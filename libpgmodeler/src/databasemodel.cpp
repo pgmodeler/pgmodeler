@@ -1652,6 +1652,7 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 	Reference ref;
 	ObjectType tab_obj_type[3]={ OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_INDEX };
 	bool found=false;
+  vector<BaseObject *> objects;
 
 	try
 	{
@@ -1772,6 +1773,16 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 						}
 					}
 				}
+
+        /* Removing child objects from view and including them in the list of objects to be recreated,
+           this will avoid errors when removing the view from model */
+        objects=view->getObjects();
+        for(auto &obj : objects)
+        {
+          xml_special_objs[obj->getObjectId()]=obj->getCodeDefinition(SchemaParser::XML_DEFINITION);
+          view->removeObject(obj);
+          delete(obj);
+        }
 
 				removeView(view);
 				delete(view);

@@ -118,7 +118,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
   connect(raw_attrib_names_chk, SIGNAL(toggled(bool)), this, SLOT(showObjectProperties()));
 
   connect(data_grid_tb, &QToolButton::clicked,
-          [=]() { emit s_dataGridOpenRequested(); });
+          [=]() { emit s_dataGridOpenRequested(connection.getConnectionParam(Connection::PARAM_DB_NAME)); });
 
   connect(runsql_tb, &QToolButton::clicked,
           [=]() { emit s_sqlExecutionRequested(); });
@@ -129,6 +129,9 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
   connect(filter_edt, &QLineEdit::textChanged,
           [=](){ DatabaseImportForm::filterObjects(objects_trw, filter_edt->text(),
                                                    (by_oid_chk->isChecked() ? DatabaseImportForm::OBJECT_ID : 0)); });
+
+  connect(drop_db_tb, &QToolButton::clicked,
+          [=]() { emit s_databaseDropRequested(connection.getConnectionParam(Connection::PARAM_DB_NAME)); });
 }
 
 bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
@@ -150,7 +153,8 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
          obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
 
          if(oid!=0 && (obj_type==OBJ_TABLE || obj_type==OBJ_VIEW))
-           emit s_dataGridOpenRequested(item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
+           emit s_dataGridOpenRequested(connection.getConnectionParam(Connection::PARAM_DB_NAME),
+                                        item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
                                         item->text(0), obj_type!=OBJ_VIEW);
        }
      }
@@ -853,7 +857,9 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
     {
       handle_menu.addSeparator();
       handle_menu.addAction(drop_action);
-      handle_menu.addAction(drop_cascade_action);
+
+      if(obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE)
+        handle_menu.addAction(drop_cascade_action);
 
       if(obj_type==OBJ_TABLE)
       {
@@ -876,7 +882,8 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
     else if(exec_action==properties_action)
       showObjectProperties(true);
     else if(exec_action==show_data_action)
-      emit s_dataGridOpenRequested(item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
+      emit s_dataGridOpenRequested(connection.getConnectionParam(Connection::PARAM_DB_NAME),
+                                   item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
                                    item->text(0),
                                    item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt()!=OBJ_VIEW);
     else if(exec_action)
@@ -942,6 +949,10 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
     {
       ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
       QString msg;
+
+      //Roles and tablespaces can't be removed in cascade mode
+      if(cascade && (obj_type==OBJ_ROLE || obj_type==OBJ_TABLESPACE))
+        return;
 
       if(!cascade)
         msg=trUtf8("Do you really want to drop the object <strong>%1</strong> <em>(%2)</em>?")

@@ -19,6 +19,7 @@
 #include "snippetsconfigwidget.h"
 #include "baseobject.h"
 #include "messagebox.h"
+#include "pgmodeleruins.h"
 
 map<QString, attribs_map> SnippetsConfigWidget::config_params;
 
@@ -57,6 +58,8 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 
   placeholders_ht=new HintTextWidget(placeholders_hint, this);
   placeholders_ht->setText(placeholders_chk->statusTip());
+
+  snippet_txt=PgModelerUiNS::createNumberedTextEditor(snippet_wgt);
 
   try
   {

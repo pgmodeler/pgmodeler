@@ -28,30 +28,34 @@
 #include "ui_sourcecodewidget.h"
 #include "baseobjectwidget.h"
 #include "hinttextwidget.h"
+#include "numberedtexteditor.h"
 
 class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
-	private:
-		Q_OBJECT
+  private:
+    Q_OBJECT
 
     static const int ORIGINAL_SQL=0,
     DEPENDENCIES_SQL=1,
     CHILDREN_SQL=2;
 
-		SyntaxHighlighter *hl_sqlcode,
-											*hl_xmlcode;
+    NumberedTextEditor *sqlcode_txt,
+    *xmlcode_txt;
+
+    SyntaxHighlighter *hl_sqlcode,
+    *hl_xmlcode;
 
     HintTextWidget *code_options_ht;
 
-		void applyConfiguration(void){}
-		void hideEvent(QHideEvent *event);
+    void applyConfiguration(void){}
+    void hideEvent(QHideEvent *event);
 
-	public:
-		SourceCodeWidget(QWidget * parent = 0);
-		void setAttributes(DatabaseModel *model, BaseObject *object=nullptr);
+  public:
+    SourceCodeWidget(QWidget * parent = 0);
+    void setAttributes(DatabaseModel *model, BaseObject *object=nullptr);
 
-	private slots:
-		void generateSourceCode(int=0);
-		void setSourceCodeTab(int=0);
+  private slots:
+    void generateSourceCode(int=0);
+    void setSourceCodeTab(int=0);
     void saveSQLCode(void);
 };
 

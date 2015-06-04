@@ -47,6 +47,7 @@ class ObjectsDiffInfo {
 
 		unsigned getDiffType(void);
 		QString getInfoMessage(void);
+    QString getDiffTypeString(void);
 		BaseObject *getObject(void);
     BaseObject *getOldObject(void);
 

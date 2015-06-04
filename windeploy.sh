@@ -3,64 +3,107 @@
 QT_INSTALL_VERSION='5.4.1'
 QT_BASE_VERSION='5.4'
 PGSQL_VERSION='9.4'
-QT_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/${QT_BASE_VERSION}/mingw491_32/"
-QMAKE_ROOT=$QT_ROOT/bin
-MINGW_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/Tools/mingw491_32/bin"
-PGSQL_ROOT="/c/PostgreSQL/${PGSQL_VERSION}/bin"
-QMAKE_ARGS="-r -spec win32-g++ CONFIG+=release"
 INNOSETUP_CMD='/c/Program Files (x86)/Inno Setup 5/ISCC.exe'
 LOG=windeploy.log
 
 # Detecting current pgModeler version
-DEPLOY_VER=`cat libutils/src/globalattributes.h | grep PGMODELER_VERSION | sed 's/PGMODELER_VERSION=QString("//g' | sed 's/"),//g'`
+DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PGMODELER_VERSION | sed 's/PGMODELER_VERSION=QString("//g' | sed 's/"),//g'`
 DEPLOY_VER=${DEPLOY_VER/PGMODELER_VERSION=\"/}
 DEPLOY_VER=`echo ${DEPLOY_VER/\",/} | tr -d ' '`
-BUILD_NUM=$(date '+%Y%m%d')
 
-WITH_BUILD_NUM='-with-build-num'
 DEMO_VERSION_OPT='-demo-version'
 DEMO_VERSION=0
 
-for param in $@; do
- if [[ "$param" == "$WITH_BUILD_NUM" ]]; then
-   PKGNAME="${PKGNAME}_${BUILD_NUM}"
- fi
+BUILD_ALL_OPT='-build-all'
+BUILD_ALL=0
 
+# Setting key paths according to the arch build (x86|x64)
+# If none of the build type parameter is specified, the default is tu use x86
+X64_BUILD_OPT='-x64-build'
+X64_BUILD=0
+X86_BUILD=1
+WIN_BITS="32"
+DEST_ARCH="x86"
+
+for param in $@; do 
  if [[ "$param" == "$DEMO_VERSION_OPT" ]]; then
    DEMO_VERSION=1
-   QMAKE_ARGS="$QMAKE_ARGS DEMO_VERSION+=true"
+ fi
+ if [[ "$param" == "$X64_BUILD_OPT" ]]; then
+   X64_BUILD=1
+   DEST_ARCH="x64"
+   WIN_BITS="64"
+ fi
+ if [[ "$param" == "$BUILD_ALL_OPT" ]]; then
+   BUILD_ALL=1
+   DEMO_VERSION=0
  fi
 done
 
+# Define the base name of the binary
 if [ $DEMO_VERSION = 1 ]; then
-  PKGNAME="pgmodeler-demo-windows"
+  PKGNAME="pgmodeler-demo-windows$WIN_BITS"
 else
-  PKGNAME="pgmodeler-$DEPLOY_VER-windows"
+  PKGNAME="pgmodeler-$DEPLOY_VER-windows$WIN_BITS"
+fi
+
+if [ $X64_BUILD = 1 ]; then
+  # Settings for x64 build
+  QT_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}-x64/"
+  QMAKE_ROOT=$QT_ROOT/bin
+  MINGW_ROOT="/c/msys64/mingw64/bin"
+  PGSQL_ROOT="/c/PostgreSQL/${PGSQL_VERSION}-x64/bin"  
+  QMAKE_ARGS="-r -spec win32-g++ CONFIG+=release \
+              XML_INC+=$PGSQL_ROOT/../include \
+			  XML_LIB=$PGSQL_ROOT/libxml2.dll \
+			  PGSQL_INC+=$PGSQL_ROOT/../include \
+			  PGSQL_LIB+=$PGSQL_ROOT/libpq.dll"
+  DEP_LIBS="$QMAKE_ROOT/icudt55.dll \
+		    $QMAKE_ROOT/icuin55.dll \
+		    $QMAKE_ROOT/icuuc55.dll \
+		    $MINGW_ROOT/libgcc_s_seh-1.dll \
+		    $MINGW_ROOT/libstdc++-6.dll \
+		    $MINGW_ROOT/libwinpthread-1.dll \
+			$PGSQL_ROOT/iconv.dll \
+			$PGSQL_ROOT/libintl-8.dll"
+else
+  # Default setting for x86 build
+  QT_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/${QT_BASE_VERSION}/mingw491_32/"
+  QMAKE_ROOT=$QT_ROOT/bin
+  QMAKE_ARGS="-r -spec win32-g++ CONFIG+=release"
+  MINGW_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/Tools/mingw491_32/bin"
+  PGSQL_ROOT="/c/PostgreSQL/${PGSQL_VERSION}/bin"
+  DEP_LIBS="$QMAKE_ROOT/icudt53.dll \
+		   $QMAKE_ROOT/icuin53.dll \
+		   $QMAKE_ROOT/icuuc53.dll \
+		   $QMAKE_ROOT/libgcc_s_dw2-1.dll \
+		   $QMAKE_ROOT/libstdc++-6.dll \
+		   $QMAKE_ROOT/libwinpthread-1.dll \
+		   $PGSQL_ROOT/libiconv.dll \
+		   $PGSQL_ROOT/intl.dll"
+fi
+
+if [ $DEMO_VERSION = 1 ]; then
+  QMAKE_ARGS="$QMAKE_ARGS DEMO_VERSION+=true"
 fi
 
 PKGFILE=$PKGNAME.exe
 GENINSTALLER=pgmodeler.exe
 INSTALL_ROOT="$PWD/build"
+DIST_ROOT="$PWD/dist"
 ISSFILE=./installer/windows/pgmodeler.iss
 QT_CONF="$INSTALL_ROOT/qt.conf"
 DEP_PLUGINS_DIR="$INSTALL_ROOT/qtplugins"
 PLUGINS="dummy xml2object"
-  
-DEP_LIBS="$QMAKE_ROOT/icudt53.dll \
-		  $QMAKE_ROOT/icuin53.dll \
-		  $QMAKE_ROOT/icuuc53.dll \
-		  $QMAKE_ROOT/libgcc_s_dw2-1.dll \
-		  $QMAKE_ROOT/libstdc++-6.dll \
-		  $QMAKE_ROOT/libwinpthread-1.dll \
-		  $QMAKE_ROOT/Qt5Core.dll \
+
+# Common dependency libraries 
+DEP_LIBS+=" $QMAKE_ROOT/Qt5Core.dll \
 		  $QMAKE_ROOT/Qt5Gui.dll \
 		  $QMAKE_ROOT/Qt5Widgets.dll \
 		  $QMAKE_ROOT/Qt5PrintSupport.dll \
 		  $QMAKE_ROOT/Qt5Network.dll \
 		  $PGSQL_ROOT/libxml2.dll \
-		  $PGSQL_ROOT/libiconv.dll \
 		  $PGSQL_ROOT/libpq.dll \
-		  $PGSQL_ROOT/intl.dll \
 		  $PGSQL_ROOT/libeay32.dll \
 		  $PGSQL_ROOT/ssleay32.dll \
 		  $PGSQL_ROOT/zlib1.dll"
@@ -116,7 +159,13 @@ if [ $DEMO_VERSION = 1 ]; then
   echo "Building demonstration version. (Found $DEMO_VERSION_OPT)"
 fi
 
+echo "Building for arch: $DEST_ARCH"
 echo "Cleaning previous compilation..."
+
+if [ $BUILD_ALL -eq 1 ]; then
+  rm -r $DIST_ROOT/* > $LOG 2>&1
+fi
+
 rm -r build/* > $LOG 2>&1
 $MINGW_ROOT/mingw32-make.exe distclean >> $LOG 2>&1
 
@@ -140,10 +189,17 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-echo "Installing dependencies..."
-
+echo "Deploying application..."
 $MINGW_ROOT/mingw32-make.exe install >> $LOG 2>&1
 
+	if [ $? -ne 0 ]; then
+		echo
+		echo "** Deployment failed!"
+		echo
+		exit 1
+	fi
+
+echo "Installing dependencies..."
 for dll in $DEP_LIBS; do
 	cp $dll $INSTALL_ROOT >> $LOG 2>&1
 	if [ $? -ne 0 ]; then
@@ -177,14 +233,6 @@ done
 
 $MINGW_ROOT/mingw32-make.exe install >> $LOG 2>&1
 
-
-#Fixing the pgModeler plugin deployment.
-#Moving dlls from build/plugins/[PLUGIN]/build to build/plugins/[PLUGIN]
-#for plugin in $PLUGINS; do
-#	mv build/plugins/$plugin/build/* build/plugins/$plugin >> $LOG 2>&1
-#	rm -r build/plugins/$plugin/build/  >> $LOG 2>&1
-#done
-
 if [ $? -ne 0 ]; then
   echo
   echo "** Installation failed!"
@@ -214,8 +262,22 @@ if [ $? -ne 0 ]; then
   echo "Directory created: $PKGNAME"
 else
   mv $GENINSTALLER build/$PKGFILE >> $LOG 2>&1
-  echo "File created: $INSTALL_ROOT/$PKGFILE"
+  echo "File created: $PKGFILE"
+fi
+
+mkdir -p $DIST_ROOT >> $LOG 2>&1
+mv $INSTALL_ROOT/$PKGFILE $DIST_ROOT >> $LOG 2>&1
+
+if [ $? -ne 0 ]; then
+	echo "** Failed to move $PKGFILE to $DIST_ROOT!"
+	exit 1
 fi
 
 echo "pgModeler successfully deployed!"
 echo
+
+if [ $BUILD_ALL -eq 1 ]; then
+ sh windeploy.sh -demo-version
+ sh windeploy.sh -x64-build
+ sh windeploy.sh -x64-build -demo-version
+fi

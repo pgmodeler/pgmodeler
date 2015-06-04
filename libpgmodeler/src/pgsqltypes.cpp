@@ -1297,63 +1297,71 @@ bool PgSQLType::isUserType(void)
 
 bool PgSQLType::isGiSType(void)
 {
-  return(type_list[this->type_idx]==QString("geography") ||
-         type_list[this->type_idx]==QString("geometry") ||
-         type_list[this->type_idx]==QString("geometry_dump"));
+  return(!isUserType() &&
+         (type_list[this->type_idx]==QString("geography") ||
+          type_list[this->type_idx]==QString("geometry") ||
+          type_list[this->type_idx]==QString("geometry_dump")));
 }
 
 bool PgSQLType::isRangeType(void)
 {
-  return(type_list[this->type_idx]==QString("int4range") || type_list[this->type_idx]==QString("int8range") ||
-         type_list[this->type_idx]==QString("numrange") ||	type_list[this->type_idx]==QString("tsrange") ||
-         type_list[this->type_idx]==QString("tstzrange") || type_list[this->type_idx]==QString("daterange"));
+  return(!isUserType() &&
+         (type_list[this->type_idx]==QString("int4range") || type_list[this->type_idx]==QString("int8range") ||
+          type_list[this->type_idx]==QString("numrange") ||	type_list[this->type_idx]==QString("tsrange") ||
+          type_list[this->type_idx]==QString("tstzrange") || type_list[this->type_idx]==QString("daterange")));
 }
 
 bool PgSQLType::isSerialType(void)
 {
-  return(type_list[this->type_idx]==QString("serial") ||
-         type_list[this->type_idx]==QString("smallserial") ||
-         type_list[this->type_idx]==QString("bigserial"));
+  return(!isUserType() &&
+         (type_list[this->type_idx]==QString("serial") ||
+          type_list[this->type_idx]==QString("smallserial") ||
+          type_list[this->type_idx]==QString("bigserial")));
 }
 
 bool PgSQLType::isDateTimeType(void)
 {
-  return(type_list[this->type_idx]==QString("time") ||
-         type_list[this->type_idx]==QString("timestamp") ||
-         type_list[this->type_idx]==QString("interval") ||
-         type_list[this->type_idx]==QString("date") ||
-         type_list[this->type_idx]==QString("timetz") ||
-         type_list[this->type_idx]==QString("timestamptz"));
+  return(!isUserType() &&
+         (type_list[this->type_idx]==QString("time") ||
+          type_list[this->type_idx]==QString("timestamp") ||
+          type_list[this->type_idx]==QString("interval") ||
+          type_list[this->type_idx]==QString("date") ||
+          type_list[this->type_idx]==QString("timetz") ||
+          type_list[this->type_idx]==QString("timestamptz")));
 }
 
 bool PgSQLType::isNumericType(void)
 {
-  return(type_list[this->type_idx]==QString("numeric") ||
-         type_list[this->type_idx]==QString("decimal"));
+  return(!isUserType() &&
+         (type_list[this->type_idx]==QString("numeric") ||
+          type_list[this->type_idx]==QString("decimal")));
 }
 
 bool PgSQLType::isIntegerType(void)
 {
-  return(type_list[this->type_idx]==QString("smallint") ||
-         type_list[this->type_idx]==QString("integer") ||
-         type_list[this->type_idx]==QString("bigint") ||
-         type_list[this->type_idx]==QString("int4") ||
-         type_list[this->type_idx]==QString("int8") ||
-         type_list[this->type_idx]==QString("int2"));
+  return(!isUserType() &&
+         (type_list[this->type_idx]==QString("smallint") ||
+          type_list[this->type_idx]==QString("integer") ||
+          type_list[this->type_idx]==QString("bigint") ||
+          type_list[this->type_idx]==QString("int4") ||
+          type_list[this->type_idx]==QString("int8") ||
+          type_list[this->type_idx]==QString("int2")));
 }
 
 bool PgSQLType::hasVariableLength(void)
 {
-  return(type_list[this->type_idx]==QString("numeric") || type_list[this->type_idx]==QString("decimal") ||
-      type_list[this->type_idx]==QString("character varying") || type_list[this->type_idx]==QString("varchar") ||
-      type_list[this->type_idx]==QString("character") || type_list[this->type_idx]==QString("char") ||
-      type_list[this->type_idx]==QString("bit") || type_list[this->type_idx]==QString("bit varying") ||
-      type_list[this->type_idx]==QString("varbit"));
+  return(!isUserType() &&
+         (type_list[this->type_idx]==QString("numeric") || type_list[this->type_idx]==QString("decimal") ||
+          type_list[this->type_idx]==QString("character varying") || type_list[this->type_idx]==QString("varchar") ||
+          type_list[this->type_idx]==QString("character") || type_list[this->type_idx]==QString("char") ||
+          type_list[this->type_idx]==QString("bit") || type_list[this->type_idx]==QString("bit varying") ||
+          type_list[this->type_idx]==QString("varbit")));
 }
 
 bool PgSQLType::acceptsPrecision(void)
 {
-  return(isNumericType() || (type_list[this->type_idx]!=QString("date") && isDateTimeType()));
+  return(isNumericType() ||
+         (!isUserType() && type_list[this->type_idx]!=QString("date") && isDateTimeType()));
 }
 
 bool PgSQLType::isEquivalentTo(PgSQLType type)
@@ -1392,23 +1400,29 @@ bool PgSQLType::isEquivalentTo(PgSQLType type)
 
 PgSQLType PgSQLType::getAliasType(void)
 {
-  if(type_list[this->type_idx]==QString("serial"))
-    return(PgSQLType(QString("integer")));
-  else if(type_list[this->type_idx]==QString("smallserial"))
-    return(PgSQLType(QString("smallint")));
-  else if(type_list[this->type_idx]==QString("bigserial"))
-    return(PgSQLType(QString("bigint")));
-	else
-		return(PgSQLType(type_list[this->type_idx]));
+  if(!isUserType())
+  {
+    if(type_list[this->type_idx]==QString("serial"))
+      return(PgSQLType(QString("integer")));
+    else if(type_list[this->type_idx]==QString("smallserial"))
+      return(PgSQLType(QString("smallint")));
+    else if(type_list[this->type_idx]==QString("bigserial"))
+      return(PgSQLType(QString("bigint")));
+    else
+      return(PgSQLType(type_list[this->type_idx]));
+  }
+  else
+    return(*this);
 }
 
 void PgSQLType::setDimension(unsigned dim)
 {
 	if(dim > 0 && this->isUserType())
 	{
-		int idx=getUserTypeIndex(~(*this), nullptr);
-		if(user_types[idx].type_conf==UserTypeConfig::DOMAIN_TYPE ||
-			 user_types[idx].type_conf==UserTypeConfig::SEQUENCE_TYPE)
+    int idx=getUserTypeIndex(~(*this), nullptr) - (pseudo_end + 1);
+    if(static_cast<unsigned>(idx) < user_types.size() &&
+       (user_types[idx].type_conf==UserTypeConfig::DOMAIN_TYPE ||
+        user_types[idx].type_conf==UserTypeConfig::SEQUENCE_TYPE))
 			throw Exception(ERR_ASG_INV_DOMAIN_ARRAY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
@@ -1426,17 +1440,20 @@ void PgSQLType::setLength(unsigned len)
 
 void PgSQLType::setPrecision(int prec)
 {
-	//Raises an error if the user tries to specify a precision > lenght
-  if(((BaseType::type_list[type_idx]==QString("numeric") ||
-       BaseType::type_list[type_idx]==QString("decimal")) && prec > static_cast<int>(length)))
-		throw Exception(ERR_ASG_INV_PRECISION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	//Raises an error if the precision is greater thant 6
-  else if(((BaseType::type_list[type_idx]==QString("time") ||
-            BaseType::type_list[type_idx]==QString("timestamp") ||
-            BaseType::type_list[type_idx]==QString("interval")) && prec > 6))
-		throw Exception(ERR_ASG_INV_PREC_TIMESTAMP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  if(!isUserType())
+  {
+    //Raises an error if the user tries to specify a precision > lenght
+    if(((BaseType::type_list[type_idx]==QString("numeric") ||
+         BaseType::type_list[type_idx]==QString("decimal")) && prec > static_cast<int>(length)))
+      throw Exception(ERR_ASG_INV_PRECISION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    //Raises an error if the precision is greater thant 6
+    else if(((BaseType::type_list[type_idx]==QString("time") ||
+              BaseType::type_list[type_idx]==QString("timestamp") ||
+              BaseType::type_list[type_idx]==QString("interval")) && prec > 6))
+      throw Exception(ERR_ASG_INV_PREC_TIMESTAMP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	this->precision=prec;
+    this->precision=prec;
+  }
 }
 
 unsigned PgSQLType::getDimension(void)

@@ -722,6 +722,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
             pos1=aux_cmd.indexOf(QString("DROP"));
             is_drop=true;
           }
+
           tab_name=aux_cmd.mid(pos, pos1 - pos).simplified();
 
           //Extracting the child object name (column | constraint) the one between
@@ -740,6 +741,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
             msg=trUtf8("Creating object `%1' (%2).").arg(obj_name).arg(BaseObject::getTypeName(obj_type));
 
           emit s_progressUpdated(aux_prog, msg, obj_type, sql_cmd);
+          is_drop=false;
         }
         //Check if the regex matches the sql command
         else if(obj_reg.exactMatch(sql_cmd))
@@ -754,7 +756,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
             obj_type=obj_tp;
 
             //Appeding special tokens when the object is an index or view
-            if(lin.startsWith(QString("CREATE")))
+            if(lin.startsWith(QString("CREATE")) || lin.startsWith(QString("ALTER")))
             {
               if(obj_tp==OBJ_INDEX)
               {
@@ -768,13 +770,15 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
               }
             }
             else if(lin.startsWith(QString("DROP")))
+            {
               lin.remove(QString("IF EXISTS"));
+              lin.remove(QString("MATERIALIZED"));
+            }
 
             lin=lin.simplified();
 
             //Check if the keyword for the current object exists on string
-            reg_aux.setPattern(QString("(CREATE|DROP|ALTER)( )(%1)")
-                               .arg(BaseObject::getSQLName(obj_tp)));
+            reg_aux.setPattern(QString("(CREATE|DROP|ALTER)( )(%1)").arg(BaseObject::getSQLName(obj_tp)));
             pos=reg_aux.indexIn(lin);
 
             if(pos >= 0)

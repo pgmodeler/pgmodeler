@@ -55,7 +55,8 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(schema_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(disableControlButtons()));
 	connect(table_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(disableControlButtons()));
 	connect(table_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(listColumns()));
-	connect(refresh_tb, SIGNAL(clicked()), this, SLOT(retrieveData()));
+  connect(table_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(retrieveData()));
+  connect(refresh_tb, SIGNAL(clicked()), this, SLOT(retrieveData()));
 	connect(add_ord_col_tb, SIGNAL(clicked()), this, SLOT(addColumnToList()));
 	connect(ord_columns_lst, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(removeColumnFromList()));
 	connect(ord_columns_lst, SIGNAL(itemPressed(QListWidgetItem*)), this, SLOT(changeOrderMode(QListWidgetItem*)));
@@ -95,19 +96,15 @@ void DataManipulationForm::setAttributes(Connection conn, const QString curr_sch
 	{
 		QString db_name;
 
-		connection=conn;
-		catalog.setConnection(conn);
-
-		db_name=QString("%1@%2:%3").arg(conn.getConnectionParam(Connection::PARAM_DB_NAME))
+    tmpl_conn_params=conn.getConnectionParams();
+    db_name=QString("<strong>%1</strong>@<em>%2:%3</em>").arg(conn.getConnectionParam(Connection::PARAM_DB_NAME))
 															 .arg(conn.getConnectionParam(Connection::PARAM_SERVER_IP).isEmpty() ?
 																		conn.getConnectionParam(Connection::PARAM_SERVER_FQDN) : conn.getConnectionParam(Connection::PARAM_SERVER_IP))
 															 .arg(conn.getConnectionParam(Connection::PARAM_PORT));
 
-    this->setWindowTitle(this->windowTitle() + QString(" - ") + db_name);
-    db_name=QString("<strong>") + db_name;
-    db_name=db_name.replace(QString("@"),QString("</strong><em>@"));
-    db_name+=QString("</em>");
 		db_name_lbl->setText(db_name);
+    db_name.remove(QRegExp("<(/)?(strong|em)>"));
+    this->setWindowTitle(this->windowTitle() + QString(" - ") + db_name);
 
 		schema_cmb->clear();
 		listObjects(schema_cmb, { OBJ_SCHEMA });
@@ -116,8 +113,8 @@ void DataManipulationForm::setAttributes(Connection conn, const QString curr_sch
 		table_cmb->setCurrentText(curr_table);
 		disableControlButtons();
 
-		if(!curr_table.isEmpty())
-			retrieveData();
+    if(!curr_table.isEmpty())
+      retrieveData();
 	}
 	catch(Exception &e)
 	{
@@ -146,32 +143,52 @@ void DataManipulationForm::listTables(void)
 
 void DataManipulationForm::listColumns(void)
 {
-	resetAdvancedControls();
-	col_names.clear();
-	code_compl_wgt->clearCustomItems();
+  Catalog catalog;
+  Connection conn=Connection(tmpl_conn_params);
 
-	if(table_cmb->currentIndex() > 0)
-	{
-		vector<attribs_map> cols;
+  try
+  {
+    resetAdvancedControls();
+    col_names.clear();
+    code_compl_wgt->clearCustomItems();
 
-		cols=catalog.getObjectsAttributes(OBJ_COLUMN, schema_cmb->currentText(), table_cmb->currentText());
+    if(table_cmb->currentIndex() > 0)
+    {
+      vector<attribs_map> cols;
 
-    for(auto &col : cols)
-		{
-			col_names.push_back(col[ParsersAttributes::NAME]);
-      code_compl_wgt->insertCustomItem(col[ParsersAttributes::NAME], {},
-                                       QPixmap(QString(":/icones/icones/column.png")));
-		}
+      catalog.setConnection(conn);
+      cols=catalog.getObjectsAttributes(OBJ_COLUMN, schema_cmb->currentText(), table_cmb->currentText());
 
-		ord_column_cmb->addItems(col_names);
-	}
+      for(auto &col : cols)
+      {
+        col_names.push_back(col[ParsersAttributes::NAME]);
+        code_compl_wgt->insertCustomItem(col[ParsersAttributes::NAME], {},
+                                         QPixmap(QString(":/icones/icones/column.png")));
+      }
 
-	add_ord_col_tb->setEnabled(ord_column_cmb->count() > 0);
-  filter_tb->setEnabled(ord_column_cmb->count() > 0);
+      ord_column_cmb->addItems(col_names);
+    }
+
+    add_ord_col_tb->setEnabled(ord_column_cmb->count() > 0);
+    filter_tb->setEnabled(ord_column_cmb->count() > 0);
+  }
+  catch(Exception &e)
+  {
+    catalog.closeConnection();
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+
 }
 
 void DataManipulationForm::retrieveData(void)
 {
+  if(table_cmb->currentIndex() <= 0)
+    return;
+
+  Catalog catalog;
+  Connection conn_sql=Connection(tmpl_conn_params),
+      conn_cat=Connection(tmpl_conn_params);
+
 	try
 	{
 		QString query=QString("SELECT * FROM \"%1\".\"%2\"").arg(schema_cmb->currentText()).arg(table_cmb->currentText());
@@ -202,8 +219,9 @@ void DataManipulationForm::retrieveData(void)
 		if(limit > 0)
 			query+=QString(" LIMIT %1").arg(limit);
 
-		connection.connect();
-		connection.executeDMLCommand(query, res);
+    catalog.setConnection(conn_cat);
+    conn_sql.connect();
+    conn_sql.executeDMLCommand(query, res);
 
 		retrievePKColumns(schema_cmb->currentText(), table_cmb->currentText());
     SQLExecutionWidget::fillResultsTable(catalog, res, results_tbw, true);
@@ -224,11 +242,13 @@ void DataManipulationForm::retrieveData(void)
 		else
 			results_tbw->setFocus();
 
-		connection.close();
+    conn_sql.close();
+    catalog.closeConnection();
 	}
 	catch(Exception &e)
 	{
-    connection.close();
+    conn_sql.close();
+    catalog.closeConnection();
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -349,12 +369,16 @@ void DataManipulationForm::changeOrderMode(QListWidgetItem *item)
 
 void DataManipulationForm::listObjects(QComboBox *combo, vector<ObjectType> obj_types, const QString &schema)
 {
+  Catalog catalog;
+  Connection conn=Connection(tmpl_conn_params);
+
 	try
 	{
 		attribs_map objects;
 		QStringList items;
 		int idx=0, count=0;
 
+    catalog.setConnection(conn);
 		catalog.setFilter(Catalog::LIST_ALL_OBJS);
 		combo->blockSignals(true);
 		combo->clear();
@@ -380,23 +404,27 @@ void DataManipulationForm::listObjects(QComboBox *combo, vector<ObjectType> obj_
 			idx=count;
 		}
 
-		if(objects.empty())
+    if(combo->count()==0)
 			combo->insertItem(0, trUtf8("No objects found"));
 		else
 			combo->insertItem(0, trUtf8("Found %1 object(s)").arg(combo->count()));
 
 		combo->setCurrentIndex(0);
 		combo->blockSignals(false);
-
+    catalog.closeConnection();
 	}
 	catch(Exception &e)
 	{
+    catalog.closeConnection();
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
 void DataManipulationForm::retrievePKColumns(const QString &schema, const QString &table)
 {
+  Catalog catalog;
+  Connection conn=Connection(tmpl_conn_params);
+
 	try
 	{
 		vector<attribs_map> pks;
@@ -409,9 +437,12 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 		}
 		else
 		{
+      catalog.setConnection(conn);
 			//Retrieving the constraints from catalog using a custom filter to select only primary keys (contype=p)
       pks=catalog.getObjectsAttributes(OBJ_CONSTRAINT, schema, table, {}, {{ParsersAttributes::CUSTOM_FILTER, QString("contype='p'")}});
-			warning_frm->setVisible(pks.empty());
+      catalog.closeConnection();
+
+      warning_frm->setVisible(pks.empty());
 
 			if(pks.empty())
 				warning_lbl->setText(trUtf8("The selected table doesn't owns a primary key! Updates and deletes will be performed by considering all columns as primary key. <strong>WARNING:</strong> those operations can affect more than one row."));
@@ -437,6 +468,7 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 	}
 	catch(Exception &e)
 	{
+    catalog.closeConnection();
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -554,7 +586,7 @@ void DataManipulationForm::markDeleteOnRows(void)
 
 		if(item->data(Qt::UserRole)==OP_INSERT)
 			ins_rows.push_back(row);
-		else if(!pk_col_ids.empty())
+    else
 			markOperationOnRow(OP_DELETE, row);
 	}
 
@@ -709,6 +741,7 @@ void DataManipulationForm::insertRowOnTabPress(int curr_row, int curr_col, int p
 void DataManipulationForm::saveChanges(void)
 {
 	int row=0;
+  Connection conn=Connection(tmpl_conn_params);
 
 	try
 	{
@@ -725,18 +758,18 @@ void DataManipulationForm::saveChanges(void)
 			//Forcing the cell editor to be closed by selecting an unexistent cell and clearing the selection
 			results_tbw->setCurrentCell(-1,-1, QItemSelectionModel::Clear);
 
-			connection.connect();
-      connection.executeDDLCommand(QString("START TRANSACTION"));
+      conn.connect();
+      conn.executeDDLCommand(QString("START TRANSACTION"));
 
 			for(unsigned idx=0; idx < changed_rows.size(); idx++)
 			{
 				row=changed_rows[idx];
 				cmd=getDMLCommand(row);
-				connection.executeDDLCommand(cmd);
+        conn.executeDDLCommand(cmd);
 			}
 
-      connection.executeDDLCommand(QString("COMMIT"));
-			connection.close();
+      conn.executeDDLCommand(QString("COMMIT"));
+      conn.close();
 
 			retrieveData();
 			undo_tb->setEnabled(false);
@@ -755,10 +788,10 @@ void DataManipulationForm::saveChanges(void)
 
 		unsigned op_type=results_tbw->verticalHeaderItem(row)->data(Qt::UserRole).toUInt();
 
-		if(connection.isStablished())
+    if(conn.isStablished())
 		{
-      connection.executeDDLCommand(QString("ROLLBACK"));
-			connection.close();
+      conn.executeDDLCommand(QString("ROLLBACK"));
+      conn.close();
 		}
 
 		results_tbw->selectRow(row);

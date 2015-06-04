@@ -28,6 +28,11 @@
 <!ATTLIST configuration code-completion (false|true) "true">
 <!ATTLIST configuration code-font CDATA #IMPLIED>
 <!ATTLIST configuration code-font-size CDATA #IMPLIED>
+<!ATTLIST configuration display-line-numbers (false|true) "true">
+<!ATTLIST configuration highlight-lines (false|true) "true">
+<!ATTLIST configuration line-numbers-color CDATA #IMPLIED>
+<!ATTLIST configuration line-numbers-bg-color CDATA #IMPLIED>
+<!ATTLIST configuration line-highlight-color CDATA #IMPLIED>
 
 <!ELEMENT session (file+)>
 <!ELEMENT recent-models (file+)>

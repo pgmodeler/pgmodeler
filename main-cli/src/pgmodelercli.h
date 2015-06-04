@@ -151,7 +151,8 @@ class PgModelerCLI: public QApplication {
 
 	private slots:
 		void handleObjectAddition(BaseObject *);
-		void updateProgress(int progress, QString msg);
+    void updateProgress(int progress, QString msg);
+    void handleObjectRemoval(BaseObject *object);
 };
 
 #endif

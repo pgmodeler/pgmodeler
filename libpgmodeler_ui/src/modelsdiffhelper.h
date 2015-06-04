@@ -40,32 +40,36 @@ class ModelsDiffHelper: public QObject {
     pgsql_version;
 
     //! brief Indicates if the diff was cancelled by user
-    bool diff_canceled,
+    bool diff_canceled, diff_opts[8];
+    //,
 
     /*! brief Indicates if cluster level objects like tablespaces or roles must be kept intact on
         database in case of drop */
-    keep_cluster_objs,
+    //keep_cluster_objs,
 
     //! brief Indicates if any DROP/TRUNCATE generated must be in cascade mode
-    cascade_mode,
+    //cascade_mode,
 
     //! brief Forces the recreation of any object maked as ALTER in the output
-    force_recreation,
+    //force_recreation,
 
     //! brief Recreates only objects that can't be modified using ALTER commands
-    recreate_unchangeble,
+    //recreate_unchangeble,
 
     //! brief Generate a TRUNCATE command for every table which columns was modified in their data types
-    trucante_tables,
+    //trucante_tables,
 
     //! brief Indicates if permissions must be preserved on database
-    keep_obj_perms,
+   // keep_obj_perms,
 
     /*! brief Indicates that existing sequences must be reused in serial columns. Since serial columns are converted
         into integer and a new sequence created and assigned as nextval(sequence) default value for those columns,
         if reuse is enabled, new sequences will not be created instead the ones which name matches the column's default
         value will be reused */
-    reuse_sequences;
+   // reuse_sequences,
+
+    //! brief Do not generate and execute commands to rename the destinatio database
+   // preserve_db_name;
 
     //! brief Stores the count of objects to be dropped, changed or created
     unsigned diffs_counter[4];
@@ -121,6 +125,33 @@ class ModelsDiffHelper: public QObject {
     BaseObject *getRelNNTable(const QString &obj_name, DatabaseModel *model);
 
   public:
+    static const unsigned OPT_KEEP_CLUSTER_OBJS=0,
+
+    //! brief Indicates if any DROP/TRUNCATE generated must be in cascade mode
+    OPT_CASCADE_MODE=1,
+
+    //! brief Forces the recreation of any object maked as ALTER in the output
+    OPT_FORCE_RECREATION=2,
+
+    //! brief Recreates only objects that can't be modified using ALTER commands
+    OPT_RECREATE_UNCHANGEBLE=3,
+
+    //! brief Generate a TRUNCATE command for every table which columns was modified in their data types
+    OPT_TRUCANTE_TABLES=4,
+
+    //! brief Indicates if permissions must be preserved on database
+    OPT_KEEP_OBJ_PERMS=5,
+
+    /*! brief Indicates that existing sequences must be reused in serial columns. Since serial columns are converted
+        into integer and a new sequence created and assigned as nextval(sequence) default value for those columns,
+        if reuse is enabled, new sequences will not be created instead the ones which name matches the column's default
+        value will be reused */
+    OPT_REUSE_SEQUENCES=6,
+
+    //! brief Indicates to not generate and execute commands to rename the destination database
+    OPT_PRESERVE_DB_NAME=7;
+
+
 		ModelsDiffHelper(void);
     ~ModelsDiffHelper(void);
 
@@ -129,10 +160,8 @@ class ModelsDiffHelper: public QObject {
         database model that represents the current arrange of the database. */
     void setModels(DatabaseModel *src_model, DatabaseModel *imp_model);
 
-    //! brief Configures the set of diff options before start the process
-    void setDiffOptions(bool keep_cluster_objs, bool cascade_mode, bool truncate_tables,
-                        bool force_recreation, bool recreate_unchangeble, bool keep_obj_perms,
-                        bool reuse_sequences);
+    //! brief Toggles a diff option throught the OPT_xxx constants
+    void setDiffOption(unsigned opt_id, bool value);
 
     //! brief Configures the PostgreSQL version used in the diff generation
     void setPgSQLVersion(const QString pgsql_ver);

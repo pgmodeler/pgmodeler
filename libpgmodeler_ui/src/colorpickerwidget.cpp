@@ -17,6 +17,7 @@
 */
 
 #include "colorpickerwidget.h"
+#include <QToolTip>
 
 ColorPickerWidget::ColorPickerWidget(int color_count, QWidget * parent) : QWidget(parent)
 {
@@ -42,6 +43,7 @@ ColorPickerWidget::ColorPickerWidget(int color_count, QWidget * parent) : QWidge
 		btn=new QToolButton(this);
 		btn->setMinimumHeight(random_color_tb->height() - 3);
 		btn->setMinimumWidth(55);
+    btn->installEventFilter(this);
 
     disable_color=btn->palette().color(QPalette::Button);
 		buttons.push_back(btn);
@@ -58,11 +60,24 @@ ColorPickerWidget::ColorPickerWidget(int color_count, QWidget * parent) : QWidge
 	connect(random_color_tb, SIGNAL(clicked()), this, SLOT(generateRandomColors()));
 }
 
+bool ColorPickerWidget::eventFilter(QObject *object, QEvent *event)
+{
+  QToolButton *button=qobject_cast<QToolButton *>(object);
+
+  if(event->type()==QEvent::ToolTip && button && button!=random_color_tb)
+  {
+    QToolTip::showText(QCursor::pos(), button->toolTip());
+    return(true);
+  }
+
+  return(QWidget::eventFilter(object, event));
+}
+
 void ColorPickerWidget::setColor(int color_idx, const QColor &color)
 {
   QString cl_name;
 
-  if(color_idx < 0 || color_idx >  colors.size())
+  if(color_idx < 0 || color_idx >=  colors.size())
 		throw Exception(ERR_REF_ELEM_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   if(this->isEnabled())
@@ -76,7 +91,7 @@ void ColorPickerWidget::setColor(int color_idx, const QColor &color)
 
 QColor ColorPickerWidget::getColor(int color_idx)
 {
-  if(color_idx < 0 || color_idx > colors.size())
+  if(color_idx < 0 || color_idx >= colors.size())
 		throw Exception(ERR_REF_ELEM_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   return(colors[color_idx]);
@@ -89,10 +104,18 @@ unsigned ColorPickerWidget::getColorCount(void)
 
 bool ColorPickerWidget::isButtonVisible(unsigned idx)
 {
-	if(idx > static_cast<unsigned>(buttons.size()))
+  if(idx >= static_cast<unsigned>(buttons.size()))
 		throw Exception(ERR_REF_ELEM_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(buttons[idx]->isVisible());
+  return(buttons[idx]->isVisible());
+}
+
+void ColorPickerWidget::setButtonToolTip(unsigned button_idx, const QString &tooltip)
+{
+  if(button_idx >= static_cast<unsigned>(buttons.size()))
+    throw Exception(ERR_REF_ELEM_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+  buttons[button_idx]->setToolTip(tooltip);
 }
 
 void ColorPickerWidget::setEnabled(bool value)
@@ -108,7 +131,7 @@ void ColorPickerWidget::setEnabled(bool value)
 
 void ColorPickerWidget::setButtonVisible(unsigned idx, bool value)
 {
-	if(idx > static_cast<unsigned>(buttons.size()))
+  if(idx >= static_cast<unsigned>(buttons.size()))
 		throw Exception(ERR_REF_ELEM_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	buttons[idx]->setVisible(value);

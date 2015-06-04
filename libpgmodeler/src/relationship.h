@@ -175,6 +175,9 @@ class Relationship: public BaseRelationship {
 								//! \brief Stores the unique key that represents the 1-1 relationship (including the fk_rel1n)
 								*uq_rel11;
 
+    //! brief Stores the CHECK constraints copied from the parent table to its child
+    vector<Constraint *> ck_constraints;
+
 		//! \brief Table created by the relationship n-n
 		Table *table_relnn;
 
@@ -219,6 +222,11 @@ class Relationship: public BaseRelationship {
 		 relationships of type copy / generalization. It is necessary
 		 to check duplicate names and incompatible types of columns */
 		void addColumnsRelGen(void);
+
+    /*! \brief Copy constraints from the parent table to the child. Currently, only
+        check constraints are copied only if the NO INHERIT attribute is not set and
+        there are no conflicting constraints (name or expression) on the child table */
+    void addConstraintsRelGen(void);
 
 		/*! \brief Creates the foreign key that represents the relationship and adds it
 		 to the receiver table. Must be specified the actions ON DELETE and UPDATE. */

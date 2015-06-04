@@ -30,6 +30,7 @@
 #include "modelwidget.h"
 #include "modelvalidationhelper.h"
 #include "swapobjectsidswidget.h"
+#include "htmlitemdelegate.h"
 
 /* Declaring the ValidationInfo class as a Qt metatype in order to permit
 	 that instances of the class be used as data of QVariant and QMetaType */
@@ -39,6 +40,9 @@ Q_DECLARE_METATYPE(ValidationInfo)
 class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 	private:
 		Q_OBJECT
+
+    //! brief Custom delegate used to paint html texts in output tree
+    HtmlItemDelegate *htmlitem_del;
 
 		//! \brief Reference model widget
 		ModelWidget *model_wgt;

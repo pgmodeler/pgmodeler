@@ -57,6 +57,13 @@ Connection::Connection(void)
   auto_browse_db=false;
 }
 
+Connection::Connection(const attribs_map &params)
+{
+  connection=nullptr;
+  auto_browse_db=false;
+  setConnectionParams(params);
+}
+
 Connection::~Connection(void)
 {
 	if(connection)

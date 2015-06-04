@@ -221,7 +221,9 @@ void Table::setConstraintsAttribute(unsigned def_type)
 		if(constr->getConstraintType()!=ConstraintType::foreign_key &&
 
 			 ((def_type==SchemaParser::SQL_DEFINITION &&
-				 (!constr->isReferRelationshipAddedColumn() || constr->getConstraintType()==ConstraintType::primary_key)) ||
+         ((!constr->isReferRelationshipAddedColumn() && constr->getConstraintType()!=ConstraintType::check) ||
+          (constr->getConstraintType()==ConstraintType::check && !constr->isAddedByGeneralization()) ||
+           constr->getConstraintType()==ConstraintType::primary_key)) ||
 
 				(def_type==SchemaParser::XML_DEFINITION && !constr->isAddedByRelationship() &&
 				 ((constr->getConstraintType()!=ConstraintType::primary_key && !constr->isReferRelationshipAddedColumn()) ||

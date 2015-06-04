@@ -18,14 +18,14 @@
 
 #include "syntaxhighlighter.h"
 
-QFont SyntaxHighlighter::default_font=QFont(QString("DejaVu Sans Mono"), 9);
+QFont SyntaxHighlighter::default_font=QFont(QString("DejaVu Sans Mono"), 10);
 
-SyntaxHighlighter::SyntaxHighlighter(QTextEdit *parent, bool auto_rehighlight, bool single_line_mode) : QSyntaxHighlighter(parent)
+SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool auto_rehighlight, bool single_line_mode) : QSyntaxHighlighter(parent)
 {
   if(!parent)
     throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	parent->setAcceptRichText(true);
+  this->setDocument(parent->document());
   this->auto_rehighlight=auto_rehighlight;
 	this->single_line_mode=single_line_mode;
 	configureAttributes();
@@ -68,17 +68,16 @@ void SyntaxHighlighter::configureAttributes(void)
 	current_block=-1;
 	curr_blk_info_count=0;
 
-	if(auto_rehighlight)
+  if(auto_rehighlight)
 	{
-		connect(document(), SIGNAL(blockCountChanged(int)), this, SLOT(rehighlight(void)));
-		connect(document(), SIGNAL(contentsChange(int,int,int)), this, SLOT(validateTextModification(int,int,int)));
+    connect(document(), SIGNAL(blockCountChanged(int)), this, SLOT(rehighlight(void)));
+    connect(document(), SIGNAL(modificationChanged(bool)), this, SLOT(validateTextModification(bool)));
 	}
 }
 
-void SyntaxHighlighter::validateTextModification(int, int removed, int added)
+void SyntaxHighlighter::validateTextModification(bool has_changes)
 {
-	if(getMultiLineInfoCount(current_block)!=curr_blk_info_count ||
-		 added > 0 || removed > 0)
+  if(getMultiLineInfoCount(current_block)!=curr_blk_info_count || has_changes)
 		rehighlight();
 }
 
@@ -326,18 +325,18 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 
 void SyntaxHighlighter::rehighlight(void)
 {
-	MultiLineInfo *info=nullptr;
+  MultiLineInfo *info=nullptr;
 
-	/* Remove all the multiline infos because during the rehighlight
-		 all them all gathered again */
-	while(!multi_line_infos.empty())
-	{
-		info=multi_line_infos.back();
-		multi_line_infos.pop_back();
-		delete(info);
-	}
+  /* Remove all the multiline infos because during the rehighlight
+     all them all gathered again */
+  while(!multi_line_infos.empty())
+  {
+    info=multi_line_infos.back();
+    multi_line_infos.pop_back();
+    delete(info);
+  }
 
-	QSyntaxHighlighter::rehighlight();
+  QSyntaxHighlighter::rehighlight();
 }
 
 void SyntaxHighlighter::highlightBlock(const QString &txt)
@@ -415,9 +414,12 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 				group=identifyWordGroup(word,lookahead_chr, idx, match_idx, match_len);
 
 				if(!group.isEmpty())
-				{
-					start_col=idx + match_idx;
-					setFormat(start_col, match_len, formats[group]);
+        {
+          QTextCharFormat format = formats[group];
+          format.setFontFamily(default_font.family());
+          format.setFontPointSize(default_font.pointSizeF());
+          start_col=idx + match_idx;
+          setFormat(start_col, match_len, format);
 				}
 
 				aux_len=(match_idx + match_len);
@@ -698,5 +700,5 @@ QChar SyntaxHighlighter::getCompletionTrigger(void)
 
 void SyntaxHighlighter::setDefaultFont(const QFont &fnt)
 {
-	SyntaxHighlighter::default_font=fnt;
+  SyntaxHighlighter::default_font=fnt;
 }

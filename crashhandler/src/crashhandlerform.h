@@ -33,7 +33,7 @@ class CrashHandlerForm: public BugReportForm {
 		Q_OBJECT
 
     //! brief Display the stacktrace
-    QTextEdit *stack_txt;
+    QPlainTextEdit *stack_txt;
 
     //! brief Container for widget that handles input report file
     QWidget *input_wgt;

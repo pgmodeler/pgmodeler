@@ -59,7 +59,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 
     for(int i=0; i < pattern_fields.size(); i++)
 		{
-      patterns_hl[i]=new SyntaxHighlighter(qobject_cast<QTextEdit *>(pattern_fields[i]), true, true);
+      patterns_hl[i]=new SyntaxHighlighter(qobject_cast<QPlainTextEdit *>(pattern_fields[i]), true, true);
 			patterns_hl[i]->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
 																			 GlobalAttributes::DIR_SEPARATOR +
 																			 GlobalAttributes::PATTERN_HIGHLIGHT_CONF +
@@ -977,7 +977,7 @@ void RelationshipWidget::applyConfiguration(void)
 
 		if(this->object->getObjectType()==OBJ_RELATIONSHIP)
 		{
-			QTextEdit *pattern_fields[]={ src_col_pattern_txt, dst_col_pattern_txt,
+      QPlainTextEdit *pattern_fields[]={ src_col_pattern_txt, dst_col_pattern_txt,
 																		src_fk_pattern_txt, dst_fk_pattern_txt,
                                     pk_pattern_txt, uq_pattern_txt, pk_col_pattern_txt };
 			unsigned pattern_ids[]= { Relationship::SRC_COL_PATTERN, Relationship::DST_COL_PATTERN,

@@ -25,7 +25,11 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 {
   try
   {
-    setupUi(this);
+    setupUi(this);   
+    sqlcode_txt=PgModelerUiNS::createNumberedTextEditor(sqlcode_wgt);
+
+    htmlitem_del=new HtmlItemDelegate;
+    output_trw->setItemDelegateForColumn(0, htmlitem_del);
 
     imported_model=nullptr;
     import_helper=nullptr;
@@ -62,7 +66,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
     force_recreation_ht->setText(force_recreation_chk->statusTip());
 
     recreate_unmod_ht=new HintTextWidget(recreate_unmod_hint, this);
-    recreate_unmod_ht->setText("Recreates only objects can't be changed through ALTER commands according to pgModeler implementation not PostgreSQL.\
+    recreate_unmod_ht->setText("Recreates only objects that can't be changed through ALTER commands according to pgModeler implementation not the PostgreSQL one.\
 Currently, those objects are:<br/><br/>aggregate, cast, constraint, collation, conversion, language, operator, operator class, operator family, rule, trigger and view.");
 
     cascade_mode_ht=new HintTextWidget(drop_cascade_hint, this);
@@ -80,6 +84,9 @@ Currently, those objects are:<br/><br/>aggregate, cast, constraint, collation, c
     reuse_sequences_ht=new HintTextWidget(reuse_sequences_hint, this);
     reuse_sequences_ht->setText(reuse_sequences_chk->statusTip());
 
+    preserve_db_name_ht=new HintTextWidget(preserve_db_name_hint, this);
+    preserve_db_name_ht->setText(preserve_db_name_chk->statusTip());
+
     sqlcode_hl=new SyntaxHighlighter(sqlcode_txt, false);
     sqlcode_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
@@ -87,7 +94,7 @@ Currently, those objects are:<br/><br/>aggregate, cast, constraint, collation, c
 
     connect(cancel_btn, &QToolButton::clicked, [=](){ cancelOperation(true); });
     connect(pgsql_ver_chk, SIGNAL(toggled(bool)), pgsql_ver_cmb, SLOT(setEnabled(bool)));
-    connect(connect_tb, SIGNAL(clicked()), this, SLOT(listDatabases()));
+    connect(connections_cmb, SIGNAL(activated(int)), this, SLOT(listDatabases()));
     connect(store_in_file_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
     connect(apply_on_server_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
     connect(file_edt, SIGNAL(textChanged(QString)), this, SLOT(enableDiffMode()));
@@ -126,10 +133,9 @@ void ModelDatabaseDiffForm::setDatabaseModel(DatabaseModel *model)
 
 void ModelDatabaseDiffForm::resetForm(void)
 {
-  ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb);
+  ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true);
   connections_cmb->setEnabled(connections_cmb->count() > 0);
-  connection_lbl->setEnabled(connections_cmb->isEnabled());
-  connect_tb->setEnabled(connections_cmb->isEnabled());
+  connection_lbl->setEnabled(connections_cmb->isEnabled());  
   enableDiffMode();
   settings_tbw->setTabEnabled(1, false);
   settings_tbw->setTabEnabled(2, false);
@@ -252,16 +258,24 @@ void ModelDatabaseDiffForm::listDatabases(void)
 	try
 	{
 		Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-		DatabaseImportHelper imp_helper;
 
-		imp_helper.setConnection(*conn);
-    DatabaseImportForm::listDatabases(imp_helper, database_cmb);
+    if(conn)
+    {
+      DatabaseImportHelper imp_helper;
+      imp_helper.setConnection(*conn);
+      DatabaseImportForm::listDatabases(imp_helper, database_cmb);
+    }
+    else
+      database_cmb->clear();
 
 		database_cmb->setEnabled(database_cmb->count() > 0);
 		database_lbl->setEnabled(database_cmb->isEnabled());
 	}
 	catch(Exception &e)
 	{
+    database_cmb->clear();
+    database_cmb->setEnabled(false);
+    database_lbl->setEnabled(false);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -354,13 +368,14 @@ void ModelDatabaseDiffForm::diffModels(void)
 
   diff_item=PgModelerUiNS::createOutputTreeItem(output_trw, step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
 
-  diff_helper->setDiffOptions(keep_cluster_objs_chk->isChecked(),
-                              cascade_mode_chk->isChecked(),
-                              trunc_tables_chk->isChecked(),
-                              force_recreation_chk->isChecked(),
-                              recreate_unmod_chk->isChecked(),
-                              keep_obj_perms_chk->isChecked(),
-                              reuse_sequences_chk->isChecked());
+  diff_helper->setDiffOption(ModelsDiffHelper::OPT_KEEP_CLUSTER_OBJS, keep_cluster_objs_chk->isChecked());
+  diff_helper->setDiffOption(ModelsDiffHelper::OPT_CASCADE_MODE, cascade_mode_chk->isChecked());
+  diff_helper->setDiffOption(ModelsDiffHelper::OPT_TRUCANTE_TABLES, trunc_tables_chk->isChecked());
+  diff_helper->setDiffOption(ModelsDiffHelper::OPT_FORCE_RECREATION, force_recreation_chk->isChecked());
+  diff_helper->setDiffOption(ModelsDiffHelper::OPT_RECREATE_UNCHANGEBLE, recreate_unmod_chk->isChecked());
+  diff_helper->setDiffOption(ModelsDiffHelper::OPT_KEEP_OBJ_PERMS, keep_obj_perms_chk->isChecked());
+  diff_helper->setDiffOption(ModelsDiffHelper::OPT_REUSE_SEQUENCES, reuse_sequences_chk->isChecked());
+  diff_helper->setDiffOption(ModelsDiffHelper::OPT_PRESERVE_DB_NAME, reuse_sequences_chk->isChecked());
 
   diff_helper->setModels(source_model, imported_model);
 
@@ -525,10 +540,10 @@ void ModelDatabaseDiffForm::captureThreadError(Exception e)
 	progress_lbl->setText(trUtf8("Process aborted due to errors!"));
 	progress_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_erro.png")));
 
-  item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getErrorMessage()), *progress_ico_lbl->pixmap(), nullptr, true);
+  item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getErrorMessage()), *progress_ico_lbl->pixmap(), nullptr, true, true);
 
   if(!e.getExtraInfo().isEmpty())
-    PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getExtraInfo()), *progress_ico_lbl->pixmap(), item, true);
+    PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getExtraInfo()), *progress_ico_lbl->pixmap(), item, true, true);
 
   throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 }
@@ -560,7 +575,7 @@ void ModelDatabaseDiffForm::handleDiffFinished(void)
     finishDiff();
 
   if(sqlcode_txt->toPlainText().isEmpty())
-    sqlcode_txt->setText(trUtf8("-- No differences were detected between model and database. --"));
+    sqlcode_txt->setPlainText(trUtf8("-- No differences were detected between model and database. --"));
 }
 
 void ModelDatabaseDiffForm::handleExportFinished(void)
@@ -577,15 +592,15 @@ void ModelDatabaseDiffForm::handleErrorIgnored(QString err_code, QString err_msg
 
   item=PgModelerUiNS::createOutputTreeItem(output_trw, trUtf8("Error code <strong>%1</strong> found and ignored. Proceeding with export.").arg(err_code),
                  QPixmap(QString(":/icones/icones/msgbox_alerta.png")),
-                 export_item, false, false);
+                 export_item, false);
 
   PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(err_msg),
                  QPixmap(QString(":/icones/icones/msgbox_alerta.png")),
-                 item, true, false);
+                 item, false);
 
   PgModelerUiNS::createOutputTreeItem(output_trw, cmd,
                  QPixmap(),
-                 item, true, false);
+                 item, false);
 }
 
 void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd)
@@ -603,7 +618,7 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 	}
   else if(diff_thread && diff_thread->isRunning())
   {
-    if(progress >= 90 && obj_type==BASE_OBJECT)
+    if((progress == 0 || progress == 100) && obj_type==BASE_OBJECT)
     {
       PgModelerUiNS::createOutputTreeItem(output_trw, msg,
                                           QPixmap(QString(":/icones/icones/msgbox_info.png")),
@@ -623,10 +638,10 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
     else
       ico=QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png"));
 
-    item=PgModelerUiNS::createOutputTreeItem(output_trw, msg, ico, export_item, false, false);
+    item=PgModelerUiNS::createOutputTreeItem(output_trw, msg, ico, export_item, false);
 
     if(!cmd.isEmpty())
-      PgModelerUiNS::createOutputTreeItem(output_trw, cmd, QPixmap(), item, true, false);
+      PgModelerUiNS::createOutputTreeItem(output_trw, cmd, QPixmap(), item, false);
   }
 
   progress_lbl->setText(msg);

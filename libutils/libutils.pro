@@ -17,7 +17,9 @@ HEADERS += src/exception.h \
            src/globalattributes.h \
            src/pgsqlversions.h
 
-SOURCES += src/exception.cpp
+SOURCES += src/exception.cpp \
+           src/globalattributes.cpp \
+           src/pgsqlversions.cpp
 
 # Deployment settings
 target.path = $$PRIVATELIBDIR

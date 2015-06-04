@@ -806,6 +806,9 @@
    <property name="text">
     <string>New</string>
    </property>
+   <property name="toolTip">
+    <string>New</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
    </property>
@@ -819,6 +822,9 @@
      <normaloff>:/icones/icones/salvar.png</normaloff>:/icones/icones/salvar.png</iconset>
    </property>
    <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="toolTip">
     <string>Save</string>
    </property>
    <property name="shortcut">
@@ -1351,6 +1357,24 @@
    </property>
    <property name="text">
     <string>Bug report</string>
+   </property>
+   <property name="toolTip">
+    <string>Report a bug</string>
+   </property>
+  </action>
+  <action name="action_donate">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icones/icones/donate.png</normaloff>:/icones/icones/donate.png</iconset>
+   </property>
+   <property name="text">
+    <string>Donate</string>
+   </property>
+   <property name="toolTip">
+    <string>Help pgModeler by donating!</string>
    </property>
   </action>
  </widget>

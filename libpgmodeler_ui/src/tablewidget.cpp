@@ -391,7 +391,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 
 		//Column 2: Column defaul value
     if(column->getSequence())
-      str_aux=QString("netval('%1'::regclass)").arg(column->getSequence()->getName(true).remove('"'));
+      str_aux=QString("nextval('%1'::regclass)").arg(column->getSequence()->getName(true).remove('"'));
     else
       str_aux=column->getDefaultValue();
 

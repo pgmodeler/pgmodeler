@@ -117,6 +117,7 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
       if(parsed_opts.count(EXPORT_TO_PNG))
       {
         connect(model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
+        connect(model, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(handleObjectRemoval(BaseObject *)));
 
         //Creates a scene to
         scene=new ObjectsScene;
@@ -296,11 +297,6 @@ accepted structure. All available options are described below.") << endl;
 
 void PgModelerCLI::parseOptions(attribs_map &opts)
 {
-  QString orig_work_dir=QDir::current().absolutePath();
-
-  //Changing the current working dir to the executable's directory in
-  QDir::setCurrent(this->applicationDirPath());
-
   //Loading connections
   if(opts.count(LIST_CONNS) || opts.count(EXPORT_TO_DBMS))
   {
@@ -366,13 +362,8 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
       throw Exception(trUtf8("Invalid action specified to update mime option!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
     //Converting input and output files to absolute paths to avoid that they are read/written on the app's working dir
-    QDir::setCurrent(orig_work_dir);
     opts[INPUT]=input_fi.absoluteFilePath();
     opts[OUTPUT]=output_fi.absoluteFilePath();
-
-    //Changing the current working dir to the executable's directory in
-    QDir::setCurrent(this->applicationDirPath());
-
     parsed_opts=opts;
   }
 }
@@ -521,6 +512,23 @@ void PgModelerCLI::handleObjectAddition(BaseObject *object)
       dynamic_cast<Schema *>(graph_obj->getSchema())->setModified(true);
   }
 }
+
+
+void PgModelerCLI::handleObjectRemoval(BaseObject *object)
+{
+  BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(object);
+
+  if(graph_obj)
+  {
+    scene->removeItem(dynamic_cast<QGraphicsItem *>(graph_obj->getReceiverObject()));
+
+    //Updates the parent schema if the removed object were a table or view
+    if(graph_obj->getSchema() &&
+       (graph_obj->getObjectType()==OBJ_TABLE || graph_obj->getObjectType()==OBJ_VIEW))
+      dynamic_cast<Schema *>(graph_obj->getSchema())->setModified(true);
+  }
+}
+
 
 void PgModelerCLI::extractObjectXML(void)
 {

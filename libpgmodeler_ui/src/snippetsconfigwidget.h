@@ -30,6 +30,7 @@
 #include "syntaxhighlighter.h"
 #include "baseobject.h"
 #include "hinttextwidget.h"
+#include "numberedtexteditor.h"
 
 class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWidget {
 	private:
@@ -40,6 +41,8 @@ class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWi
 
     //! brief The regular expression the defines a valid id for a snippet
     static const QRegExp ID_FORMAT_REGEXP;
+
+    NumberedTextEditor *snippet_txt;
 
     SyntaxHighlighter *snippet_hl;
 
@@ -109,6 +112,8 @@ class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWi
 
   public slots:
 		void restoreDefaults(void);
+
+    friend class ConfigurationForm;
 };
 
 #endif

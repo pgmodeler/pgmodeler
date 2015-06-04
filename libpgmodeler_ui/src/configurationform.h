@@ -45,6 +45,7 @@ class ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
     PluginsConfigWidget *plugins_conf;
 
     void hideEvent(QHideEvent *);
+    void showEvent(QShowEvent *);
 
 	public:
 		static const int	GENERAL_CONF_WGT=0,

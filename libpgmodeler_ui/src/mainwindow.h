@@ -48,6 +48,7 @@
 #include "modelnavigationwidget.h"
 #include "centralwidget.h"
 #include "configurationform.h"
+#include "donatewidget.h"
 
 class MainWindow: public QMainWindow, public Ui::MainWindow {
 	private:
@@ -74,6 +75,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
     unsigned pending_op;
 
     AboutWidget *about_wgt;
+
+    DonateWidget *donate_wgt;
 
 		/*! brief Widget positioned on the center of main window that contains some basic operations like
 		create new model, open a file, restore session */
@@ -188,7 +191,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Returns the model at given index
 		ModelWidget *getModel(int idx);
 
-	private slots:
+  private slots:
 		void showMainMenu(void);
 
 		//! \brief Atualiza as definições da grade com base nas ações: Exibir Grade, Alin. Grade e Exibir limites
@@ -274,6 +277,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
     void restoreLastSession(void);
     void toggleUpdateNotifier(bool show);
 		void toggleAboutWidget(bool show);
+    void toggleDonateWidget(bool show);
 		void removeModelActions(void);
 		void showDemoVersionWarning(void);
 		void quitDemoVersion(void);

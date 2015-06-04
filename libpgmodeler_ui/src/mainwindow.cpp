@@ -103,17 +103,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		//Enables the action to restore session when there are registered session files
 		action_restore_session->setEnabled(!prev_session_files.isEmpty());
 		central_wgt->last_session_tb->setEnabled(action_restore_session->isEnabled());
-
-    //Check if the temporary dir exists, if not, creates it.
-    QDir dir;
-    if(!dir.exists(GlobalAttributes::TEMPORARY_DIR))
-    {
-      if(!dir.mkdir(GlobalAttributes::TEMPORARY_DIR))
-        throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN)
-                        .arg(GlobalAttributes::TEMPORARY_DIR),
-                        ERR_FILE_DIR_NOT_WRITTEN, __PRETTY_FUNCTION__,__FILE__,__LINE__);
-    }
-
 	}
 	catch(Exception &e)
 	{
@@ -129,10 +118,12 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
     control_tb->addWidget(model_nav_wgt);
     control_tb->addSeparator();
     control_tb->addAction(action_bug_report);
+    control_tb->addAction(action_donate);
     control_tb->addAction(action_about);
     control_tb->addAction(action_update_found);
 
 		about_wgt=new AboutWidget(this);
+    donate_wgt=new DonateWidget(this);
 		restoration_form=new ModelRestorationForm(nullptr, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
     #ifdef NO_UPDATE_CHECK
@@ -167,6 +158,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	connect(action_about,SIGNAL(toggled(bool)),this,SLOT(toggleAboutWidget(bool)));
 	connect(about_wgt, SIGNAL(s_visibilityChanged(bool)), action_about, SLOT(setChecked(bool)));
+
+  connect(action_donate, SIGNAL(toggled(bool)),this,SLOT(toggleDonateWidget(bool)));
+  connect(donate_wgt, SIGNAL(s_visibilityChanged(bool)), action_donate, SLOT(setChecked(bool)));
 
 	connect(action_restore_session,SIGNAL(triggered(bool)),this,SLOT(restoreLastSession()));
 	connect(action_exit,SIGNAL(triggered(bool)),this,SLOT(close()));
@@ -227,6 +221,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	model_valid_parent->setVisible(false);
 	bg_saving_wgt->setVisible(false);
 	about_wgt->setVisible(false);
+  donate_wgt->setVisible(false);
 
 	models_tbw_parent->lower();
 	central_wgt->lower();
@@ -501,7 +496,6 @@ void MainWindow::showEvent(QShowEvent *)
 	#ifdef DEMO_VERSION
 		#warning "DEMO VERSION: demonstration version startup alert."
 		QTimer::singleShot(1500, this, SLOT(showDemoVersionWarning()));
-    //QTimer::singleShot(1200000, qApp, SLOT(quit()));
 	#endif
 }
 
@@ -512,6 +506,10 @@ void MainWindow::resizeEvent(QResizeEvent *)
 		central_wgt->move(bg_widget->width()/2 - central_wgt->width()/2 ,
 											bg_widget->height()/2 - central_wgt->height()/2);
 	}
+
+  action_about->setChecked(false);
+  action_donate->setChecked(false);
+  action_update_found->setChecked(false);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -643,18 +641,15 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::updateConnections(void)
 {
-  map<QString, Connection *> connections;
   ConnectionsConfigWidget *conn_cfg_wgt=
       dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT));
-
-  conn_cfg_wgt->getConnections(connections);
 
   if(conn_cfg_wgt->isConfigurationChanged() ||
      model_valid_wgt->connections_cmb->count()==0 ||
      sql_tool_wgt->connections_cmb->count()==0 )
-  {
-    model_valid_wgt->updateConnections(connections);
-    sql_tool_wgt->updateConnections(connections);
+  {   
+    ConnectionsConfigWidget::fillConnectionsComboBox(sql_tool_wgt->connections_cmb, true);
+    ConnectionsConfigWidget::fillConnectionsComboBox(model_valid_wgt->connections_cmb, false);
   }
 }
 
@@ -1145,6 +1140,8 @@ void MainWindow::applyConfigurations(void)
 		updateConnections();
     sql_tool_wgt->configureSnippets();
 	}
+
+  sql_tool_wgt->updateTabs();
 }
 
 
@@ -1571,6 +1568,7 @@ void MainWindow::toggleUpdateNotifier(bool show)
     {
       setFloatingWidgetPos(update_notifier_wgt, qobject_cast<QAction *>(sender()), control_tb, false);
       action_about->setChecked(false);
+      action_donate->setChecked(false);
     }
 
     update_notifier_wgt->setVisible(show);
@@ -1583,9 +1581,22 @@ void MainWindow::toggleAboutWidget(bool show)
 	{
 		setFloatingWidgetPos(about_wgt, qobject_cast<QAction *>(sender()), control_tb, false);
 		action_update_found->setChecked(false);
+    action_donate->setChecked(false);
 	}
 
 	about_wgt->setVisible(show);
+}
+
+void MainWindow::toggleDonateWidget(bool show)
+{
+  if(show)
+  {
+    setFloatingWidgetPos(donate_wgt, qobject_cast<QAction *>(sender()), control_tb, false);
+    action_about->setChecked(false);
+    action_update_found->setChecked(false);
+  }
+
+  donate_wgt->setVisible(show);
 }
 
 void MainWindow::setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *toolbar, bool map_to_window)
@@ -1593,11 +1604,15 @@ void MainWindow::setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *t
 	if(widget && act && toolbar)
 	{
 		QWidget *wgt=toolbar->widgetForAction(act);
-		QPoint pos=(wgt ? wgt->pos() : QPoint(0,0));
+    QPoint pos_orig=(wgt ? wgt->pos() : QPoint(0,0)), pos;
 
 		if(map_to_window) pos=wgt->mapTo(this, pos);
-		pos.setX(pos.x() - 9);
-		pos.setY(toolbar->pos().y() + toolbar->height() - 9);
+    pos.setX(pos_orig.x() - 10);
+    pos.setY(toolbar->pos().y() + toolbar->height() - 10);
+
+    if((pos.x() + widget->width()) > this->width())
+      pos.setX(pos_orig.x() - (widget->width() - 40));
+
 		widget->move(pos);
 	}
 }

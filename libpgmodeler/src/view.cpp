@@ -564,8 +564,7 @@ QString View::getCodeDefinition(unsigned def_type)
   attributes[ParsersAttributes::COLUMNS]=QString();
   attributes[ParsersAttributes::TAG]=QString();
 
-  if(materialized)
-    attributes[ParsersAttributes::SQL_OBJECT]=QString("MATERIALIZED ") + BaseObject::getSQLName(OBJ_VIEW);
+  setSQLObjectAttribute();
 
   if(recursive)
     attributes[ParsersAttributes::COLUMNS]=getColumnsList().join(',');
@@ -581,8 +580,21 @@ QString View::getCodeDefinition(unsigned def_type)
 		setReferencesAttribute();
 	}
 
-	return(BaseObject::__getCodeDefinition(def_type));
+  return(BaseObject::__getCodeDefinition(def_type));
 }
+
+void View::setSQLObjectAttribute(void)
+{
+  if(materialized)
+    attributes[ParsersAttributes::SQL_OBJECT]=QString("MATERIALIZED ") + BaseObject::getSQLName(OBJ_VIEW);
+}
+
+QString View::getDropDefinition(bool cascade)
+{
+  setSQLObjectAttribute();
+  return(BaseObject::getDropDefinition(cascade));
+}
+
 
 int View::getObjectIndex(BaseObject *obj)
 {
