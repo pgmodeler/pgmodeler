@@ -109,7 +109,7 @@ fi
 echo "Packaging installation..."
 
 # Deploy the Qt libraries onto app bundle
-$QT_ROOT/bin/macdeployqt $BUNDLE >> $LOG 2>&1
+$QT_ROOT/bin/macdeployqt $BUNDLE -executable=$BUNDLE/Contents/MacOS/pgmodeler-ch -executable=$BUNDLE/Contents/MacOS/pgmodeler-cli >> $LOG 2>&1
 
 # Creates an empty dmg file named
 cp installer/macosx/installer_icon.icns $INSTALL_ROOT/.VolumeIcon.icns >> $LOG 2>&1
