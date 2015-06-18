@@ -88,9 +88,6 @@ linux {
   !defined(SAMPLESDIR, var):    SAMPLESDIR = $$SHAREDIR/samples
   !defined(SCHEMASDIR, var):    SCHEMASDIR = $$SHAREDIR/schemas
   !defined(TEMPDIR, var):       TEMPDIR = $$PREFIX/tmp
-
-  # Specifies where to find the libraries at runtime
-  QMAKE_RPATHDIR += $$PRIVATELIBDIR
 }
 
 
@@ -131,9 +128,15 @@ macx {
   !defined(SAMPLESDIR, var):    SAMPLESDIR = $$BINDIR/samples
   !defined(SCHEMASDIR, var):    SCHEMASDIR = $$BINDIR/schemas
   !defined(TEMPDIR, var):       TEMPDIR = $$PREFIX/tmp
+}
 
-  # Specifies where to find the libraries at runtime
-  QMAKE_RPATHDIR += $$PRIVATELIBDIR
+# Specifies where to find the libraries at runtime
+unix {
+  defined(RPATHDIR, var) {
+    QMAKE_RPATHDIR += $$RPATHDIR
+  } else {
+    QMAKE_RPATHDIR += $$PRIVATELIBDIR
+  }
 }
 
 # Creating constants based upon the custom paths so the GlobalAttributes
@@ -235,6 +238,7 @@ defineTest(printBuildDetails) {
  log("  SAMPLESDIR    = $$SHAREDIR/samples $$LB")
  log("  SCHEMASDIR    = $$SHAREDIR/schemas $$LB")
  log("  TEMPDIR       = $$PREFIX/tmp $$LB $$LB")
+ log("  QMAKE_RPATHDIR= $$QMAKE_RPATHDIR")
  log("* To change a variable value run qmake again setting the desired value e.g.: $$LB")
  log("  > qmake PREFIX+=/usr/local -r pgmodeler.pro $$LB $$LB")
  log("* Proceed with build process by running: $$LB")
