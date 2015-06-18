@@ -19,7 +19,7 @@
 #include "codecompletionwidget.h"
 #include "generalconfigwidget.h"
 
-CodeCompletionWidget::CodeCompletionWidget(QTextEdit *code_field_txt) :	QWidget(dynamic_cast<QWidget *>(code_field_txt))
+CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt) :	QWidget(dynamic_cast<QWidget *>(code_field_txt))
 {
 	if(!code_field_txt)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -367,14 +367,14 @@ void CodeCompletionWidget::updateList(void)
 			int row=0;
       QListWidgetItem *item=nullptr;
 
-			for(auto itr : custom_items)
+      for(auto &itr : custom_items)
 			{
 				if(itr.first.contains(regexp))
 					list.push_back(itr.first);
 			}
 
 			list.sort();
-      for(auto item_name : list)
+      for(auto &item_name : list)
       {
         item=new QListWidgetItem(custom_items[item_name], item_name);
         item->setToolTip(custom_items_tips[item_name]);

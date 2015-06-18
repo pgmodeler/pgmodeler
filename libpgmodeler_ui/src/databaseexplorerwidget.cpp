@@ -101,6 +101,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
   trunc_cascade_action=new QAction(QIcon(QString(":icones/icones/trunccascade.png")), trUtf8("Trunc. cascade"), &handle_menu);
 
   show_data_action=new QAction(QIcon(QString(":icones/icones/result.png")), trUtf8("Show data"), &handle_menu);
+  show_data_action->setShortcut(QKeySequence(Qt::Key_Space));
   properties_action=new QAction(QIcon(QString(":icones/icones/editar.png")), trUtf8("Reload properties"), &handle_menu);
 
   refresh_action=new QAction(QIcon(QString(":icones/icones/atualizar.png")), trUtf8("Update"), &handle_menu);
@@ -117,7 +118,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
   connect(raw_attrib_names_chk, SIGNAL(toggled(bool)), this, SLOT(showObjectProperties()));
 
   connect(data_grid_tb, &QToolButton::clicked,
-          [=]() { emit s_dataGridOpenRequested(); });
+          [=]() { emit s_dataGridOpenRequested(connection.getConnectionParam(Connection::PARAM_DB_NAME)); });
 
   connect(runsql_tb, &QToolButton::clicked,
           [=]() { emit s_sqlExecutionRequested(); });
@@ -128,6 +129,9 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
   connect(filter_edt, &QLineEdit::textChanged,
           [=](){ DatabaseImportForm::filterObjects(objects_trw, filter_edt->text(),
                                                    (by_oid_chk->isChecked() ? DatabaseImportForm::OBJECT_ID : 0)); });
+
+  connect(drop_db_tb, &QToolButton::clicked,
+          [=]() { emit s_databaseDropRequested(connection.getConnectionParam(Connection::PARAM_DB_NAME)); });
 }
 
 bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
@@ -136,10 +140,26 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
   {
     QKeyEvent *k_event=dynamic_cast<QKeyEvent *>(event);
 
-    if(k_event->key()==Qt::Key_Delete || k_event->key()==Qt::Key_F5)
+    if(k_event->key()==Qt::Key_Delete || k_event->key()==Qt::Key_F5 || k_event->key()==Qt::Key_Space)
     {
-     if(k_event->key()==Qt::Key_F5)
-        updateCurrentItem();
+     if(k_event->key()==Qt::Key_Space)
+     {
+       QTreeWidgetItem *item=objects_trw->currentItem();
+       ObjectType obj_type=BASE_OBJECT;
+
+       if(item)
+       {
+         unsigned oid=item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt();
+         obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
+
+         if(oid!=0 && (obj_type==OBJ_TABLE || obj_type==OBJ_VIEW))
+           emit s_dataGridOpenRequested(connection.getConnectionParam(Connection::PARAM_DB_NAME),
+                                        item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
+                                        item->text(0), obj_type!=OBJ_VIEW);
+       }
+     }
+     else if(k_event->key()==Qt::Key_F5)
+       updateCurrentItem();
      else
        dropObject(objects_trw->currentItem(), k_event->modifiers()==Qt::ShiftModifier);
      return(true);
@@ -207,7 +227,7 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
      attribs[ParsersAttributes::NAME].startsWith(QLatin1String("information_schema.")))
     attribs[ParsersAttributes::NAME]=attribs[ParsersAttributes::NAME].split('.').at(1);
 
-  for(auto attrib : attribs)
+  for(auto &attrib : attribs)
   {
     attr_name=attrib.first;
     attr_value=attrib.second;
@@ -792,6 +812,7 @@ void DatabaseExplorerWidget::listObjects(void)
     DatabaseImportForm::listObjects(import_helper, objects_trw, false, false, true);
     objects_trw->blockSignals(false);
     import_helper.closeConnection();
+    catalog.closeConnection();
   }
   catch(Exception &e)
   {
@@ -819,7 +840,7 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 
     SnippetsConfigWidget::configureSnippetsMenu(&snippets_menu, { obj_type, BASE_OBJECT });
 
-    for(auto act : handle_menu.actions())
+    for(auto &act : handle_menu.actions())
       handle_menu.removeAction(act);
 
     handle_menu.addAction(refresh_action);
@@ -836,7 +857,9 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
     {
       handle_menu.addSeparator();
       handle_menu.addAction(drop_action);
-      handle_menu.addAction(drop_cascade_action);
+
+      if(obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE)
+        handle_menu.addAction(drop_cascade_action);
 
       if(obj_type==OBJ_TABLE)
       {
@@ -859,7 +882,8 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
     else if(exec_action==properties_action)
       showObjectProperties(true);
     else if(exec_action==show_data_action)
-      emit s_dataGridOpenRequested(item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
+      emit s_dataGridOpenRequested(connection.getConnectionParam(Connection::PARAM_DB_NAME),
+                                   item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
                                    item->text(0),
                                    item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt()!=OBJ_VIEW);
     else if(exec_action)
@@ -906,7 +930,7 @@ void DatabaseExplorerWidget::handleSelectedSnippet(const QString &snip_id)
     attribs[ParsersAttributes::OBJECT_TYPE]=BaseObject::getSchemaName(obj_type);
   }
 
-  for(auto attr : attribs)
+  for(auto &attr : attribs)
   {
     if(attr.second.contains(ELEM_SEPARATOR))
       attribs[attr.first]=attr.second.replace(ELEM_SEPARATOR,QString(","));
@@ -925,6 +949,10 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
     {
       ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
       QString msg;
+
+      //Roles and tablespaces can't be removed in cascade mode
+      if(cascade && (obj_type==OBJ_ROLE || obj_type==OBJ_TABLESPACE))
+        return;
 
       if(!cascade)
         msg=trUtf8("Do you really want to drop the object <strong>%1</strong> <em>(%2)</em>?")
@@ -965,7 +993,7 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 
         //For table objects the "table" attribute must be schema qualified
         if(obj_type!=OBJ_INDEX && TableObject::isTableObject(obj_type))
-          attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::SCHEMA] + QString(".") + attribs[ParsersAttributes::TABLE];
+          attribs[ParsersAttributes::TABLE]=attribs[ParsersAttributes::SCHEMA] + QString(".") + attribs[ParsersAttributes::TABLE];
         //For operators and functions there must exist the signature attribute
         else if(obj_type==OBJ_OPERATOR || obj_type==OBJ_FUNCTION)
           attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::SCHEMA] + QString(".") + attribs[ParsersAttributes::NAME] + QString("(%1)").arg(types.join(ELEM_SEPARATOR));
@@ -1132,7 +1160,7 @@ void DatabaseExplorerWidget::updateCurrentItem(void)
       //Updating the subtree for schemas / tables
       if(obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLE)
       {
-        for(auto item : gen_items)
+        for(auto &item : gen_items)
         {
           //When the user refresh a single schema or table
           if(obj_id > 0 || obj_type==OBJ_TABLE)
@@ -1153,7 +1181,7 @@ void DatabaseExplorerWidget::updateCurrentItem(void)
                                                               false, false, item, item->text(0));
 
             //Updates the table group for the current schema
-            for(auto item1 : gen_items1)
+            for(auto &item1 : gen_items1)
             {
               DatabaseImportForm::updateObjectsTree(import_helper, objects_trw,
                                                     BaseObject::getChildObjectTypes(OBJ_TABLE),
@@ -1181,7 +1209,7 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
     if(oid != 0)
     {
       ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
-      attribs_map orig_attribs, fmt_attribs;
+      attribs_map orig_attribs, fmt_attribs;     
 
       //First, retrieve the attributes stored on the item as a result of a previous properties listing
       orig_attribs=item->data(DatabaseImportForm::OBJECT_ATTRIBS, Qt::UserRole).value<attribs_map>();
@@ -1189,6 +1217,8 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
       //In case of the cached attributes are empty
       if(orig_attribs.empty() || force_reload)
       {
+        catalog.setConnection(connection);
+
         //Retrieve them from the catalog
         if(obj_type!=OBJ_COLUMN)
           orig_attribs=catalog.getObjectAttributes(obj_type, oid);
@@ -1211,6 +1241,8 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
 
         //Store the attributes on the item to avoid repeatedly query the database
         item->setData(DatabaseImportForm::OBJECT_ATTRIBS, Qt::UserRole, QVariant::fromValue<attribs_map>(fmt_attribs));
+
+        catalog.closeConnection();
       }
     }
   }
@@ -1249,7 +1281,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 
       if(!cached_attribs.empty())
       {
-        for(auto attrib : cached_attribs)
+        for(auto &attrib : cached_attribs)
         {
           properties_tbw->insertRow(properties_tbw->rowCount());
           row=properties_tbw->rowCount() - 1;

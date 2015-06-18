@@ -15,7 +15,7 @@ Xml2ObjectWidget::Xml2ObjectWidget(QWidget *parent, Qt::WindowFlags f) : QDialog
 
 void Xml2ObjectWidget::clearSource(void)
 {
-  code_txt->setText(QString("<dbmodel>\n\n</dbmodel>"));
+  code_txt->setPlainText(QString("<dbmodel>\n\n</dbmodel>"));
 }
 
 void Xml2ObjectWidget::loadXML(void)
@@ -39,7 +39,7 @@ void Xml2ObjectWidget::loadXML(void)
 											ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 
-		code_txt->setText(QString::fromUtf8(f.readAll()));
+    code_txt->setPlainText(QString::fromUtf8(f.readAll()));
 		f.close();
 	}
 }

@@ -187,8 +187,8 @@ void ConstraintWidget::addColumn(Column *column, unsigned col_id, int row)
 		else
 			table_wgt=ref_columns_tab;
 
-    table_wgt->setCellText(/*Utf8String::create(*/column->getName(),row,0);
-    table_wgt->setCellText(/*Utf8String::create(*/~column->getType(),row,1);
+    table_wgt->setCellText(column->getName(),row,0);
+    table_wgt->setCellText(~column->getType(),row,1);
 		table_wgt->setRowData(QVariant::fromValue<void *>(column), row);
 
 		//Change the table row background color if the column is protected or added by relationship
@@ -256,7 +256,7 @@ void ConstraintWidget::updateColumnsCombo(unsigned col_id)
 
 			//If the column does not exists on the column's table, adds it
 			if(aux_col_tab->getRowIndex(QVariant::fromValue<void *>(column)) < 0)
-        combo->addItem(/*Utf8String::create(*/column->getName() +
+        combo->addItem(column->getName() +
                        QString(" (") +
                        ~column->getType() +
                        QString(")"), QVariant::fromValue<void *>(column));
@@ -429,7 +429,7 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 		constr_type_cmb->setEnabled(false);
 		constr_type_lbl->setEnabled(false);
 
-    expression_txt->setPlainText(/*Utf8String::create(*/constr->getExpression());
+    expression_txt->setPlainText(constr->getExpression());
 		no_inherit_chk->setChecked(constr->isNoInherit());
 		deferrable_chk->setChecked(constr->isDeferrable());
 		deferral_cmb->setCurrentIndex(deferral_cmb->findText(~constr->getDeferralType()));

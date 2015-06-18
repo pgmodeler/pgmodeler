@@ -113,7 +113,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	label=new QLabel(protected_model_frm);
 	label->setMinimumSize(QSize(32, 32));
 	label->setMaximumSize(QSize(32, 32));
-  label->setPixmap(QPixmap(/*Utf8String::create(*/QString(":/icones/icones/msgbox_alerta.png")));
+  label->setPixmap(QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
 
   grid=new QGridLayout;
 	grid->addWidget(label, 0, 0, 1, 1);
@@ -144,7 +144,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	viewport->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 	viewport->setRenderHint(QPainter::Antialiasing, !disable_render_smooth);
 	viewport->setRenderHint(QPainter::TextAntialiasing, !disable_render_smooth);
-	viewport->setRenderHint(QPainter::SmoothPixmapTransform, !disable_render_smooth);
+  viewport->setRenderHint(QPainter::SmoothPixmapTransform, !disable_render_smooth);
 
 	//Force the scene to be drawn from the left to right and from top to bottom
 	viewport->setAlignment(Qt::AlignLeft | Qt::AlignTop);
@@ -513,6 +513,12 @@ bool ModelWidget::saveLastCanvasPosition(void)
   return(false);
 }
 
+void ModelWidget::setUpdatesEnabled(bool value)
+{
+  viewport->setUpdatesEnabled(value);
+  QWidget::setUpdatesEnabled(value);
+}
+
 void ModelWidget::restoreLastCanvasPosition(void)
 {
   if(save_restore_pos)
@@ -530,23 +536,23 @@ void ModelWidget::restoreLastCanvasPosition(void)
   }
 }
 
-void ModelWidget::applyZoom(float zoom)
+void ModelWidget::applyZoom(double zoom)
 {
-	if(zoom >= MINIMUM_ZOOM && zoom <= MAXIMUM_ZOOM)
+  if(zoom > (MINIMUM_ZOOM - ZOOM_INCREMENT) && zoom <= MAXIMUM_ZOOM)
   {
-    zoom_info_lbl->setText(trUtf8("Zoom: %1%").arg(QString::number(zoom * 100, 'g' , 3)));
+		viewport->resetTransform();
+		viewport->scale(zoom, zoom);
+    this->current_zoom=zoom;
+
+    zoom_info_lbl->setText(trUtf8("Zoom: %1%").arg(QString::number(this->current_zoom * 100, 'g' , 3)));
     zoom_info_lbl->setVisible(true);
     zoom_info_timer.start();
 
-		viewport->resetTransform();
-		viewport->scale(zoom, zoom);
-
-		this->current_zoom=zoom;
-		emit s_zoomModified(zoom);
-	}
+    emit s_zoomModified(zoom);
+  }
 }
 
-float ModelWidget::getCurrentZoom(void)
+double ModelWidget::getCurrentZoom(void)
 {
 	return(current_zoom);
 }
@@ -719,7 +725,7 @@ void ModelWidget::handleObjectsMovement(bool end_moviment)
 				{
 					//For schemas, when they are moved, the original position of tables are registered instead of the position of schema itself
 					tables=dynamic_cast<SchemaView *>(schema->getReceiverObject())->getChildren();
-          for(auto tab : tables)
+          for(auto &tab : tables)
 					{
 						op_list->registerObject(tab->getSourceObject(), Operation::OBJECT_MOVED);
 
@@ -1356,7 +1362,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		that can be edited only on its fill color an rectangle attributes */
     if(object && object->isSystemObject() && object->getName()!=QString("public"))
 			throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
-                      .arg(object->getName()).arg(/*Utf8String::create(*/object->getTypeName()),
+                      .arg(object->getName()).arg(object->getTypeName()),
 											ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
     if(obj_type==OBJ_PERMISSION)
@@ -1607,14 +1613,11 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 
 		if(res==QDialog::Accepted)
 		{
-			if(!this->modified)
-			{
-				this->modified=true;
-				this->db_model->setInvalidated(true);
-			}
-
+      this->modified=true;
+      this->db_model->setInvalidated(true);
 			emit s_objectManipulated();
 		}
+
 		this->setFocus();
 	}
 	catch(Exception &e)
@@ -1679,7 +1682,7 @@ void ModelWidget::renameObject(void)
 
 	if(obj->isSystemObject())
 		throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
-                    .arg(obj->getName()).arg(/*Utf8String::create(*/obj->getTypeName()),
+                    .arg(obj->getName()).arg(obj->getTypeName()),
 										ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	ObjectRenameWidget objectrename_wgt(this);
@@ -1756,7 +1759,7 @@ void ModelWidget::moveToSchema(void)
             if(!rels.empty())
             {
               //Updating the tables from relationships
-              for(auto rel : rels)
+              for(auto &rel : rels)
               {
                 if(rel->getTable(BaseRelationship::SRC_TABLE)!=obj_graph)
                   rel->getTable(BaseRelationship::SRC_TABLE)->setModified(true);
@@ -1947,7 +1950,7 @@ void ModelWidget::protectObject(void)
 				//Raise an error if the user try to modify a reserved object protection
 				if(this->selected_objects[0]->isSystemObject())
 					throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
-                          .arg(selected_objects[0]->getName()).arg(/*Utf8String::create(*/selected_objects[0]->getTypeName()),
+                          .arg(selected_objects[0]->getName()).arg(selected_objects[0]->getTypeName()),
 													ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 				this->selected_objects[0]->setProtected(!this->selected_objects[0]->isProtected());
@@ -1976,7 +1979,7 @@ void ModelWidget::protectObject(void)
 
 				if(object->isSystemObject())
 					throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
-                          .arg(object->getName()).arg(/*Utf8String::create(*/object->getTypeName()),
+                          .arg(object->getName()).arg(object->getTypeName()),
 													ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 				else if(obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT)
 				{
@@ -2036,7 +2039,7 @@ void ModelWidget::copyObjects(void)
 		//Raise an error if the user try to copy a reserved object
 		if(selected_objects[0]->isSystemObject())
 			throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
-                      .arg(selected_objects[0]->getName()).arg(/*Utf8String::create(*/selected_objects[0]->getTypeName()),
+                      .arg(selected_objects[0]->getName()).arg(selected_objects[0]->getTypeName()),
 											ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
@@ -2164,7 +2167,7 @@ void ModelWidget::pasteObjects(void)
 		tab_obj=dynamic_cast<TableObject *>(object);
 		itr++;
 		pos++;
-		task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
+    task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
                                   trUtf8("Validating object: `%1' (%2)").arg(object->getName())
 																	.arg(object->getTypeName()),
 																	object->getObjectType());
@@ -2261,7 +2264,7 @@ void ModelWidget::pasteObjects(void)
 		itr++;
 
 		pos++;
-		task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
+    task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
                                   trUtf8("Generating XML for: `%1' (%2)").arg(object->getName())
 																	.arg(object->getTypeName()),
 																	object->getObjectType());
@@ -2623,7 +2626,7 @@ void ModelWidget::removeObjects(bool cascade)
           //Raises an error if the user try to remove a reserved object
           if(object->isSystemObject())
 						throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
-                            .arg(object->getName()).arg(/*Utf8String::create(*/object->getTypeName()),
+                            .arg(object->getName()).arg(object->getTypeName()),
 														ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					//Raises an error if the user try to remove a protected object
           else if(object->isProtected())
@@ -3227,7 +3230,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 					submenu=new QMenu(&popup_menu);
 					submenu->setIcon(QPixmap(QString(":/icones/icones/") +
 																	 BaseObject::getSchemaName(OBJ_CONSTRAINT) + str_aux + QString(".png")));
-          submenu->setTitle(/*Utf8String::create(*/constr->getName());
+          submenu->setTitle(constr->getName());
 
 					action=new QAction(dynamic_cast<QObject *>(submenu));
 					action->setIcon(QPixmap(QString(":/icones/icones/editar.png")));
@@ -3481,7 +3484,7 @@ void ModelWidget::breakRelationshipLine(void)
 		QAction *action=dynamic_cast<QAction *>(sender());
 		BaseRelationship *rel=dynamic_cast<BaseRelationship *>(selected_objects[0]);
 		RelationshipView *rel_view=dynamic_cast<RelationshipView *>(rel->getReceiverObject());
-		float dx, dy;
+		double dx, dy;
 		unsigned break_type=action->data().toUInt();
 		QPointF src_pnt, dst_pnt;
 
@@ -3544,13 +3547,13 @@ void ModelWidget::removeRelationshipPoints(void)
 	}
 }
 
-void ModelWidget::rearrangeSchemas(QPointF origin, unsigned tabs_per_row, unsigned sch_per_row, float obj_spacing)
+void ModelWidget::rearrangeSchemas(QPointF origin, unsigned tabs_per_row, unsigned sch_per_row, double obj_spacing)
 {
 	vector<BaseObject *>::iterator itr, itr_end;
 	Schema *schema=nullptr;
 	SchemaView *sch_view=nullptr;
 	unsigned sch_id=0;
-	float x=origin.x(), y=origin.y(), max_y=-1, cy=0;
+	double x=origin.x(), y=origin.y(), max_y=-1, cy=0;
 
 	itr=db_model->getObjectList(OBJ_SCHEMA)->begin();
 	itr_end=db_model->getObjectList(OBJ_SCHEMA)->end();
@@ -3602,7 +3605,7 @@ void ModelWidget::rearrangeSchemas(QPointF origin, unsigned tabs_per_row, unsign
 	this->adjustSceneSize();
 }
 
-void ModelWidget::rearrangeTables(Schema *schema, QPointF origin, unsigned tabs_per_row, float obj_spacing)
+void ModelWidget::rearrangeTables(Schema *schema, QPointF origin, unsigned tabs_per_row, double obj_spacing)
 {
 	if(schema)
 	{
@@ -3611,7 +3614,7 @@ void ModelWidget::rearrangeTables(Schema *schema, QPointF origin, unsigned tabs_
 		BaseTableView *tab_view=nullptr;
 		BaseTable *base_tab=nullptr;
 		unsigned tab_id=0;
-		float max_y=-1, x=origin.x(), y=origin.y(), cy=0;
+		double max_y=-1, x=origin.x(), y=origin.y(), cy=0;
 
 		//Get the tables and views for the specified schema
 		tables=db_model->getObjects(OBJ_TABLE, schema);

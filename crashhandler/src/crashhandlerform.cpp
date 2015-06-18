@@ -30,10 +30,10 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 
   setWindowTitle(trUtf8("Crash Handler"));
 
-  stack_txt=new QTextEdit(this);
+  stack_txt=new QPlainTextEdit(this);
   stack_txt->setReadOnly(true);
   stack_txt->setFont(QFont("DejaVu Sans Mono"));
-  stack_txt->setLineWrapMode(QTextEdit::NoWrap);
+  stack_txt->setLineWrapMode(QPlainTextEdit::NoWrap);
 
   layout->addWidget(stack_txt);
   layout->setContentsMargins(4,4,4,4);
@@ -130,7 +130,7 @@ void CrashHandlerForm::loadReport(const QString &filename)
 		QByteArray uncomp_buf;
 		QString buf_aux, str_aux;
 		int i, idx;
-		QTextEdit *txt_widgets[]={ actions_txt, model_txt , stack_txt};
+    QPlainTextEdit *txt_widgets[]={ actions_txt, model_txt , stack_txt};
 
 		//Creates a text buffer
 		buf=new char[fi.size()];

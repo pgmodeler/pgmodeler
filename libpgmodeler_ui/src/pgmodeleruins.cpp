@@ -2,41 +2,60 @@
 #include "messagebox.h"
 #include "databasemodel.h"
 #include <QLabel>
+#include "numberedtexteditor.h"
 
-QTreeWidgetItem *PgModelerUiNS::createOutputTreeItem(QTreeWidget *output_trw, const QString &text, const QPixmap &ico, QTreeWidgetItem *parent, bool word_wrap, bool expand_item)
+namespace PgModelerUiNS {
+
+NumberedTextEditor *createNumberedTextEditor(QWidget *parent)
+{
+  NumberedTextEditor *editor=new NumberedTextEditor(parent);
+
+  if(parent && !parent->layout())
+  {
+    QHBoxLayout *layout=new QHBoxLayout(parent);
+    layout->setContentsMargins(0,0,0,0);
+    layout->addWidget(editor);
+  }
+
+  return(editor);
+}
+
+QTreeWidgetItem *createOutputTreeItem(QTreeWidget *output_trw, const QString &text, const QPixmap &ico, QTreeWidgetItem *parent, bool expand_item, bool word_wrap)
 {
   if(!output_trw)
     throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   QTreeWidgetItem *item=nullptr;
-  QLabel *label=new QLabel;
 
   item=new QTreeWidgetItem(parent);
   item->setIcon(0, ico);
-  label->setTextFormat(Qt::AutoText);
-  label->setText(text);
-  label->setWordWrap(word_wrap);
-  label->setTextInteractionFlags(Qt::TextSelectableByMouse);
-
-  if(word_wrap)
-  {
-    label->setMinimumHeight(output_trw->iconSize().height());
-    label->setMaximumHeight(label->heightForWidth(label->width()));
-  }
-
 
   if(!parent)
     output_trw->insertTopLevelItem(output_trw->topLevelItemCount(), item);
 
+  if(!word_wrap)
+    item->setText(0, text);
+  else
+  {
+    QLabel *label=new QLabel;
+    label->setTextFormat(Qt::AutoText);
+    label->setText(text);
+    label->setWordWrap(true);
+    label->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    label->setMinimumHeight(output_trw->iconSize().height());
+    label->setMaximumHeight(label->heightForWidth(label->width()));
+    output_trw->setItemWidget(item, 0, label);
+  }
+
+  item->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
   item->setExpanded(expand_item);
-  output_trw->setItemWidget(item, 0, label);
   output_trw->setItemHidden(item, false);
   output_trw->scrollToBottom();
 
   return(item);
 }
 
-void PgModelerUiNS::disableObjectSQL(BaseObject *object, bool value)
+void disableObjectSQL(BaseObject *object, bool value)
 {
   if(object)
   {
@@ -63,7 +82,7 @@ void PgModelerUiNS::disableObjectSQL(BaseObject *object, bool value)
   }
 }
 
-void PgModelerUiNS::disableReferencesSQL(BaseObject *object)
+void disableReferencesSQL(BaseObject *object)
 {
   if(object && object->getDatabase())
   {
@@ -95,13 +114,13 @@ void PgModelerUiNS::disableReferencesSQL(BaseObject *object)
   }
 }
 
-QString PgModelerUiNS::formatMessage(const QString &msg)
+QString formatMessage(const QString &msg)
 {
   QString fmt_msg=msg;
   QChar start_chrs[2]={'`','('},
-        end_chrs[2]={'\'', ')'};
+      end_chrs[2]={'\'', ')'};
   QStringList start_tags={ QString("<strong>"), QString("<em>(") },
-              end_tags={ QString("</strong>"), QString(")</em>") };
+      end_tags={ QString("</strong>"), QString(")</em>") };
   int pos=-1, pos1=-1;
 
   // Replacing the form `' by <strong></strong> and () by <em></em>
@@ -119,6 +138,8 @@ QString PgModelerUiNS::formatMessage(const QString &msg)
         pos1 += start_tags[chr_idx].length() - 1;
         fmt_msg.replace(pos1, 1, end_tags[chr_idx]);
       }
+      else
+        break;
 
       pos=pos1;
     }
@@ -128,4 +149,6 @@ QString PgModelerUiNS::formatMessage(const QString &msg)
   fmt_msg.replace(QString("\n"), QString("<br/>"));
 
   return(fmt_msg);
+}
+
 }

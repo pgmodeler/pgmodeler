@@ -34,6 +34,12 @@
 %aggregate;
 <!ENTITY % domain SYSTEM "domain.dtd">
 %domain;
+<!ENTITY % index SYSTEM "index.dtd">
+%index;
+<!ENTITY % rule SYSTEM "rule.dtd">
+%rule;
+<!ENTITY % trigger SYSTEM "trigger.dtd">
+%trigger;
 <!ENTITY % table SYSTEM "table.dtd">
 %table;
 <!ENTITY % sequence SYSTEM "sequence.dtd">

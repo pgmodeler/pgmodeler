@@ -35,7 +35,7 @@ class ModelValidationHelper: public QObject {
 	private:
 		Q_OBJECT
 
-		//! \brief Reference database model
+    //! \brief Reference database model
 		DatabaseModel *db_model;
 
 		//! \brief Connection used to validate model on DBMS
@@ -70,15 +70,11 @@ class ModelValidationHelper: public QObject {
     //! brief Stores the analyzed relationship marked as invalidated
     vector<BaseObject *> inv_rels;
 
-		/*! \brief When the execution of the instance of this class is in another thread instead of main app
-		thread puts the parent thread to sleep for [msecs] ms to give time to external operationsto be correctly
-		finished before completely quit the thread itself otherwise the method don't do anything. */
-		void sleepThread(unsigned msecs);
-
 		void generateValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> refs);
 
 	public:
 		ModelValidationHelper(void);
+    ~ModelValidationHelper(void);
 
 		/*! \brief Validates the specified model. If a connection is specifies executes the
 		SQL validation directly on DBMS */
@@ -99,8 +95,10 @@ class ModelValidationHelper: public QObject {
 		//! \brief Try to resolve the conflict specified by validation info
 		void resolveConflict(ValidationInfo &info);
 
+    bool isValidationCanceled(void);
+
 	private slots:
-		void redirectExportProgress(int prog, QString msg, ObjectType obj_type, QString cmd);
+    void redirectExportProgress(int prog, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen);
 		void captureThreadError(Exception e);
 		void emitValidationCanceled(void);
 		void emitValidationFinished(void);
@@ -115,7 +113,7 @@ class ModelValidationHelper: public QObject {
 		void s_validationInfoGenerated(ValidationInfo val_info);
 
 		//! \brief This signal is emitted when the validation progress changes
-		void s_progressUpdated(int prog, QString msg, ObjectType obj_type=BASE_OBJECT, QString cmd=QString());
+    void s_progressUpdated(int prog, QString msg, ObjectType obj_type=BASE_OBJECT, QString cmd=QString(), bool is_code_gen=false);
 
 		//! \brief This signal is emitted when the object is processed by the validator
 		void s_objectProcessed(QString obj_name, ObjectType obj_type);

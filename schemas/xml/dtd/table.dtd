@@ -6,12 +6,6 @@
 %column;
 <!ENTITY % constraint SYSTEM "constraint.dtd">
 %constraint;
-<!ENTITY % index SYSTEM "index.dtd">
-%index;
-<!ENTITY % rule SYSTEM "rule.dtd">
-%rule;
-<!ENTITY % trigger SYSTEM "trigger.dtd">
-%trigger;
 
 <!ELEMENT table (schema,role?,tablespace?,comment?,tag?, appended-sql?,prepended-sql?,position,column*,constraint*,customidxs*)>
 <!ATTLIST table name CDATA #REQUIRED>

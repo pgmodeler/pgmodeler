@@ -109,7 +109,14 @@ void ObjectSelectorWidget::setSelectedObject(BaseObject *object)
 	{   
 		rem_object_tb->setEnabled(object);
 		this->selected_obj=object;
-    obj_name_txt->setPlainText(/*Utf8String::create(*/selected_obj->getSignature());
+
+    if(object->getObjectType()!=OBJ_CONSTRAINT)
+      obj_name_txt->setPlainText(selected_obj->getSignature());
+    else
+      obj_name_txt->setPlainText(QString("%1.%2")
+                                 .arg(dynamic_cast<TableObject *>(selected_obj)->getParentTable()->getSignature())
+                                 .arg(selected_obj->getName(true)));
+
 		emit s_objectSelected();
 	}
 	else

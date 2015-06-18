@@ -202,38 +202,33 @@
               </widget>
              </item>
              <item row="0" column="1">
-              <layout class="QHBoxLayout" name="horizontalLayout_4">
-               <item>
-                <widget class="QComboBox" name="connections_cmb">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QToolButton" name="connect_tb">
-                 <property name="toolTip">
-                  <string>Connect and list available databases</string>
-                 </property>
-                 <property name="text">
-                  <string>...</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="../res/resources.qrc">
-                   <normaloff>:/icones/icones/conexaobd.png</normaloff>:/icones/icones/conexaobd.png</iconset>
-                 </property>
-                 <property name="iconSize">
-                  <size>
-                   <width>22</width>
-                   <height>22</height>
-                  </size>
-                 </property>
-                </widget>
-               </item>
-              </layout>
+              <widget class="QComboBox" name="connections_cmb">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="database_lbl">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Database:</string>
+               </property>
+               <property name="indent">
+                <number>-1</number>
+               </property>
+              </widget>
              </item>
              <item row="1" column="1">
               <widget class="QComboBox" name="database_cmb">
@@ -254,25 +249,6 @@
                  <width>18</width>
                  <height>18</height>
                 </size>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="database_lbl">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Database:</string>
-               </property>
-               <property name="indent">
-                <number>-1</number>
                </property>
               </widget>
              </item>
@@ -348,7 +324,7 @@
                </item>
               </layout>
              </item>
-             <item row="11" column="0">
+             <item row="12" column="0">
               <spacer name="verticalSpacer">
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
@@ -361,7 +337,7 @@
                </property>
               </spacer>
              </item>
-             <item row="7" column="0">
+             <item row="8" column="0">
               <layout class="QHBoxLayout" name="horizontalLayout_14">
                <item>
                 <widget class="QCheckBox" name="trunc_tables_chk">
@@ -493,7 +469,7 @@
                </item>
               </layout>
              </item>
-             <item row="6" column="0">
+             <item row="7" column="0">
               <layout class="QHBoxLayout" name="horizontalLayout_16">
                <item>
                 <widget class="QCheckBox" name="cascade_mode_chk">
@@ -622,7 +598,7 @@
                </item>
               </layout>
              </item>
-             <item row="9" column="0">
+             <item row="10" column="0">
               <layout class="QGridLayout" name="gridLayout_8">
                <item row="1" column="1">
                 <widget class="QCheckBox" name="recreate_unmod_chk">
@@ -630,7 +606,7 @@
                   <bool>true</bool>
                  </property>
                  <property name="statusTip">
-                  <string>Recreates only objects that formally can't be changed through ALTER commands according to pgModeler implementation not PostgreSQL. Currently, only constraints and casts are examples of these objects all other objects can be changed through ALTER command.</string>
+                  <string/>
                  </property>
                  <property name="text">
                   <string>Recreate only unmodifiable objects</string>
@@ -766,7 +742,7 @@
                </item>
               </layout>
              </item>
-             <item row="8" column="0">
+             <item row="9" column="0">
               <layout class="QHBoxLayout" name="horizontalLayout_20">
                <item>
                 <widget class="QCheckBox" name="reuse_sequences_chk">
@@ -789,6 +765,48 @@
                </item>
                <item>
                 <widget class="QWidget" name="reuse_sequences_hint" native="true">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="6" column="0">
+              <layout class="QHBoxLayout" name="horizontalLayout_21">
+               <item>
+                <widget class="QCheckBox" name="preserve_db_name_chk">
+                 <property name="toolTip">
+                  <string/>
+                 </property>
+                 <property name="statusTip">
+                  <string>No command to rename the destination database will be generated even the model's name differ from database name.</string>
+                 </property>
+                 <property name="text">
+                  <string>Preserve database name</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QWidget" name="preserve_db_name_hint" native="true">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1169,7 +1187,7 @@
              <enum>QAbstractScrollArea::AdjustToContents</enum>
             </property>
             <property name="editTriggers">
-             <set>QAbstractItemView::NoEditTriggers</set>
+             <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
             </property>
             <property name="alternatingRowColors">
              <bool>true</bool>
@@ -1684,6 +1702,16 @@
           <property name="bottomMargin">
            <number>4</number>
           </property>
+          <item row="0" column="0" colspan="2">
+           <widget class="QWidget" name="sqlcode_wgt" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="1">
            <widget class="QPushButton" name="apply_on_server_btn">
             <property name="sizePolicy">
@@ -1719,27 +1747,6 @@
             </property>
             <property name="default">
              <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0" colspan="2">
-           <widget class="QTextEdit" name="sqlcode_txt">
-            <property name="font">
-             <font>
-              <family>DejaVu Sans Mono</family>
-             </font>
-            </property>
-            <property name="undoRedoEnabled">
-             <bool>false</bool>
-            </property>
-            <property name="lineWrapMode">
-             <enum>QTextEdit::NoWrap</enum>
-            </property>
-            <property name="acceptRichText">
-             <bool>true</bool>
-            </property>
-            <property name="textInteractionFlags">
-             <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
             </property>
            </widget>
           </item>

@@ -26,7 +26,6 @@ ModelOverviewWidget::ModelOverviewWidget(QWidget *parent) : QWidget(parent, Qt::
 	zoom_factor=1;
 	curr_resize_factor=RESIZE_FACTOR;
 	this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-	this->setWindowFlags(Qt::WindowStaysOnTopHint);
 }
 
 void ModelOverviewWidget::show(ModelWidget *model)
@@ -46,7 +45,7 @@ void ModelOverviewWidget::show(ModelWidget *model)
 		connect(this->model, SIGNAL(s_objectRemoved(void)), this, SLOT(updateOverview(void)));
 		connect(this->model, SIGNAL(s_objectsMoved(void)), this, SLOT(updateOverview(void)));
 		connect(this->model, SIGNAL(s_objectModified(void)), this, SLOT(updateOverview(void)));
-		connect(this->model, SIGNAL(s_zoomModified(float)), this, SLOT(updateZoomFactor(float)));
+		connect(this->model, SIGNAL(s_zoomModified(double)), this, SLOT(updateZoomFactor(double)));
 
 		connect(this->model, SIGNAL(s_modelResized(void)), this, SLOT(resizeOverview(void)));
 		connect(this->model, SIGNAL(s_modelResized(void)), this, SLOT(resizeWindowFrame(void)));
@@ -114,7 +113,7 @@ void ModelOverviewWidget::resizeWindowFrame(void)
 	if(this->model)
 	{
 		QSizeF size;
-		float factor=curr_resize_factor/zoom_factor;
+		double factor=curr_resize_factor/zoom_factor;
 		QScrollBar *h_scroll=this->model->viewport->horizontalScrollBar(),
 				*v_scroll=this->model->viewport->verticalScrollBar();
 
@@ -162,7 +161,7 @@ void ModelOverviewWidget::resizeOverview(void)
 	}
 }
 
-void ModelOverviewWidget::updateZoomFactor(float zoom)
+void ModelOverviewWidget::updateZoomFactor(double zoom)
 {
 	this->zoom_factor=zoom;
 	this->resizeWindowFrame();
@@ -204,8 +203,8 @@ void ModelOverviewWidget::mouseMoveEvent(QMouseEvent *event)
 			rect.translate(0,(rect1.bottom() - rect.bottom())-rect1.top());
 
 		window_frm->setGeometry(rect);
-		this->model->viewport->horizontalScrollBar()->setValue(ceilf(zoom_factor * scene_rect.width() * (rect.x()/static_cast<float>(rect1.width()))));
-		this->model->viewport->verticalScrollBar()->setValue(ceilf(zoom_factor * scene_rect.height() * (rect.y()/static_cast<float>(rect1.height()))));
+		this->model->viewport->horizontalScrollBar()->setValue(ceilf(zoom_factor * scene_rect.width() * (rect.x()/static_cast<double>(rect1.width()))));
+		this->model->viewport->verticalScrollBar()->setValue(ceilf(zoom_factor * scene_rect.height() * (rect.y()/static_cast<double>(rect1.height()))));
 	}
 }
 

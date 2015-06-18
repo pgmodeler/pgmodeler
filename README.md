@@ -22,7 +22,7 @@ Much effort, coffee, chocolate, time and knowledge has been devoted to this proj
 Developers and Reviewers wanted!
 --------------------------------
 
-pgModeler grown bigger and reached a state that its lonely developer cannot handle all the modification and new feature requests as well to create a user's manual. So if you know C++ and Qt framework programming and wants to contribute with coding or an user's manual let me know! I'll be grateful for any help to the project!
+pgModeler grown bigger and reached a state that its lonely developer cannot handle all the modification and new feature requests. So if you know C++ and Qt framework programming and wants to contribute with coding let me know! I'll be grateful for any help to the project!
 
 Compiling/Installation
 ----------------------
@@ -32,6 +32,9 @@ For details about installation process from source code visit the [Installation]
 Known Issues
 -----------
 
+* pgModeler is unusable in sandboxed Mac OS X installations. To workaround this issue you'll need to deactivate sandbox usage to run pgModeler properly. There is no planning to adapt this tool for sandbox feature in Mac OS X. There is no plan to adapt pgModeler to run in sandboxed Mac OS X installations.
+* pgModeler can't be compiled in Microsoft Visual Studio due to use of some gcc/clang extensions. There is a work in progress to make the build possible but it is too early to tell if it'll be fully functional and merged to the official codebase.
+* Compiling the source using '-Wconversion' (disabled by Qt in its default) generates a lot of warnings. These warnings are harmless in 99% of times but we can't just ignore them but I don't plan to fix them in a near future (mail me for more details! It's a long history...).
 * pgModeler sometimes can crash during the export, import or validation process due to some threaded operations that, depending on size and arrange of the model, causes race conditions.
 * Due to particularities on executing bundles on MacOSX the file association does not work correctly on this system. So it's not possible to open a model file by clicking it on Finder.
 * To use pgmodeler-cli command on MacOSX you must call it by executing the following command inside the "pgmodeler.app/Contents/MacOS" path: ```./startapp pgmodeler-cli [PARAMS]```

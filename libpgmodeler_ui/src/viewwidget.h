@@ -83,7 +83,7 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 	public:
 		ViewWidget(QWidget * parent = 0);
 
-		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, View *view, float px, float py);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, View *view, double px, double py);
 
 	private slots:
 		//! \brief Shows the field according to the selected reference type

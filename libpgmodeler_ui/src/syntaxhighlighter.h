@@ -69,7 +69,7 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 				}
 		};
 
-		static QFont default_font;
+    static QFont default_font;
 
 		/*! \brief Stores the multiline infos and is used to check if the text being typed
 		by the user is on a multiline block */
@@ -104,7 +104,7 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 
 					/*! \brief This causes the highlighter to ignores any RETURN/ENTER press on QTextEdit causing
 							the text to be in a single line. */
-					single_line_mode;
+          single_line_mode;
 
 		//! \brief Stores the chars that indicates word separators
 		QString word_separators,
@@ -151,7 +151,7 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		/*! \brief Install the syntax highlighter in a QTextEdit. The boolean param is used to
 		enable the auto rehighlight. If this is set to false the user must call the rehighlight method
 		every time he modifies the text */
-		SyntaxHighlighter(QTextEdit *parent, bool auto_rehighlight, bool single_line_mode=false);
+    SyntaxHighlighter(QPlainTextEdit *parent, bool auto_rehighlight, bool single_line_mode=false);
 
 		//! \brief Loads a highlight configuration from a XML file
 		void loadConfiguration(const QString &filename);
@@ -166,7 +166,7 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		//! \brief Returns the current configured code completion trigger char
 		QChar getCompletionTrigger(void);
 
-		static void setDefaultFont(const QFont &fnt);
+    static void setDefaultFont(const QFont &fnt);
 
 	public slots:
 		//! \brief Rehighlight all the document
@@ -177,9 +177,9 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		void highlightBlock(const QString &txt);
 
 		/*! \brief Validates the text modification made by the user doing the highlight if needed.
-		This slot is linked with the contentsChanged() of document because is in it that are
-		captured the character count removed and added on the text */
-		void validateTextModification(int, int removed, int added);
+    The parameter has_changes is used to know if the contents of the document changed
+    (see QPlainTextEdit::modificationChanged) */
+    void validateTextModification(bool has_changes);
 
 		//! \brief Clears the loaded configuration
 		void clearConfiguration(void);

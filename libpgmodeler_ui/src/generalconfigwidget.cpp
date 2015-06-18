@@ -22,6 +22,8 @@
 #include "operationlist.h"
 #include "syntaxhighlighter.h"
 #include "mainwindow.h"
+#include "numberedtexteditor.h"
+#include "linenumberswidget.h"
 
 map<QString, attribs_map> GeneralConfigWidget::config_params;
 
@@ -37,12 +39,49 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 
 	Ui_GeneralConfigWidget::setupUi(this);
 
+  line_numbers_cp=new ColorPickerWidget(1, this);
+  line_numbers_cp->setButtonToolTip(0, trUtf8("Line numbers' font color"));
+
+  line_numbers_bg_cp=new ColorPickerWidget(1, this);
+  line_numbers_bg_cp->setButtonToolTip(0, trUtf8("Line numbers' background color"));
+
+  line_highlight_cp=new ColorPickerWidget(1, this);
+  line_highlight_cp->setButtonToolTip(0, trUtf8("Highlighted line color"));
+
+  font_preview_txt=new NumberedTextEditor(this);
+  font_preview_txt->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+  font_preview_txt->setPlainText(trUtf8("The little brown fox jumps over the lazy dog") + QString("\n0123456789\n.()[]{};"));
+  font_preview_txt->setReadOnly(true);
+
+  QBoxLayout *layout=new QBoxLayout(QBoxLayout::LeftToRight);
+  QGridLayout *grid=dynamic_cast<QGridLayout *>(code_font_gb->layout());
+  layout->addWidget(line_numbers_cp);
+  layout->addWidget(line_numbers_bg_cp);
+  layout->addWidget(line_highlight_cp);
+  layout->addItem(new QSpacerItem(1000,20, QSizePolicy::Expanding));
+  grid->addLayout(layout, 2, 1);
+  grid->addWidget(font_preview_txt,grid->count(),0,1,5);
+
 	for(int i=0; i < count; i++)
 		paper_cmb->setItemData(i, QVariant(paper_ids[i]));
 
 	connect(unity_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(convertMarginUnity(void)));
 	connect(autosave_interv_chk, SIGNAL(toggled(bool)), autosave_interv_spb, SLOT(setEnabled(bool)));
 	connect(paper_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectPaperSize(void)));
+  connect(font_size_spb, SIGNAL(valueChanged(double)), this, SLOT(updateFontPreview()));
+  connect(font_cmb, SIGNAL(currentFontChanged(QFont)), this, SLOT(updateFontPreview()));
+
+  connect(line_numbers_cp, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateFontPreview()));
+  connect(line_numbers_cp, SIGNAL(s_colorsChanged(void)), this, SLOT(updateFontPreview()));
+
+  connect(line_numbers_bg_cp, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateFontPreview()));
+  connect(line_numbers_bg_cp, SIGNAL(s_colorsChanged(void)), this, SLOT(updateFontPreview()));
+
+  connect(line_highlight_cp, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateFontPreview()));
+  connect(line_highlight_cp, SIGNAL(s_colorsChanged(void)), this, SLOT(updateFontPreview()));
+
+  connect(disp_line_numbers_chk, SIGNAL(toggled(bool)), this, SLOT(updateFontPreview()));
+  connect(hightlight_lines_chk, SIGNAL(toggled(bool)), this, SLOT(updateFontPreview()));
 
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]=QString();
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]=QString();
@@ -71,6 +110,11 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
   config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CONFIRM_VALIDATION]=QString();
   config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_MAIN_MENU]=QString();
   config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_COMPLETION]=QString();
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DISPLAY_LINE_NUMBERS]=QString();
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::LINE_NUMBERS_COLOR]=QString();
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::LINE_NUMBERS_BG_COLOR]=QString();
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::LINE_HIGHLIGHT_COLOR]=QString();
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIGHLIGHT_LINES]=QString();
 
   simp_obj_creation_ht=new HintTextWidget(simp_obj_creation_hint, this);
   simp_obj_creation_ht->setText(simple_obj_creation_chk->statusTip());
@@ -139,6 +183,11 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
     child_wgts.push_back(radio);
     connect(radio, SIGNAL(clicked()), this, SLOT(setConfigurationChanged()));
   }
+
+  #ifdef NO_UPDATE_CHECK
+    check_upd_chk->setChecked(false);
+    check_upd_chk->setVisible(false);
+  #endif
 }
 
 void GeneralConfigWidget::loadConfiguration(void)
@@ -181,24 +230,30 @@ void GeneralConfigWidget::loadConfiguration(void)
     margin=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN].split(',');
     custom_size=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_CUSTOM_SIZE].split(',');
 
-		left_marg->setValue((margin.count() >= 4 ? margin[0].toFloat() : 2));
-		top_marg->setValue((margin.count()>= 4 ? margin[1].toFloat() : 2));
-		right_marg->setValue((margin.count() >= 4 ? margin[2].toFloat() : 2));
-		bottom_marg->setValue((margin.count() >= 4 ? margin[3].toFloat() : 2));
+    left_marg->setValue((margin.count() >= 4 ? margin[0].toDouble() : 2));
+    top_marg->setValue((margin.count()>= 4 ? margin[1].toDouble() : 2));
+    right_marg->setValue((margin.count() >= 4 ? margin[2].toDouble() : 2));
+    bottom_marg->setValue((margin.count() >= 4 ? margin[3].toDouble() : 2));
 
-		width_spb->setValue((custom_size.count() >= 2 ? custom_size[0].toFloat() : 500));
-		height_spb->setValue((custom_size.count() >= 2 ? custom_size[1].toFloat() : 500));
+    width_spb->setValue((custom_size.count() >= 2 ? custom_size[0].toDouble() : 500));
+    height_spb->setValue((custom_size.count() >= 2 ? custom_size[1].toDouble() : 500));
 
 		hide_ext_attribs_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::_TRUE_);
 		hide_rel_name_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_REL_NAME]==ParsersAttributes::_TRUE_);
 		hide_table_tags_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIDE_TABLE_TAGS]==ParsersAttributes::_TRUE_);
 
 		font_cmb->setCurrentFont(QFont(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]));
-		font_size_spb->setValue(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toFloat());
+    font_size_spb->setValue(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toDouble());
+    disp_line_numbers_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DISPLAY_LINE_NUMBERS]==ParsersAttributes::_TRUE_);
+    hightlight_lines_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIGHLIGHT_LINES]==ParsersAttributes::_TRUE_);
+    line_numbers_cp->setColor(0, config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::LINE_NUMBERS_COLOR]);
+    line_numbers_bg_cp->setColor(0, config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::LINE_NUMBERS_BG_COLOR]);
+    line_highlight_cp->setColor(0, config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::LINE_HIGHLIGHT_COLOR]);
 
     for(QWidget *wgt : child_wgts)
       wgt->blockSignals(false);
 
+    updateFontPreview();
 		this->applyConfiguration();
 	}
 	catch(Exception &e)
@@ -237,6 +292,15 @@ map<QString, attribs_map> GeneralConfigWidget::getConfigurationParams(void)
   return(config_params);
 }
 
+QString GeneralConfigWidget::getConfigurationParam(const QString &section_id, const QString &param_name)
+{
+  if(config_params.count(section_id) &&
+     config_params[section_id].count(param_name))
+    return(config_params[section_id][param_name]);
+  else
+    return(QString());
+}
+
 void GeneralConfigWidget::saveConfiguration(void)
 {
   try
@@ -244,7 +308,7 @@ void GeneralConfigWidget::saveConfiguration(void)
     map<QString, attribs_map >::iterator itr, itr_end;
     QString file_sch, root_dir, widget_sch;
 
-    root_dir=GlobalAttributes::CONFIGURATIONS_DIR +
+    root_dir=GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
              GlobalAttributes::DIR_SEPARATOR;
 
     file_sch=root_dir +
@@ -293,6 +357,11 @@ void GeneralConfigWidget::saveConfiguration(void)
 
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]=font_cmb->currentText();
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE]=QString::number(font_size_spb->value());
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DISPLAY_LINE_NUMBERS]=(disp_line_numbers_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIGHLIGHT_LINES]=(hightlight_lines_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::LINE_NUMBERS_COLOR]=line_numbers_cp->getColor(0).name();
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::LINE_NUMBERS_BG_COLOR]=line_numbers_bg_cp->getColor(0).name();
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::LINE_HIGHLIGHT_COLOR]=line_highlight_cp->getColor(0).name();
 
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]=QString();
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]=QString();
@@ -342,7 +411,7 @@ void GeneralConfigWidget::applyConfiguration(void)
 {
 	int unit=unity_cmb->currentIndex();
 	QFont fnt;
-	float fnt_size=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toFloat();
+  double fnt_size=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toDouble();
 
 	if(fnt_size < 5.0f)
 		fnt_size=5.0f;
@@ -368,7 +437,12 @@ void GeneralConfigWidget::applyConfiguration(void)
 
 	fnt.setFamily(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]);
 	fnt.setPointSize(fnt_size);
-	SyntaxHighlighter::setDefaultFont(fnt);
+  NumberedTextEditor::setLineNumbersVisible(disp_line_numbers_chk->isChecked());
+  NumberedTextEditor::setLineHighlightColor(line_highlight_cp->getColor(0));
+  NumberedTextEditor::setHighlightLines(hightlight_lines_chk->isChecked());
+  NumberedTextEditor::setDefaultFont(fnt);
+  LineNumbersWidget::setColors(line_numbers_cp->getColor(0), line_numbers_bg_cp->getColor(0));
+  SyntaxHighlighter::setDefaultFont(fnt);
 }
 
 void GeneralConfigWidget::restoreDefaults(void)
@@ -377,6 +451,7 @@ void GeneralConfigWidget::restoreDefaults(void)
 	{
 		BaseConfigWidget::restoreDefaults(GlobalAttributes::GENERAL_CONF);
 		this->loadConfiguration();
+    this->applyConfiguration();
     setConfigurationChanged(true);
 	}
 	catch(Exception &e)
@@ -388,7 +463,7 @@ void GeneralConfigWidget::restoreDefaults(void)
 void GeneralConfigWidget::convertMarginUnity(void)
 {
 	static int prev_unity=UNIT_MILIMETERS;
-	float conv_factor[]={1.0f, 2.83f, 0.04f, 0.1f},
+	double conv_factor[]={1.0f, 2.83f, 0.04f, 0.1f},
 			left, right, top, bottom, width, height;
 
 	left=left_marg->value() / conv_factor[prev_unity];
@@ -405,174 +480,30 @@ void GeneralConfigWidget::convertMarginUnity(void)
 	width_spb->setValue(width * conv_factor[unity_cmb->currentIndex()]);
 	height_spb->setValue(height * conv_factor[unity_cmb->currentIndex()]);
 
-	prev_unity=unity_cmb->currentIndex();
+  prev_unity=unity_cmb->currentIndex();
 }
 
-void GeneralConfigWidget::updateFileAssociation(void)
+void GeneralConfigWidget::updateFontPreview(void)
 {
- Messagebox msg_box;
- QString title=trUtf8("File association missing"),
-         msg=trUtf8("It seems that .dbm files aren't associated with pgModeler. Do you want to do it now?");
+  QFont fnt;
 
- #ifdef Q_OS_LINUX
-  attribs_map attribs;
-	QString str_aux,
+  fnt=font_cmb->currentFont();
+  fnt.setPointSizeF(font_size_spb->value());
 
-			 //Configures the path to the application logo
-			 exec_icon=QDir(GlobalAttributes::CONFIGURATIONS_DIR +
-                      GlobalAttributes::DIR_SEPARATOR + QString("pgmodeler_logo.png")).absolutePath(),
+  NumberedTextEditor::setDefaultFont(fnt);
+  NumberedTextEditor::setLineNumbersVisible(disp_line_numbers_chk->isChecked());
+  NumberedTextEditor::setLineHighlightColor(line_highlight_cp->getColor(0));
+  NumberedTextEditor::setHighlightLines(hightlight_lines_chk->isChecked());
+  LineNumbersWidget::setColors(line_numbers_cp->getColor(0), line_numbers_bg_cp->getColor(0));
 
-			 //Configures the path to the document logo
-			 dbm_icon=QDir(GlobalAttributes::CONFIGURATIONS_DIR +
-                     GlobalAttributes::DIR_SEPARATOR + QString("pgmodeler_dbm.png")).absolutePath(),
+  font_preview_txt->updateLineNumbersSize();
+  font_preview_txt->updateLineNumbers();
+  font_preview_txt->highlightCurrentLine();
 
-			 //Path to directory that register mime types
-       mime_db_dir=QDir::homePath() + QString("/.local/share/mime"),
-
-			 //Path to the file that associates apps to mimetypes
-       mimeapps=QDir::homePath() + QString("/.local/share/applications/mimeapps.list"),
-
-			 base_conf_dir=GlobalAttributes::CONFIGURATIONS_DIR + GlobalAttributes::DIR_SEPARATOR +
-										 GlobalAttributes::SCHEMAS_DIR + GlobalAttributes::DIR_SEPARATOR,
-
-			 //Files generated after update file association (application-dbm.xml and pgModeler.desktop)
-       files[] = { QDir::homePath() + QString("/.local/share/applications/pgModeler.desktop"),
-                   mime_db_dir + QString("/packages/application-dbm.xml") },
-
-       schemas[] = { base_conf_dir + QString("desktop") + GlobalAttributes::SCHEMA_EXT,
-                     base_conf_dir + QString("application-dbm") + GlobalAttributes::SCHEMA_EXT };
-	QByteArray buf, buf_aux;
-	QFile out;
-
-	//Check if the necessary file exists. If not asks the user to update file association
-	if(!QFileInfo(files[0]).exists() || !QFileInfo(files[1]).exists())
-    msg_box.show(title, msg, Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
-
-	if(msg_box.result()==QDialog::Accepted)
-	{
-		//file_associated=true;
-		attribs[ParsersAttributes::ROOT_DIR]=QApplication::applicationDirPath();
-		attribs[ParsersAttributes::ICON]=exec_icon;
-
-		try
-		{
-			for(unsigned i=0; i < 2; i++)
-			{
-				schparser.loadFile(schemas[i]);
-				buf.append(schparser.getCodeDefinition(attribs));
-        QDir(QString(".")).mkpath(QFileInfo(files[i]).absolutePath());
-
-				out.setFileName(files[i]);
-				out.open(QFile::WriteOnly);
-
-				if(!out.isOpen())
-					throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(files[i]),
-													ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-				out.write(buf.data(), buf.size());
-				out.close();
-				buf.clear();
-				attribs[ParsersAttributes::ICON]=dbm_icon;
-			}
-
-			out.setFileName(mimeapps);
-
-			//If the file mimeapps.list doesn't exists (generally in Ubuntu) creates a new one
-			if(!QFileInfo(mimeapps).exists())
-			{
-				out.open(QFile::WriteOnly);
-				out.write(QByteArray("[Added Associations]\napplication/dbm=pgModeler.desktop;\n"));
-				out.close();
-			}
-			else
-			{
-
-				out.open(QFile::ReadOnly);
-
-				if(!out.isOpen())
-					throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(mimeapps),
-													ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-				//Opens the mimeapps.list to add a entry linking pgModeler to .dbm files
-				buf=out.readAll();
-				out.close();
-
-				QTextStream ts(&buf);
-				while(!ts.atEnd())
-				{
-					//Remove any reference to application/dbm mime from file
-					str_aux=ts.readLine();
-          str_aux.replace(QRegExp(QString("application/dbm*"),Qt::CaseSensitive,QRegExp::Wildcard),QString());
-
-					if(!str_aux.isEmpty())
-					{
-						//Updates the application/dbm mime association
-            if(str_aux.contains(QString("[Added Associations]")))
-              str_aux.append(QString("\napplication/dbm=pgModeler.desktop;\n"));
-						else
-              str_aux+=QString("\n");
-
-						buf_aux.append(str_aux);
-					}
-				}
-
-				//Write a new copy of the mimeapps.list file
-				out.open(QFile::Truncate | QFile::WriteOnly);
-				out.write(buf_aux.data(), buf_aux.size());
-				out.close();
-			}
-
-			//Update the mime database
-      QProcess::execute(QString("update-mime-database"), QStringList { mime_db_dir });
-		}
-		catch(Exception &e)
-		{
-			msg_box.show(e);
-		}
-	}
- #else
-		#ifdef Q_OS_WIN
-     //Checking if the .dbm registry key exists
-     QSettings dbm_ext(QString("HKEY_CURRENT_USER\\Software\\Classes\\.dbm"), QSettings::NativeFormat);
-     QString exe_path=QDir::toNativeSeparators(QApplication::applicationDirPath() + QString("\\pgmodeler.exe"));
-
-     //If there is no value assigned to .dbm/Default key shows the update extension confirmation message
-     if(dbm_ext.value(QString("Default")).toString().isEmpty())
-       msg_box.show(title, msg, Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
-
-      if(msg_box.result()==QDialog::Accepted)
-      {
-        //Write the default value for .dbm registry key
-        dbm_ext.setValue(QString("Default"), QString("dbm_auto_file"));
-        dbm_ext.sync();
-
-        //Other registry keys values
-        map<QString, QStringList> confs = {
-          { QString("\\HKEY_CURRENT_USER\\Software\\Classes\\dbm_auto_file"), { QString("FriendlyTypeName") , QString("pgModeler Database Model") } },
-          { QString("\\HKEY_CURRENT_USER\\Software\\Classes\\dbm_auto_file\\DefaultIcon"), { QString("Default") , QString("%1,1").arg(exe_path) } },
-          { QString("\\HKEY_CURRENT_USER\\Software\\Classes\\dbm_auto_file\\shell\\open\\command"), { QString("Default") , QString("\"%1\" \"%2\"").arg(exe_path).arg("%1") } },
-          { QString("\\HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.dbm"), { QString("OpenWithList/a"), QString("pgmodeler.exe"), QString("OpenWithList/MRUList"), QString("a")} }
-        };
-
-        map<QString, QStringList>::iterator itr;
-        itr=confs.begin();
-
-        //Iterates over the configuration map writing the other keys on registry
-        while(itr!=confs.end())
-        {
-          QSettings s(itr->first, QSettings::NativeFormat);
-          for(int i=0; i < itr->second.size(); i+=2)
-            s.setValue(itr->second[i], itr->second[i+1]);
-
-          s.sync();
-          itr++;
-        }
-     }
-		#endif
-#endif
+  setConfigurationChanged(true);
 }
 
-void GeneralConfigWidget::selectPaperSize()
+void GeneralConfigWidget::selectPaperSize(void)
 {
 	bool visible=paper_cmb->currentIndex()==paper_cmb->count()-1;
 

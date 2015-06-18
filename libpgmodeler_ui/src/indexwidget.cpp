@@ -113,7 +113,7 @@ void IndexWidget::setAttributes(DatabaseModel *model, Table *parent_obj, Operati
 		fast_update_chk->setChecked(index->getIndexAttribute(Index::FAST_UPDATE));
 		unique_chk->setChecked(index->getIndexAttribute(Index::UNIQUE));
 		buffering_chk->setChecked(index->getIndexAttribute(Index::BUFFERING));
-    predicate_txt->setPlainText(/*Utf8String::create(*/index->getPredicate());
+    predicate_txt->setPlainText(index->getPredicate());
 
 		selectIndexingType();
 	}

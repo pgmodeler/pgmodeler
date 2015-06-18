@@ -262,7 +262,7 @@ void Catalog::getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<u
 		{
       attribs=getObjectsNames(type, QString(), QString(), extra_attribs);
 
-			for(auto attr : attribs)
+      for(auto &attr : attribs)
 			{
 				obj_oids[type].push_back(attr.first.toUInt());
 
@@ -278,7 +278,7 @@ void Catalog::getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<u
 					//Retrieve the oid and names of the table's columns
 					col_attribs=getObjectsNames(OBJ_COLUMN, sch_names[tab_attribs[0][ParsersAttributes::SCHEMA]], attr.second);
 
-					for(auto col_attr : col_attribs)
+          for(auto &col_attr : col_attribs)
 						col_oids[tab_oid].push_back(col_attr.first.toUInt());
 				}
 			}

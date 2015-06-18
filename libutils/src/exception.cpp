@@ -120,7 +120,8 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_INV_IDENT_RELATIOSHIP", QT_TR_NOOP("Identifier relationship can not be created for a self relationship, relationships of the type n-n, copy or generalization!")},
 	{"ERR_DUPLIC_COLS_COPY_REL", QT_TR_NOOP("Unable to create a copy relationship because the column `%1' in table `%2' already exists in table `%3'!")},
 	{"ERR_INCOMP_COLS_INHERIT_REL", QT_TR_NOOP("Unable to create the generalization relationship because the column `%1' in table `%2' can not be merged with the column `%3' of table `%4' because they have incompatible types!")},
-	{"ERR_ASG_OBJ_INV_REL_TYPE", QT_TR_NOOP("An attribute can not be added to a copy or generalization relationship!")},
+  {"ERR_INCOMP_CONSTRS_INHERIT_REL", QT_TR_NOOP("Unable to create the generalization relationship because the constraint `%1' in table `%2' can not be merged with the constraint `%3' of table `%4' due to their incompatible composition!")},
+  {"ERR_ASG_OBJ_INV_REL_TYPE", QT_TR_NOOP("An attribute can not be added to a copy or generalization relationship!")},
 	{"ERR_ASG_FOREIGN_KEY_REL", QT_TR_NOOP("A foreign key can not be added to a relationship because is created automatically when this is connected!")},
 	{"ERR_REF_OBJ_INEXISTS_MODEL", QT_TR_NOOP("The object `%1' (%2) is referencing the object `%3' (%4) which was not found in the model!")},
 	{"ERR_REF_INEXIST_USER_TYPE", QT_TR_NOOP("Reference to an user-defined data type that not exists in the model!")},
@@ -240,7 +241,9 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_ASG_INV_EVENT_TRIGGER_VARIABLE", QT_TR_NOOP("Could not assign the variable `%1' to event trigger's filter. Currently, PostgreSQL supports only the `TAG' variable!")},
 	{"ERR_ROW_DATA_NOT_MANIPULATED", QT_TR_NOOP("Could not perform the `%1' operation on `%2' using the data on row `%3'! All changes were rolled back. \n\n ** Returned error ** \n\n%4")},
 	{"ERR_MALFORMED_UNESCAPED_VALUE", QT_TR_NOOP("Malformed unescaped value on row `%1' column `%2'!")},
-  {"ERR_UNDO_REDO_OPR_INV_OBJECT", QT_TR_NOOP("Trying to undo/redo an invalid operation over an object that does not exists anymore! The operations history will be cleaned up.")}
+  {"ERR_UNDO_REDO_OPR_INV_OBJECT", QT_TR_NOOP("Trying to undo/redo an invalid operation over an object that does not exists anymore! The operations history will be cleaned up.")},
+  {"ERR_REQ_FIELDS_NOT_FILLED",  QT_TR_NOOP("The object `%1' (%2) can't be handled because some needed fields are not set! Please, make sure to fill at least the requires fields in order to properly create or update the object.")},
+  {"ERR_INV_REL_ID_SWAP",  QT_TR_NOOP("A relationship can only be swapped by other object of the same kind!")}
 };
 
 Exception::Exception(void)

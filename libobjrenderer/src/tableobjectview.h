@@ -73,7 +73,7 @@ class TableObjectView: public BaseObjectView
 		void configureObject(void);
 
 		//! \brief Sets the horizontal position of the specified child object (index)
-		void setChildObjectXPos(unsigned obj_idx, float px);
+		void setChildObjectXPos(unsigned obj_idx, double px);
 
 		//! \brief Returns the child object at the specified index
 		QGraphicsItem *getChildObject(unsigned obj_idx);

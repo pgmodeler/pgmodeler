@@ -20,12 +20,15 @@
 #include "taskprogresswidget.h"
 #include "databaseexplorerwidget.h"
 #include "snippetsconfigwidget.h"
+#include "pgmodeleruins.h"
 
 SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 {
 	setupUi(this);
 
-  sql_cmd_hl=new SyntaxHighlighter(sql_cmd_txt, false, false);
+  sql_cmd_txt=PgModelerUiNS::createNumberedTextEditor(sql_cmd_wgt);
+
+  sql_cmd_hl=new SyntaxHighlighter(sql_cmd_txt, true, false);
   sql_cmd_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 	h_splitter1->setSizes({1000, 250});
@@ -53,6 +56,9 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	load_tb->setToolTip(load_tb->toolTip() + QString(" (%1)").arg(load_tb->shortcut().toString()));
 	save_tb->setToolTip(save_tb->toolTip() + QString(" (%1)").arg(save_tb->shortcut().toString()));
 
+  ro_item_del=new ReadOnlyItemDelegate(this);
+  results_tbw->setItemDelegate(ro_item_del);
+
 	connect(clear_btn, SIGNAL(clicked(void)), this, SLOT(clearAll(void)));
 	connect(sql_cmd_txt, SIGNAL(textChanged(void)), this, SLOT(enableCommandButtons(void)));
 	connect(run_sql_tb, SIGNAL(clicked(void)), this, SLOT(runSQLCommand(void)));
@@ -67,7 +73,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 					[=](){ clear_history_btn->setDisabled(true); });
 
 	connect(cmd_history_lst, &QListWidget::itemDoubleClicked,
-					[=](){ sql_cmd_txt->setText(cmd_history_lst->currentItem()->data(Qt::UserRole).toString()); });
+          [=](){ sql_cmd_txt->setPlainText(cmd_history_lst->currentItem()->data(Qt::UserRole).toString()); });
 
 	connect(results_tbw, &QTableWidget::itemPressed,
           [=](){ SQLExecutionWidget::copySelection(results_tbw); });
@@ -85,6 +91,11 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 void SQLExecutionWidget::setConnection(Connection conn)
 {
   sql_cmd_conn=conn;
+  db_name_lbl->setText(QString("<strong>%1</strong>@<em>%2:%3</em>")
+                       .arg(conn.getConnectionParam(Connection::PARAM_DB_NAME))
+                       .arg(conn.getConnectionParam(Connection::PARAM_SERVER_IP).isEmpty() ?
+                            conn.getConnectionParam(Connection::PARAM_SERVER_FQDN) : conn.getConnectionParam(Connection::PARAM_SERVER_IP))
+                       .arg(conn.getConnectionParam(Connection::PARAM_PORT)));
 }
 
 void SQLExecutionWidget::enableCommandButtons(void)
@@ -111,7 +122,12 @@ void SQLExecutionWidget::fillResultsTable(ResultSet &res)
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+  }
+}
+
+void SQLExecutionWidget::showEvent(QShowEvent *)
+{
+  sql_cmd_txt->setFocus();
 }
 
 void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTableWidget *results_tbw, bool store_data)
@@ -145,7 +161,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 		std::unique(type_ids.begin(), type_ids.end());
     types=catalog.getObjectsAttributes(OBJ_TYPE, QString(), QString(), type_ids);
 
-		for(auto tp : types)
+    for(auto &tp : types)
 			type_names[tp[ParsersAttributes::OID].toUInt()]=tp[ParsersAttributes::NAME];
 
 		catalog.setFilter(orig_filter);
@@ -401,7 +417,7 @@ void SQLExecutionWidget::clearAll(void)
 
 	if(msg_box.result()==QDialog::Accepted)
 	{
-    sql_cmd_txt->setText(QString());
+    sql_cmd_txt->setPlainText(QString());
 		msgoutput_lst->clear();
 		msgoutput_lst->setVisible(true);
 		results_parent->setVisible(false);

@@ -62,7 +62,7 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
     static void getConnections(map<QString, Connection *> &conns, bool inc_hosts=true);
 
 		//! brief Fills the passed combobox with all the loaded connections
-    static void fillConnectionsComboBox(QComboBox *combo);
+    static void fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder);
 
   public slots:
 		void restoreDefaults(void);

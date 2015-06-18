@@ -984,7 +984,7 @@
             <number>4</number>
            </property>
            <item row="0" column="0">
-            <widget class="QTextEdit" name="filter_txt">
+            <widget class="QPlainTextEdit" name="filter_txt">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                <horstretch>0</horstretch>
@@ -996,15 +996,6 @@
                <width>0</width>
                <height>0</height>
               </size>
-             </property>
-             <property name="tabChangesFocus">
-              <bool>true</bool>
-             </property>
-             <property name="undoRedoEnabled">
-              <bool>true</bool>
-             </property>
-             <property name="acceptRichText">
-              <bool>true</bool>
              </property>
             </widget>
            </item>

@@ -38,14 +38,19 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		Q_OBJECT
 
 		//! brief Database import helper used to list objects from current connection
-		DatabaseImportHelper import_helper;
+    DatabaseImportHelper import_helper;
+
+    /*! brief Controls the link between a database explorer instance and SQL execution widgets.
+        When a database explorer is closed all the SQL execution panes related to it are closed too.
+        (see addSQLExecutionTab and closeSQLExecutionTab for deitails) */
+    QMap<QWidget *, QWidgetList> sql_exec_wgts;
 
   public:
 		SQLToolWidget(QWidget * parent = 0);
     ~SQLToolWidget(void);
 
-		//! \brief Updates the connections combo
-		void updateConnections(map<QString, Connection *> &conns);
+    //! brief Force the update of the sql command input field and the syntax highligter attached to the opened tabs
+    void updateTabs(void);
 
   public slots:
     void configureSnippets(void);
@@ -55,13 +60,13 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
     void connectToServer(void);
 
     //! brief Disconnect from server and close any opened database explorer or sql execution tab
-    void disconnectFromServer(void);
+    void disconnectFromDatabases(void);
 
-		//! brief Drop the current selected database
-		void dropDatabase(void);
+    //! brief Drop the named database
+    void dropDatabase(const QString &dbname);
 
 		//! brief Show the widget to handle data in tables
-    void openDataGrid(const QString &schema=QString("public"), const QString &table=QString(), bool hide_views=true);
+    void openDataGrid(const QString &dbname=QString(), const QString &schema=QString("public"), const QString &table=QString(), bool hide_views=true);
 
     //! brief Open the current database in a database explorer instance
     void browseDatabase(void);
@@ -76,7 +81,7 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
     void closeDatabaseExplorer(int idx);
 
     //! brief Close the SQL execution tab specified by its index
-    void closeSQLExecution(int idx);
+    void closeSQLExecutionTab(int idx);
 };
 
 #endif

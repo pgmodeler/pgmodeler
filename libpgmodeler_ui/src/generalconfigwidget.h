@@ -29,12 +29,17 @@
 #include "baseconfigwidget.h"
 #include "messagebox.h"
 #include "hinttextwidget.h"
+#include "colorpickerwidget.h"
+#include "numberedtexteditor.h"
 
 class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidget {
 	private:
 		Q_OBJECT
 
     QWidgetList child_wgts;
+
+    NumberedTextEditor *font_preview_txt;
+
     static map<QString, attribs_map> config_params;
 
 		static const unsigned UNIT_MILIMETERS=0,
@@ -45,6 +50,8 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
     HintTextWidget *simp_obj_creation_ht, *confirm_validation_ht, *corner_move_ht,
     *save_last_pos_ht, *invert_pan_range_ht, *disable_smooth_ht,
     *hide_ext_attribs_ht, *hide_table_tags_ht, *hide_rel_name_ht, *code_completion_ht;
+
+    ColorPickerWidget *line_numbers_cp, *line_numbers_bg_cp, *line_highlight_cp;
 
     void hideEvent(QHideEvent *);
 
@@ -57,14 +64,18 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
     static void removeConfigurationParam(const QRegExp &param_reg);
     static map<QString, attribs_map> getConfigurationParams(void);
 
+    /*! brief Returns a single value of a configuration param in the specified section id.
+        Section id can be <configuration>, <dock-widget>, <file[n]> or <recent[n]> */
+    static QString getConfigurationParam(const QString &section_id, const QString &param_name);
+
 	public slots:
 		void applyConfiguration(void);
 		void restoreDefaults(void);
-		void updateFileAssociation(void);
 		void selectPaperSize(void);
 
 	private slots:
 		void convertMarginUnity(void);
+    void updateFontPreview(void);
 };
 
 #endif

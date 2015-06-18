@@ -47,10 +47,8 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 
 		CodeCompletionWidget *code_compl_wgt;
 
-		Connection connection;
-
-		//! brief Catalog object used to list database objects
-		Catalog catalog;
+    //! brief Store the template connection params to be used by catalogs and command execution connections
+    attribs_map tmpl_conn_params;
 
 		//! brief Current editing table columns names
 		QStringList col_names;

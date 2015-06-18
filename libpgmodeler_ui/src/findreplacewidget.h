@@ -26,7 +26,7 @@
 #define FIND_REPLACE_WIDGET_H
 
 #include "ui_findreplacewidget.h"
-#include <QTextEdit>
+#include <QPlainTextEdit>
 #include "exception.h"
 
 class FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {
@@ -34,7 +34,7 @@ class FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {
 		Q_OBJECT
 
 		//! brief QTextEdit instance that the finder is attached to
-		QTextEdit *text_edt;
+    QPlainTextEdit *text_edt;
 
 		//! brief Find the text in a backward and/or cyclic way
 		bool findText(bool backward, bool cyclic);
@@ -45,7 +45,7 @@ class FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {
 		void showEvent(QShowEvent *);
 
 	public:
-		FindReplaceWidget(QTextEdit *txt_edit, QWidget * parent = 0);
+    FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget * parent = 0);
 
 	public slots:
 		void replaceText(void);

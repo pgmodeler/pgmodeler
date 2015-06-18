@@ -30,6 +30,7 @@
 #include "modelwidget.h"
 #include "modelvalidationhelper.h"
 #include "swapobjectsidswidget.h"
+#include "htmlitemdelegate.h"
 
 /* Declaring the ValidationInfo class as a Qt metatype in order to permit
 	 that instances of the class be used as data of QVariant and QMetaType */
@@ -40,11 +41,14 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 	private:
 		Q_OBJECT
 
+    //! brief Custom delegate used to paint html texts in output tree
+    HtmlItemDelegate *htmlitem_del;
+
 		//! \brief Reference model widget
 		ModelWidget *model_wgt;
 
 		//! \brief Object that handles the model validation steps
-		ModelValidationHelper validation_helper;
+    ModelValidationHelper *validation_helper;
 
 		//! \brief Object creation order modifier
 		SwapObjectsIdsWidget *swapobjectsids_wgt;
@@ -52,11 +56,15 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		//! \brief Current fix step
 		int curr_step;
 
-	protected:
 		//! \brief Thread used to control the validation helper
 		QThread *validation_thread;
 
-		void emitValidationInProgress(void);
+		void emitValidationInProgress(void);    
+
+    //! brief Creates a new validation thread
+    void createThread(void);
+
+    void configureValidation(void);
 
 	public:
 		ModelValidationWidget(QWidget * parent = 0);
@@ -67,21 +75,24 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		//! \brief Updates the connections combo
 		void updateConnections(map<QString, Connection *> &conns);
 
+    //! brief Returns if there is a validation in progress
+    bool isValidationRunning(void);
+
 	private slots:
 		void applyFixes(void);
 		void updateValidation(ValidationInfo val_info);
-		void updateProgress(int prog, QString msg, ObjectType obj_type, QString cmd);
+    void updateProgress(int prog, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen);
 		void updateObjectName(QString obj_name, ObjectType obj_type);
-		void validateModel(void);
 		void reenableValidation(void);
-		void configureValidation(void);
 		void cancelValidation(void);
 		void swapObjectsIds(void);
     void validateRelationships(void);
+    void destroyThread(bool force=false);
 
 	public slots:
 		void hide(void);
 		void clearOutput(void);
+    void validateModel(void);
 
 	signals:
 		void s_visibilityChanged(bool);
@@ -89,8 +100,6 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
     void s_validationFinished(bool);
     void s_validationCanceled(void);
     void s_fixApplied(void);
-
-	friend class MainWindow;
 };
 
 #endif

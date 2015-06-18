@@ -165,8 +165,8 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 		connect(roles_tab, SIGNAL(s_rowAdded(int)), this, SLOT(selectRole(void)));
 		connect(permissions_tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removePermissions(void)));
 
-    name_edt->setText(/*Utf8String::create(*/object->getName(true));
-    comment_edt->setText(/*Utf8String::create(*/object->getTypeName());
+    name_edt->setText(object->getName(true));
+    comment_edt->setText(object->getTypeName());
 
 		for(priv=Permission::PRIV_SELECT; priv<=Permission::PRIV_USAGE; priv++)
 		{
@@ -253,7 +253,7 @@ void PermissionWidget::listPermissions(void)
 			count1=perm->getRoleCount();
 			for(i1=0; i1 < count1; i1++)
 			{
-        str_aux+=/*Utf8String::create(*/perm->getRole(i1)->getName();
+        str_aux+=perm->getRole(i1)->getName();
         str_aux+=QString(",");
 			}
 			str_aux.remove(str_aux.size()-1,1);
@@ -279,7 +279,7 @@ void PermissionWidget::showSelectedRoleData(void)
 
 	if(role && row_idx < 0)
 	{
-    roles_tab->setCellText(/*Utf8String::create(*/role->getName(), row, 0);
+    roles_tab->setCellText(role->getName(), row, 0);
 		roles_tab->setRowData(QVariant::fromValue<void *>(dynamic_cast<void *>(role)), row);
 	}
 	else
@@ -291,7 +291,7 @@ void PermissionWidget::showSelectedRoleData(void)
 		if(role && row_idx >= 0)
 		{
 			throw Exception(Exception::getErrorMessage(ERR_ASG_DUPL_OBJ_CONTAINER)
-                      .arg(/*Utf8String::create(*/role->getName())
+                      .arg(role->getName())
 											.arg(role->getTypeName())
 											.arg(roles_gb->title()),
 											ERR_INS_DUPLIC_ROLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -355,7 +355,7 @@ void PermissionWidget::updatePermission(void)
 		{
 			//Raises an error if the configured permission already exists
 			throw Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PERMISSION)
-                      .arg(/*Utf8String::create(*/permission->getObject()->getName())
+                      .arg(permission->getObject()->getName())
 											.arg(permission->getObject()->getTypeName()),
 											ERR_ASG_DUPLIC_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
@@ -398,7 +398,7 @@ void PermissionWidget::editPermission(void)
 			roles_tab->addRow();
 			role=permission->getRole(i);
 			roles_tab->setRowData(QVariant::fromValue<void *>(reinterpret_cast<void *>(role)), i);
-      roles_tab->setCellText(/*Utf8String::create(*/role->getName(),i,0);
+      roles_tab->setCellText(role->getName(),i,0);
 		}
 
 		roles_tab->blockSignals(false);
@@ -553,7 +553,7 @@ void PermissionWidget::updateCodePreview(void)
     if(code.isEmpty())
       code=trUtf8("-- No permissions defined for the specified object!");
 
-    code_txt->setText(code);
+    code_txt->setPlainText(code);
   }
   catch(Exception &e)
   {

@@ -31,18 +31,26 @@
 #include "modelexporthelper.h"
 #include "hinttextwidget.h"
 #include "syntaxhighlighter.h"
+#include "htmlitemdelegate.h"
+#include "numberedtexteditor.h"
 #include <QThread>
 
 class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 	private:
 		Q_OBJECT
 
+    NumberedTextEditor *sqlcode_txt;
+
+    //! brief Custom delegate used to paint html texts in output tree
+    HtmlItemDelegate *htmlitem_del;
+
     //! brief Hint texts used on the diff options
     HintTextWidget *apply_on_server_ht, *store_in_file_ht,
     *import_sys_objs_ht, *import_ext_objs_ht, *keep_cluster_objs_ht,
     *trunc_tables_ht, *ignore_errors_ht, *force_recreation_ht,
     *cascade_mode_ht, *pgsql_ver_ht, *recreate_unmod_ht,
-    *keep_obj_perms_ht, *ignore_duplic_ht, *reuse_sequences_ht;
+    *keep_obj_perms_ht, *ignore_duplic_ht, *reuse_sequences_ht,
+    *preserve_db_name_ht;
 
     //! brief Syntax highlighter used on the diff preview tab
     SyntaxHighlighter *sqlcode_hl;
@@ -81,10 +89,10 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		void closeEvent(QCloseEvent *event);
 
     //! brief Creates the helpers and threads
-    void createThreads(void);
+    void createThread(unsigned thread_id);
 
     //! brief Destroy the helpers and threads
-    void destroyThreads(void);
+    void destroyThread(unsigned thread_id);
 
     //! brief Destroy the imported model
     void destroyModel(void);
@@ -95,10 +103,14 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
     void saveDiffToFile(void);
     void finishDiff(void);
 
+    //! brief Constants used to reference the thread/helper to be handled in createThread() and destroyThread()
+    static const unsigned IMPORT_THREAD=0,
+                          DIFF_THREAD=1,
+                          EXPORT_THREAD=2;
+
 	public:
 		ModelDatabaseDiffForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 		~ModelDatabaseDiffForm(void);
-
 		void setDatabaseModel(DatabaseModel *model);
 
   private slots:

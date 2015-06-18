@@ -139,18 +139,18 @@ void OperatorClassWidget::showElementData(OperatorClassElement elem, int lin_idx
 
 	if(elem_type==OperatorClassElement::FUNCTION_ELEM)
 	{
-    elements_tab->setCellText(/*Utf8String::create(*/elem.getFunction()->getSignature(), lin_idx, 0);
-    elements_tab->setCellText(/*Utf8String::create(*/elem.getFunction()->getTypeName(), lin_idx, 1);
+    elements_tab->setCellText(elem.getFunction()->getSignature(), lin_idx, 0);
+    elements_tab->setCellText(elem.getFunction()->getTypeName(), lin_idx, 1);
 	}
 	else if(elem_type==OperatorClassElement::OPERATOR_ELEM)
 	{
-    elements_tab->setCellText(/*Utf8String::create(*/elem.getOperator()->getSignature(), lin_idx, 0);
-    elements_tab->setCellText(/*Utf8String::create(*/elem.getOperator()->getTypeName(), lin_idx, 1);
+    elements_tab->setCellText(elem.getOperator()->getSignature(), lin_idx, 0);
+    elements_tab->setCellText(elem.getOperator()->getTypeName(), lin_idx, 1);
 	}
 	else
 	{
 		elements_tab->setCellText(*elem.getStorage(), lin_idx, 0);
-    elements_tab->setCellText(/*Utf8String::create(*/BaseObject::getTypeName(OBJ_TYPE), lin_idx, 1);
+    elements_tab->setCellText(BaseObject::getTypeName(OBJ_TYPE), lin_idx, 1);
 	}
 
 	if(elem_type!=OperatorClassElement::STORAGE_ELEM)
@@ -159,7 +159,7 @@ void OperatorClassWidget::showElementData(OperatorClassElement elem, int lin_idx
     elements_tab->setCellText(QString(" "), lin_idx, 2);
 
 	if(elem_type==OperatorClassElement::OPERATOR_ELEM && elem.getOperatorFamily())
-    elements_tab->setCellText(/*Utf8String::create(*/elem.getOperatorFamily()->getName(true), lin_idx, 3);
+    elements_tab->setCellText(elem.getOperatorFamily()->getName(true), lin_idx, 3);
 	else
 		elements_tab->clearCellText(lin_idx, 3);
 

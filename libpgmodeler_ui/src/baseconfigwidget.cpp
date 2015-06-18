@@ -49,7 +49,7 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, at
 	QByteArray buf;
 
 						//Configures the schema filename for the configuration
-	QString	sch_filename=GlobalAttributes::CONFIGURATIONS_DIR +
+  QString	sch_filename=GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
 									 GlobalAttributes::DIR_SEPARATOR +
 									 GlobalAttributes::SCHEMAS_DIR +
 									 GlobalAttributes::DIR_SEPARATOR +
@@ -78,11 +78,11 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, at
 
 		//Generates the configuration from the schema file
 		schparser.ignoreEmptyAttributes(true);
-		buf.append(schparser.getCodeDefinition(sch_filename, attribs));
+    buf.append(schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(sch_filename, attribs)));
 		output.open(QFile::WriteOnly);
 
 		if(!output.isOpen())
-      throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(/*Utf8String::create(*/cfg_filename),
+      throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(cfg_filename),
 											ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Writes the generated configuration to the output file
@@ -93,7 +93,7 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, at
 	catch(Exception &e)
 	{
 		if(output.isOpen()) output.close();
-    throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTER_INV_DEF).arg(/*Utf8String::create(*/cfg_filename),
+    throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTER_INV_DEF).arg(cfg_filename),
 										ERR_FILE_NOT_WRITTER_INV_DEF,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -109,7 +109,7 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id)
 							 GlobalAttributes::CONFIGURATION_EXT;
 
 	//Build the path to the default configuration file (conf/defaults/[conf_id].conf
-	default_file=GlobalAttributes::CONFIGURATIONS_DIR +
+  default_file=GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
 							 GlobalAttributes::DIR_SEPARATOR +
 							 GlobalAttributes::DEFAULT_CONFS_DIR+
 							 GlobalAttributes::DIR_SEPARATOR +
@@ -118,7 +118,7 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id)
 
 	//Raises an error if the default file doesn't exists
 	if(!QFile::exists(default_file))
-    throw Exception(Exception::getErrorMessage(ERR_DEFAULT_CONFIG_NOT_REST).arg(/*Utf8String::create(*/default_file),
+    throw Exception(Exception::getErrorMessage(ERR_DEFAULT_CONFIG_NOT_REST).arg(default_file),
 										ERR_DEFAULT_CONFIG_NOT_REST,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
@@ -134,7 +134,7 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, at
 	{
 		config_params.clear();
 		xmlparser.restartParser();
-		xmlparser.setDTDFile(GlobalAttributes::CONFIGURATIONS_DIR +
+    xmlparser.setDTDFile(GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
 													GlobalAttributes::DIR_SEPARATOR +
 													GlobalAttributes::OBJECT_DTD_DIR +
 													GlobalAttributes::DIR_SEPARATOR +

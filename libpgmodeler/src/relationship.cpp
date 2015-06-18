@@ -59,15 +59,15 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 				!this->getReferenceTable()->getPrimaryKey()) ||
 			 (rel_type==RELATIONSHIP_NN && (!src_tab->getPrimaryKey() || !dst_tab->getPrimaryKey())))
 			throw Exception(Exception::getErrorMessage(ERR_LINK_TABLES_NO_PK)
-                      .arg(/*Utf8String::create(*/obj_name)
-                      .arg(/*Utf8String::create(*/src_tab->getName(true))
-                      .arg(/*Utf8String::create(*/dst_tab->getName(true)),
+                      .arg(obj_name)
+                      .arg(src_tab->getName(true))
+                      .arg(dst_tab->getName(true)),
 											ERR_LINK_TABLES_NO_PK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(rel_type==RELATIONSHIP_DEP && src_tab->getCopyTable())
 				throw Exception(Exception::getErrorMessage(ERR_COPY_REL_TAB_DEFINED)
-                        .arg(/*Utf8String::create(*/src_tab->getName(true))
-                        .arg(/*Utf8String::create(*/dst_tab->getName(true))
-                        .arg(/*Utf8String::create(*/src_tab->getCopyTable()->getName(true)),
+                        .arg(src_tab->getName(true))
+                        .arg(dst_tab->getName(true))
+                        .arg(src_tab->getCopyTable()->getName(true)),
 												ERR_COPY_REL_TAB_DEFINED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		copy_options=copy_op;
@@ -154,10 +154,10 @@ void Relationship::setNamePattern(unsigned pat_id, const QString &pattern)
 
     if(pat_id > PK_COL_PATTERN)
 			throw Exception(Exception::getErrorMessage(ERR_REF_INV_NAME_PATTERN_ID)
-                      .arg(/*Utf8String::create(*/this->getName()),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                      .arg(this->getName()),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(!BaseObject::isValidName(aux_name))
 			throw Exception(Exception::getErrorMessage(ERR_ASG_INV_NAME_PATTERN)
-                      .arg(/*Utf8String::create(*/this->getName()),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                      .arg(this->getName()),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		name_patterns[pat_id]=pattern;
 		this->invalidated=true;
@@ -232,7 +232,7 @@ void Relationship::setSpecialPrimaryKeyCols(vector<unsigned> &cols)
 		relationship type is identifier or self relationship */
 	if(!cols.empty() && (isSelfRelationship() || isIdentifier()))
 		throw Exception(Exception::getErrorMessage(ERR_INV_USE_ESPECIAL_PK)
-                    .arg(/*Utf8String::create(*/this->getName()),
+                    .arg(this->getName()),
 										ERR_INV_USE_ESPECIAL_PK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->column_ids_pk_rel=cols;
@@ -266,7 +266,7 @@ void Relationship::createSpecialPrimaryKey(void)
 		pk_special->setDeclaredInTable(this->getRelationshipType()!=RELATIONSHIP_GEN);
 
     gen_cols=gen_columns;
-    for(auto attrib : rel_attributes)
+    for(auto &attrib : rel_attributes)
       gen_cols.push_back(dynamic_cast<Column *>(attrib));
 
 		//Adds the columns to the primary key
@@ -282,7 +282,7 @@ void Relationship::createSpecialPrimaryKey(void)
 		{
 			this->addObject(pk_special);
 		}
-		catch(Exception &e)
+    catch(Exception &)
 		{
 			//Case some error is raised deletes the special primary key
 			delete(pk_special);
@@ -480,7 +480,7 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 	{
 		if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
-                      .arg(/*Utf8String::create(*/tab_obj->getName())
+                      .arg(tab_obj->getName())
 											.arg(tab_obj->getTypeName()),
 											ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		else
@@ -548,11 +548,11 @@ void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
 		//Raises an error if the column to be removed is referenced by a relationship constraint
 		if(refer)
 			throw Exception(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE)
-                      .arg(/*Utf8String::create(*/col->getName())
+                      .arg(col->getName())
 											.arg(col->getTypeName())
-                      .arg(/*Utf8String::create(*/constr->getName())
+                      .arg(constr->getName())
 											.arg(constr->getTypeName())
-                      .arg(/*Utf8String::create(*/this->getName(true))
+                      .arg(this->getName(true))
 											.arg(this->getTypeName()),
 											ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -1029,11 +1029,11 @@ void Relationship::addColumnsRelGen(void)
 			throw Exception(msg, err_type,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
-		//Creates the special primary key if exists
-		this->createSpecialPrimaryKey();
+    //Creates the special primary key if exists
+    this->createSpecialPrimaryKey();
 
-		//Adds the constraint on the receiver table
-		this->addConstraints(getReceiverTable());
+    //Adds the constraint on the receiver table
+    this->addConstraints(getReceiverTable());
 	}
 	catch(Exception &e)
 	{
@@ -1042,7 +1042,48 @@ void Relationship::addColumnsRelGen(void)
 		this->disconnectRelationship();
 
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-	}
+  }
+}
+
+void Relationship::addConstraintsRelGen(void)
+{
+  Table *parent_tab=dynamic_cast<Table *>(getReferenceTable()),
+        *child_tab=dynamic_cast<Table *>(getReceiverTable());
+  vector<TableObject *> *constrs=parent_tab->getObjectList(OBJ_CONSTRAINT);
+  Constraint *ck_constr=nullptr, *constr=nullptr, *aux_constr=nullptr;
+
+  try
+  {
+    for(auto &obj : *constrs)
+    {
+      constr=dynamic_cast<Constraint *>(obj);
+
+      if(constr->getConstraintType()==ConstraintType::check && !constr->isNoInherit())
+      {
+        aux_constr=dynamic_cast<Constraint *>(child_tab->getObject(constr->getName(), OBJ_CONSTRAINT));
+
+        if(!aux_constr)
+        {
+          ck_constr=new Constraint;
+          (*ck_constr)=(*constr);
+          ck_constr->setParentTable(nullptr);
+          ck_constr->setAddedByGeneralization(true);
+          child_tab->addConstraint(ck_constr);
+          ck_constraints.push_back(ck_constr);
+        }
+        else if(aux_constr->getConstraintType()!=ConstraintType::check ||
+                aux_constr->getExpression().simplified()!=constr->getExpression().simplified())
+          throw Exception(Exception::getErrorMessage(ERR_INCOMP_CONSTRS_INHERIT_REL)
+                          .arg(constr->getName()).arg(parent_tab->getName(false, true))
+                          .arg(aux_constr->getName()).arg(child_tab->getName(false, true)),
+                          ERR_INCOMP_CONSTRS_INHERIT_REL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+      }
+    }
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
 }
 
 void Relationship::connectRelationship(void)
@@ -1053,7 +1094,10 @@ void Relationship::connectRelationship(void)
 		{
 			if(rel_type==RELATIONSHIP_GEN)
 			{
-				//Creates the columns on the receiver table following the rules for generalization rules
+        //Copying the CHECK constraints before adding custom constraints like special pk
+        addConstraintsRelGen();
+
+        //Creates the columns on the receiver table following the rules for generalization rules
 				addColumnsRelGen();
 
 				//The reference table is added as parent table on the receiver
@@ -1396,9 +1440,9 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 		if((!src_pk && (rel_type==RELATIONSHIP_1N || rel_type==RELATIONSHIP_11)) ||
 			 (!src_pk && !dst_pk && rel_type==RELATIONSHIP_NN))
 			throw Exception(Exception::getErrorMessage(ERR_LINK_TABLES_NO_PK)
-                      .arg(/*Utf8String::create(*/this->obj_name)
-                      .arg(/*Utf8String::create(*/ref_tab->getName(true))
-                      .arg(/*Utf8String::create(*/recv_tab->getName(true)),
+                      .arg(this->obj_name)
+                      .arg(ref_tab->getName(true))
+                      .arg(recv_tab->getName(true)),
 											ERR_LINK_TABLES_NO_PK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		count=pk->getColumnCount(Constraint::SOURCE_COLS);
@@ -1687,14 +1731,14 @@ void Relationship::addColumnsRelNn(void)
 
     if(!single_pk_column)
     {
-      for(auto col : gen_columns)
+      for(auto &col : gen_columns)
         pk_tabnn->addColumn(col, Constraint::SOURCE_COLS);
     }
     else
     {
       pk_tabnn->addColumn(pk_col, Constraint::SOURCE_COLS);
 
-      for(auto col : gen_columns)
+      for(auto &col : gen_columns)
         col->setNotNull(true);
     }
 
@@ -1925,7 +1969,16 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 					table->removeObject(pk_special);
 
 				if(rel_type==RELATIONSHIP_GEN)
+        {
 					table->removeObject(getReferenceTable());
+
+          while(!ck_constraints.empty())
+          {
+            table->removeObject(ck_constraints.back());
+            delete(ck_constraints.back());
+            ck_constraints.pop_back();
+          }
+        }
 				else
 					table->setCopyTable(nullptr);
 			}
@@ -2124,7 +2177,7 @@ void Relationship::forceInvalidate(void)
 
 bool Relationship::isInvalidated(void)
 {
-	unsigned rel_cols_count, tab_cols_count, i, count;
+  unsigned rel_cols_count=0, tab_cols_count=0, i=0, count=0;
 	Table *table=nullptr, *table1=nullptr;
 	Constraint *fk=nullptr, *fk1=nullptr, *constr=nullptr, *pk=nullptr;
 	bool valid=false;
@@ -2241,6 +2294,13 @@ bool Relationship::isInvalidated(void)
 			if this not happen indicates that a reference table column was renamed */
 			for(i=0; i < tab_cols_count && valid; i++)
 				valid=table1->getColumn(table->getColumn(i)->getName(true));
+
+      //Checking if the check constraints were not renamed in the parent table
+      for(i=0; i < ck_constraints.size() && valid; i++)
+      {
+        constr=table->getConstraint(ck_constraints[i]->getName(true));
+        valid=(constr && !constr->isNoInherit() && constr->getConstraintType()==ConstraintType::check);
+      }
 		}
 
 		/* For n-n relationships, it is necessary the comparisons:

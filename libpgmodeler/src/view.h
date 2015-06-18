@@ -74,6 +74,8 @@ class View: public BaseTable {
     when TABLE.* syntax is used */
     QStringList getColumnsList(void);
 
+    void setSQLObjectAttribute(void);
+
 	public:
 		View(void);
 		~View(void);
@@ -193,6 +195,8 @@ class View: public BaseTable {
 
 		//! \brief Returns the SQL / XML definition for the view
 		virtual QString getCodeDefinition(unsigned def_type) final;
+
+    virtual QString getDropDefinition(bool cascade) final;
 
 		/*! \brief Returns whether the view references columns added
 		 by relationship. This method is used as auxiliary

@@ -148,12 +148,12 @@ QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs)
   {
     QRectF rect=QGraphicsScene::itemsBoundingRect();
     QList<QGraphicsItem *> items=this->items();
-    float x=rect.width(), y=rect.height();
+    double x=rect.width(), y=rect.height();
     BaseObjectView *obj_view=nullptr;
     QPointF pnt;
     BaseGraphicObject *graph_obj=nullptr;
 
-    for(auto item : items)
+    for(auto &item : items)
     {
       obj_view=dynamic_cast<BaseObjectView *>(item);
 
@@ -187,7 +187,7 @@ void ObjectsScene::setGridSize(unsigned size)
 	if(size >= 20 || grid.style()==Qt::NoBrush)
 	{
 		QImage grid_img;
-		float width, height, x, y;
+		double width, height, x, y;
 		int img_w, img_h;
 		QSizeF aux_size;
 		QPrinter printer;
@@ -199,8 +199,8 @@ void ObjectsScene::setGridSize(unsigned size)
 		aux_size-=page_margins.size();
 
 		//Calculates where the extreme width and height where delimiter lines will be drawn
-		width=aux_size.width()/static_cast<float>(size) * size;
-		height=aux_size.height()/static_cast<float>(size) * size;
+		width=aux_size.width()/static_cast<double>(size) * size;
+		height=aux_size.height()/static_cast<double>(size) * size;
 
 		//Calculates the grid pixmpa size
 		img_w=ceil(width/size)*size;
@@ -555,7 +555,7 @@ QGraphicsView *ObjectsScene::getActiveViewport(void)
 {
   QGraphicsView *view_p=nullptr;
 
-  for(auto view : this->views())
+  for(auto &view : this->views())
   {
     if(view && view->isActiveWindow())
     {
@@ -686,7 +686,7 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
   {
     unsigned i, count;
     QList<QGraphicsItem *> items=this->selectedItems(), rel_list;
-    float x1,y1,x2,y2, dx, dy;
+    double x1,y1,x2,y2, dx, dy;
     QRectF rect;
     SchemaView *sch_view=nullptr;
     vector<QPointF> points;
@@ -696,7 +696,7 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     RelationshipView *rel=nullptr;
 
     //Gathering the relationships inside the selected schemsa in order to move their points too
-    for(auto item : items)
+    for(auto &item : items)
     {
       sch_view=dynamic_cast<SchemaView *>(item);
 
@@ -712,7 +712,7 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
           base_rels=dynamic_cast<DatabaseModel *>(schema->getDatabase())->getObjects(BASE_RELATIONSHIP, schema);
           rels.insert(rels.end(), base_rels.begin(), base_rels.end());
 
-          for(auto rel : rels)
+          for(auto &rel : rels)
           {
             base_rel=dynamic_cast<BaseRelationship *>(rel);
 
@@ -895,7 +895,7 @@ vector<QRectF> ObjectsScene::getPagesForPrinting(const QSizeF &paper_size, const
 {
   vector<QRectF> pages;
   QRectF page_rect, max_rect;
-  float width, height, page_width, page_height;
+  double width, height, page_width, page_height;
   unsigned h_page=0, v_page=0, start_h=99999, start_v=99999;
   QList<QGraphicsItem *> list;
 

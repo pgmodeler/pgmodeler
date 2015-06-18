@@ -43,7 +43,7 @@ class ModelWidget: public QWidget {
     NewObjectOverlayWidget *new_obj_overlay_wgt;
 
 		//! \brief Current zoom aplied to the scene
-		float current_zoom;
+		double current_zoom;
 
 		//! \brief Indicates if the model was modified by some operation
     bool modified;
@@ -188,17 +188,17 @@ class ModelWidget: public QWidget {
 
 		/*! \brief Reorganizes the schemas over the scene. The parameters are: an origin point,
 		number of tables per row, schemas per row and a object spacing */
-		void rearrangeSchemas(QPointF origin, unsigned tabs_per_row, unsigned sch_per_row, float obj_spacing);
+		void rearrangeSchemas(QPointF origin, unsigned tabs_per_row, unsigned sch_per_row, double obj_spacing);
 
 		/*! \brief Reorganizes the tables of a specific schema over the scene. The parameter are:
 		 the schema in which the tables will be rearranged, an origin point, number of tables per row
 		 a object spacing */
-		void rearrangeTables(Schema *schema, QPointF origin, unsigned tabs_per_row, float obj_spacing);
+		void rearrangeTables(Schema *schema, QPointF origin, unsigned tabs_per_row, double obj_spacing);
 
 	public:
-    static constexpr float MINIMUM_ZOOM=0.05f,
-													 MAXIMUM_ZOOM=4.0f,
-													 ZOOM_INCREMENT=0.05f;
+    static constexpr double MINIMUM_ZOOM=0.050000,
+                            MAXIMUM_ZOOM=4.000001,
+                            ZOOM_INCREMENT=0.050000;
 
 		ModelWidget(QWidget *parent = 0);
 		~ModelWidget(void);
@@ -216,10 +216,10 @@ class ModelWidget: public QWidget {
 		void showObjectForm(ObjectType obj_type, BaseObject *object=nullptr, BaseObject *parent_obj=nullptr, QPointF pos=QPointF(NAN, NAN));
 
 		//! \brief Applies a zoom factor to the model
-		void applyZoom(float zoom);
+		void applyZoom(double zoom);
 
 		//! \brief Returns the current zoom factor applied to the model
-		float getCurrentZoom(void);
+		double getCurrentZoom(void);
 
 		//! \brief Returns if the model is modified or not
 		bool isModified(void);
@@ -245,6 +245,8 @@ class ModelWidget: public QWidget {
     /*! brief Save the last editing position on canvas as well the zoom factor. This method return true when
         the current values was saved on the database model */
     bool saveLastCanvasPosition(void);
+
+    void setUpdatesEnabled(bool value);
 
 private slots:
 		//! \brief Handles the signals that indicates the object creation on the reference database model
@@ -364,7 +366,7 @@ private slots:
 		void s_objectsMoved(void);
 		void s_objectCreated(void);
 		void s_objectRemoved(void);
-		void s_zoomModified(float);
+		void s_zoomModified(double);
 		void s_modelResized(void);
 
 		//! \brief Signal emitted whenever a object is created / edited using the form

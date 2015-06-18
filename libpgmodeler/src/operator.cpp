@@ -72,8 +72,8 @@ bool Operator::isValidName(const QString &name)
 	{
 		//The set ~!@#%^&|' is defined from position 7  in the valid_chars string
 		len=valid_chars.size();
-		for(pos=7; pos < len && valid; pos++)
-			valid=(name.indexOf(valid_chars[pos]) < 0);
+    for(pos=7; pos < len && valid; pos++)
+      valid|=(name.indexOf(valid_chars[pos]) >= 0);
 	}
 
 	return(valid);
@@ -99,14 +99,14 @@ void Operator::setFunction(Function *func, unsigned func_type)
 		//Raises an error if the function is not allocated
 		if(!func)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
-                      .arg(/*Utf8String::create(*/this->getName(true))
+                      .arg(this->getName(true))
 											.arg(BaseObject::getTypeName(OBJ_OPERATOR)),
 											ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		/* Raises an error if the parameter count is invalid. To be used by the operator
 		 the function must own 1 or 2 parameters */
 		else if(func->getParameterCount()==0 || func->getParameterCount() > 2)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
-                      .arg(/*Utf8String::create(*/this->getName())
+                      .arg(this->getName())
 											.arg(BaseObject::getTypeName(OBJ_OPERATOR)),
 											ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else
@@ -141,7 +141,7 @@ void Operator::setFunction(Function *func, unsigned func_type)
           ((argument_types[0]!=QString("any") && argument_types[0]!=param_type1) ||
            (argument_types[1]!=QString("any") && argument_types[1]!=param_type1))))
 				throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_PARAMS)
-                        .arg(/*Utf8String::create(*/this->getName())
+                        .arg(this->getName())
 												.arg(BaseObject::getTypeName(OBJ_OPERATOR)),
 												ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
@@ -177,8 +177,8 @@ void Operator::setOperator(Operator *oper, unsigned op_type)
 		if(oper && op_type==OPER_COMMUTATOR && argument_types[LEFT_ARG]!=oper->argument_types[RIGHT_ARG])
 		{
 			throw Exception(Exception::getErrorMessage(ERR_ASG_INV_COM_OPEERATOR)
-                      .arg(/*Utf8String::create(*/oper->getSignature(true))
-                      .arg(/*Utf8String::create(*/this->getSignature(true)),
+                      .arg(oper->getSignature(true))
+                      .arg(this->getSignature(true)),
 											ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 		/* Validating Negator OP: According to the PostgreSQL documentation the negator
@@ -191,8 +191,8 @@ void Operator::setOperator(Operator *oper, unsigned op_type)
 						 argument_types[RIGHT_ARG]!=oper->argument_types[RIGHT_ARG]))
 		{
 			throw Exception(Exception::getErrorMessage(ERR_ASG_INV_NEG_OPERATOR)
-                      .arg(/*Utf8String::create(*/oper->getSignature(true))
-                      .arg(/*Utf8String::create(*/this->getSignature(true)),
+                      .arg(oper->getSignature(true))
+                      .arg(this->getSignature(true)),
 											ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 

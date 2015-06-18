@@ -1,6 +1,156 @@
 Change Log
 ---------
 
+v0.8.1-beta
+------
+<em>Codename: <strong>Faithful Elephant</strong></em><br/>
+<em>Release date: June 04, 2015</em><br/>
+
+* [New] Added the ability to handle databases in different connections at once without the need to disconnect from a server and connect to another.
+* [New] Added an option to preserve database name (do not rename) in diff process.
+* [New] Added a numbered code editor in ModelDatabaseDiffForm.
+* [New] Created a basic structure to start building unit tests based upon Qtest for new features and fixes.
+* [New] Added an automatic quotation mechanism for PostgreSQL's reserved keywords when they are begin used as object's name.
+* [New] Created the function createNumberedTextEditor in PgModelerUiNS to be used as a factory of NumberedTextEdit instances.
+* [New] Added a font preview widget in GeneralConfigWidget.
+* [New] Added the ability to configure line numbers font/bg colors and highligt color in GeneralConfigWidget.
+* [New] Created a class ReadOnlyItemDelegate to avoid the edition of items in data grid / tree widgtes.
+* [New] Added a donate widget in MainWindow.
+* [New] Created a new class NumberedTextEdit which goal is to display source code with line numbering and highlight color.
+* [New] Created a html based delegate item in order to render tree items with html format.
+* [New] Added a fallback value for environment values not set during startup.
+* [Change] Minor improvement on ConnectionsConfigWidget when user left a connection open for editing and don't save it. The software will ask for save the connection.
+* [Change] Improvements done to DataManipulationForm in order to avoid let connections open leading to application crash when the connection timeout is reached.
+* [Change] Added a new constructor to Connection class that accepts a map of connection params.
+* [Change] Removed the installation of PGMODELER_TMP_DIR environment variable in installer.
+* [Change] Removed the usage of TEMPDIR variable in pgmodeler.pri
+* [Change] Moved the code to create temp dir to Application class.
+* [Change] Temporary folder now is isolated in pgModeler's configuration dir at user's home (platform specific) to avoid a user to see temp files from another.
+* [Change] Removed the "stay on top" behavior on ModelOverviewWidget to avoid the blocking of application dialogs is some systems.
+* [Change] Minor improvement on DataManipulationForm when creating the window title based upon the connected database.
+* [Change] Disabled the cascade drop for roles and tablespaces (not supported) in DatabaseExplorerWidget.
+* [Change] Minor improvement on SQLToolWidget to remove the excessive usage of buttons to connect and browse databases.
+* [Change] Removed the "connect" button from ModelDatabaseDiffForm. Now the databases are listed when the connection is selected in combo.
+* [Change] Removed the "connect" button from DatabaseImportForm. Now when selecting a connection the databases will be listed.
+* [Change] Minor improvement on DataManipulationForm to load the first 100 rows of the current table each time the index of combobox changes.
+* [Change] Moved the database drop button from SQLToolWidget to DatabaseExplorerWidget. Now each instance of the latter class emits a signal to SQLToolWidget to perform the db drop.
+* [Change] Removed the mothod ModelsDiffHelper::setDiffOptions and create setDiffOption and a set of OPT_xxx constants to access the diff options.
+* [Change] Minor improvement on SQLToolWidget to force focus of the current SQLExecutionWidget instance.
+* [Change] Replaced the QPlainTextEdit instance in SnippetsConfigWidget by NumberedTextEditor.
+* [Change] Added instances of NumberedTextEditor to CustomSQLWidget to be used as appended/prepended code input.
+* [Change] Changed the default font size of source code editors to 10pt.
+* [Change] Minor size adjustments on aboutwidget.ui and donatewidget.ui
+* [Change] Improved the windeploy.sh to build binaries in x86 and x64 at once.
+* [Change] Minor improvement on linuxdeploy.sh to build demo and full versions at once.
+* [Change] Avoiding the copy of ui-style.conf during startup.
+* [Change] Attributes and general functions in namespaces are now declared as extern in .h and defined in .cpp to force them to be initialized once.
+* [Fix] Minor fix on windeploy.sh when building all releases at once.
+* [Fix] Fixed the demo version build error.
+* [Fix] Fix a crash when recreating Views that have child objects (rules or triggers) in DatabaseModel::storeSpecialObjectsXML.
+* [Fix] Fixed a typo when displaying column default values as nextval(seqname).
+* [Fix] Fixed a bug on DatabaseExplorerWidget that was selecting the wrong database when opening the data grid.
+* [Fix] Fix a bug on DataManipulationForm that was preventing user to delete rows in tables with no primary key.
+* [Fix] Minor signal message correction in DatabaseImportHelper.
+* [Fix] Minor hint text correction in ModelDatabaseDiffForm.
+* [Fix] Fix a bug on diff process that was not detecting precision/length changes in column types.
+* [Fix] Fixed a bug in CLI that was not considering the PWD when dealing with input/output files.
+* [Fix] Fix a crash in PgModelerCLI when exporting model to PNG.
+* [Fix] Minor fix in SyntaxHighlighter to apply font changes in live objects instead of only apply font changes in new objects (requires the use of rehighlight())
+* [Fix] Fixed a bug on SyntaxHighlighter that was rehighlighting endlessly a document leading to application crash.
+* [Fix] Minor adjust on pgmodeler executable to find libs at runtime (Mac OSX).
+* [Fix] Fixed a crash when creating a new table containing a new index.
+* [Fix] Fixed a bug that was permitting to set precision/scale to a user-defined type.
+* [Fix] Minor fix on catalog query that retrieve types. Now types derivated from materialized views are not listed.
+* [Fix] More fixes related to inherited columns and check constraints. Now diff infos containing modification for these kind of objects are discarded.
+* [Fix] Fixed the import of inherited check constraints.
+* [Fix] Minor fixes on DatabaseImportForm, ModelDatabaseDiffForm, ModelValidationWidget to use the html item delegate.
+* [Fix] Minor fix on model export and validation progress.
+
+v0.8.1-alpha1
+------
+<em>Codename: <strong>Faithful Elephant</strong></em><br/>
+<em>Release date: April 20, 2015</em><br/>
+
+* [New] Added the ability to import objects from an existent database to a currently working model.
+* [New] Improvements on DatabaseImportHelper to dump the objects attributes in debug mode or to the log file when "ignore errors" is checked.
+* [New] Added a fix step in CLI to fix functions signatures that includes OUT parameters.
+* [Change] Minor adjustment on model validation progress and output.
+* [Change] Minor adjust on model export progress on CLI.
+* [Change] Minor improvements on objects validation process when dealing with broken relationship config as well with FKs referencing a column created before it.
+* [Change] Minor improvement on object selector widget to show the constraint name correctly.
+* [Change] Change in user's configuration copy process. Now only configuration files are copied, folders are not copied anymore.
+* [Change] The CLI now references template configuration files instead of user's when configuring file association.
+* [Change] The settings related widgets now references template configuration files in order to load defaults or save settings.
+* [Change] Improved the way threads are handled in ModelDatabaseDiffForm.
+* [Change] Changed the way thread is used in ModelValidationWidget. Now it'll be created in each time the "Validate" button is clicked.
+* [Change] Removed unused actions in MainWindow.
+* [Change] Removed sleepThread method from ModelExportHelper, ModelValidationHelper and DatabaseImportHelper.
+* [Change] Disabled the tabChangeFocus property of sql input field in SQLExecutionWidget.
+* [Change] Minor adjust on tag objects positioning.
+* [Change] Fixed the generation of function's signature in Function. Now OUT parameters aren't included.
+* [Change] Fixed the generation of function's signature in DatabaseImportHelper. Parameters signaled with 't' in their modes aren't included.
+* [Change] Restored the old behavior of Connection class to append only error code as extra info in exceptions to avoid break other features that need that code.
+* [Fix] Added a proper quotation to the command used to trigger the crash handler.
+* [Fix] Minor fix when displaying the row amount for the selected table on database explorer.
+* [Fix] Added a patch into swap id dialog when dealing with broken relationships.
+* [Fix] Minor fix on relationship line configuration when redrawing them during the relationship validation process.
+* [Fix] Minor fix when drawing views with extended attributes.
+* [Fix] Minor fix when enabling/disabling zoom buttons when the current zoom reaches the minimum or maximum values.
+* [Fix] Minor fix on thread operations on Windows system.
+* [Fix] Fixed the export to SQL and PNG in thread mode.
+* [Fix] Added missing breaking points in ModelsDiffHelper to help the thread to shutdown.
+* [Fix] Fixed the UI hang up when exporting a huge model by using BlockingQueueConnection in some slots to avoid thread consume all CPU resources.
+* [Fix] Fixed a endless loop in PgModelerUiNS::formatMessage.
+* [Fix] Minor fix in the generation of ALTER TABLE .. ADD COLUMN command.
+* [Fix] Fixed current tab index in AboutWidget.
+* [Fix] Minor fix on SwapObjectsIdsWidget to invalidate the database forcing the validation process.
+* [Fix] Fixed the operator name validation.
+* [Fix] Adding missing flag icons in AboutWidget.
+
+v0.8.1-alpha
+------
+<em>Codename: <strong>Faithful Elephant</strong></em><br/>
+<em>Release date: April 02, 2015</em><br/>
+
+* [New] Added a "Contributors" section in "About pgModeler" dialog.
+* [New] Introduced the NO_UPDATE_CHECK variable in qmake to turn off update verification code specifically for package maintainers usage.
+* [New] Generated installers has the ability to install .dbm file association (Windows and Linux).
+* [New] Introduced a new env var PGMODELER_TMPL_CONF_DIR to override the template configuration location.
+* [New] The "plugins" folder is created automatically at startup if does not exits.
+* [New] Added the ability to show original SQL code, dependencies and children's code for test purposes in source code preview dialog.
+* [New] Added the method DatabaseModel::getCreationOrder(BaseObject *) that retrieves all objects needed to create a certain object.
+* [New] Added an action to save SQL code to file in source code preview dialog.
+* [New] Added an option to list indirect refereces to an object in ObjectDepsRefsWidget.
+* [Change] Minor adjust on Windows installer script.
+* [Change] Deployment scripts on all platforms now uses PostgreSQL 9.4 and Qt 5.4.1 by default.
+* [Change] Replaced float data types to double in libobjrenderer and libpgmodeler_ui classes to avoid lost of precision mainly when handling graphical objects.
+* [Change] File association procedures were moved to CLI. Now the user can install/remove file association by using '--dbm-mime-type' option (Windows and Linux).
+* [Change] Minor adjustments in PgModelerCLI menu.
+* [Change] Removed unused variables and commented code throughout the code.
+* [Change] The build process now uses libxml2 from PostgreSQL installation (Windows).
+* [Change] Minor adjustment on how the duplicated elements are removed from lists in the methods __getObjectDependencies(), __getObjectReferences(), findObject() in DatabaseModel class.
+* [Change] Removed uneeded "using namespace" statements.
+* [Change] Adjustment on start-pgmodeler.sh script to use pgmodeler.vars as source of needed environment variables (Linux).
+* [Change] Improvements on how objects are recreated using the "recreate unmodifiable" option on Diff process.
+* [Change] Enhanced the control of database explorer widgets and the SQL execution panes related to them.
+* [Change] Added a clear error message when required fields are not set when creating/updating object.
+* [Change] Installation folder/files arrangement reverted to previous settings in order to avoid "DLL entry point errors" errors (Windows).
+* [Change] Minor change in pgmodeler.pri to set default output paths according to FSH standard (Linux).
+* [Fix] Minor fixes and adjustments on the deployment script and installer configuration file (windows).
+* [Fix] Minor fixes when dealing with CLI and crash handler calls inside code (MacOSX).
+* [Fix] Minor fix on range based loops using auto keyword.
+* [Fix] Fixing invalid shebang in shell scripts (Linux).
+* [Fix] Fix tab order in ConnectionsConfigWidget.
+* [Fix] Minor fix when resizing HintTextWidget instances.
+* [Fix] Fixed a bug when importing constraint triggers.
+* [Fix] Minor bug fix when dropping table children objects in database explorer.
+* [Fix] Minor fix when generating XML code for permissions.
+* [Fix] Minor bug fix on database explorer at manage view to avoid left opened connections.
+* [Fix] Added a patch in model fix process to correctly move indexes/triggers/rules from within tables to outside their xml definition.
+* [Fix] Fixed a bug when configuring encoding for database. Now the "Default" value can be used normally.
+* [Fix] Fixed a bug on model fix process that was removing empty lines (only with breaks) from functions definitions as well from other objects.
+* [Fix] Fix crash when converting a serial column which is not assigned to a primary key.
+
 v0.8.0
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em><br/>

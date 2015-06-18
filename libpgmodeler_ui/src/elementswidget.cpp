@@ -193,7 +193,7 @@ void ElementsWidget::updateColumnsCombo(void)
 			for(i=0; i < col_count; i++)
 			{
 				column=table->getColumn(i);
-        column_cmb->addItem(/*Utf8String::create(*/column->getName(),
+        column_cmb->addItem(column->getName(),
 														QVariant::fromValue<void *>(column));
 			}
 		}
@@ -203,7 +203,7 @@ void ElementsWidget::updateColumnsCombo(void)
 			for(i=0; i < col_count; i++)
 			{
 				column=rel->getAttribute(i);
-        column_cmb->addItem(/*Utf8String::create(*/column->getName(),
+        column_cmb->addItem(column->getName(),
 														QVariant::fromValue<void *>(column));
 			}
 		}
@@ -231,24 +231,24 @@ void ElementsWidget::showElementData(Element *elem, int elem_idx)
 
 	if(elem->getColumn())
 	{
-    elements_tab->setCellText(/*Utf8String::create(*/elem->getColumn()->getName(), elem_idx, 0);
-    elements_tab->setCellText(/*Utf8String::create(*/elem->getColumn()->getTypeName(), elem_idx, 1);
+    elements_tab->setCellText(elem->getColumn()->getName(), elem_idx, 0);
+    elements_tab->setCellText(elem->getColumn()->getTypeName(), elem_idx, 1);
 	}
 	else
 	{
-    elements_tab->setCellText(/*Utf8String::create(*/elem->getExpression(), elem_idx, 0);
+    elements_tab->setCellText(elem->getExpression(), elem_idx, 0);
 		elements_tab->setCellText(trUtf8("Expression"), elem_idx, 1);
 	}
 
 	elements_tab->clearCellText(elem_idx, 2);
 	if(idxelem && idxelem->getCollation())
-    elements_tab->setCellText(/*Utf8String::create(*/idxelem->getCollation()->getName(true), elem_idx, 2);
+    elements_tab->setCellText(idxelem->getCollation()->getName(true), elem_idx, 2);
 	else if(excelem && excelem->getOperator())
-    elements_tab->setCellText(/*Utf8String::create(*/excelem->getOperator()->getSignature(true), elem_idx, 2);
+    elements_tab->setCellText(excelem->getOperator()->getSignature(true), elem_idx, 2);
 
 	elements_tab->clearCellText(elem_idx, 3);
 	if(elem->getOperatorClass())
-    elements_tab->setCellText(/*Utf8String::create(*/elem->getOperatorClass()->getName(true), elem_idx, 3);
+    elements_tab->setCellText(elem->getOperatorClass()->getName(true), elem_idx, 3);
 
 	if(elem->isSortingEnabled())
 	{
@@ -340,12 +340,12 @@ void ElementsWidget::editElement(int elem_idx)
 	if(elem->getColumn())
 	{
 		column_rb->setChecked(true);
-    column_cmb->setCurrentIndex(column_cmb->findText(/*Utf8String::create(*/elem->getColumn()->getName()));
+    column_cmb->setCurrentIndex(column_cmb->findText(elem->getColumn()->getName()));
 	}
 	else
 	{
 		expression_rb->setChecked(true);
-    elem_expr_txt->setPlainText(/*Utf8String::create(*/elem->getExpression());
+    elem_expr_txt->setPlainText(elem->getExpression());
 	}
 
 	if(elem->getSortingAttribute(IndexElement::ASC_ORDER))

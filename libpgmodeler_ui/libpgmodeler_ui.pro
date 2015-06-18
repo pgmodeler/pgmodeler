@@ -100,7 +100,12 @@ SOURCES += src/mainwindow.cpp \
            src/snippetsconfigwidget.cpp \
            src/pgmodeleruins.cpp \
            src/bugreportform.cpp \
-    src/sqlexecutionwidget.cpp
+           src/sqlexecutionwidget.cpp \
+           src/htmlitemdelegate.cpp \
+           src/donatewidget.cpp \
+    src/readonlyitemdelegate.cpp \
+    src/numberedtexteditor.cpp \
+    src/linenumberswidget.cpp
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
@@ -187,7 +192,12 @@ HEADERS += src/mainwindow.h \
            src/snippetsconfigwidget.h \
            src/pgmodeleruins.h \
            src/bugreportform.h \
-    src/sqlexecutionwidget.h
+           src/sqlexecutionwidget.h \
+           src/htmlitemdelegate.h \
+           src/donatewidget.h \
+    src/readonlyitemdelegate.h \
+    src/numberedtexteditor.h \
+    src/linenumberswidget.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \
@@ -262,7 +272,9 @@ FORMS += ui/mainwindow.ui \
          ui/databaseexplorerwidget.ui \
          ui/snippetsconfigwidget.ui \
          ui/bugreportform.ui \
-    ui/sqlexecutionwidget.ui
+         ui/sqlexecutionwidget.ui \
+         ui/donatewidget.ui \
+    ui/sourcecodeeditorform.ui
 
 unix|windows: LIBS += -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
                       -L$$OUT_PWD/../libpgconnector/ -lpgconnector \

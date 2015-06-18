@@ -66,7 +66,7 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 	public:
 		TableWidget(QWidget * parent = 0);
 
-		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Table *table, float pos_x, float pos_y);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Table *table, double pos_x, double pos_y);
 
 	private slots:
 		//! \brief Adds or edit a object on the object table that calls the slot

@@ -49,6 +49,11 @@ void ConfigurationForm::hideEvent(QHideEvent *)
   icons_lst->setCurrentRow(GENERAL_CONF_WGT);
 }
 
+void ConfigurationForm::showEvent(QShowEvent *)
+{
+  snippets_conf->snippet_txt->updateLineNumbers();
+}
+
 void ConfigurationForm::reject(void)
 {
 	try

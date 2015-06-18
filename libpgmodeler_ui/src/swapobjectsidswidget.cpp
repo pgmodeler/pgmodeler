@@ -5,7 +5,8 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 	try
 	{
 		QGridLayout *swap_objs_grid=new QGridLayout(this);
-    vector<ObjectType> types=BaseObject::getObjectTypes(true, {OBJ_PERMISSION, OBJ_ROLE, OBJ_TEXTBOX, OBJ_RELATIONSHIP, OBJ_COLUMN, OBJ_CONSTRAINT });
+    vector<ObjectType> types=BaseObject::getObjectTypes(true, {OBJ_PERMISSION, OBJ_ROLE, OBJ_TEXTBOX,
+                                                               /*OBJ_RELATIONSHIP,*/ OBJ_COLUMN, OBJ_CONSTRAINT });
     setupUi(this);
 
 		src_object_sel=nullptr;
@@ -43,10 +44,10 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 		parent_form.resize(parent_form.minimumSize());
 		parent_form.setMaximumHeight(220);
 
-		setModel(nullptr);
+    setModel(nullptr);
 
 		connect(parent_form.cancel_btn, SIGNAL(clicked(bool)), this, SLOT(close(void)));
-		connect(parent_form.apply_ok_btn, SIGNAL(clicked(bool)), this, SLOT(changeObjectsIds(void)));
+    connect(parent_form.apply_ok_btn, SIGNAL(clicked(bool)), this, SLOT(swapObjectsIds(void)));
 		connect(src_object_sel, SIGNAL(s_objectSelected(void)), this, SLOT(showObjectId(void)));
 		connect(dst_object_sel, SIGNAL(s_objectSelected(void)), this, SLOT(showObjectId(void)));
 		connect(src_object_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(showObjectId(void)));
@@ -76,11 +77,14 @@ void SwapObjectsIdsWidget::show(void)
 
 void SwapObjectsIdsWidget::setModel(DatabaseModel *model)
 {
-	this->model=model;
-	src_object_sel->setModel(model);
-	dst_object_sel->setModel(model);
+  this->model=model;
+
+  src_object_sel->setModel(model);
+  dst_object_sel->setModel(model);
+
 	parent_form.generalwidget_wgt->setEnabled(model!=nullptr);
 	parent_form.apply_ok_btn->setEnabled(model!=nullptr);
+
 	src_object_sel->clearSelector();
 	dst_object_sel->clearSelector();
 }
@@ -88,12 +92,12 @@ void SwapObjectsIdsWidget::setModel(DatabaseModel *model)
 void SwapObjectsIdsWidget::close(void)
 {
 	this->setResult(QDialog::Rejected);
-	parent_form.close();
+  parent_form.close();
 }
 
 void SwapObjectsIdsWidget::hideEvent(QHideEvent *)
 {
-	this->setModel(nullptr);
+  this->setModel(nullptr);
 }
 
 void SwapObjectsIdsWidget::showObjectId(void)
@@ -136,24 +140,48 @@ void SwapObjectsIdsWidget::showObjectId(void)
                              dst_object_sel->getSelectedObject());
 }
 
-void SwapObjectsIdsWidget::changeObjectsIds(void)
+void SwapObjectsIdsWidget::swapObjectsIds(void)
 {
 	BaseObject *src_obj=src_object_sel->getSelectedObject(),
 						 *dst_obj=dst_object_sel->getSelectedObject();
 	BaseGraphicObject *graph_src_obj=dynamic_cast<BaseGraphicObject *>(src_obj),
 										*graph_dst_obj=dynamic_cast<BaseGraphicObject *>(dst_obj);
 
+  //Raise an exception if the user try to swap an id of relationship by other object of different kind
+  if((src_obj->getObjectType()==OBJ_RELATIONSHIP || dst_obj->getObjectType()==OBJ_RELATIONSHIP) &&
+     (src_obj->getObjectType() != dst_obj->getObjectType()))
+    throw Exception(ERR_INV_REL_ID_SWAP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+
 	try
-	{
+	{    
 		BaseObject::swapObjectsIds(src_obj, dst_obj, false);
 
-		if(graph_src_obj)
-			graph_src_obj->setModified(true);
+    //Special id swap for relationship
+    if(src_obj->getObjectType()==OBJ_RELATIONSHIP)
+    {
+      vector<BaseObject *>::iterator itr, itr1;
+      vector<BaseObject *> *list=model->getObjectList(OBJ_RELATIONSHIP);
 
-		if(graph_dst_obj)
-			graph_dst_obj->setModified(true);
+      //Find the relationships in the list and swap the memory position too
+      itr=std::find(list->begin(), list->end(), src_obj);
+      itr1=std::find(list->begin(), list->end(), dst_obj);
+      (*itr)=dst_obj;
+      (*itr1)=src_obj;
 
-		this->accept();
+      model->validateRelationships();
+    }
+    else
+    {
+      if(graph_src_obj)
+        graph_src_obj->setModified(true);
+
+      if(graph_dst_obj)
+        graph_dst_obj->setModified(true);
+    }
+
+    model->setInvalidated(true);
+    this->setResult(QDialog::Accepted);
 		parent_form.close();
 	}
 	catch(Exception &e)

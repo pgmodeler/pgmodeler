@@ -806,6 +806,9 @@
    <property name="text">
     <string>New</string>
    </property>
+   <property name="toolTip">
+    <string>New</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
    </property>
@@ -819,6 +822,9 @@
      <normaloff>:/icones/icones/salvar.png</normaloff>:/icones/icones/salvar.png</iconset>
    </property>
    <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="toolTip">
     <string>Save</string>
    </property>
    <property name="shortcut">
@@ -880,42 +886,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
-   </property>
-  </action>
-  <action name="action_next">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../res/resources.qrc">
-     <normaloff>:/icones/icones/proximo.png</normaloff>:/icones/icones/proximo.png</iconset>
-   </property>
-   <property name="text">
-    <string>Next</string>
-   </property>
-   <property name="toolTip">
-    <string>Next</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Right</string>
-   </property>
-  </action>
-  <action name="action_previous">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../res/resources.qrc">
-     <normaloff>:/icones/icones/anterior.png</normaloff>:/icones/icones/anterior.png</iconset>
-   </property>
-   <property name="text">
-    <string>Previous</string>
-   </property>
-   <property name="toolTip">
-    <string>Previous</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Left</string>
    </property>
   </action>
   <action name="action_save_as">
@@ -1196,15 +1166,6 @@
     <string>New</string>
    </property>
   </action>
-  <action name="action_css">
-   <property name="icon">
-    <iconset resource="../res/resources.qrc">
-     <normaloff>:/icones/icones/funcao.png</normaloff>:/icones/icones/funcao.png</iconset>
-   </property>
-   <property name="text">
-    <string>CSS</string>
-   </property>
-  </action>
   <action name="action_plugins">
    <property name="icon">
     <iconset resource="../res/resources.qrc">
@@ -1396,6 +1357,24 @@
    </property>
    <property name="text">
     <string>Bug report</string>
+   </property>
+   <property name="toolTip">
+    <string>Report a bug</string>
+   </property>
+  </action>
+  <action name="action_donate">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icones/icones/donate.png</normaloff>:/icones/icones/donate.png</iconset>
+   </property>
+   <property name="text">
+    <string>Donate</string>
+   </property>
+   <property name="toolTip">
+    <string>Help pgModeler by donating!</string>
    </property>
   </action>
  </widget>

@@ -37,7 +37,7 @@ void Language::setName(const QString &name)
 	//Raises an error if the user try to set an system reserved language name (C, SQL)
 	if(name.toLower()==~LanguageType("c") || name.toLower()==~LanguageType("sql"))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_RESERVED_NAME)
-                    .arg(/*Utf8String::create(*/this->getName())
+                    .arg(this->getName())
 										.arg(BaseObject::getTypeName(OBJ_LANGUAGE)),
 										ERR_ASG_RESERVED_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 

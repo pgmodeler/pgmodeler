@@ -77,7 +77,7 @@ void DatabaseImportHelper::setSelectedOIDs(DatabaseModel *db_model, map<ObjectTy
 	//Fills the creation order vector with the selected OIDs
 	creation_order.clear();
 
-	for(auto itr : object_oids)
+  for(auto &itr : object_oids)
 		creation_order.insert(creation_order.end(), itr.second.begin(), itr.second.end());
 
 	//Sort the creation order vector to create the object in the correct sequence
@@ -195,8 +195,7 @@ void DatabaseImportHelper::retrieveSystemObjects(void)
 			itr++;
 		}
 
-		progress=(i/static_cast<float>(cnt))*10;
-    sleepThread(10);
+    progress=(i/static_cast<float>(cnt))*10;
 	}
 }
 
@@ -231,9 +230,8 @@ void DatabaseImportHelper::retrieveUserObjects(void)
 		}
 
 		objects.clear();
-		progress=(i/static_cast<float>(object_oids.size()))*100;
+    progress=(i/static_cast<float>(object_oids.size()))*100;
 		oid_itr++; i++;
-    sleepThread(10);
 	}
 
 	//Retrieving all selected table columns
@@ -250,9 +248,8 @@ void DatabaseImportHelper::retrieveUserObjects(void)
     if(names.size() > 1)
      retrieveTableColumns(names[0], names[1], col_itr->second);
 
-		progress=(i/static_cast<float>(column_oids.size()))*100;
+    progress=(i/static_cast<float>(column_oids.size()))*100;
 		col_itr++; i++;
-    sleepThread(10);
   }
 }
 
@@ -265,7 +262,7 @@ void DatabaseImportHelper::retrieveTableColumns(const QString &sch_name, const Q
 
     cols=catalog.getObjectsAttributes(OBJ_COLUMN, sch_name, tab_name, col_ids);
 
-    for(auto itr : cols)
+    for(auto &itr : cols)
     {
       col_oid=itr.at(ParsersAttributes::OID).toUInt();
       tab_oid=itr.at(ParsersAttributes::TABLE).toUInt();
@@ -317,13 +314,14 @@ void DatabaseImportHelper::createObjects(void)
       not_created_objs.push_back(oid);
 		}
 
-		progress=(i/static_cast<float>(creation_order.size())) * 100;
-    sleepThread(10);
+    progress=(i/static_cast<float>(creation_order.size())) * 100;    
 	}
 
   //Trying to recreate objects that failed to be created previously
   if(!not_created_objs.empty())
   {
+    unsigned max_tries=10, tries=1;
+
     do
     {
       /* Store the current size of the objects list. If this size is the same after
@@ -359,12 +357,18 @@ void DatabaseImportHelper::createObjects(void)
         {
           //In case of some error store the oid and the error in separated lists
           not_created_objs.push_back(*itr);
-          aux_errors.push_back(e);
+          aux_errors.push_back(Exception(e.getErrorMessage(), e.getErrorType(), __PRETTY_FUNCTION__,__FILE__,__LINE__, &e, dumpObjectAttributes(attribs)));
         }
 
         progress=(i/static_cast<float>(not_created_objs.size())) * 100;
-        sleepThread(10);
       }
+
+      tries++;
+
+      if(tries >= max_tries)
+        emit s_progressUpdated(progress,
+                               trUtf8("Import failed to recreate some objects in `%1' tries.").arg(max_tries),
+                               BASE_OBJECT);
 
       if(!import_canceled)
       {
@@ -379,7 +383,7 @@ void DatabaseImportHelper::createObjects(void)
         aux_errors.clear();
       }
     }
-    while(!not_created_objs.empty() && !import_canceled);
+    while(!not_created_objs.empty() && !import_canceled && tries < max_tries);
   }
 }
 
@@ -396,71 +400,86 @@ void DatabaseImportHelper::createConstraints(void)
 
 		try
 		{
-			emit s_progressUpdated(progress,
-                             trUtf8("Creating object `%1' (%2)...")
-														 .arg(attribs[ParsersAttributes::NAME])
-														 .arg(BaseObject::getTypeName(OBJ_CONSTRAINT)),
-														 OBJ_CONSTRAINT);
+      //Check constraints are created only if they are not inherited, other types are created normally
+      if(attribs[ParsersAttributes::TYPE]!=ParsersAttributes::CK_CONSTR ||
+         (attribs[ParsersAttributes::TYPE]==ParsersAttributes::CK_CONSTR &&
+          attribs[ParsersAttributes::INHERITED]!=ParsersAttributes::_TRUE_))
+      {
+        emit s_progressUpdated(progress,
+                               trUtf8("Creating object `%1' (%2)...")
+                               .arg(attribs[ParsersAttributes::NAME])
+                               .arg(BaseObject::getTypeName(OBJ_CONSTRAINT)),
+                               OBJ_CONSTRAINT);
 
-			createObject(attribs);
+        createObject(attribs);
+      }
 		}
 		catch(Exception &e)
 		{
 			if(ignore_errors)
-				errors.push_back(e);
+        errors.push_back(Exception(e.getErrorMessage(), e.getErrorType(), __PRETTY_FUNCTION__,__FILE__,__LINE__, &e, dumpObjectAttributes(attribs)));
 			else
 				throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 
-		progress=(i/static_cast<float>(constr_creation_order.size())) * 100;
-		sleepThread(10);
+    progress=(i/static_cast<float>(constr_creation_order.size())) * 100;
 	}
 }
 
 void DatabaseImportHelper::createPermissions(void)
 {
-	try
+  attribs_map attribs;
+
+  try
 	{
 		unsigned i=0, progress=0;
 		vector<unsigned>::iterator itr, itr_obj=obj_perms.begin();
 		map<unsigned, vector<unsigned>>::iterator itr_cols=col_perms.begin();
+    QString msg=trUtf8("Creating permissions for object `%1' (%2)...");
+    ObjectType obj_type;
 
 		//Create the object level permission
 		while(itr_obj!=obj_perms.end() && !import_canceled)
 		{
-			emit s_progressUpdated(progress, trUtf8("Creating objects permissions..."), OBJ_PERMISSION);
+      attribs=user_objs[*itr_obj];
+      obj_type=static_cast<ObjectType>(attribs[ParsersAttributes::OBJECT_TYPE].toUInt());
+      emit s_progressUpdated(progress,
+                             msg.arg(getObjectName(attribs[ParsersAttributes::OID]))
+                             .arg(BaseObject::getTypeName(obj_type)), OBJ_PERMISSION);
 
-			createPermission(user_objs[*itr_obj]);
+      createPermission(attribs);
 			itr_obj++;
 
-			progress=((i++)/static_cast<float>(obj_perms.size())) * 100;
-			sleepThread(10);
+      progress=((i++)/static_cast<float>(obj_perms.size())) * 100;
 		}
 
+    emit s_progressUpdated(progress, trUtf8("Creating columns permissions..."), OBJ_PERMISSION);
 		//Create the column level permission
 		i=0;
 		while(itr_cols!=col_perms.end() && !import_canceled)
-		{
-			emit s_progressUpdated(progress, trUtf8("Creating columns permissions..."), OBJ_PERMISSION);
-
+		{			
 			itr=col_perms[itr_cols->first].begin();
 
 			while(itr!=itr_cols->second.end())
-			{
-				createPermission(columns[itr_cols->first][*itr]);
+      {
+        attribs=columns[itr_cols->first][*itr];
+        obj_type=static_cast<ObjectType>(attribs[ParsersAttributes::OBJECT_TYPE].toUInt());
+        emit s_progressUpdated(progress,
+                               msg.arg(getObjectName(attribs[ParsersAttributes::OID]))
+                               .arg(BaseObject::getTypeName(obj_type)), OBJ_PERMISSION);
+
+        createPermission(attribs);
 				itr++;
 			}
 
 			itr_cols++;
-			progress=((i++)/static_cast<float>(col_perms.size())) * 100;
-			sleepThread(10);
+      progress=((i++)/static_cast<float>(col_perms.size())) * 100;
 		}
-
 	}
 	catch(Exception &e)
 	{
 		if(ignore_errors)
-			errors.push_back(e);
+      errors.push_back(Exception(e.getErrorMessage(), e.getErrorType(), __PRETTY_FUNCTION__,__FILE__,__LINE__, &e, dumpObjectAttributes(attribs)));
 		else
 			throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -485,28 +504,21 @@ void DatabaseImportHelper::updateFKRelationships(void)
 			tab=dynamic_cast<Table *>(*itr_tab);
 
 			emit s_progressUpdated(progress,
-                             trUtf8("Update relationships of `%1' (%2)...")
+                             trUtf8("Updating relationships of `%1' (%2)...")
 														 .arg(tab->getName())
 														 .arg(BaseObject::getTypeName(OBJ_TABLE)),
 														 OBJ_TABLE);
 
 			dbmodel->updateTableFKRelationships(tab);
 
-			progress=(i/static_cast<float>(count)) * 100;
+      progress=(i/static_cast<float>(count)) * 100;
 			itr_tab++; i++;
-			sleepThread(10);
 		}
 	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
-}
-
-void DatabaseImportHelper::sleepThread(unsigned msecs)
-{
-	if(qApp->thread()!=this->thread())
-		QThread::msleep(msecs);
 }
 
 void DatabaseImportHelper::importDatabase(void)
@@ -556,35 +568,40 @@ void DatabaseImportHelper::importDatabase(void)
 		else
 			emit s_importCanceled();
 
-		//Generating random colors for relationships
-		if(rand_rel_colors)
-		{
-			vector<BaseObject *> *rels=nullptr;
-			vector<BaseObject *>::iterator itr, itr_end;
-			std::uniform_int_distribution<unsigned> dist(0,255);
-			ObjectType rel_type[]={ OBJ_RELATIONSHIP, BASE_RELATIONSHIP };
+    if(!import_canceled)
+    {
+      //Generating random colors for relationships
+      if(rand_rel_colors)
+      {
+        vector<BaseObject *> *rels=nullptr;
+        vector<BaseObject *>::iterator itr, itr_end;
+        std::uniform_int_distribution<unsigned> dist(0,255);
+        ObjectType rel_type[]={ OBJ_RELATIONSHIP, BASE_RELATIONSHIP };
+        BaseRelationship *rel=nullptr;
 
-			for(unsigned i=0; i < 2; i++)
-			{
-				rels=dbmodel->getObjectList(rel_type[i]);
-				itr=rels->begin();
-				itr_end=rels->end();
+        for(unsigned i=0; i < 2; i++)
+        {
+          rels=dbmodel->getObjectList(rel_type[i]);
+          itr=rels->begin();
+          itr_end=rels->end();
 
-				while(itr!=itr_end)
-				{
-					(*itr)->setCodeInvalidated(true);
-					dynamic_cast<BaseRelationship *>(*itr)->setCustomColor(QColor(dist(rand_num_engine),
-																																			dist(rand_num_engine),
-																																			dist(rand_num_engine)));
-					itr++;
-				}
-			}
-		}
+          while(itr!=itr_end)
+          {
+            rel=dynamic_cast<BaseRelationship *>(*itr);
+            rel->setPoints({});
+            rel->setCustomColor(QColor(dist(rand_num_engine),
+                                       dist(rand_num_engine),
+                                       dist(rand_num_engine)));
+            itr++;
+          }
+        }
+      }
 
-		//Forcing the update of tables and views in order to correctly draw their titles without the schema's name
-		dbmodel->setObjectsModified({ OBJ_TABLE, OBJ_VIEW });
+      //Forcing the update of tables and views in order to correctly draw their titles without the schema's name
+      dbmodel->setObjectsModified({ OBJ_TABLE, OBJ_VIEW });
+    }
+
 		resetImportParameters();   
-		sleepThread(20);
 	}
 	catch(Exception &e)
 	{
@@ -592,11 +609,11 @@ void DatabaseImportHelper::importDatabase(void)
 
 		/* When running in a separated thread (other than the main application thread)
 		redirects the error in form of signal */
-		if(this->thread() && this->thread()!=qApp->thread())
-			emit s_importAborted(Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, e.getExtraInfo()));
-		else
-			//Redirects any error to the user
-			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, e.getExtraInfo());
+    if(this->thread() && this->thread()!=qApp->thread())
+      emit s_importAborted(Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, e.getExtraInfo()));
+    else
+      //Redirects any error to the user
+      throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, e.getExtraInfo());
 	}
 }
 
@@ -638,6 +655,12 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 
 			if(!attribs[ParsersAttributes::PERMISSION].isEmpty())
 				obj_perms.push_back(oid);
+
+      if(debug_mode)
+      {
+        QTextStream ts(stdout);
+        ts << dumpObjectAttributes(attribs) << endl;
+      }
 
 			switch(obj_type)
 			{
@@ -800,7 +823,7 @@ void DatabaseImportHelper::loadObjectXML(ObjectType obj_type, attribs_map &attri
 		if(debug_mode)
 		{
 			QTextStream ts(stdout);
-      ts << QString("<!-- OID: ") << attribs[ParsersAttributes::OID] << QString(" -->") << endl;
+      ts << QString("<!-- XML code: %1 (OID: %2) -->").arg(attribs[ParsersAttributes::NAME]).arg(attribs[ParsersAttributes::OID]) << endl;
 			ts << xml_buf << endl;
 		}
 
@@ -830,10 +853,24 @@ void DatabaseImportHelper::resetImportParameters(void)
 	constr_creation_order.clear();
 	obj_perms.clear();
 	col_perms.clear();
-
-  //if(connection.isStablished())
   connection.close();
   catalog.closeConnection();
+}
+
+QString DatabaseImportHelper::dumpObjectAttributes(attribs_map &attribs)
+{
+  QString dump_str;
+
+  dump_str+=QString("-- Raw attributes: %1 (OID: %2) --\n")
+            .arg(attribs[ParsersAttributes::NAME])
+            .arg(attribs[ParsersAttributes::OID]);
+
+  for(auto &attr : attribs)
+    dump_str+=QString("%1: %2\n").arg(attr.first).arg(attr.second);
+
+  dump_str+=QString("---\n");
+
+  return(dump_str);
 }
 
 void DatabaseImportHelper::createTablespace(attribs_map &attribs)
@@ -1496,7 +1533,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
       {
         /* Building the type name prepending the schema name in order to search it on
            the user defined types list at PgSQLType class */
-        type_name=getObjectName(types[type_oid][ParsersAttributes::SCHEMA], OBJ_SCHEMA);
+        type_name=getObjectName(types[type_oid][ParsersAttributes::SCHEMA], true);
         type_name+=QString(".") + types[type_oid][ParsersAttributes::NAME];
         is_type_registered=PgSQLType::isRegistered(type_name, dbmodel);
       }
@@ -1506,8 +1543,11 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
         type_name=itr->second[ParsersAttributes::TYPE];
       }
 
-      //Checking if the type used by the column exists (is registered), if not it'll be created when auto_resolve_deps is checked
-      if(auto_resolve_deps && !is_type_registered)
+      /* Checking if the type used by the column exists (is registered),
+         if not it'll be created when auto_resolve_deps is checked. The only exception here if for
+         array types [] that will not be automatically created because they are derivated from
+         the non-array type, this way, if the original type is created there is no need to create the array form */
+      if(auto_resolve_deps && !is_type_registered && !type_name.contains(QString("[]")))
       {
         type_def=getDependencyObject(itr->second[ParsersAttributes::TYPE_OID], OBJ_TYPE);
         unknown_obj_xml=UNKNOWN_OBJECT_OID_XML.arg(type_oid);
@@ -1817,10 +1857,10 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 {
 	ObjectType obj_type=static_cast<ObjectType>(attribs[ParsersAttributes::OBJECT_TYPE].toUInt());
 	Permission *perm=nullptr;
+  QString sig;
 
 	if(Permission::objectAcceptsPermission(obj_type))
 	{
-
 		QStringList perm_list;
 		vector<unsigned> privs, gop_privs;
 		QString role_name;
@@ -1838,7 +1878,10 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 				if(obj_type==OBJ_DATABASE)
 					object=dbmodel;
 				else
+        {
+          sig=getObjectName(attribs[ParsersAttributes::OID], true);
           object=dbmodel->getObject(getObjectName(attribs[ParsersAttributes::OID], true), obj_type);
+        }
 			}
 			else
 			{
@@ -1895,7 +1938,7 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 						if(perm) delete(perm);
 
 						if(ignore_errors)
-							errors.push_back(e);
+              errors.push_back(Exception(e.getErrorMessage(), e.getErrorType(), __PRETTY_FUNCTION__,__FILE__,__LINE__, &e, dumpObjectAttributes(attribs)));
 						else
 							throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 					}
@@ -2001,7 +2044,7 @@ void DatabaseImportHelper::__createTableInheritances(void)
 					if(rel) delete(rel);
 
 					if(ignore_errors)
-						errors.push_back(e);
+            errors.push_back(e);
 					else
 						throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 				}
@@ -2072,7 +2115,9 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 
 					for(int i=0; i < arg_types.size(); i++)
 					{
-            if(!arg_modes.isEmpty() && arg_modes[i]!=QString("t") && arg_modes[i]!=QString("o"))
+            if(arg_modes.isEmpty())
+             params.push_back(arg_types[i]);
+            else if(arg_modes[i]!=QString("t") && arg_modes[i]!=QString("o"))
 						{
               if(arg_modes[i]==QString("i"))
                 params.push_back(QString("IN ") + arg_types[i]);
@@ -2080,9 +2125,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
                 params.push_back(QString("INOUT ") + arg_types[i]);
 							else
                 params.push_back(QString("VARIADIC ") + arg_types[i]);
-						}
-						else
-              params.push_back(arg_types[i]);
+						}             
 					}
 				}
         else if(obj_type==OBJ_AGGREGATE)
@@ -2202,8 +2245,8 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 
 			//Prepend the schema name only if it is not a system schema ('pg_catalog' or 'information_schema')
 			sch_name=getObjectName(type_attr[ParsersAttributes::SCHEMA]);
-      if(!sch_name.isEmpty() && sch_name!=QString("pg_catalog") && sch_name!=QString("information_schema") &&
-				 !catalog.isExtensionObject(type_oid))
+      if(!sch_name.isEmpty() && sch_name!=QString("pg_catalog") && sch_name!=QString("information_schema")) /*&&
+         !catalog.isExtensionObject(type_oid))*/
         obj_name.prepend(sch_name + QString("."));
 
 			if(generate_xml)

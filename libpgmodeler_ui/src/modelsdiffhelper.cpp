@@ -26,7 +26,16 @@ ModelsDiffHelper::ModelsDiffHelper(void)
   pgsql_version=PgSQLVersions::DEFAULT_VERSION;
 	source_model=imported_model=nullptr;
   resetDiffCounter();
-  setDiffOptions(true, true, false, false, false, true, true);
+  //setDiffOptions(true, true, false, false, false, true, true);
+
+  diff_opts[OPT_KEEP_CLUSTER_OBJS]=true;
+  diff_opts[OPT_CASCADE_MODE]=true;
+  diff_opts[OPT_TRUCANTE_TABLES]=false;
+  diff_opts[OPT_FORCE_RECREATION]=false;
+  diff_opts[OPT_RECREATE_UNCHANGEBLE]=true;
+  diff_opts[OPT_KEEP_OBJ_PERMS]=true;
+  diff_opts[OPT_REUSE_SEQUENCES]=true;
+  diff_opts[OPT_PRESERVE_DB_NAME]=true;
 }
 
 ModelsDiffHelper::~ModelsDiffHelper(void)
@@ -34,7 +43,8 @@ ModelsDiffHelper::~ModelsDiffHelper(void)
   destroyTempObjects();
 }
 
-void ModelsDiffHelper::setDiffOptions(bool keep_cluster_objs, bool cascade_mode, bool truncate_tables, bool force_recreation, bool recreate_unchangeble, bool keep_obj_perms, bool reuse_sequences)
+/*void ModelsDiffHelper::setDiffOptions(bool keep_cluster_objs, bool cascade_mode, bool truncate_tables, bool force_recreation,
+                                      bool recreate_unchangeble, bool keep_obj_perms, bool reuse_sequences)
 {
   this->keep_cluster_objs=keep_cluster_objs;
   this->cascade_mode=cascade_mode;
@@ -43,6 +53,14 @@ void ModelsDiffHelper::setDiffOptions(bool keep_cluster_objs, bool cascade_mode,
   this->recreate_unchangeble=(force_recreation && recreate_unchangeble);
   this->keep_obj_perms=keep_obj_perms;
   this->reuse_sequences=reuse_sequences;
+}*/
+
+void ModelsDiffHelper::setDiffOption(unsigned opt_id, bool value)
+{
+  if(opt_id > OPT_PRESERVE_DB_NAME)
+    throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+  diff_opts[opt_id]=value;
 }
 
 void ModelsDiffHelper::setPgSQLVersion(const QString pgsql_ver)
@@ -137,31 +155,42 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
   {
     tab_objs=ref_tab->getObjectList(types[i]);
 
-    for(auto tab_obj : *tab_objs)
+    for(auto &tab_obj : *tab_objs)
     {
       //Get the object from the compared table
       aux_obj=comp_tab->getObject(tab_obj->getName(), tab_obj->getObjectType());
       constr=dynamic_cast<Constraint *>(tab_obj);
 
-      /* If the current info is ALTER or CREATE, only objects created by generalization or
+      //Ignoring check constraints added by generalizations
+      if(constr && constr->isAddedByGeneralization() &&
+         constr->getConstraintType()==ConstraintType::check)
+      {
+        generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, constr);
+      }
+      else
+      {
+        /* If the current info is ALTER or CREATE, only objects created by generalization or
          not created by common relationships will be considered on the comparison. Also,
          foreign keys are discarded here, since they will be compared on the main comparison
          at diffModels() */
-      if(aux_obj && diff_type!=ObjectsDiffInfo::DROP_OBJECT &&
-         ((tab_obj->isAddedByGeneralization() || !tab_obj->isAddedByLinking()) ||
-          (constr && constr->getConstraintType()!=ConstraintType::foreign_key)))
-      {
-        //If there are some differences on the XML code of the objects
-        if(tab_obj->isCodeDiffersFrom(aux_obj))
-          generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, tab_obj, aux_obj);
-      }      
-      /* If the object does not exists it will generate a drop info and the original
-         one (tab_obj) was not included by generalization (to avoid drop inherited columns) */
-      else if(!aux_obj && !tab_obj->isAddedByGeneralization())
-        generateDiffInfo(diff_type, tab_obj);
-    }
+        if(aux_obj && diff_type!=ObjectsDiffInfo::DROP_OBJECT &&
+           ((tab_obj->isAddedByGeneralization() || !tab_obj->isAddedByLinking()) ||
+            (constr && constr->getConstraintType()!=ConstraintType::foreign_key)))
+        {
+            //If there are some differences on the XML code of the objects
+            if(tab_obj->isCodeDiffersFrom(aux_obj))
+              generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, tab_obj, aux_obj);
 
-    QThread::msleep(15);
+        }
+        /* If the object does not exists it will generate a drop info and the original
+         one (tab_obj) was not included by generalization (to avoid drop inherited columns) */
+        else if(!aux_obj && !tab_obj->isAddedByGeneralization())
+          generateDiffInfo(diff_type, tab_obj);
+      }
+
+      if(diff_canceled)
+        break;
+    }
   }
 }
 
@@ -174,6 +203,9 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
   unsigned idx=0, factor=0, prog=0;
 	DatabaseModel *aux_model=nullptr;
   bool objs_differs=false, xml_differs=false;
+
+  if(diff_canceled)
+    return;
 
 	if(diff_type==ObjectsDiffInfo::DROP_OBJECT)
 	{
@@ -195,10 +227,8 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
     prog=50;
 	}
 
-	for(auto obj_itr : obj_order)
+  for(auto &obj_itr : obj_order)
 	{
-		if(diff_canceled) break;
-
 		object=obj_itr.second;
 		obj_type=object->getObjectType();
 		idx++;
@@ -209,11 +239,11 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
        3) Cluster objects such as roles and tablespaces (when the operatoin is DROP and keep_cluster_objs is true) */
     if(obj_type!=BASE_RELATIONSHIP &&
        !object->isSystemObject() && !object->isSQLDisabled() &&
-			 ((diff_type==ObjectsDiffInfo::DROP_OBJECT && (!keep_cluster_objs || (keep_cluster_objs && obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE))) ||
+       ((diff_type==ObjectsDiffInfo::DROP_OBJECT && (!diff_opts[OPT_KEEP_CLUSTER_OBJS] || (diff_opts[OPT_KEEP_CLUSTER_OBJS] && obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE))) ||
 				(diff_type!=ObjectsDiffInfo::DROP_OBJECT)))
 		{
       emit s_progressUpdated(prog + ((idx/static_cast<float>(obj_order.size())) * factor),
-                             trUtf8("Processing object `%1' (%2)...").arg(object->getName()).arg(object->getTypeName()),
+                             trUtf8("Processing object `%1' (%2)...").arg(object->getSignature()).arg(object->getTypeName()),
                              object->getObjectType());
 
       //Processing objects that are not database, table child object (they are processed further)
@@ -222,7 +252,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
         /* Processing permissions. If the operation is DROP and keep_obj_perms is true the
            the permission is ignored */
         if(obj_type==OBJ_PERMISSION &&
-           ((diff_type!=ObjectsDiffInfo::DROP_OBJECT) || !keep_obj_perms))
+           ((diff_type!=ObjectsDiffInfo::DROP_OBJECT) || !diff_opts[OPT_KEEP_OBJ_PERMS]))
           generateDiffInfo(diff_type, object);
 
         //Processing relationship (in this case only generalization ones are considered)
@@ -281,7 +311,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
               generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, object, aux_object);
 
               //If the object is a table, do additional comparision between their child objects
-              if((!force_recreation || recreate_unchangeble) && object->getObjectType()==OBJ_TABLE)
+              if((!diff_opts[OPT_FORCE_RECREATION] || diff_opts[OPT_RECREATE_UNCHANGEBLE]) && object->getObjectType()==OBJ_TABLE)
               {
                 Table *tab=dynamic_cast<Table *>(object), *aux_tab=dynamic_cast<Table *>(aux_object);
                 diffTables(tab, aux_tab, ObjectsDiffInfo::DROP_OBJECT);
@@ -304,16 +334,20 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
         if(!source_model->getAlterDefinition(imported_model).isEmpty())
          generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, source_model, imported_model);
       }
+
+      if(diff_canceled)
+        break;
     }
     else
     {
       generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, object);
       emit s_progressUpdated(prog + ((idx/static_cast<float>(obj_order.size())) * factor),
-                             trUtf8("Skipping object `%1' (%2)...").arg(object->getName()).arg(object->getTypeName()),
+                             trUtf8("Skipping object `%1' (%2)...").arg(object->getSignature()).arg(object->getTypeName()),
                              object->getObjectType());
-    }
 
-    QThread::msleep(15);
+      if(diff_canceled)
+        break;
+    }
 	}
 }
 
@@ -370,7 +404,7 @@ BaseObject *ModelsDiffHelper::getRelNNTable(const QString &obj_name, DatabaseMod
   Relationship *rel=nullptr;
   BaseObject *tab=nullptr;
 
-  for(auto obj : *rels)
+  for(auto &obj : *rels)
   {
     rel=dynamic_cast<Relationship *>(obj);
     if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN &&
@@ -392,7 +426,7 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
 
     /* If the info is for ALTER and there is a DROP info on the list,
      the object will be recreated instead of modified */
-    if((!force_recreation || recreate_unchangeble) &&
+    if((!diff_opts[OPT_FORCE_RECREATION] || diff_opts[OPT_RECREATE_UNCHANGEBLE]) &&
        diff_type==ObjectsDiffInfo::ALTER_OBJECT &&
        isDiffInfoExists(ObjectsDiffInfo::DROP_OBJECT, old_object, nullptr) &&
        !isDiffInfoExists(ObjectsDiffInfo::CREATE_OBJECT, object, nullptr))
@@ -417,13 +451,9 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
         Column *aux_col=new Column;
         Sequence *seq=new Sequence;
         BaseTable *tab=col->getParentTable();
-        //QString seq_name;
 
         //Configures the sequence
         seq->setName(QString("%1_%2_seq").arg(tab->getName()).arg(col->getName()));
-        //seq_name=PgModelerNS::generateUniqueName(seq, *imported_model->getObjectList(OBJ_SEQUENCE));
-        //seq->setName(seq_name);
-
         seq->setOwner(tab->getOwner());
         seq->setSchema(tab->getSchema());
 
@@ -441,7 +471,7 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
         diffs_counter[ObjectsDiffInfo::ALTER_OBJECT]++;
         emit s_objectsDiffInfoGenerated(diff_info);
 
-        if(!reuse_sequences || imported_model->getObjectIndex(seq->getSignature(), OBJ_SEQUENCE) < 0)
+        if(!diff_opts[OPT_REUSE_SEQUENCES] || imported_model->getObjectIndex(seq->getSignature(), OBJ_SEQUENCE) < 0)
         {
           //Creates a CREATE info with the sequence
           diff_info=ObjectsDiffInfo(ObjectsDiffInfo::CREATE_OBJECT, seq, nullptr);
@@ -449,7 +479,7 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
           diffs_counter[ObjectsDiffInfo::CREATE_OBJECT]++;
           emit s_objectsDiffInfoGenerated(diff_info);
         }
-        else if(reuse_sequences)
+        else if(diff_opts[OPT_REUSE_SEQUENCES])
         {
           //Removing DROP infos related to the sequence that will be reused
           vector<ObjectsDiffInfo>::iterator itr=diff_infos.begin(),
@@ -484,16 +514,19 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
 
       /* If the info is for DROP, generate the drop for referer objects of the
        one marked to be dropped */
-      if((!force_recreation || recreate_unchangeble) &&
+      if((!diff_opts[OPT_FORCE_RECREATION] || diff_opts[OPT_RECREATE_UNCHANGEBLE]) &&
               diff_type==ObjectsDiffInfo::DROP_OBJECT)
       {
         vector<BaseObject *> ref_objs;
         imported_model->getObjectReferences(object, ref_objs);
 
-        for(auto obj : ref_objs)
+        for(auto &obj : ref_objs)
         {
           if(obj->getObjectType()!=BASE_RELATIONSHIP)
             generateDiffInfo(diff_type, obj);
+
+          if(diff_canceled)
+            break;
         }
       }
     }
@@ -526,7 +559,7 @@ void ModelsDiffHelper::processDiffInfos(void)
   Relationship *rel=nullptr;
   map<unsigned, QString> drop_objs, create_objs, alter_objs, truncate_tabs;
   vector<BaseObject *> drop_vect, create_vect, drop_cols;
-  unsigned diff_type, schema_id=0;
+  unsigned diff_type, schema_id=0, idx=0;
   ObjectType obj_type;
   map<unsigned, QString>::reverse_iterator ritr, ritr_end;
   attribs_map attribs;
@@ -535,11 +568,20 @@ void ModelsDiffHelper::processDiffInfos(void)
   SchemaParser schparser;
   Type *type=nullptr;
   vector<Type *> types;
+  Constraint *constr=nullptr;
+  Column *col=nullptr, *aux_col=nullptr;
+  Table *parent_tab=nullptr;
+  bool skip_obj=false;
+  QStringList sch_names;
 
   try
   {
     if(!diff_infos.empty())
-      emit s_progressUpdated(90, trUtf8("Processing diff infos..."));
+      emit s_progressUpdated(0, trUtf8("Processing diff infos..."));
+
+    //Reuniting the schema names to inject a SET search_path command
+    for(auto &schema : *imported_model->getObjectList(OBJ_SCHEMA))
+      sch_names.push_back(schema->getName(true));
 
     //Separating the base types
     for(ObjectsDiffInfo diff : diff_infos)
@@ -557,8 +599,44 @@ void ModelsDiffHelper::processDiffInfos(void)
     {
       diff_type=diff.getDiffType();
       object=diff.getObject();
-      rel=dynamic_cast<Relationship *>(object);
       obj_type=object->getObjectType();
+      rel=dynamic_cast<Relationship *>(object);
+      constr=dynamic_cast<Constraint *>(object);
+      col=dynamic_cast<Column *>(object);
+
+      emit s_progressUpdated((idx++/static_cast<float>(diff_infos.size())) * 100,
+                             trUtf8("Processing `%1' info for object `%2' (%3)...")
+                             .arg(diff.getDiffTypeString()).arg(object->getSignature()).arg(object->getTypeName()),
+                             obj_type);
+
+      /* Preliminary verification for check constraints: there is the need to
+         check if the constraint is added by generalization or if this is not the case
+         if it already exists in a ancestor table of its parent, this avoid the generation
+         of commands to create or drop an inherited constraint raising errors when export the diff */
+      if(constr && constr->getConstraintType()==ConstraintType::check)
+      {
+        parent_tab=dynamic_cast<Table *>(constr->getParentTable());
+        skip_obj=constr->isAddedByGeneralization();
+
+        for(unsigned i=0; i < parent_tab->getAncestorTableCount() && !skip_obj; i++)
+          skip_obj=(parent_tab->getAncestorTable(i)->getConstraint(constr->getName())!=nullptr);
+
+        if(skip_obj) continue;
+      }
+      //Igoring any operation done over inherited columns
+      else if(col)
+      {
+        parent_tab=dynamic_cast<Table *>(col->getParentTable());
+        skip_obj=col->isAddedByGeneralization();
+
+        for(unsigned i=0; i < parent_tab->getAncestorTableCount() && !skip_obj; i++)
+        {
+          aux_col=parent_tab->getAncestorTable(i)->getColumn(col->getName());
+          skip_obj=(aux_col && aux_col->getType().getAliasType()==col->getType());
+        }
+
+        if(skip_obj) continue;
+      }
 
       //Generating the DROP commands
       if(diff_type==ObjectsDiffInfo::DROP_OBJECT)
@@ -568,7 +646,7 @@ void ModelsDiffHelper::processDiffInfos(void)
           no_inherit_def+=rel->getInheritDefinition(true);
         else if(obj_type==OBJ_PERMISSION)
           //Unsetting permissions
-          unset_perms+=object->getDropDefinition(cascade_mode);
+          unset_perms+=object->getDropDefinition(diff_opts[OPT_CASCADE_MODE]);
         else
         {
           //Ordinary drop commands for any object except columns
@@ -600,24 +678,30 @@ void ModelsDiffHelper::processDiffInfos(void)
              dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::foreign_key)
             fk_defs+=getCodeDefinition(object, false);
           else
+          {
             create_objs[object->getObjectId()]=getCodeDefinition(object, false);
+
+            if(obj_type==OBJ_SCHEMA)
+              sch_names.push_back(object->getName(true));
+          }
         }
       }
       //Generating the ALTER commands
       else if(diff_type==ObjectsDiffInfo::ALTER_OBJECT)
       {
         //Recreating the object instead of generating an ALTER command for it
-        if((force_recreation && obj_type!=OBJ_DATABASE) &&
-           (!recreate_unchangeble || (recreate_unchangeble && !object->acceptsAlterCommand())))
+        if((diff_opts[OPT_FORCE_RECREATION] && obj_type!=OBJ_DATABASE) &&
+           (!diff_opts[OPT_RECREATE_UNCHANGEBLE] ||
+            (diff_opts[OPT_RECREATE_UNCHANGEBLE] && !object->acceptsAlterCommand())))
         {
           recreateObject(object, drop_vect, create_vect);
 
           //Generating the drop for the object's reference
-          for(auto obj : drop_vect)
+          for(auto &obj : drop_vect)
             drop_objs[obj->getObjectId()]=getCodeDefinition(obj, true);
 
           //Generating the create for the object's reference
-          for(auto obj : create_vect)
+          for(auto &obj : create_vect)
           {
             //The there is no ALTER info registered for an object's reference
             if(!isDiffInfoExists(ObjectsDiffInfo::ALTER_OBJECT, nullptr, obj, false))
@@ -634,11 +718,15 @@ void ModelsDiffHelper::processDiffInfos(void)
 
           if(!alter_def.isEmpty())
           {
+            //Commenting out the ALTER DATABASE ... RENAME TO ... command if user chooses to preserve the original name
+            if(obj_type==OBJ_DATABASE && alter_def.contains("RENAME") && diff_opts[OPT_PRESERVE_DB_NAME])
+              alter_def.prepend(QString("-- "));
+
             alter_objs[object->getObjectId()]=alter_def;
 
             /* If the object is a column checks if the types of the columns are differents,
                generating a TRUNCATE TABLE for the parent table */
-            if(obj_type==OBJ_COLUMN && trucante_tables)
+            if(obj_type==OBJ_COLUMN && diff_opts[OPT_TRUCANTE_TABLES])
             {
               Column *src_col=dynamic_cast<Column *>(object),
                      *imp_col=dynamic_cast<Column *>(diff.getOldObject());
@@ -646,7 +734,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 
               //If the truncate was not generated previously
               if((*src_col->getType())!=(*imp_col->getType()) && truncate_tabs.count(tab->getObjectId())==0)
-                truncate_tabs[tab->getObjectId()]=tab->getTruncateDefinition(cascade_mode);
+                truncate_tabs[tab->getObjectId()]=tab->getTruncateDefinition(diff_opts[OPT_CASCADE_MODE]);
             }
           }
         }
@@ -676,6 +764,8 @@ void ModelsDiffHelper::processDiffInfos(void)
        !inherit_def.isEmpty() || !no_inherit_def.isEmpty() || !set_perms.isEmpty() ||
        !fk_defs.isEmpty() || !col_drop_def.isEmpty())
     {
+      sch_names.removeDuplicates();
+
       //Attributes used on the diff schema file
       attribs[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::_TRUE_;
       attribs[ParsersAttributes::PGMODELER_VERSION]=GlobalAttributes::PGMODELER_VERSION;
@@ -683,6 +773,7 @@ void ModelsDiffHelper::processDiffInfos(void)
       attribs[ParsersAttributes::CREATE]=QString::number(create_objs.size());
       attribs[ParsersAttributes::DROP]=QString::number(drop_objs.size());
       attribs[ParsersAttributes::TRUNCATE]=QString::number(truncate_tabs.size());
+      attribs[ParsersAttributes::SEARCH_PATH]=sch_names.join(',');
       attribs[ParsersAttributes::ALTER_CMDS]=QString();
       attribs[ParsersAttributes::DROP_CMDS]=QString();
       attribs[ParsersAttributes::CREATE_CMDS]=QString();
@@ -706,16 +797,16 @@ void ModelsDiffHelper::processDiffInfos(void)
 
 
 
-      for(auto itr : create_objs)
+      for(auto &itr : create_objs)
         attribs[ParsersAttributes::CREATE_CMDS]+=itr.second;
 
       attribs[ParsersAttributes::CREATE_CMDS]+=fk_defs;
       attribs[ParsersAttributes::CREATE_CMDS]+=inherit_def;
 
-      for(auto itr : truncate_tabs)
+      for(auto &itr : truncate_tabs)
         attribs[ParsersAttributes::TRUNCATE_CMDS]+=itr.second;
 
-      for(auto itr : alter_objs)
+      for(auto &itr : alter_objs)
         attribs[ParsersAttributes::ALTER_CMDS]+=itr.second;
 
       //Generating the whole diff buffer
@@ -754,7 +845,7 @@ QString ModelsDiffHelper::getCodeDefinition(BaseObject *object, bool drop_cmd)
       table->setGenerateAlterCmds(true);
 
       if(drop_cmd)
-        cmd=tab_obj->getDropDefinition(cascade_mode);
+        cmd=tab_obj->getDropDefinition(diff_opts[OPT_CASCADE_MODE]);
       else
         cmd=tab_obj->getCodeDefinition(SchemaParser::SQL_DEFINITION);
 
@@ -763,7 +854,7 @@ QString ModelsDiffHelper::getCodeDefinition(BaseObject *object, bool drop_cmd)
     else
     {
       if(drop_cmd)
-       cmd=object->getDropDefinition(cascade_mode);
+       cmd=object->getDropDefinition(diff_opts[OPT_CASCADE_MODE]);
       else
        cmd=object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
     }
@@ -860,7 +951,7 @@ void ModelsDiffHelper::recreateObject(BaseObject *object, vector<BaseObject *> &
       create_objs.push_back(object);
 
     //Executing the recreation of the object's references
-    for(auto obj : ref_objs)
+    for(auto &obj : ref_objs)
       recreateObject(obj, drop_objs, create_objs);
   }
 }

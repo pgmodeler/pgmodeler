@@ -38,7 +38,7 @@ class ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
 		ModelWidget *model;
 
 		//! \brief Zoom factor applied to the visualization
-		float zoom_factor,
+		double zoom_factor,
 
 		//! \brief Store the current calculated resize factor
 		curr_resize_factor;
@@ -50,7 +50,7 @@ class ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
 		QRectF scene_rect;
 
 		//! \brief Resize factor applied to overview widgets (default: 20% of the scene original size)
-    static constexpr float RESIZE_FACTOR=0.20f;
+    static constexpr double RESIZE_FACTOR=0.20f;
 
 		void mouseDoubleClickEvent(QMouseEvent *);
 		void mousePressEvent(QMouseEvent *event);
@@ -77,7 +77,7 @@ class ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
 		void resizeOverview(void);
 
 		//! \brief Updates the overview zoom factor
-		void updateZoomFactor(float zoom);
+		void updateZoomFactor(double zoom);
 
 		//! \brief Shows the overview specifying the model to be drawn
 		void show(ModelWidget *model);

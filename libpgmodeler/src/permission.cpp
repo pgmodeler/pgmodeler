@@ -207,7 +207,12 @@ Role *Permission::getRole(unsigned role_idx)
 	if(role_idx > roles.size())
 		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(roles[role_idx]);
+  return(roles[role_idx]);
+}
+
+vector<Role *> Permission::getRoles(void)
+{
+  return(roles);
 }
 
 unsigned Permission::getRoleCount(void)
@@ -400,7 +405,6 @@ QString Permission::getCodeDefinition(unsigned def_type)
 
   attributes[ParsersAttributes::REVOKE]=(revoke ? ParsersAttributes::_TRUE_ : QString());
   attributes[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : QString());
-  attributes[ParsersAttributes::OBJECT]=object->getSignature();
 
 	if(def_type==SchemaParser::SQL_DEFINITION)
 	{
@@ -412,7 +416,12 @@ QString Permission::getCodeDefinition(unsigned def_type)
 		attributes[ParsersAttributes::TYPE]=BaseObject::getSchemaName(object->getObjectType());
 
 	if(obj_type==OBJ_COLUMN)
+  {
+    attributes[ParsersAttributes::OBJECT]=object->getName();
 		attributes[ParsersAttributes::PARENT]=dynamic_cast<Column *>(object)->getParentTable()->getName(true);
+  }
+  else
+    attributes[ParsersAttributes::OBJECT]=object->getSignature();
 
 	if(def_type==SchemaParser::XML_DEFINITION)
 	{

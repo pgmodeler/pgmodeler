@@ -56,7 +56,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 {
 	ObjectType obj_type=BASE_OBJECT;
 	Column *column=dynamic_cast<Column *>(this->getSourceObject());
-	float factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
+	double factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
 	bool ellipse_desc=false;
 
 	//Based upon the source object type the descriptor is allocated
@@ -182,21 +182,21 @@ void TableObjectView::configureObject(void)
 	if(this->getSourceObject())
 	{
 		QTextCharFormat fmt;
-		float px;
+		double px;
 		QString str_constr, tooltip, atribs_tip;
 		TableObject *tab_obj=dynamic_cast<TableObject *>(this->getSourceObject());
 		Column *column=dynamic_cast<Column *>(tab_obj);
 		ConstraintType constr_type=ConstraintType::null;
 		bool sql_disabled=false;
 
-    tooltip=/*Utf8String::create(*/tab_obj->getName() + QString(" (") + tab_obj->getTypeName() + QString(")");
+    tooltip=tab_obj->getName() + QString(" (") + tab_obj->getTypeName() + QString(")");
     tooltip+=QString("\nId: %1").arg(tab_obj->getObjectId());
 		sql_disabled=tab_obj->isSQLDisabled();
 
 		if(column)
 		{
 			if(column->isAddedByRelationship())
-        tooltip+=trUtf8("\nRelationship: %1").arg(/*Utf8String::create(*/column->getParentRelationship()->getName());
+        tooltip+=trUtf8("\nRelationship: %1").arg(column->getParentRelationship()->getName());
 
 			str_constr=this->getConstraintString(column);
 
@@ -256,7 +256,7 @@ void TableObjectView::configureObject(void)
 
 		//Configuring the labels as follow: [object name] [type] [constraints]
 		//Configuring tha name label
-    lables[0]->setText(/*Utf8String::create(*/tab_obj->getName());
+    lables[0]->setText(tab_obj->getName());
 
 		//Strikeout the column name when its SQL is disabled
 		QFont font=fmt.font();
@@ -271,9 +271,9 @@ void TableObjectView::configureObject(void)
 		//Configuring the type label
 		fmt=font_config[ParsersAttributes::OBJECT_TYPE];
 		if(column)
-      lables[1]->setText(/*Utf8String::create(*/TYPE_SEPARATOR + (*column->getType()));
+      lables[1]->setText(TYPE_SEPARATOR + (*column->getType()));
 		else
-      lables[1]->setText(/*Utf8String::create(*/TYPE_SEPARATOR + tab_obj->getSchemaName());
+      lables[1]->setText(TYPE_SEPARATOR + tab_obj->getSchemaName());
 
 		lables[1]->setFont(fmt.font());
 		lables[1]->setBrush(fmt.foreground());
@@ -283,7 +283,7 @@ void TableObjectView::configureObject(void)
 		//Configuring the constraints label
 		fmt=font_config[ParsersAttributes::CONSTRAINTS];
 		if(column)
-      lables[2]->setText(/*Utf8String::create(*/str_constr);
+      lables[2]->setText(str_constr);
 		else
 		{
 			Rule *rule=dynamic_cast<Rule *>(tab_obj);
@@ -346,7 +346,7 @@ void TableObjectView::configureObject(void)
 			}
 
 			if(!str_constr.isEmpty())
-        lables[2]->setText(/*Utf8String::create(*/CONSTR_DELIM_START + QString(" ") +
+        lables[2]->setText(CONSTR_DELIM_START + QString(" ") +
                                              str_constr + QString(" ") +
                                              CONSTR_DELIM_END);
 		}
@@ -356,7 +356,7 @@ void TableObjectView::configureObject(void)
 			if(atribs_tip.at(atribs_tip.length()-1)==' ')
 				atribs_tip.remove(atribs_tip.length()-2, 2);
 
-      atribs_tip=/*Utf8String::create(*/QString("\n") + CONSTR_DELIM_START +
+      atribs_tip=QString("\n") + CONSTR_DELIM_START +
                                     QString(" ") + atribs_tip + QString(" ") + CONSTR_DELIM_END;
 		}
 
@@ -381,7 +381,7 @@ void TableObjectView::configureObject(void)
 void TableObjectView::configureObject(Reference reference)
 {
 	QTextCharFormat fmt;
-	float px;
+	double px;
 	QString str_aux;
 
 	configureDescriptor();
@@ -392,7 +392,7 @@ void TableObjectView::configureObject(Reference reference)
 	{
 		//Configures the name label as: [table].[column]
 		fmt=font_config[ParsersAttributes::REF_TABLE];
-    lables[0]->setText(/*Utf8String::create(*/reference.getTable()->getName() + ".");
+    lables[0]->setText(reference.getTable()->getName() + ".");
 		lables[0]->setFont(fmt.font());
 		lables[0]->setBrush(fmt.foreground());
 		lables[0]->setPos(px, 0);
@@ -400,7 +400,7 @@ void TableObjectView::configureObject(Reference reference)
 
 		fmt=font_config[ParsersAttributes::REF_COLUMN];
 		if(reference.getColumn())
-      lables[1]->setText(/*Utf8String::create(*/reference.getColumn()->getName());
+      lables[1]->setText(reference.getColumn()->getName());
 		else
 			lables[1]->setText("*");
 
@@ -436,7 +436,7 @@ void TableObjectView::configureObject(Reference reference)
 
     str_aux=QString(" (") + str_aux + QString(") ");
 		fmt=font_config[ParsersAttributes::ALIAS];
-    lables[2]->setText(/*Utf8String::create(*/str_aux);
+    lables[2]->setText(str_aux);
 		lables[2]->setFont(fmt.font());
 		lables[2]->setBrush(fmt.foreground());
 		lables[2]->setPos(px, 0);
@@ -451,7 +451,7 @@ void TableObjectView::configureObject(Reference reference)
 		bounding_rect.setBottomRight(QPointF(lables[2]->boundingRect().right(), lables[0]->boundingRect().bottom()));
 }
 
-void TableObjectView::setChildObjectXPos(unsigned obj_idx, float px)
+void TableObjectView::setChildObjectXPos(unsigned obj_idx, double px)
 {
 	if(obj_idx >= 4)
 		throw Exception(ERR_REF_OBJ_INV_INDEX, __PRETTY_FUNCTION__, __FILE__, __LINE__);
