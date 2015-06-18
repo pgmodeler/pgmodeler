@@ -69,7 +69,11 @@ linux {
   !defined(SCHEMASDIR, var):    SCHEMASDIR = $$SHAREDIR/schemas
 
   # Specifies where to find the libraries at runtime
-  QMAKE_RPATHDIR += $$PRIVATELIBDIR
+  defined(RPATHDIR, var) {
+    QMAKE_RPATHDIR += $$RPATHDIR
+  } else {
+    QMAKE_RPATHDIR += $$PRIVATELIBDIR
+  }
 
   # Forcing the display of some warnings
   CONFIG(debug, debug|release): QMAKE_CXXFLAGS += "-Wall -Wextra -Wuninitialized"
@@ -113,7 +117,11 @@ macx {
   !defined(SCHEMASDIR, var):    SCHEMASDIR = $$BINDIR/schemas
 
   # Specifies where to find the libraries at runtime
-  QMAKE_RPATHDIR += @executable_path/../Frameworks
+  defined(RPATHDIR, var) {
+    QMAKE_RPATHDIR += $$RPATHDIR
+  } else {
+    QMAKE_RPATHDIR += @executable_path/../Frameworks
+  }
 }
 
 # Creating constants based upon the custom paths so the GlobalAttributes
@@ -213,6 +221,7 @@ defineTest(printBuildDetails) {
  log("  LANGDIR       = $$LANGDIR $$LB")
  log("  SAMPLESDIR    = $$SAMPLESDIR $$LB")
  log("  SCHEMASDIR    = $$SCHEMASDIR $$LB $$LB")
+ log("  QMAKE_RPATHDIR= $$QMAKE_RPATHDIR")
  log("* To change a variable value run qmake again setting the desired value e.g.: $$LB")
  log("  > qmake PREFIX+=/usr/local -r pgmodeler.pro $$LB $$LB")
  log("* Proceed with build process by running: $$LB")
