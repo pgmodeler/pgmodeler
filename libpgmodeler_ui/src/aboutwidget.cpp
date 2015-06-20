@@ -32,11 +32,7 @@ AboutWidget::AboutWidget(QWidget *parent) : QWidget(parent)
   build_num_lbl->setText(GlobalAttributes::PGMODELER_BUILD_NUMBER);
 
   for(int row=0; row < contributors_tab->rowCount(); row++)
-  {
     contributors_tab->item(row, 2)->setToolTip(contributors_tab->item(row, 2)->text().replace(QString("; "), QString(";\n")));
-    contributors_tab->item(row, 1)->setIcon(QIcon(QString(":/icones/icones/flag_%1.png")
-                                                  .arg(contributors_tab->item(row, 1)->text().toLower())));
-  }
 
   contributors_tab->sortByColumn(0, Qt::AscendingOrder);
   contributors_tab->resizeColumnsToContents();

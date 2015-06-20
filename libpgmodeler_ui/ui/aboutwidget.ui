@@ -102,6 +102,9 @@
         <property name="text">
          <string>PostgreSQL Database Modeler</string>
         </property>
+        <property name="textInteractionFlags">
+         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+        </property>
        </widget>
       </item>
       <item row="0" column="0" rowspan="5">
@@ -174,7 +177,7 @@
          <number>0</number>
         </property>
         <property name="textInteractionFlags">
-         <set>Qt::NoTextInteraction</set>
+         <set>Qt::TextSelectableByMouse</set>
         </property>
        </widget>
       </item>
@@ -636,7 +639,7 @@ p, li { white-space: pre-wrap; }
              <bool>true</bool>
             </property>
             <property name="textInteractionFlags">
-             <set>Qt::LinksAccessibleByMouse</set>
+             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
             </property>
            </widget>
           </item>
@@ -740,6 +743,11 @@ p, li { white-space: pre-wrap; }
               <string>7</string>
              </property>
             </row>
+            <row>
+             <property name="text">
+              <string>8</string>
+             </property>
+            </row>
             <column>
              <property name="text">
               <string>Name</string>
@@ -764,6 +772,10 @@ p, li { white-space: pre-wrap; }
              <property name="text">
               <string>France</string>
              </property>
+             <property name="icon">
+              <iconset resource="../res/resources.qrc">
+               <normaloff>:/icones/icones/flag_france.png</normaloff>:/icones/icones/flag_france.png</iconset>
+             </property>
             </item>
             <item row="0" column="2">
              <property name="text">
@@ -778,6 +790,10 @@ p, li { white-space: pre-wrap; }
             <item row="1" column="1">
              <property name="text">
               <string>China</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../res/resources.qrc">
+               <normaloff>:/icones/icones/flag_china.png</normaloff>:/icones/icones/flag_china.png</iconset>
              </property>
             </item>
             <item row="1" column="2">
@@ -794,6 +810,10 @@ p, li { white-space: pre-wrap; }
              <property name="text">
               <string>France</string>
              </property>
+             <property name="icon">
+              <iconset resource="../res/resources.qrc">
+               <normaloff>:/icones/icones/flag_france.png</normaloff>:/icones/icones/flag_france.png</iconset>
+             </property>
             </item>
             <item row="2" column="2">
              <property name="text">
@@ -808,6 +828,10 @@ p, li { white-space: pre-wrap; }
             <item row="3" column="1">
              <property name="text">
               <string>Argentina</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../res/resources.qrc">
+               <normaloff>:/icones/icones/flag_argentina.png</normaloff>:/icones/icones/flag_argentina.png</iconset>
              </property>
             </item>
             <item row="3" column="2">
@@ -824,6 +848,10 @@ p, li { white-space: pre-wrap; }
              <property name="text">
               <string>Russia</string>
              </property>
+             <property name="icon">
+              <iconset resource="../res/resources.qrc">
+               <normaloff>:/icones/icones/flag_russia.png</normaloff>:/icones/icones/flag_russia.png</iconset>
+             </property>
             </item>
             <item row="4" column="2">
              <property name="text">
@@ -838,6 +866,10 @@ p, li { white-space: pre-wrap; }
             <item row="5" column="1">
              <property name="text">
               <string>Poland</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../res/resources.qrc">
+               <normaloff>:/icones/icones/flag_poland.png</normaloff>:/icones/icones/flag_poland.png</iconset>
              </property>
             </item>
             <item row="5" column="2">
@@ -854,10 +886,33 @@ p, li { white-space: pre-wrap; }
              <property name="text">
               <string>France</string>
              </property>
+             <property name="icon">
+              <iconset resource="../res/resources.qrc">
+               <normaloff>:/icones/icones/flag_france.png</normaloff>:/icones/icones/flag_france.png</iconset>
+             </property>
             </item>
             <item row="6" column="2">
              <property name="text">
               <string>French UI translation.</string>
+             </property>
+            </item>
+            <item row="7" column="0">
+             <property name="text">
+              <string>Gilberto Castillo</string>
+             </property>
+            </item>
+            <item row="7" column="1">
+             <property name="text">
+              <string>Cuba</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../res/resources.qrc">
+               <normaloff>:/icones/icones/flag_cuba.png</normaloff>:/icones/icones/flag_cuba.png</iconset>
+             </property>
+            </item>
+            <item row="7" column="2">
+             <property name="text">
+              <string>Spanish UI translation.</string>
              </property>
             </item>
            </widget>

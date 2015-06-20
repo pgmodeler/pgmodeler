@@ -205,6 +205,7 @@
         <file>icones/flag_singapore.png</file>
         <file>icones/flag_poland.png</file>
         <file>icones/donate.png</file>
+        <file>icones/flag_cuba.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>
