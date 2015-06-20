@@ -87,6 +87,7 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 {
   setupUi(this);
+  rename_item=nullptr;
 
   snippets_menu.setTitle(trUtf8("Snippets"));
   snippets_menu.setIcon(QIcon(QString(":icones/icones/codesnippet.png")));
@@ -106,6 +107,10 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 
   refresh_action=new QAction(QIcon(QString(":icones/icones/atualizar.png")), trUtf8("Update"), &handle_menu);
   refresh_action->setShortcut(QKeySequence(Qt::Key_F5));
+
+  rename_action=new QAction(QIcon(QString(":icones/icones/rename.png")), trUtf8("Rename"), &handle_menu);
+  rename_action->setShortcut(QKeySequence(Qt::Key_F2));
+
   objects_trw->installEventFilter(this);
 
   connect(refresh_tb, SIGNAL(clicked(void)), this, SLOT(listObjects(void)));
@@ -116,6 +121,10 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
   connect(objects_trw, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(handleObject(QTreeWidgetItem *,int)));
   connect(objects_trw, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(showObjectProperties()));
   connect(raw_attrib_names_chk, SIGNAL(toggled(bool)), this, SLOT(showObjectProperties()));
+
+  connect(objects_trw, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(cancelObjectRename()));
+  connect(objects_trw, SIGNAL(itemCollapsed(QTreeWidgetItem*)), this, SLOT(cancelObjectRename()));
+  connect(objects_trw, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(cancelObjectRename()));
 
   connect(data_grid_tb, &QToolButton::clicked,
           [=]() { emit s_dataGridOpenRequested(connection.getConnectionParam(Connection::PARAM_DB_NAME)); });
@@ -140,7 +149,9 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
   {
     QKeyEvent *k_event=dynamic_cast<QKeyEvent *>(event);
 
-    if(k_event->key()==Qt::Key_Delete || k_event->key()==Qt::Key_F5 || k_event->key()==Qt::Key_Space)
+    if(k_event->key()==Qt::Key_Delete || k_event->key()==Qt::Key_F5 ||
+       k_event->key()==Qt::Key_Space ||  k_event->key()==Qt::Key_F2 ||
+       k_event->key()==Qt::Key_Escape)
     {
      if(k_event->key()==Qt::Key_Space)
      {
@@ -160,6 +171,10 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
      }
      else if(k_event->key()==Qt::Key_F5)
        updateCurrentItem();
+     else if(k_event->key()==Qt::Key_F2)
+       startObjectRename(objects_trw->currentItem());
+     else if(k_event->key()==Qt::Key_Escape)
+       cancelObjectRename();
      else
        dropObject(objects_trw->currentItem(), k_event->modifiers()==Qt::ShiftModifier);
      return(true);
@@ -851,6 +866,7 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
         handle_menu.addAction(show_data_action);
 
       handle_menu.addAction(properties_action);
+      handle_menu.addAction(rename_action);
     }
 
     if(obj_id > 0 && obj_type!=OBJ_DATABASE)
@@ -879,6 +895,8 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
       truncateTable(item,  exec_action==trunc_cascade_action);
     else if(exec_action==refresh_action)
       updateCurrentItem();
+    else if(exec_action==rename_action)
+      startObjectRename(item);
     else if(exec_action==properties_action)
       showObjectProperties(true);
     else if(exec_action==show_data_action)
@@ -1329,6 +1347,41 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
   catch(Exception &e)
   {
     throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+}
+
+
+void DatabaseExplorerWidget::startObjectRename(QTreeWidgetItem *item)
+{
+  Messagebox msg_box;
+
+  try
+  {
+    if(item && static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt()) > 0)
+    {
+      item->setFlags(item->flags() | Qt::ItemIsEditable);
+      objects_trw->openPersistentEditor(item);
+      rename_item=item;
+    }
+  }
+  catch(Exception &e)
+  {
+    msg_box.show(e);
+  }
+}
+
+void DatabaseExplorerWidget::finishObjectRename(void)
+{
+  qDebug("DatabaseExplorerWidget::finishRenameObject");
+}
+
+void DatabaseExplorerWidget::cancelObjectRename(void)
+{
+  if(rename_item)
+  {
+    objects_trw->closePersistentEditor(rename_item);
+    rename_item->setFlags(rename_item->flags() ^ Qt::ItemIsEditable);
+    rename_item=nullptr;
   }
 }
 

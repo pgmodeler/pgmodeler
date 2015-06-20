@@ -60,7 +60,9 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 
     QAction *copy_action, *drop_action, *drop_cascade_action,
             *show_data_action, *refresh_action, *properties_action,
-            *trunc_cascade_action, *truncate_action;
+            *trunc_cascade_action, *truncate_action, *rename_action;
+
+    QTreeWidgetItem *rename_item;
 
     void configureImportHelper(void);
 
@@ -69,6 +71,8 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 
     //! brief Truncates the table represented by the specified item
     void truncateTable(QTreeWidgetItem *item, bool cascade);
+
+    void startObjectRename(QTreeWidgetItem *item);
 
     bool eventFilter(QObject *object, QEvent *event);
 
@@ -147,6 +151,9 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
     /*! brief Loads (calling loadObjectProperties) and expose the attributes of the object in the properties grid,
         the force_reload parameter is used to ignore the cached properties and retrieve them again */
     void showObjectProperties(bool force_reload=false);
+
+    void finishObjectRename(void);
+    void cancelObjectRename(void);
 
   signals:
     //! brief This signal is emmited to indicate that the data manipulation dialog need to be opened
