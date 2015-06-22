@@ -151,7 +151,8 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
 
     if(k_event->key()==Qt::Key_Delete || k_event->key()==Qt::Key_F5 ||
        k_event->key()==Qt::Key_Space ||  k_event->key()==Qt::Key_F2 ||
-       k_event->key()==Qt::Key_Escape)
+       k_event->key()==Qt::Key_Escape ||  k_event->key()==Qt::Key_Return ||
+       k_event->key()==Qt::Key_Enter)
     {
      if(k_event->key()==Qt::Key_Space)
      {
@@ -175,6 +176,9 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
        startObjectRename(objects_trw->currentItem());
      else if(k_event->key()==Qt::Key_Escape)
        cancelObjectRename();
+     else if(k_event->key()==Qt::Key_Enter ||
+             k_event->key()==Qt::Key_Return)
+       finishObjectRename();
      else
        dropObject(objects_trw->currentItem(), k_event->modifiers()==Qt::ShiftModifier);
      return(true);
@@ -866,21 +870,23 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
         handle_menu.addAction(show_data_action);
 
       handle_menu.addAction(properties_action);
-      handle_menu.addAction(rename_action);
-    }
 
-    if(obj_id > 0 && obj_type!=OBJ_DATABASE)
-    {
-      handle_menu.addSeparator();
-      handle_menu.addAction(drop_action);
+      if(obj_type!=OBJ_CAST && obj_type!=OBJ_DATABASE)
+        handle_menu.addAction(rename_action);
 
-      if(obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE)
-        handle_menu.addAction(drop_cascade_action);
-
-      if(obj_type==OBJ_TABLE)
+      if(obj_type!=OBJ_DATABASE)
       {
-        handle_menu.addAction(truncate_action);
-        handle_menu.addAction(trunc_cascade_action);
+        handle_menu.addSeparator();
+        handle_menu.addAction(drop_action);
+
+        if(obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE)
+          handle_menu.addAction(drop_cascade_action);
+
+        if(obj_type==OBJ_TABLE)
+        {
+          handle_menu.addAction(truncate_action);
+          handle_menu.addAction(trunc_cascade_action);
+        }
       }
     }
 
@@ -957,6 +963,56 @@ void DatabaseExplorerWidget::handleSelectedSnippet(const QString &snip_id)
   emit s_snippetShowRequested(SnippetsConfigWidget::getParsedSnippet(snip_id, attribs));
 }
 
+attribs_map DatabaseExplorerWidget::extractAttributesFromItem(QTreeWidgetItem *item)
+{
+  if(!item)
+    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+  ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
+  QString obj_name=item->text(0);
+  int idx=0, idx1=0;
+  attribs_map attribs;
+  QStringList types;
+
+  attribs[ParsersAttributes::SQL_OBJECT]=BaseObject::getSQLName(obj_type);
+  attribs[ParsersAttributes::DECL_IN_TABLE]=QString();
+  attribs[BaseObject::getSchemaName(obj_type)]=ParsersAttributes::_TRUE_;
+
+  //For cast, operator and function is needed to extract the name and the params types
+  if(obj_type==OBJ_OPERATOR || obj_type==OBJ_FUNCTION || obj_type==OBJ_CAST)
+  {
+    idx=obj_name.indexOf('(');
+    idx1=obj_name.indexOf(')');
+    types=obj_name.mid(idx+1, idx1-idx-1).split(',');
+    types.removeAll(QString("-"));
+    obj_name.remove(idx, obj_name.size());
+  }
+
+  //Formatting the names
+  attribs[ParsersAttributes::NAME]=BaseObject::formatName(obj_name, obj_type==OBJ_OPERATOR);
+  attribs[ParsersAttributes::TABLE]=BaseObject::formatName(item->data(DatabaseImportForm::OBJECT_TABLE, Qt::UserRole).toString());
+  attribs[ParsersAttributes::SCHEMA]=BaseObject::formatName(item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString());
+
+  //For table objects the "table" attribute must be schema qualified
+  if(obj_type!=OBJ_INDEX && TableObject::isTableObject(obj_type))
+    attribs[ParsersAttributes::TABLE]=attribs[ParsersAttributes::SCHEMA] + QString(".") + attribs[ParsersAttributes::TABLE];
+  //For operators and functions there must exist the signature attribute
+  else if(obj_type==OBJ_OPERATOR || obj_type==OBJ_FUNCTION)
+    attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::SCHEMA] + QString(".") + attribs[ParsersAttributes::NAME] + QString("(%1)").arg(types.join(ELEM_SEPARATOR));
+  else if(obj_type==OBJ_CAST)
+    attribs[ParsersAttributes::SIGNATURE]=QString("(%1 AS %2)").arg(types[0]).arg(types[1]);
+  else
+  {
+    if(!attribs[ParsersAttributes::SCHEMA].isEmpty() &&
+       attribs[ParsersAttributes::NAME].indexOf(attribs[ParsersAttributes::SCHEMA] + QString(".")) < 0)
+      attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::SCHEMA] + QString(".") + attribs[ParsersAttributes::NAME];
+    else
+      attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::NAME];
+  }
+
+  return(attribs);
+}
+
 void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 {
   Messagebox msg_box;
@@ -985,46 +1041,10 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
       {
         QTreeWidgetItem *parent=nullptr;
         attribs_map attribs;
-        QStringList types;
-        QString drop_cmd, obj_name=item->text(0);
-        int idx=0, idx1=0;
+        QString drop_cmd;
         Connection conn;
 
-        attribs[ParsersAttributes::SQL_OBJECT]=BaseObject::getSQLName(obj_type);
-        attribs[ParsersAttributes::DECL_IN_TABLE]=QString();
-        attribs[BaseObject::getSchemaName(obj_type)]=ParsersAttributes::_TRUE_;
-
-        //For cast, operator and function is needed to extract the name and the params types
-        if(obj_type==OBJ_OPERATOR || obj_type==OBJ_FUNCTION || obj_type==OBJ_CAST)
-        {
-          idx=obj_name.indexOf('(');
-          idx1=obj_name.indexOf(')');
-          types=obj_name.mid(idx+1, idx1-idx-1).split(',');
-          types.removeAll(QString("-"));
-          obj_name.remove(idx, obj_name.size());
-        }
-
-        //Formatting the names
-        attribs[ParsersAttributes::NAME]=BaseObject::formatName(obj_name, obj_type==OBJ_OPERATOR);
-        attribs[ParsersAttributes::TABLE]=BaseObject::formatName(item->data(DatabaseImportForm::OBJECT_TABLE, Qt::UserRole).toString());
-        attribs[ParsersAttributes::SCHEMA]=BaseObject::formatName(item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString());
-
-        //For table objects the "table" attribute must be schema qualified
-        if(obj_type!=OBJ_INDEX && TableObject::isTableObject(obj_type))
-          attribs[ParsersAttributes::TABLE]=attribs[ParsersAttributes::SCHEMA] + QString(".") + attribs[ParsersAttributes::TABLE];
-        //For operators and functions there must exist the signature attribute
-        else if(obj_type==OBJ_OPERATOR || obj_type==OBJ_FUNCTION)
-          attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::SCHEMA] + QString(".") + attribs[ParsersAttributes::NAME] + QString("(%1)").arg(types.join(ELEM_SEPARATOR));
-        else if(obj_type==OBJ_CAST)
-          attribs[ParsersAttributes::SIGNATURE]=QString("(%1 AS %2)").arg(types[0]).arg(types[1]);
-        else
-        {
-          if(!attribs[ParsersAttributes::SCHEMA].isEmpty() &&
-             attribs[ParsersAttributes::NAME].indexOf(attribs[ParsersAttributes::SCHEMA] + QString(".")) < 0)
-            attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::SCHEMA] + QString(".") + attribs[ParsersAttributes::NAME];
-          else
-            attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::NAME];
-        }
+        attribs=extractAttributesFromItem(item);
 
         //Generate the drop command
         schparser.ignoreEmptyAttributes(true);
@@ -1353,26 +1373,57 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 
 void DatabaseExplorerWidget::startObjectRename(QTreeWidgetItem *item)
 {
-  Messagebox msg_box;
-
-  try
+  if(item && static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt()) > 0)
   {
-    if(item && static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt()) > 0)
+    ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
+
+    if(obj_type!=OBJ_CAST && obj_type!=OBJ_DATABASE)
     {
       item->setFlags(item->flags() | Qt::ItemIsEditable);
       objects_trw->openPersistentEditor(item);
       rename_item=item;
+      rename_item->setData(DatabaseImportForm::OBJECT_OTHER_DATA, Qt::UserRole, rename_item->text(0));
     }
-  }
-  catch(Exception &e)
-  {
-    msg_box.show(e);
   }
 }
 
 void DatabaseExplorerWidget::finishObjectRename(void)
 {
-  qDebug("DatabaseExplorerWidget::finishRenameObject");
+  Messagebox msg_box;
+
+  try
+  {
+    if(rename_item)
+    {
+      QString rename_cmd;
+      Connection conn=connection;
+      attribs_map attribs=extractAttributesFromItem(rename_item);
+      ObjectType obj_type=static_cast<ObjectType>(rename_item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
+
+      objects_trw->closePersistentEditor(rename_item);
+      attribs[ParsersAttributes::NEW_NAME]=BaseObject::formatName(rename_item->text(0), obj_type==OBJ_OPERATOR);
+
+      //Generate the drop command
+      schparser.ignoreEmptyAttributes(true);
+      schparser.ignoreUnkownAttributes(true);
+      rename_cmd=schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
+                                             GlobalAttributes::ALTER_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
+                                             ParsersAttributes::RENAME + GlobalAttributes::SCHEMA_EXT,
+                                             attribs);
+
+      //Executes the rename cmd
+      conn.connect();
+      conn.executeDDLCommand(rename_cmd);
+
+      rename_item->setFlags(rename_item->flags() ^ Qt::ItemIsEditable);
+      rename_item=nullptr;
+    }
+  }
+  catch(Exception &e)
+  {
+    cancelObjectRename();
+    msg_box.show(e);
+  }
 }
 
 void DatabaseExplorerWidget::cancelObjectRename(void)
@@ -1381,6 +1432,7 @@ void DatabaseExplorerWidget::cancelObjectRename(void)
   {
     objects_trw->closePersistentEditor(rename_item);
     rename_item->setFlags(rename_item->flags() ^ Qt::ItemIsEditable);
+    rename_item->setText(0, rename_item->data(DatabaseImportForm::OBJECT_OTHER_DATA, Qt::UserRole).toString());
     rename_item=nullptr;
   }
 }
