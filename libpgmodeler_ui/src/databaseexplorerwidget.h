@@ -60,7 +60,9 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 
     QAction *copy_action, *drop_action, *drop_cascade_action,
             *show_data_action, *refresh_action, *properties_action,
-            *trunc_cascade_action, *truncate_action;
+            *trunc_cascade_action, *truncate_action, *rename_action;
+
+    QTreeWidgetItem *rename_item;
 
     void configureImportHelper(void);
 
@@ -69,6 +71,9 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 
     //! brief Truncates the table represented by the specified item
     void truncateTable(QTreeWidgetItem *item, bool cascade);
+
+    //! brief Marks the item as editable so that the user can change its name
+    void startObjectRename(QTreeWidgetItem *item);
 
     bool eventFilter(QObject *object, QEvent *event);
 
@@ -117,6 +122,9 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
     void formatIndexAttribs(attribs_map &attribs);
     void handleSelectedSnippet(const QString &snip_id);
 
+    //! brief Extract an attribute map containing the basic attributes for drop/rename commands
+    attribs_map extractAttributesFromItem(QTreeWidgetItem *item);
+
   public:
     DatabaseExplorerWidget(QWidget * parent = 0);
 
@@ -147,6 +155,12 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
     /*! brief Loads (calling loadObjectProperties) and expose the attributes of the object in the properties grid,
         the force_reload parameter is used to ignore the cached properties and retrieve them again */
     void showObjectProperties(bool force_reload=false);
+
+    //! brief Executes the rename command on the database
+    void finishObjectRename(void);
+
+    //! brief Cancels the rename and restore the original item's name
+    void cancelObjectRename(void);
 
   signals:
     //! brief This signal is emmited to indicate that the data manipulation dialog need to be opened
