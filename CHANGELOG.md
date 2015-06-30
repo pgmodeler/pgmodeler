@@ -1,6 +1,20 @@
 Change Log
 ---------
 
+v0.8.1-beta1
+------
+<em>Codename: <strong>Faithful Elephant</strong></em><br/>
+<em>Release date: June 30, 2015</em><br/>
+
+* [New] Objects can be now renamed in database explorer except for databases and casts.
+* [New] Added an initial Spanish (es_ES) UI translation (review needed).
+* [Change] Dropped the startapp script in Mac OSX. All executables now are able to run without explicitly use that script.
+* [Fix] Fixed the snippet related to object renaming in snippets.conf.
+* [Fix] Fixed a small bug in schema parser that was ignoring the usage of '$oc' metacharacter in some cases.
+* [Fix] Fixed shortcut for delete command in data manipulation form.
+* [Fix] Fixed the deployment script on Mac OSX to make the CLI and crash handler find the core libraries properly.
+* [Fix] Fixed a bug that was generating ALTER ROLE commands without the semicolon.
+
 v0.8.1-beta
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em><br/>
