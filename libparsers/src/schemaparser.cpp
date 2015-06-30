@@ -1276,7 +1276,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 									word=(*itr);
 
                   //Check if the word is not an attribute
-                  if(!word.isEmpty() && word[0]==CHR_INI_ATTRIB)
+                  if(!word.isEmpty() && word.startsWith(CHR_INI_ATTRIB) && word.endsWith(CHR_END_ATTRIB))
 									{
                     //If its an attribute, extracts the name between { } and checks if the same has empty value
                     atrib=word.mid(1, word.size()-2);

@@ -12,6 +12,7 @@ SUBDIRS = libutils \
 
 TRANSLATIONS = lang/pt_BR.ts \
                lang/zh_CN.ts \
-               lang/fr_FR.ts
+               lang/fr_FR.ts \
+               lang/es_ES.ts
 
 CODECFORTR = UTF8
