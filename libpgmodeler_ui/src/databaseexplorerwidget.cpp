@@ -995,7 +995,10 @@ attribs_map DatabaseExplorerWidget::extractAttributesFromItem(QTreeWidgetItem *i
 
   //For table objects the "table" attribute must be schema qualified
   if(obj_type!=OBJ_INDEX && TableObject::isTableObject(obj_type))
+  {
     attribs[ParsersAttributes::TABLE]=attribs[ParsersAttributes::SCHEMA] + QString(".") + attribs[ParsersAttributes::TABLE];
+    attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::NAME];
+  }
   //For operators and functions there must exist the signature attribute
   else if(obj_type==OBJ_OPERATOR || obj_type==OBJ_FUNCTION)
     attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::SCHEMA] + QString(".") + attribs[ParsersAttributes::NAME] + QString("(%1)").arg(types.join(ELEM_SEPARATOR));
