@@ -489,9 +489,11 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
       if(obj_idx < 0 || obj_idx >= static_cast<int>(obj_list->size()))
          getObject(object->getSignature(), obj_type, obj_idx);
 
-			if(obj_idx >= 0)
+      if(obj_idx >= 0)
 			{
-				removePermissions(object);
+        if(Permission::objectAcceptsPermission(obj_type))
+          removePermissions(object);
+
 				obj_list->erase(obj_list->begin() + obj_idx);
 			}
 		}
@@ -580,13 +582,6 @@ BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, i
     while(itr!=itr_end && !found)
     {
       signature=(*itr)->getSignature().remove("\"");
-
-      /* Special case for operator class and operator family.
-         Their signature comes with a "USING index_mode" string
-         that must be removed */
-      if(obj_type==OBJ_OPCLASS || obj_type==OBJ_OPFAMILY)
-        signature.remove(QRegExp(QString("( )+(USING)(.)+")));
-
       found=(signature==aux_name1);
       if(!found) itr++;
     }

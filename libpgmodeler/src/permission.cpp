@@ -461,7 +461,7 @@ QString Permission::getCodeDefinition(unsigned def_type)
 
 QString Permission::getSignature(bool format)
 {
-  QStringList rol_names;
+  QStringList rol_names, words;
   QString signature;
 
   for(Role *role : roles)
@@ -475,11 +475,8 @@ QString Permission::getSignature(bool format)
   else
     signature=rol_names.join(',') + signature;
 
-  if(revoke)
-    signature=QString("revoke:") + signature;
-  else
-    signature=QString("grant:") + signature;
-
+  words=this->obj_name.split("_");
+  signature=words[0] + QChar(':') + signature + QString(" [id:%1]").arg(words[1]);
   return(signature);
 }
 
