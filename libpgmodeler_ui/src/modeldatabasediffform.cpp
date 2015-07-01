@@ -679,7 +679,7 @@ void ModelDatabaseDiffForm::updateDiffInfo(ObjectsDiffInfo diff_info)
 
 void ModelDatabaseDiffForm::selectOutputFile(void)
 {
-  QFileDialog file_dlg;
+  QFileDialog file_dlg(this);
 
   file_dlg.setWindowTitle(trUtf8("Save diff as..."));
   file_dlg.setFileMode(QFileDialog::AnyFile);

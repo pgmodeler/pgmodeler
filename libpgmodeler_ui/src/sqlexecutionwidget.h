@@ -50,7 +50,7 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		Connection sql_cmd_conn;
 
 		//! brief Dialog for SQL save/load
-		QFileDialog sql_file_dlg;
+        QFileDialog sql_file_dlg;
 
     QMenu snippets_menu;
 

@@ -22,7 +22,7 @@
 #include "snippetsconfigwidget.h"
 #include "pgmodeleruins.h"
 
-SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
+SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent), sql_file_dlg(parent)
 {
 	setupUi(this);
 
@@ -341,7 +341,7 @@ void SQLExecutionWidget::exportResults(QTableWidget *results_tbw)
 	if(!results_tbw)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	QFileDialog csv_file_dlg;
+    QFileDialog csv_file_dlg(results_tbw);
 
   csv_file_dlg.setDefaultSuffix(QString("csv"));
 	csv_file_dlg.setFileMode(QFileDialog::AnyFile);

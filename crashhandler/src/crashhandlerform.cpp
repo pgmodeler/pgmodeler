@@ -166,7 +166,7 @@ void CrashHandlerForm::loadReport(const QString &filename)
 
 void CrashHandlerForm::loadReport(void)
 {
-  QFileDialog file_dlg;
+  QFileDialog file_dlg(this);
 
 	try
 	{
@@ -190,7 +190,7 @@ void CrashHandlerForm::loadReport(void)
 
 void CrashHandlerForm::saveModel(void)
 {
-  QFileDialog file_dlg;
+  QFileDialog file_dlg(this);
 
 	try
 	{
