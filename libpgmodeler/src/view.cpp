@@ -426,7 +426,7 @@ void View::setDeclarationAttribute(void)
 		{
 			vector<unsigned> *refs_vect[3]={&exp_select, &exp_from, &exp_where};
 			vector<unsigned>::iterator itr, itr_end;
-			QString palavras[3]={"SELECT ", "\n FROM ", "\n WHERE "};
+      QString palavras[3]={"SELECT\n", "\nFROM\n", "\nWHERE\n"};
 			unsigned i, qtd, idx, tipo_sql[3]={Reference::SQL_REFER_SELECT,
 																				 Reference::SQL_REFER_FROM,
 																				 Reference::SQL_REFER_WHERE};

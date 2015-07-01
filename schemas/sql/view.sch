@@ -38,14 +38,14 @@ $br
   %end
 %end
 
-[AS ]
+[AS ] $br
 
 #Commom table expression (CTE)
 %if {cte-exp} %then
  [WITH ] {cte-exp}
 %end
 
-{declaration}
+$br {declaration}
 
 %if ({pgsql-ver} >= "9.3") %then
   %if {materialized} %and {with-no-data} %then
