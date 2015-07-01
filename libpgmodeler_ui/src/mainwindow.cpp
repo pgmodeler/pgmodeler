@@ -1211,7 +1211,7 @@ void MainWindow::saveModel(ModelWidget *model)
 				//If the action that calls the slot were the 'save as' or the model filename isn't set
         if(sender()==action_save_as || model->filename.isEmpty() || pending_op==PENDING_SAVE_AS_OPER)
 				{
-                    QFileDialog file_dlg(this);
+					QFileDialog file_dlg(this);
 
           file_dlg.setDefaultSuffix(QString("dbm"));
 					file_dlg.setWindowTitle(trUtf8("Save '%1' as...").arg(model->db_model->getName()));
