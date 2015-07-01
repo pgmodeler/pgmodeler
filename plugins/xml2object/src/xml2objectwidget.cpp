@@ -20,7 +20,7 @@ void Xml2ObjectWidget::clearSource(void)
 
 void Xml2ObjectWidget::loadXML(void)
 {
-    QFileDialog file_dlg(this);
+	QFileDialog file_dlg(this);
 
 	file_dlg.setNameFilter(trUtf8("Database model (*.dbm);;XML file (*.xml);;All files (*.*)"));
 	file_dlg.setWindowIcon(QPixmap(QString(":/icones/icones/pgsqlModeler48x48.png")));

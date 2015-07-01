@@ -22,7 +22,7 @@
 #include "snippetsconfigwidget.h"
 #include "pgmodeleruins.h"
 
-SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent), sql_file_dlg(parent)
+SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 {
 	setupUi(this);
 
@@ -35,7 +35,8 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent), sql_
 	results_parent->setVisible(false);
 	cmd_history_gb->setVisible(false);
 
-  sql_file_dlg.setDefaultSuffix(QString("sql"));
+    sql_file_dlg.setParent(qApp->activeWindow());
+    sql_file_dlg.setDefaultSuffix(QString("sql"));
 	sql_file_dlg.setFileMode(QFileDialog::AnyFile);
   sql_file_dlg.setNameFilter(trUtf8("SQL file (*.sql);;All files (*.*)"));
 	sql_file_dlg.setModal(true);
@@ -341,7 +342,7 @@ void SQLExecutionWidget::exportResults(QTableWidget *results_tbw)
 	if(!results_tbw)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	QFileDialog csv_file_dlg(results_tbw);
+    QFileDialog csv_file_dlg(qApp->activeWindow());
 
   csv_file_dlg.setDefaultSuffix(QString("csv"));
 	csv_file_dlg.setFileMode(QFileDialog::AnyFile);
