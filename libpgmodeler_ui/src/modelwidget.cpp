@@ -134,7 +134,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	grid->addWidget(label, 0, 1, 1, 1);
 	protected_model_frm->setLayout(grid);
 
-	db_model=new DatabaseModel;
+  db_model=new DatabaseModel(this);
 	xmlparser=db_model->getXMLParser();
 	op_list=new OperationList(db_model);
 	scene=new ObjectsScene;

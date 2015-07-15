@@ -56,6 +56,8 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 #include <algorithm>
 #include <locale.h>
 
+class ModelWidget;
+
 class DatabaseModel:  public QObject, public BaseObject {
 	private:
 		Q_OBJECT
@@ -63,6 +65,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		static unsigned dbmodel_id;
 
 		XMLParser xmlparser;
+
+    //! brief Stores the model widget that is managing this database model instance
+    ModelWidget *model_wgt;
 
 		//! \brief Database encoding
 		EncodingType encoding;
@@ -157,8 +162,15 @@ class DatabaseModel:  public QObject, public BaseObject {
 		QString getErrorExtraInfo(void);
 
   public:
-		DatabaseModel(void);
-		~DatabaseModel(void);
+    DatabaseModel(void);
+
+    //! brief Creates a database model and assign the model widget which will manage this instance
+    explicit DatabaseModel(ModelWidget *model_wgt);
+
+    ~DatabaseModel(void);
+
+    //! brief Returns the model widget that is managing the current database instance
+    ModelWidget *getModelWidget(void);
 
 		//! \brief Returns the complete object list according to the type
 		vector<BaseObject *> *getObjectList(ObjectType obj_type);

@@ -38,7 +38,7 @@ ObjectSelectorWidget::ObjectSelectorWidget(vector<ObjectType> sel_obj_types, boo
 	try
 	{
 		this->sel_obj_types=sel_obj_types;
-		configureSelector(install_highlighter);
+    configureSelector(install_highlighter);
 	}
 	catch(Exception &e)
 	{
@@ -85,7 +85,12 @@ bool ObjectSelectorWidget::eventFilter(QObject *obj, QEvent *evnt)
 
 ObjectSelectorWidget::~ObjectSelectorWidget(void)
 {
-	delete(obj_view_wgt);
+  delete(obj_view_wgt);
+}
+
+void ObjectSelectorWidget::enableObjectCreation(bool value)
+{
+  obj_view_wgt->enableObjectCreation(value);
 }
 
 BaseObject *ObjectSelectorWidget::getSelectedObject(void)

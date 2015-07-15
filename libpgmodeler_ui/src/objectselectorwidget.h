@@ -55,14 +55,17 @@ class ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
 		DatabaseModel *model;
 
 		//! \brief Configures the selectors attributes at construction time
-		void configureSelector(bool install_highlighter);
+    void configureSelector(bool install_highlighter);
 
 		bool eventFilter(QObject *obj, QEvent *evnt);
 
 	public:
-		ObjectSelectorWidget(ObjectType sel_obj_type, bool install_highlighter, QWidget * parent = 0);
-		ObjectSelectorWidget(vector<ObjectType> sel_obj_types, bool install_highlighter, QWidget * parent = 0);
+    ObjectSelectorWidget(ObjectType sel_obj_type, bool install_highlighter, QWidget * parent = 0);
+    ObjectSelectorWidget(vector<ObjectType> sel_obj_types, bool install_highlighter, QWidget * parent = 0);
 		~ObjectSelectorWidget(void);
+
+    //! brief Enables the creation of new objects from withing the object selector dialog
+    void enableObjectCreation(bool value);
 
 		//! \brief Returns the reference to the selected object
 		BaseObject *getSelectedObject(void);

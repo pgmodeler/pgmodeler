@@ -23,12 +23,13 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 {
 	setupUi(this);
 	model_wgt=nullptr;
-	db_model=nullptr;
-	setModel(db_model);
+	db_model=nullptr;	 
+  setModel(db_model);
 
 	title_wgt->setVisible(!simplified_view);
 	this->simplified_view=simplified_view;
 	this->save_tree_state=!simplified_view;
+  enable_obj_creation=simplified_view;
 
 	select_tb->setVisible(simplified_view);
 	cancel_tb->setVisible(simplified_view);
@@ -137,6 +138,12 @@ void ModelObjectsWidget::editObject(void)
 void ModelObjectsWidget::selectObject(void)
 {
 	ObjectType obj_type=BASE_OBJECT;
+  ModelWidget *model_wgt=nullptr;
+
+  if(!simplified_view && this->model_wgt)
+    model_wgt=this->model_wgt;
+  else if(simplified_view)
+    model_wgt=db_model->getModelWidget();
 
 	if(tree_view_tb->isChecked())
 	{
@@ -149,13 +156,14 @@ void ModelObjectsWidget::selectObject(void)
 		}
 
 		//If user select a group item popups a "New [OBJECT]" menu
-		if(!selected_object && QApplication::mouseButtons()==Qt::RightButton &&
+    if((!simplified_view || (simplified_view && enable_obj_creation)) &&
+       !selected_object && QApplication::mouseButtons()==Qt::RightButton &&
 			 obj_type!=OBJ_COLUMN && obj_type!=OBJ_CONSTRAINT && obj_type!=OBJ_RULE &&
 			 obj_type!=OBJ_INDEX && obj_type!=OBJ_TRIGGER && obj_type!=OBJ_PERMISSION)
 		{
 			QAction act(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")),
                   trUtf8("New") + QString(" ") + BaseObject::getTypeName(obj_type), nullptr);
-			QMenu popup;
+      QMenu popup;
 
 			//If not a relationship, connect the action to the addNewObject method of the model wiget
 			if(obj_type!=OBJ_RELATIONSHIP)
@@ -170,6 +178,9 @@ void ModelObjectsWidget::selectObject(void)
 			popup.addAction(&act);
 			popup.exec(QCursor::pos());
 			disconnect(&act,nullptr,model_wgt,nullptr);
+
+      if(simplified_view && enable_obj_creation)
+        updateObjectsView();
 		}
 	}
 	else
@@ -796,7 +807,12 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 
 BaseObject *ModelObjectsWidget::getSelectedObject(void)
 {
-	return(selected_object);
+  return(selected_object);
+}
+
+void ModelObjectsWidget::enableObjectCreation(bool value)
+{
+  enable_obj_creation=value;
 }
 
 void ModelObjectsWidget::close(void)

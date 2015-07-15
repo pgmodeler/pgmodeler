@@ -23,6 +23,7 @@ unsigned DatabaseModel::dbmodel_id=2000;
 
 DatabaseModel::DatabaseModel(void)
 {
+  this->model_wgt=nullptr;
 	object_id=DatabaseModel::dbmodel_id++;
 	obj_type=OBJ_DATABASE;
 
@@ -46,10 +47,20 @@ DatabaseModel::DatabaseModel(void)
   attributes[ParsersAttributes::PREPEND_AT_EOD]=QString();
 }
 
+DatabaseModel::DatabaseModel(ModelWidget *model_wgt):DatabaseModel()
+{
+  this->model_wgt=model_wgt;
+}
+
 DatabaseModel::~DatabaseModel(void)
 {
 	this->blockSignals(true);
-	destroyObjects();
+  destroyObjects();
+}
+
+ModelWidget *DatabaseModel::getModelWidget(void)
+{
+  return(model_wgt);
 }
 
 void DatabaseModel::setEncoding(EncodingType encod)

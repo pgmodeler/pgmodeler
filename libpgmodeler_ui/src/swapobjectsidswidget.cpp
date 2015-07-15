@@ -6,13 +6,17 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 	{
 		QGridLayout *swap_objs_grid=new QGridLayout(this);
     vector<ObjectType> types=BaseObject::getObjectTypes(true, {OBJ_PERMISSION, OBJ_ROLE, OBJ_TEXTBOX,
-                                                               /*OBJ_RELATIONSHIP,*/ OBJ_COLUMN, OBJ_CONSTRAINT });
+                                                               OBJ_COLUMN, OBJ_CONSTRAINT });
     setupUi(this);
 
 		src_object_sel=nullptr;
 		dst_object_sel=nullptr;
-		src_object_sel=new ObjectSelectorWidget(types, true, this);
-		dst_object_sel=new ObjectSelectorWidget(types, true, this);
+
+    src_object_sel=new ObjectSelectorWidget(types, true, this);
+    src_object_sel->enableObjectCreation(false);
+
+    dst_object_sel=new ObjectSelectorWidget(types, true, this);
+    dst_object_sel->enableObjectCreation(false);
 
     parent_form.setWindowTitle(QString("Change objects creation order"));
 		parent_form.generalwidget_wgt->insertWidget(0, this);

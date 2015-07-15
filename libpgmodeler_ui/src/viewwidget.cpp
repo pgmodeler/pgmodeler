@@ -48,7 +48,9 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
     dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 4);
 
 		table_sel=new ObjectSelectorWidget(OBJ_TABLE, true, this);
+    table_sel->enableObjectCreation(false);
 		column_sel=new ObjectSelectorWidget(OBJ_COLUMN, true, this);
+    column_sel->enableObjectCreation(false);
 
 		references_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
 		references_tab->setColumnCount(4);
