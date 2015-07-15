@@ -28,7 +28,7 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	connect(filter_btn, SIGNAL(toggled(bool)), filter_frm, SLOT(setVisible(bool)));
 	connect(find_btn, SIGNAL(clicked(bool)), this, SLOT(findObjects(void)));
 	connect(hide_tb, SIGNAL(clicked(void)), this, SLOT(hide(void)));
-	connect(result_tbw, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(selectObject(void)));
+  connect(result_tbw, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(selectObject(void)));
 	connect(result_tbw, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(editObject(void)));
 	connect(clear_res_btn, SIGNAL(clicked(void)), this, SLOT(clearResult(void)));
 	connect(select_all_btn, SIGNAL(clicked(void)), this, SLOT(setAllObjectsChecked(void)));
@@ -134,21 +134,31 @@ void ObjectFinderWidget::selectObject(void)
 	if(tab_item)
 	{
 		selected_obj=reinterpret_cast<BaseObject *>(tab_item->data(Qt::UserRole).value<void *>());
-		BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(selected_obj);
-		TableObject *tab_obj=dynamic_cast<TableObject *>(selected_obj);
 
-		if(tab_obj && !graph_obj)
-			graph_obj=dynamic_cast<BaseGraphicObject *>(tab_obj->getParentTable());
+    if(QApplication::mouseButtons()!=Qt::RightButton)
+    {
+      BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(selected_obj);
+      TableObject *tab_obj=dynamic_cast<TableObject *>(selected_obj);
 
-		//Highlight the graphical object when the 'highlight' button is checked
-		if(graph_obj && highlight_btn->isChecked())
-		{
-			BaseObjectView *obj=dynamic_cast<BaseObjectView *>(graph_obj->getReceiverObject());
-			model_wgt->scene->clearSelection();
-			model_wgt->viewport->centerOn(obj);
-			obj->setSelected(true);
-		}
-	}
+      if(tab_obj && !graph_obj)
+        graph_obj=dynamic_cast<BaseGraphicObject *>(tab_obj->getParentTable());
+
+      //Highlight the graphical object when the 'highlight' button is checked
+      if(graph_obj && highlight_btn->isChecked())
+      {
+        BaseObjectView *obj=dynamic_cast<BaseObjectView *>(graph_obj->getReceiverObject());
+        model_wgt->scene->clearSelection();
+        model_wgt->viewport->centerOn(obj);
+        obj->setSelected(true);
+      }
+    }
+    //Showing the popup menu for the selected object in the result set
+    else
+    {
+      model_wgt->configureObjectMenu(selected_obj);
+      model_wgt->showObjectMenu();
+    }
+  }
 }
 
 void ObjectFinderWidget::editObject(void)
