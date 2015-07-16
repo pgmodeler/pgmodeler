@@ -680,5 +680,11 @@ void TableWidget::cancelConfiguration(void)
 
 	if(operation_count < op_list->getCurrentSize())
 		BaseObjectWidget::cancelConfiguration();
+
+  if(new_object && this->object)
+  {
+    delete(this->object);
+    this->object=nullptr;
+  }
 }
 

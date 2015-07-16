@@ -374,7 +374,7 @@ void ViewWidget::listObjects(ObjectType obj_type)
 
 void ViewWidget::hideEvent(QHideEvent *evento)
 {
-	View *view=dynamic_cast<View *>(this->object);
+  //View *view=dynamic_cast<View *>(this->object);
 	ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE };
 
 	references_tab->removeRows();
@@ -390,7 +390,7 @@ void ViewWidget::hideEvent(QHideEvent *evento)
 		objects_tab_map[types[i]]->blockSignals(false);
 	}
 
-	if(this->new_object && !view->isModified())
+  if(this->new_object)// && !view->isModified())
 		this->cancelConfiguration();
 
 	BaseObjectWidget::hideEvent(evento);
@@ -698,9 +698,6 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 	op_list->startOperationChain();
 	operation_count=op_list->getCurrentSize();
 
-	if(this->new_object)
-		op_list->registerObject(view, Operation::OBJECT_CREATED);
-
 	column_sel->setModel(model);
 	table_sel->setModel(model);
 
@@ -748,6 +745,8 @@ void ViewWidget::applyConfiguration(void)
 
 		if(!this->new_object)
 			op_list->registerObject(this->object, Operation::OBJECT_MODIFIED);
+    else
+      registerNewObject();
 
 		BaseObjectWidget::applyConfiguration();
 
@@ -786,7 +785,6 @@ void ViewWidget::applyConfiguration(void)
 	}
 	catch(Exception &e)
 	{
-		this->cancelConfiguration();
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -798,4 +796,10 @@ void ViewWidget::cancelConfiguration(void)
 
 	if(operation_count < op_list->getCurrentSize())
 		BaseObjectWidget::cancelConfiguration();
+
+  if(new_object && this->object)
+  {
+    delete(this->object);
+    this->object=nullptr;
+  }
 }

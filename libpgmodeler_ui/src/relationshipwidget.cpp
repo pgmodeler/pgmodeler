@@ -255,12 +255,10 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		this->setAttributes(model, op_list, rel);
 
 		op_list->startOperationChain();
-		operation_count=op_list->getCurrentSize();
-		op_list->registerObject(rel, Operation::OBJECT_CREATED);
+		operation_count=op_list->getCurrentSize();		
 	}
 	catch(Exception &e)
 	{
-		op_list->removeLastOperation();
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -967,6 +965,8 @@ void RelationshipWidget::applyConfiguration(void)
 
 		if(!this->new_object && this->object->getObjectType()==OBJ_RELATIONSHIP)
 			op_list->registerObject(this->object, Operation::OBJECT_MODIFIED);
+    else
+      registerNewObject();
 
 		BaseObjectWidget::applyConfiguration();
 
@@ -1078,10 +1078,6 @@ void RelationshipWidget::applyConfiguration(void)
 	}
 	catch(Exception &e)
 	{
-		op_list->ignoreOperationChain(true);
-		this->cancelConfiguration();
-		op_list->ignoreOperationChain(false);
-
 		model->validateRelationships();
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -1089,9 +1085,15 @@ void RelationshipWidget::applyConfiguration(void)
 
 void RelationshipWidget::cancelConfiguration(void)
 {
-	if(op_list->isOperationChainStarted())
-		op_list->finishOperationChain();
+  if(op_list->isOperationChainStarted())
+    op_list->finishOperationChain();
 
-	if(operation_count < op_list->getCurrentSize())
-		BaseObjectWidget::cancelConfiguration();
+  if(operation_count < op_list->getCurrentSize())
+    BaseObjectWidget::cancelConfiguration();
+
+  if(new_object && this->object)
+  {
+    delete(this->object);
+    this->object=nullptr;
+  }
 }

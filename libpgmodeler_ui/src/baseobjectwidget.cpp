@@ -903,6 +903,7 @@ void BaseObjectWidget::cancelConfiguration(void)
 			 obj_type!=OBJ_VIEW &&
 			 obj_type!=OBJ_RELATIONSHIP)
 		{
+      delete(this->object);
 			this->object=nullptr;
     }
 	}
@@ -919,7 +920,7 @@ void BaseObjectWidget::cancelConfiguration(void)
 		{}
 	}
 
-	emit s_objectManipulated();
+  emit s_objectManipulated();
 }
 
 void BaseObjectWidget::registerNewObject(void)
