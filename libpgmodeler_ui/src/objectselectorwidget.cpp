@@ -18,8 +18,6 @@
 
 #include "objectselectorwidget.h"
 
-QObject *ObjectSelectorWidget::current_selector=nullptr;
-
 ObjectSelectorWidget::ObjectSelectorWidget(ObjectType sel_obj_type, bool install_highlighter, QWidget *parent) : QWidget(parent)
 {
 	try
@@ -152,8 +150,8 @@ void ObjectSelectorWidget::setModel(DatabaseModel *modelo)
 
 void ObjectSelectorWidget::showSelectedObject(BaseObject *obj_sel, bool)
 {
-	if(ObjectSelectorWidget::current_selector==this && obj_sel)
-		setSelectedObject(obj_sel);
+  if(obj_sel)
+    setSelectedObject(obj_sel);
 }
 
 void ObjectSelectorWidget::clearSelector(void)
@@ -166,8 +164,6 @@ void ObjectSelectorWidget::clearSelector(void)
 
 void ObjectSelectorWidget::showObjectView(void)
 {
-	ObjectSelectorWidget::current_selector=this;
-
 	for(unsigned i=0; i < sel_obj_types.size(); i++)
 		obj_view_wgt->setObjectVisible(sel_obj_types[i], true);
 

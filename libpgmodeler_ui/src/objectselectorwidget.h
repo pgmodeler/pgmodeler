@@ -38,10 +38,6 @@ class ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
 		//! \brief An object view widget instance used as object picker
 		ModelObjectsWidget *obj_view_wgt;
 
-		/*! \brief Stores the selector instance currently focused. This attribute is used to
-		prevent other selector in a same form to receive the selected object */
-		static QObject *current_selector;
-
 		//! \brief Selected object name highlighter
 		SyntaxHighlighter *obj_name_hl;
 

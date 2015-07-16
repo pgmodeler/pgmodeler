@@ -139,6 +139,7 @@ void ModelObjectsWidget::selectObject(void)
 {
 	ObjectType obj_type=BASE_OBJECT;
   ModelWidget *model_wgt=nullptr;
+  QMetaObject::Connection conn;
 
   if(!simplified_view && this->model_wgt)
     model_wgt=this->model_wgt;
@@ -175,12 +176,30 @@ void ModelObjectsWidget::selectObject(void)
 			else
 				act.setMenu(model_wgt->rels_menu);
 
+      if(simplified_view && enable_obj_creation)
+      {
+        //Creating a lambda connection and storing its handle to be able to disconnect at the end
+        conn=connect(model_wgt->getDatabaseModel(), &DatabaseModel::s_objectAdded,
+        [=](BaseObject *obj){
+            updateObjectsView();
+            QTreeWidgetItem *item=getTreeItem(obj);
+            if(item)
+            {
+              objectstree_tw->blockSignals(true);
+              objectstree_tw->setItemSelected(item, true);
+              objectstree_tw->setCurrentItem(item);
+              objectstree_tw->scrollToItem(item);
+              selected_object=obj;
+              select_tb->setFocus();
+              objectstree_tw->blockSignals(false);
+            }
+        });
+      }
+
 			popup.addAction(&act);
 			popup.exec(QCursor::pos());
-			disconnect(&act,nullptr,model_wgt,nullptr);
-
-      if(simplified_view && enable_obj_creation)
-        updateObjectsView();
+      disconnect(&act,nullptr,model_wgt,nullptr);
+      disconnect(conn);
 		}
 	}
 	else
@@ -196,11 +215,8 @@ void ModelObjectsWidget::selectObject(void)
 
 	if(obj_type!=OBJ_PERMISSION && selected_object && !simplified_view)
 	{
-		vector<BaseObject *> vect;
-
-		vect.push_back(selected_object);
 		model_wgt->scene->clearSelection();
-		model_wgt->configurePopupMenu(vect);
+    model_wgt->configureObjectMenu(selected_object);
 		showObjectMenu();
 	}
 }
