@@ -301,7 +301,10 @@ private slots:
 		void selectSchemaChildren(void);
 
 		//! \brief Removes the selected objects
-    void removeObjects(bool cascade);
+    void removeObjects(bool cascade = false);
+
+    //! brief Removes the selected objects in cascade model. This is the same as call removeObjects(true).
+    void removeObjectsCascade(void);
 
 		//! \brief Selects all the graphical objects on the scene
 		void selectAllObjects(void);
@@ -371,6 +374,10 @@ private slots:
 
 		//! \brief Signal emitted whenever a object is created / edited using the form
 		void s_objectManipulated(void);
+
+    /*! brief Signal emitted whenever the user open an object in its editing form but cancel the operation
+        by closing the form */
+    void s_manipulationCanceled(void);
 
 		friend class MainWindow;
 		friend class ModelExportForm;

@@ -808,16 +808,7 @@ void BaseObjectWidget::finishConfiguration(void)
         else if(obj_type!=OBJ_PARAMETER)
           model->addObject(this->object);
 
-        if(op_list)
-        {
-          emit s_newObjectAboutToBeRegistered();
-
-          //If the object is a new one is necessary register it on the operation list
-          if(this->table)
-            op_list->registerObject(this->object, Operation::OBJECT_CREATED, -1, this->table);
-          else if(obj_type!=OBJ_RELATIONSHIP && obj_type!=OBJ_TABLE)
-            op_list->registerObject(this->object, Operation::OBJECT_CREATED, -1, this->relationship);
-        }
+        registerNewObject();
         new_object=false;
       }
       else
@@ -912,23 +903,12 @@ void BaseObjectWidget::cancelConfiguration(void)
 			 obj_type!=OBJ_VIEW &&
 			 obj_type!=OBJ_RELATIONSHIP)
 		{
-      //delete(this->object);
 			this->object=nullptr;
-    }
-
-    //this->object=nullptr;
-
-		if(op_list)
-    {
-      op_list->ignoreOperationChain(true);
-			op_list->removeLastOperation();
-      op_list->ignoreOperationChain(false);
     }
 	}
 
 	//If the object is not a new one, restore its previous state
-	if(!new_object &&
-		 op_list && obj_type!=OBJ_DATABASE && obj_type!=OBJ_PERMISSION)
+  if(op_list && obj_type!=OBJ_DATABASE && obj_type!=OBJ_PERMISSION)
 	{
 		try
 		{
@@ -940,4 +920,27 @@ void BaseObjectWidget::cancelConfiguration(void)
 	}
 
 	emit s_objectManipulated();
+}
+
+void BaseObjectWidget::registerNewObject(void)
+{
+  try
+  {
+    if(this->new_object && op_list && !op_list->isObjectRegistered(this->object, Operation::OBJECT_CREATED))
+    {
+      ObjectType obj_type=this->object->getObjectType();
+
+      //If the object is a new one is necessary register it on the operation list
+      if(this->table)
+        op_list->registerObject(this->object, Operation::OBJECT_CREATED, -1, this->table);
+      else if(obj_type!=OBJ_RELATIONSHIP && obj_type!=OBJ_TABLE)
+        op_list->registerObject(this->object, Operation::OBJECT_CREATED, -1, this->relationship);
+      else
+        op_list->registerObject(this->object, Operation::OBJECT_CREATED);
+    }
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
 }

@@ -165,34 +165,29 @@ void TableWidget::showTableObjectForm(ObjectType obj_type)
 	if(obj_type==OBJ_COLUMN)
 	{
 		ColumnWidget column_wgt(this);
-    connect(&column_wgt, SIGNAL(s_newObjectAboutToBeRegistered()), this, SLOT(registerNewTable()));
 		column_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Column *>(object));
 		column_wgt.show();
 	}
 	else if(obj_type==OBJ_CONSTRAINT)
 	{
 		ConstraintWidget constraint_wgt(this);
-    connect(&constraint_wgt, SIGNAL(s_newObjectAboutToBeRegistered()), this, SLOT(registerNewTable()));
 		constraint_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Constraint *>(object));
 		constraint_wgt.show();
 	}
 	else if(obj_type==OBJ_TRIGGER)
 	{
 		TriggerWidget trigger_wgt(this);
-    connect(&trigger_wgt, SIGNAL(s_newObjectAboutToBeRegistered()), this, SLOT(registerNewTable()));
 		trigger_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Trigger *>(object));
 		trigger_wgt.show();
 	}
 	else if(obj_type==OBJ_INDEX)
 	{
 		IndexWidget index_wgt(this);
-    connect(&index_wgt, SIGNAL(s_newObjectAboutToBeRegistered()), this, SLOT(registerNewTable()));
 		index_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Index *>(object));
 		index_wgt.show();
 	}else
 	{
 		RuleWidget rule_wgt(this);
-    connect(&rule_wgt, SIGNAL(s_newObjectAboutToBeRegistered()), this, SLOT(registerNewTable()));
 		rule_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Rule *>(object));
 		rule_wgt.show();
 	}
@@ -616,12 +611,6 @@ void TableWidget::TableWidget::swapObjects(int idx1, int idx2)
   }
 }
 
-void TableWidget::registerNewTable(void)
-{
-  if(this->new_object && !op_list->isObjectRegistered(this->object, Operation::OBJECT_CREATED))
-   op_list->registerObject(this->object, Operation::OBJECT_CREATED);
-}
-
 void TableWidget::applyConfiguration(void)
 {
 	try
@@ -632,7 +621,7 @@ void TableWidget::applyConfiguration(void)
 		if(!this->new_object)
 			op_list->registerObject(this->object, Operation::OBJECT_MODIFIED);
     else
-      registerNewTable();
+      registerNewObject();
 
 		table=dynamic_cast<Table *>(this->object);
 		table->setWithOIDs(with_oids_chk->isChecked());
@@ -680,9 +669,6 @@ void TableWidget::applyConfiguration(void)
 	}
 	catch(Exception &e)
 	{
-		op_list->ignoreOperationChain(true);
-		this->cancelConfiguration();
-		op_list->ignoreOperationChain(false);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }

@@ -1615,10 +1615,12 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		{
       this->modified=true;
       this->db_model->setInvalidated(true);
-			emit s_objectManipulated();
-		}
+      emit s_objectManipulated();
+    }
+    else
+      emit s_manipulationCanceled();
 
-		this->setFocus();
+    this->setFocus();
 	}
 	catch(Exception &e)
 	{
@@ -2761,7 +2763,12 @@ void ModelWidget::removeObjects(bool cascade)
         msg_box.show(e);
 			}
 		}
-	}
+  }
+}
+
+void ModelWidget::removeObjectsCascade(void)
+{
+  removeObjects(true);
 }
 
 void ModelWidget::appendSQL(void)
@@ -3272,14 +3279,14 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
             action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
 						action->setText(trUtf8("Delete"));
             submenu->addAction(action);
-            connect(action, &QAction::triggered, [=](){ removeObjects(false); });
+            connect(action, SIGNAL(triggered()), this, SLOT(removeObjects()));
 
             action=new QAction(dynamic_cast<QObject *>(submenu));
             action->setIcon(QPixmap(QString(":/icones/icones/delcascade.png")));
             action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
             action->setText(trUtf8("Del. cascade"));
             submenu->addAction(action);
-            connect(action, &QAction::triggered, [=](){ removeObjects(true); });
+            connect(action, SIGNAL(triggered()), this, SLOT(removeObjectsCascade()));
 					}
 					submenus.push_back(submenu);
 				}
