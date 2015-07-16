@@ -168,6 +168,11 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 	signals:
 		//! \brief Signal emitted whenever a object is created / edited using the form
 		void s_objectManipulated(void);
+
+    /*! \brief Signal emitted whenever a object is about to be registered in the operation history
+        at the end of creation/editing. This signal is useful to perform operations before register
+        the object in the list */
+    void s_newObjectAboutToBeRegistered(void);
 };
 
 template<class Class>

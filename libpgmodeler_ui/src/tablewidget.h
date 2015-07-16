@@ -81,6 +81,9 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 		//! \brief Swap the index between two rows of the table that calls the slot
 		void swapObjects(int idx1, int idx2);
 
+    //! brief Register the new table in the operation history
+    void registerNewTable(void);
+
 	public slots:
 		void applyConfiguration(void);
 		void cancelConfiguration(void);

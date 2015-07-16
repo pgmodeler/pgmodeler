@@ -103,7 +103,21 @@ void OperationList::ignoreOperationChain(bool value)
 bool OperationList::isOperationChainStarted(void)
 {
 	return(next_op_chain==Operation::CHAIN_START ||
-				 next_op_chain==Operation::CHAIN_MIDDLE);
+         next_op_chain==Operation::CHAIN_MIDDLE);
+}
+
+bool OperationList::isObjectRegistered(BaseObject *object, unsigned op_type)
+{
+  bool registered=false;
+  vector<Operation *>::iterator itr=operations.begin();
+
+  while(itr!=operations.end() && !registered)
+  {
+    registered=((*itr)->getOriginalObject()==object && (*itr)->getOperationType()==op_type);
+    itr++;
+  }
+
+  return(registered);
 }
 
 bool OperationList::isRedoAvailable(void)
@@ -601,7 +615,7 @@ void OperationList::undoOperation(void)
 			}
 			catch(Exception &e)
 			{
-				this->removeOperations();
+        this->removeOperations();
 				error=e;
 			}
 
@@ -665,7 +679,7 @@ void OperationList::redoOperation(void)
 			}
 			catch(Exception &e)
 			{
-				this->removeOperations();
+        this->removeOperations();
 				error=e;
 			}
 			current_index++;
