@@ -903,21 +903,28 @@ void BaseObjectWidget::cancelConfiguration(void)
 			 obj_type!=OBJ_VIEW &&
 			 obj_type!=OBJ_RELATIONSHIP)
 		{
-      delete(this->object);
-			this->object=nullptr;
+      if(!op_list->isObjectRegistered(this->object, Operation::OBJECT_CREATED))
+        delete(this->object);
+
+      this->object=nullptr;
     }
 	}
 
 	//If the object is not a new one, restore its previous state
-  if(op_list && obj_type!=OBJ_DATABASE && obj_type!=OBJ_PERMISSION)
+  if(op_list &&
+     ((!new_object && obj_type!=OBJ_DATABASE && obj_type!=OBJ_PERMISSION) ||
+      (new_object && (obj_type==OBJ_TABLE || obj_type==OBJ_VIEW || obj_type==OBJ_RELATIONSHIP))))
 	{
 		try
 		{
 			op_list->undoOperation();
 			op_list->removeLastOperation();
 		}
-    catch(Exception &)
-		{}
+    catch(Exception &e)
+    {
+      Messagebox msg;
+      msg.show(e);
+    }
 	}
 
   emit s_objectManipulated();
@@ -934,7 +941,7 @@ void BaseObjectWidget::registerNewObject(void)
       //If the object is a new one is necessary register it on the operation list
       if(this->table)
         op_list->registerObject(this->object, Operation::OBJECT_CREATED, -1, this->table);
-      else if(obj_type!=OBJ_RELATIONSHIP && obj_type!=OBJ_TABLE)
+      else if(this->relationship)
         op_list->registerObject(this->object, Operation::OBJECT_CREATED, -1, this->relationship);
       else
         op_list->registerObject(this->object, Operation::OBJECT_CREATED);

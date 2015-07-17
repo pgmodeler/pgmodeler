@@ -568,7 +568,7 @@ void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
 	}
 
   //Removing the object from the receiver table
-  if(recv_table)
+  if(recv_table && tab_obj->getParentTable()==recv_table)
   {
     recv_table->removeObject(tab_obj);
     tab_obj->setParentTable(nullptr);

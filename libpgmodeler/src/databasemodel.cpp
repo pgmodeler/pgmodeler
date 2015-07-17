@@ -583,16 +583,20 @@ BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, i
 		throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
-		itr=obj_list->begin();
+    /* This regexp is used for operator class and operator family.
+       Their signature comes with a "USING index_mode" string
+       that must be removed before any comparison is done */
+    QRegExp aux_regexp(QString("( )+(USING)(.)+"));
+    QString signature;
+
+    itr=obj_list->begin();
 		itr_end=obj_list->end();
 		obj_idx=-1;		
-    aux_name1=QString(name).remove('"');
-
-    QString signature;
+    aux_name1=QString(name).remove('"').remove(aux_regexp);
 
     while(itr!=itr_end && !found)
     {
-      signature=(*itr)->getSignature().remove("\"");
+      signature=(*itr)->getSignature().remove("\"").remove(aux_regexp);
       found=(signature==aux_name1);
       if(!found) itr++;
     }
@@ -8804,7 +8808,12 @@ vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<O
 		if(format_obj_names)
 		{
       if(TableObject::isTableObject(objs.back()->getObjectType()))
-        obj_name=dynamic_cast<TableObject *>(objs.back())->getParentTable()->getName(true);
+      {
+        TableObject *tab_obj=dynamic_cast<TableObject *>(objs.back());
+
+        if(tab_obj->getParentTable())
+          obj_name=tab_obj->getParentTable()->getName(true);
+      }
 
 			obj_name+=objs.back()->getName(true, true);
 			obj_name.remove('"');

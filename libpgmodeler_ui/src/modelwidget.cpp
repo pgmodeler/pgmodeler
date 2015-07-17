@@ -2965,7 +2965,9 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 			quick_actions_menu.addAction(action_append_sql);
 		}
 
-    if(object && obj_type!=OBJ_TEXTBOX && obj_type!=BASE_RELATIONSHIP)
+    if(object &&
+       ((!TableObject::isTableObject(obj_type) && obj_type!=OBJ_TEXTBOX && obj_type!=BASE_RELATIONSHIP) ||
+        (TableObject::isTableObject(obj_type) && !dynamic_cast<TableObject*>(object)->isAddedByRelationship())))
     {
       action_enable_sql->setData(QVariant::fromValue<void *>(object));
       action_disable_sql->setData(QVariant::fromValue<void *>(object));

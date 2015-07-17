@@ -255,7 +255,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		this->setAttributes(model, op_list, rel);
 
 		op_list->startOperationChain();
-		operation_count=op_list->getCurrentSize();		
+    operation_count=op_list->getCurrentSize();
 	}
 	catch(Exception &e)
 	{
