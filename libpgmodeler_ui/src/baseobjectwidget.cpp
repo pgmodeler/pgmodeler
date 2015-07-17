@@ -920,11 +920,7 @@ void BaseObjectWidget::cancelConfiguration(void)
 			op_list->undoOperation();
 			op_list->removeLastOperation();
 		}
-    catch(Exception &e)
-    {
-      Messagebox msg;
-      msg.show(e);
-    }
+    catch(Exception &){}
 	}
 
   emit s_objectManipulated();
@@ -936,8 +932,6 @@ void BaseObjectWidget::registerNewObject(void)
   {
     if(this->new_object && op_list && !op_list->isObjectRegistered(this->object, Operation::OBJECT_CREATED))
     {
-      ObjectType obj_type=this->object->getObjectType();
-
       //If the object is a new one is necessary register it on the operation list
       if(this->table)
         op_list->registerObject(this->object, Operation::OBJECT_CREATED, -1, this->table);

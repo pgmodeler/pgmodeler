@@ -283,20 +283,11 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
   connect(model_valid_wgt, &ModelValidationWidget::s_validationCanceled, [=](){ pending_op=NO_PENDING_OPER; }); 
   connect(model_valid_wgt, SIGNAL(s_validationFinished(bool)), this, SLOT(executePendingOperation(bool)));
+  connect(model_valid_wgt, SIGNAL(s_fixApplied()), this, SLOT(removeOperations()), Qt::QueuedConnection);
 
 	connect(&tmpmodel_save_timer, SIGNAL(timeout()), &tmpmodel_thread, SLOT(start()));
 	connect(&tmpmodel_thread, SIGNAL(started()), this, SLOT(saveTemporaryModels()));
 	connect(&tmpmodel_thread, &QThread::started, [=](){ tmpmodel_thread.setPriority(QThread::HighPriority); });
-
-  connect(model_valid_wgt, &ModelValidationWidget::s_fixApplied,
-          [=](){
-                  //Clears the operation list everytime a fix is applied to the model
-                  if(current_model && current_model->op_list->getCurrentSize()!=0)
-                  {
-                    current_model->op_list->removeOperations();
-                    oper_list_wgt->updateOperationList();
-                  }
-                });
 
 	models_tbw_parent->resize(QSize(models_tbw_parent->maximumWidth(), models_tbw_parent->height()));
 
@@ -1805,4 +1796,14 @@ void MainWindow::reportBug(void)
 {
   BugReportForm bugrep_frm;
   bugrep_frm.exec();
+}
+
+void MainWindow::removeOperations(void)
+{
+  //Clears the operation list everytime a fix is applied to the model
+  if(current_model && current_model->op_list->getCurrentSize()!=0)
+  {
+    current_model->op_list->removeOperations();
+    oper_list_wgt->updateOperationList();
+  }
 }

@@ -75,8 +75,12 @@ void ObjectSelectorWidget::configureSelector(bool install_highlighter)
 
 bool ObjectSelectorWidget::eventFilter(QObject *obj, QEvent *evnt)
 {
-  if(this->isEnabled() && evnt->type()==QEvent::MouseButtonPress && obj==obj_name_txt)
+  if(this->isEnabled() && evnt->type()==QEvent::FocusIn &&
+     QApplication::mouseButtons()==Qt::LeftButton && obj==obj_name_txt)
+  {
 		showObjectView();
+    return(true);
+  }
 
 	return(QWidget::eventFilter(obj, evnt));
 }
@@ -164,6 +168,8 @@ void ObjectSelectorWidget::clearSelector(void)
 
 void ObjectSelectorWidget::showObjectView(void)
 {
+  obj_name_txt->clearFocus();
+
 	for(unsigned i=0; i < sel_obj_types.size(); i++)
 		obj_view_wgt->setObjectVisible(sel_obj_types[i], true);
 

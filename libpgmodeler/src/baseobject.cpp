@@ -255,7 +255,7 @@ bool BaseObject::isValidName(const QString &name)
 		}
 
     //The name is invalid if it starts with number
-    valid=!name.contains(QRegExp("^[0-9]+"));
+    valid=!name.contains(QRegExp("^(\")*[0-9]+"));
 
 		while(valid && i < len)
 		{

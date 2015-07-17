@@ -283,6 +283,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void quitDemoVersion(void);
     void changeCurrentView(bool checked);
     void reportBug(void);
+    void removeOperations(void);
 };
 
 #endif
