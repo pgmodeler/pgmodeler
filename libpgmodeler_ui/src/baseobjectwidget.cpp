@@ -50,7 +50,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		owner_sel=nullptr;
 		tablespace_sel=nullptr;
 
-		parent_form=new BaseForm(nullptr, (Qt::WindowTitleHint | Qt::WindowSystemMenuHint));
+    parent_form=new BaseForm(nullptr, (Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::WindowSystemMenuHint));
 		parent_form->setWindowTitle(trUtf8("Create / Edit: ") + BaseObject::getTypeName(obj_type));
 		parent_form->generalwidget_wgt->insertWidget(0, this);
 		parent_form->generalwidget_wgt->setCurrentIndex(0);

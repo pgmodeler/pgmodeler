@@ -64,7 +64,7 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 	{
 		setMinimumSize(250, 300);
 		setWindowModality(Qt::ApplicationModal);
-		setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowStaysOnTopHint | Qt::WindowTitleHint);
+    setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint /*| Qt::WindowStaysOnTopHint*/ | Qt::WindowTitleHint);
 		connect(objectstree_tw,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this, SLOT(close(void)));
 		connect(objectslist_tbw,SIGNAL(itemDoubleClicked(QTableWidgetItem*)),this, SLOT(close(void)));
 		connect(select_tb,SIGNAL(clicked(void)),this,SLOT(close(void)));
@@ -177,29 +177,12 @@ void ModelObjectsWidget::selectObject(void)
 				act.setMenu(model_wgt->rels_menu);
 
       if(simplified_view && enable_obj_creation)
-      {
-        //Creating a lambda connection and storing its handle to be able to disconnect at the end
-        conn=connect(model_wgt->getDatabaseModel(), &DatabaseModel::s_objectAdded,
-        [=](BaseObject *obj){
-            updateObjectsView();
-            QTreeWidgetItem *item=getTreeItem(obj);
-            if(item)
-            {
-              objectstree_tw->blockSignals(true);
-              objectstree_tw->setItemSelected(item, true);
-              objectstree_tw->setCurrentItem(item);
-              objectstree_tw->scrollToItem(item);
-              selected_object=obj;
-              select_tb->setFocus();
-              objectstree_tw->blockSignals(false);
-            }
-        });
-      }
+        connect(model_wgt->getDatabaseModel(), SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(selectCreatedObject(BaseObject *)), Qt::QueuedConnection);
 
 			popup.addAction(&act);
 			popup.exec(QCursor::pos());
       disconnect(&act,nullptr,model_wgt,nullptr);
-      disconnect(conn);
+      disconnect(model_wgt->getDatabaseModel(),nullptr, this,nullptr);
 		}
 	}
 	else
@@ -1034,4 +1017,21 @@ QTreeWidgetItem *ModelObjectsWidget::getTreeItem(BaseObject *object)
 	}
 	else
 		return(nullptr);
+}
+
+void ModelObjectsWidget::selectCreatedObject(BaseObject *obj)
+{
+  updateObjectsView();
+  QTreeWidgetItem *item=getTreeItem(obj);
+
+  if(item)
+  {
+    objectstree_tw->blockSignals(true);
+    objectstree_tw->setItemSelected(item, true);
+    objectstree_tw->setCurrentItem(item);
+    objectstree_tw->scrollToItem(item);
+    selected_object=obj;
+    select_tb->setFocus();
+    objectstree_tw->blockSignals(false);
+  }
 }

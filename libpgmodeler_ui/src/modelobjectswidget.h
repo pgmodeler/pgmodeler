@@ -131,9 +131,10 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 		void showObjectMenu(void);
 		void editObject(void);
 		void collapseAll(void);
-		void filterObjects(void);
+		void filterObjects(void); 
+    void selectCreatedObject(BaseObject *obj);
 
-	signals:
+signals:
 		void s_visibilityChanged(BaseObject *,bool);
 		void s_visibilityChanged(bool);
 
