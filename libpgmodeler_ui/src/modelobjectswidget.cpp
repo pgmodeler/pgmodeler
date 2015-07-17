@@ -75,28 +75,66 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 	connect(list_view_tb,SIGNAL(clicked(void)),this,SLOT(changeObjectsView(void)));
 	connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterObjects()));
 	connect(by_id_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects()));
+    filter_edt->installEventFilter(this);
+    objectstree_tw->installEventFilter(this);
+    objectslist_tbw->installEventFilter(this);
 }
 
 bool ModelObjectsWidget::eventFilter(QObject *object, QEvent *event)
 {
-  if(event->type() == QEvent::FocusOut &&
-     (object==objectslist_tbw || object==objectstree_tw))
-  {
-    QFocusEvent *evnt=dynamic_cast<QFocusEvent *>(event);
+    if (object==objectslist_tbw || object==objectstree_tw) {
+        if (event->type() == QEvent::FocusOut) {
+            QFocusEvent *evnt=dynamic_cast<QFocusEvent *>(event);
+            if (evnt->reason()==Qt::MouseFocusReason) {
+                objectslist_tbw->clearSelection();
+                objectstree_tw->clearSelection();
 
-    if(evnt->reason()==Qt::MouseFocusReason)
-    {
-      objectslist_tbw->clearSelection();
-      objectstree_tw->clearSelection();
-
-			if(model_wgt)
-				model_wgt->configurePopupMenu({});
-
-      return(true);
+                if (model_wgt) {
+                    model_wgt->configurePopupMenu({});
+                }
+                return(true);
+            }
+        }
+        if (passEventToFilterEdit(event)) {
+            return true;
+        }
     }
-  }
+    if (object == filter_edt && event->type() == QEvent::KeyPress) {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+        if (Q_LIKELY(keyEvent)) {
+            if ((keyEvent->key() == Qt::Key_Down) || (keyEvent->key() == Qt::Key_Up)) {
+                if (tree_view_tb->isChecked()) {
+                    objectstree_tw->setFocus();
+                    QList<QTreeWidgetItem*> items=objectstree_tw->findItems(filter_edt->text(), Qt::MatchStartsWith | Qt::MatchRecursive);
+                    if (items.length()) {
+                        objectstree_tw->setCurrentItem(items[0]);
+                    }
+                } else {
+                    objectslist_tbw->setFocus();
+                    QList<QTableWidgetItem*> items=objectslist_tbw->findItems(filter_edt->text(), Qt::MatchStartsWith | Qt::MatchRecursive);
+                    if (items.length()) {
+                        objectslist_tbw->setCurrentItem(items[0]);
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+    return(QWidget::eventFilter(object, event));
+}
 
-  return(QWidget::eventFilter(object, event));
+bool ModelObjectsWidget::passEventToFilterEdit(QEvent *event)
+{
+    if (event->type() == QEvent::KeyPress) {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+        if ( ( (keyEvent->key() >= Qt::Key_Space) && (keyEvent->key() <= Qt::Key_AsciiTilde)) || keyEvent->key() == Qt::Key_Backspace) {
+            QApplication::sendEvent(filter_edt, event);
+            return true;
+        }
+    } else {
+        return false;
+    }
 }
 
 void ModelObjectsWidget::hide(void)
@@ -883,7 +921,12 @@ void ModelObjectsWidget::showEvent(QShowEvent *)
 			y = wgt->pos().y() + abs((wgt->height() - this->height()) / 2);
 			this->setGeometry(QRect(QPoint(x,y), this->minimumSize()));
 		}
-  }
+    }
+}
+
+void ModelObjectsWidget::keyPressEvent(QKeyEvent *event)
+{
+    passEventToFilterEdit(event);
 }
 
 void ModelObjectsWidget::closeEvent(QCloseEvent *)
