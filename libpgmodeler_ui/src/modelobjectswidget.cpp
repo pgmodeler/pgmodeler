@@ -139,7 +139,6 @@ void ModelObjectsWidget::selectObject(void)
 {
 	ObjectType obj_type=BASE_OBJECT;
   ModelWidget *model_wgt=nullptr;
-  QMetaObject::Connection conn;
 
   if(!simplified_view && this->model_wgt)
     model_wgt=this->model_wgt;

@@ -1410,7 +1410,10 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
     attribs[attribs[ParsersAttributes::CONFIGURATION]]=ParsersAttributes::_TRUE_;
 
 		if(!attribs[ParsersAttributes::ENUM_TYPE].isEmpty())
+    {
       attribs[ParsersAttributes::ENUMERATIONS]=Catalog::parseArrayValues(attribs[ParsersAttributes::ENUMERATIONS]).join(',');
+      attribs[ParsersAttributes::ENUMERATIONS].remove('"');
+    }
 		else if(!attribs[ParsersAttributes::COMPOSITE_TYPE].isEmpty())
 		{
 			QStringList comp_attribs, values;
