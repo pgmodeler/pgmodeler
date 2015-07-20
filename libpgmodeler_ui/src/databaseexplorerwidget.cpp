@@ -87,6 +87,8 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 {
   setupUi(this);
+  splitter->setSizes({ 70, 30 });
+
   rename_item=nullptr;
 
   snippets_menu.setTitle(trUtf8("Snippets"));

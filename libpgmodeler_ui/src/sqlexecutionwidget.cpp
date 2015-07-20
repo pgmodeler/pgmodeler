@@ -32,6 +32,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
   sql_cmd_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 	h_splitter1->setSizes({1000, 250});
+  v_splitter->setSizes({ 700 , 300 });
 	results_parent->setVisible(false);
 	cmd_history_gb->setVisible(false);
 
