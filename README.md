@@ -32,6 +32,7 @@ For details about installation process from source code visit the [Installation]
 Known Issues
 -----------
 
+* pgModeler does not fully supports the [quoted identifier notation](http://www.postgresql.org/docs/current/static/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS). When using quoted identifiers only the characters are accepted in the middle of names: a-z A-Z 0-9 _ . @ $ - space
 * pgModeler is unusable in sandboxed Mac OS X installations. To workaround this issue you'll need to deactivate sandbox usage to run pgModeler properly. There is no planning to adapt this tool for sandbox feature in Mac OS X. There is no plan to adapt pgModeler to run in sandboxed Mac OS X installations.
 * pgModeler can't be compiled in Microsoft Visual Studio due to use of some gcc/clang extensions. There is a work in progress to make the build possible but it is too early to tell if it'll be fully functional and merged to the official codebase.
 * Compiling the source using '-Wconversion' (disabled by Qt in its default) generates a lot of warnings. These warnings are harmless in 99% of times but we can't just ignore them but I don't plan to fix them in a near future (mail me for more details! It's a long history...).
