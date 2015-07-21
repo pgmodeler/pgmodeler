@@ -61,129 +61,139 @@ bool SyntaxHighlighter::eventFilter(QObject *object, QEvent *event)
   return(QSyntaxHighlighter::eventFilter(object, event));
 }
 
+bool SyntaxHighlighter::isMultiLineGroup(const QString &group)
+{
+  return(initial_exprs.count(group) && final_exprs.count(group));
+}
 
 void SyntaxHighlighter::configureAttributes(void)
 {
 	conf_loaded=false;
 	current_block=-1;
 	curr_blk_info_count=0;
-
-  if(auto_rehighlight)
-	{
-    connect(document(), SIGNAL(blockCountChanged(int)), this, SLOT(rehighlight(void)));
-    connect(document(), SIGNAL(modificationChanged(bool)), this, SLOT(validateTextModification(bool)));
-	}
 }
 
-void SyntaxHighlighter::validateTextModification(bool has_changes)
+void SyntaxHighlighter::highlightBlock(const QString &txt)
 {
-  if(getMultiLineInfoCount(current_block)!=curr_blk_info_count || has_changes)
-		rehighlight();
-}
+  current_block=currentBlock().blockNumber();
 
-SyntaxHighlighter::MultiLineInfo *SyntaxHighlighter::getMultiLineInfo(int start_col, int end_col, int block)
-{
-	unsigned i, count;
-	bool found=false;
-	MultiLineInfo *info=nullptr;
+  if(!txt.isEmpty())
+  {
+    QString word, group, text;
+    unsigned i=0, len, idx=0, i1;
+    int match_idx, match_len, aux_len, start_col;
+    QChar chr_delim, lookahead_chr;
 
-	//Checking if the passed parameters is inside a multiline info
-	count=multi_line_infos.size();
-	for(i=0; i < count; i++)
-	{
-		info=multi_line_infos[i];
+    text=txt + '\n';
+    len=text.length();
 
-		/* First we need to check if the block passed is within the limits
-		established by the first and last blocks of multiline info.
-		Importantly, when a multi block is opened, for example,	the user opened a
-		multiline with '/ *' and not closed with '* /' the attributes end_block and end_col
-		possess the value of -1 until the user closes the multiline and the highlighter identifies
-		which part this text is closing */
-		if(block >= info->start_block && (info->end_block < 0 || block <= info->end_block))
-		{
-			/* Next, some conditions are tested in order to verify if the passed parameters
-			are inside a mulitline block */
+    do
+    {
+      //Ignoring the char listed as ingnored on configuration
+      while(i < len && ignored_chars.indexOf(text[i])>=0) i++;
 
-			/* Condition 1: The passed block is the same as the current info and this latter
-											is a multiline but opened and closed on the same line of text,
-											will be checked	if parameter start_col and end_col are within
-											the limits stablished bythe starting and ending columns on the info */
-			if(block==info->start_block && info->start_block==info->end_block)
-				found=(start_col >= info->start_col && end_col <= info->end_col);
+      if(i < len)
+      {
+        //Stores the curret text positon
+        idx=i;
 
-			/* Condition 2: The passed block is the same as current info and this latter is a opened
-											multiline. Tests only if the initial column from parameter is after the
-											initial column of info.	This indicates that the text is entered after the
-											opening of multiline and consequently	within the same */
-			else if(block == info->start_block)
-				found=(start_col >= info->start_col);
+        //If the char is a word separator
+        if(word_separators.indexOf(text[i])>=0)
+        {
+          while(i < len && word_separators.indexOf(text[i])>=0)
+            word+=text[i++];
+        }
+        //If the char is a word delimiter
+        else if(word_delimiters.indexOf(text[i])>=0)
+        {
+          chr_delim=text[i++];
+          word+=chr_delim;
 
-			/* Condition 3: The passed block is the same as the last block of the current info and this latter is
-											a closed multiline. Tests only if the parameter is the final column before the final
-											column of the info indicating that the current multiline text is inserted
-											into the block multiline */
-			else if(info->end_block >=0 && block == info->end_block)
-				found=(end_col <= info->end_col);
+          while(i < len && chr_delim!=text[i])
+            word+=text[i++];
 
-			/* Condition 4: The current information is a opened multiline. Only tests if the passed block is in
-											the same initial block as the information or after without needing to test the columns
-											and the final block. This is done because if the text is inserted in the middle
-											of multiline block after opening, and as the block is open, all text entered after
-											the block is considered an open multiblock */
-			else if(info->end_block < 0)
-				found=(block >= info->start_block);
+          if(i < len && text[i]==chr_delim)
+          {
+            word+=chr_delim;
+            i++;
+          }
+        }
+        else
+        {
+          while(i < len &&
+                word_separators.indexOf(text[i]) < 0 &&
+                word_delimiters.indexOf(text[i]) < 0 &&
+                ignored_chars.indexOf(text[i]) < 0)
+          {
+            word+=text[i++];
+          }
+        }
+      }
 
-			/* Conditional 5:	 The current info is a closed multiline. Tests only if the passed block is in
-												 the middle of the range established by the first and last blocks of multiline info.
-												 This is done because if the text is inserted in the middle of multiline after opening block
-												 and before closing the whole line of text is considered a multiblock */
-			else if(info->end_block >=0 && info->start_block!=info->end_block)
-				found=(block >= info->start_block && block <= info->end_block);
-		}
-	}
 
-	if(found)
-		return(info);
-	else
-		return(nullptr);
-}
+      //If the word is not empty try to identify the group
+      if(!word.isEmpty())
+      {
+        int prev_blk_id=previousBlockState();
+        BlockInfo *info=dynamic_cast<BlockInfo *>(currentBlockUserData());
 
-void SyntaxHighlighter::removeMultiLineInfo(int block)
-{
-	vector<MultiLineInfo *>::iterator itr, itr_end;
+        i1=i;
+        while(i1 < len && ignored_chars.indexOf(text[i1])>=0) i1++;
 
-	itr=multi_line_infos.begin();
-	itr_end=multi_line_infos.end();
+        if(i1 < len)
+          lookahead_chr=text[i1];
+        else
+          lookahead_chr='\0';
 
-	while(itr!=itr_end)
-	{
-		if((*itr)->start_block==block)
-		{
-			delete(*itr);
-			multi_line_infos.erase(itr);
-			itr=multi_line_infos.begin();
-			itr_end=multi_line_infos.end();
-		}
-		else
-			itr++;
-	}
-}
+        match_idx=-1;
+        match_len=0;
+        group=identifyWordGroup(word, lookahead_chr, idx, match_idx, match_len);
 
-unsigned SyntaxHighlighter::getMultiLineInfoCount(int block)
-{
-	vector<MultiLineInfo *>::iterator itr, itr_end;
-	unsigned count=0;
+        if((!info && static_cast<unsigned>(prev_blk_id) < block_infos.size() && !block_infos[prev_blk_id]->is_closed) ||
+           (info && info->is_multiline && !info->is_closed))
+        {
+          match_idx=0;
+          match_len=word.length();
+          group=(info ? info->group : block_infos[prev_blk_id]->group);
+        }
 
-	itr=multi_line_infos.begin();
-	itr_end=multi_line_infos.end();
+        if(!group.isEmpty())
+        {
+          QTextCharFormat format = formats[group];
+          format.setFontFamily(default_font.family());
+          format.setFontPointSize(default_font.pointSizeF());
+          start_col=idx + match_idx;
+          setFormat(start_col, match_len, format);
 
-	while(itr!=itr_end)
-	{
-		if((*itr)->start_block==block) count++;
-		itr++;
-	}
+          bool is_multiline=isMultiLineGroup(group);
+          int block_id=-1;
 
-	return(count);
+          if(!info)
+          {
+            info=new BlockInfo(group, is_multiline);
+            setCurrentBlockUserData(info);
+            block_id=static_cast<int>(block_infos.size());
+            info->id=block_id;
+            block_infos.push_back(info);
+          }
+          else
+          {
+            block_id=info->id;
+            info->setBlockInfo(group, is_multiline);
+          }
+
+          setCurrentBlockState(is_multiline ? block_id : -1);
+        }
+
+        aux_len=(match_idx + match_len);
+        if(match_idx >=0 &&  aux_len != word.length())
+          i-=word.length() - aux_len;
+
+        word=QString();
+      }
+    }
+    while(i < len);
+  }
 }
 
 QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &lookahead_chr, int idx, int &match_idx, int &match_len)
@@ -194,16 +204,9 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 	vector<QRegExp> *vet_expr=nullptr;
 	QString group;
 	bool match=false, part_mach=false;
-	MultiLineInfo *info=nullptr;
+  BlockInfo *info=dynamic_cast<BlockInfo *>(currentBlockUserData());
 
-	//Try to get the multiline info for the current block
-	info=getMultiLineInfo(idx, idx, current_block);
-
-	/* Case the highlighter is in the middle of a multiline code block,
-		 a different action is executed: check if the current word does not
-		 matches with one of final expresion of the group indicating that the
-		 group highlighting must be interrupted after the current word */
-	if(info)
+  if(info && info->is_multiline && !info->is_closed)
 	{
 		group=info->group;
 
@@ -245,20 +248,17 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 		/* If the word matches configures a multiline info with the
 			 values retrieved from the regexp matching */
 		if(match)
-		{
-			info->end_col=idx + match_idx + match_len-1;
-			info->end_block=current_block;
-		}
-		else
+      info->is_closed=true;
+    else
 		{
 			match_idx=0;
 			match_len=word.length();
 		}
 
-		return(group);
+    return(group);
 	}
-	else
-	{
+  else
+  {
 		itr=groups_order.begin();
 		itr_end=groups_order.end();
 
@@ -302,137 +302,15 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 				itr_exp++;
 			}
 
-			/* Case the word matches with one of group regexp check if this latter
-				 has final expressions which indicates that the group treats multiline blocks.
-				 This way alocates a info with the initial configurations */
-			if(match && final_exprs.count(group))
-			{
-				if(!info)
-				{
-					info=new MultiLineInfo;
-					info->group=group;
-					info->start_col=idx + match_idx + match_len;
-					info->start_block=current_block;
-					multi_line_infos.push_back(info);
-				}
-			}
+      if(match && info && isMultiLineGroup(group))
+        info->is_closed=false;
 		}
 
-    if(!match) group=QString();
-		return(group);
-	}
-}
-
-void SyntaxHighlighter::rehighlight(void)
-{
-  MultiLineInfo *info=nullptr;
-
-  /* Remove all the multiline infos because during the rehighlight
-     all them all gathered again */
-  while(!multi_line_infos.empty())
-  {
-    info=multi_line_infos.back();
-    multi_line_infos.pop_back();
-    delete(info);
+    if(!match)
+      return(QString());
+    else
+      return(group);
   }
-
-  QSyntaxHighlighter::rehighlight();
-}
-
-void SyntaxHighlighter::highlightBlock(const QString &txt)
-{
-	current_block=currentBlock().blockNumber();
-
-	if(!txt.isEmpty())
-	{
-		QString word, group, text;
-		unsigned i=0, len, idx=0, i1;
-		int match_idx, match_len, aux_len, start_col;
-		QChar chr_delim, lookahead_chr;
-
-		text=txt + '\n';
-		len=text.length();
-		removeMultiLineInfo(current_block);
-
-		do
-		{
-			//Ignoring the char listed as ingnored on configuration
-			while(i < len && ignored_chars.indexOf(text[i])>=0) i++;
-
-			if(i < len)
-			{
-				//Stores the curret text positon
-				idx=i;
-
-				//If the char is a word separator
-				if(word_separators.indexOf(text[i])>=0)
-				{
-					while(i < len && word_separators.indexOf(text[i])>=0)
-						word+=text[i++];
-				}
-				//If the char is a word delimiter
-				else if(word_delimiters.indexOf(text[i])>=0)
-				{
-					chr_delim=text[i++];
-					word+=chr_delim;
-
-					while(i < len && chr_delim!=text[i])
-						word+=text[i++];
-
-					if(i < len && text[i]==chr_delim)
-					{
-						word+=chr_delim;
-						i++;
-					}
-				}
-				else
-				{
-					while(i < len &&
-								word_separators.indexOf(text[i]) < 0 &&
-								word_delimiters.indexOf(text[i]) < 0 &&
-								ignored_chars.indexOf(text[i]) < 0)
-					{
-						word+=text[i++];
-					}
-				}
-			}
-
-
-			//If the word is not empty try to identify the group
-			if(!word.isEmpty())
-			{	
-				i1=i;
-				while(i1 < len && ignored_chars.indexOf(text[i1])>=0) i1++;
-
-				if(i1 < len)
-					lookahead_chr=text[i1];
-				else
-					lookahead_chr='\0';
-
-				match_idx=-1;
-				match_len=0;
-				group=identifyWordGroup(word,lookahead_chr, idx, match_idx, match_len);
-
-				if(!group.isEmpty())
-        {
-          QTextCharFormat format = formats[group];
-          format.setFontFamily(default_font.family());
-          format.setFontPointSize(default_font.pointSizeF());
-          start_col=idx + match_idx;
-          setFormat(start_col, match_len, format);
-				}
-
-				aux_len=(match_idx + match_len);
-				if(match_idx >=0 &&  aux_len != word.length())
-					i-=word.length() - aux_len;
-
-        word=QString();
-			}
-		}
-		while(i < len);
-
-		curr_blk_info_count=getMultiLineInfoCount(current_block);
-	}
 }
 
 bool SyntaxHighlighter::isConfigurationLoaded(void)

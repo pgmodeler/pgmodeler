@@ -38,42 +38,35 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 	private:
 		Q_OBJECT
 		XMLParser xmlparser;
-
-		//! \brief Auxiliary class used by the highlighter that stores informations	about multiline code blocks
-		class MultiLineInfo: public QTextBlockUserData {
-			public:
-				//! \brief Column where starts the multiline info
-				int start_col,
-
-						//! \brief Block (line) where the multiline starts
-						start_block,
-
-						/*! \brief Column where the multiline info ends it can be -1 while the
-						highlighter does not find the multiline end char */
-						end_col,
-
-						/*! \brief Block (line) where the multiline info ends it can be -1 while
-						the highlighter does not find the multiline end char */
-						end_block;
-
-				//! \brief Highlight group used to highlight the matching words on multiline
-				QString group;
-
-				MultiLineInfo(void)
-				{
-					this->group=QString();
-					this->start_col=-1;
-					this->start_block=-1;
-					this->end_col=-1;
-					this->end_block=-1;
-				}
-		};
-
     static QFont default_font;
 
-		/*! \brief Stores the multiline infos and is used to check if the text being typed
-		by the user is on a multiline block */
-		vector<MultiLineInfo *> multi_line_infos;
+    class BlockInfo: public QTextBlockUserData {
+      public:
+        QString group;
+        bool is_multiline;
+        bool is_closed;
+        int id;
+
+        BlockInfo(void)
+        {
+          id=-1;
+          is_closed=false;
+        }
+
+        BlockInfo(const QString group, bool is_multiline) : BlockInfo()
+        {
+          setBlockInfo(group, is_multiline);
+        }
+
+        void setBlockInfo(const QString group, bool is_multiline)
+        {
+          this->group=group;
+          this->is_multiline=is_multiline;
+          if(!is_multiline) is_closed=false;
+        }
+    };
+
+    vector<BlockInfo *> block_infos;
 
 		/*! \brief Stores the regexp used to identify keywords, identifiers, strings, numbers.
 		Also stores initial regexps used to identify a multiline group */
@@ -133,19 +126,11 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		match length. */
 		QString identifyWordGroup(const QString &palavra, const QChar &lookahead_chr, int idx, int &match_idx, int &match_len);
 
-		/*! \brief Returns the multiline info for the specified start and end column and for the specified block.
-		Returns null when no such info could be found. */
-		MultiLineInfo *getMultiLineInfo(int col_ini, int end_col, int block);
-
-		//! \brief Removes the multiline info for the specified block index
-		void removeMultiLineInfo(int block);
-
-		//! \brief Returns the multiline info count for the specified block
-		unsigned getMultiLineInfoCount(int block);
-
 		/*! \brief This event filter is used to nullify the line breaks when the highlighter
 		 is created in single line edit model */
 		bool eventFilter(QObject *object, QEvent *event);
+
+    bool isMultiLineGroup(const QString &group);
 
 	public:
 		/*! \brief Install the syntax highlighter in a QTextEdit. The boolean param is used to
@@ -168,21 +153,12 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 
     static void setDefaultFont(const QFont &fnt);
 
-	public slots:
-		//! \brief Rehighlight all the document
-		void rehighlight(void);
-
 	private slots:
 		//! \brief Highlight a line of the text
 		void highlightBlock(const QString &txt);
 
-		/*! \brief Validates the text modification made by the user doing the highlight if needed.
-    The parameter has_changes is used to know if the contents of the document changed
-    (see QPlainTextEdit::modificationChanged) */
-    void validateTextModification(bool has_changes);
-
 		//! \brief Clears the loaded configuration
-		void clearConfiguration(void);
+    void clearConfiguration(void);
 };
 
 #endif
