@@ -68,7 +68,7 @@ bool SyntaxHighlighter::isDualExpressionGroup(const QString &group)
 
 SyntaxHighlighter::BlockInfo *SyntaxHighlighter::getBlockInfo(int block)
 {
-  BlockInfo *info=nullptr;
+ /* BlockInfo *info=nullptr;
 
   for(auto &inf : block_infos)
   {
@@ -79,28 +79,47 @@ SyntaxHighlighter::BlockInfo *SyntaxHighlighter::getBlockInfo(int block)
     }
   }
 
-  return(info);
+  return(info); */
 }
 
 void SyntaxHighlighter::configureAttributes(void)
 {
 	conf_loaded=false;
+  is_rehighlighting=false;
   connect(document(), SIGNAL(contentsChange(int,int,int)), this, SLOT(validateTextModification(int,int,int)));
 }
 
 void SyntaxHighlighter::validateTextModification(int, int chars_rem, int chars_add)
 {
-  if(chars_rem > 0)
+  if(chars_rem > 0 || chars_add > 0)
   {
-    //BlockInfo *info=dynamic_cast<BlockInfo *>(getBlockInfo(current_block.blockNumber()));
+    /*QTextBlock block=current_block;
 
-   /* if(info)
+    while(block.isValid())
     {
-      info->group.clear();
-      info->is_closed=false;
-      info->is_multiline=false;
-      rehighlightBlock(current_block);
+      block.setUserState(UNDEF_BLOCK);
+      rehighlightBlock(block);
+      block=block.next();
     } */
+  }
+}
+
+bool SyntaxHighlighter::hasDualExpression(const QString &txt, const QString &group)
+{
+  if(initial_exprs.count(group)==0 || final_exprs.count(group)==0)
+    return(false);
+  else
+  {
+    bool found=false;
+    vector<vector<QRegExp> *> exprs={ &initial_exprs[group], &final_exprs[group] };
+
+    for(auto vect : exprs)
+    {
+      for(auto expr=vect->begin(); expr!=vect->end() && !found; expr++)
+        found=txt.contains(*expr);
+    }
+
+    return(found);
   }
 }
 
@@ -110,16 +129,25 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
   current_block=currentBlock();
   ts << "highlightBlock >> " << txt << endl;
 
-
   if(!txt.isEmpty())
   {
-    QString word, group, text;
+    QString text=txt + QChar('\n'), word, group;
     unsigned i=0, len, idx=0, i1;
     int match_idx, match_len, aux_len, start_col;
     QChar chr_delim, lookahead_chr;
+    bool has_dual_expr=false;
+    BlockInfo *info=dynamic_cast<BlockInfo *>(current_block.userData()),
+        *prev_info=dynamic_cast<BlockInfo *>(current_block.previous().userData());
 
-    text=txt + '\n';
     len=text.length();
+
+    if(info && info->has_dual_expr)
+    {
+      removeBlockInfo(info);
+      setCurrentBlockUserData(nullptr);
+      setCurrentBlockState(UNDEF_BLOCK);
+      info=nullptr;
+    }
 
     do
     {
@@ -168,9 +196,8 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
       //If the word is not empty try to identify the group
       if(!word.isEmpty())
       {
-        //int prev_blk_id=previousBlockState();
-        BlockInfo *info=dynamic_cast<BlockInfo *>(currentBlockUserData());
         bool expr_closed=false;
+        int block_st=UNDEF_BLOCK;
 
         i1=i;
         while(i1 < len && ignored_chars.contains(text[i1])) i1++;
@@ -184,28 +211,41 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
         match_len=0;
         group=identifyWordGroup(word, lookahead_chr, match_idx, match_len, expr_closed);
 
+        QTextStream ts(stdout);
+        ts << "block state:       " << currentBlockState() << endl;
+        ts << "prev. block state: " <<  current_block.previous().userState() << endl;
+        ts << "---" << endl;
+
+        if(current_block.previous().userState()==OPEN_EXPR_BLOCK &&
+           (!info || (info && !info->has_dual_expr)))
+          group=prev_info->group;
+
         if(!group.isEmpty())
         {
           bool is_dual_expr=isDualExpressionGroup(group);
-          QTextCharFormat format=formats[group];
 
-          format.setFontFamily(default_font.family());
-          format.setFontPointSize(default_font.pointSizeF());
+          if(!has_dual_expr && is_dual_expr && hasDualExpression(text, group))
+            has_dual_expr=true;
+
           start_col=idx + match_idx;
-          setFormat(start_col, match_len, format);
+          setFormat(start_col, match_len, group);
 
           if(!info)
           {
-            info=new BlockInfo(block_infos.size(), group);
-            block_infos.push_back(info);
+            info=createBlockInfo(group);
             setCurrentBlockUserData(info);
           }
           else
-          {
             info->group=group;
-          }
 
-          setCurrentBlockState(is_dual_expr && !expr_closed ? OPEN_EXPRESSION_BLOCK : SIMPLE_BLOCK);
+          info->has_dual_expr=has_dual_expr;
+
+          if(is_dual_expr)
+            block_st=(expr_closed ? CLOSED_EXPR_BLOCK : OPEN_EXPR_BLOCK);
+          else
+            block_st=SIMPLE_BLOCK;
+
+          setCurrentBlockState(block_st);
         }
 
         aux_len=(match_idx + match_len);
@@ -215,7 +255,7 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
         word=QString();
       }
     }
-    while(i < len);
+    while(i < len);      
   }
 }
 
@@ -227,10 +267,10 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 	vector<QRegExp> *vet_expr=nullptr;
 	QString group;
 	bool match=false, part_mach=false;
-  BlockInfo *info=dynamic_cast<BlockInfo *>(currentBlockUserData());
+  BlockInfo *info=dynamic_cast<BlockInfo *>(current_block.userData());
   int block_st=currentBlockState();
 
-  if(info && block_st==OPEN_EXPRESSION_BLOCK)
+  if(info && block_st==OPEN_EXPR_BLOCK)
 	{
 		group=info->group;
 
@@ -597,7 +637,30 @@ vector<QRegExp> SyntaxHighlighter::getExpressions(const QString &group_name, boo
 
 QChar SyntaxHighlighter::getCompletionTrigger(void)
 {
-	return(completion_trigger);
+  return(completion_trigger);
+}
+
+void SyntaxHighlighter::setFormat(int start, int count, const QString &group)
+{
+  QTextCharFormat format=formats[group];
+  format.setFontFamily(default_font.family());
+  format.setFontPointSize(default_font.pointSizeF());
+  QSyntaxHighlighter::setFormat(start, count, format);
+}
+
+SyntaxHighlighter::BlockInfo *SyntaxHighlighter::createBlockInfo(const QString &group)
+{
+  BlockInfo *info=nullptr;
+
+  info=new BlockInfo(group);
+  block_infos.push_back(info);
+
+  return(info);
+}
+
+void SyntaxHighlighter::removeBlockInfo(BlockInfo *info)
+{
+  block_infos.erase(std::find(block_infos.begin(), block_infos.end(), info));
 }
 
 void SyntaxHighlighter::setDefaultFont(const QFont &fnt)

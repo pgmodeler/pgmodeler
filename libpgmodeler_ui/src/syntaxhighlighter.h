@@ -44,17 +44,18 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 
     static const int UNDEF_BLOCK=-1,
     SIMPLE_BLOCK=0,
-    OPEN_EXPRESSION_BLOCK=1;
+    OPEN_EXPR_BLOCK=1,
+    CLOSED_EXPR_BLOCK=2;
 
     class BlockInfo: public QTextBlockUserData {
       public:
-        unsigned id;
         QString group;
+        bool has_dual_expr;
 
-        BlockInfo(unsigned id, const QString group)
+        BlockInfo(const QString group)
         {
-          this->id=id;
           this->group=group;
+          this->has_dual_expr=false;
         }
 
        /* bool is_multiline;
@@ -111,7 +112,9 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 
 					/*! \brief This causes the highlighter to ignores any RETURN/ENTER press on QTextEdit causing
 							the text to be in a single line. */
-          single_line_mode;
+          single_line_mode,
+
+          is_rehighlighting;
 
 		//! \brief Stores the chars that indicates word separators
 		QString word_separators,
@@ -144,7 +147,15 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 
     BlockInfo *getBlockInfo(int block);
 
-	public:
+    bool hasDualExpression(const QString &txt, const QString &group);
+
+    void removeBlockInfo(BlockInfo *info);
+
+    BlockInfo *createBlockInfo(const QString &group);
+
+    void setFormat(int start, int count, const QString &group);
+
+  public:
 		/*! \brief Install the syntax highlighter in a QTextEdit. The boolean param is used to
 		enable the auto rehighlight. If this is set to false the user must call the rehighlight method
 		every time he modifies the text */
