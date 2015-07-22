@@ -35,11 +35,11 @@ void SyntaxHighlighterTest::handleMultiLineComment(void)
   SyntaxHighlighter *sql_hl=nullptr;
 
   sql_hl=new SyntaxHighlighter(edt, false, false);
-  sql_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+  sql_hl->loadConfiguration(GlobalAttributes::XML_HIGHLIGHT_CONF_PATH);
 
   layout->addWidget(edt);
 
-  edt->setPlainText("/* txt bla \n new line");
+  edt->setPlainText("<tag>asdfasdf</atg>\n<!-- comment \n -->");
 
   dlg->exec();
 }

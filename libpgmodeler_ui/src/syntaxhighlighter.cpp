@@ -32,6 +32,15 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool auto_rehighlig
   parent->installEventFilter(this);
 }
 
+SyntaxHighlighter::~SyntaxHighlighter(void)
+{
+ /* while(!block_infos.empty())
+  {
+    delete(block_infos.back());
+    block_infos.pop_back();
+  }*/
+}
+
 bool SyntaxHighlighter::eventFilter(QObject *object, QEvent *event)
 {
 	//Filters the ENTER/RETURN avoiding line breaks
@@ -70,22 +79,6 @@ void SyntaxHighlighter::configureAttributes(void)
 {
 	conf_loaded=false;
   is_rehighlighting=false;
-  connect(document(), SIGNAL(contentsChange(int,int,int)), this, SLOT(validateTextModification(int,int,int)));
-}
-
-void SyntaxHighlighter::validateTextModification(int, int chars_rem, int chars_add)
-{
-  if(chars_rem > 0 || chars_add > 0)
-  {
-    /*QTextBlock block=current_block;
-
-    while(block.isValid())
-    {
-      block.setUserState(UNDEF_BLOCK);
-      rehighlightBlock(block);
-      block=block.next();
-    } */
-  }
 }
 
 bool SyntaxHighlighter::hasDualExpression(const QString &txt, const QString &group)
@@ -109,11 +102,18 @@ bool SyntaxHighlighter::hasDualExpression(const QString &txt, const QString &gro
 
 void SyntaxHighlighter::highlightBlock(const QString &txt)
 {
-  QTextStream ts(stdout);
   current_block=currentBlock();
-  ts << "highlightBlock >> " << txt << endl;
 
-  if(!txt.isEmpty())
+  if(txt.isEmpty())
+  {
+    BlockInfo *prev_info=dynamic_cast<BlockInfo *>(current_block.previous().userData());
+
+    if(prev_info)
+      setCurrentBlockUserData(createBlockInfo(prev_info->group));
+
+    setCurrentBlockState(current_block.previous().userState());
+  }
+  else if(!txt.isEmpty())
   {
     QString text=txt + QChar('\n'), word, group;
     unsigned i=0, len, idx=0, i1;
@@ -125,7 +125,9 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 
     len=text.length();
 
-    if(info && info->has_dual_expr)
+    if((info && info->has_dual_expr) ||
+       (current_block.previous().userState()==SIMPLE_BLOCK &&
+        currentBlockState()==OPEN_EXPR_BLOCK))
     {
       removeBlockInfo(info);
       setCurrentBlockUserData(nullptr);
@@ -628,7 +630,11 @@ SyntaxHighlighter::BlockInfo *SyntaxHighlighter::createBlockInfo(const QString &
 
 void SyntaxHighlighter::removeBlockInfo(BlockInfo *info)
 {
-  block_infos.erase(std::find(block_infos.begin(), block_infos.end(), info));
+  if(info)
+  {
+    block_infos.erase(std::find(block_infos.begin(), block_infos.end(), info));
+    #warning "delete info after remove here!"
+  }
 }
 
 void SyntaxHighlighter::setDefaultFont(const QFont &fnt)

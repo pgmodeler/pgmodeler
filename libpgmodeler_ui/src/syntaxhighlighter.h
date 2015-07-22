@@ -57,6 +57,7 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
         }
     };
 
+    //! brief Stores the info about dual expression groups assigned to text blocks
     vector<BlockInfo *> block_infos;
 
 		/*! \brief Stores the regexp used to identify keywords, identifiers, strings, numbers.
@@ -135,6 +136,8 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		every time he modifies the text */
     SyntaxHighlighter(QPlainTextEdit *parent, bool auto_rehighlight, bool single_line_mode=false);
 
+    ~SyntaxHighlighter(void);
+
 		//! \brief Loads a highlight configuration from a XML file
 		void loadConfiguration(const QString &filename);
 
@@ -156,8 +159,6 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 
 		//! \brief Clears the loaded configuration
     void clearConfiguration(void);
-
-    void validateTextModification(int pos, int chars_rem, int chars_add);
 };
 
 #endif
