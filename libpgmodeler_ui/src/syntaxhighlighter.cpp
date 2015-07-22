@@ -61,21 +61,55 @@ bool SyntaxHighlighter::eventFilter(QObject *object, QEvent *event)
   return(QSyntaxHighlighter::eventFilter(object, event));
 }
 
-bool SyntaxHighlighter::isMultiLineGroup(const QString &group)
+bool SyntaxHighlighter::isDualExpressionGroup(const QString &group)
 {
   return(initial_exprs.count(group) && final_exprs.count(group));
+}
+
+SyntaxHighlighter::BlockInfo *SyntaxHighlighter::getBlockInfo(int block)
+{
+  BlockInfo *info=nullptr;
+
+  for(auto &inf : block_infos)
+  {
+    if(inf->id==block)
+    {
+      info=inf;
+      break;
+    }
+  }
+
+  return(info);
 }
 
 void SyntaxHighlighter::configureAttributes(void)
 {
 	conf_loaded=false;
-	current_block=-1;
-	curr_blk_info_count=0;
+  connect(document(), SIGNAL(contentsChange(int,int,int)), this, SLOT(validateTextModification(int,int,int)));
+}
+
+void SyntaxHighlighter::validateTextModification(int, int chars_rem, int chars_add)
+{
+  if(chars_rem > 0)
+  {
+    //BlockInfo *info=dynamic_cast<BlockInfo *>(getBlockInfo(current_block.blockNumber()));
+
+   /* if(info)
+    {
+      info->group.clear();
+      info->is_closed=false;
+      info->is_multiline=false;
+      rehighlightBlock(current_block);
+    } */
+  }
 }
 
 void SyntaxHighlighter::highlightBlock(const QString &txt)
 {
-  current_block=currentBlock().blockNumber();
+  QTextStream ts(stdout);
+  current_block=currentBlock();
+  ts << "highlightBlock >> " << txt << endl;
+
 
   if(!txt.isEmpty())
   {
@@ -90,7 +124,7 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
     do
     {
       //Ignoring the char listed as ingnored on configuration
-      while(i < len && ignored_chars.indexOf(text[i])>=0) i++;
+      while(i < len && ignored_chars.contains(text[i])) i++;
 
       if(i < len)
       {
@@ -98,13 +132,13 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
         idx=i;
 
         //If the char is a word separator
-        if(word_separators.indexOf(text[i])>=0)
+        if(word_separators.contains(text[i]))
         {
-          while(i < len && word_separators.indexOf(text[i])>=0)
+          while(i < len && word_separators.contains(text[i]))
             word+=text[i++];
         }
         //If the char is a word delimiter
-        else if(word_delimiters.indexOf(text[i])>=0)
+        else if(word_delimiters.contains(text[i]))
         {
           chr_delim=text[i++];
           word+=chr_delim;
@@ -121,9 +155,9 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
         else
         {
           while(i < len &&
-                word_separators.indexOf(text[i]) < 0 &&
-                word_delimiters.indexOf(text[i]) < 0 &&
-                ignored_chars.indexOf(text[i]) < 0)
+                !word_separators.contains(text[i]) &&
+                !word_delimiters.contains(text[i]) &&
+                !ignored_chars.contains(text[i]))
           {
             word+=text[i++];
           }
@@ -134,11 +168,12 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
       //If the word is not empty try to identify the group
       if(!word.isEmpty())
       {
-        int prev_blk_id=previousBlockState();
+        //int prev_blk_id=previousBlockState();
         BlockInfo *info=dynamic_cast<BlockInfo *>(currentBlockUserData());
+        bool expr_closed=false;
 
         i1=i;
-        while(i1 < len && ignored_chars.indexOf(text[i1])>=0) i1++;
+        while(i1 < len && ignored_chars.contains(text[i1])) i1++;
 
         if(i1 < len)
           lookahead_chr=text[i1];
@@ -147,42 +182,30 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 
         match_idx=-1;
         match_len=0;
-        group=identifyWordGroup(word, lookahead_chr, idx, match_idx, match_len);
-
-        if((!info && static_cast<unsigned>(prev_blk_id) < block_infos.size() && !block_infos[prev_blk_id]->is_closed) ||
-           (info && info->is_multiline && !info->is_closed))
-        {
-          match_idx=0;
-          match_len=word.length();
-          group=(info ? info->group : block_infos[prev_blk_id]->group);
-        }
+        group=identifyWordGroup(word, lookahead_chr, match_idx, match_len, expr_closed);
 
         if(!group.isEmpty())
         {
-          QTextCharFormat format = formats[group];
+          bool is_dual_expr=isDualExpressionGroup(group);
+          QTextCharFormat format=formats[group];
+
           format.setFontFamily(default_font.family());
           format.setFontPointSize(default_font.pointSizeF());
           start_col=idx + match_idx;
           setFormat(start_col, match_len, format);
 
-          bool is_multiline=isMultiLineGroup(group);
-          int block_id=-1;
-
           if(!info)
           {
-            info=new BlockInfo(group, is_multiline);
-            setCurrentBlockUserData(info);
-            block_id=static_cast<int>(block_infos.size());
-            info->id=block_id;
+            info=new BlockInfo(block_infos.size(), group);
             block_infos.push_back(info);
+            setCurrentBlockUserData(info);
           }
           else
           {
-            block_id=info->id;
-            info->setBlockInfo(group, is_multiline);
+            info->group=group;
           }
 
-          setCurrentBlockState(is_multiline ? block_id : -1);
+          setCurrentBlockState(is_dual_expr && !expr_closed ? OPEN_EXPRESSION_BLOCK : SIMPLE_BLOCK);
         }
 
         aux_len=(match_idx + match_len);
@@ -196,7 +219,7 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
   }
 }
 
-QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &lookahead_chr, int idx, int &match_idx, int &match_len)
+QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &lookahead_chr, int &match_idx, int &match_len, bool &expr_closed)
 {
 	QRegExp expr;
 	vector<QString>::iterator itr, itr_end;
@@ -205,8 +228,9 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 	QString group;
 	bool match=false, part_mach=false;
   BlockInfo *info=dynamic_cast<BlockInfo *>(currentBlockUserData());
+  int block_st=currentBlockState();
 
-  if(info && info->is_multiline && !info->is_closed)
+  if(info && block_st==OPEN_EXPRESSION_BLOCK)
 	{
 		group=info->group;
 
@@ -248,9 +272,9 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 		/* If the word matches configures a multiline info with the
 			 values retrieved from the regexp matching */
 		if(match)
-      info->is_closed=true;
+      expr_closed=true;
     else
-		{
+		{      
 			match_idx=0;
 			match_len=word.length();
 		}
@@ -302,8 +326,8 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 				itr_exp++;
 			}
 
-      if(match && info && isMultiLineGroup(group))
-        info->is_closed=false;
+      if(match && info && isDualExpressionGroup(group))
+        expr_closed=false;
 		}
 
     if(!match)

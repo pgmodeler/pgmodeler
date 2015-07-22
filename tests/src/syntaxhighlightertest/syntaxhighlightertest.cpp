@@ -39,7 +39,7 @@ void SyntaxHighlighterTest::handleMultiLineComment(void)
 
   layout->addWidget(edt);
 
-  edt->setPlainText("/* commented uncommented */ asdf");
+  edt->setPlainText("-- txt bla\n new line");
 
   dlg->exec();
 }

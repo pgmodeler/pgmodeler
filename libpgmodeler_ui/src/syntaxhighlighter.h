@@ -37,17 +37,31 @@
 class SyntaxHighlighter: public QSyntaxHighlighter {
 	private:
 		Q_OBJECT
-		XMLParser xmlparser;
+
+    XMLParser xmlparser;
+
     static QFont default_font;
+
+    static const int UNDEF_BLOCK=-1,
+    SIMPLE_BLOCK=0,
+    OPEN_EXPRESSION_BLOCK=1;
 
     class BlockInfo: public QTextBlockUserData {
       public:
+        unsigned id;
         QString group;
-        bool is_multiline;
-        bool is_closed;
-        int id;
 
-        BlockInfo(void)
+        BlockInfo(unsigned id, const QString group)
+        {
+          this->id=id;
+          this->group=group;
+        }
+
+       /* bool is_multiline;
+        bool is_closed;
+        int id;*/
+
+       /* BlockInfo(void)
         {
           id=-1;
           is_closed=false;
@@ -63,7 +77,7 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
           this->group=group;
           this->is_multiline=is_multiline;
           if(!is_multiline) is_closed=false;
-        }
+        }*/
     };
 
     vector<BlockInfo *> block_infos;
@@ -112,11 +126,7 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		QChar	completion_trigger;
 
 		//! \brief Current block in which the highlighter is positioned
-		int current_block;
-
-		/*! \brief Multiline info count on the current block. This attribute is used to know when
-		the highlighter must call the rehighlight method to highlight all the document again */
-		unsigned curr_blk_info_count;
+    QTextBlock current_block;
 
 		//! \brief Configures the initial attributes of the highlighter
 		void configureAttributes(void);
@@ -124,13 +134,15 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		/*! \brief Indentifies the group which the word belongs to.  The other parameters indicates, respectively,
 		the lookahead char for the group, the current index (column) on the buffer, the initial match indixe and the
 		match length. */
-		QString identifyWordGroup(const QString &palavra, const QChar &lookahead_chr, int idx, int &match_idx, int &match_len);
+    QString identifyWordGroup(const QString &palavra, const QChar &lookahead_chr, int &match_idx, int &match_len, bool &expr_closed);
 
 		/*! \brief This event filter is used to nullify the line breaks when the highlighter
 		 is created in single line edit model */
 		bool eventFilter(QObject *object, QEvent *event);
 
-    bool isMultiLineGroup(const QString &group);
+    bool isDualExpressionGroup(const QString &group);
+
+    BlockInfo *getBlockInfo(int block);
 
 	public:
 		/*! \brief Install the syntax highlighter in a QTextEdit. The boolean param is used to
@@ -159,6 +171,8 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 
 		//! \brief Clears the loaded configuration
     void clearConfiguration(void);
+
+    void validateTextModification(int pos, int chars_rem, int chars_add);
 };
 
 #endif
