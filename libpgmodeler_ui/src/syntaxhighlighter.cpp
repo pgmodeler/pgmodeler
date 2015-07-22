@@ -66,22 +66,6 @@ bool SyntaxHighlighter::isDualExpressionGroup(const QString &group)
   return(initial_exprs.count(group) && final_exprs.count(group));
 }
 
-SyntaxHighlighter::BlockInfo *SyntaxHighlighter::getBlockInfo(int block)
-{
- /* BlockInfo *info=nullptr;
-
-  for(auto &inf : block_infos)
-  {
-    if(inf->id==block)
-    {
-      info=inf;
-      break;
-    }
-  }
-
-  return(info); */
-}
-
 void SyntaxHighlighter::configureAttributes(void)
 {
 	conf_loaded=false;
@@ -145,7 +129,7 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
     {
       removeBlockInfo(info);
       setCurrentBlockUserData(nullptr);
-      setCurrentBlockState(UNDEF_BLOCK);
+      setCurrentBlockState(SIMPLE_BLOCK);
       info=nullptr;
     }
 
@@ -197,7 +181,6 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
       if(!word.isEmpty())
       {
         bool expr_closed=false;
-        int block_st=UNDEF_BLOCK;
 
         i1=i;
         while(i1 < len && ignored_chars.contains(text[i1])) i1++;
@@ -210,11 +193,6 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
         match_idx=-1;
         match_len=0;
         group=identifyWordGroup(word, lookahead_chr, match_idx, match_len, expr_closed);
-
-        QTextStream ts(stdout);
-        ts << "block state:       " << currentBlockState() << endl;
-        ts << "prev. block state: " <<  current_block.previous().userState() << endl;
-        ts << "---" << endl;
 
         if(current_block.previous().userState()==OPEN_EXPR_BLOCK &&
            (!info || (info && !info->has_dual_expr)))
@@ -239,13 +217,7 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
             info->group=group;
 
           info->has_dual_expr=has_dual_expr;
-
-          if(is_dual_expr)
-            block_st=(expr_closed ? CLOSED_EXPR_BLOCK : OPEN_EXPR_BLOCK);
-          else
-            block_st=SIMPLE_BLOCK;
-
-          setCurrentBlockState(block_st);
+          setCurrentBlockState(is_dual_expr && !expr_closed ? OPEN_EXPR_BLOCK : SIMPLE_BLOCK);
         }
 
         aux_len=(match_idx + match_len);
@@ -309,9 +281,7 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 			itr_exp++;
 		}
 
-		/* If the word matches configures a multiline info with the
-			 values retrieved from the regexp matching */
-		if(match)
+    if(match)
       expr_closed=true;
     else
 		{      
@@ -357,6 +327,7 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 					{
 						match_idx=0;
 						match_len=word.length();
+            expr_closed=false;
 					}
 				}
 
@@ -365,9 +336,6 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 
 				itr_exp++;
 			}
-
-      if(match && info && isDualExpressionGroup(group))
-        expr_closed=false;
 		}
 
     if(!match)

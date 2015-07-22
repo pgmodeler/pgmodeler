@@ -42,10 +42,8 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 
     static QFont default_font;
 
-    static const int UNDEF_BLOCK=-1,
-    SIMPLE_BLOCK=0,
-    OPEN_EXPR_BLOCK=1,
-    CLOSED_EXPR_BLOCK=2;
+    static const int SIMPLE_BLOCK=-1,
+    OPEN_EXPR_BLOCK=0;
 
     class BlockInfo: public QTextBlockUserData {
       public:
@@ -57,28 +55,6 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
           this->group=group;
           this->has_dual_expr=false;
         }
-
-       /* bool is_multiline;
-        bool is_closed;
-        int id;*/
-
-       /* BlockInfo(void)
-        {
-          id=-1;
-          is_closed=false;
-        }
-
-        BlockInfo(const QString group, bool is_multiline) : BlockInfo()
-        {
-          setBlockInfo(group, is_multiline);
-        }
-
-        void setBlockInfo(const QString group, bool is_multiline)
-        {
-          this->group=group;
-          this->is_multiline=is_multiline;
-          if(!is_multiline) is_closed=false;
-        }*/
     };
 
     vector<BlockInfo *> block_infos;
@@ -144,8 +120,6 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		bool eventFilter(QObject *object, QEvent *event);
 
     bool isDualExpressionGroup(const QString &group);
-
-    BlockInfo *getBlockInfo(int block);
 
     bool hasDualExpression(const QString &txt, const QString &group);
 
