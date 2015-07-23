@@ -34,7 +34,7 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 
 	Ui_PermissionWidget::setupUi(this);
 
-  code_hl=new SyntaxHighlighter(code_txt, false);
+  code_hl=new SyntaxHighlighter(code_txt);
   code_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 	object_selection_wgt=new ModelObjectsWidget(true);

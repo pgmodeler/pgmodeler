@@ -63,8 +63,8 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 		connect(sourcecode_twg, SIGNAL(currentChanged(int)), this, SLOT(setSourceCodeTab(int)));
     connect(save_sql_tb, SIGNAL(clicked()), this, SLOT(saveSQLCode()));
 
-    hl_sqlcode=new SyntaxHighlighter(sqlcode_txt, false);
-		hl_xmlcode=new SyntaxHighlighter(xmlcode_txt, false);
+    hl_sqlcode=new SyntaxHighlighter(sqlcode_txt);
+    hl_xmlcode=new SyntaxHighlighter(xmlcode_txt);
 	}
 	catch(Exception &e)
 	{

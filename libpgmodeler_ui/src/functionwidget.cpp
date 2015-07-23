@@ -36,7 +36,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		configureFormLayout(function_grid, OBJ_FUNCTION);
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
-    source_code_hl=new SyntaxHighlighter(source_code_txt, false);
+    source_code_hl=new SyntaxHighlighter(source_code_txt);
 		source_code_cp=new CodeCompletionWidget(source_code_txt);
 
 		ret_type=new PgSQLTypeWidget(this);

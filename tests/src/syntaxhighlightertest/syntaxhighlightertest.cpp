@@ -34,7 +34,7 @@ void SyntaxHighlighterTest::handleMultiLineComment(void)
   QHBoxLayout *layout=new QHBoxLayout(dlg);
   SyntaxHighlighter *sql_hl=nullptr;
 
-  sql_hl=new SyntaxHighlighter(edt, false, false);
+  sql_hl=new SyntaxHighlighter(edt, false);
   //sql_hl->loadConfiguration(GlobalAttributes::XML_HIGHLIGHT_CONF_PATH);
   sql_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 

@@ -27,11 +27,11 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 		Ui_CustomSQLWidget::setupUi(this);
 		configureFormLayout(sqlappend_grid, BASE_OBJECT);
 
-    append_sql_hl=new SyntaxHighlighter(append_sql_txt, false);
+    append_sql_hl=new SyntaxHighlighter(append_sql_txt);
     append_sql_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
     append_sql_cp=new CodeCompletionWidget(append_sql_txt);
 
-    prepend_sql_hl=new SyntaxHighlighter(prepend_sql_txt, false);
+    prepend_sql_hl=new SyntaxHighlighter(prepend_sql_txt);
     prepend_sql_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
     prepend_sql_cp=new CodeCompletionWidget(prepend_sql_txt);
 

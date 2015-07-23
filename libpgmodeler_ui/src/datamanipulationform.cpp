@@ -32,7 +32,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	setupUi(this);
   setWindowFlags(Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
-	filter_hl=new SyntaxHighlighter(filter_txt, false);
+  filter_hl=new SyntaxHighlighter(filter_txt);
   filter_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 	code_compl_wgt=new CodeCompletionWidget(filter_txt);
