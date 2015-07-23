@@ -35,14 +35,9 @@ void SyntaxHighlighterTest::handleMultiLineComment(void)
   SyntaxHighlighter *sql_hl=nullptr;
 
   sql_hl=new SyntaxHighlighter(edt, false);
-  //sql_hl->loadConfiguration(GlobalAttributes::XML_HIGHLIGHT_CONF_PATH);
   sql_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
   layout->addWidget(edt);
-  //edt->setPlainText("<tag><![CDATA[\ntext\n]]></tag>");
-  //edt->setPlainText("<!--\nCAUTION \n-->\n<dbmodel>");
-  //edt->setPlainText("-- comment\nnew line");
-
   dlg->exec();
 }
 
