@@ -48,17 +48,21 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
     class BlockInfo: public QTextBlockUserData {
       public:
         QString group;
-        bool has_dual_expr;
+        bool has_block_expr;
+        bool is_expr_closed;
 
-        BlockInfo(const QString group)
+        BlockInfo(void)
         {
-          this->group=group;
-          this->has_dual_expr=false;
+          resetBlockInfo();
+        }
+
+        void resetBlockInfo(void)
+        {
+          group.clear();
+          has_block_expr=false;
+          is_expr_closed=false;
         }
     };
-
-    //! brief Stores the info about dual expression groups assigned to text blocks
-    vector<BlockInfo *> block_infos;
 
 		/*! \brief Stores the regexp used to identify keywords, identifiers, strings, numbers.
 		Also stores initial regexps used to identify a multiline group */
@@ -120,11 +124,9 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		 is created in single line edit model */
 		bool eventFilter(QObject *object, QEvent *event);
 
-    bool isDualExpressionGroup(const QString &group);
+    bool isBlockExpressionGroup(const QString &group);
 
-    bool hasDualExpression(const QString &txt, const QString &group);
-
-    void removeBlockInfo(BlockInfo *info);
+    bool hasBlockExpression(const QString &txt, const QString &group);
 
     BlockInfo *createBlockInfo(const QString &group);
 
@@ -135,8 +137,6 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		enable the auto rehighlight. If this is set to false the user must call the rehighlight method
 		every time he modifies the text */
     SyntaxHighlighter(QPlainTextEdit *parent, bool auto_rehighlight, bool single_line_mode=false);
-
-    ~SyntaxHighlighter(void);
 
 		//! \brief Loads a highlight configuration from a XML file
 		void loadConfiguration(const QString &filename);
