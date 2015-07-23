@@ -105,6 +105,7 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
   {
     info=dynamic_cast<BlockInfo *>(currentBlockUserData());
     info->resetBlockInfo();
+    setCurrentBlockState(SIMPLE_BLOCK);
   }
 
   if(prev_info && currentBlock().previous().userState()==OPEN_EXPR_BLOCK)
@@ -204,6 +205,14 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
     }
     while(i < len);      
   }
+
+  /*int block_st=currentBlockState();
+
+  if(txt.isEmpty() &&
+     currentBlock().next().isValid() &&
+     block_st==SIMPLE_BLOCK &&
+     currentBlock().next().userState()!=block_st)
+    rehighlightBlock(currentBlock().next());*/
 }
 
 QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &lookahead_chr, int &match_idx, int &match_len, bool &expr_closed)
