@@ -39,8 +39,9 @@ void SyntaxHighlighterTest::handleMultiLineComment(void)
   sql_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
   layout->addWidget(edt);
-  //edt->setPlainText("<!--\n--> s <!-- a");
-  edt->setPlainText("/* comment */ \n new line");
+  //edt->setPlainText("<tag><![CDATA[\ntext\n]]></tag>");
+  //edt->setPlainText("<!--\nCAUTION \n-->\n<dbmodel>");
+  //edt->setPlainText("-- comment\nnew line");
 
   dlg->exec();
 }

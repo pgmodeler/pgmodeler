@@ -109,9 +109,6 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		//! \brief Stores the char that triggers the code completion
 		QChar	completion_trigger;
 
-		//! \brief Current block in which the highlighter is positioned
-    QTextBlock current_block;
-
 		//! \brief Configures the initial attributes of the highlighter
 		void configureAttributes(void);
 
