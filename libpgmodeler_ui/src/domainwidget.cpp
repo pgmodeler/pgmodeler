@@ -25,7 +25,7 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DOMAIN
 		Ui_DomainWidget::setupUi(this);
 
 		check_expr_hl=nullptr;
-		check_expr_hl=new SyntaxHighlighter(check_expr_txt, false);
+    check_expr_hl=new SyntaxHighlighter(check_expr_txt);
     check_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		data_type=nullptr;

@@ -32,7 +32,7 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 		this->setWindowTitle(groupBox->title());
 
 		format_hl=nullptr;
-		format_hl=new SyntaxHighlighter(format_txt, false);
+    format_hl=new SyntaxHighlighter(format_txt);
 
     format_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 

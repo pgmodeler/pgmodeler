@@ -9,4 +9,5 @@
 TEMPLATE = subdirs
 SUBDIRS = src/main \
           src/baseobjecttest \
-          src/roletest
+          src/roletest \
+          src/syntaxhighlightertest

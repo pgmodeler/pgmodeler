@@ -35,13 +35,13 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 
 		operation_count=0;
 
-		expression_hl=new SyntaxHighlighter(expression_txt, false);
+    expression_hl=new SyntaxHighlighter(expression_txt);
     expression_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
-		code_hl=new SyntaxHighlighter(code_txt, false);
+    code_hl=new SyntaxHighlighter(code_txt);
     code_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
-		cte_expression_hl=new SyntaxHighlighter(cte_expression_txt, false);
+    cte_expression_hl=new SyntaxHighlighter(cte_expression_txt);
     cte_expression_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
     tag_sel=new ObjectSelectorWidget(OBJ_TAG, false, this);

@@ -35,7 +35,7 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 
 	for(int i=0; i < pattern_fields.size(); i++)
 	{
-    pattern_hl=new SyntaxHighlighter(pattern_fields[i], true, true);
+    pattern_hl=new SyntaxHighlighter(pattern_fields[i], true);
     pattern_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                   GlobalAttributes::DIR_SEPARATOR +
                                   GlobalAttributes::PATTERN_HIGHLIGHT_CONF +

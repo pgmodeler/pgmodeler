@@ -42,7 +42,7 @@ BugReportForm::BugReportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(paren
   output_edt->setText(QFileInfo(GlobalAttributes::TEMPORARY_DIR).absoluteFilePath());
 
 	//Installs a syntax highlighter on model_txt widget
-	hl_model_txt=new SyntaxHighlighter(model_txt, false);
+  hl_model_txt=new SyntaxHighlighter(model_txt);
   hl_model_txt->loadConfiguration(GlobalAttributes::XML_HIGHLIGHT_CONF_PATH);
 
   QDir tmp_dir=QDir(GlobalAttributes::TEMPORARY_DIR, QString("*.dbm"), QDir::Name, QDir::Files | QDir::NoDotAndDotDot);

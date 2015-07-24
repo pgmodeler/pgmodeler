@@ -28,7 +28,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 
   sql_cmd_txt=PgModelerUiNS::createNumberedTextEditor(sql_cmd_wgt);
 
-  sql_cmd_hl=new SyntaxHighlighter(sql_cmd_txt, true, false);
+  sql_cmd_hl=new SyntaxHighlighter(sql_cmd_txt, false);
   sql_cmd_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 	h_splitter1->setSizes({1000, 250});

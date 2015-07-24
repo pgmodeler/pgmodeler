@@ -87,7 +87,7 @@ Currently, those objects are:<br/><br/>aggregate, cast, constraint, collation, c
     preserve_db_name_ht=new HintTextWidget(preserve_db_name_hint, this);
     preserve_db_name_ht->setText(preserve_db_name_chk->statusTip());
 
-    sqlcode_hl=new SyntaxHighlighter(sqlcode_txt, false);
+    sqlcode_hl=new SyntaxHighlighter(sqlcode_txt);
     sqlcode_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
     pgsql_ver_cmb->addItems(PgSQLVersions::ALL_VERSIONS);

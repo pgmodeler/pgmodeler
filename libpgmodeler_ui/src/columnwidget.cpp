@@ -31,7 +31,7 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN
     Ui_ColumnWidget::setupUi(this);
 
     hl_default_value=nullptr;
-    hl_default_value=new SyntaxHighlighter(def_value_txt, false, true);
+    hl_default_value=new SyntaxHighlighter(def_value_txt, true);
     hl_default_value->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
     sequence_sel=new ObjectSelectorWidget(OBJ_SEQUENCE, true, this);

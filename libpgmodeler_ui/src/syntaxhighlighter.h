@@ -37,43 +37,39 @@
 class SyntaxHighlighter: public QSyntaxHighlighter {
 	private:
 		Q_OBJECT
-		XMLParser xmlparser;
 
-		//! \brief Auxiliary class used by the highlighter that stores informations	about multiline code blocks
-		class MultiLineInfo: public QTextBlockUserData {
-			public:
-				//! \brief Column where starts the multiline info
-				int start_col,
+    class BlockInfo: public QTextBlockUserData {
+      public:
+        QString group;
+        bool has_exprs;
+        bool is_expr_closed;
 
-						//! \brief Block (line) where the multiline starts
-						start_block,
+        BlockInfo(void)
+        {
+          resetBlockInfo();
+        }
 
-						/*! \brief Column where the multiline info ends it can be -1 while the
-						highlighter does not find the multiline end char */
-						end_col,
+        void resetBlockInfo(void)
+        {
+          group.clear();
+          has_exprs=false;
+          is_expr_closed=false;
+        }
+    };
 
-						/*! \brief Block (line) where the multiline info ends it can be -1 while
-						the highlighter does not find the multiline end char */
-						end_block;
+    //! brief XML parser used to parse configuration files
+    XMLParser xmlparser;
 
-				//! \brief Highlight group used to highlight the matching words on multiline
-				QString group;
-
-				MultiLineInfo(void)
-				{
-					this->group=QString();
-					this->start_col=-1;
-					this->start_block=-1;
-					this->end_col=-1;
-					this->end_block=-1;
-				}
-		};
-
+    //! brief Default font configuratoin for all instances os syntax highlighter
     static QFont default_font;
 
-		/*! \brief Stores the multiline infos and is used to check if the text being typed
-		by the user is on a multiline block */
-		vector<MultiLineInfo *> multi_line_infos;
+    //! brief Indicates that the current block has no special meaning
+    static const int SIMPLE_BLOCK=-1,
+
+    /*! brief Indicates that the current block has an open (but still to close) expression (e.g. multline comments)
+        When the highlighter finds this const it'll do special operation like highlight next blocks with the same
+        configuration as the current one */
+    OPEN_EXPR_BLOCK=0;
 
 		/*! \brief Stores the regexp used to identify keywords, identifiers, strings, numbers.
 		Also stores initial regexps used to identify a multiline group */
@@ -98,10 +94,6 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		//! \brief Indicates if the configuration is loaded or not
 		bool conf_loaded,
 
-					/*! \brief Indicates that the code must be rehighlighted in real time (as the user types).
-					If this attribute is set to false, the user must always call the rehighlight method */
-					auto_rehighlight,
-
 					/*! \brief This causes the highlighter to ignores any RETURN/ENTER press on QTextEdit causing
 							the text to be in a single line. */
           single_line_mode;
@@ -118,40 +110,27 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		//! \brief Stores the char that triggers the code completion
 		QChar	completion_trigger;
 
-		//! \brief Current block in which the highlighter is positioned
-		int current_block;
-
-		/*! \brief Multiline info count on the current block. This attribute is used to know when
-		the highlighter must call the rehighlight method to highlight all the document again */
-		unsigned curr_blk_info_count;
-
 		//! \brief Configures the initial attributes of the highlighter
 		void configureAttributes(void);
 
 		/*! \brief Indentifies the group which the word belongs to.  The other parameters indicates, respectively,
 		the lookahead char for the group, the current index (column) on the buffer, the initial match indixe and the
 		match length. */
-		QString identifyWordGroup(const QString &palavra, const QChar &lookahead_chr, int idx, int &match_idx, int &match_len);
-
-		/*! \brief Returns the multiline info for the specified start and end column and for the specified block.
-		Returns null when no such info could be found. */
-		MultiLineInfo *getMultiLineInfo(int col_ini, int end_col, int block);
-
-		//! \brief Removes the multiline info for the specified block index
-		void removeMultiLineInfo(int block);
-
-		//! \brief Returns the multiline info count for the specified block
-		unsigned getMultiLineInfoCount(int block);
+    QString identifyWordGroup(const QString &palavra, const QChar &lookahead_chr, int &match_idx, int &match_len);
 
 		/*! \brief This event filter is used to nullify the line breaks when the highlighter
 		 is created in single line edit model */
 		bool eventFilter(QObject *object, QEvent *event);
 
-	public:
-		/*! \brief Install the syntax highlighter in a QTextEdit. The boolean param is used to
-		enable the auto rehighlight. If this is set to false the user must call the rehighlight method
-		every time he modifies the text */
-    SyntaxHighlighter(QPlainTextEdit *parent, bool auto_rehighlight, bool single_line_mode=false);
+    //! brief Returns if the specified group contains both initial and final expressions
+    bool hasInitialAndFinalExprs(const QString &group);
+
+    //! brief Renders the block format using the configuration of the specified group
+    void setFormat(int start, int count, const QString &group);
+
+  public:
+    //! \brief Install the syntax highlighter in a QPlainTextEdit.
+    SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode=false);
 
 		//! \brief Loads a highlight configuration from a XML file
 		void loadConfiguration(const QString &filename);
@@ -166,23 +145,15 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		//! \brief Returns the current configured code completion trigger char
 		QChar getCompletionTrigger(void);
 
+    //! brief Sets the default font for all instances of this class
     static void setDefaultFont(const QFont &fnt);
-
-	public slots:
-		//! \brief Rehighlight all the document
-		void rehighlight(void);
 
 	private slots:
 		//! \brief Highlight a line of the text
 		void highlightBlock(const QString &txt);
 
-		/*! \brief Validates the text modification made by the user doing the highlight if needed.
-    The parameter has_changes is used to know if the contents of the document changed
-    (see QPlainTextEdit::modificationChanged) */
-    void validateTextModification(bool has_changes);
-
 		//! \brief Clears the loaded configuration
-		void clearConfiguration(void);
+    void clearConfiguration(void);
 };
 
 #endif
