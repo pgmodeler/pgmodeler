@@ -752,10 +752,10 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 
     if(!comment.isEmpty())
 		{
-			attributes[ParsersAttributes::COMMENT]=comment;
-
-			if(def_type==SchemaParser::SQL_DEFINITION)
-        attributes[ParsersAttributes::COMMENT].replace(QString("'"), QString("''"));
+      if(def_type==SchemaParser::SQL_DEFINITION)
+        attributes[ParsersAttributes::COMMENT]=QString(comment).replace(QString("'"), QString("''"));
+      else
+        attributes[ParsersAttributes::COMMENT]=comment;
 
 			if((def_type==SchemaParser::SQL_DEFINITION &&
 					obj_type!=OBJ_TABLESPACE &&
