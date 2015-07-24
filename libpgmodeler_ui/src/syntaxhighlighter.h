@@ -94,15 +94,9 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		//! \brief Indicates if the configuration is loaded or not
 		bool conf_loaded,
 
-					/*! \brief Indicates that the code must be rehighlighted in real time (as the user types).
-					If this attribute is set to false, the user must always call the rehighlight method */
-					auto_rehighlight,
-
 					/*! \brief This causes the highlighter to ignores any RETURN/ENTER press on QTextEdit causing
 							the text to be in a single line. */
-          single_line_mode,
-
-          is_rehighlighting;
+          single_line_mode;
 
 		//! \brief Stores the chars that indicates word separators
 		QString word_separators,

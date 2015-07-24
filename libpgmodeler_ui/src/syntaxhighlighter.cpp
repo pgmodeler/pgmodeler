@@ -149,7 +149,6 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
         }
       }
 
-
       //If the word is not empty try to identify the group
       if(!word.isEmpty())
       {
@@ -180,7 +179,7 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
         if(match_idx >=0 &&  aux_len != word.length())
           i-=word.length() - aux_len;
 
-        word=QString();
+        word.clear();
       }
     }
     while(i < len);      
