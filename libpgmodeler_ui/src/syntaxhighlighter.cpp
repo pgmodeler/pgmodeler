@@ -170,7 +170,7 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
           setFormat(start_col, match_len, group);
         }
 
-        if(info->has_exprs && !info->is_expr_closed)
+        if(info->has_exprs && !info->is_expr_closed && hasInitialAndFinalExprs(group))
           setCurrentBlockState(OPEN_EXPR_BLOCK);
         else
           setCurrentBlockState(SIMPLE_BLOCK);
