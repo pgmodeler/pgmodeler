@@ -768,6 +768,10 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
                 lin.remove(QString("MATERIALIZED"));
                 lin.remove(QString("RECURSIVE"));
               }
+              else if(obj_tp==OBJ_TABLE)
+              {
+                lin.remove(QString("UNLOGGED"));
+              }
             }
             else if(lin.startsWith(QString("DROP")))
             {
