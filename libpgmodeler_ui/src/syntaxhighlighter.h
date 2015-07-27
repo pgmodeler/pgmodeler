@@ -114,7 +114,7 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		void configureAttributes(void);
 
 		/*! \brief Indentifies the group which the word belongs to.  The other parameters indicates, respectively,
-		the lookahead char for the group, the current index (column) on the buffer, the initial match indixe and the
+    the lookahead char for the group, the current index (column) on the buffer, the initial match index and the
 		match length. */
     QString identifyWordGroup(const QString &palavra, const QChar &lookahead_chr, int &match_idx, int &match_len);
 
@@ -127,6 +127,11 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 
     //! brief Renders the block format using the configuration of the specified group
     void setFormat(int start, int count, const QString &group);
+
+    /*! brief Check if the word matches the specified group by searching the vector of expressions related to it.
+        If the word matches then the match_idx and match_len parameters will be configured with the index and length of chars that
+        the expression could match. Additionally this method returns a boolean indicating the if the match was successful */
+    bool isWordMatchGroup(const QString &word, const QString &group, bool use_final_expr, const QChar &lookahead_chr, int &match_idx, int &match_len);
 
   public:
     //! \brief Install the syntax highlighter in a QPlainTextEdit.

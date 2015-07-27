@@ -188,12 +188,8 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 
 QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &lookahead_chr, int &match_idx, int &match_len)
 {
-	QRegExp expr;
-	vector<QString>::iterator itr, itr_end;
-	vector<QRegExp>::iterator itr_exp, itr_exp_end;
-	vector<QRegExp> *vet_expr=nullptr;
 	QString group;
-	bool match=false, part_mach=false;
+  bool match=false;
   BlockInfo *info=dynamic_cast<BlockInfo *>(currentBlockUserData()),
       *prev_info=dynamic_cast<BlockInfo *>(currentBlock().previous().userData());
 
@@ -205,46 +201,11 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
     else
       group=info->group;
 
-		//Checking if the word is not a highlight ending for the group
-		itr_exp=final_exprs[group].begin();
-		itr_exp_end=final_exprs[group].end();
-		part_mach=partial_match[group];
-
-		while(itr_exp!=itr_exp_end && !match)
-		{
-			expr=(*itr_exp);
-
-			if(part_mach)
-			{
-				match_idx=word.indexOf(expr);
-				match_len=expr.matchedLength();
-				match=(match_idx >= 0);
-			}
-			else
-			{
-				if(expr.patternSyntax()==QRegExp::FixedString)
-					match=((expr.pattern().compare(word, expr.caseSensitivity())==0));
-				else
-					match=expr.exactMatch(word);
-
-				if(match)
-				{
-					match_idx=0;
-					match_len=word.length();
-				}
-			}
-
-			if(match && lookahead_char.count(group) > 0 && lookahead_chr!=lookahead_char.at(group))
-				match=false;
-
-			itr_exp++;
-		}
+    match=isWordMatchGroup(word, group, true, lookahead_chr, match_idx, match_len);
 
     //If the word match one final expression marks the current block info as closed
     if(match)
-    {
       info->is_expr_closed=true;
-    }
     else
 		{      
 			match_idx=0;
@@ -253,52 +214,19 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 
     info->has_exprs=hasInitialAndFinalExprs(group);
     info->group=group;
+
     return(group);
 	}
   else
   {
-		itr=groups_order.begin();
-		itr_end=groups_order.end();
-
-		while(itr!=itr_end && !match)
+    for(auto &itr_group : groups_order)
 		{
-			group=(*itr);
-			vet_expr=&initial_exprs[group];
-			itr++;
-
-			itr_exp=vet_expr->begin();
-			itr_exp_end=vet_expr->end();
-			part_mach=partial_match[group];
-
-			while(itr_exp!=itr_exp_end && !match)
-			{
-				expr=(*itr_exp);
-
-				if(part_mach)
-				{
-					match_idx=word.indexOf(expr);
-					match_len=expr.matchedLength();
-					match=(match_idx >= 0);
-				}
-				else
-				{
-					if(expr.patternSyntax()==QRegExp::FixedString)
-						match=((expr.pattern().compare(word, expr.caseSensitivity())==0));
-					else
-						match=expr.exactMatch(word);
-
-					if(match)
-					{
-						match_idx=0;
-						match_len=word.length();
-					}
-				}
-
-				if(match && lookahead_char.count(group) > 0 && lookahead_chr!=lookahead_char.at(group))
-					match=false;
-
-				itr_exp++;
-			}
+      group=itr_group;
+      if(isWordMatchGroup(word, group, false, lookahead_chr, match_idx, match_len))
+      {
+        match=true;
+        break;
+      }
 		}
 
     if(!match)
@@ -314,6 +242,47 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
       return(group);
     }
   }
+}
+
+bool SyntaxHighlighter::isWordMatchGroup(const QString &word, const QString &group, bool use_final_expr, const QChar &lookahead_chr, int &match_idx, int &match_len)
+{
+  vector<QRegExp> *vet_expr=nullptr;
+  bool match=false, part_match=partial_match[group];
+
+  if(use_final_expr && final_exprs.count(group))
+    vet_expr=&final_exprs[group];
+  else
+    vet_expr=&initial_exprs[group];
+
+  for(auto &expr : *vet_expr)
+  {
+    if(part_match)
+    {
+      match_idx=word.indexOf(expr);
+      match_len=expr.matchedLength();
+      match=(match_idx >= 0);
+    }
+    else
+    {
+      if(expr.patternSyntax()==QRegExp::FixedString)
+        match=((expr.pattern().compare(word, expr.caseSensitivity())==0));
+      else
+        match=expr.exactMatch(word);
+
+      if(match)
+      {
+        match_idx=0;
+        match_len=word.length();
+      }
+    }
+
+    if(match && lookahead_char.count(group) > 0 && lookahead_chr!=lookahead_char.at(group))
+      match=false;
+
+    if(match) break;
+  }
+
+  return(match);
 }
 
 bool SyntaxHighlighter::isConfigurationLoaded(void)
