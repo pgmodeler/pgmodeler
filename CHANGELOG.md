@@ -1,6 +1,42 @@
 Change Log
 ---------
 
+v0.8.1
+------
+<em>Codename: <strong>Faithful Elephant</strong></em><br/>
+<em>Release date: July 30, 2015</em><br/>
+
+* [New] Added the ability to create objects from within the object selectors to shorten up the time spent to create a new objects in the model. The only exception of for selectors in SwapObjectsIdsWidget and table/column selectors in ViewWidget.
+* [New] Added a new method OperationList::isObjectRegistered to check if an object is registered in the list.
+* [New] Created a test class for SyntaxHighlighter.
+* [Change] Code optmizations done in SyntaxHighlighter removing duplicated or unused code.
+* [Change] Minor adjustments on splitters at DatabaseExplorerWidget and SQLExecutionWidget.
+* [Change] Changed the way the s_objectAdded signal is captured in ModelObjectsWidget::selectObject in order to work properly in Windows.
+* [Change] Removed unnecessary message box in BaseObjectWidget.
+* [Change] Changed the connection mode of the procedures to clear the operation list when a fix is applied in the model by the validation.
+* [Change] More improvements related to the operation list management when editing/creating objects through forms.
+* [Change] Improvements on BaseObjectWidget when canceling the creation/edition of objects and there are chained operations in the operations list.
+* [Change] Additional improvements on TableWidget removing unneeded connection to signals.
+* [Change] Improvement in TableWidget to register a new table in the operaions list after the user create a dependency object (schema, tag, role, etc) to avoid undo/redo errors.
+* [Change] Additional improvements on ObjectSelectorWidget and ModelObjectsWidget to automatically set focus on the created object.
+* [Change] Enhanced the generated view code. Now it should be more readable.
+* [Fix] Fixed a bug related to unlogged tables exporting.
+* [Fix] Fixed a small bug in SyntaxHighlighter that was not highlighting properly new lines and text after multline comments.
+* [Fix] Fixed a bug that was preventing comments to be properly quoted (issue #710)
+* [Fix] Fixed the SyntaxHighlighter constructor call throught the classes.
+* [Fix] Minor fixes on xml-highlight.conf
+* [Fix] Minor fix in the import process to remove quotes from enum type attributes to avoid erroneous modification of attributes when diff a model and database.
+* [Fix] Fixed the disabled close button on editing forms (Windows only)
+* [Fix] Fixed a bug in the object selector that was preventing the selector dialog to be shown when user click in the input field.
+* [Fix] Fixed a regression in method DatabaseModel::getObject(QString,ObjectType) when dealing with operator class or family.
+* [Fix] Fixed the configuration of Quick menu for relationship added objects. The disable/enable sql action is not visible anymore.
+* [Fix] Fixed possible memory leaks when creating new objects through editing forms.
+* [Fix] Fixed a bug on the object name validation that was permitting user to specify object names containing only numbers.
+* [Fix] Fixed a bug when generating ENUM types without enum attributes.
+* [Fix] Fixed the generation of DROP command for trigger and rules.
+* [Fix] Fixed a crash when closing the model. This crash was related to removing permissions from special objects and right after destroy the remaining permisisons.
+* [Fix] Fixed the method Permission::getSignature to avoid generating the same signature for different objects (permissions must be unique).
+
 v0.8.1-beta1
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em><br/>
