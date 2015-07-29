@@ -5,15 +5,15 @@ v0.8.1
 <em>Changes since: <strong>v0.8.0</strong></em><br/>
 
 <strong>Summary:</strong> after five months working to enhance the last major release we finally have the 0.8.1! This version brings a lot of improvements and fixes in a total of 30 new features, 68 changes, 72 bug fixes.<br/>
-The previous release (0.8.1) introduced important new feature and this one brings more improvements to them.<br/>
+The previous release (0.8.1) introduced important new features and this one brings more improvements to them.<br/>
 Obviously, not all new features or changes will be noted by the user because they were created to help in bug fixes but what matters is that pgModeler is continously being enhanced.<br/>
 Below the key features of this new release are described. Please, refer to CHANGELOG.md to see the complete list of features and fixes.<br/>
 
-* <strong>Faster design:</strong> now it is possible to create dependency objects from within their related selectors in editing forms. For instance, inside the table's editing form you can create a new schema and assing to the table on the fly just by poping up the schema's selector dialog and right click the item "Schemas (n)" and then selecting "New schema". This action is valid in almost all selectors in editing forms. Surely this will shorten up the time spent to create objects in the model.<br/>
+* <strong>Faster design:</strong> now it is possible to create dependency objects from within their related selectors in editing forms. For instance, inside the table's editing form you can create a new schema and assign to the table on the fly just by popping up the schema's selector dialog and right click the item "Schemas (n)" and then selecting "New schema". This action is valid in almost all selectors in editing forms. Surely this will shorten up the time spent to create objects in the model.<br/>
 
-* <strong>Automatic keyword quotation:</strong> introducing an automatic name quotation mechanism. This feature will add quotes to objects' names if they refer to PostgreSQL's reserved keywords. The automatic quotation will happen whenever the SQL code needs to be generated, this will avoid export or validation errors related to objects' names. <strong>NOTE:</strong> this feature is experimental and may fail in some cases.</br>
+* <strong>Automatic keyword quotating:</strong> introducing an automatic name quoting mechanism. This feature will add quotes to objects' names if they refer to PostgreSQL's reserved keywords. The automatic quoting will happen whenever the SQL code needs to be generated, this will avoid export or validation errors related to objects' names. <strong>NOTE:</strong> this feature is experimental and may fail in some cases.</br>
 
-* <strong>Improved object finder:</strong> the object finder is a handful tool when working with big models. In previous releases the only action over results was to open the editing form of the selected object in the results grid. Now the user can access the complete menu (the same one in the canvas area) by right click any item in the result grid. <strong>NOTE:</strong> the items available in the menu may vary depending upon the selected object.<br/>
+* <strong>Improved object finder:</strong> the object finder is a handy tool when working with big models. In previous releases the only action over results was to open the editing form of the selected object in the results grid. Now the user can access the complete menu (the same one in the canvas area) by right click any item in the result grid. <strong>NOTE:</strong> the items available in the menu may vary depending upon the selected object.<br/>
 
 * <strong>Advanced code preview:</strong> the source code visualization now is able to generate code related to the object and its dependecies or children for test purposes. Also, there is the possibility to save the code in that dialog to a file for later usage.<br/>
 
