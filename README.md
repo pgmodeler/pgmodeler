@@ -17,12 +17,12 @@ See [LICENSE](https://github.com/pgmodeler/pgmodeler/blob/master/LICENSE) for de
 Donate to pgModeler
 -------------------
 
-Much effort, coffee, chocolate, time and knowledge has been devoted to this project so that a usable and constantly improved product can be delivered to the community. If you liked pgModeler and think it deserves a contribution please donate any amount (via PayPal) on [project's official site](http://pgmodeler.com.br).
+Much effort, coffee, chocolate, time and knowledge has been devoted to this project so that a usable and constantly improved product could be delivered to the community. If you liked pgModeler and think it deserves a contribution please donate any amount (via PayPal) at [project's official site](http://pgmodeler.com.br).
 
 Developers and Reviewers wanted!
 --------------------------------
 
-pgModeler grown bigger and reached a state that its lonely developer cannot handle all the modification and new feature requests. So if you know C++ and Qt framework programming and wants to contribute with coding let me know! I'll be grateful for any help to the project!
+pgModeler grown bigger and reached a state that its lonely developer cannot handle all the modifications and new features requests. So if you know C++ and Qt framework programming and wants to contribute with coding let me know! I'll be grateful for any help to the project!
 
 Compiling/Installation
 ----------------------
@@ -32,10 +32,10 @@ For details about installation process from source code visit the [Installation]
 Known Issues
 -----------
 
-* pgModeler does not fully supports the [quoted identifier notation](http://www.postgresql.org/docs/current/static/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS). When using quoted identifiers only the characters are accepted in the middle of names: a-z A-Z 0-9 _ . @ $ - space
+* pgModeler does not fully supports the [quoted identifier notation](http://www.postgresql.org/docs/current/static/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS). When using quoted identifiers only the following characters are accepted in the middle of names: a-z A-Z 0-9 _ . @ $ - space
 * pgModeler is unusable in sandboxed Mac OS X installations. To workaround this issue you'll need to deactivate sandbox usage to run pgModeler properly. There is no planning to adapt this tool for sandbox feature in Mac OS X.
 * pgModeler can't be compiled in Microsoft Visual Studio due to use of some gcc/clang extensions. There is a work in progress to make the build possible but it is too early to tell if it'll be fully functional and merged to the official codebase.
-* Compiling the source using '-Wconversion' (disabled by Qt in its default) generates a lot of warnings. These warnings are harmless in 99% of times but we can't just ignore them but I don't plan to fix them in a near future (mail me for more details! It's a long history...).
+* Compiling the source using '-Wconversion' (disabled by Qt in its default) generates a lot of warnings. These warnings are harmless in 99% of times but we can't just ignore them but I don't plan to fix them in a near future (mail me for more details).
 * pgModeler sometimes can crash during the export, import or validation process due to some threaded operations that, depending on size and arrange of the model, causes race conditions.
 * Due to particularities on executing bundles on MacOSX the file association does not work correctly on this system. So it's not possible to open a model file by clicking it on Finder.
 
