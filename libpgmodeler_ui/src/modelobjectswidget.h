@@ -42,7 +42,12 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 
 					/*! \brief Indicates if the object tree state must be saved, this means, that the current item
 					expansion is memorized and can be restored at any moment via restoreTreeState() method */
-					save_tree_state;
+          save_tree_state,
+
+    /*! brief Allow the object creation in simplified mode by using the "New [object type]" popup menu.
+        This flag is ignored if the model object widget is used in the complete mode since the main purpose
+        of the widget is to allow the object management */
+    enable_obj_creation;
 
 		//! \brief Stores the reference to the object currently selected on the tree/list
 		BaseObject *selected_object;
@@ -97,6 +102,9 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 
 		BaseObject *getSelectedObject(void);
 
+    //! brief Enables the object creation in simplified view by exposing the popup menu "New [object]"
+    void enableObjectCreation(bool value);
+
 	protected:
 		//! \brief Saves the currently expanded items on the specified vector
 		void saveTreeState(vector<BaseObject *> &tree_items);
@@ -123,9 +131,10 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 		void showObjectMenu(void);
 		void editObject(void);
 		void collapseAll(void);
-		void filterObjects(void);
+		void filterObjects(void); 
+    void selectCreatedObject(BaseObject *obj);
 
-	signals:
+signals:
 		void s_visibilityChanged(BaseObject *,bool);
 		void s_visibilityChanged(bool);
 

@@ -29,7 +29,7 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 
 		Ui_IndexWidget::setupUi(this);
 
-    predicate_hl=new SyntaxHighlighter(predicate_txt, false);
+    predicate_hl=new SyntaxHighlighter(predicate_txt);
     predicate_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		elements_wgt = new ElementsWidget(this);
@@ -113,7 +113,7 @@ void IndexWidget::setAttributes(DatabaseModel *model, Table *parent_obj, Operati
 		fast_update_chk->setChecked(index->getIndexAttribute(Index::FAST_UPDATE));
 		unique_chk->setChecked(index->getIndexAttribute(Index::UNIQUE));
 		buffering_chk->setChecked(index->getIndexAttribute(Index::BUFFERING));
-    predicate_txt->setPlainText(/*Utf8String::create(*/index->getPredicate());
+    predicate_txt->setPlainText(index->getPredicate());
 
 		selectIndexingType();
 	}

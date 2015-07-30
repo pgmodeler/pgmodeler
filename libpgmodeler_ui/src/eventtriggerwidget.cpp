@@ -85,7 +85,7 @@ void EventTriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 		filter_tab->blockSignals(true);
 
-		for(auto flt : filter)
+    for(auto &flt : filter)
 		{
 			filter_tab->addRow();
 			filter_tab->setCellText(flt, filter_tab->getRowCount()-1, 0);

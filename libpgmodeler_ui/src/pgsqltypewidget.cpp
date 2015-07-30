@@ -32,7 +32,7 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 		this->setWindowTitle(groupBox->title());
 
 		format_hl=nullptr;
-		format_hl=new SyntaxHighlighter(format_txt, false);
+    format_hl=new SyntaxHighlighter(format_txt);
 
     format_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
@@ -114,7 +114,7 @@ void PgSQLTypeWidget::updateTypeFormat(void)
 		type.setIntervalType(interval_cmb->currentText());
 		type.setWithTimezone(timezone_chk->isChecked());
 
-    format_txt->setPlainText(/*Utf8String::create(*/*type);
+    format_txt->setPlainText(*type);
 	}
 	catch(Exception &e)
 	{
@@ -137,7 +137,7 @@ void PgSQLTypeWidget::listPgSQLTypes(QComboBox *combo, DatabaseModel *model, uns
 		count=types.size();
 
 		for(idx=0; idx < count; idx++)
-      combo->addItem(/*Utf8String::create(*/types[idx], QVariant(PgSQLType::getUserTypeIndex(types[idx],nullptr,model)));
+      combo->addItem(types[idx], QVariant(PgSQLType::getUserTypeIndex(types[idx],nullptr,model)));
 
 		//Getting the built-in type adding them into the combo
 		PgSQLType::getTypes(types, oid_types, pseudo_types);
@@ -157,7 +157,7 @@ void PgSQLTypeWidget::setAttributes(PgSQLType type, DatabaseModel *model,  unsig
 		type_cmb->blockSignals(false);
 
 		//Get the passed type index
-    idx=type_cmb->findText(/*Utf8String::create(*/~type);
+    idx=type_cmb->findText(~type);
 
 		//Select the type on the combo
 		type_cmb->setCurrentIndex(idx);

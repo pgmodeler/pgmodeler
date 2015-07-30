@@ -165,10 +165,10 @@ BaseObject *BaseObjectView::getSourceObject(void)
 	return(reinterpret_cast<BaseObject *>(this->data(0).value<void *>()));
 }
 
-void BaseObjectView::resizePolygon(QPolygonF &pol, float width, float height)
+void BaseObjectView::resizePolygon(QPolygonF &pol, double width, double height)
 {
 	QVector<QPointF>::iterator itr,itr_end;
-	float coef_a, coef_b;
+	double coef_a, coef_b;
 
 	itr=pol.begin();
 	itr_end=pol.end();
@@ -202,7 +202,7 @@ void BaseObjectView::loadObjectsStyle(void)
 	try
 	{
 		xmlparser.restartParser();
-		xmlparser.setDTDFile(GlobalAttributes::CONFIGURATIONS_DIR +
+    xmlparser.setDTDFile(GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
 													GlobalAttributes::DIR_SEPARATOR +
 													GlobalAttributes::OBJECT_DTD_DIR +
 													GlobalAttributes::DIR_SEPARATOR +
@@ -222,7 +222,7 @@ void BaseObjectView::loadObjectsStyle(void)
 					if(elem==ParsersAttributes::GLOBAL)
 					{
 						font.setFamily(attribs[ParsersAttributes::FONT]);
-						font.setPointSizeF(attribs[ParsersAttributes::SIZE].toFloat());
+            font.setPointSizeF(attribs[ParsersAttributes::SIZE].toDouble());
 						font.setBold(attribs[ParsersAttributes::BOLD]==ParsersAttributes::_TRUE_);
 						font.setItalic(attribs[ParsersAttributes::ITALIC]==ParsersAttributes::_TRUE_);
 						font.setUnderline(attribs[ParsersAttributes::UNDERLINE]==ParsersAttributes::_TRUE_);
@@ -447,7 +447,7 @@ void BaseObjectView::configureSQLDisabledInfo(void)
 {
   if(sql_disabled_box)
   {
-    float px=0, py=0;
+    double px=0, py=0;
 
     sql_disabled_txt->setVisible(this->getSourceObject()->isSQLDisabled());
     sql_disabled_box->setVisible(this->getSourceObject()->isSQLDisabled());
@@ -508,7 +508,7 @@ void BaseObjectView::configureProtectedIcon(void)
 	{
 		QGraphicsPolygonItem *pol_item=nullptr;
 		QPolygonF pol;
-		float factor;
+		double factor;
 
 		//Calculates the factor used to resize the protection icon accordding the font size
 		factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
@@ -554,7 +554,7 @@ void BaseObjectView::__configureObject(void)
 	if(graph_obj)
 	{
 		this->setPos(graph_obj->getPosition());
-    this->setToolTip(/*Utf8String::create(*/graph_obj->getName(true) +
+    this->setToolTip(graph_obj->getName(true) +
                      QString(" (") + graph_obj->getTypeName() +
                      QString(") ") + QString("\nId: %1").arg(graph_obj->getObjectId()));
 		this->configurePositionInfo(graph_obj->getPosition());

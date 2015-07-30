@@ -97,6 +97,20 @@ QString ObjectsDiffInfo::getInfoMessage(void)
   return(msg);
 }
 
+QString ObjectsDiffInfo::getDiffTypeString(void)
+{
+  if(diff_type==NO_DIFFERENCE)
+    return(QString());
+  else if(diff_type==DROP_OBJECT)
+    return(QString("DROP"));
+  else if(diff_type==CREATE_OBJECT)
+   return(QString("CREATE"));
+  else if(diff_type==ALTER_OBJECT)
+   return(QString("ALTER"));
+  else
+   return(QString("IGNORE"));
+}
+
 BaseObject *ObjectsDiffInfo::getObject(void)
 {
   return(object);

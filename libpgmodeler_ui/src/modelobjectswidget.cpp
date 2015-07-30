@@ -23,12 +23,13 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 {
 	setupUi(this);
 	model_wgt=nullptr;
-	db_model=nullptr;
-	setModel(db_model);
+	db_model=nullptr;	 
+  setModel(db_model);
 
 	title_wgt->setVisible(!simplified_view);
 	this->simplified_view=simplified_view;
 	this->save_tree_state=!simplified_view;
+  enable_obj_creation=simplified_view;
 
 	select_tb->setVisible(simplified_view);
 	cancel_tb->setVisible(simplified_view);
@@ -63,7 +64,7 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 	{
 		setMinimumSize(250, 300);
 		setWindowModality(Qt::ApplicationModal);
-		setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowStaysOnTopHint | Qt::WindowTitleHint);
+    setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint /*| Qt::WindowStaysOnTopHint*/ | Qt::WindowTitleHint);
 		connect(objectstree_tw,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this, SLOT(close(void)));
 		connect(objectslist_tbw,SIGNAL(itemDoubleClicked(QTableWidgetItem*)),this, SLOT(close(void)));
 		connect(select_tb,SIGNAL(clicked(void)),this,SLOT(close(void)));
@@ -137,6 +138,12 @@ void ModelObjectsWidget::editObject(void)
 void ModelObjectsWidget::selectObject(void)
 {
 	ObjectType obj_type=BASE_OBJECT;
+  ModelWidget *model_wgt=nullptr;
+
+  if(!simplified_view && this->model_wgt)
+    model_wgt=this->model_wgt;
+  else if(simplified_view)
+    model_wgt=db_model->getModelWidget();
 
 	if(tree_view_tb->isChecked())
 	{
@@ -149,13 +156,14 @@ void ModelObjectsWidget::selectObject(void)
 		}
 
 		//If user select a group item popups a "New [OBJECT]" menu
-		if(!selected_object && QApplication::mouseButtons()==Qt::RightButton &&
+    if((!simplified_view || (simplified_view && enable_obj_creation)) &&
+       !selected_object && QApplication::mouseButtons()==Qt::RightButton &&
 			 obj_type!=OBJ_COLUMN && obj_type!=OBJ_CONSTRAINT && obj_type!=OBJ_RULE &&
 			 obj_type!=OBJ_INDEX && obj_type!=OBJ_TRIGGER && obj_type!=OBJ_PERMISSION)
 		{
 			QAction act(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")),
                   trUtf8("New") + QString(" ") + BaseObject::getTypeName(obj_type), nullptr);
-			QMenu popup;
+      QMenu popup;
 
 			//If not a relationship, connect the action to the addNewObject method of the model wiget
 			if(obj_type!=OBJ_RELATIONSHIP)
@@ -167,9 +175,13 @@ void ModelObjectsWidget::selectObject(void)
 			else
 				act.setMenu(model_wgt->rels_menu);
 
+      if(simplified_view && enable_obj_creation)
+        connect(model_wgt->getDatabaseModel(), SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(selectCreatedObject(BaseObject *)), Qt::QueuedConnection);
+
 			popup.addAction(&act);
 			popup.exec(QCursor::pos());
-			disconnect(&act,nullptr,model_wgt,nullptr);
+      disconnect(&act,nullptr,model_wgt,nullptr);
+      disconnect(model_wgt->getDatabaseModel(),nullptr, this,nullptr);
 		}
 	}
 	else
@@ -185,11 +197,8 @@ void ModelObjectsWidget::selectObject(void)
 
 	if(obj_type!=OBJ_PERMISSION && selected_object && !simplified_view)
 	{
-		vector<BaseObject *> vect;
-
-		vect.push_back(selected_object);
 		model_wgt->scene->clearSelection();
-		model_wgt->configurePopupMenu(vect);
+    model_wgt->configureObjectMenu(selected_object);
 		showObjectMenu();
 	}
 }
@@ -221,20 +230,20 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
   {
     Function *func=dynamic_cast<Function *>(object);
     func->createSignature(false);
-    item->setText(0,/*Utf8String::create(*/func->getSignature());
-    obj_name=/*Utf8String::create(*/func->getSignature();
+    item->setText(0,func->getSignature());
+    obj_name=func->getSignature();
     func->createSignature(true);
   }
   else if(obj_type==OBJ_OPERATOR)
   {
     Operator *oper=dynamic_cast<Operator *>(object);
-    item->setText(0, /*Utf8String::create(*/oper->getSignature(false));
-    obj_name=/*Utf8String::create(*/oper->getSignature(false);
+    item->setText(0, oper->getSignature(false));
+    obj_name=oper->getSignature(false);
   }
   else
   {
-    item->setText(0,/*Utf8String::create(*/object->getName());
-    obj_name=/*Utf8String::create(*/object->getName();
+    item->setText(0,object->getName());
+    obj_name=object->getName();
   }
 
 	item->setToolTip(0, QString("%1 (id: %2)").arg(obj_name).arg(object->getObjectId()));
@@ -424,7 +433,7 @@ void ModelObjectsWidget::updateObjectsList(void)
 	{
 		vector<ObjectType> visible_types;
 
-		for(auto tp : visible_objs_map)
+    for(auto &tp : visible_objs_map)
 		{
 			if(tp.second)
 				visible_types.push_back(tp.first);
@@ -692,7 +701,7 @@ void ModelObjectsWidget::updatePermissionTree(QTreeWidgetItem *root, BaseObject 
 			font.setItalic(true);
 			item->setFont(0, font);
 			item->setText(0, QString("%1 (%2)")
-                    .arg(/*Utf8String::create(*/BaseObject::getTypeName(OBJ_PERMISSION))
+                    .arg(BaseObject::getTypeName(OBJ_PERMISSION))
 										.arg(perms.size()));
 
 			item->setData(0, Qt::UserRole, generateItemValue(object));
@@ -772,7 +781,7 @@ void ModelObjectsWidget::updateDatabaseTree(void)
               {
                 db_model->getObjectReferences(object, ref_list);
 
-                for(auto ref : ref_list)
+                for(auto &ref : ref_list)
                   createItemForObject(ref, item2, false);
               }
             }
@@ -796,7 +805,12 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 
 BaseObject *ModelObjectsWidget::getSelectedObject(void)
 {
-	return(selected_object);
+  return(selected_object);
+}
+
+void ModelObjectsWidget::enableObjectCreation(bool value)
+{
+  enable_obj_creation=value;
 }
 
 void ModelObjectsWidget::close(void)
@@ -1002,4 +1016,21 @@ QTreeWidgetItem *ModelObjectsWidget::getTreeItem(BaseObject *object)
 	}
 	else
 		return(nullptr);
+}
+
+void ModelObjectsWidget::selectCreatedObject(BaseObject *obj)
+{
+  updateObjectsView();
+  QTreeWidgetItem *item=getTreeItem(obj);
+
+  if(item)
+  {
+    objectstree_tw->blockSignals(true);
+    objectstree_tw->setItemSelected(item, true);
+    objectstree_tw->setCurrentItem(item);
+    objectstree_tw->scrollToItem(item);
+    selected_object=obj;
+    select_tb->setFocus();
+    objectstree_tw->blockSignals(false);
+  }
 }

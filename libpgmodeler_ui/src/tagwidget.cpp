@@ -29,7 +29,7 @@ TagWidget::TagWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TAG)
 	unsigned color_count=1;
 	int row=0;
 
-	for(auto attr : attribs)
+  for(auto &attr : attribs)
 	{
 		if(color_count==1 && attr!=ParsersAttributes::TABLE_NAME && attr!=ParsersAttributes::TABLE_SCHEMA_NAME)
 			 color_count=3;
@@ -54,7 +54,7 @@ void TagWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Tag 
 
 	BaseObjectWidget::setAttributes(model, op_list, tag);
 
-	for(auto attr : attribs)
+  for(auto &attr : attribs)
 	{
 		if(color_count==1 && attr!=ParsersAttributes::TABLE_NAME && attr!=ParsersAttributes::TABLE_SCHEMA_NAME)
 			 color_count=3;
@@ -86,7 +86,7 @@ void TagWidget::applyConfiguration(void)
 		tag->setElementColor(ParsersAttributes::TABLE_NAME, color_pickers[ParsersAttributes::TABLE_NAME]->getColor(0), Tag::FILL_COLOR1);
 		tag->setElementColor(ParsersAttributes::TABLE_SCHEMA_NAME, color_pickers[ParsersAttributes::TABLE_SCHEMA_NAME]->getColor(0), Tag::FILL_COLOR1);
 
-		for(auto attr : attribs)
+    for(auto &attr : attribs)
 		{
 			tag->setElementColors(attr,
 														QString("%1,%2,%3")

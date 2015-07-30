@@ -18,7 +18,6 @@
 
 #include "updatenotifierwidget.h"
 #include <iostream>
-using namespace std;
 
 UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
 {

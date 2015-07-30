@@ -33,7 +33,7 @@ void Tablespace::setName(const QString &name)
 		raises an error */
   if(name.mid(0,3)==QString("pg_"))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_RESERVED_NAME)
-                    .arg(/*Utf8String::create(*/this->getName())
+                    .arg(this->getName())
 										.arg(BaseObject::getTypeName(OBJ_TABLESPACE)),
 										ERR_ASG_RESERVED_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 

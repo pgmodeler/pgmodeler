@@ -38,10 +38,6 @@ class ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
 		//! \brief An object view widget instance used as object picker
 		ModelObjectsWidget *obj_view_wgt;
 
-		/*! \brief Stores the selector instance currently focused. This attribute is used to
-		prevent other selector in a same form to receive the selected object */
-		static QObject *current_selector;
-
 		//! \brief Selected object name highlighter
 		SyntaxHighlighter *obj_name_hl;
 
@@ -55,14 +51,17 @@ class ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
 		DatabaseModel *model;
 
 		//! \brief Configures the selectors attributes at construction time
-		void configureSelector(bool install_highlighter);
+    void configureSelector(bool install_highlighter);
 
 		bool eventFilter(QObject *obj, QEvent *evnt);
 
 	public:
-		ObjectSelectorWidget(ObjectType sel_obj_type, bool install_highlighter, QWidget * parent = 0);
-		ObjectSelectorWidget(vector<ObjectType> sel_obj_types, bool install_highlighter, QWidget * parent = 0);
+    ObjectSelectorWidget(ObjectType sel_obj_type, bool install_highlighter, QWidget * parent = 0);
+    ObjectSelectorWidget(vector<ObjectType> sel_obj_types, bool install_highlighter, QWidget * parent = 0);
 		~ObjectSelectorWidget(void);
+
+    //! brief Enables the creation of new objects from withing the object selector dialog
+    void enableObjectCreation(bool value);
 
 		//! \brief Returns the reference to the selected object
 		BaseObject *getSelectedObject(void);

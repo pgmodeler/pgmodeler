@@ -426,7 +426,7 @@ void View::setDeclarationAttribute(void)
 		{
 			vector<unsigned> *refs_vect[3]={&exp_select, &exp_from, &exp_where};
 			vector<unsigned>::iterator itr, itr_end;
-			QString palavras[3]={"SELECT ", "\n FROM ", "\n WHERE "};
+      QString palavras[3]={"SELECT\n", "\nFROM\n", "\nWHERE\n"};
 			unsigned i, qtd, idx, tipo_sql[3]={Reference::SQL_REFER_SELECT,
 																				 Reference::SQL_REFER_FROM,
 																				 Reference::SQL_REFER_WHERE};
@@ -511,7 +511,7 @@ vector<Column *> View::getRelationshipAddedColumns(void)
   vector<Column *> cols;
   Column *col=nullptr;
 
-  for(auto ref : references)
+  for(auto &ref : references)
   {
     col=ref.getColumn();
     if(col && col->isAddedByRelationship())
@@ -564,8 +564,7 @@ QString View::getCodeDefinition(unsigned def_type)
   attributes[ParsersAttributes::COLUMNS]=QString();
   attributes[ParsersAttributes::TAG]=QString();
 
-  if(materialized)
-    attributes[ParsersAttributes::SQL_OBJECT]=QString("MATERIALIZED ") + BaseObject::getSQLName(OBJ_VIEW);
+  setSQLObjectAttribute();
 
   if(recursive)
     attributes[ParsersAttributes::COLUMNS]=getColumnsList().join(',');
@@ -581,8 +580,21 @@ QString View::getCodeDefinition(unsigned def_type)
 		setReferencesAttribute();
 	}
 
-	return(BaseObject::__getCodeDefinition(def_type));
+  return(BaseObject::__getCodeDefinition(def_type));
 }
+
+void View::setSQLObjectAttribute(void)
+{
+  if(materialized)
+    attributes[ParsersAttributes::SQL_OBJECT]=QString("MATERIALIZED ") + BaseObject::getSQLName(OBJ_VIEW);
+}
+
+QString View::getDropDefinition(bool cascade)
+{
+  setSQLObjectAttribute();
+  return(BaseObject::getDropDefinition(cascade));
+}
+
 
 int View::getObjectIndex(BaseObject *obj)
 {
@@ -680,8 +692,8 @@ void View::addObject(BaseObject *obj, int obj_idx)
 		{
 			if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
 				throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
-                        .arg(/*Utf8String::create(*/obj->getName())
-                        .arg(/*Utf8String::create(*/obj->getTypeName()),
+                        .arg(obj->getName())
+                        .arg(obj->getTypeName()),
 												ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 			else
 				throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);

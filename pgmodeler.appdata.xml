@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application>
+	<id type="desktop">pgmodeler.desktop</id>
+	<metadata_license>CC0</metadata_license>
+	<project_license>GPLv3</project_license>
+	<name>pgmodeler</name>
+	<summary>PostgreSQL Database Modeler</summary>
+	<summary xml:lang="ru">Инструмент ER проектирования БД для PostgreSQL</summary>
+	<description>
+		<p>
+			pgModeler - PostgreSQL Database Modeler - is an open source data modeling tool designed for PostgreSQL. No more DDL commands written by hand let pgModeler do the job for you! This software reunites the concepts of entity-relationship diagrams and the features that PostgreSQL implements as extensions of SQL standards.
+		</p>
+		<p xml:lang="ru">
+			PostgreSQL Database Modeler, или просто, pgModeler является свободным инструментом для моделирования баз данных. Он объединяет в себе классическую концепцию entity-relationship (ER) диаграмм с некоторыми осоденностями, реализованными только в PostgreSQL. Модели, созданные пользователем могут быть автоматически транслированы в SQL код и применены к БД на кластер (версии 9.*).
+		</p>
+	</description>
+	<screenshots>
+		<screenshot type="default">http://pgmodeler.com.br/assets/img/ss/ss1.png</screenshot>
+		<screenshot>http://pgmodeler.com.br/assets/img/ss/ss2.png</screenshot>
+		<screenshot>http://pgmodeler.com.br/assets/img/ss/ss3.png</screenshot>
+		<screenshot>http://pgmodeler.com.br/assets/img/ss/ss4.png</screenshot>
+		<screenshot>http://pgmodeler.com.br/assets/img/ss/ss5.png</screenshot>
+		<screenshot>http://pgmodeler.com.br/assets/img/ss/ss6.png</screenshot>
+		<screenshot>http://pgmodeler.com.br/assets/img/ss/ss7.png</screenshot>
+		<screenshot>http://pgmodeler.com.br/assets/img/ss/ss8.png</screenshot>
+		<screenshot>http://pgmodeler.com.br/assets/img/ss/ss9.png</screenshot>
+		<screenshot>http://pgmodeler.com.br/assets/img/ss/ss10.png</screenshot>
+	</screenshots>
+	<url type="homepage">http://pgmodeler.com.br/</url>
+	<updatecontact>pahan_at_hubbitus.info</updatecontact>
+</application>

@@ -51,7 +51,7 @@ class TableTitleView: public BaseObjectView
 		~TableTitleView(void);
 
 		void configureObject(BaseGraphicObject *object);
-		void resizeTitle(float width, float height);
+		void resizeTitle(double width, double height);
 };
 
 #endif

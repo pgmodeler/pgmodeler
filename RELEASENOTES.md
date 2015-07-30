@@ -1,32 +1,26 @@
-v0.8.0
+v0.8.1
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em>
-<em>Release date: February 28, 2015</em>
-<em>Changes since: <strong>v0.7.2</strong></em><br/>
+<em>Release date: July 30, 2015</em>
+<em>Changes since: <strong>v0.8.0</strong></em><br/>
 
-<strong>Summary:</strong> after eight months working on create an even more improved product the final 0.8.0 is done. This version is the best one ever created because the software is more stable, reliable, useful and beautiful.<br/>
-Compared to the previous release (0.7.2) this one has a lot more features that will surely improve the database design. Also, there are new features to help user in manage live databases.<br/>
-To give an idea on how pgModeler has changed since 0.7.2, the full change log for the new release has 349 entries, being 85 new features, 147 changes and 117 bug fixes.<br/>
-Obviously, not all new features or changes will be noted since they were created to help in bug fixes but what matters is that pgModeler is now a better product.<br/>
-Below the key features of this new version are described. Please, refer to CHANGELOG.md to see the complete list of features and fixes.<br/>
+<strong>Summary:</strong> after five months working to enhance the last major release we finally have the 0.8.1! This version brings a lot of improvements and fixes in a total of 30 new features, 68 changes, 72 bug fixes.<br/>
+The previous release (0.8.1) introduced important new features and this one brings more improvements to them.<br/>
+Obviously, not all new features or changes will be noted by the user because they were created to help in bug fixes but what matters is that pgModeler is continously being enhanced.<br/>
+Below the key features of this new release are described. Please, refer to CHANGELOG.md to see the complete list of features and fixes.<br/>
 
-* <strong>Optmized layout:</strong> the entire layout was improved, separating portions of the software in form of views (welcome, design and manage) giving users a better usage experience. Also, as part of layout improvements, the database model objects are now more clean and smooth being more pleasing to the eyes.<br/>
+* <strong>Faster design:</strong> now it is possible to create dependency objects from within their related selectors in editing forms. For instance, inside the table's editing form you can create a new schema and assign to the table on the fly just by popping up the schema's selector dialog and right click the item "Schemas (n)" and then selecting "New schema". This action is valid in almost all selectors in editing forms. Surely this will shorten up the time spent to create objects in the model.<br/>
 
-* <strong>Faster code generation:</strong> the SQL and XML code generation speed was increased by introducing the cached code feature. With this feature the loading, saving and export processes are more faster speeding up the productivity.<br/>
+* <strong>Automatic keyword quotating:</strong> introducing an automatic name quoting mechanism. This feature will add quotes to objects' names if they refer to PostgreSQL's reserved keywords. The automatic quoting will happen whenever the SQL code needs to be generated, this will avoid export or validation errors related to objects' names. <strong>NOTE:</strong> this feature is experimental and may fail in some cases.</br>
 
-* <strong>Per-user configurations:</strong> pgModeler now is capable to store its settings separated for each user in the same system. This is quite handy when several users need to run the software with their own preferred settings without mess with others settings.<br/>
+* <strong>Improved object finder:</strong> the object finder is a handy tool when working with big models. In previous releases the only action over results was to open the editing form of the selected object in the results grid. Now the user can access the complete menu (the same one in the canvas area) by right click any item in the result grid. <strong>NOTE:</strong> the items available in the menu may vary depending upon the selected object.<br/>
 
-* <strong>Model database diff:</strong> create SQL scripts containing all commands needed to keep synchronized both model and database. With the diff feature you can make changes on a living database without drop it and recreate from the model that originate it.<br/>
-Just do the needed changes on the model and compare it to the database, pgModeler will handle the rest creating DDL commands and storing them on a file or applying directly to a server. <strong>NOTE:</strong> this is an experimental feature so it may fail in some cases.<br/>
+* <strong>Advanced code preview:</strong> the source code visualization now is able to generate code related to the object and its dependecies or children for test purposes. Also, there is the possibility to save the code in that dialog to a file for later usage.<br/>
 
-* <strong>Improved reverse engineering:</strong> the import process is even better. Free from a lot of bug of previous releases the import permits user to create partial models by importing only a few set of objects or the entire database as he wishes.<br/>
-This process now is capable to solve automatically the majority of problems related to object's dependencies that previous versions could not handle.<br/>
+* <strong>Multiple database management:</strong> in previous versions the user was able to manage only a database at a time. Now it's possible to manage several databases at once using different connections without the need to close the ones currently being managed.<br/>
 
-* <strong>Improved SQL tool:</strong> being now a dedicated section of the software the SQL tool (manage view) is even better. Now its possible to handle several databases, manage table data through the data manipulation dialog and run SQL commands directly on the server.<br/>
-In this release, SQL code snippets were introduced in order to help users to create and execute SQL commands when working on a database.<br/>
+* <strong>Patched diff process:</strong> the experimental diff feature was quite appreciated by the users and attending to some requests this feature received several fixes and a few new options like the one to preserve database names. This option will avoid attempts to rename a database when the model's name differs from the database's name.<br/>
 
-* <strong>Improved model validation:</strong> the main source of crashes in previous releases the validation process was carefully improved being more stable and reliable by fixing the majority of model inconsistencies that may appear during the design time.<br/>
+* <strong>Improved import process:</strong> the reverse engineering process is now able to import a set of objects to an existing model. This is useful when the user needs to reuse objects from another database in the model currently being designed.<br/>
 
-* <strong>Improved model export:</strong> several bugs were fixed on the model export process. Additionally, user now have the option to run DROP commands before create an object directly on the database. This is useful when you do not want to drop the entire database in order to recreate the objects.<br/>
-
-* <strong>Miscelaneous:</strong> several bug fixes throughout the subprojects, ability to drop objects in cascade way during design, several improvements on quick actions menu when two or more objects are selected, several improvements on the configuration sections and much more. <br/>
+* <strong>Miscelaneous:</strong> fixed some crashes related to thread hang ups when validating or diff'ing large models; the CLI received important patches and the model fix process generates more reliable models; pgModeler received a numbered source code editor in its most relevant portions to facilitate the source code reading and editing; Added a "Contributors" section in the about dialog to list the persons who contributed with patches and features and much more.<br/>

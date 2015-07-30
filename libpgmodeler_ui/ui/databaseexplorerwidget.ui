@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>322</width>
+    <width>373</width>
     <height>702</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Form</string>
@@ -43,7 +49,7 @@
         <string>Toggles the display of system objects.</string>
        </property>
        <property name="text">
-        <string>Sys. objects</string>
+        <string>System</string>
        </property>
        <property name="checked">
         <bool>false</bool>
@@ -65,7 +71,7 @@
         <string>Toggles the display of extension objects</string>
        </property>
        <property name="text">
-        <string>Ext. objects</string>
+        <string>Extension</string>
        </property>
        <property name="checked">
         <bool>false</bool>
@@ -89,7 +95,7 @@
         </font>
        </property>
        <property name="toolTip">
-        <string>Open the grid to visualize / edit data</string>
+        <string>Open the grid to visualize or edit data.</string>
        </property>
        <property name="text">
         <string>Data &amp;Grid</string>
@@ -118,7 +124,7 @@
         <bool>true</bool>
        </property>
        <property name="toolTip">
-        <string>Update the objects tree.</string>
+        <string>Open a new SQL execution pane.</string>
        </property>
        <property name="text">
         <string>...</string>
@@ -161,6 +167,35 @@
        </property>
        <property name="shortcut">
         <string>Ctrl+F5</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="drop_db_tb">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>30</width>
+         <height>29</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Drop this database</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/icones/icones/excluir.png</normaloff>:/icones/icones/excluir.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
        </property>
       </widget>
      </item>

@@ -103,7 +103,21 @@ void OperationList::ignoreOperationChain(bool value)
 bool OperationList::isOperationChainStarted(void)
 {
 	return(next_op_chain==Operation::CHAIN_START ||
-				 next_op_chain==Operation::CHAIN_MIDDLE);
+         next_op_chain==Operation::CHAIN_MIDDLE);
+}
+
+bool OperationList::isObjectRegistered(BaseObject *object, unsigned op_type)
+{
+  bool registered=false;
+  vector<Operation *>::iterator itr=operations.begin();
+
+  while(itr!=operations.end() && !registered)
+  {
+    registered=((*itr)->getOriginalObject()==object && (*itr)->getOperationType()==op_type);
+    itr++;
+  }
+
+  return(registered);
 }
 
 bool OperationList::isRedoAvailable(void)
@@ -589,7 +603,7 @@ void OperationList::undoOperation(void)
 				{
 					//Emits a signal with the current progress of operation execution
 					pos++;
-					emit s_operationExecuted((pos/static_cast<float>(chain_size))*100,
+          emit s_operationExecuted((pos/static_cast<float>(chain_size))*100,
                                    trUtf8("Undoing change on object `%1' (%2).")
                                    .arg(operation->getOriginalObject()->getName(true))
                                    .arg(operation->getOriginalObject()->getTypeName()),
@@ -601,7 +615,7 @@ void OperationList::undoOperation(void)
 			}
 			catch(Exception &e)
 			{
-				this->removeOperations();
+        this->removeOperations();
 				error=e;
 			}
 
@@ -653,7 +667,7 @@ void OperationList::redoOperation(void)
 				{
 					//Emits a signal with the current progress of operation execution
 					pos++;
-					emit s_operationExecuted((pos/static_cast<float>(chain_size))*100,
+          emit s_operationExecuted((pos/static_cast<float>(chain_size))*100,
                                    trUtf8("Redoing change on object `%1' (%2).")
                                    .arg(operation->getOriginalObject()->getName(true))
                                    .arg(operation->getOriginalObject()->getTypeName()),
@@ -665,7 +679,7 @@ void OperationList::redoOperation(void)
 			}
 			catch(Exception &e)
 			{
-				this->removeOperations();
+        this->removeOperations();
 				error=e;
 			}
 			current_index++;
@@ -919,7 +933,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
       vector<BaseObject *> ref_objs;
       model->getObjectReferences(object, ref_objs);
 
-      for(auto obj : ref_objs)
+      for(auto &obj : ref_objs)
       {
         if(obj->getObjectType()==OBJ_COLUMN)
           dynamic_cast<Column *>(obj)->getParentTable()->setModified(true);

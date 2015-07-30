@@ -33,8 +33,6 @@
 #include <QTime>
 #include <random>
 
-using namespace std;
-
 class ColorPickerWidget: public QWidget, public Ui::ColorPickerWidget {
 	private:
 		Q_OBJECT
@@ -51,6 +49,9 @@ class ColorPickerWidget: public QWidget, public Ui::ColorPickerWidget {
 		//! brief Palette assinged to buttons when the color picker is disabled
     QColor disable_color;
 
+  protected:
+    bool eventFilter(QObject *object, QEvent *event);
+
 	public:
     static const int MAX_COLOR_BUTTONS=20;
 
@@ -58,8 +59,10 @@ class ColorPickerWidget: public QWidget, public Ui::ColorPickerWidget {
 
     void setColor(int color_idx, const QColor &color);
     QColor getColor(int color_idx);
-		unsigned getColorCount(void);
-		bool isButtonVisible(unsigned idx);
+    unsigned getColorCount(void);
+    bool isButtonVisible(unsigned idx);
+
+    void setButtonToolTip(unsigned button_idx, const QString &tooltip);
 
 	public slots:
 		void setEnabled(bool value);

@@ -95,7 +95,7 @@ void Trigger::setFunction(Function *func)
 	//Case the function is null an error is raised
 	if(!func)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
-                    .arg(/*Utf8String::create(*/this->getName())
+                    .arg(this->getName())
 										.arg(BaseObject::getTypeName(OBJ_TRIGGER)),
 										ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
@@ -106,7 +106,7 @@ void Trigger::setFunction(Function *func)
 		//Case the function has some parameters raise an error
 		else if(func->getParameterCount()!=0)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
-                      .arg(/*Utf8String::create(*/this->getName())
+                      .arg(this->getName())
 											.arg(BaseObject::getTypeName(OBJ_TRIGGER)),
 											ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -315,7 +315,7 @@ vector<Column *> Trigger::getRelationshipAddedColumns(void)
 {
   vector<Column *> cols;
 
-  for(auto col : upd_columns)
+  for(auto &col : upd_columns)
   {
     if(col->isAddedByRelationship())
       cols.push_back(col);

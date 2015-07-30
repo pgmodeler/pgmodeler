@@ -55,7 +55,7 @@ ValidationInfo::ValidationInfo(Exception e)
 
 ValidationInfo::ValidationInfo(const QString &msg)
 {
-	val_type=VALIDATION_ABORTED;
+  val_type=VALIDATION_ABORTED;
 	errors.push_back(msg);
 }
 

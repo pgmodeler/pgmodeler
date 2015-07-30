@@ -124,6 +124,8 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 
 			if(!alias.isEmpty())
         tab_name=BaseObject::formatName(alias) + QString(".");
+      else
+        tab_name=table->getSignature() + QString(".");
 
 			/* Case there is no column definede the default behavior is consider
 			all the table columns (e.g. table.*) */
@@ -148,7 +150,7 @@ QString Reference::getSQLDefinition(unsigned sql_type)
       if(!alias.isEmpty())
         sql_def+=QString(" AS ") + BaseObject::formatName(alias);
 		}
-    sql_def+=QString(", ");
+    sql_def+=QString(",\n");
 	}
 	//Case the reference is between the FROM-[JOIN | WHERE] keywords
 	else if(sql_type==SQL_REFER_FROM)
@@ -168,7 +170,7 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 		else
 			sql_def=expression;
 
-    sql_def+=QString(", ");
+    sql_def+=QString(",\n");
 	}
 	//Case the reference is after [JOIN | WHERE] keywords
 	else
@@ -193,6 +195,7 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 			sql_def=expression;
 	}
 
+  sql_def=QString("   ") + sql_def;
 	return(sql_def);
 }
 

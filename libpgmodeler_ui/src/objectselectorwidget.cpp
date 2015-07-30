@@ -18,8 +18,6 @@
 
 #include "objectselectorwidget.h"
 
-QObject *ObjectSelectorWidget::current_selector=nullptr;
-
 ObjectSelectorWidget::ObjectSelectorWidget(ObjectType sel_obj_type, bool install_highlighter, QWidget *parent) : QWidget(parent)
 {
 	try
@@ -38,7 +36,7 @@ ObjectSelectorWidget::ObjectSelectorWidget(vector<ObjectType> sel_obj_types, boo
 	try
 	{
 		this->sel_obj_types=sel_obj_types;
-		configureSelector(install_highlighter);
+    configureSelector(install_highlighter);
 	}
 	catch(Exception &e)
 	{
@@ -59,7 +57,7 @@ void ObjectSelectorWidget::configureSelector(bool install_highlighter)
 
 		if(install_highlighter)
 		{
-			obj_name_hl=new SyntaxHighlighter(obj_name_txt, false);
+      obj_name_hl=new SyntaxHighlighter(obj_name_txt);
       obj_name_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 		}
 
@@ -77,15 +75,24 @@ void ObjectSelectorWidget::configureSelector(bool install_highlighter)
 
 bool ObjectSelectorWidget::eventFilter(QObject *obj, QEvent *evnt)
 {
-  if(this->isEnabled() && evnt->type()==QEvent::MouseButtonPress && obj==obj_name_txt)
+  if(this->isEnabled() && evnt->type()==QEvent::FocusIn &&
+     QApplication::mouseButtons()==Qt::LeftButton && obj==obj_name_txt)
+  {
 		showObjectView();
+    return(true);
+  }
 
 	return(QWidget::eventFilter(obj, evnt));
 }
 
 ObjectSelectorWidget::~ObjectSelectorWidget(void)
 {
-	delete(obj_view_wgt);
+  delete(obj_view_wgt);
+}
+
+void ObjectSelectorWidget::enableObjectCreation(bool value)
+{
+  obj_view_wgt->enableObjectCreation(value);
 }
 
 BaseObject *ObjectSelectorWidget::getSelectedObject(void)
@@ -109,7 +116,14 @@ void ObjectSelectorWidget::setSelectedObject(BaseObject *object)
 	{   
 		rem_object_tb->setEnabled(object);
 		this->selected_obj=object;
-    obj_name_txt->setPlainText(/*Utf8String::create(*/selected_obj->getSignature());
+
+    if(object->getObjectType()!=OBJ_CONSTRAINT)
+      obj_name_txt->setPlainText(selected_obj->getSignature());
+    else
+      obj_name_txt->setPlainText(QString("%1.%2")
+                                 .arg(dynamic_cast<TableObject *>(selected_obj)->getParentTable()->getSignature())
+                                 .arg(selected_obj->getName(true)));
+
 		emit s_objectSelected();
 	}
 	else
@@ -140,8 +154,8 @@ void ObjectSelectorWidget::setModel(DatabaseModel *modelo)
 
 void ObjectSelectorWidget::showSelectedObject(BaseObject *obj_sel, bool)
 {
-	if(ObjectSelectorWidget::current_selector==this && obj_sel)
-		setSelectedObject(obj_sel);
+  if(obj_sel)
+    setSelectedObject(obj_sel);
 }
 
 void ObjectSelectorWidget::clearSelector(void)
@@ -154,7 +168,7 @@ void ObjectSelectorWidget::clearSelector(void)
 
 void ObjectSelectorWidget::showObjectView(void)
 {
-	ObjectSelectorWidget::current_selector=this;
+  obj_name_txt->clearFocus();
 
 	for(unsigned i=0; i < sel_obj_types.size(); i++)
 		obj_view_wgt->setObjectVisible(sel_obj_types[i], true);

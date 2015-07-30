@@ -126,14 +126,14 @@ void Column::setSequence(BaseObject *seq)
   {
     if(seq->getObjectType()!=OBJ_SEQUENCE)
       throw Exception(Exception::getErrorMessage(ERR_ASG_INV_OBJECT_TYPE)
-                      .arg(/*Utf8String::create(*/this->obj_name)
+                      .arg(this->obj_name)
                       .arg(this->getTypeName())
                       .arg(BaseObject::getTypeName(OBJ_SEQUENCE)),
                       ERR_INCOMP_COL_TYPE_FOR_SEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
     else if(!type.isIntegerType())
       throw Exception(Exception::getErrorMessage(ERR_INCOMP_COL_TYPE_FOR_SEQ)
-                      .arg(/*Utf8String::create(*/seq->getName(true))
-                      .arg(/*Utf8String::create(*/this->obj_name),
+                      .arg(seq->getName(true))
+                      .arg(this->obj_name),
                       ERR_INCOMP_COL_TYPE_FOR_SEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
     default_value=QString();
@@ -190,7 +190,10 @@ QString Column::getAlterDefinition(BaseObject *object)
     if(getParentTable())
       attribs[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
-    if(!this->type.isEquivalentTo(col->type))
+    if(!this->type.isEquivalentTo(col->type) ||
+       (this->type==col->type &&
+        (this->type.hasVariableLength() || this->type.acceptsPrecision()) &&
+         ((this->type.getLength()!=col->type.getLength()) || (this->type.getPrecision()!=col->type.getPrecision()))))
       attribs[ParsersAttributes::TYPE]=col->type.getCodeDefinition(SchemaParser::SQL_DEFINITION);
 
     if(col->sequence)

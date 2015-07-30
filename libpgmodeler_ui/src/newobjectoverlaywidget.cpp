@@ -63,7 +63,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 
 	vector<QToolButton *> permission_btns={db_sch_perms_tb, tab_perms_tb };
 
-	for(auto itr : obj_shortcuts)
+  for(auto &itr : obj_shortcuts)
   {
     button=itr.first;
     shortcut=std::get<0>(itr.second);
@@ -75,7 +75,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
     connect(button, SIGNAL(clicked()), parent->actions_new_objects[obj_type], SLOT(trigger()));
   }
 
-  for(auto itr : rel_shortcuts)
+  for(auto &itr : rel_shortcuts)
   {
     button=itr.first;
     shortcut=std::get<0>(itr.second);
@@ -90,7 +90,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
   }
 
   shortcut=trUtf8("0");
-  for(auto itr : permission_btns)
+  for(auto &itr : permission_btns)
   {
     button=itr;
     button->setText(shortcut + QString(": ") + button->text());

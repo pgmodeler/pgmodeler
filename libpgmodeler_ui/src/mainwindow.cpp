@@ -103,17 +103,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		//Enables the action to restore session when there are registered session files
 		action_restore_session->setEnabled(!prev_session_files.isEmpty());
 		central_wgt->last_session_tb->setEnabled(action_restore_session->isEnabled());
-
-    //Check if the temporary dir exists, if not, creates it.
-    QDir dir;
-    if(!dir.exists(GlobalAttributes::TEMPORARY_DIR))
-    {
-      if(!dir.mkdir(GlobalAttributes::TEMPORARY_DIR))
-        throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN)
-                        .arg(GlobalAttributes::TEMPORARY_DIR),
-                        ERR_FILE_DIR_NOT_WRITTEN, __PRETTY_FUNCTION__,__FILE__,__LINE__);
-    }
-
 	}
 	catch(Exception &e)
 	{
@@ -129,12 +118,20 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
     control_tb->addWidget(model_nav_wgt);
     control_tb->addSeparator();
     control_tb->addAction(action_bug_report);
+    control_tb->addAction(action_donate);
     control_tb->addAction(action_about);
     control_tb->addAction(action_update_found);
 
 		about_wgt=new AboutWidget(this);
-		update_notifier_wgt=new UpdateNotifierWidget(this);
+    donate_wgt=new DonateWidget(this);
 		restoration_form=new ModelRestorationForm(nullptr, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+
+    #ifdef NO_UPDATE_CHECK
+      update_notifier_wgt=nullptr;
+    #else
+      update_notifier_wgt=new UpdateNotifierWidget(this);
+      update_notifier_wgt->setVisible(false);
+    #endif
 
 		oper_list_wgt=new OperationListWidget;
 		model_objs_wgt=new ModelObjectsWidget;
@@ -151,23 +148,25 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(central_wgt->open_tb, SIGNAL(clicked()), this, SLOT(loadModel()));
 	connect(central_wgt->last_session_tb, SIGNAL(clicked()), this, SLOT(restoreLastSession()));
 
-	connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), action_update_found, SLOT(setVisible(bool)));
-	connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), action_update_found, SLOT(setChecked(bool)));
-	connect(update_notifier_wgt, SIGNAL(s_visibilityChanged(bool)), action_update_found, SLOT(setChecked(bool)));
-	connect(action_update_found,SIGNAL(toggled(bool)),this,SLOT(toggleUpdateNotifier(bool)));
-	connect(action_check_update,SIGNAL(triggered()), update_notifier_wgt, SLOT(checkForUpdate()));
+  #ifndef NO_UPDATE_CHECK
+    connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), action_update_found, SLOT(setVisible(bool)));
+    connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), action_update_found, SLOT(setChecked(bool)));
+    connect(update_notifier_wgt, SIGNAL(s_visibilityChanged(bool)), action_update_found, SLOT(setChecked(bool)));
+    connect(action_update_found,SIGNAL(toggled(bool)),this,SLOT(toggleUpdateNotifier(bool)));
+    connect(action_check_update,SIGNAL(triggered()), update_notifier_wgt, SLOT(checkForUpdate()));
+  #endif
 
 	connect(action_about,SIGNAL(toggled(bool)),this,SLOT(toggleAboutWidget(bool)));
 	connect(about_wgt, SIGNAL(s_visibilityChanged(bool)), action_about, SLOT(setChecked(bool)));
+
+  connect(action_donate, SIGNAL(toggled(bool)),this,SLOT(toggleDonateWidget(bool)));
+  connect(donate_wgt, SIGNAL(s_visibilityChanged(bool)), action_donate, SLOT(setChecked(bool)));
 
 	connect(action_restore_session,SIGNAL(triggered(bool)),this,SLOT(restoreLastSession()));
 	connect(action_exit,SIGNAL(triggered(bool)),this,SLOT(close()));
 	connect(action_new_model,SIGNAL(triggered(bool)),this,SLOT(addModel()));
 	connect(action_close_model,SIGNAL(triggered(bool)),this,SLOT(closeModel()));
 	connect(action_fix_model, SIGNAL(triggered(bool)), this, SLOT(fixModel()));
-
-	connect(action_next,SIGNAL(triggered(bool)),this,SLOT(setCurrentModel()));
-	connect(action_previous,SIGNAL(triggered(bool)),this,SLOT(setCurrentModel()));
 	connect(action_wiki,SIGNAL(triggered(bool)),this,SLOT(openWiki()));
 
 	connect(action_inc_zoom,SIGNAL(triggered(bool)),this,SLOT(applyZoom()));
@@ -221,8 +220,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	obj_finder_parent->setVisible(false);
 	model_valid_parent->setVisible(false);
 	bg_saving_wgt->setVisible(false);
-	update_notifier_wgt->setVisible(false);
 	about_wgt->setVisible(false);
+  donate_wgt->setVisible(false);
 
 	models_tbw_parent->lower();
 	central_wgt->lower();
@@ -284,20 +283,11 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
   connect(model_valid_wgt, &ModelValidationWidget::s_validationCanceled, [=](){ pending_op=NO_PENDING_OPER; }); 
   connect(model_valid_wgt, SIGNAL(s_validationFinished(bool)), this, SLOT(executePendingOperation(bool)));
+  connect(model_valid_wgt, SIGNAL(s_fixApplied()), this, SLOT(removeOperations()), Qt::QueuedConnection);
 
 	connect(&tmpmodel_save_timer, SIGNAL(timeout()), &tmpmodel_thread, SLOT(start()));
 	connect(&tmpmodel_thread, SIGNAL(started()), this, SLOT(saveTemporaryModels()));
 	connect(&tmpmodel_thread, &QThread::started, [=](){ tmpmodel_thread.setPriority(QThread::HighPriority); });
-
-  connect(model_valid_wgt, &ModelValidationWidget::s_fixApplied,
-          [=](){
-                  //Clears the operation list everytime a fix is applied to the model
-                  if(current_model && current_model->op_list->getCurrentSize()!=0)
-                  {
-                    current_model->op_list->removeOperations();
-                    oper_list_wgt->updateOperationList();
-                  }
-                });
 
 	models_tbw_parent->resize(QSize(models_tbw_parent->maximumWidth(), models_tbw_parent->height()));
 
@@ -359,7 +349,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
   QList<QAction *> actions=general_tb->actions();
   QToolButton *btn=nullptr;
 
-  for(auto act : actions)
+  for(auto &act : actions)
   {
     btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(act));
     if(btn)
@@ -471,8 +461,6 @@ void MainWindow::showEvent(QShowEvent *)
 	map<QString, attribs_map> confs=conf_wgt->getConfigurationParams();
 
   #ifndef Q_OS_MAC
-    QTimer::singleShot(1000, conf_wgt, SLOT(updateFileAssociation()));
-
     //Hiding/showing the main menu bar depending on the retrieved conf
     main_menu_mb->setVisible(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_MAIN_MENU]==ParsersAttributes::_TRUE_);
 
@@ -488,14 +476,17 @@ void MainWindow::showEvent(QShowEvent *)
 	setFloatingWidgetPos(update_notifier_wgt, action_update_found, control_tb, false);
 	action_update_found->setVisible(false);
 
-	//Enabling update check at startup
-	if(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]==ParsersAttributes::_TRUE_)
-		QTimer::singleShot(2000, update_notifier_wgt, SLOT(checkForUpdate()));
+  #ifdef NO_UPDATE_CHECK
+    #warning "NO UPDATE CHECK: Update checking is disabled."
+  #else
+    //Enabling update check at startup
+    if(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]==ParsersAttributes::_TRUE_)
+      QTimer::singleShot(2000, update_notifier_wgt, SLOT(checkForUpdate()));
+  #endif
 
 	#ifdef DEMO_VERSION
 		#warning "DEMO VERSION: demonstration version startup alert."
 		QTimer::singleShot(1500, this, SLOT(showDemoVersionWarning()));
-    //QTimer::singleShot(1200000, qApp, SLOT(quit()));
 	#endif
 }
 
@@ -506,6 +497,10 @@ void MainWindow::resizeEvent(QResizeEvent *)
 		central_wgt->move(bg_widget->width()/2 - central_wgt->width()/2 ,
 											bg_widget->height()/2 - central_wgt->height()/2);
 	}
+
+  action_about->setChecked(false);
+  action_donate->setChecked(false);
+  action_update_found->setChecked(false);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -515,7 +510,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	#endif
 
 	//pgModeler will not close when the validation thread is still running
-	if(model_valid_wgt->validation_thread->isRunning())
+  if(model_valid_wgt->isValidationRunning())
 		event->ignore();
 	else
 	{
@@ -637,18 +632,15 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::updateConnections(void)
 {
-  map<QString, Connection *> connections;
   ConnectionsConfigWidget *conn_cfg_wgt=
       dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT));
-
-  conn_cfg_wgt->getConnections(connections);
 
   if(conn_cfg_wgt->isConfigurationChanged() ||
      model_valid_wgt->connections_cmb->count()==0 ||
      sql_tool_wgt->connections_cmb->count()==0 )
-  {
-    model_valid_wgt->updateConnections(connections);
-    sql_tool_wgt->updateConnections(connections);
+  {   
+    ConnectionsConfigWidget::fillConnectionsComboBox(sql_tool_wgt->connections_cmb, true);
+    ConnectionsConfigWidget::fillConnectionsComboBox(model_valid_wgt->connections_cmb, false);
   }
 }
 
@@ -672,7 +664,7 @@ void MainWindow::saveTemporaryModels(void)
 			for(int i=0; i < count; i++)
 			{
 				model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
-				bg_saving_pb->setValue(((i+1)/static_cast<float>(count)) * 100);
+        bg_saving_pb->setValue(((i+1)/static_cast<float>(count)) * 100);
 
         if(model->isModified() || !QFileInfo(model->getTempFilename()).exists())
 					model->getDatabaseModel()->saveModel(model->getTempFilename(), SchemaParser::XML_DEFINITION);
@@ -763,13 +755,13 @@ void MainWindow::addModel(const QString &filename)
     tab_name=obj_name;
 
     model_tab=new ModelWidget;
-    model_tab->setObjectName(/*Utf8String::create(*/obj_name);
+    model_tab->setObjectName(obj_name);
 
     //Add the tab to the tab widget
     obj_name=model_tab->db_model->getName();
 
     models_tbw->blockSignals(true);
-    models_tbw->addTab(model_tab, /*Utf8String::create(*/obj_name);
+    models_tbw->addTab(model_tab, obj_name);
     models_tbw->setCurrentIndex(models_tbw->count()-1);
     models_tbw->blockSignals(false);
     models_tbw->currentWidget()->layout()->setContentsMargins(3,3,0,3);
@@ -837,7 +829,7 @@ void MainWindow::addModel(ModelWidget *model_wgt)
     model_nav_wgt->addModel(model_wgt);
 
     models_tbw->blockSignals(true);
-    models_tbw->addTab(model_wgt, /*Utf8String::create(*/model_wgt->getDatabaseModel()->getName());
+    models_tbw->addTab(model_wgt, model_wgt->getDatabaseModel()->getName());
     models_tbw->setCurrentIndex(models_tbw->count()-1);
     models_tbw->blockSignals(false);
     setCurrentModel();
@@ -875,9 +867,6 @@ void MainWindow::showMainMenu(void)
 
 void MainWindow::setCurrentModel(void)
 {
-  QObject *object=nullptr;
-
-	object=sender();
 	models_tbw->setVisible(models_tbw->count() > 0);
   action_design->setEnabled(models_tbw->count() > 0);
 
@@ -893,18 +882,6 @@ void MainWindow::setCurrentModel(void)
 	edit_menu->addAction(action_redo);
   edit_menu->addSeparator();
 
-	if(object==action_next || object==action_previous)
-	{
-		models_tbw->blockSignals(true);
-
-		if(object==action_next)
-			models_tbw->setCurrentIndex(models_tbw->currentIndex()+1);
-		else if(object==action_previous)
-			models_tbw->setCurrentIndex(models_tbw->currentIndex()-1);
-
-		models_tbw->blockSignals(false);
-	}
-
 	//Avoids the tree state saving in order to restore the current model tree state
 	model_objs_wgt->saveTreeState(false);
 
@@ -912,7 +889,7 @@ void MainWindow::setCurrentModel(void)
 	if(current_model)
 		model_objs_wgt->saveTreeState(model_tree_states[current_model]);
 
-	models_tbw->setCurrentIndex(model_nav_wgt->getCurrentIndex());
+  models_tbw->setCurrentIndex(model_nav_wgt->getCurrentIndex());
 	current_model=dynamic_cast<ModelWidget *>(models_tbw->currentWidget());
 
   if(current_model)
@@ -955,6 +932,7 @@ void MainWindow::setCurrentModel(void)
 		else
       this->setWindowTitle(window_title + QString(" - ") + QDir::toNativeSeparators(current_model->getFilename()));
 
+    connect(current_model, SIGNAL(s_manipulationCanceled(void)),this, SLOT(updateDockWidgets(void)));
 		connect(current_model, SIGNAL(s_objectsMoved(void)),oper_list_wgt, SLOT(updateOperationList(void)));
 		connect(current_model, SIGNAL(s_objectModified(void)),this, SLOT(updateDockWidgets(void)));
 		connect(current_model, SIGNAL(s_objectCreated(void)),this, SLOT(updateDockWidgets(void)));
@@ -962,7 +940,7 @@ void MainWindow::setCurrentModel(void)
 		connect(current_model, SIGNAL(s_objectManipulated(void)),this, SLOT(updateDockWidgets(void)));
 		connect(current_model, SIGNAL(s_objectManipulated(void)), this, SLOT(updateModelTabName(void)));
 
-		connect(current_model, SIGNAL(s_zoomModified(float)), this, SLOT(updateToolsState(void)));
+		connect(current_model, SIGNAL(s_zoomModified(double)), this, SLOT(updateToolsState(void)));
 		connect(current_model, SIGNAL(s_objectModified(void)), this, SLOT(updateModelTabName(void)));
 
 		connect(action_alin_objs_grade, SIGNAL(triggered(bool)), this, SLOT(setGridOptions(void)));
@@ -1016,7 +994,7 @@ void MainWindow::applyZoom(void)
 {
 	if(current_model)
 	{
-		float zoom=current_model->getCurrentZoom();
+		double zoom=current_model->getCurrentZoom();
 
 		if(sender()==action_normal_zoom)
 			zoom=1;
@@ -1115,7 +1093,7 @@ void MainWindow::closeModel(int model_id)
 void MainWindow::updateModelTabName(void)
 {
 	if(current_model && current_model->db_model->getName()!=models_tbw->tabText(models_tbw->currentIndex()))
-    model_nav_wgt->updateModelText(models_tbw->currentIndex(), /*Utf8String::create(*/current_model->db_model->getName(), current_model->getFilename());
+    model_nav_wgt->updateModelText(models_tbw->currentIndex(), current_model->db_model->getName(), current_model->getFilename());
 }
 
 void MainWindow::applyConfigurations(void)
@@ -1154,6 +1132,8 @@ void MainWindow::applyConfigurations(void)
 		updateConnections();
     sql_tool_wgt->configureSnippets();
 	}
+
+  sql_tool_wgt->updateTabs();
 }
 
 
@@ -1315,12 +1295,15 @@ void MainWindow::importDatabase(void)
 	DatabaseImportForm db_import_form(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
   stopTimers(true);
+
+  db_import_form.setModelWidget(current_model);
   db_import_form.exec();
   stopTimers(false);
 
   if(db_import_form.result()==QDialog::Accepted && db_import_form.getModelWidget())
     this->addModel(db_import_form.getModelWidget());
-
+  else if(current_model)
+    updateDockWidgets();
  #endif
 }
 
@@ -1518,9 +1501,9 @@ void MainWindow::updateToolsState(bool model_closed)
 		action_undo->setEnabled(current_model->op_list->isUndoAvailable());
 		action_redo->setEnabled(current_model->op_list->isRedoAvailable());
 
-		action_inc_zoom->setEnabled(current_model->getCurrentZoom() <= ModelWidget::MAXIMUM_ZOOM - ModelWidget::ZOOM_INCREMENT);
+    action_inc_zoom->setEnabled(current_model->getCurrentZoom() <= (ModelWidget::MAXIMUM_ZOOM - ModelWidget::ZOOM_INCREMENT));
 		action_normal_zoom->setEnabled(current_model->getCurrentZoom()!=0);
-		action_dec_zoom->setEnabled(current_model->getCurrentZoom() >= ModelWidget::MINIMUM_ZOOM + ModelWidget::ZOOM_INCREMENT);
+    action_dec_zoom->setEnabled(current_model->getCurrentZoom() >= ModelWidget::MINIMUM_ZOOM);
 	}
 }
 
@@ -1531,7 +1514,7 @@ void MainWindow::updateDockWidgets(void)
 
 	/* Any operation executed over the model will reset the validation and
 	the finder will execute the search again */
-	model_valid_wgt->setModel(current_model);
+  model_valid_wgt->setModel(current_model);
 
 	if(current_model && obj_finder_wgt->result_tbw->rowCount() > 0)
 		obj_finder_wgt->findObjects();
@@ -1572,13 +1555,16 @@ void MainWindow::openWiki(void)
 
 void MainWindow::toggleUpdateNotifier(bool show)
 {
-	if(show)
-	{
-		setFloatingWidgetPos(update_notifier_wgt, qobject_cast<QAction *>(sender()), control_tb, false);
-		action_about->setChecked(false);
-	}
+  #ifndef NO_UPDATE_CHECK
+    if(show)
+    {
+      setFloatingWidgetPos(update_notifier_wgt, qobject_cast<QAction *>(sender()), control_tb, false);
+      action_about->setChecked(false);
+      action_donate->setChecked(false);
+    }
 
-	update_notifier_wgt->setVisible(show);
+    update_notifier_wgt->setVisible(show);
+  #endif
 }
 
 void MainWindow::toggleAboutWidget(bool show)
@@ -1587,9 +1573,22 @@ void MainWindow::toggleAboutWidget(bool show)
 	{
 		setFloatingWidgetPos(about_wgt, qobject_cast<QAction *>(sender()), control_tb, false);
 		action_update_found->setChecked(false);
+    action_donate->setChecked(false);
 	}
 
 	about_wgt->setVisible(show);
+}
+
+void MainWindow::toggleDonateWidget(bool show)
+{
+  if(show)
+  {
+    setFloatingWidgetPos(donate_wgt, qobject_cast<QAction *>(sender()), control_tb, false);
+    action_about->setChecked(false);
+    action_update_found->setChecked(false);
+  }
+
+  donate_wgt->setVisible(show);
 }
 
 void MainWindow::setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *toolbar, bool map_to_window)
@@ -1597,11 +1596,15 @@ void MainWindow::setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *t
 	if(widget && act && toolbar)
 	{
 		QWidget *wgt=toolbar->widgetForAction(act);
-		QPoint pos=(wgt ? wgt->pos() : QPoint(0,0));
+    QPoint pos_orig=(wgt ? wgt->pos() : QPoint(0,0)), pos;
 
 		if(map_to_window) pos=wgt->mapTo(this, pos);
-		pos.setX(pos.x() - 9);
-		pos.setY(toolbar->pos().y() + toolbar->height() - 9);
+    pos.setX(pos_orig.x() - 10);
+    pos.setY(toolbar->pos().y() + toolbar->height() - 10);
+
+    if((pos.x() + widget->width()) > this->width())
+      pos.setX(pos_orig.x() - (widget->width() - 40));
+
 		widget->move(pos);
 	}
 }
@@ -1770,11 +1773,11 @@ void MainWindow::changeCurrentView(bool checked)
 
     actions=edit_menu->actions();
     actions.removeOne(action_configuration);
-    for(auto act : actions)
+    for(auto &act : actions)
       act->setEnabled(enable);
 
     actions=show_menu->actions();
-    for(auto act : actions)
+    for(auto &act : actions)
       act->setEnabled(enable);
 
     model_nav_wgt->setEnabled(enable);
@@ -1793,4 +1796,14 @@ void MainWindow::reportBug(void)
 {
   BugReportForm bugrep_frm;
   bugrep_frm.exec();
+}
+
+void MainWindow::removeOperations(void)
+{
+  //Clears the operation list everytime a fix is applied to the model
+  if(current_model && current_model->op_list->getCurrentSize()!=0)
+  {
+    current_model->op_list->removeOperations();
+    oper_list_wgt->updateOperationList();
+  }
 }

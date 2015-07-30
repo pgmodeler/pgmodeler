@@ -19,6 +19,7 @@
 #include "snippetsconfigwidget.h"
 #include "baseobject.h"
 #include "messagebox.h"
+#include "pgmodeleruins.h"
 
 map<QString, attribs_map> SnippetsConfigWidget::config_params;
 
@@ -38,7 +39,7 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
     types_map[BaseObject::getTypeName(type)]=type;
 
   //Creates a combo with the accepted object type
-  for(auto itr : types_map)
+  for(auto &itr : types_map)
   {
     ico.load(QString(":/icones/icones/%1.png").arg(BaseObject::getSchemaName(itr.second)));
     applies_to_cmb->addItem(ico, itr.first, itr.second);
@@ -58,9 +59,11 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
   placeholders_ht=new HintTextWidget(placeholders_hint, this);
   placeholders_ht->setText(placeholders_chk->statusTip());
 
+  snippet_txt=PgModelerUiNS::createNumberedTextEditor(snippet_wgt);
+
   try
   {
-    snippet_hl=new SyntaxHighlighter(snippet_txt, false);
+    snippet_hl=new SyntaxHighlighter(snippet_txt);
     snippet_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
   }
   catch(Exception &e)
@@ -106,7 +109,7 @@ QStringList SnippetsConfigWidget::getSnippetsIdsByObject(ObjectType obj_type)
   QString type_name=(obj_type==BASE_OBJECT ?
                      ParsersAttributes::GENERAL : BaseObject::getSchemaName(obj_type));
 
-  for(auto snip : config_params)
+  for(auto &snip : config_params)
   {
     if(snip.second[ParsersAttributes::OBJECT]==type_name)
       ids.push_back(snip.second[ParsersAttributes::ID]);
@@ -121,7 +124,7 @@ vector<attribs_map> SnippetsConfigWidget::getSnippetsByObject(ObjectType obj_typ
   QString type_name=(obj_type==BASE_OBJECT ?
                      ParsersAttributes::GENERAL : BaseObject::getSchemaName(obj_type));
 
-  for(auto snip : config_params)
+  for(auto &snip : config_params)
   {
     if(snip.second[ParsersAttributes::OBJECT]==type_name)
       snippets.push_back(snip.second);
@@ -134,7 +137,7 @@ QStringList SnippetsConfigWidget::getAllSnippetsAttribute(const QString &attrib)
 {
   QStringList attribs;
 
-  for(auto snip : config_params)
+  for(auto &snip : config_params)
   {
     if(snip.second.count(attrib))
       attribs.push_back(snip.second[attrib]);
@@ -147,7 +150,7 @@ vector<attribs_map> SnippetsConfigWidget::getAllSnippets(void)
 {
   vector<attribs_map> snippets;
 
-  for(auto snip : config_params)
+  for(auto &snip : config_params)
     snippets.push_back(snip.second);
 
   return(snippets);
@@ -209,7 +212,7 @@ void SnippetsConfigWidget::fillSnippetsCombo(map<QString, attribs_map> &config)
 {
   snippets_cmb->clear();
 
-  for(auto cfg : config)
+  for(auto &cfg : config)
     snippets_cmb->addItem(QString("[%1] %2").arg(cfg.first, cfg.second.at(ParsersAttributes::LABEL)), cfg.first);
 }
 
@@ -270,7 +273,7 @@ void SnippetsConfigWidget::loadConfiguration(void)
     BaseConfigWidget::loadConfiguration(GlobalAttributes::SNIPPETS_CONF, config_params, { ParsersAttributes::ID });
 
     //Check if there are invalid snippets loaded
-    for(auto snip : config_params)
+    for(auto &snip : config_params)
     {
       if(!isSnippetValid(snip.second,QString()))
         inv_snippets.push_back(snip.first);
@@ -413,7 +416,7 @@ void SnippetsConfigWidget::filterSnippets(int idx)
     if(object_id.isEmpty())
       object_id=ParsersAttributes::GENERAL;
 
-    for(auto cfg : config_params)
+    for(auto &cfg : config_params)
     {
       if(cfg.second.at(ParsersAttributes::OBJECT)==object_id)
         flt_snippets[cfg.first]=cfg.second;
@@ -442,7 +445,7 @@ void SnippetsConfigWidget::saveConfiguration(void)
 { 
 	try
 	{
-    QString root_dir=GlobalAttributes::CONFIGURATIONS_DIR +
+    QString root_dir=GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
                      GlobalAttributes::DIR_SEPARATOR,
 
         snippet_sch=root_dir +
@@ -461,7 +464,7 @@ void SnippetsConfigWidget::saveConfiguration(void)
       obj_type=static_cast<ObjectType>(applies_to_cmb->itemData(i).toUInt());
       snippets=getSnippetsByObject(obj_type);
 
-      for(auto snip : snippets)
+      for(auto &snip : snippets)
       {
         attribs[ParsersAttributes::SNIPPET]+=
          schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(snippet_sch, snip));

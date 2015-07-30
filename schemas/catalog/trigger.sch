@@ -66,7 +66,7 @@
 
 	    CASE
 	      WHEN (tg.tgconstraint > 0) THEN
-		regexp_replace(regexp_replace( pg_get_triggerdef(tg.oid), '(.)+(UPDATE OF )', ''), '( ON)(.)*','')
+                regexp_replace(regexp_replace(pg_get_triggerdef(tg.oid), '(.)+((INSERT|DELETE|UPDATE)|( OF))', ''), '( ON)(.)*','')
 	      ELSE NULL
 	    END AS columns
 

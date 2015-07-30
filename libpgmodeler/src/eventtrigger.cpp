@@ -37,7 +37,7 @@ void EventTrigger::setFunction(Function *func)
 {
 	if(!func)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
-                    .arg(/*Utf8String::create(*/this->getName())
+                    .arg(this->getName())
 										.arg(BaseObject::getTypeName(OBJ_EVENT_TRIGGER)),
 										ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Functions with return type other that event_trigger are not accepted
@@ -46,7 +46,7 @@ void EventTrigger::setFunction(Function *func)
 	//Functions with one or more parameters are not accepted
 	else if(func->getParameterCount()!=0)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
-                    .arg(/*Utf8String::create(*/this->getName())
+                    .arg(this->getName())
 										.arg(BaseObject::getTypeName(OBJ_EVENT_TRIGGER)),
 										ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Functions coded in SQL lang. is not accepted by event triggers
@@ -115,7 +115,7 @@ QString EventTrigger::getCodeDefinition(unsigned def_type)
 		if(function)
 			attributes[ParsersAttributes::FUNCTION]=function->getSignature();
 
-		for(auto flt : filter)
+    for(auto &flt : filter)
       str_list.push_back(QString("%1 IN ('%2')").arg(flt.first).arg(flt.second.join(QString("','"))));
 
     attributes[ParsersAttributes::FILTER]=str_list.join(QString("\n\t AND "));
@@ -125,7 +125,7 @@ QString EventTrigger::getCodeDefinition(unsigned def_type)
 		if(function)
 			attributes[ParsersAttributes::FUNCTION]=function->getCodeDefinition(def_type, true);
 
-		for(auto flt : filter)
+    for(auto &flt : filter)
 			//Creating an element <filter variable="" values=""/>
 			attributes[ParsersAttributes::FILTER]+=QString("\t<%1 %2=\"%3\" %4=\"%5\"/>\n")
 																						 .arg(ParsersAttributes::FILTER)

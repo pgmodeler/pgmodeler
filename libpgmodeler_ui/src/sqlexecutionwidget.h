@@ -31,12 +31,17 @@
 #include "databaseimportform.h"
 #include "findreplacewidget.h"
 #include "codecompletionwidget.h"
+#include "readonlyitemdelegate.h"
+#include "numberedtexteditor.h"
 
 class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 	private:
 		Q_OBJECT
 
 		SchemaParser schparser;
+
+    //! brief Custom delegate used to avoid cell edition in result set
+    ReadOnlyItemDelegate *ro_item_del;
 
 		//! brief Syntax highlighter for sql input field
 		SyntaxHighlighter *sql_cmd_hl;
@@ -65,6 +70,12 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 
     //! brief Fills the result grid with the specified result set
 		void fillResultsTable(ResultSet &res);
+
+  protected:
+    //! brief Widget that serves as SQL commands input
+    NumberedTextEditor *sql_cmd_txt;
+
+    void showEvent(QShowEvent *);
 
   public:
     SQLExecutionWidget(QWidget * parent = 0);
@@ -107,6 +118,8 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
     void selectSnippet(QAction *act);
 
     void handleSelectedWord(QString word);
+
+    friend class SQLToolWidget;
 };
 
 #endif

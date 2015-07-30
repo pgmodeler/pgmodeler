@@ -27,6 +27,8 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
   body=new RoundedRectItem;
+  body->setRoundedCorners(RoundedRectItem::BOTTOMLEFT_CORNER | RoundedRectItem::BOTTOMRIGHT_CORNER);
+
   title=new TableTitleView;
 
   ext_attribs_body=new RoundedRectItem;
@@ -153,7 +155,7 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 	if(!this->isSelected())
 	{
 		QList<QGraphicsItem *> items;
-		float cols_height, item_idx, ext_height=0;
+		double cols_height, item_idx, ext_height=0;
 		QRectF rect, rect1;
 
 		items.append(columns->childItems());
@@ -165,7 +167,7 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 		}
 
 		//Calculates the default item height
-		cols_height=roundf((columns->boundingRect().height() + ext_height) / static_cast<float>(items.size()));
+		cols_height=roundf((columns->boundingRect().height() + ext_height) / static_cast<double>(items.size()));
 
 		//Calculates the item index based upon the mouse position
 		rect=this->mapRectToItem(title, title->boundingRect());
@@ -221,7 +223,7 @@ void BaseTableView::configureTag(void)
   {
     QPolygonF pol;
     QPointF p1, p2;
-    float bottom;
+    double bottom;
     QFont fnt=BaseObjectView::getFontStyle(ParsersAttributes::TAG).font();
 
     fnt.setPointSizeF(fnt.pointSizeF() * 0.80f);
@@ -244,8 +246,8 @@ void BaseTableView::configureTag(void)
     tag_body->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::TAG));
     tag_body->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::TAG));
 
-    tag_name->setPos(-5, bottom - 2.5f);
-    tag_body->setPos(-5, bottom - 2.5f);
+    tag_name->setPos(-5, bottom - 1.5f);
+    tag_body->setPos(-5, bottom - 1.5f);
   }
 }
 

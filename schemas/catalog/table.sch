@@ -22,7 +22,7 @@
 
 %else
     %if {attribs} %then
-    [SELECT tb.oid, tb.relname AS name, tb.relnamespace AS schema, tb.relowner AS owner, tb.reltuples AS row_amount,
+    [SELECT tb.oid, tb.relname AS name, tb.relnamespace AS schema, tb.relowner AS owner, tb.reltuples::int8 AS row_amount,
 	    tb.reltablespace AS tablespace, tb.relacl AS permission, relhasoids AS oids_bool, ]
 
     %if ({pgsql-ver} == "9.0") %then

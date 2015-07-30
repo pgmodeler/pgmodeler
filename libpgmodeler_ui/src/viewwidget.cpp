@@ -35,20 +35,22 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 
 		operation_count=0;
 
-		expression_hl=new SyntaxHighlighter(expression_txt, false);
+    expression_hl=new SyntaxHighlighter(expression_txt);
     expression_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
-		code_hl=new SyntaxHighlighter(code_txt, false);
+    code_hl=new SyntaxHighlighter(code_txt);
     code_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
-		cte_expression_hl=new SyntaxHighlighter(cte_expression_txt, false);
+    cte_expression_hl=new SyntaxHighlighter(cte_expression_txt);
     cte_expression_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
     tag_sel=new ObjectSelectorWidget(OBJ_TAG, false, this);
     dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 4);
 
 		table_sel=new ObjectSelectorWidget(OBJ_TABLE, true, this);
+    table_sel->enableObjectCreation(false);
 		column_sel=new ObjectSelectorWidget(OBJ_COLUMN, true, this);
+    column_sel->enableObjectCreation(false);
 
 		references_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
 		references_tab->setColumnCount(4);
@@ -302,7 +304,7 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 	tab=objects_tab_map[obj_type];
 
 	//Column 0: Object name
-  tab->setCellText(/*Utf8String::create(*/object->getName(),row,0);
+  tab->setCellText(object->getName(),row,0);
 
 	if(obj_type==OBJ_TRIGGER)
 	{
@@ -311,7 +313,7 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 		//Column 1: Table referenced by the trigger (constraint trigger)
 		tab->clearCellText(row,1);
 		if(trigger->getReferencedTable())
-      tab->setCellText(/*Utf8String::create(*/trigger->getReferencedTable()->getName(true),row,1);
+      tab->setCellText(trigger->getReferencedTable()->getName(true),row,1);
 
 		//Column 2: Trigger firing type
 		tab->setCellText(~trigger->getFiringType(),row,2);
@@ -372,7 +374,7 @@ void ViewWidget::listObjects(ObjectType obj_type)
 
 void ViewWidget::hideEvent(QHideEvent *evento)
 {
-	View *view=dynamic_cast<View *>(this->object);
+  //View *view=dynamic_cast<View *>(this->object);
 	ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE };
 
 	references_tab->removeRows();
@@ -388,7 +390,7 @@ void ViewWidget::hideEvent(QHideEvent *evento)
 		objects_tab_map[types[i]]->blockSignals(false);
 	}
 
-	if(this->new_object && !view->isModified())
+  if(this->new_object)// && !view->isModified())
 		this->cancelConfiguration();
 
 	BaseObjectWidget::hideEvent(evento);
@@ -497,13 +499,13 @@ void ViewWidget::editReference(int ref_idx)
 		else
 			table_sel->setSelectedObject(ref.getTable());
 
-    col_alias_edt->setText(/*Utf8String::create(*/ref.getColumnAlias());
-    tab_alias_edt->setText(/*Utf8String::create(*/ref.getAlias());
+    col_alias_edt->setText(ref.getColumnAlias());
+    tab_alias_edt->setText(ref.getAlias());
 	}
 	else
 	{
-    expression_txt->setPlainText(/*Utf8String::create(*/ref.getExpression());
-    expr_alias_edt->setText(/*Utf8String::create(*/ref.getAlias());
+    expression_txt->setPlainText(ref.getExpression());
+    expr_alias_edt->setText(ref.getAlias());
 	}
 
 	str_aux=references_tab->getCellText(ref_idx,3);
@@ -557,21 +559,21 @@ void ViewWidget::showReferenceData(Reference refer, bool selec_from, bool from_w
 		/* If the table is allocated but not the column indicates that the reference
 		 is to all table columns this way shows a string in format: [SCHEMA].[TABLE].* */
 		if(tab && !col)
-      references_tab->setCellText(/*Utf8String::create(*/tab->getName(true) + QString(".*"),row,0);
+      references_tab->setCellText(tab->getName(true) + QString(".*"),row,0);
 		/* If the table and column are allocated indicates that the reference
 		 is to a specific column this way shows a string in format: [SCHEMA].[TABLE].[COLUMN] */
 		else
-      references_tab->setCellText(/*Utf8String::create(*/tab->getName(true) + QString(".") + col->getName(true),row,0);
+      references_tab->setCellText(tab->getName(true) + QString(".") + col->getName(true),row,0);
 
-    references_tab->setCellText(/*Utf8String::create(*/refer.getAlias(),row,1);
+    references_tab->setCellText(refer.getAlias(),row,1);
 
 		if(col)
-      references_tab->setCellText(/*Utf8String::create(*/refer.getColumnAlias(),row,2);
+      references_tab->setCellText(refer.getColumnAlias(),row,2);
 	}
 	else
 	{
-    references_tab->setCellText(/*Utf8String::create(*/refer.getExpression(),row,0);
-    references_tab->setCellText(/*Utf8String::create(*/refer.getAlias(),row,1);
+    references_tab->setCellText(refer.getExpression(),row,0);
+    references_tab->setCellText(refer.getAlias(),row,1);
 	}
 
 	//Configures the string that denotes the SQL application for the reference
@@ -653,7 +655,7 @@ void ViewWidget::updateCodePreview(void)
 
 				itr++;
 			}
-      code_txt->setPlainText(/*Utf8String::create(*/aux_view.getCodeDefinition(SchemaParser::SQL_DEFINITION));
+      code_txt->setPlainText(aux_view.getCodeDefinition(SchemaParser::SQL_DEFINITION));
 		}
 	}
 	catch(Exception &e)
@@ -666,7 +668,7 @@ void ViewWidget::updateCodePreview(void)
 	}
 }
 
-void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, View *view, float px, float py)
+void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, View *view, double px, double py)
 {
 	unsigned i, count;
 	bool sel_from, from_where, after_where, view_def;
@@ -696,16 +698,13 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 	op_list->startOperationChain();
 	operation_count=op_list->getCurrentSize();
 
-	if(this->new_object)
-		op_list->registerObject(view, Operation::OBJECT_CREATED);
-
 	column_sel->setModel(model);
 	table_sel->setModel(model);
 
   tag_sel->setModel(this->model);
   tag_sel->setSelectedObject(view->getTag());
 
-  cte_expression_txt->setPlainText(/*Utf8String::create(*/view->getCommomTableExpression());
+  cte_expression_txt->setPlainText(view->getCommomTableExpression());
 
   count=view->getReferenceCount();
   references_tab->blockSignals(true);
@@ -746,6 +745,8 @@ void ViewWidget::applyConfiguration(void)
 
 		if(!this->new_object)
 			op_list->registerObject(this->object, Operation::OBJECT_MODIFIED);
+    else
+      registerNewObject();
 
 		BaseObjectWidget::applyConfiguration();
 
@@ -784,7 +785,6 @@ void ViewWidget::applyConfiguration(void)
 	}
 	catch(Exception &e)
 	{
-		this->cancelConfiguration();
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -796,4 +796,10 @@ void ViewWidget::cancelConfiguration(void)
 
 	if(operation_count < op_list->getCurrentSize())
 		BaseObjectWidget::cancelConfiguration();
+
+  if(new_object && this->object)
+  {
+    delete(this->object);
+    this->object=nullptr;
+  }
 }

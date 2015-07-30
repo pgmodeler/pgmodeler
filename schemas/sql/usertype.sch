@@ -29,7 +29,9 @@
    %end
 
    %if {enumeration} %then
-     %if {enumerations} %then [ ENUM ] ({enumerations}); %end
+     [ ENUM ] (
+     %if {enumerations} %then {enumerations} %end
+     [);]
    %end
 
    %if ({pgsql-ver} >= "9.2") %and {range} %then

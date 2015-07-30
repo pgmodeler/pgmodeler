@@ -82,7 +82,8 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		RelationshipWidget(QWidget * parent = 0);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseRelationship *base_rel);
 
-	private slots:
+    void cancelChainedConfiguration();
+  private slots:
 		void hideEvent(QHideEvent *event);
     void showEvent(QShowEvent *event);
 

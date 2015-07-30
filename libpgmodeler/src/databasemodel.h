@@ -56,6 +56,8 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 #include <algorithm>
 #include <locale.h>
 
+class ModelWidget;
+
 class DatabaseModel:  public QObject, public BaseObject {
 	private:
 		Q_OBJECT
@@ -63,6 +65,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		static unsigned dbmodel_id;
 
 		XMLParser xmlparser;
+
+    //! brief Stores the model widget that is managing this database model instance
+    ModelWidget *model_wgt;
 
 		//! \brief Database encoding
 		EncodingType encoding;
@@ -127,7 +132,7 @@ class DatabaseModel:  public QObject, public BaseObject {
     //! \brief Stores the last position on the model where the user was editing objects
     QPoint last_pos;
 
-    float last_zoom;
+    double last_zoom;
 
 		/*! \brief Returns an object seaching it by its name and type. The third parameter stores
 		 the object index */
@@ -156,9 +161,16 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! brief Returns extra error info when loading database models
 		QString getErrorExtraInfo(void);
 
-	public:
-		DatabaseModel(void);
-		~DatabaseModel(void);
+  public:
+    DatabaseModel(void);
+
+    //! brief Creates a database model and assign the model widget which will manage this instance
+    explicit DatabaseModel(ModelWidget *model_wgt);
+
+    ~DatabaseModel(void);
+
+    //! brief Returns the model widget that is managing the current database instance
+    ModelWidget *getModelWidget(void);
 
 		//! \brief Returns the complete object list according to the type
 		vector<BaseObject *> *getObjectList(ObjectType obj_type);
@@ -283,6 +295,12 @@ class DatabaseModel:  public QObject, public BaseObject {
         of the many-to-many relationships instead of the relationships themselves. The incl_relnn_objs is
         is accepted only when the creation order for SQL code is being generated, for XML, it'll simply ignored. */
     map<unsigned, BaseObject *> getCreationOrder(unsigned def_type, bool incl_relnn_objs=false);
+
+    /*! brief Returns a list containig all the object need to create the 'object' in the proper order.
+        If 'only_children' is set only children objects will be included in the list (for tables, views or schemas).
+        If 'only_children' is not set, the method will automatically include dependencies, children and permissions of
+        the object. */
+    vector<BaseObject *> getCreationOrder(BaseObject *object, bool only_children);
 
 		void addRelationship(BaseRelationship *rel, int obj_idx=-1);
 		void removeRelationship(BaseRelationship *rel, int obj_idx=-1);
@@ -479,6 +497,12 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 the informed object, e.g., a schema linked to a table that is referenced in a view */
 		void getObjectDependecies(BaseObject *objeto, vector<BaseObject *> &vet_deps, bool inc_indirect_deps=false);
 
+    /*! brief Recursive version of getObjectDependencies. Returns all the dependencies of the specified object but
+        additionally its children objects (for schemas, tables or views) as well permissions.
+        This method is less efficient than the non recursive version and is used only as an auxiliary operation for
+        getCreationOrder(BaseObject *object) */
+    void __getObjectDependencies(BaseObject *object, vector<BaseObject *> &objs);
+
 		/*! \brief Returns all the objects that references the passed object. The boolean exclusion_mode is used to performance purpose,
 		 generally applied when excluding objects, this means that the method will stop the search when the first
 		 reference is found. The exclude_perms parameter when true will not include permissions in the references list. */
@@ -513,8 +537,8 @@ class DatabaseModel:  public QObject, public BaseObject {
     void setLastPosition(const QPoint &pnt);
     QPoint getLastPosition(void);
 
-    void setLastZoomFactor(float zoom);
-    float getLastZoomFactor(void);
+    void setLastZoomFactor(double zoom);
+    double getLastZoomFactor(void);
 
 		/*! brief This method exposes the XML parser for the outside world. In order to create objects from xml code inside the current
 		 database model you need first get the parser (through this method), populate the parser with the desired XML and then call

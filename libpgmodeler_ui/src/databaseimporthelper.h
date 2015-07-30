@@ -31,8 +31,6 @@
 #include "modelwidget.h"
 #include <random>
 
-using namespace std;
-
 class DatabaseImportHelper: public QObject {
 	private:
 		Q_OBJECT
@@ -196,6 +194,9 @@ class DatabaseImportHelper: public QObject {
 		//! \brief Clears the vectors and maps used in the import process
 		void resetImportParameters(void);
 
+    //! brief Return a string containing all attributes and their values in a formatted way
+    QString dumpObjectAttributes(attribs_map &attribs);
+
   public:
 		DatabaseImportHelper(QObject *parent=0);
 
@@ -239,11 +240,6 @@ class DatabaseImportHelper: public QObject {
 		void createPermissions(void);
 		void swapSequencesTablesIds(void);
 		void updateFKRelationships(void);
-
-		/*! \brief When the execution of the instance of this class is in another thread instead of main app
-		thread puts the parent thread to sleep for [msecs] ms to give time to external operationsto be correctly
-		finished before completely quit the thread itself otherwise the method don't do anything. */
-		void sleepThread(unsigned msecs);
 
 	signals:
 		//! \brief This singal is emitted whenever the export progress changes

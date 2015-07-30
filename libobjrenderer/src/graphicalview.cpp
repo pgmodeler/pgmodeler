@@ -41,7 +41,7 @@ void GraphicalView::configureObject(void)
   RoundedRectItem *bodies[]={ body, ext_attribs_body };
   QString attribs[]={ ParsersAttributes::VIEW_BODY, ParsersAttributes::VIEW_EXT_BODY },
           tag_attribs[]={ ParsersAttributes::TABLE_BODY, ParsersAttributes::TABLE_EXT_BODY };
-	float width, type_width=0, px=0;
+	double width, type_width=0, px=0;
 	TableObjectView *col_item=nullptr;
 	QList<TableObjectView *> col_items;
 	TableObject *tab_obj=nullptr;
@@ -229,12 +229,18 @@ void GraphicalView::configureObject(void)
 	this->bounding_rect.setWidth(title->boundingRect().width());
 
 	if(!ext_attribs->isVisible())
+  {
 		this->bounding_rect.setHeight(title->boundingRect().height() +
 																	body->boundingRect().height() - 1);
+    body->setRoundedCorners(RoundedRectItem::BOTTOMLEFT_CORNER | RoundedRectItem::BOTTOMRIGHT_CORNER);
+  }
 	else
+  {
 		this->bounding_rect.setHeight(title->boundingRect().height() +
 																	body->boundingRect().height() +
 																	ext_attribs_body->boundingRect().height() -2);
+    body->setRoundedCorners(RoundedRectItem::NONE_CORNERS);
+  }
 
 	//Set the protected icon position to the top-right on the title
 	protected_icon->setPos(title->pos().x() + title->boundingRect().width() * 0.90f,
@@ -244,7 +250,7 @@ void GraphicalView::configureObject(void)
 	BaseObjectView::configureObjectShadow();
 	BaseObjectView::configureObjectSelection();
 
-  this->table_tooltip=/*Utf8String::create(*/view->getName(true) +
+  this->table_tooltip=view->getName(true) +
                       QString(" (") + view->getTypeName() + QString(") \n") +
                       QString("Id: %1\n").arg(view->getObjectId()) +
 											TableObjectView::CONSTR_DELIM_START +

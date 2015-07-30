@@ -36,7 +36,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		configureFormLayout(function_grid, OBJ_FUNCTION);
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
-    source_code_hl=new SyntaxHighlighter(source_code_txt, false);
+    source_code_hl=new SyntaxHighlighter(source_code_txt);
 		source_code_cp=new CodeCompletionWidget(source_code_txt);
 
 		ret_type=new PgSQLTypeWidget(this);
@@ -216,8 +216,8 @@ void FunctionWidget::showParameterData(Parameter param, ObjectTableWidget *tab, 
 	{
 		QString str_aux;
 
-    tab->setCellText(/*Utf8String::create(*/param.getName(),row,0);
-    tab->setCellText(/*Utf8String::create(*/*param.getType(),row,1);
+    tab->setCellText(param.getName(),row,0);
+    tab->setCellText(*param.getType(),row,1);
 		tab->setRowData(QVariant::fromValue<PgSQLType>(param.getType()), row);
 
 		if(tab==parameters_tab)
@@ -231,7 +231,7 @@ void FunctionWidget::showParameterData(Parameter param, ObjectTableWidget *tab, 
 			}
 
 			tab->setCellText(str_aux,row,2);
-      tab->setCellText(/*Utf8String::create(*/param.getDefaultValue(),row,3);
+      tab->setCellText(param.getDefaultValue(),row,3);
 		}
 	}
 }
@@ -314,7 +314,7 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 		}
 		else
 		{
-      source_code_txt->setPlainText(/*Utf8String::create(*/func->getSourceCode());
+      source_code_txt->setPlainText(func->getSourceCode());
 		}
 
 		parameters_tab->blockSignals(false);
@@ -362,7 +362,7 @@ void FunctionWidget::selectLanguage(void)
 																				 GlobalAttributes::HIGHLIGHT_FILE_SUF +
 																				 GlobalAttributes::CONFIGURATION_EXT);
 		}
-		catch(Exception &e)
+    catch(Exception &)
 		{
       source_code_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 		}
@@ -474,7 +474,7 @@ void FunctionWidget::validateConfiguredFunction(void)
 	catch(Exception &e)
 	{
 		throw Exception(Exception::getErrorMessage(ERR_FUNC_CONFIG_INV_OBJECT)
-                    .arg(/*Utf8String::create(*/object->getName(true))
+                    .arg(object->getName(true))
 										.arg(object->getTypeName()),
 										ERR_FUNC_CONFIG_INV_OBJECT,
 										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);

@@ -81,8 +81,8 @@ void Function::addParameter(Parameter param)
 	//If a duplicated parameter is found an error is raised
 	if(found)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PARAM_FUNCTION)
-                    .arg(/*Utf8String::create(*/param.getName())
-                    .arg(/*Utf8String::create(*/this->signature),
+                    .arg(param.getName())
+                    .arg(this->signature),
 										ERR_ASG_DUPLIC_PARAM_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Inserts the parameter in the function
@@ -114,8 +114,8 @@ void Function::addReturnedTableColumn(const QString &name, PgSQLType type)
 	//Raises an error if the column is duplicated
 	if(found)
 		throw Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_RET_TAB_TYPE)
-                    .arg(/*Utf8String::create(*/name)
-                    .arg(/*Utf8String::create(*/this->signature),
+                    .arg(name)
+                    .arg(this->signature),
 										ERR_INS_DUPLIC_RET_TAB_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	Parameter p;
@@ -175,7 +175,7 @@ void Function::setLibrary(const QString &library)
 {
 	if(language->getName().toLower()!=~LanguageType("c"))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_REFLIB_LANG_NOT_C)
-                    .arg(/*Utf8String::create(*/this->getSignature()),
+                    .arg(this->getSignature()),
 										ERR_ASG_FUNC_REFLIB_LANG_NOT_C,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->library != library);
@@ -186,7 +186,7 @@ void Function::setSymbol(const QString &symbol)
 {
 	if(language->getName().toLower()!=~LanguageType("c"))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_REFLIB_LANG_NOT_C)
-                    .arg(/*Utf8String::create(*/this->getSignature()),
+                    .arg(this->getSignature()),
 										ERR_ASG_FUNC_REFLIB_LANG_NOT_C,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->symbol != symbol);
@@ -252,7 +252,7 @@ void Function::setSourceCode(const QString &src_code)
 {
 	if(language && language->getName().toLower()==~LanguageType("c"))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_CODE_FUNC_C_LANGUAGE)
-                    .arg(/*Utf8String::create(*/this->getSignature()),
+                    .arg(this->getSignature()),
 										ERR_ASG_CODE_FUNC_C_LANGUAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->source_code != src_code);
@@ -429,9 +429,9 @@ void Function::createSignature(bool format, bool prepend_schema)
 	for(i=0; i < count; i++)
 	{
 		//OUT parameters is not part of function's signature
-		if(!parameters[i].isIn() || parameters[i].isVariadic() ||
+    if(!parameters[i].isOut() || parameters[i].isVariadic() ||
 			 (parameters[i].isIn() && parameters[i].isOut()) ||
-			 (parameters[i].isIn() && !parameters[i].isOut()))
+       (parameters[i].isIn() && !parameters[i].isOut()))
 		{
 			str_param+=parameters[i].getCodeDefinition(SchemaParser::SQL_DEFINITION, true).trimmed();
 			parameters[i].setCodeInvalidated(true);

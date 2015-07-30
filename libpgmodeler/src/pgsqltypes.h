@@ -32,13 +32,9 @@
 #include <map>
 #include <QRegExp>
 
-using namespace std;
-
 class BaseType{
-	private:
-		static const unsigned types_count=237;
-
 	protected:
+    static const unsigned types_count=237;
 		static QString type_list[types_count];
 
 		//! \brief Index of the type on the type_list vector
