@@ -343,11 +343,12 @@ void ModelValidationHelper::validateModel(void)
                 for foreign keys that are discarded from any validation since they are always created
                 at end of code defintion being free of any reference breaking. */
               if(object != refs.back() &&
-                 ((
-                    (col || (constr && constr->getConstraintType()!=ConstraintType::foreign_key)) &&
-                    (tab_obj->getParentTable()->getObjectId() <= object->getObjectId())
-                    )
-                  || (refs.back()->getObjectId() <= object->getObjectId())))
+                 (
+                  ((col || (constr && constr->getConstraintType()!=ConstraintType::foreign_key)) &&
+                   (tab_obj->getParentTable()->getObjectId() <= object->getObjectId()))
+                  ||
+                  (!constr && refs.back()->getObjectId() <= object->getObjectId()))
+                 )
               {
                 if(col || constr)
                   refer_obj=tab_obj->getParentTable();
