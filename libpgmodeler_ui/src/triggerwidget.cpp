@@ -100,12 +100,15 @@ void TriggerWidget::setConstraintTrigger(bool value)
 	ref_table_sel->setEnabled(value);
 	ref_table_lbl->setEnabled(value);
 	deferrable_chk->setEnabled(value);
+  firing_mode_cmb->setEnabled(!value);
 
 	if(!value)
 	{
 		ref_table_sel->clearSelector();
 		deferrable_chk->setChecked(false);
 	}
+  else
+    firing_mode_cmb->setCurrentText(~FiringType(FiringType::after));
 }
 
 void TriggerWidget::addColumn(int lin_idx)

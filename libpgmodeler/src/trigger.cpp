@@ -398,13 +398,12 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::CONDITION]=condition;
 
 	if(referenced_table)
-	{
 		attributes[ParsersAttributes::REF_TABLE]=referenced_table->getName(true);
-		attributes[ParsersAttributes::DEFERRABLE]=(is_deferrable ? ParsersAttributes::_TRUE_ : QString());
-		attributes[ParsersAttributes::DEFER_TYPE]=(~deferral_type);
-	}
 
-	return(BaseObject::__getCodeDefinition(def_type));
+  attributes[ParsersAttributes::DEFERRABLE]=(is_deferrable ? ParsersAttributes::_TRUE_ : QString());
+  attributes[ParsersAttributes::DEFER_TYPE]=(~deferral_type);
+
+  return(BaseObject::__getCodeDefinition(def_type));
 }
 
 void Trigger::validateTrigger(void)
