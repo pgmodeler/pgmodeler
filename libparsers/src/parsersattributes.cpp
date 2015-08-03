@@ -183,6 +183,7 @@ namespace ParsersAttributes {
   FIRING_TYPE=QString("firing-type"),
   FK_COLUMN=QString("fk-column"),
   FK_CONSTR=QString("fk-constr"),
+  FK_DEFS=QString("fk-defs"),
   FONT_SIZE=QString("font-size"),
   FONT=QString("font"),
   FOREGROUND_COLOR=QString("foreground-color"),

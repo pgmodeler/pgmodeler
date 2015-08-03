@@ -27,6 +27,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
   {
     setupUi(this);   
     sqlcode_txt=PgModelerUiNS::createNumberedTextEditor(sqlcode_wgt);
+    sqlcode_txt->setReadOnly(true);
 
     htmlitem_del=new HtmlItemDelegate;
     output_trw->setItemDelegateForColumn(0, htmlitem_del);

@@ -198,6 +198,7 @@ namespace ParsersAttributes {
   FIRING_TYPE,
   FK_COLUMN,
   FK_CONSTR,
+  FK_DEFS,
   FONT_SIZE,
   FONT,
   FOREGROUND_COLOR,

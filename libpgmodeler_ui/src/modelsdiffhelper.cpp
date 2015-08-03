@@ -43,18 +43,6 @@ ModelsDiffHelper::~ModelsDiffHelper(void)
   destroyTempObjects();
 }
 
-/*void ModelsDiffHelper::setDiffOptions(bool keep_cluster_objs, bool cascade_mode, bool truncate_tables, bool force_recreation,
-                                      bool recreate_unchangeble, bool keep_obj_perms, bool reuse_sequences)
-{
-  this->keep_cluster_objs=keep_cluster_objs;
-  this->cascade_mode=cascade_mode;
-  this->force_recreation=force_recreation;
-  this->trucante_tables=truncate_tables;
-  this->recreate_unchangeble=(force_recreation && recreate_unchangeble);
-  this->keep_obj_perms=keep_obj_perms;
-  this->reuse_sequences=reuse_sequences;
-}*/
-
 void ModelsDiffHelper::setDiffOption(unsigned opt_id, bool value)
 {
   if(opt_id > OPT_PRESERVE_DB_NAME)
@@ -693,7 +681,7 @@ void ModelsDiffHelper::processDiffInfos(void)
         if((diff_opts[OPT_FORCE_RECREATION] && obj_type!=OBJ_DATABASE) &&
            (!diff_opts[OPT_RECREATE_UNCHANGEBLE] ||
             (diff_opts[OPT_RECREATE_UNCHANGEBLE] && !object->acceptsAlterCommand())))
-        {
+        {                    
           recreateObject(object, drop_vect, create_vect);
 
           //Generating the drop for the object's reference
@@ -705,7 +693,13 @@ void ModelsDiffHelper::processDiffInfos(void)
           {
             //The there is no ALTER info registered for an object's reference
             if(!isDiffInfoExists(ObjectsDiffInfo::ALTER_OBJECT, nullptr, obj, false))
-             create_objs[obj->getObjectId()]=getCodeDefinition(obj, false);
+            {
+              if(obj->getObjectType()==OBJ_CONSTRAINT &&
+                 dynamic_cast<Constraint *>(obj)->getConstraintType()==ConstraintType::foreign_key)
+                fk_defs+=getCodeDefinition(obj, false);
+              else
+                create_objs[obj->getObjectId()]=getCodeDefinition(obj, false);
+            }
           }
 
           drop_vect.clear();
@@ -800,8 +794,9 @@ void ModelsDiffHelper::processDiffInfos(void)
       for(auto &itr : create_objs)
         attribs[ParsersAttributes::CREATE_CMDS]+=itr.second;
 
-      attribs[ParsersAttributes::CREATE_CMDS]+=fk_defs;
       attribs[ParsersAttributes::CREATE_CMDS]+=inherit_def;
+
+      attribs[ParsersAttributes::FK_DEFS]=fk_defs;
 
       for(auto &itr : truncate_tabs)
         attribs[ParsersAttributes::TRUNCATE_CMDS]+=itr.second;
