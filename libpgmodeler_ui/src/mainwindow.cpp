@@ -720,9 +720,21 @@ void MainWindow::loadModelFromAction(void)
 
 	if(act)
 	{
-		addModel(act->data().toString());
-		recent_models.push_back(act->data().toString());
-		updateRecentModelsMenu();
+    QString filename=act->data().toString();
+
+    try
+    {
+      addModel(filename);
+      recent_models.push_back(act->data().toString());
+      updateRecentModelsMenu();
+    }
+    catch(Exception &e)
+    {
+      if(QFileInfo(filename).exists())
+        showFixMessage(e, filename);
+      else
+        throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+    }
 	}
 }
 
@@ -1450,18 +1462,23 @@ void MainWindow::loadModels(const QStringList &list)
 	}
 	catch(Exception &e)
 	{	
-		Messagebox msg_box;
-
-		msg_box.show(Exception(Exception::getErrorMessage(ERR_MODEL_FILE_NOT_LOADED).arg(list[i]),
-													 ERR_MODEL_FILE_NOT_LOADED ,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e),
-								 trUtf8("Could not load the database model file `%1'. Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(list[i]),
-								 Messagebox::ERROR_ICON, Messagebox::YES_NO_BUTTONS,
-                 trUtf8("Fix model"), trUtf8("Cancel"), QString(),
-                 QString(":/icones/icones/fixobject.png"), QString(":/icones/icones/msgbox_erro.png"));
-
-		if(msg_box.result()==QDialog::Accepted)
-			fixModel(list[i]);
+    showFixMessage(e, list[i]);
   }
+}
+
+void MainWindow::showFixMessage(Exception &e, const QString &filename)
+{
+  Messagebox msg_box;
+
+  msg_box.show(Exception(Exception::getErrorMessage(ERR_MODEL_FILE_NOT_LOADED).arg(filename),
+                         ERR_MODEL_FILE_NOT_LOADED ,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e),
+               trUtf8("Could not load the database model file `%1'. Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(filename),
+               Messagebox::ERROR_ICON, Messagebox::YES_NO_BUTTONS,
+               trUtf8("Fix model"), trUtf8("Cancel"), QString(),
+               QString(":/icones/icones/fixobject.png"), QString(":/icones/icones/msgbox_erro.png"));
+
+  if(msg_box.result()==QDialog::Accepted)
+    fixModel(filename);
 }
 
 void MainWindow::setConfirmValidation(bool value)
