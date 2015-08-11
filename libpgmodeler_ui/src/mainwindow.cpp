@@ -525,23 +525,29 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 		//If not in demo version there is no confirmation before close the software
 		#ifndef DEMO_VERSION
-			bool modified=false;
 			int i=0;
+      QStringList model_names;
+      ModelWidget *model=nullptr;
 
 			//Checking if there is modified models and ask the user to save them before close the application
 			if(models_tbw->count() > 0)
 			{
 				i=0;
-				while(i < models_tbw->count() && !modified)
-					modified=dynamic_cast<ModelWidget *>(models_tbw->widget(i++))->isModified();
+        while(i < models_tbw->count())
+        {
+          model=dynamic_cast<ModelWidget *>(models_tbw->widget(i++));
 
-				if(modified)
+          if(model->isModified())
+            model_names.push_back(QString("<strong>%1</strong>").arg(model->getDatabaseModel()->getName()));
+        }
+
+        if(!model_names.isEmpty())
 				{
 					Messagebox msg_box;
 
-					msg_box.show(trUtf8("Save all models"),
-											 trUtf8("Some models were modified! Do you really want to quit pgModeler without save them?"),
-											 Messagebox::CONFIRM_ICON,Messagebox::YES_NO_BUTTONS);
+          msg_box.show(trUtf8("Save modified model(s)"),
+                       trUtf8("The following models were modified but not saved: %1. Do you really want to quit pgModeler?").arg(model_names.join(", ")),
+                       Messagebox::CONFIRM_ICON,Messagebox::YES_NO_BUTTONS);
 
 					/* If the user rejects the message box the close event will be aborted
 				causing pgModeler not to be finished */
