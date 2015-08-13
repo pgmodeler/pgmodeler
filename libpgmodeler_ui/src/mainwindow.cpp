@@ -1060,7 +1060,7 @@ void MainWindow::closeModel(int model_id)
 			if(model->isModified())
 			{
 				msg_box.show(trUtf8("Save model"),
-										 trUtf8("The model was modified! Do you really want to close without save it?"),
+                     trUtf8("The model <strong>%1</strong> was modified! Do you really want to close without save it?").arg(model->getDatabaseModel()->getName()),
 										 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 			}
 		#endif

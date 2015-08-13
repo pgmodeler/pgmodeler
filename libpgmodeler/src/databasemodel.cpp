@@ -741,7 +741,7 @@ void DatabaseModel::destroyObjects(void)
 
   //Removing the special objects first
   storeSpecialObjectsXML();
-	disconnectRelationships();
+  disconnectRelationships();
 
 	for(i=0; i < cnt; i++)
 	{
@@ -764,7 +764,7 @@ void DatabaseModel::destroyObjects(void)
 			else
 				list->pop_back();
 
-			delete(object);
+      delete(object);
 		}
 	}
 
@@ -1648,7 +1648,7 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
 
 void DatabaseModel::storeSpecialObjectsXML(void)
 {
-	unsigned count, i, type_id;
+  unsigned count=0, i=0, type_id=0;
 	vector<BaseObject *>::iterator itr, itr_end;
 	Sequence *sequence=nullptr;
 	Permission *permission=nullptr;
@@ -1662,7 +1662,7 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 	Reference ref;
 	ObjectType tab_obj_type[3]={ OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_INDEX };
 	bool found=false;
-  vector<BaseObject *> objects;
+  vector<BaseObject *> objects, rem_objects;
 
 	try
 	{
@@ -1732,8 +1732,10 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 			}
 		}
 
-		itr=sequences.begin();
-		itr_end=sequences.end();
+    //Making a copy of the sequences list to avoid iterator invalidation when removing an object
+    rem_objects.assign(sequences.begin(), sequences.end());
+    itr=rem_objects.begin();
+    itr_end=rem_objects.end();
 
 		while(itr!=itr_end)
 		{
@@ -1748,13 +1750,15 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 			}
 		}
 
-		itr=views.begin();
-		itr_end=views.end();
+    //Making a copy of the view list to avoid iterator invalidation when removing an object
+    rem_objects.assign(views.begin(), views.end());
+    itr=rem_objects.begin();
+    itr_end=rem_objects.end();
 
 		while(itr!=itr_end)
 		{
 			view=dynamic_cast<View *>(*itr);
-			itr++;
+      itr++;
 
 			if(view->isReferRelationshipAddedColumn())
 			{
@@ -1799,6 +1803,8 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 			}
 		}
 
+    //Making a copy of the permissions list to avoid iterator invalidation when removing an object
+    rem_objects.assign(permissions.begin(), permissions.end());
 		itr=permissions.begin();
 		itr_end=permissions.end();
 
