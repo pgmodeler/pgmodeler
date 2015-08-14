@@ -106,50 +106,6 @@
          <property name="spacing">
           <number>6</number>
          </property>
-         <item row="0" column="3">
-          <widget class="QToolButton" name="role_tb">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>95</width>
-             <height>50</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="text">
-            <string>Role</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../res/resources.qrc">
-             <normaloff>:/icones/icones/role.png</normaloff>:/icones/icones/role.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>32</width>
-             <height>32</height>
-            </size>
-           </property>
-           <property name="popupMode">
-            <enum>QToolButton::InstantPopup</enum>
-           </property>
-           <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextUnderIcon</enum>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="2">
           <widget class="QToolButton" name="tag_tb">
            <property name="sizePolicy">
@@ -241,50 +197,6 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="2">
-          <widget class="QToolButton" name="language_tb">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>95</width>
-             <height>50</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="text">
-            <string>Language</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../res/resources.qrc">
-             <normaloff>:/icones/icones/language.png</normaloff>:/icones/icones/language.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>32</width>
-             <height>32</height>
-            </size>
-           </property>
-           <property name="popupMode">
-            <enum>QToolButton::InstantPopup</enum>
-           </property>
-           <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextUnderIcon</enum>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="3">
           <widget class="QToolButton" name="textbox_tb">
            <property name="sizePolicy">
@@ -314,50 +226,6 @@
            <property name="icon">
             <iconset resource="../res/resources.qrc">
              <normaloff>:/icones/icones/textbox.png</normaloff>:/icones/icones/textbox.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>32</width>
-             <height>32</height>
-            </size>
-           </property>
-           <property name="popupMode">
-            <enum>QToolButton::InstantPopup</enum>
-           </property>
-           <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextUnderIcon</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QToolButton" name="eventtrigger_tb">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>95</width>
-             <height>50</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="text">
-            <string>Event Trigger</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../res/resources.qrc">
-             <normaloff>:/icones/icones/eventtrigger.png</normaloff>:/icones/icones/eventtrigger.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -461,6 +329,138 @@
            </property>
           </widget>
          </item>
+         <item row="0" column="1">
+          <widget class="QToolButton" name="language_tb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>95</width>
+             <height>50</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>Language</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../res/resources.qrc">
+             <normaloff>:/icones/icones/language.png</normaloff>:/icones/icones/language.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="popupMode">
+            <enum>QToolButton::InstantPopup</enum>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QToolButton" name="role_tb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>95</width>
+             <height>50</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>Role</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../res/resources.qrc">
+             <normaloff>:/icones/icones/role.png</normaloff>:/icones/icones/role.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="popupMode">
+            <enum>QToolButton::InstantPopup</enum>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3">
+          <widget class="QToolButton" name="eventtrigger_tb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>95</width>
+             <height>50</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>Event Trigger</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../res/resources.qrc">
+             <normaloff>:/icones/icones/eventtrigger.png</normaloff>:/icones/icones/eventtrigger.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="popupMode">
+            <enum>QToolButton::InstantPopup</enum>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
@@ -488,7 +488,7 @@
          <property name="spacing">
           <number>6</number>
          </property>
-         <item row="0" column="3">
+         <item row="0" column="4">
           <widget class="QToolButton" name="domain_tb">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -532,7 +532,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="2">
+         <item row="0" column="3">
           <widget class="QToolButton" name="conversion_tb">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -664,7 +664,7 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="2">
+         <item row="2" column="3">
           <widget class="QToolButton" name="table_tb">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -708,7 +708,7 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="3">
+         <item row="2" column="4">
           <widget class="QToolButton" name="type_tb">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -928,94 +928,6 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="2">
-          <widget class="QToolButton" name="opclass_tb">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>95</width>
-             <height>50</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="text">
-            <string>Op. Class</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../res/resources.qrc">
-             <normaloff>:/icones/icones/opclass.png</normaloff>:/icones/icones/opclass.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>32</width>
-             <height>32</height>
-            </size>
-           </property>
-           <property name="popupMode">
-            <enum>QToolButton::InstantPopup</enum>
-           </property>
-           <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextUnderIcon</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="3">
-          <widget class="QToolButton" name="operator_tb">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>95</width>
-             <height>50</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="text">
-            <string>Operator</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../res/resources.qrc">
-             <normaloff>:/icones/icones/operator.png</normaloff>:/icones/icones/operator.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>32</width>
-             <height>32</height>
-            </size>
-           </property>
-           <property name="popupMode">
-            <enum>QToolButton::InstantPopup</enum>
-           </property>
-           <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextUnderIcon</enum>
-           </property>
-          </widget>
-         </item>
          <item row="3" column="0">
           <widget class="QToolButton" name="view_tb">
            <property name="sizePolicy">
@@ -1104,6 +1016,94 @@
            </property>
           </widget>
          </item>
+         <item row="1" column="4">
+          <widget class="QToolButton" name="opclass_tb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>95</width>
+             <height>50</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>Op. Class</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../res/resources.qrc">
+             <normaloff>:/icones/icones/opclass.png</normaloff>:/icones/icones/opclass.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="popupMode">
+            <enum>QToolButton::InstantPopup</enum>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="3">
+          <widget class="QToolButton" name="operator_tb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>95</width>
+             <height>50</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>Operator</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../res/resources.qrc">
+             <normaloff>:/icones/icones/operator.png</normaloff>:/icones/icones/operator.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="popupMode">
+            <enum>QToolButton::InstantPopup</enum>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
@@ -1131,8 +1131,8 @@
          <property name="spacing">
           <number>6</number>
          </property>
-         <item row="1" column="4">
-          <widget class="QToolButton" name="rule_tb">
+         <item row="0" column="4">
+          <widget class="QToolButton" name="constraint_tb">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1155,55 +1155,11 @@
             <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
-            <string>Rule</string>
+            <string>Constraint</string>
            </property>
            <property name="icon">
             <iconset resource="../res/resources.qrc">
-             <normaloff>:/icones/icones/rule.png</normaloff>:/icones/icones/rule.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>32</width>
-             <height>32</height>
-            </size>
-           </property>
-           <property name="popupMode">
-            <enum>QToolButton::InstantPopup</enum>
-           </property>
-           <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextUnderIcon</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="2">
-          <widget class="QToolButton" name="index_tb">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>95</width>
-             <height>50</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="text">
-            <string>Index</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../res/resources.qrc">
-             <normaloff>:/icones/icones/index.png</normaloff>:/icones/icones/index.png</iconset>
+             <normaloff>:/icones/icones/constraint.png</normaloff>:/icones/icones/constraint.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -1263,8 +1219,8 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="4">
-          <widget class="QToolButton" name="constraint_tb">
+         <item row="1" column="8">
+          <widget class="QToolButton" name="tab_perms_tb">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1287,11 +1243,11 @@
             <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
-            <string>Constraint</string>
+            <string>Permissions</string>
            </property>
            <property name="icon">
             <iconset resource="../res/resources.qrc">
-             <normaloff>:/icones/icones/constraint.png</normaloff>:/icones/icones/constraint.png</iconset>
+             <normaloff>:/icones/icones/permission.png</normaloff>:/icones/icones/permission.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -1307,7 +1263,51 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="7">
+         <item row="0" column="8">
+          <widget class="QToolButton" name="index_tb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>95</width>
+             <height>50</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>Index</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../res/resources.qrc">
+             <normaloff>:/icones/icones/index.png</normaloff>:/icones/icones/index.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="popupMode">
+            <enum>QToolButton::InstantPopup</enum>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="4">
           <widget class="QToolButton" name="trigger_tb">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -1351,8 +1351,8 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="7">
-          <widget class="QToolButton" name="tab_perms_tb">
+         <item row="1" column="2">
+          <widget class="QToolButton" name="rule_tb">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1375,11 +1375,11 @@
             <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
-            <string>Permissions</string>
+            <string>Rule</string>
            </property>
            <property name="icon">
             <iconset resource="../res/resources.qrc">
-             <normaloff>:/icones/icones/permission.png</normaloff>:/icones/icones/permission.png</iconset>
+             <normaloff>:/icones/icones/rule.png</normaloff>:/icones/icones/rule.png</iconset>
            </property>
            <property name="iconSize">
             <size>
