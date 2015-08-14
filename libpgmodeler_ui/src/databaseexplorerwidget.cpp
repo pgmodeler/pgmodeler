@@ -89,6 +89,9 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
   setupUi(this);
   splitter->setSizes({ 70, 30 });
 
+  ro_item_deleg=new ReadOnlyItemDelegate(this);
+  properties_tbw->setItemDelegate(ro_item_deleg);
+
   rename_item=nullptr;
 
   snippets_menu.setTitle(trUtf8("Snippets"));
@@ -1356,7 +1359,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
             properties_tbw->setItem(row, 1, tab_item);
 
             //If the value contains multiple lines, configures the tooltip to expose the complete form of the value
-            if(attrib.second.contains('\n'))
+            if(attrib.second.contains('\n') || attrib.second.length() > 30)
               tab_item->setToolTip(attrib.second);
           }
         }
