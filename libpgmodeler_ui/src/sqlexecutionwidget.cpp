@@ -458,7 +458,11 @@ void SQLExecutionWidget::copySelection(QTableWidget *results_tbw, bool use_popup
 
 void SQLExecutionWidget::selectSnippet(QAction *act)
 {
-  sql_cmd_txt->setPlainText(SnippetsConfigWidget::getParsedSnippet(act->text()));
+  QTextCursor cursor=sql_cmd_txt->textCursor();
+  cursor.movePosition(QTextCursor::End);
+
+  sql_cmd_txt->appendPlainText(SnippetsConfigWidget::getParsedSnippet(act->text()));
+  sql_cmd_txt->setTextCursor(cursor);
 }
 
 void SQLExecutionWidget::handleSelectedWord(QString word)

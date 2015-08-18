@@ -296,5 +296,10 @@ void SQLToolWidget::showSnippet(const QString &snip)
     addSQLExecutionTab();
 
   sql_exec_wgt=dynamic_cast<SQLExecutionWidget *>(sql_exec_tbw->currentWidget());
-  sql_exec_wgt->sql_cmd_txt->setPlainText(snip);
+
+  QTextCursor cursor=sql_exec_wgt->sql_cmd_txt->textCursor();
+  cursor.movePosition(QTextCursor::End);
+
+  sql_exec_wgt->sql_cmd_txt->appendPlainText(snip);
+  sql_exec_wgt->sql_cmd_txt->setTextCursor(cursor);
 }

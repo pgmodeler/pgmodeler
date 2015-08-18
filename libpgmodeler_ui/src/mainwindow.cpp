@@ -1186,9 +1186,7 @@ void MainWindow::saveModel(ModelWidget *model)
 		if(model)
 		{
 			Messagebox msg_box;
-      DatabaseModel *db_model=model->getDatabaseModel();
-
-      action_design->setChecked(true);
+      DatabaseModel *db_model=model->getDatabaseModel();    
 
       if(confirm_validation && db_model->isInvalidated())
 			{
@@ -1210,6 +1208,7 @@ void MainWindow::saveModel(ModelWidget *model)
         {
           validation_btn->setChecked(true);
           this->pending_op=(sender()==action_save_as ? PENDING_SAVE_AS_OPER : PENDING_SAVE_OPER);
+          action_design->setChecked(true);
           model_valid_wgt->validateModel();
         }
 			}
