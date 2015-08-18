@@ -5059,7 +5059,7 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="48"/>
         <source>General &amp;&amp; Design</source>
-        <translation>Desiño &amp;&amp; General</translation>
+        <translation>Diseño &amp;&amp; General</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="66"/>
@@ -5114,7 +5114,7 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="319"/>
         <source>Design</source>
-        <translation>Desiño</translation>
+        <translation>Diseño</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="348"/>
@@ -6094,7 +6094,7 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
     <message>
         <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1326"/>
         <source>Design</source>
-        <translation>Desiño</translation>
+        <translation>Diseño</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1329"/>
@@ -6218,7 +6218,7 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
     <message>
         <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1277"/>
         <source>Export anyway</source>
-        <translation>Exportar de todas modo</translation>
+        <translation>Exportar de todas modos</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1303"/>
@@ -6422,7 +6422,7 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="200"/>
         <source>Connection:</source>
-        <translation>Conección:</translation>
+        <translation>Conexión:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="219"/>
@@ -6722,12 +6722,12 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
     <message>
         <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="451"/>
         <source>Saving diff to file &lt;strong&gt;%1&lt;/strong&gt;</source>
-        <translation>Savando diff a archivo &lt;strong&gt;%1&lt;/strong&gt;</translation>
+        <translation>Guardando diff a archivo &lt;strong&gt;%1&lt;/strong&gt;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="474"/>
         <source>Diff process sucessfully ended!</source>
-        <translation>Poceso Diff finalizado satisfactoriamente!</translation>
+        <translation>Proceso Diff finalizado satisfactoriamente!</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="475"/>
@@ -7008,7 +7008,7 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="254"/>
         <source>PostgreSQL `%1&apos; server detected.</source>
-        <translation>Servidor PostgreSQL `%1&apos; detecta.</translation>
+        <translation>Servidor PostgreSQL `%1&apos; detectado.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="259"/>
