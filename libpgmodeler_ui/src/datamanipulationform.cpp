@@ -24,8 +24,8 @@ const unsigned DataManipulationForm::NO_OPERATION=0;
 const unsigned DataManipulationForm::OP_INSERT=1;
 const unsigned DataManipulationForm::OP_UPDATE=2;
 const unsigned DataManipulationForm::OP_DELETE=3;
-const QChar DataManipulationForm::UNESC_VALUE_START='<';
-const QChar	DataManipulationForm::UNESC_VALUE_END='>';
+const QChar DataManipulationForm::UNESC_VALUE_START='{';
+const QChar	DataManipulationForm::UNESC_VALUE_END='}';
 
 DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f): QDialog(parent, f)
 {
