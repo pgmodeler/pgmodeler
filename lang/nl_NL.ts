@@ -1278,187 +1278,187 @@ Dit zorgt ervoor dat de code voor alle kinder-objecten en refererende objecten w
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="59"/>
         <source>Password:</source>
-        <translation type="unfinished"></translation>
+        <translation>Wachtwoord:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="85"/>
         <source>Connection Alias:</source>
-        <translation type="unfinished"></translation>
+        <translation>Verbindingsalias:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="98"/>
         <source>Connection DB:</source>
-        <translation type="unfinished"></translation>
+        <translation>Verbinding DB:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="111"/>
         <source>Host/Port:</source>
-        <translation type="unfinished"></translation>
+        <translation>Host/Poort:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="124"/>
         <source>User:</source>
-        <translation type="unfinished"></translation>
+        <translation>Gebruiker:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="137"/>
         <source>Timeout:</source>
-        <translation type="unfinished"></translation>
+        <translation>Timeout:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="150"/>
         <source>SSL Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>SSL Modus:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="164"/>
         <source>Disable</source>
-        <translation type="unfinished"></translation>
+        <translation>Uit</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="169"/>
         <source>Allow</source>
-        <translation type="unfinished"></translation>
+        <translation>Toegelaten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="174"/>
         <source>Require</source>
-        <translation type="unfinished"></translation>
+        <translation>Vereist</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="179"/>
         <source>AC verification</source>
-        <translation type="unfinished"></translation>
+        <translation>AC verificatie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="184"/>
         <source>Full verification</source>
-        <translation type="unfinished"></translation>
+        <translation>Volledige verificatie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="201"/>
         <source>Client Certificate:</source>
-        <translation type="unfinished"></translation>
+        <translation>Client Certificaat:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="217"/>
         <source>Revoked Certs.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Herroepen Certs:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="233"/>
         <source>Client Key:</source>
-        <translation type="unfinished"></translation>
+        <translation>Client Sleutel:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="249"/>
         <source>Root Certificate:</source>
-        <translation type="unfinished"></translation>
+        <translation>Root Certificaat:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="262"/>
         <source>Options:</source>
-        <translation type="unfinished"></translation>
+        <translation>Opties:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="278"/>
         <source>Kerberus Server:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kerberos Server:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="301"/>
         <source>~/.postgresql/root.crt</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="311"/>
         <source>Connections:</source>
-        <translation type="unfinished"></translation>
+        <translation>Verbindingen:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="333"/>
         <source>second(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>Second(en)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="373"/>
         <source>Force GSSAPI</source>
-        <translation type="unfinished"></translation>
+        <translation>Forceer GSSAPI</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="385"/>
         <source>~/.postgresql/postgresql.crt</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="431"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Toevoegen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="469"/>
         <source>Update</source>
-        <translation type="unfinished"></translation>
+        <translation>Updaten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="507"/>
         <source>Test</source>
-        <translation type="unfinished"></translation>
+        <translation>Test</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="568"/>
         <source>~/.postgresql/root.crl</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="581"/>
         <source>~/.postgresql/postgresql.key</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="631"/>
         <source>Create new connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Maak een nieuwe verbinding</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="660"/>
         <source>Cancel edition</source>
-        <translation type="unfinished"></translation>
+        <translation>Annuleer aanpassingen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="689"/>
         <source>Duplicate the selected connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Dupliceer de geselecteerde verbinding</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="718"/>
         <source>Edit selected connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Pas de geselecteerde verbinding aan</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="747"/>
         <source>Delete selected connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwijder de geselecteerde verbinding</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="809"/>
         <source>Automatically browses the named database when using this connection to manage databases on &lt;strong&gt;Manage&lt;/strong&gt; view.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bladert automatisch door de genoemde database wanneer deze verbinding wordt gebruikt om databases te beheren via de &lt;strong&gt;Beheer&lt;/strong&gt; view.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="812"/>
         <source>Auto browse</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/connectionsconfigwidget.cpp" line="385"/>
         <source>Success</source>
-        <translation type="unfinished"></translation>
+        <translation>Success</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/connectionsconfigwidget.cpp" line="386"/>
@@ -1469,22 +1469,28 @@ Server details:
 PID: `%1&apos;
 Protocol: `%2&apos;
 Version: `%3&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>De verebinding werd aangemaakt!
+
+Details Server:
+
+PID: `%1&apos;
+Protocol: `%2&apos;
+Versie: `%3&apos;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/connectionsconfigwidget.cpp" line="431"/>
         <source>There is a connection being created or edited! Do you want to save it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Wenst u de nieuwe of aan te passen verbinding op te slaan vooraleer verder te gaan?</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/connectionsconfigwidget.cpp" line="506"/>
         <source>Found %1 connection(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 verbinding(en) gevonden</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/connectionsconfigwidget.cpp" line="508"/>
         <source>No connections found</source>
-        <translation type="unfinished"></translation>
+        <translation>Geen verbindingen gevonden</translation>
     </message>
 </context>
 <context>
