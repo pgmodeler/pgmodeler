@@ -1498,47 +1498,47 @@ Versie: `%3&apos;</translation>
     <message>
         <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="59"/>
         <source>Match:</source>
-        <translation type="unfinished"></translation>
+        <translation>Evenaar:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="97"/>
         <source>Constraint Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Constraint Type:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="110"/>
         <source>This attribute cannot be changed once the object is created.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dit attribuut kan niet worden aangepast eens het object is aangemaakt.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="129"/>
         <source>Expression:</source>
-        <translation type="unfinished"></translation>
+        <translation>Expressie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="170"/>
         <source>Deferrable:</source>
-        <translation type="unfinished"></translation>
+        <translation>Uitstelbaar:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="211"/>
         <source>Deferral:</source>
-        <translation type="unfinished"></translation>
+        <translation>Uitstel:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="265"/>
         <source>ON DELETE:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="290"/>
         <source>ON UPDATE:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="313"/>
@@ -1548,55 +1548,55 @@ Versie: `%3&apos;</translation>
     <message>
         <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="333"/>
         <source>Exclude Elements</source>
-        <translation type="unfinished"></translation>
+        <translation>Elementen Uitsluiten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="356"/>
         <source>Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolommen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="383"/>
         <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="497"/>
         <source>Column:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolom:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="429"/>
         <source>Referenced Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Gerefereerde Kolommen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="510"/>
         <source>Table:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabel:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="527"/>
         <source>Indexing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Indexering:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="547"/>
         <source>Fill Factor:</source>
-        <translation type="unfinished"></translation>
+        <translation>Vul-factor:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/constraintwidget.cpp" line="51"/>
         <location filename="../libpgmodeler_ui/src/constraintwidget.cpp" line="58"/>
         <source>Column</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolom</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/constraintwidget.cpp" line="53"/>
         <location filename="../libpgmodeler_ui/src/constraintwidget.cpp" line="60"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Type</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/constraintwidget.cpp" line="85"/>
         <source>Columns which were included by relationship can not be added / removed manually from the primary key. If done such changes they can raise errors. To create primary key using columns included by relationship use the following options: identifier field, attributes &amp; constraints tab or primary key tab on the relationship form.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolommen die werden ingesloten via relaties kunnen niet manueel worden toegevoegd aan of verwijderd uit de primaire sleutel. Dit soort aanpassingen kan tot fouten leiden. Om een primaire sleutel aan te maken via kolommen die werden ingesloten door relaties, gebruik de volgende opties: identifier veld, attributen &amp; constraints tab-blad of primaire sleutel tab=blad in het relatie-venster.</translation>
     </message>
 </context>
 <context>
