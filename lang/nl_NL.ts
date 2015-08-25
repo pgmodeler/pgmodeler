@@ -1020,52 +1020,52 @@ This will disable the code of all child and referrer objects.</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/castwidget.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/castwidget.ui" line="59"/>
         <source>Implicit</source>
-        <translation type="unfinished"></translation>
+        <translation>Impliciet</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/castwidget.ui" line="87"/>
         <source>Assignment</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/castwidget.ui" line="100"/>
         <source>Input / Output</source>
-        <translation type="unfinished"></translation>
+        <translation>Invoer / Uitvoer</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/castwidget.ui" line="125"/>
         <source>Conversion Func.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Conversie-functie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/castwidget.ui" line="150"/>
         <source>Cast Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Cast Type:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/castwidget.ui" line="175"/>
         <source>Explicit</source>
-        <translation type="unfinished"></translation>
+        <translation>Expliciet</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/castwidget.cpp" line="31"/>
         <source>Source data type</source>
-        <translation type="unfinished"></translation>
+        <translation>Bron data type</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/castwidget.cpp" line="32"/>
         <source>Target data type</source>
-        <translation type="unfinished"></translation>
+        <translation>Doel data type</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/castwidget.cpp" line="46"/>
         <source>The function to be assigned to a cast from &lt;em&gt;&lt;strong&gt;typeA&lt;/strong&gt;&lt;/em&gt; to &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt;&lt;/em&gt; must have the following signature: &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt; function(&lt;strong&gt;typeA&lt;/strong&gt;, integer, boolean)&lt;/em&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>De functie die wordt gebruikt bij den cast van &lt;em&gt;&lt;strong&gt;typeA&lt;/strong&gt;&lt;/em&gt; naar &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt;&lt;/em&gt; moet de volgende signature hebben:: &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt; functie(&lt;strong&gt;typeA&lt;/strong&gt;, integer, boolean)&lt;/em&gt;.</translation>
     </message>
 </context>
 <context>
