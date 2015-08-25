@@ -8702,28 +8702,28 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../libpgmodeler_ui/ui/objectrenamewidget.ui" line="26"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectrenamewidget.ui" line="158"/>
         <source>....</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectrenamewidget.ui" line="176"/>
         <source>to:</source>
-        <translation type="unfinished"></translation>
+        <translation>naar:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectrenamewidget.ui" line="194"/>
         <location filename="../libpgmodeler_ui/ui/objectrenamewidget.ui" line="249"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>Hernoem</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectrenamewidget.ui" line="281"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Annuleren</translation>
     </message>
 </context>
 <context>
@@ -8863,17 +8863,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../libpgmodeler/src/operationlist.cpp" line="522"/>
         <source>(invalid object)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">(ongeldig object)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/operationlist.cpp" line="607"/>
         <source>Undoing change on object `%1&apos; (%2).</source>
-        <translation type="unfinished"></translation>
+        <translation>Aanpassingen op object `%1&apos; ongedaan maken (%2).</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/operationlist.cpp" line="671"/>
         <source>Redoing change on object `%1&apos; (%2).</source>
-        <translation type="unfinished"></translation>
+        <translation>Aanpassingen op object `%1&apos; opnieuw topassen (%2).</translation>
     </message>
 </context>
 <context>
@@ -9080,12 +9080,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../libpgmodeler_ui/ui/operatorfamilywidget.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operatorfamilywidget.ui" line="44"/>
         <source>Indexing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Indexering:</translation>
     </message>
 </context>
 <context>
@@ -9166,32 +9166,32 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../libpgmodeler_ui/ui/parameterwidget.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/parameterwidget.ui" line="44"/>
         <source>Default Value:</source>
-        <translation type="unfinished"></translation>
+        <translation>Standaardwaarde:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/parameterwidget.ui" line="73"/>
         <source>Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Modus:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/parameterwidget.ui" line="92"/>
         <source>IN</source>
-        <translation type="unfinished"></translation>
+        <translation>IN</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/parameterwidget.ui" line="99"/>
         <source>OUT</source>
-        <translation type="unfinished"></translation>
+        <translation>OUT</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/parameterwidget.ui" line="106"/>
         <source>VARIADIC</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
