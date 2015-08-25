@@ -8731,17 +8731,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../libpgmodeler_ui/ui/objectselectorwidget.ui" line="35"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectselectorwidget.ui" line="74"/>
         <source>Clear field</source>
-        <translation type="unfinished"></translation>
+        <translation>Veld leegmaken</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectselectorwidget.ui" line="109"/>
         <source>Select Object</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecteer Object</translation>
     </message>
 </context>
 <context>
@@ -10849,17 +10849,17 @@ accepted structure. All available options are described below.</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/schemawidget.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/schemawidget.ui" line="32"/>
         <source>Fill color:</source>
-        <translation type="unfinished"></translation>
+        <translation>Vulkleur:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/schemawidget.ui" line="51"/>
         <source>Show rectangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Toon rechthoek</translation>
     </message>
 </context>
 <context>
@@ -11264,38 +11264,38 @@ accepted structure. All available options are described below.</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/swapobjectsidswidget.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/swapobjectsidswidget.ui" line="38"/>
         <source>Create:</source>
-        <translation type="unfinished"></translation>
+        <translation>Aanmaken:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/swapobjectsidswidget.ui" line="63"/>
         <location filename="../libpgmodeler_ui/ui/swapobjectsidswidget.ui" line="132"/>
         <source>ID:</source>
-        <translation type="unfinished"></translation>
+        <translation>ID:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/swapobjectsidswidget.ui" line="107"/>
         <source>Before:</source>
-        <translation type="unfinished"></translation>
+        <translation>Voor:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/swapobjectsidswidget.ui" line="226"/>
         <source>It&apos;s recommended to use this feature only when the SQL validation fails in cases when a object is being referenced in portions where the ordinary validation couldn&apos;t reach, e.g., inside of a rule command or check constraint expression.</source>
-        <translation type="unfinished"></translation>
+        <translation>Het is aangeraden om dit feature enkel te gebruiken wanneer SQL validatie faalt in gevallen waarin naar een object wordt verwezen in delen waar de gewone validitie niet inkijkt, bijvoorbeeld binnen een regel-commando or check-constraint expressie.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/swapobjectsidswidget.ui" line="297"/>
         <source>Swap the values of the fields</source>
-        <translation type="unfinished"></translation>
+        <translation>Wissel de veldwaarden om</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/swapobjectsidswidget.ui" line="300"/>
         <source>Swap values</source>
-        <translation type="unfinished"></translation>
+        <translation>Wissel de waarden om</translation>
     </message>
 </context>
 <context>
@@ -11325,7 +11325,7 @@ Relationship: %1</source>
     <message>
         <location filename="../libobjrenderer/src/tableview.cpp" line="233"/>
         <source>Connected rels: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Verbonden relaties: %1</translation>
     </message>
 </context>
 <context>
@@ -11478,12 +11478,12 @@ Relationship: %1</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/tablespacewidget.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/tablespacewidget.ui" line="38"/>
         <source>Directory:</source>
-        <translation type="unfinished"></translation>
+        <translation>Map:</translation>
     </message>
 </context>
 <context>
