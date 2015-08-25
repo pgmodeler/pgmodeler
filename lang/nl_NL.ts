@@ -9133,7 +9133,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="106"/>
         <source>Commutator:</source>
-        <translation>Commutor</translation>
+        <translation>Commutator:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="113"/>
