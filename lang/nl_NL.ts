@@ -1637,67 +1637,67 @@ Versie: `%3&apos;</translation>
     <message>
         <location filename="../crashhandler/src/crashhandlerform.cpp" line="31"/>
         <source>Crash Handler</source>
-        <translation type="unfinished"></translation>
+        <translation>Crash Handler</translation>
     </message>
     <message>
         <location filename="../crashhandler/src/crashhandlerform.cpp" line="43"/>
         <source>Stack trace</source>
-        <translation type="unfinished"></translation>
+        <translation>Stack trace</translation>
     </message>
     <message>
         <location filename="../crashhandler/src/crashhandlerform.cpp" line="75"/>
         <source>Input:</source>
-        <translation type="unfinished"></translation>
+        <translation>Invoer:</translation>
     </message>
     <message>
         <location filename="../crashhandler/src/crashhandlerform.cpp" line="88"/>
         <source>Load report file for analysis</source>
-        <translation type="unfinished"></translation>
+        <translation>Laad rapport bestand voor analyze</translation>
     </message>
     <message>
         <location filename="../crashhandler/src/crashhandlerform.cpp" line="96"/>
         <source>Save the attached model file on the filesystem</source>
-        <translation type="unfinished"></translation>
+        <translation>Bewaar het ingevoegde model bestaand op het bestandssysteem</translation>
     </message>
     <message>
         <location filename="../crashhandler/src/crashhandlerform.cpp" line="173"/>
         <source>pgModeler bug report (*.bug);;All files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation>pgModeler bug rapport (*.bug);;Alle bestanden (*.*)</translation>
     </message>
     <message>
         <location filename="../crashhandler/src/crashhandlerform.cpp" line="174"/>
         <source>Load report</source>
-        <translation type="unfinished"></translation>
+        <translation>Laad rapport</translation>
     </message>
     <message>
         <location filename="../crashhandler/src/crashhandlerform.cpp" line="198"/>
         <source>Save model</source>
-        <translation type="unfinished"></translation>
+        <translation>Bewaar model</translation>
     </message>
     <message>
         <location filename="../crashhandler/src/crashhandlerform.cpp" line="199"/>
         <source>Database model (*.dbm);;All files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Database model (*.dbm);;Alle bestanden (*.*)</translation>
     </message>
     <message>
         <location filename="../crashhandler/src/crashhandlerform.cpp" line="236"/>
         <source>Crash handler</source>
-        <translation type="unfinished"></translation>
+        <translation>Crash Handler</translation>
     </message>
     <message>
         <location filename="../crashhandler/src/crashhandlerform.cpp" line="237"/>
         <source>Bug report analysis mode activated.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bug rapport analyze modus is geactiveerd.</translation>
     </message>
     <message>
         <location filename="../crashhandler/src/crashhandlerform.cpp" line="241"/>
         <source>Oops! pgModeler just crashed!</source>
-        <translation type="unfinished"></translation>
+        <translation>Oeps! pgModeler crashte!</translation>
     </message>
     <message>
         <location filename="../crashhandler/src/crashhandlerform.cpp" line="242"/>
         <source>We apologize for what happened! It is clear that a nasty bug caused that. Please fill out the form below describing your actions before pgModeler quit unexpectedly. This will help on bug extermination and improve the software.</source>
-        <translation type="unfinished"></translation>
+        <translation>We verontschuldigen ons voor wat net gebeurde! Het is overduidelijk dat een ernstige bug dit veroorzaakte. Gelieve het formuleer hieronder in te vullen met een beschrijving van wat u deed vooralleer pgModeler onverwachts afsloot. Dit zal ons helpen om deze bug te corrigeren en de software te verbeteren.</translation>
     </message>
 </context>
 <context>
