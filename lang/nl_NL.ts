@@ -913,7 +913,7 @@ This will disable the code of all child and referrer objects.</source>
     <message>
         <location filename="../libpgmodeler/src/baserelationship.cpp" line="61"/>
         <source>rel_%1_%2</source>
-        <translation type="unfinished"></translation>
+        <translation>rel_%1_%2</translation>
     </message>
 </context>
 <context>
@@ -921,98 +921,98 @@ This will disable the code of all child and referrer objects.</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="35"/>
         <source>Bug Report</source>
-        <translation type="unfinished"></translation>
+        <translation>Bug Rapport</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="107"/>
         <source>Bug report</source>
-        <translation type="unfinished"></translation>
+        <translation>Bug rapport</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="156"/>
         <source>Create</source>
-        <translation type="unfinished"></translation>
+        <translation>Versturen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="188"/>
         <source>&amp;Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Annuleren</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="238"/>
         <source>Use the form below to generate a complete bug report. Please, try to be as clear as possible when describing the actions that can reproduce the bug. Additionally, it&apos;s important to attach a sample database model so that the bug can be quickly discovered and fixed!</source>
-        <translation type="unfinished"></translation>
+        <translation>Gebruik dit formulier om een volledig bug rapport aan te maken. Gelieve zo volledig en duidelijk mogelijk de actie die tot de bug leidden, te beschrijven. Indien mogelijk, voeg een voorbeeld database model toe aan dit rapport zodat de bug snel gevonden en gecorigeerd kan worden!</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="273"/>
         <source>Report</source>
-        <translation type="unfinished"></translation>
+        <translation>Rapport</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="291"/>
         <source>Issue details</source>
-        <translation type="unfinished"></translation>
+        <translation>Probleeminformatie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="336"/>
         <source>Output:</source>
-        <translation type="unfinished"></translation>
+        <translation>Output:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="346"/>
         <source>Select the report&apos;s output folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecteer de output-map voor het rapport</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="349"/>
         <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="573"/>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="441"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you prefer it&apos;s possible to report this issue anytime on pgModeler&apos;s project repository at &lt;a href=&quot;http://github.com/pgmodeler/pgmodeler/issues&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;GitHub&lt;/span&gt;&lt;/a&gt;. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Indien u wenst kan u bugs ook rapporten via pgModeler&apos;s project repository op &lt;a href=&quot;http://github.com/pgmodeler/pgmodeler/issues&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;GitHub&lt;/span&gt;&lt;/a&gt;. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="461"/>
         <source>Database Model</source>
-        <translation type="unfinished"></translation>
+        <translation>Database Model</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="526"/>
         <source>In none occasion the models sent within the report will be published. They are kept safe and are used only for debug purpose. </source>
-        <translation type="unfinished"></translation>
+        <translation>Database modellen die u ons opstuurt worden onder geen enkel beding gepubliceerd. Deze worden op een veilige manier bewaard door de ontwikkelaars en worden enkel geraadpleegd voor debugging doeleinden.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="560"/>
         <source>Attach the below database model file to be debugged.</source>
-        <translation type="unfinished"></translation>
+        <translation>Voeg het database model waarmee het probleem zich voordoet toe</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="570"/>
         <source>Attach a different database model</source>
-        <translation type="unfinished"></translation>
+        <translation>Voeg een ander database model toe</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/bugreportform.cpp" line="117"/>
         <source>Bug report successfuly generated! Please, send the file &lt;strong&gt;%1&lt;/strong&gt; to &lt;em&gt;%2&lt;/em&gt; in order be analyzed. Thank you for the collaboration!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het bug rapport werd gegeneerd! Gelieve het bestand &lt;strong&gt;%1&lt;/strong&gt; naar &lt;em&gt;%2&lt;/em&gt; te sturen zodat het kan worden gebruikt bij het debuggen. Hartelijk dank voor je bijdrage!</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/bugreportform.cpp" line="129"/>
         <source>Load model</source>
-        <translation type="unfinished"></translation>
+        <translation>Laad model</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/bugreportform.cpp" line="130"/>
         <source>Database model (*.dbm);;All files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Database model (*.dbm);;Alle bestanden (*.*)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/bugreportform.cpp" line="161"/>
         <source>Select report output folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecteer de rapport-uitvoer map</translation>
     </message>
 </context>
 <context>
