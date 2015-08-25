@@ -1604,32 +1604,32 @@ Versie: `%3&apos;</translation>
     <message>
         <location filename="../libpgmodeler_ui/ui/conversionwidget.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/conversionwidget.ui" line="50"/>
         <source>Source Encoding:</source>
-        <translation type="unfinished"></translation>
+        <translation>Broncodering:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/conversionwidget.ui" line="94"/>
         <source>Target Encoding:</source>
-        <translation type="unfinished"></translation>
+        <translation>Doelcodering:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/conversionwidget.ui" line="141"/>
         <source>Conversion Func.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Conversie-functie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/conversionwidget.ui" line="179"/>
         <source>Default Conversion:</source>
-        <translation type="unfinished"></translation>
+        <translation>Standaard Conversie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/conversionwidget.cpp" line="40"/>
         <source>The function to be assigned to an encoding conversion must have the following signature: &lt;em&gt;void function(integer, integer, cstring, internal, integer)&lt;/em&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Een functie die wordt toegewezen aan een coderingsconversie met de volgende signature hebben: &lt;em&gt;void functie(integer, integer, cstring, internal, integet)&lt;/em&gt;.</translation>
     </message>
 </context>
 <context>
