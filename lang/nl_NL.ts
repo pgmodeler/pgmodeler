@@ -5655,57 +5655,57 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="45"/>
         <source>Attributes</source>
-        <translation type="unfinished"></translation>
+        <translation>Attributen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="91"/>
         <source>Indexing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Indexering:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="136"/>
         <source>Fill Factor:</source>
-        <translation type="unfinished"></translation>
+        <translation>Vul-factor:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="195"/>
         <source>Options:</source>
-        <translation type="unfinished"></translation>
+        <translation>Opties:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="225"/>
         <source>Concurrent</source>
-        <translation type="unfinished"></translation>
+        <translation>Gelijktijdig</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="250"/>
         <source>Unique</source>
-        <translation type="unfinished"></translation>
+        <translation>Uniek</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="275"/>
         <source>Fast update</source>
-        <translation type="unfinished"></translation>
+        <translation>Snelle update</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="288"/>
         <source>Buffering</source>
-        <translation type="unfinished"></translation>
+        <translation>Buffering</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="315"/>
         <source>Predicate:</source>
-        <translation type="unfinished"></translation>
+        <translation>Predicaat:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="360"/>
         <source>Elements</source>
-        <translation type="unfinished"></translation>
+        <translation>Elementen</translation>
     </message>
 </context>
 <context>
@@ -6450,79 +6450,79 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/messagebox.ui" line="29"/>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Dialoogvenster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/messagebox.ui" line="184"/>
         <source>msg</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/messagebox.ui" line="267"/>
         <source>Exceptions</source>
-        <translation type="unfinished"></translation>
+        <translation>Uitzonderingen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/messagebox.ui" line="338"/>
         <source>Show raw text errors or information.</source>
-        <translation type="unfinished"></translation>
+        <translation>Toon technische error-tekst en -informatie.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/messagebox.ui" line="367"/>
         <source>Show/hide exceptions stack.</source>
-        <translation type="unfinished"></translation>
+        <translation>Toon/verberg uitzonderingsstack.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/messagebox.ui" line="370"/>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/messagebox.ui" line="446"/>
         <location filename="../libpgmodeler_ui/src/messagebox.cpp" line="181"/>
         <source>&amp;Yes</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ja</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/messagebox.ui" line="483"/>
         <location filename="../libpgmodeler_ui/src/messagebox.cpp" line="185"/>
         <source>&amp;No</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nee</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/messagebox.ui" line="514"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Annuleren</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/messagebox.cpp" line="181"/>
         <source>&amp;Ok</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;OK</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/messagebox.cpp" line="188"/>
         <source>&amp;Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Annuleren</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/messagebox.cpp" line="199"/>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Fout</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/messagebox.cpp" line="203"/>
         <source>Alert</source>
-        <translation type="unfinished"></translation>
+        <translation>Waarschuwing</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/messagebox.cpp" line="207"/>
         <source>Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Informatie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/messagebox.cpp" line="211"/>
         <source>Confirmation</source>
-        <translation type="unfinished"></translation>
+        <translation>Bevestiging</translation>
     </message>
 </context>
 <context>
@@ -7343,42 +7343,42 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../libpgmodeler_ui/ui/modelnavigationwidget.ui" line="23"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelnavigationwidget.ui" line="59"/>
         <source>Previous model</source>
-        <translation type="unfinished"></translation>
+        <translation>Vorige model</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelnavigationwidget.ui" line="75"/>
         <source>Ctrl+Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Op</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelnavigationwidget.ui" line="100"/>
         <source>Next model</source>
-        <translation type="unfinished"></translation>
+        <translation>Volgende model</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelnavigationwidget.ui" line="116"/>
         <source>Ctrl+Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Neer</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelnavigationwidget.ui" line="154"/>
         <source>Close model</source>
-        <translation type="unfinished"></translation>
+        <translation>Sluit model</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelnavigationwidget.ui" line="157"/>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelnavigationwidget.cpp" line="64"/>
         <source>(model not saved yet)</source>
-        <translation type="unfinished"></translation>
+        <translation>(het model werd nog niet opgeslagen)</translation>
     </message>
 </context>
 <context>
@@ -8515,67 +8515,67 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="49"/>
         <source>Dependencies</source>
-        <translation type="unfinished"></translation>
+        <translation>Afhankelijken</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="133"/>
         <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="270"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation>ID</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="142"/>
         <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="279"/>
         <source>Object</source>
-        <translation type="unfinished"></translation>
+        <translation>Object</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="151"/>
         <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="288"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Type</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="160"/>
         <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="297"/>
         <source>Parent Object</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouder Object</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="169"/>
         <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="306"/>
         <source>Parent Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouder Type</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="181"/>
         <source>Exclude indirect dependencies</source>
-        <translation type="unfinished"></translation>
+        <translation>Sluit indirecte afhankelijken uit</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="192"/>
         <source>References</source>
-        <translation type="unfinished"></translation>
+        <translation>Referenties</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="318"/>
         <source>Include indirect references</source>
-        <translation type="unfinished"></translation>
+        <translation>Neem indirecte afhankele op</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="401"/>
         <source>This object does not exists anymore. The dependencies and references listing are disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dit object bestaat niet langer. Het lijsten van afhankelijken en referenties is uitgeschakeld.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/objectdepsrefswidget.cpp" line="27"/>
         <source>Object&apos;s dependencies &amp; references</source>
-        <translation type="unfinished"></translation>
+        <translation>Afhankelijken &amp; referenties van het object</translation>
     </message>
 </context>
 <context>
@@ -11070,68 +11070,70 @@ accepted structure. All available options are described below.</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodeeditorform.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodeeditorform.ui" line="69"/>
         <source>Load SQL script</source>
-        <translation type="unfinished"></translation>
+        <translation>Laad SQL script</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodeeditorform.ui" line="72"/>
         <source>&amp;Load</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Laden</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodeeditorform.ui" line="115"/>
         <location filename="../libpgmodeler_ui/ui/sourcecodeeditorform.ui" line="164"/>
         <source>Save SQL commands</source>
-        <translation type="unfinished"></translation>
+        <translation>Bewaar SQL commando&apos;s</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodeeditorform.ui" line="118"/>
         <source>&amp;Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Op&amp;slaan</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodeeditorform.ui" line="167"/>
         <source>&amp;Find</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Zoek</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodeeditorform.ui" line="180"/>
         <source>Alt+F</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Z is accelarator for Find</translatorcomment>
+        <translation>Alt+Z</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodeeditorform.ui" line="213"/>
         <source>Clear sql input field and results</source>
-        <translation type="unfinished"></translation>
+        <translation>Wis SQL invoerveld en resultaten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodeeditorform.ui" line="216"/>
         <source>Clear All</source>
-        <translation type="unfinished"></translation>
+        <translation>Alles Wissen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodeeditorform.ui" line="250"/>
         <source>Export results to a CSV file</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporteer de resultaten naar CSV bestand</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodeeditorform.ui" line="253"/>
         <source>Snippe&amp;ts</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodeeditorform.ui" line="361"/>
         <source>&amp;Apply</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Not sure p is a good accellerator here (t would be better but that is used for snippets)</translatorcomment>
+        <translation>Toe&amp;passen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodeeditorform.ui" line="387"/>
         <source>&amp;Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Annuleren</translation>
     </message>
 </context>
 <context>
