@@ -588,12 +588,12 @@
     <message>
         <location filename="../main/src/application.cpp" line="126"/>
         <source>Unknown exception caught!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een onbekende uitzondering trad op!</translation>
     </message>
     <message>
         <location filename="../main/src/application.cpp" line="146"/>
         <source>Failed to create initial configuration in `%1&apos;! Check if the current user has write permission over that path and at least read permission over `%2&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>De initiële configuratie kon niet worden gecreëerd in `%1&apos;! Kijk na of de huidige gebruiker schrijf-machtigingen heeft op dit pad en minstens lees-machtigingen op &apos;%2&apos;.</translation>
     </message>
 </context>
 <context>
