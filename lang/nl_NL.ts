@@ -1073,32 +1073,32 @@ This will disable the code of all child and referrer objects.</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/centralwidget.ui" line="23"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/centralwidget.ui" line="98"/>
         <source>New model</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieuw model</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/centralwidget.ui" line="137"/>
         <source>Open model</source>
-        <translation type="unfinished"></translation>
+        <translation>Open model</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/centralwidget.ui" line="179"/>
         <source>Sample models</source>
-        <translation type="unfinished"></translation>
+        <translation>Voorbeeldmodellen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/centralwidget.ui" line="224"/>
         <source>Recent models</source>
-        <translation type="unfinished"></translation>
+        <translation>Recente modellen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/centralwidget.ui" line="270"/>
         <source>Last session</source>
-        <translation type="unfinished"></translation>
+        <translation>Vorige sessie</translation>
     </message>
 </context>
 <context>
