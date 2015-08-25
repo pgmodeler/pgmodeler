@@ -4913,82 +4913,82 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="57"/>
         <source>Replace one occurrence</source>
-        <translation type="unfinished"></translation>
+        <translation>Vervang één voorkomen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="60"/>
         <source>Replace</source>
-        <translation type="unfinished"></translation>
+        <translation>Vervangen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="90"/>
         <source>Replace all occurrences</source>
-        <translation type="unfinished"></translation>
+        <translation>Vervang alle voorkomens</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="93"/>
         <source>Replace All</source>
-        <translation type="unfinished"></translation>
+        <translation>Vervang Allen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="123"/>
         <source>Replace the selection and find the next one</source>
-        <translation type="unfinished"></translation>
+        <translation>Vervang in de selectie en vindt de volgende</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="126"/>
         <source>Replace &amp;&amp; Find</source>
-        <translation type="unfinished"></translation>
+        <translation>Vervang &amp;&amp; Zoek</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="160"/>
         <source>Replace:</source>
-        <translation type="unfinished"></translation>
+        <translation>Vervang:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="170"/>
         <source>Find:</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoek:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="193"/>
         <source>Find previous</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoek vorige</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="209"/>
         <source>Shift+F3</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="233"/>
         <source>Find next</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoek volgende</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="249"/>
         <source>F3</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="259"/>
         <source>Case sensitive</source>
-        <translation type="unfinished"></translation>
+        <translation>Hoofdlettergevoelig</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="272"/>
         <source>Regular expression</source>
-        <translation type="unfinished"></translation>
+        <translation>Regular expression</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="285"/>
         <source>Whole words</source>
-        <translation type="unfinished"></translation>
+        <translation>Volledig woord</translation>
     </message>
 </context>
 <context>
