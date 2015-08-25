@@ -8863,7 +8863,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../libpgmodeler/src/operationlist.cpp" line="522"/>
         <source>(invalid object)</source>
-        <translation type="unfinished">(ongeldig object)</translation>
+        <translation>(ongeldig object)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/operationlist.cpp" line="607"/>
@@ -9677,17 +9677,17 @@ accepted structure. All available options are described below.</source>
     <message>
         <location filename="../libpgmodeler_ui/src/pgmodelerplugin.cpp" line="37"/>
         <source>Plugin Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Plugin Informatie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/pgmodelerplugin.cpp" line="92"/>
         <source>Version: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Versie: %1</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/pgmodelerplugin.cpp" line="93"/>
         <source>Author: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Auteur: %1</translation>
     </message>
 </context>
 <context>
@@ -9695,17 +9695,17 @@ accepted structure. All available options are described below.</source>
     <message>
         <location filename="../libpgmodeler_ui/src/pgmodeleruins.cpp" line="76"/>
         <source>Do you want to apply the &lt;strong&gt;SQL %1 status&lt;/strong&gt; to the object&apos;s references too? This will avoid problems when exporting or validating the model.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wenst u de &lt;strong&gt; SQL %1 status&lt;/strong&gt; ook toe te passen op de referenties van het object? Dit vermijdt problemen bij het exporteren of valideren van het model.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/pgmodeleruins.cpp" line="76"/>
         <source>disabling</source>
-        <translation type="unfinished"></translation>
+        <translation>uitschakelen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/pgmodeleruins.cpp" line="76"/>
         <source>enabling</source>
-        <translation type="unfinished"></translation>
+        <translation>inschakelen</translation>
     </message>
 </context>
 <context>
@@ -9809,37 +9809,37 @@ accepted structure. All available options are described below.</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/pluginsconfigwidget.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/pluginsconfigwidget.ui" line="80"/>
         <source>Open in file manager</source>
-        <translation type="unfinished"></translation>
+        <translation>Open in bestandsbeheer</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/pluginsconfigwidget.ui" line="106"/>
         <source>Plug-ins root directory:</source>
-        <translation type="unfinished"></translation>
+        <translation>Plug-in startmap:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/pluginsconfigwidget.ui" line="121"/>
         <source>Loaded plug-ins</source>
-        <translation type="unfinished"></translation>
+        <translation>Geladen plug-ins</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/pluginsconfigwidget.cpp" line="32"/>
         <source>Plugin</source>
-        <translation type="unfinished"></translation>
+        <translation>Plugin</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/pluginsconfigwidget.cpp" line="34"/>
         <source>Version</source>
-        <translation type="unfinished"></translation>
+        <translation>Versie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/pluginsconfigwidget.cpp" line="35"/>
         <source>Library</source>
-        <translation type="unfinished"></translation>
+        <translation>Bibliotheek</translation>
     </message>
 </context>
 <context>
@@ -9847,14 +9847,14 @@ accepted structure. All available options are described below.</source>
     <message>
         <location filename="../libpgmodeler/src/databasemodel.cpp" line="31"/>
         <source>new_database</source>
-        <translation type="unfinished"></translation>
+        <translation>nieuwe_database</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/databasemodel.cpp" line="2919"/>
         <location filename="../libpgmodeler/src/databasemodel.cpp" line="2972"/>
         <location filename="../libpgmodeler/src/databasemodel.cpp" line="3195"/>
         <source>%1 (line: %2)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (lijn %2)</translation>
     </message>
 </context>
 <context>
@@ -9862,27 +9862,27 @@ accepted structure. All available options are described below.</source>
     <message>
         <location filename="../libpgmodeler/src/relationship.cpp" line="85"/>
         <source>%1_has_one_%2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1_heeft_exact_een_%2</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/relationship.cpp" line="87"/>
         <source>%1_has_many_%2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1_heeft_meerdere_%2</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/relationship.cpp" line="89"/>
         <source>many_%1_has_many_%2</source>
-        <translation type="unfinished"></translation>
+        <translation>meerdere_%1_heeft_meerdere_%2</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/relationship.cpp" line="91"/>
         <source>%1_inherits_%2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1_erft_van_%2</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/relationship.cpp" line="93"/>
         <source>%1_copies_%2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1_kopieert_%2</translation>
     </message>
 </context>
 <context>
@@ -10583,42 +10583,42 @@ accepted structure. All available options are described below.</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/rulewidget.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/rulewidget.ui" line="53"/>
         <source>Event:</source>
-        <translation type="unfinished"></translation>
+        <translation>Event:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/rulewidget.ui" line="105"/>
         <source>Execution Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Uitvoeringstype:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/rulewidget.ui" line="154"/>
         <source>Conditional Expr.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Voorwaardelijke Expressie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/rulewidget.ui" line="161"/>
         <source>Commands</source>
-        <translation type="unfinished"></translation>
+        <translation>Commando&apos;s</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/rulewidget.ui" line="194"/>
         <source>SQL Command:</source>
-        <translation type="unfinished"></translation>
+        <translation>SQL Commando:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/rulewidget.cpp" line="38"/>
         <source>SQL command</source>
-        <translation type="unfinished"></translation>
+        <translation>SQL commando</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/rulewidget.cpp" line="42"/>
         <source>To create a rule that does not perform any action (&lt;strong&gt;DO NOTHING&lt;/strong&gt;) simply do not specify commands in the SQL commands table.</source>
-        <translation type="unfinished"></translation>
+        <translation>Om een regel aan te maken die niets doet (&lt;strong&gt;DO NOTHING&lt;/strong&gt;), laat eenvoudigweg de commando&apos;s in de SQL commando tabel leeg.</translation>
     </message>
 </context>
 <context>
