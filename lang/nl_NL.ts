@@ -1543,7 +1543,7 @@ Versie: `%3&apos;</translation>
     <message>
         <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="313"/>
         <source>No inherit:</source>
-        <translation type="unfinished"></translation>
+        <translation>Geen overerving:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="333"/>
@@ -3444,17 +3444,17 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
     <message>
         <location filename="../libpgmodeler/src/databasemodel.cpp" line="358"/>
         <source>The demonstration version can create only `%1&apos; instances of each object type! You&apos;ve reach this limit for the type: `%2&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>U kan slechts `%1&apos; instancies per object type aanmaken in demonstratie-versies! U heeft deze limiet bereikt voor het type `%2&apos;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/databasemodel.cpp" line="2909"/>
         <source>Loading: `%1&apos; (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bezig met laden: `%1&apos; (%2)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/databasemodel.cpp" line="6292"/>
         <source>Generating %1 of the object `%2&apos; (%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>Genereren van %1 van het type `%2&apos; (%3)</translation>
     </message>
 </context>
 <context>
@@ -5639,7 +5639,7 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <location filename="../libobjrenderer/src/graphicalview.cpp" line="257"/>
         <source>Connected rels: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Verbonden relaties: %1</translation>
     </message>
 </context>
 <context>
@@ -5647,7 +5647,7 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/hinttextwidget.ui" line="44"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
 </context>
 <context>
@@ -7561,12 +7561,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../libpgmodeler_ui/src/modelvalidationhelper.cpp" line="565"/>
         <source>There are pending errors! SQL validation will not be executed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Er zijn fouten! SQL validatie zal niet worden uitgevoerd.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelvalidationhelper.cpp" line="648"/>
         <source>Operation canceled by the user.</source>
-        <translation type="unfinished"></translation>
+        <translation>De operatie werd geannuleerd door de gebruiker.</translation>
     </message>
 </context>
 <context>
@@ -11303,12 +11303,12 @@ accepted structure. All available options are described below.</source>
     <message>
         <location filename="../libpgmodeler/src/table.cpp" line="38"/>
         <source>new_table</source>
-        <translation type="unfinished"></translation>
+        <translation>nieuwe_tabel</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/table.cpp" line="315"/>
         <source>In demonstration version tables can have only `%1&apos; instances of each child object type or ancestor tables! You&apos;ve reach this limit for the type: `%2&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabellen kunnen slechts `%1&apos; instancies per kind-object type of voorouder-tabellen hebben in demonstratie-versies! U heeft deze limiet bereikt voor het type `%2&apos;</translation>
     </message>
 </context>
 <context>
@@ -11317,7 +11317,7 @@ accepted structure. All available options are described below.</source>
         <location filename="../libobjrenderer/src/tableobjectview.cpp" line="199"/>
         <source>
 Relationship: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Relatie: %1</translation>
     </message>
 </context>
 <context>
