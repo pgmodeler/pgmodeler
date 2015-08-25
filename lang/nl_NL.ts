@@ -1106,22 +1106,22 @@ This will disable the code of all child and referrer objects.</source>
     <message>
         <location filename="../libpgmodeler_ui/src/codecompletionwidget.cpp" line="35"/>
         <source>Make persistent</source>
-        <translation type="unfinished"></translation>
+        <translation>Maakt blijvend</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/codecompletionwidget.cpp" line="36"/>
         <source>Makes the widget closable only by ESC key or mouse click on other controls.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zorgt ervoor dat widgets enkel kunnen worden gesloten via de ESC toets of via een muisklik op andere controls.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/codecompletionwidget.cpp" line="357"/>
         <source>SQL Keyword</source>
-        <translation type="unfinished"></translation>
+        <translation>SQL Sleutelwoord</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/codecompletionwidget.cpp" line="388"/>
         <source>(no items found.)</source>
-        <translation type="unfinished"></translation>
+        <translation>(geen items gevonden.)</translation>
     </message>
 </context>
 <context>
