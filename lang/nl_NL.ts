@@ -3462,77 +3462,77 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
     <message>
         <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="42"/>
         <source>Attributes</source>
-        <translation type="unfinished"></translation>
+        <translation>Attributen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="95"/>
         <source>LC_COLLATE:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="121"/>
         <source>LC_CTYPE:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="160"/>
         <source>Template DB:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sjabloon DB:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="173"/>
         <source>Model Author:</source>
-        <translation type="unfinished"></translation>
+        <translation>Modelauteur:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="192"/>
         <source>Encoding:</source>
-        <translation type="unfinished"></translation>
+        <translation>Codering:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="228"/>
         <source>Connections:</source>
-        <translation type="unfinished"></translation>
+        <translation>Verbindingen:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="284"/>
         <source>Default Objects</source>
-        <translation type="unfinished"></translation>
+        <translation>Standaardobjecten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="302"/>
         <source>Tablespace:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tablespace:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="309"/>
         <source>Schema:</source>
-        <translation type="unfinished"></translation>
+        <translation>Schema:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="316"/>
         <source>Collation:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sortering:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="323"/>
         <source>Owner:</source>
-        <translation type="unfinished"></translation>
+        <translation>Eigenaar:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databasewidget.cpp" line="39"/>
         <source>The fields &lt;strong&gt;LC_COLLATE&lt;/strong&gt; and &lt;strong&gt;LC_CTYPE&lt;/strong&gt; have pre-configured values based upon the running system. You can freely modify those values if you intend to export the model to another host.</source>
-        <translation type="unfinished"></translation>
+        <translation>De velden &lt;strong&gt;LC_COLLATE&lt;/strong&gt; en &lt;strong&gt;LC_CTYPE&lt;/strong&gt; hebben voorgedefinieerde waarden gebasseerd op het lopende systeem. Deze waarden kunnen vrij worden aangepast indien u dit model naar een andere host wenst te exporteren.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databasewidget.cpp" line="43"/>
         <source>Use the above fields to specify the default attributes assigned to new objects created on the database model. Leaving a field empty will cause PostgreSQL to use the default values when exporting the model.</source>
-        <translation type="unfinished"></translation>
+        <translation>Gebruik de velden hierboven om de waarden voor standaard attributen die aan nieuwe objecten worden toegewezen, te specifieren. Het veld leeglaten zorgt ervoor dat PostgreSQL zijn standaardwaarden gebruikt bij het exporteren.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databasewidget.cpp" line="59"/>
@@ -3540,7 +3540,7 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
         <location filename="../libpgmodeler_ui/src/databasewidget.cpp" line="134"/>
         <location filename="../libpgmodeler_ui/src/databasewidget.cpp" line="139"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>Standaard</translation>
     </message>
 </context>
 <context>
@@ -9093,72 +9093,72 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="35"/>
         <source>MERGES</source>
-        <translation type="unfinished"></translation>
+        <translation>MERGES</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="42"/>
         <source>HASHES</source>
-        <translation type="unfinished"></translation>
+        <translation>HASHES</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="55"/>
         <source>Options:</source>
-        <translation type="unfinished"></translation>
+        <translation>Opties:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="66"/>
         <source>Arguments</source>
-        <translation type="unfinished"></translation>
+        <translation>Argumenten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="71"/>
         <source>Advanced</source>
-        <translation type="unfinished"></translation>
+        <translation>Geavanceerd</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="92"/>
         <source>Join:</source>
-        <translation type="unfinished"></translation>
+        <translation>Join:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="99"/>
         <source>Restrict:</source>
-        <translation type="unfinished"></translation>
+        <translation>Restrict:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="106"/>
         <source>Commutator:</source>
-        <translation type="unfinished"></translation>
+        <translation>Commutor</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="113"/>
         <source>Negator:</source>
-        <translation type="unfinished"></translation>
+        <translation>Negator:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="163"/>
         <source>Operator Func.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Operator functie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/operatorwidget.cpp" line="33"/>
         <source>Left Argument Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Linkse Argument Type</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/operatorwidget.cpp" line="35"/>
         <source>Right Argument Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Rechtse Argument Type</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/operatorwidget.cpp" line="42"/>
         <source>To create a unary operator it is necessary to specify as &lt;strong&gt;&lt;em&gt;&apos;any&apos;&lt;/em&gt;&lt;/strong&gt; one of its arguments. Additionally, the function that defines the operator must have only one parameter and this, in turn, must have the same data type of the the argument of unary operator.</source>
-        <translation type="unfinished"></translation>
+        <translation>Om een unaire operator aan te maken moet u &lt;strong&gt;&lt;em&gt;&apos;any&apos;&lt;/em&gt;&lt;/strong&gt; als een van zijn argumenten specifiëren. Daarenboven mag de functie die de operator definieert slechts één parameter bezitten die van hetzelfde type moet zijn als de unaire operator.</translation>
     </message>
 </context>
 <context>
@@ -10793,55 +10793,55 @@ accepted structure. All available options are described below.</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="84"/>
         <source>Database explorer</source>
-        <translation type="unfinished"></translation>
+        <translation>Databaseverkenner</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="129"/>
         <source>Disconnect from all databases</source>
-        <translation type="unfinished"></translation>
+        <translation>Van alle databases ontkoppelen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="132"/>
         <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="187"/>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="184"/>
         <source>Update the database list.</source>
-        <translation type="unfinished"></translation>
+        <translation>Update de database lijst.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="232"/>
         <source>SQL execution</source>
-        <translation type="unfinished"></translation>
+        <translation>SQL uitvoering</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/sqltoolwidget.cpp" line="107"/>
         <location filename="../libpgmodeler_ui/src/sqltoolwidget.cpp" line="138"/>
         <location filename="../libpgmodeler_ui/src/sqltoolwidget.cpp" line="176"/>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Opgepast</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/sqltoolwidget.cpp" line="108"/>
         <source>&lt;strong&gt;ATTENTION:&lt;/strong&gt; Disconnect from all databases will close any opened tab in this view! Do you really want to proceed?</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;LET OP:&lt;/strong&gt; Van alle databases ontkoppelen sluit alle tab-bladen in dit venster! Bent u zeker dat u verder wilt gaan?</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/sqltoolwidget.cpp" line="139"/>
         <source>&lt;strong&gt;CAUTION:&lt;/strong&gt; You are about to drop the entire database &lt;strong&gt;%1&lt;/strong&gt;! All data will be completely wiped out. Do you really want to proceed?</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;PAS OP:&lt;/strong&gt; U staat op het punt om de volledige database &lt;strong&gt;%1&lt;/strong&gt; te verwijderen! Alle data zal verloren gaan. Bent u zeker dat u verder wilt gaan?</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/sqltoolwidget.cpp" line="177"/>
         <source>You&apos;re running a demonstration version! The data manipulation feature is available only in the full version!</source>
-        <translation type="unfinished"></translation>
+        <translation>Dit is een demonstratie-versie. De data manipulatie functionaliteit is enkel beschikbaar in de volledige versie!</translation>
     </message>
 </context>
 <context>
