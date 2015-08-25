@@ -539,6 +539,7 @@ void DatabaseImportHelper::importDatabase(void)
 		if(!import_canceled)
 		{
 			swapSequencesTablesIds();
+      assignSequencesToColumns();
 
 			if(!errors.empty())
 			{
@@ -1563,8 +1564,8 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 
       col.setType(PgSQLType::parseString(type_name));
       col.setNotNull(!itr->second[ParsersAttributes::NOT_NULL].isEmpty());
-			col.setDefaultValue(itr->second[ParsersAttributes::DEFAULT_VALUE]);
 			col.setComment(itr->second[ParsersAttributes::COMMENT]);
+      col.setDefaultValue(itr->second[ParsersAttributes::DEFAULT_VALUE]);
 
       //Checking if the collation used by the column exists, if not it'll be created when auto_resolve_deps is checked
       if(auto_resolve_deps && !itr->second[ParsersAttributes::COLLATION].isEmpty())
@@ -2003,6 +2004,53 @@ void DatabaseImportHelper::createTableInheritances(void)
         errors.push_back(e);
       else
         throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+    }
+  }
+}
+
+void DatabaseImportHelper::assignSequencesToColumns(void)
+{
+  Table *table=nullptr;
+  Column *col=nullptr;
+  emit s_progressUpdated(95,
+                         trUtf8("Assigning sequences to columns..."),
+                         OBJ_SEQUENCE);
+
+  for(auto &object : *dbmodel->getObjectList(OBJ_TABLE))
+  {
+    table=dynamic_cast<Table *>(object);
+
+    for(auto &tab_obj : *table->getObjectList(OBJ_COLUMN))
+    {
+      col=dynamic_cast<Column *>(tab_obj);
+
+      //Translating the default value nextval('sequence'::regclass)
+      if(col->getType().isIntegerType() &&
+         col->getDefaultValue().contains(QString("nextval(")))
+      {
+        QString seq_name=col->getDefaultValue();
+        Sequence *seq=nullptr;
+
+        //Extracting the name from the nextval(''::regclass) portion and formating it
+        seq_name.remove(0, seq_name.indexOf(QChar('\'')) + 1);
+        seq_name.remove(seq_name.indexOf(QChar('\'')), seq_name.length());
+        seq_name=BaseObject::formatName(seq_name);
+
+        /* Checking if the sequence name contains the schema prepended.
+           If not, it'll be prepended by retrieving the table's schema name */
+        if(!seq_name.contains(QChar('.')))
+           seq_name.prepend(table->getSchema()->getName(true) + QString("."));
+
+        seq=dbmodel->getSequence(seq_name);
+
+        if(seq)
+        {
+          col->setSequence(seq);
+
+          if(col->getParentTable()->getObjectId() < seq->getObjectId())
+            BaseObject::swapObjectsIds(col->getParentTable(), seq, false);
+        }
+      }
     }
   }
 }

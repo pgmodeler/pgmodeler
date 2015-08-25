@@ -156,6 +156,9 @@ class DatabaseImportHelper: public QObject {
     void __createTableInheritances(void);
     void createTableInheritances(void);
 
+    //! brief Tries to assign imported sequences that are related to nextval() calls used in columns default values
+    void assignSequencesToColumns(void);
+
 		/*! \brief Retrieve the schema qualified name for the specified object oid. If the oid represents a function
 		or operator the signature can be retrieved instead by using the boolean parameter */
 		QString getObjectName(const QString &oid, bool signature_form=false);

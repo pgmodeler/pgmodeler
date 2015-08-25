@@ -90,7 +90,7 @@ namespace GlobalAttributes {
 
   /*! \brief Variables used to reference the pgModeler directories.
 
-     PGMODELER_SCHEMAS_DIR   --> "schema" folder  (SQL/XML generation schema files)
+     PGMODELER_SCHEMAS_DIR   --> "schemas" folder  (SQL/XML generation schema files)
      PGMODELER_CONF_DIR      --> "conf" folder    (user's own settings for pgModeler)
      PGMODELER_TMPL_CONF_DIR --> "conf" folder    (used as template settings and copied to user's settings)
      PGMODELER_LANG_DIR      --> "lang" folder    (ui translations)
