@@ -7515,7 +7515,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../libpgmodeler_ui/ui/modeloverviewwidget.ui" line="41"/>
         <source>Model overview</source>
-        <translation type="unfinished"></translation>
+        <translation>Modeloverzicht</translation>
     </message>
 </context>
 <context>
@@ -7523,37 +7523,37 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../libpgmodeler_ui/ui/modelrestorationform.ui" line="35"/>
         <source>Model restoration</source>
-        <translation type="unfinished"></translation>
+        <translation>Modelherstel</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelrestorationform.ui" line="159"/>
         <source>pgModeler was not closed properly in a previous execution and some models were still being edited. Click &lt;strong&gt;Restore&lt;/strong&gt; to reopen the models or &lt;strong&gt;Cancel&lt;/strong&gt; to abort the restoration.</source>
-        <translation type="unfinished"></translation>
+        <translation>pgModeler werd niet correct afgesloten en sommige modellen waren nog steeds geladen. Klik op &lt;strong&gt;Herstel&lt;/strong&gt; om deze mogellen te heropenen of &lt;strong&gt;Annuleer&lt;/strong&gt; om het herstel af te breken.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelrestorationform.ui" line="207"/>
         <source>pgModeler will try to recover the selected models but will not destroy them in case of loading failure. This option serves as a last resort in order to try to recover the database model. Temporary models will last until the application is closed so the user must try to manually recover the files before exit pgModeler.</source>
-        <translation type="unfinished"></translation>
+        <translation>pgModeler zal proberen om de geselecteerde modellen te herstellen. Indien dit niet lukt blijven deze staan. Deze optie dient als laatste redmiddel om een database model te recupereren. Tijdelijke modellen zullen blijven staan totdat de applicatie wordt afgesloten. Dit betekent dat de gebruiker moet proberen deze manueel te recupereren vooralleer pgModeler af te sluiten.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelrestorationform.ui" line="210"/>
         <source>Keep temporary models in case of restoration failure</source>
-        <translation type="unfinished"></translation>
+        <translation>Houdt de tijdelijke modellen bij indien recuperatie faalt</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelrestorationform.ui" line="281"/>
         <source>&amp;Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Annuleer</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelrestorationform.ui" line="322"/>
         <source>&amp;Restore</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Herstel</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelrestorationform.cpp" line="53"/>
         <source>Modified: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Aangepast: %1</translation>
     </message>
 </context>
 <context>
@@ -8157,27 +8157,27 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../libpgmodeler_ui/src/modelsdiffhelper.cpp" line="246"/>
         <source>Processing object `%1&apos; (%2)...</source>
-        <translation type="unfinished"></translation>
+        <translation>Object `%1&apos; wordt behandeld (%2)...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelsdiffhelper.cpp" line="345"/>
         <source>Skipping object `%1&apos; (%2)...</source>
-        <translation type="unfinished"></translation>
+        <translation>Object `%1&apos; wordt overgeslagen (%2)...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelsdiffhelper.cpp" line="580"/>
         <source>Processing diff infos...</source>
-        <translation type="unfinished"></translation>
+        <translation>Diff informatie wordt verwerkt...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelsdiffhelper.cpp" line="608"/>
         <source>Processing `%1&apos; info for object `%2&apos; (%3)...</source>
-        <translation type="unfinished"></translation>
+        <translation>`%1&apos; informatie voor object `%2&apos; wordt verwerkt (%3)...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelsdiffhelper.cpp" line="819"/>
         <source>Comparison between model and database finished.</source>
-        <translation type="unfinished"></translation>
+        <translation>De vergelijking tussen het model en de database is voltooid.</translation>
     </message>
 </context>
 <context>
