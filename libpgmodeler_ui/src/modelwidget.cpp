@@ -3425,10 +3425,12 @@ void ModelWidget::createSequenceFromColumn(void)
 		op_list->registerObject(seq, Operation::OBJECT_CREATED);
 		db_model->addSequence(seq);
 
+    BaseObject::swapObjectsIds(tab, seq, false);
+
     op_list->registerObject(col, Operation::OBJECT_MODIFIED, -1, tab);
     //Changes the column type to the alias for serial type
     col->setType(col->getType().getAliasType());
-    col->setSequence(seq);
+    col->setSequence(seq);   
 
     op_list->finishOperationChain();
 

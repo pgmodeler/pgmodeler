@@ -71,7 +71,7 @@ bool BaseObject::use_cached_code=true;
 
 BaseObject::BaseObject(void)
 {
-	object_id=BaseObject::global_id++;
+  object_id=BaseObject::global_id++;
 	is_protected=system_obj=sql_disabled=false;
 	code_invalidated=true;
 	obj_type=BASE_OBJECT;
