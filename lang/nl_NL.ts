@@ -153,7 +153,7 @@
     <message>
         <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="782"/>
         <source>French UI translation and several improvements in auxiliary scripts.</source>
-        <translation>Franse vertaling en verschillende verbeteringen in scripts</translation>
+        <translation>Franse vertaling en verschillende verbeteringen in scripts.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="787"/>
@@ -168,7 +168,7 @@
     <message>
         <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="801"/>
         <source>Chinese UI translation and small fixes.</source>
-        <translation>Chinese vertaling en kleine verbeteringen</translation>
+        <translation>Chinese vertaling en kleine verbeteringen.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="806"/>
@@ -179,7 +179,7 @@
         <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="820"/>
         <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="896"/>
         <source>French UI translation.</source>
-        <translation>Franse vertaling</translation>
+        <translation>Franse vertaling.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="825"/>
@@ -194,7 +194,7 @@
     <message>
         <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="839"/>
         <source>Improvements on build scripts enabling the custom packaging in Linux distros; Per-user settings; pgModeler&apos;s package maintainer in Debian Linux.</source>
-        <translation>Aanpassingen aan de build script die aangepaste verpakking for Linux distro&apos;s mogelijk maakt; per-user instellingen; Debian Linux package maintainer voor pgModeler</translation>
+        <translation>Aanpassingen aan de build script die aangepaste verpakking for Linux distro&apos;s mogelijk maakt; per-user instellingen; Debian Linux package maintainer voor pgModeler.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="844"/>
@@ -209,7 +209,7 @@
     <message>
         <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="858"/>
         <source>Additional work for packaging in Linux distros; pgModeler&apos;s package maintainer in Fedora Linux.</source>
-        <translation>Bijkomend werk voor Linux Distro verpakking; Fedora Linux package maintainer voor pgModeler</translation>
+        <translation>Bijkomend werk voor Linux Distro verpakking; Fedora Linux package maintainer voor pgModeler.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="863"/>
@@ -244,7 +244,7 @@
     <message>
         <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="915"/>
         <source>Spanish UI translation.</source>
-        <translation>Spaanse vertaling</translation>
+        <translation>Spaanse vertaling.</translation>
     </message>
 </context>
 <context>
@@ -839,7 +839,7 @@
     <message>
         <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="295"/>
         <source>This object is protected thus no change in form will be applied to it.</source>
-        <translation>Dit object is beschermd en dus worden vorm-aanpassingen niet toegepast</translation>
+        <translation>Dit object is beschermd en dus worden vorm-aanpassingen niet toegepast.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="323"/>
@@ -988,7 +988,7 @@ Dit zorgt ervoor dat de code voor alle kinder-objecten en refererende objecten w
     <message>
         <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="560"/>
         <source>Attach the below database model file to be debugged.</source>
-        <translation>Voeg het database model waarmee het probleem zich voordoet toe</translation>
+        <translation>Voeg het database model waarmee het probleem zich voordoet toe.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="570"/>
@@ -1041,7 +1041,7 @@ Dit zorgt ervoor dat de code voor alle kinder-objecten en refererende objecten w
     <message>
         <location filename="../libpgmodeler_ui/ui/castwidget.ui" line="125"/>
         <source>Conversion Func.:</source>
-        <translation>Conversie-functie</translation>
+        <translation>Conversie-functie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/castwidget.ui" line="150"/>
@@ -10902,7 +10902,7 @@ accepted structure. All available options are described below.</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/sequencewidget.ui" line="201"/>
         <source>Owner Col.:</source>
-        <translation>Bezittende kolom</translation>
+        <translation>Bezittende kolom:</translation>
     </message>
 </context>
 <context>
@@ -11511,7 +11511,7 @@ Relationship: %1</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/tagwidget.ui" line="64"/>
         <source>Title:</source>
-        <translation>Titel</translation>
+        <translation>Titel:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/tagwidget.ui" line="71"/>
