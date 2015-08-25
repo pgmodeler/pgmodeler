@@ -26,7 +26,7 @@
     <message>
         <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="231"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://pgmodeler.com.br&quot;&gt;&lt;span style=&quot; font-size:11pt; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;http://pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="247"/>
@@ -36,7 +36,7 @@
     <message>
         <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="272"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copyright 2006-2015 - Raphael Araújo e Silva &amp;lt;&lt;a href=&quot;mailto:raphael@pgmodeler.com.br&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;raphael@pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="302"/>
@@ -51,12 +51,12 @@
     <message>
         <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="350"/>
         <source>0.0.0.0</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="408"/>
         <source>(CODE_NAME)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="442"/>
@@ -66,7 +66,7 @@
     <message>
         <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="506"/>
         <source>(BUILD_NUM)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="528"/>
@@ -81,7 +81,7 @@
     <message>
         <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="624"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This page is dedicated to all contributors who gave a bit of their time in make pgModeler a better software somehow. The complete list of people that helped pgModeler can be found at &lt;a href=&quot;https://github.com/pgmodeler/pgmodeler/graphs/contributors&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#00a489;&quot;&gt;GitHub&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;If you have a great idea to improve pgModeler please submit it &lt;a href=&quot;http://github.com/pgmodeler/pgmodeler/issues&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#00a489;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;. No ideas for now but want to help? Why not donate a few bucks &lt;a href=&quot;http://pgmodeler.com.br/#donate&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#00a489;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;!?&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Deze pagina is opgedragen aan alle medewerkers die een beetje van hun tijd opofferden om pgModeler te verbeteren op verschillende manieren. De volledige lijst van individuen die meewerken aan pgModeler is terug te vinden op &lt;a href=&quot;https://github.com/pgmodeler/pgmodeler/graphs/contributors&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#00a489;&quot;&gt;GitHub&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Indien je een geweldig idee hebt om pgModeler te verbeteren, &lt;a href=&quot;http://github.com/pgmodeler/pgmodeler/issues&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#00a489;&quot;&gt;aarzel dan niet om het ons te laten weten&lt;/span&gt;&lt;/a&gt;. Geen idee hoe je ons kan helpen? Waarom geen kleine bijdrage &lt;a href=&quot;http://pgmodeler.com.br/#donate&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#00a489;&quot;&gt;storten&lt;/span&gt;&lt;/a&gt;!?&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="713"/>
