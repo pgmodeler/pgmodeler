@@ -3548,32 +3548,32 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
     <message>
         <location filename="../libpgmodeler_ui/ui/domainwidget.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/domainwidget.ui" line="32"/>
         <source>Default Value:</source>
-        <translation type="unfinished"></translation>
+        <translation>Standaardwaarde:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/domainwidget.ui" line="42"/>
         <source>Constraint</source>
-        <translation type="unfinished"></translation>
+        <translation>Constraint</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/domainwidget.ui" line="60"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Naam:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/domainwidget.ui" line="70"/>
         <source>Not Null:</source>
-        <translation type="unfinished"></translation>
+        <translation>Not Null:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/domainwidget.ui" line="84"/>
         <source>Check Expr.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Check Expressie:</translation>
     </message>
 </context>
 <context>
@@ -3581,32 +3581,32 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
     <message>
         <location filename="../libpgmodeler_ui/ui/donatewidget.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/donatewidget.ui" line="66"/>
         <source>Donate to pgModeler</source>
-        <translation type="unfinished"></translation>
+        <translation>Doneer aan pgModeler</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/donatewidget.ui" line="91"/>
         <source>Hide this widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Verberg dit widget</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/donatewidget.ui" line="94"/>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/donatewidget.ui" line="129"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;pgModeler is brought to you thanks to a &lt;span style=&quot; font-style:italic;&quot;&gt;great effort to create and distribute a quality product&lt;/span&gt;. This project is reaching out levels of maturity never imagined. All this is the result of a joint work between its author and the &lt;span style=&quot; font-weight:600;&quot;&gt;Open Source community&lt;/span&gt;. &lt;br/&gt;&lt;br/&gt;This software has a long way to go yet and with your help we&apos;ll keep maintaining the good job and bringing new improvements on each release. If you did like pgModeler and thinks it deserves a contribution please make a donation!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;pgModeler komt tot stand dankzij &lt;span style=&quot; font-style:italic;&quot;&gt;een grote inzet om een kwaliteitsvol product te bezorgen&lt;/span&gt;. Dit project heeft een niveau van volwassenheid bereikt die nooit was voorzien. Dit alles is het resultaat van de samenwerken tussen de auteur(s) en de &lt;span style=&quot; font-weight:600;&quot;&gt;Open Source gemeenschap&lt;/span&gt;. &lt;br/&gt;&lt;br/&gt;Dit product heeft nog een lange weg af te leggen; met uw hulp kunnen we deze uitdaging aan en kunnen we nieuwe verbeteringen en toevoegingen aan dit product blijven publiceren bij elke release. Als u vertrouwd op pgMOdeler en denkt dat u kan bijdragen, gelieve dan een donatie te maken aan pgModeler!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/donatewidget.ui" line="172"/>
         <source>I want to help!</source>
-        <translation type="unfinished"></translation>
+        <translation>Ik wil helpen!</translation>
     </message>
 </context>
 <context>
@@ -3717,32 +3717,32 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
     <message>
         <location filename="../libpgmodeler_ui/ui/eventtriggerwidget.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/eventtriggerwidget.ui" line="32"/>
         <source>Event:</source>
-        <translation type="unfinished"></translation>
+        <translation>Event:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/eventtriggerwidget.ui" line="59"/>
         <source>Function:</source>
-        <translation type="unfinished"></translation>
+        <translation>Functie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/eventtriggerwidget.ui" line="72"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Filter</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/eventtriggerwidget.ui" line="92"/>
         <source>Tag:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tag:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/eventtriggerwidget.cpp" line="33"/>
         <source>Tag command</source>
-        <translation type="unfinished"></translation>
+        <translation>Tag commando</translation>
     </message>
 </context>
 <context>
@@ -4885,27 +4885,27 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/extensionwidget.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/extensionwidget.ui" line="41"/>
         <source>Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>Versie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/extensionwidget.ui" line="64"/>
         <source>Old Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>Oude Versie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/extensionwidget.ui" line="87"/>
         <source>This attribute cannot be changed once the object is created.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dit attribuut kan niet worden veranderd eens het object is aangemaakt.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/extensionwidget.ui" line="90"/>
         <source>Handles data type</source>
-        <translation type="unfinished"></translation>
+        <translation>Behandelt dit data type</translation>
     </message>
 </context>
 <context>
@@ -5713,32 +5713,32 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/languagewidget.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/languagewidget.ui" line="66"/>
         <source>Trusted:</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertrouwd:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/languagewidget.ui" line="85"/>
         <source>Validator Func.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Validatiefunctie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/languagewidget.ui" line="104"/>
         <source>Handler Func.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Behandelende Functie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/languagewidget.ui" line="123"/>
         <source>Inline Func.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Inline Functie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/languagewidget.cpp" line="42"/>
         <source>The functions to be assigned to the language should have, respectively, the following signatures:&lt;br/&gt;&lt;br/&gt;  &lt;strong&gt;Handler Function:&lt;/strong&gt; &lt;em&gt;language_handler function()&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;Validator Function:&lt;/strong&gt; &lt;em&gt;void function(oid)&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;Inline Function:&lt;/strong&gt; &lt;em&gt;void function(internal)&lt;/em&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>De functie die worden toegewezen aan de taal moeten de volgende signatures hebben, respectievelijk: &lt;br/&gt;&lt;br/&gt;  &lt;strong&gt;Handler Functie:&lt;/strong&gt; &lt;em&gt;taal_handler_functie()&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;Validatie Functie:&lt;/strong&gt; &lt;em&gt;void functie(oid)&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;Inline Functie:&lt;/strong&gt; &lt;em&gt;void functie(internal)&lt;/em&gt;</translation>
     </message>
 </context>
 <context>
