@@ -252,52 +252,52 @@
     <message>
         <location filename="../libpgmodeler_ui/ui/aggregatewidget.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/aggregatewidget.ui" line="41"/>
         <source>Final Function:</source>
-        <translation type="unfinished"></translation>
+        <translation>Finale functie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/aggregatewidget.ui" line="48"/>
         <source>Sort Operator:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sorteer-operator:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/aggregatewidget.ui" line="55"/>
         <source>Initial Condition:</source>
-        <translation type="unfinished"></translation>
+        <translation>Initiële Vereiste:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/aggregatewidget.ui" line="66"/>
         <source>Funtion Inputs</source>
-        <translation type="unfinished"></translation>
+        <translation>Functie Invoer</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/aggregatewidget.ui" line="71"/>
         <source>Function State</source>
-        <translation type="unfinished"></translation>
+        <translation>Functie Staat</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/aggregatewidget.ui" line="79"/>
         <source>Transition Func.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Overgangsfunctie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/aggregatewidget.cpp" line="37"/>
         <source>Input Data Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Invoer Data Type</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/aggregatewidget.cpp" line="38"/>
         <source>State Data Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Status Data Type</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/aggregatewidget.cpp" line="62"/>
         <source>An aggregate function that accepts the types &lt;em&gt;&lt;strong&gt;typeA&lt;/strong&gt;&lt;/em&gt; and &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt;&lt;/em&gt; as input types and which type of state is &lt;em&gt;&lt;strong&gt;state_type&lt;/strong&gt;&lt;/em&gt;, must obey the following rules: &lt;br/&gt;&lt;br/&gt; &lt;strong&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;• Final Function:&lt;/strong&gt; &lt;em&gt;void final_function(&lt;strong&gt;state_type&lt;/strong&gt;)&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;• Transition Function:&lt;/strong&gt; &lt;em&gt;&lt;strong&gt;state_type&lt;/strong&gt; transition_function(&lt;strong&gt;state_type&lt;/strong&gt;, &lt;strong&gt;typeA&lt;/strong&gt;, &lt;strong&gt;typeB&lt;/strong&gt;)&lt;/em&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Een aggregatie-funtie die de types &lt;em&gt;&lt;strong&gt;typeA&lt;/strong&gt;&lt;/em&gt; en &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt;&lt;/em&gt; als invoer aanvaardt en waarvan het status-type &lt;em&gt;&lt;strong&gt;status_type&lt;/strong&gt;&lt;/em&gt; is. De volgende regels moeten voldaan zijn: &lt;br/&gt;&lt;br/&gt; &lt;strong&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;• Finale Functie:&lt;/strong&gt; &lt;em&gt;void finale_functie(&lt;strong&gt;status_type&lt;/strong&gt;)&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;• Overgangsfunctie:&lt;/strong&gt; &lt;em&gt;&lt;strong&gt;status_type&lt;/strong&gt; transitie_functie(&lt;strong&gt;status_type&lt;/strong&gt;, &lt;strong&gt;typeA&lt;/strong&gt;, &lt;strong&gt;typeB&lt;/strong&gt;)&lt;/em&gt;</translation>
     </message>
 </context>
 <context>
