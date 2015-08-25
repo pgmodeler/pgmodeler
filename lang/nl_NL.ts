@@ -10867,42 +10867,42 @@ accepted structure. All available options are described below.</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/sequencewidget.ui" line="26"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sequencewidget.ui" line="47"/>
         <source>Cyclic:</source>
-        <translation type="unfinished"></translation>
+        <translation>Cyclisch:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sequencewidget.ui" line="61"/>
         <source>Start:</source>
-        <translation type="unfinished"></translation>
+        <translation>Start:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sequencewidget.ui" line="89"/>
         <source>Maximum:</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximum:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sequencewidget.ui" line="117"/>
         <source>Minimum:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sequencewidget.ui" line="145"/>
         <source>Increment:</source>
-        <translation type="unfinished"></translation>
+        <translation>Toename:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sequencewidget.ui" line="173"/>
         <source>Cache:</source>
-        <translation type="unfinished"></translation>
+        <translation>Cache:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sequencewidget.ui" line="201"/>
         <source>Owner Col.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Bezittende kolom</translation>
     </message>
 </context>
 <context>
