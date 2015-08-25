@@ -11491,37 +11491,37 @@ Relationship: %1</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/tagwidget.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/tagwidget.ui" line="32"/>
         <source>Colors</source>
-        <translation type="unfinished"></translation>
+        <translation>Kleuren</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/tagwidget.ui" line="50"/>
         <source>Extended body:</source>
-        <translation type="unfinished"></translation>
+        <translation>Uitgebreide inhoud:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/tagwidget.ui" line="57"/>
         <source>Body:</source>
-        <translation type="unfinished"></translation>
+        <translation>Inhoud:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/tagwidget.ui" line="64"/>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>Titel</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/tagwidget.ui" line="71"/>
         <source>Schema name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Schemanaam:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/tagwidget.ui" line="78"/>
         <source>Table name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabelnaam:</translation>
     </message>
 </context>
 <context>
@@ -11543,47 +11543,47 @@ Relationship: %1</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/textboxwidget.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/textboxwidget.ui" line="38"/>
         <source>Font:</source>
-        <translation type="unfinished"></translation>
+        <translation>Lettertype:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/textboxwidget.ui" line="45"/>
         <source>Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Tekst</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/textboxwidget.ui" line="96"/>
         <source>pt</source>
-        <translation type="unfinished"></translation>
+        <translation>pt</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/textboxwidget.ui" line="105"/>
         <source>Color:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kleur:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/textboxwidget.ui" line="203"/>
         <source>Bold</source>
-        <translation type="unfinished"></translation>
+        <translation>Vet</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/textboxwidget.ui" line="210"/>
         <source>Italic</source>
-        <translation type="unfinished"></translation>
+        <translation>Cursief</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/textboxwidget.ui" line="223"/>
         <source>Underline</source>
-        <translation type="unfinished"></translation>
+        <translation>Onderstrepen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/textboxwidget.cpp" line="71"/>
         <source>Select text color</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecteer tekstkleur</translation>
     </message>
 </context>
 <context>
