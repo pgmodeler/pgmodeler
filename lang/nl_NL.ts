@@ -1129,38 +1129,38 @@ This will disable the code of all child and referrer objects.</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/collationwidget.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/collationwidget.ui" line="44"/>
         <source>Locale:</source>
-        <translation type="unfinished"></translation>
+        <translation>Locale:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/collationwidget.ui" line="79"/>
         <source>Encoding:</source>
-        <translation type="unfinished"></translation>
+        <translation>Codering:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/collationwidget.ui" line="124"/>
         <source>LC_COLLATE:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/collationwidget.ui" line="169"/>
         <source>LC_CTYPE:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/collationwidget.cpp" line="30"/>
         <source>The fields &lt;strong&gt;&lt;em&gt;Collation&lt;/em&gt;&lt;/strong&gt;, &lt;strong&gt;&lt;em&gt;Locale&lt;/em&gt;&lt;/strong&gt;, &lt;strong&gt;&lt;em&gt;LC_COLLATE &amp; LC_CTYPE&lt;/em&gt;&lt;/strong&gt; are mutually exclusive, so you have to set only one of them in order to properly handle a collation.</source>
-        <translation type="unfinished"></translation>
+        <translation>De velden &lt;strong&gt;&lt;em&gt;Sortering&lt;/em&gt;&lt;/strong&gt;, &lt;strong&gt;&lt;em&gt;Locale&lt;/em&gt;&lt;/strong&gt;, &lt;strong&gt;&lt;em&gt;LC_COLLATE &amp; LC_CTYPE&lt;/em&gt;&lt;/strong&gt; zijn onderling uitsluitend, om een sortering correct te gebruiken hoeft u slechts één van deze velden in te stellen.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/collationwidget.cpp" line="38"/>
         <location filename="../libpgmodeler_ui/src/collationwidget.cpp" line="50"/>
         <source>Not defined</source>
-        <translation type="unfinished"></translation>
+        <translation>Niet gedefinieerd</translation>
     </message>
 </context>
 <context>
