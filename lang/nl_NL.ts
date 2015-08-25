@@ -625,169 +625,169 @@
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="39"/>
         <source>Column</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolom</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="39"/>
         <source>Constraint</source>
-        <translation type="unfinished"></translation>
+        <translation>Constraint</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="39"/>
         <source>Function</source>
-        <translation type="unfinished"></translation>
+        <translation>Functie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="40"/>
         <source>Trigger</source>
-        <translation type="unfinished"></translation>
+        <translation>Trigger</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="40"/>
         <source>Index</source>
-        <translation type="unfinished"></translation>
+        <translation>Index</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="40"/>
         <source>Rule</source>
-        <translation type="unfinished"></translation>
+        <translation>Regel</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="41"/>
         <source>Table</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabel</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="41"/>
         <source>View</source>
-        <translation type="unfinished"></translation>
+        <translation>View</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="41"/>
         <source>Domain</source>
-        <translation type="unfinished"></translation>
+        <translation>Domein</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="42"/>
         <source>Schema</source>
-        <translation type="unfinished"></translation>
+        <translation>Schema</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="42"/>
         <source>Aggregate</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggregator</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="42"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>Operator</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="43"/>
         <source>Sequence</source>
-        <translation type="unfinished"></translation>
+        <translation>Sequentie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="43"/>
         <source>Role</source>
-        <translation type="unfinished"></translation>
+        <translation>Rol</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="43"/>
         <source>Conversion</source>
-        <translation type="unfinished"></translation>
+        <translation>Conversie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="44"/>
         <source>Cast</source>
-        <translation type="unfinished"></translation>
+        <translation>Cast</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="44"/>
         <source>Language</source>
-        <translation type="unfinished"></translation>
+        <translation>Taal</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="44"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Type</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="44"/>
         <source>Tablespace</source>
-        <translation type="unfinished"></translation>
+        <translation>Tablespace</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="45"/>
         <source>Operator Family</source>
-        <translation type="unfinished"></translation>
+        <translation>Operator Familie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="45"/>
         <source>Operator Class</source>
-        <translation type="unfinished"></translation>
+        <translation>Operator Klasse</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="46"/>
         <source>Database</source>
-        <translation type="unfinished"></translation>
+        <translation>Database</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="46"/>
         <source>Collation</source>
-        <translation type="unfinished"></translation>
+        <translation>Sortering</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="46"/>
         <source>Extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Uitbreiding</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="47"/>
         <source>Event Trigger</source>
-        <translation type="unfinished"></translation>
+        <translation>Event Trigger</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="47"/>
         <source>Relationship</source>
-        <translation type="unfinished"></translation>
+        <translation>Relatie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="47"/>
         <source>Textbox</source>
-        <translation type="unfinished"></translation>
+        <translation>Tekst box</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="48"/>
         <source>Permission</source>
-        <translation type="unfinished"></translation>
+        <translation>Machtiging</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="48"/>
         <source>Parameter</source>
-        <translation type="unfinished"></translation>
+        <translation>Parameter</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="48"/>
         <source>Type Attribute</source>
-        <translation type="unfinished"></translation>
+        <translation>Type Attribuut</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="49"/>
         <source>Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Tag</translation>
     </message>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="49"/>
         <source>Basic Relationship</source>
-        <translation type="unfinished"></translation>
+        <translation>Basisrelatie</translation>
     </message>
     <message numerus="yes">
         <location filename="../libpgmodeler/src/baseobject.cpp" line="95"/>
         <source>new_object</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>nieuw_object</numerusform>
+            <numerusform>nieuwe_objecten</numerusform>
         </translation>
     </message>
 </context>
@@ -796,7 +796,7 @@
     <message>
         <location filename="../libobjrenderer/src/baseobjectview.cpp" line="462"/>
         <source>SQL off</source>
-        <translation type="unfinished"></translation>
+        <translation>SQL uit</translation>
     </message>
 </context>
 <context>
