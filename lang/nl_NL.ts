@@ -1168,22 +1168,22 @@ This will disable the code of all child and referrer objects.</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/colorpickerwidget.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/colorpickerwidget.ui" line="50"/>
         <source>Generate random color(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>Genereer willekeurige kleur(en)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/colorpickerwidget.ui" line="66"/>
         <source>Alt+R</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+R</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/colorpickerwidget.cpp" line="146"/>
         <source>Select color</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecteer kleur</translation>
     </message>
 </context>
 <context>
