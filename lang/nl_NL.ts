@@ -1191,27 +1191,27 @@ This will disable the code of all child and referrer objects.</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/columnwidget.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/columnwidget.ui" line="35"/>
         <source>Default Value:</source>
-        <translation type="unfinished"></translation>
+        <translation>Standaardwaarde:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/columnwidget.ui" line="53"/>
         <source>Expression:</source>
-        <translation type="unfinished"></translation>
+        <translation>Expressie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/columnwidget.ui" line="69"/>
         <source>NOT NULL</source>
-        <translation type="unfinished"></translation>
+        <translation>NOT NULL</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/columnwidget.ui" line="76"/>
         <source>Sequence:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sequentie:</translation>
     </message>
 </context>
 <context>
