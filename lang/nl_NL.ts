@@ -1219,57 +1219,57 @@ This will disable the code of all child and referrer objects.</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/configurationform.ui" line="29"/>
         <source>pgModeler Configuration</source>
-        <translation type="unfinished"></translation>
+        <translation>pgModeler Configuratie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/configurationform.ui" line="187"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Algemeen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/configurationform.ui" line="202"/>
         <source>Relationships</source>
-        <translation type="unfinished"></translation>
+        <translation>Relaties</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/configurationform.ui" line="211"/>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation>Voorkomen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/configurationform.ui" line="226"/>
         <source>Connections</source>
-        <translation type="unfinished"></translation>
+        <translation>Verbindingen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/configurationform.ui" line="241"/>
         <source>Snippets</source>
-        <translation type="unfinished"></translation>
+        <translation>Snippets</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/configurationform.ui" line="250"/>
         <source>Plug-ins</source>
-        <translation type="unfinished"></translation>
+        <translation>Plug-ins</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/configurationform.ui" line="329"/>
         <source>Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Standaard waarden</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/configurationform.ui" line="358"/>
         <source>&amp;Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Toepassen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/configurationform.ui" line="384"/>
         <source>&amp;Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Annuleren</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/configurationform.cpp" line="121"/>
         <source>Any modification made until now in the current section will be lost! Do you really want to restore default settings?</source>
-        <translation type="unfinished"></translation>
+        <translation>De waarden in de huidige sectie zullen worden overschreven! Bent u er zeker van dat u de standaard waarden wilt instellen?</translation>
     </message>
 </context>
 <context>
