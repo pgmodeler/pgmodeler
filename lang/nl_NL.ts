@@ -601,23 +601,23 @@
     <message>
         <location filename="../libpgmodeler_ui/ui/baseform.ui" line="23"/>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Dialoogvenster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/baseform.ui" line="154"/>
         <location filename="../libpgmodeler_ui/src/baseform.cpp" line="40"/>
         <source>&amp;Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Toepassen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/baseform.ui" line="201"/>
         <source>&amp;Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Annuleren</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/baseform.cpp" line="45"/>
         <source>&amp;Ok</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ok</translation>
     </message>
 </context>
 <context>
