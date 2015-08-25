@@ -11529,13 +11529,13 @@ Relationship: %1</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/taskprogresswidget.ui" line="29"/>
         <source>Executing tasks</source>
-        <translation type="unfinished"></translation>
+        <translation>Taken uitvoeren</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/taskprogresswidget.ui" line="131"/>
         <location filename="../libpgmodeler_ui/src/taskprogresswidget.cpp" line="51"/>
         <source>Waiting task to start...</source>
-        <translation type="unfinished"></translation>
+        <translation>Wachten op het starten van de taak...</translation>
     </message>
 </context>
 <context>
