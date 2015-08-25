@@ -804,108 +804,109 @@
     <message>
         <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="26"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="50"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Naam:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="106"/>
         <source>Comment:</source>
-        <translation type="unfinished"></translation>
+        <translation>Commentaar:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="141"/>
         <source>Tablespace:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tablespace:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="160"/>
         <source>Schema:</source>
-        <translation type="unfinished"></translation>
+        <translation>Schema:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="194"/>
         <source>Edit object&apos;s permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>Machtiginen voor dit object aanpassen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="197"/>
         <source>Edit permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>Machtigingen aanpassen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="295"/>
         <source>This object is protected thus no change in form will be applied to it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dit object is beschermd en dus worden vorm-aanpassingen niet toegepast</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="323"/>
         <source>Disables the generated SQL code using comment tokens (--).
 This will disable the code of all child and referrer objects.</source>
-        <translation type="unfinished"></translation>
+        <translation>Maakt de gegenereerde SQL code onuitvoerbaar via comment-tokens (--).
+Dit zorgt ervoor dat de code voor alle kinder-objecten en refererende objecten wordt uitgeschakeld.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="327"/>
         <source>Disable SQL code</source>
-        <translation type="unfinished"></translation>
+        <translation>Niet-uitvoerbare SQL code</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="346"/>
         <source>Collation:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sortering:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="380"/>
         <source>Append or prepend a set of SQL commands to the object&apos;s definition.</source>
-        <translation type="unfinished"></translation>
+        <translation>Voeg SQL commando toe voor of na de definitie van het object.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="383"/>
         <source>Custom SQL</source>
-        <translation type="unfinished"></translation>
+        <translation>Aangepaste SQL</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="415"/>
         <source>Owner:</source>
-        <translation type="unfinished"></translation>
+        <translation>Eigenaar:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="461"/>
         <source>ID:</source>
-        <translation type="unfinished"></translation>
+        <translation>ID:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="492"/>
         <source>icone</source>
-        <translation type="unfinished"></translation>
+        <translation>icone</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/baseobjectwidget.cpp" line="54"/>
         <source>Create / Edit: </source>
-        <translation type="unfinished"></translation>
+        <translation>Creëer / Pas aan:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/baseobjectwidget.cpp" line="220"/>
         <source>Required field. Leaving this empty will raise errors!</source>
-        <translation type="unfinished"></translation>
+        <translation>Vereist veld. Dit veld leeglaten leidt tot foutmeldingen!</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/baseobjectwidget.cpp" line="598"/>
         <source>Value(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>Waarde(s)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/baseobjectwidget.cpp" line="615"/>
         <source>Version</source>
-        <translation type="unfinished"></translation>
+        <translation>Versie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/baseobjectwidget.cpp" line="653"/>
         <source>The &lt;em style=&apos;color: %1&apos;&gt;&lt;strong&gt;highlighted&lt;/strong&gt;&lt;/em&gt; fields on the form are available only on specific PostgreSQL versions. 													When generating SQL code for versions other than those specified on fields&apos; tooltips pgModeler will ignore their values.</source>
-        <translation type="unfinished"></translation>
+        <translation>De &lt;em style=&apos;color: %1&apos;&gt;&lt;strong&gt;aangeduidde&lt;/strong&gt;&lt;/em&gt; velden zijn enkel beschikbaar in specifieke versies van PostgreSQL. 													Wanneer SQL code voor andere versies wordt gegenereerd zal pgModeler deze negeren.</translation>
     </message>
 </context>
 <context>
