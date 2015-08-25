@@ -305,282 +305,282 @@
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="59"/>
         <source>Element:</source>
-        <translation type="unfinished"></translation>
+        <translation>Element:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="67"/>
         <source>Global: Font style</source>
-        <translation type="unfinished"></translation>
+        <translation>Algemeen: Lettertype</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="72"/>
         <source>Global: Constraints descriptor</source>
-        <translation type="unfinished"></translation>
+        <translation>Algemeen: Constraints beschrijving</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="77"/>
         <source>Global: Object selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Algemeen: Object selectie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="82"/>
         <source>Global: Position hint text</source>
-        <translation type="unfinished"></translation>
+        <translation>Algemeen: Positie hint tekst</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="87"/>
         <source>Global: Position hint box</source>
-        <translation type="unfinished"></translation>
+        <translation>Algemeen: Positie hint box</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="92"/>
         <source>Global: Objects type</source>
-        <translation type="unfinished"></translation>
+        <translation>Algemeen: Object-type</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="97"/>
         <source>Global: Lock arc</source>
-        <translation type="unfinished"></translation>
+        <translation>Algemeen: Lock arc</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="102"/>
         <source>Global: Lock body</source>
-        <translation type="unfinished"></translation>
+        <translation>Algemeen: Lock body</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="107"/>
         <source>Table: Schema name</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabel: Schemanaam</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="112"/>
         <source>Table: Table name</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabel: Tabelnaam</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="117"/>
         <source>Table: Columns box</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabel: Kolom box</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="122"/>
         <source>Table: Extended attributes box</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabel: Uitgebreide attributen box</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="127"/>
         <source>Table: Title box</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabel: Titel box</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="132"/>
         <source>Rule: Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Regel: Naam</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="137"/>
         <source>Rule: Descriptor</source>
-        <translation type="unfinished"></translation>
+        <translation>Regel: Beschrijving</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="142"/>
         <source>Index: Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Index: Naam</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="147"/>
         <source>Index: Descriptor</source>
-        <translation type="unfinished"></translation>
+        <translation>Index: Beschrijving</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="152"/>
         <source>Trigger: Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Trigger: Naam</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="157"/>
         <source>Trigger: Descriptor</source>
-        <translation type="unfinished"></translation>
+        <translation>Trigger: Beschrijving</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="162"/>
         <source>View: Schema name</source>
-        <translation type="unfinished"></translation>
+        <translation>View: Schemanaam</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="167"/>
         <source>View: View name</source>
-        <translation type="unfinished"></translation>
+        <translation>View: View-naam</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="172"/>
         <source>View: References box</source>
-        <translation type="unfinished"></translation>
+        <translation>View: Referenties box</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="177"/>
         <source>View: Extended attributes box</source>
-        <translation type="unfinished"></translation>
+        <translation>View: Uitgebreide attributen box</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="182"/>
         <source>View: Title box</source>
-        <translation type="unfinished"></translation>
+        <translation>View: Titel box</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="187"/>
         <source>View: Table / columns alias</source>
-        <translation type="unfinished"></translation>
+        <translation>View: Tabel / Kolom alias</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="192"/>
         <source>View: Referenced column</source>
-        <translation type="unfinished"></translation>
+        <translation>View: Gerefereerde kolom</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="197"/>
         <source>View: Referenced table</source>
-        <translation type="unfinished"></translation>
+        <translation>View: Gerefereerde tabel</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="202"/>
         <source>View: Reference descriptor</source>
-        <translation type="unfinished"></translation>
+        <translation>View: Referentiebeschrijving</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="207"/>
         <source>Textbox: Body</source>
-        <translation type="unfinished"></translation>
+        <translation>Tekst box: Inhoud</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="212"/>
         <source>Column: Column name</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolom: Kolom naam</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="217"/>
         <source>Column: Descriptor</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolom: Beschrijving</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="222"/>
         <source>Column: Included / Inherited by relationship</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolom: Ingesloten / Overgeërfd via relatie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="227"/>
         <source>Column: Protected</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolom: Beschermd</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="232"/>
         <source>Column (pk): Column name</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolom (pk): Kolom naam</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="237"/>
         <source>Column (pk): Descriptor</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolom (pk): Beschrijving</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="242"/>
         <source>Column (fk): Column name</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolom (fk): Kolom naam</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="247"/>
         <source>Column (fk): Descriptor</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolom (fk): Beschrijving</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="252"/>
         <source>Column (uq): Column name</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolom (uq): Kolom naam</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="257"/>
         <source>Column (uq): Descriptor</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolom (uq): Beschrijving</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="262"/>
         <source>Column (nn): Column name</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolom (nn): Kolom naam</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="267"/>
         <source>Column (nn): Descriptor</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolom (nn): Beschrijving</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="272"/>
         <source>Relationship: Descriptor</source>
-        <translation type="unfinished"></translation>
+        <translation>Relatie: Beschrijving</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="277"/>
         <source>Relationship: Label text</source>
-        <translation type="unfinished"></translation>
+        <translation>Relatie: Label tekst</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="282"/>
         <source>Relationship: Label box</source>
-        <translation type="unfinished"></translation>
+        <translation>Relatie: Label box</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="287"/>
         <source>Relationship: Attribute text</source>
-        <translation type="unfinished"></translation>
+        <translation>Relatie: Attribuut tekst</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="292"/>
         <source>Relationship: Attribute descriptor</source>
-        <translation type="unfinished"></translation>
+        <translation>Relatie: Attribuut beschrijving</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="297"/>
         <source>Tag: Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Tag: Naam</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="302"/>
         <source>Tag: Body</source>
-        <translation type="unfinished"></translation>
+        <translation>Tag: Inhoud</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="316"/>
         <source>Font:</source>
-        <translation type="unfinished"></translation>
+        <translation>Lettertype:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="329"/>
         <source>Colors:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kleuren:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="370"/>
         <source> pt</source>
-        <translation type="unfinished"></translation>
+        <translation> pt</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="385"/>
         <source>Underline</source>
-        <translation type="unfinished"></translation>
+        <translation>Onderstrepen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="404"/>
         <source>Italic</source>
-        <translation type="unfinished"></translation>
+        <translation>Cursief</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="423"/>
         <source>Bold</source>
-        <translation type="unfinished"></translation>
+        <translation>Vet</translation>
     </message>
 </context>
 <context>
