@@ -3634,7 +3634,7 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
     <message>
         <location filename="../libpgmodeler_ui/ui/elementswidget.ui" line="157"/>
         <source>Operator Class:</source>
-        <translation>Operator Klasse</translation>
+        <translation>Operator Klasse:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/elementswidget.ui" line="164"/>
@@ -7234,64 +7234,64 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="35"/>
         <source>Model file fix</source>
-        <translation type="unfinished"></translation>
+        <translation>Modelcorrectiebestand</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="97"/>
         <source>&amp;Fix</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Correctie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="129"/>
         <source>&amp;Close</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Sluiten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="218"/>
         <source>Fix model file</source>
-        <translation type="unfinished"></translation>
+        <translation>Corrigeer modelbestand</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="321"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;[pgmodeler-cli not found error]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;[pgmodeler-cli kon niet worden gevonden]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="340"/>
         <source>pgmodeler-cli:</source>
-        <translation type="unfinished"></translation>
+        <translation>pgmodeler-cli:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="364"/>
         <source>Browse for pgmodeler-cli tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Blader naar pgmodeler-cli tool</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="367"/>
         <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="611"/>
         <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="647"/>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="427"/>
         <source>The specified file is not the pgModeler command line tool (pgmodeler-cli).</source>
-        <translation type="unfinished"></translation>
+        <translation>Het gespecifieerde bestand is niet het pgModeler command line tool (pgmodeler-cli).</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="442"/>
         <source>Input file:</source>
-        <translation type="unfinished"></translation>
+        <translation>Invoerbestand:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="455"/>
         <source>Output file:</source>
-        <translation type="unfinished"></translation>
+        <translation>Uitvoerbestand:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="462"/>
         <source>Fix tries:</source>
-        <translation type="unfinished"></translation>
+        <translation>Correctiepogingen:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="577"/>
@@ -7300,42 +7300,46 @@ Message returned by the DBMS: `%1&apos;</source>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Monospace&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Waiting process to start...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Monospace&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Wachten op het starten van het process...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="608"/>
         <source>Select input file</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecteer invoerbestand</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="644"/>
         <source>Select output file</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecteer uitvoerbestand</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="684"/>
         <source>Load fixed model when finish</source>
-        <translation type="unfinished"></translation>
+        <translation>Laad gecorrigeerde model na voltooïng</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="774"/>
         <source>In some cases the fix process will fail to restore all objects within the model demanding manual fixes by changing the file on a text editor. &lt;strong&gt;NOTE:&lt;/strong&gt; relationships may lost their graphical configuration like custom points and line color.</source>
-        <translation type="unfinished"></translation>
+        <translation>In sommige gevallen kan het correctieproces niet alle objecten herstellen en zijn manuele correcties via een tekstverwerker vereist. &lt;strong&gt;LET OP:&lt;/strong&gt; relaties kunnen mogelijkerwijs hun configuratie verliezen, zoals aangepaste punten- en lijn-kleur.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelfixform.cpp" line="64"/>
         <source>Waiting process to start...</source>
-        <translation type="unfinished"></translation>
+        <translation>Wachten op het starten van de taak...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelfixform.cpp" line="75"/>
         <source>Could not locate &lt;strong&gt;%1&lt;/strong&gt; tool on &lt;strong&gt;%2&lt;/strong&gt;. The fix process can&apos;t continue! Please check pgModeler installation or try to manually specify the command below.</source>
-        <translation type="unfinished"></translation>
+        <translation>Het tool &lt;strong&gt;%1&lt;/strong&gt; kon niet worden gevonden in &lt;strong&gt;%2&lt;/strong&gt;. Het correctieprocess kan niet verder gaan! Gelieve uw pgModeler installatie na te kijken of het pad naar het tool manueel in te stellen.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelfixform.cpp" line="146"/>
         <source>pgModeler command line tool (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>pgModeler command line tool (%1)</translation>
     </message>
 </context>
 <context>
@@ -11593,102 +11597,102 @@ Relationship: %1</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="49"/>
         <source>Constraint</source>
-        <translation type="unfinished"></translation>
+        <translation>Constraint</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="77"/>
         <source>Deferrable:</source>
-        <translation type="unfinished"></translation>
+        <translation>Uitstelbaar:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="172"/>
         <source>FOR EACH ROW</source>
-        <translation type="unfinished"></translation>
+        <translation>FOR EACH ROW</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="199"/>
         <source>Event:</source>
-        <translation type="unfinished"></translation>
+        <translation>Event:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="229"/>
         <source>INSERT</source>
-        <translation type="unfinished"></translation>
+        <translation>INSERT</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="254"/>
         <source>DELETE</source>
-        <translation type="unfinished"></translation>
+        <translation>DELETE</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="279"/>
         <source>UPDATE</source>
-        <translation type="unfinished"></translation>
+        <translation>UPDATE</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="304"/>
         <source>TRUNCATE</source>
-        <translation type="unfinished"></translation>
+        <translation>TRUNCATE</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="334"/>
         <source>Refer. Table:</source>
-        <translation type="unfinished"></translation>
+        <translation>Refer. Tabel:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="359"/>
         <source>Condition:</source>
-        <translation type="unfinished"></translation>
+        <translation>Voorwaarde:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="370"/>
         <source>Arguments</source>
-        <translation type="unfinished"></translation>
+        <translation>Argumenten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="391"/>
         <source>Argument:</source>
-        <translation type="unfinished"></translation>
+        <translation>Argument:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="412"/>
         <source>Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolommen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="445"/>
         <source>Column:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolom:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="499"/>
         <source>Function:</source>
-        <translation type="unfinished"></translation>
+        <translation>Functie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="527"/>
         <source>Options:</source>
-        <translation type="unfinished"></translation>
+        <translation>Opties:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="555"/>
         <source>Excution:</source>
-        <translation type="unfinished"></translation>
+        <translation>Uitvoer:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/triggerwidget.cpp" line="46"/>
         <source>Column</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolom</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/triggerwidget.cpp" line="48"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Type</translation>
     </message>
 </context>
 <context>
