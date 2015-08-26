@@ -8753,113 +8753,113 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../libpgmodeler_ui/ui/objecttablewidget.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objecttablewidget.ui" line="58"/>
         <source>Add Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Item Toevoegen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objecttablewidget.ui" line="74"/>
         <source>Ins</source>
-        <translation type="unfinished"></translation>
+        <translation>Ins</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objecttablewidget.ui" line="96"/>
         <source>Remove Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Item Verwijderen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objecttablewidget.ui" line="112"/>
         <source>Del</source>
-        <translation type="unfinished"></translation>
+        <translation>Del</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objecttablewidget.ui" line="134"/>
         <source>Update Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Item Updaten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objecttablewidget.ui" line="150"/>
         <source>Alt+R</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+R</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objecttablewidget.ui" line="172"/>
         <source>Remove All</source>
-        <translation type="unfinished"></translation>
+        <translation>Alles Verwijderen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objecttablewidget.ui" line="188"/>
         <source>Shift+Del</source>
-        <translation type="unfinished"></translation>
+        <translation>Shift+Del</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objecttablewidget.ui" line="210"/>
         <source>Edit Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Item Aanpassen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objecttablewidget.ui" line="226"/>
         <source>Space</source>
-        <translation type="unfinished"></translation>
+        <translation>Spatie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objecttablewidget.ui" line="248"/>
         <source>Move Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Naar Boven</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objecttablewidget.ui" line="264"/>
         <source>Ctrl+Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Up</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objecttablewidget.ui" line="286"/>
         <source>Move Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Naar Beneden</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objecttablewidget.ui" line="302"/>
         <source>Ctrl+Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Down</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objecttablewidget.ui" line="324"/>
         <source>Move to start</source>
-        <translation type="unfinished"></translation>
+        <translation>Naar de eerste plaats</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objecttablewidget.ui" line="340"/>
         <source>Ctrl+Home</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Home</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objecttablewidget.ui" line="362"/>
         <source>Move to end</source>
-        <translation type="unfinished"></translation>
+        <translation>Naar de laatste plaats</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objecttablewidget.ui" line="378"/>
         <source>Ctrl+End, Ctrl+S</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+End, Ctrl+S</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/objecttablewidget.cpp" line="369"/>
         <location filename="../libpgmodeler_ui/src/objecttablewidget.cpp" line="395"/>
         <source>Confirmação</source>
-        <translation type="unfinished"></translation>
+        <translation>Bevestiging</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/objecttablewidget.cpp" line="369"/>
         <source>Do you really want to remove the selected item?</source>
-        <translation type="unfinished"></translation>
+        <translation>Bent u zeker dat u het geselecteerde item wilt verwijderen?</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/objecttablewidget.cpp" line="395"/>
         <source>Do you really want to remove the all items?</source>
-        <translation type="unfinished"></translation>
+        <translation>Bent u zeker dat u alle items wilt verwijderen?</translation>
     </message>
 </context>
 <context>
