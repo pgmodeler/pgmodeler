@@ -7110,123 +7110,123 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="40"/>
         <source>Generating SQL code for PostgreSQL `%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Bezig met het genereren van SQL code voor PostgreSQL `%1&apos;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="45"/>
         <source>Output SQL file `%1&apos; successfully written.</source>
-        <translation type="unfinished"></translation>
+        <translation>Het uitvoer-SQL bestand `%1&apos; werd succesvol opgeslagen.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="167"/>
         <source>Rendering objects to page %1/%2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Objecten worden gerendered naar pagina %1/%2.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="194"/>
         <source>Output image `%1&apos; successfully written.</source>
-        <translation type="unfinished"></translation>
+        <translation>Uitvoerafbeelding `%1&apos; werd succesvol opgeslagen.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="243"/>
         <source>Starting export to DBMS.</source>
-        <translation type="unfinished"></translation>
+        <translation>De export naar het DBMS begint.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="249"/>
         <source>PostgreSQL version detection overridden. Using version `%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>PostgreSQL versie-detectie werd overschreven. Versie `%1&apos; wordt gebruikt.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="254"/>
         <source>PostgreSQL `%1&apos; server detected.</source>
-        <translation type="unfinished"></translation>
+        <translation>PostgreSQL `%1&apos; server ontdekt.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="259"/>
         <source>Generating temporary names for database, roles and tablespaces.</source>
-        <translation type="unfinished"></translation>
+        <translation>De tijdelijke namen voor de database, rollen en tablespaces worden gegenereerd.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="270"/>
         <source>Enabling the SQL code for database `%1&apos; to avoid errors.</source>
-        <translation type="unfinished"></translation>
+        <translation>SQL code voor de database `%1&apos; wordt geactiveerd om fouten te vermijden.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="276"/>
         <source>Ignoring object duplication errors.</source>
-        <translation type="unfinished"></translation>
+        <translation>Duplicaten-fouten worden genegeerd.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="283"/>
         <source>Ignoring the following error code(s): `%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>De volgende foutencode(s) worden genegeerd: `%1&apos;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="287"/>
         <source>Trying to drop database `%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Proberen om database `%1&apos; te verwijderen.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="292"/>
         <source>Simulation mode activated.</source>
-        <translation type="unfinished"></translation>
+        <translation>Simulatiemodus geactiveerd.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="310"/>
         <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="741"/>
         <source>Creating object `%1&apos; (%2).</source>
-        <translation type="unfinished"></translation>
+        <translation>Creëer object `%1&apos; (%2).</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="343"/>
         <source>Creating database `%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Creëer database `%1&apos;.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="373"/>
         <source>Connecting to database `%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Verbinden met database `%1&apos;.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="381"/>
         <source>Generating SQL for `%1&apos; objects...</source>
-        <translation type="unfinished"></translation>
+        <translation>Genereren van SQL voor `%1&apos; objecten...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="510"/>
         <source>Destroying objects created on the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Objecten aangemaakt op de server worden verwijderd.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="536"/>
         <source>Restoring original names of database, roles and tablespaces.</source>
-        <translation type="unfinished"></translation>
+        <translation>De originele namen van de database, rollen en tablespaces worden teruggezet.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="739"/>
         <source>Dropping object `%1&apos; (%2).</source>
-        <translation type="unfinished"></translation>
+        <translation>Object `%1&apos; (%2) wordt verwijderd.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="818"/>
         <source>Creating object `%1&apos; (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Object `%1&apos; (%2) wordt aangemaakt.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="820"/>
         <source>Dropping object `%1&apos; (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Object `%1&apos; (%2) wordt verwijderd</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="822"/>
         <source>Changing object `%1&apos; (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Object `%1&apos; (%2) wordt aangepast.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="835"/>
         <source>Running auxiliary command.</source>
-        <translation type="unfinished"></translation>
+        <translation>Een hulpcommando wordt uitgevoerd.</translation>
     </message>
 </context>
 <context>
