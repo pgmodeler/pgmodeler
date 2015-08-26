@@ -10486,96 +10486,96 @@ accepted structure. All available options are described below.</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="53"/>
         <source>yyyy-MMM-dd hh:mm:ss</source>
-        <translation type="unfinished"></translation>
+        <translation>jjjj-MMM-dd hh:mm:ss</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="91"/>
         <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="63"/>
         <source>Validity</source>
-        <translation type="unfinished"></translation>
+        <translation>Geldigheid</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="105"/>
         <source>Connections:</source>
-        <translation type="unfinished"></translation>
+        <translation>Verbindingen:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="112"/>
         <source>Attributes</source>
-        <translation type="unfinished"></translation>
+        <translation>Attributen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="133"/>
         <source>Superuser</source>
-        <translation type="unfinished"></translation>
+        <translation>Superuser</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="140"/>
         <source>Inherit Permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>Erf Machtigingen Over</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="147"/>
         <source>Can create Database</source>
-        <translation type="unfinished"></translation>
+        <translation>Kan Database Aanmaken</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="154"/>
         <source>Can Login</source>
-        <translation type="unfinished"></translation>
+        <translation>Kan Inloggen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="161"/>
         <source>Can create Role</source>
-        <translation type="unfinished"></translation>
+        <translation>Kan Rol Aanmaken</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="168"/>
         <source>Can use Replication</source>
-        <translation type="unfinished"></translation>
+        <translation>Kan Replicatie Gebruiken</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="182"/>
         <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="69"/>
         <source>Members</source>
-        <translation type="unfinished"></translation>
+        <translation>Leden</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="187"/>
         <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="66"/>
         <source>Member of</source>
-        <translation type="unfinished"></translation>
+        <translation>Lid van</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="192"/>
         <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="72"/>
         <source>Members (Admin.)</source>
-        <translation type="unfinished"></translation>
+        <translation>Leden (Admin.)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="200"/>
         <source>Password:</source>
-        <translation type="unfinished"></translation>
+        <translation>Wachtwoord:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="223"/>
         <source>Encrypted</source>
-        <translation type="unfinished"></translation>
+        <translation>Geëncrypteerd</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="35"/>
         <source>Assigning &lt;strong&gt;&lt;em&gt;-1&lt;/em&gt;&lt;/strong&gt; to &lt;strong&gt;&lt;em&gt;Connections&lt;/em&gt;&lt;/strong&gt; creates a role without connection limit.&lt;br/&gt;																				 Unchecking &lt;strong&gt;&lt;em&gt;Validity&lt;/em&gt;&lt;/strong&gt; creates an role that never expires.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;&lt;em&gt;-1&lt;/em&gt;&lt;/strong&gt; toewijzen aan  &lt;strong&gt;&lt;em&gt;Verbindingen&lt;/em&gt;&lt;/strong&gt; maakt een rol aan zonder verbindingslimiet.&lt;br/&gt;																				 Vink &lt;strong&gt;&lt;em&gt;Geldigheid&lt;/em&gt;&lt;/strong&gt; af om een rol aan te maken die nooit vervalt.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="60"/>
         <source>Role</source>
-        <translation type="unfinished"></translation>
+        <translation>Rol</translation>
     </message>
 </context>
 <context>
