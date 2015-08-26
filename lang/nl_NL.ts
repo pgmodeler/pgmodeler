@@ -11349,62 +11349,62 @@ Relationship: %1</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="41"/>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Opties</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="71"/>
         <source>Tag:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tag:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="78"/>
         <source>With OID</source>
-        <translation type="unfinished"></translation>
+        <translation>Met OID</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="94"/>
         <source>Generate ALTER for columns/constraints</source>
-        <translation type="unfinished"></translation>
+        <translation>Genereer ALTER voor kolommen/constraints</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="101"/>
         <source>Unlogged</source>
-        <translation type="unfinished"></translation>
+        <translation>Niet gelogged</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="115"/>
         <source>Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolommen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="120"/>
         <source>Constraints</source>
-        <translation type="unfinished"></translation>
+        <translation>Constraints</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="125"/>
         <source>Triggers</source>
-        <translation type="unfinished"></translation>
+        <translation>Triggers</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="130"/>
         <source>Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>Regels</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="135"/>
         <source>Indexes</source>
-        <translation type="unfinished"></translation>
+        <translation>Indexen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="140"/>
         <source>Tables</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabellen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="44"/>
@@ -11414,79 +11414,79 @@ Relationship: %1</source>
         <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="105"/>
         <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="111"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Naam</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="46"/>
         <source>Schema</source>
-        <translation type="unfinished"></translation>
+        <translation>Schema</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="48"/>
         <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="82"/>
         <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="90"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Type</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="84"/>
         <source>Default Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Standaardwaarde</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="85"/>
         <source>Attribute</source>
-        <translation type="unfinished"></translation>
+        <translation>Attribuut</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="92"/>
         <source>ON DELETE</source>
-        <translation type="unfinished"></translation>
+        <translation>ON DELETE</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="93"/>
         <source>ON UPDATE</source>
-        <translation type="unfinished"></translation>
+        <translation>ON UPDATE</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="98"/>
         <source>Refer. Table</source>
-        <translation type="unfinished"></translation>
+        <translation>Refer. Tabel</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="100"/>
         <source>Firing</source>
-        <translation type="unfinished"></translation>
+        <translation>Afvuring</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="102"/>
         <source>Events</source>
-        <translation type="unfinished"></translation>
+        <translation>Events</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="107"/>
         <source>Execution</source>
-        <translation type="unfinished"></translation>
+        <translation>Uitvoering</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="108"/>
         <source>Event</source>
-        <translation type="unfinished"></translation>
+        <translation>Event</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="113"/>
         <source>Indexing</source>
-        <translation type="unfinished"></translation>
+        <translation>Indexering</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="269"/>
         <source>Parent</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouder</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="278"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopie</translation>
     </message>
 </context>
 <context>
