@@ -8991,88 +8991,88 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="57"/>
         <source>Default Class:</source>
-        <translation type="unfinished"></translation>
+        <translation>Standaardklasse:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="82"/>
         <source>Indexing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Indexering:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="105"/>
         <source>Elements</source>
-        <translation type="unfinished"></translation>
+        <translation>Elementen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="126"/>
         <source>Element Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Elementtype:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="140"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>Operator</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="145"/>
         <source>Function</source>
-        <translation type="unfinished"></translation>
+        <translation>Functie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="150"/>
         <source>Storage</source>
-        <translation type="unfinished"></translation>
+        <translation>Opslag</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="171"/>
         <source>Function:</source>
-        <translation type="unfinished"></translation>
+        <translation>Functie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="178"/>
         <source>Operator:</source>
-        <translation type="unfinished"></translation>
+        <translation>Operator:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="185"/>
         <source>Support/Strategy:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ondersteuning/Strategie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="199"/>
         <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="221"/>
         <source>Op. Family:</source>
-        <translation type="unfinished"></translation>
+        <translation>Operator Familie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/operatorclasswidget.cpp" line="35"/>
         <source>Storage Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Opslagtype</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/operatorclasswidget.cpp" line="39"/>
         <source>Object</source>
-        <translation type="unfinished"></translation>
+        <translation>Object</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/operatorclasswidget.cpp" line="42"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Type</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/operatorclasswidget.cpp" line="45"/>
         <source>Support/Strategy</source>
-        <translation type="unfinished"></translation>
+        <translation>Ondersteuning/Strategie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/operatorclasswidget.cpp" line="46"/>
         <source>Operator Family</source>
-        <translation type="unfinished"></translation>
+        <translation>Operator Familie</translation>
     </message>
 </context>
 <context>
