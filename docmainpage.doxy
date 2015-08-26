@@ -12,18 +12,21 @@
  * 
  * \mainpage
  * 
- * <h2>This is a experimental resource for developers who wants to know more about pgModeler's source code and/or implements their own plug-ins.</h2>
+ * <h2>This is a experimental resource for developers who want to know more about pgModeler's source code and/or implements their own plug-ins.</h2>
  * 
- * \section help Help Wanted!
+ * \section help pgModeler needs your help!
  * 
- * pgModeler is growing and the development needs contributors. If you know <em>C++ language</em> and <em>Qt framework</em> why not give your contribution to the project? You are welcome to join me on development!
- *
- * Even not being developer you can collaborate. pgModeler doesn't own a User's Manual and my reduce spare time does not permit me to write one.
+ * pgModeler is growing and the development needs contributors. If you know <em>C++</em> and <em>Qt</em>, consider contributing to pgModeler. You are welcome to join us on development!
  * 
- * If you are interested in write a user's manual or found typos over the this documentation feel free to contact me.
+ * Even if you are not a developer you can still contribute...
+ * <ul>
+ * 	<li>Contribute to our (currently not yet existing) User Manual</li>
+ * 	<li>Help us with translating pgModeler to more languages</li>
+ * 	<li>Report bugs or feature requests</li>
+ * 	<li>...</li>
+ * </ul>
  * 
- * Hope you enjoy! ;)
- * 
+ * If any of this sounds or exciting to you, drop us a line.
  * <em><strong>Raphael A. Silva</strong></em><br/>
  * <em>raphael@pgmodeler.com.br</em>
  */ 
