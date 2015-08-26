@@ -4996,133 +4996,133 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="26"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="63"/>
         <source>Attributes</source>
-        <translation type="unfinished"></translation>
+        <translation>Attributen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="100"/>
         <source>Security:</source>
-        <translation type="unfinished"></translation>
+        <translation>Beveiliging:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="132"/>
         <source>Function Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Functietype:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="190"/>
         <source>Rows Returned:</source>
-        <translation type="unfinished"></translation>
+        <translation>Aantal rijen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="212"/>
         <source>Langague:</source>
-        <translation type="unfinished"></translation>
+        <translation>Taal:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="259"/>
         <source>Return Method:</source>
-        <translation type="unfinished"></translation>
+        <translation>Terugkeermethode:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="278"/>
         <source>Behavior:</source>
-        <translation type="unfinished"></translation>
+        <translation>Gedrag:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="303"/>
         <source>Simple</source>
-        <translation type="unfinished"></translation>
+        <translation>Simpel</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="322"/>
         <source>Set</source>
-        <translation type="unfinished"></translation>
+        <translation>Set</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="338"/>
         <source>Table</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabel</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="356"/>
         <source>Return Table</source>
-        <translation type="unfinished"></translation>
+        <translation>Terugkeertabel</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="381"/>
         <source>Execution Cost:</source>
-        <translation type="unfinished"></translation>
+        <translation>Uitvoeringskost:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="397"/>
         <source>Windown Func.</source>
-        <translation type="unfinished"></translation>
+        <translation>Windowing Functie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="436"/>
         <source>Leakproof</source>
-        <translation type="unfinished"></translation>
+        <translation>Lekdicht</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="444"/>
         <source>Parameters</source>
-        <translation type="unfinished"></translation>
+        <translation>Parameters</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="449"/>
         <source>Definition</source>
-        <translation type="unfinished"></translation>
+        <translation>Definitie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="500"/>
         <source>Dynamic Library:</source>
-        <translation type="unfinished"></translation>
+        <translation>Dynamische Bibliotheek</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="529"/>
         <source>Symbol:</source>
-        <translation type="unfinished"></translation>
+        <translation>Symbool:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="558"/>
         <source>Library:</source>
-        <translation type="unfinished"></translation>
+        <translation>Bibliotheek:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="624"/>
         <source>Source code:</source>
-        <translation type="unfinished"></translation>
+        <translation>Broncode:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/functionwidget.cpp" line="51"/>
         <source>Column</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolom</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/functionwidget.cpp" line="53"/>
         <location filename="../libpgmodeler_ui/src/functionwidget.cpp" line="61"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Type</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/functionwidget.cpp" line="59"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Naam</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/functionwidget.cpp" line="63"/>
         <source>Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Modus</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/functionwidget.cpp" line="64"/>
         <source>Default Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Standaardwaarde:</translation>
     </message>
 </context>
 <context>
