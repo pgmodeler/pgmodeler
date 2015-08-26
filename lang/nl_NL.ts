@@ -8886,108 +8886,108 @@ p, li { white-space: pre-wrap; }
         <location filename="../libpgmodeler_ui/ui/operationlistwidget.ui" line="35"/>
         <location filename="../libpgmodeler_ui/ui/operationlistwidget.ui" line="92"/>
         <source>Executed Operations</source>
-        <translation type="unfinished"></translation>
+        <translation>Uitgevoerde Acties</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operationlistwidget.ui" line="124"/>
         <source>Hide this widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Verberg dit widget</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operationlistwidget.ui" line="127"/>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operationlistwidget.ui" line="248"/>
         <source>1</source>
-        <translation type="unfinished"></translation>
+        <translation>1</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operationlistwidget.ui" line="261"/>
         <source>Operations:</source>
-        <translation type="unfinished"></translation>
+        <translation>Acties:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operationlistwidget.ui" line="271"/>
         <location filename="../libpgmodeler_ui/ui/operationlistwidget.ui" line="291"/>
         <source>0</source>
-        <translation type="unfinished"></translation>
+        <translation>0</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operationlistwidget.ui" line="281"/>
         <source>Position:</source>
-        <translation type="unfinished"></translation>
+        <translation>Positie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operationlistwidget.ui" line="318"/>
         <source>Delete operation history</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwijder actiegeschiedenis</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operationlistwidget.ui" line="344"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>Ongedaan maken</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/operationlistwidget.ui" line="370"/>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>Opnieuw doen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/operationlistwidget.cpp" line="103"/>
         <source>Object: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Object: %1</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/operationlistwidget.cpp" line="108"/>
         <source>Name: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Naam: %1</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/operationlistwidget.cpp" line="113"/>
         <source>created</source>
-        <translation type="unfinished"></translation>
+        <translation>aangemaakt</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/operationlistwidget.cpp" line="118"/>
         <source>removed</source>
-        <translation type="unfinished"></translation>
+        <translation>verwijderd</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/operationlistwidget.cpp" line="123"/>
         <source>modified</source>
-        <translation type="unfinished"></translation>
+        <translation>aangepast</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/operationlistwidget.cpp" line="128"/>
         <source>moved</source>
-        <translation type="unfinished"></translation>
+        <translation>verplaatst</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/operationlistwidget.cpp" line="134"/>
         <source>Operation: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Actie: %1</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/operationlistwidget.cpp" line="160"/>
         <source>Undoing operations...</source>
-        <translation type="unfinished"></translation>
+        <translation>Acties ongedaan maken...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/operationlistwidget.cpp" line="195"/>
         <source>Redoing operations...</source>
-        <translation type="unfinished"></translation>
+        <translation>Acties opnieuw uitvoeren...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/operationlistwidget.cpp" line="227"/>
         <source>Operation history exclusion</source>
-        <translation type="unfinished"></translation>
+        <translation>Actiegeschiedenisuitsluiting</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/operationlistwidget.cpp" line="228"/>
         <source>Delete the executed operations history is an irreversible action, do you want to continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>Het verwijderen van de geschiedenis van de uitgevoerde acties kan niet worden ongedaan gemaakt, bent u zeker dat u wilt verdergaan?</translation>
     </message>
 </context>
 <context>
