@@ -2537,7 +2537,7 @@ Deze optie afvinken zorgt ervoor dat de SQL wordt ingevoegd na het CREATE DATABA
     <message>
         <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="49"/>
         <source>Join func.</source>
-        <translation>Join functie</translation>
+        <translation>Join func.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="50"/>
@@ -3095,8 +3095,8 @@ Deze optie afvinken zorgt ervoor dat de SQL wordt ingevoegd na het CREATE DATABA
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="1040"/>
-        <source>Do you really want to &lt;strong&gt;cascade&lt;/strong&gt; drop the object &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt;? This action will drop all the other objects that depends on it?</source>
-        <translation>Bent u er zeker van dat u het object &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt; via &lt;strong&gt;cascade&lt;/strong&gt; wilt verwijderen? Deze actie verwijdert ook alle objecten die afhankelijk zijn van dit object.</translation>
+        <source>Do you really want to &lt;strong&gt;cascade&lt;/strong&gt; drop the object &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt;? This action will drop all the other objects that depends on it.</source>
+        <translation>Bent u er zeker van dat u het object &amp;lt;strong&amp;gt;%1&amp;lt;/strong&amp;gt; &amp;lt;em&amp;gt;(%2)&amp;lt;/em&amp;gt; via &amp;lt;strong&amp;gt;cascade&amp;lt;/strong&amp;gt; wilt verwijderen? Deze actie verwijdert ook alle objecten die afhankelijk zijn van dit object.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="1107"/>
@@ -3264,7 +3264,7 @@ Deze optie afvinken zorgt ervoor dat de SQL wordt ingevoegd na het CREATE DATABA
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="835"/>
         <source>By OID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Per OID</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="872"/>
@@ -11785,17 +11785,17 @@ Relationship: %1</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="198"/>
         <source>By value</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Per waarde</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="211"/>
         <source>Preferred</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Voorkeur</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="218"/>
         <source>Collatable</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sorteerbaar</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="227"/>
@@ -11860,7 +11860,7 @@ Relationship: %1</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="394"/>
         <source>Enumerations</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Enumeraties</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="415"/>
@@ -11905,7 +11905,7 @@ Relationship: %1</source>
     <message>
         <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="36"/>
         <source>Subtype</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Subtype</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="60"/>
@@ -12192,7 +12192,7 @@ Relationship: %1</source>
     <message>
         <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="59"/>
         <source>Alias Col.</source>
-        <translation>Alias Kolom</translation>
+        <translation>Alias Kol.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="60"/>
