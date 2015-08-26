@@ -3384,59 +3384,59 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
     <message>
         <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="169"/>
         <source>Retrieving system objects... `%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Systeemobjecten ophalen... `%1&apos;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="219"/>
         <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="243"/>
         <source>Retrieving objects... `%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Objecten ophalen... `%1&apos;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="301"/>
         <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="409"/>
         <source>Creating object `%1&apos; (%2)...</source>
-        <translation type="unfinished"></translation>
+        <translation>Object aanmaken `%1&apos; (%2)...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="347"/>
         <source>Trying to recreate object `%1&apos; (%2)...</source>
-        <translation type="unfinished"></translation>
+        <translation>Object `%1&apos; proberen aan te maken (%2)...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="370"/>
         <source>Import failed to recreate some objects in `%1&apos; tries.</source>
-        <translation type="unfinished"></translation>
+        <translation>Het importeren faalde na `%1&apos; pogingen om sommige objecten te her-creëeren.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="438"/>
         <source>Creating permissions for object `%1&apos; (%2)...</source>
-        <translation type="unfinished"></translation>
+        <translation>Machtigingen aanmaken voor object `%1&apos; (%2)...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="456"/>
         <source>Creating columns permissions...</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolommachtigingen aanmaken...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="507"/>
         <source>Updating relationships of `%1&apos; (%2)...</source>
-        <translation type="unfinished"></translation>
+        <translation>Updaten van de relaties voor `%1&apos; (%2)...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="562"/>
         <source>The database import ended but some errors were generated and saved into the log file `%1&apos;. This file will last until pgModeler quit.</source>
-        <translation type="unfinished"></translation>
+        <translation>Het importeren van de database is voltooid maar er werden enkele fouten gegenereerd, deze werden opgeslagen in het log-bestand `%1&apos;. Dit bestand zal worden verwijderd wanneer u pgModeler afsluit.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="1962"/>
         <source>Destroying unused detached columns...</source>
-        <translation type="unfinished"></translation>
+        <translation>De vrijstaande kolommen worden verwijderd...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="1996"/>
         <source>Creating table inheritances...</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabel-overervingen worden aangemaakt...</translation>
     </message>
 </context>
 <context>
