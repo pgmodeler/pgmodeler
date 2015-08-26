@@ -10491,7 +10491,7 @@ accepted structure. All available options are described below.</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="53"/>
         <source>yyyy-MMM-dd hh:mm:ss</source>
-        <translation>jjjj-MMM-dd hh:mm:ss</translation>
+        <translation>yyyy-MMM-dd hh:mm:ss</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="91"/>
