@@ -11925,108 +11925,108 @@ Relationship: %1</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="26"/>
         <source>Update Notifier</source>
-        <translation type="unfinished"></translation>
+        <translation>Update Aankondiging</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="81"/>
         <source>New update found!</source>
-        <translation type="unfinished"></translation>
+        <translation>Er is een nieuwe update!</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="131"/>
         <source>Hide this widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Verberg dit widget</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="134"/>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="173"/>
         <source>Released in:</source>
-        <translation type="unfinished"></translation>
+        <translation>Releasedatum:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="194"/>
         <source>mmm dd, yyyy</source>
-        <translation type="unfinished"></translation>
+        <translation>mmm dd, yyyy</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="228"/>
         <source>Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>Versie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="248"/>
         <source>0.0.0</source>
-        <translation type="unfinished"></translation>
+        <translation>0.0.0</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="257"/>
         <source>Changelog</source>
-        <translation type="unfinished"></translation>
+        <translation>Aanpassingen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="326"/>
         <source>Redirects to purchase page.</source>
-        <translation type="unfinished"></translation>
+        <translation>Leidt naar de aankooppagina.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="329"/>
         <source>Get binary package</source>
-        <translation type="unfinished"></translation>
+        <translation>Verkrijg een binair pakket</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="361"/>
         <source>Redirects to GitHub source repository.</source>
-        <translation type="unfinished"></translation>
+        <translation>Leidt naar de broncode op GitHub.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="364"/>
         <source>Get source code</source>
-        <translation type="unfinished"></translation>
+        <translation>Verkrijg de broncode</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="455"/>
         <source>&lt;strong&gt;Note:&lt;/strong&gt; Both actions below will open a new web browser window</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Let op:&lt;/strong&gt; Beide acties zullen in een browservenster openen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/updatenotifierwidget.cpp" line="38"/>
         <source>Recover a package</source>
-        <translation type="unfinished"></translation>
+        <translation>Herstel een pakket</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/updatenotifierwidget.cpp" line="39"/>
         <source>Purchase a new package</source>
-        <translation type="unfinished"></translation>
+        <translation>Koop een nieuw pakket aan</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/updatenotifierwidget.cpp" line="113"/>
         <location filename="../libpgmodeler_ui/src/updatenotifierwidget.cpp" line="158"/>
         <source>Failed to check updates</source>
-        <translation type="unfinished"></translation>
+        <translation>Het ophalen van update informatie faalde</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/updatenotifierwidget.cpp" line="114"/>
         <source>The update notifier failed to check for new versions! Please, verify your internet connectivity and try again! Connection error returned: &lt;strong&gt;%1&lt;/strong&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Het ophalen van nieuwe versie informatie faalde! Gelieve uw internetverbinding na te kijken en opnieuw te proberen! De verbindingsfout die werd gegenereerd is &lt;strong&gt;%1&lt;/strong&gt;.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/updatenotifierwidget.cpp" line="149"/>
         <source>No updates found</source>
-        <translation type="unfinished"></translation>
+        <translation>Geen nieuwe updates</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/updatenotifierwidget.cpp" line="150"/>
         <source>You are running the most recent pgModeler version! No update needed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dit is de meest recente versie van pgModeler!</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/updatenotifierwidget.cpp" line="159"/>
         <source>The update notifier failed to check for new versions! A HTTP status code was returned: &lt;strong&gt;%1&lt;/strong&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Het ophalen van nieuwe versie informatie faalde! De volgende HTTP status code werd gegenereerd: &lt;strong&gt;%1&lt;/strong&gt;</translation>
     </message>
 </context>
 <context>
