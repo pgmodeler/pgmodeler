@@ -9753,7 +9753,7 @@ accepted structure. All available options are described below.</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="287"/>
         <source>Spatial:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ruimtelijk:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="312"/>
