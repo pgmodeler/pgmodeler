@@ -7391,12 +7391,12 @@ p, li { white-space: pre-wrap; }
         <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="35"/>
         <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="89"/>
         <source>Model Objects</source>
-        <translation type="unfinished"></translation>
+        <translation>Modelobjecten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="121"/>
         <source>Hide this widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Verberg dit widget</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="124"/>
@@ -7406,112 +7406,112 @@ p, li { white-space: pre-wrap; }
         <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="789"/>
         <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="824"/>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="307"/>
         <source>1</source>
-        <translation type="unfinished"></translation>
+        <translation>1</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="392"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation>ID</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="401"/>
         <source>Object</source>
-        <translation type="unfinished"></translation>
+        <translation>Object</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="410"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Type</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="419"/>
         <source>Parent Object</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouder Object</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="428"/>
         <source>Parent Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouder Type</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="454"/>
         <source>Visible Object Types</source>
-        <translation type="unfinished"></translation>
+        <translation>Zichtbare Object Types</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="527"/>
         <source>Select All</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecteer Alles</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="540"/>
         <source>Clear All</source>
-        <translation type="unfinished"></translation>
+        <translation>Alles Wissen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="602"/>
         <source>Select</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecteer</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="618"/>
         <source>Return</source>
-        <translation type="unfinished"></translation>
+        <translation>Keer terug</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="637"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Annuleren</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="653"/>
         <source>Esc</source>
-        <translation type="unfinished"></translation>
+        <translation>Esc</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="672"/>
         <source>Tree view</source>
-        <translation type="unfinished"></translation>
+        <translation>Boomstructuur</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="713"/>
         <source>List view</source>
-        <translation type="unfinished"></translation>
+        <translation>Lijst</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="748"/>
         <source>Objects view configuration</source>
-        <translation type="unfinished"></translation>
+        <translation>Object-overzichtsconfiguratie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="786"/>
         <source>Expands all items</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle items uitklappen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="821"/>
         <source>Collapses all items</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle items inklappen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="863"/>
         <source>Filter:</source>
-        <translation type="unfinished"></translation>
+        <translation>Filter:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="877"/>
         <source>By ID</source>
-        <translation type="unfinished"></translation>
+        <translation>Volgens ID</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelobjectswidget.cpp" line="165"/>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieuw</translation>
     </message>
 </context>
 <context>
