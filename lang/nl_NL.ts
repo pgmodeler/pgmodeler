@@ -10631,166 +10631,166 @@ accepted structure. All available options are described below.</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="64"/>
         <source>Load SQL script</source>
-        <translation type="unfinished"></translation>
+        <translation>Laad SQL script</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="67"/>
         <source>&amp;Load</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Laden</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="110"/>
         <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="159"/>
         <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="299"/>
         <source>Save SQL commands</source>
-        <translation type="unfinished"></translation>
+        <translation>Sla SQL commando&apos;s op</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="113"/>
         <source>&amp;Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Op&amp;slaan</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="162"/>
         <source>&amp;Find</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Zoeken</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="175"/>
         <source>Alt+F</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+Z</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="214"/>
         <source>Run the specified SQL command</source>
-        <translation type="unfinished"></translation>
+        <translation>Voer het commando uit</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="217"/>
         <source>Run SQL</source>
-        <translation type="unfinished"></translation>
+        <translation>Uitvoeren</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="230"/>
         <source>F6</source>
-        <translation type="unfinished"></translation>
+        <translation>F6</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="254"/>
         <source>Clear sql input field and results</source>
-        <translation type="unfinished"></translation>
+        <translation>Wis SQL invoerveld en resultaten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="257"/>
         <source>Clear All</source>
-        <translation type="unfinished"></translation>
+        <translation>Alles Wissen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="291"/>
         <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="340"/>
         <source>Export results to a CSV file</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporteer de resultaten naar CSV bestand</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="294"/>
         <source>Snippe&amp;ts</source>
-        <translation type="unfinished"></translation>
+        <translation>Snippe&amp;ts</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="343"/>
         <source>E&amp;xport</source>
-        <translation type="unfinished"></translation>
+        <translation>E&amp;xporteren</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="386"/>
         <source>Shows the command history</source>
-        <translation type="unfinished"></translation>
+        <translation>Toon de commandogeschiedenis</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="389"/>
         <source>&amp;History</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Geschiedenis</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="402"/>
         <source>Alt+H</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+G</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="508"/>
         <source>Command History</source>
-        <translation type="unfinished"></translation>
+        <translation>Commandogeschiedenis</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="553"/>
         <source>Clear sql input field and results.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wis SQL invoerveld en resultaten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="556"/>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>Leegmaken</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="669"/>
         <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="674"/>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="688"/>
         <source>0</source>
-        <translation type="unfinished"></translation>
+        <translation>0</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="701"/>
         <source>Rows returned: </source>
-        <translation type="unfinished"></translation>
+        <translation>Aantal rijen: </translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="41"/>
         <source>SQL file (*.sql);;All files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation>SQL Code (*.sql);;Alle bestanden (*.*)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="193"/>
         <source>[binary data]</source>
-        <translation type="unfinished"></translation>
+        <translation>[binaire data]</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="281"/>
         <source>[&lt;strong&gt;%1&lt;/strong&gt;] SQL command successfully executed. &lt;em&gt;Rows affected &lt;strong&gt;%2&lt;/strong&gt;&lt;/em&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>[&lt;strong&gt;%1&lt;/strong&gt;] SQL command werd succesvol uitgevoerd. &lt;em&gt;&lt;strong&gt;%2&lt;/strong&gt; rijen werden beïnvloed&lt;/em&gt;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="320"/>
         <source>Load SQL commands</source>
-        <translation type="unfinished"></translation>
+        <translation>Laad SQL commando&apos;s</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="349"/>
         <source>Save CSV file</source>
-        <translation type="unfinished"></translation>
+        <translation>Sla CSV bestand op</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="350"/>
         <source>Comma-separated values file (*.csv);;All files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bestand met komma-gesepareerde waarden (*.csv);;Alle bestanden (*.*)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="416"/>
         <source>The SQL input field and the results grid will be cleared! Want to proceed?</source>
-        <translation type="unfinished"></translation>
+        <translation>Het SQL invoerveld en de resultaten-lijst zullen worden leeggemaakt! Wenst u verder te gaan?</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="439"/>
         <source>Copy selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopiëer de selectie</translation>
     </message>
 </context>
 <context>
