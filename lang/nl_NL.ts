@@ -3614,102 +3614,102 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
     <message>
         <location filename="../libpgmodeler_ui/ui/elementswidget.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/elementswidget.ui" line="53"/>
         <source>Column:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolom:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/elementswidget.ui" line="119"/>
         <source>Expression:</source>
-        <translation type="unfinished"></translation>
+        <translation>Expressie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/elementswidget.ui" line="132"/>
         <source>Collation:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sortering:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/elementswidget.ui" line="157"/>
         <source>Operator Class:</source>
-        <translation type="unfinished"></translation>
+        <translation>Operator Klasse</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/elementswidget.ui" line="164"/>
         <source>Operator:</source>
-        <translation type="unfinished"></translation>
+        <translation>Operator:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/elementswidget.ui" line="177"/>
         <source>Sorting:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sortering:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/elementswidget.ui" line="195"/>
         <source>Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation>Stijgend</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/elementswidget.ui" line="211"/>
         <source>Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>Afdalend</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/elementswidget.ui" line="224"/>
         <source>Nulls first</source>
-        <translation type="unfinished"></translation>
+        <translation>Nulls eerst</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/elementswidget.cpp" line="40"/>
         <source>Element</source>
-        <translation type="unfinished"></translation>
+        <translation>Element</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/elementswidget.cpp" line="42"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Type</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/elementswidget.cpp" line="44"/>
         <source>Operator Class</source>
-        <translation type="unfinished"></translation>
+        <translation>Operator Klasse</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/elementswidget.cpp" line="46"/>
         <source>Sorting</source>
-        <translation type="unfinished"></translation>
+        <translation>Sortering</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/elementswidget.cpp" line="47"/>
         <source>Nulls First</source>
-        <translation type="unfinished"></translation>
+        <translation>Nulls eerst</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/elementswidget.cpp" line="126"/>
         <source>Collation</source>
-        <translation type="unfinished"></translation>
+        <translation>Sortering</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/elementswidget.cpp" line="145"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>Operator</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/elementswidget.cpp" line="240"/>
         <source>Expression</source>
-        <translation type="unfinished"></translation>
+        <translation>Expressie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/elementswidget.cpp" line="261"/>
         <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation>Ja</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/elementswidget.cpp" line="263"/>
         <source>No</source>
-        <translation type="unfinished"></translation>
+        <translation>Nee</translation>
     </message>
 </context>
 <context>
