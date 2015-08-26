@@ -1705,144 +1705,145 @@ Versie: `%3&apos;</translation>
     <message>
         <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="26"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="44"/>
         <source>SQL code</source>
-        <translation type="unfinished"></translation>
+        <translation>SQL code</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="88"/>
         <source>Puts an SELECT command template at current cursor position.</source>
-        <translation type="unfinished"></translation>
+        <translation>Plaatst een SELECT commando-sjabloon op de huidige positie van de cursor.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="91"/>
         <source>&amp;SELECT</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;SELECT</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="125"/>
         <source>Puts an INSERT command template at current cursor position.</source>
-        <translation type="unfinished"></translation>
+        <translation>Plaatst een INSERT commando-sjabloon op de huidige positie van de cursor.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="128"/>
         <source>&amp;INSERT</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;INSERT</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="162"/>
         <source>Puts an UPDATE command template at current cursor position.</source>
-        <translation type="unfinished"></translation>
+        <translation>Plaatst een UPDATE commando-sjabloon op de huidige positie van de cursor.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="165"/>
         <source>&amp;UPDATE</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;UPDATE</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="199"/>
         <source>Puts an DELETE command template at current cursor position.</source>
-        <translation type="unfinished"></translation>
+        <translation>Plaatst een DELETE commando-sjabloon op de huidige positie van de cursor.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="202"/>
         <source>&amp;DELETE</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;DELETE</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="233"/>
         <source>&amp;Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Leegmaken</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="272"/>
         <source>Append SQL</source>
-        <translation type="unfinished"></translation>
+        <translation>Nagevoegde SQL</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="290"/>
         <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="323"/>
         <source>Append the SQL code at the very end of model definition.
 Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE command.</source>
-        <translation type="unfinished"></translation>
+        <translation>Plaats de SQL code op het einde van de modeldefinitie.
+Deze optie afvinken zorgt ervoor dat de SQL wordt ingevoegd na het CREATE DATABASE commando.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="294"/>
         <source>Append at end of model definition.</source>
-        <translation type="unfinished"></translation>
+        <translation>Voeg toe aan het einde van de modeldefinitie.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="305"/>
         <source>Prepend SQL</source>
-        <translation type="unfinished"></translation>
+        <translation>Voorgevoegde SQL</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="327"/>
         <source>Prepend at beginning of model definition.</source>
-        <translation type="unfinished"></translation>
+        <translation>Voeg toe aan het begin van de modeldefinitie.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="413"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use custom commands with extreme caution because you can change the semantics of the entire model when running SQL validation or export processes. Additionally, depending on the amount of commands, those processes can have their performance sensibly degradated.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wees voorzichtig bij het gebruik van aangepaste SQL. Dit kan leiden tot een verandering van de betekenis van het volledige model wanneer SQL validatie wordt uigevoerd of wanneer het model wordt geëxporteerd. Het is ook mogelijk, afhankelijk van de hoeveelheid commando&apos;s, dat de prestaties van deze processen voelbaar en negatief kunnen worden beïnvloed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="38"/>
         <source>Append / Prepend SQL code</source>
-        <translation type="unfinished"></translation>
+        <translation>Voeg SQL code voor/na</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="48"/>
         <source>Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Type:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="50"/>
         <source>Generic INSERT</source>
-        <translation type="unfinished"></translation>
+        <translation>Generische INSERT</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="52"/>
         <source>Include serial columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Sluit seriële kolommen in</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="54"/>
         <source>Exclude serial columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Sluit seriële kolommen uit</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="56"/>
         <source>Generic SELECT</source>
-        <translation type="unfinished"></translation>
+        <translation>Generische SELECT</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="58"/>
         <source>Table SELECT</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabel SELECT</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="60"/>
         <source>Generic UPDATE</source>
-        <translation type="unfinished"></translation>
+        <translation>Generische UPDATE</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="62"/>
         <source>Table UPDATE</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabel UPDATE</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="64"/>
         <source>Generic DELETE</source>
-        <translation type="unfinished"></translation>
+        <translation>Generische DELETE</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="66"/>
         <source>Table DELETE</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabel DELETE</translation>
     </message>
 </context>
 <context>
