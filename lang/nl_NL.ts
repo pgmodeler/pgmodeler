@@ -10915,159 +10915,161 @@ accepted structure. All available options are described below.</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="95"/>
         <source>Label:</source>
-        <translation type="unfinished"></translation>
+        <translation>Label:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="124"/>
         <source>Applies to:</source>
-        <translation type="unfinished"></translation>
+        <translation>Van toepassing op:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="137"/>
         <source>ID:</source>
-        <translation type="unfinished"></translation>
+        <translation>ID:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="180"/>
         <source>Create new connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Maak een nieuwe verbinding aan</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="209"/>
         <source>Cancel edition</source>
-        <translation type="unfinished"></translation>
+        <translation>Annuleer aanpassingen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="238"/>
         <source>Edit selected connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Pas de geselecteerde verbinding aan</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="267"/>
         <source>Delete selected connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwijder de geselecteerde verbinding</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="302"/>
         <source>Remove All</source>
-        <translation type="unfinished"></translation>
+        <translation>Alles Verwijderen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="318"/>
         <source>Shift+Del</source>
-        <translation type="unfinished"></translation>
+        <translation>Shift+Del</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="333"/>
         <source>Snippets:</source>
-        <translation type="unfinished"></translation>
+        <translation>Snippets:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="376"/>
         <source>Parse the snippet in order to check if there are syntax errors.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ontleed het snippet om zeker te zijn dat het geen syntactische fouten bevat.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="379"/>
         <source>Parse</source>
-        <translation type="unfinished"></translation>
+        <translation>Ontleed</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="417"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Toevoegen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="455"/>
         <source>Update</source>
-        <translation type="unfinished"></translation>
+        <translation>Updaten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="515"/>
         <source>Parsable or dynamic snippets are written in the &lt;strong&gt;schema micro language&lt;/strong&gt; syntax. When using a parsable snippet the attributes surrounded in &lt;strong&gt;{}&lt;/strong&gt; will be replaced by the selected object&apos;s matching attributes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ontleedbare of dynamische snippets worden in de &lt;strong&gt;schema micro language&lt;/strong&gt; syntax geschreven. Wanneer een ontleedbaar snippet wordt gebruikt worden attributen die met &lt;strong&gt;{}&lt;/strong&gt; zijn omringd, vervangen door de attributen van het overeenkomstige geselecteerde object.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="518"/>
         <source>Parsable</source>
-        <translation type="unfinished"></translation>
+        <translation>Ontleedbaar</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="572"/>
         <source>When handling parsable snippets empty attributes will be replaced by a value in the format &lt;strong&gt;{attribute}&lt;/strong&gt;. Note that this option can affect the semantics of the resulting snippet.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bij ontleedbare snippets worden lege attributen vervangen door een waarde volgens het formaat &lt;strong&gt;{attribuut}&lt;/strong&gt;. Deze optie kan de betekenis van het snippet beïnvloeden.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="575"/>
         <source>Placeholders</source>
-        <translation type="unfinished"></translation>
+        <translation>Plaatshouder</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="625"/>
         <source>Filter:</source>
-        <translation type="unfinished"></translation>
+        <translation>Filter:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="31"/>
         <source>General purpose</source>
-        <translation type="unfinished"></translation>
+        <translation>Algemeen doel</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="53"/>
         <source>All snippets</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle snippets</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="204"/>
         <source>/* Error parsing the snippet &apos;%1&apos;:
 
  %2 */</source>
-        <translation type="unfinished"></translation>
+        <translation>/* Er trad een fout op tijdens het onleden van het snippet &apos;%1&apos;:
+
+ %2 */</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="226"/>
         <source>Duplicated snippet id &lt;strong&gt;%1&lt;/strong&gt; detected. Please, specify a different one!</source>
-        <translation type="unfinished"></translation>
+        <translation>Gelieve een andere snippet id te selecteren, de id &lt;strong&gt;%1&lt;/strong&gt; is reeds in gebruik!</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="228"/>
         <source>Invalid ID pattern detected &lt;strong&gt;%1&lt;/strong&gt;. This one must start with at leat one letter and be composed by letters, numbers and/or underscore!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een ongeldig ID patroon werd gedetecteerd. Deze moet starten met minstens één letter en worden gevormed door letters, nummer en/or een underscore!</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="230"/>
         <source>Empty label for snippet &lt;strong&gt;%1&lt;/strong&gt;. Please, specify a value for it!</source>
-        <translation type="unfinished"></translation>
+        <translation>Gelieve een waarde in te vullen voor het label van snippet &lt;strong&gt;%1&lt;/strong&gt;!</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="232"/>
         <source>Empty code for snippet &lt;strong&gt;%1&lt;/strong&gt;. Please, specify a value for it!</source>
-        <translation type="unfinished"></translation>
+        <translation>Gelieve een waarde in te vullen voor de code van snippet &lt;strong&gt;%1&lt;/strong&gt;!</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="248"/>
         <source>The dynamic snippet contains syntax error(s). Additional info: &lt;br/&gt;&lt;em&gt;%1&lt;/em&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Het dynamische snippet bevat één of meer syntactische fouten. Bijkomende info: &lt;br/&gt;&lt;em&gt;%1&lt;/em&gt;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="366"/>
         <source>Do you really want to remove all snippets?</source>
-        <translation type="unfinished"></translation>
+        <translation>Bent u zeker dat u alle snippets wilt verwijderen?</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="436"/>
         <source>No syntax errors found in the snippet.</source>
-        <translation type="unfinished"></translation>
+        <translation>Het snippet bevat geen syntactische fouten.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="534"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Algemeen</translation>
     </message>
 </context>
 <context>
