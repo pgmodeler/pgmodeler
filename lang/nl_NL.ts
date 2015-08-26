@@ -9713,38 +9713,38 @@ accepted structure. All available options are described below.</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="32"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="68"/>
         <source>Data Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Data Type</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="143"/>
         <source>SRID:</source>
-        <translation type="unfinished"></translation>
+        <translation>SRID:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="189"/>
         <source>Variation:</source>
-        <translation type="unfinished"></translation>
+        <translation>Variatie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="196"/>
         <source>Z</source>
-        <translation type="unfinished"></translation>
+        <translation>Z</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="209"/>
         <source>M</source>
-        <translation type="unfinished"></translation>
+        <translation>M</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="236"/>
         <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="464"/>
         <source>Precision</source>
-        <translation type="unfinished"></translation>
+        <translation>Precisie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="287"/>
@@ -9755,53 +9755,53 @@ accepted structure. All available options are described below.</source>
         <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="312"/>
         <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="609"/>
         <source>Dimension</source>
-        <translation type="unfinished"></translation>
+        <translation>Dimensie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="349"/>
         <source>Format:</source>
-        <translation type="unfinished"></translation>
+        <translation>Formaat:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="381"/>
         <source>Timezone:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tijdszone:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="434"/>
         <source>Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Type:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="470"/>
         <source>P:</source>
-        <translation type="unfinished"></translation>
+        <translation>P:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="495"/>
         <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="537"/>
         <source>Length</source>
-        <translation type="unfinished"></translation>
+        <translation>Lengte</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="543"/>
         <source>L:</source>
-        <translation type="unfinished"></translation>
+        <translation>L:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="579"/>
         <source>Interval:</source>
-        <translation type="unfinished"></translation>
+        <translation>Interval:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="615"/>
         <source>[ ]:</source>
-        <translation type="unfinished"></translation>
+        <translation>[ ]:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/pgsqltypewidget.cpp" line="44"/>
         <source>NONE</source>
-        <translation type="unfinished"></translation>
+        <translation>GEEN</translation>
     </message>
 </context>
 <context>
