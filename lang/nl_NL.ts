@@ -9895,168 +9895,168 @@ accepted structure. All available options are described below.</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="45"/>
         <source>Connection Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Verbindingsmodus</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="97"/>
         <source>This mode is available only for &lt;strong&gt;one-to-one&lt;/strong&gt;, &lt;strong&gt;one-to-many&lt;/strong&gt; and &lt;strong&gt;fk relationships&lt;/strong&gt; but provides a better semantics when linking tables by placing the lines on the exact point where the relationship occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Deze modus is enkel beschikbaar voor &lt;strong&gt;one-to-one&lt;/strong&gt;, &lt;strong&gt;one-to-many&lt;/strong&gt; en &lt;strong&gt;fk relaties&lt;/strong&gt; maar voorziet in betere semantiek bij het linken van tabellen door de lijnen te plaatsen op de exacte locatie waar de relatie zich bevindt.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="100"/>
         <source>Connect FK to PK columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Verbindt FK naar PK kolommen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="193"/>
         <source>This mode is the classical one. It connects the relationship to tables through their central points.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dit is de klassieke modus. Deze verbindt de relaties tussen tabellen via hun centrale punt.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="196"/>
         <source>Connect tables&apos; center points</source>
-        <translation type="unfinished"></translation>
+        <translation>Verbindt de centrale punten van de tabellen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="302"/>
         <source>FK Settings &amp;&amp; Patterns</source>
-        <translation type="unfinished"></translation>
+        <translation>FK instellingen &amp;&amp; Patronen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="326"/>
         <source>Foreign key settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Foreign key instellingen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="374"/>
         <source>Deferral:</source>
-        <translation type="unfinished"></translation>
+        <translation>Uitstel:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="399"/>
         <source>Deferrable:</source>
-        <translation type="unfinished"></translation>
+        <translation>Uitstelbaar:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="459"/>
         <source>ON DELETE:</source>
-        <translation type="unfinished"></translation>
+        <translation>ON DELETE:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="472"/>
         <source>ON UPDATE:</source>
-        <translation type="unfinished"></translation>
+        <translation>ON UPDATE:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="493"/>
         <source>Name patterns</source>
-        <translation type="unfinished"></translation>
+        <translation>Naamspatronen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="514"/>
         <source>Pattern for foreign key generated based upon reference table&apos;s pk (1-1 and 1-n) or based upon source table&apos;s pk (n-n).</source>
-        <translation type="unfinished"></translation>
+        <translation>Het patroon voor de foreign key wordt gegenereerd op basis van de pk van de gerefereerde tabel (1-1 en 1-n) of op basis van de pk van de brontabel (n-n).</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="517"/>
         <source>Foreign Key (Source):</source>
-        <translation type="unfinished"></translation>
+        <translation>Foreign Key (Bron):</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="524"/>
         <source>Relationship type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Relatietype:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="531"/>
         <source>Pattern for columns generated based upon target table&apos;s pk (n-n).</source>
-        <translation type="unfinished"></translation>
+        <translation>Het patroon voor kolommen die worden gegenereerd op basis van de pk van de doeltabel (n-n).</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="534"/>
         <source>Column (Target):</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolom (Doel):</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="542"/>
         <source>One to one (1:1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Een-op-een (1:1)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="547"/>
         <source>One to many (1:n)</source>
-        <translation type="unfinished"></translation>
+        <translation>Een op meerdere (1:n)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="552"/>
         <source>Many to many (n:n)</source>
-        <translation type="unfinished"></translation>
+        <translation>Meerdere op meerdere (n:n)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="557"/>
         <source>Generalization</source>
-        <translation type="unfinished"></translation>
+        <translation>Generalisatie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="562"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopieer</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="570"/>
         <source>Pattern for columns generated based upon reference table&apos;s pk (1-1 and 1-n) or based upon source table&apos;s pk (n-n).</source>
-        <translation type="unfinished"></translation>
+        <translation>Het patroon voor de kolommen wordt gegenereerd op basis van de pk van de gerefereerde tabel (1-1 en 1-n) of op basis van de pk van de brontabel (n-n).</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="573"/>
         <source>Column (Source):</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolom (Bron):</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="580"/>
         <source>Pattern for foreign key generated based upon target table&apos;s pk (n-n).</source>
-        <translation type="unfinished"></translation>
+        <translation>Het patroon voor de foreign key wordt gegenereerd op basis van de pk van de doeltabel (n-n).</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="583"/>
         <source>Foreign Key (Target):</source>
-        <translation type="unfinished"></translation>
+        <translation>Foreign Key (Doel):</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="590"/>
         <source>Pattern for unique key generated by the relationship.</source>
-        <translation type="unfinished"></translation>
+        <translation>Het patroon voor de unieke sleutel wordt gegenereerd op basis van de relatie.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="593"/>
         <source>Unique Key Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Naam van de unieke sleutel:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="600"/>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="610"/>
         <source>Pattern for primary key generated by identifier relationship.</source>
-        <translation type="unfinished"></translation>
+        <translation>Het patroon voor de primary key wordt gegenereerd op basis van de relatie met de identifier.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="603"/>
         <source>Primary Key Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Naam van de Primary Key:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="613"/>
         <source>Primary Key Column:</source>
-        <translation type="unfinished"></translation>
+        <translation>Primary Key Kolom:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/relationshipconfigwidget.cpp" line="57"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>Standaard</translation>
     </message>
 </context>
 <context>
