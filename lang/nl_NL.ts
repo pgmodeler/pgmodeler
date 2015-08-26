@@ -11145,17 +11145,17 @@ accepted structure. All available options are described below.</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodewidget.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodewidget.ui" line="49"/>
         <source>Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>Versie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodewidget.ui" line="95"/>
         <source>PostgreSQL</source>
-        <translation type="unfinished"></translation>
+        <translation>PostgreSQL</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodewidget.ui" line="146"/>
@@ -11165,72 +11165,72 @@ accepted structure. All available options are described below.</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodewidget.ui" line="162"/>
         <source>SQL</source>
-        <translation type="unfinished"></translation>
+        <translation>SQL</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodewidget.ui" line="185"/>
         <source>Code display:</source>
-        <translation type="unfinished"></translation>
+        <translation>Codeweergave:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodewidget.ui" line="202"/>
         <source>Original</source>
-        <translation type="unfinished"></translation>
+        <translation>Origineel</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodewidget.ui" line="207"/>
         <source>Original + depedencies&apos; SQL</source>
-        <translation type="unfinished"></translation>
+        <translation>Origineel + SQL voor afhankelijken</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodewidget.ui" line="212"/>
         <source>Original + children&apos;s SQL</source>
-        <translation type="unfinished"></translation>
+        <translation>Origineel + SQL voor kinderen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodewidget.ui" line="255"/>
         <source>Save the SQL code to a file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sla de SQL code op in een bestand</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodewidget.ui" line="258"/>
         <source>Save SQL</source>
-        <translation type="unfinished"></translation>
+        <translation>Sla SQL Op</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodewidget.ui" line="291"/>
         <source>XML</source>
-        <translation type="unfinished"></translation>
+        <translation>XML</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="31"/>
         <source>Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Type:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="50"/>
         <source>Source code visualization</source>
-        <translation type="unfinished"></translation>
+        <translation>Broncodevisualisatie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="56"/>
         <source>&lt;strong&gt;Original:&lt;/strong&gt; displays only the original object&apos;s SQL code.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Dependencies:&lt;/strong&gt; display the original code including all dependencies needed to properly create the selected object.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Children:&lt;/strong&gt; display the original code including all children&apos;s SQL code. This option is used only by schemas, tables and views.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Origineel:&lt;/strong&gt; toon enkel de originele SQL code van het object.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Afhankelijken:&lt;/strong&gt; toon de originele code inclusief alle afhankelijken die nodig zijn om het geselecteerde object correct aan te maken.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Kinderen:&lt;/strong&gt; toon de originele code inclusief de code voor alle kinderen. Deze optie wordt enkel gebruikt door schema&apos;s, tabellen en views.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="116"/>
         <source>Save SQL code as...</source>
-        <translation type="unfinished"></translation>
+        <translation>Sla SQL code op als...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="121"/>
         <source>SQL code (*.sql);;All files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation>SQL Code (*.sql);;Alle bestanden (*.*)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="165"/>
         <source>Generating source code...</source>
-        <translation type="unfinished"></translation>
+        <translation>De broncode wordt gegeneerd...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="184"/>
@@ -11245,24 +11245,34 @@ accepted structure. All available options are described below.</source>
 
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>-- LET OP: de volgende code bevat SQL voor zowel het geselecteerde object
+-- alsook zijn afhankelijken kinderen (indien zo aangevinkt).
+-- 
+-- Dit feature bestaat enkel zodat u op een eenvoudige manier de volledige
+-- SQL definitie van het object kan testen.
+-- 
+-- Bij het exporteren of genereren van de SQL code voor de volledige database
+-- worden alle objecten in hun originele positie geplaatst.
+
+
+</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="203"/>
         <source>
 
 -- SQL code purposely truncated at this point on demo version!</source>
-        <translation type="unfinished"></translation>
+        <translation>-- In de demo-versie wordt de SQL code hier moedwillig afgekort!</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="212"/>
         <source>-- SQL code unavailable for this type of object --</source>
-        <translation type="unfinished"></translation>
+        <translation>-- Er is geen SQL code beschikbaar voor dit type object --</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="216"/>
         <source>&lt;!-- XML code preview disabled in demonstration version --&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!-- XML codevoorbeelden zijn niet beschikbaar in de demo-versie --&gt;</translation>
     </message>
 </context>
 <context>
