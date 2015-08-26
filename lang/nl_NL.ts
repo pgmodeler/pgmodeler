@@ -9203,110 +9203,110 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../libpgmodeler_ui/ui/permissionwidget.ui" line="26"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/permissionwidget.ui" line="51"/>
         <location filename="../libpgmodeler_ui/ui/permissionwidget.ui" line="395"/>
         <source>Permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>Machtigingen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/permissionwidget.ui" line="90"/>
         <source>ID:</source>
-        <translation type="unfinished"></translation>
+        <translation>ID:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/permissionwidget.ui" line="121"/>
         <source>Disable SQL code</source>
-        <translation type="unfinished"></translation>
+        <translation>Niet-uitvoerbare SQL code</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/permissionwidget.ui" line="152"/>
         <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="79"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Rollen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/permissionwidget.ui" line="175"/>
         <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="81"/>
         <source>Privileges</source>
-        <translation type="unfinished"></translation>
+        <translation>Machtiginen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/permissionwidget.ui" line="199"/>
         <source>Grant</source>
-        <translation type="unfinished"></translation>
+        <translation>GRANT</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/permissionwidget.ui" line="209"/>
         <source>Revoke</source>
-        <translation type="unfinished"></translation>
+        <translation>REVOKE</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/permissionwidget.ui" line="219"/>
         <source>Cascade</source>
-        <translation type="unfinished"></translation>
+        <translation>Cascade</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/permissionwidget.ui" line="242"/>
         <source>Privilege</source>
-        <translation type="unfinished"></translation>
+        <translation>Machtiging</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/permissionwidget.ui" line="247"/>
         <source>GRANT OPTION</source>
-        <translation type="unfinished"></translation>
+        <translation>GRANT OPTION</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/permissionwidget.ui" line="283"/>
         <source>Add Permission</source>
-        <translation type="unfinished"></translation>
+        <translation>Machtiging toekennen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/permissionwidget.ui" line="312"/>
         <source>Update Permission</source>
-        <translation type="unfinished"></translation>
+        <translation>Machtiging aanpassen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/permissionwidget.ui" line="341"/>
         <source>Cancel Operation</source>
-        <translation type="unfinished"></translation>
+        <translation>Actie annuleren</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/permissionwidget.ui" line="404"/>
         <source>Code Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Codevoorbeeld</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="51"/>
         <source>Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Type:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="65"/>
         <source>Role</source>
-        <translation type="unfinished"></translation>
+        <translation>Rol</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="77"/>
         <source>Id</source>
-        <translation type="unfinished"></translation>
+        <translation>Id</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="104"/>
         <source>Leave the &lt;em&gt;&lt;strong&gt;Roles&lt;/strong&gt;&lt;/em&gt; empty to create a permission applicable to &lt;strong&gt;&lt;em&gt;PUBLIC&lt;/em&gt;&lt;/strong&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Laat de &lt;em&gt;&lt;strong&gt;Rollen&lt;/strong&gt;&lt;/em&gt; leeg om een machtiging aan te maken die op &lt;strong&gt;&lt;em&gt;PUBLIC&lt;/em&gt;&lt;/strong&gt; van toepassing is.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="554"/>
         <source>-- No permissions defined for the specified object!</source>
-        <translation type="unfinished"></translation>
+        <translation>-- Er zijn geen machtigingen gedefinieerd voor het gespecifieerde object!</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="562"/>
         <source>/* Could not generate the SQL code preview for permissions!</source>
-        <translation type="unfinished"></translation>
+        <translation>/* Er kon geen SQL Codevoorbeeld worden gegenereerd voor de machtigingen!</translation>
     </message>
 </context>
 <context>
