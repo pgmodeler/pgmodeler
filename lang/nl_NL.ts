@@ -8587,118 +8587,118 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="50"/>
         <source>Pattern:</source>
-        <translation type="unfinished"></translation>
+        <translation>Patroon:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="84"/>
         <source>Find</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoek</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="115"/>
         <source>Defines the search filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Definieert de zoekfilter</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="118"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Filter</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="149"/>
         <source>Clears the search results</source>
-        <translation type="unfinished"></translation>
+        <translation>Maakt de zoekresultaten leeg</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="152"/>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>Leegmaken</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="180"/>
         <source>Highlight graphical objects when selecting them or their children on the result list</source>
-        <translation type="unfinished"></translation>
+        <translation>Licht grafische objecten op wanneer deze of hun kinderen geselecteerd worden in de resultatenlijst</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="183"/>
         <source>Highlight</source>
-        <translation type="unfinished"></translation>
+        <translation>Licht op</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="212"/>
         <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="253"/>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="250"/>
         <source>Hide this widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Verberg dit widget</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="319"/>
         <source>Regular Expression</source>
-        <translation type="unfinished"></translation>
+        <translation>Regular expression</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="332"/>
         <source>Exact Match</source>
-        <translation type="unfinished"></translation>
+        <translation>Exacte Overeenkomst</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="392"/>
         <source>Select All</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecteer Alles</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="425"/>
         <source>Clear All</source>
-        <translation type="unfinished"></translation>
+        <translation>Alles Wissen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="496"/>
         <source>Case Sensitive</source>
-        <translation type="unfinished"></translation>
+        <translation>Hoofdlettergevoelig</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="583"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation>ID</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="592"/>
         <source>Object</source>
-        <translation type="unfinished"></translation>
+        <translation>Object</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="601"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Type</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="610"/>
         <source>Parent Object</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouder Object</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="619"/>
         <source>Parent Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouder Type</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/objectfinderwidget.cpp" line="119"/>
         <source>Found &lt;strong&gt;%1&lt;/strong&gt; object(s).</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;%1&lt;/strong&gt; object(en) gevonden.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/objectfinderwidget.cpp" line="124"/>
         <source>No objects found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Geen objecten gevonden.</translation>
     </message>
 </context>
 <context>
