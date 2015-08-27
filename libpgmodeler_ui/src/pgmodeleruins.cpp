@@ -55,9 +55,9 @@ QTreeWidgetItem *createOutputTreeItem(QTreeWidget *output_trw, const QString &te
   return(item);
 }
 
-void disableObjectSQL(BaseObject *object, bool value)
+void disableObjectSQL(BaseObject *object, bool disable)
 {
-  if(object)
+  if(object && object->getObjectType()!=BASE_RELATIONSHIP)
   {
     Messagebox msgbox;
     ObjectType obj_type=object->getObjectType();
@@ -69,15 +69,35 @@ void disableObjectSQL(BaseObject *object, bool value)
                       .arg(object->getTypeName()),
                       ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-    object->setSQLDisabled(value);
+    object->setSQLDisabled(disable);
 
-    if(obj_type!=OBJ_DATABASE && curr_val!=value)
+    if(obj_type!=OBJ_DATABASE && curr_val!=disable)
     {
-      msgbox.show(QString(QT_TR_NOOP("Do you want to apply the <strong>SQL %1 status</strong> to the object's references too? This will avoid problems when exporting or validating the model.")).arg(value ? QT_TR_NOOP("disabling") : QT_TR_NOOP("enabling")),
+      msgbox.show(QString(QT_TR_NOOP("Do you want to apply the <strong>SQL %1 status</strong> to the object's references too? This will avoid problems when exporting or validating the model.")).arg(disable ? QT_TR_NOOP("disabling") : QT_TR_NOOP("enabling")),
                   Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
       if(msgbox.result()==QDialog::Accepted)
         disableReferencesSQL(object);
+    }
+
+    /* Special case for tables. When disable the code there is the need to disable constraints
+       codes when the code of parent table is disabled too in order to avoid export errors */
+    if(object->getObjectType()==OBJ_TABLE)
+    {
+      Constraint *constr = nullptr;
+      vector<TableObject *> *objects=dynamic_cast<Table *>(object)->getObjectList(OBJ_CONSTRAINT);
+
+      for(auto &obj : (*objects))
+      {
+        constr=dynamic_cast<Constraint *>(obj);
+
+        /* If the constraint is not FK but is declared outside table via alter (ALTER TABLE...ADD CONSTRAINT...) or
+           The constraint is FK and the reference table is disabled the FK will not be enabled */
+        if((constr->getConstraintType()!=ConstraintType::foreign_key && !constr->isDeclaredInTable()) ||
+           (constr->getConstraintType()==ConstraintType::foreign_key &&
+            (disable || (!disable && !constr->getReferencedTable()->isSQLDisabled()))))
+          constr->setSQLDisabled(disable);
+      }
     }
   }
 }
@@ -97,7 +117,8 @@ void disableReferencesSQL(BaseObject *object)
       tab_obj=dynamic_cast<TableObject *>(refs.back());
 
       //If the object is a relationship added does not do anything since the relationship itself will be disabled
-      if(!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship()))
+      if(refs.back()->getObjectType()!=BASE_RELATIONSHIP &&
+         (!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship())))
       {
         refs.back()->setSQLDisabled(object->isSQLDisabled());
 

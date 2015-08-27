@@ -46,7 +46,7 @@ namespace PgModelerUiNS {
 
   /*! brief Toggles the SQL code for the object. This function also toggles the SQL of the references
       related to the input object */
-  extern void disableObjectSQL(BaseObject *object, bool value);
+  extern void disableObjectSQL(BaseObject *object, bool disable);
 
   //! brief Recursively toggles the specified object's references SQL
   extern void disableReferencesSQL(BaseObject *object);
