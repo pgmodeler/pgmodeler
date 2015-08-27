@@ -3162,11 +3162,6 @@ Deze optie afvinken zorgt ervoor dat de SQL wordt ingevoegd na het CREATE DATABA
         <translation>Spatiëring:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="278"/>
-        <source>Schemas  per row</source>
-        <translation>Schemas per rij</translation>
-    </message>
-    <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="294"/>
         <source>Spacing between objects</source>
         <translation>Spatiëring tussen objecten</translation>
@@ -3175,11 +3170,6 @@ Deze optie afvinken zorgt ervoor dat de SQL wordt ingevoegd na het CREATE DATABA
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="316"/>
         <source>Schemas per row:</source>
         <translation>Schemas per rij:</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="331"/>
-        <source>Resolve some of the object&apos;s dependencies by query the catalog when a needed object does not exists on the loaded set. In some cases it&apos;s necessary to combine this option with others below. This option does not applies to database level objects like role, tablespace and language as well for data types and extensions.</source>
-        <translation>Los sommige afhankelijkheden van objecten op door de catalogus raad te plegen wanneer een object niet in de geladen set bestaat. In sommige gevallen is het nodig om deze optie met andere opties te combineren. Deze optie is niet van toepassing op database-niveau objecten zoals rollen, tablespaces en talen alsook data types en uitbreidingen.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="337"/>
@@ -3227,8 +3217,18 @@ Deze optie afvinken zorgt ervoor dat de SQL wordt ingevoegd na het CREATE DATABA
         <translation>Negeer importeerfouten</translation>
     </message>
     <message>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="278"/>
+        <source>Schemas per row</source>
+        <translation>Schemas per rij</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="331"/>
+        <source>Resolve some of the object&apos;s dependencies by querying the catalog when a needed object does not exists on the loaded set. In some cases it&apos;s necessary to combine this option with others below. This option does not applies to database level objects like role, tablespace and language as well for data types and extensions.</source>
+        <translation>Los sommige afhankelijkheden van objecten op door de catalogus raad te plegen wanneer een object niet in de geladen set bestaat. In sommige gevallen is het nodig om deze optie met andere opties te combineren. Deze optie is niet van toepassing op database-niveau objecten zoals rollen, tablespaces en talen alsook data types en uitbreidingen.</translation>
+    </message>
+    <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="580"/>
-        <source>All catalog queries as well the created objects&apos; source code are printed to standard outupt (stdout).</source>
+        <source>All catalog queries as well the created objects&apos; source code are printed to standard output (stdout).</source>
         <translation>Alle catalogusqueries plus the broncode van de aangemaakte objecten wordt naar de standaard output (stdout) geprint.</translation>
     </message>
     <message>
@@ -6571,7 +6571,7 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="299"/>
         <source>Ignore import errors</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Negeer importeerfouten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="351"/>
@@ -6591,7 +6591,7 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="399"/>
         <source>Import system objects</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Importeer systeemobjecten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="441"/>
@@ -6601,7 +6601,7 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="444"/>
         <source>Import extension objects</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Importeer uitbreidingsobjecten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="483"/>
