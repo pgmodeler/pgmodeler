@@ -7783,378 +7783,378 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="77"/>
         <source>One to One (1-1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Een-op-een (1-1)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="77"/>
         <source>One to Many (1-n)</source>
-        <translation type="unfinished"></translation>
+        <translation>Een op meer (1-n)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="78"/>
         <source>Many to Many (n-n)</source>
-        <translation type="unfinished"></translation>
+        <translation>Meer op meer (n-n)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="78"/>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="201"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopieer</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="78"/>
         <source>Generalization</source>
-        <translation type="unfinished">Generalisatie</translation>
+        <translation>Generalisatie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="132"/>
         <source>&lt;strong&gt;ATTENTION:&lt;/strong&gt; The database model is protected! Operations that could modify it are disabled!</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;OPGELET:&lt;/strong&gt; Het databasemodel is beschermd! Operaties die het zouden kunnen aanpassen zijn uitgeschakeld!</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="177"/>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Bron</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="178"/>
         <source>Alt+S</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+S</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="179"/>
         <source>Show object source code</source>
-        <translation type="unfinished"></translation>
+        <translation>Toon object broncode</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="181"/>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="3246"/>
         <source>Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Eigenschappen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="182"/>
         <source>Space</source>
-        <translation type="unfinished">Spatie</translation>
+        <translation>Spatie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="183"/>
         <source>Edit the object properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Bewerk de eigenschappen van het object</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="185"/>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="3275"/>
         <source>Protect</source>
-        <translation type="unfinished"></translation>
+        <translation>Bescherm</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="186"/>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="3270"/>
         <source>Unprotect</source>
-        <translation type="unfinished"></translation>
+        <translation>Bescherming af</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="187"/>
         <source>Protects object(s) from modifications</source>
-        <translation type="unfinished"></translation>
+        <translation>Beschermt object(en) tegen aanpassingen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="189"/>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="3282"/>
         <source>Delete</source>
-        <translation type="unfinished">Verwijderen</translation>
+        <translation>Verwijderen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="190"/>
         <source>Del</source>
-        <translation type="unfinished">Del</translation>
+        <translation>Del</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="192"/>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="3289"/>
         <source>Del. cascade</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwijder cascade</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="193"/>
         <source>Shift+Del</source>
-        <translation type="unfinished">Shift+Del</translation>
+        <translation>Shift+Del</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="195"/>
         <source>Select all</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecteer Alles</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="196"/>
         <source>Ctrl+A</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+A</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="197"/>
         <source>Selects all the graphical objects in the model</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecteert alle grafische objecten in het model</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="199"/>
         <source>Convert</source>
-        <translation type="unfinished"></translation>
+        <translation>Converteer</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="202"/>
         <source>Ctrl+C</source>
-        <translation type="unfinished">Ctrl+C</translation>
+        <translation>Ctrl+C</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="204"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>Plakken</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="205"/>
         <source>Ctrl+V</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+V</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="207"/>
         <source>Cut</source>
-        <translation type="unfinished"></translation>
+        <translation>Knippen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="208"/>
         <source>Ctrl+X</source>
-        <translation type="unfinished">Ctrl+X</translation>
+        <translation>Ctrl+X</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="210"/>
         <source>Deps &amp;&amp; Referrers</source>
-        <translation type="unfinished"></translation>
+        <translation>Afhankelijkheden &amp;&amp; Verwijzers</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="212"/>
         <source>New</source>
-        <translation type="unfinished">Nieuw</translation>
+        <translation>Nieuw</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="213"/>
         <source>Add a new object in the model</source>
-        <translation type="unfinished"></translation>
+        <translation>Voeg een nieuw object toe aan het model</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="215"/>
         <source>Quick</source>
-        <translation type="unfinished"></translation>
+        <translation>Snel</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="216"/>
         <source>Quick action for the selected object</source>
-        <translation type="unfinished"></translation>
+        <translation>Snelle actie voor het geselecteerde object</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="219"/>
         <source>Rename</source>
-        <translation type="unfinished">Hernoem</translation>
+        <translation>Hernoem</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="220"/>
         <source>F2</source>
-        <translation type="unfinished">F2</translation>
+        <translation>F2</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="221"/>
         <source>Quick rename the object</source>
-        <translation type="unfinished"></translation>
+        <translation>Snelle hernoeming van het object</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="223"/>
         <source>Move to schema</source>
-        <translation type="unfinished"></translation>
+        <translation>Verplaats naar schema</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="226"/>
         <source>Set tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Zet tag</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="229"/>
         <source>Edit permissions</source>
-        <translation type="unfinished">Machtigingen aanpassen</translation>
+        <translation>Machtigingen aanpassen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="230"/>
         <source>Ctrl+E</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+E</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="232"/>
         <source>Change owner</source>
-        <translation type="unfinished"></translation>
+        <translation>Eigenaar veranderen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="235"/>
         <source>Select children</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecteer kinderen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="236"/>
         <source>Highlight</source>
-        <translation type="unfinished">Licht op</translation>
+        <translation>Licht op</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="237"/>
         <source>Open relationship</source>
-        <translation type="unfinished"></translation>
+        <translation>Open relatie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="239"/>
         <source>Custom SQL</source>
-        <translation type="unfinished">Aangepaste SQL</translation>
+        <translation>Aangepaste SQL</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="240"/>
         <source>Alt+Q</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+Q</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="242"/>
         <source>Convert to sequence</source>
-        <translation type="unfinished"></translation>
+        <translation>Converteer naar sequentie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="243"/>
         <source>Convert to serial</source>
-        <translation type="unfinished"></translation>
+        <translation>Converteer naar serieel</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="245"/>
         <source>Break line</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieuw lijn</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="247"/>
         <source>Remove points</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwijder punten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="249"/>
         <source>Enable SQL</source>
-        <translation type="unfinished"></translation>
+        <translation>Schakel SQL in</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="250"/>
         <source>Disable SQL</source>
-        <translation type="unfinished"></translation>
+        <translation>Schakel SQL uit</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="252"/>
         <source>90° (vertical)</source>
-        <translation type="unfinished"></translation>
+        <translation>90° (vertikaal)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="257"/>
         <source>90° (horizontal)</source>
-        <translation type="unfinished"></translation>
+        <translation>90° (horizontaal)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="262"/>
         <source>90° + 90° (vertical)</source>
-        <translation type="unfinished"></translation>
+        <translation>90° + 90° (vertikaal)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="267"/>
         <source>90° + 90° (horizontal)</source>
-        <translation type="unfinished"></translation>
+        <translation>90° + 90° (horizontaal)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="547"/>
         <source>Zoom: %1%</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom: %1%</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="879"/>
         <source>Do you really want to convert the relationship into an intermediate table?</source>
-        <translation type="unfinished"></translation>
+        <translation>Bent u zeker dat u de relatie wilt converteren naar een intermediaire tabel?</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="1099"/>
         <source>Loading database model</source>
-        <translation type="unfinished"></translation>
+        <translation>Het databasemodel wordt geladen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="1302"/>
         <source>Saving database model</source>
-        <translation type="unfinished"></translation>
+        <translation>Het databasemodel wordt opgeslagen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2049"/>
         <source>Also copy all dependencies of selected objects? This minimizes the breakdown of references when copied objects are pasted into another model.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wenst u alle afhankelijken van de geselecteerde objecten ook te kopiëren? Dit minimalizeert het verbreken van referenties wanneer gekopieerde objecten in een ander model worden geplakt.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2150"/>
         <source>Pasting objects...</source>
-        <translation type="unfinished"></translation>
+        <translation>Bezig met het plakken van objecten...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2173"/>
         <source>Validating object: `%1&apos; (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bezig met het valideren van object: `%1&apos; (%2)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2270"/>
         <source>Generating XML for: `%1&apos; (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bezig met het genereren van XML voor: `%1&apos; (%2)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2344"/>
         <source>Pasting object: `%1&apos; (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bezig met het plakken van object: `%1&apos; (%2)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2403"/>
         <source>Not all objects were pasted to the model due to errors returned during the process! Refer to error stack for more details!</source>
-        <translation type="unfinished"></translation>
+        <translation>Niet alle objecten werden in het model geplakt omwille van fouten die werden gegenereerd gedurende dit proces. Kijk de error-stack na voor meer details!</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2476"/>
         <source>&lt;strong&gt;CAUTION:&lt;/strong&gt; You are about to delete objects in cascade mode which means more objects than the selected will be dropped too. Do you really want to proceed?</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;PAS OP:&lt;strong&gt; U staat op het punt om objecten te verwijderen in cascade modus, dit betekent dat ook objecten die niet geselecteerd zijn verwijderd kunnen worden. Bent u zeker dat u wilt verdergaan?</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2480"/>
         <source>&lt;strong&gt;CAUTION:&lt;/strong&gt; Remove multiple objects at once can cause irreversible invalidations to other objects in the model causing such invalid objects to be deleted too. Do you really want to proceed?</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;PAS OP:&lt;/strong&gt; Meerdere objecten in één keer verwijderen kan onherroepbare ongeldigheden veroorzaken in andere objecten binnen het model en ervoor zorgen dat deze objecten ook worden verwijderd. Bent u zeker dat u verder wenst te gaan?</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2486"/>
         <source>&lt;strong&gt;CAUTION:&lt;/strong&gt; Remove a relationship can cause irreversible invalidations to other objects in the model causing such invalid objects to be deleted too. Do you really want to proceed?</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;PAS OP:&lt;/strong&gt; Een relatie verwijderen kan onherroepbare ongeldigheden veroorzaken in andere objecten en ervoor zorgen dat deze objecten ook worden verwijderd. Bent u er zeker van dat u wenst verder te gaan?</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2489"/>
         <source>Do you really want to delete the selected object?</source>
-        <translation type="unfinished"></translation>
+        <translation>Bent u er zeker van dat u het geselecteerde object wenst te verwijderen?</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2737"/>
         <source>The cascade deletion found some problems when running! Some objects could not be deleted or registered in the operation&apos;s history! Please, refer to error stack for more details.</source>
-        <translation type="unfinished"></translation>
+        <translation>Het cascade verwijderen kwam enkele problemenen tegen tijdens het uitvoeren! Sommige objecten konden niet worden verwijderd of geregistreerd in de actie-geschiedenis! Gelieve de error-stack na te kijken voor meer details.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2892"/>
         <source>(no objects)</source>
-        <translation type="unfinished"></translation>
+        <translation>(geen objecten)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="3253"/>
         <source>Source code</source>
-        <translation type="unfinished"></translation>
+        <translation>Broncode</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="3301"/>
         <source>Constraints</source>
-        <translation type="unfinished">Constraints</translation>
+        <translation>Constraints</translation>
     </message>
 </context>
 <context>
