@@ -2294,10 +2294,12 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
       if(obj_name.startsWith(QString("timestamp")) || obj_name.startsWith(QString("time")))
         obj_name.remove(QString(" without time zone"));
 
-			//Prepend the schema name only if it is not a system schema ('pg_catalog' or 'information_schema')
+      /* Prepend the schema name only if it is not a system schema ('pg_catalog' or 'information_schema') and
+         if the schema's names is already present in the type's name (in case of table types) */
 			sch_name=getObjectName(type_attr[ParsersAttributes::SCHEMA]);
-      if(!sch_name.isEmpty() && sch_name!=QString("pg_catalog") && sch_name!=QString("information_schema")) /*&&
-         !catalog.isExtensionObject(type_oid))*/
+      if(!sch_name.isEmpty() && sch_name!=QString("pg_catalog") &&
+         sch_name!=QString("information_schema") &&
+         !obj_name.contains(QRegExp(QString("^(\\\")?(%1)(\\\")?(.)").arg(sch_name))))
         obj_name.prepend(sch_name + QString("."));
 
 			if(generate_xml)
