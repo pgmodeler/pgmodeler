@@ -11713,224 +11713,224 @@ Relationship: %1</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished">Venster</translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="47"/>
         <source>Range</source>
-        <translation type="unfinished"></translation>
+        <translation>Omvang</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="58"/>
         <source>Functions</source>
-        <translation type="unfinished"></translation>
+        <translation>Functies</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="79"/>
         <source>INPUT:</source>
-        <translation type="unfinished"></translation>
+        <translation>INPUT:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="86"/>
         <source>OUTPUT:</source>
-        <translation type="unfinished"></translation>
+        <translation>OUTPUT:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="93"/>
         <source>RECV:</source>
-        <translation type="unfinished"></translation>
+        <translation>RECV:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="100"/>
         <source>SEND:</source>
-        <translation type="unfinished"></translation>
+        <translation>SEND:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="107"/>
         <source>TPMOD_IN:</source>
-        <translation type="unfinished"></translation>
+        <translation>TPMOD_IN:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="114"/>
         <source>TPMOD_OUT:</source>
-        <translation type="unfinished"></translation>
+        <translation>TPMOD_OUT:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="121"/>
         <source>ANALYZE:</source>
-        <translation type="unfinished"></translation>
+        <translation>ANALYZE:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="129"/>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="440"/>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="493"/>
         <source>Attributes</source>
-        <translation type="unfinished">Attributen</translation>
+        <translation>Attributen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="150"/>
         <source>Internal Length:</source>
-        <translation type="unfinished"></translation>
+        <translation>Interne lengte:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="173"/>
         <source>Storage:</source>
-        <translation type="unfinished"></translation>
+        <translation>Opslag:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="183"/>
         <source>Options:</source>
-        <translation type="unfinished">Opties:</translation>
+        <translation>Opties:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="198"/>
         <source>By value</source>
-        <translation type="unfinished">Per waarde</translation>
+        <translation>Per waarde</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="211"/>
         <source>Preferred</source>
-        <translation type="unfinished">Voorkeur</translation>
+        <translation>Voorkeur</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="218"/>
         <source>Collatable</source>
-        <translation type="unfinished">Sorteerbaar</translation>
+        <translation>Sorteerbaar</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="227"/>
         <source>Category:</source>
-        <translation type="unfinished"></translation>
+        <translation>Categorie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="237"/>
         <source>Delimiter:</source>
-        <translation type="unfinished"></translation>
+        <translation>Delimiter:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="251"/>
         <source>Default Value:</source>
-        <translation type="unfinished">Standaardwaarde:</translation>
+        <translation>Standaardwaarde:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="261"/>
         <source>Alignment:</source>
-        <translation type="unfinished"></translation>
+        <translation>Uitlijning:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="281"/>
         <source>integer</source>
-        <translation type="unfinished"></translation>
+        <translation>integer</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="286"/>
         <source>char</source>
-        <translation type="unfinished"></translation>
+        <translation>char</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="291"/>
         <source>smallint</source>
-        <translation type="unfinished"></translation>
+        <translation>smallint</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="296"/>
         <source>double precision</source>
-        <translation type="unfinished"></translation>
+        <translation>double precision</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="327"/>
         <source>Configuration:</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuratie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="340"/>
         <source>Base Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Basistype</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="356"/>
         <source>Enumeration</source>
-        <translation type="unfinished"></translation>
+        <translation>Enumeratie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="375"/>
         <source>Composite</source>
-        <translation type="unfinished"></translation>
+        <translation>Composite</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="394"/>
         <source>Enumerations</source>
-        <translation type="unfinished">Enumeraties</translation>
+        <translation>Enumeraties</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="415"/>
         <source>Enumeration:</source>
-        <translation type="unfinished"></translation>
+        <translation>Enumeratie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="461"/>
         <source>Name:</source>
-        <translation type="unfinished">Naam:</translation>
+        <translation>Naam:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="477"/>
         <source>Collation:</source>
-        <translation type="unfinished">Sortering:</translation>
+        <translation>Sortering:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="514"/>
         <source>Subtype Diff Func.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Subtype Diff Func.:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="521"/>
         <source>Operator Class:</source>
-        <translation type="unfinished">Operator Klasse:</translation>
+        <translation>Operator Klasse:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="528"/>
         <source>Canonical Func.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Canonische Func.:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="34"/>
         <source>Like Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Like type</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="35"/>
         <source>Element Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Elementtype</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="36"/>
         <source>Subtype</source>
-        <translation type="unfinished">Subtype</translation>
+        <translation>Subtype</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="60"/>
         <source>Name</source>
-        <translation type="unfinished">Naam</translation>
+        <translation>Naam</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="62"/>
         <source>Type</source>
-        <translation type="unfinished">Type</translation>
+        <translation>Type</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="64"/>
         <source>Collation</source>
-        <translation type="unfinished">Sortering</translation>
+        <translation>Sortering</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="79"/>
         <source>The functions to be assigned to a type should be written in C language and possess, respectively, the following signatures:&lt;br/&gt;  &lt;table&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;INPUT:&lt;/strong&gt; &lt;em&gt;any function(cstring, oid, integer)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;OUTPUT:&lt;/strong&gt; &lt;em&gt;cstring function(any)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;SEND:&lt;/strong&gt; &lt;em&gt;byta function(any)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;RECV:&lt;/strong&gt; &lt;em&gt;any function(internal, oid, integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_IN:&lt;/strong&gt; &lt;em&gt;integer function(cstring[])&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_OUT:&lt;/strong&gt; &lt;em&gt;cstring function(integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;ANALYZE:&lt;/strong&gt; &lt;em&gt;boolean function(internal)&lt;/em&gt;&lt;/td&gt;    &lt;tr&gt;  &lt;/table&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>De functies die worden toegewezen aan een type moeten in de C programmeertaal zijn geschreven en moeten, respectievelijk de volgende signatures bezitten:&lt;br/&gt;  &lt;table&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;INPUT:&lt;/strong&gt; &lt;em&gt;any functie(cstring, oid, integer)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;OUTPUT:&lt;/strong&gt; &lt;em&gt;cstring functie(any)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;SEND:&lt;/strong&gt; &lt;em&gt;byta functie(any)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;RECV:&lt;/strong&gt; &lt;em&gt;any functie(internal, oid, integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_IN:&lt;/strong&gt; &lt;em&gt;integer functie(cstring[])&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_OUT:&lt;/strong&gt; &lt;em&gt;cstring functie(integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;ANALYZE:&lt;/strong&gt; &lt;em&gt;boolean functie(internal)&lt;/em&gt;&lt;/td&gt;    &lt;tr&gt;  &lt;/table&gt;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="96"/>
         <source>The functions to be assigned to a range type should have the following signatures:&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Canonical:&lt;/strong&gt; &lt;em&gt;any function(any)&lt;/em&gt; &lt;br/&gt;&lt;strong&gt;Subtype Diff:&lt;/strong&gt; &lt;em&gt;double precision function(subtype, subtype)&lt;/em&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>De functies die aan een omvang worden toegewezen moeten de volgende signatures bezitten:&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Canonish:&lt;/strong&gt; &lt;em&gt;any functie(any)&lt;/em&gt; &lt;br/&gt;&lt;strong&gt;Subtype Diff:&lt;/strong&gt; &lt;em&gt;double precision functie(subtype, subtype)&lt;/em&gt;</translation>
     </message>
 </context>
 <context>
