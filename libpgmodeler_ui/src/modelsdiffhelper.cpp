@@ -567,6 +567,7 @@ void ModelsDiffHelper::processDiffInfos(void)
   Table *parent_tab=nullptr;
   bool skip_obj=false;
   QStringList sch_names;
+  vector<unsigned> created_fk_ids;
 
   try
   {
@@ -687,7 +688,7 @@ void ModelsDiffHelper::processDiffInfos(void)
         if((diff_opts[OPT_FORCE_RECREATION] && obj_type!=OBJ_DATABASE) &&
            (!diff_opts[OPT_RECREATE_UNCHANGEBLE] ||
             (diff_opts[OPT_RECREATE_UNCHANGEBLE] && !object->acceptsAlterCommand())))
-        {                    
+        {
           recreateObject(object, drop_vect, create_vect);
 
           //Generating the drop for the object's reference
@@ -700,9 +701,19 @@ void ModelsDiffHelper::processDiffInfos(void)
             //The there is no ALTER info registered for an object's reference
             if(!isDiffInfoExists(ObjectsDiffInfo::ALTER_OBJECT, nullptr, obj, false))
             {
+              /* Special case for constraints, their code will be appeded to a separated variable in order to
+                 create them at the end of diff buffer */
               if(obj->getObjectType()==OBJ_CONSTRAINT &&
                  dynamic_cast<Constraint *>(obj)->getConstraintType()==ConstraintType::foreign_key)
-                fk_defs+=getCodeDefinition(obj, false);
+              {
+                //If the constraint was not analyzed before, include it
+                if(std::find(created_fk_ids.begin(), created_fk_ids.end(), obj->getObjectId())==created_fk_ids.end())
+                {
+                  fk_defs+=getCodeDefinition(obj, false);
+                  //Register the constraint id to avoid code duplication
+                  created_fk_ids.push_back(obj->getObjectId());
+                }
+              }
               else
                 create_objs[obj->getObjectId()]=getCodeDefinition(obj, false);
             }
