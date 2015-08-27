@@ -346,7 +346,7 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
        (mode_cnt==0 && fix_model && upd_mime))
       throw Exception(trUtf8("Export, fix model and update mime operations can't be used at the same time!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
     else if(!fix_model && !upd_mime && mode_cnt > 1)
-      throw Exception(trUtf8("Multiple export mode especified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+      throw Exception(trUtf8("Multiple export mode specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
     else	if(!upd_mime && opts[INPUT].isEmpty())
       throw Exception(trUtf8("No input file specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
     else	if(!opts.count(EXPORT_TO_DBMS) && !upd_mime && opts[OUTPUT].isEmpty())
