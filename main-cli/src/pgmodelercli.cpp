@@ -408,7 +408,7 @@ int PgModelerCLI::exec(void)
           handleMimeDatabase(parsed_opts[DBM_MIME_TYPE]==UNINSTALL);
 
           if(!silent_mode)
-            PgModelerCLI::out << trUtf8("Mime database sucessfully updated.") << endl << endl;
+            PgModelerCLI::out << trUtf8("Mime database successfully updated.") << endl << endl;
         #endif
       }
       else
