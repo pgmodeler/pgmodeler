@@ -503,14 +503,20 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
       /* If the info is for DROP, generate the drop for referer objects of the
        one marked to be dropped */
       if((!diff_opts[OPT_FORCE_RECREATION] || diff_opts[OPT_RECREATE_UNCHANGEBLE]) &&
-              diff_type==ObjectsDiffInfo::DROP_OBJECT)
+          diff_type==ObjectsDiffInfo::DROP_OBJECT)
       {
         vector<BaseObject *> ref_objs;
+        ObjectType obj_type=object->getObjectType();
+
         imported_model->getObjectReferences(object, ref_objs);
 
         for(auto &obj : ref_objs)
         {
-          if(obj->getObjectType()!=BASE_RELATIONSHIP)
+          /* Avoiding columns to be dropped when a sequence linked to them is dropped too. This because
+             a column can be a reference to a sequence so to avoid drop and recreate that column this one
+             will not be erased, unless the column does not exists in the model anymore */
+          if((obj_type==OBJ_SEQUENCE && obj->getObjectType()!=OBJ_COLUMN) &&
+             (obj_type!=OBJ_SEQUENCE && obj->getObjectType()!=BASE_RELATIONSHIP))
             generateDiffInfo(diff_type, obj);
 
           if(diff_canceled)
