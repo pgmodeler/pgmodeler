@@ -3114,162 +3114,162 @@ Deze optie afvinken zorgt ervoor dat de SQL wordt ingevoegd na het CREATE DATABA
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="35"/>
         <source>Database Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Database Import</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="122"/>
         <source>Database import</source>
-        <translation type="unfinished"></translation>
+        <translation>Database import</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="139"/>
         <source>Settings</source>
-        <translation type="unfinished">Instellingen</translation>
+        <translation>Instellingen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="170"/>
         <source>Options</source>
-        <translation type="unfinished">Opties</translation>
+        <translation>Opties</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="194"/>
         <source>Connection:</source>
-        <translation type="unfinished">Verbinding:</translation>
+        <translation>Verbinding:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="207"/>
         <source>Origin point:</source>
-        <translation type="unfinished"></translation>
+        <translation>Oorsprongspunt:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="214"/>
         <source>Starting point where objects will be put.</source>
-        <translation type="unfinished"></translation>
+        <translation>Startpunt waar objecten zullen worden neergezet.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="236"/>
         <source>Tables per row:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabellen per rij:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="249"/>
         <source>Tables per row</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabellen per rij</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="271"/>
         <source>Spacing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Spatiëring:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="278"/>
         <source>Schemas  per row</source>
-        <translation type="unfinished"></translation>
+        <translation>Schemas per rij</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="294"/>
         <source>Spacing between objects</source>
-        <translation type="unfinished"></translation>
+        <translation>Spatiëring tussen objecten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="316"/>
         <source>Schemas per row:</source>
-        <translation type="unfinished"></translation>
+        <translation>Schemas per rij:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="331"/>
         <source>Resolve some of the object&apos;s dependencies by query the catalog when a needed object does not exists on the loaded set. In some cases it&apos;s necessary to combine this option with others below. This option does not applies to database level objects like role, tablespace and language as well for data types and extensions.</source>
-        <translation type="unfinished"></translation>
+        <translation>Los sommige afhankelijkheden van objecten op door de catalogus raad te plegen wanneer een object niet in de geladen set bestaat. In sommige gevallen is het nodig om deze optie met andere opties te combineren. Deze optie is niet van toepassing op database-niveau objecten zoals rollen, tablespaces en talen alsook data types en uitbreidingen.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="337"/>
         <source>Automatically resolve dependencies</source>
-        <translation type="unfinished"></translation>
+        <translation>Los afhankelijkheden automatisch op</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="400"/>
         <source>Random colors will be assigned to imported relationships facilitating the identification of links between tables mainly in large models.</source>
-        <translation type="unfinished"></translation>
+        <translation>Om de identificatie van de links tussen tabellen in grote modellen makkelijker te maken zullen willekeurige kleuren worden gebruikt om de geïmporteerde relaties aan te duiden.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="403"/>
         <source>Random colors for relationships</source>
-        <translation type="unfinished"></translation>
+        <translation>Willekeurige kleuren voor relaties</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="445"/>
         <source>Enables the import of system built-in objects. It&apos;s recommend to select only those objects that are directly referenced by the ones to be imported. WARNING: Try to import a huge set of system objects can bloat the resultant model or even crash pgModeler due to memory/cpu overuse.</source>
-        <translation type="unfinished"></translation>
+        <translation>Activeert het importeren van ingebouwde systeemobjecten. Het is aangeraden om enkel objecten te importeren waarnaar onmiddellijk worden gerefereerd. PAS OP: grote hoeveelheden systeemobjecten importeren kan leiden tot een opgezwollen resultaatsmodel of kan zelfs pgModeler tot een crash leiden omwillen van geheugen- of processor-uitputting.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="451"/>
         <source>Import system objects</source>
-        <translation type="unfinished"></translation>
+        <translation>Importeer systeemobjecten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="490"/>
         <source>Enables the import of objects created by extensions. Generally there is no need to check this option but if there are objects in the database that directly references this category of objects this mode must be enabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Activeert het importeren van objecten die werden aangemaakt door uitbreidingen. Algemeen gezien is er geen nood om deze optie aan te vinken tenzij er objecten in de databse leven die onmiddellijk naar objecten van deze categorie refereren.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="496"/>
         <source>Import extension objects</source>
-        <translation type="unfinished"></translation>
+        <translation>Importeer uitbreidingsobjecten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="535"/>
         <source>pgModeler ignores import errors and will try to create as many as possible objects. By checking this option the import operation will be not aborted but an incomplete model will be constructed. This option generates a log file on pgModeler&apos;s temp directory.</source>
-        <translation type="unfinished"></translation>
+        <translation>pgModeler negeert importeerfouten en zal pogen om zoveel mogelijk objecten aan te maken. Door deze optie aan te vinken zal de importeer-taak niet afbreken bij een fout maar zal een onvolledig model worden aangemaakt. Deze optie creëert een log bestand in de tijdelijke map voor pgModeler.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="541"/>
         <source>Ignore import errors</source>
-        <translation type="unfinished"></translation>
+        <translation>Negeer importeerfouten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="580"/>
         <source>All catalog queries as well the created objects&apos; source code are printed to standard outupt (stdout).</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle catalogusqueries plus the broncode van de aangemaakte objecten wordt naar de standaard output (stdout) geprint.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="586"/>
         <source>Debug mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Debugmodus</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="619"/>
         <source>Create all imported objects in the current working model instead of create a new one.</source>
-        <translation type="unfinished"></translation>
+        <translation>Maak alle geïmporteerde objecten aan in het huidige model en maak geen nieuw model aan.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="622"/>
         <source>Import objects to the working model</source>
-        <translation type="unfinished"></translation>
+        <translation>Importeer de objecten in het huidige model</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="666"/>
         <source>Database</source>
-        <translation type="unfinished">Database</translation>
+        <translation>Database</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="815"/>
         <source>Filter:</source>
-        <translation type="unfinished">Filter:</translation>
+        <translation>Filter:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="832"/>
         <source>Filter object by it&apos;s OID</source>
-        <translation type="unfinished"></translation>
+        <translation>Filter objecten per hun OID</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="835"/>
         <source>By OID</source>
-        <translation type="unfinished">Per OID</translation>
+        <translation>Per OID</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="872"/>
         <source>Select all objects</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecteer alle objecten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="875"/>
@@ -3277,107 +3277,107 @@ Deze optie afvinken zorgt ervoor dat de SQL wordt ingevoegd na het CREATE DATABA
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="951"/>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="989"/>
         <source>...</source>
-        <translation type="unfinished">...</translation>
+        <translation>...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="910"/>
         <source>Clear object selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Maak de objectselectie ongedaan</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="948"/>
         <source>Expands all items</source>
-        <translation type="unfinished">Alle items uitklappen</translation>
+        <translation>Alle items uitklappen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="986"/>
         <source>Collapses all items</source>
-        <translation type="unfinished">Alle items inklappen</translation>
+        <translation>Alle items inklappen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="1030"/>
         <source>Output</source>
-        <translation type="unfinished">Uitvoer</translation>
+        <translation>Uitvoer</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="1099"/>
         <source>Progress label...</source>
-        <translation type="unfinished">Vooruitgangslabel...</translation>
+        <translation>Vooruitgangslabel...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="1109"/>
         <source>Cancel</source>
-        <translation type="unfinished">Annuleren</translation>
+        <translation>Annuleren</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="1230"/>
         <source>&amp;Import</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="1262"/>
         <source>&amp;Close</source>
-        <translation type="unfinished">&amp;Sluiten</translation>
+        <translation>&amp;Sluiten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="181"/>
         <source>&lt;strong&gt;ATTENTION:&lt;/strong&gt; You are about to import objects to the current working model! This action will cause irreversible changes to it even in case of critical errors during the process. Do you want to proceed?</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;OPGEPAST:&lt;/strong&gt; U staat op het punt om objecten te importeren in het huidige model! Deze actie zal onherroepbare verandering teweegbrengen, zelfs wanneer kritische problemen opduiken gedurende dit proces. Bent u zeker dat u verder wilt gaan?</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="378"/>
         <source>Importing process aborted!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het import proces werd afgebroken!</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="467"/>
         <source>Importing process canceled by user!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het import proces werd geannuleerd door de gebruiker!</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="492"/>
         <source>Importing process sucessfuly ended!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het import proces werd succesvol beëindigt!</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="547"/>
         <source>No databases found</source>
-        <translation type="unfinished"></translation>
+        <translation>Er werd database gevonden</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="567"/>
         <source>Found %1 database(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>Er werd(en) %1 database(s) gevonden</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="592"/>
         <source>Retrieving objects from database...</source>
-        <translation type="unfinished"></translation>
+        <translation>De objecten worden van de database opgehaald...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="597"/>
         <source>Retrieving cluster level objects...</source>
-        <translation type="unfinished"></translation>
+        <translation>De objecten op cluster-niveau worden opgehaald...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="626"/>
         <source>Retrieving objects of schema `%1&apos;...</source>
-        <translation type="unfinished"></translation>
+        <translation>De objecten uit schema `%1&apos; worden opgehaald...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="641"/>
         <source>Retrieving objects of table `%1&apos;...</source>
-        <translation type="unfinished"></translation>
+        <translation>De objecten van tabel `%1&apos; worden opgehaald...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="730"/>
         <source>This is a PostgreSQL built-in data type and cannot be imported.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dit is een ingebouwd type van PostgreSQL en kan niet worden geïmporteerd.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="742"/>
         <source>This is a pgModeler&apos;s built-in object. It will be ignored if checked by user.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dit is een ingebouwd object van pgModeler. Dit object wordt genegeerd indien aangevinkt door de gebruiker.</translation>
     </message>
 </context>
 <context>
