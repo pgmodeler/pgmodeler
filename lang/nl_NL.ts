@@ -1697,7 +1697,7 @@ Versie: `%3&apos;</translation>
     <message>
         <location filename="../crashhandler/src/crashhandlerform.cpp" line="242"/>
         <source>We apologize for what happened! It is clear that a nasty bug caused that. Please fill out the form below describing your actions before pgModeler quit unexpectedly. This will help on bug extermination and improve the software.</source>
-        <translation>We verontschuldigen ons voor wat net gebeurde! Het is overduidelijk dat een ernstige bug dit veroorzaakte. Gelieve het formuleer hieronder in te vullen met een beschrijving van wat u deed vooralleer pgModeler onverwachts afsloot. Dit zal ons helpen om deze bug te corrigeren en de software te verbeteren.</translation>
+        <translation>We verontschuldigen ons voor wat net gebeurde! Het is overduidelijk dat een ernstige bug dit veroorzaakte. Gelieve het formuleer hieronder in te vullen met een beschrijving van wat u deed vooraleer pgModeler onverwachts afsloot. Dit zal ons helpen om deze bug te corrigeren en de software te verbeteren.</translation>
     </message>
 </context>
 <context>
@@ -6531,237 +6531,237 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="35"/>
         <source>Database model diff</source>
-        <translation type="unfinished"></translation>
+        <translation>Databasemodel verschillen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="133"/>
         <source>Generate diff from model</source>
-        <translation type="unfinished"></translation>
+        <translation>Genereer een diff op basis van het model</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="152"/>
         <source>Settings</source>
-        <translation type="unfinished">Instellingen</translation>
+        <translation>Instellingen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="182"/>
         <source>Input database</source>
-        <translation type="unfinished"></translation>
+        <translation>Invoerdatabase</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="200"/>
         <source>Connection:</source>
-        <translation type="unfinished">Verbinding:</translation>
+        <translation>Verbinding:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="226"/>
         <source>Database:</source>
-        <translation type="unfinished"></translation>
+        <translation>Database:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="267"/>
         <source> Options</source>
-        <translation type="unfinished"></translation>
+        <translation> Opties</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="296"/>
         <source>Ignores as many as possible errors on import step. This option generates a incomplete diff.</source>
-        <translation type="unfinished"></translation>
+        <translation>Negeer zoveel mogelijk fouten gedurende de invoer-stap. Deze optie genereerd een onvolledige diff.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="299"/>
         <source>Ignore import errors</source>
-        <translation type="unfinished">Negeer importeerfouten</translation>
+        <translation>Negeer importeerfouten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="351"/>
         <source>Clears the data of all tables which will have columns modified. This is useful to avoid errors related to type casting. &lt;strong&gt;WARNING:&lt;/strong&gt; DO NOT use this option on production server and always make a backup before use this options.</source>
-        <translation type="unfinished"></translation>
+        <translation>Maak de data van alle tabellen waarvan kolommen werden aangepast leeg. Dit kan nuttig zijn om fouten te vermijden die worden veroorzaakt door type-casting. &lt;strong&gt;PAS OP&lt;/strong&gt; gebruik deze optie NIET op een productie-server en maak altijd een backup vooraleer deze opties te gebruiken.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="354"/>
         <source>Trucate tables before alter columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Trunceer de tabellen vooraleer de kolommen aan te passen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="396"/>
         <source>Import system (built in) objects. Use this if the import step is returning errors.</source>
-        <translation type="unfinished"></translation>
+        <translation>Importeer systeem- /ingebouwde objecten. Gebruik deze optie indien de importeer-stap fouten genereert.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="399"/>
         <source>Import system objects</source>
-        <translation type="unfinished">Importeer systeemobjecten</translation>
+        <translation>Importeer systeemobjecten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="441"/>
         <source>Import extension objects. Use this if the import step is returning errors even importing built in ones.</source>
-        <translation type="unfinished"></translation>
+        <translation>Importeer uitbreidingsobjecten. Gebruik deze optie indien de importeer-stap fouten genereert.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="444"/>
         <source>Import extension objects</source>
-        <translation type="unfinished">Importeer uitbreidingsobjecten</translation>
+        <translation>Importeer uitbreidingsobjecten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="483"/>
         <source>For DROP command, the objects that depends on an object to be dropped will be deleted as well. For TRUNCATE command, tables that are linked to a table to be truncated will be truncate too. &lt;strong&gt;NOTE:&lt;/strong&gt; this option can affect more objects than listed in the output or diff preview.</source>
-        <translation type="unfinished"></translation>
+        <translation>Voor DROP commando&apos;s worden objecten die afhankelijk zijn van het object dat verwijderd wordt, ook verwijderd. Voor het TRUNCATE commando worden tabellen die gelinkt zijn aan de te trunceren tabel ook getrunceerd. &lt;strong&gt;LET OP:&lt;/strong&gt; deze optie kan objecten beïnvloeden die niet in het uitvoer- of diff-voorbeeld opgenomen zijn.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="486"/>
         <source>Drop or truncate in cascade mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Drop of trunceer in cascade modus</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="525"/>
         <source>Permissions already set on database objects will be kept.The ones configured on the model will be applied to the database.</source>
-        <translation type="unfinished"></translation>
+        <translation>Machtigingen die reeds op databaseobjecten zijn toegepast zullen behouden blijven. De machtigingen die door het model worden gespecifieerd zullen worden toegepast op de database.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="528"/>
         <source>Keep object&apos;s permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>Behoudt de machtigingen van het object</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="567"/>
         <source>Database cluster level objects like roles and tablespaces will not be dropped.</source>
-        <translation type="unfinished"></translation>
+        <translation>Database cluster-niveau objecten zoals rollen en tablespaces zullen niet worden verwijderd.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="570"/>
         <source>Keep cluster objects</source>
-        <translation type="unfinished"></translation>
+        <translation>Behoudt clusterobjecten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="612"/>
         <source>Recreate only unmodifiable objects</source>
-        <translation type="unfinished"></translation>
+        <translation>Hercreeer enkel niet-aanpasbare objecten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="663"/>
         <source>Instead of use an ALTER command to modify certain kind of objects a DROP and CREATE will be used in order to do a full modification. This option does not affects database objects.</source>
-        <translation type="unfinished"></translation>
+        <translation>In plaats van een ALTER commando om een bepaald soort object aan te passen, wordt eerst een DROP en dan een CREATE gebruikt. Deze optie beïnvloedt geen database objecten.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="666"/>
         <source>Force recreation of objects</source>
-        <translation type="unfinished"></translation>
+        <translation>Forceer het heraanmaken van objecten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="714"/>
         <source>Ignores errors generated by duplicated objects when exporting the diff to database.</source>
-        <translation type="unfinished"></translation>
+        <translation>Negeer fouten die worden gegenereerd door duplicate objecten gedurende het exporteren van de diff naar de database.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="717"/>
         <source>Ignore duplicity errors</source>
-        <translation type="unfinished"></translation>
+        <translation>Negeer fouten omwille van duplicaten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="756"/>
         <source>Serial columns are converted to integer and having the default value changed  to &lt;strong&gt;nextval(sequence)&lt;/strong&gt; function call. By default, a new sequence is created for each serial column but checking this option sequences matching the name on column&apos;s default value will be reused and will not be dropped.</source>
-        <translation type="unfinished"></translation>
+        <translation>Seriële kolommen worden geconverteerd naar integers en hun standaardwaarde wordt ingesteld als een functieaanroep naar &lt;strong&gt;nextval(sequentie)&lt;/strong&gt;. Normaal gezien wordt een nieuwe sequentie aangemaakt voor elke seriële kolom maar deze optie aanvinken zorgt ervoor dat sequenties die de naam van de kolom gebruiken worden hergebruikt in plaats van verwijderd.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="759"/>
         <source>Reuse sequences on serial columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Hergebruik sequenties op seriële kolommen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="798"/>
         <source>No command to rename the destination database will be generated even the model&apos;s name differ from database name.</source>
-        <translation type="unfinished"></translation>
+        <translation>Behoudt de naam van de doeldatabase wanneer deze verschilt van de databasenaam in het model.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="801"/>
         <source>Preserve database name</source>
-        <translation type="unfinished"></translation>
+        <translation>Behoudt databasenaam</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="844"/>
         <source>Diff mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Diff modus</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="864"/>
         <source>Override the PostgreSQL version when generating the diff. The default is to use the same version as the input database.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zet de versie waarvoor de diff wordt gegenereerd expliciet zelf. Standaard wordt dezelfde versie gebruikt als de invoerdatabase.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="867"/>
         <source>Use PostgreSQL:</source>
-        <translation type="unfinished"></translation>
+        <translation>Gebruikt PostgreSQL:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="935"/>
         <source>Compares the model and the input database storing the diff in a SQL file for later usage.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vergelijkt het model en de invoerdatabase en slaat het verschil op in een SQL bestand voor later gebruik.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="938"/>
         <source>Store in SQL file</source>
-        <translation type="unfinished"></translation>
+        <translation>Sla op in SQL bestand</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1024"/>
         <source>File:</source>
-        <translation type="unfinished">Bestand:</translation>
+        <translation>Bestand:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1040"/>
         <source>Select output file</source>
-        <translation type="unfinished">Selecteer uitvoerbestand</translation>
+        <translation>Selecteer uitvoerbestand</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1043"/>
         <source>...</source>
-        <translation type="unfinished">...</translation>
+        <translation>...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1093"/>
         <source>Compares the model and the input database generating a diff and applying it directly to the latter. &lt;strong&gt;WARNING:&lt;/strong&gt; this mode causes irreversible changes on the database and in case of failure the original structure is not restored, so make sure to have a backup before proceed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vergelijkt het model met de invoerdatabase en genereerd een diff die op die laatste wordt toegepast. &lt;strong&gt;PAS OP:&lt;/strong&gt; deze modus veroorzaakt onherroepelijke veranderingen in de database en in geval van falen wordt de originele structuur niet hersteld, zorg ervoor dat u een backup hebt vooraleer u verdergaat.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1096"/>
         <source>Apply on server</source>
-        <translation type="unfinished"></translation>
+        <translation>Toepassen op de server</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1160"/>
         <source>Output</source>
-        <translation type="unfinished">Uitvoer</translation>
+        <translation>Uitvoer</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1241"/>
         <source>Changes:</source>
-        <translation type="unfinished"></translation>
+        <translation>Aanpassingen:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1306"/>
         <source>Cancel</source>
-        <translation type="unfinished">Annuleren</translation>
+        <translation>Annuleren</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1374"/>
         <source>Progress label...</source>
-        <translation type="unfinished">Vooruitgangslabel...</translation>
+        <translation>Vooruitgangslabel...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1387"/>
         <source>Step label...</source>
-        <translation type="unfinished"></translation>
+        <translation>Staplabel...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1469"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Objects marked with an &lt;span style=&quot; font-weight:600;&quot;&gt;ALTER&lt;/span&gt; may not be effectively changed unless that the differences detected are in attributes that can be modified through ALTER commands otherwise no operationwill be performed or, if the force recreation is checked, the object will be dropped and created again.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Objecten die zijn aangeduid met &lt;span style=&quot; font-weight:600;&quot;&gt;ALTER&lt;/span&gt; kunnen mogelijkerwijs niet worden aangepast tenzij de gedetecteerde verschillen in de attribute liggen die kunnen worden aangepast via een ALTER commando; in alle andere gevallen zal geen actie worden ondernomen of, indien &apos;Forceer het heraanmaken van objecten&apos; is aangevinkt, zal het object worden verwijderd en heraangemaakt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1521"/>
         <source>Objects to be created</source>
-        <translation type="unfinished"></translation>
+        <translation>Objecten die aangemaakt moeten worden</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1524"/>
@@ -6769,134 +6769,134 @@ Message returned by the DBMS: `%1&apos;</source>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1606"/>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1647"/>
         <source>0</source>
-        <translation type="unfinished">0</translation>
+        <translation>0</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1562"/>
         <source>Objects to be dropped</source>
-        <translation type="unfinished"></translation>
+        <translation>Objecten die verwijderd moeten worden</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1603"/>
         <source>Possible objects to be changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Objecten die mogelijkerwijs aangepast moeten worden</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1644"/>
         <source>Ignored objects (system ones or with sql disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Genegeerde objecten (systeemobjecten of objecten waarvan SQL is uitgeschakeld)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1690"/>
         <source>Diff Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Diff voorbeeld</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1736"/>
         <source>&amp;Apply diff</source>
-        <translation type="unfinished"></translation>
+        <translation>Diff &amp;Toepassen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1800"/>
         <source>&amp;Generate</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Genereer</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1832"/>
         <source>&amp;Close</source>
-        <translation type="unfinished">&amp;Sluiten</translation>
+        <translation>&amp;Sluiten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="242"/>
         <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="244"/>
         <source>Waiting process to start...</source>
-        <translation type="unfinished">Wachten op het starten van de taak...</translation>
+        <translation>Wachten op het starten van de taak...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="325"/>
         <source>Importing database &lt;strong&gt;%1&lt;/strong&gt;...</source>
-        <translation type="unfinished"></translation>
+        <translation>Bezig met het importeren van database &lt;strong&gt;%1&lt;/strong&gt;...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="361"/>
         <source>Comparing the model &lt;strong&gt;%1&lt;/strong&gt; and database &lt;strong&gt;%2&lt;/strong&gt;...</source>
-        <translation type="unfinished"></translation>
+        <translation>Bezig met het vergelijken van model &lt;strong&gt;%1&lt;/strong&gt; en database &lt;strong&gt;%2&lt;/strong&gt;...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="397"/>
         <source>Confirmation</source>
-        <translation type="unfinished">Bevestiging</translation>
+        <translation>Bevestiging</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="398"/>
         <source> &lt;strong&gt;WARNING:&lt;/strong&gt; The generated diff is ready to be exported! Once started this process will cause irreversible changes on the database. Do you really want to proceed?</source>
-        <translation type="unfinished"></translation>
+        <translation> &lt;strong&gt;PAS OP:&lt;/strong&gt; De gegenereerde diff is klaar om geëxporteerd te worden! Eens gestart zal dit proces onherroepelijke veranderingen aanbrengen aan de database. Bent u zeker dat u wilt verdergaan?</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="400"/>
         <source>Apply diff</source>
-        <translation type="unfinished"></translation>
+        <translation>Diff toepassen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="400"/>
         <source>Preview diff</source>
-        <translation type="unfinished"></translation>
+        <translation>Diff belijken</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="408"/>
         <source>Exporting diff to database &lt;strong&gt;%1&lt;/strong&gt;...</source>
-        <translation type="unfinished"></translation>
+        <translation>Diff exporteren naar database &lt;strong&gt;%1&lt;/strong&gt;...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="431"/>
         <source>Diff process paused. Waiting user action...</source>
-        <translation type="unfinished"></translation>
+        <translation>Het diff proces is gepauzeerd. Wachten op een actie van de gebruiker...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="466"/>
         <source>Saving diff to file &lt;strong&gt;%1&lt;/strong&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>De diff wordt opgeslagen in het bestand &lt;strong&gt;%1&lt;/strong&gt;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="489"/>
         <source>Diff process sucessfully ended!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het diff proces werd succesvol beëindigd!</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="490"/>
         <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="505"/>
         <source>No operations left.</source>
-        <translation type="unfinished"></translation>
+        <translation>Er zijn geen operaties meer.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="504"/>
         <source>Operation cancelled by the user.</source>
-        <translation type="unfinished"></translation>
+        <translation>De operatie werd geannulleerd door de gebruiker.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="540"/>
         <source>Process aborted due to errors!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het proces werd afgebroken omwille van fouten!</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="578"/>
         <source>-- No differences were detected between model and database. --</source>
-        <translation type="unfinished"></translation>
+        <translation>-- Er werden geen verschillen gedetecteerd tussen het model en de database. --</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="593"/>
         <source>Error code &lt;strong&gt;%1&lt;/strong&gt; found and ignored. Proceeding with export.</source>
-        <translation type="unfinished">Foutencode &lt;strong&gt;%1&lt;/strong&gt; trad op en werd genegeerd. De export gaat voort.</translation>
+        <translation>Foutencode &lt;strong&gt;%1&lt;/strong&gt; trad op en werd genegeerd. De export gaat voort.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="684"/>
         <source>Save diff as...</source>
-        <translation type="unfinished"></translation>
+        <translation>Sla diff op als...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="688"/>
         <source>SQL code (*.sql);;All files (*.*)</source>
-        <translation type="unfinished">SQL Code (*.sql);;Alle bestanden (*.*)</translation>
+        <translation>SQL Code (*.sql);;Alle bestanden (*.*)</translation>
     </message>
 </context>
 <context>
@@ -7538,7 +7538,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../libpgmodeler_ui/ui/modelrestorationform.ui" line="207"/>
         <source>pgModeler will try to recover the selected models but will not destroy them in case of loading failure. This option serves as a last resort in order to try to recover the database model. Temporary models will last until the application is closed so the user must try to manually recover the files before exit pgModeler.</source>
-        <translation>pgModeler zal proberen om de geselecteerde modellen te herstellen. Indien dit niet lukt blijven deze staan. Deze optie dient als laatste redmiddel om een database model te recupereren. Tijdelijke modellen zullen blijven staan totdat de applicatie wordt afgesloten. Dit betekent dat de gebruiker moet proberen deze manueel te recupereren vooralleer pgModeler af te sluiten.</translation>
+        <translation>pgModeler zal proberen om de geselecteerde modellen te herstellen. Indien dit niet lukt blijven deze staan. Deze optie dient als laatste redmiddel om een database model te recupereren. Tijdelijke modellen zullen blijven staan totdat de applicatie wordt afgesloten. Dit betekent dat de gebruiker moet proberen deze manueel te recupereren vooraleer pgModeler af te sluiten.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelrestorationform.ui" line="210"/>
@@ -9445,7 +9445,7 @@ laatste geaccepteerde structuur. Alle beschikbare opties worden hieronder beschr
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="275"/>
         <source>   %1, %2=[FACTOR]		 Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4</source>
-        <translation>   %1, %2=[FACTOR]		 Past een zoom (in procent) toe vooralleer te exporteren naar PNG afbeelding. Geaccepteerde zoomintervals: %3-%4</translation>
+        <translation>   %1, %2=[FACTOR]		 Past een zoom (in procent) toe vooraleer te exporteren naar PNG afbeelding. Geaccepteerde zoomintervals: %3-%4</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="277"/>
@@ -9460,7 +9460,7 @@ laatste geaccepteerde structuur. Alle beschikbare opties worden hieronder beschr
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="279"/>
         <source>   %1, %2		 Drop the database before execute a export process.</source>
-        <translation>   %1, %2		 Verwijder de database vooralleer het exporteringsprocess te starten.</translation>
+        <translation>   %1, %2		 Verwijder de database vooraleer het exporteringsprocess te starten.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="280"/>
@@ -9604,8 +9604,8 @@ laatste geaccepteerde structuur. Alle beschikbare opties worden hieronder beschr
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="411"/>
-        <source>Mime database sucessfully updated.</source>
-        <translation>De mime database werd succesvol aangepast.</translation>
+        <source>Mime database successfully updated.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="426"/>
