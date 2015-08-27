@@ -8190,329 +8190,329 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="28"/>
         <source>Form</source>
-        <translation type="unfinished">Venster</translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="133"/>
         <source>Role</source>
-        <translation type="unfinished">Rol</translation>
+        <translation>Rol</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="177"/>
         <source>Tag</source>
-        <translation type="unfinished">Tag</translation>
+        <translation>Tag</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="221"/>
         <source>Cast</source>
-        <translation type="unfinished">Cast</translation>
+        <translation>Cast</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="234"/>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="31"/>
         <source>A</source>
-        <translation type="unfinished"></translation>
+        <translation>A</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="268"/>
         <source>Language</source>
-        <translation type="unfinished">Taal</translation>
+        <translation>Taal</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="312"/>
         <source>Textbox</source>
-        <translation type="unfinished">Tekst box</translation>
+        <translation>Tekst box</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="356"/>
         <source>Event Trigger</source>
-        <translation type="unfinished">Event Trigger</translation>
+        <translation>Event Trigger</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="400"/>
         <source>Tablespace</source>
-        <translation type="unfinished">Tablespace</translation>
+        <translation>Tablespace</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="444"/>
         <source>Schema</source>
-        <translation type="unfinished">Schema</translation>
+        <translation>Schema</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="515"/>
         <source>Domain</source>
-        <translation type="unfinished">Domein</translation>
+        <translation>Domein</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="559"/>
         <source>Conversion</source>
-        <translation type="unfinished">Conversie</translation>
+        <translation>Conversie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="603"/>
         <source>Aggregate</source>
-        <translation type="unfinished">Aggregator</translation>
+        <translation>Aggregator</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="647"/>
         <source>Collation</source>
-        <translation type="unfinished">Sortering</translation>
+        <translation>Sortering</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="691"/>
         <source>Table</source>
-        <translation type="unfinished">Tabel</translation>
+        <translation>Tabel</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="735"/>
         <source>Type</source>
-        <translation type="unfinished">Type</translation>
+        <translation>Type</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="779"/>
         <source>Op. Family</source>
-        <translation type="unfinished"></translation>
+        <translation>Op. Familie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="823"/>
         <source>Sequence</source>
-        <translation type="unfinished">Sequentie</translation>
+        <translation>Sequentie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="867"/>
         <source>Extension</source>
-        <translation type="unfinished">Uitbreiding</translation>
+        <translation>Uitbreiding</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="911"/>
         <source>Function</source>
-        <translation type="unfinished">Functie</translation>
+        <translation>Functie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="955"/>
         <source>Op. Class</source>
-        <translation type="unfinished"></translation>
+        <translation>Op. Klasse</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="999"/>
         <source>Operator</source>
-        <translation type="unfinished">Operator</translation>
+        <translation>Operator</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="1043"/>
         <source>View</source>
-        <translation type="unfinished">View</translation>
+        <translation>View</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="1087"/>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="1378"/>
         <source>Permissions</source>
-        <translation type="unfinished">Machtigingen</translation>
+        <translation>Machtigingen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="1158"/>
         <source>Rule</source>
-        <translation type="unfinished">Regel</translation>
+        <translation>Regel</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="1202"/>
         <source>Index</source>
-        <translation type="unfinished">Index</translation>
+        <translation>Index</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="1246"/>
         <source>Column</source>
-        <translation type="unfinished">Kolom</translation>
+        <translation>Kolom</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="1290"/>
         <source>Constraint</source>
-        <translation type="unfinished">Constraint</translation>
+        <translation>Constraint</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="1334"/>
         <source>Trigger</source>
-        <translation type="unfinished">Trigger</translation>
+        <translation>Trigger</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="1449"/>
         <source>Many-to-many</source>
-        <translation type="unfinished"></translation>
+        <translation>Meer-op-meer</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="1493"/>
         <source>One-to-many</source>
-        <translation type="unfinished"></translation>
+        <translation>Een-op-meer</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="1537"/>
         <source>One-to-one</source>
-        <translation type="unfinished"></translation>
+        <translation>Een-op-een</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="1581"/>
         <source>Inheritance</source>
-        <translation type="unfinished"></translation>
+        <translation>Overerving</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="1625"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopieer</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="32"/>
         <source>G</source>
-        <translation type="unfinished"></translation>
+        <translation>G</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="33"/>
         <source>K</source>
-        <translation type="unfinished"></translation>
+        <translation>K</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="34"/>
         <source>H</source>
-        <translation type="unfinished"></translation>
+        <translation>H</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="35"/>
         <source>J</source>
-        <translation type="unfinished"></translation>
+        <translation>J</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="36"/>
         <source>D</source>
-        <translation type="unfinished"></translation>
+        <translation>D</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="37"/>
         <source>E</source>
-        <translation type="unfinished"></translation>
+        <translation>E</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="38"/>
         <source>F</source>
-        <translation type="unfinished"></translation>
+        <translation>F</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="39"/>
         <source>L</source>
-        <translation type="unfinished"></translation>
+        <translation>L</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="40"/>
         <source>O</source>
-        <translation type="unfinished"></translation>
+        <translation>O</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="41"/>
         <source>U</source>
-        <translation type="unfinished"></translation>
+        <translation>U</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="42"/>
         <source>I</source>
-        <translation type="unfinished"></translation>
+        <translation>I</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="43"/>
         <source>R</source>
-        <translation type="unfinished"></translation>
+        <translation>R</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="44"/>
         <source>S</source>
-        <translation type="unfinished"></translation>
+        <translation>S</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="45"/>
         <source>Q</source>
-        <translation type="unfinished"></translation>
+        <translation>Q</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="46"/>
         <source>T</source>
-        <translation type="unfinished"></translation>
+        <translation>T</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="47"/>
         <source>P</source>
-        <translation type="unfinished"></translation>
+        <translation>P</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="48"/>
         <source>M</source>
-        <translation type="unfinished">M</translation>
+        <translation>M</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="49"/>
         <source>Y</source>
-        <translation type="unfinished"></translation>
+        <translation>Y</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="50"/>
         <source>W</source>
-        <translation type="unfinished"></translation>
+        <translation>W</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="51"/>
         <source>9</source>
-        <translation type="unfinished">9</translation>
+        <translation>9</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="52"/>
         <source>Z</source>
-        <translation type="unfinished">Z</translation>
+        <translation>Z</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="53"/>
         <source>X</source>
-        <translation type="unfinished"></translation>
+        <translation>X</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="54"/>
         <source>C</source>
-        <translation type="unfinished"></translation>
+        <translation>C</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="55"/>
         <source>V</source>
-        <translation type="unfinished"></translation>
+        <translation>V</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="56"/>
         <source>B</source>
-        <translation type="unfinished"></translation>
+        <translation>B</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="58"/>
         <source>1</source>
-        <translation type="unfinished">1</translation>
+        <translation>1</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="59"/>
         <source>2</source>
-        <translation type="unfinished">2</translation>
+        <translation>2</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="60"/>
         <source>3</source>
-        <translation type="unfinished">3</translation>
+        <translation>3</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="61"/>
         <source>5</source>
-        <translation type="unfinished">5</translation>
+        <translation>5</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="62"/>
         <source>4</source>
-        <translation type="unfinished">4</translation>
+        <translation>4</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="92"/>
         <source>0</source>
-        <translation type="unfinished">0</translation>
+        <translation>0</translation>
     </message>
 </context>
 <context>
