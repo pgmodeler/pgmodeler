@@ -5131,508 +5131,509 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished">Venster</translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="48"/>
         <source>General &amp;&amp; Design</source>
-        <translation type="unfinished"></translation>
+        <translation>Algemeen &amp;&amp; Design</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="66"/>
         <source>General</source>
-        <translation type="unfinished">Algemeen</translation>
+        <translation>Algemeen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="96"/>
         <source>The opened models will be saved periodically</source>
-        <translation type="unfinished"></translation>
+        <translation>De geopende modellen worden periodiek opgeslagen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="99"/>
         <source>Autosave interval:</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatische opslaginterval:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="118"/>
         <source>Operation history:</source>
-        <translation type="unfinished"></translation>
+        <translation>Taakgeschiedenis:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="167"/>
         <source>minute(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>minuten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="218"/>
         <source>items</source>
-        <translation type="unfinished"></translation>
+        <translation>items</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="227"/>
         <source>Check if there is a new version on server</source>
-        <translation type="unfinished"></translation>
+        <translation>Vink dit aan om na te kijken of een nieuwe versie beschikbaar is op de server</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="230"/>
         <source>Check for updates at startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoek naar updates bij het opstarten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="288"/>
         <source>pixels</source>
-        <translation type="unfinished"></translation>
+        <translation>pixels</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="309"/>
         <source>Grid size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Rastergrootte:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="319"/>
         <source>Design</source>
-        <translation type="unfinished"></translation>
+        <translation>Design</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="348"/>
         <source>Graphical objects (table, views and textboxes) will be created in a single step without the need to click on canvas </source>
-        <translation type="unfinished"></translation>
+        <translation>Grafische objecten (tabellen, views en tekstvakken) worden in een enkele stap aangemaakt zonder op het canvas te hoeven klikken</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="351"/>
         <source>Simplify creation of graphical objects</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Should be &apos;Vereenvoudig de aanmaak van grafische objecten&apos; but that&apos;s way too long for the space</translatorcomment>
+        <translation>Versimpel creatie van grafische objecten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="396"/>
         <source>After loading the model the last zoom and position on canvas will be restored</source>
-        <translation type="unfinished"></translation>
+        <translation>Nadat het model geladen is wordt de laatste zoomwaarde en positie op het canvas hersteld</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="399"/>
         <source>Save and restore last position and zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Behoud de laatste positie en zoom</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="441"/>
         <source>Disable antialiasing for lines and texts improving performance on huge models (requires restart)</source>
-        <translation type="unfinished"></translation>
+        <translation>Schakel anti-aliassing uit voor lijnen en tekst, dit verbetert de performantie bij grote modellen (vereist opnieuw opstarten van de applicatie)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="444"/>
         <source>Disable render smoothness</source>
-        <translation type="unfinished"></translation>
+        <translation>Schakel vlakke rendering uit</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="486"/>
         <source>Hide the object that represents the relationship name</source>
-        <translation type="unfinished"></translation>
+        <translation>Verberg het object dat de relatienaam voorstelt</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="489"/>
         <source>Hide relationship name</source>
-        <translation type="unfinished"></translation>
+        <translation>Verberg relatienaam</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="525"/>
         <source>Operations like save, export and diff will be executed without asking user to validate the model</source>
-        <translation type="unfinished"></translation>
+        <translation>Operaties zoals opslaan, exporteren en diff worden uitgevoerd zonder dat de gebruiker gevraagd wordt om het model te valideren</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="528"/>
         <source>Validate before save, export or diff</source>
-        <translation type="unfinished"></translation>
+        <translation>Valideer voor opslaan, exporteren of diff</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="573"/>
         <source>Hide the object which represents the tag assigned to the table</source>
-        <translation type="unfinished"></translation>
+        <translation>Verberg het tag object dat is toegekend aan de tabel</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="576"/>
         <source>Hide table tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Verberg tabel-tags</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="618"/>
         <source>Start move the canvas when the cursor is on the canvas edges</source>
-        <translation type="unfinished"></translation>
+        <translation>Verplaatst het canvas wanneer de cursor zich op de rand van het canvas bevindt</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="621"/>
         <source>Move canvas by keep mouse on corners</source>
-        <translation type="unfinished"></translation>
+        <translation>Verplaats canvas bij muis in de hoeken</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="666"/>
         <source>Hide the portion of table which represent triggers, indexes and rules</source>
-        <translation type="unfinished"></translation>
+        <translation>Verberg het tabel-gedeelte dat triggers, indexes en regels voorstelt</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="669"/>
         <source>Hide table extended attributes</source>
-        <translation type="unfinished"></translation>
+        <translation>Verberg uitgebreide attributen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="711"/>
         <source>By default panning mode is triggered with left click and range selection with Shift + left click.</source>
-        <translation type="unfinished"></translation>
+        <translation>De standaard panning modus wordt geactiveerd met linkermuisknop en een gebied-selectie via Shift+Linkermuisknop.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="714"/>
         <source>Swap panning and range selection triggers</source>
-        <translation type="unfinished"></translation>
+        <translation>Wissel panning- &amp;&amp; gebiedsselectietriggers</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="759"/>
-        <source>Toggles the code completion in all fields that accepts the input of SQL commads.</source>
-        <translation type="unfinished"></translation>
+        <source>Toggles the code completion in all fields that accepts the input of SQL commands.</source>
+        <translation>Schakelt codevervollediging aan of af in alle velden die SQL commando&apos;s aanvaarden.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="762"/>
         <source>Enable SQL code completion</source>
-        <translation type="unfinished"></translation>
+        <translation>Schakel SQL codevervollediging in</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="810"/>
         <source>Printing &amp;&amp; Code</source>
-        <translation type="unfinished"></translation>
+        <translation>Printen &amp;&amp; Code</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="828"/>
         <source>Code style</source>
-        <translation type="unfinished"></translation>
+        <translation>Codestijl</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="852"/>
         <source>Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Grootte:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="865"/>
         <source>Font:</source>
-        <translation type="unfinished">Lettertype:</translation>
+        <translation>Lettertype:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="878"/>
         <source>Colors:</source>
-        <translation type="unfinished">Kleuren:</translation>
+        <translation>Kleuren:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="891"/>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1002"/>
         <source>Options:</source>
-        <translation type="unfinished">Opties:</translation>
+        <translation>Opties:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="900"/>
         <source>Display line numbers</source>
-        <translation type="unfinished"></translation>
+        <translation>Geef lijnnummers weer</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="916"/>
         <source>Highlight lines at cursor&apos;s position</source>
-        <translation type="unfinished"></translation>
+        <translation>Licht de huidige lijn onder de cursor op</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="959"/>
         <source> pt</source>
-        <translation type="unfinished"> pt</translation>
+        <translation> pt</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="984"/>
         <source>Printing</source>
-        <translation type="unfinished"></translation>
+        <translation>Printen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1015"/>
         <source>Print grid</source>
-        <translation type="unfinished"></translation>
+        <translation>Print raster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1031"/>
         <source>Print page numbers</source>
-        <translation type="unfinished"></translation>
+        <translation>Print paginanummers</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1047"/>
         <source>Paper:</source>
-        <translation type="unfinished"></translation>
+        <translation>Papier:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1070"/>
         <source>A0 (841 x 1189 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1075"/>
         <source>A1 (594 x 841 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1080"/>
         <source>A2 (420 x 594 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1085"/>
         <source>A3 (297 x 420 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1090"/>
         <source>A4 (210 x 297 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1095"/>
         <source>A5 (148 x 210 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1100"/>
         <source>A6 (105 x 148 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1105"/>
         <source>A7 (74 x 105 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1110"/>
         <source>A8 (52 x 74 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1115"/>
         <source>A9 (37 x 52 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1120"/>
         <source>B0 (1030 x 1456 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1125"/>
         <source>B1 (728 x 1030 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1130"/>
         <source>B10 (32 x 45 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1135"/>
         <source>B2 (515 x 728 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1140"/>
         <source>B3 (364 x 515 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1145"/>
         <source>B4 (257 x 364 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1150"/>
         <source>B5 (182 x 257 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1155"/>
         <source>B6 (128 x 182 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1160"/>
         <source>B7 (91 x 128 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1165"/>
         <source>B8 (64 x 91 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1170"/>
         <source>B9 (45 x 64 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1175"/>
         <source>C5E (163 x 229 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1180"/>
         <source>Comm10E (105 x 241 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1185"/>
         <source>DLE (110 x 220 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1190"/>
         <source>Executive (191 x 254 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1195"/>
         <source>Folio (210 x 330 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1200"/>
         <source>Ledger (432 x 279 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1205"/>
         <source>Legal (216 x 356 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1210"/>
         <source>Letter (216 x 279 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1215"/>
         <source>Tabloid (279 x 432 mm)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1220"/>
         <source>Custom</source>
-        <translation type="unfinished"></translation>
+        <translation>Aangepast</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1234"/>
         <source>Orientation:</source>
-        <translation type="unfinished"></translation>
+        <translation>Oriëntatie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1247"/>
         <source>Landscape</source>
-        <translation type="unfinished"></translation>
+        <translation>Landschap</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1263"/>
         <source>Portrait</source>
-        <translation type="unfinished"></translation>
+        <translation>Portret</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1270"/>
         <source>Unity:</source>
-        <translation type="unfinished"></translation>
+        <translation>Eenheid:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1277"/>
         <source>Custom Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Aangepaste Grootte:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1292"/>
         <source>Width:</source>
-        <translation type="unfinished"></translation>
+        <translation>Breedte:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1321"/>
         <source>Height:</source>
-        <translation type="unfinished"></translation>
+        <translation>Hoogte:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1346"/>
         <source>Page Margins:</source>
-        <translation type="unfinished"></translation>
+        <translation>Paginamarges:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1361"/>
         <source>Left:</source>
-        <translation type="unfinished"></translation>
+        <translation>Links:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1380"/>
         <source>Left margin</source>
-        <translation type="unfinished"></translation>
+        <translation>Linkermarge</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1390"/>
         <source>Top:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kop:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1409"/>
         <source>Top margin</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopmarge</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1425"/>
         <source>Right:</source>
-        <translation type="unfinished"></translation>
+        <translation>Rechts:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1444"/>
         <source>Right margin</source>
-        <translation type="unfinished"></translation>
+        <translation>Rechtermarge</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1454"/>
         <source>Bottom:</source>
-        <translation type="unfinished"></translation>
+        <translation>Voet:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1473"/>
         <source>Bottom margin</source>
-        <translation type="unfinished"></translation>
+        <translation>Voetmarge</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1495"/>
         <source>Milimeters</source>
-        <translation type="unfinished"></translation>
+        <translation>Milimeters</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1500"/>
         <source>Pixels</source>
-        <translation type="unfinished"></translation>
+        <translation>Pixels</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1505"/>
         <source>Inches</source>
-        <translation type="unfinished"></translation>
+        <translation>Inches</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1510"/>
         <source>Centimeter</source>
-        <translation type="unfinished"></translation>
+        <translation>Centimeter</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/generalconfigwidget.cpp" line="43"/>
         <source>Line numbers&apos; font color</source>
-        <translation type="unfinished"></translation>
+        <translation>Lettertypekleur van lijnnummers</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/generalconfigwidget.cpp" line="46"/>
         <source>Line numbers&apos; background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Achtergrondkleur van lijnnummers</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/generalconfigwidget.cpp" line="49"/>
         <source>Highlighted line color</source>
-        <translation type="unfinished"></translation>
+        <translation>Uitlichtkleur</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/generalconfigwidget.cpp" line="53"/>
         <source>The little brown fox jumps over the lazy dog</source>
-        <translation type="unfinished"></translation>
+        <translation>The little brown fox jumps over the lazy dog</translation>
     </message>
 </context>
 <context>
@@ -6209,7 +6210,7 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1332"/>
         <source>Design</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Design</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1335"/>
