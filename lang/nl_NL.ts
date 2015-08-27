@@ -1911,7 +1911,7 @@ Deze optie afvinken zorgt ervoor dat de SQL wordt ingevoegd na het CREATE DATABA
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="481"/>
         <source>Ctrl+S</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ctrl+S</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="505"/>
@@ -3124,7 +3124,7 @@ Deze optie afvinken zorgt ervoor dat de SQL wordt ingevoegd na het CREATE DATABA
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="139"/>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Instellingen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="170"/>
@@ -3134,7 +3134,7 @@ Deze optie afvinken zorgt ervoor dat de SQL wordt ingevoegd na het CREATE DATABA
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="194"/>
         <source>Connection:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Verbinding:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="207"/>
@@ -3297,12 +3297,12 @@ Deze optie afvinken zorgt ervoor dat de SQL wordt ingevoegd na het CREATE DATABA
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="1030"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Uitvoer</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="1099"/>
         <source>Progress label...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vooruitgangslabel...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="1109"/>
@@ -5870,7 +5870,7 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="831"/>
         <source>Ctrl+S</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ctrl+S</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="843"/>
@@ -5984,7 +5984,7 @@ Message returned by the DBMS: `%1&apos;</source>
         <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1014"/>
         <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1017"/>
         <source>Show grid</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Raster tonen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1020"/>
@@ -6034,7 +6034,7 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1095"/>
         <source>Show delimiters</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Delimiters tonen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1098"/>
@@ -6049,7 +6049,7 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1110"/>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Instellingen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1113"/>
@@ -6541,7 +6541,7 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="152"/>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Instellingen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="182"/>
@@ -6551,7 +6551,7 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="200"/>
         <source>Connection:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Verbinding:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="226"/>
@@ -6706,7 +6706,7 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1024"/>
         <source>File:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bestand:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1040"/>
@@ -6731,7 +6731,7 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1160"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Uitvoer</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1241"/>
@@ -6746,7 +6746,7 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1374"/>
         <source>Progress label...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vooruitgangslabel...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1387"/>
@@ -6886,7 +6886,7 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="593"/>
         <source>Error code &lt;strong&gt;%1&lt;/strong&gt; found and ignored. Proceeding with export.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Foutencode &lt;strong&gt;%1&lt;/strong&gt; trad op en werd genegeerd. De export gaat voort.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="684"/>
@@ -7729,7 +7729,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="264"/>
-        <source>The relationship &lt;strong&gt;%1&lt;/strong&gt; [id: %2] is in a permanent invalidation state and need to be rellocated.</source>
+        <source>The relationship &lt;strong&gt;%1&lt;/strong&gt; [id: %2] is in a permanent invalidation state and needs to be relocated.</source>
         <translation>De relatie &lt;strong&gt;%1&lt;/strong&gt; [id: %2] is in een permanente ongeldige staat en moet worden herplaats.</translation>
     </message>
     <message>
@@ -7764,7 +7764,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="422"/>
-        <source>Database model sucessfully validated.</source>
+        <source>Database model successfully validated.</source>
         <translation>Het database model werd succesvol gevalideerd.</translation>
     </message>
     <message>

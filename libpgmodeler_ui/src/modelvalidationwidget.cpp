@@ -261,7 +261,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 
 	}
   else if(val_info.getValidationType()==ValidationInfo::BROKEN_REL_CONFIG)
-    label->setText(trUtf8("The relationship <strong>%1</strong> [id: %2] is in a permanent invalidation state and need to be rellocated.")
+    label->setText(trUtf8("The relationship <strong>%1</strong> [id: %2] is in a permanent invalidation state and needs to be relocated.")
                   .arg(val_info.getObject()->getName(true).remove('"'))
                   .arg(val_info.getObject()->getObjectId()));
 	else if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR)
@@ -419,7 +419,7 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 		fix_btn->setEnabled(false);
 
     PgModelerUiNS::createOutputTreeItem(output_trw,
-                                        trUtf8("Database model sucessfully validated."),
+                                        trUtf8("Database model successfully validated."),
                                         QPixmap(QString(":/icones/icones/msgbox_info.png")));
 
     emit s_validationFinished(validation_helper->getErrorCount() != 0);
