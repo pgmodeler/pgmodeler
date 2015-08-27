@@ -7579,203 +7579,203 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="26"/>
         <source>Form</source>
-        <translation type="unfinished">Venster</translation>
+        <translation>Venster</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="91"/>
         <source>Warnings: does not prevents model to be saved.</source>
-        <translation type="unfinished"></translation>
+        <translation>Let op: dit voorkomt niet dat het model kan worden opgeslagen.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="116"/>
         <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="204"/>
         <source>0</source>
-        <translation type="unfinished">0</translation>
+        <translation>0</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="176"/>
         <source>Errors: model will not be saved while there are validation errors.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fouten: het model zal niet worden opgeslagen zolang er validatiefouten zijn.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="279"/>
         <source>Hide this widget</source>
-        <translation type="unfinished">Verberg dit widget</translation>
+        <translation>Verberg dit widget</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="282"/>
         <source>...</source>
-        <translation type="unfinished">...</translation>
+        <translation>...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="371"/>
         <source>Use unique temporary names for database, role and tablespace objects</source>
-        <translation type="unfinished"></translation>
+        <translation>Gebruik unieke namen voor de database, rollen en tablespace objecten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="384"/>
         <source>Enable validation of SQL code on DBMS (requires connection)</source>
-        <translation type="unfinished"></translation>
+        <translation>Activeer validatie van SQL code op het DBMS (vereist een verbinding)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="387"/>
         <source>SQL Validation:</source>
-        <translation type="unfinished"></translation>
+        <translation>SQL Validatie:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="412"/>
         <source>Connection alias</source>
-        <translation type="unfinished"></translation>
+        <translation>Verbindingsalias</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="428"/>
         <source>PostgreSQL version</source>
-        <translation type="unfinished"></translation>
+        <translation>PostgreSQL versie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="478"/>
         <source>SQL validation, if enabled, will occur only on the last step or when there are no warnings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wanneer SQL validatie is geactiveerd, zal deze enkel worden uitgevoerd als laatste stap of wanneer er geen waarschuwingen zijn.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="537"/>
         <source>Using temporary names will avoid object duplication errors when running the SQL validation.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tijdelijke namen gebruiken vermijdt object-duplicatiefouten wanneer SQL validatie wordt uitgevoerd.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="577"/>
         <source>Try to resolve the reported issues.</source>
-        <translation type="unfinished"></translation>
+        <translation>Probeer om de gerapporteerde problemen te verhelpen.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="580"/>
         <source>Apply Fix</source>
-        <translation type="unfinished"></translation>
+        <translation>Verhelp</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="593"/>
         <source>Ctrl+S</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+S</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="614"/>
         <source>Clear validation results</source>
-        <translation type="unfinished"></translation>
+        <translation>Validatieresultaten leegmaken</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="617"/>
         <source>Clear</source>
-        <translation type="unfinished">Leegmaken</translation>
+        <translation>Leegmaken</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="651"/>
         <source>Try to apply a fix on the selected validation info.</source>
-        <translation type="unfinished"></translation>
+        <translation>Probeer de validatieinformatie te verhelpen.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="654"/>
         <source>Options</source>
-        <translation type="unfinished">Opties</translation>
+        <translation>Opties</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="698"/>
         <source>Cancel the SQL validation in progress.</source>
-        <translation type="unfinished"></translation>
+        <translation>Annuleer de lopende SQL validatie.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="701"/>
         <source>Cancel</source>
-        <translation type="unfinished">Annuleren</translation>
+        <translation>Annuleren</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="714"/>
         <source>Esc</source>
-        <translation type="unfinished">Esc</translation>
+        <translation>Esc</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="729"/>
         <source>Change the creation order for two objects by swapping their ids</source>
-        <translation type="unfinished"></translation>
+        <translation>Wijzig de aanmaak-volgorde voor twee objecten door hun ids om te wisselen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="732"/>
         <source>Swap Ids</source>
-        <translation type="unfinished"></translation>
+        <translation>Wissel Ids om</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="763"/>
         <source>Va&amp;lidate</source>
-        <translation type="unfinished"></translation>
+        <translation>Va&amp;lideer</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="35"/>
         <source>Autodetect</source>
-        <translation type="unfinished"></translation>
+        <translation>Autodetecteer</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="223"/>
         <source>The object &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt; [id: %3] is being referenced by &lt;strong&gt;%4&lt;/strong&gt; object(s) before its creation.</source>
-        <translation type="unfinished"></translation>
+        <translation>Het object &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt; [id: %3] wordt door &lt;strong&gt;%4&lt;/strong&gt; object(en) gerefereerd vóór zijn aanmaak.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="238"/>
         <source>The object &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt; [id: %3]%4 is referencing columns created by &lt;strong&gt;%5&lt;/strong&gt; relationship(s) but is created before them.</source>
-        <translation type="unfinished"></translation>
+        <translation>Het object &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt; [id: %3]%4 refereerd naar kolommen aangemaakt door &lt;strong&gt;%5&lt;/strong&gt; relatie(s) maar wordt vóór deze aangemaakt.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="257"/>
         <source>The object &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt; has a name that conflicts with &lt;strong&gt;%3&lt;/strong&gt; object&apos;s name(s).</source>
-        <translation type="unfinished"></translation>
+        <translation>Het object &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt; heeft een naam die conflicteerd met de naam van &lt;strong&gt;%3&lt;/strong&gt; andere objecten.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="264"/>
         <source>The relationship &lt;strong&gt;%1&lt;/strong&gt; [id: %2] is in a permanent invalidation state and need to be rellocated.</source>
-        <translation type="unfinished"></translation>
+        <translation>De relatie &lt;strong&gt;%1&lt;/strong&gt; [id: %2] is in een permanente ongeldige staat en moet worden herplaats.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="268"/>
         <source>SQL validation failed due to error(s) below. &lt;strong&gt;NOTE:&lt;/strong&gt;&lt;em&gt; These errors does not invalidates the model but may affect operations like &lt;strong&gt;export&lt;/strong&gt; and &lt;strong&gt;diff&lt;/strong&gt;.&lt;/em&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>SQL validatie faalde omwille van de volgende fouten. &lt;strong&gt;LET OP:&lt;/strong&gt;&lt;em&gt; Deze fouten ontkrachten het model niet maar kunnen &lt;strong&gt;export&lt;/strong&gt; en &lt;strong&gt;diff&lt;/strong&gt; beïnvloeden.&lt;/em&gt;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="306"/>
         <source>&lt;strong&gt;HINT:&lt;/strong&gt; try to swap the mentioned relationship by another one in order to solve this situation. Note that other objects may be lost in this process.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;HINT:&lt;/strong&gt; probeer om de vermeldde relatie om te wisselen met een andere relatie om dit probleem trachten te verhelpen maar wees ervan bewust dat dit ervoor kan zorgen dat bepaalde andere objecten verloren gaan in het process.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="339"/>
         <source>&lt;em&gt;The above object was created by a relationship. Change the name pattern on it&apos;s generator relationship. Fix will not be applied!&lt;/em&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;em&gt;Het hierboven vermeldde object werd aangemaakt door een relatie. Verander het naamspatroon van de genererende relatie. Dit probleem kan niet automatisch worden verholpen!&lt;/em&gt;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="345"/>
         <source>Conflicting object: &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Conflicterende object: &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt;.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="352"/>
         <source>Relationship: &lt;strong&gt;%1&lt;/strong&gt; [id: %2].</source>
-        <translation type="unfinished"></translation>
+        <translation>Relatie: &lt;strong&gt;%1&lt;/strong&gt; [id: %2].</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="357"/>
         <source>Referrer object: &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt; [id: %3].</source>
-        <translation type="unfinished"></translation>
+        <translation>Refererende object: &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt; [id: %3].</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="422"/>
         <source>Database model sucessfully validated.</source>
-        <translation type="unfinished"></translation>
+        <translation>Het database model werd succesvol gevalideerd.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="448"/>
         <source>Running SQL commands on server...</source>
-        <translation type="unfinished"></translation>
+        <translation>De SQL commando&apos;s worden uitgevoerd op de server...</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="460"/>
         <source>Processing object: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Bezig met het verwerken van object: %1</translation>
     </message>
 </context>
 <context>
