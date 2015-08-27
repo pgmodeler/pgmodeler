@@ -1851,139 +1851,139 @@ Deze optie afvinken zorgt ervoor dat de SQL wordt ingevoegd na het CREATE DATABA
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="20"/>
         <source>Data Manipulation</source>
-        <translation type="unfinished"></translation>
+        <translation>Datamanipulatie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="114"/>
         <source>&amp;Close</source>
-        <translation type="unfinished">&amp;Sluiten</translation>
+        <translation>&amp;Sluiten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="177"/>
         <source>Rows returned: </source>
-        <translation type="unfinished">Aantal rijen: </translation>
+        <translation>Aantal rijen: </translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="199"/>
         <source>0</source>
-        <translation type="unfinished">0</translation>
+        <translation>0</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="216"/>
         <source>Maximum limit of listed rows</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximum limit van weergegeven rijen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="219"/>
         <source>(Limit: 0)</source>
-        <translation type="unfinished"></translation>
+        <translation>(Limiet: 0)</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="309"/>
         <source>Empty values are assumed as &lt;strong&gt;DEFAULT&lt;/strong&gt;. To use special values like &lt;strong&gt;NULL&lt;/strong&gt;, a function call like &lt;strong&gt;now()&lt;/strong&gt; or a specific data escaping, enclose values in &lt;strong&gt;&amp;lt;&amp;gt;&lt;/strong&gt;. To use &lt;strong&gt;&amp;lt;&lt;/strong&gt; or &lt;strong&gt;&amp;gt;&lt;/strong&gt; as part of the value prepend the backslash character, e.g., &lt;strong&gt;\&amp;lt;&lt;/strong&gt; or &lt;strong&gt;\&amp;gt;&lt;/strong&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Een lege waarde wordt verondersteld &lt;strong&gt;DEFAULT&lt;/strong&gt; te zijn. Om speciale waarden zoals &lt;strong&gt;NULL&lt;/strong&gt;, een functie-aanroep zoals &lt;strong&gt;now()&lt;/strong&gt; of een specifieke data-escaping te gebruiken, sluit deze waarden in tussen&lt;strong&gt;&amp;lt;&amp;gt;&lt;/strong&gt;. Om &lt;strong&gt;&amp;lt;&lt;/strong&gt; of &lt;strong&gt;&amp;gt;&lt;/strong&gt; te gebruiken als deel van een waarde, voeg een backslash toe voor de waarde, bv., &lt;strong&gt;\&amp;lt;&lt;/strong&gt; of &lt;strong&gt;\&amp;gt;&lt;/strong&gt;.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="425"/>
         <source>Refresh listing</source>
-        <translation type="unfinished"></translation>
+        <translation>De lijst wordt vernieuwd</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="428"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Vernieuwen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="441"/>
         <source>F5</source>
-        <translation type="unfinished">F5</translation>
+        <translation>F5</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="465"/>
         <source>Save changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Aanpassingen opslaan</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="468"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Opslaan</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="481"/>
         <source>Ctrl+S</source>
-        <translation type="unfinished">Ctrl+S</translation>
+        <translation>Ctrl+S</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="505"/>
         <source>Copy the selection as CSV buffer</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopieer de selectie als CSV buffer</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="508"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopieer</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="521"/>
         <source>Ctrl+C</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+C</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="545"/>
         <source>Export results to CSV file</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporteer de resultaten naar een CSV bestand</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="548"/>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporteer</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="561"/>
         <source>Ctrl+X</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+X</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="585"/>
         <source>Undo modifications</source>
-        <translation type="unfinished"></translation>
+        <translation>Aanpassingen ongedaan maken</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="588"/>
         <source>Undo</source>
-        <translation type="unfinished">Ongedaan maken</translation>
+        <translation>Ongedaan maken</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="601"/>
         <source>Ctrl+Z</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Z</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="625"/>
         <source>Add data</source>
-        <translation type="unfinished"></translation>
+        <translation>Data toevoegen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="628"/>
         <source>Add</source>
-        <translation type="unfinished">Toevoegen</translation>
+        <translation>Toevoegen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="641"/>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1175"/>
         <source>Ins</source>
-        <translation type="unfinished">Ins</translation>
+        <translation>Ins</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="665"/>
         <source>Mark the selected rows to be deleted</source>
-        <translation type="unfinished"></translation>
+        <translation>Markeer de geselecteerde rij als &apos;te verwijderen&apos;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="668"/>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="708"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwijderen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="681"/>
@@ -1992,172 +1992,172 @@ Deze optie afvinken zorgt ervoor dat de SQL wordt ingevoegd na het CREATE DATABA
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1289"/>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1327"/>
         <source>Del</source>
-        <translation type="unfinished">Del</translation>
+        <translation>Del</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="705"/>
         <source>Filter the result set</source>
-        <translation type="unfinished"></translation>
+        <translation>Filter de resultaten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="739"/>
         <source>Table:</source>
-        <translation type="unfinished">Tabel:</translation>
+        <translation>Tabel:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="752"/>
         <source>Schema:</source>
-        <translation type="unfinished">Schema:</translation>
+        <translation>Schema:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="830"/>
         <source>in </source>
-        <translation type="unfinished"></translation>
+        <translation>in</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="886"/>
         <source>Hide views</source>
-        <translation type="unfinished"></translation>
+        <translation>Verberg views</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="968"/>
         <source>Filter expression</source>
-        <translation type="unfinished"></translation>
+        <translation>Filterexpressie</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1003"/>
         <source>Order &amp;&amp; Limit</source>
-        <translation type="unfinished"></translation>
+        <translation>Sortering &amp;&amp; Limiet</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1027"/>
         <source>Column:</source>
-        <translation type="unfinished">Kolom:</translation>
+        <translation>Kolom:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1055"/>
         <source>ASC</source>
-        <translation type="unfinished"></translation>
+        <translation>ASC</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1071"/>
         <source>DESC</source>
-        <translation type="unfinished"></translation>
+        <translation>DESC</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1090"/>
         <source>Limit in:</source>
-        <translation type="unfinished"></translation>
+        <translation>Limiet in:</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1106"/>
         <source>000000</source>
-        <translation type="unfinished">000000</translation>
+        <translation>000000</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1109"/>
         <source>100</source>
-        <translation type="unfinished">100</translation>
+        <translation>100</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1122"/>
         <source>results</source>
-        <translation type="unfinished"></translation>
+        <translation>resultaten</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1159"/>
         <source>Add Item</source>
-        <translation type="unfinished">Item Toevoegen</translation>
+        <translation>Item Toevoegen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1197"/>
         <source>Remove Item</source>
-        <translation type="unfinished">Item Verwijderen</translation>
+        <translation>Item Verwijderen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1235"/>
         <source>Clear the order by columns list</source>
-        <translation type="unfinished"></translation>
+        <translation>Maak de sorterings-kolomlijst leeg</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1273"/>
         <source>Move selected item up</source>
-        <translation type="unfinished"></translation>
+        <translation>Verplaats het geselecteerde item naar boven</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1311"/>
         <source>Move selected item down</source>
-        <translation type="unfinished"></translation>
+        <translation>Verplaats het geselecteerde item naar beneden</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="234"/>
         <source>&lt;em&gt;(Limit: &lt;strong&gt;%1&lt;/strong&gt;)&lt;/em&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;em&gt;(Limiet: &lt;strong&gt;%1&lt;/strong&gt;)&lt;/em&gt;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="408"/>
         <source>No objects found</source>
-        <translation type="unfinished"></translation>
+        <translation>Geen objecten gevonden</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="410"/>
         <source>Found %1 object(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 object(en) gevonden</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="436"/>
         <source>Views can&apos;t have their data handled through this grid, this way, all operations are disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Data van views kan niet worden aangepast via dit raster, alle operaties zijn uitgeschakeld.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="448"/>
         <source>The selected table doesn&apos;t owns a primary key! Updates and deletes will be performed by considering all columns as primary key. &lt;strong&gt;WARNING:&lt;/strong&gt; those operations can affect more than one row.</source>
-        <translation type="unfinished"></translation>
+        <translation>De geselecteerde tabel bevat geen primary key! Update en delete commando&apos;s worden uitgevoerd door alle kolommen als primary key te beschouwen. &lt;strong&gt;OPGEPAST&lt;/strong&gt; deze acties kunnen meer dan één rij beïnvloeden.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="482"/>
         <source>This row is marked to be %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Deze rij is als %1 gemarkeerd.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="487"/>
         <source>deleted</source>
-        <translation type="unfinished"></translation>
+        <translation>verwijderd</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="489"/>
         <source>updated</source>
-        <translation type="unfinished"></translation>
+        <translation>aangepast</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="491"/>
         <source>inserted</source>
-        <translation type="unfinished"></translation>
+        <translation>ingevoegd</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="613"/>
         <source>[binary data]</source>
-        <translation type="unfinished">[binaire data]</translation>
+        <translation>[binaire data]</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="751"/>
         <source>&lt;strong&gt;WARNING:&lt;/strong&gt; Once commited its not possible to undo the changes! Proceed with saving?</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;OPGEPAST: &lt;/strong&gt; Eens toegepast is het niet langer mogelijk om aanpassingen ongedaan te maken! Bent u zeker dat u wilt opslaan?</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="781"/>
         <source>delete</source>
-        <translation type="unfinished"></translation>
+        <translation>delete</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="782"/>
         <source>update</source>
-        <translation type="unfinished"></translation>
+        <translation>update</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="783"/>
         <source>insert</source>
-        <translation type="unfinished"></translation>
+        <translation>insert</translation>
     </message>
 </context>
 <context>
