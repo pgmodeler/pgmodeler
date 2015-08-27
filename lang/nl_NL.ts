@@ -5865,7 +5865,7 @@ Message returned by the DBMS: `%1&apos;</source>
         <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="825"/>
         <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="828"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Opslaan</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="831"/>
@@ -5952,7 +5952,7 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="963"/>
         <source>Ctrl+Z</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ctrl+Z</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="975"/>
@@ -5967,7 +5967,7 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="990"/>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Exporteer</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="993"/>
@@ -7863,7 +7863,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="189"/>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="3282"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Verwijderen</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="190"/>
@@ -7904,7 +7904,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="202"/>
         <source>Ctrl+C</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ctrl+C</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="204"/>
@@ -7924,7 +7924,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="208"/>
         <source>Ctrl+X</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ctrl+X</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="210"/>
@@ -9315,366 +9315,368 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="94"/>
         <source>Unrecognized option &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Niet-herkende optie &apos;%1&apos;.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="98"/>
         <source>Value not specified for option &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Er is geen waarde gespecifieerd voor optie &apos;%1&apos;.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="100"/>
         <source>Option &apos;%1&apos; does not accept values.</source>
-        <translation type="unfinished"></translation>
+        <translation>Optie &apos;%1&apos; aanvaardt geen waardes.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="140"/>
         <source>Connection aliased as &apos;%1&apos; was not found on configuration file.</source>
-        <translation type="unfinished"></translation>
+        <translation>De verbindingsalias &apos;%1&apos; werd niet teruggevonden in het configuratiebestand.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="249"/>
         <source>Usage: pgmodeler-cli [OPTIONS]</source>
-        <translation type="unfinished"></translation>
+        <translation>Gebruik: pgmodeler-cli [OPTIES]</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="250"/>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="379"/>
         <source> command line interface.</source>
-        <translation type="unfinished"></translation>
+        <translation> commandolijn interface.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="251"/>
         <source>PostgreSQL Database Modeler Project - pgmodeler.com.br</source>
-        <translation type="unfinished"></translation>
+        <translation>PostgreSQL Database Modelling Project - pgmodeler.com.br</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="252"/>
         <source>Copyright 2006-2015 Raphael A. Silva &lt;raphael@pgmodeler.com.br&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Copyright 2006-2015 Raphael A. Silva &lt;raphael@pgmodeler.com.br&gt;</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="254"/>
         <source>This CLI tool provides the operations to export pgModeler&apos;s database models without
 the need to load them on graphical interface as well to fix model files to the most recent
 accepted structure. All available options are described below.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dit CLI tool maakt het mogelijk om pgModeler database modellen te exporteren zonder
+deze in de grafische interface te hoeven laden alsook om modellen te herstellen naar de
+laatste geaccepteerde structuur. Alle beschikbare opties worden hieronder beschreven.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="258"/>
         <source>General options: </source>
-        <translation type="unfinished"></translation>
+        <translation>Algemene opties: </translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="259"/>
         <source>   %1, %2=[FILE]		 Input model file (.dbm). Mandatory use when fixing a model or exporting it.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2=[BESTAND]		 Input model bestand (.dbm). Verplicht wanneer een model wordt geimporteerd or hersteld.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="260"/>
         <source>   %1, %2=[FILE]		 Output file. Mandatory use when fixing model or export to file or png.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2=[BESTAND]		 Uitvoerbestand. Verplicht wanneer een model wordt hersteld of geexporteerd naar een bestand of PNG.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="261"/>
         <source>   %1, %2		 Try to fix the structure of the input model file in order to make it loadable again.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2		 Probeer de structuur van het invoerbestand te herstellen zodat het opnieuw kan worden geladen.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="262"/>
         <source>   %1, %2		 Model fix tries. When reaching the maximum count the invalid objects will be discard.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2		 Aantel herstelpogingen. Na het bereiken van deze limiet worden ongeldige objecten verwijderd.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="263"/>
         <source>   %1, %2		 Export to a sql script file.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2		 Exporteer naar een sql script bestand.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="264"/>
         <source>   %1, %2		 Export to a png image.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2		 Exporteer naar een PNG afbeelding.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="265"/>
         <source>   %1, %2		 Export directly to a PostgreSQL server.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2		 Exporteer direct naar een PostgreSQL server.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="266"/>
         <source>   %1, %2		 List available connections on %3 file.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2		 Toon de beschikbare verbindingen in bestand %3.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="267"/>
         <source>   %1, %2		 Version of generated SQL code. Only for file or dbms export.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2		 Versie voor de gegenereerde SQL code. ENkel geldig bij bestands- of DBMS export.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="268"/>
         <source>   %1, %2			 Silent execution. Only critical errors are shown during process.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2			 Stille uitvoer. Enkel kritische fouten worden getoond tijdens het proces.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="269"/>
         <source>   %1, %2			 Show this help menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2			 Toon deze helpmenu.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="271"/>
         <source>PNG export options: </source>
-        <translation type="unfinished"></translation>
+        <translation>PNG exporteeringsopties: </translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="272"/>
         <source>   %1, %2		 Draws the grid on the exported png image.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2		 Tekent het raster in de geexporteerde PNG afbeelding.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="273"/>
         <source>   %1, %2	 Draws the page delimiters on the exported png image.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2		 Tekent de paginamarkering op de geexporteerde PNG afbeelding.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="274"/>
         <source>   %1, %2		 Each page will be exported on a separated png image.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2		 Elke pagina wordt als apparte PNG afbeelding geexporteerd.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="275"/>
         <source>   %1, %2=[FACTOR]		 Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2=[FACTOR]		 Past een zoom (in procent) toe vooralleer te exporteren naar PNG afbeelding. Geaccepteerde zoomintervals: %3-%4</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="277"/>
         <source>DBMS export options: </source>
-        <translation type="unfinished"></translation>
+        <translation>DBMS exporteringsopties: </translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="278"/>
         <source>   %1, %2	 Ignores errors related to duplicated objects that eventually exists on server side.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2	 Negeert fouten omwille van duplicate objecten die uiteindelijk op de server zullen bestaan.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="279"/>
         <source>   %1, %2		 Drop the database before execute a export process.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2		 Verwijder de database vooralleer het exporteringsprocess te starten.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="280"/>
         <source>   %1, %2		 Runs the DROP commands attached to SQL-enabled objects.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2		 Voert de DROP commando&apos;s uit die geassocieerd zijn met SQL-ingeschakelde objecten.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="281"/>
         <source>   %1, %2		 Simulates a export process. Actually executes all steps but undoing any modification.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2		 Simuleert het exporteringsprocess. Alle stappen worden uitgevoerd maar aanpassingen worden ongedaan gemaakt.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="282"/>
         <source>   %1, %2		 Generates temporary names for database, roles and tablespaces when in simulation mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2		 Genereert tijdelijke namen voor databases, rollen en tablespaces wanneer simulatiemodus is gespecifieerd.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="283"/>
         <source>   %1, %2=[ALIAS]	 Connection configuration alias to be used.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2=[ALIAS]	 Verbindingsconfiguratiealias diemoet worden gebruikt.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="284"/>
         <source>   %1, %2=[HOST]		 PostgreSQL host which export will operate.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2=[HOST]		 PostgreSQL host waarnaar te exporteren.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="285"/>
         <source>   %1, %2=[PORT]		 PostgreSQL host listening port.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2=[POORT]		 De poort waarop de PostgreSQL host luistert.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="286"/>
-        <source>   %1, %2=[USER]		 PosrgreSQL username.</source>
-        <translation type="unfinished"></translation>
+        <source>   %1, %2=[USER]		 PostgreSQL username.</source>
+        <translation>   %1, %2=[GEBRUIKER]		 PostgreSQL gebruikersnaam.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="287"/>
-        <source>   %1, %2=[PASSWORD]	 PosrgreSQL user password.</source>
-        <translation type="unfinished"></translation>
+        <source>   %1, %2=[PASSWORD]	 PostgreSQL user password.</source>
+        <translation>   %1, %2=[WACHTWOORD]	 PostgreSQL wachtwoord.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="288"/>
         <source>   %1, %2=[DBNAME]	 Connection&apos;s initial database.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2=[DBNAAM]	 De verbinding&apos;s initiele database.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="292"/>
         <source>Miscellaneous options: </source>
-        <translation type="unfinished"></translation>
+        <translation>Andere opties: </translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="293"/>
         <source>   %1, %2=[ACTION]	 Handles the file association to .dbm files. The ACTION can be [%3 | %4].</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2=[ACTIE]	 Behandelt de bestandsassociatie met .dbm bestanden. De ACTIE kan [%3 | %4] zijn.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="315"/>
         <source>There are no connections configured.</source>
-        <translation type="unfinished"></translation>
+        <translation>Er zijn geen verbindingen geconfigureerd.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="320"/>
         <source>Available connections (alias : conn. string)</source>
-        <translation type="unfinished"></translation>
+        <translation>Beschikbare verbindingen (alias: conn. string)</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="344"/>
         <source>No export mode specified!</source>
-        <translation type="unfinished"></translation>
+        <translation>Er is geen exportmodus gespecifieerd!</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="347"/>
         <source>Export, fix model and update mime operations can&apos;t be used at the same time!</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;Exporteer en corrigeer model&apos; kan niet samen worden gebruikt met &apos;update the mime operaties&apos;!</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="349"/>
-        <source>Multiple export mode especified!</source>
-        <translation type="unfinished"></translation>
+        <source>Multiple export mode specified!</source>
+        <translation>Meerdere exportmodussen gespecifieerd!</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="351"/>
         <source>No input file specified!</source>
-        <translation type="unfinished"></translation>
+        <translation>Er werd geen invoerbestand gespecifieerd!</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="353"/>
         <source>No output file specified!</source>
-        <translation type="unfinished"></translation>
+        <translation>Er werd geen uitvoerbestand gespecifieerd!</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="355"/>
         <source>Input file must be different from output!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het invoerbestand mag niet hetzelfde zijn als het uitvoerbestand!</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="358"/>
         <source>Incomplete connection information!</source>
-        <translation type="unfinished"></translation>
+        <translation>Onvolledige verbindingsinformatie!</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="360"/>
         <source>Invalid zoom specified!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een ongeldige zoom gespecifieerd!</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="362"/>
         <source>Invalid action specified to update mime option!</source>
-        <translation type="unfinished"></translation>
+        <translation>The actie om de mime optie the updaten is ongeldig!</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="382"/>
         <source>Starting model fixing...</source>
-        <translation type="unfinished"></translation>
+        <translation>Modelcorrectie begint...</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="384"/>
         <source>Starting mime update...</source>
-        <translation type="unfinished"></translation>
+        <translation>Mime update begint...</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="386"/>
         <source>Starting model export...</source>
-        <translation type="unfinished"></translation>
+        <translation>Model export begint...</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="389"/>
         <source>Loading input file: </source>
-        <translation type="unfinished"></translation>
+        <translation>Bezig met het laden van invoerbestand: </translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="395"/>
         <source>Fixed model file: </source>
-        <translation type="unfinished"></translation>
+        <translation>Het modelbestand werd gecorrigeerd: </translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="403"/>
         <source>Model successfully fixed!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het model werd succesvol gecorrigeerd!</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="411"/>
         <source>Mime database sucessfully updated.</source>
-        <translation type="unfinished"></translation>
+        <translation>De mime database werd succesvol aangepast.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="426"/>
         <source>Export to PNG image: </source>
-        <translation type="unfinished"></translation>
+        <translation>Exporteren naar PNG afbeelding: </translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="437"/>
         <source>Export to SQL script file: </source>
-        <translation type="unfinished"></translation>
+        <translation>Exporteren naar SQL script bestand: </translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="445"/>
         <source>Export to DBMS: </source>
-        <translation type="unfinished"></translation>
+        <translation>Exporteren naar DBMS: </translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="456"/>
         <source>Export successfully ended!</source>
-        <translation type="unfinished"></translation>
+        <translation>De export is succesvol beëindigd!</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="550"/>
         <source>Extracting objects&apos; XML...</source>
-        <translation type="unfinished"></translation>
+        <translation>De XML van de objecten word geextraheerd...</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="566"/>
         <source>Invalid input file! It seems that is not a pgModeler generated model or the file is corrupted!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het invoerbestand is ongeldig! Kijk na of dit bestand door pgModeler werd gegenereerd ofdat het bestand gecorrupteerd raakte!</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="689"/>
         <source>Recreating objects...</source>
-        <translation type="unfinished"></translation>
+        <translation>De objecten worden heraangemaakt...</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="809"/>
         <source>
 ** Object(s) that couldn&apos;t fixed: </source>
-        <translation type="unfinished"></translation>
+        <translation>** Object(en) die niet kon(den) worden gecorrigeerd: </translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="821"/>
         <source>WARNING: There are objects that maybe can&apos;t be fixed. Trying again... (tries %1/%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>OPGEPAST: Er zijn objecten die niet konden worden gecorrigeerd. We proberen opnieuw... (poging %1 van %2)</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="1008"/>
         <source>Database model files (.dbm) are already associated to pgModeler!</source>
-        <translation type="unfinished"></translation>
+        <translation>Database modelbestanden (.dbm) zijn reeds geassocieerd met pgModeler!</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="1009"/>
         <source>There is no file association related to pgModeler and .dbm files!</source>
-        <translation type="unfinished"></translation>
+        <translation>Er is geen bestandsassociatie tussen pgModeler and .dbm bestanden!</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="1013"/>
         <source>Mime database operation: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Mime databaseoperatie: %1</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="1074"/>
         <source>Can&apos;t erase the file %1! Check if the current user has permissions to delete it and if the file exists.</source>
-        <translation type="unfinished"></translation>
+        <translation>Het bestand %1 kan niet worden verwijderd! Kijk na of de huidige gebruiker voldoende machtigingen heeft om het bestand te verwijderen en of het bestand bestaat.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="1150"/>
         <source>Running update-mime-database command...</source>
-        <translation type="unfinished"></translation>
+        <translation>Het update-mime-database commando wordt uitgevoerd...</translation>
     </message>
 </context>
 <context>
