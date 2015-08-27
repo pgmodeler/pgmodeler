@@ -283,8 +283,8 @@ accepted structure. All available options are described below.") << endl;
   out << trUtf8("   %1, %2=[ALIAS]\t Connection configuration alias to be used.").arg(short_opts[CONN_ALIAS]).arg(CONN_ALIAS) << endl;
   out << trUtf8("   %1, %2=[HOST]\t\t PostgreSQL host which export will operate.").arg(short_opts[HOST]).arg(HOST) << endl;
   out << trUtf8("   %1, %2=[PORT]\t\t PostgreSQL host listening port.").arg(short_opts[PORT]).arg(PORT) << endl;
-  out << trUtf8("   %1, %2=[USER]\t\t PosrgreSQL username.").arg(short_opts[USER]).arg(USER) << endl;
-  out << trUtf8("   %1, %2=[PASSWORD]\t PosrgreSQL user password.").arg(short_opts[PASSWD]).arg(PASSWD) << endl;
+  out << trUtf8("   %1, %2=[USER]\t\t PostgreSQL username.").arg(short_opts[USER]).arg(USER) << endl;
+  out << trUtf8("   %1, %2=[PASSWORD]\t PostgreSQL user password.").arg(short_opts[PASSWD]).arg(PASSWD) << endl;
   out << trUtf8("   %1, %2=[DBNAME]\t Connection's initial database.").arg(short_opts[INITIAL_DB]).arg(INITIAL_DB) << endl;
   out << endl;
 
