@@ -4221,142 +4221,142 @@ Deze optie afvinken zorgt ervoor dat de SQL wordt ingevoegd na het CREATE DATABA
     <message>
         <location filename="../libutils/src/exception.cpp" line="117"/>
         <source>The relationship of the type 1-1 where both tables are mandatory participation is not implemented because it requires fusion between the tables that breaks the modeling done by the user!</source>
-        <translation type="unfinished"></translation>
+        <translation>De relatie van het type 1-1 waar beide tabellen verplicht meespelen is niet geimplementeerd omdat dit een fusie tussen de tabellen vereist die het design van de gebruiker zou breken!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="118"/>
         <source>Assignment of an invalid expression to the object!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een ongeldige expressie aan het object!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="119"/>
         <source>Assignment of a primary key to a table which already has one!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een primary key aan een tabel die reeds over een primary key beschikt!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="120"/>
         <source>Identifier relationship can not be created for a self relationship, relationships of the type n-n, copy or generalization!</source>
-        <translation type="unfinished"></translation>
+        <translation>De identifier-relatie kan niet worden aangemaakt voor een zelf-relatie, relaties van het type n-n, kopie or generalisatie!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="121"/>
         <source>Unable to create a copy relationship because the column `%1&apos; in table `%2&apos; already exists in table `%3&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>De kopie-relatie kon niet worden aangemaakt omdat de kolom `%1&apos; in table `%2&apos; reeds bestaat in tabel `%3&apos;!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="122"/>
         <source>Unable to create the generalization relationship because the column `%1&apos; in table `%2&apos; can not be merged with the column `%3&apos; of table `%4&apos; because they have incompatible types!</source>
-        <translation type="unfinished"></translation>
+        <translation>De generalisatierelatie kan niet worden aangemaakt omdat de kolom `%1&apos; in tabel `%2&apos; niet kan worden samengevoegd met kolom `%3&apos; van tabel `%4&apos;, deze kolommen hebben incompatibele types!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="123"/>
         <source>Unable to create the generalization relationship because the constraint `%1&apos; in table `%2&apos; can not be merged with the constraint `%3&apos; of table `%4&apos; due to their incompatible composition!</source>
-        <translation type="unfinished"></translation>
+        <translation>De generalisatierelatie kan niet worden aangemaakt omdat de constraint `%1&apos; in tabel `%2&apos; niet kan worden samengevoegd met constraint `%3&apos; van tabel `%4&apos;, deze constraints hebben een incompatibele compositie!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="124"/>
         <source>An attribute can not be added to a copy or generalization relationship!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een attribuut kan niet worden toegevoegd aan een kopie of een generalisatierelatie!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="125"/>
         <source>A foreign key can not be added to a relationship because is created automatically when this is connected!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een foreign key kan niet worden toegevoegd aan een relatie omdat deze automatisch wordt aangemaakt wanneer deze wordt verbonden!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="126"/>
         <source>The object `%1&apos; (%2) is referencing the object `%3&apos; (%4) which was not found in the model!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het object `%1&apos; (%2) refereert naar het object `%3&apos; (%4), dit laatste object kon niet worden gevonden in het model!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="127"/>
         <source>Reference to an user-defined data type that not exists in the model!</source>
-        <translation type="unfinished"></translation>
+        <translation>Referentie naar een gebruikersgedefinieerd type dat niet in het model bestaat!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="128"/>
         <source>Assignment of invalid maximum size to operation list!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een ongeldige maximumwaarde aan de operatielijst!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="129"/>
         <source>Unable to write the file or directory `%1&apos;! Make sure the output directory exists, or if the user has write permissions over it!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het bestand of de map `%1&apos; kon niet worden aangemaakt! Zorg ervoor dat de uitvoermap bestaat en dat de gebruiker er schrijfmachtigingen toe heeft!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="130"/>
-        <source>Unable to write the file `%1&apos;&apos; due to one or more errors in the definition generation process!</source>
-        <translation type="unfinished"></translation>
+        <source>Unable to write the file `%1&apos; due to one or more errors in the definition generation process!</source>
+        <translation>Het bestand `%1&apos; kan niet worden geschreven omwille van een of meerdere fouten die optraden tijdens het definitie-generatie proces!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="131"/>
         <source>There is already a relationship between `%1&apos; (%2) and `%3&apos; (%4) in the model!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het model bevat reeds een relatie tussen `%1&apos; (%2) en `%3&apos; (%4)!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="132"/>
-        <source>The configuration of the relationship `%1&apos; generates a redundancy between the relationships `%2&apos;. Redundancy on identifier or generalization/copy relationships are not accepted since they result in  incorrect column spreading making the model inconsistent!</source>
-        <translation type="unfinished"></translation>
+        <source>The configuration of the relationship `%1&apos; generates a redundancy between the relationships `%2&apos;. Redundancy on identifier or generalization/copy relationships are not accepted since they result in incorrect column spreading making the model inconsistent!</source>
+        <translation>De configuratie van de relatie `%1&apos; creeert een redundantie tussen de relaties `%2&apos;. Redundanties van identifiers of generalisatie/kopie-relaties zijn niet geldig omdat deze kunnen leiden tot het incorrect verspreiden van kolommen en dit kan het model inconsistent maken!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="133"/>
         <source>One or more objects were invalidated and automatically removed because they were referencing table columns which were included through relationships and which no longer exists due to disconnection of relationships or exclusion of such generated columns!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een of meerdere objecten werden als ongeldig gemarkeerd en werde automatisch verwijderd omdat deze naar kolommen refereerden die werden ingesloten door relaties die niet langer bestaan omwille van het ontkoppelen van de relatie of het uitsluiten van zulke gegenereerde kolommen!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="134"/>
         <source>The primary key `%1&apos; can only be allocated if declared within a block of code that defines a table or relationship!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een foreign key `%1&apos; kan niet worden toegevoegd aan een relatie omdat deze automatisch wordt aangemaakt wanneer deze wordt verbonden!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="135"/>
         <source>Reference to an invalid privilege type!</source>
-        <translation type="unfinished"></translation>
+        <translation>Referentie naar een ongeldig machtigingstype!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="136"/>
         <source>Insertion of a role which already exists in the role list of the permission!</source>
-        <translation type="unfinished"></translation>
+        <translation>Invoegen van een rol die reeds in de rollenlijst van de machtiging aanwezig is!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="137"/>
         <source>Assignment of privilege incompatible with the type of object referenced by permission!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een machtiging die niet compatibel is met het type waarnaar wordt verwezen door de machtiging!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="138"/>
         <source>There is already a permission on object `%1&apos; (%2) which has one or more equal roles from those present on permission to be assigned to the object!</source>
-        <translation type="unfinished"></translation>
+        <translation>Er bestaat reeds een machtiging op object `%1&apos; (%2) die een of meerdere zelfde rollen bevat als deze die onderdeel uitmaken van de nieuwe machtiging die aan het object worden toegewezen!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="139"/>
         <source>A permission is referencing the object `%1&apos; (%2) which was not found in the model!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een machtiging refereert naar object `%1&apos; (%2) dat niet in het model kon worden teruggevonden!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="140"/>
         <source>The object `%1&apos; (%2) can not be created because its not being assigned to any schema!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het object `%1&apos; (%2) kan niet worden aangemaakt omdat het niet aan een schema is toegewezen!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="141"/>
         <source>The tablespace `%1&apos; can not be inserted into the model because it points to the same directory as the tablespace `%2&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>De tablespace `%1&apos; kan niet worden ingevoegd in het model omdat het naar dezelfde map verwijst als de tablespace `%2&apos;!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="142"/>
         <source>It is not possible to create arrays of domains or sequences (dimension &gt;= 1)! PostgreSQL does not yet implement this feature!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het is niet mogelijk om arrays van domeinen of sequenties (dimensie &gt;= 1) aan te maken! Dit feature is nog niet aanwezig in PostgreSQL!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="143"/>
         <source>The function `%1&apos; can not get a source code as a definition because its language is set to C. Use the attributes symbol and dynamic library instead!</source>
-        <translation type="unfinished"></translation>
+        <translation>De functie `%1&apos; kan geen broncode bevatten als definitie omdat de taal is ingesteld als &apos;C&apos;. Gebruik het attributensymbool en dynamische bibliotheek in de plaats!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="144"/>
         <source>The function `%1&apos; can have the attributes symbol and dynamic library configured only if the language is set to C. For all other cases you must specify a source code that defines it in the DBMS!</source>
-        <translation type="unfinished"></translation>
+        <translation>De functie `%1&apos; kan enkel symboolattributen en een dynamische bibliotheek configureren waneer de taal is ingesteld als zijnde &apos;C&apos;. In alle andere gevallen moet u broncode specifieren die de functie definieert in het DBMS!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="145"/>
