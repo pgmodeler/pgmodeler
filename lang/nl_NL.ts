@@ -4361,117 +4361,117 @@ Deze optie afvinken zorgt ervoor dat de SQL wordt ingevoegd na het CREATE DATABA
     <message>
         <location filename="../libutils/src/exception.cpp" line="145"/>
         <source>The operator `%1&apos; can not be assigned as a comutator of operator `%2&apos; because it has incompatible settings!</source>
-        <translation type="unfinished"></translation>
+        <translation>De operator `%1&apos; kan niet worden toegewezen als comutator van operator `%2&apos; omdat deze incompatibele instellingen heeft!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="146"/>
         <source>The operator `%1&apos; can not be assigned as negator of operator `%2&apos; because it has incompatible settings!</source>
-        <translation type="unfinished"></translation>
+        <translation>De operator `%1&apos; kan niet worden toegewezen als negator van operator `%2&apos; omdat deze incompatibele instellingen heeft!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="147"/>
         <source>The type `%1&apos; can not self refer in the attributes `element&apos; or `copy type&apos; or be used as a data type of an attribute in the configuration of a composite type!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het type `%1&apos; kan geen zelf-referentie bevatten in de attributen &apos;element&apos; of &apos;kopie type&apos; noch kan het worden gebruikt als het data type van een attribuut in de configuratie van een composiet-type!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="148"/>
         <source>Assignment of invalid element to type `%1&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een ongeldig element aan type `%1&apos;!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="149"/>
         <source>Assignment of invalid alignment to type `%1&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een ongeldig uitlijning aan type `%1&apos;!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="150"/>
         <source>Assignment of invalid name to the table generated from N-N relationship!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een ongeldige naam werd toegewezen aan de tabel gegenereerd op basis van een N-N relatie!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="151"/>
         <source>The relationship `%1&apos; can not make use of the special primary key because it is marked as identifier or it is a self relationship!</source>
-        <translation type="unfinished"></translation>
+        <translation>De relatie `%1&apos; kan geen gebruik maken van de primary key omdat deze is aangeduid als identifier of omdat het een zelfverwijzende relatie is!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="152"/>
         <source>The object `%1&apos; (%2) can not be edited or deleted because it was automatically included through a relationship! If the object is an attribute or constraint the modifications must be done on the relationship editing form.</source>
-        <translation type="unfinished"></translation>
+        <translation>Het object `%1&apos; (%2) kan niet worden bewerkt of verwijderd omdat het automatisch werd ingesloten via een relatie! Indien het object een attribuut of een constraint is moeten de bewerkingen worden uitgevoerd via het Relatie bewerk-venster.</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="153"/>
         <source>The object `%1&apos; (%2) can not be deleted because it is protected!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het object `%1&apos; (%2) kan niet worden verwijderd omdat het beschermd is!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="154"/>
         <source>The group `%1&apos; has already been declared earlier!</source>
-        <translation type="unfinished"></translation>
+        <translation>De groep `%1&apos; werd reeds eerder gedeclareerd!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="155"/>
         <source>The group `%1&apos; can not be built in the groups declaration block (%2)!</source>
-        <translation type="unfinished"></translation>
+        <translation>De groep `%1&apos; kan niet worden opgebouwd in de groependeclaratie-block (%2)!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="156"/>
         <source>The group `%1&apos; was built but not declared in the groups declaration block (%2)!</source>
-        <translation type="unfinished"></translation>
+        <translation>De groep `%1&apos; werd opgebouwd maar is niet gedeclareerd in de groependeclaratie-block (%2)!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="157"/>
         <source>The group `%1&apos; can not be built without possessing child elements!</source>
-        <translation type="unfinished"></translation>
+        <translation>De groep `%1&apos; kan niet worden opgebouwd zonder kind-elementen!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="158"/>
         <source>The group `%1&apos; can not be built once more because this was done in previous blocks!</source>
-        <translation type="unfinished"></translation>
+        <translation>De groep `%1&apos; kan niet worden opgebouwd omdat dit reeds werd uitgevoerd in een vorige block!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="159"/>
         <source>The group `%1&apos; has been declared but not built!</source>
-        <translation type="unfinished"></translation>
+        <translation>De groep `%1&apos; werd gedeclareerd maar niet opgebouwd!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="160"/>
         <source>Reference to a column of the objects table with invalid index!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een referentie naar een kolom in de objectentabel met een ongeldige index!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="161"/>
         <source>Reference to a row of the objects table with invalid index!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een referentie naar een rij in de objectentabel met een ongeldige index!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="162"/>
         <source>The object `%1&apos; (%2) can not be manipulated because it is reserved to PostgreSQL! This object is present in the database model only as a reference!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het object `%1&apos; (%2) kan niet worden gemanipuleerd omdat dit een gereserveerd object is in PostgreSQL! Dit object bestaat enkel als referentie in het databasemodel!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="163"/>
         <source>The new configuration of the function invalidates the object `%1&apos; (%2)! In this case it is needed to undo the relationship between the affected object and function in order to the new configuration to take effect!</source>
-        <translation type="unfinished"></translation>
+        <translation>De nieuwe configuratie van de functie maakt het object `%1&apos; (%2) niet langer gevalideerd! Om de nieuwe configuratie in voege te doen treden moet u de relatie tussen het beinvloedde object en de functie ongedaan maken.</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="164"/>
         <source>A view reference must be used in at least one these SQL scopes: View Definition, SELECT-FROM, FROM-WHERE or After WHERE!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een viewreferentie moet minstens in een van de volgende SQL scopes worden gebruikt: View Definitie, SELECT-FROM, FROM_WHERE of Na WHERE!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="165"/>
         <source>Constraints like primary key, foreign key or unique must have at least one column related to them! For foreign keys must be selected, in addition, the referenced columns!</source>
-        <translation type="unfinished"></translation>
+        <translation>Constraints zoals primary key, foreign key of unique key moeten minstens een kolom bevatten! Voor foreign keys moeten ook de gerefereerde kolommen worden geselecteerd!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="166"/>
         <source>Unable to load one or more configuration files! Please check if files exists in the configuration folder and if they are not corrupted to preventing this error to occur again on the next startup!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een of meerdere configuratiebestanden kunnen niet worden geladen! Om ervoor te zorgen dat deze fout zich niet voordoet de volgende maal u het programma opstart, gelieve na te kijken of deze bestanden in de configuratie-map bestaan en dat deze niet gecorrupteerd zijn.</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="167"/>
         <source>Could not find the default settings file `%1&apos;! To restore default settings check the existence of the file and try again!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het standaardinstellingsbestand `%1&apos; kon niet worden gevonden. Kijk na of dit bestand bestaat om de standaardinstellingen terug te zetten en probeer opnieuw!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="168"/>
