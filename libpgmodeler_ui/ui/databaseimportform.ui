@@ -275,7 +275,7 @@
               <item row="3" column="3">
                <widget class="QSpinBox" name="sch_per_row_sb">
                 <property name="toolTip">
-                 <string>Schemas  per row</string>
+                 <string>Schemas per row</string>
                 </property>
                 <property name="minimum">
                  <number>1</number>
@@ -328,7 +328,7 @@
                    </sizepolicy>
                   </property>
                   <property name="statusTip">
-                   <string>Resolve some of the object's dependencies by query the catalog when a needed object does not exists on the loaded set. In some cases it's necessary to combine this option with others below. This option does not applies to database level objects like role, tablespace and language as well for data types and extensions.</string>
+                   <string>Resolve some of the object's dependencies by querying the catalog when a needed object does not exists on the loaded set. In some cases it's necessary to combine this option with others below. This option does not applies to database level objects like role, tablespace and language as well for data types and extensions.</string>
                   </property>
                   <property name="whatsThis">
                    <string/>
@@ -577,7 +577,7 @@
                    </sizepolicy>
                   </property>
                   <property name="statusTip">
-                   <string>All catalog queries as well the created objects' source code are printed to standard outupt (stdout).</string>
+                   <string>All catalog queries as well the created objects' source code are printed to standard output (stdout).</string>
                   </property>
                   <property name="whatsThis">
                    <string/>

@@ -283,8 +283,8 @@ accepted structure. All available options are described below.") << endl;
   out << trUtf8("   %1, %2=[ALIAS]\t Connection configuration alias to be used.").arg(short_opts[CONN_ALIAS]).arg(CONN_ALIAS) << endl;
   out << trUtf8("   %1, %2=[HOST]\t\t PostgreSQL host which export will operate.").arg(short_opts[HOST]).arg(HOST) << endl;
   out << trUtf8("   %1, %2=[PORT]\t\t PostgreSQL host listening port.").arg(short_opts[PORT]).arg(PORT) << endl;
-  out << trUtf8("   %1, %2=[USER]\t\t PosrgreSQL username.").arg(short_opts[USER]).arg(USER) << endl;
-  out << trUtf8("   %1, %2=[PASSWORD]\t PosrgreSQL user password.").arg(short_opts[PASSWD]).arg(PASSWD) << endl;
+  out << trUtf8("   %1, %2=[USER]\t\t PostgreSQL username.").arg(short_opts[USER]).arg(USER) << endl;
+  out << trUtf8("   %1, %2=[PASSWORD]\t PostgreSQL user password.").arg(short_opts[PASSWD]).arg(PASSWD) << endl;
   out << trUtf8("   %1, %2=[DBNAME]\t Connection's initial database.").arg(short_opts[INITIAL_DB]).arg(INITIAL_DB) << endl;
   out << endl;
 
@@ -346,7 +346,7 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
        (mode_cnt==0 && fix_model && upd_mime))
       throw Exception(trUtf8("Export, fix model and update mime operations can't be used at the same time!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
     else if(!fix_model && !upd_mime && mode_cnt > 1)
-      throw Exception(trUtf8("Multiple export mode especified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+      throw Exception(trUtf8("Multiple export mode specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
     else	if(!upd_mime && opts[INPUT].isEmpty())
       throw Exception(trUtf8("No input file specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
     else	if(!opts.count(EXPORT_TO_DBMS) && !upd_mime && opts[OUTPUT].isEmpty())
@@ -408,7 +408,7 @@ int PgModelerCLI::exec(void)
           handleMimeDatabase(parsed_opts[DBM_MIME_TYPE]==UNINSTALL);
 
           if(!silent_mode)
-            PgModelerCLI::out << trUtf8("Mime database sucessfully updated.") << endl << endl;
+            PgModelerCLI::out << trUtf8("Mime database successfully updated.") << endl << endl;
         #endif
       }
       else
