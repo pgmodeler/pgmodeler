@@ -26,7 +26,6 @@ ModelsDiffHelper::ModelsDiffHelper(void)
   pgsql_version=PgSQLVersions::DEFAULT_VERSION;
 	source_model=imported_model=nullptr;
   resetDiffCounter();
-  //setDiffOptions(true, true, false, false, false, true, true);
 
   diff_opts[OPT_KEEP_CLUSTER_OBJS]=true;
   diff_opts[OPT_CASCADE_MODE]=true;
@@ -558,7 +557,7 @@ void ModelsDiffHelper::processDiffInfos(void)
   map<unsigned, QString>::reverse_iterator ritr, ritr_end;
   attribs_map attribs;
   QString alter_def, no_inherit_def, inherit_def, set_perms,
-          unset_perms, fk_defs, col_drop_def;
+          unset_perms, col_drop_def;
   SchemaParser schparser;
   Type *type=nullptr;
   vector<Type *> types;
@@ -567,7 +566,7 @@ void ModelsDiffHelper::processDiffInfos(void)
   Table *parent_tab=nullptr;
   bool skip_obj=false;
   QStringList sch_names;
-  vector<unsigned> created_fk_ids;
+  map<unsigned, QString> create_fks;
 
   try
   {
@@ -671,7 +670,7 @@ void ModelsDiffHelper::processDiffInfos(void)
           //Generating fks definitions in a separated variable in order to append them at create commands maps
           if(object->getObjectType()==OBJ_CONSTRAINT &&
              dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::foreign_key)
-            fk_defs+=getCodeDefinition(object, false);
+            create_fks[object->getObjectId()]=getCodeDefinition(object, false);
           else
           {
             create_objs[object->getObjectId()]=getCodeDefinition(object, false);
@@ -705,15 +704,7 @@ void ModelsDiffHelper::processDiffInfos(void)
                  create them at the end of diff buffer */
               if(obj->getObjectType()==OBJ_CONSTRAINT &&
                  dynamic_cast<Constraint *>(obj)->getConstraintType()==ConstraintType::foreign_key)
-              {
-                //If the constraint was not analyzed before, include it
-                if(std::find(created_fk_ids.begin(), created_fk_ids.end(), obj->getObjectId())==created_fk_ids.end())
-                {
-                  fk_defs+=getCodeDefinition(obj, false);
-                  //Register the constraint id to avoid code duplication
-                  created_fk_ids.push_back(obj->getObjectId());
-                }
-              }
+                create_fks[obj->getObjectId()]=getCodeDefinition(obj, false);
               else
                 create_objs[obj->getObjectId()]=getCodeDefinition(obj, false);
             }
@@ -771,9 +762,9 @@ void ModelsDiffHelper::processDiffInfos(void)
 
     diff_def.clear();
 
-    if(!drop_objs.empty() || !create_objs.empty() || !alter_objs.empty() ||
+    if(!drop_objs.empty() || !create_objs.empty() || !alter_objs.empty() || !create_fks.empty() ||
        !inherit_def.isEmpty() || !no_inherit_def.isEmpty() || !set_perms.isEmpty() ||
-       !fk_defs.isEmpty() || !col_drop_def.isEmpty())
+       !col_drop_def.isEmpty())
     {
       sch_names.removeDuplicates();
 
@@ -781,7 +772,7 @@ void ModelsDiffHelper::processDiffInfos(void)
       attribs[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::_TRUE_;
       attribs[ParsersAttributes::PGMODELER_VERSION]=GlobalAttributes::PGMODELER_VERSION;
       attribs[ParsersAttributes::CHANGE]=QString::number(alter_objs.size());
-      attribs[ParsersAttributes::CREATE]=QString::number(create_objs.size());
+      attribs[ParsersAttributes::CREATE]=QString::number(create_objs.size() + create_fks.size());
       attribs[ParsersAttributes::DROP]=QString::number(drop_objs.size());
       attribs[ParsersAttributes::TRUNCATE]=QString::number(truncate_tabs.size());
       attribs[ParsersAttributes::SEARCH_PATH]=sch_names.join(',');
@@ -807,13 +798,13 @@ void ModelsDiffHelper::processDiffInfos(void)
       attribs[ParsersAttributes::DROP_CMDS]+=col_drop_def;
 
 
-
       for(auto &itr : create_objs)
         attribs[ParsersAttributes::CREATE_CMDS]+=itr.second;
 
       attribs[ParsersAttributes::CREATE_CMDS]+=inherit_def;
 
-      attribs[ParsersAttributes::FK_DEFS]=fk_defs;
+      for(auto &itr : create_fks)
+        attribs[ParsersAttributes::FK_DEFS]+=itr.second;
 
       for(auto &itr : truncate_tabs)
         attribs[ParsersAttributes::TRUNCATE_CMDS]+=itr.second;
