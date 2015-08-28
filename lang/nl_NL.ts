@@ -4085,8 +4085,8 @@ Deze optie afvinken zorgt ervoor dat de SQL wordt ingevoegd na het CREATE DATABA
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="90"/>
-        <source>Assignment of a null type to to object `%1&apos; (%2)!</source>
-        <translation type="unfinished"></translation>
+        <source>Assignment of a null type to object `%1&apos; (%2)!</source>
+        <translation>Toewijzing van een null type aan het object `%1&apos; (%2)!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="91"/>
