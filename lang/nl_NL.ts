@@ -4812,7 +4812,7 @@ Het bericht dat terugkwam van de DBMS is: `%1&apos;</translation>
     <message>
         <location filename="../libutils/src/exception.cpp" line="232"/>
         <source>The object `%1&apos; (%2) could not be imported due to one or more errors! Check the exception stack for more details.</source>
-        <translation>Het object `%1&apos; (%2) kon niet worden geimporteerd omwille van een of meer fouten! Kijk de exception stack na voor meer details.</translation>
+        <translation>Het object `%1&apos; (%2) kon niet worden geïmporteerd omwille van een of meer fouten! Kijk de exception stack na voor meer details.</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="233"/>
@@ -9384,7 +9384,7 @@ laatste geaccepteerde structuur. Alle beschikbare opties worden hieronder beschr
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="259"/>
         <source>   %1, %2=[FILE]		 Input model file (.dbm). Mandatory use when fixing a model or exporting it.</source>
-        <translation>   %1, %2=[BESTAND]		 Input model bestand (.dbm). Verplicht wanneer een model wordt geimporteerd or hersteld.</translation>
+        <translation>   %1, %2=[BESTAND]		 Input model bestand (.dbm). Verplicht wanneer een model wordt geïmporteerd or hersteld.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="260"/>
