@@ -4480,134 +4480,140 @@ Deze optie afvinken zorgt ervoor dat de SQL wordt ingevoegd na het CREATE DATABA
 ** Executed SQL command: **
 
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Het exportproces faalde door een fout die werd gegenereerd door PostgreSQL tijdens het uitvoeren van een SQL commando. Voor meer informatie over de fout, gelieve de exception stack na te kijken!
+
+** Uitgevoerde SQL commando: **
+
+%1</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="169"/>
         <source>Could not load the plugin `%1&apos; from the library `%2&apos;! Message returned by plugin manager: `%3&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>De plugin `%1&apos; kon niet worden geladen van de bibliotheek `%2&apos;! De plugin manager antwoordde met: `%3&apos;</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="170"/>
         <source>One or more plugins were not activated due to errors during the loading process! Check the exception stack for more details.</source>
-        <translation type="unfinished"></translation>
+        <translation>Een of meerdere plugin werden niet geactiveerd omwille van fouten gedurende het laadproces! Kijk de exception stack na voor meer details.</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="171"/>
         <source>Invalid syntax in file %1, line %2, column %3!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het bestand %1 bevat ongeldige syntax op lijn %2, kolom %3!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="172"/>
         <source>Invalid instruction `%1&apos; on file %2, line %3, column %4!</source>
-        <translation type="unfinished"></translation>
+        <translation>De instructie `%1&apos; in bestand %2 op lijn %3, kolom %4 is ongeldig!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="173"/>
         <source>Unknown attribute `%1&apos; in file %2, line %3, column %4!</source>
-        <translation type="unfinished"></translation>
+        <translation>De attribuut `%1&apos; in bestand %2 op lijn %3, kolom %4 is ongeldig!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="174"/>
         <source>Invalid metacharacter `%1&apos; in file %2, line %3, column %4!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het metakarakter `%1&apos; in bestand %2 op lijn %3, kolom %4 is ongeldig!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="175"/>
         <source>Invalid operator `%1&apos; in comparison expression, file %2, line %3, column %4!</source>
-        <translation type="unfinished"></translation>
+        <translation>De operator `%1&apos; binnen de vergelijkingsexpressie in bestand %2 op lijn %3, kolom %4 is ongeldig!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="176"/>
         <source>Attribute `%1&apos; with an undefined value in file %2, line %3, column %4!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een attribuut `%1&apos; met een ongedefinieerde waarde in bestand %2 op lijn %3, kolom %4!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="177"/>
         <source>Attribute `%1&apos; with an invalid name in file %2, line %3, column %4!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een attribuut `%1&apos; met een ongeldige naam in bestand %2 op lijn %3, kolom %4!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="178"/>
         <source>Assignment of empty XML buffer to parser!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzingen van een lege XML buffer aan de parser!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="179"/>
         <source>Could not access the file or directory %1! Make sure that it exists or if the user has access permissions on it!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het bestand of de map %1 is niet toegankelijk! Zorg ervoor dat het pad bestaat en dat de gebuiker toegangsmachtigingen tot dit pad heeft!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="180"/>
         <source>Assignment of empty DTD file name!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een lege DTD bestandsnaam!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="181"/>
         <source>Assignment of empty name to the DTD declaration!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een lege naam aan de DTD declaratie!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="182"/>
         <source>Error while interpreting XML buffer at line %1 column %2.
 Message generated by the parser: %3. %4</source>
-        <translation type="unfinished"></translation>
+        <translation>Er trad een fout op tijdens het interpreteren van de XML buffer op lijn %1, kolom %2.
+De parser antwoordde met: %3. %4</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="183"/>
         <source>Operation on unallocated element tree! It is necessary to load the XML parser buffer and interpret it so that the tree is generated!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een operatie werd uitgevoerd op een niet-gealloceerd element in de boomstructuur! De XML parser buffer moet eerst worden geladen en geinterpreteerd zodat deze boomstructuur kan worden gegenereerd!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="184"/>
         <source>Could not load file %1. The same appears to be inconsistent or one of its dependencies (DTD files) has errors or is missing!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het bestand %1 kon niet worden geladen. Ditzelfde lijkt inconsistent te zijn of een van zijn dependencies (DTD bestanden) heeft ofwel fouten of ontbreekt!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="185"/>
         <source>Operation with unallocated tree element!</source>
-        <translation type="unfinished"></translation>
+        <translation>Operatie met een niet-gealloceerd object!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="186"/>
         <source>Operation with element which does not exists in the element tree currently loaded!</source>
-        <translation type="unfinished"></translation>
+        <translation>Er werd een operatie uitgevoerd op een element dat niet bestaat in de huidig geladen elementen-boomstructuur!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="187"/>
         <source>Assignment of a value to an invalid connection parameter!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een waarde aan een ongeldige verbindingsparameter!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="188"/>
         <source>Operation on connection not established!</source>
-        <translation type="unfinished"></translation>
+        <translation>Er werd een operatie uitgevoerd op een niet-verbonden verbinding!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="189"/>
         <source>Attempt to connect without define configuration parameters!</source>
-        <translation type="unfinished"></translation>
+        <translation>Poging tot verbinden zonder dat de configuratieparameters zijn gedefinieerd!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="190"/>
         <source>Attempt to start a connection already stablished!</source>
-        <translation type="unfinished"></translation>
+        <translation>Poging tot het starten van een verbinding die reeds verbonden is!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="191"/>
         <source>Could not connect to the database.
 Message returned: `%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Er kon geen verbinding worden gemaakt met de database.
+Het bericht is: `%1&apos;</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="192"/>
         <source>Assignment of not allocated SQL command result!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een niet-gealloceerde SQL commandoresultaat!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="193"/>
         <source>Unable to allocate the result of the SQL command because the response from the DBMS was not understood by the client!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het is niet mogelijk om het resultaat van het SQL commando te allocaren omdat de client het antwoord van de DBMS niet verstond!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="194"/>
