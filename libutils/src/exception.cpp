@@ -87,7 +87,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_ASG_NOT_ALOC_LANGUAGE", QT_TR_NOOP("Assignment of not allocated language!")},
 	{"ERR_ASG_INV_LANGUAGE_OBJECT", QT_TR_NOOP("Assignment of language object which type is invalid!")},
 	{"ERR_REF_TYPE_INV_INDEX", QT_TR_NOOP("Reference to data type with an index outside the capacity of data types list!")},
-  {"ERR_ASG_NULL_TYPE_OBJECT", QT_TR_NOOP("Assignment of a null type to to object `%1' (%2)!")},
+  {"ERR_ASG_NULL_TYPE_OBJECT", QT_TR_NOOP("Assignment of a null type to object `%1' (%2)!")},
 	{"ERR_ASG_INV_TYPE_OBJECT", QT_TR_NOOP("Assignment of invalid type to the object!")},
 	{"ERR_ASG_EMPTY_DIR_NAME", QT_TR_NOOP("Assignment of an empty directory to object `%1' (%2)!")},
 	{"ERR_OBT_TYPES_INV_QUANTITY", QT_TR_NOOP("Obtaining types with invalid quantity!")},
