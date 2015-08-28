@@ -1332,7 +1332,7 @@
     <string>Design</string>
    </property>
    <property name="toolTip">
-    <string>Design datase models</string>
+    <string>Design database models</string>
    </property>
   </action>
   <action name="action_manage">
