@@ -465,6 +465,7 @@ class BaseObject {
 		friend class ModelValidationHelper;
 		friend class DatabaseImportHelper;
 		friend class SwapObjectsIdsWidget;
+    friend class ModelWidget;
 };
 
 #endif
