@@ -1916,8 +1916,15 @@ void DatabaseModel::removeRelationship(BaseRelationship *rel, int obj_idx)
 	{
 		if(getObjectIndex(rel) >= 0)
 		{
+      Table *recv_tab=nullptr;
+
 			if(rel->getObjectType()==OBJ_RELATIONSHIP)
 			{
+        /* If the relationship is not a many-to-many we store the receiver table in order to
+           update the fk relationships (if there are any) */
+        if(rel->getRelationshipType()!=Relationship::RELATIONSHIP_NN)
+          recv_tab=dynamic_cast<Relationship *>(rel)->getReceiverTable();
+
 				storeSpecialObjectsXML();
 				disconnectRelationships();
 			}
@@ -1932,6 +1939,10 @@ void DatabaseModel::removeRelationship(BaseRelationship *rel, int obj_idx)
 			{
 				validateRelationships();
 			}
+
+      //Updating the fk relationships for the receiver table after removing the old relationship
+      if(recv_tab)
+        updateTableFKRelationships(recv_tab);
 		}
 	}
 	catch(Exception &e)

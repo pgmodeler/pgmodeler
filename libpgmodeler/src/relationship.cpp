@@ -1293,6 +1293,12 @@ void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del
 			if(rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N)
 				fk_rel1n=fk;
 		}
+    //If the fk already exists just remove the old columns to do a new configuration
+    else if(fk_rel1n)
+    {
+      fk=fk_rel1n;
+      fk->removeColumns();
+    }
 
 		//Sets the ON DELETE and ON UPDATE actions for the foreign key
     fk->setActionType(del_act, Constraint::DELETE_ACTION);
