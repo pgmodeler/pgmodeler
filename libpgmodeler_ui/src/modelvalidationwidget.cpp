@@ -303,7 +303,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 
     if(val_info.getValidationType()==ValidationInfo::BROKEN_REL_CONFIG)
     {
-      PgModelerUiNS::createOutputTreeItem(output_trw, trUtf8("<strong>HINT:</strong> try to swap the mentioned relationship by another one in order to solve this situation. Note that other objects may be lost in this process."),
+      PgModelerUiNS::createOutputTreeItem(output_trw, trUtf8("<strong>HINT:</strong> try to swap the relationship by another ones that somehow are linked to it through generated columns or constraints to solve this issue. Note that other objects may be lost in the swap process."),
                                           QPixmap(QString(":/icones/icones/msgbox_alerta.png")), item);
     }
     else

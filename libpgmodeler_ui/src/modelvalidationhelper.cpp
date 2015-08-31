@@ -184,23 +184,6 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 				refs.pop_back();
 			}
 		}
-    /* ** CODE DISABLED:
-          It's not a good idea to move the relationship to the end of list
-          it may break other special objects **  */
-    /* else if(info.getValidationType()==ValidationInfo::BROKEN_REL_CONFIG)
-    {
-      vector<BaseObject *> *rels=db_model->getObjectList(OBJ_RELATIONSHIP);
-      vector<BaseObject *>::iterator itr;
-
-      itr=std::find(rels->begin(), rels->end(), info.getObject());
-
-      if(itr!=rels->end() && (*itr)!=rels->back())
-      {
-        rels->erase(itr);
-        rels->push_back(info.getObject());
-        BaseObject::updateObjectId(info.getObject());
-      }
-    }*/
 	}
 	catch(Exception &e)
 	{
