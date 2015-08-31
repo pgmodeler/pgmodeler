@@ -780,6 +780,7 @@ void ModelsDiffHelper::processDiffInfos(void)
       attribs[ParsersAttributes::DROP_CMDS]=QString();
       attribs[ParsersAttributes::CREATE_CMDS]=QString();
       attribs[ParsersAttributes::TRUNCATE_CMDS]=QString();
+      attribs[ParsersAttributes::FK_DEFS]=QString();
       attribs[ParsersAttributes::UNSET_PERMS]=unset_perms;
       attribs[ParsersAttributes::SET_PERMS]=set_perms;
       attribs[ParsersAttributes::FUNCTION]=(source_model->getObjectCount(OBJ_FUNCTION)!=0 ? ParsersAttributes::_TRUE_ : QString());

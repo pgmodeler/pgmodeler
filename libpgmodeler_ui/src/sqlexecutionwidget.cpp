@@ -114,6 +114,7 @@ void SQLExecutionWidget::fillResultsTable(ResultSet &res)
     Catalog catalog;
     Connection aux_conn=sql_cmd_conn;
 
+    rows_ret_lbl->setText(QString("[<em>%1</em>] Rows returned:").arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))));
 		row_cnt_lbl->setText(QString::number(res.getTupleCount()));
 		export_tb->setEnabled(res.getTupleCount() > 0);
 
@@ -141,6 +142,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 		int col=0, row=0, col_cnt=res.getColumnCount();
 		QTableWidgetItem *item=nullptr;
 		vector<unsigned> type_ids;
+    vector<unsigned>::iterator end;
 		vector<attribs_map> types;
 		map<unsigned, QString> type_names;
 		unsigned orig_filter=catalog.getFilter();
@@ -159,7 +161,10 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 
 		//Retrieving the data type names for each column
 		catalog.setFilter(Catalog::LIST_ALL_OBJS);
-		std::unique(type_ids.begin(), type_ids.end());
+    std::sort(type_ids.begin(), type_ids.end());
+    end=std::unique(type_ids.begin(), type_ids.end());
+    type_ids.erase(end, type_ids.end());
+
     types=catalog.getObjectsAttributes(OBJ_TYPE, QString(), QString(), type_ids);
 
     for(auto &tp : types)
@@ -278,7 +283,7 @@ void SQLExecutionWidget::runSQLCommand(void)
 			fillResultsTable(res);
 		else
 		{
-			QLabel *label=new QLabel(trUtf8("[<strong>%1</strong>] SQL command successfully executed. <em>Rows affected <strong>%2</strong></em>").arg(QTime::currentTime().toString()).arg(res.getTupleCount()));
+      QLabel *label=new QLabel(trUtf8("[<em>%1</em>] SQL command successfully executed. <em>Rows affected <strong>%2</strong></em>").arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))).arg(res.getTupleCount()));
 			QListWidgetItem *item=new QListWidgetItem;
 
       item->setIcon(QIcon(QString(":/icones/icones/msgbox_info.png")));
