@@ -45,6 +45,9 @@ class NumberedTextEditor : public QPlainTextEdit {
     //! brief Default font for texts
     static QFont default_font;
 
+    //! brief Default tab size for texts
+    static int tab_width;
+
     //! brief Widget used to expose document line numbers
     LineNumbersWidget *line_number_wgt;
 
@@ -61,6 +64,8 @@ class NumberedTextEditor : public QPlainTextEdit {
     static void setLineNumbersVisible(bool value);
     static void setHighlightLines(bool value);
     static void setLineHighlightColor(const QColor &color);
+    static void setTabWidth(int value);
+    static int getTabWidth(void);
 
   public slots:
     //! brief Grabs the keyboard input and also highlight the current line

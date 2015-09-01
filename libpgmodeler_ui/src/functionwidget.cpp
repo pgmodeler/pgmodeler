@@ -36,6 +36,9 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		configureFormLayout(function_grid, OBJ_FUNCTION);
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
+    source_code_txt=new NumberedTextEditor(this);
+    dynamic_cast<QGridLayout *>(source_code_frm->layout())->addWidget(source_code_txt, 1, 0, 1, 2);
+
     source_code_hl=new SyntaxHighlighter(source_code_txt);
 		source_code_cp=new CodeCompletionWidget(source_code_txt);
 
@@ -349,8 +352,8 @@ void FunctionWidget::selectLanguage(void)
 	bool c_lang;
 
 	c_lang=(language_cmb->currentText()==~LanguageType(LanguageType::c));
-	codigofonte_frm->setVisible(!c_lang);
-	biblioteca_frm->setVisible(c_lang);
+  source_code_frm->setVisible(!c_lang);
+  library_frm->setVisible(c_lang);
 
 	if(!c_lang)
 	{
