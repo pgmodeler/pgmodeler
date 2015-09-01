@@ -1293,14 +1293,8 @@ void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del
 			if(rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N)
 				fk_rel1n=fk;
 		}
-    //If the fk already exists just remove the old columns to do a new configuration
-    else if(fk_rel1n)
-    {
-      fk=fk_rel1n;
-      fk->removeColumns();
-    }
 
-		//Sets the ON DELETE and ON UPDATE actions for the foreign key
+    //Sets the ON DELETE and ON UPDATE actions for the foreign key
     fk->setActionType(del_act, Constraint::DELETE_ACTION);
     fk->setActionType(upd_act, Constraint::UPDATE_ACTION);
 
@@ -1950,7 +1944,13 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 {
 	try
 	{
-		if(connected)
+     if(connected ||
+
+       /* WORKAROUND: in a very specific case (under investigation) the relationship is marked as disconnected
+          but the internal objects aren't destroyed. To avoid memory leaks we are forcing the disconnection
+          and destroying any allocated object. It seems this issues happens only during loading process
+          but is related to relationship disconnection, mixing fk rels and 1:n rels, and validation. */
+       (!connected && (fk_rel1n || pk_relident || uq_rel11 || table_relnn || pk_special)))
 		{
 			vector<Column *>::iterator itr, itr_end;
 			Column *column=nullptr;
@@ -1960,8 +1960,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 			vector<TableObject *>::iterator itr_atrib, itr_atrib_end;
 			TableObject *tab_obj=nullptr;
 
-			if(rel_type==RELATIONSHIP_GEN ||
-				 rel_type==RELATIONSHIP_DEP)
+      if(rel_type==RELATIONSHIP_GEN || rel_type==RELATIONSHIP_DEP)
 			{
 				table=getReceiverTable();
 
@@ -2041,8 +2040,9 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 						//Gets the table that own the identifier relationship primary key
 						table=dynamic_cast<Table *>(pk_relident->getParentTable());
 
-						//Removes the primary key from table
-						table->removeConstraint(pk_relident->getName());
+            //Removes the primary key from table
+            if(table)
+              table->removeConstraint(pk_relident->getName());
 
 						//Destroy the primary key
 						delete(pk);
