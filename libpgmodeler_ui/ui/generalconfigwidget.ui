@@ -41,7 +41,7 @@
       </size>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -892,7 +892,7 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="1" colspan="4">
+          <item row="3" column="1" colspan="2">
            <layout class="QHBoxLayout" name="horizontalLayout_18">
             <item>
              <widget class="QCheckBox" name="disp_line_numbers_chk">
@@ -922,7 +922,7 @@
             </item>
            </layout>
           </item>
-          <item row="0" column="1" colspan="4">
+          <item row="0" column="1" colspan="2">
            <widget class="QFontComboBox" name="font_cmb">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -932,7 +932,7 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="1" colspan="4">
+          <item row="1" column="1" colspan="2">
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
              <widget class="QDoubleSpinBox" name="font_size_spb">
@@ -955,6 +955,12 @@
             </item>
             <item>
              <widget class="QLabel" name="unity_lbl">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
                <string> pt</string>
               </property>
@@ -962,6 +968,48 @@
             </item>
             <item>
              <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>30</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="tab_width_chk">
+              <property name="text">
+               <string>Custom tab width:</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="tab_width_spb">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="value">
+               <number>1</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_2">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>

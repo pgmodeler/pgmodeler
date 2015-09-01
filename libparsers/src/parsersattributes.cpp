@@ -70,6 +70,7 @@ namespace ParsersAttributes {
   CODE_COMPLETION=QString("code-completion"),
   CODE_FONT_SIZE=QString("code-font-size"),
   CODE_FONT=QString("code-font"),
+  CODE_TAB_WIDTH=QString("code-tab-width"),
   COL_INDEXES=QString("col-indexes"),
   COLLATABLE=QString("collatable"),
   COLLATION=QString("collation"),

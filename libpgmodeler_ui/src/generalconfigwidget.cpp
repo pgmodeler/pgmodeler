@@ -82,9 +82,9 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 
   connect(disp_line_numbers_chk, SIGNAL(toggled(bool)), this, SLOT(updateFontPreview()));
   connect(hightlight_lines_chk, SIGNAL(toggled(bool)), this, SLOT(updateFontPreview()));
-  connect(tab_size_spb, SIGNAL(valueChanged(int)), this, SLOT(updateFontPreview()));
-  connect(tab_size_chk, SIGNAL(toggled(bool)), this, SLOT(updateFontPreview()));
-  connect(tab_size_chk, SIGNAL(toggled(bool)), tab_size_spb, SLOT(setEnabled(bool)));
+  connect(tab_width_spb, SIGNAL(valueChanged(int)), this, SLOT(updateFontPreview()));
+  connect(tab_width_chk, SIGNAL(toggled(bool)), tab_width_spb, SLOT(setEnabled(bool)));
+  connect(tab_width_chk, SIGNAL(toggled(bool)), this, SLOT(updateFontPreview()));
 
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]=QString();
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]=QString();
@@ -200,6 +200,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 		QStringList margin, custom_size;
 		vector<QString> key_attribs;
 		unsigned interv=0;
+    int tab_width=0;
 
     for(QWidget *wgt : child_wgts)
       wgt->blockSignals(true);
@@ -211,9 +212,16 @@ void GeneralConfigWidget::loadConfiguration(void)
 		oplist_size_spb->setValue((config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]).toUInt());
 
 		interv=(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::AUTOSAVE_INTERVAL]).toUInt();
+    tab_width=(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_TAB_WIDTH]).toInt();
+
 		autosave_interv_chk->setChecked(interv > 0);
 		autosave_interv_spb->setValue(interv);
 		autosave_interv_spb->setEnabled(autosave_interv_chk->isChecked());
+
+    tab_width_chk->setChecked(tab_width > 0);
+    tab_width_spb->setEnabled(tab_width_chk->isChecked());
+    tab_width_spb->setValue(tab_width);
+
 		corner_move_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CANVAS_CORNER_MOVE]==ParsersAttributes::_TRUE_);
 		invert_pan_range_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::INVERT_PANNING_RANGESEL]==ParsersAttributes::_TRUE_);
 		check_upd_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]==ParsersAttributes::_TRUE_);
@@ -326,10 +334,10 @@ void GeneralConfigWidget::saveConfiguration(void)
              ParsersAttributes::WIDGET +
              GlobalAttributes::SCHEMA_EXT;
 
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]=QString("%1").arg(grid_size_spb->value());
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]=QString("%1").arg(oplist_size_spb->value());
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::AUTOSAVE_INTERVAL]=QString("%1").arg(autosave_interv_chk->isChecked() ? autosave_interv_spb->value() : 0);
-    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_TYPE]=QString("%1").arg(paper_cmb->currentIndex());
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]=QString::number(grid_size_spb->value());
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]=QString::number(oplist_size_spb->value());
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::AUTOSAVE_INTERVAL]=QString::number(autosave_interv_chk->isChecked() ? autosave_interv_spb->value() : 0);
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_TYPE]=QString::number(paper_cmb->currentIndex());
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]=(portrait_rb->isChecked() ? ParsersAttributes::PORTRAIT : ParsersAttributes::LANDSCAPE);
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CANVAS_CORNER_MOVE]=(corner_move_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::INVERT_PANNING_RANGESEL]=(invert_pan_range_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
@@ -339,6 +347,7 @@ void GeneralConfigWidget::saveConfiguration(void)
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SIMPLIFIED_OBJ_CREATION]=(simple_obj_creation_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CONFIRM_VALIDATION]=(confirm_validation_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_COMPLETION]=(code_completion_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_TAB_WIDTH]=QString::number(tab_width_chk->isChecked() ? tab_width_spb->value() : 0);
 
     unity_cmb->setCurrentIndex(UNIT_MILIMETERS);
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN]=QString("%1,%2,%3,%4").arg(left_marg->value())
@@ -497,7 +506,7 @@ void GeneralConfigWidget::updateFontPreview(void)
   NumberedTextEditor::setLineNumbersVisible(disp_line_numbers_chk->isChecked());
   NumberedTextEditor::setLineHighlightColor(line_highlight_cp->getColor(0));
   NumberedTextEditor::setHighlightLines(hightlight_lines_chk->isChecked());
-  NumberedTextEditor::setTabWidth(tab_size_chk->isChecked() ? tab_size_spb->value() : 0);
+  NumberedTextEditor::setTabWidth(tab_width_chk->isChecked() ? tab_width_spb->value() : 0);
   LineNumbersWidget::setColors(line_numbers_cp->getColor(0), line_numbers_bg_cp->getColor(0));
 
   font_preview_txt->updateLineNumbersSize();

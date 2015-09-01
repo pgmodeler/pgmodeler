@@ -33,6 +33,7 @@
 <!ATTLIST configuration line-numbers-color CDATA #IMPLIED>
 <!ATTLIST configuration line-numbers-bg-color CDATA #IMPLIED>
 <!ATTLIST configuration line-highlight-color CDATA #IMPLIED>
+<!ATTLIST configuration code-tab-width CDATA #IMPLIED>
 
 <!ELEMENT session (file+)>
 <!ELEMENT recent-models (file+)>
