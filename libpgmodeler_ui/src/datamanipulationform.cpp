@@ -185,12 +185,22 @@ void DataManipulationForm::retrieveData(void)
   if(table_cmb->currentIndex() <= 0)
     return;
 
+  Messagebox msg_box;
   Catalog catalog;
   Connection conn_sql=Connection(tmpl_conn_params),
       conn_cat=Connection(tmpl_conn_params);
 
 	try
 	{
+    if(!changed_rows.empty())
+    {
+      msg_box.show(trUtf8("<strong>WARNING: </strong> There are some changed rows waiting the commit! Do you really want to discard them and retrieve the data now?"),
+                   Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
+
+      if(msg_box.result()==QDialog::Rejected)
+        return;
+    }
+
 		QString query=QString("SELECT * FROM \"%1\".\"%2\"").arg(schema_cmb->currentText()).arg(table_cmb->currentText());
 		ResultSet res;
 		unsigned limit=limit_edt->text().toUInt();
