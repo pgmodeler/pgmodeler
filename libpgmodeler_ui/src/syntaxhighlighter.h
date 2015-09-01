@@ -134,8 +134,10 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
     bool isWordMatchGroup(const QString &word, const QString &group, bool use_final_expr, const QChar &lookahead_chr, int &match_idx, int &match_len);
 
   public:
-    //! \brief Install the syntax highlighter in a QPlainTextEdit.
-    SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode=false);
+    /*! \brief Install the syntax highlighter in a QPlainTextEdit. If single_line_mode is true
+        the highlighter prevents the parent text field to process line breaks. If use_custom_tab_width is true
+        the highlighter will use the same tab size as NumberedTextEdit class */
+    SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode=false, bool use_custom_tab_width=false);
 
 		//! \brief Loads a highlight configuration from a XML file
 		void loadConfiguration(const QString &filename);

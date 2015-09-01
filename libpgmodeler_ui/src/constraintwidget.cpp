@@ -34,7 +34,7 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		grid->addWidget(excl_elems_wgt,0,0);
 		excl_elems_grp->setLayout(grid);
 
-    expression_hl=new SyntaxHighlighter(expression_txt);
+    expression_hl=new SyntaxHighlighter(expression_txt, false, true);
     expression_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		columns_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^

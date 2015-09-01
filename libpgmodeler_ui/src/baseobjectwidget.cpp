@@ -503,7 +503,11 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 	while(!chld_list.isEmpty())
 	{
 		wgt=dynamic_cast<QWidget *>(chld_list.front());
-		if(wgt)
+
+    //Avoids install event filters in objects that are inteneded to edit multiple lines
+    if(wgt &&
+       wgt->metaObject()->className()!=QString("QPlainTextEdit") &&
+       wgt->metaObject()->className()!=QString("NumberedTextEditor"))
 			wgt->installEventFilter(this);
 
 		chld_list.pop_front();

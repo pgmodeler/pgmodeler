@@ -50,7 +50,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 
   font_preview_txt=new NumberedTextEditor(this);
   font_preview_txt->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-  font_preview_txt->setPlainText(trUtf8("The little brown fox jumps over the lazy dog") + QString("\n0123456789\n.()[]{};"));
+  font_preview_txt->setPlainText(trUtf8("The little brown fox jumps over the lazy dog") + QString("\n\ttext with tab «") + QString("\n0123456789\n.()[]{};"));
   font_preview_txt->setReadOnly(true);
 
   QBoxLayout *layout=new QBoxLayout(QBoxLayout::LeftToRight);
@@ -82,6 +82,9 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 
   connect(disp_line_numbers_chk, SIGNAL(toggled(bool)), this, SLOT(updateFontPreview()));
   connect(hightlight_lines_chk, SIGNAL(toggled(bool)), this, SLOT(updateFontPreview()));
+  connect(tab_size_spb, SIGNAL(valueChanged(int)), this, SLOT(updateFontPreview()));
+  connect(tab_size_chk, SIGNAL(toggled(bool)), this, SLOT(updateFontPreview()));
+  connect(tab_size_chk, SIGNAL(toggled(bool)), tab_size_spb, SLOT(setEnabled(bool)));
 
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]=QString();
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]=QString();
@@ -494,6 +497,7 @@ void GeneralConfigWidget::updateFontPreview(void)
   NumberedTextEditor::setLineNumbersVisible(disp_line_numbers_chk->isChecked());
   NumberedTextEditor::setLineHighlightColor(line_highlight_cp->getColor(0));
   NumberedTextEditor::setHighlightLines(hightlight_lines_chk->isChecked());
+  NumberedTextEditor::setTabWidth(tab_size_chk->isChecked() ? tab_size_spb->value() : 0);
   LineNumbersWidget::setColors(line_numbers_cp->getColor(0), line_numbers_bg_cp->getColor(0));
 
   font_preview_txt->updateLineNumbersSize();

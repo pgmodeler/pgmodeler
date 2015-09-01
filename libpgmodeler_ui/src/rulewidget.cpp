@@ -27,10 +27,10 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RULE)
 
 		Ui_RuleWidget::setupUi(this);
 
-    cond_expr_hl=new SyntaxHighlighter(cond_expr_txt);
+    cond_expr_hl=new SyntaxHighlighter(cond_expr_txt, false, true);
     cond_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
-    command_hl=new SyntaxHighlighter(comando_txt);
+    command_hl=new SyntaxHighlighter(comando_txt, false, true);
     command_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 		command_cp=new CodeCompletionWidget(comando_txt);
 

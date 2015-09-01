@@ -26,7 +26,7 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 		QFrame *frame=nullptr;
 
     setupUi(this);
-    elem_expr_hl=new SyntaxHighlighter(elem_expr_txt);
+    elem_expr_hl=new SyntaxHighlighter(elem_expr_txt, false, true);
     elem_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
     parent_obj=nullptr;

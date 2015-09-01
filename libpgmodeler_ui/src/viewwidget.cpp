@@ -27,6 +27,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		ObjectTableWidget *tab=nullptr;
 		ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE };
 		QGridLayout *grid=nullptr;
+    QVBoxLayout *vbox=nullptr;
 
     map<QString, vector<QWidget *> > fields_map;
     QFrame *frame=nullptr;
@@ -35,14 +36,22 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 
 		operation_count=0;
 
-    expression_hl=new SyntaxHighlighter(expression_txt);
+    expression_hl=new SyntaxHighlighter(expression_txt, false, true);
     expression_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
+    code_txt=new NumberedTextEditor(this);
     code_hl=new SyntaxHighlighter(code_txt);
     code_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+    vbox=new QVBoxLayout(code_prev_tab);
+    vbox->setContentsMargins(4,4,4,4);
+    vbox->addWidget(code_txt);
 
+    cte_expression_txt=new NumberedTextEditor(this);
     cte_expression_hl=new SyntaxHighlighter(cte_expression_txt);
     cte_expression_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+    vbox=new QVBoxLayout(cte_tab);
+    vbox->setContentsMargins(4,4,4,4);
+    vbox->addWidget(cte_expression_txt);
 
     tag_sel=new ObjectSelectorWidget(OBJ_TAG, false, this);
     dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 4);
