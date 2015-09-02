@@ -781,6 +781,7 @@ void DataManipulationForm::saveChanges(void)
       conn.executeDDLCommand(QString("COMMIT"));
       conn.close();
 
+      changed_rows.clear();
 			retrieveData();
 			undo_tb->setEnabled(false);
 			save_tb->setEnabled(false);
