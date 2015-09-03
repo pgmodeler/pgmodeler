@@ -47,8 +47,8 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN
 		configureFormLayout(column_grid, OBJ_COLUMN);
     configureTabOrder({ data_type });
 
-    parent_form->setMinimumSize(530, 460);
-    parent_form->setMaximumHeight(460);
+    parent_form->setMinimumSize(530, 480);
+    parent_form->setMaximumHeight(480);
 
     connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
