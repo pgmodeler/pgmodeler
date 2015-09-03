@@ -3751,727 +3751,727 @@ Deze optie afvinken zorgt ervoor dat de SQL wordt ingevoegd na het CREATE DATABA
     <message>
         <location filename="../libutils/src/exception.cpp" line="23"/>
         <source>Assignment of a pseudo-type to the type of the column!</source>
-        <translation type="unfinished"></translation>
+        <translation>Poging to toewijzing van een pseudo-type als het type van een kolom!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="24"/>
         <source>Zero length assignment!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een waarde met lengte nul!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="25"/>
         <source>Assignment of a precision greater than the length of the type!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een waarde met grotere precisie dan de toegewezen locatie!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="26"/>
         <source>Assignment of an invalid precision to type time, timestamp or interval. The precision in this case must be equal to or less than 6!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een ongeldige precisie aan het type time, timestamp of interval. De precisie moet in dit geval kleiner dan of gelijk zijn aan 6!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="27"/>
         <source>Assignment of a not allocated column to object `%1&apos; (%2)!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een niet-gealloceerde kolom aan het object `%1&apos; (%2)!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="28"/>
         <source>Reference to a column which index is out of the capacity of the column list!</source>
-        <translation type="unfinished"></translation>
+        <translation>Referentie naar een kolom wiens index buiten de capaciteit van de kolomlijst ligt!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="29"/>
         <source>Assignment of not allocated object!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een niet-gealloceerd object!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="30"/>
         <source>Assignment of a not allocated schema to object `%1&apos; (%2)!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een niet-gealloceerde schema aan het object `%1&apos; (%2)!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="31"/>
         <source>The object `%1&apos; (%2) has inconsistent SQL or XML definition!</source>
-        <translation type="unfinished"></translation>
+        <translation>het object `%1&apos; (%2) heeft een inconsistente SQL of XML definitie!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="32"/>
         <source>The object `%1&apos; (%2) already exists on `%3&apos; (%4)!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het object `%1&apos; (%2) bestaat reeds op `%3&apos; (%4)!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="33"/>
         <source>The object `%1&apos; (%2) cannot be assigned because there is already exists in the container object `%3&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het object `%1&apos; (%2) kan niet worden toegewezen omdat het reeds bestaat in het container-object `%3&apos;!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="34"/>
         <source>Assigning object of an invalid type!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een object van een ongeldig type!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="35"/>
         <source>Removing an object of an invalid type!</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwijdering van een object van een ongeldig type!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="36"/>
         <source>Obtaining an object of an invalid type!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het verkregen object is van een ongeldig type!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="37"/>
         <source>Assignment of empty name to table return type!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een lege naam aan een tabel-terugkeertype!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="38"/>
         <source>The insertion of the parameter `%1&apos; will not be possible because there is another parameter with same name in the function `%2&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het toevoegen van parameter `%1&apos; is niet mogelijk omdat de functie  `%2&apos; reeds een parameter met deze naam bevat!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="39"/>
         <source>The insertion of the table return type `%1&apos; will not be possible because there is another return type with the same name in the `%2&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het invoegen van tabel-terugkeertype `%1&apos; is niet mogelijk omdat er reeds een terugkeer-type met deze naam bestaat in `%2&apos;!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="40"/>
         <source>Reference to a parameter which index is out of the parameter list bounds!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een referentie naar een parameter met een index die buiten de limieten ligt van de parameterlijst!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="41"/>
         <source>Reference to an event which does not belongs to trigger!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een referentie naar een event die niet tot de trigger behoort!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="42"/>
         <source>The column `%1&apos; cannot be assigned to the trigger `%2&apos; because they belongs to different parent tables!</source>
-        <translation type="unfinished"></translation>
+        <translation>De kolom `%1&apos; kan niet toegewezen worden aan de trigger `%2&apos; omdat deze tot verschillende ouder-tabellen behoren!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="43"/>
         <source>Assignment of a not allocated function to object `%1&apos; (%2)!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een niet-gealloceerde functie aan het object `%1&apos; (%2)!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="44"/>
         <source>Assignment of a function which return type is different from `%1&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een functie waarvan het terugkeertype verschilt van `%1&apos;!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="45"/>
         <source>Assignment of a function which parameter count is invalid to the object `%1&apos; (%2)!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een functie waarvan het aantal parameters ongeldig is voor het object `%1&apos; (%2)!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="46"/>
         <source>Assignment of a function which language is invalid!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een functie waarvan de taal ongeldig is!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="47"/>
         <source>Event trigger function must be coded in any language other than SQL!</source>
-        <translation type="unfinished"></translation>
+        <translation>Event triggerfunctie moet geschreven zijn in een taal die verschilt van SQL!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="48"/>
         <source>Assignment of not allocated table to object `%1&apos; (%2)!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een niet-gealloceerde tabel aan object `%1&apos; (%2)!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="49"/>
         <source>Reference to an argument which index is out of argument list bounds!</source>
-        <translation type="unfinished"></translation>
+        <translation>Referentie naar een argument met een index die buiten de limieten ligt van de argumentenlijst!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="50"/>
         <source>Assignment of empty name to an object!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een lege naam aan een object!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="51"/>
         <source>Assignment of a name which contains invalid characters!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzen van een naam die ongeldige karakters bevat!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="52"/>
         <source>Assignment of a name which length exceeds the maximum of 63 characters!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een naam die de maximumlengte van 63 karakters overtreed!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="53"/>
         <source>Assignment of schema object which type is invalid!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een schemaobject wiens type ongeldig is!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="54"/>
         <source>Assignment of tablespace object with invalid type!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een tablespaceobject met een ongeldig type!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="55"/>
         <source>Assignment of tablespace to an invalid object!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een tablespace aan een ongeldig object!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="56"/>
         <source>Assignment of tablespace to a constraint which type is invalid! To belong to a tablespace the constraint must be a primary key or unique!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een tablespace aan een constraint wiens type ongeldig is! Om tot een tablespace te behoren moet een constraint een primary key of een unieke sleutel zijn!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="57"/>
         <source>Assignment of owner object which type is invalid!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een eigenaarsobject wiens type ongeldig is!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="58"/>
         <source>Assignment of owner to an invalid object!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een eigenaar aan een ongeldig object!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="59"/>
         <source>Assignment of appended or prepended SQL to an invalid object!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van toegevoegde of voorgevoegde SQL aan een ongeldig object!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="60"/>
         <source>Reference to a function with invalid type!</source>
-        <translation type="unfinished"></translation>
+        <translation>Referentie naar een functie met een ongeldig type!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="61"/>
         <source>Reference to an argument of the operator with invalid type!</source>
-        <translation type="unfinished"></translation>
+        <translation>Referentie naar een argument van de operator met een ongeldig type!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="62"/>
         <source>Reference to an operator with invalid type!</source>
-        <translation type="unfinished"></translation>
+        <translation>Referentie naar een operator met een ongeldig type!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="63"/>
         <source>Assignment of value to an invalid option type on role!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een waarde aan een ongeldig optietype van een rol!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="64"/>
         <source>Reference to an invalid role type!</source>
-        <translation type="unfinished"></translation>
+        <translation>Referentie naar een ongeldig rol-type!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="65"/>
         <source>The insertion of the role `%1&apos; is not possible because this is already being referenced by role `%2&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het invoegen van de rol `%1&apos; is onmogelijk omdat deze reeds wordt gerefereerd door rol `%2&apos;!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="66"/>
         <source>Reference redundancy detected by having the role `%1&apos; referencing the role `%2&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>Referentieredundantie gedetecteerd doordat de rol `%1&apos; refereert naar rol `%2&apos;!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="67"/>
         <source>The role `%1&apos; can not be listed as a member of itself!</source>
-        <translation type="unfinished"></translation>
+        <translation>De rol `%1&apos; kan geen lid zijn van zichzelf!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="68"/>
         <source>Reference to a role which index is out of role list bounds!</source>
-        <translation type="unfinished"></translation>
+        <translation>Referentie naar een rol wiens index buiten de limieten van de rollelijst ligt!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="69"/>
         <source>Insertion of empty command to the rule!</source>
-        <translation type="unfinished"></translation>
+        <translation>Invoeging van een leeg commando aan de regel!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="70"/>
         <source>Reference to a command which index is out of the command list bounds!</source>
-        <translation type="unfinished"></translation>
+        <translation>Referentie naar een commando wiens index buiten de limieten van de commandolijst ligt!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="71"/>
         <source>Is not possible to create a self generalization/copy relationship! The table can not inherit or copy their own attributes!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het is onmodelijk om een zelf-generalisatie/kopieer-relatie aan te maken! De tabel kan niet van zichzelf erven of zijn eigen attributen kopieren!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="72"/>
         <source>Assignment of an object that already belongs to another table!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een object dat reeds aan een andere tabel toehoort!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="73"/>
         <source>Assignment of a schema to the sequence which differs from the schema of the owner table!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een schema aan de sequentie die verschilt van het schema van de eigenaars-tabel!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="74"/>
         <source>Assignment of an invalid value to one of the sequence attributes!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een ongeldige waarde aan een van de sequentie-attributen!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="75"/>
         <source>Assignment of a minimum value to the sequence which is greater than the maximum value!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een minimumwaarde die groter is dan de maximumwaarde van de sequentie!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="76"/>
         <source>Assignment of a start value to the sequence which is extrapolating the range defined by minimum and maximum values!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een startwaarde aan de sequentie die de omvang extrapoleerd als gedefinieerd door de minimum- en maximumwaarden!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="77"/>
         <source>Assignment of a null increment value to the sequence!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een null-vermeerdering aan de sequentie!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="78"/>
         <source>Assignment of null cache value to the sequence!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van null-cachewaarden aan de sequentie!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="79"/>
         <source>Assignment of owner table which is not in the same schema as the sequence `%1&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een eigenaarstabel die zich niet in hetzelfde schema bevindt als de sequentie `%1&apos;!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="80"/>
         <source>Assignment of owner table which does not belong to the same owner of the sequence `%1&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een eigenaarstabel die niet tot dezelfde eigenaar behoort als de sequentie `%1&apos;!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="81"/>
         <source>Assignment of a nonexistent owner column to the sequence `%1&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een niet-bestaande eigenaarskolom aan de sequentie `%1&apos;!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="82"/>
         <source>Assignment of an owner column to the sequence `%1&apos; that is not related to any table!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een eigenaarskolom aan de sequentie `%1&apos; die aan geen enkele tabel gerelateerd is!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="83"/>
         <source>Reference to a label which index is out of labels list bounds!</source>
-        <translation type="unfinished"></translation>
+        <translation>Referentie naar een label wiens index buiten de limieten ligt van de label-lijst!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="84"/>
         <source>Allocation of object with invalid type!</source>
-        <translation type="unfinished"></translation>
+        <translation>Allocatie van een object met ongeldig type!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="85"/>
         <source>Assignment of a function with invalid return type to object `%1&apos; (%2)!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een functie met een ongeldige terugkeerwaarde aan object `%1&apos; (%2)!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="86"/>
         <source>Assignment of a function with invalid parameter(s) type(s) to object `%1&apos; (%2)!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een functie met ongeldige parametertype(s) aan object `%1&apos; (%2)!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="87"/>
         <source>Assignment of not allocated language!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een niet-gealloceerde taal!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="88"/>
         <source>Assignment of language object which type is invalid!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een taalobject wiens type ongeldig is!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="89"/>
         <source>Reference to data type with an index outside the capacity of data types list!</source>
-        <translation type="unfinished"></translation>
+        <translation>Referentie naar een datatype met een index die buiten de capaciteit van de datatype lijst ligt!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="90"/>
-        <source>Assignment of a null type to to object `%1&apos; (%2)!</source>
-        <translation type="unfinished"></translation>
+        <source>Assignment of a null type to object `%1&apos; (%2)!</source>
+        <translation>Toewijzing van een null type aan het object `%1&apos; (%2)!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="91"/>
         <source>Assignment of invalid type to the object!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een ongeldig type aan het object!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="92"/>
         <source>Assignment of an empty directory to object `%1&apos; (%2)!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een lege map aan object `%1&apos; (%2)!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="93"/>
         <source>Obtaining types with invalid quantity!</source>
-        <translation type="unfinished"></translation>
+        <translation>Types met ongeldige hoeveelheid verkregen!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="94"/>
         <source>Insertion of item which already exists in the attributes list of the type!</source>
-        <translation type="unfinished"></translation>
+        <translation>Invoegen van een item dat reeds bestaat in de attributenlijst van het type!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="95"/>
         <source>Insertion of invalid item in the attributes list of the type!</source>
-        <translation type="unfinished"></translation>
+        <translation>Invoegen van een ongeldig item in de attributenlijst van het type!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="96"/>
         <source>Insertion of item which already exists in the enumarations list of the type!</source>
-        <translation type="unfinished"></translation>
+        <translation>Invoegen van een item dat reeds bestaat in de enumeratielijst van het type!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="97"/>
         <source>Insertion of invalid item in the enumerations list of the type!</source>
-        <translation type="unfinished"></translation>
+        <translation>Invoegen van een ongeldig item in de enumeratielijst van het type!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="98"/>
         <source>Reference to an attribute which index is out of the attributes list bounds!</source>
-        <translation type="unfinished"></translation>
+        <translation>Referentie naar een attribuut met een index die buiten de limieten van de attributenlijst ligt!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="99"/>
         <source>Reference to an enumeration which index is out of the enumerations list bounds!</source>
-        <translation type="unfinished"></translation>
+        <translation>Referentie naar een enumeratie met een index buiten de limieten van de enumeratielijst!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="100"/>
         <source>Assignment of invalid configuration to the type!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een ongeldige configuratie aan het type!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="101"/>
         <source>The data type `%1&apos; can not be assigned because it already exists in the types list of the aggregate function `%2&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het datatype `%1&apos; kan niet worden toegewezen omdat het reeds bestaat in de typelijst van de aggregatiefunctie `%2&apos;!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="102"/>
         <source>Assignment of an operator which input type count is invalid to aggregate function!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een operatie wiens inputtypehoeveelheid ongeldig is voor een aggregatiefunctie!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="103"/>
         <source>Assignment of an operator which types of arguments is invalid!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een operator wiens argumententypes ongeldig zijn!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="104"/>
         <source>Assignment of system reserved name to the object `%1&apos; (%2)!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een systeem-gereserveerde naam aan het object `%1&apos; (%2)!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="105"/>
         <source>One function with invalid configuration is been used by the object `%1&apos; (%2)!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een functie met ongeldige configuratie wordt gebruikt door het object `%1&apos; (%2)!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="106"/>
         <source>Assignment of an invalid strategy/support number to an operator class element!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een ongeldig strategy- of supportnummer aan een operatorklasse element!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="107"/>
         <source>Insertion of element which already exists in the element list!</source>
-        <translation type="unfinished"></translation>
+        <translation>Invoegen van een element dat reeds bestaat in de elementenlijst!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="108"/>
         <source>Reference to an element which index is out of element list bounds!</source>
-        <translation type="unfinished"></translation>
+        <translation>Referentie naar een element wiens index buiten de limiet van de elementenlijst valt!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="109"/>
         <source>Reference to an object which index is out of object list bounds!</source>
-        <translation type="unfinished"></translation>
+        <translation>Referentie anar een object wiens index buiten de limiet van de objectenlijst valt!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="110"/>
         <source>Removal of an object not allocated!</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwijdering van een niet-gealloceerd object!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="111"/>
         <source>The object `%1&apos; (%2) can not be removed because it is being referenced by object `%3&apos; (%4)!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het object `%1&apos; (%2) kan niet worden verwijderd omdat object `%3&apos; (%4) ernaar verwijst!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="112"/>
         <source>The object `%1&apos; (%2) can not be removed because it is being referenced by object `%3&apos; (%4) that belongs to `%5&apos; (%6)!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het object `%1&apos; (%2) kan niet worden verwijderd omdat object `%3&apos; (%4), dat aan `%5&apos; (%6) toehoort, ernaar verwijst!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="113"/>
         <source>Operation with object(s) which type(s) is invalid!</source>
-        <translation type="unfinished"></translation>
+        <translation>Operatie met object(en) van een ongeldig type!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="114"/>
         <source>Reference to object with invalid type!</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwijzing naar een object van een ongeldig type!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="115"/>
         <source>Operation with object not allocated!</source>
-        <translation type="unfinished"></translation>
+        <translation>Operatie op een niet-gealloceerd object!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="116"/>
         <source>The creation of the relationship `%1&apos; between the table `%2&apos; and `%3&apos; can not be done because one does not have a primary key. If the relationship is of the type n-n both tables must have primary keys!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het aanmaken van de relatie `%1&apos; tussen de tabellen `%2&apos; en `%3&apos; kan niet worden voltooid omdat deze geen primary key bevatten. Indien de relatie van het type n-n is, moeten beide tabellen over een primary key beschikken!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="117"/>
         <source>The relationship of the type 1-1 where both tables are mandatory participation is not implemented because it requires fusion between the tables that breaks the modeling done by the user!</source>
-        <translation type="unfinished"></translation>
+        <translation>De relatie van het type 1-1 waar beide tabellen verplicht meespelen is niet geimplementeerd omdat dit een fusie tussen de tabellen vereist die het design van de gebruiker zou breken!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="118"/>
         <source>Assignment of an invalid expression to the object!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een ongeldige expressie aan het object!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="119"/>
         <source>Assignment of a primary key to a table which already has one!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een primary key aan een tabel die reeds over een primary key beschikt!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="120"/>
         <source>Identifier relationship can not be created for a self relationship, relationships of the type n-n, copy or generalization!</source>
-        <translation type="unfinished"></translation>
+        <translation>De identifier-relatie kan niet worden aangemaakt voor een zelf-relatie, relaties van het type n-n, kopie or generalisatie!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="121"/>
         <source>Unable to create a copy relationship because the column `%1&apos; in table `%2&apos; already exists in table `%3&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>De kopie-relatie kon niet worden aangemaakt omdat de kolom `%1&apos; in table `%2&apos; reeds bestaat in tabel `%3&apos;!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="122"/>
         <source>Unable to create the generalization relationship because the column `%1&apos; in table `%2&apos; can not be merged with the column `%3&apos; of table `%4&apos; because they have incompatible types!</source>
-        <translation type="unfinished"></translation>
+        <translation>De generalisatierelatie kan niet worden aangemaakt omdat de kolom `%1&apos; in tabel `%2&apos; niet kan worden samengevoegd met kolom `%3&apos; van tabel `%4&apos;, deze kolommen hebben incompatibele types!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="123"/>
         <source>Unable to create the generalization relationship because the constraint `%1&apos; in table `%2&apos; can not be merged with the constraint `%3&apos; of table `%4&apos; due to their incompatible composition!</source>
-        <translation type="unfinished"></translation>
+        <translation>De generalisatierelatie kan niet worden aangemaakt omdat de constraint `%1&apos; in tabel `%2&apos; niet kan worden samengevoegd met constraint `%3&apos; van tabel `%4&apos;, deze constraints hebben een incompatibele compositie!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="124"/>
         <source>An attribute can not be added to a copy or generalization relationship!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een attribuut kan niet worden toegevoegd aan een kopie of een generalisatierelatie!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="125"/>
         <source>A foreign key can not be added to a relationship because is created automatically when this is connected!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een foreign key kan niet worden toegevoegd aan een relatie omdat deze automatisch wordt aangemaakt wanneer deze wordt verbonden!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="126"/>
         <source>The object `%1&apos; (%2) is referencing the object `%3&apos; (%4) which was not found in the model!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het object `%1&apos; (%2) refereert naar het object `%3&apos; (%4), dit laatste object kon niet worden gevonden in het model!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="127"/>
         <source>Reference to an user-defined data type that not exists in the model!</source>
-        <translation type="unfinished"></translation>
+        <translation>Referentie naar een gebruikersgedefinieerd type dat niet in het model bestaat!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="128"/>
         <source>Assignment of invalid maximum size to operation list!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een ongeldige maximumwaarde aan de operatielijst!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="129"/>
         <source>Unable to write the file or directory `%1&apos;! Make sure the output directory exists, or if the user has write permissions over it!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het bestand of de map `%1&apos; kon niet worden aangemaakt! Zorg ervoor dat de uitvoermap bestaat en dat de gebruiker er schrijfmachtigingen toe heeft!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="130"/>
-        <source>Unable to write the file `%1&apos;&apos; due to one or more errors in the definition generation process!</source>
-        <translation type="unfinished"></translation>
+        <source>Unable to write the file `%1&apos; due to one or more errors in the definition generation process!</source>
+        <translation>Het bestand `%1&apos; kan niet worden geschreven omwille van een of meerdere fouten die optraden tijdens het definitie-generatie proces!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="131"/>
         <source>There is already a relationship between `%1&apos; (%2) and `%3&apos; (%4) in the model!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het model bevat reeds een relatie tussen `%1&apos; (%2) en `%3&apos; (%4)!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="132"/>
-        <source>The configuration of the relationship `%1&apos; generates a redundancy between the relationships `%2&apos;. Redundancy on identifier or generalization/copy relationships are not accepted since they result in  incorrect column spreading making the model inconsistent!</source>
-        <translation type="unfinished"></translation>
+        <source>The configuration of the relationship `%1&apos; generates a redundancy between the relationships `%2&apos;. Redundancy on identifier or generalization/copy relationships are not accepted since they result in incorrect column spreading making the model inconsistent!</source>
+        <translation>De configuratie van de relatie `%1&apos; creeert een redundantie tussen de relaties `%2&apos;. Redundanties van identifiers of generalisatie/kopie-relaties zijn niet geldig omdat deze kunnen leiden tot het incorrect verspreiden van kolommen en dit kan het model inconsistent maken!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="133"/>
         <source>One or more objects were invalidated and automatically removed because they were referencing table columns which were included through relationships and which no longer exists due to disconnection of relationships or exclusion of such generated columns!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een of meerdere objecten werden als ongeldig gemarkeerd en werde automatisch verwijderd omdat deze naar kolommen refereerden die werden ingesloten door relaties die niet langer bestaan omwille van het ontkoppelen van de relatie of het uitsluiten van zulke gegenereerde kolommen!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="134"/>
         <source>The primary key `%1&apos; can only be allocated if declared within a block of code that defines a table or relationship!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een foreign key `%1&apos; kan niet worden toegevoegd aan een relatie omdat deze automatisch wordt aangemaakt wanneer deze wordt verbonden!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="135"/>
         <source>Reference to an invalid privilege type!</source>
-        <translation type="unfinished"></translation>
+        <translation>Referentie naar een ongeldig machtigingstype!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="136"/>
         <source>Insertion of a role which already exists in the role list of the permission!</source>
-        <translation type="unfinished"></translation>
+        <translation>Invoegen van een rol die reeds in de rollenlijst van de machtiging aanwezig is!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="137"/>
         <source>Assignment of privilege incompatible with the type of object referenced by permission!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een machtiging die niet compatibel is met het type waarnaar wordt verwezen door de machtiging!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="138"/>
         <source>There is already a permission on object `%1&apos; (%2) which has one or more equal roles from those present on permission to be assigned to the object!</source>
-        <translation type="unfinished"></translation>
+        <translation>Er bestaat reeds een machtiging op object `%1&apos; (%2) die een of meerdere zelfde rollen bevat als deze die onderdeel uitmaken van de nieuwe machtiging die aan het object worden toegewezen!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="139"/>
         <source>A permission is referencing the object `%1&apos; (%2) which was not found in the model!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een machtiging refereert naar object `%1&apos; (%2) dat niet in het model kon worden teruggevonden!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="140"/>
         <source>The object `%1&apos; (%2) can not be created because its not being assigned to any schema!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het object `%1&apos; (%2) kan niet worden aangemaakt omdat het niet aan een schema is toegewezen!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="141"/>
         <source>The tablespace `%1&apos; can not be inserted into the model because it points to the same directory as the tablespace `%2&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>De tablespace `%1&apos; kan niet worden ingevoegd in het model omdat het naar dezelfde map verwijst als de tablespace `%2&apos;!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="142"/>
         <source>It is not possible to create arrays of domains or sequences (dimension &gt;= 1)! PostgreSQL does not yet implement this feature!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het is niet mogelijk om arrays van domeinen of sequenties (dimensie &gt;= 1) aan te maken! Dit feature is nog niet aanwezig in PostgreSQL!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="143"/>
         <source>The function `%1&apos; can not get a source code as a definition because its language is set to C. Use the attributes symbol and dynamic library instead!</source>
-        <translation type="unfinished"></translation>
+        <translation>De functie `%1&apos; kan geen broncode bevatten als definitie omdat de taal is ingesteld als &apos;C&apos;. Gebruik het attributensymbool en dynamische bibliotheek in de plaats!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="144"/>
         <source>The function `%1&apos; can have the attributes symbol and dynamic library configured only if the language is set to C. For all other cases you must specify a source code that defines it in the DBMS!</source>
-        <translation type="unfinished"></translation>
+        <translation>De functie `%1&apos; kan enkel symboolattributen en een dynamische bibliotheek configureren waneer de taal is ingesteld als zijnde &apos;C&apos;. In alle andere gevallen moet u broncode specifieren die de functie definieert in het DBMS!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="145"/>
         <source>The operator `%1&apos; can not be assigned as a comutator of operator `%2&apos; because it has incompatible settings!</source>
-        <translation type="unfinished"></translation>
+        <translation>De operator `%1&apos; kan niet worden toegewezen als comutator van operator `%2&apos; omdat deze incompatibele instellingen heeft!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="146"/>
         <source>The operator `%1&apos; can not be assigned as negator of operator `%2&apos; because it has incompatible settings!</source>
-        <translation type="unfinished"></translation>
+        <translation>De operator `%1&apos; kan niet worden toegewezen als negator van operator `%2&apos; omdat deze incompatibele instellingen heeft!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="147"/>
         <source>The type `%1&apos; can not self refer in the attributes `element&apos; or `copy type&apos; or be used as a data type of an attribute in the configuration of a composite type!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het type `%1&apos; kan geen zelf-referentie bevatten in de attributen &apos;element&apos; of &apos;kopie type&apos; noch kan het worden gebruikt als het data type van een attribuut in de configuratie van een composiet-type!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="148"/>
         <source>Assignment of invalid element to type `%1&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een ongeldig element aan type `%1&apos;!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="149"/>
         <source>Assignment of invalid alignment to type `%1&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een ongeldig uitlijning aan type `%1&apos;!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="150"/>
         <source>Assignment of invalid name to the table generated from N-N relationship!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een ongeldige naam werd toegewezen aan de tabel gegenereerd op basis van een N-N relatie!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="151"/>
         <source>The relationship `%1&apos; can not make use of the special primary key because it is marked as identifier or it is a self relationship!</source>
-        <translation type="unfinished"></translation>
+        <translation>De relatie `%1&apos; kan geen gebruik maken van de primary key omdat deze is aangeduid als identifier of omdat het een zelfverwijzende relatie is!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="152"/>
         <source>The object `%1&apos; (%2) can not be edited or deleted because it was automatically included through a relationship! If the object is an attribute or constraint the modifications must be done on the relationship editing form.</source>
-        <translation type="unfinished"></translation>
+        <translation>Het object `%1&apos; (%2) kan niet worden bewerkt of verwijderd omdat het automatisch werd ingesloten via een relatie! Indien het object een attribuut of een constraint is moeten de bewerkingen worden uitgevoerd via het Relatie bewerk-venster.</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="153"/>
         <source>The object `%1&apos; (%2) can not be deleted because it is protected!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het object `%1&apos; (%2) kan niet worden verwijderd omdat het beschermd is!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="154"/>
         <source>The group `%1&apos; has already been declared earlier!</source>
-        <translation type="unfinished"></translation>
+        <translation>De groep `%1&apos; werd reeds eerder gedeclareerd!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="155"/>
         <source>The group `%1&apos; can not be built in the groups declaration block (%2)!</source>
-        <translation type="unfinished"></translation>
+        <translation>De groep `%1&apos; kan niet worden opgebouwd in de groependeclaratie-block (%2)!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="156"/>
         <source>The group `%1&apos; was built but not declared in the groups declaration block (%2)!</source>
-        <translation type="unfinished"></translation>
+        <translation>De groep `%1&apos; werd opgebouwd maar is niet gedeclareerd in de groependeclaratie-block (%2)!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="157"/>
         <source>The group `%1&apos; can not be built without possessing child elements!</source>
-        <translation type="unfinished"></translation>
+        <translation>De groep `%1&apos; kan niet worden opgebouwd zonder kind-elementen!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="158"/>
         <source>The group `%1&apos; can not be built once more because this was done in previous blocks!</source>
-        <translation type="unfinished"></translation>
+        <translation>De groep `%1&apos; kan niet worden opgebouwd omdat dit reeds werd uitgevoerd in een vorige block!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="159"/>
         <source>The group `%1&apos; has been declared but not built!</source>
-        <translation type="unfinished"></translation>
+        <translation>De groep `%1&apos; werd gedeclareerd maar niet opgebouwd!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="160"/>
         <source>Reference to a column of the objects table with invalid index!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een referentie naar een kolom in de objectentabel met een ongeldige index!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="161"/>
         <source>Reference to a row of the objects table with invalid index!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een referentie naar een rij in de objectentabel met een ongeldige index!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="162"/>
         <source>The object `%1&apos; (%2) can not be manipulated because it is reserved to PostgreSQL! This object is present in the database model only as a reference!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het object `%1&apos; (%2) kan niet worden gemanipuleerd omdat dit een gereserveerd object is in PostgreSQL! Dit object bestaat enkel als referentie in het databasemodel!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="163"/>
         <source>The new configuration of the function invalidates the object `%1&apos; (%2)! In this case it is needed to undo the relationship between the affected object and function in order to the new configuration to take effect!</source>
-        <translation type="unfinished"></translation>
+        <translation>De nieuwe configuratie van de functie maakt het object `%1&apos; (%2) niet langer gevalideerd! Om de nieuwe configuratie in voege te doen treden moet u de relatie tussen het beinvloedde object en de functie ongedaan maken.</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="164"/>
         <source>A view reference must be used in at least one these SQL scopes: View Definition, SELECT-FROM, FROM-WHERE or After WHERE!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een viewreferentie moet minstens in een van de volgende SQL scopes worden gebruikt: View Definitie, SELECT-FROM, FROM_WHERE of Na WHERE!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="165"/>
         <source>Constraints like primary key, foreign key or unique must have at least one column related to them! For foreign keys must be selected, in addition, the referenced columns!</source>
-        <translation type="unfinished"></translation>
+        <translation>Constraints zoals primary key, foreign key of unique key moeten minstens een kolom bevatten! Voor foreign keys moeten ook de gerefereerde kolommen worden geselecteerd!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="166"/>
         <source>Unable to load one or more configuration files! Please check if files exists in the configuration folder and if they are not corrupted to preventing this error to occur again on the next startup!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een of meerdere configuratiebestanden kunnen niet worden geladen! Om ervoor te zorgen dat deze fout zich niet voordoet de volgende maal u het programma opstart, gelieve na te kijken of deze bestanden in de configuratie-map bestaan en dat deze niet gecorrupteerd zijn.</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="167"/>
         <source>Could not find the default settings file `%1&apos;! To restore default settings check the existence of the file and try again!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het standaardinstellingsbestand `%1&apos; kon niet worden gevonden. Kijk na of dit bestand bestaat om de standaardinstellingen terug te zetten en probeer opnieuw!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="168"/>
@@ -4480,376 +4480,384 @@ Deze optie afvinken zorgt ervoor dat de SQL wordt ingevoegd na het CREATE DATABA
 ** Executed SQL command: **
 
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Het exportproces faalde door een fout die werd gegenereerd door PostgreSQL tijdens het uitvoeren van een SQL commando. Voor meer informatie over de fout, gelieve de exception stack na te kijken!
+
+** Uitgevoerde SQL commando: **
+
+%1</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="169"/>
         <source>Could not load the plugin `%1&apos; from the library `%2&apos;! Message returned by plugin manager: `%3&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>De plugin `%1&apos; kon niet worden geladen van de bibliotheek `%2&apos;! De plugin manager antwoordde met: `%3&apos;</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="170"/>
         <source>One or more plugins were not activated due to errors during the loading process! Check the exception stack for more details.</source>
-        <translation type="unfinished"></translation>
+        <translation>Een of meerdere plugin werden niet geactiveerd omwille van fouten gedurende het laadproces! Kijk de exception stack na voor meer details.</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="171"/>
         <source>Invalid syntax in file %1, line %2, column %3!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het bestand %1 bevat ongeldige syntax op lijn %2, kolom %3!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="172"/>
         <source>Invalid instruction `%1&apos; on file %2, line %3, column %4!</source>
-        <translation type="unfinished"></translation>
+        <translation>De instructie `%1&apos; in bestand %2 op lijn %3, kolom %4 is ongeldig!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="173"/>
         <source>Unknown attribute `%1&apos; in file %2, line %3, column %4!</source>
-        <translation type="unfinished"></translation>
+        <translation>De attribuut `%1&apos; in bestand %2 op lijn %3, kolom %4 is ongeldig!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="174"/>
         <source>Invalid metacharacter `%1&apos; in file %2, line %3, column %4!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het metakarakter `%1&apos; in bestand %2 op lijn %3, kolom %4 is ongeldig!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="175"/>
         <source>Invalid operator `%1&apos; in comparison expression, file %2, line %3, column %4!</source>
-        <translation type="unfinished"></translation>
+        <translation>De operator `%1&apos; binnen de vergelijkingsexpressie in bestand %2 op lijn %3, kolom %4 is ongeldig!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="176"/>
         <source>Attribute `%1&apos; with an undefined value in file %2, line %3, column %4!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een attribuut `%1&apos; met een ongedefinieerde waarde in bestand %2 op lijn %3, kolom %4!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="177"/>
         <source>Attribute `%1&apos; with an invalid name in file %2, line %3, column %4!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een attribuut `%1&apos; met een ongeldige naam in bestand %2 op lijn %3, kolom %4!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="178"/>
         <source>Assignment of empty XML buffer to parser!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzingen van een lege XML buffer aan de parser!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="179"/>
         <source>Could not access the file or directory %1! Make sure that it exists or if the user has access permissions on it!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het bestand of de map %1 is niet toegankelijk! Zorg ervoor dat het pad bestaat en dat de gebuiker toegangsmachtigingen tot dit pad heeft!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="180"/>
         <source>Assignment of empty DTD file name!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een lege DTD bestandsnaam!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="181"/>
         <source>Assignment of empty name to the DTD declaration!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een lege naam aan de DTD declaratie!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="182"/>
         <source>Error while interpreting XML buffer at line %1 column %2.
 Message generated by the parser: %3. %4</source>
-        <translation type="unfinished"></translation>
+        <translation>Er trad een fout op tijdens het interpreteren van de XML buffer op lijn %1, kolom %2.
+De parser antwoordde met: %3. %4</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="183"/>
         <source>Operation on unallocated element tree! It is necessary to load the XML parser buffer and interpret it so that the tree is generated!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een operatie werd uitgevoerd op een niet-gealloceerd element in de boomstructuur! De XML parser buffer moet eerst worden geladen en geinterpreteerd zodat deze boomstructuur kan worden gegenereerd!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="184"/>
         <source>Could not load file %1. The same appears to be inconsistent or one of its dependencies (DTD files) has errors or is missing!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het bestand %1 kon niet worden geladen. Ditzelfde lijkt inconsistent te zijn of een van zijn dependencies (DTD bestanden) heeft ofwel fouten of ontbreekt!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="185"/>
         <source>Operation with unallocated tree element!</source>
-        <translation type="unfinished"></translation>
+        <translation>Operatie met een niet-gealloceerd object!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="186"/>
         <source>Operation with element which does not exists in the element tree currently loaded!</source>
-        <translation type="unfinished"></translation>
+        <translation>Er werd een operatie uitgevoerd op een element dat niet bestaat in de huidig geladen elementen-boomstructuur!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="187"/>
         <source>Assignment of a value to an invalid connection parameter!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een waarde aan een ongeldige verbindingsparameter!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="188"/>
         <source>Operation on connection not established!</source>
-        <translation type="unfinished"></translation>
+        <translation>Er werd een operatie uitgevoerd op een niet-verbonden verbinding!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="189"/>
         <source>Attempt to connect without define configuration parameters!</source>
-        <translation type="unfinished"></translation>
+        <translation>Poging tot verbinden zonder dat de configuratieparameters zijn gedefinieerd!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="190"/>
         <source>Attempt to start a connection already stablished!</source>
-        <translation type="unfinished"></translation>
+        <translation>Poging tot het starten van een verbinding die reeds verbonden is!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="191"/>
         <source>Could not connect to the database.
 Message returned: `%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Er kon geen verbinding worden gemaakt met de database.
+Het bericht is: `%1&apos;</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="192"/>
         <source>Assignment of not allocated SQL command result!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een niet-gealloceerde SQL commandoresultaat!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="193"/>
         <source>Unable to allocate the result of the SQL command because the response from the DBMS was not understood by the client!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het is niet mogelijk om het resultaat van het SQL commando te allocaren omdat de client het antwoord van de DBMS niet verstond!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="194"/>
         <source>Unable to allocate command result for the SQL because the server has generated a fatal error!
 Message returned by the DBMS: `%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Het commandoresultaat voor de SQL code kan niet worden gealloceerd omdat de server een fatale fout genereerde!
+Het bericht dat terugkwam van de DBMS is: `%1&apos;</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="195"/>
         <source>Reference to a column of tuple with invalid index!</source>
-        <translation type="unfinished"></translation>
+        <translation>Referentie naar een kolom van een tuple met een ongeldige index!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="196"/>
         <source>Reference to a column of tuple with invalid name!</source>
-        <translation type="unfinished"></translation>
+        <translation>Referentie naar een kolom van een tuple met een ongeldige naam!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="197"/>
-        <source>Reference to a tuple with index invalid or the result is empty (no tuples)!</source>
-        <translation type="unfinished"></translation>
+        <source>Reference to a tuple with an invalid index or the result is empty (no tuples)!</source>
+        <translation>Referentie naar een tuple met een ongeldige index of het resultaat is leeg (geen tuples)!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="198"/>
         <source>Reference to a column of a tuple which was not yet initialized (tuple navigation not started)!</source>
-        <translation type="unfinished"></translation>
+        <translation>Referentie naar een kolom van een tuple dat nog niet werd geinitializeerd (tuple-navigatie nog niet gestart)!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="199"/>
         <source>Could not execute the SQL command.
  Message returned: `%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Het SQL commando kon niet worden uitgevoerd.
+ Het teruggekeerde bericht is: `%1&apos;</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="200"/>
-        <source>Invalid use of a view referece as whole SQL definition! The assigned reference must be an expression!</source>
-        <translation type="unfinished"></translation>
+        <source>Invalid use of a view reference as whole SQL definition! The assigned reference must be an expression!</source>
+        <translation>Ongeldig gebruik van een view-referentie als volledige SQL definitie! De toegewezen referentie moet een expressie zijn!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="201"/>
         <source>Assignment of a second definition expression to the view!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een tweede definitie-expressie aan de view!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="202"/>
         <source>It is not possible mix ordinary references (SELECT-FROM, FROM-WHERE, After WHERE) with references used as view SQL definition!</source>
-        <translation type="unfinished"></translation>
+        <translation>Gewone referenties (SELECT-FROM, FROM-WHERE, Na WHERE) kunnen niet worden gemixt met referenties die gebruikt worden als SQL definitie!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="203"/>
         <source>Assignment of collation object which type is invalid!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een sorteringsobject wiens type ongeldig is!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="204"/>
-        <source>At the moment pgModeler does not support the creation of primary keys which some columns were generated by relationship connection. To create primary keys with this feature you can use the field `Indentifier&apos; or the tab `Primary key&apos; on relationship editing form!</source>
-        <translation type="unfinished"></translation>
+        <source>At the moment pgModeler does not support the creation of primary keys which some columns were generated by relationship connection. To create primary keys with this feature you can use the field `Identifier&apos; or the tab `Primary key&apos; on relationship editing form!</source>
+        <translation>Op dit moment ondersteunt pgModeler de aanmaak van primary keys waarvan sommige kolomen door relatie-verbindingen worden gegenereerd nog niet. Om primary keys met dit feature aan te maken kan u gebruik maken van het veld &apos;Identifier&apos; of het &apos;Primary key&apos; tab-blad in het relatie-bewerkingsvenster!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="205"/>
         <source>Collations must be created at least with attributes LC_COLLATE and LC_CTYPE defined!</source>
-        <translation type="unfinished"></translation>
+        <translation>Sorteringsmethodes moeten worden aangemaakt en minstens LC_COLLATE en LC_CTYPE gedefinieerd hebben!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="206"/>
         <source>The object `%1&apos; (%2) cannot reference itself! This operation is not permitted for this kind of object!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het object `%1&apos; (%2) kan niet naar zichzelf verwijzen! Deze operatie is niet toegelaten voor dit type object!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="207"/>
         <source>Only operator families which uses `btree&apos; as indexing method are accepted by operator class elements!</source>
-        <translation type="unfinished"></translation>
+        <translation>Enkel operator-families die gebruik maken van `btree&apos; als indexeringsmethod kunnen worden aanvaard als operatorklasse element!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="208"/>
         <source>Reference to an invalid copy table option!</source>
-        <translation type="unfinished"></translation>
+        <translation>Referentie naar een ongeldige kopie-tabel optie!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="209"/>
         <source>Copy relationship between tables `%1&apos; and `%2&apos; cannot be done because the first one already copies attributes from `%3&apos;! Tables can have only one copy table!</source>
-        <translation type="unfinished"></translation>
+        <translation>De kopie-relatie tussen tabellen `%1&apos; en `%2&apos; kan niet worden aangemaakt omdat de eerste reeds attributen kopieert van `%3&apos;! Tabellen kunnen over slechts een kopie-tabel beschikken!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="210"/>
         <source>The INSTEAD OF mode cannot be used on triggers that belongs to tables! This is available only for view triggers!</source>
-        <translation type="unfinished"></translation>
+        <translation>De INSTEAD OF modus kan niet worden gebruikt voor triggers die aan tabellen toehoren! Dit is enkel beschikbaar voor triggers die aan views toehoren!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="211"/>
         <source>The TRUNCATE event can only be used when the trigger executes for each statement and belongs to a table!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het TRUNCATE event kan enkel worden gebruikt wanneer de trigger uitvoert voor elk statement en aan een tabel toebehoort!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="212"/>
         <source>The INSTEAD OF mode cannot be used on view triggers that executes for each statement!</source>
-        <translation type="unfinished"></translation>
+        <translation>De INSTEAD OF modus kan niet worden gebruikt voor view triggers die voor elk statement worden uitgevoerd!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="213"/>
         <source>Constraint triggers can only be executed on AFTER events and for each row!</source>
-        <translation type="unfinished"></translation>
+        <translation>Constraint triggers kunnen enkel worden uitgevoerd NA events en voor elke rij!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="214"/>
         <source>A view trigger cannot be AFTER/BEFORE when it executes for each row!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een view trigger kan niet AFTER/BEFORE zijn wanneer deze voor elke rij wordt uitgevoerd!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="215"/>
         <source>A trigger cannot make reference to columns when using INSTEAD OF mode and UPDATE event!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een trigger kan niet naar kolommen refereren wanneer deze gebruikt maakt van de INSTEAD OF modus binnen een UPDATE event!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="216"/>
         <source>Assignment of a column which has no parent table to the object `%1&apos; (%2)!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzing van een kolom aan object `%1&apos; (%2) die geen ouder-tabel heeft!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="217"/>
         <source>Only constraint triggers can be deferrable or reference another table!</source>
-        <translation type="unfinished"></translation>
+        <translation>Enkel constraint triggers kunnen uitstelbaar zijn of naar andere tabellen refereren!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="218"/>
-        <source>Reference to a function id which is incompatible whit the user define type configuration!</source>
-        <translation type="unfinished"></translation>
+        <source>Reference to a function id which is incompatible with the user define type configuration!</source>
+        <translation>Een referentie naar een functie id die niet compatibel is met de configuratie van het gebruiker gedefinieerde type!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="219"/>
         <source>The operator class assigned to the object `%1&apos; (%2) must use `btree&apos; as indexing method!</source>
-        <translation type="unfinished"></translation>
+        <translation>De operatorklasse die is toegewezen aan het object `%1&apos; (%2) moet &apos;btree&apos; als indexeringsmethod gebruiken!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="220"/>
         <source>Unsupported PostgreSQL version (%1) detected! Valid versions are: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Er werd een niet-ondersteunde versie van PostgreSQL gedetecteerd (%1)! Geldige versies zijn: %2</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="221"/>
         <source>The validation process failed due to an error triggered by the validation helper. For more details about the error check the exception stack!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het validatieproces faalde omwille van een fout in de validatie-helper. Kijk voor meer details over de fout de exception stack na!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="222"/>
         <source>The extension `%1&apos; is registered as a data type and cannot have the attribute `handles datatype&apos; modified!</source>
-        <translation type="unfinished"></translation>
+        <translation>De uitbreiding `%1&apos; is geregistreerd als een data type, het &apos;behandeld data type&apos; attribuut kan niet worden aangepast!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="223"/>
         <source>The fk relationship `%1&apos; cannot be created because the foreign-key that represents it was not created on table `%2&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>De fk relatie `%1&apos; kan niet worden aangemaakt omdat de foreign key die deze relatie weergeeft niet werd aangemaakt op tabel `%2&apos;!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="224"/>
         <source>Assignement of an invalid object name pattern to the relationship `%1&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toewijzijng van een ongeldig objectnaamspatroon aan de relatie `%1&apos;!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="225"/>
         <source>Reference to an invalid object name pattern id on the relationship `%1&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>Referentie naar een ongeldige id van objectnaamspatronen voor de relatie `%1&apos;!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="226"/>
         <source>Invalid use of variadic parameter mode! This mode can be used only with array data types!</source>
-        <translation type="unfinished"></translation>
+        <translation>Ongeldig gebruik van varierende-parametermodus! Deze modus kan enkel worden gebruikt bij array types!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="227"/>
         <source>Mixing incompatibles DBMS export modes: `ignore object duplications&apos;, `drop database&apos; or `drop objects&apos; cannot be used with `simulate export&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>Mixen van niet-compatibele DBMS export-modussen: `negeer object duplicaten&apos;, `verwijder database&apos; of `verwijder objecten&apos; kan niet samen worden gebruikt met `simuleer export&apos;!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="228"/>
         <source>Mixing incompatibles DROP options: `drop database&apos; and `drop objects&apos; cannot be used at the same time!</source>
-        <translation type="unfinished"></translation>
+        <translation>Mixen van niet-compatibele DROP opties: `verwijder database&apos; en `verwijder objecten&apos; kunnen niet samen worden gebruikt!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="229"/>
         <source>Invalid object id swapping operation! The objects involved are the same!</source>
-        <translation type="unfinished"></translation>
+        <translation>Ongeldige object id wissel-operatie! De betrokken objecten zijn dezelfde!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="230"/>
         <source>Invalid object id swapping operation! The database itself, tablespaces or roles cannot have the ids swapped!</source>
-        <translation type="unfinished"></translation>
+        <translation>Ongeldige object id wissel-operatie! De database zelf, tablespaces en rollen kunnen geen ids omwisselen!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="231"/>
         <source>The widget already has a parent and cannot be assigned to a different object!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het widget heeft reeds een ouder en kan niet aan een ander object worden toegewezen!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="232"/>
         <source>The object `%1&apos; (%2) could not be imported due to one or more errors! Check the exception stack for more details.</source>
-        <translation type="unfinished"></translation>
+        <translation>Het object `%1&apos; (%2) kon niet worden geïmporteerd omwille van een of meer fouten! Kijk de exception stack na voor meer details.</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="233"/>
         <source>Could not load the database model file `%1&apos;. Check the error stack to see details. Try to run `pgmodeler-cli --fix-model&apos; in order to correct the structure of the file if that is the case.</source>
-        <translation type="unfinished"></translation>
+        <translation>Het datababase modelbestand `%1&apos; kon niet worden geladen. Kijk de foutenstack na voor meer details. Probeer `pgmodeler-cli --fix-model&apos; uit te voeren op het model om de bestandsstructuur te corigeren indien dit nodig zou zijn.</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="234"/>
         <source>The column `%1&apos; cannot reference it&apos;s parent table `%2&apos; as data type!</source>
-        <translation type="unfinished"></translation>
+        <translation>De kolom `%1&apos; kan niet naar de oudertabel `%2&apos; als data type verwijzen!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="235"/>
         <source>Operation with an invalid element id `%1&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>Operatie met een ongeldige olement id `%1&apos;!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="236"/>
         <source>Reference to an invalid color id `%1&apos; for element `%2&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>Referentie naar een ongeldige kleuren-id `%1&apos; voor element `%2&apos;!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="237"/>
-        <source>Assignment of an invalid object to `%1&apos; (%2)! The assigned object must be of type `%3&apos;</source>
-        <translation type="unfinished"></translation>
+        <source>Assignment of an invalid object to `%1&apos; (%2)! The assigned object must be of type `%3&apos;.</source>
+        <translation>Toewijzing van een ongeldig object aan `%1&apos; (%2)! Het toegewezen object moet van het type `%3&apos; zijn.</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="238"/>
         <source>The sequence `%1&apos; can&apos;t be assigned to the column `%2&apos; because the data type of the latter is incompatible. The type used must be an integer one!</source>
-        <translation type="unfinished"></translation>
+        <translation>De sequentie `%1&apos; kan niet aan de kolom `%2&apos; worden toegewezen omdat het data type van de kolom niet compatibel is. Het gebruikte type moet een integer type zijn!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="239"/>
         <source>The option to generate temporary object names can only be used in simulation mode!</source>
-        <translation type="unfinished"></translation>
+        <translation>De optie om tijdelijke objectnamen te genereren kan enkel worden gebruikt in simulatie-modus!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="240"/>
         <source>It&apos;s not possible convert the type of the column `%1&apos; to serial! It must have an `integer&apos; based type and its default value must be a call to `nextval(seq_name::regclass)&apos; function!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het is niet mogelijk om het type van kolom `%1&apos; naar serial om te vormen! Het type van de kolom moet een `integer&apos;-gebaseerd type zijn en de standaardwaarde moet een aanroep van de `nextval(seq_name::regclass)&apos; functie zijn!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="241"/>
         <source>Could not assign the variable `%1&apos; to event trigger&apos;s filter. Currently, PostgreSQL supports only the `TAG&apos; variable!</source>
-        <translation type="unfinished"></translation>
+        <translation>De variabele `%1&apos; kon niet worden toegewezen aan de filter van de event trigger! Op dit moment ondersteunt PostgreSQL enkel de `TAG&apos; variabele!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="242"/>
@@ -4858,27 +4866,31 @@ Message returned by the DBMS: `%1&apos;</source>
  ** Returned error ** 
 
 %4</source>
-        <translation type="unfinished"></translation>
+        <translation>De operatie `%1&apos; op `%2&apos; kon niet worden voltooid met de data op rij `%3&apos;! Alle aanpassingen werden ongedaan gemaakt.
+
+ ** Gerapporteerde fout ** 
+
+%4</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="243"/>
         <source>Malformed unescaped value on row `%1&apos; column `%2&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>Incorrect gevormde un-escape waarde op rij `%1&apos;, kolom `%2&apos;!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="244"/>
         <source>Trying to undo/redo an invalid operation over an object that does not exists anymore or can&apos;t be handled! The operation history will be cleaned up.</source>
-        <translation type="unfinished"></translation>
+        <translation>Poging tot het ongedaan maken of opnieuw uitvoeren van een ongeldige operatie op een object dat niet langer bestaat of niet kan worden behandeld! De taakgeschiedenis zal worden leeggemaakt.</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="245"/>
         <source>The object `%1&apos; (%2) can&apos;t be handled because some needed fields are not set! Please, make sure to fill at least the requires fields in order to properly create or update the object.</source>
-        <translation type="unfinished"></translation>
+        <translation>Het object `%1&apos; (%2) kan niet worden behandeld omdat sommige nodige velden niet werden ingesteld! Gelieve de verplichte velden in te voeren om het object correct aan te kunnen maken of passen.</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="246"/>
         <source>A relationship can only be swapped by other object of the same kind!</source>
-        <translation type="unfinished"></translation>
+        <translation>De relatie kan enkel worden omgewisseld door een ander object van dezelfde soort!</translation>
     </message>
 </context>
 <context>
@@ -9372,7 +9384,7 @@ laatste geaccepteerde structuur. Alle beschikbare opties worden hieronder beschr
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="259"/>
         <source>   %1, %2=[FILE]		 Input model file (.dbm). Mandatory use when fixing a model or exporting it.</source>
-        <translation>   %1, %2=[BESTAND]		 Input model bestand (.dbm). Verplicht wanneer een model wordt geimporteerd or hersteld.</translation>
+        <translation>   %1, %2=[BESTAND]		 Input model bestand (.dbm). Verplicht wanneer een model wordt geïmporteerd or hersteld.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="260"/>
@@ -9607,7 +9619,7 @@ laatste geaccepteerde structuur. Alle beschikbare opties worden hieronder beschr
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="411"/>
         <source>Mime database successfully updated.</source>
-        <translation type="unfinished"></translation>
+        <translation>De mime database werd succesvol geupdate.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="426"/>
@@ -11167,7 +11179,7 @@ laatste geaccepteerde structuur. Alle beschikbare opties worden hieronder beschr
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodewidget.ui" line="146"/>
         <source>iconecodigo</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodewidget.ui" line="162"/>
@@ -11197,7 +11209,7 @@ laatste geaccepteerde structuur. Alle beschikbare opties worden hieronder beschr
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodewidget.ui" line="255"/>
         <source>Save the SQL code to a file.</source>
-        <translation>Sla de SQL code op in een bestand</translation>
+        <translation>Sla de SQL code op in een bestand.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodewidget.ui" line="258"/>
