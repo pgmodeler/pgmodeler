@@ -316,6 +316,8 @@ void ElementsWidget::handleElement(int elem_idx)
 	}
 	else if(elements_tab->getCellText(elem_idx,0).isEmpty())
 		elements_tab->removeRow(elem_idx);
+
+  emit s_elementHandled(elem_idx);
 }
 
 void ElementsWidget::editElement(int elem_idx)

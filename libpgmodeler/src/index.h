@@ -49,7 +49,11 @@ class Index: public TableObject{
 		//! \brief Formats the elements string used by the SchemaParser
 		void setIndexElementsAttribute(unsigned def_type);
 
-	public:
+    /*! brief Executes any validation over the index's elements. Currently, this method disable sorting
+        when the indexing type is 'gin' */
+    void validateElements(void);
+
+  public:
 		static const  unsigned UNIQUE=0,
                            CONCURRENT=1,
 													 FAST_UPDATE=2,

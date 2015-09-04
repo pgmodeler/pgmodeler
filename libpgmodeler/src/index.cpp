@@ -80,6 +80,7 @@ void Index::addIndexElement(IndexElement elem)
 
 	idx_elements.push_back(elem);
 	setCodeInvalidated(true);
+  validateElements();
 }
 
 void Index::addIndexElement(const QString &expr, Collation *coll, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first)
@@ -96,7 +97,7 @@ void Index::addIndexElement(const QString &expr, Collation *coll, OperatorClass 
 		elem.setExpression(expr);
 		elem.setOperatorClass(op_class);
 		elem.setCollation(coll);
-		elem.setSortingEnabled(use_sorting);
+    elem.setSortingEnabled(use_sorting);
 		elem.setSortingAttribute(IndexElement::NULLS_FIRST, nulls_first);
 		elem.setSortingAttribute(IndexElement::ASC_ORDER, asc_order);
 
@@ -105,6 +106,7 @@ void Index::addIndexElement(const QString &expr, Collation *coll, OperatorClass 
 
 		idx_elements.push_back(elem);
 		setCodeInvalidated(true);
+    validateElements();
 	}
 	catch(Exception &e)
 	{
@@ -129,7 +131,7 @@ void Index::addIndexElement(Column *column, Collation *coll, OperatorClass *op_c
 		elem.setColumn(column);
 		elem.setOperatorClass(op_class);
 		elem.setCollation(coll);
-		elem.setSortingEnabled(use_sorting);
+    elem.setSortingEnabled(use_sorting);
 		elem.setSortingAttribute(IndexElement::NULLS_FIRST, nulls_first);
 		elem.setSortingAttribute(IndexElement::ASC_ORDER, asc_order);
 
@@ -138,6 +140,7 @@ void Index::addIndexElement(Column *column, Collation *coll, OperatorClass *op_c
 
 		idx_elements.push_back(elem);
 		setCodeInvalidated(true);
+    validateElements();
 	}
 	catch(Exception &e)
 	{
@@ -215,6 +218,7 @@ void Index::setIndexingType(IndexingType idx_type)
 {
 	setCodeInvalidated(indexing_type != idx_type);
 	this->indexing_type=idx_type;
+  validateElements();
 }
 
 void Index::setPredicate(const QString &expr)
@@ -401,5 +405,20 @@ QString Index::getAlterDefinition(BaseObject *object)
   catch(Exception &e)
   {
     throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+}
+
+void Index::validateElements(void)
+{
+  if(indexing_type!=IndexingType::btree)
+  {
+    for(unsigned i=0; i < idx_elements.size(); i++)
+    {
+      if(idx_elements[i].isSortingEnabled())
+      {
+        idx_elements[i].setSortingEnabled(false);
+        setCodeInvalidated(true);
+      }
+    }
   }
 }
