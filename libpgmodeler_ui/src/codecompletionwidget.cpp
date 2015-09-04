@@ -24,24 +24,24 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt) :	QWi
 	if(!code_field_txt)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	parent_wgt=new QWidget(this);
-	parent_wgt->setWindowFlags(Qt::Popup);
+  completion_wgt=new QWidget(this);
+  completion_wgt->setWindowFlags(Qt::Popup);
 
-	name_list=new QListWidget(parent_wgt);
+  name_list=new QListWidget(completion_wgt);
 	name_list->setSpacing(2);
 	name_list->setIconSize(QSize(16,16));
 
-	persistent_chk=new QCheckBox(parent_wgt);
+  persistent_chk=new QCheckBox(completion_wgt);
 	persistent_chk->setText(trUtf8("Make persistent"));
 	persistent_chk->setToolTip(trUtf8("Makes the widget closable only by ESC key or mouse click on other controls."));
 	persistent_chk->setFocusPolicy(Qt::NoFocus);
 
-	QVBoxLayout *vbox=new QVBoxLayout(parent_wgt);
+  QVBoxLayout *vbox=new QVBoxLayout(completion_wgt);
 	vbox->addWidget(name_list);
 	vbox->addWidget(persistent_chk);
 	vbox->setContentsMargins(4,4,4,4);
 	vbox->setSpacing(6);
-	parent_wgt->setLayout(vbox);
+  completion_wgt->setLayout(vbox);
 
 	QFont font=name_list->font();
 	font.setPointSizeF(8);
@@ -84,7 +84,7 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 			}
 			else if(k_event->key()==Qt::Key_Space || k_event->key()==Qt::Key_Backspace || k_event->key()==Qt::Key_Delete)
 			{
-				if(persistent_chk->isChecked() && this->parent_wgt->isVisible())
+        if(persistent_chk->isChecked() && this->completion_wgt->isVisible())
 					this->show();
 				else
 					this->close();
@@ -242,7 +242,7 @@ void CodeCompletionWidget::show(void)
 {
 	prev_txt_cur=code_field_txt->textCursor();
 	this->updateList();
-	parent_wgt->show();
+  completion_wgt->show();
   this->showItemTooltip();
 }
 
@@ -326,18 +326,43 @@ void CodeCompletionWidget::updateList(void)
 			objects=db_model->findObjects(pattern, types, false, false, !auto_triggered, auto_triggered);
 		else
 		{
+      QString left_word;
+
 			//Searching objects according to qualifying level.
+      tc=code_field_txt->textCursor();
+      tc.movePosition(QTextCursor::WordLeft, QTextCursor::KeepAnchor);
+
+      /* Retrieving the word at the left in order to compare it to the object's name at the current qualifying level,
+         if the word does not matches the object then children objects will not be retrieved */
+      if(tc.selectedText().contains('\"'))
+      {
+        tc.movePosition(QTextCursor::WordLeft, QTextCursor::KeepAnchor);
+        left_word=tc.selectedText();
+        left_word.remove('"');
+      }
+      else
+        left_word=tc.selectedText();
 
 			//Level 0 indicates that user selected a schema, so all objects of the schema are retrieved
-			if(qualifying_level==0)
+      if(qualifying_level==0 && left_word==sel_objects[qualifying_level]->getName())
 				objects=db_model->getObjects(sel_objects[qualifying_level]);
-			//Level 1 indicates that user selected a table or view, so all child objects are retrieved
-			else if(qualifying_level==1)
+
+      /* Level 1 indicates that user selected a table or view, so all child objects are retrieved.
+         If the current level is 1 and the table/view name isn't present then the children will not be listed */
+      else if(qualifying_level==1 && left_word==sel_objects[qualifying_level]->getName())
 				objects=dynamic_cast<BaseTable *>(sel_objects[qualifying_level])->getObjects();
+
+      /* If the current qualifying level and current word does retrieve any object as a fallback
+         we try to find any object in the model and reset the qualifying level */
+      else
+      {
+        objects=db_model->findObjects(pattern, types, false, false, !auto_triggered, auto_triggered);
+        setQualifyingLevel(nullptr);
+      }
 
 			/* If the typed word is equal to the current level object's name clear the order in order
 			to avoid listing the same object */
-			if(word==sel_objects[qualifying_level]->getName())
+      if(qualifying_level >=0 && word==sel_objects[qualifying_level]->getName())
 				word.clear();
 		}
 
@@ -393,7 +418,7 @@ void CodeCompletionWidget::updateList(void)
 		name_list->setItemSelected(name_list->item(0), true);
 
 	//Sets the list position right below of text cursor
-	parent_wgt->move(code_field_txt->mapToGlobal(code_field_txt->cursorRect().topLeft() + QPoint(0,20)));
+  completion_wgt->move(code_field_txt->mapToGlobal(code_field_txt->cursorRect().topLeft() + QPoint(0,20)));
 	name_list->setFocus();
 }
 
@@ -439,11 +464,10 @@ void CodeCompletionWidget::selectItem(void)
 		setQualifyingLevel(nullptr);
 
 	name_list->clearSelection();
+  auto_triggered=false;
 
 	if(!persistent_chk->isChecked())
 		this->close();
-
-  auto_triggered=false;
 }
 
 void CodeCompletionWidget::showItemTooltip(void)
@@ -459,9 +483,8 @@ void CodeCompletionWidget::showItemTooltip(void)
 
 void CodeCompletionWidget::close(void)
 {
-	setQualifyingLevel(nullptr);
 	name_list->clearSelection();
-	parent_wgt->close();
+  completion_wgt->close();
 	auto_triggered=false;
 }
 
