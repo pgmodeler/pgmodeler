@@ -18,10 +18,6 @@
  %else
    {signature}
  %end
-
- %if {trigger} %or {rule} %then
-  [ ON ] {table}
- %end
  
  %if {cascade} %and %not {database} %and %not {tablespace} %and %not {role} %then
    [ CASCADE]

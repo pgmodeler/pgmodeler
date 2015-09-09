@@ -452,5 +452,5 @@ QString Trigger::getSignature(bool format)
   if(!getParentTable())
     return(BaseObject::getSignature(format));
 
-  return(QString("%1 ON %2 ").arg(this->getName(format)).arg(getParentTable()->getSignature(true)));
+  return(QString("%1 ON %2").arg(this->getName(format)).arg(getParentTable()->getSignature(true)));
 }
