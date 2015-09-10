@@ -171,7 +171,8 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
                 name.indexOf('.')>=0 ||
                 name.indexOf('@')>=0 ||
                 name.indexOf(' ')>=0 ||
-                name.indexOf('$')>=0));
+                name.indexOf('$')>=0 ||
+                name.contains(QRegExp("^[0-9]+"))));
 
 		i=0;
     while(i < qtd && !needs_fmt)
@@ -254,9 +255,6 @@ bool BaseObject::isValidName(const QString &name)
 			valid=true; i++; len--;
 		}
 
-    //The name is invalid if it starts with number
-    valid=!name.contains(QRegExp("^(\")*[0-9]+"));
-
 		while(valid && i < len)
 		{
 			chr=raw_name[i];
@@ -267,8 +265,8 @@ bool BaseObject::isValidName(const QString &name)
 				 (chr >= 'A' && chr <='Z') ||
 				 (chr >= '0' && chr <='9') ||
 					chr == '_' || chr == '-' ||
-					chr == '.' || chr == '@' || chr ==' ' ||
-				 (i > 0 && chr=='$'))
+          chr == '.' || chr == '@' ||
+          chr == ' ' ||	chr=='$')
 			{
 				valid=true;
 				i++;
