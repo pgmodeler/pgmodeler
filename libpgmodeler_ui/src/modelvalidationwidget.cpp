@@ -69,6 +69,8 @@ void ModelValidationWidget::createThread(void)
 
     connect(validation_thread, SIGNAL(started(void)), validation_helper, SLOT(validateModel(void)));
     connect(validation_thread, SIGNAL(started(void)), validation_helper, SLOT(applyFixes(void)));
+
+    connect(validation_thread, SIGNAL(finished(void)), this, SLOT(updateGraphicalObjects(void)));
     connect(validation_thread, SIGNAL(finished(void)), this, SLOT(destroyThread(void)));
 
     connect(validation_helper, SIGNAL(s_validationInfoGenerated(ValidationInfo)), this, SLOT(updateValidation(ValidationInfo)), Qt::QueuedConnection);
@@ -88,6 +90,12 @@ void ModelValidationWidget::createThread(void)
 
     connect(validation_helper, &ModelValidationHelper::s_fixApplied,
             [=](){ emit s_fixApplied(); });
+
+    connect(validation_helper, &ModelValidationHelper::s_objectIdChanged,
+            [=](BaseObject *obj) {
+                BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(obj);
+                if(graph_obj) graph_objects.push_back(graph_obj);
+            });
   }
 }
 
@@ -496,5 +504,25 @@ void ModelValidationWidget::validateRelationships(void)
   {
     Messagebox msg_box;
     msg_box.show(e);
+  }
+}
+
+void ModelValidationWidget::updateGraphicalObjects(void)
+{
+  if(!graph_objects.empty())
+  {
+    vector<BaseGraphicObject *>::iterator end;
+
+    std::sort(graph_objects.begin(), graph_objects.end());
+    end=std::unique(graph_objects.begin(), graph_objects.end());
+    graph_objects.erase(end, graph_objects.end());
+
+    while(!graph_objects.empty())
+    {
+      graph_objects.back()->setModified(true);
+      graph_objects.pop_back();
+    }
+
+    emit s_graphicalObjectsUpdated();
   }
 }

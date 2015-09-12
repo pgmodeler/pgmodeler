@@ -97,10 +97,12 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 						{
 							BaseObject::swapObjectsIds(info_obj, obj, true);
 							aux_obj=info_obj;
+              emit s_objectIdChanged(obj);
 						}
 						else if(tab_obj && tab_obj->getParentTable()==info_obj)
 						{
 							BaseObject::updateObjectId(tab_obj);
+              emit s_objectIdChanged(tab_obj);
 						}
 					}
 
@@ -110,7 +112,10 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
             for(auto &rel : base_rels)
 						{
 							if(rel->getObjectId() < aux_obj->getObjectId())
+              {
 								BaseObject::updateObjectId(rel);
+                emit s_objectIdChanged(rel);
+              }
 						}
 					}
 
@@ -123,6 +128,8 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
       {
         BaseObject::updateObjectId(info_obj);
       }
+
+      emit s_objectIdChanged(info_obj);
 		}
 		//Resolving no unique name by renaming the constraints/indexes
 		else if(info.getValidationType()==ValidationInfo::NO_UNIQUE_NAME)
