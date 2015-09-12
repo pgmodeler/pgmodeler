@@ -665,8 +665,7 @@ void MainWindow::saveTemporaryModels(void)
 		{
 			bg_saving_wgt->setVisible(true);
 			bg_saving_pb->setValue(0);
-			bg_saving_lbl->setText(trUtf8("Saving temp. models"));
-			bg_saving_wgt->repaint();
+      bg_saving_wgt->repaint();
 
 			for(int i=0; i < count; i++)
 			{
