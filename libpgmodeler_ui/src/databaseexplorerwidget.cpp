@@ -94,6 +94,10 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 
   rename_item=nullptr;
 
+  data_grid_tb->setToolTip(data_grid_tb->toolTip() + QString(" (%1)").arg(data_grid_tb->shortcut().toString()));
+  runsql_tb->setToolTip(runsql_tb->toolTip() + QString(" (%1)").arg(runsql_tb->shortcut().toString()));
+  refresh_tb->setToolTip(refresh_tb->toolTip() + QString(" (%1)").arg(refresh_tb->shortcut().toString()));
+
   snippets_menu.setTitle(trUtf8("Snippets"));
   snippets_menu.setIcon(QIcon(QString(":icones/icones/codesnippet.png")));
 
@@ -857,7 +861,7 @@ void DatabaseExplorerWidget::configureImportHelper(void)
 
 void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 {
-  if(QApplication::mouseButtons()==Qt::RightButton)
+  if(QApplication::mouseButtons()==Qt::RightButton && item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toInt() >= 0)
   {
     ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
     unsigned obj_id=item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt();
@@ -1303,14 +1307,9 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
   try
   {
     QTreeWidgetItem *item=objects_trw->currentItem();
-    unsigned oid=0;
-
     clearObjectProperties();
 
-    if(item)
-      oid=item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt();
-
-    if(oid != 0)
+    if(item && item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toInt() >= 0)
     {
       attribs_map cached_attribs;
       QTableWidgetItem *tab_item=nullptr;
@@ -1362,6 +1361,40 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
             if(attrib.second.contains('\n') || attrib.second.length() > 30)
               tab_item->setToolTip(attrib.second);
           }
+        }
+
+        cached_attribs=item->data(DatabaseImportForm::OBJECT_OTHER_DATA,Qt::UserRole).value<attribs_map>();
+
+        if(cached_attribs[ParsersAttributes::OBJECT_TYPE]==BaseObject::getSchemaName(OBJ_CONSTRAINT) &&
+           cached_attribs[ParsersAttributes::TYPE]==~ConstraintType(ConstraintType::foreign_key) &&
+           item->childCount()==0)
+        {
+          QTreeWidgetItem *fk_item=nullptr, *src_item=nullptr;
+
+          /* Creates two items denoting the source columns and referenced tables.
+             These items have a negative id indicating that no popup menu will be show if user
+             right-click them. */
+
+          src_item=new QTreeWidgetItem(item);
+          src_item->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, QVariant::fromValue<int>(-1));
+          src_item->setIcon(0, QPixmap(QString(":/icones/icones/column.png")));
+          src_item->setText(0, QString("%1(%2)")
+                           .arg(cached_attribs[ParsersAttributes::TABLE])
+                           .arg(cached_attribs[ParsersAttributes::SRC_COLUMNS]));
+          src_item->setToolTip(0, trUtf8("Src. table: %1\nSrc. column(s): %2")
+                              .arg(cached_attribs[ParsersAttributes::TABLE])
+                              .arg(cached_attribs[ParsersAttributes::SRC_COLUMNS]));
+
+
+          fk_item=new QTreeWidgetItem(item);
+          fk_item->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, QVariant::fromValue<int>(-1));
+          fk_item->setIcon(0, QPixmap(QString(":/icones/icones/reference.png")));
+          fk_item->setText(0, QString("%1(%2)")
+                           .arg(cached_attribs[ParsersAttributes::REF_TABLE])
+                           .arg(cached_attribs[ParsersAttributes::DST_COLUMNS]));
+          fk_item->setToolTip(0, trUtf8("Ref. table: %1\nRef. column(s): %2")
+                              .arg(cached_attribs[ParsersAttributes::REF_TABLE])
+                              .arg(cached_attribs[ParsersAttributes::DST_COLUMNS]));
         }
       }
 
