@@ -1365,36 +1365,50 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 
         cached_attribs=item->data(DatabaseImportForm::OBJECT_OTHER_DATA,Qt::UserRole).value<attribs_map>();
 
-        if(cached_attribs[ParsersAttributes::OBJECT_TYPE]==BaseObject::getSchemaName(OBJ_CONSTRAINT) &&
-           cached_attribs[ParsersAttributes::TYPE]==~ConstraintType(ConstraintType::foreign_key) &&
-           item->childCount()==0)
+        if(cached_attribs[ParsersAttributes::OBJECT_TYPE]==BaseObject::getSchemaName(OBJ_CONSTRAINT) &&  item->childCount()==0)
         {
           QTreeWidgetItem *fk_item=nullptr, *src_item=nullptr;
 
-          /* Creates two items denoting the source columns and referenced tables.
+          if(cached_attribs[ParsersAttributes::TYPE]==~ConstraintType(ConstraintType::foreign_key))
+          {
+            /* Creates two items denoting the source columns and referenced tables.
              These items have a negative id indicating that no popup menu will be show if user
              right-click them. */
 
-          src_item=new QTreeWidgetItem(item);
-          src_item->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, QVariant::fromValue<int>(-1));
-          src_item->setIcon(0, QPixmap(QString(":/icones/icones/column.png")));
-          src_item->setText(0, QString("%1(%2)")
-                           .arg(cached_attribs[ParsersAttributes::TABLE])
-                           .arg(cached_attribs[ParsersAttributes::SRC_COLUMNS]));
-          src_item->setToolTip(0, trUtf8("Src. table: %1\nSrc. column(s): %2")
-                              .arg(cached_attribs[ParsersAttributes::TABLE])
-                              .arg(cached_attribs[ParsersAttributes::SRC_COLUMNS]));
+            src_item=new QTreeWidgetItem(item);
+            src_item->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, QVariant::fromValue<int>(-1));
+            src_item->setIcon(0, QPixmap(QString(":/icones/icones/column.png")));
+            src_item->setText(0, QString("%1(%2)")
+                .arg(cached_attribs[ParsersAttributes::TABLE])
+                .arg(cached_attribs[ParsersAttributes::SRC_COLUMNS]));
+            src_item->setToolTip(0, trUtf8("Src. table: %1\nSrc. column(s): %2")
+                .arg(cached_attribs[ParsersAttributes::TABLE])
+                .arg(cached_attribs[ParsersAttributes::SRC_COLUMNS]));
 
 
-          fk_item=new QTreeWidgetItem(item);
-          fk_item->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, QVariant::fromValue<int>(-1));
-          fk_item->setIcon(0, QPixmap(QString(":/icones/icones/reference.png")));
-          fk_item->setText(0, QString("%1(%2)")
-                           .arg(cached_attribs[ParsersAttributes::REF_TABLE])
-                           .arg(cached_attribs[ParsersAttributes::DST_COLUMNS]));
-          fk_item->setToolTip(0, trUtf8("Ref. table: %1\nRef. column(s): %2")
-                              .arg(cached_attribs[ParsersAttributes::REF_TABLE])
-                              .arg(cached_attribs[ParsersAttributes::DST_COLUMNS]));
+            fk_item=new QTreeWidgetItem(item);
+            fk_item->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, QVariant::fromValue<int>(-1));
+            fk_item->setIcon(0, QPixmap(QString(":/icones/icones/reference.png")));
+            fk_item->setText(0, QString("%1(%2)")
+                  .arg(cached_attribs[ParsersAttributes::REF_TABLE])
+                  .arg(cached_attribs[ParsersAttributes::DST_COLUMNS]));
+            fk_item->setToolTip(0, trUtf8("Ref. table: %1\nRef. column(s): %2")
+                  .arg(cached_attribs[ParsersAttributes::REF_TABLE])
+                  .arg(cached_attribs[ParsersAttributes::DST_COLUMNS]));
+          }
+          else if(cached_attribs[ParsersAttributes::TYPE]==~ConstraintType(ConstraintType::unique) ||
+                  cached_attribs[ParsersAttributes::TYPE]==~ConstraintType(ConstraintType::primary_key))
+          {
+            QStringList columns=cached_attribs[ParsersAttributes::SRC_COLUMNS].split(ELEM_SEPARATOR);
+
+            for(auto &col : columns)
+            {
+              src_item=new QTreeWidgetItem(item);
+              src_item->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, QVariant::fromValue<int>(-1));
+              src_item->setIcon(0, QPixmap(QString(":/icones/icones/column.png")));
+              src_item->setText(0, col);
+            }
+          }
         }
       }
 
