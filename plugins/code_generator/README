@@ -1,0 +1,31 @@
+#
+# Created by: Riccardo Campisano riccardo.campisano AT gmail DOT com
+# Original code: https://github.com/pgmodeler/pgmodeler/tree/develop/plugins/xml2object
+#
+# NOTE: pgmodeler plugins needs 'qttools5-dev' system package
+#
+###
+# Example of pgmodeler compilation (under debian):
+# from http://www.campisano.org/wiki/en/Postgresql#Pgmodeler :
+###
+# sudo apt-get install g++ pkg-config qt5-qmake qt5-default qtchooser libpq-dev libxml2-dev
+# cd $HOME
+# wget https://github.com/pgmodeler/pgmodeler/archive/v0.8.1.tar.gz
+# tar -xzvf v0.8.1.tar.gz
+# cd pgmodeler-0.8.1/
+# qmake PREFIX=$HOME/pgmodeler pgmodeler.pro
+# make
+# make install
+# $HOME/pgmodeler/bin/pgmodeler
+#
+###
+# Example of plugin compilation
+###
+# sudo apt-get install qttools5-dev
+# cd $HOME/pgmodeler-0.8.1/plugins
+# qmake PREFIX=$HOME/pgmodeler plugins.pro
+# make
+# make install
+# $HOME/pgmodeler/bin/pgmodeler
+# # open or generate a model and press CTRL+ALT+G
+#
