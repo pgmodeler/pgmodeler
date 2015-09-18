@@ -2,12 +2,12 @@
 #include "code_generator_widget.h"
 #include "exception.h"
 #include "messagebox.h"
-#include "YOUR_SPECIFIC_generator.h"
+#include "python_daos_generator.h"
 
 CodeGeneratorPlugin::CodeGeneratorPlugin(void)
 {
     this->widget = new CodeGeneratorWidget();
-    this->generator = new YOUR_SPECIFIC_Generator();
+    this->generator = new PythonDAOsGenerator();
     ((CodeGeneratorWidget*)this->widget)->setGenerator((BaseCodeGenerator *) this->generator);
 
     configurePluginInfo(
