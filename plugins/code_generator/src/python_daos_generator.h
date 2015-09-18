@@ -11,12 +11,15 @@ class PythonDAOsGenerator: public BaseCodeGenerator {
 
     private:
         void generateTable(std::stringstream &text, Table *table);
-        std::string getDAONameFromTableName(std::string &table_name);
         void generateHeader(std::stringstream &text, Table *table);
         void generateInsert(std::stringstream &text, Table *table);
         void generateUpdate(std::stringstream &text, Table *table);
         void generateDelete(std::stringstream &text, Table *table);
         void generateSelect(std::stringstream &text, Table *table);
+
+        std::string getDAONameFromTableName(std::string &table_name);
+        std::vector< Column * > getTableColumns(Table *table);
+        std::vector< Column * > getTablePrimaryKeysColumns(Table *table);
 };
 
 #endif
