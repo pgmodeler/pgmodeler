@@ -30,11 +30,11 @@ void PythonDAOsGenerator::generateTable(std::stringstream &text, Table *table)
     text << '\n';
 
     // Update
-    this->generateUpdate(text, table);
+    this->generateUpdateFromPK(text, table);
     text << '\n';
 
     // Delete
-    this->generateDelete(text, table);
+    this->generateDeleteFromPK(text, table);
     text << '\n';
 
     // Select
@@ -136,7 +136,10 @@ void PythonDAOsGenerator::generateInsert(std::stringstream &text, Table *table)
             text << "            \"" << col_name << "\": " << col_name;
         }
     }
-    text << "\n        }\n";
+    text << "\n        }";
+    text << '\n';
+
+    //TODO [CMP] put \n at the start of the line
 
     // sql query
     text << "\n        sql = (";
@@ -216,14 +219,176 @@ void PythonDAOsGenerator::generateInsert(std::stringstream &text, Table *table)
     text << "\n            raise";
 }
 
-void PythonDAOsGenerator::generateUpdate(std::stringstream &text, Table *table)
+void PythonDAOsGenerator::generateUpdateFromPK(std::stringstream &text, Table *table)
 {
+    // table name
+    std::string table_name = table->getName().toUtf8().constData();
 
+    // get table columns and iterator to loop under all table columns
+    std::vector< Column * > table_columns = this->getTableColumns(table);
+    std::vector< Column * >::iterator table_columns_it;
+
+    // get primary key columns and iterator
+    std::vector< Column * > pk_columns = this->getTablePrimaryKeyColumns(table);
+    std::vector< Column * >::iterator pk_columns_it;
+
+    if(pk_columns.empty())
+    {
+        return; // will be no update from pk
+    }
+
+    std::string pk_names = this->getTablePrimaryKeyNames(pk_columns);
+
+    // auxiliary vars
+    Column *column;
+    std::string col_name;
+    bool is_pk;
+
+    // funcion definition and parameters
+    text << "\n    def update_by_" << pk_names << "(";
+    text << "\n        self,";
+    // pk first
+    for(pk_columns_it = pk_columns.begin(); pk_columns_it != pk_columns.end(); ++pk_columns_it)
+    {
+        column = *pk_columns_it;
+        col_name = column->getName().toUtf8().constData();
+        text << "\n        " << col_name;
+        if(!table_columns.empty() || std::next(pk_columns_it, 1) != pk_columns.end()) text << ',';
+    }
+    // then the rest
+    for(table_columns_it = table_columns.begin(); table_columns_it != table_columns.end(); ++table_columns_it)
+    {
+        is_pk = std::find(pk_columns.begin(), pk_columns.end(), *table_columns_it) != pk_columns.end();
+        if(! is_pk)
+        {
+            column = *table_columns_it;
+            col_name = column->getName().toUtf8().constData();
+            text << "\n        " << col_name;
+            if(std::next(table_columns_it, 1) != table_columns.end()) text << ',';
+        }
+    }
+    text << "\n    ):";
+
+    // commentary
+    text << "\n        \"\"\" Update a '" << table_name << "' record";
+    text << "\n            using primary key \"\"\"";
+    text << '\n';
+
+    // query arguments
+    text << "\n        args = {";
+    for(table_columns_it = table_columns.begin(); table_columns_it != table_columns.end(); ++table_columns_it)
+    {
+        column = *table_columns_it;
+        col_name = column->getName().toUtf8().constData();
+        text << "\n            \"" << col_name << "\": " << col_name;
+        if(std::next(table_columns_it, 1) != table_columns.end()) text << ',';
+    }
+    text << "\n        }";
+    text << '\n';
+
+    // sql query
+    text << "\n        sql = (";
+    text << "\n            \"UPDATE " << table_name << " SET \"";
+    for(table_columns_it = table_columns.begin(); table_columns_it != table_columns.end(); ++table_columns_it)
+    {
+        column = *table_columns_it;
+        col_name = column->getName().toUtf8().constData();
+        text << "\n            \"" << col_name << " = %(" << col_name << ")s";
+        if(std::next(table_columns_it, 1) != table_columns.end()) text << ", ";
+        text << '\"';
+    }
+    text << "\n            \" WHERE \"";
+    for(pk_columns_it = pk_columns.begin(); pk_columns_it != pk_columns.end(); ++pk_columns_it)
+    {
+        column = *pk_columns_it;
+        col_name = column->getName().toUtf8().constData();
+        text << "\n            \"" << col_name << " = %(" << col_name << ")s";
+        if(std::next(pk_columns_it, 1) != pk_columns.end()) text << " AND ";
+        text << '\"';
+    }
+    text << "\n        )";
+    text << '\n';
+    // execution
+    text << "\n        try:";
+    text << "\n            result = self.db.execute(sql, args)";
+    text << "\n            result.close()";
+    text << "\n            return result.rowcount";
+    text << "\n        except Exception, error:";
+    text << "\n            self.db.logger.error(error)";
+    text << "\n            raise";
 }
 
-void PythonDAOsGenerator::generateDelete(std::stringstream &text, Table *table)
+void PythonDAOsGenerator::generateDeleteFromPK(std::stringstream &text, Table *table)
 {
+    // table name
+    std::string table_name = table->getName().toUtf8().constData();
 
+    // get primary key columns and iterator
+    std::vector< Column * > pk_columns = this->getTablePrimaryKeyColumns(table);
+    std::vector< Column * >::iterator pk_columns_it;
+
+    if(pk_columns.empty())
+    {
+        return; // will be no delete from pk
+    }
+
+    std::string pk_names = this->getTablePrimaryKeyNames(pk_columns);
+
+    // auxiliary vars
+    Column *column;
+    std::string col_name;
+
+    // funcion definition and parameters
+    text << "\n    def delete_by_" << pk_names << "(";
+    text << "\n        self,";
+    // pk first
+    for(pk_columns_it = pk_columns.begin(); pk_columns_it != pk_columns.end(); ++pk_columns_it)
+    {
+        column = *pk_columns_it;
+        col_name = column->getName().toUtf8().constData();
+        text << "\n        " << col_name;
+        if(std::next(pk_columns_it, 1) != pk_columns.end()) text << ',';
+    }
+    text << "\n    ):";
+
+    // commentary
+    text << "\n        \"\"\" Delete a '" << table_name << "' record";
+    text << "\n            using primary key \"\"\"";
+    text << '\n';
+
+    // query arguments
+    text << "\n        args = {";
+    for(pk_columns_it = pk_columns.begin(); pk_columns_it != pk_columns.end(); ++pk_columns_it)
+    {
+        column = *pk_columns_it;
+        col_name = column->getName().toUtf8().constData();
+        text << "\n            \"" << col_name << "\": " << col_name;
+        if(std::next(pk_columns_it, 1) != pk_columns.end()) text << ',';
+    }
+    text << "\n        }";
+    text << '\n';
+
+    // sql query
+    text << "\n        sql = (";
+    text << "\n            \"DELETE FROM " << table_name << " WHERE \"";
+    for(pk_columns_it = pk_columns.begin(); pk_columns_it != pk_columns.end(); ++pk_columns_it)
+    {
+        column = *pk_columns_it;
+        col_name = column->getName().toUtf8().constData();
+        text << "\n            \"" << col_name << " = %(" << col_name << ")s";
+        if(std::next(pk_columns_it, 1) != pk_columns.end()) text << " AND ";
+        text << '\"';
+    }
+    text << "\n        )";
+    text << '\n';
+    // execution
+    text << "\n        try:";
+    text << "\n            result = self.db.execute(sql, args)";
+    text << "\n            result.close()";
+    text << "\n            return result.rowcount";
+    text << "\n        except Exception, error:";
+    text << "\n            self.db.logger.error(error)";
+    text << "\n            raise";
 }
 
 void PythonDAOsGenerator::generateSelectFromPK(std::stringstream &text, Table *table)
@@ -303,11 +468,17 @@ void PythonDAOsGenerator::generateSelectFromPK(std::stringstream &text, Table *t
     text << '\n';
     // execution
     text << "\n        try:";
-    text << "\n            result = self.db.execute(sql, args)";
-    text << "\n            results = []";
-    text << "\n            for row in result:";
-    text << "\n                results.append(dict(zip(row.keys(), row.values())))";
-    text << "\n            return results";
+    text << "\n            results = self.db.execute(sql, args)";
+    text << "\n            if results.rowcount > 1:";
+    text << "\n                raise RuntimeError(";
+    text << "\n                    \"ERROR: Select by primary key returned multiple rows!\")";
+    text << "\n            if results.rowcount == 1:";
+    text << "\n                row = results.fetchone()";
+    text << "\n                result = dict(zip(row.keys(), row.values()))";
+    text << "\n            else:";
+    text << "\n                result = None";
+    text << "\n            results.close()";
+    text << "\n            return result";
     text << "\n        except Exception, error:";
     text << "\n            self.db.logger.error(error)";
     text << "\n            raise";

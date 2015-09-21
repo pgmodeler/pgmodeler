@@ -13,8 +13,8 @@ class PythonDAOsGenerator: public BaseCodeGenerator {
         void generateTable(std::stringstream &text, Table *table);
         void generateHeader(std::stringstream &text, Table *table);
         void generateInsert(std::stringstream &text, Table *table);
-        void generateUpdate(std::stringstream &text, Table *table);
-        void generateDelete(std::stringstream &text, Table *table);
+        void generateUpdateFromPK(std::stringstream &text, Table *table);
+        void generateDeleteFromPK(std::stringstream &text, Table *table);
         void generateSelectFromPK(std::stringstream &text, Table *table);
 
         std::string getDAONameFromTableName(std::string &table_name);
