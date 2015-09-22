@@ -23,22 +23,23 @@ void PythonDAOsGenerator::generateTable(std::stringstream &text, Table *table)
 {
     // Header:
     this->generateHeader(text, table);
-    text << '\n';
 
     // Insert
     this->generateInsert(text, table);
-    text << '\n';
 
     // Update
     this->generateUpdateFromPK(text, table);
-    text << '\n';
 
     // Delete
     this->generateDeleteFromPK(text, table);
-    text << '\n';
 
     // Select
     this->generateSelectFromPK(text, table);
+
+    // Select
+    this->generateSelectFromUKs(text, table);
+
+    // end newline
     text << '\n';
 }
 
@@ -85,6 +86,7 @@ void PythonDAOsGenerator::generateInsert(std::stringstream &text, Table *table)
     bool is_first_column_writed;
 
     // funcion definition and parameters
+    text << '\n';
     text << "\n    def insert(";
     text << "\n        self";
     is_first_column_writed = true; // already write self above
@@ -237,7 +239,7 @@ void PythonDAOsGenerator::generateUpdateFromPK(std::stringstream &text, Table *t
         return; // will be no update from pk
     }
 
-    std::string pk_names = this->getTablePrimaryKeyNames(pk_columns);
+    std::string pk_names = this->getKeyNamesFromColumns(pk_columns);
 
     // auxiliary vars
     Column *column;
@@ -245,6 +247,7 @@ void PythonDAOsGenerator::generateUpdateFromPK(std::stringstream &text, Table *t
     bool is_pk;
 
     // funcion definition and parameters
+    text << '\n';
     text << "\n    def update_by_" << pk_names << "(";
     text << "\n        self,";
     // pk first
@@ -332,13 +335,14 @@ void PythonDAOsGenerator::generateDeleteFromPK(std::stringstream &text, Table *t
         return; // will be no delete from pk
     }
 
-    std::string pk_names = this->getTablePrimaryKeyNames(pk_columns);
+    std::string pk_names = this->getKeyNamesFromColumns(pk_columns);
 
     // auxiliary vars
     Column *column;
     std::string col_name;
 
     // funcion definition and parameters
+    text << '\n';
     text << "\n    def delete_by_" << pk_names << "(";
     text << "\n        self,";
     // pk first
@@ -398,48 +402,74 @@ void PythonDAOsGenerator::generateSelectFromPK(std::stringstream &text, Table *t
 
     // get table columns and iterator to loop under all table columns
     std::vector< Column * > table_columns = this->getTableColumns(table);
-    std::vector< Column * >::iterator table_columns_it;
 
     // get primary key columns and iterator
     std::vector< Column * > pk_columns = this->getTablePrimaryKeyColumns(table);
-    std::vector< Column * >::iterator pk_columns_it;
 
-    if(pk_columns.empty())
+    // generate for pk
+    generateSelectFromConstraintColumns(text, table_name, table_columns, pk_columns);
+}
+
+void PythonDAOsGenerator::generateSelectFromUKs(std::stringstream &text, Table *table)
+{
+    // table name
+    std::string table_name = table->getName().toUtf8().constData();
+
+    // get table columns and iterator to loop under all table columns
+    std::vector< Column * > table_columns = this->getTableColumns(table);
+
+    // get all unique keys
+    std::vector< std::vector< Column * > > uk_keys = getTableUniqueKeyColumns(table);
+    std::vector< std::vector< Column * > >::iterator uk_keys_it;
+
+    // generate for all uk
+    for(uk_keys_it = uk_keys.begin(); uk_keys_it != uk_keys.end(); ++uk_keys_it)
     {
-        return; // will be no select from pk
+        generateSelectFromConstraintColumns(text, table_name, table_columns, *uk_keys_it);
+    }
+}
+
+void PythonDAOsGenerator::generateSelectFromConstraintColumns(std::stringstream &text, std::string &table_name, std::vector< Column * > &table_columns, std::vector< Column * > &constr_columns)
+{
+    if(constr_columns.empty())
+    {
+        return; // will be no select from this primary/unique key
     }
 
-    std::string pk_names = this->getTablePrimaryKeyNames(pk_columns);
+    std::vector< Column * >::iterator table_columns_it;
+    std::vector< Column * >::iterator constr_columns_it;
+    std::string constr_names = this->getKeyNamesFromColumns(constr_columns);
 
     // auxiliary vars
     Column *column;
     std::string col_name;
 
     // funcion definition and parameters
-    text << "\n    def select_by_" << pk_names << "(";
+    text << '\n';
+    text << "\n    def select_by_" << constr_names << "(";
     text << "\n        self,";
-    for(pk_columns_it = pk_columns.begin(); pk_columns_it != pk_columns.end(); ++pk_columns_it)
+    for(constr_columns_it = constr_columns.begin(); constr_columns_it != constr_columns.end(); ++constr_columns_it)
     {
-        column = *pk_columns_it;
+        column = *constr_columns_it;
         col_name = column->getName().toUtf8().constData();
         text << "\n        " << col_name;
-        if(std::next(pk_columns_it, 1) != pk_columns.end()) text << ',';
+        if(std::next(constr_columns_it, 1) != constr_columns.end()) text << ',';
     }
     text << "\n    ):";
 
     // commentary
     text << "\n        \"\"\" Retreive a '" << table_name << "' record";
-    text << "\n            using primary key \"\"\"";
+    text << "\n            using primary or unique key \"\"\"";
     text << '\n';
 
     // query arguments
     text << "\n        args = {";
-    for(pk_columns_it = pk_columns.begin(); pk_columns_it != pk_columns.end(); ++pk_columns_it)
+    for(constr_columns_it = constr_columns.begin(); constr_columns_it != constr_columns.end(); ++constr_columns_it)
     {
-        column = *pk_columns_it;
+        column = *constr_columns_it;
         col_name = column->getName().toUtf8().constData();
         text << "\n            \"" << col_name << "\": " << col_name;
-        if(std::next(pk_columns_it, 1) != pk_columns.end()) text << ',';
+        if(std::next(constr_columns_it, 1) != constr_columns.end()) text << ',';
     }
     text << "\n        }";
     text << '\n';
@@ -456,12 +486,12 @@ void PythonDAOsGenerator::generateSelectFromPK(std::stringstream &text, Table *t
         text << '\"';
     }
     text << "\n            \" FROM " << table_name << " WHERE \"";
-    for(pk_columns_it = pk_columns.begin(); pk_columns_it != pk_columns.end(); ++pk_columns_it)
+    for(constr_columns_it = constr_columns.begin(); constr_columns_it != constr_columns.end(); ++constr_columns_it)
     {
-        column = *pk_columns_it;
+        column = *constr_columns_it;
         col_name = column->getName().toUtf8().constData();
         text << "\n            \"" << col_name << " = %(" << col_name << ")s";
-        if(std::next(pk_columns_it, 1) != pk_columns.end()) text << " AND ";
+        if(std::next(constr_columns_it, 1) != constr_columns.end()) text << " AND ";
         text << '\"';
     }
     text << "\n        )";
@@ -471,7 +501,8 @@ void PythonDAOsGenerator::generateSelectFromPK(std::stringstream &text, Table *t
     text << "\n            results = self.db.execute(sql, args)";
     text << "\n            if results.rowcount > 1:";
     text << "\n                raise RuntimeError(";
-    text << "\n                    \"ERROR: Select by primary key returned multiple rows!\")";
+    text << "\n                    \"ERROR: Select by primary/unique key\"";
+    text << "\n                    \"returned multiple rows!\")";
     text << "\n            if results.rowcount == 1:";
     text << "\n                row = results.fetchone()";
     text << "\n                result = dict(zip(row.keys(), row.values()))";
@@ -561,7 +592,40 @@ std::vector< Column * > PythonDAOsGenerator::getTablePrimaryKeyAutoColumns(Table
     return pk_columns;
 }
 
-std::string PythonDAOsGenerator::getTablePrimaryKeyNames(std::vector< Column * > &pk_columns)
+std::vector< std::vector< Column * > > PythonDAOsGenerator::getTableUniqueKeyColumns(Table *table)
+{
+    std::vector< std::vector< Column * > > uk_columns;
+
+    std::vector< TableObject * > *table_objects = table->getObjectList(OBJ_CONSTRAINT);
+    std::vector< TableObject * >::iterator table_objects_it;
+
+    Constraint* unique_key;
+    unsigned uk_num_columns;
+
+    for(table_objects_it = table_objects->begin(); table_objects_it != table_objects->end(); ++table_objects_it)
+    {
+        unique_key = (Constraint *)(*table_objects_it);
+
+        if(unique_key->getConstraintType() == ConstraintType::unique)
+        {
+            uk_num_columns = unique_key->getColumnCount(Constraint::SOURCE_COLS);
+
+            if(uk_num_columns > 0)
+            {
+                std::vector< Column * > columns;
+                for(unsigned i = 0; i<uk_num_columns; ++i)
+                {
+                    columns.push_back(unique_key->getColumn(i, Constraint::SOURCE_COLS));
+                }
+                uk_columns.push_back(columns);
+            }
+        }
+    }
+
+    return uk_columns;
+}
+
+std::string PythonDAOsGenerator::getKeyNamesFromColumns(std::vector< Column * > &pk_columns)
 {
     std::string pk_names;
     std::vector< Column * >::iterator pk_columns_it;
