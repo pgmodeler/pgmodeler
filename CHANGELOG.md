@@ -1,6 +1,66 @@
 Change Log
 ---------
 
+v0.8.2-alpha
+------
+<em>Codename: <strong>Faithful Elephant</strong></em><br/>
+<em>Release date: September 26, 2015</em><br/>
+
+* [New] Added missing keywords CASE, ELSE, QUERY, ELSIF, RAISE, EXCEPTION, TG_OP to sql-highlight.conf
+* [New] Columns that compose primary key and unique key are exposed as children of the constraint in the object tree at DatabaseExplorerWidget.
+* [New] Foreign key objects selected in DatabaseExplorerWidget now expose, in two children items, the source and referenced tables/columns.
+* [New] Added a confirmation message in DataManipulationForm to avoid lose uncommited changes before retrieve data.
+* [New] NumberedTextEditor now is able to set a custom tab width.
+* [New] Added a configuration option for custom tab width in GeneralConfigWidget.
+* [New] Added a nl_NL translation.
+* [New] Created a mechanism to make default values of columns in the form nextval(sequence) be transformed in a link between the sequence and the column in the import process. This will diminish the divergences raised by the diff process.
+* [New] Added a readonly item delegate for attributes grid to permit user to copy contents or navigate through values using keyboard.
+* [Change] Minor enhacement in DataManipulationForm to show the query time when retrieving data.
+* [Change] Minor adjustments on tooltips of buttons in SQLToolWidget and DatabaseExplorerWidget.
+* [Change] Minor size adjustment in ColumnWidget.
+* [Change] Minor improvement on SyntaxHighlighter to optionally use the same tab size as NumberedTextEditor.
+* [Change] Minor improvement on BaseObjectWidget to avoid install event filter in QPlainTextEdit and NumberedTextEditor.
+* [Change] Replaced the QPlainTextEdit instance for source code input in FunctionWidget by a NumberedTextEditor instance.
+* [Change] Minor message adjustments on SQLExecutionWidget.
+* [Change] Minor adjustment on relationship invalidation message in ModelValidationWidget.
+* [Change] Removed unused code from ModelValidationHelper.
+* [Change] If a 1:1 or 1:n relationship is removed from the model the receiver table will have its fk relationships updated. This is useful to recreate fk relationships that were replaced by the removed relationship.
+* [Change] Minor forms adjustments to resize command buttons depending on the size of texts.
+* [Change] More improvements in the diff process when dealing with foreign keys creation.
+* [Change] Changed the characters used to specify function call or any unescaped values in DataManipulationForm from <> to {}
+* [Change] When using snippets in the SQL execution field the current code will not be cleaned up, instead the snippet will be appended to the current code.
+* [Change] Removed the automatic view switching when saving the model.
+* [Change] Minor adjustment on buttons positions at NewObjectOverlay.
+* [Change] Minor message update in MainWindow::saveModel.
+* [Change] pgModeler now indicates the name of unsaved models before quit.
+* [Fix] Minor fix to correclty show the temporary models save progress at the bottom of main window.
+* [Fix] Minor fixes in the validation process to force graphical objects updates and object's tree updates to reflect the new ids.
+* [Fix] Minor fixes in the object naming. Now pgModeler will accept dollar signs in any portion of the string or even numbers as object's name but this will automatically quote the name to avoid errors.
+* [Fix] Fixed the generation of DROP command for triggers and rules.
+* [Fix] Fixed a bug in Index and IndexWidget that was permiting btree index elements to have sorting attributes which is not valid according to PostgreSQL rules.
+* [Fix] Fixed a bug in CodeCompletionWidget that was not retrieving objects with quoted names.
+* [Fix] Minor fix in DataManipulationForm to clear the changed rows list after save the modifications.
+* [Fix] Fixing the tab index in generalconfigwidget.ui.
+* [Fix] Added a workaround to avoid crashes and leaks related to relationship disconnection and validation.
+* [Fix] Minor fix in ModelsDiffHelper to avoid diff generation errors related to the missing 'fk-defs' attribute.
+* [Fix] Fixed a crash when trying to create a new foreign key after connect two tables using a 1:1 or 1:n relationship.
+* [Fix] Translated the pt_BR word found in the code.
+* [Fix] Minor fix in BaseObject to permit the usage of swapObjectsIds method from ModelWidget class.
+* [Fix] Fixed a bug that was duplicating some foreign key creation code in diff process.
+* [Fix] Fixed a bug in the diff process that was dropping columns linked to sequences when these ones were dropped.
+* [Fix] Fixed a bug when disabling table's SQL code from model widget. The FK constraints are now enabled/disabled correctly.
+* [Fix] Fixed a bug in import process that was wrongly prepending schema's name in types related to tables.
+* [Fix] Minor fixes in doxygen.conf.
+* [Fix] Fixed the feature to convert to sequence a serial column in order to diminsh breaking references between the column's parent table and the newly created sequence.
+* [Fix] Spelling fixes in es_ES UI translation.
+* [Fix] Fixed a bug that was not setting up the object's schema correctly when creating new table or view inside a selected schema.
+* [Fix] Fixed a bug in DatabaseModel::storeSpecialObjectsXML that was causing crashes when closing a model.
+* [Fix] Fixed the model loading from recent list in order to expose the "fix model" message box in case of errors.
+* [Fix] Minor adjustment on the generated diff code to include foreign keys definitions at the end of the script.
+* [Fix] Minor adjustment on ui-style.conf to minimize the problems with dark themes.
+* [Fix] Fixed a problem with validation that was trying to validate foreign keys without need.
+* [Fix] Fix a bug that was preventing "deferrable" attribute for constraint triggers to be used in SQL definition.
+
 v0.8.1
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em><br/>
