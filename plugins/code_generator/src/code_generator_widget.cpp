@@ -1,5 +1,8 @@
 #include "code_generator_widget.h"
 
+#include <iostream>
+#include <fstream>
+#include <map>
 #include <string>
 
 CodeGeneratorWidget::CodeGeneratorWidget(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,f)
@@ -37,12 +40,22 @@ void CodeGeneratorWidget::doClearCode(void)
 
 void CodeGeneratorWidget::doGenerateCode(void)
 {
+    std::map< std::string, std::string > files_to_generate;
+    std::map< std::string, std::string >::iterator it;
+
     try
     {
         if(!op_list->isOperationChainStarted())
             op_list->startOperationChain();
 
-        this->generator->generateCode(model, this);
+        this->generator->generateCode(*model, *this, files_to_generate);
+
+        for(it = files_to_generate.begin(); it != files_to_generate.end(); ++it)
+        {
+            std::ofstream out_file("/tmp/" + it->first);
+            out_file << it->second;
+            out_file.close();
+        }
 
         op_list->finishOperationChain();
     }
