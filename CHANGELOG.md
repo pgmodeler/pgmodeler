@@ -12,7 +12,7 @@ v0.8.2-alpha
 * [New] Added a confirmation message in DataManipulationForm to avoid lose uncommited changes before retrieve data.
 * [New] NumberedTextEditor now is able to set a custom tab width.
 * [New] Added a configuration option for custom tab width in GeneralConfigWidget.
-* [New] Added a nl_NL translation.
+* [New] Added a nl_NL (Dutch - Netherlands) UI translation.
 * [New] Created a mechanism to make default values of columns in the form nextval(sequence) be transformed in a link between the sequence and the column in the import process. This will diminish the divergences raised by the diff process.
 * [New] Added a readonly item delegate for attributes grid to permit user to copy contents or navigate through values using keyboard.
 * [Change] Minor enhacement in DataManipulationForm to show the query time when retrieving data.
@@ -36,7 +36,7 @@ v0.8.2-alpha
 * [Fix] Minor fix to correclty show the temporary models save progress at the bottom of main window.
 * [Fix] Minor fixes in the validation process to force graphical objects updates and object's tree updates to reflect the new ids.
 * [Fix] Minor fixes in the object naming. Now pgModeler will accept dollar signs in any portion of the string or even numbers as object's name but this will automatically quote the name to avoid errors.
-* [Fix] Fixed the generation of DROP command for triggers and rules.
+* [Fix] Fixed the generation of DROP commands for triggers and rules.
 * [Fix] Fixed a bug in Index and IndexWidget that was permiting btree index elements to have sorting attributes which is not valid according to PostgreSQL rules.
 * [Fix] Fixed a bug in CodeCompletionWidget that was not retrieving objects with quoted names.
 * [Fix] Minor fix in DataManipulationForm to clear the changed rows list after save the modifications.
@@ -44,7 +44,7 @@ v0.8.2-alpha
 * [Fix] Added a workaround to avoid crashes and leaks related to relationship disconnection and validation.
 * [Fix] Minor fix in ModelsDiffHelper to avoid diff generation errors related to the missing 'fk-defs' attribute.
 * [Fix] Fixed a crash when trying to create a new foreign key after connect two tables using a 1:1 or 1:n relationship.
-* [Fix] Translated the pt_BR word found in the code.
+* [Fix] Translated the pt_BR (Brazilian Portuguese) word found in the code.
 * [Fix] Minor fix in BaseObject to permit the usage of swapObjectsIds method from ModelWidget class.
 * [Fix] Fixed a bug that was duplicating some foreign key creation code in diff process.
 * [Fix] Fixed a bug in the diff process that was dropping columns linked to sequences when these ones were dropped.
@@ -52,7 +52,7 @@ v0.8.2-alpha
 * [Fix] Fixed a bug in import process that was wrongly prepending schema's name in types related to tables.
 * [Fix] Minor fixes in doxygen.conf.
 * [Fix] Fixed the feature to convert to sequence a serial column in order to diminsh breaking references between the column's parent table and the newly created sequence.
-* [Fix] Spelling fixes in es_ES UI translation.
+* [Fix] Spelling fixes in es_ES (Spanish) UI translation.
 * [Fix] Fixed a bug that was not setting up the object's schema correctly when creating new table or view inside a selected schema.
 * [Fix] Fixed a bug in DatabaseModel::storeSpecialObjectsXML that was causing crashes when closing a model.
 * [Fix] Fixed the model loading from recent list in order to expose the "fix model" message box in case of errors.

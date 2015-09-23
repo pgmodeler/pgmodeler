@@ -1,26 +1,41 @@
-v0.8.1
+v0.8.2-alpha
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em>
-<em>Release date: July 30, 2015</em>
-<em>Changes since: <strong>v0.8.0</strong></em><br/>
+<em>Release date: September 26, 2015</em>
+<em>Changes since: <strong>v0.8.1</strong></em><br/>
 
-<strong>Summary:</strong> after five months working to enhance the last major release we finally have the 0.8.1! This version brings a lot of improvements and fixes in a total of 30 new features, 68 changes, 72 bug fixes.<br/>
-The previous release introduced important new features and this one brings more improvements to them.<br/>
-Obviously, not all new features or changes will be noted by the user because they were created to help in bug fixes but what matters is that pgModeler is continously being enhanced.<br/>
-Below the key features of this new release are described. Please, refer to CHANGELOG.md to see the complete list of features and fixes.<br/>
+<strong>Summary:</strong> this is the first release of the last version that will close the 0.8.x series. This one brings a few new features and important bug fixes mainly related to diff and import processes.<br/>
 
-* <strong>Faster design:</strong> now it is possible to create dependency objects from within their related selectors in editing forms. For instance, inside the table's editing form you can create a new schema and assign to the table on the fly just by popping up the schema's selector dialog and right click the item "Schemas (n)" and then selecting "New schema". This action is valid in almost all selectors in editing forms. Surely this will shorten up the time spent to create objects in the model.<br/>
+Below the key features and fixes of this new release are described. Please, refer to CHANGELOG.md to see the complete list of features and fixes.<br/>
 
-* <strong>Automatic keyword quotating:</strong> introducing an automatic name quoting mechanism. This feature will add quotes to objects' names if they refer to PostgreSQL's reserved keywords. The automatic quoting will happen whenever the SQL code needs to be generated, this will avoid export or validation errors related to objects' names. <strong>NOTE:</strong> this feature is experimental and may fail in some cases.</br>
+<strong>Reverse engineering:</strong> <br/>
+* [New] Created a mechanism to make default values of columns in the form nextval(sequence) be transformed in a link between the sequence and the column in the import process. This will diminish the divergences raised by the diff process.
+* [Fix] Fixed a bug in import process that was wrongly prepending schema's name in types related to tables.
 
-* <strong>Improved object finder:</strong> the object finder is a handy tool when working with big models. In previous releases the only action over results was to open the editing form of the selected object in the results grid. Now the user can access the complete menu (the same one in the canvas area) by right click any item in the result grid. <strong>NOTE:</strong> the items available in the menu may vary depending upon the selected object.<br/>
+<strong>Diff process:</strong> </br>
+* [Fix] Minor fix in ModelsDiffHelper to avoid diff generation errors related to the missing 'fk-defs' attribute.
+* [Fix] Fixed a bug that was duplicating some foreign key creation code in diff process.
+* [Fix] Fixed a bug in the diff process that was dropping columns linked to sequences when these ones were dropped.
 
-* <strong>Advanced code preview:</strong> the source code visualization now is able to generate code related to the object and its dependecies or children for test purposes. Also, there is the possibility to save the code in that dialog to a file for later usage.<br/>
+<strong>Validation process:</strong> </br>
+* [Fix] Minor fixes in the validation process to force graphical objects updates and object's tree updates to reflect the new ids.
+* [Fix] Fixed a problem with validation that was trying to validate foreign keys without need.
 
-* <strong>Multiple database management:</strong> in previous versions the user was able to manage only a database at a time. Now it's possible to manage several databases at once using different connections without the need to close the ones currently being managed.<br/>
+<strong>Database explorer:</strong> <br/>
+* [New] Columns that compose primary key and unique key are exposed as children of the constraint in the object tree at DatabaseExplorerWidget.
+* [New] Foreign key objects selected in DatabaseExplorerWidget now expose, in two children items, the source and referenced tables/columns.
 
-* <strong>Patched diff process:</strong> the experimental diff feature was quite appreciated by the users and attending to some requests this feature received several fixes and a few new options like the one to preserve database names. This option will avoid attempts to rename a database when the model's name differs from the database's name.<br/>
+<strong>Solved leaks and crashes:</strong> <br/>
+* [Fix] Added a workaround to avoid crashes and leaks related to relationship disconnection and validation.
+* [Fix] Fixed a crash when trying to create a new foreign key after connect two tables using a 1:1 or 1:n relationship.
 
-* <strong>Improved import process:</strong> the reverse engineering process is now able to import a set of objects to an existing model. This is useful when the user needs to reuse objects from another database in the model currently being designed.<br/>
-
-* <strong>Miscelaneous:</strong> fixed some crashes related to thread hang ups when validating or diff'ing large models; the CLI received important patches and the model fix process generates more reliable models; pgModeler received a numbered source code editor in its most relevant portions to facilitate the source code reading and editing; Added a "Contributors" section in the about dialog to list the persons who contributed with patches and features and much more.<br/>
+<strong>Miscelaneous:</strong> <br/>
+* [New] NumberedTextEditor now is able to set a custom tab width.
+* [Change] When using snippets in the SQL execution field the current code will not be cleaned up, instead the snippet will be appended to the current code.
+* [Change] Removed the automatic view switching when saving the model.
+* [Change] pgModeler now indicates the name of unsaved models before quit.
+* [Fix] Minor fixes in the object naming. Now pgModeler will accept dollar signs in any portion of the string or even numbers as object's name but this will automatically quote the name to avoid errors.
+* [Fix] Fixed the generation of DROP commands for triggers and rules.
+* [Fix] Fixed a bug that was not setting up the object's schema correctly when creating new table or view inside a selected schema.
+* [Fix] Minor adjustment on ui-style.conf to minimize the problems with dark themes.
+* [Fix] Fix a bug that was preventing "deferrable" attribute for constraint triggers to be used in SQL definition.
