@@ -503,29 +503,40 @@ QString Function::getAlterDefinition(BaseObject *object)
 
     attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
 
-    if(this->execution_cost!=func->execution_cost)
-      attribs[ParsersAttributes::EXECUTION_COST]=QString::number(func->execution_cost);
-
-    if(this->returns_setof && func->returns_setof && this->row_amount!=func->row_amount)
+    if(this->source_code.simplified()!=func->source_code.simplified() ||
+       this->library!=func->library ||
+       this->symbol!=func->symbol)
     {
-      attribs[ParsersAttributes::RETURNS_SETOF]=ParsersAttributes::_TRUE_;
-      attribs[ParsersAttributes::ROW_AMOUNT]=QString::number(row_amount);
+      attribs[ParsersAttributes::DEFINITION]=func->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+      attribs[ParsersAttributes::DEFINITION].replace(QString("CREATE FUNCTION"), QString("CREATE OR REPLACE FUNCTION"));
+      attribs[ParsersAttributes::DEFINITION].size();
     }
+    else
+    {
+      if(this->execution_cost!=func->execution_cost)
+        attribs[ParsersAttributes::EXECUTION_COST]=QString::number(func->execution_cost);
 
-    if(this->function_type!=func->function_type)
-      attribs[ParsersAttributes::FUNCTION_TYPE]=~func->function_type;
+      if(this->returns_setof && func->returns_setof && this->row_amount!=func->row_amount)
+      {
+        attribs[ParsersAttributes::RETURNS_SETOF]=ParsersAttributes::_TRUE_;
+        attribs[ParsersAttributes::ROW_AMOUNT]=QString::number(row_amount);
+      }
 
-    if(this->is_leakproof!=func->is_leakproof)
-      attribs[ParsersAttributes::LEAKPROOF]=(func->is_leakproof ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+      if(this->function_type!=func->function_type)
+        attribs[ParsersAttributes::FUNCTION_TYPE]=~func->function_type;
 
-    if(this->security_type!=func->security_type)
-      attribs[ParsersAttributes::SECURITY_TYPE]=~func->security_type; 
+      if(this->is_leakproof!=func->is_leakproof)
+        attribs[ParsersAttributes::LEAKPROOF]=(func->is_leakproof ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
 
-    if((this->behavior_type!=func->behavior_type) &&
-       ((this->behavior_type==BehaviorType::called_on_null_input) ||
-        ((this->behavior_type==BehaviorType::strict || this->behavior_type==BehaviorType::returns_null_on_null_input) &&
-         func->function_type==BehaviorType::called_on_null_input)))
-      attribs[ParsersAttributes::BEHAVIOR_TYPE]=~func->behavior_type;
+      if(this->security_type!=func->security_type)
+        attribs[ParsersAttributes::SECURITY_TYPE]=~func->security_type;
+
+      if((this->behavior_type!=func->behavior_type) &&
+         ((this->behavior_type==BehaviorType::called_on_null_input) ||
+          ((this->behavior_type==BehaviorType::strict || this->behavior_type==BehaviorType::returns_null_on_null_input) &&
+           func->function_type==BehaviorType::called_on_null_input)))
+        attribs[ParsersAttributes::BEHAVIOR_TYPE]=~func->behavior_type;
+    }
 
     copyAttributes(attribs);
 

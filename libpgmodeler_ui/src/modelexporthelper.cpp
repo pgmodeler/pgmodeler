@@ -772,6 +772,10 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
               {
                 lin.remove(QString("UNLOGGED"));
               }
+              else if(obj_tp==OBJ_FUNCTION)
+              {
+                lin.remove(QString("OR REPLACE"));
+              }
             }
             else if(lin.startsWith(QString("DROP")))
             {

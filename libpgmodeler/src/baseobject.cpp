@@ -447,12 +447,6 @@ bool BaseObject::acceptsAlterCommand(ObjectType obj_type)
          obj_type==OBJ_SCHEMA || obj_type==OBJ_SEQUENCE ||
          obj_type==OBJ_TABLE || obj_type==OBJ_TABLESPACE ||
          obj_type==OBJ_TYPE);
-
-  /* return(obj_type!=OBJ_CONSTRAINT && obj_type!=OBJ_CAST &&
-         obj_type!=BASE_RELATIONSHIP && obj_type!=OBJ_TEXTBOX &&
-         obj_type!=OBJ_PERMISSION && obj_type!=OBJ_PARAMETER &&
-         obj_type!=OBJ_TYPE_ATTRIBUTE && obj_type!=OBJ_TAG  &&
-         obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE); */
 }
 
 bool BaseObject::acceptsDropCommand(ObjectType obj_type)
