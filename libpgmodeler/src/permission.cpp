@@ -194,6 +194,7 @@ bool Permission::isSimilarTo(Permission *perm)
   vector<vector<Role *>*> vect_roles={ &this->roles, &perm->roles };
   BaseObject *object=this->getObject(), *aux_object=perm->getObject();
 
+  //Generating a list with role names of both permissions
   for(auto &roles : vect_roles)
   {
     for(auto &role : *roles)
@@ -203,8 +204,6 @@ bool Permission::isSimilarTo(Permission *perm)
     fmt_rol_names.append(rol_names.join(','));
     rol_names.clear();
   }
-
-  //TODO: Compare the grant_op vector
 
   return(((object==aux_object) ||
           (object && aux_object && object->getSignature()==aux_object->getSignature())) &&

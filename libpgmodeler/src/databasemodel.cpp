@@ -2730,7 +2730,7 @@ void DatabaseModel::getPermissions(BaseObject *object, vector<Permission *> &per
 	}
 }
 
-int DatabaseModel::getPermissionIndex(Permission *perm, bool check_contents)
+int DatabaseModel::getPermissionIndex(Permission *perm, bool exact_match)
 {
 	int perm_idx=-1;
 
@@ -2742,7 +2742,7 @@ int DatabaseModel::getPermissionIndex(Permission *perm, bool check_contents)
     itr=permissions.begin();
     itr_end=permissions.end();
 
-    if(check_contents)
+    if(exact_match)
     {
       while(itr!=itr_end)
       {
