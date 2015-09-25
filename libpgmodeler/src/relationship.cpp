@@ -2532,7 +2532,7 @@ void Relationship::operator = (Relationship &rel)
 QString Relationship::getInheritDefinition(bool undo_inherit)
 {
   if(rel_type!=RELATIONSHIP_GEN)
-    return("");
+    return(QString());
 
   attributes[ParsersAttributes::INHERIT]=(undo_inherit ? ParsersAttributes::UNSET : ParsersAttributes::_TRUE_);
   attributes[ParsersAttributes::TABLE]=getReceiverTable()->getName(true);

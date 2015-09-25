@@ -4965,10 +4965,14 @@ XMLParser *DatabaseModel::getXMLParser(void)
 
 QString DatabaseModel::getAlterDefinition(BaseObject *object)
 {
+  DatabaseModel *db_aux=dynamic_cast<DatabaseModel *>(object);
+
+  if(!db_aux)
+    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
   try
   {
     QString alter_def=BaseObject::getAlterDefinition(object);
-    DatabaseModel *db_aux=dynamic_cast<DatabaseModel *>(object);
 
     if(this->conn_limit!=db_aux->conn_limit)
     {

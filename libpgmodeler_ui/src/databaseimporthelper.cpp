@@ -25,7 +25,7 @@ DatabaseImportHelper::DatabaseImportHelper(QObject *parent) : QObject(parent)
 	random_device rand_seed;
 	rand_num_engine.seed(rand_seed());
 
-	import_canceled=ignore_errors=import_sys_objs=import_ext_objs=rand_rel_colors=false;
+  import_canceled=ignore_errors=import_sys_objs=import_ext_objs=rand_rel_colors=update_fk_rels=false;
 	auto_resolve_deps=true;
 	import_filter=Catalog::LIST_ALL_OBJS | Catalog::EXCL_EXTENSION_OBJS | Catalog::EXCL_SYSTEM_OBJS;
 	xmlparser=nullptr;
@@ -87,7 +87,7 @@ void DatabaseImportHelper::setSelectedOIDs(DatabaseModel *db_model, map<ObjectTy
 	system_objs.clear();
 }
 
-void DatabaseImportHelper::setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors, bool debug_mode, bool rand_rel_colors)
+void DatabaseImportHelper::setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors, bool debug_mode, bool rand_rel_colors, bool update_rels)
 {
 	this->import_sys_objs=import_sys_objs;
 	this->import_ext_objs=import_ext_objs;
@@ -95,6 +95,7 @@ void DatabaseImportHelper::setImportOptions(bool import_sys_objs, bool import_ex
 	this->ignore_errors=ignore_errors;
 	this->debug_mode=debug_mode;
 	this->rand_rel_colors=rand_rel_colors;
+  this->update_fk_rels=update_rels;
 
 	Connection::setPrintSQL(debug_mode);
 
@@ -511,7 +512,7 @@ void DatabaseImportHelper::updateFKRelationships(void)
 
 			dbmodel->updateTableFKRelationships(tab);
 
-      progress=(i/static_cast<float>(count)) * 100;
+      progress=(i/static_cast<float>(count)) * 90;
 			itr_tab++; i++;
 		}
 	}
@@ -534,7 +535,9 @@ void DatabaseImportHelper::importDatabase(void)
     createConstraints();
     createTableInheritances();
     createPermissions();
-		updateFKRelationships();
+
+    if(update_fk_rels)
+      updateFKRelationships();
 
 		if(!import_canceled)
 		{
@@ -1605,7 +1608,6 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 
 
 		attribs[ParsersAttributes::POSITION]=schparser.getCodeDefinition(ParsersAttributes::POSITION, pos_attrib, SchemaParser::XML_DEFINITION);
-
     ref=Reference(attribs[ParsersAttributes::DEFINITION], QString());
 		ref.setDefinitionExpression(true);
 		attribs[ParsersAttributes::REFERENCES]=ref.getXMLDefinition();

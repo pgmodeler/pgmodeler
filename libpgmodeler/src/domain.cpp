@@ -148,10 +148,14 @@ void Domain::operator = (Domain &domain)
 
 QString Domain::getAlterDefinition(BaseObject *object)
 {
+  Domain *domain=dynamic_cast<Domain *>(object);
+
+  if(!domain)
+    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
   try
   {
     QString alter_def=BaseObject::getAlterDefinition(object);
-    Domain *domain=dynamic_cast<Domain *>(object);
 
     attributes[ParsersAttributes::DEFAULT_VALUE]=QString();
     attributes[ParsersAttributes::NOT_NULL]=QString();

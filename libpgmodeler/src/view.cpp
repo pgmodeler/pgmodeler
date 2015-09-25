@@ -22,7 +22,7 @@ View::View(void) : BaseTable()
 {
 	obj_type=OBJ_VIEW;
   materialized=recursive=with_no_data=false;
-  attributes[ParsersAttributes::DECLARATION]=QString();
+  attributes[ParsersAttributes::DEFINITION]=QString();
   attributes[ParsersAttributes::REFERENCES]=QString();
   attributes[ParsersAttributes::SELECT_EXP]=QString();
   attributes[ParsersAttributes::FROM_EXP]=QString();
@@ -193,6 +193,8 @@ QStringList View::getColumnsList(void)
     if(!references[i].getColumn())
     {
       tab=references[i].getTable();
+
+      if(!tab) continue;
       col_count=tab->getColumnCount();
 
       for(col_id=0; col_id < col_count; col_id++)
@@ -412,7 +414,7 @@ int View::getReferenceIndex(Reference &ref, unsigned sql_type)
 		return(-1);
 }
 
-void View::setDeclarationAttribute(void)
+void View::setDefinitionAttribute(void)
 {
 	QString decl;
 
@@ -459,7 +461,7 @@ void View::setDeclarationAttribute(void)
 		}
 	}
 
-	attributes[ParsersAttributes::DECLARATION]=decl;
+  attributes[ParsersAttributes::DEFINITION]=decl;
 }
 
 void View::setReferencesAttribute(void)
@@ -573,7 +575,7 @@ QString View::getCodeDefinition(unsigned def_type)
    attributes[ParsersAttributes::TAG]=tag->getCodeDefinition(def_type, true);
 
 	if(def_type==SchemaParser::SQL_DEFINITION)
-		setDeclarationAttribute();
+    setDefinitionAttribute();
 	else
 	{
 		setPositionAttribute();

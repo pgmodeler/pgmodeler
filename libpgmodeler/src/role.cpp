@@ -359,9 +359,13 @@ QString Role::getCodeDefinition(unsigned def_type)
 
 QString Role::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
 {
+  Role *role=dynamic_cast<Role *>(object);
+
+  if(!role)
+    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
   try
   {
-    Role *role=dynamic_cast<Role *>(object);
     attribs_map attribs;
     QString op_attribs[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
                            ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,

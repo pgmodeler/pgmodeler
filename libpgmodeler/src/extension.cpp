@@ -97,10 +97,13 @@ QString Extension::getCodeDefinition(unsigned def_type)
 
 QString Extension::getAlterDefinition(BaseObject *object)
 {
+  Extension *ext=dynamic_cast<Extension *>(object);
+
+  if(!ext)
+    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
   try
   {
-    Extension *ext=dynamic_cast<Extension *>(object);
-
     attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
     attributes[ParsersAttributes::NEW_VERSION]=QString();
 

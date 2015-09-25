@@ -686,7 +686,9 @@ void ModelsDiffHelper::processDiffInfos(void)
         //Recreating the object instead of generating an ALTER command for it
         if((diff_opts[OPT_FORCE_RECREATION] && obj_type!=OBJ_DATABASE) &&
            (!diff_opts[OPT_RECREATE_UNCHANGEBLE] ||
-            (diff_opts[OPT_RECREATE_UNCHANGEBLE] && !object->acceptsAlterCommand())))
+            (diff_opts[OPT_RECREATE_UNCHANGEBLE] && !object->acceptsAlterCommand() &&
+             diff.getObject()->getCodeDefinition(SchemaParser::SQL_DEFINITION).simplified()!=
+             diff.getOldObject()->getCodeDefinition(SchemaParser::SQL_DEFINITION).simplified())))
         {
           recreateObject(object, drop_vect, create_vect);
 

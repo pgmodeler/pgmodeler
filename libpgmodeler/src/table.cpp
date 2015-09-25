@@ -1569,9 +1569,13 @@ void Table::setCodeInvalidated(bool value)
 
 QString Table::getAlterDefinition(BaseObject *object)
 {
+  Table *tab=dynamic_cast<Table *>(object);
+
+  if(!tab)
+    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
   try
   {
-    Table *tab=dynamic_cast<Table *>(object);
     QString alter_def;
 
     attributes[ParsersAttributes::OIDS]=QString();

@@ -496,9 +496,13 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 QString Function::getAlterDefinition(BaseObject *object)
 {
+  Function *func=dynamic_cast<Function *>(object);
+
+  if(!func)
+    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
   try
   {
-    Function *func=dynamic_cast<Function *>(object);
     attribs_map attribs;
 
     attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
@@ -509,7 +513,6 @@ QString Function::getAlterDefinition(BaseObject *object)
     {
       attribs[ParsersAttributes::DEFINITION]=func->getCodeDefinition(SchemaParser::SQL_DEFINITION);
       attribs[ParsersAttributes::DEFINITION].replace(QString("CREATE FUNCTION"), QString("CREATE OR REPLACE FUNCTION"));
-      attribs[ParsersAttributes::DEFINITION].size();
     }
     else
     {

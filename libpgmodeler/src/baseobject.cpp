@@ -1162,58 +1162,56 @@ QString BaseObject::getAlterDefinition(BaseObject *object)
 QString BaseObject::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
 {
   if(!object)
-   return(QString());
-  else
+    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+  QString alter;
+
+  if(object->obj_type!=this->obj_type)
+    throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+  setBasicAttributes(true);
+
+  try
   {
-    QString alter;
+    QStringList attribs={ ParsersAttributes::OWNER, ParsersAttributes::SCHEMA, ParsersAttributes::TABLESPACE };
+    bool accepts_obj[3]={ acceptsOwner(), acceptsSchema(), acceptsTablespace() };
+    BaseObject *dep_objs[3]={ this->getOwner(), this->getSchema(), this->getTablespace() },
+        *aux_dep_objs[3]={ object->getOwner(), object->getSchema(), object->getTablespace() };
 
-    if(object->obj_type!=this->obj_type)
-      throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-    setBasicAttributes(true);
-
-    try
+    if(!ignore_name_diff && this->getName()!=object->getName())
     {
-      QStringList attribs={ ParsersAttributes::OWNER, ParsersAttributes::SCHEMA, ParsersAttributes::TABLESPACE };
-      bool accepts_obj[3]={ acceptsOwner(), acceptsSchema(), acceptsTablespace() };
-      BaseObject *dep_objs[3]={ this->getOwner(), this->getSchema(), this->getTablespace() },
-                 *aux_dep_objs[3]={ object->getOwner(), object->getSchema(), object->getTablespace() };
-
-      if(!ignore_name_diff && this->getName()!=object->getName())
-      {
-        attributes[ParsersAttributes::NEW_NAME]=object->getName(true, false);
-        alter+=BaseObject::getAlterDefinition(ParsersAttributes::RENAME, attributes, true);
-        attributes[ParsersAttributes::NAME]=attributes[ParsersAttributes::NEW_NAME];
-        attributes[ParsersAttributes::SIGNATURE]=object->getSignature(true);
-      }
-
-      for(unsigned i=0; i < 3; i++)
-      {
-        if(accepts_obj[i] && dep_objs[i] && aux_dep_objs[i] &&
-           dep_objs[i]->getName(true)!=aux_dep_objs[i]->getName(true))
-        {
-          attributes[attribs[i]]=aux_dep_objs[i]->getName(true);          
-          alter+=BaseObject::getAlterDefinition(attribs[i], attributes, true);
-        }
-      }
-
-      if(this->getComment()!=object->getComment())
-      {
-        if(object->getComment().isEmpty())
-          attributes[ParsersAttributes::COMMENT]=ParsersAttributes::UNSET;
-        else
-          attributes[ParsersAttributes::COMMENT]=object->getComment();
-
-        schparser.ignoreUnkownAttributes(true);
-        schparser.ignoreEmptyAttributes(true);
-        alter+=schparser.getCodeDefinition(ParsersAttributes::COMMENT, attributes, SchemaParser::SQL_DEFINITION);
-      }
-    }
-    catch(Exception &e)
-    {
-      throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+      attributes[ParsersAttributes::NEW_NAME]=object->getName(true, false);
+      alter+=BaseObject::getAlterDefinition(ParsersAttributes::RENAME, attributes, true);
+      attributes[ParsersAttributes::NAME]=attributes[ParsersAttributes::NEW_NAME];
+      attributes[ParsersAttributes::SIGNATURE]=object->getSignature(true);
     }
 
-    return(alter);
+    for(unsigned i=0; i < 3; i++)
+    {
+      if(accepts_obj[i] && dep_objs[i] && aux_dep_objs[i] &&
+         dep_objs[i]->getName(true)!=aux_dep_objs[i]->getName(true))
+      {
+        attributes[attribs[i]]=aux_dep_objs[i]->getName(true);
+        alter+=BaseObject::getAlterDefinition(attribs[i], attributes, true);
+      }
+    }
+
+    if(this->getComment()!=object->getComment())
+    {
+      if(object->getComment().isEmpty())
+        attributes[ParsersAttributes::COMMENT]=ParsersAttributes::UNSET;
+      else
+        attributes[ParsersAttributes::COMMENT]=object->getComment();
+
+      schparser.ignoreUnkownAttributes(true);
+      schparser.ignoreEmptyAttributes(true);
+      alter+=schparser.getCodeDefinition(ParsersAttributes::COMMENT, attributes, SchemaParser::SQL_DEFINITION);
+    }
   }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+
+  return(alter);
 }
