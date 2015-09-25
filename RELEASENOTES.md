@@ -13,6 +13,8 @@ Below the key features and fixes of this new release are described. Please, refe
 * [Fix] Fixed a bug in import process that was wrongly prepending schema's name in types related to tables.
 
 <strong>Diff process:</strong> </br>
+* [Change] Improvements on diff process to avoid include already existent permissions.
+* [Change] Improvement in diff process to avoid generate code for an unmodifiable object when its code doesn't differs from the same object in database.
 * [Fix] Minor fix in ModelsDiffHelper to avoid diff generation errors related to the missing 'fk-defs' attribute.
 * [Fix] Fixed a bug that was duplicating some foreign key creation code in diff process.
 * [Fix] Fixed a bug in the diff process that was dropping columns linked to sequences when these ones were dropped.
@@ -28,6 +30,7 @@ Below the key features and fixes of this new release are described. Please, refe
 <strong>Solved leaks and crashes:</strong> <br/>
 * [Fix] Added a workaround to avoid crashes and leaks related to relationship disconnection and validation.
 * [Fix] Fixed a crash when trying to create a new foreign key after connect two tables using a 1:1 or 1:n relationship.
+* [Fix] Fixed a crash when generating SQL code for recursive views.
 
 <strong>Miscelaneous:</strong> <br/>
 * [New] NumberedTextEditor now is able to set a custom tab width.
@@ -39,3 +42,4 @@ Below the key features and fixes of this new release are described. Please, refe
 * [Fix] Fixed a bug that was not setting up the object's schema correctly when creating new table or view inside a selected schema.
 * [Fix] Minor adjustment on ui-style.conf to minimize the problems with dark themes.
 * [Fix] Fix a bug that was preventing "deferrable" attribute for constraint triggers to be used in SQL definition.
+* [Fix] Fixed the view's SQL generation trimming the SQL that defines it to avoid differences between the model's view and the one generated after export. This will cause less divergences in when diff'ing the model and database.
