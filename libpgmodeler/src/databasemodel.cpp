@@ -2630,7 +2630,7 @@ void DatabaseModel::addPermission(Permission *perm)
 
 		TableObject *tab_obj=dynamic_cast<TableObject *>(perm->getObject());
 
-		if(getPermissionIndex(perm) >=0)
+    if(getPermissionIndex(perm, false) >=0)
 		{
 			throw Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PERMISSION)
                       .arg(perm->getObject()->getName())
@@ -2730,49 +2730,71 @@ void DatabaseModel::getPermissions(BaseObject *object, vector<Permission *> &per
 	}
 }
 
-int DatabaseModel::getPermissionIndex(Permission *perm)
+int DatabaseModel::getPermissionIndex(Permission *perm, bool check_contents)
 {
 	int perm_idx=-1;
 
 	if(perm)
 	{
-		Permission *perm_aux=nullptr;
-		vector<BaseObject *>::iterator itr, itr_end;
-		BaseObject *object=nullptr;
-		Role *role=nullptr;
-		unsigned count, i;
-		bool ref_role=false;
+    Permission *perm_aux=nullptr;
+    vector<BaseObject *>::iterator itr, itr_end;
 
-		itr=permissions.begin();
-		itr_end=permissions.end();
+    itr=permissions.begin();
+    itr_end=permissions.end();
 
-		object=perm->getObject();
+    if(check_contents)
+    {
+      while(itr!=itr_end)
+      {
+        perm_aux=dynamic_cast<Permission *>(*itr);
 
-		while(itr!=itr_end && perm_idx < 0)
-		{
-			perm_aux=dynamic_cast<Permission *>(*itr);
+        if(perm->isSimilarTo(perm_aux))
+        {
+          perm_idx=itr-permissions.begin();
+          break;
+        }
 
-			/* When the object of the auxiliary permission is the same as the
-			specified permission it will be check if the existant roles are
-			the same on both permissions */
-			if(object==perm_aux->getObject())
-			{
-				count=perm->getRoleCount();
+        itr++;
+      }
+    }
+    else
+    {
+      BaseObject *object=nullptr;
+      Role *role=nullptr;
+      unsigned count, i;
+      bool ref_role=false;
 
-				for(i=0; i < count && !ref_role; i++)
-				{
-					role=perm->getRole(i);
-					ref_role=perm_aux->isRoleExists(role);
-				}
-			}
+      object=perm->getObject();
 
-			//If the permissions references the same roles but one is a REVOKE and other GRANT they a considered different
-			if(perm==perm_aux || (ref_role && perm->isRevoke()==perm_aux->isRevoke()))
-				perm_idx=itr-permissions.begin();
+      while(itr!=itr_end)
+      {
+        perm_aux=dynamic_cast<Permission *>(*itr);
 
-			itr++;
-		}
-	}
+        /* When the object of the auxiliary permission is the same as the
+           specified permission it will be check if the existant roles are
+           the same on both permissions */
+        if(object==perm_aux->getObject())
+        {
+          count=perm->getRoleCount();
+
+          for(i=0; i < count && !ref_role; i++)
+          {
+            role=perm->getRole(i);
+            ref_role=perm_aux->isRoleExists(role);
+          }
+        }
+
+        //If the permissions references the same roles but one is a REVOKE and other GRANT they a considered different
+        if(perm==perm_aux || (ref_role && perm->isRevoke()==perm_aux->isRevoke()))
+        {
+          perm_idx=itr-permissions.begin();
+          break;
+        }
+
+        itr++;
+      }
+    }
+  }
 
   return(perm_idx);
 }

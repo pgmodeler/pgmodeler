@@ -123,7 +123,7 @@ bool Permission::isRoleExists(Role *role)
 
 	while(itr!=itr_end && !found)
 	{
-		found=(*itr)==role;
+    found=((*itr)==role);
 		itr++;
 	}
 
@@ -182,7 +182,36 @@ bool Permission::isRevoke(void)
 
 bool Permission::isCascade(void)
 {
-	return(cascade);
+  return(cascade);
+}
+
+bool Permission::isSimilarTo(Permission *perm)
+{
+  if(!perm)
+    return(false);
+
+  QStringList rol_names, fmt_rol_names;
+  vector<vector<Role *>*> vect_roles={ &this->roles, &perm->roles };
+  BaseObject *object=this->getObject(), *aux_object=perm->getObject();
+
+  for(auto &roles : vect_roles)
+  {
+    for(auto &role : *roles)
+      rol_names.append(role->getName());
+
+    rol_names.sort();
+    fmt_rol_names.append(rol_names.join(','));
+    rol_names.clear();
+  }
+
+  //TODO: Compare the grant_op vector
+
+  return(((object==aux_object) ||
+          (object && aux_object && object->getSignature()==aux_object->getSignature())) &&
+         this->getPermissionString()==perm->getPermissionString() &&
+         this->revoke==perm->revoke &&
+         fmt_rol_names[0]==fmt_rol_names[1]);
+
 }
 
 void Permission::removeRole(unsigned role_idx)

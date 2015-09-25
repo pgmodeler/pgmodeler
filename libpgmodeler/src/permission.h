@@ -150,6 +150,9 @@ class Permission: public BaseObject {
 		bool isRevoke(void);
 		bool isCascade(void);
 
+    //! brief Returns the the specified permission is semantically the same as this permission
+    bool isSimilarTo(Permission *perm);
+
 		//! \brief Returns if the passed object type accepts permission
 		static bool objectAcceptsPermission(ObjectType obj_type, int privilege=-1);
 

@@ -422,7 +422,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		void addPermission(Permission *perm);
 		void removePermission(Permission *perm);
-		int getPermissionIndex(Permission *perm);
+    int getPermissionIndex(Permission *perm, bool check_contents);
 
 		//! \brief Inserts a list of permissions into the model
     void addPermissions(const vector<Permission *> &perms);
