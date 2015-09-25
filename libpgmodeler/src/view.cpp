@@ -461,6 +461,10 @@ void View::setDefinitionAttribute(void)
 		}
 	}
 
+  decl=decl.trimmed();
+  if(!decl.endsWith(QChar(';')))
+    decl.append(QChar(';'));
+
   attributes[ParsersAttributes::DEFINITION]=decl;
 }
 

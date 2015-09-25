@@ -45,7 +45,7 @@ $br
  [WITH ] {cte-exp}
 %end
 
-$br {declaration}
+$br {definition}
 
 %if ({pgsql-ver} >= "9.3") %then
   %if {materialized} %and {with-no-data} %then
@@ -53,11 +53,10 @@ $br {declaration}
   %end
 %end
 
- ; $br
 
 # This is a special token that pgModeler recognizes as end of DDL command
 # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
-[-- ddl-end --] $br
+$br [-- ddl-end --] $br
 
 %if {comment} %then {comment} %end
 %if {owner} %then {owner} %end
