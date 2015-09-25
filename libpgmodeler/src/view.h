@@ -56,8 +56,8 @@ class View: public BaseTable {
     //! brief Indicates that the view is a a recursive one. This setting is auto exclusive with 'materialized'
     recursive;
 
-		//! \brief Sets the declaration attribute used by the SchemaParser
-		void setDeclarationAttribute(void);
+    //! \brief Sets the definition attribute used by the SchemaParser
+    void setDefinitionAttribute(void);
 
 		//! \brief Sets the references attribute used by the SchemaParser
 		void setReferencesAttribute(void);

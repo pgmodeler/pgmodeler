@@ -406,9 +406,13 @@ QString Sequence::getCodeDefinition(unsigned def_type)
 
 QString Sequence::getAlterDefinition(BaseObject *object)
 {
+  Sequence *seq=dynamic_cast<Sequence *>(object);
+
+  if(!seq)
+    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
   try
   {
-    Sequence *seq=dynamic_cast<Sequence *>(object);
     Table *table=nullptr;
     attribs_map attribs;
 

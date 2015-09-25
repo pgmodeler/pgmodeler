@@ -179,9 +179,13 @@ QString Column::getCodeDefinition(unsigned def_type)
 
 QString Column::getAlterDefinition(BaseObject *object)
 {
+  Column *col=dynamic_cast<Column *>(object);
+
+  if(!col)
+    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
   try
   {
-    Column *col=dynamic_cast<Column *>(object);
     attribs_map attribs;
     QString def_val;
 

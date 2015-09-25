@@ -234,12 +234,21 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
                              object->getObjectType());
 
       //Processing objects that are not database, table child object (they are processed further)
-      if(obj_type!=OBJ_DATABASE && !TableObject::isTableObject(obj_type))// && obj_type!=BASE_RELATIONSHIP)
+      if(obj_type!=OBJ_DATABASE && !TableObject::isTableObject(obj_type))
       {
+        if(diff_type==ObjectsDiffInfo::CREATE_OBJECT && obj_type==OBJ_PERMISSION)
+          object->getName();
+
         /* Processing permissions. If the operation is DROP and keep_obj_perms is true the
            the permission is ignored */
         if(obj_type==OBJ_PERMISSION &&
-           ((diff_type!=ObjectsDiffInfo::DROP_OBJECT) || !diff_opts[OPT_KEEP_OBJ_PERMS]))
+
+           ((diff_type==ObjectsDiffInfo::DROP_OBJECT &&
+             !diff_opts[OPT_KEEP_OBJ_PERMS]) ||
+
+            (diff_type==ObjectsDiffInfo::CREATE_OBJECT &&
+             (aux_model->getPermissionIndex(dynamic_cast<Permission *>(object), true) < 0 ||
+              !diff_opts[OPT_KEEP_OBJ_PERMS]))))
           generateDiffInfo(diff_type, object);
 
         //Processing relationship (in this case only generalization ones are considered)
@@ -686,7 +695,9 @@ void ModelsDiffHelper::processDiffInfos(void)
         //Recreating the object instead of generating an ALTER command for it
         if((diff_opts[OPT_FORCE_RECREATION] && obj_type!=OBJ_DATABASE) &&
            (!diff_opts[OPT_RECREATE_UNCHANGEBLE] ||
-            (diff_opts[OPT_RECREATE_UNCHANGEBLE] && !object->acceptsAlterCommand())))
+            (diff_opts[OPT_RECREATE_UNCHANGEBLE] && !object->acceptsAlterCommand() &&
+             diff.getObject()->getCodeDefinition(SchemaParser::SQL_DEFINITION).simplified()!=
+             diff.getOldObject()->getCodeDefinition(SchemaParser::SQL_DEFINITION).simplified())))
         {
           recreateObject(object, drop_vect, create_vect);
 

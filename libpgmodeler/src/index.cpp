@@ -377,9 +377,13 @@ QString Index::getSignature(bool format)
 
 QString Index::getAlterDefinition(BaseObject *object)
 {
+  Index *index=dynamic_cast<Index *>(object);
+
+  if(!index)
+    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
   try
   {
-    Index *index=dynamic_cast<Index *>(object);
     attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
 
     if(this->indexing_type==index->indexing_type)

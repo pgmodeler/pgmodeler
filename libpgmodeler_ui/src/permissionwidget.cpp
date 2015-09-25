@@ -343,7 +343,7 @@ void PermissionWidget::updatePermission(void)
 		configurePermission(perm);
 
 		//Checking if the permission already exists on model
-		perm_idx=model->getPermissionIndex(perm);
+    perm_idx=model->getPermissionIndex(perm, false);
 
 		if(perm_idx < 0 || (perm_idx >=0 && model->getObject(perm_idx,OBJ_PERMISSION)==permission))
 		{

@@ -852,7 +852,7 @@ void DatabaseExplorerWidget::configureImportHelper(void)
 {
   import_helper.setConnection(connection);
   import_helper.setCurrentDatabase(connection.getConnectionParam(Connection::PARAM_DB_NAME));
-  import_helper.setImportOptions(sys_objs_chk->isChecked(), ext_objs_chk->isChecked(), false, false, false, false);
+  import_helper.setImportOptions(sys_objs_chk->isChecked(), ext_objs_chk->isChecked(), false, false, false, false, false);
 
   catalog.closeConnection();
   catalog.setFilter(Catalog::LIST_ALL_OBJS);

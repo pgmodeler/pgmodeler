@@ -6,6 +6,7 @@ v0.8.2-alpha
 <em>Codename: <strong>Faithful Elephant</strong></em><br/>
 <em>Release date: September 26, 2015</em><br/>
 
+* [New] Added the method Permission::isSimilarTo that returns true when a provided permission has the same semantics as the caller permission.
 * [New] Added missing keywords CASE, ELSE, QUERY, ELSIF, RAISE, EXCEPTION, TG_OP to sql-highlight.conf
 * [New] Columns that compose primary key and unique key are exposed as children of the constraint in the object tree at DatabaseExplorerWidget.
 * [New] Foreign key objects selected in DatabaseExplorerWidget now expose, in two children items, the source and referenced tables/columns.
@@ -15,6 +16,11 @@ v0.8.2-alpha
 * [New] Added a nl_NL (Dutch - Netherlands) UI translation.
 * [New] Created a mechanism to make default values of columns in the form nextval(sequence) be transformed in a link between the sequence and the column in the import process. This will diminish the divergences raised by the diff process.
 * [New] Added a readonly item delegate for attributes grid to permit user to copy contents or navigate through values using keyboard.
+* [Change] Changed the method DatabaseModel::getPermissionIndex to search permissions looking into their contents and not only by their internal references.
+* [Change] Improvements on diff process to avoid include already existent permissions.
+* [Change] Improvement in diff process to avoid generate code for an unmodifiable object when its code doesn't differs from the same object in database.
+* [Change] Added an option to DatabaseImportHelper to avoid the fk relationship updates. This will reduce the time to perform the import step in diff process.
+* [Change] The diff is now capable to detect differences in functions source code and recreate them.
 * [Change] Minor enhacement in DataManipulationForm to show the query time when retrieving data.
 * [Change] Minor adjustments on tooltips of buttons in SQLToolWidget and DatabaseExplorerWidget.
 * [Change] Minor size adjustment in ColumnWidget.
@@ -33,6 +39,9 @@ v0.8.2-alpha
 * [Change] Minor adjustment on buttons positions at NewObjectOverlay.
 * [Change] Minor message update in MainWindow::saveModel.
 * [Change] pgModeler now indicates the name of unsaved models before quit.
+* [Fix] Fixed the view's SQL generation trimming the SQL that defines it to avoid differences between the model's view and the one generated after export. This will cause less divergences in when diff'ing the model and database.
+* [Fix] Minor fixes in the *::getAlterDefinition() methods do avoid crashes due to null objects handling.
+* [Fix] Fixed a crash when generating SQL code for recursive views.
 * [Fix] Minor fix to correclty show the temporary models save progress at the bottom of main window.
 * [Fix] Minor fixes in the validation process to force graphical objects updates and object's tree updates to reflect the new ids.
 * [Fix] Minor fixes in the object naming. Now pgModeler will accept dollar signs in any portion of the string or even numbers as object's name but this will automatically quote the name to avoid errors.
