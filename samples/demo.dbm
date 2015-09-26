@@ -15,7 +15,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<style id="table-schema-name" colors="#ffffff"/>
 	<style id="table-title" colors="#ff0000,#aa0000,#710000"/>
 </tag>
-<schema name="public" protected="true" rect-visible="true" fill-color="#6abdb2" sql-disabled="true">
+<schema name="public" rect-visible="true" fill-color="#6abdb2" sql-disabled="true">
 </schema>
 
 <schema name="schema_a" rect-visible="true" fill-color="#df83eb">
