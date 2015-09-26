@@ -16,6 +16,8 @@ v0.8.2-alpha
 * [New] Added a nl_NL (Dutch - Netherlands) UI translation.
 * [New] Created a mechanism to make default values of columns in the form nextval(sequence) be transformed in a link between the sequence and the column in the import process. This will diminish the divergences raised by the diff process.
 * [New] Added a readonly item delegate for attributes grid to permit user to copy contents or navigate through values using keyboard.
+* [Change] Removed the default protected status of public schema in sample models.
+* [Change] The system schema public now can be protected/unprotected as well moved through the canvas area.
 * [Change] Changed the method DatabaseModel::getPermissionIndex to search permissions looking into their contents and not only by their internal references.
 * [Change] Improvements on diff process to avoid include already existent permissions.
 * [Change] Improvement in diff process to avoid generate code for an unmodifiable object when its code doesn't differs from the same object in database.
@@ -39,6 +41,7 @@ v0.8.2-alpha
 * [Change] Minor adjustment on buttons positions at NewObjectOverlay.
 * [Change] Minor message update in MainWindow::saveModel.
 * [Change] pgModeler now indicates the name of unsaved models before quit.
+* [Fix] Minor fix when showing system objects in ModelObjectsWidget.
 * [Fix] Fixed the view's SQL generation trimming the SQL that defines it to avoid differences between the model's view and the one generated after export. This will cause less divergences in when diff'ing the model and database.
 * [Fix] Minor fixes in the *::getAlterDefinition() methods do avoid crashes due to null objects handling.
 * [Fix] Fixed a crash when generating SQL code for recursive views.

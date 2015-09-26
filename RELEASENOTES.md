@@ -34,6 +34,7 @@ Below the key features and fixes of this new release are described. Please, refe
 
 <strong>Miscelaneous:</strong> <br/>
 * [New] NumberedTextEditor now is able to set a custom tab width.
+* [Change] The system schema public now can be protected/unprotected as well moved through the canvas area.
 * [Change] When using snippets in the SQL execution field the current code will not be cleaned up, instead the snippet will be appended to the current code.
 * [Change] Removed the automatic view switching when saving the model.
 * [Change] pgModeler now indicates the name of unsaved models before quit.
