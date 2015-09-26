@@ -1360,7 +1360,8 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 
     /* Raises an error if the user try to edit a reserverd object. The only exception is for "public" schema
 		that can be edited only on its fill color an rectangle attributes */
-    if(object && object->isSystemObject() && object->getName()!=QString("public"))
+    if(object && object->isSystemObject() &&
+       (object->getObjectType()!=OBJ_SCHEMA || object->getName()!="public"))
 			throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
                       .arg(object->getName()).arg(object->getTypeName()),
 											ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -1949,12 +1950,6 @@ void ModelWidget::protectObject(void)
 			}
 			else
 			{
-				//Raise an error if the user try to modify a reserved object protection
-				if(this->selected_objects[0]->isSystemObject())
-					throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
-                          .arg(selected_objects[0]->getName()).arg(selected_objects[0]->getTypeName()),
-													ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
 				this->selected_objects[0]->setProtected(!this->selected_objects[0]->isProtected());
 			}
 		}
@@ -1979,11 +1974,7 @@ void ModelWidget::protectObject(void)
 
 				obj_type=object->getObjectType();
 
-				if(object->isSystemObject())
-					throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
-                          .arg(object->getName()).arg(object->getTypeName()),
-													ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-				else if(obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT)
+        if(obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT)
 				{
 					tab_obj=dynamic_cast<TableObject *>(object);
 
@@ -3169,12 +3160,18 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 		 !this->db_model->isProtected() &&
 		 (!tab_obj || (tab_obj && !tab_obj->getParentTable()->isProtected() && !tab_obj->isAddedByRelationship())))
 	{
-		if(!objects[0]->isProtected())
-			popup_menu.addAction(action_protect);
-		else
-			popup_menu.addAction(action_unprotect);
+    /* Special case for systema objects: The actions protect/unprotect will be displayed only for
+       system schemas. The rest of system objects those actions aren't available */
+    if(!objects[0]->isSystemObject() ||
+       (objects[0]->isSystemObject() && objects[0]->getObjectType()==OBJ_SCHEMA))
+    {
+      if(!objects[0]->isProtected())
+        popup_menu.addAction(action_protect);
+      else
+        popup_menu.addAction(action_unprotect);
 
-		popup_menu.addSeparator();
+      popup_menu.addSeparator();
+    }
 	}
 
 	//Adding the copy and paste if there is selected objects

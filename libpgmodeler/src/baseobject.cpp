@@ -331,7 +331,7 @@ BaseObject *BaseObject::getDatabase(void)
 void BaseObject::setProtected(bool value)
 {
 	setCodeInvalidated(this->is_protected != value);
-	is_protected=(!system_obj ? value : true);
+  is_protected=value;//(!system_obj ? value : true);
 }
 
 void BaseObject::setName(const QString &name)
@@ -643,7 +643,7 @@ bool BaseObject::isSQLDisabled(void)
 void BaseObject::setSystemObject(bool value)
 {
 	setCodeInvalidated(this->system_obj != value);
-	system_obj=sql_disabled=is_protected=value;
+  system_obj=sql_disabled=value;
 }
 
 bool BaseObject::isSystemObject(void)

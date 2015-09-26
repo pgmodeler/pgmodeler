@@ -36,7 +36,6 @@ void BaseGraphicObject::setProtected(bool value)
 void BaseGraphicObject::setSystemObject(bool value)
 {
 	BaseObject::setSystemObject(value);
-	emit s_objectProtected(this->isProtected());
 }
 
 void BaseGraphicObject::setModified(bool value)

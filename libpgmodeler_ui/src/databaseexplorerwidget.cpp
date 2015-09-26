@@ -251,8 +251,8 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
     attribs[ParsersAttributes::PERMISSION]=Catalog::parseArrayValues(attribs[ParsersAttributes::PERMISSION]).join(ELEM_SEPARATOR);
 
   //Removing system schemas from object's name
-  if(attribs[ParsersAttributes::NAME].startsWith(QLatin1String("pg_catalog.")) ||
-     attribs[ParsersAttributes::NAME].startsWith(QLatin1String("information_schema.")))
+  if(attribs[ParsersAttributes::NAME].startsWith(QString("pg_catalog.")) ||
+     attribs[ParsersAttributes::NAME].startsWith(QString("information_schema.")))
     attribs[ParsersAttributes::NAME]=attribs[ParsersAttributes::NAME].split('.').at(1);
 
   for(auto &attrib : attribs)
