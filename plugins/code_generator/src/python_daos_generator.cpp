@@ -11,14 +11,18 @@ void PythonDAOsGenerator::generateCode(DatabaseModel &model, BaseLogger &logger,
     std::string table_name;
     std::string table_code;
 
+    std::stringstream text;
+
     for(it = tables->begin(); it != tables->end(); ++it)
     {
         schema_name = (*it)->getSchema()->getName().toUtf8().constData();
         table_name = (*it)->getName().toUtf8().constData();
         table_code = this->generateCompleteTableCode(*(Table *)(* it));
         files_to_generate[schema_name + "_" + table_name + ".py"] = table_code;
-        logger.log(table_code);
+        text << table_code;
     }
+
+    logger.log(text.str());
 }
 
 // Starting code generation
@@ -52,18 +56,22 @@ std::string PythonDAOsGenerator::generateCompleteTableCode(Table &table)
 
 void PythonDAOsGenerator::generateHeader(std::stringstream &text, Table &table)
 {
+    // schema and table name
+    std::string schema_name = table.getSchema()->getName().toUtf8().constData();
     std::string table_name = table.getName().toUtf8().constData();
-    std::string dao_name = this->getDAONameFromTableName(table_name);
+
+    // DAO class name
+    std::string dao_class_name = this->getDAONameFromSchemaTableName(schema_name, table_name);
 
     text << "#!/usr/bin/env python";
     text << "\n# -*- coding: utf-8 -*-";
     text << "\n\"\"\"";
-    text << "\n@package " << dao_name << " Data Access Object";
-    text << "\n         for '" << table_name << "' table";
+    text << "\n@package " << dao_class_name << " Data Access Object";
+    text << "\n         for '" << schema_name << '.' << table_name << "' table";
     text << "\n\"\"\"";
     text << '\n';
     text << '\n';
-    text << "\nclass " << dao_name << "():";
+    text << "\nclass " << dao_class_name << "():";
     text << '\n';
     text << "\n    def __init__(self, database):";
     text << "\n        self.db = database";
@@ -71,8 +79,10 @@ void PythonDAOsGenerator::generateHeader(std::stringstream &text, Table &table)
 
 void PythonDAOsGenerator::generateInsert(std::stringstream &text, Table &table)
 {
-    // table name
+    // schema and table name
+    std::string schema_name = table.getSchema()->getName().toUtf8().constData();
     std::string table_name = table.getName().toUtf8().constData();
+    std::string schema_table_name = schema_name + '.' + table_name;
 
     // get table columns and iterator to loop under all table columns
     std::vector< Column * > table_columns = this->getTableColumns(table);
@@ -119,7 +129,7 @@ void PythonDAOsGenerator::generateInsert(std::stringstream &text, Table &table)
     text << "\n    ):";
 
     // commentary
-    text << "\n        \"\"\" Insert a '" << table_name << "' record";
+    text << "\n        \"\"\" Insert a '" << schema_table_name << "' record";
     text << "\n            and get back the DB generated ID \"\"\"";
     text << '\n';
 
@@ -152,7 +162,7 @@ void PythonDAOsGenerator::generateInsert(std::stringstream &text, Table &table)
 
     // sql query
     text << "\n        sql = (";
-    text << "\n            \"INSERT INTO " << table_name << " (";
+    text << "\n            \"INSERT INTO " << schema_table_name << " (";
     is_first_column_writed = false;
     for(table_columns_it = table_columns.begin(); table_columns_it != table_columns.end(); ++table_columns_it)
     {
@@ -230,8 +240,10 @@ void PythonDAOsGenerator::generateInsert(std::stringstream &text, Table &table)
 
 void PythonDAOsGenerator::generateUpdateFromPK(std::stringstream &text, Table &table)
 {
-    // table name
+    // schema and table name
+    std::string schema_name = table.getSchema()->getName().toUtf8().constData();
     std::string table_name = table.getName().toUtf8().constData();
+    std::string schema_table_name = schema_name + '.' + table_name;
 
     // get table columns and iterator to loop under all table columns
     std::vector< Column * > table_columns = this->getTableColumns(table);
@@ -280,7 +292,7 @@ void PythonDAOsGenerator::generateUpdateFromPK(std::stringstream &text, Table &t
     text << "\n    ):";
 
     // commentary
-    text << "\n        \"\"\" Update a '" << table_name << "' record";
+    text << "\n        \"\"\" Update a '" << schema_table_name << "' record";
     text << "\n            using primary key \"\"\"";
     text << '\n';
 
@@ -298,7 +310,7 @@ void PythonDAOsGenerator::generateUpdateFromPK(std::stringstream &text, Table &t
 
     // sql query
     text << "\n        sql = (";
-    text << "\n            \"UPDATE " << table_name << " SET \"";
+    text << "\n            \"UPDATE " << schema_table_name << " SET \"";
     for(table_columns_it = table_columns.begin(); table_columns_it != table_columns.end(); ++table_columns_it)
     {
         column = *table_columns_it;
@@ -330,8 +342,10 @@ void PythonDAOsGenerator::generateUpdateFromPK(std::stringstream &text, Table &t
 
 void PythonDAOsGenerator::generateDeleteFromPK(std::stringstream &text, Table &table)
 {
-    // table name
+    // schema and table name
+    std::string schema_name = table.getSchema()->getName().toUtf8().constData();
     std::string table_name = table.getName().toUtf8().constData();
+    std::string schema_table_name = schema_name + '.' + table_name;
 
     // get primary key columns and iterator
     std::vector< Column * > pk_columns = this->getTablePrimaryKeyColumns(table);
@@ -363,7 +377,7 @@ void PythonDAOsGenerator::generateDeleteFromPK(std::stringstream &text, Table &t
     text << "\n    ):";
 
     // commentary
-    text << "\n        \"\"\" Delete a '" << table_name << "' record";
+    text << "\n        \"\"\" Delete a '" << schema_table_name << "' record";
     text << "\n            using primary key \"\"\"";
     text << '\n';
 
@@ -381,7 +395,7 @@ void PythonDAOsGenerator::generateDeleteFromPK(std::stringstream &text, Table &t
 
     // sql query
     text << "\n        sql = (";
-    text << "\n            \"DELETE FROM " << table_name << " WHERE \"";
+    text << "\n            \"DELETE FROM " << schema_table_name << " WHERE \"";
     for(pk_columns_it = pk_columns.begin(); pk_columns_it != pk_columns.end(); ++pk_columns_it)
     {
         column = *pk_columns_it;
@@ -404,8 +418,10 @@ void PythonDAOsGenerator::generateDeleteFromPK(std::stringstream &text, Table &t
 
 void PythonDAOsGenerator::generateSelectFromPK(std::stringstream &text, Table &table)
 {
-    // table name
+    // schema and table name
+    std::string schema_name = table.getSchema()->getName().toUtf8().constData();
     std::string table_name = table.getName().toUtf8().constData();
+    std::string schema_table_name = schema_name + '.' + table_name;
 
     // get table columns and iterator to loop under all table columns
     std::vector< Column * > table_columns = this->getTableColumns(table);
@@ -414,13 +430,15 @@ void PythonDAOsGenerator::generateSelectFromPK(std::stringstream &text, Table &t
     std::vector< Column * > pk_columns = this->getTablePrimaryKeyColumns(table);
 
     // generate for pk
-    generateSelectFromConstraintColumns(text, table_name, table_columns, pk_columns);
+    generateSelectFromConstraintColumns(text, schema_table_name, table_columns, pk_columns);
 }
 
 void PythonDAOsGenerator::generateSelectFromUKs(std::stringstream &text, Table &table)
 {
-    // table name
+    // schema and table name
+    std::string schema_name = table.getSchema()->getName().toUtf8().constData();
     std::string table_name = table.getName().toUtf8().constData();
+    std::string schema_table_name = schema_name + '.' + table_name;
 
     // get table columns and iterator to loop under all table columns
     std::vector< Column * > table_columns = this->getTableColumns(table);
@@ -432,11 +450,11 @@ void PythonDAOsGenerator::generateSelectFromUKs(std::stringstream &text, Table &
     // generate for all uk
     for(uk_keys_it = uk_keys.begin(); uk_keys_it != uk_keys.end(); ++uk_keys_it)
     {
-        generateSelectFromConstraintColumns(text, table_name, table_columns, *uk_keys_it);
+        generateSelectFromConstraintColumns(text, schema_table_name, table_columns, *uk_keys_it);
     }
 }
 
-void PythonDAOsGenerator::generateSelectFromConstraintColumns(std::stringstream &text, std::string &table_name, std::vector< Column * > &table_columns, std::vector< Column * > &constr_columns)
+void PythonDAOsGenerator::generateSelectFromConstraintColumns(std::stringstream &text, std::string &schema_table_name, std::vector< Column * > &table_columns, std::vector< Column * > &constr_columns)
 {
     if(constr_columns.empty())
     {
@@ -465,7 +483,7 @@ void PythonDAOsGenerator::generateSelectFromConstraintColumns(std::stringstream 
     text << "\n    ):";
 
     // commentary
-    text << "\n        \"\"\" Retreive a '" << table_name << "' record";
+    text << "\n        \"\"\" Retreive a '" << schema_table_name << "' record";
     text << "\n            using primary or unique key \"\"\"";
     text << '\n';
 
@@ -492,7 +510,7 @@ void PythonDAOsGenerator::generateSelectFromConstraintColumns(std::stringstream 
         if(std::next(table_columns_it, 1) != table_columns.end()) text << ", ";
         text << '\"';
     }
-    text << "\n            \" FROM " << table_name << " WHERE \"";
+    text << "\n            \" FROM " << schema_table_name << " WHERE \"";
     for(constr_columns_it = constr_columns.begin(); constr_columns_it != constr_columns.end(); ++constr_columns_it)
     {
         column = *constr_columns_it;
@@ -522,9 +540,9 @@ void PythonDAOsGenerator::generateSelectFromConstraintColumns(std::stringstream 
     text << "\n            raise";
 }
 
-std::string PythonDAOsGenerator::getDAONameFromTableName(std::string &table_name)
+std::string PythonDAOsGenerator::getDAONameFromSchemaTableName(std::string &schema_name, std::string &table_name)
 {
-    stringstream in(table_name);
+    stringstream in(schema_name + '_' + table_name);
     stringstream out;
 
     while(!in.eof())

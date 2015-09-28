@@ -21,8 +21,8 @@ class PythonDAOsGenerator: public BaseCodeGenerator {
         void generateSelectFromPK(std::stringstream &text, Table &table);
         void generateSelectFromUKs(std::stringstream &text, Table &table);
 
-        void generateSelectFromConstraintColumns(std::stringstream &text, std::string &table_name, std::vector< Column * > &table_columns, std::vector< Column * > &constr_columns);
-        std::string getDAONameFromTableName(std::string &table_name);
+        void generateSelectFromConstraintColumns(std::stringstream &text, std::string &schema_table_name, std::vector< Column * > &table_columns, std::vector< Column * > &constr_columns);
+        std::string getDAONameFromSchemaTableName(std::string &schema_name, std::string &table_name);
         std::vector< Column * > getTableColumns(Table &table);
         std::vector< Column * > getTablePrimaryKeyColumns(Table &table);
         std::vector< Column * > getTablePrimaryKeyAutoColumns(Table &table);
