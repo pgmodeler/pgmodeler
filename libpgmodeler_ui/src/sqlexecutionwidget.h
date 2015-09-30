@@ -119,6 +119,8 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 
     void handleSelectedWord(QString word);
 
+    void toggleOutputPane(bool visible);
+
     friend class SQLToolWidget;
 };
 

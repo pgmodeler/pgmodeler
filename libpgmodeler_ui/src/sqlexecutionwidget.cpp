@@ -56,6 +56,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	history_tb->setToolTip(history_tb->toolTip() + QString(" (%1)").arg(history_tb->shortcut().toString()));
 	load_tb->setToolTip(load_tb->toolTip() + QString(" (%1)").arg(load_tb->shortcut().toString()));
 	save_tb->setToolTip(save_tb->toolTip() + QString(" (%1)").arg(save_tb->shortcut().toString()));
+  output_tb->setToolTip(output_tb->toolTip() + QString(" (%1)").arg(output_tb->shortcut().toString()));
 
   ro_item_del=new ReadOnlyItemDelegate(this);
   results_tbw->setItemDelegate(ro_item_del);
@@ -68,6 +69,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(history_tb, SIGNAL(toggled(bool)), cmd_history_gb, SLOT(setVisible(bool)));
 	connect(clear_history_btn, SIGNAL(clicked(void)), cmd_history_lst, SLOT(clear(void)));
 	connect(find_tb, SIGNAL(toggled(bool)), find_wgt_parent, SLOT(setVisible(bool)));
+  connect(output_tb, SIGNAL(toggled(bool)), this, SLOT(toggleOutputPane(bool)));
 
 	//Signal handling with C++11 lambdas Slots
 	connect(clear_history_btn, &QPushButton::clicked,
@@ -87,6 +89,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
   connect(code_compl_wgt, SIGNAL(s_wordSelected(QString)), this, SLOT(handleSelectedWord(QString)));
 
   configureSnippets();
+  toggleOutputPane(false);
 }
 
 void SQLExecutionWidget::setConnection(Connection conn)
@@ -261,6 +264,8 @@ void SQLExecutionWidget::runSQLCommand(void)
 	{
 		ResultSet res;
     QString cmd=sql_cmd_txt->textCursor().selectedText();
+
+    output_tb->setChecked(true);
 
 		if(cmd.isEmpty())
 			cmd=sql_cmd_txt->toPlainText();
@@ -479,6 +484,33 @@ void SQLExecutionWidget::handleSelectedWord(QString word)
     tc.removeSelectedText();
     tc.insertText(SnippetsConfigWidget::getParsedSnippet(word));
   }
+}
+
+void SQLExecutionWidget::toggleOutputPane(bool visible)
+{
+  static int output_h=0, sqlcmd_h=0;
+
+  if(!visible)
+  {
+    //Storing the previous widgts sizes and changing the splitter's cursor
+    output_h=output_wgt->height();
+    sqlcmd_h=sql_cmd_wgt->height();
+    v_splitter->handle(1)->setCursor(Qt::ArrowCursor);
+    v_splitter->handle(1)->setEnabled(false);
+  }
+  else
+    v_splitter->handle(1)->setCursor(Qt::SplitVCursor);
+
+  v_splitter->handle(1)->setEnabled(visible);
+  output_wgt->setVisible(visible);
+
+  if(!visible)
+    /* Force the splitter size to be the same as the sql_cmd_wgt maximum height
+       in order to force the splitter to the bottom, hiding the output pane */
+    v_splitter->setSizes({sql_cmd_wgt->maximumHeight(), 0});
+  else
+    //Restore the splitter size with the previous sizes
+    v_splitter->setSizes({sqlcmd_h, output_h});
 }
 
 void SQLExecutionWidget::configureSnippets(void)
