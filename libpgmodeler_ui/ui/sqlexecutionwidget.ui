@@ -156,7 +156,7 @@
             </font>
            </property>
            <property name="toolTip">
-            <string>Save SQL commands</string>
+            <string>Search in SQL code</string>
            </property>
            <property name="text">
             <string>&amp;Find</string>
