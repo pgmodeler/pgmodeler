@@ -95,10 +95,9 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 bool SQLExecutionWidget::eventFilter(QObject *object, QEvent *event)
 {
   if(event->type() == QEvent::MouseButtonDblClick &&
-     qobject_cast<QSplitterHandle *>(object) == v_splitter->handle(1) &&
-     v_splitter->handle(1)->isEnabled())
+     qobject_cast<QSplitterHandle *>(object) == v_splitter->handle(1))
   {
-    output_tb->setChecked(false);
+    output_tb->setChecked(!v_splitter->handle(1)->isEnabled());
     return(true);
   }
 
