@@ -32,7 +32,6 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
   sql_cmd_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 	h_splitter1->setSizes({1000, 250});
-  v_splitter->setSizes({ 700 , 300 });
 	results_parent->setVisible(false);
 	cmd_history_gb->setVisible(false);
 
@@ -488,13 +487,8 @@ void SQLExecutionWidget::handleSelectedWord(QString word)
 
 void SQLExecutionWidget::toggleOutputPane(bool visible)
 {
-  static int output_h=0, sqlcmd_h=0;
-
   if(!visible)
   {
-    //Storing the previous widgts sizes and changing the splitter's cursor
-    output_h=output_wgt->height();
-    sqlcmd_h=sql_cmd_wgt->height();
     v_splitter->handle(1)->setCursor(Qt::ArrowCursor);
     v_splitter->handle(1)->setEnabled(false);
   }
@@ -509,8 +503,8 @@ void SQLExecutionWidget::toggleOutputPane(bool visible)
        in order to force the splitter to the bottom, hiding the output pane */
     v_splitter->setSizes({sql_cmd_wgt->maximumHeight(), 0});
   else
-    //Restore the splitter size with the previous sizes
-    v_splitter->setSizes({sqlcmd_h, output_h});
+    //Restore the splitter to the default size
+    v_splitter->setSizes({700, 300});
 }
 
 void SQLExecutionWidget::configureSnippets(void)
