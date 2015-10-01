@@ -89,6 +89,20 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 
   configureSnippets();
   toggleOutputPane(false);
+  v_splitter->handle(1)->installEventFilter(this);
+}
+
+bool SQLExecutionWidget::eventFilter(QObject *object, QEvent *event)
+{
+  if(event->type() == QEvent::MouseButtonDblClick &&
+     qobject_cast<QSplitterHandle *>(object) == v_splitter->handle(1) &&
+     v_splitter->handle(1)->isEnabled())
+  {
+    output_tb->setChecked(false);
+    return(true);
+  }
+
+  return(QWidget::eventFilter(object, event));
 }
 
 void SQLExecutionWidget::setConnection(Connection conn)
