@@ -33,11 +33,13 @@ Below the key features and fixes of this new release are described. Please, refe
 * [Fix] Fixed a crash when generating SQL code for recursive views.
 
 <strong>Miscelaneous:</strong> <br/>
+* [New] Added a toggle button in SQL Execution to show/hide the output pane.
 * [New] NumberedTextEditor now is able to set a custom tab width.
 * [Change] The system schema public now can be protected/unprotected as well moved through the canvas area.
 * [Change] When using snippets in the SQL execution field the current code will not be cleaned up, instead the snippet will be appended to the current code.
 * [Change] Removed the automatic view switching when saving the model.
 * [Change] pgModeler now indicates the name of unsaved models before quit.
+* [Fix] Fixed a severe bug that was not configuring the connection correctly when adding a new SQL input field from the current browsed database in SQL tool. The bug could cause user to manage a different database other than the one desired.
 * [Fix] Minor fixes in the object naming. Now pgModeler will accept dollar signs in any portion of the string or even numbers as object's name but this will automatically quote the name to avoid errors.
 * [Fix] Fixed the generation of DROP commands for triggers and rules.
 * [Fix] Fixed a bug that was not setting up the object's schema correctly when creating new table or view inside a selected schema.

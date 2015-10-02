@@ -6,6 +6,7 @@ v0.8.2-alpha
 <em>Codename: <strong>Faithful Elephant</strong></em><br/>
 <em>Release date: September 26, 2015</em><br/>
 
+* [New] Added a toggle button in SQL Execution to show/hide the output pane.
 * [New] Added the method Permission::isSimilarTo that returns true when a provided permission has the same semantics as the caller permission.
 * [New] Added missing keywords CASE, ELSE, QUERY, ELSIF, RAISE, EXCEPTION, TG_OP to sql-highlight.conf
 * [New] Columns that compose primary key and unique key are exposed as children of the constraint in the object tree at DatabaseExplorerWidget.
@@ -16,6 +17,7 @@ v0.8.2-alpha
 * [New] Added a nl_NL (Dutch - Netherlands) UI translation.
 * [New] Created a mechanism to make default values of columns in the form nextval(sequence) be transformed in a link between the sequence and the column in the import process. This will diminish the divergences raised by the diff process.
 * [New] Added a readonly item delegate for attributes grid to permit user to copy contents or navigate through values using keyboard.
+* [Change] Changed the initial data limit in DataManipulationForm from 100 to 1000.
 * [Change] Removed the default protected status of public schema in sample models.
 * [Change] The system schema public now can be protected/unprotected as well moved through the canvas area.
 * [Change] Changed the method DatabaseModel::getPermissionIndex to search permissions looking into their contents and not only by their internal references.
@@ -41,6 +43,9 @@ v0.8.2-alpha
 * [Change] Minor adjustment on buttons positions at NewObjectOverlay.
 * [Change] Minor message update in MainWindow::saveModel.
 * [Change] pgModeler now indicates the name of unsaved models before quit.
+* [Fix] Fixed a regression in trigger drop action in DatabaseExplorerWidget.
+* [Fix] Fixed a severe bug that was not configuring the connection correctly when adding a new SQL input field from the current browsed database in SQL tool. The bug could cause user to manage a different database other than the one desired.
+* [Fix] Fixed the "Find" button tooltip in SQLExecutionWidget
 * [Fix] Minor fix when showing system objects in ModelObjectsWidget.
 * [Fix] Fixed the view's SQL generation trimming the SQL that defines it to avoid differences between the model's view and the one generated after export. This will cause less divergences in when diff'ing the model and database.
 * [Fix] Minor fixes in the *::getAlterDefinition() methods do avoid crashes due to null objects handling.

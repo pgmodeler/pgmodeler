@@ -1006,7 +1006,7 @@ attribs_map DatabaseExplorerWidget::extractAttributesFromItem(QTreeWidgetItem *i
   if(obj_type!=OBJ_INDEX && TableObject::isTableObject(obj_type))
   {
     attribs[ParsersAttributes::TABLE]=attribs[ParsersAttributes::SCHEMA] + QString(".") + attribs[ParsersAttributes::TABLE];
-    attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::NAME];
+    attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::NAME] + QString(" ON %1").arg(attribs[ParsersAttributes::TABLE]);
   }
   //For operators and functions there must exist the signature attribute
   else if(obj_type==OBJ_OPERATOR || obj_type==OBJ_FUNCTION)
