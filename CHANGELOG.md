@@ -4,7 +4,7 @@ Change Log
 v0.8.2-alpha
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em><br/>
-<em>Release date: September 26, 2015</em><br/>
+<em>Release date: October 05, 2015</em><br/>
 
 * [New] Added a toggle button in SQL Execution to show/hide the output pane.
 * [New] Added the method Permission::isSimilarTo that returns true when a provided permission has the same semantics as the caller permission.

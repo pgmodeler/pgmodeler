@@ -1,7 +1,7 @@
 v0.8.2-alpha
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em>
-<em>Release date: September 26, 2015</em>
+<em>Release date: October 05, 2015</em>
 <em>Changes since: <strong>v0.8.1</strong></em><br/>
 
 <strong>Summary:</strong> this is the first release of the last version that will close the 0.8.x series. This one brings a few new features and important bug fixes mainly related to diff and import processes.<br/>
