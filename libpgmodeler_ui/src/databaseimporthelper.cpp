@@ -25,7 +25,7 @@ DatabaseImportHelper::DatabaseImportHelper(QObject *parent) : QObject(parent)
 	random_device rand_seed;
 	rand_num_engine.seed(rand_seed());
 
-	import_canceled=ignore_errors=import_sys_objs=import_ext_objs=rand_rel_colors=false;
+  import_canceled=ignore_errors=import_sys_objs=import_ext_objs=rand_rel_colors=update_fk_rels=false;
 	auto_resolve_deps=true;
 	import_filter=Catalog::LIST_ALL_OBJS | Catalog::EXCL_EXTENSION_OBJS | Catalog::EXCL_SYSTEM_OBJS;
 	xmlparser=nullptr;
@@ -87,7 +87,7 @@ void DatabaseImportHelper::setSelectedOIDs(DatabaseModel *db_model, map<ObjectTy
 	system_objs.clear();
 }
 
-void DatabaseImportHelper::setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors, bool debug_mode, bool rand_rel_colors)
+void DatabaseImportHelper::setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors, bool debug_mode, bool rand_rel_colors, bool update_rels)
 {
 	this->import_sys_objs=import_sys_objs;
 	this->import_ext_objs=import_ext_objs;
@@ -95,6 +95,7 @@ void DatabaseImportHelper::setImportOptions(bool import_sys_objs, bool import_ex
 	this->ignore_errors=ignore_errors;
 	this->debug_mode=debug_mode;
 	this->rand_rel_colors=rand_rel_colors;
+  this->update_fk_rels=update_rels;
 
 	Connection::setPrintSQL(debug_mode);
 
@@ -511,7 +512,7 @@ void DatabaseImportHelper::updateFKRelationships(void)
 
 			dbmodel->updateTableFKRelationships(tab);
 
-      progress=(i/static_cast<float>(count)) * 100;
+      progress=(i/static_cast<float>(count)) * 90;
 			itr_tab++; i++;
 		}
 	}
@@ -534,11 +535,14 @@ void DatabaseImportHelper::importDatabase(void)
     createConstraints();
     createTableInheritances();
     createPermissions();
-		updateFKRelationships();
+
+    if(update_fk_rels)
+      updateFKRelationships();
 
 		if(!import_canceled)
 		{
 			swapSequencesTablesIds();
+      assignSequencesToColumns();
 
 			if(!errors.empty())
 			{
@@ -1563,8 +1567,8 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 
       col.setType(PgSQLType::parseString(type_name));
       col.setNotNull(!itr->second[ParsersAttributes::NOT_NULL].isEmpty());
-			col.setDefaultValue(itr->second[ParsersAttributes::DEFAULT_VALUE]);
 			col.setComment(itr->second[ParsersAttributes::COMMENT]);
+      col.setDefaultValue(itr->second[ParsersAttributes::DEFAULT_VALUE]);
 
       //Checking if the collation used by the column exists, if not it'll be created when auto_resolve_deps is checked
       if(auto_resolve_deps && !itr->second[ParsersAttributes::COLLATION].isEmpty())
@@ -1604,7 +1608,6 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 
 
 		attribs[ParsersAttributes::POSITION]=schparser.getCodeDefinition(ParsersAttributes::POSITION, pos_attrib, SchemaParser::XML_DEFINITION);
-
     ref=Reference(attribs[ParsersAttributes::DEFINITION], QString());
 		ref.setDefinitionExpression(true);
 		attribs[ParsersAttributes::REFERENCES]=ref.getXMLDefinition();
@@ -2007,6 +2010,53 @@ void DatabaseImportHelper::createTableInheritances(void)
   }
 }
 
+void DatabaseImportHelper::assignSequencesToColumns(void)
+{
+  Table *table=nullptr;
+  Column *col=nullptr;
+  emit s_progressUpdated(95,
+                         trUtf8("Assigning sequences to columns..."),
+                         OBJ_SEQUENCE);
+
+  for(auto &object : *dbmodel->getObjectList(OBJ_TABLE))
+  {
+    table=dynamic_cast<Table *>(object);
+
+    for(auto &tab_obj : *table->getObjectList(OBJ_COLUMN))
+    {
+      col=dynamic_cast<Column *>(tab_obj);
+
+      //Translating the default value nextval('sequence'::regclass)
+      if(col->getType().isIntegerType() &&
+         col->getDefaultValue().contains(QString("nextval(")))
+      {
+        QString seq_name=col->getDefaultValue();
+        Sequence *seq=nullptr;
+
+        //Extracting the name from the nextval(''::regclass) portion and formating it
+        seq_name.remove(0, seq_name.indexOf(QChar('\'')) + 1);
+        seq_name.remove(seq_name.indexOf(QChar('\'')), seq_name.length());
+        seq_name=BaseObject::formatName(seq_name);
+
+        /* Checking if the sequence name contains the schema prepended.
+           If not, it'll be prepended by retrieving the table's schema name */
+        if(!seq_name.contains(QChar('.')))
+           seq_name.prepend(table->getSchema()->getName(true) + QString("."));
+
+        seq=dbmodel->getSequence(seq_name);
+
+        if(seq)
+        {
+          col->setSequence(seq);
+
+          if(col->getParentTable()->getObjectId() < seq->getObjectId())
+            BaseObject::swapObjectsIds(col->getParentTable(), seq, false);
+        }
+      }
+    }
+  }
+}
+
 void DatabaseImportHelper::__createTableInheritances(void)
 {
 	vector<unsigned>::iterator itr, itr_end;
@@ -2246,10 +2296,12 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
       if(obj_name.startsWith(QString("timestamp")) || obj_name.startsWith(QString("time")))
         obj_name.remove(QString(" without time zone"));
 
-			//Prepend the schema name only if it is not a system schema ('pg_catalog' or 'information_schema')
+      /* Prepend the schema name only if it is not a system schema ('pg_catalog' or 'information_schema') and
+         if the schema's names is already present in the type's name (in case of table types) */
 			sch_name=getObjectName(type_attr[ParsersAttributes::SCHEMA]);
-      if(!sch_name.isEmpty() && sch_name!=QString("pg_catalog") && sch_name!=QString("information_schema")) /*&&
-         !catalog.isExtensionObject(type_oid))*/
+      if(!sch_name.isEmpty() && sch_name!=QString("pg_catalog") &&
+         sch_name!=QString("information_schema") &&
+         !obj_name.contains(QRegExp(QString("^(\\\")?(%1)(\\\")?(.)").arg(sch_name))))
         obj_name.prepend(sch_name + QString("."));
 
 			if(generate_xml)

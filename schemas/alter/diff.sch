@@ -57,6 +57,12 @@
     {alter-cmds}
   %end
 
+  %if {fk-defs} %then
+    $br $br
+    [-- ] $ob [ Created foreign keys ] $cb [ --] $br
+    {fk-defs}
+  %end
+
   %if {set-perms} %then
     $br $br
     [-- ] $ob [ Created permissions ] $cb [ --] $br

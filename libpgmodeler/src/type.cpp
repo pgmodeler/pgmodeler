@@ -704,9 +704,13 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 QString Type::getAlterDefinition(BaseObject *object)
 {
+  Type *type=dynamic_cast<Type *>(object);
+
+  if(!type)
+    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
   try
-  {
-    Type *type=dynamic_cast<Type *>(object);
+  {   
     attribs_map attribs;
     QString alter_def, prev_val;
     int attrib_idx=-1;

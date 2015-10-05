@@ -59,7 +59,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<comment><![CDATA[comentario no banco de dados teste]]></comment>
 </database>
 
-<schema name="public" protected="true" rect-visible="true" fill-color="#ffc0c0" sql-disabled="true">
+<schema name="public" rect-visible="true" fill-color="#ffc0c0" sql-disabled="true">
 </schema>
 
 <schema name="schema_B" rect-visible="true" fill-color="#c0c0ff">

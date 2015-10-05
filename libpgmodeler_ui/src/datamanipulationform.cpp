@@ -24,8 +24,8 @@ const unsigned DataManipulationForm::NO_OPERATION=0;
 const unsigned DataManipulationForm::OP_INSERT=1;
 const unsigned DataManipulationForm::OP_UPDATE=2;
 const unsigned DataManipulationForm::OP_DELETE=3;
-const QChar DataManipulationForm::UNESC_VALUE_START='<';
-const QChar	DataManipulationForm::UNESC_VALUE_END='>';
+const QChar DataManipulationForm::UNESC_VALUE_START='{';
+const QChar	DataManipulationForm::UNESC_VALUE_END='}';
 
 DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f): QDialog(parent, f)
 {
@@ -44,6 +44,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	export_tb->setToolTip(export_tb->toolTip() + QString(" (%1)").arg(export_tb->shortcut().toString()));
 	delete_tb->setToolTip(delete_tb->toolTip() + QString(" (%1)").arg(delete_tb->shortcut().toString()));
 	add_tb->setToolTip(add_tb->toolTip() + QString(" (%1)").arg(add_tb->shortcut().toString()));
+  result_info_wgt->setVisible(false);
 
   //Forcing the splitter that handles the bottom widgets to resize its children to their minimum size
   h_splitter->setSizes({500, 250, 500});
@@ -136,9 +137,7 @@ void DataManipulationForm::listTables(void)
 
 	table_lbl->setEnabled(table_cmb->count() > 0);
 	table_cmb->setEnabled(table_cmb->count() > 0);
-	row_cnt_lbl->setVisible(false);
-	rows_ret_lbl->setVisible(false);
-  limit_lbl->setVisible(false);
+  result_info_wgt->setVisible(false);
 }
 
 void DataManipulationForm::listColumns(void)
@@ -185,12 +184,22 @@ void DataManipulationForm::retrieveData(void)
   if(table_cmb->currentIndex() <= 0)
     return;
 
+  Messagebox msg_box;
   Catalog catalog;
   Connection conn_sql=Connection(tmpl_conn_params),
       conn_cat=Connection(tmpl_conn_params);
 
 	try
 	{
+    if(!changed_rows.empty())
+    {
+      msg_box.show(trUtf8("<strong>WARNING: </strong> There are some changed rows waiting the commit! Do you really want to discard them and retrieve the data now?"),
+                   Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
+
+      if(msg_box.result()==QDialog::Rejected)
+        return;
+    }
+
 		QString query=QString("SELECT * FROM \"%1\".\"%2\"").arg(schema_cmb->currentText()).arg(table_cmb->currentText());
 		ResultSet res;
 		unsigned limit=limit_edt->text().toUInt();
@@ -227,11 +236,10 @@ void DataManipulationForm::retrieveData(void)
     SQLExecutionWidget::fillResultsTable(catalog, res, results_tbw, true);
 
 		export_tb->setEnabled(results_tbw->rowCount() > 0);
-		rows_ret_lbl->setVisible(results_tbw->rowCount() > 0);
-		row_cnt_lbl->setVisible(results_tbw->rowCount() > 0);
-		row_cnt_lbl->setText(QString::number(results_tbw->rowCount()));
-    limit_lbl->setVisible(results_tbw->rowCount() > 0);
-    limit_lbl->setText(trUtf8("<em>(Limit: <strong>%1</strong>)</em>").arg(limit_edt->text()));
+    result_info_wgt->setVisible(results_tbw->rowCount() > 0);
+    result_info_lbl->setText(QString("<em>[%1]</em> ").arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))) +
+                             trUtf8("Rows returned: <strong>%1</strong>&nbsp;&nbsp;&nbsp;").arg(results_tbw->rowCount()) +
+                             trUtf8("<em>(Limit: <strong>%1</strong>)</em>").arg(limit_edt->text().isEmpty() ? trUtf8("none") : limit_edt->text()));
 
 		//Reset the changed rows state
 		clearChangedRows();
@@ -771,6 +779,7 @@ void DataManipulationForm::saveChanges(void)
       conn.executeDDLCommand(QString("COMMIT"));
       conn.close();
 
+      changed_rows.clear();
 			retrieveData();
 			undo_tb->setEnabled(false);
 			save_tb->setEnabled(false);

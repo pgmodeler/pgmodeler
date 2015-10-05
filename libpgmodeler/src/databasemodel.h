@@ -422,7 +422,12 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		void addPermission(Permission *perm);
 		void removePermission(Permission *perm);
-		int getPermissionIndex(Permission *perm);
+
+    /*! brief Returns the specified permission's index. If exact_match is true
+        then all the contents of the permission are compared against other permission,
+        otherwise checks only if the roles and the objects are the same between the specified
+        permission and the ones existent in the model */
+    int getPermissionIndex(Permission *perm, bool exact_match);
 
 		//! \brief Inserts a list of permissions into the model
     void addPermissions(const vector<Permission *> &perms);

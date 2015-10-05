@@ -75,7 +75,10 @@ class DatabaseImportHelper: public QObject {
 		debug_mode,
 
 		//! \brief Generate random colors for relationships
-		rand_rel_colors;
+    rand_rel_colors,
+
+    //! \brief Indicates to the importer that the relationship update step must be executed
+    update_fk_rels;
 
 		//! \brief Stores the selected objects oids to be imported
 		map<ObjectType, vector<unsigned>> object_oids;
@@ -156,6 +159,9 @@ class DatabaseImportHelper: public QObject {
     void __createTableInheritances(void);
     void createTableInheritances(void);
 
+    //! brief Tries to assign imported sequences that are related to nextval() calls used in columns default values
+    void assignSequencesToColumns(void);
+
 		/*! \brief Retrieve the schema qualified name for the specified object oid. If the oid represents a function
 		or operator the signature can be retrieved instead by using the boolean parameter */
 		QString getObjectName(const QString &oid, bool signature_form=false);
@@ -214,7 +220,7 @@ class DatabaseImportHelper: public QObject {
 		void setSelectedOIDs(DatabaseModel *db_model, map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids);
 
 		//! brief Configures the import parameters
-		void setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors, bool debug_mode, bool rand_rel_colors);
+    void setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors, bool debug_mode, bool rand_rel_colors, bool update_fk_rels);
 
 		//! brief Returns the last system OID value for the current database
 		unsigned getLastSystemOID(void);

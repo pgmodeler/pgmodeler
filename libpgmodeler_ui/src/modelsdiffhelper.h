@@ -41,35 +41,6 @@ class ModelsDiffHelper: public QObject {
 
     //! brief Indicates if the diff was cancelled by user
     bool diff_canceled, diff_opts[8];
-    //,
-
-    /*! brief Indicates if cluster level objects like tablespaces or roles must be kept intact on
-        database in case of drop */
-    //keep_cluster_objs,
-
-    //! brief Indicates if any DROP/TRUNCATE generated must be in cascade mode
-    //cascade_mode,
-
-    //! brief Forces the recreation of any object maked as ALTER in the output
-    //force_recreation,
-
-    //! brief Recreates only objects that can't be modified using ALTER commands
-    //recreate_unchangeble,
-
-    //! brief Generate a TRUNCATE command for every table which columns was modified in their data types
-    //trucante_tables,
-
-    //! brief Indicates if permissions must be preserved on database
-   // keep_obj_perms,
-
-    /*! brief Indicates that existing sequences must be reused in serial columns. Since serial columns are converted
-        into integer and a new sequence created and assigned as nextval(sequence) default value for those columns,
-        if reuse is enabled, new sequences will not be created instead the ones which name matches the column's default
-        value will be reused */
-   // reuse_sequences,
-
-    //! brief Do not generate and execute commands to rename the destinatio database
-   // preserve_db_name;
 
     //! brief Stores the count of objects to be dropped, changed or created
     unsigned diffs_counter[4];

@@ -261,7 +261,7 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
     font.setItalic(true);
     item->setForeground(0,BaseObjectView::getFontStyle(ParsersAttributes::INH_COLUMN).foreground());
   }
-  else if(object->isProtected())
+  else if(object->isProtected() || object->isSystemObject())
   {
     font.setItalic(true);
     item->setForeground(0,BaseObjectView::getFontStyle(ParsersAttributes::PROT_COLUMN).foreground());

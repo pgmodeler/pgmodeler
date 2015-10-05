@@ -201,7 +201,7 @@ void DatabaseImportForm::importDatabase(void)
     model_wgt->setUpdatesEnabled(false);
     import_helper->setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(),
 																	 resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(),
-																	 debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked());
+                                   debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked(), true);
 
     import_helper->setSelectedOIDs(model_wgt->getDatabaseModel(), obj_oids, col_oids);
 		import_thread->start();
@@ -303,7 +303,7 @@ void DatabaseImportForm::listObjects(void)
       import_helper->setCurrentDatabase(database_cmb->currentText());
       import_helper->setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(),
 																		 resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(),
-																		 debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked());
+                                     debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked(), true);
 
       //List the objects using the static helper method
       DatabaseImportForm::listObjects(*import_helper, db_objects_tw, true, true, false);

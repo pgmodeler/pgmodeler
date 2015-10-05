@@ -26,6 +26,7 @@ bool NumberedTextEditor::line_nums_visible=true;
 bool NumberedTextEditor::highlight_lines=true;
 QColor NumberedTextEditor::line_hl_color=Qt::yellow;
 QFont NumberedTextEditor::default_font=QFont(QString("DejaVu Sans Mono"), 10);
+int NumberedTextEditor::tab_width=0;
 
 NumberedTextEditor::NumberedTextEditor(QWidget * parent) : QPlainTextEdit(parent)
 {
@@ -55,6 +56,25 @@ void NumberedTextEditor::setHighlightLines(bool value)
 void NumberedTextEditor::setLineHighlightColor(const QColor &color)
 {
   line_hl_color=color;
+}
+
+void NumberedTextEditor::setTabWidth(int value)
+{
+  if(value < 0)
+    tab_width=0;
+  else
+    tab_width=value;
+}
+
+int NumberedTextEditor::getTabWidth(void)
+{
+  if(tab_width == 0)
+    return(80);
+  else
+  {
+    QFontMetrics fm(default_font);
+    return(tab_width * fm.width(' '));
+  }
 }
 
 void NumberedTextEditor::setFocus(void)
@@ -101,6 +121,9 @@ void NumberedTextEditor::updateLineNumbers(void)
   }
 
   line_number_wgt->drawLineNumbers(first_line, line_count, dy);
+
+  if(this->tabStopWidth()!=NumberedTextEditor::getTabWidth())
+    this->setTabStopWidth(NumberedTextEditor::getTabWidth());
 }
 
 void NumberedTextEditor::updateLineNumbersSize(void)

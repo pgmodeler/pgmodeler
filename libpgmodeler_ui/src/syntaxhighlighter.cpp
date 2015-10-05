@@ -17,10 +17,11 @@
 */
 
 #include "syntaxhighlighter.h"
+#include "numberedtexteditor.h"
 
 QFont SyntaxHighlighter::default_font=QFont(QString("DejaVu Sans Mono"), 10);
 
-SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode) : QSyntaxHighlighter(parent)
+SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode, bool use_custom_tab_width) : QSyntaxHighlighter(parent)
 {
   if(!parent)
     throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -29,6 +30,9 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mo
 	this->single_line_mode=single_line_mode;
 	configureAttributes();
   parent->installEventFilter(this);
+
+  if(use_custom_tab_width)
+    parent->setTabStopWidth(NumberedTextEditor::getTabWidth());
 }
 
 bool SyntaxHighlighter::eventFilter(QObject *object, QEvent *event)

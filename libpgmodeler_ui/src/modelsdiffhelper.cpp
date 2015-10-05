@@ -26,7 +26,6 @@ ModelsDiffHelper::ModelsDiffHelper(void)
   pgsql_version=PgSQLVersions::DEFAULT_VERSION;
 	source_model=imported_model=nullptr;
   resetDiffCounter();
-  //setDiffOptions(true, true, false, false, false, true, true);
 
   diff_opts[OPT_KEEP_CLUSTER_OBJS]=true;
   diff_opts[OPT_CASCADE_MODE]=true;
@@ -42,18 +41,6 @@ ModelsDiffHelper::~ModelsDiffHelper(void)
 {
   destroyTempObjects();
 }
-
-/*void ModelsDiffHelper::setDiffOptions(bool keep_cluster_objs, bool cascade_mode, bool truncate_tables, bool force_recreation,
-                                      bool recreate_unchangeble, bool keep_obj_perms, bool reuse_sequences)
-{
-  this->keep_cluster_objs=keep_cluster_objs;
-  this->cascade_mode=cascade_mode;
-  this->force_recreation=force_recreation;
-  this->trucante_tables=truncate_tables;
-  this->recreate_unchangeble=(force_recreation && recreate_unchangeble);
-  this->keep_obj_perms=keep_obj_perms;
-  this->reuse_sequences=reuse_sequences;
-}*/
 
 void ModelsDiffHelper::setDiffOption(unsigned opt_id, bool value)
 {
@@ -247,12 +234,21 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
                              object->getObjectType());
 
       //Processing objects that are not database, table child object (they are processed further)
-      if(obj_type!=OBJ_DATABASE && !TableObject::isTableObject(obj_type))// && obj_type!=BASE_RELATIONSHIP)
+      if(obj_type!=OBJ_DATABASE && !TableObject::isTableObject(obj_type))
       {
+        if(diff_type==ObjectsDiffInfo::CREATE_OBJECT && obj_type==OBJ_PERMISSION)
+          object->getName();
+
         /* Processing permissions. If the operation is DROP and keep_obj_perms is true the
            the permission is ignored */
         if(obj_type==OBJ_PERMISSION &&
-           ((diff_type!=ObjectsDiffInfo::DROP_OBJECT) || !diff_opts[OPT_KEEP_OBJ_PERMS]))
+
+           ((diff_type==ObjectsDiffInfo::DROP_OBJECT &&
+             !diff_opts[OPT_KEEP_OBJ_PERMS]) ||
+
+            (diff_type==ObjectsDiffInfo::CREATE_OBJECT &&
+             (aux_model->getPermissionIndex(dynamic_cast<Permission *>(object), true) < 0 ||
+              !diff_opts[OPT_KEEP_OBJ_PERMS]))))
           generateDiffInfo(diff_type, object);
 
         //Processing relationship (in this case only generalization ones are considered)
@@ -515,14 +511,20 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
       /* If the info is for DROP, generate the drop for referer objects of the
        one marked to be dropped */
       if((!diff_opts[OPT_FORCE_RECREATION] || diff_opts[OPT_RECREATE_UNCHANGEBLE]) &&
-              diff_type==ObjectsDiffInfo::DROP_OBJECT)
+          diff_type==ObjectsDiffInfo::DROP_OBJECT)
       {
         vector<BaseObject *> ref_objs;
+        ObjectType obj_type=object->getObjectType();
+
         imported_model->getObjectReferences(object, ref_objs);
 
         for(auto &obj : ref_objs)
         {
-          if(obj->getObjectType()!=BASE_RELATIONSHIP)
+          /* Avoiding columns to be dropped when a sequence linked to them is dropped too. This because
+             a column can be a reference to a sequence so to avoid drop and recreate that column this one
+             will not be erased, unless the column does not exists in the model anymore */
+          if((obj_type==OBJ_SEQUENCE && obj->getObjectType()!=OBJ_COLUMN) &&
+             (obj_type!=OBJ_SEQUENCE && obj->getObjectType()!=BASE_RELATIONSHIP))
             generateDiffInfo(diff_type, obj);
 
           if(diff_canceled)
@@ -564,7 +566,7 @@ void ModelsDiffHelper::processDiffInfos(void)
   map<unsigned, QString>::reverse_iterator ritr, ritr_end;
   attribs_map attribs;
   QString alter_def, no_inherit_def, inherit_def, set_perms,
-          unset_perms, fk_defs, col_drop_def;
+          unset_perms, col_drop_def;
   SchemaParser schparser;
   Type *type=nullptr;
   vector<Type *> types;
@@ -573,6 +575,7 @@ void ModelsDiffHelper::processDiffInfos(void)
   Table *parent_tab=nullptr;
   bool skip_obj=false;
   QStringList sch_names;
+  map<unsigned, QString> create_fks;
 
   try
   {
@@ -676,7 +679,7 @@ void ModelsDiffHelper::processDiffInfos(void)
           //Generating fks definitions in a separated variable in order to append them at create commands maps
           if(object->getObjectType()==OBJ_CONSTRAINT &&
              dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::foreign_key)
-            fk_defs+=getCodeDefinition(object, false);
+            create_fks[object->getObjectId()]=getCodeDefinition(object, false);
           else
           {
             create_objs[object->getObjectId()]=getCodeDefinition(object, false);
@@ -692,7 +695,9 @@ void ModelsDiffHelper::processDiffInfos(void)
         //Recreating the object instead of generating an ALTER command for it
         if((diff_opts[OPT_FORCE_RECREATION] && obj_type!=OBJ_DATABASE) &&
            (!diff_opts[OPT_RECREATE_UNCHANGEBLE] ||
-            (diff_opts[OPT_RECREATE_UNCHANGEBLE] && !object->acceptsAlterCommand())))
+            (diff_opts[OPT_RECREATE_UNCHANGEBLE] && !object->acceptsAlterCommand() &&
+             diff.getObject()->getCodeDefinition(SchemaParser::SQL_DEFINITION).simplified()!=
+             diff.getOldObject()->getCodeDefinition(SchemaParser::SQL_DEFINITION).simplified())))
         {
           recreateObject(object, drop_vect, create_vect);
 
@@ -705,7 +710,15 @@ void ModelsDiffHelper::processDiffInfos(void)
           {
             //The there is no ALTER info registered for an object's reference
             if(!isDiffInfoExists(ObjectsDiffInfo::ALTER_OBJECT, nullptr, obj, false))
-             create_objs[obj->getObjectId()]=getCodeDefinition(obj, false);
+            {
+              /* Special case for constraints, their code will be appeded to a separated variable in order to
+                 create them at the end of diff buffer */
+              if(obj->getObjectType()==OBJ_CONSTRAINT &&
+                 dynamic_cast<Constraint *>(obj)->getConstraintType()==ConstraintType::foreign_key)
+                create_fks[obj->getObjectId()]=getCodeDefinition(obj, false);
+              else
+                create_objs[obj->getObjectId()]=getCodeDefinition(obj, false);
+            }
           }
 
           drop_vect.clear();
@@ -760,9 +773,9 @@ void ModelsDiffHelper::processDiffInfos(void)
 
     diff_def.clear();
 
-    if(!drop_objs.empty() || !create_objs.empty() || !alter_objs.empty() ||
+    if(!drop_objs.empty() || !create_objs.empty() || !alter_objs.empty() || !create_fks.empty() ||
        !inherit_def.isEmpty() || !no_inherit_def.isEmpty() || !set_perms.isEmpty() ||
-       !fk_defs.isEmpty() || !col_drop_def.isEmpty())
+       !col_drop_def.isEmpty())
     {
       sch_names.removeDuplicates();
 
@@ -770,7 +783,7 @@ void ModelsDiffHelper::processDiffInfos(void)
       attribs[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::_TRUE_;
       attribs[ParsersAttributes::PGMODELER_VERSION]=GlobalAttributes::PGMODELER_VERSION;
       attribs[ParsersAttributes::CHANGE]=QString::number(alter_objs.size());
-      attribs[ParsersAttributes::CREATE]=QString::number(create_objs.size());
+      attribs[ParsersAttributes::CREATE]=QString::number(create_objs.size() + create_fks.size());
       attribs[ParsersAttributes::DROP]=QString::number(drop_objs.size());
       attribs[ParsersAttributes::TRUNCATE]=QString::number(truncate_tabs.size());
       attribs[ParsersAttributes::SEARCH_PATH]=sch_names.join(',');
@@ -778,6 +791,7 @@ void ModelsDiffHelper::processDiffInfos(void)
       attribs[ParsersAttributes::DROP_CMDS]=QString();
       attribs[ParsersAttributes::CREATE_CMDS]=QString();
       attribs[ParsersAttributes::TRUNCATE_CMDS]=QString();
+      attribs[ParsersAttributes::FK_DEFS]=QString();
       attribs[ParsersAttributes::UNSET_PERMS]=unset_perms;
       attribs[ParsersAttributes::SET_PERMS]=set_perms;
       attribs[ParsersAttributes::FUNCTION]=(source_model->getObjectCount(OBJ_FUNCTION)!=0 ? ParsersAttributes::_TRUE_ : QString());
@@ -796,12 +810,13 @@ void ModelsDiffHelper::processDiffInfos(void)
       attribs[ParsersAttributes::DROP_CMDS]+=col_drop_def;
 
 
-
       for(auto &itr : create_objs)
         attribs[ParsersAttributes::CREATE_CMDS]+=itr.second;
 
-      attribs[ParsersAttributes::CREATE_CMDS]+=fk_defs;
       attribs[ParsersAttributes::CREATE_CMDS]+=inherit_def;
+
+      for(auto &itr : create_fks)
+        attribs[ParsersAttributes::FK_DEFS]+=itr.second;
 
       for(auto &itr : truncate_tabs)
         attribs[ParsersAttributes::TRUNCATE_CMDS]+=itr.second;

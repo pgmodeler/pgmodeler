@@ -46,6 +46,7 @@ class IndexWidget: public BaseObjectWidget, public Ui::IndexWidget {
 	private slots:
 		void hideEvent(QHideEvent *event);
 		void selectIndexingType(void);
+    void enableSortingOptions(void);
 
 	public slots:
 		void applyConfiguration(void);

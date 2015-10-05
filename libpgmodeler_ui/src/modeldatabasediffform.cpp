@@ -27,6 +27,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
   {
     setupUi(this);   
     sqlcode_txt=PgModelerUiNS::createNumberedTextEditor(sqlcode_wgt);
+    sqlcode_txt->setReadOnly(true);
 
     htmlitem_del=new HtmlItemDelegate;
     output_trw->setItemDelegateForColumn(0, htmlitem_del);
@@ -344,7 +345,8 @@ void ModelDatabaseDiffForm::importDatabase(void)
 		import_helper->setConnection(conn1);
 		import_helper->setSelectedOIDs(imported_model, obj_oids, col_oids);
 		import_helper->setCurrentDatabase(database_cmb->currentText());
-		import_helper->setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(), true, ignore_errors_chk->isChecked(), false, false);
+    import_helper->setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(), true,
+                                    ignore_errors_chk->isChecked(), false, false, false);
 
 		import_thread->start();
 	}

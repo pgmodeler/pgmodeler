@@ -69,6 +69,8 @@ void ModelValidationWidget::createThread(void)
 
     connect(validation_thread, SIGNAL(started(void)), validation_helper, SLOT(validateModel(void)));
     connect(validation_thread, SIGNAL(started(void)), validation_helper, SLOT(applyFixes(void)));
+
+    connect(validation_thread, SIGNAL(finished(void)), this, SLOT(updateGraphicalObjects(void)));
     connect(validation_thread, SIGNAL(finished(void)), this, SLOT(destroyThread(void)));
 
     connect(validation_helper, SIGNAL(s_validationInfoGenerated(ValidationInfo)), this, SLOT(updateValidation(ValidationInfo)), Qt::QueuedConnection);
@@ -88,6 +90,12 @@ void ModelValidationWidget::createThread(void)
 
     connect(validation_helper, &ModelValidationHelper::s_fixApplied,
             [=](){ emit s_fixApplied(); });
+
+    connect(validation_helper, &ModelValidationHelper::s_objectIdChanged,
+            [=](BaseObject *obj) {
+                BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(obj);
+                if(graph_obj) graph_objects.push_back(graph_obj);
+            });
   }
 }
 
@@ -303,7 +311,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 
     if(val_info.getValidationType()==ValidationInfo::BROKEN_REL_CONFIG)
     {
-      PgModelerUiNS::createOutputTreeItem(output_trw, trUtf8("<strong>HINT:</strong> try to swap the mentioned relationship by another one in order to solve this situation. Note that other objects may be lost in this process."),
+      PgModelerUiNS::createOutputTreeItem(output_trw, trUtf8("<strong>HINT:</strong> try to swap the relationship by another ones that somehow are linked to it through generated columns or constraints to solve this issue. Note that other objects may be lost in the swap process."),
                                           QPixmap(QString(":/icones/icones/msgbox_alerta.png")), item);
     }
     else
@@ -496,5 +504,25 @@ void ModelValidationWidget::validateRelationships(void)
   {
     Messagebox msg_box;
     msg_box.show(e);
+  }
+}
+
+void ModelValidationWidget::updateGraphicalObjects(void)
+{
+  if(!graph_objects.empty())
+  {
+    vector<BaseGraphicObject *>::iterator end;
+
+    std::sort(graph_objects.begin(), graph_objects.end());
+    end=std::unique(graph_objects.begin(), graph_objects.end());
+    graph_objects.erase(end, graph_objects.end());
+
+    while(!graph_objects.empty())
+    {
+      graph_objects.back()->setModified(true);
+      graph_objects.pop_back();
+    }
+
+    emit s_graphicalObjectsUpdated();
   }
 }

@@ -228,15 +228,12 @@ void SQLToolWidget::addSQLExecutionTab(void)
 {
   try
   {
-    Connection conn=(*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>()));
     SQLExecutionWidget *sql_exec_wgt=new SQLExecutionWidget;
-    QString db_name=databases_tbw->tabText(databases_tbw->currentIndex());
     DatabaseExplorerWidget *db_explorer_wgt=dynamic_cast<DatabaseExplorerWidget *>(sender());
+    Connection conn=db_explorer_wgt->getConnection();
 
-    conn.setConnectionParam(Connection::PARAM_DB_NAME, db_name);
     sql_exec_wgt->setConnection(conn);
-
-    sql_exec_tbw->addTab(sql_exec_wgt, db_name);
+    sql_exec_tbw->addTab(sql_exec_wgt, conn.getConnectionParam(Connection::PARAM_DB_NAME));
     sql_exec_tbw->setCurrentWidget(sql_exec_wgt);
     sql_exec_tbw->currentWidget()->layout()->setContentsMargins(4,4,4,4);
     sql_exec_wgts[db_explorer_wgt].push_back(sql_exec_wgt);
@@ -296,5 +293,10 @@ void SQLToolWidget::showSnippet(const QString &snip)
     addSQLExecutionTab();
 
   sql_exec_wgt=dynamic_cast<SQLExecutionWidget *>(sql_exec_tbw->currentWidget());
-  sql_exec_wgt->sql_cmd_txt->setPlainText(snip);
+
+  QTextCursor cursor=sql_exec_wgt->sql_cmd_txt->textCursor();
+  cursor.movePosition(QTextCursor::End);
+
+  sql_exec_wgt->sql_cmd_txt->appendPlainText(snip);
+  sql_exec_wgt->sql_cmd_txt->setTextCursor(cursor);
 }

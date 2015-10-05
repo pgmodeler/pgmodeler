@@ -89,6 +89,9 @@ class ElementsWidget: public QWidget, public Ui::ElementsWidget {
 		void selectElementObject(void);
 		void handleElement(int elem_idx);
 		void editElement(int elem_idx);
+
+  signals:
+    void s_elementHandled(int elem_idx);
 };
 
 #endif

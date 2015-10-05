@@ -366,7 +366,7 @@ void ObjectTableWidget::removeRow(void)
 		if(item->isSelected())
 		{
 			if(conf_exclusion)
-				msg_box.show(trUtf8("Confirmação"),trUtf8("Do you really want to remove the selected item?"),
+        msg_box.show(trUtf8("Confirmation"),trUtf8("Do you really want to remove the selected item?"),
 												Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
 			if(!conf_exclusion || (conf_exclusion && msg_box.result()==QDialog::Accepted))
@@ -392,7 +392,7 @@ void ObjectTableWidget::removeRows(void)
 		/* Only shows the confirmation message if the conf_exclusion is set and the user called the method
 			 activating the 'remove_all_tb' button */
 		if(conf_exclusion && sender_obj==remove_all_tb)
-			msg_box.show(trUtf8("Confirmação"),trUtf8("Do you really want to remove the all items?"),
+      msg_box.show(trUtf8("Confirmation"),trUtf8("Do you really want to remove the all items?"),
 											Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
 		if(!conf_exclusion || (conf_exclusion && sender_obj!=remove_all_tb) ||

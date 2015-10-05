@@ -26,7 +26,7 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 		QFrame *frame=nullptr;
 
     setupUi(this);
-    elem_expr_hl=new SyntaxHighlighter(elem_expr_txt);
+    elem_expr_hl=new SyntaxHighlighter(elem_expr_txt, false, true);
     elem_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
     parent_obj=nullptr;
@@ -316,6 +316,8 @@ void ElementsWidget::handleElement(int elem_idx)
 	}
 	else if(elements_tab->getCellText(elem_idx,0).isEmpty())
 		elements_tab->removeRow(elem_idx);
+
+  emit s_elementHandled(elem_idx);
 }
 
 void ElementsWidget::editElement(int elem_idx)

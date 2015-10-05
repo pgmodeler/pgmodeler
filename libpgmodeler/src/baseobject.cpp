@@ -71,7 +71,7 @@ bool BaseObject::use_cached_code=true;
 
 BaseObject::BaseObject(void)
 {
-	object_id=BaseObject::global_id++;
+  object_id=BaseObject::global_id++;
 	is_protected=system_obj=sql_disabled=false;
 	code_invalidated=true;
 	obj_type=BASE_OBJECT;
@@ -171,7 +171,8 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
                 name.indexOf('.')>=0 ||
                 name.indexOf('@')>=0 ||
                 name.indexOf(' ')>=0 ||
-                name.indexOf('$')>=0));
+                name.indexOf('$')>=0 ||
+                name.contains(QRegExp("^[0-9]+"))));
 
 		i=0;
     while(i < qtd && !needs_fmt)
@@ -254,9 +255,6 @@ bool BaseObject::isValidName(const QString &name)
 			valid=true; i++; len--;
 		}
 
-    //The name is invalid if it starts with number
-    valid=!name.contains(QRegExp("^(\")*[0-9]+"));
-
 		while(valid && i < len)
 		{
 			chr=raw_name[i];
@@ -267,8 +265,8 @@ bool BaseObject::isValidName(const QString &name)
 				 (chr >= 'A' && chr <='Z') ||
 				 (chr >= '0' && chr <='9') ||
 					chr == '_' || chr == '-' ||
-					chr == '.' || chr == '@' || chr ==' ' ||
-				 (i > 0 && chr=='$'))
+          chr == '.' || chr == '@' ||
+          chr == ' ' ||	chr=='$')
 			{
 				valid=true;
 				i++;
@@ -333,7 +331,7 @@ BaseObject *BaseObject::getDatabase(void)
 void BaseObject::setProtected(bool value)
 {
 	setCodeInvalidated(this->is_protected != value);
-	is_protected=(!system_obj ? value : true);
+  is_protected=value;//(!system_obj ? value : true);
 }
 
 void BaseObject::setName(const QString &name)
@@ -449,12 +447,6 @@ bool BaseObject::acceptsAlterCommand(ObjectType obj_type)
          obj_type==OBJ_SCHEMA || obj_type==OBJ_SEQUENCE ||
          obj_type==OBJ_TABLE || obj_type==OBJ_TABLESPACE ||
          obj_type==OBJ_TYPE);
-
-  /* return(obj_type!=OBJ_CONSTRAINT && obj_type!=OBJ_CAST &&
-         obj_type!=BASE_RELATIONSHIP && obj_type!=OBJ_TEXTBOX &&
-         obj_type!=OBJ_PERMISSION && obj_type!=OBJ_PARAMETER &&
-         obj_type!=OBJ_TYPE_ATTRIBUTE && obj_type!=OBJ_TAG  &&
-         obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE); */
 }
 
 bool BaseObject::acceptsDropCommand(ObjectType obj_type)
@@ -651,7 +643,7 @@ bool BaseObject::isSQLDisabled(void)
 void BaseObject::setSystemObject(bool value)
 {
 	setCodeInvalidated(this->system_obj != value);
-	system_obj=sql_disabled=is_protected=value;
+  system_obj=sql_disabled=value;
 }
 
 bool BaseObject::isSystemObject(void)
@@ -1170,58 +1162,56 @@ QString BaseObject::getAlterDefinition(BaseObject *object)
 QString BaseObject::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
 {
   if(!object)
-   return(QString());
-  else
+    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+  QString alter;
+
+  if(object->obj_type!=this->obj_type)
+    throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+  setBasicAttributes(true);
+
+  try
   {
-    QString alter;
+    QStringList attribs={ ParsersAttributes::OWNER, ParsersAttributes::SCHEMA, ParsersAttributes::TABLESPACE };
+    bool accepts_obj[3]={ acceptsOwner(), acceptsSchema(), acceptsTablespace() };
+    BaseObject *dep_objs[3]={ this->getOwner(), this->getSchema(), this->getTablespace() },
+        *aux_dep_objs[3]={ object->getOwner(), object->getSchema(), object->getTablespace() };
 
-    if(object->obj_type!=this->obj_type)
-      throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-    setBasicAttributes(true);
-
-    try
+    if(!ignore_name_diff && this->getName()!=object->getName())
     {
-      QStringList attribs={ ParsersAttributes::OWNER, ParsersAttributes::SCHEMA, ParsersAttributes::TABLESPACE };
-      bool accepts_obj[3]={ acceptsOwner(), acceptsSchema(), acceptsTablespace() };
-      BaseObject *dep_objs[3]={ this->getOwner(), this->getSchema(), this->getTablespace() },
-                 *aux_dep_objs[3]={ object->getOwner(), object->getSchema(), object->getTablespace() };
-
-      if(!ignore_name_diff && this->getName()!=object->getName())
-      {
-        attributes[ParsersAttributes::NEW_NAME]=object->getName(true, false);
-        alter+=BaseObject::getAlterDefinition(ParsersAttributes::RENAME, attributes, true);
-        attributes[ParsersAttributes::NAME]=attributes[ParsersAttributes::NEW_NAME];
-        attributes[ParsersAttributes::SIGNATURE]=object->getSignature(true);
-      }
-
-      for(unsigned i=0; i < 3; i++)
-      {
-        if(accepts_obj[i] && dep_objs[i] && aux_dep_objs[i] &&
-           dep_objs[i]->getName(true)!=aux_dep_objs[i]->getName(true))
-        {
-          attributes[attribs[i]]=aux_dep_objs[i]->getName(true);          
-          alter+=BaseObject::getAlterDefinition(attribs[i], attributes, true);
-        }
-      }
-
-      if(this->getComment()!=object->getComment())
-      {
-        if(object->getComment().isEmpty())
-          attributes[ParsersAttributes::COMMENT]=ParsersAttributes::UNSET;
-        else
-          attributes[ParsersAttributes::COMMENT]=object->getComment();
-
-        schparser.ignoreUnkownAttributes(true);
-        schparser.ignoreEmptyAttributes(true);
-        alter+=schparser.getCodeDefinition(ParsersAttributes::COMMENT, attributes, SchemaParser::SQL_DEFINITION);
-      }
-    }
-    catch(Exception &e)
-    {
-      throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+      attributes[ParsersAttributes::NEW_NAME]=object->getName(true, false);
+      alter+=BaseObject::getAlterDefinition(ParsersAttributes::RENAME, attributes, true);
+      attributes[ParsersAttributes::NAME]=attributes[ParsersAttributes::NEW_NAME];
+      attributes[ParsersAttributes::SIGNATURE]=object->getSignature(true);
     }
 
-    return(alter);
+    for(unsigned i=0; i < 3; i++)
+    {
+      if(accepts_obj[i] && dep_objs[i] && aux_dep_objs[i] &&
+         dep_objs[i]->getName(true)!=aux_dep_objs[i]->getName(true))
+      {
+        attributes[attribs[i]]=aux_dep_objs[i]->getName(true);
+        alter+=BaseObject::getAlterDefinition(attribs[i], attributes, true);
+      }
+    }
+
+    if(this->getComment()!=object->getComment())
+    {
+      if(object->getComment().isEmpty())
+        attributes[ParsersAttributes::COMMENT]=ParsersAttributes::UNSET;
+      else
+        attributes[ParsersAttributes::COMMENT]=object->getComment();
+
+      schparser.ignoreUnkownAttributes(true);
+      schparser.ignoreEmptyAttributes(true);
+      alter+=schparser.getCodeDefinition(ParsersAttributes::COMMENT, attributes, SchemaParser::SQL_DEFINITION);
+    }
   }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
+
+  return(alter);
 }

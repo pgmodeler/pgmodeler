@@ -35,7 +35,7 @@ class CodeCompletionWidget: public QWidget
 	private:
 		Q_OBJECT
 
-		QWidget *parent_wgt;
+    QWidget *completion_wgt;
 
 		//! brief Marks the completion widget as persistent (available only when there is no a database model assinged)
 		QCheckBox *persistent_chk;

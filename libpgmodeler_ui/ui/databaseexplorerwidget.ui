@@ -95,7 +95,7 @@
         </font>
        </property>
        <property name="toolTip">
-        <string>Open the grid to visualize or edit data.</string>
+        <string>Open the grid to visualize or edit data</string>
        </property>
        <property name="text">
         <string>Data &amp;Grid</string>
@@ -124,7 +124,7 @@
         <bool>true</bool>
        </property>
        <property name="toolTip">
-        <string>Open a new SQL execution pane.</string>
+        <string>Open a new SQL execution pane</string>
        </property>
        <property name="text">
         <string>...</string>
@@ -140,7 +140,7 @@
         </size>
        </property>
        <property name="shortcut">
-        <string>Ctrl+F5</string>
+        <string>Ctrl+F6</string>
        </property>
       </widget>
      </item>
@@ -150,7 +150,7 @@
         <bool>true</bool>
        </property>
        <property name="toolTip">
-        <string>Update the objects tree.</string>
+        <string>Update the objects tree</string>
        </property>
        <property name="text">
         <string>...</string>
@@ -206,6 +206,9 @@
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
+     <property name="childrenCollapsible">
+      <bool>false</bool>
+     </property>
      <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
@@ -221,6 +224,12 @@
          </property>
          <property name="frameShadow">
           <enum>QFrame::Sunken</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAsNeeded</enum>
+         </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QAbstractScrollArea::AdjustIgnored</enum>
          </property>
          <property name="editTriggers">
           <set>QAbstractItemView::NoEditTriggers</set>
@@ -262,16 +271,11 @@
           <bool>true</bool>
          </property>
          <property name="columnCount">
-          <number>2</number>
+          <number>1</number>
          </property>
          <column>
           <property name="text">
            <string notr="true">1</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string notr="true">2</string>
           </property>
          </column>
         </widget>
@@ -462,7 +466,7 @@
        <number>16</number>
       </property>
       <property name="editTriggers">
-       <set>QAbstractItemView::NoEditTriggers</set>
+       <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
       </property>
       <property name="tabKeyNavigation">
        <bool>false</bool>
@@ -531,7 +535,7 @@
    <item>
     <widget class="QCheckBox" name="raw_attrib_names_chk">
      <property name="text">
-      <string>Show raw attributes names</string>
+      <string>Show raw attributes</string>
      </property>
     </widget>
    </item>

@@ -741,7 +741,7 @@ void DatabaseModel::destroyObjects(void)
 
   //Removing the special objects first
   storeSpecialObjectsXML();
-	disconnectRelationships();
+  disconnectRelationships();
 
 	for(i=0; i < cnt; i++)
 	{
@@ -764,7 +764,7 @@ void DatabaseModel::destroyObjects(void)
 			else
 				list->pop_back();
 
-			delete(object);
+      delete(object);
 		}
 	}
 
@@ -1648,7 +1648,7 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
 
 void DatabaseModel::storeSpecialObjectsXML(void)
 {
-	unsigned count, i, type_id;
+  unsigned count=0, i=0, type_id=0;
 	vector<BaseObject *>::iterator itr, itr_end;
 	Sequence *sequence=nullptr;
 	Permission *permission=nullptr;
@@ -1662,7 +1662,7 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 	Reference ref;
 	ObjectType tab_obj_type[3]={ OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_INDEX };
 	bool found=false;
-  vector<BaseObject *> objects;
+  vector<BaseObject *> objects, rem_objects;
 
 	try
 	{
@@ -1732,8 +1732,10 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 			}
 		}
 
-		itr=sequences.begin();
-		itr_end=sequences.end();
+    //Making a copy of the sequences list to avoid iterator invalidation when removing an object
+    rem_objects.assign(sequences.begin(), sequences.end());
+    itr=rem_objects.begin();
+    itr_end=rem_objects.end();
 
 		while(itr!=itr_end)
 		{
@@ -1748,13 +1750,15 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 			}
 		}
 
-		itr=views.begin();
-		itr_end=views.end();
+    //Making a copy of the view list to avoid iterator invalidation when removing an object
+    rem_objects.assign(views.begin(), views.end());
+    itr=rem_objects.begin();
+    itr_end=rem_objects.end();
 
 		while(itr!=itr_end)
 		{
 			view=dynamic_cast<View *>(*itr);
-			itr++;
+      itr++;
 
 			if(view->isReferRelationshipAddedColumn())
 			{
@@ -1799,6 +1803,8 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 			}
 		}
 
+    //Making a copy of the permissions list to avoid iterator invalidation when removing an object
+    rem_objects.assign(permissions.begin(), permissions.end());
 		itr=permissions.begin();
 		itr_end=permissions.end();
 
@@ -1910,8 +1916,15 @@ void DatabaseModel::removeRelationship(BaseRelationship *rel, int obj_idx)
 	{
 		if(getObjectIndex(rel) >= 0)
 		{
+      Table *recv_tab=nullptr;
+
 			if(rel->getObjectType()==OBJ_RELATIONSHIP)
 			{
+        /* If the relationship is not a many-to-many we store the receiver table in order to
+           update the fk relationships (if there are any) */
+        if(rel->getRelationshipType()!=Relationship::RELATIONSHIP_NN)
+          recv_tab=dynamic_cast<Relationship *>(rel)->getReceiverTable();
+
 				storeSpecialObjectsXML();
 				disconnectRelationships();
 			}
@@ -1926,6 +1939,10 @@ void DatabaseModel::removeRelationship(BaseRelationship *rel, int obj_idx)
 			{
 				validateRelationships();
 			}
+
+      //Updating the fk relationships for the receiver table after removing the old relationship
+      if(recv_tab)
+        updateTableFKRelationships(recv_tab);
 		}
 	}
 	catch(Exception &e)
@@ -2613,7 +2630,7 @@ void DatabaseModel::addPermission(Permission *perm)
 
 		TableObject *tab_obj=dynamic_cast<TableObject *>(perm->getObject());
 
-		if(getPermissionIndex(perm) >=0)
+    if(getPermissionIndex(perm, false) >=0)
 		{
 			throw Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PERMISSION)
                       .arg(perm->getObject()->getName())
@@ -2713,49 +2730,71 @@ void DatabaseModel::getPermissions(BaseObject *object, vector<Permission *> &per
 	}
 }
 
-int DatabaseModel::getPermissionIndex(Permission *perm)
+int DatabaseModel::getPermissionIndex(Permission *perm, bool exact_match)
 {
 	int perm_idx=-1;
 
 	if(perm)
 	{
-		Permission *perm_aux=nullptr;
-		vector<BaseObject *>::iterator itr, itr_end;
-		BaseObject *object=nullptr;
-		Role *role=nullptr;
-		unsigned count, i;
-		bool ref_role=false;
+    Permission *perm_aux=nullptr;
+    vector<BaseObject *>::iterator itr, itr_end;
 
-		itr=permissions.begin();
-		itr_end=permissions.end();
+    itr=permissions.begin();
+    itr_end=permissions.end();
 
-		object=perm->getObject();
+    if(exact_match)
+    {
+      while(itr!=itr_end)
+      {
+        perm_aux=dynamic_cast<Permission *>(*itr);
 
-		while(itr!=itr_end && perm_idx < 0)
-		{
-			perm_aux=dynamic_cast<Permission *>(*itr);
+        if(perm->isSimilarTo(perm_aux))
+        {
+          perm_idx=itr-permissions.begin();
+          break;
+        }
 
-			/* When the object of the auxiliary permission is the same as the
-			specified permission it will be check if the existant roles are
-			the same on both permissions */
-			if(object==perm_aux->getObject())
-			{
-				count=perm->getRoleCount();
+        itr++;
+      }
+    }
+    else
+    {
+      BaseObject *object=nullptr;
+      Role *role=nullptr;
+      unsigned count, i;
+      bool ref_role=false;
 
-				for(i=0; i < count && !ref_role; i++)
-				{
-					role=perm->getRole(i);
-					ref_role=perm_aux->isRoleExists(role);
-				}
-			}
+      object=perm->getObject();
 
-			//If the permissions references the same roles but one is a REVOKE and other GRANT they a considered different
-			if(perm==perm_aux || (ref_role && perm->isRevoke()==perm_aux->isRevoke()))
-				perm_idx=itr-permissions.begin();
+      while(itr!=itr_end)
+      {
+        perm_aux=dynamic_cast<Permission *>(*itr);
 
-			itr++;
-		}
-	}
+        /* When the object of the auxiliary permission is the same as the
+           specified permission it will be check if the existant roles are
+           the same on both permissions */
+        if(object==perm_aux->getObject())
+        {
+          count=perm->getRoleCount();
+
+          for(i=0; i < count && !ref_role; i++)
+          {
+            role=perm->getRole(i);
+            ref_role=perm_aux->isRoleExists(role);
+          }
+        }
+
+        //If the permissions references the same roles but one is a REVOKE and other GRANT they a considered different
+        if(perm==perm_aux || (ref_role && perm->isRevoke()==perm_aux->isRevoke()))
+        {
+          perm_idx=itr-permissions.begin();
+          break;
+        }
+
+        itr++;
+      }
+    }
+  }
 
   return(perm_idx);
 }
@@ -4948,10 +4987,14 @@ XMLParser *DatabaseModel::getXMLParser(void)
 
 QString DatabaseModel::getAlterDefinition(BaseObject *object)
 {
+  DatabaseModel *db_aux=dynamic_cast<DatabaseModel *>(object);
+
+  if(!db_aux)
+    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
   try
   {
     QString alter_def=BaseObject::getAlterDefinition(object);
-    DatabaseModel *db_aux=dynamic_cast<DatabaseModel *>(object);
 
     if(this->conn_limit!=db_aux->conn_limit)
     {

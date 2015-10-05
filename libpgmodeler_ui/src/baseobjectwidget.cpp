@@ -361,7 +361,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	owner_sel->setModel(model);
   owner_sel->setSelectedObject(model->getDefaultObject(OBJ_ROLE));
 
-	schema_sel->setModel(model);
+  schema_sel->setModel(model);
   schema_sel->setSelectedObject(model->getDefaultObject(OBJ_SCHEMA));
 
 	tablespace_sel->setModel(model);
@@ -389,6 +389,10 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
       owner_sel->setSelectedObject(object->getOwner());
       collation_sel->setSelectedObject(object->getCollation());
     }
+    /* Some objects like tables and views came with a pre selected schema even when
+       they are new objects. So we need to show this selected schema instead of the default one */
+    else if(new_object && object->getSchema())
+      schema_sel->setSelectedObject(object->getSchema());
 
 		obj_type=object->getObjectType();
 		prot=(parent_type!=OBJ_RELATIONSHIP &&
@@ -499,7 +503,11 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 	while(!chld_list.isEmpty())
 	{
 		wgt=dynamic_cast<QWidget *>(chld_list.front());
-		if(wgt)
+
+    //Avoids install event filters in objects that are inteneded to edit multiple lines
+    if(wgt &&
+       wgt->metaObject()->className()!=QString("QPlainTextEdit") &&
+       wgt->metaObject()->className()!=QString("NumberedTextEditor"))
 			wgt->installEventFilter(this);
 
 		chld_list.pop_front();

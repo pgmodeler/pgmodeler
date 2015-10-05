@@ -97,10 +97,12 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 						{
 							BaseObject::swapObjectsIds(info_obj, obj, true);
 							aux_obj=info_obj;
+              emit s_objectIdChanged(obj);
 						}
 						else if(tab_obj && tab_obj->getParentTable()==info_obj)
 						{
 							BaseObject::updateObjectId(tab_obj);
+              emit s_objectIdChanged(tab_obj);
 						}
 					}
 
@@ -110,7 +112,10 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
             for(auto &rel : base_rels)
 						{
 							if(rel->getObjectId() < aux_obj->getObjectId())
+              {
 								BaseObject::updateObjectId(rel);
+                emit s_objectIdChanged(rel);
+              }
 						}
 					}
 
@@ -123,6 +128,8 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
       {
         BaseObject::updateObjectId(info_obj);
       }
+
+      emit s_objectIdChanged(info_obj);
 		}
 		//Resolving no unique name by renaming the constraints/indexes
 		else if(info.getValidationType()==ValidationInfo::NO_UNIQUE_NAME)
@@ -184,23 +191,6 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 				refs.pop_back();
 			}
 		}
-    /* ** CODE DISABLED:
-          It's not a good idea to move the relationship to the end of list
-          it may break other special objects **  */
-    /* else if(info.getValidationType()==ValidationInfo::BROKEN_REL_CONFIG)
-    {
-      vector<BaseObject *> *rels=db_model->getObjectList(OBJ_RELATIONSHIP);
-      vector<BaseObject *>::iterator itr;
-
-      itr=std::find(rels->begin(), rels->end(), info.getObject());
-
-      if(itr!=rels->end() && (*itr)!=rels->back())
-      {
-        rels->erase(itr);
-        rels->push_back(info.getObject());
-        BaseObject::updateObjectId(info.getObject());
-      }
-    }*/
 	}
 	catch(Exception &e)
 	{
@@ -343,11 +333,12 @@ void ModelValidationHelper::validateModel(void)
                 for foreign keys that are discarded from any validation since they are always created
                 at end of code defintion being free of any reference breaking. */
               if(object != refs.back() &&
-                 ((
-                    (col || (constr && constr->getConstraintType()!=ConstraintType::foreign_key)) &&
-                    (tab_obj->getParentTable()->getObjectId() <= object->getObjectId())
-                    )
-                  || (refs.back()->getObjectId() <= object->getObjectId())))
+                 (
+                  ((col || (constr && constr->getConstraintType()!=ConstraintType::foreign_key)) &&
+                   (tab_obj->getParentTable()->getObjectId() <= object->getObjectId()))
+                  ||
+                  (!constr && refs.back()->getObjectId() <= object->getObjectId()))
+                 )
               {
                 if(col || constr)
                   refer_obj=tab_obj->getParentTable();

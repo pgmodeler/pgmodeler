@@ -398,13 +398,12 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::CONDITION]=condition;
 
 	if(referenced_table)
-	{
 		attributes[ParsersAttributes::REF_TABLE]=referenced_table->getName(true);
-		attributes[ParsersAttributes::DEFERRABLE]=(is_deferrable ? ParsersAttributes::_TRUE_ : QString());
-		attributes[ParsersAttributes::DEFER_TYPE]=(~deferral_type);
-	}
 
-	return(BaseObject::__getCodeDefinition(def_type));
+  attributes[ParsersAttributes::DEFERRABLE]=(is_deferrable ? ParsersAttributes::_TRUE_ : QString());
+  attributes[ParsersAttributes::DEFER_TYPE]=(~deferral_type);
+
+  return(BaseObject::__getCodeDefinition(def_type));
 }
 
 void Trigger::validateTrigger(void)
@@ -453,5 +452,5 @@ QString Trigger::getSignature(bool format)
   if(!getParentTable())
     return(BaseObject::getSignature(format));
 
-  return(QString("%1 ON %2 ").arg(this->getName(format)).arg(getParentTable()->getSignature(true)));
+  return(QString("%1 ON %2").arg(this->getName(format)).arg(getParentTable()->getSignature(true)));
 }

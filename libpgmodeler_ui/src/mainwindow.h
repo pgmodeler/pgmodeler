@@ -163,7 +163,10 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! brief Restore the dock widget configurations from the parameters loaded from main configuration file
 		void restoreDockWidgetsSettings(void);
 
-	public:
+    //! brief Shows a error dialog informing that the model demands a fix after the error ocurred when loading the filename.
+    void showFixMessage(Exception &e, const QString &filename);
+
+  public:
 		MainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 		~MainWindow(void);
 

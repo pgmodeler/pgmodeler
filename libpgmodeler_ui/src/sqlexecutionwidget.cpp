@@ -32,7 +32,6 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
   sql_cmd_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 	h_splitter1->setSizes({1000, 250});
-  v_splitter->setSizes({ 700 , 300 });
 	results_parent->setVisible(false);
 	cmd_history_gb->setVisible(false);
 
@@ -56,6 +55,8 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	history_tb->setToolTip(history_tb->toolTip() + QString(" (%1)").arg(history_tb->shortcut().toString()));
 	load_tb->setToolTip(load_tb->toolTip() + QString(" (%1)").arg(load_tb->shortcut().toString()));
 	save_tb->setToolTip(save_tb->toolTip() + QString(" (%1)").arg(save_tb->shortcut().toString()));
+  output_tb->setToolTip(output_tb->toolTip() + QString(" (%1)").arg(output_tb->shortcut().toString()));
+  find_tb->setToolTip(find_tb->toolTip() + QString(" (%1)").arg(find_tb->shortcut().toString()));
 
   ro_item_del=new ReadOnlyItemDelegate(this);
   results_tbw->setItemDelegate(ro_item_del);
@@ -68,6 +69,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(history_tb, SIGNAL(toggled(bool)), cmd_history_gb, SLOT(setVisible(bool)));
 	connect(clear_history_btn, SIGNAL(clicked(void)), cmd_history_lst, SLOT(clear(void)));
 	connect(find_tb, SIGNAL(toggled(bool)), find_wgt_parent, SLOT(setVisible(bool)));
+  connect(output_tb, SIGNAL(toggled(bool)), this, SLOT(toggleOutputPane(bool)));
 
 	//Signal handling with C++11 lambdas Slots
 	connect(clear_history_btn, &QPushButton::clicked,
@@ -87,6 +89,20 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
   connect(code_compl_wgt, SIGNAL(s_wordSelected(QString)), this, SLOT(handleSelectedWord(QString)));
 
   configureSnippets();
+  toggleOutputPane(false);
+  v_splitter->handle(1)->installEventFilter(this);
+}
+
+bool SQLExecutionWidget::eventFilter(QObject *object, QEvent *event)
+{
+  if(event->type() == QEvent::MouseButtonDblClick &&
+     qobject_cast<QSplitterHandle *>(object) == v_splitter->handle(1))
+  {
+    output_tb->setChecked(!v_splitter->handle(1)->isEnabled());
+    return(true);
+  }
+
+  return(QWidget::eventFilter(object, event));
 }
 
 void SQLExecutionWidget::setConnection(Connection conn)
@@ -114,6 +130,7 @@ void SQLExecutionWidget::fillResultsTable(ResultSet &res)
     Catalog catalog;
     Connection aux_conn=sql_cmd_conn;
 
+    rows_ret_lbl->setText(QString("[<em>%1</em>] Rows returned:").arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))));
 		row_cnt_lbl->setText(QString::number(res.getTupleCount()));
 		export_tb->setEnabled(res.getTupleCount() > 0);
 
@@ -141,6 +158,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 		int col=0, row=0, col_cnt=res.getColumnCount();
 		QTableWidgetItem *item=nullptr;
 		vector<unsigned> type_ids;
+    vector<unsigned>::iterator end;
 		vector<attribs_map> types;
 		map<unsigned, QString> type_names;
 		unsigned orig_filter=catalog.getFilter();
@@ -159,7 +177,10 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 
 		//Retrieving the data type names for each column
 		catalog.setFilter(Catalog::LIST_ALL_OBJS);
-		std::unique(type_ids.begin(), type_ids.end());
+    std::sort(type_ids.begin(), type_ids.end());
+    end=std::unique(type_ids.begin(), type_ids.end());
+    type_ids.erase(end, type_ids.end());
+
     types=catalog.getObjectsAttributes(OBJ_TYPE, QString(), QString(), type_ids);
 
     for(auto &tp : types)
@@ -257,6 +278,8 @@ void SQLExecutionWidget::runSQLCommand(void)
 		ResultSet res;
     QString cmd=sql_cmd_txt->textCursor().selectedText();
 
+    output_tb->setChecked(true);
+
 		if(cmd.isEmpty())
 			cmd=sql_cmd_txt->toPlainText();
     else
@@ -278,7 +301,7 @@ void SQLExecutionWidget::runSQLCommand(void)
 			fillResultsTable(res);
 		else
 		{
-			QLabel *label=new QLabel(trUtf8("[<strong>%1</strong>] SQL command successfully executed. <em>Rows affected <strong>%2</strong></em>").arg(QTime::currentTime().toString()).arg(res.getTupleCount()));
+      QLabel *label=new QLabel(trUtf8("[<em>%1</em>] SQL command successfully executed. <em>Rows affected <strong>%2</strong></em>").arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))).arg(res.getTupleCount()));
 			QListWidgetItem *item=new QListWidgetItem;
 
       item->setIcon(QIcon(QString(":/icones/icones/msgbox_info.png")));
@@ -458,7 +481,11 @@ void SQLExecutionWidget::copySelection(QTableWidget *results_tbw, bool use_popup
 
 void SQLExecutionWidget::selectSnippet(QAction *act)
 {
-  sql_cmd_txt->setPlainText(SnippetsConfigWidget::getParsedSnippet(act->text()));
+  QTextCursor cursor=sql_cmd_txt->textCursor();
+  cursor.movePosition(QTextCursor::End);
+
+  sql_cmd_txt->appendPlainText(SnippetsConfigWidget::getParsedSnippet(act->text()));
+  sql_cmd_txt->setTextCursor(cursor);
 }
 
 void SQLExecutionWidget::handleSelectedWord(QString word)
@@ -470,6 +497,28 @@ void SQLExecutionWidget::handleSelectedWord(QString word)
     tc.removeSelectedText();
     tc.insertText(SnippetsConfigWidget::getParsedSnippet(word));
   }
+}
+
+void SQLExecutionWidget::toggleOutputPane(bool visible)
+{
+  if(!visible)
+  {
+    v_splitter->handle(1)->setCursor(Qt::ArrowCursor);
+    v_splitter->handle(1)->setEnabled(false);
+  }
+  else
+    v_splitter->handle(1)->setCursor(Qt::SplitVCursor);
+
+  v_splitter->handle(1)->setEnabled(visible);
+  output_wgt->setVisible(visible);
+
+  if(!visible)
+    /* Force the splitter size to be the same as the sql_cmd_wgt maximum height
+       in order to force the splitter to the bottom, hiding the output pane */
+    v_splitter->setSizes({sql_cmd_wgt->maximumHeight(), 0});
+  else
+    //Restore the splitter to the default size
+    v_splitter->setSizes({700, 300});
 }
 
 void SQLExecutionWidget::configureSnippets(void)

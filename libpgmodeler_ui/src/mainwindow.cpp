@@ -284,6 +284,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
   connect(model_valid_wgt, &ModelValidationWidget::s_validationCanceled, [=](){ pending_op=NO_PENDING_OPER; }); 
   connect(model_valid_wgt, SIGNAL(s_validationFinished(bool)), this, SLOT(executePendingOperation(bool)));
   connect(model_valid_wgt, SIGNAL(s_fixApplied()), this, SLOT(removeOperations()), Qt::QueuedConnection);
+  connect(model_valid_wgt, SIGNAL(s_graphicalObjectsUpdated()), model_objs_wgt, SLOT(updateObjectsView()), Qt::QueuedConnection);
 
 	connect(&tmpmodel_save_timer, SIGNAL(timeout()), &tmpmodel_thread, SLOT(start()));
 	connect(&tmpmodel_thread, SIGNAL(started()), this, SLOT(saveTemporaryModels()));
@@ -525,23 +526,29 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 		//If not in demo version there is no confirmation before close the software
 		#ifndef DEMO_VERSION
-			bool modified=false;
 			int i=0;
+      QStringList model_names;
+      ModelWidget *model=nullptr;
 
 			//Checking if there is modified models and ask the user to save them before close the application
 			if(models_tbw->count() > 0)
 			{
 				i=0;
-				while(i < models_tbw->count() && !modified)
-					modified=dynamic_cast<ModelWidget *>(models_tbw->widget(i++))->isModified();
+        while(i < models_tbw->count())
+        {
+          model=dynamic_cast<ModelWidget *>(models_tbw->widget(i++));
 
-				if(modified)
+          if(model->isModified())
+            model_names.push_back(QString("<strong>%1</strong>").arg(model->getDatabaseModel()->getName()));
+        }
+
+        if(!model_names.isEmpty())
 				{
 					Messagebox msg_box;
 
-					msg_box.show(trUtf8("Save all models"),
-											 trUtf8("Some models were modified! Do you really want to quit pgModeler without save them?"),
-											 Messagebox::CONFIRM_ICON,Messagebox::YES_NO_BUTTONS);
+          msg_box.show(trUtf8("Save modified model(s)"),
+                       trUtf8("The following models were modified but not saved: %1. Do you really want to quit pgModeler?").arg(model_names.join(", ")),
+                       Messagebox::CONFIRM_ICON,Messagebox::YES_NO_BUTTONS);
 
 					/* If the user rejects the message box the close event will be aborted
 				causing pgModeler not to be finished */
@@ -658,8 +665,7 @@ void MainWindow::saveTemporaryModels(void)
 		{
 			bg_saving_wgt->setVisible(true);
 			bg_saving_pb->setValue(0);
-			bg_saving_lbl->setText(trUtf8("Saving temp. models"));
-			bg_saving_wgt->repaint();
+      bg_saving_wgt->repaint();
 
 			for(int i=0; i < count; i++)
 			{
@@ -720,9 +726,21 @@ void MainWindow::loadModelFromAction(void)
 
 	if(act)
 	{
-		addModel(act->data().toString());
-		recent_models.push_back(act->data().toString());
-		updateRecentModelsMenu();
+    QString filename=act->data().toString();
+
+    try
+    {
+      addModel(filename);
+      recent_models.push_back(act->data().toString());
+      updateRecentModelsMenu();
+    }
+    catch(Exception &e)
+    {
+      if(QFileInfo(filename).exists())
+        showFixMessage(e, filename);
+      else
+        throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+    }
 	}
 }
 
@@ -1042,7 +1060,7 @@ void MainWindow::closeModel(int model_id)
 			if(model->isModified())
 			{
 				msg_box.show(trUtf8("Save model"),
-										 trUtf8("The model was modified! Do you really want to close without save it?"),
+                     trUtf8("The model <strong>%1</strong> was modified! Do you really want to close without save it?").arg(model->getDatabaseModel()->getName()),
 										 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 			}
 		#endif
@@ -1168,9 +1186,7 @@ void MainWindow::saveModel(ModelWidget *model)
 		if(model)
 		{
 			Messagebox msg_box;
-      DatabaseModel *db_model=model->getDatabaseModel();
-
-      action_design->setChecked(true);
+      DatabaseModel *db_model=model->getDatabaseModel();    
 
       if(confirm_validation && db_model->isInvalidated())
 			{
@@ -1192,6 +1208,7 @@ void MainWindow::saveModel(ModelWidget *model)
         {
           validation_btn->setChecked(true);
           this->pending_op=(sender()==action_save_as ? PENDING_SAVE_AS_OPER : PENDING_SAVE_OPER);
+          action_design->setChecked(true);
           model_valid_wgt->validateModel();
         }
 			}
@@ -1450,18 +1467,23 @@ void MainWindow::loadModels(const QStringList &list)
 	}
 	catch(Exception &e)
 	{	
-		Messagebox msg_box;
-
-		msg_box.show(Exception(Exception::getErrorMessage(ERR_MODEL_FILE_NOT_LOADED).arg(list[i]),
-													 ERR_MODEL_FILE_NOT_LOADED ,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e),
-								 trUtf8("Could not load the database model file `%1'. Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(list[i]),
-								 Messagebox::ERROR_ICON, Messagebox::YES_NO_BUTTONS,
-                 trUtf8("Fix model"), trUtf8("Cancel"), QString(),
-                 QString(":/icones/icones/fixobject.png"), QString(":/icones/icones/msgbox_erro.png"));
-
-		if(msg_box.result()==QDialog::Accepted)
-			fixModel(list[i]);
+    showFixMessage(e, list[i]);
   }
+}
+
+void MainWindow::showFixMessage(Exception &e, const QString &filename)
+{
+  Messagebox msg_box;
+
+  msg_box.show(Exception(Exception::getErrorMessage(ERR_MODEL_FILE_NOT_LOADED).arg(filename),
+                         ERR_MODEL_FILE_NOT_LOADED ,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e),
+               trUtf8("Could not load the database model file `%1'. Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(filename),
+               Messagebox::ERROR_ICON, Messagebox::YES_NO_BUTTONS,
+               trUtf8("Fix model"), trUtf8("Cancel"), QString(),
+               QString(":/icones/icones/fixobject.png"), QString(":/icones/icones/msgbox_erro.png"));
+
+  if(msg_box.result()==QDialog::Accepted)
+    fixModel(filename);
 }
 
 void MainWindow::setConfirmValidation(bool value)
@@ -1706,7 +1728,7 @@ void MainWindow::showDemoVersionWarning(void)
 void MainWindow::quitDemoVersion(void)
 {
  #ifdef DEMO_VERSION
-	Messagebox msg_box;
+  /*Messagebox msg_box;
   msg_box.show(trUtf8("The execution of demonstration version has finished!\
 											Did you like pgModeler and want to purchase it? Use the following promocodes and receive good discounts:<br/><br/>\
 											<strong>D3M02BR0NZ3</strong> (Discount on bronze package)<br/>\
@@ -1715,8 +1737,8 @@ void MainWindow::quitDemoVersion(void)
 											<strong>D3M02PL4T1NUM</strong> (Discount on platinum package)<br/>\
 											<strong>D3M02D14M0ND</strong> (Discount on diamond package)<br/>\
 											<br/>Thank you for testing pgModeler!"),
-               Messagebox::INFO_ICON, Messagebox::OK_BUTTON);
-    #endif
+               Messagebox::INFO_ICON, Messagebox::OK_BUTTON); */
+ #endif
 }
 
 void MainWindow::executePendingOperation(bool valid_error)

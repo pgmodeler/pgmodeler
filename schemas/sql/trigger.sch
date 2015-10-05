@@ -19,13 +19,15 @@ $tb {firing-type} $sp {events} $br
 
 $tb [ON ] {table} $br
 
-%if {ref-table} %then 
- $tb [FROM ] {ref-table} $br 
+%if {constraint} %then
+  %if {ref-table} %then 
+    $tb [FROM ] {ref-table} $br 
+  %end
 
- %if {deferrable} %then
-  $tb [DEFERRABLE ] {defer-type} $br
- %else
-  $tb [NOT DEFERRABLE ] $br
+  %if {deferrable} %then
+    $tb [DEFERRABLE ] {defer-type} $br
+  %else
+    $tb [NOT DEFERRABLE ] $br
  %end
 %end
 

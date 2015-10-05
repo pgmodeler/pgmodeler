@@ -59,6 +59,10 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		//! \brief Thread used to control the validation helper
 		QThread *validation_thread;
 
+    /*! brief Stores the graphical objects that have their ids changed so that in the end of
+        the validation they can be updated to reflect the new id in the tooltips and forms */
+    vector<BaseGraphicObject *> graph_objects;
+
 		void emitValidationInProgress(void);    
 
     //! brief Creates a new validation thread
@@ -88,6 +92,7 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		void swapObjectsIds(void);
     void validateRelationships(void);
     void destroyThread(bool force=false);
+    void updateGraphicalObjects(void);
 
 	public slots:
 		void hide(void);
@@ -100,6 +105,7 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
     void s_validationFinished(bool);
     void s_validationCanceled(void);
     void s_fixApplied(void);
+    void s_graphicalObjectsUpdated(void);
 };
 
 #endif

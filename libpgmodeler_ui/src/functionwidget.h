@@ -31,10 +31,13 @@
 #include "objecttablewidget.h"
 #include "codecompletionwidget.h"
 #include "parameterwidget.h"
+#include "numberedtexteditor.h"
 
 class FunctionWidget: public BaseObjectWidget, public Ui::FunctionWidget  {
 	private:
     Q_OBJECT
+
+    NumberedTextEditor *source_code_txt;
 
 		//! \brief Function's source code highlighter
 		SyntaxHighlighter *source_code_hl;

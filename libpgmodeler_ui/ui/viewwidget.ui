@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>632</width>
-    <height>462</height>
+    <width>639</width>
+    <height>453</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -31,7 +31,7 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="references_tab">
       <attribute name="title">
        <string>References</string>
       </attribute>
@@ -274,78 +274,25 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_3">
+     <widget class="QWidget" name="triggers_tab">
       <attribute name="title">
        <string>Triggers</string>
       </attribute>
      </widget>
-     <widget class="QWidget" name="tab_4">
+     <widget class="QWidget" name="rules_tab">
       <attribute name="title">
        <string>Rules</string>
       </attribute>
      </widget>
-     <widget class="QWidget" name="CTE">
+     <widget class="QWidget" name="cte_tab">
       <attribute name="title">
        <string>Table Expression</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout">
-       <property name="leftMargin">
-        <number>4</number>
-       </property>
-       <property name="topMargin">
-        <number>4</number>
-       </property>
-       <property name="rightMargin">
-        <number>4</number>
-       </property>
-       <property name="bottomMargin">
-        <number>4</number>
-       </property>
-       <item row="0" column="0">
-        <widget class="QPlainTextEdit" name="cte_expression_txt">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-      </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
+     <widget class="QWidget" name="code_prev_tab">
       <attribute name="title">
        <string>Code Preview</string>
       </attribute>
-      <layout class="QGridLayout" name="previsao_grid">
-       <property name="leftMargin">
-        <number>4</number>
-       </property>
-       <property name="topMargin">
-        <number>4</number>
-       </property>
-       <property name="rightMargin">
-        <number>4</number>
-       </property>
-       <property name="bottomMargin">
-        <number>4</number>
-       </property>
-       <property name="spacing">
-        <number>6</number>
-       </property>
-       <item row="0" column="0">
-        <widget class="QPlainTextEdit" name="code_txt">
-         <property name="font">
-          <font>
-           <family>DejaVu Sans Mono</family>
-          </font>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
      </widget>
     </widget>
    </item>

@@ -30,6 +30,7 @@
 #include "ui_viewwidget.h"
 #include "objecttablewidget.h"
 #include "codecompletionwidget.h"
+#include "numberedtexteditor.h"
 
 /* Declaring the Reference class as a Qt metatype in order to permit
 	 that instances of the class be used as data of QVariant and QMetaType */
@@ -43,6 +44,8 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 		QFrame *frame_info;
 
     ObjectSelectorWidget *tag_sel;
+
+    NumberedTextEditor *cte_expression_txt, *code_txt;
 
 		/*! \brief Operation list element count before editing the view. This attribute
 		is used to know, in case of cancel the edition, the operation (count) that is needed to
