@@ -1728,7 +1728,7 @@ void MainWindow::showDemoVersionWarning(void)
 void MainWindow::quitDemoVersion(void)
 {
  #ifdef DEMO_VERSION
-	Messagebox msg_box;
+  /*Messagebox msg_box;
   msg_box.show(trUtf8("The execution of demonstration version has finished!\
 											Did you like pgModeler and want to purchase it? Use the following promocodes and receive good discounts:<br/><br/>\
 											<strong>D3M02BR0NZ3</strong> (Discount on bronze package)<br/>\
@@ -1737,8 +1737,8 @@ void MainWindow::quitDemoVersion(void)
 											<strong>D3M02PL4T1NUM</strong> (Discount on platinum package)<br/>\
 											<strong>D3M02D14M0ND</strong> (Discount on diamond package)<br/>\
 											<br/>Thank you for testing pgModeler!"),
-               Messagebox::INFO_ICON, Messagebox::OK_BUTTON);
-    #endif
+               Messagebox::INFO_ICON, Messagebox::OK_BUTTON); */
+ #endif
 }
 
 void MainWindow::executePendingOperation(bool valid_error)
