@@ -183,168 +183,172 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
 
 void ModelsDiffHelper::diffModels(unsigned diff_type)
 {
-	map<unsigned, BaseObject *> obj_order;
-	BaseObject *object=nullptr, *aux_object=nullptr;
-	ObjectType obj_type;
-  QString obj_name;
-  unsigned idx=0, factor=0, prog=0;
-	DatabaseModel *aux_model=nullptr;
-  bool objs_differs=false, xml_differs=false;
-
   if(diff_canceled)
     return;
 
-	if(diff_type==ObjectsDiffInfo::DROP_OBJECT)
-	{
-    /* For DROP detection, we must gather the objects from the database in order to check
-       if they exists on the model. The object drop order here is the inverse of the creation order
-       on the database */
-    obj_order=imported_model->getCreationOrder(SchemaParser::SQL_DEFINITION, true);
-    aux_model=source_model;
-    factor=25;
-	}
-	else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT ||
-					diff_type==ObjectsDiffInfo::ALTER_OBJECT)
-	{
-    /* For creation or modification of objects the order followed is the same
-       as the creation order on the source model */
-    obj_order=source_model->getCreationOrder(SchemaParser::SQL_DEFINITION, true);
-		aux_model=imported_model;
-    factor=50;
-    prog=50;
-	}
+  try
+  {
+    map<unsigned, BaseObject *> obj_order;
+    BaseObject *object=nullptr, *aux_object=nullptr;
+    ObjectType obj_type;
+    QString obj_name;
+    unsigned idx=0, factor=0, prog=0;
+    DatabaseModel *aux_model=nullptr;
+    bool objs_differs=false, xml_differs=false;
 
-  for(auto &obj_itr : obj_order)
-	{
-		object=obj_itr.second;
-		obj_type=object->getObjectType();
-		idx++;
+    if(diff_type==ObjectsDiffInfo::DROP_OBJECT)
+    {
+      /* For DROP detection, we must gather the objects from the database in order to check
+         if they exists on the model. The object drop order here is the inverse of the creation order
+         on the database */
+      obj_order=imported_model->getCreationOrder(SchemaParser::SQL_DEFINITION, true);
+      aux_model=source_model;
+      factor=25;
+    }
+    else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT ||
+            diff_type==ObjectsDiffInfo::ALTER_OBJECT)
+    {
+      /* For creation or modification of objects the order followed is the same
+         as the creation order on the source model */
+      obj_order=source_model->getCreationOrder(SchemaParser::SQL_DEFINITION, true);
+      aux_model=imported_model;
+      factor=50;
+      prog=50;
+    }
 
-    /* If this checking the following objects are discarded:
-       1) BASE_RELATIONSHIP objects
-       2) Objects which SQL code is disabled or system objects
-       3) Cluster objects such as roles and tablespaces (when the operatoin is DROP and keep_cluster_objs is true) */
-    if(obj_type!=BASE_RELATIONSHIP &&
-       !object->isSystemObject() && !object->isSQLDisabled() &&
-       ((diff_type==ObjectsDiffInfo::DROP_OBJECT && (!diff_opts[OPT_KEEP_CLUSTER_OBJS] || (diff_opts[OPT_KEEP_CLUSTER_OBJS] && obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE))) ||
-				(diff_type!=ObjectsDiffInfo::DROP_OBJECT)))
-		{
-      emit s_progressUpdated(prog + ((idx/static_cast<float>(obj_order.size())) * factor),
-                             trUtf8("Processing object `%1' (%2)...").arg(object->getSignature()).arg(object->getTypeName()),
-                             object->getObjectType());
+    for(auto &obj_itr : obj_order)
+    {
+      object=obj_itr.second;
+      obj_type=object->getObjectType();
+      idx++;
 
-      //Processing objects that are not database, table child object (they are processed further)
-      if(obj_type!=OBJ_DATABASE && !TableObject::isTableObject(obj_type))
+      /* If this checking the following objects are discarded:
+         1) BASE_RELATIONSHIP objects
+         2) Objects which SQL code is disabled or system objects
+         3) Cluster objects such as roles and tablespaces (when the operatoin is DROP and keep_cluster_objs is true) */
+      if(obj_type!=BASE_RELATIONSHIP &&
+         !object->isSystemObject() && !object->isSQLDisabled() &&
+         ((diff_type==ObjectsDiffInfo::DROP_OBJECT && (!diff_opts[OPT_KEEP_CLUSTER_OBJS] || (diff_opts[OPT_KEEP_CLUSTER_OBJS] && obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE))) ||
+          (diff_type!=ObjectsDiffInfo::DROP_OBJECT)))
       {
-        if(diff_type==ObjectsDiffInfo::CREATE_OBJECT && obj_type==OBJ_PERMISSION)
-          object->getName();
+        emit s_progressUpdated(prog + ((idx/static_cast<float>(obj_order.size())) * factor),
+                               trUtf8("Processing object `%1' (%2)...").arg(object->getSignature()).arg(object->getTypeName()),
+                               object->getObjectType());
 
-        /* Processing permissions. If the operation is DROP and keep_obj_perms is true the
-           the permission is ignored */
-        if(obj_type==OBJ_PERMISSION &&
-
-           ((diff_type==ObjectsDiffInfo::DROP_OBJECT &&
-             !diff_opts[OPT_KEEP_OBJ_PERMS]) ||
-
-            (diff_type==ObjectsDiffInfo::CREATE_OBJECT &&
-             (aux_model->getPermissionIndex(dynamic_cast<Permission *>(object), true) < 0 ||
-              !diff_opts[OPT_KEEP_OBJ_PERMS]))))
-          generateDiffInfo(diff_type, object);
-
-        //Processing relationship (in this case only generalization ones are considered)
-        else if(obj_type==OBJ_RELATIONSHIP)
+        //Processing objects that are not database, table child object (they are processed further)
+        if(obj_type!=OBJ_DATABASE && !TableObject::isTableObject(obj_type))
         {
-          Relationship *rel=dynamic_cast<Relationship *>(object);
+          /* Processing permissions. If the operation is DROP and keep_obj_perms is true the
+             the permission is ignored */
+          if(obj_type==OBJ_PERMISSION &&
 
-          if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN)
+             ((diff_type==ObjectsDiffInfo::DROP_OBJECT &&
+               !diff_opts[OPT_KEEP_OBJ_PERMS]) ||
+
+              (diff_type==ObjectsDiffInfo::CREATE_OBJECT &&
+               (aux_model->getPermissionIndex(dynamic_cast<Permission *>(object), true) < 0 ||
+                !diff_opts[OPT_KEEP_OBJ_PERMS]))))
+            generateDiffInfo(diff_type, object);
+
+          //Processing relationship (in this case only generalization ones are considered)
+          else if(obj_type==OBJ_RELATIONSHIP)
           {
-            Table *ref_tab=nullptr, *rec_tab=nullptr;
+            Relationship *rel=dynamic_cast<Relationship *>(object);
 
-            ref_tab=aux_model->getTable(rel->getReferenceTable()->getName(true));
-            rec_tab=aux_model->getTable(rel->getReceiverTable()->getName(true));
-
-            /* If the receiver table exists on the model generates a info for the relationship,
-               otherwise, the generalization will be created automatically when the table is
-               created (see table's code defintion) */
-            if(rec_tab && !aux_model->getRelationship(ref_tab, rec_tab))
-              generateDiffInfo(diff_type, rel);
-          }
-        }
-        else if(obj_type!=OBJ_PERMISSION)
-        {
-          //Get the object from the database
-          obj_name=object->getSignature();
-          aux_object=aux_model->getObject(obj_name, obj_type);
-
-          //Special case for many-to-many relationships
-          if(obj_type==OBJ_TABLE && !aux_object)
-            aux_object=getRelNNTable(obj_name, aux_model);
-
-          if(diff_type!=ObjectsDiffInfo::DROP_OBJECT && aux_object)
-          {
-            /* Try to get a diff from the retrieve object and the current object,
-               comparing only basic attributes like schema, tablespace and owner
-               this is why the BaseObject::getAlterDefinition is called */
-            objs_differs=!aux_object->BaseObject::getAlterDefinition(object).isEmpty();
-
-            //If the objects does not differ, try to compare their XML definition
-            if(!objs_differs)
-              xml_differs=object->isCodeDiffersFrom(aux_object,
-                                                    { ParsersAttributes::PROTECTED,
-                                                      ParsersAttributes::SQL_DISABLED,
-                                                      ParsersAttributes::RECT_VISIBLE,
-                                                      ParsersAttributes::FILL_COLOR },
-                                                    { ParsersAttributes::ROLE,
-                                                      ParsersAttributes::TABLESPACE,
-                                                      ParsersAttributes::COLLATION,
-                                                      ParsersAttributes::POSITION,
-                                                      ParsersAttributes::APPENDED_SQL,
-                                                      ParsersAttributes::PREPENDED_SQL });
-
-            //If a difference was detected between the objects
-            if(objs_differs || xml_differs)
+            if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN)
             {
-              generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, object, aux_object);
+              Table *ref_tab=nullptr, *rec_tab=nullptr;
 
-              //If the object is a table, do additional comparision between their child objects
-              if((!diff_opts[OPT_FORCE_RECREATION] || diff_opts[OPT_RECREATE_UNCHANGEBLE]) && object->getObjectType()==OBJ_TABLE)
-              {
-                Table *tab=dynamic_cast<Table *>(object), *aux_tab=dynamic_cast<Table *>(aux_object);
-                diffTables(tab, aux_tab, ObjectsDiffInfo::DROP_OBJECT);
-                diffTables(tab, aux_tab, ObjectsDiffInfo::CREATE_OBJECT);
-              }
+              ref_tab=aux_model->getTable(rel->getReferenceTable()->getName(true));
+              rec_tab=aux_model->getTable(rel->getReceiverTable()->getName(true));
 
-              objs_differs=xml_differs=false;
+              /* If the receiver table exists on the model generates a info for the relationship,
+                 otherwise, the generalization will be created automatically when the table is
+                 created (see table's code defintion) */
+              if(rec_tab && !aux_model->getRelationship(ref_tab, rec_tab))
+                generateDiffInfo(diff_type, rel);
             }
           }
-          else if(!aux_object)           
-            generateDiffInfo(diff_type, object);
+          else if(obj_type!=OBJ_PERMISSION)
+          {
+            //Get the object from the database
+            obj_name=object->getSignature();
+            aux_object=aux_model->getObject(obj_name, obj_type);
+
+            //Special case for many-to-many relationships
+            if(obj_type==OBJ_TABLE && !aux_object)
+              aux_object=getRelNNTable(obj_name, aux_model);
+
+            if(diff_type!=ObjectsDiffInfo::DROP_OBJECT && aux_object)
+            {
+              /* Try to get a diff from the retrieve object and the current object,
+                 comparing only basic attributes like schema, tablespace and owner
+                 this is why the BaseObject::getAlterDefinition is called */
+              objs_differs=!aux_object->BaseObject::getAlterDefinition(object).isEmpty();
+
+              //If the objects does not differ, try to compare their XML definition
+              if(!objs_differs)
+                xml_differs=object->isCodeDiffersFrom(aux_object,
+                                                      { ParsersAttributes::PROTECTED,
+                                                        ParsersAttributes::SQL_DISABLED,
+                                                        ParsersAttributes::RECT_VISIBLE,
+                                                        ParsersAttributes::FILL_COLOR },
+                                                      { ParsersAttributes::ROLE,
+                                                        ParsersAttributes::TABLESPACE,
+                                                        ParsersAttributes::COLLATION,
+                                                        ParsersAttributes::POSITION,
+                                                        ParsersAttributes::APPENDED_SQL,
+                                                        ParsersAttributes::PREPENDED_SQL });
+
+              //If a difference was detected between the objects
+              if(objs_differs || xml_differs)
+              {
+                generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, object, aux_object);
+
+                //If the object is a table, do additional comparision between their child objects
+                if((!diff_opts[OPT_FORCE_RECREATION] || diff_opts[OPT_RECREATE_UNCHANGEBLE]) && object->getObjectType()==OBJ_TABLE)
+                {
+                  Table *tab=dynamic_cast<Table *>(object), *aux_tab=dynamic_cast<Table *>(aux_object);
+                  diffTables(tab, aux_tab, ObjectsDiffInfo::DROP_OBJECT);
+                  diffTables(tab, aux_tab, ObjectsDiffInfo::CREATE_OBJECT);
+                }
+
+                objs_differs=xml_differs=false;
+              }
+            }
+            else if(!aux_object)
+              generateDiffInfo(diff_type, object);
+          }
         }
+        //Comparison for constraints (fks), triggers, rules, indexes
+        else if(TableObject::isTableObject(obj_type))
+          diffTableObject(dynamic_cast<TableObject *>(object), diff_type);
+        //Comparison between model db and the imported db
+        else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT)
+        {
+          if(!source_model->getAlterDefinition(imported_model).isEmpty())
+           generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, source_model, imported_model);
+        }
+
+        if(diff_canceled)
+          break;
       }
-      //Comparison for constraints (fks), triggers, rules, indexes
-      else if(TableObject::isTableObject(obj_type))
-        diffTableObject(dynamic_cast<TableObject *>(object), diff_type);
-      //Comparison between model db and the imported db
-      else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT)
+      else
       {
-        if(!source_model->getAlterDefinition(imported_model).isEmpty())
-         generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, source_model, imported_model);
+        generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, object);
+        emit s_progressUpdated(prog + ((idx/static_cast<float>(obj_order.size())) * factor),
+                               trUtf8("Skipping object `%1' (%2)...").arg(object->getSignature()).arg(object->getTypeName()),
+                               object->getObjectType());
+
+        if(diff_canceled)
+          break;
       }
-
-      if(diff_canceled)
-        break;
     }
-    else
-    {
-      generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, object);
-      emit s_progressUpdated(prog + ((idx/static_cast<float>(obj_order.size())) * factor),
-                             trUtf8("Skipping object `%1' (%2)...").arg(object->getSignature()).arg(object->getTypeName()),
-                             object->getObjectType());
-
-      if(diff_canceled)
-        break;
-    }
-	}
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  }
 }
 
 void ModelsDiffHelper::diffTableObject(TableObject *tab_obj, unsigned diff_type)
@@ -416,122 +420,132 @@ BaseObject *ModelsDiffHelper::getRelNNTable(const QString &obj_name, DatabaseMod
 
 void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, BaseObject *old_object)
 {
-  if(object)
+  try
   {
-    ObjectsDiffInfo diff_info;
-
-    /* If the info is for ALTER and there is a DROP info on the list,
-     the object will be recreated instead of modified */
-    if((!diff_opts[OPT_FORCE_RECREATION] || diff_opts[OPT_RECREATE_UNCHANGEBLE]) &&
-       diff_type==ObjectsDiffInfo::ALTER_OBJECT &&
-       isDiffInfoExists(ObjectsDiffInfo::DROP_OBJECT, old_object, nullptr) &&
-       !isDiffInfoExists(ObjectsDiffInfo::CREATE_OBJECT, object, nullptr))
+    if(object)
     {
-      diff_info=ObjectsDiffInfo(ObjectsDiffInfo::CREATE_OBJECT, object, nullptr);
-      diff_infos.push_back(diff_info);
-      diffs_counter[ObjectsDiffInfo::CREATE_OBJECT]++;
-      emit s_objectsDiffInfoGenerated(diff_info);
-    }
-    else if(!isDiffInfoExists(diff_type, object, old_object))
-    {
-      Column *col=dynamic_cast<Column *>(object),
-             *old_col=dynamic_cast<Column *>(old_object);
+      ObjectsDiffInfo diff_info;
 
-      /* Special case for columns marked with ALTER.
-         If the type of them is "serial" or similar then a sequence will be created and the
-         type of the column changed to "integer" or similar, this because the ALTER command
-         for columns don't accept the type "serial" */
-      if(diff_type==ObjectsDiffInfo::ALTER_OBJECT && col && old_col &&
-         (col->getType()!=old_col->getType() && col->getType().isSerialType()))
+      /* If the info is for ALTER and there is a DROP info on the list,
+       the object will be recreated instead of modified */
+      if((!diff_opts[OPT_FORCE_RECREATION] || diff_opts[OPT_RECREATE_UNCHANGEBLE]) &&
+         diff_type==ObjectsDiffInfo::ALTER_OBJECT &&
+         isDiffInfoExists(ObjectsDiffInfo::DROP_OBJECT, old_object, nullptr) &&
+         !isDiffInfoExists(ObjectsDiffInfo::CREATE_OBJECT, object, nullptr))
       {
-        Column *aux_col=new Column;
-        Sequence *seq=new Sequence;
-        BaseTable *tab=col->getParentTable();
-
-        //Configures the sequence
-        seq->setName(QString("%1_%2_seq").arg(tab->getName()).arg(col->getName()));
-        seq->setOwner(tab->getOwner());
-        seq->setSchema(tab->getSchema());
-
-        //Configure an auxiliary column with the same values of the original one
-        (*aux_col)=(*col);
-        aux_col->setDefaultValue(QString());
-        //Setting the type as the alias of the serial type
-        aux_col->setType(aux_col->getType().getAliasType());
-        //Assigns the sequence to the column in order to configure the default value correctly
-        aux_col->setSequence(seq);
-
-        //Creates a new ALTER info with the created column
-        diff_info=ObjectsDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, aux_col, col);
+        diff_info=ObjectsDiffInfo(ObjectsDiffInfo::CREATE_OBJECT, object, nullptr);
         diff_infos.push_back(diff_info);
-        diffs_counter[ObjectsDiffInfo::ALTER_OBJECT]++;
+        diffs_counter[ObjectsDiffInfo::CREATE_OBJECT]++;
         emit s_objectsDiffInfoGenerated(diff_info);
+      }
+      else if(!isDiffInfoExists(diff_type, object, old_object))
+      {
+        Column *col=dynamic_cast<Column *>(object),
+               *old_col=dynamic_cast<Column *>(old_object);
 
-        if(!diff_opts[OPT_REUSE_SEQUENCES] || imported_model->getObjectIndex(seq->getSignature(), OBJ_SEQUENCE) < 0)
+        /* Special case for columns marked with ALTER.
+           If the type of them is "serial" or similar then a sequence will be created and the
+           type of the column changed to "integer" or similar, this because the ALTER command
+           for columns don't accept the type "serial" */
+        if(diff_type==ObjectsDiffInfo::ALTER_OBJECT && col && old_col &&
+           (col->getType()!=old_col->getType() && col->getType().isSerialType()))
         {
-          //Creates a CREATE info with the sequence
-          diff_info=ObjectsDiffInfo(ObjectsDiffInfo::CREATE_OBJECT, seq, nullptr);
+          Column *aux_col=new Column;
+          Sequence *seq=new Sequence;
+          BaseTable *tab=col->getParentTable();
+          QString seq_name=QString("%1_%2_seq").arg(tab->getName()).arg(col->getName());
+
+          if(seq_name.length() > BaseObject::OBJECT_NAME_MAX_LENGTH)
+            seq_name.chop(seq_name.length() - BaseObject::OBJECT_NAME_MAX_LENGTH);
+
+          seq->setName(seq_name);
+          seq->setOwner(tab->getOwner());
+          seq->setSchema(tab->getSchema());
+
+          //Configure an auxiliary column with the same values of the original one
+          (*aux_col)=(*col);
+          aux_col->setDefaultValue(QString());
+          //Setting the type as the alias of the serial type
+          aux_col->setType(aux_col->getType().getAliasType());
+          //Assigns the sequence to the column in order to configure the default value correctly
+          aux_col->setSequence(seq);
+
+          //Creates a new ALTER info with the created column
+          diff_info=ObjectsDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, aux_col, col);
           diff_infos.push_back(diff_info);
-          diffs_counter[ObjectsDiffInfo::CREATE_OBJECT]++;
+          diffs_counter[ObjectsDiffInfo::ALTER_OBJECT]++;
+          emit s_objectsDiffInfoGenerated(diff_info);
+
+          if(!diff_opts[OPT_REUSE_SEQUENCES] || imported_model->getObjectIndex(seq->getSignature(), OBJ_SEQUENCE) < 0)
+          {
+            //Creates a CREATE info with the sequence
+            diff_info=ObjectsDiffInfo(ObjectsDiffInfo::CREATE_OBJECT, seq, nullptr);
+            diff_infos.push_back(diff_info);
+            diffs_counter[ObjectsDiffInfo::CREATE_OBJECT]++;
+            emit s_objectsDiffInfoGenerated(diff_info);
+          }
+          else if(diff_opts[OPT_REUSE_SEQUENCES])
+          {
+            //Removing DROP infos related to the sequence that will be reused
+            vector<ObjectsDiffInfo>::iterator itr=diff_infos.begin(),
+                itr_end=diff_infos.end();
+
+            while(itr!=itr_end)
+            {
+              if(itr->getDiffType()==ObjectsDiffInfo::DROP_OBJECT &&
+                 itr->getObject()->getObjectType()==OBJ_SEQUENCE &&
+                 itr->getObject()->getSignature()==seq->getSignature())
+              {
+                diff_infos.erase(itr);
+                break;
+              }
+
+              itr++;
+            }
+          }
+
+          /* Stores the created objects in the temp list in order to be destroyed at the
+               end of the process. */
+          tmp_objects.push_back(aux_col);
+          tmp_objects.push_back(seq);
+        }
+        else
+        {
+          diff_info=ObjectsDiffInfo(diff_type, object, old_object);
+          diff_infos.push_back(diff_info);
+          diffs_counter[diff_type]++;
           emit s_objectsDiffInfoGenerated(diff_info);
         }
-        else if(diff_opts[OPT_REUSE_SEQUENCES])
-        {
-          //Removing DROP infos related to the sequence that will be reused
-          vector<ObjectsDiffInfo>::iterator itr=diff_infos.begin(),
-              itr_end=diff_infos.end();
 
-          while(itr!=itr_end)
+        /* If the info is for DROP, generate the drop for referer objects of the
+         one marked to be dropped */
+        if((!diff_opts[OPT_FORCE_RECREATION] || diff_opts[OPT_RECREATE_UNCHANGEBLE]) &&
+            diff_type==ObjectsDiffInfo::DROP_OBJECT)
+        {
+          vector<BaseObject *> ref_objs;
+          ObjectType obj_type=object->getObjectType();
+
+          imported_model->getObjectReferences(object, ref_objs);
+
+          for(auto &obj : ref_objs)
           {
-            if(itr->getDiffType()==ObjectsDiffInfo::DROP_OBJECT &&
-               itr->getObject()->getObjectType()==OBJ_SEQUENCE &&
-               itr->getObject()->getSignature()==seq->getSignature())
-            {
-              diff_infos.erase(itr);
+            /* Avoiding columns to be dropped when a sequence linked to them is dropped too. This because
+               a column can be a reference to a sequence so to avoid drop and recreate that column this one
+               will not be erased, unless the column does not exists in the model anymore */
+            if((obj_type==OBJ_SEQUENCE && obj->getObjectType()!=OBJ_COLUMN) &&
+               (obj_type!=OBJ_SEQUENCE && obj->getObjectType()!=BASE_RELATIONSHIP))
+              generateDiffInfo(diff_type, obj);
+
+            if(diff_canceled)
               break;
-            }
-
-            itr++;
           }
-        }
-
-        /* Stores the created objects in the temp list in order to be destroyed at the
-             end of the process. */
-        tmp_objects.push_back(aux_col);
-        tmp_objects.push_back(seq);
-      }
-      else
-      {
-        diff_info=ObjectsDiffInfo(diff_type, object, old_object);
-        diff_infos.push_back(diff_info);
-        diffs_counter[diff_type]++;
-        emit s_objectsDiffInfoGenerated(diff_info);
-      }
-
-      /* If the info is for DROP, generate the drop for referer objects of the
-       one marked to be dropped */
-      if((!diff_opts[OPT_FORCE_RECREATION] || diff_opts[OPT_RECREATE_UNCHANGEBLE]) &&
-          diff_type==ObjectsDiffInfo::DROP_OBJECT)
-      {
-        vector<BaseObject *> ref_objs;
-        ObjectType obj_type=object->getObjectType();
-
-        imported_model->getObjectReferences(object, ref_objs);
-
-        for(auto &obj : ref_objs)
-        {
-          /* Avoiding columns to be dropped when a sequence linked to them is dropped too. This because
-             a column can be a reference to a sequence so to avoid drop and recreate that column this one
-             will not be erased, unless the column does not exists in the model anymore */
-          if((obj_type==OBJ_SEQUENCE && obj->getObjectType()!=OBJ_COLUMN) &&
-             (obj_type!=OBJ_SEQUENCE && obj->getObjectType()!=BASE_RELATIONSHIP))
-            generateDiffInfo(diff_type, obj);
-
-          if(diff_canceled)
-            break;
         }
       }
     }
+  }
+  catch(Exception &e)
+  {
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
   }
 }
 
