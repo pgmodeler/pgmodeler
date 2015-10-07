@@ -52,16 +52,8 @@ void Role::setOption(unsigned op_type, bool value)
 		//Raises an error if the option type is invalid
 		throw Exception(ERR_ASG_VAL_INV_ROLE_OPT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	//Uncheck all the other options when OP_SUPERUSER is true
-	for(unsigned i=OP_CREATEDB; (op_type==OP_SUPERUSER && value) && i <= OP_REPLICATION; i++)
-		options[i]=false;
-
 	setCodeInvalidated(options[op_type] != value);
-
-  if(op_type!=OP_ENCRYPTED)
-    options[op_type]=(!options[OP_SUPERUSER] && value);
-  else
-    options[op_type]=value;
+  options[op_type]=value;
 }
 
 void Role::addRole(unsigned role_type, Role *role)

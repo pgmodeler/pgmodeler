@@ -46,7 +46,6 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 	connect(validity_chk, SIGNAL(toggled(bool)), validity_dte, SLOT(setEnabled(bool)));
 	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 	connect(members_twg, SIGNAL(currentChanged(int)), this, SLOT(configureRoleSelection(void)));
-	connect(superusr_chk, SIGNAL(toggled(bool)), this, SLOT(uncheckOptions(void)));
 
 	//Alocation of the member role tables
 	for(i=0; i < 3; i++)
@@ -87,20 +86,6 @@ RoleWidget::~RoleWidget()
 {
 	parent_form->generalwidget_wgt->removeWidget(this);
 	delete(object_selection_wgt);
-}
-
-void RoleWidget::uncheckOptions(void)
-{
-	can_login_chk->setChecked(false);
-	can_login_chk->setEnabled(!superusr_chk->isChecked());
-	can_replicate_chk->setChecked(false);
-	can_replicate_chk->setEnabled(!superusr_chk->isChecked());
-	inh_perm_chk->setChecked(false);
-	inh_perm_chk->setEnabled(!superusr_chk->isChecked());
-	create_db_chk->setChecked(false);
-	create_db_chk->setEnabled(!superusr_chk->isChecked());
-	create_role_chk->setChecked(false);
-	create_role_chk->setEnabled(!superusr_chk->isChecked());
 }
 
 void RoleWidget::configureRoleSelection(void)
