@@ -745,9 +745,19 @@ void ModelsDiffHelper::processDiffInfos(void)
 
           if(!alter_def.isEmpty())
           {
-            //Commenting out the ALTER DATABASE ... RENAME TO ... command if user chooses to preserve the original name
-            if(obj_type==OBJ_DATABASE && alter_def.contains("RENAME") && diff_opts[OPT_PRESERVE_DB_NAME])
-              alter_def.prepend(QString("-- "));
+            if(obj_type==OBJ_DATABASE)
+            {
+              QString comment_db=QString("COMMENT ON DATABASE");
+
+              //Commenting out the ALTER DATABASE ... RENAME TO ... command if user chooses to preserve the original name
+              if(alter_def.contains("RENAME") && diff_opts[OPT_PRESERVE_DB_NAME])
+                alter_def.prepend(QString("-- "));
+
+              //Using the original db name in COMMENT ON command
+              if(alter_def.contains(comment_db) && diff_opts[OPT_PRESERVE_DB_NAME])
+                alter_def.replace(QRegExp(QString("(%1)( )+(\\\")?(%2)(\\\")?").arg(comment_db).arg(object->getName())),
+                                  QString("%1 %2").arg(comment_db).arg(diff.getOldObject()->getName(true)));
+            }
 
             alter_objs[object->getObjectId()]=alter_def;
 

@@ -377,7 +377,7 @@ void ModelDatabaseDiffForm::diffModels(void)
   diff_helper->setDiffOption(ModelsDiffHelper::OPT_RECREATE_UNCHANGEBLE, recreate_unmod_chk->isChecked());
   diff_helper->setDiffOption(ModelsDiffHelper::OPT_KEEP_OBJ_PERMS, keep_obj_perms_chk->isChecked());
   diff_helper->setDiffOption(ModelsDiffHelper::OPT_REUSE_SEQUENCES, reuse_sequences_chk->isChecked());
-  diff_helper->setDiffOption(ModelsDiffHelper::OPT_PRESERVE_DB_NAME, reuse_sequences_chk->isChecked());
+  diff_helper->setDiffOption(ModelsDiffHelper::OPT_PRESERVE_DB_NAME, preserve_db_name_chk->isChecked());
 
   diff_helper->setModels(source_model, imported_model);
 
