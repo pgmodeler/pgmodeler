@@ -76,7 +76,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 					[=](){ clear_history_btn->setDisabled(true); });
 
 	connect(cmd_history_lst, &QListWidget::itemDoubleClicked,
-          [=](){ sql_cmd_txt->setPlainText(cmd_history_lst->currentItem()->data(Qt::UserRole).toString()); });
+          [=](){ sql_cmd_txt->appendPlainText(cmd_history_lst->currentItem()->data(Qt::UserRole).toString()); });
 
 	connect(results_tbw, &QTableWidget::itemPressed,
           [=](){ SQLExecutionWidget::copySelection(results_tbw); });
@@ -255,19 +255,23 @@ void SQLExecutionWidget::registerSQLCommand(const QString &cmd)
 {
 	if(!cmd.isEmpty())
 	{
-		QListWidgetItem *item=new QListWidgetItem;
-		item->setData(Qt::UserRole, QVariant(cmd));
+    QString trunc_cmd=cmd;
 
-		if(cmd.size() > 500)
-      item->setText(cmd.mid(0, 500) + QString("..."));
-		else
-			item->setText(cmd);
+    if(trunc_cmd.size() > 500)
+      trunc_cmd=trunc_cmd.mid(0, 500) + QString("...");
 
-		if(cmd_history_lst->count() > 100)
-			cmd_history_lst->clear();
+    if(cmd_history_lst->findItems(trunc_cmd, Qt::MatchExactly).isEmpty())
+    {
+      QListWidgetItem *item=new QListWidgetItem;
+      item->setData(Qt::UserRole, QVariant(cmd));
+      item->setText(trunc_cmd);
 
-		cmd_history_lst->addItem(item);
-		clear_history_btn->setEnabled(true);
+      if(cmd_history_lst->count() > 100)
+        cmd_history_lst->clear();
+
+      cmd_history_lst->addItem(item);
+      clear_history_btn->setEnabled(true);
+    }
 	}
 }
 
