@@ -553,13 +553,9 @@ void ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
       parent_form->exec();
 
       if(parent_form->result()==QDialog::Accepted)
-      {
         conn_cfg_wgt->saveConfiguration();
-        conn_cfg_wgt->fillConnectionsComboBox(combo, incl_placeholder);
-      }
-      else
-        combo->setCurrentIndex(0);
 
+      conn_cfg_wgt->fillConnectionsComboBox(combo, incl_placeholder);
       delete(parent_form);
     }
     catch(Exception &e)
