@@ -72,6 +72,8 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
   connect(&export_hlp, SIGNAL(s_errorIgnored(QString,QString,QString)), this, SLOT(handleErrorIgnored(QString,QString,QString)));
   connect(&export_hlp, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
   connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelExport(void)));
+  connect(connections_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(editConnections(void)));
+
 
   pgsqlvers_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
   pgsqlvers1_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
@@ -93,7 +95,7 @@ void ModelExportForm::exec(ModelWidget *model)
   if(model)
   {
     this->model=model;
-    ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, false);
+    ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true);
     selectExportMode();
     QDialog::exec();
   }
@@ -213,7 +215,7 @@ void ModelExportForm::selectExportMode(void)
   }
 
   pgsqlvers1_cmb->setEnabled(export_to_dbms_rb->isChecked() && pgsqlvers_chk->isChecked());
-  export_btn->setEnabled((export_to_dbms_rb->isChecked() && connections_cmb->count() > 0) ||
+  export_btn->setEnabled((export_to_dbms_rb->isChecked() && connections_cmb->currentIndex() > 0 && connections_cmb->currentIndex()!=connections_cmb->count()-1) ||
                          (export_to_file_rb->isChecked() && !file_edt->text().isEmpty()) ||
                          (export_to_img_rb->isChecked() && !image_edt->text().isEmpty()));
 }
@@ -330,4 +332,22 @@ void ModelExportForm::closeEvent(QCloseEvent *event)
   close the form and make thread execute in background */
   if(export_thread->isRunning())
     event->ignore();
+}
+
+void ModelExportForm::editConnections(void)
+{
+  try
+  {
+    if(connections_cmb->currentIndex()==connections_cmb->count()-1)
+      ConnectionsConfigWidget::openConnectionsConfiguration(connections_cmb, true);
+  }
+  catch(Exception &e)
+  {
+    Messagebox msg_box;
+    msg_box.show(e);
+  }
+
+  export_btn->setEnabled(export_to_dbms_rb->isChecked() &&
+                         connections_cmb->currentIndex() > 0 &&
+                         connections_cmb->currentIndex()!=connections_cmb->count()-1);
 }

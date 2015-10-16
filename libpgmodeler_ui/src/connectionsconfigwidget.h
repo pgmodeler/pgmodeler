@@ -48,14 +48,15 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
 		void configureConnection(Connection *conn);
 
 		void hideEvent(QHideEvent *);
-		void destroyConnections(void);
+    void showEvent(QShowEvent *);
 
 	public:
 		ConnectionsConfigWidget(QWidget * parent=0);
 		~ConnectionsConfigWidget(void);
 
-		void saveConfiguration(void);
-		void loadConfiguration(void);
+    void saveConfiguration(void);
+    void loadConfiguration(void);
+
     static map<QString, attribs_map> getConfigurationParams(void);
 
 		//! \brief Fills the passed map with all the loaded connections.
@@ -63,6 +64,12 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
 
 		//! brief Fills the passed combobox with all the loaded connections
     static void fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder);
+
+    //! brief Opens a local instance of connection config dialog to permit user configures connections on-the-fly
+    static void openConnectionsConfiguration(QComboBox *combo, bool incl_placeholder);
+
+  protected:
+    void destroyConnections(void);
 
   public slots:
 		void restoreDefaults(void);
@@ -77,6 +84,8 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
 		void enableCertificates(void);
 		void enableConnectionTest(void);
     void applyConfiguration(void){}
+
+  friend class ConfigurationForm;
 };
 
 #endif

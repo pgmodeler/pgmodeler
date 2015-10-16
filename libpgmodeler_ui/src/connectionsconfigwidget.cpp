@@ -18,6 +18,7 @@
 
 #include "connectionsconfigwidget.h"
 #include "pgmodeleruins.h"
+#include "baseform.h"
 
 vector<Connection *> ConnectionsConfigWidget::connections;
 map<QString, attribs_map> ConnectionsConfigWidget::config_params;
@@ -54,17 +55,25 @@ ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : BaseConfigW
 
 ConnectionsConfigWidget::~ConnectionsConfigWidget(void)
 {
-	destroyConnections();
+
 }
 
 void ConnectionsConfigWidget::hideEvent(QHideEvent *)
 {
-	this->newConnection();
+  this->newConnection();
+}
+
+void ConnectionsConfigWidget::showEvent(QShowEvent *)
+{
+  connections_cmb->clear();
+
+  for(auto &conn : connections)
+    connections_cmb->addItem(conn->getConnectionId());
 }
 
 void ConnectionsConfigWidget::destroyConnections(void)
 {
-	Connection *conn=nullptr;
+  Connection *conn=nullptr;
 
   while(!connections.empty())
 	{
@@ -72,7 +81,7 @@ void ConnectionsConfigWidget::destroyConnections(void)
     connections.pop_back();
 		connections_cmb->removeItem(0);
     delete(conn);
-	}
+  }
 }
 
 map<QString, attribs_map> ConnectionsConfigWidget::getConfigurationParams(void)
@@ -118,13 +127,11 @@ void ConnectionsConfigWidget::loadConfiguration(void)
       conn->setAutoBrowseDB(itr->second[ParsersAttributes::AUTO_BROWSE_DB]==ParsersAttributes::_TRUE_);
 
       connections.push_back(conn);
-      connections_cmb->addItem(conn->getConnectionId());
-
 			itr++;
 		}
 
-		edit_tb->setEnabled(connections_cmb->count() > 0);
-		remove_tb->setEnabled(connections_cmb->count() > 0);
+    edit_tb->setEnabled(!connections.empty());
+    remove_tb->setEnabled(!connections.empty());
 	}
 	catch(Exception &e)
 	{
@@ -466,7 +473,9 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 			}
 		}
 
+    schparser.ignoreUnkownAttributes(true);
     BaseConfigWidget::saveConfiguration(GlobalAttributes::CONNECTIONS_CONF, config_params);
+    schparser.ignoreUnkownAttributes(false);
   }
 	catch(Exception &e)
 	{
@@ -498,6 +507,8 @@ void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool inc
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   getConnections(connections);
+
+  combo->blockSignals(true);
 	combo->clear();
 
   if(incl_placeholder)
@@ -510,6 +521,54 @@ void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool inc
 
   for(auto &itr : connections)
 		combo->addItem(itr.first, QVariant::fromValue<void *>(itr.second));
+
+  if(incl_placeholder)
+    combo->addItem(QIcon(QString(":icones/icones/conexaobd.png")), trUtf8("Edit connections"));
+
+  combo->blockSignals(false);
+}
+
+void ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, bool incl_placeholder)
+{
+  if(combo)
+  {
+    BaseForm *parent_form=new BaseForm;
+    ConnectionsConfigWidget *conn_cfg_wgt=new ConnectionsConfigWidget;
+
+    parent_form->setWindowTitle(trUtf8("Configure connections"));
+    parent_form->setMinimumSize(640,480);
+    parent_form->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+
+    connect(parent_form->cancel_btn, SIGNAL(clicked(bool)), parent_form, SLOT(reject()));
+    connect(parent_form->apply_ok_btn, SIGNAL(clicked(bool)),  parent_form, SLOT(accept()));
+
+    try
+    {
+      conn_cfg_wgt->loadConfiguration();
+      conn_cfg_wgt->frame->setFrameShape(QFrame::NoFrame);
+      parent_form->generalwidget_wgt->insertWidget(0, conn_cfg_wgt);
+      parent_form->generalwidget_wgt->setCurrentIndex(0);
+
+      parent_form->adjustSize();
+      parent_form->exec();
+
+      if(parent_form->result()==QDialog::Accepted)
+      {
+        conn_cfg_wgt->saveConfiguration();
+        conn_cfg_wgt->fillConnectionsComboBox(combo, incl_placeholder);
+      }
+      else
+        combo->setCurrentIndex(0);
+
+      delete(parent_form);
+    }
+    catch(Exception &e)
+    {
+      combo->setCurrentIndex(0);
+      delete(parent_form);
+      throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+    }
+  }
 }
 
 

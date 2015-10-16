@@ -74,6 +74,7 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
     void handleExportFinished(void);
     void handleExportCanceled(void);
     void handleErrorIgnored(QString err_code, QString err_msg, QString cmd);
+    void editConnections(void);
 };
 
 #endif

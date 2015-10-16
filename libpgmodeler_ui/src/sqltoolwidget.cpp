@@ -21,6 +21,7 @@
 #include "databaseexplorerwidget.h"
 #include "snippetsconfigwidget.h"
 #include "sqlexecutionwidget.h"
+#include "connectionsconfigwidget.h"
 
 SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 {
@@ -72,25 +73,32 @@ void SQLToolWidget::connectToServer(void)
 {
 	try
 	{
-		Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-
-    database_cmb->clear();
-
-    if(conn)
+    if(connections_cmb->currentIndex()==connections_cmb->count()-1)
     {
-      import_helper.setConnection(*conn);
-      DatabaseImportForm::listDatabases(import_helper, database_cmb);
-      import_helper.closeConnection();
-
-      if(sender()==connections_cmb && conn->isAutoBrowseDB())
-      {
-        database_cmb->setCurrentText(conn->getConnectionParam(Connection::PARAM_DB_NAME));
-        browseDatabase();
-      }
+      ConnectionsConfigWidget::openConnectionsConfiguration(connections_cmb, true);
     }
+    else
+    {
+      Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 
-    database_cmb->setEnabled(database_cmb->count() > 1);
-    refresh_tb->setEnabled(database_cmb->isEnabled());
+      database_cmb->clear();
+
+      if(conn)
+      {
+        import_helper.setConnection(*conn);
+        DatabaseImportForm::listDatabases(import_helper, database_cmb);
+        import_helper.closeConnection();
+
+        if(sender()==connections_cmb && conn->isAutoBrowseDB())
+        {
+          database_cmb->setCurrentText(conn->getConnectionParam(Connection::PARAM_DB_NAME));
+          browseDatabase();
+        }
+      }
+
+      database_cmb->setEnabled(database_cmb->count() > 1);
+      refresh_tb->setEnabled(database_cmb->isEnabled());
+    }
 	}
 	catch(Exception &e)
 	{

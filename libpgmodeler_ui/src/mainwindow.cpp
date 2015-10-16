@@ -647,7 +647,7 @@ void MainWindow::updateConnections(void)
      sql_tool_wgt->connections_cmb->count()==0 )
   {   
     ConnectionsConfigWidget::fillConnectionsComboBox(sql_tool_wgt->connections_cmb, true);
-    ConnectionsConfigWidget::fillConnectionsComboBox(model_valid_wgt->connections_cmb, false);
+    ConnectionsConfigWidget::fillConnectionsComboBox(model_valid_wgt->connections_cmb, true);
   }
 }
 
