@@ -48,3 +48,4 @@ Older Releases/Code
 -------------------
 
 Older releases of pgModeler can be found at [Sourceforge.net](http://sourceforge.net/projects/pgmodeler)
+Fanta
