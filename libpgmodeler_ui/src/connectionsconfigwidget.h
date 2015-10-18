@@ -68,6 +68,8 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
     //! brief Opens a local instance of connection config dialog to permit user configures connections on-the-fly
     static void openConnectionsConfiguration(QComboBox *combo, bool incl_placeholder);
 
+    static bool isConnectionsModified(void);
+
   protected:
     void destroyConnections(void);
 

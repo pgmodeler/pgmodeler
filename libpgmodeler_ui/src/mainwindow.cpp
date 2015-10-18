@@ -488,7 +488,7 @@ void MainWindow::showEvent(QShowEvent *)
 	#ifdef DEMO_VERSION
 		#warning "DEMO VERSION: demonstration version startup alert."
 		QTimer::singleShot(1500, this, SLOT(showDemoVersionWarning()));
-	#endif
+#endif
 }
 
 void MainWindow::resizeEvent(QResizeEvent *)
@@ -644,7 +644,7 @@ void MainWindow::updateConnections(void)
 
   if(conn_cfg_wgt->isConfigurationChanged() ||
      model_valid_wgt->connections_cmb->count()==0 ||
-     sql_tool_wgt->connections_cmb->count()==0 )
+     sql_tool_wgt->connections_cmb->count()==0)
   {   
     ConnectionsConfigWidget::fillConnectionsComboBox(sql_tool_wgt->connections_cmb, true);
     ConnectionsConfigWidget::fillConnectionsComboBox(model_valid_wgt->connections_cmb, true);
