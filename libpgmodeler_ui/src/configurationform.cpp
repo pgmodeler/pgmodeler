@@ -44,6 +44,11 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
   icons_lst->setCurrentRow(GENERAL_CONF_WGT);
 }
 
+ConfigurationForm::~ConfigurationForm(void)
+{
+  connections_conf->destroyConnections();
+}
+
 void ConfigurationForm::hideEvent(QHideEvent *)
 {
   icons_lst->setCurrentRow(GENERAL_CONF_WGT);

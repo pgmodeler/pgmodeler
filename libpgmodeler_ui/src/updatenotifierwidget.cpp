@@ -97,7 +97,7 @@ void UpdateNotifierWidget::activateLink(const QString &link)
 
 void UpdateNotifierWidget::checkForUpdate(void)
 {
-	QUrl url(GlobalAttributes::PGMODELER_UPD_CHECK_URL + GlobalAttributes::PGMODELER_VERSION);
+  QUrl url(GlobalAttributes::PGMODELER_UPD_CHECK_URL + GlobalAttributes::PGMODELER_VERSION);
 	QNetworkRequest req(url);
 
 	show_no_upd_msg=(dynamic_cast<QAction *>(sender())!=nullptr);
@@ -120,9 +120,13 @@ void UpdateNotifierWidget::handleUpdateChecked(QNetworkReply *reply)
 
     /* In case of [301 - Move permanently] there is the need to make a new request to
        reach the final destination */
-    if(http_status==301)
+    if(http_status==301 || http_status==302)
     {
       QString url=reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString();
+
+      if(http_status==302 && !url.startsWith(GlobalAttributes::PGMODELER_SITE))
+        url.prepend(GlobalAttributes::PGMODELER_SITE);
+
       QNetworkRequest req(url);
       update_chk_reply=update_chk_manager.get(req);
     }

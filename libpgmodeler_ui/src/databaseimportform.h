@@ -127,6 +127,11 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 
 		//! \brief Toggles the check state for all items
 		void setItemsCheckState(void);
+
+  signals:
+    /*! brief This signal is emitted whenever the user changes the connections settings
+        within this widget without use the main configurations dialog */
+    void s_connectionsUpdateRequest(void);
 };
 
 #endif

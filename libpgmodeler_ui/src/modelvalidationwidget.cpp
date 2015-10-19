@@ -42,6 +42,12 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
     validation_helper=nullptr;
     this->setModel(nullptr);
 
+    sql_validation_ht=new HintTextWidget(sql_validation_hint, this);
+    sql_validation_ht->setText(sql_validation_chk->statusTip());
+
+    use_unique_names_ht=new HintTextWidget(use_unique_names_hint, this);
+    use_unique_names_ht->setText(use_tmp_names_chk->statusTip());
+
 		connect(hide_tb, SIGNAL(clicked(void)), this, SLOT(hide(void)));
 		connect(clear_btn, SIGNAL(clicked(void)), this, SLOT(clearOutput(void)));
 		connect(options_btn, SIGNAL(toggled(bool)), options_frm, SLOT(setVisible(bool)));
@@ -52,6 +58,9 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
     connect(fix_btn, SIGNAL(clicked(void)), this, SLOT(applyFixes(void)));
     connect(swap_ids_btn, SIGNAL(clicked(void)), this, SLOT(swapObjectsIds(void)));
     connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(cancelValidation(void)));
+    connect(connections_cmb, SIGNAL(activated(int)), this, SLOT(editConnections()));
+
+    ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true);
 	}
 	catch(Exception &e)
 	{
@@ -477,7 +486,7 @@ void ModelValidationWidget::configureValidation(void)
 		QString ver;
 
 		//Get the connection only the checkbox is checked.
-		if(sql_validation_chk->isChecked() && connections_cmb->count() > 0)
+    if(sql_validation_chk->isChecked() && connections_cmb->currentIndex() > 0 && connections_cmb->currentIndex()!=connections_cmb->count()-1)
 		{
 			ver=(version_cmb->currentIndex() > 0 ? version_cmb->currentText() : QString());
 			conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
@@ -525,4 +534,11 @@ void ModelValidationWidget::updateGraphicalObjects(void)
 
     emit s_graphicalObjectsUpdated();
   }
+}
+
+void ModelValidationWidget::editConnections(void)
+{
+  if(connections_cmb->currentIndex()==connections_cmb->count()-1 &&
+     ConnectionsConfigWidget::openConnectionsConfiguration(connections_cmb, true))
+    emit s_connectionsUpdateRequest();
 }

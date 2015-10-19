@@ -74,6 +74,12 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
     void handleExportFinished(void);
     void handleExportCanceled(void);
     void handleErrorIgnored(QString err_code, QString err_msg, QString cmd);
+    void editConnections(void);
+
+  signals:
+    /*! brief This signal is emitted whenever the user changes the connections settings
+        within this widget without use the main configurations dialog */
+    void s_connectionsUpdateRequest(void);
 };
 
 #endif
