@@ -50,7 +50,9 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
 		void hideEvent(QHideEvent *);
     void showEvent(QShowEvent *);
 
-	public:
+    void updateConnectionsCombo(void);
+
+  public:
 		ConnectionsConfigWidget(QWidget * parent=0);
 		~ConnectionsConfigWidget(void);
 
@@ -66,9 +68,7 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
     static void fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder);
 
     //! brief Opens a local instance of connection config dialog to permit user configures connections on-the-fly
-    static void openConnectionsConfiguration(QComboBox *combo, bool incl_placeholder);
-
-    static bool isConnectionsModified(void);
+    static bool openConnectionsConfiguration(QComboBox *combo, bool incl_placeholder);
 
   protected:
     void destroyConnections(void);

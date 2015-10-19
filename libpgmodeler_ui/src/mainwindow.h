@@ -259,7 +259,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void updateRecentModelsMenu(void);
 
 		//! \brief Updates the connections list of the validator widget
-		void updateConnections(void);
+    void updateConnections(bool force = false);
 
 		//! \brief Save the temp files for all opened models
     void saveTemporaryModels(void);

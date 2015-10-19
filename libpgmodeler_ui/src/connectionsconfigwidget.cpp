@@ -65,10 +65,15 @@ void ConnectionsConfigWidget::hideEvent(QHideEvent *)
 
 void ConnectionsConfigWidget::showEvent(QShowEvent *)
 {
+  updateConnectionsCombo();
+}
+
+void ConnectionsConfigWidget::updateConnectionsCombo(void)
+{
   connections_cmb->clear();
 
   for(auto &conn : connections)
-    connections_cmb->addItem(conn->getConnectionId());
+    connections_cmb->addItem(QIcon(QString(":icones/icones/server.png")), conn->getConnectionId());
 }
 
 void ConnectionsConfigWidget::destroyConnections(void)
@@ -210,7 +215,7 @@ void ConnectionsConfigWidget::duplicateConnection(void)
     connections.push_back(new_conn);
 
     new_conn->setConnectionParam(Connection::PARAM_ALIAS, QString("cp_%1").arg(conn->getConnectionParam(Connection::PARAM_ALIAS)));
-    connections_cmb->addItem(new_conn->getConnectionId());
+    connections_cmb->addItem(QIcon(QString(":icones/icones/server.png")), new_conn->getConnectionId());
     connections_cmb->setCurrentIndex(connections_cmb->count()-1);
     setConfigurationChanged(true);
   }
@@ -233,7 +238,7 @@ void ConnectionsConfigWidget::handleConnection(void)
 		{
 			conn=new Connection;
 			this->configureConnection(conn);
-      connections_cmb->addItem(conn->getConnectionId());
+      connections_cmb->addItem(QIcon(QString(":icones/icones/server.png")), conn->getConnectionId());
       connections.push_back(conn);
 		}
 		else
@@ -415,6 +420,8 @@ void ConnectionsConfigWidget::restoreDefaults(void)
 		//Reloads the configuration
     this->loadConfiguration();
 
+    updateConnectionsCombo();
+    this->setConfigurationChanged(true);
 	}
 	catch(Exception &e)
 	{
@@ -528,12 +535,13 @@ void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool inc
   combo->blockSignals(false);
 }
 
-void ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, bool incl_placeholder)
+bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, bool incl_placeholder)
 {
   if(combo)
   {
     BaseForm *parent_form=new BaseForm;
     ConnectionsConfigWidget *conn_cfg_wgt=new ConnectionsConfigWidget;
+    bool conn_saved = false;
 
     parent_form->setWindowTitle(trUtf8("Edit database connections"));
     parent_form->setMinimumSize(640,500);
@@ -555,7 +563,10 @@ void ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
       parent_form->exec();
 
       if(parent_form->result()==QDialog::Accepted)
+      {
         conn_cfg_wgt->saveConfiguration();
+        conn_saved=true;
+      }
 
       conn_cfg_wgt->fillConnectionsComboBox(combo, incl_placeholder);
       delete(parent_form);
@@ -566,5 +577,9 @@ void ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
       delete(parent_form);
       throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
     }
+
+    return(conn_saved);
   }
+
+  return(false);
 }

@@ -82,6 +82,11 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 
     //! brief Close the SQL execution tab specified by its index
     void closeSQLExecutionTab(int idx);
+
+  signals:
+    /*! brief This signal is emitted whenever the user changes the connections settings
+        within this widget without use the main configurations dialog */
+    void s_connectionsUpdateRequest(void);
 };
 
 #endif

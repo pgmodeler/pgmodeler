@@ -110,6 +110,10 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
     void s_validationCanceled(void);
     void s_fixApplied(void);
     void s_graphicalObjectsUpdated(void);
+
+    /*! brief This signal is emitted whenever the user changes the connections settings
+        within this widget without use the main configurations dialog */
+    void s_connectionsUpdateRequest(void);
 };
 
 #endif

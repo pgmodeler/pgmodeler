@@ -130,6 +130,11 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		void diffModels(void);
     void exportDiff(bool confirm=true);
     void filterDiffInfos(void);
+
+  signals:
+    /*! brief This signal is emitted whenever the user changes the connections settings
+        within this widget without use the main configurations dialog */
+    void s_connectionsUpdateRequest(void);
 };
 
 #endif

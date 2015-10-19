@@ -538,6 +538,7 @@ void ModelValidationWidget::updateGraphicalObjects(void)
 
 void ModelValidationWidget::editConnections(void)
 {
-  if(connections_cmb->currentIndex()==connections_cmb->count()-1)
-    ConnectionsConfigWidget::openConnectionsConfiguration(connections_cmb, true);
+  if(connections_cmb->currentIndex()==connections_cmb->count()-1 &&
+     ConnectionsConfigWidget::openConnectionsConfiguration(connections_cmb, true))
+    emit s_connectionsUpdateRequest();
 }

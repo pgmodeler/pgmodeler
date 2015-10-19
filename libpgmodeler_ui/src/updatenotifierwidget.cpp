@@ -123,6 +123,10 @@ void UpdateNotifierWidget::handleUpdateChecked(QNetworkReply *reply)
     if(http_status==301 || http_status==302)
     {
       QString url=reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString();
+
+      if(http_status==302 && !url.startsWith(GlobalAttributes::PGMODELER_SITE))
+        url.prepend(GlobalAttributes::PGMODELER_SITE);
+
       QNetworkRequest req(url);
       update_chk_reply=update_chk_manager.get(req);
     }
