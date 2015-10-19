@@ -34,7 +34,8 @@ std::string PythonDAOsGenerator::generateCompleteTableCode(Table &table)
     this->generateHeader(text, table);
 
     // Insert
-    this->generateInsert(text, table);
+    this->generateInsertAutoPK(text, table);
+    this->generateInsertAll(text, table);
 
     // Update
     this->generateUpdateFromPK(text, table);
@@ -77,7 +78,17 @@ void PythonDAOsGenerator::generateHeader(std::stringstream &text, Table &table)
     text << "\n        self.db = database";
 }
 
-void PythonDAOsGenerator::generateInsert(std::stringstream &text, Table &table)
+void PythonDAOsGenerator::generateInsertAutoPK(std::stringstream &text, Table &table)
+{
+    this->generateInsert(text, table, false);
+}
+
+void PythonDAOsGenerator::generateInsertAll(std::stringstream &text, Table &table)
+{
+    this->generateInsert(text, table, true);
+}
+
+void PythonDAOsGenerator::generateInsert(std::stringstream &text, Table &table, bool all)
 {
     // schema and table name
     std::string schema_name = table.getSchema()->getName().toUtf8().constData();
@@ -92,9 +103,25 @@ void PythonDAOsGenerator::generateInsert(std::stringstream &text, Table &table)
     std::vector< Column * > pk_columns = this->getTablePrimaryKeyColumns(table);
     std::vector< Column * >::iterator pk_columns_it;
 
-    // get primary key columns that have a sequence
-    std::vector< Column * > pk_auto_columns = this->getTablePrimaryKeyAutoColumns(table);
+    std::string method_name = "insert";
+    std::vector< Column * > pk_auto_columns;
     std::vector< Column * >::iterator pk_auto_columns_it;
+
+    if(all)
+    {
+        method_name += "All";
+    }
+    else
+    {
+        // get primary key columns that have a sequence
+        pk_auto_columns = this->getTablePrimaryKeyAutoColumns(table);
+    }
+
+    // in the case that there are no columns to insert
+    if(table_columns.size() - pk_auto_columns.size() <= 0)
+    {
+        return;
+    }
 
     // auxiliary vars
     Column *column;
@@ -104,7 +131,7 @@ void PythonDAOsGenerator::generateInsert(std::stringstream &text, Table &table)
 
     // funcion definition and parameters
     text << '\n';
-    text << "\n    def insert(";
+    text << "\n    def " << method_name << "(";
     text << "\n        self";
     is_first_column_writed = true; // already write self above
     for(table_columns_it = table_columns.begin(); table_columns_it != table_columns.end(); ++table_columns_it)
