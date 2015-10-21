@@ -493,7 +493,25 @@ void ModelValidationWidget::configureValidation(void)
 		}
 
     validation_helper->setValidationParams(model_wgt->getDatabaseModel(), conn, ver, use_tmp_names_chk->isChecked());
-	}
+  }
+}
+
+void ModelValidationWidget::resizeEvent(QResizeEvent *event)
+{
+  Qt::ToolButtonStyle style=Qt::ToolButtonTextBesideIcon;
+
+  if(event->size().width() < this->baseSize().width())
+    style=Qt::ToolButtonIconOnly;
+
+  if(validate_btn->toolButtonStyle()!=style)
+  {
+    validate_btn->setToolButtonStyle(style);
+    fix_btn->setToolButtonStyle(style);
+    swap_ids_btn->setToolButtonStyle(style);
+    clear_btn->setToolButtonStyle(style);
+    cancel_btn->setToolButtonStyle(style);
+    options_btn->setToolButtonStyle(style);
+  }
 }
 
 void ModelValidationWidget::swapObjectsIds(void)

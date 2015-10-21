@@ -148,6 +148,28 @@ void SQLExecutionWidget::showEvent(QShowEvent *)
   sql_cmd_txt->setFocus();
 }
 
+void SQLExecutionWidget::resizeEvent(QResizeEvent *event)
+{
+  Qt::ToolButtonStyle style=Qt::ToolButtonTextBesideIcon;
+
+  if(event->size().width() < this->baseSize().width())
+    style=Qt::ToolButtonIconOnly;
+
+
+  if(load_tb->toolButtonStyle()!=style)
+  {
+    load_tb->setToolButtonStyle(style);
+    save_tb->setToolButtonStyle(style);
+    run_sql_tb->setToolButtonStyle(style);
+    clear_btn->setToolButtonStyle(style);
+    find_tb->setToolButtonStyle(style);
+    snippets_tb->setToolButtonStyle(style);
+    export_tb->setToolButtonStyle(style);
+    output_tb->setToolButtonStyle(style);
+    history_tb->setToolButtonStyle(style);
+  }
+}
+
 void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTableWidget *results_tbw, bool store_data)
 {
 	if(!results_tbw)

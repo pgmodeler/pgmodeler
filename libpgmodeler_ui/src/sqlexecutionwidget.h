@@ -71,13 +71,13 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
     //! brief Fills the result grid with the specified result set
 		void fillResultsTable(ResultSet &res);
 
-    bool eventFilter(QObject *object, QEvent *event);
-
   protected:
     //! brief Widget that serves as SQL commands input
     NumberedTextEditor *sql_cmd_txt;
 
     void showEvent(QShowEvent *);
+    void resizeEvent(QResizeEvent *);
+    bool eventFilter(QObject *object, QEvent *event);
 
   public:
     SQLExecutionWidget(QWidget * parent = 0);
