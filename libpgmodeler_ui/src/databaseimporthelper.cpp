@@ -540,6 +540,12 @@ void DatabaseImportHelper::importDatabase(void)
     if(update_fk_rels)
       updateFKRelationships();
 
+    if(!inherited_cols.empty())
+    {
+      emit s_progressUpdated(100, trUtf8("Validating relationships..."), OBJ_RELATIONSHIP);
+      dbmodel->validateRelationships();
+    }
+
 		if(!import_canceled)
 		{
 			swapSequencesTablesIds();
@@ -2073,7 +2079,7 @@ void DatabaseImportHelper::__createTableInheritances(void)
 	Relationship *rel=nullptr;
 	Table *parent_tab=nullptr, *child_tab=nullptr;
 	QStringList inh_list;
-	unsigned oid;
+  unsigned oid;
 
 	itr=object_oids[OBJ_TABLE].begin();
 	itr_end=object_oids[OBJ_TABLE].end();
@@ -2125,7 +2131,7 @@ void DatabaseImportHelper::__createTableInheritances(void)
 				}
 			}
 		}
-	}
+  }
 }
 
 void DatabaseImportHelper::configureDatabase(attribs_map &attribs)
