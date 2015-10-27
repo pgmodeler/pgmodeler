@@ -532,8 +532,8 @@ void DatabaseImportHelper::importDatabase(void)
 		retrieveSystemObjects();
 		retrieveUserObjects();
 		createObjects();
-    createConstraints();
     createTableInheritances();
+    createConstraints();
     destroyDetachedColumns();
     createPermissions();
 
@@ -1979,7 +1979,7 @@ void DatabaseImportHelper::createTableInheritances(void)
 
 void DatabaseImportHelper::destroyDetachedColumns(void)
 {
-  if(inherited_cols.empty())
+  if(inherited_cols.empty() || import_canceled)
     return;
 
   vector<BaseObject *> refs;
@@ -2094,13 +2094,25 @@ void DatabaseImportHelper::__createTableInheritances(void)
 			{
 				//Get the parent table resolving it's name from the oid
 				parent_tab=dynamic_cast<Table *>(dbmodel->getObject(getObjectName(inh_list.front()), OBJ_TABLE));
-				inh_list.pop_front();
 
-				try
-				{
+        try
+        {
+          if(!parent_tab && auto_resolve_deps)
+          {
+            getDependencyObject(inh_list.front(), OBJ_TABLE);
+            parent_tab=dynamic_cast<Table *>(dbmodel->getObject(getObjectName(inh_list.front()), OBJ_TABLE));
+          }
+
+          if(!parent_tab)
+            throw Exception(Exception::getErrorMessage(ERR_INV_INH_PARENT_TAB_NOT_FOUND).arg(child_tab->getSignature()).arg(inh_list.front()),
+                            ERR_INV_INH_PARENT_TAB_NOT_FOUND,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+          inh_list.pop_front();
+
 					//Create the inheritance relationship
 					rel=new Relationship(Relationship::RELATIONSHIP_GEN, child_tab, parent_tab);
 					dbmodel->addRelationship(rel);
+          rel=nullptr;
 				}
 				catch(Exception &e)
 				{
