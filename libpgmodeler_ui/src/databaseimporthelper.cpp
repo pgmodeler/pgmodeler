@@ -534,6 +534,7 @@ void DatabaseImportHelper::importDatabase(void)
 		createObjects();
     createConstraints();
     createTableInheritances();
+    destroyDetachedColumns();
     createPermissions();
 
     if(update_fk_rels)
@@ -1956,46 +1957,12 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 
 void DatabaseImportHelper::createTableInheritances(void)
 {
-  vector<BaseObject *> refs;
-  Table *parent_tab=nullptr;
-
-  if(!inherited_cols.empty())
-  {
-    emit s_progressUpdated(90,
-                           trUtf8("Destroying unused detached columns..."),
-                           OBJ_COLUMN);
-
-    //Destroying detached columns before create inheritances
-    for(Column *col : inherited_cols)
-    {
-      dbmodel->getObjectReferences(col, refs, true);
-
-      if(refs.empty())
-      {
-        try
-        {
-          //Removing the column from the parent table and destroying it
-          parent_tab=dynamic_cast<Table *>(col->getParentTable());
-          parent_tab->removeObject(col);
-          delete(col);
-        }
-        catch(Exception &e)
-        {
-          if(ignore_errors)
-            errors.push_back(e);
-          else
-            throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-        }
-      }
-    }
-  }
-
   //Creating table inheiritances
   if(dbmodel->getObjectCount(OBJ_TABLE) > 0 && !import_canceled)
   {
     try
     {
-      emit s_progressUpdated(100,
+      emit s_progressUpdated(90,
                              trUtf8("Creating table inheritances..."),
                              OBJ_RELATIONSHIP);
       __createTableInheritances();
@@ -2008,6 +1975,49 @@ void DatabaseImportHelper::createTableInheritances(void)
         throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
     }
   }
+}
+
+void DatabaseImportHelper::destroyDetachedColumns(void)
+{
+  if(inherited_cols.empty())
+    return;
+
+  vector<BaseObject *> refs;
+  Table *parent_tab=nullptr;
+
+  dbmodel->disconnectRelationships();
+
+  emit s_progressUpdated(95,
+                         trUtf8("Destroying unused detached columns..."),
+                         OBJ_COLUMN);
+
+  //Destroying detached columns before create inheritances
+  for(Column *col : inherited_cols)
+  {
+    dbmodel->getObjectReferences(col, refs, true);
+
+    if(refs.empty())
+    {
+      try
+      {
+        //Removing the column from the parent table and destroying it since they will be recreated by inheritances
+        parent_tab=dynamic_cast<Table *>(col->getParentTable());
+        parent_tab->removeObject(col);
+        delete(col);
+      }
+      catch(Exception &e)
+      {
+        if(ignore_errors)
+          errors.push_back(e);
+        else
+          throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+      }
+    }
+  }
+
+  /* Force the validation and connection of inheritance relationships
+     leading to the creation of inherited columns */
+  dbmodel->validateRelationships();
 }
 
 void DatabaseImportHelper::assignSequencesToColumns(void)

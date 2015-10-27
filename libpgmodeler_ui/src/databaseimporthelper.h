@@ -158,6 +158,7 @@ class DatabaseImportHelper: public QObject {
 		void createEventTrigger(attribs_map &attribs);
     void __createTableInheritances(void);
     void createTableInheritances(void);
+    void destroyDetachedColumns(void);
 
     //! brief Tries to assign imported sequences that are related to nextval() calls used in columns default values
     void assignSequencesToColumns(void);
