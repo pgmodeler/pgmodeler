@@ -735,9 +735,20 @@ void DatabaseModel::destroyObjects(void)
 		OBJ_DOMAIN, OBJ_TYPE, OBJ_FUNCTION,
 		OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_ROLE, OBJ_COLLATION,
 		OBJ_EXTENSION, OBJ_SCHEMA, OBJ_PERMISSION };
+  ObjectType graph_types[]={ OBJ_SCHEMA, BASE_RELATIONSHIP, OBJ_RELATIONSHIP,
+                             OBJ_TABLE, OBJ_VIEW };
 	vector<BaseObject *> *list=nullptr;
 	BaseObject *object=nullptr;
 	unsigned i, cnt=sizeof(types)/sizeof(ObjectType);
+
+  //Blocking signals of all graphical objects to avoid uneeded updates in the destruction
+  this->blockSignals(true);
+
+  for(i=0; i < 5; i++)
+  {
+    for(auto &object : *this->getObjectList(graph_types[i]))
+      dynamic_cast<BaseGraphicObject *>(object)->blockSignals(true);
+  }
 
   //Removing the special objects first
   storeSpecialObjectsXML();

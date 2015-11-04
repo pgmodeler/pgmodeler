@@ -436,7 +436,6 @@ void ObjectsScene::removeItem(QGraphicsItem *item)
       disconnect(object, nullptr, dynamic_cast<BaseGraphicObject*>(object->getSourceObject()), nullptr);
       disconnect(dynamic_cast<BaseGraphicObject*>(object->getSourceObject()), nullptr, object, nullptr);
       removed_objs.push_back(object);
-      //delete(item);
     }
 	}
 }
