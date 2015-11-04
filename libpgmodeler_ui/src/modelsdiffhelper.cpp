@@ -856,7 +856,7 @@ void ModelsDiffHelper::processDiffInfos(void)
     }
 
     if(diff_def.isEmpty())
-      emit s_progressUpdated(100, trUtf8("No differeces between the model and database."));
+      emit s_progressUpdated(100, trUtf8("No differences between the model and database."));
     else
       emit s_progressUpdated(100, trUtf8("Preparing diff code..."));
   }
