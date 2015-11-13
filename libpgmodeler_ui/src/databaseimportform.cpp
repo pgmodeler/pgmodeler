@@ -324,22 +324,30 @@ void DatabaseImportForm::listDatabases(void)
 {
   try
   {
-    Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-
     //Close a previous connection opened by the import helper
     import_helper->closeConnection();
 
-    if(conn)
+    if(connections_cmb->currentIndex()==connections_cmb->count()-1 &&
+       ConnectionsConfigWidget::openConnectionsConfiguration(connections_cmb, true))
     {
-      //List the available databases using the selected connection
-      import_helper->setConnection(*conn);
-      DatabaseImportForm::listDatabases(*import_helper, database_cmb);
+      emit s_connectionsUpdateRequest();
     }
     else
-      database_cmb->clear();
+    {
+      Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 
-    db_objects_tw->clear();
-    database_cmb->setEnabled(database_cmb->count() > 1);
+      if(conn)
+      {
+        //List the available databases using the selected connection
+        import_helper->setConnection(*conn);
+        DatabaseImportForm::listDatabases(*import_helper, database_cmb);
+      }
+      else
+        database_cmb->clear();
+
+      db_objects_tw->clear();
+      database_cmb->setEnabled(database_cmb->count() > 1);
+    }
   }
   catch(Exception &e)
   {

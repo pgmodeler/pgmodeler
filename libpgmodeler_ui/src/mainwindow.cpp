@@ -191,7 +191,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	connect(oper_list_wgt, SIGNAL(s_operationExecuted(void)), overview_wgt, SLOT(updateOverview(void)));
 	connect(configuration_form, SIGNAL(finished(int)), this, SLOT(applyConfigurations(void)));
-	connect(configuration_form, SIGNAL(rejected()), this, SLOT(updateConnections(void)));
+  connect(configuration_form, SIGNAL(rejected()), this, SLOT(updateConnections()));
 	connect(&model_save_timer, SIGNAL(timeout(void)), this, SLOT(saveAllModels(void)));
 
 	connect(action_export, SIGNAL(triggered(bool)), this, SLOT(exportModel(void)));
@@ -203,6 +203,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
   connect(action_manage, SIGNAL(toggled(bool)), this, SLOT(changeCurrentView(bool)));
 
   connect(action_bug_report, SIGNAL(triggered()), this, SLOT(reportBug()));
+
+  connect(model_valid_wgt, &ModelValidationWidget::s_connectionsUpdateRequest, [=](){ updateConnections(true); });
+  connect(sql_tool_wgt, &SQLToolWidget::s_connectionsUpdateRequest, [=](){ updateConnections(true); });
 
   window_title=this->windowTitle() + QString(" ") + GlobalAttributes::PGMODELER_VERSION;
 
@@ -488,7 +491,7 @@ void MainWindow::showEvent(QShowEvent *)
 	#ifdef DEMO_VERSION
 		#warning "DEMO VERSION: demonstration version startup alert."
 		QTimer::singleShot(1500, this, SLOT(showDemoVersionWarning()));
-	#endif
+#endif
 }
 
 void MainWindow::resizeEvent(QResizeEvent *)
@@ -637,17 +640,20 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	}
 }
 
-void MainWindow::updateConnections(void)
+void MainWindow::updateConnections(bool force)
 {
   ConnectionsConfigWidget *conn_cfg_wgt=
       dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT));
 
-  if(conn_cfg_wgt->isConfigurationChanged() ||
-     model_valid_wgt->connections_cmb->count()==0 ||
-     sql_tool_wgt->connections_cmb->count()==0 )
-  {   
-    ConnectionsConfigWidget::fillConnectionsComboBox(sql_tool_wgt->connections_cmb, true);
-    ConnectionsConfigWidget::fillConnectionsComboBox(model_valid_wgt->connections_cmb, false);
+  if(force || (!force && (conn_cfg_wgt->isConfigurationChanged() ||
+                          model_valid_wgt->connections_cmb->count()==0 ||
+                          sql_tool_wgt->connections_cmb->count()==0)))
+  {
+    if(sender()!=sql_tool_wgt)
+      ConnectionsConfigWidget::fillConnectionsComboBox(sql_tool_wgt->connections_cmb, true);
+
+    if(sender()!=model_valid_wgt)
+      ConnectionsConfigWidget::fillConnectionsComboBox(model_valid_wgt->connections_cmb, true);
   }
 }
 
@@ -1295,6 +1301,7 @@ void MainWindow::exportModel(void)
      (!db_model->isInvalidated() || (confirm_validation && msg_box.result()==QDialog::Accepted)))
   {
     stopTimers(true);
+    connect(&model_export_form, &ModelExportForm::s_connectionsUpdateRequest, [=](){ updateConnections(true); });
     model_export_form.exec(current_model);
     stopTimers(false);
   }
@@ -1313,6 +1320,7 @@ void MainWindow::importDatabase(void)
 
   stopTimers(true);
 
+  connect(&db_import_form, &DatabaseImportForm::s_connectionsUpdateRequest, [=](){ updateConnections(true); });
   db_import_form.setModelWidget(current_model);
   db_import_form.exec();
   stopTimers(false);
@@ -1361,6 +1369,7 @@ void MainWindow::diffModelDatabase(void)
       modeldb_diff_frm.setDatabaseModel(db_model);
 
       stopTimers(true);
+      connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_connectionsUpdateRequest, [=](){ updateConnections(true); });
       modeldb_diff_frm.exec();
       stopTimers(false);
     }

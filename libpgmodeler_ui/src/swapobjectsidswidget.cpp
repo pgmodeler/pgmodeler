@@ -46,7 +46,8 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 
 		parent_form.setMinimumSize(540,220);
 		parent_form.resize(parent_form.minimumSize());
-		parent_form.setMaximumHeight(220);
+    parent_form.setMaximumSize(540,220);
+    parent_form.setWindowFlags(Qt::Dialog | Qt::WindowMinimizeButtonHint | Qt::WindowCloseButtonHint);
 
     setModel(nullptr);
 

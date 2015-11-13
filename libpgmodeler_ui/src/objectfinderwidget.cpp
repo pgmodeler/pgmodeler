@@ -60,7 +60,23 @@ void ObjectFinderWidget::hide(void)
 
 void ObjectFinderWidget::showEvent(QShowEvent *)
 {
-	pattern_edt->setFocus();
+  pattern_edt->setFocus();
+}
+
+void ObjectFinderWidget::resizeEvent(QResizeEvent *event)
+{
+  Qt::ToolButtonStyle style=Qt::ToolButtonTextBesideIcon;
+
+  if(event->size().width() < this->baseSize().width())
+    style=Qt::ToolButtonIconOnly;
+
+  if(find_btn->toolButtonStyle()!=style)
+  {
+    filter_btn->setToolButtonStyle(style);
+    find_btn->setToolButtonStyle(style);
+    clear_res_btn->setToolButtonStyle(style);
+    highlight_btn->setToolButtonStyle(style);
+  }
 }
 
 void ObjectFinderWidget::setModel(ModelWidget *model_wgt)

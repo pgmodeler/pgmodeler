@@ -532,12 +532,19 @@ void DatabaseImportHelper::importDatabase(void)
 		retrieveSystemObjects();
 		retrieveUserObjects();
 		createObjects();
-    createConstraints();
     createTableInheritances();
+    createConstraints();
+    destroyDetachedColumns();
     createPermissions();
 
     if(update_fk_rels)
       updateFKRelationships();
+
+    if(!inherited_cols.empty())
+    {
+      emit s_progressUpdated(100, trUtf8("Validating relationships..."), OBJ_RELATIONSHIP);
+      dbmodel->validateRelationships();
+    }
 
 		if(!import_canceled)
 		{
@@ -1956,46 +1963,12 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 
 void DatabaseImportHelper::createTableInheritances(void)
 {
-  vector<BaseObject *> refs;
-  Table *parent_tab=nullptr;
-
-  if(!inherited_cols.empty())
-  {
-    emit s_progressUpdated(90,
-                           trUtf8("Destroying unused detached columns..."),
-                           OBJ_COLUMN);
-
-    //Destroying detached columns before create inheritances
-    for(Column *col : inherited_cols)
-    {
-      dbmodel->getObjectReferences(col, refs, true);
-
-      if(refs.empty())
-      {
-        try
-        {
-          //Removing the column from the parent table and destroying it
-          parent_tab=dynamic_cast<Table *>(col->getParentTable());
-          parent_tab->removeObject(col);
-          delete(col);
-        }
-        catch(Exception &e)
-        {
-          if(ignore_errors)
-            errors.push_back(e);
-          else
-            throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-        }
-      }
-    }
-  }
-
   //Creating table inheiritances
   if(dbmodel->getObjectCount(OBJ_TABLE) > 0 && !import_canceled)
   {
     try
     {
-      emit s_progressUpdated(100,
+      emit s_progressUpdated(90,
                              trUtf8("Creating table inheritances..."),
                              OBJ_RELATIONSHIP);
       __createTableInheritances();
@@ -2008,6 +1981,49 @@ void DatabaseImportHelper::createTableInheritances(void)
         throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
     }
   }
+}
+
+void DatabaseImportHelper::destroyDetachedColumns(void)
+{
+  if(inherited_cols.empty() || import_canceled)
+    return;
+
+  vector<BaseObject *> refs;
+  Table *parent_tab=nullptr;
+
+  dbmodel->disconnectRelationships();
+
+  emit s_progressUpdated(95,
+                         trUtf8("Destroying unused detached columns..."),
+                         OBJ_COLUMN);
+
+  //Destroying detached columns before create inheritances
+  for(Column *col : inherited_cols)
+  {
+    dbmodel->getObjectReferences(col, refs, true);
+
+    if(refs.empty())
+    {
+      try
+      {
+        //Removing the column from the parent table and destroying it since they will be recreated by inheritances
+        parent_tab=dynamic_cast<Table *>(col->getParentTable());
+        parent_tab->removeObject(col);
+        delete(col);
+      }
+      catch(Exception &e)
+      {
+        if(ignore_errors)
+          errors.push_back(e);
+        else
+          throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+      }
+    }
+  }
+
+  /* Force the validation and connection of inheritance relationships
+     leading to the creation of inherited columns */
+  dbmodel->validateRelationships();
 }
 
 void DatabaseImportHelper::assignSequencesToColumns(void)
@@ -2063,7 +2079,7 @@ void DatabaseImportHelper::__createTableInheritances(void)
 	Relationship *rel=nullptr;
 	Table *parent_tab=nullptr, *child_tab=nullptr;
 	QStringList inh_list;
-	unsigned oid;
+  unsigned oid;
 
 	itr=object_oids[OBJ_TABLE].begin();
 	itr_end=object_oids[OBJ_TABLE].end();
@@ -2084,13 +2100,25 @@ void DatabaseImportHelper::__createTableInheritances(void)
 			{
 				//Get the parent table resolving it's name from the oid
 				parent_tab=dynamic_cast<Table *>(dbmodel->getObject(getObjectName(inh_list.front()), OBJ_TABLE));
-				inh_list.pop_front();
 
-				try
-				{
+        try
+        {
+          if(!parent_tab && auto_resolve_deps)
+          {
+            getDependencyObject(inh_list.front(), OBJ_TABLE);
+            parent_tab=dynamic_cast<Table *>(dbmodel->getObject(getObjectName(inh_list.front()), OBJ_TABLE));
+          }
+
+          if(!parent_tab)
+            throw Exception(Exception::getErrorMessage(ERR_INV_INH_PARENT_TAB_NOT_FOUND).arg(child_tab->getSignature()).arg(inh_list.front()),
+                            ERR_INV_INH_PARENT_TAB_NOT_FOUND,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+          inh_list.pop_front();
+
 					//Create the inheritance relationship
 					rel=new Relationship(Relationship::RELATIONSHIP_GEN, child_tab, parent_tab);
 					dbmodel->addRelationship(rel);
+          rel=nullptr;
 				}
 				catch(Exception &e)
 				{
@@ -2103,7 +2131,7 @@ void DatabaseImportHelper::__createTableInheritances(void)
 				}
 			}
 		}
-	}
+  }
 }
 
 void DatabaseImportHelper::configureDatabase(attribs_map &attribs)

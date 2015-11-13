@@ -328,7 +328,7 @@
                    </sizepolicy>
                   </property>
                   <property name="statusTip">
-                   <string>Resolve some of the object's dependencies by querying the catalog when a needed object does not exists on the loaded set. In some cases it's necessary to combine this option with others below. This option does not applies to database level objects like role, tablespace and language as well for data types and extensions.</string>
+                   <string>Resolve some of the object's dependencies by querying the catalog when a needed object does not exists on the loaded set. In some cases it's necessary to combine this option with others below. This option does not applies to database level objects like role, tablespace and language as well for data types, extensions.</string>
                   </property>
                   <property name="whatsThis">
                    <string/>
@@ -387,6 +387,15 @@
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="sizeAdjustPolicy">
+                   <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>18</width>
+                    <height>18</height>
+                   </size>
                   </property>
                  </widget>
                 </item>

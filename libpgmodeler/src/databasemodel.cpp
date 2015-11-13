@@ -735,9 +735,20 @@ void DatabaseModel::destroyObjects(void)
 		OBJ_DOMAIN, OBJ_TYPE, OBJ_FUNCTION,
 		OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_ROLE, OBJ_COLLATION,
 		OBJ_EXTENSION, OBJ_SCHEMA, OBJ_PERMISSION };
+  ObjectType graph_types[]={ OBJ_SCHEMA, BASE_RELATIONSHIP, OBJ_RELATIONSHIP,
+                             OBJ_TABLE, OBJ_VIEW };
 	vector<BaseObject *> *list=nullptr;
 	BaseObject *object=nullptr;
 	unsigned i, cnt=sizeof(types)/sizeof(ObjectType);
+
+  //Blocking signals of all graphical objects to avoid uneeded updates in the destruction
+  this->blockSignals(true);
+
+  for(i=0; i < 5; i++)
+  {
+    for(auto &object : *this->getObjectList(graph_types[i]))
+      dynamic_cast<BaseGraphicObject *>(object)->blockSignals(true);
+  }
 
   //Removing the special objects first
   storeSpecialObjectsXML();
@@ -1240,13 +1251,13 @@ void DatabaseModel::disconnectRelationships(void)
 			base_rel=dynamic_cast<BaseRelationship *>(*ritr_rel);
 			ritr_rel++;
 
-			if(base_rel->getObjectType()==OBJ_RELATIONSHIP)
-			{
-				rel=dynamic_cast<Relationship *>(base_rel);
-				rel->disconnectRelationship();
-			}
-			else
-				base_rel->disconnectRelationship();
+      if(base_rel->getObjectType()==OBJ_RELATIONSHIP)
+      {
+        rel=dynamic_cast<Relationship *>(base_rel);
+        rel->disconnectRelationship();
+      }
+      else
+        base_rel->disconnectRelationship();
 		}
 	}
 	catch(Exception &e)
@@ -2870,7 +2881,7 @@ void DatabaseModel::loadModel(const QString &filename)
     ObjectType obj_type;
     attribs_map attribs;
     BaseObject *object=nullptr;
-    bool protected_model=false;
+    bool protected_model=false, found_inh_rel;
     QStringList pos_str;
     map<ObjectType, QString> def_objs;
 
@@ -2944,6 +2955,12 @@ void DatabaseModel::loadModel(const QString &filename)
                   if(!dynamic_cast<TableObject *>(object) && obj_type!=OBJ_RELATIONSHIP && obj_type!=BASE_RELATIONSHIP)
                     addObject(object);
 
+                  /* If there is at least one inheritance relationship we need to flag this situation
+                     in order to do an addtional rel. validation in the end of loading */
+                  if(!found_inh_rel && object->getObjectType()==OBJ_RELATIONSHIP &&
+                     dynamic_cast<Relationship *>(object)->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN)
+                    found_inh_rel=true;
+
                   emit s_objectLoaded((xmlparser.getCurrentBufferLine()/static_cast<float>(xmlparser.getBufferLineCount()))*100,
                                       trUtf8("Loading: `%1' (%2)")
                                       .arg(object->getName())
@@ -2989,10 +3006,10 @@ void DatabaseModel::loadModel(const QString &filename)
 
       loading_model=false;
 
-      /* If there are relationship make an last relationship validation to
-      recreate any special object left behind */
+      //If there are relationship make a relationship validation to recreate any special object left behind
       if(!relationships.empty())
       {
+        emit s_objectLoaded(100, trUtf8("Validating relationships..."), OBJ_RELATIONSHIP);
         storeSpecialObjectsXML();
         disconnectRelationships();
         validateRelationships();
@@ -3000,6 +3017,13 @@ void DatabaseModel::loadModel(const QString &filename)
 
       this->setInvalidated(false);
       this->setObjectsModified({OBJ_RELATIONSHIP, BASE_RELATIONSHIP});
+
+      //Doing another relationship validation when there are inheritances to avoid incomplete tables
+      if(found_inh_rel)
+      {
+        emit s_objectLoaded(100, trUtf8("Validating relationships..."), OBJ_RELATIONSHIP);
+        validateRelationships();
+      }
     }
     catch(Exception &e)
     {

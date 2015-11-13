@@ -243,7 +243,8 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_MALFORMED_UNESCAPED_VALUE", QT_TR_NOOP("Malformed unescaped value on row `%1' column `%2'!")},
   {"ERR_UNDO_REDO_OPR_INV_OBJECT", QT_TR_NOOP("Trying to undo/redo an invalid operation over an object that does not exists anymore or can't be handled! The operation history will be cleaned up.")},
   {"ERR_REQ_FIELDS_NOT_FILLED",  QT_TR_NOOP("The object `%1' (%2) can't be handled because some needed fields are not set! Please, make sure to fill at least the requires fields in order to properly create or update the object.")},
-  {"ERR_INV_REL_ID_SWAP",  QT_TR_NOOP("A relationship can only be swapped by other object of the same kind!")}
+  {"ERR_INV_REL_ID_SWAP",  QT_TR_NOOP("A relationship can only be swapped by other object of the same kind!")},
+  {"ERR_INV_INH_PARENT_TAB_NOT_FOUND",  QT_TR_NOOP("A parent table of `%1' which OID is `%2' was not found in the set of imported objects!")}
 };
 
 Exception::Exception(void)

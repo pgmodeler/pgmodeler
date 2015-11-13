@@ -855,7 +855,10 @@ void ModelsDiffHelper::processDiffInfos(void)
                                            ParsersAttributes::DIFF + GlobalAttributes::SCHEMA_EXT, attribs);
     }
 
-    emit s_progressUpdated(100, trUtf8("Comparison between model and database finished."));
+    if(diff_def.isEmpty())
+      emit s_progressUpdated(100, trUtf8("No differences between the model and database."));
+    else
+      emit s_progressUpdated(100, trUtf8("Preparing diff code..."));
   }
   catch(Exception &e)
   {

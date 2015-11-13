@@ -33,7 +33,7 @@
 #include <deque>
 
 using namespace std;
-static const int ERROR_COUNT=225;
+static const int ERROR_COUNT=226;
 
 /*
  ErrorType enum format: ERR_[[OPERATION_CODE][ERROR_CODE]] where:
@@ -272,7 +272,8 @@ enum ErrorType {
   ERR_MALFORMED_UNESCAPED_VALUE,
   ERR_UNDO_REDO_OPR_INV_OBJECT,
   ERR_REQ_FIELDS_NOT_FILLED,
-  ERR_INV_REL_ID_SWAP
+  ERR_INV_REL_ID_SWAP,
+  ERR_INV_INH_PARENT_TAB_NOT_FOUND
 };
 
 class Exception {

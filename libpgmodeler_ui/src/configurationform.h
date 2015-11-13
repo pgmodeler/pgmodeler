@@ -56,6 +56,7 @@ class ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
                       PLUGINS_CONF_WGT=5;
 
 		ConfigurationForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
+    ~ConfigurationForm(void);
 
 		BaseConfigWidget *getConfigurationWidget(unsigned idx);
 

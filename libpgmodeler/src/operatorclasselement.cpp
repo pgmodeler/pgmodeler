@@ -24,6 +24,7 @@ OperatorClassElement::OperatorClassElement(void)
 	function=nullptr;
 	_operator=nullptr;
 	strategy_number=0;
+  op_family=nullptr;
 }
 
 void OperatorClassElement::setFunction(Function *func, unsigned stg_number)

@@ -369,10 +369,13 @@ ModelWidget::~ModelWidget(void)
 	owners_menu.clear();
 	tags_menu.clear();
 	break_rel_menu.clear();
+
+  delete(viewport);
+  delete(scene);
+
 	op_list->removeOperations();
 	db_model->destroyObjects();
-	delete(viewport);
-	delete(scene);
+
 	delete(op_list);
 	delete(db_model);
 }

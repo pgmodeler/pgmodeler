@@ -355,8 +355,8 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	}
 
 	name_edt->setFocus();
-	edt_perms_tb->setEnabled(object!=nullptr);
-	append_sql_tb->setEnabled(object!=nullptr);
+  edt_perms_tb->setEnabled(object!=nullptr && !new_object);
+  append_sql_tb->setEnabled(object!=nullptr && !new_object);
 
 	owner_sel->setModel(model);
   owner_sel->setSelectedObject(model->getDefaultObject(OBJ_ROLE));

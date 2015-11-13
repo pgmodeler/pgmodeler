@@ -31,6 +31,7 @@
 #include "modelvalidationhelper.h"
 #include "swapobjectsidswidget.h"
 #include "htmlitemdelegate.h"
+#include "hinttextwidget.h"
 
 /* Declaring the ValidationInfo class as a Qt metatype in order to permit
 	 that instances of the class be used as data of QVariant and QMetaType */
@@ -40,6 +41,8 @@ Q_DECLARE_METATYPE(ValidationInfo)
 class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 	private:
 		Q_OBJECT
+
+    HintTextWidget *sql_validation_ht, *use_unique_names_ht;
 
     //! brief Custom delegate used to paint html texts in output tree
     HtmlItemDelegate *htmlitem_del;
@@ -70,6 +73,9 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 
     void configureValidation(void);
 
+  protected:
+    void resizeEvent(QResizeEvent *event);
+
 	public:
 		ModelValidationWidget(QWidget * parent = 0);
 
@@ -92,9 +98,10 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		void swapObjectsIds(void);
     void validateRelationships(void);
     void destroyThread(bool force=false);
-    void updateGraphicalObjects(void);
+    void updateGraphicalObjects(void);    
+    void editConnections(void);
 
-	public slots:
+  public slots:
 		void hide(void);
 		void clearOutput(void);
     void validateModel(void);
@@ -106,6 +113,10 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
     void s_validationCanceled(void);
     void s_fixApplied(void);
     void s_graphicalObjectsUpdated(void);
+
+    /*! brief This signal is emitted whenever the user changes the connections settings
+        within this widget without use the main configurations dialog */
+    void s_connectionsUpdateRequest(void);
 };
 
 #endif

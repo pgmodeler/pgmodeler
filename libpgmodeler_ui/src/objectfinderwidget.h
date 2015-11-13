@@ -44,6 +44,7 @@ class ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
 		bool eventFilter(QObject *object, QEvent *event);
 
 		void showEvent(QShowEvent *);
+    void resizeEvent(QResizeEvent *event);
 
 	public:
 		ObjectFinderWidget(QWidget *parent = 0);
