@@ -757,6 +757,9 @@
                <property name="selectionMode">
                 <enum>QAbstractItemView::ContiguousSelection</enum>
                </property>
+               <property name="horizontalScrollMode">
+                <enum>QAbstractItemView::ScrollPerPixel</enum>
+               </property>
                <property name="sortingEnabled">
                 <bool>false</bool>
                </property>
