@@ -630,6 +630,7 @@
     <addaction name="separator"/>
     <addaction name="action_import"/>
     <addaction name="action_export"/>
+    <addaction name="action_diff"/>
     <addaction name="separator"/>
     <addaction name="action_restore_session"/>
     <addaction name="separator"/>
@@ -993,7 +994,7 @@
     <string>Export the current opened model in different modes</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+S</string>
+    <string>Ctrl+Shift+E</string>
    </property>
   </action>
   <action name="action_show_grid">
@@ -1297,6 +1298,9 @@
    </property>
    <property name="toolTip">
     <string>Determine the changes between model and database</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+D</string>
    </property>
   </action>
   <action name="action_welcome">
