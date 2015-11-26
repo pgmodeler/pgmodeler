@@ -302,7 +302,7 @@
                   <string/>
                  </property>
                  <property name="statusTip">
-                  <string>Ignores as many as possible errors on import step. This option generates a incomplete diff.</string>
+                  <string>Ignores as many as possible errors on import step. This option generates an incomplete diff.</string>
                  </property>
                  <property name="text">
                   <string>Ignore import errors</string>
@@ -357,7 +357,7 @@
                   </sizepolicy>
                  </property>
                  <property name="statusTip">
-                  <string>Clears the data of all tables which will have columns modified. This is useful to avoid errors related to type casting. &lt;strong&gt;WARNING:&lt;/strong&gt; DO NOT use this option on production server and always make a backup before use this options.</string>
+                  <string>Clears the data of all tables which will have columns modified. This is useful to avoid errors related to type casting. &lt;strong&gt;WARNING:&lt;/strong&gt; DO NOT use this option on production servers and always make a backup before use it.</string>
                  </property>
                  <property name="text">
                   <string>Trucate tables before alter columns</string>
@@ -402,7 +402,7 @@
                   <string/>
                  </property>
                  <property name="statusTip">
-                  <string>Import system (built in) objects. Use this if the import step is returning errors.</string>
+                  <string>Import system (built-in) objects. Use this if the import step is returning errors related to missing objects.</string>
                  </property>
                  <property name="text">
                   <string>Import system objects</string>
@@ -447,7 +447,7 @@
                   <string/>
                  </property>
                  <property name="statusTip">
-                  <string>Import extension objects. Use this if the import step is returning errors even importing built in ones.</string>
+                  <string>Import objects created by extensions. Use this if the import step is returning errors even importing built in ones.</string>
                  </property>
                  <property name="text">
                   <string>Import extension objects</string>
@@ -669,7 +669,7 @@
                   <string/>
                  </property>
                  <property name="statusTip">
-                  <string>Instead of use an ALTER command to modify certain kind of objects a DROP and CREATE will be used in order to do a full modification. This option does not affects database objects.</string>
+                  <string>Instead of use an ALTER command to modify certain kind of objects a DROP and CREATE will be used in order to do a full modification. This option does not affects the database object.</string>
                  </property>
                  <property name="text">
                   <string>Force recreation of objects</string>
