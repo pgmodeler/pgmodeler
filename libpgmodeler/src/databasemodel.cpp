@@ -3029,7 +3029,6 @@ void DatabaseModel::loadModel(const QString &filename)
     {
       QString extra_info;
       loading_model=false;
-      destroyObjects();
 
 			if(xmlparser.getCurrentElement())
 				extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
