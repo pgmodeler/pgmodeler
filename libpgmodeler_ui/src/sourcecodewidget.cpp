@@ -54,8 +54,8 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
     code_options_ht=new HintTextWidget(code_options_hint, this);
     code_options_ht->setText(
           trUtf8("<strong>Original:</strong> displays only the original object's SQL code.<br/><br/>\
-<strong>Dependencies:</strong> display the original code including all dependencies needed to properly create the selected object.<br/><br/>\
-<strong>Children:</strong> display the original code including all children's SQL code. This option is used only by schemas, tables and views."));
+<strong>Dependencies:</strong> displays the original code including all dependencies needed to properly create the selected object.<br/><br/>\
+<strong>Children:</strong> displays the original code including all object's children SQL code. This option is used only by schemas, tables and views."));
 
 		connect(parent_form->apply_ok_btn, SIGNAL(clicked(bool)), parent_form, SLOT(close(void)));
 		connect(version_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(generateSourceCode(int)));
