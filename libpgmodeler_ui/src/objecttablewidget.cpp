@@ -103,6 +103,7 @@ void ObjectTableWidget::setColumnCount(unsigned col_count)
 		for(;i < col_count; i++)
 		{
 			item=new QTableWidgetItem;
+      item->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
 			table_tbw->setHorizontalHeaderItem(static_cast<int>(i),item);
 		}
 	}

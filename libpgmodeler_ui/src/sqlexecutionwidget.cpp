@@ -195,7 +195,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 		{
 			type_ids.push_back(res.getColumnTypeId(col));
       item=new QTableWidgetItem(res.getColumnName(col));
-      item->setTextAlignment(Qt::AlignLeft);
+      item->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
       results_tbw->setHorizontalHeaderItem(col, item);
 		}
 
