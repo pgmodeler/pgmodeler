@@ -44,6 +44,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	export_tb->setToolTip(export_tb->toolTip() + QString(" (%1)").arg(export_tb->shortcut().toString()));
 	delete_tb->setToolTip(delete_tb->toolTip() + QString(" (%1)").arg(delete_tb->shortcut().toString()));
 	add_tb->setToolTip(add_tb->toolTip() + QString(" (%1)").arg(add_tb->shortcut().toString()));
+  copy_tb->setToolTip(copy_tb->toolTip() + QString(" (%1)").arg(copy_tb->shortcut().toString()));
   result_info_wgt->setVisible(false);
 
   //Forcing the splitter that handles the bottom widgets to resize its children to their minimum size
