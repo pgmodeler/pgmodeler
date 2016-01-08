@@ -1,26 +1,26 @@
-v0.8.2-alpha
+v0.8.2-beta
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em>
-<em>Release date: November 13, 2015</em>
-<em>Changes since: <strong>v0.8.2-alpha</strong></em><br/>
+<em>Release date: January 10, 2016</em>
+<em>Changes since: <strong>v0.8.2-alpha1</strong></em><br/>
 
-<strong>Summary:</strong> this is the second release of the last version that will close the 0.8.x series. This one brings a few fixes for bugs reported after the release of 0.8.2-alpha and some new minor features.<br/>
+<strong>Summary:</strong> this is the first beta release of the 0.8.2. This one brings a few fixes for some bugs discovered during the final days of 2015.<br/>
 
-Below the key features and fixes of this new release are described. Please, refer to CHANGELOG.md to see the complete list of features and fixes.<br/>
+No new exciting feature is included because the priority in the 0.8.2 is the bug fixes.<br/>
 
-* [New] Added an additional step in import process to validate inheritance relationships to avoid incomplete tables.
-* [New] Added an additional relationship validation in model loading process when there are inheritances. This will avoid incomplete columns and validation errors related to "permanent invalidation state".
-* [New] Created an exclusive exception code when a parent table is not found in the imported set. This error is raised during inheritances creation.
-* [New] Added the signal s_connectionsUpdateRequest in DatabaseImportForm, ModelExportForm, ModelDatabaseDiffForm, ModelValidationWidget and SQLToolWidget in order to inform the main window that user has changed connections in those forms.
-* [New] Added the ability to configure connections without using the main configuration form. Now the user is able to do this task by using the "edit connections" option in any combo related to connections.
-* [Change] Minor adjustments in diff process messages.
-* [Change] Minor adjustments on ModelValidationWidget, ObjectFinderWidget and SQLExecutionWidget resize event to change the shape of toolbuttons in order to avoid truncate texts when the window size is too small.
-* [Change] Replaced the explicit hint texts from ModelValidationWidget by HintText instances.
-* [Change] Minor adjustment on widgets that are used to set connections.
-* [Fix] Fixed the way objects are destroyed when a model is closed diminishing the time consumed by that operation and the chances of crashes after their destruction.
-* [Fix] Additional fix in database import feature. Inheritances will be automatically created when "auto resolve dependencies" is checked.
-* [Fix] Fixed a crash when importing a database that contains big tables that handles multiple inheritances.
-* [Fix] Fixed a crash in Windows version. A missing initialization in OperatorClassElement was leading to segmentation fault.
-* [Fix] Fixed a bug in table and view editing form that was permitting to confugure permissions to new objects before create them in the model.
-* [Fix] Fixed a problem in UpdateNotifierWidget when the server returns http status code 302.
+Below all changes this release are described. <br/>
 
+
+* [New] Added version descriptor for PostgreSQL 9.5 enabling pgModeler to connect to it.
+* [New] Added "Diff" action to File menu.
+* [Change] Minor improvement in DataManipulationForm adding the shortcut of "Copy selection" button to its tooltip.
+* [Change] Improvements on DataManipulationForm on how pk columns are handled and used in the generated DML commands for UPDATE and DELETE.
+* [Change] Minor improvement on ModelRestorationForm when listing temp models.
+* [Change] Changed the hint text for "Disable render smoothness" option.
+* [Change] Changed the hint text for "Validate before save, export and diff".
+* [Change] Minor improvements on SQLExecutionWidget and DataManipulationForm to scroll items in the results grid by pixel not per item.
+* [Fix] Fixed a bug in operations that convert integer to serial and vice-versa.
+* [Fix] Fixed some header items text alignment.
+* [Fix] Fixed a crash when loading a broken model. Instead of show the error message related to corrupted file pgModeler was being aborted.
+* [Fix] Minor fix in hint text in SourceCodeWidget and ModelDatabaseDiffForm.
+* [Fix] Fixed shortcut conflicts in MainWindow.
