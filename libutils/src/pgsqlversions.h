@@ -35,6 +35,7 @@ namespace PgSQLVersions {
   PGSQL_VERSION_92,
   PGSQL_VERSION_93,
   PGSQL_VERSION_94,
+  PGSQL_VERSION_95,
   DEFAULT_VERSION;
 
   extern const QStringList ALL_VERSIONS;
