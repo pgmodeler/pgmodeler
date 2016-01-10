@@ -399,7 +399,7 @@ void ModelObjectsWidget::filterObjects(void)
 {
 	if(tree_view_tb->isChecked())
 	{
-		DatabaseImportForm::filterObjects(objectstree_tw, filter_edt->text(), (by_id_chk->isChecked() ? 1 : 0));
+    DatabaseImportForm::filterObjects(objectstree_tw, filter_edt->text(), (by_id_chk->isChecked() ? 1 : 0), simplified_view);
 	}
 	else
 	{
@@ -423,6 +423,9 @@ void ModelObjectsWidget::updateObjectsView(void)
 {
 	updateDatabaseTree();
 	updateObjectsList();
+
+  if(!filter_edt->text().isEmpty())
+    filterObjects();
 }
 
 void ModelObjectsWidget::updateObjectsList(void)
