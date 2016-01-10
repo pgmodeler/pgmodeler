@@ -275,7 +275,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Kerberus Server:</string>
+         <string>Kerberos Server:</string>
         </property>
        </widget>
       </item>
