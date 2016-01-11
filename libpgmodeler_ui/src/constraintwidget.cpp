@@ -24,6 +24,7 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	{
 		QStringList list;
 		map<QString, vector<QWidget *> > fields_map;
+    map<QWidget *, vector<QString> > values_map;
 		QGridLayout *grid=nullptr;
 
 		Ui_ConstraintWidget::setupUi(this);
@@ -87,7 +88,10 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		info_frm->setParent(this);
 
     fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_92)].push_back(no_inherit_lbl);
-		warn_frm=generateVersionWarningFrame(fields_map);
+    fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(indexing_chk);
+    values_map[indexing_chk].push_back(~IndexingType(IndexingType::brin));
+
+    warn_frm=generateVersionWarningFrame(fields_map, &values_map);
 		constraint_grid->addWidget(warn_frm, constraint_grid->count()+1, 0, 1, 0);
 		warn_frm->setParent(this);
 

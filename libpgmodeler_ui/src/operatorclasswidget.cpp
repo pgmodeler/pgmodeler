@@ -24,6 +24,9 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 	{
 		QStringList tipos;
 		QGridLayout *grid=nullptr;
+    map<QString, vector<QWidget *> > fields_map;
+    map<QWidget *, vector<QString> > values_map;
+    QFrame *frame=nullptr;
 
     Ui_OperatorClassWidget::setupUi(this);
 
@@ -58,6 +61,14 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		this->setLayout(grid);
 		configureFormLayout(grid, OBJ_OPCLASS);
 
+    fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(indexing_lbl);
+    values_map[indexing_lbl].push_back(~IndexingType(IndexingType::brin));
+
+    frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);
+    frame->setParent(this);
+    grid=dynamic_cast<QGridLayout *>(this->layout());
+    grid->addWidget(frame, grid->count(), 0, 1, 5);
+
 		grid=dynamic_cast<QGridLayout *>(elements_grp->layout());
 		grid->addWidget(function_sel, 1,1,1,4);
 		grid->addWidget(operator_sel, 2,1,1,4);
@@ -71,14 +82,13 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		connect(elements_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleElement(int)));
 		connect(elements_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editElement(int)));
 
-		parent_form->setMinimumSize(620, 640);
+    parent_form->setMinimumSize(620, 700);
 		selectElementType(0);
 
 		IndexingType::getTypes(tipos);
 		indexing_cmb->addItems(tipos);
 
 		setRequiredField(elements_grp);
-
     configureTabOrder({ indexing_cmb, def_class_chk , family_sel, data_type, elem_type_cmb,
                         operator_sel, elem_family_sel, function_sel, stg_num_sb, storage_type });
 	}

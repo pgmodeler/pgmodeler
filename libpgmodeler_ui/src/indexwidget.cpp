@@ -24,7 +24,8 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 	{
 		QStringList list;
 		QGridLayout *grid=nullptr;
-		map<QString, vector<QWidget *> > fields_map;
+    map<QString, vector<QWidget *> > fields_map;
+    map<QWidget *, vector<QString> > values_map;
 		QFrame *frame=nullptr;
 
 		Ui_IndexWidget::setupUi(this);
@@ -46,7 +47,10 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 		indexing_cmb->addItems(list);
 
     fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_92)].push_back(buffering_chk);
-		frame=BaseObjectWidget::generateVersionWarningFrame(fields_map);
+    fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(indexing_lbl);
+    values_map[indexing_lbl].push_back(~IndexingType(IndexingType::brin));
+
+    frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);
 		frame->setParent(this);
 		grid=dynamic_cast<QGridLayout *>(tabWidget->widget(0)->layout());
 		grid->addWidget(frame, grid->count(), 0, 1, 5);

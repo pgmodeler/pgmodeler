@@ -20,6 +20,10 @@
 
 EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_EVENT_TRIGGER)
 {
+  map<QString, vector<QWidget *> > fields_map;
+  map<QWidget *, vector<QString> > values_map;
+  QFrame *frame=nullptr;
+
 	Ui_EventTriggerWidget::setupUi(this);
 
 	function_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
@@ -37,7 +41,15 @@ EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent
 
 	configureFormLayout(eventtrigger_grid, OBJ_EVENT_TRIGGER);
 
-	parent_form->setMinimumSize(530, 450);
+
+  fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(event_lbl);
+  values_map[event_lbl].push_back(~EventTriggerType(EventTriggerType::table_rewrite));
+
+  frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);
+  frame->setParent(this);
+  eventtrigger_grid->addWidget(frame, eventtrigger_grid->count(), 0, 1, 2);
+
+  parent_form->setMinimumSize(530, 500);
 	configureTabOrder({ event_cmb, function_sel, tag_edt, filter_tab });
 
 	QStringList list;

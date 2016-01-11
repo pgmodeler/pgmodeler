@@ -20,20 +20,30 @@
 
 OperatorFamilyWidget::OperatorFamilyWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_OPFAMILY)
 {
-	QStringList tipos;
+  QStringList types;
+  map<QString, vector<QWidget *> > fields_map;
+  map<QWidget *, vector<QString> > values_map;
+  QFrame *frame=nullptr;
 
 	Ui_OperatorFamilyWidget::setupUi(this);
 	configureFormLayout(opfamily_grid, OBJ_OPFAMILY);
 
 	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
-	IndexingType::getTypes(tipos);
-	indexing_cmb->addItems(tipos);
+  IndexingType::getTypes(types);
+  indexing_cmb->addItems(types);
 
-  parent_form->setMinimumSize(520, 260);
-  parent_form->setMaximumHeight(260);
+  parent_form->setMinimumSize(520, 300);
+  parent_form->setMaximumHeight(300);
 
 	setRequiredField(indexing_lbl);
+  fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(indexing_lbl);
+  values_map[indexing_lbl].push_back(~IndexingType(IndexingType::brin));
+
+  frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);
+  frame->setParent(this);
+  opfamily_grid->addWidget(frame, opfamily_grid->count(), 0, 1, 5);
+
   configureTabOrder();
 }
 
