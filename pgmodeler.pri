@@ -147,9 +147,8 @@ unix:!macx {
 macx {
   PGSQL_LIB = /Library/PostgreSQL/9.4/lib/libpq.dylib
   PGSQL_INC = /Library/PostgreSQL/9.4/include
-  XML_INC = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/libxml2
-  XML_LIB = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/libxml2.dylib
-
+  XML_INC = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/include/libxml2
+  XML_LIB = /usr/lib/libxml2.dylib
   INCLUDEPATH += $$PGSQL_INC $$XML_INC
 }
 
