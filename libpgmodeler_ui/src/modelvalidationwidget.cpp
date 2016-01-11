@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -431,9 +431,19 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
      validation_helper->getErrorCount()==0 &&
      validation_helper->getWarningCount()==0)
 	{
-		warn_count_lbl->setText(QString("%1").arg(0));
-		error_count_lbl->setText(QString("%1").arg(0));
+    error_count_lbl->setText(QString::number(0));
 		fix_btn->setEnabled(false);
+
+
+    if(sql_validation_chk->isChecked() && connections_cmb->currentIndex() <= 0)
+    {
+      warn_count_lbl->setText(QString::number(1));
+      PgModelerUiNS::createOutputTreeItem(output_trw,
+                                          trUtf8("SQL validation not executed! No connection defined."),
+                                          QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
+    }
+    else
+      warn_count_lbl->setText(QString::number(0));
 
     PgModelerUiNS::createOutputTreeItem(output_trw,
                                         trUtf8("Database model successfully validated."),

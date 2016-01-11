@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -146,7 +146,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 
   connect(filter_edt, &QLineEdit::textChanged,
           [=](){ DatabaseImportForm::filterObjects(objects_trw, filter_edt->text(),
-                                                   (by_oid_chk->isChecked() ? DatabaseImportForm::OBJECT_ID : 0)); });
+                                                   (by_oid_chk->isChecked() ? DatabaseImportForm::OBJECT_ID : 0), false); });
 
   connect(drop_db_tb, &QToolButton::clicked,
           [=]() { emit s_databaseDropRequested(connection.getConnectionParam(Connection::PARAM_DB_NAME)); });

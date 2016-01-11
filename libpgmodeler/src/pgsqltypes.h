@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@
 
 class BaseType{
 	protected:
-    static const unsigned types_count=237;
+    static const unsigned types_count=239;
 		static QString type_list[types_count];
 
 		//! \brief Index of the type on the type_list vector
@@ -190,7 +190,7 @@ class FunctionType: public BaseType{
 class IndexingType: public BaseType{
 	private:
     static const unsigned offset=21;
-    static const unsigned types_count=5;
+    static const unsigned types_count=6;
 
 	public:
     static const unsigned btree=offset;
@@ -198,6 +198,7 @@ class IndexingType: public BaseType{
     static const unsigned hash=offset+2;
     static const unsigned gin=offset+3;
     static const unsigned spgist=offset+4;
+    static const unsigned brin=offset+5;
 
 		IndexingType(const QString &type_name);
 		IndexingType(unsigned type_id);
@@ -210,7 +211,7 @@ class IndexingType: public BaseType{
 
 class IntervalType: public BaseType{
 	private:
-		static const unsigned offset=135;
+    static const unsigned offset=136;
     static const unsigned types_count=13;
 
 	public:
@@ -240,7 +241,7 @@ class IntervalType: public BaseType{
 class SpatialType: public BaseType{
 	private:
 		unsigned variation;
-		static const unsigned offset=226;
+    static const unsigned offset=227;
     static const unsigned types_count=8;
 
 		/*! \brief Used in conjunction with spatial_type, and denotes the SRID value
@@ -318,16 +319,16 @@ class UserTypeConfig {
 
 class PgSQLType: public BaseType{
 	private:
-    static const unsigned offset=26;
+    static const unsigned offset=27;
 		static const unsigned types_count=109;
 
 		//! \brief Offset for oid types
-		static const unsigned oid_start=107;
-		static const unsigned oid_end=119;
+    static const unsigned oid_start=108;
+    static const unsigned oid_end=120;
 
 		//! \brief Offset for pseudo types
-		static const unsigned pseudo_start=120;
-		static const unsigned pseudo_end=134;
+    static const unsigned pseudo_start=121;
+    static const unsigned pseudo_end=135;
 
 		//! \brief Configuration for user defined types
 		static vector<UserTypeConfig> user_types;
@@ -492,7 +493,7 @@ class PgSQLType: public BaseType{
 
 class BehaviorType: public BaseType{
 	private:
-		static const unsigned offset=148;
+    static const unsigned offset=149;
     static const unsigned types_count=3;
 
 	public:
@@ -511,7 +512,7 @@ class BehaviorType: public BaseType{
 
 class SecurityType: public BaseType{
 	private:
-		static const unsigned offset=151;
+    static const unsigned offset=152;
     static const unsigned types_count=2;
 
 	public:
@@ -529,7 +530,7 @@ class SecurityType: public BaseType{
 
 class LanguageType: public BaseType{
 	private:
-		static const unsigned offset=153;
+    static const unsigned offset=154;
     static const unsigned types_count=6;
 
 	public:
@@ -551,7 +552,7 @@ class LanguageType: public BaseType{
 
 class EncodingType: public BaseType{
 	private:
-		static const unsigned offset=159;
+    static const unsigned offset=160;
     static const unsigned types_count=41;
 
 	public:
@@ -571,7 +572,7 @@ class EncodingType: public BaseType{
 
 class StorageType: public BaseType{
 	private:
-		static const unsigned offset=200;
+    static const unsigned offset=201;
     static const unsigned types_count=4;
 
 	public:
@@ -594,7 +595,7 @@ class StorageType: public BaseType{
 
 class MatchType: public BaseType{
 	private:
-		static const unsigned offset=204;
+    static const unsigned offset=205;
     static const unsigned types_count=3;
 
 	public:
@@ -613,7 +614,7 @@ class MatchType: public BaseType{
 
 class DeferralType: public BaseType{
 	private:
-		static const unsigned offset=207;
+    static const unsigned offset=208;
     static const unsigned types_count=2;
 
 	public:
@@ -631,7 +632,7 @@ class DeferralType: public BaseType{
 
 class CategoryType: public BaseType{
 	private:
-		static const unsigned offset=209;
+    static const unsigned offset=210;
     static const unsigned types_count=14;
 
 	public:
@@ -661,7 +662,7 @@ class CategoryType: public BaseType{
 
 class FiringType: public BaseType{
 	private:
-		static const unsigned offset=223;
+    static const unsigned offset=224;
     static const unsigned types_count=3;
 
 	public:
@@ -680,13 +681,14 @@ class FiringType: public BaseType{
 
 class EventTriggerType: public BaseType{
 	private:
-		static const unsigned offset=234;
-		static const unsigned types_count=3;
+    static const unsigned offset=235;
+    static const unsigned types_count=4;
 
 	public:
 		static const unsigned ddl_command_start=offset;
 		static const unsigned ddl_command_end=offset+1;
 		static const unsigned sql_drop=offset+2;
+    static const unsigned table_rewrite=offset+3;
 
 		EventTriggerType(const QString &type_name);
 		EventTriggerType(unsigned type_id);

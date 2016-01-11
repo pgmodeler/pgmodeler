@@ -857,6 +857,9 @@
          <property name="selectionMode">
           <enum>QAbstractItemView::ContiguousSelection</enum>
          </property>
+         <property name="horizontalScrollMode">
+          <enum>QAbstractItemView::ScrollPerPixel</enum>
+         </property>
          <property name="sortingEnabled">
           <bool>false</bool>
          </property>
@@ -1044,10 +1047,10 @@
               <string>000000</string>
              </property>
              <property name="text">
-              <string>1000</string>
+              <string>500</string>
              </property>
              <property name="cursorPosition">
-              <number>0</number>
+              <number>6</number>
              </property>
              <property name="clearButtonEnabled">
               <bool>true</bool>

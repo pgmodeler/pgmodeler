@@ -438,7 +438,7 @@
                <string/>
               </property>
               <property name="statusTip">
-               <string>Disable antialiasing for lines and texts improving performance on huge models (requires restart)</string>
+               <string>Disable antialiasing for lines and texts improving performance when handling huge models (requires restart)</string>
               </property>
               <property name="text">
                <string>Disable render smoothness</string>
@@ -522,7 +522,7 @@
                <string/>
               </property>
               <property name="statusTip">
-               <string>Operations like save, export and diff will be executed without asking user to validate the model</string>
+               <string>Triggers a dialog asking the user to validate the model before a save, export or diff operation.</string>
               </property>
               <property name="text">
                <string>Validate before save, export or diff</string>

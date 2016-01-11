@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ namespace GlobalAttributes {
   PGMODELER_APP_NAME=QString("pgmodeler"),
   PGMODELER_URI=QString("pgmodeler.com.br"),
   PGMODELER_REVERSE_URI=QString("br.com.pgmodeler"),
-  PGMODELER_VERSION=QString("0.8.2-alpha1"),
+  PGMODELER_VERSION=QString("0.8.2-beta"),
   PGMODELER_VER_CODENAME=QString("Faithful Elephant"),
   PGMODELER_BUILD_NUMBER=QString(BUILDNUM),
   PGMODELER_SITE=QString("http://www.pgmodeler.com.br"),

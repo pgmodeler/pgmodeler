@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	export_tb->setToolTip(export_tb->toolTip() + QString(" (%1)").arg(export_tb->shortcut().toString()));
 	delete_tb->setToolTip(delete_tb->toolTip() + QString(" (%1)").arg(delete_tb->shortcut().toString()));
 	add_tb->setToolTip(add_tb->toolTip() + QString(" (%1)").arg(add_tb->shortcut().toString()));
+  copy_tb->setToolTip(copy_tb->toolTip() + QString(" (%1)").arg(copy_tb->shortcut().toString()));
   result_info_wgt->setVisible(false);
 
   //Forcing the splitter that handles the bottom widgets to resize its children to their minimum size
@@ -435,7 +436,7 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 
 	try
 	{
-		vector<attribs_map> pks;
+    vector<attribs_map> pks, columns;
 		ObjectType obj_type=static_cast<ObjectType>(table_cmb->currentData().toUInt());
 
 		if(obj_type==OBJ_VIEW)
@@ -448,7 +449,6 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
       catalog.setConnection(conn);
 			//Retrieving the constraints from catalog using a custom filter to select only primary keys (contype=p)
       pks=catalog.getObjectsAttributes(OBJ_CONSTRAINT, schema, table, {}, {{ParsersAttributes::CUSTOM_FILTER, QString("contype='p'")}});
-      catalog.closeConnection();
 
       warning_frm->setVisible(pks.empty());
 
@@ -458,15 +458,23 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 
 		hint_frm->setVisible(obj_type==OBJ_TABLE);
 		add_tb->setEnabled(obj_type==OBJ_TABLE);
-		pk_col_ids.clear();
+    pk_col_names.clear();
 
 		if(!pks.empty())
 		{
 			QStringList col_str_ids=Catalog::parseArrayValues(pks[0][ParsersAttributes::COLUMNS]);
+      vector<unsigned> col_ids;
 
-			for(QString id : col_str_ids)
-				pk_col_ids.push_back(id.toInt() - 1);
+      for(QString id : col_str_ids)
+        col_ids.push_back(id.toUInt());
+
+      columns=catalog.getObjectsAttributes(OBJ_COLUMN, schema, table, col_ids);
+
+      for(auto &col : columns)
+        pk_col_names.push_back(col[ParsersAttributes::NAME]);
 		}
+
+    catalog.closeConnection();
 
 		//For tables, even if there is no pk the user can manipulate data
 		if(obj_type==OBJ_TABLE)
@@ -825,31 +833,27 @@ QString DataManipulationForm::getDMLCommand(int row)
 	QTableWidgetItem *item=nullptr;
 	unsigned op_type=results_tbw->verticalHeaderItem(row)->data(Qt::UserRole).toUInt();
 	QStringList val_list, col_list, flt_list;
-	QString pk_col_name, col_name, value;
+  QString col_name, value;
 
-	if(op_type==OP_DELETE || op_type==OP_UPDATE)
+  if(op_type==OP_DELETE || op_type==OP_UPDATE)
 	{
-		vector<int> pk_cols;
-
-		if(!pk_col_ids.empty())
-			pk_cols=pk_col_ids;
-		else
-		{
-			//Considering all columns as pk when the tables doesn't has one (except bytea columns)
-			for(int col=0; col < results_tbw->columnCount(); col++)
-			{
+    if(pk_col_names.isEmpty())
+    {
+      //Considering all columns as pk when the tables doesn't has one (except bytea columns)
+      for(int col=0; col < results_tbw->columnCount(); col++)
+      {
         if(results_tbw->horizontalHeaderItem(col)->data(Qt::UserRole)!=QString("bytea"))
-					pk_cols.push_back(col);
-			}
-		}
+          pk_col_names.push_back(results_tbw->horizontalHeaderItem(col)->text());
+      }
+    }
 
-		//Creating the where clause with original column's values
-		for(int pk_col_id : pk_cols)
-		{
-			pk_col_name=results_tbw->horizontalHeaderItem(pk_col_id)->text();
-			flt_list.push_back(QString("\"%1\"='%2'").arg(pk_col_name).arg(results_tbw->item(row, pk_col_id)->data(Qt::UserRole).toString()));
-		}
-	}
+    //Creating the where clause with original column's values
+    for(QString pk_col : pk_col_names)
+    {
+      flt_list.push_back(QString("\"%1\"='%2'").arg(pk_col)
+                         .arg(results_tbw->item(row,  col_names.indexOf(pk_col))->data(Qt::UserRole).toString()));
+    }
+  }
 
 	if(op_type==OP_DELETE)
 	{

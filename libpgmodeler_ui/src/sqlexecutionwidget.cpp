@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -194,7 +194,9 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 		for(col=0; col < col_cnt; col++)
 		{
 			type_ids.push_back(res.getColumnTypeId(col));
-			results_tbw->setHorizontalHeaderItem(col, new QTableWidgetItem(res.getColumnName(col)));
+      item=new QTableWidgetItem(res.getColumnName(col));
+      item->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+      results_tbw->setHorizontalHeaderItem(col, item);
 		}
 
 		//Retrieving the data type names for each column
@@ -214,7 +216,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 		for(col=0; col < col_cnt; col++)
 		{
 			item=results_tbw->horizontalHeaderItem(col);
-			item->setToolTip(type_names[res.getColumnTypeId(col)]);
+      item->setToolTip(res.getColumnName(col) + QString(" [%1]").arg(type_names[res.getColumnTypeId(col)]));
 			item->setData(Qt::UserRole, type_names[res.getColumnTypeId(col)]);
 		}
 

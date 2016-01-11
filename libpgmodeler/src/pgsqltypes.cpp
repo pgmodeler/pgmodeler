@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -64,15 +64,16 @@ QString BaseType::type_list[types_count]=
 	"IMMUTABLE",
 
 	//Types used by the class IndexingType
-	//offsets 21 to 25
+  //offsets 21 to 26
 	"btree",
 	"gist",
 	"hash",
 	"gin",
 	"spgist",
+  "brin",
 
 	//Types used by the class PgSQLType
-	//offsets 26 to 85
+  //offsets 27 to 86
 	//Note: the type char is different from "char" (with quotes)
 	//Reference: http://www.postgresql.org/docs/9.2/static/datatype-character.html
 
@@ -90,7 +91,7 @@ QString BaseType::type_list[types_count]=
 	"reltime", "tinterval", "tsquery", "tsvector", "txid_snapshot",
 
 	//Spatial type specifics for the PostGiS extension
-	//offsets 87 to 100
+  //offsets 88 to 101
 	"box2d","box3d","geometry",
 	"geometry_dump","geography",
   "geomval", "addbandarg", "rastbandarg",
@@ -100,43 +101,43 @@ QString BaseType::type_list[types_count]=
   "validatetopology_returntype",
 
 	//Range-types
-	//offsets 101 to 106
+  //offsets 102 to 107
 	"int4range", "int8range", "numrange",
 	"tsrange","tstzrange","daterange",
 
 	//Object Identification type (OID)
-	//offsets 107 to 119
+  //offsets 108 to 120
 	"oid", "regproc", "regprocedure",
 	"regoper", "regoperator", "regclass",
 	"regtype", "regconfig", "regdictionary",
 	"xid", "cid", "tid",  "oidvector",
 
 	//Pseudo-types
-	//offsets 120 to 134
+  //offsets 121 to 135
 	"any","anyarray","anyelement","anyenum",
 	"anynonarray", "anyrange", "cstring","internal","language_handler",
 	"record","trigger","void","opaque", "fdw_handler", "event_trigger",
 
 	//Interval types
-	//offsets 135 to 147
+  //offsets 136 to 148
 	"YEAR", "MONTH", "DAY", "HOUR",
 	"MINUTE", "SECOND","YEAR TO MONTH",
 	"DAY TO HOUR","DAY TO MINUTE","DAY TO SECOND",
 	"HOUR TO MINUTE","HOUR TO SECOND","MINUTE TO SECOND",
 
 	//Types used by the class BehaviorType
-	//offsets 148 to 150
+  //offsets 149 to 151
 	"CALLED ON NULL INPUT",
 	"RETURNS NULL ON NULL INPUT",
 	"STRICT",
 
 	//Types used by the class SecurityType
-	//offsets 151 to 152
+  //offsets 152 to 153
 	"SECURITY INVOKER",
 	"SECURITY DEFINER",
 
 	//Types used by the class LanguageType
-	//offsets 153 to 158
+  //offsets 154 to 159
 	"sql",
 	"c",
 	"plpgsql",
@@ -145,7 +146,7 @@ QString BaseType::type_list[types_count]=
 	"plpython",
 
 	//Types used by the class EncodingType
-	//offsets 159 to 199
+  //offsets 160 to 200
 	"UTF8", "BIG5", "EUC_CN",  "EUC_JP", "EUC_JIS_2004", "EUC_KR",
 	"EUC_TW", "GB18030", "GBK", "ISO_8859_5", "ISO_8859_6",
 	"ISO_8859_7", "ISO_8859_8", "JOHAB", "KOI", "LATIN1",
@@ -157,25 +158,25 @@ QString BaseType::type_list[types_count]=
 	"WIN1258",
 
 	//Types used by the class StorageType
-	//offsets 200 to 203
+  //offsets 201 to 204
 	"plain",
 	"external",
 	"extended",
 	"main",
 
 	//Types used by the class MatchType
-	//offsets 204 to 206
+  //offsets 205 to 207
 	"MATCH FULL",
 	"MATCH PARTIAL",
 	"MATCH SIMPLE",
 
 	//Types used by the class DeferralType
-	//offsets 207 to 208
+  //offsets 208 to 209
 	"INITIALLY IMMEDIATE",
 	"INITIALLY DEFERRED",
 
 	//Types used by the class CategoryType
-	//offsets 209 to 222 - See table 44-43 on PostgreSQL 8.4 documentation
+  //offsets 210 to 223 - See table 44-43 on PostgreSQL 8.4 documentation
 	"U", //User-defined types
 	"A", //Array types
 	"B", //Boolean types
@@ -192,7 +193,7 @@ QString BaseType::type_list[types_count]=
 	"X", //Unknown type
 
 	//Types used by the class FiringType
-	//offsets 223 to 225
+  //offsets 224 to 226
 	"BEFORE",
 	"AFTER",
 	"INSTEAD OF",
@@ -201,7 +202,7 @@ QString BaseType::type_list[types_count]=
 			These types accepts variations Z, M e ZM.
 			 > Example: POINT, POINTZ, POINTM, POINTZM
 			Reference: http://postgis.refractions.net/documentation/manual-2.0/using_postgis_dbmanagement.html */
-	//offsets 226 to 233
+  //offsets 227 to 234
 	"POINT",
 	"LINESTRING",
 	"POLYGON",
@@ -212,10 +213,11 @@ QString BaseType::type_list[types_count]=
 	"GEOMETRYCOLLECTION",
 
 	//Types used by the class EventTriggerMode
-	//offsets 234 to 236
+  //offsets 235 to 237
 	"ddl_command_start",
 	"ddl_command_end",
-	"sql_drop"
+  "sql_drop",
+  "table_rewrite"
 };
 
 BaseType::BaseType(void)

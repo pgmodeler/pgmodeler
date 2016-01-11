@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		//! brief Default row colors for each operation type
 		static const QColor ROW_COLORS[3];
 
-		//! brief Default char used as unescaped value delimiter (< and >)
+    //! brief Default char used as unescaped value delimiter ({ and })
 		static const QChar UNESC_VALUE_START, UNESC_VALUE_END;
 
 		SyntaxHighlighter *filter_hl;
@@ -51,13 +51,13 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
     attribs_map tmpl_conn_params;
 
 		//! brief Current editing table columns names
-		QStringList col_names;
+    QStringList col_names,
+
+    //! brief Current editing table pk columns names
+    pk_col_names;
 
 		//! brief Stores the ids of changed rows. These ids are handled on saveChanges() method
-		vector<int> changed_rows,
-
-		//! brief Stores the ids of primary key columns. These ids are handled on getDMLCommand() method
-		pk_col_ids;
+    vector<int> changed_rows;
 
 		//! brief Stores the previous color of the rows before being marked with some operation
 		map<int, QBrush> prev_row_colors;

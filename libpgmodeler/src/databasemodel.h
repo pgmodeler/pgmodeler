@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -209,7 +209,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns an object from the model using its index and type
 		BaseObject *getObject(unsigned obj_idx, ObjectType obj_type);
 
-		//! \brief Loads a database model from a file
+    /*! \brief Loads a database model from a file. In case of loading errors
+    the objects in the model will not be destroyed automatically. The user need to call
+    destroyObjects() or delete the entire model */
 		void loadModel(const QString &filename);
 
 		//! \brief Sets the database encoding

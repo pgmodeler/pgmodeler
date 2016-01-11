@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -237,7 +237,7 @@ QString Exception::messages[ERROR_COUNT][2]={
   {"ERR_ASG_INV_OBJECT_TYPE", QT_TR_NOOP("Assignment of an invalid object to `%1' (%2)! The assigned object must be of type `%3'.")},
   {"ERR_INCOMP_COL_TYPE_FOR_SEQ", QT_TR_NOOP("The sequence `%1' can't be assigned to the column `%2' because the data type of the latter is incompatible. The type used must be an integer one!")},
   {"ERR_INV_USE_TMPNAMES_EXPORT_OPT", QT_TR_NOOP("The option to generate temporary object names can only be used in simulation mode!")},
-	{"ERR_INV_CONV_INTEGER_TO_SERIAL", QT_TR_NOOP("It's not possible convert the type of the column `%1' to serial! It must have an `integer' based type and its default value must be a call to `nextval(seq_name::regclass)' function!")},
+  {"ERR_INV_CONV_INTEGER_TO_SERIAL", QT_TR_NOOP("It's not possible convert the type of the column `%1' to serial! It must have an `integer' based type and its default value must be a call to `nextval(seq_name::regclass)' function or a sequence object must be directly assigned to the column!")},
 	{"ERR_ASG_INV_EVENT_TRIGGER_VARIABLE", QT_TR_NOOP("Could not assign the variable `%1' to event trigger's filter. Currently, PostgreSQL supports only the `TAG' variable!")},
 	{"ERR_ROW_DATA_NOT_MANIPULATED", QT_TR_NOOP("Could not perform the `%1' operation on `%2' using the data on row `%3'! All changes were rolled back. \n\n ** Returned error ** \n\n%4")},
 	{"ERR_MALFORMED_UNESCAPED_VALUE", QT_TR_NOOP("Malformed unescaped value on row `%1' column `%2'!")},

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -399,7 +399,7 @@ void ModelObjectsWidget::filterObjects(void)
 {
 	if(tree_view_tb->isChecked())
 	{
-		DatabaseImportForm::filterObjects(objectstree_tw, filter_edt->text(), (by_id_chk->isChecked() ? 1 : 0));
+    DatabaseImportForm::filterObjects(objectstree_tw, filter_edt->text(), (by_id_chk->isChecked() ? 1 : 0), simplified_view);
 	}
 	else
 	{
@@ -423,6 +423,9 @@ void ModelObjectsWidget::updateObjectsView(void)
 {
 	updateDatabaseTree();
 	updateObjectsList();
+
+  if(!filter_edt->text().isEmpty())
+    filterObjects();
 }
 
 void ModelObjectsWidget::updateObjectsList(void)

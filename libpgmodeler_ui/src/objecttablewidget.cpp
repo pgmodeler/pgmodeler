@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -103,6 +103,7 @@ void ObjectTableWidget::setColumnCount(unsigned col_count)
 		for(;i < col_count; i++)
 		{
 			item=new QTableWidgetItem;
+      item->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
 			table_tbw->setHorizontalHeaderItem(static_cast<int>(i),item);
 		}
 	}

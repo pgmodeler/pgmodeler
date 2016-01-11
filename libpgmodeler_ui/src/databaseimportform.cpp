@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -405,20 +405,21 @@ void DatabaseImportForm::captureThreadError(Exception e)
 
 void DatabaseImportForm::filterObjects(void)
 {
-	DatabaseImportForm::filterObjects(db_objects_tw, filter_edt->text(), (by_oid_chk->isChecked() ? OBJECT_ID : 0));
+  DatabaseImportForm::filterObjects(db_objects_tw, filter_edt->text(), (by_oid_chk->isChecked() ? OBJECT_ID : 0), false);
 }
 
-void DatabaseImportForm::filterObjects(QTreeWidget *tree_wgt, const QString &pattern, int search_column)
+void DatabaseImportForm::filterObjects(QTreeWidget *tree_wgt, const QString &pattern, int search_column, bool sel_single_leaf)
 {
 	if(!tree_wgt)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	QList<QTreeWidgetItem*> items=tree_wgt->findItems(pattern, Qt::MatchStartsWith | Qt::MatchRecursive, search_column);
 	QTreeWidgetItemIterator itr(tree_wgt);
-  QTreeWidgetItem *parent=nullptr, *item=nullptr;
+
 
 	tree_wgt->blockSignals(true);
 	tree_wgt->collapseAll();
+  tree_wgt->clearSelection();
 
 	while(*itr)
 	{
@@ -432,6 +433,9 @@ void DatabaseImportForm::filterObjects(QTreeWidget *tree_wgt, const QString &pat
 	}
 	else
 	{
+    QTreeWidgetItem *parent=nullptr, *item=nullptr, *leaf=nullptr;
+    int leaf_count=0;
+
 		while(!items.isEmpty())
 		{
       item=items.front();
@@ -447,7 +451,21 @@ void DatabaseImportForm::filterObjects(QTreeWidget *tree_wgt, const QString &pat
 			}
 
       items.pop_front();
+
+      //Counting the leaf items found so far
+      if(sel_single_leaf && item->childCount()==0 && item->parent())
+      {
+        leaf_count++;
+        leaf=item;
+      }
 		}
+
+    //Selecting the single leaf item
+    if(sel_single_leaf && leaf_count == 1 && leaf)
+    {
+      leaf->setSelected(true);
+      tree_wgt->setCurrentItem(leaf);
+    }
 	}
 
 	tree_wgt->blockSignals(false);

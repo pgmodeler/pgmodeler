@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -101,7 +101,9 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
     //! brief Fills a tree widget with all available database objects according to the configurations of the specified import helper
     static void listObjects(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, bool checkable_items, bool disable_empty_grps, bool create_db_item);
 
-		static void filterObjects(QTreeWidget *db_objects_tw, const QString &pattern, int search_column=OBJECT_ID);
+    /*! brief Filters an tree widget using a pattern. The 'search_column' indicates in which column the pattern is applied.
+        The paramenter 'sel_single_leaf' indicates if the single leaf (resulting from filtering) must be selected. */
+    static void filterObjects(QTreeWidget *db_objects_tw, const QString &pattern, int search_column, bool sel_single_leaf);
 
     /*! \brief Retrieve the specified objects from the database and insert them onto the tree view.
     The "root" parameter is used to associate the group of objects as child of it.
