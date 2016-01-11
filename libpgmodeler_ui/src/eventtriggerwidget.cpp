@@ -40,7 +40,7 @@ EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent
 	filter_layout->addWidget(filter_tab);
 
 	configureFormLayout(eventtrigger_grid, OBJ_EVENT_TRIGGER);
-
+  setRequiredField(function_lbl);
 
   fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(event_lbl);
   values_map[event_lbl].push_back(~EventTriggerType(EventTriggerType::table_rewrite));
