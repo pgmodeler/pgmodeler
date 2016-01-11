@@ -646,7 +646,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
                                  OBJ_OPCLASS, OBJ_OPERATOR,  OBJ_SEQUENCE,
                                  OBJ_CONVERSION, OBJ_CAST,	OBJ_LANGUAGE,
                                  OBJ_COLLATION, OBJ_EXTENSION, OBJ_TYPE,
-                                 OBJ_DATABASE };
+                                 OBJ_EVENT_TRIGGER, OBJ_DATABASE };
 
 
   /* Extract each SQL command from the buffer and execute them separately. This is done
