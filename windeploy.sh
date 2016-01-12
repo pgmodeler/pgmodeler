@@ -126,7 +126,7 @@ clear
 echo
 echo "pgModeler Windows deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.com.br"
-echo "Copyright 2006-2014 Raphael A. Silva <raphael@pgmodeler.com.br>"
+echo "Copyright 2006-2016 Raphael A. Silva <raphael@pgmodeler.com.br>"
 
 # Identifying Qt version
 if [ -e "$QMAKE_ROOT/qmake" ]; then

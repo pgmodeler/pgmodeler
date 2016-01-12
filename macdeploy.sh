@@ -40,7 +40,7 @@ clear
 echo
 echo "pgModeler Mac OSX deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.com.br"
-echo "Copyright 2006-2015 Raphael A. Silva <raphael@pgmodeler.com.br>"
+echo "Copyright 2006-2016 Raphael A. Silva <raphael@pgmodeler.com.br>"
 
 # Identifying System Qt version
 if [ -e "$QT_ROOT/bin/qmake" ]; then
