@@ -7,9 +7,11 @@ v0.8.2-beta
 
 <strong>Summary:</strong> this is the first beta release of the 0.8.2. This one brings a few fixes for some bugs discovered during the final days of 2015.<br/>
 
-No new exciting feature is included because the priority in the 0.8.2 is the bug fixes.<br/>
+An initial support to the fresh PostgreSQL 9.5 was included. Currently it'll be possible to connect to this new server version as well doing all supported operation so far: export, import and diff. <br/>
 
-Below all changes this release are described. <br/>
+There is a basic support to BRIN indexes and new events of Event Trigger object, nothing more. The real support to PostgreSQL 9.5 including new object and important changes in another ones is scheduled to be implemented in pgModeler 0.9.x. <br/>
+
+Below all changes of this release are described. <br/>
 
 * [New] Added version descriptor for PostgreSQL 9.5 enabling pgModeler to connect to it.
 * [New] Added access method BRIN for indexes, operator classes and operator families as an initial support to PostgreSQL 9.5.
