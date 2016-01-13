@@ -228,10 +228,19 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 
 bool BaseObject::isValidName(const QString &name)
 {
+  QString aux_name=name;
+
+  if(aux_name.contains(QRegExp("^(\")(.)+(\")$")))
+  {
+    aux_name.remove(0,1);
+    aux_name.remove(aux_name.size()-1,1);
+  }
+
 	/* If the name is greater than the maximum size accepted
-		by PostgreSQL (currently 63 bytes) or it is empty
-		the name is invalid */
-  if(name.isEmpty() || name.size() > OBJECT_NAME_MAX_LENGTH)
+    by PostgreSQL (currently 63 bytes) the name is invalid.
+    In this case the starting and ending quotes are discarded from
+    the name in order to validate the length. */
+  if(name.isEmpty() || aux_name.size() > OBJECT_NAME_MAX_LENGTH)
 		return(false);
 	else
 	{
@@ -331,35 +340,29 @@ BaseObject *BaseObject::getDatabase(void)
 void BaseObject::setProtected(bool value)
 {
 	setCodeInvalidated(this->is_protected != value);
-  is_protected=value;//(!system_obj ? value : true);
+  is_protected=value;
 }
 
 void BaseObject::setName(const QString &name)
 {
-	//Raises an error if the passed name is empty
-	if(name.isEmpty())
-		throw Exception(ERR_ASG_EMPTY_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else
-	{
-		int count;
-		QString aux_name=name;
+  QString aux_name=name;
+  bool is_quoted=aux_name.contains(QRegExp("^(\")(.)+(\")$"));
 
-		count=aux_name.count(QChar('\0'));
-		if(count >=1) aux_name.chop(count);
+  //Raises an error if the passed name is invalid
+  if(!isValidName(aux_name))
+  {
+    if(aux_name.isEmpty())
+      throw Exception(ERR_ASG_EMPTY_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    //If the name is quoted we add 2 bytes to the maximum in order to check if it exceeds the limit
+    else if(aux_name.size() > (OBJECT_NAME_MAX_LENGTH + (is_quoted ? 2 : 0)))
+      throw Exception(ERR_ASG_LONG_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    else
+      throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  }
 
-		//Raises an error if the passed name is invalid
-		if(!isValidName(aux_name))
-		{
-			if(name.size() > OBJECT_NAME_MAX_LENGTH)
-				throw Exception(ERR_ASG_LONG_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-			else
-				throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		}
-
-		aux_name.remove('\"');
-		setCodeInvalidated(this->obj_name!=aux_name);
-		this->obj_name=aux_name;
-	}
+  aux_name.remove('"');
+  setCodeInvalidated(this->obj_name!=aux_name);
+  this->obj_name=aux_name;
 }
 
 void BaseObject::setComment(const QString &comment)
