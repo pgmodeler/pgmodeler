@@ -34,6 +34,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		QSpacerItem *spacer=nullptr;
 
     setupUi(this);
+    operation_count=0;
     new_object=false;
 		model=nullptr;
 		table=nullptr;
@@ -294,7 +295,29 @@ void BaseObjectWidget::configureTabOrder(vector<QWidget *> widgets)
   cnt=tab_order.size()-1;
 
   for(idx=0; idx < cnt; idx++)
-   QWidget::setTabOrder(tab_order[idx], tab_order[idx+1]);
+    QWidget::setTabOrder(tab_order[idx], tab_order[idx+1]);
+}
+
+void BaseObjectWidget::cancelChainedOperation(void)
+{
+  bool op_list_changed=false;
+
+  if(op_list->isOperationChainStarted())
+    op_list->finishOperationChain();
+
+  if(operation_count < op_list->getCurrentSize())
+  {
+    op_list_changed=true;
+    BaseObjectWidget::cancelConfiguration();
+  }
+
+  if(new_object && this->object)
+  {
+    if(!op_list_changed)
+      delete(this->object);
+
+    this->object=nullptr;
+  }
 }
 
 void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *object, BaseObject *parent_obj, double obj_px, double obj_py, bool uses_op_list)

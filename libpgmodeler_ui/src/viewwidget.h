@@ -47,11 +47,6 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 
     NumberedTextEditor *cte_expression_txt, *code_txt;
 
-		/*! \brief Operation list element count before editing the view. This attribute
-		is used to know, in case of cancel the edition, the operation (count) that is needed to
-		be removed. See: cancelConfiguration() */
-		unsigned operation_count;
-
 		//! \brief Stores all the view references
 		ObjectTableWidget *references_tab;
 

@@ -38,7 +38,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	table_grid->addWidget(frame, table_grid->count()+1, 0, 1, 2);
 	frame->setParent(this);
 
-	operation_count=0;
+  //operation_count=0;
 	parent_tables = new ObjectTableWidget(ObjectTableWidget::NO_BUTTONS, true, this);
 	parent_tables->setColumnCount(3);
 	parent_tables->setHeaderLabel(trUtf8("Name"), 0);
@@ -675,16 +675,6 @@ void TableWidget::applyConfiguration(void)
 
 void TableWidget::cancelConfiguration(void)
 {
-	if(op_list->isOperationChainStarted())
-		op_list->finishOperationChain();
-
-	if(operation_count < op_list->getCurrentSize())
-		BaseObjectWidget::cancelConfiguration();
-
-  if(new_object && this->object)
-  {
-    delete(this->object);
-    this->object=nullptr;
-  }
+  BaseObjectWidget::cancelChainedOperation();
 }
 

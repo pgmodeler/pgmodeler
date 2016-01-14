@@ -54,6 +54,13 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 												RELINC_LINE_BGCOLOR,
 												RELINC_LINE_FGCOLOR;
 
+
+    /*! \brief Operation list element count before editing an object. This attribute
+    is used to know, in case of cancel the edition, the operation (count) that is needed to
+    be removed. This attribute applies only if the object creation is chained (like in tables, views or relationships)
+    See: cancelChainedConfiguration() */
+    unsigned operation_count;
+
 		//! \brief Parent form used to show the widget as a dialog.
 		BaseForm *parent_form;
 
@@ -126,9 +133,13 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 		this original one whit the op_list=nullptr and obj_px=NAN, obj_py=NAN */
 	 void setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj);
 
+   //! brief Disable the object's refereces SQL code
 	 void disableReferencesSQL(BaseObject *object);
 
    void configureTabOrder(vector<QWidget *> widgets={});
+
+   //! brief Executes the proper actions to cancel chained operations.
+   void cancelChainedOperation(void);
 
 	public:
 		//! \brief Constants used to generate version intervals for version alert frame

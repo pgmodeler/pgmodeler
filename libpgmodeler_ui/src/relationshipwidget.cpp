@@ -35,7 +35,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
     QWidgetList pattern_fields={ src_col_pattern_txt, dst_col_pattern_txt,
                                  src_fk_pattern_txt, dst_fk_pattern_txt,
                                  pk_pattern_txt, uq_pattern_txt, pk_col_pattern_txt };
-		operation_count=0;
+    //operation_count=0;
 
     gen_tab_name_ht=new HintTextWidget(gen_tab_name_hint, this);
     gen_tab_name_ht->setText(relnn_tab_name_edt->statusTip());
@@ -1085,15 +1085,5 @@ void RelationshipWidget::applyConfiguration(void)
 
 void RelationshipWidget::cancelConfiguration(void)
 {
-  if(op_list->isOperationChainStarted())
-    op_list->finishOperationChain();
-
-  if(operation_count < op_list->getCurrentSize())
-    BaseObjectWidget::cancelConfiguration();
-
-  if(new_object && this->object)
-  {
-    delete(this->object);
-    this->object=nullptr;
-  }
+  BaseObjectWidget::cancelChainedOperation();
 }

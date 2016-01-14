@@ -34,11 +34,6 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 	private:
 		Q_OBJECT
 
-		/*! \brief Operation list element count before editing the table. This attribute
-		is used to know, in case of cancel the edition, the operation (count) that is needed to
-		be removed. See: cancelConfiguration() */
-		unsigned operation_count;
-
 		ObjectTableWidget *parent_tables;
 
     ObjectSelectorWidget *tag_sel;

@@ -34,8 +34,6 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 
 		Ui_ViewWidget::setupUi(this);
 
-		operation_count=0;
-
     expression_hl=new SyntaxHighlighter(expression_txt, false, true);
     expression_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
@@ -800,15 +798,5 @@ void ViewWidget::applyConfiguration(void)
 
 void ViewWidget::cancelConfiguration(void)
 {
-	if(op_list->isOperationChainStarted())
-		op_list->finishOperationChain();
-
-	if(operation_count < op_list->getCurrentSize())
-		BaseObjectWidget::cancelConfiguration();
-
-  if(new_object && this->object)
-  {
-    delete(this->object);
-    this->object=nullptr;
-  }
+  BaseObjectWidget::cancelChainedOperation();
 }
