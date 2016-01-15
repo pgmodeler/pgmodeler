@@ -172,6 +172,7 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
                 name.indexOf('@')>=0 ||
                 name.indexOf(' ')>=0 ||
                 name.indexOf('$')>=0 ||
+                name.indexOf(':')>=0 ||
                 name.contains(QRegExp("^[0-9]+"))));
 
 		i=0;
@@ -269,13 +270,13 @@ bool BaseObject::isValidName(const QString &name)
 			chr=raw_name[i];
 
 			/* Validation of simple ASCI characters.
-      Checks if the name has the characters in the set [ a-z A-Z 0-9 _ . @ $ - space ] */
+      Checks if the name has the characters in the set [ a-z A-Z 0-9 _ . @ $ - : space ] */
 			if((chr >= 'a' && chr <='z') ||
 				 (chr >= 'A' && chr <='Z') ||
 				 (chr >= '0' && chr <='9') ||
 					chr == '_' || chr == '-' ||
           chr == '.' || chr == '@' ||
-          chr == ' ' ||	chr=='$')
+          chr == ' ' ||	chr=='$' || chr==':')
 			{
 				valid=true;
 				i++;
