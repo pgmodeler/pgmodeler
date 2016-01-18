@@ -94,7 +94,7 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
   save_tb->setToolButtonStyle(output_tb->toolButtonStyle());
   save_tb->setIconSize(output_tb->iconSize());
   save_tb->setToolTip(trUtf8("Save the attached model file on the filesystem"));
-  layout->addWidget(save_tb);
+  attach_wgt->layout()->addWidget(save_tb);
 
   report_tab_lt->removeWidget(details_gb);
   report_tab_lt->removeWidget(output_wgt);
@@ -227,7 +227,10 @@ void CrashHandlerForm::saveModel(void)
 void CrashHandlerForm::setAnalysisMode(bool value)
 {
   output_wgt->setEnabled(!value);
-  attach_wgt->setEnabled(!value);
+  attach_tb->setEnabled(!value);
+  attach_mod_chk->setEnabled(!value);
+  save_tb->setVisible(value);
+
   create_btn->setVisible(!value);
   input_wgt->setVisible(value);
 
