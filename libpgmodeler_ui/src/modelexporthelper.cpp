@@ -307,7 +307,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 					{
 						//Emits a signal indicating that the object is being exported
 						emit s_progressUpdated(progress,
-                                   trUtf8("Creating object `%1' (%2).")
+                                   trUtf8("Creating object `%1' (%2)")
                                    .arg(object->getName())
                                    .arg(object->getTypeName()),
 																	 object->getObjectType());
@@ -340,7 +340,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			{
 				//Creating the database on the DBMS
 				emit s_progressUpdated(progress,
-                               trUtf8("Creating database `%1'.")
+                               trUtf8("Creating database `%1'")
                                .arg(db_model->getName()),
 															 OBJ_DATABASE);
 
@@ -370,7 +370,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			new_db_conn=conn;
 			new_db_conn.setConnectionParam(Connection::PARAM_DB_NAME, db_model->getName());
 			emit s_progressUpdated(progress,
-                             trUtf8("Connecting to database `%1'.")
+                             trUtf8("Connecting to database `%1'")
                              .arg(db_model->getName()));
 
 			new_db_conn.connect();
@@ -547,7 +547,7 @@ void ModelExportHelper::undoDBMSExport(DatabaseModel *db_model, Connection &conn
 
 void ModelExportHelper::generateTempObjectNames(DatabaseModel *db_model)
 {
-  QString tmp_name;
+  QString tmp_name, old_name;
   QTextStream stream(&tmp_name);
   QDateTime dt=QDateTime::currentDateTime();
   QCryptographicHash hash(QCryptographicHash::Md5);
@@ -579,8 +579,14 @@ void ModelExportHelper::generateTempObjectNames(DatabaseModel *db_model)
     hash.addData(QByteArray(tmp_name.toStdString().c_str()));
     tmp_name=obj_suffixes[obj.first->getObjectType()] + hash.result().toHex();
 
+    old_name=obj.first->getName();
     obj.first->setName(tmp_name.mid(0,15));
     tmp_name.clear();
+
+    emit s_progressUpdated(progress, trUtf8("Renaming `%1' (%2) to `%3'")
+                           .arg(old_name)
+                           .arg(obj.first->getTypeName())
+                           .arg(obj.first->getName()));
   }
 
 	/* Invalidates the codes of all objects on database model in order to generate the SQL referencing the
@@ -736,9 +742,9 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
           obj_name=tab_name + QString(".") + obj_name;
 
           if(is_drop)
-            msg=trUtf8("Dropping object `%1' (%2).").arg(obj_name).arg(BaseObject::getTypeName(obj_type));
+            msg=trUtf8("Dropping object `%1' (%2)").arg(obj_name).arg(BaseObject::getTypeName(obj_type));
           else
-            msg=trUtf8("Creating object `%1' (%2).").arg(obj_name).arg(BaseObject::getTypeName(obj_type));
+            msg=trUtf8("Creating object `%1' (%2)").arg(obj_name).arg(BaseObject::getTypeName(obj_type));
 
           emit s_progressUpdated(aux_prog, msg, obj_type, sql_cmd);
           is_drop=false;
