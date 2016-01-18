@@ -212,7 +212,7 @@ QString BaseType::type_list[types_count]=
   "GEOMETRY",
 	"GEOMETRYCOLLECTION",
 
-	//Types used by the class EventTriggerMode
+  //Types used by the class EventTriggerType
   //offsets 235 to 237
 	"ddl_command_start",
 	"ddl_command_end",
@@ -1983,7 +1983,7 @@ unsigned FiringType::operator = (const QString &type_name)
 }
 
 /***************************
- * CLASS: EventTriggerMode *
+ * CLASS: EventTriggerType *
  ***************************/
 EventTriggerType::EventTriggerType(void)
 {

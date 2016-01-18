@@ -29,7 +29,6 @@
 #include "parsersattributes.h"
 #include "schemaparser.h"
 #include <vector>
-#include <map>
 #include <QRegExp>
 
 class BaseType{
