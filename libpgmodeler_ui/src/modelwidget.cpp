@@ -3402,6 +3402,7 @@ void ModelWidget::toggleObjectSQL(void)
     BaseObject *object=reinterpret_cast<BaseObject *>(action->data().value<void *>());
     PgModelerUiNS::disableObjectSQL(object, !object->isSQLDisabled());
     this->modified=true;
+    emit s_objectModified();
   }
 }
 
