@@ -129,7 +129,7 @@ void ModelFixForm::fixModel(void)
 void ModelFixForm::selectFile(void)
 {
   QObject *sender_obj=sender();
-  QFileDialog file_dlg;
+  QFileDialog file_dlg(this);
   QLineEdit *txt=nullptr;
 
   if(sender_obj==sel_cli_exe_tb)

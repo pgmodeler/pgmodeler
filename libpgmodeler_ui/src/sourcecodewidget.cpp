@@ -111,7 +111,7 @@ void SourceCodeWidget::setSourceCodeTab(int)
 
 void SourceCodeWidget::saveSQLCode(void)
 {
-  QFileDialog file_dlg;
+  QFileDialog file_dlg(this);
 
   file_dlg.setWindowTitle(trUtf8("Save SQL code as..."));
 

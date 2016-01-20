@@ -222,7 +222,7 @@ void ModelExportForm::selectExportMode(void)
 
 void ModelExportForm::selectOutputFile(void)
 {
-  QFileDialog file_dlg;
+  QFileDialog file_dlg(this);
 
   file_dlg.setWindowTitle(trUtf8("Export model as..."));
 

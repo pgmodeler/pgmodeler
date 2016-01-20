@@ -121,7 +121,7 @@ void BugReportForm::generateReport(const QByteArray &buf)
 
 void BugReportForm::attachModel(void)
 {
-  QFileDialog file_dlg;
+  QFileDialog file_dlg(this);
 
   try
   {
@@ -156,7 +156,7 @@ void BugReportForm::attachModel(void)
 
 void BugReportForm::selectOutput(void)
 {
-  QFileDialog file_dlg;
+  QFileDialog file_dlg(this);
 
   file_dlg.setWindowTitle(trUtf8("Select report output folder"));
   file_dlg.setFileMode(QFileDialog::DirectoryOnly);
