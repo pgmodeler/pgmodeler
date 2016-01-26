@@ -95,7 +95,9 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 		void resizeEvent(QResizeEvent *);
 		void closeEvent(QCloseEvent *);
 		void showEvent(QShowEvent *);
+        void keyPressEvent(QKeyEvent *event);
     bool eventFilter(QObject *object, QEvent *event);
+        bool passEventToFilterEdit(QEvent *event);
 
   public:
 		ModelObjectsWidget(bool simplified_view=false, QWidget * parent = 0);
