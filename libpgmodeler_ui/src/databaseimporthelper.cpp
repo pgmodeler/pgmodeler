@@ -996,6 +996,7 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 	unsigned dim=0;
 	QStringList param_types, param_names, param_modes, param_def_vals;
 	int def_val_idx=0;
+  QString param_tmpl_name=QString("_param%1");
 
 	try
 	{
@@ -1029,12 +1030,16 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 			param.setType(type);
 
       if(!param_names.isEmpty())
+      {
         param_names[i].remove('"');
 
-      if(param_names[i].isEmpty())
-        param.setName(QString("_param%1").arg(i+1));
+        if(param_names[i].isEmpty())
+          param.setName(param_tmpl_name.arg(i+1));
+        else
+          param.setName(param_names[i]);
+      }
       else
-        param.setName(param_names[i]);
+        param.setName(param_tmpl_name.arg(i+1));
 
 			//Parameter modes: i = IN, o = OUT, b = INOUT, v = VARIADIC
 			if(!param_modes.isEmpty())
