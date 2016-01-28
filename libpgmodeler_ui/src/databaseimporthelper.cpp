@@ -1028,10 +1028,13 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 			param=Parameter();
 			param.setType(type);
 
-			if(param_names.isEmpty())
-				param.setName(QString("_param%1").arg(i+1));
-			else
-				param.setName(param_names[i]);
+      if(!param_names.isEmpty())
+        param_names[i].remove('"');
+
+      if(param_names[i].isEmpty())
+        param.setName(QString("_param%1").arg(i+1));
+      else
+        param.setName(param_names[i]);
 
 			//Parameter modes: i = IN, o = OUT, b = INOUT, v = VARIADIC
 			if(!param_modes.isEmpty())
