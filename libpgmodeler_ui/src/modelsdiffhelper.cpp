@@ -35,6 +35,7 @@ ModelsDiffHelper::ModelsDiffHelper(void)
   diff_opts[OPT_KEEP_OBJ_PERMS]=true;
   diff_opts[OPT_REUSE_SEQUENCES]=true;
   diff_opts[OPT_PRESERVE_DB_NAME]=true;
+  diff_opts[OPT_KEEP_NOT_IMPORTED_OBJS]=false;
 }
 
 ModelsDiffHelper::~ModelsDiffHelper(void)
@@ -44,7 +45,7 @@ ModelsDiffHelper::~ModelsDiffHelper(void)
 
 void ModelsDiffHelper::setDiffOption(unsigned opt_id, bool value)
 {
-  if(opt_id > OPT_PRESERVE_DB_NAME)
+  if(opt_id > OPT_KEEP_NOT_IMPORTED_OBJS)
     throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   diff_opts[opt_id]=value;
@@ -172,7 +173,12 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
         /* If the object does not exists it will generate a drop info and the original
          one (tab_obj) was not included by generalization (to avoid drop inherited columns) */
         else if(!aux_obj && !tab_obj->isAddedByGeneralization())
-          generateDiffInfo(diff_type, tab_obj);
+        {
+          if(!diff_opts[OPT_KEEP_NOT_IMPORTED_OBJS])
+            generateDiffInfo(diff_type, tab_obj);
+          else
+            generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, tab_obj);
+        }
       }
 
       if(diff_canceled)
@@ -317,7 +323,12 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
               }
             }
             else if(!aux_object)
-              generateDiffInfo(diff_type, object);
+            {
+              if(!diff_opts[OPT_KEEP_NOT_IMPORTED_OBJS])
+                generateDiffInfo(diff_type, object);
+              else
+                generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, object);
+            }
           }
         }
         //Comparison for constraints (fks), triggers, rules, indexes
@@ -392,8 +403,13 @@ void ModelsDiffHelper::diffTableObject(TableObject *tab_obj, unsigned diff_type)
       aux_tab_obj=aux_base_tab->getObject(obj_name, obj_type);
   }
 
-	if(!aux_tab_obj)
-		generateDiffInfo(diff_type, tab_obj);
+  if(!aux_tab_obj)
+  {
+    if(!diff_opts[OPT_KEEP_NOT_IMPORTED_OBJS])
+      generateDiffInfo(diff_type, tab_obj);
+    else
+      generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, tab_obj);
+  }
 	else if(diff_type!=ObjectsDiffInfo::DROP_OBJECT && tab_obj->isCodeDiffersFrom(aux_tab_obj))
     generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, tab_obj, aux_tab_obj);
 }
