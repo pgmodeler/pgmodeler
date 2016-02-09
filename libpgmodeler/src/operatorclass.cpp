@@ -181,7 +181,12 @@ QString OperatorClass::getCodeDefinition(unsigned def_type, bool reduced_form)
 		attributes[ParsersAttributes::TYPE]=data_type.getCodeDefinition(def_type);
 
 	if(family)
-		attributes[ParsersAttributes::FAMILY]=family->getName(true);
+  {
+    if(def_type==SchemaParser::SQL_DEFINITION)
+      attributes[ParsersAttributes::FAMILY]=family->getName(true);
+    else
+      attributes[ParsersAttributes::FAMILY]=family->getCodeDefinition(def_type,true);
+  }
 
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));
 }

@@ -3,7 +3,8 @@
            Unexpected results may occur if the code is changed deliberately.
 -->
 <!ELEMENT opfamily (schema?,role?,comment?, appended-sql?,prepended-sql?)>
-<!ATTLIST opfamily name CDATA #REQUIRED>
+<!ATTLIST opfamily name CDATA #IMPLIED>
+<!ATTLIST opfamily signature CDATA #IMPLIED>
 <!ATTLIST opfamily index-type (btree | rtree | gist | hash | gin) "btree">
 <!ATTLIST opfamily protected (false|true) "false">
 <!ATTLIST opfamily sql-disabled (false|true) "false">

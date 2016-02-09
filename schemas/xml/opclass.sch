@@ -26,7 +26,10 @@
 %if {appended-sql} %then {appended-sql} %end
 %if {prepended-sql} %then {prepended-sql} %end
 
-%if {family} %then $tb <opfamily $sp name="{family}" /> $br %end
+%if {family} %then 
+  $tb [<opfamily signature="] {family} [" />] $br
+%end
+
 {type}
 {elements}
 
