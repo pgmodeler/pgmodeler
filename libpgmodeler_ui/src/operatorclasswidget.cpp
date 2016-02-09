@@ -30,7 +30,7 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 
     Ui_OperatorClassWidget::setupUi(this);
 
-		family_sel=new ObjectSelectorWidget(OBJ_OPFAMILY, false, this);
+    family_sel=new ObjectSelectorWidget(OBJ_OPFAMILY, true, this);
 		data_type=new PgSQLTypeWidget(this);
     operator_sel=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);
     elem_family_sel=new ObjectSelectorWidget(OBJ_OPFAMILY, true, this);
