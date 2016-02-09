@@ -27,7 +27,7 @@
 %if {prepended-sql} %then {prepended-sql} %end
 
 %if {family} %then 
-  $tb [<opfamily signature="] {family} [" />] $br
+  $tb [<opfamily signature="] {family} ["/>] $br
 %end
 
 {type}
