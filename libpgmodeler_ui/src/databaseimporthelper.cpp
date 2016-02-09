@@ -1160,7 +1160,7 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 		vector<attribs_map> elems;
 		QStringList array_vals, list;
 
-		attribs[ParsersAttributes::FAMILY]=getObjectName(attribs[ParsersAttributes::FAMILY]);
+    attribs[ParsersAttributes::FAMILY]=getObjectName(attribs[ParsersAttributes::FAMILY], true);
 		attribs[ParsersAttributes::TYPE]=getType(attribs[ParsersAttributes::TYPE], true, attribs);
 
 		//Generating attributes for STORAGE elements
@@ -2193,7 +2193,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
         obj_name.prepend(sch_name + QString("."));
 
 			//Formatting the name in form of signature (only for functions and operators)
-      if(signature_form && (obj_type==OBJ_FUNCTION || obj_type==OBJ_OPERATOR || obj_type==OBJ_AGGREGATE))
+      if(signature_form && (obj_type==OBJ_FUNCTION || obj_type==OBJ_OPERATOR || obj_type==OBJ_AGGREGATE || obj_type==OBJ_OPFAMILY))
 			{
 				QStringList params;
 
@@ -2224,7 +2224,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
           if(params.isEmpty())
             params.push_back(QString("*"));
         }
-				else
+        else if(obj_type==OBJ_OPERATOR)
 				{
 					if(obj_attr[ParsersAttributes::LEFT_TYPE].toUInt() > 0)
 						params.push_back(getType(obj_attr[ParsersAttributes::LEFT_TYPE], false));
@@ -2236,8 +2236,13 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 					else
             params.push_back(QString("NONE"));
 				}
+        else
+        {
+          obj_name += QString(" USING %1").arg(obj_attr[ParsersAttributes::INDEX_TYPE]);
+        }
 
-        obj_name+=QString("(") + params.join(',') + QString(")");
+        if(obj_type != OBJ_OPFAMILY)
+          obj_name+=QString("(") + params.join(',') + QString(")");
 			}
 
 			return(obj_name);
