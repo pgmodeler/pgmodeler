@@ -240,6 +240,13 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
     item->setText(0, oper->getSignature(false));
     obj_name=oper->getSignature(false);
   }
+  else if(obj_type==OBJ_OPCLASS || obj_type == OBJ_OPFAMILY)
+  {
+    obj_name=object->getSignature(false);
+    obj_name.replace(QRegExp("( )+(USING)( )+"), QString(" ["));
+    obj_name+=QChar(']');
+    item->setText(0,obj_name);
+  }
   else
   {
     item->setText(0,object->getName());
