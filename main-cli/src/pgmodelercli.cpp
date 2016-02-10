@@ -945,6 +945,33 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
     obj_xml.replace(tag.arg(QString("grant")), tag.arg(BaseObject::getSchemaName(OBJ_PERMISSION)));
     obj_xml.replace(end_tag.arg(QString("grant")), end_tag.arg(BaseObject::getSchemaName(OBJ_PERMISSION)));
   }
+
+  //Referencing op. families by signature instead of name in operator classes
+  if(obj_xml.contains(BaseObject::getSchemaName(OBJ_OPCLASS)))
+  {
+    obj_xml.replace(tag.arg(BaseObject::getSchemaName(OBJ_OPFAMILY)) + QString(" name="),
+                    tag.arg(BaseObject::getSchemaName(OBJ_OPFAMILY)) + QString(" signature="));
+
+    QString signature;
+    QRegExp sign_regexp=QRegExp(att_regexp.arg(QString("signature")));
+    int pos=0;
+
+    do
+    {
+      pos=sign_regexp.indexIn(obj_xml, pos);
+
+      if(pos >= 0)
+      {
+        signature=obj_xml.mid(pos, sign_regexp.matchedLength());
+        pos++;
+        out << signature << endl;
+
+        //Find the operator family
+        //Fix the signature
+      }
+    }
+    while(pos >= 0);
+  }
 }
 
 QStringList PgModelerCLI::extractForeignKeys(QString &obj_xml)
