@@ -6,7 +6,8 @@
 %element;
 
 <!ELEMENT opclass (schema?,role?,comment?, appended-sql?,prepended-sql?,opfamily?,type?,element*)>
-<!ATTLIST opclass name CDATA #REQUIRED>
+<!ATTLIST opclass name CDATA #IMPLIED>
+<!ATTLIST opclass signature CDATA #IMPLIED>
 <!ATTLIST opclass index-type CDATA #IMPLIED>
 <!ATTLIST opclass default (false | true) "true">
 <!ATTLIST opclass protected (false|true) "false">
