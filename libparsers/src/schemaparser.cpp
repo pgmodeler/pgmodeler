@@ -953,7 +953,7 @@ QString SchemaParser::convertCharsToXMLEntities(QString buf)
 					//Gets the substring extracted using regexp
           str_aux=lin.mid(attr_start, count).trimmed();
 
-          if(str_aux.contains(QRegExp("(&|\\|<|>|\")")))
+          if(str_aux.contains(QRegExp("(&|\\<|\\>|\")")))
           {
             //Replaces the char by the XML entities
             if(!str_aux.contains(XMLParser::CHAR_QUOT) && !str_aux.contains(XMLParser::CHAR_LT) &&
