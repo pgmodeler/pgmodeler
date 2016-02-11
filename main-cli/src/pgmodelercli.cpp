@@ -49,6 +49,10 @@ const QString PgModelerCLI::DBM_MIME_TYPE=QString("--dbm-mime-type");
 const QString PgModelerCLI::INSTALL=QString("install");
 const QString PgModelerCLI::UNINSTALL=QString("uninstall");
 
+const QString PgModelerCLI::TAG_EXPR=QString("<%1");
+const QString PgModelerCLI::END_TAG_EXPR=QString("</%1");
+const QString PgModelerCLI::ATTRIBUTE_EXPR=QString("(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&|\\;)+(\")");
+
 PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 {
   try
@@ -832,18 +836,15 @@ void PgModelerCLI::recreateObjects(void)
 
 void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 {
-  QString tag=QString("<%1"), end_tag=QString("</%1"),
-      att_regexp=QString("(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&|\\;)+(\")");
-
   //Placing objects <index>, <rule>, <trigger> outside of <table>
-  if(!obj_xml.startsWith(tag.arg(BaseObject::getSchemaName(OBJ_TABLESPACE))) &&
-     obj_xml.startsWith(tag.arg(BaseObject::getSchemaName(OBJ_TABLE))))
+  if(!obj_xml.startsWith(TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_TABLESPACE))) &&
+     obj_xml.startsWith(TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_TABLE))))
   {
     int start_idx=-1, end_idx=-1, len=0;
     ObjectType obj_types[3]={ OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX  };
     QString  curr_tag, curr_end_tag, def, tab_name, sch_name,
         name_attr=QString("name=\""),
-        sch_name_attr=tag.arg(BaseObject::getSchemaName(OBJ_SCHEMA)) + QString(" ") + name_attr;
+        sch_name_attr=TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_SCHEMA)) + QString(" ") + name_attr;
 
     //Extracting the table's name
     start_idx=obj_xml.indexOf(name_attr);
@@ -860,8 +861,8 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 
     for(unsigned idx=0; idx < 3; idx++)
     {
-      curr_tag=tag.arg(BaseObject::getSchemaName(obj_types[idx]));
-      curr_end_tag=end_tag.arg(BaseObject::getSchemaName(obj_types[idx])) + QString(">");
+      curr_tag=TAG_EXPR.arg(BaseObject::getSchemaName(obj_types[idx]));
+      curr_end_tag=END_TAG_EXPR.arg(BaseObject::getSchemaName(obj_types[idx])) + QString(">");
       start_idx=obj_xml.indexOf(curr_tag);
 
       while(start_idx >=0)
@@ -872,7 +873,7 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
         obj_xml.remove(start_idx, len);
 
         //If the object is a rule include the table attribute
-        if(def.startsWith(tag.arg(BaseObject::getSchemaName(OBJ_RULE))))
+        if(def.startsWith(TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_RULE))))
         {
           start_idx=def.indexOf('>');
           def.replace(start_idx, 1, QString(" ") + tab_name + QString(">"));
@@ -888,11 +889,11 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
   }
 
   //Remove recheck attribute from <element> tags.
-  if(obj_xml.contains(tag.arg(ParsersAttributes::ELEMENT)))
-    obj_xml.remove(QRegExp(att_regexp.arg(QString("recheck"))));
+  if(obj_xml.contains(TAG_EXPR.arg(ParsersAttributes::ELEMENT)))
+    obj_xml.remove(QRegExp(ATTRIBUTE_EXPR.arg(QString("recheck"))));
 
   //Remove values greater-op, less-op, sort-op or sort2-op from ref-type attribute from <operator> tags.
-  if(obj_xml.contains(tag.arg(BaseObject::getSchemaName(OBJ_OPERATOR))))
+  if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_OPERATOR))))
   {
     obj_xml.remove(QString("greater-op"));
     obj_xml.remove(QString("less-op"));
@@ -901,99 +902,117 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
   }
 
   //Replacing attribute owner by onwer-col for sequences
-  if(obj_xml.contains(tag.arg(BaseObject::getSchemaName(OBJ_SEQUENCE))))
+  if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_SEQUENCE))))
     obj_xml.replace(ParsersAttributes::OWNER, ParsersAttributes::OWNER_COLUMN);
 
   //Remove sysid attribute from <role> tags.
-  if(obj_xml.contains(tag.arg(BaseObject::getSchemaName(OBJ_ROLE))))
-    obj_xml.remove(QRegExp(att_regexp.arg(QString("sysid"))));
+  if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_ROLE))))
+    obj_xml.remove(QRegExp(ATTRIBUTE_EXPR.arg(QString("sysid"))));
 
   //Replace <parameter> tag by <typeattrib> on <usertype> tags.
-  if(obj_xml.contains(tag.arg(QString("usertype"))))
+  if(obj_xml.contains(TAG_EXPR.arg(QString("usertype"))))
   {
-    obj_xml.replace(tag.arg(ParsersAttributes::PARAMETER), tag.arg(ParsersAttributes::TYPE_ATTRIBUTE));
-    obj_xml.replace(end_tag.arg(ParsersAttributes::PARAMETER), end_tag.arg(ParsersAttributes::TYPE_ATTRIBUTE));
+    obj_xml.replace(TAG_EXPR.arg(ParsersAttributes::PARAMETER), TAG_EXPR.arg(ParsersAttributes::TYPE_ATTRIBUTE));
+    obj_xml.replace(END_TAG_EXPR.arg(ParsersAttributes::PARAMETER), END_TAG_EXPR.arg(ParsersAttributes::TYPE_ATTRIBUTE));
   }
 
-  if(obj_xml.contains(tag.arg(BaseObject::getSchemaName(OBJ_RELATIONSHIP))))
+  if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_RELATIONSHIP))))
   {
     //Remove auto-sufix, src-sufix, dst-sufix, col-indexes, constr-indexes, attrib-indexes from <relationship> tags.
-    obj_xml.remove(QRegExp(att_regexp.arg(QString("auto-sufix"))));
-    obj_xml.remove(QRegExp(att_regexp.arg(QString("src-sufix"))));
-    obj_xml.remove(QRegExp(att_regexp.arg(QString("dst-sufix"))));
-    obj_xml.remove(QRegExp(att_regexp.arg(QString("col-indexes"))));
-    obj_xml.remove(QRegExp(att_regexp.arg(QString("constr-indexes"))));
-    obj_xml.remove(QRegExp(att_regexp.arg(QString("attrib-indexes"))));
+    obj_xml.remove(QRegExp(ATTRIBUTE_EXPR.arg(QString("auto-sufix"))));
+    obj_xml.remove(QRegExp(ATTRIBUTE_EXPR.arg(QString("src-sufix"))));
+    obj_xml.remove(QRegExp(ATTRIBUTE_EXPR.arg(QString("dst-sufix"))));
+    obj_xml.remove(QRegExp(ATTRIBUTE_EXPR.arg(QString("col-indexes"))));
+    obj_xml.remove(QRegExp(ATTRIBUTE_EXPR.arg(QString("constr-indexes"))));
+    obj_xml.remove(QRegExp(ATTRIBUTE_EXPR.arg(QString("attrib-indexes"))));
 
     obj_xml.replace(QString("line-color"), ParsersAttributes::CUSTOM_COLOR);
   }
 
   //Renaming the tag <condition> to <predicate> on indexes
-  if(obj_xml.contains(tag.arg(BaseObject::getSchemaName(OBJ_INDEX))))
+  if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_INDEX))))
   {
-    obj_xml.replace(tag.arg(ParsersAttributes::CONDITION), tag.arg(ParsersAttributes::PREDICATE));
-    obj_xml.replace(end_tag.arg(ParsersAttributes::CONDITION), end_tag.arg(ParsersAttributes::PREDICATE));
+    obj_xml.replace(TAG_EXPR.arg(ParsersAttributes::CONDITION), TAG_EXPR.arg(ParsersAttributes::PREDICATE));
+    obj_xml.replace(END_TAG_EXPR.arg(ParsersAttributes::CONDITION), END_TAG_EXPR.arg(ParsersAttributes::PREDICATE));
   }
 
   //Renaming the attribute default to default-value on domain
-  if(obj_xml.contains(tag.arg(BaseObject::getSchemaName(OBJ_DOMAIN))))
+  if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_DOMAIN))))
     obj_xml.replace(ParsersAttributes::DEFAULT, ParsersAttributes::DEFAULT_VALUE);
 
   //Renaming the tag <grant> to <permission>
-  if(obj_xml.contains(tag.arg(QString("grant"))))
+  if(obj_xml.contains(TAG_EXPR.arg(QString("grant"))))
   {
-    obj_xml.replace(tag.arg(QString("grant")), tag.arg(BaseObject::getSchemaName(OBJ_PERMISSION)));
-    obj_xml.replace(end_tag.arg(QString("grant")), end_tag.arg(BaseObject::getSchemaName(OBJ_PERMISSION)));
+    obj_xml.replace(TAG_EXPR.arg(QString("grant")), TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_PERMISSION)));
+    obj_xml.replace(END_TAG_EXPR.arg(QString("grant")), END_TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_PERMISSION)));
   }
 
-  //Referencing op. families by signature instead of name in operator classes
-  if(obj_xml.contains(BaseObject::getSchemaName(OBJ_OPCLASS)))
+  //Fix the references to op. classes and families if needed
+  fixOpClassesFamiliesReferences(obj_xml);
+}
+
+void PgModelerCLI::fixOpClassesFamiliesReferences(QString &obj_xml)
+{
+  ObjectType ref_obj_type;
+
+  if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_INDEX))) ||
+     obj_xml.contains(QRegExp(QString("(%1)(.)+(type=)(\")(%2)(\")")
+                              .arg(TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_CONSTRAINT)))
+                              .arg(ParsersAttributes::EX_CONSTR))))
+    ref_obj_type=OBJ_OPCLASS;
+  else if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_OPCLASS))))
+    ref_obj_type=OBJ_OPFAMILY;
+  else
+    return;
+
+  QString ref_obj_name=BaseObject::getSchemaName(ref_obj_type);
+  if(!obj_xml.contains(TAG_EXPR.arg(ref_obj_name)))
+    return;
+
+  QString obj_name, aux_obj_name, signature=QString("%1 USING %2");
+  QRegExp sign_regexp=QRegExp(ATTRIBUTE_EXPR.arg(QString("signature")));
+  QStringList index_types;
+  int pos=0;
+
+  obj_xml.replace(TAG_EXPR.arg(ref_obj_name) + QString(" name="),
+                  TAG_EXPR.arg(ref_obj_name) + QString(" signature="));
+
+  IndexingType::getTypes(index_types);
+
+  do
   {
-    obj_xml.replace(tag.arg(BaseObject::getSchemaName(OBJ_OPFAMILY)) + QString(" name="),
-                    tag.arg(BaseObject::getSchemaName(OBJ_OPFAMILY)) + QString(" signature="));
+    pos=sign_regexp.indexIn(obj_xml, pos);
 
-    QString obj_name, aux_obj_name, signature=QString("%1 USING %2");
-    QRegExp sign_regexp=QRegExp(att_regexp.arg(QString("signature")));
-    QStringList index_types;
-    int pos=0;
-
-    IndexingType::getTypes(index_types);
-
-    do
+    if(pos >= 0)
     {
-      pos=sign_regexp.indexIn(obj_xml, pos);
+      //Extracting the signature attribute
+      obj_name=obj_xml.mid(pos, sign_regexp.matchedLength());
 
-      if(pos >= 0)
+      //Removing useless portions signature=" in order to retrive only the object's name
+      obj_name.remove(QRegExp("(signature)( )*(=)"));
+      obj_name.remove('"');
+
+      //Transforming xml entity for quote into the char
+      obj_name.replace(XMLParser::CHAR_QUOT, QString("\""));
+
+      for(QString idx_type : index_types)
       {
-        //Extracting the signature attribute
-        obj_name=obj_xml.mid(pos, sign_regexp.matchedLength());
+        //Building a name by appe
+        aux_obj_name=signature.arg(obj_name).arg(idx_type);
 
-        //Removing useless portions signature=" in order to retrive only the object's name
-        obj_name.remove(QRegExp("(signature)( )*(=)"));
-        obj_name.remove('"');
-
-        //Transforming xml entity for quote into the char
-        obj_name.replace(XMLParser::CHAR_QUOT, QString("\""));
-
-        for(QString idx_type : index_types)
+        if(model->getObjectIndex(aux_obj_name, ref_obj_type) >= 0)
         {
-          //Building a name by appe
-          aux_obj_name=signature.arg(obj_name).arg(idx_type);
-
-          if(model->getObjectIndex(aux_obj_name, OBJ_OPFAMILY) >= 0)
-          {
-            //Replacing the old signature with the corrected form
-            aux_obj_name.replace(QString("\""), XMLParser::CHAR_QUOT);
-            obj_xml.replace(pos, sign_regexp.matchedLength(), QString("signature=\"%1\"").arg(aux_obj_name));
-            break;
-          }
+          //Replacing the old signature with the corrected form
+          aux_obj_name.replace(QString("\""), XMLParser::CHAR_QUOT);
+          obj_xml.replace(pos, sign_regexp.matchedLength(), QString("signature=\"%1\"").arg(aux_obj_name));
+          break;
         }
-
-        pos+=sign_regexp.matchedLength();
       }
+
+      pos+=sign_regexp.matchedLength();
     }
-    while(pos >= 0);
   }
+  while(pos >= 0);
 }
 
 QStringList PgModelerCLI::extractForeignKeys(QString &obj_xml)
