@@ -583,20 +583,16 @@ BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, i
 		throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
-    /* This regexp is used for operator class and operator family.
-       Their signature comes with a "USING index_mode" string
-       that must be removed before any comparison is done */
-    QRegExp aux_regexp(QString("( )+(USING)(.)+"));
     QString signature;
 
     itr=obj_list->begin();
 		itr_end=obj_list->end();
 		obj_idx=-1;		
-    aux_name1=QString(name).remove('"').remove(aux_regexp);
+    aux_name1=QString(name).remove('"');
 
     while(itr!=itr_end && !found)
     {
-      signature=(*itr)->getSignature().remove("\"").remove(aux_regexp);
+      signature=(*itr)->getSignature().remove("\"");
       found=(signature==aux_name1);
       if(!found) itr++;
     }
@@ -4319,15 +4315,15 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 
 					if(elem==objs_schemas[OBJ_OPFAMILY])
 					{
-						xmlparser.getElementAttributes(attribs);
-						object=getObject(attribs[ParsersAttributes::NAME], OBJ_OPFAMILY);
+            xmlparser.getElementAttributes(attribs);
+            object=getObject(attribs[ParsersAttributes::SIGNATURE], OBJ_OPFAMILY);
 
 						//Raises an error if the operator family doesn't exists
-						if(!object && !attribs[ParsersAttributes::NAME].isEmpty())
+            if(!object)
 							throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
                               .arg(op_class->getName())
 															.arg(op_class->getTypeName())
-                              .arg(attribs[ParsersAttributes::NAME])
+                              .arg(attribs[ParsersAttributes::SIGNATURE])
 								.arg(BaseObject::getTypeName(OBJ_OPFAMILY)),
 								ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -4371,13 +4367,13 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 								xmlparser.accessElement(XMLParser::NEXT_ELEMENT);
 								xmlparser.getElementAttributes(attribs_aux);
 
-								object=getObject(attribs_aux[ParsersAttributes::NAME],OBJ_OPFAMILY);
+                object=getObject(attribs_aux[ParsersAttributes::SIGNATURE],OBJ_OPFAMILY);
 
-								if(!object && !attribs_aux[ParsersAttributes::NAME].isEmpty())
+                if(!object && !attribs_aux[ParsersAttributes::SIGNATURE].isEmpty())
 									throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
                                   .arg(op_class->getName())
 																	.arg(op_class->getTypeName())
-                                  .arg(attribs_aux[ParsersAttributes::NAME])
+                                  .arg(attribs_aux[ParsersAttributes::SIGNATURE])
 																	.arg(BaseObject::getTypeName(OBJ_OPFAMILY)),
 										ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -4907,7 +4903,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 				if(xml_elem==ParsersAttributes::OP_CLASS)
 				{
 					xmlparser.getElementAttributes(attribs);
-					op_class=dynamic_cast<OperatorClass *>(getObject(attribs[ParsersAttributes::NAME], OBJ_OPCLASS));
+          op_class=dynamic_cast<OperatorClass *>(getObject(attribs[ParsersAttributes::SIGNATURE], OBJ_OPCLASS));
 
 					//Raises an error if the operator class doesn't exists
 					if(!op_class)
@@ -4915,7 +4911,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 						throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
                             .arg(tab_obj->getName())
                             .arg(tab_obj->getTypeName())
-                            .arg(attribs[ParsersAttributes::NAME])
+                            .arg(attribs[ParsersAttributes::SIGNATURE])
 														.arg(BaseObject::getTypeName(OBJ_OPCLASS)),
 														ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}

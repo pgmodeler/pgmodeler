@@ -150,8 +150,12 @@ void Type::addEnumeration(const QString &enum_name)
   if(enum_name.isEmpty())
 		throw Exception(ERR_INS_INV_TYPE_ENUM_ITEM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the enumeration name is invalid (exceeds the maximum length)
-	else if(enum_name.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
-		throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  else if(enum_name.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
+    throw Exception(Exception::getErrorMessage(ERR_ASG_ENUM_LONG_NAME).arg(enum_name).arg(this->getName(true)),
+        ERR_ASG_ENUM_LONG_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  else if(enum_name.contains(QChar(',')))
+    throw Exception(Exception::getErrorMessage(ERR_ASG_ENUM_INV_CHARS).arg(enum_name).arg(this->getName(true)),
+        ERR_ASG_ENUM_INV_CHARS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the enumeration already exists
 	else if(isEnumerationExists(enum_name))
 		throw Exception(ERR_INS_DUPLIC_ENUM_ITEM,__PRETTY_FUNCTION__,__FILE__,__LINE__);

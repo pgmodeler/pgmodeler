@@ -40,7 +40,10 @@ class ModelsDiffHelper: public QObject {
     pgsql_version;
 
     //! brief Indicates if the diff was cancelled by user
-    bool diff_canceled, diff_opts[8];
+    bool diff_canceled,
+
+    //!brief Diff options. See OPT_??? constants
+    diff_opts[9];
 
     //! brief Stores the count of objects to be dropped, changed or created
     unsigned diffs_counter[4];
@@ -120,7 +123,12 @@ class ModelsDiffHelper: public QObject {
     OPT_REUSE_SEQUENCES=6,
 
     //! brief Indicates to not generate and execute commands to rename the destination database
-    OPT_PRESERVE_DB_NAME=7;
+    OPT_PRESERVE_DB_NAME=7,
+
+    /*! brief Indicates to not generate and execute commands to drop missing objects. For instance, if user
+        try to diff a partial model against the original database DROP commands will be generated, this option
+        will avoid this situation and preserve the missing (not imported) objects. */
+    OPT_KEEP_NOT_IMPORTED_OBJS=8;
 
 
 		ModelsDiffHelper(void);

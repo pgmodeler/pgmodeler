@@ -996,6 +996,8 @@ attribs_map DatabaseExplorerWidget::extractAttributesFromItem(QTreeWidgetItem *i
     types.removeAll(QString("-"));
     obj_name.remove(idx, obj_name.size());
   }
+  else if(obj_type==OBJ_OPFAMILY || obj_type==OBJ_OPCLASS)
+    obj_name.remove(QRegExp("( )+(\\[)(.)+(\\])"));
 
   //Formatting the names
   attribs[ParsersAttributes::NAME]=BaseObject::formatName(obj_name, obj_type==OBJ_OPERATOR);
@@ -1013,6 +1015,11 @@ attribs_map DatabaseExplorerWidget::extractAttributesFromItem(QTreeWidgetItem *i
     attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::SCHEMA] + QString(".") + attribs[ParsersAttributes::NAME] + QString("(%1)").arg(types.join(ELEM_SEPARATOR));
   else if(obj_type==OBJ_CAST)
     attribs[ParsersAttributes::SIGNATURE]=QString("(%1 AS %2)").arg(types[0]).arg(types[1]);
+  else if(obj_type==OBJ_OPFAMILY || obj_type==OBJ_OPCLASS)
+  {
+    attribs_map aux_attribs=item->data(DatabaseImportForm::OBJECT_OTHER_DATA, Qt::UserRole).value<attribs_map>();
+    attribs[ParsersAttributes::SIGNATURE]=QString("%1 USING %2").arg(attribs[ParsersAttributes::NAME]).arg(aux_attribs[ParsersAttributes::INDEX_TYPE]);
+  }
   else
   {
     if(!attribs[ParsersAttributes::SCHEMA].isEmpty() &&

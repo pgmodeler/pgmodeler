@@ -242,9 +242,12 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_ROW_DATA_NOT_MANIPULATED", QT_TR_NOOP("Could not perform the `%1' operation on `%2' using the data on row `%3'! All changes were rolled back. \n\n ** Returned error ** \n\n%4")},
 	{"ERR_MALFORMED_UNESCAPED_VALUE", QT_TR_NOOP("Malformed unescaped value on row `%1' column `%2'!")},
   {"ERR_UNDO_REDO_OPR_INV_OBJECT", QT_TR_NOOP("Trying to undo/redo an invalid operation over an object that does not exists anymore or can't be handled! The operation history will be cleaned up.")},
-  {"ERR_REQ_FIELDS_NOT_FILLED",  QT_TR_NOOP("The object `%1' (%2) can't be handled because some needed fields are not set! Please, make sure to fill at least the requires fields in order to properly create or update the object.")},
-  {"ERR_INV_REL_ID_SWAP",  QT_TR_NOOP("A relationship can only be swapped by other object of the same kind!")},
-  {"ERR_INV_INH_PARENT_TAB_NOT_FOUND",  QT_TR_NOOP("A parent table of `%1' which OID is `%2' was not found in the set of imported objects!")}
+  {"ERR_REQ_FIELDS_NOT_FILLED", QT_TR_NOOP("The object `%1' (%2) can't be handled because some needed fields are not set! Please, make sure to fill at least the requires fields in order to properly create or update the object.")},
+  {"ERR_INV_REL_ID_SWAP", QT_TR_NOOP("A relationship can only be swapped by other object of the same kind!")},
+  {"ERR_INV_INH_PARENT_TAB_NOT_FOUND", QT_TR_NOOP("A parent table of `%1' which OID is `%2' was not found in the set of imported objects!")},
+  {"ERR_ASG_ENUM_INV_CHARS", QT_TR_NOOP("The enumeration `%1' can't be assigned to the type `%2' because contains invalid characters!")},
+  {"ERR_ASG_ENUM_LONG_NAME", QT_TR_NOOP("The enumeration `%1' can't be assigned to the type `%2' because is too long!")},
+
 };
 
 Exception::Exception(void)

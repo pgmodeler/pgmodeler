@@ -88,6 +88,9 @@ Currently, those objects are:<br/><br/>aggregate, cast, constraint, collation, c
     preserve_db_name_ht=new HintTextWidget(preserve_db_name_hint, this);
     preserve_db_name_ht->setText(preserve_db_name_chk->statusTip());
 
+    keep_not_imported_objs_ht=new HintTextWidget(keep_not_imported_objs_hint, this);
+    keep_not_imported_objs_ht->setText(keep_not_imported_objs_chk->statusTip());
+
     sqlcode_hl=new SyntaxHighlighter(sqlcode_txt);
     sqlcode_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
@@ -386,6 +389,7 @@ void ModelDatabaseDiffForm::diffModels(void)
   diff_helper->setDiffOption(ModelsDiffHelper::OPT_KEEP_OBJ_PERMS, keep_obj_perms_chk->isChecked());
   diff_helper->setDiffOption(ModelsDiffHelper::OPT_REUSE_SEQUENCES, reuse_sequences_chk->isChecked());
   diff_helper->setDiffOption(ModelsDiffHelper::OPT_PRESERVE_DB_NAME, preserve_db_name_chk->isChecked());
+  diff_helper->setDiffOption(ModelsDiffHelper::OPT_KEEP_NOT_IMPORTED_OBJS, keep_not_imported_objs_chk->isChecked());
 
   diff_helper->setModels(source_model, imported_model);
 

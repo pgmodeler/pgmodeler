@@ -161,7 +161,7 @@ void SourceCodeWidget::generateSourceCode(int)
 
 			if(obj_type==OBJ_DATABASE)
 			{
-				task_prog_wgt=new TaskProgressWidget(this);
+        task_prog_wgt=new TaskProgressWidget;
 				task_prog_wgt->setWindowTitle(trUtf8("Generating source code..."));
 				task_prog_wgt->show();
         connect(this->model, SIGNAL(s_objectLoaded(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));

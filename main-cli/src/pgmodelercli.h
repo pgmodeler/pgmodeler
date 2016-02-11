@@ -109,7 +109,11 @@ class PgModelerCLI: public QApplication {
     USE_TMP_NAMES,
     DBM_MIME_TYPE,
     INSTALL,
-    UNINSTALL;
+    UNINSTALL,
+
+    TAG_EXPR,
+    END_TAG_EXPR,
+    ATTRIBUTE_EXPR;
 
 		//! \brief Parsers the options and executes the action specified by them
 		void parseOptions(attribs_map &parsed_opts);
@@ -143,6 +147,11 @@ class PgModelerCLI: public QApplication {
     /*! brief Install the .dbm file association in the mime database (default behaviour).
         The paramenter 'uninstall' is used to clean up any file association done previously. */
     void handleMimeDatabase(bool uninstall);
+
+    /*! brief Fixes the references to opertor classes and families by replacing tags like
+        <opclass name="name"/> by <opclass signature="name USING index_method"/>. This method operates
+        only over operator classes, indexes and constraints */
+    void fixOpClassesFamiliesReferences(QString &obj_xml);
 
   public:
 		PgModelerCLI(int argc, char **argv);
