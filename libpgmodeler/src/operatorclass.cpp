@@ -188,6 +188,7 @@ QString OperatorClass::getCodeDefinition(unsigned def_type, bool reduced_form)
       attributes[ParsersAttributes::FAMILY]=family->getSignature();
   }
 
+  attributes[ParsersAttributes::SIGNATURE]=getSignature();
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));
 }
 
