@@ -4315,22 +4315,15 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 
 					if(elem==objs_schemas[OBJ_OPFAMILY])
 					{
-            QString opf_name;
             xmlparser.getElementAttributes(attribs);
-
-            if(!attribs[ParsersAttributes::SIGNATURE].isEmpty())
-              opf_name=attribs[ParsersAttributes::SIGNATURE];
-            else
-              opf_name=attribs[ParsersAttributes::NAME];
-
-            object=getObject(opf_name, OBJ_OPFAMILY);
+            object=getObject(attribs[ParsersAttributes::SIGNATURE], OBJ_OPFAMILY);
 
 						//Raises an error if the operator family doesn't exists
             if(!object)
 							throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
                               .arg(op_class->getName())
 															.arg(op_class->getTypeName())
-                              .arg(opf_name)
+                              .arg(attribs[ParsersAttributes::SIGNATURE])
 								.arg(BaseObject::getTypeName(OBJ_OPFAMILY)),
 								ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -4910,7 +4903,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 				if(xml_elem==ParsersAttributes::OP_CLASS)
 				{
 					xmlparser.getElementAttributes(attribs);
-					op_class=dynamic_cast<OperatorClass *>(getObject(attribs[ParsersAttributes::NAME], OBJ_OPCLASS));
+          op_class=dynamic_cast<OperatorClass *>(getObject(attribs[ParsersAttributes::SIGNATURE], OBJ_OPCLASS));
 
 					//Raises an error if the operator class doesn't exists
 					if(!op_class)
@@ -4918,7 +4911,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 						throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
                             .arg(tab_obj->getName())
                             .arg(tab_obj->getTypeName())
-                            .arg(attribs[ParsersAttributes::NAME])
+                            .arg(attribs[ParsersAttributes::SIGNATURE])
 														.arg(BaseObject::getTypeName(OBJ_OPCLASS)),
 														ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
