@@ -3,7 +3,8 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.8.0-beta" last-position="60,0" last-zoom="1">
+<dbmodel pgmodeler-ver="0.8.2-beta1" last-position="61,10" last-zoom="1"
+	 default-owner="postgres">
 <role name="admin1"
       superuser="true"
       connlimit="500"
@@ -84,7 +85,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="&quot;schema_B&quot;"/>
 	<role name="admin1"/>
 	<comment><![CDATA[Comentário na função  validator]]></comment>
-	<language name="c" protected="true" sql-disabled="true"/>
+	<language name="c" sql-disabled="true"/>
 	<return-type>
 	<type name="void"/>
 	</return-type>
@@ -105,7 +106,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="&quot;schema_B&quot;"/>
 	<role name="admin1"/>
 	<comment><![CDATA[Comentário na função handler]]></comment>
-	<language name="c" protected="true" sql-disabled="true"/>
+	<language name="c" sql-disabled="true"/>
 	<return-type>
 	<type name="language_handler"/>
 	</return-type>
@@ -123,7 +124,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="&quot;schema_B&quot;"/>
 	<role name="admin1"/>
 	<comment><![CDATA[Comentário na função input]]></comment>
-	<language name="c" protected="true" sql-disabled="true"/>
+	<language name="c" sql-disabled="true"/>
 	<return-type>
 	<type name="any"/>
 	</return-type>
@@ -150,7 +151,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="&quot;schema_B&quot;"/>
 	<role name="admin1"/>
 	<comment><![CDATA[Comentário na função output]]></comment>
-	<language name="c" protected="true" sql-disabled="true"/>
+	<language name="c" sql-disabled="true"/>
 	<return-type>
 	<type name="cstring"/>
 	</return-type>
@@ -171,7 +172,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="&quot;schema_B&quot;"/>
 	<role name="admin1"/>
 	<comment><![CDATA[Comentário na função recv]]></comment>
-	<language name="c" protected="true" sql-disabled="true"/>
+	<language name="c" sql-disabled="true"/>
 	<return-type>
 	<type name="any"/>
 	</return-type>
@@ -198,7 +199,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="&quot;schema_B&quot;"/>
 	<role name="admin1"/>
 	<comment><![CDATA[Comentário na função send]]></comment>
-	<language name="c" protected="true" sql-disabled="true"/>
+	<language name="c" sql-disabled="true"/>
 	<return-type>
 	<type name="bytea"/>
 	</return-type>
@@ -219,7 +220,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="&quot;schema_B&quot;"/>
 	<role name="admin1"/>
 	<comment><![CDATA[Comentário na função tpmodin]]></comment>
-	<language name="c" protected="true" sql-disabled="true"/>
+	<language name="c" sql-disabled="true"/>
 	<return-type>
 	<type name="integer"/>
 	</return-type>
@@ -240,7 +241,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="&quot;schema_B&quot;"/>
 	<role name="admin1"/>
 	<comment><![CDATA[Comentário na função tpmodout]]></comment>
-	<language name="c" protected="true" sql-disabled="true"/>
+	<language name="c" sql-disabled="true"/>
 	<return-type>
 	<type name="cstring"/>
 	</return-type>
@@ -261,7 +262,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="&quot;schema_B&quot;"/>
 	<role name="admin1"/>
 	<comment><![CDATA[Comentário na função analyze]]></comment>
-	<language name="c" protected="true" sql-disabled="true"/>
+	<language name="c" sql-disabled="true"/>
 	<return-type>
 	<type name="boolean"/>
 	</return-type>
@@ -282,7 +283,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="&quot;schema_B&quot;"/>
 	<role name="admin1"/>
 	<comment><![CDATA[Comentário na função cast]]></comment>
-	<language name="plpgsql" protected="true" sql-disabled="true"/>
+	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
 	<type name="float"/>
 	</return-type>
@@ -309,7 +310,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="&quot;schema_B&quot;"/>
 	<role name="admin1"/>
 	<comment><![CDATA[Comentário na função conversion]]></comment>
-	<language name="c" protected="true" sql-disabled="true"/>
+	<language name="c" sql-disabled="true"/>
 	<return-type>
 	<type name="void"/>
 	</return-type>
@@ -342,7 +343,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="&quot;schema_B&quot;"/>
 	<role name="admin1"/>
 	<comment><![CDATA[Comentário na função operator]]></comment>
-	<language name="c" protected="true" sql-disabled="true"/>
+	<language name="c" sql-disabled="true"/>
 	<return-type>
 	<type name="void"/>
 	</return-type>
@@ -366,7 +367,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="&quot;schema_B&quot;"/>
 	<role name="admin1"/>
 	<comment><![CDATA[Comentário na função operator]]></comment>
-	<language name="c" protected="true" sql-disabled="true"/>
+	<language name="c" sql-disabled="true"/>
 	<return-type>
 	<type name="void"/>
 	</return-type>
@@ -390,7 +391,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="&quot;schema_B&quot;"/>
 	<role name="admin1"/>
 	<comment><![CDATA[Comentário na função operator]]></comment>
-	<language name="c" protected="true" sql-disabled="true"/>
+	<language name="c" sql-disabled="true"/>
 	<return-type>
 	<type name="integer"/>
 	</return-type>
@@ -420,7 +421,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="&quot;schema_B&quot;"/>
 	<role name="admin1"/>
 	<comment><![CDATA[Comentário na função final]]></comment>
-	<language name="c" protected="true" sql-disabled="true"/>
+	<language name="c" sql-disabled="true"/>
 	<return-type>
 	<type name="integer"/>
 	</return-type>
@@ -440,7 +441,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		row-amount="2500">
 	<schema name="public"/>
 	<comment><![CDATA[Função teste que retorna strings.]]></comment>
-	<language name="plpgsql" protected="true" sql-disabled="true"/>
+	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
 	<type name="trigger"/>
 	</return-type>
@@ -510,11 +511,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<comment><![CDATA[comentario na familia de operadores teste1]]></comment>
 </opfamily>
 
-<opclass name="classeop_teste" index-type="gist" default="true">
+<opclass  name="classeop_teste" index-type="gist" default="true">
 	<schema name="&quot;schema_B&quot;"/>
 	<role name="admin1"/>
 	<comment><![CDATA[comentario na classe de operadores teste1]]></comment>
-	<opfamily name="&quot;schema_B&quot;.familia_teste"/>
+	<opfamily signature="&quot;schema_B&quot;.familia_teste USING btree"/>
 	<type name="text"/>
 	<element type="function" stg-number="1">
 		<function ref-type="operfunc" signature="&quot;schema_B&quot;.funcao_operator(integer,text)"/>
@@ -933,7 +934,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<type name="float"/>
 	</column>
 	<column name="coluna_USR_TESTE">
-		<type name="&quot;schema_B&quot;.tipo_usr_base"/>
+		<type name="&quot;schema_B&quot;.tipo_usr_base" precision="32721"/>
 	</column>
 	<constraint name="tabela_B_4z_pk" type="pk-constr" factor="10" table="public.&quot;tabela_B_4z&quot;">
 		<columns names="coluna_B" ref-type="src-columns"/>
@@ -1027,7 +1028,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 custom-color="#6dbc20"
 	 src-table="&quot;schema_C&quot;.&quot;table_C1&quot;"
 	 dst-table="&quot;schema_C&quot;.&quot;table_C2&quot;"
-	 src-required="true" dst-required="false"	 identifier="true"
+	 src-required="true" dst-required="false"
+	 identifier="true"
 />
 
 <relationship name="table_C2_has_many_table_C4" type="rel1n"
@@ -1037,7 +1039,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 custom-color="#881a4b"
 	 src-table="&quot;schema_C&quot;.&quot;table_C2&quot;"
 	 dst-table="&quot;schema_C&quot;.&quot;table_C4&quot;"
-	 src-required="true" dst-required="false"	 identifier="true"
+	 src-required="true" dst-required="false"
+	 identifier="true"
 
 	 deferrable="true" defer-type="INITIALLY IMMEDIATE">
 	<line>
@@ -1050,7 +1053,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="coluna_Teste2">
 		<type name="integer"/>
 	</column>
-	<column name="__coluna_Teste3" not-null="true">
+	<column name="__coluna_Teste3">
 		<type name="integer"/>
 	</column>
 	<constraint name="relacao_teste_6_pk" type="pk-constr" factor="100">
@@ -1080,7 +1083,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="coluna_Teste2">
 		<type name="integer"/>
 	</column>
-	<column name="coluna_Teste3" not-null="true">
+	<column name="coluna_Teste3">
 		<type name="integer"/>
 	</column>
 	<constraint name="relacao_teste_7_pk" type="pk-constr" factor="100">
@@ -1102,10 +1105,12 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-col-pattern="{sc}_{st}" dst-col-pattern="{sc}_{dt}"
 	 pk-pattern="{gt}_pk" uq-pattern="{gt}_uq"
 	 src-fk-pattern="{st}_fk" dst-fk-pattern="{dt}_fk"
+	 pk-col-pattern="id"
 	 custom-color="#f73e5c"
 	 src-table="&quot;schema_B&quot;.&quot;table_B1&quot;"
 	 dst-table="&quot;schema_B&quot;.&quot;table_B3&quot;"
-	 src-required="false" dst-required="false"	 table-name="tabela_REL_NN"/>
+	 src-required="false" dst-required="false"
+	 table-name="tabela_REL_NN"/>
 
 <relationship name="table_C3_has_many_table_C2" type="rel1n"
 	 src-col-pattern="{sc}_{st}"
@@ -1169,7 +1174,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 </trigger>
 
 <textbox name="pagila_desc" font-size="11">
-	<position x="82" y="39.273"/>
+	<position x="81" y="36.273"/>
 	<comment><![CDATA[[ sampledb database ]
 
 This database model is here just for historical (or nostalgic) reason,
