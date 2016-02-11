@@ -1204,9 +1204,10 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 			for(int i=0; i < array_vals.size(); i++)
 			{
 				list=array_vals[i].split(':');
+        elem_attr[ParsersAttributes::DEFINITION]="";
 				elem_attr[ParsersAttributes::STRATEGY_NUM]=list[0];
 				elem_attr[ParsersAttributes::DEFINITION]+=getDependencyObject(list[1], OBJ_OPERATOR, true);
-				elem_attr[ParsersAttributes::DEFINITION]+=getDependencyObject(list[2], OBJ_OPERATOR, true);
+        elem_attr[ParsersAttributes::DEFINITION]+=getDependencyObject(list[2], OBJ_OPFAMILY, true);
 				elems.push_back(elem_attr);
 			}
 		}
@@ -1220,7 +1221,7 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 		}
 
 		loadObjectXML(OBJ_OPCLASS, attribs);
-		opclass=dbmodel->createOperatorClass();
+    opclass=dbmodel->createOperatorClass();
 		dbmodel->addOperatorClass(opclass);
 	}
 	catch(Exception &e)
