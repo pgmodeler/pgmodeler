@@ -833,7 +833,7 @@ void PgModelerCLI::recreateObjects(void)
 void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 {
   QString tag=QString("<%1"), end_tag=QString("</%1"),
-      att_regexp=QString("(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&\\;)+(\")");
+      att_regexp=QString("(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&|\\;)+(\")");
 
   //Placing objects <index>, <rule>, <trigger> outside of <table>
   if(!obj_xml.startsWith(tag.arg(BaseObject::getSchemaName(OBJ_TABLESPACE))) &&
@@ -952,9 +952,12 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
     obj_xml.replace(tag.arg(BaseObject::getSchemaName(OBJ_OPFAMILY)) + QString(" name="),
                     tag.arg(BaseObject::getSchemaName(OBJ_OPFAMILY)) + QString(" signature="));
 
-    QString signature;
+    QString obj_name, aux_obj_name, signature=QString("%1 USING %2");
     QRegExp sign_regexp=QRegExp(att_regexp.arg(QString("signature")));
+    QStringList index_types;
     int pos=0;
+
+    IndexingType::getTypes(index_types);
 
     do
     {
@@ -962,12 +965,31 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 
       if(pos >= 0)
       {
-        signature=obj_xml.mid(pos, sign_regexp.matchedLength());
-        pos++;
-        out << signature << endl;
+        //Extracting the signature attribute
+        obj_name=obj_xml.mid(pos, sign_regexp.matchedLength());
 
-        //Find the operator family
-        //Fix the signature
+        //Removing useless portions signature=" in order to retrive only the object's name
+        obj_name.remove(QRegExp("(signature)( )*(=)"));
+        obj_name.remove('"');
+
+        //Transforming xml entity for quote into the char
+        obj_name.replace(XMLParser::CHAR_QUOT, QString("\""));
+
+        for(QString idx_type : index_types)
+        {
+          //Building a name by appe
+          aux_obj_name=signature.arg(obj_name).arg(idx_type);
+
+          if(model->getObjectIndex(aux_obj_name, OBJ_OPFAMILY) >= 0)
+          {
+            //Replacing the old signature with the corrected form
+            aux_obj_name.replace(QString("\""), XMLParser::CHAR_QUOT);
+            obj_xml.replace(pos, sign_regexp.matchedLength(), QString("signature=\"%1\"").arg(aux_obj_name));
+            break;
+          }
+        }
+
+        pos+=sign_regexp.matchedLength();
       }
     }
     while(pos >= 0);
