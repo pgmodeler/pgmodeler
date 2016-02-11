@@ -926,52 +926,57 @@ QString SchemaParser::convertCharsToXMLEntities(QString buf)
 			lin+="\n";
 		else
 		{
-			QRegExp regexp_vect[]={
-				QRegExp("([a-z]+)( )*(=\")"), //Regexp to find the attribute start (attrib=")
-				QRegExp("(\")(([\r\n\t])+|(\\ )+|(/>)+|(>)+)") //Regexp to find the attribute end ("\n|\r|\t/>)
-			};
-
-			int pos=0, pos1=0, count=0;
+      QRegExp attr_regexp=QRegExp("(([a-z]+)|(\\-))+( )*(=\")"),
+          next_attr_regexp=QRegExp(QString("(\")(( )|(\\t))+(%1)").arg(attr_regexp.pattern()));
+      int attr_start=0, attr_end=0, count=0, next_attr=-1;
 			QString str_aux;
 
 			lin+="\n";
 
-			do
+      do
 			{
 				//Try to extract the values using regular expressions
-				pos=regexp_vect[0].indexIn(lin, pos);
-				pos+=regexp_vect[0].matchedLength();
-				pos1=regexp_vect[1].indexIn(lin, pos);
+        attr_start=attr_regexp.indexIn(lin, attr_start);
+        attr_start+=attr_regexp.matchedLength();
+        next_attr=next_attr_regexp.indexIn(lin, attr_start);
+
+        if(next_attr < 0)
+          attr_end=lin.lastIndexOf(QChar('"')) - 1;
+        else
+          attr_end=next_attr - 1;
 
 				//Calculates the amount of extracted characters
-				count=(pos > 0 ? (pos1-pos) : 0);
+        count=(attr_start > 0 ? (attr_end - attr_start) + 1 : 0);
 
-				if(pos >= 0 && count > 0)
+        if(attr_start >= 0 && count > 0)
 				{
 					//Gets the substring extracted using regexp
-					str_aux=lin.mid(pos, count);
+          str_aux=lin.mid(attr_start, count).trimmed();
 
-					//Replaces the char by the XML entities
-					if(!str_aux.contains(XMLParser::CHAR_QUOT) && !str_aux.contains(XMLParser::CHAR_LT) &&
-						 !str_aux.contains(XMLParser::CHAR_GT) &&  !str_aux.contains(XMLParser::CHAR_AMP) &&
-						 str_aux.contains('&'))
-						str_aux.replace('&',XMLParser::CHAR_AMP);
+          if(str_aux.contains(QRegExp("(&|\\|<|>|\")")))
+          {
+            //Replaces the char by the XML entities
+            if(!str_aux.contains(XMLParser::CHAR_QUOT) && !str_aux.contains(XMLParser::CHAR_LT) &&
+               !str_aux.contains(XMLParser::CHAR_GT) && !str_aux.contains(XMLParser::CHAR_AMP) &&
+               !str_aux.contains(XMLParser::CHAR_APOS) && str_aux.contains('&'))
+              str_aux.replace('&', XMLParser::CHAR_AMP);
 
-					str_aux.replace('\"',XMLParser::CHAR_QUOT);
-					str_aux.replace('<',XMLParser::CHAR_LT);
-					str_aux.replace('>',XMLParser::CHAR_GT);
+            str_aux.replace('"',XMLParser::CHAR_QUOT);
+            str_aux.replace('<',XMLParser::CHAR_LT);
+            str_aux.replace('>',XMLParser::CHAR_GT);
 
-					//Puts on the original XML definition the modified string
-					lin.replace(pos,count,str_aux);
+            //Puts on the original XML definition the modified string
+            lin.replace(attr_start, count, str_aux);
+          }
 
-					pos+=str_aux.size()+1;//pos1+1;//count;
+          attr_start+=str_aux.size() + 1;
 				}
 			}
 
 			/* Iterates while the positions of the expressions found is valid.
 			 Positions less than 0 indicates that no regular expressions
 			 managed to find values */
-			while(pos >=0 && pos1 >=0 && pos < lin.size());
+      while(attr_start >=0 && attr_end >=0 && attr_start < lin.size());
 		}
 
 		buf_aux+=lin;
