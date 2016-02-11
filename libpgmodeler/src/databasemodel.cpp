@@ -4315,15 +4315,22 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 
 					if(elem==objs_schemas[OBJ_OPFAMILY])
 					{
-						xmlparser.getElementAttributes(attribs);
-            object=getObject(attribs[ParsersAttributes::SIGNATURE], OBJ_OPFAMILY);
+            QString opf_name;
+            xmlparser.getElementAttributes(attribs);
+
+            if(!attribs[ParsersAttributes::SIGNATURE].isEmpty())
+              opf_name=attribs[ParsersAttributes::SIGNATURE];
+            else
+              opf_name=attribs[ParsersAttributes::NAME];
+
+            object=getObject(opf_name, OBJ_OPFAMILY);
 
 						//Raises an error if the operator family doesn't exists
-            if(!object && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
+            if(!object)
 							throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
                               .arg(op_class->getName())
 															.arg(op_class->getTypeName())
-                              .arg(attribs[ParsersAttributes::SIGNATURE])
+                              .arg(opf_name)
 								.arg(BaseObject::getTypeName(OBJ_OPFAMILY)),
 								ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
