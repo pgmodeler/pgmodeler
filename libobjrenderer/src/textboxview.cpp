@@ -83,8 +83,11 @@ void TextboxView::togglePlaceholder(bool visible)
   {
     if(visible)
     {
-      placeholder_pol->setBrush(QColor(220,220,220,128));
-      placeholder_pol->setPen(QPen(QColor(180,180,180), 1, Qt::DashLine));
+      QPen pen=BaseObjectView::getBorderStyle(ParsersAttributes::PLACEHOLDER);
+      pen.setStyle(Qt::DashLine);
+
+      placeholder_pol->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::PLACEHOLDER));
+      placeholder_pol->setPen(pen);
       placeholder_pol->setPolygon(box->polygon());
       placeholder_pol->setPos(this->mapToScene(this->bounding_rect.topLeft()));
       this->scene()->addItem(placeholder_pol);

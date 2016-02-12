@@ -141,10 +141,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	scene->setSceneRect(QRectF(0,0,2000,2000));
 
 	viewport=new QGraphicsView(scene);
+  updateRenderHints();
 	viewport->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-	viewport->setRenderHint(QPainter::Antialiasing, !disable_render_smooth);
-	viewport->setRenderHint(QPainter::TextAntialiasing, !disable_render_smooth);
-  viewport->setRenderHint(QPainter::SmoothPixmapTransform, !disable_render_smooth);
 
 	//Force the scene to be drawn from the left to right and from top to bottom
 	viewport->setAlignment(Qt::AlignLeft | Qt::AlignTop);
@@ -1284,8 +1282,16 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 	}
 }
 
+void ModelWidget::updateRenderHints(void)
+{
+  viewport->setRenderHint(QPainter::Antialiasing, !disable_render_smooth);
+  viewport->setRenderHint(QPainter::TextAntialiasing, !disable_render_smooth);
+  viewport->setRenderHint(QPainter::SmoothPixmapTransform, !disable_render_smooth);
+}
+
 void ModelWidget::update(void)
 {
+  updateRenderHints();
 	scene->update();
 	QWidget::update();
 }

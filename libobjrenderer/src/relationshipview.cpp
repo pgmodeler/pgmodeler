@@ -42,6 +42,7 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 	sel_object=nullptr;
 	sel_object_idx=-1;
 	configuring_line=false;
+  using_placeholders=BaseObjectView::isPlaceholderEnabled();
 
 	descriptor=new QGraphicsPolygonItem;
 	descriptor->setZValue(0);
@@ -397,10 +398,28 @@ void RelationshipView::disconnectTables(void)
 
 		for(unsigned i=0; i < 2; i++)
 		{
-      disconnect(tables[i], nullptr, this, nullptr);
+      tables[i]->disconnect(this);
 			tables[i]=nullptr;
 		}
 	}
+}
+
+void RelationshipView::connectTables(void)
+{
+  if(tables[0] && tables[1])
+  {
+    for(unsigned i=0; i < 2; i++)
+    {
+      tables[i]->disconnect(this);
+
+      if(BaseObjectView::isPlaceholderEnabled())
+        connect(tables[i], SIGNAL(s_relUpdateRequest(void)), this, SLOT(configureLine(void)));
+      else
+        connect(tables[i], SIGNAL(s_objectMoved(void)), this, SLOT(configureLine(void)));
+
+      connect(tables[i], SIGNAL(s_objectDimensionChanged(void)), this, SLOT(configureLine(void)));
+    }
+  }
 }
 
 void RelationshipView::configureObject(void)
@@ -415,19 +434,9 @@ void RelationshipView::configureObject(void)
 	if(!rel_base->isSelfRelationship())
 		tables[1]->updateConnectedRelsCount(1);
 
-	this->configureLine(); 
-
-	for(unsigned i=0; i < 2; i++)
-	{
-    if(BaseObjectView::isPlaceholderEnabled())
-      connect(tables[i], SIGNAL(s_relUpdateRequest(void)), this, SLOT(configureLine(void)));
-    else
-      connect(tables[i], SIGNAL(s_objectMoved(void)), this, SLOT(configureLine(void)));
-
-    connect(tables[i], SIGNAL(s_objectDimensionChanged(void)), this, SLOT(configureLine(void)));
-	}
-
-	connect(rel_base, SIGNAL(s_objectModified()), this, SLOT(configureLine(void)));
+  configureLine();
+  connectTables();
+  connect(rel_base, SIGNAL(s_objectModified()), this, SLOT(configureLine(void)));
 }
 
 void RelationshipView::configurePositionInfo(void)
@@ -444,6 +453,13 @@ void RelationshipView::configurePositionInfo(void)
 
 void RelationshipView::configureLine(void)
 {
+  //Reconnect the tables is the placeholder usage changes
+  if(using_placeholders!=BaseObjectView::isPlaceholderEnabled())
+  {
+    connectTables();
+    using_placeholders=BaseObjectView::isPlaceholderEnabled();
+  }
+
 	if(!configuring_line)
 	{
 		BaseRelationship *base_rel=this->getSourceObject();

@@ -49,7 +49,10 @@ class RelationshipView: public BaseObjectView {
 
 		/*! \brief Indicate that the line is being configured/updated. This flag is used to evict
 		 that the configureLine() method is exceedingly called during the table moving. */
-		bool configuring_line;
+    bool configuring_line,
+
+    //! brief Indicates if the instance is configured to use placeholders
+    using_placeholders;
 
 		//! \brief Stores the graphical representation for labels
 		TextboxView *labels[3];
@@ -106,12 +109,20 @@ class RelationshipView: public BaseObjectView {
 		//! brief Configures the specified label's position based as well some styles for it
 		void configureLabelPosition(unsigned label_id, double x, double y);
 
-	protected:
+  protected:
 		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 		void mousePressEvent(QGraphicsSceneMouseEvent *event);
 		void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 		void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 		void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *){}
+
+    /*! brief (Re)connects the tables to the relationship changing the signals captured.
+        This method is called whenever the placeholder usage is toggled. If the placeholders are on
+        the the table's signal s_relUpdateRequested() is used otherwise the s_objectMoved() is used */
+    void connectTables(void);
+
+    //! \brief Disconnects the signal handled by the relationship which senders are the tables
+    void disconnectTables(void);
 
 	public slots:
 		//! \brief Configures the relationship line
@@ -137,9 +148,6 @@ class RelationshipView: public BaseObjectView {
 		//! \brief Returns the relationship that generates the graphical representation
 		BaseRelationship *getSourceObject(void);
 
-		//! \brief Disconnects the signal handled by the relationship which senders are the tables
-		void disconnectTables(void);
-
 		//! \brief Hides the relationship's name label. This applies to all relationship instances
 		static void setHideNameLabel(bool value);
 
@@ -160,8 +168,10 @@ class RelationshipView: public BaseObjectView {
 		 line connection mode used.	*/
 		QPointF getConnectionPoint(unsigned table_idx);
 
-	signals:
+   signals:
 		void s_relationshipModified(BaseGraphicObject *rel);
+
+   friend class ObjectsScene;
 };
 
 #endif

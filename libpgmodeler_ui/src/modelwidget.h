@@ -248,7 +248,9 @@ class ModelWidget: public QWidget {
 
     void setUpdatesEnabled(bool value);
 
-private slots:
+    void updateRenderHints(void);
+
+  private slots:
 		//! \brief Handles the signals that indicates the object creation on the reference database model
 		void handleObjectAddition(BaseObject *object);
 

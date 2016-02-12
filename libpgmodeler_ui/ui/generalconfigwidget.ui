@@ -345,7 +345,7 @@
                <string/>
               </property>
               <property name="statusTip">
-               <string>Disable antialiasing for lines and texts improving performance when handling huge models (requires restart)</string>
+               <string>Disable antialiasing for lines and texts improving performance when handling huge models.</string>
               </property>
               <property name="text">
                <string>Disable render smoothness</string>
@@ -621,7 +621,7 @@
                <string/>
               </property>
               <property name="statusTip">
-               <string>When enabled this option creates a placeholder object at the previous object's position when starting to move it. This will cause graphical updates to be performed only when the drag &amp; drop action is done improving the performance. Disabling placeholders will cause those updates to be executed every time the object position changes (classical behavior). (requires restart)</string>
+               <string>When enabled this option creates a placeholder object at the previous object's position when starting to move it. This will cause graphical updates to be performed only when the drag &amp; drop action is done improving the performance. Disabling placeholders will cause those updates to be executed every time the object position changes (classical behavior).</string>
               </property>
               <property name="text">
                <string>Use placeholders when moving objects</string>
