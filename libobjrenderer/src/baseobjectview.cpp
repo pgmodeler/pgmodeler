@@ -44,15 +44,20 @@ BaseObjectView::~BaseObjectView(void)
 
 void BaseObjectView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-	if(event->button()==Qt::RightButton && !this->isSelected())
+  if(event->button()==Qt::RightButton && !this->isSelected())
 	{
-		if(this->scene()->selectedItems().count()==1)
-			this->scene()->clearSelection();
+    //Faking an left-click in order to force the object selection using the right button.
+    QGraphicsSceneMouseEvent *m_event=new QGraphicsSceneMouseEvent;
+    m_event->setPos(event->pos());
+    m_event->setScenePos(event->scenePos());
+    m_event->setScreenPos(event->screenPos());
+    m_event->setButton(Qt::LeftButton);
 
-		this->setSelected(true);
+    QGraphicsItemGroup::mousePressEvent(m_event);
+    event->ignore();
 	}
-	else
-		QGraphicsItemGroup::mousePressEvent(event);
+  else if(event->button()==Qt::LeftButton)
+    QGraphicsItemGroup::mousePressEvent(event);
 }
 
 void BaseObjectView::setSourceObject(BaseObject *object)
