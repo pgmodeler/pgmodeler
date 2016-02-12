@@ -34,6 +34,7 @@
 <!ATTLIST configuration line-numbers-bg-color CDATA #IMPLIED>
 <!ATTLIST configuration line-highlight-color CDATA #IMPLIED>
 <!ATTLIST configuration code-tab-width CDATA #IMPLIED>
+<!ATTLIST configuration use-placeholders (false|true) "true">
 
 <!ELEMENT session (file+)>
 <!ELEMENT recent-models (file+)>

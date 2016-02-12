@@ -39,7 +39,8 @@ $sp [<configuration op-list-size="] {op-list-size} ["] $br
 [               highlight-lines="] %if {highlight-lines} %then true %else false %end ["] $br
 [               line-numbers-color="] {line-numbers-color} ["] $br
 [               line-numbers-bg-color="] {line-numbers-bg-color} ["] $br
-[               line-highlight-color="] {line-highlight-color} ["]
+[               line-highlight-color="] {line-highlight-color} ["] $br
+[               use-placeholders="] %if {use-placeholders} %then true %else false %end ["]
 [/>] $br
 
 %if {file} %then

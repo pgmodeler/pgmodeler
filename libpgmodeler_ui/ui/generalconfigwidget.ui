@@ -331,6 +331,189 @@
           <property name="bottomMargin">
            <number>4</number>
           </property>
+          <item row="0" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_9">
+            <item>
+             <widget class="QCheckBox" name="disable_smooth_chk">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string/>
+              </property>
+              <property name="statusTip">
+               <string>Disable antialiasing for lines and texts improving performance when handling huge models (requires restart)</string>
+              </property>
+              <property name="text">
+               <string>Disable render smoothness</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QWidget" name="disable_smooth_hint" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="2" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_14">
+            <item>
+             <widget class="QCheckBox" name="confirm_validation_chk">
+              <property name="toolTip">
+               <string/>
+              </property>
+              <property name="statusTip">
+               <string>Triggers a dialog asking the user to validate the model before a save, export or diff operation.</string>
+              </property>
+              <property name="text">
+               <string>Validate before save, export or diff</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QWidget" name="confirm_validation_hint" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="3" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_12">
+            <item>
+             <widget class="QCheckBox" name="corner_move_chk">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string/>
+              </property>
+              <property name="statusTip">
+               <string>Start move the canvas when the cursor is on the canvas edges</string>
+              </property>
+              <property name="text">
+               <string>Move canvas by keep mouse on corners</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QWidget" name="corner_move_hint" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="5" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_11">
+            <item>
+             <widget class="QCheckBox" name="invert_pan_range_chk">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string/>
+              </property>
+              <property name="statusTip">
+               <string>By default panning mode is triggered with left click and range selection with Shift + left click.</string>
+              </property>
+              <property name="text">
+               <string>Swap panning and range selection triggers</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QWidget" name="invert_pan_range_hint" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
           <item row="0" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_10">
             <item>
@@ -379,7 +562,7 @@
             </item>
            </layout>
           </item>
-          <item row="3" column="0">
+          <item row="4" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_13">
             <item>
              <widget class="QCheckBox" name="save_last_pos_chk">
@@ -424,187 +607,10 @@
             </item>
            </layout>
           </item>
-          <item row="0" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_9">
-            <item>
-             <widget class="QCheckBox" name="disable_smooth_chk">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="toolTip">
-               <string/>
-              </property>
-              <property name="statusTip">
-               <string>Disable antialiasing for lines and texts improving performance when handling huge models (requires restart)</string>
-              </property>
-              <property name="text">
-               <string>Disable render smoothness</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="disable_smooth_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="3" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_8">
-            <item>
-             <widget class="QCheckBox" name="hide_rel_name_chk">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="toolTip">
-               <string/>
-              </property>
-              <property name="statusTip">
-               <string>Hide the object that represents the relationship name</string>
-              </property>
-              <property name="text">
-               <string>Hide relationship name</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="hide_rel_name_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
           <item row="1" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_14">
+           <layout class="QHBoxLayout" name="horizontalLayout_15">
             <item>
-             <widget class="QCheckBox" name="confirm_validation_chk">
-              <property name="toolTip">
-               <string/>
-              </property>
-              <property name="statusTip">
-               <string>Triggers a dialog asking the user to validate the model before a save, export or diff operation.</string>
-              </property>
-              <property name="text">
-               <string>Validate before save, export or diff</string>
-              </property>
-              <property name="checked">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="confirm_validation_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="2" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_7">
-            <item>
-             <widget class="QCheckBox" name="hide_table_tags_chk">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="toolTip">
-               <string/>
-              </property>
-              <property name="statusTip">
-               <string>Hide the object which represents the tag assigned to the table</string>
-              </property>
-              <property name="text">
-               <string>Hide table tags</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="hide_table_tags_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="2" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_12">
-            <item>
-             <widget class="QCheckBox" name="corner_move_chk">
+             <widget class="QCheckBox" name="use_placeholders_chk">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -615,18 +621,15 @@
                <string/>
               </property>
               <property name="statusTip">
-               <string>Start move the canvas when the cursor is on the canvas edges</string>
+               <string>When enabled this option creates a placeholder object at the previous object's position when starting to move it. This will cause graphical updates to be performed only when the drag &amp; drop action is done improving the performance. Disabling placeholders will cause those updates to be executed every time the object position changes (classical behavior). (requires restart)</string>
               </property>
               <property name="text">
-               <string>Move canvas by keep mouse on corners</string>
-              </property>
-              <property name="checked">
-               <bool>false</bool>
+               <string>Use placeholders when moving objects</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QWidget" name="corner_move_hint" native="true">
+             <widget class="QWidget" name="use_placeholders_hint" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -694,12 +697,12 @@
             </item>
            </layout>
           </item>
-          <item row="4" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_11">
+          <item row="2" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_7">
             <item>
-             <widget class="QCheckBox" name="invert_pan_range_chk">
+             <widget class="QCheckBox" name="hide_table_tags_chk">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -708,18 +711,60 @@
                <string/>
               </property>
               <property name="statusTip">
-               <string>By default panning mode is triggered with left click and range selection with Shift + left click.</string>
+               <string>Hide the object which represents the tag assigned to the table</string>
               </property>
               <property name="text">
-               <string>Swap panning and range selection triggers</string>
-              </property>
-              <property name="checked">
-               <bool>false</bool>
+               <string>Hide table tags</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QWidget" name="invert_pan_range_hint" native="true">
+             <widget class="QWidget" name="hide_table_tags_hint" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="3" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_8">
+            <item>
+             <widget class="QCheckBox" name="hide_rel_name_chk">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string/>
+              </property>
+              <property name="statusTip">
+               <string>Hide the object that represents the relationship name</string>
+              </property>
+              <property name="text">
+               <string>Hide relationship name</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QWidget" name="hide_rel_name_hint" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>

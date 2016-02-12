@@ -118,6 +118,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
   config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::LINE_NUMBERS_BG_COLOR]=QString();
   config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::LINE_HIGHLIGHT_COLOR]=QString();
   config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIGHLIGHT_LINES]=QString();
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::USE_PLACEHOLDERS]=QString();
 
   simp_obj_creation_ht=new HintTextWidget(simp_obj_creation_hint, this);
   simp_obj_creation_ht->setText(simple_obj_creation_chk->statusTip());
@@ -148,6 +149,9 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 
   code_completion_ht=new HintTextWidget(code_completion_hint, this);
   code_completion_ht->setText(code_completion_chk->statusTip());
+
+  use_placeholders_ht=new HintTextWidget(use_placeholders_hint, this);
+  use_placeholders_ht->setText(use_placeholders_chk->statusTip());
 
 	selectPaperSize();
 
@@ -230,6 +234,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 		simple_obj_creation_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SIMPLIFIED_OBJ_CREATION]==ParsersAttributes::_TRUE_);
     confirm_validation_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CONFIRM_VALIDATION]==ParsersAttributes::_TRUE_);
     code_completion_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_COMPLETION]==ParsersAttributes::_TRUE_);
+    use_placeholders_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::USE_PLACEHOLDERS]==ParsersAttributes::_TRUE_);
 
 		print_grid_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]==ParsersAttributes::_TRUE_);
 		print_pg_num_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]==ParsersAttributes::_TRUE_);
@@ -348,6 +353,7 @@ void GeneralConfigWidget::saveConfiguration(void)
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CONFIRM_VALIDATION]=(confirm_validation_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_COMPLETION]=(code_completion_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_TAB_WIDTH]=QString::number(tab_width_chk->isChecked() ? tab_width_spb->value() : 0);
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::USE_PLACEHOLDERS]=(use_placeholders_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
 
     unity_cmb->setCurrentIndex(UNIT_MILIMETERS);
     config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN]=QString("%1,%2,%3,%4").arg(left_marg->value())
@@ -446,6 +452,7 @@ void GeneralConfigWidget::applyConfiguration(void)
 	ModelWidget::setRenderSmoothnessDisabled(disable_smooth_chk->isChecked());
 	ModelWidget::setSimplifiedObjectCreation(simple_obj_creation_chk->isChecked());
   MainWindow::setConfirmValidation(confirm_validation_chk->isChecked());
+  BaseObjectView::setPlaceholderEnabled(use_placeholders_chk->isChecked());
 
 	fnt.setFamily(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]);
 	fnt.setPointSize(fnt_size);

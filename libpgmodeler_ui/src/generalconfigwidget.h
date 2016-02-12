@@ -49,7 +49,8 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 
     HintTextWidget *simp_obj_creation_ht, *confirm_validation_ht, *corner_move_ht,
     *save_last_pos_ht, *invert_pan_range_ht, *disable_smooth_ht,
-    *hide_ext_attribs_ht, *hide_table_tags_ht, *hide_rel_name_ht, *code_completion_ht;
+    *hide_ext_attribs_ht, *hide_table_tags_ht, *hide_rel_name_ht,
+    *code_completion_ht, *use_placeholders_ht;
 
     ColorPickerWidget *line_numbers_cp, *line_numbers_bg_cp, *line_highlight_cp;
 
