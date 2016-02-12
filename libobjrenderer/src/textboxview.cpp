@@ -81,6 +81,9 @@ void TextboxView::togglePlaceholder(bool visible)
 {
   if(use_placeholder && this->scene())
   {
+    if(!placeholder_pol->scene())
+     this->scene()->addItem(placeholder_pol);
+
     if(visible)
     {
       QPen pen=BaseObjectView::getBorderStyle(ParsersAttributes::PLACEHOLDER);
@@ -89,11 +92,8 @@ void TextboxView::togglePlaceholder(bool visible)
       placeholder_pol->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::PLACEHOLDER));
       placeholder_pol->setPen(pen);
       placeholder_pol->setPolygon(box->polygon());
-      placeholder_pol->setPos(this->mapToScene(this->bounding_rect.topLeft()));
-      this->scene()->addItem(placeholder_pol);
+      placeholder_pol->setPos(this->mapToScene(this->bounding_rect.topLeft()));  
     }
-    else
-      this->scene()->removeItem(placeholder_pol);
 
     placeholder_pol->setVisible(visible);
   }

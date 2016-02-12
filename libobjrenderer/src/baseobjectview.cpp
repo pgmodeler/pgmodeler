@@ -116,7 +116,6 @@ void BaseObjectView::setSourceObject(BaseObject *object)
 
     if(placeholder)
     {
-      togglePlaceholder(false);
       delete(placeholder);
       placeholder=nullptr;
     }
@@ -609,6 +608,9 @@ void BaseObjectView::togglePlaceholder(bool visible)
 {
   if(use_placeholder && placeholder && this->scene())
   {
+    if(!placeholder->scene())
+      this->scene()->addItem(placeholder);
+
     if(visible)
     {
       QPen pen=BaseObjectView::getBorderStyle(ParsersAttributes::PLACEHOLDER);
@@ -618,10 +620,7 @@ void BaseObjectView::togglePlaceholder(bool visible)
       placeholder->setPen(pen);
       placeholder->setRect(QRectF(QPointF(0,0),this->bounding_rect.size()));
       placeholder->setPos(this->mapToScene(this->bounding_rect.topLeft()));
-      this->scene()->addItem(placeholder);
     }
-    else
-      this->scene()->removeItem(placeholder);
 
     placeholder->setVisible(visible);
   }
