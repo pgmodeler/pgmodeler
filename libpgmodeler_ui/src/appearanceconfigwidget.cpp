@@ -41,11 +41,11 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 		ParsersAttributes::UQ_COLUMN, ParsersAttributes::UQ_COLUMN, ParsersAttributes::NN_COLUMN,
 		ParsersAttributes::NN_COLUMN, ParsersAttributes::RELATIONSHIP, ParsersAttributes::LABEL,
     ParsersAttributes::LABEL, ParsersAttributes::ATTRIBUTE, ParsersAttributes::ATTRIBUTE,
-    ParsersAttributes::TAG, ParsersAttributes::TAG };
+    ParsersAttributes::TAG, ParsersAttributes::TAG, ParsersAttributes::PLACEHOLDER};
 	int i, count=element_cmb->count(),
 			//This auxiliary vector stores the id of elements that represents color/font conf. of objects
 			obj_conf_ids_vect[]={ 2, 4, 6, 7, 10, 11, 12, 14, 16, 18, 21, 22, 23,
-                            27, 28, 30, 34, 36, 38, 40, 41, 43, 45, 47 };
+                            27, 28, 30, 34, 36, 38, 40, 41, 43, 45, 47, 48 };
 	vector<int> conf_obj_ids(obj_conf_ids_vect, obj_conf_ids_vect + sizeof(obj_conf_ids_vect) / sizeof(int));
 
 	conf_items.resize(count);
@@ -60,6 +60,7 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 	model=new DatabaseModel;
 	scene=new ObjectsScene;
 	scene->setSceneRect(QRectF(0,0,500,500));
+  placeholder=new RoundedRectItem;
 
 	viewp=new QGraphicsView(scene);
 	viewp->setEnabled(false);
@@ -95,6 +96,9 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 
 AppearanceConfigWidget::~AppearanceConfigWidget(void)
 {
+  scene->removeItem(placeholder);
+
+  delete(placeholder);
   delete(viewp);
 	delete(scene);
 	delete(model);
@@ -157,12 +161,24 @@ void AppearanceConfigWidget::loadExampleModel(void)
 				txtbox->setSelected(i==0);
 				scene->addItem(txtbox);
 			}
+
+      placeholder->setRect(QRectF(170, 130, 100,50));
+      updatePlaceholderItem();
+      scene->addItem(placeholder);
 		}
 	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+  }
+}
+
+void AppearanceConfigWidget::updatePlaceholderItem(void)
+{
+  placeholder->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::PLACEHOLDER));
+  QPen pen=BaseObjectView::getBorderStyle(ParsersAttributes::PLACEHOLDER);
+  pen.setStyle(Qt::DashLine);
+  placeholder->setPen(pen);
 }
 
 void AppearanceConfigWidget::loadConfiguration(void)
@@ -328,6 +344,7 @@ void AppearanceConfigWidget::applyElementColor(unsigned color_idx, QColor color)
 	{
 		conf_items[element_cmb->currentIndex()].colors[color_idx]=color;
 		BaseObjectView::setElementColor(conf_items[element_cmb->currentIndex()].conf_id, color, color_idx);
+    updatePlaceholderItem();
 	}
 	else
 	{

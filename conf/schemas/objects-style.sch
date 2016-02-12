@@ -55,4 +55,5 @@ $br
 [  <object id="obj-selection" fill-color="] {obj-selection-color} [" border-color="] {obj-selection-bcolor} ["/>] $br
 [  <object id="pos-info" fill-color="] {pos-info-color} [" border-color="] {pos-info-bcolor} ["/>] $br
 [  <object id="tag" fill-color="] {tag-color} [" border-color="] {tag-bcolor} ["/>] $br
+[  <object id="placeholder" fill-color="] {placeholder-color} [" border-color="] {placeholder-bcolor} ["/>] $br
 </objects-style> $br

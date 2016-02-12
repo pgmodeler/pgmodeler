@@ -302,6 +302,11 @@
           <string>Tag: Body</string>
          </property>
         </item>
+        <item>
+         <property name="text">
+          <string>Placeholder: Body</string>
+         </property>
+        </item>
        </widget>
       </item>
       <item row="1" column="0">

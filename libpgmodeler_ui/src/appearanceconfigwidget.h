@@ -47,6 +47,8 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 				bool obj_conf;
 		};
 
+    RoundedRectItem *placeholder;
+
 		ColorPickerWidget *color_picker;
 
 		//! \brief Color picker dialog
@@ -66,6 +68,9 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 
 		//! \brief Loads the example model from file (conf/exampledb.dbm)
 		void loadExampleModel(void);
+
+    //! brief Updates the color configuration for the placeholder item
+    void updatePlaceholderItem(void);
 
 	public:
 		AppearanceConfigWidget(QWidget * parent=0);
