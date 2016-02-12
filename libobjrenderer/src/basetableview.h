@@ -50,7 +50,9 @@ class BaseTableView: public BaseObjectView {
     RoundedRectItem *body,
 
     //! \brief Extended table attributes (indexes, rules, triggers) section body
-    *ext_attribs_body;
+    *ext_attribs_body,
+
+    *placeholder;
 
     QGraphicsPolygonItem *tag_body;
 
@@ -99,9 +101,15 @@ class BaseTableView: public BaseObjectView {
 		//! \brief Returns the current count of connected relationships
 		int getConnectRelsCount(void);
 
+    //! brief This method just emits the signal to indicate that the relationships attached must be updated
+    void requestRelationshipsUpdate(void);
+
 	signals:
 		//! \brief Signal emitted when a table is moved over the scene
 		void s_objectMoved(void);
+
+    //! \brief Signal emitted to indicate that the relationships attached to the table need to be updated
+    void s_relUpdateRequest(void);
 
 		//! \brief Signal emitted when the user right-click a focused table child object
 		void s_childObjectSelected(TableObject *);

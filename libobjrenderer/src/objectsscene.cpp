@@ -640,8 +640,22 @@ void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
       //Case the user starts a object moviment
       if(!this->selectedItems().isEmpty() && !moving_objs && event->modifiers()==Qt::NoModifier)
       {
+        if(BaseObjectView::isPlaceholderEnabled())
+        {
+          QList<QGraphicsItem *> items=this->selectedItems();
+          BaseObjectView *obj_view=nullptr;
+
+          for(QGraphicsItem *item : items)
+          {
+            obj_view=dynamic_cast<BaseObjectView *>(item);
+
+            if(obj_view)
+              obj_view->togglePlaceholder(true);
+          }
+        }
+
         emit s_objectsMoved(false);
-        moving_objs=true;
+        moving_objs=true;       
       }
 
       //If the alignment to grid is active, adjust the event scene position
@@ -693,13 +707,23 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     vector<BaseObject *> rels, base_rels;
     BaseRelationship *base_rel=nullptr;
     RelationshipView *rel=nullptr;
+    BaseObjectView *obj_view=nullptr;
+    BaseTableView *tab_view=nullptr;
+    QList<BaseObjectView *> tables;
 
     //Gathering the relationships inside the selected schemsa in order to move their points too
     for(auto &item : items)
     {
+      obj_view=dynamic_cast<BaseObjectView *>(item);
       sch_view=dynamic_cast<SchemaView *>(item);
+      tab_view=dynamic_cast<BaseTableView *>(item);
 
-      if(sch_view)
+      if(obj_view)
+       obj_view->togglePlaceholder(false);
+
+      if(tab_view)
+        tables.push_back(tab_view);
+      else if(sch_view)
       {
         //Get the schema object
         Schema *schema=dynamic_cast<Schema *>(sch_view->getSourceObject());
@@ -721,6 +745,8 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                !base_rel->getPoints().empty())
               rel_list.push_back(dynamic_cast<QGraphicsItem *>(base_rel->getReceiverObject()));
           }
+
+          tables.append(sch_view->getChildren());
         }
       }
     }
@@ -804,6 +830,18 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
       rect.setWidth(rect.width() * 1.05f);
       rect.setHeight(rect.height() * 1.05f);
       this->setSceneRect(rect);
+    }
+
+    if(BaseObjectView::isPlaceholderEnabled())
+    {
+      /* Updating relationships related to moved tables. Converting the list of table to a set
+       in order to remove the duplicated elements */
+      for(auto &obj : tables.toSet())
+      {
+        tab_view=dynamic_cast<BaseTableView *>(obj);
+        if(tab_view)
+          tab_view->requestRelationshipsUpdate();
+      }
     }
 
     emit s_objectsMoved(true);

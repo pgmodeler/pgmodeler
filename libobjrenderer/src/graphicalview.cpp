@@ -260,5 +260,6 @@ void GraphicalView::configureObject(void)
 	this->setToolTip(this->table_tooltip);
   configureTag();
   configureSQLDisabledInfo();
+  requestRelationshipsUpdate();
 }
 

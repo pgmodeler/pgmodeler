@@ -241,6 +241,8 @@ void TableView::configureObject(void)
 	if((old_width!=0 && this->bounding_rect.width()!=old_width) ||
 		 (old_height!=0 && this->bounding_rect.height()!=old_height))
 		emit s_objectDimensionChanged();
+  else
+    requestRelationshipsUpdate();
 }
 
 QPointF TableView::getConnectionPoints(TableObject *tab_obj, unsigned pnt_type)

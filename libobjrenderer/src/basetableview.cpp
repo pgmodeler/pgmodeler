@@ -62,6 +62,7 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
   this->addToGroup(tag_body);
 	this->addToGroup(ext_attribs);
 	this->addToGroup(ext_attribs_body);
+  //this->addToGroup(wireframe);
 
 	this->setAcceptHoverEvents(true);
 	sel_child_obj=nullptr;
@@ -253,6 +254,11 @@ void BaseTableView::configureTag(void)
 
 int BaseTableView::getConnectRelsCount(void)
 {
-	return(connected_rels);
+  return(connected_rels);
+}
+
+void BaseTableView::requestRelationshipsUpdate(void)
+{
+  emit s_relUpdateRequest();
 }
 

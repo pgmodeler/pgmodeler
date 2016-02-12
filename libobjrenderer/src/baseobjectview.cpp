@@ -23,6 +23,7 @@
 map<QString, QTextCharFormat> BaseObjectView::font_config;
 map<QString, QColor *> BaseObjectView::color_config;
 unsigned BaseObjectView::global_sel_order=1;
+bool BaseObjectView::use_placeholder=true;
 
 BaseObjectView::BaseObjectView(BaseObject *object)
 {
@@ -34,6 +35,7 @@ BaseObjectView::BaseObjectView(BaseObject *object)
 	pos_info_txt=nullptr;
   sql_disabled_txt=nullptr;
   sql_disabled_box=nullptr;
+  placeholder=nullptr;
 	setSourceObject(object);
 }
 
@@ -111,6 +113,13 @@ void BaseObjectView::setSourceObject(BaseObject *object)
       delete(sql_disabled_box);
       sql_disabled_box=nullptr;
     }
+
+    if(placeholder)
+    {
+      togglePlaceholder(false);
+      delete(placeholder);
+      placeholder=nullptr;
+    }
 	}
 	else
 	{
@@ -161,6 +170,15 @@ void BaseObjectView::setSourceObject(BaseObject *object)
 
       this->addToGroup(sql_disabled_box);
       this->addToGroup(sql_disabled_txt);
+    }
+
+    if(!placeholder && object->getObjectType()!=OBJ_TEXTBOX)
+    {
+      placeholder=new RoundedRectItem();
+      placeholder->setVisible(false);
+      placeholder->setZValue(-1);
+      placeholder->setFlag(QGraphicsItem::ItemIsMovable, false);
+      placeholder->setFlag(QGraphicsItem::ItemIsSelectable, false);
     }
   }
 }
@@ -332,7 +350,7 @@ QLinearGradient BaseObjectView::getFillStyle(const QString &id)
 		colors=color_config[id];
 		if(colors)
 		{
-			if(id==ParsersAttributes::OBJ_SELECTION)
+      if(id==ParsersAttributes::OBJ_SELECTION || id==ParsersAttributes::PLACEHOLDER)
 			{
 				colors[0].setAlpha(128);
 				colors[1].setAlpha(128);
@@ -373,9 +391,18 @@ QTextCharFormat BaseObjectView::getFontStyle(const QString &id)
 	if(font_config.count(id))
 		return(font_config[id]);
 	else
-		return(QTextCharFormat());
+    return(QTextCharFormat());
 }
 
+void BaseObjectView::setPlaceholderEnabled(bool value)
+{
+  use_placeholder=value;
+}
+
+bool BaseObjectView::isPlaceholderEnabled(void)
+{
+  return(use_placeholder);
+}
 
 QVariant BaseObjectView::itemChange(GraphicsItemChange change, const QVariant &value)
 {
@@ -576,4 +603,26 @@ QPointF BaseObjectView::getCenter(void)
 {
 	return(QPointF(this->pos().x() + this->boundingRect().width()/2.0f,
 								 this->pos().y() + this->boundingRect().height()/2.0f));
+}
+
+void BaseObjectView::togglePlaceholder(bool visible)
+{
+  if(use_placeholder && placeholder && this->scene())
+  {
+    if(visible)
+    {
+      QPen pen=BaseObjectView::getBorderStyle(ParsersAttributes::PLACEHOLDER);
+      pen.setStyle(Qt::DashLine);
+
+      placeholder->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::PLACEHOLDER));
+      placeholder->setPen(pen);
+      placeholder->setRect(QRectF(QPointF(0,0),this->bounding_rect.size()));
+      placeholder->setPos(this->mapToScene(this->bounding_rect.topLeft()));
+      this->scene()->addItem(placeholder);
+    }
+    else
+      this->scene()->removeItem(placeholder);
+
+    placeholder->setVisible(visible);
+  }
 }

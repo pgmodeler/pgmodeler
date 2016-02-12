@@ -29,12 +29,19 @@
 #include "basegraphicobject.h"
 #include "baserelationship.h"
 #include "xmlparser.h"
+#include "roundedrectitem.h"
 
 class BaseObjectView: public QObject, public QGraphicsItemGroup {
 	private:
 		Q_OBJECT
 
-	protected:
+	protected:   
+    /*! brief Indicates if the placeholder object must be used when moving objects.
+        Place holder objects when enabled causes a significant performance gain mainly when
+        moving tables linked to relationships because the relationships will be updated only
+        when the table moviment ends and not during it */
+    static bool use_placeholder;
+
 		/*! \brief Stores the global selection order of objects. This attributes
 		 is incremented each time an object is selected. */
 		static unsigned global_sel_order;
@@ -63,6 +70,9 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 
 		//! \brief Graphical object that represents the current object shadow
     QGraphicsItem *obj_shadow;
+
+    //! brief Graphical object that represents the placeholder when the object is being moved
+    RoundedRectItem *placeholder;
 
     //! \brief Graphical object of the sql disabled info
     QGraphicsRectItem *sql_disabled_box;
@@ -133,6 +143,10 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		//! \brief Returns the font style for the specified element id
 		static QTextCharFormat getFontStyle(const QString &id);
 
+    static void setPlaceholderEnabled(bool value);
+
+    static bool isPlaceholderEnabled(void);
+
 		//! \brief Sets the  font style for the specified element id
 		static void setFontStyle(const QString &id, QTextCharFormat font_fmt);
 
@@ -153,7 +167,10 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		method calculates the center point based upon the current object's position */
 		virtual QPointF getCenter(void);
 
-    protected slots:
+    //! brief Toggles the wireframe display
+    virtual void togglePlaceholder(bool visible);
+
+  protected slots:
 		//! \brief Make the basic object operations
 		void __configureObject(void);
 

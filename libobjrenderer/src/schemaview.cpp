@@ -35,7 +35,7 @@ SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 
 	this->addToGroup(box);
 	this->addToGroup(sch_name);
-  this->setZValue(-10);
+  this->setZValue(-5);
 
 	this->configureObject();
 	all_selected=false;
@@ -144,6 +144,14 @@ unsigned SchemaView::getChildrenCount()
 QList<BaseObjectView *> SchemaView::getChildren(void)
 {
   return(children);
+}
+
+void SchemaView::togglePlaceholder(bool visible)
+{
+  BaseObjectView::togglePlaceholder(visible);
+
+  for(auto &obj : getChildren())
+    obj->togglePlaceholder(visible);
 }
 
 void SchemaView::configureObject(void)

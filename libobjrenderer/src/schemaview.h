@@ -65,8 +65,11 @@ class SchemaView: public BaseObjectView
 
 		//! \brief Visually selects all the schema children
 		void selectChildren(void);
-		unsigned getChildrenCount(void);
+
+    unsigned getChildrenCount(void);
     QList<BaseObjectView *> getChildren(void);
+
+    virtual void togglePlaceholder(bool visible);
 
 	public slots:
 		void configureObject(void);

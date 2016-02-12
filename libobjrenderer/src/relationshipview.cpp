@@ -59,7 +59,7 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 	tables[0]=tables[1]=nullptr;
 
 	//Relationship has the minor Z, being on the bottom of scene object's stack
-	this->setZValue(-1);
+  this->setZValue(-1);
 	this->configureObject();
 }
 
@@ -397,7 +397,7 @@ void RelationshipView::disconnectTables(void)
 
 		for(unsigned i=0; i < 2; i++)
 		{
-			disconnect(tables[i], nullptr, this, nullptr);
+      disconnect(tables[i], nullptr, this, nullptr);
 			tables[i]=nullptr;
 		}
 	}
@@ -415,12 +415,16 @@ void RelationshipView::configureObject(void)
 	if(!rel_base->isSelfRelationship())
 		tables[1]->updateConnectedRelsCount(1);
 
-	this->configureLine();
+	this->configureLine(); 
 
 	for(unsigned i=0; i < 2; i++)
 	{
-		connect(tables[i], SIGNAL(s_objectMoved(void)), this, SLOT(configureLine(void)));
-		connect(tables[i], SIGNAL(s_objectDimensionChanged(void)), this, SLOT(configureLine(void)));
+    if(BaseObjectView::isPlaceholderEnabled())
+      connect(tables[i], SIGNAL(s_relUpdateRequest(void)), this, SLOT(configureLine(void)));
+    else
+      connect(tables[i], SIGNAL(s_objectMoved(void)), this, SLOT(configureLine(void)));
+
+    connect(tables[i], SIGNAL(s_objectDimensionChanged(void)), this, SLOT(configureLine(void)));
 	}
 
 	connect(rel_base, SIGNAL(s_objectModified()), this, SLOT(configureLine(void)));
@@ -728,7 +732,7 @@ void RelationshipView::configureLine(void)
 					if(i >= static_cast<int>(ref_lin->size()))
 					{
 						lin=new QGraphicsLineItem;
-						lin->setZValue(-1);
+            lin->setZValue(-1);
 						ref_lin->push_back(lin);
 						this->addToGroup(lin);
 					}
@@ -765,7 +769,7 @@ void RelationshipView::configureLine(void)
 			if(i >= static_cast<int>(lines.size()))
 			{
 				lin=new QGraphicsLineItem;
-				lin->setZValue(-1);
+        lin->setZValue(-1);
 				lines.push_back(lin);
 				this->addToGroup(lin);
 			}
@@ -986,11 +990,11 @@ void RelationshipView::configureAttributes(void)
 			if(i >= static_cast<int>(attributes.size()))
 			{
 				attrib=new QGraphicsItemGroup;
-				attrib->setZValue(-1);
+        attrib->setZValue(-1);
 
 				//Creates the line that connects the attribute to the relationship descriptor
 				lin=new QGraphicsLineItem;
-				lin->setZValue(-1);
+        lin->setZValue(-1);
 				attrib->addToGroup(lin);
 
 				//Creates the attribute descriptor

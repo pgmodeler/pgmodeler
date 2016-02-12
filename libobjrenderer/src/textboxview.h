@@ -40,6 +40,11 @@ class TextboxView: public BaseObjectView {
     //! \brief Graphical item that represent the box
     QGraphicsPolygonItem *box;
 
+    /*! \brief Graphical item that represent the placeholder of the textbox.
+         Since textbox object is polygonal the placeholder object from the base class
+         is not used */
+    QGraphicsPolygonItem *placeholder_pol;
+
     //! \brief Graphical item that represent the text
     QGraphicsSimpleTextItem *text;
 
@@ -63,6 +68,8 @@ class TextboxView: public BaseObjectView {
 		/*! \brief Sets the font style for the text box. This method has effect only when
 		 the style can be overriden (via constructor) */
 		void setFontStyle(const QTextCharFormat &fmt);
+
+    virtual void togglePlaceholder(bool visible);
 
 	protected slots:
     virtual void configureObject(void);
