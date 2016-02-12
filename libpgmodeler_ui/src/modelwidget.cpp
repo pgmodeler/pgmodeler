@@ -1943,7 +1943,26 @@ void ModelWidget::protectObject(void)
 			graph_obj=dynamic_cast<BaseGraphicObject *>(this->selected_objects[0]);
 
 			if(graph_obj)
-				graph_obj->setProtected(!graph_obj->isProtected());
+      {
+        bool protect=!graph_obj->isProtected();
+
+        if(graph_obj->getObjectType()==OBJ_SCHEMA)
+        {
+          Messagebox msgbox;
+          msgbox.show(QString(QT_TR_NOOP("Do you want to %1 the selected schema's children too?")).arg(protect ? QT_TR_NOOP("protect") : QT_TR_NOOP("unprotect")),
+                      Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+
+          if(msgbox.result()==QDialog::Accepted)
+          {
+            vector<BaseObject *> objects(db_model->getObjects(this->selected_objects[0]));
+
+            for(BaseObject *obj : objects)
+              obj->setProtected(protect);
+          }
+        }
+
+        graph_obj->setProtected(protect);
+      }
 			else if(tab_obj)
 			{
 				tab_obj->setProtected(!tab_obj->isProtected());
@@ -1996,6 +2015,7 @@ void ModelWidget::protectObject(void)
 		protected_model_frm->setVisible(db_model->isProtected());
 		scene->blockSignals(false);
 		scene->clearSelection();
+    this->setModified(true);
 
 		emit s_objectModified();
 	}
