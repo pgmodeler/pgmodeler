@@ -228,7 +228,7 @@ void SchemaView::configureObject(void)
 		box->setBrush(color);
 
     color=QColor(color.red()/3,color.green()/3,color.blue()/3, 80);
-		box->setPen(QPen(color, 1, Qt::DashLine));
+    box->setPen(QPen(color, 1, Qt::SolidLine));
 
 		this->bounding_rect=rect;
 		this->setVisible(true);

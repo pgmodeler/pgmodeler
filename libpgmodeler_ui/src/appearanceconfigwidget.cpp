@@ -204,6 +204,7 @@ void AppearanceConfigWidget::loadConfiguration(void)
 		this->enableConfigElement();
 		font_cmb->setCurrentFont(BaseObjectView::getFontStyle(ParsersAttributes::GLOBAL).font());
 		model->setObjectsModified();
+    updatePlaceholderItem();
 		scene->update();
 	}
 	catch(Exception &e)

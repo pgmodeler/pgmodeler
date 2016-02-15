@@ -105,7 +105,7 @@ class ObjectsScene: public QGraphicsScene {
 
     QGraphicsView *getActiveViewport(void);
 
-	protected:
+  protected:
 		//! \brief Brush used to draw the grid over the scene
 		static QBrush grid;
 
@@ -150,9 +150,10 @@ class ObjectsScene: public QGraphicsScene {
 
     bool isRangeSelectionEnabled(void);
     bool isPanningRangeSelectionInverted(void);
-		bool isRelationshipLineVisible(void);
+		bool isRelationshipLineVisible(void);  
+    bool isMovingObjects(void);
 
-	public slots:
+  public slots:
 		void alignObjectsToGrid(void);
 
 		void update(void);

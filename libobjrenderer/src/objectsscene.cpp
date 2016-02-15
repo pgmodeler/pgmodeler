@@ -996,3 +996,8 @@ bool ObjectsScene::isRelationshipLineVisible(void)
 {
 	return(rel_line->isVisible());
 }
+
+bool ObjectsScene::isMovingObjects(void)
+{
+  return(moving_objs);
+}

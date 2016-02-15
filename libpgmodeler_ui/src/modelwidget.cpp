@@ -434,7 +434,9 @@ void ModelWidget::keyPressEvent(QKeyEvent *event)
     else
     {
       this->cancelObjectAddition();
-      scene->clearSelection();
+
+      if(!scene->isMovingObjects())
+        scene->clearSelection();
     }
 	}
   else if(event->key()==Qt::Key_N)
