@@ -648,9 +648,7 @@ void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
           for(QGraphicsItem *item : items)
           {
             obj_view=dynamic_cast<BaseObjectView *>(item);
-
-            if(obj_view)
-              obj_view->togglePlaceholder(true);
+            obj_view->togglePlaceholder(true);
           }
         }
 

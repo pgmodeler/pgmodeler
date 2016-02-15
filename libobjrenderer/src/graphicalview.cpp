@@ -25,7 +25,8 @@ GraphicalView::GraphicalView(View *view) : BaseTableView(view)
 	columns=new QGraphicsItemGroup;
 	columns->setZValue(1);
 	this->addToGroup(columns);
-	this->configureObject();
+  configurePlaceholder();
+  this->configureObject();
 }
 
 void GraphicalView::configureObject(void)

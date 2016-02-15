@@ -91,6 +91,8 @@ class RelationshipView: public BaseObjectView {
 		//! \brief Stores the initial (default) labels position
 		QPointF labels_ini_pos[3];
 
+    QGraphicsEllipseItem *line_circles[2];
+
 		//! \brief Stores the selected child object index
 		int sel_object_idx;
 

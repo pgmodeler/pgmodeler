@@ -62,11 +62,12 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
   this->addToGroup(tag_body);
 	this->addToGroup(ext_attribs);
 	this->addToGroup(ext_attribs_body);
-  //this->addToGroup(wireframe);
 
 	this->setAcceptHoverEvents(true);
 	sel_child_obj=nullptr;
 	connected_rels=0;
+
+  configurePlaceholder();
 }
 
 BaseTableView::~BaseTableView(void)
@@ -260,5 +261,10 @@ int BaseTableView::getConnectRelsCount(void)
 void BaseTableView::requestRelationshipsUpdate(void)
 {
   emit s_relUpdateRequest();
+}
+
+void BaseTableView::togglePlaceholder(bool value)
+{
+  BaseObjectView::togglePlaceholder(connected_rels > 0 && value);
 }
 

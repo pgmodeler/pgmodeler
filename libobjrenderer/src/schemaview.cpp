@@ -148,8 +148,7 @@ QList<BaseObjectView *> SchemaView::getChildren(void)
 
 void SchemaView::togglePlaceholder(bool visible)
 {
-  BaseObjectView::togglePlaceholder(visible);
-
+  //BaseObjectView::togglePlaceholder(visible);
   for(auto &obj : getChildren())
     obj->togglePlaceholder(visible);
 }

@@ -38,12 +38,6 @@ TextboxView::TextboxView(Textbox *txtbox, bool override_style) : BaseObjectView(
   obj_selection->setZValue(4);
   this->addToGroup(obj_selection);
 
-  placeholder_pol=new QGraphicsPolygonItem;
-  placeholder_pol->setVisible(false);
-  placeholder_pol->setZValue(-1);
-  placeholder_pol->setFlag(QGraphicsItem::ItemIsMovable, false);
-  placeholder_pol->setFlag(QGraphicsItem::ItemIsSelectable, false);
-
 	this->override_style=override_style;
   this->addToGroup(text);
   this->addToGroup(box);
@@ -56,7 +50,6 @@ TextboxView::~TextboxView(void)
 	this->removeFromGroup(text);
 	delete(box);
 	delete(text);
-  delete(placeholder_pol);
 }
 
 void TextboxView::setColorStyle(const QBrush &fill_style, const QPen &border_style)
@@ -77,7 +70,7 @@ void TextboxView::setFontStyle(const QTextCharFormat &fmt)
   }
 }
 
-void TextboxView::togglePlaceholder(bool visible)
+/*void TextboxView::togglePlaceholder(bool visible)
 {
   if(use_placeholder && this->scene())
   {
@@ -97,7 +90,7 @@ void TextboxView::togglePlaceholder(bool visible)
 
     placeholder_pol->setVisible(visible);
   }
-}
+}*/
 
 void TextboxView::__configureObject(void)
 {

@@ -170,15 +170,6 @@ void BaseObjectView::setSourceObject(BaseObject *object)
       this->addToGroup(sql_disabled_box);
       this->addToGroup(sql_disabled_txt);
     }
-
-    if(!placeholder && object->getObjectType()!=OBJ_TEXTBOX)
-    {
-      placeholder=new RoundedRectItem();
-      placeholder->setVisible(false);
-      placeholder->setZValue(-1);
-      placeholder->setFlag(QGraphicsItem::ItemIsMovable, false);
-      placeholder->setFlag(QGraphicsItem::ItemIsSelectable, false);
-    }
   }
 }
 
@@ -575,7 +566,19 @@ void BaseObjectView::configureProtectedIcon(void)
 		pol_item->setPolygon(pol);
 		pol_item->setBrush(this->getFillStyle(ParsersAttributes::LOCKER_BODY));
 		pol_item->setPen(this->getBorderStyle(ParsersAttributes::LOCKER_BODY));
-	}
+  }
+}
+
+void BaseObjectView::configurePlaceholder(void)
+{
+  if(!placeholder)
+  {
+    placeholder=new RoundedRectItem();
+    placeholder->setVisible(false);
+    placeholder->setZValue(-1);
+    placeholder->setFlag(QGraphicsItem::ItemIsMovable, false);
+    placeholder->setFlag(QGraphicsItem::ItemIsSelectable, false);
+  }
 }
 
 void BaseObjectView::__configureObject(void)

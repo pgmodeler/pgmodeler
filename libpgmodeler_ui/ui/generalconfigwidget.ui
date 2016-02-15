@@ -621,10 +621,10 @@
                <string/>
               </property>
               <property name="statusTip">
-               <string>When enabled this option creates a placeholder object at the previous object's position when starting to move it. This will cause graphical updates to be performed only when the drag &amp; drop action is done improving the performance. Disabling placeholders will cause those updates to be executed every time the object position changes (classical behavior).</string>
+               <string>When enabled this option creates a placeholder object at the previous table's position when starting to move it. This will cause graphical updates on relationship lines to be performed only when the drag &amp; drop action is done improving the performance. Disabling placeholders will cause those updates to be executed every time the table's position changes a single pixel (classical behavior).</string>
               </property>
               <property name="text">
-               <string>Use placeholders when moving objects</string>
+               <string>Use placeholders when moving linked tables</string>
               </property>
              </widget>
             </item>

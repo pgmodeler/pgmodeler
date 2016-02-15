@@ -104,6 +104,9 @@ class BaseTableView: public BaseObjectView {
     //! brief This method just emits the signal to indicate that the relationships attached must be updated
     void requestRelationshipsUpdate(void);
 
+    //! brief Toggles the placeholder object when there is at least one relationship connected to the object
+    virtual void togglePlaceholder(bool value);
+
 	signals:
 		//! \brief Signal emitted when a table is moved over the scene
 		void s_objectMoved(void);

@@ -59,6 +59,15 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 
 	tables[0]=tables[1]=nullptr;
 
+  for(unsigned i=0; i < 2; i++)
+  {
+    line_circles[i]=new QGraphicsEllipseItem;
+    line_circles[i]->setRect(QRectF(0,0,GRAPHIC_PNT_RADIUS,GRAPHIC_PNT_RADIUS));
+    line_circles[i]->setZValue(0);
+    line_circles[i]->setVisible(false);
+    this->addToGroup(line_circles[i]);
+  }
+
 	//Relationship has the minor Z, being on the bottom of scene object's stack
   this->setZValue(-1);
 	this->configureObject();
@@ -66,7 +75,13 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 
 RelationshipView::~RelationshipView(void)
 {
-	QGraphicsItem *item=nullptr;  
+  QGraphicsItem *item=nullptr;
+
+  for(int i=0; i < 2; i++)
+  {
+    this->removeFromGroup(line_circles[i]);
+    delete(line_circles[i]);
+  }
 
 	for(int i=0; i < 3; i++)
 	{
@@ -110,7 +125,7 @@ RelationshipView::~RelationshipView(void)
 	}
 
 	this->removeFromGroup(descriptor);
-	delete(descriptor);
+  delete(descriptor);
 }
 
 void RelationshipView::setHideNameLabel(bool value)
@@ -501,9 +516,9 @@ void RelationshipView::configureLine(void)
 			p_central[1].setX(pos.x() + (rect.width()/1.5f));
 			p_central[1].setY(pos.y());
 
-			points.push_back(QPointF(p_central[0].x() + (10 * fator),  p_central[0].y()));
-			points.push_back(QPointF(p_central[0].x() + (10 * fator),  p_central[1].y() - (10 * fator)));
-			points.push_back(QPointF(p_central[1].x(),  p_central[1].y() - (10 * fator)));
+      points.push_back(QPointF(p_central[0].x() + (9 * fator),  p_central[0].y()));
+      points.push_back(QPointF(p_central[0].x() + (9 * fator),  p_central[1].y() - (9 * fator)));
+      points.push_back(QPointF(p_central[1].x(),  p_central[1].y() - (9 * fator)));
 			base_rel->setPoints(points);
 		}
 		else
@@ -816,6 +831,24 @@ void RelationshipView::configureLine(void)
 				i1--;
 			}
 		}
+
+    if(line_conn_mode==CONNECT_CENTER_PNTS ||
+       base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_DEP ||
+       base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN)
+    {
+      for(i=0; i < 2; i++)
+      {
+        line_circles[i]->setVisible(true);
+        line_circles[i]->setPen(pen);
+        line_circles[i]->setBrush(pen.color());
+        line_circles[i]->setPos(p_central[i]-QPointF(GRAPHIC_PNT_RADIUS/2, GRAPHIC_PNT_RADIUS/2));
+      }
+    }
+    else
+    {
+      line_circles[0]->setVisible(false);
+      line_circles[1]->setVisible(false);
+    }
 
     this->configureDescriptor();
 		this->configureLabels();
