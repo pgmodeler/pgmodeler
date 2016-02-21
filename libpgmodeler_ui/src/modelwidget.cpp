@@ -1668,7 +1668,7 @@ void ModelWidget::showSourceCode(void)
 
 		if(object)
 		{
-			SourceCodeWidget sourcecode_wgt(this);
+      SourceCodeWidget sourcecode_wgt;
 			sourcecode_wgt.setAttributes(this->db_model, object);
 			sourcecode_wgt.show();
 		}

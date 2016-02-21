@@ -59,16 +59,22 @@
      <height>25</height>
     </rect>
    </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="minimumSize">
     <size>
      <width>0</width>
-     <height>25</height>
+     <height>0</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
      <width>16777215</width>
-     <height>25</height>
+     <height>16777215</height>
     </size>
    </property>
    <property name="text">
@@ -115,10 +121,16 @@
      <height>25</height>
     </rect>
    </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="minimumSize">
     <size>
      <width>0</width>
-     <height>25</height>
+     <height>0</height>
     </size>
    </property>
   </widget>
@@ -170,7 +182,7 @@
     </rect>
    </property>
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
@@ -184,7 +196,7 @@
    <property name="maximumSize">
     <size>
      <width>16777215</width>
-     <height>30</height>
+     <height>16777215</height>
     </size>
    </property>
    <property name="focusPolicy">
@@ -202,8 +214,8 @@
    </property>
    <property name="iconSize">
     <size>
-     <width>20</width>
-     <height>20</height>
+     <width>22</width>
+     <height>22</height>
     </size>
    </property>
    <property name="toolButtonStyle">
@@ -279,10 +291,9 @@
      </widget>
     </item>
     <item row="0" column="1">
-     <widget class="QLabel" name="label_2">
+     <widget class="QLabel" name="protected_obj_lbl">
       <property name="font">
        <font>
-        <pointsize>8</pointsize>
         <weight>50</weight>
         <italic>true</italic>
         <bold>false</bold>
@@ -356,7 +367,7 @@ This will disable the code of all child and referrer objects.</string>
     </rect>
    </property>
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
@@ -370,7 +381,7 @@ This will disable the code of all child and referrer objects.</string>
    <property name="maximumSize">
     <size>
      <width>16777215</width>
-     <height>30</height>
+     <height>16777215</height>
     </size>
    </property>
    <property name="focusPolicy">
@@ -388,8 +399,8 @@ This will disable the code of all child and referrer objects.</string>
    </property>
    <property name="iconSize">
     <size>
-     <width>20</width>
-     <height>20</height>
+     <width>22</width>
+     <height>22</height>
     </size>
    </property>
    <property name="toolButtonStyle">

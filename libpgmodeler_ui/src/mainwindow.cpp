@@ -352,12 +352,17 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
   QList<QAction *> actions=general_tb->actions();
   QToolButton *btn=nullptr;
+  QFont fnt=general_tb->font();
+  fnt.setPointSizeF(fnt.pointSizeF() * PgModelerUiNS::SMALL_FONT_FACTOR);
 
   for(auto &act : actions)
   {
     btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(act));
     if(btn)
+    {
+      btn->setFont(fnt);
       btn->setGraphicsEffect(createDropShadow(btn));
+    }
   }
 
   #ifdef Q_OS_MAC
@@ -919,6 +924,9 @@ void MainWindow::setCurrentModel(void)
   if(current_model)
 	{
     QToolButton *tool_btn=nullptr;
+    QList<QToolButton *> btns;
+    QFont fnt;
+    fnt.setPointSizeF(fnt.pointSizeF() * PgModelerUiNS::SMALL_FONT_FACTOR);
 
 		current_model->setFocus(Qt::OtherFocusReason);
 		current_model->cancelObjectAddition();  
@@ -926,24 +934,30 @@ void MainWindow::setCurrentModel(void)
     general_tb->addAction(current_model->action_new_object);
     tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_new_object));
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
-		tool_btn->setGraphicsEffect(createDropShadow(tool_btn));
+    btns.push_back(tool_btn);
 
 		general_tb->addAction(current_model->action_quick_actions);
     tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_quick_actions));
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
-		tool_btn->setGraphicsEffect(createDropShadow(tool_btn));
+    btns.push_back(tool_btn);
 
 		general_tb->addAction(current_model->action_edit);
 		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_edit));
-		tool_btn->setGraphicsEffect(createDropShadow(tool_btn));
+    btns.push_back(tool_btn);
 
 		general_tb->addAction(current_model->action_source_code);
     tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_source_code));
-		tool_btn->setGraphicsEffect(createDropShadow(tool_btn));
+    btns.push_back(tool_btn);
 
 		general_tb->addAction(current_model->action_select_all);
     tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_select_all));
-    tool_btn->setGraphicsEffect(createDropShadow(tool_btn));
+    btns.push_back(tool_btn);
+
+    for(QToolButton *btn : btns)
+    {
+      btn->setFont(fnt);
+      btn->setGraphicsEffect(createDropShadow(tool_btn));
+    }
 
 		edit_menu->addAction(current_model->action_copy);
 		edit_menu->addAction(current_model->action_cut);

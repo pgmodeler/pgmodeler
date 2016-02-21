@@ -269,11 +269,11 @@
      <x>424</x>
      <y>92</y>
      <width>105</width>
-     <height>27</height>
+     <height>31</height>
     </rect>
    </property>
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
@@ -287,7 +287,7 @@
    <property name="maximumSize">
     <size>
      <width>16777215</width>
-     <height>30</height>
+     <height>16777215</height>
     </size>
    </property>
    <property name="focusPolicy">
@@ -305,8 +305,8 @@
    </property>
    <property name="iconSize">
     <size>
-     <width>20</width>
-     <height>20</height>
+     <width>22</width>
+     <height>22</height>
     </size>
    </property>
    <property name="toolButtonStyle">

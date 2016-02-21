@@ -51,6 +51,10 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		owner_sel=nullptr;
 		tablespace_sel=nullptr;
 
+    QFont fnt=protected_obj_lbl->font();
+    fnt.setPointSizeF(fnt.pointSizeF() * PgModelerUiNS::SMALL_FONT_FACTOR);
+    protected_obj_lbl->setFont(fnt);
+
     parent_form=new BaseForm(nullptr, (Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::WindowSystemMenuHint));
 		parent_form->setWindowTitle(trUtf8("Create / Edit: ") + BaseObject::getTypeName(obj_type));
 		parent_form->generalwidget_wgt->insertWidget(0, this);
@@ -131,8 +135,8 @@ bool BaseObjectWidget::eventFilter(QObject *object, QEvent *event)
 
 void BaseObjectWidget::show(void)
 {
-	parent_form->exec();
-	QDialog::show();
+  parent_form->exec();
+  QDialog::show();
 }
 
 void BaseObjectWidget::showEvent(QShowEvent *)
@@ -211,9 +215,11 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 		{
 			QPalette pal;
 			pal.setColor(QPalette::Base, bgcolor);
+      pal.setColor(QPalette::Text, QColor(0,0,0));
 
 			if(sel)
 				widget=sel->obj_name_txt;
+
 			widget->setPalette(pal);
 		}
 
@@ -558,7 +564,7 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 
 	info_frm = new QFrame;
 
-	font.setPointSize(8);
+  font.setPointSize(font.pointSizeF() * PgModelerUiNS::SMALL_FONT_FACTOR);
 	font.setItalic(false);
 	font.setBold(false);
 	info_frm->setFont(font);
@@ -652,7 +658,7 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 
 	alert_frm = new QFrame;
 
-	font.setPointSize(8);
+  font.setPointSize(font.pointSizeF() * PgModelerUiNS::SMALL_FONT_FACTOR);
 	font.setItalic(false);
 	font.setBold(false);
 	alert_frm->setFont(font);
@@ -692,7 +698,7 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 
 void BaseObjectWidget::editPermissions(void)
 {
-	PermissionWidget permission_wgt(this);
+  PermissionWidget permission_wgt;
 	BaseObject *parent_obj=nullptr;
 
 	if(this->relationship)

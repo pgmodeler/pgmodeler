@@ -31,6 +31,7 @@
 #include "numberedtexteditor.h"
 
 namespace PgModelerUiNS {
+  static const float SMALL_FONT_FACTOR = 0.85f;
 
   /*! brief Creates a NumberedTextEditor instance automatically assigning it to 'parent'.
       This method will create a layout if 'parent' doesn't has one. If parent has a layout

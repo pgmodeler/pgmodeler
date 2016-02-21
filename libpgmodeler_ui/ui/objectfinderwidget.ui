@@ -78,10 +78,17 @@
      <property name="enabled">
       <bool>true</bool>
      </property>
-     <property name="font">
-      <font>
-       <pointsize>8</pointsize>
-      </font>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
      </property>
      <property name="toolTip">
       <string>Defines the search filter</string>
@@ -112,10 +119,17 @@
      <property name="enabled">
       <bool>false</bool>
      </property>
-     <property name="font">
-      <font>
-       <pointsize>8</pointsize>
-      </font>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
      </property>
      <property name="toolTip">
       <string>Clears the search results</string>
@@ -143,10 +157,17 @@
      <property name="enabled">
       <bool>true</bool>
      </property>
-     <property name="font">
-      <font>
-       <pointsize>8</pointsize>
-      </font>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
      </property>
      <property name="toolTip">
       <string>Highlight graphical objects when selecting them or their children on the result list</string>
@@ -344,7 +365,7 @@
             <item row="2" column="1">
              <widget class="QPushButton" name="select_all_btn">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -352,13 +373,8 @@
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>25</height>
+                <height>0</height>
                </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>8</pointsize>
-               </font>
               </property>
               <property name="text">
                <string>Select All</string>
@@ -377,7 +393,7 @@
                <bool>true</bool>
               </property>
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -385,13 +401,8 @@
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>25</height>
+                <height>0</height>
                </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>8</pointsize>
-               </font>
               </property>
               <property name="text">
                <string>Clear All</string>
@@ -555,7 +566,7 @@
         <string>ID</string>
        </property>
        <property name="textAlignment">
-        <set>AlignLeft|AlignVCenter</set>
+        <set>AlignLeading|AlignVCenter</set>
        </property>
        <property name="icon">
         <iconset resource="../res/resources.qrc">
@@ -567,7 +578,7 @@
         <string>Object</string>
        </property>
        <property name="textAlignment">
-        <set>AlignLeft|AlignVCenter</set>
+        <set>AlignLeading|AlignVCenter</set>
        </property>
        <property name="icon">
         <iconset resource="../res/resources.qrc">
@@ -579,7 +590,7 @@
         <string>Type</string>
        </property>
        <property name="textAlignment">
-        <set>AlignLeft|AlignVCenter</set>
+        <set>AlignLeading|AlignVCenter</set>
        </property>
        <property name="icon">
         <iconset resource="../res/resources.qrc">
@@ -591,7 +602,7 @@
         <string>Parent Object</string>
        </property>
        <property name="textAlignment">
-        <set>AlignLeft|AlignVCenter</set>
+        <set>AlignLeading|AlignVCenter</set>
        </property>
        <property name="icon">
         <iconset resource="../res/resources.qrc">
@@ -603,7 +614,7 @@
         <string>Parent Type</string>
        </property>
        <property name="textAlignment">
-        <set>AlignLeft|AlignVCenter</set>
+        <set>AlignLeading|AlignVCenter</set>
        </property>
        <property name="icon">
         <iconset resource="../res/resources.qrc">
@@ -616,15 +627,16 @@
    <item row="0" column="2">
     <widget class="QToolButton" name="find_btn">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="font">
-      <font>
-       <pointsize>8</pointsize>
-      </font>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
      </property>
      <property name="text">
       <string>Find</string>
