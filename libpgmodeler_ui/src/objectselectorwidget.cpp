@@ -66,7 +66,7 @@ void ObjectSelectorWidget::configureSelector(bool install_highlighter)
 		connect(obj_view_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedObject(BaseObject*, bool)));
 
 		obj_name_txt->installEventFilter(this);
-    QFontMetrics fm(obj_name_txt->font());
+    QFontMetrics fm=obj_name_txt->fontMetrics();
 
     obj_name_txt->setMaximumHeight(fm.height() + (fm.lineSpacing()/1.5));
     this->adjustSize();

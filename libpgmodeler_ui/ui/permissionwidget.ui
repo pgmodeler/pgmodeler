@@ -196,7 +196,7 @@
                   <bool>true</bool>
                  </property>
                  <property name="text">
-                  <string>Grant</string>
+                  <string>&amp;Grant</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -206,7 +206,7 @@
                <item row="0" column="1">
                 <widget class="QRadioButton" name="revoke_rb">
                  <property name="text">
-                  <string>Revoke</string>
+                  <string>Re&amp;voke</string>
                  </property>
                 </widget>
                </item>
@@ -291,8 +291,8 @@
                </property>
                <property name="iconSize">
                 <size>
-                 <width>20</width>
-                 <height>20</height>
+                 <width>22</width>
+                 <height>22</height>
                 </size>
                </property>
               </widget>
@@ -320,8 +320,8 @@
                </property>
                <property name="iconSize">
                 <size>
-                 <width>20</width>
-                 <height>20</height>
+                 <width>22</width>
+                 <height>22</height>
                 </size>
                </property>
               </widget>
@@ -349,8 +349,8 @@
                </property>
                <property name="iconSize">
                 <size>
-                 <width>20</width>
-                 <height>20</height>
+                 <width>22</width>
+                 <height>22</height>
                 </size>
                </property>
               </widget>

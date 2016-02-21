@@ -85,7 +85,7 @@
        <number>6</number>
       </property>
       <item row="0" column="1">
-       <widget class="QLabel" name="label_5">
+       <widget class="QLabel" name="title_lbl">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -139,7 +139,7 @@
        </widget>
       </item>
       <item row="5" column="0" colspan="3">
-       <widget class="QLabel" name="label_20">
+       <widget class="QLabel" name="about_lbl">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -182,7 +182,7 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QLabel" name="label_9">
+       <widget class="QLabel" name="slogan_lbl">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -261,7 +261,7 @@
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QLabel" name="label_3">
+         <widget class="QLabel" name="copyright_lbl">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>

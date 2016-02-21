@@ -19,6 +19,7 @@
 #include "hinttextwidget.h"
 #include <QHBoxLayout>
 #include <QGraphicsDropShadowEffect>
+#include "pgmodeleruins.h"
 
 HintTextWidget::HintTextWidget(QWidget *btn_parent, QWidget *parent): QWidget(parent)
 {
@@ -48,6 +49,10 @@ HintTextWidget::HintTextWidget(QWidget *btn_parent, QWidget *parent): QWidget(pa
 
   this->setVisible(false);
   text_lbl->installEventFilter(this);
+
+  QFont fnt=text_lbl->font();
+  fnt.setPointSizeF(fnt.pointSizeF() * PgModelerUiNS::SMALL_FONT_FACTOR);
+  text_lbl->setFont(fnt);
   parent->installEventFilter(this);
 
   setIconSize(SMALL_ICON);
@@ -89,7 +94,7 @@ void HintTextWidget::setWidgetPosition(void)
 
 void HintTextWidget::setText(const QString &text)
 {
-  QFontMetrics f(text_lbl->font());
+  QFontMetrics f=text_lbl->fontMetrics();
   QString txt=text;
   QRect ret;
   QSize txt_size;
@@ -97,7 +102,7 @@ void HintTextWidget::setText(const QString &text)
   txt.replace(QRegExp(QString("(<)(br)(/)?(>)")), QString("\n"));
   txt.remove(QRegExp(QString("(<)(/)?([a-z]|[A-Z])+(>)")));
   ret=f.boundingRect(0,0, this->maximumWidth(), this->maximumHeight(), Qt::TextWordWrap, txt);
-  txt_size=QSize(ret.size().width(), ret.size().height() + (text_lbl->margin() * 1.5));
+  txt_size=QSize(ret.size().width(), ret.size().height() + f.lineSpacing() + (text_lbl->margin() * 1.5));
 
   text_lbl->setText(text);
   text_lbl->setMaximumSize(txt_size);

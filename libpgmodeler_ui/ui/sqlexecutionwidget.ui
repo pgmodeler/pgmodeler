@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>782</width>
+    <width>831</width>
     <height>532</height>
    </rect>
   </property>
@@ -61,11 +61,6 @@
              <height>27</height>
             </size>
            </property>
-           <property name="font">
-            <font>
-             <pointsize>8</pointsize>
-            </font>
-           </property>
            <property name="toolTip">
             <string>Load SQL script</string>
            </property>
@@ -78,8 +73,8 @@
            </property>
            <property name="iconSize">
             <size>
-             <width>20</width>
-             <height>20</height>
+             <width>22</width>
+             <height>22</height>
             </size>
            </property>
            <property name="shortcut">
@@ -107,11 +102,6 @@
              <height>27</height>
             </size>
            </property>
-           <property name="font">
-            <font>
-             <pointsize>8</pointsize>
-            </font>
-           </property>
            <property name="toolTip">
             <string>Save SQL commands</string>
            </property>
@@ -124,8 +114,8 @@
            </property>
            <property name="iconSize">
             <size>
-             <width>20</width>
-             <height>20</height>
+             <width>22</width>
+             <height>22</height>
             </size>
            </property>
            <property name="shortcut">
@@ -156,11 +146,6 @@
              <height>27</height>
             </size>
            </property>
-           <property name="font">
-            <font>
-             <pointsize>8</pointsize>
-            </font>
-           </property>
            <property name="toolTip">
             <string>Search in SQL code</string>
            </property>
@@ -173,8 +158,8 @@
            </property>
            <property name="iconSize">
             <size>
-             <width>20</width>
-             <height>20</height>
+             <width>22</width>
+             <height>22</height>
             </size>
            </property>
            <property name="shortcut">
@@ -211,11 +196,6 @@
              <height>27</height>
             </size>
            </property>
-           <property name="font">
-            <font>
-             <pointsize>8</pointsize>
-            </font>
-           </property>
            <property name="toolTip">
             <string>Run the specified SQL command</string>
            </property>
@@ -228,8 +208,8 @@
            </property>
            <property name="iconSize">
             <size>
-             <width>20</width>
-             <height>20</height>
+             <width>22</width>
+             <height>22</height>
             </size>
            </property>
            <property name="shortcut">
@@ -251,11 +231,6 @@
              <height>27</height>
             </size>
            </property>
-           <property name="font">
-            <font>
-             <pointsize>8</pointsize>
-            </font>
-           </property>
            <property name="toolTip">
             <string>Clear sql input field and results</string>
            </property>
@@ -268,8 +243,8 @@
            </property>
            <property name="iconSize">
             <size>
-             <width>20</width>
-             <height>20</height>
+             <width>22</width>
+             <height>22</height>
             </size>
            </property>
            <property name="toolButtonStyle">
@@ -288,11 +263,6 @@
              <height>27</height>
             </size>
            </property>
-           <property name="font">
-            <font>
-             <pointsize>8</pointsize>
-            </font>
-           </property>
            <property name="toolTip">
             <string>Export results to a CSV file</string>
            </property>
@@ -305,8 +275,8 @@
            </property>
            <property name="iconSize">
             <size>
-             <width>20</width>
-             <height>20</height>
+             <width>22</width>
+             <height>22</height>
             </size>
            </property>
            <property name="shortcut">
@@ -337,11 +307,6 @@
              <height>27</height>
             </size>
            </property>
-           <property name="font">
-            <font>
-             <pointsize>8</pointsize>
-            </font>
-           </property>
            <property name="toolTip">
             <string>Export results to a CSV file</string>
            </property>
@@ -354,8 +319,8 @@
            </property>
            <property name="iconSize">
             <size>
-             <width>20</width>
-             <height>20</height>
+             <width>22</width>
+             <height>22</height>
             </size>
            </property>
            <property name="shortcut">
@@ -383,11 +348,6 @@
              <height>27</height>
             </size>
            </property>
-           <property name="font">
-            <font>
-             <pointsize>8</pointsize>
-            </font>
-           </property>
            <property name="toolTip">
             <string>Toggles the output pane</string>
            </property>
@@ -400,8 +360,8 @@
            </property>
            <property name="iconSize">
             <size>
-             <width>20</width>
-             <height>20</height>
+             <width>22</width>
+             <height>22</height>
             </size>
            </property>
            <property name="shortcut">
@@ -429,11 +389,6 @@
              <height>27</height>
             </size>
            </property>
-           <property name="font">
-            <font>
-             <pointsize>8</pointsize>
-            </font>
-           </property>
            <property name="toolTip">
             <string>Shows the command history</string>
            </property>
@@ -446,8 +401,8 @@
            </property>
            <property name="iconSize">
             <size>
-             <width>20</width>
-             <height>20</height>
+             <width>22</width>
+             <height>22</height>
             </size>
            </property>
            <property name="shortcut">
@@ -596,11 +551,6 @@
                <height>27</height>
               </size>
              </property>
-             <property name="font">
-              <font>
-               <pointsize>8</pointsize>
-              </font>
-             </property>
              <property name="toolTip">
               <string>Clear sql input field and results.</string>
              </property>
@@ -613,8 +563,8 @@
              </property>
              <property name="iconSize">
               <size>
-               <width>20</width>
-               <height>20</height>
+               <width>22</width>
+               <height>22</height>
               </size>
              </property>
              <property name="toolButtonStyle">

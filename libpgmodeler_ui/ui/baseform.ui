@@ -135,7 +135,7 @@
           <property name="minimumSize">
            <size>
             <width>90</width>
-            <height>32</height>
+            <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -159,8 +159,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>20</width>
-            <height>20</height>
+            <width>22</width>
+            <height>22</height>
            </size>
           </property>
           <property name="autoRepeat">
@@ -182,7 +182,7 @@
           <property name="minimumSize">
            <size>
             <width>90</width>
-            <height>32</height>
+            <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -206,8 +206,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>20</width>
-            <height>20</height>
+            <width>22</width>
+            <height>22</height>
            </size>
           </property>
           <property name="autoRepeat">

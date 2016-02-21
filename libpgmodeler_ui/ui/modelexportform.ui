@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
-    <height>450</height>
+    <width>689</width>
+    <height>529</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -28,7 +28,7 @@
   <property name="maximumSize">
    <size>
     <width>16777215</width>
-    <height>450</height>
+    <height>16777215</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -495,7 +495,7 @@
                      <bool>false</bool>
                     </property>
                     <property name="text">
-                     <string>Objects</string>
+                     <string>Ob&amp;jects</string>
                     </property>
                    </widget>
                   </item>
