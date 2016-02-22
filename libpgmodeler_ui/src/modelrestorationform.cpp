@@ -17,11 +17,13 @@
 */
 
 #include "modelrestorationform.h"
+#include "pgmodeleruins.h"
 
 ModelRestorationForm::ModelRestorationForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
 
+  PgModelerUiNS::configureWidgetFont(message_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
   keep_models_ht=new HintTextWidget(keep_models_hint, this);
   keep_models_ht->setText(keep_models_chk->statusTip());
 

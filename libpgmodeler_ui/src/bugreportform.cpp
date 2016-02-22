@@ -20,6 +20,7 @@
 #include "exception.h"
 #include "globalattributes.h"
 #include "messagebox.h"
+#include "pgmodeleruins.h"
 
 const char BugReportForm::CHR_DELIMITER=static_cast<char>(3);
 
@@ -30,6 +31,8 @@ BugReportForm::BugReportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(paren
                  Qt::WindowTitleHint |
                  Qt::WindowMinMaxButtonsHint |
                  Qt::WindowCloseButtonHint);
+
+  PgModelerUiNS::configureWidgetFont(hint_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 
 	connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(close(void)));
 	connect(create_btn, SIGNAL(clicked(void)), this, SLOT(generateReport(void)));

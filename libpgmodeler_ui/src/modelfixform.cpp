@@ -19,6 +19,7 @@
 #include "modelfixform.h"
 #include "configurationform.h"
 #include <iostream>
+#include "pgmodeleruins.h"
 
 const QString ModelFixForm::PGMODELER_CLI=QString("pgmodeler-cli");
 
@@ -28,6 +29,10 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 
   setupUi(this);
   hideEvent(nullptr);
+
+  PgModelerUiNS::configureWidgetFont(invalid_cli_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
+  PgModelerUiNS::configureWidgetFont(message_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
+  PgModelerUiNS::configureWidgetFont(not_found_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 
   //Configuring font style for output widget
   if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT].isEmpty())
@@ -72,7 +77,7 @@ int ModelFixForm::exec(void)
 	//Show an warning if the cli command doesn't exists
 	if(!fi.exists())
 	{
-    msg_lbl->setText(trUtf8("Could not locate <strong>%1</strong> tool on <strong>%2</strong>. The fix process can't continue! Please check pgModeler installation or try to manually specify the command below.")
+    not_found_lbl->setText(trUtf8("Could not locate <strong>%1</strong> tool on <strong>%2</strong>. The fix process can't continue! Please check pgModeler installation or try to manually specify the command below.")
                      .arg(PGMODELER_CLI).arg(fi.absoluteDir().absolutePath()));
 		message_frm->setVisible(true);
 		pgmodeler_cli_lbl->setVisible(true);

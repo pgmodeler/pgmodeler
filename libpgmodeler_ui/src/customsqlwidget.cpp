@@ -17,6 +17,7 @@
 */
 
 #include "customsqlwidget.h"
+#include "pgmodeleruins.h"
 
 CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 {
@@ -46,6 +47,8 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 		comment_edt->setFont(font);
 		comment_edt->setReadOnly(true);
 		comment_lbl->setText(trUtf8("Type:"));
+
+    PgModelerUiNS::configureWidgetFont(message_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 
 		action_gen_insert=new QAction(trUtf8("Generic INSERT"), this);
     action_gen_insert->setObjectName(QString("action_gen_insert"));

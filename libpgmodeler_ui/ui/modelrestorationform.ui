@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>496</width>
-    <height>300</height>
+    <height>322</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -143,12 +143,10 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QLabel" name="label_3">
+          <widget class="QLabel" name="message_lbl">
            <property name="font">
             <font>
-             <pointsize>8</pointsize>
              <weight>50</weight>
-             <italic>true</italic>
              <bold>false</bold>
              <underline>false</underline>
              <strikeout>false</strikeout>
@@ -239,7 +237,7 @@
           <string>Database</string>
          </property>
          <property name="textAlignment">
-          <set>AlignLeft|AlignVCenter</set>
+          <set>AlignLeading|AlignVCenter</set>
          </property>
          <property name="icon">
           <iconset resource="../res/resources.qrc">
@@ -251,7 +249,7 @@
           <string>File</string>
          </property>
          <property name="textAlignment">
-          <set>AlignLeft|AlignVCenter</set>
+          <set>AlignLeading|AlignVCenter</set>
          </property>
          <property name="icon">
           <iconset resource="../res/resources.qrc">
@@ -263,7 +261,7 @@
           <string>Modified</string>
          </property>
          <property name="textAlignment">
-          <set>AlignLeft|AlignVCenter</set>
+          <set>AlignLeading|AlignVCenter</set>
          </property>
          <property name="icon">
           <iconset resource="../res/resources.qrc">
@@ -275,7 +273,7 @@
           <string>Size</string>
          </property>
          <property name="textAlignment">
-          <set>AlignLeft|AlignVCenter</set>
+          <set>AlignLeading|AlignVCenter</set>
          </property>
         </column>
        </widget>
@@ -310,7 +308,7 @@
      <property name="minimumSize">
       <size>
        <width>90</width>
-       <height>32</height>
+       <height>0</height>
       </size>
      </property>
      <property name="maximumSize">
@@ -328,8 +326,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>20</width>
-       <height>20</height>
+       <width>22</width>
+       <height>22</height>
       </size>
      </property>
      <property name="flat">
@@ -351,7 +349,7 @@
      <property name="minimumSize">
       <size>
        <width>90</width>
-       <height>32</height>
+       <height>0</height>
       </size>
      </property>
      <property name="maximumSize">
@@ -369,8 +367,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>20</width>
-       <height>20</height>
+       <width>22</width>
+       <height>22</height>
       </size>
      </property>
      <property name="default">

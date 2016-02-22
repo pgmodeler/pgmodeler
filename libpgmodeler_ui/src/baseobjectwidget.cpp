@@ -51,9 +51,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		owner_sel=nullptr;
 		tablespace_sel=nullptr;
 
-    QFont fnt=protected_obj_lbl->font();
-    fnt.setPointSizeF(fnt.pointSizeF() * PgModelerUiNS::SMALL_FONT_FACTOR);
-    protected_obj_lbl->setFont(fnt);
+    PgModelerUiNS::configureWidgetFont(protected_obj_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 
     parent_form=new BaseForm(nullptr, (Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::WindowSystemMenuHint));
 		parent_form->setWindowTitle(trUtf8("Create / Edit: ") + BaseObject::getTypeName(obj_type));
@@ -564,10 +562,11 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 
 	info_frm = new QFrame;
 
-  font.setPointSize(font.pointSizeF() * PgModelerUiNS::SMALL_FONT_FACTOR);
 	font.setItalic(false);
 	font.setBold(false);
 	info_frm->setFont(font);
+
+  PgModelerUiNS::configureWidgetFont(info_frm, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 
   info_frm->setObjectName("info_frm");
   info_frm->setFrameShape(QFrame::StyledPanel);
@@ -657,11 +656,10 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 
 
 	alert_frm = new QFrame;
-
-  font.setPointSize(font.pointSizeF() * PgModelerUiNS::SMALL_FONT_FACTOR);
 	font.setItalic(false);
 	font.setBold(false);
-	alert_frm->setFont(font);
+
+  PgModelerUiNS::configureWidgetFont(alert_frm, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 
   alert_frm->setObjectName("alerta_frm");
   alert_frm->setFrameShape(QFrame::StyledPanel);

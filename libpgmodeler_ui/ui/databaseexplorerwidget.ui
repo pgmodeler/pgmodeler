@@ -83,12 +83,6 @@
        <property name="enabled">
         <bool>true</bool>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>27</height>
-        </size>
-       </property>
        <property name="font">
         <font>
          <pointsize>8</pointsize>
@@ -175,12 +169,6 @@
        <property name="enabled">
         <bool>true</bool>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>30</width>
-         <height>29</height>
-        </size>
-       </property>
        <property name="toolTip">
         <string>Drop this database</string>
        </property>
@@ -193,8 +181,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>22</width>
+         <height>22</height>
         </size>
        </property>
       </widget>
@@ -333,12 +321,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>27</height>
-               </size>
-              </property>
               <property name="toolTip">
                <string>Expands all items</string>
               </property>
@@ -351,8 +333,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>20</width>
-                <height>20</height>
+                <width>22</width>
+                <height>22</height>
                </size>
               </property>
               <property name="checkable">
@@ -371,12 +353,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>27</height>
-               </size>
-              </property>
               <property name="toolTip">
                <string>Collapses all items</string>
               </property>
@@ -389,8 +365,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>20</width>
-                <height>20</height>
+                <width>22</width>
+                <height>22</height>
                </size>
               </property>
               <property name="checkable">

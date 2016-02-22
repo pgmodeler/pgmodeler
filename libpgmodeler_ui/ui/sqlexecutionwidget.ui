@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>831</width>
+    <width>905</width>
     <height>532</height>
    </rect>
   </property>
@@ -55,12 +55,6 @@
            <property name="enabled">
             <bool>true</bool>
            </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>27</height>
-            </size>
-           </property>
            <property name="toolTip">
             <string>Load SQL script</string>
            </property>
@@ -95,12 +89,6 @@
           <widget class="QToolButton" name="save_tb">
            <property name="enabled">
             <bool>false</bool>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>27</height>
-            </size>
            </property>
            <property name="toolTip">
             <string>Save SQL commands</string>
@@ -139,12 +127,6 @@
           <widget class="QToolButton" name="find_tb">
            <property name="enabled">
             <bool>false</bool>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>27</height>
-            </size>
            </property>
            <property name="toolTip">
             <string>Search in SQL code</string>
@@ -190,12 +172,6 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>27</height>
-            </size>
-           </property>
            <property name="toolTip">
             <string>Run the specified SQL command</string>
            </property>
@@ -225,12 +201,6 @@
            <property name="enabled">
             <bool>false</bool>
            </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>27</height>
-            </size>
-           </property>
            <property name="toolTip">
             <string>Clear sql input field and results</string>
            </property>
@@ -256,12 +226,6 @@
           <widget class="QToolButton" name="snippets_tb">
            <property name="enabled">
             <bool>true</bool>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>27</height>
-            </size>
            </property>
            <property name="toolTip">
             <string>Export results to a CSV file</string>
@@ -301,12 +265,6 @@
            <property name="enabled">
             <bool>false</bool>
            </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>27</height>
-            </size>
-           </property>
            <property name="toolTip">
             <string>Export results to a CSV file</string>
            </property>
@@ -342,12 +300,6 @@
            <property name="enabled">
             <bool>true</bool>
            </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>27</height>
-            </size>
-           </property>
            <property name="toolTip">
             <string>Toggles the output pane</string>
            </property>
@@ -382,12 +334,6 @@
           <widget class="QToolButton" name="history_tb">
            <property name="enabled">
             <bool>true</bool>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>27</height>
-            </size>
            </property>
            <property name="toolTip">
             <string>Shows the command history</string>
@@ -544,12 +490,6 @@
             <widget class="QToolButton" name="clear_history_btn">
              <property name="enabled">
               <bool>false</bool>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>27</height>
-              </size>
              </property>
              <property name="toolTip">
               <string>Clear sql input field and results.</string>

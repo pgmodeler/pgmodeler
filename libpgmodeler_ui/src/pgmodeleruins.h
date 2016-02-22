@@ -31,7 +31,11 @@
 #include "numberedtexteditor.h"
 
 namespace PgModelerUiNS {
-  static const float SMALL_FONT_FACTOR = 0.85f;
+  static const unsigned SMALL_FONT_FACTOR = 0,
+  MEDIUM_FONT_FACTOR = 1,
+  BIG_FONT_FACTOR = 2;
+
+  extern void configureWidgetFont(QWidget *widget, unsigned factor_id);
 
   /*! brief Creates a NumberedTextEditor instance automatically assigning it to 'parent'.
       This method will create a layout if 'parent' doesn't has one. If parent has a layout

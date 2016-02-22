@@ -1,4 +1,5 @@
 #include "swapobjectsidswidget.h"
+#include "pgmodeleruins.h"
 
 SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -8,6 +9,8 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
     vector<ObjectType> types=BaseObject::getObjectTypes(true, {OBJ_PERMISSION, OBJ_ROLE, OBJ_TEXTBOX,
                                                                OBJ_COLUMN, OBJ_CONSTRAINT });
     setupUi(this);
+
+    PgModelerUiNS::configureWidgetFont(message_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 
 		src_object_sel=nullptr;
 		dst_object_sel=nullptr;

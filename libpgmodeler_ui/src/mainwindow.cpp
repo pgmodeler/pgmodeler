@@ -352,15 +352,14 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
   QList<QAction *> actions=general_tb->actions();
   QToolButton *btn=nullptr;
-  QFont fnt=general_tb->font();
-  fnt.setPointSizeF(fnt.pointSizeF() * PgModelerUiNS::SMALL_FONT_FACTOR);
 
   for(auto &act : actions)
   {
     btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(act));
+
     if(btn)
     {
-      btn->setFont(fnt);
+      PgModelerUiNS::configureWidgetFont(btn, PgModelerUiNS::SMALL_FONT_FACTOR);
       btn->setGraphicsEffect(createDropShadow(btn));
     }
   }
@@ -925,8 +924,6 @@ void MainWindow::setCurrentModel(void)
 	{
     QToolButton *tool_btn=nullptr;
     QList<QToolButton *> btns;
-    QFont fnt;
-    fnt.setPointSizeF(fnt.pointSizeF() * PgModelerUiNS::SMALL_FONT_FACTOR);
 
 		current_model->setFocus(Qt::OtherFocusReason);
 		current_model->cancelObjectAddition();  
@@ -955,7 +952,7 @@ void MainWindow::setCurrentModel(void)
 
     for(QToolButton *btn : btns)
     {
-      btn->setFont(fnt);
+      PgModelerUiNS::configureWidgetFont(btn, PgModelerUiNS::SMALL_FONT_FACTOR);
       btn->setGraphicsEffect(createDropShadow(tool_btn));
     }
 

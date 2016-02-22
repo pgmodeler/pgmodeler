@@ -382,7 +382,7 @@
              <property name="spacing">
               <number>0</number>
              </property>
-             <item row="0" column="5">
+             <item row="0" column="6">
               <spacer name="horizontalSpacer_2">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -395,147 +395,7 @@
                </property>
               </spacer>
              </item>
-             <item row="0" column="7">
-              <widget class="QPushButton" name="objects_btn">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="toolTip">
-                <string>Toggle the model objects widget</string>
-               </property>
-               <property name="text">
-                <string>O&amp;bjects</string>
-               </property>
-               <property name="icon">
-                <iconset resource="../res/resources.qrc">
-                 <normaloff>:/icones/icones/tablespace.png</normaloff>:/icones/icones/tablespace.png</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>20</width>
-                 <height>20</height>
-                </size>
-               </property>
-               <property name="shortcut">
-                <string>Alt+B</string>
-               </property>
-               <property name="checkable">
-                <bool>true</bool>
-               </property>
-               <property name="flat">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QPushButton" name="validation_btn">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="toolTip">
-                <string>Toogle the model validation widgets</string>
-               </property>
-               <property name="text">
-                <string>&amp;Validation</string>
-               </property>
-               <property name="icon">
-                <iconset resource="../res/resources.qrc">
-                 <normaloff>:/icones/icones/validation.png</normaloff>:/icones/icones/validation.png</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>20</width>
-                 <height>20</height>
-                </size>
-               </property>
-               <property name="shortcut">
-                <string>Alt+V</string>
-               </property>
-               <property name="checkable">
-                <bool>true</bool>
-               </property>
-               <property name="flat">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="6">
-              <widget class="QPushButton" name="operations_btn">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="toolTip">
-                <string>Toggle the operation history widget</string>
-               </property>
-               <property name="text">
-                <string>&amp;Operations</string>
-               </property>
-               <property name="icon">
-                <iconset resource="../res/resources.qrc">
-                 <normaloff>:/icones/icones/funcao.png</normaloff>:/icones/icones/funcao.png</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>20</width>
-                 <height>20</height>
-                </size>
-               </property>
-               <property name="shortcut">
-                <string>Alt+O</string>
-               </property>
-               <property name="checkable">
-                <bool>true</bool>
-               </property>
-               <property name="flat">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="2">
-              <widget class="QPushButton" name="find_obj_btn">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="toolTip">
-                <string>Toggle the object finder</string>
-               </property>
-               <property name="text">
-                <string>Find Object</string>
-               </property>
-               <property name="icon">
-                <iconset resource="../res/resources.qrc">
-                 <normaloff>:/icones/icones/buscar.png</normaloff>:/icones/icones/buscar.png</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>20</width>
-                 <height>20</height>
-                </size>
-               </property>
-               <property name="shortcut">
-                <string>Ctrl+F</string>
-               </property>
-               <property name="checkable">
-                <bool>true</bool>
-               </property>
-               <property name="flat">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="3">
+             <item row="0" column="4">
               <spacer name="horizontalSpacer">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -548,7 +408,7 @@
                </property>
               </spacer>
              </item>
-             <item row="0" column="4">
+             <item row="0" column="5">
               <widget class="QWidget" name="bg_saving_wgt" native="true">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -570,59 +430,207 @@
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QLabel" name="bg_saving_lbl">
-                  <property name="text">
-                   <string>Saving temp. models</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QProgressBar" name="bg_saving_pb">
-                  <property name="maximumSize">
-                   <size>
-                    <width>16777215</width>
-                    <height>16</height>
-                   </size>
-                  </property>
-                  <property name="value">
-                   <number>24</number>
-                  </property>
-                 </widget>
+                 <layout class="QHBoxLayout" name="horizontalLayout_5">
+                  <item>
+                   <widget class="QLabel" name="bg_saving_lbl">
+                    <property name="text">
+                     <string>Saving temp. models</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QProgressBar" name="bg_saving_pb">
+                    <property name="maximumSize">
+                     <size>
+                      <width>16777215</width>
+                      <height>16</height>
+                     </size>
+                    </property>
+                    <property name="value">
+                     <number>24</number>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </item>
                </layout>
               </widget>
              </item>
-             <item row="0" column="0">
-              <spacer name="horizontalSpacer_3">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
+             <item row="0" column="0" colspan="2">
+              <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <property name="spacing">
+                <number>6</number>
                </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Fixed</enum>
+               <property name="leftMargin">
+                <number>3</number>
                </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>3</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
+               <item>
+                <widget class="QToolButton" name="validation_btn">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string>Toogle the model validation widgets</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Validation</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../res/resources.qrc">
+                   <normaloff>:/icones/icones/validation.png</normaloff>:/icones/icones/validation.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="shortcut">
+                  <string>Alt+V</string>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="toolButtonStyle">
+                  <enum>Qt::ToolButtonTextBesideIcon</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QToolButton" name="find_obj_btn">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string>Toggle the object finder</string>
+                 </property>
+                 <property name="text">
+                  <string>Find Object</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../res/resources.qrc">
+                   <normaloff>:/icones/icones/buscar.png</normaloff>:/icones/icones/buscar.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="shortcut">
+                  <string>Ctrl+F</string>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="toolButtonStyle">
+                  <enum>Qt::ToolButtonTextBesideIcon</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
-             <item row="0" column="8">
-              <spacer name="horizontalSpacer_4">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
+             <item row="0" column="9">
+              <layout class="QHBoxLayout" name="horizontalLayout_4">
+               <property name="spacing">
+                <number>0</number>
                </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Fixed</enum>
+               <property name="rightMargin">
+                <number>3</number>
                </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>3</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
+               <item>
+                <widget class="QToolButton" name="operations_btn">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string>Toggle the operation history widget</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Operations</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../res/resources.qrc">
+                   <normaloff>:/icones/icones/funcao.png</normaloff>:/icones/icones/funcao.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="shortcut">
+                  <string>Alt+O</string>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="toolButtonStyle">
+                  <enum>Qt::ToolButtonTextBesideIcon</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_3">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeType">
+                  <enum>QSizePolicy::Fixed</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>6</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QToolButton" name="objects_btn">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string>Toggle the model objects widget</string>
+                 </property>
+                 <property name="text">
+                  <string>O&amp;bjects</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../res/resources.qrc">
+                   <normaloff>:/icones/icones/tablespace.png</normaloff>:/icones/icones/tablespace.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="shortcut">
+                  <string>Alt+B</string>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="toolButtonStyle">
+                  <enum>Qt::ToolButtonTextBesideIcon</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
            </widget>
@@ -1425,10 +1433,6 @@
  </widget>
  <tabstops>
   <tabstop>models_tbw</tabstop>
-  <tabstop>validation_btn</tabstop>
-  <tabstop>find_obj_btn</tabstop>
-  <tabstop>operations_btn</tabstop>
-  <tabstop>objects_btn</tabstop>
  </tabstops>
  <resources>
   <include location="../res/resources.qrc"/>

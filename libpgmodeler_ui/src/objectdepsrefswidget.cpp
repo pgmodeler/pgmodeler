@@ -17,11 +17,14 @@
 */
 
 #include "objectdepsrefswidget.h"
+#include "pgmodeleruins.h"
 
 ObjectDepsRefsWidget::ObjectDepsRefsWidget(QWidget *parent): BaseObjectWidget(parent)
 {
 	Ui_ObjectDepsRefsWidget::setupUi(this);
 	configureFormLayout(objectdepsrefs_grid, BASE_OBJECT);
+
+  PgModelerUiNS::configureWidgetFont(message_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 
   model_wgt=nullptr;
   parent_form->setWindowTitle(trUtf8("Object's dependencies & references"));

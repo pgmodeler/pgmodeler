@@ -49,10 +49,8 @@ HintTextWidget::HintTextWidget(QWidget *btn_parent, QWidget *parent): QWidget(pa
 
   this->setVisible(false);
   text_lbl->installEventFilter(this);
+  PgModelerUiNS::configureWidgetFont(text_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 
-  QFont fnt=text_lbl->font();
-  fnt.setPointSizeF(fnt.pointSizeF() * PgModelerUiNS::SMALL_FONT_FACTOR);
-  text_lbl->setFont(fnt);
   parent->installEventFilter(this);
 
   setIconSize(SMALL_ICON);

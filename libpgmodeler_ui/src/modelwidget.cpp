@@ -111,8 +111,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	protected_model_frm->setVisible(false);
 
 	label=new QLabel(protected_model_frm);
-	label->setMinimumSize(QSize(32, 32));
-	label->setMaximumSize(QSize(32, 32));
+  label->setMinimumSize(QSize(32, 32));
+  label->setMaximumSize(QSize(32, 32));
   label->setPixmap(QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
 
   grid=new QGridLayout;
@@ -120,7 +120,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	label=new QLabel(protected_model_frm);
 
-	font.setPointSize(9);
 	font.setBold(false);
 	font.setItalic(false);
 	font.setUnderline(false);
@@ -130,9 +129,11 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	label->setFont(font);
 	label->setWordWrap(true);
 	label->setText(trUtf8("<strong>ATTENTION:</strong> The database model is protected! Operations that could modify it are disabled!"));
+  PgModelerUiNS::configureWidgetFont(label, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 
-	grid->addWidget(label, 0, 1, 1, 1);
+  grid->addWidget(label, 0, 1, 1, 1);
 	protected_model_frm->setLayout(grid);
+  protected_model_frm->adjustSize();
 
   db_model=new DatabaseModel(this);
 	xmlparser=db_model->getXMLParser();

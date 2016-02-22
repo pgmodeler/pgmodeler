@@ -172,4 +172,17 @@ QString formatMessage(const QString &msg)
   return(fmt_msg);
 }
 
+void configureWidgetFont(QWidget *widget, unsigned factor_id)
+{
+  if(!widget)
+    return;
+
+  QFont font=widget->font();
+  float factor = 1;
+
+  factor = (factor_id == SMALL_FONT_FACTOR ? 0.80f : (factor_id == MEDIUM_FONT_FACTOR ? 0.90f : 1.10f));
+  font.setPointSizeF(font.pointSizeF() * factor);
+  widget->setFont(font);
+}
+
 }
