@@ -118,9 +118,9 @@ void Element::configureAttributes(attribs_map &attributes, unsigned def_type)
 bool Element::operator == (Element &elem)
 {
 	return(this->column == elem.column &&
-				 this->expression == elem.expression &&
-				 this->operator_class == elem.operator_class &&
-				 this->sorting_enabled == elem.sorting_enabled &&
-				 this->sorting_attibs[ASC_ORDER] == elem.sorting_attibs[ASC_ORDER] &&
-				 this->sorting_attibs[NULLS_FIRST] == elem.sorting_attibs[NULLS_FIRST]);
+		   this->expression == elem.expression &&
+		   this->operator_class == elem.operator_class &&
+		   this->sorting_enabled == elem.sorting_enabled &&
+		   this->sorting_attibs[ASC_ORDER] == elem.sorting_attibs[ASC_ORDER] &&
+		   this->sorting_attibs[NULLS_FIRST] == elem.sorting_attibs[NULLS_FIRST]);
 }

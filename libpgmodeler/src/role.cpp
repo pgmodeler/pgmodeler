@@ -53,7 +53,7 @@ void Role::setOption(unsigned op_type, bool value)
 		throw Exception(ERR_ASG_VAL_INV_ROLE_OPT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(options[op_type] != value);
-  options[op_type]=value;
+	options[op_type]=value;
 }
 
 void Role::addRole(unsigned role_type, Role *role)
@@ -64,8 +64,8 @@ void Role::addRole(unsigned role_type, Role *role)
 	//Raises an error if the role to be added is the 'this' role
 	else if(role && this==role)
 		throw Exception(Exception::getErrorMessage(ERR_ROLE_MEMBER_ITSELF)
-                    .arg(role->getName()),
-										ERR_ROLE_MEMBER_ITSELF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						.arg(role->getName()),
+						ERR_ROLE_MEMBER_ITSELF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
 		bool role_ref, role_mem, role_adm,
@@ -84,12 +84,12 @@ void Role::addRole(unsigned role_type, Role *role)
 
 		//Raises an error if the role already exists in one of the internal list
 		if((role_type==REF_ROLE && role_ref) ||
-			 (role_type==MEMBER_ROLE && (role_mem || role_adm)) ||
-			 (role_type==ADMIN_ROLE && (role_adm || role_mem)))
+				(role_type==MEMBER_ROLE && (role_mem || role_adm)) ||
+				(role_type==ADMIN_ROLE && (role_adm || role_mem)))
 			throw Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_ROLE)
-                      .arg(role->getName())
-                      .arg(this->getName()),
-											ERR_INS_DUPLIC_ROLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							.arg(role->getName())
+							.arg(this->getName()),
+							ERR_INS_DUPLIC_ROLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		/* Checking for redundant reference between roles.
 			A redundant reference can happen when:
@@ -114,12 +114,12 @@ void Role::addRole(unsigned role_type, Role *role)
 				 and the user try to add the object 'role' as an element of the 'member_roles' list
 				 of the role 'this' */
 		else if((role_type==REF_ROLE && ((role_mem || role_adm) || role_ref1)) ||
-						(role_type==MEMBER_ROLE && ((role_mem1 || role_adm1) || role_ref)) ||
-						(role_type==ADMIN_ROLE &&  ((role_mem1 || role_adm1) || role_ref)))
+				(role_type==MEMBER_ROLE && ((role_mem1 || role_adm1) || role_ref)) ||
+				(role_type==ADMIN_ROLE &&  ((role_mem1 || role_adm1) || role_ref)))
 			throw Exception(Exception::getErrorMessage(ERR_ROLE_REF_REDUNDANCY)
-                      .arg(this->getName())
-                      .arg(role->getName()),
-											ERR_ROLE_REF_REDUNDANCY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							.arg(this->getName())
+							.arg(role->getName()),
+							ERR_ROLE_REF_REDUNDANCY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else
 		{
 			switch(role_type)
@@ -182,7 +182,7 @@ void Role::setRoleAttribute(unsigned role_type)
 	for(i=0; i < count; i++)
 	{
 		str_roles+=roles_vect->at(i)->getName(true);
-    if(i < (count-1)) str_roles+=QString(",");
+		if(i < (count-1)) str_roles+=QString(",");
 	}
 
 	attributes[attrib]=str_roles;
@@ -329,9 +329,9 @@ QString Role::getCodeDefinition(unsigned def_type)
 
 	unsigned i;
 	QString op_attribs[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
-												 ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,
-												 ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED,
-												 ParsersAttributes::REPLICATION };
+						   ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,
+						   ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED,
+						   ParsersAttributes::REPLICATION };
 
 	setRoleAttribute(REF_ROLE);
 	setRoleAttribute(MEMBER_ROLE);
@@ -351,40 +351,40 @@ QString Role::getCodeDefinition(unsigned def_type)
 
 QString Role::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
 {
-  Role *role=dynamic_cast<Role *>(object);
+	Role *role=dynamic_cast<Role *>(object);
 
-  if(!role)
-    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(!role)
+		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  try
-  {
-    attribs_map attribs;
-    QString op_attribs[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
-                           ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,
-                           ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED,
-                           ParsersAttributes::REPLICATION };
+	try
+	{
+		attribs_map attribs;
+		QString op_attribs[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
+							   ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,
+							   ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED,
+							   ParsersAttributes::REPLICATION };
 
-    attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object, ignore_name_diff);
+		attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object, ignore_name_diff);
 
-    if(this->password!=role->password)
-      attribs[ParsersAttributes::PASSWORD]=role->password;
+		if(this->password!=role->password)
+			attribs[ParsersAttributes::PASSWORD]=role->password;
 
-    if(this->validity!=role->validity)
-      attribs[ParsersAttributes::VALIDITY]=role->validity;
+		if(this->validity!=role->validity)
+			attribs[ParsersAttributes::VALIDITY]=role->validity;
 
-    for(unsigned i=0; i <= OP_REPLICATION; i++)
-    {
-      if((attribs.count(ParsersAttributes::PASSWORD) && i==OP_ENCRYPTED) ||
-         this->options[i]!=role->options[i])
-        attribs[op_attribs[i]]=(role->options[i] ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
-    }
+		for(unsigned i=0; i <= OP_REPLICATION; i++)
+		{
+			if((attribs.count(ParsersAttributes::PASSWORD) && i==OP_ENCRYPTED) ||
+					this->options[i]!=role->options[i])
+				attribs[op_attribs[i]]=(role->options[i] ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+		}
 
-    copyAttributes(attribs);
+		copyAttributes(attribs);
 
-    return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
-  }
-  catch(Exception &e)
-  {
-    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-  }
+		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
 }

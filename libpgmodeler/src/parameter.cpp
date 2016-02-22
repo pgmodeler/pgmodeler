@@ -21,7 +21,7 @@
 Parameter::Parameter(void)
 {
 	obj_type=OBJ_PARAMETER;
-  is_in=is_out=is_variadic=false;
+	is_in=is_out=is_variadic=false;
 }
 
 void Parameter::setType(PgSQLType type)

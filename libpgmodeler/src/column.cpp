@@ -26,9 +26,9 @@ Column::Column(void)
 	attributes[ParsersAttributes::DEFAULT_VALUE]=QString();
 	attributes[ParsersAttributes::NOT_NULL]=QString();
 	attributes[ParsersAttributes::TABLE]=QString();
-  attributes[ParsersAttributes::SEQUENCE]=QString();
+	attributes[ParsersAttributes::SEQUENCE]=QString();
 	attributes[ParsersAttributes::DECL_IN_TABLE]=QString();
-  parent_rel=sequence=nullptr;
+	parent_rel=sequence=nullptr;
 }
 
 void Column::setName(const QString &name)
@@ -67,7 +67,7 @@ void Column::setDefaultValue(const QString &value)
 {
 	setCodeInvalidated(default_value != value);
 	default_value=value.trimmed();
-  sequence=nullptr;
+	sequence=nullptr;
 }
 
 void Column::setNotNull(bool value)
@@ -89,9 +89,9 @@ bool Column::isNotNull(void)
 QString Column::getTypeReference(void)
 {
 	if(getParentTable())
-    return(getParentTable()->getName(true) + QString(".") + this->getName(true) + QString("%TYPE"));
+		return(getParentTable()->getName(true) + QString(".") + this->getName(true) + QString("%TYPE"));
 	else
-    return(QString());
+		return(QString());
 }
 
 QString Column::getDefaultValue(void)
@@ -117,35 +117,35 @@ void Column::setParentRelationship(BaseObject *parent_rel)
 
 BaseObject *Column::getParentRelationship(void)
 {
-  return(parent_rel);
+	return(parent_rel);
 }
 
 void Column::setSequence(BaseObject *seq)
 {
-  if(seq)
-  {
-    if(seq->getObjectType()!=OBJ_SEQUENCE)
-      throw Exception(Exception::getErrorMessage(ERR_ASG_INV_OBJECT_TYPE)
-                      .arg(this->obj_name)
-                      .arg(this->getTypeName())
-                      .arg(BaseObject::getTypeName(OBJ_SEQUENCE)),
-                      ERR_INCOMP_COL_TYPE_FOR_SEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-    else if(!type.isIntegerType())
-      throw Exception(Exception::getErrorMessage(ERR_INCOMP_COL_TYPE_FOR_SEQ)
-                      .arg(seq->getName(true))
-                      .arg(this->obj_name),
-                      ERR_INCOMP_COL_TYPE_FOR_SEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(seq)
+	{
+		if(seq->getObjectType()!=OBJ_SEQUENCE)
+			throw Exception(Exception::getErrorMessage(ERR_ASG_INV_OBJECT_TYPE)
+							.arg(this->obj_name)
+							.arg(this->getTypeName())
+							.arg(BaseObject::getTypeName(OBJ_SEQUENCE)),
+							ERR_INCOMP_COL_TYPE_FOR_SEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		else if(!type.isIntegerType())
+			throw Exception(Exception::getErrorMessage(ERR_INCOMP_COL_TYPE_FOR_SEQ)
+							.arg(seq->getName(true))
+							.arg(this->obj_name),
+							ERR_INCOMP_COL_TYPE_FOR_SEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-    default_value=QString();
-  }
+		default_value=QString();
+	}
 
 	setCodeInvalidated(sequence != seq);
-  sequence=seq;
+	sequence=seq;
 }
 
 BaseObject *Column::getSequence(void)
 {
-  return(sequence);
+	return(sequence);
 }
 
 QString Column::getCodeDefinition(unsigned def_type)
@@ -153,71 +153,71 @@ QString Column::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-  if(getParentTable())
-    attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
+	if(getParentTable())
+		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
-  attributes[ParsersAttributes::TYPE]=type.getCodeDefinition(def_type);
+	attributes[ParsersAttributes::TYPE]=type.getCodeDefinition(def_type);
 
-  attributes[ParsersAttributes::DEFAULT_VALUE]=QString();
+	attributes[ParsersAttributes::DEFAULT_VALUE]=QString();
 
-  if(!sequence)
-    attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
-  else
-  {
-    //Configuring the default value of the column to get the next value of the sequence
-    if(def_type==SchemaParser::SQL_DEFINITION)
-      attributes[ParsersAttributes::DEFAULT_VALUE]=QString("nextval('%1'::regclass)").arg(sequence->getSignature());//.remove("\""));
+	if(!sequence)
+		attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
+	else
+	{
+		//Configuring the default value of the column to get the next value of the sequence
+		if(def_type==SchemaParser::SQL_DEFINITION)
+			attributes[ParsersAttributes::DEFAULT_VALUE]=QString("nextval('%1'::regclass)").arg(sequence->getSignature());//.remove("\""));
 
-    attributes[ParsersAttributes::SEQUENCE]=sequence->getName(true);
-  }
+		attributes[ParsersAttributes::SEQUENCE]=sequence->getName(true);
+	}
 
-  attributes[ParsersAttributes::NOT_NULL]=(!not_null ? QString() : ParsersAttributes::_TRUE_);
-  attributes[ParsersAttributes::DECL_IN_TABLE]=(isDeclaredInTable() ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::NOT_NULL]=(!not_null ? QString() : ParsersAttributes::_TRUE_);
+	attributes[ParsersAttributes::DECL_IN_TABLE]=(isDeclaredInTable() ? ParsersAttributes::_TRUE_ : QString());
 
-  return(BaseObject::__getCodeDefinition(def_type));
+	return(BaseObject::__getCodeDefinition(def_type));
 }
 
 QString Column::getAlterDefinition(BaseObject *object)
 {
-  Column *col=dynamic_cast<Column *>(object);
+	Column *col=dynamic_cast<Column *>(object);
 
-  if(!col)
-    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(!col)
+		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  try
-  {
-    attribs_map attribs;
-    QString def_val;
+	try
+	{
+		attribs_map attribs;
+		QString def_val;
 
-    BaseObject::setBasicAttributes(true);
+		BaseObject::setBasicAttributes(true);
 
-    if(getParentTable())
-      attribs[ParsersAttributes::TABLE]=getParentTable()->getName(true);
+		if(getParentTable())
+			attribs[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
-    if(!this->type.isEquivalentTo(col->type) ||
-       (this->type==col->type &&
-        (this->type.hasVariableLength() || this->type.acceptsPrecision()) &&
-         ((this->type.getLength()!=col->type.getLength()) || (this->type.getPrecision()!=col->type.getPrecision()))))
-      attribs[ParsersAttributes::TYPE]=col->type.getCodeDefinition(SchemaParser::SQL_DEFINITION);
+		if(!this->type.isEquivalentTo(col->type) ||
+				(this->type==col->type &&
+				 (this->type.hasVariableLength() || this->type.acceptsPrecision()) &&
+				 ((this->type.getLength()!=col->type.getLength()) || (this->type.getPrecision()!=col->type.getPrecision()))))
+			attribs[ParsersAttributes::TYPE]=col->type.getCodeDefinition(SchemaParser::SQL_DEFINITION);
 
-    if(col->sequence)
-      def_val=QString("nextval('%1'::regclass)").arg(col->sequence->getSignature());
-    else
-      def_val=col->default_value;
+		if(col->sequence)
+			def_val=QString("nextval('%1'::regclass)").arg(col->sequence->getSignature());
+		else
+			def_val=col->default_value;
 
-    if(this->default_value!=def_val)
-      attribs[ParsersAttributes::DEFAULT_VALUE]=(def_val.isEmpty() ? ParsersAttributes::UNSET : def_val);
+		if(this->default_value!=def_val)
+			attribs[ParsersAttributes::DEFAULT_VALUE]=(def_val.isEmpty() ? ParsersAttributes::UNSET : def_val);
 
-    if(this->not_null!=col->not_null)
-      attribs[ParsersAttributes::NOT_NULL]=(!col->not_null ? ParsersAttributes::UNSET : ParsersAttributes::_TRUE_);
+		if(this->not_null!=col->not_null)
+			attribs[ParsersAttributes::NOT_NULL]=(!col->not_null ? ParsersAttributes::UNSET : ParsersAttributes::_TRUE_);
 
-    copyAttributes(attribs);
-    return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
-  }
-  catch(Exception &e)
-  {
-    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-  }
+		copyAttributes(attribs);
+		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
 }
 
 void Column::operator = (Column &col)
@@ -233,7 +233,7 @@ void Column::operator = (Column &col)
 
 	this->not_null=col.not_null;
 	this->parent_rel=col.parent_rel;
-  this->sequence=col.sequence;
+	this->sequence=col.sequence;
 
 	this->setParentTable(col.getParentTable());
 	this->setAddedByCopy(false);

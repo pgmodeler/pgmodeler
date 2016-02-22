@@ -57,8 +57,8 @@ class EventTrigger: public BaseObject {
 		Function *getFunction(void);
 		QStringList getFilter(const QString &variable);
 
-    virtual QString getCodeDefinition(unsigned def_type) final;
-    virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getAlterDefinition(BaseObject *object) final;
 };
 
 #endif

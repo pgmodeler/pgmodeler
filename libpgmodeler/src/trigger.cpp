@@ -22,7 +22,7 @@ Trigger::Trigger(void)
 {
 	unsigned i;
 	EventType tipos[4]={EventType::on_insert, EventType::on_delete,
-											EventType::on_update, EventType::on_truncate};
+						EventType::on_update, EventType::on_truncate};
 
 	function=nullptr;
 	is_exec_per_row=is_constraint=is_deferrable=false;
@@ -65,11 +65,11 @@ void Trigger::setArgumentAttribute(unsigned def_type)
 	for(i=0; i < count; i++)
 	{
 		if(def_type==SchemaParser::SQL_DEFINITION)
-      str_args+=QString("'") + arguments[i] + QString("'");
+			str_args+=QString("'") + arguments[i] + QString("'");
 		else
 			str_args+=arguments[i];
 
-    if(i < (count-1)) str_args+=QString(",");
+		if(i < (count-1)) str_args+=QString(",");
 	}
 
 	attributes[ParsersAttributes::ARGUMENTS]=str_args;
@@ -95,20 +95,20 @@ void Trigger::setFunction(Function *func)
 	//Case the function is null an error is raised
 	if(!func)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
-                    .arg(this->getName())
-										.arg(BaseObject::getTypeName(OBJ_TRIGGER)),
-										ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						.arg(this->getName())
+						.arg(BaseObject::getTypeName(OBJ_TRIGGER)),
+						ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
 		//Case the function doesn't returns 'trigger' it cannot be used with the trigger thus raise an error
-    if(func->getReturnType()!=QString("trigger"))
-      throw Exception(Exception::getErrorMessage(ERR_ASG_INV_TRIGGER_FUNCTION).arg(QString("trigger")),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		if(func->getReturnType()!=QString("trigger"))
+			throw Exception(Exception::getErrorMessage(ERR_ASG_INV_TRIGGER_FUNCTION).arg(QString("trigger")),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		//Case the function has some parameters raise an error
 		else if(func->getParameterCount()!=0)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
-                      .arg(this->getName())
-											.arg(BaseObject::getTypeName(OBJ_TRIGGER)),
-											ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							.arg(this->getName())
+							.arg(BaseObject::getTypeName(OBJ_TRIGGER)),
+							ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		setCodeInvalidated(function != func);
 		this->function=func;
@@ -125,20 +125,20 @@ void Trigger::addColumn(Column *column)
 {
 	if(!column)
 		throw Exception(QString(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN))
-										.arg(this->getName(true))
-										.arg(this->getTypeName()),
-										ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						.arg(this->getName(true))
+						.arg(this->getTypeName()),
+						ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(!column->getParentTable())
 		throw Exception(QString(Exception::getErrorMessage(ERR_ASG_COLUMN_NO_PARENT))
-										.arg(this->getName(true))
-										.arg(this->getTypeName()),
-										ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						.arg(this->getName(true))
+						.arg(this->getTypeName()),
+						ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(this->getParentTable() &&
-					column->getParentTable() != this->getParentTable())
+			column->getParentTable() != this->getParentTable())
 		throw Exception(QString(Exception::getErrorMessage(ERR_ASG_INV_COLUMN_TRIGGER))
-										.arg(column->getName(true))
-										.arg(this->getName(true)),
-										ERR_ASG_INV_COLUMN_TRIGGER,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						.arg(column->getName(true))
+						.arg(this->getName(true)),
+						ERR_ASG_INV_COLUMN_TRIGGER,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	upd_columns.push_back(column);
 	setCodeInvalidated(true);
@@ -308,30 +308,30 @@ bool Trigger::isReferRelationshipAddedColumn(void)
 		itr++;
 	}
 
-  return(enc);
+	return(enc);
 }
 
 vector<Column *> Trigger::getRelationshipAddedColumns(void)
 {
-  vector<Column *> cols;
+	vector<Column *> cols;
 
-  for(auto &col : upd_columns)
-  {
-    if(col->isAddedByRelationship())
-      cols.push_back(col);
-  }
+	for(auto &col : upd_columns)
+	{
+		if(col->isAddedByRelationship())
+			cols.push_back(col);
+	}
 
-  return(cols);
+	return(cols);
 }
 
 void Trigger::setBasicAttributes(unsigned def_type)
 {
 	QString str_aux,
 			attribs[4]={ParsersAttributes::INS_EVENT, ParsersAttributes::DEL_EVENT,
-									ParsersAttributes::TRUNC_EVENT, ParsersAttributes::UPD_EVENT },
+						ParsersAttributes::TRUNC_EVENT, ParsersAttributes::UPD_EVENT },
 			sql_event[4]={"INSERT OR ", "DELETE OR ", "TRUNCATE OR ", "UPDATE   "};
 	unsigned count, i, i1, event_types[4]={EventType::on_insert, EventType::on_delete,
-																				 EventType::on_truncate, EventType::on_update};
+										   EventType::on_truncate, EventType::on_update};
 
 
 	setArgumentAttribute(def_type);
@@ -341,7 +341,7 @@ void Trigger::setBasicAttributes(unsigned def_type)
 		if(events.at(event_types[i]))
 		{
 			str_aux+=sql_event[i];
-      attributes[attribs[i]]=ParsersAttributes::_TRUE_;
+			attributes[attribs[i]]=ParsersAttributes::_TRUE_;
 
 			if(event_types[i]==EventType::on_update)
 			{
@@ -352,16 +352,16 @@ void Trigger::setBasicAttributes(unsigned def_type)
 				{
 					attributes[ParsersAttributes::COLUMNS]+=upd_columns.at(i1)->getName(true);
 					if(i1 < count-1)
-            attributes[ParsersAttributes::COLUMNS]+=QString(",");
+						attributes[ParsersAttributes::COLUMNS]+=QString(",");
 				}
 			}
 		}
 	}
 
-  if(!str_aux.isEmpty()) str_aux.remove(str_aux.size()-3,3);
+	if(!str_aux.isEmpty()) str_aux.remove(str_aux.size()-3,3);
 
 	if(def_type==SchemaParser::SQL_DEFINITION && !attributes[ParsersAttributes::COLUMNS].isEmpty())
-    str_aux+=QString(" OF ") + attributes[ParsersAttributes::COLUMNS];
+		str_aux+=QString(" OF ") + attributes[ParsersAttributes::COLUMNS];
 
 	attributes[ParsersAttributes::EVENTS]=str_aux;
 
@@ -384,7 +384,7 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 	/* Case the trigger doesn't referece some column added by relationship it will be declared
 		inside the parent table construction by the use of 'decl-in-table' schema attribute */
 	if(!isReferRelationshipAddedColumn())
-    attributes[ParsersAttributes::DECL_IN_TABLE]=ParsersAttributes::_TRUE_;
+		attributes[ParsersAttributes::DECL_IN_TABLE]=ParsersAttributes::_TRUE_;
 
 	if(getParentTable())
 		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
@@ -400,10 +400,10 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 	if(referenced_table)
 		attributes[ParsersAttributes::REF_TABLE]=referenced_table->getName(true);
 
-  attributes[ParsersAttributes::DEFERRABLE]=(is_deferrable ? ParsersAttributes::_TRUE_ : QString());
-  attributes[ParsersAttributes::DEFER_TYPE]=(~deferral_type);
+	attributes[ParsersAttributes::DEFERRABLE]=(is_deferrable ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::DEFER_TYPE]=(~deferral_type);
 
-  return(BaseObject::__getCodeDefinition(def_type));
+	return(BaseObject::__getCodeDefinition(def_type));
 }
 
 void Trigger::validateTrigger(void)
@@ -449,8 +449,8 @@ void Trigger::validateTrigger(void)
 
 QString Trigger::getSignature(bool format)
 {
-  if(!getParentTable())
-    return(BaseObject::getSignature(format));
+	if(!getParentTable())
+		return(BaseObject::getSignature(format));
 
-  return(QString("%1 ON %2").arg(this->getName(format)).arg(getParentTable()->getSignature(true)));
+	return(QString("%1 ON %2").arg(this->getName(format)).arg(getParentTable()->getSignature(true)));
 }

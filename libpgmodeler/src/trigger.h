@@ -167,11 +167,11 @@ class Trigger: public TableObject{
 		 connections and disconnections of relationships */
 		bool isReferRelationshipAddedColumn(void);
 
-    /*! brief Returns the list of all columns that is created by relationships.
-    This method is slower than isReferRelationshipAddedColumn() so it's not
-    recommended to use it only check if the object is referencing columns
-    added by relationship */
-    vector<Column *> getRelationshipAddedColumns(void);
+		/*! brief Returns the list of all columns that is created by relationships.
+	This method is slower than isReferRelationshipAddedColumn() so it's not
+	recommended to use it only check if the object is referencing columns
+	added by relationship */
+		vector<Column *> getRelationshipAddedColumns(void);
 
 		//! \brief Returns the SQL / XML definition for the trigger
 		virtual QString getCodeDefinition(unsigned def_type) final;
@@ -181,7 +181,7 @@ class Trigger: public TableObject{
 		Normally the user don't need to call it explicitly */
 		void validateTrigger(void);
 
-    virtual QString getSignature(bool format=true) final;
+		virtual QString getSignature(bool format=true) final;
 };
 
 #endif
