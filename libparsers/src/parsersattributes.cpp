@@ -97,6 +97,7 @@ namespace ParsersAttributes {
 	CONNECT_PRIV=QString("connect"),
 	CONNECTION=QString("connection"),
 	CONNECTIONS=QString("connections"),
+	CONNECTION_TIMEOUT=QString("connection-timeout"),
 	CONSTR_INDEXES=QString("constr-indexes"),
 	CONSTR_SQL_DISABLED=QString("constr-sql-disabled"),
 	CONSTRAINT=QString("constraint"),

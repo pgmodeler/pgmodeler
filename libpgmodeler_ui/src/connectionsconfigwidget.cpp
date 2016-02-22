@@ -120,7 +120,7 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 			conn->setConnectionParam(Connection::PARAM_USER, itr->second[Connection::PARAM_USER]);
 			conn->setConnectionParam(Connection::PARAM_PASSWORD,itr->second[Connection::PARAM_PASSWORD]);
 			conn->setConnectionParam(Connection::PARAM_DB_NAME, itr->second[Connection::PARAM_DB_NAME]);
-			conn->setConnectionParam(Connection::PARAM_CONN_TIMEOUT, itr->second[Connection::PARAM_CONN_TIMEOUT]);
+			conn->setConnectionParam(Connection::PARAM_CONN_TIMEOUT, itr->second[ParsersAttributes::CONNECTION_TIMEOUT]);
 			conn->setConnectionParam(Connection::PARAM_SSL_MODE, itr->second[Connection::PARAM_SSL_MODE]);
 			conn->setConnectionParam(Connection::PARAM_SSL_ROOT_CERT, itr->second[Connection::PARAM_SSL_ROOT_CERT]);
 			conn->setConnectionParam(Connection::PARAM_SSL_CERT, itr->second[Connection::PARAM_SSL_CERT]);
@@ -466,6 +466,7 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 
 				attribs[ParsersAttributes::ALIAS]=attribs[Connection::PARAM_ALIAS];
 				attribs[ParsersAttributes::AUTO_BROWSE_DB]=(conn->isAutoBrowseDB() ? ParsersAttributes::_TRUE_ : QString());
+				attribs[ParsersAttributes::CONNECTION_TIMEOUT]=attribs[Connection::PARAM_CONN_TIMEOUT];
 
 				schparser.ignoreUnkownAttributes(true);
 				config_params[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONNECTIONS]+=
@@ -544,7 +545,7 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 		bool conn_saved = false;
 
 		parent_form->setWindowTitle(trUtf8("Edit database connections"));
-		parent_form->setMinimumSize(640,580);
+		parent_form->setMinimumSize(640,620);
 
 		parent_form->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 		parent_form->setWindowFlags(Qt::Dialog | Qt::WindowMinimizeButtonHint | Qt::WindowCloseButtonHint);
