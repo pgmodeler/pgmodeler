@@ -29,16 +29,16 @@
 #include <QStringList>
 
 namespace PgSQLVersions {
-  extern const QString
-  PGSQL_VERSION_90,
-  PGSQL_VERSION_91,
-  PGSQL_VERSION_92,
-  PGSQL_VERSION_93,
-  PGSQL_VERSION_94,
-  PGSQL_VERSION_95,
-  DEFAULT_VERSION;
+	extern const QString
+	PGSQL_VERSION_90,
+	PGSQL_VERSION_91,
+	PGSQL_VERSION_92,
+	PGSQL_VERSION_93,
+	PGSQL_VERSION_94,
+	PGSQL_VERSION_95,
+	DEFAULT_VERSION;
 
-  extern const QStringList ALL_VERSIONS;
+	extern const QStringList ALL_VERSIONS;
 }
 
 #endif
