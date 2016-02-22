@@ -38,7 +38,7 @@ class SchemaView: public BaseObjectView
 
 		QGraphicsSimpleTextItem *sch_name;
 
-    RoundedRectItem *box;
+		RoundedRectItem *box;
 
 		QPointF last_pos;
 
@@ -66,10 +66,10 @@ class SchemaView: public BaseObjectView
 		//! \brief Visually selects all the schema children
 		void selectChildren(void);
 
-    unsigned getChildrenCount(void);
-    QList<BaseObjectView *> getChildren(void);
+		unsigned getChildrenCount(void);
+		QList<BaseObjectView *> getChildren(void);
 
-    virtual void togglePlaceholder(bool visible);
+		virtual void togglePlaceholder(bool visible);
 
 	public slots:
 		void configureObject(void);

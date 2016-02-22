@@ -35,12 +35,12 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 	private:
 		Q_OBJECT
 
-	protected:   
-    /*! brief Indicates if the placeholder object must be used when moving objects.
-        Place holder objects when enabled causes a significant performance gain mainly when
-        moving tables linked to relationships because the relationships will be updated only
-        when the table moviment ends and not during it */
-    static bool use_placeholder;
+	protected:
+		/*! brief Indicates if the placeholder object must be used when moving objects.
+		Place holder objects when enabled causes a significant performance gain mainly when
+		moving tables linked to relationships because the relationships will be updated only
+		when the table moviment ends and not during it */
+		static bool use_placeholder;
 
 		/*! \brief Stores the global selection order of objects. This attributes
 		 is incremented each time an object is selected. */
@@ -57,28 +57,28 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		QGraphicsSimpleTextItem *pos_info_txt;
 
 		//! \brief Graphical object (rectangle) of the position info
-    QGraphicsRectItem *pos_info_rect;
+		QGraphicsRectItem *pos_info_rect;
 
 		//! \brief Stores the objects bounding rect
 		QRectF bounding_rect;
 
 		//! \brief Graphical object that represents the object selection
-    QGraphicsItem *obj_selection;
+		QGraphicsItem *obj_selection;
 
 		//! \brief Icon that represent the object protection
 		QGraphicsItemGroup *protected_icon;
 
 		//! \brief Graphical object that represents the current object shadow
-    QGraphicsItem *obj_shadow;
+		QGraphicsItem *obj_shadow;
 
-    //! brief Graphical object that represents the placeholder when the object is being moved
-    RoundedRectItem *placeholder;
+		//! brief Graphical object that represents the placeholder when the object is being moved
+		RoundedRectItem *placeholder;
 
-    //! \brief Graphical object of the sql disabled info
-    QGraphicsRectItem *sql_disabled_box;
+		//! \brief Graphical object of the sql disabled info
+		QGraphicsRectItem *sql_disabled_box;
 
-    //! \brief Graphical text for the sql disabled info
-    QGraphicsSimpleTextItem *sql_disabled_txt;
+		//! \brief Graphical text for the sql disabled info
+		QGraphicsSimpleTextItem *sql_disabled_txt;
 
 		//! \brief Stores the object font configuration
 		static map<QString, QTextCharFormat> font_config;
@@ -98,23 +98,23 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		//! \brief Configures the polygons used to show the current object position
 		void configurePositionInfo(QPointF pos);
 
-    //! \brief Configures the rectangle used to show the sql disabled status
-    void configureSQLDisabledInfo(void);
+		//! \brief Configures the rectangle used to show the sql disabled status
+		void configureSQLDisabledInfo(void);
 
 		//! \brief Configures the icon that denotes the object's protection
 		void configureProtectedIcon(void);
 
-    void configurePlaceholder(void);
+		void configurePlaceholder(void);
 
 		void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
-    void setSelectionOrder(bool selected);
+		void setSelectionOrder(bool selected);
 
 	public:
-    static constexpr double VERT_SPACING=2.0f,
-													 HORIZ_SPACING=2.0f,
-													 DEFAULT_FONT_SIZE=9.0f,
-													 OBJ_BORDER_WIDTH=0.80f;
+		static constexpr double VERT_SPACING=2.0f,
+		HORIZ_SPACING=2.0f,
+		DEFAULT_FONT_SIZE=9.0f,
+		OBJ_BORDER_WIDTH=0.80f;
 
 		BaseObjectView(BaseObject *object=nullptr);
 		virtual ~BaseObjectView(void);
@@ -147,9 +147,9 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		//! \brief Returns the font style for the specified element id
 		static QTextCharFormat getFontStyle(const QString &id);
 
-    static void setPlaceholderEnabled(bool value);
+		static void setPlaceholderEnabled(bool value);
 
-    static bool isPlaceholderEnabled(void);
+		static bool isPlaceholderEnabled(void);
 
 		//! \brief Sets the  font style for the specified element id
 		static void setFontStyle(const QString &id, QTextCharFormat font_fmt);
@@ -157,13 +157,13 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		//! \brief Sets the color for the specified element id (used to set color for objects and font)
 		static void setElementColor(const QString &id, QColor color, unsigned color_id);
 
-    //! \brief Returns the color for the specified element id (used to get color for objects and font)
-    static QColor getElementColor(const QString &id, unsigned color_id);
+		//! \brief Returns the color for the specified element id (used to get color for objects and font)
+		static QColor getElementColor(const QString &id, unsigned color_id);
 
-    //! \brief Defines the object that the view represents
-    void setSourceObject(BaseObject *object);
+		//! \brief Defines the object that the view represents
+		void setSourceObject(BaseObject *object);
 
-    //! \brief Pure virtual object (the derived classes must implement it)
+		//! \brief Pure virtual object (the derived classes must implement it)
 		virtual void configureObject(void)=0;
 
 		/*! \brief Returns the center point of the whole object.
@@ -171,10 +171,10 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		method calculates the center point based upon the current object's position */
 		virtual QPointF getCenter(void);
 
-    //! brief Toggles the wireframe display
-    virtual void togglePlaceholder(bool visible);
+		//! brief Toggles the wireframe display
+		virtual void togglePlaceholder(bool visible);
 
-  protected slots:
+	protected slots:
 		//! \brief Make the basic object operations
 		void __configureObject(void);
 

@@ -26,40 +26,40 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 	if(!base_tab)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-  body=new RoundedRectItem;
-  body->setRoundedCorners(RoundedRectItem::BOTTOMLEFT_CORNER | RoundedRectItem::BOTTOMRIGHT_CORNER);
+	body=new RoundedRectItem;
+	body->setRoundedCorners(RoundedRectItem::BOTTOMLEFT_CORNER | RoundedRectItem::BOTTOMRIGHT_CORNER);
 
-  title=new TableTitleView;
+	title=new TableTitleView;
 
-  ext_attribs_body=new RoundedRectItem;
-  ext_attribs_body->setRoundedCorners(RoundedRectItem::BOTTOMLEFT_CORNER | RoundedRectItem::BOTTOMRIGHT_CORNER);
+	ext_attribs_body=new RoundedRectItem;
+	ext_attribs_body->setRoundedCorners(RoundedRectItem::BOTTOMLEFT_CORNER | RoundedRectItem::BOTTOMRIGHT_CORNER);
 
-  ext_attribs=new QGraphicsItemGroup;
-  ext_attribs->setZValue(1);
+	ext_attribs=new QGraphicsItemGroup;
+	ext_attribs->setZValue(1);
 
-  columns=new QGraphicsItemGroup;
-  columns->setZValue(1);
+	columns=new QGraphicsItemGroup;
+	columns->setZValue(1);
 
-  tag_name=new QGraphicsSimpleTextItem;
-  tag_name->setZValue(3);
+	tag_name=new QGraphicsSimpleTextItem;
+	tag_name->setZValue(3);
 
-  tag_body=new QGraphicsPolygonItem;
-  tag_body->setZValue(2);
+	tag_body=new QGraphicsPolygonItem;
+	tag_body->setZValue(2);
 
-  obj_shadow=new RoundedRectItem;
-  obj_shadow->setZValue(-1);
+	obj_shadow=new RoundedRectItem;
+	obj_shadow->setZValue(-1);
 
-  obj_selection=new RoundedRectItem;
-  obj_selection->setVisible(false);
-  obj_selection->setZValue(4);
+	obj_selection=new RoundedRectItem;
+	obj_selection->setVisible(false);
+	obj_selection->setZValue(4);
 
-  this->addToGroup(obj_selection);
-  this->addToGroup(obj_shadow);
-  this->addToGroup(columns);
+	this->addToGroup(obj_selection);
+	this->addToGroup(obj_shadow);
+	this->addToGroup(columns);
 	this->addToGroup(body);
 	this->addToGroup(title);
-  this->addToGroup(tag_name);
-  this->addToGroup(tag_body);
+	this->addToGroup(tag_name);
+	this->addToGroup(tag_body);
 	this->addToGroup(ext_attribs);
 	this->addToGroup(ext_attribs_body);
 
@@ -67,7 +67,7 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 	sel_child_obj=nullptr;
 	connected_rels=0;
 
-  configurePlaceholder();
+	configurePlaceholder();
 }
 
 BaseTableView::~BaseTableView(void)
@@ -77,35 +77,35 @@ BaseTableView::~BaseTableView(void)
 	this->removeFromGroup(ext_attribs_body);
 	this->removeFromGroup(ext_attribs);
 	this->removeFromGroup(columns);
-  this->removeFromGroup(tag_name);
-  this->removeFromGroup(tag_body);
+	this->removeFromGroup(tag_name);
+	this->removeFromGroup(tag_body);
 	delete(ext_attribs_body);
 	delete(ext_attribs);
 	delete(body);
 	delete(title);
 	delete(columns);
-  delete(tag_name);
-  delete(tag_body);
+	delete(tag_name);
+	delete(tag_body);
 }
 
 void BaseTableView::setHideExtAttributes(bool value)
 {
-  hide_ext_attribs=value;
+	hide_ext_attribs=value;
 }
 
 void BaseTableView::setHideTags(bool value)
 {
-  hide_tags=value;
+	hide_tags=value;
 }
 
 bool BaseTableView::isExtAttributesHidden(void)
 {
-  return(hide_ext_attribs);
+	return(hide_ext_attribs);
 }
 
 bool BaseTableView::isTagsHidden(void)
 {
-  return(hide_tags);
+	return(hide_tags);
 }
 
 QVariant BaseTableView::itemChange(GraphicsItemChange change, const QVariant &value)
@@ -130,7 +130,7 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	if(!this->isSelected() && event->buttons()==Qt::RightButton && sel_child_obj)
 	{
 		if(this->scene())
-		 this->scene()->clearSelection();
+			this->scene()->clearSelection();
 
 		/* Deactivate the table in order not to hide the child object selection.
 			 The table object is reativated when the context menu is hidden */
@@ -183,16 +183,16 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 		}
 		else if(!items.isEmpty())
 		{
-      //QPolygonF pol;
+			//QPolygonF pol;
 			BaseObjectView *item=dynamic_cast<TableObjectView *>(items[item_idx]);
 
 			//Configures the selection with the item's dimension
 			if(obj_selection->boundingRect().height()!=item->boundingRect().height())
 			{
-        dynamic_cast<RoundedRectItem *>(obj_selection)->setBorderRadius(2);
-        dynamic_cast<RoundedRectItem *>(obj_selection)->setRect(QRectF(0,0,
-                                                                       title->boundingRect().width() - (2.5 * HORIZ_SPACING),
-                                                                       item->boundingRect().height()));
+				dynamic_cast<RoundedRectItem *>(obj_selection)->setBorderRadius(2);
+				dynamic_cast<RoundedRectItem *>(obj_selection)->setRect(QRectF(0,0,
+																			   title->boundingRect().width() - (2.5 * HORIZ_SPACING),
+																			   item->boundingRect().height()));
 			}
 
 			//Sets the selection position as same as item's position
@@ -210,61 +210,61 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 void BaseTableView::updateConnectedRelsCount(int inc)
 {
 	connected_rels+=inc;
-  if(connected_rels < 0) connected_rels=0;
+	if(connected_rels < 0) connected_rels=0;
 }
 
 void BaseTableView::configureTag(void)
 {
-  BaseTable *tab=dynamic_cast<BaseTable *>(this->getSourceObject());
-  Tag *tag=tab->getTag();
+	BaseTable *tab=dynamic_cast<BaseTable *>(this->getSourceObject());
+	Tag *tag=tab->getTag();
 
-  tag_body->setVisible(tag!=nullptr && !hide_tags);
-  tag_name->setVisible(tag!=nullptr && !hide_tags);
+	tag_body->setVisible(tag!=nullptr && !hide_tags);
+	tag_name->setVisible(tag!=nullptr && !hide_tags);
 
-  if(!hide_tags && tag)
-  {
-    QPolygonF pol;
-    QPointF p1, p2;
-    double bottom;
-    QFont fnt=BaseObjectView::getFontStyle(ParsersAttributes::TAG).font();
+	if(!hide_tags && tag)
+	{
+		QPolygonF pol;
+		QPointF p1, p2;
+		double bottom;
+		QFont fnt=BaseObjectView::getFontStyle(ParsersAttributes::TAG).font();
 
-    fnt.setPointSizeF(fnt.pointSizeF() * 0.80f);
-    tag_name->setFont(fnt);
-    tag_name->setText(tag->getName());
-    tag_name->setBrush(BaseObjectView::getFontStyle(ParsersAttributes::TAG).foreground());
+		fnt.setPointSizeF(fnt.pointSizeF() * 0.80f);
+		tag_name->setFont(fnt);
+		tag_name->setText(tag->getName());
+		tag_name->setBrush(BaseObjectView::getFontStyle(ParsersAttributes::TAG).foreground());
 
-    p1=tag_name->boundingRect().topLeft(),
-    p2=tag_name->boundingRect().bottomRight();
-    bottom=this->boundingRect().bottom();
+		p1=tag_name->boundingRect().topLeft(),
+				p2=tag_name->boundingRect().bottomRight();
+		bottom=this->boundingRect().bottom();
 
-    pol.append(QPointF(p1.x()-BaseObjectView::HORIZ_SPACING, p1.y() - BaseObjectView::VERT_SPACING));
-    pol.append(QPointF(p2.x(), p1.y() - BaseObjectView::VERT_SPACING));
-    pol.append(QPointF(p2.x() + BaseObjectView::HORIZ_SPACING + 5, p2.y()/2));
-    pol.append(QPointF(p2.x(), p2.y() + BaseObjectView::VERT_SPACING));
-    pol.append(QPointF(p1.x(), p2.y() + BaseObjectView::VERT_SPACING));
-    pol.append(QPointF(p1.x()-BaseObjectView::HORIZ_SPACING, p2.y() + BaseObjectView::VERT_SPACING));
+		pol.append(QPointF(p1.x()-BaseObjectView::HORIZ_SPACING, p1.y() - BaseObjectView::VERT_SPACING));
+		pol.append(QPointF(p2.x(), p1.y() - BaseObjectView::VERT_SPACING));
+		pol.append(QPointF(p2.x() + BaseObjectView::HORIZ_SPACING + 5, p2.y()/2));
+		pol.append(QPointF(p2.x(), p2.y() + BaseObjectView::VERT_SPACING));
+		pol.append(QPointF(p1.x(), p2.y() + BaseObjectView::VERT_SPACING));
+		pol.append(QPointF(p1.x()-BaseObjectView::HORIZ_SPACING, p2.y() + BaseObjectView::VERT_SPACING));
 
-    tag_body->setPolygon(pol);
-    tag_body->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::TAG));
-    tag_body->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::TAG));
+		tag_body->setPolygon(pol);
+		tag_body->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::TAG));
+		tag_body->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::TAG));
 
-    tag_name->setPos(-5, bottom - 1.5f);
-    tag_body->setPos(-5, bottom - 1.5f);
-  }
+		tag_name->setPos(-5, bottom - 1.5f);
+		tag_body->setPos(-5, bottom - 1.5f);
+	}
 }
 
 int BaseTableView::getConnectRelsCount(void)
 {
-  return(connected_rels);
+	return(connected_rels);
 }
 
 void BaseTableView::requestRelationshipsUpdate(void)
 {
-  emit s_relUpdateRequest();
+	emit s_relUpdateRequest();
 }
 
 void BaseTableView::togglePlaceholder(bool value)
 {
-  BaseObjectView::togglePlaceholder(connected_rels > 0 && value);
+	BaseObjectView::togglePlaceholder(connected_rels > 0 && value);
 }
 

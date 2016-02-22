@@ -35,10 +35,10 @@ void TableView::configureObject(void)
 	QList<TableObjectView *> col_items;
 	TableObject *tab_obj=nullptr;
 	QGraphicsItemGroup *groups[]={ columns, ext_attribs };
-  RoundedRectItem *bodies[]={ body, ext_attribs_body };
+	RoundedRectItem *bodies[]={ body, ext_attribs_body };
 	vector<TableObject *> tab_objs;
 	QString atribs[]={ ParsersAttributes::TABLE_BODY, ParsersAttributes::TABLE_EXT_BODY };
-  Tag *tag=table->getTag();
+	Tag *tag=table->getTag();
 
 	//Configures the table title
 	title->configureObject(table);
@@ -54,24 +54,24 @@ void TableView::configureObject(void)
 		if(obj_idx==0)
 		{
 			tab_objs.assign(table->getObjectList(OBJ_COLUMN)->begin(),
-											table->getObjectList(OBJ_COLUMN)->end());
+							table->getObjectList(OBJ_COLUMN)->end());
 		}
 		else
 		{
 			tab_objs.assign(table->getObjectList(OBJ_RULE)->begin(),
-											table->getObjectList(OBJ_RULE)->end());
+							table->getObjectList(OBJ_RULE)->end());
 			tab_objs.insert(tab_objs.end(),
-											table->getObjectList(OBJ_TRIGGER)->begin(),
-											table->getObjectList(OBJ_TRIGGER)->end());
+							table->getObjectList(OBJ_TRIGGER)->begin(),
+							table->getObjectList(OBJ_TRIGGER)->end());
 			tab_objs.insert(tab_objs.end(),
-											table->getObjectList(OBJ_INDEX)->begin(),
-											table->getObjectList(OBJ_INDEX)->end());
+							table->getObjectList(OBJ_INDEX)->begin(),
+							table->getObjectList(OBJ_INDEX)->end());
 		}
 
 		//Gets the subitems of the current group
 		subitems=groups[obj_idx]->childItems();
 		groups[obj_idx]->moveBy(-groups[obj_idx]->scenePos().x(),
-												-groups[obj_idx]->scenePos().y());
+								-groups[obj_idx]->scenePos().y());
 		count=tab_objs.size();
 
 		//Special case: if there is no item on extended attributes, the extended body is hidden
@@ -92,7 +92,7 @@ void TableView::configureObject(void)
 				col_item->setSourceObject(tab_obj);
 				col_item->configureObject();
 				col_item->moveBy(-col_item->scenePos().x(),
-												 -col_item->scenePos().y());
+								 -col_item->scenePos().y());
 			}
 			else
 				col_item=new TableObjectView(tab_obj);
@@ -104,7 +104,7 @@ void TableView::configureObject(void)
 			/* Calculates the width of the name + type of the object. This is used to align all
 			the constraint labels on table */
 			width=col_item->getChildObject(0)->boundingRect().width() +
-						col_item->getChildObject(1)->boundingRect().width() + (3 * HORIZ_SPACING);
+				  col_item->getChildObject(1)->boundingRect().width() + (3 * HORIZ_SPACING);
 			if(px < width)  px=width;
 
 			//Gets the maximum width of the column type label to align all at same horizontal position
@@ -143,12 +143,12 @@ void TableView::configureObject(void)
 	/* Calculating the maximum width between the title, columns and extended attributes.
 		This width is used to set the uniform width of table */
 	if(!columns->childItems().isEmpty() &&
-		 (columns->boundingRect().width() > title->boundingRect().width() &&
-			(hide_ext_attribs || (columns->boundingRect().width() > ext_attribs->boundingRect().width()))))
+			(columns->boundingRect().width() > title->boundingRect().width() &&
+			 (hide_ext_attribs || (columns->boundingRect().width() > ext_attribs->boundingRect().width()))))
 		width=columns->boundingRect().width() + (2 * HORIZ_SPACING);
 	else if(!ext_attribs->childItems().isEmpty() && !hide_ext_attribs &&
-					(ext_attribs->boundingRect().width() > title->boundingRect().width() &&
-					 ext_attribs->boundingRect().width() > columns->boundingRect().width()))
+			(ext_attribs->boundingRect().width() > title->boundingRect().width() &&
+			 ext_attribs->boundingRect().width() > columns->boundingRect().width()))
 		width=ext_attribs->boundingRect().width() + (2 * HORIZ_SPACING);
 	else
 		width=title->boundingRect().width() + (2 * HORIZ_SPACING);
@@ -159,16 +159,16 @@ void TableView::configureObject(void)
 	//Resizes the columns/extended attributes using the new width
 	for(obj_idx=0; obj_idx < 2; obj_idx++)
 	{
-    bodies[obj_idx]->setRect(QRectF(0,0, width, groups[obj_idx]->boundingRect().height() + (2 * VERT_SPACING)));
+		bodies[obj_idx]->setRect(QRectF(0,0, width, groups[obj_idx]->boundingRect().height() + (2 * VERT_SPACING)));
 		pen=this->getBorderStyle(atribs[obj_idx]);
 
-    if(!tag)
+		if(!tag)
 			bodies[obj_idx]->setBrush(this->getFillStyle(atribs[obj_idx]));
-    else
-    {
+		else
+		{
 			pen.setColor(tag->getElementColor(atribs[obj_idx], Tag::BORDER_COLOR));
 			bodies[obj_idx]->setBrush(tag->getFillStyle(atribs[obj_idx]));
-    }
+		}
 
 		bodies[obj_idx]->setPen(pen);
 
@@ -176,8 +176,8 @@ void TableView::configureObject(void)
 			bodies[obj_idx]->setPos(title->pos().x(), title->boundingRect().height()-1);
 		else
 			bodies[obj_idx]->setPos(title->pos().x(),
-													title->boundingRect().height() +
-													bodies[0]->boundingRect().height() - 2);
+									title->boundingRect().height() +
+									bodies[0]->boundingRect().height() - 2);
 		groups[obj_idx]->setPos(bodies[obj_idx]->pos());
 
 		subitems=groups[obj_idx]->childItems();
@@ -186,7 +186,7 @@ void TableView::configureObject(void)
 			col_item=dynamic_cast<TableObjectView *>(subitems.front());
 			subitems.pop_front();
 			col_item->setChildObjectXPos(3, width -
-																	 col_item->boundingRect().width() - (2 * HORIZ_SPACING) - 1);
+										 col_item->boundingRect().width() - (2 * HORIZ_SPACING) - 1);
 
 
 			//Generating the connection points of the columns
@@ -195,54 +195,54 @@ void TableView::configureObject(void)
 				tab_obj=dynamic_cast<TableObject *>(col_item->getSourceObject());
 				cy=title->boundingRect().height() + col_item->pos().y() + (col_item->boundingRect().height()/2);
 				conn_points[tab_obj].resize(2);
-        conn_points[tab_obj][LEFT_CONN_POINT]=QPointF(col_item->pos().x() - 1.5f, cy);
-        conn_points[tab_obj][RIGHT_CONN_POINT]=QPointF(col_item->pos().x() + width - 1.5f  , cy);
+				conn_points[tab_obj][LEFT_CONN_POINT]=QPointF(col_item->pos().x() - 1.5f, cy);
+				conn_points[tab_obj][RIGHT_CONN_POINT]=QPointF(col_item->pos().x() + width - 1.5f  , cy);
 			}
 		}
 	}
 
 	//Set the protected icon position to the top-right on the title
 	protected_icon->setPos(title->pos().x() + title->boundingRect().width() * 0.90f,
-												 2 * VERT_SPACING);
+						   2 * VERT_SPACING);
 
 	this->bounding_rect.setTopLeft(title->boundingRect().topLeft());
 	this->bounding_rect.setWidth(title->boundingRect().width());
 
 	if(!ext_attribs->isVisible())
-  {
+	{
 		this->bounding_rect.setHeight(title->boundingRect().height() +
-																	body->boundingRect().height() - 1);
-    body->setRoundedCorners(RoundedRectItem::BOTTOMLEFT_CORNER | RoundedRectItem::BOTTOMRIGHT_CORNER);
-  }
+									  body->boundingRect().height() - 1);
+		body->setRoundedCorners(RoundedRectItem::BOTTOMLEFT_CORNER | RoundedRectItem::BOTTOMRIGHT_CORNER);
+	}
 	else
-  {
+	{
 		this->bounding_rect.setHeight(title->boundingRect().height() +
-																	body->boundingRect().height() +
-																	ext_attribs_body->boundingRect().height() -2);
-    body->setRoundedCorners(RoundedRectItem::NONE_CORNERS);
-  }
+									  body->boundingRect().height() +
+									  ext_attribs_body->boundingRect().height() -2);
+		body->setRoundedCorners(RoundedRectItem::NONE_CORNERS);
+	}
 
 	BaseObjectView::__configureObject();
 	BaseObjectView::configureObjectShadow();
 	BaseObjectView::configureObjectSelection();
 
-  this->table_tooltip=table->getName(true) +
-                      QString(" (") + table->getTypeName() + QString(") \n") +
-                      QString("Id: %1\n").arg(table->getObjectId()) +
-											TableObjectView::CONSTR_DELIM_START +
-											trUtf8("Connected rels: %1").arg(this->getConnectRelsCount()) +
-											TableObjectView::CONSTR_DELIM_END;
+	this->table_tooltip=table->getName(true) +
+						QString(" (") + table->getTypeName() + QString(") \n") +
+						QString("Id: %1\n").arg(table->getObjectId()) +
+						TableObjectView::CONSTR_DELIM_START +
+						trUtf8("Connected rels: %1").arg(this->getConnectRelsCount()) +
+						TableObjectView::CONSTR_DELIM_END;
 
 	this->setToolTip(this->table_tooltip);
 
-  configureTag();
-  configureSQLDisabledInfo();
+	configureTag();
+	configureSQLDisabledInfo();
 
 	if((old_width!=0 && this->bounding_rect.width()!=old_width) ||
-		 (old_height!=0 && this->bounding_rect.height()!=old_height))
+			(old_height!=0 && this->bounding_rect.height()!=old_height))
 		emit s_objectDimensionChanged();
-  else
-    requestRelationshipsUpdate();
+	else
+		requestRelationshipsUpdate();
 }
 
 QPointF TableView::getConnectionPoints(TableObject *tab_obj, unsigned pnt_type)
