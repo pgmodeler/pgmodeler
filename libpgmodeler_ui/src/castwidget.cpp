@@ -53,7 +53,7 @@ CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_CAST)
 		connect(input_output_chk, SIGNAL(toggled(bool)), conv_func_sel, SLOT(clearSelector(void)));
 
 		parent_form->setMinimumSize(530, 520);
-		parent_form->setMaximumHeight(520);
+		//parent_form->setMaximumHeight(520);
 
 		setRequiredField(src_datatype);
 		setRequiredField(trg_datatype);

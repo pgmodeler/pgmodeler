@@ -82,7 +82,7 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		connect(elements_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleElement(int)));
 		connect(elements_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editElement(int)));
 
-		parent_form->setMinimumSize(620, 700);
+		parent_form->setMinimumSize(640, 700);
 		selectElementType(0);
 
 		IndexingType::getTypes(tipos);

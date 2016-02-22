@@ -49,7 +49,7 @@ ParameterWidget::ParameterWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		connect(param_out_chk, SIGNAL(toggled(bool)), this, SLOT(enableVariadic(void)));
 
 		parent_form->setMinimumSize(500, 300);
-		parent_form->setMaximumHeight(300);
+		//parent_form->setMaximumHeight(300);
 	}
 	catch(Exception &e)
 	{

@@ -67,7 +67,6 @@ void ObjectSelectorWidget::configureSelector(bool install_highlighter)
 
 		obj_name_txt->installEventFilter(this);
 		QFontMetrics fm=obj_name_txt->fontMetrics();
-
 		obj_name_txt->setMaximumHeight(fm.height() + (fm.lineSpacing()/1.5));
 		this->adjustSize();
 	}

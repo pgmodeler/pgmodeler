@@ -113,7 +113,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	objects_tab_map[OBJ_INDEX]->setHeaderLabel(trUtf8("Indexing"), 1);
 
 	configureFormLayout(table_grid, OBJ_TABLE);
-	parent_form->setMinimumSize(580, 620);
+	parent_form->setMinimumSize(600, 650);
 
 	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 	connect(parent_form->cancel_btn,SIGNAL(clicked(bool)), this, SLOT(cancelConfiguration(void)));

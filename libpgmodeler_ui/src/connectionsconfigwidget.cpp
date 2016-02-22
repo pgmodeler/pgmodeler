@@ -544,9 +544,9 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 		bool conn_saved = false;
 
 		parent_form->setWindowTitle(trUtf8("Edit database connections"));
-		parent_form->setMinimumSize(640,500);
-		parent_form->setMaximumSize(640,500);
-		parent_form->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+		parent_form->setMinimumSize(640,580);
+
+		parent_form->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 		parent_form->setWindowFlags(Qt::Dialog | Qt::WindowMinimizeButtonHint | Qt::WindowCloseButtonHint);
 
 		connect(parent_form->cancel_btn, SIGNAL(clicked(bool)), parent_form, SLOT(reject()));

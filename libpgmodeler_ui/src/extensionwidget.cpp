@@ -5,9 +5,9 @@ ExtensionWidget::ExtensionWidget(QWidget * parent) : BaseObjectWidget(parent, OB
 	Ui_ExtensionWidget::setupUi(this);
 	configureFormLayout(extension_grid, OBJ_EXTENSION);
 
+	extension_grid->addItem(new QSpacerItem(10,10,QSizePolicy::Minimum,QSizePolicy::Expanding), extension_grid->count()+1, 0, 1, 0);
 	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-	parent_form->setMinimumSize(480, 250);
-	parent_form->setMaximumHeight(250);
+	parent_form->setMinimumSize(480, 290);
 
 	configureTabOrder({ cur_ver_edt, old_ver_edt, handles_type_chk });
 }

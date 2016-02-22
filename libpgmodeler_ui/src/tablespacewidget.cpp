@@ -25,8 +25,8 @@ TablespaceWidget::TablespaceWidget(QWidget *parent): BaseObjectWidget(parent, OB
 
 	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
-	parent_form->setMinimumSize(500, 230);
-	parent_form->setMaximumHeight(230);
+	tablespace_grid->addItem(new QSpacerItem(10,0,QSizePolicy::Minimum,QSizePolicy::Expanding), tablespace_grid->count(), 0);
+	parent_form->setMinimumSize(500, 260);
 
 	setRequiredField(directory_lbl);
 	setRequiredField(directory_edt);

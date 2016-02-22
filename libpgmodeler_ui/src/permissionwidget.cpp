@@ -45,9 +45,7 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	parent_form->setButtonConfiguration(Messagebox::OK_BUTTON);
 	connect(parent_form->apply_ok_btn, SIGNAL(clicked(bool)), parent_form, SLOT(close(void)));
 
-	parent_form->setMinimumSize(670, 580);
-	parent_form->resize(670, 580);
-
+	parent_form->setMinimumSize(670, 600);
 	comment_lbl->setText(trUtf8("Type:"));
 	font=name_edt->font();
 	font.setItalic(true);

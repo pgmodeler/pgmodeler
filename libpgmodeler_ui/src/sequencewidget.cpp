@@ -31,8 +31,8 @@ SequenceWidget::SequenceWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_SE
 		configureFormLayout(sequence_grid, OBJ_SEQUENCE);
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
-		parent_form->setMinimumSize(500, 360);
-		parent_form->setMaximumHeight(360);
+		sequence_grid->addItem(new QSpacerItem(10,0,QSizePolicy::Minimum,QSizePolicy::Expanding), sequence_grid->count(), 0);
+		parent_form->setMinimumSize(540, 430);
 
 		configureTabOrder();
 	}

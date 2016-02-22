@@ -34,10 +34,10 @@ SchemaWidget::SchemaWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_SCHEMA
 	hbox->addWidget(show_rect_chk);
 
 	baseobject_grid->addLayout(hbox, baseobject_grid->count(), 0, 1, baseobject_grid->columnCount());
-	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+	baseobject_grid->addItem(new QSpacerItem(10,10,QSizePolicy::Minimum,QSizePolicy::Expanding), baseobject_grid->count(), 0);
 
-	parent_form->setMinimumSize(500, 220);
-	parent_form->setMaximumHeight(220);
+	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+	parent_form->setMinimumSize(500, 270);
 
 	configureTabOrder({ color_picker, show_rect_chk });
 }

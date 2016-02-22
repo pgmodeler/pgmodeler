@@ -33,16 +33,17 @@ OperatorFamilyWidget::OperatorFamilyWidget(QWidget *parent): BaseObjectWidget(pa
 	IndexingType::getTypes(types);
 	indexing_cmb->addItems(types);
 
-	parent_form->setMinimumSize(520, 300);
-	parent_form->setMaximumHeight(300);
+	parent_form->setMinimumSize(520, 380);
 
 	setRequiredField(indexing_lbl);
 	fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(indexing_lbl);
 	values_map[indexing_lbl].push_back(~IndexingType(IndexingType::brin));
 
+	opfamily_grid->addItem(new QSpacerItem(10,10,QSizePolicy::Minimum,QSizePolicy::Expanding), opfamily_grid->count()+1, 0, 1, 0);
+
 	frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);
 	frame->setParent(this);
-	opfamily_grid->addWidget(frame, opfamily_grid->count(), 0, 1, 5);
+	opfamily_grid->addWidget(frame, opfamily_grid->count()+1, 0, 1, 5);
 
 	configureTabOrder();
 }

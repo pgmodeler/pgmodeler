@@ -41,7 +41,9 @@ ColorPickerWidget::ColorPickerWidget(int color_count, QWidget * parent) : QWidge
 	for(int i=0; i < color_count; i++)
 	{
 		btn=new QToolButton(this);
-		btn->setMinimumHeight(random_color_tb->height() - 3);
+		btn->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+		btn->setMinimumHeight(25);
+		btn->setMaximumHeight(random_color_tb->height() - 10);
 		btn->setMinimumWidth(55);
 		btn->installEventFilter(this);
 

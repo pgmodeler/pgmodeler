@@ -36,8 +36,7 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DOMAIN
 		configureFormLayout(domain_grid, OBJ_DOMAIN);
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
-		parent_form->setMinimumSize(540, 570);
-		parent_form->setMaximumHeight(570);
+		parent_form->setMinimumSize(600, 670);
 
 		setRequiredField(data_type);
 		configureTabOrder({ def_value_edt, constr_name_edt, not_null_chk,

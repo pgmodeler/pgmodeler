@@ -86,7 +86,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		grid->addWidget(frame, grid->count()+1, 0, 1, 5);
 		frame->setParent(func_config_twg->widget(0));
 
-		parent_form->setMinimumSize(645, 675);
+		parent_form->setMinimumSize(650, 700);
 
 		SecurityType::getTypes(types);
 		security_cmb->addItems(types);

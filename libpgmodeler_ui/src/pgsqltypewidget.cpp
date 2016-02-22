@@ -36,6 +36,10 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 
 		format_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
+		QFontMetrics fm=format_txt->fontMetrics();
+		format_txt->setMaximumHeight(fm.height() + (fm.lineSpacing()/1.5));
+		this->adjustSize();
+
 		IntervalType::getTypes(interval_lst);
 		interval_cmb->addItem("");
 		interval_cmb->addItems(interval_lst);

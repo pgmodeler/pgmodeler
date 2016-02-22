@@ -40,9 +40,9 @@ TagWidget::TagWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TAG)
 		row++;
 	}
 
+	tag_grid->addItem(new QSpacerItem(10,0,QSizePolicy::Minimum,QSizePolicy::Expanding), tag_grid->count(), 0);
 	connect(parent_form->apply_ok_btn, SIGNAL(clicked()), this, SLOT(applyConfiguration()));
-	parent_form->setMinimumSize(450, 320);
-	parent_form->setMaximumHeight(320);
+	parent_form->setMinimumSize(450, 390);
 }
 
 void TagWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Tag *tag)

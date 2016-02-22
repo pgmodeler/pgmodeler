@@ -45,11 +45,11 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 		hlayout->addSpacerItem(new QSpacerItem(10,10, QSizePolicy::Expanding));
 
 		swap_objs_grid->addLayout(hlayout, 2, 0, 1, 4);
-		swap_objs_grid->addWidget(alert_frm, 3, 0, 1, 4);
+		swap_objs_grid->addItem(new QSpacerItem(10,0,QSizePolicy::Minimum,QSizePolicy::Expanding), swap_objs_grid->count()+1, 0);
+		swap_objs_grid->addWidget(alert_frm, swap_objs_grid->count()+1, 0, 1, 4);
 
-		parent_form.setMinimumSize(540,220);
+		parent_form.setMinimumSize(540, 260);
 		parent_form.resize(parent_form.minimumSize());
-		parent_form.setMaximumSize(540,220);
 		parent_form.setWindowFlags(Qt::Dialog | Qt::WindowMinimizeButtonHint | Qt::WindowCloseButtonHint);
 
 		setModel(nullptr);
