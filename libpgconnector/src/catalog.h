@@ -43,8 +43,8 @@ class Catalog {
 		PGSQL_FALSE, //! \brief Replacement for false 'f' boolean value
 		BOOL_FIELD,     //! \brief Suffix for boolean fields.
 
-    //! \brief Query used to retrieve extension objects.
-    GET_EXT_OBJS_SQL,
+		//! \brief Query used to retrieve extension objects.
+		GET_EXT_OBJS_SQL,
 
 		//! \brief This pattern matches the PostgreSQL array values in format [n:n]={a,b,c,d,...} or {a,b,c,d,...}
 		ARRAY_PATTERN;
@@ -57,16 +57,16 @@ class Catalog {
 		composed by the pg_[OBJECT_TYPE] table alias. Refer to catalog query schema files for details */
 		static map<ObjectType, QString> oid_fields;
 
-    /*! \brief This map stores the oid field name that is used to check if the object (or its parent) is part of a extension
-        (see getNotExtObjectQuery()). By default the attribute oid_fields is used instead for that purpose, but, for some objects,
-        there are different fields that tells if the object (or its parent) is part of extension. */
-    static map<ObjectType, QString> ext_oid_fields;
+		/*! \brief This map stores the oid field name that is used to check if the object (or its parent) is part of a extension
+		(see getNotExtObjectQuery()). By default the attribute oid_fields is used instead for that purpose, but, for some objects,
+		there are different fields that tells if the object (or its parent) is part of extension. */
+		static map<ObjectType, QString> ext_oid_fields;
 
-    //! brief Indicates is the use of cached catalog queries is enabled
-    static bool use_cached_queries;
+		//! brief Indicates is the use of cached catalog queries is enabled
+		static bool use_cached_queries;
 
-    //! brief Store the cached catalog queries (only when use_cached_queries=true)
-    static attribs_map catalog_queries;
+		//! brief Store the cached catalog queries (only when use_cached_queries=true)
+		static attribs_map catalog_queries;
 
 		//! \brief Connection used to query the pg_catalog
 		Connection connection;
@@ -88,16 +88,16 @@ class Catalog {
 		//! \brief Indicates if the catalog must list only system objects
 		list_only_sys_objs;
 
-    /*! brief Load the schema parser buffer with the catalog query using identified by qry_id.
-        The method will cache the catalog query if it's not cached yet (only when use_cached_queries=true) */
-    void loadCatalogQuery(const QString &qry_id);
+		/*! brief Load the schema parser buffer with the catalog query using identified by qry_id.
+		The method will cache the catalog query if it's not cached yet (only when use_cached_queries=true) */
+		void loadCatalogQuery(const QString &qry_id);
 
 		/*! \brief Executes a query on the catalog for the specified object type. If the parameter 'single_result' is true
 		the query will return only one tuple on the result set. Additional attributes can be passed so that SchemaParser will
 		use them when parsing the schema file for the object. A special extra attribute is accepted but not passed to SchemaParser:
 		ParsersAttributes::CUSTOM_FILTER that will be appended to the current filter expression */
 		void executeCatalogQuery(const QString &qry_type, ObjectType obj_type, ResultSet &result,
-                             bool single_result=false, attribs_map attribs=attribs_map());
+								 bool single_result=false, attribs_map attribs=attribs_map());
 
 		/*! \brief Recreates the attribute map in such way that attribute names that have
 		underscores have this char replaced by dashes. Another special operation made is to replace
@@ -121,7 +121,7 @@ class Catalog {
 
 	public:
 		Catalog(void);
-    Catalog(const Catalog &catalog);
+		Catalog(const Catalog &catalog);
 
 		//! \brief Excludes the system objects from listing
 		static const unsigned EXCL_SYSTEM_OBJS=1,
@@ -140,12 +140,12 @@ class Catalog {
 		LIST_ALL_OBJS=16;
 
 		//! \brief Changes the current connection used by the catalog
-    void setConnection(Connection &conn);
+		void setConnection(Connection &conn);
 
-    /*! brief Closes the connection used by the catalog.
-    Once this method is called the user must call setConnection() again or the
-    catalog queries will fail */
-    void closeConnection(void);
+		/*! brief Closes the connection used by the catalog.
+	Once this method is called the user must call setConnection() again or the
+	catalog queries will fail */
+		void closeConnection(void);
 
 		//! \brief Configures the catalog query filter
 		void setFilter(unsigned filter);
@@ -158,7 +158,7 @@ class Catalog {
 
 		/*! \brief Returns the count for the specified object type. A schema name can be specified
 		in order to filter only objects of the specifed schema */
-    unsigned getObjectCount(ObjectType obj_type, const QString &sch_name=QString(), const QString &tab_name=QString(), attribs_map extra_attribs=attribs_map());
+		unsigned getObjectCount(ObjectType obj_type, const QString &sch_name=QString(), const QString &tab_name=QString(), attribs_map extra_attribs=attribs_map());
 
 		//! brief Returns the current filter configuration for the catalog
 		unsigned getFilter(void);
@@ -168,7 +168,7 @@ class Catalog {
 
 		/*! \brief Returns a attributes map containing the oids (key) and names (values) of the objects from
 		the specified type.	A schema name can be specified in order to filter only objects of the specifed schema */
-    attribs_map getObjectsNames(ObjectType obj_type, const QString &sch_name=QString(), const QString &tab_name=QString(), attribs_map extra_attribs=attribs_map());
+		attribs_map getObjectsNames(ObjectType obj_type, const QString &sch_name=QString(), const QString &tab_name=QString(), attribs_map extra_attribs=attribs_map());
 
 		//! \brief Returns a set of multiple attributes (several tuples) for the specified object type
 		vector<attribs_map> getMultipleAttributes(ObjectType obj_type, attribs_map extra_attribs=attribs_map());
@@ -176,10 +176,10 @@ class Catalog {
 		/*! \brief Retrieve all available objects attributes for the specified type. Internally this method calls the get method for the
 		specified type. User can filter items by oids (except for table child objects), by schema (in the object type is suitable to accept schema)
 		and by table name (only when retriving child objects for a specific table) */
-    vector<attribs_map> getObjectsAttributes(ObjectType obj_type, const QString &schema=QString(), const QString &table=QString(), const vector<unsigned> &filter_oids={}, attribs_map extra_attribs=attribs_map());
+		vector<attribs_map> getObjectsAttributes(ObjectType obj_type, const QString &schema=QString(), const QString &table=QString(), const vector<unsigned> &filter_oids={}, attribs_map extra_attribs=attribs_map());
 
-    //! brief Returns the attributes for the object specified by its type and OID
-    attribs_map getObjectAttributes(ObjectType obj_type, unsigned oid, const QString sch_name=QString(), const QString tab_name=QString(), attribs_map extra_attribs=attribs_map());
+		//! brief Returns the attributes for the object specified by its type and OID
+		attribs_map getObjectAttributes(ObjectType obj_type, unsigned oid, const QString sch_name=QString(), const QString tab_name=QString(), attribs_map extra_attribs=attribs_map());
 
 		//! \brief Parse a PostgreSQL array value and return the elements in a string list
 		static QStringList parseArrayValues(const QString &array_val);
@@ -187,20 +187,20 @@ class Catalog {
 		/*! \brief Parse a function's default value and return the elements in a string list.
 		It can be specified the string delimiter as well the value separator if the input default value
 		contains several values */
-    static QStringList parseDefaultValues(const QString &def_vals, const QString &str_delim=QString("'"), const QString &val_sep=QString(", "));
+		static QStringList parseDefaultValues(const QString &def_vals, const QString &str_delim=QString("'"), const QString &val_sep=QString(", "));
 
-    //! brief Parse the raw commands of a rule retrieved by the catalog and returns only the relevant parts
-    static QStringList parseRuleCommands(const QString &cmd);
+		//! brief Parse the raw commands of a rule retrieved by the catalog and returns only the relevant parts
+		static QStringList parseRuleCommands(const QString &cmd);
 
-    /*! brief Enable/disable the use of cached catalog queries. When enabled, the schema files read for the first are stored in memory
-        so in the next time the same catalog query must be used it'll be read right from the memory and not from the disk anymore */
-    static void enableCachedQueries(bool value);
+		/*! brief Enable/disable the use of cached catalog queries. When enabled, the schema files read for the first are stored in memory
+		so in the next time the same catalog query must be used it'll be read right from the memory and not from the disk anymore */
+		static void enableCachedQueries(bool value);
 
-    //! brief Returns the current status of cached catalog queries
-    static bool isCachedQueriesEnabled(void);
+		//! brief Returns the current status of cached catalog queries
+		static bool isCachedQueriesEnabled(void);
 
-    //! brief Performs the copy between two catalogs
-    void operator = (const Catalog &catalog);
+		//! brief Performs the copy between two catalogs
+		void operator = (const Catalog &catalog);
 };
 
 #endif
