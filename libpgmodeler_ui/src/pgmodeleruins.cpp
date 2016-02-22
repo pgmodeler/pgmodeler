@@ -180,7 +180,7 @@ void configureWidgetFont(QWidget *widget, unsigned factor_id)
   QFont font=widget->font();
   float factor = 1;
 
-  factor = (factor_id == SMALL_FONT_FACTOR ? 0.80f : (factor_id == MEDIUM_FONT_FACTOR ? 0.90f : 1.10f));
+  factor = (factor_id == SMALL_FONT_FACTOR ? 0.85f : (factor_id == MEDIUM_FONT_FACTOR ? 0.95f : 1.10f));
   font.setPointSizeF(font.pointSizeF() * factor);
   widget->setFont(font);
 }
