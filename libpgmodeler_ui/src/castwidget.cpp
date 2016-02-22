@@ -58,8 +58,8 @@ CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_CAST)
 		setRequiredField(src_datatype);
 		setRequiredField(trg_datatype);
 
-    configureTabOrder({ explicit_rb, implicit_rb, assignment_rb, input_output_chk,
-                        conv_func_sel, src_datatype, trg_datatype });
+		configureTabOrder({ explicit_rb, implicit_rb, assignment_rb, input_output_chk,
+							conv_func_sel, src_datatype, trg_datatype });
 	}
 	catch(Exception &e)
 	{

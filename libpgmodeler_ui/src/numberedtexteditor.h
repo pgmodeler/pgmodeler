@@ -30,56 +30,56 @@ based upon the code editor example provided by Qt
 #include "linenumberswidget.h"
 
 class NumberedTextEditor : public QPlainTextEdit {
-  private:
-    Q_OBJECT
+	private:
+		Q_OBJECT
 
-    //! brief Controls if line numbers must be visible or not
-    static bool line_nums_visible,
+		//! brief Controls if line numbers must be visible or not
+		static bool line_nums_visible,
 
-    //! brief Controls if current line must be highlighted
-    highlight_lines;
+		//! brief Controls if current line must be highlighted
+		highlight_lines;
 
-    //! brief Line highlight color
-    static QColor line_hl_color;
+		//! brief Line highlight color
+		static QColor line_hl_color;
 
-    //! brief Default font for texts
-    static QFont default_font;
+		//! brief Default font for texts
+		static QFont default_font;
 
-    //! brief Default tab size for texts
-    static int tab_width;
+		//! brief Default tab size for texts
+		static int tab_width;
 
-    //! brief Widget used to expose document line numbers
-    LineNumbersWidget *line_number_wgt;
+		//! brief Widget used to expose document line numbers
+		LineNumbersWidget *line_number_wgt;
 
-    //! brief Determines and returns the line numbers widget width
-    int getLineNumbersWidth(void);
+		//! brief Determines and returns the line numbers widget width
+		int getLineNumbersWidth(void);
 
-  protected:
-    void resizeEvent(QResizeEvent *event);
+	protected:
+		void resizeEvent(QResizeEvent *event);
 
-  public:
-    NumberedTextEditor(QWidget * parent = 0);
+	public:
+		NumberedTextEditor(QWidget * parent = 0);
 
-    static void setDefaultFont(const QFont &font);
-    static void setLineNumbersVisible(bool value);
-    static void setHighlightLines(bool value);
-    static void setLineHighlightColor(const QColor &color);
-    static void setTabWidth(int value);
-    static int getTabWidth(void);
+		static void setDefaultFont(const QFont &font);
+		static void setLineNumbersVisible(bool value);
+		static void setHighlightLines(bool value);
+		static void setLineHighlightColor(const QColor &color);
+		static void setTabWidth(int value);
+		static int getTabWidth(void);
 
-  public slots:
-    //! brief Grabs the keyboard input and also highlight the current line
-    void setFocus(void);
+	public slots:
+		//! brief Grabs the keyboard input and also highlight the current line
+		void setFocus(void);
 
-    //! brief Draw the line numbers according to the current visible lines
-    void updateLineNumbers(void);
+		//! brief Draw the line numbers according to the current visible lines
+		void updateLineNumbers(void);
 
-    /*! brief Configures the line numbers widget sizes (w,h) depending on the current
-        visible lines and the text editor height */
-    void updateLineNumbersSize(void);
+		/*! brief Configures the line numbers widget sizes (w,h) depending on the current
+		visible lines and the text editor height */
+		void updateLineNumbersSize(void);
 
-    //! brief Colors the background of the line where the cursor is
-    void highlightCurrentLine(void);
+		//! brief Colors the background of the line where the cursor is
+		void highlightCurrentLine(void);
 };
 
 #endif

@@ -28,17 +28,17 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 		Ui_CustomSQLWidget::setupUi(this);
 		configureFormLayout(sqlappend_grid, BASE_OBJECT);
 
-    append_sql_hl=new SyntaxHighlighter(append_sql_txt);
-    append_sql_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
-    append_sql_cp=new CodeCompletionWidget(append_sql_txt);
+		append_sql_hl=new SyntaxHighlighter(append_sql_txt);
+		append_sql_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		append_sql_cp=new CodeCompletionWidget(append_sql_txt);
 
-    prepend_sql_hl=new SyntaxHighlighter(prepend_sql_txt);
-    prepend_sql_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
-    prepend_sql_cp=new CodeCompletionWidget(prepend_sql_txt);
+		prepend_sql_hl=new SyntaxHighlighter(prepend_sql_txt);
+		prepend_sql_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		prepend_sql_cp=new CodeCompletionWidget(prepend_sql_txt);
 
-    parent_form->setWindowTitle(trUtf8("Append / Prepend SQL code"));
+		parent_form->setWindowTitle(trUtf8("Append / Prepend SQL code"));
 		parent_form->setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
-    parent_form->setMinimumSize(640, 480);
+		parent_form->setMinimumSize(640, 480);
 
 		font=name_edt->font();
 		font.setItalic(true);
@@ -48,26 +48,26 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 		comment_edt->setReadOnly(true);
 		comment_lbl->setText(trUtf8("Type:"));
 
-    PgModelerUiNS::configureWidgetFont(message_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
+		PgModelerUiNS::configureWidgetFont(message_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 
 		action_gen_insert=new QAction(trUtf8("Generic INSERT"), this);
-    action_gen_insert->setObjectName(QString("action_gen_insert"));
+		action_gen_insert->setObjectName(QString("action_gen_insert"));
 		action_inc_serials=new QAction(trUtf8("Include serial columns"), this);
-    action_inc_serials->setObjectName(QString("action_inc_serials"));
+		action_inc_serials->setObjectName(QString("action_inc_serials"));
 		action_exc_serials=new QAction(trUtf8("Exclude serial columns"), this);
-    action_exc_serials->setObjectName(QString("action_exc_serials"));
+		action_exc_serials->setObjectName(QString("action_exc_serials"));
 		action_gen_select=new QAction(trUtf8("Generic SELECT"), this);
-    action_gen_select->setObjectName(QString("action_gen_select"));
+		action_gen_select->setObjectName(QString("action_gen_select"));
 		action_tab_select=new QAction(trUtf8("Table SELECT"), this);
-    action_tab_select->setObjectName(QString("action_tab_select"));
+		action_tab_select->setObjectName(QString("action_tab_select"));
 		action_gen_update=new QAction(trUtf8("Generic UPDATE"), this);
-    action_gen_update->setObjectName(QString("action_gen_update"));
+		action_gen_update->setObjectName(QString("action_gen_update"));
 		action_tab_update=new QAction(trUtf8("Table UPDATE"), this);
-    action_tab_update->setObjectName(QString("action_tab_update"));
+		action_tab_update->setObjectName(QString("action_tab_update"));
 		action_gen_delete=new QAction(trUtf8("Generic DELETE"), this);
-    action_gen_delete->setObjectName(QString("action_gen_delete"));
+		action_gen_delete->setObjectName(QString("action_gen_delete"));
 		action_tab_delete=new QAction(trUtf8("Table DELETE"), this);
-    action_tab_delete->setObjectName(QString("action_tab_delete"));
+		action_tab_delete->setObjectName(QString("action_tab_delete"));
 
 		insert_menu.addAction(action_inc_serials);
 		insert_menu.addAction(action_exc_serials);
@@ -157,9 +157,9 @@ void CustomSQLWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 		obj_id_lbl->setVisible(false);
 		parent_form->apply_ok_btn->setEnabled(true);
 
-    obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") +
-                                    BaseObject::getSchemaName(object->getObjectType()) +
-                                    QString(".png")));
+		obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") +
+										BaseObject::getSchemaName(object->getObjectType()) +
+										QString(".png")));
 
 		configureMenus();
 	}
@@ -173,14 +173,14 @@ void CustomSQLWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 void CustomSQLWidget::applyConfiguration(void)
 {
 	if(this->object->getObjectType()==OBJ_DATABASE)
-  {
+	{
 		dynamic_cast<DatabaseModel *>(this->object)->setAppendAtEOD(end_of_model_chk->isChecked());
-    dynamic_cast<DatabaseModel *>(this->object)->setPrependAtBOD(begin_of_model_chk->isChecked());
-  }
+		dynamic_cast<DatabaseModel *>(this->object)->setPrependAtBOD(begin_of_model_chk->isChecked());
+	}
 
-  this->object->setAppendedSQL(append_sql_txt->toPlainText());
-  this->object->setPrependedSQL(prepend_sql_txt->toPlainText());
-  this->sqlcodes_twg->setCurrentIndex(0);
+	this->object->setAppendedSQL(append_sql_txt->toPlainText());
+	this->object->setPrependedSQL(prepend_sql_txt->toPlainText());
+	this->sqlcodes_twg->setCurrentIndex(0);
 	this->accept();
 }
 
@@ -189,14 +189,14 @@ void CustomSQLWidget::addCommand(void)
 	Table *table=dynamic_cast<Table *>(this->object);
 	BaseTable *base_table=dynamic_cast<BaseTable *>(this->object);
 	QString cmd,
-      ins_cmd=QString("INSERT INTO %1 (%2) VALUES (%3);"),
-      sel_cmd=QString("SELECT * FROM %1;"),
-      del_cmd=QString("DELETE * FROM %1;"),
-      upd_cmd=QString("UPDATE %1 SET ;");
-  QPlainTextEdit *sqlcode_txt=(sqlcodes_twg->currentIndex()==0 ? append_sql_txt : prepend_sql_txt);
+			ins_cmd=QString("INSERT INTO %1 (%2) VALUES (%3);"),
+			sel_cmd=QString("SELECT * FROM %1;"),
+			del_cmd=QString("DELETE * FROM %1;"),
+			upd_cmd=QString("UPDATE %1 SET ;");
+	QPlainTextEdit *sqlcode_txt=(sqlcodes_twg->currentIndex()==0 ? append_sql_txt : prepend_sql_txt);
 
-  if(sender()->objectName().contains(QLatin1String("insert")) ||
-     sender()->objectName().contains(QLatin1String("serial")))
+	if(sender()->objectName().contains(QLatin1String("insert")) ||
+			sender()->objectName().contains(QLatin1String("serial")))
 	{
 		if(!table || sender()==action_gen_insert)
 			cmd=ins_cmd.arg("table").arg("cols").arg("values");
@@ -209,9 +209,9 @@ void CustomSQLWidget::addCommand(void)
 			for(unsigned i=0; i < table->getColumnCount(); i++)
 			{
 				if(inc_serials ||
-					 (!inc_serials && !table->getColumn(i)->getType().isSerialType()))
+						(!inc_serials && !table->getColumn(i)->getType().isSerialType()))
 				{
-          cols+=table->getColumn(i)->getName(true) + ',';
+					cols+=table->getColumn(i)->getName(true) + ',';
 					vals+=QString("val%1,").arg(val_id++);
 				}
 			}
@@ -221,14 +221,14 @@ void CustomSQLWidget::addCommand(void)
 			cmd=ins_cmd.arg(table->getName(true)).arg(cols).arg(vals);
 		}
 	}
-  else if(sender()->objectName().contains(QLatin1String("select")))
+	else if(sender()->objectName().contains(QLatin1String("select")))
 	{
 		if(!base_table || sender()==action_gen_select)
 			cmd=sel_cmd.arg("object");
 		else if(base_table)
 			cmd=sel_cmd.arg(base_table->getName(true));
 	}
-  else if(sender()->objectName().contains(QLatin1String("delete")))
+	else if(sender()->objectName().contains(QLatin1String("delete")))
 	{
 		if(!table || sender()==action_gen_delete)
 			cmd=del_cmd.arg("object");
@@ -244,14 +244,14 @@ void CustomSQLWidget::addCommand(void)
 	}
 
 	if(!sqlcode_txt->toPlainText().isEmpty())
-    sqlcode_txt->insertPlainText(QLatin1String("\n"));
+		sqlcode_txt->insertPlainText(QLatin1String("\n"));
 
 	sqlcode_txt->insertPlainText(cmd);
 }
 
 void CustomSQLWidget::clearCode(void)
 {
-  QPlainTextEdit *sqlcode_txt=(sqlcodes_twg->currentIndex()==0 ? append_sql_txt : prepend_sql_txt);
+	QPlainTextEdit *sqlcode_txt=(sqlcodes_twg->currentIndex()==0 ? append_sql_txt : prepend_sql_txt);
 	QTextCursor tc=sqlcode_txt->textCursor();
 	tc.movePosition(QTextCursor::End, QTextCursor::MoveAnchor);
 	tc.movePosition(QTextCursor::Start, QTextCursor::KeepAnchor);

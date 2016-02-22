@@ -41,12 +41,12 @@ class OperatorClassWidget: public BaseObjectWidget, public Ui::OperatorClassWidg
 
 		//! \brief Family, funciton and operator selectors
 		ObjectSelectorWidget *family_sel,
-												*function_sel,
-												*operator_sel,
-												*elem_family_sel;
+		*function_sel,
+		*operator_sel,
+		*elem_family_sel;
 
 		PgSQLTypeWidget *data_type,
-										*storage_type;
+		*storage_type;
 
 		//! \brief Stores the elements of operator class
 		ObjectTableWidget *elements_tab;

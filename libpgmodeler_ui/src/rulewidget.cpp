@@ -27,16 +27,16 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RULE)
 
 		Ui_RuleWidget::setupUi(this);
 
-    cond_expr_hl=new SyntaxHighlighter(cond_expr_txt, false, true);
-    cond_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		cond_expr_hl=new SyntaxHighlighter(cond_expr_txt, false, true);
+		cond_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
-    command_hl=new SyntaxHighlighter(comando_txt, false, true);
-    command_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		command_hl=new SyntaxHighlighter(comando_txt, false, true);
+		command_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 		command_cp=new CodeCompletionWidget(comando_txt);
 
 		commands_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
 		commands_tab->setHeaderLabel(trUtf8("SQL command"),0);
-    commands_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/codigosql.png")),0);
+		commands_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/codigosql.png")),0);
 		dynamic_cast<QGridLayout *>(commands_gb->layout())->addWidget(commands_tab, 1, 0, 1, 2);
 
 		frame=generateInformationFrame(trUtf8("To create a rule that does not perform any action (<strong>DO NOTHING</strong>) simply do not specify commands in the SQL commands table."));
@@ -58,7 +58,7 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RULE)
 		connect(commands_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editCommand(int)));
 
 		setRequiredField(event_lbl);
-    configureTabOrder();
+		configureTabOrder();
 	}
 	catch(Exception &e)
 	{
@@ -106,14 +106,14 @@ void RuleWidget::setAttributes(DatabaseModel *model, BaseTable *parent_tab, Oper
 	{
 		event_cmb->setCurrentIndex(event_cmb->findText(~rule->getEventType()));
 		exec_type_cmb->setCurrentIndex(exec_type_cmb->findText(~rule->getExecutionType()));
-    cond_expr_txt->setPlainText(rule->getConditionalExpression());
+		cond_expr_txt->setPlainText(rule->getConditionalExpression());
 
 		commands_tab->blockSignals(true);
 		qtd=rule->getCommandCount();
 		for(i=0; i < qtd; i++)
 		{
 			commands_tab->addRow();
-      commands_tab->setCellText(rule->getCommand(i),i,0);
+			commands_tab->setCellText(rule->getCommand(i),i,0);
 		}
 		commands_tab->blockSignals(false);
 	}

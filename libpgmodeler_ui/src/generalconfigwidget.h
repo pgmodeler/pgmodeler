@@ -36,38 +36,38 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 	private:
 		Q_OBJECT
 
-    QWidgetList child_wgts;
+		QWidgetList child_wgts;
 
-    NumberedTextEditor *font_preview_txt;
+		NumberedTextEditor *font_preview_txt;
 
-    static map<QString, attribs_map> config_params;
+		static map<QString, attribs_map> config_params;
 
 		static const unsigned UNIT_MILIMETERS=0,
-                          UNIT_POINT=1,
-													UNIT_INCHS=2,
-													UNIT_CENTIMETERS=3;
+		UNIT_POINT=1,
+		UNIT_INCHS=2,
+		UNIT_CENTIMETERS=3;
 
-    HintTextWidget *simp_obj_creation_ht, *confirm_validation_ht, *corner_move_ht,
-    *save_last_pos_ht, *invert_pan_range_ht, *disable_smooth_ht,
-    *hide_ext_attribs_ht, *hide_table_tags_ht, *hide_rel_name_ht,
-    *code_completion_ht, *use_placeholders_ht;
+		HintTextWidget *simp_obj_creation_ht, *confirm_validation_ht, *corner_move_ht,
+		*save_last_pos_ht, *invert_pan_range_ht, *disable_smooth_ht,
+		*hide_ext_attribs_ht, *hide_table_tags_ht, *hide_rel_name_ht,
+		*code_completion_ht, *use_placeholders_ht;
 
-    ColorPickerWidget *line_numbers_cp, *line_numbers_bg_cp, *line_highlight_cp;
+		ColorPickerWidget *line_numbers_cp, *line_numbers_bg_cp, *line_highlight_cp;
 
-    void hideEvent(QHideEvent *);
+		void hideEvent(QHideEvent *);
 
 	public:
 		GeneralConfigWidget(QWidget * parent=0);
 
 		void saveConfiguration(void);
 		void loadConfiguration(void);
-    static void addConfigurationParam(const QString &param, const attribs_map &attribs);
-    static void removeConfigurationParam(const QRegExp &param_reg);
-    static map<QString, attribs_map> getConfigurationParams(void);
+		static void addConfigurationParam(const QString &param, const attribs_map &attribs);
+		static void removeConfigurationParam(const QRegExp &param_reg);
+		static map<QString, attribs_map> getConfigurationParams(void);
 
-    /*! brief Returns a single value of a configuration param in the specified section id.
-        Section id can be <configuration>, <dock-widget>, <file[n]> or <recent[n]> */
-    static QString getConfigurationParam(const QString &section_id, const QString &param_name);
+		/*! brief Returns a single value of a configuration param in the specified section id.
+		Section id can be <configuration>, <dock-widget>, <file[n]> or <recent[n]> */
+		static QString getConfigurationParam(const QString &section_id, const QString &param_name);
 
 	public slots:
 		void applyConfiguration(void);
@@ -76,7 +76,7 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 
 	private slots:
 		void convertMarginUnity(void);
-    void updateFontPreview(void);
+		void updateFontPreview(void);
 };
 
 #endif

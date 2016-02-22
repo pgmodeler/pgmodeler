@@ -36,7 +36,7 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 
 		ObjectTableWidget *parent_tables;
 
-    ObjectSelectorWidget *tag_sel;
+		ObjectSelectorWidget *tag_sel;
 
 		//! \brief Stores the objects tables used to handle columns, constraints, indexes, rules and triggers
 		map<ObjectType, ObjectTableWidget *> objects_tab_map;

@@ -9,7 +9,7 @@ ExtensionWidget::ExtensionWidget(QWidget * parent) : BaseObjectWidget(parent, OB
 	parent_form->setMinimumSize(480, 250);
 	parent_form->setMaximumHeight(250);
 
-  configureTabOrder({ cur_ver_edt, old_ver_edt, handles_type_chk });
+	configureTabOrder({ cur_ver_edt, old_ver_edt, handles_type_chk });
 }
 
 void ExtensionWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Extension *ext)
@@ -28,11 +28,11 @@ void ExtensionWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 
 void ExtensionWidget::hideEvent(QHideEvent *event)
 {
- handles_type_chk->setEnabled(true);
- handles_type_chk->setChecked(false);
- cur_ver_edt->clear();
- old_ver_edt->clear();
- BaseObjectWidget::hideEvent(event);
+	handles_type_chk->setEnabled(true);
+	handles_type_chk->setChecked(false);
+	cur_ver_edt->clear();
+	old_ver_edt->clear();
+	BaseObjectWidget::hideEvent(event);
 }
 
 void ExtensionWidget::applyConfiguration(void)

@@ -24,13 +24,13 @@ BaseForm::BaseForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 
 	/* Windows System workaround: permitting the windows subject to maximize shows
 	the maximize button as well the editing dialogs stay on top of all other dialogs */
-	#ifdef Q_OS_WIN
-		this->setWindowFlags(this->windowFlags() |
-												 Qt::Dialog |
-												 Qt::WindowMaximizeButtonHint);
+#ifdef Q_OS_WIN
+	this->setWindowFlags(this->windowFlags() |
+						 Qt::Dialog |
+						 Qt::WindowMaximizeButtonHint);
 
-		this->generalwidget_wgt->setFrameShape(QFrame::WinPanel);
-  #endif
+	this->generalwidget_wgt->setFrameShape(QFrame::WinPanel);
+#endif
 }
 
 void BaseForm::setButtonConfiguration(unsigned button_conf)

@@ -26,37 +26,37 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
 	appearance_conf=new AppearanceConfigWidget(this);
 	connections_conf=new ConnectionsConfigWidget(this);
 	relationships_conf=new RelationshipConfigWidget(this);
-  snippets_conf=new SnippetsConfigWidget(this);
-  plugins_conf=new PluginsConfigWidget(this);
+	snippets_conf=new SnippetsConfigWidget(this);
+	plugins_conf=new PluginsConfigWidget(this);
 
-  QWidgetList wgt_list={ general_conf, relationships_conf,
-                         appearance_conf, connections_conf,
-                         snippets_conf, plugins_conf};
+	QWidgetList wgt_list={ general_conf, relationships_conf,
+						   appearance_conf, connections_conf,
+						   snippets_conf, plugins_conf};
 
-  for(int i=GENERAL_CONF_WGT; i <= PLUGINS_CONF_WGT; i++)
-    confs_stw->addWidget(wgt_list[i]);
+	for(int i=GENERAL_CONF_WGT; i <= PLUGINS_CONF_WGT; i++)
+		confs_stw->addWidget(wgt_list[i]);
 
 	connect(icons_lst, SIGNAL(currentRowChanged(int)), confs_stw, SLOT(setCurrentIndex(int)));
 	connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(reject(void)));
 	connect(apply_btn, SIGNAL(clicked(void)), this, SLOT(applyConfiguration(void)));
 	connect(defaults_btn, SIGNAL(clicked(void)), this, SLOT(restoreDefaults(void)));
 
-  icons_lst->setCurrentRow(GENERAL_CONF_WGT);
+	icons_lst->setCurrentRow(GENERAL_CONF_WGT);
 }
 
 ConfigurationForm::~ConfigurationForm(void)
 {
-  connections_conf->destroyConnections();
+	connections_conf->destroyConnections();
 }
 
 void ConfigurationForm::hideEvent(QHideEvent *)
 {
-  icons_lst->setCurrentRow(GENERAL_CONF_WGT);
+	icons_lst->setCurrentRow(GENERAL_CONF_WGT);
 }
 
 void ConfigurationForm::showEvent(QShowEvent *)
 {
-  snippets_conf->snippet_txt->updateLineNumbers();
+	snippets_conf->snippet_txt->updateLineNumbers();
 }
 
 void ConfigurationForm::reject(void)
@@ -64,17 +64,17 @@ void ConfigurationForm::reject(void)
 	try
 	{
 		if(sender()==cancel_btn)
-    {
-      QWidgetList wgt_list={ appearance_conf, connections_conf, snippets_conf };
-      BaseConfigWidget *conf_wgt=nullptr;
+		{
+			QWidgetList wgt_list={ appearance_conf, connections_conf, snippets_conf };
+			BaseConfigWidget *conf_wgt=nullptr;
 
-      for(QWidget *wgt : wgt_list)
-      {
-        conf_wgt=qobject_cast<BaseConfigWidget *>(wgt);
+			for(QWidget *wgt : wgt_list)
+			{
+				conf_wgt=qobject_cast<BaseConfigWidget *>(wgt);
 
-        if(conf_wgt->isConfigurationChanged())
-          conf_wgt->loadConfiguration();
-      }
+				if(conf_wgt->isConfigurationChanged())
+					conf_wgt->loadConfiguration();
+			}
 		}
 	}
 	catch(Exception &)
@@ -85,18 +85,18 @@ void ConfigurationForm::reject(void)
 
 void ConfigurationForm::applyConfiguration(void)
 {
-  BaseConfigWidget *conf_wgt=nullptr;
+	BaseConfigWidget *conf_wgt=nullptr;
 
-  for(int i=GENERAL_CONF_WGT; i <= SNIPPETS_CONF_WGT; i++)
-  {
-    conf_wgt=qobject_cast<BaseConfigWidget *>(confs_stw->widget(i));
+	for(int i=GENERAL_CONF_WGT; i <= SNIPPETS_CONF_WGT; i++)
+	{
+		conf_wgt=qobject_cast<BaseConfigWidget *>(confs_stw->widget(i));
 
-    if(conf_wgt->isConfigurationChanged())
-      conf_wgt->saveConfiguration();
-  }
+		if(conf_wgt->isConfigurationChanged())
+			conf_wgt->saveConfiguration();
+	}
 
-  general_conf->applyConfiguration();
-  relationships_conf->applyConfiguration();
+	general_conf->applyConfiguration();
+	relationships_conf->applyConfiguration();
 
 	QDialog::accept();
 }
@@ -105,8 +105,8 @@ void ConfigurationForm::loadConfiguration(void)
 {
 	try
 	{
-    for(int i=GENERAL_CONF_WGT; i <= PLUGINS_CONF_WGT; i++)
-      qobject_cast<BaseConfigWidget *>(confs_stw->widget(i))->loadConfiguration();
+		for(int i=GENERAL_CONF_WGT; i <= PLUGINS_CONF_WGT; i++)
+			qobject_cast<BaseConfigWidget *>(confs_stw->widget(i))->loadConfiguration();
 	}
 	catch(Exception &e)
 	{
@@ -123,12 +123,12 @@ void ConfigurationForm::loadConfiguration(void)
 void ConfigurationForm::restoreDefaults(void)
 {
 	Messagebox msg_box;
-  msg_box.show(trUtf8("Any modification made until now in the current section will be lost! Do you really want to restore default settings?"),
-               Messagebox::CONFIRM_ICON,
-               Messagebox::YES_NO_BUTTONS);
+	msg_box.show(trUtf8("Any modification made until now in the current section will be lost! Do you really want to restore default settings?"),
+				 Messagebox::CONFIRM_ICON,
+				 Messagebox::YES_NO_BUTTONS);
 
 	if(msg_box.result()==QDialog::Accepted)
-    qobject_cast<BaseConfigWidget *>(confs_stw->currentWidget())->restoreDefaults();
+		qobject_cast<BaseConfigWidget *>(confs_stw->currentWidget())->restoreDefaults();
 }
 
 BaseConfigWidget *ConfigurationForm::getConfigurationWidget(unsigned idx)
@@ -136,6 +136,6 @@ BaseConfigWidget *ConfigurationForm::getConfigurationWidget(unsigned idx)
 	if(idx >= static_cast<unsigned>(confs_stw->count()))
 		return(nullptr);
 	else
-    return(qobject_cast<BaseConfigWidget *>(confs_stw->widget(static_cast<unsigned>(idx))));
+		return(qobject_cast<BaseConfigWidget *>(confs_stw->widget(static_cast<unsigned>(idx))));
 }
 

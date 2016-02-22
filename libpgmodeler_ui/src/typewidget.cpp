@@ -35,13 +35,13 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 		element_type=new PgSQLTypeWidget(this, trUtf8("Element Type"));
 		range_subtype=new PgSQLTypeWidget(this, trUtf8("Subtype"));
 
-        grid=dynamic_cast<QGridLayout *>(base_attribs_twg->widget(1)->layout());
+		grid=dynamic_cast<QGridLayout *>(base_attribs_twg->widget(1)->layout());
 		spacer=new QSpacerItem(20, 1, QSizePolicy::Minimum, QSizePolicy::Expanding);
 		grid->addWidget(like_type,6,0,1,0);
 		grid->addWidget(element_type,7,0,1,0);
 		grid->addItem(spacer,8,0);
 
-        grid=dynamic_cast<QGridLayout *>(base_attribs_twg->widget(0)->layout());
+		grid=dynamic_cast<QGridLayout *>(base_attribs_twg->widget(0)->layout());
 		for(i=Type::INPUT_FUNC; i <= Type::ANALYZE_FUNC; i++)
 		{
 			functions_sel[i]=nullptr;
@@ -50,7 +50,7 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 		}
 
 		enumerations_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-                                               ObjectTableWidget::EDIT_BUTTON, true, this);
+											   ObjectTableWidget::EDIT_BUTTON, true, this);
 		grid=dynamic_cast<QGridLayout *>(enumerations_gb->layout());
 		grid->addWidget(enumerations_tab,1,0,1,2);
 		enumerations_gb->setVisible(false);
@@ -58,11 +58,11 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 		attributes_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
 		attributes_tab->setColumnCount(3);
 		attributes_tab->setHeaderLabel(trUtf8("Name"),0);
-    attributes_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
+		attributes_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
 		attributes_tab->setHeaderLabel(trUtf8("Type"),1);
-    attributes_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+		attributes_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
 		attributes_tab->setHeaderLabel(trUtf8("Collation"),2);
-    attributes_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/collation.png")),2);
+		attributes_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/collation.png")),2);
 
 		grid=dynamic_cast<QGridLayout *>(attributes_gb->layout());
 
@@ -75,10 +75,10 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 		grid->addWidget(attributes_tab,3,0,1,2);
 		attributes_gb->setVisible(false);
 
-        grid=dynamic_cast<QGridLayout *>(base_attribs_twg->widget(0)->layout());
+		grid=dynamic_cast<QGridLayout *>(base_attribs_twg->widget(0)->layout());
 		frame=generateInformationFrame(trUtf8("The functions to be assigned to a type should be written in C language and possess, respectively, the following signatures:<br/>  <table>   <tr>    <td><strong>INPUT:</strong> <em>any function(cstring, oid, integer)</em></td>    <td><strong>OUTPUT:</strong> <em>cstring function(any)</em></td>   </tr>   <tr>    <td><strong>SEND:</strong> <em>byta function(any)</em></td>    <td><strong>RECV:</strong> <em>any function(internal, oid, integer)</em></td>   </tr>   <tr>    <td><strong>TPMOD_IN:</strong> <em>integer function(cstring[])</em></td>    <td><strong>TPMOD_OUT:</strong> <em>cstring function(integer)</em></td>   </tr>   <tr>    <td><strong>ANALYZE:</strong> <em>boolean function(internal)</em></td>    <tr>  </table>"));
 		grid->addWidget(frame, grid->count()+1, 0, 1, 0);
-        frame->setParent(base_attribs_twg->widget(0));
+		frame->setParent(base_attribs_twg->widget(0));
 
 		grid=dynamic_cast<QGridLayout *>(range_attribs_gb->layout());
 		opclass_sel=new ObjectSelectorWidget(OBJ_OPCLASS, true, this);
@@ -125,10 +125,10 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 		setRequiredField(enumerations_gb);
 		setRequiredField(attributes_gb);
 
-    configureTabOrder({base_type_rb, enumeration_rb, composite_rb, range_rb,
-                       enum_name_edt, attrib_name_edt, attrib_collation_sel, attrib_type_wgt,
-                       opclass_sel, functions_sel[Type::CANONICAL_FUNC], functions_sel[Type::SUBTYPE_DIFF_FUNC],
-                       base_attribs_twg});
+		configureTabOrder({base_type_rb, enumeration_rb, composite_rb, range_rb,
+						   enum_name_edt, attrib_name_edt, attrib_collation_sel, attrib_type_wgt,
+						   opclass_sel, functions_sel[Type::CANONICAL_FUNC], functions_sel[Type::SUBTYPE_DIFF_FUNC],
+						   base_attribs_twg});
 	}
 	catch(Exception &e)
 	{
@@ -188,11 +188,11 @@ void TypeWidget::handleEnumeration(int row)
 
 void TypeWidget::showAttributeData(TypeAttribute attrib, int row)
 {
-  attributes_tab->setCellText(attrib.getName(), row, 0);
-  attributes_tab->setCellText(*attrib.getType(), row, 1);
+	attributes_tab->setCellText(attrib.getName(), row, 0);
+	attributes_tab->setCellText(*attrib.getType(), row, 1);
 
 	if(attrib.getCollation())
-    attributes_tab->setCellText(attrib.getCollation()->getName(true), row, 2);
+		attributes_tab->setCellText(attrib.getCollation()->getName(true), row, 2);
 	else
 		attributes_tab->clearCellText(row,2);
 
@@ -203,7 +203,7 @@ void TypeWidget::editAttribute(int row)
 {
 	TypeAttribute attrib=attributes_tab->getRowData(row).value<TypeAttribute>();
 
-  attrib_name_edt->setText(attrib.getName());
+	attrib_name_edt->setText(attrib.getName());
 	attrib_collation_sel->setSelectedObject(attrib.getCollation());
 	attrib_type_wgt->setAttributes(attrib.getType(), this->model);
 }
@@ -225,7 +225,7 @@ void TypeWidget::handleAttribute(int row)
 	catch(Exception &e)
 	{
 		if(attributes_tab->getCellText(row,0).isEmpty())
-				attributes_tab->removeRow(row);
+			attributes_tab->removeRow(row);
 
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -275,7 +275,7 @@ void TypeWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 			for(i=0; i < count; i++)
 			{
 				enumerations_tab->addRow();
-        enumerations_tab->setCellText(type->getEnumeration(i), i, 0);
+				enumerations_tab->setCellText(type->getEnumeration(i), i, 0);
 			}
 
 			enumerations_tab->blockSignals(false);
@@ -301,7 +301,7 @@ void TypeWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 			preferred_chk->setChecked(type->isPreferred());
 			collatable_chk->setChecked(type->isCollatable());
 			delimiter_edt->setText(QString(type->getDelimiter()));
-      default_value_edt->setText(type->getDefaultValue());
+			default_value_edt->setText(type->getDefaultValue());
 			category_cmb->setCurrentIndex(category_cmb->findText(~type->getCategory()));
 			storage_cmb->setCurrentIndex(storage_cmb->findText(~type->getStorage()));
 			alignment_cmb->setCurrentIndex(alignment_cmb->findText(~type->getAlignment()));

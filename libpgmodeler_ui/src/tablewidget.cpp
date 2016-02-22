@@ -33,22 +33,22 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 
 	Ui_TableWidget::setupUi(this);
 
-  fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_91)].push_back(unlogged_chk);
+	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_91)].push_back(unlogged_chk);
 	frame=generateVersionWarningFrame(fields_map);
 	table_grid->addWidget(frame, table_grid->count()+1, 0, 1, 2);
 	frame->setParent(this);
 
-  //operation_count=0;
+	//operation_count=0;
 	parent_tables = new ObjectTableWidget(ObjectTableWidget::NO_BUTTONS, true, this);
 	parent_tables->setColumnCount(3);
 	parent_tables->setHeaderLabel(trUtf8("Name"), 0);
-  parent_tables->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
+	parent_tables->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
 	parent_tables->setHeaderLabel(trUtf8("Schema"), 1);
-  parent_tables->setHeaderIcon(QPixmap(QString(":/icones/icones/schema.png")),1);
+	parent_tables->setHeaderIcon(QPixmap(QString(":/icones/icones/schema.png")),1);
 	parent_tables->setHeaderLabel(trUtf8("Type"), 2);
-  parent_tables->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),2);
+	parent_tables->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),2);
 
-  tag_sel=new ObjectSelectorWidget(OBJ_TAG, false, this);
+	tag_sel=new ObjectSelectorWidget(OBJ_TAG, false, this);
 	dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 3);
 
 	grid=new QGridLayout;
@@ -60,7 +60,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	for(unsigned i=0; i < 5; i++)
 	{
 		tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-															(ObjectTableWidget::UPDATE_BUTTON), true, this);
+								  (ObjectTableWidget::UPDATE_BUTTON), true, this);
 
 		objects_tab_map[types[i]]=tab;
 
@@ -78,38 +78,38 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 
 	objects_tab_map[OBJ_COLUMN]->setColumnCount(4);
 	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Name"), 0);
-  objects_tab_map[OBJ_COLUMN]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
+	objects_tab_map[OBJ_COLUMN]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
 	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Type"), 1);
-  objects_tab_map[OBJ_COLUMN]->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+	objects_tab_map[OBJ_COLUMN]->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
 	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Default Value"), 2);
 	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Attribute"), 3);
 
 	objects_tab_map[OBJ_CONSTRAINT]->setColumnCount(4);
 	objects_tab_map[OBJ_CONSTRAINT]->setHeaderLabel(trUtf8("Name"), 0);
-  objects_tab_map[OBJ_CONSTRAINT]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
+	objects_tab_map[OBJ_CONSTRAINT]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
 	objects_tab_map[OBJ_CONSTRAINT]->setHeaderLabel(trUtf8("Type"), 1);
-  objects_tab_map[OBJ_CONSTRAINT]->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+	objects_tab_map[OBJ_CONSTRAINT]->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
 	objects_tab_map[OBJ_CONSTRAINT]->setHeaderLabel(trUtf8("ON DELETE"), 2);
 	objects_tab_map[OBJ_CONSTRAINT]->setHeaderLabel(trUtf8("ON UPDATE"), 3);
 
 	objects_tab_map[OBJ_TRIGGER]->setColumnCount(4);
 	objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Name"), 0);
-  objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
+	objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
 	objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Refer. Table"), 1);
-  objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(QString(":/icones/icones/table.png")),1);
+	objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(QString(":/icones/icones/table.png")),1);
 	objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Firing"), 2);
-  objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(QString(":/icones/icones/trigger.png")),2);
+	objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(QString(":/icones/icones/trigger.png")),2);
 	objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Events"), 3);
 
 	objects_tab_map[OBJ_RULE]->setColumnCount(3);
 	objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Name"), 0);
-  objects_tab_map[OBJ_RULE]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
+	objects_tab_map[OBJ_RULE]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
 	objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Execution"), 1);
 	objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Event"), 2);
 
 	objects_tab_map[OBJ_INDEX]->setColumnCount(2);
 	objects_tab_map[OBJ_INDEX]->setHeaderLabel(trUtf8("Name"), 0);
-  objects_tab_map[OBJ_INDEX]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
+	objects_tab_map[OBJ_INDEX]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
 	objects_tab_map[OBJ_INDEX]->setHeaderLabel(trUtf8("Indexing"), 1);
 
 	configureFormLayout(table_grid, OBJ_TABLE);
@@ -118,7 +118,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 	connect(parent_form->cancel_btn,SIGNAL(clicked(bool)), this, SLOT(cancelConfiguration(void)));
 
-  configureTabOrder({ tag_sel });
+	configureTabOrder({ tag_sel });
 }
 
 void TableWidget::hideEvent(QHideEvent *event)
@@ -255,7 +255,7 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 		{
 			listObjects(types[i]);
 			objects_tab_map[types[i]]->setButtonConfiguration(ObjectTableWidget::ALL_BUTTONS ^
-																												(ObjectTableWidget::UPDATE_BUTTON));
+															  (ObjectTableWidget::UPDATE_BUTTON));
 		}
 
 		//Listing the ancestor tables
@@ -264,8 +264,8 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 		{
 			aux_tab=table->getAncestorTable(i);
 			parent_tables->addRow();
-      parent_tables->setCellText(aux_tab->getName(), i, 0);
-      parent_tables->setCellText(aux_tab->getSchema()->getName(), i, 1);
+			parent_tables->setCellText(aux_tab->getName(), i, 0);
+			parent_tables->setCellText(aux_tab->getSchema()->getName(), i, 1);
 			parent_tables->setCellText(trUtf8("Parent"), i, 2);
 		}
 
@@ -273,8 +273,8 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 		if(aux_tab)
 		{
 			parent_tables->addRow();
-      parent_tables->setCellText(aux_tab->getName(), i, 0);
-      parent_tables->setCellText(aux_tab->getSchema()->getName(), i, 1);
+			parent_tables->setCellText(aux_tab->getName(), i, 0);
+			parent_tables->setCellText(aux_tab->getSchema()->getName(), i, 1);
 			parent_tables->setCellText(trUtf8("Copy"), i, 2);
 		}
 
@@ -283,8 +283,8 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 		unlogged_chk->setChecked(table->isUnlogged());
 		gen_alter_cmds_chk->setChecked(table->isGenerateAlterCmds());
 
-    tag_sel->setModel(this->model);
-    tag_sel->setSelectedObject(table->getTag());
+		tag_sel->setModel(this->model);
+		tag_sel->setSelectedObject(table->getTag());
 	}
 	catch(Exception &e)
 	{
@@ -321,11 +321,11 @@ void TableWidget::listObjects(ObjectType obj_type)
 		if(obj_type==OBJ_COLUMN)
 		{
 			objects_tab_map[OBJ_CONSTRAINT]->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON,
-																											objects_tab_map[OBJ_COLUMN]->getRowCount() > 0);
+															   objects_tab_map[OBJ_COLUMN]->getRowCount() > 0);
 			objects_tab_map[OBJ_TRIGGER]->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON,
-																									 objects_tab_map[OBJ_COLUMN]->getRowCount() > 0);
+															objects_tab_map[OBJ_COLUMN]->getRowCount() > 0);
 			objects_tab_map[OBJ_INDEX]->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON,
-																								 objects_tab_map[OBJ_COLUMN]->getRowCount() > 0);
+														  objects_tab_map[OBJ_COLUMN]->getRowCount() > 0);
 		}
 	}
 	catch(Exception &e)
@@ -360,23 +360,23 @@ void TableWidget::showObjectData(TableObject *object, int row)
 	Rule *rule=nullptr;
 	Index *index=nullptr;
 	ObjectType obj_type;
-  QString str_aux, str_aux1;
+	QString str_aux, str_aux1;
 
-  QStringList contr_types={ ~ConstraintType(ConstraintType::primary_key), ~ConstraintType(ConstraintType::foreign_key),
-                            ~ConstraintType(ConstraintType::check), ~ConstraintType(ConstraintType::unique),
-                            QString("NOT NULL") },
-      constr_codes={ QString("pk"), QString("fk"), QString("ck"), QString("uq"), QString("nn")};
+	QStringList contr_types={ ~ConstraintType(ConstraintType::primary_key), ~ConstraintType(ConstraintType::foreign_key),
+							  ~ConstraintType(ConstraintType::check), ~ConstraintType(ConstraintType::unique),
+							  QString("NOT NULL") },
+			constr_codes={ QString("pk"), QString("fk"), QString("ck"), QString("uq"), QString("nn")};
 
 	QFont font;
 	unsigned i;
 	EventType events[]={ EventType::on_insert, EventType::on_delete,
-											 EventType::on_truncate,	EventType::on_update };
+						 EventType::on_truncate,	EventType::on_update };
 
 	obj_type=object->getObjectType();
 	tab=objects_tab_map[obj_type];
 
 	//Column 0: Object name
-  tab->setCellText(object->getName(),row,0);
+	tab->setCellText(object->getName(),row,0);
 
 	//For each object type there is a use for the columns from 1 to 3
 	if(obj_type==OBJ_COLUMN)
@@ -384,26 +384,26 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		column=dynamic_cast<Column *>(object);
 
 		//Column 1: Column data type
-    tab->setCellText(*column->getType(),row,1);
+		tab->setCellText(*column->getType(),row,1);
 
 		//Column 2: Column defaul value
-    if(column->getSequence())
-      str_aux=QString("nextval('%1'::regclass)").arg(column->getSequence()->getName(true).remove('"'));
-    else
-      str_aux=column->getDefaultValue();
+		if(column->getSequence())
+			str_aux=QString("nextval('%1'::regclass)").arg(column->getSequence()->getName(true).remove('"'));
+		else
+			str_aux=column->getDefaultValue();
 
-    if(str_aux.isEmpty()) str_aux=QString("-");
+		if(str_aux.isEmpty()) str_aux=QString("-");
 		tab->setCellText(str_aux,row,2);
 
 		//Column 3: Column attributes (constraints which belongs)
-    str_aux=TableObjectView::getConstraintString(column);
-    for(int i=0; i < constr_codes.size(); i++)
+		str_aux=TableObjectView::getConstraintString(column);
+		for(int i=0; i < constr_codes.size(); i++)
 		{
 			if(str_aux.indexOf(constr_codes[i]) >= 0)
 				str_aux1+=contr_types[i]  + QString(", ");
 		}
 
-    if(str_aux1.isEmpty()) str_aux1=QString("-");
+		if(str_aux1.isEmpty()) str_aux1=QString("-");
 		else str_aux1.remove(str_aux1.size()-2, 2);
 
 		tab->setCellText(str_aux1,row,3);
@@ -425,8 +425,8 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		}
 		else
 		{
-      tab->setCellText(QString("-"),row,2);
-      tab->setCellText(QString("-"),row,3);
+			tab->setCellText(QString("-"),row,2);
+			tab->setCellText(QString("-"),row,3);
 		}
 	}
 	else if(obj_type==OBJ_TRIGGER)
@@ -436,7 +436,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		//Column 1: Table referenced by the trigger (constraint trigger)
 		tab->clearCellText(row,1);
 		if(trigger->getReferencedTable())
-      tab->setCellText(trigger->getReferencedTable()->getName(true),row,1);
+			tab->setCellText(trigger->getReferencedTable()->getName(true),row,1);
 
 		//Column 2: Trigger firing type
 		tab->setCellText(~trigger->getFiringType(),row,2);
@@ -503,16 +503,16 @@ void TableWidget::removeObjects(void)
 			object=table->getObject(0, obj_type);
 
 			if(!object->isProtected() &&
-				 !dynamic_cast<TableObject *>(object)->isAddedByRelationship())
+					!dynamic_cast<TableObject *>(object)->isAddedByRelationship())
 			{
 				op_list->registerObject(object, Operation::OBJECT_REMOVED, 0, this->object);
 				table->removeObject(object);
 			}
 			else
 				throw Exception(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT)
-                        .arg(object->getName())
-												.arg(object->getTypeName()),
-												ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+								.arg(object->getName())
+								.arg(object->getTypeName()),
+								ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 	}
 	catch(Exception &e)
@@ -542,7 +542,7 @@ void TableWidget::removeObject(int row)
 	Table *table=nullptr;
 	BaseObject *object=nullptr;
 	ObjectType obj_type=BASE_OBJECT;
-  int op_id=-1;
+	int op_id=-1;
 
 	try
 	{
@@ -552,26 +552,26 @@ void TableWidget::removeObject(int row)
 		object=table->getObject(row, obj_type);
 
 		if(!object->isProtected() &&
-			 !dynamic_cast<TableObject *>(object)->isAddedByRelationship())
+				!dynamic_cast<TableObject *>(object)->isAddedByRelationship())
 		{
-      op_id=op_list->registerObject(object, Operation::OBJECT_REMOVED, row, this->object);
+			op_id=op_list->registerObject(object, Operation::OBJECT_REMOVED, row, this->object);
 			table->removeObject(object);
 		}
 		else
 			throw Exception(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT)
-                      .arg(object->getName())
-											.arg(object->getTypeName()),
-											ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							.arg(object->getName())
+							.arg(object->getTypeName()),
+							ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 	catch(Exception &e)
 	{
-    //If operation was registered
-    if(op_id >= 0)
-    {
-      op_list->ignoreOperationChain(true);
-      op_list->removeLastOperation();
-      op_list->ignoreOperationChain(false);
-    }
+		//If operation was registered
+		if(op_id >= 0)
+		{
+			op_list->ignoreOperationChain(true);
+			op_list->removeLastOperation();
+			op_list->ignoreOperationChain(false);
+		}
 
 		listObjects(obj_type);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
@@ -608,7 +608,7 @@ void TableWidget::TableWidget::swapObjects(int idx1, int idx2)
 	{
 		listObjects(obj_type);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-  }
+	}
 }
 
 void TableWidget::applyConfiguration(void)
@@ -620,14 +620,14 @@ void TableWidget::applyConfiguration(void)
 
 		if(!this->new_object)
 			op_list->registerObject(this->object, Operation::OBJECT_MODIFIED);
-    else
-      registerNewObject();
+		else
+			registerNewObject();
 
 		table=dynamic_cast<Table *>(this->object);
 		table->setWithOIDs(with_oids_chk->isChecked());
 		table->setGenerateAlterCmds(gen_alter_cmds_chk->isChecked());
 		table->setUnlogged(unlogged_chk->isChecked());
-    table->setTag(dynamic_cast<Tag *>(tag_sel->getSelectedObject()));
+		table->setTag(dynamic_cast<Tag *>(tag_sel->getSelectedObject()));
 
 		BaseObjectWidget::applyConfiguration();
 
@@ -635,10 +635,10 @@ void TableWidget::applyConfiguration(void)
 		{
 			table->saveRelObjectsIndexes();
 
-      if(model->getRelationship(table, nullptr))
-        model->validateRelationships();
+			if(model->getRelationship(table, nullptr))
+				model->validateRelationships();
 
-      model->updateTableFKRelationships(table);
+			model->updateTableFKRelationships(table);
 		}
 		catch(Exception &e)
 		{
@@ -654,17 +654,17 @@ void TableWidget::applyConfiguration(void)
 		finishConfiguration();
 
 		if(RelationshipView::getLineConnectinMode()==RelationshipView::CONNECT_FK_TO_PK)
-    {
+		{
 			/* Forcing the update of relationships connected to the table in order to reconfigure the line
 			 in case of the relationship is using the CONNECT_FK_TO_PK line mode */
-      rels=model->getRelationships(table);
-      for(auto &rel : rels)
-      {
-        if(rel->getRelationshipType()==Relationship::RELATIONSHIP_11 ||
-           rel->getRelationshipType()==Relationship::RELATIONSHIP_1N ||
-           rel->getRelationshipType()==Relationship::RELATIONSHIP_FK)
-          rel->setModified(true);
-      }
+			rels=model->getRelationships(table);
+			for(auto &rel : rels)
+			{
+				if(rel->getRelationshipType()==Relationship::RELATIONSHIP_11 ||
+						rel->getRelationshipType()==Relationship::RELATIONSHIP_1N ||
+						rel->getRelationshipType()==Relationship::RELATIONSHIP_FK)
+					rel->setModified(true);
+			}
 		}
 	}
 	catch(Exception &e)
@@ -675,6 +675,6 @@ void TableWidget::applyConfiguration(void)
 
 void TableWidget::cancelConfiguration(void)
 {
-  BaseObjectWidget::cancelChainedOperation();
+	BaseObjectWidget::cancelChainedOperation();
 }
 

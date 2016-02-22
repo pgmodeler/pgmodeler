@@ -31,13 +31,13 @@ ReadOnlyItemDelegate::~ReadOnlyItemDelegate(void)
 
 void ReadOnlyItemDelegate::setEditorData(QWidget * editor, const QModelIndex & index) const
 {
-  QLineEdit *line_edt=qobject_cast<QLineEdit *>(editor);
+	QLineEdit *line_edt=qobject_cast<QLineEdit *>(editor);
 
-  if(line_edt)
-  {
-    line_edt->setReadOnly(true);
-    line_edt->setText(index.data(Qt::DisplayRole).toString());
-  }
-  else
-    QStyledItemDelegate::setEditorData(editor, index);
+	if(line_edt)
+	{
+		line_edt->setReadOnly(true);
+		line_edt->setText(index.data(Qt::DisplayRole).toString());
+	}
+	else
+		QStyledItemDelegate::setEditorData(editor, index);
 }

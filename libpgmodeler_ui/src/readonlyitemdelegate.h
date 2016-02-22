@@ -29,16 +29,16 @@
 #include <QStyledItemDelegate>
 
 class ReadOnlyItemDelegate : public QStyledItemDelegate {
-  private:
-    Q_OBJECT
+	private:
+		Q_OBJECT
 
-  public:
-    ReadOnlyItemDelegate(QObject * parent = 0);
-    ~ReadOnlyItemDelegate(void);
+	public:
+		ReadOnlyItemDelegate(QObject * parent = 0);
+		~ReadOnlyItemDelegate(void);
 
-  protected:
-    //! brief Overrides the default implementation and set the editor as read only/disable to prevent change the item data
-    virtual void setEditorData(QWidget *editor, const QModelIndex &index) const;
+	protected:
+		//! brief Overrides the default implementation and set the editor as read only/disable to prevent change the item data
+		virtual void setEditorData(QWidget *editor, const QModelIndex &index) const;
 };
 
 #endif

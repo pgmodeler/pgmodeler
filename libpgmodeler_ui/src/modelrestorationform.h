@@ -34,7 +34,7 @@ class ModelRestorationForm: public QDialog, public Ui::ModelRestorationForm {
 	private:
 		Q_OBJECT
 
-    HintTextWidget * keep_models_ht;
+		HintTextWidget * keep_models_ht;
 
 	public:
 		ModelRestorationForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
