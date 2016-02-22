@@ -53,8 +53,8 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		lcctype_cmb->addItems(loc_list);
 		locale_cmb->addItems(loc_list);
 
-    parent_form->setMinimumSize(520, 425);
-    parent_form->setMaximumHeight(425);
+		parent_form->setMinimumSize(520, 425);
+		parent_form->setMaximumHeight(425);
 
 		connect(collation_sel, SIGNAL(s_objectSelected(void)), this, SLOT(resetFields(void)));
 		connect(collation_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(resetFields(void)));
@@ -63,7 +63,7 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		connect(lccollate_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(resetFields(void)));
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
-    configureTabOrder({ locale_cmb, encoding_cmb, lccollate_cmb, lcctype_cmb });
+		configureTabOrder({ locale_cmb, encoding_cmb, lccollate_cmb, lcctype_cmb });
 	}
 	catch(Exception &e)
 	{
@@ -123,14 +123,14 @@ void CollationWidget::resetFields(void)
 	}
 	//Resetting the collation selector and locale combo
 	else if((sender()==lccollate_cmb || sender()==lcctype_cmb) &&
-		 (lccollate_cmb->currentIndex() > 0 || lcctype_cmb->currentIndex() > 0))
+			(lccollate_cmb->currentIndex() > 0 || lcctype_cmb->currentIndex() > 0))
 	{
 		collation_sel->clearSelector();
 		locale_cmb->setCurrentIndex(0);
 	}
 	//Resetting the lc_??? combos
 	else if((sender()==collation_sel || sender()==locale_cmb) &&
-					(collation_sel->getSelectedObject()!=nullptr || locale_cmb->currentIndex() > 0))
+			(collation_sel->getSelectedObject()!=nullptr || locale_cmb->currentIndex() > 0))
 	{
 		lccollate_cmb->setCurrentIndex(0);
 		lcctype_cmb->setCurrentIndex(0);

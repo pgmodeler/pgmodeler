@@ -45,8 +45,8 @@ class Element {
 		/*! \brief Sorting attributes of the element (ASC|DESC, NULLS [FIRST|LAST])
 		 This attibutes can be configured used the constants ASC_ORDER and nullptrS_FIRST */
 		bool sorting_attibs[2],
-				 //! \brief Enable the use of the sort attributes
-				 sorting_enabled;
+		//! \brief Enable the use of the sort attributes
+		sorting_enabled;
 
 	protected:
 		SchemaParser schparser;
@@ -56,7 +56,7 @@ class Element {
 	public:
 		//! \brief Constants used to reference the sorting method of the element
 		static const unsigned ASC_ORDER=0,
-													NULLS_FIRST=1;
+		NULLS_FIRST=1;
 
 		Element(void);
 		virtual ~Element(void) {}

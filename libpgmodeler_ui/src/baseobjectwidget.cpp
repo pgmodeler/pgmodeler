@@ -33,9 +33,9 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		QHBoxLayout *layout=nullptr;
 		QSpacerItem *spacer=nullptr;
 
-    setupUi(this);
-    operation_count=0;
-    new_object=false;
+		setupUi(this);
+		operation_count=0;
+		new_object=false;
 		model=nullptr;
 		table=nullptr;
 		relationship=nullptr;
@@ -51,27 +51,27 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		owner_sel=nullptr;
 		tablespace_sel=nullptr;
 
-    PgModelerUiNS::configureWidgetFont(protected_obj_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
+		PgModelerUiNS::configureWidgetFont(protected_obj_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 
-    parent_form=new BaseForm(nullptr, (Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::WindowSystemMenuHint));
+		parent_form=new BaseForm(nullptr, (Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::WindowSystemMenuHint));
 		parent_form->setWindowTitle(trUtf8("Create / Edit: ") + BaseObject::getTypeName(obj_type));
 		parent_form->generalwidget_wgt->insertWidget(0, this);
 		parent_form->generalwidget_wgt->setCurrentIndex(0);
 		parent_form->setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
-    parent_form->setObjectName(QString("parent_form"));
+		parent_form->setObjectName(QString("parent_form"));
 
-    connect(edt_perms_tb, SIGNAL(clicked(bool)),this, SLOT(editPermissions(void)));
-    connect(append_sql_tb, SIGNAL(clicked(bool)),this, SLOT(appendSQL(void)));
-    connect(parent_form->cancel_btn, SIGNAL(clicked(bool)), parent_form, SLOT(reject(void)));
-    connect(parent_form, SIGNAL(rejected()), this, SLOT(reject()));
+		connect(edt_perms_tb, SIGNAL(clicked(bool)),this, SLOT(editPermissions(void)));
+		connect(append_sql_tb, SIGNAL(clicked(bool)),this, SLOT(appendSQL(void)));
+		connect(parent_form->cancel_btn, SIGNAL(clicked(bool)), parent_form, SLOT(reject(void)));
+		connect(parent_form, SIGNAL(rejected()), this, SLOT(reject()));
 
-    schema_sel=new ObjectSelectorWidget(OBJ_SCHEMA, true, this);
-    collation_sel=new ObjectSelectorWidget(OBJ_COLLATION, true, this);
-    tablespace_sel=new ObjectSelectorWidget(OBJ_TABLESPACE, true, this);
-    owner_sel=new ObjectSelectorWidget(OBJ_ROLE, true, this);
+		schema_sel=new ObjectSelectorWidget(OBJ_SCHEMA, true, this);
+		collation_sel=new ObjectSelectorWidget(OBJ_COLLATION, true, this);
+		tablespace_sel=new ObjectSelectorWidget(OBJ_TABLESPACE, true, this);
+		owner_sel=new ObjectSelectorWidget(OBJ_ROLE, true, this);
 
 		baseobject_grid = new QGridLayout;
-    baseobject_grid->setObjectName("objetobase_grid");
+		baseobject_grid->setObjectName("objetobase_grid");
 		baseobject_grid->addWidget(protected_obj_frm, 0, 0, 1, 0);
 		baseobject_grid->addWidget(name_lbl, 1, 0, 1, 1);
 		baseobject_grid->addWidget(name_edt, 1, 1, 1, 1);
@@ -80,9 +80,9 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		baseobject_grid->addWidget(schema_sel, 4, 1, 1, 4);
 		baseobject_grid->addWidget(collation_lbl, 5, 0, 1, 1);
 		baseobject_grid->addWidget(collation_sel, 5, 1, 1, 4);
-    baseobject_grid->addWidget(tablespace_lbl, 6, 0, 1, 1);
+		baseobject_grid->addWidget(tablespace_lbl, 6, 0, 1, 1);
 		baseobject_grid->addWidget(tablespace_sel, 6, 1, 1, 4);
-    baseobject_grid->addWidget(owner_lbl, 7, 0, 1, 1);
+		baseobject_grid->addWidget(owner_lbl, 7, 0, 1, 1);
 		baseobject_grid->addWidget(owner_sel, 7, 1, 1, 4);
 		baseobject_grid->addWidget(comment_lbl, 8, 0, 1, 1);
 		baseobject_grid->addWidget(comment_edt, 8, 1, 1, 4);
@@ -117,24 +117,24 @@ BaseObjectWidget::~BaseObjectWidget(void)
 bool BaseObjectWidget::eventFilter(QObject *object, QEvent *event)
 {
 	//Filters the ENTER/RETURN pressing forcing the parent form activate the "Apply" button
-  if(event->type() == QEvent::KeyPress)
+	if(event->type() == QEvent::KeyPress)
 	{
-    QKeyEvent *kevent=dynamic_cast<QKeyEvent *>(event);
+		QKeyEvent *kevent=dynamic_cast<QKeyEvent *>(event);
 
-    if(kevent->key()==Qt::Key_Return || kevent->key()==Qt::Key_Enter)
-    {
-      parent_form->apply_ok_btn->click();
-      return(true);
-    }
+		if(kevent->key()==Qt::Key_Return || kevent->key()==Qt::Key_Enter)
+		{
+			parent_form->apply_ok_btn->click();
+			return(true);
+		}
 	}
 
-  return(QWidget::eventFilter(object, event));
+	return(QWidget::eventFilter(object, event));
 }
 
 void BaseObjectWidget::show(void)
 {
-  parent_form->exec();
-  QDialog::show();
+	parent_form->exec();
+	QDialog::show();
 }
 
 void BaseObjectWidget::showEvent(QShowEvent *)
@@ -147,12 +147,12 @@ void BaseObjectWidget::showEvent(QShowEvent *)
 
 	if(protected_obj_frm->isVisible())
 	{
-    int max_h=(pf_max_height + protected_obj_frm->height() + 10);
-    if(max_h > MAX_OBJECT_SIZE) max_h=MAX_OBJECT_SIZE;
+		int max_h=(pf_max_height + protected_obj_frm->height() + 10);
+		if(max_h > MAX_OBJECT_SIZE) max_h=MAX_OBJECT_SIZE;
 
-		parent_form->setMinimumHeight(pf_min_height + protected_obj_frm->height() + 10);       
-    parent_form->setMaximumHeight(max_h);
-    parent_form->resize(parent_form->minimumWidth(),parent_form->minimumHeight());
+		parent_form->setMinimumHeight(pf_min_height + protected_obj_frm->height() + 10);
+		parent_form->setMaximumHeight(max_h);
+		parent_form->resize(parent_form->minimumWidth(),parent_form->minimumHeight());
 	}
 	else if(pf_min_height > 0)
 	{
@@ -192,8 +192,8 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 		QGroupBox *grp=dynamic_cast<QGroupBox *>(widget);
 		ObjectSelectorWidget *sel=dynamic_cast<ObjectSelectorWidget *>(widget);
 		PgSQLTypeWidget *pgtype=dynamic_cast<PgSQLTypeWidget *>(widget);
-    QString str_aux=QString(" <span style='color: #ff0000;'>*</span> ");
-    QColor bgcolor=QColor(QString("#ffffc0"));
+		QString str_aux=QString(" <span style='color: #ff0000;'>*</span> ");
+		QColor bgcolor=QColor(QString("#ffffc0"));
 
 		QFont fnt=widget->font();
 
@@ -207,13 +207,13 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 			if(!grp)
 				widget->setFont(fnt);
 			else
-        grp->setStyleSheet(QString("QGroupBox {	font-weight: bold; }"));
+				grp->setStyleSheet(QString("QGroupBox {	font-weight: bold; }"));
 		}
 		else if(edt || txt || sel)
 		{
 			QPalette pal;
 			pal.setColor(QPalette::Base, bgcolor);
-      pal.setColor(QPalette::Text, QColor(0,0,0));
+			pal.setColor(QPalette::Text, QColor(0,0,0));
 
 			if(sel)
 				widget=sel->obj_name_txt;
@@ -221,7 +221,7 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 			widget->setPalette(pal);
 		}
 
-    str_aux=(!widget->toolTip().isEmpty() ? QString("\n") : QString());
+		str_aux=(!widget->toolTip().isEmpty() ? QString("\n") : QString());
 		widget->setToolTip(widget->toolTip() + str_aux + trUtf8("Required field. Leaving this empty will raise errors!"));
 	}
 }
@@ -256,72 +256,72 @@ void BaseObjectWidget::disableReferencesSQL(BaseObject *object)
 		}
 
 		refs.pop_back();
-  }
+	}
 }
 
 void BaseObjectWidget::configureTabOrder(vector<QWidget *> widgets)
 {
-  ObjectSelectorWidget *obj_sel=nullptr;
-  PgSQLTypeWidget *type_wgt=nullptr;
-  vector<QWidget *> children, tab_order;
-  int idx=0, cnt=0;
+	ObjectSelectorWidget *obj_sel=nullptr;
+	PgSQLTypeWidget *type_wgt=nullptr;
+	vector<QWidget *> children, tab_order;
+	int idx=0, cnt=0;
 
- widgets.insert(widgets.begin(),
-                { name_edt, schema_sel , collation_sel, owner_sel, tablespace_sel,
-                  comment_edt, append_sql_tb, edt_perms_tb, disable_sql_chk });
+	widgets.insert(widgets.begin(),
+	{ name_edt, schema_sel , collation_sel, owner_sel, tablespace_sel,
+	  comment_edt, append_sql_tb, edt_perms_tb, disable_sql_chk });
 
-  for(auto &wgt : widgets)
-  {
-    wgt->setFocusPolicy(Qt::StrongFocus);
+	for(auto &wgt : widgets)
+	{
+		wgt->setFocusPolicy(Qt::StrongFocus);
 
-    obj_sel=dynamic_cast<ObjectSelectorWidget *>(wgt);
-    type_wgt=dynamic_cast<PgSQLTypeWidget *>(wgt);
+		obj_sel=dynamic_cast<ObjectSelectorWidget *>(wgt);
+		type_wgt=dynamic_cast<PgSQLTypeWidget *>(wgt);
 
-    if(obj_sel)
-      children={ obj_sel->rem_object_tb, obj_sel->sel_object_tb };
-    else if(type_wgt)
-    {
-      children={ type_wgt->type_cmb, type_wgt->length_sb, type_wgt->precision_sb,
-                 type_wgt->dimension_sb, type_wgt->interval_cmb, type_wgt->spatial_cmb,
-                 type_wgt->srid_spb, type_wgt->var_z_chk, type_wgt->var_m_chk,
-                 type_wgt->timezone_chk };
-    }
+		if(obj_sel)
+			children={ obj_sel->rem_object_tb, obj_sel->sel_object_tb };
+		else if(type_wgt)
+		{
+			children={ type_wgt->type_cmb, type_wgt->length_sb, type_wgt->precision_sb,
+					   type_wgt->dimension_sb, type_wgt->interval_cmb, type_wgt->spatial_cmb,
+					   type_wgt->srid_spb, type_wgt->var_z_chk, type_wgt->var_m_chk,
+					   type_wgt->timezone_chk };
+		}
 
-    tab_order.push_back(wgt);
+		tab_order.push_back(wgt);
 
-    for(auto &child : children)
-    {
-      child->setFocusPolicy(Qt::StrongFocus);
-      tab_order.push_back(child);
-    }
-  }
+		for(auto &child : children)
+		{
+			child->setFocusPolicy(Qt::StrongFocus);
+			tab_order.push_back(child);
+		}
+	}
 
-  cnt=tab_order.size()-1;
+	cnt=tab_order.size()-1;
 
-  for(idx=0; idx < cnt; idx++)
-    QWidget::setTabOrder(tab_order[idx], tab_order[idx+1]);
+	for(idx=0; idx < cnt; idx++)
+		QWidget::setTabOrder(tab_order[idx], tab_order[idx+1]);
 }
 
 void BaseObjectWidget::cancelChainedOperation(void)
 {
-  bool op_list_changed=false;
+	bool op_list_changed=false;
 
-  if(op_list->isOperationChainStarted())
-    op_list->finishOperationChain();
+	if(op_list->isOperationChainStarted())
+		op_list->finishOperationChain();
 
-  if(operation_count < op_list->getCurrentSize())
-  {
-    op_list_changed=true;
-    BaseObjectWidget::cancelConfiguration();
-  }
+	if(operation_count < op_list->getCurrentSize())
+	{
+		op_list_changed=true;
+		BaseObjectWidget::cancelConfiguration();
+	}
 
-  if(new_object && this->object)
-  {
-    if(!op_list_changed)
-      delete(this->object);
+	if(new_object && this->object)
+	{
+		if(!op_list_changed)
+			delete(this->object);
 
-    this->object=nullptr;
-  }
+		this->object=nullptr;
+	}
 }
 
 void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *object, BaseObject *parent_obj, double obj_px, double obj_py, bool uses_op_list)
@@ -382,20 +382,20 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	}
 
 	name_edt->setFocus();
-  edt_perms_tb->setEnabled(object!=nullptr && !new_object);
-  append_sql_tb->setEnabled(object!=nullptr && !new_object);
+	edt_perms_tb->setEnabled(object!=nullptr && !new_object);
+	append_sql_tb->setEnabled(object!=nullptr && !new_object);
 
 	owner_sel->setModel(model);
-  owner_sel->setSelectedObject(model->getDefaultObject(OBJ_ROLE));
+	owner_sel->setSelectedObject(model->getDefaultObject(OBJ_ROLE));
 
-  schema_sel->setModel(model);
-  schema_sel->setSelectedObject(model->getDefaultObject(OBJ_SCHEMA));
+	schema_sel->setModel(model);
+	schema_sel->setSelectedObject(model->getDefaultObject(OBJ_SCHEMA));
 
 	tablespace_sel->setModel(model);
-  tablespace_sel->setSelectedObject(model->getDefaultObject(OBJ_TABLESPACE));
+	tablespace_sel->setSelectedObject(model->getDefaultObject(OBJ_TABLESPACE));
 
 	collation_sel->setModel(model);
-  collation_sel->setSelectedObject(model->getDefaultObject(OBJ_COLLATION));
+	collation_sel->setSelectedObject(model->getDefaultObject(OBJ_COLLATION));
 
 	if(object)
 	{
@@ -403,29 +403,29 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 
 		obj_id_lbl->setVisible(true);
 		obj_id_lbl->setText(QString("ID: %1").arg(object->getObjectId()));
-    name_edt->setText(object->getName());
-    comment_edt->setText(object->getComment());
+		name_edt->setText(object->getName());
+		comment_edt->setText(object->getComment());
 
-    /* When creating a new table or relationship the object is pre allocated and the flag new_object is set.
-       In order to avoid the selectors to have empty values, we check if the flag is false which means
-       that the object is not new at all */
-    if(!new_object)
-    {
-      schema_sel->setSelectedObject(object->getSchema());
-      tablespace_sel->setSelectedObject(object->getTablespace());
-      owner_sel->setSelectedObject(object->getOwner());
-      collation_sel->setSelectedObject(object->getCollation());
-    }
-    /* Some objects like tables and views came with a pre selected schema even when
-       they are new objects. So we need to show this selected schema instead of the default one */
-    else if(new_object && object->getSchema())
-      schema_sel->setSelectedObject(object->getSchema());
+		/* When creating a new table or relationship the object is pre allocated and the flag new_object is set.
+	   In order to avoid the selectors to have empty values, we check if the flag is false which means
+	   that the object is not new at all */
+		if(!new_object)
+		{
+			schema_sel->setSelectedObject(object->getSchema());
+			tablespace_sel->setSelectedObject(object->getTablespace());
+			owner_sel->setSelectedObject(object->getOwner());
+			collation_sel->setSelectedObject(object->getCollation());
+		}
+		/* Some objects like tables and views came with a pre selected schema even when
+	   they are new objects. So we need to show this selected schema instead of the default one */
+		else if(new_object && object->getSchema())
+			schema_sel->setSelectedObject(object->getSchema());
 
 		obj_type=object->getObjectType();
 		prot=(parent_type!=OBJ_RELATIONSHIP &&
-											 (object->isProtected() ||
-												((obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT) &&
-												 dynamic_cast<TableObject *>(object)->isAddedByRelationship())));
+						   (object->isProtected() ||
+							((obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT) &&
+							 dynamic_cast<TableObject *>(object)->isAddedByRelationship())));
 		protected_obj_frm->setVisible(prot);
 		parent_form->apply_ok_btn->setEnabled(!prot);
 
@@ -436,7 +436,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 		obj_id_lbl->setVisible(false);
 		protected_obj_frm->setVisible(false);
 
-    if(parent_obj && parent_obj->getObjectType()==OBJ_SCHEMA)
+		if(parent_obj && parent_obj->getObjectType()==OBJ_SCHEMA)
 			schema_sel->setSelectedObject(parent_obj);
 	}
 }
@@ -479,7 +479,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 		this->setLayout(baseobject_grid);
 
 	baseobject_grid->setContentsMargins(4, 4, 4, 4);
-  disable_sql_chk->setVisible(obj_type!=BASE_OBJECT && obj_type!=OBJ_PERMISSION && obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_TAG);
+	disable_sql_chk->setVisible(obj_type!=BASE_OBJECT && obj_type!=OBJ_PERMISSION && obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_TAG);
 
 	edt_perms_tb->setVisible(Permission::objectAcceptsPermission(obj_type));
 	append_sql_tb->setVisible(BaseObject::acceptsCustomSQL(obj_type));
@@ -502,7 +502,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 
 	if(obj_type!=BASE_OBJECT)
 	{
-    obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
+		obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
 		obj_icon_lbl->setToolTip(BaseObject::getTypeName(obj_type));
 
 		if(obj_type!=OBJ_PERMISSION && obj_type!=OBJ_CAST)
@@ -519,7 +519,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 	{
 		QFrame *frame=nullptr;
 		map<QString, vector<QWidget *> > fields_map;
-    fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_91)].push_back(collation_lbl);
+		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_91)].push_back(collation_lbl);
 		frame=generateVersionWarningFrame(fields_map);
 		baseobject_grid->addWidget(frame, baseobject_grid->count()+1, 0, 1, 0);
 		frame->setParent(this);
@@ -531,10 +531,10 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 	{
 		wgt=dynamic_cast<QWidget *>(chld_list.front());
 
-    //Avoids install event filters in objects that are inteneded to edit multiple lines
-    if(wgt &&
-       wgt->metaObject()->className()!=QString("QPlainTextEdit") &&
-       wgt->metaObject()->className()!=QString("NumberedTextEditor"))
+		//Avoids install event filters in objects that are inteneded to edit multiple lines
+		if(wgt &&
+				wgt->metaObject()->className()!=QString("QPlainTextEdit") &&
+				wgt->metaObject()->className()!=QString("NumberedTextEditor"))
 			wgt->installEventFilter(this);
 
 		chld_list.pop_front();
@@ -544,13 +544,13 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 QString BaseObjectWidget::generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver)
 {
 	if(ver_interv_id==UNTIL_VERSION && !ini_ver.isEmpty())
-    return(XMLParser::CHAR_LT + QString("= ") + ini_ver);
+		return(XMLParser::CHAR_LT + QString("= ") + ini_ver);
 	else if(ver_interv_id==VERSIONS_INTERVAL && !ini_ver.isEmpty() && !end_ver.isEmpty())
-    return(XMLParser::CHAR_GT + QString("= ") + ini_ver + XMLParser::CHAR_AMP + XMLParser::CHAR_LT + QString("= ") + end_ver);
+		return(XMLParser::CHAR_GT + QString("= ") + ini_ver + XMLParser::CHAR_AMP + XMLParser::CHAR_LT + QString("= ") + end_ver);
 	else if(ver_interv_id==AFTER_VERSION &&  !ini_ver.isEmpty())
-    return(XMLParser::CHAR_GT + QString("= ") + ini_ver);
+		return(XMLParser::CHAR_GT + QString("= ") + ini_ver);
 	else
-    return(QString());
+		return(QString());
 }
 
 QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
@@ -566,30 +566,30 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 	font.setBold(false);
 	info_frm->setFont(font);
 
-  PgModelerUiNS::configureWidgetFont(info_frm, PgModelerUiNS::MEDIUM_FONT_FACTOR);
+	PgModelerUiNS::configureWidgetFont(info_frm, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 
-  info_frm->setObjectName("info_frm");
-  info_frm->setFrameShape(QFrame::StyledPanel);
+	info_frm->setObjectName("info_frm");
+	info_frm->setFrameShape(QFrame::StyledPanel);
 	info_frm->setFrameShadow(QFrame::Raised);
 	info_frm->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
 	grid = new QGridLayout(info_frm);
 	grid->setContentsMargins(4, 4, 4, 4);
-  grid->setObjectName("grid");
+	grid->setObjectName("grid");
 
 	ico_lbl = new QLabel(info_frm);
-  ico_lbl->setObjectName("icone_lbl");
+	ico_lbl->setObjectName("icone_lbl");
 	ico_lbl->setMinimumSize(QSize(24, 24));
 	ico_lbl->setMaximumSize(QSize(24, 24));
 	ico_lbl->setScaledContents(true);
-  ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
+	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
 	ico_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop);
 
 	grid->addWidget(ico_lbl, 0, 0, 1, 1);
 
 	msg_lbl = new QLabel(info_frm);
 	msg_lbl->setFont(font);
-  msg_lbl->setObjectName("message_lbl");
+	msg_lbl->setObjectName("message_lbl");
 	msg_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
 	msg_lbl->setWordWrap(true);
 
@@ -602,7 +602,7 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 }
 
 QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidget *> > &fields,
-																											map< QWidget *, vector<QString> > *values)
+													  map< QWidget *, vector<QString> > *values)
 {
 	QFrame *alert_frm=nullptr;
 	QGridLayout *grid=nullptr;
@@ -648,8 +648,8 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 			font.setBold(true);
 			font.setItalic(true);
 			wgt->setFont(font);
-      wgt->setToolTip(QString("<em style='font-size: 8pt'>") + trUtf8("Version") +
-                      itr->first + QString(" %1</em>").arg(field_name));
+			wgt->setToolTip(QString("<em style='font-size: 8pt'>") + trUtf8("Version") +
+							itr->first + QString(" %1</em>").arg(field_name));
 		}
 		itr++;
 	}
@@ -659,44 +659,44 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 	font.setItalic(false);
 	font.setBold(false);
 
-  PgModelerUiNS::configureWidgetFont(alert_frm, PgModelerUiNS::MEDIUM_FONT_FACTOR);
+	PgModelerUiNS::configureWidgetFont(alert_frm, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 
-  alert_frm->setObjectName("alerta_frm");
-  alert_frm->setFrameShape(QFrame::StyledPanel);
+	alert_frm->setObjectName("alerta_frm");
+	alert_frm->setFrameShape(QFrame::StyledPanel);
 	alert_frm->setFrameShadow(QFrame::Raised);
 	alert_frm->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
 	grid = new QGridLayout(alert_frm);
-  grid->setObjectName("grid");
+	grid->setObjectName("grid");
 
 	ico_lbl = new QLabel(alert_frm);
-  ico_lbl->setObjectName("icone_lbl");
+	ico_lbl->setObjectName("icone_lbl");
 	ico_lbl->setMinimumSize(QSize(24, 24));
 	ico_lbl->setMaximumSize(QSize(24, 24));
 	ico_lbl->setScaledContents(true);
-  ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
+	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
 	ico_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop);
 
 	grid->addWidget(ico_lbl, 0, 0, 1, 1);
 
 	msg_lbl = new QLabel(alert_frm);
 	msg_lbl->setFont(font);
-  msg_lbl->setObjectName("mensagelm_lb");
+	msg_lbl->setObjectName("mensagelm_lb");
 	msg_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
 	msg_lbl->setWordWrap(true);
 
-  msg_lbl->setText(trUtf8("The <em style='color: %1'><strong>highlighted</strong></em> fields in the form or one of their values are available only on specific PostgreSQL versions. \
-                          Generating SQL code for versions other than those specified in the fields' tooltips may create incompatible code.").arg(color.name()));
+	msg_lbl->setText(trUtf8("The <em style='color: %1'><strong>highlighted</strong></em> fields in the form or one of their values are available only on specific PostgreSQL versions. \
+							Generating SQL code for versions other than those specified in the fields' tooltips may create incompatible code.").arg(color.name()));
 
-	grid->addWidget(msg_lbl, 0, 1, 1, 1);
-	grid->setContentsMargins(4,4,4,4);
+							grid->addWidget(msg_lbl, 0, 1, 1, 1);
+					 grid->setContentsMargins(4,4,4,4);
 
-	return(alert_frm);
+			return(alert_frm);
 }
 
 void BaseObjectWidget::editPermissions(void)
 {
-  PermissionWidget permission_wgt;
+	PermissionWidget permission_wgt;
 	BaseObject *parent_obj=nullptr;
 
 	if(this->relationship)
@@ -721,10 +721,10 @@ void BaseObjectWidget::applyConfiguration(void)
 		{
 			BaseObject *aux_obj=nullptr, *aux_obj1=nullptr, *parent_obj=nullptr;
 			bool new_obj;
-      ObjectType obj_type=object->getObjectType();
+			ObjectType obj_type=object->getObjectType();
 			QString obj_name;
 
-      obj_name=BaseObject::formatName(name_edt->text().toUtf8(), obj_type==OBJ_OPERATOR);
+			obj_name=BaseObject::formatName(name_edt->text().toUtf8(), obj_type==OBJ_OPERATOR);
 
 			if(this->object->acceptsSchema() &&  schema_sel->getSelectedObject())
 				obj_name=schema_sel->getSelectedObject()->getName(true) + "." + obj_name;
@@ -763,7 +763,7 @@ void BaseObjectWidget::applyConfiguration(void)
 					else if(!aux_obj && obj_type==OBJ_VIEW)
 						aux_obj=model->getObject(obj_name, OBJ_TABLE);
 
-          aux_obj1=model->getObject(object->getSignature(), obj_type);
+					aux_obj1=model->getObject(object->getSignature(), obj_type);
 					new_obj=(!aux_obj && !aux_obj1);
 				}
 
@@ -771,11 +771,11 @@ void BaseObjectWidget::applyConfiguration(void)
 				if(!new_obj && aux_obj && aux_obj!=object)
 				{
 					throw Exception(QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
-                          .arg(obj_name)
-                          .arg(BaseObject::getTypeName(obj_type))
-                          .arg(parent_obj->getName(true))
-                          .arg(parent_obj->getTypeName()),
-													ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									.arg(obj_name)
+									.arg(BaseObject::getTypeName(obj_type))
+									.arg(parent_obj->getName(true))
+									.arg(parent_obj->getTypeName()),
+									ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 				}
 			}
 
@@ -810,110 +810,110 @@ void BaseObjectWidget::applyConfiguration(void)
 				object->setSchema(esquema);
 			}
 
-      if(!object->isProtected() && !object->isSystemObject())
-        PgModelerUiNS::disableObjectSQL(object, disable_sql_chk->isChecked());
+			if(!object->isProtected() && !object->isSystemObject())
+				PgModelerUiNS::disableObjectSQL(object, disable_sql_chk->isChecked());
 		}
 		catch(Exception &e)
-		{     
-      throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		{
+			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
 }
 
 void BaseObjectWidget::finishConfiguration(void)
 {
-  try
-  {
-    if(this->object)
-    {
-      ObjectType obj_type=this->object->getObjectType();
-      BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(this->object);
-      TableObject *tab_obj=dynamic_cast<TableObject *>(this->object);
-      vector<BaseObject *> ref_objs;
+	try
+	{
+		if(this->object)
+		{
+			ObjectType obj_type=this->object->getObjectType();
+			BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(this->object);
+			TableObject *tab_obj=dynamic_cast<TableObject *>(this->object);
+			vector<BaseObject *> ref_objs;
 
-      if(new_object)
-      {
-        //If the object is a table object and the parent table is specified, adds it to table
-        if(table && TableObject::isTableObject(obj_type))
-          table->addObject(this->object);
-        //Adding the object on the relationship, if specified
-        else if(relationship && (obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT))
-          relationship->addObject(dynamic_cast<TableObject *>(this->object));
-        //Adding the object on the model
-        else if(obj_type!=OBJ_PARAMETER)
-          model->addObject(this->object);
+			if(new_object)
+			{
+				//If the object is a table object and the parent table is specified, adds it to table
+				if(table && TableObject::isTableObject(obj_type))
+					table->addObject(this->object);
+				//Adding the object on the relationship, if specified
+				else if(relationship && (obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT))
+					relationship->addObject(dynamic_cast<TableObject *>(this->object));
+				//Adding the object on the model
+				else if(obj_type!=OBJ_PARAMETER)
+					model->addObject(this->object);
 
-        registerNewObject();
-        new_object=false;
-      }
-      else
-      {
-        //If the object is being updated, validates its SQL definition
-        if(obj_type==BASE_RELATIONSHIP || obj_type==OBJ_TEXTBOX || obj_type==OBJ_TAG)
-          this->object->getCodeDefinition(SchemaParser::XML_DEFINITION);
-        else
-          this->object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
-      }
+				registerNewObject();
+				new_object=false;
+			}
+			else
+			{
+				//If the object is being updated, validates its SQL definition
+				if(obj_type==BASE_RELATIONSHIP || obj_type==OBJ_TEXTBOX || obj_type==OBJ_TAG)
+					this->object->getCodeDefinition(SchemaParser::XML_DEFINITION);
+				else
+					this->object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+			}
 
 
-      model->getObjectReferences(object, ref_objs);
-      for(auto &obj : ref_objs)
-      {
-        obj->setCodeInvalidated(true);
+			model->getObjectReferences(object, ref_objs);
+			for(auto &obj : ref_objs)
+			{
+				obj->setCodeInvalidated(true);
 
-        if(obj->getObjectType()==OBJ_COLUMN)
-          dynamic_cast<Column *>(obj)->getParentTable()->setModified(true);
-      }
+				if(obj->getObjectType()==OBJ_COLUMN)
+					dynamic_cast<Column *>(obj)->getParentTable()->setModified(true);
+			}
 
-      object->setCodeInvalidated(true);
-      this->accept();
-      parent_form->hide();
+			object->setCodeInvalidated(true);
+			this->accept();
+			parent_form->hide();
 
-      //If the object is graphical (or a table object), updates it (or its parent) on the scene
-      if(graph_obj || tab_obj)
-      {
-        if(!graph_obj && tab_obj && tab_obj->getObjectType()!=OBJ_PARAMETER)
-        {
-          if(this->table)
-            graph_obj=dynamic_cast<BaseGraphicObject *>(this->table);
-          else
-            graph_obj=dynamic_cast<BaseGraphicObject *>(this->relationship);
+			//If the object is graphical (or a table object), updates it (or its parent) on the scene
+			if(graph_obj || tab_obj)
+			{
+				if(!graph_obj && tab_obj && tab_obj->getObjectType()!=OBJ_PARAMETER)
+				{
+					if(this->table)
+						graph_obj=dynamic_cast<BaseGraphicObject *>(this->table);
+					else
+						graph_obj=dynamic_cast<BaseGraphicObject *>(this->relationship);
 
-          graph_obj->setModified(true);
-          graph_obj->setCodeInvalidated(true);
-        }
-        else if(graph_obj)
-        {
-          if(!std::isnan(object_px) && !std::isnan(object_py))
-            graph_obj->setPosition(QPointF(object_px, object_py));
+					graph_obj->setModified(true);
+					graph_obj->setCodeInvalidated(true);
+				}
+				else if(graph_obj)
+				{
+					if(!std::isnan(object_px) && !std::isnan(object_py))
+						graph_obj->setPosition(QPointF(object_px, object_py));
 
-          graph_obj->setModified(true);
-        }
+					graph_obj->setModified(true);
+				}
 
-        /* Updates the visual schemas when the objects is moved to another or a
-        table object is added to a table */
-        if(object->getSchema())
-          dynamic_cast<Schema *>(object->getSchema())->setModified(true);
-        else if(tab_obj && tab_obj->getParentTable() &&
-                 tab_obj->getParentTable()->getSchema())
-          dynamic_cast<Schema *>(tab_obj->getParentTable() ->getSchema())->setModified(true);
+				/* Updates the visual schemas when the objects is moved to another or a
+		table object is added to a table */
+				if(object->getSchema())
+					dynamic_cast<Schema *>(object->getSchema())->setModified(true);
+				else if(tab_obj && tab_obj->getParentTable() &&
+						tab_obj->getParentTable()->getSchema())
+					dynamic_cast<Schema *>(tab_obj->getParentTable() ->getSchema())->setModified(true);
 
-        if(prev_schema && object->getSchema()!=prev_schema)
-          prev_schema->setModified(true);
-      }
+				if(prev_schema && object->getSchema()!=prev_schema)
+					prev_schema->setModified(true);
+			}
 
-      emit s_objectManipulated();
-    }
-  }
-  catch(Exception &e)
-  {
-    if(e.getErrorType()==ERR_ASG_OBJ_INV_DEFINITION)
-      throw Exception(Exception::getErrorMessage(ERR_REQ_FIELDS_NOT_FILLED)
-                      .arg(this->object->getName()).arg(this->object->getTypeName()),
-                      ERR_REQ_FIELDS_NOT_FILLED,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-    else
-      throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-  }
+			emit s_objectManipulated();
+		}
+	}
+	catch(Exception &e)
+	{
+		if(e.getErrorType()==ERR_ASG_OBJ_INV_DEFINITION)
+			throw Exception(Exception::getErrorMessage(ERR_REQ_FIELDS_NOT_FILLED)
+							.arg(this->object->getName()).arg(this->object->getTypeName()),
+							ERR_REQ_FIELDS_NOT_FILLED,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		else
+			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
 }
 
 void BaseObjectWidget::cancelConfiguration(void)
@@ -934,50 +934,50 @@ void BaseObjectWidget::cancelConfiguration(void)
 		else if(relationship && relationship->getObjectIndex(tab_obj) >= 0)
 			relationship->removeObject(tab_obj);
 
-    if(obj_type!=OBJ_TABLE &&
-			 obj_type!=OBJ_VIEW &&
-			 obj_type!=OBJ_RELATIONSHIP)
+		if(obj_type!=OBJ_TABLE &&
+				obj_type!=OBJ_VIEW &&
+				obj_type!=OBJ_RELATIONSHIP)
 		{
-      if(!op_list->isObjectRegistered(this->object, Operation::OBJECT_CREATED))
-        delete(this->object);
+			if(!op_list->isObjectRegistered(this->object, Operation::OBJECT_CREATED))
+				delete(this->object);
 
-      this->object=nullptr;
-    }
+			this->object=nullptr;
+		}
 	}
 
 	//If the object is not a new one, restore its previous state
-  if(op_list &&
-     ((!new_object && obj_type!=OBJ_DATABASE && obj_type!=OBJ_PERMISSION) ||
-      (new_object && (obj_type==OBJ_TABLE || obj_type==OBJ_VIEW || obj_type==OBJ_RELATIONSHIP))))
+	if(op_list &&
+			((!new_object && obj_type!=OBJ_DATABASE && obj_type!=OBJ_PERMISSION) ||
+			 (new_object && (obj_type==OBJ_TABLE || obj_type==OBJ_VIEW || obj_type==OBJ_RELATIONSHIP))))
 	{
 		try
 		{
 			op_list->undoOperation();
 			op_list->removeLastOperation();
 		}
-    catch(Exception &){}
+		catch(Exception &){}
 	}
 
-  emit s_objectManipulated();
+	emit s_objectManipulated();
 }
 
 void BaseObjectWidget::registerNewObject(void)
 {
-  try
-  {
-    if(this->new_object && op_list && !op_list->isObjectRegistered(this->object, Operation::OBJECT_CREATED))
-    {
-      //If the object is a new one is necessary register it on the operation list
-      if(this->table)
-        op_list->registerObject(this->object, Operation::OBJECT_CREATED, -1, this->table);
-      else if(this->relationship)
-        op_list->registerObject(this->object, Operation::OBJECT_CREATED, -1, this->relationship);
-      else
-        op_list->registerObject(this->object, Operation::OBJECT_CREATED);
-    }
-  }
-  catch(Exception &e)
-  {
-    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-  }
+	try
+	{
+		if(this->new_object && op_list && !op_list->isObjectRegistered(this->object, Operation::OBJECT_CREATED))
+		{
+			//If the object is a new one is necessary register it on the operation list
+			if(this->table)
+				op_list->registerObject(this->object, Operation::OBJECT_CREATED, -1, this->table);
+			else if(this->relationship)
+				op_list->registerObject(this->object, Operation::OBJECT_CREATED, -1, this->relationship);
+			else
+				op_list->registerObject(this->object, Operation::OBJECT_CREATED);
+		}
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
 }

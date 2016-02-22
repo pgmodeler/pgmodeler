@@ -47,12 +47,12 @@ class TypeWidget: public BaseObjectWidget, public Ui::TypeWidget {
 
 		//! \brief Type configuration widgets, used to handle "like type", "element type" and "range subtype"
 		PgSQLTypeWidget *like_type,
-										*element_type,
-										*range_subtype;
+		*element_type,
+		*range_subtype;
 
 		//! \brief Tables that store enumaration elementas and composite attributes
 		ObjectTableWidget *enumerations_tab,
-											*attributes_tab;
+		*attributes_tab;
 
 		//! \brief Composite type attribute collation selector
 		ObjectSelectorWidget *attrib_collation_sel;

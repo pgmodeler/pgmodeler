@@ -35,7 +35,7 @@ class SwapObjectsIdsWidget: public QDialog, public Ui::SwapObjectsIdsWidget {
 		Q_OBJECT
 
 		//! \brief Reference database model
-    DatabaseModel *model;
+		DatabaseModel *model;
 
 		//! \brief Widget's parent form (with bottom right control buttons)
 		BaseForm parent_form;
@@ -43,12 +43,12 @@ class SwapObjectsIdsWidget: public QDialog, public Ui::SwapObjectsIdsWidget {
 		//! \brief Source and destination object selectors
 		ObjectSelectorWidget *src_object_sel, *dst_object_sel;
 
-    void hideEvent(QHideEvent *);
+		void hideEvent(QHideEvent *);
 
 	public:
 		SwapObjectsIdsWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);
 		~SwapObjectsIdsWidget(void);
-    void setModel(DatabaseModel *model);
+		void setModel(DatabaseModel *model);
 		
 	signals:
 

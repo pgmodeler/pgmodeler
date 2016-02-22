@@ -23,73 +23,73 @@ ModelRestorationForm::ModelRestorationForm(QWidget *parent, Qt::WindowFlags f) :
 {
 	setupUi(this);
 
-  PgModelerUiNS::configureWidgetFont(message_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
-  keep_models_ht=new HintTextWidget(keep_models_hint, this);
-  keep_models_ht->setText(keep_models_chk->statusTip());
+	PgModelerUiNS::configureWidgetFont(message_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
+	keep_models_ht=new HintTextWidget(keep_models_hint, this);
+	keep_models_ht->setText(keep_models_chk->statusTip());
 
 	connect(restore_btn, SIGNAL(clicked(void)), this, SLOT(accept(void)));
 	connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(reject(void)));
-  connect(tmp_files_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(enableRestoration(void)));
+	connect(tmp_files_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(enableRestoration(void)));
 }
 
 QStringList ModelRestorationForm::getTemporaryModels(void)
 {
 	//Returns if there is some .dbm file on the tmp dir
-  return(QDir(GlobalAttributes::TEMPORARY_DIR, QString("*.dbm"), QDir::Name, QDir::Files | QDir::NoDotAndDotDot).entryList());
+	return(QDir(GlobalAttributes::TEMPORARY_DIR, QString("*.dbm"), QDir::Name, QDir::Files | QDir::NoDotAndDotDot).entryList());
 }
 
 int ModelRestorationForm::exec(void)
 {
-  QStringList file_list=this->getTemporaryModels(), tmp_info;
+	QStringList file_list=this->getTemporaryModels(), tmp_info;
 	QFileInfo info;
-  QTableWidgetItem *item=nullptr;
-  QFile input;
-  QString buffer, filename;
-  QRegExp regexp=QRegExp("(\\<database)( )+(name)(=)(\")");
-  int start=-1, end=-1, col=0;
+	QTableWidgetItem *item=nullptr;
+	QFile input;
+	QString buffer, filename;
+	QRegExp regexp=QRegExp("(\\<database)( )+(name)(=)(\")");
+	int start=-1, end=-1, col=0;
 
 
 	while(!file_list.isEmpty())
 	{
 		info.setFile(GlobalAttributes::TEMPORARY_DIR, file_list.front());
-    filename=GlobalAttributes::TEMPORARY_DIR + GlobalAttributes::DIR_SEPARATOR + file_list.front();
+		filename=GlobalAttributes::TEMPORARY_DIR + GlobalAttributes::DIR_SEPARATOR + file_list.front();
 
-    input.setFileName(filename);
-    input.open(QFile::ReadOnly);
-    buffer.append(input.readAll());
-    input.close();
+		input.setFileName(filename);
+		input.open(QFile::ReadOnly);
+		buffer.append(input.readAll());
+		input.close();
 
-    start=regexp.indexIn(buffer) + regexp.matchedLength();
-    end=buffer.indexOf("\"", start);
+		start=regexp.indexIn(buffer) + regexp.matchedLength();
+		end=buffer.indexOf("\"", start);
 
-    tmp_info.append(buffer.mid(start, end - start));
-    tmp_info.append(info.fileName());
-    tmp_info.append(info.lastModified().toString(QString("yyyy-MM-dd hh:mm:ss")));
+		tmp_info.append(buffer.mid(start, end - start));
+		tmp_info.append(info.fileName());
+		tmp_info.append(info.lastModified().toString(QString("yyyy-MM-dd hh:mm:ss")));
 
-    if(info.size() < 1024)
-      tmp_info.append(QString("%1 bytes").arg(info.size()));
-    else
-      tmp_info.append(QString("%1 KB").arg(info.size()/1024));
+		if(info.size() < 1024)
+			tmp_info.append(QString("%1 bytes").arg(info.size()));
+		else
+			tmp_info.append(QString("%1 KB").arg(info.size()/1024));
 
-    tmp_files_tbw->insertRow(tmp_files_tbw->rowCount());
+		tmp_files_tbw->insertRow(tmp_files_tbw->rowCount());
 
-    for(col=0; col < tmp_info.size(); col++)
-    {
-      item=new QTableWidgetItem;
-      item->setText(tmp_info.at(col));
-      item->setData(Qt::UserRole, filename);
-      item->setSelected(true);
-      tmp_files_tbw->setItem(tmp_files_tbw->rowCount()-1, col, item);
-    }
+		for(col=0; col < tmp_info.size(); col++)
+		{
+			item=new QTableWidgetItem;
+			item->setText(tmp_info.at(col));
+			item->setData(Qt::UserRole, filename);
+			item->setSelected(true);
+			tmp_files_tbw->setItem(tmp_files_tbw->rowCount()-1, col, item);
+		}
 
 		file_list.pop_front();
-    buffer.clear();
-    tmp_info.clear();
-    start=end=-1;
+		buffer.clear();
+		tmp_info.clear();
+		start=end=-1;
 	}
 
-  tmp_files_tbw->resizeColumnsToContents();
-  tmp_files_tbw->resizeRowsToContents();
+	tmp_files_tbw->resizeColumnsToContents();
+	tmp_files_tbw->resizeRowsToContents();
 
 	return(QDialog::exec());
 }
@@ -120,15 +120,15 @@ void ModelRestorationForm::removeTemporaryModel(const QString &tmp_model)
 
 void ModelRestorationForm::enableRestoration(void)
 {
-  restore_btn->setEnabled(!tmp_files_tbw->selectedItems().isEmpty());
+	restore_btn->setEnabled(!tmp_files_tbw->selectedItems().isEmpty());
 }
 
 QStringList ModelRestorationForm::getSelectedModels(void)
 {
 	QStringList list;
-  QList<QTableWidgetItem *> items;
+	QList<QTableWidgetItem *> items;
 
-  items=tmp_files_tbw->selectedItems();
+	items=tmp_files_tbw->selectedItems();
 
 	while(!items.isEmpty())
 	{
@@ -136,7 +136,7 @@ QStringList ModelRestorationForm::getSelectedModels(void)
 		items.pop_front();
 	}
 
-  list.removeDuplicates();
+	list.removeDuplicates();
 	return(list);
 }
 

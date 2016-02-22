@@ -35,9 +35,9 @@
 class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConfigWidget  {
 	private:
 		Q_OBJECT
-
-    static map<QString, attribs_map> config_params;
-
+		
+		static map<QString, attribs_map> config_params;
+		
 		//! \brief Auxiliary class that stores the formating data of each element
 		class AppearanceConfigItem {
 			public:
@@ -46,48 +46,48 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 				QColor colors[3];
 				bool obj_conf;
 		};
-
-    RoundedRectItem *placeholder;
-
+		
+		RoundedRectItem *placeholder;
+		
 		ColorPickerWidget *color_picker;
-
+		
 		//! \brief Color picker dialog
 		QColorDialog color_dlg;
-
+		
 		//! \brief Viewport used to show the example model
 		QGraphicsView *viewp;
-
+		
 		//! \brief Object scene used to store the graphical objects
 		ObjectsScene *scene;
-
+		
 		//! \brief Database model used to store the example base objects
 		DatabaseModel *model;
-
+		
 		//! \brief Stores the element configuration items
 		vector<AppearanceConfigItem> conf_items;
-
+		
 		//! \brief Loads the example model from file (conf/exampledb.dbm)
 		void loadExampleModel(void);
-
-    //! brief Updates the color configuration for the placeholder item
-    void updatePlaceholderItem(void);
-
+		
+		//! brief Updates the color configuration for the placeholder item
+		void updatePlaceholderItem(void);
+		
 	public:
 		AppearanceConfigWidget(QWidget * parent=0);
 		~AppearanceConfigWidget(void);
-
+		
 		void saveConfiguration(void);
 		void loadConfiguration(void);
-    static map<QString, attribs_map> getConfigurationParams(void);
-
-  private slots:
+		static map<QString, attribs_map> getConfigurationParams(void);
+		
+	private slots:
 		void enableConfigElement(void);
 		void applyFontStyle(void);
 		void applyElementColor(unsigned color_idx, QColor color);
-
+		
 		/*! \brief Disabled method */
 		void applyConfiguration(void){}
-
+		
 	public slots:
 		void restoreDefaults(void);
 };

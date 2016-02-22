@@ -46,16 +46,16 @@ class ValidationInfo {
 		QStringList errors;
 
 	public:
-    static const unsigned NO_UNIQUE_NAME=0,
-                          BROKEN_REFERENCE=1,
-                          SP_OBJ_BROKEN_REFERENCE=2,
-                          BROKEN_REL_CONFIG=3,
-                          SQL_VALIDATION_ERR=4,
-                          VALIDATION_ABORTED=5;
+		static const unsigned NO_UNIQUE_NAME=0,
+		BROKEN_REFERENCE=1,
+		SP_OBJ_BROKEN_REFERENCE=2,
+		BROKEN_REL_CONFIG=3,
+		SQL_VALIDATION_ERR=4,
+		VALIDATION_ABORTED=5;
 
 		ValidationInfo(void);
 		ValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> references);
-    ValidationInfo(const QString &msg);
+		ValidationInfo(const QString &msg);
 		ValidationInfo(Exception e);
 
 		//! \brief Returns the validation type

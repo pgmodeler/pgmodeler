@@ -23,14 +23,14 @@
 Xml2Object::Xml2Object(void)
 {
 	configurePluginInfo(getPluginTitle(),
-											getPluginVersion(),
-											getPluginAuthor(),
-											getPluginDescription(),
+						getPluginVersion(),
+						getPluginAuthor(),
+						getPluginDescription(),
 
-											GlobalAttributes::PLUGINS_DIR +
-											GlobalAttributes::DIR_SEPARATOR +
-											QString("xml2object") +
-                      GlobalAttributes::DIR_SEPARATOR + QString("xml2object.png"));
+						GlobalAttributes::PLUGINS_DIR +
+						GlobalAttributes::DIR_SEPARATOR +
+						QString("xml2object") +
+						GlobalAttributes::DIR_SEPARATOR + QString("xml2object.png"));
 }
 
 QString Xml2Object::getPluginTitle(void)
@@ -40,12 +40,12 @@ QString Xml2Object::getPluginTitle(void)
 
 QString Xml2Object::getPluginVersion(void)
 {
-  return(QString("0.1"));
+	return(QString("0.1"));
 }
 
 QString Xml2Object::getPluginAuthor(void)
 {
-  return(QString("Raphael A. Silva"));
+	return(QString("Raphael A. Silva"));
 }
 
 QString Xml2Object::getPluginDescription(void)
@@ -68,5 +68,5 @@ void Xml2Object::executePlugin(ModelWidget *model)
 
 QKeySequence Xml2Object::getPluginShortcut(void)
 {
-  return(QKeySequence(QString("Ctrl+K")));
+	return(QKeySequence(QString("Ctrl+K")));
 }

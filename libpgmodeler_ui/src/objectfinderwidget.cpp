@@ -28,7 +28,7 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	connect(filter_btn, SIGNAL(toggled(bool)), filter_frm, SLOT(setVisible(bool)));
 	connect(find_btn, SIGNAL(clicked(bool)), this, SLOT(findObjects(void)));
 	connect(hide_tb, SIGNAL(clicked(void)), this, SLOT(hide(void)));
-  connect(result_tbw, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(selectObject(void)));
+	connect(result_tbw, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(selectObject(void)));
 	connect(result_tbw, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(editObject(void)));
 	connect(clear_res_btn, SIGNAL(clicked(void)), this, SLOT(clearResult(void)));
 	connect(select_all_btn, SIGNAL(clicked(void)), this, SLOT(setAllObjectsChecked(void)));
@@ -43,7 +43,7 @@ bool ObjectFinderWidget::eventFilter(QObject *object, QEvent *event)
 
 	//Executes the search when user press enter/return on the pattern field
 	if(event->type() == QEvent::KeyPress &&
-		 (k_event->key()==Qt::Key_Return || k_event->key()==Qt::Key_Enter))
+			(k_event->key()==Qt::Key_Return || k_event->key()==Qt::Key_Enter))
 	{
 		find_btn->click();
 		return(true);
@@ -60,23 +60,23 @@ void ObjectFinderWidget::hide(void)
 
 void ObjectFinderWidget::showEvent(QShowEvent *)
 {
-  pattern_edt->setFocus();
+	pattern_edt->setFocus();
 }
 
 void ObjectFinderWidget::resizeEvent(QResizeEvent *event)
 {
-  Qt::ToolButtonStyle style=Qt::ToolButtonTextBesideIcon;
+	Qt::ToolButtonStyle style=Qt::ToolButtonTextBesideIcon;
 
-  if(event->size().width() < this->baseSize().width())
-    style=Qt::ToolButtonIconOnly;
+	if(event->size().width() < this->baseSize().width())
+		style=Qt::ToolButtonIconOnly;
 
-  if(find_btn->toolButtonStyle()!=style)
-  {
-    filter_btn->setToolButtonStyle(style);
-    find_btn->setToolButtonStyle(style);
-    clear_res_btn->setToolButtonStyle(style);
-    highlight_btn->setToolButtonStyle(style);
-  }
+	if(find_btn->toolButtonStyle()!=style)
+	{
+		filter_btn->setToolButtonStyle(style);
+		find_btn->setToolButtonStyle(style);
+		clear_res_btn->setToolButtonStyle(style);
+		highlight_btn->setToolButtonStyle(style);
+	}
 }
 
 void ObjectFinderWidget::setModel(ModelWidget *model_wgt)
@@ -123,7 +123,7 @@ void ObjectFinderWidget::findObjects(void)
 
 		//Search the objects on model
 		objs=model_wgt->getDatabaseModel()->findObjects(pattern_edt->text(), types, true,
-																										case_sensitive_chk->isChecked(), regexp_chk->isChecked(), exact_match_chk->isChecked());
+														case_sensitive_chk->isChecked(), regexp_chk->isChecked(), exact_match_chk->isChecked());
 
 		//Show the found objects on the result table
 		updateObjectTable(result_tbw, objs);
@@ -151,30 +151,30 @@ void ObjectFinderWidget::selectObject(void)
 	{
 		selected_obj=reinterpret_cast<BaseObject *>(tab_item->data(Qt::UserRole).value<void *>());
 
-    if(QApplication::mouseButtons()!=Qt::RightButton)
-    {
-      BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(selected_obj);
-      TableObject *tab_obj=dynamic_cast<TableObject *>(selected_obj);
+		if(QApplication::mouseButtons()!=Qt::RightButton)
+		{
+			BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(selected_obj);
+			TableObject *tab_obj=dynamic_cast<TableObject *>(selected_obj);
 
-      if(tab_obj && !graph_obj)
-        graph_obj=dynamic_cast<BaseGraphicObject *>(tab_obj->getParentTable());
+			if(tab_obj && !graph_obj)
+				graph_obj=dynamic_cast<BaseGraphicObject *>(tab_obj->getParentTable());
 
-      //Highlight the graphical object when the 'highlight' button is checked
-      if(graph_obj && highlight_btn->isChecked())
-      {
-        BaseObjectView *obj=dynamic_cast<BaseObjectView *>(graph_obj->getReceiverObject());
-        model_wgt->scene->clearSelection();
-        model_wgt->viewport->centerOn(obj);
-        obj->setSelected(true);
-      }
-    }
-    //Showing the popup menu for the selected object in the result set
-    else
-    {
-      model_wgt->configureObjectMenu(selected_obj);
-      model_wgt->showObjectMenu();
-    }
-  }
+			//Highlight the graphical object when the 'highlight' button is checked
+			if(graph_obj && highlight_btn->isChecked())
+			{
+				BaseObjectView *obj=dynamic_cast<BaseObjectView *>(graph_obj->getReceiverObject());
+				model_wgt->scene->clearSelection();
+				model_wgt->viewport->centerOn(obj);
+				obj->setSelected(true);
+			}
+		}
+		//Showing the popup menu for the selected object in the result set
+		else
+		{
+			model_wgt->configureObjectMenu(selected_obj);
+			model_wgt->showObjectMenu();
+		}
+	}
 }
 
 void ObjectFinderWidget::editObject(void)
@@ -222,7 +222,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 		for(lin_idx=0, i=0; i < objs.size(); i++)
 		{
 			if(objs[i]->getObjectType()==BASE_RELATIONSHIP)
-        str_aux=QString("tv");
+				str_aux=QString("tv");
 			else
 				str_aux.clear();
 
@@ -243,10 +243,10 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 				tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(objs[i])));
 				fnt=tab_item->font();
 
-        tab_item->setText(objs[i]->getName());
+				tab_item->setText(objs[i]->getName());
 				tab_item->setIcon(QPixmap(QString(":/icones/icones/") +
-                                  BaseObject::getSchemaName(objs[i]->getObjectType()) +
-                                  str_aux + QString(".png")));
+										  BaseObject::getSchemaName(objs[i]->getObjectType()) +
+										  str_aux + QString(".png")));
 				tab_wgt->setItem(lin_idx, 1, tab_item);
 
 				if(objs[i]->isProtected() || objs[i]->isSystemObject())
@@ -255,7 +255,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 					tab_item->setForeground(BaseObjectView::getFontStyle(ParsersAttributes::PROT_COLUMN).foreground());
 				}
 				else if(dynamic_cast<TableObject *>(objs[i]) &&
-								dynamic_cast<TableObject *>(objs[i])->isAddedByRelationship())
+						dynamic_cast<TableObject *>(objs[i])->isAddedByRelationship())
 				{
 					fnt.setItalic(true);
 					tab_item->setForeground(BaseObjectView::getFontStyle(ParsersAttributes::INH_COLUMN).foreground());
@@ -290,8 +290,8 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 				else
 					parent_obj=objs[i]->getDatabase();
 
-        tab_item->setText(parent_obj ? parent_obj->getName() : QString("-"));
-        tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(parent_obj)));
+				tab_item->setText(parent_obj ? parent_obj->getName() : QString("-"));
+				tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(parent_obj)));
 
 				tab_wgt->setItem(lin_idx, 3, tab_item);
 
@@ -305,7 +305,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 					}
 
 					tab_item->setIcon(QPixmap(QString(":/icones/icones/") +
-																		BaseObject::getSchemaName(parent_obj->getObjectType())+ QString(".png")));
+											  BaseObject::getSchemaName(parent_obj->getObjectType())+ QString(".png")));
 				}
 			}
 
@@ -315,7 +315,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 				tab_item=new QTableWidgetItem;
 				fnt.setItalic(true);
 				tab_item->setFont(fnt);
-        tab_item->setText(parent_obj ? parent_obj->getTypeName() : QString("-"));
+				tab_item->setText(parent_obj ? parent_obj->getTypeName() : QString("-"));
 				tab_wgt->setItem(lin_idx, 4, tab_item);
 			}
 
@@ -343,11 +343,11 @@ void ObjectFinderWidget::updateObjectTypeList(QListWidget *list_wgt)
 			item=new QListWidgetItem;
 
 			if(types[type_id]==BASE_RELATIONSHIP)
-        str_aux=QString(BaseObject::getSchemaName(types[type_id])) + QString("tv");
+				str_aux=QString(BaseObject::getSchemaName(types[type_id])) + QString("tv");
 			else
 				str_aux=QString(BaseObject::getSchemaName(types[type_id]));
 
-      icon=QPixmap(QString(":/icones/icones/") + str_aux + QString(".png"));
+			icon=QPixmap(QString(":/icones/icones/") + str_aux + QString(".png"));
 
 			item->setText(BaseObject::getTypeName(types[type_id]));
 			item->setIcon(icon);

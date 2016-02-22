@@ -34,7 +34,7 @@ class RelationshipView: public BaseObjectView {
 		Q_OBJECT
 
 		//! \brief Graphical point radius
-    static constexpr double GRAPHIC_PNT_RADIUS=6.0f;
+		static constexpr double GRAPHIC_PNT_RADIUS=6.0f;
 
 		//! brief Length of the lines linked to fk/pk columns
 		static constexpr double CONN_LINE_LENGTH=20.0f;
@@ -49,10 +49,10 @@ class RelationshipView: public BaseObjectView {
 
 		/*! \brief Indicate that the line is being configured/updated. This flag is used to evict
 		 that the configureLine() method is exceedingly called during the table moving. */
-    bool configuring_line,
+		bool configuring_line,
 
-    //! brief Indicates if the instance is configured to use placeholders
-    using_placeholders;
+		//! brief Indicates if the instance is configured to use placeholders
+		using_placeholders;
 
 		//! \brief Stores the graphical representation for labels
 		TextboxView *labels[3];
@@ -91,7 +91,7 @@ class RelationshipView: public BaseObjectView {
 		//! \brief Stores the initial (default) labels position
 		QPointF labels_ini_pos[3];
 
-    QGraphicsEllipseItem *line_circles[2];
+		QGraphicsEllipseItem *line_circles[2];
 
 		//! \brief Stores the selected child object index
 		int sel_object_idx;
@@ -111,20 +111,20 @@ class RelationshipView: public BaseObjectView {
 		//! brief Configures the specified label's position based as well some styles for it
 		void configureLabelPosition(unsigned label_id, double x, double y);
 
-  protected:
+	protected:
 		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 		void mousePressEvent(QGraphicsSceneMouseEvent *event);
 		void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 		void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 		void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *){}
 
-    /*! brief (Re)connects the tables to the relationship changing the signals captured.
-        This method is called whenever the placeholder usage is toggled. If the placeholders are on
-        the the table's signal s_relUpdateRequested() is used otherwise the s_objectMoved() is used */
-    void connectTables(void);
+		/*! brief (Re)connects the tables to the relationship changing the signals captured.
+		This method is called whenever the placeholder usage is toggled. If the placeholders are on
+		the the table's signal s_relUpdateRequested() is used otherwise the s_objectMoved() is used */
+		void connectTables(void);
 
-    //! \brief Disconnects the signal handled by the relationship which senders are the tables
-    void disconnectTables(void);
+		//! \brief Disconnects the signal handled by the relationship which senders are the tables
+		void disconnectTables(void);
 
 	public slots:
 		//! \brief Configures the relationship line
@@ -170,10 +170,10 @@ class RelationshipView: public BaseObjectView {
 		 line connection mode used.	*/
 		QPointF getConnectionPoint(unsigned table_idx);
 
-   signals:
+	signals:
 		void s_relationshipModified(BaseGraphicObject *rel);
 
-   friend class ObjectsScene;
+		friend class ObjectsScene;
 };
 
 #endif

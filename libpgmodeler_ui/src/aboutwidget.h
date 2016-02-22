@@ -33,10 +33,10 @@
 class AboutWidget: public QWidget, public Ui::AboutWidget {
 	private:
 		Q_OBJECT
-
+		
 	public:
 		AboutWidget(QWidget *parent = 0);
-
+		
 	signals:
 		void s_visibilityChanged(bool value);
 };

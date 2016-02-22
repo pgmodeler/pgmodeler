@@ -20,36 +20,36 @@
 
 BaseTable::BaseTable(void)
 {
- tag=nullptr;
- obj_type=BASE_TABLE;
- attributes[ParsersAttributes::TAG]=QString();
+	tag=nullptr;
+	obj_type=BASE_TABLE;
+	attributes[ParsersAttributes::TAG]=QString();
 }
 
 void BaseTable::setTag(Tag *tag)
 {
 	setCodeInvalidated(this->tag != tag);
-  this->tag=tag;
+	this->tag=tag;
 }
 
 Tag *BaseTable::getTag(void)
 {
-  return(tag);
+	return(tag);
 }
 
 QString BaseTable::getAlterDefinition(BaseObject *object)
 {
-  try
-  {
-    return(BaseObject::getAlterDefinition(object));
-  }
-  catch(Exception &e)
-  {
-    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-  }
+	try
+	{
+		return(BaseObject::getAlterDefinition(object));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
 }
 
 void BaseTable::operator = (BaseTable &tab)
 {
-  (*dynamic_cast<BaseGraphicObject *>(this))=dynamic_cast<BaseGraphicObject &>(tab);
-  this->tag=tab.tag;
+	(*dynamic_cast<BaseGraphicObject *>(this))=dynamic_cast<BaseGraphicObject &>(tab);
+	this->tag=tab.tag;
 }

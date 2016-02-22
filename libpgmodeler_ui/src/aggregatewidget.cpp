@@ -27,23 +27,23 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		QSpacerItem *spacer=nullptr;
 		QFrame *frame=nullptr;
 
-    initial_cond_hl=new SyntaxHighlighter(initial_cond_txt);
-    initial_cond_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		initial_cond_hl=new SyntaxHighlighter(initial_cond_txt);
+		initial_cond_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
-    final_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
-    transition_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
-    sort_op_sel=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);
+		final_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
+		transition_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
+		sort_op_sel=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);
 
 		input_type=new PgSQLTypeWidget(this, trUtf8("Input Data Type"));
 		state_type=new PgSQLTypeWidget(this, trUtf8("State Data Type"));
 
 		input_types_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-                                          ObjectTableWidget::EDIT_BUTTON, true, this);
+											  ObjectTableWidget::EDIT_BUTTON, true, this);
 		input_types_tab->setColumnCount(1);
 
-    funcaoagregacao_grid->addWidget(final_func_sel,0,1,1,1);
-    funcaoagregacao_grid->addWidget(transition_func_sel,1,1,1,1);
-    funcaoagregacao_grid->addWidget(sort_op_sel,2,1,1,1);
+		funcaoagregacao_grid->addWidget(final_func_sel,0,1,1,1);
+		funcaoagregacao_grid->addWidget(transition_func_sel,1,1,1,1);
+		funcaoagregacao_grid->addWidget(sort_op_sel,2,1,1,1);
 
 		grid=new QGridLayout;
 		grid->setContentsMargins(2,2,2,2);
@@ -73,10 +73,10 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		setRequiredField(state_type);
 		setRequiredField(input_type);
 		setRequiredField(transition_func_sel);
-    setRequiredField(transition_func_lbl);
+		setRequiredField(transition_func_lbl);
 
-    configureTabOrder({ final_func_sel, transition_func_sel, sort_op_sel });
-  }
+		configureTabOrder({ final_func_sel, transition_func_sel, sort_op_sel });
+	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
@@ -111,7 +111,7 @@ void AggregateWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 		final_func_sel->setSelectedObject(aggregate->getFunction(Aggregate::FINAL_FUNC));
 		transition_func_sel->setSelectedObject(aggregate->getFunction(Aggregate::TRANSITION_FUNC));
 		sort_op_sel->setSelectedObject(aggregate->getSortOperator());
-    initial_cond_txt->setPlainText(aggregate->getInitialCondition());
+		initial_cond_txt->setPlainText(aggregate->getInitialCondition());
 
 		input_types_tab->blockSignals(true);
 		count=aggregate->getDataTypeCount();
@@ -121,7 +121,7 @@ void AggregateWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 			input_types_tab->addRow();
 			type=aggregate->getDataType(i);
 			input_types_tab->setRowData(QVariant::fromValue<PgSQLType>(type), i);
-      input_types_tab->setCellText(*type,i,0);
+			input_types_tab->setCellText(*type,i,0);
 		}
 		input_types_tab->blockSignals(false);
 		input_types_tab->clearSelection();
@@ -136,7 +136,7 @@ void AggregateWidget::handleDataType(int linha)
 
 	type=input_type->getPgSQLType();
 	input_types_tab->setRowData(QVariant::fromValue<PgSQLType>(type), linha);
-  input_types_tab->setCellText(*type,linha,0);
+	input_types_tab->setCellText(*type,linha,0);
 }
 
 void AggregateWidget::applyConfiguration(void)

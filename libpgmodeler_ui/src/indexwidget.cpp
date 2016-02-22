@@ -24,14 +24,14 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 	{
 		QStringList list;
 		QGridLayout *grid=nullptr;
-    map<QString, vector<QWidget *> > fields_map;
-    map<QWidget *, vector<QString> > values_map;
+		map<QString, vector<QWidget *> > fields_map;
+		map<QWidget *, vector<QString> > values_map;
 		QFrame *frame=nullptr;
 
 		Ui_IndexWidget::setupUi(this);
 
-    predicate_hl=new SyntaxHighlighter(predicate_txt, false, true);
-    predicate_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		predicate_hl=new SyntaxHighlighter(predicate_txt, false, true);
+		predicate_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		elements_wgt = new ElementsWidget(this);
 
@@ -46,11 +46,11 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 		IndexingType::getTypes(list);
 		indexing_cmb->addItems(list);
 
-    fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_92)].push_back(buffering_chk);
-    fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(indexing_lbl);
-    values_map[indexing_lbl].push_back(~IndexingType(IndexingType::brin));
+		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_92)].push_back(buffering_chk);
+		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(indexing_lbl);
+		values_map[indexing_lbl].push_back(~IndexingType(IndexingType::brin));
 
-    frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);
+		frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);
 		frame->setParent(this);
 		grid=dynamic_cast<QGridLayout *>(tabWidget->widget(0)->layout());
 		grid->addWidget(frame, grid->count(), 0, 1, 5);
@@ -58,9 +58,9 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(indexing_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectIndexingType(void)));
 		connect(fill_factor_chk, SIGNAL(toggled(bool)), fill_factor_sb, SLOT(setEnabled(bool)));
-    connect(elements_wgt, SIGNAL(s_elementHandled(int)), this, SLOT(enableSortingOptions()));
+		connect(elements_wgt, SIGNAL(s_elementHandled(int)), this, SLOT(enableSortingOptions()));
 
-    configureTabOrder();
+		configureTabOrder();
 		selectIndexingType();
 	}
 	catch(Exception &e)
@@ -73,7 +73,7 @@ void IndexWidget::hideEvent(QHideEvent *event)
 {
 	BaseObjectWidget::hideEvent(event);
 
-  predicate_txt->clear();
+	predicate_txt->clear();
 	concurrent_chk->setChecked(false);
 	unique_chk->setChecked(false);
 	buffering_chk->setChecked(false);
@@ -87,22 +87,22 @@ void IndexWidget::selectIndexingType(void)
 {
 	fast_update_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::gin);
 	buffering_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::gist);
-  fill_factor_sb->setEnabled(fill_factor_chk->isChecked() && fill_factor_chk->isEnabled());
-  enableSortingOptions();
+	fill_factor_sb->setEnabled(fill_factor_chk->isChecked() && fill_factor_chk->isEnabled());
+	enableSortingOptions();
 }
 
 void IndexWidget::enableSortingOptions(void)
 {
-  elements_wgt->sorting_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::btree);
-  elements_wgt->ascending_rb->setEnabled(elements_wgt->sorting_chk->isEnabled());
-  elements_wgt->descending_rb->setEnabled(elements_wgt->sorting_chk->isEnabled());
-  elements_wgt->nulls_first_chk->setEnabled(elements_wgt->sorting_chk->isEnabled());
+	elements_wgt->sorting_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::btree);
+	elements_wgt->ascending_rb->setEnabled(elements_wgt->sorting_chk->isEnabled());
+	elements_wgt->descending_rb->setEnabled(elements_wgt->sorting_chk->isEnabled());
+	elements_wgt->nulls_first_chk->setEnabled(elements_wgt->sorting_chk->isEnabled());
 
-  if(!elements_wgt->sorting_chk->isEnabled())
-  {
-    elements_wgt->sorting_chk->setChecked(false);
-    elements_wgt->nulls_first_chk->setChecked(false);
-  }
+	if(!elements_wgt->sorting_chk->isEnabled())
+	{
+		elements_wgt->sorting_chk->setChecked(false);
+		elements_wgt->nulls_first_chk->setChecked(false);
+	}
 }
 
 void IndexWidget::setAttributes(DatabaseModel *model, Table *parent_obj, OperationList *op_list, Index *index)
@@ -132,7 +132,7 @@ void IndexWidget::setAttributes(DatabaseModel *model, Table *parent_obj, Operati
 		fast_update_chk->setChecked(index->getIndexAttribute(Index::FAST_UPDATE));
 		unique_chk->setChecked(index->getIndexAttribute(Index::UNIQUE));
 		buffering_chk->setChecked(index->getIndexAttribute(Index::BUFFERING));
-    predicate_txt->setPlainText(index->getPredicate());
+		predicate_txt->setPlainText(index->getPredicate());
 
 		selectIndexingType();
 	}
@@ -157,7 +157,7 @@ void IndexWidget::applyConfiguration(void)
 		index->setIndexAttribute(Index::CONCURRENT, concurrent_chk->isChecked());
 		index->setIndexAttribute(Index::UNIQUE, unique_chk->isChecked());
 		index->setIndexAttribute(Index::BUFFERING, buffering_chk->isChecked());
-    index->setPredicate(predicate_txt->toPlainText().toUtf8());
+		index->setPredicate(predicate_txt->toPlainText().toUtf8());
 		index->setIndexingType(IndexingType(indexing_cmb->currentText()));
 
 		if(fill_factor_chk->isChecked())

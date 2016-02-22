@@ -19,7 +19,7 @@
 #include <QApplication>
 
 QString Exception::messages[ERROR_COUNT][2]={
-  {"ERR_CUSTOM", QString(" ")},
+	{"ERR_CUSTOM", QString(" ")},
 	{"ERR_ASG_PSDTYPE_COLUMN", QT_TR_NOOP("Assignment of a pseudo-type to the type of the column!")},
 	{"ERR_ASG_ZERO_LENGTH", QT_TR_NOOP("Zero length assignment!")},
 	{"ERR_ASG_INV_PRECISION", QT_TR_NOOP("Assignment of a precision greater than the length of the type!")},
@@ -56,7 +56,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_ASG_TABSPC_INV_CONSTR_TYPE", QT_TR_NOOP("Assignment of tablespace to a constraint which type is invalid! To belong to a tablespace the constraint must be a primary key or unique!")},
 	{"ERR_ASG_INV_ROLE_OBJECT", QT_TR_NOOP("Assignment of owner object which type is invalid!")},
 	{"ERR_ASG_ROLE_OBJECT_INV_TYPE", QT_TR_NOOP("Assignment of owner to an invalid object!")},
-  {"ERR_ASG_APPSQL_OBJECT_INV_TYPE", QT_TR_NOOP("Assignment of appended or prepended SQL to an invalid object!")},
+	{"ERR_ASG_APPSQL_OBJECT_INV_TYPE", QT_TR_NOOP("Assignment of appended or prepended SQL to an invalid object!")},
 	{"ERR_REF_FUNCTION_INV_TYPE", QT_TR_NOOP("Reference to a function with invalid type!")},
 	{"ERR_REF_OPER_ARG_INV_TYPE", QT_TR_NOOP("Reference to an argument of the operator with invalid type!")},
 	{"ERR_REF_OPER_INV_TYPE", QT_TR_NOOP("Reference to an operator with invalid type!")},
@@ -87,7 +87,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_ASG_NOT_ALOC_LANGUAGE", QT_TR_NOOP("Assignment of not allocated language!")},
 	{"ERR_ASG_INV_LANGUAGE_OBJECT", QT_TR_NOOP("Assignment of language object which type is invalid!")},
 	{"ERR_REF_TYPE_INV_INDEX", QT_TR_NOOP("Reference to data type with an index outside the capacity of data types list!")},
-  {"ERR_ASG_NULL_TYPE_OBJECT", QT_TR_NOOP("Assignment of a null type to object `%1' (%2)!")},
+	{"ERR_ASG_NULL_TYPE_OBJECT", QT_TR_NOOP("Assignment of a null type to object `%1' (%2)!")},
 	{"ERR_ASG_INV_TYPE_OBJECT", QT_TR_NOOP("Assignment of invalid type to the object!")},
 	{"ERR_ASG_EMPTY_DIR_NAME", QT_TR_NOOP("Assignment of an empty directory to object `%1' (%2)!")},
 	{"ERR_OBT_TYPES_INV_QUANTITY", QT_TR_NOOP("Obtaining types with invalid quantity!")},
@@ -120,14 +120,14 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_INV_IDENT_RELATIOSHIP", QT_TR_NOOP("Identifier relationship can not be created for a self relationship, relationships of the type n-n, copy or generalization!")},
 	{"ERR_DUPLIC_COLS_COPY_REL", QT_TR_NOOP("Unable to create a copy relationship because the column `%1' in table `%2' already exists in table `%3'!")},
 	{"ERR_INCOMP_COLS_INHERIT_REL", QT_TR_NOOP("Unable to create the generalization relationship because the column `%1' in table `%2' can not be merged with the column `%3' of table `%4' because they have incompatible types!")},
-  {"ERR_INCOMP_CONSTRS_INHERIT_REL", QT_TR_NOOP("Unable to create the generalization relationship because the constraint `%1' in table `%2' can not be merged with the constraint `%3' of table `%4' due to their incompatible composition!")},
-  {"ERR_ASG_OBJ_INV_REL_TYPE", QT_TR_NOOP("An attribute can not be added to a copy or generalization relationship!")},
+	{"ERR_INCOMP_CONSTRS_INHERIT_REL", QT_TR_NOOP("Unable to create the generalization relationship because the constraint `%1' in table `%2' can not be merged with the constraint `%3' of table `%4' due to their incompatible composition!")},
+	{"ERR_ASG_OBJ_INV_REL_TYPE", QT_TR_NOOP("An attribute can not be added to a copy or generalization relationship!")},
 	{"ERR_ASG_FOREIGN_KEY_REL", QT_TR_NOOP("A foreign key can not be added to a relationship because is created automatically when this is connected!")},
 	{"ERR_REF_OBJ_INEXISTS_MODEL", QT_TR_NOOP("The object `%1' (%2) is referencing the object `%3' (%4) which was not found in the model!")},
 	{"ERR_REF_INEXIST_USER_TYPE", QT_TR_NOOP("Reference to an user-defined data type that not exists in the model!")},
 	{"ERR_ASG_INV_MAX_SIZE_OP_LIST", QT_TR_NOOP("Assignment of invalid maximum size to operation list!")},
-  {"ERR_FILE_DIR_NOT_WRITTEN", QT_TR_NOOP("Unable to write the file or directory `%1'! Make sure the output directory exists, or if the user has write permissions over it!")},
-  {"ERR_FILE_NOT_WRITTER_INV_DEF", QT_TR_NOOP("Unable to write the file `%1' due to one or more errors in the definition generation process!")},
+	{"ERR_FILE_DIR_NOT_WRITTEN", QT_TR_NOOP("Unable to write the file or directory `%1'! Make sure the output directory exists, or if the user has write permissions over it!")},
+	{"ERR_FILE_NOT_WRITTER_INV_DEF", QT_TR_NOOP("Unable to write the file `%1' due to one or more errors in the definition generation process!")},
 	{"ERR_DUPLIC_RELATIONSHIP", QT_TR_NOOP("There is already a relationship between `%1' (%2) and `%3' (%4) in the model!")},
 	{"ERR_INS_REL_GENS_REDUNDACY", QT_TR_NOOP("The configuration of the relationship `%1' generates a redundancy between the relationships `%2'. Redundancy on identifier or generalization/copy relationships are not accepted since they result in incorrect column spreading making the model inconsistent!")},
 	{"ERR_INVALIDATED_OBJECTS", QT_TR_NOOP("One or more objects were invalidated and automatically removed because they were referencing table columns which were included through relationships and which no longer exists due to disconnection of relationships or exclusion of such generated columns!")},
@@ -150,7 +150,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_ASG_INV_NAME_TABLE_RELNN",  QT_TR_NOOP("Assignment of invalid name to the table generated from N-N relationship!")},
 	{"ERR_INV_USE_ESPECIAL_PK", QT_TR_NOOP("The relationship `%1' can not make use of the special primary key because it is marked as identifier or it is a self relationship!")},
 	{"ERR_OPR_REL_INCL_OBJECT", QT_TR_NOOP("The object `%1' (%2) can not be edited or deleted because it was automatically included through a relationship! If the object is an attribute or constraint the modifications must be done on the relationship editing form.")},
-  {"ERR_REM_PROTECTED_OBJECT", QT_TR_NOOP("The object `%1' (%2) can not be deleted because it is protected!")},
+	{"ERR_REM_PROTECTED_OBJECT", QT_TR_NOOP("The object `%1' (%2) can not be deleted because it is protected!")},
 	{"ERR_REDECL_HL_GROUP", QT_TR_NOOP("The group `%1' has already been declared earlier!")},
 	{"ERR_DEF_INV_GROUP_DECL", QT_TR_NOOP("The group `%1' can not be built in the groups declaration block (%2)!")},
 	{"ERR_DEF_NOT_DECL_GROUP", QT_TR_NOOP("The group `%1' was built but not declared in the groups declaration block (%2)!")},
@@ -168,13 +168,13 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_EXPORT_FAILURE", QT_TR_NOOP("The export process failed due to an error triggered by the PostgreSQL server in an attempt to execute a SQL command. For more details about the error check the exception stack!\n\n** Executed SQL command: **\n\n%1")},
 	{"ERR_PLUGIN_NOT_LOADED", QT_TR_NOOP("Could not load the plugin `%1' from the library `%2'! Message returned by plugin manager: `%3'")},
 	{"ERR_PLUGINS_NOT_LOADED", QT_TR_NOOP("One or more plugins were not activated due to errors during the loading process! Check the exception stack for more details.")},
-  {"ERR_INV_SYNTAX", QT_TR_NOOP("Invalid syntax in file %1, line %2, column %3!")},
-  {"ERR_INV_INSTRUCTION", QT_TR_NOOP("Invalid instruction `%1' on file %2, line %3, column %4!")},
+	{"ERR_INV_SYNTAX", QT_TR_NOOP("Invalid syntax in file %1, line %2, column %3!")},
+	{"ERR_INV_INSTRUCTION", QT_TR_NOOP("Invalid instruction `%1' on file %2, line %3, column %4!")},
 	{"ERR_UNK_ATTRIBUTE", QT_TR_NOOP("Unknown attribute `%1' in file %2, line %3, column %4!")},
 	{"ERR_INV_METACHARACTER", QT_TR_NOOP("Invalid metacharacter `%1' in file %2, line %3, column %4!")},
-  {"ERR_INV_OPERATOR_IN_EXPR", QT_TR_NOOP("Invalid operator `%1' in comparison expression, file %2, line %3, column %4!")},
-  {"ERR_UNDEF_ATTRIB_VALUE", QT_TR_NOOP("Attribute `%1' with an undefined value in file %2, line %3, column %4!")},
-  {"ERR_INV_ATTRIBUTE", QT_TR_NOOP("Attribute `%1' with an invalid name in file %2, line %3, column %4!")},
+	{"ERR_INV_OPERATOR_IN_EXPR", QT_TR_NOOP("Invalid operator `%1' in comparison expression, file %2, line %3, column %4!")},
+	{"ERR_UNDEF_ATTRIB_VALUE", QT_TR_NOOP("Attribute `%1' with an undefined value in file %2, line %3, column %4!")},
+	{"ERR_INV_ATTRIBUTE", QT_TR_NOOP("Attribute `%1' with an invalid name in file %2, line %3, column %4!")},
 	{"ERR_ASG_EMPTY_XML_BUFFER", QT_TR_NOOP("Assignment of empty XML buffer to parser!")},
 	{"ERR_FILE_DIR_NOT_ACCESSED", QT_TR_NOOP("Could not access the file or directory %1! Make sure that it exists or if the user has access permissions on it!")},
 	{"ERR_ASG_EMPTY_DTD_FILE", QT_TR_NOOP("Assignment of empty DTD file name!")},
@@ -188,15 +188,15 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_OPR_NOT_ALOC_CONN", QT_TR_NOOP("Operation on connection not established!")},
 	{"ERR_CONNECTION_NOT_CONFIGURED", QT_TR_NOOP("Attempt to connect without define configuration parameters!")},
 	{"ERR_CONNECTION_ALREADY_STABLISHED", QT_TR_NOOP("Attempt to start a connection already stablished!")},
-  {"ERR_CONNECTION_NOT_STABLISHED", QT_TR_NOOP("Could not connect to the database.\nMessage returned: `%1'")},
+	{"ERR_CONNECTION_NOT_STABLISHED", QT_TR_NOOP("Could not connect to the database.\nMessage returned: `%1'")},
 	{"ERR_ASG_SQL_RESULT_NOT_ALOC", QT_TR_NOOP("Assignment of not allocated SQL command result!")},
 	{"ERR_INCOMPREHENSIBLE_DBMS_RESP", QT_TR_NOOP("Unable to allocate the result of the SQL command because the response from the DBMS was not understood by the client!")},
-  {"ERR_DBMS_FATAL_ERROR", QT_TR_NOOP("Unable to allocate command result for the SQL because the server has generated a fatal error!\nMessage returned by the DBMS: `%1'")},
+	{"ERR_DBMS_FATAL_ERROR", QT_TR_NOOP("Unable to allocate command result for the SQL because the server has generated a fatal error!\nMessage returned by the DBMS: `%1'")},
 	{"ERR_REF_TUPLE_COL_INV_INDEX", QT_TR_NOOP("Reference to a column of tuple with invalid index!")},
 	{"ERR_REF_TUPLE_COL_INV_NAME", QT_TR_NOOP("Reference to a column of tuple with invalid name!")},
 	{"ERR_REF_TUPLE_INEXISTENT", QT_TR_NOOP("Reference to a tuple with an invalid index or the result is empty (no tuples)!")},
 	{"ERR_REF_INV_TUPLE_COLUMN", QT_TR_NOOP("Reference to a column of a tuple which was not yet initialized (tuple navigation not started)!")},
-  {"ERR_CMD_SQL_NOT_EXECUTED", QT_TR_NOOP("Could not execute the SQL command.\n Message returned: `%1'")},
+	{"ERR_CMD_SQL_NOT_EXECUTED", QT_TR_NOOP("Could not execute the SQL command.\n Message returned: `%1'")},
 	{"ERR_INV_VIEW_DEF_EXPRESSION", QT_TR_NOOP("Invalid use of a view reference as whole SQL definition! The assigned reference must be an expression!")},
 	{"ERR_ASG_SEC_VIEW_DEF_EXPRESSION", QT_TR_NOOP("Assignment of a second definition expression to the view!")},
 	{"ERR_MIX_VIEW_DEF_EXPR_REFS", QT_TR_NOOP("It is not possible mix ordinary references (SELECT-FROM, FROM-WHERE, After WHERE) with references used as view SQL definition!")},
@@ -217,42 +217,42 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_TRIG_USING_CONSTRIG_ATRIBS",QT_TR_NOOP("Only constraint triggers can be deferrable or reference another table!")},
 	{"ERR_REF_FUNCTION_INV_TYPE_CONF", QT_TR_NOOP("Reference to a function id which is incompatible with the user define type configuration!")},
 	{"ERR_ASG_INV_OPCLASS_OBJ", QT_TR_NOOP("The operator class assigned to the object `%1' (%2) must use `btree' as indexing method!")},
-  {"ERR_INV_POSTGRESQL_VERSION", QT_TR_NOOP("Unsupported PostgreSQL version (%1) detected! Valid versions are: %2")},
+	{"ERR_INV_POSTGRESQL_VERSION", QT_TR_NOOP("Unsupported PostgreSQL version (%1) detected! Valid versions are: %2")},
 	{"ERR_VALIDATION_FAILURE", QT_TR_NOOP("The validation process failed due to an error triggered by the validation helper. For more details about the error check the exception stack!")},
 	{"ERR_REG_EXT_NOT_HANDLING_TYPE", QT_TR_NOOP("The extension `%1' is registered as a data type and cannot have the attribute `handles datatype' modified!")},
 	{"ERR_ALOC_INV_FK_RELATIONSHIP", QT_TR_NOOP("The fk relationship `%1' cannot be created because the foreign-key that represents it was not created on table `%2'!")},
 	{"ERR_ASG_INV_NAME_PATTERN", QT_TR_NOOP("Assignement of an invalid object name pattern to the relationship `%1'!")},
 	{"ERR_REF_INV_NAME_PATTERN_ID", QT_TR_NOOP("Reference to an invalid object name pattern id on the relationship `%1'!")},
 	{"ERR_INV_USE_VARIADIC_PARAM_MODE", QT_TR_NOOP("Invalid use of variadic parameter mode! This mode can be used only with array data types!")},
-  {"ERR_MIX_INCOMP_EXPORT_OPTS", QT_TR_NOOP("Mixing incompatibles DBMS export modes: `ignore object duplications', `drop database' or `drop objects' cannot be used with `simulate export'!")},
-  {"ERR_MIX_INCOMP_DROP_OPTS", QT_TR_NOOP("Mixing incompatibles DROP options: `drop database' and `drop objects' cannot be used at the same time!")},
-  {"ERR_INV_ID_SWAP_SAME_OBJECT", QT_TR_NOOP("Invalid object id swapping operation! The objects involved are the same!")},
+	{"ERR_MIX_INCOMP_EXPORT_OPTS", QT_TR_NOOP("Mixing incompatibles DBMS export modes: `ignore object duplications', `drop database' or `drop objects' cannot be used with `simulate export'!")},
+	{"ERR_MIX_INCOMP_DROP_OPTS", QT_TR_NOOP("Mixing incompatibles DROP options: `drop database' and `drop objects' cannot be used at the same time!")},
+	{"ERR_INV_ID_SWAP_SAME_OBJECT", QT_TR_NOOP("Invalid object id swapping operation! The objects involved are the same!")},
 	{"ERR_INV_ID_SWAP_INV_OBJ_TYPE", QT_TR_NOOP("Invalid object id swapping operation! The database itself, tablespaces or roles cannot have the ids swapped!")},
 	{"ERR_ASG_WGT_ALREADY_HAS_PARENT", QT_TR_NOOP("The widget already has a parent and cannot be assigned to a different object!")},
 	{"ERR_OBJECT_NOT_IMPORTED",  QT_TR_NOOP("The object `%1' (%2) could not be imported due to one or more errors! Check the exception stack for more details.")},
-  {"ERR_MODEL_FILE_NOT_LOADED", QT_TR_NOOP("Could not load the database model file `%1'. Check the error stack to see details. Try to run `pgmodeler-cli --fix-model' in order to correct the structure of the file if that is the case.")},
-  {"ERR_INV_COLUMN_TABLE_TYPE", QT_TR_NOOP("The column `%1' cannot reference it's parent table `%2' as data type!")},
-  {"ERR_OPR_INV_ELEMENT_ID", QT_TR_NOOP("Operation with an invalid element id `%1'!")},
-  {"ERR_REF_ELEMENT_COLOR_ID", QT_TR_NOOP("Reference to an invalid color id `%1' for element `%2'!")},
-  {"ERR_ASG_INV_OBJECT_TYPE", QT_TR_NOOP("Assignment of an invalid object to `%1' (%2)! The assigned object must be of type `%3'.")},
-  {"ERR_INCOMP_COL_TYPE_FOR_SEQ", QT_TR_NOOP("The sequence `%1' can't be assigned to the column `%2' because the data type of the latter is incompatible. The type used must be an integer one!")},
-  {"ERR_INV_USE_TMPNAMES_EXPORT_OPT", QT_TR_NOOP("The option to generate temporary object names can only be used in simulation mode!")},
-  {"ERR_INV_CONV_INTEGER_TO_SERIAL", QT_TR_NOOP("It's not possible convert the type of the column `%1' to serial! It must have an `integer' based type and its default value must be a call to `nextval(seq_name::regclass)' function or a sequence object must be directly assigned to the column!")},
+	{"ERR_MODEL_FILE_NOT_LOADED", QT_TR_NOOP("Could not load the database model file `%1'. Check the error stack to see details. Try to run `pgmodeler-cli --fix-model' in order to correct the structure of the file if that is the case.")},
+	{"ERR_INV_COLUMN_TABLE_TYPE", QT_TR_NOOP("The column `%1' cannot reference it's parent table `%2' as data type!")},
+	{"ERR_OPR_INV_ELEMENT_ID", QT_TR_NOOP("Operation with an invalid element id `%1'!")},
+	{"ERR_REF_ELEMENT_COLOR_ID", QT_TR_NOOP("Reference to an invalid color id `%1' for element `%2'!")},
+	{"ERR_ASG_INV_OBJECT_TYPE", QT_TR_NOOP("Assignment of an invalid object to `%1' (%2)! The assigned object must be of type `%3'.")},
+	{"ERR_INCOMP_COL_TYPE_FOR_SEQ", QT_TR_NOOP("The sequence `%1' can't be assigned to the column `%2' because the data type of the latter is incompatible. The type used must be an integer one!")},
+	{"ERR_INV_USE_TMPNAMES_EXPORT_OPT", QT_TR_NOOP("The option to generate temporary object names can only be used in simulation mode!")},
+	{"ERR_INV_CONV_INTEGER_TO_SERIAL", QT_TR_NOOP("It's not possible convert the type of the column `%1' to serial! It must have an `integer' based type and its default value must be a call to `nextval(seq_name::regclass)' function or a sequence object must be directly assigned to the column!")},
 	{"ERR_ASG_INV_EVENT_TRIGGER_VARIABLE", QT_TR_NOOP("Could not assign the variable `%1' to event trigger's filter. Currently, PostgreSQL supports only the `TAG' variable!")},
 	{"ERR_ROW_DATA_NOT_MANIPULATED", QT_TR_NOOP("Could not perform the `%1' operation on `%2' using the data on row `%3'! All changes were rolled back. \n\n ** Returned error ** \n\n%4")},
 	{"ERR_MALFORMED_UNESCAPED_VALUE", QT_TR_NOOP("Malformed unescaped value on row `%1' column `%2'!")},
-  {"ERR_UNDO_REDO_OPR_INV_OBJECT", QT_TR_NOOP("Trying to undo/redo an invalid operation over an object that does not exists anymore or can't be handled! The operation history will be cleaned up.")},
-  {"ERR_REQ_FIELDS_NOT_FILLED", QT_TR_NOOP("The object `%1' (%2) can't be handled because some needed fields are not set! Please, make sure to fill at least the requires fields in order to properly create or update the object.")},
-  {"ERR_INV_REL_ID_SWAP", QT_TR_NOOP("A relationship can only be swapped by other object of the same kind!")},
-  {"ERR_INV_INH_PARENT_TAB_NOT_FOUND", QT_TR_NOOP("A parent table of `%1' which OID is `%2' was not found in the set of imported objects!")},
-  {"ERR_ASG_ENUM_INV_CHARS", QT_TR_NOOP("The enumeration `%1' can't be assigned to the type `%2' because contains invalid characters!")},
-  {"ERR_ASG_ENUM_LONG_NAME", QT_TR_NOOP("The enumeration `%1' can't be assigned to the type `%2' because is too long!")},
+	{"ERR_UNDO_REDO_OPR_INV_OBJECT", QT_TR_NOOP("Trying to undo/redo an invalid operation over an object that does not exists anymore or can't be handled! The operation history will be cleaned up.")},
+	{"ERR_REQ_FIELDS_NOT_FILLED", QT_TR_NOOP("The object `%1' (%2) can't be handled because some needed fields are not set! Please, make sure to fill at least the requires fields in order to properly create or update the object.")},
+	{"ERR_INV_REL_ID_SWAP", QT_TR_NOOP("A relationship can only be swapped by other object of the same kind!")},
+	{"ERR_INV_INH_PARENT_TAB_NOT_FOUND", QT_TR_NOOP("A parent table of `%1' which OID is `%2' was not found in the set of imported objects!")},
+	{"ERR_ASG_ENUM_INV_CHARS", QT_TR_NOOP("The enumeration `%1' can't be assigned to the type `%2' because contains invalid characters!")},
+	{"ERR_ASG_ENUM_LONG_NAME", QT_TR_NOOP("The enumeration `%1' can't be assigned to the type `%2' because is too long!")},
 
 };
 
 Exception::Exception(void)
 {
-  configureException(QString(),ERR_CUSTOM,QString(),QString(),-1,QString());
+	configureException(QString(),ERR_CUSTOM,QString(),QString(),-1,QString());
 }
 
 Exception::Exception(const QString &msg, const QString &method, const QString &file, int line, Exception *exception, const QString &extra_info)
@@ -267,7 +267,7 @@ Exception::Exception(ErrorType error_type, const QString &method, const QString 
 		so the translation method is called  directly from the application specifying the
 		context (Exception) in the ts file and the text to be translated */
 	configureException(QApplication::translate("Exception",messages[error_type][ERROR_MESSAGE].toStdString().c_str(),"", -1),
-										 error_type, method, file, line, extra_info);
+					   error_type, method, file, line, extra_info);
 
 	if(exception) addException(*exception);
 }
@@ -286,7 +286,7 @@ Exception::Exception(ErrorType error_type, const QString &method, const QString 
 		so the translation method is called  directly from the application specifying the
 		context (Exception) in the ts file and the text to be translated */
 	configureException(QApplication::translate("Exception",messages[error_type][ERROR_MESSAGE].toStdString().c_str(),"",-1),
-										 error_type, method, file, line, extra_info);
+					   error_type, method, file, line, extra_info);
 
 	itr=exceptions.begin();
 	itr_end=exceptions.end();
@@ -348,7 +348,7 @@ QString Exception::getErrorMessage(ErrorType error_type)
 		 context (Exception) in the ts file and the text to be translated */
 		return(QApplication::translate("Exception",messages[error_type][ERROR_MESSAGE].toStdString().c_str(),"", -1));
 	else
-    return(QString());
+		return(QString());
 }
 
 QString Exception::getErrorCode(ErrorType error_type)
@@ -356,7 +356,7 @@ QString Exception::getErrorCode(ErrorType error_type)
 	if(error_type < ERROR_COUNT)
 		return(messages[error_type][ERROR_CODE]);
 	else
-    return(QString());
+		return(QString());
 }
 
 QString Exception::getMethod(void)
@@ -394,19 +394,19 @@ void Exception::addException(Exception &exception)
 	while(itr!=itr_end)
 	{
 		this->exceptions.push_back(Exception(itr->error_msg,itr->error_type,
-																					itr->method,itr->file,itr->line,nullptr,itr->extra_info));
+											 itr->method,itr->file,itr->line,nullptr,itr->extra_info));
 		itr++;
 	}
 	exception.exceptions.clear();
 	this->exceptions.push_back(Exception(exception.error_msg,exception.error_type,
-																			 exception.method,exception.file,exception.line,nullptr,exception.extra_info));
+										 exception.method,exception.file,exception.line,nullptr,exception.extra_info));
 }
 
 void Exception::getExceptionsList(vector<Exception> &list)
 {
 	list.assign(this->exceptions.begin(), this->exceptions.end());
 	list.push_back(Exception(this->error_msg,this->error_type,
-													 this->method,this->file,this->line,nullptr,this->extra_info));
+							 this->method,this->file,this->line,nullptr,this->extra_info));
 }
 
 QString Exception::getExceptionsText(void)
@@ -432,7 +432,7 @@ QString Exception::getExceptionsText(void)
 		if(!itr->getExtraInfo().isEmpty())
 			exceptions_txt+=QString("       ** %1\n\n").arg(itr->getExtraInfo());
 		else
-      exceptions_txt+=QString("\n");
+			exceptions_txt+=QString("\n");
 
 		itr++; idx--;
 	}

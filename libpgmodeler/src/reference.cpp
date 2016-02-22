@@ -33,7 +33,7 @@ Reference::Reference(Table *table, Column *column, const QString &tab_alias, con
 
 	//Raises an error if the table/column alias has an invalid name
 	else if((!tab_alias.isEmpty() && !BaseObject::isValidName(tab_alias)) ||
-					(!col_alias.isEmpty() && !BaseObject::isValidName(col_alias)))
+			(!col_alias.isEmpty() && !BaseObject::isValidName(col_alias)))
 		throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Raises an error if the column parent table differs from the passed table
@@ -50,7 +50,7 @@ Reference::Reference(Table *table, Column *column, const QString &tab_alias, con
 Reference::Reference(const QString &expression, const QString &expr_alias)
 {
 	//Raises an error if the user try to create an reference using an empty expression
-  if(expression.isEmpty())
+	if(expression.isEmpty())
 		throw Exception(ERR_ASG_INV_EXPR_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the expression alias has an invalid name
 	else if(!expr_alias.isEmpty() && !BaseObject::isValidName(expr_alias))
@@ -100,7 +100,7 @@ QString Reference::getExpression(void)
 
 unsigned Reference::getReferenceType(void)
 {
-  if(expression.isEmpty())
+	if(expression.isEmpty())
 		return(REFER_COLUMN);
 	else
 		return(REFER_EXPRESSION);
@@ -123,22 +123,22 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 			[TABLE_ALIAS.]{COLUMN_NAME | *} [AS COLUMN_ALIAS] */
 
 			if(!alias.isEmpty())
-        tab_name=BaseObject::formatName(alias) + QString(".");
-      else
-        tab_name=table->getSignature() + QString(".");
+				tab_name=BaseObject::formatName(alias) + QString(".");
+			else
+				tab_name=table->getSignature() + QString(".");
 
 			/* Case there is no column definede the default behavior is consider
 			all the table columns (e.g. table.*) */
 			if(!column)
-        sql_def=tab_name + QString("*");
+				sql_def=tab_name + QString("*");
 			else
 			{
 				//Case there is an column concatenates its name to the code definition
 				sql_def=tab_name + column->getName(true);
 
 				//Case there is a column alias concatenate it to the definition
-        if(!column_alias.isEmpty())
-          sql_def+=QString(" AS ") + BaseObject::formatName(column_alias);
+				if(!column_alias.isEmpty())
+					sql_def+=QString(" AS ") + BaseObject::formatName(column_alias);
 			}
 		}
 		//Case the reference is linked to an expression
@@ -147,10 +147,10 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 			/* Generated SQL definition:
 			{expression} [AS ALIAS] */
 			sql_def=expression;
-      if(!alias.isEmpty())
-        sql_def+=QString(" AS ") + BaseObject::formatName(alias);
+			if(!alias.isEmpty())
+				sql_def+=QString(" AS ") + BaseObject::formatName(alias);
 		}
-    sql_def+=QString(",\n");
+		sql_def+=QString(",\n");
 	}
 	//Case the reference is between the FROM-[JOIN | WHERE] keywords
 	else if(sql_type==SQL_REFER_FROM)
@@ -164,13 +164,13 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 		{
 			sql_def+=table->getName(true);
 
-      if(!alias.isEmpty())
-        sql_def+=QString(" AS ") + BaseObject::formatName(alias);
+			if(!alias.isEmpty())
+				sql_def+=QString(" AS ") + BaseObject::formatName(alias);
 		}
 		else
 			sql_def=expression;
 
-    sql_def+=QString(",\n");
+		sql_def+=QString(",\n");
 	}
 	//Case the reference is after [JOIN | WHERE] keywords
 	else
@@ -181,12 +181,12 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 			/* Generated SQL definition:
 			... WHERE {TABLE_NAME | ALIAS}.{COLUMN_NAME} */
 
-      if(alias.isEmpty())
+			if(alias.isEmpty())
 				sql_def=table->getName(true);
 			else
 				sql_def=BaseObject::formatName(alias);
 
-      sql_def+=QString(".");
+			sql_def+=QString(".");
 
 			if(column)
 				sql_def+=column->getName(true);
@@ -195,7 +195,7 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 			sql_def=expression;
 	}
 
-  sql_def=QString("   ") + sql_def;
+	sql_def=QString("   ") + sql_def;
 	return(sql_def);
 }
 
@@ -231,15 +231,15 @@ bool Reference::operator == (Reference &refer)
 		if(ref_type==REFER_COLUMN)
 		{
 			return(this->table==refer.table &&
-						 this->column==refer.column &&
-						 this->alias==refer.alias &&
-						 this->column_alias==refer.column_alias);
+				   this->column==refer.column &&
+				   this->alias==refer.alias &&
+				   this->column_alias==refer.column_alias);
 		}
 		else
 		{
 			return(this->expression==refer.expression &&
-						 this->alias==refer.alias &&
-						 this->is_def_expr==refer.is_def_expr);
+				   this->alias==refer.alias &&
+				   this->is_def_expr==refer.is_def_expr);
 		}
 	}
 	else

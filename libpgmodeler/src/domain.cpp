@@ -55,7 +55,7 @@ void Domain::setSchema(BaseObject *schema)
 void Domain::setConstraintName(const QString &constr_name)
 {
 	//Raises an error if the constraint name is invalid
-  if(!constr_name.isEmpty() && !BaseObject::isValidName(constr_name))
+	if(!constr_name.isEmpty() && !BaseObject::isValidName(constr_name))
 		throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(constraint_name != constr_name);
@@ -148,46 +148,46 @@ void Domain::operator = (Domain &domain)
 
 QString Domain::getAlterDefinition(BaseObject *object)
 {
-  Domain *domain=dynamic_cast<Domain *>(object);
+	Domain *domain=dynamic_cast<Domain *>(object);
 
-  if(!domain)
-    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(!domain)
+		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  try
-  {
-    QString alter_def=BaseObject::getAlterDefinition(object);
+	try
+	{
+		QString alter_def=BaseObject::getAlterDefinition(object);
 
-    attributes[ParsersAttributes::DEFAULT_VALUE]=QString();
-    attributes[ParsersAttributes::NOT_NULL]=QString();
-    attributes[ParsersAttributes::CONSTRAINT]=QString();
-    attributes[ParsersAttributes::EXPRESSION]=QString();
-    attributes[ParsersAttributes::OLD_NAME]=QString();
-    attributes[ParsersAttributes::NEW_NAME]=QString();
+		attributes[ParsersAttributes::DEFAULT_VALUE]=QString();
+		attributes[ParsersAttributes::NOT_NULL]=QString();
+		attributes[ParsersAttributes::CONSTRAINT]=QString();
+		attributes[ParsersAttributes::EXPRESSION]=QString();
+		attributes[ParsersAttributes::OLD_NAME]=QString();
+		attributes[ParsersAttributes::NEW_NAME]=QString();
 
-    if(this->default_value!=domain->default_value)
-      attributes[ParsersAttributes::DEFAULT_VALUE]=(!domain->default_value.isEmpty() ? domain->default_value : ParsersAttributes::UNSET);
+		if(this->default_value!=domain->default_value)
+			attributes[ParsersAttributes::DEFAULT_VALUE]=(!domain->default_value.isEmpty() ? domain->default_value : ParsersAttributes::UNSET);
 
-    if(this->not_null!=domain->not_null)
-      attributes[ParsersAttributes::NOT_NULL]=(domain->not_null ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+		if(this->not_null!=domain->not_null)
+			attributes[ParsersAttributes::NOT_NULL]=(domain->not_null ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
 
-    if(this->expression!=domain->expression)
-    {
-      attributes[ParsersAttributes::CONSTRAINT]=domain->constraint_name;
-      attributes[ParsersAttributes::EXPRESSION]=(!domain->expression.isEmpty() ? domain->expression : ParsersAttributes::UNSET);
-    }
+		if(this->expression!=domain->expression)
+		{
+			attributes[ParsersAttributes::CONSTRAINT]=domain->constraint_name;
+			attributes[ParsersAttributes::EXPRESSION]=(!domain->expression.isEmpty() ? domain->expression : ParsersAttributes::UNSET);
+		}
 
-    if(!this->constraint_name.isEmpty() && !domain->constraint_name.isEmpty() &&
-       this->constraint_name!=domain->constraint_name)
-    {
-      attributes[ParsersAttributes::OLD_NAME]=this->constraint_name;
-      attributes[ParsersAttributes::NEW_NAME]=domain->constraint_name;
-    }
+		if(!this->constraint_name.isEmpty() && !domain->constraint_name.isEmpty() &&
+				this->constraint_name!=domain->constraint_name)
+		{
+			attributes[ParsersAttributes::OLD_NAME]=this->constraint_name;
+			attributes[ParsersAttributes::NEW_NAME]=domain->constraint_name;
+		}
 
-    alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
-    return(alter_def);
-  }
-  catch(Exception &e)
-  {
-    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-  }
+		alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
+		return(alter_def);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
 }

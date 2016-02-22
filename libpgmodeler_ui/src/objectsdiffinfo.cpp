@@ -26,7 +26,7 @@ const unsigned ObjectsDiffInfo::NO_DIFFERENCE=4;
 
 ObjectsDiffInfo::ObjectsDiffInfo(void)
 {
-  object=old_object=nullptr;
+	object=old_object=nullptr;
 	diff_type=NO_DIFFERENCE;
 }
 
@@ -34,7 +34,7 @@ ObjectsDiffInfo::ObjectsDiffInfo(unsigned diff_type, BaseObject *object, BaseObj
 {
 	this->diff_type=diff_type;
 	this->object=object;
-  this->old_object=new_object;
+	this->old_object=new_object;
 }
 
 unsigned ObjectsDiffInfo::getDiffType(void)
@@ -44,86 +44,86 @@ unsigned ObjectsDiffInfo::getDiffType(void)
 
 QString ObjectsDiffInfo::getInfoMessage(void)
 {
-  QString msg=QString("%1 `%2' (%3)"), obj_name;
-  BaseObject *ref_obj=nullptr;
-  ObjectType obj_type=BASE_OBJECT;
+	QString msg=QString("%1 `%2' (%3)"), obj_name;
+	BaseObject *ref_obj=nullptr;
+	ObjectType obj_type=BASE_OBJECT;
 
-  if(diff_type==ALTER_OBJECT && old_object)
-    ref_obj=old_object;
-  else
-    ref_obj=object;
+	if(diff_type==ALTER_OBJECT && old_object)
+		ref_obj=old_object;
+	else
+		ref_obj=object;
 
-  obj_type=ref_obj->getObjectType();
+	obj_type=ref_obj->getObjectType();
 
-  /* Forcing the usage of BaseObject::getSignature for the following object,
-     since the custom getSignature for those types return some undesired
-     SQL keywords for this context */
-  if(obj_type==OBJ_CONSTRAINT || obj_type==OBJ_TRIGGER || obj_type==OBJ_RULE)
-    obj_name=dynamic_cast<TableObject *>(ref_obj)->TableObject::getSignature();
-  else if(obj_type==OBJ_OPCLASS || obj_type==OBJ_OPFAMILY)
-    obj_name=ref_obj->BaseObject::getSignature();
-  else
-    obj_name=ref_obj->getSignature();
+	/* Forcing the usage of BaseObject::getSignature for the following object,
+	 since the custom getSignature for those types return some undesired
+	 SQL keywords for this context */
+	if(obj_type==OBJ_CONSTRAINT || obj_type==OBJ_TRIGGER || obj_type==OBJ_RULE)
+		obj_name=dynamic_cast<TableObject *>(ref_obj)->TableObject::getSignature();
+	else if(obj_type==OBJ_OPCLASS || obj_type==OBJ_OPFAMILY)
+		obj_name=ref_obj->BaseObject::getSignature();
+	else
+		obj_name=ref_obj->getSignature();
 
-  if(diff_type==NO_DIFFERENCE)
-    return(QString());
-  else if(diff_type==DROP_OBJECT)
+	if(diff_type==NO_DIFFERENCE)
+		return(QString());
+	else if(diff_type==DROP_OBJECT)
 	{
-    msg=msg.arg(QString("<font color=\"#e00000\"><strong>DROP</strong></font>"))
-           .arg(obj_name)
-           .arg(ref_obj->getTypeName());
+		msg=msg.arg(QString("<font color=\"#e00000\"><strong>DROP</strong></font>"))
+			.arg(obj_name)
+			.arg(ref_obj->getTypeName());
 	}
 	else if(diff_type==CREATE_OBJECT)
 	{
-    msg=msg.arg(QString("<font color=\"#008000\"><strong>CREATE</strong></font>"))
-           .arg(obj_name)
-           .arg(ref_obj->getTypeName());
+		msg=msg.arg(QString("<font color=\"#008000\"><strong>CREATE</strong></font>"))
+			.arg(obj_name)
+			.arg(ref_obj->getTypeName());
 	}
 	else if(diff_type==ALTER_OBJECT)
-	{   
-    msg=msg.arg(QString("<font color=\"#ff8000\"><strong>ALTER</strong></font>"))
-           .arg(obj_name)
-           .arg(ref_obj->getTypeName());
+	{
+		msg=msg.arg(QString("<font color=\"#ff8000\"><strong>ALTER</strong></font>"))
+			.arg(obj_name)
+			.arg(ref_obj->getTypeName());
 
 	}
-  else if(diff_type==IGNORE_OBJECT)
-  {
-    msg=msg.arg(QString("<font color=\"#606060\"><strong>IGNORE</strong></font>"))
-           .arg(obj_name)
-           .arg(ref_obj->getTypeName());
+	else if(diff_type==IGNORE_OBJECT)
+	{
+		msg=msg.arg(QString("<font color=\"#606060\"><strong>IGNORE</strong></font>"))
+			.arg(obj_name)
+			.arg(ref_obj->getTypeName());
 
-  }
+	}
 
-  return(msg);
+	return(msg);
 }
 
 QString ObjectsDiffInfo::getDiffTypeString(void)
 {
-  if(diff_type==NO_DIFFERENCE)
-    return(QString());
-  else if(diff_type==DROP_OBJECT)
-    return(QString("DROP"));
-  else if(diff_type==CREATE_OBJECT)
-   return(QString("CREATE"));
-  else if(diff_type==ALTER_OBJECT)
-   return(QString("ALTER"));
-  else
-   return(QString("IGNORE"));
+	if(diff_type==NO_DIFFERENCE)
+		return(QString());
+	else if(diff_type==DROP_OBJECT)
+		return(QString("DROP"));
+	else if(diff_type==CREATE_OBJECT)
+		return(QString("CREATE"));
+	else if(diff_type==ALTER_OBJECT)
+		return(QString("ALTER"));
+	else
+		return(QString("IGNORE"));
 }
 
 BaseObject *ObjectsDiffInfo::getObject(void)
 {
-  return(object);
+	return(object);
 }
 
 BaseObject *ObjectsDiffInfo::getOldObject(void)
 {
-  return(old_object);
+	return(old_object);
 }
 
 bool ObjectsDiffInfo::operator == (ObjectsDiffInfo &info)
 {
-  return(this->diff_type==info.diff_type &&
-         this->object==info.object &&
-         this->old_object==info.old_object);
+	return(this->diff_type==info.diff_type &&
+		   this->object==info.object &&
+		   this->old_object==info.old_object);
 }

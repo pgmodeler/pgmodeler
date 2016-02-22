@@ -25,8 +25,8 @@ GraphicalView::GraphicalView(View *view) : BaseTableView(view)
 	columns=new QGraphicsItemGroup;
 	columns->setZValue(1);
 	this->addToGroup(columns);
-  configurePlaceholder();
-  this->configureObject();
+	configurePlaceholder();
+	this->configureObject();
 }
 
 void GraphicalView::configureObject(void)
@@ -39,14 +39,14 @@ void GraphicalView::configureObject(void)
 	QList<QGraphicsItem *> subitems;
 	vector<TableObject *> tab_objs;
 	QGraphicsItemGroup *groups[]={ columns, ext_attribs };
-  RoundedRectItem *bodies[]={ body, ext_attribs_body };
-  QString attribs[]={ ParsersAttributes::VIEW_BODY, ParsersAttributes::VIEW_EXT_BODY },
-          tag_attribs[]={ ParsersAttributes::TABLE_BODY, ParsersAttributes::TABLE_EXT_BODY };
+	RoundedRectItem *bodies[]={ body, ext_attribs_body };
+	QString attribs[]={ ParsersAttributes::VIEW_BODY, ParsersAttributes::VIEW_EXT_BODY },
+			tag_attribs[]={ ParsersAttributes::TABLE_BODY, ParsersAttributes::TABLE_EXT_BODY };
 	double width, type_width=0, px=0;
 	TableObjectView *col_item=nullptr;
 	QList<TableObjectView *> col_items;
 	TableObject *tab_obj=nullptr;
-  Tag *tag=view->getTag();
+	Tag *tag=view->getTag();
 
 	//Configures the view's title
 	title->configureObject(view);
@@ -59,7 +59,7 @@ void GraphicalView::configureObject(void)
 
 	//Moves the references group to the origin to be moved latter
 	columns->moveBy(-columns->scenePos().x(),
-										 -columns->scenePos().y());
+					-columns->scenePos().y());
 
 	subitems=columns->childItems();
 
@@ -77,7 +77,7 @@ void GraphicalView::configureObject(void)
 
 			//Moves the reference to the origin to be moved latter
 			graph_ref->moveBy(-graph_ref->scenePos().x(),
-												-graph_ref->scenePos().y());
+							  -graph_ref->scenePos().y());
 		}
 		else
 			graph_ref=new TableObjectView;
@@ -99,10 +99,10 @@ void GraphicalView::configureObject(void)
 	}
 
 	tab_objs.assign(view->getObjectList(OBJ_RULE)->begin(),
-									view->getObjectList(OBJ_RULE)->end());
+					view->getObjectList(OBJ_RULE)->end());
 	tab_objs.insert(tab_objs.end(),
-									view->getObjectList(OBJ_TRIGGER)->begin(),
-									view->getObjectList(OBJ_TRIGGER)->end());
+					view->getObjectList(OBJ_TRIGGER)->begin(),
+					view->getObjectList(OBJ_TRIGGER)->end());
 
 	ext_attribs->setVisible(!tab_objs.empty() && !hide_ext_attribs);
 	ext_attribs_body->setVisible(!tab_objs.empty() && !hide_ext_attribs);
@@ -114,7 +114,7 @@ void GraphicalView::configureObject(void)
 		//Gets the subitems of the current group
 		subitems=ext_attribs->childItems();
 		ext_attribs->moveBy(-ext_attribs->scenePos().x(),
-												-ext_attribs->scenePos().y());
+							-ext_attribs->scenePos().y());
 		for(i=0; i < count; i++)
 		{
 			tab_obj=tab_objs.at(i);
@@ -126,7 +126,7 @@ void GraphicalView::configureObject(void)
 				col_item->setSourceObject(tab_obj);
 				col_item->configureObject();
 				col_item->moveBy(-col_item->scenePos().x(),
-												 -col_item->scenePos().y());
+								 -col_item->scenePos().y());
 			}
 			else
 				col_item=new TableObjectView(tab_obj);
@@ -138,7 +138,7 @@ void GraphicalView::configureObject(void)
 			/* Calculates the width of the name + type of the object. This is used to align all
 			the constraint labels on table */
 			width=col_item->getChildObject(0)->boundingRect().width() +
-						col_item->getChildObject(1)->boundingRect().width() + (3 * HORIZ_SPACING);
+				  col_item->getChildObject(1)->boundingRect().width() + (3 * HORIZ_SPACING);
 			if(px < width)  px=width;
 
 			//Gets the maximum width of the column type label to align all at same horizontal position
@@ -177,12 +177,12 @@ void GraphicalView::configureObject(void)
 	/* Calculating the maximum width between the title, columns and extended attributes.
 		This width is used to set the uniform width of table */
 	if(!columns->childItems().isEmpty() &&
-		 (columns->boundingRect().width() > title->boundingRect().width() &&
-			((hide_ext_attribs || (columns->boundingRect().width() > ext_attribs->boundingRect().width())))))
+			(columns->boundingRect().width() > title->boundingRect().width() &&
+			 ((hide_ext_attribs || (columns->boundingRect().width() > ext_attribs->boundingRect().width())))))
 		width=columns->boundingRect().width() + (2 * HORIZ_SPACING);
 	else if(!ext_attribs->childItems().isEmpty() &&  !hide_ext_attribs &&
-					(ext_attribs->boundingRect().width() > title->boundingRect().width() &&
-					 ext_attribs->boundingRect().width() > columns->boundingRect().width()))
+			(ext_attribs->boundingRect().width() > title->boundingRect().width() &&
+			 ext_attribs->boundingRect().width() > columns->boundingRect().width()))
 		width=ext_attribs->boundingRect().width() + (2 * HORIZ_SPACING);
 	else
 		width=title->boundingRect().width() + (2 * HORIZ_SPACING);
@@ -193,18 +193,18 @@ void GraphicalView::configureObject(void)
 	//Resizes the columns/extended attributes using the new width
 	for(int idx=0; idx < 2; idx++)
 	{
-    bodies[idx]->setRect(QRectF(0,0, width, groups[idx]->boundingRect().height() + (2 * VERT_SPACING)));
+		bodies[idx]->setRect(QRectF(0,0, width, groups[idx]->boundingRect().height() + (2 * VERT_SPACING)));
 
-    pen=this->getBorderStyle(attribs[idx]);
-    pen.setStyle(Qt::DashLine);
+		pen=this->getBorderStyle(attribs[idx]);
+		pen.setStyle(Qt::DashLine);
 
-    if(!tag)
-      bodies[idx]->setBrush(this->getFillStyle(attribs[idx]));
-    else
-    {
-      bodies[idx]->setBrush(tag->getFillStyle(tag_attribs[idx]));
-      pen.setColor(tag->getElementColor(tag_attribs[idx], Tag::BORDER_COLOR));
-    }
+		if(!tag)
+			bodies[idx]->setBrush(this->getFillStyle(attribs[idx]));
+		else
+		{
+			bodies[idx]->setBrush(tag->getFillStyle(tag_attribs[idx]));
+			pen.setColor(tag->getElementColor(tag_attribs[idx], Tag::BORDER_COLOR));
+		}
 
 		bodies[idx]->setPen(pen);
 
@@ -212,8 +212,8 @@ void GraphicalView::configureObject(void)
 			bodies[idx]->setPos(title->pos().x(), title->boundingRect().height()-1);
 		else
 			bodies[idx]->setPos(title->pos().x(),
-													title->boundingRect().height() +
-													bodies[0]->boundingRect().height() - 2);
+								title->boundingRect().height() +
+								bodies[0]->boundingRect().height() - 2);
 		groups[idx]->setPos(bodies[idx]->pos());
 
 		subitems=groups[idx]->childItems();
@@ -222,7 +222,7 @@ void GraphicalView::configureObject(void)
 			col_item=dynamic_cast<TableObjectView *>(subitems.front());
 			subitems.pop_front();
 			col_item->setChildObjectXPos(3, width -
-																	 col_item->boundingRect().width() - (2 * HORIZ_SPACING) - 1);
+										 col_item->boundingRect().width() - (2 * HORIZ_SPACING) - 1);
 		}
 	}
 
@@ -230,37 +230,37 @@ void GraphicalView::configureObject(void)
 	this->bounding_rect.setWidth(title->boundingRect().width());
 
 	if(!ext_attribs->isVisible())
-  {
+	{
 		this->bounding_rect.setHeight(title->boundingRect().height() +
-																	body->boundingRect().height() - 1);
-    body->setRoundedCorners(RoundedRectItem::BOTTOMLEFT_CORNER | RoundedRectItem::BOTTOMRIGHT_CORNER);
-  }
+									  body->boundingRect().height() - 1);
+		body->setRoundedCorners(RoundedRectItem::BOTTOMLEFT_CORNER | RoundedRectItem::BOTTOMRIGHT_CORNER);
+	}
 	else
-  {
+	{
 		this->bounding_rect.setHeight(title->boundingRect().height() +
-																	body->boundingRect().height() +
-																	ext_attribs_body->boundingRect().height() -2);
-    body->setRoundedCorners(RoundedRectItem::NONE_CORNERS);
-  }
+									  body->boundingRect().height() +
+									  ext_attribs_body->boundingRect().height() -2);
+		body->setRoundedCorners(RoundedRectItem::NONE_CORNERS);
+	}
 
 	//Set the protected icon position to the top-right on the title
 	protected_icon->setPos(title->pos().x() + title->boundingRect().width() * 0.90f,
-												 2 * VERT_SPACING);
+						   2 * VERT_SPACING);
 
 	BaseObjectView::__configureObject();
 	BaseObjectView::configureObjectShadow();
 	BaseObjectView::configureObjectSelection();
 
-  this->table_tooltip=view->getName(true) +
-                      QString(" (") + view->getTypeName() + QString(") \n") +
-                      QString("Id: %1\n").arg(view->getObjectId()) +
-											TableObjectView::CONSTR_DELIM_START +
-											trUtf8("Connected rels: %1").arg(this->getConnectRelsCount()) +
-											TableObjectView::CONSTR_DELIM_END;
+	this->table_tooltip=view->getName(true) +
+						QString(" (") + view->getTypeName() + QString(") \n") +
+						QString("Id: %1\n").arg(view->getObjectId()) +
+						TableObjectView::CONSTR_DELIM_START +
+						trUtf8("Connected rels: %1").arg(this->getConnectRelsCount()) +
+						TableObjectView::CONSTR_DELIM_END;
 
 	this->setToolTip(this->table_tooltip);
-  configureTag();
-  configureSQLDisabledInfo();
-  requestRelationshipsUpdate();
+	configureTag();
+	configureSQLDisabledInfo();
+	requestRelationshipsUpdate();
 }
 

@@ -34,7 +34,7 @@ class PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
 	private:
 		Q_OBJECT
 
-    SyntaxHighlighter *code_hl;
+		SyntaxHighlighter *code_hl;
 
 		//! \brief Stores the permission to be edited
 		Permission *permission;
@@ -42,8 +42,8 @@ class PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
 		//! \brief Table widget that stores the roles that has permission over the object
 		ObjectTableWidget *roles_tab,
 
-													//! \brief Table widget that stores the permissions related to the object
-												*permissions_tab;
+		//! \brief Table widget that stores the permissions related to the object
+		*permissions_tab;
 
 		//! \brief Widget used to select roles on the database model
 		ModelObjectsWidget *object_selection_wgt;
@@ -94,8 +94,8 @@ class PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
 		//! \brief Shows the selected role data on the role tables
 		void showSelectedRoleData(void);
 
-    //! \brief Updates the sql code for object's permissions
-    void updateCodePreview(void);
+		//! \brief Updates the sql code for object's permissions
+		void updateCodePreview(void);
 
 		void enableEditButtons(void);
 

@@ -31,7 +31,7 @@ TablespaceWidget::TablespaceWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	setRequiredField(directory_lbl);
 	setRequiredField(directory_edt);
 
-  configureTabOrder();
+	configureTabOrder();
 }
 
 void TablespaceWidget::hideEvent(QHideEvent *event)

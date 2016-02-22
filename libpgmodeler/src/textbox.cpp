@@ -33,7 +33,7 @@ Textbox::Textbox(void)
 QString Textbox::getCodeDefinition(unsigned def_type)
 {
 	if(def_type==SchemaParser::SQL_DEFINITION)
-    return(QString());
+		return(QString());
 	else
 	{
 		QString code_def=getCachedCode(def_type, false);
@@ -42,15 +42,15 @@ QString Textbox::getCodeDefinition(unsigned def_type)
 		setPositionAttribute();
 
 		if(text_attributes[ITALIC_TXT])
-      attributes[ParsersAttributes::ITALIC]=ParsersAttributes::_TRUE_;
+			attributes[ParsersAttributes::ITALIC]=ParsersAttributes::_TRUE_;
 
 		if(text_attributes[BOLD_TXT])
-      attributes[ParsersAttributes::BOLD]=ParsersAttributes::_TRUE_;
+			attributes[ParsersAttributes::BOLD]=ParsersAttributes::_TRUE_;
 
 		if(text_attributes[UNDERLINE_TXT])
-      attributes[ParsersAttributes::UNDERLINE]=ParsersAttributes::_TRUE_;
+			attributes[ParsersAttributes::UNDERLINE]=ParsersAttributes::_TRUE_;
 
-    if(text_color.name()!=QString("#000000"))
+		if(text_color.name()!=QString("#000000"))
 			attributes[ParsersAttributes::COLOR]=text_color.name();
 
 		attributes[ParsersAttributes::FONT_SIZE]=QString("%1").arg(font_size);

@@ -80,11 +80,11 @@ PgModelerPlugin::PgModelerPlugin(void)
 
 PgModelerPlugin::~PgModelerPlugin(void)
 {
-  delete(plugin_info_frm);
+	delete(plugin_info_frm);
 }
 
 void PgModelerPlugin::configurePluginInfo(const QString &title, const QString &version, const QString &author,
-																					const QString &description, const QString &ico_filename)
+										  const QString &description, const QString &ico_filename)
 {
 	QPixmap ico;
 

@@ -65,8 +65,8 @@ class Aggregate: public BaseObject {
 
 	public:
 		//! \brief Constants used to reference the functions used by the aggregate
-    static const unsigned FINAL_FUNC=0,
-                          TRANSITION_FUNC=1;
+		static const unsigned FINAL_FUNC=0,
+		TRANSITION_FUNC=1;
 
 		Aggregate(void);
 
@@ -104,11 +104,11 @@ class Aggregate: public BaseObject {
 		//! \brief Returns the SQL / XML code definition for the aggregate
 		virtual QString getCodeDefinition(unsigned def_type) final;
 
-    virtual QString getDropDefinition(bool cascade) final;
+		virtual QString getDropDefinition(bool cascade) final;
 
-    virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterDefinition(BaseObject *object) final;
 
-    virtual QString getSignature(bool format=true) final;
+		virtual QString getSignature(bool format=true) final;
 };
 
 #endif

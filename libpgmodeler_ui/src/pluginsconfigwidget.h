@@ -43,18 +43,18 @@ class PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidg
 		//! \brief Table used to show the loaded plugins
 		ObjectTableWidget *plugins_tab;
 
-    /* Disabled methods */
-    void applyConfiguration(void){}
-    void saveConfiguration(void){}
-    void restoreDefaults(void){}    
-    void addConfigurationParam(const QString &, const attribs_map &){}
+		/* Disabled methods */
+		void applyConfiguration(void){}
+		void saveConfiguration(void){}
+		void restoreDefaults(void){}
+		void addConfigurationParam(const QString &, const attribs_map &){}
 
-  public:
+	public:
 		PluginsConfigWidget(QWidget *parent = 0);
 		~PluginsConfigWidget(void);
 
-    //! brief Since plugins has its own configurations this method load all plugins instead
-    void loadConfiguration(void);
+		//! brief Since plugins has its own configurations this method load all plugins instead
+		void loadConfiguration(void);
 
 		/*! \brief Install the created actions on menu and toolbars. Additionally the user must specify the
 		 receiver object and slot executed when the actions is activated */

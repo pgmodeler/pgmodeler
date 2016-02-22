@@ -35,7 +35,7 @@ class RuleWidget: public BaseObjectWidget, public Ui::RuleWidget {
 		Q_OBJECT
 
 		SyntaxHighlighter *cond_expr_hl,
-											*command_hl;
+		*command_hl;
 
 		CodeCompletionWidget *command_cp;
 

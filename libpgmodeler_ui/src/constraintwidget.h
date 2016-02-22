@@ -34,44 +34,44 @@
 class ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
 	private:
 		Q_OBJECT
-
+		
 		QFrame *info_frm, *warn_frm;
-
-    SyntaxHighlighter *expression_hl;
-
+		
+		SyntaxHighlighter *expression_hl;
+		
 		ElementsWidget *excl_elems_wgt;
-
+		
 		/*! \brief Table widgets used to store the columns that forms the constraint as well the
 		referenced columns (only for foreign keys) */
 		ObjectTableWidget *columns_tab,
-											*ref_columns_tab;
-
+		*ref_columns_tab;
+		
 		//! \brief Referenced table selector
 		ObjectSelectorWidget *ref_table_sel;
-
+		
 		//! \brief Updates the column combo according to the column id. (Constraint::[SOURCE_COLS | REFERENCED_COLS])
 		void updateColumnsCombo(unsigned col_id);
-
+		
 		//! \brief Adds the column to the column's table at the specified row
 		void addColumn(Column *column, unsigned col_id, int row);
-
+		
 		void hideEvent(QHideEvent *event);
-
+		
 	public:
 		ConstraintWidget(QWidget * parent = 0);
 		void setAttributes(DatabaseModel *model, BaseObject *parent_obj, OperationList *op_list, Constraint *constr);
-
+		
 	private slots:
 		//! \brief Shows only the fields related to the selected constraint type
 		void selectConstraintType(void);
-
+		
 		//! \brief Selects the referenced table as well updates the combo containing the referenced table columns
 		void selectReferencedTable(void);
-
+		
 		void addColumn(int row);
 		void removeColumn(int);
 		void removeColumns(void);
-
+		
 	public slots:
 		void applyConfiguration(void);
 };

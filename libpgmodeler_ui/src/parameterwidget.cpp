@@ -60,7 +60,7 @@ ParameterWidget::ParameterWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 void ParameterWidget::enableVariadic(void)
 {
 	param_variadic_chk->setChecked(!param_in_chk->isChecked() &&
-																 !param_out_chk->isChecked());
+								   !param_out_chk->isChecked());
 }
 
 void ParameterWidget::hideEvent(QHideEvent *event)
@@ -78,7 +78,7 @@ void ParameterWidget::setAttributes(Parameter param, DatabaseModel *model)
 	param_in_chk->setChecked(param.isIn());
 	param_out_chk->setChecked(param.isOut());
 	param_variadic_chk->setChecked(param.isVariadic());
-  default_value_edt->setText(param.getDefaultValue());
+	default_value_edt->setText(param.getDefaultValue());
 	data_type->setAttributes(param.getType(), model);
 
 	BaseObjectWidget::setAttributes(model,&this->parameter, nullptr);

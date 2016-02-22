@@ -41,14 +41,14 @@ Permission::Permission(BaseObject *obj)
 	this->obj_type=OBJ_PERMISSION;
 	revoke=cascade=false;
 
-  attributes[ParsersAttributes::OBJECT]=QString();
-  attributes[ParsersAttributes::TYPE]=QString();
-  attributes[ParsersAttributes::PARENT]=QString();
-  attributes[ParsersAttributes::GRANT_OP]=QString();
-  attributes[ParsersAttributes::ROLES]=QString();
-  attributes[ParsersAttributes::PRIVILEGES]=QString();
-  attributes[ParsersAttributes::CASCADE]=QString();
-  attributes[ParsersAttributes::PRIVILEGES_GOP]=QString();
+	attributes[ParsersAttributes::OBJECT]=QString();
+	attributes[ParsersAttributes::TYPE]=QString();
+	attributes[ParsersAttributes::PARENT]=QString();
+	attributes[ParsersAttributes::GRANT_OP]=QString();
+	attributes[ParsersAttributes::ROLES]=QString();
+	attributes[ParsersAttributes::PRIVILEGES]=QString();
+	attributes[ParsersAttributes::CASCADE]=QString();
+	attributes[ParsersAttributes::PRIVILEGES_GOP]=QString();
 }
 
 bool Permission::objectAcceptsPermission(ObjectType obj_type, int privilege)
@@ -57,9 +57,9 @@ bool Permission::objectAcceptsPermission(ObjectType obj_type, int privilege)
 	unsigned priv_id=static_cast<unsigned>(privilege);
 
 	result=(obj_type==OBJ_TABLE || obj_type==OBJ_COLUMN || obj_type==OBJ_VIEW ||
-					obj_type==OBJ_SEQUENCE || obj_type==OBJ_DATABASE || obj_type==OBJ_FUNCTION ||
-					obj_type==OBJ_AGGREGATE || obj_type==OBJ_LANGUAGE || obj_type==OBJ_SCHEMA ||
-          obj_type==OBJ_TABLESPACE || obj_type==OBJ_DOMAIN || obj_type==OBJ_TYPE);
+			obj_type==OBJ_SEQUENCE || obj_type==OBJ_DATABASE || obj_type==OBJ_FUNCTION ||
+			obj_type==OBJ_AGGREGATE || obj_type==OBJ_LANGUAGE || obj_type==OBJ_SCHEMA ||
+			obj_type==OBJ_TABLESPACE || obj_type==OBJ_DOMAIN || obj_type==OBJ_TYPE);
 
 
 	//Validating privilege
@@ -84,30 +84,30 @@ bool Permission::objectAcceptsPermission(ObjectType obj_type, int privilege)
 			View: SELECT | INSERT | UPDATE | DELETE | REFERENCES | TRIGGER */
 		result=result &&
 
-		(((obj_type==OBJ_TABLE || obj_type==OBJ_VIEW) &&
-			 (priv_id==PRIV_SELECT || priv_id==PRIV_INSERT ||
-				priv_id==PRIV_UPDATE || priv_id==PRIV_DELETE ||
-				priv_id==PRIV_REFERENCES ||	priv_id==PRIV_TRIGGER)) ||
+			   (((obj_type==OBJ_TABLE || obj_type==OBJ_VIEW) &&
+				 (priv_id==PRIV_SELECT || priv_id==PRIV_INSERT ||
+				  priv_id==PRIV_UPDATE || priv_id==PRIV_DELETE ||
+				  priv_id==PRIV_REFERENCES ||	priv_id==PRIV_TRIGGER)) ||
 
-     ((obj_type==OBJ_TABLE || obj_type==OBJ_VIEW) && priv_id==PRIV_TRUNCATE) ||
+				((obj_type==OBJ_TABLE || obj_type==OBJ_VIEW) && priv_id==PRIV_TRUNCATE) ||
 
-		 (obj_type==OBJ_COLUMN &&
-			(priv_id==PRIV_SELECT ||priv_id==PRIV_INSERT ||
-			 priv_id==PRIV_UPDATE || priv_id==PRIV_REFERENCES)) ||
+				(obj_type==OBJ_COLUMN &&
+				 (priv_id==PRIV_SELECT ||priv_id==PRIV_INSERT ||
+				  priv_id==PRIV_UPDATE || priv_id==PRIV_REFERENCES)) ||
 
-		 (obj_type==OBJ_SEQUENCE &&
-			(priv_id==PRIV_USAGE || priv_id==PRIV_SELECT ||	priv_id==PRIV_UPDATE)) ||
+				(obj_type==OBJ_SEQUENCE &&
+				 (priv_id==PRIV_USAGE || priv_id==PRIV_SELECT ||	priv_id==PRIV_UPDATE)) ||
 
-		 (obj_type==OBJ_DATABASE &&
-			(priv_id==PRIV_CREATE || priv_id==PRIV_CONNECT ||	priv_id==PRIV_TEMPORARY)) ||
+				(obj_type==OBJ_DATABASE &&
+				 (priv_id==PRIV_CREATE || priv_id==PRIV_CONNECT ||	priv_id==PRIV_TEMPORARY)) ||
 
-		 ((obj_type==OBJ_FUNCTION || obj_type==OBJ_AGGREGATE) && priv_id==PRIV_EXECUTE) ||
+				((obj_type==OBJ_FUNCTION || obj_type==OBJ_AGGREGATE) && priv_id==PRIV_EXECUTE) ||
 
-     ((obj_type==OBJ_LANGUAGE || obj_type==OBJ_TYPE || obj_type==OBJ_DOMAIN) && priv_id==PRIV_USAGE) ||
+				((obj_type==OBJ_LANGUAGE || obj_type==OBJ_TYPE || obj_type==OBJ_DOMAIN) && priv_id==PRIV_USAGE) ||
 
-		 (obj_type==OBJ_SCHEMA && (priv_id==PRIV_USAGE || priv_id==PRIV_CREATE)) ||
+				(obj_type==OBJ_SCHEMA && (priv_id==PRIV_USAGE || priv_id==PRIV_CREATE)) ||
 
-		 (obj_type==OBJ_TABLESPACE && priv_id==PRIV_CREATE));
+				(obj_type==OBJ_TABLESPACE && priv_id==PRIV_CREATE));
 	}
 
 	return(result);
@@ -123,7 +123,7 @@ bool Permission::isRoleExists(Role *role)
 
 	while(itr!=itr_end && !found)
 	{
-    found=((*itr)==role);
+		found=((*itr)==role);
 		itr++;
 	}
 
@@ -171,8 +171,8 @@ void Permission::setRevoke(bool value)
 
 void Permission::setCascade(bool value)
 {
-  setCodeInvalidated(revoke && (cascade != value));
-  cascade=(revoke && value);
+	setCodeInvalidated(revoke && (cascade != value));
+	cascade=(revoke && value);
 }
 
 bool Permission::isRevoke(void)
@@ -182,34 +182,34 @@ bool Permission::isRevoke(void)
 
 bool Permission::isCascade(void)
 {
-  return(cascade);
+	return(cascade);
 }
 
 bool Permission::isSimilarTo(Permission *perm)
 {
-  if(!perm)
-    return(false);
+	if(!perm)
+		return(false);
 
-  QStringList rol_names, fmt_rol_names;
-  vector<vector<Role *>*> vect_roles={ &this->roles, &perm->roles };
-  BaseObject *object=this->getObject(), *aux_object=perm->getObject();
+	QStringList rol_names, fmt_rol_names;
+	vector<vector<Role *>*> vect_roles={ &this->roles, &perm->roles };
+	BaseObject *object=this->getObject(), *aux_object=perm->getObject();
 
-  //Generating a list with role names of both permissions
-  for(auto &roles : vect_roles)
-  {
-    for(auto &role : *roles)
-      rol_names.append(role->getName());
+	//Generating a list with role names of both permissions
+	for(auto &roles : vect_roles)
+	{
+		for(auto &role : *roles)
+			rol_names.append(role->getName());
 
-    rol_names.sort();
-    fmt_rol_names.append(rol_names.join(','));
-    rol_names.clear();
-  }
+		rol_names.sort();
+		fmt_rol_names.append(rol_names.join(','));
+		rol_names.clear();
+	}
 
-  return(((object==aux_object) ||
-          (object && aux_object && object->getSignature()==aux_object->getSignature())) &&
-         this->getPermissionString()==perm->getPermissionString() &&
-         this->revoke==perm->revoke &&
-         fmt_rol_names[0]==fmt_rol_names[1]);
+	return(((object==aux_object) ||
+			(object && aux_object && object->getSignature()==aux_object->getSignature())) &&
+		   this->getPermissionString()==perm->getPermissionString() &&
+		   this->revoke==perm->revoke &&
+		   fmt_rol_names[0]==fmt_rol_names[1]);
 
 }
 
@@ -235,12 +235,12 @@ Role *Permission::getRole(unsigned role_idx)
 	if(role_idx > roles.size())
 		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  return(roles[role_idx]);
+	return(roles[role_idx]);
 }
 
 vector<Role *> Permission::getRoles(void)
 {
-  return(roles);
+	return(roles);
 }
 
 unsigned Permission::getRoleCount(void)
@@ -399,7 +399,7 @@ void Permission::generatePermissionId(void)
 		for(i=0; i < count; i++)
 		{
 			str_aux+=QString("%1").arg(addr_vect[i]);
-      if(i < count-1) str_aux+='.';
+			if(i < count-1) str_aux+='.';
 		}
 
 	}
@@ -407,12 +407,12 @@ void Permission::generatePermissionId(void)
 		generates an identifier with zeros indicating that permission
 		is not linked directly to any role on the model */
 	else
-    str_aux+=QString("000000");
+		str_aux+=QString("000000");
 
 	//Generates an unique name for the permission through md5 hash
 	hash.addData(QByteArray(str_aux.toStdString().c_str()));
 	str_aux=hash.result().toHex();
-  this->obj_name=(!revoke ? QString("grant_") : QString("revoke_")) + str_aux.mid(0,10);
+	this->obj_name=(!revoke ? QString("grant_") : QString("revoke_")) + str_aux.mid(0,10);
 }
 
 QString Permission::getCodeDefinition(unsigned def_type)
@@ -423,33 +423,33 @@ QString Permission::getCodeDefinition(unsigned def_type)
 	unsigned i, count;
 	ObjectType obj_type;
 	QString priv_vect[12]={ ParsersAttributes::SELECT_PRIV, ParsersAttributes::INSERT_PRIV,
-													ParsersAttributes::UPDATE_PRIV, ParsersAttributes::DELETE_PRIV,
-													ParsersAttributes::TRUNCATE_PRIV, ParsersAttributes::REFERENCES_PRIV,
-													ParsersAttributes::TRIGGER_PRIV, ParsersAttributes::CREATE_PRIV,
-													ParsersAttributes::CONNECT_PRIV, ParsersAttributes::TEMPORARY_PRIV,
-													ParsersAttributes::EXECUTE_PRIV, ParsersAttributes::USAGE_PRIV };
+							ParsersAttributes::UPDATE_PRIV, ParsersAttributes::DELETE_PRIV,
+							ParsersAttributes::TRUNCATE_PRIV, ParsersAttributes::REFERENCES_PRIV,
+							ParsersAttributes::TRIGGER_PRIV, ParsersAttributes::CREATE_PRIV,
+							ParsersAttributes::CONNECT_PRIV, ParsersAttributes::TEMPORARY_PRIV,
+							ParsersAttributes::EXECUTE_PRIV, ParsersAttributes::USAGE_PRIV };
 
 	obj_type=object->getObjectType();
 
-  attributes[ParsersAttributes::REVOKE]=(revoke ? ParsersAttributes::_TRUE_ : QString());
-  attributes[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::REVOKE]=(revoke ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : QString());
 
 	if(def_type==SchemaParser::SQL_DEFINITION)
 	{
 		//Views and Tables uses the same key word when setting permission (TABLE)
 		attributes[ParsersAttributes::TYPE]=
-		 (object->getObjectType()==OBJ_VIEW ? BaseObject::getSQLName(OBJ_TABLE): BaseObject::getSQLName(object->getObjectType()));
+				(object->getObjectType()==OBJ_VIEW ? BaseObject::getSQLName(OBJ_TABLE): BaseObject::getSQLName(object->getObjectType()));
 	}
 	else
 		attributes[ParsersAttributes::TYPE]=BaseObject::getSchemaName(object->getObjectType());
 
 	if(obj_type==OBJ_COLUMN)
-  {
-    attributes[ParsersAttributes::OBJECT]=object->getName();
+	{
+		attributes[ParsersAttributes::OBJECT]=object->getName();
 		attributes[ParsersAttributes::PARENT]=dynamic_cast<Column *>(object)->getParentTable()->getName(true);
-  }
-  else
-    attributes[ParsersAttributes::OBJECT]=object->getSignature();
+	}
+	else
+		attributes[ParsersAttributes::OBJECT]=object->getSignature();
 
 	if(def_type==SchemaParser::XML_DEFINITION)
 	{
@@ -460,7 +460,7 @@ QString Permission::getCodeDefinition(unsigned def_type)
 			else if(privileges[i])
 				attributes[priv_vect[i]]=ParsersAttributes::_TRUE_;
 			else
-        attributes[priv_vect[i]]=QString();
+				attributes[priv_vect[i]]=QString();
 		}
 	}
 	else
@@ -468,9 +468,9 @@ QString Permission::getCodeDefinition(unsigned def_type)
 		for(i=0; i < 12; i++)
 		{
 			if(privileges[i] && !grant_option[i])
-        attributes[ParsersAttributes::PRIVILEGES]+=priv_vect[i].toUpper() + QString(",");
+				attributes[ParsersAttributes::PRIVILEGES]+=priv_vect[i].toUpper() + QString(",");
 			else if(grant_option[i])
-        attributes[ParsersAttributes::PRIVILEGES_GOP]+=priv_vect[i].toUpper() + QString(",");
+				attributes[ParsersAttributes::PRIVILEGES_GOP]+=priv_vect[i].toUpper() + QString(",");
 		}
 
 		attributes[ParsersAttributes::PRIVILEGES].remove(attributes[ParsersAttributes::PRIVILEGES].size()-1,1);
@@ -480,50 +480,50 @@ QString Permission::getCodeDefinition(unsigned def_type)
 	count=roles.size();
 
 	for(i=0; i < count; i++)
-    attributes[ParsersAttributes::ROLES]+=roles[i]->getName(true) + QString(",");
+		attributes[ParsersAttributes::ROLES]+=roles[i]->getName(true) + QString(",");
 
 	attributes[ParsersAttributes::ROLES].remove(attributes[ParsersAttributes::ROLES].size()-1,1);
 
-  return(BaseObject::__getCodeDefinition(def_type));
+	return(BaseObject::__getCodeDefinition(def_type));
 }
 
 QString Permission::getSignature(bool format)
 {
-  QStringList rol_names, words;
-  QString signature;
+	QStringList rol_names, words;
+	QString signature;
 
-  for(Role *role : roles)
-    rol_names.push_back(role->getName(format));
+	for(Role *role : roles)
+		rol_names.push_back(role->getName(format));
 
-  rol_names.sort();
-  signature=QString("=") + getPermissionString();
+	rol_names.sort();
+	signature=QString("=") + getPermissionString();
 
-  if(roles.empty())
-    signature=QString("PUBLIC") + signature;
-  else
-    signature=rol_names.join(',') + signature;
+	if(roles.empty())
+		signature=QString("PUBLIC") + signature;
+	else
+		signature=rol_names.join(',') + signature;
 
-  words=this->obj_name.split("_");
-  signature=words[0] + QChar(':') + signature + QString(" [id:%1]").arg(words[1]);
-  return(signature);
+	words=this->obj_name.split("_");
+	signature=words[0] + QChar(':') + signature + QString(" [id:%1]").arg(words[1]);
+	return(signature);
 }
 
 QString Permission::getDropDefinition(bool cascade)
 {
-  try
-  {
-    QString def;
+	try
+	{
+		QString def;
 
-    this->setRevoke(!revoke);
-    this->setCascade(cascade);
-    def=this->getCodeDefinition(SchemaParser::SQL_DEFINITION);
-    this->setRevoke(revoke);
-    this->setCascade(this->cascade);
+		this->setRevoke(!revoke);
+		this->setCascade(cascade);
+		def=this->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+		this->setRevoke(revoke);
+		this->setCascade(this->cascade);
 
-    return(def);
-  }
-  catch(Exception &e)
-  {
-    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-  }
+		return(def);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
 }

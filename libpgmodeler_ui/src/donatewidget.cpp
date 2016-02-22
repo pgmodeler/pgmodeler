@@ -23,24 +23,24 @@
 
 DonateWidget::DonateWidget(QWidget *parent) : QWidget(parent)
 {
-  setupUi(this);
-  setWindowFlags(Qt::Widget | Qt::FramelessWindowHint);
+	setupUi(this);
+	setWindowFlags(Qt::Widget | Qt::FramelessWindowHint);
 
 	QGraphicsDropShadowEffect * drop_shadow=new QGraphicsDropShadowEffect(this);
 	drop_shadow->setOffset(5,5);
 	drop_shadow->setBlurRadius(30);
 	this->setGraphicsEffect(drop_shadow);
 
-  connect(hide_tb, &QToolButton::clicked,
-          [=](){
-            this->close();
-            emit s_visibilityChanged(false);
-          });
+	connect(hide_tb, &QToolButton::clicked,
+			[=](){
+		this->close();
+		emit s_visibilityChanged(false);
+	});
 
-  connect(donate_tb, &QToolButton::clicked,
-          [=](){
-            QDesktopServices::openUrl(QUrl(GlobalAttributes::PGMODELER_DONATE_URL));
-            this->close();
-            emit s_visibilityChanged(false);
-          });
+	connect(donate_tb, &QToolButton::clicked,
+			[=](){
+		QDesktopServices::openUrl(QUrl(GlobalAttributes::PGMODELER_DONATE_URL));
+		this->close();
+		emit s_visibilityChanged(false);
+	});
 }

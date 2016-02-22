@@ -25,46 +25,46 @@ QColor LineNumbersWidget::bg_color=Qt::black;
 
 LineNumbersWidget::LineNumbersWidget(QPlainTextEdit * parent) : QWidget(parent)
 {
-  first_line=line_count=0;
-  dy=0;
+	first_line=line_count=0;
+	dy=0;
 }
 
 void LineNumbersWidget::drawLineNumbers(unsigned first_line, unsigned line_count, int dy)
 {
-  bool update=(first_line!=this->first_line || line_count != this->line_count);
+	bool update=(first_line!=this->first_line || line_count != this->line_count);
 
-  if(update)
-  {
-    this->first_line=first_line;
-    this->line_count=line_count;
-    this->dy=dy;
-    this->update();
-  }
+	if(update)
+	{
+		this->first_line=first_line;
+		this->line_count=line_count;
+		this->dy=dy;
+		this->update();
+	}
 }
 
 void LineNumbersWidget::setColors(const QColor &font_color, const QColor &bg_color)
 {
-  LineNumbersWidget::font_color=font_color;
-  LineNumbersWidget::bg_color=bg_color;
+	LineNumbersWidget::font_color=font_color;
+	LineNumbersWidget::bg_color=bg_color;
 }
 
 void LineNumbersWidget::paintEvent(QPaintEvent *event)
 {
-  QPainter painter(this);
-  int y=dy, height=fontMetrics().height();
-  unsigned last_line=first_line + line_count;
+	QPainter painter(this);
+	int y=dy, height=fontMetrics().height();
+	unsigned last_line=first_line + line_count;
 
-  //Repaint the widget to clear previous drawn numbers
-  painter.fillRect(event->rect(), bg_color);
-  painter.setPen(font_color);
+	//Repaint the widget to clear previous drawn numbers
+	painter.fillRect(event->rect(), bg_color);
+	painter.setPen(font_color);
 
-  //Draw line numbers
-  for(unsigned lin=first_line; lin < last_line; lin++)
-  {
-    painter.drawText(0, y, this->width(), fontMetrics().height(),
-                     Qt::AlignHCenter, QString::number(lin));
-    y+=height;
-  }
+	//Draw line numbers
+	for(unsigned lin=first_line; lin < last_line; lin++)
+	{
+		painter.drawText(0, y, this->width(), fontMetrics().height(),
+						 Qt::AlignHCenter, QString::number(lin));
+		y+=height;
+	}
 }
 
 

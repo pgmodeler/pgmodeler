@@ -58,13 +58,13 @@ class TableObject: public BaseObject {
 		//! \brief Defines that the object is include by copy relationship
 		void setAddedByCopy(bool value);
 
-    /*! \brief Defines that the object's SQL code must be created inside parent's
-    table declaration, this is true by default. This attribute is only changed
-    on export operations. This attribute is used only by columns and constraints, other
-    types of child objects will ignore it */
-    void setDeclaredInTable(bool value);
+		/*! \brief Defines that the object's SQL code must be created inside parent's
+	table declaration, this is true by default. This attribute is only changed
+	on export operations. This attribute is used only by columns and constraints, other
+	types of child objects will ignore it */
+		void setDeclaredInTable(bool value);
 
-  public:
+	public:
 		TableObject(void);
 
 		//! \brief Defines the parent table for the object
@@ -78,9 +78,9 @@ class TableObject: public BaseObject {
 	not instantiable */
 		virtual QString getCodeDefinition(unsigned def_type)=0;
 
-    virtual QString getDropDefinition(bool cascade);
+		virtual QString getDropDefinition(bool cascade);
 
-    virtual QString getSignature(bool format = true);
+		virtual QString getSignature(bool format = true);
 
 		//! \brief Returns whether the object was added by relationship 1-1, 1-n, n-n
 		bool isAddedByLinking(void);

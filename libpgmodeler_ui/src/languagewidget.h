@@ -33,8 +33,8 @@ class LanguageWidget: public BaseObjectWidget, public Ui::LanguageWidget {
 		Q_OBJECT
 
 		ObjectSelectorWidget *func_handler_sel,
-												*func_validator_sel,
-												*func_inline_sel;
+		*func_validator_sel,
+		*func_inline_sel;
 
 		void hideEvent(QHideEvent *event);
 

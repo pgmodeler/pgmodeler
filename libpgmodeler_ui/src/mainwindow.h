@@ -57,26 +57,26 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Maximum number of files listed on recent models menu
 		const static int MAX_RECENT_MODELS=10;
 
-    const static int GENERAL_ACTIONS_COUNT=9;
+		const static int GENERAL_ACTIONS_COUNT=9;
 
-    const static int WELCOME_VIEW=0,
-    DESIGN_VIEW=1,
-    MANAGE_VIEW=2;
+		const static int WELCOME_VIEW=0,
+		DESIGN_VIEW=1,
+		MANAGE_VIEW=2;
 
-    static bool confirm_validation;
+		static bool confirm_validation;
 
-    //! \brief Constants used to mark a pending operation to be executed after validate model
-    const static unsigned NO_PENDING_OPER=0,
-    PENDING_SAVE_OPER=1,
-    PENDING_SAVE_AS_OPER=2,
-    PENDING_EXPORT_OPER=3,
-    PENDING_DIFF_OPER=4;
+		//! \brief Constants used to mark a pending operation to be executed after validate model
+		const static unsigned NO_PENDING_OPER=0,
+		PENDING_SAVE_OPER=1,
+		PENDING_SAVE_AS_OPER=2,
+		PENDING_EXPORT_OPER=3,
+		PENDING_DIFF_OPER=4;
 
-    unsigned pending_op;
+		unsigned pending_op;
 
-    AboutWidget *about_wgt;
+		AboutWidget *about_wgt;
 
-    DonateWidget *donate_wgt;
+		DonateWidget *donate_wgt;
 
 		/*! brief Widget positioned on the center of main window that contains some basic operations like
 		create new model, open a file, restore session */
@@ -97,8 +97,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Model validation widget
 		ModelValidationWidget *model_valid_wgt;
 
-    //! \brief SQL tool widget widget
-    SQLToolWidget *sql_tool_wgt;
+		//! \brief SQL tool widget widget
+		SQLToolWidget *sql_tool_wgt;
 
 		//! \brief Temporary model restoration form
 		ModelRestorationForm *restoration_form;
@@ -112,11 +112,11 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Object finder used as dock widget
 		ObjectFinderWidget *obj_finder_wgt;
 
-    //! brief Update notifier popup widget
-    UpdateNotifierWidget *update_notifier_wgt;
+		//! brief Update notifier popup widget
+		UpdateNotifierWidget *update_notifier_wgt;
 
-    //! brief Configuration form
-    ConfigurationForm *configuration_form;
+		//! brief Configuration form
+		ConfigurationForm *configuration_form;
 
 		//! \brief Stores the currently focused model
 		ModelWidget *current_model;
@@ -148,7 +148,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		void resizeEvent(QResizeEvent *);
 
-    //! brief Set the postion of a floating widget based upon an action at a tool bar
+		//! brief Set the postion of a floating widget based upon an action at a tool bar
 		void setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *toolbar, bool map_to_window);
 
 		//! brief Creates drop shadown on a tool button that represents an QAction
@@ -163,23 +163,23 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! brief Restore the dock widget configurations from the parameters loaded from main configuration file
 		void restoreDockWidgetsSettings(void);
 
-    //! brief Shows a error dialog informing that the model demands a fix after the error ocurred when loading the filename.
-    void showFixMessage(Exception &e, const QString &filename);
+		//! brief Shows a error dialog informing that the model demands a fix after the error ocurred when loading the filename.
+		void showFixMessage(Exception &e, const QString &filename);
 
-  public:
+	public:
 		MainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 		~MainWindow(void);
 
 		//! \brief Loads a set of models from string list
 		void loadModels(const QStringList &list);
 
-    //! brief Indicates if model must be validated before save, diff or export
-    static void setConfirmValidation(bool value);
+		//! brief Indicates if model must be validated before save, diff or export
+		static void setConfirmValidation(bool value);
 
 	public slots:
 		/*! \brief Creates a new empty model inside the main window. If the parameter 'filename' is specified,
 		creates the model loading it from a file */
-    void addModel(const QString &filename=QString());
+		void addModel(const QString &filename=QString());
 
 		/*! \brief Creates a new model inside the main window using the specified model widget. The method will raise
 		an error is the widget isn't allocated or already has a parent */
@@ -194,7 +194,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Returns the model at given index
 		ModelWidget *getModel(int idx);
 
-  private slots:
+	private slots:
 		void showMainMenu(void);
 
 		//! \brief Atualiza as definições da grade com base nas ações: Exibir Grade, Alin. Grade e Exibir limites
@@ -213,8 +213,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Loads a model from a file via file dialog
 		void loadModel(void);
 
-    //! \brief Loads a model from a specified filename
-    void loadModel(const QString &filename);
+		//! \brief Loads a model from a specified filename
+		void loadModel(const QString &filename);
 
 		//! \brief Saves the currently focused model. If the parameter 'model' is set, saves the passed model
 		void saveModel(ModelWidget *model=nullptr);
@@ -259,10 +259,10 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void updateRecentModelsMenu(void);
 
 		//! \brief Updates the connections list of the validator widget
-    void updateConnections(bool force = false);
+		void updateConnections(bool force = false);
 
 		//! \brief Save the temp files for all opened models
-    void saveTemporaryModels(void);
+		void saveTemporaryModels(void);
 
 		//! \brief Opens the pgModeler Wiki in a web browser window
 		void openWiki(void);
@@ -271,22 +271,22 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		in order to avoid the saving while the validation is working */
 		void stopTimers(bool value);
 
-    //! \brief Executes one of the pending operations (save, export, diff) after validate the model
-    void executePendingOperation(bool valid_error);
+		//! \brief Executes one of the pending operations (save, export, diff) after validate the model
+		void executePendingOperation(bool valid_error);
 
 		void fixModel(const QString &filename=QString());
-    void showRightWidgetsBar(void);
-    void showBottomWidgetsBar(void);
-    void restoreLastSession(void);
-    void toggleUpdateNotifier(bool show);
+		void showRightWidgetsBar(void);
+		void showBottomWidgetsBar(void);
+		void restoreLastSession(void);
+		void toggleUpdateNotifier(bool show);
 		void toggleAboutWidget(bool show);
-    void toggleDonateWidget(bool show);
+		void toggleDonateWidget(bool show);
 		void removeModelActions(void);
 		void showDemoVersionWarning(void);
 		void quitDemoVersion(void);
-    void changeCurrentView(bool checked);
-    void reportBug(void);
-    void removeOperations(void);
+		void changeCurrentView(bool checked);
+		void reportBug(void);
+		void removeOperations(void);
 };
 
 #endif

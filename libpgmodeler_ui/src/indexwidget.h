@@ -34,8 +34,8 @@ class IndexWidget: public BaseObjectWidget, public Ui::IndexWidget {
 	private:
 		Q_OBJECT
 
-    //! \brief Syntax highlighter for predicate
-    SyntaxHighlighter *predicate_hl;
+		//! \brief Syntax highlighter for predicate
+		SyntaxHighlighter *predicate_hl;
 
 		ElementsWidget *elements_wgt;
 
@@ -46,7 +46,7 @@ class IndexWidget: public BaseObjectWidget, public Ui::IndexWidget {
 	private slots:
 		void hideEvent(QHideEvent *event);
 		void selectIndexingType(void);
-    void enableSortingOptions(void);
+		void enableSortingOptions(void);
 
 	public slots:
 		void applyConfiguration(void);
