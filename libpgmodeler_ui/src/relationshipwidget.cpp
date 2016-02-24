@@ -185,6 +185,8 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 
 		connect(fk_gconf_chk, SIGNAL(toggled(bool)), this, SLOT(useFKGlobalSettings(bool)));
 		connect(patterns_gconf_chk, SIGNAL(toggled(bool)), this, SLOT(usePatternGlobalSettings(bool)));
+
+		setIdealSize(640, 0);
 	}
 	catch(Exception &e)
 	{

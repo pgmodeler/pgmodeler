@@ -2816,8 +2816,8 @@ void ModelWidget::editCustomSQL(void)
 {
 	QAction *act=dynamic_cast<QAction *>(sender());
 	BaseObject *obj=reinterpret_cast<BaseObject *>(act->data().value<void *>());
+	BaseForm parent_form(this);
 	CustomSQLWidget customsql_wgt;
-	BaseForm parent_form;
 
 	customsql_wgt.setAttributes(db_model, obj);
 	parent_form.setMainWidget(&customsql_wgt);

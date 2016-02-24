@@ -46,12 +46,14 @@ class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
 
 		HintTextWidget *code_options_ht;
 
-		void applyConfiguration(void){}
 		void hideEvent(QHideEvent *event);
 
 	public:
 		SourceCodeWidget(QWidget * parent = 0);
 		void setAttributes(DatabaseModel *model, BaseObject *object=nullptr);
+
+	public slots:
+		void applyConfiguration(void){}
 
 	private slots:
 		void generateSourceCode(int=0);
