@@ -24,10 +24,10 @@ TextboxWidget::TextboxWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TEXT
 	configureFormLayout(textbox_grid, OBJ_TEXTBOX);
 
 	text_txt->removeEventFilter(this);
-	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 	connect(color_select_tb, SIGNAL(clicked(void)), this, SLOT(selectTextColor(void)));
-	parent_form->setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
-	parent_form->setMinimumSize(500,250);
+
+	setIdealSize(500, 220);
+	setSizePadding(30);
 }
 
 void TextboxWidget::hideEvent(QHideEvent *event)

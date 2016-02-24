@@ -28,7 +28,7 @@ DatabaseWidget::DatabaseWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DA
 
 		Ui_DatabaseWidget::setupUi(this);
 
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+		//connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		configureFormLayout(database_grid, OBJ_DATABASE);
 
 		def_schema_sel=new ObjectSelectorWidget(OBJ_SCHEMA, true, this);
@@ -50,9 +50,6 @@ DatabaseWidget::DatabaseWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DA
 		grid->addWidget(frame, grid->count()+1, 0, 1, 0);
 		frame->setParent(attributes_twg->widget(1));
 
-		parent_form->setMinimumWidth(640);
-		parent_form->setMinimumHeight(570);
-
 		//Configures the encoding combobox
 		EncodingType::getTypes(encodings);
 		encodings.push_front(trUtf8("Default"));
@@ -71,6 +68,9 @@ DatabaseWidget::DatabaseWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DA
 
 		lccollate_cmb->addItems(loc_list);
 		lcctype_cmb->addItems(loc_list);
+
+		setIdealSize(600, 550);
+		setSizePadding(30);
 	}
 	catch(Exception &e)
 	{

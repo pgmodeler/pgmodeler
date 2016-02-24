@@ -32,15 +32,15 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DOMAIN
 		data_type=nullptr;
 		data_type=new PgSQLTypeWidget(this);
 		domain_grid->addWidget(data_type,4,0,1,2);
+		domain_grid->addItem(new QSpacerItem(10,1,QSizePolicy::Fixed,QSizePolicy::Expanding), domain_grid->count()+1, 0, 1, 0);
 
 		configureFormLayout(domain_grid, OBJ_DOMAIN);
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-
-		parent_form->setMinimumSize(600, 670);
-
 		setRequiredField(data_type);
 		configureTabOrder({ def_value_edt, constr_name_edt, not_null_chk,
 							check_expr_txt, data_type });
+
+		setIdealSize(600,640);
+		setSizePadding(30);
 	}
 	catch(Exception &e)
 	{

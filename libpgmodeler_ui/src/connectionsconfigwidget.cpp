@@ -540,42 +540,36 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 {
 	if(combo)
 	{
-		BaseForm *parent_form=new BaseForm;
-		ConnectionsConfigWidget *conn_cfg_wgt=new ConnectionsConfigWidget;
+		BaseForm parent_form;
+		ConnectionsConfigWidget conn_cfg_wgt;
 		bool conn_saved = false;
 
-		parent_form->setWindowTitle(trUtf8("Edit database connections"));
-		parent_form->setMinimumSize(640,620);
+		parent_form.setWindowTitle(trUtf8("Edit database connections"));
+		parent_form.setWindowFlags(Qt::Dialog | Qt::WindowMinimizeButtonHint | Qt::WindowCloseButtonHint);
 
-		parent_form->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-		parent_form->setWindowFlags(Qt::Dialog | Qt::WindowMinimizeButtonHint | Qt::WindowCloseButtonHint);
-
-		connect(parent_form->cancel_btn, SIGNAL(clicked(bool)), parent_form, SLOT(reject()));
-		connect(parent_form->apply_ok_btn, SIGNAL(clicked(bool)),  parent_form, SLOT(accept()));
+		connect(parent_form.cancel_btn, SIGNAL(clicked(bool)), &parent_form, SLOT(reject()));
+		connect(parent_form.apply_ok_btn, SIGNAL(clicked(bool)),  &parent_form, SLOT(accept()));
 
 		try
 		{
-			conn_cfg_wgt->loadConfiguration();
-			conn_cfg_wgt->frame->setFrameShape(QFrame::NoFrame);
-			parent_form->generalwidget_wgt->insertWidget(0, conn_cfg_wgt);
-			parent_form->generalwidget_wgt->setCurrentIndex(0);
+			conn_cfg_wgt.loadConfiguration();
+			conn_cfg_wgt.frame->setFrameShape(QFrame::NoFrame);
 
-			parent_form->adjustSize();
-			parent_form->exec();
+			parent_form.setMainWidget(&conn_cfg_wgt);
+			parent_form.adjustSize(QSize(560, 580), 30);
+			parent_form.exec();
 
-			if(parent_form->result()==QDialog::Accepted)
+			if(parent_form.result()==QDialog::Accepted)
 			{
-				conn_cfg_wgt->saveConfiguration();
+				conn_cfg_wgt.saveConfiguration();
 				conn_saved=true;
 			}
 
-			conn_cfg_wgt->fillConnectionsComboBox(combo, incl_placeholder);
-			delete(parent_form);
+			conn_cfg_wgt.fillConnectionsComboBox(combo, incl_placeholder);
 		}
 		catch(Exception &e)
 		{
 			combo->setCurrentIndex(0);
-			delete(parent_form);
 			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 		}
 

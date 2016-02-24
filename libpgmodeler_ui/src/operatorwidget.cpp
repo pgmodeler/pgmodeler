@@ -64,14 +64,12 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_OP
 		operator_grid->addWidget(functions_sel[0],0,1,1,3);
 		configureFormLayout(operator_grid, OBJ_OPERATOR);
 
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-
-		parent_form->setMinimumWidth(600);
-		parent_form->setMinimumHeight(680);
-
 		setRequiredField(operator_func_lbl);
 		setRequiredField(functions_sel[0]);
 		configureTabOrder({ functions_sel[0], arg_types[0], arg_types[1] });
+
+		setIdealSize(600, 680);
+		setSizePadding(30);
 	}
 	catch(Exception &e)
 	{

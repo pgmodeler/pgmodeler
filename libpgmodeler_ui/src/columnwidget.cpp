@@ -47,17 +47,14 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN
 		configureFormLayout(column_grid, OBJ_COLUMN);
 		configureTabOrder({ data_type });
 
-		parent_form->setMinimumSize(530, 480);
-		//parent_form->setMaximumHeight(480);
-
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-
 		connect(sequence_rb, &QRadioButton::clicked,
 				[=](){ sequence_sel->setEnabled(true); def_value_txt->setEnabled(false); });
 
 		connect(expression_rb, &QRadioButton::clicked,
 				[=](){ sequence_sel->setEnabled(false); def_value_txt->setEnabled(true); });
 
+		setIdealSize(530, 480);
+		setSizePadding(30);
 	}
 	catch(Exception &e)
 	{

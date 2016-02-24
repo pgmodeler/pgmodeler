@@ -47,3 +47,46 @@ void BaseForm::setButtonConfiguration(unsigned button_conf)
 	}
 }
 
+void BaseForm::adjustSize(const QSize &ideal_size, int size_padding)
+{
+	QDialog::adjustSize();
+
+	QSize size=this->size();
+	int curr_h=size.height(),
+			curr_w=size.width();
+
+	if(curr_h < ideal_size.height())
+		curr_h = ideal_size.height();
+	else if(curr_h > ideal_size.height() + size_padding)
+		curr_h = ((ideal_size.height() * 2) + size_padding)/2;
+
+	if(curr_w < ideal_size.width())
+		curr_w = ideal_size.width();
+	else if(curr_w > ideal_size.width() + size_padding)
+		 curr_w = ((ideal_size.width() * 2) + size_padding)/2;
+
+	this->setMinimumSize(curr_w, curr_h);
+	this->resize(curr_w, curr_h);
+}
+
+void BaseForm::setMainWidget(BaseObjectWidget *widget)
+{
+	if(!widget)	return;
+
+	setWindowTitle(trUtf8("%1 properties").arg(BaseObject::getTypeName(widget->getHandledObjectType())));
+	generalwidget_wgt->insertWidget(0, widget);
+	generalwidget_wgt->setCurrentIndex(0);
+	setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
+	this->adjustSize(widget->getIdealSize(), widget->getSizePadding());
+
+	connect(apply_ok_btn, SIGNAL(clicked(bool)), widget, SLOT(applyConfiguration()));
+	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(reject()));
+	connect(apply_ok_btn, SIGNAL(clicked(bool)), this, SLOT(accept()));
+}
+
+void BaseForm::setMainWidget(QWidget *widget)
+{
+	if(!widget)	return;
+	generalwidget_wgt->insertWidget(0, widget);
+	generalwidget_wgt->setCurrentIndex(0);
+}

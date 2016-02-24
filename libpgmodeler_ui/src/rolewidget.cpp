@@ -44,7 +44,7 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 	frame->setParent(this);
 
 	connect(validity_chk, SIGNAL(toggled(bool)), validity_dte, SLOT(setEnabled(bool)));
-	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+	//connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 	connect(members_twg, SIGNAL(currentChanged(int)), this, SLOT(configureRoleSelection(void)));
 
 	//Alocation of the member role tables
@@ -77,14 +77,14 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 		members_twg->widget(i)->setLayout(grid);
 	}
 
-	parent_form->setMinimumSize(580, 650);
-
 	connect(object_selection_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedRoleData(void)));
+
+	setIdealSize(580, 650);
+	setSizePadding(30);
 }
 
 RoleWidget::~RoleWidget()
 {
-	parent_form->generalwidget_wgt->removeWidget(this);
 	delete(object_selection_wgt);
 }
 

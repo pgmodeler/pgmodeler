@@ -29,6 +29,7 @@
 #include "ui_baseform.h"
 #include "exception.h"
 #include "messagebox.h"
+#include "baseobjectwidget.h"
 
 class BaseForm: public QDialog, public Ui::BaseForm {
 	private:
@@ -37,6 +38,17 @@ class BaseForm: public QDialog, public Ui::BaseForm {
 	public:
 		BaseForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 		void setButtonConfiguration(unsigned button_conf=Messagebox::OK_CANCEL_BUTTONS);
+		void adjustSize(const QSize &ideal_size, int size_padding);
+
+		/*! \brief Injects the specified object into the form and turns it the main widget.
+				The widget is reparented to the stack widget within the form */
+		void setMainWidget(QWidget *widget);
+
+		/*! \brief Injects the specified object into the form and turns it the main widget.
+				The widget is reparented to the stack widget within the form. This version of method
+				does additional configurations like signal connection, automatic sizing and
+				custom title configuration based upont the object handled by the BaseObjectWidget instance */
+		void setMainWidget(BaseObjectWidget *widget);
 };
 
 #endif

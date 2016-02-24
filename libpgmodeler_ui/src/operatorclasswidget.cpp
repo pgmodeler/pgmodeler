@@ -76,21 +76,22 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		grid->addWidget(storage_type, 5,0,1,5);
 		grid->addWidget(elements_tab, 6,0,1,4);
 
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+		//connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(elem_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectElementType(int)));
 		connect(elements_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleElement(int)));
 		connect(elements_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleElement(int)));
 		connect(elements_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editElement(int)));
 
-		parent_form->setMinimumSize(640, 700);
 		selectElementType(0);
-
 		IndexingType::getTypes(tipos);
 		indexing_cmb->addItems(tipos);
 
 		setRequiredField(elements_grp);
 		configureTabOrder({ indexing_cmb, def_class_chk , family_sel, data_type, elem_type_cmb,
 							operator_sel, elem_family_sel, function_sel, stg_num_sb, storage_type });
+
+		//parent_form->setIdealSize(640, 750, 30);
+		//parent_form->adjustSize();
 	}
 	catch(Exception &e)
 	{

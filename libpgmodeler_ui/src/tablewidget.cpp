@@ -22,6 +22,7 @@
 #include "rulewidget.h"
 #include "indexwidget.h"
 #include "triggerwidget.h"
+#include "baseform.h"
 
 TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 {
@@ -113,12 +114,10 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	objects_tab_map[OBJ_INDEX]->setHeaderLabel(trUtf8("Indexing"), 1);
 
 	configureFormLayout(table_grid, OBJ_TABLE);
-	parent_form->setMinimumSize(600, 650);
-
-	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-	connect(parent_form->cancel_btn,SIGNAL(clicked(bool)), this, SLOT(cancelConfiguration(void)));
-
 	configureTabOrder({ tag_sel });
+
+	setIdealSize(600, 650);
+	setSizePadding(30);
 }
 
 void TableWidget::hideEvent(QHideEvent *event)
@@ -152,6 +151,7 @@ void TableWidget::showTableObjectForm(ObjectType obj_type)
 	TableObject *object=nullptr;
 	ObjectTableWidget *obj_table=nullptr;
 	Table *table=nullptr;
+	BaseForm parent_form(this);
 
 	//Selects the object table based upon the passed object type
 	obj_table=getObjectTable(obj_type);
@@ -164,33 +164,35 @@ void TableWidget::showTableObjectForm(ObjectType obj_type)
 
 	if(obj_type==OBJ_COLUMN)
 	{
-		ColumnWidget column_wgt(this);
+		ColumnWidget column_wgt;
 		column_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Column *>(object));
-		column_wgt.show();
+		parent_form.setMainWidget(&column_wgt);
 	}
 	else if(obj_type==OBJ_CONSTRAINT)
 	{
-		ConstraintWidget constraint_wgt(this);
+		ConstraintWidget constraint_wgt;
 		constraint_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Constraint *>(object));
-		constraint_wgt.show();
+		parent_form.setMainWidget(&constraint_wgt);
 	}
 	else if(obj_type==OBJ_TRIGGER)
 	{
-		TriggerWidget trigger_wgt(this);
+		TriggerWidget trigger_wgt;
 		trigger_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Trigger *>(object));
-		trigger_wgt.show();
+		parent_form.setMainWidget(&trigger_wgt);
 	}
 	else if(obj_type==OBJ_INDEX)
 	{
-		IndexWidget index_wgt(this);
+		IndexWidget index_wgt;
 		index_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Index *>(object));
-		index_wgt.show();
+		parent_form.setMainWidget(&index_wgt);
 	}else
 	{
-		RuleWidget rule_wgt(this);
+		RuleWidget rule_wgt;
 		rule_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Rule *>(object));
-		rule_wgt.show();
+		parent_form.setMainWidget(&rule_wgt);
 	}
+
+	parent_form.exec();
 }
 
 ObjectTableWidget *TableWidget::getObjectTable(ObjectType obj_type)

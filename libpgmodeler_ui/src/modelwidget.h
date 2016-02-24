@@ -29,7 +29,6 @@
 #include "databasemodel.h"
 #include "operationlist.h"
 #include "messagebox.h"
-#include "baseform.h"
 #include "objectsscene.h"
 #include "taskprogresswidget.h"
 #include "newobjectoverlaywidget.h"
@@ -330,7 +329,7 @@ class ModelWidget: public QWidget {
 		void addNewObject(void);
 
 		//! \brief Triggers the sql insertion widget for the current database model
-		void appendSQL(void);
+		void editCustomSQL(void);
 
 		//! \brief Configures the selected object vector whenever the selection changes on the scene
 		void configureObjectSelection(void);

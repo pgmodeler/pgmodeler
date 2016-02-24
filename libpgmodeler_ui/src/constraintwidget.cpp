@@ -95,7 +95,7 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		constraint_grid->addWidget(warn_frm, constraint_grid->count()+1, 0, 1, 0);
 		warn_frm->setParent(this);
 
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+		//connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(constr_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectConstraintType(void)));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_lbl, SLOT(setEnabled(bool)));
@@ -110,11 +110,11 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		connect(ref_table_sel, SIGNAL(s_objectSelected(void)), this, SLOT(selectReferencedTable(void)));
 		connect(fill_factor_chk, SIGNAL(toggled(bool)), fill_factor_sb, SLOT(setEnabled(bool)));
 
-		parent_form->setMinimumSize(600, 640);
-
 		selectConstraintType();
-
 		configureTabOrder();
+
+		setIdealSize(600, 640);
+		setSizePadding(30);
 	}
 	catch(Exception &e)
 	{

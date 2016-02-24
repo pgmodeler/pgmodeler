@@ -49,14 +49,13 @@ EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent
 	frame->setParent(this);
 	eventtrigger_grid->addWidget(frame, eventtrigger_grid->count(), 0, 1, 2);
 
-	parent_form->setMinimumSize(530, 500);
 	configureTabOrder({ event_cmb, function_sel, tag_edt, filter_tab });
 
 	QStringList list;
 	EventTriggerType::getTypes(list);
 	event_cmb->addItems(list);
 
-	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+	//connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 	connect(filter_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleTagValue(int)));
 	connect(filter_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleTagValue(int)));
 
@@ -71,6 +70,9 @@ EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent
 		filter_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, !tag_edt->text().isEmpty());
 		filter_tab->setButtonsEnabled(ObjectTableWidget::UPDATE_BUTTON, !tag_edt->text().isEmpty());
 	});
+
+	setIdealSize(500,530);
+	setSizePadding(30);
 }
 
 void EventTriggerWidget::hideEvent(QHideEvent *)

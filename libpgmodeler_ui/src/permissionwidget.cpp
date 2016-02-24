@@ -40,12 +40,6 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	object_selection_wgt=new ModelObjectsWidget(true);
 	permission=nullptr;
 
-	parent_form->generalwidget_wgt->insertWidget(0, this);
-	parent_form->generalwidget_wgt->setCurrentIndex(0);
-	parent_form->setButtonConfiguration(Messagebox::OK_BUTTON);
-	connect(parent_form->apply_ok_btn, SIGNAL(clicked(bool)), parent_form, SLOT(close(void)));
-
-	parent_form->setMinimumSize(670, 600);
 	comment_lbl->setText(trUtf8("Type:"));
 	font=name_edt->font();
 	font.setItalic(true);
@@ -122,11 +116,13 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	connect(revoke_rb, SIGNAL(toggled(bool)), cascade_chk, SLOT(setEnabled(bool)));
 	connect(revoke_rb, SIGNAL(toggled(bool)), this, SLOT(disableGrantOptions(void)));
 	connect(grant_rb, SIGNAL(toggled(bool)), this, SLOT(disableGrantOptions(void)));
+
+	setIdealSize(670,600);
+	setSizePadding(30);
 }
 
 PermissionWidget::~PermissionWidget(void)
 {
-	parent_form->generalwidget_wgt->removeWidget(this);
 	delete(object_selection_wgt);
 }
 
@@ -151,7 +147,7 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 
 	perms_changed=false;
 	protected_obj_frm->setVisible(false);
-	parent_form->apply_ok_btn->setEnabled(true);
+	//parent_form->apply_ok_btn->setEnabled(true);
 	obj_id_lbl->setVisible(false);
 
 	if(object)

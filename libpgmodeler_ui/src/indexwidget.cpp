@@ -41,7 +41,6 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 		tabWidget->widget(1)->setLayout(grid);
 
 		configureFormLayout(index_grid, OBJ_INDEX);
-		parent_form->setMinimumSize(600, 600);
 
 		IndexingType::getTypes(list);
 		indexing_cmb->addItems(list);
@@ -55,13 +54,15 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 		grid=dynamic_cast<QGridLayout *>(tabWidget->widget(0)->layout());
 		grid->addWidget(frame, grid->count(), 0, 1, 5);
 
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(indexing_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectIndexingType(void)));
 		connect(fill_factor_chk, SIGNAL(toggled(bool)), fill_factor_sb, SLOT(setEnabled(bool)));
 		connect(elements_wgt, SIGNAL(s_elementHandled(int)), this, SLOT(enableSortingOptions()));
 
 		configureTabOrder();
 		selectIndexingType();
+
+		setIdealSize(600, 600);
+		setSizePadding(30);
 	}
 	catch(Exception &e)
 	{

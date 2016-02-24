@@ -28,7 +28,7 @@
 #include <QtWidgets>
 #include "databasemodel.h"
 #include "operationlist.h"
-#include "baseform.h"
+//#include "baseform.h"
 #include "modelobjectswidget.h"
 #include "objectselectorwidget.h"
 #include "ui_baseobjectwidget.h"
@@ -39,14 +39,14 @@
 #include <QMetaType>
 Q_DECLARE_METATYPE(PgSQLType)
 
-class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
+class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 	private:
 		Q_OBJECT
 		
 		/*! \brief Stores the minimum and maximum height of the parent form, in order
 			to control the exhibition of the alert frame when the object is protected */
 		int pf_min_height, pf_max_height;
-		
+
 	protected:
 		static const int MAX_OBJECT_SIZE=16777215;
 		static const QColor PROT_LINE_BGCOLOR,
@@ -54,16 +54,21 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 		RELINC_LINE_BGCOLOR,
 		RELINC_LINE_FGCOLOR;
 		
+		//! \brief The ideal size of the widget
+		QSize ideal_size;
+
+		//! \brief A size increment to cover the width and height differences between window themes
+		int size_padding;
+
+		//! \brief Store the kind of object being handled by the widget (configured in the constructor)
+		ObjectType handled_obj_type;
 		
 		/*! \brief Operation list element count before editing an object. This attribute
 			is used to know, in case of cancel the edition, the operation (count) that is needed to
 			be removed. This attribute applies only if the object creation is chained (like in tables, views or relationships)
 			See: cancelChainedConfiguration() */
 		unsigned operation_count;
-		
-		//! \brief Parent form used to show the widget as a dialog.
-		BaseForm *parent_form;
-		
+				
 		//! \brief Reference database model
 		DatabaseModel *model;
 		
@@ -122,7 +127,6 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 		virtual void applyConfiguration(void);
 		
 		void hideEvent(QHideEvent *);
-		void showEvent(QShowEvent *);
 		
 		void setAttributes(DatabaseModel *model, OperationList *op_list,
 						   BaseObject *object, BaseObject *parent_obj=nullptr,
@@ -168,16 +172,26 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 		
 		//! \brief Filters the ENTER/RETURN key press forcing the button "Apply" to be clicked
 		bool eventFilter(QObject *object, QEvent *event);
+
+		//! \brief Returns the kind of database object handled
+		ObjectType getHandledObjectType(void);
 		
+		//! \brief Defines the optimal widget's dimension to fit all its children
+		void setIdealSize(int width, int height);
+		void setIdealSize(const QSize &size);
+
+		//! \brief Defines a size padding used to apply to the widget size when dealing with different window themes
+		void setSizePadding(int size_padding);
+
+		QSize getIdealSize(void);
+		int getSizePadding(void);
+
 	protected slots:
 		void editPermissions(void);
-		void appendSQL(void);
+		void editCustomSQL(void);
 		
 		//! brief Register the new object in the operation history if it is not registered already
 		void registerNewObject(void);
-		
-	public slots:
-		void show(void);
 		
 	signals:
 		//! \brief Signal emitted whenever a object is created / edited using the form

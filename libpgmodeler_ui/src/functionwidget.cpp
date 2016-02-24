@@ -17,6 +17,7 @@
 */
 
 #include "functionwidget.h"
+#include "baseform.h"
 
 FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FUNCTION)
 {
@@ -34,8 +35,6 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		Ui_FunctionWidget::setupUi(this);
 
 		configureFormLayout(function_grid, OBJ_FUNCTION);
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-
 		source_code_txt=new NumberedTextEditor(this);
 		dynamic_cast<QGridLayout *>(source_code_frm->layout())->addWidget(source_code_txt, 1, 0, 1, 2);
 
@@ -86,8 +85,6 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		grid->addWidget(frame, grid->count()+1, 0, 1, 5);
 		frame->setParent(func_config_twg->widget(0));
 
-		parent_form->setMinimumSize(650, 700);
-
 		SecurityType::getTypes(types);
 		security_cmb->addItems(types);
 
@@ -113,6 +110,9 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		setRequiredField(library_lbl);
 		setRequiredField(sourc_code_lbl);
 		configureTabOrder();
+
+		setIdealSize(650, 700);
+		setSizePadding(20);
 	}
 	catch(Exception &e)
 	{
@@ -159,7 +159,8 @@ void FunctionWidget::showParameterForm(void)
 	ObjectTableWidget *table=nullptr;
 	Parameter aux_param;
 	int lin_idx;
-	ParameterWidget parameter_wgt(this);
+	ParameterWidget parameter_wgt;
+	BaseForm parent_form;
 
 	if(obj_sender==parameters_tab || obj_sender==return_tab)
 	{
@@ -176,10 +177,11 @@ void FunctionWidget::showParameterForm(void)
 			aux_param=getParameter(table, lin_idx);
 
 		parameter_wgt.setAttributes(aux_param, model);
-		parameter_wgt.show();
+		parent_form.setMainWidget(&parameter_wgt);
+		parent_form.exec();
 
 		aux_param=parameter_wgt.getParameter();
-		handleParameter(aux_param, parameter_wgt.result());
+		handleParameter(aux_param, parent_form.result());
 	}
 }
 

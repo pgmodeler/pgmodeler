@@ -42,14 +42,13 @@ ParameterWidget::ParameterWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		parameter_grid->addWidget(data_type,2,0,1,4);
 
 		configureFormLayout(parameter_grid, OBJ_PARAMETER);
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(param_variadic_chk, SIGNAL(toggled(bool)), param_in_chk, SLOT(setDisabled(bool)));
 		connect(param_variadic_chk, SIGNAL(toggled(bool)), param_out_chk, SLOT(setDisabled(bool)));
 		connect(param_in_chk, SIGNAL(toggled(bool)), this, SLOT(enableVariadic(void)));
 		connect(param_out_chk, SIGNAL(toggled(bool)), this, SLOT(enableVariadic(void)));
 
-		parent_form->setMinimumSize(500, 300);
-		//parent_form->setMaximumHeight(300);
+		setIdealSize(500, 300);
+		setSizePadding(30);
 	}
 	catch(Exception &e)
 	{

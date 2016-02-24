@@ -99,7 +99,7 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 
 		range_attribs_gb->setVisible(false);
 
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+		//connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(base_type_rb, SIGNAL(toggled(bool)), this, SLOT(selectTypeConfiguration(void)));
 		connect(composite_rb, SIGNAL(toggled(bool)), this, SLOT(selectTypeConfiguration(void)));
 		connect(enumeration_rb, SIGNAL(toggled(bool)), this, SLOT(selectTypeConfiguration(void)));
@@ -108,8 +108,6 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 		connect(attributes_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleAttribute(int)));
 		connect(attributes_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleAttribute(int)));
 		connect(attributes_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editAttribute(int)));
-
-		parent_form->setMinimumSize(620, 760);
 
 		StorageType::getTypes(list);
 		storage_cmb->addItems(list);
@@ -129,6 +127,9 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 						   enum_name_edt, attrib_name_edt, attrib_collation_sel, attrib_type_wgt,
 						   opclass_sel, functions_sel[Type::CANONICAL_FUNC], functions_sel[Type::SUBTYPE_DIFF_FUNC],
 						   base_attribs_twg});
+
+		setIdealSize(620, 760);
+		setSizePadding(30);
 	}
 	catch(Exception &e)
 	{

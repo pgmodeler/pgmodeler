@@ -45,10 +45,10 @@ LanguageWidget::LanguageWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_LA
 		language_grid->addWidget(frame, language_grid->count()+1, 0, 1, 0);
 		frame->setParent(this);
 
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-
-		parent_form->setMinimumSize(640, 520);
 		configureTabOrder({ trusted_chk, func_handler_sel, func_validator_sel, func_inline_sel });
+
+		setIdealSize(620, 450);
+		setSizePadding(30);
 	}
 	catch(Exception &e)
 	{

@@ -28,12 +28,8 @@ OperatorFamilyWidget::OperatorFamilyWidget(QWidget *parent): BaseObjectWidget(pa
 	Ui_OperatorFamilyWidget::setupUi(this);
 	configureFormLayout(opfamily_grid, OBJ_OPFAMILY);
 
-	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-
 	IndexingType::getTypes(types);
 	indexing_cmb->addItems(types);
-
-	parent_form->setMinimumSize(520, 380);
 
 	setRequiredField(indexing_lbl);
 	fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(indexing_lbl);
@@ -46,6 +42,8 @@ OperatorFamilyWidget::OperatorFamilyWidget(QWidget *parent): BaseObjectWidget(pa
 	opfamily_grid->addWidget(frame, opfamily_grid->count()+1, 0, 1, 5);
 
 	configureTabOrder();
+	setIdealSize(520, 300);
+	setSizePadding(30);
 }
 
 void OperatorFamilyWidget::hideEvent(QHideEvent *event)

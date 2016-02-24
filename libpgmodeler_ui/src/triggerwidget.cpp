@@ -58,9 +58,7 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 		firing_mode_cmb->addItems(list);
 
 		configureFormLayout(trigger_grid, OBJ_TRIGGER);
-		parent_form->setMinimumSize(580, 580);
 
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_type_cmb, SLOT(setEnabled(bool)));
 		connect(columns_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addColumn(int)));
 		connect(columns_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(updateColumnsCombo(void)));
@@ -75,6 +73,9 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 		setRequiredField(firing_mode_lbl);
 		setRequiredField(function_lbl);
 		setRequiredField(function_sel);
+
+		setIdealSize(580, 580);
+		setSizePadding(30);
 	}
 	catch(Exception &e)
 	{
