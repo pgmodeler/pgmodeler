@@ -1380,6 +1380,10 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 							.arg(object->getName()).arg(object->getTypeName()),
 							ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+		//Disabling the apply button if the object is protected
+		if(object)
+			editing_form.apply_ok_btn->setEnabled(!object->isProtected());
+
 		if(obj_type==OBJ_PERMISSION)
 		{
 			PermissionWidget permission_wgt;
