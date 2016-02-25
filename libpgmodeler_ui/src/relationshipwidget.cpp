@@ -691,6 +691,17 @@ void RelationshipWidget::showAdvancedObject(int row)
 	}
 }
 
+template<class Class, class WidgetClass>
+int RelationshipWidget::openEditingForm(TableObject *object)
+{
+	BaseForm editing_form(this);
+	WidgetClass *object_wgt=new WidgetClass;
+	object_wgt->setAttributes(this->model, this->object, this->op_list, dynamic_cast<Class *>(object));
+	editing_form.setMainWidget(object_wgt);
+
+	return(editing_form.exec());
+}
+
 void RelationshipWidget::addObject(void)
 {
 	ObjectType obj_type=BASE_OBJECT;
@@ -709,17 +720,9 @@ void RelationshipWidget::addObject(void)
 		}
 
 		if(obj_type==OBJ_COLUMN)
-		{
-			ColumnWidget column_wgt(this);
-			column_wgt.setAttributes(this->model, this->object, this->op_list, nullptr);
-			column_wgt.show();
-		}
+			openEditingForm<Column,ColumnWidget>(nullptr);
 		else
-		{
-			ConstraintWidget constraint_wgt(this);
-			constraint_wgt.setAttributes(this->model, this->object, this->op_list, nullptr);
-			constraint_wgt.show();
-		}
+			openEditingForm<Constraint,ConstraintWidget>(nullptr);
 
 		listObjects(obj_type);
 	}
@@ -733,27 +736,23 @@ void RelationshipWidget::addObject(void)
 void RelationshipWidget::editObject(int row)
 {
 	ObjectType obj_type=OBJ_COLUMN;
+	TableObject *tab_obj=nullptr;
 
 	try
 	{
 		op_list->ignoreOperationChain(true);
 
-		#warning "Create template method to replace these blocks!"
 		if(sender()==attributes_tab)
 		{
-			ColumnWidget column_wgt(this);
 			obj_type=OBJ_COLUMN;
-			column_wgt.setAttributes(this->model, this->object, this->op_list,
-									 reinterpret_cast<Column *>(attributes_tab->getRowData(row).value<void *>()));
-			column_wgt.show();
+			tab_obj=reinterpret_cast<TableObject *>(attributes_tab->getRowData(row).value<void *>());
+			openEditingForm<Column,ColumnWidget>(tab_obj);
 		}
 		else
 		{
-			ConstraintWidget constraint_wgt(this);
 			obj_type=OBJ_CONSTRAINT;
-			constraint_wgt.setAttributes(this->model, this->object, this->op_list,
-										 reinterpret_cast<Constraint *>(constraints_tab->getRowData(row).value<void *>()));
-			constraint_wgt.show();
+			tab_obj=reinterpret_cast<TableObject *>(constraints_tab->getRowData(row).value<void *>());
+			openEditingForm<Constraint,ConstraintWidget>(tab_obj);
 		}
 
 		listObjects(obj_type);

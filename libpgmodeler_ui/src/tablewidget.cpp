@@ -147,41 +147,15 @@ void TableWidget::hideEvent(QHideEvent *event)
 }
 
 template<class Class, class WidgetClass>
-int TableWidget::openEditingForm(TableObject *object, Table *table)
+int TableWidget::openEditingForm(TableObject *object)
 {
 	BaseForm editing_form(this);
 	WidgetClass *object_wgt=new WidgetClass;
-	object_wgt->setAttributes(this->model, table, this->op_list, dynamic_cast<Class *>(object));
+	object_wgt->setAttributes(this->model, dynamic_cast<Table *>(this->object),
+														this->op_list, dynamic_cast<Class *>(object));
 	editing_form.setMainWidget(object_wgt);
 
 	return(editing_form.exec());
-}
-
-void TableWidget::showTableObjectForm(ObjectType obj_type)
-{
-	TableObject *object=nullptr;
-	ObjectTableWidget *obj_table=nullptr;
-	Table *table=nullptr;
-
-	//Selects the object table based upon the passed object type
-	obj_table=getObjectTable(obj_type);
-
-	//Gets the object reference if there is an item select on table
-	if(obj_table->getSelectedRow()>=0)
-		object=reinterpret_cast<TableObject *>(obj_table->getRowData(obj_table->getSelectedRow()).value<void *>());
-
-	table=dynamic_cast<Table *>(this->object);
-
-	if(obj_type==OBJ_COLUMN)
-		openEditingForm<Column, ColumnWidget>(object, table);
-	else if(obj_type==OBJ_CONSTRAINT)
-		openEditingForm<Constraint, ConstraintWidget>(object, table);
-	else if(obj_type==OBJ_TRIGGER)
-		openEditingForm<Trigger, TriggerWidget>(object, table);
-	else if(obj_type==OBJ_INDEX)
-		openEditingForm<Index, IndexWidget>(object, table);
-	else
-		openEditingForm<Rule, RuleWidget>(object, table);
 }
 
 ObjectTableWidget *TableWidget::getObjectTable(ObjectType obj_type)
@@ -328,11 +302,31 @@ void TableWidget::listObjects(ObjectType obj_type)
 void TableWidget::handleObject(void)
 {
 	ObjectType obj_type=BASE_OBJECT;
+	TableObject *object=nullptr;
+	ObjectTableWidget *obj_table=nullptr;
 
 	try
 	{
 		obj_type=getObjectType(sender());
-		showTableObjectForm(obj_type);
+
+		//Selects the object table based upon the passed object type
+		obj_table=getObjectTable(obj_type);
+
+		//Gets the object reference if there is an item select on table
+		if(obj_table->getSelectedRow()>=0)
+			object=reinterpret_cast<TableObject *>(obj_table->getRowData(obj_table->getSelectedRow()).value<void *>());
+
+		if(obj_type==OBJ_COLUMN)
+			openEditingForm<Column, ColumnWidget>(object);
+		else if(obj_type==OBJ_CONSTRAINT)
+			openEditingForm<Constraint, ConstraintWidget>(object);
+		else if(obj_type==OBJ_TRIGGER)
+			openEditingForm<Trigger, TriggerWidget>(object);
+		else if(obj_type==OBJ_INDEX)
+			openEditingForm<Index, IndexWidget>(object);
+		else
+			openEditingForm<Rule, RuleWidget>(object);
+
 		listObjects(obj_type);
 	}
 	catch(Exception &e)

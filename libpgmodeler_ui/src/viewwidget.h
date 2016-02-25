@@ -78,6 +78,11 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 
 		void listObjects(ObjectType obj_type);
 
+		/*! brief Template method that opens the editing form for the specified object.
+				Class and ClassWidget should be compatible, e.g., "Column" can only be edited using ColumnWidget */
+		template<class Class, class ClassWidget>
+		int openEditingForm(TableObject *object);
+
 	public:
 		ViewWidget(QWidget * parent = 0);
 
