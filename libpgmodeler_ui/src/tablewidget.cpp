@@ -146,12 +146,22 @@ void TableWidget::hideEvent(QHideEvent *event)
 	BaseObjectWidget::hideEvent(event);
 }
 
+template<class Class, class WidgetClass>
+int TableWidget::openEditingForm(TableObject *object, Table *table)
+{
+	BaseForm editing_form(this);
+	WidgetClass *object_wgt=new WidgetClass;
+	object_wgt->setAttributes(this->model, table, this->op_list, dynamic_cast<Class *>(object));
+	editing_form.setMainWidget(object_wgt);
+
+	return(editing_form.exec());
+}
+
 void TableWidget::showTableObjectForm(ObjectType obj_type)
 {
 	TableObject *object=nullptr;
 	ObjectTableWidget *obj_table=nullptr;
 	Table *table=nullptr;
-	BaseForm parent_form(this);
 
 	//Selects the object table based upon the passed object type
 	obj_table=getObjectTable(obj_type);
@@ -163,36 +173,15 @@ void TableWidget::showTableObjectForm(ObjectType obj_type)
 	table=dynamic_cast<Table *>(this->object);
 
 	if(obj_type==OBJ_COLUMN)
-	{
-		ColumnWidget column_wgt;
-		column_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Column *>(object));
-		parent_form.setMainWidget(&column_wgt);
-	}
+		openEditingForm<Column, ColumnWidget>(object, table);
 	else if(obj_type==OBJ_CONSTRAINT)
-	{
-		ConstraintWidget constraint_wgt;
-		constraint_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Constraint *>(object));
-		parent_form.setMainWidget(&constraint_wgt);
-	}
+		openEditingForm<Constraint, ConstraintWidget>(object, table);
 	else if(obj_type==OBJ_TRIGGER)
-	{
-		TriggerWidget trigger_wgt;
-		trigger_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Trigger *>(object));
-		parent_form.setMainWidget(&trigger_wgt);
-	}
+		openEditingForm<Trigger, TriggerWidget>(object, table);
 	else if(obj_type==OBJ_INDEX)
-	{
-		IndexWidget index_wgt;
-		index_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Index *>(object));
-		parent_form.setMainWidget(&index_wgt);
-	}else
-	{
-		RuleWidget rule_wgt;
-		rule_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Rule *>(object));
-		parent_form.setMainWidget(&rule_wgt);
-	}
-
-	parent_form.exec();
+		openEditingForm<Index, IndexWidget>(object, table);
+	else
+		openEditingForm<Rule, RuleWidget>(object, table);
 }
 
 ObjectTableWidget *TableWidget::getObjectTable(ObjectType obj_type)

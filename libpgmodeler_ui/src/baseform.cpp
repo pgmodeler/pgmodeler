@@ -75,13 +75,14 @@ void BaseForm::setMainWidget(BaseObjectWidget *widget)
 
 	setWindowTitle(trUtf8("%1 properties").arg(BaseObject::getTypeName(widget->getHandledObjectType())));
 	generalwidget_wgt->insertWidget(0, widget);
-	generalwidget_wgt->setCurrentIndex(0);
+  generalwidget_wgt->setCurrentWidget(widget);
+
 	setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
-	this->adjustSize(widget->getIdealSize(), widget->getSizePadding());
+  this->adjustSize(widget->getIdealSize(), widget->getSizePadding());
 
 	connect(apply_ok_btn, SIGNAL(clicked(bool)), widget, SLOT(applyConfiguration()));
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(reject()));
-	connect(apply_ok_btn, SIGNAL(clicked(bool)), this, SLOT(accept()));
+  connect(apply_ok_btn, SIGNAL(clicked(bool)), this, SLOT(accept()));
 }
 
 void BaseForm::setMainWidget(QWidget *widget)

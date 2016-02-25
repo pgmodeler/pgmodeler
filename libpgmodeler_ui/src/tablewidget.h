@@ -56,6 +56,11 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 		//! \brief Shows the table object editing form according to the specified object type
 		void showTableObjectForm(ObjectType obj_type);
 
+		/*! brief Template method that opens the editing form for the specified object.
+				Class and ClassWidget should be compatible, e.g, "Column" can only be edited using ColumnWidget */
+		template<class Class, class ClassWidget>
+		int openEditingForm(TableObject *object, Table *table);
+
 		void hideEvent(QHideEvent *event);
 
 	public:

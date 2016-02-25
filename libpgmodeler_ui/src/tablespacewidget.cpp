@@ -23,8 +23,6 @@ TablespaceWidget::TablespaceWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	Ui_TablespaceWidget::setupUi(this);
 	configureFormLayout(tablespace_grid, OBJ_TABLESPACE);
 
-	//connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-
 	tablespace_grid->addItem(new QSpacerItem(10,0,QSizePolicy::Minimum,QSizePolicy::Expanding), tablespace_grid->count(), 0);
 
 	setRequiredField(directory_lbl);
@@ -32,8 +30,8 @@ TablespaceWidget::TablespaceWidget(QWidget *parent): BaseObjectWidget(parent, OB
 
 	configureTabOrder();
 
-	//parent_form->setIdealSize(500, 230, 30);
-	//parent_form->adjustSize();
+  setIdealSize(500, 230);
+  setSizePadding(30);
 }
 
 void TablespaceWidget::hideEvent(QHideEvent *event)

@@ -681,13 +681,13 @@ void BaseObjectWidget::editPermissions(void)
 {
 	BaseObject *parent_obj=nullptr;
 	BaseForm parent_form(this);
-	PermissionWidget permission_wgt;
+  PermissionWidget *permission_wgt=new PermissionWidget;
 
 	if(this->relationship)
 		parent_obj=this->relationship;
 
-	permission_wgt.setAttributes(this->model, parent_obj, this->object);
-	parent_form.setMainWidget(&permission_wgt);
+  permission_wgt->setAttributes(this->model, parent_obj, this->object);
+  parent_form.setMainWidget(permission_wgt);
 	parent_form.setWindowTitle(trUtf8("Edit permissions"));
 	parent_form.setButtonConfiguration(Messagebox::OK_BUTTON);
 	parent_form.exec();
@@ -696,10 +696,10 @@ void BaseObjectWidget::editPermissions(void)
 void BaseObjectWidget::editCustomSQL(void)
 {
 	BaseForm parent_form(this);
-	CustomSQLWidget customsql_wgt;
+  CustomSQLWidget *customsql_wgt=new CustomSQLWidget;
 
-	customsql_wgt.setAttributes(this->model, this->object);
-	parent_form.setMainWidget(&customsql_wgt);
+  customsql_wgt->setAttributes(this->model, this->object);
+  parent_form.setMainWidget(customsql_wgt);
 	parent_form.setWindowTitle(trUtf8("Add custom SQL code"));
 	parent_form.exec();
 }

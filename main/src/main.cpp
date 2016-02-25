@@ -38,7 +38,7 @@ void startCrashHandler(int signal)
 	symbols = backtrace_symbols(stack, stack_size);
 #endif
 
-	cmd=QString("\"%1\"").arg(GlobalAttributes::PGMODELER_CHANDLER_PATH) + QString(" -style ") + GlobalAttributes::DEFAULT_QT_STYLE;
+  cmd=QString("\"%1\"").arg(GlobalAttributes::PGMODELER_CHANDLER_PATH);
 
 	//Creates the stacktrace file
 	output.setFileName(GlobalAttributes::TEMPORARY_DIR +
