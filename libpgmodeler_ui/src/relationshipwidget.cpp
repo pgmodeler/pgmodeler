@@ -224,20 +224,6 @@ void RelationshipWidget::hideEvent(QHideEvent *event)
 	BaseObjectWidget::hideEvent(event);
 }
 
-void RelationshipWidget::showEvent(QShowEvent *)
-{
-	/*if(rel_fk_rb->isChecked() ||
-			(rel_dep_rb->isChecked() &&
-			 this->object && this->object->getObjectType()==BASE_RELATIONSHIP))
-		parent_form->setIdealSize(640, 320, 20);
-	else if(rel_gen_rb->isChecked())
-		parent_form->setIdealSize(640, 520, 20);
-	else
-		parent_form->setIdealSize(640, 680, 20);
-
-	parent_form->adjustSize();*/
-}
-
 void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Table *src_tab, Table *dst_tab, unsigned rel_type)
 {
 	Relationship *rel=nullptr;
@@ -455,6 +441,17 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		usePatternGlobalSettings(this->new_object);
 		patterns_gconf_chk->blockSignals(false);
 	}
+}
+
+QSize RelationshipWidget::getIdealSize(void)
+{
+	if(rel_fk_rb->isChecked() ||
+		 (rel_dep_rb->isChecked() &&	this->object && this->object->getObjectType()==BASE_RELATIONSHIP))
+		return(QSize(640, 320));
+	else if(rel_gen_rb->isChecked())
+		return(QSize(640, 520));
+	else
+		return(QSize(640, 680));
 }
 
 void RelationshipWidget::useFKGlobalSettings(bool value)

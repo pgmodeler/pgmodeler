@@ -82,10 +82,10 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		RelationshipWidget(QWidget * parent = 0);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseRelationship *base_rel);
 
-		void cancelChainedConfiguration();
+		QSize getIdealSize(void);
+
 	private slots:
 		void hideEvent(QHideEvent *event);
-		void showEvent(QShowEvent *event);
 
 		void addObject(void);
 		void editObject(int row);
