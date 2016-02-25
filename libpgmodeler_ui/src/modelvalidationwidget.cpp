@@ -29,9 +29,6 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		htmlitem_del=new HtmlItemDelegate;
 		output_trw->setItemDelegateForColumn(0, htmlitem_del);
 
-		swapobjectsids_wgt=nullptr;
-		swapobjectsids_wgt=new SwapObjectsIdsWidget(this);
-
 		version_cmb->addItem(trUtf8("Autodetect"));
 		version_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
 
@@ -526,8 +523,19 @@ void ModelValidationWidget::resizeEvent(QResizeEvent *event)
 
 void ModelValidationWidget::swapObjectsIds(void)
 {
-	swapobjectsids_wgt->setModel(model_wgt->getDatabaseModel());
-	swapobjectsids_wgt->show();
+	BaseForm parent_form(this);
+	SwapObjectsIdsWidget *swap_ids_wgt=new SwapObjectsIdsWidget;
+
+	swap_ids_wgt->setModel(model_wgt->getDatabaseModel());
+
+	connect(swap_ids_wgt, SIGNAL(s_objectsIdSwapEnabled(bool)), parent_form.apply_ok_btn, SLOT(setEnabled(bool)));
+	connect(parent_form.apply_ok_btn, SIGNAL(clicked(bool)), swap_ids_wgt, SLOT(swapObjectsIds()));
+
+	parent_form.setMainWidget(swap_ids_wgt);
+	parent_form.resizeToIdealSize(QSize(550, 280), 30);
+	parent_form.apply_ok_btn->setEnabled(false);
+
+	parent_form.exec();
 }
 
 void ModelValidationWidget::validateRelationships(void)
