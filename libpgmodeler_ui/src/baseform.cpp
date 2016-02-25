@@ -21,6 +21,7 @@
 BaseForm::BaseForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
+	this->setWindowFlags(this->windowFlags() ^ Qt::WindowContextHelpButtonHint);
 
 	/* Windows System workaround: permitting the windows subject to maximize shows
 	the maximize button as well the editing dialogs stay on top of all other dialogs */
@@ -47,7 +48,7 @@ void BaseForm::setButtonConfiguration(unsigned button_conf)
 	}
 }
 
-void BaseForm::adjustSize(const QSize &ideal_size, int size_padding)
+void BaseForm::resizeToIdealSize(const QSize &ideal_size, int size_padding)
 {
 	QDialog::adjustSize();
 
@@ -55,15 +56,18 @@ void BaseForm::adjustSize(const QSize &ideal_size, int size_padding)
 	int curr_h=size.height(),
 			curr_w=size.width();
 
-	if(curr_h < ideal_size.height())
-		curr_h = ideal_size.height();
-	else if(curr_h > ideal_size.height() + size_padding)
-		curr_h = ((ideal_size.height() * 2) + size_padding)/2;
+	if(ideal_size.isValid())
+	{
+		if(curr_h < ideal_size.height())
+			curr_h = ideal_size.height();
+		else if(curr_h > ideal_size.height() + size_padding)
+			curr_h = ((ideal_size.height() * 2) + size_padding)/2;
 
-	if(curr_w < ideal_size.width())
-		curr_w = ideal_size.width();
-	else if(curr_w > ideal_size.width() + size_padding)
-		 curr_w = ((ideal_size.width() * 2) + size_padding)/2;
+		if(curr_w < ideal_size.width())
+			curr_w = ideal_size.width();
+		else if(curr_w > ideal_size.width() + size_padding)
+			curr_w = ((ideal_size.width() * 2) + size_padding)/2;
+	}
 
 	this->setMinimumSize(curr_w, curr_h);
 	this->resize(curr_w, curr_h);
@@ -73,16 +77,20 @@ void BaseForm::setMainWidget(BaseObjectWidget *widget)
 {
 	if(!widget)	return;
 
-	setWindowTitle(trUtf8("%1 properties").arg(BaseObject::getTypeName(widget->getHandledObjectType())));
+	if(widget->getHandledObjectType()!=BASE_OBJECT && widget->windowTitle().isEmpty())
+		setWindowTitle(trUtf8("%1 properties").arg(BaseObject::getTypeName(widget->getHandledObjectType())));
+	else
+		setWindowTitle(widget->windowTitle());
+
 	generalwidget_wgt->insertWidget(0, widget);
   generalwidget_wgt->setCurrentWidget(widget);
 
 	setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
-  this->adjustSize(widget->getIdealSize(), widget->getSizePadding());
+	this->resizeToIdealSize(widget->getIdealSize(), widget->getSizePadding());
 
-	connect(apply_ok_btn, SIGNAL(clicked(bool)), widget, SLOT(applyConfiguration()));
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(reject()));
-  connect(apply_ok_btn, SIGNAL(clicked(bool)), this, SLOT(accept()));
+	connect(apply_ok_btn, SIGNAL(clicked(bool)), widget, SLOT(applyConfiguration()));	
+	connect(widget, SIGNAL(s_closeRequested()), this, SLOT(accept()));
 }
 
 void BaseForm::setMainWidget(QWidget *widget)
@@ -90,4 +98,7 @@ void BaseForm::setMainWidget(QWidget *widget)
 	if(!widget)	return;
 	generalwidget_wgt->insertWidget(0, widget);
 	generalwidget_wgt->setCurrentIndex(0);
+
+	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(reject()));
+	connect(apply_ok_btn, SIGNAL(clicked(bool)), this, SLOT(accept()));
 }

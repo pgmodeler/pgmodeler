@@ -34,6 +34,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 		QHBoxLayout *layout=nullptr;
 		QSpacerItem *spacer=nullptr;
 
+		setWindowTitle(QString());
 		setupUi(this);
 
 		handled_obj_type=obj_type;
@@ -164,6 +165,11 @@ void BaseObjectWidget::hideEvent(QHideEvent *)
 
 	disable_sql_chk->setChecked(false);
 	new_object=false;
+}
+
+void BaseObjectWidget::showEvent(QShowEvent *)
+{
+	name_edt->setFocus();
 }
 
 void BaseObjectWidget::setRequiredField(QWidget *widget)
@@ -681,14 +687,13 @@ void BaseObjectWidget::editPermissions(void)
 {
 	BaseObject *parent_obj=nullptr;
 	BaseForm parent_form(this);
-  PermissionWidget *permission_wgt=new PermissionWidget;
+	PermissionWidget *permission_wgt=new PermissionWidget;
 
 	if(this->relationship)
 		parent_obj=this->relationship;
 
-  permission_wgt->setAttributes(this->model, parent_obj, this->object);
-  parent_form.setMainWidget(permission_wgt);
-	parent_form.setWindowTitle(trUtf8("Edit permissions"));
+	permission_wgt->setAttributes(this->model, parent_obj, this->object);
+	parent_form.setMainWidget(permission_wgt);
 	parent_form.setButtonConfiguration(Messagebox::OK_BUTTON);
 	parent_form.exec();
 }
@@ -700,7 +705,6 @@ void BaseObjectWidget::editCustomSQL(void)
 
   customsql_wgt->setAttributes(this->model, this->object);
   parent_form.setMainWidget(customsql_wgt);
-	parent_form.setWindowTitle(trUtf8("Add custom SQL code"));
 	parent_form.exec();
 }
 
@@ -846,7 +850,6 @@ void BaseObjectWidget::finishConfiguration(void)
 					this->object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
 			}
 
-
 			model->getObjectReferences(object, ref_objs);
 			for(auto &obj : ref_objs)
 			{
@@ -880,7 +883,7 @@ void BaseObjectWidget::finishConfiguration(void)
 				}
 
 				/* Updates the visual schemas when the objects is moved to another or a
-		table object is added to a table */
+					table object is added to a table */
 				if(object->getSchema())
 					dynamic_cast<Schema *>(object->getSchema())->setModified(true);
 				else if(tab_obj && tab_obj->getParentTable() &&
@@ -892,6 +895,7 @@ void BaseObjectWidget::finishConfiguration(void)
 			}
 
 			emit s_objectManipulated();
+			emit s_closeRequested();
 		}
 	}
 	catch(Exception &e)

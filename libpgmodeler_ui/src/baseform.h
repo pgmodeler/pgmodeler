@@ -37,8 +37,11 @@ class BaseForm: public QDialog, public Ui::BaseForm {
 		
 	public:
 		BaseForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
+
 		void setButtonConfiguration(unsigned button_conf=Messagebox::OK_CANCEL_BUTTONS);
-		void adjustSize(const QSize &ideal_size, int size_padding);
+
+		//! \brief Resizes the form to the specified ideal size and padding
+		void resizeToIdealSize(const QSize &ideal_size, int size_padding);
 
 		/*! \brief Injects the specified object into the form and turns it the main widget.
 				The widget is reparented to the stack widget within the form */

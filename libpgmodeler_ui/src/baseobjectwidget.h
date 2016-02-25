@@ -127,6 +127,7 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		virtual void applyConfiguration(void);
 		
 		void hideEvent(QHideEvent *);
+		void showEvent(QShowEvent *);
 		
 		void setAttributes(DatabaseModel *model, OperationList *op_list,
 						   BaseObject *object, BaseObject *parent_obj=nullptr,
@@ -196,6 +197,9 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 	signals:
 		//! \brief Signal emitted whenever a object is created / edited using the form
 		void s_objectManipulated(void);
+
+		//! \brief Signal emitted whenever the object editing was successful and the form need to be closed
+		void s_closeRequested(void);
 };
 
 template<class Class>
