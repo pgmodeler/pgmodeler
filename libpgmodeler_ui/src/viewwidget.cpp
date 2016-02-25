@@ -176,9 +176,14 @@ int ViewWidget::openEditingForm(TableObject *object)
 {
 	BaseForm editing_form(this);
 	WidgetClass *object_wgt=new WidgetClass;
-	object_wgt->setAttributes(this->model, dynamic_cast<BaseTable *>(this->object),
-														this->op_list, dynamic_cast<Class *>(object));
+	object_wgt->setAttributes(this->model, this->op_list,
+														dynamic_cast<BaseTable *>(this->object),
+														dynamic_cast<Class *>(object));
 	editing_form.setMainWidget(object_wgt);
+
+	//Disabling the apply button if the object is protected
+	if(object)
+		editing_form.apply_ok_btn->setEnabled(!object->isProtected());
 
 	return(editing_form.exec());
 }
@@ -197,7 +202,6 @@ void ViewWidget::handleObject(void)
 		if(obj_table->getSelectedRow()>=0)
 			object=reinterpret_cast<TableObject *>(obj_table->getRowData(obj_table->getSelectedRow()).value<void *>());
 
-		#warning "Create template method to replace these blocks!"
 		if(obj_type==OBJ_TRIGGER)
 			openEditingForm<Trigger,TriggerWidget>(object);
 		else

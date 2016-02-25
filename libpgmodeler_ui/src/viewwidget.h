@@ -104,8 +104,6 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 		//! \brief Updates the sql code field of the view form
 		void updateCodePreview(void);
 
-		void showTableObjectForm(ObjectType obj_type);
-
 		//! \brief Adds or edit a object on the object table that calls the slot
 		void handleObject(void);
 

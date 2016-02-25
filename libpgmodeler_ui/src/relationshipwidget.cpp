@@ -661,7 +661,7 @@ void RelationshipWidget::showAdvancedObject(int row)
 	{
 		ColumnWidget column_wgt(this);
 		col=dynamic_cast<Column *>(object);
-		column_wgt.setAttributes(this->model, col->getParentTable(), this->op_list, col);
+		column_wgt.setAttributes(this->model, this->op_list, col->getParentTable(), col);
 		column_wgt.show();
 	}
 	else if(obj_type==OBJ_CONSTRAINT)
@@ -675,7 +675,7 @@ void RelationshipWidget::showAdvancedObject(int row)
 			constr->setProtected(true);
 		}
 
-		constraint_wgt.setAttributes(this->model, constr->getParentTable(), this->op_list, constr);
+		constraint_wgt.setAttributes(this->model, this->op_list, constr->getParentTable(), constr);
 		constraint_wgt.show();
 		constr->setProtected(prot);
 	}
@@ -696,7 +696,7 @@ int RelationshipWidget::openEditingForm(TableObject *object)
 {
 	BaseForm editing_form(this);
 	WidgetClass *object_wgt=new WidgetClass;
-	object_wgt->setAttributes(this->model, this->object, this->op_list, dynamic_cast<Class *>(object));
+	object_wgt->setAttributes(this->model, this->op_list, this->object, dynamic_cast<Class *>(object));
 	editing_form.setMainWidget(object_wgt);
 
 	return(editing_form.exec());
