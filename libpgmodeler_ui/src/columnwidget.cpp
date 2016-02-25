@@ -71,7 +71,7 @@ void ColumnWidget::hideEvent(QHideEvent *event)
 	BaseObjectWidget::hideEvent(event);
 }
 
-void ColumnWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, OperationList *op_list, Column *column)
+void ColumnWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *parent_obj, Column *column)
 {
 	PgSQLType type;
 

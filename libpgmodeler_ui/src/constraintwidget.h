@@ -59,7 +59,7 @@ class ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
 		
 	public:
 		ConstraintWidget(QWidget * parent = 0);
-		void setAttributes(DatabaseModel *model, BaseObject *parent_obj, OperationList *op_list, Constraint *constr);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *parent_obj, Constraint *constr);
 		
 	private slots:
 		//! \brief Shows only the fields related to the selected constraint type

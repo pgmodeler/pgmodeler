@@ -106,7 +106,7 @@ void IndexWidget::enableSortingOptions(void)
 	}
 }
 
-void IndexWidget::setAttributes(DatabaseModel *model, Table *parent_obj, OperationList *op_list, Index *index)
+void IndexWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Table *parent_obj, Index *index)
 {
 	vector<IndexElement> idx_elems;
 
@@ -114,7 +114,6 @@ void IndexWidget::setAttributes(DatabaseModel *model, Table *parent_obj, Operati
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObjectWidget::setAttributes(model, op_list, index, parent_obj);
-
 
 	if(index)
 	{

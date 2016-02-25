@@ -377,7 +377,7 @@ void ConstraintWidget::selectConstraintType(void)
 	excl_elems_grp->setVisible(constr_type==ConstraintType::exclude);
 }
 
-void ConstraintWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, OperationList *op_list, Constraint *constr)
+void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_list,  BaseObject *parent_obj, Constraint *constr)
 {
 	ObjectType obj_type;
 	unsigned count, i, row;

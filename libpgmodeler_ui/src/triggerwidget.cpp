@@ -219,7 +219,7 @@ void TriggerWidget::hideEvent(QHideEvent *event)
 	arg_cols_tbw->setCurrentIndex(0);
 }
 
-void TriggerWidget::setAttributes(DatabaseModel *model, BaseTable *parent_table, OperationList *op_list, Trigger *trigger)
+void TriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseTable *parent_table, Trigger *trigger)
 {
 	unsigned count=0, i;
 	Column *column=nullptr;
