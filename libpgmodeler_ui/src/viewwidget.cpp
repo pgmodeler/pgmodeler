@@ -183,6 +183,7 @@ void ViewWidget::showTableObjectForm(ObjectType obj_type)
 
 	view=dynamic_cast<View *>(this->object);
 
+	#warning "Create template method to replace these blocks!"
 	if(obj_type==OBJ_TRIGGER)
 	{
 		TriggerWidget trigger_wgt(this);

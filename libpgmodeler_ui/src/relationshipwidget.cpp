@@ -738,7 +738,7 @@ void RelationshipWidget::editObject(int row)
 	{
 		op_list->ignoreOperationChain(true);
 
-
+		#warning "Create template method to replace these blocks!"
 		if(sender()==attributes_tab)
 		{
 			ColumnWidget column_wgt(this);

@@ -1384,142 +1384,143 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		if(object)
 			editing_form.apply_ok_btn->setEnabled(!object->isProtected());
 
+		#warning "Create template method to replace these blocks!"
 		if(obj_type==OBJ_PERMISSION)
 		{
-      PermissionWidget *permission_wgt=new PermissionWidget;
+			PermissionWidget *permission_wgt=new PermissionWidget;
 			Permission *perm=dynamic_cast<Permission *>(object);
 
 			if(!perm)
-        permission_wgt->setAttributes(db_model, nullptr, object);
+				permission_wgt->setAttributes(db_model, nullptr, object);
 			else
-        permission_wgt->setAttributes(db_model, nullptr, perm->getObject());
+				permission_wgt->setAttributes(db_model, nullptr, perm->getObject());
 
-      editing_form.setMainWidget(permission_wgt);
+			editing_form.setMainWidget(permission_wgt);
 			res=editing_form.exec();
 		}
 		else if(obj_type== OBJ_SCHEMA)
 		{
-      SchemaWidget *schema_wgt=new SchemaWidget;
-      schema_wgt->setAttributes(db_model, op_list, dynamic_cast<Schema *>(object));
-      editing_form.setMainWidget(schema_wgt);
+			SchemaWidget *schema_wgt=new SchemaWidget;
+			schema_wgt->setAttributes(db_model, op_list, dynamic_cast<Schema *>(object));
+			editing_form.setMainWidget(schema_wgt);
 			res=editing_form.exec();
 		}
 		else if(obj_type== OBJ_ROLE)
 		{
-      RoleWidget *role_wgt=new RoleWidget;
-      role_wgt->setAttributes(db_model, op_list, dynamic_cast<Role *>(object));
-      editing_form.setMainWidget(role_wgt);
+			RoleWidget *role_wgt=new RoleWidget;
+			role_wgt->setAttributes(db_model, op_list, dynamic_cast<Role *>(object));
+			editing_form.setMainWidget(role_wgt);
 			res=editing_form.exec();
 		}
 		else if(obj_type== OBJ_TABLESPACE)
 		{
-      TablespaceWidget *tablespace_wgt=new TablespaceWidget;
-      tablespace_wgt->setAttributes(db_model, op_list, dynamic_cast<Tablespace *>(object));
-      editing_form.setMainWidget(tablespace_wgt);
+			TablespaceWidget *tablespace_wgt=new TablespaceWidget;
+			tablespace_wgt->setAttributes(db_model, op_list, dynamic_cast<Tablespace *>(object));
+			editing_form.setMainWidget(tablespace_wgt);
 			res=editing_form.exec();
 		}
 		else if(obj_type== OBJ_LANGUAGE)
 		{
-      LanguageWidget *language_wgt=new LanguageWidget;
-      language_wgt->setAttributes(db_model, op_list, dynamic_cast<Language *>(object));
-      editing_form.setMainWidget(language_wgt);
+			LanguageWidget *language_wgt=new LanguageWidget;
+			language_wgt->setAttributes(db_model, op_list, dynamic_cast<Language *>(object));
+			editing_form.setMainWidget(language_wgt);
 			res=editing_form.exec();
 		}
 		else if(obj_type== OBJ_FUNCTION)
 		{
-      FunctionWidget *function_wgt=new FunctionWidget;
-      function_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Function *>(object));
-      editing_form.setMainWidget(function_wgt);
+			FunctionWidget *function_wgt=new FunctionWidget;
+			function_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Function *>(object));
+			editing_form.setMainWidget(function_wgt);
 			res=editing_form.exec();
 		}
 		else if(obj_type== OBJ_CAST)
 		{
-      CastWidget *cast_wgt=new CastWidget;
-      cast_wgt->setAttributes(db_model, op_list, dynamic_cast<Cast *>(object));
-      editing_form.setMainWidget(cast_wgt);
+			CastWidget *cast_wgt=new CastWidget;
+			cast_wgt->setAttributes(db_model, op_list, dynamic_cast<Cast *>(object));
+			editing_form.setMainWidget(cast_wgt);
 			res=editing_form.exec();
 		}
 		else if(obj_type== OBJ_CONVERSION)
 		{
-      ConversionWidget *conversion_wgt=new ConversionWidget;
-      conversion_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Conversion *>(object));
-      editing_form.setMainWidget(conversion_wgt);
+			ConversionWidget *conversion_wgt=new ConversionWidget;
+			conversion_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Conversion *>(object));
+			editing_form.setMainWidget(conversion_wgt);
 			res=editing_form.exec();
 		}
 		else if(obj_type== OBJ_DOMAIN)
 		{
-      DomainWidget *domain_wgt=new DomainWidget;
-      domain_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Domain *>(object));
-      editing_form.setMainWidget(domain_wgt);
+			DomainWidget *domain_wgt=new DomainWidget;
+			domain_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Domain *>(object));
+			editing_form.setMainWidget(domain_wgt);
 			res=editing_form.exec();
 		}
 		else if(obj_type== OBJ_AGGREGATE)
 		{
-      AggregateWidget *aggregate_wgt=new AggregateWidget;
-      aggregate_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Aggregate *>(object));
-      editing_form.setMainWidget(aggregate_wgt);
+			AggregateWidget *aggregate_wgt=new AggregateWidget;
+			aggregate_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Aggregate *>(object));
+			editing_form.setMainWidget(aggregate_wgt);
 			res=editing_form.exec();
 		}
 		else if(obj_type== OBJ_SEQUENCE)
 		{
-      SequenceWidget *sequence_wgt=new SequenceWidget;
-      sequence_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Sequence *>(object));
-      editing_form.setMainWidget(sequence_wgt);
+			SequenceWidget *sequence_wgt=new SequenceWidget;
+			sequence_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Sequence *>(object));
+			editing_form.setMainWidget(sequence_wgt);
 			res=editing_form.exec();
 		}
-    else if(obj_type==OBJ_OPERATOR)
+		else if(obj_type==OBJ_OPERATOR)
 		{
-      OperatorWidget *operator_wgt=new OperatorWidget;
-      operator_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Operator *>(object));
-      editing_form.setMainWidget(operator_wgt);
+			OperatorWidget *operator_wgt=new OperatorWidget;
+			operator_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Operator *>(object));
+			editing_form.setMainWidget(operator_wgt);
 			res=editing_form.exec();
 		}
 		else if(obj_type== OBJ_OPFAMILY)
 		{
-      OperatorFamilyWidget *opfamily_wgt=new OperatorFamilyWidget;
-      opfamily_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<OperatorFamily *>(object));
-      editing_form.setMainWidget(opfamily_wgt);
+			OperatorFamilyWidget *opfamily_wgt=new OperatorFamilyWidget;
+			opfamily_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<OperatorFamily *>(object));
+			editing_form.setMainWidget(opfamily_wgt);
 			res=editing_form.exec();
 		}
 		else if(obj_type== OBJ_OPCLASS)
 		{
-      OperatorClassWidget *opclass_wgt=new OperatorClassWidget;
-      opclass_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<OperatorClass *>(object));
-      editing_form.setMainWidget(opclass_wgt);
+			OperatorClassWidget *opclass_wgt=new OperatorClassWidget;
+			opclass_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<OperatorClass *>(object));
+			editing_form.setMainWidget(opclass_wgt);
 			res=editing_form.exec();
 		}
 		else if(obj_type== OBJ_TYPE)
 		{
-      TypeWidget *type_wgt=new TypeWidget;
-      type_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Type *>(object));
-      editing_form.setMainWidget(type_wgt);
+			TypeWidget *type_wgt=new TypeWidget;
+			type_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Type *>(object));
+			editing_form.setMainWidget(type_wgt);
 			res=editing_form.exec();
 		}
 		else if(obj_type== OBJ_VIEW)
 		{
-      ViewWidget *view_wgt=new ViewWidget;
+			ViewWidget *view_wgt=new ViewWidget;
 			View *view=nullptr;
 			view=dynamic_cast<View *>(object);
-      view_wgt->setAttributes(db_model, op_list, sel_schema, view, pos.x(), pos.y());
-      editing_form.setMainWidget(view_wgt);
+			view_wgt->setAttributes(db_model, op_list, sel_schema, view, pos.x(), pos.y());
+			editing_form.setMainWidget(view_wgt);
 			res=editing_form.exec();
 		}
 		else if(obj_type== OBJ_TEXTBOX)
 		{
-      TextboxWidget *textbox_wgt=new TextboxWidget;
+			TextboxWidget *textbox_wgt=new TextboxWidget;
 			Textbox *txtbox=nullptr;
 			txtbox=dynamic_cast<Textbox *>(object);
-      textbox_wgt->setAttributes(db_model, op_list, txtbox, pos.x(), pos.y());
-      editing_form.setMainWidget(textbox_wgt);
+			textbox_wgt->setAttributes(db_model, op_list, txtbox, pos.x(), pos.y());
+			editing_form.setMainWidget(textbox_wgt);
 			res=editing_form.exec();
 		}
 		else if(obj_type==OBJ_COLUMN)
 		{
-      ColumnWidget *column_wgt=new ColumnWidget;
+			ColumnWidget *column_wgt=new ColumnWidget;
 			Column *col=nullptr;
 			col=dynamic_cast<Column *>(object);
-      column_wgt->setAttributes(db_model, parent_obj, op_list, col);
-      editing_form.setMainWidget(column_wgt);
+			column_wgt->setAttributes(db_model, parent_obj, op_list, col);
+			editing_form.setMainWidget(column_wgt);
 			res=editing_form.exec();
 
 			if(res==QDialog::Accepted)
@@ -1532,11 +1533,11 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		}
 		else if(obj_type== OBJ_CONSTRAINT)
 		{
-      ConstraintWidget *constraint_wgt=new ConstraintWidget;
+			ConstraintWidget *constraint_wgt=new ConstraintWidget;
 			Constraint *constr=nullptr;
 			constr=dynamic_cast<Constraint *>(object);
-      constraint_wgt->setAttributes(db_model, parent_obj, op_list, constr);
-      editing_form.setMainWidget(constraint_wgt);
+			constraint_wgt->setAttributes(db_model, parent_obj, op_list, constr);
+			editing_form.setMainWidget(constraint_wgt);
 			res=editing_form.exec();
 
 			if(res==QDialog::Accepted)
@@ -1549,28 +1550,28 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		}
 		else if(obj_type== OBJ_RULE)
 		{
-      RuleWidget *rule_wgt=new RuleWidget;
-      rule_wgt->setAttributes(db_model, dynamic_cast<BaseTable *>(parent_obj), op_list, dynamic_cast<Rule *>(object));
-      editing_form.setMainWidget(rule_wgt);
+			RuleWidget *rule_wgt=new RuleWidget;
+			rule_wgt->setAttributes(db_model, dynamic_cast<BaseTable *>(parent_obj), op_list, dynamic_cast<Rule *>(object));
+			editing_form.setMainWidget(rule_wgt);
 			res=editing_form.exec();
 		}
 		else if(obj_type== OBJ_TRIGGER)
 		{
-      TriggerWidget *trigger_wgt=new TriggerWidget;
-      trigger_wgt->setAttributes(db_model, dynamic_cast<BaseTable *>(parent_obj), op_list, dynamic_cast<Trigger *>(object));
-      editing_form.setMainWidget(trigger_wgt);
+			TriggerWidget *trigger_wgt=new TriggerWidget;
+			trigger_wgt->setAttributes(db_model, dynamic_cast<BaseTable *>(parent_obj), op_list, dynamic_cast<Trigger *>(object));
+			editing_form.setMainWidget(trigger_wgt);
 			res=editing_form.exec();
 		}
 		else if(obj_type== OBJ_INDEX)
 		{
-      IndexWidget *index_wgt=new IndexWidget;
-      index_wgt->setAttributes(db_model, dynamic_cast<Table *>(parent_obj), op_list, dynamic_cast<Index *>(object));
-      editing_form.setMainWidget(index_wgt);
+			IndexWidget *index_wgt=new IndexWidget;
+			index_wgt->setAttributes(db_model, dynamic_cast<Table *>(parent_obj), op_list, dynamic_cast<Index *>(object));
+			editing_form.setMainWidget(index_wgt);
 			res=editing_form.exec();
 		}
 		else if(obj_type== BASE_RELATIONSHIP || obj_type== OBJ_RELATIONSHIP)
 		{
-      RelationshipWidget *relationship_wgt=new RelationshipWidget;
+			RelationshipWidget *relationship_wgt=new RelationshipWidget;
 
 			if(!object && rel_type > 0 &&
 					selected_objects.size() > 0 &&
@@ -1579,55 +1580,55 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 				Table *tab1=dynamic_cast<Table *>(selected_objects[0]),
 						*tab2=(selected_objects.size()==2 ?
 								   dynamic_cast<Table *>(selected_objects[1]) : tab1);
-        relationship_wgt->setAttributes(db_model, op_list, tab1, tab2, rel_type);
+				relationship_wgt->setAttributes(db_model, op_list, tab1, tab2, rel_type);
 			}
 			else
-        relationship_wgt->setAttributes(db_model, op_list, dynamic_cast<BaseRelationship *>(object));
+				relationship_wgt->setAttributes(db_model, op_list, dynamic_cast<BaseRelationship *>(object));
 
-      editing_form.setMainWidget(relationship_wgt);
+			editing_form.setMainWidget(relationship_wgt);
 			res=editing_form.exec();
 			scene->clearSelection();
 		}
 		else if(obj_type== OBJ_TABLE)
 		{
-      TableWidget *table_wgt=new TableWidget;
-      table_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Table *>(object), pos.x(), pos.y());
-      editing_form.setMainWidget(table_wgt);
+			TableWidget *table_wgt=new TableWidget;
+			table_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Table *>(object), pos.x(), pos.y());
+			editing_form.setMainWidget(table_wgt);
 			res=editing_form.exec();
 		}
-    else if(obj_type==OBJ_COLLATION)
+		else if(obj_type==OBJ_COLLATION)
 		{
-      CollationWidget *collation_wgt=new CollationWidget;
-      collation_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Collation *>(object));
-      editing_form.setMainWidget(collation_wgt);
+			CollationWidget *collation_wgt=new CollationWidget;
+			collation_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Collation *>(object));
+			editing_form.setMainWidget(collation_wgt);
 			res=editing_form.exec();
 		}
 		else if(obj_type== OBJ_EXTENSION)
 		{
-      ExtensionWidget *extension_wgt=new ExtensionWidget;
-      extension_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Extension *>(object));
-      editing_form.setMainWidget(extension_wgt);
+			ExtensionWidget *extension_wgt=new ExtensionWidget;
+			extension_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Extension *>(object));
+			editing_form.setMainWidget(extension_wgt);
 			res=editing_form.exec();
 		}
-    else if(obj_type==OBJ_TAG)
+		else if(obj_type==OBJ_TAG)
 		{
-      TagWidget *tag_wgt=new TagWidget;
-      tag_wgt->setAttributes(db_model, op_list, dynamic_cast<Tag *>(object));
-      editing_form.setMainWidget(tag_wgt);
+			TagWidget *tag_wgt=new TagWidget;
+			tag_wgt->setAttributes(db_model, op_list, dynamic_cast<Tag *>(object));
+			editing_form.setMainWidget(tag_wgt);
 			res=editing_form.exec();
 		}
 		else if(obj_type== OBJ_EVENT_TRIGGER)
 		{
-      EventTriggerWidget *eventtrigger_wgt=new EventTriggerWidget;
-      eventtrigger_wgt->setAttributes(db_model, op_list, dynamic_cast<EventTrigger *>(object));
-      editing_form.setMainWidget(eventtrigger_wgt);
+			EventTriggerWidget *eventtrigger_wgt=new EventTriggerWidget;
+			eventtrigger_wgt->setAttributes(db_model, op_list, dynamic_cast<EventTrigger *>(object));
+			editing_form.setMainWidget(eventtrigger_wgt);
 			res=editing_form.exec();
 		}
 		else
 		{
-      DatabaseWidget *database_wgt=new DatabaseWidget;
-      database_wgt->setAttributes(db_model);
-      editing_form.setMainWidget(database_wgt);
+			DatabaseWidget *database_wgt=new DatabaseWidget;
+			database_wgt->setAttributes(db_model);
+			editing_form.setMainWidget(database_wgt);
 			res=editing_form.exec();
 		}
 
@@ -1660,9 +1661,9 @@ void ModelWidget::showDependenciesReferences(void)
 		if(object)
 		{
 			BaseForm parent_form(this);
-      ObjectDepsRefsWidget *deps_refs_wgt=new ObjectDepsRefsWidget;
-      deps_refs_wgt->setAttributes(this, object);
-      parent_form.setMainWidget(deps_refs_wgt);
+			ObjectDepsRefsWidget *deps_refs_wgt=new ObjectDepsRefsWidget;
+			deps_refs_wgt->setAttributes(this, object);
+			parent_form.setMainWidget(deps_refs_wgt);
 			parent_form.setButtonConfiguration(Messagebox::OK_BUTTON);
 			parent_form.setWindowTitle(trUtf8("Object's dependencies & references"));
 			parent_form.exec();
@@ -1681,9 +1682,9 @@ void ModelWidget::showSourceCode(void)
 		if(object)
 		{
 			BaseForm parent_form(this);
-      SourceCodeWidget *sourcecode_wgt=new SourceCodeWidget;
-      sourcecode_wgt->setAttributes(this->db_model, object);
-      parent_form.setMainWidget(sourcecode_wgt);
+			SourceCodeWidget *sourcecode_wgt=new SourceCodeWidget;
+			sourcecode_wgt->setAttributes(this->db_model, object);
+			parent_form.setMainWidget(sourcecode_wgt);
 			parent_form.setWindowTitle(trUtf8("Source code visualization"));
 			parent_form.setButtonConfiguration(Messagebox::OK_BUTTON);
 			parent_form.exec();
@@ -1903,14 +1904,14 @@ void ModelWidget::setTag(void)
 void ModelWidget::editPermissions(void)
 {
 	BaseForm parent_form(this);
-  PermissionWidget *permission_wgt=new PermissionWidget;
+	PermissionWidget *permission_wgt=new PermissionWidget;
 	QAction *act=dynamic_cast<QAction *>(sender());
 	BaseObject *obj=reinterpret_cast<BaseObject *>(act->data().value<void *>());
 
-  permission_wgt->setAttributes(this->db_model, nullptr, obj);
-  parent_form.setMainWidget(permission_wgt);
-  parent_form.setWindowTitle(trUtf8("Edit permissions"));
-  parent_form.setButtonConfiguration(Messagebox::OK_BUTTON);
+	permission_wgt->setAttributes(this->db_model, nullptr, obj);
+	parent_form.setMainWidget(permission_wgt);
+	parent_form.setWindowTitle(trUtf8("Edit permissions"));
+	parent_form.setButtonConfiguration(Messagebox::OK_BUTTON);
 	parent_form.exec();
 	this->setModified(true);
 
@@ -2818,10 +2819,10 @@ void ModelWidget::editCustomSQL(void)
 	QAction *act=dynamic_cast<QAction *>(sender());
 	BaseObject *obj=reinterpret_cast<BaseObject *>(act->data().value<void *>());
 	BaseForm parent_form(this);
-  CustomSQLWidget *customsql_wgt=new CustomSQLWidget;
+	CustomSQLWidget *customsql_wgt=new CustomSQLWidget;
 
-  customsql_wgt->setAttributes(db_model, obj);
-  parent_form.setMainWidget(customsql_wgt);
+	customsql_wgt->setAttributes(db_model, obj);
+	parent_form.setMainWidget(customsql_wgt);
 	parent_form.setWindowTitle(trUtf8("Add custom SQL code"));
 	parent_form.setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
 	parent_form.exec();
