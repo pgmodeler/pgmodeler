@@ -16,9 +16,6 @@
     <height>0</height>
    </size>
   </property>
-  <property name="windowTitle">
-   <string>Form</string>
-  </property>
   <widget class="QLabel" name="default_value_lbl">
    <property name="geometry">
     <rect>
@@ -78,7 +75,7 @@
     <rect>
      <x>83</x>
      <y>129</y>
-     <width>197</width>
+     <width>200</width>
      <height>24</height>
     </rect>
    </property>

@@ -7,11 +7,8 @@
     <x>0</x>
     <y>0</y>
     <width>347</width>
-    <height>112</height>
+    <height>123</height>
    </rect>
-  </property>
-  <property name="windowTitle">
-   <string>Form</string>
   </property>
   <layout class="QGridLayout" name="column_grid">
    <property name="leftMargin">
@@ -50,7 +47,7 @@
       <item row="0" column="0">
        <widget class="QRadioButton" name="expression_rb">
         <property name="text">
-         <string>Expression:</string>
+         <string>E&amp;xpression:</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -73,7 +70,7 @@
       <item row="1" column="0">
        <widget class="QRadioButton" name="sequence_rb">
         <property name="text">
-         <string>Sequence:</string>
+         <string>Se&amp;quence:</string>
         </property>
        </widget>
       </item>

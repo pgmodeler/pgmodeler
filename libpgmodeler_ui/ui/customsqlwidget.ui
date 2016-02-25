@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Add custom SQL code</string>
   </property>
   <layout class="QGridLayout" name="sqlappend_grid">
    <property name="leftMargin">

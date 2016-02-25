@@ -7,11 +7,8 @@
     <x>0</x>
     <y>0</y>
     <width>349</width>
-    <height>62</height>
+    <height>70</height>
    </rect>
-  </property>
-  <property name="windowTitle">
-   <string>Form</string>
   </property>
   <layout class="QGridLayout" name="extension_grid">
    <property name="leftMargin">

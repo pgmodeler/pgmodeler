@@ -16,9 +16,6 @@
     <height>310</height>
    </size>
   </property>
-  <property name="windowTitle">
-   <string>Form</string>
-  </property>
   <layout class="QGridLayout" name="trigger_grid">
    <property name="leftMargin">
     <number>4</number>

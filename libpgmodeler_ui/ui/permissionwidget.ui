@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Edit permissions</string>
   </property>
   <layout class="QGridLayout" name="permission_grid">
    <property name="leftMargin">
