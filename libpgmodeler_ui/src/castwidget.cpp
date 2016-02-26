@@ -46,7 +46,7 @@ CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_CAST)
 		frame=generateInformationFrame(trUtf8("The function to be assigned to a cast from <em><strong>typeA</strong></em> to <em><strong>typeB</strong></em> must have the following signature: <em><strong>typeB</strong> function(<strong>typeA</strong>, integer, boolean)</em>."));
 		cast_grid->addItem(spacer, cast_grid->count()+1, 0, 1, 0);
 		cast_grid->addWidget(frame, cast_grid->count()+1, 0, 1, 0);
-		frame->setParent(this);
+		frame->setParent(this);		
 
 		setRequiredField(src_datatype);
 		setRequiredField(trg_datatype);
@@ -54,8 +54,7 @@ CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_CAST)
 		configureTabOrder({ explicit_rb, implicit_rb, assignment_rb, input_output_chk,
 							conv_func_sel, src_datatype, trg_datatype });
 
-		setIdealSize(500, 480);
-		setSizePadding(60);
+		setMinimumSize(520,480);
 	}
 	catch(Exception &e)
 	{

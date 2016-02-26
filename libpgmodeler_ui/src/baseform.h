@@ -34,7 +34,7 @@
 class BaseForm: public QDialog, public Ui::BaseForm {
 	private:
 		Q_OBJECT
-		
+
 	public:
 		BaseForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 

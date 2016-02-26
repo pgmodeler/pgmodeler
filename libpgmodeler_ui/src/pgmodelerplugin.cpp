@@ -32,9 +32,9 @@ PgModelerPlugin::PgModelerPlugin(void)
 	gridLayout=new QGridLayout;
 
 	widget=new QWidget(plugin_info_frm);
-	plugin_info_frm->generalwidget_wgt->insertWidget(0, widget);
+/*	plugin_info_frm->generalwidget_wgt->insertWidget(0, widget);
 	plugin_info_frm->generalwidget_wgt->setCurrentIndex(0);
-	plugin_info_frm->setWindowTitle(QT_TRANSLATE_NOOP("PgModelerPlugin", "Plugin Information"));
+	plugin_info_frm->setWindowTitle(QT_TRANSLATE_NOOP("PgModelerPlugin", "Plugin Information"));*/
 
 	gridLayout->setHorizontalSpacing(10);
 	gridLayout->setVerticalSpacing(6);

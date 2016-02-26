@@ -82,22 +82,77 @@ void BaseForm::setMainWidget(BaseObjectWidget *widget)
 	else
 		setWindowTitle(widget->windowTitle());
 
-	generalwidget_wgt->insertWidget(0, widget);
-  generalwidget_wgt->setCurrentWidget(widget);
+	QVBoxLayout *vbox=new QVBoxLayout;
+	QScreen *screen=qApp->screens().at(0);
+	QSize min_size=widget->minimumSize();
+	int max_h = screen->size().height() * 0.67,
+			max_w = screen->size().width() * 0.67,
+			inc_w = 0, curr_w =0, curr_h = 0;
 
+	vbox->setContentsMargins(2,2,2,2);
+
+	if(max_w < min_size.width() || max_h < min_size.height())
+	{
+		QScrollArea *scrollarea=nullptr;
+		scrollarea=new QScrollArea(main_frm);
+		scrollarea->setFrameShape(QFrame::NoFrame);
+		scrollarea->setFrameShadow(QFrame::Plain);
+		scrollarea->setWidget(widget);
+		scrollarea->setWidgetResizable(true);
+		widget->setParent(scrollarea);
+		vbox->addWidget(scrollarea);
+		inc_w=scrollarea->verticalScrollBar()->width()/2;
+	}
+	else
+	{
+		vbox->addWidget(widget);
+		widget->setParent(main_frm);
+	}
+
+	main_frm->setLayout(vbox);
 	setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
-	this->resizeToIdealSize(widget->getIdealSize(), widget->getSizePadding());
+
+	QDialog::adjustSize();
+
+	curr_h=this->height(),
+	curr_w=this->width();
+
+	if(curr_h > min_size.height() && min_size.height() < max_h)
+		curr_h = min_size.height();
+	else if(min_size.height() >= max_h)
+		curr_h = max_h;
+
+	if(curr_w > min_size.width() && min_size.width() < max_w)
+		curr_w = min_size.width();
+	else if(min_size.width() >= max_w)
+		curr_w = max_w;
+
+	curr_w += vbox->contentsMargins().left() +
+						vbox->contentsMargins().right();
+
+	curr_h += apply_ok_btn->height() +
+						buttons_lt->contentsMargins().top() +
+						buttons_lt->contentsMargins().bottom() +
+						vbox->contentsMargins().top() +
+						vbox->contentsMargins().bottom();
+
+	this->setMinimumSize(curr_w, curr_h);
+	this->resize(curr_w, curr_h);
 
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(reject()));
-	connect(apply_ok_btn, SIGNAL(clicked(bool)), widget, SLOT(applyConfiguration()));	
+	connect(apply_ok_btn, SIGNAL(clicked(bool)), widget, SLOT(applyConfiguration()));
 	connect(widget, SIGNAL(s_closeRequested()), this, SLOT(accept()));
 }
 
 void BaseForm::setMainWidget(QWidget *widget)
 {
 	if(!widget)	return;
-	generalwidget_wgt->insertWidget(0, widget);
-	generalwidget_wgt->setCurrentIndex(0);
+	/*generalwidget_wgt->insertWidget(0, widget);
+	generalwidget_wgt->setCurrentIndex(0);*/
+
+	QVBoxLayout *hbox=new QVBoxLayout;
+	hbox->addWidget(widget);
+//	widget->setParent(main_wgt);
 
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(reject()));
 	connect(apply_ok_btn, SIGNAL(clicked(bool)), this, SLOT(accept()));
