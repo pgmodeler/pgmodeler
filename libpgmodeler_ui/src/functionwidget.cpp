@@ -111,8 +111,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		setRequiredField(sourc_code_lbl);
 		configureTabOrder();
 
-		setIdealSize(650, 700);
-		setSizePadding(20);
+		setMinimumSize(650, 700);
 	}
 	catch(Exception &e)
 	{
@@ -159,28 +158,28 @@ void FunctionWidget::showParameterForm(void)
 	ObjectTableWidget *table=nullptr;
 	Parameter aux_param;
 	int lin_idx;
-	ParameterWidget parameter_wgt;
+	ParameterWidget *parameter_wgt=new ParameterWidget;
 	BaseForm parent_form;
 
 	if(obj_sender==parameters_tab || obj_sender==return_tab)
 	{
 		table=dynamic_cast<ObjectTableWidget *>(obj_sender);
 
-		parameter_wgt.param_in_chk->setEnabled(obj_sender==parameters_tab);
-		parameter_wgt.param_out_chk->setEnabled(obj_sender==parameters_tab);
-		parameter_wgt.param_variadic_chk->setEnabled(obj_sender==parameters_tab);
-		parameter_wgt.default_value_edt->setEnabled(obj_sender==parameters_tab);
+		parameter_wgt->param_in_chk->setEnabled(obj_sender==parameters_tab);
+		parameter_wgt->param_out_chk->setEnabled(obj_sender==parameters_tab);
+		parameter_wgt->param_variadic_chk->setEnabled(obj_sender==parameters_tab);
+		parameter_wgt->default_value_edt->setEnabled(obj_sender==parameters_tab);
 
 		lin_idx=table->getSelectedRow();
 
 		if(lin_idx >= 0 && !table->getCellText(lin_idx, 0).isEmpty())
 			aux_param=getParameter(table, lin_idx);
 
-		parameter_wgt.setAttributes(aux_param, model);
-		parent_form.setMainWidget(&parameter_wgt);
+		parameter_wgt->setAttributes(aux_param, model);
+		parent_form.setMainWidget(parameter_wgt);
 		parent_form.exec();
 
-		aux_param=parameter_wgt.getParameter();
+		aux_param=parameter_wgt->getParameter();
 		handleParameter(aux_param, parent_form.result());
 	}
 }

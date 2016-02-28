@@ -48,45 +48,13 @@ void BaseForm::setButtonConfiguration(unsigned button_conf)
 	}
 }
 
-void BaseForm::resizeToIdealSize(const QSize &ideal_size, int size_padding)
+void BaseForm::resizeForm(QWidget *widget)
 {
-	QDialog::adjustSize();
-
-	QSize size=this->size();
-	int curr_h=size.height(),
-			curr_w=size.width();
-
-	if(ideal_size.isValid())
-	{
-		if(curr_h < ideal_size.height())
-			curr_h = ideal_size.height();
-		else if(curr_h > ideal_size.height() + size_padding)
-			curr_h = ((ideal_size.height() * 2) + size_padding)/2;
-
-		if(curr_w < ideal_size.width())
-			curr_w = ideal_size.width();
-		else if(curr_w > ideal_size.width() + size_padding)
-			curr_w = ((ideal_size.width() * 2) + size_padding)/2;
-	}
-
-	this->setMinimumSize(curr_w, curr_h);
-	this->resize(curr_w, curr_h);
-}
-
-void BaseForm::setMainWidget(BaseObjectWidget *widget)
-{
-	if(!widget)	return;
-
-	if(widget->getHandledObjectType()!=BASE_OBJECT && widget->windowTitle().isEmpty())
-		setWindowTitle(trUtf8("%1 properties").arg(BaseObject::getTypeName(widget->getHandledObjectType())));
-	else
-		setWindowTitle(widget->windowTitle());
-
 	QVBoxLayout *vbox=new QVBoxLayout;
 	QScreen *screen=qApp->screens().at(0);
 	QSize min_size=widget->minimumSize();
-	int max_h = screen->size().height() * 0.67,
-			max_w = screen->size().width() * 0.67,
+	int max_h = screen->size().height() * 0.70,
+			max_w = screen->size().width() * 0.70,
 			inc_w = 0, curr_w =0, curr_h = 0;
 
 	vbox->setContentsMargins(2,2,2,2);
@@ -101,7 +69,7 @@ void BaseForm::setMainWidget(BaseObjectWidget *widget)
 		scrollarea->setWidgetResizable(true);
 		widget->setParent(scrollarea);
 		vbox->addWidget(scrollarea);
-		inc_w=scrollarea->verticalScrollBar()->width()/2;
+		inc_w=scrollarea->verticalScrollBar()->width();
 	}
 	else
 	{
@@ -110,34 +78,46 @@ void BaseForm::setMainWidget(BaseObjectWidget *widget)
 	}
 
 	main_frm->setLayout(vbox);
-	setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
-
 	QDialog::adjustSize();
 
 	curr_h=this->height(),
 	curr_w=this->width();
 
-	if(curr_h > min_size.height() && min_size.height() < max_h)
-		curr_h = min_size.height();
+	if(min_size.height() > 0 &&
+					curr_h > min_size.height() && min_size.height() < max_h)
+		curr_h = (curr_h + min_size.height())/2;
 	else if(min_size.height() >= max_h)
 		curr_h = max_h;
 
-	if(curr_w > min_size.width() && min_size.width() < max_w)
-		curr_w = min_size.width();
+	if(min_size.width() > 0 &&
+		 curr_w > min_size.width() && min_size.width() < max_w)
+		curr_w = (curr_w + min_size.width())/2;
 	else if(min_size.width() >= max_w)
 		curr_w = max_w;
 
-	curr_w += vbox->contentsMargins().left() +
-						vbox->contentsMargins().right();
+	curr_w += inc_w +
+						((vbox->contentsMargins().left() +
+							vbox->contentsMargins().right()) * 2);
 
 	curr_h += apply_ok_btn->height() +
-						buttons_lt->contentsMargins().top() +
-						buttons_lt->contentsMargins().bottom() +
-						vbox->contentsMargins().top() +
-						vbox->contentsMargins().bottom();
+							((buttons_lt->contentsMargins().top() +
+								buttons_lt->contentsMargins().bottom()) * 4);
 
 	this->setMinimumSize(curr_w, curr_h);
 	this->resize(curr_w, curr_h);
+}
+
+void BaseForm::setMainWidget(BaseObjectWidget *widget)
+{
+	if(!widget)	return;
+
+	if(widget->getHandledObjectType()!=BASE_OBJECT && widget->windowTitle().isEmpty())
+		setWindowTitle(trUtf8("%1 properties").arg(BaseObject::getTypeName(widget->getHandledObjectType())));
+	else
+		setWindowTitle(widget->windowTitle());
+
+	resizeForm(widget);
+	setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
 
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(reject()));
 	connect(apply_ok_btn, SIGNAL(clicked(bool)), widget, SLOT(applyConfiguration()));
@@ -147,12 +127,10 @@ void BaseForm::setMainWidget(BaseObjectWidget *widget)
 void BaseForm::setMainWidget(QWidget *widget)
 {
 	if(!widget)	return;
-	/*generalwidget_wgt->insertWidget(0, widget);
-	generalwidget_wgt->setCurrentIndex(0);*/
 
-	QVBoxLayout *hbox=new QVBoxLayout;
-	hbox->addWidget(widget);
-//	widget->setParent(main_wgt);
+	setWindowTitle(widget->windowTitle());
+	resizeForm(widget);
+	setButtonConfiguration(Messagebox::OK_BUTTON);
 
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(reject()));
 	connect(apply_ok_btn, SIGNAL(clicked(bool)), this, SLOT(accept()));

@@ -74,8 +74,7 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 		setRequiredField(function_lbl);
 		setRequiredField(function_sel);
 
-		setIdealSize(580, 580);
-		setSizePadding(30);
+		setMinimumSize(580, 580);
 	}
 	catch(Exception &e)
 	{

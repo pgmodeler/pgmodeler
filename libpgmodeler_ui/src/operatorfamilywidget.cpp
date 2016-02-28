@@ -42,8 +42,7 @@ OperatorFamilyWidget::OperatorFamilyWidget(QWidget *parent): BaseObjectWidget(pa
 	opfamily_grid->addWidget(frame, opfamily_grid->count()+1, 0, 1, 5);
 
 	configureTabOrder();
-	setIdealSize(520, 300);
-	setSizePadding(30);
+	setMinimumSize(500, 270);
 }
 
 void OperatorFamilyWidget::hideEvent(QHideEvent *event)

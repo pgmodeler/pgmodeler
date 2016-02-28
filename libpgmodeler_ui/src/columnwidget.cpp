@@ -53,8 +53,7 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN
 		connect(expression_rb, &QRadioButton::clicked,
 				[=](){ sequence_sel->setEnabled(false); def_value_txt->setEnabled(true); });
 
-		setIdealSize(530, 480);
-		setSizePadding(30);
+		setMinimumSize(540, 460);
 	}
 	catch(Exception &e)
 	{

@@ -99,6 +99,12 @@
     </item>
     <item>
      <widget class="QCheckBox" name="param_variadic_chk">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="text">
        <string>VARIADIC</string>
       </property>

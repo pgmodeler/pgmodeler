@@ -90,7 +90,7 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 		connect(action_gen_delete, SIGNAL(triggered(void)), this, SLOT(addCommand(void)));
 		connect(action_tab_delete, SIGNAL(triggered(void)), this, SLOT(addCommand(void)));
 
-		setIdealSize(640, 480);
+		setMinimumSize(640, 480);
 	}
 	catch(Exception &e)
 	{
@@ -175,6 +175,8 @@ void CustomSQLWidget::applyConfiguration(void)
 	this->object->setAppendedSQL(append_sql_txt->toPlainText());
 	this->object->setPrependedSQL(prepend_sql_txt->toPlainText());
 	this->sqlcodes_twg->setCurrentIndex(0);
+
+	emit s_closeRequested();
 }
 
 void CustomSQLWidget::addCommand(void)

@@ -117,8 +117,7 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	connect(revoke_rb, SIGNAL(toggled(bool)), this, SLOT(disableGrantOptions(void)));
 	connect(grant_rb, SIGNAL(toggled(bool)), this, SLOT(disableGrantOptions(void)));
 
-	setIdealSize(670,600);
-	setSizePadding(30);
+	setMinimumSize(670,600);
 }
 
 PermissionWidget::~PermissionWidget(void)
@@ -147,7 +146,6 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 
 	perms_changed=false;
 	protected_obj_frm->setVisible(false);
-	//parent_form->apply_ok_btn->setEnabled(true);
 	obj_id_lbl->setVisible(false);
 
 	if(object)
@@ -557,4 +555,9 @@ void PermissionWidget::updateCodePreview(void)
 		str_aux+=QString("\n\n>> Returned error(s): \n\n%1*/").arg(e.getExceptionsText());
 		code_txt->setPlainText(str_aux);
 	}
+}
+
+void PermissionWidget::applyConfiguration(void)
+{
+	emit s_closeRequested();
 }

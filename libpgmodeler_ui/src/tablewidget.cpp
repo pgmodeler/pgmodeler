@@ -39,7 +39,6 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	table_grid->addWidget(frame, table_grid->count()+1, 0, 1, 2);
 	frame->setParent(this);
 
-	//operation_count=0;
 	parent_tables = new ObjectTableWidget(ObjectTableWidget::NO_BUTTONS, true, this);
 	parent_tables->setColumnCount(3);
 	parent_tables->setHeaderLabel(trUtf8("Name"), 0);
@@ -116,8 +115,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	configureFormLayout(table_grid, OBJ_TABLE);
 	configureTabOrder({ tag_sel });
 
-	setIdealSize(600, 650);
-	setSizePadding(30);
+	setMinimumSize(600, 630);
 }
 
 void TableWidget::hideEvent(QHideEvent *event)

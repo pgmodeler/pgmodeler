@@ -30,8 +30,7 @@ TablespaceWidget::TablespaceWidget(QWidget *parent): BaseObjectWidget(parent, OB
 
 	configureTabOrder();
 
-  setIdealSize(500, 230);
-  setSizePadding(30);
+	setMinimumSize(500, 180);
 }
 
 void TablespaceWidget::hideEvent(QHideEvent *event)

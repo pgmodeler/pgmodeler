@@ -71,7 +71,7 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		setRequiredField(transition_func_lbl);
 
 		configureTabOrder({ final_func_sel, transition_func_sel, sort_op_sel });
-		setMinimumSize(600,720);
+		setMinimumSize(620,700);
 	}
 	catch(Exception &e)
 	{

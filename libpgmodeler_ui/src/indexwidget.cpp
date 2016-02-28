@@ -61,8 +61,7 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 		configureTabOrder();
 		selectIndexingType();
 
-		setIdealSize(600, 600);
-		setSizePadding(30);
+		setMinimumSize(570, 550);
 	}
 	catch(Exception &e)
 	{

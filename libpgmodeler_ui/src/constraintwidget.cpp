@@ -113,8 +113,7 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		selectConstraintType();
 		configureTabOrder();
 
-		setIdealSize(600, 640);
-		setSizePadding(30);
+		setMinimumSize(540, 600);
 	}
 	catch(Exception &e)
 	{

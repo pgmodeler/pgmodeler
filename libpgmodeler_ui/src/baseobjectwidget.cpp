@@ -38,9 +38,6 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 		setupUi(this);
 
 		handled_obj_type=obj_type;
-		ideal_size=QSize(0,0);
-		this->size_padding=0;
-
 		operation_count=0;
 		new_object=false;
 		model=nullptr;
@@ -51,8 +48,6 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 		object=nullptr;
 		object_px=NAN;
 		object_py=NAN;
-		pf_min_height=-1;
-		pf_max_height=-1;
 		schema_sel=nullptr;
 		owner_sel=nullptr;
 		tablespace_sel=nullptr;
@@ -103,32 +98,6 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 BaseObjectWidget::~BaseObjectWidget(void)
 {
 
-}
-
-void BaseObjectWidget::setIdealSize(int width, int height)
-{
-	ideal_size.setWidth(width);
-	ideal_size.setHeight(height);
-}
-
-void BaseObjectWidget::setIdealSize(const QSize &size)
-{
-	ideal_size=size;
-}
-
-void BaseObjectWidget::setSizePadding(int size_padding)
-{
-	this->size_padding=size_padding;
-}
-
-int BaseObjectWidget::getSizePadding(void)
-{
-	return(size_padding);
-}
-
-QSize BaseObjectWidget::getIdealSize(void)
-{
-	return(ideal_size);
 }
 
 bool BaseObjectWidget::eventFilter(QObject *object, QEvent *event)
@@ -467,7 +436,9 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 		this->setLayout(baseobject_grid);
 
 	baseobject_grid->setContentsMargins(4, 4, 4, 4);
-	disable_sql_chk->setVisible(obj_type!=BASE_OBJECT && obj_type!=OBJ_PERMISSION && obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_TAG);
+	disable_sql_chk->setVisible(obj_type!=BASE_OBJECT && obj_type!=OBJ_PERMISSION &&
+															obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_TAG &&
+															obj_type!=OBJ_PARAMETER);
 
 	edt_perms_tb->setVisible(Permission::objectAcceptsPermission(obj_type));
 	append_sql_tb->setVisible(BaseObject::acceptsCustomSQL(obj_type));
