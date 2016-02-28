@@ -38,7 +38,7 @@ void startCrashHandler(int signal)
 	symbols = backtrace_symbols(stack, stack_size);
 #endif
 
-  cmd=QString("\"%1\"").arg(GlobalAttributes::PGMODELER_CHANDLER_PATH);
+	cmd=QString("\"%1\"").arg(GlobalAttributes::PGMODELER_CHANDLER_PATH) + QString(" -style ") + GlobalAttributes::DEFAULT_QT_STYLE;
 
 	//Creates the stacktrace file
 	output.setFileName(GlobalAttributes::TEMPORARY_DIR +
@@ -98,8 +98,18 @@ int main(int argc, char **argv)
 		signal(SIGSEGV, startCrashHandler);
 		signal(SIGABRT, startCrashHandler);
 
+		//Checking if the user specified another widget style using the -style param
+		bool using_style=false;
+
+		for(int i=0; i < argc && !using_style; i++)
+			using_style=QString(argv[i]).contains("-style");
+
 		Application app(argc,argv);
 		int res=0;
+
+		//If no custom style is specified we force the usage of Fusion (the default for Qt and pgModeler)
+		if(!using_style)
+			app.setStyle(GlobalAttributes::DEFAULT_QT_STYLE);
 
 		//Loading the application splash screen
 		QSplashScreen splash;
