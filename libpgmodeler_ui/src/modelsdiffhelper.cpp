@@ -174,7 +174,8 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
 		 one (tab_obj) was not included by generalization (to avoid drop inherited columns) */
 				else if(!aux_obj && !tab_obj->isAddedByGeneralization())
 				{
-					if(!diff_opts[OPT_KEEP_NOT_IMPORTED_OBJS])
+					if(diff_type!=ObjectsDiffInfo::DROP_OBJECT ||
+						 (diff_type==ObjectsDiffInfo::DROP_OBJECT && !diff_opts[OPT_KEEP_NOT_IMPORTED_OBJS]))
 						generateDiffInfo(diff_type, tab_obj);
 					else
 						generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, tab_obj);
