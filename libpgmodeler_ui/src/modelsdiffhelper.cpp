@@ -216,7 +216,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 		{
 			/* For creation or modification of objects the order followed is the same
 		 as the creation order on the source model */
-			obj_order=source_model->getCreationOrder(SchemaParser::SQL_DEFINITION, true);
+			obj_order=source_model->getCreationOrder(SchemaParser::SQL_DEFINITION, true, true);
 			aux_model=imported_model;
 			factor=50;
 			prog=50;
@@ -259,18 +259,18 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 					//Processing relationship (in this case only generalization ones are considered)
 					else if(obj_type==OBJ_RELATIONSHIP)
 					{
+						Table *ref_tab=nullptr, *rec_tab=nullptr;
 						Relationship *rel=dynamic_cast<Relationship *>(object);
+
+						rec_tab=aux_model->getTable(rel->getReceiverTable()->getName(true));
 
 						if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN)
 						{
-							Table *ref_tab=nullptr, *rec_tab=nullptr;
-
 							ref_tab=aux_model->getTable(rel->getReferenceTable()->getName(true));
-							rec_tab=aux_model->getTable(rel->getReceiverTable()->getName(true));
 
 							/* If the receiver table exists on the model generates a info for the relationship,
-				 otherwise, the generalization will be created automatically when the table is
-				 created (see table's code defintion) */
+									otherwise, the generalization will be created automatically when the table is
+									created (see table's code defintion) */
 							if(rec_tab && !aux_model->getRelationship(ref_tab, rec_tab))
 								generateDiffInfo(diff_type, rel);
 						}
@@ -674,9 +674,11 @@ void ModelsDiffHelper::processDiffInfos(void)
 			//Generating the DROP commands
 			if(diff_type==ObjectsDiffInfo::DROP_OBJECT)
 			{
-				if(rel)
+				if(rel && rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN)
+				{
 					//Undoing inheritances
 					no_inherit_def+=rel->getInheritDefinition(true);
+				}
 				else if(obj_type==OBJ_PERMISSION)
 					//Unsetting permissions
 					unset_perms+=object->getDropDefinition(diff_opts[OPT_CASCADE_MODE]);
@@ -698,9 +700,11 @@ void ModelsDiffHelper::processDiffInfos(void)
 			//Generating the CREATE commands
 			else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT)
 			{
-				if(rel)
+				if(rel && rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN)
+				{
 					//Creating inheritances
 					inherit_def+=rel->getInheritDefinition(false);
+				}
 				else if(obj_type==OBJ_PERMISSION)
 					//Setting permissions
 					set_perms+=object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
