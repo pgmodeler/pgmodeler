@@ -53,7 +53,7 @@ class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
 		void setAttributes(DatabaseModel *model, BaseObject *object=nullptr);
 
 	public slots:
-		void applyConfiguration(void){}
+		void applyConfiguration(void);
 
 	private slots:
 		void generateSourceCode(int=0);

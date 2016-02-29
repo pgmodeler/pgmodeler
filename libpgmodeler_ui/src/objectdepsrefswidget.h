@@ -42,7 +42,7 @@ class ObjectDepsRefsWidget: public BaseObjectWidget, public Ui::ObjectDepsRefsWi
 		void setAttributes(ModelWidget *model_wgt, BaseObject *object, BaseObject *parent_obj=nullptr);
 
 	public slots:
-		void applyConfiguration(void){}
+		void applyConfiguration(void);
 
 	private slots:
 		void clearTables(void);

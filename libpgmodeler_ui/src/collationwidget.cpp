@@ -29,6 +29,7 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 
 		frame=generateInformationFrame(trUtf8("The fields <strong><em>Collation</em></strong>, <strong><em>Locale</em></strong>, <strong><em>LC_COLLATE & LC_CTYPE</em></strong> are mutually exclusive, so you have to set only one of them in order to properly handle a collation."));
 
+		collation_grid->addItem(new QSpacerItem(10,10, QSizePolicy::Minimum,QSizePolicy::Expanding), collation_grid->count()+1, 0, 1, 0);
 		collation_grid->addWidget(frame, collation_grid->count()+1, 0, 1, 0);
 		frame->setParent(this);
 		configureFormLayout(collation_grid, OBJ_COLLATION);
@@ -60,10 +61,8 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		connect(lccollate_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(resetFields(void)));
 
 		configureTabOrder({ locale_cmb, encoding_cmb, lccollate_cmb, lcctype_cmb });
-		collation_grid->addItem(new QSpacerItem(10,10,QSizePolicy::Minimum,QSizePolicy::Expanding), collation_grid->count()+1, 0, 1, 0);
 
-		setIdealSize(520,420);
-		setSizePadding(30);
+		setMinimumSize(520,400);
 	}
 	catch(Exception &e)
 	{

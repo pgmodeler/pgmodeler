@@ -47,8 +47,7 @@ LanguageWidget::LanguageWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_LA
 
 		configureTabOrder({ trusted_chk, func_handler_sel, func_validator_sel, func_inline_sel });
 
-		setIdealSize(620, 450);
-		setSizePadding(30);
+		setMinimumSize(600, 400);
 	}
 	catch(Exception &e)
 	{

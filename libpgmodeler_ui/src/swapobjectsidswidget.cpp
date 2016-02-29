@@ -54,6 +54,8 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 				[=](){ BaseObject *obj=src_object_sel->getSelectedObject();
 			src_object_sel->setSelectedObject(dst_object_sel->getSelectedObject());
 			dst_object_sel->setSelectedObject(obj); });
+
+		setMinimumSize(550,150);
 	}
 	catch(Exception &e)
 	{

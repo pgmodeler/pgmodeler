@@ -89,8 +89,7 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		configureTabOrder({ indexing_cmb, def_class_chk , family_sel, data_type, elem_type_cmb,
 							operator_sel, elem_family_sel, function_sel, stg_num_sb, storage_type });
 
-    setIdealSize(640, 750);
-    setSizePadding(30);
+		setMinimumSize(640, 730);
 	}
 	catch(Exception &e)
 	{

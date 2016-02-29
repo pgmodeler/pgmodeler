@@ -38,8 +38,7 @@ SchemaWidget::SchemaWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_SCHEMA
 
 	configureTabOrder({ color_picker, show_rect_chk });
 
-	setIdealSize(500, 230);
-	setSizePadding(30);
+	setMinimumSize(500, 180);
 }
 
 void SchemaWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema)
@@ -59,10 +58,7 @@ void SchemaWidget::setAttributes(DatabaseModel *model, OperationList *op_list, S
 	if(schema)
 	{
 		if(schema->isSystemObject())
-		{
 			protected_obj_frm->setVisible(false);
-			//parent_form->apply_ok_btn->setEnabled(true);
-		}
 
 		color_picker->setColor(0, schema->getFillColor());
 		show_rect_chk->setChecked(schema && schema->isRectVisible());

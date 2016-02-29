@@ -34,7 +34,7 @@ ObjectDepsRefsWidget::ObjectDepsRefsWidget(QWidget *parent): BaseObjectWidget(pa
 	connect(dependences_tbw, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(handleItemSelection(QTableWidgetItem*)));
 	connect(references_tbw, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(handleItemSelection(QTableWidgetItem*)));
 
-	setIdealSize(580, 350);
+	setMinimumSize(580, 350);
 }
 
 void ObjectDepsRefsWidget::setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj)
@@ -59,6 +59,11 @@ void ObjectDepsRefsWidget::setAttributes(ModelWidget *model_wgt, BaseObject *obj
 
 	this->model_wgt=model_wgt;
 	setAttributes(model_wgt->getDatabaseModel(), object, parent_obj);
+}
+
+void ObjectDepsRefsWidget::applyConfiguration(void)
+{
+	emit s_closeRequested();
 }
 
 void ObjectDepsRefsWidget::clearTables(void)

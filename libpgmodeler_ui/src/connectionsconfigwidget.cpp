@@ -556,7 +556,7 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 			conn_cfg_wgt.frame->setFrameShape(QFrame::NoFrame);
 
 			parent_form.setMainWidget(&conn_cfg_wgt);
-			parent_form.resizeToIdealSize(QSize(560, 580), 30);
+			parent_form.setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
 			parent_form.exec();
 
 			if(parent_form.result()==QDialog::Accepted)

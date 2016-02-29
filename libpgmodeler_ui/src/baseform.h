@@ -34,14 +34,17 @@
 class BaseForm: public QDialog, public Ui::BaseForm {
 	private:
 		Q_OBJECT
-		
+
+		/*! brief Resizes the dialog according to the minimum sizes of the provided widget.
+				If the widget size exceed 70% of the screen size a scroll area will be created and
+				the widget reparented to it. If the minimum size of the widget is 0 then the size
+				is automatically calculated (no so precise) */
+		void resizeForm(QWidget *widget);
+
 	public:
 		BaseForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
 		void setButtonConfiguration(unsigned button_conf=Messagebox::OK_CANCEL_BUTTONS);
-
-		//! \brief Resizes the form to the specified ideal size and padding
-		void resizeToIdealSize(const QSize &ideal_size, int size_padding);
 
 		/*! \brief Injects the specified object into the form and turns it the main widget.
 				The widget is reparented to the stack widget within the form */

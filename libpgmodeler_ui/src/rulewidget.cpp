@@ -58,8 +58,7 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RULE)
 		setRequiredField(event_lbl);
 		configureTabOrder();
 
-		setIdealSize(550, 520);
-		setSizePadding(30);
+		setMinimumSize(550, 500);
 	}
 	catch(Exception &e)
 	{

@@ -22,16 +22,6 @@ BaseForm::BaseForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
 	this->setWindowFlags(this->windowFlags() ^ Qt::WindowContextHelpButtonHint);
-
-	/* Windows System workaround: permitting the windows subject to maximize shows
-	the maximize button as well the editing dialogs stay on top of all other dialogs */
-#ifdef Q_OS_WIN
-	this->setWindowFlags(this->windowFlags() |
-						 Qt::Dialog |
-						 Qt::WindowMaximizeButtonHint);
-
-	this->generalwidget_wgt->setFrameShape(QFrame::WinPanel);
-#endif
 }
 
 void BaseForm::setButtonConfiguration(unsigned button_conf)
@@ -48,26 +38,60 @@ void BaseForm::setButtonConfiguration(unsigned button_conf)
 	}
 }
 
-void BaseForm::resizeToIdealSize(const QSize &ideal_size, int size_padding)
+void BaseForm::resizeForm(QWidget *widget)
 {
+	QVBoxLayout *vbox=new QVBoxLayout;
+	QScreen *screen=qApp->screens().at(0);
+	QSize min_size=widget->minimumSize();
+	int max_h = screen->size().height() * 0.70,
+			max_w = screen->size().width() * 0.70,
+			inc_w = 0, curr_w =0, curr_h = 0;
+
+	vbox->setContentsMargins(2,2,2,2);
+
+	if(max_w < min_size.width() || max_h < min_size.height())
+	{
+		QScrollArea *scrollarea=nullptr;
+		scrollarea=new QScrollArea(main_frm);
+		scrollarea->setFrameShape(QFrame::NoFrame);
+		scrollarea->setFrameShadow(QFrame::Plain);
+		scrollarea->setWidget(widget);
+		scrollarea->setWidgetResizable(true);
+		widget->setParent(scrollarea);
+		vbox->addWidget(scrollarea);
+		inc_w=scrollarea->verticalScrollBar()->width();
+	}
+	else
+	{
+		vbox->addWidget(widget);
+		widget->setParent(main_frm);
+	}
+
+	main_frm->setLayout(vbox);
 	QDialog::adjustSize();
 
-	QSize size=this->size();
-	int curr_h=size.height(),
-			curr_w=size.width();
+	curr_h=this->height(),
+	curr_w=this->width();
 
-	if(ideal_size.isValid())
-	{
-		if(curr_h < ideal_size.height())
-			curr_h = ideal_size.height();
-		else if(curr_h > ideal_size.height() + size_padding)
-			curr_h = ((ideal_size.height() * 2) + size_padding)/2;
+	if(min_size.height() > 0 &&
+					curr_h > min_size.height() && min_size.height() < max_h)
+		curr_h = (curr_h + min_size.height())/2;
+	else if(min_size.height() >= max_h)
+		curr_h = max_h;
 
-		if(curr_w < ideal_size.width())
-			curr_w = ideal_size.width();
-		else if(curr_w > ideal_size.width() + size_padding)
-			curr_w = ((ideal_size.width() * 2) + size_padding)/2;
-	}
+	if(min_size.width() > 0 &&
+		 curr_w > min_size.width() && min_size.width() < max_w)
+		curr_w = (curr_w + min_size.width())/2;
+	else if(min_size.width() >= max_w)
+		curr_w = max_w;
+
+	curr_w += inc_w +
+						((vbox->contentsMargins().left() +
+							vbox->contentsMargins().right()) * 2);
+
+	curr_h += apply_ok_btn->height() +
+							((buttons_lt->contentsMargins().top() +
+								buttons_lt->contentsMargins().bottom()) * 4);
 
 	this->setMinimumSize(curr_w, curr_h);
 	this->resize(curr_w, curr_h);
@@ -82,22 +106,21 @@ void BaseForm::setMainWidget(BaseObjectWidget *widget)
 	else
 		setWindowTitle(widget->windowTitle());
 
-	generalwidget_wgt->insertWidget(0, widget);
-  generalwidget_wgt->setCurrentWidget(widget);
-
+	resizeForm(widget);
 	setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
-	this->resizeToIdealSize(widget->getIdealSize(), widget->getSizePadding());
 
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(reject()));
-	connect(apply_ok_btn, SIGNAL(clicked(bool)), widget, SLOT(applyConfiguration()));	
+	connect(apply_ok_btn, SIGNAL(clicked(bool)), widget, SLOT(applyConfiguration()));
 	connect(widget, SIGNAL(s_closeRequested()), this, SLOT(accept()));
 }
 
 void BaseForm::setMainWidget(QWidget *widget)
 {
 	if(!widget)	return;
-	generalwidget_wgt->insertWidget(0, widget);
-	generalwidget_wgt->setCurrentIndex(0);
+
+	setWindowTitle(widget->windowTitle());
+	resizeForm(widget);
+	setButtonConfiguration(Messagebox::OK_BUTTON);
 
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(reject()));
 	connect(apply_ok_btn, SIGNAL(clicked(bool)), this, SLOT(accept()));

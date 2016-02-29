@@ -532,7 +532,6 @@ void ModelValidationWidget::swapObjectsIds(void)
 	connect(parent_form.apply_ok_btn, SIGNAL(clicked(bool)), swap_ids_wgt, SLOT(swapObjectsIds()));
 
 	parent_form.setMainWidget(swap_ids_wgt);
-	parent_form.resizeToIdealSize(QSize(550, 280), 30);
 	parent_form.apply_ok_btn->setEnabled(false);
 
 	parent_form.exec();
