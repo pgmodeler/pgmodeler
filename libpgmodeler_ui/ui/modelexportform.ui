@@ -1254,18 +1254,24 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="pixmap">
-      <pixmap resource="../res/resources.qrc">:/imagens/imagens/pgmodeler_name.png</pixmap>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
+   <item row="1" column="0" colspan="3">
     <layout class="QHBoxLayout" name="horizontalLayout_10">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="../res/resources.qrc">:/imagens/imagens/pgmodeler_name.png</pixmap>
+       </property>
+      </widget>
+     </item>
      <item>
       <spacer name="horizontalSpacer_6">
        <property name="orientation">
@@ -1290,7 +1296,7 @@
        <property name="minimumSize">
         <size>
          <width>90</width>
-         <height>38</height>
+         <height>32</height>
         </size>
        </property>
        <property name="maximumSize">
@@ -1328,7 +1334,7 @@
        <property name="minimumSize">
         <size>
          <width>90</width>
-         <height>38</height>
+         <height>32</height>
         </size>
        </property>
        <property name="maximumSize">

@@ -49,6 +49,15 @@ void BaseForm::resizeForm(QWidget *widget)
 
 	vbox->setContentsMargins(2,2,2,2);
 
+	/* If the widget's minimum size is zero then we need to do
+			a size adjustment on the widget prior to insert it into the dialog */
+	if(min_size.height() <= 0 || min_size.width() <= 0)
+	{
+		widget->adjustSize();
+		min_size=widget->size();
+	}
+
+	//Insert the widget into a scroll area if it's minimum size exceeds the 70% of screen's dimensions
 	if(max_w < min_size.width() || max_h < min_size.height())
 	{
 		QScrollArea *scrollarea=nullptr;
@@ -68,30 +77,32 @@ void BaseForm::resizeForm(QWidget *widget)
 	}
 
 	main_frm->setLayout(vbox);
-	QDialog::adjustSize();
+	this->adjustSize();
 
 	curr_h=this->height(),
 	curr_w=this->width();
 
-	if(min_size.height() > 0 &&
-					curr_h > min_size.height() && min_size.height() < max_h)
+	// If the current height is greater than the widget's minimum height we will use a medium value
+	if(curr_h > min_size.height() && min_size.height() < max_h)
 		curr_h = (curr_h + min_size.height())/2;
-	else if(min_size.height() >= max_h)
+	//Using the maximum height if the widget's minimum height exceeds the maximum allowed
+	else if(min_size.height() > max_h)
 		curr_h = max_h;
 
-	if(min_size.width() > 0 &&
-		 curr_w > min_size.width() && min_size.width() < max_w)
+	// If the current width is greater than the widget's minimum width we will use a medium value
+	if(curr_w > min_size.width() && min_size.width() < max_w)
 		curr_w = (curr_w + min_size.width())/2;
-	else if(min_size.width() >= max_w)
+	//Using the maximum width if the widget's minimum width exceeds the maximum allowed
+	else if(min_size.width() > max_w)
 		curr_w = max_w;
 
 	curr_w += inc_w +
 						((vbox->contentsMargins().left() +
-							vbox->contentsMargins().right()) * 2);
+							vbox->contentsMargins().right()) * 3);
 
-	curr_h += apply_ok_btn->height() +
+	curr_h += baselogo_lbl->minimumHeight() +
 							((buttons_lt->contentsMargins().top() +
-								buttons_lt->contentsMargins().bottom()) * 4);
+								buttons_lt->contentsMargins().bottom()) * 3);
 
 	this->setMinimumSize(curr_w, curr_h);
 	this->resize(curr_w, curr_h);
