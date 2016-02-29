@@ -303,6 +303,12 @@
      <property name="enabled">
       <bool>false</bool>
      </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>30</height>
+      </size>
+     </property>
      <property name="toolTip">
       <string>Clear validation results</string>
      </property>
@@ -371,6 +377,12 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>30</height>
+      </size>
+     </property>
      <property name="toolTip">
       <string>Try to resolve the reported issues.</string>
      </property>
@@ -400,6 +412,12 @@
    </item>
    <item row="0" column="2">
     <widget class="QToolButton" name="swap_ids_btn">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>30</height>
+      </size>
+     </property>
      <property name="toolTip">
       <string>Change the creation order for two objects by swapping their ids</string>
      </property>
@@ -428,6 +446,12 @@
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>30</height>
+      </size>
      </property>
      <property name="text">
       <string>Va&amp;lidate</string>
@@ -675,6 +699,12 @@
      <property name="enabled">
       <bool>false</bool>
      </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>30</height>
+      </size>
+     </property>
      <property name="toolTip">
       <string>Cancel the SQL validation in progress.</string>
      </property>
@@ -709,6 +739,12 @@
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>30</height>
+      </size>
      </property>
      <property name="toolTip">
       <string>Try to apply a fix on the selected validation info.</string>
