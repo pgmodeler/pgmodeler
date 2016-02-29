@@ -293,10 +293,15 @@ class DatabaseModel:  public QObject, public BaseObject {
 		QString __getCodeDefinition(unsigned def_type);
 
 		/*! brief Returns the creation order of objects in each definition type (SQL or XML).
+
 		The parameter incl_relnn_objs when 'true' includes the generated objects (table and constraint)
 		of the many-to-many relationships instead of the relationships themselves. The incl_relnn_objs is
+		is accepted only when the creation order for SQL code is being generated, for XML, it'll simply ignored.
+
+		The parameter incl_rel1n_constr when 'true' includes the generated foreign and unique keys
+		of one-to-one|many relationships instead of the relationships themselves. This parameter is
 		is accepted only when the creation order for SQL code is being generated, for XML, it'll simply ignored. */
-		map<unsigned, BaseObject *> getCreationOrder(unsigned def_type, bool incl_relnn_objs=false);
+		map<unsigned, BaseObject *> getCreationOrder(unsigned def_type, bool incl_relnn_objs=false, bool incl_rel1n_constrs=false);
 
 		/*! brief Returns a list containig all the object need to create the 'object' in the proper order.
 		If 'only_children' is set only children objects will be included in the list (for tables, views or schemas).
