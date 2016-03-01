@@ -8879,7 +8879,7 @@ vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<O
 	while(!objs.empty())
 	{
 		//Quotes are removed from the name by default
-		if(format_obj_names)
+		if(format_obj_names && !exact_match)
 		{
 			if(TableObject::isTableObject(objs.back()->getObjectType()))
 			{
