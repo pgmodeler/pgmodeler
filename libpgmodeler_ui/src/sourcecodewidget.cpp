@@ -61,7 +61,7 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 		hl_sqlcode=new SyntaxHighlighter(sqlcode_txt);
 		hl_xmlcode=new SyntaxHighlighter(xmlcode_txt);
 
-		setMinimumSize(680, 580);
+		setMinimumSize(640, 540);
 	}
 	catch(Exception &e)
 	{

@@ -38,7 +38,7 @@ SchemaWidget::SchemaWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_SCHEMA
 
 	configureTabOrder({ color_picker, show_rect_chk });
 
-	setMinimumSize(500, 180);
+	setMinimumSize(480, 140);
 }
 
 void SchemaWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema)

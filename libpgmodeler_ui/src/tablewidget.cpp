@@ -115,7 +115,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	configureFormLayout(table_grid, OBJ_TABLE);
 	configureTabOrder({ tag_sel });
 
-	setMinimumSize(600, 630);
+	setMinimumSize(600, 610);
 }
 
 void TableWidget::hideEvent(QHideEvent *event)

@@ -62,7 +62,7 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 
 		configureTabOrder({ locale_cmb, encoding_cmb, lccollate_cmb, lcctype_cmb });
 
-		setMinimumSize(520,400);
+		setMinimumSize(520, 380);
 	}
 	catch(Exception &e)
 	{

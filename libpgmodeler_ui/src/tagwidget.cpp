@@ -40,7 +40,7 @@ TagWidget::TagWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TAG)
 		row++;
 	}
 
-	setMinimumSize(450, 250);
+	setMinimumSize(450, 220);
 }
 
 void TagWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Tag *tag)

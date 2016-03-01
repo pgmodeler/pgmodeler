@@ -26,7 +26,7 @@ TextboxWidget::TextboxWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TEXT
 	text_txt->removeEventFilter(this);
 	connect(color_select_tb, SIGNAL(clicked(void)), this, SLOT(selectTextColor(void)));
 
-	setMinimumSize(500, 220);
+	setMinimumSize(500, 200);
 }
 
 void TextboxWidget::hideEvent(QHideEvent *event)

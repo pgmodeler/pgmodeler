@@ -39,7 +39,7 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DOMAIN
 		configureTabOrder({ def_value_edt, constr_name_edt, not_null_chk,
 							check_expr_txt, data_type });
 
-		setMinimumSize(580, 520);
+		setMinimumSize(580, 530);
 	}
 	catch(Exception &e)
 	{

@@ -154,7 +154,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 							ref_type_cmb, select_from_chk, from_where_chk, after_where_chk,
 							table_sel, tab_alias_edt, column_sel, col_alias_edt });
 
-		setMinimumSize(650, 730);
+		setMinimumSize(600, 730);
 	}
 	catch(Exception &e)
 	{

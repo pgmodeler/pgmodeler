@@ -45,7 +45,7 @@ void BaseForm::resizeForm(QWidget *widget)
 	QSize min_size=widget->minimumSize();
 	int max_h = screen->size().height() * 0.70,
 			max_w = screen->size().width() * 0.70,
-			inc_w = 0, curr_w =0, curr_h = 0;
+			curr_w =0, curr_h = 0;
 
 	vbox->setContentsMargins(2,2,2,2);
 
@@ -68,7 +68,6 @@ void BaseForm::resizeForm(QWidget *widget)
 		scrollarea->setWidgetResizable(true);
 		widget->setParent(scrollarea);
 		vbox->addWidget(scrollarea);
-		inc_w=scrollarea->verticalScrollBar()->width();
 	}
 	else
 	{
@@ -80,29 +79,21 @@ void BaseForm::resizeForm(QWidget *widget)
 	this->adjustSize();
 
 	curr_h=this->height(),
-	curr_w=this->width();
+	curr_w=min_size.width();
 
 	// If the current height is greater than the widget's minimum height we will use a medium value
 	if(curr_h > min_size.height() && min_size.height() < max_h)
 		curr_h = (curr_h + min_size.height())/2;
 	//Using the maximum height if the widget's minimum height exceeds the maximum allowed
-	else if(min_size.height() > max_h)
+	else if(min_size.height() >= max_h)
 		curr_h = max_h;
 
-	// If the current width is greater than the widget's minimum width we will use a medium value
-	if(curr_w > min_size.width() && min_size.width() < max_w)
-		curr_w = (curr_w + min_size.width())/2;
-	//Using the maximum width if the widget's minimum width exceeds the maximum allowed
-	else if(min_size.width() > max_w)
-		curr_w = max_w;
-
-	curr_w += inc_w +
-						((vbox->contentsMargins().left() +
-							vbox->contentsMargins().right()) * 3);
+	curr_w += (vbox->contentsMargins().left() +
+						 vbox->contentsMargins().right()) * 6;
 
 	curr_h += baselogo_lbl->minimumHeight() +
 							((buttons_lt->contentsMargins().top() +
-								buttons_lt->contentsMargins().bottom()) * 3);
+								buttons_lt->contentsMargins().bottom()) * 6);
 
 	this->setMinimumSize(curr_w, curr_h);
 	this->resize(curr_w, curr_h);

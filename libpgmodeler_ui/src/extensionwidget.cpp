@@ -8,7 +8,7 @@ ExtensionWidget::ExtensionWidget(QWidget * parent) : BaseObjectWidget(parent, OB
 	extension_grid->addItem(new QSpacerItem(10,10,QSizePolicy::Minimum,QSizePolicy::Expanding), extension_grid->count()+1, 0, 1, 0);
 	configureTabOrder({ cur_ver_edt, old_ver_edt, handles_type_chk });
 
-	setMinimumSize(500, 200);
+	setMinimumSize(500, 180);
 }
 
 void ExtensionWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Extension *ext)

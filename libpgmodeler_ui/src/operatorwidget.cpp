@@ -70,7 +70,7 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_OP
 		setRequiredField(functions_sel[0]);
 		configureTabOrder({ functions_sel[0], arg_types[0], arg_types[1] });
 
-		setMinimumSize(600, 550);
+		setMinimumSize(600, 620);
 	}
 	catch(Exception &e)
 	{
