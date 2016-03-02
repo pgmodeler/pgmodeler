@@ -129,6 +129,7 @@ else
            libQt5Network.so.5 \
            libQt5Gui.so.5 \
            libQt5Core.so.5 \
+           libQt5XcbQpa.so.5 \
            libicui18n.so.5* \
            libicuuc.so.5* \
            libicudata.so.5*"
@@ -245,7 +246,7 @@ if [ $BUNDLE_QT_LIBS = 1 ]; then
  QT_ROOT=`$QMAKE_ROOT/qtpaths --install-prefix`  >> $LOG 2>&1
  
  for lib in $QT_LIBS; do
-  cp $QT_ROOT/lib/$lib $BUILD_DIR/$INSTALL_ROOT/lib >> $LOG 2>&1
+  cp -v $QT_ROOT/lib/$lib $BUILD_DIR/$INSTALL_ROOT/lib >> $LOG 2>&1
  done
  
  if [ $? -ne 0 ]; then
@@ -268,7 +269,7 @@ if [ $BUNDLE_QT_LIBS = 1 ]; then
  for plug in $DEP_PLUGINS; do
    pdir=`dirname $plug`
    mkdir -p $DEP_PLUGINS_DIR/$pdir >> $LOG 2>&1
-   cp $QT_ROOT/plugins/$plug $DEP_PLUGINS_DIR/$pdir >> $LOG 2>&1
+   cp -v $QT_ROOT/plugins/$plug $DEP_PLUGINS_DIR/$pdir >> $LOG 2>&1
 
    if [ $? -ne 0 ]; then
     echo
@@ -281,9 +282,9 @@ if [ $BUNDLE_QT_LIBS = 1 ]; then
 fi
 
 echo "Copying scripts..."
-cp $STARTUP_SCRIPT "$BUILD_DIR/$INSTALL_ROOT" >> $LOG 2>&1
-cp $MIME_UPDATE_SCRIPT "$BUILD_DIR/$INSTALL_ROOT" >> $LOG 2>&1
-cp $ENV_VARS_SCRIPT "$BUILD_DIR/$INSTALL_ROOT" >> $LOG 2>&1
+cp -v $STARTUP_SCRIPT "$BUILD_DIR/$INSTALL_ROOT" >> $LOG 2>&1
+cp -v $MIME_UPDATE_SCRIPT "$BUILD_DIR/$INSTALL_ROOT" >> $LOG 2>&1
+cp -v $ENV_VARS_SCRIPT "$BUILD_DIR/$INSTALL_ROOT" >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
     echo
