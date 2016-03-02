@@ -38,7 +38,6 @@ ConversionWidget::ConversionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 
 		configureFormLayout(convcod_grid, OBJ_CONVERSION);
 		frame=generateInformationFrame(trUtf8("The function to be assigned to an encoding conversion must have the following signature: <em>void function(integer, integer, cstring, internal, integer)</em>."));
-
 		convcod_grid->addItem(new QSpacerItem(10,10,QSizePolicy::Minimum,QSizePolicy::Expanding), convcod_grid->count()+1, 0, 1, 0);
 		convcod_grid->addWidget(frame, convcod_grid->count()+1, 0, 1, 0);
 		frame->setParent(this);
@@ -47,9 +46,9 @@ ConversionWidget::ConversionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		src_encoding_cmb->addItems(encodings);
 		trg_encoding_cmb->addItems(encodings);
 
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-		parent_form->setMinimumSize(600, 440);
 		configureTabOrder({ src_encoding_cmb, trg_encoding_cmb, conv_func_sel });
+
+		setMinimumSize(500, 300);
 	}
 	catch(Exception &e)
 	{

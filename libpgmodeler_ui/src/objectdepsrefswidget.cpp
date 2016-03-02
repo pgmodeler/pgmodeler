@@ -27,26 +27,21 @@ ObjectDepsRefsWidget::ObjectDepsRefsWidget(QWidget *parent): BaseObjectWidget(pa
 	PgModelerUiNS::configureWidgetFont(message_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 
 	model_wgt=nullptr;
-	parent_form->setWindowTitle(trUtf8("Object's dependencies & references"));
-	parent_form->setButtonConfiguration(Messagebox::OK_BUTTON);
-	parent_form->setMinimumSize(580, 350);
 	alert_frm->setVisible(false);
 
-	connect(parent_form->apply_ok_btn, SIGNAL(clicked(bool)), parent_form, SLOT(close(void)));
 	connect(exc_ind_deps_chk,	SIGNAL(toggled(bool)), this, SLOT(updateObjectTables(void)));
 	connect(inc_ind_refs_chk,	SIGNAL(toggled(bool)), this, SLOT(updateObjectTables(void)));
 	connect(dependences_tbw, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(handleItemSelection(QTableWidgetItem*)));
 	connect(references_tbw, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(handleItemSelection(QTableWidgetItem*)));
+
+	setMinimumSize(580, 350);
 }
 
 void ObjectDepsRefsWidget::setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj)
 {
-	vector<BaseObject *> objs;
-
 	BaseObjectWidget::setAttributes(model, object, parent_obj);
 
 	this->name_edt->setReadOnly(true);
-	this->parent_form->apply_ok_btn->setEnabled(true);
 	this->protected_obj_frm->setVisible(false);
 	this->comment_edt->setVisible(false);
 	this->comment_lbl->setVisible(false);
@@ -64,6 +59,11 @@ void ObjectDepsRefsWidget::setAttributes(ModelWidget *model_wgt, BaseObject *obj
 
 	this->model_wgt=model_wgt;
 	setAttributes(model_wgt->getDatabaseModel(), object, parent_obj);
+}
+
+void ObjectDepsRefsWidget::applyConfiguration(void)
+{
+	emit s_closeRequested();
 }
 
 void ObjectDepsRefsWidget::clearTables(void)

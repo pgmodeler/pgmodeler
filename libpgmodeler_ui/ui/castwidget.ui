@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>513</width>
-    <height>78</height>
+    <height>52</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -15,9 +15,6 @@
     <width>0</width>
     <height>0</height>
    </size>
-  </property>
-  <property name="windowTitle">
-   <string>Form</string>
   </property>
   <layout class="QGridLayout" name="cast_grid">
    <property name="leftMargin">
@@ -56,7 +53,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Implicit</string>
+      <string>I&amp;mplicit</string>
      </property>
      <property name="checked">
       <bool>false</bool>
@@ -172,7 +169,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Explicit</string>
+      <string>E&amp;xplicit</string>
      </property>
      <property name="checked">
       <bool>true</bool>

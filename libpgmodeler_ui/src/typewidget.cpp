@@ -23,7 +23,6 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 	try
 	{
 		QGridLayout *grid=nullptr;
-		QSpacerItem *spacer=nullptr;
 		QFrame *frame=nullptr;
 		QStringList list;
 		unsigned i,i1;
@@ -36,10 +35,9 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 		range_subtype=new PgSQLTypeWidget(this, trUtf8("Subtype"));
 
 		grid=dynamic_cast<QGridLayout *>(base_attribs_twg->widget(1)->layout());
-		spacer=new QSpacerItem(20, 1, QSizePolicy::Minimum, QSizePolicy::Expanding);
 		grid->addWidget(like_type,6,0,1,0);
 		grid->addWidget(element_type,7,0,1,0);
-		grid->addItem(spacer,8,0);
+		grid->addItem(new QSpacerItem(20, 1, QSizePolicy::Minimum, QSizePolicy::Expanding),8,0);
 
 		grid=dynamic_cast<QGridLayout *>(base_attribs_twg->widget(0)->layout());
 		for(i=Type::INPUT_FUNC; i <= Type::ANALYZE_FUNC; i++)
@@ -77,6 +75,8 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 
 		grid=dynamic_cast<QGridLayout *>(base_attribs_twg->widget(0)->layout());
 		frame=generateInformationFrame(trUtf8("The functions to be assigned to a type should be written in C language and possess, respectively, the following signatures:<br/>  <table>   <tr>    <td><strong>INPUT:</strong> <em>any function(cstring, oid, integer)</em></td>    <td><strong>OUTPUT:</strong> <em>cstring function(any)</em></td>   </tr>   <tr>    <td><strong>SEND:</strong> <em>byta function(any)</em></td>    <td><strong>RECV:</strong> <em>any function(internal, oid, integer)</em></td>   </tr>   <tr>    <td><strong>TPMOD_IN:</strong> <em>integer function(cstring[])</em></td>    <td><strong>TPMOD_OUT:</strong> <em>cstring function(integer)</em></td>   </tr>   <tr>    <td><strong>ANALYZE:</strong> <em>boolean function(internal)</em></td>    <tr>  </table>"));
+
+		grid->addItem(new QSpacerItem(20, 1, QSizePolicy::Minimum, QSizePolicy::Expanding), grid->count()+1,0);
 		grid->addWidget(frame, grid->count()+1, 0, 1, 0);
 		frame->setParent(base_attribs_twg->widget(0));
 
@@ -92,14 +92,13 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 		}
 
 		grid->addWidget(range_subtype,3,0,1,2);
-		spacer=new QSpacerItem(20, 1, QSizePolicy::Minimum, QSizePolicy::Expanding);
 		frame=generateInformationFrame(trUtf8("The functions to be assigned to a range type should have the following signatures:<br/><br/><strong>Canonical:</strong> <em>any function(any)</em> <br/><strong>Subtype Diff:</strong> <em>double precision function(subtype, subtype)</em>"));
-		grid->addWidget(frame, 4, 0, 1, 0);
-		grid->addItem(spacer,5,0);
+		grid->addItem(new QSpacerItem(20, 1, QSizePolicy::Minimum, QSizePolicy::Expanding),4,0);
+		grid->addWidget(frame, 5, 0, 1, 0);
 
 		range_attribs_gb->setVisible(false);
 
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+		//connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(base_type_rb, SIGNAL(toggled(bool)), this, SLOT(selectTypeConfiguration(void)));
 		connect(composite_rb, SIGNAL(toggled(bool)), this, SLOT(selectTypeConfiguration(void)));
 		connect(enumeration_rb, SIGNAL(toggled(bool)), this, SLOT(selectTypeConfiguration(void)));
@@ -108,8 +107,6 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 		connect(attributes_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleAttribute(int)));
 		connect(attributes_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleAttribute(int)));
 		connect(attributes_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editAttribute(int)));
-
-		parent_form->setMinimumSize(620, 760);
 
 		StorageType::getTypes(list);
 		storage_cmb->addItems(list);
@@ -129,6 +126,8 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 						   enum_name_edt, attrib_name_edt, attrib_collation_sel, attrib_type_wgt,
 						   opclass_sel, functions_sel[Type::CANONICAL_FUNC], functions_sel[Type::SUBTYPE_DIFF_FUNC],
 						   base_attribs_twg});
+
+		setMinimumSize(620, 750);
 	}
 	catch(Exception &e)
 	{

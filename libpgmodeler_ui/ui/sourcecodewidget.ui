@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Source code visualization</string>
   </property>
   <layout class="QGridLayout" name="codigofonte_grid">
    <property name="leftMargin">

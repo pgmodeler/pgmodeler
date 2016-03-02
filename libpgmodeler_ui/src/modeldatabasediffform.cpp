@@ -96,6 +96,8 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 
 		pgsql_ver_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
 
+		PgModelerUiNS::configureWidgetFont(message_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
+
 		connect(cancel_btn, &QToolButton::clicked, [=](){ cancelOperation(true); });
 		connect(pgsql_ver_chk, SIGNAL(toggled(bool)), pgsql_ver_cmb, SLOT(setEnabled(bool)));
 		connect(connections_cmb, SIGNAL(activated(int)), this, SLOT(listDatabases()));

@@ -20,20 +20,24 @@
 #include "permissionwidget.h"
 #include "customsqlwidget.h"
 #include "pgmodeleruins.h"
+#include "baseform.h"
 
 const QColor BaseObjectWidget::PROT_LINE_BGCOLOR=QColor(255,180,180);
 const QColor BaseObjectWidget::PROT_LINE_FGCOLOR=QColor(80,80,80);
 const QColor BaseObjectWidget::RELINC_LINE_BGCOLOR=QColor(164,249,176);
 const QColor BaseObjectWidget::RELINC_LINE_FGCOLOR=QColor(80,80,80);
 
-BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialog(parent)
+BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidget(parent)
 {
 	try
 	{
 		QHBoxLayout *layout=nullptr;
 		QSpacerItem *spacer=nullptr;
 
+		setWindowTitle(QString());
 		setupUi(this);
+
+		handled_obj_type=obj_type;
 		operation_count=0;
 		new_object=false;
 		model=nullptr;
@@ -44,26 +48,14 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		object=nullptr;
 		object_px=NAN;
 		object_py=NAN;
-		pf_min_height=-1;
-		pf_max_height=-1;
-		parent_form=nullptr;
 		schema_sel=nullptr;
 		owner_sel=nullptr;
 		tablespace_sel=nullptr;
 
 		PgModelerUiNS::configureWidgetFont(protected_obj_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 
-		parent_form=new BaseForm(nullptr, (Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::WindowSystemMenuHint));
-		parent_form->setWindowTitle(trUtf8("Create / Edit: ") + BaseObject::getTypeName(obj_type));
-		parent_form->generalwidget_wgt->insertWidget(0, this);
-		parent_form->generalwidget_wgt->setCurrentIndex(0);
-		parent_form->setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
-		parent_form->setObjectName(QString("parent_form"));
-
 		connect(edt_perms_tb, SIGNAL(clicked(bool)),this, SLOT(editPermissions(void)));
-		connect(append_sql_tb, SIGNAL(clicked(bool)),this, SLOT(appendSQL(void)));
-		connect(parent_form->cancel_btn, SIGNAL(clicked(bool)), parent_form, SLOT(reject(void)));
-		connect(parent_form, SIGNAL(rejected()), this, SLOT(reject()));
+		connect(append_sql_tb, SIGNAL(clicked(bool)),this, SLOT(editCustomSQL(void)));
 
 		schema_sel=new ObjectSelectorWidget(OBJ_SCHEMA, true, this);
 		collation_sel=new ObjectSelectorWidget(OBJ_COLLATION, true, this);
@@ -105,13 +97,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 
 BaseObjectWidget::~BaseObjectWidget(void)
 {
-	if(parent_form)
-	{
-		parent_form->generalwidget_wgt->removeWidget(this);
-		this->setParent(nullptr);
-		delete(parent_form);
-		parent_form=nullptr;
-	}
+
 }
 
 bool BaseObjectWidget::eventFilter(QObject *object, QEvent *event)
@@ -123,7 +109,7 @@ bool BaseObjectWidget::eventFilter(QObject *object, QEvent *event)
 
 		if(kevent->key()==Qt::Key_Return || kevent->key()==Qt::Key_Enter)
 		{
-			parent_form->apply_ok_btn->click();
+			applyConfiguration();
 			return(true);
 		}
 	}
@@ -131,35 +117,9 @@ bool BaseObjectWidget::eventFilter(QObject *object, QEvent *event)
 	return(QWidget::eventFilter(object, event));
 }
 
-void BaseObjectWidget::show(void)
+ObjectType BaseObjectWidget::getHandledObjectType(void)
 {
-	parent_form->exec();
-	QDialog::show();
-}
-
-void BaseObjectWidget::showEvent(QShowEvent *)
-{
-	if(pf_min_height < 0)
-	{
-		pf_min_height=parent_form->minimumHeight();
-		pf_max_height=parent_form->maximumHeight();
-	}
-
-	if(protected_obj_frm->isVisible())
-	{
-		int max_h=(pf_max_height + protected_obj_frm->height() + 10);
-		if(max_h > MAX_OBJECT_SIZE) max_h=MAX_OBJECT_SIZE;
-
-		parent_form->setMinimumHeight(pf_min_height + protected_obj_frm->height() + 10);
-		parent_form->setMaximumHeight(max_h);
-		parent_form->resize(parent_form->minimumWidth(),parent_form->minimumHeight());
-	}
-	else if(pf_min_height > 0)
-	{
-		parent_form->setMinimumHeight(pf_min_height);
-		parent_form->setMaximumHeight(pf_max_height);
-		parent_form->resize(parent_form->minimumWidth(), pf_min_height);
-	}
+	return(handled_obj_type);
 }
 
 void BaseObjectWidget::hideEvent(QHideEvent *)
@@ -173,13 +133,12 @@ void BaseObjectWidget::hideEvent(QHideEvent *)
 	collation_sel->clearSelector();
 
 	disable_sql_chk->setChecked(false);
-
-	parent_form->blockSignals(true);
-	parent_form->apply_ok_btn->setEnabled(true);
-	parent_form->close();
-	parent_form->blockSignals(false);
-
 	new_object=false;
+}
+
+void BaseObjectWidget::showEvent(QShowEvent *)
+{
+	name_edt->setFocus();
 }
 
 void BaseObjectWidget::setRequiredField(QWidget *widget)
@@ -427,8 +386,6 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 							((obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT) &&
 							 dynamic_cast<TableObject *>(object)->isAddedByRelationship())));
 		protected_obj_frm->setVisible(prot);
-		parent_form->apply_ok_btn->setEnabled(!prot);
-
 		disable_sql_chk->setChecked(object->isSQLDisabled());
 	}
 	else
@@ -479,7 +436,9 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 		this->setLayout(baseobject_grid);
 
 	baseobject_grid->setContentsMargins(4, 4, 4, 4);
-	disable_sql_chk->setVisible(obj_type!=BASE_OBJECT && obj_type!=OBJ_PERMISSION && obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_TAG);
+	disable_sql_chk->setVisible(obj_type!=BASE_OBJECT && obj_type!=OBJ_PERMISSION &&
+															obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_TAG &&
+															obj_type!=OBJ_PARAMETER);
 
 	edt_perms_tb->setVisible(Permission::objectAcceptsPermission(obj_type));
 	append_sql_tb->setVisible(BaseObject::acceptsCustomSQL(obj_type));
@@ -664,7 +623,7 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 	alert_frm->setObjectName("alerta_frm");
 	alert_frm->setFrameShape(QFrame::StyledPanel);
 	alert_frm->setFrameShadow(QFrame::Raised);
-	alert_frm->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+	alert_frm->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
 	grid = new QGridLayout(alert_frm);
 	grid->setObjectName("grid");
@@ -688,29 +647,36 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 	msg_lbl->setText(trUtf8("The <em style='color: %1'><strong>highlighted</strong></em> fields in the form or one of their values are available only on specific PostgreSQL versions. \
 							Generating SQL code for versions other than those specified in the fields' tooltips may create incompatible code.").arg(color.name()));
 
-							grid->addWidget(msg_lbl, 0, 1, 1, 1);
-					 grid->setContentsMargins(4,4,4,4);
+	grid->addWidget(msg_lbl, 0, 1, 1, 1);
+	grid->setContentsMargins(4,4,4,4);
 
-			return(alert_frm);
+	alert_frm->adjustSize();
+	return(alert_frm);
 }
 
 void BaseObjectWidget::editPermissions(void)
 {
-	PermissionWidget permission_wgt;
 	BaseObject *parent_obj=nullptr;
+	BaseForm parent_form(this);
+	PermissionWidget *permission_wgt=new PermissionWidget;
 
 	if(this->relationship)
 		parent_obj=this->relationship;
 
-	permission_wgt.setAttributes(this->model, parent_obj, this->object);
-	permission_wgt.show();
+	permission_wgt->setAttributes(this->model, parent_obj, this->object);
+	parent_form.setMainWidget(permission_wgt);
+	parent_form.setButtonConfiguration(Messagebox::OK_BUTTON);
+	parent_form.exec();
 }
 
-void BaseObjectWidget::appendSQL(void)
+void BaseObjectWidget::editCustomSQL(void)
 {
-	CustomSQLWidget customsql_wgt;
-	customsql_wgt.setAttributes(this->model, this->object);
-	customsql_wgt.show();
+	BaseForm parent_form(this);
+  CustomSQLWidget *customsql_wgt=new CustomSQLWidget;
+
+  customsql_wgt->setAttributes(this->model, this->object);
+  parent_form.setMainWidget(customsql_wgt);
+	parent_form.exec();
 }
 
 void BaseObjectWidget::applyConfiguration(void)
@@ -855,7 +821,6 @@ void BaseObjectWidget::finishConfiguration(void)
 					this->object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
 			}
 
-
 			model->getObjectReferences(object, ref_objs);
 			for(auto &obj : ref_objs)
 			{
@@ -866,8 +831,6 @@ void BaseObjectWidget::finishConfiguration(void)
 			}
 
 			object->setCodeInvalidated(true);
-			this->accept();
-			parent_form->hide();
 
 			//If the object is graphical (or a table object), updates it (or its parent) on the scene
 			if(graph_obj || tab_obj)
@@ -891,7 +854,7 @@ void BaseObjectWidget::finishConfiguration(void)
 				}
 
 				/* Updates the visual schemas when the objects is moved to another or a
-		table object is added to a table */
+					table object is added to a table */
 				if(object->getSchema())
 					dynamic_cast<Schema *>(object->getSchema())->setModified(true);
 				else if(tab_obj && tab_obj->getParentTable() &&
@@ -903,6 +866,7 @@ void BaseObjectWidget::finishConfiguration(void)
 			}
 
 			emit s_objectManipulated();
+			emit s_closeRequested();
 		}
 	}
 	catch(Exception &e)

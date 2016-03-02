@@ -78,6 +78,11 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 
 		void listObjects(ObjectType obj_type);
 
+		/*! brief Template method that opens the editing form for the specified object.
+				Class and ClassWidget should be compatible, e.g., "Column" can only be edited using ColumnWidget */
+		template<class Class, class ClassWidget>
+		int openEditingForm(TableObject *object);
+
 	public:
 		ViewWidget(QWidget * parent = 0);
 
@@ -98,8 +103,6 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 
 		//! \brief Updates the sql code field of the view form
 		void updateCodePreview(void);
-
-		void showTableObjectForm(ObjectType obj_type);
 
 		//! \brief Adds or edit a object on the object table that calls the slot
 		void handleObject(void);

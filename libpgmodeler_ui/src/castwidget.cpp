@@ -44,22 +44,17 @@ CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_CAST)
 		name_edt->setFont(font);
 
 		frame=generateInformationFrame(trUtf8("The function to be assigned to a cast from <em><strong>typeA</strong></em> to <em><strong>typeB</strong></em> must have the following signature: <em><strong>typeB</strong> function(<strong>typeA</strong>, integer, boolean)</em>."));
-		cast_grid->addWidget(frame, cast_grid->count()+1, 0, 1, 0);
 		cast_grid->addItem(spacer, cast_grid->count()+1, 0, 1, 0);
-		frame->setParent(this);
-
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-		connect(input_output_chk, SIGNAL(toggled(bool)), conv_func_sel, SLOT(setDisabled(bool)));
-		connect(input_output_chk, SIGNAL(toggled(bool)), conv_func_sel, SLOT(clearSelector(void)));
-
-		parent_form->setMinimumSize(530, 520);
-		//parent_form->setMaximumHeight(520);
+		cast_grid->addWidget(frame, cast_grid->count()+1, 0, 1, 0);
+		frame->setParent(this);		
 
 		setRequiredField(src_datatype);
 		setRequiredField(trg_datatype);
 
 		configureTabOrder({ explicit_rb, implicit_rb, assignment_rb, input_output_chk,
 							conv_func_sel, src_datatype, trg_datatype });
+
+		setMinimumSize(520, 420);
 	}
 	catch(Exception &e)
 	{

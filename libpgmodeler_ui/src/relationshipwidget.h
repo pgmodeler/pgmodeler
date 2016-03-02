@@ -35,6 +35,12 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 	private:
 		Q_OBJECT
 
+		static const unsigned GENERAL_TAB=0,
+		ATTRIBUTES_TAB=1,
+		CONSTRAINTS_TAB=2,
+		SPECIAL_PK_TAB=3,
+		ADVANCED_TAB=4;
+
 		HintTextWidget *gen_tab_name_ht, *ref_table_ht, *recv_table_ht, *identifier_ht, *single_pk_ht;
 
 		ColorPickerWidget *color_picker;
@@ -64,11 +70,10 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		 the current object type */
 		void showObjectData(TableObject *object, int row);
 
-		static const unsigned GENERAL_TAB=0,
-		ATTRIBUTES_TAB=1,
-		CONSTRAINTS_TAB=2,
-		SPECIAL_PK_TAB=3,
-		ADVANCED_TAB=4;
+		/*! brief Template method that opens the editing form for the specified object.
+				Class and ClassWidget should be compatible, e.g., "Column" can only be edited using ColumnWidget */
+		template<class Class, class ClassWidget>
+		int openEditingForm(TableObject *object);
 
 	protected:
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Table *src_tab, Table *dst_tab, unsigned rel_type);
@@ -77,10 +82,10 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		RelationshipWidget(QWidget * parent = 0);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseRelationship *base_rel);
 
-		void cancelChainedConfiguration();
+		QSize getIdealSize(void);
+
 	private slots:
 		void hideEvent(QHideEvent *event);
-		void showEvent(QShowEvent *event);
 
 		void addObject(void);
 		void editObject(int row);

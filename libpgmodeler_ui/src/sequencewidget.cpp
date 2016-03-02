@@ -29,12 +29,10 @@ SequenceWidget::SequenceWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_SE
 		sequence_grid->addWidget(column_sel,3,1,1,3);
 
 		configureFormLayout(sequence_grid, OBJ_SEQUENCE);
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-
 		sequence_grid->addItem(new QSpacerItem(10,0,QSizePolicy::Minimum,QSizePolicy::Expanding), sequence_grid->count(), 0);
-		parent_form->setMinimumSize(540, 430);
-
 		configureTabOrder();
+
+		setMinimumSize(520, 280);
 	}
 	catch(Exception &e)
 	{

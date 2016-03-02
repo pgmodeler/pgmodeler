@@ -41,7 +41,7 @@ class ColumnWidget: public BaseObjectWidget, public Ui::ColumnWidget {
 		
 	public:
 		ColumnWidget(QWidget * parent = 0);
-		void setAttributes(DatabaseModel *model, BaseObject *parent_obj, OperationList *op_list, Column *column);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *parent_obj, Column *column);
 		
 	private slots:
 		

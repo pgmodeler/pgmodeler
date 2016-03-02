@@ -36,10 +36,6 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 		prepend_sql_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 		prepend_sql_cp=new CodeCompletionWidget(prepend_sql_txt);
 
-		parent_form->setWindowTitle(trUtf8("Append / Prepend SQL code"));
-		parent_form->setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
-		parent_form->setMinimumSize(640, 480);
-
 		font=name_edt->font();
 		font.setItalic(true);
 
@@ -79,9 +75,6 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 		delete_menu.addAction(action_tab_delete);
 		delete_menu.addAction(action_gen_delete);
 
-		connect(parent_form->apply_ok_btn, SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-		connect(parent_form->cancel_btn, SIGNAL(clicked(bool)), parent_form, SLOT(reject(void)));
-
 		connect(clear_tb, SIGNAL(clicked(bool)), this, SLOT(clearCode(void)));
 		connect(insert_tb, SIGNAL(clicked(bool)), this, SLOT(addCommand(void)));
 		connect(select_tb, SIGNAL(clicked(bool)), this, SLOT(addCommand(void)));
@@ -96,6 +89,8 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 		connect(action_tab_update, SIGNAL(triggered(void)), this, SLOT(addCommand(void)));
 		connect(action_gen_delete, SIGNAL(triggered(void)), this, SLOT(addCommand(void)));
 		connect(action_tab_delete, SIGNAL(triggered(void)), this, SLOT(addCommand(void)));
+
+		setMinimumSize(640, 480);
 	}
 	catch(Exception &e)
 	{
@@ -155,7 +150,6 @@ void CustomSQLWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 		comment_edt->setText(object->getTypeName());
 		protected_obj_frm->setVisible(false);
 		obj_id_lbl->setVisible(false);
-		parent_form->apply_ok_btn->setEnabled(true);
 
 		obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") +
 										BaseObject::getSchemaName(object->getObjectType()) +
@@ -181,7 +175,8 @@ void CustomSQLWidget::applyConfiguration(void)
 	this->object->setAppendedSQL(append_sql_txt->toPlainText());
 	this->object->setPrependedSQL(prepend_sql_txt->toPlainText());
 	this->sqlcodes_twg->setCurrentIndex(0);
-	this->accept();
+
+	emit s_closeRequested();
 }
 
 void CustomSQLWidget::addCommand(void)

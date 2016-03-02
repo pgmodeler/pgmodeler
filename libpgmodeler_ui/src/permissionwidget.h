@@ -60,6 +60,9 @@ class PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
 
 		void setAttributes(DatabaseModel *model, BaseObject *objeto_pai, BaseObject *object);
 
+	public slots:
+		void applyConfiguration(void);
+
 	private slots:
 		//! \brief Shows the object selection window
 		void selectRole(void);

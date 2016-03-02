@@ -7,11 +7,8 @@
     <x>0</x>
     <y>0</y>
     <width>499</width>
-    <height>31</height>
+    <height>57</height>
    </rect>
-  </property>
-  <property name="windowTitle">
-   <string>Form</string>
   </property>
   <widget class="QLabel" name="fill_color_lbl">
    <property name="geometry">

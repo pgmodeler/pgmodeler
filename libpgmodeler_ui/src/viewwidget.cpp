@@ -19,6 +19,7 @@
 #include "viewwidget.h"
 #include "rulewidget.h"
 #include "triggerwidget.h"
+#include "baseform.h"
 
 ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 {
@@ -121,7 +122,6 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		view_grid->addWidget(frame, view_grid->count()+1, 0, 1,3);
 		frame->setParent(this);
 
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(ref_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectReferenceType(void)));
 		connect(column_sel, SIGNAL(s_objectSelected(void)), this, SLOT(showObjectName(void)));
 		connect(column_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(showObjectName(void)));
@@ -148,12 +148,13 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		connect(schema_sel, SIGNAL(s_objectSelected(void)), this, SLOT(updateCodePreview(void)));
 		connect(schema_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(updateCodePreview(void)));
 
-		parent_form->setMinimumSize(650, 700);
 		selectReferenceType();
 
 		configureTabOrder({ tag_sel, ordinary_rb, recursive_rb, with_no_data_chk, tabWidget,
 							ref_type_cmb, select_from_chk, from_where_chk, after_where_chk,
 							table_sel, tab_alias_edt, column_sel, col_alias_edt });
+
+		setMinimumSize(600, 730);
 	}
 	catch(Exception &e)
 	{
@@ -169,41 +170,42 @@ ObjectTableWidget *ViewWidget::getObjectTable(ObjectType obj_type)
 		return(nullptr);
 }
 
-void ViewWidget::showTableObjectForm(ObjectType obj_type)
+template<class Class, class WidgetClass>
+int ViewWidget::openEditingForm(TableObject *object)
 {
-	TableObject *object=nullptr;
-	ObjectTableWidget *obj_table=nullptr;
-	View *view=nullptr;
+	BaseForm editing_form(this);
+	WidgetClass *object_wgt=new WidgetClass;
+	object_wgt->setAttributes(this->model, this->op_list,
+														dynamic_cast<BaseTable *>(this->object),
+														dynamic_cast<Class *>(object));
+	editing_form.setMainWidget(object_wgt);
 
-	obj_table=getObjectTable(obj_type);
+	//Disabling the apply button if the object is protected
+	if(object)
+		editing_form.apply_ok_btn->setEnabled(!object->isProtected());
 
-	if(obj_table->getSelectedRow()>=0)
-		object=reinterpret_cast<TableObject *>(obj_table->getRowData(obj_table->getSelectedRow()).value<void *>());
-
-	view=dynamic_cast<View *>(this->object);
-
-	if(obj_type==OBJ_TRIGGER)
-	{
-		TriggerWidget trigger_wgt(this);
-		trigger_wgt.setAttributes(this->model, view, this->op_list, dynamic_cast<Trigger *>(object));
-		trigger_wgt.show();
-	}
-	else
-	{
-		RuleWidget rule_wgt(this);
-		rule_wgt.setAttributes(this->model, view, this->op_list, dynamic_cast<Rule *>(object));
-		rule_wgt.show();
-	}
+	return(editing_form.exec());
 }
 
 void ViewWidget::handleObject(void)
 {
 	ObjectType obj_type=BASE_OBJECT;
+	TableObject *object=nullptr;
+	ObjectTableWidget *obj_table=nullptr;
 
 	try
 	{
 		obj_type=getObjectType(sender());
-		showTableObjectForm(obj_type);
+		obj_table=getObjectTable(obj_type);
+
+		if(obj_table->getSelectedRow()>=0)
+			object=reinterpret_cast<TableObject *>(obj_table->getRowData(obj_table->getSelectedRow()).value<void *>());
+
+		if(obj_type==OBJ_TRIGGER)
+			openEditingForm<Trigger,TriggerWidget>(object);
+		else
+			openEditingForm<Rule,RuleWidget>(object);
+
 		listObjects(obj_type);
 	}
 	catch(Exception &e)

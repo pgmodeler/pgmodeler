@@ -721,25 +721,17 @@ PgSQLType::PgSQLType(void)
 	with_timezone=false;
 }
 
-PgSQLType::PgSQLType(const QString &type_name)
+PgSQLType::PgSQLType(const QString &type_name) : PgSQLType()
 {
 	(*this)=type_name;
-	length=1;
-	precision=-1;
-	dimension=0;
-	with_timezone=false;
 }
 
-PgSQLType::PgSQLType(void *ptype)
+PgSQLType::PgSQLType(void *ptype) : PgSQLType()
 {
 	(*this) << ptype;
-	length=1;
-	precision=-1;
-	dimension=0;
-	with_timezone=false;
 }
 
-PgSQLType::PgSQLType(void *ptype, unsigned length, unsigned dimension, int precision, bool with_timezone, IntervalType interv_type, SpatialType spatial_type)
+PgSQLType::PgSQLType(void *ptype, unsigned length, unsigned dimension, int precision, bool with_timezone, IntervalType interv_type, SpatialType spatial_type) : PgSQLType()
 {
 	(*this) << ptype;
 	setLength(length);
@@ -750,7 +742,7 @@ PgSQLType::PgSQLType(void *ptype, unsigned length, unsigned dimension, int preci
 	setSpatialType(spatial_type);
 }
 
-PgSQLType::PgSQLType(const QString &type_name, unsigned length, unsigned dimension, int precision, bool with_timezone, IntervalType interv_type, SpatialType spatial_type)
+PgSQLType::PgSQLType(const QString &type_name, unsigned length, unsigned dimension, int precision, bool with_timezone, IntervalType interv_type, SpatialType spatial_type) : PgSQLType()
 {
 	(*this)=type_name;
 	setLength(length);
@@ -761,7 +753,7 @@ PgSQLType::PgSQLType(const QString &type_name, unsigned length, unsigned dimensi
 	setSpatialType(spatial_type);
 }
 
-PgSQLType::PgSQLType(unsigned type_id, unsigned length, unsigned dimension, int precision, bool with_timezone, IntervalType interv_type, SpatialType spatial_type)
+PgSQLType::PgSQLType(unsigned type_id, unsigned length, unsigned dimension, int precision, bool with_timezone, IntervalType interv_type, SpatialType spatial_type) : PgSQLType()
 {
 	(*this)=type_id;
 	setLength(length);

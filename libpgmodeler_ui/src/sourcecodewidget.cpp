@@ -47,24 +47,21 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 		name_edt->setReadOnly(true);
 		version_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
 
-		parent_form->setWindowTitle(trUtf8("Source code visualization"));
-		parent_form->setButtonConfiguration(Messagebox::OK_BUTTON);
-		parent_form->setMinimumSize(720, 580);
-
 		code_options_ht=new HintTextWidget(code_options_hint, this);
 		code_options_ht->setText(
 					trUtf8("<strong>Original:</strong> displays only the original object's SQL code.<br/><br/>\
 						   <strong>Dependencies:</strong> displays the original code including all dependencies needed to properly create the selected object.<br/><br/>\
 						   <strong>Children:</strong> displays the original code including all object's children SQL code. This option is used only by schemas, tables and views."));
 
-						   connect(parent_form->apply_ok_btn, SIGNAL(clicked(bool)), parent_form, SLOT(close(void)));
-					connect(version_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(generateSourceCode(int)));
-				connect(code_options_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(generateSourceCode()));
+		connect(version_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(generateSourceCode(int)));
+		connect(code_options_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(generateSourceCode()));
 		connect(sourcecode_twg, SIGNAL(currentChanged(int)), this, SLOT(setSourceCodeTab(int)));
 		connect(save_sql_tb, SIGNAL(clicked()), this, SLOT(saveSQLCode()));
 
 		hl_sqlcode=new SyntaxHighlighter(sqlcode_txt);
 		hl_xmlcode=new SyntaxHighlighter(xmlcode_txt);
+
+		setMinimumSize(640, 540);
 	}
 	catch(Exception &e)
 	{
@@ -248,13 +245,12 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 			BaseObjectWidget::setAttributes(model, object, nullptr);
 			ObjectType obj_type=object->getObjectType();
 
-			this->parent_form->apply_ok_btn->setEnabled(true);
 			this->protected_obj_frm->setVisible(false);
 			this->obj_id_lbl->setVisible(false);
 			this->code_options_cmb->setEnabled(obj_type!=OBJ_DATABASE &&
-														 obj_type!=OBJ_TEXTBOX &&
-																   obj_type!=BASE_RELATIONSHIP &&
-																			 obj_type!=OBJ_RELATIONSHIP);
+																					obj_type!=OBJ_TEXTBOX &&
+																					obj_type!=BASE_RELATIONSHIP &&
+																					obj_type!=OBJ_RELATIONSHIP);
 
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: SQL code display options disabled."
@@ -279,5 +275,10 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
+}
+
+void SourceCodeWidget::applyConfiguration(void)
+{
+	emit s_closeRequested();
 }
 

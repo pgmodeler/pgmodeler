@@ -58,9 +58,7 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 		firing_mode_cmb->addItems(list);
 
 		configureFormLayout(trigger_grid, OBJ_TRIGGER);
-		parent_form->setMinimumSize(580, 580);
 
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_type_cmb, SLOT(setEnabled(bool)));
 		connect(columns_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addColumn(int)));
 		connect(columns_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(updateColumnsCombo(void)));
@@ -75,6 +73,8 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 		setRequiredField(firing_mode_lbl);
 		setRequiredField(function_lbl);
 		setRequiredField(function_sel);
+
+		setMinimumSize(580, 580);
 	}
 	catch(Exception &e)
 	{
@@ -218,7 +218,7 @@ void TriggerWidget::hideEvent(QHideEvent *event)
 	arg_cols_tbw->setCurrentIndex(0);
 }
 
-void TriggerWidget::setAttributes(DatabaseModel *model, BaseTable *parent_table, OperationList *op_list, Trigger *trigger)
+void TriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseTable *parent_table, Trigger *trigger)
 {
 	unsigned count=0, i;
 	Column *column=nullptr;

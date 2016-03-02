@@ -23,13 +23,13 @@ ParameterWidget::ParameterWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 	try
 	{
 		QGridLayout *parameter_grid=nullptr;
-		QSpacerItem *hspacer=nullptr;
+		QSpacerItem *spacer=nullptr;
 
 		Ui_ParameterWidget::setupUi(this);
 
 		data_type=new PgSQLTypeWidget(this);
 		parameter_grid=new QGridLayout(this);
-		hspacer=new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+		spacer=new QSpacerItem(40, 20, QSizePolicy::Minimum, QSizePolicy::Expanding);
 		parameter_grid->setContentsMargins(0, 0, 0, 0);
 
 		parameter_grid->addWidget(default_value_lbl, 0, 0, 1, 1);
@@ -38,18 +38,16 @@ ParameterWidget::ParameterWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		parameter_grid->addWidget(param_in_chk, 1, 1, 1, 1);
 		parameter_grid->addWidget(param_out_chk, 1, 2, 1, 1);
 		parameter_grid->addWidget(param_variadic_chk, 1, 3, 1, 1);
-		parameter_grid->addItem(hspacer, 1, 3, 1, 1);
-		parameter_grid->addWidget(data_type,2,0,1,4);
+		parameter_grid->addWidget(data_type,2, 0, 1, 4);
+		parameter_grid->addItem(spacer, parameter_grid->count()+1,0);
 
 		configureFormLayout(parameter_grid, OBJ_PARAMETER);
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(param_variadic_chk, SIGNAL(toggled(bool)), param_in_chk, SLOT(setDisabled(bool)));
 		connect(param_variadic_chk, SIGNAL(toggled(bool)), param_out_chk, SLOT(setDisabled(bool)));
 		connect(param_in_chk, SIGNAL(toggled(bool)), this, SLOT(enableVariadic(void)));
 		connect(param_out_chk, SIGNAL(toggled(bool)), this, SLOT(enableVariadic(void)));
 
-		parent_form->setMinimumSize(500, 300);
-		//parent_form->setMaximumHeight(300);
+		setMinimumSize(500, 200);
 	}
 	catch(Exception &e)
 	{

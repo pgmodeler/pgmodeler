@@ -55,6 +55,12 @@
            <property name="enabled">
             <bool>true</bool>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
            <property name="toolTip">
             <string>Load SQL script</string>
            </property>
@@ -89,6 +95,12 @@
           <widget class="QToolButton" name="save_tb">
            <property name="enabled">
             <bool>false</bool>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
            </property>
            <property name="toolTip">
             <string>Save SQL commands</string>
@@ -127,6 +139,12 @@
           <widget class="QToolButton" name="find_tb">
            <property name="enabled">
             <bool>false</bool>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
            </property>
            <property name="toolTip">
             <string>Search in SQL code</string>
@@ -172,6 +190,12 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
            <property name="toolTip">
             <string>Run the specified SQL command</string>
            </property>
@@ -201,6 +225,12 @@
            <property name="enabled">
             <bool>false</bool>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
            <property name="toolTip">
             <string>Clear sql input field and results</string>
            </property>
@@ -226,6 +256,12 @@
           <widget class="QToolButton" name="snippets_tb">
            <property name="enabled">
             <bool>true</bool>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
            </property>
            <property name="toolTip">
             <string>Export results to a CSV file</string>
@@ -265,6 +301,12 @@
            <property name="enabled">
             <bool>false</bool>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
            <property name="toolTip">
             <string>Export results to a CSV file</string>
            </property>
@@ -300,6 +342,12 @@
            <property name="enabled">
             <bool>true</bool>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
            <property name="toolTip">
             <string>Toggles the output pane</string>
            </property>
@@ -334,6 +382,12 @@
           <widget class="QToolButton" name="history_tb">
            <property name="enabled">
             <bool>true</bool>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
            </property>
            <property name="toolTip">
             <string>Shows the command history</string>
@@ -396,8 +450,8 @@
              </property>
              <property name="maximumSize">
               <size>
-               <width>20</width>
-               <height>20</height>
+               <width>22</width>
+               <height>22</height>
               </size>
              </property>
              <property name="text">
@@ -490,6 +544,12 @@
             <widget class="QToolButton" name="clear_history_btn">
              <property name="enabled">
               <bool>false</bool>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>30</height>
+              </size>
              </property>
              <property name="toolTip">
               <string>Clear sql input field and results.</string>
@@ -676,11 +736,6 @@
           </item>
           <item>
            <widget class="QListWidget" name="msgoutput_lst">
-            <property name="font">
-             <font>
-              <pointsize>8</pointsize>
-             </font>
-            </property>
             <property name="editTriggers">
              <set>QAbstractItemView::NoEditTriggers</set>
             </property>

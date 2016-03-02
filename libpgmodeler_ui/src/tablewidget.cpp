@@ -22,6 +22,7 @@
 #include "rulewidget.h"
 #include "indexwidget.h"
 #include "triggerwidget.h"
+#include "baseform.h"
 
 TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 {
@@ -38,7 +39,6 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	table_grid->addWidget(frame, table_grid->count()+1, 0, 1, 2);
 	frame->setParent(this);
 
-	//operation_count=0;
 	parent_tables = new ObjectTableWidget(ObjectTableWidget::NO_BUTTONS, true, this);
 	parent_tables->setColumnCount(3);
 	parent_tables->setHeaderLabel(trUtf8("Name"), 0);
@@ -113,12 +113,9 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	objects_tab_map[OBJ_INDEX]->setHeaderLabel(trUtf8("Indexing"), 1);
 
 	configureFormLayout(table_grid, OBJ_TABLE);
-	parent_form->setMinimumSize(600, 650);
-
-	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-	connect(parent_form->cancel_btn,SIGNAL(clicked(bool)), this, SLOT(cancelConfiguration(void)));
-
 	configureTabOrder({ tag_sel });
+
+	setMinimumSize(600, 610);
 }
 
 void TableWidget::hideEvent(QHideEvent *event)
@@ -147,50 +144,21 @@ void TableWidget::hideEvent(QHideEvent *event)
 	BaseObjectWidget::hideEvent(event);
 }
 
-void TableWidget::showTableObjectForm(ObjectType obj_type)
+template<class Class, class WidgetClass>
+int TableWidget::openEditingForm(TableObject *object)
 {
-	TableObject *object=nullptr;
-	ObjectTableWidget *obj_table=nullptr;
-	Table *table=nullptr;
+	BaseForm editing_form(this);
+	WidgetClass *object_wgt=new WidgetClass;
+	object_wgt->setAttributes(this->model, this->op_list,
+														dynamic_cast<Table *>(this->object), dynamic_cast<Class *>(object));
+	editing_form.setMainWidget(object_wgt);
 
-	//Selects the object table based upon the passed object type
-	obj_table=getObjectTable(obj_type);
+	//Disabling the apply button if the object is protected
+	if(object)
+		editing_form.apply_ok_btn->setEnabled(!object->isProtected() && !object->isAddedByRelationship());
 
-	//Gets the object reference if there is an item select on table
-	if(obj_table->getSelectedRow()>=0)
-		object=reinterpret_cast<TableObject *>(obj_table->getRowData(obj_table->getSelectedRow()).value<void *>());
-
-	table=dynamic_cast<Table *>(this->object);
-
-	if(obj_type==OBJ_COLUMN)
-	{
-		ColumnWidget column_wgt(this);
-		column_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Column *>(object));
-		column_wgt.show();
-	}
-	else if(obj_type==OBJ_CONSTRAINT)
-	{
-		ConstraintWidget constraint_wgt(this);
-		constraint_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Constraint *>(object));
-		constraint_wgt.show();
-	}
-	else if(obj_type==OBJ_TRIGGER)
-	{
-		TriggerWidget trigger_wgt(this);
-		trigger_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Trigger *>(object));
-		trigger_wgt.show();
-	}
-	else if(obj_type==OBJ_INDEX)
-	{
-		IndexWidget index_wgt(this);
-		index_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Index *>(object));
-		index_wgt.show();
-	}else
-	{
-		RuleWidget rule_wgt(this);
-		rule_wgt.setAttributes(this->model, table, this->op_list, dynamic_cast<Rule *>(object));
-		rule_wgt.show();
-	}
+	editing_form.adjustSize();
+	return(editing_form.exec());
 }
 
 ObjectTableWidget *TableWidget::getObjectTable(ObjectType obj_type)
@@ -337,11 +305,31 @@ void TableWidget::listObjects(ObjectType obj_type)
 void TableWidget::handleObject(void)
 {
 	ObjectType obj_type=BASE_OBJECT;
+	TableObject *object=nullptr;
+	ObjectTableWidget *obj_table=nullptr;
 
 	try
 	{
 		obj_type=getObjectType(sender());
-		showTableObjectForm(obj_type);
+
+		//Selects the object table based upon the passed object type
+		obj_table=getObjectTable(obj_type);
+
+		//Gets the object reference if there is an item select on table
+		if(obj_table->getSelectedRow()>=0)
+			object=reinterpret_cast<TableObject *>(obj_table->getRowData(obj_table->getSelectedRow()).value<void *>());
+
+		if(obj_type==OBJ_COLUMN)
+			openEditingForm<Column, ColumnWidget>(object);
+		else if(obj_type==OBJ_CONSTRAINT)
+			openEditingForm<Constraint, ConstraintWidget>(object);
+		else if(obj_type==OBJ_TRIGGER)
+			openEditingForm<Trigger, TriggerWidget>(object);
+		else if(obj_type==OBJ_INDEX)
+			openEditingForm<Index, IndexWidget>(object);
+		else
+			openEditingForm<Rule, RuleWidget>(object);
+
 		listObjects(obj_type);
 	}
 	catch(Exception &e)

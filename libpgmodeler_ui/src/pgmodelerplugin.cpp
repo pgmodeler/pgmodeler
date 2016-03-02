@@ -25,16 +25,11 @@ PgModelerPlugin::PgModelerPlugin(void)
 	QFont font;
 	QWidget *widget=nullptr;
 
-	plugin_info_frm=new BaseForm(nullptr, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
-	plugin_info_frm->setButtonConfiguration(Messagebox::OK_BUTTON);
-	plugin_info_frm->connect(plugin_info_frm->apply_ok_btn, SIGNAL(clicked(void)), plugin_info_frm, SLOT(close(void)));
-
+	plugin_info_frm=new BaseForm;
 	gridLayout=new QGridLayout;
 
-	widget=new QWidget(plugin_info_frm);
-	plugin_info_frm->generalwidget_wgt->insertWidget(0, widget);
-	plugin_info_frm->generalwidget_wgt->setCurrentIndex(0);
-	plugin_info_frm->setWindowTitle(QT_TRANSLATE_NOOP("PgModelerPlugin", "Plugin Information"));
+	widget=new QWidget;
+	widget->setWindowTitle(QT_TRANSLATE_NOOP("PgModelerPlugin", "Plugin Information"));
 
 	gridLayout->setHorizontalSpacing(10);
 	gridLayout->setVerticalSpacing(6);
@@ -73,9 +68,8 @@ PgModelerPlugin::PgModelerPlugin(void)
 	gridLayout->addWidget(description_lbl, 4, 0, 1, 2);
 
 	widget->setLayout(gridLayout);
-
-	plugin_info_frm->setMinimumSize(400, 250);
-	plugin_info_frm->resize(plugin_info_frm->minimumSize());
+	widget->setMinimumSize(400, 200);
+	plugin_info_frm->setMainWidget(widget);
 }
 
 PgModelerPlugin::~PgModelerPlugin(void)

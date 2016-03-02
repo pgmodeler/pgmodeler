@@ -53,9 +53,6 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		//! \brief Object that handles the model validation steps
 		ModelValidationHelper *validation_helper;
 
-		//! \brief Object creation order modifier
-		SwapObjectsIdsWidget *swapobjectsids_wgt;
-
 		//! \brief Current fix step
 		int curr_step;
 

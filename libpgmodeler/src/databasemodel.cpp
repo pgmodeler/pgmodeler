@@ -6538,7 +6538,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 	return(def);
 }
 
-map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, bool incl_relnn_objs)
+map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, bool incl_relnn_objs, bool incl_rel1n_constrs)
 {
 	BaseObject *object=nullptr;
 	vector<BaseObject *> fkeys;
@@ -6688,7 +6688,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 	if(def_type==SchemaParser::SQL_DEFINITION)
 	{
 		BaseObject *objs[3]={nullptr, nullptr, nullptr};
-		vector<BaseObject *> vet_aux;
+		vector<BaseObject *> vet_aux, rel_constrs;
 
 		vet_aux=relationships;
 		vet_aux.insert(vet_aux.end(), tables.begin(),tables.end());
@@ -6726,12 +6726,22 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 							fkeys.push_back(constr);
 					}
 				}
+				else if(incl_rel1n_constrs)
+				{
+					vector<Constraint *> constrs=rel->getGeneratedConstraints();
+
+					for(auto &constr : constrs)
+					{
+						if(constr->getConstraintType()!=ConstraintType::primary_key)
+							rel_constrs.push_back(constr);
+					}
+				}
 				else
 					objs[2]=rel;
 
 				for(i=0; i < 3; i++)
 				{
-					if(objects_map.count(objs[i]->getObjectId())==0)
+					if(objs[i] && objects_map.count(objs[i]->getObjectId())==0)
 						objects_map[objs[i]->getObjectId()]=objs[i];
 				}
 			}
@@ -6741,6 +6751,8 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 					objects_map[object->getObjectId()]=object;
 			}
 		}
+
+		fkeys.insert(fkeys.end(), rel_constrs.begin(), rel_constrs.end());
 	}
 
 	//Adding fk relationships and foreign keys at end of objects map
@@ -8867,7 +8879,7 @@ vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<O
 	while(!objs.empty())
 	{
 		//Quotes are removed from the name by default
-		if(format_obj_names)
+		if(format_obj_names && !exact_match)
 		{
 			if(TableObject::isTableObject(objs.back()->getObjectType()))
 			{

@@ -29,7 +29,6 @@
 #include "databasemodel.h"
 #include "operationlist.h"
 #include "messagebox.h"
-#include "baseform.h"
 #include "objectsscene.h"
 #include "taskprogresswidget.h"
 #include "newobjectoverlaywidget.h"
@@ -126,6 +125,22 @@ class ModelWidget: public QWidget {
 		//! brief This timer controls the interval the zoom label is visible
 		QTimer zoom_info_timer;
 
+		//! brief Creates a BaseForm instance in insert the widget into it. A custom configuration for dialog buttons can be passed
+		int openEditingForm(QWidget *widget, BaseObject *object = nullptr, unsigned button_conf = Messagebox::OK_CANCEL_BUTTONS);
+
+		//! brief Opens a editing form for objects at database level
+		template<class Class, class WidgetClass>
+		int openEditingForm(BaseObject *object);
+
+		/*! brief Opens a editing form for objects that can have a parent other than database, e.g., schema level objects,
+				table child object or relationship attributes & constraints */
+		template<class Class, class WidgetClass, class ParentClass>
+		int openEditingForm(BaseObject *object, BaseObject *parent_obj);
+
+		//! brief Opens a editing form for objects that can have a position in the canvas area
+		template<class Class, class WidgetClass, class ParentClass>
+		int openEditingForm(BaseObject *object, BaseObject *parent_obj, const QPointF &pos);
+
 	protected:
 		static const unsigned BREAK_VERT_NINETY_DEGREES, //Break vertically the line in one 90° angle
 		BREAK_HORIZ_NINETY_DEGREES, //Break horizontally the line in one 90° angle
@@ -213,7 +228,7 @@ class ModelWidget: public QWidget {
 		QString getTempFilename(void);
 
 		//! \brief Shows the editing form according to the passed object type
-		void showObjectForm(ObjectType obj_type, BaseObject *object=nullptr, BaseObject *parent_obj=nullptr, QPointF pos=QPointF(NAN, NAN));
+		void showObjectForm(ObjectType obj_type, BaseObject *object=nullptr, BaseObject *parent_obj=nullptr, const QPointF &pos=QPointF(NAN, NAN));
 
 		//! \brief Applies a zoom factor to the model
 		void applyZoom(double zoom);
@@ -330,7 +345,7 @@ class ModelWidget: public QWidget {
 		void addNewObject(void);
 
 		//! \brief Triggers the sql insertion widget for the current database model
-		void appendSQL(void);
+		void editCustomSQL(void);
 
 		//! \brief Configures the selected object vector whenever the selection changes on the scene
 		void configureObjectSelection(void);

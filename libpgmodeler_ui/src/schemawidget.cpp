@@ -34,12 +34,11 @@ SchemaWidget::SchemaWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_SCHEMA
 	hbox->addWidget(show_rect_chk);
 
 	baseobject_grid->addLayout(hbox, baseobject_grid->count(), 0, 1, baseobject_grid->columnCount());
-	baseobject_grid->addItem(new QSpacerItem(10,10,QSizePolicy::Minimum,QSizePolicy::Expanding), baseobject_grid->count(), 0);
-
-	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-	parent_form->setMinimumSize(500, 270);
+	baseobject_grid->addItem(new QSpacerItem(1,1,QSizePolicy::Minimum,QSizePolicy::Expanding), baseobject_grid->count(), 0);
 
 	configureTabOrder({ color_picker, show_rect_chk });
+
+	setMinimumSize(480, 140);
 }
 
 void SchemaWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema)
@@ -59,10 +58,7 @@ void SchemaWidget::setAttributes(DatabaseModel *model, OperationList *op_list, S
 	if(schema)
 	{
 		if(schema->isSystemObject())
-		{
 			protected_obj_frm->setVisible(false);
-			parent_form->apply_ok_btn->setEnabled(true);
-		}
 
 		color_picker->setColor(0, schema->getFillColor());
 		show_rect_chk->setChecked(schema && schema->isRectVisible());

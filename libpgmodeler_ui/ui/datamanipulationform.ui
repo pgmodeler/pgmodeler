@@ -59,7 +59,7 @@
      <item row="0" column="0">
       <widget class="QLabel" name="label">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -67,7 +67,7 @@
        <property name="minimumSize">
         <size>
          <width>127</width>
-         <height>30</height>
+         <height>0</height>
         </size>
        </property>
        <property name="styleSheet">
@@ -84,7 +84,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
+     <item row="0" column="2">
       <widget class="QPushButton" name="close_btn">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -133,6 +133,19 @@
         <bool>false</bool>
        </property>
       </widget>
+     </item>
+     <item row="0" column="1">
+      <spacer name="horizontalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
      </item>
     </layout>
    </item>
@@ -777,8 +790,8 @@
             </property>
             <property name="maximumSize">
              <size>
-              <width>20</width>
-              <height>20</height>
+              <width>22</width>
+              <height>22</height>
              </size>
             </property>
             <property name="text">

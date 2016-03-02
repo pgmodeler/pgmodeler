@@ -52,7 +52,7 @@ class TriggerWidget: public BaseObjectWidget, public Ui::TriggerWidget {
 	public:
 		TriggerWidget(QWidget * parent = 0);
 
-		void setAttributes(DatabaseModel *model, BaseTable *parent_table, OperationList *op_list, Trigger *trigger);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseTable *parent_table, Trigger *trigger);
 
 	private slots:
 		void addColumn(int lin_idx);

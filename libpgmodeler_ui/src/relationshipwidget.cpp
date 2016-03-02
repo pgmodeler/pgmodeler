@@ -35,7 +35,6 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		QWidgetList pattern_fields={ src_col_pattern_txt, dst_col_pattern_txt,
 									 src_fk_pattern_txt, dst_fk_pattern_txt,
 									 pk_pattern_txt, uq_pattern_txt, pk_col_pattern_txt };
-		//operation_count=0;
 
 		gen_tab_name_ht=new HintTextWidget(gen_tab_name_hint, this);
 		gen_tab_name_ht->setText(relnn_tab_name_edt->statusTip());
@@ -128,21 +127,20 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		grid->addWidget(color_picker, 0, 1);
 
 		configureFormLayout(relationship_grid, OBJ_RELATIONSHIP);
-		parent_form->setMinimumSize(this->minimumSize());
 
 		DeferralType::getTypes(list);
 		deferral_cmb->addItems(list);
 
 		frame=generateInformationFrame(trUtf8("Available tokens to define name patterns:<br/>\
-											  <strong>%1</strong> = Reference (source) primary key column name. <em>(Ignored on constraint patterns)</em><br/> \
-																	<strong>%2</strong> = Reference (source) table name.<br/> \
-																						  <strong>%3</strong> = Receiver (destination) table name.<br/> \
-																												<strong>%4</strong> = Generated table name. <em>(Only for n:n relationships)</em>")
-																																	  .arg(Relationship::SRC_COL_TOKEN)
-																																	  .arg(Relationship::SRC_TAB_TOKEN)
-																																	  .arg(Relationship::DST_TAB_TOKEN)
-																																	  .arg(Relationship::GEN_TAB_TOKEN));
-			  vlayout=dynamic_cast<QVBoxLayout *>(name_patterns_grp->layout());
+					<strong>%1</strong> = Reference (source) primary key column name. <em>(Ignored on constraint patterns)</em><br/> \
+					<strong>%2</strong> = Reference (source) table name.<br/> \
+					<strong>%3</strong> = Receiver (destination) table name.<br/> \
+					<strong>%4</strong> = Generated table name. <em>(Only for n:n relationships)</em>")
+					.arg(Relationship::SRC_COL_TOKEN)
+					.arg(Relationship::SRC_TAB_TOKEN)
+					.arg(Relationship::DST_TAB_TOKEN)
+					.arg(Relationship::GEN_TAB_TOKEN));
+		vlayout=dynamic_cast<QVBoxLayout *>(name_patterns_grp->layout());
 		vlayout->addWidget(frame);
 
 		ActionType::getTypes(list);
@@ -156,8 +154,6 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		tab_labels=QStringList{ QString(), rel_attribs_tbw->tabText(ATTRIBUTES_TAB), rel_attribs_tbw->tabText(CONSTRAINTS_TAB),
 				   rel_attribs_tbw->tabText(SPECIAL_PK_TAB), rel_attribs_tbw->tabText(ADVANCED_TAB)};
 
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-		connect(parent_form->cancel_btn,SIGNAL(clicked(bool)), this, SLOT(cancelConfiguration(void)));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_lbl, SLOT(setEnabled(bool)));
 
@@ -189,6 +185,8 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 
 		connect(fk_gconf_chk, SIGNAL(toggled(bool)), this, SLOT(useFKGlobalSettings(bool)));
 		connect(patterns_gconf_chk, SIGNAL(toggled(bool)), this, SLOT(usePatternGlobalSettings(bool)));
+
+		setMinimumSize(600, 0);
 	}
 	catch(Exception &e)
 	{
@@ -224,20 +222,6 @@ void RelationshipWidget::hideEvent(QHideEvent *event)
 		this->cancelConfiguration();
 
 	BaseObjectWidget::hideEvent(event);
-}
-
-void RelationshipWidget::showEvent(QShowEvent *)
-{
-	if(rel_fk_rb->isChecked() ||
-			(rel_dep_rb->isChecked() &&
-			 this->object && this->object->getObjectType()==BASE_RELATIONSHIP))
-		parent_form->setMinimumSize(640, 320);
-	else if(rel_gen_rb->isChecked())
-		parent_form->setMinimumSize(640, 525);
-	else
-		parent_form->setMinimumSize(640, 680);
-
-	parent_form->resize(parent_form->minimumSize());
 }
 
 void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Table *src_tab, Table *dst_tab, unsigned rel_type)
@@ -459,6 +443,17 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	}
 }
 
+QSize RelationshipWidget::getIdealSize(void)
+{
+	if(rel_fk_rb->isChecked() ||
+		 (rel_dep_rb->isChecked() &&	this->object && this->object->getObjectType()==BASE_RELATIONSHIP))
+		return(QSize(640, 320));
+	else if(rel_gen_rb->isChecked())
+		return(QSize(640, 520));
+	else
+		return(QSize(640, 680));
+}
+
 void RelationshipWidget::useFKGlobalSettings(bool value)
 {
 	fk_wgt->setEnabled(!value);
@@ -663,7 +658,7 @@ void RelationshipWidget::showAdvancedObject(int row)
 	{
 		ColumnWidget column_wgt(this);
 		col=dynamic_cast<Column *>(object);
-		column_wgt.setAttributes(this->model, col->getParentTable(), this->op_list, col);
+		column_wgt.setAttributes(this->model, this->op_list, col->getParentTable(), col);
 		column_wgt.show();
 	}
 	else if(obj_type==OBJ_CONSTRAINT)
@@ -677,7 +672,7 @@ void RelationshipWidget::showAdvancedObject(int row)
 			constr->setProtected(true);
 		}
 
-		constraint_wgt.setAttributes(this->model, constr->getParentTable(), this->op_list, constr);
+		constraint_wgt.setAttributes(this->model, this->op_list, constr->getParentTable(), constr);
 		constraint_wgt.show();
 		constr->setProtected(prot);
 	}
@@ -691,6 +686,17 @@ void RelationshipWidget::showAdvancedObject(int row)
 		table_wgt.show();
 		tab->setProtected(false);
 	}
+}
+
+template<class Class, class WidgetClass>
+int RelationshipWidget::openEditingForm(TableObject *object)
+{
+	BaseForm editing_form(this);
+	WidgetClass *object_wgt=new WidgetClass;
+	object_wgt->setAttributes(this->model, this->op_list, this->object, dynamic_cast<Class *>(object));
+	editing_form.setMainWidget(object_wgt);
+
+	return(editing_form.exec());
 }
 
 void RelationshipWidget::addObject(void)
@@ -711,17 +717,9 @@ void RelationshipWidget::addObject(void)
 		}
 
 		if(obj_type==OBJ_COLUMN)
-		{
-			ColumnWidget column_wgt(this);
-			column_wgt.setAttributes(this->model, this->object, this->op_list, nullptr);
-			column_wgt.show();
-		}
+			openEditingForm<Column,ColumnWidget>(nullptr);
 		else
-		{
-			ConstraintWidget constraint_wgt(this);
-			constraint_wgt.setAttributes(this->model, this->object, this->op_list, nullptr);
-			constraint_wgt.show();
-		}
+			openEditingForm<Constraint,ConstraintWidget>(nullptr);
 
 		listObjects(obj_type);
 	}
@@ -735,27 +733,23 @@ void RelationshipWidget::addObject(void)
 void RelationshipWidget::editObject(int row)
 {
 	ObjectType obj_type=OBJ_COLUMN;
+	TableObject *tab_obj=nullptr;
 
 	try
 	{
 		op_list->ignoreOperationChain(true);
 
-
 		if(sender()==attributes_tab)
 		{
-			ColumnWidget column_wgt(this);
 			obj_type=OBJ_COLUMN;
-			column_wgt.setAttributes(this->model, this->object, this->op_list,
-									 reinterpret_cast<Column *>(attributes_tab->getRowData(row).value<void *>()));
-			column_wgt.show();
+			tab_obj=reinterpret_cast<TableObject *>(attributes_tab->getRowData(row).value<void *>());
+			openEditingForm<Column,ColumnWidget>(tab_obj);
 		}
 		else
 		{
-			ConstraintWidget constraint_wgt(this);
 			obj_type=OBJ_CONSTRAINT;
-			constraint_wgt.setAttributes(this->model, this->object, this->op_list,
-										 reinterpret_cast<Constraint *>(constraints_tab->getRowData(row).value<void *>()));
-			constraint_wgt.show();
+			tab_obj=reinterpret_cast<TableObject *>(constraints_tab->getRowData(row).value<void *>());
+			openEditingForm<Constraint,ConstraintWidget>(tab_obj);
 		}
 
 		listObjects(obj_type);

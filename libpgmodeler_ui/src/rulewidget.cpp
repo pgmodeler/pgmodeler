@@ -44,7 +44,6 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RULE)
 		frame->setParent(this);
 
 		configureFormLayout(rule_grid, OBJ_RULE);
-		parent_form->setMinimumSize(550, 520);
 
 		EventType::getTypes(list);
 		event_cmb->addItems(list);
@@ -52,13 +51,14 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RULE)
 		ExecutionType::getTypes(list);
 		exec_type_cmb->addItems(list);
 
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(commands_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleCommand(int)));
 		connect(commands_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleCommand(int)));
 		connect(commands_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editCommand(int)));
 
 		setRequiredField(event_lbl);
 		configureTabOrder();
+
+		setMinimumSize(550, 500);
 	}
 	catch(Exception &e)
 	{
@@ -91,7 +91,7 @@ void RuleWidget::handleCommand(int row)
 		commands_tab->removeRow(row);
 }
 
-void RuleWidget::setAttributes(DatabaseModel *model, BaseTable *parent_tab, OperationList *op_list, Rule *rule)
+void RuleWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseTable *parent_tab, Rule *rule)
 {
 	unsigned qtd, i;
 

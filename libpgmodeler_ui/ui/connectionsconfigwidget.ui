@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>786</width>
-    <height>614</height>
+    <width>562</width>
+    <height>622</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Edit database connections</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <property name="leftMargin">
@@ -28,6 +28,12 @@
    </property>
    <item row="0" column="0">
     <widget class="QFrame" name="frame">
+     <property name="minimumSize">
+      <size>
+       <width>560</width>
+       <height>0</height>
+      </size>
+     </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
@@ -418,7 +424,7 @@
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>0</height>
+            <height>30</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -456,7 +462,7 @@
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>0</height>
+            <height>30</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -494,7 +500,7 @@
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>0</height>
+            <height>30</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -630,12 +636,6 @@
           <property name="enabled">
            <bool>true</bool>
           </property>
-          <property name="minimumSize">
-           <size>
-            <width>30</width>
-            <height>25</height>
-           </size>
-          </property>
           <property name="toolTip">
            <string>Create new connection</string>
           </property>
@@ -658,12 +658,6 @@
          <widget class="QToolButton" name="cancel_tb">
           <property name="enabled">
            <bool>true</bool>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>30</width>
-            <height>25</height>
-           </size>
           </property>
           <property name="toolTip">
            <string>Cancel edition</string>
@@ -688,12 +682,6 @@
           <property name="enabled">
            <bool>true</bool>
           </property>
-          <property name="minimumSize">
-           <size>
-            <width>30</width>
-            <height>25</height>
-           </size>
-          </property>
           <property name="toolTip">
            <string>Duplicate the selected connection</string>
           </property>
@@ -717,12 +705,6 @@
           <property name="enabled">
            <bool>false</bool>
           </property>
-          <property name="minimumSize">
-           <size>
-            <width>30</width>
-            <height>25</height>
-           </size>
-          </property>
           <property name="toolTip">
            <string>Edit selected connection</string>
           </property>
@@ -745,12 +727,6 @@
          <widget class="QToolButton" name="remove_tb">
           <property name="enabled">
            <bool>false</bool>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>30</width>
-            <height>25</height>
-           </size>
           </property>
           <property name="toolTip">
            <string>Delete selected connection</string>

@@ -17,8 +17,8 @@
 */
 
 #include "centralwidget.h"
-#include "QGraphicsDropShadowEffect"
-#include "QTextStream"
+#include <QGraphicsDropShadowEffect>
+#include "pgmodeleruins.h"
 
 CentralWidget::CentralWidget(QWidget *parent): QWidget(parent)
 {
@@ -34,5 +34,7 @@ CentralWidget::CentralWidget(QWidget *parent): QWidget(parent)
 		shadow->setYOffset(3);
 		shadow->setBlurRadius(10);
 		btn->setGraphicsEffect(shadow);
+
+		PgModelerUiNS::configureWidgetFont(btn, 1.20f);
 	}
 }

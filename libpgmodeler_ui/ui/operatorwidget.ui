@@ -7,11 +7,8 @@
     <x>0</x>
     <y>0</y>
     <width>522</width>
-    <height>293</height>
+    <height>192</height>
    </rect>
-  </property>
-  <property name="windowTitle">
-   <string>Form</string>
   </property>
   <layout class="QGridLayout" name="operator_grid">
    <property name="leftMargin">
@@ -29,33 +26,6 @@
    <property name="spacing">
     <number>6</number>
    </property>
-   <item row="1" column="1">
-    <widget class="QCheckBox" name="merges_chk">
-     <property name="text">
-      <string>MERGES</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QCheckBox" name="hashes_chk">
-     <property name="text">
-      <string>HASHES</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="options_lbl">
-     <property name="minimumSize">
-      <size>
-       <width>70</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>Options:</string>
-     </property>
-    </widget>
-   </item>
    <item row="2" column="0" colspan="4">
     <widget class="QTabWidget" name="attributes_twg">
      <property name="currentIndex">
@@ -144,23 +114,37 @@
      </property>
     </spacer>
    </item>
-   <item row="3" column="0">
-    <spacer name="verticalSpacer_3">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>1</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
    <item row="0" column="0">
     <widget class="QLabel" name="operator_func_lbl">
      <property name="text">
       <string>Operator Func.:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QCheckBox" name="hashes_chk">
+     <property name="text">
+      <string>HASHES</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="options_lbl">
+     <property name="minimumSize">
+      <size>
+       <width>70</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Options:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QCheckBox" name="merges_chk">
+     <property name="text">
+      <string>MERGES</string>
      </property>
     </widget>
    </item>

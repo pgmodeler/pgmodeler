@@ -17,6 +17,7 @@
 */
 
 #include "aboutwidget.h"
+#include "pgmodeleruins.h"
 
 AboutWidget::AboutWidget(QWidget *parent) : QWidget(parent)
 {
@@ -42,4 +43,12 @@ AboutWidget::AboutWidget(QWidget *parent) : QWidget(parent)
 		this->close();
 		emit s_visibilityChanged(false);
 	});
+
+	PgModelerUiNS::configureWidgetFont(title_lbl, PgModelerUiNS::HUGE_FONT_FACTOR);
+	PgModelerUiNS::configureWidgetFont(slogan_lbl, PgModelerUiNS::BIG_FONT_FACTOR);
+	PgModelerUiNS::configureWidgetFont(pgmodeler_ver_lbl, PgModelerUiNS::HUGE_FONT_FACTOR);
+	PgModelerUiNS::configureWidgetFont(code_name_lbl, PgModelerUiNS::BIG_FONT_FACTOR);
+	PgModelerUiNS::configureWidgetFont(build_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
+	PgModelerUiNS::configureWidgetFont(build_num_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
+	this->adjustSize();
 }

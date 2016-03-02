@@ -47,17 +47,13 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN
 		configureFormLayout(column_grid, OBJ_COLUMN);
 		configureTabOrder({ data_type });
 
-		parent_form->setMinimumSize(530, 480);
-		//parent_form->setMaximumHeight(480);
-
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-
 		connect(sequence_rb, &QRadioButton::clicked,
 				[=](){ sequence_sel->setEnabled(true); def_value_txt->setEnabled(false); });
 
 		connect(expression_rb, &QRadioButton::clicked,
 				[=](){ sequence_sel->setEnabled(false); def_value_txt->setEnabled(true); });
 
+		setMinimumSize(540, 460);
 	}
 	catch(Exception &e)
 	{
@@ -74,7 +70,7 @@ void ColumnWidget::hideEvent(QHideEvent *event)
 	BaseObjectWidget::hideEvent(event);
 }
 
-void ColumnWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, OperationList *op_list, Column *column)
+void ColumnWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *parent_obj, Column *column)
 {
 	PgSQLType type;
 

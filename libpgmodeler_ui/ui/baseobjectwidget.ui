@@ -22,9 +22,6 @@
     <height>0</height>
    </size>
   </property>
-  <property name="windowTitle">
-   <string>Form</string>
-  </property>
   <widget class="QLabel" name="name_lbl">
    <property name="geometry">
     <rect>
@@ -178,7 +175,7 @@
      <x>338</x>
      <y>316</y>
      <width>148</width>
-     <height>29</height>
+     <height>30</height>
     </rect>
    </property>
    <property name="sizePolicy">
@@ -190,7 +187,7 @@
    <property name="minimumSize">
     <size>
      <width>0</width>
-     <height>0</height>
+     <height>30</height>
     </size>
    </property>
    <property name="maximumSize">
@@ -362,7 +359,7 @@ This will disable the code of all child and referrer objects.</string>
      <x>210</x>
      <y>320</y>
      <width>121</width>
-     <height>29</height>
+     <height>31</height>
     </rect>
    </property>
    <property name="sizePolicy">
@@ -374,7 +371,7 @@ This will disable the code of all child and referrer objects.</string>
    <property name="minimumSize">
     <size>
      <width>0</width>
-     <height>0</height>
+     <height>30</height>
     </size>
    </property>
    <property name="maximumSize">

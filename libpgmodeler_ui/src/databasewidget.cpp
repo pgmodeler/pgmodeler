@@ -27,8 +27,6 @@ DatabaseWidget::DatabaseWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DA
 		QGridLayout *grid=nullptr;
 
 		Ui_DatabaseWidget::setupUi(this);
-
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		configureFormLayout(database_grid, OBJ_DATABASE);
 
 		def_schema_sel=new ObjectSelectorWidget(OBJ_SCHEMA, true, this);
@@ -38,6 +36,7 @@ DatabaseWidget::DatabaseWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DA
 
 		frame=generateInformationFrame(trUtf8("The fields <strong>LC_COLLATE</strong> and <strong>LC_CTYPE</strong> have pre-configured values based upon the running system. You can freely modify those values if you intend to export the model to another host."));
 		grid=dynamic_cast<QGridLayout *>(attributes_twg->widget(0)->layout());
+		grid->addItem(new QSpacerItem(10,1,QSizePolicy::Fixed,QSizePolicy::Expanding), grid->count()+1, 0);
 		grid->addWidget(frame, grid->count()+1, 0, 1, 0);
 
 		frame=generateInformationFrame(trUtf8("Use the above fields to specify the default attributes assigned to new objects created on the database model. Leaving a field empty will cause PostgreSQL to use the default values when exporting the model."));
@@ -47,11 +46,9 @@ DatabaseWidget::DatabaseWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DA
 		grid->addWidget(def_schema_sel, 1, 1);
 		grid->addWidget(def_owner_sel, 2, 1);
 		grid->addWidget(def_tablespace_sel, 3, 1);
+		grid->addItem(new QSpacerItem(10,1,QSizePolicy::Fixed,QSizePolicy::Expanding), grid->count()+1, 0);
 		grid->addWidget(frame, grid->count()+1, 0, 1, 0);
 		frame->setParent(attributes_twg->widget(1));
-
-		parent_form->setMinimumWidth(640);
-		parent_form->setMinimumHeight(570);
 
 		//Configures the encoding combobox
 		EncodingType::getTypes(encodings);
@@ -71,6 +68,8 @@ DatabaseWidget::DatabaseWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DA
 
 		lccollate_cmb->addItems(loc_list);
 		lcctype_cmb->addItems(loc_list);
+
+		setMinimumSize(560, 340);
 	}
 	catch(Exception &e)
 	{

@@ -1,7 +1,7 @@
 #include "swapobjectsidswidget.h"
 #include "pgmodeleruins.h"
 
-SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
+SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) : QWidget(parent, f)
 {
 	try
 	{
@@ -20,11 +20,6 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 
 		dst_object_sel=new ObjectSelectorWidget(types, true, this);
 		dst_object_sel->enableObjectCreation(false);
-
-		parent_form.setWindowTitle(QString("Change objects creation order"));
-		parent_form.generalwidget_wgt->insertWidget(0, this);
-		parent_form.generalwidget_wgt->setCurrentIndex(0);
-		parent_form.setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
 
 		swap_objs_grid->setContentsMargins(4,4,4,4);
 		swap_objs_grid->setSpacing(6);
@@ -48,14 +43,8 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 		swap_objs_grid->addItem(new QSpacerItem(10,0,QSizePolicy::Minimum,QSizePolicy::Expanding), swap_objs_grid->count()+1, 0);
 		swap_objs_grid->addWidget(alert_frm, swap_objs_grid->count()+1, 0, 1, 4);
 
-		parent_form.setMinimumSize(540, 260);
-		parent_form.resize(parent_form.minimumSize());
-		parent_form.setWindowFlags(Qt::Dialog | Qt::WindowMinimizeButtonHint | Qt::WindowCloseButtonHint);
-
 		setModel(nullptr);
 
-		connect(parent_form.cancel_btn, SIGNAL(clicked(bool)), this, SLOT(close(void)));
-		connect(parent_form.apply_ok_btn, SIGNAL(clicked(bool)), this, SLOT(swapObjectsIds(void)));
 		connect(src_object_sel, SIGNAL(s_objectSelected(void)), this, SLOT(showObjectId(void)));
 		connect(dst_object_sel, SIGNAL(s_objectSelected(void)), this, SLOT(showObjectId(void)));
 		connect(src_object_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(showObjectId(void)));
@@ -65,6 +54,8 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 				[=](){ BaseObject *obj=src_object_sel->getSelectedObject();
 			src_object_sel->setSelectedObject(dst_object_sel->getSelectedObject());
 			dst_object_sel->setSelectedObject(obj); });
+
+		setMinimumSize(550,150);
 	}
 	catch(Exception &e)
 	{
@@ -74,13 +65,7 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 
 SwapObjectsIdsWidget::~SwapObjectsIdsWidget()
 {
-	parent_form.generalwidget_wgt->removeWidget(this);
-}
 
-void SwapObjectsIdsWidget::show(void)
-{
-	QDialog::show();
-	parent_form.exec();
 }
 
 void SwapObjectsIdsWidget::setModel(DatabaseModel *model)
@@ -90,22 +75,8 @@ void SwapObjectsIdsWidget::setModel(DatabaseModel *model)
 	src_object_sel->setModel(model);
 	dst_object_sel->setModel(model);
 
-	parent_form.generalwidget_wgt->setEnabled(model!=nullptr);
-	parent_form.apply_ok_btn->setEnabled(model!=nullptr);
-
 	src_object_sel->clearSelector();
 	dst_object_sel->clearSelector();
-}
-
-void SwapObjectsIdsWidget::close(void)
-{
-	this->setResult(QDialog::Rejected);
-	parent_form.close();
-}
-
-void SwapObjectsIdsWidget::hideEvent(QHideEvent *)
-{
-	this->setModel(nullptr);
 }
 
 void SwapObjectsIdsWidget::showObjectId(void)
@@ -145,7 +116,10 @@ void SwapObjectsIdsWidget::showObjectId(void)
 	}
 
 	swap_values_tb->setEnabled(src_object_sel->getSelectedObject() &&
-							   dst_object_sel->getSelectedObject());
+														 dst_object_sel->getSelectedObject());
+
+	emit s_objectsIdSwapEnabled(src_object_sel->getSelectedObject() &&
+														 dst_object_sel->getSelectedObject());
 }
 
 void SwapObjectsIdsWidget::swapObjectsIds(void)
@@ -155,11 +129,12 @@ void SwapObjectsIdsWidget::swapObjectsIds(void)
 	BaseGraphicObject *graph_src_obj=dynamic_cast<BaseGraphicObject *>(src_obj),
 			*graph_dst_obj=dynamic_cast<BaseGraphicObject *>(dst_obj);
 
+	if(!src_obj && !dst_obj)
+		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raise an exception if the user try to swap an id of relationship by other object of different kind
-	if((src_obj->getObjectType()==OBJ_RELATIONSHIP || dst_obj->getObjectType()==OBJ_RELATIONSHIP) &&
+	else if((src_obj->getObjectType()==OBJ_RELATIONSHIP || dst_obj->getObjectType()==OBJ_RELATIONSHIP) &&
 			(src_obj->getObjectType() != dst_obj->getObjectType()))
 		throw Exception(ERR_INV_REL_ID_SWAP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
 
 	try
 	{
@@ -189,8 +164,6 @@ void SwapObjectsIdsWidget::swapObjectsIds(void)
 		}
 
 		model->setInvalidated(true);
-		this->setResult(QDialog::Accepted);
-		parent_form.close();
 	}
 	catch(Exception &e)
 	{

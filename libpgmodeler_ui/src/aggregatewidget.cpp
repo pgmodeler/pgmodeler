@@ -64,11 +64,6 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		frame->setParent(this);
 
 		configureFormLayout(funcaoagregacao_grid, OBJ_AGGREGATE);
-		parent_form->setMinimumSize(645, 750);
-
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-		connect(input_types_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleDataType(int)));
-		connect(input_types_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleDataType(int)));
 
 		setRequiredField(state_type);
 		setRequiredField(input_type);
@@ -76,6 +71,7 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		setRequiredField(transition_func_lbl);
 
 		configureTabOrder({ final_func_sel, transition_func_sel, sort_op_sel });
+		setMinimumSize(620,700);
 	}
 	catch(Exception &e)
 	{

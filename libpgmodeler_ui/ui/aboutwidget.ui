@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>592</width>
-    <height>551</height>
+    <width>550</width>
+    <height>556</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,14 +21,14 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>0</width>
+    <width>550</width>
     <height>0</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>16777215</width>
-    <height>16777215</height>
+    <height>600</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -94,7 +94,6 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>14</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -154,7 +153,6 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>10</pointsize>
           <italic>false</italic>
          </font>
         </property>
@@ -203,7 +201,6 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>12</pointsize>
           <italic>true</italic>
          </font>
         </property>
@@ -215,20 +212,15 @@
       <item row="8" column="0" colspan="3">
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0">
-         <widget class="QLabel" name="label_2">
+         <widget class="QLabel" name="site_link_lbl">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="font">
-           <font>
-            <pointsize>8</pointsize>
-           </font>
-          </property>
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://pgmodeler.com.br&quot;&gt;&lt;span style=&quot; font-size:11pt; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;http://pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;a href=&quot;http://pgmodeler.com.br&quot;&gt;http://pgmodeler.com.br&lt;/a&gt;</string>
           </property>
           <property name="textFormat">
            <enum>Qt::RichText</enum>
@@ -340,7 +332,6 @@
           </property>
           <property name="font">
            <font>
-            <pointsize>14</pointsize>
             <weight>75</weight>
             <italic>true</italic>
             <bold>true</bold>
@@ -398,7 +389,6 @@
           </property>
           <property name="font">
            <font>
-            <pointsize>12</pointsize>
             <weight>50</weight>
             <italic>true</italic>
             <bold>false</bold>
@@ -429,7 +419,6 @@
           </property>
           <property name="font">
            <font>
-            <pointsize>9</pointsize>
             <weight>75</weight>
             <italic>true</italic>
             <bold>true</bold>
@@ -496,7 +485,6 @@
           </property>
           <property name="font">
            <font>
-            <pointsize>9</pointsize>
             <weight>50</weight>
             <italic>true</italic>
             <bold>false</bold>
@@ -545,7 +533,6 @@
             <property name="font">
              <font>
               <family>Droid Sans Tamil</family>
-              <pointsize>10</pointsize>
              </font>
             </property>
             <property name="frameShadow">
@@ -600,7 +587,7 @@ p, li { white-space: pre-wrap; }
           <item row="0" column="0">
            <widget class="QLabel" name="label_21">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -613,7 +600,6 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="font">
              <font>
-              <pointsize>10</pointsize>
               <italic>false</italic>
              </font>
             </property>
@@ -646,7 +632,7 @@ p, li { white-space: pre-wrap; }
           <item row="1" column="0">
            <widget class="QTableWidget" name="contributors_tab">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -927,7 +913,7 @@ p, li { white-space: pre-wrap; }
          <enum>Qt::Vertical</enum>
         </property>
         <property name="sizeType">
-         <enum>QSizePolicy::Fixed</enum>
+         <enum>QSizePolicy::Expanding</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>

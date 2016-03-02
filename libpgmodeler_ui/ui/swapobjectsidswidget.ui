@@ -17,7 +17,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Change objects creation order</string>
   </property>
   <widget class="QLabel" name="create_lbl">
    <property name="geometry">

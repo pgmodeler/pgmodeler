@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Object's dependencies &amp; references</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../res/resources.qrc">
