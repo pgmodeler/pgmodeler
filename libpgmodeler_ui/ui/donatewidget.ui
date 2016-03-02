@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>435</width>
-    <height>259</height>
+    <width>400</width>
+    <height>245</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -15,6 +15,12 @@
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>16777215</width>
+    <height>600</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Form</string>
@@ -57,7 +63,6 @@
        <widget class="QLabel" name="title_lbl">
         <property name="font">
          <font>
-          <pointsize>12</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -118,7 +123,6 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>10</pointsize>
           <italic>false</italic>
          </font>
         </property>
@@ -132,7 +136,7 @@
          <enum>Qt::RichText</enum>
         </property>
         <property name="alignment">
-         <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+         <set>Qt::AlignJustify|Qt::AlignTop</set>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -165,7 +169,7 @@
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>0</height>
+            <height>30</height>
            </size>
           </property>
           <property name="text">

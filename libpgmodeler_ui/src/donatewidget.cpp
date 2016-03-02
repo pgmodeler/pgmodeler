@@ -20,6 +20,7 @@
 #include "globalattributes.h"
 #include <QDesktopServices>
 #include <QUrl>
+#include "pgmodeleruins.h"
 
 DonateWidget::DonateWidget(QWidget *parent) : QWidget(parent)
 {
@@ -43,4 +44,7 @@ DonateWidget::DonateWidget(QWidget *parent) : QWidget(parent)
 		this->close();
 		emit s_visibilityChanged(false);
 	});
+
+	PgModelerUiNS::configureWidgetFont(title_lbl, PgModelerUiNS::BIG_FONT_FACTOR);
+	this->adjustSize();
 }

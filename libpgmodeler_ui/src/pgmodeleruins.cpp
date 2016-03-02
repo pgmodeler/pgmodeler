@@ -174,15 +174,35 @@ namespace PgModelerUiNS {
 
 	void configureWidgetFont(QWidget *widget, unsigned factor_id)
 	{
+		float factor = 1;
+
+		switch(factor_id)
+		{
+			case SMALL_FONT_FACTOR:
+				factor=0.85f;
+			break;
+			case MEDIUM_FONT_FACTOR:
+				factor=0.90f;
+			break;
+			case BIG_FONT_FACTOR:
+				factor=1.10f;
+			break;
+			case HUGE_FONT_FACTOR:
+			default:
+				factor=1.40f;
+			break;
+		}
+
+		configureWidgetFont(widget, factor);
+	}
+
+	void configureWidgetFont(QWidget *widget, float factor)
+	{
 		if(!widget)
 			return;
 
 		QFont font=widget->font();
-		float factor = 1;
-
-		factor = (factor_id == SMALL_FONT_FACTOR ? 0.85f : (factor_id == MEDIUM_FONT_FACTOR ? 0.90f : 1.10f));
 		font.setPointSizeF(font.pointSizeF() * factor);
 		widget->setFont(font);
 	}
-
 }

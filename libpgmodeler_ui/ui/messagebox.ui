@@ -290,7 +290,6 @@
             <property name="font">
              <font>
               <family>DejaVu Sans Mono</family>
-              <pointsize>8</pointsize>
              </font>
             </property>
             <property name="lineWrapMode">

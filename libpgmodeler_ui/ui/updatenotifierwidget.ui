@@ -12,13 +12,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>500</width>
+    <width>450</width>
     <height>280</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>500</width>
+    <width>450</width>
     <height>280</height>
    </size>
   </property>
@@ -69,7 +69,7 @@
        <number>6</number>
       </property>
       <item row="0" column="1">
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel" name="title_lbl">
         <property name="font">
          <font>
           <pointsize>12</pointsize>
@@ -78,7 +78,7 @@
          </font>
         </property>
         <property name="text">
-         <string>New update found!</string>
+         <string>Update found!</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -154,8 +154,8 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>60</width>
-            <height>20</height>
+            <width>80</width>
+            <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -163,11 +163,6 @@
             <width>16777215</width>
             <height>16777215</height>
            </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
           </property>
           <property name="text">
            <string>Released in:</string>
@@ -184,7 +179,6 @@
           </property>
           <property name="font">
            <font>
-            <pointsize>10</pointsize>
             <weight>50</weight>
             <italic>true</italic>
             <bold>false</bold>
@@ -209,8 +203,8 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>60</width>
-            <height>20</height>
+            <width>80</width>
+            <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -219,13 +213,8 @@
             <height>16777215</height>
            </size>
           </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
           <property name="text">
-           <string>Version:</string>
+           <string>New version:</string>
           </property>
          </widget>
         </item>
@@ -239,7 +228,6 @@
           </property>
           <property name="font">
            <font>
-            <pointsize>12</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -271,11 +259,6 @@
          </property>
          <item>
           <widget class="QTextEdit" name="changelog_txt">
-           <property name="font">
-            <font>
-             <pointsize>8</pointsize>
-            </font>
-           </property>
            <property name="frameShadow">
             <enum>QFrame::Sunken</enum>
            </property>
@@ -319,7 +302,7 @@
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>0</height>
+            <height>30</height>
            </size>
           </property>
           <property name="toolTip">
@@ -354,7 +337,7 @@
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>0</height>
+            <height>30</height>
            </size>
           </property>
           <property name="toolTip">
