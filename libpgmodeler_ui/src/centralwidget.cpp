@@ -35,6 +35,6 @@ CentralWidget::CentralWidget(QWidget *parent): QWidget(parent)
 		shadow->setBlurRadius(10);
 		btn->setGraphicsEffect(shadow);
 
-		PgModelerUiNS::configureWidgetFont(btn, 1.13f);
+		PgModelerUiNS::configureWidgetFont(btn, 1.20f);
 	}
 }
