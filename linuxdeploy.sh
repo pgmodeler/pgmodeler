@@ -20,7 +20,7 @@ esac
 QMAKE_ARGS="-r -spec linux-clang"
 QMAKE_ROOT=/usr/bin
 LOG="$PWD/linuxdeploy.log"
-QT_IFW_ROOT=/opt/qt-if-1.5.0
+QT_IFW_ROOT=/opt/qt-ifw-1.5.0
 
 STARTUP_SCRIPT="start-pgmodeler.sh"
 MIME_UPDATE_SCRIPT="dbm-mime-type.sh"
