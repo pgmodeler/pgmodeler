@@ -244,7 +244,7 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 
 	msg_lbl->setText(msg);
 
-	this->setWindowTitle(QString("pgModeler - ") + aux_title);
+	this->setWindowTitle(aux_title);
 	this->objs_group_wgt->setCurrentIndex(0);
 	this->show_errors_tb->setChecked(false);
 	this->show_errors_tb->setVisible((exceptions_trw->topLevelItemCount() > 0));
