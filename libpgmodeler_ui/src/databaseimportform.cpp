@@ -655,6 +655,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 				{
 					item=new QTreeWidgetItem(sch_items.back());
 					item->setText(0, QString("..."));
+					item->setData(OBJECT_OTHER_DATA, Qt::UserRole, QVariant::fromValue<int>(-1));
 					sch_items.pop_back();
 				}
 			}

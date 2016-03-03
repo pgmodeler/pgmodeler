@@ -123,8 +123,6 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	objects_trw->installEventFilter(this);
 
 	connect(refresh_tb, SIGNAL(clicked(void)), this, SLOT(listObjects(void)));
-	connect(expand_all_tb, SIGNAL(clicked(bool)), objects_trw, SLOT(expandAll(void)));
-	connect(collapse_all_tb, SIGNAL(clicked(bool)), objects_trw, SLOT(collapseAll(void)));
 	connect(ext_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
 	connect(sys_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
 	connect(objects_trw, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(handleObject(QTreeWidgetItem *,int)));
@@ -150,6 +148,14 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 
 	connect(drop_db_tb, &QToolButton::clicked,
 			[=]() { emit s_databaseDropRequested(connection.getConnectionParam(Connection::PARAM_DB_NAME)); });
+
+	connect(collapse_all_tb, SIGNAL(clicked(bool)), objects_trw, SLOT(collapseAll(void)));
+	connect(expand_all_tb, &QToolButton::clicked,
+			[=](){
+						objects_trw->blockSignals(true);
+						objects_trw->expandAll();
+						objects_trw->blockSignals(false);
+			});
 
 	connect(objects_trw, &QTreeWidget::itemExpanded,
 			[=](QTreeWidgetItem *item){
@@ -890,7 +896,11 @@ void DatabaseExplorerWidget::configureImportHelper(void)
 
 void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 {
-	if(QApplication::mouseButtons()==Qt::RightButton && item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toInt() >= 0)
+	if(item->data(DatabaseImportForm::OBJECT_OTHER_DATA, Qt::UserRole).toInt() < 0)
+	{
+		updateItem(item->parent());
+	}
+	else if(QApplication::mouseButtons()==Qt::RightButton && item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toInt() >= 0)
 	{
 		ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
 		unsigned obj_id=item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt();
@@ -1248,6 +1258,7 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item)
 				{
 					aux_item=new QTreeWidgetItem(item);
 					aux_item->setText(0, QString("..."));
+					aux_item->setData(DatabaseImportForm::OBJECT_OTHER_DATA, Qt::UserRole, QVariant::fromValue<int>(-1));
 				}
 			}
 
