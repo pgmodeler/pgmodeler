@@ -76,7 +76,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		
 		//! brief Destroys both import thread and helper
 		void destroyThread(void);
-		
+
 	public:
 		//! brief Constants used to access the tree widget items data
 		static const unsigned OBJECT_ID=1,
@@ -98,21 +98,25 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		//! brief Fills a combo box with all available databases according to the configurations of the specified import helper
 		static void listDatabases(DatabaseImportHelper &import_helper, QComboBox *dbcombo);
 		
-		//! brief Fills a tree widget with all available database objects according to the configurations of the specified import helper
-		static void listObjects(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, bool checkable_items, bool disable_empty_grps, bool create_db_item);
+		/*! brief Fills a tree widget with all available database objects according to the configurations of the specified import helper.
+		The parameter 'disable_empty_grps' will make empty group items disabled. The parameter 'create_db_item' will create the root
+		item representing the database itself. The parameter 'create_dummy_item' create an empty child item that represent schema or table
+		child. In this case the generation of schema's or table's children need to be done manually. */
+		static void listObjects(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, bool checkable_items,
+														bool disable_empty_grps, bool create_db_item, bool create_dummy_item = false);
 		
 		/*! brief Filters an tree widget using a pattern. The 'search_column' indicates in which column the pattern is applied.
 		The paramenter 'sel_single_leaf' indicates if the single leaf (resulting from filtering) must be selected. */
 		static void filterObjects(QTreeWidget *db_objects_tw, const QString &pattern, int search_column, bool sel_single_leaf);
 		
 		/*! \brief Retrieve the specified objects from the database and insert them onto the tree view.
-	The "root" parameter is used to associate the group of objects as child of it.
-	The "schema" and "table" parameter are used to filter objects by schema and/or table.
-	This method automatically returns a list of QTreeWidgetItem when the vector "types" contains OBJ_SCHEMA or OBJ_TABLE */
+		The "root" parameter is used to associate the group of objects as child of it.
+		The "schema" and "table" parameter are used to filter objects by schema and/or table.
+		This method automatically returns a list of QTreeWidgetItem when the vector "types" contains OBJ_SCHEMA or OBJ_TABLE */
 		static vector<QTreeWidgetItem *> updateObjectsTree(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, vector<ObjectType> types,
-														   bool checkable_items=false, bool disable_empty_grps=true,
-														   QTreeWidgetItem *root=nullptr, const QString &schema=QString(), const QString &table=QString());
-		
+																											 bool checkable_items=false, bool disable_empty_grps=true, QTreeWidgetItem *root=nullptr,
+																											 const QString &schema=QString(), const QString &table=QString());
+
 	private slots:
 		void importDatabase(void);
 		void listObjects(void);
