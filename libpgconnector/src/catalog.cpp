@@ -157,65 +157,70 @@ void Catalog::loadCatalogQuery(const QString &qry_id)
 	schparser.loadBuffer(catalog_queries[qry_id]);
 }
 
+QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, bool single_result, attribs_map attribs)
+{
+	QString sql, custom_filter;
+
+	schparser.setPgSQLVersion(connection.getPgSQLVersion(true));
+	attribs[qry_type]=ParsersAttributes::_TRUE_;
+
+	if(exclude_sys_objs || list_only_sys_objs)
+		attribs[ParsersAttributes::LAST_SYS_OID]=QString("%1").arg(last_sys_oid);
+
+	if(list_only_sys_objs)
+		attribs[ParsersAttributes::OID_FILTER_OP]=QString("<=");
+	else
+		attribs[ParsersAttributes::OID_FILTER_OP]=QString(">");
+
+	if(obj_type==OBJ_TYPE && exclude_array_types)
+		attribs[ParsersAttributes::EXC_BUILTIN_ARRAYS]=ParsersAttributes::_TRUE_;
+
+	//Checking if the custom filter expression is present
+	if(attribs.count(ParsersAttributes::CUSTOM_FILTER))
+	{
+		custom_filter=attribs[ParsersAttributes::CUSTOM_FILTER];
+		attribs.erase(ParsersAttributes::CUSTOM_FILTER);
+	}
+
+	if(exclude_ext_objs && obj_type!=OBJ_DATABASE &&	obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_EXTENSION)
+	{
+		if(ext_oid_fields.count(obj_type)==0)
+			attribs[ParsersAttributes::NOT_EXT_OBJECT]=getNotExtObjectQuery(oid_fields[obj_type]);
+		else
+			attribs[ParsersAttributes::NOT_EXT_OBJECT]=getNotExtObjectQuery(ext_oid_fields[obj_type]);
+	}
+
+	loadCatalogQuery(BaseObject::getSchemaName(obj_type));
+	schparser.ignoreUnkownAttributes(true);
+	schparser.ignoreEmptyAttributes(true);
+
+	attribs[ParsersAttributes::PGSQL_VERSION]=schparser.getPgSQLVersion();
+	sql=schparser.getCodeDefinition(attribs).simplified();
+
+	//Appeding the custom filter to the whole catalog query
+	if(!custom_filter.isEmpty())
+	{
+		if(!sql.contains(QString("WHERE"), Qt::CaseInsensitive))
+			sql+=QString(" WHERE ");
+		else
+			sql+=QString(" AND (%1)").arg(custom_filter);
+	}
+
+	//Append a LIMIT clause when the single_result is set
+	if(single_result)
+	{
+		if(sql.endsWith(';'))	sql.remove(sql.size()-1, 1);
+		sql+=QString(" LIMIT 1");
+	}
+
+	return(sql);
+}
+
 void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, ResultSet &result, bool single_result, attribs_map attribs)
 {
 	try
 	{
-		QString sql, custom_filter;
-
-		schparser.setPgSQLVersion(connection.getPgSQLVersion(true));
-		attribs[qry_type]=ParsersAttributes::_TRUE_;
-
-		if(exclude_sys_objs || list_only_sys_objs)
-			attribs[ParsersAttributes::LAST_SYS_OID]=QString("%1").arg(last_sys_oid);
-
-		if(list_only_sys_objs)
-			attribs[ParsersAttributes::OID_FILTER_OP]=QString("<=");
-		else
-			attribs[ParsersAttributes::OID_FILTER_OP]=QString(">");
-
-		if(obj_type==OBJ_TYPE && exclude_array_types)
-			attribs[ParsersAttributes::EXC_BUILTIN_ARRAYS]=ParsersAttributes::_TRUE_;
-
-		//Checking if the custom filter expression is present
-		if(attribs.count(ParsersAttributes::CUSTOM_FILTER))
-		{
-			custom_filter=attribs[ParsersAttributes::CUSTOM_FILTER];
-			attribs.erase(ParsersAttributes::CUSTOM_FILTER);
-		}
-
-		if(exclude_ext_objs && obj_type!=OBJ_DATABASE &&	obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_EXTENSION)
-		{
-			if(ext_oid_fields.count(obj_type)==0)
-				attribs[ParsersAttributes::NOT_EXT_OBJECT]=getNotExtObjectQuery(oid_fields[obj_type]);
-			else
-				attribs[ParsersAttributes::NOT_EXT_OBJECT]=getNotExtObjectQuery(ext_oid_fields[obj_type]);
-		}
-
-		loadCatalogQuery(BaseObject::getSchemaName(obj_type));
-		schparser.ignoreUnkownAttributes(true);
-		schparser.ignoreEmptyAttributes(true);
-
-		attribs[ParsersAttributes::PGSQL_VERSION]=schparser.getPgSQLVersion();
-		sql=schparser.getCodeDefinition(attribs).simplified();
-
-		//Appeding the custom filter to the whole catalog query
-		if(!custom_filter.isEmpty())
-		{
-			if(!sql.contains(QString("WHERE"), Qt::CaseInsensitive))
-				sql+=QString(" WHERE ");
-			else
-				sql+=QString(" AND (%1)").arg(custom_filter);
-		}
-
-		//Append a LIMIT clause when the single_result is set
-		if(single_result)
-		{
-			if(sql.endsWith(';'))	sql.remove(sql.size()-1, 1);
-			sql+=QString(" LIMIT 1");
-		}
-
-		connection.executeDMLCommand(sql, result);
+		connection.executeDMLCommand(getCatalogQuery(qry_type, obj_type, single_result, attribs), result);
 	}
 	catch(Exception &e)
 	{
@@ -306,6 +311,61 @@ attribs_map Catalog::getObjectsNames(ObjectType obj_type, const QString &sch_nam
 			do
 			{
 				objects[res.getColumnValue(ParsersAttributes::OID)]=res.getColumnValue(ParsersAttributes::NAME);
+			}
+			while(res.accessTuple(ResultSet::NEXT_TUPLE));
+		}
+
+		return(objects);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+vector<attribs_map> Catalog::getObjectsNames(vector<ObjectType> obj_types, const QString &sch_name, const QString &tab_name, attribs_map extra_attribs, bool sort_results)
+{
+	try
+	{
+		ResultSet res;
+		vector<attribs_map> objects;
+		QString sql, select_kw=QString("SELECT");
+		QStringList queries;
+		attribs_map attribs;
+
+		extra_attribs[ParsersAttributes::SCHEMA]=sch_name;
+		extra_attribs[ParsersAttributes::TABLE]=tab_name;
+
+		for(ObjectType obj_type : obj_types)
+		{
+			//Build the catalog query for the specified object type
+			sql=getCatalogQuery(QUERY_LIST, obj_type, false, extra_attribs);
+
+			//Injecting the object type integer code in order to sort the final result
+			sql.replace(sql.indexOf(select_kw), select_kw.size(),
+									QString("%1 %2 AS object_type, ").arg(select_kw).arg(obj_type));
+
+			sql+=QChar('\n');
+			queries.push_back(sql);
+		}
+
+		//Joining the generated queries by using union in order to retrieve all results at once
+		sql = QChar('(') +  queries.join(QString(") UNION (")) + QChar(')');
+
+		if(sort_results)
+			sql += QString(" ORDER BY oid, object_type");
+
+		connection.executeDMLCommand(sql, res);
+
+		if(res.accessTuple(ResultSet::FIRST_TUPLE))
+		{
+			do
+			{
+				attribs[ParsersAttributes::OID]=res.getColumnValue(ParsersAttributes::OID);
+				attribs[ParsersAttributes::NAME]=res.getColumnValue(ParsersAttributes::NAME);
+				attribs[ParsersAttributes::OBJECT_TYPE]=res.getColumnValue(QString("object_type"));
+				objects.push_back(attribs);
+				attribs.clear();
 			}
 			while(res.accessTuple(ResultSet::NEXT_TUPLE));
 		}
