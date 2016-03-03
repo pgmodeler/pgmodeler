@@ -151,7 +151,7 @@
        </property>
        <property name="icon">
         <iconset resource="../res/resources.qrc">
-         <normaloff>:/icones/icones/atualizar.png</normaloff>:/icones/icones/atualizar.png</iconset>
+         <normaloff>:/icones/icones/refreshdb.png</normaloff>:/icones/icones/refreshdb.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -160,7 +160,7 @@
         </size>
        </property>
        <property name="shortcut">
-        <string>Ctrl+F5</string>
+        <string>Ctrl+S</string>
        </property>
       </widget>
      </item>
@@ -402,6 +402,9 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="statusTip">
+               <string>Filters the currently loaded items in the tree by using a pattern and matching their names. If &lt;strong&gt;By OID&lt;/strong&gt; is checked the pattern is interpreted as an integer value that represents the object id (OID). &lt;br&gt;&lt;br/&gt;&lt;strong&gt;HINT:&lt;/strong&gt; if you need to search the entire database use the full refresh (&lt;strong&gt;Ctrl+F5&lt;/strong&gt;) prior the filtering.</string>
+              </property>
               <property name="text">
                <string>Filter:</string>
               </property>
@@ -421,6 +424,28 @@
              <widget class="QCheckBox" name="by_oid_chk">
               <property name="text">
                <string>By OID</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QWidget" name="filter_hint" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
               </property>
              </widget>
             </item>
