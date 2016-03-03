@@ -29,6 +29,7 @@
 #include "databaseimporthelper.h"
 #include "schemaparser.h"
 #include "readonlyitemdelegate.h"
+#include "hinttextwidget.h"
 
 class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget {
 	private:
@@ -68,6 +69,8 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		
 		QTreeWidgetItem *rename_item;
 		
+		HintTextWidget *filter_ht;
+
 		void configureImportHelper(void);
 		
 		//! brief Drops the object represented by the specified item
@@ -128,6 +131,9 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		
 		//! brief Extract an attribute map containing the basic attributes for drop/rename commands
 		attribs_map extractAttributesFromItem(QTreeWidgetItem *item);
+
+		//! brief Updates the selected tree item
+		void updateItem(QTreeWidgetItem *item);
 		
 	public:
 		DatabaseExplorerWidget(QWidget * parent = 0);
@@ -148,10 +154,7 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 	private slots:
 		//! brief Shows the menu to drop/show data
 		void handleObject(QTreeWidgetItem *item, int);
-		
-		//! brief Updates on the tree under the current selected object
-		void updateCurrentItem(void);
-		
+
 		/*! brief Loads the catalog properties of a selected object and stores them in the current selected item,
 		the force_reload parameter is used to ignore the cached properties and retrieve them again */
 		void loadObjectProperties(bool force_reload=false);

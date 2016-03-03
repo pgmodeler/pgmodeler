@@ -96,8 +96,10 @@ class Catalog {
 		the query will return only one tuple on the result set. Additional attributes can be passed so that SchemaParser will
 		use them when parsing the schema file for the object. A special extra attribute is accepted but not passed to SchemaParser:
 		ParsersAttributes::CUSTOM_FILTER that will be appended to the current filter expression */
-		void executeCatalogQuery(const QString &qry_type, ObjectType obj_type, ResultSet &result,
-								 bool single_result=false, attribs_map attribs=attribs_map());
+		void executeCatalogQuery(const QString &qry_type, ObjectType obj_type, ResultSet &result, bool single_result=false, attribs_map attribs=attribs_map());
+
+		//! \brief Returns the catalog query according to the type of the object type provided
+		QString getCatalogQuery(const QString &qry_type, ObjectType obj_type, bool single_result=false, attribs_map attribs=attribs_map());
 
 		/*! \brief Recreates the attribute map in such way that attribute names that have
 		underscores have this char replaced by dashes. Another special operation made is to replace
@@ -169,6 +171,10 @@ class Catalog {
 		/*! \brief Returns a attributes map containing the oids (key) and names (values) of the objects from
 		the specified type.	A schema name can be specified in order to filter only objects of the specifed schema */
 		attribs_map getObjectsNames(ObjectType obj_type, const QString &sch_name=QString(), const QString &tab_name=QString(), attribs_map extra_attribs=attribs_map());
+
+		/*! \brief Returns a vector of attributes map containing the oids (key) and names as well types of the objects from
+		the specified list of types.	A schema name can be specified in order to filter only objects of the specifed schema */
+		vector<attribs_map> getObjectsNames(vector<ObjectType> obj_types, const QString &sch_name=QString(), const QString &tab_name=QString(), attribs_map extra_attribs=attribs_map(), bool sort_results=false);
 
 		//! \brief Returns a set of multiple attributes (several tuples) for the specified object type
 		vector<attribs_map> getMultipleAttributes(ObjectType obj_type, attribs_map extra_attribs=attribs_map());
