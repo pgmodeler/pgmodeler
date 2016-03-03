@@ -137,6 +137,19 @@ attribs_map DatabaseImportHelper::getObjects(ObjectType obj_type, const QString 
 	}
 }
 
+vector<attribs_map> DatabaseImportHelper::getObjects(vector<ObjectType> obj_types, const QString &schema, const QString &table, attribs_map extra_attribs)
+{
+	try
+	{
+		catalog.setFilter(import_filter);
+		return(catalog.getObjectsNames(obj_types, schema, table, extra_attribs));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
 void DatabaseImportHelper::swapSequencesTablesIds(void)
 {
 	BaseObject *table=nullptr, *sequence=nullptr;
@@ -167,7 +180,7 @@ void DatabaseImportHelper::retrieveSystemObjects(void)
 	for(i=0; i < cnt && !import_canceled; i++)
 	{
 		emit s_progressUpdated(progress,
-							   trUtf8("Retrieving system objects... `%1'").arg(BaseObject::getTypeName(sys_objs[i])),
+								 trUtf8("Retrieving system objects... `%1'").arg(BaseObject::getTypeName(sys_objs[i])),
 							   sys_objs[i]);
 
 		if(sys_objs[i]!=OBJ_TYPE)
@@ -217,7 +230,7 @@ void DatabaseImportHelper::retrieveUserObjects(void)
 	while(oid_itr!=object_oids.end() && !import_canceled)
 	{
 		emit s_progressUpdated(progress,
-							   trUtf8("Retrieving objects... `%1'").arg(BaseObject::getTypeName(oid_itr->first)),
+								 trUtf8("Retrieving objects... `%1'").arg(BaseObject::getTypeName(oid_itr->first)),
 							   oid_itr->first);
 
 		objects=catalog.getObjectsAttributes(oid_itr->first, QString(), QString(), oid_itr->second);
@@ -241,7 +254,7 @@ void DatabaseImportHelper::retrieveUserObjects(void)
 	while(col_itr!=column_oids.end())
 	{
 		emit s_progressUpdated(progress,
-							   trUtf8("Retrieving objects... `%1'").arg(BaseObject::getTypeName(OBJ_COLUMN)),
+								 trUtf8("Retrieving objects... `%1'").arg(BaseObject::getTypeName(OBJ_COLUMN)),
 							   OBJ_COLUMN);
 
 		names=getObjectName(QString::number(col_itr->first)).split(".");
@@ -299,7 +312,7 @@ void DatabaseImportHelper::createObjects(void)
 			if(obj_type!=OBJ_CONSTRAINT)
 			{
 				emit s_progressUpdated(progress,
-									   trUtf8("Creating object `%1' (%2)...")
+										 trUtf8("Creating object `%1' (%2)...")
 									   .arg(attribs[ParsersAttributes::NAME])
 						.arg(BaseObject::getTypeName(obj_type)),
 						obj_type);
@@ -345,7 +358,7 @@ void DatabaseImportHelper::createObjects(void)
 				itr++;
 
 				emit s_progressUpdated(progress,
-									   trUtf8("Trying to recreate object `%1' (%2)...")
+										 trUtf8("Trying to recreate object `%1' (%2)...")
 									   .arg(attribs[ParsersAttributes::NAME])
 						.arg(BaseObject::getTypeName(obj_type)),
 						obj_type);
@@ -407,7 +420,7 @@ void DatabaseImportHelper::createConstraints(void)
 					 attribs[ParsersAttributes::INHERITED]!=ParsersAttributes::_TRUE_))
 			{
 				emit s_progressUpdated(progress,
-									   trUtf8("Creating object `%1' (%2)...")
+										 trUtf8("Creating object `%1' (%2)...")
 									   .arg(attribs[ParsersAttributes::NAME])
 						.arg(BaseObject::getTypeName(OBJ_CONSTRAINT)),
 						OBJ_CONSTRAINT);
@@ -445,7 +458,7 @@ void DatabaseImportHelper::createPermissions(void)
 			attribs=user_objs[*itr_obj];
 			obj_type=static_cast<ObjectType>(attribs[ParsersAttributes::OBJECT_TYPE].toUInt());
 			emit s_progressUpdated(progress,
-								   msg.arg(getObjectName(attribs[ParsersAttributes::OID]))
+									 msg.arg(getObjectName(attribs[ParsersAttributes::OID]))
 					.arg(BaseObject::getTypeName(obj_type)), OBJ_PERMISSION);
 
 			createPermission(attribs);
@@ -505,7 +518,7 @@ void DatabaseImportHelper::updateFKRelationships(void)
 			tab=dynamic_cast<Table *>(*itr_tab);
 
 			emit s_progressUpdated(progress,
-								   trUtf8("Updating relationships of `%1' (%2)...")
+									 trUtf8("Updating relationships of `%1' (%2)...")
 								   .arg(tab->getName())
 								   .arg(BaseObject::getTypeName(OBJ_TABLE)),
 								   OBJ_TABLE);
@@ -2040,7 +2053,7 @@ void DatabaseImportHelper::assignSequencesToColumns(void)
 	Table *table=nullptr;
 	Column *col=nullptr;
 	emit s_progressUpdated(95,
-						   trUtf8("Assigning sequences to columns..."),
+							 trUtf8("Assigning sequences to columns..."),
 						   OBJ_SEQUENCE);
 
 	for(auto &object : *dbmodel->getObjectList(OBJ_TABLE))
