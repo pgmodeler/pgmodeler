@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>373</width>
+    <width>315</width>
     <height>702</height>
    </rect>
   </property>
@@ -259,11 +259,19 @@
           <bool>true</bool>
          </property>
          <property name="columnCount">
-          <number>1</number>
+          <number>2</number>
          </property>
+         <attribute name="headerStretchLastSection">
+          <bool>true</bool>
+         </attribute>
          <column>
           <property name="text">
            <string notr="true">1</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string notr="true">2</string>
           </property>
          </column>
         </widget>

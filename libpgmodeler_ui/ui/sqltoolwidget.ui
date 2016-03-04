@@ -265,6 +265,47 @@
              </spacer>
             </item>
             <item>
+             <widget class="QToolButton" name="attributes_tb">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Toggle the object finder</string>
+              </property>
+              <property name="statusTip">
+               <string>Toggle the object's attributes grid</string>
+              </property>
+              <property name="text">
+               <string>Attributes</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../res/resources.qrc">
+                <normaloff>:/icones/icones/attribute.png</normaloff>:/icones/icones/attribute.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+              <property name="shortcut">
+               <string>Alt+R</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextBesideIcon</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QToolButton" name="source_pane_tb">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -279,7 +320,7 @@
                <string>Toggle the display of source code pane</string>
               </property>
               <property name="text">
-               <string>Sou&amp;rce pane</string>
+               <string>Source pane</string>
               </property>
               <property name="icon">
                <iconset resource="../res/resources.qrc">
@@ -290,9 +331,6 @@
                 <width>22</width>
                 <height>22</height>
                </size>
-              </property>
-              <property name="shortcut">
-               <string>Alt+R</string>
               </property>
               <property name="checkable">
                <bool>true</bool>
@@ -322,7 +360,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="">
+        <widget class="QWidget" name="layoutWidget">
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
            <widget class="QSplitter" name="v_splitter">
