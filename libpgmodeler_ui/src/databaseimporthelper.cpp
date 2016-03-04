@@ -64,7 +64,7 @@ void DatabaseImportHelper::setCurrentDatabase(const QString &dbname)
 	}
 }
 
-void DatabaseImportHelper::setSelectedOIDs(DatabaseModel *db_model, map<ObjectType, vector<unsigned> > &obj_oids, map<unsigned, vector<unsigned> > &col_oids)
+void DatabaseImportHelper::setSelectedOIDs(DatabaseModel *db_model, const map<ObjectType, vector<unsigned> > &obj_oids, const map<unsigned, vector<unsigned> > &col_oids)
 {
 	if(!db_model)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -714,7 +714,10 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				case OBJ_EVENT_TRIGGER: createEventTrigger(attribs); break;
 
 				default:
-					qDebug("create method for %s isn't implemented!", BaseObject::getSchemaName(obj_type).toStdString().c_str());
+					if(debug_mode)
+					{
+						qDebug("create method for %s isn't implemented!", BaseObject::getSchemaName(obj_type).toStdString().c_str());
+					}
 				break;
 			}
 

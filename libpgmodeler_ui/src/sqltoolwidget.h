@@ -32,10 +32,15 @@
 #include "datamanipulationform.h"
 #include "findreplacewidget.h"
 #include "codecompletionwidget.h"
+#include "numberedtexteditor.h"
 
 class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 	private:
 		Q_OBJECT
+
+		NumberedTextEditor *sourcecode_txt;
+
+		SyntaxHighlighter *sourcecode_hl;
 
 		//! brief Database import helper used to list objects from current connection
 		DatabaseImportHelper import_helper;
