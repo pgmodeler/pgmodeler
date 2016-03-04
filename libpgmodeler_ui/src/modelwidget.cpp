@@ -3493,18 +3493,17 @@ void ModelWidget::removeRelationshipPoints(void)
 
 void ModelWidget::rearrangeSchemas(QPointF origin, unsigned tabs_per_row, unsigned sch_per_row, double obj_spacing)
 {
-	vector<BaseObject *>::iterator itr, itr_end;
+	vector<BaseObject *> *objects=nullptr;
 	Schema *schema=nullptr;
 	SchemaView *sch_view=nullptr;
 	unsigned sch_id=0;
 	double x=origin.x(), y=origin.y(), max_y=-1, cy=0;
 
-	itr=db_model->getObjectList(OBJ_SCHEMA)->begin();
-	itr_end=db_model->getObjectList(OBJ_SCHEMA)->end();
+	objects=db_model->getObjectList(OBJ_SCHEMA);
 
-	while(itr!=itr_end)
+	for(BaseObject *obj : *objects)
 	{
-		schema=dynamic_cast<Schema *>(*itr);
+		schema=dynamic_cast<Schema *>(obj);
 
 		/* Forcing the schema rectangle to be visible in order to correctly positioin
 			 schemas over the screen */
@@ -3541,8 +3540,18 @@ void ModelWidget::rearrangeSchemas(QPointF origin, unsigned tabs_per_row, unsign
 				//Configuring the x position for the next schema on the current row
 				x=sch_view->pos().x() + sch_view->boundingRect().width() + obj_spacing;
 		}
+	}
 
-		itr++;
+	objects=db_model->getObjectList(OBJ_RELATIONSHIP);
+	for(BaseObject *obj : *objects)
+	{
+		dynamic_cast<BaseRelationship *>(obj)->setModified(true);
+	}
+
+	objects=db_model->getObjectList(BASE_RELATIONSHIP);
+	for(BaseObject *obj : *objects)
+	{
+		dynamic_cast<BaseRelationship *>(obj)->setModified(true);
 	}
 
 	//Adjust the whole scene size due to table/schema repositioning
