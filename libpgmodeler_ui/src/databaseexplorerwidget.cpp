@@ -1552,36 +1552,52 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 				ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
 				QString sch_name, name, sql_code;
 				BaseObject *object=nullptr;
+				vector<Permission *> perms;
 
 				dbmodel.createSystemObjects(false);
 				import_hlp.setConnection(connection);
 				import_hlp.setCurrentDatabase(connection.getConnectionParam(Connection::PARAM_DB_NAME));
 				import_hlp.setImportOptions(sys_objs_chk->isChecked(), ext_objs_chk->isChecked(),
 																		true, false, false, false, false);
-
 				import_hlp.setSelectedOIDs(&dbmodel, {{obj_type,{oid}}}, {});
 				import_hlp.importDatabase();
 
-				sch_name=item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString();
-				name=item->data(DatabaseImportForm::OBJECT_NAME, Qt::UserRole).toString();
-
-				if(!sch_name.isEmpty())
-					name.prepend(sch_name + QChar('.'));
-
-				object=dbmodel.getObject(name, obj_type);
-
-				if(object)
+				if(obj_type==OBJ_DATABASE)
 				{
-					object->setSystemObject(false);
-					object->setSQLDisabled(false);
-					object->setCodeInvalidated(true);
-					sql_code=object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
-					emit s_sourceCodeShowRequested(sql_code);
+					dbmodel.getPermissions(&dbmodel, perms);
+					sql_code=dbmodel.__getCodeDefinition(SchemaParser::SQL_DEFINITION);
+
+					for(auto &perm : perms)
+						sql_code+=perm->getCodeDefinition(SchemaParser::SQL_DEFINITION);
 				}
 				else
 				{
-					sql_code=QString("-- Source code unavailable for the object. --");
-					emit s_sourceCodeShowRequested(sql_code);
+					sch_name=item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString();
+					name=item->data(DatabaseImportForm::OBJECT_NAME, Qt::UserRole).toString();
+
+					if(!sch_name.isEmpty())
+						name.prepend(sch_name + QChar('.'));
+
+					object=dbmodel.getObject(name, obj_type);
+
+					if(object)
+					{
+						dbmodel.getPermissions(object, perms);
+						object->setSystemObject(false);
+						object->setSQLDisabled(false);
+						object->setCodeInvalidated(true);
+						sql_code=object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+
+						for(auto &perm : perms)
+							sql_code+=perm->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+
+						emit s_sourceCodeShowRequested(sql_code);
+					}
+					else
+					{
+						sql_code=QString("-- Source code unavailable for the object. --");
+						emit s_sourceCodeShowRequested(sql_code);
+					}
 				}
 
 				item->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, sql_code);

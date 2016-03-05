@@ -406,7 +406,8 @@ void GeneralConfigWidget::saveConfiguration(void)
 						schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
 			}
 			else if(itr->first==ParsersAttributes::VALIDATOR ||
-					itr->first==ParsersAttributes::OBJECT_FINDER)
+							itr->first==ParsersAttributes::OBJECT_FINDER ||
+							itr->first==ParsersAttributes::SQL_TOOL)
 			{
 				schparser.ignoreUnkownAttributes(true);
 				config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DOCK_WIDGETS]+=

@@ -236,8 +236,11 @@ void SQLToolWidget::browseDatabase(void)
 			connect(db_explorer_wgt, SIGNAL(s_snippetShowRequested(QString)), this, SLOT(showSnippet(QString)));
 			connect(db_explorer_wgt, SIGNAL(s_sourceCodeShowRequested(QString)), sourcecode_txt, SLOT(setPlainText(QString)));
 
+			connect(attributes_tb, SIGNAL(toggled(bool)), db_explorer_wgt->attributes_wgt, SLOT(setVisible(bool)));
+			db_explorer_wgt->attributes_wgt->setVisible(attributes_tb->isChecked());
+
 			/* Forcing the signal s_sqlExecutionRequested to be emitted to properly register the
-	   new tab on the map of sql panes related to the database explorer */
+			new tab on the map of sql panes related to the database explorer */
 			db_explorer_wgt->runsql_tb->click();
 		}
 	}

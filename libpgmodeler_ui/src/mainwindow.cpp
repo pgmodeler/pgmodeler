@@ -1708,6 +1708,12 @@ void MainWindow::storeDockWidgetsSettings(void)
 	params[ParsersAttributes::EXACT_MATCH]=(obj_finder_wgt->exact_match_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
 	conf_wgt->addConfigurationParam(ParsersAttributes::OBJECT_FINDER, params);
 	params.clear();
+
+	params[ParsersAttributes::SQL_TOOL]=ParsersAttributes::_TRUE_;
+	params[ParsersAttributes::SHOW_ATTRIBUTES_GRID]=(sql_tool_wgt->attributes_tb->isChecked() ? ParsersAttributes::_TRUE_ : QString());
+	params[ParsersAttributes::SHOW_SOURCE_PANE]=(sql_tool_wgt->source_pane_tb->isChecked() ? ParsersAttributes::_TRUE_ : QString());
+	conf_wgt->addConfigurationParam(ParsersAttributes::SQL_TOOL, params);
+	params.clear();
 }
 
 void MainWindow::restoreDockWidgetsSettings(void)
@@ -1728,6 +1734,12 @@ void MainWindow::restoreDockWidgetsSettings(void)
 		obj_finder_wgt->regexp_chk->setChecked(confs[ParsersAttributes::OBJECT_FINDER][ParsersAttributes::REGULAR_EXP]==ParsersAttributes::_TRUE_);
 		obj_finder_wgt->case_sensitive_chk->setChecked(confs[ParsersAttributes::OBJECT_FINDER][ParsersAttributes::CASE_SENSITIVE]==ParsersAttributes::_TRUE_);
 		obj_finder_wgt->exact_match_chk->setChecked(confs[ParsersAttributes::OBJECT_FINDER][ParsersAttributes::EXACT_MATCH]==ParsersAttributes::_TRUE_);
+	}
+
+	if(confs.count(ParsersAttributes::SQL_TOOL))
+	{
+		sql_tool_wgt->attributes_tb->setChecked(confs[ParsersAttributes::SQL_TOOL][ParsersAttributes::SHOW_ATTRIBUTES_GRID]==ParsersAttributes::_TRUE_);
+		sql_tool_wgt->source_pane_tb->setChecked(confs[ParsersAttributes::SQL_TOOL][ParsersAttributes::SHOW_SOURCE_PANE]==ParsersAttributes::_TRUE_);
 	}
 }
 
