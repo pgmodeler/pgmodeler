@@ -16,8 +16,8 @@
 %if {io-cast} %then
   $tb [WITH INOUT ]
 %else
-  %if {signature} %then
-    $tb [WITH FUNCTION ] {signature}
+  %if {function} %then
+    $tb [WITH FUNCTION ] {function}
   %else
     $tb [WITHOUT FUNCTION]
   %end

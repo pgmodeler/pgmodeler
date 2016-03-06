@@ -52,9 +52,9 @@ class Cast: public BaseObject {
 		static const unsigned SRC_TYPE=0,
 		DST_TYPE=1,
 		//! \brief Constants used to define the cast type
-		ASSIGNMENT=10,
-		IMPLICIT=20,
-		EXPLICIT=30;
+		EXPLICIT=0,
+		ASSIGNMENT=1,
+		IMPLICIT=2;
 		Cast(void);
 
 		/*! \brief Defines one of the data types envolved on the cast
