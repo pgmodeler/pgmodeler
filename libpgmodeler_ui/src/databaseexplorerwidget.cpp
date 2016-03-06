@@ -1548,59 +1548,80 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 			{
 				DatabaseModel dbmodel;
 				DatabaseImportHelper import_hlp;
-				unsigned oid=item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt();
+				unsigned oid=item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt(), sys_oid=0;
 				ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
-				QString sch_name, name, sql_code;
+				QString sch_name, name;
 				BaseObject *object=nullptr;
 				vector<Permission *> perms;
+
+				sch_name=item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString();
+				name=item->data(DatabaseImportForm::OBJECT_NAME, Qt::UserRole).toString();
+
+				if(!sch_name.isEmpty())
+					name.prepend(sch_name + QChar('.'));
 
 				dbmodel.createSystemObjects(false);
 				import_hlp.setConnection(connection);
 				import_hlp.setCurrentDatabase(connection.getConnectionParam(Connection::PARAM_DB_NAME));
 				import_hlp.setImportOptions(sys_objs_chk->isChecked(), ext_objs_chk->isChecked(),
-																		true, false, false, false, false);
+																		true, false, true, false, false);
 				import_hlp.setSelectedOIDs(&dbmodel, {{obj_type,{oid}}}, {});
-				import_hlp.importDatabase();
+				sys_oid=import_hlp.getLastSystemOID();
 
-				if(obj_type==OBJ_DATABASE)
+				if(obj_type==OBJ_TYPE && oid <= sys_oid)
 				{
-					dbmodel.getPermissions(&dbmodel, perms);
-					sql_code=dbmodel.__getCodeDefinition(SchemaParser::SQL_DEFINITION);
-
-					for(auto &perm : perms)
-						sql_code+=perm->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+					source=trUtf8("-- Source code currently unavailable for built-in types --");
+					emit s_sourceCodeShowRequested(source);
 				}
 				else
 				{
-					sch_name=item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString();
-					name=item->data(DatabaseImportForm::OBJECT_NAME, Qt::UserRole).toString();
+					import_hlp.importDatabase();
 
-					if(!sch_name.isEmpty())
-						name.prepend(sch_name + QChar('.'));
-
-					object=dbmodel.getObject(name, obj_type);
-
-					if(object)
+					if(obj_type==OBJ_DATABASE)
 					{
-						dbmodel.getPermissions(object, perms);
-						object->setSystemObject(false);
-						object->setSQLDisabled(false);
-						object->setCodeInvalidated(true);
-						sql_code=object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+						dbmodel.getPermissions(&dbmodel, perms);
+						source=dbmodel.__getCodeDefinition(SchemaParser::SQL_DEFINITION);
 
 						for(auto &perm : perms)
-							sql_code+=perm->getCodeDefinition(SchemaParser::SQL_DEFINITION);
-
-						emit s_sourceCodeShowRequested(sql_code);
+							source+=perm->getCodeDefinition(SchemaParser::SQL_DEFINITION);
 					}
 					else
 					{
-						sql_code=QString("-- Source code unavailable for the object. --");
-						emit s_sourceCodeShowRequested(sql_code);
+						if(obj_type==OBJ_OPCLASS || obj_type==OBJ_OPFAMILY)
+						{
+							QString idx_type=item->text(0);
+
+							idx_type.remove(0, idx_type.indexOf(QChar('[')) + 1);
+							idx_type.remove(QChar(']'));
+
+							name=QString("%1 USING %2").arg(name).arg(idx_type);
+						}
+
+						object=dbmodel.getObject(name, obj_type);
+
+						if(object)
+						{
+							dbmodel.getPermissions(object, perms);
+							object->setSystemObject(false);
+							object->setSQLDisabled(false);
+							object->setCodeInvalidated(true);
+							source=object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+
+							for(auto &perm : perms)
+								source+=perm->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+
+							emit s_sourceCodeShowRequested(source);
+						}
+						else
+						{
+							source=trUtf8("-- Source code unavailable for the object %1 (%2). --").arg(name).arg(BaseObject::getTypeName(obj_type));
+							emit s_sourceCodeShowRequested(source);
+						}
 					}
 				}
 
-				item->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, sql_code);
+
+				item->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, source);
 			}
 		}
 	}

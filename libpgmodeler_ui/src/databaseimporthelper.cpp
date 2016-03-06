@@ -1029,7 +1029,7 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 					(attribs[ParsersAttributes::REF_TYPE]==ParsersAttributes::SEND_FUNC ||
 					 attribs[ParsersAttributes::REF_TYPE]==ParsersAttributes::OUTPUT_FUNC ||
 					 attribs[ParsersAttributes::REF_TYPE]==ParsersAttributes::CANONICAL_FUNC))
-				type=PgSQLType(QString("any"));
+				type=PgSQLType(QString("\"any\""));
 			else
 			{
 				//If the type contains array descriptor [] set the dimension to 1
@@ -1094,7 +1094,7 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 			if(attribs[ParsersAttributes::REF_TYPE]==ParsersAttributes::INPUT_FUNC ||
 					attribs[ParsersAttributes::REF_TYPE]==ParsersAttributes::RECV_FUNC ||
 					attribs[ParsersAttributes::REF_TYPE]==ParsersAttributes::CANONICAL_FUNC)
-				attribs[ParsersAttributes::RETURN_TYPE]=PgSQLType(QString("any")).getCodeDefinition(SchemaParser::XML_DEFINITION);
+				attribs[ParsersAttributes::RETURN_TYPE]=PgSQLType(QString("\"any\"")).getCodeDefinition(SchemaParser::XML_DEFINITION);
 			else
 				attribs[ParsersAttributes::RETURN_TYPE]=getType(attribs[ParsersAttributes::RETURN_TYPE], true);
 		}
