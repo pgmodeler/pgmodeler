@@ -33,7 +33,7 @@
 
 class BaseType{
 	protected:
-		static const unsigned types_count=239;
+		static const unsigned types_count=240;
 		static QString type_list[types_count];
 
 		//! \brief Index of the type on the type_list vector
@@ -535,7 +535,7 @@ class SecurityType: public BaseType{
 class LanguageType: public BaseType{
 	private:
 		static const unsigned offset=154;
-		static const unsigned types_count=6;
+		static const unsigned types_count=7;
 
 	public:
 		static const unsigned sql=offset;
@@ -544,6 +544,7 @@ class LanguageType: public BaseType{
 		static const unsigned pltcl=offset+3;
 		static const unsigned plperl=offset+4;
 		static const unsigned plpython=offset+5;
+		static const unsigned internal=offset+6;
 
 		LanguageType(const QString &type_name);
 		LanguageType(unsigned type_id);
@@ -556,7 +557,7 @@ class LanguageType: public BaseType{
 
 class EncodingType: public BaseType{
 	private:
-		static const unsigned offset=160;
+		static const unsigned offset=161;
 		static const unsigned types_count=41;
 
 	public:
@@ -576,7 +577,7 @@ class EncodingType: public BaseType{
 
 class StorageType: public BaseType{
 	private:
-		static const unsigned offset=201;
+		static const unsigned offset=202;
 		static const unsigned types_count=4;
 
 	public:
@@ -599,7 +600,7 @@ class StorageType: public BaseType{
 
 class MatchType: public BaseType{
 	private:
-		static const unsigned offset=205;
+		static const unsigned offset=206;
 		static const unsigned types_count=3;
 
 	public:
@@ -618,7 +619,7 @@ class MatchType: public BaseType{
 
 class DeferralType: public BaseType{
 	private:
-		static const unsigned offset=208;
+		static const unsigned offset=209;
 		static const unsigned types_count=2;
 
 	public:
@@ -636,7 +637,7 @@ class DeferralType: public BaseType{
 
 class CategoryType: public BaseType{
 	private:
-		static const unsigned offset=210;
+		static const unsigned offset=211;
 		static const unsigned types_count=14;
 
 	public:
@@ -666,7 +667,7 @@ class CategoryType: public BaseType{
 
 class FiringType: public BaseType{
 	private:
-		static const unsigned offset=224;
+		static const unsigned offset=225;
 		static const unsigned types_count=3;
 
 	public:
@@ -685,7 +686,7 @@ class FiringType: public BaseType{
 
 class EventTriggerType: public BaseType{
 	private:
-		static const unsigned offset=235;
+		static const unsigned offset=236;
 		static const unsigned types_count=4;
 
 	public:

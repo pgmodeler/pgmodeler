@@ -114,7 +114,7 @@ QString BaseType::type_list[types_count]=
 
 	//Pseudo-types
 	//offsets 121 to 135
-	"any","anyarray","anyelement","anyenum",
+	"\"any\"","anyarray","anyelement","anyenum",
 	"anynonarray", "anyrange", "cstring","internal","language_handler",
 	"record","trigger","void","opaque", "fdw_handler", "event_trigger",
 
@@ -137,16 +137,17 @@ QString BaseType::type_list[types_count]=
 	"SECURITY DEFINER",
 
 	//Types used by the class LanguageType
-	//offsets 154 to 159
+	//offsets 154 to 160
 	"sql",
 	"c",
 	"plpgsql",
 	"pltcl",
 	"plperl",
 	"plpython",
+	"internal",
 
 	//Types used by the class EncodingType
-	//offsets 160 to 200
+	//offsets 161 to 201
 	"UTF8", "BIG5", "EUC_CN",  "EUC_JP", "EUC_JIS_2004", "EUC_KR",
 	"EUC_TW", "GB18030", "GBK", "ISO_8859_5", "ISO_8859_6",
 	"ISO_8859_7", "ISO_8859_8", "JOHAB", "KOI", "LATIN1",
@@ -158,25 +159,25 @@ QString BaseType::type_list[types_count]=
 	"WIN1258",
 
 	//Types used by the class StorageType
-	//offsets 201 to 204
+	//offsets 202 to 205
 	"plain",
 	"external",
 	"extended",
 	"main",
 
 	//Types used by the class MatchType
-	//offsets 205 to 207
+	//offsets 206 to 208
 	"MATCH FULL",
 	"MATCH PARTIAL",
 	"MATCH SIMPLE",
 
 	//Types used by the class DeferralType
-	//offsets 208 to 209
+	//offsets 209 to 210
 	"INITIALLY IMMEDIATE",
 	"INITIALLY DEFERRED",
 
 	//Types used by the class CategoryType
-	//offsets 210 to 223 - See table 44-43 on PostgreSQL 8.4 documentation
+	//offsets 211 to 224 - See table 44-43 on PostgreSQL 8.4 documentation
 	"U", //User-defined types
 	"A", //Array types
 	"B", //Boolean types
@@ -193,7 +194,7 @@ QString BaseType::type_list[types_count]=
 	"X", //Unknown type
 
 	//Types used by the class FiringType
-	//offsets 224 to 226
+	//offsets 225 to 227
 	"BEFORE",
 	"AFTER",
 	"INSTEAD OF",
@@ -202,7 +203,7 @@ QString BaseType::type_list[types_count]=
 				These types accepts variations Z, M e ZM.
 				 > Example: POINT, POINTZ, POINTM, POINTZM
 				Reference: http://postgis.refractions.net/documentation/manual-2.0/using_postgis_dbmanagement.html */
-	//offsets 227 to 234
+	//offsets 228 to 235
 	"POINT",
 	"LINESTRING",
 	"POLYGON",
@@ -213,7 +214,7 @@ QString BaseType::type_list[types_count]=
 	"GEOMETRYCOLLECTION",
 
 	//Types used by the class EventTriggerType
-	//offsets 235 to 237
+	//offsets 236 to 239
 	"ddl_command_start",
 	"ddl_command_end",
 	"sql_drop",
@@ -1276,7 +1277,14 @@ QString PgSQLType::operator ~ (void)
 	if(type_idx >= pseudo_end + 1)
 		return(user_types[type_idx - (pseudo_end + 1)].name);
 	else
-		return(BaseType::type_list[type_idx]);
+	{
+		QString name=BaseType::type_list[type_idx];
+
+		if(with_timezone && (name==QString("time") || name==QString("timestamp")))
+			 name+=QString(" with time zone");
+
+		return(name);
+	}
 }
 
 bool PgSQLType::isArrayType(void)
