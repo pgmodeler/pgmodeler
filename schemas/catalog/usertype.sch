@@ -35,6 +35,16 @@
 %else
     %if {attribs} %then
     [SELECT tp.oid, replace(tp.oid::regtype::text, ns.nspname || '.', '') AS name, tp.typnamespace AS schema, tp.typowner AS owner, ]
+    
+    #Retrieve the OID for table/view/sequence that generates the composite type
+    [ (SELECT 
+        CASE 
+            WHEN relkind = 'r' THEN 'table'
+            WHEN relkind = 'S' THEN 'sequence'
+            WHEN relkind = 'v' THEN 'view'
+            WHEN relkind = 'm' THEN 'view'
+            WHEN typtype = 'd' THEN 'domain'
+        END AS type_class FROM pg_class WHERE oid=tp.typrelid), tp.typrelid AS object_id, ]
 
     #TODO: Discover which field is the acl for user defined types on PgSQL 9.0
     %if ({pgsql-ver} <= "9.1") %then

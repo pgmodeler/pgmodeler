@@ -1550,21 +1550,35 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 				DatabaseImportHelper import_hlp;
 				unsigned oid=item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt(), sys_oid=0;
 				ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
-				QString sch_name, name;
+				QString sch_name, tab_name, name;
 				BaseObject *object=nullptr;
 				vector<Permission *> perms;
+				bool is_column=false;
 
 				sch_name=item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString();
+				tab_name=item->data(DatabaseImportForm::OBJECT_TABLE, Qt::UserRole).toString();
 				name=item->data(DatabaseImportForm::OBJECT_NAME, Qt::UserRole).toString();
 
 				if(!sch_name.isEmpty())
-					name.prepend(sch_name + QChar('.'));
+				{
+					if(tab_name.isEmpty())
+						name.prepend(sch_name + QChar('.'));
+					else
+						tab_name.prepend(sch_name + QChar('.'));
+				}
+
+				if(obj_type==OBJ_COLUMN)
+				{
+					oid=item->parent()->parent()->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt();
+					is_column=true;
+					obj_type=OBJ_TABLE;
+				}
 
 				dbmodel.createSystemObjects(false);
 				import_hlp.setConnection(connection);
 				import_hlp.setCurrentDatabase(connection.getConnectionParam(Connection::PARAM_DB_NAME));
 				import_hlp.setImportOptions(sys_objs_chk->isChecked(), ext_objs_chk->isChecked(),
-																		true, false, true, false, false);
+																		true, false, false, false, false);
 				import_hlp.setSelectedOIDs(&dbmodel, {{obj_type,{oid}}}, {});
 				sys_oid=import_hlp.getLastSystemOID();
 
@@ -1597,7 +1611,20 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 							name=QString("%1 USING %2").arg(name).arg(idx_type);
 						}
 
-						object=dbmodel.getObject(name, obj_type);
+						if(TableObject::isTableObject(obj_type) || is_column)
+						{
+							Table *table=nullptr;
+							table=dynamic_cast<Table *>(dbmodel.getObject(tab_name, OBJ_TABLE));
+
+							if(table)
+							{
+								table->setGenerateAlterCmds(true);
+								object=table->getObject(name, (is_column ? OBJ_COLUMN : obj_type));
+							}
+						}
+						else
+							object=dbmodel.getObject(name, obj_type);
+
 
 						if(object)
 						{
@@ -1619,7 +1646,6 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 						}
 					}
 				}
-
 
 				item->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, source);
 			}

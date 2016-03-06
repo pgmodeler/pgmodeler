@@ -1408,10 +1408,10 @@ void DatabaseImportHelper::createAggregate(attribs_map &attribs)
 	{
 		QStringList types;
 		QString func_types[]={ ParsersAttributes::TRANSITION_FUNC,
-							   ParsersAttributes::FINAL_FUNC };
+													 ParsersAttributes::FINAL_FUNC };
 
 		for(unsigned i=0; i < 2; i++)
-			attribs[func_types[i]]=getDependencyObject(attribs[func_types[i]], OBJ_FUNCTION, true, false, true, {{ParsersAttributes::REF_TYPE, func_types[i]}});
+			attribs[func_types[i]]=getDependencyObject(attribs[func_types[i]], OBJ_FUNCTION, true, auto_resolve_deps, true, {{ParsersAttributes::REF_TYPE, func_types[i]}});
 
 		types=getTypes(attribs[ParsersAttributes::TYPES], true);
 		if(!types.isEmpty())
@@ -1662,6 +1662,7 @@ void DatabaseImportHelper::createRule(attribs_map &attribs)
 	QString cmds=attribs[ParsersAttributes::COMMANDS];
 	int start=-1;
 	QRegExp cond_regexp(QString("(WHERE)(.)+(DO)"));
+	ObjectType table_type=OBJ_TABLE;
 
 	try
 	{
@@ -1673,7 +1674,12 @@ void DatabaseImportHelper::createRule(attribs_map &attribs)
 		}
 
 		attribs[ParsersAttributes::COMMANDS]=Catalog::parseRuleCommands(attribs[ParsersAttributes::COMMANDS]).join(';');
-		attribs[ParsersAttributes::TABLE]=getObjectName(attribs[ParsersAttributes::TABLE]);
+
+		if(attribs[ParsersAttributes::TABLE_TYPE]==BaseObject::getSchemaName(OBJ_VIEW))
+			table_type=OBJ_VIEW;
+
+		attribs[ParsersAttributes::TABLE]=getDependencyObject(attribs[ParsersAttributes::TABLE], table_type, true, auto_resolve_deps, false);
+
 		loadObjectXML(OBJ_RULE, attribs);
 		rule=dbmodel->createRule();
 	}
@@ -1689,7 +1695,12 @@ void DatabaseImportHelper::createTrigger(attribs_map &attribs)
 {
 	try
 	{
-		attribs[ParsersAttributes::TABLE]=getObjectName(attribs[ParsersAttributes::TABLE]);
+		ObjectType table_type=OBJ_TABLE;
+
+		if(attribs[ParsersAttributes::TABLE_TYPE]==BaseObject::getSchemaName(OBJ_VIEW))
+			table_type=OBJ_VIEW;
+
+		attribs[ParsersAttributes::TABLE]=getDependencyObject(attribs[ParsersAttributes::TABLE], table_type, true, auto_resolve_deps, false);
 		attribs[ParsersAttributes::TRIGGER_FUNC]=getDependencyObject(attribs[ParsersAttributes::TRIGGER_FUNC], OBJ_FUNCTION, true, true);
 		attribs[ParsersAttributes::ARGUMENTS]=Catalog::parseArrayValues(attribs[ParsersAttributes::ARGUMENTS].remove(QString(",\"\""))).join(',');
 
@@ -1716,7 +1727,7 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 		int i, id_expr;
 
 		attribs[ParsersAttributes::FACTOR]=QString("90");
-		tab_name=getObjectName(attribs[ParsersAttributes::TABLE]);
+		tab_name=getDependencyObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE, true, auto_resolve_deps, false);
 		table=dynamic_cast<Table *>(dbmodel->getObject(tab_name, OBJ_TABLE));
 
 		if(!table)
@@ -1760,7 +1771,7 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 			attribs[ParsersAttributes::ELEMENTS]+=elem.getCodeDefinition(SchemaParser::XML_DEFINITION);
 		}
 
-		attribs[ParsersAttributes::TABLE]=getObjectName(attribs[ParsersAttributes::TABLE]);
+		attribs[ParsersAttributes::TABLE]=tab_name;
 		loadObjectXML(OBJ_INDEX, attribs);
 		dbmodel->createIndex();
 	}
@@ -1779,13 +1790,16 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 	{
 		QString table_oid=attribs[ParsersAttributes::TABLE],
 				ref_tab_oid=attribs[ParsersAttributes::REF_TABLE],
-				tab_name=getObjectName(table_oid);
+				tab_name;
 		Table *table=nullptr;
 
 		//If the table oid is 0 indicates that the constraint is part of a data type like domains
 		if(!table_oid.isEmpty() && table_oid!=QString("0"))
 		{
 			QStringList factor=Catalog::parseArrayValues(attribs[ParsersAttributes::FACTOR]);
+
+			//Retrieving the table is it was not imported yet and auto_resolve_deps is true
+			tab_name=getDependencyObject(table_oid, OBJ_TABLE, true, auto_resolve_deps, false);
 
 			if(!factor.isEmpty() && factor[0].startsWith(QString("fillfactor=")))
 				attribs[ParsersAttributes::FACTOR]=factor[0].remove(QString("fillfactor="));
@@ -2327,7 +2341,7 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 	{
 		attribs_map type_attr;
 		QString xml_def, sch_name, obj_name;
-		unsigned type_oid=oid_str.toUInt(), dimension=0;
+		unsigned type_oid=oid_str.toUInt(), dimension=0, object_id=type_attr[ParsersAttributes::OBJECT_ID].toUInt();
 
 		if(type_oid > 0)
 		{
@@ -2347,6 +2361,25 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 			}
 			else
 				obj_name=type_attr[ParsersAttributes::NAME];
+
+			/* If the type was generated from a table/sequence/view/domain and the source object is not
+				 yet imported and the auto resolve deps is enabled, we need to import it */
+			if(!type_attr[ParsersAttributes::TYPE_CLASS].isEmpty() && auto_resolve_deps &&
+				 (!user_objs.count(object_id) && !system_objs.count(object_id)))
+			{
+				ObjectType obj_type;
+
+				if(type_attr[ParsersAttributes::TYPE_CLASS]==BaseObject::getSchemaName(OBJ_TABLE))
+					obj_type=OBJ_TABLE;
+				else if(type_attr[ParsersAttributes::TYPE_CLASS]==BaseObject::getSchemaName(OBJ_VIEW))
+					obj_type=OBJ_VIEW;
+				else if(type_attr[ParsersAttributes::TYPE_CLASS]==BaseObject::getSchemaName(OBJ_DOMAIN))
+					obj_type=OBJ_DOMAIN;
+				else
+					obj_type=OBJ_SEQUENCE;
+
+				getDependencyObject(type_attr[ParsersAttributes::OBJECT_ID], obj_type, true, true, false);
+			}
 
 			/* Removing the optional modifier "without time zone" from date/time types.
 				 Since the class PgSQLTypes ommits the modifier it is necessary to reproduce
