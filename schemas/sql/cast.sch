@@ -17,7 +17,7 @@
   $tb [WITH INOUT ]
 %else
   %if {signature} %then
-    $tb [WITH FUNCTION ] {function}
+    $tb [WITH FUNCTION ] {signature}
   %else
     $tb [WITHOUT FUNCTION]
   %end
