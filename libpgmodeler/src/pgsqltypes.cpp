@@ -279,13 +279,13 @@ unsigned BaseType::getType(const QString &type_name,unsigned offset,unsigned cou
 	{
 		QString aux_name, tp_name=type_name;
 
-		tp_name.remove('"');
+		//tp_name.remove('"');
 		total=offset + count;
 
 		for(idx=offset; idx<total && !found; idx++)
 		{
 			aux_name=BaseType::type_list[idx];
-			aux_name.remove('"');
+			//aux_name.remove('"');
 			found=(tp_name==aux_name);
 		}
 
@@ -1289,85 +1289,136 @@ bool PgSQLType::isUserType(void)
 	return(type_idx > pseudo_end);
 }
 
+bool PgSQLType::isNetworkType(void)
+{
+	QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
+
+	return(!isUserType() &&
+				 (curr_type==QString("cidr") ||
+					curr_type==QString("inet")));
+}
+
 bool PgSQLType::isGiSType(void)
 {
+	QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
+
 	return(!isUserType() &&
-		   (type_list[this->type_idx]==QString("geography") ||
-		   type_list[this->type_idx]==QString("geometry") ||
-			type_list[this->type_idx]==QString("geometry_dump")));
+				 (curr_type==QString("geography") ||
+					curr_type==QString("geometry") ||
+					curr_type==QString("geometry_dump")));
 }
 
 bool PgSQLType::isRangeType(void)
 {
+	QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
+
 	return(!isUserType() &&
-		   (type_list[this->type_idx]==QString("int4range") || type_list[this->type_idx]==QString("int8range") ||
-			type_list[this->type_idx]==QString("numrange") ||	type_list[this->type_idx]==QString("tsrange") ||
-			type_list[this->type_idx]==QString("tstzrange") || type_list[this->type_idx]==QString("daterange")));
+				(curr_type==QString("int4range") || curr_type==QString("int8range") ||
+				curr_type==QString("numrange") ||	curr_type==QString("tsrange") ||
+				curr_type==QString("tstzrange") || curr_type==QString("daterange")));
 }
 
 bool PgSQLType::isSerialType(void)
 {
+	QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
+
 	return(!isUserType() &&
-		   (type_list[this->type_idx]==QString("serial") ||
-		   type_list[this->type_idx]==QString("smallserial") ||
-			type_list[this->type_idx]==QString("bigserial")));
+			 (curr_type==QString("serial") ||
+				curr_type==QString("smallserial") ||
+				curr_type==QString("bigserial")));
 }
 
 bool PgSQLType::isDateTimeType(void)
 {
+	QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
+
 	return(!isUserType() &&
-		   (type_list[this->type_idx]==QString("time") ||
-		   type_list[this->type_idx]==QString("timestamp") ||
-			type_list[this->type_idx]==QString("interval") ||
-			type_list[this->type_idx]==QString("date") ||
-			type_list[this->type_idx]==QString("timetz") ||
-			type_list[this->type_idx]==QString("timestamptz")));
+				(curr_type==QString("time") || curr_type==QString("timestamp") ||
+				 curr_type==QString("interval") || curr_type==QString("date") ||
+				 curr_type==QString("timetz") || curr_type==QString("timestamptz")));
 }
 
 bool PgSQLType::isNumericType(void)
 {
+	QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
+
 	return(!isUserType() &&
-		   (type_list[this->type_idx]==QString("numeric") ||
-		   type_list[this->type_idx]==QString("decimal")));
+					(curr_type==QString("numeric") || curr_type==QString("decimal")));
 }
 
 bool PgSQLType::isIntegerType(void)
 {
+	QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
+
 	return(!isUserType() &&
-		   (type_list[this->type_idx]==QString("smallint") ||
-		   type_list[this->type_idx]==QString("integer") ||
-			type_list[this->type_idx]==QString("bigint") ||
-			type_list[this->type_idx]==QString("int4") ||
-			type_list[this->type_idx]==QString("int8") ||
-			type_list[this->type_idx]==QString("int2")));
+			 (curr_type==QString("smallint") || curr_type==QString("integer") ||
+				curr_type==QString("bigint") || curr_type==QString("int4") ||
+				curr_type==QString("int8") || curr_type==QString("int2")));
 }
 
 bool PgSQLType::hasVariableLength(void)
 {
+	QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
+
 	return(!isUserType() &&
-		   (type_list[this->type_idx]==QString("numeric") || type_list[this->type_idx]==QString("decimal") ||
-			type_list[this->type_idx]==QString("character varying") || type_list[this->type_idx]==QString("varchar") ||
-			type_list[this->type_idx]==QString("character") || type_list[this->type_idx]==QString("char") ||
-			type_list[this->type_idx]==QString("bit") || type_list[this->type_idx]==QString("bit varying") ||
-			type_list[this->type_idx]==QString("varbit")));
+				(curr_type==QString("numeric") || curr_type==QString("decimal") ||
+				curr_type==QString("character varying") || curr_type==QString("varchar") ||
+				curr_type==QString("character") || curr_type==QString("char") ||
+				curr_type==QString("bit") || curr_type==QString("bit varying") ||
+				curr_type==QString("varbit")));
+}
+
+bool PgSQLType::isCharacterType(void)
+{
+	QString curr_type=type_list[this->type_idx];
+
+	return(curr_type==QString("\"char\"") || curr_type==QString("char") ||
+				 curr_type==QString("character") || curr_type==QString("varchar") ||
+				 curr_type==QString("character varying") || curr_type==QString("text"));
 }
 
 bool PgSQLType::acceptsPrecision(void)
 {
 	return(isNumericType() ||
-		   (!isUserType() && type_list[this->type_idx]!=QString("date") && isDateTimeType()));
+				(!isUserType() && type_list[this->type_idx]!=QString("date") && isDateTimeType()));
+}
+
+bool PgSQLType::canCastTo(PgSQLType type)
+{
+	// If the types are the same of belongs to the same category they naturally can be casted
+	if(*this==type ||
+		(isCharacterType() && type.isCharacterType()) ||
+		(isDateTimeType() && type.isDateTimeType()) ||
+		(isNumericType() && type.isNumericType()) ||
+		(isNetworkType() && type.isNetworkType()) ||
+
+		//Character to network address
+		((isCharacterType() || isNetworkType()) &&
+		 (type.isCharacterType() || type.isNetworkType())) ||
+
+		//Integer to OID
+		((isIntegerType() || isOIDType()) &&
+		 (type.isIntegerType() || type.isOIDType())))
+
+		return(true);
+
+	return(false);
 }
 
 bool PgSQLType::isEquivalentTo(PgSQLType type)
 {
 	unsigned this_idx=0, type_idx=0;
-	static vector<QStringList> types={ {QString("int2"),QString("smallint")},
-									   {QString("int4"),QString("integer")},
-									   {QString("int8"),QString("bigint")},
-									   {QString("decimal"),QString("numeric")},
-									   {QString("character varying"),QString("varchar")},
-									   {QString("character"), QString("char")},
-									   {QString("bit varying"),QString("varbit")} };
+	static vector<QStringList> types={{QString("int2"),QString("smallint")},
+																		{QString("int4"),QString("integer")},
+																		{QString("int8"),QString("bigint")},
+																		{QString("decimal"),QString("numeric")},
+																		{QString("character varying"),QString("varchar")},
+																		{QString("character"), QString("char")},
+																		{QString("bit varying"),QString("varbit")},
+																		{QString("oid"),QString("regproc"),QString("regprocedure"),
+																		 QString("regoper"),QString("regoperator"),QString("regclass"),
+																		 QString("regtype"),QString("regconfig"),QString("regdictionary")}};
+
 
 	//If the types are equal there is no need to perform further operations
 	if(*this==type)
@@ -2011,3 +2062,4 @@ unsigned EventTriggerType::operator = (const QString &type_name)
 	BaseType::setType(type_id,offset,types_count);
 	return(type_id);
 }
+

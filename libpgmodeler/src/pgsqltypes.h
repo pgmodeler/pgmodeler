@@ -438,8 +438,13 @@ class PgSQLType: public BaseType{
 		bool isDateTimeType(void);
 		bool isNumericType(void);
 		bool isIntegerType(void);
+		bool isCharacterType(void);
+		bool isNetworkType(void);
 		bool hasVariableLength(void);
 		bool acceptsPrecision(void);
+
+		//! brief Indicates if the 'this' type can be casted to 'type'
+		bool canCastTo(PgSQLType type);
 
 		/*! brief Returns if the "this" type is equivalent to the specified type.
 		In order to be compatible the "this" and "type" must be an alias from each other,
