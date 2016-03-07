@@ -190,6 +190,10 @@ void Table::setColumnsAttribute(unsigned def_type)
 			if(def_type==SchemaParser::SQL_DEFINITION)
 				setCommentAttribute(columns[i]);
 		}
+		else if(def_type==SchemaParser::SQL_DEFINITION && columns[i]->isAddedByGeneralization() && !gen_alter_cmds)
+		{
+			str_cols+=QString("-- ") + columns[i]->getCodeDefinition(def_type);
+		}
 	}
 
 	if(def_type==SchemaParser::SQL_DEFINITION)
