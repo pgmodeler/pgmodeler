@@ -137,6 +137,9 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		//! brief Updates the selected tree item
 		void updateItem(QTreeWidgetItem *item);
 		
+		//! brief Generate the SQL code for the specified object appending the permissions code for it as well
+		QString getObjectSource(BaseObject *object, DatabaseModel *dbmodel);
+
 	public:
 		DatabaseExplorerWidget(QWidget * parent = 0);
 		
@@ -186,6 +189,7 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		//! brief This signal is emmited containing the processed snippet to be shown in an input field
 		void s_snippetShowRequested(QString snippet);
 
+		//! brief This signal is emmited containing the source code to be shown in an input field
 		void s_sourceCodeShowRequested(QString source);
 };
 

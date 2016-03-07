@@ -40,7 +40,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	vbox->addWidget(sourcecode_txt);
 	sourcecode_gb->setLayout(vbox);
 
-	connect(connections_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(connectToServer(void)));
+	connect(connections_cmb, SIGNAL(activated(int)), this, SLOT(connectToServer(void)));
 	connect(refresh_tb, SIGNAL(clicked(void)), this, SLOT(connectToServer(void)));
 	connect(databases_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeDatabaseExplorer(int)));
 	connect(sql_exec_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeSQLExecutionTab(int)));
@@ -49,7 +49,17 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	connect(source_pane_tb, SIGNAL(toggled(bool)), sourcecode_gb, SLOT(setVisible(bool)));
 
 	connect(databases_tbw, &QTabWidget::currentChanged,
-			[=](){ disconnect_tb->setEnabled(databases_tbw->count() > 0); });
+			[=](){
+				DatabaseExplorerWidget *dbexplorer=qobject_cast<DatabaseExplorerWidget *>(databases_tbw->currentWidget());
+
+				sourcecode_txt->clear();
+
+				if(dbexplorer && dbexplorer->objects_trw->currentItem())
+					sourcecode_txt->setPlainText(dbexplorer->objects_trw->currentItem()->
+																			 data(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole).toString());
+
+				disconnect_tb->setEnabled(databases_tbw->count() > 0);
+			});
 }
 
 SQLToolWidget::~SQLToolWidget(void)

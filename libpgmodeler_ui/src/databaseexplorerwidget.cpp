@@ -1548,12 +1548,17 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 			{
 				DatabaseModel dbmodel;
 				DatabaseImportHelper import_hlp;
-				unsigned oid=item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt(), sys_oid=0;
 				ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
 				QString sch_name, tab_name, name;
+				QTreeWidgetItem *sch_item=nullptr;
 				BaseObject *object=nullptr;
-				vector<Permission *> perms;
+				BaseObject *schema=nullptr;
+				attribs_map attribs=item->data(DatabaseImportForm::OBJECT_OTHER_DATA, Qt::UserRole).value<attribs_map>();
 				bool is_column=false;
+				unsigned oid=item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt(),
+						db_oid=objects_trw->topLevelItem(0)->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt(),
+						sys_oid=0;
+				int sbar_value=(objects_trw->verticalScrollBar() ? objects_trw->verticalScrollBar()->value() : 0);
 
 				sch_name=item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString();
 				tab_name=item->data(DatabaseImportForm::OBJECT_TABLE, Qt::UserRole).toString();
@@ -1567,6 +1572,7 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 						tab_name.prepend(sch_name + QChar('.'));
 				}
 
+				//Special case for columns. We will retrieve the table from database and then generate the code for the column
 				if(obj_type==OBJ_COLUMN)
 				{
 					oid=item->parent()->parent()->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt();
@@ -1574,17 +1580,19 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 					obj_type=OBJ_TABLE;
 				}
 
+				//Importing the object and its dependencies
 				dbmodel.createSystemObjects(false);
 				import_hlp.setConnection(connection);
 				import_hlp.setCurrentDatabase(connection.getConnectionParam(Connection::PARAM_DB_NAME));
-				import_hlp.setImportOptions(sys_objs_chk->isChecked(), ext_objs_chk->isChecked(),
-																		true, false, true, false, false);
-				import_hlp.setSelectedOIDs(&dbmodel, {{obj_type,{oid}}}, {});
+				import_hlp.setImportOptions(sys_objs_chk->isChecked(), ext_objs_chk->isChecked(), true, false, false, false, false);
+				import_hlp.setSelectedOIDs(&dbmodel, {{OBJ_DATABASE, {db_oid}}, {obj_type,{oid}}}, {});
 				sys_oid=import_hlp.getLastSystemOID();
 
-				if(obj_type==OBJ_TYPE && oid <= sys_oid)
+				//Currently pgModeler does not support the visualization of base types and built-in ones
+				if(obj_type==OBJ_TYPE &&
+					 (oid <= sys_oid || attribs[ParsersAttributes::CONFIGURATION]==ParsersAttributes::BASE_TYPE))
 				{
-					source=trUtf8("-- Source code currently unavailable for built-in types --");
+					source=trUtf8("-- Source code genaration for buil-in and base types currently unavailable --");
 					emit s_sourceCodeShowRequested(source);
 				}
 				else
@@ -1592,15 +1600,11 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 					import_hlp.importDatabase();
 
 					if(obj_type==OBJ_DATABASE)
-					{
-						dbmodel.getPermissions(&dbmodel, perms);
-						source=dbmodel.__getCodeDefinition(SchemaParser::SQL_DEFINITION);
-
-						for(auto &perm : perms)
-							source+=perm->getCodeDefinition(SchemaParser::SQL_DEFINITION);
-					}
+						source=getObjectSource(&dbmodel, &dbmodel);
 					else
 					{
+						/* Fixing the signature of opclasses and opfamilies.
+								The name is in form "name [index type]", so we change it to "name USING [index type]" */
 						if(obj_type==OBJ_OPCLASS || obj_type==OBJ_OPFAMILY)
 						{
 							QString idx_type=item->text(0);
@@ -1611,42 +1615,62 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 							name=QString("%1 USING %2").arg(name).arg(idx_type);
 						}
 
+						//Generating the code for table child object
 						if(TableObject::isTableObject(obj_type) || is_column)
 						{
 							Table *table=nullptr;
 							table=dynamic_cast<Table *>(dbmodel.getObject(tab_name, OBJ_TABLE));
+							QTreeWidgetItem *table_item=nullptr;
 
+							//If the table was imported then the source code of it will be placed on the respective item
 							if(table)
 							{
+								table_item=item->parent()->parent();
+								objects_trw->setCurrentItem(item->parent()->parent());
+								table_item->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, getObjectSource(table, &dbmodel));
+
+								sch_item=table_item->parent()->parent();
+								schema=table->getSchema();
+
+								//Generate the code of table children objects as ALTER commands
 								table->setGenerateAlterCmds(true);
 								object=table->getObject(name, (is_column ? OBJ_COLUMN : obj_type));
 							}
 						}
 						else
+						{
 							object=dbmodel.getObject(name, obj_type);
+							schema=object->getSchema();
+						}
 
 						if(object)
-						{
-							dbmodel.getPermissions(object, perms);
-							object->setSystemObject(false);
-							object->setSQLDisabled(false);
-							object->setCodeInvalidated(true);
-							source=object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
-
-							for(auto &perm : perms)
-								source+=perm->getCodeDefinition(SchemaParser::SQL_DEFINITION);
-
-							emit s_sourceCodeShowRequested(source);
-						}
+							source=getObjectSource(object, &dbmodel);
 						else
-						{
 							source=trUtf8("-- Source code unavailable for the object %1 (%2). --").arg(name).arg(BaseObject::getTypeName(obj_type));
-							emit s_sourceCodeShowRequested(source);
-						}
 					}
 				}
 
+				//Generating the schema code and assigning it to the respective items
+				if(schema)
+				{
+					if(!sch_item) sch_item=item->parent()->parent();
+					objects_trw->setCurrentItem(sch_item);
+					sch_item->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, getObjectSource(schema, &dbmodel));
+
+					//Generating the code for the database itself and storing it in the root item in the tree
+					objects_trw->setCurrentItem(objects_trw->topLevelItem(0));
+					objects_trw->topLevelItem(0)->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, getObjectSource(&dbmodel, &dbmodel));
+				}
+
 				item->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, source);
+				objects_trw->setCurrentItem(item);
+
+				/* Restore the position of the scrollbar in the tree because the usage of setCurrentItem in previous lines
+					 may cause the scrollbar to change its original value */
+				if(objects_trw->verticalScrollBar())
+					objects_trw->verticalScrollBar()->setValue(sbar_value);
+
+				emit s_sourceCodeShowRequested(source);
 			}
 		}
 	}
@@ -1654,4 +1678,28 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 	{
 		emit s_sourceCodeShowRequested(QString("/* Could not generate source code due to one or more errors! \n \n %1 */").arg(e.getExceptionsText()));
 	}
+}
+
+QString DatabaseExplorerWidget::getObjectSource(BaseObject *object, DatabaseModel *dbmodel)
+{
+	if(!object || !dbmodel)
+		return QString();
+
+	vector<Permission *> perms;
+	QString source;
+
+	dbmodel->getPermissions(object, perms);
+	object->setSystemObject(false);
+	object->setSQLDisabled(false);
+	object->setCodeInvalidated(true);
+
+	if(object!=dbmodel)
+		source=object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+	else
+		source=dbmodel->__getCodeDefinition(SchemaParser::SQL_DEFINITION);
+
+	for(auto &perm : perms)
+		source+=perm->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+
+	return(source);
 }
