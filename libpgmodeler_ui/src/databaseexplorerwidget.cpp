@@ -1578,7 +1578,7 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 				import_hlp.setConnection(connection);
 				import_hlp.setCurrentDatabase(connection.getConnectionParam(Connection::PARAM_DB_NAME));
 				import_hlp.setImportOptions(sys_objs_chk->isChecked(), ext_objs_chk->isChecked(),
-																		true, false, false, false, false);
+																		true, false, true, false, false);
 				import_hlp.setSelectedOIDs(&dbmodel, {{obj_type,{oid}}}, {});
 				sys_oid=import_hlp.getLastSystemOID();
 
@@ -1624,7 +1624,6 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 						}
 						else
 							object=dbmodel.getObject(name, obj_type);
-
 
 						if(object)
 						{

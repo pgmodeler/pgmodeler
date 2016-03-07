@@ -1408,7 +1408,8 @@ void DatabaseImportHelper::createAggregate(attribs_map &attribs)
 	{
 		QStringList types;
 		QString func_types[]={ ParsersAttributes::TRANSITION_FUNC,
-													 ParsersAttributes::FINAL_FUNC };
+													 ParsersAttributes::FINAL_FUNC },
+				sch_name;
 
 		for(unsigned i=0; i < 2; i++)
 			attribs[func_types[i]]=getDependencyObject(attribs[func_types[i]], OBJ_FUNCTION, true, auto_resolve_deps, true, {{ParsersAttributes::REF_TYPE, func_types[i]}});
@@ -1428,6 +1429,14 @@ void DatabaseImportHelper::createAggregate(attribs_map &attribs)
 		loadObjectXML(OBJ_AGGREGATE, attribs);
 		agg=dbmodel->createAggregate();
 		dbmodel->addAggregate(agg);
+
+		/* Removing the schema name from the aggregate name.
+				The catalog query for certain aggregates (under pg_catalog for instance)
+				will return names in the form "pg_catalog.agg_name" which cause objects
+				to be imported with wrong names so the fix below is needed */
+		sch_name=agg->getSchema()->getName() + QChar('.');
+		if(agg->getName().startsWith(sch_name))
+			agg->setName(agg->getName().remove(sch_name));
 	}
 	catch(Exception &e)
 	{

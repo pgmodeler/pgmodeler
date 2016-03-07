@@ -91,9 +91,6 @@ class Aggregate: public BaseObject {
 		//! \brief Removes all accepted data types from aggregate
 		void removeDataTypes(void);
 
-		//! \brief Checks whether the passed type exists in the aggregate's set of data types
-		bool isDataTypeExist(PgSQLType type);
-
 		Function *getFunction(unsigned func_idx);
 		PgSQLType getStateType(void);
 		QString getInitialCondition(void);

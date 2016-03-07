@@ -1378,11 +1378,20 @@ bool PgSQLType::hasVariableLength(void)
 
 bool PgSQLType::isCharacterType(void)
 {
-	QString curr_type=type_list[this->type_idx];
+	QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
 
 	return(curr_type==QString("\"char\"") || curr_type==QString("char") ||
 				 curr_type==QString("character") || curr_type==QString("varchar") ||
 				 curr_type==QString("character varying") || curr_type==QString("text"));
+}
+
+bool PgSQLType::isPolymorphicType(void)
+{
+		QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
+
+	return(curr_type==QString("anyarray") || curr_type==QString("anyelement") ||
+				 curr_type==QString("anyenum") || curr_type==QString("anynonarray") ||
+				 curr_type==QString("anyrange") || curr_type==QString("\"any\""));
 }
 
 bool PgSQLType::acceptsPrecision(void)
@@ -1394,11 +1403,15 @@ bool PgSQLType::acceptsPrecision(void)
 bool PgSQLType::canCastTo(PgSQLType type)
 {
 	// If the types are the same of belongs to the same category they naturally can be casted
-	if(*this==type ||
+	if(this->type_idx==type.type_idx ||
 		(isCharacterType() && type.isCharacterType()) ||
 		(isDateTimeType() && type.isDateTimeType()) ||
 		(isNumericType() && type.isNumericType()) ||
 		(isNetworkType() && type.isNetworkType()) ||
+
+		//Polymorphics anyarray, anyrange, anynoarray, anyenum to anyelement
+		((isPolymorphicType() && type==QString("anyelement")) ||
+		 ((*this)==QString("anyelement") && type.isPolymorphicType())) ||
 
 		//Character to network address
 		((isCharacterType() || isNetworkType()) &&
@@ -1406,7 +1419,11 @@ bool PgSQLType::canCastTo(PgSQLType type)
 
 		//Integer to OID
 		((isIntegerType() || isOIDType()) &&
-		 (type.isIntegerType() || type.isOIDType())))
+		 (type.isIntegerType() || type.isOIDType())) ||
+
+		//abstime to integer
+		((((*this)==QString("integer") || (*this)==QString("int4")) && type==QString("abstime")) ||
+		 (((*this)==QString("abstime") && (type==QString("integer") || type==QString("int4"))))))
 
 		return(true);
 

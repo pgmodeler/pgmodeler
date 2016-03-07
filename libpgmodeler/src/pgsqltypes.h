@@ -440,6 +440,7 @@ class PgSQLType: public BaseType{
 		bool isIntegerType(void);
 		bool isCharacterType(void);
 		bool isNetworkType(void);
+		bool isPolymorphicType(void);
 		bool hasVariableLength(void);
 		bool acceptsPrecision(void);
 
