@@ -33,7 +33,7 @@
 
 class BaseType{
 	protected:
-		static const unsigned types_count=240;
+		static const unsigned types_count=241;
 		static QString type_list[types_count];
 
 		//! \brief Index of the type on the type_list vector
@@ -240,7 +240,7 @@ class IntervalType: public BaseType{
 class SpatialType: public BaseType{
 	private:
 		unsigned variation;
-		static const unsigned offset=227;
+		static const unsigned offset=229;
 		static const unsigned types_count=8;
 
 		/*! \brief Used in conjunction with spatial_type, and denotes the SRID value
@@ -559,7 +559,7 @@ class LanguageType: public BaseType{
 class EncodingType: public BaseType{
 	private:
 		static const unsigned offset=161;
-		static const unsigned types_count=41;
+		static const unsigned types_count=42;
 
 	public:
 		EncodingType(void);
@@ -578,7 +578,7 @@ class EncodingType: public BaseType{
 
 class StorageType: public BaseType{
 	private:
-		static const unsigned offset=202;
+		static const unsigned offset=203;
 		static const unsigned types_count=4;
 
 	public:
@@ -601,7 +601,7 @@ class StorageType: public BaseType{
 
 class MatchType: public BaseType{
 	private:
-		static const unsigned offset=206;
+		static const unsigned offset=207;
 		static const unsigned types_count=3;
 
 	public:
@@ -620,7 +620,7 @@ class MatchType: public BaseType{
 
 class DeferralType: public BaseType{
 	private:
-		static const unsigned offset=209;
+		static const unsigned offset=210;
 		static const unsigned types_count=2;
 
 	public:
@@ -638,7 +638,7 @@ class DeferralType: public BaseType{
 
 class CategoryType: public BaseType{
 	private:
-		static const unsigned offset=211;
+		static const unsigned offset=212;
 		static const unsigned types_count=14;
 
 	public:
@@ -668,7 +668,7 @@ class CategoryType: public BaseType{
 
 class FiringType: public BaseType{
 	private:
-		static const unsigned offset=225;
+		static const unsigned offset=226;
 		static const unsigned types_count=3;
 
 	public:
@@ -687,7 +687,7 @@ class FiringType: public BaseType{
 
 class EventTriggerType: public BaseType{
 	private:
-		static const unsigned offset=236;
+		static const unsigned offset=237;
 		static const unsigned types_count=4;
 
 	public:
