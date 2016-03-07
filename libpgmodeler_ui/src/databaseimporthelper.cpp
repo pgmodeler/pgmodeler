@@ -1352,7 +1352,7 @@ void DatabaseImportHelper::createConversion(attribs_map &attribs)
 
 	try
 	{
-		attribs[ParsersAttributes::FUNCTION]=getDependencyObject(attribs[ParsersAttributes::FUNCTION], OBJ_FUNCTION, true);
+		attribs[ParsersAttributes::FUNCTION]=getDependencyObject(attribs[ParsersAttributes::FUNCTION], OBJ_FUNCTION, true, auto_resolve_deps);
 		loadObjectXML(OBJ_CONVERSION, attribs);
 		conv=dbmodel->createConversion();
 		dbmodel->addConversion(conv);
