@@ -1559,7 +1559,7 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 				tab_name=item->data(DatabaseImportForm::OBJECT_TABLE, Qt::UserRole).toString();
 				name=item->data(DatabaseImportForm::OBJECT_NAME, Qt::UserRole).toString();
 
-				if(!sch_name.isEmpty())
+				if(!sch_name.isEmpty() && obj_type!=OBJ_EXTENSION)
 				{
 					if(tab_name.isEmpty())
 						name.prepend(sch_name + QChar('.'));
