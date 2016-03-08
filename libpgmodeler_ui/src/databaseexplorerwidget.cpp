@@ -1670,7 +1670,10 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 					if(!sch_item) sch_item=item->parent()->parent();
 					objects_trw->setCurrentItem(sch_item);
 					sch_item->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, getObjectSource(schema, &dbmodel));
+				}
 
+				if(obj_type != OBJ_DATABASE)
+				{
 					//Generating the code for the database itself and storing it in the root item in the tree
 					objects_trw->setCurrentItem(objects_trw->topLevelItem(0));
 					objects_trw->topLevelItem(0)->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, getObjectSource(&dbmodel, &dbmodel));
