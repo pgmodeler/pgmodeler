@@ -669,13 +669,13 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 			attribs[ParsersAttributes::COMMENT]=getComment(attribs);
 
 			if(attribs.count(ParsersAttributes::OWNER))
-				attribs[ParsersAttributes::OWNER]=getDependencyObject(attribs[ParsersAttributes::OWNER], OBJ_ROLE);
+				attribs[ParsersAttributes::OWNER]=getDependencyObject(attribs[ParsersAttributes::OWNER], OBJ_ROLE, false, auto_resolve_deps);
 
 			if(attribs.count(ParsersAttributes::TABLESPACE))
-				attribs[ParsersAttributes::TABLESPACE]=getDependencyObject(attribs[ParsersAttributes::TABLESPACE], OBJ_TABLESPACE);
+				attribs[ParsersAttributes::TABLESPACE]=getDependencyObject(attribs[ParsersAttributes::TABLESPACE], OBJ_TABLESPACE, false, auto_resolve_deps);
 
 			if(attribs.count(ParsersAttributes::SCHEMA))
-				attribs[ParsersAttributes::SCHEMA]=getDependencyObject(attribs[ParsersAttributes::SCHEMA], OBJ_SCHEMA);
+				attribs[ParsersAttributes::SCHEMA]=getDependencyObject(attribs[ParsersAttributes::SCHEMA], OBJ_SCHEMA, false, auto_resolve_deps);
 
 			if(!attribs[ParsersAttributes::PERMISSION].isEmpty())
 				obj_perms.push_back(oid);
@@ -772,9 +772,8 @@ QString DatabaseImportHelper::getDependencyObject(const QString &oid, ObjectType
 			resolution is enable, the object's attributes will be retrieved from catalog */
 			if(auto_resolve_deps && obj_attr.empty() &&
 					((import_ext_objs && catalog.isExtensionObject(obj_oid)) ||
-					 (!import_sys_objs && !import_ext_objs &&
-					  obj_oid > catalog.getLastSysObjectOID() && !catalog.isExtensionObject(obj_oid)) ||
-					 (import_sys_objs  && obj_oid <= catalog.getLastSysObjectOID())))
+					 (import_sys_objs  && obj_oid <= catalog.getLastSysObjectOID()) ||
+					 (obj_oid > catalog.getLastSysObjectOID() && !catalog.isExtensionObject(obj_oid))))
 			{
 				catalog.setFilter(Catalog::LIST_ALL_OBJS);
 				vector<attribs_map> attribs_vect=catalog.getObjectsAttributes(obj_type,QString(),QString(), { obj_oid });
@@ -803,7 +802,7 @@ QString DatabaseImportHelper::getDependencyObject(const QString &oid, ObjectType
 				/* If the attributes of the dependency exists but it was not created on the model yet,
 					 pgModeler will create it and it's dependencies recursively */
 				if(recursive_dep_res && !TableObject::isTableObject(obj_type) &&
-						obj_type!=OBJ_DATABASE && dbmodel->getObjectIndex(obj_name, obj_type) < 0)
+						obj_type!=OBJ_DATABASE && dbmodel->getObjectIndex(obj_attr[ParsersAttributes::NAME], obj_type) < 0)
 					createObject(obj_attr);
 
 				if(use_signature)
