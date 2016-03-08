@@ -32,19 +32,19 @@
 class CastWidget: public BaseObjectWidget, public Ui::CastWidget {
 	private:
 		Q_OBJECT
-
+		
 		//! \brief Datatype configurations
 		PgSQLTypeWidget *src_datatype, *trg_datatype;
-
+		
 		//! \brief Conversion function selector
 		ObjectSelectorWidget *conv_func_sel;
-
+		
 		void hideEvent(QHideEvent *event);
-
+		
 	public:
 		CastWidget(QWidget * parent = 0);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Cast *cast);
-
+		
 	public slots:
 		void applyConfiguration(void);
 };

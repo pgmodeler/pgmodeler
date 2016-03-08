@@ -20,22 +20,22 @@
 
 SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 {
-  connect(schema, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
+	connect(schema, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
 
 	sch_name=new QGraphicsSimpleTextItem;
-  sch_name->setZValue(1);
+	sch_name->setZValue(1);
 
-  box=new RoundedRectItem;
+	box=new RoundedRectItem;
 	box->setZValue(0);
 
-  obj_selection=new RoundedRectItem;
-  obj_selection->setVisible(false);
-  obj_selection->setZValue(4);
-  this->addToGroup(obj_selection);
+	obj_selection=new RoundedRectItem;
+	obj_selection->setVisible(false);
+	obj_selection->setZValue(4);
+	this->addToGroup(obj_selection);
 
 	this->addToGroup(box);
 	this->addToGroup(sch_name);
-  this->setZValue(-10);
+	this->setZValue(-5);
 
 	this->configureObject();
 	all_selected=false;
@@ -45,18 +45,18 @@ SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 
 SchemaView::~SchemaView(void)
 {
-  this->removeFromGroup(box);
-  this->removeFromGroup(sch_name);
+	this->removeFromGroup(box);
+	this->removeFromGroup(sch_name);
 
-  delete(box);
-  delete(sch_name);
+	delete(box);
+	delete(sch_name);
 }
 
 void SchemaView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
 	//If the user press SHIFT + left-click select all the schema children
 	if(event->modifiers()==Qt::ShiftModifier &&
-		 event->buttons()==Qt::LeftButton && !all_selected)
+			event->buttons()==Qt::LeftButton && !all_selected)
 		this->selectChildren();
 	else
 		BaseObjectView::mousePressEvent(event);
@@ -125,11 +125,11 @@ QVariant SchemaView::itemChange(QGraphicsItem::GraphicsItemChange change, const 
 	if(change==ItemPositionChange)
 		last_pos=this->pos();
 	else if(change==ItemPositionHasChanged && this->isSelected())
-	{	
+	{
 		double dx=pos().x() - last_pos.x(),
-					dy=pos().y() - last_pos.y();
+				dy=pos().y() - last_pos.y();
 
-    for(auto &child : children)
+		for(auto &child : children)
 			child->moveBy(dx, dy);
 	}
 
@@ -143,7 +143,14 @@ unsigned SchemaView::getChildrenCount()
 
 QList<BaseObjectView *> SchemaView::getChildren(void)
 {
-  return(children);
+	return(children);
+}
+
+void SchemaView::togglePlaceholder(bool visible)
+{
+	//BaseObjectView::togglePlaceholder(visible);
+	for(auto &obj : getChildren())
+		obj->togglePlaceholder(visible);
 }
 
 void SchemaView::configureObject(void)
@@ -160,7 +167,7 @@ void SchemaView::configureObject(void)
 		QRectF rect;
 		QFont font;
 		double sp_h=0, sp_v=0, txt_h=0;
-    double x1=1000000, y1=1000000, x2=-1000000, y2=-1000000, width=0;
+		double x1=1000000, y1=1000000, x2=-1000000, y2=-1000000, width=0;
 		QList<BaseObjectView *>::Iterator itr=children.begin();
 
 		//Configures the bounding rect based upon the children dimension
@@ -182,60 +189,60 @@ void SchemaView::configureObject(void)
 			itr++;
 		}
 
-    //Configures the schema name at the top
-    sch_name->setText(schema->getName());
+		//Configures the schema name at the top
+		sch_name->setText(schema->getName());
 		font=BaseObjectView::getFontStyle(ParsersAttributes::GLOBAL).font();
 		font.setItalic(true);
 		font.setBold(true);
 		font.setPointSizeF(font.pointSizeF() * 1.3f);
 
 		sch_name->setFont(font);
-    sch_name->setPos(HORIZ_SPACING, VERT_SPACING);
+		sch_name->setPos(HORIZ_SPACING, VERT_SPACING);
 		txt_h=sch_name->boundingRect().height() + (2 * VERT_SPACING);
 
 		//Configures the box with the points calculated above
-    sp_h=(3 * HORIZ_SPACING);
-    sp_v=(3 * VERT_SPACING) + txt_h;
+		sp_h=(3 * HORIZ_SPACING);
+		sp_v=(3 * VERT_SPACING) + txt_h;
 
-    width=(x2-x1) + 1;
+		width=(x2-x1) + 1;
 
-    if(width < sch_name->boundingRect().width())
-      width=sch_name->boundingRect().width();
+		if(width < sch_name->boundingRect().width())
+			width=sch_name->boundingRect().width();
 
-    rect.setTopLeft(QPointF(-sp_h, 0));
-    rect.setTopRight(QPointF(width + sp_h, 0));
-    rect.setBottomRight(QPointF(width + sp_h, y2-y1 + sp_v));
-    rect.setBottomLeft(QPointF(-sp_h, y2-y1 + sp_v));
-    box->setRect(rect);
+		rect.setTopLeft(QPointF(-sp_h, 0));
+		rect.setTopRight(QPointF(width + sp_h, 0));
+		rect.setBottomRight(QPointF(width + sp_h, y2-y1 + sp_v));
+		rect.setBottomLeft(QPointF(-sp_h, y2-y1 + sp_v));
+		box->setRect(rect);
 
 		//Sets the schema view position
 		this->setFlag(ItemSendsGeometryChanges, false);
 		this->moveBy(-this->pos().x(),-this->pos().y());
 		this->setPos(QPointF(x1, y1 - txt_h));
-    schema->setPosition(this->mapToScene(rect.topLeft()));
+		schema->setPosition(this->mapToScene(rect.topLeft()));
 		this->setFlag(ItemSendsGeometryChanges, true);
 
 		color=schema->getFillColor();
-    color.setAlpha(80);
+		color.setAlpha(80);
 		box->setBrush(color);
 
-    color=QColor(color.red()/3,color.green()/3,color.blue()/3, 80);
-		box->setPen(QPen(color, 1, Qt::DashLine));
+		color=QColor(color.red()/3,color.green()/3,color.blue()/3, 80);
+		box->setPen(QPen(color, 1, Qt::SolidLine));
 
 		this->bounding_rect=rect;
 		this->setVisible(true);
 
-    this->setToolTip(schema->getName(true) +  QString(" (") + schema->getTypeName() + QString(")"));
+		this->setToolTip(schema->getName(true) +  QString(" (") + schema->getTypeName() + QString(")"));
 		sch_name->setToolTip(this->toolTip());
 
-    this->protected_icon->setPos(QPointF( sch_name->boundingRect().width() + sp_h,
-                                          sch_name->pos().y() + VERT_SPACING ));
+		this->protected_icon->setPos(QPointF( sch_name->boundingRect().width() + sp_h,
+											  sch_name->pos().y() + VERT_SPACING ));
 
-    this->configureObjectSelection();
-    this->configureProtectedIcon();
-    this->configurePositionInfo(this->pos());
-    this->configureSQLDisabledInfo();
+		this->configureObjectSelection();
+		this->configureProtectedIcon();
+		this->configurePositionInfo(this->pos());
+		this->configureSQLDisabledInfo();
 	}
 	else
-    this->setVisible(false);
+		this->setVisible(false);
 }

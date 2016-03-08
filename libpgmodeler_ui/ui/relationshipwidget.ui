@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>734</width>
-    <height>638</height>
+    <width>753</width>
+    <height>702</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,9 +21,6 @@
     <width>0</width>
     <height>0</height>
    </size>
-  </property>
-  <property name="windowTitle">
-   <string>Form</string>
   </property>
   <layout class="QGridLayout" name="relationship_grid">
    <property name="leftMargin">
@@ -867,7 +864,7 @@
             <string>One to one relationship</string>
            </property>
            <property name="text">
-            <string>1-1</string>
+            <string>&amp;1-1</string>
            </property>
           </widget>
          </item>
@@ -975,7 +972,7 @@
             <string>Generalization relationship (inheritance)</string>
            </property>
            <property name="text">
-            <string>gen</string>
+            <string>&amp;gen</string>
            </property>
           </widget>
          </item>
@@ -1261,7 +1258,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>EXCLUDING</string>
+             <string>E&amp;XCLUDING</string>
             </property>
            </widget>
           </item>

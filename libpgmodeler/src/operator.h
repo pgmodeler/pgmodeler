@@ -42,16 +42,16 @@ class Operator: public BaseObject {
 		Operator *operators[2];
 
 		bool	hashes, //! \brief Indicates that the operator can execute a hash join
-					merges;  //! \brief Indicates that the operator can execute a merge join
+		merges;  //! \brief Indicates that the operator can execute a merge join
 
 	public:
 		static const unsigned FUNC_OPERATOR=0,
-															FUNC_JOIN=1,
-															FUNC_RESTRICT=2,
-															LEFT_ARG=0,
-															RIGHT_ARG=1,
-															OPER_COMMUTATOR=0,
-															OPER_NEGATOR=1;
+		FUNC_JOIN=1,
+		FUNC_RESTRICT=2,
+		LEFT_ARG=0,
+		RIGHT_ARG=1,
+		OPER_COMMUTATOR=0,
+		OPER_NEGATOR=1;
 
 		Operator(void);
 
@@ -96,7 +96,7 @@ class Operator: public BaseObject {
 		virtual QString getCodeDefinition(unsigned def_type) final;
 
 		//! \brief Returns the operator signature
-    virtual QString getSignature(bool format_name=true);
+		virtual QString getSignature(bool format_name=true);
 };
 
 #endif

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>959</width>
+    <width>990</width>
     <height>282</height>
    </rect>
   </property>
@@ -303,10 +303,11 @@
      <property name="enabled">
       <bool>false</bool>
      </property>
-     <property name="font">
-      <font>
-       <pointsize>8</pointsize>
-      </font>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>30</height>
+      </size>
      </property>
      <property name="toolTip">
       <string>Clear validation results</string>
@@ -376,10 +377,11 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="font">
-      <font>
-       <pointsize>8</pointsize>
-      </font>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>30</height>
+      </size>
      </property>
      <property name="toolTip">
       <string>Try to resolve the reported issues.</string>
@@ -410,10 +412,11 @@
    </item>
    <item row="0" column="2">
     <widget class="QToolButton" name="swap_ids_btn">
-     <property name="font">
-      <font>
-       <pointsize>8</pointsize>
-      </font>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>30</height>
+      </size>
      </property>
      <property name="toolTip">
       <string>Change the creation order for two objects by swapping their ids</string>
@@ -444,10 +447,11 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="font">
-      <font>
-       <pointsize>8</pointsize>
-      </font>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>30</height>
+      </size>
      </property>
      <property name="text">
       <string>Va&amp;lidate</string>
@@ -695,10 +699,11 @@
      <property name="enabled">
       <bool>false</bool>
      </property>
-     <property name="font">
-      <font>
-       <pointsize>8</pointsize>
-      </font>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>30</height>
+      </size>
      </property>
      <property name="toolTip">
       <string>Cancel the SQL validation in progress.</string>
@@ -735,10 +740,11 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="font">
-      <font>
-       <pointsize>8</pointsize>
-      </font>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>30</height>
+      </size>
      </property>
      <property name="toolTip">
       <string>Try to apply a fix on the selected validation info.</string>

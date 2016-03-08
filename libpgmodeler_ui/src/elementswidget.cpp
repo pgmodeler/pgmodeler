@@ -25,11 +25,11 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 		map<QString, vector<QWidget *> > fields_map;
 		QFrame *frame=nullptr;
 
-    setupUi(this);
-    elem_expr_hl=new SyntaxHighlighter(elem_expr_txt, false, true);
-    elem_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		setupUi(this);
+		elem_expr_hl=new SyntaxHighlighter(elem_expr_txt, false, true);
+		elem_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
-    parent_obj=nullptr;
+		parent_obj=nullptr;
 		elements_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
 		op_class_sel=new ObjectSelectorWidget(OBJ_OPCLASS, true, this);
 		collation_sel=new ObjectSelectorWidget(OBJ_COLLATION, true, this);
@@ -38,11 +38,11 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 
 		elements_tab->setColumnCount(6);
 		elements_tab->setHeaderLabel(trUtf8("Element"), 0);
-    elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
+		elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
 		elements_tab->setHeaderLabel(trUtf8("Type"), 1);
-    elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+		elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
 		elements_tab->setHeaderLabel(trUtf8("Operator Class"), 3);
-    elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/opclass.png")),3);
+		elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/opclass.png")),3);
 		elements_tab->setHeaderLabel(trUtf8("Sorting"), 4);
 		elements_tab->setHeaderLabel(trUtf8("Nulls First"), 5);
 
@@ -51,7 +51,7 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 		element_grid->addWidget(operator_sel, 4,1,1,2);
 		element_grid->addWidget(elements_tab, 6,0,1,3);
 
-    fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_91)].push_back(collation_lbl);
+		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_91)].push_back(collation_lbl);
 		frame=BaseObjectWidget::generateVersionWarningFrame(fields_map);
 		element_grid->addWidget(frame, element_grid->count()+1, 0, 1, 3);
 		frame->setParent(this);
@@ -74,21 +74,21 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 		BaseObjectWidget::setRequiredField(operator_sel);
 		BaseObjectWidget::setRequiredField(operator_lbl);
 
-    setTabOrder(column_rb, column_cmb);
-    setTabOrder(column_cmb, expression_rb);
-    setTabOrder(expression_rb, elem_expr_txt);
-    setTabOrder(elem_expr_txt, collation_sel);
-    setTabOrder(collation_sel, collation_sel->rem_object_tb);
-    setTabOrder(collation_sel->rem_object_tb, collation_sel->sel_object_tb);
-    setTabOrder(collation_sel->sel_object_tb, op_class_sel);
+		setTabOrder(column_rb, column_cmb);
+		setTabOrder(column_cmb, expression_rb);
+		setTabOrder(expression_rb, elem_expr_txt);
+		setTabOrder(elem_expr_txt, collation_sel);
+		setTabOrder(collation_sel, collation_sel->rem_object_tb);
+		setTabOrder(collation_sel->rem_object_tb, collation_sel->sel_object_tb);
+		setTabOrder(collation_sel->sel_object_tb, op_class_sel);
 
-    setTabOrder(op_class_sel, op_class_sel->rem_object_tb);
-    setTabOrder(op_class_sel->rem_object_tb, op_class_sel->sel_object_tb);
-    setTabOrder(op_class_sel->sel_object_tb, sorting_chk);
+		setTabOrder(op_class_sel, op_class_sel->rem_object_tb);
+		setTabOrder(op_class_sel->rem_object_tb, op_class_sel->sel_object_tb);
+		setTabOrder(op_class_sel->sel_object_tb, sorting_chk);
 
-    setTabOrder(sorting_chk, ascending_rb);
-    setTabOrder(ascending_rb, descending_rb);
-    setTabOrder(descending_rb, nulls_first_chk);
+		setTabOrder(sorting_chk, ascending_rb);
+		setTabOrder(ascending_rb, descending_rb);
+		setTabOrder(descending_rb, nulls_first_chk);
 	}
 	catch(Exception &e)
 	{
@@ -104,7 +104,7 @@ void ElementsWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 	else if(parent_obj->getObjectType()!=OBJ_TABLE &&
-					parent_obj->getObjectType()!=OBJ_RELATIONSHIP)
+			parent_obj->getObjectType()!=OBJ_RELATIONSHIP)
 		throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->setEnabled(true);
@@ -124,7 +124,7 @@ void ElementsWidget::setAttributes(DatabaseModel *model, Table *table, vector<In
 	collation_lbl->setVisible(true);
 
 	elements_tab->setHeaderLabel(trUtf8("Collation"), 2);
-  elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/collation.png")),2);
+	elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/collation.png")),2);
 	elements_tab->blockSignals(true);
 
 	for(unsigned i=0; i < elems.size(); i++)
@@ -143,7 +143,7 @@ void ElementsWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj,
 	operator_lbl->setVisible(true);
 
 	elements_tab->setHeaderLabel(trUtf8("Operator"), 2);
-  elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/operator.png")),2);
+	elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/operator.png")),2);
 	elements_tab->blockSignals(true);
 
 	for(unsigned i=0; i < elems.size(); i++)
@@ -193,8 +193,8 @@ void ElementsWidget::updateColumnsCombo(void)
 			for(i=0; i < col_count; i++)
 			{
 				column=table->getColumn(i);
-        column_cmb->addItem(column->getName(),
-														QVariant::fromValue<void *>(column));
+				column_cmb->addItem(column->getName(),
+									QVariant::fromValue<void *>(column));
 			}
 		}
 		else
@@ -203,8 +203,8 @@ void ElementsWidget::updateColumnsCombo(void)
 			for(i=0; i < col_count; i++)
 			{
 				column=rel->getAttribute(i);
-        column_cmb->addItem(column->getName(),
-														QVariant::fromValue<void *>(column));
+				column_cmb->addItem(column->getName(),
+									QVariant::fromValue<void *>(column));
 			}
 		}
 	}
@@ -231,24 +231,24 @@ void ElementsWidget::showElementData(Element *elem, int elem_idx)
 
 	if(elem->getColumn())
 	{
-    elements_tab->setCellText(elem->getColumn()->getName(), elem_idx, 0);
-    elements_tab->setCellText(elem->getColumn()->getTypeName(), elem_idx, 1);
+		elements_tab->setCellText(elem->getColumn()->getName(), elem_idx, 0);
+		elements_tab->setCellText(elem->getColumn()->getTypeName(), elem_idx, 1);
 	}
 	else
 	{
-    elements_tab->setCellText(elem->getExpression(), elem_idx, 0);
+		elements_tab->setCellText(elem->getExpression(), elem_idx, 0);
 		elements_tab->setCellText(trUtf8("Expression"), elem_idx, 1);
 	}
 
 	elements_tab->clearCellText(elem_idx, 2);
 	if(idxelem && idxelem->getCollation())
-    elements_tab->setCellText(idxelem->getCollation()->getName(true), elem_idx, 2);
+		elements_tab->setCellText(idxelem->getCollation()->getName(true), elem_idx, 2);
 	else if(excelem && excelem->getOperator())
-    elements_tab->setCellText(excelem->getOperator()->getSignature(true), elem_idx, 2);
+		elements_tab->setCellText(excelem->getOperator()->getSignature(true), elem_idx, 2);
 
 	elements_tab->clearCellText(elem_idx, 3);
 	if(elem->getOperatorClass())
-    elements_tab->setCellText(elem->getOperatorClass()->getName(true), elem_idx, 3);
+		elements_tab->setCellText(elem->getOperatorClass()->getName(true), elem_idx, 3);
 
 	if(elem->isSortingEnabled())
 	{
@@ -277,7 +277,7 @@ void ElementsWidget::showElementData(Element *elem, int elem_idx)
 void ElementsWidget::handleElement(int elem_idx)
 {
 	if(column_rb->isChecked() ||
-		 (expression_rb->isChecked() && !elem_expr_txt->toPlainText().isEmpty()))
+			(expression_rb->isChecked() && !elem_expr_txt->toPlainText().isEmpty()))
 	{
 		IndexElement idxelem;
 		ExcludeElement excelem;
@@ -285,8 +285,8 @@ void ElementsWidget::handleElement(int elem_idx)
 		/* Selects the correct element based upon the visibility of operator
 			 selector (available only for ExcludeElement) */
 		Element *elem = (operator_sel->isVisible() ?
-											 dynamic_cast<Element *>(&excelem) :
-											 dynamic_cast<Element *>(&idxelem));
+							 dynamic_cast<Element *>(&excelem) :
+							 dynamic_cast<Element *>(&idxelem));
 
 		elem->setSortingEnabled(sorting_chk->isChecked());
 		elem->setSortingAttribute(IndexElement::NULLS_FIRST, nulls_first_chk->isChecked());
@@ -317,7 +317,7 @@ void ElementsWidget::handleElement(int elem_idx)
 	else if(elements_tab->getCellText(elem_idx,0).isEmpty())
 		elements_tab->removeRow(elem_idx);
 
-  emit s_elementHandled(elem_idx);
+	emit s_elementHandled(elem_idx);
 }
 
 void ElementsWidget::editElement(int elem_idx)
@@ -342,12 +342,12 @@ void ElementsWidget::editElement(int elem_idx)
 	if(elem->getColumn())
 	{
 		column_rb->setChecked(true);
-    column_cmb->setCurrentIndex(column_cmb->findText(elem->getColumn()->getName()));
+		column_cmb->setCurrentIndex(column_cmb->findText(elem->getColumn()->getName()));
 	}
 	else
 	{
 		expression_rb->setChecked(true);
-    elem_expr_txt->setPlainText(elem->getExpression());
+		elem_expr_txt->setPlainText(elem->getExpression());
 	}
 
 	if(elem->getSortingAttribute(IndexElement::ASC_ORDER))

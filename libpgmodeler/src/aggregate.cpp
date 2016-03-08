@@ -41,9 +41,9 @@ void Aggregate::setFunction(unsigned func_idx, Function *func)
 	//Checks if the function is valid, if not the case raises an error
 	if(!isValidFunction(func_idx, func))
 		throw Exception(Exception::getErrorMessage(ERR_USING_INV_FUNC_CONFIG)
-                    .arg(this->getName())
-										.arg(BaseObject::getTypeName(OBJ_AGGREGATE)),
-										ERR_USING_INV_FUNC_CONFIG,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						.arg(this->getName())
+						.arg(BaseObject::getTypeName(OBJ_AGGREGATE)),
+						ERR_USING_INV_FUNC_CONFIG,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(functions[func_idx]!=func);
 	functions[func_idx]=func;
@@ -55,10 +55,16 @@ bool Aggregate::isValidFunction(unsigned func_idx, Function *func)
 	{
 		if(func_idx==FINAL_FUNC)
 		{
-			/* The final function to be valid must have 1 parameter which type is the
-			same as the state_type attribute */
-			return((func->getParameterCount()==1 &&
-							func->getParameter(0).getType()==state_type));
+			/* According to docs the final function to be valid must have 1 parameter which type is the
+					same as the state_type attribute. BUT when importing system aggregates some functions has
+					different parameter counts so in order to import them correctly we remove the restriction
+					of one paramenter for this function */
+
+			/*return((func->getParameterCount()==1 ||
+								func->getParameter(0).getType().canCastTo(state_type));*/
+
+			return(func->getParameterCount() > 0 &&
+						 func->getParameter(0).getType().canCastTo(state_type));
 		}
 		else
 		{
@@ -67,15 +73,23 @@ bool Aggregate::isValidFunction(unsigned func_idx, Function *func)
 
 			/* The transition function must have n+1 parameters, where n is the accepted data types list size.
 			Also, the first parameter of the function and the return type must be the same as the 'state_type'
-			attribute. Lastly, de other parameters must be the same as the accepted data types (the appearece order
-			is important here) */
-			cond1=(func->getReturnType()==state_type) &&
-						(func->getParameterCount()==data_types.size() + 1) &&
-						(func->getParameter(0).getType()==state_type);
+			attribute. Lastly, the other parameters must be the same as the accepted data types (the appearece order
+			is important here).
+
+			IMPORTANT: this is not documented by aggregate docs but when trying to import some catalog aggregates the
+			majority of the functions used by them has polymorphic parameters so in order to accept that situation
+			and recreate aggregates in the model we enable the usage of polymorphic functions here */
+
+			cond1=(func->getReturnType().canCastTo(state_type)) &&
+					((func->getParameterCount()==data_types.size() + 1) ||
+						(func->getParameterCount() > 0 &&
+							func->getParameter(func->getParameterCount()-1).getType().isPolymorphicType())) &&
+					(func->getParameter(0).getType().canCastTo(state_type));
 
 			qtd=func->getParameterCount();
 			for(i=1 ; i < qtd && cond2; i++)
-				cond2=(func->getParameter(i).getType()==data_types[i-1]);
+				cond2=(func->getParameter(i).getType().isPolymorphicType() ||
+							 func->getParameter(i).getType().canCastTo(data_types[i-1]));
 
 			return(cond1 && cond2);
 		}
@@ -113,7 +127,7 @@ void Aggregate::setSortOperator(Operator *sort_op)
 			throw Exception(ERR_ASG_INV_OPER_ARGS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		//Validating the condition 2
 		else if(func->getParameter(0).getType()!=data_types[0] ||
-						(func->getParameterCount()==2 && func->getParameter(1).getType()!=data_types[0]))
+				(func->getParameterCount()==2 && func->getParameter(1).getType()!=data_types[0]))
 			throw Exception(ERR_ASG_INV_OPERATOR_TYPES,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
@@ -123,7 +137,7 @@ void Aggregate::setSortOperator(Operator *sort_op)
 
 void Aggregate::setTypesAttribute(unsigned def_type)
 {
-  QString str_types;
+	QString str_types;
 	unsigned i, count;
 
 	count=data_types.size();
@@ -131,28 +145,21 @@ void Aggregate::setTypesAttribute(unsigned def_type)
 	{
 		if(def_type==SchemaParser::SQL_DEFINITION)
 		{
-      str_types+=~data_types[i];
-      if(i < (count-1)) str_types+=',';
+			str_types+=data_types[i].getCodeDefinition(SchemaParser::SQL_DEFINITION);
+			if(i < (count-1)) str_types+=',';
 		}
 		else str_types+=data_types[i].getCodeDefinition(def_type);
-  }
+	}
 
 	/* Case none data type is specified for the aggregate creates
 		an aggregate that accepts any possible data '*' e.g. function(*) */
-  if(str_types.isEmpty()) str_types='*';
+	if(str_types.isEmpty()) str_types='*';
 
-  attributes[ParsersAttributes::TYPES]=str_types;
+	attributes[ParsersAttributes::TYPES]=str_types;
 }
 
 void Aggregate::addDataType(PgSQLType type)
 {
-	//Case the data type already exists in the aggregate raise an exception
-	if(isDataTypeExist(type))
-		throw Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_TYPE)
-                    .arg(~type)
-                    .arg(this->getName(true)),
-										ERR_INS_DUPLIC_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
 	data_types.push_back(type);
 	setCodeInvalidated(true);
 }
@@ -172,23 +179,6 @@ void Aggregate::removeDataTypes(void)
 {
 	data_types.clear();
 	setCodeInvalidated(true);
-}
-
-bool Aggregate::isDataTypeExist(PgSQLType type)
-{
-	vector<PgSQLType>::iterator itr, itr_end;
-	bool enc=false;
-
-	itr=data_types.begin();
-	itr_end=data_types.end();
-
-	while(itr!=itr_end && !enc)
-	{
-		enc=((*itr)==type);
-		itr++;
-	}
-
-  return(enc);
 }
 
 unsigned Aggregate::getDataTypeCount(void)
@@ -243,7 +233,7 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 		else
 		{
 			functions[TRANSITION_FUNC]->setAttribute(ParsersAttributes::REF_TYPE,
-																							 ParsersAttributes::TRANSITION_FUNC);
+													 ParsersAttributes::TRANSITION_FUNC);
 			attributes[ParsersAttributes::TRANSITION_FUNC]=functions[TRANSITION_FUNC]->getCodeDefinition(def_type,true);
 		}
 	}
@@ -255,7 +245,7 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 		else
 		{
 			functions[FINAL_FUNC]->setAttribute(ParsersAttributes::REF_TYPE,
-																					ParsersAttributes::FINAL_FUNC);
+												ParsersAttributes::FINAL_FUNC);
 			attributes[ParsersAttributes::FINAL_FUNC]=functions[FINAL_FUNC]->getCodeDefinition(def_type,true);
 		}
 	}
@@ -268,7 +258,7 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 			attributes[ParsersAttributes::SORT_OP]=sort_operator->getCodeDefinition(def_type,true);
 	}
 
-  if(!initial_condition.isEmpty())
+	if(!initial_condition.isEmpty())
 		attributes[ParsersAttributes::INITIAL_COND]=initial_condition;
 
 	if(def_type==SchemaParser::SQL_DEFINITION)
@@ -276,40 +266,40 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 	else
 		attributes[ParsersAttributes::STATE_TYPE]=state_type.getCodeDefinition(def_type,ParsersAttributes::STATE_TYPE);
 
-  return(BaseObject::__getCodeDefinition(def_type));
+	return(BaseObject::__getCodeDefinition(def_type));
 }
 
 QString Aggregate::getDropDefinition(bool cascade)
 {
-  setTypesAttribute(SchemaParser::SQL_DEFINITION);
-  return(BaseObject::getDropDefinition(cascade));
+	setTypesAttribute(SchemaParser::SQL_DEFINITION);
+	return(BaseObject::getDropDefinition(cascade));
 }
 
 QString Aggregate::getAlterDefinition(BaseObject *object)
 {
-  try
-  {
-    setTypesAttribute(SchemaParser::SQL_DEFINITION);
-    return(BaseObject::getAlterDefinition(object));
-  }
-  catch(Exception &e)
-  {
-    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-  }
+	try
+	{
+		setTypesAttribute(SchemaParser::SQL_DEFINITION);
+		return(BaseObject::getAlterDefinition(object));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
 }
 
 QString Aggregate::getSignature(bool format)
 {
-  QStringList types;
+	QStringList types;
 
-  if(data_types.empty())
-    types.push_back(QString("*"));
-  else
-  {
-    for(auto &tp : data_types)
-      types.push_back(~tp);
-  }
+	if(data_types.empty())
+		types.push_back(QString("*"));
+	else
+	{
+		for(auto &tp : data_types)
+			types.push_back(tp.getCodeDefinition(SchemaParser::SQL_DEFINITION));
+	}
 
-  return(BaseObject::getSignature(format) + QString("(%1)").arg(types.join(',')));
+	return(BaseObject::getSignature(format) + QString("(%1)").arg(types.join(',')));
 }
 

@@ -39,7 +39,7 @@ class Type: public BaseObject {
 		unsigned config;
 
 		//! \brief Attributes for composite type
-    vector<TypeAttribute> type_attribs;
+		vector<TypeAttribute> type_attribs;
 
 		//! \brief Enumerations of enumeration type
 		vector<QString> enumerations;
@@ -61,7 +61,7 @@ class Type: public BaseObject {
 
 		//! \brief Storage alignmnet (char, smallint (int2), integer (int4) ou double precision)
 		PgSQLType alignment, //ALIGNMENT
-							element; //ELEMENT
+		element; //ELEMENT
 
 		//! \brief Type's storage
 		StorageType storage; //STORAGE
@@ -87,7 +87,7 @@ class Type: public BaseObject {
 		OperatorClass *subtype_opclass;
 
 		//! \brief Checks if the named attribute exists
-    int getAttributeIndex(const QString &attrib_name);
+		int getAttributeIndex(const QString &attrib_name);
 
 		//! \brief Checks if the named enumeration exists
 		bool isEnumerationExists(const QString &enum_name);
@@ -107,19 +107,19 @@ class Type: public BaseObject {
 
 	public:
 		static const unsigned BASE_TYPE=10,
-															ENUMERATION_TYPE=11,
-															COMPOSITE_TYPE=12,
-															RANGE_TYPE=13;
+		ENUMERATION_TYPE=11,
+		COMPOSITE_TYPE=12,
+		RANGE_TYPE=13;
 
 		static const unsigned INPUT_FUNC=0,
-															OUTPUT_FUNC=1,
-															RECV_FUNC=2,
-															SEND_FUNC=3,
-															TPMOD_IN_FUNC=4,
-															TPMOD_OUT_FUNC=5,
-															ANALYZE_FUNC=6,
-															CANONICAL_FUNC=7,
-															SUBTYPE_DIFF_FUNC=8;
+		OUTPUT_FUNC=1,
+		RECV_FUNC=2,
+		SEND_FUNC=3,
+		TPMOD_IN_FUNC=4,
+		TPMOD_OUT_FUNC=5,
+		ANALYZE_FUNC=6,
+		CANONICAL_FUNC=7,
+		SUBTYPE_DIFF_FUNC=8;
 
 		Type(void);
 
@@ -222,13 +222,13 @@ class Type: public BaseObject {
 		//! \brief Returns the SQL / XML definition for the type
 		virtual QString getCodeDefinition(unsigned def_type) final;
 
-    virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterDefinition(BaseObject *object) final;
 
 		//! \brief Makes a copy between two type
 		void operator = (Type &tipo);
 
-    friend class DatabaseModel;
-    friend class ModelsDiffHelper;
+		friend class DatabaseModel;
+		friend class ModelsDiffHelper;
 };
 
 #endif

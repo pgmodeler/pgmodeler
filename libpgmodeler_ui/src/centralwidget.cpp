@@ -17,8 +17,8 @@
 */
 
 #include "centralwidget.h"
-#include "QGraphicsDropShadowEffect"
-#include "QTextStream"
+#include <QGraphicsDropShadowEffect>
+#include "pgmodeleruins.h"
 
 CentralWidget::CentralWidget(QWidget *parent): QWidget(parent)
 {
@@ -27,12 +27,14 @@ CentralWidget::CentralWidget(QWidget *parent): QWidget(parent)
 	QList<QToolButton *> btns= { new_tb, open_tb, recent_tb, last_session_tb, sample_tb };
 	QGraphicsDropShadowEffect *shadow=nullptr;
 
-  for(auto &btn : btns)
+	for(auto &btn : btns)
 	{
 		shadow=new QGraphicsDropShadowEffect(this);
 		shadow->setXOffset(3);
 		shadow->setYOffset(3);
 		shadow->setBlurRadius(10);
 		btn->setGraphicsEffect(shadow);
+
+		PgModelerUiNS::configureWidgetFont(btn, 1.20f);
 	}
 }

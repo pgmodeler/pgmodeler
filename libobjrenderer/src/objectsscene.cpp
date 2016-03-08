@@ -32,8 +32,8 @@ bool ObjectsScene::invert_panning_rangesel=false;
 
 ObjectsScene::ObjectsScene(void)
 {
-  moving_objs=move_scene=false;
-  enable_range_sel=true;
+	moving_objs=move_scene=false;
+	enable_range_sel=true;
 	this->setBackgroundBrush(grid);
 
 	sel_ini_pnt.setX(NAN);
@@ -51,21 +51,21 @@ ObjectsScene::ObjectsScene(void)
 	this->addItem(selection_rect);
 	this->addItem(rel_line);
 
-  scene_move_dx=scene_move_dy=0;
+	scene_move_dx=scene_move_dy=0;
 
-  connect(&scene_move_timer, SIGNAL(timeout()), this, SLOT(moveObjectScene()));
-  connect(&corner_hover_timer, SIGNAL(timeout()), this, SLOT(enableSceneMove()));
+	connect(&scene_move_timer, SIGNAL(timeout()), this, SLOT(moveObjectScene()));
+	connect(&corner_hover_timer, SIGNAL(timeout()), this, SLOT(enableSceneMove()));
 
-  scene_move_timer.setInterval(SCENE_MOVE_TIMEOUT);
-  corner_hover_timer.setInterval(SCENE_MOVE_TIMEOUT * 10);
+	scene_move_timer.setInterval(SCENE_MOVE_TIMEOUT);
+	corner_hover_timer.setInterval(SCENE_MOVE_TIMEOUT * 10);
 }
 
 ObjectsScene::~ObjectsScene(void)
 {
 	QGraphicsItemGroup *item=nullptr;
-  QList<QGraphicsItem *> items;
+	QList<QGraphicsItem *> items;
 	ObjectType obj_types[]={ OBJ_RELATIONSHIP, OBJ_TEXTBOX,
-													 OBJ_VIEW, OBJ_TABLE, OBJ_SCHEMA };
+							 OBJ_VIEW, OBJ_TABLE, OBJ_SCHEMA };
 	unsigned i, count=sizeof(obj_types)/sizeof(ObjectType);
 
 	this->removeItem(selection_rect);
@@ -85,12 +85,12 @@ ObjectsScene::~ObjectsScene(void)
 			/* Case the object is converted to a item group and can be converted to database
 			objects, indicates that the object can be removed from the scene */
 			if(item && !item->parentItem() &&
-				 ((dynamic_cast<RelationshipView *>(item) && obj_types[i]==OBJ_RELATIONSHIP) ||
-					(dynamic_cast<TextboxView *>(item) && obj_types[i]==OBJ_TEXTBOX) ||
-          (dynamic_cast<StyledTextboxView *>(item) && obj_types[i]==OBJ_TEXTBOX) ||
-					(dynamic_cast<GraphicalView *>(item) && obj_types[i]==OBJ_VIEW) ||
-					(dynamic_cast<TableView *>(item) && obj_types[i]==OBJ_TABLE) ||
-					(dynamic_cast<SchemaView *>(item) && obj_types[i]==OBJ_SCHEMA)))
+					((dynamic_cast<RelationshipView *>(item) && obj_types[i]==OBJ_RELATIONSHIP) ||
+					 (dynamic_cast<TextboxView *>(item) && obj_types[i]==OBJ_TEXTBOX) ||
+					 (dynamic_cast<StyledTextboxView *>(item) && obj_types[i]==OBJ_TEXTBOX) ||
+					 (dynamic_cast<GraphicalView *>(item) && obj_types[i]==OBJ_VIEW) ||
+					 (dynamic_cast<TableView *>(item) && obj_types[i]==OBJ_TABLE) ||
+					 (dynamic_cast<SchemaView *>(item) && obj_types[i]==OBJ_SCHEMA)))
 
 			{
 				this->removeItem(item);
@@ -100,34 +100,34 @@ ObjectsScene::~ObjectsScene(void)
 		}
 	}
 
-  //The graphical representation of db objects must be destroyed in a sorted way
-  std::sort(removed_objs.begin(), removed_objs.end());
-  while(!removed_objs.empty())
-  {
-    delete(removed_objs.back());
-    removed_objs.pop_back();
-  }
+	//The graphical representation of db objects must be destroyed in a sorted way
+	std::sort(removed_objs.begin(), removed_objs.end());
+	while(!removed_objs.empty())
+	{
+		delete(removed_objs.back());
+		removed_objs.pop_back();
+	}
 }
 
 void ObjectsScene::setEnableCornerMove(bool enable)
 {
-  ObjectsScene::corner_move=enable;
+	ObjectsScene::corner_move=enable;
 }
 
 void ObjectsScene::setInvertPanningRangeSelection(bool invert)
 {
-  ObjectsScene::invert_panning_rangesel=invert;
+	ObjectsScene::invert_panning_rangesel=invert;
 }
 
 bool ObjectsScene::isCornerMoveEnabled(void)
 {
-  return(ObjectsScene::corner_move);
+	return(ObjectsScene::corner_move);
 }
 
 QPointF ObjectsScene::alignPointToGrid(const QPointF &pnt)
 {
 	QPointF p(roundf(pnt.x()/grid_size) * grid_size,
-						roundf(pnt.y()/grid_size) * grid_size);
+			  roundf(pnt.y()/grid_size) * grid_size);
 
 	if(p.x() < 0) p.setX(0);
 	if(p.y() < 0) p.setY(0);
@@ -137,49 +137,49 @@ QPointF ObjectsScene::alignPointToGrid(const QPointF &pnt)
 
 void ObjectsScene::setSceneRect(const QRectF &rect)
 {
-  QGraphicsScene::setSceneRect(0, 0, rect.width(), rect.height());
+	QGraphicsScene::setSceneRect(0, 0, rect.width(), rect.height());
 }
 
 QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs)
 {
-  if(!seek_only_db_objs)
-    return(QGraphicsScene::itemsBoundingRect());
-  else
-  {
-    QRectF rect=QGraphicsScene::itemsBoundingRect();
-    QList<QGraphicsItem *> items=this->items();
-    double x=rect.width(), y=rect.height();
-    BaseObjectView *obj_view=nullptr;
-    QPointF pnt;
-    BaseGraphicObject *graph_obj=nullptr;
+	if(!seek_only_db_objs)
+		return(QGraphicsScene::itemsBoundingRect());
+	else
+	{
+		QRectF rect=QGraphicsScene::itemsBoundingRect();
+		QList<QGraphicsItem *> items=this->items();
+		double x=rect.width(), y=rect.height();
+		BaseObjectView *obj_view=nullptr;
+		QPointF pnt;
+		BaseGraphicObject *graph_obj=nullptr;
 
-    for(auto &item : items)
-    {
-      obj_view=dynamic_cast<BaseObjectView *>(item);
+		for(auto &item : items)
+		{
+			obj_view=dynamic_cast<BaseObjectView *>(item);
 
-      if(obj_view && obj_view->isVisible())
-      {
-        graph_obj=dynamic_cast<BaseGraphicObject *>(obj_view->getSourceObject());
+			if(obj_view && obj_view->isVisible())
+			{
+				graph_obj=dynamic_cast<BaseGraphicObject *>(obj_view->getSourceObject());
 
-        if(graph_obj)
-        {
-          if(graph_obj->getObjectType()!=OBJ_RELATIONSHIP &&
-             graph_obj->getObjectType()!=BASE_RELATIONSHIP)
-            pnt=graph_obj->getPosition();
-          else
-            pnt=dynamic_cast<RelationshipView *>(obj_view)->__boundingRect().topLeft();
+				if(graph_obj)
+				{
+					if(graph_obj->getObjectType()!=OBJ_RELATIONSHIP &&
+							graph_obj->getObjectType()!=BASE_RELATIONSHIP)
+						pnt=graph_obj->getPosition();
+					else
+						pnt=dynamic_cast<RelationshipView *>(obj_view)->__boundingRect().topLeft();
 
-          if(pnt.x() < x)
-            x=pnt.x();
+					if(pnt.x() < x)
+						x=pnt.x();
 
-          if(pnt.y() < y)
-            y=pnt.y();
-        }
-      }
-    }
+					if(pnt.y() < y)
+						y=pnt.y();
+				}
+			}
+		}
 
-    return(QRectF(QPointF(x, y), rect.bottomRight()));
-  }
+		return(QRectF(QPointF(x, y), rect.bottomRight()));
+	}
 }
 
 void ObjectsScene::setGridSize(unsigned size)
@@ -194,8 +194,8 @@ void ObjectsScene::setGridSize(unsigned size)
 		QPainter painter;
 		QPen pen;
 
-    configurePrinter(&printer);
-    aux_size=printer.paperSize(QPrinter::Point);
+		configurePrinter(&printer);
+		aux_size=printer.paperSize(QPrinter::Point);
 		aux_size-=page_margins.size();
 
 		//Calculates where the extreme width and height where delimiter lines will be drawn
@@ -254,7 +254,7 @@ void ObjectsScene::showRelationshipLine(bool value, const QPointF &p_start)
 	{
 		//When showing the relationship line all the objects cannot be moved
 		flags=QGraphicsItem::ItemIsSelectable |
-					QGraphicsItem::ItemSendsGeometryChanges;
+			  QGraphicsItem::ItemSendsGeometryChanges;
 
 		object=dynamic_cast<BaseObjectView *>(items.front());
 
@@ -263,15 +263,15 @@ void ObjectsScene::showRelationshipLine(bool value, const QPointF &p_start)
 			base_obj=dynamic_cast<BaseGraphicObject *>(object->getSourceObject());
 
 			if(!value && base_obj &&
-				 base_obj->getObjectType()!=OBJ_RELATIONSHIP &&
-				 base_obj->getObjectType()!=BASE_RELATIONSHIP &&
-				 !base_obj->isProtected())
+					base_obj->getObjectType()!=OBJ_RELATIONSHIP &&
+					base_obj->getObjectType()!=BASE_RELATIONSHIP &&
+					!base_obj->isProtected())
 				flags=QGraphicsItem::ItemIsMovable |
-							QGraphicsItem::ItemIsSelectable |
-							QGraphicsItem::ItemSendsGeometryChanges;
+					  QGraphicsItem::ItemIsSelectable |
+					  QGraphicsItem::ItemSendsGeometryChanges;
 			else
 				flags=QGraphicsItem::ItemIsSelectable |
-							QGraphicsItem::ItemSendsGeometryChanges;
+					  QGraphicsItem::ItemSendsGeometryChanges;
 		}
 
 		items.front()->setFlags(flags);
@@ -282,8 +282,8 @@ void ObjectsScene::showRelationshipLine(bool value, const QPointF &p_start)
 void ObjectsScene::setGridOptions(bool show_grd, bool align_objs_grd, bool show_pag_dlm)
 {
 	bool redef_grid=(ObjectsScene::show_grid!=show_grd ||
-									 ObjectsScene::show_page_delim!=show_pag_dlm ||
-									 grid.style()==Qt::NoBrush);
+											  ObjectsScene::show_page_delim!=show_pag_dlm ||
+																			 grid.style()==Qt::NoBrush);
 
 	ObjectsScene::show_grid=show_grd;
 	ObjectsScene::show_page_delim=show_pag_dlm;
@@ -306,9 +306,9 @@ void ObjectsScene::getGridOptions(bool &show_grd, bool &align_objs_grd, bool &sh
 void ObjectsScene::setPaperConfiguration(QPrinter::PaperSize paper_sz, QPrinter::Orientation orient, QRectF margins, QSizeF custom_size)
 {
 	ObjectsScene::paper_size=paper_sz;
-  ObjectsScene::page_orientation=orient;
+	ObjectsScene::page_orientation=orient;
 	ObjectsScene::page_margins=margins;
-  ObjectsScene::custom_paper_size=custom_size;
+	ObjectsScene::custom_paper_size=custom_size;
 }
 
 void ObjectsScene::getPaperConfiguration(QPrinter::PaperSize &paper_sz, QPrinter::Orientation &orient, QRectF &margins, QSizeF &custom_size)
@@ -316,60 +316,60 @@ void ObjectsScene::getPaperConfiguration(QPrinter::PaperSize &paper_sz, QPrinter
 	paper_sz=ObjectsScene::paper_size;
 	orient=ObjectsScene::page_orientation;
 	margins=ObjectsScene::page_margins;
-  custom_size=ObjectsScene::custom_paper_size;
+	custom_size=ObjectsScene::custom_paper_size;
 }
 
 void ObjectsScene::configurePrinter(QPrinter *printer)
 {
-  if(!printer)
-    throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(!printer)
+		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  if(paper_size!=QPrinter::Custom)
-   printer->setPaperSize(paper_size);
-  else
-  {
-    #if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
-      //The QTBUG-33645 is fixed on Qt 5.3
-      QPageLayout pl;
-      QPageSize ps;
-      ps=QPageSize(QSizeF(custom_paper_size.width(), custom_paper_size.height()), QPageSize::Point, QString(), QPageSize::ExactMatch);
-      pl.setPageSize(ps);
-      pl.setOrientation(page_orientation==QPrinter::Landscape ? QPageLayout::Landscape : QPageLayout::Portrait);
-      printer->setPageSize(pl.pageSize());
-    #else
-      #warning "Custom page size bug (QTBUG-33645) workaround for Qt 5.2 or lower. NOTE: This issue is fixed on Qt 5.3"
-      printer->setPaperSize(QSizeF(custom_paper_size.height(), custom_paper_size.width()), QPrinter::Point);
-    #endif
-  }
+	if(paper_size!=QPrinter::Custom)
+		printer->setPaperSize(paper_size);
+	else
+	{
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
+		//The QTBUG-33645 is fixed on Qt 5.3
+		QPageLayout pl;
+		QPageSize ps;
+		ps=QPageSize(QSizeF(custom_paper_size.width(), custom_paper_size.height()), QPageSize::Point, QString(), QPageSize::ExactMatch);
+		pl.setPageSize(ps);
+		pl.setOrientation(page_orientation==QPrinter::Landscape ? QPageLayout::Landscape : QPageLayout::Portrait);
+		printer->setPageSize(pl.pageSize());
+#else
+#warning "Custom page size bug (QTBUG-33645) workaround for Qt 5.2 or lower. NOTE: This issue is fixed on Qt 5.3"
+		printer->setPaperSize(QSizeF(custom_paper_size.height(), custom_paper_size.width()), QPrinter::Point);
+#endif
+	}
 
-  if(paper_size==QPrinter::Custom)
-  {
-    if(custom_paper_size.width() > custom_paper_size.height())
-      ObjectsScene::page_orientation=QPrinter::Landscape;
-    else
-      ObjectsScene::page_orientation=QPrinter::Portrait;
-  }
-  else
-     printer->setOrientation(page_orientation);
+	if(paper_size==QPrinter::Custom)
+	{
+		if(custom_paper_size.width() > custom_paper_size.height())
+			ObjectsScene::page_orientation=QPrinter::Landscape;
+		else
+			ObjectsScene::page_orientation=QPrinter::Portrait;
+	}
+	else
+		printer->setOrientation(page_orientation);
 
-  printer->setPageMargins(page_margins.left(), page_margins.top(), page_margins.width(), page_margins.height(), QPrinter::Millimeter);
+	printer->setPageMargins(page_margins.left(), page_margins.top(), page_margins.width(), page_margins.height(), QPrinter::Millimeter);
 }
 
 void ObjectsScene::configurePrinter(QPrinter *printer, const QSizeF &custom_size, QPrinter::Orientation orient)
 {
-  QPrinter::PaperSize orig_page_sz=paper_size;
-  QPrinter::Orientation orig_orient=page_orientation;
-  QSizeF orig_custom_sz=custom_paper_size;
+	QPrinter::PaperSize orig_page_sz=paper_size;
+	QPrinter::Orientation orig_orient=page_orientation;
+	QSizeF orig_custom_sz=custom_paper_size;
 
-  paper_size=QPrinter::Custom;
-  page_orientation=orient;
-  custom_paper_size=custom_size;
+	paper_size=QPrinter::Custom;
+	page_orientation=orient;
+	custom_paper_size=custom_size;
 
-  configurePrinter(printer);
+	configurePrinter(printer);
 
-  paper_size=orig_page_sz;
-  page_orientation=orig_orient;
-  custom_paper_size=orig_custom_sz;
+	paper_size=orig_page_sz;
+	page_orientation=orig_orient;
+	custom_paper_size=orig_custom_sz;
 }
 
 void ObjectsScene::emitObjectModification(BaseGraphicObject *object)
@@ -401,15 +401,15 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 
 		if(rel)
 			connect(rel, SIGNAL(s_relationshipModified(BaseGraphicObject*)),
-							this, SLOT(emitObjectModification(BaseGraphicObject*)));
+					this, SLOT(emitObjectModification(BaseGraphicObject*)));
 		else if(tab)
 			connect(tab, SIGNAL(s_childObjectSelected(TableObject*)),
-							this, SLOT(emitChildObjectSelection(TableObject*)));
+					this, SLOT(emitChildObjectSelection(TableObject*)));
 
 		if(obj)
 		{
 			connect(obj, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)),
-							this, SLOT(emitObjectSelection(BaseGraphicObject*,bool)));
+					this, SLOT(emitObjectSelection(BaseGraphicObject*,bool)));
 		}
 
 		QGraphicsScene::addItem(item);
@@ -420,410 +420,446 @@ void ObjectsScene::removeItem(QGraphicsItem *item)
 {
 	if(item)
 	{
-    BaseObjectView *object=dynamic_cast<BaseObjectView *>(item);
+		BaseObjectView *object=dynamic_cast<BaseObjectView *>(item);
 		RelationshipView *rel=dynamic_cast<RelationshipView *>(item);
 
-    if(rel)
-      rel->disconnectTables();
+		if(rel)
+			rel->disconnectTables();
 
 		item->setVisible(false);
 		item->setActive(false);
-    QGraphicsScene::removeItem(item);
+		QGraphicsScene::removeItem(item);
 
-    if(object)
-    {
-      disconnect(object, nullptr, this, nullptr);
-      disconnect(object, nullptr, dynamic_cast<BaseGraphicObject*>(object->getSourceObject()), nullptr);
-      disconnect(dynamic_cast<BaseGraphicObject*>(object->getSourceObject()), nullptr, object, nullptr);
-      removed_objs.push_back(object);
-    }
+		if(object)
+		{
+			disconnect(object, nullptr, this, nullptr);
+			disconnect(object, nullptr, dynamic_cast<BaseGraphicObject*>(object->getSourceObject()), nullptr);
+			disconnect(dynamic_cast<BaseGraphicObject*>(object->getSourceObject()), nullptr, object, nullptr);
+			removed_objs.push_back(object);
+		}
 	}
 }
 
 void ObjectsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
-  QGraphicsScene::mouseDoubleClickEvent(event);
-  enablePannigMode(false);
+	QGraphicsScene::mouseDoubleClickEvent(event);
+	enablePannigMode(false);
 
-  if(this->selectedItems().size()==1 && event->buttons()==Qt::LeftButton && !rel_line->isVisible())
-  {
-    //Gets the selected graphical object
-    BaseObjectView *obj=dynamic_cast<BaseObjectView *>(this->selectedItems().at(0));
+	if(this->selectedItems().size()==1 && event->buttons()==Qt::LeftButton && !rel_line->isVisible())
+	{
+		//Gets the selected graphical object
+		BaseObjectView *obj=dynamic_cast<BaseObjectView *>(this->selectedItems().at(0));
 
-    if(obj)
-      emit s_objectDoubleClicked(dynamic_cast<BaseGraphicObject *>(obj->getSourceObject()));
-  }
-  else
-    //Emit a signal indicating that no object was selected
-    emit s_objectDoubleClicked(nullptr);
+		if(obj)
+			emit s_objectDoubleClicked(dynamic_cast<BaseGraphicObject *>(obj->getSourceObject()));
+	}
+	else
+		//Emit a signal indicating that no object was selected
+		emit s_objectDoubleClicked(nullptr);
 }
 
 void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-  QGraphicsView *view=getActiveViewport();
+	QGraphicsView *view=getActiveViewport();
 
-  //Gets the item at mouse position
-  QGraphicsItem* item=this->itemAt(event->scenePos().x(), event->scenePos().y(), QTransform());
+	//Gets the item at mouse position
+	QGraphicsItem* item=this->itemAt(event->scenePos().x(), event->scenePos().y(), QTransform());
 
-  if(selectedItems().empty())
-    emit s_objectsScenePressed(event->buttons());
+	if(selectedItems().empty())
+		emit s_objectsScenePressed(event->buttons());
 
-  /* If the relationship line is visible, indicates that the user is in the middle of
-     a relationship creation, thus is needed to inform to the scene to activate the
-     the multiselection to be able to select two tables and link them. By default,
-     the multiselection modifier is the Control key */
-  if(rel_line->isVisible())
-    event->setModifiers(Qt::ControlModifier);
+	/* If the relationship line is visible, indicates that the user is in the middle of
+	 a relationship creation, thus is needed to inform to the scene to activate the
+	 the multiselection to be able to select two tables and link them. By default,
+	 the multiselection modifier is the Control key */
+	if(rel_line->isVisible())
+		event->setModifiers(Qt::ControlModifier);
 
-  QGraphicsScene::mousePressEvent(event);
+	QGraphicsScene::mousePressEvent(event);
 
-  if(event->buttons()==Qt::LeftButton)
-  {
+	if(event->buttons()==Qt::LeftButton)
+	{
 		sel_ini_pnt=event->scenePos();
 
-    if((!invert_panning_rangesel && event->modifiers()==Qt::ShiftModifier) ||
-       (invert_panning_rangesel && event->modifiers()==Qt::NoModifier))
-    {
-      if(enable_range_sel && this->selectedItems().isEmpty())
-      {
-        selection_rect->setVisible(true);
-        emit s_objectSelected(nullptr,false);
-      }
-    }
-    else
-    {
-      //Selects the object (without press control) if the user is creating a relationship
-      if(item && item->isEnabled() && !item->isSelected() &&  rel_line->isVisible())
-        item->setSelected(true);     
-      /* Workaround to avoid the panning mode to be activated when user is only adding a
-         graphical object (table / textbox / relationship / view) */
-      else if(((invert_panning_rangesel && event->modifiers()==Qt::ShiftModifier) || !invert_panning_rangesel)  &&
-              view && view->cursor().shape()==Qt::ArrowCursor)
-        enablePannigMode(true);
-    }
-  }
-  else if(event->buttons()==Qt::RightButton)
-  {
-    //Case there is no item at the mouse position clears the selection on the scene
-    if(!item)
-    {
-      this->clearSelection();
-      emit s_objectSelected(nullptr,false);
-    }
+		if((!invert_panning_rangesel && event->modifiers()==Qt::ShiftModifier) ||
+				(invert_panning_rangesel && event->modifiers()==Qt::NoModifier))
+		{
+			if(enable_range_sel && this->selectedItems().isEmpty())
+			{
+				selection_rect->setVisible(true);
+				emit s_objectSelected(nullptr,false);
+			}
+		}
+		else
+		{
+			//Selects the object (without press control) if the user is creating a relationship
+			if(item && item->isEnabled() && !item->isSelected() &&  rel_line->isVisible())
+				item->setSelected(true);
+			/* Workaround to avoid the panning mode to be activated when user is only adding a
+		 graphical object (table / textbox / relationship / view) */
+			else if(((invert_panning_rangesel && event->modifiers()==Qt::ShiftModifier) || !invert_panning_rangesel)  &&
+					view && view->cursor().shape()==Qt::ArrowCursor)
+				enablePannigMode(true);
+		}
+	}
+	else if(event->buttons()==Qt::RightButton)
+	{
+		//Case there is no item at the mouse position clears the selection on the scene
+		if(!item)
+		{
+			this->clearSelection();
+			emit s_objectSelected(nullptr,false);
+		}
 
-    emit s_popupMenuRequested();
-  }
+		emit s_popupMenuRequested();
+	}
 }
 
 bool ObjectsScene::mouseIsAtCorner(void)
 {
-  QGraphicsView *view=getActiveViewport();
+	QGraphicsView *view=getActiveViewport();
 
-  if(view)
-  {
+	if(view)
+	{
 
-    QPoint pos=view->mapFromGlobal(QCursor::pos());
-    QRect rect=view->rect();
+		QPoint pos=view->mapFromGlobal(QCursor::pos());
+		QRect rect=view->rect();
 
-    if(rect.contains(pos))
-    {
-      if(pos.x() <= SCENE_MOVE_THRESHOLD)
-        scene_move_dx=-SCENE_MOVE_STEP;
-      else if(pos.x() >= (view->width() - view->verticalScrollBar()->width() - SCENE_MOVE_THRESHOLD))
-        scene_move_dx=SCENE_MOVE_STEP;
-      else
-        scene_move_dx=0;
+		if(rect.contains(pos))
+		{
+			if(pos.x() <= SCENE_MOVE_THRESHOLD)
+				scene_move_dx=-SCENE_MOVE_STEP;
+			else if(pos.x() >= (view->width() - view->verticalScrollBar()->width() - SCENE_MOVE_THRESHOLD))
+				scene_move_dx=SCENE_MOVE_STEP;
+			else
+				scene_move_dx=0;
 
-      if(pos.y() <= SCENE_MOVE_THRESHOLD)
-        scene_move_dy=-SCENE_MOVE_STEP;
-      else if(pos.y() >= (view->height() - view->horizontalScrollBar()->height() - SCENE_MOVE_THRESHOLD))
-        scene_move_dy=SCENE_MOVE_STEP;
-      else
-        scene_move_dy=0;
+			if(pos.y() <= SCENE_MOVE_THRESHOLD)
+				scene_move_dy=-SCENE_MOVE_STEP;
+			else if(pos.y() >= (view->height() - view->horizontalScrollBar()->height() - SCENE_MOVE_THRESHOLD))
+				scene_move_dy=SCENE_MOVE_STEP;
+			else
+				scene_move_dy=0;
 
-      return(scene_move_dx!=0 || scene_move_dy!=0);
-    }
-    else
-      return(false);
-  }
-  else
-    return(false);
+			return(scene_move_dx!=0 || scene_move_dy!=0);
+		}
+		else
+			return(false);
+	}
+	else
+		return(false);
 }
 
 QGraphicsView *ObjectsScene::getActiveViewport(void)
 {
-  QGraphicsView *view_p=nullptr;
+	QGraphicsView *view_p=nullptr;
 
-  for(auto &view : this->views())
-  {
-    if(view && view->isActiveWindow())
-    {
-      view_p=view;
-      break;
-    }
-  }
+	for(auto &view : this->views())
+	{
+		if(view && view->isActiveWindow())
+		{
+			view_p=view;
+			break;
+		}
+	}
 
-  return(view_p);
+	return(view_p);
 }
 
 void ObjectsScene::moveObjectScene(void)
 {
-  if(scene_move_dx!=0 || scene_move_dy!=0)
-  {
-    QGraphicsView *view=getActiveViewport();
+	if(scene_move_dx!=0 || scene_move_dy!=0)
+	{
+		QGraphicsView *view=getActiveViewport();
 
-    if(view && mouseIsAtCorner())
-    {
-      view->horizontalScrollBar()->setValue(view->horizontalScrollBar()->value() + scene_move_dx);
-      view->verticalScrollBar()->setValue(view->verticalScrollBar()->value() + scene_move_dy);
-      move_scene=true;
-    }
-    else
-    {
-      move_scene=false;
-      scene_move_timer.stop();
-    }
-  }
+		if(view && mouseIsAtCorner())
+		{
+			view->horizontalScrollBar()->setValue(view->horizontalScrollBar()->value() + scene_move_dx);
+			view->verticalScrollBar()->setValue(view->verticalScrollBar()->value() + scene_move_dy);
+			move_scene=true;
+		}
+		else
+		{
+			move_scene=false;
+			scene_move_timer.stop();
+		}
+	}
 }
 
 void ObjectsScene::enablePannigMode(bool value)
 {
-  QGraphicsView *view=getActiveViewport();
+	QGraphicsView *view=getActiveViewport();
 
-  if(view)
-   view->setDragMode((value ? QGraphicsView::ScrollHandDrag : QGraphicsView::NoDrag));
+	if(view)
+		view->setDragMode((value ? QGraphicsView::ScrollHandDrag : QGraphicsView::NoDrag));
 }
 
 void ObjectsScene::enableSceneMove(bool value)
 {
-  if(value)
-  {
-  scene_move_timer.start();
-  corner_hover_timer.stop();
-  }
-  else
-  {
-    corner_hover_timer.stop();
-    scene_move_timer.stop();
-  }
+	if(value)
+	{
+		scene_move_timer.start();
+		corner_hover_timer.stop();
+	}
+	else
+	{
+		corner_hover_timer.stop();
+		scene_move_timer.stop();
+	}
 
-  move_scene=value;
+	move_scene=value;
 }
 
 void ObjectsScene::enableRangeSelection(bool value)
 {
-  enable_range_sel=value;
+	enable_range_sel=value;
 
-  if(!value && selection_rect->isVisible())
-    selection_rect->setVisible(value);
+	if(!value && selection_rect->isVisible())
+		selection_rect->setVisible(value);
 }
 
 void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-  if(event->buttons()==Qt::LeftButton || rel_line->isVisible())
-  {
-    if(corner_move)
-    {
-      if(mouseIsAtCorner())
-      {
-       if(move_scene)
-         scene_move_timer.start();
-       else
-         corner_hover_timer.start();
-      }
-      else
-        enableSceneMove(false);
-    }
+	if(event->buttons()==Qt::LeftButton || rel_line->isVisible())
+	{
+		if(corner_move)
+		{
+			if(mouseIsAtCorner())
+			{
+				if(move_scene)
+					scene_move_timer.start();
+				else
+					corner_hover_timer.start();
+			}
+			else
+				enableSceneMove(false);
+		}
 
-    if(!rel_line->isVisible())
-    {
-      //Case the user starts a object moviment
-      if(!this->selectedItems().isEmpty() && !moving_objs && event->modifiers()==Qt::NoModifier)
-      {
-        emit s_objectsMoved(false);
-        moving_objs=true;
-      }
+		if(!rel_line->isVisible())
+		{
+			//Case the user starts a object moviment
+			if(!this->selectedItems().isEmpty() && !moving_objs && event->modifiers()==Qt::NoModifier)
+			{
+				if(BaseObjectView::isPlaceholderEnabled())
+				{
+					QList<QGraphicsItem *> items=this->selectedItems();
+					BaseObjectView *obj_view=nullptr;
 
-      //If the alignment to grid is active, adjust the event scene position
-      if(align_objs_grid && !selection_rect->isVisible())
-        event->setScenePos(this->alignPointToGrid(event->scenePos()));
-      else if(selection_rect->isVisible())
-      {
-        QPolygonF pol;
-        pol.append(sel_ini_pnt);
-        pol.append(QPointF(event->scenePos().x(), sel_ini_pnt.y()));
-        pol.append(QPointF(event->scenePos().x(), event->scenePos().y()));
-        pol.append(QPointF(sel_ini_pnt.x(), event->scenePos().y()));
-        selection_rect->setPolygon(pol);
-        selection_rect->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::OBJ_SELECTION));
-        selection_rect->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::OBJ_SELECTION));
-      }
-    }
-  }
+					for(QGraphicsItem *item : items)
+					{
+						obj_view=dynamic_cast<BaseObjectView *>(item);
+						obj_view->togglePlaceholder(true);
+					}
+				}
 
-  if(rel_line->isVisible())
-    rel_line->setLine(QLineF(rel_line->line().p1(), event->scenePos()));
+				emit s_objectsMoved(false);
+				moving_objs=true;
+			}
 
-  QGraphicsScene::mouseMoveEvent(event);
+			//If the alignment to grid is active, adjust the event scene position
+			if(align_objs_grid && !selection_rect->isVisible())
+				event->setScenePos(this->alignPointToGrid(event->scenePos()));
+			else if(selection_rect->isVisible())
+			{
+				QPolygonF pol;
+				pol.append(sel_ini_pnt);
+				pol.append(QPointF(event->scenePos().x(), sel_ini_pnt.y()));
+				pol.append(QPointF(event->scenePos().x(), event->scenePos().y()));
+				pol.append(QPointF(sel_ini_pnt.x(), event->scenePos().y()));
+				selection_rect->setPolygon(pol);
+				selection_rect->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::OBJ_SELECTION));
+				selection_rect->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::OBJ_SELECTION));
+			}
+		}
+	}
+
+	if(rel_line->isVisible())
+		rel_line->setLine(QLineF(rel_line->line().p1(), event->scenePos()));
+
+	QGraphicsScene::mouseMoveEvent(event);
 }
 
 void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-  QGraphicsScene::mouseReleaseEvent(event);
+	QGraphicsScene::mouseReleaseEvent(event);
 
-  if(event->button()==Qt::LeftButton)
-  {
-    enablePannigMode(false);
+	if(event->button()==Qt::LeftButton)
+	{
+		enablePannigMode(false);
 
-    if(corner_move)
-      enableSceneMove(false);
-  }
+		if(corner_move)
+			enableSceneMove(false);
+	}
 
-  //If there is selected object and the user ends the object moviment
-  if(!this->selectedItems().isEmpty() && moving_objs &&
-     event->button()==Qt::LeftButton && event->modifiers()==Qt::NoModifier)
-  {
-    unsigned i, count;
-    QList<QGraphicsItem *> items=this->selectedItems(), rel_list;
-    double x1,y1,x2,y2, dx, dy;
-    QRectF rect;
-    SchemaView *sch_view=nullptr;
-    vector<QPointF> points;
-    vector<QPointF>::iterator itr;
-    vector<BaseObject *> rels, base_rels;
-    BaseRelationship *base_rel=nullptr;
-    RelationshipView *rel=nullptr;
+	//If there is selected object and the user ends the object moviment
+	if(!this->selectedItems().isEmpty() && moving_objs &&
+			event->button()==Qt::LeftButton && event->modifiers()==Qt::NoModifier)
+	{
+		unsigned i, count;
+		QList<QGraphicsItem *> items=this->selectedItems(), rel_list;
+		double x1,y1,x2,y2, dx, dy;
+		QRectF rect;
+		SchemaView *sch_view=nullptr;
+		vector<QPointF> points;
+		vector<QPointF>::iterator itr;
+		vector<BaseObject *> rels, base_rels;
+		BaseRelationship *base_rel=nullptr;
+		RelationshipView *rel=nullptr;
+		BaseObjectView *obj_view=nullptr;
+		BaseTableView *tab_view=nullptr;
+		QList<BaseObjectView *> tables;
 
-    //Gathering the relationships inside the selected schemsa in order to move their points too
-    for(auto &item : items)
-    {
-      sch_view=dynamic_cast<SchemaView *>(item);
+		//Gathering the relationships inside the selected schemsa in order to move their points too
+		for(auto &item : items)
+		{
+			obj_view=dynamic_cast<BaseObjectView *>(item);
+			sch_view=dynamic_cast<SchemaView *>(item);
+			tab_view=dynamic_cast<BaseTableView *>(item);
 
-      if(sch_view)
-      {
-        //Get the schema object
-        Schema *schema=dynamic_cast<Schema *>(sch_view->getSourceObject());
+			if(obj_view)
+				obj_view->togglePlaceholder(false);
 
-        if(!schema->isProtected())
-        {
-          //Get the table-table and table-view relationships
-          rels=dynamic_cast<DatabaseModel *>(schema->getDatabase())->getObjects(OBJ_RELATIONSHIP, schema);
-          base_rels=dynamic_cast<DatabaseModel *>(schema->getDatabase())->getObjects(BASE_RELATIONSHIP, schema);
-          rels.insert(rels.end(), base_rels.begin(), base_rels.end());
+			if(tab_view)
+				tables.push_back(tab_view);
+			else if(sch_view)
+			{
+				//Get the schema object
+				Schema *schema=dynamic_cast<Schema *>(sch_view->getSourceObject());
 
-          for(auto &rel : rels)
-          {
-            base_rel=dynamic_cast<BaseRelationship *>(rel);
+				if(!schema->isProtected())
+				{
+					//Get the table-table and table-view relationships
+					rels=dynamic_cast<DatabaseModel *>(schema->getDatabase())->getObjects(OBJ_RELATIONSHIP, schema);
+					base_rels=dynamic_cast<DatabaseModel *>(schema->getDatabase())->getObjects(BASE_RELATIONSHIP, schema);
+					rels.insert(rels.end(), base_rels.begin(), base_rels.end());
 
-            /* If the relationship contains points and it is not selected then it will be included on the list
-               in order to move their custom line points */
-            if(!dynamic_cast<RelationshipView *>(base_rel->getReceiverObject())->isSelected() &&
-               !base_rel->getPoints().empty())
-              rel_list.push_back(dynamic_cast<QGraphicsItem *>(base_rel->getReceiverObject()));
-          }
-        }
-      }
-    }
+					for(auto &rel : rels)
+					{
+						base_rel=dynamic_cast<BaseRelationship *>(rel);
 
-    items.append(rel_list);
+						/* If the relationship contains points and it is not selected then it will be included on the list
+			   in order to move their custom line points */
+						if(!dynamic_cast<RelationshipView *>(base_rel->getReceiverObject())->isSelected() &&
+								!base_rel->getPoints().empty())
+							rel_list.push_back(dynamic_cast<QGraphicsItem *>(base_rel->getReceiverObject()));
+					}
 
-    /* Get the extreme points of the scene to check if some objects are out the area
-     forcing the scene to be resized */
-    x1=this->sceneRect().left();
-    y1=this->sceneRect().top();
-    x2=this->sceneRect().right();
-    y2=this->sceneRect().bottom();
-    dx=event->scenePos().x() - sel_ini_pnt.x();
-    dy=event->scenePos().y() - sel_ini_pnt.y();
+					tables.append(sch_view->getChildren());
+				}
+			}
+		}
 
-    count=items.size();
-    for(i=0; i < count; i++)
-    {
-      rel=dynamic_cast<RelationshipView *>(items[i]);
+		items.append(rel_list);
 
-      if(!rel)
-      {
-        if(align_objs_grid)
-          items[i]->setPos(alignPointToGrid(items[i]->pos()));
-        else
-        {
-          QPointF p=items[i]->pos();
-          if(p.x() < 0) p.setX(0);
-          if(p.y() < 0) p.setY(0);
-          items[i]->setPos(p);
-        }
+		/* Get the extreme points of the scene to check if some objects are out the area
+	 forcing the scene to be resized */
+		x1=this->sceneRect().left();
+		y1=this->sceneRect().top();
+		x2=this->sceneRect().right();
+		y2=this->sceneRect().bottom();
+		dx=event->scenePos().x() - sel_ini_pnt.x();
+		dy=event->scenePos().y() - sel_ini_pnt.y();
 
-        rect.setTopLeft(items[i]->pos());
-        rect.setSize(items[i]->boundingRect().size());
-      }
-      else
-      {
-        /* If the relationship has points added to the line is necessary to move the points
-        too. Since relationships cannot be moved naturally (by user) this will be done
-        by the scene. NOTE: this operation is done ONLY WHEN there is more than one object selected! */
-        points=rel->getSourceObject()->getPoints();
-        if(count > 1 && !points.empty())
-        {
-          itr=points.begin();
-          while(itr!=points.end())
-          {
-            //Translate the points
-            itr->setX(itr->x() + dx);
-            itr->setY(itr->y() + dy);
+		count=items.size();
+		for(i=0; i < count; i++)
+		{
+			rel=dynamic_cast<RelationshipView *>(items[i]);
 
-            //Align to grid if the flag is set
-            if(align_objs_grid)
-              (*itr)=alignPointToGrid(*itr);
+			if(!rel)
+			{
+				if(align_objs_grid)
+					items[i]->setPos(alignPointToGrid(items[i]->pos()));
+				else
+				{
+					QPointF p=items[i]->pos();
+					if(p.x() < 0) p.setX(0);
+					if(p.y() < 0) p.setY(0);
+					items[i]->setPos(p);
+				}
 
-            itr++;
-          }
+				rect.setTopLeft(items[i]->pos());
+				rect.setSize(items[i]->boundingRect().size());
+			}
+			else
+			{
+				/* If the relationship has points added to the line is necessary to move the points
+		too. Since relationships cannot be moved naturally (by user) this will be done
+		by the scene. NOTE: this operation is done ONLY WHEN there is more than one object selected! */
+				points=rel->getSourceObject()->getPoints();
+				if(count > 1 && !points.empty())
+				{
+					itr=points.begin();
+					while(itr!=points.end())
+					{
+						//Translate the points
+						itr->setX(itr->x() + dx);
+						itr->setY(itr->y() + dy);
 
-          //Assing the new points to relationship and reconfigure its line
-          rel->getSourceObject()->setPoints(points);
-          rel->configureLine();
-        }
+						//Align to grid if the flag is set
+						if(align_objs_grid)
+							(*itr)=alignPointToGrid(*itr);
 
-        rect=rel->__boundingRect();
-      }
+						itr++;
+					}
 
-      //Made the comparisson between the scene extremity and the object's bounding rect
-      if(rect.left() < x1) x1=rect.left();
-      if(rect.top() < y1) y1=rect.top();
-      if(rect.right() > x2) x2=rect.right();
-      if(rect.bottom() > y2) y2=rect.bottom();
-    }
+					//Assing the new points to relationship and reconfigure its line
+					rel->getSourceObject()->setPoints(points);
+					rel->configureLine();
+				}
 
-    //Reconfigures the rectangle with the most extreme points
-    rect.setCoords(x1, y1, x2, y2);
+				rect=rel->__boundingRect();
+			}
 
-    //If the new rect is greater than the scene bounding rect, this latter is resized
-    if(rect!=this->sceneRect())
-    {
-      rect=this->itemsBoundingRect();
-      rect.setTopLeft(QPointF(0,0));
-      rect.setWidth(rect.width() * 1.05f);
-      rect.setHeight(rect.height() * 1.05f);
-      this->setSceneRect(rect);
-    }
+			//Made the comparisson between the scene extremity and the object's bounding rect
+			if(rect.left() < x1) x1=rect.left();
+			if(rect.top() < y1) y1=rect.top();
+			if(rect.right() > x2) x2=rect.right();
+			if(rect.bottom() > y2) y2=rect.bottom();
+		}
 
-    emit s_objectsMoved(true);
-    moving_objs=false;
-    sel_ini_pnt.setX(NAN);
-    sel_ini_pnt.setY(NAN);
-  }
-  else if(selection_rect->isVisible() && event->button()==Qt::LeftButton)
-  {
-    QPolygonF pol;
-    QPainterPath sel_area;
+		//Reconfigures the rectangle with the most extreme points
+		rect.setCoords(x1, y1, x2, y2);
 
-    sel_area.addRect(selection_rect->polygon().boundingRect());
-    this->setSelectionArea(sel_area, Qt::IntersectsItemShape);
+		//If the new rect is greater than the scene bounding rect, this latter is resized
+		if(rect!=this->sceneRect())
+		{
+			rect=this->itemsBoundingRect();
+			rect.setTopLeft(QPointF(0,0));
+			rect.setWidth(rect.width() * 1.05f);
+			rect.setHeight(rect.height() * 1.05f);
+			this->setSceneRect(rect);
+		}
 
-    selection_rect->setVisible(false);
-    selection_rect->setPolygon(pol);
-    sel_ini_pnt.setX(NAN);
-    sel_ini_pnt.setY(NAN);
-  }
+		if(BaseObjectView::isPlaceholderEnabled())
+		{
+			/* Updating relationships related to moved tables. Converting the list of table to a set
+	   in order to remove the duplicated elements */
+			for(auto &obj : tables.toSet())
+			{
+				tab_view=dynamic_cast<BaseTableView *>(obj);
+				if(tab_view)
+					tab_view->requestRelationshipsUpdate();
+			}
+		}
+
+		emit s_objectsMoved(true);
+		moving_objs=false;
+		sel_ini_pnt.setX(NAN);
+		sel_ini_pnt.setY(NAN);
+	}
+	else if(selection_rect->isVisible() && event->button()==Qt::LeftButton)
+	{
+		QPolygonF pol;
+		QPainterPath sel_area;
+
+		sel_area.addRect(selection_rect->polygon().boundingRect());
+		this->setSelectionArea(sel_area, Qt::IntersectsItemShape);
+
+		selection_rect->setVisible(false);
+		selection_rect->setPolygon(pol);
+		sel_ini_pnt.setX(NAN);
+		sel_ini_pnt.setY(NAN);
+	}
 }
 
 void ObjectsScene::alignObjectsToGrid(void)
@@ -862,7 +898,7 @@ void ObjectsScene::alignObjectsToGrid(void)
 
 				//Align the labels
 				for(i1=BaseRelationship::SRC_CARD_LABEL;
-						i1<=BaseRelationship::REL_NAME_LABEL; i1++)
+					i1<=BaseRelationship::REL_NAME_LABEL; i1++)
 				{
 					lab=rel->getLabel(i1);
 					if(lab)
@@ -887,66 +923,66 @@ void ObjectsScene::alignObjectsToGrid(void)
 void ObjectsScene::update(void)
 {
 	this->setBackgroundBrush(grid);
-  QGraphicsScene::update(this->sceneRect());
+	QGraphicsScene::update(this->sceneRect());
 }
 
 vector<QRectF> ObjectsScene::getPagesForPrinting(const QSizeF &paper_size, const QSizeF &margin, unsigned &h_page_cnt, unsigned &v_page_cnt)
 {
-  vector<QRectF> pages;
-  QRectF page_rect, max_rect;
-  double width, height, page_width, page_height;
-  unsigned h_page=0, v_page=0, start_h=99999, start_v=99999;
-  QList<QGraphicsItem *> list;
+	vector<QRectF> pages;
+	QRectF page_rect, max_rect;
+	double width, height, page_width, page_height;
+	unsigned h_page=0, v_page=0, start_h=99999, start_v=99999;
+	QList<QGraphicsItem *> list;
 
-  page_width=ceilf(paper_size.width() - margin.width()-1);
-  page_height=ceilf(paper_size.height() - margin.height()-1);
+	page_width=ceilf(paper_size.width() - margin.width()-1);
+	page_height=ceilf(paper_size.height() - margin.height()-1);
 
-  //Calculates the horizontal and vertical page count based upon the passed paper size
-  h_page_cnt=roundf(this->sceneRect().width()/page_width) + 1;
-  v_page_cnt=roundf(this->sceneRect().height()/page_height) + 1;
+	//Calculates the horizontal and vertical page count based upon the passed paper size
+	h_page_cnt=roundf(this->sceneRect().width()/page_width) + 1;
+	v_page_cnt=roundf(this->sceneRect().height()/page_height) + 1;
 
-  //Calculates the maximum count of horizontal and vertical pages
-  for(v_page=0; v_page < v_page_cnt; v_page++)
-  {
-    for(h_page=0; h_page < h_page_cnt; h_page++)
-    {
-      //Calculates the current page rectangle
-      page_rect=QRectF(QPointF(h_page * page_width, v_page * page_height), QSizeF(page_width, page_height));
+	//Calculates the maximum count of horizontal and vertical pages
+	for(v_page=0; v_page < v_page_cnt; v_page++)
+	{
+		for(h_page=0; h_page < h_page_cnt; h_page++)
+		{
+			//Calculates the current page rectangle
+			page_rect=QRectF(QPointF(h_page * page_width, v_page * page_height), QSizeF(page_width, page_height));
 
-      //Case there is selected items recalculates the maximum page size
-      list=this->items(page_rect, Qt::IntersectsItemShape);
-      if(!list.isEmpty())
-      {
-        if(start_h > h_page) start_h=h_page;
-        if(start_v > v_page) start_v=v_page;
+			//Case there is selected items recalculates the maximum page size
+			list=this->items(page_rect, Qt::IntersectsItemShape);
+			if(!list.isEmpty())
+			{
+				if(start_h > h_page) start_h=h_page;
+				if(start_v > v_page) start_v=v_page;
 
-        width=page_rect.left() + page_rect.width();
-        height=page_rect.top() + page_rect.height();
+				width=page_rect.left() + page_rect.width();
+				height=page_rect.top() + page_rect.height();
 
-        if(width > max_rect.width())
-          max_rect.setWidth(width);
+				if(width > max_rect.width())
+					max_rect.setWidth(width);
 
-        if(height > max_rect.height())
-          max_rect.setHeight(height);
-      }
-    }
-  }
+				if(height > max_rect.height())
+					max_rect.setHeight(height);
+			}
+		}
+	}
 
-  //Re calculates the maximum page count based upon the maximum page size
-  h_page_cnt=roundf(max_rect.width()/page_width);
-  v_page_cnt=roundf(max_rect.height()/page_height);
+	//Re calculates the maximum page count based upon the maximum page size
+	h_page_cnt=roundf(max_rect.width()/page_width);
+	v_page_cnt=roundf(max_rect.height()/page_height);
 
-  //Inserts the page rectangles on the list
-  for(v_page=static_cast<unsigned>(start_v); v_page < v_page_cnt; v_page++)
-    for(h_page=static_cast<unsigned>(start_h); h_page < h_page_cnt; h_page++)
-      pages.push_back(QRectF(QPointF(h_page * page_width, v_page * page_height), QSizeF(page_width, page_height)));
+	//Inserts the page rectangles on the list
+	for(v_page=static_cast<unsigned>(start_v); v_page < v_page_cnt; v_page++)
+		for(h_page=static_cast<unsigned>(start_h); h_page < h_page_cnt; h_page++)
+			pages.push_back(QRectF(QPointF(h_page * page_width, v_page * page_height), QSizeF(page_width, page_height)));
 
-  return(pages);
+	return(pages);
 }
 
 bool ObjectsScene::isRangeSelectionEnabled(void)
 {
-  return(enable_range_sel);
+	return(enable_range_sel);
 }
 
 bool ObjectsScene::isPanningRangeSelectionInverted(void)
@@ -957,4 +993,9 @@ bool ObjectsScene::isPanningRangeSelectionInverted(void)
 bool ObjectsScene::isRelationshipLineVisible(void)
 {
 	return(rel_line->isVisible());
+}
+
+bool ObjectsScene::isMovingObjects(void)
+{
+	return(moving_objs);
 }

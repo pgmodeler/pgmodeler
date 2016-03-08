@@ -43,9 +43,9 @@ class Collation : public BaseObject {
 		//! \brief LC_CTYPE and LC_COLLATE attributes
 		QString localization[2],
 
-						/*! \brief This attribute sets at once the localization attribute. Using this attribute
+		/*! \brief This attribute sets at once the localization attribute. Using this attribute
 						user cannot change localization attributes */
-						locale;
+		locale;
 
 	public:
 		static const unsigned _LC_CTYPE=0,
@@ -76,7 +76,7 @@ class Collation : public BaseObject {
 		virtual QString getCodeDefinition(unsigned def_type) final;
 		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) final;
 
-    virtual QString getAlterDefinition(BaseObject *object);
+		virtual QString getAlterDefinition(BaseObject *object);
 };
 
 #endif

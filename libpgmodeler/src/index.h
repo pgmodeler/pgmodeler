@@ -34,8 +34,8 @@ class Index: public TableObject{
 		//! \brief Stores the elements that defines the index
 		vector<IndexElement> idx_elements;
 
-    //! \brief Predicate expression for the index
-    QString predicate;
+		//! \brief Predicate expression for the index
+		QString predicate;
 
 		//! \brief Fill factor used by the index
 		unsigned fill_factor;
@@ -49,15 +49,15 @@ class Index: public TableObject{
 		//! \brief Formats the elements string used by the SchemaParser
 		void setIndexElementsAttribute(unsigned def_type);
 
-    /*! brief Executes any validation over the index's elements. Currently, this method disable sorting
-        when the indexing type is 'gin' */
-    void validateElements(void);
+		/*! brief Executes any validation over the index's elements. Currently, this method disable sorting
+		when the indexing type is 'gin' */
+		void validateElements(void);
 
-  public:
+	public:
 		static const  unsigned UNIQUE=0,
-                           CONCURRENT=1,
-													 FAST_UPDATE=2,
-													 BUFFERING=3;
+		CONCURRENT=1,
+		FAST_UPDATE=2,
+		BUFFERING=3;
 
 		Index(void);
 
@@ -88,8 +88,8 @@ class Index: public TableObject{
 		//! \brief Remove all elements from the index
 		void removeIndexElements(void);
 
-    //! \brief Defines the predicate used by the index
-    void setPredicate(const QString &expr);
+		//! \brief Defines the predicate used by the index
+		void setPredicate(const QString &expr);
 
 		//! \brief Defines the indexing method used by the index
 		void setIndexingType(IndexingType idx_type);
@@ -102,7 +102,7 @@ class Index: public TableObject{
 		void setFillFactor(unsigned factor);
 
 		//! \brief Gets the index conditional expression
-    QString getPredicate(void);
+		QString getPredicate(void);
 
 		//! \brief Gets the index element count
 		unsigned getIndexElementCount(void);
@@ -119,9 +119,9 @@ class Index: public TableObject{
 		//! \brief Returns the SQL / XML definition for the index
 		virtual QString getCodeDefinition(unsigned def_type) final;
 
-    virtual QString getSignature(bool format=true) final ;
+		virtual QString getSignature(bool format=true) final ;
 
-    virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterDefinition(BaseObject *object) final;
 
 		/*! \brief Returns whether the index references columns added
 		 by relationship. This method is used as auxiliary
@@ -130,17 +130,17 @@ class Index: public TableObject{
 		 connections and disconnections of relationships */
 		bool isReferRelationshipAddedColumn(void);
 
-    /*! brief Returns the list of all columns that is created by relationships.
-    This method is slower than isReferRelationshipAddedColumn() so it's not
-    recommended to use it only check if the object is referencing columns
-    added by relationship */
-    vector<Column *> getRelationshipAddedColumns(void);
+		/*! brief Returns the list of all columns that is created by relationships.
+	This method is slower than isReferRelationshipAddedColumn() so it's not
+	recommended to use it only check if the object is referencing columns
+	added by relationship */
+		vector<Column *> getRelationshipAddedColumns(void);
 
 		//! \brief Returns if some index element is referencing the specified collation
-    bool isReferCollation(Collation *collation);
+		bool isReferCollation(Collation *collation);
 
-    //! brief Returns if some index element is referencing the specified column
-    bool isReferColumn(Column *column);
+		//! brief Returns if some index element is referencing the specified column
+		bool isReferColumn(Column *column);
 };
 
 #endif

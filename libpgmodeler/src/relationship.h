@@ -119,11 +119,11 @@ class Relationship: public BaseRelationship {
 	private:
 		/*! \brief Indicates that the relationship invalid because one or more critical attributes
 		 where modified needing to be revalidated */
-    bool invalidated,
+		bool invalidated,
 
-    /*! brief Indicates that the generated table primary key must have only a single column instead
-        of the two from the foreign keys (only for n-n relationships) */
-    single_pk_column;
+		/*! brief Indicates that the generated table primary key must have only a single column instead
+		of the two from the foreign keys (only for n-n relationships) */
+		single_pk_column;
 
 		/*! \brief Stores the number of columns which were rejected at the time of relationship
 		 connection. This is used only for generalization relationships because, according
@@ -163,20 +163,20 @@ class Relationship: public BaseRelationship {
 		//! \brief Foreign key that represents the 1-n relationship
 		Constraint *fk_rel1n,
 
-								/*! \brief Stores reference to the primary key automatically created when the
+		/*! \brief Stores reference to the primary key automatically created when the
 								relationship is identifier and the weak entity does not have
 								a primary key */
-								*pk_relident,
+		*pk_relident,
 
-								/*! \brief Stores the reference to the special primary key. This constraint is only available
+		/*! \brief Stores the reference to the special primary key. This constraint is only available
 								to generalization / copy relationships */
-								*pk_special,
+		*pk_special,
 
-								//! \brief Stores the unique key that represents the 1-1 relationship (including the fk_rel1n)
-								*uq_rel11;
+		//! \brief Stores the unique key that represents the 1-1 relationship (including the fk_rel1n)
+		*uq_rel11;
 
-    //! brief Stores the CHECK constraints copied from the parent table to its child
-    vector<Constraint *> ck_constraints;
+		//! brief Stores the CHECK constraints copied from the parent table to its child
+		vector<Constraint *> ck_constraints;
 
 		//! \brief Table created by the relationship n-n
 		Table *table_relnn;
@@ -187,9 +187,9 @@ class Relationship: public BaseRelationship {
 		//! \brief Indicates if the foreign key (for 1-1, 1-n relationships) is deferrable
 		bool deferrable;
 
-    ActionType del_action,
+		ActionType del_action,
 
-    upd_action;
+		upd_action;
 
 		//! \brief Deferral type used by the foreign key when this is deferrable
 		DeferralType deferral_type;
@@ -223,10 +223,10 @@ class Relationship: public BaseRelationship {
 		 to check duplicate names and incompatible types of columns */
 		void addColumnsRelGen(void);
 
-    /*! \brief Copy constraints from the parent table to the child. Currently, only
-        check constraints are copied only if the NO INHERIT attribute is not set and
-        there are no conflicting constraints (name or expression) on the child table */
-    void addConstraintsRelGen(void);
+		/*! \brief Copy constraints from the parent table to the child. Currently, only
+		check constraints are copied only if the NO INHERIT attribute is not set and
+		there are no conflicting constraints (name or expression) on the child table */
+		void addConstraintsRelGen(void);
 
 		/*! \brief Creates the foreign key that represents the relationship and adds it
 		 to the receiver table. Must be specified the actions ON DELETE and UPDATE. */
@@ -260,11 +260,11 @@ class Relationship: public BaseRelationship {
 		//! \brief Creates the special primary key using the names stored in the 'column_ids_pk_rel' vector
 		void createSpecialPrimaryKey(void);
 
-    //! \brief Removes all the columns created by the relationship from the specified table primary key if exists.
+		//! \brief Removes all the columns created by the relationship from the specified table primary key if exists.
 		void removeColumnsFromTablePK(Table *table);
 
-    //! \brief Removes a single column created by the relationship from the specified table primary key if exists.
-    void removeColumnFromTablePK(Table *table, Column *column);
+		//! \brief Removes a single column created by the relationship from the specified table primary key if exists.
+		void removeColumnFromTablePK(Table *table, Column *column);
 
 		//! \brief Generates the object name according to the specified name pattern
 		QString generateObjectName(unsigned pat_id, Column *id_col=nullptr);
@@ -287,10 +287,10 @@ class Relationship: public BaseRelationship {
 	public:
 		//! \brief String used as the name suffix separator. Default '_'
 		static const QString SUFFIX_SEPARATOR,
-    SRC_TAB_TOKEN, //{st}
-    DST_TAB_TOKEN, //{dt}
-    GEN_TAB_TOKEN, //{gt}
-    SRC_COL_TOKEN; //{sc}
+		SRC_TAB_TOKEN, //{st}
+		DST_TAB_TOKEN, //{dt}
+		GEN_TAB_TOKEN, //{gt}
+		SRC_COL_TOKEN; //{sc}
 
 		//! \brief Patterns ids
 		static const unsigned SRC_COL_PATTERN,
@@ -298,19 +298,19 @@ class Relationship: public BaseRelationship {
 		PK_PATTERN,
 		UQ_PATTERN,
 		SRC_FK_PATTERN,
-    DST_FK_PATTERN,
-    PK_COL_PATTERN;
+		DST_FK_PATTERN,
+		PK_COL_PATTERN;
 
 		Relationship(Relationship *rel);
 
 		Relationship(unsigned rel_type,
-								 Table *src_tab, Table *dst_tab,
-								 bool src_mdtry=false, bool dst_mdtry=false,
-								 bool identifier=false, bool deferrable=false,
-								 DeferralType deferral_type=DeferralType::immediate,
-                 ActionType fk_del_act=ActionType::null,
-                 ActionType fk_upd_act=ActionType::null,
-								 CopyOptions copy_op = CopyOptions(0,0));
+					 Table *src_tab, Table *dst_tab,
+					 bool src_mdtry=false, bool dst_mdtry=false,
+					 bool identifier=false, bool deferrable=false,
+					 DeferralType deferral_type=DeferralType::immediate,
+					 ActionType fk_del_act=ActionType::null,
+					 ActionType fk_upd_act=ActionType::null,
+					 CopyOptions copy_op = CopyOptions(0,0));
 
 		//! \brief  Connects the relationship making the configuration according to its type
 		void connectRelationship(void);
@@ -355,9 +355,9 @@ class Relationship: public BaseRelationship {
 		//! \brief Defines the deferral type for the created foreign key (only for 1-1, 1-n relationships)
 		void setDeferralType(DeferralType defer_type);
 
-    /*! \brief Defines the type of action for generated foreign keys (ON DELETE and ON UPDATE)
-    User must use Constraint::[DELETE_ACTION|UPDATE_ACTION] (only for 1-1, 1-n relationships) */
-    void setActionType(ActionType act_type, unsigned act_id);
+		/*! \brief Defines the type of action for generated foreign keys (ON DELETE and ON UPDATE)
+	User must use Constraint::[DELETE_ACTION|UPDATE_ACTION] (only for 1-1, 1-n relationships) */
+		void setActionType(ActionType act_type, unsigned act_id);
 
 		//! \brief Returns the deferral tyep for the created foreign key (only for 1-1, 1-n relationships)
 		DeferralType getDeferralType(void);
@@ -380,8 +380,8 @@ class Relationship: public BaseRelationship {
 		//! \brief Returns the current copy options
 		CopyOptions getCopyOptions(void);
 
-    //! \brief Retuns the action type (ON DELETE or ON UPDATE) of the generated foreign keys
-    ActionType getActionType(unsigned act_id);
+		//! \brief Retuns the action type (ON DELETE or ON UPDATE) of the generated foreign keys
+		ActionType getActionType(unsigned act_id);
 
 		/*! \brief Returns if the relationship is invalidated in relation to propagation of columns.
 			This method makes a series of verifications for each type of relationship,
@@ -423,8 +423,8 @@ class Relationship: public BaseRelationship {
 		//! \brief Gets an attribute using its name
 		Column *getAttribute(const QString &name);
 
-    //! brief Returns the list of user added attributes
-    vector<TableObject *> getAttributes(void);
+		//! brief Returns the list of user added attributes
+		vector<TableObject *> getAttributes(void);
 
 		//! \brief Gets an constraint using its index
 		Constraint *getConstraint(unsigned constr_idx);
@@ -432,8 +432,8 @@ class Relationship: public BaseRelationship {
 		//! \brief Gets an constraint using its name
 		Constraint *getConstraint(const QString &name);
 
-    //! brief Returns the list of user added constraints
-    vector<TableObject *> getConstraints(void);
+		//! brief Returns the list of user added constraints
+		vector<TableObject *> getConstraints(void);
 
 		/*! \brief Returns the index of a relationship attribute or constraint. Returns -1
 		 when the object doesn't exists */
@@ -472,8 +472,8 @@ class Relationship: public BaseRelationship {
 		 has 2 reference tables, which may be obtained by the method BaseRelationship::getTable() */
 		Table *getReferenceTable(void);
 
-    void setSiglePKColumn(bool value);
-    bool isSiglePKColumn(void);
+		void setSiglePKColumn(bool value);
+		bool isSiglePKColumn(void);
 
 		//! \brief Returns SQL / XML definition for the relationship.
 		virtual QString getCodeDefinition(unsigned def_type) final;
@@ -481,13 +481,13 @@ class Relationship: public BaseRelationship {
 		//! \brief Copies the attributes from one relationship to another
 		void operator = (Relationship &rel);
 
-    QString getInheritDefinition(bool undo_inherit);
+		QString getInheritDefinition(bool undo_inherit);
 
 		friend class DatabaseModel;
 		friend class ModelWidget;
 		friend class RelationshipWidget;
 		friend class ModelExportHelper;
-    friend class ModelsDiffHelper;
+		friend class ModelsDiffHelper;
 };
 
 #endif

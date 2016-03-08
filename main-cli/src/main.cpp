@@ -23,19 +23,19 @@ int main(int argc, char **argv)
 {
 	QTextStream out(stdout);
 
-	#ifdef DEMO_VERSION
-		out << endl;
-    out << QString("pgModeler ") << GlobalAttributes::PGMODELER_VERSION << QT_TR_NOOP(" command line interface.") << endl;
-		out << QT_TR_NOOP("PostgreSQL Database Modeler Project - pgmodeler.com.br") << endl;
-		out << QT_TR_NOOP("Copyright 2006-2015 Raphael A. Silva <raphael@pgmodeler.com.br>") << endl;
-		out << QT_TR_NOOP("\n** CLI disabled in demonstration version! **") << endl << endl;
-	#else
+#ifdef DEMO_VERSION
+	out << endl;
+	out << QString("pgModeler ") << GlobalAttributes::PGMODELER_VERSION << QT_TR_NOOP(" command line interface.") << endl;
+	out << QT_TR_NOOP("PostgreSQL Database Modeler Project - pgmodeler.com.br") << endl;
+	out << QT_TR_NOOP("Copyright 2006-2015 Raphael A. Silva <raphael@pgmodeler.com.br>") << endl;
+	out << QT_TR_NOOP("\n** CLI disabled in demonstration version! **") << endl << endl;
+#else
 	try
-  {
+	{
 		QTranslator translator;
 		PgModelerCLI pgmodeler_cli(argc, argv);
 
-    //Tries to load the ui translation according to the system's locale
+		//Tries to load the ui translation according to the system's locale
 		translator.load(QLocale::system().name(), GlobalAttributes::LANGUAGES_DIR);
 
 		//Installs the translator on the application
@@ -48,8 +48,8 @@ int main(int argc, char **argv)
 	{
 		out << endl;
 		out << e.getExceptionsText();
-    out << QString("** pgmodeler-cli aborted due to critical error(s). **") << endl << endl;
+		out << QString("** pgmodeler-cli aborted due to critical error(s). **") << endl << endl;
 		return(e.getErrorType()==ERR_CUSTOM ? -1 : e.getErrorType());
 	}
-	#endif
+#endif
 }

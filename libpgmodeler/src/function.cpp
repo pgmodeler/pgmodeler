@@ -20,7 +20,7 @@
 
 Function::Function(void)
 {
-  return_type=PgSQLType(QString("void"));
+	return_type=PgSQLType(QString("void"));
 	language=nullptr;
 	returns_setof=false;
 	is_wnd_function=false;
@@ -81,9 +81,9 @@ void Function::addParameter(Parameter param)
 	//If a duplicated parameter is found an error is raised
 	if(found)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PARAM_FUNCTION)
-                    .arg(param.getName())
-                    .arg(this->signature),
-										ERR_ASG_DUPLIC_PARAM_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						.arg(param.getName())
+						.arg(this->signature),
+						ERR_ASG_DUPLIC_PARAM_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Inserts the parameter in the function
 	parameters.push_back(param);
@@ -93,7 +93,7 @@ void Function::addParameter(Parameter param)
 void Function::addReturnedTableColumn(const QString &name, PgSQLType type)
 {
 	//Raises an error if the column name is empty
-  if(name.isEmpty())
+	if(name.isEmpty())
 		throw Exception(ERR_ASG_EMPTY_NAME_RET_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	vector<Parameter>::iterator itr,itr_end;
@@ -114,9 +114,9 @@ void Function::addReturnedTableColumn(const QString &name, PgSQLType type)
 	//Raises an error if the column is duplicated
 	if(found)
 		throw Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_RET_TAB_TYPE)
-                    .arg(name)
-                    .arg(this->signature),
-										ERR_INS_DUPLIC_RET_TAB_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						.arg(name)
+						.arg(this->signature),
+						ERR_INS_DUPLIC_RET_TAB_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	Parameter p;
 	p.setName(name);
@@ -175,8 +175,8 @@ void Function::setLibrary(const QString &library)
 {
 	if(language->getName().toLower()!=~LanguageType("c"))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_REFLIB_LANG_NOT_C)
-                    .arg(this->getSignature()),
-										ERR_ASG_FUNC_REFLIB_LANG_NOT_C,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						.arg(this->getSignature()),
+						ERR_ASG_FUNC_REFLIB_LANG_NOT_C,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->library != library);
 	this->library=library;
@@ -186,8 +186,8 @@ void Function::setSymbol(const QString &symbol)
 {
 	if(language->getName().toLower()!=~LanguageType("c"))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_REFLIB_LANG_NOT_C)
-                    .arg(this->getSignature()),
-										ERR_ASG_FUNC_REFLIB_LANG_NOT_C,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						.arg(this->getSignature()),
+						ERR_ASG_FUNC_REFLIB_LANG_NOT_C,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->symbol != symbol);
 	this->symbol=symbol;
@@ -252,8 +252,8 @@ void Function::setSourceCode(const QString &src_code)
 {
 	if(language && language->getName().toLower()==~LanguageType("c"))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_CODE_FUNC_C_LANGUAGE)
-                    .arg(this->getSignature()),
-										ERR_ASG_CODE_FUNC_C_LANGUAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						.arg(this->getSignature()),
+						ERR_ASG_CODE_FUNC_C_LANGUAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->source_code != src_code);
 	this->source_code=src_code;
@@ -429,9 +429,9 @@ void Function::createSignature(bool format, bool prepend_schema)
 	for(i=0; i < count; i++)
 	{
 		//OUT parameters is not part of function's signature
-    if(!parameters[i].isOut() || parameters[i].isVariadic() ||
-			 (parameters[i].isIn() && parameters[i].isOut()) ||
-       (parameters[i].isIn() && !parameters[i].isOut()))
+		if(!parameters[i].isOut() || parameters[i].isVariadic() ||
+				(parameters[i].isIn() && parameters[i].isOut()) ||
+				(parameters[i].isIn() && !parameters[i].isOut()))
 		{
 			str_param+=parameters[i].getCodeDefinition(SchemaParser::SQL_DEFINITION, true).trimmed();
 			parameters[i].setCodeInvalidated(true);
@@ -441,13 +441,13 @@ void Function::createSignature(bool format, bool prepend_schema)
 	str_param.remove(str_param.length()-1, 1);
 
 	//Signature format NAME(IN|OUT PARAM1_TYPE,IN|OUT PARAM2_TYPE,...,IN|OUT PARAMn_TYPE)
-  signature=this->getName(format, prepend_schema) + QString("(") + str_param + QString(")");
+	signature=this->getName(format, prepend_schema) + QString("(") + str_param + QString(")");
 	this->setCodeInvalidated(true);
 }
 
 QString Function::getCodeDefinition(unsigned def_type)
 {
-  return(this->getCodeDefinition(def_type, false));
+	return(this->getCodeDefinition(def_type, false));
 }
 
 QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
@@ -496,57 +496,57 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 QString Function::getAlterDefinition(BaseObject *object)
 {
-  Function *func=dynamic_cast<Function *>(object);
+	Function *func=dynamic_cast<Function *>(object);
 
-  if(!func)
-    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(!func)
+		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  try
-  {
-    attribs_map attribs;
+	try
+	{
+		attribs_map attribs;
 
-    attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
+		attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
 
-    if(this->source_code.simplified()!=func->source_code.simplified() ||
-       this->library!=func->library ||
-       this->symbol!=func->symbol)
-    {
-      attribs[ParsersAttributes::DEFINITION]=func->getCodeDefinition(SchemaParser::SQL_DEFINITION);
-      attribs[ParsersAttributes::DEFINITION].replace(QString("CREATE FUNCTION"), QString("CREATE OR REPLACE FUNCTION"));
-    }
-    else
-    {
-      if(this->execution_cost!=func->execution_cost)
-        attribs[ParsersAttributes::EXECUTION_COST]=QString::number(func->execution_cost);
+		if(this->source_code.simplified()!=func->source_code.simplified() ||
+				this->library!=func->library ||
+				this->symbol!=func->symbol)
+		{
+			attribs[ParsersAttributes::DEFINITION]=func->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+			attribs[ParsersAttributes::DEFINITION].replace(QString("CREATE FUNCTION"), QString("CREATE OR REPLACE FUNCTION"));
+		}
+		else
+		{
+			if(this->execution_cost!=func->execution_cost)
+				attribs[ParsersAttributes::EXECUTION_COST]=QString::number(func->execution_cost);
 
-      if(this->returns_setof && func->returns_setof && this->row_amount!=func->row_amount)
-      {
-        attribs[ParsersAttributes::RETURNS_SETOF]=ParsersAttributes::_TRUE_;
-        attribs[ParsersAttributes::ROW_AMOUNT]=QString::number(row_amount);
-      }
+			if(this->returns_setof && func->returns_setof && this->row_amount!=func->row_amount)
+			{
+				attribs[ParsersAttributes::RETURNS_SETOF]=ParsersAttributes::_TRUE_;
+				attribs[ParsersAttributes::ROW_AMOUNT]=QString::number(row_amount);
+			}
 
-      if(this->function_type!=func->function_type)
-        attribs[ParsersAttributes::FUNCTION_TYPE]=~func->function_type;
+			if(this->function_type!=func->function_type)
+				attribs[ParsersAttributes::FUNCTION_TYPE]=~func->function_type;
 
-      if(this->is_leakproof!=func->is_leakproof)
-        attribs[ParsersAttributes::LEAKPROOF]=(func->is_leakproof ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+			if(this->is_leakproof!=func->is_leakproof)
+				attribs[ParsersAttributes::LEAKPROOF]=(func->is_leakproof ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
 
-      if(this->security_type!=func->security_type)
-        attribs[ParsersAttributes::SECURITY_TYPE]=~func->security_type;
+			if(this->security_type!=func->security_type)
+				attribs[ParsersAttributes::SECURITY_TYPE]=~func->security_type;
 
-      if((this->behavior_type!=func->behavior_type) &&
-         ((this->behavior_type==BehaviorType::called_on_null_input) ||
-          ((this->behavior_type==BehaviorType::strict || this->behavior_type==BehaviorType::returns_null_on_null_input) &&
-           func->function_type==BehaviorType::called_on_null_input)))
-        attribs[ParsersAttributes::BEHAVIOR_TYPE]=~func->behavior_type;
-    }
+			if((this->behavior_type!=func->behavior_type) &&
+					((this->behavior_type==BehaviorType::called_on_null_input) ||
+					 ((this->behavior_type==BehaviorType::strict || this->behavior_type==BehaviorType::returns_null_on_null_input) &&
+					  func->function_type==BehaviorType::called_on_null_input)))
+				attribs[ParsersAttributes::BEHAVIOR_TYPE]=~func->behavior_type;
+		}
 
-    copyAttributes(attribs);
+		copyAttributes(attribs);
 
-    return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
-  }
-  catch(Exception &e)
-  {
-    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-  }
+		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
 }

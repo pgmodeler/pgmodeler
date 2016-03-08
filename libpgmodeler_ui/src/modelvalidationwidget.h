@@ -42,19 +42,16 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 	private:
 		Q_OBJECT
 
-    HintTextWidget *sql_validation_ht, *use_unique_names_ht;
+		HintTextWidget *sql_validation_ht, *use_unique_names_ht;
 
-    //! brief Custom delegate used to paint html texts in output tree
-    HtmlItemDelegate *htmlitem_del;
+		//! brief Custom delegate used to paint html texts in output tree
+		HtmlItemDelegate *htmlitem_del;
 
 		//! \brief Reference model widget
 		ModelWidget *model_wgt;
 
 		//! \brief Object that handles the model validation steps
-    ModelValidationHelper *validation_helper;
-
-		//! \brief Object creation order modifier
-		SwapObjectsIdsWidget *swapobjectsids_wgt;
+		ModelValidationHelper *validation_helper;
 
 		//! \brief Current fix step
 		int curr_step;
@@ -62,19 +59,19 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		//! \brief Thread used to control the validation helper
 		QThread *validation_thread;
 
-    /*! brief Stores the graphical objects that have their ids changed so that in the end of
-        the validation they can be updated to reflect the new id in the tooltips and forms */
-    vector<BaseGraphicObject *> graph_objects;
+		/*! brief Stores the graphical objects that have their ids changed so that in the end of
+		the validation they can be updated to reflect the new id in the tooltips and forms */
+		vector<BaseGraphicObject *> graph_objects;
 
-		void emitValidationInProgress(void);    
+		void emitValidationInProgress(void);
 
-    //! brief Creates a new validation thread
-    void createThread(void);
+		//! brief Creates a new validation thread
+		void createThread(void);
 
-    void configureValidation(void);
+		void configureValidation(void);
 
-  protected:
-    void resizeEvent(QResizeEvent *event);
+	protected:
+		void resizeEvent(QResizeEvent *event);
 
 	public:
 		ModelValidationWidget(QWidget * parent = 0);
@@ -85,38 +82,38 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		//! \brief Updates the connections combo
 		void updateConnections(map<QString, Connection *> &conns);
 
-    //! brief Returns if there is a validation in progress
-    bool isValidationRunning(void);
+		//! brief Returns if there is a validation in progress
+		bool isValidationRunning(void);
 
 	private slots:
 		void applyFixes(void);
 		void updateValidation(ValidationInfo val_info);
-    void updateProgress(int prog, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen);
+		void updateProgress(int prog, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen);
 		void updateObjectName(QString obj_name, ObjectType obj_type);
 		void reenableValidation(void);
 		void cancelValidation(void);
 		void swapObjectsIds(void);
-    void validateRelationships(void);
-    void destroyThread(bool force=false);
-    void updateGraphicalObjects(void);    
-    void editConnections(void);
+		void validateRelationships(void);
+		void destroyThread(bool force=false);
+		void updateGraphicalObjects(void);
+		void editConnections(void);
 
-  public slots:
+	public slots:
 		void hide(void);
 		void clearOutput(void);
-    void validateModel(void);
+		void validateModel(void);
 
 	signals:
 		void s_visibilityChanged(bool);
-    void s_validationInProgress(bool);
-    void s_validationFinished(bool);
-    void s_validationCanceled(void);
-    void s_fixApplied(void);
-    void s_graphicalObjectsUpdated(void);
+		void s_validationInProgress(bool);
+		void s_validationFinished(bool);
+		void s_validationCanceled(void);
+		void s_fixApplied(void);
+		void s_graphicalObjectsUpdated(void);
 
-    /*! brief This signal is emitted whenever the user changes the connections settings
-        within this widget without use the main configurations dialog */
-    void s_connectionsUpdateRequest(void);
+		/*! brief This signal is emitted whenever the user changes the connections settings
+		within this widget without use the main configurations dialog */
+		void s_connectionsUpdateRequest(void);
 };
 
 #endif

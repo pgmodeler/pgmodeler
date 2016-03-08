@@ -38,11 +38,11 @@ class TriggerWidget: public BaseObjectWidget, public Ui::TriggerWidget {
 
 		//! \brief Object tables used to control columns and agruments
 		ObjectTableWidget *columns_tab,
-												*arguments_tab;
+		*arguments_tab;
 
 		//! \brief Selectors for reference table and trigger function
 		ObjectSelectorWidget *ref_table_sel,
-												*function_sel;
+		*function_sel;
 
 		//! \brief Adds a column to the referenced columns table
 		void addColumn(Column *column, int row);
@@ -52,7 +52,7 @@ class TriggerWidget: public BaseObjectWidget, public Ui::TriggerWidget {
 	public:
 		TriggerWidget(QWidget * parent = 0);
 
-		void setAttributes(DatabaseModel *model, BaseTable *parent_table, OperationList *op_list, Trigger *trigger);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseTable *parent_table, Trigger *trigger);
 
 	private slots:
 		void addColumn(int lin_idx);

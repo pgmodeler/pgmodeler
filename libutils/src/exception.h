@@ -33,7 +33,7 @@
 #include <deque>
 
 using namespace std;
-static const int ERROR_COUNT=228;
+static const int ERROR_COUNT=227;
 
 /*
  ErrorType enum format: ERR_[[OPERATION_CODE][ERROR_CODE]] where:
@@ -116,7 +116,7 @@ enum ErrorType {
 	ERR_ASG_NOT_ALOC_LANGUAGE,
 	ERR_ASG_INV_LANGUAGE_OBJECT,
 	ERR_REF_TYPE_INV_INDEX,
-  ERR_ASG_NULL_TYPE_OBJECT,
+	ERR_ASG_NULL_TYPE_OBJECT,
 	ERR_ASG_INV_TYPE_OBJECT,
 	ERR_ASG_EMPTY_DIR_NAME,
 	ERR_OBT_TYPES_INV_QUANTITY,
@@ -127,7 +127,6 @@ enum ErrorType {
 	ERR_REF_ATTRIB_INV_INDEX,
 	ERR_REF_ENUM_INV_INDEX,
 	ERR_ASG_INV_TYPE_CONFIG,
-	ERR_INS_DUPLIC_TYPE,
 	ERR_ASG_INV_OPER_ARGS,
 	ERR_ASG_INV_OPERATOR_TYPES,
 	ERR_ASG_RESERVED_NAME,
@@ -149,13 +148,13 @@ enum ErrorType {
 	ERR_INV_IDENT_RELATIOSHIP,
 	ERR_DUPLIC_COLS_COPY_REL,
 	ERR_INCOMP_COLS_INHERIT_REL,
-  ERR_INCOMP_CONSTRS_INHERIT_REL,
+	ERR_INCOMP_CONSTRS_INHERIT_REL,
 	ERR_ASG_OBJ_INV_REL_TYPE,
 	ERR_ASG_FOREIGN_KEY_REL,
 	ERR_REF_OBJ_INEXISTS_MODEL,
 	ERR_REF_INEXIST_USER_TYPE,
 	ERR_ASG_INV_MAX_SIZE_OP_LIST,
-  ERR_FILE_DIR_NOT_WRITTEN,
+	ERR_FILE_DIR_NOT_WRITTEN,
 	ERR_FILE_NOT_WRITTER_INV_DEF,
 	ERR_DUPLIC_RELATIONSHIP,
 	ERR_INS_REL_GENS_REDUNDACY,
@@ -197,13 +196,13 @@ enum ErrorType {
 	ERR_EXPORT_FAILURE,
 	ERR_PLUGIN_NOT_LOADED,
 	ERR_PLUGINS_NOT_LOADED,
-  ERR_INV_SYNTAX,
-  ERR_INV_INSTRUCTION,
-  ERR_UNK_ATTRIBUTE,
-  ERR_INV_METACHARACTER,
-  ERR_INV_OPERATOR_IN_EXPR,
+	ERR_INV_SYNTAX,
+	ERR_INV_INSTRUCTION,
+	ERR_UNK_ATTRIBUTE,
+	ERR_INV_METACHARACTER,
+	ERR_INV_OPERATOR_IN_EXPR,
 	ERR_UNDEF_ATTRIB_VALUE,
-  ERR_INV_ATTRIBUTE,
+	ERR_INV_ATTRIBUTE,
 	ERR_ASG_EMPTY_XML_BUFFER,
 	ERR_FILE_DIR_NOT_ACCESSED,
 	ERR_ASG_EMPTY_DTD_FILE,
@@ -254,28 +253,28 @@ enum ErrorType {
 	ERR_REF_INV_NAME_PATTERN_ID,
 	ERR_INV_USE_VARIADIC_PARAM_MODE,
 	ERR_MIX_INCOMP_EXPORT_OPTS,
-  ERR_MIX_INCOMP_DROP_OPTS,
+	ERR_MIX_INCOMP_DROP_OPTS,
 	ERR_INV_ID_SWAP_SAME_OBJECT,
 	ERR_INV_ID_SWAP_INV_OBJ_TYPE,
 	ERR_ASG_WGT_ALREADY_HAS_PARENT,
 	ERR_OBJECT_NOT_IMPORTED,
 	ERR_MODEL_FILE_NOT_LOADED,
-  ERR_INV_COLUMN_TABLE_TYPE,
-  ERR_OPR_INV_ELEMENT_ID,
-  ERR_REF_ELEMENT_COLOR_ID,
-  ERR_ASG_INV_OBJECT_TYPE,
-  ERR_INCOMP_COL_TYPE_FOR_SEQ,
-  ERR_INV_USE_TMPNAMES_EXPORT_OPT,
+	ERR_INV_COLUMN_TABLE_TYPE,
+	ERR_OPR_INV_ELEMENT_ID,
+	ERR_REF_ELEMENT_COLOR_ID,
+	ERR_ASG_INV_OBJECT_TYPE,
+	ERR_INCOMP_COL_TYPE_FOR_SEQ,
+	ERR_INV_USE_TMPNAMES_EXPORT_OPT,
 	ERR_INV_CONV_INTEGER_TO_SERIAL,
 	ERR_ASG_INV_EVENT_TRIGGER_VARIABLE,
 	ERR_ROW_DATA_NOT_MANIPULATED,
-  ERR_MALFORMED_UNESCAPED_VALUE,
-  ERR_UNDO_REDO_OPR_INV_OBJECT,
-  ERR_REQ_FIELDS_NOT_FILLED,
-  ERR_INV_REL_ID_SWAP,
-  ERR_INV_INH_PARENT_TAB_NOT_FOUND,
-  ERR_ASG_ENUM_INV_CHARS,
-  ERR_ASG_ENUM_LONG_NAME
+	ERR_MALFORMED_UNESCAPED_VALUE,
+	ERR_UNDO_REDO_OPR_INV_OBJECT,
+	ERR_REQ_FIELDS_NOT_FILLED,
+	ERR_INV_REL_ID_SWAP,
+	ERR_INV_INH_PARENT_TAB_NOT_FOUND,
+	ERR_ASG_ENUM_INV_CHARS,
+	ERR_ASG_ENUM_LONG_NAME
 };
 
 class Exception {
@@ -289,26 +288,26 @@ class Exception {
 		static QString messages[ERROR_COUNT][2];
 
 		//! \brief Constants used to access the error details
-    static const unsigned ERROR_CODE=0,
-															ERROR_MESSAGE=1;
+		static const unsigned ERROR_CODE=0,
+		ERROR_MESSAGE=1;
 
 		//! \brief Error type related to the exception
 		ErrorType error_type;
 
 		//! \brief Formated error message
 		QString error_msg,
-						/*! \brief Holds the class name and method which was
+		/*! \brief Holds the class name and method which was
 						triggered the exception. For this to be possible, at the time
 						instantiation of this class the  G++ macro __ PRETTY_FUNCTION__
 						must be passed. This macro contains the format [RETURN][CLASS]::[METHOD][PARAMS] */
-						method,
+		method,
 
-						//! \brief File where the exception was generated (Macro __ FILE__)
-						file,
+		//! \brief File where the exception was generated (Macro __ FILE__)
+		file,
 
-						/*! \brief Additional information (optional) may store any other
+		/*! \brief Additional information (optional) may store any other
 						type of information that is interesting on attempt to resolve the error */
-						extra_info;
+		extra_info;
 
 		//! \brief Line of file where the exception were generated (Macro __LINE__)
 		int line;
@@ -321,12 +320,12 @@ class Exception {
 
 	public:
 		Exception(void);
-    Exception(const QString &msg, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info=QString());
-    Exception(const QString &msg, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info=QString());
-    Exception(const QString &msg, ErrorType error_type, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info=QString());
-    Exception(const QString &msg, ErrorType error_type, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info=QString());
-    Exception(ErrorType error_type, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info=QString());
-    Exception(ErrorType error_type, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info=QString());
+		Exception(const QString &msg, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info=QString());
+		Exception(const QString &msg, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info=QString());
+		Exception(const QString &msg, ErrorType error_type, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info=QString());
+		Exception(const QString &msg, ErrorType error_type, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info=QString());
+		Exception(ErrorType error_type, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info=QString());
+		Exception(ErrorType error_type, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info=QString());
 
 		~Exception(void){}
 		QString getErrorMessage(void);

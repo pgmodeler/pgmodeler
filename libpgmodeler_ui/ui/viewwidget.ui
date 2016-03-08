@@ -10,9 +10,6 @@
     <height>453</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Form</string>
-  </property>
   <layout class="QGridLayout" name="view_grid">
    <property name="leftMargin">
     <number>2</number>
@@ -355,7 +352,7 @@
         <item>
          <widget class="QRadioButton" name="recursive_rb">
           <property name="text">
-           <string>Recursive</string>
+           <string>Recursi&amp;ve</string>
           </property>
           <property name="checked">
            <bool>false</bool>
@@ -365,7 +362,7 @@
         <item>
          <widget class="QRadioButton" name="materialized_rb">
           <property name="text">
-           <string>Materialized</string>
+           <string>&amp;Materialized</string>
           </property>
          </widget>
         </item>

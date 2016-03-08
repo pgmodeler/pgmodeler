@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>554</width>
-    <height>68</height>
+    <height>75</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -42,17 +42,6 @@
        <property name="enabled">
         <bool>false</bool>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>62</width>
-         <height>27</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
        <property name="toolTip">
         <string>Replace one occurrence</string>
        </property>
@@ -75,17 +64,6 @@
        <property name="enabled">
         <bool>false</bool>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>27</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
        <property name="toolTip">
         <string>Replace all occurrences</string>
        </property>
@@ -107,17 +85,6 @@
       <widget class="QToolButton" name="replace_find_tb">
        <property name="enabled">
         <bool>false</bool>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>27</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
        </property>
        <property name="toolTip">
         <string>Replace the selection and find the next one</string>
@@ -178,12 +145,6 @@
        <property name="enabled">
         <bool>false</bool>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>27</width>
-         <height>27</height>
-        </size>
-       </property>
        <property name="font">
         <font>
          <pointsize>8</pointsize>
@@ -201,8 +162,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>22</width>
+         <height>22</height>
         </size>
        </property>
        <property name="shortcut">
@@ -217,12 +178,6 @@
       <widget class="QToolButton" name="next_tb">
        <property name="enabled">
         <bool>false</bool>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>27</width>
-         <height>27</height>
-        </size>
        </property>
        <property name="font">
         <font>
@@ -241,8 +196,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>22</width>
+         <height>22</height>
         </size>
        </property>
        <property name="shortcut">

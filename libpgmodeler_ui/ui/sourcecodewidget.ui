@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Source code visualization</string>
   </property>
   <layout class="QGridLayout" name="codigofonte_grid">
    <property name="leftMargin">
@@ -263,8 +263,8 @@
            </property>
            <property name="iconSize">
             <size>
-             <width>20</width>
-             <height>20</height>
+             <width>22</width>
+             <height>22</height>
             </size>
            </property>
            <property name="toolButtonStyle">

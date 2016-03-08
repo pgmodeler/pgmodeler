@@ -30,14 +30,14 @@
 #include "tag.h"
 
 class BaseTable: public BaseGraphicObject {
-  protected:
-    Tag *tag;
+	protected:
+		Tag *tag;
 
 	public:
 		BaseTable(void);
 
-    virtual void setTag(Tag *tag);
-    virtual Tag *getTag(void);
+		virtual void setTag(Tag *tag);
+		virtual Tag *getTag(void);
 
 		//! \brief Adds an object to the table. It can be inserted at a specified index 'obj_idx'.
 		virtual void addObject(BaseObject *obj, int obj_idx=-1)=0;
@@ -70,12 +70,12 @@ class BaseTable: public BaseGraphicObject {
 		//! \brief Returns all child objects of the table
 		virtual vector<BaseObject *> getObjects(void)=0;
 
-    virtual QString getCodeDefinition(unsigned tipo_def)=0;
+		virtual QString getCodeDefinition(unsigned tipo_def)=0;
 
-    virtual QString getAlterDefinition(BaseObject *object);
+		virtual QString getAlterDefinition(BaseObject *object);
 
-    //! \brief Copy the attributes between two tables
-    void operator = (BaseTable &tab);
+		//! \brief Copy the attributes between two tables
+		void operator = (BaseTable &tab);
 
 		friend class DatabaseModel;
 };

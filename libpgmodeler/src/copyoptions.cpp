@@ -25,11 +25,11 @@ CopyOptions::CopyOptions(void)
 
 CopyOptions::CopyOptions(unsigned copy_mode, unsigned copy_op_ids)
 {
- if((copy_mode!=0 && copy_mode!=INCLUDING && copy_mode!=EXCLUDING) || copy_op_ids > ALL)
-	throw Exception(ERR_REF_INV_LIKE_OP_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if((copy_mode!=0 && copy_mode!=INCLUDING && copy_mode!=EXCLUDING) || copy_op_ids > ALL)
+		throw Exception(ERR_REF_INV_LIKE_OP_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- this->copy_mode = copy_mode;
- this->copy_op_ids = copy_op_ids;
+	this->copy_mode = copy_mode;
+	this->copy_op_ids = copy_op_ids;
 }
 
 unsigned CopyOptions::getCopyMode(void)
@@ -64,11 +64,11 @@ QString CopyOptions::getSQLDefinition(void)
 {
 	QString def, mode, op_name;
 	unsigned op_id,
-					 ids[]={ALL, DEFAULTS, CONSTRAINTS,
-									INDEXES, STORAGE, COMMENTS },
-					 cnt = sizeof(ids) / sizeof(unsigned);
+			ids[]={ALL, DEFAULTS, CONSTRAINTS,
+				   INDEXES, STORAGE, COMMENTS },
+			cnt = sizeof(ids) / sizeof(unsigned);
 
-  mode = (copy_mode == INCLUDING ? QString(" INCLUDING") : QString(" EXCLUDING"));
+	mode = (copy_mode == INCLUDING ? QString(" INCLUDING") : QString(" EXCLUDING"));
 	if(copy_mode!=0 && copy_op_ids!=0)
 	{
 		for(unsigned i=0; i < cnt; i++)
@@ -77,12 +77,12 @@ QString CopyOptions::getSQLDefinition(void)
 
 			switch(op_id)
 			{
-        case ALL: op_name=QString(" ALL"); break;
-        case DEFAULTS: op_name=QString(" DEFAULTS"); break;
-        case CONSTRAINTS: op_name=QString(" CONSTRAINTS"); break;
-        case INDEXES: op_name=QString(" INDEXES"); break;
-        case STORAGE: op_name=QString(" STORAGE"); break;
-        case COMMENTS: op_name=QString(" COMMENTS"); break;
+				case ALL: op_name=QString(" ALL"); break;
+				case DEFAULTS: op_name=QString(" DEFAULTS"); break;
+				case CONSTRAINTS: op_name=QString(" CONSTRAINTS"); break;
+				case INDEXES: op_name=QString(" INDEXES"); break;
+				case STORAGE: op_name=QString(" STORAGE"); break;
+				case COMMENTS: op_name=QString(" COMMENTS"); break;
 			}
 
 			if(!op_name.isEmpty())

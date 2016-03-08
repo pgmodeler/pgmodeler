@@ -24,7 +24,7 @@ OperatorClassElement::OperatorClassElement(void)
 	function=nullptr;
 	_operator=nullptr;
 	strategy_number=0;
-  op_family=nullptr;
+	op_family=nullptr;
 }
 
 void OperatorClassElement::setFunction(Function *func, unsigned stg_number)
@@ -137,7 +137,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 	if(element_type==FUNCTION_ELEM && function && strategy_number > 0)
 	{
 		//FUNCTION support_number [ ( op_type [ , op_type ] ) ] funcname ( argument_type [, ...] )
-    attributes[ParsersAttributes::FUNCTION]=ParsersAttributes::_TRUE_;
+		attributes[ParsersAttributes::FUNCTION]=ParsersAttributes::_TRUE_;
 		attributes[ParsersAttributes::STRATEGY_NUM]=QString("%1").arg(strategy_number);
 
 		if(def_type==SchemaParser::SQL_DEFINITION)
@@ -148,7 +148,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 	else if(element_type==OPERATOR_ELEM && _operator && strategy_number > 0)
 	{
 		//OPERATOR strategy_number operator_name [ ( op_type, op_type ) ] [ FOR SEARCH | FOR ORDER BY sort_family_name ]
-    attributes[ParsersAttributes::OPERATOR]=ParsersAttributes::_TRUE_;
+		attributes[ParsersAttributes::OPERATOR]=ParsersAttributes::_TRUE_;
 		attributes[ParsersAttributes::STRATEGY_NUM]=QString("%1").arg(strategy_number);
 
 		if(def_type==SchemaParser::SQL_DEFINITION)
@@ -167,7 +167,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 	else if(element_type==STORAGE_ELEM && storage!=PgSQLType::null)
 	{
 		//STORAGE storage_type
-    attributes[ParsersAttributes::STORAGE]=ParsersAttributes::_TRUE_;
+		attributes[ParsersAttributes::STORAGE]=ParsersAttributes::_TRUE_;
 
 		if(def_type==SchemaParser::SQL_DEFINITION)
 			attributes[ParsersAttributes::TYPE]=(*storage);
@@ -181,10 +181,10 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 bool OperatorClassElement::operator == (OperatorClassElement &elem)
 {
 	return(this->element_type == elem.element_type &&
-				 this->storage == elem.storage &&
-				 this->function == elem.function &&
-				 this->_operator == elem._operator &&
-				 this->strategy_number == elem.strategy_number &&
-				 this->op_family == elem.op_family);
+		   this->storage == elem.storage &&
+		   this->function == elem.function &&
+		   this->_operator == elem._operator &&
+		   this->strategy_number == elem.strategy_number &&
+		   this->op_family == elem.op_family);
 }
 

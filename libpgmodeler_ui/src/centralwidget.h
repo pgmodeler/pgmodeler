@@ -29,10 +29,10 @@
 class CentralWidget: public QWidget, public Ui::CentralWidget {
 	private:
 		Q_OBJECT
-
+		
 	public:
 		CentralWidget(QWidget * parent = 0);
-
+		
 	public slots:
 };
 

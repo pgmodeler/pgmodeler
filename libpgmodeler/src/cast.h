@@ -50,11 +50,11 @@ class Cast: public BaseObject {
 	public:
 		//! \brief Constants used to access the data types envolved in the cast
 		static const unsigned SRC_TYPE=0,
-															DST_TYPE=1,
-															//! \brief Constants used to define the cast type
-															ASSIGNMENT=10,
-															IMPLICIT=20,
-															EXPLICIT=30;
+		DST_TYPE=1,
+		//! \brief Constants used to define the cast type
+		EXPLICIT=0,
+		ASSIGNMENT=1,
+		IMPLICIT=2;
 		Cast(void);
 
 		/*! \brief Defines one of the data types envolved on the cast
@@ -87,7 +87,7 @@ class Cast: public BaseObject {
 		//! \brief Returns the SQL/XML code definition for the cast
 		virtual QString getCodeDefinition(unsigned def_type) final;
 
-    virtual QString getSignature(bool=false) final;
+		virtual QString getSignature(bool=false) final;
 };
 
 #endif

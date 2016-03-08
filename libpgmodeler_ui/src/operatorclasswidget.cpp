@@ -24,26 +24,26 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 	{
 		QStringList tipos;
 		QGridLayout *grid=nullptr;
-    map<QString, vector<QWidget *> > fields_map;
-    map<QWidget *, vector<QString> > values_map;
-    QFrame *frame=nullptr;
+		map<QString, vector<QWidget *> > fields_map;
+		map<QWidget *, vector<QString> > values_map;
+		QFrame *frame=nullptr;
 
-    Ui_OperatorClassWidget::setupUi(this);
+		Ui_OperatorClassWidget::setupUi(this);
 
-    family_sel=new ObjectSelectorWidget(OBJ_OPFAMILY, true, this);
+		family_sel=new ObjectSelectorWidget(OBJ_OPFAMILY, true, this);
 		data_type=new PgSQLTypeWidget(this);
-    operator_sel=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);
-    elem_family_sel=new ObjectSelectorWidget(OBJ_OPFAMILY, true, this);
-    function_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
-    storage_type=new PgSQLTypeWidget(this, trUtf8("Storage Type"));
+		operator_sel=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);
+		elem_family_sel=new ObjectSelectorWidget(OBJ_OPFAMILY, true, this);
+		function_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
+		storage_type=new PgSQLTypeWidget(this, trUtf8("Storage Type"));
 		elements_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
 
 		elements_tab->setColumnCount(4);
 		elements_tab->setHeaderLabel(trUtf8("Object"),0);
-    elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/table.png")),0);
+		elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/table.png")),0);
 
 		elements_tab->setHeaderLabel(trUtf8("Type"),1);
-    elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+		elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
 
 		elements_tab->setHeaderLabel(trUtf8("Support/Strategy"),2);
 		elements_tab->setHeaderLabel(trUtf8("Operator Family"),3);
@@ -61,13 +61,13 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		this->setLayout(grid);
 		configureFormLayout(grid, OBJ_OPCLASS);
 
-    fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(indexing_lbl);
-    values_map[indexing_lbl].push_back(~IndexingType(IndexingType::brin));
+		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(indexing_lbl);
+		values_map[indexing_lbl].push_back(~IndexingType(IndexingType::brin));
 
-    frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);
-    frame->setParent(this);
-    grid=dynamic_cast<QGridLayout *>(this->layout());
-    grid->addWidget(frame, grid->count(), 0, 1, 5);
+		frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);
+		frame->setParent(this);
+		grid=dynamic_cast<QGridLayout *>(this->layout());
+		grid->addWidget(frame, grid->count(), 0, 1, 5);
 
 		grid=dynamic_cast<QGridLayout *>(elements_grp->layout());
 		grid->addWidget(function_sel, 1,1,1,4);
@@ -76,21 +76,20 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		grid->addWidget(storage_type, 5,0,1,5);
 		grid->addWidget(elements_tab, 6,0,1,4);
 
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(elem_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectElementType(int)));
 		connect(elements_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleElement(int)));
 		connect(elements_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleElement(int)));
 		connect(elements_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editElement(int)));
 
-    parent_form->setMinimumSize(620, 700);
 		selectElementType(0);
-
 		IndexingType::getTypes(tipos);
 		indexing_cmb->addItems(tipos);
 
 		setRequiredField(elements_grp);
-    configureTabOrder({ indexing_cmb, def_class_chk , family_sel, data_type, elem_type_cmb,
-                        operator_sel, elem_family_sel, function_sel, stg_num_sb, storage_type });
+		configureTabOrder({ indexing_cmb, def_class_chk , family_sel, data_type, elem_type_cmb,
+							operator_sel, elem_family_sel, function_sel, stg_num_sb, storage_type });
+
+		setMinimumSize(640, 730);
 	}
 	catch(Exception &e)
 	{
@@ -149,27 +148,27 @@ void OperatorClassWidget::showElementData(OperatorClassElement elem, int lin_idx
 
 	if(elem_type==OperatorClassElement::FUNCTION_ELEM)
 	{
-    elements_tab->setCellText(elem.getFunction()->getSignature(), lin_idx, 0);
-    elements_tab->setCellText(elem.getFunction()->getTypeName(), lin_idx, 1);
+		elements_tab->setCellText(elem.getFunction()->getSignature(), lin_idx, 0);
+		elements_tab->setCellText(elem.getFunction()->getTypeName(), lin_idx, 1);
 	}
 	else if(elem_type==OperatorClassElement::OPERATOR_ELEM)
 	{
-    elements_tab->setCellText(elem.getOperator()->getSignature(), lin_idx, 0);
-    elements_tab->setCellText(elem.getOperator()->getTypeName(), lin_idx, 1);
+		elements_tab->setCellText(elem.getOperator()->getSignature(), lin_idx, 0);
+		elements_tab->setCellText(elem.getOperator()->getTypeName(), lin_idx, 1);
 	}
 	else
 	{
 		elements_tab->setCellText(*elem.getStorage(), lin_idx, 0);
-    elements_tab->setCellText(BaseObject::getTypeName(OBJ_TYPE), lin_idx, 1);
+		elements_tab->setCellText(BaseObject::getTypeName(OBJ_TYPE), lin_idx, 1);
 	}
 
 	if(elem_type!=OperatorClassElement::STORAGE_ELEM)
 		elements_tab->setCellText(QString("%1").arg(elem.getStrategyNumber()), lin_idx, 2);
 	else
-    elements_tab->setCellText(QString(" "), lin_idx, 2);
+		elements_tab->setCellText(QString(" "), lin_idx, 2);
 
 	if(elem_type==OperatorClassElement::OPERATOR_ELEM && elem.getOperatorFamily())
-    elements_tab->setCellText(elem.getOperatorFamily()->getName(true), lin_idx, 3);
+		elements_tab->setCellText(elem.getOperatorFamily()->getName(true), lin_idx, 3);
 	else
 		elements_tab->clearCellText(lin_idx, 3);
 

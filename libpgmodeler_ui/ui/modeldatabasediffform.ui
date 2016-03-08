@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>668</width>
-    <height>527</height>
+    <width>670</width>
+    <height>560</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,8 +21,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>620</width>
-    <height>480</height>
+    <width>670</width>
+    <height>560</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -986,7 +986,7 @@
                   <string>Compares the model and the input database storing the diff in a SQL file for later usage.</string>
                  </property>
                  <property name="text">
-                  <string>Store in SQL file</string>
+                  <string>Store in S&amp;QL file</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -1144,7 +1144,7 @@
                   <string>Compares the model and the input database generating a diff and applying it directly to the latter. &lt;strong&gt;WARNING:&lt;/strong&gt; this mode causes irreversible changes on the database and in case of failure the original structure is not restored, so make sure to have a backup before proceed.</string>
                  </property>
                  <property name="text">
-                  <string>Apply on server</string>
+                  <string>Appl&amp;y on server</string>
                  </property>
                  <property name="checked">
                   <bool>false</bool>
@@ -1353,6 +1353,18 @@
                <property name="enabled">
                 <bool>false</bool>
                </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>30</height>
+                </size>
+               </property>
                <property name="text">
                 <string>Cancel</string>
                </property>
@@ -1362,8 +1374,8 @@
                </property>
                <property name="iconSize">
                 <size>
-                 <width>20</width>
-                 <height>20</height>
+                 <width>22</width>
+                 <height>22</height>
                 </size>
                </property>
                <property name="toolButtonStyle">
@@ -1504,12 +1516,11 @@
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QLabel" name="label_4">
+              <widget class="QLabel" name="message_lbl">
                <property name="font">
                 <font>
-                 <pointsize>8</pointsize>
                  <weight>50</weight>
-                 <italic>true</italic>
+                 <italic>false</italic>
                  <bold>false</bold>
                  <underline>false</underline>
                  <strikeout>false</strikeout>
@@ -1565,7 +1576,7 @@
                <property name="minimumSize">
                 <size>
                  <width>50</width>
-                 <height>0</height>
+                 <height>30</height>
                 </size>
                </property>
                <property name="toolTip">
@@ -1606,7 +1617,7 @@
                <property name="minimumSize">
                 <size>
                  <width>50</width>
-                 <height>0</height>
+                 <height>30</height>
                 </size>
                </property>
                <property name="toolTip">
@@ -1647,7 +1658,7 @@
                <property name="minimumSize">
                 <size>
                  <width>50</width>
-                 <height>0</height>
+                 <height>30</height>
                 </size>
                </property>
                <property name="toolTip">
@@ -1688,7 +1699,7 @@
                <property name="minimumSize">
                 <size>
                  <width>50</width>
-                 <height>0</height>
+                 <height>30</height>
                 </size>
                </property>
                <property name="toolTip">
@@ -1766,15 +1777,15 @@
           <item row="1" column="1">
            <widget class="QPushButton" name="apply_on_server_btn">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="minimumSize">
              <size>
-              <width>90</width>
-              <height>32</height>
+              <width>0</width>
+              <height>30</height>
              </size>
             </property>
             <property name="maximumSize">
@@ -1792,8 +1803,8 @@
             </property>
             <property name="iconSize">
              <size>
-              <width>20</width>
-              <height>20</height>
+              <width>22</width>
+              <height>22</height>
              </size>
             </property>
             <property name="default">
@@ -1808,18 +1819,24 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="pixmap">
-      <pixmap resource="../res/resources.qrc">:/imagens/imagens/pgmodeler_name.png</pixmap>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
+   <item row="1" column="0" colspan="3">
     <layout class="QHBoxLayout" name="horizontalLayout_10">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="../res/resources.qrc">:/imagens/imagens/pgmodeler_name.png</pixmap>
+       </property>
+      </widget>
+     </item>
      <item>
       <spacer name="horizontalSpacer_6">
        <property name="orientation">
@@ -1862,8 +1879,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>22</width>
+         <height>22</height>
         </size>
        </property>
        <property name="default">
@@ -1900,8 +1917,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>22</width>
+         <height>22</height>
         </size>
        </property>
        <property name="flat">

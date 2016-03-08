@@ -4,8 +4,8 @@ Xml2ObjectWidget::Xml2ObjectWidget(QWidget *parent, Qt::WindowFlags f) : QDialog
 {
 	setupUi(this);
 
-  code_hl=new SyntaxHighlighter(code_txt);
-  code_hl->loadConfiguration(GlobalAttributes::XML_HIGHLIGHT_CONF_PATH);
+	code_hl=new SyntaxHighlighter(code_txt);
+	code_hl->loadConfiguration(GlobalAttributes::XML_HIGHLIGHT_CONF_PATH);
 
 	connect(close_btn, SIGNAL(clicked(void)), this, SLOT(close(void)));
 	connect(clear_btn, SIGNAL(clicked(void)), this, SLOT(clearSource(void)));
@@ -15,7 +15,7 @@ Xml2ObjectWidget::Xml2ObjectWidget(QWidget *parent, Qt::WindowFlags f) : QDialog
 
 void Xml2ObjectWidget::clearSource(void)
 {
-  code_txt->setPlainText(QString("<dbmodel>\n\n</dbmodel>"));
+	code_txt->setPlainText(QString("<dbmodel>\n\n</dbmodel>"));
 }
 
 void Xml2ObjectWidget::loadXML(void)
@@ -36,10 +36,10 @@ void Xml2ObjectWidget::loadXML(void)
 
 		if(!f.isOpen())
 			throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(file_dlg.selectedFiles().at(0)),
-											ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 
-    code_txt->setPlainText(QString::fromUtf8(f.readAll()));
+		code_txt->setPlainText(QString::fromUtf8(f.readAll()));
 		f.close();
 	}
 }
@@ -75,14 +75,14 @@ void Xml2ObjectWidget::generateObject(void)
 				if(xmlparser->getElementType()==XML_ELEMENT_NODE)
 				{
 					elem_name=xmlparser->getElementName();
-          obj_type=BaseObject::getObjectType(elem_name);
+					obj_type=BaseObject::getObjectType(elem_name);
 
 					xmlparser->savePosition();
 
 					object=model->createObject(obj_type);
 
 					if(object && !dynamic_cast<TableObject *>(object) &&
-						 obj_type!=OBJ_RELATIONSHIP && obj_type!=BASE_RELATIONSHIP)
+							obj_type!=OBJ_RELATIONSHIP && obj_type!=BASE_RELATIONSHIP)
 					{
 						model->addObject(object);
 						op_list->registerObject(object, Operation::OBJECT_CREATED, -1, model);

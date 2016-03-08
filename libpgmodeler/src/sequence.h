@@ -37,14 +37,14 @@ class Sequence: public BaseObject {
 
 		//! \brief Minimum value
 		QString min_value,
-						//! \brief Maximum value
-						max_value,
-						//! \brief Current sequence value
-						start,
-						//! \brief Sequence value increment
-						increment,
-						//! \brief Sequence cache value
-						cache;
+		//! \brief Maximum value
+		max_value,
+		//! \brief Current sequence value
+		start,
+		//! \brief Sequence value increment
+		increment,
+		//! \brief Sequence cache value
+		cache;
 
 		//! \brief Column that owns the sequence
 		Column *owner_col;
@@ -67,14 +67,14 @@ class Sequence: public BaseObject {
 	public:
 		//! \brief Constants that indicates the maximum and minimum values accepted by sequence
 		static const QString //For serial sequences
-												 MAX_POSITIVE_VALUE,
-												 MAX_NEGATIVE_VALUE,
-												 //For smallserial sequences
-												 MAX_SMALL_POSITIVE_VALUE,
-												 MAX_SMALL_NEGATIVE_VALUE,
-												 //For bigserial sequences
-												 MAX_BIG_POSITIVE_VALUE,
-												 MAX_BIG_NEGATIVE_VALUE;
+		MAX_POSITIVE_VALUE,
+		MAX_NEGATIVE_VALUE,
+		//For smallserial sequences
+		MAX_SMALL_POSITIVE_VALUE,
+		MAX_SMALL_NEGATIVE_VALUE,
+		//For bigserial sequences
+		MAX_BIG_POSITIVE_VALUE,
+		MAX_BIG_NEGATIVE_VALUE;
 
 		Sequence(void);
 
@@ -121,9 +121,9 @@ class Sequence: public BaseObject {
 		void operator = (Sequence &seq);
 
 		//! \brief Returns the SQL / XML definition for the sequence
-    virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getCodeDefinition(unsigned def_type) final;
 
-    virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterDefinition(BaseObject *object) final;
 };
 
 #endif

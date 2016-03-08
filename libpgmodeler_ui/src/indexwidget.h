@@ -34,19 +34,19 @@ class IndexWidget: public BaseObjectWidget, public Ui::IndexWidget {
 	private:
 		Q_OBJECT
 
-    //! \brief Syntax highlighter for predicate
-    SyntaxHighlighter *predicate_hl;
+		//! \brief Syntax highlighter for predicate
+		SyntaxHighlighter *predicate_hl;
 
 		ElementsWidget *elements_wgt;
 
 	public:
 		IndexWidget(QWidget * parent = 0);
-		void setAttributes(DatabaseModel *model, Table *parent_obj, OperationList *op_list, Index *index);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Table *parent_obj, Index *index);
 
 	private slots:
 		void hideEvent(QHideEvent *event);
 		void selectIndexingType(void);
-    void enableSortingOptions(void);
+		void enableSortingOptions(void);
 
 	public slots:
 		void applyConfiguration(void);

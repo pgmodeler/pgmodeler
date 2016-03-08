@@ -40,8 +40,8 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 
 		SchemaParser schparser;
 
-    //! brief Custom delegate used to avoid cell edition in result set
-    ReadOnlyItemDelegate *ro_item_del;
+		//! brief Custom delegate used to avoid cell edition in result set
+		ReadOnlyItemDelegate *ro_item_del;
 
 		//! brief Syntax highlighter for sql input field
 		SyntaxHighlighter *sql_cmd_hl;
@@ -52,7 +52,7 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		//! brief Dialog for SQL save/load
 		QFileDialog sql_file_dlg;
 
-    QMenu snippets_menu;
+		QMenu snippets_menu;
 
 		FindReplaceWidget *find_replace_wgt;
 
@@ -65,25 +65,25 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		//! brief Stores the command on the sql command history
 		void registerSQLCommand(const QString &cmd);
 
-    //! brief Show the exception message in the output widget
+		//! brief Show the exception message in the output widget
 		void showError(Exception &e);
 
-    //! brief Fills the result grid with the specified result set
+		//! brief Fills the result grid with the specified result set
 		void fillResultsTable(ResultSet &res);
 
-  protected:
-    //! brief Widget that serves as SQL commands input
-    NumberedTextEditor *sql_cmd_txt;
+	protected:
+		//! brief Widget that serves as SQL commands input
+		NumberedTextEditor *sql_cmd_txt;
 
-    void showEvent(QShowEvent *);
-    void resizeEvent(QResizeEvent *);
-    bool eventFilter(QObject *object, QEvent *event);
+		void showEvent(QShowEvent *);
+		void resizeEvent(QResizeEvent *);
+		bool eventFilter(QObject *object, QEvent *event);
 
-  public:
-    SQLExecutionWidget(QWidget * parent = 0);
+	public:
+		SQLExecutionWidget(QWidget * parent = 0);
 
-    //! brief Configures the connection to query the server
-    void setConnection(Connection conn);
+		//! brief Configures the connection to query the server
+		void setConnection(Connection conn);
 
 		/*! brief Fills up the results grid based upon the specified result set.
 				The parameter store_data will make each item store the text as its data */
@@ -98,10 +98,10 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		//! brief Exports the results to csv file
 		static void exportResults(QTableWidget *results_tbw);
 
-  public slots:
-    void configureSnippets(void);
+	public slots:
+		void configureSnippets(void);
 
-  private slots:
+	private slots:
 		//! brief Enables the command buttons when user fills the sql field
 		void enableCommandButtons(void);
 
@@ -117,13 +117,13 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		//! brief Clears the input field as well the results grid
 		void clearAll(void);
 
-    void selectSnippet(QAction *act);
+		void selectSnippet(QAction *act);
 
-    void handleSelectedWord(QString word);
+		void handleSelectedWord(QString word);
 
-    void toggleOutputPane(bool visible);
+		void toggleOutputPane(bool visible);
 
-    friend class SQLToolWidget;
+		friend class SQLToolWidget;
 };
 
 #endif

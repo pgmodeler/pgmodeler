@@ -35,7 +35,7 @@ BaseRelationship::BaseRelationship(BaseRelationship *rel)
 }
 
 BaseRelationship::BaseRelationship(unsigned rel_type, BaseTable *src_tab, BaseTable *dst_tab,
-																	 bool src_mandatory, bool dst_mandatory)
+								   bool src_mandatory, bool dst_mandatory)
 
 {
 	try
@@ -59,7 +59,7 @@ BaseRelationship::BaseRelationship(unsigned rel_type, BaseTable *src_tab, BaseTa
 		configureRelationship();
 
 		str_aux=QApplication::translate("BaseRelationship","rel_%1_%2","")
-						.arg(src_tab->getName()).arg(dst_tab->getName());
+				.arg(src_tab->getName()).arg(dst_tab->getName());
 
 		if(str_aux.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
 			str_aux.resize(BaseObject::OBJECT_NAME_MAX_LENGTH);
@@ -107,10 +107,10 @@ void BaseRelationship::configureRelationship(void)
 	attributes[ParsersAttributes::UQ_PATTERN]=QString();
 	attributes[ParsersAttributes::SRC_FK_PATTERN]=QString();
 	attributes[ParsersAttributes::DST_FK_PATTERN]=QString();
-  attributes[ParsersAttributes::PK_COL_PATTERN]=QString();
-  attributes[ParsersAttributes::SINGLE_PK_COLUMN]=QString();
-  attributes[ParsersAttributes::UPD_ACTION]=QString();
-  attributes[ParsersAttributes::DEL_ACTION]=QString();
+	attributes[ParsersAttributes::PK_COL_PATTERN]=QString();
+	attributes[ParsersAttributes::SINGLE_PK_COLUMN]=QString();
+	attributes[ParsersAttributes::UPD_ACTION]=QString();
+	attributes[ParsersAttributes::DEL_ACTION]=QString();
 	attributes[ParsersAttributes::CUSTOM_COLOR]=QString();
 
 	//Check if the relationship type is valid
@@ -119,14 +119,14 @@ void BaseRelationship::configureRelationship(void)
 		//Raises an error if one of the tables is not allocated
 		if(!src_table || !dst_table)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_TABLE)
-                      .arg(this->getName())
-											.arg(BaseObject::getTypeName(BASE_RELATIONSHIP)),
-											ERR_ASG_NOT_ALOC_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							.arg(this->getName())
+							.arg(BaseObject::getTypeName(BASE_RELATIONSHIP)),
+							ERR_ASG_NOT_ALOC_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		/* Raises an error if the relationship type is generalization or dependency
 			and the source and destination table are the same. */
 		if((rel_type==RELATIONSHIP_GEN ||
-				rel_type==RELATIONSHIP_DEP) && src_table==dst_table)
+			rel_type==RELATIONSHIP_DEP) && src_table==dst_table)
 			throw Exception(ERR_INV_INH_COPY_RELATIONSHIP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Allocates the textbox for the name label
@@ -135,7 +135,7 @@ void BaseRelationship::configureRelationship(void)
 
 		//Allocates the cardinality labels only when the relationship is not generalization or dependency (copy)
 		if(rel_type!=RELATIONSHIP_GEN &&
-			 rel_type!=RELATIONSHIP_DEP)
+				rel_type!=RELATIONSHIP_DEP)
 		{
 			lables[SRC_CARD_LABEL]=new Textbox;
 			lables[DST_CARD_LABEL]=new Textbox;
@@ -186,8 +186,8 @@ void BaseRelationship::setMandatoryTable(unsigned table_id, bool value)
 		(1,1)-<>-(1,1). This type of relationship is not implemented because
 		it requires the table fusion. */
 	if(rel_type==RELATIONSHIP_11 &&
-		 ((table_id==SRC_TABLE && value && dst_mandatory) ||
-			(table_id==DST_TABLE && value && src_mandatory)))
+			((table_id==SRC_TABLE && value && dst_mandatory) ||
+			 (table_id==DST_TABLE && value && src_mandatory)))
 		throw Exception(ERR_NOT_IMPL_REL_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Case the source table is mandatory
@@ -210,17 +210,17 @@ void BaseRelationship::setMandatoryTable(unsigned table_id, bool value)
 		label_id=DST_CARD_LABEL;
 	}
 
-  if(!value) cmin=QString("0");
-  else cmin=QString("1");
+	if(!value) cmin=QString("0");
+	else cmin=QString("1");
 
 	if(lables[label_id])
 	{
 		if(rel_type==RELATIONSHIP_11)
-      lables[label_id]->setComment(cmin + QString(":1"));
+			lables[label_id]->setComment(cmin + QString(":1"));
 		else if(rel_type==RELATIONSHIP_1N)
 		{
-      aux=(table_id==SRC_TABLE ? QString("1") : QString("n"));
-      lables[label_id]->setComment(cmin + QString(":") + aux);
+			aux=(table_id==SRC_TABLE ? QString("1") : QString("n"));
+			lables[label_id]->setComment(cmin + QString(":") + aux);
 		}
 		else if(rel_type==RELATIONSHIP_FK)
 		{
@@ -229,18 +229,18 @@ void BaseRelationship::setMandatoryTable(unsigned table_id, bool value)
 			if(!isBidirectional())
 			{
 				if((table_id==SRC_TABLE && dynamic_cast<Table *>(src_table)->isReferTableOnForeignKey(dynamic_cast<Table *>(dst_table))) ||
-					 (!isSelfRelationship() && table_id==DST_TABLE && dynamic_cast<Table *>(dst_table)->isReferTableOnForeignKey(dynamic_cast<Table *>(src_table))))
-          aux=QString("n");
+						(!isSelfRelationship() && table_id==DST_TABLE && dynamic_cast<Table *>(dst_table)->isReferTableOnForeignKey(dynamic_cast<Table *>(src_table))))
+					aux=QString("n");
 				else
-          aux=QString("1");
+					aux=QString("1");
 
-        lables[label_id]->setComment(aux);
+				lables[label_id]->setComment(aux);
 			}
 			else
-        lables[label_id]->setComment(QString("1:n"));
+				lables[label_id]->setComment(QString("1:n"));
 		}
 		else if(rel_type==RELATIONSHIP_NN)
-      lables[label_id]->setComment(QString("n"));
+			lables[label_id]->setComment(QString("n"));
 
 		lables[label_id]->setModified(true);
 	}
@@ -271,7 +271,7 @@ void BaseRelationship::setConnected(bool value)
 	src_table->setModified(true);
 
 	if(dst_table!=src_table)
-	 dst_table->setModified(true);
+		dst_table->setModified(true);
 
 	dynamic_cast<Schema *>(src_table->getSchema())->setModified(true);
 
@@ -330,20 +330,20 @@ bool BaseRelationship::isBidirectional(void)
 	else
 	{
 		Table *src_tab=dynamic_cast<Table *>(src_table),
-					*dst_tab=dynamic_cast<Table *>(dst_table);
+				*dst_tab=dynamic_cast<Table *>(dst_table);
 
 		return(src_tab->isReferTableOnForeignKey(dst_tab) &&
-					 dst_tab->isReferTableOnForeignKey(src_tab));
+			   dst_tab->isReferTableOnForeignKey(src_tab));
 	}
 }
 
 void BaseRelationship::setRelationshipAttributes(void)
 {
-    unsigned count, i;
-    QString str_aux,
-            label_attribs[3]={ ParsersAttributes::SRC_LABEL,
-															 ParsersAttributes::DST_LABEL,
-															 ParsersAttributes::NAME_LABEL};
+	unsigned count, i;
+	QString str_aux,
+			label_attribs[3]={ ParsersAttributes::SRC_LABEL,
+							   ParsersAttributes::DST_LABEL,
+							   ParsersAttributes::NAME_LABEL};
 
 
 	attributes[ParsersAttributes::TYPE]=getRelTypeAttribute();
@@ -386,8 +386,8 @@ void BaseRelationship::setRelationshipAttributes(void)
 QString BaseRelationship::getCachedCode(unsigned def_type)
 {
 	if(!code_invalidated &&
-		 ((!cached_code[def_type].isEmpty()) ||
-			(def_type==SchemaParser::XML_DEFINITION  && !cached_reduced_code.isEmpty())))
+			((!cached_code[def_type].isEmpty()) ||
+			 (def_type==SchemaParser::XML_DEFINITION  && !cached_reduced_code.isEmpty())))
 	{
 		if(def_type==SchemaParser::XML_DEFINITION  && !cached_reduced_code.isEmpty())
 			return(cached_reduced_code);
@@ -395,7 +395,7 @@ QString BaseRelationship::getCachedCode(unsigned def_type)
 			return(cached_code[def_type]);
 	}
 	else
-    return(QString());
+		return(QString());
 }
 
 QString BaseRelationship::getCodeDefinition(unsigned def_type)
@@ -406,7 +406,7 @@ QString BaseRelationship::getCodeDefinition(unsigned def_type)
 	if(def_type==SchemaParser::SQL_DEFINITION)
 	{
 		if(rel_type!=RELATIONSHIP_FK)
-      return(QString());
+			return(QString());
 		else
 		{
 			QString sql_code;
@@ -429,7 +429,7 @@ QString BaseRelationship::getCodeDefinition(unsigned def_type)
 		bool reduced_form;
 		setRelationshipAttributes();
 		reduced_form=(attributes[ParsersAttributes::POINTS].isEmpty() &&
-								 attributes[ParsersAttributes::LABELS_POS].isEmpty());
+					 attributes[ParsersAttributes::LABELS_POS].isEmpty());
 
 		if(!reduced_form)
 			cached_reduced_code.clear();

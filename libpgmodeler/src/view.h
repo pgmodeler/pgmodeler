@@ -36,8 +36,8 @@ class View: public BaseTable {
 		/*! \brief Vectors that stores indexes to the view references in each
 		 SQL part: SELECT-FROM, FROM-WHERE, after WHERE*/
 		vector<unsigned>	exp_select,
-											exp_from,
-											exp_where;
+		exp_from,
+		exp_where;
 
 		vector<TableObject *> triggers;
 		vector<TableObject *> rules;
@@ -47,17 +47,17 @@ class View: public BaseTable {
 			> http://www.postgresql.org/docs/8.4/interactive/queries-with.html */
 		QString cte_expression;
 
-    //! brief Indicates that the view is a materialized one. This setting is auto exclusive with 'recursive'
-    bool materialized,
+		//! brief Indicates that the view is a materialized one. This setting is auto exclusive with 'recursive'
+		bool materialized,
 
-    //! brief Indicates that the materialized view should not be initialized at creation time (default=false)
-    with_no_data,
+		//! brief Indicates that the materialized view should not be initialized at creation time (default=false)
+		with_no_data,
 
-    //! brief Indicates that the view is a a recursive one. This setting is auto exclusive with 'materialized'
-    recursive;
+		//! brief Indicates that the view is a a recursive one. This setting is auto exclusive with 'materialized'
+		recursive;
 
-    //! \brief Sets the definition attribute used by the SchemaParser
-    void setDefinitionAttribute(void);
+		//! \brief Sets the definition attribute used by the SchemaParser
+		void setDefinitionAttribute(void);
 
 		//! \brief Sets the references attribute used by the SchemaParser
 		void setReferencesAttribute(void);
@@ -69,12 +69,12 @@ class View: public BaseTable {
 		//! \brief Returns the reference to internal expression list according to the SQL expression type
 		vector<unsigned> *getExpressionList(unsigned sql_type);
 
-    /*! \brief Returns a list of deduced names for view's colums for recursive views.
-    The names are retrieved, first, from columns aliases and lastly from table's columns
-    when TABLE.* syntax is used */
-    QStringList getColumnsList(void);
+		/*! \brief Returns a list of deduced names for view's colums for recursive views.
+	The names are retrieved, first, from columns aliases and lastly from table's columns
+	when TABLE.* syntax is used */
+		QStringList getColumnsList(void);
 
-    void setSQLObjectAttribute(void);
+		void setSQLObjectAttribute(void);
 
 	public:
 		View(void);
@@ -84,13 +84,13 @@ class View: public BaseTable {
 		void setSchema(BaseObject *schema);
 		void setProtected(bool value);
 
-    void setMaterialized(bool value);
-    void setRecursive(bool value);
-    void setWithNoData(bool value);
+		void setMaterialized(bool value);
+		void setRecursive(bool value);
+		void setWithNoData(bool value);
 
-    bool isMaterialized(void);
-    bool isRecursive(void);
-    bool isWithNoData(void);
+		bool isMaterialized(void);
+		bool isRecursive(void);
+		bool isWithNoData(void);
 
 		/*! \brief Adds a reference to the view specifying the SQL expression type for it
 		 (refer to class Reference::SQL_??? constants). The 'expr_id' parameter is the
@@ -162,7 +162,7 @@ class View: public BaseTable {
 		//! \brief Sets the commom table expression for the view
 		void setCommomTableExpression(const QString &expr);
 
-			/*! \brief Remove the reference from the view using its index, removing all the elements
+		/*! \brief Remove the reference from the view using its index, removing all the elements
 		 from the exp_??? vectors when they make use of the deleted reference. */
 		void removeReference(unsigned ref_id);
 
@@ -196,7 +196,7 @@ class View: public BaseTable {
 		//! \brief Returns the SQL / XML definition for the view
 		virtual QString getCodeDefinition(unsigned def_type) final;
 
-    virtual QString getDropDefinition(bool cascade) final;
+		virtual QString getDropDefinition(bool cascade) final;
 
 		/*! \brief Returns whether the view references columns added
 		 by relationship. This method is used as auxiliary
@@ -205,11 +205,11 @@ class View: public BaseTable {
 		 connections and disconnections of relationships */
 		bool isReferRelationshipAddedColumn(void);
 
-    /*! brief Returns the list of all columns that is created by relationships.
-    This method is slower than isReferRelationshipAddedColumn() so it's not
-    recommended to use it only check if the object is referencing columns
-    added by relationship */
-    vector<Column *> getRelationshipAddedColumns(void);
+		/*! brief Returns the list of all columns that is created by relationships.
+	This method is slower than isReferRelationshipAddedColumn() so it's not
+	recommended to use it only check if the object is referencing columns
+	added by relationship */
+		vector<Column *> getRelationshipAddedColumns(void);
 
 		//! \brief Returns if the view is referencing the specified table
 		bool isReferencingTable(Table *tab);
@@ -220,7 +220,7 @@ class View: public BaseTable {
 		//! \brief Returns if the view has an reference expression that is used as view definition
 		bool hasDefinitionExpression(void);
 
-    //! \brief Copy the attributes between two views
+		//! \brief Copy the attributes between two views
 		void operator = (View &visao);
 };
 

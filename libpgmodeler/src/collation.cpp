@@ -39,7 +39,7 @@ void Collation::setLocale(const QString &locale)
 void Collation::setLocalization(unsigned lc_id, QString lc_name)
 {
 	if(locale.isEmpty())
-	{	
+	{
 		if(lc_id > _LC_COLLATE)
 			throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -61,9 +61,9 @@ void Collation::setCollation(BaseObject *collation)
 {
 	if(collation==this)
 		throw Exception(Exception::getErrorMessage(ERR_OBJECT_REFERENCING_ITSELF)
-                    .arg(this->getName(true))
-                    .arg(this->getTypeName()),
-										ERR_OBJECT_REFERENCING_ITSELF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						.arg(this->getName(true))
+						.arg(this->getTypeName()),
+						ERR_OBJECT_REFERENCING_ITSELF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObject::setCollation(collation);
 
@@ -74,7 +74,7 @@ void Collation::setCollation(BaseObject *collation)
 
 QString Collation::getLocale(void)
 {
- return(locale);
+	return(locale);
 }
 
 QString Collation::getLocalization(unsigned lc_id)
@@ -121,24 +121,24 @@ QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 			attributes[lc_attribs[i]]=getLocalization(i);
 
 			if(def_type==SchemaParser::SQL_DEFINITION && encoding!=BaseType::null &&
-				 !attributes[lc_attribs[i]].isEmpty())
+					!attributes[lc_attribs[i]].isEmpty())
 				attributes[lc_attribs[i]]+="." + (~encoding).toLower();
 		}
 	}
 
 	attributes[ParsersAttributes::ENCODING]=~encoding;
-  return(BaseObject::getCodeDefinition(def_type, reduced_form));
+	return(BaseObject::getCodeDefinition(def_type, reduced_form));
 }
 
 QString Collation::getAlterDefinition(BaseObject *object)
 {
-  try
-  {
-    attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
-    return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, false));
-  }
-  catch(Exception &e)
-  {
-    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-  }
+	try
+	{
+		attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
+		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, false));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
 }

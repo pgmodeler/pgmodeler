@@ -30,15 +30,15 @@
 #include "readonlyitemdelegate.h"
 
 class HtmlItemDelegate : public ReadOnlyItemDelegate {
-  private:
-    Q_OBJECT
+	private:
+		Q_OBJECT
 
-  public:
-    HtmlItemDelegate(QObject * parent = 0);
-    ~HtmlItemDelegate(void);
+	public:
+		HtmlItemDelegate(QObject * parent = 0);
+		~HtmlItemDelegate(void);
 
-  protected:
-    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+	protected:
+		virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 };
 
 #endif

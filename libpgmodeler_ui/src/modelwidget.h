@@ -29,7 +29,6 @@
 #include "databasemodel.h"
 #include "operationlist.h"
 #include "messagebox.h"
-#include "baseform.h"
 #include "objectsscene.h"
 #include "taskprogresswidget.h"
 #include "newobjectoverlaywidget.h"
@@ -40,16 +39,16 @@ class ModelWidget: public QWidget {
 
 		XMLParser *xmlparser;
 
-    NewObjectOverlayWidget *new_obj_overlay_wgt;
+		NewObjectOverlayWidget *new_obj_overlay_wgt;
 
 		//! \brief Current zoom aplied to the scene
 		double current_zoom;
 
 		//! \brief Indicates if the model was modified by some operation
-    bool modified;
+		bool modified;
 
 		//! \brief Configures the submenu related to the object
-    void configureSubmenu(BaseObject *object);
+		void configureSubmenu(BaseObject *object);
 
 		/*! \brief Indicates if the cut operation is currently activated. This flag modifies
 		the way the methods copyObjects() and removeObject() works. */
@@ -85,22 +84,22 @@ class ModelWidget: public QWidget {
 		//! \brief Model's general context menu
 		QMenu popup_menu,
 
-					//! \brief Stores the actions related to new objects creation
-					new_object_menu,
+		//! \brief Stores the actions related to new objects creation
+		new_object_menu,
 
-					//! \brief Stores the quick actions
-					quick_actions_menu,
+		//! \brief Stores the quick actions
+		quick_actions_menu,
 
-					//! \brief Stores the schemas used by the "move to schema" operation
-					schemas_menu,
+		//! \brief Stores the schemas used by the "move to schema" operation
+		schemas_menu,
 
-					//! \brief Stores the role names used by the "change owner" operation
-					owners_menu,
+		//! \brief Stores the role names used by the "change owner" operation
+		owners_menu,
 
-          //! \brief Stores the tags used by the "set tag" operation
-          tags_menu,
+		//! \brief Stores the tags used by the "set tag" operation
+		tags_menu,
 
-          break_rel_menu;
+		break_rel_menu;
 
 		//! \brief Stores the selected object on the scene
 		vector<BaseObject *> selected_objects;
@@ -117,53 +116,69 @@ class ModelWidget: public QWidget {
 		//! \brief Stores the loaded database model filename
 		QString filename,
 
-						//! \brief Stores the temporary database model filename
-            tmp_filename;
+		//! \brief Stores the temporary database model filename
+		tmp_filename;
 
-    //! brief This label shows the user the current applied zoom
-    QLabel *zoom_info_lbl;
+		//! brief This label shows the user the current applied zoom
+		QLabel *zoom_info_lbl;
 
-    //! brief This timer controls the interval the zoom label is visible
-    QTimer zoom_info_timer;
+		//! brief This timer controls the interval the zoom label is visible
+		QTimer zoom_info_timer;
 
-  protected:
+		//! brief Creates a BaseForm instance in insert the widget into it. A custom configuration for dialog buttons can be passed
+		int openEditingForm(QWidget *widget, BaseObject *object = nullptr, unsigned button_conf = Messagebox::OK_CANCEL_BUTTONS);
+
+		//! brief Opens a editing form for objects at database level
+		template<class Class, class WidgetClass>
+		int openEditingForm(BaseObject *object);
+
+		/*! brief Opens a editing form for objects that can have a parent other than database, e.g., schema level objects,
+				table child object or relationship attributes & constraints */
+		template<class Class, class WidgetClass, class ParentClass>
+		int openEditingForm(BaseObject *object, BaseObject *parent_obj);
+
+		//! brief Opens a editing form for objects that can have a position in the canvas area
+		template<class Class, class WidgetClass, class ParentClass>
+		int openEditingForm(BaseObject *object, BaseObject *parent_obj, const QPointF &pos);
+
+	protected:
 		static const unsigned BREAK_VERT_NINETY_DEGREES, //Break vertically the line in one 90° angle
-													BREAK_HORIZ_NINETY_DEGREES, //Break horizontally the line in one 90° angle
-													BREAK_VERT_2NINETY_DEGREES, //Break vertically the line in two 90° angles
-													BREAK_HORIZ_2NINETY_DEGREES;//Break horizontally the line in two 90° angles
+		BREAK_HORIZ_NINETY_DEGREES, //Break horizontally the line in one 90° angle
+		BREAK_VERT_2NINETY_DEGREES, //Break vertically the line in two 90° angles
+		BREAK_HORIZ_2NINETY_DEGREES;//Break horizontally the line in two 90° angles
 
-    QAction *action_source_code,
-            *action_edit,
-            *action_protect,
-            *action_unprotect,
-            *action_remove,
-            *action_cascade_del,
-            *action_select_all,
-            *action_convert_relnn,
-            *action_copy,
-            *action_paste,
-            *action_cut,
-            *action_deps_refs,
-            *action_new_object,
-            *action_rename,
-            *action_moveto_schema,
-            *action_edit_perms,
-            *action_change_owner,
-            *action_quick_actions,
-            *action_sel_sch_children,
-            *action_highlight_object,
-            *action_parent_rel,
-            *action_append_sql,
-            *action_create_seq_col,
-            *action_conv_int_serial,
-            *action_break_rel_line,
-            *action_remove_rel_points,
-            *action_set_tag,
-            *action_disable_sql,
-            *action_enable_sql;
+		QAction *action_source_code,
+		*action_edit,
+		*action_protect,
+		*action_unprotect,
+		*action_remove,
+		*action_cascade_del,
+		*action_select_all,
+		*action_convert_relnn,
+		*action_copy,
+		*action_paste,
+		*action_cut,
+		*action_deps_refs,
+		*action_new_object,
+		*action_rename,
+		*action_moveto_schema,
+		*action_edit_perms,
+		*action_change_owner,
+		*action_quick_actions,
+		*action_sel_sch_children,
+		*action_highlight_object,
+		*action_parent_rel,
+		*action_append_sql,
+		*action_create_seq_col,
+		*action_conv_int_serial,
+		*action_break_rel_line,
+		*action_remove_rel_points,
+		*action_set_tag,
+		*action_disable_sql,
+		*action_enable_sql;
 
-    //! \brief Actions used to create new objects on the model
-    map<ObjectType, QAction *> actions_new_objects;
+		//! \brief Actions used to create new objects on the model
+		map<ObjectType, QAction *> actions_new_objects;
 
 		//! \brief Stores the relationship types menu
 		QMenu *rels_menu;
@@ -196,9 +211,9 @@ class ModelWidget: public QWidget {
 		void rearrangeTables(Schema *schema, QPointF origin, unsigned tabs_per_row, double obj_spacing);
 
 	public:
-    static constexpr double MINIMUM_ZOOM=0.050000,
-                            MAXIMUM_ZOOM=4.000001,
-                            ZOOM_INCREMENT=0.050000;
+		static constexpr double MINIMUM_ZOOM=0.050000,
+		MAXIMUM_ZOOM=4.000001,
+		ZOOM_INCREMENT=0.050000;
 
 		ModelWidget(QWidget *parent = 0);
 		~ModelWidget(void);
@@ -213,7 +228,7 @@ class ModelWidget: public QWidget {
 		QString getTempFilename(void);
 
 		//! \brief Shows the editing form according to the passed object type
-		void showObjectForm(ObjectType obj_type, BaseObject *object=nullptr, BaseObject *parent_obj=nullptr, QPointF pos=QPointF(NAN, NAN));
+		void showObjectForm(ObjectType obj_type, BaseObject *object=nullptr, BaseObject *parent_obj=nullptr, const QPointF &pos=QPointF(NAN, NAN));
 
 		//! \brief Applies a zoom factor to the model
 		void applyZoom(double zoom);
@@ -230,7 +245,7 @@ class ModelWidget: public QWidget {
 		//! \brief Returns the operation list used by database model
 		OperationList *getOperationList(void);
 
-    //! brief Defines if any instance of ModelWidget must restore the last saved editing position on canvas
+		//! brief Defines if any instance of ModelWidget must restore the last saved editing position on canvas
 		static void setSaveLastCanvasPosition(bool value);
 
 		//! brief Defines if any instance of the class must disable rendering smoothness improving performance
@@ -239,16 +254,18 @@ class ModelWidget: public QWidget {
 		//! brief Defines if any instance of the class must simiplify the graphical object's creation
 		static void setSimplifiedObjectCreation(bool value);
 
-    //! brief Restore the last editing position on canvas as well the zoom factor
-    void restoreLastCanvasPosition(void);
+		//! brief Restore the last editing position on canvas as well the zoom factor
+		void restoreLastCanvasPosition(void);
 
-    /*! brief Save the last editing position on canvas as well the zoom factor. This method return true when
-        the current values was saved on the database model */
-    bool saveLastCanvasPosition(void);
+		/*! brief Save the last editing position on canvas as well the zoom factor. This method return true when
+		the current values was saved on the database model */
+		bool saveLastCanvasPosition(void);
 
-    void setUpdatesEnabled(bool value);
+		void setUpdatesEnabled(bool value);
 
-private slots:
+		void updateRenderHints(void);
+
+	private slots:
 		//! \brief Handles the signals that indicates the object creation on the reference database model
 		void handleObjectAddition(BaseObject *object);
 
@@ -291,8 +308,8 @@ private slots:
 		//! \brief Quickly changes the object's owner via popup menu
 		void changeOwner(void);
 
-    //! \brief Quickly sets the table's tag via popup menu
-    void setTag(void);
+		//! \brief Quickly sets the table's tag via popup menu
+		void setTag(void);
 
 		//! \brief Triggers the permission editing form
 		void editPermissions(void);
@@ -301,10 +318,10 @@ private slots:
 		void selectSchemaChildren(void);
 
 		//! \brief Removes the selected objects
-    void removeObjects(bool cascade = false);
+		void removeObjects(bool cascade = false);
 
-    //! brief Removes the selected objects in cascade model. This is the same as call removeObjects(true).
-    void removeObjectsCascade(void);
+		//! brief Removes the selected objects in cascade model. This is the same as call removeObjects(true).
+		void removeObjectsCascade(void);
 
 		//! \brief Selects all the graphical objects on the scene
 		void selectAllObjects(void);
@@ -328,19 +345,19 @@ private slots:
 		void addNewObject(void);
 
 		//! \brief Triggers the sql insertion widget for the current database model
-		void appendSQL(void);
+		void editCustomSQL(void);
 
 		//! \brief Configures the selected object vector whenever the selection changes on the scene
 		void configureObjectSelection(void);
 
 		/*! \brief Creates a sequence based upon the selected column. This method changes the default value
 		for the column as well the type. */
-    void createSequenceFromColumn(void);
+		void createSequenceFromColumn(void);
 
-    /*! \brief Creates a serial data type based upon the selected column data type. The prerequisite to create a serial data type
-        is that the column's type is an integer one (smallint, int, bigint) and the default value is a function call
-        to nextval('myseq'::regclass) */
-    void convertIntegerToSerial(void);
+		/*! \brief Creates a serial data type based upon the selected column data type. The prerequisite to create a serial data type
+		is that the column's type is an integer one (smallint, int, bigint) and the default value is a function call
+		to nextval('myseq'::regclass) */
+		void convertIntegerToSerial(void);
 
 		//! \brief Break the relationship line in one or two straight angles (see BREAK_??? constants)
 		void breakRelationshipLine(void);
@@ -348,14 +365,14 @@ private slots:
 		//! \brief Removes any user added point from relationship
 		void removeRelationshipPoints(void);
 
-    //! \brief Highlights the object stored on the action that triggers the slot
+		//! \brief Highlights the object stored on the action that triggers the slot
 		void highlightObject(void);
 
-    void toggleNewObjectOverlay(void);
+		void toggleNewObjectOverlay(void);
 
-    void adjustOverlayPosition(void);
+		void adjustOverlayPosition(void);
 
-    void toggleObjectSQL(void);
+		void toggleObjectSQL(void);
 
 	public slots:
 		void loadModel(const QString &filename);
@@ -375,9 +392,9 @@ private slots:
 		//! \brief Signal emitted whenever a object is created / edited using the form
 		void s_objectManipulated(void);
 
-    /*! brief Signal emitted whenever the user open an object in its editing form but cancel the operation
-        by closing the form */
-    void s_manipulationCanceled(void);
+		/*! brief Signal emitted whenever the user open an object in its editing form but cancel the operation
+		by closing the form */
+		void s_manipulationCanceled(void);
 
 		friend class MainWindow;
 		friend class ModelExportForm;
@@ -387,7 +404,7 @@ private slots:
 		friend class ModelValidationWidget;
 		friend class DatabaseImportForm;
 		friend class ObjectFinderWidget;
-    friend class NewObjectOverlayWidget;
+		friend class NewObjectOverlayWidget;
 };
 
 #endif

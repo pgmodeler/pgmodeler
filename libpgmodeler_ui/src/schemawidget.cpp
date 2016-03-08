@@ -34,12 +34,11 @@ SchemaWidget::SchemaWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_SCHEMA
 	hbox->addWidget(show_rect_chk);
 
 	baseobject_grid->addLayout(hbox, baseobject_grid->count(), 0, 1, baseobject_grid->columnCount());
-	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-
-	parent_form->setMinimumSize(500, 220);
-	parent_form->setMaximumHeight(220);
+	baseobject_grid->addItem(new QSpacerItem(1,1,QSizePolicy::Minimum,QSizePolicy::Expanding), baseobject_grid->count(), 0);
 
 	configureTabOrder({ color_picker, show_rect_chk });
+
+	setMinimumSize(480, 140);
 }
 
 void SchemaWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema)
@@ -52,20 +51,17 @@ void SchemaWidget::setAttributes(DatabaseModel *model, OperationList *op_list, S
 	edt_perms_tb->setEnabled(enable);
 	name_edt->setEnabled(enable);
 	comment_edt->setEnabled(enable);
-  owner_sel->setEnabled(enable);
-  disable_sql_chk->setEnabled(enable);
-  append_sql_tb->setEnabled(enable);
+	owner_sel->setEnabled(enable);
+	disable_sql_chk->setEnabled(enable);
+	append_sql_tb->setEnabled(enable);
 
 	if(schema)
 	{
 		if(schema->isSystemObject())
-		{
 			protected_obj_frm->setVisible(false);
-			parent_form->apply_ok_btn->setEnabled(true);
-		}
 
 		color_picker->setColor(0, schema->getFillColor());
-    show_rect_chk->setChecked(schema && schema->isRectVisible());
+		show_rect_chk->setChecked(schema && schema->isRectVisible());
 	}
 	else
 		color_picker->setColor(0, QColor(225,225,225));
@@ -79,7 +75,7 @@ void SchemaWidget::applyConfiguration(void)
 
 		startConfiguration<Schema>();
 		schema=dynamic_cast<Schema *>(this->object);
-    BaseObjectWidget::applyConfiguration();
+		BaseObjectWidget::applyConfiguration();
 
 		schema->setRectVisible(show_rect_chk->isChecked());
 		schema->setFillColor(color_picker->getColor(0));

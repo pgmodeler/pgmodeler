@@ -126,7 +126,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<comment><![CDATA[Comentário na função input]]></comment>
 	<language name="c" sql-disabled="true"/>
 	<return-type>
-	<type name="any"/>
+	<type name="&quot;any&quot;"/>
 	</return-type>
 	<parameter name="param1">
 		<type name="cstring"/>
@@ -156,7 +156,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<type name="cstring"/>
 	</return-type>
 	<parameter name="param1">
-		<type name="any"/>
+		<type name="&quot;any&quot;"/>
 	</parameter>
 	<definition library="/usr/local/lib/funcoes.so" symbol="funcao_handler"/>
 </function>
@@ -174,7 +174,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<comment><![CDATA[Comentário na função recv]]></comment>
 	<language name="c" sql-disabled="true"/>
 	<return-type>
-	<type name="any"/>
+	<type name="&quot;any&quot;"/>
 	</return-type>
 	<parameter name="param1">
 		<type name="internal"/>
@@ -204,7 +204,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<type name="bytea"/>
 	</return-type>
 	<parameter name="param1">
-		<type name="any"/>
+		<type name="&quot;any&quot;"/>
 	</parameter>
 	<definition library="/usr/local/lib/funcoes.so" symbol="funcao_handler"/>
 </function>

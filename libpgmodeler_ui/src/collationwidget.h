@@ -31,16 +31,16 @@
 class CollationWidget: public BaseObjectWidget, public Ui::CollationWidget {
 	private:
 		Q_OBJECT
-
+		
 		void hideEvent(QHideEvent *event);
-
+		
 	public:
 		CollationWidget(QWidget * parent = 0);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Collation *collation);
-
+		
 	public slots:
 		void applyConfiguration(void);
-
+		
 	private slots:
 		void resetFields(void);
 };

@@ -31,15 +31,15 @@
 class ExtensionWidget: public BaseObjectWidget, public Ui::ExtensionWidget {
 	private:
 		Q_OBJECT
-
+		
 	public:
 		ExtensionWidget(QWidget * parent = 0);
-
+		
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Extension *ext);
-
+		
 	private slots:
 		void hideEvent(QHideEvent *event);
-
+		
 	public slots:
 		void applyConfiguration(void);
 };

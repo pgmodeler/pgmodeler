@@ -32,19 +32,19 @@
 class ColumnWidget: public BaseObjectWidget, public Ui::ColumnWidget {
 	private:
 		Q_OBJECT
-
+		
 		SyntaxHighlighter *hl_default_value;
 		PgSQLTypeWidget *data_type;
-    ObjectSelectorWidget *sequence_sel;
-
+		ObjectSelectorWidget *sequence_sel;
+		
 		void hideEvent(QHideEvent *event);
-
+		
 	public:
 		ColumnWidget(QWidget * parent = 0);
-		void setAttributes(DatabaseModel *model, BaseObject *parent_obj, OperationList *op_list, Column *column);
-
+		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *parent_obj, Column *column);
+		
 	private slots:
-
+		
 	public slots:
 		void applyConfiguration(void);
 };
