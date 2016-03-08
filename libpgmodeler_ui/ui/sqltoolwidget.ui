@@ -273,10 +273,10 @@
                </sizepolicy>
               </property>
               <property name="toolTip">
-               <string>Toggle the object finder</string>
+               <string>Toggle the object's attributes grid</string>
               </property>
               <property name="statusTip">
-               <string>Toggle the object's attributes grid</string>
+               <string/>
               </property>
               <property name="text">
                <string>Attributes</string>
@@ -314,13 +314,13 @@
                </sizepolicy>
               </property>
               <property name="toolTip">
-               <string>Toggle the object finder</string>
-              </property>
-              <property name="statusTip">
                <string>Toggle the display of source code pane</string>
               </property>
+              <property name="statusTip">
+               <string/>
+              </property>
               <property name="text">
-               <string>Source pane</string>
+               <string>Source code</string>
               </property>
               <property name="icon">
                <iconset resource="../res/resources.qrc">
