@@ -116,19 +116,7 @@ int main(int argc, char **argv)
 		QPixmap pix(QPixmap(QString(":imagens/imagens/pgmodeler_splash.png")));
 		splash.setPixmap(pix);
 		splash.setMask(pix.mask());
-
-#ifndef Q_OS_MAC
-		splash.setWindowFlags(Qt::SplashScreen | Qt::FramelessWindowHint);
-#else
-		splash.setWindowFlags(Qt::SplashScreen | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
-#endif
-
-#ifdef Q_OS_WIN
-		splash.show();
-#else
-		splash.showMaximized();
-#endif
-
+        splash.show();
 		app.processEvents();
 
 		//Creates the main form
