@@ -542,14 +542,14 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 	ico_lbl->setMaximumSize(QSize(24, 24));
 	ico_lbl->setScaledContents(true);
 	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
-	ico_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop);
+	ico_lbl->setAlignment(Qt::AlignLeft|Qt::AlignTop);
 
 	grid->addWidget(ico_lbl, 0, 0, 1, 1);
 
 	msg_lbl = new QLabel(info_frm);
 	msg_lbl->setFont(font);
 	msg_lbl->setObjectName("message_lbl");
-	msg_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
+	msg_lbl->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
 	msg_lbl->setWordWrap(true);
 
 	msg_lbl->setText(msg);
@@ -634,14 +634,14 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 	ico_lbl->setMaximumSize(QSize(24, 24));
 	ico_lbl->setScaledContents(true);
 	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
-	ico_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop);
+	ico_lbl->setAlignment(Qt::AlignLeft|Qt::AlignTop);
 
 	grid->addWidget(ico_lbl, 0, 0, 1, 1);
 
 	msg_lbl = new QLabel(alert_frm);
 	msg_lbl->setFont(font);
 	msg_lbl->setObjectName("mensagelm_lb");
-	msg_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
+	msg_lbl->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
 	msg_lbl->setWordWrap(true);
 
 	msg_lbl->setText(trUtf8("The <em style='color: %1'><strong>highlighted</strong></em> fields in the form or one of their values are available only on specific PostgreSQL versions. \

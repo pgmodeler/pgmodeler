@@ -34,6 +34,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	setWindowFlags(Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
 	PgModelerUiNS::configureWidgetFont(hint_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
+	PgModelerUiNS::configureWidgetFont(warning_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 
 	filter_hl=new SyntaxHighlighter(filter_txt);
 	filter_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
