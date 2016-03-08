@@ -871,13 +871,18 @@ void DatabaseExplorerWidget::listObjects(void)
 	try
 	{
 		QAction *act=qobject_cast<QAction *>(sender());
+		bool quick_refresh=(act ? act->data().toBool() : true);
 
 		configureImportHelper();
 		objects_trw->blockSignals(true);
 
 		clearObjectProperties();
 
-		DatabaseImportForm::listObjects(import_helper, objects_trw, false, false, true, (act ? act->data().toBool() : true));
+		if(quick_refresh)
+			QApplication::setOverrideCursor(Qt::WaitCursor);
+
+		DatabaseImportForm::listObjects(import_helper, objects_trw, false, false, true, quick_refresh);
+		QApplication::restoreOverrideCursor();
 
 		objects_trw->blockSignals(false);
 		import_helper.closeConnection();
@@ -1220,6 +1225,8 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item)
 		QString sch_name, tab_name;
 		vector<QTreeWidgetItem *> gen_items;
 
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+
 		if(obj_type==OBJ_DATABASE)
 			listObjects();
 		else
@@ -1281,6 +1288,8 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item)
 			objects_trw->sortItems(0, Qt::AscendingOrder);
 			objects_trw->setCurrentItem(nullptr);
 		}
+
+		QApplication::restoreOverrideCursor();
 	}
 }
 
@@ -1296,12 +1305,14 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
 			ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
 			attribs_map orig_attribs, fmt_attribs;
 
+
 			//First, retrieve the attributes stored on the item as a result of a previous properties listing
 			orig_attribs=item->data(DatabaseImportForm::OBJECT_ATTRIBS, Qt::UserRole).value<attribs_map>();
 
 			//In case of the cached attributes are empty
 			if(orig_attribs.empty() || force_reload)
 			{
+				QApplication::setOverrideCursor(Qt::WaitCursor);
 				catalog.setConnection(connection);
 
 				//Retrieve them from the catalog
@@ -1329,11 +1340,13 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
 				item->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, DEFAULT_SOURCE_CODE);
 
 				catalog.closeConnection();
+				QApplication::restoreOverrideCursor();
 			}
 		}
 	}
 	catch(Exception &e)
 	{
+		QApplication::restoreOverrideCursor();
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
@@ -1560,6 +1573,7 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 						sys_oid=0;
 				int sbar_value=(objects_trw->verticalScrollBar() ? objects_trw->verticalScrollBar()->value() : 0);
 
+				QApplication::setOverrideCursor(Qt::WaitCursor);
 				sch_name=item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString();
 				tab_name=item->data(DatabaseImportForm::OBJECT_TABLE, Qt::UserRole).toString();
 				name=item->data(DatabaseImportForm::OBJECT_NAME, Qt::UserRole).toString();
@@ -1670,12 +1684,14 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 				if(objects_trw->verticalScrollBar())
 					objects_trw->verticalScrollBar()->setValue(sbar_value);
 
+				QApplication::restoreOverrideCursor();
 				emit s_sourceCodeShowRequested(source);
 			}
 		}
 	}
 	catch (Exception &e)
 	{
+		QApplication::restoreOverrideCursor();
 		emit s_sourceCodeShowRequested(QString("/* Could not generate source code due to one or more errors! \n \n %1 */").arg(e.getExceptionsText()));
 	}
 }
