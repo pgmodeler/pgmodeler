@@ -600,15 +600,7 @@ void OperationList::undoOperation(void)
 			try
 			{
 				if(chain_size > 0 && operation->isOperationValid())
-				{
-					//Emits a signal with the current progress of operation execution
 					pos++;
-					emit s_operationExecuted((pos/static_cast<float>(chain_size))*100,
-											 trUtf8("Undoing change on object `%1' (%2).")
-											 .arg(operation->getOriginalObject()->getName(true))
-											 .arg(operation->getOriginalObject()->getTypeName()),
-											 operation->getOriginalObject()->getObjectType());
-				}
 
 				//Executes the undo operation
 				executeOperation(operation, false);
@@ -664,15 +656,7 @@ void OperationList::redoOperation(void)
 			try
 			{
 				if(chain_size > 0 && operation->isOperationValid())
-				{
-					//Emits a signal with the current progress of operation execution
 					pos++;
-					emit s_operationExecuted((pos/static_cast<float>(chain_size))*100,
-											 trUtf8("Redoing change on object `%1' (%2).")
-											 .arg(operation->getOriginalObject()->getName(true))
-											 .arg(operation->getOriginalObject()->getTypeName()),
-											 operation->getOriginalObject()->getObjectType());
-				}
 
 				//Executes the redo operation (second argument as 'true')
 				executeOperation(operation, true);

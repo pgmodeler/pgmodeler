@@ -152,28 +152,18 @@ void OperationListWidget::setModel(ModelWidget *model)
 
 void OperationListWidget::undoOperation(void)
 {
-	TaskProgressWidget task_prog_wgt(this);
-
 	try
 	{
-		connect(model_wgt->op_list, SIGNAL(s_operationExecuted(int,QString,unsigned)), &task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
-		task_prog_wgt.setWindowTitle(trUtf8("Undoing operations..."));
-		task_prog_wgt.show();
-
+		QApplication::setOverrideCursor(Qt::WaitCursor);
 		model_wgt->op_list->undoOperation();
-
-		task_prog_wgt.close();
-		disconnect(model_wgt->op_list, nullptr, &task_prog_wgt, nullptr);
-
 		notifyUpdateOnModel();
-
 		model_wgt->scene->clearSelection();
+		QApplication::restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{
-		task_prog_wgt.close();
+		QApplication::restoreOverrideCursor();
 		this->updateOperationList();
-		disconnect(model_wgt->op_list, nullptr, &task_prog_wgt, nullptr);
 
 		if(e.getErrorType()==ERR_UNDO_REDO_OPR_INV_OBJECT)
 		{
@@ -187,28 +177,17 @@ void OperationListWidget::undoOperation(void)
 
 void OperationListWidget::redoOperation(void)
 {
-	TaskProgressWidget task_prog_wgt(this);
-
 	try
 	{
-		connect(model_wgt->op_list, SIGNAL(s_operationExecuted(int,QString,unsigned)), &task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
-		task_prog_wgt.setWindowTitle(trUtf8("Redoing operations..."));
-		task_prog_wgt.show();
-
+		QApplication::setOverrideCursor(Qt::WaitCursor);
 		model_wgt->op_list->redoOperation();
-
-		task_prog_wgt.close();
-		disconnect(model_wgt->op_list, nullptr, &task_prog_wgt, nullptr);
-
 		notifyUpdateOnModel();
-
 		model_wgt->scene->clearSelection();
+		QApplication::restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{
-		task_prog_wgt.close();
-		this->updateOperationList();
-		disconnect(model_wgt->op_list, nullptr, &task_prog_wgt, nullptr);
+		QApplication::restoreOverrideCursor();
 
 		if(e.getErrorType()==ERR_UNDO_REDO_OPR_INV_OBJECT)
 		{

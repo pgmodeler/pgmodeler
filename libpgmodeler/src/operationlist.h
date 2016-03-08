@@ -183,10 +183,6 @@ class OperationList: public QObject {
 		 of the object with the new value for the operations which refer the object is not
 		 executed incorrectly using previous index */
 		void updateObjectIndex(BaseObject *object, unsigned new_idx);
-
-	signals:
-		//! \brief Signal emitted when one operation is executed
-		void s_operationExecuted(int progress, QString object_id, unsigned icon_id);
 };
 
 #endif
