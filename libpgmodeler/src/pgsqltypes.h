@@ -33,7 +33,7 @@
 
 class BaseType{
 	protected:
-		static const unsigned types_count=239;
+		static const unsigned types_count=241;
 		static QString type_list[types_count];
 
 		//! \brief Index of the type on the type_list vector
@@ -240,7 +240,7 @@ class IntervalType: public BaseType{
 class SpatialType: public BaseType{
 	private:
 		unsigned variation;
-		static const unsigned offset=227;
+		static const unsigned offset=229;
 		static const unsigned types_count=8;
 
 		/*! \brief Used in conjunction with spatial_type, and denotes the SRID value
@@ -438,8 +438,14 @@ class PgSQLType: public BaseType{
 		bool isDateTimeType(void);
 		bool isNumericType(void);
 		bool isIntegerType(void);
+		bool isCharacterType(void);
+		bool isNetworkType(void);
+		bool isPolymorphicType(void);
 		bool hasVariableLength(void);
 		bool acceptsPrecision(void);
+
+		//! brief Indicates if the 'this' type can be casted to 'type'
+		bool canCastTo(PgSQLType type);
 
 		/*! brief Returns if the "this" type is equivalent to the specified type.
 		In order to be compatible the "this" and "type" must be an alias from each other,
@@ -530,7 +536,7 @@ class SecurityType: public BaseType{
 class LanguageType: public BaseType{
 	private:
 		static const unsigned offset=154;
-		static const unsigned types_count=6;
+		static const unsigned types_count=7;
 
 	public:
 		static const unsigned sql=offset;
@@ -539,6 +545,7 @@ class LanguageType: public BaseType{
 		static const unsigned pltcl=offset+3;
 		static const unsigned plperl=offset+4;
 		static const unsigned plpython=offset+5;
+		static const unsigned internal=offset+6;
 
 		LanguageType(const QString &type_name);
 		LanguageType(unsigned type_id);
@@ -551,8 +558,8 @@ class LanguageType: public BaseType{
 
 class EncodingType: public BaseType{
 	private:
-		static const unsigned offset=160;
-		static const unsigned types_count=41;
+		static const unsigned offset=161;
+		static const unsigned types_count=42;
 
 	public:
 		EncodingType(void);
@@ -571,7 +578,7 @@ class EncodingType: public BaseType{
 
 class StorageType: public BaseType{
 	private:
-		static const unsigned offset=201;
+		static const unsigned offset=203;
 		static const unsigned types_count=4;
 
 	public:
@@ -594,7 +601,7 @@ class StorageType: public BaseType{
 
 class MatchType: public BaseType{
 	private:
-		static const unsigned offset=205;
+		static const unsigned offset=207;
 		static const unsigned types_count=3;
 
 	public:
@@ -613,7 +620,7 @@ class MatchType: public BaseType{
 
 class DeferralType: public BaseType{
 	private:
-		static const unsigned offset=208;
+		static const unsigned offset=210;
 		static const unsigned types_count=2;
 
 	public:
@@ -631,7 +638,7 @@ class DeferralType: public BaseType{
 
 class CategoryType: public BaseType{
 	private:
-		static const unsigned offset=210;
+		static const unsigned offset=212;
 		static const unsigned types_count=14;
 
 	public:
@@ -661,7 +668,7 @@ class CategoryType: public BaseType{
 
 class FiringType: public BaseType{
 	private:
-		static const unsigned offset=224;
+		static const unsigned offset=226;
 		static const unsigned types_count=3;
 
 	public:
@@ -680,7 +687,7 @@ class FiringType: public BaseType{
 
 class EventTriggerType: public BaseType{
 	private:
-		static const unsigned offset=235;
+		static const unsigned offset=237;
 		static const unsigned types_count=4;
 
 	public:

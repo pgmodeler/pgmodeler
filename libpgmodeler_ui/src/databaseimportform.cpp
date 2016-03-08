@@ -416,7 +416,6 @@ void DatabaseImportForm::filterObjects(QTreeWidget *tree_wgt, const QString &pat
 	QList<QTreeWidgetItem*> items=tree_wgt->findItems(pattern, Qt::MatchStartsWith | Qt::MatchRecursive, search_column);
 	QTreeWidgetItemIterator itr(tree_wgt);
 
-
 	tree_wgt->blockSignals(true);
 	tree_wgt->collapseAll();
 	tree_wgt->clearSelection();
@@ -724,13 +723,14 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 		QTreeWidgetItem *group=nullptr, *item=nullptr;
 		QFont grp_fnt=tree_wgt->font();
 		attribs_map extra_attribs={{ParsersAttributes::FILTER_TABLE_TYPES, ParsersAttributes::_TRUE_}};
-		QString tooltip=QString("OID: %1"), name;
+		QString tooltip=QString("OID: %1"), name, label;
 		bool child_checked=false;
 		vector<attribs_map> objects_vect;
 		map<ObjectType, QTreeWidgetItem *> gen_groups;
 		ObjectType obj_type;
 		QList<QTreeWidgetItem*> groups_list;
 		unsigned oid=0;
+		int start=-1, end=-1;
 
 		grp_fnt.setItalic(true);
 		tree_wgt->blockSignals(true);
@@ -768,12 +768,24 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 
 				//Creates individual items for each object of the current type
 				oid=attribs[ParsersAttributes::OID].toUInt();
-				name=attribs[ParsersAttributes::NAME];
+
+				attribs[ParsersAttributes::NAME].remove(QRegExp(QString("( )(without)( time zone)")));
+				label=name=attribs[ParsersAttributes::NAME];
+
+				//Removing the trailing type string from op. families or op. classes names
+				if(obj_type==OBJ_OPFAMILY || obj_type==OBJ_OPCLASS)
+				{
+					start=name.indexOf(QChar('['));
+					end=name.lastIndexOf(QChar(']'));
+					name.remove(start, (end-start)+1);
+					name=name.trimmed();
+				}
 
 				item=new QTreeWidgetItem(group);
 				item->setIcon(0, QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
-				item->setText(0, attribs[ParsersAttributes::NAME]);
-				item->setText(1, attribs[ParsersAttributes::OID]);
+				item->setText(0, label);
+				item->setText(OBJECT_ID, attribs[ParsersAttributes::OID]);
+				item->setData(OBJECT_NAME, Qt::UserRole, name);
 
 				if(checkable_items)
 				{

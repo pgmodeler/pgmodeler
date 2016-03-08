@@ -13,7 +13,7 @@
     [DROP ] {sql-object} [ IF EXISTS ]
  %end
 
- %if {column} %or {constraint} %and %not {decl-in-table} %then
+ %if {column} %or {constraint} %and %not {decl-in-table} %or {extension} %then
    {name}
  %else
    {signature}

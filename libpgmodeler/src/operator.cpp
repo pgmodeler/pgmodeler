@@ -31,8 +31,8 @@ Operator::Operator(void)
 		operators[i]=nullptr;
 
 	hashes=merges=false;
-	argument_types[LEFT_ARG]=PgSQLType(QString("any"));
-	argument_types[RIGHT_ARG]=PgSQLType(QString("any"));
+	argument_types[LEFT_ARG]=PgSQLType(QString("\"any\""));
+	argument_types[RIGHT_ARG]=PgSQLType(QString("\"any\""));
 
 	attributes[ParsersAttributes::LEFT_TYPE]=QString();
 	attributes[ParsersAttributes::RIGHT_TYPE]=QString();
@@ -112,7 +112,7 @@ void Operator::setFunction(Function *func, unsigned func_type)
 		else
 		{
 			unsigned param_count=func->getParameterCount();
-			PgSQLType param_type1=PgSQLType(QString("any")), param_type2=PgSQLType(QString("any"));
+			PgSQLType param_type1=PgSQLType(QString("\"any\"")), param_type2=PgSQLType(QString("\"any\""));
 
 			//Get the function parameter to make validations
 			param_type1=func->getParameter(0).getType();
@@ -121,25 +121,25 @@ void Operator::setFunction(Function *func, unsigned func_type)
 			//Validates the function parameters according to the operator arguments
 
 			//ERROR 1: The function have parameters of the type 'any'
-			if((param_type1==QString("any") || (param_count==2 && param_type2==QString("any"))) ||
+			if((param_type1==QString("\"any\"") || (param_count==2 && param_type2==QString("\"any\""))) ||
 
 					//ERROR 2: The function parameter count is 1 and the type of operator argument is not 'any'
-					(param_count==1 && argument_types[0]!=QString("any") && argument_types[1]!=QString("any")) ||
+					(param_count==1 && argument_types[0]!=QString("\"any\"") && argument_types[1]!=QString("\"any\"")) ||
 
 					//ERROR 3: The function parameter count is 2 and the operator arguments is not 'any'
-					(param_count==2 && ((argument_types[0]==QString("any") && argument_types[1]!=QString("any")) ||
-										(argument_types[0]!=QString("any") && argument_types[1]==QString("any")))) ||
+					(param_count==2 && ((argument_types[0]==QString("\"any\"") && argument_types[1]!=QString("\"any\"")) ||
+										(argument_types[0]!=QString("\"any\"") && argument_types[1]==QString("\"any\"")))) ||
 
 					/* ERROR 4:  The function parameter count is 2 and the argument types differs from
 													parameters type */
 					(param_count==2 &&
-					 ((argument_types[0]==QString("any") || argument_types[1]==QString("any")) ||
+					 ((argument_types[0]==QString("\"any\"") || argument_types[1]==QString("\"any\"")) ||
 					  (argument_types[0]!=param_type1 || argument_types[1]!=param_type2))) ||
 
 					//ERROR 5:  When the function has 1 parameter the type differ from the operator argument
 					(param_count==1 &&
-					 ((argument_types[0]!=QString("any") && argument_types[0]!=param_type1) ||
-					  (argument_types[1]!=QString("any") && argument_types[1]!=param_type1))))
+					 ((argument_types[0]!=QString("\"any\"") && argument_types[0]!=param_type1) ||
+						(argument_types[1]!=QString("\"any\"") && argument_types[1]!=param_type1))))
 				throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_PARAMS)
 								.arg(this->getName())
 								.arg(BaseObject::getTypeName(OBJ_OPERATOR)),
@@ -259,7 +259,7 @@ QString Operator::getSignature(bool format_name)
 
 	for(i=0; i < 2; i++)
 	{
-		if(argument_types[i]==QString("any"))
+		if(argument_types[i]==QString("\"any\""))
 			args.push_back(QString("NONE"));
 		else
 			args.push_back(*argument_types[i]);
@@ -292,7 +292,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 	{
 		if(def_type==SchemaParser::SQL_DEFINITION)
 		{
-			if(argument_types[i]!=QString("any"))
+			if(argument_types[i]!=QString("\"any\""))
 				attributes[type_attribs[i]]=(*argument_types[i]);
 		}
 		else

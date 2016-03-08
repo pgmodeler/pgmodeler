@@ -27,6 +27,7 @@ using namespace ParsersAttributes;
 const QString DatabaseExplorerWidget::DEP_NOT_DEFINED=QString();
 const QString DatabaseExplorerWidget::DEP_NOT_FOUND=QT_TR_NOOP("(not found, OID: %1)");
 const QString DatabaseExplorerWidget::ELEM_SEPARATOR=QString("•");
+const QString DatabaseExplorerWidget::DEFAULT_SOURCE_CODE=QT_TR_NOOP("-- Source not generated! Middle-click the item to load it. --");
 
 const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{ADMIN_ROLES, QT_TR_NOOP("Admin. roles")},           {ALIGNMENT, QT_TR_NOOP("Alignment")},                  {ANALYZE_FUNC, QT_TR_NOOP("Analyze func.")},
@@ -119,6 +120,8 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 
 	rename_action=new QAction(QIcon(QString(":icones/icones/rename.png")), trUtf8("Rename"), &handle_menu);
 	rename_action->setShortcut(QKeySequence(Qt::Key_F2));
+
+	source_action=new QAction(QIcon(QString(":icones/icones/codigosql.png")), trUtf8("Source code"), &handle_menu);
 
 	objects_trw->installEventFilter(this);
 
@@ -859,6 +862,8 @@ void DatabaseExplorerWidget::clearObjectProperties(void)
 {
 	while(properties_tbw->rowCount() > 0)
 		properties_tbw->removeRow(0);
+
+	emit s_sourceCodeShowRequested(QString());
 }
 
 void DatabaseExplorerWidget::listObjects(void)
@@ -866,12 +871,18 @@ void DatabaseExplorerWidget::listObjects(void)
 	try
 	{
 		QAction *act=qobject_cast<QAction *>(sender());
+		bool quick_refresh=(act ? act->data().toBool() : true);
 
 		configureImportHelper();
 		objects_trw->blockSignals(true);
+
 		clearObjectProperties();
 
-		DatabaseImportForm::listObjects(import_helper, objects_trw, false, false, true, (act ? act->data().toBool() : true));
+		if(quick_refresh)
+			QApplication::setOverrideCursor(Qt::WaitCursor);
+
+		DatabaseImportForm::listObjects(import_helper, objects_trw, false, false, true, quick_refresh);
+		QApplication::restoreOverrideCursor();
 
 		objects_trw->blockSignals(false);
 		import_helper.closeConnection();
@@ -900,6 +911,10 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 	{
 		updateItem(item->parent());
 	}
+	else if(QApplication::mouseButtons()==Qt::MiddleButton && item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toInt() >= 0)
+	{
+		loadObjectSource();
+	}
 	else if(QApplication::mouseButtons()==Qt::RightButton && item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toInt() >= 0)
 	{
 		ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
@@ -918,6 +933,7 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 				handle_menu.addAction(show_data_action);
 
 			handle_menu.addAction(properties_action);
+			handle_menu.addAction(source_action);
 
 			if(obj_type!=OBJ_CAST && obj_type!=OBJ_DATABASE)
 				handle_menu.addAction(rename_action);
@@ -953,6 +969,8 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 			startObjectRename(item);
 		else if(exec_action==properties_action)
 			showObjectProperties(true);
+		else if(exec_action==source_action)
+			loadObjectSource();
 		else if(exec_action==show_data_action)
 			emit s_dataGridOpenRequested(connection.getConnectionParam(Connection::PARAM_DB_NAME),
 										 item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
@@ -1081,6 +1099,7 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 		{
 			ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
 			QString msg;
+			QString obj_name=item->data(DatabaseImportForm::OBJECT_NAME, Qt::UserRole).toString();
 
 			//Roles and tablespaces can't be removed in cascade mode
 			if(cascade && (obj_type==OBJ_ROLE || obj_type==OBJ_TABLESPACE))
@@ -1088,10 +1107,10 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 
 			if(!cascade)
 				msg=trUtf8("Do you really want to drop the object <strong>%1</strong> <em>(%2)</em>?")
-					.arg(item->text(0)).arg(BaseObject::getTypeName(obj_type));
+					.arg(obj_name).arg(BaseObject::getTypeName(obj_type));
 			else
 				msg=trUtf8("Do you really want to <strong>cascade</strong> drop the object <strong>%1</strong> <em>(%2)</em>? This action will drop all the other objects that depends on it.")
-					.arg(item->text(0)).arg(BaseObject::getTypeName(obj_type));
+					.arg(obj_name).arg(BaseObject::getTypeName(obj_type));
 
 			msg_box.show(msg, Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
@@ -1134,6 +1153,7 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 				else
 					objects_trw->takeTopLevelItem(objects_trw->indexOfTopLevelItem(item));
 
+				objects_trw->setCurrentItem(nullptr);
 			}
 		}
 	}
@@ -1153,7 +1173,7 @@ void DatabaseExplorerWidget::truncateTable(QTreeWidgetItem *item, bool cascade)
 		{
 			QString msg, obj_name, sch_name;
 
-			obj_name=item->text(0);
+			obj_name=item->data(DatabaseImportForm::OBJECT_NAME, Qt::UserRole).toString();
 			sch_name=BaseObject::formatName(item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString());
 
 			if(!cascade)
@@ -1203,7 +1223,9 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item)
 		ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
 		unsigned obj_id=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt());
 		QString sch_name, tab_name;
-		vector<QTreeWidgetItem *> gen_items, gen_items1;
+		vector<QTreeWidgetItem *> gen_items;
+
+		QApplication::setOverrideCursor(Qt::WaitCursor);
 
 		if(obj_type==OBJ_DATABASE)
 			listObjects();
@@ -1264,7 +1286,10 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item)
 
 			import_helper.closeConnection();
 			objects_trw->sortItems(0, Qt::AscendingOrder);
+			objects_trw->setCurrentItem(nullptr);
 		}
+
+		QApplication::restoreOverrideCursor();
 	}
 }
 
@@ -1280,12 +1305,14 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
 			ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
 			attribs_map orig_attribs, fmt_attribs;
 
+
 			//First, retrieve the attributes stored on the item as a result of a previous properties listing
 			orig_attribs=item->data(DatabaseImportForm::OBJECT_ATTRIBS, Qt::UserRole).value<attribs_map>();
 
 			//In case of the cached attributes are empty
 			if(orig_attribs.empty() || force_reload)
 			{
+				QApplication::setOverrideCursor(Qt::WaitCursor);
 				catalog.setConnection(connection);
 
 				//Retrieve them from the catalog
@@ -1310,13 +1337,16 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
 
 				//Store the attributes on the item to avoid repeatedly query the database
 				item->setData(DatabaseImportForm::OBJECT_ATTRIBS, Qt::UserRole, QVariant::fromValue<attribs_map>(fmt_attribs));
+				item->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, DEFAULT_SOURCE_CODE);
 
 				catalog.closeConnection();
+				QApplication::restoreOverrideCursor();
 			}
 		}
 	}
 	catch(Exception &e)
 	{
+		QApplication::restoreOverrideCursor();
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
@@ -1391,8 +1421,8 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 					if(cached_attribs[ParsersAttributes::TYPE]==~ConstraintType(ConstraintType::foreign_key))
 					{
 						/* Creates two items denoting the source columns and referenced tables.
-			 These items have a negative id indicating that no popup menu will be show if user
-			 right-click them. */
+							These items have a negative id indicating that no popup menu will be show if user
+							right-click them. */
 
 						src_item=new QTreeWidgetItem(item);
 						src_item->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, QVariant::fromValue<int>(-1));
@@ -1430,6 +1460,8 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 					}
 				}
 			}
+
+			emit s_sourceCodeShowRequested(item->data(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole).toString());
 
 			properties_tbw->setSortingEnabled(true);
 			properties_tbw->sortByColumn(0, Qt::AscendingOrder);
@@ -1511,4 +1543,179 @@ void DatabaseExplorerWidget::cancelObjectRename(void)
 	}
 }
 
+void DatabaseExplorerWidget::loadObjectSource(void)
+{
+	QTreeWidgetItem *item=objects_trw->currentItem();
 
+	try
+	{
+		if(item)
+		{
+			QString source=item->data(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole).toString();
+
+			if(source!=DEFAULT_SOURCE_CODE)
+			{
+				emit s_sourceCodeShowRequested(source);
+			}
+			else
+			{
+				DatabaseModel dbmodel;
+				DatabaseImportHelper import_hlp;
+				ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
+				QString sch_name, tab_name, name;
+				QTreeWidgetItem *sch_item=nullptr;
+				BaseObject *object=nullptr;
+				BaseObject *schema=nullptr;
+				attribs_map attribs=item->data(DatabaseImportForm::OBJECT_OTHER_DATA, Qt::UserRole).value<attribs_map>();
+				bool is_column=false;
+				unsigned oid=item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt(),
+						db_oid=objects_trw->topLevelItem(0)->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt(),
+						sys_oid=0;
+				int sbar_value=(objects_trw->verticalScrollBar() ? objects_trw->verticalScrollBar()->value() : 0);
+
+				QApplication::setOverrideCursor(Qt::WaitCursor);
+				sch_name=item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString();
+				tab_name=item->data(DatabaseImportForm::OBJECT_TABLE, Qt::UserRole).toString();
+				name=item->data(DatabaseImportForm::OBJECT_NAME, Qt::UserRole).toString();
+
+				if(!sch_name.isEmpty() && obj_type!=OBJ_EXTENSION)
+				{
+					if(tab_name.isEmpty())
+						name.prepend(sch_name + QChar('.'));
+					else
+						tab_name.prepend(sch_name + QChar('.'));
+				}
+
+				//Special case for columns. We will retrieve the table from database and then generate the code for the column
+				if(obj_type==OBJ_COLUMN)
+				{
+					oid=item->parent()->parent()->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt();
+					is_column=true;
+					obj_type=OBJ_TABLE;
+				}
+
+				//Importing the object and its dependencies
+				dbmodel.createSystemObjects(false);
+				import_hlp.setConnection(connection);
+				import_hlp.setCurrentDatabase(connection.getConnectionParam(Connection::PARAM_DB_NAME));
+				import_hlp.setImportOptions(sys_objs_chk->isChecked(), ext_objs_chk->isChecked(), true, false, false, false, false);
+				import_hlp.setSelectedOIDs(&dbmodel, {{OBJ_DATABASE, {db_oid}}, {obj_type,{oid}}}, {});
+				sys_oid=import_hlp.getLastSystemOID();
+
+				//Currently pgModeler does not support the visualization of base types and built-in ones
+				if(obj_type==OBJ_TYPE &&
+					 (oid <= sys_oid || attribs[ParsersAttributes::CONFIGURATION]==ParsersAttributes::BASE_TYPE))
+				{
+					source=trUtf8("-- Source code genaration for buil-in and base types currently unavailable --");
+					emit s_sourceCodeShowRequested(source);
+				}
+				else
+				{
+					import_hlp.importDatabase();
+
+					if(obj_type==OBJ_DATABASE)
+						source=getObjectSource(&dbmodel, &dbmodel);
+					else
+					{
+						/* Fixing the signature of opclasses and opfamilies.
+								The name is in form "name [index type]", so we change it to "name USING [index type]" */
+						if(obj_type==OBJ_OPCLASS || obj_type==OBJ_OPFAMILY)
+						{
+							QString idx_type=item->text(0);
+
+							idx_type.remove(0, idx_type.indexOf(QChar('[')) + 1);
+							idx_type.remove(QChar(']'));
+
+							name=QString("%1 USING %2").arg(name).arg(idx_type);
+						}
+
+						//Generating the code for table child object
+						if(TableObject::isTableObject(obj_type) || is_column)
+						{
+							Table *table=nullptr;
+							table=dynamic_cast<Table *>(dbmodel.getObject(tab_name, OBJ_TABLE));
+							QTreeWidgetItem *table_item=nullptr;
+
+							//If the table was imported then the source code of it will be placed on the respective item
+							if(table)
+							{
+								table_item=item->parent()->parent();
+								objects_trw->setCurrentItem(item->parent()->parent());
+								table_item->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, getObjectSource(table, &dbmodel));
+
+								sch_item=table_item->parent()->parent();
+								schema=table->getSchema();
+
+								//Generate the code of table children objects as ALTER commands
+								table->setGenerateAlterCmds(true);
+								object=table->getObject(name, (is_column ? OBJ_COLUMN : obj_type));
+							}
+						}
+						else
+						{
+							object=dbmodel.getObject(name, obj_type);
+							schema=object->getSchema();
+						}
+
+						if(object)
+							source=getObjectSource(object, &dbmodel);
+						else
+							source=trUtf8("-- Source code unavailable for the object %1 (%2). --").arg(name).arg(BaseObject::getTypeName(obj_type));
+					}
+				}
+
+				//Generating the schema code and assigning it to the respective items
+				if(schema)
+				{
+					if(!sch_item) sch_item=item->parent()->parent();
+					objects_trw->setCurrentItem(sch_item);
+					sch_item->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, getObjectSource(schema, &dbmodel));
+
+					//Generating the code for the database itself and storing it in the root item in the tree
+					objects_trw->setCurrentItem(objects_trw->topLevelItem(0));
+					objects_trw->topLevelItem(0)->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, getObjectSource(&dbmodel, &dbmodel));
+				}
+
+				item->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, source);
+				objects_trw->setCurrentItem(item);
+
+				/* Restore the position of the scrollbar in the tree because the usage of setCurrentItem in previous lines
+					 may cause the scrollbar to change its original value */
+				if(objects_trw->verticalScrollBar())
+					objects_trw->verticalScrollBar()->setValue(sbar_value);
+
+				QApplication::restoreOverrideCursor();
+				emit s_sourceCodeShowRequested(source);
+			}
+		}
+	}
+	catch (Exception &e)
+	{
+		QApplication::restoreOverrideCursor();
+		emit s_sourceCodeShowRequested(QString("/* Could not generate source code due to one or more errors! \n \n %1 */").arg(e.getExceptionsText()));
+	}
+}
+
+QString DatabaseExplorerWidget::getObjectSource(BaseObject *object, DatabaseModel *dbmodel)
+{
+	if(!object || !dbmodel)
+		return QString();
+
+	vector<Permission *> perms;
+	QString source;
+
+	dbmodel->getPermissions(object, perms);
+	object->setSystemObject(false);
+	object->setSQLDisabled(false);
+	object->setCodeInvalidated(true);
+
+	if(object!=dbmodel)
+		source=object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+	else
+		source=dbmodel->__getCodeDefinition(SchemaParser::SQL_DEFINITION);
+
+	for(auto &perm : perms)
+		source+=perm->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+
+	return(source);
+}

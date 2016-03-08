@@ -27,16 +27,39 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 {
 	setupUi(this);
 	h_splitter->setSizes({0, 10000});
+	v_splitter->setSizes({1000, 500});
 
-	connect(connections_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(connectToServer(void)));
+	QVBoxLayout *vbox=new QVBoxLayout;
+	sourcecode_txt=new NumberedTextEditor(sourcecode_gb);
+	sourcecode_txt->setReadOnly(true);
+
+	sourcecode_hl=new SyntaxHighlighter(sourcecode_txt);
+	sourcecode_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+
+	vbox->setContentsMargins(4,4,4,4);
+	vbox->addWidget(sourcecode_txt);
+	sourcecode_gb->setLayout(vbox);
+
+	connect(connections_cmb, SIGNAL(activated(int)), this, SLOT(connectToServer(void)));
 	connect(refresh_tb, SIGNAL(clicked(void)), this, SLOT(connectToServer(void)));
 	connect(databases_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeDatabaseExplorer(int)));
 	connect(sql_exec_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeSQLExecutionTab(int)));
 	connect(database_cmb, SIGNAL(activated(int)), this, SLOT(browseDatabase()));
 	connect(disconnect_tb, SIGNAL(clicked()), this, SLOT(disconnectFromDatabases()));
+	connect(source_pane_tb, SIGNAL(toggled(bool)), sourcecode_gb, SLOT(setVisible(bool)));
 
 	connect(databases_tbw, &QTabWidget::currentChanged,
-			[=](){ disconnect_tb->setEnabled(databases_tbw->count() > 0); });
+			[=](){
+				DatabaseExplorerWidget *dbexplorer=qobject_cast<DatabaseExplorerWidget *>(databases_tbw->currentWidget());
+
+				sourcecode_txt->clear();
+
+				if(dbexplorer && dbexplorer->objects_trw->currentItem())
+					sourcecode_txt->setPlainText(dbexplorer->objects_trw->currentItem()->
+																			 data(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole).toString());
+
+				disconnect_tb->setEnabled(databases_tbw->count() > 0);
+			});
 }
 
 SQLToolWidget::~SQLToolWidget(void)
@@ -204,7 +227,7 @@ void SQLToolWidget::browseDatabase(void)
 	try
 	{
 		//If the selected database is already being browse do not create another explorer instance
-		if(database_cmb->currentIndex() > 0 /* && !databases_tbw->findChild<DatabaseExplorerWidget *>(database_cmb->currentText())*/)
+		if(database_cmb->currentIndex() > 0)
 		{
 			Connection conn=(*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>()));
 			DatabaseExplorerWidget *db_explorer_wgt=new DatabaseExplorerWidget;
@@ -221,9 +244,13 @@ void SQLToolWidget::browseDatabase(void)
 			connect(db_explorer_wgt, SIGNAL(s_databaseDropRequested(QString)), this, SLOT(dropDatabase(QString)));
 			connect(db_explorer_wgt, SIGNAL(s_sqlExecutionRequested()), this, SLOT(addSQLExecutionTab()));
 			connect(db_explorer_wgt, SIGNAL(s_snippetShowRequested(QString)), this, SLOT(showSnippet(QString)));
+			connect(db_explorer_wgt, SIGNAL(s_sourceCodeShowRequested(QString)), sourcecode_txt, SLOT(setPlainText(QString)));
+
+			connect(attributes_tb, SIGNAL(toggled(bool)), db_explorer_wgt->attributes_wgt, SLOT(setVisible(bool)));
+			db_explorer_wgt->attributes_wgt->setVisible(attributes_tb->isChecked());
 
 			/* Forcing the signal s_sqlExecutionRequested to be emitted to properly register the
-	   new tab on the map of sql panes related to the database explorer */
+			new tab on the map of sql panes related to the database explorer */
 			db_explorer_wgt->runsql_tb->click();
 		}
 	}

@@ -45,7 +45,7 @@
 <!ATTLIST file path CDATA #REQUIRED>
 
 <!ELEMENT widget EMPTY>
-<!ATTLIST widget id (validator|objectfinder) "validator">
+<!ATTLIST widget id (validator|objectfinder|sqltool) "validator">
 <!ATTLIST widget sql-validation (false|true) "false">
 <!ATTLIST widget pgsql-version CDATA #IMPLIED>
 <!ATTLIST widget use-unique-names (false|true) "false">
@@ -53,5 +53,7 @@
 <!ATTLIST widget exact-match (false|true) "false">
 <!ATTLIST widget case-sensitive (false|true) "false">
 <!ATTLIST widget highlight-objects (false|true) "false">
+<!ATTLIST widget show-attributes-grid (false|true) "true">
+<!ATTLIST widget show-source-pane (false|true) "true">
 
 

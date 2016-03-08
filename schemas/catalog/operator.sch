@@ -3,7 +3,21 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-  [SELECT op.oid, oprname || '(' || oprleft::regtype || ',' || oprright::regtype || ')' AS name FROM pg_operator AS op ]
+  [SELECT op.oid, oprname || '(' || 
+  
+    CASE 
+        WHEN oprleft::char = '0' THEN 'NONE'
+        ELSE oprleft::regtype::varchar
+    END
+  
+    || ',' || 
+  
+    CASE 
+        WHEN oprright::char = '0' THEN 'NONE'
+        ELSE oprright::regtype::varchar
+    END
+        
+    || ')' AS name FROM pg_operator AS op ]
 
   %if {schema} %then
     [ LEFT JOIN pg_namespace AS ns ON op.oprnamespace = ns.oid

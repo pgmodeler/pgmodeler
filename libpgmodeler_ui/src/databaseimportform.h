@@ -81,11 +81,13 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		//! brief Constants used to access the tree widget items data
 		static const unsigned OBJECT_ID=1,
 		OBJECT_TYPE=2,
-		OBJECT_SCHEMA=3,
-		OBJECT_TABLE=4,
-		OBJECT_ATTRIBS=5, //Stores the object's attributes returned by catalog query
-		OBJECT_OTHER_DATA=6, //General purpose usage
-		OBJECT_COUNT=7; //Only for gropus
+		OBJECT_NAME=3,
+		OBJECT_SCHEMA=4,
+		OBJECT_TABLE=5,
+		OBJECT_ATTRIBS=6, //Stores the object's attributes returned by catalog query
+		OBJECT_OTHER_DATA=7, //General purpose usage
+		OBJECT_COUNT=8,
+		OBJECT_SOURCE=9; //Only for gropus
 		
 		DatabaseImportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 		~DatabaseImportForm(void);

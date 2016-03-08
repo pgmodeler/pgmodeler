@@ -14,6 +14,12 @@ $tb [<widget]
     [ case-sensitive="] %if {case-sensitive} %then true %else false %end ["]
     [ exact-match="] %if {exact-match} %then true %else false %end ["]
     [ highlight-objects="] %if {highlight-objects} %then true %else false %end ["]
+  %else 
+    %if {sqltool} %then
+      [ id="sqltool"]
+      [ show-attributes-grid="] %if {show-attributes-grid} %then true %else false %end ["]
+      [ show-source-pane="] %if {show-source-pane} %then true %else false %end ["]
+    %end
   %end
 %end
 

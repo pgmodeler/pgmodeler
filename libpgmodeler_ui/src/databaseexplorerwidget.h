@@ -37,7 +37,8 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		
 		static const QString DEP_NOT_DEFINED,
 		DEP_NOT_FOUND,
-		ELEM_SEPARATOR;
+		ELEM_SEPARATOR,
+		DEFAULT_SOURCE_CODE;
 		
 		//! brief Delegate item form object's attributes grid
 		ReadOnlyItemDelegate *ro_item_deleg;
@@ -65,7 +66,8 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		
 		QAction *copy_action, *drop_action, *drop_cascade_action,
 		*show_data_action, *refresh_action, *properties_action,
-		*trunc_cascade_action, *truncate_action, *rename_action;
+		*trunc_cascade_action, *truncate_action, *rename_action,
+		*source_action;
 		
 		QTreeWidgetItem *rename_item;
 		
@@ -135,6 +137,9 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		//! brief Updates the selected tree item
 		void updateItem(QTreeWidgetItem *item);
 		
+		//! brief Generate the SQL code for the specified object appending the permissions code for it as well
+		QString getObjectSource(BaseObject *object, DatabaseModel *dbmodel);
+
 	public:
 		DatabaseExplorerWidget(QWidget * parent = 0);
 		
@@ -168,6 +173,8 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		
 		//! brief Cancels the rename and restore the original item's name
 		void cancelObjectRename(void);
+
+		void loadObjectSource(void);
 		
 	signals:
 		//! brief This signal is emmited to indicate that the data manipulation dialog need to be opened
@@ -181,6 +188,9 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		
 		//! brief This signal is emmited containing the processed snippet to be shown in an input field
 		void s_snippetShowRequested(QString snippet);
+
+		//! brief This signal is emmited containing the source code to be shown in an input field
+		void s_sourceCodeShowRequested(QString source);
 };
 
 #endif

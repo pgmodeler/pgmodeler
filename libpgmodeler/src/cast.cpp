@@ -57,7 +57,7 @@ void Cast::setDataType(unsigned type_idx, PgSQLType type)
 void Cast::setCastType(unsigned cast_type)
 {
 	//Raises an error if the user tries to assign an invalid cast type
-	if(cast_type!=ASSIGNMENT && cast_type!=IMPLICIT)
+	if(cast_type > IMPLICIT)
 		throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->cast_type != cast_type);
@@ -74,6 +74,7 @@ void Cast::setCastFunction(Function *cast_func)
 {
 	unsigned param_count;
 	bool error=false;
+	PgSQLType ret_type;
 
 	if(!cast_func)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
@@ -94,7 +95,8 @@ void Cast::setCastFunction(Function *cast_func)
 	{
 		/* Error condition 1: Check if the first function parameter data type differs
 		 from cast source data type */
-		error=(cast_func->getParameter(0).getType()!=this->types[SRC_TYPE]);
+		error=(cast_func->getParameter(0).getType()!=this->types[SRC_TYPE] &&
+					!cast_func->getParameter(0).getType().canCastTo(this->types[SRC_TYPE]));
 
 		/* Error condition 2: Check if the second function parameter data type
 		 is different from 'integer' */
@@ -114,8 +116,11 @@ void Cast::setCastFunction(Function *cast_func)
 							ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
-	//Raises an error if the return type of the function differs from the destination data type
-	if(cast_func->getReturnType()!=this->types[DST_TYPE])
+	/* Raises an error if the return type of the function differs from the destination data type.
+			If the types can be casted between them no error is returned */
+	ret_type=cast_func->getReturnType();
+
+	if(ret_type!=this->types[DST_TYPE] && !ret_type.canCastTo(this->types[DST_TYPE]))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
 						.arg(this->getName())
 						.arg(BaseObject::getTypeName(OBJ_CAST)),
@@ -179,7 +184,7 @@ QString Cast::getCodeDefinition(unsigned def_type)
 	else if(cast_type==IMPLICIT)
 		attributes[ParsersAttributes::CAST_TYPE]=ParsersAttributes::IMPLICIT;
 	else
-		attributes[ParsersAttributes::CAST_TYPE]=ParsersAttributes::EXPLICIT;
+		attributes[ParsersAttributes::CAST_TYPE]=QString();
 
 	if(def_type==SchemaParser::SQL_DEFINITION)
 		attributes[ParsersAttributes::CAST_TYPE]=attributes[ParsersAttributes::CAST_TYPE].toUpper();

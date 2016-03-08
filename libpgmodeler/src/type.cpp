@@ -194,14 +194,14 @@ void Type::setConfiguration(unsigned conf)
 	setCollation(nullptr);
 	subtype_opclass=nullptr;
 
-	alignment="integer";
+	alignment=QString("integer");
 	delimiter='\0';
 	storage=StorageType::plain;
-	element="any";
+	element=QString("\"any\"");
 	internal_len=0;
 	category=CategoryType::userdefined;
 	preferred=collatable=by_value=false;
-	like_type="any";
+	like_type=QString("\"any\"");
 
 	this->config=conf;
 	setCodeInvalidated(true);
@@ -239,7 +239,8 @@ void Type::setFunction(unsigned func_id, Function *func)
 		/* Raises an error if the function language is not C.
 		 Functions assigned to base type must be written in C */
 		if((func_id!=CANONICAL_FUNC && func_id!=SUBTYPE_DIFF_FUNC) &&
-				func->getLanguage()->getName()!=(~lang))
+				func->getLanguage()->getName()!=~LanguageType(LanguageType::c) &&
+				func->getLanguage()->getName()!=~LanguageType(LanguageType::internal))
 			throw Exception(ERR_ASG_FUNC_INV_LANGUAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		/* Raises an error if the parameter count for INPUT and RECV functions
@@ -262,14 +263,14 @@ void Type::setFunction(unsigned func_id, Function *func)
 		 OUTPUT and TPMOD_OUT should return cstring.
 		 The other functions SEND, TPMOD_IN and ANALYZE should return bytea, integer and boolean,
 		 respectively. Raises an error if some of conditions above is not satisfied. */
-		else if((func_id==INPUT_FUNC && func->getReturnType()!=QString("any")) ||
+		else if((func_id==INPUT_FUNC && func->getReturnType()!=QString("\"any\"")) ||
 				(func_id==OUTPUT_FUNC && func->getReturnType()!=QString("cstring")) ||
-				(func_id==RECV_FUNC && func->getReturnType()!=QString("any")) ||
+				(func_id==RECV_FUNC && func->getReturnType()!=QString("\"any\"")) ||
 				(func_id==SEND_FUNC && func->getReturnType()!=QString("bytea")) ||
 				(func_id==TPMOD_IN_FUNC && func->getReturnType()!=QString("integer")) ||
 				(func_id==TPMOD_OUT_FUNC && func->getReturnType()!=QString("cstring")) ||
 				(func_id==ANALYZE_FUNC && func->getReturnType()!=QString("boolean")) ||
-				(func_id==CANONICAL_FUNC && func->getReturnType()!=QString("any")) ||
+				(func_id==CANONICAL_FUNC && func->getReturnType()!=QString("\"any\"")) ||
 				(func_id==SUBTYPE_DIFF_FUNC && func->getReturnType()!=QString("double precision")))
 			throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
 							.arg(this->getName())
@@ -295,7 +296,7 @@ void Type::setFunction(unsigned func_id, Function *func)
 				  (param_count==3 &&
 				   (func->getParameter(1).getType()!=QString("oid") ||
 					func->getParameter(2).getType()!=QString("integer"))))) ||
-				((func_id==SEND_FUNC || func_id==CANONICAL_FUNC || func_id==OUTPUT_FUNC) && func->getParameter(0).getType()!=QString("any")) ||
+				((func_id==SEND_FUNC || func_id==CANONICAL_FUNC || func_id==OUTPUT_FUNC) && func->getParameter(0).getType()!=QString("\"any\"")) ||
 				(func_id==TPMOD_IN_FUNC && *(func->getParameter(0).getType())!=QString("cstring[]")) ||
 				(func_id==TPMOD_OUT_FUNC && func->getParameter(0).getType()!=QString("integer")) ||
 				(func_id==ANALYZE_FUNC && func->getParameter(0).getType()!=QString("internal")) ||
@@ -339,7 +340,7 @@ void Type::convertFunctionParameters(bool inverse_conv)
 				}
 				else
 				{
-					param.setType(PgSQLType(QString("any")));
+					param.setType(PgSQLType(QString("\"any\"")));
 					func->addParameter(param);
 				}
 			}
@@ -348,7 +349,7 @@ void Type::convertFunctionParameters(bool inverse_conv)
 				if(!inverse_conv)
 					func->setReturnType(PgSQLType(this));
 				else
-					func->setReturnType(PgSQLType(QString("any")));
+					func->setReturnType(PgSQLType(QString("\"any\"")));
 			}
 		}
 	}
@@ -400,7 +401,7 @@ void Type::setElement(PgSQLType elem)
 	if(PgSQLType::getUserTypeIndex(this->getName(true), this) == !elem)
 		throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(this->getName(true)),
 						ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(elem!=QString("any") &&
+	else if(elem!=QString("\"any\"") &&
 			(elem.isOIDType() || elem.isPseudoType() ||
 			 elem.isUserType() || elem.isArrayType()))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_INV_ELEMENT_TYPE).arg(this->getName(true)),
@@ -655,7 +656,7 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 		attributes[ParsersAttributes::STORAGE]=(~storage);
 		attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
 
-		if(element!=QString("any"))
+		if(element!=QString("\"any\""))
 			attributes[ParsersAttributes::ELEMENT]=(*element);
 
 		if(delimiter!='\0')
@@ -666,7 +667,7 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 		attributes[ParsersAttributes::PREFERRED]=(preferred ? ParsersAttributes::_TRUE_ : QString());
 		attributes[ParsersAttributes::COLLATABLE]=(collatable ? ParsersAttributes::_TRUE_ : QString());
 
-		if(like_type!=QString("any"))
+		if(like_type!=QString("\"any\""))
 		{
 			if(def_type==SchemaParser::SQL_DEFINITION)
 				attributes[ParsersAttributes::LIKE_TYPE]=(*like_type);
