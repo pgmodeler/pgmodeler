@@ -27,7 +27,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 {
 	setupUi(this);
 	h_splitter->setSizes({0, 10000});
-	v_splitter->setSizes({1000, 500});
+	v_splitter->setSizes({1000, 400});
 
 	QVBoxLayout *vbox=new QVBoxLayout;
 	sourcecode_txt=new NumberedTextEditor(sourcecode_gb);
