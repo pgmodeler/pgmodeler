@@ -97,3 +97,9 @@ QObject *BaseGraphicObject::getReceiverObject(void)
 {
 	return(receiver_object);
 }
+
+bool BaseGraphicObject::isGraphicObject(ObjectType type)
+{
+	return(type==OBJ_TABLE || type==OBJ_VIEW || type==OBJ_RELATIONSHIP ||
+				 type==BASE_RELATIONSHIP || type==OBJ_TEXTBOX || type==OBJ_SCHEMA);
+}
