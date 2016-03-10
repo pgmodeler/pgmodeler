@@ -8954,3 +8954,320 @@ bool DatabaseModel::isPrependedAtBOD(void)
 {
 	return(prepend_at_bod);
 }
+
+void DatabaseModel::saveObjectsMetadata(const QString &filename)
+{
+	QFile output(filename);
+	QByteArray buf;
+	QString objs_def;
+	vector<BaseObject *> objects;
+	attribs_map attribs;
+	BaseGraphicObject *graph_obj=nullptr;
+	Relationship *rel=nullptr;
+	Table *tab_nn=nullptr;
+	BaseTable *src_tab=nullptr, *dst_tab=nullptr;
+	Schema *schema=nullptr;
+	QPointF pnt;
+	ObjectType obj_type;
+	int idx=0;
+	QStringList labels_attrs={ ParsersAttributes::SRC_LABEL,
+														 ParsersAttributes::DST_LABEL,
+														 ParsersAttributes::NAME_LABEL };
+
+
+	output.open(QFile::WriteOnly);
+
+	if(!output.isOpen())
+		throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(filename),
+						ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	try
+	{
+
+		objects=schemas;
+		objects.insert(objects.end(), tables.begin(), tables.end());
+		objects.insert(objects.end(), views.begin(), views.end());
+		objects.insert(objects.end(), textboxes.begin(), textboxes.end());
+		objects.insert(objects.end(), relationships.begin(), relationships.end());
+		objects.insert(objects.end(), base_relationships.begin(), base_relationships.end());
+
+		//Adding rel. n-n generated tables to the list of tables too
+		for(BaseObject *object : relationships)
+		{
+			rel=dynamic_cast<Relationship *>(object);
+			if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN && rel->getReceiverTable())
+			{
+				tab_nn=rel->getReceiverTable();
+				src_tab=rel->getTable(BaseRelationship::SRC_TABLE);
+				dst_tab=rel->getTable(BaseRelationship::DST_TABLE);
+
+				//Since the generated table does not have a position we create one based upon the source tables  positions
+				pnt.setX((src_tab->getPosition().x() + dst_tab->getPosition().x())/2.0f);
+				pnt.setY((src_tab->getPosition().y() + dst_tab->getPosition().y())/2.0f);
+				tab_nn->setPosition(pnt);
+
+				objects.push_back(tab_nn);
+			}
+		}
+
+		for(BaseObject *object : objects)
+		{
+			obj_type=object->getObjectType();
+
+			emit s_objectLoaded(((++idx)/static_cast<float>(objects.size()))*100,
+													trUtf8("Saving metadata of the object `%1' (%2)")
+													.arg(object->getName()).arg(object->getTypeName()), obj_type);
+
+			graph_obj=dynamic_cast<BaseGraphicObject *>(object);
+
+			attribs[ParsersAttributes::NAME]=graph_obj->getSignature();
+			attribs[ParsersAttributes::TYPE]=graph_obj->getSchemaName();
+			attribs[ParsersAttributes::POSITION]=QString();
+			attribs[ParsersAttributes::CUSTOM_COLOR]=QString();
+			attribs[ParsersAttributes::RECT_VISIBLE]=QString();
+			attribs[ParsersAttributes::REF_TYPE]=QString();
+
+			//For non-relationship objects we retrieve only the position
+			if(obj_type!=BASE_RELATIONSHIP && obj_type!=OBJ_RELATIONSHIP)
+			{
+				pnt=graph_obj->getPosition();
+
+				//If the object is a schema we save the postion, color and rect visible status
+				if(obj_type==OBJ_SCHEMA)
+				{
+					schema=dynamic_cast<Schema *>(object);
+
+					if(schema->isRectVisible())
+					{
+						attribs[ParsersAttributes::RECT_VISIBLE]=ParsersAttributes::_TRUE_;
+						attribs[ParsersAttributes::CUSTOM_COLOR]=schema->getFillColor().name();
+						attribs[ParsersAttributes::X_POS]=QString::number(pnt.x());
+						attribs[ParsersAttributes::Y_POS]=QString::number(pnt.y());
+					}
+				}
+				else
+				{
+					attribs[ParsersAttributes::X_POS]=QString::number(pnt.x());
+					attribs[ParsersAttributes::Y_POS]=QString::number(pnt.y());
+				}
+
+				if(obj_type!=OBJ_SCHEMA || !attribs[ParsersAttributes::RECT_VISIBLE].isEmpty())
+				{
+					attribs[ParsersAttributes::POSITION]=
+							schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
+																					GlobalAttributes::GENERAL_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
+																					ParsersAttributes::POSITION + GlobalAttributes::SCHEMA_EXT, attribs);
+				}
+			}
+			//For relationships we retrieve and save the custom line points as position tags
+			else
+			{
+				BaseRelationship *rel=dynamic_cast<BaseRelationship *>(object);
+				vector<QPointF> points=rel->getPoints();
+
+				attribs[ParsersAttributes::CUSTOM_COLOR]=(rel->getCustomColor()!=Qt::transparent ? rel->getCustomColor().name() : QString());
+
+				attribs[ParsersAttributes::SRC_TABLE]=rel->getTable(BaseRelationship::SRC_TABLE)->getSignature();
+				attribs[ParsersAttributes::SRC_TYPE]=rel->getTable(BaseRelationship::SRC_TABLE)->getSchemaName();
+
+				attribs[ParsersAttributes::DST_TABLE]=rel->getTable(BaseRelationship::DST_TABLE)->getSignature();
+				attribs[ParsersAttributes::DST_TYPE]=rel->getTable(BaseRelationship::DST_TABLE)->getSchemaName();
+
+				for(QPointF pnt : points)
+				{
+					attribs[ParsersAttributes::X_POS]=QString::number(pnt.x());
+					attribs[ParsersAttributes::Y_POS]=QString::number(pnt.y());
+
+					attribs[ParsersAttributes::POSITION]+=
+							schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
+																					GlobalAttributes::GENERAL_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
+																					ParsersAttributes::POSITION + GlobalAttributes::SCHEMA_EXT, attribs);
+				}
+
+				//Saving the labels' custom positions
+				for(unsigned id=BaseRelationship::SRC_CARD_LABEL; id <= BaseRelationship::REL_NAME_LABEL; id++)
+				{
+					pnt=rel->getLabelDistance(id);
+					if(!std::isnan(pnt.x()) && !std::isnan(pnt.y()))
+					{
+						attribs[ParsersAttributes::X_POS]=QString::number(pnt.x());
+						attribs[ParsersAttributes::Y_POS]=QString::number(pnt.y());
+						attribs[ParsersAttributes::REF_TYPE]=labels_attrs[id];
+
+						attribs[ParsersAttributes::POSITION]+=
+								schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
+																						GlobalAttributes::GENERAL_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
+																						ParsersAttributes::POSITION + GlobalAttributes::SCHEMA_EXT, attribs);
+					}
+				}
+			}
+
+			//Save the object in the file only if the position tag was generated
+			if(!attribs[ParsersAttributes::POSITION].isEmpty())
+			{
+				schparser.ignoreUnkownAttributes(true);
+				objs_def+=schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
+																							GlobalAttributes::GENERAL_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
+																							ParsersAttributes::OBJECT + GlobalAttributes::SCHEMA_EXT, attribs);
+			}
+
+			attribs.clear();
+		}
+
+		//Generate the positioning XML buffer
+		attribs[ParsersAttributes::OBJECTS]=objs_def;
+		buf.append(schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
+																					 GlobalAttributes::GENERAL_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
+																					 ParsersAttributes::OBJECTS_METADATA + GlobalAttributes::SCHEMA_EXT, attribs));
+
+		output.write(buf.data(),buf.size());
+		output.close();
+	}
+	catch(Exception &e)
+	{
+		if(output.isOpen()) output.close();
+		throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTER_INV_DEF).arg(filename),
+						ERR_FILE_NOT_WRITTER_INV_DEF,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void DatabaseModel::loadObjectsMetadata(const QString &filename)
+{
+	QString elem_name, obj_name, ref_type,
+			dtd_file=GlobalAttributes::SCHEMAS_ROOT_DIR +
+									 GlobalAttributes::DIR_SEPARATOR +
+									 GlobalAttributes::GENERAL_SCHEMA_DIR +
+									 GlobalAttributes::DIR_SEPARATOR +
+									 GlobalAttributes::OBJECT_DTD_DIR +
+									 GlobalAttributes::DIR_SEPARATOR;
+	attribs_map attribs, pos_attrib;
+	ObjectType obj_type;
+	BaseGraphicObject *object=nullptr;
+	BaseTable *src_tab=nullptr, *dst_tab=nullptr;
+	vector<QPointF> points;
+	map<QString, unsigned> labels_attrs;
+	vector<QPointF> labels_pos={ QPointF(NAN,NAN), QPointF(NAN,NAN), QPointF(NAN,NAN) };
+	BaseRelationship *rel=nullptr;
+	Schema *schema=nullptr;
+	QPointF pnt;
+	int progress=0;
+
+	try
+	{
+		labels_attrs[ParsersAttributes::SRC_LABEL]=BaseRelationship::SRC_CARD_LABEL;
+		labels_attrs[ParsersAttributes::DST_LABEL]=BaseRelationship::DST_CARD_LABEL;
+		labels_attrs[ParsersAttributes::NAME_LABEL]=BaseRelationship::REL_NAME_LABEL;
+
+		xmlparser.restartParser();
+		xmlparser.setDTDFile(dtd_file + ParsersAttributes::OBJECTS_METADATA +
+												 GlobalAttributes::OBJECT_DTD_EXT,
+												 ParsersAttributes::OBJECTS_METADATA);
+
+		xmlparser.loadXMLFile(filename);
+
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
+		{
+			do
+			{
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
+				{
+					elem_name=xmlparser.getElementName();
+
+					if(elem_name==ParsersAttributes::OBJECT)
+					{
+						xmlparser.getElementAttributes(attribs);
+						obj_name=attribs[ParsersAttributes::NAME];
+						xmlparser.savePosition();
+
+						obj_type=BaseObject::getObjectType(attribs[ParsersAttributes::TYPE]);
+						object=dynamic_cast<BaseGraphicObject *>(getObject(attribs[ParsersAttributes::NAME], obj_type));
+						progress=xmlparser.getCurrentBufferLine()/static_cast<float>(xmlparser.getBufferLineCount()) * 100;
+
+						/* If the object does not exists but it is a relationship, we try to get the relationship
+						 involving the tables in paramenters src-table and dst-table */
+						if(!object && obj_type==OBJ_RELATIONSHIP)
+						{
+							src_tab=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::SRC_TABLE],
+																								BaseObject::getObjectType(attribs[ParsersAttributes::SRC_TYPE])));
+							dst_tab=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::DST_TABLE],
+																								BaseObject::getObjectType(attribs[ParsersAttributes::DST_TYPE])));
+							object=getRelationship(src_tab, dst_tab);
+						}
+
+						if(object && BaseGraphicObject::isGraphicObject(obj_type))
+						{
+							emit s_objectLoaded(progress, trUtf8("Loading metadata for object `%1' (%2)")
+																	.arg(object->getName()).arg(object->getTypeName()), obj_type);
+
+							if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
+							{
+								do
+								{
+									//Retrieving and storing the points
+									xmlparser.getElementAttributes(pos_attrib);
+									ref_type=pos_attrib[ParsersAttributes::REF_TYPE];
+									pnt=QPointF(pos_attrib[ParsersAttributes::X_POS].toFloat(),
+															pos_attrib[ParsersAttributes::Y_POS].toFloat());
+
+									if(pos_attrib[ParsersAttributes::REF_TYPE].isEmpty())
+										points.push_back(pnt);
+									else
+										labels_pos[labels_attrs[ref_type]]=pnt;
+								}
+								while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
+							}
+
+							if(!points.empty())
+							{
+								rel=dynamic_cast<BaseRelationship *>(object);
+								schema=dynamic_cast<Schema *>(object);
+
+								if(!rel && !schema)
+									object->setPosition(points[0]);
+								else if(schema)
+								{
+									schema->setFillColor(QColor(attribs[ParsersAttributes::CUSTOM_COLOR]));
+									schema->setRectVisible(attribs[ParsersAttributes::RECT_VISIBLE]==ParsersAttributes::_TRUE_);
+								}
+								else
+								{
+									rel->setPoints(points);
+
+									if(!attribs[ParsersAttributes::CUSTOM_COLOR].isEmpty())
+										rel->setCustomColor(QColor(attribs[ParsersAttributes::CUSTOM_COLOR]));
+
+									for(unsigned id=BaseRelationship::SRC_CARD_LABEL; id <= BaseRelationship::REL_NAME_LABEL; id++)
+									{
+										rel->setLabelDistance(id, labels_pos[id]);
+										labels_pos[id]=QPointF(NAN,NAN);
+									}
+								}
+
+								points.clear();
+							}
+						}
+						else
+						{
+							emit s_objectLoaded(progress, trUtf8("Object `%1' (%2) not found. Ignoring metadata.")
+																	.arg(obj_name).arg(BaseObject::getTypeName(obj_type)), BASE_OBJECT);
+						}
+
+						xmlparser.restorePosition();
+					}
+				}
+			}
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
+		}
+
+		setObjectsModified();
+	}
+	catch(Exception &e)
+	{
+		QString extra_info;
+
+		if(xmlparser.getCurrentElement())
+			extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
+
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+	}
+}

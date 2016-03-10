@@ -45,6 +45,7 @@ namespace GlobalAttributes {
 	SCHEMAS_DIR=QString("schemas"),
 	SQL_SCHEMA_DIR=QString("sql"),
 	XML_SCHEMA_DIR=QString("xml"),
+	GENERAL_SCHEMA_DIR=QString("general"),
 	ALTER_SCHEMA_DIR=QString("alter"),
 	SCHEMA_EXT=QString(".sch"),
 	OBJECT_DTD_DIR=QString("dtd"),

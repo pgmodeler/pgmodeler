@@ -19,6 +19,7 @@
 #include "mainwindow.h"
 #include "pgmodeleruins.h"
 #include "bugreportform.h"
+#include "objectsmetadataform.h"
 
 bool MainWindow::confirm_validation=true;
 
@@ -203,6 +204,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(action_manage, SIGNAL(toggled(bool)), this, SLOT(changeCurrentView(bool)));
 
 	connect(action_bug_report, SIGNAL(triggered()), this, SLOT(reportBug()));
+	connect(action_handle_metadata, SIGNAL(triggered(bool)), this, SLOT(handleObjectsMetadata()));
 
 	connect(model_valid_wgt, &ModelValidationWidget::s_connectionsUpdateRequest, [=](){ updateConnections(true); });
 	connect(sql_tool_wgt, &SQLToolWidget::s_connectionsUpdateRequest, [=](){ updateConnections(true); });
@@ -1538,6 +1540,8 @@ void MainWindow::updateToolsState(bool model_closed)
 	action_undo->setEnabled(enabled);
 	action_redo->setEnabled(enabled);
 
+	action_handle_metadata->setEnabled(enabled);
+
 	if(!model_closed && current_model && models_tbw->count() > 0)
 	{
 		action_undo->setEnabled(current_model->op_list->isUndoAvailable());
@@ -1860,4 +1864,11 @@ void MainWindow::removeOperations(void)
 		current_model->op_list->removeOperations();
 		oper_list_wgt->updateOperationList();
 	}
+}
+
+void MainWindow::handleObjectsMetadata(void)
+{
+	ObjectsMetadataForm objs_meta_frm(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+	objs_meta_frm.setModelWidget(current_model);
+	objs_meta_frm.exec();
 }
