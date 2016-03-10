@@ -562,12 +562,12 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns the ALTER definition between the current model and the provided one
 		virtual QString getAlterDefinition(BaseObject *object) final;
 
-		/*! \brief Save the graphical objects positions and custom points (for relationship lines) to an special file
+		/*! \brief Save the graphical objects positions, custom colors and custom points (for relationship lines) to an special file
 				that can be loaded by another model in order to change their objects position */
-		void saveObjectsPositioning(const QString &filename);
+		void saveObjectsMetadata(const QString &filename);
 
 		//! \brief Load the file containing the objects positioning to be applied to the model
-		void loadObjectsPositioning(const QString &filename);
+		void loadObjectsMetadata(const QString &filename);
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model

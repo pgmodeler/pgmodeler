@@ -24,15 +24,15 @@ class DatabaseModelTest: public QObject {
 		Q_OBJECT
 
 	private slots:
-		void saveObjectsPositioning(void);
-		void loadObjectsPositioning(void);
+		void saveObjectsMetadata(void);
+		void loadObjectsMetadata(void);
 };
 
-void DatabaseModelTest::saveObjectsPositioning(void)
+void DatabaseModelTest::saveObjectsMetadata(void)
 {
 	DatabaseModel dbmodel;
 	QTextStream out(stdout);
-	QString output=QFileInfo(BINDIR).absolutePath() + GlobalAttributes::DIR_SEPARATOR + QString("demo.opf"),
+	QString output=QFileInfo(BINDIR).absolutePath() + GlobalAttributes::DIR_SEPARATOR + QString("demo.omd"),
 			input=SAMPLESDIR + GlobalAttributes::DIR_SEPARATOR + QString("demo.dbm");
 
 	try
@@ -41,7 +41,7 @@ void DatabaseModelTest::saveObjectsPositioning(void)
 		dir.remove(output);
 		dbmodel.createSystemObjects(false);
 		dbmodel.loadModel(input);
-		dbmodel.saveObjectsPositioning(output);
+		dbmodel.saveObjectsMetadata(output);
 	}
 	catch (Exception &e)
 	{
@@ -51,18 +51,20 @@ void DatabaseModelTest::saveObjectsPositioning(void)
 	QCOMPARE(QFileInfo(output).exists(), true);
 }
 
-void DatabaseModelTest::loadObjectsPositioning(void)
+void DatabaseModelTest::loadObjectsMetadata(void)
 {
 	DatabaseModel dbmodel;
 	QTextStream out(stdout);
-	QString input_opf=QFileInfo(BINDIR).absolutePath() + GlobalAttributes::DIR_SEPARATOR + QString("demo.opf"),
-			input_dbm=SAMPLESDIR + GlobalAttributes::DIR_SEPARATOR + QString("demo.dbm");
+	QString input_opf=QFileInfo(BINDIR).absolutePath() + GlobalAttributes::DIR_SEPARATOR + QString("demo.omd"),
+			input_dbm=SAMPLESDIR + GlobalAttributes::DIR_SEPARATOR + QString("demo.dbm"),
+			output=QFileInfo(BINDIR).absolutePath() + GlobalAttributes::DIR_SEPARATOR + QString("demo_changed.dbm");
 
 	try
 	{
 		dbmodel.createSystemObjects(false);
 		dbmodel.loadModel(input_dbm);
-		dbmodel.loadObjectsPositioning(input_opf);
+		dbmodel.loadObjectsMetadata(input_opf);
+		dbmodel.saveModel(output, SchemaParser::XML_DEFINITION);
 		QCOMPARE(true, true);
 	}
 	catch (Exception &e)

@@ -285,7 +285,7 @@ namespace ParsersAttributes {
 	OBJECT_TYPE=QString("object-type"),
 	OBJECT=QString("object"),
 	OBJECTS=QString("objects"),
-	OBJECTS_POSITIONING=QString("objects-positioning"),
+	OBJECTS_METADATA=QString("objects-metadata"),
 	OID_FILTER_OP=QString("oid-filter-op"),
 	OID=QString("oid"),
 	OIDS=QString("oids"),
