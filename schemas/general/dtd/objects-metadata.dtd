@@ -1,0 +1,35 @@
+<!--
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT position EMPTY>
+<!ATTLIST position x CDATA "0">
+<!ATTLIST position y CDATA "0">
+<!ATTLIST position ref-type (name-label|src-label|dst-label) "name-label">
+
+<!ELEMENT appended-sql (#PCDATA)>
+<!ELEMENT prepended-sql (#PCDATA)>
+
+<!ELEMENT object (position*, appended-sql?, prepended-sql?)>
+<!ATTLIST object name CDATA #REQUIRED>
+<!ATTLIST object type CDATA #IMPLIED>
+<!ATTLIST object src-table CDATA #IMPLIED>
+<!ATTLIST object dst-table CDATA #IMPLIED>
+<!ATTLIST object src-type (table|view) "table">
+<!ATTLIST object dst-type (table|view) "table">
+<!ATTLIST object custom-color CDATA #IMPLIED>
+<!ATTLIST object rect-visible (false|true) "false">
+<!ATTLIST object append-at-eod (false|true) "false">
+<!ATTLIST object prepend-at-bod (false|true) "false">
+<!ATTLIST object tag CDATA #IMPLIED>
+<!ATTLIST object author CDATA #IMPLIED>
+<!ATTLIST object protected (false|true) "false">
+<!ATTLIST object sql-disabled (false|true) "false">
+<!ATTLIST object last-position CDATA #IMPLIED>
+<!ATTLIST object last-zoom CDATA #IMPLIED>
+<!ATTLIST object default-schema CDATA #IMPLIED>
+<!ATTLIST object default-owner CDATA #IMPLIED>
+<!ATTLIST object default-collation CDATA #IMPLIED>
+<!ATTLIST object default-tablespace CDATA #IMPLIED>
+
+<!ELEMENT objects-metadata (textbox*, tag*, object*)>
