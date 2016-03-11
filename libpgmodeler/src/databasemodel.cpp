@@ -9074,15 +9074,19 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			attribs[ParsersAttributes::TYPE]=object->getSchemaName();
 			attribs[ParsersAttributes::PROTECTED]=(save_objs_prot && object->isProtected() && !object->isSystemObject() ? ParsersAttributes::_TRUE_ : QString());
 			attribs[ParsersAttributes::SQL_DISABLED]=(save_objs_sqldis && object->isSQLDisabled() && !object->isSystemObject()  ? ParsersAttributes::_TRUE_ : QString());
-			attribs[ParsersAttributes::APPEND_AT_EOD]=(save_custom_sql && object==this && this->isAppendAtEOD() ? ParsersAttributes::_TRUE_ : QString());
-			attribs[ParsersAttributes::PREPEND_AT_BOD]=(save_custom_sql && object==this && this->isPrependedAtBOD() ? ParsersAttributes::_TRUE_ : QString());
 			attribs[ParsersAttributes::TAG]=(save_tags && base_tab && base_tab->getTag() ? base_tab->getTag()->getName() : QString());
 			attribs[ParsersAttributes::APPENDED_SQL]=object->getAppendedSQL();
 			attribs[ParsersAttributes::PREPENDED_SQL]=object->getPrependedSQL();
 
+			if(save_custom_sql && obj_type==OBJ_DATABASE)
+			{
+				attribs[ParsersAttributes::APPEND_AT_EOD]=(this->isAppendAtEOD() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
+				attribs[ParsersAttributes::PREPEND_AT_BOD]=(this->isPrependedAtBOD() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
+			}
+
 			//Configuring database model attributes
 			if(save_db_attribs && object==this)
-			{
+			{			
 				attribs[ParsersAttributes::MODEL_AUTHOR]=this->getAuthor();
 				attribs[ParsersAttributes::LAST_POSITION]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
 				attribs[ParsersAttributes::LAST_ZOOM]=QString::number(last_zoom);
@@ -9281,6 +9285,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 		labels_attrs[ParsersAttributes::NAME_LABEL]=BaseRelationship::REL_NAME_LABEL;
 
 		xmlparser.restartParser();
+
 		/*xmlparser.setDTDFile(dtd_file + ParsersAttributes::OBJECTS_METADATA +
 												 GlobalAttributes::OBJECT_DTD_EXT,
 												 ParsersAttributes::OBJECTS_METADATA);*/
@@ -9381,6 +9386,14 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 								if(tag)
 									dynamic_cast<BaseTable *>(object)->setTag(tag);
+							}
+							else if(obj_type==OBJ_DATABASE && load_custom_sql)
+							{
+								if(!attribs[ParsersAttributes::APPEND_AT_EOD].isEmpty())
+									this->setAppendAtEOD(attribs[ParsersAttributes::APPEND_AT_EOD]==ParsersAttributes::_TRUE_);
+
+								if(!attribs[ParsersAttributes::PREPEND_AT_BOD].isEmpty())
+									this->setPrependAtBOD(attribs[ParsersAttributes::PREPEND_AT_BOD]==ParsersAttributes::_TRUE_);
 							}
 
 							if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))

@@ -20,6 +20,12 @@ $tb [<object name=] "{name}" [ type=] "{type}"
     %if {last-zoom} %then  [ last-zoom=] "{last-zoom}" %end
 %end
 
+%if {append-at-eod} %or {prepend-at-bod}  %then
+    $br $tb $tb
+    %if {append-at-eod} %then [ append-at-eod=] "{append-at-eod}" %end
+    %if {prepend-at-bod} %then [ prepend-at-bod=] "{prepend-at-bod}" %end
+%end
+
 %if {default-schema} %or {default-owner}  %then
     $br $tb $tb
     %if {default-schema} %then [ default-schema=] "{default-schema}" %end
