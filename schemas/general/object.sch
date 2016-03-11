@@ -7,10 +7,10 @@ $tb [<object name=] "{name}" [ type=] "{type}"
     [ tag=] "{tag}"
 %end
 
-%if {sql-disabled} %or {protected} %then
+%if {protected} %or {sql-disabled}  %then
     $br $tb $tb
-    %if {sql-disable} %then [ sql-disabled="true"] %end
     %if {protected} %then [ protected="true"] %end
+    %if {sql-disabled} %then [ sql-disabled="true"] %end
 %end
 
 %if {author} %or {last-position} %or {last-zoom} %then
