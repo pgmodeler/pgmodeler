@@ -19,7 +19,7 @@
 #include "mainwindow.h"
 #include "pgmodeleruins.h"
 #include "bugreportform.h"
-#include "objectsmetadataform.h"
+#include "metadatahandlingform.h"
 
 bool MainWindow::confirm_validation=true;
 
@@ -1868,7 +1868,8 @@ void MainWindow::removeOperations(void)
 
 void MainWindow::handleObjectsMetadata(void)
 {
-	ObjectsMetadataForm objs_meta_frm(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+	MetadataHandlingForm objs_meta_frm(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 	objs_meta_frm.setModelWidget(current_model);
+	connect(&objs_meta_frm, SIGNAL(s_metadataLoaded()), model_objs_wgt, SLOT(updateObjectsView()));
 	objs_meta_frm.exec();
 }

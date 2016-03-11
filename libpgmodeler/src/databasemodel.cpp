@@ -9084,12 +9084,12 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			if(save_db_attribs && object==this)
 			{
 				attribs[ParsersAttributes::MODEL_AUTHOR]=this->getAuthor();
-				attribs[ParsersAttributes::LAST_POSITION]=QString("%1,%2").arg(this->getLastPosition().x()).arg(this->getLastPosition().y());
-				attribs[ParsersAttributes::LAST_ZOOM]=QString::number(this->getLastZoomFactor());
-				attribs[ParsersAttributes::DEFAULT_COLLATION]=(this->getDefaultObject(OBJ_COLLATION) ? this->getDefaultObject(OBJ_COLLATION)->getSignature() : QString());
-				attribs[ParsersAttributes::DEFAULT_SCHEMA]=(this->getDefaultObject(OBJ_SCHEMA) ? this->getDefaultObject(OBJ_SCHEMA)->getSignature() : QString());
-				attribs[ParsersAttributes::DEFAULT_TABLESPACE]=(this->getDefaultObject(OBJ_TABLESPACE) ? this->getDefaultObject(OBJ_TABLESPACE)->getSignature() : QString());
-				attribs[ParsersAttributes::DEFAULT_OWNER]=(this->getDefaultObject(OBJ_ROLE) ? this->getDefaultObject(OBJ_ROLE)->getSignature() : QString());
+				attribs[ParsersAttributes::LAST_POSITION]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
+				attribs[ParsersAttributes::LAST_ZOOM]=QString::number(last_zoom);
+				attribs[ParsersAttributes::DEFAULT_COLLATION]=(default_objs[OBJ_COLLATION] ? default_objs[OBJ_COLLATION]->getSignature() : QString());
+				attribs[ParsersAttributes::DEFAULT_SCHEMA]=(default_objs[OBJ_SCHEMA] ? default_objs[OBJ_SCHEMA]->getSignature() : QString());
+				attribs[ParsersAttributes::DEFAULT_TABLESPACE]=(default_objs[OBJ_TABLESPACE] ? default_objs[OBJ_TABLESPACE]->getSignature() : QString());
+				attribs[ParsersAttributes::DEFAULT_OWNER]=(default_objs[OBJ_ROLE] ? default_objs[OBJ_ROLE]->getSignature() : QString());
 			}
 
 			//If the object is a graphic one and we need to save positions and colors
@@ -9103,10 +9103,11 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 					{
 						schema=dynamic_cast<Schema *>(object);
 
+						attribs[ParsersAttributes::CUSTOM_COLOR]=(save_custom_colors ? schema->getFillColor().name() : QString());
+						attribs[ParsersAttributes::RECT_VISIBLE]=(schema->isRectVisible() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
+
 						if(schema->isRectVisible())
 						{
-							attribs[ParsersAttributes::RECT_VISIBLE]=ParsersAttributes::_TRUE_;
-							attribs[ParsersAttributes::CUSTOM_COLOR]=(save_custom_colors ? schema->getFillColor().name() : QString());
 							attribs[ParsersAttributes::X_POS]=QString::number(pnt.x());
 							attribs[ParsersAttributes::Y_POS]=QString::number(pnt.y());
 						}
@@ -9117,9 +9118,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 						attribs[ParsersAttributes::Y_POS]=QString::number(pnt.y());
 					}
 
-					if(obj_type!=OBJ_SCHEMA ||
-						 !attribs[ParsersAttributes::RECT_VISIBLE].isEmpty() ||
-						 !attribs[ParsersAttributes::CUSTOM_COLOR].isEmpty())
+					if(obj_type!=OBJ_SCHEMA || !attribs[ParsersAttributes::X_POS].isEmpty())
 					{
 						schparser.ignoreUnkownAttributes(true);
 						attribs[ParsersAttributes::POSITION]=
@@ -9133,7 +9132,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 					BaseRelationship *rel=dynamic_cast<BaseRelationship *>(object);
 					vector<QPointF> points=rel->getPoints();
 
-					attribs[ParsersAttributes::CUSTOM_COLOR]=(save_custom_colors && rel->getCustomColor()!=Qt::transparent ? rel->getCustomColor().name() : QString());
+					attribs[ParsersAttributes::CUSTOM_COLOR]=(save_custom_colors && rel->getCustomColor()!=Qt::transparent ? rel->getCustomColor().name() : ParsersAttributes::NONE);
 
 					attribs[ParsersAttributes::SRC_TABLE]=rel->getTable(BaseRelationship::SRC_TABLE)->getSignature();
 					attribs[ParsersAttributes::SRC_TYPE]=rel->getTable(BaseRelationship::SRC_TABLE)->getSchemaName();
@@ -9188,7 +9187,13 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 
 			/* The object's metadata code will be generated only if one of the key attributes
 			 for each option were filled previously. */
-			if((save_objs_pos && !attribs[ParsersAttributes::POSITION].isEmpty()) ||
+			if((save_db_attribs && obj_type==OBJ_DATABASE) ||
+				 (save_custom_colors &&
+					((obj_type==OBJ_RELATIONSHIP || obj_type==BASE_RELATIONSHIP) ||
+					 (!attribs[ParsersAttributes::CUSTOM_COLOR].isEmpty()))) ||
+				 (save_objs_pos &&
+					(!attribs[ParsersAttributes::POSITION].isEmpty() ||
+					 !attribs[ParsersAttributes::RECT_VISIBLE].isEmpty())) ||
 				 (save_tags && !attribs[ParsersAttributes::TAG].isEmpty()) ||
 				 (save_objs_prot && !attribs[ParsersAttributes::PROTECTED].isEmpty()) ||
 				 (save_objs_sqldis && !attribs[ParsersAttributes::SQL_DISABLED].isEmpty()) ||
@@ -9239,11 +9244,11 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 {
 	QString elem_name, aux_elem, obj_name, ref_type,
 			dtd_file=GlobalAttributes::SCHEMAS_ROOT_DIR +
-									 GlobalAttributes::DIR_SEPARATOR +
-									 GlobalAttributes::GENERAL_SCHEMA_DIR +
-									 GlobalAttributes::DIR_SEPARATOR +
-									 GlobalAttributes::OBJECT_DTD_DIR +
-									 GlobalAttributes::DIR_SEPARATOR;
+							 GlobalAttributes::DIR_SEPARATOR +
+							 GlobalAttributes::GENERAL_SCHEMA_DIR +
+							 GlobalAttributes::DIR_SEPARATOR +
+							 GlobalAttributes::OBJECT_DTD_DIR +
+							 GlobalAttributes::DIR_SEPARATOR;
 	attribs_map attribs, aux_attrib;
 	ObjectType obj_type;
 	BaseObject *object=nullptr, *new_object=nullptr;
@@ -9322,115 +9327,121 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						obj_type=BaseObject::getObjectType(attribs[ParsersAttributes::TYPE]);
 						progress=xmlparser.getCurrentBufferLine()/static_cast<float>(xmlparser.getBufferLineCount()) * 100;
 
-						if(obj_type==OBJ_DATABASE && load_db_attribs)
+						if(obj_type==OBJ_DATABASE)
 						{
-							QStringList pos=attribs[ParsersAttributes::LAST_POSITION].split(',');
-
-							default_objs[OBJ_SCHEMA]=getSchema(attribs[ParsersAttributes::DEFAULT_SCHEMA]);
-							default_objs[OBJ_ROLE]=getRole(attribs[ParsersAttributes::DEFAULT_OWNER]);
-							default_objs[OBJ_COLLATION]=getCollation(attribs[ParsersAttributes::DEFAULT_COLLATION]);
-							default_objs[OBJ_TABLESPACE]=getTablespace(attribs[ParsersAttributes::DEFAULT_TABLESPACE]);
-							author=attribs[ParsersAttributes::MODEL_AUTHOR];
-							last_zoom=attribs[ParsersAttributes::LAST_ZOOM].toFloat();
-
-							if(pos.size()>=2)
-								last_pos=QPoint(pos[0].toFloat(), pos[1].toFloat());
-						}
-						else if(obj_type!=OBJ_DATABASE)
-						{
-							object=getObject(obj_name, obj_type);
-
-							/* If the object does not exists but it is a relationship, we try to get the relationship
-						 involving the tables in paramenters src-table and dst-table */
-							if(!object && obj_type==OBJ_RELATIONSHIP)
+							if(load_db_attribs)
 							{
-								src_tab=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::SRC_TABLE],
-																									BaseObject::getObjectType(attribs[ParsersAttributes::SRC_TYPE])));
-								dst_tab=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::DST_TABLE],
-																									BaseObject::getObjectType(attribs[ParsersAttributes::DST_TYPE])));
-								object=getRelationship(src_tab, dst_tab);
+								QStringList pos=attribs[ParsersAttributes::LAST_POSITION].split(',');
+
+								default_objs[OBJ_SCHEMA]=getSchema(attribs[ParsersAttributes::DEFAULT_SCHEMA]);
+								default_objs[OBJ_ROLE]=getRole(attribs[ParsersAttributes::DEFAULT_OWNER]);
+								default_objs[OBJ_COLLATION]=getCollation(attribs[ParsersAttributes::DEFAULT_COLLATION]);
+								default_objs[OBJ_TABLESPACE]=getTablespace(attribs[ParsersAttributes::DEFAULT_TABLESPACE]);
+								author=attribs[ParsersAttributes::MODEL_AUTHOR];
+								last_zoom=attribs[ParsersAttributes::LAST_ZOOM].toFloat();
+
+								if(pos.size()>=2)
+									last_pos=QPoint(pos[0].toFloat(), pos[1].toFloat());
 							}
 
-							if(object)
+							object=this;
+						}
+						else
+							object=getObject(obj_name, obj_type);
+
+						/* If the object does not exists but it is a relationship, we try to get the relationship
+						 involving the tables in paramenters src-table and dst-table */
+						if(!object && obj_type==OBJ_RELATIONSHIP)
+						{
+							src_tab=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::SRC_TABLE],
+																								BaseObject::getObjectType(attribs[ParsersAttributes::SRC_TYPE])));
+							dst_tab=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::DST_TABLE],
+																								BaseObject::getObjectType(attribs[ParsersAttributes::DST_TYPE])));
+							object=getRelationship(src_tab, dst_tab);
+						}
+
+						if(object)
+						{
+							emit s_objectLoaded(progress, trUtf8("Loading metadata for object `%1' (%2)")
+																	.arg(object->getName()).arg(object->getTypeName()), obj_type);
+
+							if(!object->isSystemObject() &&
+								 ((!attribs[ParsersAttributes::PROTECTED].isEmpty() && load_objs_prot) ||
+									(!attribs[ParsersAttributes::SQL_DISABLED].isEmpty() && load_objs_sqldis)))
 							{
-								emit s_objectLoaded(progress, trUtf8("Loading metadata for object `%1' (%2)")
-																		.arg(object->getName()).arg(object->getTypeName()), obj_type);
+								if(!attribs[ParsersAttributes::PROTECTED].isEmpty())
+									object->setProtected(attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
 
-								if(!object->isSystemObject() &&
-									 ((!attribs[ParsersAttributes::PROTECTED].isEmpty() && load_objs_prot) ||
-										(!attribs[ParsersAttributes::SQL_DISABLED].isEmpty() && load_objs_sqldis)))
+								if(!attribs[ParsersAttributes::SQL_DISABLED].isEmpty())
+									object->setSQLDisabled(attribs[ParsersAttributes::SQL_DISABLED]==ParsersAttributes::_TRUE_);
+							}
+							else if((obj_type==OBJ_TABLE || obj_type==OBJ_VIEW) && load_tags && !attribs[ParsersAttributes::TAG].isEmpty())
+							{
+								tag=getTag(attribs[ParsersAttributes::TAG]);
+
+								if(tag)
+									dynamic_cast<BaseTable *>(object)->setTag(tag);
+							}
+
+							if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
+							{
+								do
 								{
-									if(!attribs[ParsersAttributes::PROTECTED].isEmpty())
-										object->setProtected(attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
+									aux_elem=xmlparser.getElementName();
+									xmlparser.getElementAttributes(aux_attrib);
 
-									if(!attribs[ParsersAttributes::SQL_DISABLED].isEmpty())
-										object->setSQLDisabled(attribs[ParsersAttributes::SQL_DISABLED]==ParsersAttributes::_TRUE_);
-								}
-								else if((obj_type==OBJ_TABLE || obj_type==OBJ_VIEW) && load_tags && !attribs[ParsersAttributes::TAG].isEmpty())
-								{
-									tag=getTag(attribs[ParsersAttributes::TAG]);
-
-									if(tag)
-										dynamic_cast<BaseTable *>(object)->setTag(tag);
-								}
-
-								if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
-								{
-									do
+									if(aux_elem==ParsersAttributes::POSITION)
 									{
-										aux_elem=xmlparser.getElementName();
-										xmlparser.getElementAttributes(aux_attrib);
+										//Retrieving and storing the points
+										ref_type=aux_attrib[ParsersAttributes::REF_TYPE];
+										pnt=QPointF(aux_attrib[ParsersAttributes::X_POS].toFloat(),
+												aux_attrib[ParsersAttributes::Y_POS].toFloat());
 
-										if(aux_elem==ParsersAttributes::POSITION)
-										{
-											//Retrieving and storing the points
-											ref_type=aux_attrib[ParsersAttributes::REF_TYPE];
-											pnt=QPointF(aux_attrib[ParsersAttributes::X_POS].toFloat(),
-													aux_attrib[ParsersAttributes::Y_POS].toFloat());
-
-											if(aux_attrib[ParsersAttributes::REF_TYPE].isEmpty())
-												points.push_back(pnt);
-											else
-												labels_pos[labels_attrs[ref_type]]=pnt;
-										}
-										else if(load_custom_sql && aux_elem==ParsersAttributes::APPENDED_SQL &&
-														attribs[ParsersAttributes::APPENDED_SQL].isEmpty())
-										{
-											xmlparser.savePosition();
-											xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
-											object->setAppendedSQL(xmlparser.getElementContent());
-											xmlparser.restorePosition();
-										}
-										else if(load_custom_sql && aux_elem==ParsersAttributes::PREPENDED_SQL &&
-														attribs[ParsersAttributes::PREPENDED_SQL].isEmpty())
-										{
-											xmlparser.savePosition();
-											xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
-											object->setPrependedSQL(xmlparser.getElementContent());
-											xmlparser.restorePosition();
-										}
+										if(aux_attrib[ParsersAttributes::REF_TYPE].isEmpty())
+											points.push_back(pnt);
+										else
+											labels_pos[labels_attrs[ref_type]]=pnt;
 									}
-									while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
-								}
-
-								if(!points.empty() && BaseGraphicObject::isGraphicObject(obj_type))
-								{
-									rel=dynamic_cast<BaseRelationship *>(object);
-									schema=dynamic_cast<Schema *>(object);
-
-									if(!rel && !schema && load_objs_pos)
-										dynamic_cast<BaseGraphicObject *>(object)->setPosition(points[0]);
-									else if(schema && load_custom_colors)
+									else if(load_custom_sql && aux_elem==ParsersAttributes::APPENDED_SQL &&
+													attribs[ParsersAttributes::APPENDED_SQL].isEmpty())
 									{
-										schema->setFillColor(QColor(attribs[ParsersAttributes::CUSTOM_COLOR]));
-										schema->setRectVisible(attribs[ParsersAttributes::RECT_VISIBLE]==ParsersAttributes::_TRUE_);
+										xmlparser.savePosition();
+										xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
+										object->setAppendedSQL(xmlparser.getElementContent());
+										xmlparser.restorePosition();
 									}
-									else if(rel && load_objs_pos)
+									else if(load_custom_sql && aux_elem==ParsersAttributes::PREPENDED_SQL &&
+													attribs[ParsersAttributes::PREPENDED_SQL].isEmpty())
+									{
+										xmlparser.savePosition();
+										xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
+										object->setPrependedSQL(xmlparser.getElementContent());
+										xmlparser.restorePosition();
+									}
+								}
+								while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
+							}
+
+							if(BaseGraphicObject::isGraphicObject(obj_type))
+							{
+								rel=dynamic_cast<BaseRelationship *>(object);
+								schema=dynamic_cast<Schema *>(object);
+
+								if(!rel && !schema && !points.empty() && load_objs_pos)
+									dynamic_cast<BaseGraphicObject *>(object)->setPosition(points[0]);
+								else if(rel)
+								{
+									if(load_custom_colors)
+									{
+										if(attribs[ParsersAttributes::CUSTOM_COLOR]==ParsersAttributes::NONE)
+											rel->setCustomColor(Qt::transparent);
+										else
+											rel->setCustomColor(QColor(attribs[ParsersAttributes::CUSTOM_COLOR]));
+									}
+
+									if(load_objs_pos)
 									{
 										rel->setPoints(points);
-
-										if(load_custom_colors && !attribs[ParsersAttributes::CUSTOM_COLOR].isEmpty())
-											rel->setCustomColor(QColor(attribs[ParsersAttributes::CUSTOM_COLOR]));
 
 										for(unsigned id=BaseRelationship::SRC_CARD_LABEL; id <= BaseRelationship::REL_NAME_LABEL; id++)
 										{
@@ -9438,24 +9449,35 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 											labels_pos[id]=QPointF(NAN,NAN);
 										}
 									}
+								}
+								else if(schema)
+								{
+									if(load_custom_colors)
+										schema->setFillColor(QColor(attribs[ParsersAttributes::CUSTOM_COLOR]));
 
-									points.clear();
+									schema->setRectVisible(attribs[ParsersAttributes::RECT_VISIBLE]==ParsersAttributes::_TRUE_);
 								}
 							}
-							else if(!object)
-							{
-								emit s_objectLoaded(progress, trUtf8("Object `%1' (%2) not found. Ignoring metadata.")
-																		.arg(obj_name).arg(BaseObject::getTypeName(obj_type)), BASE_OBJECT);
-							}
 
-							xmlparser.restorePosition();
+
+							points.clear();
+
 						}
+						else if(!object)
+						{
+							emit s_objectLoaded(progress, trUtf8("Object `%1' (%2) not found. Ignoring metadata.")
+																	.arg(obj_name).arg(BaseObject::getTypeName(obj_type)), BASE_OBJECT);
+						}
+
+						xmlparser.restorePosition();
+
 					}
 				}
 			}
 			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 
+		emit s_objectLoaded(100, trUtf8("Metadata file successfully loaded!"), BASE_OBJECT);
 		setObjectsModified();
 	}
 	catch(Exception &e)

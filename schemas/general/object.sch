@@ -43,7 +43,7 @@ $tb [<object name=] "{name}" [ type=] "{type}"
 %if {custom-color} %or {rect-visible} %then
     $br $tb $tb
     %if {custom-color} %then [ custom-color=] "{custom-color}" %end
-    %if {rect-visible} %then [ rect-visible=] "true" %end
+    %if {rect-visible} %then [ rect-visible=] "{rect-visible}" %end
 %end
 
 %if {position} %or {appended-sql} %or {prepended-sql} %then

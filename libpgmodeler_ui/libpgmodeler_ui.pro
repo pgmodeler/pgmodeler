@@ -106,7 +106,7 @@ SOURCES += src/mainwindow.cpp \
     src/readonlyitemdelegate.cpp \
     src/numberedtexteditor.cpp \
 		src/linenumberswidget.cpp \
-		src/objectsmetadataform.cpp
+    src/metadatahandlingform.cpp
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
@@ -199,7 +199,7 @@ HEADERS += src/mainwindow.h \
     src/readonlyitemdelegate.h \
     src/numberedtexteditor.h \
 		src/linenumberswidget.h \
-		src/objectsmetadataform.h
+    src/metadatahandlingform.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \
@@ -276,7 +276,7 @@ FORMS += ui/mainwindow.ui \
          ui/bugreportform.ui \
          ui/sqlexecutionwidget.ui \
          ui/donatewidget.ui \
-				ui/objectsmetadataform.ui
+    ui/metadatahandlingform.ui
 
 unix|windows: LIBS += -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
                       -L$$OUT_PWD/../libpgconnector/ -lpgconnector \

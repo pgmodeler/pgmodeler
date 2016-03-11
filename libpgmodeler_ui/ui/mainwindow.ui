@@ -1447,10 +1447,10 @@
    </property>
    <property name="icon">
     <iconset resource="../res/resources.qrc">
-     <normaloff>:/icones/icones/objpositioning.png</normaloff>:/icones/icones/objpositioning.png</iconset>
+     <normaloff>:/icones/icones/objmetadata.png</normaloff>:/icones/icones/objmetadata.png</iconset>
    </property>
    <property name="text">
-    <string>Handle objects metadata</string>
+    <string>&amp;Handle objects metadata</string>
    </property>
   </action>
  </widget>

@@ -16,10 +16,10 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "objectsmetadataform.h"
+#include "metadatahandlingform.h"
 #include "pgmodeleruins.h"
 
-ObjectsMetadataForm::ObjectsMetadataForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
+MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
 
@@ -58,22 +58,24 @@ ObjectsMetadataForm::ObjectsMetadataForm(QWidget *parent, Qt::WindowFlags f) : Q
 	connect(apply_btn, SIGNAL(clicked()), this, SLOT(handleObjectsMetada()));
 
 	connect(select_file_tb, &QToolButton::clicked,
-					[=](){	selectFile(extract_from_model_rb->isChecked()); });
+					[=](){	selectFile(save_metadata_rb->isChecked()); });
+
+	connect(file_edt, &QLineEdit::textChanged,
+					[=](){ apply_btn->setDisabled(file_edt->text().isEmpty()); });
 }
 
-void ObjectsMetadataForm::setModelWidget(ModelWidget *model_wgt)
+void MetadataHandlingForm::setModelWidget(ModelWidget *model_wgt)
 {
 	this->model_wgt=model_wgt;
 }
 
-void ObjectsMetadataForm::handleObjectsMetada(void)
+void MetadataHandlingForm::handleObjectsMetada(void)
 {
 	try
 	{
 		unsigned options=0;
 
 		output_trw->clear();
-		apply_btn->setEnabled(true);
 		settings_tbw->setTabEnabled(1, true);
 		settings_tbw->setCurrentIndex(1);
 
@@ -86,13 +88,14 @@ void ObjectsMetadataForm::handleObjectsMetada(void)
 		options+=(tag_objs_chk->isChecked() ? DatabaseModel::META_TAG_OBJS : 0);
 		options+=(textbox_objs_chk->isChecked() ? DatabaseModel::META_TEXTBOX_OBJS : 0);
 
-		if(extract_from_model_rb->isChecked())
+		if(save_metadata_rb->isChecked())
 		{
 			PgModelerUiNS::createOutputTreeItem(output_trw,
 																					PgModelerUiNS::formatMessage(trUtf8("Extracting metadata to file `%1'").arg(file_edt->text())),
 																					QPixmap(QString(":/icones/icones/msgbox_info.png")), nullptr);
 
 			model_wgt->getDatabaseModel()->saveObjectsMetadata(file_edt->text(), options);
+			emit s_metadataSaved();
 		}
 		else
 		{
@@ -103,8 +106,14 @@ void ObjectsMetadataForm::handleObjectsMetada(void)
 			model_wgt->setUpdatesEnabled(false);
 			model_wgt->getDatabaseModel()->loadObjectsMetadata(file_edt->text(), options);
 			model_wgt->adjustSceneSize();
+			model_wgt->restoreLastCanvasPosition();
 			model_wgt->setUpdatesEnabled(true);
+			model_wgt->setModified(true);
+
+			emit s_metadataLoaded();
 		}
+
+		this->accept();
 	}
 	catch(Exception &e)
 	{
@@ -121,22 +130,25 @@ void ObjectsMetadataForm::handleObjectsMetada(void)
 	}
 }
 
-void ObjectsMetadataForm::showEvent(QShowEvent *)
+void MetadataHandlingForm::showEvent(QShowEvent *)
 {
-	apply_btn->setEnabled(model_wgt!=nullptr);
-	settings_tbw->setEnabled(model_wgt!=nullptr);
+	if(!model_wgt)
+	{
+		apply_btn->setEnabled(false);
+		settings_tbw->setEnabled(false);
+	}
 
 	if(model_wgt)
 		connect(model_wgt->getDatabaseModel(), SIGNAL(s_objectLoaded(int,QString,unsigned)), this, SLOT(updateProgress(int,QString,unsigned)));
 }
 
-void ObjectsMetadataForm::closeEvent(QCloseEvent *)
+void MetadataHandlingForm::closeEvent(QCloseEvent *)
 {
 	if(model_wgt)
 		disconnect(model_wgt->getDatabaseModel(), nullptr, this, nullptr);
 }
 
-void ObjectsMetadataForm::selectFile(bool is_output)
+void MetadataHandlingForm::selectFile(bool is_output)
 {
 	QFileDialog file_dlg;
 
@@ -161,7 +173,7 @@ void ObjectsMetadataForm::selectFile(bool is_output)
 		file_edt->setText(file_dlg.selectedFiles().at(0));
 }
 
-void ObjectsMetadataForm::updateProgress(int progress, QString msg, unsigned int type_id)
+void MetadataHandlingForm::updateProgress(int progress, QString msg, unsigned int type_id)
 {
 	ObjectType obj_type=static_cast<ObjectType>(type_id);
 	QString fmt_msg=PgModelerUiNS::formatMessage(msg);

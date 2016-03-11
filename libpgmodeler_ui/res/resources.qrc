@@ -210,7 +210,7 @@
         <file>icones/outputpane.png</file>
         <file>icones/server.png</file>
         <file>icones/refreshdb.png</file>
-        <file>icones/objpositioning.png</file>
+        <file>icones/objmetadata.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

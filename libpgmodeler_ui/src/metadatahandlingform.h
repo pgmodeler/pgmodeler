@@ -22,16 +22,16 @@
 \brief Implements an interface to the feature to extract and restore objects metadata in a model.
 */
 
-#ifndef OBJECTS_METADATA_FORM_H
-#define OBJECTS_METADATA_FORM_H
+#ifndef METADATA_HANDLING_FORM_H
+#define METADATA_HANDLING_FORM_H
 
 #include <QtWidgets>
-#include "ui_objectsmetadataform.h"
+#include "ui_metadatahandlingform.h"
 #include "modelwidget.h"
 #include "htmlitemdelegate.h"
 #include "hinttextwidget.h"
 
-class ObjectsMetadataForm: public QDialog, public Ui::ObjectsMetadataForm {
+class MetadataHandlingForm: public QDialog, public Ui::MetadataHandlingForm {
 	private:
 		Q_OBJECT
 
@@ -47,12 +47,16 @@ class ObjectsMetadataForm: public QDialog, public Ui::ObjectsMetadataForm {
 		void selectFile(bool is_output);
 
 	public:
-		ObjectsMetadataForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		MetadataHandlingForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 		void setModelWidget(ModelWidget *model_wgt);
 
 	private slots:
 		void updateProgress(int progress, QString msg, unsigned type_id);
 		void handleObjectsMetada(void);
+
+	signals:
+		void s_metadataLoaded(void);
+		void s_metadataSaved(void);
 };
 
 #endif
