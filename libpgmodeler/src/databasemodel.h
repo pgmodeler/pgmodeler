@@ -162,6 +162,16 @@ class DatabaseModel:  public QObject, public BaseObject {
 		QString getErrorExtraInfo(void);
 
 	public:
+		static const unsigned META_DB_ATTRIBUTES=1,	//! brief Handle database model attribute when save/load metadata file
+		META_OBJS_POSITIONING=2,	//! brief Handle objects' positioning when save/load metadata file
+		META_OBJS_PROTECTION=4,	//! brief Handle objects' protection status when save/load metadata file
+		META_OBJS_SQLDISABLED=8,	//! brief Handle objects' sql disabled status when save/load metadata file
+		META_OBJS_CUSTOMSQL=16,	//! brief Handle object's custom sql when save/load metadata file
+		META_OBJS_CUSTOMCOLORS=32,	//! brief Handle object's custom colors when save/load metadata file
+		META_TEXTBOX_OBJS=64,	//! brief Handle textboxes object when save/load metadata file
+		META_TAG_OBJS=128,	//! brief Handle tags object when save/load metadata file
+		META_ALL_INFO=255;	//! brief Handle all metadata information about objects when save/load metadata file
+
 		DatabaseModel(void);
 
 		//! brief Creates a database model and assign the model widget which will manage this instance
@@ -564,10 +574,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		/*! \brief Save the graphical objects positions, custom colors and custom points (for relationship lines) to an special file
 				that can be loaded by another model in order to change their objects position */
-		void saveObjectsMetadata(const QString &filename);
+		void saveObjectsMetadata(const QString &filename, unsigned options=META_ALL_INFO);
 
 		//! \brief Load the file containing the objects positioning to be applied to the model
-		void loadObjectsMetadata(const QString &filename);
+		void loadObjectsMetadata(const QString &filename, unsigned options=META_ALL_INFO);
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model

@@ -29,6 +29,7 @@
 #include "ui_objectsmetadataform.h"
 #include "modelwidget.h"
 #include "htmlitemdelegate.h"
+#include "hinttextwidget.h"
 
 class ObjectsMetadataForm: public QDialog, public Ui::ObjectsMetadataForm {
 	private:
@@ -36,6 +37,10 @@ class ObjectsMetadataForm: public QDialog, public Ui::ObjectsMetadataForm {
 
 		ModelWidget *model_wgt;
 		HtmlItemDelegate *htmlitem_deleg;
+
+		HintTextWidget *db_metadata_ht, *objs_positioning_ht, *objs_protection_ht,
+		*objs_sql_disabled_ht, *custom_sql_ht, *textbox_objs_ht, *tag_objs_ht,
+		*custom_colors_ht;
 
 		void showEvent(QShowEvent *);
 		void closeEvent(QCloseEvent *);

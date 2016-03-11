@@ -335,7 +335,7 @@ namespace ParsersAttributes {
 	PRECISION=QString("precision"),
 	PREDICATE=QString("predicate"),
 	PREFERRED=QString("preferred"),
-	PREPEND_AT_EOD=QString("prepend-at-bod"),
+	PREPEND_AT_BOD=QString("prepend-at-bod"),
 	PREPENDED_SQL=QString("prepended-sql"),
 	PRINT_GRID=QString("print-grid"),
 	PRINT_PG_NUM=QString("print-pg-num"),

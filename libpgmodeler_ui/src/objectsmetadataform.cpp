@@ -27,6 +27,30 @@ ObjectsMetadataForm::ObjectsMetadataForm(QWidget *parent, Qt::WindowFlags f) : Q
 	settings_tbw->setTabEnabled(1, false);
 	apply_btn->setEnabled(false);
 
+	db_metadata_ht=new HintTextWidget(db_metadata_hint, this);
+	db_metadata_ht->setText(db_metadata_chk->statusTip());
+
+	objs_positioning_ht=new HintTextWidget(objs_positioning_hint, this);
+	objs_positioning_ht->setText(objs_positioning_chk->statusTip());
+
+	objs_protection_ht=new HintTextWidget(objs_protection_hint, this);
+	objs_protection_ht->setText(objs_protection_chk->statusTip());
+
+	objs_sql_disabled_ht=new HintTextWidget(objs_sql_disabled_hint, this);
+	objs_sql_disabled_ht->setText(objs_sql_disabled_chk->statusTip());
+
+	custom_sql_ht=new HintTextWidget(custom_sql_hint, this);
+	custom_sql_ht->setText(custom_sql_chk->statusTip());
+
+	textbox_objs_ht=new HintTextWidget(textbox_objs_hint, this);
+	textbox_objs_ht->setText(textbox_objs_chk->statusTip());
+
+	tag_objs_ht=new HintTextWidget(tag_objs_hint, this);
+	tag_objs_ht->setText(tag_objs_chk->statusTip());
+
+	custom_colors_ht=new HintTextWidget(custom_colors_hint, this);
+	custom_colors_ht->setText(custom_colors_chk->statusTip());
+
 	htmlitem_deleg=new HtmlItemDelegate;
 	output_trw->setItemDelegateForColumn(0, htmlitem_deleg);
 
@@ -46,10 +70,21 @@ void ObjectsMetadataForm::handleObjectsMetada(void)
 {
 	try
 	{
+		unsigned options=0;
+
 		output_trw->clear();
 		apply_btn->setEnabled(true);
 		settings_tbw->setTabEnabled(1, true);
 		settings_tbw->setCurrentIndex(1);
+
+		options+=(db_metadata_chk->isChecked() ? DatabaseModel::META_DB_ATTRIBUTES : 0);
+		options+=(custom_colors_chk->isChecked() ? DatabaseModel::META_OBJS_CUSTOMCOLORS : 0);
+		options+=(custom_sql_chk->isChecked() ? DatabaseModel::META_OBJS_CUSTOMSQL : 0);
+		options+=(objs_positioning_chk->isChecked() ? DatabaseModel::META_OBJS_POSITIONING : 0);
+		options+=(objs_protection_chk->isChecked() ? DatabaseModel::META_OBJS_PROTECTION : 0);
+		options+=(objs_sql_disabled_chk->isChecked() ? DatabaseModel::META_OBJS_SQLDISABLED : 0);
+		options+=(tag_objs_chk->isChecked() ? DatabaseModel::META_TAG_OBJS : 0);
+		options+=(textbox_objs_chk->isChecked() ? DatabaseModel::META_TEXTBOX_OBJS : 0);
 
 		if(extract_from_model_rb->isChecked())
 		{
@@ -57,7 +92,7 @@ void ObjectsMetadataForm::handleObjectsMetada(void)
 																					PgModelerUiNS::formatMessage(trUtf8("Extracting metadata to file `%1'").arg(file_edt->text())),
 																					QPixmap(QString(":/icones/icones/msgbox_info.png")), nullptr);
 
-			model_wgt->getDatabaseModel()->saveObjectsMetadata(file_edt->text());
+			model_wgt->getDatabaseModel()->saveObjectsMetadata(file_edt->text(), options);
 		}
 		else
 		{
@@ -66,7 +101,7 @@ void ObjectsMetadataForm::handleObjectsMetada(void)
 																					QPixmap(QString(":/icones/icones/msgbox_info.png")), nullptr);
 
 			model_wgt->setUpdatesEnabled(false);
-			model_wgt->getDatabaseModel()->loadObjectsMetadata(file_edt->text());
+			model_wgt->getDatabaseModel()->loadObjectsMetadata(file_edt->text(), options);
 			model_wgt->adjustSceneSize();
 			model_wgt->setUpdatesEnabled(true);
 		}
@@ -133,7 +168,12 @@ void ObjectsMetadataForm::updateProgress(int progress, QString msg, unsigned int
 	QPixmap icon;
 
 	if(obj_type==BASE_OBJECT)
-		icon=QPixmap(QString(":/icones/icones/msgbox_alerta.png"));
+	{
+		if(progress==100)
+			icon=QPixmap(QString(":/icones/icones/msgbox_info.png"));
+		else
+			icon=QPixmap(QString(":/icones/icones/msgbox_alerta.png"));
+	}
 	else
 		icon=QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png"));
 
@@ -141,13 +181,4 @@ void ObjectsMetadataForm::updateProgress(int progress, QString msg, unsigned int
 	progress_lbl->setText(fmt_msg);
 	ico_lbl->setPixmap(icon);
 	progress_pb->setValue(progress);
-
-	if(progress==100)
-	{
-		icon=QPixmap(QString(":/icones/icones/msgbox_info.png"));
-		fmt_msg=trUtf8("Metadata handling ended successfully!");
-		PgModelerUiNS::createOutputTreeItem(output_trw, fmt_msg, icon, nullptr);
-		ico_lbl->setPixmap(icon);
-		progress_lbl->setText(fmt_msg);
-	}
 }
