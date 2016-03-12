@@ -411,7 +411,7 @@
                   <string/>
                  </property>
                  <property name="statusTip">
-                  <string>Handles the following database model attibutes in the metadata file: author, zoom factor, last postion and default objects.</string>
+                  <string>Handles the following database model attributes in the metadata file: author, zoom factor, last position and default objects.</string>
                  </property>
                  <property name="text">
                   <string>Database model metadata</string>
@@ -520,7 +520,7 @@
                   <string/>
                  </property>
                  <property name="statusTip">
-                  <string>Handles the objects' custom colors in the metadata file. Currenlty available only for relationships and schemas.</string>
+                  <string>Handles the objects' custom colors in the metadata file. Currently available only for relationships and schemas.</string>
                  </property>
                  <property name="text">
                   <string>Custom object's colors</string>
@@ -712,7 +712,7 @@
                   <string/>
                  </property>
                  <property name="statusTip">
-                  <string>Save textboxes to the output file when extracting metadata. When loading the file duplicated textboxes are be ignored.</string>
+                  <string>Save textboxes to the output file when extracting metadata. When loading the file textboxes are recreated and duplicated ones are ignored.</string>
                  </property>
                  <property name="text">
                   <string>Textbox objects</string>
@@ -760,7 +760,7 @@
                   <string/>
                  </property>
                  <property name="statusTip">
-                  <string>Save tags to the output file when extracting metadata. When loading the file duplicated tags are ignored.</string>
+                  <string>Save tags to the output file when extracting metadata. When loading the file tags are recreated and duplicated ones are ignored.</string>
                  </property>
                  <property name="text">
                   <string>Tag objects</string>
