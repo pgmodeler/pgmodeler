@@ -45,12 +45,12 @@ namespace GlobalAttributes {
 	SCHEMAS_DIR=QString("schemas"),
 	SQL_SCHEMA_DIR=QString("sql"),
 	XML_SCHEMA_DIR=QString("xml"),
-	GENERAL_SCHEMA_DIR=QString("general"),
 	ALTER_SCHEMA_DIR=QString("alter"),
 	SCHEMA_EXT=QString(".sch"),
 	OBJECT_DTD_DIR=QString("dtd"),
 	OBJECT_DTD_EXT=QString(".dtd"),
 	ROOT_DTD=QString("dbmodel"),
+	METADATA_DTD=QString("metadata"),
 	CONFIGURATION_EXT=QString(".conf"),
 	HIGHLIGHT_FILE_SUF=QString("-highlight"),
 

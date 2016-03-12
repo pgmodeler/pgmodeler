@@ -61,11 +61,11 @@ namespace GlobalAttributes {
 	SQL_SCHEMA_DIR,     //! \brief Default name for the sql schemas directory
 	XML_SCHEMA_DIR,     //! \brief Default name for the xml schemas directory
 	ALTER_SCHEMA_DIR,   //! \brief Default name for the alter schemas directory
-	GENERAL_SCHEMA_DIR,     //! \brief Default name for the general schemas directory
 	SCHEMA_EXT,         //! \brief Default extension for schema files
 	OBJECT_DTD_DIR,     //! \brief Default directory for dtd files
 	OBJECT_DTD_EXT,     //! \brief Default extension for dtd files
 	ROOT_DTD,           //! \brief Root DTD of model xml files
+	METADATA_DTD,				//! \brief Root DTD of objects metadata xml files
 	CONFIGURATION_EXT,  //! \brief Default extension for configuration files
 	HIGHLIGHT_FILE_SUF, //! \brief Suffix of language highlight configuration files
 

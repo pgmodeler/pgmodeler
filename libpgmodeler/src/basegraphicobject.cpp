@@ -24,6 +24,7 @@ BaseGraphicObject::BaseGraphicObject(void)
 	attributes[ParsersAttributes::X_POS]=QString();
 	attributes[ParsersAttributes::Y_POS]=QString();
 	attributes[ParsersAttributes::POSITION]=QString();
+	attributes[ParsersAttributes::REF_TYPE]=QString();
 	receiver_object=nullptr;
 }
 

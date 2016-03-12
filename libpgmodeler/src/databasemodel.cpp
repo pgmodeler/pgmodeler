@@ -9127,7 +9127,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 						schparser.ignoreUnkownAttributes(true);
 						attribs[ParsersAttributes::POSITION]=
 								schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-																						GlobalAttributes::GENERAL_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
+																						GlobalAttributes::XML_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
 																						ParsersAttributes::POSITION + GlobalAttributes::SCHEMA_EXT, attribs);
 					}
 				}
@@ -9152,7 +9152,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 						schparser.ignoreUnkownAttributes(true);
 						attribs[ParsersAttributes::POSITION]+=
 								schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-																						GlobalAttributes::GENERAL_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
+																						GlobalAttributes::XML_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
 																						ParsersAttributes::POSITION + GlobalAttributes::SCHEMA_EXT, attribs);
 					}
 
@@ -9168,7 +9168,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 
 							attribs[ParsersAttributes::POSITION]+=
 									schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-																							GlobalAttributes::GENERAL_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
+																							GlobalAttributes::XML_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
 																							ParsersAttributes::POSITION + GlobalAttributes::SCHEMA_EXT, attribs);
 						}
 					}
@@ -9211,8 +9211,8 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 				schparser.ignoreUnkownAttributes(true);
 				objs_def+=schparser.convertCharsToXMLEntities(
 										schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-																							GlobalAttributes::GENERAL_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
-																							ParsersAttributes::OBJECT + GlobalAttributes::SCHEMA_EXT, attribs));
+																							GlobalAttributes::XML_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
+																							ParsersAttributes::INFO + GlobalAttributes::SCHEMA_EXT, attribs));
 			}
 			else
 				idx++;
@@ -9223,10 +9223,10 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 		if(!objs_def.isEmpty())
 		{
 			//Generates the metadata XML buffer
-			attribs[ParsersAttributes::OBJECTS]=objs_def;
+			attribs[ParsersAttributes::INFO]=objs_def;
 			buf.append(schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-																						 GlobalAttributes::GENERAL_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
-																						 ParsersAttributes::OBJECTS_METADATA + GlobalAttributes::SCHEMA_EXT, attribs));
+																						 GlobalAttributes::XML_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
+																						 ParsersAttributes::METADATA + GlobalAttributes::SCHEMA_EXT, attribs));
 			output.write(buf.data(),buf.size());
 
 			emit s_objectLoaded(100, trUtf8("Metadata file successfully saved!"), BASE_OBJECT);
@@ -9249,7 +9249,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 	QString elem_name, aux_elem, obj_name, ref_type,
 			dtd_file=GlobalAttributes::SCHEMAS_ROOT_DIR +
 							 GlobalAttributes::DIR_SEPARATOR +
-							 GlobalAttributes::GENERAL_SCHEMA_DIR +
+							 GlobalAttributes::XML_SCHEMA_DIR +
 							 GlobalAttributes::DIR_SEPARATOR +
 							 GlobalAttributes::OBJECT_DTD_DIR +
 							 GlobalAttributes::DIR_SEPARATOR;
@@ -9286,9 +9286,9 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 		xmlparser.restartParser();
 
-		/*xmlparser.setDTDFile(dtd_file + ParsersAttributes::OBJECTS_METADATA +
+		xmlparser.setDTDFile(dtd_file + GlobalAttributes::METADATA_DTD +
 												 GlobalAttributes::OBJECT_DTD_EXT,
-												 ParsersAttributes::OBJECTS_METADATA);*/
+												 GlobalAttributes::METADATA_DTD);
 
 		xmlparser.loadXMLFile(filename);
 
@@ -9323,10 +9323,10 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						new_object=nullptr;
 						xmlparser.restorePosition();
 					}
-					else if(elem_name==ParsersAttributes::OBJECT)
+					else if(elem_name==ParsersAttributes::INFO)
 					{
 						xmlparser.getElementAttributes(attribs);
-						obj_name=attribs[ParsersAttributes::NAME];
+						obj_name=attribs[ParsersAttributes::OBJECT];
 						xmlparser.savePosition();
 
 						obj_type=BaseObject::getObjectType(attribs[ParsersAttributes::TYPE]);
