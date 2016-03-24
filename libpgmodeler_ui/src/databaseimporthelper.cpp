@@ -1542,6 +1542,8 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 
 
 		attribs[ParsersAttributes::COLUMNS]=QString();
+
+		schparser.ignoreUnkownAttributes(true);
 		attribs[ParsersAttributes::POSITION]=schparser.getCodeDefinition(ParsersAttributes::POSITION, pos_attrib, SchemaParser::XML_DEFINITION);
 
 		//Retrieving columns if they were not retrieved yet
@@ -1647,7 +1649,9 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 								{ ParsersAttributes::Y_POS, QString("0") }};
 
 
+		schparser.ignoreUnkownAttributes(true);
 		attribs[ParsersAttributes::POSITION]=schparser.getCodeDefinition(ParsersAttributes::POSITION, pos_attrib, SchemaParser::XML_DEFINITION);
+
 		ref=Reference(attribs[ParsersAttributes::DEFINITION], QString());
 		ref.setDefinitionExpression(true);
 		attribs[ParsersAttributes::REFERENCES]=ref.getXMLDefinition();
