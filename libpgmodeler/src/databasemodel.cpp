@@ -1701,8 +1701,8 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 				 relationship added column and the constraint itself was not added by
 				 relationship (created manually by the user) */
 						found=(!constr->isAddedByRelationship() &&
-							   constr->isReferRelationshipAddedColumn() &&
-							   constr->getConstraintType()!=ConstraintType::primary_key);
+								 constr->isReferRelationshipAddedColumn() &&
+								 constr->getConstraintType()!=ConstraintType::primary_key);
 
 						//When found some special object, stores is xml definition
 						if(found)
@@ -9136,6 +9136,8 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 					BaseRelationship *rel=dynamic_cast<BaseRelationship *>(object);
 					vector<QPointF> points=rel->getPoints();
 
+					attribs_map aux_attribs;
+
 					attribs[ParsersAttributes::CUSTOM_COLOR]=(save_custom_colors && rel->getCustomColor()!=Qt::transparent ? rel->getCustomColor().name() : ParsersAttributes::NONE);
 
 					attribs[ParsersAttributes::SRC_TABLE]=rel->getTable(BaseRelationship::SRC_TABLE)->getSignature();
@@ -9162,14 +9164,17 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 						pnt=rel->getLabelDistance(id);
 						if(!std::isnan(pnt.x()) && !std::isnan(pnt.y()))
 						{
-							attribs[ParsersAttributes::X_POS]=QString::number(pnt.x());
-							attribs[ParsersAttributes::Y_POS]=QString::number(pnt.y());
-							attribs[ParsersAttributes::REF_TYPE]=labels_attrs[id];
+							aux_attribs[ParsersAttributes::X_POS]=QString::number(pnt.x());
+							aux_attribs[ParsersAttributes::Y_POS]=QString::number(pnt.y());
+							aux_attribs[ParsersAttributes::REF_TYPE]=labels_attrs[id];
 
-							attribs[ParsersAttributes::POSITION]+=
-									schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-																							GlobalAttributes::XML_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
-																							ParsersAttributes::POSITION + GlobalAttributes::SCHEMA_EXT, attribs);
+							aux_attribs[ParsersAttributes::POSITION]=schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
+																																									 GlobalAttributes::XML_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
+																																									 ParsersAttributes::POSITION + GlobalAttributes::SCHEMA_EXT, aux_attribs);
+
+							attribs[ParsersAttributes::POSITION]+=schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
+																																								GlobalAttributes::XML_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
+																																								ParsersAttributes::LABEL + GlobalAttributes::SCHEMA_EXT, aux_attribs);
 						}
 					}
 				}
@@ -9403,17 +9408,26 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 									aux_elem=xmlparser.getElementName();
 									xmlparser.getElementAttributes(aux_attrib);
 
+									//Retrieving and storing the points
 									if(aux_elem==ParsersAttributes::POSITION)
 									{
-										//Retrieving and storing the points
+										points.push_back(QPointF(aux_attrib[ParsersAttributes::X_POS].toFloat(),
+																						 aux_attrib[ParsersAttributes::Y_POS].toFloat()));
+									}
+									//Retrieving and storing the labels' custom positions
+									else if(aux_elem==ParsersAttributes::LABEL)
+									{
 										ref_type=aux_attrib[ParsersAttributes::REF_TYPE];
-										pnt=QPointF(aux_attrib[ParsersAttributes::X_POS].toFloat(),
-												aux_attrib[ParsersAttributes::Y_POS].toFloat());
+										xmlparser.savePosition();
 
-										if(aux_attrib[ParsersAttributes::REF_TYPE].isEmpty())
-											points.push_back(pnt);
-										else
-											labels_pos[labels_attrs[ref_type]]=pnt;
+										if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
+										{
+											xmlparser.getElementAttributes(aux_attrib);
+											labels_pos[labels_attrs[ref_type]]=QPointF(aux_attrib[ParsersAttributes::X_POS].toFloat(),
+																																 aux_attrib[ParsersAttributes::Y_POS].toFloat());
+										}
+
+										xmlparser.restorePosition();
 									}
 									else if(load_custom_sql && aux_elem==ParsersAttributes::APPENDED_SQL &&
 													attribs[ParsersAttributes::APPENDED_SQL].isEmpty())
