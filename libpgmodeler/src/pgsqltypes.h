@@ -33,7 +33,7 @@
 
 class BaseType{
 	protected:
-		static const unsigned types_count=241;
+		static const unsigned types_count=249;
 		static QString type_list[types_count];
 
 		//! \brief Index of the type on the type_list vector
@@ -237,45 +237,6 @@ class IntervalType: public BaseType{
 		unsigned operator = (const QString &type_name);
 };
 
-class SpatialType: public BaseType{
-	private:
-		unsigned variation;
-		static const unsigned offset=229;
-		static const unsigned types_count=8;
-
-		/*! \brief Used in conjunction with spatial_type, and denotes the SRID value
-	 for the spatial type. This value goes from -1 to n. */
-		int srid;
-
-	public:
-		static const unsigned no_var=0;
-		static const unsigned var_z=1;
-		static const unsigned var_m=2;
-		static const unsigned var_zm=3;
-
-		static const unsigned point=offset;
-		static const unsigned linestring=offset+1;
-		static const unsigned polygon=offset+2;
-		static const unsigned multipoint=offset+3;
-		static const unsigned multilinestring=offset+4;
-		static const unsigned multipolygon=offset+5;
-		static const unsigned geometry=offset+6;
-		static const unsigned geometrycollection=offset+7;
-
-		SpatialType(const QString &type_name, int srid, unsigned variation_id=SpatialType::no_var);
-		SpatialType(unsigned type_id, int srid, unsigned var_id=SpatialType::no_var);
-		SpatialType(void);
-
-		void setVariation(unsigned var);
-		unsigned getVariation(void);
-
-		void setSRID(int srid);
-		int getSRID(void);
-
-		static void getTypes(QStringList &type_list);
-		QString operator * (void);
-};
-
 /*! \brief This class stores the user defined type configureation.
 	 When the user creates a Type, Sequence, Domain, even a Table,
 	 it can be used as a type on certain configurations so this
@@ -314,6 +275,45 @@ class UserTypeConfig {
 		{ name=QString(); ptype=nullptr; pmodel=nullptr; invalidated=false; type_conf=BASE_TYPE; }
 
 		friend class PgSQLType;
+};
+
+class SpatialType: public BaseType{
+	private:
+		unsigned variation;
+		static const unsigned offset=229;
+		static const unsigned types_count=16;
+
+		/*! \brief Used in conjunction with spatial_type, and denotes the SRID value
+	 for the spatial type. This value goes from -1 to n. */
+		int srid;
+
+	public:
+		static const unsigned no_var=0;
+		static const unsigned var_z=1;
+		static const unsigned var_m=2;
+		static const unsigned var_zm=3;
+
+		static const unsigned point=offset;
+		static const unsigned linestring=offset+1;
+		static const unsigned polygon=offset+2;
+		static const unsigned multipoint=offset+3;
+		static const unsigned multilinestring=offset+4;
+		static const unsigned multipolygon=offset+5;
+		static const unsigned geometry=offset+6;
+		static const unsigned geometrycollection=offset+7;
+
+		SpatialType(const QString &type_name, int srid, unsigned variation_id=SpatialType::no_var);
+		SpatialType(unsigned type_id, int srid, unsigned var_id=SpatialType::no_var);
+		SpatialType(void);
+
+		void setVariation(unsigned var);
+		unsigned getVariation(void);
+
+		void setSRID(int srid);
+		int getSRID(void);
+
+		static void getTypes(QStringList &type_list);
+		QString operator * (void);
 };
 
 class PgSQLType: public BaseType{
@@ -687,7 +687,7 @@ class FiringType: public BaseType{
 
 class EventTriggerType: public BaseType{
 	private:
-		static const unsigned offset=237;
+		static const unsigned offset=245;
 		static const unsigned types_count=4;
 
 	public:
