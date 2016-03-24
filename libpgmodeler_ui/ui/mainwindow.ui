@@ -1450,7 +1450,10 @@
      <normaloff>:/icones/icones/objmetadata.png</normaloff>:/icones/icones/objmetadata.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Handle objects metadata</string>
+    <string>Objects me&amp;tadata</string>
+   </property>
+   <property name="toolTip">
+    <string>Objects metadata</string>
    </property>
   </action>
  </widget>
