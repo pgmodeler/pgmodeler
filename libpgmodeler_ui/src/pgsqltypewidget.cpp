@@ -45,6 +45,7 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 		interval_cmb->addItems(interval_lst);
 
 		SpatialType::getTypes(spatial_lst);
+		spatial_lst.sort();
 		spatial_cmb->addItem(trUtf8("NONE"));
 		spatial_cmb->addItems(spatial_lst);
 
