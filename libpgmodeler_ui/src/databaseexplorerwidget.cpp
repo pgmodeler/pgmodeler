@@ -27,7 +27,7 @@ using namespace ParsersAttributes;
 const QString DatabaseExplorerWidget::DEP_NOT_DEFINED=QString();
 const QString DatabaseExplorerWidget::DEP_NOT_FOUND=QT_TR_NOOP("(not found, OID: %1)");
 const QString DatabaseExplorerWidget::ELEM_SEPARATOR=QString("•");
-const QString DatabaseExplorerWidget::DEFAULT_SOURCE_CODE=QT_TR_NOOP("-- Source not generated! Middle-click the item to load it. --");
+const QString DatabaseExplorerWidget::DEFAULT_SOURCE_CODE=QT_TR_NOOP("-- Source code not generated! Hit F7 or middle-click the item to load it. --");
 
 const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{ADMIN_ROLES, QT_TR_NOOP("Admin. roles")},           {ALIGNMENT, QT_TR_NOOP("Alignment")},                  {ANALYZE_FUNC, QT_TR_NOOP("Analyze func.")},
@@ -122,6 +122,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	rename_action->setShortcut(QKeySequence(Qt::Key_F2));
 
 	source_action=new QAction(QIcon(QString(":icones/icones/codigosql.png")), trUtf8("Source code"), &handle_menu);
+	source_action->setShortcut(QKeySequence(Qt::Key_F7));
 
 	objects_trw->installEventFilter(this);
 
@@ -196,7 +197,7 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
 		if(k_event->key()==Qt::Key_Delete || k_event->key()==Qt::Key_F5 ||
 				k_event->key()==Qt::Key_Space ||  k_event->key()==Qt::Key_F2 ||
 				k_event->key()==Qt::Key_Escape ||  k_event->key()==Qt::Key_Return ||
-				k_event->key()==Qt::Key_Enter)
+				k_event->key()==Qt::Key_Enter || k_event->key()==Qt::Key_F7)
 		{
 			if(k_event->key()==Qt::Key_Space)
 			{
@@ -218,6 +219,8 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
 				updateItem(objects_trw->currentItem());
 			else if(k_event->key()==Qt::Key_F2)
 				startObjectRename(objects_trw->currentItem());
+			else if(k_event->key()==Qt::Key_F7)
+				loadObjectSource();
 			else if(k_event->key()==Qt::Key_Escape)
 				cancelObjectRename();
 			else if(k_event->key()==Qt::Key_Enter ||

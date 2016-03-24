@@ -204,7 +204,7 @@ QString BaseType::type_list[types_count]=
 	These types accepts variations Z, M e ZM.
 	> Example: POINT, POINTZ, POINTM, POINTZM
 	Reference: http://postgis.refractions.net/documentation/manual-2.0/using_postgis_dbmanagement.html */
-	//offsets 229 to 236
+	//offsets 229 to 244
 	"POINT",
 	"LINESTRING",
 	"POLYGON",
@@ -213,9 +213,17 @@ QString BaseType::type_list[types_count]=
 	"MULTIPOLYGON",
 	"GEOMETRY",
 	"GEOMETRYCOLLECTION",
+	"POLYHEDRALSURFACE",
+	"TRIANGLE",
+	"TIN",
+	"CIRCULARSTRING",
+	"COMPOUNDCURVE",
+	"CURVEPOLYGON",
+	"MULTICURVE",
+	"MULTISURFACE",
 
 	//Types used by the class EventTriggerType
-	//offsets 237 to 240
+	//offsets 245 to 248
 	"ddl_command_start",
 	"ddl_command_end",
 	"sql_drop",

@@ -50,6 +50,7 @@ namespace GlobalAttributes {
 	OBJECT_DTD_DIR=QString("dtd"),
 	OBJECT_DTD_EXT=QString(".dtd"),
 	ROOT_DTD=QString("dbmodel"),
+	METADATA_DTD=QString("metadata"),
 	CONFIGURATION_EXT=QString(".conf"),
 	HIGHLIGHT_FILE_SUF=QString("-highlight"),
 

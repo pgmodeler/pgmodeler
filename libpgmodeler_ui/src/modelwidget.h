@@ -183,10 +183,6 @@ class ModelWidget: public QWidget {
 		//! \brief Stores the relationship types menu
 		QMenu *rels_menu;
 
-		/*! \brief Configures the scene aligning the object to the grid and resizing the scene
-		rect when some object is out of bound */
-		void adjustSceneSize(void);
-
 		void resizeEvent(QResizeEvent *);
 		void mousePressEvent(QMouseEvent *event);
 		void keyPressEvent(QKeyEvent *event);
@@ -217,6 +213,10 @@ class ModelWidget: public QWidget {
 
 		ModelWidget(QWidget *parent = 0);
 		~ModelWidget(void);
+
+		/*! \brief Configures the scene aligning the object to the grid and resizing the scene
+		rect when some object is out of bound */
+		void adjustSceneSize(void);
 
 		//! \brief Set the model as modified forcing it to be redrawn
 		void setModified(bool value);

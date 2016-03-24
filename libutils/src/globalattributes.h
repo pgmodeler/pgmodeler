@@ -65,6 +65,7 @@ namespace GlobalAttributes {
 	OBJECT_DTD_DIR,     //! \brief Default directory for dtd files
 	OBJECT_DTD_EXT,     //! \brief Default extension for dtd files
 	ROOT_DTD,           //! \brief Root DTD of model xml files
+	METADATA_DTD,				//! \brief Root DTD of objects metadata xml files
 	CONFIGURATION_EXT,  //! \brief Default extension for configuration files
 	HIGHLIGHT_FILE_SUF, //! \brief Suffix of language highlight configuration files
 

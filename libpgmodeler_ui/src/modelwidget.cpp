@@ -76,7 +76,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	QString str_ico, str_txt;
 	QStringList rel_types_cod={QString("11"), QString("1n"), QString("nn"), QString("dep"), QString("gen") },
 			rel_labels={ trUtf8("One to One (1-1)"), trUtf8("One to Many (1-n)"),
-						 trUtf8("Many to Many (n-n)"), trUtf8("Copy"), trUtf8("Generalization") };
+						 trUtf8("Many to Many (n-n)"), trUtf8("Copy"), trUtf8("Inheritance") };
 	ObjectType types[]={ OBJ_TABLE, OBJ_VIEW, OBJ_TEXTBOX, OBJ_RELATIONSHIP,
 						 OBJ_CAST, OBJ_CONVERSION, OBJ_DOMAIN,
 						 OBJ_FUNCTION, OBJ_AGGREGATE, OBJ_LANGUAGE,

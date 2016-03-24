@@ -25,7 +25,7 @@ SOURCES += src/mainwindow.cpp \
 	   src/baseform.cpp \
 	   src/sourcecodewidget.cpp \
 	   src/syntaxhighlighter.cpp \
-           src/databasewidget.cpp \
+		 src/databasewidget.cpp \
 	   src/schemawidget.cpp \
 	   src/objecttablewidget.cpp \
 	   src/rolewidget.cpp \
@@ -77,12 +77,12 @@ SOURCES += src/mainwindow.cpp \
 	   src/databaseimporthelper.cpp \
 	   src/databaseimportform.cpp \
 	   src/codecompletionwidget.cpp \
-           src/swapobjectsidswidget.cpp \
-           src/sqltoolwidget.cpp \
-           src/tagwidget.cpp \
-           src/modelfixform.cpp \
-           src/updatenotifierwidget.cpp \
-           src/newobjectoverlaywidget.cpp \
+		 src/swapobjectsidswidget.cpp \
+		 src/sqltoolwidget.cpp \
+		 src/tagwidget.cpp \
+		 src/modelfixform.cpp \
+		 src/updatenotifierwidget.cpp \
+		 src/newobjectoverlaywidget.cpp \
            src/eventtriggerwidget.cpp \
            src/aboutwidget.cpp \
            src/colorpickerwidget.cpp \
@@ -105,7 +105,8 @@ SOURCES += src/mainwindow.cpp \
            src/donatewidget.cpp \
     src/readonlyitemdelegate.cpp \
     src/numberedtexteditor.cpp \
-    src/linenumberswidget.cpp
+		src/linenumberswidget.cpp \
+    src/metadatahandlingform.cpp
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
@@ -197,7 +198,8 @@ HEADERS += src/mainwindow.h \
            src/donatewidget.h \
     src/readonlyitemdelegate.h \
     src/numberedtexteditor.h \
-    src/linenumberswidget.h
+		src/linenumberswidget.h \
+    src/metadatahandlingform.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \
@@ -274,7 +276,7 @@ FORMS += ui/mainwindow.ui \
          ui/bugreportform.ui \
          ui/sqlexecutionwidget.ui \
          ui/donatewidget.ui \
-    ui/sourcecodeeditorform.ui
+    ui/metadatahandlingform.ui
 
 unix|windows: LIBS += -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
                       -L$$OUT_PWD/../libpgconnector/ -lpgconnector \
