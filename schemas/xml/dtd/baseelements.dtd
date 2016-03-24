@@ -16,7 +16,6 @@
 <!ELEMENT position EMPTY>
 <!ATTLIST position x CDATA "0">
 <!ATTLIST position y CDATA "0">
-<!ATTLIST position ref-type (name-label|src-label|dst-label) "name-label">
 
 <!ELEMENT columns EMPTY>
 <!ATTLIST columns names CDATA #REQUIRED>
