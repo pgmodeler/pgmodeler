@@ -284,7 +284,7 @@
            </layout>
           </item>
           <item row="6" column="0" colspan="2">
-           <widget class="QFrame" name="message_frm_2">
+           <widget class="QFrame" name="message_frm">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -800,7 +800,7 @@
           <item row="3" column="0">
            <widget class="QLabel" name="label_3">
             <property name="text">
-             <string>Operation</string>
+             <string>Operation:</string>
             </property>
            </widget>
           </item>

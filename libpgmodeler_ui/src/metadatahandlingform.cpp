@@ -62,6 +62,8 @@ MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) :
 
 	connect(file_edt, &QLineEdit::textChanged,
 					[=](){ apply_btn->setDisabled(file_edt->text().isEmpty()); });
+
+	connect(save_metadata_rb, SIGNAL(toggled(bool)), message_frm, SLOT(setHidden(bool)));
 }
 
 void MetadataHandlingForm::setModelWidget(ModelWidget *model_wgt)
