@@ -161,7 +161,7 @@ void NumberedTextEditor::highlightCurrentLine(void)
 {
 	QList<QTextEdit::ExtraSelection> extraSelections;
 
-	if(highlight_lines)
+	if(highlight_lines && !isReadOnly())
 	{
 		QTextEdit::ExtraSelection selection;
 		selection.format.setBackground(line_hl_color);
