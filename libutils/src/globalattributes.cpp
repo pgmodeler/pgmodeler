@@ -29,7 +29,7 @@ namespace GlobalAttributes {
 	PGMODELER_VER_CODENAME=QString("Faithful Elephant"),
 	PGMODELER_BUILD_NUMBER=QString(BUILDNUM),
 	PGMODELER_SITE=QString("http://www.pgmodeler.com.br"),
-	PGMODELER_WIKI=QString("%1/wiki").arg(PGMODELER_SITE),
+	PGMODELER_SUPPORT=QString("https://github.com/pgmodeler/pgmodeler/issues"),
 	PGMODELER_SRC_URL=QString("https://github.com/pgmodeler/pgmodeler/releases"),
 	PGMODELER_PURCHASE_URL=QString("%1/purchase.php").arg(PGMODELER_SITE),
 	PGMODELER_RECOVER_URL=QString("%1/recover.php").arg(PGMODELER_SITE),

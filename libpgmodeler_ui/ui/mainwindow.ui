@@ -710,7 +710,7 @@
     <property name="title">
      <string>He&amp;lp</string>
     </property>
-    <addaction name="action_wiki"/>
+    <addaction name="action_support"/>
     <addaction name="action_bug_report"/>
     <addaction name="action_check_update"/>
     <addaction name="separator"/>
@@ -789,7 +789,7 @@
    <addaction name="action_diff"/>
    <addaction name="action_plugins"/>
    <addaction name="action_configuration"/>
-   <addaction name="action_wiki"/>
+   <addaction name="action_support"/>
   </widget>
   <widget class="QToolBar" name="control_tb">
    <property name="enabled">
@@ -1203,16 +1203,16 @@
     <string>F10</string>
    </property>
   </action>
-  <action name="action_wiki">
+  <action name="action_support">
    <property name="icon">
     <iconset resource="../res/resources.qrc">
      <normaloff>:/icones/icones/help.png</normaloff>:/icones/icones/help.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Wiki</string>
+    <string>&amp;Support</string>
    </property>
    <property name="toolTip">
-    <string>Access the wiki pages</string>
+    <string>Access the support page</string>
    </property>
    <property name="shortcut">
     <string>F1</string>

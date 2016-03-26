@@ -168,7 +168,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(action_new_model,SIGNAL(triggered(bool)),this,SLOT(addModel()));
 	connect(action_close_model,SIGNAL(triggered(bool)),this,SLOT(closeModel()));
 	connect(action_fix_model, SIGNAL(triggered(bool)), this, SLOT(fixModel()));
-	connect(action_wiki,SIGNAL(triggered(bool)),this,SLOT(openWiki()));
+	connect(action_support,SIGNAL(triggered(bool)),this,SLOT(openSupport()));
 
 	connect(action_inc_zoom,SIGNAL(triggered(bool)),this,SLOT(applyZoom()));
 	connect(action_dec_zoom,SIGNAL(triggered(bool)),this,SLOT(applyZoom()));
@@ -1587,16 +1587,16 @@ void MainWindow::showOverview(bool show)
 		overview_wgt->close();
 }
 
-void MainWindow::openWiki(void)
+void MainWindow::openSupport(void)
 {
 	Messagebox msg_box;
 
-	msg_box.show(trUtf8("Open Wiki pages"),
+	msg_box.show(trUtf8("Access support page"),
 				 trUtf8("This action will open a web browser window! Want to proceed?"),
 				 Messagebox::CONFIRM_ICON,Messagebox::YES_NO_BUTTONS);
 
 	if(msg_box.result()==QDialog::Accepted)
-		QDesktopServices::openUrl(QUrl(GlobalAttributes::PGMODELER_WIKI));
+		QDesktopServices::openUrl(QUrl(GlobalAttributes::PGMODELER_SUPPORT));
 }
 
 void MainWindow::toggleUpdateNotifier(bool show)

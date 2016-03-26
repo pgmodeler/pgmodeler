@@ -265,7 +265,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void saveTemporaryModels(void);
 
 		//! \brief Opens the pgModeler Wiki in a web browser window
-		void openWiki(void);
+		void openSupport(void);
 
 		/*! \brief Stop the saving timers. This is used when validating the model
 		in order to avoid the saving while the validation is working */
