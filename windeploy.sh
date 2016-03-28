@@ -1,8 +1,8 @@
 #!/bin/bash
 
-QT_INSTALL_VERSION='5.4.1'
-QT_BASE_VERSION='5.4'
-PGSQL_VERSION='9.4'
+QT_INSTALL_VERSION='5.5.1'
+QT_BASE_VERSION='5.5'
+PGSQL_VERSION='9.5'
 INNOSETUP_CMD='/c/Program Files (x86)/Inno Setup 5/ISCC.exe'
 LOG=windeploy.log
 
@@ -64,23 +64,23 @@ if [ $X64_BUILD = 1 ]; then
 		    $MINGW_ROOT/libgcc_s_seh-1.dll \
 		    $MINGW_ROOT/libstdc++-6.dll \
 		    $MINGW_ROOT/libwinpthread-1.dll \
-			$PGSQL_ROOT/iconv.dll \
+			$PGSQL_ROOT/iconv-2.dll \
 			$PGSQL_ROOT/libintl-8.dll"
 else
   # Default setting for x86 build
-  QT_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/${QT_BASE_VERSION}/mingw491_32/"
+  QT_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/${QT_BASE_VERSION}/mingw492_32/"
   QMAKE_ROOT=$QT_ROOT/bin
   QMAKE_ARGS="-r -spec win32-g++ CONFIG+=release"
-  MINGW_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/Tools/mingw491_32/bin"
+  MINGW_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/Tools/mingw492_32/bin"
   PGSQL_ROOT="/c/PostgreSQL/${PGSQL_VERSION}/bin"
-  DEP_LIBS="$QMAKE_ROOT/icudt53.dll \
-		   $QMAKE_ROOT/icuin53.dll \
-		   $QMAKE_ROOT/icuuc53.dll \
+  DEP_LIBS="$QMAKE_ROOT/icudt54.dll \
+		   $QMAKE_ROOT/icuin54.dll \
+		   $QMAKE_ROOT/icuuc54.dll \
 		   $QMAKE_ROOT/libgcc_s_dw2-1.dll \
 		   $QMAKE_ROOT/libstdc++-6.dll \
 		   $QMAKE_ROOT/libwinpthread-1.dll \
-		   $PGSQL_ROOT/libiconv.dll \
-		   $PGSQL_ROOT/intl.dll"
+		   $PGSQL_ROOT/libiconv-2.dll \
+		   $PGSQL_ROOT/libintl-8.dll"
 fi
 
 if [ $DEMO_VERSION = 1 ]; then
