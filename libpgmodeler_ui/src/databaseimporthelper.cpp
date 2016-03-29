@@ -2403,6 +2403,12 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 					!obj_name.contains(QRegExp(QString("^(\\\")?(%1)(\\\")?(.)").arg(sch_name))))
 				obj_name.prepend(sch_name + QString("."));
 
+			/* In case of auto resolve dependencies, if the type is a user defined one and was not created in the database
+					model but its attributes were retrieved the object will be created to avoid reference errors */
+			if(auto_resolve_deps && !type_attr.empty() &&
+				 type_oid > catalog.getLastSysObjectOID() && !dbmodel->getType(obj_name))
+				createObject(type_attr);
+
 			if(generate_xml)
 			{
 				extra_attribs[ParsersAttributes::NAME]=obj_name;
