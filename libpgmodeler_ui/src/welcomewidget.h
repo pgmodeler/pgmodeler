@@ -16,25 +16,24 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "centralwidget.h"
-#include <QGraphicsDropShadowEffect>
-#include "pgmodeleruins.h"
+/**
+\ingroup libpgmodeler_ui
+\class WelcomeWidget
+*/
 
-CentralWidget::CentralWidget(QWidget *parent): QWidget(parent)
-{
-	setupUi(this);
+#ifndef WELCOME_WIDGET_H
+#define WELCOME_WIDGET_H
 
-	QList<QToolButton *> btns= { new_tb, open_tb, recent_tb, last_session_tb, sample_tb };
-	QGraphicsDropShadowEffect *shadow=nullptr;
+#include "ui_welcomewidget.h"
 
-	for(auto &btn : btns)
-	{
-		shadow=new QGraphicsDropShadowEffect(this);
-		shadow->setXOffset(3);
-		shadow->setYOffset(3);
-		shadow->setBlurRadius(10);
-		btn->setGraphicsEffect(shadow);
+class WelcomeWidget: public QWidget, public Ui::WelcomeWidget {
+	private:
+		Q_OBJECT
+		
+	public:
+		WelcomeWidget(QWidget * parent = 0);
+		
+	public slots:
+};
 
-		PgModelerUiNS::configureWidgetFont(btn, 1.20f);
-	}
-}
+#endif

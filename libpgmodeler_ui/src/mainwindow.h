@@ -46,7 +46,7 @@
 #include "modelfixform.h"
 #include "updatenotifierwidget.h"
 #include "modelnavigationwidget.h"
-#include "centralwidget.h"
+#include "welcomewidget.h"
 #include "configurationform.h"
 #include "donatewidget.h"
 
@@ -80,7 +80,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		/*! brief Widget positioned on the center of main window that contains some basic operations like
 		create new model, open a file, restore session */
-		CentralWidget *central_wgt;
+		WelcomeWidget *central_wgt;
 
 		//! brief Widget used to navigate through the opened models.
 		ModelNavigationWidget *model_nav_wgt;

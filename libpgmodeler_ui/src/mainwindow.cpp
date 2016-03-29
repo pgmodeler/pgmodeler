@@ -41,7 +41,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		models_tbw->tabBar()->setVisible(false);
 		general_tb->layout()->setContentsMargins(0,0,0,0);
 
-		central_wgt=new CentralWidget(views_stw);
+		central_wgt=new WelcomeWidget(views_stw);
 		grid=new QGridLayout;
 		grid->setContentsMargins(0,0,0,0);
 		grid->setSpacing(0);
