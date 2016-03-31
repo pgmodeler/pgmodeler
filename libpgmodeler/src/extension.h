@@ -41,12 +41,12 @@ class Extension: public BaseObject {
 
 	public:
 		static const unsigned CUR_VERSION=0,
-                          OLD_VERSION=1;
+		OLD_VERSION=1;
 		Extension(void);
 
 		void setName(const QString &name);
 		void setSchema(BaseObject *schema);
-    QString getSignature(bool format);
+		QString getSignature(bool format);
 
 		/*! \brief Defines if the extension handles a datatype. When setting to true
 		the extension will be registered as a datatype on DatabaseModel class. This method has no effect when
@@ -65,9 +65,9 @@ class Extension: public BaseObject {
 		//! \brief Returns the SQL / XML code definition for the extension
 		virtual QString getCodeDefinition(unsigned def_type) final;
 
-    virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterDefinition(BaseObject *object) final;
 
-    void operator = (Extension &ext);
+		void operator = (Extension &ext);
 };
 
 #endif

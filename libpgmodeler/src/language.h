@@ -46,8 +46,8 @@ class Language: public BaseObject{
 			> HANDLER: Function that executes the functions written in the language's syntax
 			> INLINE: Function that executes inline instructions (DO's) (only on PostgreSQL 9.x) */
 		static const unsigned VALIDATOR_FUNC=0,
-															HANDLER_FUNC=1,
-															INLINE_FUNC=2;
+		HANDLER_FUNC=1,
+		INLINE_FUNC=2;
 
 		Language(void);
 

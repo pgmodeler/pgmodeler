@@ -7,11 +7,8 @@
     <x>0</x>
     <y>0</y>
     <width>349</width>
-    <height>62</height>
+    <height>70</height>
    </rect>
-  </property>
-  <property name="windowTitle">
-   <string>Form</string>
   </property>
   <layout class="QGridLayout" name="extension_grid">
    <property name="leftMargin">
@@ -44,6 +41,12 @@
    </item>
    <item row="0" column="1">
     <widget class="QLineEdit" name="cur_ver_edt">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="minimumSize">
       <size>
        <width>100</width>
@@ -52,7 +55,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="2">
+   <item row="1" column="0">
     <widget class="QLabel" name="old_ver_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -65,8 +68,14 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="3">
+   <item row="1" column="1">
     <widget class="QLineEdit" name="old_ver_edt">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="minimumSize">
       <size>
        <width>100</width>
@@ -75,10 +84,10 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="2">
+   <item row="0" column="2">
     <widget class="QCheckBox" name="handles_type_chk">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>

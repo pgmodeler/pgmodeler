@@ -38,12 +38,12 @@ class NewObjectOverlayWidget: public QWidget, public Ui::NewObjectOverlayWidget 
 		Q_OBJECT
 
 	public:
-    explicit NewObjectOverlayWidget(ModelWidget * parent);
+		explicit NewObjectOverlayWidget(ModelWidget * parent);
 
-    void setSelectedObjects(vector<BaseObject *> &sel_objs);
-    void configureOverlayButtons(void);
+		void setSelectedObjects(vector<BaseObject *> &sel_objs);
+		void configureOverlayButtons(void);
 
-  private slots:
+	private slots:
 
 };
 

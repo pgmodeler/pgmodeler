@@ -34,14 +34,9 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 	private:
 		Q_OBJECT
 
-		/*! \brief Operation list element count before editing the table. This attribute
-		is used to know, in case of cancel the edition, the operation (count) that is needed to
-		be removed. See: cancelConfiguration() */
-		unsigned operation_count;
-
 		ObjectTableWidget *parent_tables;
 
-    ObjectSelectorWidget *tag_sel;
+		ObjectSelectorWidget *tag_sel;
 
 		//! \brief Stores the objects tables used to handle columns, constraints, indexes, rules and triggers
 		map<ObjectType, ObjectTableWidget *> objects_tab_map;
@@ -58,8 +53,10 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 		//! \brief Returns the object type according to the widget (in this case a object table) that called the method
 		ObjectType getObjectType(QObject *sender);
 
-		//! \brief Shows the table object editing form according to the specified object type
-		void showTableObjectForm(ObjectType obj_type);
+		/*! brief Template method that opens the editing form for the specified object.
+				Class and ClassWidget should be compatible, e.g., "Column" can only be edited using ColumnWidget */
+		template<class Class, class ClassWidget>
+		int openEditingForm(TableObject *object);
 
 		void hideEvent(QHideEvent *event);
 

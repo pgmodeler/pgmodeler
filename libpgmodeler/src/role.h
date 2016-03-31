@@ -42,17 +42,17 @@ class Role: public BaseObject {
 		//! \brief Validity date for the role
 		QString validity,
 
-						//! \brief Authentication password
-						password;
+		//! \brief Authentication password
+		password;
 
 		//! \brief Roles that has the 'this' role as member
 		vector<Role *> ref_roles, //! \brief IN ROLE
 
-										//! \brief Member roles of 'this' role
-										member_roles, //! \brief ROLE
+		//! \brief Member roles of 'this' role
+		member_roles, //! \brief ROLE
 
-										//! \brief Member roles of 'this' role whit admin privileges
-										admin_roles; //! \brief ADMIN
+		//! \brief Member roles of 'this' role whit admin privileges
+		admin_roles; //! \brief ADMIN
 
 		//! \brief Formats the role attribute to be used by the SchemaParser
 		void setRoleAttribute(unsigned role_type);
@@ -60,17 +60,17 @@ class Role: public BaseObject {
 	public:
 		//! \brief Constants used to reference the available options for the role
 		static const unsigned OP_SUPERUSER=0,
-															OP_CREATEDB=1,
-															OP_CREATEROLE=2,
-															OP_INHERIT=3,
-															OP_LOGIN=4,
-															OP_ENCRYPTED=5,
-															OP_REPLICATION=6;
+		OP_CREATEDB=1,
+		OP_CREATEROLE=2,
+		OP_INHERIT=3,
+		OP_LOGIN=4,
+		OP_ENCRYPTED=5,
+		OP_REPLICATION=6;
 
 		//! \brief Constants used to reference the internal role lists of the class
 		static const unsigned REF_ROLE=10,
-													MEMBER_ROLE=20,
-													ADMIN_ROLE=30;
+		MEMBER_ROLE=20,
+		ADMIN_ROLE=30;
 
 		Role(void);
 
@@ -118,9 +118,9 @@ class Role: public BaseObject {
 		QString getPassword(void);
 
 		//! \brief Returns the SQL / XML definition for the role
-    virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getCodeDefinition(unsigned def_type) final;
 
-    virtual QString getAlterDefinition(BaseObject *object, bool ignore_name_diff=false) final;
+		virtual QString getAlterDefinition(BaseObject *object, bool ignore_name_diff=false) final;
 };
 
 #endif

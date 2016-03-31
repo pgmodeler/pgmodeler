@@ -66,8 +66,8 @@ class Table: public BaseTable {
 		//! \brief Indicates if the table is unlogged, which means, is not controled by the WAL (write ahead logs)
 		unlogged;
 
-    //! \brief Stores the relationship added column / constraints indexes
-    map<QString, unsigned> col_indexes,	constr_indexes;
+		//! \brief Stores the relationship added column / constraints indexes
+		map<QString, unsigned> col_indexes,	constr_indexes;
 
 		/*! \brief Gets one table ancestor (OBJ_TABLE) or copy (BASE_TABLE) using its name and stores
 		 the index of the found object on parameter 'obj_idx' */
@@ -78,7 +78,7 @@ class Table: public BaseTable {
 		void setConstraintsAttribute(unsigned def_type);
 		void setCommentAttribute(TableObject *tab_obj);
 		void setAncestorTableAttribute(void);
-    void setRelObjectsIndexesAttribute(void);
+		void setRelObjectsIndexesAttribute(void);
 
 	protected:
 		//! \brief Adds an ancestor table
@@ -97,10 +97,10 @@ class Table: public BaseTable {
 		indicating if ALTER commands must be generated or not */
 		void updateAlterCmdsStatus(void);
 
-    void saveRelObjectsIndexes(ObjectType obj_type);
-    void restoreRelObjectsIndexes(ObjectType obj_type);
+		void saveRelObjectsIndexes(ObjectType obj_type);
+		void restoreRelObjectsIndexes(ObjectType obj_type);
 
-	public:	
+	public:
 		Table(void);
 		~Table(void);
 
@@ -253,9 +253,9 @@ class Table: public BaseTable {
 		//! \brief Gets the object index using its name and type
 		int getObjectIndex(const QString &name, ObjectType obj_type);
 
-    /*! \brief Returns the index for the specified table object.
-        If the object specified on the parameter owns to another table other than 'this'
-        then the name of the objects are compared instead of the memory address */
+		/*! \brief Returns the index for the specified table object.
+		If the object specified on the parameter owns to another table other than 'this'
+		then the name of the objects are compared instead of the memory address */
 		int getObjectIndex(BaseObject *obj);
 
 		//! \brief Returns the primary key of the table. Returns nullptr when it doesn't exists
@@ -298,7 +298,7 @@ class Table: public BaseTable {
 		void operator = (Table &tabela);
 
 		//! \brief Returns the specified object type list
-    vector<TableObject *> *getObjectList(ObjectType obj_type);
+		vector<TableObject *> *getObjectList(ObjectType obj_type);
 
 		/*! \brief Gets objects which refer to object of the parameter (directly or indirectly) and stores them in a vector.
 		 The 'exclusion_mode' is used to speed up the execution of the method when it is used to validate the
@@ -310,23 +310,23 @@ class Table: public BaseTable {
 		 created by the user. Relationship created foreign keys are discarded from the search. */
 		bool isReferTableOnForeignKey(Table *ref_tab);
 
-    //! brief Save the current index of the objects created by relationship
-    void saveRelObjectsIndexes(void);
+		//! brief Save the current index of the objects created by relationship
+		void saveRelObjectsIndexes(void);
 
-    /*! brief Restore the position of the objects created by relationships.
-        This method must be used with caution since it generate a new list of object replacing
-        the original inside the table. Also this method can be slow in huge tables */
-    void restoreRelObjectsIndexes(void);
+		/*! brief Restore the position of the objects created by relationships.
+		This method must be used with caution since it generate a new list of object replacing
+		the original inside the table. Also this method can be slow in huge tables */
+		void restoreRelObjectsIndexes(void);
 
-    //! brief Creates custom index from rel. created object using a name and index vectors as input.
-    void setRelObjectsIndexes(const vector<QString> &obj_names, const vector<unsigned> &idxs, ObjectType obj_type);
+		//! brief Creates custom index from rel. created object using a name and index vectors as input.
+		void setRelObjectsIndexes(const vector<QString> &obj_names, const vector<unsigned> &idxs, ObjectType obj_type);
 
-    //! brief Invalidates the cached code forcing the generation of both SQL and XML
+		//! brief Invalidates the cached code forcing the generation of both SQL and XML
 		void setCodeInvalidated(bool value);
 
-    virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterDefinition(BaseObject *object) final;
 
-    QString getTruncateDefinition(bool cascade);
+		QString getTruncateDefinition(bool cascade);
 
 		friend class Relationship;
 		friend class OperationList;

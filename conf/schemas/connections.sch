@@ -19,7 +19,7 @@ $tb $tb [user=] "{user}"
 
 %if {password} %then [ password=] "{password}" %end
 
-[ connect_timeout=] "{connect_timeout}" $br
+[ connection-timeout=] "{connection-timeout}" $br
 
 $tb $tb [sslmode=] "{sslmode}" $br
 

@@ -68,7 +68,7 @@
       %end
 
       %if {not-ext-object} %then
-	%if {last-sys-oid} %or {schema} %then
+	%if {filter-oids} %or {last-sys-oid} %or {schema} %then
 	  [ AND ]
 	%else
 	  [ WHERE ]

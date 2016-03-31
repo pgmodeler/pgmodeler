@@ -51,11 +51,11 @@ class Column: public TableObject{
 		//! \brief Stores a reference to the relationship that generates the column
 		BaseObject *parent_rel;
 
-    /*! \brief Stores a reference to the sequence used to generate the default value.
-    This attribute is used only the data type is integer, smallint or bigint */
-    BaseObject *sequence;
-    
-  public:
+		/*! \brief Stores a reference to the sequence used to generate the default value.
+	This attribute is used only the data type is integer, smallint or bigint */
+		BaseObject *sequence;
+
+	public:
 		Column(void);
 
 		//! \brief Defines if the column accepts null values or not
@@ -83,9 +83,9 @@ class Column: public TableObject{
 		QString getDefaultValue(void);
 
 		//! \brief Returns the SQL/XML code definition for the column
-		virtual QString getCodeDefinition(unsigned def_type); 
+		virtual QString getCodeDefinition(unsigned def_type);
 
-    virtual QString getAlterDefinition(BaseObject *object);
+		virtual QString getAlterDefinition(BaseObject *object);
 
 		/*! \brief Returns the old column name. The parameter 'format' indicates
 		 whether the name must be formatted or not */
@@ -98,11 +98,11 @@ class Column: public TableObject{
 
 		BaseObject *getParentRelationship(void);
 
-    //! brief Set the sequence that will generate the default value for the column
-    void setSequence(BaseObject *seq);
+		//! brief Set the sequence that will generate the default value for the column
+		void setSequence(BaseObject *seq);
 
-    //! brief Returns the sequence generator of default value
-    BaseObject *getSequence(void);
+		//! brief Returns the sequence generator of default value
+		BaseObject *getSequence(void);
 
 		//! \brief Copies on column to other
 		void operator = (Column &col);

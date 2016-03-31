@@ -33,28 +33,28 @@ class ModelFixForm: public QDialog, public Ui::ModelFixForm {
 	private:
 		Q_OBJECT
 
-    const static QString PGMODELER_CLI;
+		const static QString PGMODELER_CLI;
 
-    //! brief Process used to execute pgmodeler-cli
-    QProcess pgmodeler_cli_proc;
+		//! brief Process used to execute pgmodeler-cli
+		QProcess pgmodeler_cli_proc;
 
-    void hideEvent(QHideEvent *);
+		void hideEvent(QHideEvent *);
 
 	public:
-    ModelFixForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		ModelFixForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
 	public slots:
-    int exec(void);
+		int exec(void);
 
 	private slots:
-    void enableFix(void);
-    void fixModel(void);
-    void selectFile(void);
-    void updateOutput(void);
-    void handleProcessFinish(int res);
+		void enableFix(void);
+		void fixModel(void);
+		void selectFile(void);
+		void updateOutput(void);
+		void handleProcessFinish(int res);
 
-  signals:
-    void s_modelLoadRequested(QString);
+	signals:
+		void s_modelLoadRequested(QString);
 };
 
 #endif

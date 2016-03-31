@@ -35,7 +35,13 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 	private:
 		Q_OBJECT
 
-    HintTextWidget *gen_tab_name_ht, *ref_table_ht, *recv_table_ht, *identifier_ht, *single_pk_ht;
+		static const unsigned GENERAL_TAB=0,
+		ATTRIBUTES_TAB=1,
+		CONSTRAINTS_TAB=2,
+		SPECIAL_PK_TAB=3,
+		ADVANCED_TAB=4;
+
+		HintTextWidget *gen_tab_name_ht, *ref_table_ht, *recv_table_ht, *identifier_ht, *single_pk_ht;
 
 		ColorPickerWidget *color_picker;
 
@@ -45,19 +51,14 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		//! brief Stores the original labels of the tabs
 		QStringList tab_labels;
 
-		/*! \brief Operation list element count before editing the relationship. This attribute
-		is used to know, in case of cancel the edition, the operation (count) that is needed to
-		be removed. See: cancelConfiguration() */
-		unsigned operation_count;
-
 		SyntaxHighlighter *table1_hl,
-											*table2_hl,
-                      *patterns_hl[7];
+		*table2_hl,
+		*patterns_hl[7];
 
 		//! \brief Table widgets that stores the attributes, constraint and advanced objects of relationship
 		ObjectTableWidget *attributes_tab,
-											*constraints_tab,
-											*advanced_objs_tab;
+		*constraints_tab,
+		*advanced_objs_tab;
 
 		//! \brief Lists the objects of relationship (attributes/constraints) on the respective table widget
 		void listObjects(ObjectType obj_type);
@@ -69,11 +70,10 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		 the current object type */
 		void showObjectData(TableObject *object, int row);
 
-		static const unsigned GENERAL_TAB=0,
-															ATTRIBUTES_TAB=1,
-															CONSTRAINTS_TAB=2,
-															SPECIAL_PK_TAB=3,
-															ADVANCED_TAB=4;
+		/*! brief Template method that opens the editing form for the specified object.
+				Class and ClassWidget should be compatible, e.g., "Column" can only be edited using ColumnWidget */
+		template<class Class, class ClassWidget>
+		int openEditingForm(TableObject *object);
 
 	protected:
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Table *src_tab, Table *dst_tab, unsigned rel_type);
@@ -82,10 +82,10 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		RelationshipWidget(QWidget * parent = 0);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseRelationship *base_rel);
 
-    void cancelChainedConfiguration();
-  private slots:
+		QSize getIdealSize(void);
+
+	private slots:
 		void hideEvent(QHideEvent *event);
-    void showEvent(QShowEvent *event);
 
 		void addObject(void);
 		void editObject(int row);
@@ -93,7 +93,7 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		void removeObjects(void);
 		void showAdvancedObject(int row);
 		void selectCopyOptions(void);
-    void listSpecialPkColumns(void);
+		void listSpecialPkColumns(void);
 
 		void useFKGlobalSettings(bool value);
 		void usePatternGlobalSettings(bool value);

@@ -51,8 +51,8 @@ void ModelOverviewWidget::show(ModelWidget *model)
 		connect(this->model, SIGNAL(s_modelResized(void)), this, SLOT(resizeWindowFrame(void)));
 		connect(this->model, SIGNAL(s_modelResized(void)), this, SLOT(updateOverview(void)));
 
-    connect(this->model->viewport->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(resizeWindowFrame(void)));
-    connect(this->model->viewport->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(resizeWindowFrame(void)));
+		connect(this->model->viewport->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(resizeWindowFrame(void)));
+		connect(this->model->viewport->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(resizeWindowFrame(void)));
 
 		connect(this->model->scene, SIGNAL(selectionChanged(void)), this, SLOT(updateOverview(void)));
 		connect(this->model->scene, SIGNAL(sceneRectChanged(QRectF)),this, SLOT(resizeOverview(void)));
@@ -63,7 +63,7 @@ void ModelOverviewWidget::show(ModelWidget *model)
 		this->updateOverview(true);
 
 		this->move(this->model->geometry().right() - this->width(),
-							 this->model->geometry().bottom() - this->height());
+				   this->model->geometry().bottom() - this->height());
 	}
 
 	this->raise();
@@ -144,13 +144,13 @@ void ModelOverviewWidget::resizeOverview(void)
 
 		//If the size exceeds the screen half width or height
 		if(curr_size.width() > screen_rect.width()/2 ||
-			 curr_size.height() > screen_rect.height()/2)
+				curr_size.height() > screen_rect.height()/2)
 		{
-		 //Reduce the resize factor and recalculates the new size
-		 curr_resize_factor=RESIZE_FACTOR/2;
-		 curr_size=scene_rect.size();
-		 curr_size.setWidth(curr_size.width() * curr_resize_factor);
-		 curr_size.setHeight(curr_size.height() * curr_resize_factor);
+			//Reduce the resize factor and recalculates the new size
+			curr_resize_factor=RESIZE_FACTOR/2;
+			curr_size=scene_rect.size();
+			curr_size.setWidth(curr_size.width() * curr_resize_factor);
+			curr_size.setHeight(curr_size.height() * curr_resize_factor);
 		}
 		else
 			curr_resize_factor=RESIZE_FACTOR;

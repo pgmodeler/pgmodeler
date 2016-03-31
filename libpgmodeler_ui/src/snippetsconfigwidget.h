@@ -36,84 +36,84 @@ class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWi
 	private:
 		Q_OBJECT
 
-    //! brief Stores all snippets created by the user or loaded from file
-    static map<QString, attribs_map> config_params;
+		//! brief Stores all snippets created by the user or loaded from file
+		static map<QString, attribs_map> config_params;
 
-    //! brief The regular expression the defines a valid id for a snippet
-    static const QRegExp ID_FORMAT_REGEXP;
+		//! brief The regular expression the defines a valid id for a snippet
+		static const QRegExp ID_FORMAT_REGEXP;
 
-    NumberedTextEditor *snippet_txt;
+		NumberedTextEditor *snippet_txt;
 
-    SyntaxHighlighter *snippet_hl;
+		SyntaxHighlighter *snippet_hl;
 
-    HintTextWidget *parsable_ht, *placeholders_ht;
+		HintTextWidget *parsable_ht, *placeholders_ht;
 
-    //! brief Fills the snippet combobox with previously loaded snippet map
-    void fillSnippetsCombo(map<QString, attribs_map> &config);
+		//! brief Fills the snippet combobox with previously loaded snippet map
+		void fillSnippetsCombo(map<QString, attribs_map> &config);
 
-    //! brief Validates the specified snippet atributes against the current loaded ones
-    bool isSnippetValid(attribs_map &attribs, const QString &orig_id=QString());
+		//! brief Validates the specified snippet atributes against the current loaded ones
+		bool isSnippetValid(attribs_map &attribs, const QString &orig_id=QString());
 
-    void hideEvent(QHideEvent *);
+		void hideEvent(QHideEvent *);
 
-    /* Disable methods */
-    void applyConfiguration(void){}
+		/* Disable methods */
+		void applyConfiguration(void){}
 
-    //! brief Parse the snippet map by using the 'attribs' attributes referenced in the snippet code (for parsable snippets)
-    static QString parseSnippet(attribs_map snippet, attribs_map attribs);
+		//! brief Parse the snippet map by using the 'attribs' attributes referenced in the snippet code (for parsable snippets)
+		static QString parseSnippet(attribs_map snippet, attribs_map attribs);
 
-    //! brief Create an attribute maps based upon the values filled in the form
-    attribs_map getSnippetAttributes(void);
+		//! brief Create an attribute maps based upon the values filled in the form
+		attribs_map getSnippetAttributes(void);
 
-  public:
-    SnippetsConfigWidget(QWidget * parent=0);
+	public:
+		SnippetsConfigWidget(QWidget * parent=0);
 
 		void saveConfiguration(void);
 		void loadConfiguration(void);
-    static map<QString, attribs_map> getConfigurationParams(void);
+		static map<QString, attribs_map> getConfigurationParams(void);
 
-    //! brief Returns the snippet attributes related to the identified snippet snip_id
-    static attribs_map getSnippetById(const QString &snip_id);
+		//! brief Returns the snippet attributes related to the identified snippet snip_id
+		static attribs_map getSnippetById(const QString &snip_id);
 
-    //! brief Returns only the snippets ids related to the specified object type.
-    static QStringList getSnippetsIdsByObject(ObjectType obj_type);
+		//! brief Returns only the snippets ids related to the specified object type.
+		static QStringList getSnippetsIdsByObject(ObjectType obj_type);
 
-    /*! brief Returns a vector of snippets' attributes filtering by the object type in which they apply.
-        There's a special group for general purpose snippets that can be retrieved using BASE_OBJECT type.
-        If there is no snippets related to the type an empty vector is returned. */
-    static vector<attribs_map> getSnippetsByObject(ObjectType obj_type);
+		/*! brief Returns a vector of snippets' attributes filtering by the object type in which they apply.
+		There's a special group for general purpose snippets that can be retrieved using BASE_OBJECT type.
+		If there is no snippets related to the type an empty vector is returned. */
+		static vector<attribs_map> getSnippetsByObject(ObjectType obj_type);
 
-    //! brief Returns the a list of all available snippets specified attribute
-    static QStringList getAllSnippetsAttribute(const QString &attrib);
+		//! brief Returns the a list of all available snippets specified attribute
+		static QStringList getAllSnippetsAttribute(const QString &attrib);
 
-    //! brief Returns the a vector of all available snippets.
-    static vector<attribs_map> getAllSnippets(void);
+		//! brief Returns the a vector of all available snippets.
+		static vector<attribs_map> getAllSnippets(void);
 
-    /*! brief Returns the parsed snipped identified by 'snip_id'. The 'attribs' contains the set of
-        attributes to be replaced on the original snippet code */
-    static QString getParsedSnippet(const QString &snip_id, attribs_map attribs=attribs_map());
+		/*! brief Returns the parsed snipped identified by 'snip_id'. The 'attribs' contains the set of
+		attributes to be replaced on the original snippet code */
+		static QString getParsedSnippet(const QString &snip_id, attribs_map attribs=attribs_map());
 
-    //! brief Configures a QMenu instances with the available snippets categorizing them in submenus
-    static void configureSnippetsMenu(QMenu *snip_menu, vector<ObjectType> types=vector<ObjectType>());
+		//! brief Configures a QMenu instances with the available snippets categorizing them in submenus
+		static void configureSnippetsMenu(QMenu *snip_menu, vector<ObjectType> types=vector<ObjectType>());
 
-    //! brief Returns is the identified snippet exists
-    static bool isSnippetExists(const QString &snip_id);
+		//! brief Returns is the identified snippet exists
+		static bool isSnippetExists(const QString &snip_id);
 
-  private slots:
-    void resetForm(void);
-    void editSnippet(void);
-    void handleSnippet(void);
-    void removeSnippet(void);
-    void removeAllSnippets(void);
-    void enableEditMode(bool enable);
-    void enableSaveButtons(void);
-    void filterSnippets(int idx);
-    void parseSnippet(void);
+	private slots:
+		void resetForm(void);
+		void editSnippet(void);
+		void handleSnippet(void);
+		void removeSnippet(void);
+		void removeAllSnippets(void);
+		void enableEditMode(bool enable);
+		void enableSaveButtons(void);
+		void filterSnippets(int idx);
+		void parseSnippet(void);
 
-  public slots:
+	public slots:
 		void restoreDefaults(void);
 
-    friend class ConfigurationForm;
+		friend class ConfigurationForm;
 };
 
 #endif

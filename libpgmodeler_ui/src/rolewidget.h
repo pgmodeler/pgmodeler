@@ -57,7 +57,7 @@ class RoleWidget: public BaseObjectWidget, public Ui::RoleWidget {
 		void showSelectedRoleData(void);
 		void selectMemberRole(void);
 
-    //! \brief Configures the signals/slots to each role table related to object selection
+		//! \brief Configures the signals/slots to each role table related to object selection
 		void configureRoleSelection(void);
 
 	public slots:

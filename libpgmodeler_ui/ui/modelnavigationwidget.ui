@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>288</width>
-    <height>27</height>
+    <width>300</width>
+    <height>34</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -67,8 +67,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>20</width>
-       <height>20</height>
+       <width>22</width>
+       <height>22</height>
       </size>
      </property>
      <property name="shortcut">
@@ -108,8 +108,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>20</width>
-       <height>20</height>
+       <width>22</width>
+       <height>22</height>
       </size>
      </property>
      <property name="shortcut">
@@ -162,8 +162,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>20</width>
-       <height>20</height>
+       <width>22</width>
+       <height>22</height>
       </size>
      </property>
      <property name="autoRaise">

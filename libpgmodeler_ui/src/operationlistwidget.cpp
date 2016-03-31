@@ -59,8 +59,8 @@ void OperationListWidget::updateOperationList(void)
 	if(!model_wgt)
 	{
 		operations_tw->clear();
-    op_count_lbl->setText(QString("-"));
-    current_pos_lbl->setText(QString("-"));
+		op_count_lbl->setText(QString("-"));
+		current_pos_lbl->setText(QString("-"));
 	}
 	else
 	{
@@ -94,7 +94,7 @@ void OperationListWidget::updateOperationList(void)
 			item->setData(0, Qt::UserRole, QVariant(obj_type));
 
 			if(obj_type==BASE_RELATIONSHIP)
-        str_aux+=QString("tv");
+				str_aux+=QString("tv");
 
 			item->setIcon(0,QPixmap(QString(":/icones/icones/") + str_aux + QString(".png")));
 
@@ -105,26 +105,26 @@ void OperationListWidget::updateOperationList(void)
 			item2=new QTreeWidgetItem(item);
 			item2->setIcon(0,QPixmap(QString(":/icones/icones/uid.png")));
 			item2->setFont(0,font);
-      item2->setText(0,trUtf8("Name: %1").arg(obj_name));
+			item2->setText(0,trUtf8("Name: %1").arg(obj_name));
 
 			if(op_type==Operation::OBJECT_CREATED)
 			{
-        op_icon=QString("criado");
+				op_icon=QString("criado");
 				op_name=trUtf8("created");
 			}
 			else if(op_type==Operation::OBJECT_REMOVED)
 			{
-        op_icon=QString("removido");
+				op_icon=QString("removido");
 				op_name=trUtf8("removed");
 			}
 			else if(op_type==Operation::OBJECT_MODIFIED)
 			{
-        op_icon=QString("modificado");
+				op_icon=QString("modificado");
 				op_name=trUtf8("modified");
 			}
 			else if(op_type==Operation::OBJECT_MOVED)
 			{
-        op_icon=QString("movimentado");
+				op_icon=QString("movimentado");
 				op_name=trUtf8("moved");
 			}
 
@@ -152,71 +152,50 @@ void OperationListWidget::setModel(ModelWidget *model)
 
 void OperationListWidget::undoOperation(void)
 {
-	TaskProgressWidget task_prog_wgt(this);
-
 	try
 	{
-		connect(model_wgt->op_list, SIGNAL(s_operationExecuted(int,QString,unsigned)), &task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
-		task_prog_wgt.setWindowTitle(trUtf8("Undoing operations..."));
-		task_prog_wgt.show();
-
+		QApplication::setOverrideCursor(Qt::WaitCursor);
 		model_wgt->op_list->undoOperation();
-
-		task_prog_wgt.close();
-		disconnect(model_wgt->op_list, nullptr, &task_prog_wgt, nullptr);
-
 		notifyUpdateOnModel();
-
 		model_wgt->scene->clearSelection();
+		QApplication::restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{
-		task_prog_wgt.close();
+		QApplication::restoreOverrideCursor();
 		this->updateOperationList();
-		disconnect(model_wgt->op_list, nullptr, &task_prog_wgt, nullptr);
 
-    if(e.getErrorType()==ERR_UNDO_REDO_OPR_INV_OBJECT)
-    {
-      Messagebox msg_box;
-      msg_box.show(e, "", Messagebox::ALERT_ICON);
-    }
-    else
-      throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		if(e.getErrorType()==ERR_UNDO_REDO_OPR_INV_OBJECT)
+		{
+			Messagebox msg_box;
+			msg_box.show(e, "", Messagebox::ALERT_ICON);
+		}
+		else
+			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
 void OperationListWidget::redoOperation(void)
 {
-	TaskProgressWidget task_prog_wgt(this);
-
 	try
 	{
-		connect(model_wgt->op_list, SIGNAL(s_operationExecuted(int,QString,unsigned)), &task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
-		task_prog_wgt.setWindowTitle(trUtf8("Redoing operations..."));
-		task_prog_wgt.show();
-
+		QApplication::setOverrideCursor(Qt::WaitCursor);
 		model_wgt->op_list->redoOperation();
-
-		task_prog_wgt.close();
-		disconnect(model_wgt->op_list, nullptr, &task_prog_wgt, nullptr);
-
 		notifyUpdateOnModel();
-
 		model_wgt->scene->clearSelection();
+		QApplication::restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{
-		task_prog_wgt.close();
-		this->updateOperationList();
-		disconnect(model_wgt->op_list, nullptr, &task_prog_wgt, nullptr);
+		QApplication::restoreOverrideCursor();
 
-    if(e.getErrorType()==ERR_UNDO_REDO_OPR_INV_OBJECT)
-    {
-      Messagebox msg_box;
-      msg_box.show(e, "", Messagebox::ALERT_ICON);
-    }
-    else
-      throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		if(e.getErrorType()==ERR_UNDO_REDO_OPR_INV_OBJECT)
+		{
+			Messagebox msg_box;
+			msg_box.show(e, "", Messagebox::ALERT_ICON);
+		}
+		else
+			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -225,9 +204,9 @@ void OperationListWidget::removeOperations(void)
 	Messagebox msg_box;
 
 	msg_box.show(trUtf8("Operation history exclusion"),
-									trUtf8("Delete the executed operations history is an irreversible action, do you want to continue?"),
-									Messagebox::CONFIRM_ICON,
-									Messagebox::YES_NO_BUTTONS);
+				 trUtf8("Delete the executed operations history is an irreversible action, do you want to continue?"),
+				 Messagebox::CONFIRM_ICON,
+				 Messagebox::YES_NO_BUTTONS);
 
 	if(msg_box.result()==QDialog::Accepted)
 	{

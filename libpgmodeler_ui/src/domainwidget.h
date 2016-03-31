@@ -32,17 +32,17 @@
 class DomainWidget: public BaseObjectWidget, public Ui::DomainWidget {
 	private:
 		Q_OBJECT
-
+		
 		SyntaxHighlighter *check_expr_hl;
 		PgSQLTypeWidget *data_type;
-
+		
 	public:
 		DomainWidget(QWidget * parent = 0);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Domain *domain);
-
+		
 	private slots:
 		void hideEvent(QHideEvent *event);
-
+		
 	public slots:
 		void applyConfiguration(void);
 };

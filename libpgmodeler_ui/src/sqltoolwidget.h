@@ -32,61 +32,66 @@
 #include "datamanipulationform.h"
 #include "findreplacewidget.h"
 #include "codecompletionwidget.h"
+#include "numberedtexteditor.h"
 
 class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 	private:
 		Q_OBJECT
 
+		NumberedTextEditor *sourcecode_txt;
+
+		SyntaxHighlighter *sourcecode_hl;
+
 		//! brief Database import helper used to list objects from current connection
-    DatabaseImportHelper import_helper;
+		DatabaseImportHelper import_helper;
 
-    /*! brief Controls the link between a database explorer instance and SQL execution widgets.
-        When a database explorer is closed all the SQL execution panes related to it are closed too.
-        (see addSQLExecutionTab and closeSQLExecutionTab for deitails) */
-    QMap<QWidget *, QWidgetList> sql_exec_wgts;
+		/*! brief Controls the link between a database explorer instance and SQL execution widgets.
+		When a database explorer is closed all the SQL execution panes related to it are closed too.
+		(see addSQLExecutionTab and closeSQLExecutionTab for deitails) */
+		QMap<QWidget *, QWidgetList> sql_exec_wgts;
 
-  public:
+	public:
 		SQLToolWidget(QWidget * parent = 0);
-    ~SQLToolWidget(void);
+		~SQLToolWidget(void);
 
-    //! brief Force the update of the sql command input field and the syntax highligter attached to the opened tabs
-    void updateTabs(void);
+		//! brief Force the update of the sql command input field and the syntax highligter attached to the opened tabs
+		void updateTabs(void);
 
-  public slots:
-    void configureSnippets(void);
+	public slots:
+		void configureSnippets(void);
 
-  private slots:
-    //! brief Opens a connection to the selected server
-    void connectToServer(void);
+	private slots:
+		//! brief Opens a connection to the selected server
+		void connectToServer(void);
 
-    //! brief Disconnect from server and close any opened database explorer or sql execution tab
-    void disconnectFromDatabases(void);
+		//! brief Disconnect from server and close any opened database explorer or sql execution tab
+		void disconnectFromDatabases(void);
 
-    //! brief Drop the named database
-    void dropDatabase(const QString &dbname);
+		//! brief Drop the named database
+		void dropDatabase(const QString &dbname);
 
 		//! brief Show the widget to handle data in tables
-    void openDataGrid(const QString &dbname=QString(), const QString &schema=QString("public"), const QString &table=QString(), bool hide_views=true);
+		void openDataGrid(const QString &dbname=QString(), const QString &schema=QString("public"), const QString &table=QString(), bool hide_views=true);
 
-    //! brief Open the current database in a database explorer instance
-    void browseDatabase(void);
+		//! brief Open the current database in a database explorer instance
+		void browseDatabase(void);
 
-    //! brief Add a tab to permit the SQL execution for the current database being browsed
-    void addSQLExecutionTab(void);
+		//! brief Add a tab to permit the SQL execution for the current database being browsed
+		void addSQLExecutionTab(void);
 
-    //! brief Show the selected snippet on the current opened SQL execution tab
-    void showSnippet(const QString &snip);
+		//! brief Show the selected snippet on the current opened SQL execution tab
+		void showSnippet(const QString &snip);
 
-    //! brief Close the database explorer specified by its index. Also, closes any SQL exec. tab related to it
-    void closeDatabaseExplorer(int idx);
+		//! brief Close the database explorer specified by its index. Also, closes any SQL exec. tab related to it
+		void closeDatabaseExplorer(int idx);
 
-    //! brief Close the SQL execution tab specified by its index
-    void closeSQLExecutionTab(int idx);
+		//! brief Close the SQL execution tab specified by its index
+		void closeSQLExecutionTab(int idx);
 
-  signals:
-    /*! brief This signal is emitted whenever the user changes the connections settings
-        within this widget without use the main configurations dialog */
-    void s_connectionsUpdateRequest(void);
+	signals:
+		/*! brief This signal is emitted whenever the user changes the connections settings
+		within this widget without use the main configurations dialog */
+		void s_connectionsUpdateRequest(void);
 };
 
 #endif

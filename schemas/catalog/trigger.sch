@@ -40,6 +40,12 @@
     #   bit 5 -> TRUNCATE
     #   bit 6 -> INTEAD OF [1] (only for views)
       [ SELECT DISTINCT(tg.oid), tg.tgname AS name, tg.tgfoid AS trigger_func, tb.oid AS table,
+      
+        CASE 
+            WHEN tb.relkind = 'r' THEN 'table'
+            WHEN tb.relkind = 'v' THEN 'view'
+            WHEN tb.relkind = 'm' THEN 'view'
+        END AS table_type, 
 
 	#Convert the arguments from bytea to a string array. The last element is always empty and can be discarded
 	string_to_array(encode(tg.tgargs,'escape'), E'\\000') AS arguments,

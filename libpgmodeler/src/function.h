@@ -211,7 +211,7 @@ class Function: public BaseObject {
 		void removeReturnedTableColumns(void);
 
 		//! \brief Returns the complete function signature
-    virtual QString getSignature(bool=true);
+		virtual QString getSignature(bool=true);
 
 		/*! \brief Generates the function's signature. The 'format' parameter is used
 		 to adequately format the function and parameters names. By default
@@ -221,9 +221,9 @@ class Function: public BaseObject {
 		//! \brief Returns the SQL / XML code definition for the function
 		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) final;
 
-    virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getCodeDefinition(unsigned def_type) final;
 
-    virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterDefinition(BaseObject *object) final;
 };
 
 #endif

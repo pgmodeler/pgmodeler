@@ -26,22 +26,20 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DOMAIN
 		Ui_DomainWidget::setupUi(this);
 
 		check_expr_hl=nullptr;
-    check_expr_hl=new SyntaxHighlighter(check_expr_txt, false, true);
-    check_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		check_expr_hl=new SyntaxHighlighter(check_expr_txt, false, true);
+		check_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		data_type=nullptr;
 		data_type=new PgSQLTypeWidget(this);
 		domain_grid->addWidget(data_type,4,0,1,2);
+		domain_grid->addItem(new QSpacerItem(10,1,QSizePolicy::Fixed,QSizePolicy::Expanding), domain_grid->count()+1, 0, 1, 0);
 
 		configureFormLayout(domain_grid, OBJ_DOMAIN);
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-
-		parent_form->setMinimumSize(540, 570);
-		parent_form->setMaximumHeight(570);
-
 		setRequiredField(data_type);
-    configureTabOrder({ def_value_edt, constr_name_edt, not_null_chk,
-                        check_expr_txt, data_type });
+		configureTabOrder({ def_value_edt, constr_name_edt, not_null_chk,
+							check_expr_txt, data_type });
+
+		setMinimumSize(580, 530);
 	}
 	catch(Exception &e)
 	{
@@ -67,9 +65,9 @@ void DomainWidget::setAttributes(DatabaseModel *model, OperationList *op_list, S
 	if(domain)
 	{
 		type=domain->getType();
-    def_value_edt->setText(domain->getDefaultValue());
-    check_expr_txt->setPlainText(domain->getExpression());
-    constr_name_edt->setText(domain->getConstraintName());
+		def_value_edt->setText(domain->getDefaultValue());
+		check_expr_txt->setPlainText(domain->getExpression());
+		constr_name_edt->setText(domain->getConstraintName());
 		not_null_chk->setChecked(domain->isNotNull());
 	}
 
@@ -87,7 +85,7 @@ void DomainWidget::applyConfiguration(void)
 		domain->setType(data_type->getPgSQLType());
 		domain->setDefaultValue(def_value_edt->text());
 		domain->setExpression(check_expr_txt->toPlainText());
-    domain->setConstraintName(constr_name_edt->text());
+		domain->setConstraintName(constr_name_edt->text());
 		domain->setNotNull(not_null_chk->isChecked());
 
 		BaseObjectWidget::applyConfiguration();

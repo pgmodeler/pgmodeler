@@ -20,19 +20,19 @@
 
 TagWidget::TagWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TAG)
 {
-  Ui_TagWidget::setupUi(this);
-  configureFormLayout(tag_grid, OBJ_TAG);
+	Ui_TagWidget::setupUi(this);
+	configureFormLayout(tag_grid, OBJ_TAG);
 
 	QStringList attribs={ ParsersAttributes::TABLE_NAME, ParsersAttributes::TABLE_SCHEMA_NAME,
-												ParsersAttributes::TABLE_TITLE, ParsersAttributes::TABLE_BODY,
-												ParsersAttributes::TABLE_EXT_BODY };
+						  ParsersAttributes::TABLE_TITLE, ParsersAttributes::TABLE_BODY,
+						  ParsersAttributes::TABLE_EXT_BODY };
 	unsigned color_count=1;
 	int row=0;
 
-  for(auto &attr : attribs)
+	for(auto &attr : attribs)
 	{
 		if(color_count==1 && attr!=ParsersAttributes::TABLE_NAME && attr!=ParsersAttributes::TABLE_SCHEMA_NAME)
-			 color_count=3;
+			color_count=3;
 
 		color_pickers[attr]=new ColorPickerWidget(color_count, this);
 		colors_grid->addWidget(color_pickers[attr], row, 1);
@@ -40,24 +40,22 @@ TagWidget::TagWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TAG)
 		row++;
 	}
 
-	connect(parent_form->apply_ok_btn, SIGNAL(clicked()), this, SLOT(applyConfiguration()));
-	parent_form->setMinimumSize(450, 320);
-	parent_form->setMaximumHeight(320);
+	setMinimumSize(450, 220);
 }
 
 void TagWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Tag *tag)
 {
 	unsigned color_count=1, i;
 	QStringList attribs={ ParsersAttributes::TABLE_NAME, ParsersAttributes::TABLE_SCHEMA_NAME,
-												ParsersAttributes::TABLE_TITLE, ParsersAttributes::TABLE_BODY,
-												ParsersAttributes::TABLE_EXT_BODY };
+						  ParsersAttributes::TABLE_TITLE, ParsersAttributes::TABLE_BODY,
+						  ParsersAttributes::TABLE_EXT_BODY };
 
 	BaseObjectWidget::setAttributes(model, op_list, tag);
 
-  for(auto &attr : attribs)
+	for(auto &attr : attribs)
 	{
 		if(color_count==1 && attr!=ParsersAttributes::TABLE_NAME && attr!=ParsersAttributes::TABLE_SCHEMA_NAME)
-			 color_count=3;
+			color_count=3;
 
 		for(i=0; i < color_count; i++)
 		{
@@ -74,33 +72,33 @@ void TagWidget::applyConfiguration(void)
 	try
 	{
 		Tag *tag=nullptr;
-    vector<BaseObject *> tagged_tabs;
+		vector<BaseObject *> tagged_tabs;
 		QStringList attribs={ ParsersAttributes::TABLE_TITLE, ParsersAttributes::TABLE_BODY,
-													ParsersAttributes::TABLE_EXT_BODY };
+							  ParsersAttributes::TABLE_EXT_BODY };
 
-    startConfiguration<Tag>();
-    tag=dynamic_cast<Tag *>(this->object);
+		startConfiguration<Tag>();
+		tag=dynamic_cast<Tag *>(this->object);
 
-    BaseObjectWidget::applyConfiguration();
+		BaseObjectWidget::applyConfiguration();
 
 		tag->setElementColor(ParsersAttributes::TABLE_NAME, color_pickers[ParsersAttributes::TABLE_NAME]->getColor(0), Tag::FILL_COLOR1);
 		tag->setElementColor(ParsersAttributes::TABLE_SCHEMA_NAME, color_pickers[ParsersAttributes::TABLE_SCHEMA_NAME]->getColor(0), Tag::FILL_COLOR1);
 
-    for(auto &attr : attribs)
+		for(auto &attr : attribs)
 		{
 			tag->setElementColors(attr,
-														QString("%1,%2,%3")
-														.arg(color_pickers[attr]->getColor(Tag::FILL_COLOR1).name())
-														.arg(color_pickers[attr]->getColor(Tag::FILL_COLOR2).name())
-														.arg(color_pickers[attr]->getColor(Tag::BORDER_COLOR).name()));
+								  QString("%1,%2,%3")
+								  .arg(color_pickers[attr]->getColor(Tag::FILL_COLOR1).name())
+								  .arg(color_pickers[attr]->getColor(Tag::FILL_COLOR2).name())
+								  .arg(color_pickers[attr]->getColor(Tag::BORDER_COLOR).name()));
 		}
 
-    model->getObjectReferences(tag, tagged_tabs);
-    while(!tagged_tabs.empty())
-    {
-      dynamic_cast<BaseTable *>(tagged_tabs.back())->setModified(true);
-      tagged_tabs.pop_back();
-    }
+		model->getObjectReferences(tag, tagged_tabs);
+		while(!tagged_tabs.empty())
+		{
+			dynamic_cast<BaseTable *>(tagged_tabs.back())->setModified(true);
+			tagged_tabs.pop_back();
+		}
 
 		finishConfiguration();
 	}

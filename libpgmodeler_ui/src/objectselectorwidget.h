@@ -51,34 +51,34 @@ class ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
 		DatabaseModel *model;
 
 		//! \brief Configures the selectors attributes at construction time
-    void configureSelector(bool install_highlighter);
+		void configureSelector(bool install_highlighter);
 
 		bool eventFilter(QObject *obj, QEvent *evnt);
 
 	public:
-    ObjectSelectorWidget(ObjectType sel_obj_type, bool install_highlighter, QWidget * parent = 0);
-    ObjectSelectorWidget(vector<ObjectType> sel_obj_types, bool install_highlighter, QWidget * parent = 0);
+		ObjectSelectorWidget(ObjectType sel_obj_type, bool install_highlighter, QWidget * parent = 0);
+		ObjectSelectorWidget(vector<ObjectType> sel_obj_types, bool install_highlighter, QWidget * parent = 0);
 		~ObjectSelectorWidget(void);
 
-    //! brief Enables the creation of new objects from withing the object selector dialog
-    void enableObjectCreation(bool value);
+		//! brief Enables the creation of new objects from withing the object selector dialog
+		void enableObjectCreation(bool value);
 
 		//! \brief Returns the reference to the selected object
 		BaseObject *getSelectedObject(void);
 
-    //! brief Returns the selected object formated name
-    QString getSelectedObjectName(void);
+		//! brief Returns the selected object formated name
+		QString getSelectedObjectName(void);
 
 		//! \brief Defines the initial selected object to be show on the selector
 		void setSelectedObject(BaseObject *object);
 
-    //! \brief Defines the initial selected object to be show on the selector by searching it using the obj_name
-    void setSelectedObject(const QString &obj_name, ObjectType obj_type);
+		//! \brief Defines the initial selected object to be show on the selector by searching it using the obj_name
+		void setSelectedObject(const QString &obj_name, ObjectType obj_type);
 
 		//! \brief Defines the model which the selector will search the objects
 		void setModel(DatabaseModel *model);
 
-  private slots:
+	private slots:
 		void showSelectedObject(BaseObject *obj_sel, bool=false);
 
 		//! \brief Shows the object view widget (picker)

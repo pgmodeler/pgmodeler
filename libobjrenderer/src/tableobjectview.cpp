@@ -66,11 +66,11 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 	/* Elliptical descriptor is used to columns (with or without not-null constraint),
 		for other object types, polygonal descriptor is usded */
 	ellipse_desc=((column && constr_type==BaseType::null) ||
-								(obj_type!=OBJ_INDEX && obj_type!=OBJ_RULE &&
-																									obj_type!=OBJ_TRIGGER && obj_type!=OBJ_COLUMN));
+				  (obj_type!=OBJ_INDEX && obj_type!=OBJ_RULE &&
+													obj_type!=OBJ_TRIGGER && obj_type!=OBJ_COLUMN));
 
 	if(descriptor && ((ellipse_desc && !dynamic_cast<QGraphicsEllipseItem *>(descriptor)) ||
-										(!ellipse_desc && dynamic_cast<QGraphicsEllipseItem *>(descriptor))))
+					  (!ellipse_desc && dynamic_cast<QGraphicsEllipseItem *>(descriptor))))
 	{
 		this->removeFromGroup(descriptor);
 		delete(descriptor);
@@ -97,7 +97,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 			QGraphicsEllipseItem *desc=dynamic_cast<QGraphicsEllipseItem *>(descriptor);
 
 			desc->setRect(QRectF(QPointF(0,0),
-													 QSizeF(9.0f * factor, 9.0f * factor)));
+								 QSizeF(9.0f * factor, 9.0f * factor)));
 
 			if(column->isNotNull())
 				attrib=ParsersAttributes::NN_COLUMN;
@@ -130,7 +130,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 			}
 			else if(constr_type==ConstraintType::unique)
 			{
-        attrib=ParsersAttributes::UQ_COLUMN;
+				attrib=ParsersAttributes::UQ_COLUMN;
 				pol.append(QPointF(4,0)); pol.append(QPointF(0,4)); pol.append(QPointF(0,5));
 				pol.append(QPointF(4,9)); pol.append(QPointF(5,9)); pol.append(QPointF(9,5));
 				pol.append(QPointF(9,4)); pol.append(QPointF(5,0));
@@ -138,8 +138,8 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 
 			if(factor!=1.0f)
 				this->resizePolygon(pol,
-														pol.boundingRect().width() * factor,
-														pol.boundingRect().height()  * factor);
+									pol.boundingRect().width() * factor,
+									pol.boundingRect().height()  * factor);
 
 			desc->setPolygon(pol);
 			desc->setBrush(this->getFillStyle(attrib));
@@ -147,8 +147,8 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 		}
 	}
 	else if(obj_type==OBJ_INDEX ||
-					obj_type==OBJ_RULE ||
-					obj_type==OBJ_TRIGGER)
+			obj_type==OBJ_RULE ||
+			obj_type==OBJ_TRIGGER)
 	{
 		TableObject *tab_obj=dynamic_cast<TableObject *>(this->getSourceObject());
 		QGraphicsPolygonItem *desc=dynamic_cast<QGraphicsPolygonItem *>(descriptor);
@@ -159,8 +159,8 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 
 		if(factor!=1.0f)
 			this->resizePolygon(pol,
-													pol.boundingRect().width() * factor ,
-													pol.boundingRect().height() * factor);
+								pol.boundingRect().width() * factor ,
+								pol.boundingRect().height() * factor);
 
 		desc->setPolygon(pol);
 		desc->setBrush(this->getFillStyle(tab_obj->getSchemaName()));
@@ -171,7 +171,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 		QGraphicsEllipseItem *desc=dynamic_cast<QGraphicsEllipseItem *>(descriptor);
 
 		desc->setRect(QRectF(QPointF(0,0),
-												 QSizeF(9.0f * factor, 9.0f * factor)));
+							 QSizeF(9.0f * factor, 9.0f * factor)));
 		desc->setBrush(this->getFillStyle(ParsersAttributes::REFERENCE));
 		desc->setPen(this->getBorderStyle(ParsersAttributes::REFERENCE));
 	}
@@ -189,14 +189,14 @@ void TableObjectView::configureObject(void)
 		ConstraintType constr_type=ConstraintType::null;
 		bool sql_disabled=false;
 
-    tooltip=tab_obj->getName() + QString(" (") + tab_obj->getTypeName() + QString(")");
-    tooltip+=QString("\nId: %1").arg(tab_obj->getObjectId());
+		tooltip=tab_obj->getName() + QString(" (") + tab_obj->getTypeName() + QString(")");
+		tooltip+=QString("\nId: %1").arg(tab_obj->getObjectId());
 		sql_disabled=tab_obj->isSQLDisabled();
 
 		if(column)
 		{
 			if(column->isAddedByRelationship())
-        tooltip+=trUtf8("\nRelationship: %1").arg(column->getParentRelationship()->getName());
+				tooltip+=trUtf8("\nRelationship: %1").arg(column->getParentRelationship()->getName());
 
 			str_constr=this->getConstraintString(column);
 
@@ -215,7 +215,7 @@ void TableObjectView::configureObject(void)
 				fmt=font_config[ParsersAttributes::UQ_COLUMN];
 				constr_type=ConstraintType::unique;
 			}
-      else if(str_constr.indexOf(TXT_NOT_NULL)>=0)
+			else if(str_constr.indexOf(TXT_NOT_NULL)>=0)
 				fmt=font_config[ParsersAttributes::NN_COLUMN];
 			else
 				fmt=font_config[ParsersAttributes::COLUMN];
@@ -226,19 +226,19 @@ void TableObjectView::configureObject(void)
 				fmt=font_config[ParsersAttributes::PROT_COLUMN];
 
 			if(str_constr.indexOf(TXT_PRIMARY_KEY)>=0)
-        atribs_tip+=(~ConstraintType(ConstraintType::primary_key)).toLower() + QString(", ");
+				atribs_tip+=(~ConstraintType(ConstraintType::primary_key)).toLower() + QString(", ");
 
 			if(str_constr.indexOf(TXT_FOREIGN_KEY)>=0)
-        atribs_tip+=(~ConstraintType(ConstraintType::foreign_key)).toLower() + QString(", ");
+				atribs_tip+=(~ConstraintType(ConstraintType::foreign_key)).toLower() + QString(", ");
 
 			if(str_constr.indexOf(TXT_UNIQUE)>=0)
-        atribs_tip+=(~ConstraintType(ConstraintType::unique)).toLower() + QString(", ");
+				atribs_tip+=(~ConstraintType(ConstraintType::unique)).toLower() + QString(", ");
 
 			if(str_constr.indexOf(TXT_EXCLUDE)>=0)
-        atribs_tip+=(~ConstraintType(ConstraintType::exclude)).toLower() + QString(", ");
+				atribs_tip+=(~ConstraintType(ConstraintType::exclude)).toLower() + QString(", ");
 
-      if(str_constr.indexOf(TXT_NOT_NULL)>=0)
-        atribs_tip+=QString("not null");
+			if(str_constr.indexOf(TXT_NOT_NULL)>=0)
+				atribs_tip+=QString("not null");
 		}
 		else
 		{
@@ -256,7 +256,7 @@ void TableObjectView::configureObject(void)
 
 		//Configuring the labels as follow: [object name] [type] [constraints]
 		//Configuring tha name label
-    lables[0]->setText(tab_obj->getName());
+		lables[0]->setText(tab_obj->getName());
 
 		//Strikeout the column name when its SQL is disabled
 		QFont font=fmt.font();
@@ -271,9 +271,9 @@ void TableObjectView::configureObject(void)
 		//Configuring the type label
 		fmt=font_config[ParsersAttributes::OBJECT_TYPE];
 		if(column)
-      lables[1]->setText(TYPE_SEPARATOR + (*column->getType()));
+			lables[1]->setText(TYPE_SEPARATOR + (*column->getType()));
 		else
-      lables[1]->setText(TYPE_SEPARATOR + tab_obj->getSchemaName());
+			lables[1]->setText(TYPE_SEPARATOR + tab_obj->getSchemaName());
 
 		lables[1]->setFont(fmt.font());
 		lables[1]->setBrush(fmt.foreground());
@@ -283,7 +283,7 @@ void TableObjectView::configureObject(void)
 		//Configuring the constraints label
 		fmt=font_config[ParsersAttributes::CONSTRAINTS];
 		if(column)
-      lables[2]->setText(str_constr);
+			lables[2]->setText(str_constr);
 		else
 		{
 			Rule *rule=dynamic_cast<Rule *>(tab_obj);
@@ -293,7 +293,7 @@ void TableObjectView::configureObject(void)
 			if(rule)
 			{
 				str_constr+=(~rule->getExecutionType()).mid(0,1);
-        atribs_tip+=(~rule->getExecutionType()).toLower() + QString(", ");
+				atribs_tip+=(~rule->getExecutionType()).toLower() + QString(", ");
 
 				str_constr+=CONSTR_SEPARATOR;
 
@@ -306,14 +306,14 @@ void TableObjectView::configureObject(void)
 				str_constr+=(~trigger->getFiringType()).mid(0,1);
 				str_constr+=CONSTR_SEPARATOR;
 
-        atribs_tip+=(~trigger->getFiringType()).toLower() + QString(", ");
+				atribs_tip+=(~trigger->getFiringType()).toLower() + QString(", ");
 
 				for(unsigned i=EventType::on_insert; i <= EventType::on_truncate; i++)
 				{
 					if(trigger->isExecuteOnEvent(EventType(i)))
 					{
 						str_constr+=(~EventType(i)).mid(3,1);
-            atribs_tip+=(~EventType(i)).toLower() + QString(", ");
+						atribs_tip+=(~EventType(i)).toLower() + QString(", ");
 					}
 				}
 				str_constr=str_constr.toLower();
@@ -322,33 +322,33 @@ void TableObjectView::configureObject(void)
 			{
 				if(index->getIndexAttribute(Index::UNIQUE))
 				{
-          str_constr+=QString("u");
-          atribs_tip += QString("unique") + QString(", ");
+					str_constr+=QString("u");
+					atribs_tip += QString("unique") + QString(", ");
 				}
 
 				if(index->getIndexAttribute(Index::CONCURRENT))
 				{
-          str_constr+=QString("c");
-          atribs_tip += QString("concurrent") + QString(", ");
+					str_constr+=QString("c");
+					atribs_tip += QString("concurrent") + QString(", ");
 				}
 
 				if(index->getIndexAttribute(Index::FAST_UPDATE))
 				{
-          str_constr+=QString("f");
-          atribs_tip += QString("fast updated");
+					str_constr+=QString("f");
+					atribs_tip += QString("fast updated");
 				}
 
 				if(index->getIndexAttribute(Index::BUFFERING))
 				{
-          str_constr+=QString("b");
-          atribs_tip += QString("buffering");
+					str_constr+=QString("b");
+					atribs_tip += QString("buffering");
 				}
 			}
 
 			if(!str_constr.isEmpty())
-        lables[2]->setText(CONSTR_DELIM_START + QString(" ") +
-                                             str_constr + QString(" ") +
-                                             CONSTR_DELIM_END);
+				lables[2]->setText(CONSTR_DELIM_START + QString(" ") +
+								   str_constr + QString(" ") +
+								   CONSTR_DELIM_END);
 		}
 
 		if(!atribs_tip.isEmpty())
@@ -356,8 +356,8 @@ void TableObjectView::configureObject(void)
 			if(atribs_tip.at(atribs_tip.length()-1)==' ')
 				atribs_tip.remove(atribs_tip.length()-2, 2);
 
-      atribs_tip=QString("\n") + CONSTR_DELIM_START +
-                                    QString(" ") + atribs_tip + QString(" ") + CONSTR_DELIM_END;
+			atribs_tip=QString("\n") + CONSTR_DELIM_START +
+					   QString(" ") + atribs_tip + QString(" ") + CONSTR_DELIM_END;
 		}
 
 		lables[2]->setFont(fmt.font());
@@ -392,7 +392,7 @@ void TableObjectView::configureObject(Reference reference)
 	{
 		//Configures the name label as: [table].[column]
 		fmt=font_config[ParsersAttributes::REF_TABLE];
-    lables[0]->setText(reference.getTable()->getName() + ".");
+		lables[0]->setText(reference.getTable()->getName() + ".");
 		lables[0]->setFont(fmt.font());
 		lables[0]->setBrush(fmt.foreground());
 		lables[0]->setPos(px, 0);
@@ -400,7 +400,7 @@ void TableObjectView::configureObject(Reference reference)
 
 		fmt=font_config[ParsersAttributes::REF_COLUMN];
 		if(reference.getColumn())
-      lables[1]->setText(reference.getColumn()->getName());
+			lables[1]->setText(reference.getColumn()->getName());
 		else
 			lables[1]->setText("*");
 
@@ -414,29 +414,29 @@ void TableObjectView::configureObject(Reference reference)
 		fmt=font_config[ParsersAttributes::REF_TABLE];
 
 		str_aux=reference.getExpression().simplified().mid(0,25);
-    if(reference.getExpression().size() > 25) str_aux+=QString("...");
-    str_aux.replace(QString("\n"), QString(" "));
+		if(reference.getExpression().size() > 25) str_aux+=QString("...");
+		str_aux.replace(QString("\n"), QString(" "));
 
 		lables[0]->setText(str_aux);
 		lables[0]->setFont(fmt.font());
 		lables[0]->setBrush(fmt.foreground());
-    lables[1]->setText(QString());
+		lables[1]->setText(QString());
 		lables[0]->setPos(px, 0);
 		px+=lables[0]->boundingRect().width();
 	}
 
 	//Configures a label for the alias (if there is one)
-  if((reference.getColumn() && !reference.getColumnAlias().isEmpty()) ||
-     (!reference.getAlias().isEmpty() && reference.getReferenceType()==Reference::REFER_EXPRESSION))
+	if((reference.getColumn() && !reference.getColumnAlias().isEmpty()) ||
+			(!reference.getAlias().isEmpty() && reference.getReferenceType()==Reference::REFER_EXPRESSION))
 	{
 		if(reference.getReferenceType()==Reference::REFER_EXPRESSION)
 			str_aux=reference.getAlias();
 		else
 			str_aux=reference.getColumnAlias();
 
-    str_aux=QString(" (") + str_aux + QString(") ");
+		str_aux=QString(" (") + str_aux + QString(") ");
 		fmt=font_config[ParsersAttributes::ALIAS];
-    lables[2]->setText(str_aux);
+		lables[2]->setText(str_aux);
 		lables[2]->setFont(fmt.font());
 		lables[2]->setBrush(fmt.foreground());
 		lables[2]->setPos(px, 0);
@@ -492,7 +492,7 @@ QString TableObjectView::getConstraintString(Column *column)
 			itr++;
 
 			//Check if the column is referecend by the constraint
-      if(constr->isColumnReferenced(column, false))//constr->isColumnExists(column, Constraint::SOURCE_COLS))
+			if(constr->isColumnReferenced(column, false))//constr->isColumnExists(column, Constraint::SOURCE_COLS))
 			{
 				constr_type=constr->getConstraintType();
 
@@ -513,13 +513,13 @@ QString TableObjectView::getConstraintString(Column *column)
 		if(column->isNotNull() && !str_constr.contains(TXT_PRIMARY_KEY))
 			str_constr+=TXT_NOT_NULL + CONSTR_SEPARATOR;
 
-    if(!str_constr.isEmpty())
+		if(!str_constr.isEmpty())
 			str_constr= CONSTR_DELIM_START +
-									CONSTR_SEPARATOR + str_constr +
-									CONSTR_DELIM_END;
+						CONSTR_SEPARATOR + str_constr +
+						CONSTR_DELIM_END;
 
 		return(str_constr);
 	}
-  else return(QString());
+	else return(QString());
 }
 

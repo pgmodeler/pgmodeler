@@ -44,17 +44,19 @@ class BaseTableView: public BaseObjectView {
 		QGraphicsItemGroup *columns,
 		*ext_attribs;
 
-    static bool hide_ext_attribs, hide_tags;
+		static bool hide_ext_attribs, hide_tags;
 
-    //! \brief Polygonal object that defines the table body
-    RoundedRectItem *body,
+		//! \brief Polygonal object that defines the table body
+		RoundedRectItem *body,
 
-    //! \brief Extended table attributes (indexes, rules, triggers) section body
-    *ext_attribs_body;
+		//! \brief Extended table attributes (indexes, rules, triggers) section body
+		*ext_attribs_body,
 
-    QGraphicsPolygonItem *tag_body;
+		*placeholder;
 
-    QGraphicsSimpleTextItem *tag_name;
+		QGraphicsPolygonItem *tag_body;
+
+		QGraphicsSimpleTextItem *tag_name;
 
 		//! \brief Stores the reference to the child object currently selected on table
 		TableObject *sel_child_obj;
@@ -70,8 +72,8 @@ class BaseTableView: public BaseObjectView {
 		//! \brief Updates the current connected relationship count
 		void updateConnectedRelsCount(int inc);
 
-    //! brief Configures the tag object when the source object has one.
-    void configureTag(void);
+		//! brief Configures the tag object when the source object has one.
+		void configureTag(void);
 
 	public:
 		static const unsigned LEFT_CONN_POINT=0,
@@ -85,23 +87,32 @@ class BaseTableView: public BaseObjectView {
 		void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
 		//! \brief Hides the table's extended attributes (rules, triggers, indexes). This applies to all table/view instances
-    static void setHideExtAttributes(bool value);
+		static void setHideExtAttributes(bool value);
 
-    //! \brief Hides the table tags. This applies to all table instances
-    static void setHideTags(bool value);
+		//! \brief Hides the table tags. This applies to all table instances
+		static void setHideTags(bool value);
 
 		//! \brief Returns the current visibility state of extended attributes
 		static bool isExtAttributesHidden(void);
 
-    //! \brief Returns the current visibility state of tags
-    static bool isTagsHidden(void);
+		//! \brief Returns the current visibility state of tags
+		static bool isTagsHidden(void);
 
 		//! \brief Returns the current count of connected relationships
 		int getConnectRelsCount(void);
 
+		//! brief This method just emits the signal to indicate that the relationships attached must be updated
+		void requestRelationshipsUpdate(void);
+
+		//! brief Toggles the placeholder object when there is at least one relationship connected to the object
+		virtual void togglePlaceholder(bool value);
+
 	signals:
 		//! \brief Signal emitted when a table is moved over the scene
 		void s_objectMoved(void);
+
+		//! \brief Signal emitted to indicate that the relationships attached to the table need to be updated
+		void s_relUpdateRequest(void);
 
 		//! \brief Signal emitted when the user right-click a focused table child object
 		void s_childObjectSelected(TableObject *);

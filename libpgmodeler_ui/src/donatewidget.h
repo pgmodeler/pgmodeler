@@ -30,14 +30,14 @@
 #include "ui_donatewidget.h"
 
 class DonateWidget: public QWidget, public Ui::DonateWidget {
-  private:
-    Q_OBJECT
-
-  public:
-    DonateWidget(QWidget *parent = 0);
-
-  signals:
-    void s_visibilityChanged(bool value);
+	private:
+		Q_OBJECT
+		
+	public:
+		DonateWidget(QWidget *parent = 0);
+		
+	signals:
+		void s_visibilityChanged(bool value);
 };
 
 #endif

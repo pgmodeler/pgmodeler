@@ -9,7 +9,7 @@
 	FROM pg_rewrite AS rw
 	WHERE rw.ev_type <> '1'::"char"
   ) AS rl
-  LEFT JOIN pg_class cl ON cl.oid = rl.ev_class AND cl.relkind IN ('r','v') ]
+  LEFT JOIN pg_class cl ON cl.oid = rl.ev_class AND cl.relkind IN ('r','v','m') ]
 
   %if {schema} %then
     [ LEFT JOIN pg_namespace AS ns ON ns.oid = cl.relnamespace
@@ -55,14 +55,20 @@
 	 WHEN '3'::"char" THEN 'ON INSERT'::text
 	 WHEN '4'::"char" THEN 'ON DELETE'::text
 	 ELSE NULL::text
-	END AS event_type
+	END AS event_type,
+	
+	CASE 
+            WHEN cl.relkind = 'r' THEN 'table'
+            WHEN cl.relkind = 'v' THEN 'view'
+            WHEN cl.relkind = 'm' THEN 'view'
+        END AS table_type
 
        FROM (
 	SELECT rw.oid, rw.*
 	FROM pg_rewrite AS rw
        ) AS rl
 
-      LEFT JOIN pg_class AS cl ON cl.oid = rl.ev_class AND cl.relkind IN ('r','v')
+      LEFT JOIN pg_class AS cl ON cl.oid = rl.ev_class AND cl.relkind IN ('r','v','m')
       LEFT JOIN pg_description ds ON ds.objoid = rl.oid ]
 
       %if {schema} %then

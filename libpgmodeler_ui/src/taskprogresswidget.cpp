@@ -27,7 +27,7 @@ TaskProgressWidget::TaskProgressWidget(QWidget *parent, Qt::WindowFlags f) : QDi
 	setupUi(this);
 	this->setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 
-  for(auto &obj_tp : obj_types)
+	for(auto &obj_tp : obj_types)
 		addIcon(obj_tp, QIcon(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_tp) + QString(".png")));
 }
 
@@ -54,7 +54,7 @@ void TaskProgressWidget::show(void)
 
 void TaskProgressWidget::updateProgress(int progress, unsigned icon_id)
 {
-  updateProgress(progress, QString(), icon_id);
+	updateProgress(progress, QString(), icon_id);
 }
 
 void TaskProgressWidget::updateProgress(int progress, QString text, unsigned icon_id)
@@ -65,25 +65,25 @@ void TaskProgressWidget::updateProgress(int progress, QString text, unsigned ico
 	progress_pb->setValue(progress);
 
 	if(!text.isEmpty())
-    text_lbl->setText(PgModelerUiNS::formatMessage(text));
+		text_lbl->setText(PgModelerUiNS::formatMessage(text));
 
 	if(icons.count(icon_id))
 		icon_lbl->setPixmap(icons[icon_id].pixmap(QSize(32,32)));
 	else
 		icon_lbl->clear();
 
-    this->repaint();
+	this->repaint();
 
-    /* MacOSX workaround: The event loop below is needed because on this system
-       the task progress is not correctly updated. The event loop causes a little
-       delay (1ms) and it`s sufficient to update the entire widget */
-    #ifdef Q_OS_MAC
-       QEventLoop eventLoop;
-       QTimer t;
-       //Gives 1ms to the task to be shown and update its contents
-       t.singleShot(1, &eventLoop, SLOT(quit(void)));
-       eventLoop.exec(QEventLoop::AllEvents);
-    #endif
+	/* MacOSX workaround: The event loop below is needed because on this system
+	   the task progress is not correctly updated. The event loop causes a little
+	   delay (1ms) and it`s sufficient to update the entire widget */
+#ifdef Q_OS_MAC
+	QEventLoop eventLoop;
+	QTimer t;
+	//Gives 1ms to the task to be shown and update its contents
+	t.singleShot(1, &eventLoop, SLOT(quit(void)));
+	eventLoop.exec(QEventLoop::AllEvents);
+#endif
 }
 
 void TaskProgressWidget::close(void)

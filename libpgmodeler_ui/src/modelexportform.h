@@ -33,53 +33,53 @@
 #include "htmlitemdelegate.h"
 
 class ModelExportForm: public QDialog, public Ui::ModelExportForm {
-  private:
-    Q_OBJECT
+	private:
+		Q_OBJECT
 
-    //! brief Custom delegate used to paint html texts in output tree
-    HtmlItemDelegate *htmlitem_del;
+		//! brief Custom delegate used to paint html texts in output tree
+		HtmlItemDelegate *htmlitem_del;
 
-    //! \brief Stores the model widget which will be exported
-    ModelWidget *model;
+		//! \brief Stores the model widget which will be exported
+		ModelWidget *model;
 
-    //! \brief Export helper
-    ModelExportHelper export_hlp;
+		//! \brief Export helper
+		ModelExportHelper export_hlp;
 
-    //! \brief Thread used to manage the export helper when dealing with dbms export
-    QThread *export_thread;
+		//! \brief Thread used to manage the export helper when dealing with dbms export
+		QThread *export_thread;
 
-    //! brief Auxiliary viewport passed to export helper when dealing with PNG export
-    QGraphicsView *viewp;
+		//! brief Auxiliary viewport passed to export helper when dealing with PNG export
+		QGraphicsView *viewp;
 
-    HintTextWidget *pgsqlvers_ht, *drop_ht, *ignore_dup_ht, *page_by_page_ht;
+		HintTextWidget *pgsqlvers_ht, *drop_ht, *ignore_dup_ht, *page_by_page_ht;
 
-    void finishExport(const QString &msg);
-    void enableExportModes(bool value);
-    void closeEvent(QCloseEvent *event);
-    int exec(void){ return(QDialog::Rejected); }
+		void finishExport(const QString &msg);
+		void enableExportModes(bool value);
+		void closeEvent(QCloseEvent *event);
+		int exec(void){ return(QDialog::Rejected); }
 
-  public:
-    ModelExportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
+	public:
+		ModelExportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
-  public slots:
-    void exec(ModelWidget *model);
+	public slots:
+		void exec(ModelWidget *model);
 
-  private slots:
-    void selectExportMode(void);
-    void exportModel(void);
-    void selectOutputFile(void);
-    void updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen);
-    void captureThreadError(Exception e);
-    void cancelExport(void);
-    void handleExportFinished(void);
-    void handleExportCanceled(void);
-    void handleErrorIgnored(QString err_code, QString err_msg, QString cmd);
-    void editConnections(void);
+	private slots:
+		void selectExportMode(void);
+		void exportModel(void);
+		void selectOutputFile(void);
+		void updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen);
+		void captureThreadError(Exception e);
+		void cancelExport(void);
+		void handleExportFinished(void);
+		void handleExportCanceled(void);
+		void handleErrorIgnored(QString err_code, QString err_msg, QString cmd);
+		void editConnections(void);
 
-  signals:
-    /*! brief This signal is emitted whenever the user changes the connections settings
-        within this widget without use the main configurations dialog */
-    void s_connectionsUpdateRequest(void);
+	signals:
+		/*! brief This signal is emitted whenever the user changes the connections settings
+		within this widget without use the main configurations dialog */
+		void s_connectionsUpdateRequest(void);
 };
 
 #endif

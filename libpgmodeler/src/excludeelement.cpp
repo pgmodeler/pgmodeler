@@ -2,7 +2,7 @@
 
 ExcludeElement::ExcludeElement(void) : Element()
 {
- _operator=nullptr;
+	_operator=nullptr;
 }
 
 void ExcludeElement::setOperator(Operator *oper)
@@ -37,5 +37,5 @@ QString ExcludeElement::getCodeDefinition(unsigned def_type)
 bool ExcludeElement::operator == (ExcludeElement &elem)
 {
 	return(this->_operator==elem._operator &&
-				 *(dynamic_cast<Element *>(this))==dynamic_cast<Element &>(elem));
+		   *(dynamic_cast<Element *>(this))==dynamic_cast<Element &>(elem));
 }

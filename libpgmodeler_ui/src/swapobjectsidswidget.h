@@ -27,38 +27,31 @@
 
 #include <QWidget>
 #include "ui_swapobjectsidswidget.h"
-#include "baseform.h"
 #include "objectselectorwidget.h"
 
-class SwapObjectsIdsWidget: public QDialog, public Ui::SwapObjectsIdsWidget {
+class SwapObjectsIdsWidget: public QWidget, public Ui::SwapObjectsIdsWidget {
 	private:
 		Q_OBJECT
 
 		//! \brief Reference database model
-    DatabaseModel *model;
-
-		//! \brief Widget's parent form (with bottom right control buttons)
-		BaseForm parent_form;
+		DatabaseModel *model;
 
 		//! \brief Source and destination object selectors
 		ObjectSelectorWidget *src_object_sel, *dst_object_sel;
 
-    void hideEvent(QHideEvent *);
-
 	public:
 		SwapObjectsIdsWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);
 		~SwapObjectsIdsWidget(void);
-    void setModel(DatabaseModel *model);
+		void setModel(DatabaseModel *model);
 		
 	signals:
+		/*! \brief This signal is emitted whenever the object selectores changes their values.
+				If both selectors are filled the 'enabled' will true otherwise false */
+		void s_objectsIdSwapEnabled(bool enabled);
 
 	private slots:
 		void showObjectId(void);
 		void swapObjectsIds(void);
-		
-	public slots:
-		void show(void);
-		void close(void);
 };
 
 #endif

@@ -18,21 +18,21 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class CentralWidget
+\class WelcomeWidget
 */
 
-#ifndef CENTRAL_WIDGET_H
-#define CENTRAL_WIDGET_H
+#ifndef WELCOME_WIDGET_H
+#define WELCOME_WIDGET_H
 
-#include "ui_centralwidget.h"
+#include "ui_welcomewidget.h"
 
-class CentralWidget: public QWidget, public Ui::CentralWidget {
+class WelcomeWidget: public QWidget, public Ui::WelcomeWidget {
 	private:
 		Q_OBJECT
-
+		
 	public:
-		CentralWidget(QWidget * parent = 0);
-
+		WelcomeWidget(QWidget * parent = 0);
+		
 	public slots:
 };
 

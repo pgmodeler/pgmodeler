@@ -81,7 +81,7 @@ class BaseGraphicObject: public QObject, public BaseObject {
 		 This method emits the signal s_objectModified() */
 		virtual void setModified(bool value);
 
-    virtual void setSQLDisabled(bool value);
+		virtual void setSQLDisabled(bool value);
 
 		//! \brief Returns the modified status of the object
 		bool isModified(void);
@@ -98,6 +98,9 @@ class BaseGraphicObject: public QObject, public BaseObject {
 		//! \brief Returns the code definition of the object
 		virtual QString getCodeDefinition(unsigned)=0;
 
+		//! \brief Returns if the passed type one that has a graphical representation (table, view, schema, relationship or textbox)
+		static bool isGraphicObject(ObjectType type);
+
 	signals:
 		//! \brief Signal emitted when the user calls the setModified() method
 		void s_objectModified(void);
@@ -106,7 +109,7 @@ class BaseGraphicObject: public QObject, public BaseObject {
 
 		friend class BaseObjectView;
 		friend class DatabaseModel;
-    friend class OperationList;
+		friend class OperationList;
 };
 
 #endif

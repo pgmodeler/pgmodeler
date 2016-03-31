@@ -43,17 +43,17 @@ void BaseGraphicObject::setModified(bool value)
 	is_modified=value;
 
 	if(is_modified)
-    emit s_objectModified();
+		emit s_objectModified();
 }
 
 void BaseGraphicObject::setSQLDisabled(bool value)
 {
-  bool curr_val=sql_disabled;
+	bool curr_val=sql_disabled;
 
-  BaseObject::setSQLDisabled(value);
+	BaseObject::setSQLDisabled(value);
 
-  if(value != curr_val)
-    emit s_objectModified();
+	if(value != curr_val)
+		emit s_objectModified();
 }
 
 bool BaseGraphicObject::isModified(void)
@@ -96,4 +96,10 @@ void BaseGraphicObject::setReceiverObject(QObject *obj)
 QObject *BaseGraphicObject::getReceiverObject(void)
 {
 	return(receiver_object);
+}
+
+bool BaseGraphicObject::isGraphicObject(ObjectType type)
+{
+	return(type==OBJ_TABLE || type==OBJ_VIEW || type==OBJ_RELATIONSHIP ||
+				 type==BASE_RELATIONSHIP || type==OBJ_TEXTBOX || type==OBJ_SCHEMA);
 }
