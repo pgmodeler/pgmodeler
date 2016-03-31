@@ -35,6 +35,10 @@ WelcomeWidget::WelcomeWidget(QWidget *parent): QWidget(parent)
 		shadow->setBlurRadius(10);
 		btn->setGraphicsEffect(shadow);
 
+#ifdef Q_OS_WIN
+    PgModelerUiNS::configureWidgetFont(btn, 1.50f);
+#else
 		PgModelerUiNS::configureWidgetFont(btn, 1.20f);
+#endif
 	}
 }
