@@ -322,6 +322,8 @@ void Connection::executeDMLCommand(const QString &sql, ResultSet &result)
 	if(!connection)
 		throw Exception(ERR_OPR_NOT_ALOC_CONN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
+	notices.clear();
+
 	//Alocates a new result to receive the resultset returned by the sql command
 	sql_res=PQexec(connection, sql.toStdString().c_str());
 
@@ -359,6 +361,7 @@ void Connection::executeDDLCommand(const QString &sql)
 	if(!connection)
 		throw Exception(ERR_OPR_NOT_ALOC_CONN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
+	notices.clear();
 	sql_res=PQexec(connection, sql.toStdString().c_str());
 
 	//Prints the SQL to stdout when the flag is active

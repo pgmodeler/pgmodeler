@@ -128,7 +128,9 @@ void SQLExecutionWidget::fillResultsTable(ResultSet &res)
 	try
 	{
 		Catalog catalog;
-		Connection aux_conn=sql_cmd_conn;
+		Connection aux_conn;
+
+		aux_conn.setConnectionParams(sql_cmd_conn.getConnectionParams());
 		export_tb->setEnabled(res.getTupleCount() > 0);
 		catalog.setConnection(aux_conn);
 		fillResultsTable(catalog, res, results_tbw);
@@ -317,14 +319,15 @@ void SQLExecutionWidget::runSQLCommand(void)
 
 		msgoutput_lst->clear();
 
-		sql_cmd_conn.setNoticeEnabled(true);
-		sql_cmd_conn.connect();
+		if(!sql_cmd_conn.isStablished())
+		{
+			sql_cmd_conn.setNoticeEnabled(true);
+			sql_cmd_conn.connect();
+		}
 
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 		sql_cmd_conn.executeDMLCommand(cmd, res);
-
 		conn_notices=sql_cmd_conn.getNotices();
-		sql_cmd_conn.close();
 
 		registerSQLCommand(cmd);
 
@@ -367,6 +370,7 @@ void SQLExecutionWidget::runSQLCommand(void)
 		msgoutput_lst->addItem(item);
 		msgoutput_lst->setItemWidget(item, label);
 		output_tbw->setTabText(1, trUtf8("Messages (%1)").arg(msgoutput_lst->count()));
+
 		QApplication::restoreOverrideCursor();
 	}
 	catch(Exception &e)
