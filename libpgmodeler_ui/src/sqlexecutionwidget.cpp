@@ -34,6 +34,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	h_splitter1->setSizes({1000, 250});
 	results_parent->setVisible(false);
 	cmd_history_gb->setVisible(false);
+	output_tbw->setTabEnabled(0, false);
 
 	sql_file_dlg.setDefaultSuffix(QString("sql"));
 	sql_file_dlg.setFileMode(QFileDialog::AnyFile);
@@ -41,7 +42,6 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	sql_file_dlg.setModal(true);
 
 	snippets_tb->setMenu(&snippets_menu);
-
 	code_compl_wgt=new CodeCompletionWidget(sql_cmd_txt);
 
 	find_replace_wgt=new FindReplaceWidget(sql_cmd_txt, find_wgt_parent);
@@ -129,11 +129,7 @@ void SQLExecutionWidget::fillResultsTable(ResultSet &res)
 	{
 		Catalog catalog;
 		Connection aux_conn=sql_cmd_conn;
-
-		rows_ret_lbl->setText(QString("[<em>%1</em>] Rows returned:").arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))));
-		row_cnt_lbl->setText(QString::number(res.getTupleCount()));
 		export_tb->setEnabled(res.getTupleCount() > 0);
-
 		catalog.setConnection(aux_conn);
 		fillResultsTable(catalog, res, results_tbw);
 	}
@@ -273,6 +269,11 @@ void SQLExecutionWidget::showError(Exception &e)
 	msgoutput_lst->setVisible(true);
 	results_parent->setVisible(false);
 	export_tb->setEnabled(false);
+
+	output_tbw->setTabText(0, trUtf8("Results"));
+	output_tbw->setTabText(1, trUtf8("Messages (%1)").arg(msgoutput_lst->count()));
+	output_tbw->setCurrentIndex(1);
+	output_tbw->setTabEnabled(0, false);
 }
 
 void SQLExecutionWidget::registerSQLCommand(const QString &cmd)
@@ -305,6 +306,7 @@ void SQLExecutionWidget::runSQLCommand(void)
 	{
 		ResultSet res;
 		QString cmd=sql_cmd_txt->textCursor().selectedText();
+		QStringList conn_notices;
 
 		output_tb->setChecked(true);
 
@@ -315,31 +317,61 @@ void SQLExecutionWidget::runSQLCommand(void)
 
 		msgoutput_lst->clear();
 
+		sql_cmd_conn.setNoticeEnabled(true);
 		sql_cmd_conn.connect();
+
+		QApplication::setOverrideCursor(Qt::WaitCursor);
 		sql_cmd_conn.executeDMLCommand(cmd, res);
+
+		conn_notices=sql_cmd_conn.getNotices();
 		sql_cmd_conn.close();
 
 		registerSQLCommand(cmd);
 
+		output_tbw->setTabEnabled(0, !res.isEmpty());
 		results_parent->setVisible(!res.isEmpty());
 		export_tb->setEnabled(!res.isEmpty());
-		msgoutput_lst->setVisible(res.isEmpty());
 
-		if(results_tbw->isVisible())
+		if(!res.isEmpty())
+		{
 			fillResultsTable(res);
+			output_tbw->setTabText(0, trUtf8("Results (%1)").arg(res.getTupleCount()));
+			output_tbw->setCurrentIndex(0);
+		}
 		else
 		{
-			QLabel *label=new QLabel(trUtf8("[<em>%1</em>] SQL command successfully executed. <em>Rows affected <strong>%2</strong></em>").arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))).arg(res.getTupleCount()));
-			QListWidgetItem *item=new QListWidgetItem;
+			output_tbw->setTabText(0, trUtf8("Results"));
+			output_tbw->setCurrentIndex(1);
+		}
 
-			item->setIcon(QIcon(QString(":/icones/icones/msgbox_info.png")));
-			msgoutput_lst->clear();
+		QLabel *label=nullptr;
+		QListWidgetItem *item=nullptr;
+
+		msgoutput_lst->clear();
+
+		for(QString notice : conn_notices)
+		{
+			label=new QLabel(trUtf8("[<em>%1</em>] %2").arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))).arg(notice));
+			item=new QListWidgetItem;
+			item->setIcon(QIcon(QString(":/icones/icones/msgbox_alerta.png")));
 			msgoutput_lst->addItem(item);
 			msgoutput_lst->setItemWidget(item, label);
 		}
+
+		label=new QLabel(trUtf8("[<em>%1</em>] SQL command successfully executed. <em>%2 <strong>%3</strong></em>")
+										 .arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz")))
+										 .arg(res.isEmpty() ? trUtf8("Rows affected") :  trUtf8("Rows retrieved"))
+										 .arg(res.getTupleCount()));
+		item=new QListWidgetItem;
+		item->setIcon(QIcon(QString(":/icones/icones/msgbox_info.png")));
+		msgoutput_lst->addItem(item);
+		msgoutput_lst->setItemWidget(item, label);
+		output_tbw->setTabText(1, trUtf8("Messages (%1)").arg(msgoutput_lst->count()));
+		QApplication::restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{
+		QApplication::restoreOverrideCursor();
 		sql_cmd_conn.close();
 		showError(e);
 	}

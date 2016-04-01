@@ -41,6 +41,10 @@ class Connection {
 		//! \brief Formated connection string
 		QString connection_str;
 
+		/*! \brief List of notices generated during the command execution
+		The list is filled only if notice_enabled is true */
+		static QStringList notices;
+
 		//! \brief Generates the connection string based on the parameter map
 		void generateConnectionString(void);
 
@@ -50,6 +54,11 @@ class Connection {
 		aren't affected when calling this method the user must disconnect then connect again
 		to enable output. */
 		static void disableNoticeOutput(void *, const PGresult *){}
+
+		/*! brief This function overrides the default notice handler of the connections and
+		captures and stores all message in a string list that can be retrieved by the user
+		for later usage */
+		static void noticeProcessor(void *, const char *message);
 
 		//! \brief Indicates if notices are enabled
 		static bool notice_enabled,
@@ -155,6 +164,10 @@ class Connection {
 		/*! \brief Returns the DBMS version in format XX.YY[.ZZ]
 		If major_only is true only XX.YY portion is returned */
 		QString getPgSQLVersion(bool major_only=false);
+
+		/*! Returns all notices/warnings produced by the command executions.
+		This method will return an empty list if notices/warnings are disabled in the connections */
+		static QStringList getNotices(void);
 
 		/*! \brief Change the current database to the specified db name using the parameters from the current
 		stablished connection causing the connection to be reset and moved to the new database.

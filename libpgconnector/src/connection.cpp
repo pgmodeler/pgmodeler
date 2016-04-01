@@ -50,6 +50,7 @@ const QString Connection::SERVER_VERSION=QString("server-version");
 bool Connection::notice_enabled=false;
 bool Connection::print_sql=false;
 bool Connection::silence_conn_err=true;
+QStringList Connection::notices;
 
 Connection::Connection(void)
 {
@@ -138,6 +139,11 @@ void Connection::generateConnectionString(void)
 	}
 }
 
+void Connection::noticeProcessor(void *, const char *message)
+{
+	notices.push_back(QString(message));
+}
+
 void Connection::setNoticeEnabled(bool value)
 {
 	notice_enabled=value;
@@ -201,8 +207,14 @@ void Connection::connect(void)
 						__PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 
+	notices.clear();
+
 	if(!notice_enabled)
+		//Completely disable notice/warnings in the connection
 		PQsetNoticeReceiver(connection, disableNoticeOutput, nullptr);
+	else
+		//Enable the notice/warnings in the connection by pushing them into the list of generated notices
+		PQsetNoticeProcessor(connection, noticeProcessor, nullptr);
 }
 
 void Connection::close(void)
@@ -294,6 +306,11 @@ QString  Connection::getPgSQLVersion(bool major_only)
 		return(fmt_ver);
 	else
 		return(QString("%1.%2").arg(fmt_ver).arg(raw_ver.mid(4,1).toInt()));
+}
+
+QStringList Connection::getNotices(void)
+{
+	return (notices);
 }
 
 void Connection::executeDMLCommand(const QString &sql, ResultSet &result)
