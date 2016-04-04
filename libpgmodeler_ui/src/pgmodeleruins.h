@@ -26,6 +26,7 @@
 #define PGMODELER_UI_NS_H
 
 #include <QTreeWidget>
+#include <QListWidget>
 #include <QPixmap>
 #include "baseobject.h"
 #include "numberedtexteditor.h"
@@ -50,6 +51,9 @@ namespace PgModelerUiNS {
 	  Setting word_wrap will create a QLabel instance into item's and assign the text to it. */
 	extern QTreeWidgetItem *createOutputTreeItem(QTreeWidget *output_trw, const QString &text, const QPixmap &ico=QPixmap(),
 												 QTreeWidgetItem *parent=nullptr, bool expand_item=true, bool word_wrap=false);
+
+	//! brief Creates an item in the specified QListWidget instance with the specified text and ico
+	extern void createOutputListItem(QListWidget *output_lst, const QString &text, const QPixmap &ico=QPixmap(), bool is_formated=true);
 
 	/*! brief Toggles the SQL code for the object. This function also toggles the SQL of the references
 	  related to the input object */

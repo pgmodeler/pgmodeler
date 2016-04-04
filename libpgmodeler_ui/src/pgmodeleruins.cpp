@@ -55,6 +55,24 @@ namespace PgModelerUiNS {
 		return(item);
 	}
 
+	void createOutputListItem(QListWidget *output_lst, const QString &text, const QPixmap &ico, bool is_formated)
+	{
+		if(!output_lst)
+			throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		QListWidgetItem *item=new QListWidgetItem;
+		item->setIcon(ico);
+		output_lst->addItem(item);
+
+		if(!is_formated)
+			item->setText(text);
+		else
+		{
+			QLabel *label=new QLabel(text);
+			output_lst->setItemWidget(item, label);
+		}
+	}
+
 	void disableObjectSQL(BaseObject *object, bool disable)
 	{
 		if(object && object->getObjectType()!=BASE_RELATIONSHIP)
