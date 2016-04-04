@@ -246,7 +246,8 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_INV_INH_PARENT_TAB_NOT_FOUND", QT_TR_NOOP("A parent table of `%1' which OID is `%2' was not found in the set of imported objects!")},
 	{"ERR_ASG_ENUM_INV_CHARS", QT_TR_NOOP("The enumeration `%1' can't be assigned to the type `%2' because contains invalid characters!")},
 	{"ERR_ASG_ENUM_LONG_NAME", QT_TR_NOOP("The enumeration `%1' can't be assigned to the type `%2' because is too long!")},
-
+	{"ERR_CONNECTION_TIMEOUT", QT_TR_NOOP("The connection reached the timeout of `%1' second(s) and was automatically closed!")},
+	{"ERR_CONNECTION_BROKEN", QT_TR_NOOP("The connection was unexpectedly closed by the database server `%1' at port `%2'!")},
 };
 
 Exception::Exception(void)

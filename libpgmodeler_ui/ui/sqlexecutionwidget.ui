@@ -727,6 +727,9 @@
                    <property name="sortingEnabled">
                     <bool>false</bool>
                    </property>
+                   <attribute name="horizontalHeaderStretchLastSection">
+                    <bool>true</bool>
+                   </attribute>
                    <attribute name="verticalHeaderDefaultSectionSize">
                     <number>25</number>
                    </attribute>

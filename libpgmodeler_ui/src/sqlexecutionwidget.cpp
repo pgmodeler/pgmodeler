@@ -265,9 +265,22 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 
 void SQLExecutionWidget::showError(Exception &e)
 {
-	QListWidgetItem *item=new QListWidgetItem(QIcon(QString(":/icones/icones/msgbox_erro.png")), e.getErrorMessage());
+	QString time_str=QString("[%1]:").arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz")));
+
 	msgoutput_lst->clear();
-	msgoutput_lst->addItem(item);
+
+	PgModelerUiNS::createOutputListItem(msgoutput_lst,
+																			QString("%1 %2").arg(time_str).arg(e.getErrorMessage()),
+																			QPixmap(QString(":/icones/icones/msgbox_erro.png")), false);
+
+	if(e.getErrorType()==ERR_CONNECTION_TIMEOUT ||
+		 e.getErrorType()==ERR_CONNECTION_BROKEN)
+	{
+		PgModelerUiNS::createOutputListItem(msgoutput_lst,
+																				QString("%1 %2").arg(time_str).arg(trUtf8("No results retrieved or changes done due to the error above.")),
+																				QPixmap(QString(":/icones/icones/msgbox_alerta.png")), false);
+	}
+
 	msgoutput_lst->setVisible(true);
 	results_parent->setVisible(false);
 	export_tb->setEnabled(false);
@@ -323,6 +336,9 @@ void SQLExecutionWidget::runSQLCommand(void)
 		{
 			sql_cmd_conn.setNoticeEnabled(true);
 			sql_cmd_conn.connect();
+
+			//The connection will break the execution if it keeps idle for one hour or more
+			sql_cmd_conn.setCommandExecTimout(3600);
 		}
 
 		QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -347,28 +363,22 @@ void SQLExecutionWidget::runSQLCommand(void)
 			output_tbw->setCurrentIndex(1);
 		}
 
-		QLabel *label=nullptr;
-		QListWidgetItem *item=nullptr;
-
 		msgoutput_lst->clear();
 
 		for(QString notice : conn_notices)
 		{
-			label=new QLabel(trUtf8("[<em>%1</em>] %2").arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))).arg(notice));
-			item=new QListWidgetItem;
-			item->setIcon(QIcon(QString(":/icones/icones/msgbox_alerta.png")));
-			msgoutput_lst->addItem(item);
-			msgoutput_lst->setItemWidget(item, label);
+			PgModelerUiNS::createOutputListItem(msgoutput_lst,
+																					PgModelerUiNS::formatMessage(QString("[%1]: %2").arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))).arg(notice)),
+																					QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
 		}
 
-		label=new QLabel(trUtf8("[<em>%1</em>] SQL command successfully executed. <em>%2 <strong>%3</strong></em>")
-										 .arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz")))
-										 .arg(res.isEmpty() ? trUtf8("Rows affected") :  trUtf8("Rows retrieved"))
-										 .arg(res.getTupleCount()));
-		item=new QListWidgetItem;
-		item->setIcon(QIcon(QString(":/icones/icones/msgbox_info.png")));
-		msgoutput_lst->addItem(item);
-		msgoutput_lst->setItemWidget(item, label);
+		PgModelerUiNS::createOutputListItem(msgoutput_lst,
+																				PgModelerUiNS::formatMessage(trUtf8("[%1]: SQL command successfully executed. <em>%2 <strong>%3</strong></em>")
+																																		 .arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz")))
+																																		 .arg(res.isEmpty() ? trUtf8("Rows affected") :  trUtf8("Rows retrieved"))
+																																		 .arg(res.getTupleCount())),
+																				QPixmap(QString(":/icones/icones/msgbox_info.png")));
+
 		output_tbw->setTabText(1, trUtf8("Messages (%1)").arg(msgoutput_lst->count()));
 
 		QApplication::restoreOverrideCursor();
