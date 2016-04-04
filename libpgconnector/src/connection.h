@@ -29,6 +29,7 @@
 #include "resultset.h"
 #include "attribsmap.h"
 #include <QRegExp>
+#include <QDateTime>
 
 class Connection {
 	private:
@@ -40,6 +41,16 @@ class Connection {
 
 		//! \brief Formated connection string
 		QString connection_str;
+
+		/*! \brief Date-time value used to check the timeout between commands execution.
+		This attribute is used to abort the command execution to avoid program crashes
+		if the connection is closed by the server due to timeouts */
+		QDateTime last_cmd_execution;
+
+		/*! \brief Stores the maximum timeout (in seconds) between two command executions.
+		A zero value means no timeout in this case the validateConnection() will not raise
+		errors related to the exceeded timeout */
+		unsigned cmd_exec_timeout;
 
 		/*! \brief List of notices generated during the command execution
 		The list is filled only if notice_enabled is true */
@@ -72,6 +83,11 @@ class Connection {
 		/*! brief Indicates that the initial database configured in the connection can be automatically
 		browsed after connect the server. This attribute is useful only in SQLTool */
 		bool auto_browse_db;
+
+		/*! brief Validates the connection status (command exec. timeout and connection status) and
+		raise errors in case of exceeded timeout or bad connection. This method is called prior any
+		command execution */
+		void validateConnectionStatus(void);
 
 	public:
 		//! \brief Constants used to reference the connections parameters
@@ -106,6 +122,10 @@ class Connection {
 		Connection(void);
 		Connection(const attribs_map &params);
 		~Connection(void);
+
+		/*! \brief Set the maximum timeout that a connectio can be idle (without running commands)
+		Setting a zero value will cause not timemout checking */
+		void setCommandExecTimout(unsigned timeout);
 
 		//! \brief Toggles the notice output for connections. By default any notice are omitted
 		static void setNoticeEnabled(bool value);

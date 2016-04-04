@@ -55,13 +55,12 @@ QStringList Connection::notices;
 Connection::Connection(void)
 {
 	connection=nullptr;
-	auto_browse_db=false;
+	auto_browse_db=false;	
+	cmd_exec_timeout=0;
 }
 
-Connection::Connection(const attribs_map &params)
+Connection::Connection(const attribs_map &params) : Connection()
 {
-	connection=nullptr;
-	auto_browse_db=false;
 	setConnectionParams(params);
 }
 
@@ -72,6 +71,11 @@ Connection::~Connection(void)
 		PQfinish(connection);
 		connection=nullptr;
 	}
+}
+
+void Connection::setCommandExecTimout(unsigned timeout)
+{
+	cmd_exec_timeout=timeout;
 }
 
 void Connection::setConnectionParam(const QString &param, const QString &value)
@@ -144,6 +148,28 @@ void Connection::noticeProcessor(void *, const char *message)
 	notices.push_back(QString(message));
 }
 
+void Connection::validateConnectionStatus(void)
+{
+	if(cmd_exec_timeout > 0)
+	{
+		qint64 dt=(QDateTime::currentDateTime().toMSecsSinceEpoch() -
+							 last_cmd_execution.toMSecsSinceEpoch())/1000;
+
+		if(dt >= cmd_exec_timeout)
+		{
+			close();
+			throw Exception(Exception::getErrorMessage(ERR_CONNECTION_TIMEOUT).arg(cmd_exec_timeout),
+											ERR_CONNECTION_TIMEOUT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		}
+	}
+
+	if(PQstatus(connection)==CONNECTION_BAD)
+		throw Exception(Exception::getErrorMessage(ERR_CONNECTION_BROKEN)
+										.arg(connection_params[PARAM_SERVER_FQDN].isEmpty() ? connection_params[PARAM_SERVER_IP] : connection_params[PARAM_SERVER_FQDN])
+										.arg(connection_params[PARAM_PORT]),
+										ERR_CONNECTION_BROKEN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+}
+
 void Connection::setNoticeEnabled(bool value)
 {
 	notice_enabled=value;
@@ -196,6 +222,7 @@ void Connection::connect(void)
 
 	//Try to connect to the database
 	connection=PQconnectdb(connection_str.toStdString().c_str());
+	last_cmd_execution=QDateTime::currentDateTime();
 
 	/* If the connection descriptor has not been allocated or if the connection state
 		is CONNECTION_BAD it indicates that the connection was not successful */
@@ -226,6 +253,7 @@ void Connection::close(void)
 			PQfinish(connection);
 
 		connection=nullptr;
+		last_cmd_execution=QDateTime();
 	}
 }
 
@@ -322,6 +350,7 @@ void Connection::executeDMLCommand(const QString &sql, ResultSet &result)
 	if(!connection)
 		throw Exception(ERR_OPR_NOT_ALOC_CONN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
+	validateConnectionStatus();
 	notices.clear();
 
 	//Alocates a new result to receive the resultset returned by the sql command
@@ -361,6 +390,7 @@ void Connection::executeDDLCommand(const QString &sql)
 	if(!connection)
 		throw Exception(ERR_OPR_NOT_ALOC_CONN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
+	validateConnectionStatus();
 	notices.clear();
 	sql_res=PQexec(connection, sql.toStdString().c_str());
 
