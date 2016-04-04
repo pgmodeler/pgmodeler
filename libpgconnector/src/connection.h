@@ -125,7 +125,7 @@ class Connection {
 
 		/*! \brief Set the maximum timeout that a connectio can be idle (without running commands)
 		Setting a zero value will cause not timemout checking */
-		void setCommandExecTimout(unsigned timeout);
+		void setSQLExecutionTimout(unsigned timeout);
 
 		//! \brief Toggles the notice output for connections. By default any notice are omitted
 		static void setNoticeEnabled(bool value);

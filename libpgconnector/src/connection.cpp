@@ -73,7 +73,7 @@ Connection::~Connection(void)
 	}
 }
 
-void Connection::setCommandExecTimout(unsigned timeout)
+void Connection::setSQLExecutionTimout(unsigned timeout)
 {
 	cmd_exec_timeout=timeout;
 }

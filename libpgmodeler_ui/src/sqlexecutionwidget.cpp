@@ -338,7 +338,7 @@ void SQLExecutionWidget::runSQLCommand(void)
 			sql_cmd_conn.connect();
 
 			//The connection will break the execution if it keeps idle for one hour or more
-			sql_cmd_conn.setCommandExecTimout(3600);
+			sql_cmd_conn.setSQLExecutionTimout(3600);
 		}
 
 		QApplication::setOverrideCursor(Qt::WaitCursor);
