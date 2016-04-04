@@ -158,8 +158,7 @@ void Connection::validateConnectionStatus(void)
 		if(dt >= cmd_exec_timeout)
 		{
 			close();
-			throw Exception(Exception::getErrorMessage(ERR_CONNECTION_TIMEOUT).arg(cmd_exec_timeout),
-											ERR_CONNECTION_TIMEOUT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+			throw Exception(ERR_CONNECTION_TIMEOUT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		}
 	}
 
