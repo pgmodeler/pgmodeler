@@ -27,6 +27,7 @@ based upon the code editor example provided by Qt
 #define NUMBERED_TEXT_EDITOR_H
 
 #include <QPlainTextEdit>
+#include <QMenu>
 #include "linenumberswidget.h"
 
 class NumberedTextEditor : public QPlainTextEdit {
@@ -56,6 +57,7 @@ class NumberedTextEditor : public QPlainTextEdit {
 
 	protected:
 		void resizeEvent(QResizeEvent *event);
+		void keyPressEvent(QKeyEvent *event);
 
 	public:
 		NumberedTextEditor(QWidget * parent = 0);
@@ -66,6 +68,17 @@ class NumberedTextEditor : public QPlainTextEdit {
 		static void setLineHighlightColor(const QColor &color);
 		static void setTabWidth(int value);
 		static int getTabWidth(void);
+
+	private slots:
+		void showContextMenu(void);
+
+		void changeSelectionToLower(void);
+		void changeSelectionToUpper(void);
+		void changeSelectionCase(bool lower);
+
+		void identSelectionRight(void);
+		void identSelectionLeft(void);
+		void identSelection(bool ident_right);
 
 	public slots:
 		//! brief Grabs the keyboard input and also highlight the current line
