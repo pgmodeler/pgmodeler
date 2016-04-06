@@ -98,10 +98,10 @@ void NumberedTextEditor::showContextMenu(void)
 
 		ctx_menu->addSeparator();
 
-		act=ctx_menu->addAction(trUtf8("Ident left"), this, SLOT(identSelectionLeft()), QKeySequence(QString("Ctrl+]")));
+		act=ctx_menu->addAction(trUtf8("Ident right"), this, SLOT(identSelectionRight()), QKeySequence(QString("Tab")));
 		act->setEnabled(textCursor().hasSelection());
 
-		act=ctx_menu->addAction(trUtf8("Ident right"), this, SLOT(identSelectionRight()), QKeySequence(QString("Ctrl+[")));
+		act=ctx_menu->addAction(trUtf8("Ident left"), this, SLOT(identSelectionLeft()), QKeySequence(QString("Shift+Tab")));
 		act->setEnabled(textCursor().hasSelection());
 	}
 
@@ -279,19 +279,27 @@ void NumberedTextEditor::resizeEvent(QResizeEvent *event)
 
 void NumberedTextEditor::keyPressEvent(QKeyEvent *event)
 {
-	if(!isReadOnly() && event->modifiers()==Qt::ControlModifier)
+	if(!isReadOnly() && textCursor().hasSelection())
 	{
-		if(event->key()==Qt::Key_U)
-			changeSelectionToUpper();
-		else if(event->key()==Qt::Key_L)
-			changeSelectionToLower();
-		else if(event->key()==Qt::Key_BracketLeft)
-			identSelectionRight();
-		else if(event->key()==Qt::Key_BracketRight)
-			identSelectionLeft();
+		if(event->modifiers()==Qt::ControlModifier)
+		{
+			if(event->key()==Qt::Key_U)
+				changeSelectionToUpper();
+			else if(event->key()==Qt::Key_L)
+				changeSelectionToLower();
+		}
+		else if(event->key()==Qt::Key_Tab || event->key()==Qt::Key_Backtab)
+		{
+			if(event->key()==Qt::Key_Tab)
+				identSelectionRight();
+			else if(event->key()==Qt::Key_Backtab)
+				identSelectionLeft();
+		}
+		else
+			QPlainTextEdit::keyPressEvent(event);
 	}
-
-	QPlainTextEdit::keyPressEvent(event);
+	else
+		QPlainTextEdit::keyPressEvent(event);
 }
 
 void NumberedTextEditor::highlightCurrentLine(void)
