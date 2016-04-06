@@ -80,8 +80,6 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(connections_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(editConnections(void)));
 	connect(svg_rb, SIGNAL(toggled(bool)), zoom_cmb, SLOT(setDisabled(bool)));
 	connect(svg_rb, SIGNAL(toggled(bool)), zoom_lbl, SLOT(setDisabled(bool)));
-	connect(svg_rb, SIGNAL(toggled(bool)), show_grid_chk, SLOT(setDisabled(bool)));
-	connect(svg_rb, SIGNAL(toggled(bool)), show_delim_chk, SLOT(setDisabled(bool)));
 	connect(svg_rb, SIGNAL(toggled(bool)), page_by_page_chk, SLOT(setDisabled(bool)));
 
 	pgsqlvers_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
@@ -172,9 +170,12 @@ void ModelExportForm::exportModel(void)
 			if(png_rb->isChecked())
 				export_hlp.setExportToPNGParams(model->scene, viewp, image_edt->text(),
 																				zoom_cmb->itemData(zoom_cmb->currentIndex()).toDouble(),
-																				show_grid_chk->isChecked(), show_delim_chk->isChecked(), page_by_page_chk->isChecked());
+																				show_grid_chk->isChecked(), show_delim_chk->isChecked(),
+																				page_by_page_chk->isChecked());
 			else
-				export_hlp.setExportToSVGParams(model->scene, image_edt->text());
+				export_hlp.setExportToSVGParams(model->scene, image_edt->text(),
+																				show_grid_chk->isChecked(),
+																				show_delim_chk->isChecked());
 
 			export_thread->start();
 		}

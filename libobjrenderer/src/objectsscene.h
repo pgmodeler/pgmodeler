@@ -43,7 +43,7 @@ class ObjectsScene: public QGraphicsScene {
 		static bool corner_move,
 
 		/*! brief Indicates that panning mode and range selection model are activate in inverse mode.
-	By default panning model is activated with a single left-click and range selection with SHIFT + left-click */
+		By default panning model is activated with a single left-click and range selection with SHIFT + left-click */
 		invert_panning_rangesel;
 
 		//! brief Indicates if the scene need to be moved
@@ -57,7 +57,7 @@ class ObjectsScene: public QGraphicsScene {
 		QTimer scene_move_timer,
 
 		/*! \brief Timer responsible to check if the user puts cursor at corners for a certain amount of time.
-	When this timeout the scene_move_timer will be triggered and the scene will be moved */
+		When this timeout the scene_move_timer will be triggered and the scene will be moved */
 		corner_hover_timer;
 
 		//! \brief Attributes used to control the direction of scene movement when user puts cursor at corners
@@ -100,7 +100,7 @@ class ObjectsScene: public QGraphicsScene {
 		static QPointF alignPointToGrid(const QPointF &pnt);
 
 		/*! \brief Indicates if the mouse cursor is under a move spot portion of scene.
-	Additionally this method configures the direction of movement when returning true */
+		Additionally this method configures the direction of movement when returning true */
 		bool mouseIsAtCorner(void);
 
 		QGraphicsView *getActiveViewport(void);
@@ -155,7 +155,6 @@ class ObjectsScene: public QGraphicsScene {
 
 	public slots:
 		void alignObjectsToGrid(void);
-
 		void update(void);
 
 		//! brief Toggles the object range selection
@@ -163,7 +162,7 @@ class ObjectsScene: public QGraphicsScene {
 
 	private slots:
 		/*! brief Start/stop the timer responsible to move the scene. This method is called with true param
-	whenever the user stay with the cursor at corner in a certain amount of time */
+		whenever the user stay with the cursor at corner in a certain amount of time */
 		void enableSceneMove(bool value=true);
 
 		//! \brief Moves the scene when the user puts the mouse cursor on one of scene's edges

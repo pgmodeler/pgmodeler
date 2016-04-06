@@ -282,8 +282,8 @@ void ObjectsScene::showRelationshipLine(bool value, const QPointF &p_start)
 void ObjectsScene::setGridOptions(bool show_grd, bool align_objs_grd, bool show_pag_dlm)
 {
 	bool redef_grid=(ObjectsScene::show_grid!=show_grd ||
-											  ObjectsScene::show_page_delim!=show_pag_dlm ||
-																			 grid.style()==Qt::NoBrush);
+										ObjectsScene::show_page_delim!=show_pag_dlm ||
+										grid.style()==Qt::NoBrush);
 
 	ObjectsScene::show_grid=show_grd;
 	ObjectsScene::show_page_delim=show_pag_dlm;

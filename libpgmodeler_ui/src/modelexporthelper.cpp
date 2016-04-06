@@ -218,7 +218,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 	}
 }
 
-void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename)
+void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename, bool show_grid, bool show_delim)
 {
 	if(!scene)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -229,10 +229,11 @@ void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename
 	QFileInfo fi(filename);
 
 	//Making a backup of the current scene options
-	ObjectsScene::getGridOptions(shw_grd, align_objs, shw_dlm);
+	ObjectsScene::getGridOptions(shw_grd, align_objs, shw_dlm);	
+	scene->setBackgroundBrush(Qt::NoBrush);
 
 	//Disabling grid and delimiters
-	ObjectsScene::setGridOptions(false, false, false);
+	ObjectsScene::setGridOptions(show_grid, false, show_delim);
 	scene->update();
 
 	emit s_progressUpdated(0, trUtf8("Exporting model to SVG file."));
@@ -255,7 +256,6 @@ void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename
 			throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(filename),
 											ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	//Forcing the usage of the font settings defined for BaseObjectView and its subclasses
 	QFile svg_file;
 	svg_file.setFileName(filename);
 	svg_file.open(QFile::ReadOnly);
@@ -268,8 +268,15 @@ void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename
 		svg_def.append(svg_file.readAll());
 		svg_file.close();
 
+		//Forcing the usage of the font settings defined for BaseObjectView and its subclasses
 		svg_def.replace(font_attr.arg(scene->font().family()),
 										font_attr.arg(BaseObjectView::getFontStyle(ParsersAttributes::GLOBAL).font().family()));
+
+		/* Removing the empty (transparent) backgound object in order to save some space in the file if
+		the grid or delimiter is displayed */
+		if(!show_delim && !show_grid)
+			svg_def.replace(QRegExp("(<image)(.)*(xlink:href)(=)(\")(\\w|=|/|\\+|:|;|,|\n)+(\")( )+(/>)"), QString());
+
 		buf.append(svg_def);
 
 		svg_file.open(QFile::WriteOnly | QFile::Truncate);
@@ -1018,10 +1025,12 @@ void ModelExportHelper::setExportToPNGParams(ObjectsScene *scene, QGraphicsView 
 	this->page_by_page=page_by_page;
 }
 
-void ModelExportHelper::setExportToSVGParams(ObjectsScene *scene, const QString &filename)
+void ModelExportHelper::setExportToSVGParams(ObjectsScene *scene, const QString &filename, bool show_grid, bool show_delim)
 {
 	this->scene=scene;
 	this->filename=filename;
+	this->show_grid=show_grid;
+	this->show_delim=show_delim;
 }
 
 void ModelExportHelper::exportToDBMS(void)
@@ -1062,7 +1071,7 @@ void ModelExportHelper::exportToSVG(void)
 {
 	try
 	{
-		exportToSVG(scene, filename);
+		exportToSVG(scene, filename, show_grid, show_delim);
 		resetExportParams();
 	}
 	catch(Exception &e)

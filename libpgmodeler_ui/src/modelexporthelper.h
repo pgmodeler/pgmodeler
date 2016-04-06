@@ -149,7 +149,7 @@ class ModelExportHelper: public QObject {
 										 bool page_by_page, QGraphicsView *viewp=nullptr);
 
 		//! \brief Exports the model to a named SVG file.
-		void exportToSVG(ObjectsScene *scene, const QString &filename);
+		void exportToSVG(ObjectsScene *scene, const QString &filename, bool show_grid, bool show_delim);
 
 		/*! \brief Exports the model directly to the DBMS. A valid connection must be specified. The PostgreSQL
 		version is optional, since the helper identifies the version from the server. The boolean parameter
@@ -177,7 +177,9 @@ class ModelExportHelper: public QObject {
 		void setExportToPNGParams(ObjectsScene *scene, QGraphicsView *viewp, const QString &filename, double zoom,
 															bool show_grid, bool show_delim, bool page_by_page);
 
-		void setExportToSVGParams(ObjectsScene *scene, const QString &filename);
+		/*! \brief Configures the SVG export params before start the export thread (when in thread mode).
+		This form receive the objects scene, the output filename, grid options. */
+		void setExportToSVGParams(ObjectsScene *scene, const QString &filename, bool show_grid, bool show_delim);
 
 	signals:
 		//! \brief This singal is emitted whenever the export progress changes

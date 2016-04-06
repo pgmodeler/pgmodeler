@@ -276,11 +276,11 @@ void PgModelerCLI::showMenu(void)
 	out << trUtf8("   %1, %2\t\t\t Silent execution. Only critical errors are shown during process.").arg(short_opts[SILENT]).arg(SILENT) << endl;
 	out << trUtf8("   %1, %2\t\t\t Show this help menu.").arg(short_opts[HELP]).arg(HELP) << endl;
 	out << endl;
-	out << trUtf8("PNG export options: ") << endl;
+	out << trUtf8("PNG and SVG export options: ") << endl;
 	out << trUtf8("   %1, %2\t\t Draws the grid on the exported png image.").arg(short_opts[SHOW_GRID]).arg(SHOW_GRID) << endl;
 	out << trUtf8("   %1, %2\t Draws the page delimiters on the exported png image.").arg(short_opts[SHOW_DELIMITERS]).arg(SHOW_DELIMITERS) << endl;
-	out << trUtf8("   %1, %2\t\t Each page will be exported on a separated png image.").arg(short_opts[PAGE_BY_PAGE]).arg(PAGE_BY_PAGE) << endl;
-	out << trUtf8("   %1, %2=[FACTOR]\t\t Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4").arg(short_opts[ZOOM_FACTOR]).arg(ZOOM_FACTOR).arg(ModelWidget::MINIMUM_ZOOM*100).arg(ModelWidget::MAXIMUM_ZOOM*100) << endl;
+	out << trUtf8("   %1, %2\t\t Each page will be exported on a separated png image. (Only for PNG)").arg(short_opts[PAGE_BY_PAGE]).arg(PAGE_BY_PAGE) << endl;
+	out << trUtf8("   %1, %2=[FACTOR]\t\t Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4 (Only for PNG)").arg(short_opts[ZOOM_FACTOR]).arg(ZOOM_FACTOR).arg(ModelWidget::MINIMUM_ZOOM*100).arg(ModelWidget::MAXIMUM_ZOOM*100) << endl;
 	out << endl;
 	out << trUtf8("DBMS export options: ") << endl;
 	out << trUtf8("   %1, %2\t Ignores errors related to duplicated objects that eventually exists on server side.").arg(short_opts[IGNORE_DUPLICATES]).arg(IGNORE_DUPLICATES) << endl;
@@ -445,7 +445,9 @@ int PgModelerCLI::exec(void)
 					if(!silent_mode)
 						out << trUtf8("Export to SVG file: ") << parsed_opts[OUTPUT] << endl;
 
-					export_hlp.exportToSVG(scene, parsed_opts[OUTPUT]);
+					export_hlp.exportToSVG(scene, parsed_opts[OUTPUT],
+																 parsed_opts.count(SHOW_GRID) > 0,
+																 parsed_opts.count(SHOW_DELIMITERS) > 0);
 				}
 				//Export to SQL file
 				else if(parsed_opts.count(EXPORT_TO_FILE))
