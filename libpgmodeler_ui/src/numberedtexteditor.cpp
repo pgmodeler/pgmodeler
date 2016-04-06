@@ -93,7 +93,7 @@ void NumberedTextEditor::showContextMenu(void)
 		act=ctx_menu->addAction(trUtf8("Upper case"), this, SLOT(changeSelectionToUpper()), QKeySequence(QString("Ctrl+U")));
 		act->setEnabled(textCursor().hasSelection());
 
-		act=ctx_menu->addAction(trUtf8("Lower case"), this, SLOT(changeSelectionToLower()), QKeySequence(QString("Ctrl+L")));
+		act=ctx_menu->addAction(trUtf8("Lower case"), this, SLOT(changeSelectionToLower()), QKeySequence(QString("Ctrl+Shift+U")));
 		act->setEnabled(textCursor().hasSelection());
 
 		ctx_menu->addSeparator();
@@ -281,11 +281,11 @@ void NumberedTextEditor::keyPressEvent(QKeyEvent *event)
 {
 	if(!isReadOnly() && textCursor().hasSelection())
 	{
-		if(event->modifiers()==Qt::ControlModifier)
+		if(event->key()==Qt::Key_U && event->modifiers()!=Qt::NoModifier)
 		{
-			if(event->key()==Qt::Key_U)
+			if(event->modifiers()==Qt::ControlModifier)
 				changeSelectionToUpper();
-			else if(event->key()==Qt::Key_L)
+			else if(event->modifiers()==(Qt::ControlModifier | Qt::ShiftModifier))
 				changeSelectionToLower();
 		}
 		else if(event->key()==Qt::Key_Tab || event->key()==Qt::Key_Backtab)
