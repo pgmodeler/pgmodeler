@@ -10,7 +10,7 @@
 # Refactored code: https://github.com/pgmodeler/pgmodeler
 
 # General Qt settings
-QT += core widgets printsupport network
+QT += core widgets printsupport network svg
 CONFIG += ordered qt stl rtti exceptions warn_on c++11
 TEMPLATE = subdirs
 MOC_DIR = moc
