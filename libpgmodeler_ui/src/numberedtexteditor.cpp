@@ -84,7 +84,7 @@ void NumberedTextEditor::showContextMenu(void)
 	QMenu *ctx_menu;
 	QAction *act=nullptr;
 
-	ctx_menu=createStandardContextMenu(QCursor::pos());
+	ctx_menu=createStandardContextMenu();
 
 	if(!isReadOnly())
 	{
