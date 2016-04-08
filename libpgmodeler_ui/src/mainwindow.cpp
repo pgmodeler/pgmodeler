@@ -471,6 +471,15 @@ void MainWindow::showEvent(QShowEvent *)
 	map<QString, attribs_map> confs=conf_wgt->getConfigurationParams();
 
 #ifndef Q_OS_MAC
+	//Restoring the canvas grid options
+	action_show_grid->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_CANVAS_GRID]==ParsersAttributes::_TRUE_);
+	action_alin_objs_grade->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::ALIGN_OBJS_TO_GRID]==ParsersAttributes::_TRUE_);
+	action_show_delimiters->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_PAGE_DELIMITERS]==ParsersAttributes::_TRUE_);
+
+	ObjectsScene::setGridOptions(action_show_grid->isChecked(),
+															 action_alin_objs_grade->isChecked(),
+															 action_show_delimiters->isChecked());
+
 	//Hiding/showing the main menu bar depending on the retrieved conf
 	main_menu_mb->setVisible(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_MAIN_MENU]==ParsersAttributes::_TRUE_);
 
@@ -840,6 +849,9 @@ void MainWindow::addModel(const QString &filename)
 		}
 
 		model_tab->setModified(false);
+
+		if(action_alin_objs_grade->isChecked())
+			current_model->scene->alignObjectsToGrid();
 	}
 	catch(Exception &e)
 	{
@@ -864,6 +876,9 @@ void MainWindow::addModel(ModelWidget *model_wgt)
 		models_tbw->blockSignals(false);
 		setCurrentModel();
 		models_tbw->currentWidget()->layout()->setContentsMargins(3,3,0,3);
+
+		if(action_alin_objs_grade->isChecked())
+			current_model->scene->alignObjectsToGrid();
 	}
 	catch(Exception &e)
 	{
