@@ -64,7 +64,7 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 	{
 		setMinimumSize(250, 300);
 		setWindowModality(Qt::ApplicationModal);
-		setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint /*| Qt::WindowStaysOnTopHint*/ | Qt::WindowTitleHint);
+		setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
 		connect(objectstree_tw,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this, SLOT(close(void)));
 		connect(objectslist_tbw,SIGNAL(itemDoubleClicked(QTableWidgetItem*)),this, SLOT(close(void)));
 		connect(select_tb,SIGNAL(clicked(void)),this,SLOT(close(void)));

@@ -32,12 +32,8 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 		this->setWindowTitle(groupBox->title());
 
 		format_hl=nullptr;
-		format_hl=new SyntaxHighlighter(format_txt);
-
+		format_hl=new SyntaxHighlighter(format_txt, true);
 		format_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
-
-		QFontMetrics fm=format_txt->fontMetrics();
-		format_txt->setMaximumHeight(fm.height() + (fm.lineSpacing()/1.5));
 		this->adjustSize();
 
 		IntervalType::getTypes(interval_lst);

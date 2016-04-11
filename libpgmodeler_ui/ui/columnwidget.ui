@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>347</width>
-    <height>123</height>
+    <height>124</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="column_grid">
@@ -63,7 +63,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>NOT NULL</string>
+         <string>&amp;NOT NULL</string>
         </property>
        </widget>
       </item>
@@ -79,7 +79,7 @@
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>25</height>
+          <height>16777215</height>
          </size>
         </property>
         <property name="frameShadow">
@@ -96,6 +96,9 @@
         </property>
         <property name="horizontalScrollBarPolicy">
          <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="tabChangesFocus">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
