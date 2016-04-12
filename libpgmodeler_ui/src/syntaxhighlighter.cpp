@@ -37,10 +37,10 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mo
 	//Adjusting the size of the parent input according to the current font size
 	if(single_line_mode)
 	{
-		int height=QFontMetrics(default_font).height(),
-				margin_h=height/static_cast<float>(1.2);
-		parent->setMinimumHeight(height + margin_h);
-		parent->setMaximumHeight(height + margin_h);
+		QFontMetrics fm=QFontMetrics(default_font);
+		int height=fm.height() + (fm.lineSpacing()/static_cast<float>(1.3));
+		parent->setMinimumHeight(height);
+		parent->setMaximumHeight(height);
 		parent->setSizePolicy(parent->sizePolicy().horizontalPolicy(), QSizePolicy::Fixed);
 		parent->adjustSize();
 	}

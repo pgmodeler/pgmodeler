@@ -126,7 +126,7 @@
    <item row="0" column="0">
     <widget class="QPlainTextEdit" name="obj_name_txt">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
