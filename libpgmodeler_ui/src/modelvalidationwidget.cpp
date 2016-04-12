@@ -34,6 +34,7 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 
 		options_frm->setVisible(false);
 		curr_step=0;
+		default_conn=nullptr;
 
 		validation_thread=nullptr;
 		validation_helper=nullptr;
@@ -84,9 +85,7 @@ void ModelValidationWidget::createThread(void)
 		connect(validation_helper, SIGNAL(s_objectProcessed(QString,ObjectType)), this, SLOT(updateObjectName(QString,ObjectType)), Qt::QueuedConnection);
 		connect(validation_helper, SIGNAL(s_validationFinished(void)), this, SLOT(reenableValidation(void)), Qt::QueuedConnection);
 		connect(validation_helper, SIGNAL(s_validationCanceled(void)), this, SLOT(reenableValidation(void)), Qt::QueuedConnection);
-		connect(validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_btn, SLOT(setDisabled(bool)), Qt::QueuedConnection);
-		connect(validation_helper, SIGNAL(s_sqlValidationStarted(bool)), clear_btn, SLOT(setDisabled(bool)), Qt::QueuedConnection);
-		connect(validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_frm, SLOT(setDisabled(bool)), Qt::QueuedConnection);
+		connect(validation_helper, SIGNAL(s_sqlValidationStarted(void)), this, SLOT(handleSQLValidationStarted(void)), Qt::QueuedConnection);
 		connect(validation_helper, SIGNAL(s_fixApplied(void)), this, SLOT(clearOutput(void)), Qt::QueuedConnection);
 		connect(validation_helper, SIGNAL(s_fixApplied(void)), prog_info_wgt, SLOT(show(void)), Qt::QueuedConnection);
 		connect(validation_helper, SIGNAL(s_relsValidationRequested(void)), this, SLOT(validateRelationships(void)));
@@ -189,6 +188,7 @@ void ModelValidationWidget::setModel(ModelWidget *model_wgt)
 	options_frm->setEnabled(enable);
 	fix_btn->setEnabled(false);
 	curr_step=0;
+	default_conn=nullptr;
 	clearOutput();
 	destroyThread(true);
 }
@@ -431,14 +431,13 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 		error_count_lbl->setText(QString::number(0));
 		fix_btn->setEnabled(false);
 
-
-		if(sql_validation_chk->isChecked() && connections_cmb->currentIndex() <= 0)
+		if(sql_validation_chk->isChecked() && !default_conn && connections_cmb->currentIndex() <= 0)
 		{
 			warn_count_lbl->setText(QString::number(1));
 			PgModelerUiNS::createOutputTreeItem(output_trw,
 												trUtf8("SQL validation not executed! No connection defined."),
 												QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
-		}
+		}		
 		else
 			warn_count_lbl->setText(QString::number(0));
 
@@ -493,10 +492,15 @@ void ModelValidationWidget::configureValidation(void)
 		QString ver;
 
 		//Get the connection only the checkbox is checked.
-		if(sql_validation_chk->isChecked() && connections_cmb->currentIndex() > 0 && connections_cmb->currentIndex()!=connections_cmb->count()-1)
+		if(sql_validation_chk->isChecked())
 		{
-			ver=(version_cmb->currentIndex() > 0 ? version_cmb->currentText() : QString());
-			conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+			default_conn=conn=ConnectionsConfigWidget::getDefaultConnection(Connection::OP_VALIDATION);
+
+			if(!conn && connections_cmb->currentIndex() > 0 && connections_cmb->currentIndex()!=connections_cmb->count()-1)
+				conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+
+			if(conn)
+				ver=(version_cmb->currentIndex() > 0 ? version_cmb->currentText() : QString());
 		}
 
 		validation_helper->setValidationParams(model_wgt->getDatabaseModel(), conn, ver, use_tmp_names_chk->isChecked());
@@ -576,4 +580,18 @@ void ModelValidationWidget::editConnections(void)
 	if(connections_cmb->currentIndex()==connections_cmb->count()-1 &&
 			ConnectionsConfigWidget::openConnectionsConfiguration(connections_cmb, true))
 		emit s_connectionsUpdateRequest();
+}
+
+void ModelValidationWidget::handleSQLValidationStarted(void)
+{
+	options_btn->setEnabled(false);
+	clear_btn->setEnabled(false);
+	options_frm->setEnabled(false);
+
+	if(default_conn)
+	{
+		PgModelerUiNS::createOutputTreeItem(output_trw,
+																				trUtf8("Using the default connection: <strong>%1</strong>").arg(default_conn->getConnectionId()),
+																				QPixmap(QString(":/icones/icones/msgbox_info.png")));
+	}
 }

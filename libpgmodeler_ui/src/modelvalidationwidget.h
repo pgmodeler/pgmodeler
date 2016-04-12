@@ -56,6 +56,9 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		//! \brief Current fix step
 		int curr_step;
 
+		//! \brief Store the default connection for the validation being used
+		Connection *default_conn;
+
 		//! \brief Thread used to control the validation helper
 		QThread *validation_thread;
 
@@ -97,6 +100,7 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		void destroyThread(bool force=false);
 		void updateGraphicalObjects(void);
 		void editConnections(void);
+		void handleSQLValidationStarted(void);
 
 	public slots:
 		void hide(void);
