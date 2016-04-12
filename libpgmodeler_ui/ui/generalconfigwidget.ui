@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>608</width>
-    <height>536</height>
+    <width>597</width>
+    <height>530</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -627,7 +627,7 @@
                <string>When enabled this option creates a placeholder object at the previous table's position when starting to move it. This will cause graphical updates on relationship lines to be performed only when the drag &amp; drop action is done improving the performance. Disabling placeholders will cause those updates to be executed every time the table's position changes a single pixel (classical behavior).</string>
               </property>
               <property name="text">
-               <string>Use placeholders when moving linked tables</string>
+               <string>Use placeholders when moving tables</string>
               </property>
              </widget>
             </item>

@@ -35,7 +35,9 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
 	private:
 		Q_OBJECT
 		
-		HintTextWidget *auto_browse_ht;
+		HintTextWidget *auto_browse_ht, *default_for_ops_ht, *other_params_ht;
+
+		static const QString DEFAULT_FOR;
 		
 		//! brief Stores the connections created by the user
 		static vector<Connection *> connections;
@@ -49,7 +51,7 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
 		
 		void hideEvent(QHideEvent *);
 		void showEvent(QShowEvent *);
-		
+
 		void updateConnectionsCombo(void);
 		
 	public:
@@ -69,6 +71,9 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
 		
 		//! brief Opens a local instance of connection config dialog to permit user configures connections on-the-fly
 		static bool openConnectionsConfiguration(QComboBox *combo, bool incl_placeholder);
+
+		//! brief Returns the first connection found which is defined as the default for the specified operation
+		static Connection *getDefaultConnection(unsigned operation);
 		
 	protected:
 		void destroyConnections(void);
