@@ -44,7 +44,10 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		ReadOnlyItemDelegate *ro_item_del;
 
 		//! brief Syntax highlighter for sql input field
-		SyntaxHighlighter *sql_cmd_hl;
+		SyntaxHighlighter *sql_cmd_hl,
+
+		//! brief Syntax highlighter for command history field
+		*cmd_history_hl;
 
 		//! brief Connection used to run commands specified on sql input field
 		Connection sql_cmd_conn;
@@ -63,7 +66,7 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		void enableSQLExecution(bool enable);
 
 		//! brief Stores the command on the sql command history
-		void registerSQLCommand(const QString &cmd);
+		void registerSQLCommand(const QString &cmd, unsigned rows=0, const QString &error=QString());
 
 		//! brief Show the exception message in the output widget
 		void showError(Exception &e);
@@ -122,6 +125,8 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		void handleSelectedWord(QString word);
 
 		void toggleOutputPane(bool visible);
+
+		void showHistoryContextMenu(void);
 
 		friend class SQLToolWidget;
 };
