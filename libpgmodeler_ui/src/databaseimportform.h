@@ -68,6 +68,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		void getCheckedItems(map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids);
 		
 		void finishImport(const QString &msg);
+		void showEvent(QShowEvent *);
 		void closeEvent(QCloseEvent *event);
 		void destroyModelWidget(void);
 		

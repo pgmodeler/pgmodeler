@@ -127,7 +127,8 @@ class Connection {
 		static const unsigned OP_VALIDATION=0,
 		OP_EXPORT=1,
 		OP_IMPORT=2,
-		OP_DIFF=3;
+		OP_DIFF=3,
+		OP_NONE=4;
 
 		Connection(void);
 		Connection(const attribs_map &params);

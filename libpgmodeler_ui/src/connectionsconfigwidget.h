@@ -67,7 +67,7 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
 		static void getConnections(map<QString, Connection *> &conns, bool inc_hosts=true);
 		
 		//! brief Fills the passed combobox with all the loaded connections
-		static void fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder);
+		static void fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder, unsigned check_def_for=Connection::OP_NONE);
 		
 		//! brief Opens a local instance of connection config dialog to permit user configures connections on-the-fly
 		static bool openConnectionsConfiguration(QComboBox *combo, bool incl_placeholder);

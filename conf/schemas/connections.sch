@@ -9,7 +9,7 @@
 [-->] $br
 
 <connections> $br
-{connections} $br
+{connections}
 </connections> $br
 
 %else

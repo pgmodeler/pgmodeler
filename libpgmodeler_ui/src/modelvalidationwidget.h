@@ -56,9 +56,6 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		//! \brief Current fix step
 		int curr_step;
 
-		//! \brief Store the default connection for the validation being used
-		Connection *default_conn;
-
 		//! \brief Thread used to control the validation helper
 		QThread *validation_thread;
 
@@ -81,9 +78,6 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 
 		//! \brief Sets the database model to work on
 		void setModel(ModelWidget *model_wgt);
-
-		//! \brief Updates the connections combo
-		void updateConnections(map<QString, Connection *> &conns);
 
 		//! brief Returns if there is a validation in progress
 		bool isValidationRunning(void);

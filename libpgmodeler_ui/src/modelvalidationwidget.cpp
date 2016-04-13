@@ -34,7 +34,6 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 
 		options_frm->setVisible(false);
 		curr_step=0;
-		default_conn=nullptr;
 
 		validation_thread=nullptr;
 		validation_helper=nullptr;
@@ -188,28 +187,8 @@ void ModelValidationWidget::setModel(ModelWidget *model_wgt)
 	options_frm->setEnabled(enable);
 	fix_btn->setEnabled(false);
 	curr_step=0;
-	default_conn=nullptr;
 	clearOutput();
 	destroyThread(true);
-}
-
-void ModelValidationWidget::updateConnections(map<QString, Connection *> &conns)
-{
-	map<QString, Connection *>::iterator itr=conns.begin();
-	connections_cmb->clear();
-
-	//Add the connections to the combo
-	while(itr!=conns.end())
-	{
-		connections_cmb->addItem(itr->first, QVariant::fromValue<void *>(itr->second));
-		itr++;
-	}
-
-	if(conns.empty())
-	{
-		sql_validation_chk->setChecked(false);
-		sql_validation_chk->setEnabled(false);
-	}
 }
 
 bool ModelValidationWidget::isValidationRunning(void)
@@ -431,7 +410,7 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 		error_count_lbl->setText(QString::number(0));
 		fix_btn->setEnabled(false);
 
-		if(sql_validation_chk->isChecked() && !default_conn && connections_cmb->currentIndex() <= 0)
+		if(sql_validation_chk->isChecked() && connections_cmb->currentIndex() <= 0)
 		{
 			warn_count_lbl->setText(QString::number(1));
 			PgModelerUiNS::createOutputTreeItem(output_trw,
@@ -492,15 +471,10 @@ void ModelValidationWidget::configureValidation(void)
 		QString ver;
 
 		//Get the connection only the checkbox is checked.
-		if(sql_validation_chk->isChecked())
+		if(sql_validation_chk->isChecked() && connections_cmb->currentIndex() > 0 && connections_cmb->currentIndex()!=connections_cmb->count()-1)
 		{
-			default_conn=conn=ConnectionsConfigWidget::getDefaultConnection(Connection::OP_VALIDATION);
-
-			if(!conn && connections_cmb->currentIndex() > 0 && connections_cmb->currentIndex()!=connections_cmb->count()-1)
-				conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-
-			if(conn)
-				ver=(version_cmb->currentIndex() > 0 ? version_cmb->currentText() : QString());
+			conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+			ver=(version_cmb->currentIndex() > 0 ? version_cmb->currentText() : QString());
 		}
 
 		validation_helper->setValidationParams(model_wgt->getDatabaseModel(), conn, ver, use_tmp_names_chk->isChecked());
@@ -587,11 +561,4 @@ void ModelValidationWidget::handleSQLValidationStarted(void)
 	options_btn->setEnabled(false);
 	clear_btn->setEnabled(false);
 	options_frm->setEnabled(false);
-
-	if(default_conn)
-	{
-		PgModelerUiNS::createOutputTreeItem(output_trw,
-																				trUtf8("Using the default connection: <strong>%1</strong>").arg(default_conn->getConnectionId()),
-																				QPixmap(QString(":/icones/icones/msgbox_info.png")));
-	}
 }

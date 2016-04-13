@@ -540,9 +540,10 @@ void ConnectionsConfigWidget::getConnections(map<QString, Connection *> &conns, 
 	}
 }
 
-void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder)
+void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder, unsigned check_def_for)
 {
 	map<QString, Connection *> connections;
+	Connection *def_conn=nullptr;
 
 	if(!combo)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -561,10 +562,18 @@ void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool inc
 	}
 
 	for(auto &itr : connections)
+	{
 		combo->addItem(QIcon(QString(":icones/icones/server.png")), itr.first, QVariant::fromValue<void *>(itr.second));
+
+		if(!def_conn && itr.second->isDefaultForOperation(check_def_for))
+			def_conn=itr.second;
+	}
 
 	if(incl_placeholder)
 		combo->addItem(QIcon(QString(":icones/icones/conexaobd.png")), trUtf8("Edit connections"));
+
+	if(def_conn)
+		combo->setCurrentText(def_conn->getConnectionId());
 
 	combo->blockSignals(false);
 }

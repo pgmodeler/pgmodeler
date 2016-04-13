@@ -421,16 +421,18 @@ void Connection::executeDDLCommand(const QString &sql)
 
 void Connection::setDefaultForOperation(unsigned op_id, bool value)
 {
-	if(op_id > OP_DIFF)
+	if(op_id > OP_NONE)
 		throw Exception(ERR_REF_ELEM_INV_INDEX,  __PRETTY_FUNCTION__, __FILE__, __LINE__);
-
-	default_for_oper[op_id]=value;
+	else if(op_id!=OP_NONE)
+		default_for_oper[op_id]=value;
 }
 
 bool Connection::isDefaultForOperation(unsigned op_id)
 {
-	if(op_id > OP_DIFF)
+	if(op_id > OP_NONE)
 		throw Exception(ERR_REF_ELEM_INV_INDEX,  __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	else if(op_id==OP_NONE)
+		return(false);
 
 	return(default_for_oper[op_id]);
 }
