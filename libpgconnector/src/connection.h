@@ -82,7 +82,11 @@ class Connection {
 
 		/*! brief Indicates that the initial database configured in the connection can be automatically
 		browsed after connect the server. This attribute is useful only in SQLTool */
-		bool auto_browse_db;
+		bool auto_browse_db,
+
+		/*! \brief Indicates in which operations (diff, export, import, validation) the connection
+		is used if none is explicitly specified by the user in the UI */
+		default_for_oper[4];
 
 		/*! brief Validates the connection status (command exec. timeout and connection status) and
 		raise errors in case of exceeded timeout or bad connection. This method is called prior any
@@ -99,7 +103,7 @@ class Connection {
 		PARAM_USER,
 		PARAM_PASSWORD,
 		PARAM_CONN_TIMEOUT,
-		PARAM_OPTIONS,
+		PARAM_OTHERS,
 		PARAM_SSL_MODE,
 		PARAM_SSL_CERT,
 		PARAM_SSL_KEY,
@@ -118,6 +122,13 @@ class Connection {
 		static const QString	SERVER_VERSION,
 		SERVER_PROTOCOL,
 		SERVER_PID;
+
+		//! \brief Constants used to reference the default usage in model operations (see setDefaultForOperation())
+		static const unsigned OP_VALIDATION=0,
+		OP_EXPORT=1,
+		OP_IMPORT=2,
+		OP_DIFF=3,
+		OP_NONE=4;
 
 		Connection(void);
 		Connection(const attribs_map &params);
@@ -209,6 +220,12 @@ class Connection {
 		 The user don't need to specify the resultset since the commando executed is intended
 		 to be an data definition one  */
 		void executeDDLCommand(const QString &sql);
+
+		//! \brief Toggles the default status for the connect in the specified operation (OP_??? constants).
+		void setDefaultForOperation(unsigned op_id, bool value);
+
+		//! \brief Returns if the connection is the default for the specifed operation
+		bool isDefaultForOperation(unsigned op_id);
 
 		//! \brief Makes an copy between two connections
 		void operator = (const Connection &conn);

@@ -19,6 +19,7 @@
 #include "connection.h"
 #include <QTextStream>
 #include <iostream>
+#include "parsersattributes.h"
 
 const QString Connection::SSL_DESABLE=QString("disable");
 const QString Connection::SSL_ALLOW=QString("allow");
@@ -34,7 +35,7 @@ const QString Connection::PARAM_DB_NAME=QString("dbname");
 const QString Connection::PARAM_USER=QString("user");
 const QString Connection::PARAM_PASSWORD=QString("password");
 const QString Connection::PARAM_CONN_TIMEOUT=QString("connect_timeout");
-const QString Connection::PARAM_OPTIONS=QString("options");
+const QString Connection::PARAM_OTHERS=QString("options");
 const QString Connection::PARAM_SSL_MODE=QString("sslmode");
 const QString Connection::PARAM_SSL_CERT=QString("sslcert");
 const QString Connection::PARAM_SSL_KEY=QString("sslkey");
@@ -57,6 +58,9 @@ Connection::Connection(void)
 	connection=nullptr;
 	auto_browse_db=false;	
 	cmd_exec_timeout=0;
+
+	for(unsigned idx=OP_VALIDATION; idx <= OP_DIFF; idx++)
+		default_for_oper[idx]=false;
 }
 
 Connection::Connection(const attribs_map &params) : Connection()
@@ -136,7 +140,12 @@ void Connection::generateConnectionString(void)
 				value=QString("'%1'").arg(value);
 
 			if(!value.isEmpty())
-				connection_str+=itr->first + "=" + value + " ";
+			{
+				if(itr->first!=PARAM_OTHERS)
+					connection_str+=itr->first + "=" + value + " ";
+				else
+					connection_str+=value;
+			}
 		}
 
 		itr++;
@@ -410,6 +419,24 @@ void Connection::executeDDLCommand(const QString &sql)
 	}
 }
 
+void Connection::setDefaultForOperation(unsigned op_id, bool value)
+{
+	if(op_id > OP_NONE)
+		throw Exception(ERR_REF_ELEM_INV_INDEX,  __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	else if(op_id!=OP_NONE)
+		default_for_oper[op_id]=value;
+}
+
+bool Connection::isDefaultForOperation(unsigned op_id)
+{
+	if(op_id > OP_NONE)
+		throw Exception(ERR_REF_ELEM_INV_INDEX,  __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	else if(op_id==OP_NONE)
+		return(false);
+
+	return(default_for_oper[op_id]);
+}
+
 void Connection::switchToDatabase(const QString &dbname)
 {
 	QString prev_dbname=connection_params[PARAM_DB_NAME];
@@ -445,5 +472,8 @@ void Connection::operator = (const Connection &conn)
 	this->connection_params=conn.connection_params;
 	this->connection_str=conn.connection_str;
 	this->connection=nullptr;
+
+	for(unsigned idx=OP_VALIDATION; idx <= OP_DIFF; idx++)
+		default_for_oper[idx]=conn.default_for_oper[idx];
 }
 

@@ -125,7 +125,7 @@ class ModelValidationHelper: public QObject {
 		void s_validationCanceled(void);
 
 		//! \brief This signal is emitted when the dbms export thread start to run
-		void s_sqlValidationStarted(bool);
+		void s_sqlValidationStarted(void);
 
 		//! \brief This signal is emitted when the validator applied some fix on validation info
 		void s_fixApplied(void);

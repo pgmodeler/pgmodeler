@@ -84,9 +84,7 @@ void ModelValidationWidget::createThread(void)
 		connect(validation_helper, SIGNAL(s_objectProcessed(QString,ObjectType)), this, SLOT(updateObjectName(QString,ObjectType)), Qt::QueuedConnection);
 		connect(validation_helper, SIGNAL(s_validationFinished(void)), this, SLOT(reenableValidation(void)), Qt::QueuedConnection);
 		connect(validation_helper, SIGNAL(s_validationCanceled(void)), this, SLOT(reenableValidation(void)), Qt::QueuedConnection);
-		connect(validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_btn, SLOT(setDisabled(bool)), Qt::QueuedConnection);
-		connect(validation_helper, SIGNAL(s_sqlValidationStarted(bool)), clear_btn, SLOT(setDisabled(bool)), Qt::QueuedConnection);
-		connect(validation_helper, SIGNAL(s_sqlValidationStarted(bool)), options_frm, SLOT(setDisabled(bool)), Qt::QueuedConnection);
+		connect(validation_helper, SIGNAL(s_sqlValidationStarted(void)), this, SLOT(handleSQLValidationStarted(void)), Qt::QueuedConnection);
 		connect(validation_helper, SIGNAL(s_fixApplied(void)), this, SLOT(clearOutput(void)), Qt::QueuedConnection);
 		connect(validation_helper, SIGNAL(s_fixApplied(void)), prog_info_wgt, SLOT(show(void)), Qt::QueuedConnection);
 		connect(validation_helper, SIGNAL(s_relsValidationRequested(void)), this, SLOT(validateRelationships(void)));
@@ -191,25 +189,6 @@ void ModelValidationWidget::setModel(ModelWidget *model_wgt)
 	curr_step=0;
 	clearOutput();
 	destroyThread(true);
-}
-
-void ModelValidationWidget::updateConnections(map<QString, Connection *> &conns)
-{
-	map<QString, Connection *>::iterator itr=conns.begin();
-	connections_cmb->clear();
-
-	//Add the connections to the combo
-	while(itr!=conns.end())
-	{
-		connections_cmb->addItem(itr->first, QVariant::fromValue<void *>(itr->second));
-		itr++;
-	}
-
-	if(conns.empty())
-	{
-		sql_validation_chk->setChecked(false);
-		sql_validation_chk->setEnabled(false);
-	}
 }
 
 bool ModelValidationWidget::isValidationRunning(void)
@@ -431,14 +410,13 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 		error_count_lbl->setText(QString::number(0));
 		fix_btn->setEnabled(false);
 
-
 		if(sql_validation_chk->isChecked() && connections_cmb->currentIndex() <= 0)
 		{
 			warn_count_lbl->setText(QString::number(1));
 			PgModelerUiNS::createOutputTreeItem(output_trw,
 												trUtf8("SQL validation not executed! No connection defined."),
 												QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
-		}
+		}		
 		else
 			warn_count_lbl->setText(QString::number(0));
 
@@ -495,8 +473,8 @@ void ModelValidationWidget::configureValidation(void)
 		//Get the connection only the checkbox is checked.
 		if(sql_validation_chk->isChecked() && connections_cmb->currentIndex() > 0 && connections_cmb->currentIndex()!=connections_cmb->count()-1)
 		{
-			ver=(version_cmb->currentIndex() > 0 ? version_cmb->currentText() : QString());
 			conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+			ver=(version_cmb->currentIndex() > 0 ? version_cmb->currentText() : QString());
 		}
 
 		validation_helper->setValidationParams(model_wgt->getDatabaseModel(), conn, ver, use_tmp_names_chk->isChecked());
@@ -576,4 +554,11 @@ void ModelValidationWidget::editConnections(void)
 	if(connections_cmb->currentIndex()==connections_cmb->count()-1 &&
 			ConnectionsConfigWidget::openConnectionsConfiguration(connections_cmb, true))
 		emit s_connectionsUpdateRequest();
+}
+
+void ModelValidationWidget::handleSQLValidationStarted(void)
+{
+	options_btn->setEnabled(false);
+	clear_btn->setEnabled(false);
+	options_frm->setEnabled(false);
 }

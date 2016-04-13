@@ -79,9 +79,6 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		//! \brief Sets the database model to work on
 		void setModel(ModelWidget *model_wgt);
 
-		//! \brief Updates the connections combo
-		void updateConnections(map<QString, Connection *> &conns);
-
 		//! brief Returns if there is a validation in progress
 		bool isValidationRunning(void);
 
@@ -97,6 +94,7 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		void destroyThread(bool force=false);
 		void updateGraphicalObjects(void);
 		void editConnections(void);
+		void handleSQLValidationStarted(void);
 
 	public slots:
 		void hide(void);

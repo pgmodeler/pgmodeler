@@ -56,8 +56,6 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	settings_tbw->setTabEnabled(1, false);
 
 	objs_parent_wgt->setEnabled(false);
-	ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true);
-	createThread();
 
 	connect(close_btn, SIGNAL(clicked(bool)), this, SLOT(close(void)));
 	connect(connections_cmb, SIGNAL(activated(int)), this, SLOT(listDatabases(void)));
@@ -543,6 +541,15 @@ void DatabaseImportForm::finishImport(const QString &msg)
 		if(!create_model)
 			model_wgt->getOperationList()->removeOperations();
 	}
+}
+
+void DatabaseImportForm::showEvent(QShowEvent *)
+{
+	ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true, Connection::OP_IMPORT);
+	createThread();
+
+	if(connections_cmb->currentIndex() > 0)
+		listDatabases();
 }
 
 ModelWidget *DatabaseImportForm::getModelWidget(void)

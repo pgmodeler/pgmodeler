@@ -115,8 +115,6 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 		connect(drop_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
 		connect(alter_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
 		connect(ignore_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
-
-		resetForm();
 	}
 	catch(Exception &e)
 	{
@@ -139,7 +137,7 @@ void ModelDatabaseDiffForm::setDatabaseModel(DatabaseModel *model)
 
 void ModelDatabaseDiffForm::resetForm(void)
 {
-	ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true);
+	ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true, Connection::OP_DIFF);
 	connections_cmb->setEnabled(connections_cmb->count() > 0);
 	connection_lbl->setEnabled(connections_cmb->isEnabled());
 	enableDiffMode();
@@ -155,6 +153,14 @@ void ModelDatabaseDiffForm::closeEvent(QCloseEvent *event)
 			(diff_thread && diff_thread->isRunning()) ||
 			(export_thread && export_thread->isRunning()))
 		event->ignore();
+}
+
+void ModelDatabaseDiffForm::showEvent(QShowEvent *)
+{
+	resetForm();
+
+	if(connections_cmb->currentIndex() > 0)
+		listDatabases();
 }
 
 void ModelDatabaseDiffForm::createThread(unsigned thread_id)

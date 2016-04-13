@@ -21,4 +21,7 @@
 <!ATTLIST connection krbsrvname CDATA #IMPLIED>
 <!ATTLIST connection gsslib CDATA #IMPLIED>
 <!ATTLIST connection auto-browse-db (true|false) "false">
-
+<!ATTLIST connection default-for-import (true|false) "false">
+<!ATTLIST connection default-for-diff (true|false) "false">
+<!ATTLIST connection default-for-export (true|false) "false">
+<!ATTLIST connection default-for-validation (true|false) "false">
