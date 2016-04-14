@@ -766,24 +766,11 @@ void ModelsDiffHelper::processDiffInfos(void)
 
 					if(!alter_def.isEmpty())
 					{
-						if(obj_type==OBJ_DATABASE)
-						{
-							QString comment_db=QString("COMMENT ON DATABASE");
-
-							//Commenting out the ALTER DATABASE ... RENAME TO ... command if user chooses to preserve the original name
-							if(alter_def.contains("RENAME") && diff_opts[OPT_PRESERVE_DB_NAME])
-								alter_def.prepend(QString("-- "));
-
-							//Using the original db name in COMMENT ON command
-							if(alter_def.contains(comment_db) && diff_opts[OPT_PRESERVE_DB_NAME])
-								alter_def.replace(QRegExp(QString("(%1)( )+(\\\")?(%2)(\\\")?").arg(comment_db).arg(object->getName())),
-												  QString("%1 %2").arg(comment_db).arg(diff.getOldObject()->getName(true)));
-						}
-
-						alter_objs[object->getObjectId()]=alter_def;
+						if(obj_type!=OBJ_DATABASE || !diff_opts[OPT_PRESERVE_DB_NAME])
+							alter_objs[object->getObjectId()]=alter_def;
 
 						/* If the object is a column checks if the types of the columns are differents,
-			   generating a TRUNCATE TABLE for the parent table */
+							generating a TRUNCATE TABLE for the parent table */
 						if(obj_type==OBJ_COLUMN && diff_opts[OPT_TRUCANTE_TABLES])
 						{
 							Column *src_col=dynamic_cast<Column *>(object),
@@ -822,16 +809,19 @@ void ModelsDiffHelper::processDiffInfos(void)
 				!inherit_def.isEmpty() || !no_inherit_def.isEmpty() || !set_perms.isEmpty() ||
 				!col_drop_def.isEmpty())
 		{
+			unsigned create_objs_count=create_objs.size() + create_fks.size();
+			bool has_diffs=false;
+
 			sch_names.removeDuplicates();
+			has_diffs=(create_objs_count!=0 || alter_objs.size()!=0 || drop_objs.size()!=0);
 
 			//Attributes used on the diff schema file
 			attribs[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::_TRUE_;
 			attribs[ParsersAttributes::PGMODELER_VERSION]=GlobalAttributes::PGMODELER_VERSION;
 			attribs[ParsersAttributes::CHANGE]=QString::number(alter_objs.size());
-			attribs[ParsersAttributes::CREATE]=QString::number(create_objs.size() + create_fks.size());
+			attribs[ParsersAttributes::CREATE]=QString::number(create_objs_count);
 			attribs[ParsersAttributes::DROP]=QString::number(drop_objs.size());
 			attribs[ParsersAttributes::TRUNCATE]=QString::number(truncate_tabs.size());
-			attribs[ParsersAttributes::SEARCH_PATH]=sch_names.join(',');
 			attribs[ParsersAttributes::ALTER_CMDS]=QString();
 			attribs[ParsersAttributes::DROP_CMDS]=QString();
 			attribs[ParsersAttributes::CREATE_CMDS]=QString();
@@ -839,7 +829,8 @@ void ModelsDiffHelper::processDiffInfos(void)
 			attribs[ParsersAttributes::FK_DEFS]=QString();
 			attribs[ParsersAttributes::UNSET_PERMS]=unset_perms;
 			attribs[ParsersAttributes::SET_PERMS]=set_perms;
-			attribs[ParsersAttributes::FUNCTION]=(source_model->getObjectCount(OBJ_FUNCTION)!=0 ? ParsersAttributes::_TRUE_ : QString());
+			attribs[ParsersAttributes::FUNCTION]=(has_diffs && source_model->getObjectCount(OBJ_FUNCTION)!=0 ? ParsersAttributes::_TRUE_ : QString());
+			attribs[ParsersAttributes::SEARCH_PATH]=(has_diffs ? sch_names.join(',') : QString());
 
 			ritr=drop_objs.rbegin();
 			ritr_end=drop_objs.rend();
