@@ -122,7 +122,7 @@ void Table::setCommentAttribute(TableObject *tab_obj)
 		attribs[ParsersAttributes::CONSTRAINT]=(tab_obj->getObjectType()==OBJ_CONSTRAINT ? ParsersAttributes::_TRUE_ : QString());
 		attribs[ParsersAttributes::TABLE]=this->getName(true);
 		attribs[ParsersAttributes::NAME]=tab_obj->getName(true);
-		attribs[ParsersAttributes::COMMENT]=tab_obj->getComment();
+		attribs[ParsersAttributes::COMMENT]=QString(tab_obj->getComment()).replace(QString("'"), QString("''"));;
 
 		schparser.ignoreUnkownAttributes(true);
 		if(tab_obj->isSQLDisabled())
