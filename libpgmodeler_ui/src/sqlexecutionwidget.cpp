@@ -100,6 +100,7 @@ bool SQLExecutionWidget::eventFilter(QObject *object, QEvent *event)
 		return(true);
 	}
 	else if(event->type()== QEvent::MouseButtonPress &&
+					dynamic_cast<QMouseEvent *>(event)->button()==Qt::MiddleButton &&
 					qobject_cast<QPlainTextEdit *>(object)==cmd_history_txt &&
 					cmd_history_txt->textCursor().hasSelection())
 	{
