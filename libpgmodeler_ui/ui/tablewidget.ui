@@ -109,32 +109,32 @@
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>Columns</string>
+       <string>&amp;Columns</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab_4">
       <attribute name="title">
-       <string>Constraints</string>
+       <string>Co&amp;nstraints</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab_5">
       <attribute name="title">
-       <string>Triggers</string>
+       <string>Tri&amp;ggers</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab_6">
       <attribute name="title">
-       <string>Rules</string>
+       <string>&amp;Rules</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
-       <string>Indexes</string>
+       <string>&amp;Indexes</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
-       <string>Tables</string>
+       <string>&amp;Tables</string>
       </attribute>
      </widget>
     </widget>
