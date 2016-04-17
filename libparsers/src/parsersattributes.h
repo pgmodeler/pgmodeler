@@ -241,6 +241,7 @@ namespace ParsersAttributes {
 	INDEXES,
 	INFO,
 	INH_COLUMN,
+	INH_COLUMNS,
 	INHERIT,
 	INHERITED,
 	INITIAL_COND,

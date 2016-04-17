@@ -28,10 +28,15 @@
   %end
 
   %if %not {gen-alter-cmds} %then
-    %if {columns} %then {columns} %end
+    %if {columns} %then 
+        {columns} 
+        
+        %if %not {constr-sql-disabled} %then [,] $br %end
+    %end
 
-    %if {constraints} %then
-        %if %not {constr-sql-disabled} %and {columns} %then [,] $br %end
+    %if {inh-columns} %then {inh-columns} %end
+
+    %if {constraints} %then       
         {constraints}
     %end
   %end

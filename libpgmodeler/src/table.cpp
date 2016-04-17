@@ -23,6 +23,7 @@ Table::Table(void) : BaseTable()
 	obj_type=OBJ_TABLE;
 	with_oid=gen_alter_cmds=unlogged=false;
 	attributes[ParsersAttributes::COLUMNS]=QString();
+	attributes[ParsersAttributes::INH_COLUMNS]=QString();
 	attributes[ParsersAttributes::CONSTRAINTS]=QString();
 	attributes[ParsersAttributes::OIDS]=QString();
 	attributes[ParsersAttributes::COLS_COMMENT]=QString();
@@ -174,7 +175,7 @@ void Table::setRelObjectsIndexesAttribute(void)
 
 void Table::setColumnsAttribute(unsigned def_type)
 {
-	QString str_cols;
+	QString str_cols, inh_cols;
 	unsigned i, count;
 
 	count=columns.size();
@@ -192,7 +193,7 @@ void Table::setColumnsAttribute(unsigned def_type)
 		}
 		else if(def_type==SchemaParser::SQL_DEFINITION && columns[i]->isAddedByGeneralization() && !gen_alter_cmds)
 		{
-			str_cols+=QString("-- ") + columns[i]->getCodeDefinition(def_type);
+			inh_cols+=QString("-- ") + columns[i]->getCodeDefinition(def_type);
 		}
 	}
 
@@ -204,6 +205,8 @@ void Table::setColumnsAttribute(unsigned def_type)
 			if(str_cols[count-2]==',' || str_cols[count-2]=='\n')
 				str_cols.remove(count-2,2);
 		}
+
+		attributes[ParsersAttributes::INH_COLUMNS]=inh_cols;
 	}
 
 	attributes[ParsersAttributes::COLUMNS]=str_cols;

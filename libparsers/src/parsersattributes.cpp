@@ -226,6 +226,7 @@ namespace ParsersAttributes {
 	INDEXES=QString("indexes"),
 	INFO=QString("info"),
 	INH_COLUMN=QString("inh-column"),
+	INH_COLUMNS=QString("inh-columns"),
 	INHERIT=QString("inherit"),
 	INHERITED=QString("inherited"),
 	INITIAL_COND=QString("initial-cond"),
