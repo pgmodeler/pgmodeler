@@ -333,7 +333,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>Loading a metadata file to the current model is an irreversible operation so be sure to extract a backup metadata file before proceed.</string>
+                <string>Loading a metadata file to the current model is an irreversible operation so be sure to specify a backup file before proceed.</string>
                </property>
                <property name="wordWrap">
                 <bool>true</bool>
@@ -842,7 +842,7 @@
                <string>Extracts the objects metadata from one of the loaded models and apply to the current model.</string>
               </property>
               <property name="text">
-               <string>Extract from a model</string>
+               <string>Extract from a &amp;model</string>
               </property>
               <property name="checked">
                <bool>true</bool>
@@ -883,7 +883,7 @@
                <string>Reads the objects metadata from a previously saved backup file and apply to the current model.</string>
               </property>
               <property name="text">
-               <string>Restore a backup file</string>
+               <string>Restore a bac&amp;kup file</string>
               </property>
              </widget>
             </item>
