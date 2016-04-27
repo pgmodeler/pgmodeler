@@ -53,7 +53,7 @@ class PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidg
 		PluginsConfigWidget(QWidget *parent = 0);
 		~PluginsConfigWidget(void);
 
-		//! brief Since plugins has its own configurations this method load all plugins instead
+		//! \brief Since plugins has its own configurations this method load all plugins instead
 		void loadConfiguration(void);
 
 		/*! \brief Install the created actions on menu and toolbars. Additionally the user must specify the

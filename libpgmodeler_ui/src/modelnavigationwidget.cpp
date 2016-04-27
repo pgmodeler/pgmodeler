@@ -49,6 +49,11 @@ QString ModelNavigationWidget::getText(int idx)
 		return(models_cmb->itemText(idx));
 }
 
+QList<ModelWidget *> ModelNavigationWidget::getModelWidgets()
+{
+	return(model_wgts);
+}
+
 void ModelNavigationWidget::addModel(ModelWidget *model)
 {
 	if(model)
@@ -68,6 +73,9 @@ void ModelNavigationWidget::addModel(ModelWidget *model)
 		models_cmb->setToolTip(tooltip);
 
 		models_cmb->blockSignals(false);
+
+		model_wgts.append(model);
+
 		enableNavigationButtons();
 	}
 }
@@ -93,6 +101,8 @@ void ModelNavigationWidget::removeModel(int idx)
 	if(models_cmb->count() >= 1)
 		models_cmb->setToolTip(models_cmb->currentData().toString());
 	models_cmb->blockSignals(false);
+
+	model_wgts.removeAt(idx);
 
 	enableNavigationButtons();
 	emit s_modelRemoved(idx);

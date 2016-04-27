@@ -36,7 +36,7 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		Q_OBJECT
 
 	protected:
-		/*! brief Indicates if the placeholder object must be used when moving objects.
+		/*! \brief Indicates if the placeholder object must be used when moving objects.
 		Place holder objects when enabled causes a significant performance gain mainly when
 		moving tables linked to relationships because the relationships will be updated only
 		when the table moviment ends and not during it */
@@ -71,7 +71,7 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		//! \brief Graphical object that represents the current object shadow
 		QGraphicsItem *obj_shadow;
 
-		//! brief Graphical object that represents the placeholder when the object is being moved
+		//! \brief Graphical object that represents the placeholder when the object is being moved
 		RoundedRectItem *placeholder;
 
 		//! \brief Graphical object of the sql disabled info
@@ -171,7 +171,7 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		method calculates the center point based upon the current object's position */
 		virtual QPointF getCenter(void);
 
-		//! brief Toggles the wireframe display
+		//! \brief Toggles the wireframe display
 		virtual void togglePlaceholder(bool visible);
 
 	protected slots:
@@ -185,7 +185,7 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		//! \brief Signal emmited when the object is (un)selected
 		void s_objectSelected(BaseGraphicObject *object, bool selected);
 
-		//! brief Signal emmited whenever the width or height of the table changes
+		//! \brief Signal emmited whenever the width or height of the table changes
 		void s_objectDimensionChanged(void);
 };
 

@@ -40,29 +40,29 @@ namespace PgModelerUiNS {
 	extern void configureWidgetFont(QWidget *widget, unsigned factor_id);
 	extern void configureWidgetFont(QWidget *widget, float factor);
 
-	/*! brief Creates a NumberedTextEditor instance automatically assigning it to 'parent'.
+	/*! \brief Creates a NumberedTextEditor instance automatically assigning it to 'parent'.
 	  This method will create a layout if 'parent' doesn't has one. If parent has a layout
 	  the method will do nothing. If parent is null creates an orphan object which means the
 	  user must take care of the destruction of the object */
 	extern NumberedTextEditor *createNumberedTextEditor(QWidget *parent);
 
-	/*! brief Creates an item in the specified QTreeWidget instance.
+	/*! \brief Creates an item in the specified QTreeWidget instance.
 	  The new item is automatically inserted on the QTreeWidget object.
 	  Setting word_wrap will create a QLabel instance into item's and assign the text to it. */
 	extern QTreeWidgetItem *createOutputTreeItem(QTreeWidget *output_trw, const QString &text, const QPixmap &ico=QPixmap(),
 												 QTreeWidgetItem *parent=nullptr, bool expand_item=true, bool word_wrap=false);
 
-	//! brief Creates an item in the specified QListWidget instance with the specified text and ico
+	//! \brief Creates an item in the specified QListWidget instance with the specified text and ico
 	extern void createOutputListItem(QListWidget *output_lst, const QString &text, const QPixmap &ico=QPixmap(), bool is_formated=true);
 
-	/*! brief Toggles the SQL code for the object. This function also toggles the SQL of the references
+	/*! \brief Toggles the SQL code for the object. This function also toggles the SQL of the references
 	  related to the input object */
 	extern void disableObjectSQL(BaseObject *object, bool disable);
 
-	//! brief Recursively toggles the specified object's references SQL
+	//! \brief Recursively toggles the specified object's references SQL
 	extern void disableReferencesSQL(BaseObject *object);
 
-	//! brief Replaces the sequence of chars [`'] by html tags <strong></strong> and [()] by <em></em>
+	//! \brief Replaces the sequence of chars [`'] by html tags <strong></strong> and [()] by <em></em>
 	extern QString formatMessage(const QString &msg);
 }
 

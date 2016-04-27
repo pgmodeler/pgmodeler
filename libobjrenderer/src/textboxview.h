@@ -43,13 +43,13 @@ class TextboxView: public BaseObjectView {
 		//! \brief Graphical item that represent the text
 		QGraphicsSimpleTextItem *text;
 
-		//! brief Configures the shadow for the textbox
+		//! \brief Configures the shadow for the textbox
 		void configureObjectShadow(void);
 
-		//! brief Configures the selection for the textbox
+		//! \brief Configures the selection for the textbox
 		void configureObjectSelection(void);
 
-		//! brief Configures the basic attributes for textbox
+		//! \brief Configures the basic attributes for textbox
 		void __configureObject(void);
 
 	public:

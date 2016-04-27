@@ -34,7 +34,7 @@
 
 class BaseRelationship: public BaseGraphicObject  {
 	protected:
-		//! brief This attribute overrides the default color configuration for relationship line and descriptor
+		//! \brief This attribute overrides the default color configuration for relationship line and descriptor
 		QColor custom_color;
 
 		//! \brief Represents the points added by the user on the relationship line

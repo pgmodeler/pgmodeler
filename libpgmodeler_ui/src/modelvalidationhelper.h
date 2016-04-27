@@ -67,7 +67,7 @@ class ModelValidationHelper: public QObject {
 		This vector is read when applying fixes */
 		vector<ValidationInfo> val_infos;
 
-		//! brief Stores the analyzed relationship marked as invalidated
+		//! \brief Stores the analyzed relationship marked as invalidated
 		vector<BaseObject *> inv_rels;
 
 		void generateValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> refs);
@@ -133,7 +133,7 @@ class ModelValidationHelper: public QObject {
 		//! \brief This signal is emitted when the validator changes some objects id by swapping or update operations
 		void s_objectIdChanged(BaseObject *object);
 
-		/*! brief This signal is emitted when the validator need the validation of relationship.
+		/*! \brief This signal is emitted when the validator need the validation of relationship.
 		This process must be performed outside the current thread, this explains the usage of this signal */
 		void s_relsValidationRequested(void);
 };

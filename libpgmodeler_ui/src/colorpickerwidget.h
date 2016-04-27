@@ -37,16 +37,16 @@ class ColorPickerWidget: public QWidget, public Ui::ColorPickerWidget {
 	private:
 		Q_OBJECT
 		
-		//! brief Random number generator engine used to generate random colors for buttons
+		//! \brief Random number generator engine used to generate random colors for buttons
 		default_random_engine rand_num_engine;
 		
-		//! brief List of buttons used to configure each color
+		//! \brief List of buttons used to configure each color
 		QList<QToolButton *> buttons;
 		
-		//! brief List of colors assinged for each button
+		//! \brief List of colors assinged for each button
 		QList<QColor> colors;
 		
-		//! brief Palette assinged to buttons when the color picker is disabled
+		//! \brief Palette assinged to buttons when the color picker is disabled
 		QColor disable_color;
 		
 	protected:

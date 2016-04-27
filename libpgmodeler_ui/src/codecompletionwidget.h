@@ -37,7 +37,7 @@ class CodeCompletionWidget: public QWidget
 		
 		QWidget *completion_wgt;
 		
-		//! brief Marks the completion widget as persistent (available only when there is no a database model assinged)
+		//! \brief Marks the completion widget as persistent (available only when there is no a database model assinged)
 		QCheckBox *persistent_chk;
 		
 		//! \brief Input field that is associated with the code completion
@@ -107,13 +107,13 @@ class CodeCompletionWidget: public QWidget
 		highlighter uses an different configuration */
 		void configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl=nullptr, const QString &keywords_grp=QString("keywords"), bool persistent=false);
 		
-		//! brief Inserts a custom named item on the list with a custom icon. Custom item will be always appear at the beggining of the list
+		//! \brief Inserts a custom named item on the list with a custom icon. Custom item will be always appear at the beggining of the list
 		void insertCustomItem(const QString &name, const QString &tooltip, const QPixmap &icon);
 		
-		//! brief Inserts several custom named item on the list with a custom icon. Custom item will be always appear at the beggining of the list
+		//! \brief Inserts several custom named item on the list with a custom icon. Custom item will be always appear at the beggining of the list
 		void insertCustomItems(const QStringList &names, const QStringList &tooltips, const QPixmap &icon);
 		
-		//! brief Clear the custom added items
+		//! \brief Clear the custom added items
 		void clearCustomItems(void);
 		
 	public slots:
@@ -132,7 +132,7 @@ class CodeCompletionWidget: public QWidget
 		void showItemTooltip(void);
 		
 	signals:
-		//! brief This signal is emitted whenever a word is placed into the parent textbox through the completion popup.
+		//! \brief This signal is emitted whenever a word is placed into the parent textbox through the completion popup.
 		void s_wordSelected(QString);
 };
 

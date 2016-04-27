@@ -85,7 +85,7 @@ class ModelExportHelper: public QObject {
 		//! \brief Stores the current state of ALTER command generation for table columns/constraints
 		map<Table *, bool> alter_cmds_status;
 
-		//! brief Stores the original object names before the call of generateRandomObjectNames()
+		//! \brief Stores the original object names before the call of generateRandomObjectNames()
 		map<BaseObject *, QString> orig_obj_names;
 
 		ObjectsScene *scene;
@@ -131,7 +131,7 @@ class ModelExportHelper: public QObject {
 	public:
 		ModelExportHelper(QObject *parent = 0);
 
-		/*! brief Determines which error codes must be ignored during the export process.
+		/*! \brief Determines which error codes must be ignored during the export process.
 		There must be some caution when ignore some error codes because the export may
 		create an incomplete database or even reach unknown behaviors.
 		Error catalog is available at: postgresql.org/docs/current/static/errcodes-appendix.html */

@@ -33,13 +33,13 @@ class FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {
 	private:
 		Q_OBJECT
 		
-		//! brief QTextEdit instance that the finder is attached to
+		//! \brief QTextEdit instance that the finder is attached to
 		QPlainTextEdit *text_edt;
 		
-		//! brief Find the text in a backward and/or cyclic way
+		//! \brief Find the text in a backward and/or cyclic way
 		bool findText(bool backward, bool cyclic);
 		
-		//! brief Find the text using the specified flags. The regexp param is ignored on Qt versions below 5.3
+		//! \brief Find the text using the specified flags. The regexp param is ignored on Qt versions below 5.3
 		bool findText(const QString &text, bool regexp, QTextDocument::FindFlags flags);
 		
 		void showEvent(QShowEvent *);

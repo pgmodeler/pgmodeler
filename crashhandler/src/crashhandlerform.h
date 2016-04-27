@@ -32,21 +32,21 @@ class CrashHandlerForm: public BugReportForm {
 	private:
 		Q_OBJECT
 
-		//! brief Display the stacktrace
+		//! \brief Display the stacktrace
 		QPlainTextEdit *stack_txt;
 
-		//! brief Container for widget that handles input report file
+		//! \brief Container for widget that handles input report file
 		QWidget *input_wgt;
 
 		QLabel *input_lbl;
 
-		//! brief Display the path to input report file
+		//! \brief Display the path to input report file
 		QLineEdit *input_edt;
 
-		//! brief Triggers the model saving to filesystem
+		//! \brief Triggers the model saving to filesystem
 		QToolButton *save_tb,
 
-		//! brief Triggers the report file loading
+		//! \brief Triggers the report file loading
 		*load_tb;
 
 		//! \brief Load a report file showing its contents on the form
@@ -54,11 +54,11 @@ class CrashHandlerForm: public BugReportForm {
 
 		void setAnalysisMode(bool value);
 
-		//! brief Generates a report buffer containing the issue details, model and stacktrace
+		//! \brief Generates a report buffer containing the issue details, model and stacktrace
 		QByteArray generateReportBuffer(void);
 
 	public:
-		//! brief Analysis mode argument
+		//! \brief Analysis mode argument
 		const static QString ANALYSIS_MODE;
 
 		CrashHandlerForm(bool analysis_mode=false, QWidget * parent = 0, Qt::WindowFlags f = 0);

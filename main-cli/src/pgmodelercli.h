@@ -145,11 +145,11 @@ class PgModelerCLI: public QApplication {
 		//! \brief Returns if the specified string contains some of relationship attributes
 		bool containsRelAttributes(const QString &str);
 
-		/*! brief Install the .dbm file association in the mime database (default behaviour).
+		/*! \brief Install the .dbm file association in the mime database (default behaviour).
 		The paramenter 'uninstall' is used to clean up any file association done previously. */
 		void handleMimeDatabase(bool uninstall);
 
-		/*! brief Fixes the references to opertor classes and families by replacing tags like
+		/*! \brief Fixes the references to opertor classes and families by replacing tags like
 		<opclass name="name"/> by <opclass signature="name USING index_method"/>. This method operates
 		only over operator classes, indexes and constraints */
 		void fixOpClassesFamiliesReferences(QString &obj_xml);

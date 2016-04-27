@@ -60,13 +60,13 @@ class ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
 		ObjectSelectorWidget(vector<ObjectType> sel_obj_types, bool install_highlighter, QWidget * parent = 0);
 		~ObjectSelectorWidget(void);
 
-		//! brief Enables the creation of new objects from withing the object selector dialog
+		//! \brief Enables the creation of new objects from withing the object selector dialog
 		void enableObjectCreation(bool value);
 
 		//! \brief Returns the reference to the selected object
 		BaseObject *getSelectedObject(void);
 
-		//! brief Returns the selected object formated name
+		//! \brief Returns the selected object formated name
 		QString getSelectedObjectName(void);
 
 		//! \brief Defines the initial selected object to be show on the selector

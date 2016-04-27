@@ -121,7 +121,7 @@ class OperationList: public QObject {
 		//! \brief Returns if the operation chaining where started
 		bool isOperationChainStarted(void);
 
-		//! brief Returns if an operation of the specified op_type is already registered for the object
+		//! \brief Returns if an operation of the specified op_type is already registered for the object
 		bool isObjectRegistered(BaseObject *object, unsigned op_type);
 
 		//! \brief Undo the current operation on the list

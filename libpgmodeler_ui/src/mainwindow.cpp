@@ -1885,6 +1885,7 @@ void MainWindow::handleObjectsMetadata(void)
 {
 	MetadataHandlingForm objs_meta_frm(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 	objs_meta_frm.setModelWidget(current_model);
-	connect(&objs_meta_frm, SIGNAL(s_metadataLoaded()), model_objs_wgt, SLOT(updateObjectsView()));
+	objs_meta_frm.setModelWidgets(model_nav_wgt->getModelWidgets());
+	connect(&objs_meta_frm, SIGNAL(s_metadataHandled()), model_objs_wgt, SLOT(updateObjectsView()));
 	objs_meta_frm.exec();
 }

@@ -31,7 +31,7 @@
 
 class Operation {
 	private:
-		/*! brief Uniquely identifies the object. This id is used to check if the operation object's somehow
+		/*! \brief Uniquely identifies the object. This id is used to check if the operation object's somehow
 		where delete (changing their addresses). This will avoid the operation list to try to execute
 		an invalid operation */
 		QString operation_id;
@@ -65,7 +65,7 @@ class Operation {
 		//! \brief Stores the object's permission before it's removal
 		vector<Permission *> permissions;
 
-		//! brief Generate an unique id for the operation based upon the memory addresses of objects held by it
+		//! \brief Generate an unique id for the operation based upon the memory addresses of objects held by it
 		QString generateOperationId(void);
 
 	public:

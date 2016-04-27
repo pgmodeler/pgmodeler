@@ -36,7 +36,7 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 	private:
 		Q_OBJECT
 
-		//! brief Custom delegate used to paint html texts in output tree
+		//! \brief Custom delegate used to paint html texts in output tree
 		HtmlItemDelegate *htmlitem_del;
 
 		//! \brief Stores the model widget which will be exported
@@ -48,7 +48,7 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 		//! \brief Thread used to manage the export helper when dealing with dbms export
 		QThread *export_thread;
 
-		//! brief Auxiliary viewport passed to export helper when dealing with PNG export
+		//! \brief Auxiliary viewport passed to export helper when dealing with PNG export
 		QGraphicsView *viewp;
 
 		HintTextWidget *pgsqlvers_ht, *drop_ht, *ignore_dup_ht, *page_by_page_ht;
@@ -77,7 +77,7 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 		void editConnections(void);
 
 	signals:
-		/*! brief This signal is emitted whenever the user changes the connections settings
+		/*! \brief This signal is emitted whenever the user changes the connections settings
 		within this widget without use the main configurations dialog */
 		void s_connectionsUpdateRequest(void);
 };

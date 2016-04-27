@@ -40,28 +40,28 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		ELEM_SEPARATOR,
 		DEFAULT_SOURCE_CODE;
 		
-		//! brief Delegate item form object's attributes grid
+		//! \brief Delegate item form object's attributes grid
 		ReadOnlyItemDelegate *ro_item_deleg;
 		
-		//! brief Stores the translations of all used attributes at properties panel
+		//! \brief Stores the translations of all used attributes at properties panel
 		static const attribs_map attribs_i18n;
 		
-		/*! brief Connection used to handle objects on database. This connection is copied
+		/*! \brief Connection used to handle objects on database. This connection is copied
 		whenever a new operation must be performed on database */
 		Connection connection;
 		
-		//! brief Database import helper used to list objects from current connection
+		//! \brief Database import helper used to list objects from current connection
 		DatabaseImportHelper import_helper;
 		
-		//! brief Catalog instance used to retrieve object's attributes
+		//! \brief Catalog instance used to retrieve object's attributes
 		Catalog catalog;
 		
 		SchemaParser schparser;
 		
-		//! brief Stores the actions to be performed over the object
+		//! \brief Stores the actions to be performed over the object
 		QMenu handle_menu,
 		
-		//! brief Stores the snippets' actions
+		//! \brief Stores the snippets' actions
 		snippets_menu;
 		
 		QAction *copy_action, *drop_action, *drop_cascade_action,
@@ -75,38 +75,38 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 
 		void configureImportHelper(void);
 		
-		//! brief Drops the object represented by the specified item
+		//! \brief Drops the object represented by the specified item
 		void dropObject(QTreeWidgetItem *item, bool cascade);
 		
-		//! brief Truncates the table represented by the specified item
+		//! \brief Truncates the table represented by the specified item
 		void truncateTable(QTreeWidgetItem *item, bool cascade);
 		
-		//! brief Marks the item as editable so that the user can change its name
+		//! \brief Marks the item as editable so that the user can change its name
 		void startObjectRename(QTreeWidgetItem *item);
 		
 		bool eventFilter(QObject *object, QEvent *event);
 		
-		/*! brief Returns the properly format object name by querying it using its OID and type.
+		/*! \brief Returns the properly format object name by querying it using its OID and type.
 		Optional schema and table names can be specified to filter the results */
 		QString getObjectName(ObjectType obj_type, const QString &oid, const QString &sch_name=QString(), const QString tab_name=QString());
 		
-		/*! brief Returns the properly format list of object names by querying them using their OIDs and type.
+		/*! \brief Returns the properly format list of object names by querying them using their OIDs and type.
 		Optional schema and table names can be specified to filter the results */
 		QStringList getObjectsNames(ObjectType obj_type, const QStringList &oids, const QString &sch_name=QString(), const QString tab_name=QString());
 		
-		//! brief Format the object's name based upon the passed attributes
+		//! \brief Format the object's name based upon the passed attributes
 		QString formatObjectName(attribs_map &attribs);
 		
-		/*! brief Formats the keys and values for the passed object attributes returning a new map with the formatted attributes.
+		/*! \brief Formats the keys and values for the passed object attributes returning a new map with the formatted attributes.
 		This method do basic formattation on commom attributes and internally call the format[OBJECT]Attribs()
 		method according to the object being currently processed. NOTE: the original 'attribs' has its value changed but the
 		keys are preserved. */
 		attribs_map formatObjectAttribs(attribs_map &attribs);
 		
-		//! brief Formats the boolean attributes translating the 1 ou "" values to true or false
+		//! \brief Formats the boolean attributes translating the 1 ou "" values to true or false
 		void formatBooleanAttribs(attribs_map &attribs, QStringList bool_attrs);
 		
-		//! brief Convert oid attributes (or array of oids) in object names by querying it on catalog
+		//! \brief Convert oid attributes (or array of oids) in object names by querying it on catalog
 		void formatOidAttribs(attribs_map &attribs, QStringList oid_attrs, ObjectType obj_type, bool is_oid_array);
 		
 		void formatCastAttribs(attribs_map &attribs);
@@ -131,65 +131,65 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		void formatIndexAttribs(attribs_map &attribs);
 		void handleSelectedSnippet(const QString &snip_id);
 		
-		//! brief Extract an attribute map containing the basic attributes for drop/rename commands
+		//! \brief Extract an attribute map containing the basic attributes for drop/rename commands
 		attribs_map extractAttributesFromItem(QTreeWidgetItem *item);
 
-		//! brief Updates the selected tree item
+		//! \brief Updates the selected tree item
 		void updateItem(QTreeWidgetItem *item);
 		
-		//! brief Generate the SQL code for the specified object appending the permissions code for it as well
+		//! \brief Generate the SQL code for the specified object appending the permissions code for it as well
 		QString getObjectSource(BaseObject *object, DatabaseModel *dbmodel);
 
 	public:
 		DatabaseExplorerWidget(QWidget * parent = 0);
 		
-		//! brief Configures the connection used to retrieve and manipulate objects on database
+		//! \brief Configures the connection used to retrieve and manipulate objects on database
 		void setConnection(Connection conn);
 		
-		//! brief Returns a copy of the connection used by this explorer instance
+		//! \brief Returns a copy of the connection used by this explorer instance
 		Connection getConnection(void);
 		
-		//! brief Clears the object's properties table
+		//! \brief Clears the object's properties table
 		void clearObjectProperties(void);
 		
 	public slots:
-		//! brief Lists all objects for the current selected database
+		//! \brief Lists all objects for the current selected database
 		void listObjects(void);
 		
 	private slots:
-		//! brief Shows the menu to drop/show data
+		//! \brief Shows the menu to drop/show data
 		void handleObject(QTreeWidgetItem *item, int);
 
-		/*! brief Loads the catalog properties of a selected object and stores them in the current selected item,
+		/*! \brief Loads the catalog properties of a selected object and stores them in the current selected item,
 		the force_reload parameter is used to ignore the cached properties and retrieve them again */
 		void loadObjectProperties(bool force_reload=false);
 		
-		/*! brief Loads (calling loadObjectProperties) and expose the attributes of the object in the properties grid,
+		/*! \brief Loads (calling loadObjectProperties) and expose the attributes of the object in the properties grid,
 		the force_reload parameter is used to ignore the cached properties and retrieve them again */
 		void showObjectProperties(bool force_reload=false);
 		
-		//! brief Executes the rename command on the database
+		//! \brief Executes the rename command on the database
 		void finishObjectRename(void);
 		
-		//! brief Cancels the rename and restore the original item's name
+		//! \brief Cancels the rename and restore the original item's name
 		void cancelObjectRename(void);
 
 		void loadObjectSource(void);
 		
 	signals:
-		//! brief This signal is emmited to indicate that the data manipulation dialog need to be opened
+		//! \brief This signal is emmited to indicate that the data manipulation dialog need to be opened
 		void s_dataGridOpenRequested(QString dbname="", QString schema="", QString table="", bool hide_views=true);
 		
-		//! brief This signal is emmited to indicate that a sql execution widget need to be opened
+		//! \brief This signal is emmited to indicate that a sql execution widget need to be opened
 		void s_sqlExecutionRequested(void);
 		
-		//! brief This signal is emmited to indicate that the named database must be dropped
+		//! \brief This signal is emmited to indicate that the named database must be dropped
 		void s_databaseDropRequested(QString dbname);
 		
-		//! brief This signal is emmited containing the processed snippet to be shown in an input field
+		//! \brief This signal is emmited containing the processed snippet to be shown in an input field
 		void s_snippetShowRequested(QString snippet);
 
-		//! brief This signal is emmited containing the source code to be shown in an input field
+		//! \brief This signal is emmited containing the source code to be shown in an input field
 		void s_sourceCodeShowRequested(QString source);
 };
 

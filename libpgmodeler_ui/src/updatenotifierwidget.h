@@ -55,16 +55,16 @@ class UpdateNotifierWidget: public QWidget, public Ui::UpdateNotifierWidget {
 	private:
 		Q_OBJECT
 
-		//! brief Object responsible to make request to server
+		//! \brief Object responsible to make request to server
 		QNetworkAccessManager update_chk_manager;
 
-		//! brief This pointer stores the reply after the update manager make a call to server
+		//! \brief This pointer stores the reply after the update manager make a call to server
 		QNetworkReply *update_chk_reply;
 
-		//! brief Stores the old mouse position to simulate the widget resizing
+		//! \brief Stores the old mouse position to simulate the widget resizing
 		QPoint old_pos;
 
-		/*! brief This attribute indicates wether a message informing that no updates are available
+		/*! \brief This attribute indicates wether a message informing that no updates are available
 	  must be shown. Generally, this attribute is true when the user call the checkForUpdate()
 	  from a QAction */
 		bool show_no_upd_msg;
@@ -73,7 +73,7 @@ class UpdateNotifierWidget: public QWidget, public Ui::UpdateNotifierWidget {
 
 		QAction *action_purchase, *action_recover;
 
-		//! brief This event filter is used to resize the widget when the mouse is over the notifier
+		//! \brief This event filter is used to resize the widget when the mouse is over the notifier
 		bool eventFilter(QObject *obj, QEvent *event);
 
 		void activateLink(const QString &link);

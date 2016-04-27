@@ -40,10 +40,10 @@ class BugReportForm : public QDialog, public Ui::BugReportForm {
 		//! \brief Delimiter character which separates the sections of the compressed file
 		const static char CHR_DELIMITER;
 		
-		//! brief Generates an uncompressed buffer based upon the data in fields
+		//! \brief Generates an uncompressed buffer based upon the data in fields
 		virtual QByteArray generateReportBuffer(void);
 		
-		//! brief Generates the bug report file from uncompressed buffer
+		//! \brief Generates the bug report file from uncompressed buffer
 		void generateReport(const QByteArray &buf);
 		
 	public:

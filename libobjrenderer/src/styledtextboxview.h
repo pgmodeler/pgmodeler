@@ -31,7 +31,7 @@ class StyledTextboxView: public TextboxView {
 	private:
 		Q_OBJECT
 
-		//! brief Fold indicator appended at bottom-right corner of the object
+		//! \brief Fold indicator appended at bottom-right corner of the object
 		QGraphicsPolygonItem *fold;
 
 	public:

@@ -23,6 +23,7 @@ MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) :
 {
 	setupUi(this);
 
+	root_item=nullptr;
 	model_wgt=nullptr;
 	settings_tbw->setTabEnabled(1, false);
 	apply_btn->setEnabled(false);
@@ -51,32 +52,78 @@ MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) :
 	custom_colors_ht=new HintTextWidget(custom_colors_hint, this);
 	custom_colors_ht->setText(custom_colors_chk->statusTip());
 
+	extract_ht=new HintTextWidget(extract_hint, this);
+	extract_ht->setText(extract_rb->statusTip());
+
+	restore_ht=new HintTextWidget(restore_hint, this);
+	restore_ht->setText(restore_rb->statusTip());
+
 	htmlitem_deleg=new HtmlItemDelegate;
 	output_trw->setItemDelegateForColumn(0, htmlitem_deleg);
 
 	connect(cancel_btn, SIGNAL(clicked()), this, SLOT(reject()));
 	connect(apply_btn, SIGNAL(clicked()), this, SLOT(handleObjectsMetada()));
 
+	connect(extract_from_cmb, &QComboBox::currentTextChanged,
+					[=](){ apply_btn->setDisabled(extract_from_cmb->count() == 0); });
+
 	connect(select_file_tb, &QToolButton::clicked,
-					[=](){	selectFile(save_metadata_rb->isChecked()); });
+					[=](){	selectFile(extract_rb->isChecked()); });
 
-	connect(file_edt, &QLineEdit::textChanged,
-					[=](){ apply_btn->setDisabled(file_edt->text().isEmpty()); });
+	connect(restore_rb, SIGNAL(toggled(bool)), extract_from_cmb, SLOT(setDisabled(bool)));
+	connect(extract_from_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableMetadataHandling()));
+	connect(backup_file_edt, SIGNAL(textChanged(QString)), this, SLOT(enableMetadataHandling()));
+	connect(restore_rb, SIGNAL(toggled(bool)), this, SLOT(enableMetadataHandling()));
+	connect(extract_rb, SIGNAL(toggled(bool)), this, SLOT(enableMetadataHandling()));
+}
 
-	connect(save_metadata_rb, SIGNAL(toggled(bool)), message_frm, SLOT(setHidden(bool)));
+void MetadataHandlingForm::enableMetadataHandling(void)
+{
+	apply_btn->setEnabled(model_wgt &&
+												(	(extract_rb->isChecked() && extract_from_cmb->count() > 0) ||
+													(restore_rb->isChecked() && !backup_file_edt->text().isEmpty())));
 }
 
 void MetadataHandlingForm::setModelWidget(ModelWidget *model_wgt)
 {
 	this->model_wgt=model_wgt;
+
+	apply_to_edt->clear();
+
+	if(model_wgt)
+	{
+		apply_to_edt->setText(QString("%1 (%2)").arg(model_wgt->getDatabaseModel()->getName())
+													.arg(model_wgt->getFilename().isEmpty() ? trUtf8("model not saved yet") : model_wgt->getFilename()));
+	}
+}
+
+void MetadataHandlingForm::setModelWidgets(QList<ModelWidget *> models)
+{
+	extract_from_cmb->clear();
+
+	for(ModelWidget *model : models)
+	{
+		extract_from_cmb->addItem(QString("%1 (%2)").arg(model->getDatabaseModel()->getName())
+															.arg(model->getFilename().isEmpty() ? trUtf8("model not saved yet") : model->getFilename()),
+															QVariant::fromValue<void *>(reinterpret_cast<void *>(model->getDatabaseModel())));
+	}
 }
 
 void MetadataHandlingForm::handleObjectsMetada(void)
 {
+	if(!backup_file_edt->text().isEmpty() &&
+		 backup_file_edt->text() == model_wgt->getFilename())
+		throw Exception(trUtf8("The backup file cannot be the same as the input model!"),
+										ERR_CUSTOM,	__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	QTemporaryFile tmp_file;
+	QString metadata_file;
+	unsigned options=0;
+	DatabaseModel *extract_model=nullptr;
+
 	try
 	{
-		unsigned options=0;
-
+		root_item=nullptr;
 		output_trw->clear();
 		settings_tbw->setTabEnabled(1, true);
 		settings_tbw->setCurrentIndex(1);
@@ -90,36 +137,72 @@ void MetadataHandlingForm::handleObjectsMetada(void)
 		options+=(tag_objs_chk->isChecked() ? DatabaseModel::META_TAG_OBJS : 0);
 		options+=(textbox_objs_chk->isChecked() ? DatabaseModel::META_TEXTBOX_OBJS : 0);
 
-		if(save_metadata_rb->isChecked())
-		{
-			PgModelerUiNS::createOutputTreeItem(output_trw,
-																					PgModelerUiNS::formatMessage(trUtf8("Extracting metadata to file `%1'").arg(file_edt->text())),
-																					QPixmap(QString(":/icones/icones/msgbox_info.png")), nullptr);
+		connect(model_wgt->getDatabaseModel(), SIGNAL(s_objectLoaded(int,QString,unsigned)), this, SLOT(updateProgress(int,QString,unsigned)));
 
-			model_wgt->getDatabaseModel()->saveObjectsMetadata(file_edt->text(), options);
-			emit s_metadataSaved();
+		if(extract_rb->isChecked())
+		{
+			extract_model=reinterpret_cast<DatabaseModel *>(extract_from_cmb->currentData(Qt::UserRole).value<void *>());
+
+			//Configuring the temporary metadata file
+			tmp_file.setFileTemplate(GlobalAttributes::TEMPORARY_DIR +
+															 GlobalAttributes::DIR_SEPARATOR +
+															 QString("%1_metadata_XXXXXX.%2").arg(extract_model->getName()).arg(QString("omf")));
+
+			tmp_file.open();
+			metadata_file=tmp_file.fileName();
+			tmp_file.close();
+
+			connect(extract_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), this, SLOT(updateProgress(int,QString,unsigned)));
+
+			root_item=PgModelerUiNS::createOutputTreeItem(output_trw,
+																										PgModelerUiNS::formatMessage(trUtf8("Extracting metadata to file `%1'").arg(metadata_file)),
+																										QPixmap(QString(":/icones/icones/msgbox_info.png")), nullptr);
+
+			extract_model->saveObjectsMetadata(metadata_file, options);
+
+			if(!backup_file_edt->text().isEmpty())
+			{
+				root_item->setExpanded(false);
+				root_item=PgModelerUiNS::createOutputTreeItem(output_trw,
+																											PgModelerUiNS::formatMessage(trUtf8("Saving backup metadata to file `%1'").arg(backup_file_edt->text())),
+																											QPixmap(QString(":/icones/icones/msgbox_info.png")), nullptr);
+
+				model_wgt->getDatabaseModel()->saveObjectsMetadata(backup_file_edt->text());
+			}
 		}
 		else
 		{
-			PgModelerUiNS::createOutputTreeItem(output_trw,
-																					PgModelerUiNS::formatMessage(trUtf8("Applying metadata from file `%1'").arg(file_edt->text())),
-																					QPixmap(QString(":/icones/icones/msgbox_info.png")), nullptr);
-
-			model_wgt->setUpdatesEnabled(false);
-			model_wgt->getDatabaseModel()->loadObjectsMetadata(file_edt->text(), options);
-			model_wgt->adjustSceneSize();
-			model_wgt->restoreLastCanvasPosition();
-			model_wgt->setUpdatesEnabled(true);
-			model_wgt->setModified(true);
-
-			emit s_metadataLoaded();
+			metadata_file=backup_file_edt->text();
 		}
 
+		root_item->setExpanded(false);
+		root_item=PgModelerUiNS::createOutputTreeItem(output_trw,
+																									PgModelerUiNS::formatMessage(trUtf8("Applying metadata from file `%1'").arg(metadata_file)),
+																									QPixmap(QString(":/icones/icones/msgbox_info.png")), nullptr);
+
+		model_wgt->setUpdatesEnabled(false);
+		model_wgt->getDatabaseModel()->loadObjectsMetadata(metadata_file, options);
+		model_wgt->adjustSceneSize();
+		model_wgt->restoreLastCanvasPosition();
+		model_wgt->setUpdatesEnabled(true);
+		model_wgt->setModified(true);
+
+		disconnect(model_wgt->getDatabaseModel(), nullptr, this, nullptr);
+
+		if(extract_model)
+			disconnect(extract_model, nullptr, this, nullptr);
+
+		emit s_metadataHandled();
 		this->accept();
 	}
 	catch(Exception &e)
 	{
 		QPixmap icon=QPixmap(QString(":/icones/icones/msgbox_erro.png"));
+
+		disconnect(model_wgt->getDatabaseModel(), nullptr, this, nullptr);
+
+		if(extract_model)
+			disconnect(extract_model, nullptr, this, nullptr);
 
 		PgModelerUiNS::createOutputTreeItem(output_trw,
 																				PgModelerUiNS::formatMessage(e.getErrorMessage()),
@@ -139,15 +222,6 @@ void MetadataHandlingForm::showEvent(QShowEvent *)
 		apply_btn->setEnabled(false);
 		settings_tbw->setEnabled(false);
 	}
-
-	if(model_wgt)
-		connect(model_wgt->getDatabaseModel(), SIGNAL(s_objectLoaded(int,QString,unsigned)), this, SLOT(updateProgress(int,QString,unsigned)));
-}
-
-void MetadataHandlingForm::closeEvent(QCloseEvent *)
-{
-	if(model_wgt)
-		disconnect(model_wgt->getDatabaseModel(), nullptr, this, nullptr);
 }
 
 void MetadataHandlingForm::selectFile(bool is_output)
@@ -161,7 +235,7 @@ void MetadataHandlingForm::selectFile(bool is_output)
 	{
 		file_dlg.setFileMode(QFileDialog::ExistingFiles);
 		file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
-		file_dlg.selectFile(file_edt->text());
+		file_dlg.selectFile(backup_file_edt->text());
 	}
 	else
 	{
@@ -172,7 +246,7 @@ void MetadataHandlingForm::selectFile(bool is_output)
 	}
 
 	if(file_dlg.exec()==QFileDialog::Accepted && !file_dlg.selectedFiles().isEmpty())
-		file_edt->setText(file_dlg.selectedFiles().at(0));
+		backup_file_edt->setText(file_dlg.selectedFiles().at(0));
 }
 
 void MetadataHandlingForm::updateProgress(int progress, QString msg, unsigned int type_id)
@@ -191,7 +265,7 @@ void MetadataHandlingForm::updateProgress(int progress, QString msg, unsigned in
 	else
 		icon=QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png"));
 
-	PgModelerUiNS::createOutputTreeItem(output_trw, fmt_msg, icon, nullptr);
+	PgModelerUiNS::createOutputTreeItem(output_trw, fmt_msg, icon, root_item);
 	progress_lbl->setText(fmt_msg);
 	ico_lbl->setPixmap(icon);
 	progress_pb->setValue(progress);

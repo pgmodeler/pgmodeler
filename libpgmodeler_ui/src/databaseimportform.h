@@ -35,7 +35,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 	private:
 		Q_OBJECT
 		
-		//! brief Custom delegate used to paint html texts in output tree
+		//! \brief Custom delegate used to paint html texts in output tree
 		HtmlItemDelegate *htmlitem_del;
 		
 		bool create_model;
@@ -72,14 +72,14 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		void closeEvent(QCloseEvent *event);
 		void destroyModelWidget(void);
 		
-		//! brief Allocates the import thread and helper
+		//! \brief Allocates the import thread and helper
 		void createThread(void);
 		
-		//! brief Destroys both import thread and helper
+		//! \brief Destroys both import thread and helper
 		void destroyThread(void);
 
 	public:
-		//! brief Constants used to access the tree widget items data
+		//! \brief Constants used to access the tree widget items data
 		static const unsigned OBJECT_ID=1,
 		OBJECT_TYPE=2,
 		OBJECT_NAME=3,
@@ -98,17 +98,17 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		//! \brief Returns the configured model widget
 		ModelWidget *getModelWidget(void);
 		
-		//! brief Fills a combo box with all available databases according to the configurations of the specified import helper
+		//! \brief Fills a combo box with all available databases according to the configurations of the specified import helper
 		static void listDatabases(DatabaseImportHelper &import_helper, QComboBox *dbcombo);
 		
-		/*! brief Fills a tree widget with all available database objects according to the configurations of the specified import helper.
+		/*! \brief Fills a tree widget with all available database objects according to the configurations of the specified import helper.
 		The parameter 'disable_empty_grps' will make empty group items disabled. The parameter 'create_db_item' will create the root
 		item representing the database itself. The parameter 'create_dummy_item' create an empty child item that represent schema or table
 		child. In this case the generation of schema's or table's children need to be done manually. */
 		static void listObjects(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, bool checkable_items,
 														bool disable_empty_grps, bool create_db_item, bool create_dummy_item = false);
 		
-		/*! brief Filters an tree widget using a pattern. The 'search_column' indicates in which column the pattern is applied.
+		/*! \brief Filters an tree widget using a pattern. The 'search_column' indicates in which column the pattern is applied.
 		The paramenter 'sel_single_leaf' indicates if the single leaf (resulting from filtering) must be selected. */
 		static void filterObjects(QTreeWidget *db_objects_tw, const QString &pattern, int search_column, bool sel_single_leaf);
 		
@@ -138,7 +138,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		void setItemsCheckState(void);
 		
 	signals:
-		/*! brief This signal is emitted whenever the user changes the connections settings
+		/*! \brief This signal is emitted whenever the user changes the connections settings
 		within this widget without use the main configurations dialog */
 		void s_connectionsUpdateRequest(void);
 };

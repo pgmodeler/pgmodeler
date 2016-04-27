@@ -53,7 +53,7 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 		//! \brief Returns the object type according to the widget (in this case a object table) that called the method
 		ObjectType getObjectType(QObject *sender);
 
-		/*! brief Template method that opens the editing form for the specified object.
+		/*! \brief Template method that opens the editing form for the specified object.
 				Class and ClassWidget should be compatible, e.g., "Column" can only be edited using ColumnWidget */
 		template<class Class, class ClassWidget>
 		int openEditingForm(TableObject *object);

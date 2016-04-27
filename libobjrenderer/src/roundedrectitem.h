@@ -30,19 +30,19 @@
 
 class RoundedRectItem: public QGraphicsRectItem {
 	private:
-		//! brief Rect border radius
+		//! \brief Rect border radius
 		double radius;
 
-		//! brief Polygon used to simulate the rounded rectangle with custom rounded corners
+		//! \brief Polygon used to simulate the rounded rectangle with custom rounded corners
 		QPolygonF polygon;
 
-		//! brief Stores which corners of the rectangle must be rounded
+		//! \brief Stores which corners of the rectangle must be rounded
 		unsigned corners;
 
-		//! brief Creates the polygon that represents the rounded rectangle
+		//! \brief Creates the polygon that represents the rounded rectangle
 		void createPolygon(void);
 
-		/*! brief Calculates the points to simulate the rounded border. It must be informed
+		/*! \brief Calculates the points to simulate the rounded border. It must be informed
 		the starting point and start/end angles. Based upon those parameters a line
 		is configured and rotated from start_angle to end_angle and its final point
 		(the rounded border point) is detected. The method returns all the calculated
@@ -50,22 +50,22 @@ class RoundedRectItem: public QGraphicsRectItem {
 		QVector<QPointF> calculatePoints(QPointF start_pnt, double start_angle, double end_angle);
 
 	public:
-		//! brief Implies a normal rectangle (no rounded corner)
+		//! \brief Implies a normal rectangle (no rounded corner)
 		static const unsigned NONE_CORNERS=0,
 
-		//! brief The top-left corner will be rounded
+		//! \brief The top-left corner will be rounded
 		TOPLEFT_CORNER=2,
 
-		//! brief The top-right corner will be rounded
+		//! \brief The top-right corner will be rounded
 		TOPRIGHT_CORNER=4,
 
-		//! brief The Bottom-left corner will be rounded
+		//! \brief The Bottom-left corner will be rounded
 		BOTTOMLEFT_CORNER=8,
 
-		//! brief The Bottom-right corner will be rounded
+		//! \brief The Bottom-right corner will be rounded
 		BOTTOMRIGHT_CORNER=16,
 
-		//! brief All corners will be rounded
+		//! \brief All corners will be rounded
 		ALL_CORNERS=32;
 
 		explicit RoundedRectItem(QGraphicsItem *parent = 0);
@@ -76,7 +76,7 @@ class RoundedRectItem: public QGraphicsRectItem {
 		void setRoundedCorners(unsigned corners);
 		unsigned getRoundedCorners(void);
 
-		//! brief Test if a corners is configured to be rounded
+		//! \brief Test if a corners is configured to be rounded
 		bool isCornerRounded(unsigned corner);
 
 		void setRect(const QRectF &rect);
