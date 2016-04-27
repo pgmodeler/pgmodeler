@@ -58,7 +58,7 @@ class BaseConfigWidget: public QWidget {
 		//! \brief Restore the configuration specified by conf_in loading them from the original file (conf/defaults)
 		void restoreDefaults(const QString &conf_id);
 		
-		//! brief Adds a parameter to the specified configuration parameters set
+		//! \brief Adds a parameter to the specified configuration parameters set
 		static void addConfigurationParam(map<QString, attribs_map> &config_params, const QString &param, const attribs_map &attribs);
 		
 		void showEvent(QShowEvent *);
@@ -69,16 +69,16 @@ class BaseConfigWidget: public QWidget {
 		
 		bool isConfigurationChanged(void);
 		
-		//! brief Applies the configuration to object
+		//! \brief Applies the configuration to object
 		virtual void applyConfiguration(void)=0;
 		
-		//! brief Loads a set of configurations from a file
+		//! \brief Loads a set of configurations from a file
 		virtual void loadConfiguration(void)=0;
 		
-		//! brief Saves the current settings to a file
+		//! \brief Saves the current settings to a file
 		virtual void saveConfiguration(void)=0;
 		
-		//! brief Destroy the current configuration file and makes a copy of the default one located at conf/defaults
+		//! \brief Destroy the current configuration file and makes a copy of the default one located at conf/defaults
 		virtual void restoreDefaults(void)=0;
 		
 	public slots:

@@ -33,25 +33,29 @@ class ModelNavigationWidget: public QWidget, public Ui::ModelNavigationWidget {
 	private:
 		Q_OBJECT
 
+		QList<ModelWidget *> model_wgts;
+
 		void enableNavigationButtons(void);
 
 	public:
 		ModelNavigationWidget(QWidget * parent = 0);
 
-		//! brief Returns the combo's current index
+		//! \brief Returns the combo's current index
 		int getCurrentIndex(void);
 
-		//! brief Returns the text of the combo's current index
+		//! \brief Returns the text of the combo's current index
 		QString getText(int idx);
 
+		QList<ModelWidget *> getModelWidgets(void);
+
 	public slots:
-		//! brief Adds the model to the listing
+		//! \brief Adds the model to the listing
 		void addModel(ModelWidget *model);
 
-		//! brief Updates a model's info on the listing
+		//! \brief Updates a model's info on the listing
 		void updateModelText(int idx, const QString &text, const QString &filename);
 
-		//! brief Remove an entry for a model using its index
+		//! \brief Remove an entry for a model using its index
 		void removeModel(int idx);
 
 	private slots:

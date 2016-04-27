@@ -54,10 +54,10 @@ class ModelWidget: public QWidget {
 		the way the methods copyObjects() and removeObject() works. */
 		static bool cut_operation;
 
-		//! brief Indicates if the last position and zoom must be saved/restored
+		//! \brief Indicates if the last position and zoom must be saved/restored
 		static bool save_restore_pos,
 
-		//! brief Indicates that graphical objects like table, view and textboxes can be created without click canvas (direclty from their editing form)
+		//! \brief Indicates that graphical objects like table, view and textboxes can be created without click canvas (direclty from their editing form)
 		simple_obj_creation,
 
 		disable_render_smooth;
@@ -119,25 +119,25 @@ class ModelWidget: public QWidget {
 		//! \brief Stores the temporary database model filename
 		tmp_filename;
 
-		//! brief This label shows the user the current applied zoom
+		//! \brief This label shows the user the current applied zoom
 		QLabel *zoom_info_lbl;
 
-		//! brief This timer controls the interval the zoom label is visible
+		//! \brief This timer controls the interval the zoom label is visible
 		QTimer zoom_info_timer;
 
-		//! brief Creates a BaseForm instance in insert the widget into it. A custom configuration for dialog buttons can be passed
+		//! \brief Creates a BaseForm instance in insert the widget into it. A custom configuration for dialog buttons can be passed
 		int openEditingForm(QWidget *widget, BaseObject *object = nullptr, unsigned button_conf = Messagebox::OK_CANCEL_BUTTONS);
 
-		//! brief Opens a editing form for objects at database level
+		//! \brief Opens a editing form for objects at database level
 		template<class Class, class WidgetClass>
 		int openEditingForm(BaseObject *object);
 
-		/*! brief Opens a editing form for objects that can have a parent other than database, e.g., schema level objects,
+		/*! \brief Opens a editing form for objects that can have a parent other than database, e.g., schema level objects,
 				table child object or relationship attributes & constraints */
 		template<class Class, class WidgetClass, class ParentClass>
 		int openEditingForm(BaseObject *object, BaseObject *parent_obj);
 
-		//! brief Opens a editing form for objects that can have a position in the canvas area
+		//! \brief Opens a editing form for objects that can have a position in the canvas area
 		template<class Class, class WidgetClass, class ParentClass>
 		int openEditingForm(BaseObject *object, BaseObject *parent_obj, const QPointF &pos);
 
@@ -245,19 +245,19 @@ class ModelWidget: public QWidget {
 		//! \brief Returns the operation list used by database model
 		OperationList *getOperationList(void);
 
-		//! brief Defines if any instance of ModelWidget must restore the last saved editing position on canvas
+		//! \brief Defines if any instance of ModelWidget must restore the last saved editing position on canvas
 		static void setSaveLastCanvasPosition(bool value);
 
-		//! brief Defines if any instance of the class must disable rendering smoothness improving performance
+		//! \brief Defines if any instance of the class must disable rendering smoothness improving performance
 		static void setRenderSmoothnessDisabled(bool value);
 
-		//! brief Defines if any instance of the class must simiplify the graphical object's creation
+		//! \brief Defines if any instance of the class must simiplify the graphical object's creation
 		static void setSimplifiedObjectCreation(bool value);
 
-		//! brief Restore the last editing position on canvas as well the zoom factor
+		//! \brief Restore the last editing position on canvas as well the zoom factor
 		void restoreLastCanvasPosition(void);
 
-		/*! brief Save the last editing position on canvas as well the zoom factor. This method return true when
+		/*! \brief Save the last editing position on canvas as well the zoom factor. This method return true when
 		the current values was saved on the database model */
 		bool saveLastCanvasPosition(void);
 
@@ -320,7 +320,7 @@ class ModelWidget: public QWidget {
 		//! \brief Removes the selected objects
 		void removeObjects(bool cascade = false);
 
-		//! brief Removes the selected objects in cascade model. This is the same as call removeObjects(true).
+		//! \brief Removes the selected objects in cascade model. This is the same as call removeObjects(true).
 		void removeObjectsCascade(void);
 
 		//! \brief Selects all the graphical objects on the scene
@@ -392,7 +392,7 @@ class ModelWidget: public QWidget {
 		//! \brief Signal emitted whenever a object is created / edited using the form
 		void s_objectManipulated(void);
 
-		/*! brief Signal emitted whenever the user open an object in its editing form but cancel the operation
+		/*! \brief Signal emitted whenever the user open an object in its editing form but cancel the operation
 		by closing the form */
 		void s_manipulationCanceled(void);
 

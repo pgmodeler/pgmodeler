@@ -49,7 +49,7 @@ class Index: public TableObject{
 		//! \brief Formats the elements string used by the SchemaParser
 		void setIndexElementsAttribute(unsigned def_type);
 
-		/*! brief Executes any validation over the index's elements. Currently, this method disable sorting
+		/*! \brief Executes any validation over the index's elements. Currently, this method disable sorting
 		when the indexing type is 'gin' */
 		void validateElements(void);
 
@@ -130,7 +130,7 @@ class Index: public TableObject{
 		 connections and disconnections of relationships */
 		bool isReferRelationshipAddedColumn(void);
 
-		/*! brief Returns the list of all columns that is created by relationships.
+		/*! \brief Returns the list of all columns that is created by relationships.
 	This method is slower than isReferRelationshipAddedColumn() so it's not
 	recommended to use it only check if the object is referencing columns
 	added by relationship */
@@ -139,7 +139,7 @@ class Index: public TableObject{
 		//! \brief Returns if some index element is referencing the specified collation
 		bool isReferCollation(Collation *collation);
 
-		//! brief Returns if some index element is referencing the specified column
+		//! \brief Returns if some index element is referencing the specified column
 		bool isReferColumn(Column *column);
 };
 

@@ -36,13 +36,13 @@ class RelationshipView: public BaseObjectView {
 		//! \brief Graphical point radius
 		static constexpr double GRAPHIC_PNT_RADIUS=6.0f;
 
-		//! brief Length of the lines linked to fk/pk columns
+		//! \brief Length of the lines linked to fk/pk columns
 		static constexpr double CONN_LINE_LENGTH=20.0f;
 
 		//! \brief Indicates that the relationship labels must be hidden
 		static bool hide_name_label;
 
-		/*! brief Specify the type of connection used by the lines. The first (classical)
+		/*! \brief Specify the type of connection used by the lines. The first (classical)
 		is to connect the line to tables through their central points. The second (better semantics)
 		makes the line start from the fk columns on receiver table and connecting to the pk columns on reference table */
 		static unsigned line_conn_mode;
@@ -51,7 +51,7 @@ class RelationshipView: public BaseObjectView {
 		 that the configureLine() method is exceedingly called during the table moving. */
 		bool configuring_line,
 
-		//! brief Indicates if the instance is configured to use placeholders
+		//! \brief Indicates if the instance is configured to use placeholders
 		using_placeholders;
 
 		//! \brief Stores the graphical representation for labels
@@ -60,7 +60,7 @@ class RelationshipView: public BaseObjectView {
 		//! \brief Stores the graphical representation for the participant tables
 		BaseTableView *tables[2];
 
-		/*! brief Stores the points on tables where the relationship line is connected.
+		/*! \brief Stores the points on tables where the relationship line is connected.
 		This attribute is updated every time the configureLine() method is called.
 		When the relationship uses the classical link mode (center points) this attribute
 		contains the table's center points. Now, when the new line mode is used this
@@ -73,10 +73,10 @@ class RelationshipView: public BaseObjectView {
 		//! \brief Lines that represent the relationship
 		vector<QGraphicsLineItem *> lines,
 
-		//! brief Lines that are connected to the reference table (only on CONNECT_FK_TO_PK mode)
+		//! \brief Lines that are connected to the reference table (only on CONNECT_FK_TO_PK mode)
 		pk_lines,
 
-		//! brief Lines that are connected to the receiver table (only on CONNECT_FK_TO_PK mode)
+		//! \brief Lines that are connected to the receiver table (only on CONNECT_FK_TO_PK mode)
 		fk_lines;
 
 		//! \brief Stores the graphical representation for relationship attributes
@@ -108,7 +108,7 @@ class RelationshipView: public BaseObjectView {
 		//! \brief Configures the position info object
 		void configurePositionInfo(void);
 
-		//! brief Configures the specified label's position based as well some styles for it
+		//! \brief Configures the specified label's position based as well some styles for it
 		void configureLabelPosition(unsigned label_id, double x, double y);
 
 	protected:
@@ -118,7 +118,7 @@ class RelationshipView: public BaseObjectView {
 		void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 		void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *){}
 
-		/*! brief (Re)connects the tables to the relationship changing the signals captured.
+		/*! \brief (Re)connects the tables to the relationship changing the signals captured.
 		This method is called whenever the placeholder usage is toggled. If the placeholders are on
 		the the table's signal s_relUpdateRequested() is used otherwise the s_objectMoved() is used */
 		void connectTables(void);
@@ -156,16 +156,16 @@ class RelationshipView: public BaseObjectView {
 		//! \brief Returns the current visibility state of name label
 		static bool isNameLabelHidden(void);
 
-		/*! brief Configures the mode in which the lines are connected on tables.
+		/*! \brief Configures the mode in which the lines are connected on tables.
 		The first one is the CONNECT_CENTER_PNTS (the classical one) which connects the
 		two tables through the center points. The CONNECT_FK_TO_PK is the one with a better
 		semantics	and connects the fk columns of receiver table to pk columns on reference table */
 		static void setLineConnectionMode(unsigned mode);
 
-		//! brief Returns the line connection mode used for the relationships
+		//! \brief Returns the line connection mode used for the relationships
 		static unsigned getLineConnectinMode(void);
 
-		/*! brief Returns the connection point for the specified table. The connection point is
+		/*! \brief Returns the connection point for the specified table. The connection point is
 		 where the relationship is connected on envolved tables. The point returned deffers depending on the
 		 line connection mode used.	*/
 		QPointF getConnectionPoint(unsigned table_idx);

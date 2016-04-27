@@ -57,12 +57,12 @@ class Messagebox: public QDialog, public Ui::Messagebox {
 				  const QString &yes_lbl=QString(), const QString &no_lbl=QString(), const QString &cancel_lbl=QString(),
 				  const QString &yes_ico=QString(), const QString &no_ico=QString(), const QString &cancel_ico=QString());
 
-		//! brief Shows the message box using an excpetion as message
+		//! \brief Shows the message box using an excpetion as message
 		void show(Exception e, const QString &msg=QString(), unsigned icon_type=ERROR_ICON, unsigned buttons=OK_BUTTON,
 				  const QString &yes_lbl=QString(), const QString &no_lbl=QString(), const QString &cancel_lbl=QString(),
 				  const QString &yes_ico=QString(), const QString &no_ico=QString(), const QString &cancel_ico=QString());
 
-		//! brief Shows a simple message box with the title automatically defined by the icon type
+		//! \brief Shows a simple message box with the title automatically defined by the icon type
 		void show(const QString &msg, unsigned icon_type=NO_ICON, unsigned buttons=OK_BUTTON);
 
 		bool isCancelled(void);

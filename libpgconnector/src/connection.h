@@ -66,7 +66,7 @@ class Connection {
 		to enable output. */
 		static void disableNoticeOutput(void *, const PGresult *){}
 
-		/*! brief This function overrides the default notice handler of the connections and
+		/*! \brief This function overrides the default notice handler of the connections and
 		captures and stores all message in a string list that can be retrieved by the user
 		for later usage */
 		static void noticeProcessor(void *, const char *message);
@@ -80,7 +80,7 @@ class Connection {
 		//! \brief Indicates if error silence is enabled
 		silence_conn_err;
 
-		/*! brief Indicates that the initial database configured in the connection can be automatically
+		/*! \brief Indicates that the initial database configured in the connection can be automatically
 		browsed after connect the server. This attribute is useful only in SQLTool */
 		bool auto_browse_db,
 
@@ -88,7 +88,7 @@ class Connection {
 		is used if none is explicitly specified by the user in the UI */
 		default_for_oper[4];
 
-		/*! brief Validates the connection status (command exec. timeout and connection status) and
+		/*! \brief Validates the connection status (command exec. timeout and connection status) and
 		raise errors in case of exceeded timeout or bad connection. This method is called prior any
 		command execution */
 		void validateConnectionStatus(void);
@@ -162,10 +162,10 @@ class Connection {
 		 the connection to the database */
 		void setConnectionParam(const QString &param, const QString &value);
 
-		//! brief Sets all the connection parameters at once
+		//! \brief Sets all the connection parameters at once
 		void setConnectionParams(const attribs_map &params);
 
-		//! brief Set if the database configured on the connection is auto browseable when using the SQLTool manage database
+		//! \brief Set if the database configured on the connection is auto browseable when using the SQLTool manage database
 		void setAutoBrowseDB(bool value);
 
 		//! \brief Open the connection to the database
@@ -183,13 +183,13 @@ class Connection {
 		//! \brief Returns the full parameter map
 		attribs_map getConnectionParams(void) const;
 
-		//! brief Returns a map containing some server's info
+		//! \brief Returns a map containing some server's info
 		attribs_map getServerInfo(void);
 
 		//! \brief Returns the connection string used to connect to de database
 		QString getConnectionString(void);
 
-		//! brief Returns a string string containing the following signature: 'alias (host:port)'
+		//! \brief Returns a string string containing the following signature: 'alias (host:port)'
 		QString getConnectionId(void);
 
 		/*! \brief Returns the DBMS version in format XX.YY[.ZZ]
@@ -209,7 +209,7 @@ class Connection {
 		//! \brief Returns if the connections is stablished
 		bool isStablished(void);
 
-		//! brief Returns if the db configured in the connection can be automatically browsed in SQLTool
+		//! \brief Returns if the db configured in the connection can be automatically browsed in SQLTool
 		bool isAutoBrowseDB(void);
 
 		/*! \brief Executes a DML command on the server using the opened connection.

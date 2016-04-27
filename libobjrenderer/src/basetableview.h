@@ -72,7 +72,7 @@ class BaseTableView: public BaseObjectView {
 		//! \brief Updates the current connected relationship count
 		void updateConnectedRelsCount(int inc);
 
-		//! brief Configures the tag object when the source object has one.
+		//! \brief Configures the tag object when the source object has one.
 		void configureTag(void);
 
 	public:
@@ -101,10 +101,10 @@ class BaseTableView: public BaseObjectView {
 		//! \brief Returns the current count of connected relationships
 		int getConnectRelsCount(void);
 
-		//! brief This method just emits the signal to indicate that the relationships attached must be updated
+		//! \brief This method just emits the signal to indicate that the relationships attached must be updated
 		void requestRelationshipsUpdate(void);
 
-		//! brief Toggles the placeholder object when there is at least one relationship connected to the object
+		//! \brief Toggles the placeholder object when there is at least one relationship connected to the object
 		virtual void togglePlaceholder(bool value);
 
 	signals:

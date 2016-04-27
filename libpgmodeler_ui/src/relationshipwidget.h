@@ -45,10 +45,10 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 
 		ColorPickerWidget *color_picker;
 
-		//! brief Stores the tab objects to change the configuration of the form depending on the type of the relationship
+		//! \brief Stores the tab objects to change the configuration of the form depending on the type of the relationship
 		QWidgetList tabs;
 
-		//! brief Stores the original labels of the tabs
+		//! \brief Stores the original labels of the tabs
 		QStringList tab_labels;
 
 		SyntaxHighlighter *table1_hl,
@@ -70,7 +70,7 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		 the current object type */
 		void showObjectData(TableObject *object, int row);
 
-		/*! brief Template method that opens the editing form for the specified object.
+		/*! \brief Template method that opens the editing form for the specified object.
 				Class and ClassWidget should be compatible, e.g., "Column" can only be edited using ColumnWidget */
 		template<class Class, class ClassWidget>
 		int openEditingForm(TableObject *object);

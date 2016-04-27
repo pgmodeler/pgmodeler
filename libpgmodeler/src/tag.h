@@ -38,7 +38,7 @@ class Tag: public BaseObject {
 		//! \brief Stores the object colors configuration
 		map<QString, QColor*> color_config;
 
-		/*! brief Validates the element id and the color id. This method will
+		/*! \brief Validates the element id and the color id. This method will
 	raise an error if some of parameters are invalid */
 		void validateElementId(const QString &elem_id, unsigned color_id);
 
@@ -50,25 +50,25 @@ class Tag: public BaseObject {
 
 		Tag(void);
 
-		/*! brief Set the tag name. Different from regular database model object there is no rule
+		/*! \brief Set the tag name. Different from regular database model object there is no rule
 	when setting the name. The only exception is that the name cannot be greater than
 	BaseObject::OBJECT_NAME_MAX_LENGTH */
 		void setName(const QString &name) final;
 
 		QString getName(bool=false, bool=false) final;
 
-		//! brief Set the specified element id color
+		//! \brief Set the specified element id color
 		void setElementColor(const QString &elem_id, const QColor &color, unsigned color_id);
 
-		/*! brief Set the specified element colors using a string that contains a color set
+		/*! \brief Set the specified element colors using a string that contains a color set
 	on the format: [#RRGGBB],[#RRGGBB],[#RRGGBB]. Color on the string beyond position 3
 	will be ignored */
 		void setElementColors(const QString &elem_id, const QString &colors);
 
-		//! brief Returns a sigle color (at specified index) of the element.
+		//! \brief Returns a sigle color (at specified index) of the element.
 		QColor getElementColor(const QString &elem_id, unsigned color_id);
 
-		/*! brief Returns a gradient configured for the current element id. This method will return
+		/*! \brief Returns a gradient configured for the current element id. This method will return
 	an error if the current element does not have at least 2 colors configured */
 		QLinearGradient getFillStyle(const QString &elem_id);
 

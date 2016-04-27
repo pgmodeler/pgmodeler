@@ -90,7 +90,7 @@ class SchemaParser {
 		TOKEN_GT_EQ_OP,// >= (greater or equal to)
 		TOKEN_LT_EQ_OP;// <= (less or equal to)
 
-		//! brief RegExp used to validate attribute names
+		//! \brief RegExp used to validate attribute names
 		static const QRegExp ATTR_REGEXP;
 
 		//! \brief Get an attribute name from the buffer on the current position
@@ -132,7 +132,7 @@ class SchemaParser {
 		%not %and %or in the same () are not supported. */
 		bool evaluateComparisonExpr(void);
 
-		/*! brief Creates a new attribute when finding:
+		/*! \brief Creates a new attribute when finding:
 		1) %set  {attrib-name} [expr]  or
 		2) %set @{existing-attrib} [expr]
 
@@ -146,13 +146,13 @@ class SchemaParser {
 		errors if another instruction starting with % is found. */
 		void defineAttribute(void);
 
-		//! brief Clears the value of attributes when finding the instruction: %unset {attr1} {attr2}...
+		//! \brief Clears the value of attributes when finding the instruction: %unset {attr1} {attr2}...
 		void unsetAttribute(void);
 
-		//! brief Increments the column counter while blank chars (space and tabs) are found on the line
+		//! \brief Increments the column counter while blank chars (space and tabs) are found on the line
 		void ignoreBlankChars(const QString &line);
 
-		//! brief Translates the meta char token to the real character
+		//! \brief Translates the meta char token to the real character
 		char translateMetaCharacter(const QString &meta);
 
 		/*! \brief Get an word from the buffer on the current position (word is any string that isn't
@@ -231,7 +231,7 @@ class SchemaParser {
 		//! \brief Retorns the current PostgreSQL version used by the parser
 		QString getPgSQLVersion(void);
 
-		//! brief Extracts the attributes names from the currently loaded buffer
+		//! \brief Extracts the attributes names from the currently loaded buffer
 		QStringList extractAttributes(void);
 
 		/*! \brief Converts any chars (operators) < > " to the respective XML entities. This method is only

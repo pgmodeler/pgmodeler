@@ -40,7 +40,7 @@ class MetadataHandlingForm: public QDialog, public Ui::MetadataHandlingForm {
 
 		HintTextWidget *db_metadata_ht, *objs_positioning_ht, *objs_protection_ht,
 		*objs_sql_disabled_ht, *custom_sql_ht, *textbox_objs_ht, *tag_objs_ht,
-		*custom_colors_ht;
+		*custom_colors_ht, *extract_ht, *restore_ht;
 
 		void showEvent(QShowEvent *);
 		void closeEvent(QCloseEvent *);
@@ -49,14 +49,15 @@ class MetadataHandlingForm: public QDialog, public Ui::MetadataHandlingForm {
 	public:
 		MetadataHandlingForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 		void setModelWidget(ModelWidget *model_wgt);
+		void setModelWidgets(QList<ModelWidget *> models);
 
 	private slots:
 		void updateProgress(int progress, QString msg, unsigned type_id);
-		void handleObjectsMetada(void);
+		void handleObjectsMetada(void);	
+		void enableMetadataHandling(void);
 
 	signals:
-		void s_metadataLoaded(void);
-		void s_metadataSaved(void);
+		void s_metadataHandled(void);
 };
 
 #endif

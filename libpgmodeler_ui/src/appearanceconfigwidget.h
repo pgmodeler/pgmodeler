@@ -69,7 +69,7 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 		//! \brief Loads the example model from file (conf/exampledb.dbm)
 		void loadExampleModel(void);
 		
-		//! brief Updates the color configuration for the placeholder item
+		//! \brief Updates the color configuration for the placeholder item
 		void updatePlaceholderItem(void);
 		
 	public:

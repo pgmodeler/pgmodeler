@@ -65,7 +65,7 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 		static void removeConfigurationParam(const QRegExp &param_reg);
 		static map<QString, attribs_map> getConfigurationParams(void);
 
-		/*! brief Returns a single value of a configuration param in the specified section id.
+		/*! \brief Returns a single value of a configuration param in the specified section id.
 		Section id can be <configuration>, <dock-widget>, <file[n]> or <recent[n]> */
 		static QString getConfigurationParam(const QString &section_id, const QString &param_name);
 

@@ -127,12 +127,12 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		this original one whit the op_list=nullptr and obj_px=NAN, obj_py=NAN */
 		void setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj);
 		
-		//! brief Disable the object's refereces SQL code
+		//! \brief Disable the object's refereces SQL code
 		void disableReferencesSQL(BaseObject *object);
 		
 		void configureTabOrder(vector<QWidget *> widgets={});
 		
-		//! brief Executes the proper actions to cancel chained operations.
+		//! \brief Executes the proper actions to cancel chained operations.
 		void cancelChainedOperation(void);
 		
 	public:
@@ -170,7 +170,7 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		void editPermissions(void);
 		void editCustomSQL(void);
 		
-		//! brief Register the new object in the operation history if it is not registered already
+		//! \brief Register the new object in the operation history if it is not registered already
 		void registerNewObject(void);
 		
 	signals:

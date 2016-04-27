@@ -47,13 +47,13 @@ class View: public BaseTable {
 			> http://www.postgresql.org/docs/8.4/interactive/queries-with.html */
 		QString cte_expression;
 
-		//! brief Indicates that the view is a materialized one. This setting is auto exclusive with 'recursive'
+		//! \brief Indicates that the view is a materialized one. This setting is auto exclusive with 'recursive'
 		bool materialized,
 
-		//! brief Indicates that the materialized view should not be initialized at creation time (default=false)
+		//! \brief Indicates that the materialized view should not be initialized at creation time (default=false)
 		with_no_data,
 
-		//! brief Indicates that the view is a a recursive one. This setting is auto exclusive with 'materialized'
+		//! \brief Indicates that the view is a a recursive one. This setting is auto exclusive with 'materialized'
 		recursive;
 
 		//! \brief Sets the definition attribute used by the SchemaParser
@@ -205,7 +205,7 @@ class View: public BaseTable {
 		 connections and disconnections of relationships */
 		bool isReferRelationshipAddedColumn(void);
 
-		/*! brief Returns the list of all columns that is created by relationships.
+		/*! \brief Returns the list of all columns that is created by relationships.
 	This method is slower than isReferRelationshipAddedColumn() so it's not
 	recommended to use it only check if the object is referencing columns
 	added by relationship */

@@ -62,10 +62,10 @@ class Catalog {
 		there are different fields that tells if the object (or its parent) is part of extension. */
 		static map<ObjectType, QString> ext_oid_fields;
 
-		//! brief Indicates is the use of cached catalog queries is enabled
+		//! \brief Indicates is the use of cached catalog queries is enabled
 		static bool use_cached_queries;
 
-		//! brief Store the cached catalog queries (only when use_cached_queries=true)
+		//! \brief Store the cached catalog queries (only when use_cached_queries=true)
 		static attribs_map catalog_queries;
 
 		//! \brief Connection used to query the pg_catalog
@@ -88,7 +88,7 @@ class Catalog {
 		//! \brief Indicates if the catalog must list only system objects
 		list_only_sys_objs;
 
-		/*! brief Load the schema parser buffer with the catalog query using identified by qry_id.
+		/*! \brief Load the schema parser buffer with the catalog query using identified by qry_id.
 		The method will cache the catalog query if it's not cached yet (only when use_cached_queries=true) */
 		void loadCatalogQuery(const QString &qry_id);
 
@@ -144,7 +144,7 @@ class Catalog {
 		//! \brief Changes the current connection used by the catalog
 		void setConnection(Connection &conn);
 
-		/*! brief Closes the connection used by the catalog.
+		/*! \brief Closes the connection used by the catalog.
 	Once this method is called the user must call setConnection() again or the
 	catalog queries will fail */
 		void closeConnection(void);
@@ -162,10 +162,10 @@ class Catalog {
 		in order to filter only objects of the specifed schema */
 		unsigned getObjectCount(ObjectType obj_type, const QString &sch_name=QString(), const QString &tab_name=QString(), attribs_map extra_attribs=attribs_map());
 
-		//! brief Returns the current filter configuration for the catalog
+		//! \brief Returns the current filter configuration for the catalog
 		unsigned getFilter(void);
 
-		//! brief Fills the specified maps with all object's oids querying the catalog with the specified filter
+		//! \brief Fills the specified maps with all object's oids querying the catalog with the specified filter
 		void getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<unsigned, vector<unsigned> > &col_oids, attribs_map extra_attribs=attribs_map());
 
 		/*! \brief Returns a attributes map containing the oids (key) and names (values) of the objects from
@@ -184,7 +184,7 @@ class Catalog {
 		and by table name (only when retriving child objects for a specific table) */
 		vector<attribs_map> getObjectsAttributes(ObjectType obj_type, const QString &schema=QString(), const QString &table=QString(), const vector<unsigned> &filter_oids={}, attribs_map extra_attribs=attribs_map());
 
-		//! brief Returns the attributes for the object specified by its type and OID
+		//! \brief Returns the attributes for the object specified by its type and OID
 		attribs_map getObjectAttributes(ObjectType obj_type, unsigned oid, const QString sch_name=QString(), const QString tab_name=QString(), attribs_map extra_attribs=attribs_map());
 
 		//! \brief Parse a PostgreSQL array value and return the elements in a string list
@@ -195,17 +195,17 @@ class Catalog {
 		contains several values */
 		static QStringList parseDefaultValues(const QString &def_vals, const QString &str_delim=QString("'"), const QString &val_sep=QString(", "));
 
-		//! brief Parse the raw commands of a rule retrieved by the catalog and returns only the relevant parts
+		//! \brief Parse the raw commands of a rule retrieved by the catalog and returns only the relevant parts
 		static QStringList parseRuleCommands(const QString &cmd);
 
-		/*! brief Enable/disable the use of cached catalog queries. When enabled, the schema files read for the first are stored in memory
+		/*! \brief Enable/disable the use of cached catalog queries. When enabled, the schema files read for the first are stored in memory
 		so in the next time the same catalog query must be used it'll be read right from the memory and not from the disk anymore */
 		static void enableCachedQueries(bool value);
 
-		//! brief Returns the current status of cached catalog queries
+		//! \brief Returns the current status of cached catalog queries
 		static bool isCachedQueriesEnabled(void);
 
-		//! brief Performs the copy between two catalogs
+		//! \brief Performs the copy between two catalogs
 		void operator = (const Catalog &catalog);
 };
 

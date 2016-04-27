@@ -44,7 +44,7 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 
 		HintTextWidget *sql_validation_ht, *use_unique_names_ht;
 
-		//! brief Custom delegate used to paint html texts in output tree
+		//! \brief Custom delegate used to paint html texts in output tree
 		HtmlItemDelegate *htmlitem_del;
 
 		//! \brief Reference model widget
@@ -59,13 +59,13 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		//! \brief Thread used to control the validation helper
 		QThread *validation_thread;
 
-		/*! brief Stores the graphical objects that have their ids changed so that in the end of
+		/*! \brief Stores the graphical objects that have their ids changed so that in the end of
 		the validation they can be updated to reflect the new id in the tooltips and forms */
 		vector<BaseGraphicObject *> graph_objects;
 
 		void emitValidationInProgress(void);
 
-		//! brief Creates a new validation thread
+		//! \brief Creates a new validation thread
 		void createThread(void);
 
 		void configureValidation(void);
@@ -79,7 +79,7 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		//! \brief Sets the database model to work on
 		void setModel(ModelWidget *model_wgt);
 
-		//! brief Returns if there is a validation in progress
+		//! \brief Returns if there is a validation in progress
 		bool isValidationRunning(void);
 
 	private slots:
@@ -109,7 +109,7 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		void s_fixApplied(void);
 		void s_graphicalObjectsUpdated(void);
 
-		/*! brief This signal is emitted whenever the user changes the connections settings
+		/*! \brief This signal is emitted whenever the user changes the connections settings
 		within this widget without use the main configurations dialog */
 		void s_connectionsUpdateRequest(void);
 };

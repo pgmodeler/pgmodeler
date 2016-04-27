@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>562</width>
-    <height>443</height>
+    <height>507</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -246,44 +246,14 @@
           <property name="bottomMargin">
            <number>4</number>
           </property>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_2">
+          <item row="3" column="0">
+           <widget class="QLabel" name="extract_from_lbl">
             <property name="text">
-             <string>File:</string>
+             <string>Extract from:</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
-            <item>
-             <widget class="QLineEdit" name="file_edt"/>
-            </item>
-            <item>
-             <widget class="QToolButton" name="select_file_tb">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="toolTip">
-               <string>Select output file</string>
-              </property>
-              <property name="text">
-               <string>...</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../res/resources.qrc">
-                <normaloff>:/icones/icones/abrir.png</normaloff>:/icones/icones/abrir.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="6" column="0" colspan="2">
+          <item row="10" column="0" colspan="3">
            <widget class="QFrame" name="message_frm">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -373,7 +343,7 @@
             </layout>
            </widget>
           </item>
-          <item row="4" column="0" colspan="2">
+          <item row="8" column="0" colspan="3">
            <widget class="QGroupBox" name="groupBox">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -797,25 +767,82 @@
             </layout>
            </widget>
           </item>
-          <item row="3" column="0">
+          <item row="6" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Backup file:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="2">
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QLineEdit" name="backup_file_edt"/>
+            </item>
+            <item>
+             <widget class="QToolButton" name="select_file_tb">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="toolTip">
+               <string>Select file</string>
+              </property>
+              <property name="text">
+               <string>...</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../res/resources.qrc">
+                <normaloff>:/icones/icones/abrir.png</normaloff>:/icones/icones/abrir.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="3" column="2">
+           <widget class="QComboBox" name="extract_from_cmb"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="apply_to_lbl">
+            <property name="text">
+             <string>Apply to:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLineEdit" name="apply_to_edt">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
            <widget class="QLabel" name="label_3">
             <property name="text">
              <string>Operation:</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item row="0" column="2">
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
-             <widget class="QRadioButton" name="load_metadata_rb">
+             <widget class="QRadioButton" name="extract_rb">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="statusTip">
+               <string>Extracts the objects metadata from one of the loaded models and apply to the current model.</string>
+              </property>
               <property name="text">
-               <string>&amp;Load metadata file</string>
+               <string>Extract from a model</string>
               </property>
               <property name="checked">
                <bool>true</bool>
@@ -823,20 +850,77 @@
              </widget>
             </item>
             <item>
-             <widget class="QRadioButton" name="save_metadata_rb">
+             <widget class="QWidget" name="extract_hint" native="true">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="text">
-               <string>Save &amp;metadata file</string>
+              <property name="minimumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
               </property>
-              <property name="checked">
-               <bool>false</bool>
+              <property name="maximumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
               </property>
              </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="restore_rb">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="statusTip">
+               <string>Reads the objects metadata from a previously saved backup file and apply to the current model.</string>
+              </property>
+              <property name="text">
+               <string>Restore a backup file</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QWidget" name="restore_hint" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </item>

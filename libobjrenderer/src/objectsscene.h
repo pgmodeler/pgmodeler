@@ -39,14 +39,14 @@ class ObjectsScene: public QGraphicsScene {
 
 		vector<BaseObjectView *> removed_objs;
 
-		//! brief Indicates if the corner move is enabled for the scene
+		//! \brief Indicates if the corner move is enabled for the scene
 		static bool corner_move,
 
-		/*! brief Indicates that panning mode and range selection model are activate in inverse mode.
+		/*! \brief Indicates that panning mode and range selection model are activate in inverse mode.
 		By default panning model is activated with a single left-click and range selection with SHIFT + left-click */
 		invert_panning_rangesel;
 
-		//! brief Indicates if the scene need to be moved
+		//! \brief Indicates if the scene need to be moved
 		bool move_scene;
 
 		static const int SCENE_MOVE_STEP=20,
@@ -84,7 +84,7 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Indicates that there are objects being moved and the signal s_objectsMoved must be emitted
 		bool moving_objs,
 
-		//! brief Indicates if the range selection (selection using a rectangle drawn on the canvas)
+		//! \brief Indicates if the range selection (selection using a rectangle drawn on the canvas)
 		enable_range_sel;
 
 		//! \brief Initial point of selection rectangle
@@ -139,7 +139,7 @@ class ObjectsScene: public QGraphicsScene {
 		void removeItem(QGraphicsItem *item);
 		void setSceneRect(const QRectF &rect);
 
-		/*! brief Returns the items bounding rect. By default the method returns the same as QGraphicsScene::itemsBoundingRect.
+		/*! \brief Returns the items bounding rect. By default the method returns the same as QGraphicsScene::itemsBoundingRect.
 		If the parameter seek_only_db_objs is true the returned rect will have the origin point calculated based upon the
 		visible objects that inherits BaseObjectView and are database model objects (tables, views, textboxes, schemas and relationships).
 		Note: using this method with seek_only_db_objs=true can be time expensive depending on the size of the model so use it wisely. */
@@ -157,18 +157,18 @@ class ObjectsScene: public QGraphicsScene {
 		void alignObjectsToGrid(void);
 		void update(void);
 
-		//! brief Toggles the object range selection
+		//! \brief Toggles the object range selection
 		void enableRangeSelection(bool value);
 
 	private slots:
-		/*! brief Start/stop the timer responsible to move the scene. This method is called with true param
+		/*! \brief Start/stop the timer responsible to move the scene. This method is called with true param
 		whenever the user stay with the cursor at corner in a certain amount of time */
 		void enableSceneMove(bool value=true);
 
 		//! \brief Moves the scene when the user puts the mouse cursor on one of scene's edges
 		void moveObjectScene(void);
 
-		//! brief Enable the panning mode for the viewport
+		//! \brief Enable the panning mode for the viewport
 		void enablePannigMode(bool value);
 
 		//! \brief Handles and redirects the signal emitted by the modified object
@@ -199,7 +199,7 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Signal emitted when a object is selected
 		void s_objectSelected(BaseGraphicObject *objeto, bool selecionado);
 
-		//! brief Signal emtted when a blank area of the canvas is pressed
+		//! \brief Signal emtted when a blank area of the canvas is pressed
 		void s_objectsScenePressed(Qt::MouseButtons);
 
 		friend class ModelWidget;

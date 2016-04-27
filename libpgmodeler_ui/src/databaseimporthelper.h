@@ -35,7 +35,7 @@ class DatabaseImportHelper: public QObject {
 	private:
 		Q_OBJECT
 		
-		//! brief Random number generator engine used to generate random colors for imported schemas
+		//! \brief Random number generator engine used to generate random colors for imported schemas
 		default_random_engine rand_num_engine;
 		
 		static const QString UNKNOWN_OBJECT_OID_XML;
@@ -118,7 +118,7 @@ class DatabaseImportHelper: public QObject {
 				is referenced by it in order to avoid reference breaking */
 		map<QString, QString> seq_tab_swap;
 		
-		/*! brief Stores all columns that are inherited on the database. Since these columns are created
+		/*! \brief Stores all columns that are inherited on the database. Since these columns are created
 		dettached from parent columns on the resulting model before the inheritances creation they
 		will be removed from their related tables if there is no object referencing them */
 		vector<Column *> inherited_cols;
@@ -160,7 +160,7 @@ class DatabaseImportHelper: public QObject {
 		void createTableInheritances(void);
 		void destroyDetachedColumns(void);
 		
-		//! brief Tries to assign imported sequences that are related to nextval() calls used in columns default values
+		//! \brief Tries to assign imported sequences that are related to nextval() calls used in columns default values
 		void assignSequencesToColumns(void);
 		
 		/*! \brief Retrieve the schema qualified name for the specified object oid. If the oid represents a function
@@ -201,7 +201,7 @@ class DatabaseImportHelper: public QObject {
 		//! \brief Clears the vectors and maps used in the import process
 		void resetImportParameters(void);
 		
-		//! brief Return a string containing all attributes and their values in a formatted way
+		//! \brief Return a string containing all attributes and their values in a formatted way
 		QString dumpObjectAttributes(attribs_map &attribs);
 		
 	public:
@@ -210,7 +210,7 @@ class DatabaseImportHelper: public QObject {
 		//! \brief Set the connection used to access the PostgreSQL server
 		void setConnection(Connection &conn);
 		
-		/*! brief Closes all connections opened by this object including the catalog connection.
+		/*! \brief Closes all connections opened by this object including the catalog connection.
 	Once this method is called the user must call setConnection() again or the import will fail */
 		void closeConnection(void);
 		
@@ -220,16 +220,16 @@ class DatabaseImportHelper: public QObject {
 		//! \brief Defines the selected object to be imported. This method always expect filled maps. Hint: use the method Catalog::getObjectOIDs()
 		void setSelectedOIDs(DatabaseModel *db_model, const map<ObjectType, vector<unsigned>> &obj_oids, const map<unsigned, vector<unsigned>> &col_oids);
 		
-		//! brief Configures the import parameters
+		//! \brief Configures the import parameters
 		void setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors, bool debug_mode, bool rand_rel_colors, bool update_fk_rels);
 		
-		//! brief Returns the last system OID value for the current database
+		//! \brief Returns the last system OID value for the current database
 		unsigned getLastSystemOID(void);
 		
-		//! brief Returns the current database in which the helper is working on
+		//! \brief Returns the current database in which the helper is working on
 		QString getCurrentDatabase(void);
 		
-		//! brief Returns a copy of the current catalog instance being used
+		//! \brief Returns a copy of the current catalog instance being used
 		Catalog getCatalog(void);
 		
 		/*! \brief Returns an attribute map for the specified object type. The parameters "schema" and "table"

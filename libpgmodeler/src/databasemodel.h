@@ -66,7 +66,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		XMLParser xmlparser;
 
-		//! brief Stores the model widget that is managing this database model instance
+		//! \brief Stores the model widget that is managing this database model instance
 		ModelWidget *model_wgt;
 
 		//! \brief Database encoding
@@ -158,28 +158,28 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Creates a IndexElement or ExcludeElement from XML depending on type of the 'elem' param.
 		void createElement(Element &elem, TableObject *tab_obj, BaseObject *parent_obj);
 
-		//! brief Returns extra error info when loading database models
+		//! \brief Returns extra error info when loading database models
 		QString getErrorExtraInfo(void);
 
 	public:
-		static const unsigned META_DB_ATTRIBUTES=1,	//! brief Handle database model attribute when save/load metadata file
-		META_OBJS_POSITIONING=2,	//! brief Handle objects' positioning when save/load metadata file
-		META_OBJS_PROTECTION=4,	//! brief Handle objects' protection status when save/load metadata file
-		META_OBJS_SQLDISABLED=8,	//! brief Handle objects' sql disabled status when save/load metadata file
-		META_OBJS_CUSTOMSQL=16,	//! brief Handle object's custom sql when save/load metadata file
-		META_OBJS_CUSTOMCOLORS=32,	//! brief Handle object's custom colors when save/load metadata file
-		META_TEXTBOX_OBJS=64,	//! brief Handle textboxes object when save/load metadata file
-		META_TAG_OBJS=128,	//! brief Handle tags object when save/load metadata file
-		META_ALL_INFO=255;	//! brief Handle all metadata information about objects when save/load metadata file
+		static const unsigned META_DB_ATTRIBUTES=1,	//! \brief Handle database model attribute when save/load metadata file
+		META_OBJS_POSITIONING=2,	//! \brief Handle objects' positioning when save/load metadata file
+		META_OBJS_PROTECTION=4,	//! \brief Handle objects' protection status when save/load metadata file
+		META_OBJS_SQLDISABLED=8,	//! \brief Handle objects' sql disabled status when save/load metadata file
+		META_OBJS_CUSTOMSQL=16,	//! \brief Handle object's custom sql when save/load metadata file
+		META_OBJS_CUSTOMCOLORS=32,	//! \brief Handle object's custom colors when save/load metadata file
+		META_TEXTBOX_OBJS=64,	//! \brief Handle textboxes object when save/load metadata file
+		META_TAG_OBJS=128,	//! \brief Handle tags object when save/load metadata file
+		META_ALL_INFO=255;	//! \brief Handle all metadata information about objects when save/load metadata file
 
 		DatabaseModel(void);
 
-		//! brief Creates a database model and assign the model widget which will manage this instance
+		//! \brief Creates a database model and assign the model widget which will manage this instance
 		explicit DatabaseModel(ModelWidget *model_wgt);
 
 		~DatabaseModel(void);
 
-		//! brief Returns the model widget that is managing the current database instance
+		//! \brief Returns the model widget that is managing the current database instance
 		ModelWidget *getModelWidget(void);
 
 		//! \brief Returns the complete object list according to the type
@@ -302,7 +302,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns the code definition only for the database (excluding the definition of the other objects)
 		QString __getCodeDefinition(unsigned def_type);
 
-		/*! brief Returns the creation order of objects in each definition type (SQL or XML).
+		/*! \brief Returns the creation order of objects in each definition type (SQL or XML).
 
 		The parameter incl_relnn_objs when 'true' includes the generated objects (table and constraint)
 		of the many-to-many relationships instead of the relationships themselves. The incl_relnn_objs is
@@ -313,7 +313,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		is accepted only when the creation order for SQL code is being generated, for XML, it'll simply ignored. */
 		map<unsigned, BaseObject *> getCreationOrder(unsigned def_type, bool incl_relnn_objs=false, bool incl_rel1n_constrs=false);
 
-		/*! brief Returns a list containig all the object need to create the 'object' in the proper order.
+		/*! \brief Returns a list containig all the object need to create the 'object' in the proper order.
 		If 'only_children' is set only children objects will be included in the list (for tables, views or schemas).
 		If 'only_children' is not set, the method will automatically include dependencies, children and permissions of
 		the object. */
@@ -440,7 +440,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void addPermission(Permission *perm);
 		void removePermission(Permission *perm);
 
-		/*! brief Returns the specified permission's index. If exact_match is true
+		/*! \brief Returns the specified permission's index. If exact_match is true
 		then all the contents of the permission are compared against other permission,
 		otherwise checks only if the roles and the objects are the same between the specified
 		permission and the ones existent in the model */
@@ -519,7 +519,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 the informed object, e.g., a schema linked to a table that is referenced in a view */
 		void getObjectDependecies(BaseObject *objeto, vector<BaseObject *> &vet_deps, bool inc_indirect_deps=false);
 
-		/*! brief Recursive version of getObjectDependencies. Returns all the dependencies of the specified object but
+		/*! \brief Recursive version of getObjectDependencies. Returns all the dependencies of the specified object but
 		additionally its children objects (for schemas, tables or views) as well permissions.
 		This method is less efficient than the non recursive version and is used only as an auxiliary operation for
 		getCreationOrder(BaseObject *object) */
@@ -530,7 +530,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 reference is found. The exclude_perms parameter when true will not include permissions in the references list. */
 		void getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclusion_mode=false, bool exclude_perms=false);
 
-		/*! brief Recursive version of getObjectReferences. The only difference here is that the method does not runs in exclusion mode,
+		/*! \brief Recursive version of getObjectReferences. The only difference here is that the method does not runs in exclusion mode,
 		meaning that ALL objects directly or inderectly linked to the 'object' are retrieved. */
 		void __getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclude_perms=false);
 
@@ -562,7 +562,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void setLastZoomFactor(double zoom);
 		double getLastZoomFactor(void);
 
-		/*! brief This method exposes the XML parser for the outside world. In order to create objects from xml code inside the current
+		/*! \brief This method exposes the XML parser for the outside world. In order to create objects from xml code inside the current
 		 database model you need first get the parser (through this method), populate the parser with the desired XML and then call
 		 the create* method.
 

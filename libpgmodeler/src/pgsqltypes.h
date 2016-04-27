@@ -406,7 +406,7 @@ class PgSQLType: public BaseType{
 		static unsigned getUserTypeIndex(const QString &type_name, void *ptype, void *pmodel=nullptr);
 		static unsigned getBaseTypeIndex(const QString &type_name);
 
-		/*! brief Returns if the type is registered in the list of valid types (built-in one and user defined).
+		/*! \brief Returns if the type is registered in the list of valid types (built-in one and user defined).
 		The optional parameter 'pmodel' is used to filter user defined type of a specific database model */
 		static bool isRegistered(const QString &type, void *pmodel=nullptr);
 
@@ -444,10 +444,10 @@ class PgSQLType: public BaseType{
 		bool hasVariableLength(void);
 		bool acceptsPrecision(void);
 
-		//! brief Indicates if the 'this' type can be casted to 'type'
+		//! \brief Indicates if the 'this' type can be casted to 'type'
 		bool canCastTo(PgSQLType type);
 
-		/*! brief Returns if the "this" type is equivalent to the specified type.
+		/*! \brief Returns if the "this" type is equivalent to the specified type.
 		In order to be compatible the "this" and "type" must be an alias from each other,
 		for instance, "varchar" is compatible with "character varying" and vice-versa,
 		smallint is compatible with int2, and so on. */

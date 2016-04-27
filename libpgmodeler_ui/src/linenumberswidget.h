@@ -32,19 +32,19 @@ class LineNumbersWidget : public QWidget {
 	private:
 		Q_OBJECT
 
-		//! brief The first line number that must be drawn
+		//! \brief The first line number that must be drawn
 		unsigned first_line,
 
-		//! brief The amount of lines to be drawn
+		//! \brief The amount of lines to be drawn
 		line_count;
 
-		//! brief The y axis increment to start drawn the line number
+		//! \brief The y axis increment to start drawn the line number
 		int dy;
 
-		//! brief Font color for drawn line numbers
+		//! \brief Font color for drawn line numbers
 		static QColor font_color,
 
-		//! brief Widget's background color
+		//! \brief Widget's background color
 		bg_color;
 
 	protected:
@@ -53,11 +53,11 @@ class LineNumbersWidget : public QWidget {
 	public:
 		explicit LineNumbersWidget(QPlainTextEdit *parent = 0);
 
-		/*! brief Draw the lines starting from 'first_line' and stoping at fisrt_line + line_count -1.
+		/*! \brief Draw the lines starting from 'first_line' and stoping at fisrt_line + line_count -1.
 		The dy param. defines an initial Y translation before drawn lines */
 		void drawLineNumbers(unsigned first_line, unsigned line_count, int dy);
 
-		//! brief Configures the lines for both font and widget's background
+		//! \brief Configures the lines for both font and widget's background
 		static void setColors(const QColor &font_color, const QColor &bg_color);
 };
 

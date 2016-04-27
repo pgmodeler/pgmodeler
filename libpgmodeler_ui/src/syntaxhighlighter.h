@@ -57,16 +57,16 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 				}
 		};
 
-		//! brief XML parser used to parse configuration files
+		//! \brief XML parser used to parse configuration files
 		XMLParser xmlparser;
 
-		//! brief Default font configuratoin for all instances os syntax highlighter
+		//! \brief Default font configuratoin for all instances os syntax highlighter
 		static QFont default_font;
 
-		//! brief Indicates that the current block has no special meaning
+		//! \brief Indicates that the current block has no special meaning
 		static const int SIMPLE_BLOCK=-1,
 
-		/*! brief Indicates that the current block has an open (but still to close) expression (e.g. multline comments)
+		/*! \brief Indicates that the current block has an open (but still to close) expression (e.g. multline comments)
 		When the highlighter finds this const it'll do special operation like highlight next blocks with the same
 		configuration as the current one */
 		OPEN_EXPR_BLOCK=0;
@@ -122,13 +122,13 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		 is created in single line edit model */
 		bool eventFilter(QObject *object, QEvent *event);
 
-		//! brief Returns if the specified group contains both initial and final expressions
+		//! \brief Returns if the specified group contains both initial and final expressions
 		bool hasInitialAndFinalExprs(const QString &group);
 
-		//! brief Renders the block format using the configuration of the specified group
+		//! \brief Renders the block format using the configuration of the specified group
 		void setFormat(int start, int count, const QString &group);
 
-		/*! brief Check if the word matches the specified group by searching the vector of expressions related to it.
+		/*! \brief Check if the word matches the specified group by searching the vector of expressions related to it.
 		If the word matches then the match_idx and match_len parameters will be configured with the index and length of chars that
 		the expression could match. Additionally this method returns a boolean indicating the if the match was successful */
 		bool isWordMatchGroup(const QString &word, const QString &group, bool use_final_expr, const QChar &lookahead_chr, int &match_idx, int &match_len);
@@ -152,7 +152,7 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		//! \brief Returns the current configured code completion trigger char
 		QChar getCompletionTrigger(void);
 
-		//! brief Sets the default font for all instances of this class
+		//! \brief Sets the default font for all instances of this class
 		static void setDefaultFont(const QFont &fnt);
 
 	private slots:

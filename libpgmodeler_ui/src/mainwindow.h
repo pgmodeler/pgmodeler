@@ -78,11 +78,11 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		DonateWidget *donate_wgt;
 
-		/*! brief Widget positioned on the center of main window that contains some basic operations like
+		/*! \brief Widget positioned on the center of main window that contains some basic operations like
 		create new model, open a file, restore session */
 		WelcomeWidget *central_wgt;
 
-		//! brief Widget used to navigate through the opened models.
+		//! \brief Widget used to navigate through the opened models.
 		ModelNavigationWidget *model_nav_wgt;
 
 		//! \brief Thread that controls temporary model file savings
@@ -112,10 +112,10 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Object finder used as dock widget
 		ObjectFinderWidget *obj_finder_wgt;
 
-		//! brief Update notifier popup widget
+		//! \brief Update notifier popup widget
 		UpdateNotifierWidget *update_notifier_wgt;
 
-		//! brief Configuration form
+		//! \brief Configuration form
 		ConfigurationForm *configuration_form;
 
 		//! \brief Stores the currently focused model
@@ -148,22 +148,22 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		void resizeEvent(QResizeEvent *);
 
-		//! brief Set the postion of a floating widget based upon an action at a tool bar
+		//! \brief Set the postion of a floating widget based upon an action at a tool bar
 		void setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *toolbar, bool map_to_window);
 
-		//! brief Creates drop shadown on a tool button that represents an QAction
+		//! \brief Creates drop shadown on a tool button that represents an QAction
 		QGraphicsDropShadowEffect *createDropShadow(QToolButton *btn);
 
 		void configureSamplesMenu(void);
 
-		/*! brief Stores the current checkboxes states of the main dock widgets on the set of configuration params
+		/*! \brief Stores the current checkboxes states of the main dock widgets on the set of configuration params
 				in order to save them on the main configuration file */
 		void storeDockWidgetsSettings(void);
 
-		//! brief Restore the dock widget configurations from the parameters loaded from main configuration file
+		//! \brief Restore the dock widget configurations from the parameters loaded from main configuration file
 		void restoreDockWidgetsSettings(void);
 
-		//! brief Shows a error dialog informing that the model demands a fix after the error ocurred when loading the filename.
+		//! \brief Shows a error dialog informing that the model demands a fix after the error ocurred when loading the filename.
 		void showFixMessage(Exception &e, const QString &filename);
 
 	public:
@@ -173,7 +173,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Loads a set of models from string list
 		void loadModels(const QStringList &list);
 
-		//! brief Indicates if model must be validated before save, diff or export
+		//! \brief Indicates if model must be validated before save, diff or export
 		static void setConfirmValidation(bool value);
 
 	public slots:
