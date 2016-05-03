@@ -127,6 +127,9 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		//! \brief Insert a new row on the grid with the first column with edition enabled
 		void insertRow(void);
 		
+		//! \brief Duplicate the selected rows creating new ones with the same values as the selection
+		void duplicateRows(void);
+
 		//! \brief Undo the operation made on all rows or in a set of selected rows
 		void undoOperations(void);
 		

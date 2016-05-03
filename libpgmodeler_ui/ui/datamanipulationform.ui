@@ -570,14 +570,14 @@
              </font>
             </property>
             <property name="toolTip">
-             <string>Add data</string>
+             <string>Add empty rows</string>
             </property>
             <property name="text">
              <string>Add</string>
             </property>
             <property name="icon">
              <iconset resource="../res/resources.qrc">
-              <normaloff>:/icones/icones/adddata.png</normaloff>:/icones/icones/adddata.png</iconset>
+              <normaloff>:/icones/icones/addrow.png</normaloff>:/icones/icones/addrow.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -617,7 +617,7 @@
             </property>
             <property name="icon">
              <iconset resource="../res/resources.qrc">
-              <normaloff>:/icones/icones/excluir.png</normaloff>:/icones/icones/excluir.png</iconset>
+              <normaloff>:/icones/icones/delrow.png</normaloff>:/icones/icones/delrow.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -627,6 +627,46 @@
             </property>
             <property name="shortcut">
              <string>Del</string>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonIconOnly</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="duplicate_tb">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="toolTip">
+             <string>Duplicate the selected rows as new ones</string>
+            </property>
+            <property name="text">
+             <string>Duplicate</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../res/resources.qrc">
+              <normaloff>:/icones/icones/duprow.png</normaloff>:/icones/icones/duprow.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>22</width>
+              <height>22</height>
+             </size>
+            </property>
+            <property name="shortcut">
+             <string>Ctrl+D</string>
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonIconOnly</enum>
@@ -865,7 +905,10 @@
           <bool>true</bool>
          </property>
          <property name="selectionMode">
-          <enum>QAbstractItemView::ContiguousSelection</enum>
+          <enum>QAbstractItemView::ExtendedSelection</enum>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectItems</enum>
          </property>
          <property name="horizontalScrollMode">
           <enum>QAbstractItemView::ScrollPerPixel</enum>

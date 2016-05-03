@@ -49,6 +49,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	delete_tb->setToolTip(delete_tb->toolTip() + QString(" (%1)").arg(delete_tb->shortcut().toString()));
 	add_tb->setToolTip(add_tb->toolTip() + QString(" (%1)").arg(add_tb->shortcut().toString()));
 	copy_tb->setToolTip(copy_tb->toolTip() + QString(" (%1)").arg(copy_tb->shortcut().toString()));
+	duplicate_tb->setToolTip(duplicate_tb->toolTip() + QString(" (%1)").arg(duplicate_tb->shortcut().toString()));
 	result_info_wgt->setVisible(false);
 
 	//Forcing the splitter that handles the bottom widgets to resize its children to their minimum size
@@ -71,6 +72,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(results_tbw, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(markUpdateOnRow(QTableWidgetItem *)));
 	connect(delete_tb, SIGNAL(clicked()), this, SLOT(markDeleteOnRows()));
 	connect(add_tb, SIGNAL(clicked()), this, SLOT(insertRow()));
+	connect(duplicate_tb, SIGNAL(clicked()), this, SLOT(duplicateRows()));
 	connect(undo_tb, SIGNAL(clicked()), this, SLOT(undoOperations()));
 	connect(save_tb, SIGNAL(clicked()), this, SLOT(saveChanges()));
 	connect(ord_columns_lst, SIGNAL(currentRowChanged(int)), this, SLOT(enableColumnControlButtons()));
@@ -91,9 +93,12 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 			[=](){ SQLExecutionWidget::exportResults(results_tbw); });
 
 	connect(results_tbw, &QTableWidget::itemSelectionChanged,
-			[=](){ 	QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
-		copy_tb->setEnabled(!sel_ranges.isEmpty());
-		delete_tb->setEnabled(results_tbw->editTriggers()!=QAbstractItemView::NoEditTriggers && !sel_ranges.isEmpty()); });
+			[=](){
+		QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
+		copy_tb->setEnabled(sel_ranges.count()==1);
+		delete_tb->setEnabled(results_tbw->editTriggers()!=QAbstractItemView::NoEditTriggers && !sel_ranges.isEmpty());
+		duplicate_tb->setEnabled(results_tbw->editTriggers()!=QAbstractItemView::NoEditTriggers && !sel_ranges.isEmpty());
+	});
 }
 
 void DataManipulationForm::setAttributes(Connection conn, const QString curr_schema, const QString curr_table)
@@ -274,6 +279,7 @@ void DataManipulationForm::disableControlButtons(void)
 	warning_frm->setVisible(false);
 	hint_frm->setVisible(false);
 	add_tb->setEnabled(false);
+	duplicate_tb->setEnabled(false);
 	export_tb->setEnabled(false);
 	clearChangedRows();
 }
@@ -600,14 +606,17 @@ void DataManipulationForm::markDeleteOnRows(void)
 	QTableWidgetItem *item=nullptr;
 	vector<int> ins_rows;
 
-	for(int row=sel_ranges[0].topRow(); row <= sel_ranges[sel_ranges.count()-1].bottomRow(); row++)
+	for(auto &sel_rng : sel_ranges)
 	{
-		item=results_tbw->verticalHeaderItem(row);
+		for(int row=sel_rng.topRow(); row <= sel_rng.bottomRow(); row++)
+		{
+			item=results_tbw->verticalHeaderItem(row);
 
-		if(item->data(Qt::UserRole)==OP_INSERT)
-			ins_rows.push_back(row);
-		else
-			markOperationOnRow(OP_DELETE, row);
+			if(item->data(Qt::UserRole)==OP_INSERT)
+				ins_rows.push_back(row);
+			else
+				markOperationOnRow(OP_DELETE, row);
+		}
 	}
 
 	removeNewRows(ins_rows);
@@ -649,6 +658,28 @@ void DataManipulationForm::insertRow(void)
 	results_tbw->setCurrentCell(row, 0, QItemSelectionModel::ClearAndSelect);
 	results_tbw->editItem(item);
 	hint_frm->setVisible(true);
+}
+
+void DataManipulationForm::duplicateRows(void)
+{
+	QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
+
+	if(!sel_ranges.isEmpty())
+	{
+		for(auto &sel_rng : sel_ranges)
+		{
+			for(int row=sel_rng.topRow(); row <= sel_rng.bottomRow(); row++)
+			{
+				insertRow();
+
+				for(int col=0; col < results_tbw->columnCount(); col++)
+				{
+					results_tbw->item(results_tbw->rowCount() - 1, col)
+							->setText(results_tbw->item(row, col)->text());
+				}
+			}
+		}
+	}
 }
 
 void DataManipulationForm::removeNewRows(vector<int> &ins_rows)
