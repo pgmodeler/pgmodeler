@@ -230,6 +230,7 @@ namespace ParsersAttributes {
 	INHERIT=QString("inherit"),
 	INHERITED=QString("inherited"),
 	INITIAL_COND=QString("initial-cond"),
+	INITIAL_DATA=QString("initial-data"),
 	INITIAL_EXP=QString("initial-exp"),
 	INLINE_FUNC=QString("inline"),
 	INPUT_FUNC=QString("input"),

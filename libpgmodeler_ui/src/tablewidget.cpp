@@ -23,6 +23,7 @@
 #include "indexwidget.h"
 #include "triggerwidget.h"
 #include "baseform.h"
+#include "tabledatawidget.h"
 
 TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 {
@@ -31,8 +32,20 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX };
 	map<QString, vector<QWidget *> > fields_map;
 	QFrame *frame=nullptr;
+	QToolButton *edt_data_tb=nullptr;
 
 	Ui_TableWidget::setupUi(this);
+
+	edt_data_tb=new QToolButton(this);
+	QPixmap icon=QPixmap(QString(":/icones/icones/editdata.png"));
+	edt_data_tb->setMinimumSize(edt_perms_tb->minimumSize());
+	edt_data_tb->setText(trUtf8("Edit data"));
+	edt_data_tb->setIcon(icon);
+	edt_data_tb->setIconSize(edt_perms_tb->iconSize());
+	edt_data_tb->setToolButtonStyle(edt_perms_tb->toolButtonStyle());
+
+	connect(edt_data_tb, SIGNAL(clicked(bool)), this, SLOT(editData()));
+	misc_btns_lt->insertWidget(1, edt_data_tb);
 
 	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_91)].push_back(unlogged_chk);
 	frame=generateVersionWarningFrame(fields_map);
@@ -597,6 +610,17 @@ void TableWidget::TableWidget::swapObjects(int idx1, int idx2)
 		listObjects(obj_type);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+}
+
+void TableWidget::editData(void)
+{
+	BaseForm base_form(this);
+	TableDataWidget *tab_data_wgt=new TableDataWidget(this);
+
+	tab_data_wgt->setAttributes(this->model, dynamic_cast<Table *>(this->object));
+	base_form.setMainWidget(tab_data_wgt);
+	base_form.setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
+	base_form.exec();
 }
 
 void TableWidget::applyConfiguration(void)

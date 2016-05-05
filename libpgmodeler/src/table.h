@@ -39,6 +39,10 @@
 
 class Table: public BaseTable {
 	private:
+		/*! \brief Stores the initial data of the table in CSV like form.
+		This will produce a set of INSERT commands that is appended to the table's SQL definition */
+		QString initial_data;
+
 		//! \brief Vectors that store basic table attributes
 		vector<TableObject *> columns;
 		vector<TableObject *> constraints;
@@ -101,6 +105,9 @@ class Table: public BaseTable {
 		void restoreRelObjectsIndexes(ObjectType obj_type);
 
 	public:
+		static const QString DATA_SEPARATOR,
+		DATA_LINE_BREAK;
+
 		Table(void);
 		~Table(void);
 
@@ -328,9 +335,12 @@ class Table: public BaseTable {
 
 		QString getTruncateDefinition(bool cascade);
 
+		void setInitialData(const QString &value);
+		QString getInitialData(void);
+		QString getInitialDataCommand(void);
+
 		friend class Relationship;
 		friend class OperationList;
-
 };
 
 #endif

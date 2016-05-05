@@ -49,6 +49,8 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		RELINC_LINE_BGCOLOR,
 		RELINC_LINE_FGCOLOR;
 
+		QHBoxLayout *misc_btns_lt;
+
 		//! \brief Store the kind of object being handled by the widget (configured in the constructor)
 		ObjectType handled_obj_type;
 		

@@ -31,7 +31,6 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 {
 	try
 	{
-		QHBoxLayout *layout=nullptr;
 		QSpacerItem *spacer=nullptr;
 
 		setWindowTitle(QString());
@@ -79,15 +78,15 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 		baseobject_grid->addWidget(comment_lbl, 8, 0, 1, 1);
 		baseobject_grid->addWidget(comment_edt, 8, 1, 1, 4);
 
-		layout=new QHBoxLayout;
+		misc_btns_lt=new QHBoxLayout;
 		spacer=new QSpacerItem(20,1,QSizePolicy::Expanding);
 
-		layout->addItem(spacer);
-		layout->addWidget(append_sql_tb);
-		layout->addWidget(edt_perms_tb);
-		layout->addWidget(disable_sql_chk);
+		misc_btns_lt->addItem(spacer);
+		misc_btns_lt->addWidget(append_sql_tb);
+		misc_btns_lt->addWidget(edt_perms_tb);
+		misc_btns_lt->addWidget(disable_sql_chk);
 
-		baseobject_grid->addLayout(layout,9,0,1,5);
+		baseobject_grid->addLayout(misc_btns_lt,9,0,1,5);
 	}
 	catch(Exception &e)
 	{
@@ -362,7 +361,12 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 
 		obj_id_lbl->setVisible(true);
 		obj_id_lbl->setText(QString("ID: %1").arg(object->getObjectId()));
-		name_edt->setText(object->getName());
+
+		if(handled_obj_type!=BASE_OBJECT)
+			name_edt->setText(object->getName());
+		else
+			name_edt->setText(object->getSignature());
+
 		comment_edt->setText(object->getComment());
 
 		/* When creating a new table or relationship the object is pre allocated and the flag new_object is set.

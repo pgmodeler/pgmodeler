@@ -124,8 +124,8 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		//! \brief Mark a seleciton of rows to be delete. New rows are automatically removed
 		void markDeleteOnRows(void);
 		
-		//! \brief Insert a new row on the grid with the first column with edition enabled
-		void insertRow(void);
+		//! \brief Add a new row on the grid with the first column with edition enabled
+		void addRow(void);
 		
 		//! \brief Duplicate the selected rows creating new ones with the same values as the selection
 		void duplicateRows(void);

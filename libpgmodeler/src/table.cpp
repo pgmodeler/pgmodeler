@@ -18,6 +18,9 @@
 
 #include "table.h"
 
+const QString Table::DATA_SEPARATOR = QString("•");
+const QString Table::DATA_LINE_BREAK = QString(QChar::LineSeparator);
+
 Table::Table(void) : BaseTable()
 {
 	obj_type=OBJ_TABLE;
@@ -34,6 +37,7 @@ Table::Table(void) : BaseTable()
 	attributes[ParsersAttributes::COL_INDEXES]=QString();
 	attributes[ParsersAttributes::CONSTR_INDEXES]=QString();
 	attributes[ParsersAttributes::UNLOGGED]=QString();
+	attributes[ParsersAttributes::INITIAL_DATA]=QString();
 
 	copy_table=nullptr;
 	this->setName(trUtf8("new_table").toUtf8());
@@ -1373,7 +1377,11 @@ QString Table::getCodeDefinition(unsigned def_type)
 	{
 		setRelObjectsIndexesAttribute();
 		setPositionAttribute();
+		attributes[ParsersAttributes::INITIAL_DATA]=initial_data;
 	}
+	else
+		#warning "Change to INSERT COMMANDS"
+		attributes[ParsersAttributes::INITIAL_DATA]=initial_data;
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }
@@ -1618,4 +1626,15 @@ QString Table::getTruncateDefinition(bool cascade)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
+}
+
+void Table::setInitialData(const QString &value)
+{
+	setCodeInvalidated(initial_data != value);
+	initial_data = value;
+}
+
+QString Table::getInitialData(void)
+{
+	return(initial_data);
 }

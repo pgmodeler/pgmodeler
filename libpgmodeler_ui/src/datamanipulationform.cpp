@@ -71,7 +71,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(clear_ord_cols_tb, SIGNAL(clicked()), this, SLOT(clearColumnList()));
 	connect(results_tbw, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(markUpdateOnRow(QTableWidgetItem *)));
 	connect(delete_tb, SIGNAL(clicked()), this, SLOT(markDeleteOnRows()));
-	connect(add_tb, SIGNAL(clicked()), this, SLOT(insertRow()));
+	connect(add_tb, SIGNAL(clicked()), this, SLOT(addRow()));
 	connect(duplicate_tb, SIGNAL(clicked()), this, SLOT(duplicateRows()));
 	connect(undo_tb, SIGNAL(clicked()), this, SLOT(undoOperations()));
 	connect(save_tb, SIGNAL(clicked()), this, SLOT(saveChanges()));
@@ -256,7 +256,7 @@ void DataManipulationForm::retrieveData(void)
 
 		//If the table is empty automatically creates a new row
 		if(results_tbw->rowCount()==0 && table_cmb->currentData(Qt::UserRole).toUInt()==OBJ_TABLE)
-			insertRow();
+			addRow();
 		else
 			results_tbw->setFocus();
 
@@ -623,7 +623,7 @@ void DataManipulationForm::markDeleteOnRows(void)
 	results_tbw->clearSelection();
 }
 
-void DataManipulationForm::insertRow(void)
+void DataManipulationForm::addRow(void)
 {
 	int row=results_tbw->rowCount();
 	QTableWidgetItem *item=nullptr;
@@ -670,7 +670,7 @@ void DataManipulationForm::duplicateRows(void)
 		{
 			for(int row=sel_rng.topRow(); row <= sel_rng.bottomRow(); row++)
 			{
-				insertRow();
+				addRow();
 
 				for(int col=0; col < results_tbw->columnCount(); col++)
 				{
@@ -786,7 +786,7 @@ void DataManipulationForm::insertRowOnTabPress(int curr_row, int curr_col, int p
 	if(qApp->mouseButtons()==Qt::NoButton &&
 			curr_row==0 && curr_col==0 &&
 			prev_row==results_tbw->rowCount()-1 && prev_col==results_tbw->columnCount()-1)
-		insertRow();
+		addRow();
 }
 
 void DataManipulationForm::saveChanges(void)

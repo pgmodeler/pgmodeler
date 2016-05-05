@@ -68,4 +68,8 @@ $br )
  $br [-- ddl-end --] $br
 %end
 
+%if {initial-data} %then
+ $br {initial-data} $br
+%end
+
  $br
