@@ -80,7 +80,7 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		
 		//! \brief Reset the state of changed rows, clearing all attributes used to control the modifications on them
 		void clearChangedRows(void);
-		
+
 	public:
 		DataManipulationForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 		

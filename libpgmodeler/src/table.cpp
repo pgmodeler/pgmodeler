@@ -19,7 +19,7 @@
 #include "table.h"
 
 const QString Table::DATA_SEPARATOR = QString("•");
-const QString Table::DATA_LINE_BREAK = QString(QChar::LineSeparator);
+const QString Table::DATA_LINE_BREAK = QString("%1%2").arg("⸣").arg('\n');
 
 Table::Table(void) : BaseTable()
 {

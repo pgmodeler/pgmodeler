@@ -215,6 +215,8 @@
         <file>icones/delrow.png</file>
         <file>icones/duprow.png</file>
         <file>icones/editdata.png</file>
+        <file>icones/addcol.png</file>
+        <file>icones/delcol.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

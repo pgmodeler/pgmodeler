@@ -33,6 +33,8 @@ class TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 		Q_OBJECT
 
 		void populateDataGrid(void);
+		void setItemInvalid(QTableWidgetItem *item, Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
 		QString generateDataBuffer(void);
 
 	public:
@@ -48,7 +50,9 @@ class TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 		void addRow(void);
 		void duplicateRows(void);
 		void deleteRows(void);
+		void deleteColumns(void);
 		void clearRows(void);
+		void fixInvalidColumn(int col_idx);
 };
 
 #endif

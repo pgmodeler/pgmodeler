@@ -96,8 +96,20 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 			[=](){
 		QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
 		copy_tb->setEnabled(sel_ranges.count()==1);
-		delete_tb->setEnabled(results_tbw->editTriggers()!=QAbstractItemView::NoEditTriggers && !sel_ranges.isEmpty());
-		duplicate_tb->setEnabled(results_tbw->editTriggers()!=QAbstractItemView::NoEditTriggers && !sel_ranges.isEmpty());
+		delete_tb->setEnabled(false);
+		duplicate_tb->setEnabled(false);
+	});
+
+	connect(results_tbw->verticalHeader(), &QHeaderView::sectionPressed,
+		[=](){
+		delete_tb->setEnabled(true);
+		duplicate_tb->setEnabled(true);
+	});
+
+	connect(results_tbw->verticalHeader(), &QHeaderView::sectionEntered,
+		[=](){
+		delete_tb->setEnabled(true);
+		duplicate_tb->setEnabled(true);
 	});
 }
 
@@ -212,7 +224,7 @@ void DataManipulationForm::retrieveData(void)
 
 		QString query=QString("SELECT * FROM \"%1\".\"%2\"").arg(schema_cmb->currentText()).arg(table_cmb->currentText());
 		ResultSet res;
-		unsigned limit=limit_edt->text().toUInt();
+		unsigned limit=limit_spb->value();
 
 		//Building the where clause
 		if(!filter_txt->toPlainText().isEmpty())
@@ -249,7 +261,7 @@ void DataManipulationForm::retrieveData(void)
 		result_info_wgt->setVisible(results_tbw->rowCount() > 0);
 		result_info_lbl->setText(QString("<em>[%1]</em> ").arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))) +
 								 trUtf8("Rows returned: <strong>%1</strong>&nbsp;&nbsp;&nbsp;").arg(results_tbw->rowCount()) +
-								 trUtf8("<em>(Limit: <strong>%1</strong>)</em>").arg(limit_edt->text().isEmpty() ? trUtf8("none") : limit_edt->text()));
+								 trUtf8("<em>(Limit: <strong>%1</strong>)</em>").arg(limit_spb->value()==0 ? trUtf8("none") : QString::number(limit_spb->value())));
 
 		//Reset the changed rows state
 		clearChangedRows();

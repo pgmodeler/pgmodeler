@@ -35,24 +35,47 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, BASE
 	name_edt->setReadOnly(true);
 	name_edt->setFont(font);
 
-	add_tb->setToolTip(add_tb->toolTip() + QString(" (%1)").arg(add_tb->shortcut().toString()));
-	delete_tb->setToolTip(delete_tb->toolTip() + QString(" (%1)").arg(delete_tb->shortcut().toString()));
-	duplicate_tb->setToolTip(duplicate_tb->toolTip() + QString(" (%1)").arg(duplicate_tb->shortcut().toString()));
+	add_row_tb->setToolTip(add_row_tb->toolTip() + QString(" (%1)").arg(add_row_tb->shortcut().toString()));
+	del_rows_tb->setToolTip(del_rows_tb->toolTip() + QString(" (%1)").arg(del_rows_tb->shortcut().toString()));
+	dup_rows_tb->setToolTip(dup_rows_tb->toolTip() + QString(" (%1)").arg(dup_rows_tb->shortcut().toString()));
 	clear_tb->setToolTip(clear_tb->toolTip() + QString(" (%1)").arg(clear_tb->shortcut().toString()));
 
 	setMinimumSize(640, 480);
 
-	connect(add_tb, SIGNAL(clicked(bool)), this, SLOT(addRow()));
-	connect(duplicate_tb, SIGNAL(clicked(bool)), this, SLOT(duplicateRows()));
-	connect(delete_tb, SIGNAL(clicked(bool)), this, SLOT(deleteRows()));
+	connect(add_row_tb, SIGNAL(clicked(bool)), this, SLOT(addRow()));
+	connect(dup_rows_tb, SIGNAL(clicked(bool)), this, SLOT(duplicateRows()));
+	connect(del_rows_tb, SIGNAL(clicked(bool)), this, SLOT(deleteRows()));
+	connect(del_cols_tb, SIGNAL(clicked(bool)), this, SLOT(deleteColumns()));
 	connect(clear_tb, SIGNAL(clicked(bool)), this, SLOT(clearRows()));
 	connect(data_tbw, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(insertRowOnTabPress(int,int,int,int)), Qt::QueuedConnection);
 
 	connect(data_tbw, &QTableWidget::itemSelectionChanged,
 	[=](){
-		QList<QTableWidgetSelectionRange> sel_ranges=data_tbw->selectedRanges();
-		delete_tb->setEnabled(!sel_ranges.isEmpty());
-		duplicate_tb->setEnabled(!sel_ranges.isEmpty());
+		del_rows_tb->setEnabled(false);
+		dup_rows_tb->setEnabled(false);
+		del_cols_tb->setEnabled(false);
+	});
+
+	connect(data_tbw->verticalHeader(), &QHeaderView::sectionPressed,
+		[=](){
+		del_rows_tb->setEnabled(true);
+		dup_rows_tb->setEnabled(true);
+	});
+
+	connect(data_tbw->verticalHeader(), &QHeaderView::sectionEntered,
+		[=](){
+		del_rows_tb->setEnabled(true);
+		dup_rows_tb->setEnabled(true);
+	});
+
+	connect(data_tbw->horizontalHeader(), &QHeaderView::sectionPressed,
+		[=](){
+		del_cols_tb->setEnabled(true);
+	});
+
+	connect(data_tbw->horizontalHeader(), &QHeaderView::sectionEntered,
+		[=](){
+		del_cols_tb->setEnabled(true);
 	});
 }
 
@@ -101,6 +124,20 @@ void TableDataWidget::deleteRows(void)
 	}
 }
 
+void TableDataWidget::deleteColumns(void)
+{
+	Messagebox msg_box;
+
+	msg_box.show(trUtf8("Delete columns is an irreversible action! Do you really want to proceed?"),
+							 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+
+	if(msg_box.result()==QDialog::Accepted)
+	{
+
+		del_cols_tb->setEnabled(false);
+	}
+}
+
 void TableDataWidget::clearRows(void)
 {
 	Messagebox msg_box;
@@ -117,6 +154,24 @@ void TableDataWidget::clearRows(void)
 	}
 }
 
+void TableDataWidget::fixInvalidColumn(int col_idx)
+{
+	QTableWidgetItem *item=data_tbw->horizontalHeaderItem(col_idx);
+
+	if(item && item->flags()==Qt::NoItemFlags)
+	{
+		QMenu menu, submenu;
+
+		submenu.addAction("Column1");
+		submenu.addAction("Column2");
+		submenu.addAction("Column3");
+		menu.addAction("Set column")->setMenu(&submenu);
+		menu.addSeparator();
+		menu.addAction("Drop column");
+		menu.exec(QCursor::pos());
+	}
+}
+
 void TableDataWidget::setAttributes(DatabaseModel *model, Table *table)
 {
 	BaseObjectWidget::setAttributes(model, table, nullptr);
@@ -125,7 +180,7 @@ void TableDataWidget::setAttributes(DatabaseModel *model, Table *table)
 	protected_obj_frm->setVisible(false);
 	obj_id_lbl->setVisible(false);
 	data_tbw->setEnabled(enable);
-	add_tb->setEnabled(enable);
+	add_row_tb->setEnabled(enable);
 
 	if(object)
 		populateDataGrid();
@@ -136,29 +191,85 @@ void TableDataWidget::populateDataGrid(void)
 	Table *table=dynamic_cast<Table *>(this->object);
 	QTableWidgetItem *item=nullptr;
 	QString ini_data;
-	int col=0;
-	QSet<QString, int> col_indexes;
+	int col=0, row=0;
+	QStringList columns, buffer_cols, buffer, values;
+	QVector<int> disabled_cols;
 
 	while(data_tbw->rowCount() > 0)
 		data_tbw->removeRow(0);
-
-	data_tbw->setColumnCount(table->getColumnCount());
-
-	for(auto object : *table->getObjectList(OBJ_COLUMN))
-	{
-		item=new QTableWidgetItem(object->getName());
-		col_indexes[object->getName()]=col;
-		data_tbw->setHorizontalHeaderItem(col++, item);
-	}
 
 	ini_data=table->getInitialData();
 
 	if(!ini_data.isEmpty())
 	{
-		QStringList buffer=ini_data.split(Table::DATA_LINE_BREAK);
+		buffer=ini_data.split(Table::DATA_LINE_BREAK);
+
+		if(!buffer.isEmpty())
+		{
+			buffer_cols=buffer[0].split(Table::DATA_SEPARATOR);
+			columns.append(buffer_cols);
+		}
+	}
+	else
+	{
+		for(auto object : *table->getObjectList(OBJ_COLUMN))
+			columns.push_back(object->getName());
+	}
+
+	columns.removeDuplicates();
+	data_tbw->setColumnCount(columns.size());
+
+	for(QString col_name : columns)
+	{
+		item=new QTableWidgetItem(col_name);
+
+		if(table->getObjectIndex(col_name, OBJ_COLUMN) < 0)
+			disabled_cols.push_back(col);
+
+		data_tbw->setHorizontalHeaderItem(col++, item);
+	}
+
+	buffer.removeAt(0);
+	row=0;
+
+	for(QString buf_row : buffer)
+	{
+		addRow();
+		values = buf_row.split(Table::DATA_SEPARATOR);
+		col = 0;
+
+		for(QString val : values)
+			data_tbw->item(row, columns.indexOf(buffer_cols[col++]))->setText(val);
+
+		row++;
+	}
+
+	if(!disabled_cols.isEmpty())
+	{
+		for(int dis_col : disabled_cols)
+		{
+			for(row = 0; row < data_tbw->rowCount(); row++)
+				setItemInvalid(data_tbw->item(row, dis_col));
+
+			item=data_tbw->horizontalHeaderItem(dis_col);
+			setItemInvalid(item, Qt::NoItemFlags);
+		}
+
+		warn_frm->setVisible(!disabled_cols.isEmpty());
+		connect(data_tbw->horizontalHeader(), SIGNAL(sectionPressed(int)), this, SLOT(fixInvalidColumn(int)));
 	}
 
 	data_tbw->resizeRowsToContents();
+}
+
+void TableDataWidget::setItemInvalid(QTableWidgetItem *item, Qt::ItemFlags flags)
+{
+	if(item)
+	{
+		item->setData(Qt::UserRole, item->backgroundColor().name());
+		item->setBackground(QColor(QString("#FFC0C0")));
+		item->setFlags(flags);
+	}
 }
 
 QString TableDataWidget::generateDataBuffer(void)
@@ -196,7 +307,12 @@ void TableDataWidget::addRow(void)
 	for(int col=0; col < data_tbw->columnCount(); col++)
 	{
 		item=new QTableWidgetItem;
-		item->setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
+		if(data_tbw->horizontalHeaderItem(col)->flags()==Qt::NoItemFlags)
+			setItemInvalid(item);
+		else
+			item->setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
 		data_tbw->setItem(row, col, item);
 	}
 
