@@ -32,8 +32,12 @@ class TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 	private:
 		Q_OBJECT
 
+		QMenu col_names_menu;
+
 		void populateDataGrid(void);
-		void setItemInvalid(QTableWidgetItem *item, Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+		void configureColumnNamesMenu(void);
+		void toggleWarningFrame(void);
+		void setItemInvalid(QTableWidgetItem *item);
 
 		QString generateDataBuffer(void);
 
@@ -48,11 +52,13 @@ class TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 	private slots:
 		void insertRowOnTabPress(int curr_row, int curr_col, int prev_row, int prev_col);
 		void addRow(void);
+		void addColumn(QAction *action);
 		void duplicateRows(void);
 		void deleteRows(void);
 		void deleteColumns(void);
-		void clearRows(void);
+		void clearRows(bool confirm=true);
 		void fixInvalidColumn(int col_idx);
+		void enableButtons(void);
 };
 
 #endif

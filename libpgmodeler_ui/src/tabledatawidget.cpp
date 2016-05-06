@@ -40,6 +40,8 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, BASE
 	dup_rows_tb->setToolTip(dup_rows_tb->toolTip() + QString(" (%1)").arg(dup_rows_tb->shortcut().toString()));
 	clear_tb->setToolTip(clear_tb->toolTip() + QString(" (%1)").arg(clear_tb->shortcut().toString()));
 
+	add_col_tb->setMenu(&col_names_menu);
+
 	setMinimumSize(640, 480);
 
 	connect(add_row_tb, SIGNAL(clicked(bool)), this, SLOT(addRow()));
@@ -48,35 +50,9 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, BASE
 	connect(del_cols_tb, SIGNAL(clicked(bool)), this, SLOT(deleteColumns()));
 	connect(clear_tb, SIGNAL(clicked(bool)), this, SLOT(clearRows()));
 	connect(data_tbw, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(insertRowOnTabPress(int,int,int,int)), Qt::QueuedConnection);
-
-	connect(data_tbw, &QTableWidget::itemSelectionChanged,
-	[=](){
-		del_rows_tb->setEnabled(false);
-		dup_rows_tb->setEnabled(false);
-		del_cols_tb->setEnabled(false);
-	});
-
-	connect(data_tbw->verticalHeader(), &QHeaderView::sectionPressed,
-		[=](){
-		del_rows_tb->setEnabled(true);
-		dup_rows_tb->setEnabled(true);
-	});
-
-	connect(data_tbw->verticalHeader(), &QHeaderView::sectionEntered,
-		[=](){
-		del_rows_tb->setEnabled(true);
-		dup_rows_tb->setEnabled(true);
-	});
-
-	connect(data_tbw->horizontalHeader(), &QHeaderView::sectionPressed,
-		[=](){
-		del_cols_tb->setEnabled(true);
-	});
-
-	connect(data_tbw->horizontalHeader(), &QHeaderView::sectionEntered,
-		[=](){
-		del_cols_tb->setEnabled(true);
-	});
+	connect(&col_names_menu, SIGNAL(triggered(QAction*)), this, SLOT(addColumn(QAction *)));
+	connect(data_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(enableButtons()));
+	connect(data_tbw->horizontalHeader(), SIGNAL(sectionDoubleClicked(int)), this, SLOT(fixInvalidColumn(int)));
 }
 
 void TableDataWidget::insertRowOnTabPress(int curr_row, int curr_col, int prev_row, int prev_col)
@@ -133,19 +109,38 @@ void TableDataWidget::deleteColumns(void)
 
 	if(msg_box.result()==QDialog::Accepted)
 	{
+		QTableWidgetSelectionRange sel_range;
+
+		while(!data_tbw->selectedRanges().isEmpty())
+		{
+			sel_range=data_tbw->selectedRanges().at(0);
+
+			for(int i = 0; i < sel_range.columnCount(); i++)
+				data_tbw->removeColumn(sel_range.leftColumn());
+		}
+
+		if(data_tbw->columnCount()==0)
+		{
+			clearRows(false);
+			add_row_tb->setEnabled(false);
+		}
 
 		del_cols_tb->setEnabled(false);
+
+		toggleWarningFrame();
+		configureColumnNamesMenu();
 	}
 }
 
-void TableDataWidget::clearRows(void)
+void TableDataWidget::clearRows(bool confirm)
 {
 	Messagebox msg_box;
 
-	msg_box.show(trUtf8("Clear the grid is an irreversible action! Do you really want to proceed?"),
-							 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+	if(confirm)
+		msg_box.show(trUtf8("Clear the grid is an irreversible action! Do you really want to proceed?"),
+								 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
-	if(msg_box.result()==QDialog::Accepted)
+	if(!confirm || msg_box.result()==QDialog::Accepted)
 	{
 		while(data_tbw->rowCount() > 0)
 			data_tbw->removeRow(0);
@@ -160,16 +155,51 @@ void TableDataWidget::fixInvalidColumn(int col_idx)
 
 	if(item && item->flags()==Qt::NoItemFlags)
 	{
-		QMenu menu, submenu;
+		QAction * act=nullptr;
 
-		submenu.addAction("Column1");
-		submenu.addAction("Column2");
-		submenu.addAction("Column3");
-		menu.addAction("Set column")->setMenu(&submenu);
-		menu.addSeparator();
-		menu.addAction("Drop column");
-		menu.exec(QCursor::pos());
+		col_names_menu.blockSignals(true);
+		act=col_names_menu.exec(QCursor::pos());
+		col_names_menu.blockSignals(false);
+
+		if(act && act->isEnabled())
+		{
+			QTableWidgetItem *item=data_tbw->horizontalHeaderItem(col_idx);
+
+			item->setText(act->text());
+			item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+			item->setForeground(data_tbw->horizontalHeader()->palette().color(QPalette::Foreground));
+
+			for(int row = 0; row < data_tbw->rowCount(); row++)
+			{
+				item=data_tbw->item(row, col_idx);
+				item->setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+				item->setBackground(item->data(Qt::UserRole).value<QBrush>());
+			}
+
+			toggleWarningFrame();
+			configureColumnNamesMenu();
+			data_tbw->update();
+		}
 	}
+}
+
+void TableDataWidget::enableButtons(void)
+{
+	QList<QTableWidgetSelectionRange> sel_ranges=data_tbw->selectedRanges();
+	bool cols_selected, rows_selected;
+
+	cols_selected = rows_selected = !sel_ranges.isEmpty();
+
+	for(auto &sel_rng : sel_ranges)
+	{
+		cols_selected &= (sel_rng.columnCount() == data_tbw->columnCount());
+		rows_selected &= (sel_rng.rowCount() == data_tbw->rowCount());
+	}
+
+	del_rows_tb->setEnabled(cols_selected);
+	add_row_tb->setEnabled(data_tbw->columnCount() > 0);
+	del_cols_tb->setEnabled(rows_selected);
+	dup_rows_tb->setEnabled(cols_selected);
 }
 
 void TableDataWidget::setAttributes(DatabaseModel *model, Table *table)
@@ -252,23 +282,56 @@ void TableDataWidget::populateDataGrid(void)
 				setItemInvalid(data_tbw->item(row, dis_col));
 
 			item=data_tbw->horizontalHeaderItem(dis_col);
-			setItemInvalid(item, Qt::NoItemFlags);
+			item->setFlags(Qt::NoItemFlags);
+			item->setForeground(QColor(Qt::red));
 		}
 
 		warn_frm->setVisible(!disabled_cols.isEmpty());
-		connect(data_tbw->horizontalHeader(), SIGNAL(sectionPressed(int)), this, SLOT(fixInvalidColumn(int)));
 	}
 
 	data_tbw->resizeRowsToContents();
+	configureColumnNamesMenu();
 }
 
-void TableDataWidget::setItemInvalid(QTableWidgetItem *item, Qt::ItemFlags flags)
+void TableDataWidget::configureColumnNamesMenu(void)
+{
+	Table *table=dynamic_cast<Table *>(this->object);
+	QStringList col_names;
+
+	col_names_menu.clear();
+
+	for(auto object : *table->getObjectList(OBJ_COLUMN))
+		col_names.push_back(object->getName());
+
+	for(int col = 0; col < data_tbw->columnCount(); col++)
+		col_names.removeOne(data_tbw->horizontalHeaderItem(col)->text());
+
+	if(col_names.isEmpty())
+		col_names_menu.addAction(trUtf8("(no columns)"))->setEnabled(false);
+	else
+	{
+		for(QString col_name : col_names)
+		col_names_menu.addAction(col_name);
+	}
+}
+
+void TableDataWidget::toggleWarningFrame(void)
+{
+	bool has_inv_cols=false;
+
+	for(int col = 0; col < data_tbw->columnCount() && !has_inv_cols; col++)
+		has_inv_cols = data_tbw->horizontalHeaderItem(col)->flags()==Qt::NoItemFlags;
+
+	warn_frm->setVisible(has_inv_cols);
+}
+
+void TableDataWidget::setItemInvalid(QTableWidgetItem *item)
 {
 	if(item)
 	{
-		item->setData(Qt::UserRole, item->backgroundColor().name());
-		item->setBackground(QColor(QString("#FFC0C0")));
-		item->setFlags(flags);
+		item->setData(Qt::UserRole, item->background());
+		item->setBackgroundColor(QColor(QString("#FFC0C0")));
+		item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	}
 }
 
@@ -318,23 +381,44 @@ void TableDataWidget::addRow(void)
 
 	data_tbw->clearSelection();
 	data_tbw->setCurrentCell(row, 0, QItemSelectionModel::ClearAndSelect);
-	data_tbw->editItem(data_tbw->item(row, 0));
+
+	if(item->flags()!=Qt::NoItemFlags)
+		data_tbw->editItem(data_tbw->item(row, 0));
+
 	data_tbw->blockSignals(false);
 
 	clear_tb->setEnabled(true);
 }
 
+void TableDataWidget::addColumn(QAction *action)
+{
+	if(action)
+	{
+		QTableWidgetItem *item=nullptr;
+		int col = data_tbw->columnCount();
+
+		data_tbw->insertColumn(col);
+
+		item=new QTableWidgetItem;
+		item->setText(action->text());
+		data_tbw->setHorizontalHeaderItem(col, item);
+
+		for(int row=0; row < data_tbw->rowCount(); row++)
+		{
+			item=new QTableWidgetItem;
+			item->setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+			data_tbw->setItem(row, col, item);
+		}
+
+		add_row_tb->setEnabled(true);
+		configureColumnNamesMenu();
+	}
+}
+
 void TableDataWidget::applyConfiguration(void)
 {
-	try
-	{
-		Table *table = dynamic_cast<Table *>(this->object);
-		table->setInitialData(generateDataBuffer());
-		emit s_closeRequested();
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	Table *table = dynamic_cast<Table *>(this->object);
+	table->setInitialData(generateDataBuffer());
+	emit s_closeRequested();
 }
 

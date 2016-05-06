@@ -99,6 +99,9 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		
 		//! \brief Disable the buttons used to handle data
 		void disableControlButtons(void);
+
+		//! \brief Enables the delete/duplicate/copy buttons depending on the selected rows
+		void enableRowControlButtons(void);
 		
 		//! \brief Reset the state of advaced tab's controls
 		void resetAdvancedControls(void);

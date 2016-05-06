@@ -92,25 +92,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(export_tb, &QToolButton::clicked,
 			[=](){ SQLExecutionWidget::exportResults(results_tbw); });
 
-	connect(results_tbw, &QTableWidget::itemSelectionChanged,
-			[=](){
-		QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
-		copy_tb->setEnabled(sel_ranges.count()==1);
-		delete_tb->setEnabled(false);
-		duplicate_tb->setEnabled(false);
-	});
-
-	connect(results_tbw->verticalHeader(), &QHeaderView::sectionPressed,
-		[=](){
-		delete_tb->setEnabled(true);
-		duplicate_tb->setEnabled(true);
-	});
-
-	connect(results_tbw->verticalHeader(), &QHeaderView::sectionEntered,
-		[=](){
-		delete_tb->setEnabled(true);
-		duplicate_tb->setEnabled(true);
-	});
+	connect(results_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(enableRowControlButtons()));
 }
 
 void DataManipulationForm::setAttributes(Connection conn, const QString curr_schema, const QString curr_table)
@@ -294,6 +276,24 @@ void DataManipulationForm::disableControlButtons(void)
 	duplicate_tb->setEnabled(false);
 	export_tb->setEnabled(false);
 	clearChangedRows();
+}
+
+void DataManipulationForm::enableRowControlButtons(void)
+{
+	QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
+	bool cols_selected, rows_selected;
+
+	cols_selected = rows_selected = !sel_ranges.isEmpty();
+
+	for(auto &sel_rng : sel_ranges)
+	{
+		cols_selected &= (sel_rng.columnCount() == results_tbw->columnCount());
+		rows_selected &= (sel_rng.rowCount() == results_tbw->rowCount());
+	}
+
+	delete_tb->setEnabled(cols_selected);
+	duplicate_tb->setEnabled(cols_selected);
+	copy_tb->setEnabled(sel_ranges.count() == 1);
 }
 
 void DataManipulationForm::resetAdvancedControls(void)
