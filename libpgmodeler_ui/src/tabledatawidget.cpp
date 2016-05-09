@@ -19,6 +19,9 @@
 #include "tabledatawidget.h"
 #include "htmlitemdelegate.h"
 
+const QChar TableDataWidget::UNESC_VALUE_START='{';
+const QChar	TableDataWidget::UNESC_VALUE_END='}';
+
 TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, BASE_OBJECT)
 {
 	Ui_TableDataWidget::setupUi(this);
@@ -142,8 +145,8 @@ void TableDataWidget::clearRows(bool confirm)
 
 	if(!confirm || msg_box.result()==QDialog::Accepted)
 	{
-		while(data_tbw->rowCount() > 0)
-			data_tbw->removeRow(0);
+		data_tbw->clearContents();
+		data_tbw->setRowCount(0);
 
 		clear_tb->setEnabled(false);
 	}
@@ -222,11 +225,11 @@ void TableDataWidget::populateDataGrid(void)
 	QTableWidgetItem *item=nullptr;
 	QString ini_data;
 	int col=0, row=0;
-	QStringList columns, buffer_cols, buffer, values;
+	QStringList columns, aux_cols, buffer, values;
 	QVector<int> disabled_cols;
 
-	while(data_tbw->rowCount() > 0)
-		data_tbw->removeRow(0);
+	data_tbw->clearContents();
+	data_tbw->setRowCount(0);
 
 	ini_data=table->getInitialData();
 
@@ -234,11 +237,8 @@ void TableDataWidget::populateDataGrid(void)
 	{
 		buffer=ini_data.split(Table::DATA_LINE_BREAK);
 
-		if(!buffer.isEmpty())
-		{
-			buffer_cols=buffer[0].split(Table::DATA_SEPARATOR);
-			columns.append(buffer_cols);
-		}
+		if(!buffer.isEmpty() && !buffer[0].isEmpty())
+			columns.append(buffer[0].split(Table::DATA_SEPARATOR));
 	}
 	else
 	{
@@ -246,16 +246,16 @@ void TableDataWidget::populateDataGrid(void)
 			columns.push_back(object->getName());
 	}
 
-	columns.removeDuplicates();
 	data_tbw->setColumnCount(columns.size());
 
 	for(QString col_name : columns)
 	{
 		item=new QTableWidgetItem(col_name);
 
-		if(table->getObjectIndex(col_name, OBJ_COLUMN) < 0)
+		if(table->getObjectIndex(col_name, OBJ_COLUMN) < 0 || aux_cols.contains(col_name))
 			disabled_cols.push_back(col);
 
+		aux_cols.append(col_name);
 		data_tbw->setHorizontalHeaderItem(col++, item);
 	}
 
@@ -269,7 +269,10 @@ void TableDataWidget::populateDataGrid(void)
 		col = 0;
 
 		for(QString val : values)
-			data_tbw->item(row, columns.indexOf(buffer_cols[col++]))->setText(val);
+		{
+			if(col < columns.size())
+				data_tbw->item(row, col++)->setText(val);
+		}
 
 		row++;
 	}
@@ -285,10 +288,9 @@ void TableDataWidget::populateDataGrid(void)
 			item->setFlags(Qt::NoItemFlags);
 			item->setForeground(QColor(Qt::red));
 		}
-
-		warn_frm->setVisible(!disabled_cols.isEmpty());
 	}
 
+	warn_frm->setVisible(!disabled_cols.isEmpty());
 	data_tbw->resizeRowsToContents();
 	configureColumnNamesMenu();
 }
@@ -337,24 +339,38 @@ void TableDataWidget::setItemInvalid(QTableWidgetItem *item)
 
 QString TableDataWidget::generateDataBuffer(void)
 {
-	QStringList values;
-	QStringList buffer;
+	QStringList val_list, col_names, buffer;
+	QString value;
 	int col = 0, col_count = data_tbw->horizontalHeader()->count();
 
 	for(int col=0; col < col_count; col++)
-		values.push_back(data_tbw->horizontalHeaderItem(col)->text());
+		col_names.push_back(data_tbw->horizontalHeaderItem(col)->text());
 
-	buffer.push_back(values.join(Table::DATA_SEPARATOR));
+	buffer.push_back(col_names.join(Table::DATA_SEPARATOR));
 
 	for(int row = 0; row < data_tbw->rowCount(); row++)
 	{
-		values.clear();
-
 		for(col = 0; col < col_count; col++)
-			values.push_back(data_tbw->item(row, col)->text());
+		{
+			value = data_tbw->item(row, col)->text();
 
-		buffer.push_back(values.join(Table::DATA_SEPARATOR));
+			//Checking if the value is a malformed unescaped value, e.g., {value, value}, {value\}
+			if((value.startsWith(Table::UNESC_VALUE_START) && value.endsWith(QString("\\") + Table::UNESC_VALUE_END)) ||
+					(value.startsWith(Table::UNESC_VALUE_START) && !value.endsWith(Table::UNESC_VALUE_END)) ||
+					(!value.startsWith(Table::UNESC_VALUE_START) && !value.endsWith(QString("\\") + Table::UNESC_VALUE_END) && value.endsWith(Table::UNESC_VALUE_END)))
+				throw Exception(Exception::getErrorMessage(ERR_MALFORMED_UNESCAPED_VALUE)
+								.arg(row + 1).arg(col_names[col]),
+								ERR_MALFORMED_UNESCAPED_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+			val_list.push_back(value);
+		}
+
+		buffer.push_back(val_list.join(Table::DATA_SEPARATOR));
+		val_list.clear();
 	}
+
+	if(buffer.size() <= 1)
+		return(QString());
 
 	return(buffer.join(Table::DATA_LINE_BREAK));
 }
@@ -417,8 +433,15 @@ void TableDataWidget::addColumn(QAction *action)
 
 void TableDataWidget::applyConfiguration(void)
 {
-	Table *table = dynamic_cast<Table *>(this->object);
-	table->setInitialData(generateDataBuffer());
-	emit s_closeRequested();
+	try
+	{
+		Table *table = dynamic_cast<Table *>(this->object);
+		table->setInitialData(generateDataBuffer());
+		emit s_closeRequested();
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 

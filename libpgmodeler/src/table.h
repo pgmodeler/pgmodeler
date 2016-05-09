@@ -103,10 +103,15 @@ class Table: public BaseTable {
 
 		void saveRelObjectsIndexes(ObjectType obj_type);
 		void restoreRelObjectsIndexes(ObjectType obj_type);
+		QString createInsertCommand(const QStringList &col_names, const QStringList &values, const QList<int> &ignored_cols);
 
 	public:
 		static const QString DATA_SEPARATOR,
 		DATA_LINE_BREAK;
+
+		//! \brief Default chars used as unescaped value delimiter ({ and })
+		static const QChar UNESC_VALUE_START,
+		UNESC_VALUE_END;
 
 		Table(void);
 		~Table(void);
@@ -337,7 +342,7 @@ class Table: public BaseTable {
 
 		void setInitialData(const QString &value);
 		QString getInitialData(void);
-		QString getInitialDataCommand(void);
+		QString getInitialDataCommands(void);
 
 		friend class Relationship;
 		friend class OperationList;

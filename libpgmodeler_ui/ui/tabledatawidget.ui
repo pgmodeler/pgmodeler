@@ -140,7 +140,7 @@
          </font>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Some invalid columns were detected. In order to solve this issue click the header of the highlighted ones in order to define the correct column in which the data belongs to or delete the entire column. Note that invalid columns are completely igored when generating the &lt;span style=&quot; font-weight:600;&quot;&gt;INSERT&lt;/span&gt; commands.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>Some invalid or duplicated columns were detected. In order to solve this issue double-click the header of the highlighted ones in order to define the correct name in which the data belongs to or delete the entire column. Note that these columns are completely igored when generating the &lt;strong&gt;INSERT&lt;/strong&gt; commands.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -154,6 +154,9 @@
     <widget class="QTableWidget" name="data_tbw">
      <property name="enabled">
       <bool>true</bool>
+     </property>
+     <property name="sizeAdjustPolicy">
+      <enum>QAbstractScrollArea::AdjustToContents</enum>
      </property>
      <property name="editTriggers">
       <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked</set>

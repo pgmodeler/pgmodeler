@@ -20,6 +20,8 @@
 
 const QString Table::DATA_SEPARATOR = QString("•");
 const QString Table::DATA_LINE_BREAK = QString("%1%2").arg("⸣").arg('\n');
+const QChar Table::UNESC_VALUE_START='{';
+const QChar	Table::UNESC_VALUE_END='}';
 
 Table::Table(void) : BaseTable()
 {
@@ -1380,8 +1382,7 @@ QString Table::getCodeDefinition(unsigned def_type)
 		attributes[ParsersAttributes::INITIAL_DATA]=initial_data;
 	}
 	else
-		#warning "Change to INSERT COMMANDS"
-		attributes[ParsersAttributes::INITIAL_DATA]=initial_data;
+		attributes[ParsersAttributes::INITIAL_DATA]=getInitialDataCommands();
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }
@@ -1637,4 +1638,95 @@ void Table::setInitialData(const QString &value)
 QString Table::getInitialData(void)
 {
 	return(initial_data);
+}
+
+QString Table::getInitialDataCommands(void)
+{
+	QStringList buffer=initial_data.split(DATA_LINE_BREAK);
+
+	if(!buffer.isEmpty() && !buffer.at(0).isEmpty())
+	{
+		QStringList	col_names, commands;
+		QList<int> ignored_cols;
+		int curr_col=0;
+
+		col_names=(buffer.at(0)).split(DATA_SEPARATOR);
+		col_names.removeDuplicates();
+		buffer.removeFirst();
+
+		for(QString col_name : col_names)
+		{
+			if(getObjectIndex(col_name, OBJ_COLUMN) < 0)
+				ignored_cols.append(curr_col);
+
+			curr_col++;
+		}
+
+		for(QString buf_row : buffer)
+			commands.append(createInsertCommand(col_names, buf_row.split(DATA_SEPARATOR), ignored_cols));
+
+		return(commands.join('\n'));
+	}
+
+	return(QString());
+}
+
+QString Table::createInsertCommand(const QStringList &col_names, const QStringList &values, const QList<int> &ignored_cols)
+{
+	QString fmt_cmd, insert_cmd = QString("INSERT INTO %1 (%2) VALUES (%3);\n%4");
+	QStringList val_list, col_list;
+	int curr_col=0;
+
+	for(QString col_name : col_names)
+	{
+		if(ignored_cols.contains(curr_col++))
+			continue;
+
+		col_list.push_back(BaseObject::formatName(col_name));
+	}
+
+	curr_col=0;
+
+	for(QString value : values)
+	{
+		if(ignored_cols.contains(curr_col++))
+			continue;
+
+		//Empty values as considered as DEFAULT
+		if(value.isEmpty())
+		{
+			value=QString("DEFAULT");
+		}
+		//Unescaped values will not be enclosed in quotes
+		else if(value.startsWith(UNESC_VALUE_START) && value.endsWith(UNESC_VALUE_END))
+		{
+			value.remove(0,1);
+			value.remove(value.length()-1, 1);
+		}
+		//Quoting value
+		else
+		{
+			value.replace(QString("\\") + UNESC_VALUE_START, UNESC_VALUE_START);
+			value.replace(QString("\\") + UNESC_VALUE_END, UNESC_VALUE_END);
+			value=QString("'") + value + QString("'");
+		}
+
+		val_list.push_back(value);
+	}
+
+	if(!col_list.isEmpty() && !val_list.isEmpty())
+	{
+		if(val_list.size() > col_list.size())
+			val_list.erase(val_list.begin() + col_list.size(), val_list.end());
+		else if(col_list.size() > val_list.size())
+		{
+			for(curr_col = val_list.size(); curr_col < col_list.size(); curr_col++)
+				val_list.append(QString("DEFAULT"));
+		}
+
+		fmt_cmd=insert_cmd.arg(getSignature()).arg(col_list.join(", "))
+									.arg(val_list.join(", ")).arg(ParsersAttributes::DDL_END_TOKEN);
+	}
+
+	return(fmt_cmd);
 }

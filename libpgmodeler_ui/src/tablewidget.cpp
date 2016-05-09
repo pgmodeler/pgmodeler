@@ -40,6 +40,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	QPixmap icon=QPixmap(QString(":/icones/icones/editdata.png"));
 	edt_data_tb->setMinimumSize(edt_perms_tb->minimumSize());
 	edt_data_tb->setText(trUtf8("Edit data"));
+	edt_data_tb->setToolTip(trUtf8("Define initial data for the table"));
 	edt_data_tb->setIcon(icon);
 	edt_data_tb->setIconSize(edt_perms_tb->iconSize());
 	edt_data_tb->setToolButtonStyle(edt_perms_tb->toolButtonStyle());

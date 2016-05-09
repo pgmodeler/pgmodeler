@@ -42,6 +42,10 @@ class TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 		QString generateDataBuffer(void);
 
 	public:
+		//! \brief Default chars used as unescaped value delimiter ({ and })
+		static const QChar UNESC_VALUE_START,
+		UNESC_VALUE_END;
+
 		TableDataWidget(QWidget * parent = 0);
 
 		void setAttributes(DatabaseModel *model, Table *table);
