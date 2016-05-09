@@ -25,8 +25,6 @@ const unsigned DataManipulationForm::NO_OPERATION=0;
 const unsigned DataManipulationForm::OP_INSERT=1;
 const unsigned DataManipulationForm::OP_UPDATE=2;
 const unsigned DataManipulationForm::OP_DELETE=3;
-const QChar DataManipulationForm::UNESC_VALUE_START='{';
-const QChar	DataManipulationForm::UNESC_VALUE_END='}';
 
 DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f): QDialog(parent, f)
 {
@@ -922,10 +920,10 @@ QString DataManipulationForm::getDMLCommand(int row)
 
 				if(op_type==OP_INSERT || (op_type==OP_UPDATE && value!=item->data(Qt::UserRole)))
 				{
-					//Checking if the value is a malformed unescaped value, e.g., <value, value>, <value\>
-					if((value.startsWith(UNESC_VALUE_START) && value.endsWith(QString("\\") + UNESC_VALUE_END)) ||
-							(value.startsWith(UNESC_VALUE_START) && !value.endsWith(UNESC_VALUE_END)) ||
-							(!value.startsWith(UNESC_VALUE_START) && !value.endsWith(QString("\\") + UNESC_VALUE_END) && value.endsWith(UNESC_VALUE_END)))
+					//Checking if the value is a malformed unescaped value, e.g., {value, value}, {value\}
+					if((value.startsWith(Table::UNESC_VALUE_START) && value.endsWith(QString("\\") + Table::UNESC_VALUE_END)) ||
+							(value.startsWith(Table::UNESC_VALUE_START) && !value.endsWith(Table::UNESC_VALUE_END)) ||
+							(!value.startsWith(Table::UNESC_VALUE_START) && !value.endsWith(QString("\\") + Table::UNESC_VALUE_END) && value.endsWith(Table::UNESC_VALUE_END)))
 						throw Exception(Exception::getErrorMessage(ERR_MALFORMED_UNESCAPED_VALUE)
 										.arg(row + 1).arg(col_name),
 										ERR_MALFORMED_UNESCAPED_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -938,7 +936,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 						value=QString("DEFAULT");
 					}
 					//Unescaped values will not be enclosed in quotes
-					else if(value.startsWith(UNESC_VALUE_START) && value.endsWith(UNESC_VALUE_END))
+					else if(value.startsWith(Table::UNESC_VALUE_START) && value.endsWith(Table::UNESC_VALUE_END))
 					{
 						value.remove(0,1);
 						value.remove(value.length()-1, 1);
@@ -946,8 +944,8 @@ QString DataManipulationForm::getDMLCommand(int row)
 					//Quoting value
 					else
 					{
-						value.replace(QString("\\") + UNESC_VALUE_START, UNESC_VALUE_START);
-						value.replace(QString("\\") + UNESC_VALUE_END, UNESC_VALUE_END);
+						value.replace(QString("\\") + Table::UNESC_VALUE_START, Table::UNESC_VALUE_START);
+						value.replace(QString("\\") + Table::UNESC_VALUE_END, Table::UNESC_VALUE_END);
 						value=QString("'") + value + QString("'");
 					}
 

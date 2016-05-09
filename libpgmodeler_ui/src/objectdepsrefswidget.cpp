@@ -68,11 +68,11 @@ void ObjectDepsRefsWidget::applyConfiguration(void)
 
 void ObjectDepsRefsWidget::clearTables(void)
 {
-	while(dependences_tbw->rowCount() > 0)
-		dependences_tbw->removeRow(0);
+	dependences_tbw->clearContents();
+	dependences_tbw->setRowCount(0);
 
-	while(references_tbw->rowCount() > 0)
-		references_tbw->removeRow(0);
+	references_tbw->clearContents();
+	references_tbw->setRowCount(0);
 }
 
 void ObjectDepsRefsWidget::hideEvent(QHideEvent *event)

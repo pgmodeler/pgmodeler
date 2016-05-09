@@ -40,9 +40,6 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		//! \brief Default row colors for each operation type
 		static const QColor ROW_COLORS[3];
 		
-		//! \brief Default char used as unescaped value delimiter ({ and })
-		static const QChar UNESC_VALUE_START, UNESC_VALUE_END;
-		
 		SyntaxHighlighter *filter_hl;
 		
 		CodeCompletionWidget *code_compl_wgt;

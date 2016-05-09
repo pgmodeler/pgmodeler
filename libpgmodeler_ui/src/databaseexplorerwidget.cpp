@@ -863,8 +863,8 @@ Connection DatabaseExplorerWidget::getConnection(void)
 
 void DatabaseExplorerWidget::clearObjectProperties(void)
 {
-	while(properties_tbw->rowCount() > 0)
-		properties_tbw->removeRow(0);
+	properties_tbw->clearContents();
+	properties_tbw->setRowCount(0);
 
 	emit s_sourceCodeShowRequested(QString());
 }
