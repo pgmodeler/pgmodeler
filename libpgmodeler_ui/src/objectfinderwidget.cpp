@@ -98,8 +98,8 @@ void ObjectFinderWidget::clearResult(void)
 {
 	selected_obj=nullptr;
 
-	while(result_tbw->rowCount() > 0)
-		result_tbw->removeRow(0);
+	result_tbw->clearContents();
+	result_tbw->setRowCount(0);
 
 	found_lbl->setVisible(false);
 	clear_res_btn->setEnabled(false);

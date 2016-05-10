@@ -4575,6 +4575,14 @@ Table *DatabaseModel::createTable(void)
 
 						xmlparser.restorePosition();
 					}
+					//Retrieving initial data
+					else if(elem==ParsersAttributes::INITIAL_DATA)
+					{
+						xmlparser.savePosition();
+						xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
+						table->setInitialData(xmlparser.getElementContent());
+						xmlparser.restorePosition();
+					}
 
 					if(object)
 						table->addObject(object);

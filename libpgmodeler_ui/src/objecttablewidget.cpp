@@ -399,11 +399,9 @@ void ObjectTableWidget::removeRows(void)
 		if(!conf_exclusion || (conf_exclusion && sender_obj!=remove_all_tb) ||
 				(conf_exclusion &&  sender_obj==remove_all_tb && msg_box.result()==QDialog::Accepted))
 		{
-			while(table_tbw->rowCount() > 0)
-				table_tbw->removeRow(0);
-
+			table_tbw->clearContents();
+			table_tbw->setRowCount(0);
 			setButtonsEnabled();
-
 			emit s_rowsRemoved();
 		}
 	}

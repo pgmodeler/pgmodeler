@@ -384,6 +384,15 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(action_show_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
 	connect(action_hide_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
 #endif
+
+	actions=control_tb->actions();
+	actions.append(general_tb->actions());
+
+	for(QAction *act : actions)
+	{
+		if(!act->shortcut().toString().isEmpty())
+			act->setToolTip(act->toolTip() + QString(" (%1)").arg(act->shortcut().toString()));
+	}
 }
 
 MainWindow::~MainWindow(void)

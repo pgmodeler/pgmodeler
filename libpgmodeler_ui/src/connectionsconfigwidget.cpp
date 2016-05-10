@@ -111,9 +111,20 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 		Connection *conn=nullptr;
 
 		destroyConnections();
-
 		key_attribs.push_back(ParsersAttributes::ALIAS);
-		BaseConfigWidget::loadConfiguration(GlobalAttributes::CONNECTIONS_CONF, config_params, key_attribs);
+
+		try
+		{
+			BaseConfigWidget::loadConfiguration(GlobalAttributes::CONNECTIONS_CONF, config_params, key_attribs);
+		}
+		catch(Exception &e)
+		{
+			if(e.getErrorType()==ERR_LIBXMLERR)
+			{
+				fixConnectionsFileSyntax();
+				BaseConfigWidget::loadConfiguration(GlobalAttributes::CONNECTIONS_CONF, config_params, key_attribs);
+			}
+		}
 
 		itr=config_params.begin();
 		itr_end=config_params.end();
@@ -407,6 +418,35 @@ void ConnectionsConfigWidget::configureConnection(Connection *conn)
 
 		if(!other_params_edt->text().isEmpty())
 			conn->setConnectionParam(Connection::PARAM_OTHERS, other_params_edt->text());
+	}
+}
+
+void ConnectionsConfigWidget::fixConnectionsFileSyntax(void)
+{
+	QFile file;
+
+	file.setFileName(GlobalAttributes::CONFIGURATIONS_DIR +
+									 GlobalAttributes::DIR_SEPARATOR +
+									 GlobalAttributes::CONNECTIONS_CONF + GlobalAttributes::CONFIGURATION_EXT);
+	file.open(QFile::ReadWrite);
+
+	if(file.isOpen())
+	{
+		QByteArray buffer,
+				old_attrib = QByteArray(QString("%1=").arg(Connection::PARAM_CONN_TIMEOUT).toStdString().c_str()),
+				new_attrib = QByteArray(QString("%1=").arg(ParsersAttributes::CONNECTION_TIMEOUT).toStdString().c_str());
+
+		buffer = file.readAll();
+
+		if(buffer.contains(old_attrib))
+		{
+			buffer.replace(old_attrib, new_attrib);
+			file.reset();
+			file.resize(0);
+			file.write(buffer);
+		}
+
+		file.close();
 	}
 }
 

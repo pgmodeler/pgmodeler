@@ -40,9 +40,6 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		//! \brief Default row colors for each operation type
 		static const QColor ROW_COLORS[3];
 		
-		//! \brief Default char used as unescaped value delimiter ({ and })
-		static const QChar UNESC_VALUE_START, UNESC_VALUE_END;
-		
 		SyntaxHighlighter *filter_hl;
 		
 		CodeCompletionWidget *code_compl_wgt;
@@ -80,7 +77,7 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		
 		//! \brief Reset the state of changed rows, clearing all attributes used to control the modifications on them
 		void clearChangedRows(void);
-		
+
 	public:
 		DataManipulationForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 		
@@ -99,6 +96,9 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		
 		//! \brief Disable the buttons used to handle data
 		void disableControlButtons(void);
+
+		//! \brief Enables the delete/duplicate/copy buttons depending on the selected rows
+		void enableRowControlButtons(void);
 		
 		//! \brief Reset the state of advaced tab's controls
 		void resetAdvancedControls(void);
@@ -124,9 +124,12 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		//! \brief Mark a seleciton of rows to be delete. New rows are automatically removed
 		void markDeleteOnRows(void);
 		
-		//! \brief Insert a new row on the grid with the first column with edition enabled
-		void insertRow(void);
+		//! \brief Add a new row on the grid with the first column with edition enabled
+		void addRow(void);
 		
+		//! \brief Duplicate the selected rows creating new ones with the same values as the selection
+		void duplicateRows(void);
+
 		//! \brief Undo the operation made on all rows or in a set of selected rows
 		void undoOperations(void);
 		

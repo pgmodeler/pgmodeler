@@ -39,6 +39,10 @@
 
 class Table: public BaseTable {
 	private:
+		/*! \brief Stores the initial data of the table in CSV like form.
+		This will produce a set of INSERT commands that is appended to the table's SQL definition */
+		QString initial_data;
+
 		//! \brief Vectors that store basic table attributes
 		vector<TableObject *> columns;
 		vector<TableObject *> constraints;
@@ -100,7 +104,20 @@ class Table: public BaseTable {
 		void saveRelObjectsIndexes(ObjectType obj_type);
 		void restoreRelObjectsIndexes(ObjectType obj_type);
 
+		//! \brief Create an insert command from a list of columns and the values.
+		QString createInsertCommand(const QStringList &col_names, const QStringList &values);
+
 	public:
+		//! \brief Default char for data separator in initial-data tag
+		static const QString DATA_SEPARATOR,
+
+		//! \brief Default char for data line break in initial-data tag
+		DATA_LINE_BREAK;
+
+		//! \brief Default chars used as unescaped value delimiter ({ and })
+		static const QChar UNESC_VALUE_START,
+		UNESC_VALUE_END;
+
 		Table(void);
 		~Table(void);
 
@@ -328,9 +345,19 @@ class Table: public BaseTable {
 
 		QString getTruncateDefinition(bool cascade);
 
+		/*! \brief Defines an initial set of data for the table in a CSV-like buffer.
+		In order to separate columns and values use the DATA_SEPARATOR char and to separate
+		rows use the DATA_LINE_BREAK */
+		void setInitialData(const QString &value);
+
+		QString getInitialData(void);
+
+		/*! \brief Translate the CSV-like initial data to a set of INSERT commands.
+		In invalid columns exist in the buffer they will be rejected when generating the commands */
+		QString getInitialDataCommands(void);
+
 		friend class Relationship;
 		friend class OperationList;
-
 };
 
 #endif

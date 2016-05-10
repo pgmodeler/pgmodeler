@@ -531,7 +531,9 @@ void SQLExecutionWidget::copySelection(QTableWidget *results_tbw, bool use_popup
 	if(!results_tbw)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	if(!use_popup || (use_popup && QApplication::mouseButtons()==Qt::RightButton))
+	QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
+
+	if(sel_ranges.count()==1 && (!use_popup || (use_popup && QApplication::mouseButtons()==Qt::RightButton)))
 	{
 		QMenu copy_menu;
 
@@ -540,18 +542,13 @@ void SQLExecutionWidget::copySelection(QTableWidget *results_tbw, bool use_popup
 
 		if(!use_popup || (use_popup && copy_menu.exec(QCursor::pos())))
 		{
-			QList<QTableWidgetSelectionRange> sel_range=results_tbw->selectedRanges();
+			QTableWidgetSelectionRange selection=sel_ranges.at(0);
 
-			if(!sel_range.isEmpty())
-			{
-				QTableWidgetSelectionRange selection=sel_range.at(0);
-
-				//Generates the csv buffer and assigns it to application's clipboard
-				QByteArray buf=generateCSVBuffer(results_tbw,
-												 selection.topRow(), selection.leftColumn(),
-												 selection.rowCount(), selection.columnCount());
-				qApp->clipboard()->setText(buf);
-			}
+			//Generates the csv buffer and assigns it to application's clipboard
+			QByteArray buf=generateCSVBuffer(results_tbw,
+																			 selection.topRow(), selection.leftColumn(),
+																			 selection.rowCount(), selection.columnCount());
+			qApp->clipboard()->setText(buf);
 		}
 	}
 }

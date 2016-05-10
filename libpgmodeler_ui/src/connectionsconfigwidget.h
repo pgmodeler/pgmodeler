@@ -48,6 +48,10 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
 		
 		//! \brief Configures the passed connection setting it's attributes using the values from the form
 		void configureConnection(Connection *conn);
+
+		/*! \brief Fix the syntax of connections file in the user's config dir by replacing the old
+		connect_timeout attribute by connection-timeout */
+		void fixConnectionsFileSyntax(void);
 		
 		void hideEvent(QHideEvent *);
 		void showEvent(QShowEvent *);

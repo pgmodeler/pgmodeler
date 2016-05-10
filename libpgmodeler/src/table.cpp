@@ -18,6 +18,11 @@
 
 #include "table.h"
 
+const QString Table::DATA_SEPARATOR = QString("•");
+const QString Table::DATA_LINE_BREAK = QString("%1%2").arg("⸣").arg('\n');
+const QChar Table::UNESC_VALUE_START='{';
+const QChar	Table::UNESC_VALUE_END='}';
+
 Table::Table(void) : BaseTable()
 {
 	obj_type=OBJ_TABLE;
@@ -34,6 +39,7 @@ Table::Table(void) : BaseTable()
 	attributes[ParsersAttributes::COL_INDEXES]=QString();
 	attributes[ParsersAttributes::CONSTR_INDEXES]=QString();
 	attributes[ParsersAttributes::UNLOGGED]=QString();
+	attributes[ParsersAttributes::INITIAL_DATA]=QString();
 
 	copy_table=nullptr;
 	this->setName(trUtf8("new_table").toUtf8());
@@ -1373,7 +1379,10 @@ QString Table::getCodeDefinition(unsigned def_type)
 	{
 		setRelObjectsIndexesAttribute();
 		setPositionAttribute();
+		attributes[ParsersAttributes::INITIAL_DATA]=initial_data;
 	}
+	else
+		attributes[ParsersAttributes::INITIAL_DATA]=getInitialDataCommands();
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }
@@ -1618,4 +1627,117 @@ QString Table::getTruncateDefinition(bool cascade)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
+}
+
+void Table::setInitialData(const QString &value)
+{
+	setCodeInvalidated(initial_data != value);
+	initial_data = value;
+}
+
+QString Table::getInitialData(void)
+{
+	return(initial_data);
+}
+
+QString Table::getInitialDataCommands(void)
+{
+	QStringList buffer=initial_data.split(DATA_LINE_BREAK);
+
+	if(!buffer.isEmpty() && !buffer.at(0).isEmpty())
+	{
+		QStringList	col_names, col_values, commands, selected_cols;
+		int curr_col=0;
+		QList<int> ignored_cols;
+
+		col_names=(buffer.at(0)).split(DATA_SEPARATOR);
+		col_names.removeDuplicates();
+		buffer.removeFirst();
+
+		//Separating valid columns (selected) from the invalids (ignored)
+		for(QString col_name : col_names)
+		{
+			if(getObjectIndex(col_name, OBJ_COLUMN) >= 0)
+				selected_cols.append(col_name);
+			else
+				ignored_cols.append(curr_col);
+
+			curr_col++;
+		}
+
+		for(QString buf_row : buffer)
+		{
+			curr_col=0;
+
+			//Filtering the invalid columns' values
+			for(QString value : buf_row.split(DATA_SEPARATOR))
+			{
+				if(ignored_cols.contains(curr_col))
+					continue;
+
+				col_values.append(value);
+			}
+
+			commands.append(createInsertCommand(selected_cols, col_values));
+			col_values.clear();
+		}
+
+		return(commands.join('\n'));
+	}
+
+	return(QString());
+}
+
+QString Table::createInsertCommand(const QStringList &col_names, const QStringList &values)
+{
+	QString fmt_cmd, insert_cmd = QString("INSERT INTO %1 (%2) VALUES (%3);\n%4");
+	QStringList val_list, col_list;
+	int curr_col=0;
+
+	for(QString col_name : col_names)
+		col_list.push_back(BaseObject::formatName(col_name));
+
+	curr_col=0;
+
+	for(QString value : values)
+	{
+		//Empty values as considered as DEFAULT
+		if(value.isEmpty())
+		{
+			value=QString("DEFAULT");
+		}
+		//Unescaped values will not be enclosed in quotes
+		else if(value.startsWith(UNESC_VALUE_START) && value.endsWith(UNESC_VALUE_END))
+		{
+			value.remove(0,1);
+			value.remove(value.length()-1, 1);
+		}
+		//Quoting value
+		else
+		{
+			value.replace(QString("\\") + UNESC_VALUE_START, UNESC_VALUE_START);
+			value.replace(QString("\\") + UNESC_VALUE_END, UNESC_VALUE_END);
+			value=QString("'") + value + QString("'");
+		}
+
+		val_list.push_back(value);
+	}
+
+	if(!col_list.isEmpty() && !val_list.isEmpty())
+	{
+		//If the set of values is greater than the set of columns it will be truncated
+		if(val_list.size() > col_list.size())
+			val_list.erase(val_list.begin() + col_list.size(), val_list.end());
+		//If the set of columns is greater than the set of values than DEFAULT values will be provided
+		else if(col_list.size() > val_list.size())
+		{
+			for(curr_col = val_list.size(); curr_col < col_list.size(); curr_col++)
+				val_list.append(QString("DEFAULT"));
+		}
+
+		fmt_cmd=insert_cmd.arg(getSignature()).arg(col_list.join(", "))
+									.arg(val_list.join(", ")).arg(ParsersAttributes::DDL_END_TOKEN);
+	}
+
+	return(fmt_cmd);
 }

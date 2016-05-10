@@ -106,7 +106,8 @@ SOURCES += src/mainwindow.cpp \
     src/numberedtexteditor.cpp \
 		src/linenumberswidget.cpp \
     src/metadatahandlingform.cpp \
-    src/welcomewidget.cpp
+    src/welcomewidget.cpp \
+    src/tabledatawidget.cpp
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
@@ -199,7 +200,8 @@ HEADERS += src/mainwindow.h \
     src/numberedtexteditor.h \
 		src/linenumberswidget.h \
     src/metadatahandlingform.h \
-    src/welcomewidget.h
+    src/welcomewidget.h \
+    src/tabledatawidget.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \
@@ -276,7 +278,8 @@ FORMS += ui/mainwindow.ui \
          ui/sqlexecutionwidget.ui \
          ui/donatewidget.ui \
     ui/metadatahandlingform.ui \
-    ui/welcomewidget.ui
+    ui/welcomewidget.ui \
+    ui/tabledatawidget.ui
 
 unix|windows: LIBS += -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
                       -L$$OUT_PWD/../libpgconnector/ -lpgconnector \
