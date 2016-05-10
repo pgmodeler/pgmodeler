@@ -122,6 +122,7 @@ void TableDataWidget::deleteColumns(void)
 				data_tbw->removeColumn(sel_range.leftColumn());
 		}
 
+		//Clears the entire table if no columns is left
 		if(data_tbw->columnCount()==0)
 		{
 			clearRows(false);
@@ -147,7 +148,6 @@ void TableDataWidget::clearRows(bool confirm)
 	{
 		data_tbw->clearContents();
 		data_tbw->setRowCount(0);
-
 		clear_tb->setEnabled(false);
 	}
 }
@@ -226,17 +226,20 @@ void TableDataWidget::populateDataGrid(void)
 	QString ini_data;
 	int col=0, row=0;
 	QStringList columns, aux_cols, buffer, values;
-	QVector<int> disabled_cols;
+	QVector<int> invalid_cols;
 
 	data_tbw->clearContents();
 	data_tbw->setRowCount(0);
 
 	ini_data=table->getInitialData();
 
+	/* If the initial data buffer is preset the columns
+	there have priority over the current table's columns */
 	if(!ini_data.isEmpty())
-	{
+	{		
 		buffer=ini_data.split(Table::DATA_LINE_BREAK);
 
+		//The first line of the buffer always have the column names
 		if(!buffer.isEmpty() && !buffer[0].isEmpty())
 			columns.append(buffer[0].split(Table::DATA_SEPARATOR));
 	}
@@ -248,12 +251,15 @@ void TableDataWidget::populateDataGrid(void)
 
 	data_tbw->setColumnCount(columns.size());
 
+	//Creating the header of the grid
 	for(QString col_name : columns)
 	{
 		item=new QTableWidgetItem(col_name);
 
+		/* Marking the invalid columns. The ones which aren't present in the table
+		or were already created in a previous iteration */
 		if(table->getObjectIndex(col_name, OBJ_COLUMN) < 0 || aux_cols.contains(col_name))
-			disabled_cols.push_back(col);
+			invalid_cols.push_back(col);
 
 		aux_cols.append(col_name);
 		data_tbw->setHorizontalHeaderItem(col++, item);
@@ -262,6 +268,7 @@ void TableDataWidget::populateDataGrid(void)
 	buffer.removeAt(0);
 	row=0;
 
+	//Populating the grid with the data
 	for(QString buf_row : buffer)
 	{
 		addRow();
@@ -277,9 +284,10 @@ void TableDataWidget::populateDataGrid(void)
 		row++;
 	}
 
-	if(!disabled_cols.isEmpty())
+	//Disabling invalid columns avoiding the user interaction
+	if(!invalid_cols.isEmpty())
 	{
-		for(int dis_col : disabled_cols)
+		for(int dis_col : invalid_cols)
 		{
 			for(row = 0; row < data_tbw->rowCount(); row++)
 				setItemInvalid(data_tbw->item(row, dis_col));
@@ -290,8 +298,9 @@ void TableDataWidget::populateDataGrid(void)
 		}
 	}
 
-	warn_frm->setVisible(!disabled_cols.isEmpty());
+	warn_frm->setVisible(!invalid_cols.isEmpty());
 	data_tbw->resizeRowsToContents();
+	data_tbw->resizeColumnsToContents();
 	configureColumnNamesMenu();
 }
 
@@ -313,7 +322,7 @@ void TableDataWidget::configureColumnNamesMenu(void)
 	else
 	{
 		for(QString col_name : col_names)
-		col_names_menu.addAction(col_name);
+			col_names_menu.addAction(col_name);
 	}
 }
 
@@ -346,6 +355,7 @@ QString TableDataWidget::generateDataBuffer(void)
 	for(int col=0; col < col_count; col++)
 		col_names.push_back(data_tbw->horizontalHeaderItem(col)->text());
 
+	//The first line of the buffer consists in the column names
 	buffer.push_back(col_names.join(Table::DATA_SEPARATOR));
 
 	for(int row = 0; row < data_tbw->rowCount(); row++)

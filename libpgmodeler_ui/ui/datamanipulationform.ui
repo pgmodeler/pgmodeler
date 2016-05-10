@@ -666,7 +666,7 @@
              </font>
             </property>
             <property name="toolTip">
-             <string>Duplicate the selected rows as new ones</string>
+             <string>Duplicate the selected rows</string>
             </property>
             <property name="text">
              <string>Duplicate</string>

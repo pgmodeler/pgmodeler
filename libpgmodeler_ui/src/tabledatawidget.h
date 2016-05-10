@@ -32,13 +32,23 @@ class TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 	private:
 		Q_OBJECT
 
+		/*! \brief Stores the remaining column names not used in the grid.
+		This menu is used either to add new columns and fix invalid columns in the grid */
 		QMenu col_names_menu;
 
+		//! brief Loads the grid with the initial data of the curret table object
 		void populateDataGrid(void);
+
+		//! brief Configures the col_name_menu with the not used columns names
 		void configureColumnNamesMenu(void);
+
+		//! brief Toggles the warning frame if some invalid or duplicated columns is detected
 		void toggleWarningFrame(void);
+
+		//! brief Marks a certain item as invalid cause it to be deactivated in the grid
 		void setItemInvalid(QTableWidgetItem *item);
 
+		//! brief Generated the CSV-like buffer to be used as initial data in the table object
 		QString generateDataBuffer(void);
 
 	public:
