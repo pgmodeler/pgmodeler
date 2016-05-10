@@ -61,7 +61,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="10">
+   <item row="1" column="0" colspan="11">
     <widget class="QFrame" name="warn_frm">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -150,7 +150,7 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="0" colspan="10">
+   <item row="2" column="0" colspan="11">
     <widget class="QTableWidget" name="data_tbw">
      <property name="enabled">
       <bool>true</bool>
@@ -235,9 +235,6 @@
        <height>22</height>
       </size>
      </property>
-     <property name="shortcut">
-      <string>Ins</string>
-     </property>
      <property name="popupMode">
       <enum>QToolButton::InstantPopup</enum>
      </property>
@@ -247,7 +244,7 @@
     </widget>
    </item>
    <item row="0" column="8">
-    <widget class="QToolButton" name="clear_tb">
+    <widget class="QToolButton" name="clear_rows_tb">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -258,14 +255,14 @@
       </size>
      </property>
      <property name="toolTip">
-      <string>Clear the entire grid</string>
+      <string>Remove all rows from the grid preserving columns</string>
      </property>
      <property name="text">
       <string>Clear</string>
      </property>
      <property name="icon">
       <iconset resource="../res/resources.qrc">
-       <normaloff>:/icones/icones/limpartexto.png</normaloff>:/icones/icones/limpartexto.png</iconset>
+       <normaloff>:/icones/icones/delrows.png</normaloff>:/icones/icones/delrows.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -316,7 +313,7 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="10">
+   <item row="3" column="0" colspan="11">
     <widget class="QFrame" name="hint_frm">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -456,7 +453,7 @@
      </property>
     </spacer>
    </item>
-   <item row="0" column="9">
+   <item row="0" column="10">
     <spacer name="horizontalSpacer_2">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -533,8 +530,43 @@
      </property>
     </spacer>
    </item>
+   <item row="0" column="9">
+    <widget class="QToolButton" name="clear_cols_tb">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Remove all columns (and rows) from the grid</string>
+     </property>
+     <property name="text">
+      <string>Clear</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../res/resources.qrc">
+       <normaloff>:/icones/icones/delcols.png</normaloff>:/icones/icones/delcols.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
+     </property>
+     <property name="shortcut">
+      <string>Ctrl+Shift+Del</string>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonIconOnly</enum>
+     </property>
+    </widget>
+   </item>
   </layout>
-  <zorder>clear_tb</zorder>
+  <zorder>clear_rows_tb</zorder>
   <zorder>hint_frm</zorder>
   <zorder>data_tbw</zorder>
   <zorder>warn_frm</zorder>
@@ -543,6 +575,7 @@
   <zorder>dup_rows_tb</zorder>
   <zorder>add_row_tb</zorder>
   <zorder>del_rows_tb</zorder>
+  <zorder>clear_cols_tb</zorder>
  </widget>
  <resources>
   <include location="../res/resources.qrc"/>

@@ -34,6 +34,10 @@ ModelNavigationWidget::ModelNavigationWidget(QWidget *parent): QWidget(parent)
 			[=](){ models_cmb->setCurrentIndex(models_cmb->currentIndex()-1); });
 
 	connect(models_cmb, SIGNAL(highlighted(int)), this, SLOT(showTooltip(int)));
+
+	previous_tb->setToolTip(previous_tb->toolTip() + QString(" (%1)").arg(previous_tb->shortcut().toString()));
+	next_tb->setToolTip(next_tb->toolTip() + QString(" (%1)").arg(next_tb->shortcut().toString()));
+	close_tb->setToolTip(close_tb->toolTip() + QString(" (%1)").arg(close_tb->shortcut().toString()));
 }
 
 int ModelNavigationWidget::getCurrentIndex(void)

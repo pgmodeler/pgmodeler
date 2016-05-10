@@ -41,9 +41,11 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, BASE
 	add_row_tb->setToolTip(add_row_tb->toolTip() + QString(" (%1)").arg(add_row_tb->shortcut().toString()));
 	del_rows_tb->setToolTip(del_rows_tb->toolTip() + QString(" (%1)").arg(del_rows_tb->shortcut().toString()));
 	dup_rows_tb->setToolTip(dup_rows_tb->toolTip() + QString(" (%1)").arg(dup_rows_tb->shortcut().toString()));
-	clear_tb->setToolTip(clear_tb->toolTip() + QString(" (%1)").arg(clear_tb->shortcut().toString()));
+	clear_rows_tb->setToolTip(clear_rows_tb->toolTip() + QString(" (%1)").arg(clear_rows_tb->shortcut().toString()));
+	clear_cols_tb->setToolTip(clear_cols_tb->toolTip() + QString(" (%1)").arg(clear_cols_tb->shortcut().toString()));
 
 	add_col_tb->setMenu(&col_names_menu);
+	data_tbw->removeEventFilter(this);
 
 	setMinimumSize(640, 480);
 
@@ -51,7 +53,8 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, BASE
 	connect(dup_rows_tb, SIGNAL(clicked(bool)), this, SLOT(duplicateRows()));
 	connect(del_rows_tb, SIGNAL(clicked(bool)), this, SLOT(deleteRows()));
 	connect(del_cols_tb, SIGNAL(clicked(bool)), this, SLOT(deleteColumns()));
-	connect(clear_tb, SIGNAL(clicked(bool)), this, SLOT(clearRows()));
+	connect(clear_rows_tb, SIGNAL(clicked(bool)), this, SLOT(clearRows()));
+	connect(clear_cols_tb, SIGNAL(clicked(bool)), this, SLOT(clearColumns()));
 	connect(data_tbw, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(insertRowOnTabPress(int,int,int,int)), Qt::QueuedConnection);
 	connect(&col_names_menu, SIGNAL(triggered(QAction*)), this, SLOT(addColumn(QAction *)));
 	connect(data_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(enableButtons()));
@@ -87,6 +90,8 @@ void TableDataWidget::duplicateRows(void)
 				}
 			}
 		}
+
+		data_tbw->clearSelection();
 	}
 }
 
@@ -127,6 +132,7 @@ void TableDataWidget::deleteColumns(void)
 		{
 			clearRows(false);
 			add_row_tb->setEnabled(false);
+			clear_cols_tb->setEnabled(false);
 		}
 
 		del_cols_tb->setEnabled(false);
@@ -141,14 +147,32 @@ void TableDataWidget::clearRows(bool confirm)
 	Messagebox msg_box;
 
 	if(confirm)
-		msg_box.show(trUtf8("Clear the grid is an irreversible action! Do you really want to proceed?"),
+		msg_box.show(trUtf8("Remove all rows is an irreversible action! Do you really want to proceed?"),
 								 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
 	if(!confirm || msg_box.result()==QDialog::Accepted)
 	{
 		data_tbw->clearContents();
 		data_tbw->setRowCount(0);
-		clear_tb->setEnabled(false);
+		clear_rows_tb->setEnabled(false);
+	}
+}
+
+void TableDataWidget::clearColumns(void)
+{
+	Messagebox msg_box;
+
+		msg_box.show(trUtf8("Remove all columns is an irreversible action! Do you really want to proceed?"),
+								 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+
+	if(msg_box.result()==QDialog::Accepted)
+	{
+		clearRows(false);
+		data_tbw->setColumnCount(0);
+		clear_cols_tb->setEnabled(false);
+		warn_frm->setVisible(false);
+		add_row_tb->setEnabled(false);
+		configureColumnNamesMenu();
 	}
 }
 
@@ -228,9 +252,7 @@ void TableDataWidget::populateDataGrid(void)
 	QStringList columns, aux_cols, buffer, values;
 	QVector<int> invalid_cols;
 
-	data_tbw->clearContents();
-	data_tbw->setRowCount(0);
-
+	clearRows(false);
 	ini_data=table->getInitialData();
 
 	/* If the initial data buffer is preset the columns
@@ -301,6 +323,9 @@ void TableDataWidget::populateDataGrid(void)
 	warn_frm->setVisible(!invalid_cols.isEmpty());
 	data_tbw->resizeRowsToContents();
 	data_tbw->resizeColumnsToContents();
+
+	add_row_tb->setEnabled(!columns.isEmpty());
+	clear_cols_tb->setEnabled(!columns.isEmpty());
 	configureColumnNamesMenu();
 }
 
@@ -321,6 +346,8 @@ void TableDataWidget::configureColumnNamesMenu(void)
 		col_names_menu.addAction(trUtf8("(no columns)"))->setEnabled(false);
 	else
 	{
+		col_names.sort();
+
 		for(QString col_name : col_names)
 			col_names_menu.addAction(col_name);
 	}
@@ -413,7 +440,7 @@ void TableDataWidget::addRow(void)
 
 	data_tbw->blockSignals(false);
 
-	clear_tb->setEnabled(true);
+	clear_rows_tb->setEnabled(true);
 }
 
 void TableDataWidget::addColumn(QAction *action)
@@ -437,6 +464,8 @@ void TableDataWidget::addColumn(QAction *action)
 		}
 
 		add_row_tb->setEnabled(true);
+		clear_cols_tb->setEnabled(true);
+		data_tbw->resizeColumnsToContents();
 		configureColumnNamesMenu();
 	}
 }

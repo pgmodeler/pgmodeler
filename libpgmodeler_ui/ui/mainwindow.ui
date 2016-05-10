@@ -868,7 +868,7 @@
     <string>&amp;New</string>
    </property>
    <property name="toolTip">
-    <string>New</string>
+    <string>New model</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
@@ -886,7 +886,7 @@
     <string>&amp;Save</string>
    </property>
    <property name="toolTip">
-    <string>Save</string>
+    <string>Save model</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -969,6 +969,9 @@
    <property name="text">
     <string>E&amp;xit</string>
    </property>
+   <property name="toolTip">
+    <string>Exit pgModeler</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
    </property>
@@ -1005,6 +1008,9 @@
    <property name="text">
     <string>&amp;Print</string>
    </property>
+   <property name="toolTip">
+    <string>Print model</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+P</string>
    </property>
@@ -1020,6 +1026,9 @@
    <property name="text">
     <string>&amp;Undo</string>
    </property>
+   <property name="toolTip">
+    <string>Undo operation</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+Z</string>
    </property>
@@ -1034,6 +1043,9 @@
    </property>
    <property name="text">
     <string>&amp;Redo</string>
+   </property>
+   <property name="toolTip">
+    <string>Redo operation</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Y</string>
@@ -1173,6 +1185,9 @@
    <property name="toolTip">
     <string>Edit pgModeler settings</string>
    </property>
+   <property name="shortcut">
+    <string>F12</string>
+   </property>
   </action>
   <action name="action_save_all">
    <property name="enabled">
@@ -1225,6 +1240,9 @@
    </property>
    <property name="text">
     <string>New</string>
+   </property>
+   <property name="toolTip">
+    <string>New object</string>
    </property>
   </action>
   <action name="action_plugins">
@@ -1380,6 +1398,9 @@
    <property name="toolTip">
     <string>Welcome screen</string>
    </property>
+   <property name="shortcut">
+    <string>Shift+W</string>
+   </property>
   </action>
   <action name="action_design">
    <property name="checkable">
@@ -1398,6 +1419,9 @@
    <property name="toolTip">
     <string>Design database models</string>
    </property>
+   <property name="shortcut">
+    <string>Shift+D</string>
+   </property>
   </action>
   <action name="action_manage">
    <property name="checkable">
@@ -1412,6 +1436,9 @@
    </property>
    <property name="toolTip">
     <string>Manage existent databases</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+M</string>
    </property>
   </action>
   <action name="action_bug_report">

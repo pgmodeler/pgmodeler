@@ -71,6 +71,7 @@ class TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 		void deleteRows(void);
 		void deleteColumns(void);
 		void clearRows(bool confirm=true);
+		void clearColumns(void);
 		void fixInvalidColumn(int col_idx);
 		void enableButtons(void);
 };
