@@ -1646,24 +1646,41 @@ QString Table::getInitialDataCommands(void)
 
 	if(!buffer.isEmpty() && !buffer.at(0).isEmpty())
 	{
-		QStringList	col_names, commands;
-		QList<int> ignored_cols;
+		QStringList	col_names, col_values, commands, selected_cols;
 		int curr_col=0;
+		QList<int> ignored_cols;
 
 		col_names=(buffer.at(0)).split(DATA_SEPARATOR);
 		col_names.removeDuplicates();
 		buffer.removeFirst();
 
+		//Separating valid columns (selected) from the invalids (ignored)
 		for(QString col_name : col_names)
 		{
-			if(getObjectIndex(col_name, OBJ_COLUMN) < 0)
+			if(getObjectIndex(col_name, OBJ_COLUMN) >= 0)
+				selected_cols.append(col_name);
+			else
 				ignored_cols.append(curr_col);
 
 			curr_col++;
 		}
 
 		for(QString buf_row : buffer)
-			commands.append(createInsertCommand(col_names, buf_row.split(DATA_SEPARATOR), ignored_cols));
+		{
+			curr_col=0;
+
+			//Filtering the invalid columns' values
+			for(QString value : buf_row.split(DATA_SEPARATOR))
+			{
+				if(ignored_cols.contains(curr_col))
+					continue;
+
+				col_values.append(value);
+			}
+
+			commands.append(createInsertCommand(selected_cols, col_values));
+			col_values.clear();
+		}
 
 		return(commands.join('\n'));
 	}
@@ -1671,27 +1688,19 @@ QString Table::getInitialDataCommands(void)
 	return(QString());
 }
 
-QString Table::createInsertCommand(const QStringList &col_names, const QStringList &values, const QList<int> &ignored_cols)
+QString Table::createInsertCommand(const QStringList &col_names, const QStringList &values)
 {
 	QString fmt_cmd, insert_cmd = QString("INSERT INTO %1 (%2) VALUES (%3);\n%4");
 	QStringList val_list, col_list;
 	int curr_col=0;
 
 	for(QString col_name : col_names)
-	{
-		if(ignored_cols.contains(curr_col++))
-			continue;
-
 		col_list.push_back(BaseObject::formatName(col_name));
-	}
 
 	curr_col=0;
 
 	for(QString value : values)
 	{
-		if(ignored_cols.contains(curr_col++))
-			continue;
-
 		//Empty values as considered as DEFAULT
 		if(value.isEmpty())
 		{
@@ -1716,8 +1725,10 @@ QString Table::createInsertCommand(const QStringList &col_names, const QStringLi
 
 	if(!col_list.isEmpty() && !val_list.isEmpty())
 	{
+		//If the set of values is greater than the set of columns it will be truncated
 		if(val_list.size() > col_list.size())
 			val_list.erase(val_list.begin() + col_list.size(), val_list.end());
+		//If the set of columns is greater than the set of values than DEFAULT values will be provided
 		else if(col_list.size() > val_list.size())
 		{
 			for(curr_col = val_list.size(); curr_col < col_list.size(); curr_col++)
