@@ -952,7 +952,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 					if(op_type==OP_INSERT)
 						val_list.push_back(value);
 					else
-						val_list.push_back(QString("%1=%2").arg(col_name).arg(value));
+						val_list.push_back(QString("\"%1\"=%2").arg(col_name).arg(value));
 				}
 			}
 		}
