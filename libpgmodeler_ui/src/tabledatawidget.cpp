@@ -251,6 +251,7 @@ void TableDataWidget::populateDataGrid(void)
 	int col=0, row=0;
 	QStringList columns, aux_cols, buffer, values;
 	QVector<int> invalid_cols;
+	Column *column=nullptr;
 
 	clearRows(false);
 	ini_data=table->getInitialData();
@@ -276,12 +277,22 @@ void TableDataWidget::populateDataGrid(void)
 	//Creating the header of the grid
 	for(QString col_name : columns)
 	{
+		column = table->getColumn(col_name);
 		item=new QTableWidgetItem(col_name);
 
 		/* Marking the invalid columns. The ones which aren't present in the table
 		or were already created in a previous iteration */
-		if(table->getObjectIndex(col_name, OBJ_COLUMN) < 0 || aux_cols.contains(col_name))
+		if(!column || aux_cols.contains(col_name))
+		{
 			invalid_cols.push_back(col);
+
+			if(!column)
+				item->setToolTip(trUtf8("Unknown column"));
+			else
+				item->setToolTip(trUtf8("Duplicated column"));
+		}
+		else
+			item->setToolTip(QString("%1 [%2]").arg(col_name).arg(~column->getType()));
 
 		aux_cols.append(col_name);
 		data_tbw->setHorizontalHeaderItem(col++, item);
