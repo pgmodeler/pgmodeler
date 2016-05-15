@@ -14,7 +14,7 @@
     </message>
     <message>
         <source>PostgreSQL Database Modeler</source>
-        <translation></translation>
+        <translation>Modelador de Banco de Dados PostgreSQL</translation>
     </message>
     <message>
         <source>Design, configure, deploy</source>
@@ -46,7 +46,11 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 The complete text of GPLv3 is at LICENSE file on source code root directory. Also, you can get the complete GNU General Public License at &lt;http://www.gnu.org/licenses/&gt;</source>
-        <translation></translation>
+        <translation>Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo sob os termos da Licença Pública Geral da GNU como publicada pela Free Software Foundation versão 3.
+
+Este programa é distribuído na esperança de que seja útil, mas SEM QUALQUER GARANTIA; inclusive sem a garantia implícita de COMERCIABILIDADE ou ADEQUAÇÃO À UM PROPÓSITO ESPECÍFICO.  Leia a Licença Pública Geral da GNU para mais detalhes.
+
+O texto completo da GPLv3 está no arquivo LICENSE no diretório raiz do código fonte. Você também pode obter a Licença Pública Geral da GNU completa em &lt;http://www.gnu.org/licenses/&gt;</translation>
     </message>
     <message>
         <source>Version %1</source>
@@ -56,14 +60,17 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <source>Copyright 2006-2013 - Raphael Araújo e Silva &lt;rkhaotix@gmail.com&gt;
 
 The pgModeler project is a CASE tool for modeling relational databases for PostgreSQL DBMS through the use of modeling techniques from entity-relationship diagrams as well merging concepts that PostgreSQL implements.</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Em dúvida sobre &quot;bem como mesclando&quot;.</translatorcomment>
+        <translation>Copyright 2006-2013 - Raphael Araújo e Silva &lt;rkhaotix@gmail.com&gt;
+
+O projeto pgModeler trata de uma ferramenta CASE para a criação de modelos de bancos de dados relacionais para o SGDB PostgreSQL através do uso de técnicas de modelagem de diagramas entidade-relacionamento, como também mesclando conceitos implementados pelo próprio PostgreSQL.</translation>
     </message>
 </context>
 <context>
     <name>AggregateWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Final Function:</source>
@@ -79,7 +86,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Initial Condition:</source>
-        <translation></translation>
+        <translation>Condição Inicial:</translation>
     </message>
     <message>
         <source>Funtion Inputs</source>
@@ -117,7 +124,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     <name>AppearanceConfigWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Element:</source>
@@ -137,7 +144,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Global: Position hint text</source>
-        <translation>Global: Texto informativo de posição</translation>
+        <translation>Global: Texto do informativo de posição</translation>
     </message>
     <message>
         <source>Global: Position hint box</source>
@@ -145,11 +152,11 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Global: Objects type</source>
-        <translation>Global: Tipo de objetos</translation>
+        <translation>Global: Tipo dos objetos</translation>
     </message>
     <message>
         <source>Global: Lock arc</source>
-        <translation>Global: Arco de cadeado</translation>
+        <translation>Global: Arco do cadeado</translation>
     </message>
     <message>
         <source>Global: Lock body</source>
@@ -157,23 +164,23 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Table: Schema name</source>
-        <translation>Tabela: Nome de esquema</translation>
+        <translation>Tabela: Nome do esquema</translation>
     </message>
     <message>
         <source>Table: Table name</source>
-        <translation>Tabela: Nome de tabela</translation>
+        <translation>Tabela: Nome da tabela</translation>
     </message>
     <message>
         <source>Table: Columns box</source>
-        <translation>Tabela: Caixa de colunas</translation>
+        <translation>Tabela: Caixa das colunas</translation>
     </message>
     <message>
         <source>Table: Extended attributes box</source>
-        <translation>Tabela: Caixa de atributos extendidos</translation>
+        <translation>Tabela: Caixa dos atributos extendidos</translation>
     </message>
     <message>
         <source>Table: Title box</source>
-        <translation>Tabela: Caixa de título</translation>
+        <translation>Tabela: Caixa do título</translation>
     </message>
     <message>
         <source>Rule: Name</source>
@@ -201,23 +208,23 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>View: Schema name</source>
-        <translation>Visão: Nome de esquema</translation>
+        <translation>Visão: Nome do esquema</translation>
     </message>
     <message>
         <source>View: View name</source>
-        <translation>Visão: Nome de visão</translation>
+        <translation>Visão: Nome da visão</translation>
     </message>
     <message>
         <source>View: References box</source>
-        <translation>Visão: Caixa de referências</translation>
+        <translation>Visão: Caixa das referências</translation>
     </message>
     <message>
         <source>View: Title box</source>
-        <translation>Visão: Caixa de título</translation>
+        <translation>Visão: Caixa do título</translation>
     </message>
     <message>
         <source>View: Table / columns alias</source>
-        <translation>Visão: Alias de tabela / coluna</translation>
+        <translation>Visão: Apelido da tabela / coluna</translation>
     </message>
     <message>
         <source>View: Referenced column</source>
@@ -229,7 +236,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>View: Reference descriptor</source>
-        <translation>Visão: Descritor de referência</translation>
+        <translation>Visão: Descritor da referência</translation>
     </message>
     <message>
         <source>Textbox: Body</source>
@@ -237,7 +244,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Column: Column name</source>
-        <translation>Coluna: Nome de coluna</translation>
+        <translation>Coluna: Nome da coluna</translation>
     </message>
     <message>
         <source>Column: Descriptor</source>
@@ -253,7 +260,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Column (pk): Column name</source>
-        <translation>Coluna (pk): Nome de coluna</translation>
+        <translation>Coluna (pk): Nome da coluna</translation>
     </message>
     <message>
         <source>Column (pk): Descriptor</source>
@@ -261,7 +268,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Column (fk): Column name</source>
-        <translation>Coluna (fk): Nome de coluna</translation>
+        <translation>Coluna (fk): Nome da coluna</translation>
     </message>
     <message>
         <source>Column (fk): Descriptor</source>
@@ -269,7 +276,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Column (uq): Column name</source>
-        <translation>Coluna (uq): Nome de coluna</translation>
+        <translation>Coluna (uq): Nome da coluna</translation>
     </message>
     <message>
         <source>Column (uq): Descriptor</source>
@@ -277,7 +284,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Column (nn): Column name</source>
-        <translation>Coluna (nn): Nome de coluna</translation>
+        <translation>Coluna (nn): Nome da coluna</translation>
     </message>
     <message>
         <source>Column (nn): Descriptor</source>
@@ -325,11 +332,11 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Font color / Fill color 1</source>
-        <translation>Cor da fonte / preenchimento 1</translation>
+        <translation>Cor da fonte / Cor do preenchimento 1</translation>
     </message>
     <message>
         <source>Fill color 2</source>
-        <translation>Cor de preenchimento 2</translation>
+        <translation>Cor do preenchimento 2</translation>
     </message>
     <message>
         <source>Border color</source>
@@ -341,7 +348,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>View: Extended attributes box</source>
-        <translation type="unfinished"></translation>
+        <translation>Visão: Caixa dos atributos extendidos</translation>
     </message>
 </context>
 <context>
@@ -382,7 +389,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     <name>BaseForm</name>
     <message>
         <source>Dialog</source>
-        <translation></translation>
+        <translation>Diálogo</translation>
     </message>
     <message>
         <source>&amp;Apply</source>
@@ -429,7 +436,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>View</source>
-        <translation></translation>
+        <translation>Visão</translation>
     </message>
     <message>
         <source>Domain</source>
@@ -441,7 +448,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Aggregate</source>
-        <translation>Função de Agregação</translation>
+        <translation>Agregação</translation>
     </message>
     <message>
         <source>Operator</source>
@@ -449,7 +456,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Sequence</source>
-        <translation>Seqüência</translation>
+        <translation>Sequência</translation>
     </message>
     <message>
         <source>Role</source>
@@ -457,11 +464,11 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Conversion</source>
-        <translation>Conversão de Codificação</translation>
+        <translation>Conversão</translation>
     </message>
     <message>
         <source>Cast</source>
-        <translation>Conversão de Tipo</translation>
+        <translation>Molde</translation>
     </message>
     <message>
         <source>Language</source>
@@ -481,7 +488,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Operator Class</source>
-        <translation></translation>
+        <translation>Classe de Operadores</translation>
     </message>
     <message>
         <source>Database</source>
@@ -489,7 +496,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Relationship</source>
-        <translation></translation>
+        <translation>Relacionamento</translation>
     </message>
     <message>
         <source>Textbox</source>
@@ -505,17 +512,17 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Collation</source>
-        <translation type="unfinished"></translation>
+        <translation>Intercalação</translation>
     </message>
     <message>
         <source>Type Attribute</source>
-        <translation type="unfinished"></translation>
+        <translation>Atributo de Tipo</translation>
     </message>
     <message numerus="yes">
         <source>new_object</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>novo_objeto</numerusform>
+            <numerusform>novos_objetos</numerusform>
         </translation>
     </message>
 </context>
@@ -523,7 +530,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     <name>BaseObjectWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Name:</source>
@@ -531,7 +538,8 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>icone</source>
-        <translation></translation>
+        <translatorcomment>Versão em inglês está errada!</translatorcomment>
+        <translation>ícone</translation>
     </message>
     <message>
         <source>Comment:</source>
@@ -543,7 +551,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Owner:</source>
-        <translation></translation>
+        <translation>Proprietário:</translation>
     </message>
     <message>
         <source>Schema:</source>
@@ -559,11 +567,11 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>This object is protected thus no change in form will be applied to it.</source>
-        <translation>Este o objeto encontra-se protegido, assim nenhuma alteração no formulário será aplicada ao mesmo.</translation>
+        <translation>Este objeto está protegido, assim nenhuma alteração no formulário será aplicada ao mesmo.</translation>
     </message>
     <message>
         <source>Create / Edit: </source>
-        <translation></translation>
+        <translation>Criar / Editar:</translation>
     </message>
     <message>
         <source>Value(s)</source>
@@ -579,34 +587,34 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Edit permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>Editar permissões</translation>
     </message>
     <message>
         <source>Disables the generated SQL code using comment tokens (--)</source>
-        <translation type="unfinished"></translation>
+        <translation>Desabilitar o código SQL gerado usando símbolos de comentário (--)</translation>
     </message>
     <message>
         <source>Disable SQL code</source>
-        <translation type="unfinished"></translation>
+        <translation>Desabilitar código SQL</translation>
     </message>
     <message>
         <source>Collation:</source>
-        <translation type="unfinished"></translation>
+        <translation>Intercalação:</translation>
     </message>
     <message>
         <source>Required field. Leaving this empty will raise errors!</source>
-        <translation type="unfinished"></translation>
+        <translation>Campo requerido. Deixá-lo em branco gerará erros!</translation>
     </message>
     <message>
         <source>The &lt;em style=&apos;color: %1&apos;&gt;&lt;strong&gt;highlighted&lt;/strong&gt;&lt;/em&gt; fields on the form are available only on specific PostgreSQL versions. 													When generating SQL code for versions other than those specified on field&apos;s tooltips pgModeler will ignore it&apos;s values.</source>
-        <translation type="unfinished"></translation>
+        <translation>Os campos &lt;em style=&apos;color: %1&apos;&gt;&lt;strong&gt;destacados&lt;/strong&gt;&lt;/em&gt; no formulário estão disponíveis apenas em versões específicas do PostgreSQL. 													Ao gerar código SQL para versões diferentes daquelas especificadas nas dicas de campo, o pgModeler ignorará estes valores.</translation>
     </message>
 </context>
 <context>
     <name>BaseRelationship</name>
     <message>
         <source>rel_%1_%2</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -675,11 +683,11 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     <name>CastWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Cast Type:</source>
-        <translation></translation>
+        <translation>Molde de Tipo:</translation>
     </message>
     <message>
         <source>Implicit</source>
@@ -695,7 +703,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Conversion Function:</source>
-        <translation></translation>
+        <translation>Função de Conversão:</translation>
     </message>
     <message>
         <source>Source data type</source>
@@ -707,7 +715,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>The function to be assigned to a cast from &lt;em&gt;&lt;strong&gt;typeA&lt;/strong&gt;&lt;/em&gt; to &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt;&lt;/em&gt; must have the following signature: &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt; function(&lt;strong&gt;typeA&lt;/strong&gt;, integer, boolean)&lt;/em&gt;.</source>
-        <translation>A função a ser atribuída a uma conversão do &lt;em&gt;&lt;strong&gt;tipoA&lt;/strong&gt;&lt;/em&gt; para o &lt;em&gt;&lt;strong&gt;tipoB&lt;/strong&gt;&lt;/em&gt;                                     deve possuir a seguinte assinatura: &lt;em&gt;&lt;strong&gt;tipoB&lt;/strong&gt; funcao(&lt;strong&gt;tipoA&lt;/strong&gt;, integer, boolean)&lt;/em&gt;.</translation>
+        <translation>A função a ser atribuída à uma moldagem do &lt;em&gt;&lt;strong&gt;tipoA&lt;/strong&gt;&lt;/em&gt; para o &lt;em&gt;&lt;strong&gt;tipoB&lt;/strong&gt;&lt;/em&gt;                                     deve possuir a seguinte assinatura: &lt;em&gt;&lt;strong&gt;tipoB&lt;/strong&gt; funcao(&lt;strong&gt;tipoA&lt;/strong&gt;, integer, boolean)&lt;/em&gt;.</translation>
     </message>
 </context>
 <context>
@@ -812,38 +820,38 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     <name>CollationWidget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Locale:</source>
-        <translation type="unfinished"></translation>
+        <translation>Localidade:</translation>
     </message>
     <message>
         <source>Encoding:</source>
-        <translation type="unfinished">Codificação:</translation>
+        <translation>Codificação:</translation>
     </message>
     <message>
         <source>LC_COLLATE:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>LC_CTYPE:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>The fields &lt;strong&gt;&lt;em&gt;Collation&lt;/em&gt;&lt;/strong&gt;, &lt;strong&gt;&lt;em&gt;Locale&lt;/em&gt;&lt;/strong&gt;, &lt;strong&gt;&lt;em&gt;LC_COLLATE &amp; LC_CTYPE&lt;/em&gt;&lt;/strong&gt; are mutually exclusive, so you have to set only one of them in order to properly handle a collation.</source>
-        <translation type="unfinished"></translation>
+        <translation>Os campos &lt;strong&gt;&lt;em&gt;Intercalação&lt;/em&gt;&lt;/strong&gt;, &lt;strong&gt;&lt;em&gt;Localidade&lt;/em&gt;&lt;/strong&gt;, &lt;strong&gt;&lt;em&gt;LC_COLLATE &amp; LC_CTYPE&lt;/em&gt;&lt;/strong&gt; são mutuamente exclusivos, então você tem que definir apenas um deles a fim de manipular corretamente a intercalação.</translation>
     </message>
     <message>
         <source>Not defined</source>
-        <translation type="unfinished"></translation>
+        <translation>Não definido</translation>
     </message>
 </context>
 <context>
     <name>ColumnWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Default Value:</source>
@@ -1310,7 +1318,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     <name>ConfigurationForm</name>
     <message>
         <source>pgModeler Configuration</source>
-        <translation>Configurações do pgModeler</translation>
+        <translation>Configuração do pgModeler</translation>
     </message>
     <message>
         <source>&amp;Apply</source>
@@ -1330,7 +1338,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Style</source>
-        <translation>Aparência</translation>
+        <translation>Estilo</translation>
     </message>
     <message>
         <source>Connetions</source>
@@ -1338,7 +1346,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Plug-ins</source>
-        <translation></translation>
+        <translation>Plugins</translation>
     </message>
     <message>
         <source>Confirmation</source>
@@ -1353,7 +1361,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     <name>ConnectionsConfigWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Connections:</source>
@@ -1373,11 +1381,11 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Delete selected connection</source>
-        <translation>Excluir conexão selecionada</translation>
+        <translation>Apagar conexão selecionada</translation>
     </message>
     <message>
         <source>Connection Alias:</source>
-        <translation>Alias Conexão:</translation>
+        <translation>Apelido da Conexão:</translation>
     </message>
     <message>
         <source>Connection DB:</source>
@@ -1385,7 +1393,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Host/Port:</source>
-        <translation>Host/Porta:</translation>
+        <translation>Servidor/Porta:</translation>
     </message>
     <message>
         <source>User:</source>
@@ -1397,7 +1405,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Timeout:</source>
-        <translation>Timeout:</translation>
+        <translation>Tempo limite:</translation>
     </message>
     <message>
         <source>second(s)</source>
@@ -1409,7 +1417,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Disable</source>
-        <translation>Desativado</translation>
+        <translation>Desabilitar</translation>
     </message>
     <message>
         <source>Allow</source>
@@ -1417,7 +1425,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Require</source>
-        <translation>Requerido</translation>
+        <translation>Requerir</translation>
     </message>
     <message>
         <source>AC verification</source>
@@ -1489,14 +1497,14 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Connection successfuly stablished!</source>
-        <translation>Conexão efetuada com sucesso!</translation>
+        <translation>Conexão estabelecida com sucesso!</translation>
     </message>
 </context>
 <context>
     <name>ConstraintWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Constraint Type:</source>
@@ -1512,7 +1520,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Match:</source>
-        <translation></translation>
+        <translation>Confrontar:</translation>
     </message>
     <message>
         <source>Deferrable:</source>
@@ -1560,15 +1568,15 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>No inherit:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sem herança:</translation>
     </message>
     <message>
         <source>Exclude Elements</source>
-        <translation type="unfinished"></translation>
+        <translation>Excluir Elementos</translation>
     </message>
     <message>
         <source>Columns which were included by relationship can not be added / removed manually from the primary key. If done such changes they can raise errors. To create primary key using columns included by relationship use the following options: identifier field, attributes &amp; constraints tab or primary key tab on the relationship form.</source>
-        <translation type="unfinished"></translation>
+        <translation>Colunas que foram incluídas por relacionamento não podem ser adicionadas / removidas manualmente da chave primária. Se tais alterações forem feitas elas podem gerar erros. Para criar chaves primárias usando colunas incluídas por relacionamentos use as seguintes opções: campo identificador, aba atributos &amp; restrições ou aba chave primária no formulário de relacionamento.</translation>
     </message>
 </context>
 <context>
@@ -1633,7 +1641,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     <name>ConversionWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Source Encoding:</source>
@@ -1653,7 +1661,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Conversion Func.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Função de Conv.:</translation>
     </message>
 </context>
 <context>
@@ -1676,7 +1684,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>We apologize for what happened! It is clear that a nasty bug caused it. Please fill out the form below describing your actions before pgModeler quit unexpectedly. This will help on bug extermination and improve the software.</source>
-        <translation>Pedimos desculpas pelo ocorrido! Está claro que um bug desagradável causou isso. Por favor, preencha o formulário abaixo descrevendo suas ações antes do pgModeler fechar inesperadamente. Isso ajudará no extermínio do bug e melhorar o software.</translation>
+        <translation>Pedimos desculpas pelo ocorrido! Está claro que um bug desagradável causou isso. Por favor, preencha o formulário abaixo descrevendo suas ações antes do pgModeler fechar inesperadamente. Isso ajudará na eliminação do bug e melhoria do software.</translation>
     </message>
     <message>
         <source>Report</source>
@@ -1692,11 +1700,11 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
     </message>
     <message>
         <source>Attach the below database model file that possibly generates the crash.</source>
-        <translation>Anexar o model de banco de dados abaixo o qual possivelmente gerou o travamento.</translation>
+        <translation>Anexar abaixo o modelo de banco de dados que possivelmente gera o travamento.</translation>
     </message>
     <message>
         <source>Stack trace</source>
-        <translation>Pilha de Execução</translation>
+        <translation>Rastreamento de pilha</translation>
     </message>
     <message>
         <source>pgModeler crash file analysis</source>
@@ -1740,7 +1748,7 @@ Tamanho: %2 bytes
     <name>DatabaseWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Template DB:</source>
@@ -1775,7 +1783,7 @@ Tamanho: %2 bytes
     <name>DomainWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Default Value:</source>
@@ -1821,83 +1829,83 @@ Tamanho: %2 bytes
     <name>ElementsWidget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Column:</source>
-        <translation type="unfinished">Coluna:</translation>
+        <translation>Coluna:</translation>
     </message>
     <message>
         <source>Expression:</source>
-        <translation type="unfinished">Expressão:</translation>
+        <translation>Expressão:</translation>
     </message>
     <message>
         <source>Collation:</source>
-        <translation type="unfinished"></translation>
+        <translation>Intercalação:</translation>
     </message>
     <message>
         <source>Operator Class:</source>
-        <translation type="unfinished">Classe Operadores:</translation>
+        <translation>Classe de Operadores:</translation>
     </message>
     <message>
         <source>Operator:</source>
-        <translation type="unfinished">Operador:</translation>
+        <translation>Operador:</translation>
     </message>
     <message>
         <source>Sorting:</source>
-        <translation type="unfinished">Ordenação: </translation>
+        <translation>Ordenação: </translation>
     </message>
     <message>
         <source>Ascending</source>
-        <translation type="unfinished">Ascendente</translation>
+        <translation>Ascendente</translation>
     </message>
     <message>
         <source>Descending</source>
-        <translation type="unfinished">Descendente</translation>
+        <translation>Descendente</translation>
     </message>
     <message>
         <source>Nulls first</source>
-        <translation type="unfinished">Nulos primeiro</translation>
+        <translation>Nulos primeiro</translation>
     </message>
     <message>
         <source>Element</source>
-        <translation type="unfinished">Elemento</translation>
+        <translation>Elemento</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished">Tipo</translation>
+        <translation>Tipo</translation>
     </message>
     <message>
         <source>Operator Class</source>
-        <translation type="unfinished"></translation>
+        <translation>Classe de Operadores</translation>
     </message>
     <message>
         <source>Sorting</source>
-        <translation type="unfinished">Ordenação</translation>
+        <translation>Ordenação</translation>
     </message>
     <message>
         <source>Nulls First</source>
-        <translation type="unfinished">Nulos Primeiro</translation>
+        <translation>Nulos Primeiro</translation>
     </message>
     <message>
         <source>Collation</source>
-        <translation type="unfinished"></translation>
+        <translation>Intercalação</translation>
     </message>
     <message>
         <source>Operator</source>
-        <translation type="unfinished">Operador</translation>
+        <translation>Operador</translation>
     </message>
     <message>
         <source>Expression</source>
-        <translation type="unfinished">Expressão</translation>
+        <translation>Expressão</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Sim</translation>
+        <translation>Sim</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">Não</translation>
+        <translation>Não</translation>
     </message>
 </context>
 <context>
@@ -3229,35 +3237,35 @@ Mensagem retornada pelo SGBD: %1</translation>
     <name>ExportHelper</name>
     <message>
         <source>PostgreSQL %1 version code generation...</source>
-        <translation type="unfinished"></translation>
+        <translation>Geração de código do PostgreSQL versão %1...</translation>
     </message>
     <message>
         <source>PostgreSQL version detection overrided. Using version %1...</source>
-        <translation type="unfinished"></translation>
+        <translation>Detecção de versão do PostgreSQL sobreposta. Usando versão %1...</translation>
     </message>
     <message>
         <source>PostgreSQL %1 server detected...</source>
-        <translation type="unfinished"></translation>
+        <translation>Servidor PostgreSQL %1 detectado...</translation>
     </message>
     <message>
         <source>Ignoring object duplication error...</source>
-        <translation type="unfinished"></translation>
+        <translation>Ignorando erro de duplicação de objeto...</translation>
     </message>
     <message>
         <source>Creating object &apos;%1&apos; (%2)...</source>
-        <translation type="unfinished">Criando objeto &apos;%1&apos; (%2)...</translation>
+        <translation>Criando objeto &apos;%1&apos; (%2)...</translation>
     </message>
     <message>
         <source>Creating database &apos;%1&apos;...</source>
-        <translation type="unfinished">Criando banco de dados &apos;%1&apos;...</translation>
+        <translation>Criando banco de dados &apos;%1&apos;...</translation>
     </message>
     <message>
         <source>Connecting to database &apos;%1&apos;...</source>
-        <translation type="unfinished">Conectando ao banco de dados &apos;%1&apos;...</translation>
+        <translation>Conectando ao banco de dados &apos;%1&apos;...</translation>
     </message>
     <message>
         <source>Creating objects on database &apos;%1&apos;...</source>
-        <translation type="unfinished">Criando objetos No banco de dados &apos;%1&apos;...</translation>
+        <translation>Criando objetos no banco de dados &apos;%1&apos;...</translation>
     </message>
 </context>
 <context>
@@ -3842,7 +3850,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     <name>FunctionWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Attributes</source>
@@ -3890,7 +3898,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Return Table</source>
-        <translation>Tabela de retorno</translation>
+        <translation>Tabela de Retorno</translation>
     </message>
     <message>
         <source>Security:</source>
@@ -3918,7 +3926,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Source code:</source>
-        <translation>Código-Fonte:</translation>
+        <translation>Código fonte:</translation>
     </message>
     <message>
         <source>Column</source>
@@ -4008,15 +4016,15 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     <name>GeneralConfigWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Printing Options:</source>
-        <translation></translation>
+        <translation>Opções de Impressão:</translation>
     </message>
     <message>
         <source>Save widgets position</source>
-        <translation>Salvar posição de widgets</translation>
+        <translation>Salvar posição dos widgets</translation>
     </message>
     <message>
         <source>Milimeters</source>
@@ -4024,7 +4032,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Pixels</source>
-        <translation></translation>
+        <translation>Píxeis</translation>
     </message>
     <message>
         <source>Inches</source>
@@ -4032,7 +4040,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Centimeter</source>
-        <translation>Centímetros</translation>
+        <translation>Centímetro</translation>
     </message>
     <message>
         <source>Save current session</source>
@@ -4136,7 +4144,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Executive (191 x 254 mm)</source>
-        <translation></translation>
+        <translation>Executivo (191 x 254 mm)</translation>
     </message>
     <message>
         <source>Folio (210 x 330 mm)</source>
@@ -4152,11 +4160,11 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Letter (216 x 279 mm)</source>
-        <translation></translation>
+        <translation>Carta (216 x 279 mm)</translation>
     </message>
     <message>
         <source>Tabloid (279 x 432 mm)</source>
-        <translation></translation>
+        <translation>Tablóide (279 x 432 mm)</translation>
     </message>
     <message>
         <source>Custom (Based on margins)</source>
@@ -4176,7 +4184,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Autosave interval:</source>
-        <translation></translation>
+        <translation>Intervalo de Auto salvamento:</translation>
     </message>
     <message>
         <source>Grid size:</source>
@@ -4244,14 +4252,14 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>pixels</source>
-        <translation></translation>
+        <translation>pixeis</translation>
     </message>
 </context>
 <context>
     <name>IndexWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Fill Factor:</source>
@@ -4271,7 +4279,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Unique</source>
-        <translation></translation>
+        <translation>Único</translation>
     </message>
     <message>
         <source>Fast update</source>
@@ -4343,7 +4351,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Attributes</source>
-        <translation type="unfinished">Atributos</translation>
+        <translation>Atributos</translation>
     </message>
 </context>
 <context>
@@ -4445,7 +4453,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     <name>LanguageWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Trusted:</source>
@@ -4453,19 +4461,19 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Handler Function:</source>
-        <translation>Função Handler:</translation>
+        <translation>Função Manipuladora:</translation>
     </message>
     <message>
         <source>Validator Function:</source>
-        <translation>Função Validator:</translation>
+        <translation>Função Validadora:</translation>
     </message>
     <message>
         <source>Inline Function:</source>
-        <translation>Função Inline:</translation>
+        <translation>Função em Linha:</translation>
     </message>
     <message>
         <source>The functions to be assigned to the language should have, respectively, the following signatures:&lt;br/&gt;&lt;br/&gt;  &lt;strong&gt;Handler Function:&lt;/strong&gt; &lt;em&gt;language_handler function()&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;Validator Function:&lt;/strong&gt; &lt;em&gt;void function(oid)&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;Inline Function:&lt;/strong&gt; &lt;em&gt;void function(internal)&lt;/em&gt;</source>
-        <translation>As funções a serem atribuídas à linguagem devem possuir, respectivamente, as seguintes assinaturas:&lt;br/&gt;&lt;br/&gt;  &lt;strong&gt;Função Handler:&lt;/strong&gt; &lt;em&gt;language_handler funcao()&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;Função Validator:&lt;/strong&gt; &lt;em&gt;void funcao(oid)&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;Função Inline:&lt;/strong&gt; &lt;em&gt;void funcao(internal)&lt;/em&gt;</translation>
+        <translation>As funções a serem atribuídas à linguagem devem possuir, respectivamente, as seguintes assinaturas:&lt;br/&gt;&lt;br/&gt;  &lt;strong&gt;Função Manipuladora:&lt;/strong&gt; &lt;em&gt;language_handler funcao()&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;Função Validadora:&lt;/strong&gt; &lt;em&gt;void funcao(oid)&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;Função em  Linha:&lt;/strong&gt; &lt;em&gt;void funcao(internal)&lt;/em&gt;</translation>
     </message>
 </context>
 <context>
@@ -4608,27 +4616,27 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     <name>MainWindow</name>
     <message>
         <source>pgModeler - PostgreSQL Database Modeler</source>
-        <translation></translation>
+        <translation>pgModeler - Modelador de Banco de Dados PostgreSQL</translation>
     </message>
     <message>
         <source>&amp;File</source>
-        <translation></translation>
+        <translation>&amp;Arquivo</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation></translation>
+        <translation>&amp;Editar</translation>
     </message>
     <message>
         <source>&amp;Help</source>
-        <translation></translation>
+        <translation>A&amp;juda</translation>
     </message>
     <message>
         <source>&amp;Show</source>
-        <translation></translation>
+        <translation>&amp;Mostrar</translation>
     </message>
     <message>
         <source>&amp;Tools</source>
-        <translation></translation>
+        <translation>&amp;Ferramentas</translation>
     </message>
     <message>
         <source>&amp;Plugins</source>
@@ -4640,7 +4648,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>View</source>
-        <translation></translation>
+        <translation>Ver</translation>
     </message>
     <message>
         <source>Edit</source>
@@ -4672,7 +4680,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Zoom in</source>
-        <translation>Zoom +</translation>
+        <translation>Aumentar Zoom</translation>
     </message>
     <message>
         <source>Ctrl+=</source>
@@ -4680,11 +4688,11 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Zoom out</source>
-        <translation>Zoom -</translation>
+        <translation>Diminuir Zoom</translation>
     </message>
     <message>
         <source>Zoom -</source>
-        <translation>Diminuir zoom</translation>
+        <translation>Zoom -</translation>
     </message>
     <message>
         <source>Ctrl+-</source>
@@ -4760,7 +4768,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Show grid</source>
-        <translation>Exibir grade</translation>
+        <translation>Mostrar grade</translation>
     </message>
     <message>
         <source>Ctrl+G</source>
@@ -4792,11 +4800,11 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Fullscreen</source>
-        <translation>Tela cheia</translation>
+        <translation>Tela inteira</translation>
     </message>
     <message>
         <source>Show the model on fullscreen mode</source>
-        <translation>Exibe o modelo em tela cheia</translation>
+        <translation>Mostra o modelo em tela inteira</translation>
     </message>
     <message>
         <source>F11</source>
@@ -4804,11 +4812,11 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Show delimiters</source>
-        <translation>Exibir limites</translation>
+        <translation>Mostrar delimitadores</translation>
     </message>
     <message>
         <source>Show the page delimiters</source>
-        <translation></translation>
+        <translation>Mostrar os delimitadores da página</translation>
     </message>
     <message>
         <source>Ctrl+L</source>
@@ -4832,11 +4840,11 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Show the model overview</source>
-        <translation>Exibe a visão geral do modelo</translation>
+        <translation>Mostra a visão geral do modelo</translation>
     </message>
     <message>
         <source>pgModeler Wiki</source>
-        <translation></translation>
+        <translation>Wiki pgModeler</translation>
     </message>
     <message>
         <source>F1</source>
@@ -4844,11 +4852,11 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Save all models</source>
-        <translation>Salvar modelos</translation>
+        <translation>Salvar todos os modelos</translation>
     </message>
     <message>
         <source>Some models were modified! Do you want to save them before finish the pgModeler?</source>
-        <translation>Alguns modelos foram modificados! Deseja salvar todos antes de encerrar o pgModeler?</translation>
+        <translation>Alguns modelos foram modificados! Deseja salvá-los antes de encerrar o pgModeler?</translation>
     </message>
     <message>
         <source>Save model</source>
@@ -4876,7 +4884,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Changes were detected in the definitions of paper/margin of the model which may cause the incorrect print of the objects. Do you want to continue printing using the new settings? To use the default settings click &apos;No&apos; or &apos;Cancel&apos; to abort printing.</source>
-        <translation>Foram detectadas modificações nas definições de papel/margem do modelo o que pode provocar a impressão incorreta dos objetos. Deseja prosseguir com a impressão usando as novas configurações? Para usar as configurações padrão clique &apos;Não&apos; ou em &apos;Cancelar&apos; para abortar a impressão.</translation>
+        <translation>Foram detectadas modificações nas definições de papel/margem do modelo que podem provocar a impressão incorreta dos objetos. Deseja prosseguir com a impressão usando as novas configurações? Para usar as configurações padrão clique em &apos;Não&apos;, ou em &apos;Cancelar&apos; para abortar a impressão.</translation>
     </message>
     <message>
         <source>Load model</source>
@@ -4884,42 +4892,42 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Open Wiki pages</source>
-        <translation></translation>
+        <translation>Abrir Páginas Wiki</translation>
     </message>
     <message>
         <source>This action will open a web browser window! Want to proceed?</source>
-        <translation></translation>
+        <translation>Esta ação abrirá uma janela do navegador de internet! Deseja prosseguir?</translation>
     </message>
     <message>
         <source>Ctrl+Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Direita</translation>
     </message>
     <message>
         <source>Ctrl+Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Esquerda</translation>
     </message>
     <message>
         <source>Ctrl+H</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>F10</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>MessageBox</name>
     <message>
         <source>Dialog</source>
-        <translation></translation>
+        <translation>Diálogo</translation>
     </message>
     <message>
         <source>Show excpetion stack in text format (useful to report errors).</source>
-        <translation>Exibe a pilha de exceções em formato texto (útil para se reportar erros).</translation>
+        <translation>Mostra a pilha de exceções em formato texto (útil para reportar erros).</translation>
     </message>
     <message>
         <source>Show/hide exceptions stack.</source>
-        <translation>Exibir/Esconder pilha de exceções.</translation>
+        <translation>Mostrar/Esconder pilha de exceções.</translation>
     </message>
     <message>
         <source>...</source>
@@ -4974,7 +4982,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Select the export type:</source>
-        <translation>Selecione o tipo de exportação do modelo:</translation>
+        <translation>Selecione o tipo de exportação:</translation>
     </message>
     <message>
         <source>Export to SQL file:</source>
@@ -4998,11 +5006,11 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>PostgreSQL version in which the SQL code should be generated</source>
-        <translation>Versão do PostgreSQL no qual do código SQL deve ser gerado</translation>
+        <translation>Versão do PostgreSQL no qual o código SQL deve ser gerado</translation>
     </message>
     <message>
         <source>Check if the system user has write permission on target folder.</source>
-        <translation>Certifique-se que o usuário do sistema possui permissão de gravação sobre a pasta de destino do arquivo SQL.</translation>
+        <translation>Verifique se o usuário do sistema possui permissão de gravação sobre a pasta de destino.</translation>
     </message>
     <message>
         <source>Export to PNG image:</source>
@@ -5018,15 +5026,15 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Show grid</source>
-        <translation>Exibir grade</translation>
+        <translation>Mostrar grade</translation>
     </message>
     <message>
         <source>Show the page delimiters</source>
-        <translation></translation>
+        <translation>Mostrar delimitadores de página</translation>
     </message>
     <message>
         <source>Check if the system user has write permission on image target folder.</source>
-        <translation>Certifique-se que o usuário do sistema possui permissão de gravação sobre a pasta de destino da imagem.</translation>
+        <translation>Verifique se o usuário do sistema possui permissão de gravação sobre a pasta de destino da imagem.</translation>
     </message>
     <message>
         <source>Connection:</source>
@@ -5034,7 +5042,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>It is recommended to select this option only when the version of the DBMS, somehow, is not identifiable or if you need to generate a specific version of SQL code for testing.</source>
-        <translation>Recomenda-se marcar esta opção somente quando a versão do SGBD, de alguma forma, não seja identificável ou se é necessário gerar uma versão específica de código SQL para testes. </translation>
+        <translation>É recomendado selecionar esta opção somente quando a versão do SGBD, de alguma forma, não seja identificável ou se é necessário gerar uma versão específica de código SQL para testes. </translation>
     </message>
     <message>
         <source>Ignore object duplicity</source>
@@ -5042,7 +5050,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>The pgModeler ignores errors generated by duplicate objects and creates only model objects that do not exist in the database. This option may be used when an object was created after a later model export.</source>
-        <translation>O pgModeler ignora os erros gerados por duplicidade de objetos e cria apenas objetos do modelo não existentes no banco de dados serão. Esta opção pode ser usada quando um objeto foi criado no modelo posteriormente a uma exportação.</translation>
+        <translation>O pgModeler ignora os erros gerados por duplicidade de objetos e cria apenas objetos do modelo não existentes no banco de dados. Esta opção pode ser usada quando um objeto foi criado depois de uma posterior exportação do modelo.</translation>
     </message>
     <message>
         <source>Export to DBMS:</source>
@@ -5050,7 +5058,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Progress label...</source>
-        <translation></translation>
+        <translation>Rótulo de progresso...</translation>
     </message>
     <message>
         <source>ico</source>
@@ -5094,11 +5102,11 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Exporting process sucessfuly ended!</source>
-        <translation>Exportação finalizada com sucesso!</translation>
+        <translation>Processo de exportação finalizado com sucesso!</translation>
     </message>
     <message>
         <source>Error on export!</source>
-        <translation>Falha na exportação!</translation>
+        <translation>Erro na exportação!</translation>
     </message>
     <message>
         <source>Export model as...</source>
@@ -5117,7 +5125,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     <name>ModelObjectsWidget</name>
     <message>
         <source>Model Objects</source>
-        <translation></translation>
+        <translation>Objetos do Modelo</translation>
     </message>
     <message>
         <source>1</source>
@@ -5141,15 +5149,15 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Visible Object Types</source>
-        <translation></translation>
+        <translation>Tipos de Objeto Visíveis</translation>
     </message>
     <message>
         <source>Select All</source>
-        <translation>Marcar Todos</translation>
+        <translation>Selecionar Todos</translation>
     </message>
     <message>
         <source>Clear All</source>
-        <translation>Desmarcar Todos</translation>
+        <translation>Desselecionar Todos</translation>
     </message>
     <message>
         <source>Select</source>
@@ -5177,15 +5185,15 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Expands all items</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandir todos os itens</translation>
     </message>
     <message>
         <source>Collapses all items</source>
-        <translation type="unfinished"></translation>
+        <translation>Recolher todos os itens</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished">Novo</translation>
+        <translation>Novo</translation>
     </message>
 </context>
 <context>
@@ -5234,15 +5242,15 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>&lt;strong&gt;CAUTION:&lt;/strong&gt; The object model is protected! New objects will be inserted only when the protection is removed!</source>
-        <translation>&lt;strong&gt;ATENÇÃO:&lt;/strong&gt; O modelo de objetos encontra-se protegido! Novos objetos só poderão ser inseridos quando esta situação for revertida!</translation>
+        <translation>&lt;strong&gt;ATENÇÃO:&lt;/strong&gt; O modelo de objetos está protegido! Novos objetos só poderão ser inseridos quando a proteção for removida!</translation>
     </message>
     <message>
         <source>Source code</source>
-        <translation>Código-fonte</translation>
+        <translation>Código fonte</translation>
     </message>
     <message>
         <source>Show object source code</source>
-        <translation>Exibe o código-fonte do objeto</translation>
+        <translation>Mostra o código fonte do objeto</translation>
     </message>
     <message>
         <source>Properties</source>
@@ -5262,19 +5270,19 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Protects object(s) from modifications</source>
-        <translation></translation>
+        <translation>Protege objeto(s) contra modificações</translation>
     </message>
     <message>
         <source>Unprotect objetc(s) from modifications</source>
-        <translation></translation>
+        <translation>Desprotege objeto(s) contra modificações</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation>Excluir</translation>
+        <translation>Apagar</translation>
     </message>
     <message>
         <source>Delete the selected object(s)</source>
-        <translation>Exclui o(s) objeto(s) selecionado(s)</translation>
+        <translation>Apaga o(s) objeto(s) selecionado(s)</translation>
     </message>
     <message>
         <source>Select all</source>
@@ -5286,11 +5294,11 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Convert rel. n-n</source>
-        <translation>Converter rel n-n</translation>
+        <translation>Converter rel. n-n</translation>
     </message>
     <message>
         <source>Converts the n-n relationship into table</source>
-        <translation>Converte o relacionamento n-n para tabela própria</translation>
+        <translation>Converte o relacionamento n-n em tabela</translation>
     </message>
     <message>
         <source>Copy the selected objects(s)</source>
@@ -5302,7 +5310,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Paste the previous copied object(s)</source>
-        <translation></translation>
+        <translation>Cola o(s) objeto(s) copiados previamente</translation>
     </message>
     <message>
         <source>Cut</source>
@@ -5310,11 +5318,11 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Cut the selected object(s)</source>
-        <translation>Recortar o(s) objeto(s) selecionado(s)</translation>
+        <translation>Recorta o(s) objeto(s) selecionado(s)</translation>
     </message>
     <message>
         <source>Displays objects that reference and that are dependent of the selected object</source>
-        <translation>Exibe os objetos que referenciam e os que são dependência do objeto selecionado</translation>
+        <translation>Exibe os objetos que referenciam e os que são dependentes do objeto selecionado</translation>
     </message>
     <message>
         <source>New object</source>
@@ -5326,55 +5334,55 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Quick actions</source>
-        <translation></translation>
+        <translation>Ações rápidas</translation>
     </message>
     <message>
         <source>Rename</source>
-        <translation></translation>
+        <translation>Renomear</translation>
     </message>
     <message>
         <source>Quick rename the object</source>
-        <translation></translation>
+        <translation>Renomear rapidamente o objeto</translation>
     </message>
     <message>
         <source>Move to schema</source>
-        <translation></translation>
+        <translation>Mover para o esquema</translation>
     </message>
     <message>
         <source>Move the object to another schema</source>
-        <translation></translation>
+        <translation>Mover o objeto para outro esquema</translation>
     </message>
     <message>
         <source>Edit permissions</source>
-        <translation></translation>
+        <translation>Editar permissões</translation>
     </message>
     <message>
         <source>Edit object&apos;s permissions</source>
-        <translation></translation>
+        <translation>Editar permissões do objeto</translation>
     </message>
     <message>
         <source>Change owner</source>
-        <translation></translation>
+        <translation>Mudar proprietário</translation>
     </message>
     <message>
         <source>Change object&apos;s owner</source>
-        <translation></translation>
+        <translation>Mudar proprietário do objeto</translation>
     </message>
     <message>
         <source>Select children</source>
-        <translation></translation>
+        <translation>Selecionar filhos</translation>
     </message>
     <message>
         <source>Selects all the children graphical objects on the selected schema</source>
-        <translation></translation>
+        <translation>Seleciona todos os objetos gráficos filhos no esquema selecionado</translation>
     </message>
     <message>
         <source>Highlight</source>
-        <translation></translation>
+        <translation>Destacar</translation>
     </message>
     <message>
         <source>Clears the current selection and centers the model view on the selected object.</source>
-        <translation></translation>
+        <translation>Limpa a seleção atual e centraliza a visualização do modelo no objeto selecionado.</translation>
     </message>
     <message>
         <source>Confirmation</source>
@@ -5382,7 +5390,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Do you really want to convert the relationship?</source>
-        <translation></translation>
+        <translation>Deseja realmente converter o relacionamento?</translation>
     </message>
     <message>
         <source>Loading database model</source>
@@ -5394,7 +5402,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Also copy all dependencies of selected objects? This minimizes the breakdown of references when copied objects are pasted into another model.</source>
-        <translation>Deseja copiar também todas dependências dos objetos selecionados? Isso minimiza a quebra de referências quando os objetos copiados forem colados em outro modelo.</translation>
+        <translation>Copiar também todas dependências dos objetos selecionados? Isso minimiza a quebra de referências quando os objetos copiados forem colados em outro modelo.</translation>
     </message>
     <message>
         <source>Pasting objects...</source>
@@ -5422,11 +5430,11 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Do you really want to delete the selected object?</source>
-        <translation>Tem certeza de que deseja excluir o objeto selecionado?</translation>
+        <translation>Deseja realmente apagar o objeto selecionado?</translation>
     </message>
     <message>
         <source>(no objects)</source>
-        <translation></translation>
+        <translation>(sem objetos)</translation>
     </message>
     <message>
         <source>Constraints</source>
@@ -5434,15 +5442,15 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Dependencies</source>
-        <translation type="unfinished">Dependências</translation>
+        <translation>Dependências</translation>
     </message>
     <message>
         <source>CAUTION: Remove multiple objects at once can cause irreversible invalidations to other objects in the model. Such invalid objects will be deleted too. Do you really want to delete ALL selected objects?</source>
-        <translation type="unfinished"></translation>
+        <translation>ATENÇÃO: Remover múltiplos objetos de uma vez pode causar invalidações irreversíveis a outros objetos no modelo. Tais objetos inválidos serão apagados também. Deseja realmente apagar TODOS os objetos selecionados?</translation>
     </message>
     <message>
         <source>CAUTION: Remove a relationship can cause irreversible invalidations to other objects in the model. Such invalid objects will be deleted too. Do you really want to delete the relationship?</source>
-        <translation type="unfinished"></translation>
+        <translation>ATENÇÃO: Remover um relacionamento pode causar invalidações irreversíveis a outros objetos no modelo. Tais objetos inválidos serão apagados também. Deseja realmente apagar o relacionamento?</translation>
     </message>
 </context>
 <context>
@@ -5623,7 +5631,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     <name>ObjectDepsRefsWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Dependencies</source>
@@ -5651,14 +5659,14 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Dependences / References of Object</source>
-        <translation></translation>
+        <translation>Dependências / Referências de Objeto</translation>
     </message>
 </context>
 <context>
     <name>ObjectSelectorWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Clear field</source>
@@ -5673,7 +5681,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     <name>ObjectTableWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Add Item</source>
@@ -5701,7 +5709,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Remove All</source>
-        <translation>Excluir Todos</translation>
+        <translation>Remover Todos</translation>
     </message>
     <message>
         <source>Shift+Del</source>
@@ -5741,7 +5749,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Move to end</source>
-        <translation>Mover para o fim</translation>
+        <translation>Mover para o final</translation>
     </message>
     <message>
         <source>Ctrl+End, Ctrl+S</source>
@@ -5749,15 +5757,15 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Confirmação</source>
-        <translation>Confirmation</translation>
+        <translation>Confirmação</translation>
     </message>
     <message>
         <source>Do you really want to remove the selected item?</source>
-        <translation>Tem certeza de que deseja remover o item selecionado?</translation>
+        <translation>Deseja realmente remover o item selecionado?</translation>
     </message>
     <message>
         <source>Do you really want to remove the all items?</source>
-        <translation>Tem certeza de que deseja remover todos os itens?</translation>
+        <translation>Deseja realmente remover todos os itens?</translation>
     </message>
 </context>
 <context>
@@ -6028,7 +6036,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Delete operation history</source>
-        <translation>Excluir histórico de operações</translation>
+        <translation>Apagar histórico de operações</translation>
     </message>
     <message>
         <source>Undo</source>
@@ -6060,7 +6068,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>moved</source>
-        <translation>movimentado</translation>
+        <translation>movido</translation>
     </message>
     <message>
         <source>Operation: %1</source>
@@ -6080,14 +6088,14 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Delete the executed operations history is an irreversible action, do you want to continue?</source>
-        <translation>Excluir o histórico de operações executadas é uma ação irreversível, deseja realmente prosseguir?</translation>
+        <translation>Apagar o histórico de operações executadas é uma ação irreversível, deseja realmente prosseguir?</translation>
     </message>
 </context>
 <context>
     <name>OperatorClassWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Default Class:</source>
@@ -6163,22 +6171,22 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Element Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo de Elemento:</translation>
     </message>
     <message>
         <source>Op. Family:</source>
-        <translation type="unfinished"></translation>
+        <translation>Família de Op.:</translation>
     </message>
     <message>
         <source>FOR ORDER BY</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>OperatorFamilyWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Indexing:</source>
@@ -6189,7 +6197,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     <name>OperatorWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>HASHES</source>
@@ -6257,27 +6265,27 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>To create a unary operator it is necessary to specify as &lt;strong&gt;&lt;em&gt;&apos;any&apos;&lt;/em&gt;&lt;/strong&gt; one of its arguments. Additionally, the function that defines the operator must have only one parameter and this, in turn, must have the same data type of the the argument of unary operator.</source>
-        <translation>Para a criação de um operador unário é necessário especificar como &lt;strong&gt;&lt;em&gt;&apos;any&apos;&lt;/em&gt;&lt;/strong&gt;                                     um de seus argumentos. Adicionalmente, a função que define o operador deve possuir apenas uma parâmetro                                     e este, por sua vez, deve ter o tipo de dado igual ao tipo de dado do argumento do operador unário.</translation>
+        <translation>Para criar um operador unário é necessário especificar como &lt;strong&gt;&lt;em&gt;&apos;any&apos;&lt;/em&gt;&lt;/strong&gt;                                     um de seus argumentos. Adicionalmente, a função que define o operador deve possuir apenas um parâmetro                                     e este, por sua vez, deve ter o tipo de dado igual ao tipo de dado do argumento do operador unário.</translation>
     </message>
     <message>
         <source>Advanced</source>
-        <translation type="unfinished"></translation>
+        <translation>Avançado</translation>
     </message>
     <message>
         <source>Restrict:</source>
-        <translation type="unfinished"></translation>
+        <translation>Restrito:</translation>
     </message>
     <message>
         <source>Commutator</source>
-        <translation type="unfinished"></translation>
+        <translation>Comutador</translation>
     </message>
     <message>
         <source>Negator:</source>
-        <translation type="unfinished"></translation>
+        <translation>Negador:</translation>
     </message>
     <message>
         <source>Operator Func.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Fun. Operador:</translation>
     </message>
 </context>
 <context>
@@ -6347,7 +6355,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     <name>ParameterWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Default Value:</source>
@@ -6420,7 +6428,7 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     <name>PermissionWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Roles</source>
@@ -6472,214 +6480,216 @@ Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da 
     </message>
     <message>
         <source>Disable SQL code</source>
-        <translation type="unfinished"></translation>
+        <translation>Desabilitar código SQL</translation>
     </message>
     <message>
         <source>Grant</source>
-        <translation type="unfinished"></translation>
+        <translation>Conceder</translation>
     </message>
     <message>
         <source>Revoke</source>
-        <translation type="unfinished"></translation>
+        <translation>Revogar</translation>
     </message>
     <message>
         <source>Cascade</source>
-        <translation type="unfinished"></translation>
+        <translation>Cascata</translation>
     </message>
     <message>
         <source>Leave the &lt;em&gt;&lt;strong&gt;Roles&lt;/strong&gt;&lt;/em&gt; empty to create a permission applicable to &lt;strong&gt;&lt;em&gt;PUBLIC&lt;/em&gt;&lt;/strong&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Deixe os &lt;em&gt;&lt;strong&gt;Papéis&lt;/strong&gt;&lt;/em&gt; em branco para criar uma permissão aplicável a &lt;strong&gt;&lt;em&gt;PUBLIC&lt;/em&gt;&lt;/strong&gt;.</translation>
     </message>
 </context>
 <context>
     <name>PgModelerCLI</name>
     <message>
         <source>Unrecognized option &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Opção &apos;%1&apos; não reconehcida.</translation>
     </message>
     <message>
         <source>Value not specified for option &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Valor não specificado para a opção &apos;%1&apos;.</translation>
     </message>
     <message>
         <source>Option &apos;%1&apos; does not accept values.</source>
-        <translation type="unfinished"></translation>
+        <translation>Opção &apos;%1&apos; não aceita valores.</translation>
     </message>
     <message>
         <source>Connection aliased as &apos;%1&apos; was not found on configuration file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Conexão apelidada de &apos;%1&apos; não foi encontrada no arquivo de configuração.</translation>
     </message>
     <message>
         <source>Usage: pgmodeler-cli [OPTIONS]</source>
-        <translation type="unfinished"></translation>
+        <translation>Uso: pgmodeler-cli [OPÇÕES]</translation>
     </message>
     <message>
         <source> command line interface.</source>
-        <translation type="unfinished"></translation>
+        <translation>interface da linha de comando.</translation>
     </message>
     <message>
         <source>PostgreSQL Database Modeler Project - pgmodeler.com.br</source>
-        <translation type="unfinished"></translation>
+        <translation>Projeto Modelador de Banco de Dados PostgreSQL - pgmodeler.com.br</translation>
     </message>
     <message>
         <source>Copyright 2006-2013 Raphael A. Silva &lt;rkhaotix@gmail.com&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>This tool provides a way to export pgModeler&apos;s database models without
 the need to load them on graphical interface. All available exporting
 modes are described below.</source>
-        <translation type="unfinished"></translation>
+        <translation>Esta ferramenta provê um modo de exportar modelos de banco de dados do  pgModeler sem
+a necessidade de carregá-los na interface gráfica. Todos os modos de exportações
+disponíveis estão descritos abaixo.</translation>
     </message>
     <message>
         <source>Options: </source>
-        <translation type="unfinished"></translation>
+        <translation>Opções: </translation>
     </message>
     <message>
         <source>   %1, %2=[FILE]		 Input model file (.dbm).</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2=[ARQUIVO]		 Arquivo de entrada do modelo (.dbm).</translation>
     </message>
     <message>
         <source>   %1, %2=[FILE]		 Output file. Available only on export to file or png.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2=[ARQUIVO]		 Arquivo de saída. Disponível apenas ao exportar para arquivo ou png.</translation>
     </message>
     <message>
         <source>   %1, %2		 Export to a sql script file.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2		 Exportar para um arquivo de script sql.</translation>
     </message>
     <message>
         <source>   %1, %2		 Export to a png image.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2		 Exportar para uma imagem png.</translation>
     </message>
     <message>
         <source>   %1, %2		 Export directly to a PostgreSQL server.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2		 Exportar diretamente para um servidor PostgreSQL.</translation>
     </message>
     <message>
         <source>   %1, %2		 Version of generated SQL code. Only for file or dbms export.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2		 Versão de código SQL gerado. Exportação apenas para arquivo ou SGDB.</translation>
     </message>
     <message>
         <source>   %1, %2			 Silent execution. Only critical errors are shown during process.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2			 Execução silenciosa. Apenas erros críticos são mostrados durante o processo.</translation>
     </message>
     <message>
         <source>   %1, %2			 Show this help menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2			 Mostrar este menu de ajuda.</translation>
     </message>
     <message>
         <source>PNG export options: </source>
-        <translation type="unfinished"></translation>
+        <translation>Opções de exportação PNG: </translation>
     </message>
     <message>
         <source>   %1, %2		 Draws the grid on the exported png image.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2		 Desenha a grade na imagem png exportada.</translation>
     </message>
     <message>
         <source>   %1, %2	 Draws the page delimiters on the exported png image.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2	 Desenha os delimitadores de página na imagem png exportada.</translation>
     </message>
     <message>
         <source>DBMS export options: </source>
-        <translation type="unfinished"></translation>
+        <translation>Opções da exportação SGBD: </translation>
     </message>
     <message>
         <source>   %1, %2	 Ignores errors related to duplicated objects that eventually exists on server side.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2	 Ignora erros relacionados a objetos duplicados que eventualmente existam no lado servidor.</translation>
     </message>
     <message>
         <source>   %1, %2=[ALIAS]	 Connection configuration alias to be used.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2=[APELIDO]	 Apelido da configuração da conexão a ser usada.</translation>
     </message>
     <message>
         <source>   %1, %2=[HOST]		 PostgreSQL host which export will operate.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2=[SERVIDOR]		 Servidor PostgreSQL no qual a exportação irá operar.</translation>
     </message>
     <message>
         <source>   %1, %2=[PORT]		 PostgreSQL host listening port.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2=[PORTA]		 Porta de escuta do servidor PostgreSQL.</translation>
     </message>
     <message>
         <source>   %1, %2=[USER]		 PosrgreSQL username.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2=[USUARIO]		 Nome de usuário PostgreSQL.</translation>
     </message>
     <message>
         <source>   %1, %2=[PASSWORD]	 PosrgreSQL user password.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2=[SENHA]	 Senha de usuário PosrgreSQL.</translation>
     </message>
     <message>
         <source>   %1, %2=[DBNAME]	 Connection&apos;s initial database.</source>
-        <translation type="unfinished"></translation>
+        <translation>   %1, %2=[NOMEBD]	 Banco de dados inicial da conexão.</translation>
     </message>
     <message>
         <source>No export mode specified!</source>
-        <translation type="unfinished"></translation>
+        <translation>Modo de exportação não especificado!</translation>
     </message>
     <message>
         <source>Multiple export mode especified!</source>
-        <translation type="unfinished"></translation>
+        <translation>Modo de exportação múltiplo especificado!</translation>
     </message>
     <message>
         <source>No input file specified!</source>
-        <translation type="unfinished"></translation>
+        <translation>Arquivo de entrada não especificado!</translation>
     </message>
     <message>
         <source>No output file specified!</source>
-        <translation type="unfinished"></translation>
+        <translation>Arquivo de saída não especificado!</translation>
     </message>
     <message>
         <source>Input file must be different from output!</source>
-        <translation type="unfinished"></translation>
+        <translation>Arquivo de entrada deve ser diferente do de saída!</translation>
     </message>
     <message>
         <source>Incomplete connection information!</source>
-        <translation type="unfinished"></translation>
+        <translation>Informação de conexão incompleta!</translation>
     </message>
     <message>
         <source>Starting model export...</source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciando exportação de modelo...</translation>
     </message>
     <message>
         <source>Loading input file: </source>
-        <translation type="unfinished"></translation>
+        <translation>Carregando arquivo de entrada: </translation>
     </message>
     <message>
         <source>Export to PNG image: </source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar para imagem PNG: </translation>
     </message>
     <message>
         <source>Export to SQL script file: </source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar para arquivo de script SQL: </translation>
     </message>
     <message>
         <source>Export to DBMS: </source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar para SGBD: </translation>
     </message>
     <message>
         <source>Export successfully ended!</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportação finalizada com sucesso!</translation>
     </message>
 </context>
 <context>
     <name>PgModelerPlugin</name>
     <message>
         <source>Plugin Information</source>
-        <translation></translation>
+        <translation>Informação do Plugin</translation>
     </message>
     <message>
         <source>Version: %1</source>
-        <translation></translation>
+        <translation>Versão: %1</translation>
     </message>
     <message>
         <source>Author: %1</source>
-        <translation></translation>
+        <translation>Autor: %1</translation>
     </message>
 </context>
 <context>
     <name>PgSQLTypeWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Data Type</source>
@@ -6719,7 +6729,7 @@ modes are described below.</source>
     </message>
     <message>
         <source>Timezone:</source>
-        <translation></translation>
+        <translation>Fuso horário:</translation>
     </message>
     <message>
         <source>Type:</source>
@@ -6750,23 +6760,23 @@ modes are described below.</source>
     <name>PluginsConfigWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Plug-ins root directory:</source>
-        <translation></translation>
+        <translation>Diretório raiz de plugins:</translation>
     </message>
     <message>
         <source>Open in file manager</source>
-        <translation></translation>
+        <translation>Abrir gerenciador de arquivos</translation>
     </message>
     <message>
         <source>Loaded plug-ins</source>
-        <translation></translation>
+        <translation>Plugins carregados</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Details about plugins development and installation can be found at &lt;a href=&quot;http://www.pgmodeler.com.br/wiki/doku.php?id=plugins&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;pgModeler Wiki&lt;/span&gt;&lt;/a&gt;. &lt;span style=&quot; font-weight:600;&quot;&gt;Note:&lt;/span&gt; plugin installation requires pgModeler to be restarted.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Detalhes sobre o desenvolvimento e instalação de plugins podem ser encontrados em &lt;a href=&quot;http://www.pgmodeler.com.br/wiki/doku.php?id=plugins&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;Wiki pgModeler&lt;/span&gt;&lt;/a&gt;. &lt;span style=&quot; font-weight:600;&quot;&gt;Nota:&lt;/span&gt; a instalação de plugins requer que o pgModeler seja reiniciado.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Plugin</source>
@@ -6778,7 +6788,7 @@ modes are described below.</source>
     </message>
     <message>
         <source>Library</source>
-        <translation></translation>
+        <translation>Biblioteca</translation>
     </message>
 </context>
 <context>
@@ -6803,7 +6813,7 @@ modes are described below.</source>
     <name>QuickRenameWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>....</source>
@@ -6811,11 +6821,11 @@ modes are described below.</source>
     </message>
     <message>
         <source>to:</source>
-        <translation></translation>
+        <translation>para:</translation>
     </message>
     <message>
         <source>Rename</source>
-        <translation></translation>
+        <translation>Renomear</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -6976,30 +6986,30 @@ modes are described below.</source>
     <name>Relationship</name>
     <message>
         <source>%1_has_one_%2</source>
-        <translation></translation>
+        <translation>%1_tem_um_%2</translation>
     </message>
     <message>
         <source>%1_has_many_%2</source>
-        <translation></translation>
+        <translation>%1_tem_muitos_%2</translation>
     </message>
     <message>
         <source>many_%1_has_many_%2</source>
-        <translation></translation>
+        <translation>muitos_%1_tem_muitos_%2</translation>
     </message>
     <message>
         <source>%1_inherits_%2</source>
-        <translation></translation>
+        <translation>%1_herda_de_%2</translation>
     </message>
     <message>
         <source>%1_copies_%2</source>
-        <translation></translation>
+        <translation>%1_copia_de_%2</translation>
     </message>
 </context>
 <context>
     <name>RelationshipWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>General</source>
@@ -7043,7 +7053,7 @@ modes are described below.</source>
     </message>
     <message>
         <source>Dependency / Copy relationship</source>
-        <translation></translation>
+        <translation>Relacionamento de Dependência / Cópia</translation>
     </message>
     <message>
         <source>dep</source>
@@ -7051,7 +7061,7 @@ modes are described below.</source>
     </message>
     <message>
         <source>Relationship generated via foreign key</source>
-        <translation></translation>
+        <translation>Relacionamento gerado via chave estrangeira</translation>
     </message>
     <message>
         <source>fk</source>
@@ -7059,15 +7069,15 @@ modes are described below.</source>
     </message>
     <message>
         <source>Identifier</source>
-        <translation> Identificador</translation>
+        <translation>Identificador</translation>
     </message>
     <message>
         <source>Table 1:</source>
-        <translation></translation>
+        <translation>Tabela 1:</translation>
     </message>
     <message>
         <source>Table 2:</source>
-        <translation></translation>
+        <translation>Tabela 2:</translation>
     </message>
     <message>
         <source>Cardinality:</source>
@@ -7075,11 +7085,11 @@ modes are described below.</source>
     </message>
     <message>
         <source>[SRC] is required</source>
-        <translation></translation>
+        <translation>[SRC] é requerido</translation>
     </message>
     <message>
         <source>[DST] is required</source>
-        <translation></translation>
+        <translation>[DST] é requerido</translation>
     </message>
     <message>
         <source>Name of the table generated from many to many relationship</source>
@@ -7087,7 +7097,7 @@ modes are described below.</source>
     </message>
     <message>
         <source>Table Name:</source>
-        <translation>Nome Tab. N-N:</translation>
+        <translation>Nome Tab.:</translation>
     </message>
     <message>
         <source>Source Suffix:</source>
@@ -7099,7 +7109,7 @@ modes are described below.</source>
     </message>
     <message>
         <source>Foreign key</source>
-        <translation>Chave-estrangeira</translation>
+        <translation>Chave estrangeira</translation>
     </message>
     <message>
         <source>Deferrable:</source>
@@ -7123,11 +7133,11 @@ modes are described below.</source>
     </message>
     <message>
         <source>Primary key</source>
-        <translation>Chave-primária</translation>
+        <translation>Chave primária</translation>
     </message>
     <message>
         <source>Advanced</source>
-        <translation></translation>
+        <translation>Avançado</translation>
     </message>
     <message>
         <source>Attribute</source>
@@ -7147,83 +7157,83 @@ modes are described below.</source>
     </message>
     <message>
         <source>Editing attributes of an existing relationship is allowed, but must be done carefully because it may break references to columns and cause invalidation of objects such as triggers, indexes, constraints and sequences.</source>
-        <translation>A edição de atributos de um relacionamento já existente é permitida, porém, deve ser  feita com atenção pois pode quebrar referências à colunas e causar a invalidez de objetos como gatilhos,  índices, restrições e sequências.</translation>
+        <translation>A edição de atributos de um relacionamento já existente é permitida, porém deve ser feita cuidadosamente, pois pode quebrar referências à colunas e causar a invalidação de objetos como gatilhos,  índices, restrições e sequências.</translation>
     </message>
     <message>
         <source>Use the special primary key if you want to include a primary key containing inherited / copied columns to the receiving table. This is a feature available only for generalization / copy relationships.</source>
-        <translation></translation>
+        <translation>Use a chave primária especial se você quer incluir uma chave primária contendo colunas herdadas / copiadas para a tabela receptora. Esta é uma característica disponível apenas para relacionamentos de generalização / cópia.</translation>
     </message>
     <message>
         <source>This advanced tab shows the objects (columns or table) auto created by the relationship&apos;s connection as well the foreign keys that represents the link between the participant tables.</source>
-        <translation></translation>
+        <translation>Esta aba avançada mostra os objetos (colunas ou tabela) auto criados pela conexão do relacionamento, bem como as chaves estrangeiras que representam a ligação entre as tabelas participantes.</translation>
     </message>
     <message>
         <source> is required</source>
-        <translation></translation>
+        <translation>é requerido</translation>
     </message>
     <message>
         <source>Reference Table:</source>
-        <translation></translation>
+        <translation>Tabela Referência:</translation>
     </message>
     <message>
         <source>Receiver Table:</source>
-        <translation></translation>
+        <translation>Tabela Receptora:</translation>
     </message>
     <message>
         <source>Copy Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Opções de Cópia</translation>
     </message>
     <message>
         <source>INDEXES</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>COMMENTS</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>INCLUDING</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>DEFAULTS</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>EXCLUDING</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>CONSTRAINTS</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Use defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Usar padrões</translation>
     </message>
     <message>
         <source>ALL</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>STORAGE</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Reference Suffix:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sufixo de Referência:</translation>
     </message>
     <message>
         <source>Table 1 </source>
-        <translation type="unfinished"></translation>
+        <translation>Tabela 1</translation>
     </message>
     <message>
         <source> Suffix:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sufixo:</translation>
     </message>
     <message>
         <source>Table 2 </source>
-        <translation type="unfinished"></translation>
+        <translation>Tabela 2 </translation>
     </message>
 </context>
 <context>
@@ -7285,7 +7295,7 @@ modes are described below.</source>
     <name>RoleWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Password:</source>
@@ -7321,7 +7331,7 @@ modes are described below.</source>
     </message>
     <message>
         <source>Can Login</source>
-        <translation>Permitir Login</translation>
+        <translation>Pode Logar</translation>
     </message>
     <message>
         <source>Create Users/Groups</source>
@@ -7353,30 +7363,30 @@ modes are described below.</source>
     </message>
     <message>
         <source>Can create Database</source>
-        <translation type="unfinished"></translation>
+        <translation>Pode criar Banco de Dados</translation>
     </message>
     <message>
         <source>Can create Role</source>
-        <translation type="unfinished"></translation>
+        <translation>Pode criar Papel</translation>
     </message>
     <message>
         <source>Can use Replication</source>
-        <translation type="unfinished"></translation>
+        <translation>Pode usar Replicação</translation>
     </message>
     <message>
         <source>Encrypted</source>
-        <translation type="unfinished"></translation>
+        <translation>Encriptado</translation>
     </message>
     <message>
         <source>Assigning &lt;strong&gt;&lt;em&gt;-1&lt;/em&gt;&lt;/strong&gt; to &lt;strong&gt;&lt;em&gt;Connections&lt;/em&gt;&lt;/strong&gt; creates a role without connection limit.&lt;br/&gt;																				 Unchecking &lt;strong&gt;&lt;em&gt;Validity&lt;/em&gt;&lt;/strong&gt; creates an role that never expires.</source>
-        <translation type="unfinished"></translation>
+        <translation>Atribuindo &lt;strong&gt;&lt;em&gt;-1&lt;/em&gt;&lt;/strong&gt; à &lt;strong&gt;&lt;em&gt;Conexões&lt;/em&gt;&lt;/strong&gt; cria um papel sem limite de conexão.&lt;br/&gt;																				 Desmarcando &lt;strong&gt;&lt;em&gt;Validade&lt;/em&gt;&lt;/strong&gt; cria um papel que nunca expira.</translation>
     </message>
 </context>
 <context>
     <name>RuleWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Event:</source>
@@ -7404,26 +7414,26 @@ modes are described below.</source>
     </message>
     <message>
         <source>To create a rule that does not perform any action (&lt;strong&gt;DO NOTHING&lt;/strong&gt;) simply do not specify commands in the SQL commands table.</source>
-        <translation>Para se criar uma regra que não execute ação alguma (&lt;strong&gt;DO NOTHING&lt;/strong&gt;) basta não especificar comandos na tabela de comandos SQL.</translation>
+        <translation>Para criar uma regra que não execute ação alguma (&lt;strong&gt;DO NOTHING&lt;/strong&gt;) basta não especificar comandos na tabela de comandos SQL.</translation>
     </message>
 </context>
 <context>
     <name>SchemaWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Show rectangle</source>
-        <translation></translation>
+        <translation>Mostrar retângulo</translation>
     </message>
     <message>
         <source>Fill color:</source>
-        <translation></translation>
+        <translation>Cor de preenchimento:</translation>
     </message>
     <message>
         <source>Select fill color</source>
-        <translation></translation>
+        <translation>Seleciona cor de preenchimento</translation>
     </message>
 </context>
 <context>
@@ -7441,7 +7451,7 @@ modes are described below.</source>
     <name>SequenceWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Cyclic:</source>
@@ -7469,7 +7479,7 @@ modes are described below.</source>
     </message>
     <message>
         <source>Owner:</source>
-        <translation></translation>
+        <translation>Proprietário:</translation>
     </message>
 </context>
 <context>
@@ -7507,7 +7517,7 @@ modes are described below.</source>
     <name>SourceCodeWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Version:</source>
@@ -7519,7 +7529,7 @@ modes are described below.</source>
     </message>
     <message>
         <source>iconecodigo</source>
-        <translation></translation>
+        <translation>íconecódigo</translation>
     </message>
     <message>
         <source>SQL</source>
@@ -7535,11 +7545,11 @@ modes are described below.</source>
     </message>
     <message>
         <source>Source code visualization</source>
-        <translation>Visualização de Código-Fonte</translation>
+        <translation>Visualização de código fonte</translation>
     </message>
     <message>
         <source>Generating source code...</source>
-        <translation>Gerando código-fonte...</translation>
+        <translation>Gerando código fonte...</translation>
     </message>
     <message>
         <source>-- SQL code unavailable for this type of object --</source>
@@ -7680,14 +7690,14 @@ modes are described below.</source>
     <name>Table</name>
     <message>
         <source>new_table</source>
-        <translation></translation>
+        <translation>nova_tabela</translation>
     </message>
 </context>
 <context>
     <name>TableWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>With OIDs:</source>
@@ -7707,7 +7717,7 @@ modes are described below.</source>
     </message>
     <message>
         <source>Rules</source>
-        <translation>Rules</translation>
+        <translation>Regras</translation>
     </message>
     <message>
         <source>Indexes</source>
@@ -7775,22 +7785,22 @@ modes are described below.</source>
     </message>
     <message>
         <source>Schema</source>
-        <translation type="unfinished">Esquema</translation>
+        <translation>Esquema</translation>
     </message>
     <message>
         <source>Parent</source>
-        <translation type="unfinished"></translation>
+        <translation>Pai</translation>
     </message>
     <message>
         <source>Copy</source>
-        <translation type="unfinished">Copiar</translation>
+        <translation>Copiar</translation>
     </message>
 </context>
 <context>
     <name>TablespaceWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Directory:</source>
@@ -7805,14 +7815,14 @@ modes are described below.</source>
     </message>
     <message>
         <source>Waiting task to start...</source>
-        <translation></translation>
+        <translation>Aguardando a tarefa iniciar...</translation>
     </message>
 </context>
 <context>
     <name>TextboxWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Bold</source>
@@ -7961,7 +7971,7 @@ modes are described below.</source>
     <name>TriggerWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Execute per row</source>
@@ -8037,34 +8047,34 @@ modes are described below.</source>
     </message>
     <message>
         <source>Constraint</source>
-        <translation type="unfinished">Restrição</translation>
+        <translation>Restrição</translation>
     </message>
     <message>
         <source>FOR EACH ROW</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Refer. Table:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tab. Refer.:</translation>
     </message>
     <message>
         <source>Condition:</source>
-        <translation type="unfinished"></translation>
+        <translation>Condição:</translation>
     </message>
     <message>
         <source>Options:</source>
-        <translation type="unfinished">Opções:</translation>
+        <translation>Opções:</translation>
     </message>
     <message>
         <source>Excution:</source>
-        <translation type="unfinished"></translation>
+        <translation>Execução:</translation>
     </message>
 </context>
 <context>
     <name>TypeWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>Configuration:</source>
@@ -8176,7 +8186,7 @@ modes are described below.</source>
     </message>
     <message>
         <source>Like Type</source>
-        <translation></translation>
+        <translation>Tipo Como</translation>
     </message>
     <message>
         <source>Element Type</source>
@@ -8192,66 +8202,66 @@ modes are described below.</source>
     </message>
     <message>
         <source>The functions to be assigned to a type should be written in C language and possess, respectively, the following signatures:&lt;br/&gt;  &lt;table&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;INPUT:&lt;/strong&gt; &lt;em&gt;any function(cstring, oid, integer)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;OUTPUT:&lt;/strong&gt; &lt;em&gt;cstring function(any)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;SEND:&lt;/strong&gt; &lt;em&gt;byta function(any)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;RECV:&lt;/strong&gt; &lt;em&gt;any function(internal, oid, integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_IN:&lt;/strong&gt; &lt;em&gt;integer function(cstring[])&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_OUT:&lt;/strong&gt; &lt;em&gt;cstring function(integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;ANALYZE:&lt;/strong&gt; &lt;em&gt;boolean function(internal)&lt;/em&gt;&lt;/td&gt;    &lt;tr&gt;  &lt;/table&gt;</source>
-        <translation>As funções a serem atribuídas ao tipo devem ser todas escritas em linguagem C e possuirem, respectivamente, as seguintes assinaturas:&lt;br/&gt;  &lt;table&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;INPUT:&lt;/strong&gt; &lt;em&gt;any funcao(cstring, oid, integer)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;OUTPUT:&lt;/strong&gt; &lt;em&gt;cstring funcao(any)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;SEND:&lt;/strong&gt; &lt;em&gt;byta funcao(any)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;RECV:&lt;/strong&gt; &lt;em&gt;any funcao(internal, oid, integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_IN:&lt;/strong&gt; &lt;em&gt;integer funcao(cstring[])&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_OUT:&lt;/strong&gt; &lt;em&gt;cstring funcao(integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;ANALYZE:&lt;/strong&gt; &lt;em&gt;boolean funcao(internal)&lt;/em&gt;&lt;/td&gt;    &lt;tr&gt;  &lt;/table&gt;</translation>
+        <translation>As funções a serem atribuídas ao tipo devem ser escritas em linguagem C, e possuírem respectivamente as seguintes assinaturas:&lt;br/&gt;  &lt;table&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;INPUT:&lt;/strong&gt; &lt;em&gt;any funcao(cstring, oid, integer)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;OUTPUT:&lt;/strong&gt; &lt;em&gt;cstring funcao(any)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;SEND:&lt;/strong&gt; &lt;em&gt;byte funcao(any)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;RECV:&lt;/strong&gt; &lt;em&gt;any funcao(internal, oid, integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_IN:&lt;/strong&gt; &lt;em&gt;integer funcao(cstring[])&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_OUT:&lt;/strong&gt; &lt;em&gt;cstring funcao(integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;ANALYZE:&lt;/strong&gt; &lt;em&gt;boolean funcao(internal)&lt;/em&gt;&lt;/td&gt;    &lt;tr&gt;  &lt;/table&gt;</translation>
     </message>
     <message>
         <source>Range</source>
-        <translation type="unfinished"></translation>
+        <translation>Extensão</translation>
     </message>
     <message>
         <source>Options:</source>
-        <translation type="unfinished">Opções:</translation>
+        <translation>Opções:</translation>
     </message>
     <message>
         <source>By value</source>
-        <translation type="unfinished"></translation>
+        <translation>Por valor</translation>
     </message>
     <message>
         <source>Preferred</source>
-        <translation type="unfinished"></translation>
+        <translation>Preferido</translation>
     </message>
     <message>
         <source>Collatable</source>
-        <translation type="unfinished"></translation>
+        <translation>Intercalável</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished">Nome:</translation>
+        <translation>Nome:</translation>
     </message>
     <message>
         <source>Collation:</source>
-        <translation type="unfinished"></translation>
+        <translation>Intercalação:</translation>
     </message>
     <message>
         <source>Subtype Diff Func.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Fun. Dif. Subtipo:</translation>
     </message>
     <message>
         <source>Operator Class:</source>
-        <translation type="unfinished">Classe Operadores:</translation>
+        <translation>Classe de Operadores:</translation>
     </message>
     <message>
         <source>Canonical Func.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Fun. Canônica:</translation>
     </message>
     <message>
         <source>Subtype</source>
-        <translation type="unfinished"></translation>
+        <translation>Subtipo</translation>
     </message>
     <message>
         <source>Collation</source>
-        <translation type="unfinished"></translation>
+        <translation>Intercalação</translation>
     </message>
     <message>
         <source>The functions to be assigned to a range type should have the following signatures:&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Canonical:&lt;/strong&gt; &lt;em&gt;any function(any)&lt;/em&gt; &lt;br/&gt;&lt;strong&gt;Subtype Diff:&lt;/strong&gt; &lt;em&gt;double precision function(subtype, subtype)&lt;/em&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>As funções para serem atribuídas a um tipo extensão devem ter as seguintes assinaturas:&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Canônica:&lt;/strong&gt; &lt;em&gt;any funcao(any)&lt;/em&gt; &lt;br/&gt;&lt;strong&gt;Dif. Subtipo:&lt;/strong&gt; &lt;em&gt;double precision funcao(subtipo, subtipo)&lt;/em&gt;</translation>
     </message>
 </context>
 <context>
     <name>ViewWidget</name>
     <message>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <source>References</source>
@@ -8291,7 +8301,7 @@ modes are described below.</source>
     </message>
     <message>
         <source>Table Alias:</source>
-        <translation>Alias Tabela:</translation>
+        <translation>Apelido de Tabela:</translation>
     </message>
     <message>
         <source>Column:</source>
@@ -8299,7 +8309,7 @@ modes are described below.</source>
     </message>
     <message>
         <source>Column Alias:</source>
-        <translation>Alias Coluna:</translation>
+        <translation>Apelido de Coluna:</translation>
     </message>
     <message>
         <source>Expression:</source>
@@ -8307,7 +8317,7 @@ modes are described below.</source>
     </message>
     <message>
         <source>Expression Alias:</source>
-        <translation>Alias Expressão:</translation>
+        <translation>Apelido de Expressão:</translation>
     </message>
     <message>
         <source>Code Preview</source>
@@ -8319,15 +8329,16 @@ modes are described below.</source>
     </message>
     <message>
         <source>Alias</source>
-        <translation></translation>
+        <translation>Apelido</translation>
     </message>
     <message>
         <source>Alias Col.</source>
-        <translation></translation>
+        <translation>Apelido Col.</translation>
     </message>
     <message>
         <source>To reference all columns in a table (*) just do not fill the field &lt;strong&gt;Column&lt;/strong&gt;, this is the same as write &lt;em&gt;&lt;strong&gt;[schema].[tablel].*&lt;/strong&gt;&lt;/em&gt;</source>
-        <translation>Para se referenciar todas as colunas de uma tabela (*) basta não preencher                                     o campo &lt;strong&gt;Coluna&lt;/strong&gt;, isso é equivalente a se                                      escrever &lt;em&gt;&lt;strong&gt;[esquema].[tabela].*&lt;/strong&gt;&lt;/em&gt;</translation>
+        <translatorcomment>Versão em inglês com erro! (tablel)</translatorcomment>
+        <translation>Para referenciar todas as colunas de uma tabela (*) basta não preencher                                     o campo &lt;strong&gt;Coluna&lt;/strong&gt;, isso é equivalente a                                      escrever &lt;em&gt;&lt;strong&gt;[esquema].[tabela].*&lt;/strong&gt;&lt;/em&gt;</translation>
     </message>
     <message>
         <source>-- Could not generate the code. Make sure all attributes are correctly filled! --</source>
@@ -8335,55 +8346,55 @@ modes are described below.</source>
     </message>
     <message>
         <source>Reference Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo Referência:</translation>
     </message>
     <message>
         <source>View Definition</source>
-        <translation type="unfinished"></translation>
+        <translation>Definição da Visão</translation>
     </message>
     <message>
         <source>Triggers</source>
-        <translation type="unfinished">Gatilhos</translation>
+        <translation>Gatilhos</translation>
     </message>
     <message>
         <source>Rules</source>
-        <translation type="unfinished">Rules</translation>
+        <translation>Regras</translation>
     </message>
     <message>
         <source>Table Expression</source>
-        <translation type="unfinished"></translation>
+        <translation>Expressão de Tabela</translation>
     </message>
     <message>
         <source>Flags: SF FW AW VD</source>
-        <translation type="unfinished"></translation>
+        <translation>Sinalizadores: SF FW AW VD</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <source>Refer. Table</source>
-        <translation type="unfinished">Tab. Refer.</translation>
+        <translation>Tab. Refer.</translation>
     </message>
     <message>
         <source>Firing</source>
-        <translation type="unfinished">Disparo</translation>
+        <translation>Disparo</translation>
     </message>
     <message>
         <source>Events</source>
-        <translation type="unfinished">Eventos</translation>
+        <translation>Eventos</translation>
     </message>
     <message>
         <source>Execution</source>
-        <translation type="unfinished">Execução</translation>
+        <translation>Execução</translation>
     </message>
     <message>
         <source>Event</source>
-        <translation type="unfinished">Evento</translation>
+        <translation>Evento</translation>
     </message>
     <message>
         <source>/* Could not generate the SQL code. Make sure all attributes are correctly filled! </source>
-        <translation type="unfinished"></translation>
+        <translation>/* Não foi possível gerar o código SQL. Certifique-se de que todos os atributos estejam corretamente preenchidos! </translation>
     </message>
 </context>
 <context>
