@@ -330,7 +330,7 @@ void ResultSet::operator = (ResultSet &res)
 	//Copy the parameter restulset attributes to 'this' resultset
 	this->current_tuple=res.current_tuple;
 	this->empty_result=res.empty_result;
-	this->sql_result=res.sql_result;
+	this->sql_result=PQcopyResult(res.sql_result, PG_COPYRES_TUPLES | PG_COPYRES_ATTRS | PG_COPYRES_EVENTS);
 	this->is_res_copied=false;
 }
 

@@ -53,7 +53,7 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 		//! \brief Returns the object type according to the widget (in this case a object table) that called the method
 		ObjectType getObjectType(QObject *sender);
 
-		/*! brief Template method that opens the editing form for the specified object.
+		/*! \brief Template method that opens the editing form for the specified object.
 				Class and ClassWidget should be compatible, e.g., "Column" can only be edited using ColumnWidget */
 		template<class Class, class ClassWidget>
 		int openEditingForm(TableObject *object);
@@ -77,6 +77,8 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 
 		//! \brief Swap the index between two rows of the table that calls the slot
 		void swapObjects(int idx1, int idx2);
+
+		void editData(void);
 
 	public slots:
 		void applyConfiguration(void);

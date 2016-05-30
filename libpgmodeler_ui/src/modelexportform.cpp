@@ -61,7 +61,12 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 		if(export_to_dbms_rb->isChecked())
 			export_hlp.exportToDBMS();
 		else if(export_to_img_rb->isChecked())
-			export_hlp.exportToPNG();
+		{
+			if(png_rb->isChecked())
+				export_hlp.exportToPNG();
+			else
+				export_hlp.exportToSVG();
+		}
 		else
 			export_hlp.exportToSQL();
 	});
@@ -73,7 +78,9 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(&export_hlp, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelExport(void)));
 	connect(connections_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(editConnections(void)));
-
+	connect(svg_rb, SIGNAL(toggled(bool)), zoom_cmb, SLOT(setDisabled(bool)));
+	connect(svg_rb, SIGNAL(toggled(bool)), zoom_lbl, SLOT(setDisabled(bool)));
+	connect(svg_rb, SIGNAL(toggled(bool)), page_by_page_chk, SLOT(setDisabled(bool)));
 
 	pgsqlvers_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
 	pgsqlvers1_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
@@ -95,7 +102,7 @@ void ModelExportForm::exec(ModelWidget *model)
 	if(model)
 	{
 		this->model=model;
-		ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true);
+		ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true, Connection::OP_EXPORT);
 		selectExportMode();
 		QDialog::exec();
 	}
@@ -159,8 +166,17 @@ void ModelExportForm::exportModel(void)
 		if(export_to_img_rb->isChecked())
 		{
 			viewp=new QGraphicsView(model->scene);
-			export_hlp.setExportToPNGParams(model->scene, viewp, image_edt->text(), zoom_cmb->itemData(zoom_cmb->currentIndex()).toDouble(),
-											show_grid_chk->isChecked(), show_delim_chk->isChecked(), page_by_page_chk->isChecked());
+
+			if(png_rb->isChecked())
+				export_hlp.setExportToPNGParams(model->scene, viewp, image_edt->text(),
+																				zoom_cmb->itemData(zoom_cmb->currentIndex()).toDouble(),
+																				show_grid_chk->isChecked(), show_delim_chk->isChecked(),
+																				page_by_page_chk->isChecked());
+			else
+				export_hlp.setExportToSVGParams(model->scene, image_edt->text(),
+																				show_grid_chk->isChecked(),
+																				show_delim_chk->isChecked());
+
 			export_thread->start();
 		}
 		else
@@ -232,15 +248,22 @@ void ModelExportForm::selectOutputFile(void)
 
 	if(export_to_file_rb->isChecked())
 	{
-		file_dlg.setNameFilter(trUtf8("SQL code (*.sql);;All files (*.*)"));
+		file_dlg.setNameFilter(trUtf8("SQL script (*.sql);;All files (*.*)"));
 		file_dlg.selectFile(model->getDatabaseModel()->getName() + QString(".sql"));
 	}
 	else
 	{
-		file_dlg.setNameFilter(trUtf8("PNG image (*.png);;All files (*.*)"));
-		file_dlg.selectFile(model->getDatabaseModel()->getName() + QString(".png"));
+		if(png_rb->isChecked())
+		{
+			file_dlg.setNameFilter(trUtf8("Portable Network Graphics (*.png);;All files (*.*)"));
+			file_dlg.selectFile(model->getDatabaseModel()->getName() + QString(".png"));
+		}
+		else
+		{
+			file_dlg.setNameFilter(trUtf8("Scalable Vector Graphics (*.svg);;All files (*.*)"));
+			file_dlg.selectFile(model->getDatabaseModel()->getName() + QString(".svg"));
+		}
 	}
-
 
 	if(file_dlg.exec()==QFileDialog::Accepted)
 	{

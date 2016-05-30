@@ -34,109 +34,112 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 	private:
 		Q_OBJECT
 		
-		//! brief Constants used to mark the type of operation performed on rows
+		//! \brief Constants used to mark the type of operation performed on rows
 		static const unsigned NO_OPERATION,	OP_INSERT, OP_UPDATE, OP_DELETE;
 		
-		//! brief Default row colors for each operation type
+		//! \brief Default row colors for each operation type
 		static const QColor ROW_COLORS[3];
-		
-		//! brief Default char used as unescaped value delimiter ({ and })
-		static const QChar UNESC_VALUE_START, UNESC_VALUE_END;
 		
 		SyntaxHighlighter *filter_hl;
 		
 		CodeCompletionWidget *code_compl_wgt;
 		
-		//! brief Store the template connection params to be used by catalogs and command execution connections
+		//! \brief Store the template connection params to be used by catalogs and command execution connections
 		attribs_map tmpl_conn_params;
 		
-		//! brief Current editing table columns names
+		//! \brief Current editing table columns names
 		QStringList col_names,
 		
-		//! brief Current editing table pk columns names
+		//! \brief Current editing table pk columns names
 		pk_col_names;
 		
-		//! brief Stores the ids of changed rows. These ids are handled on saveChanges() method
+		//! \brief Stores the ids of changed rows. These ids are handled on saveChanges() method
 		vector<int> changed_rows;
 		
-		//! brief Stores the previous color of the rows before being marked with some operation
+		//! \brief Stores the previous color of the rows before being marked with some operation
 		map<int, QBrush> prev_row_colors;
 		
-		//! brief Fills a combobox with the names of objects retrieved from catalog
+		//! \brief Fills a combobox with the names of objects retrieved from catalog
 		void listObjects(QComboBox *combo, vector<ObjectType> obj_types, const QString &schema=QString());
 		
-		//! brief Retrieve the primary key column ids for the specified table
+		//! \brief Retrieve the primary key column ids for the specified table
 		void retrievePKColumns(const QString &schema, const QString &table);
 		
-		/*! brief Mark the line as changed, changing its background color and applying the respective operation (see OP_??? constant)
+		/*! \brief Mark the line as changed, changing its background color and applying the respective operation (see OP_??? constant)
 				when user call saveChanged() */
 		void markOperationOnRow(unsigned operation, int row);
 		
-		//! brief Generates a DML command for the row depending on the it's operation type
+		//! \brief Generates a DML command for the row depending on the it's operation type
 		QString getDMLCommand(int row);
 		
-		//! brief Remove the rows marked as OP_INSERT which ids are specified on the parameter vector
+		//! \brief Remove the rows marked as OP_INSERT which ids are specified on the parameter vector
 		void removeNewRows(vector<int> &ins_rows);
 		
-		//! brief Reset the state of changed rows, clearing all attributes used to control the modifications on them
+		//! \brief Reset the state of changed rows, clearing all attributes used to control the modifications on them
 		void clearChangedRows(void);
-		
+
 	public:
 		DataManipulationForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 		
-		//! brief Defines the connection and current schema and table to be handled, this method should be called before show the dialog
+		//! \brief Defines the connection and current schema and table to be handled, this method should be called before show the dialog
 		void setAttributes(Connection conn, const QString curr_schema=QString("public"), const QString curr_table=QString());
 		
 	private slots:
-		//! brief List the tables based upon the current schema
+		//! \brief List the tables based upon the current schema
 		void listTables(void);
 		
-		//! brief List the columns based upon the current table
+		//! \brief List the columns based upon the current table
 		void listColumns(void);
 		
-		//! brief Retrieve the data for the current table filtering the data as configured on the advanced tab
+		//! \brief Retrieve the data for the current table filtering the data as configured on the advanced tab
 		void retrieveData(void);
 		
-		//! brief Disable the buttons used to handle data
+		//! \brief Disable the buttons used to handle data
 		void disableControlButtons(void);
+
+		//! \brief Enables the delete/duplicate/copy buttons depending on the selected rows
+		void enableRowControlButtons(void);
 		
-		//! brief Reset the state of advaced tab's controls
+		//! \brief Reset the state of advaced tab's controls
 		void resetAdvancedControls(void);
 		
-		//! brief Enables/disables the buttons of the order by list depending on the state of it
+		//! \brief Enables/disables the buttons of the order by list depending on the state of it
 		void enableColumnControlButtons(void);
 		
-		//! brief Add a column to the "order by" list
+		//! \brief Add a column to the "order by" list
 		void addColumnToList(void);
 		
-		//! brief Remove a column from the "order by" list
+		//! \brief Remove a column from the "order by" list
 		void removeColumnFromList(void);
 		
-		//! brief Clears the "order by" list
+		//! \brief Clears the "order by" list
 		void clearColumnList(void);
 		
-		//! brief Toggles the sort mode between ASC and DESC when right clicking on a element at order by list
+		//! \brief Toggles the sort mode between ASC and DESC when right clicking on a element at order by list
 		void changeOrderMode(QListWidgetItem *item);
 		
-		//! brief Mark the entire row in which the item resides
+		//! \brief Mark the entire row in which the item resides
 		void markUpdateOnRow(QTableWidgetItem *item);
 		
-		//! brief Mark a seleciton of rows to be delete. New rows are automatically removed
+		//! \brief Mark a seleciton of rows to be delete. New rows are automatically removed
 		void markDeleteOnRows(void);
 		
-		//! brief Insert a new row on the grid with the first column with edition enabled
-		void insertRow(void);
+		//! \brief Add a new row on the grid with the first column with edition enabled
+		void addRow(void);
 		
-		//! brief Undo the operation made on all rows or in a set of selected rows
+		//! \brief Duplicate the selected rows creating new ones with the same values as the selection
+		void duplicateRows(void);
+
+		//! \brief Undo the operation made on all rows or in a set of selected rows
 		void undoOperations(void);
 		
-		//! brief Insert a new row as the user press tab key on the last column at last row
+		//! \brief Insert a new row as the user press tab key on the last column at last row
 		void insertRowOnTabPress(int curr_row, int curr_col, int prev_row, int prev_col);
 		
-		//! brief Commit all changes made on the rows rolling back changes when some error is triggered
+		//! \brief Commit all changes made on the rows rolling back changes when some error is triggered
 		void saveChanges(void);
 		
-		//! brief Swap two rows on the order by list
+		//! \brief Swap two rows on the order by list
 		void swapColumns(void);
 };
 

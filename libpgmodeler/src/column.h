@@ -98,10 +98,10 @@ class Column: public TableObject{
 
 		BaseObject *getParentRelationship(void);
 
-		//! brief Set the sequence that will generate the default value for the column
+		//! \brief Set the sequence that will generate the default value for the column
 		void setSequence(BaseObject *seq);
 
-		//! brief Returns the sequence generator of default value
+		//! \brief Returns the sequence generator of default value
 		BaseObject *getSequence(void);
 
 		//! \brief Copies on column to other

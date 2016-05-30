@@ -44,7 +44,7 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 					expansion is memorized and can be restored at any moment via restoreTreeState() method */
 		save_tree_state,
 
-		/*! brief Allow the object creation in simplified mode by using the "New [object type]" popup menu.
+		/*! \brief Allow the object creation in simplified mode by using the "New [object type]" popup menu.
 		This flag is ignored if the model object widget is used in the complete mode since the main purpose
 		of the widget is to allow the object management */
 		enable_obj_creation;
@@ -102,7 +102,7 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 
 		BaseObject *getSelectedObject(void);
 
-		//! brief Enables the object creation in simplified view by exposing the popup menu "New [object]"
+		//! \brief Enables the object creation in simplified view by exposing the popup menu "New [object]"
 		void enableObjectCreation(bool value);
 
 	protected:

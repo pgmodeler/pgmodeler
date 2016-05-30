@@ -196,7 +196,7 @@ class Constraint: public TableObject{
 		 connections and disconnections of relationships */
 		bool isReferRelationshipAddedColumn(void);
 
-		/*! brief Returns the list of all columns that is created by relationships.
+		/*! \brief Returns the list of all columns that is created by relationships.
 	This method is slower than isReferRelationshipAddedColumn() so it's not
 	recommended to use it only check if the object is referencing columns
 	added by relationship */
@@ -252,7 +252,7 @@ class Constraint: public TableObject{
 
 		virtual QString getSignature(bool format) final;
 
-		/*! brief Compares two constratins XML definition and returns if they differs. This methods varies a little from
+		/*! \brief Compares two constratins XML definition and returns if they differs. This methods varies a little from
 		BaseObject::isCodeDiffersFrom() because here we need to generate xml code including relationship added columns */
 		virtual bool isCodeDiffersFrom(BaseObject *object, const vector<QString> &ignored_attribs={}, const vector<QString> &ignored_tags={});
 };

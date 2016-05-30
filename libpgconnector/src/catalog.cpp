@@ -341,12 +341,18 @@ vector<attribs_map> Catalog::getObjectsNames(vector<ObjectType> obj_types, const
 			//Build the catalog query for the specified object type
 			sql=getCatalogQuery(QUERY_LIST, obj_type, false, extra_attribs);
 
-			//Injecting the object type integer code in order to sort the final result
-			sql.replace(sql.indexOf(select_kw), select_kw.size(),
-									QString("%1 %2 AS object_type, ").arg(select_kw).arg(obj_type));
+			/* For certain objects the catalog query will be empty due to the
+			absence of that kind of element in the version of the database.
+			E.g.: Event triggers does not exists in PgSQL < 9.3 */
+			if(!sql.isEmpty())
+			{
+				//Injecting the object type integer code in order to sort the final result
+				sql.replace(sql.indexOf(select_kw), select_kw.size(),
+										QString("%1 %2 AS object_type, ").arg(select_kw).arg(obj_type));
 
-			sql+=QChar('\n');
-			queries.push_back(sql);
+				sql+=QChar('\n');
+				queries.push_back(sql);
+			}
 		}
 
 		//Joining the generated queries by using union in order to retrieve all results at once

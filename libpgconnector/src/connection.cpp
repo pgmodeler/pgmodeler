@@ -19,6 +19,7 @@
 #include "connection.h"
 #include <QTextStream>
 #include <iostream>
+#include "parsersattributes.h"
 
 const QString Connection::SSL_DESABLE=QString("disable");
 const QString Connection::SSL_ALLOW=QString("allow");
@@ -34,7 +35,7 @@ const QString Connection::PARAM_DB_NAME=QString("dbname");
 const QString Connection::PARAM_USER=QString("user");
 const QString Connection::PARAM_PASSWORD=QString("password");
 const QString Connection::PARAM_CONN_TIMEOUT=QString("connect_timeout");
-const QString Connection::PARAM_OPTIONS=QString("options");
+const QString Connection::PARAM_OTHERS=QString("options");
 const QString Connection::PARAM_SSL_MODE=QString("sslmode");
 const QString Connection::PARAM_SSL_CERT=QString("sslcert");
 const QString Connection::PARAM_SSL_KEY=QString("sslkey");
@@ -50,17 +51,20 @@ const QString Connection::SERVER_VERSION=QString("server-version");
 bool Connection::notice_enabled=false;
 bool Connection::print_sql=false;
 bool Connection::silence_conn_err=true;
+QStringList Connection::notices;
 
 Connection::Connection(void)
 {
 	connection=nullptr;
-	auto_browse_db=false;
+	auto_browse_db=false;	
+	cmd_exec_timeout=0;
+
+	for(unsigned idx=OP_VALIDATION; idx <= OP_DIFF; idx++)
+		default_for_oper[idx]=false;
 }
 
-Connection::Connection(const attribs_map &params)
+Connection::Connection(const attribs_map &params) : Connection()
 {
-	connection=nullptr;
-	auto_browse_db=false;
 	setConnectionParams(params);
 }
 
@@ -71,6 +75,11 @@ Connection::~Connection(void)
 		PQfinish(connection);
 		connection=nullptr;
 	}
+}
+
+void Connection::setSQLExecutionTimout(unsigned timeout)
+{
+	cmd_exec_timeout=timeout;
 }
 
 void Connection::setConnectionParam(const QString &param, const QString &value)
@@ -131,11 +140,42 @@ void Connection::generateConnectionString(void)
 				value=QString("'%1'").arg(value);
 
 			if(!value.isEmpty())
-				connection_str+=itr->first + "=" + value + " ";
+			{
+				if(itr->first!=PARAM_OTHERS)
+					connection_str+=itr->first + "=" + value + " ";
+				else
+					connection_str+=value;
+			}
 		}
 
 		itr++;
 	}
+}
+
+void Connection::noticeProcessor(void *, const char *message)
+{
+	notices.push_back(QString(message));
+}
+
+void Connection::validateConnectionStatus(void)
+{
+	if(cmd_exec_timeout > 0)
+	{
+		qint64 dt=(QDateTime::currentDateTime().toMSecsSinceEpoch() -
+							 last_cmd_execution.toMSecsSinceEpoch())/1000;
+
+		if(dt >= cmd_exec_timeout)
+		{
+			close();
+			throw Exception(ERR_CONNECTION_TIMEOUT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		}
+	}
+
+	if(PQstatus(connection)==CONNECTION_BAD)
+		throw Exception(Exception::getErrorMessage(ERR_CONNECTION_BROKEN)
+										.arg(connection_params[PARAM_SERVER_FQDN].isEmpty() ? connection_params[PARAM_SERVER_IP] : connection_params[PARAM_SERVER_FQDN])
+										.arg(connection_params[PARAM_PORT]),
+										ERR_CONNECTION_BROKEN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 }
 
 void Connection::setNoticeEnabled(bool value)
@@ -190,6 +230,7 @@ void Connection::connect(void)
 
 	//Try to connect to the database
 	connection=PQconnectdb(connection_str.toStdString().c_str());
+	last_cmd_execution=QDateTime::currentDateTime();
 
 	/* If the connection descriptor has not been allocated or if the connection state
 		is CONNECTION_BAD it indicates that the connection was not successful */
@@ -201,8 +242,14 @@ void Connection::connect(void)
 						__PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 
+	notices.clear();
+
 	if(!notice_enabled)
+		//Completely disable notice/warnings in the connection
 		PQsetNoticeReceiver(connection, disableNoticeOutput, nullptr);
+	else
+		//Enable the notice/warnings in the connection by pushing them into the list of generated notices
+		PQsetNoticeProcessor(connection, noticeProcessor, nullptr);
 }
 
 void Connection::close(void)
@@ -214,6 +261,7 @@ void Connection::close(void)
 			PQfinish(connection);
 
 		connection=nullptr;
+		last_cmd_execution=QDateTime();
 	}
 }
 
@@ -296,6 +344,11 @@ QString  Connection::getPgSQLVersion(bool major_only)
 		return(QString("%1.%2").arg(fmt_ver).arg(raw_ver.mid(4,1).toInt()));
 }
 
+QStringList Connection::getNotices(void)
+{
+	return (notices);
+}
+
 void Connection::executeDMLCommand(const QString &sql, ResultSet &result)
 {
 	ResultSet *new_res=nullptr;
@@ -304,6 +357,9 @@ void Connection::executeDMLCommand(const QString &sql, ResultSet &result)
 	//Raise an error in case the user try to close a not opened connection
 	if(!connection)
 		throw Exception(ERR_OPR_NOT_ALOC_CONN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
+	validateConnectionStatus();
+	notices.clear();
 
 	//Alocates a new result to receive the resultset returned by the sql command
 	sql_res=PQexec(connection, sql.toStdString().c_str());
@@ -342,6 +398,8 @@ void Connection::executeDDLCommand(const QString &sql)
 	if(!connection)
 		throw Exception(ERR_OPR_NOT_ALOC_CONN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
+	validateConnectionStatus();
+	notices.clear();
 	sql_res=PQexec(connection, sql.toStdString().c_str());
 
 	//Prints the SQL to stdout when the flag is active
@@ -359,6 +417,24 @@ void Connection::executeDDLCommand(const QString &sql)
 						ERR_CMD_SQL_NOT_EXECUTED, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,
 						QString(PQresultErrorField(sql_res, PG_DIAG_SQLSTATE)));
 	}
+}
+
+void Connection::setDefaultForOperation(unsigned op_id, bool value)
+{
+	if(op_id > OP_NONE)
+		throw Exception(ERR_REF_ELEM_INV_INDEX,  __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	else if(op_id!=OP_NONE)
+		default_for_oper[op_id]=value;
+}
+
+bool Connection::isDefaultForOperation(unsigned op_id)
+{
+	if(op_id > OP_NONE)
+		throw Exception(ERR_REF_ELEM_INV_INDEX,  __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	else if(op_id==OP_NONE)
+		return(false);
+
+	return(default_for_oper[op_id]);
 }
 
 void Connection::switchToDatabase(const QString &dbname)
@@ -396,5 +472,8 @@ void Connection::operator = (const Connection &conn)
 	this->connection_params=conn.connection_params;
 	this->connection_str=conn.connection_str;
 	this->connection=nullptr;
+
+	for(unsigned idx=OP_VALIDATION; idx <= OP_DIFF; idx++)
+		default_for_oper[idx]=conn.default_for_oper[idx];
 }
 

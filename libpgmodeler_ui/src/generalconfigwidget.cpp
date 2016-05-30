@@ -324,6 +324,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 	{
 		map<QString, attribs_map >::iterator itr, itr_end;
 		QString file_sch, root_dir, widget_sch;
+		bool show_grid=false, show_delim=false, align_grid=false;
 
 		root_dir=GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
 				 GlobalAttributes::DIR_SEPARATOR;
@@ -355,6 +356,11 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_COMPLETION]=(code_completion_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_TAB_WIDTH]=QString::number(tab_width_chk->isChecked() ? tab_width_spb->value() : 0);
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::USE_PLACEHOLDERS]=(use_placeholders_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
+
+		ObjectsScene::getGridOptions(show_grid, align_grid, show_delim);
+		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_CANVAS_GRID]=(show_grid ? ParsersAttributes::_TRUE_ : QString());
+		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_PAGE_DELIMITERS]=(show_delim ? ParsersAttributes::_TRUE_ : QString());
+		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::ALIGN_OBJS_TO_GRID]=(align_grid ? ParsersAttributes::_TRUE_ : QString());
 
 		unity_cmb->setCurrentIndex(UNIT_MILIMETERS);
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN]=QString("%1,%2,%3,%4").arg(left_marg->value())
@@ -446,6 +452,11 @@ void GeneralConfigWidget::applyConfiguration(void)
 	ObjectsScene::setEnableCornerMove(corner_move_chk->isChecked());
 	ObjectsScene::setInvertPanningRangeSelection(invert_pan_range_chk->isChecked());
 	ObjectsScene::setGridSize(grid_size_spb->value());
+
+	ObjectsScene::setGridOptions(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_CANVAS_GRID]!=ParsersAttributes::_FALSE_,
+															 config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::ALIGN_OBJS_TO_GRID]!=ParsersAttributes::_FALSE_,
+															 config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_PAGE_DELIMITERS]!=ParsersAttributes::_FALSE_);
+
 	OperationList::setMaximumSize(oplist_size_spb->value());
 	BaseTableView::setHideExtAttributes(hide_ext_attribs_chk->isChecked());
 	BaseTableView::setHideTags(hide_table_tags_chk->isChecked());
@@ -453,7 +464,7 @@ void GeneralConfigWidget::applyConfiguration(void)
 	ModelWidget::setSaveLastCanvasPosition(save_last_pos_chk->isChecked());
 	ModelWidget::setRenderSmoothnessDisabled(disable_smooth_chk->isChecked());
 	ModelWidget::setSimplifiedObjectCreation(simple_obj_creation_chk->isChecked());
-	MainWindow::setConfirmValidation(confirm_validation_chk->isChecked());
+	MainWindow::setConfirmValidation(confirm_validation_chk->isChecked());	
 	BaseObjectView::setPlaceholderEnabled(use_placeholders_chk->isChecked());
 
 	fnt.setFamily(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]);

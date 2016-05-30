@@ -74,10 +74,10 @@ enum ObjectType {
 
 class BaseObject {
 	private:
-		//! brief Current PostgreSQL version used in SQL code generation
+		//! \brief Current PostgreSQL version used in SQL code generation
 		static QString pgsql_ver;
 
-		//! brief Indicates the the cached code enabled
+		//! \brief Indicates the the cached code enabled
 		static bool use_cached_code;
 
 		//! \brief Stores the database wich the object belongs
@@ -118,15 +118,15 @@ class BaseObject {
 		the role only as a reference since it already exists on the destination server. */
 		sql_disabled,
 
-		/*! brief Indicates if the cached code is invalidated. Some key attributes of this class and other base classes
+		/*! \brief Indicates if the cached code is invalidated. Some key attributes of this class and other base classes
 				automatically change the value of this attribute when the respective set[Attribute]() is called. For all the
 				rest the method setCodeInvalidated() should be explicitly called if you need to invalidate the code and
 				generate it again */
 		code_invalidated;
 
-		//! brief Stores the cached xml and sql code
+		//! \brief Stores the cached xml and sql code
 		QString cached_code[2],
-		//! brief Stores the xml code in reduced form
+		//! \brief Stores the xml code in reduced form
 		cached_reduced_code;
 
 		/*! \brief This map stores the name of each object type associated to a schema file
@@ -162,10 +162,10 @@ class BaseObject {
 		//! \brief Object's name (in PostgreSQL accepted format)
 		obj_name,
 
-		//! brief The set of SQL commands appended on the objectc's definition
+		//! \brief The set of SQL commands appended on the objectc's definition
 		appended_sql,
 
-		//! brief The set of SQL commands prepended on the objectc's definition
+		//! \brief The set of SQL commands prepended on the objectc's definition
 		prepended_sql;
 
 
@@ -193,25 +193,25 @@ class BaseObject {
 		cluster level objects (database, tablespace and roles). */
 		static void swapObjectsIds(BaseObject *obj1, BaseObject *obj2, bool enable_cl_obj_swap);
 
-		//! brief Changes the current object id to the most recent global id value.
+		//! \brief Changes the current object id to the most recent global id value.
 		static void updateObjectId(BaseObject *obj);
 
 		//! \brief Clears all the attributes used by the SchemaParser
 		void clearAttributes(void);
 
-		/*! brief Returns the cached code for the specified code type. This method returns an empty
+		/*! \brief Returns the cached code for the specified code type. This method returns an empty
 		 string in case of no code is cached */
 		QString getCachedCode(unsigned def_type, bool reduced_form);
 
-		/*! brief Configures the DIF_SQL attribute depending on the type of the object. This attribute is used to know how
+		/*! \brief Configures the DIF_SQL attribute depending on the type of the object. This attribute is used to know how
 		ALTER, COMMENT and DROP commands must be generated. Refer to schema files for comments, drop and alter. */
 		void setBasicAttributes(bool format_name);
 
-		/*! brief Compares two xml buffers and returns if they differs from each other. The user can specify which attributes
+		/*! \brief Compares two xml buffers and returns if they differs from each other. The user can specify which attributes
 	and tags must be ignored when makin the comparison. NOTE: only the name for attributes and tags must be informed */
 		bool isCodeDiffersFrom(const QString &xml_def1, const QString &xml_def2, const vector<QString> &ignored_attribs, const vector<QString> &ignored_tags);
 
-		/*! brief Copies the non-empty attributes on the map at parameter to the own object attributes map. This method is used
+		/*! \brief Copies the non-empty attributes on the map at parameter to the own object attributes map. This method is used
 		as an auxiliary when generating alter definition for some objects. When one or more attributes are copied an especial
 		attribute is inserted (HAS_CHANGES) in order to help the atler generatin process to identify which attributes are
 		products of comparison */
@@ -314,7 +314,7 @@ class BaseObject {
 		 the parameter 'prepend_schema' includes the schema name on the objects name (defult) */
 		virtual QString getName(bool format=false, bool prepend_schema=true);
 
-		//! brief Returns the name of the object with schema name (when available) prepended by default
+		//! \brief Returns the name of the object with schema name (when available) prepended by default
 		virtual QString getSignature(bool format=true);
 
 		//! \brief Retorns the object's comment
@@ -423,21 +423,21 @@ class BaseObject {
 		//! \brief Returns if the object accepts the use of DROP commands
 		bool acceptsDropCommand(void);
 
-		/*! brief Marks the current cached code as invalid and forces its regenaration.
+		/*! \brief Marks the current cached code as invalid and forces its regenaration.
 				Some key attributes / setters in the base classes BaseObject, BaseTable and BaseRelationship
 				will automatically invalidate the code but for all other setters / attributes the user must call
 				this method explicitly in order to force the regeneration of the code.
 				This method has no effect when the cached code support is disables. See enableCachedCode() */
 		virtual void setCodeInvalidated(bool value);
 
-		//! brief Returns if the code (sql and xml) is invalidated
+		//! \brief Returns if the code (sql and xml) is invalidated
 		bool isCodeInvalidated(void);
 
-		/*! brief Compares the xml code between the "this" object and another one. The user can specify which attributes
+		/*! \brief Compares the xml code between the "this" object and another one. The user can specify which attributes
 		and tags must be ignored when makin the comparison. NOTE: only the name for attributes and tags must be informed */
 		virtual bool isCodeDiffersFrom(BaseObject *object, const vector<QString> &ignored_attribs={}, const vector<QString> &ignored_tags={});
 
-		/*! brief Enable/disable the use of cached sql/xml code. When enabled the code generation speed is hugely increased
+		/*! \brief Enable/disable the use of cached sql/xml code. When enabled the code generation speed is hugely increased
 				but the downward is an increasing on memory usage. Make sure to every time when an attribute of any instance derivated
 				of this class changes you need to call setCodeInvalidated() in order to force the update of the code cache */
 		static void enableCachedCode(bool value);
@@ -454,11 +454,11 @@ class BaseObject {
 	types are OBJ_DATABASE, OBJ_SCHEMA and OBJ_TABLE */
 		static vector<ObjectType> getChildObjectTypes(ObjectType obj_type);
 
-		/*! brief Sets the default version when generating the SQL code. This affects all instances of classes that
+		/*! \brief Sets the default version when generating the SQL code. This affects all instances of classes that
 				is based upon this one */
 		static void setPgSQLVersion(const QString &ver);
 
-		//! brief Returns the current version for SQL code generation
+		//! \brief Returns the current version for SQL code generation
 		static QString getPgSQLVersion(void);
 
 		friend class DatabaseModel;

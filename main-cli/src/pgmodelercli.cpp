@@ -23,6 +23,7 @@ const QString PgModelerCLI::INPUT=QString("--input");
 const QString PgModelerCLI::OUTPUT=QString("--output");
 const QString PgModelerCLI::EXPORT_TO_FILE=QString("--export-to-file");
 const QString PgModelerCLI::EXPORT_TO_PNG=QString("--export-to-png");
+const QString PgModelerCLI::EXPORT_TO_SVG=QString("--export-to-svg");
 const QString PgModelerCLI::EXPORT_TO_DBMS=QString("--export-to-dbms");
 const QString PgModelerCLI::DROP_DATABASE=QString("--drop-database");
 const QString PgModelerCLI::DROP_OBJECTS=QString("--drop-objects");
@@ -117,8 +118,8 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 			xmlparser=model->getXMLParser();
 			silent_mode=(parsed_opts.count(SILENT));
 
-			//If the export is to png image loads additional configurations
-			if(parsed_opts.count(EXPORT_TO_PNG))
+			//If the export is to png or svg loads additional configurations
+			if(parsed_opts.count(EXPORT_TO_PNG) || parsed_opts.count(EXPORT_TO_SVG))
 			{
 				connect(model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
 				connect(model, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(handleObjectRemoval(BaseObject *)));
@@ -179,6 +180,7 @@ void PgModelerCLI::initializeOptions(void)
 	long_opts[OUTPUT]=true;
 	long_opts[EXPORT_TO_FILE]=false;
 	long_opts[EXPORT_TO_PNG]=false;
+	long_opts[EXPORT_TO_SVG]=false;
 	long_opts[EXPORT_TO_DBMS]=false;
 	long_opts[DROP_DATABASE]=false;
 	long_opts[DROP_OBJECTS]=false;
@@ -206,6 +208,7 @@ void PgModelerCLI::initializeOptions(void)
 	short_opts[OUTPUT]=QString("-o");
 	short_opts[EXPORT_TO_FILE]=QString("-f");
 	short_opts[EXPORT_TO_PNG]=QString("-p");
+	short_opts[EXPORT_TO_SVG]=QString("-G");
 	short_opts[EXPORT_TO_DBMS]=QString("-d");
 	short_opts[DROP_DATABASE]=QString("-T");
 	short_opts[DROP_OBJECTS]=QString("-J");
@@ -258,25 +261,26 @@ void PgModelerCLI::showMenu(void)
 	out << trUtf8("This CLI tool provides the operations to export pgModeler's database models without\n\
 				  the need to load them on graphical interface as well to fix model files to the most recent\n\
 				  accepted structure. All available options are described below.") << endl;
-				  out << endl;
-		   out << trUtf8("General options: ") << endl;
+	out << endl;
+	out << trUtf8("General options: ") << endl;
 	out << trUtf8("   %1, %2=[FILE]\t\t Input model file (.dbm). Mandatory use when fixing a model or exporting it.").arg(short_opts[INPUT]).arg(INPUT) << endl;
 	out << trUtf8("   %1, %2=[FILE]\t\t Output file. Mandatory use when fixing model or export to file or png.").arg(short_opts[OUTPUT]).arg(OUTPUT) << endl;
 	out << trUtf8("   %1, %2\t\t Try to fix the structure of the input model file in order to make it loadable again.").arg(short_opts[FIX_MODEL]).arg(FIX_MODEL) << endl;
 	out << trUtf8("   %1, %2\t\t Model fix tries. When reaching the maximum count the invalid objects will be discard.").arg(short_opts[FIX_TRIES]).arg(FIX_TRIES) << endl;
 	out << trUtf8("   %1, %2\t\t Export to a sql script file.").arg(short_opts[EXPORT_TO_FILE]).arg(EXPORT_TO_FILE)<< endl;
 	out << trUtf8("   %1, %2\t\t Export to a png image.").arg(short_opts[EXPORT_TO_PNG]).arg(EXPORT_TO_PNG) << endl;
+	out << trUtf8("   %1, %2\t\t Export to a svg file.").arg(short_opts[EXPORT_TO_SVG]).arg(EXPORT_TO_SVG) << endl;
 	out << trUtf8("   %1, %2\t\t Export directly to a PostgreSQL server.").arg(short_opts[EXPORT_TO_DBMS]).arg(EXPORT_TO_DBMS) << endl;
 	out << trUtf8("   %1, %2\t\t List available connections on %3 file.").arg(short_opts[LIST_CONNS]).arg(LIST_CONNS).arg(GlobalAttributes::CONNECTIONS_CONF + GlobalAttributes::CONFIGURATION_EXT) << endl;
 	out << trUtf8("   %1, %2\t\t Version of generated SQL code. Only for file or dbms export.").arg(short_opts[PGSQL_VER]).arg(PGSQL_VER) << endl;
 	out << trUtf8("   %1, %2\t\t\t Silent execution. Only critical errors are shown during process.").arg(short_opts[SILENT]).arg(SILENT) << endl;
 	out << trUtf8("   %1, %2\t\t\t Show this help menu.").arg(short_opts[HELP]).arg(HELP) << endl;
 	out << endl;
-	out << trUtf8("PNG export options: ") << endl;
+	out << trUtf8("PNG and SVG export options: ") << endl;
 	out << trUtf8("   %1, %2\t\t Draws the grid on the exported png image.").arg(short_opts[SHOW_GRID]).arg(SHOW_GRID) << endl;
 	out << trUtf8("   %1, %2\t Draws the page delimiters on the exported png image.").arg(short_opts[SHOW_DELIMITERS]).arg(SHOW_DELIMITERS) << endl;
-	out << trUtf8("   %1, %2\t\t Each page will be exported on a separated png image.").arg(short_opts[PAGE_BY_PAGE]).arg(PAGE_BY_PAGE) << endl;
-	out << trUtf8("   %1, %2=[FACTOR]\t\t Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4").arg(short_opts[ZOOM_FACTOR]).arg(ZOOM_FACTOR).arg(ModelWidget::MINIMUM_ZOOM*100).arg(ModelWidget::MAXIMUM_ZOOM*100) << endl;
+	out << trUtf8("   %1, %2\t\t Each page will be exported on a separated png image. (Only for PNG)").arg(short_opts[PAGE_BY_PAGE]).arg(PAGE_BY_PAGE) << endl;
+	out << trUtf8("   %1, %2=[FACTOR]\t\t Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4 (Only for PNG)").arg(short_opts[ZOOM_FACTOR]).arg(ZOOM_FACTOR).arg(ModelWidget::MINIMUM_ZOOM*100).arg(ModelWidget::MAXIMUM_ZOOM*100) << endl;
 	out << endl;
 	out << trUtf8("DBMS export options: ") << endl;
 	out << trUtf8("   %1, %2\t Ignores errors related to duplicated objects that eventually exists on server side.").arg(short_opts[IGNORE_DUPLICATES]).arg(IGNORE_DUPLICATES) << endl;
@@ -339,6 +343,7 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 		//Checking if multiples export modes were specified
 		mode_cnt+=opts.count(EXPORT_TO_FILE);
 		mode_cnt+=opts.count(EXPORT_TO_PNG);
+		mode_cnt+=opts.count(EXPORT_TO_SVG);
 		mode_cnt+=opts.count(EXPORT_TO_DBMS);
 
 		if(opts.count(ZOOM_FACTOR))
@@ -433,6 +438,16 @@ int PgModelerCLI::exec(void)
 										   parsed_opts.count(SHOW_GRID) > 0,
 										   parsed_opts.count(SHOW_DELIMITERS) > 0,
 										   parsed_opts.count(PAGE_BY_PAGE) > 0);
+				}
+				//Export to SVG
+				else if(parsed_opts.count(EXPORT_TO_SVG))
+				{
+					if(!silent_mode)
+						out << trUtf8("Export to SVG file: ") << parsed_opts[OUTPUT] << endl;
+
+					export_hlp.exportToSVG(scene, parsed_opts[OUTPUT],
+																 parsed_opts.count(SHOW_GRID) > 0,
+																 parsed_opts.count(SHOW_DELIMITERS) > 0);
 				}
 				//Export to SQL file
 				else if(parsed_opts.count(EXPORT_TO_FILE))

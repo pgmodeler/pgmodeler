@@ -22,6 +22,7 @@
 
 vector<Connection *> ConnectionsConfigWidget::connections;
 map<QString, attribs_map> ConnectionsConfigWidget::config_params;
+const QString ConnectionsConfigWidget::DEFAULT_FOR=QString("default-for-%1");
 
 ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
@@ -30,11 +31,16 @@ ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : BaseConfigW
 	auto_browse_ht=new HintTextWidget(auto_browse_hint, this);
 	auto_browse_ht->setText(auto_browse_chk->statusTip());
 
+	other_params_ht=new HintTextWidget(other_params_hint, this);
+	other_params_ht->setText(other_params_edt->statusTip());
+
+	default_for_ops_ht=new HintTextWidget(default_for_ops_hint, this);
+	default_for_ops_ht->setText(trUtf8("Indicates in which operations (diff, export, import or validation) the connection is used if none is explicitly specified by the user."));
+
 	connect(ssl_mode_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableCertificates(void)));
 
 	connect(new_tb, SIGNAL(clicked(bool)), this, SLOT(newConnection(void)));
 	connect(cancel_tb, SIGNAL(clicked(bool)), this, SLOT(newConnection(void)));
-
 	connect(duplicate_tb, SIGNAL(clicked(bool)), this, SLOT(duplicateConnection(void)));
 
 	connect(test_tb, SIGNAL(clicked(bool)), this, SLOT(testConnection(void)));
@@ -66,6 +72,8 @@ void ConnectionsConfigWidget::hideEvent(QHideEvent *)
 void ConnectionsConfigWidget::showEvent(QShowEvent *)
 {
 	updateConnectionsCombo();
+	newConnection();
+	conn_attribs_tbw->setCurrentIndex(0);
 }
 
 void ConnectionsConfigWidget::updateConnectionsCombo(void)
@@ -103,9 +111,20 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 		Connection *conn=nullptr;
 
 		destroyConnections();
-
 		key_attribs.push_back(ParsersAttributes::ALIAS);
-		BaseConfigWidget::loadConfiguration(GlobalAttributes::CONNECTIONS_CONF, config_params, key_attribs);
+
+		try
+		{
+			BaseConfigWidget::loadConfiguration(GlobalAttributes::CONNECTIONS_CONF, config_params, key_attribs);
+		}
+		catch(Exception &e)
+		{
+			if(e.getErrorType()==ERR_LIBXMLERR)
+			{
+				fixConnectionsFileSyntax();
+				BaseConfigWidget::loadConfiguration(GlobalAttributes::CONNECTIONS_CONF, config_params, key_attribs);
+			}
+		}
 
 		itr=config_params.begin();
 		itr_end=config_params.end();
@@ -128,8 +147,13 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 			conn->setConnectionParam(Connection::PARAM_SSL_CRL, itr->second[Connection::PARAM_SSL_CRL]);
 			conn->setConnectionParam(Connection::PARAM_LIB_GSSAPI, itr->second[Connection::PARAM_LIB_GSSAPI]);
 			conn->setConnectionParam(Connection::PARAM_KERBEROS_SERVER, itr->second[Connection::PARAM_KERBEROS_SERVER]);
-			conn->setConnectionParam(Connection::PARAM_OPTIONS, itr->second[Connection::PARAM_OPTIONS]);
+			conn->setConnectionParam(Connection::PARAM_OTHERS, itr->second[Connection::PARAM_OTHERS]);
+
 			conn->setAutoBrowseDB(itr->second[ParsersAttributes::AUTO_BROWSE_DB]==ParsersAttributes::_TRUE_);
+			conn->setDefaultForOperation(Connection::OP_DIFF, itr->second[DEFAULT_FOR.arg(ParsersAttributes::DIFF)]==ParsersAttributes::_TRUE_);
+			conn->setDefaultForOperation(Connection::OP_EXPORT, itr->second[DEFAULT_FOR.arg(ParsersAttributes::EXPORT)]==ParsersAttributes::_TRUE_);
+			conn->setDefaultForOperation(Connection::OP_IMPORT, itr->second[DEFAULT_FOR.arg(ParsersAttributes::IMPORT)]==ParsersAttributes::_TRUE_);
+			conn->setDefaultForOperation(Connection::OP_VALIDATION, itr->second[DEFAULT_FOR.arg(ParsersAttributes::VALIDATION)]==ParsersAttributes::_TRUE_);
 
 			connections.push_back(conn);
 			itr++;
@@ -177,9 +201,13 @@ void ConnectionsConfigWidget::newConnection(void)
 	host_edt->clear();
 	port_sbp->setValue(5432);
 	passwd_edt->clear();
-	options_edt->clear();
+	other_params_edt->clear();
 
 	auto_browse_chk->setChecked(false);
+	diff_chk->setChecked(false);
+	export_chk->setChecked(false);
+	import_chk->setChecked(false);
+	validation_chk->setChecked(false);
 
 	ssl_mode_cmb->setCurrentIndex(0);
 	client_cert_edt->setText(QString("~/.postgresql/postgresql.crt"));
@@ -286,6 +314,11 @@ void ConnectionsConfigWidget::editConnection(void)
 		alias_edt->setText(conn->getConnectionParam(Connection::PARAM_ALIAS));
 		auto_browse_chk->setChecked(conn->isAutoBrowseDB());
 
+		diff_chk->setChecked(conn->isDefaultForOperation(Connection::OP_DIFF));
+		export_chk->setChecked(conn->isDefaultForOperation(Connection::OP_EXPORT));
+		import_chk->setChecked(conn->isDefaultForOperation(Connection::OP_IMPORT));
+		validation_chk->setChecked(conn->isDefaultForOperation(Connection::OP_VALIDATION));
+
 		if(!conn->getConnectionParam(Connection::PARAM_SERVER_FQDN).isEmpty())
 			host_edt->setText(conn->getConnectionParam(Connection::PARAM_SERVER_FQDN));
 		else
@@ -299,7 +332,7 @@ void ConnectionsConfigWidget::editConnection(void)
 
 		krb_server_edt->setText(conn->getConnectionParam(Connection::PARAM_KERBEROS_SERVER));
 		gssapi_auth_chk->setChecked(conn->getConnectionParam(Connection::PARAM_LIB_GSSAPI)==QString("gssapi"));
-		options_edt->setText(conn->getConnectionParam(Connection::PARAM_OPTIONS));
+		other_params_edt->setText(conn->getConnectionParam(Connection::PARAM_OTHERS));
 
 		if(conn->getConnectionParam(Connection::PARAM_SSL_MODE)==Connection::SSL_DESABLE)
 			ssl_mode_cmb->setCurrentIndex(0);
@@ -344,6 +377,11 @@ void ConnectionsConfigWidget::configureConnection(Connection *conn)
 		conn->setConnectionParam(Connection::PARAM_DB_NAME, conn_db_edt->text());
 		conn->setConnectionParam(Connection::PARAM_CONN_TIMEOUT, QString("%1").arg(timeout_sbp->value()));
 
+		conn->setDefaultForOperation(Connection::OP_DIFF, diff_chk->isChecked());
+		conn->setDefaultForOperation(Connection::OP_EXPORT, export_chk->isChecked());
+		conn->setDefaultForOperation(Connection::OP_IMPORT, import_chk->isChecked());
+		conn->setDefaultForOperation(Connection::OP_VALIDATION, validation_chk->isChecked());
+
 		switch(ssl_mode_cmb->currentIndex())
 		{
 			case 1:
@@ -378,8 +416,37 @@ void ConnectionsConfigWidget::configureConnection(Connection *conn)
 		if(!krb_server_edt->text().isEmpty())
 			conn->setConnectionParam(Connection::PARAM_KERBEROS_SERVER, krb_server_edt->text());
 
-		if(!options_edt->text().isEmpty())
-			conn->setConnectionParam(Connection::PARAM_OPTIONS, options_edt->text());
+		if(!other_params_edt->text().isEmpty())
+			conn->setConnectionParam(Connection::PARAM_OTHERS, other_params_edt->text());
+	}
+}
+
+void ConnectionsConfigWidget::fixConnectionsFileSyntax(void)
+{
+	QFile file;
+
+	file.setFileName(GlobalAttributes::CONFIGURATIONS_DIR +
+									 GlobalAttributes::DIR_SEPARATOR +
+									 GlobalAttributes::CONNECTIONS_CONF + GlobalAttributes::CONFIGURATION_EXT);
+	file.open(QFile::ReadWrite);
+
+	if(file.isOpen())
+	{
+		QByteArray buffer,
+				old_attrib = QByteArray(QString("%1=").arg(Connection::PARAM_CONN_TIMEOUT).toStdString().c_str()),
+				new_attrib = QByteArray(QString("%1=").arg(ParsersAttributes::CONNECTION_TIMEOUT).toStdString().c_str());
+
+		buffer = file.readAll();
+
+		if(buffer.contains(old_attrib))
+		{
+			buffer.replace(old_attrib, new_attrib);
+			file.reset();
+			file.resize(0);
+			file.write(buffer);
+		}
+
+		file.close();
 	}
 }
 
@@ -443,7 +510,7 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 			Messagebox msg_box;
 
 			msg_box.show(trUtf8("There is a connection being created or edited! Do you want to save it?"),
-						 Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
+									 Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
 
 			if(msg_box.result()==QDialog::Accepted)
 				handleConnection();
@@ -468,6 +535,11 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 				attribs[ParsersAttributes::AUTO_BROWSE_DB]=(conn->isAutoBrowseDB() ? ParsersAttributes::_TRUE_ : QString());
 				attribs[ParsersAttributes::CONNECTION_TIMEOUT]=attribs[Connection::PARAM_CONN_TIMEOUT];
 
+				attribs[DEFAULT_FOR.arg(ParsersAttributes::EXPORT)]=(conn->isDefaultForOperation(Connection::OP_EXPORT) ? ParsersAttributes::_TRUE_ : QString());
+				attribs[DEFAULT_FOR.arg(ParsersAttributes::IMPORT)]=(conn->isDefaultForOperation(Connection::OP_IMPORT) ? ParsersAttributes::_TRUE_ : QString());
+				attribs[DEFAULT_FOR.arg(ParsersAttributes::DIFF)]=(conn->isDefaultForOperation(Connection::OP_DIFF) ? ParsersAttributes::_TRUE_ : QString());
+				attribs[DEFAULT_FOR.arg(ParsersAttributes::VALIDATION)]=(conn->isDefaultForOperation(Connection::OP_VALIDATION) ? ParsersAttributes::_TRUE_ : QString());
+
 				schparser.ignoreUnkownAttributes(true);
 				config_params[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONNECTIONS]+=
 						schparser.getCodeDefinition(GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
@@ -477,6 +549,7 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 													GlobalAttributes::CONNECTIONS_CONF +
 													GlobalAttributes::SCHEMA_EXT,
 													attribs);
+
 				schparser.ignoreUnkownAttributes(false);
 			}
 		}
@@ -507,9 +580,10 @@ void ConnectionsConfigWidget::getConnections(map<QString, Connection *> &conns, 
 	}
 }
 
-void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder)
+void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder, unsigned check_def_for)
 {
 	map<QString, Connection *> connections;
+	Connection *def_conn=nullptr;
 
 	if(!combo)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -528,10 +602,18 @@ void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool inc
 	}
 
 	for(auto &itr : connections)
+	{
 		combo->addItem(QIcon(QString(":icones/icones/server.png")), itr.first, QVariant::fromValue<void *>(itr.second));
+
+		if(!def_conn && itr.second->isDefaultForOperation(check_def_for))
+			def_conn=itr.second;
+	}
 
 	if(incl_placeholder)
 		combo->addItem(QIcon(QString(":icones/icones/conexaobd.png")), trUtf8("Edit connections"));
+
+	if(def_conn)
+		combo->setCurrentText(def_conn->getConnectionId());
 
 	combo->blockSignals(false);
 }
@@ -554,6 +636,7 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 		{
 			conn_cfg_wgt.loadConfiguration();
 			conn_cfg_wgt.frame->setFrameShape(QFrame::NoFrame);
+			conn_cfg_wgt.frame->layout()->setContentsMargins(2,2,2,2);
 
 			parent_form.setMainWidget(&conn_cfg_wgt);
 			parent_form.setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
@@ -577,4 +660,20 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 	}
 
 	return(false);
+}
+
+Connection *ConnectionsConfigWidget::getDefaultConnection(unsigned operation)
+{
+	Connection *conn=nullptr;
+
+	for(Connection *aux_conn : connections)
+	{
+		if(aux_conn->isDefaultForOperation(operation))
+		{
+			conn=aux_conn;
+			break;
+		}
+	}
+
+	return(conn);
 }

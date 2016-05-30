@@ -9,7 +9,7 @@
 [-->] $br
 
 <connections> $br
-{connections} $br
+{connections}
 </connections> $br
 
 %else
@@ -19,14 +19,14 @@ $tb $tb [user=] "{user}"
 
 %if {password} %then [ password=] "{password}" %end
 
-[ connection-timeout=] "{connection-timeout}" $br
+[ connection-timeout=] "{connection-timeout}" 
 
-$tb $tb [sslmode=] "{sslmode}" $br
+$br $tb $tb [sslmode=] "{sslmode}"
 
-%if {sslcert} %then $tb $tb [sslcert=] "{sslcert}" $br %end
-%if {sslkey} %then  $tb $tb [sslkey=] "{sslkey}" $br %end 
-%if {sslrootcert} %then $tb $tb [sslrootcert=] "{sslrootcert}" $br %end 
-%if {sslcrl} %then $tb $tb [sslcrl=] "{sslcrl}" $br %end
+%if {sslcert} %then $br $tb $tb [sslcert=] "{sslcert}" %end
+%if {sslkey} %then  $br $tb $tb [sslkey=] "{sslkey}"  %end 
+%if {sslrootcert} %then $br $tb $tb [sslrootcert=] "{sslrootcert}"  %end 
+%if {sslcrl} %then $br $tb $tb [sslcrl=] "{sslcrl}"  %end
 
 
 %if {krbsrvname} %then
@@ -45,6 +45,10 @@ $tb $tb [sslmode=] "{sslmode}" $br
  $br $tb $tb options="{options}"
 %end
 
+%if {default-for-export} %then $br $tb $tb [default-for-export=] "{default-for-export}" %end
+%if {default-for-import} %then $br $tb $tb [default-for-import=] "{default-for-import}" %end
+%if {default-for-diff} %then $br $tb $tb [default-for-diff=] "{default-for-diff}" %end
+%if {default-for-validation} %then $br $tb $tb [default-for-validation=] "{default-for-validation}" %end
 
 /> $br
 %end

@@ -36,7 +36,7 @@ class HintTextWidget: public QWidget, public Ui::HintTextWidget {
 	private:
 		Q_OBJECT
 
-		//! brief Tool button installed on the parent in order to trigger the hint popup
+		//! \brief Tool button installed on the parent in order to trigger the hint popup
 		QToolButton *hint_tb;
 
 		bool eventFilter(QObject *object, QEvent *event);

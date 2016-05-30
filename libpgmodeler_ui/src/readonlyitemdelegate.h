@@ -37,7 +37,7 @@ class ReadOnlyItemDelegate : public QStyledItemDelegate {
 		~ReadOnlyItemDelegate(void);
 
 	protected:
-		//! brief Overrides the default implementation and set the editor as read only/disable to prevent change the item data
+		//! \brief Overrides the default implementation and set the editor as read only/disable to prevent change the item data
 		virtual void setEditorData(QWidget *editor, const QModelIndex &index) const;
 };
 

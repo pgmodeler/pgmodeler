@@ -1956,6 +1956,9 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 			//Parses the permission retrieving the role name as well the privileges over the object
 			role_name=Permission::parsePermissionString(perm_list[i], privs, gop_privs);
 
+			//Removing extra backslash from the role's names to avoid the role not to be found
+			role_name.remove(QChar('\\'));
+
 			if(!privs.empty() || gop_privs.empty())
 			{
 				role=dynamic_cast<Role *>(dbmodel->getObject(role_name, OBJ_ROLE));

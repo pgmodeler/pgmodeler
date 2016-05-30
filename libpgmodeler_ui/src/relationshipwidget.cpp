@@ -49,16 +49,16 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		single_pk_ht->setText(single_pk_chk->statusTip());
 
 		table1_hl=nullptr;
-		table1_hl=new SyntaxHighlighter(ref_table_txt);
+		table1_hl=new SyntaxHighlighter(ref_table_txt, true);
 		table1_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		table2_hl=nullptr;
-		table2_hl=new SyntaxHighlighter(recv_table_txt);
+		table2_hl=new SyntaxHighlighter(recv_table_txt, true);
 		table2_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		for(int i=0; i < pattern_fields.size(); i++)
 		{
-			patterns_hl[i]=new SyntaxHighlighter(qobject_cast<QPlainTextEdit *>(pattern_fields[i]));
+			patterns_hl[i]=new SyntaxHighlighter(qobject_cast<QPlainTextEdit *>(pattern_fields[i]), true);
 			patterns_hl[i]->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
 											  GlobalAttributes::DIR_SEPARATOR +
 											  GlobalAttributes::PATTERN_HIGHLIGHT_CONF +

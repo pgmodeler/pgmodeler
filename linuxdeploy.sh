@@ -130,6 +130,7 @@ else
            libQt5Gui.so.5 \
            libQt5Core.so.5 \
            libQt5XcbQpa.so.5 \
+           libQt5Svg.so \
            libicui18n.so.5* \
            libicuuc.so.5* \
            libicudata.so.5*"

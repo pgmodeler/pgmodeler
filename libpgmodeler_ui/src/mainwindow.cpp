@@ -384,6 +384,15 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(action_show_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
 	connect(action_hide_main_menu, SIGNAL(triggered()), this, SLOT(showMainMenu()));
 #endif
+
+	actions=control_tb->actions();
+	actions.append(general_tb->actions());
+
+	for(QAction *act : actions)
+	{
+		if(!act->shortcut().toString().isEmpty())
+			act->setToolTip(act->toolTip() + QString(" (%1)").arg(act->shortcut().toString()));
+	}
 }
 
 MainWindow::~MainWindow(void)
@@ -471,6 +480,15 @@ void MainWindow::showEvent(QShowEvent *)
 	map<QString, attribs_map> confs=conf_wgt->getConfigurationParams();
 
 #ifndef Q_OS_MAC
+	//Restoring the canvas grid options
+	action_show_grid->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_CANVAS_GRID]==ParsersAttributes::_TRUE_);
+	action_alin_objs_grade->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::ALIGN_OBJS_TO_GRID]==ParsersAttributes::_TRUE_);
+	action_show_delimiters->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_PAGE_DELIMITERS]==ParsersAttributes::_TRUE_);
+
+	ObjectsScene::setGridOptions(action_show_grid->isChecked(),
+															 action_alin_objs_grade->isChecked(),
+															 action_show_delimiters->isChecked());
+
 	//Hiding/showing the main menu bar depending on the retrieved conf
 	main_menu_mb->setVisible(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_MAIN_MENU]==ParsersAttributes::_TRUE_);
 
@@ -515,10 +533,6 @@ void MainWindow::resizeEvent(QResizeEvent *)
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-#ifdef DEMO_VERSION
-	quitDemoVersion();
-#endif
-
 	//pgModeler will not close when the validation thread is still running
 	if(model_valid_wgt->isValidationRunning())
 		event->ignore();
@@ -659,7 +673,7 @@ void MainWindow::updateConnections(bool force)
 			ConnectionsConfigWidget::fillConnectionsComboBox(sql_tool_wgt->connections_cmb, true);
 
 		if(sender()!=model_valid_wgt)
-			ConnectionsConfigWidget::fillConnectionsComboBox(model_valid_wgt->connections_cmb, true);
+			ConnectionsConfigWidget::fillConnectionsComboBox(model_valid_wgt->connections_cmb, true, Connection::OP_VALIDATION);
 	}
 }
 
@@ -840,6 +854,9 @@ void MainWindow::addModel(const QString &filename)
 		}
 
 		model_tab->setModified(false);
+
+		if(action_alin_objs_grade->isChecked())
+			current_model->scene->alignObjectsToGrid();
 	}
 	catch(Exception &e)
 	{
@@ -864,6 +881,9 @@ void MainWindow::addModel(ModelWidget *model_wgt)
 		models_tbw->blockSignals(false);
 		setCurrentModel();
 		models_tbw->currentWidget()->layout()->setContentsMargins(3,3,0,3);
+
+		if(action_alin_objs_grade->isChecked())
+			current_model->scene->alignObjectsToGrid();
 	}
 	catch(Exception &e)
 	{
@@ -1273,21 +1293,6 @@ void MainWindow::saveModel(ModelWidget *model)
 
 void MainWindow::exportModel(void)
 {
-#ifdef DEMO_VERSION
-#warning "DEMO VERSION: export feature execution limit."
-	static unsigned exp_limit=0;
-	exp_limit++;
-
-	if(exp_limit > 2)
-	{
-		Messagebox msg_box;
-		msg_box.show(trUtf8("Warning"),
-					 trUtf8("You're running a demonstration version! The model export feature can be tested twice per pgModeler execution!"),
-					 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
-		return;
-	}
-#endif
-
 	ModelExportForm model_export_form(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 	Messagebox msg_box;
 	DatabaseModel *db_model=current_model->getDatabaseModel();
@@ -1322,13 +1327,6 @@ void MainWindow::exportModel(void)
 
 void MainWindow::importDatabase(void)
 {
-#ifdef DEMO_VERSION
-#warning "DEMO VERSION: reverse engineering feature disabled."
-	Messagebox msg_box;
-	msg_box.show(trUtf8("Warning"),
-				 trUtf8("You're running a demonstration version! The database import (reverse engineering) feature is available only in the full version!"),
-				 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
-#else
 	DatabaseImportForm db_import_form(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
 	stopTimers(true);
@@ -1342,18 +1340,10 @@ void MainWindow::importDatabase(void)
 		this->addModel(db_import_form.getModelWidget());
 	else if(current_model)
 		updateDockWidgets();
-#endif
 }
 
 void MainWindow::diffModelDatabase(void)
 {
-#ifdef DEMO_VERSION
-#warning "DEMO VERSION: model diff feature disabled."
-	Messagebox msg_box;
-	msg_box.show(trUtf8("Warning"),
-				 trUtf8("You're running a demonstration version! The model-database diff feature is available only in the full version!"),
-				 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
-#else
 	ModelDatabaseDiffForm modeldb_diff_frm(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 	Messagebox msg_box;
 	DatabaseModel *db_model=current_model->getDatabaseModel();
@@ -1386,7 +1376,6 @@ void MainWindow::diffModelDatabase(void)
 		modeldb_diff_frm.exec();
 		stopTimers(false);
 	}
-#endif
 }
 
 void MainWindow::printModel(void)
@@ -1753,27 +1742,12 @@ void MainWindow::showDemoVersionWarning(void)
 	Messagebox msg_box;
 	msg_box.show(trUtf8("Warning"),
 				 trUtf8("You're running a demonstration version! Note that you'll be able to create only <strong>%1</strong> instances \
-						of each type of object and some key features will be disabled!<br/><br/>You can purchase a full binary copy or get the source code at <a href='http://pgmodeler.com.br'>pgmodeler.com.br</a>.\
-																																									  <strong>NOTE:</strong> pgModeler is an open source software, but purchasing binary copies or providing some donations will support the project and cover all development costs.<br/><br/><br/><br/>").arg(GlobalAttributes::MAX_OBJECT_COUNT),
+						of each type of object and some key features will be disabled or limited!<br/><br/>You can purchase a full binary copy or get the source code at <a href='http://pgmodeler.com.br'>pgmodeler.com.br</a>.\
+						<strong>NOTE:</strong> pgModeler is an open source software, but purchasing binary copies or providing some donations will support the project and cover all development costs.<br/><br/>\
+						<strong>HINT:</strong> in order to test all features it's recommended to use the <strong>demo.dbm</strong> model located in </strong>Sample models</strong> at <strong>Welcome</strong> view.<br/><br/><br/><br/>").arg(GlobalAttributes::MAX_OBJECT_COUNT),
 						Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
 
 			QTimer::singleShot(150000, this, SLOT(showDemoVersionWarning()));
-#endif
-}
-
-void MainWindow::quitDemoVersion(void)
-{
-#ifdef DEMO_VERSION
-	/*Messagebox msg_box;
-  msg_box.show(trUtf8("The execution of demonstration version has finished!\
-											Did you like pgModeler and want to purchase it? Use the following promocodes and receive good discounts:<br/><br/>\
-											<strong>D3M02BR0NZ3</strong> (Discount on bronze package)<br/>\
-											<strong>D3M02S1LV3R</strong> (Discount on silver package)<br/>\
-											<strong>D3M02G0LD</strong> (Discount on gold package)<br/>\
-											<strong>D3M02PL4T1NUM</strong> (Discount on platinum package)<br/>\
-											<strong>D3M02D14M0ND</strong> (Discount on diamond package)<br/>\
-											<br/>Thank you for testing pgModeler!"),
-			   Messagebox::INFO_ICON, Messagebox::OK_BUTTON); */
 #endif
 }
 
@@ -1870,6 +1844,7 @@ void MainWindow::handleObjectsMetadata(void)
 {
 	MetadataHandlingForm objs_meta_frm(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 	objs_meta_frm.setModelWidget(current_model);
-	connect(&objs_meta_frm, SIGNAL(s_metadataLoaded()), model_objs_wgt, SLOT(updateObjectsView()));
+	objs_meta_frm.setModelWidgets(model_nav_wgt->getModelWidgets());
+	connect(&objs_meta_frm, SIGNAL(s_metadataHandled()), model_objs_wgt, SLOT(updateObjectsView()));
 	objs_meta_frm.exec();
 }

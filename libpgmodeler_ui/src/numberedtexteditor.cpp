@@ -32,10 +32,12 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent) : QPlainTextEdit(parent
 {
 	line_number_wgt=new LineNumbersWidget(this);
 	setWordWrapMode(QTextOption::NoWrap);
+	setContextMenuPolicy(Qt::CustomContextMenu);
 
 	connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightCurrentLine()));
 	connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateLineNumbers(void)));
 	connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumbersSize()));
+	connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu()));
 }
 
 void NumberedTextEditor::setDefaultFont(const QFont &font)
@@ -74,6 +76,124 @@ int NumberedTextEditor::getTabWidth(void)
 	{
 		QFontMetrics fm(default_font);
 		return(tab_width * fm.width(' '));
+	}
+}
+
+void NumberedTextEditor::showContextMenu(void)
+{
+	QMenu *ctx_menu;
+	QAction *act=nullptr;
+
+	ctx_menu=createStandardContextMenu();
+
+	if(!isReadOnly())
+	{
+		ctx_menu->addSeparator();
+
+		act=ctx_menu->addAction(trUtf8("Upper case"), this, SLOT(changeSelectionToUpper()), QKeySequence(QString("Ctrl+U")));
+		act->setEnabled(textCursor().hasSelection());
+
+		act=ctx_menu->addAction(trUtf8("Lower case"), this, SLOT(changeSelectionToLower()), QKeySequence(QString("Ctrl+Shift+U")));
+		act->setEnabled(textCursor().hasSelection());
+
+		ctx_menu->addSeparator();
+
+		act=ctx_menu->addAction(trUtf8("Ident right"), this, SLOT(identSelectionRight()), QKeySequence(QString("Tab")));
+		act->setEnabled(textCursor().hasSelection());
+
+		act=ctx_menu->addAction(trUtf8("Ident left"), this, SLOT(identSelectionLeft()), QKeySequence(QString("Shift+Tab")));
+		act->setEnabled(textCursor().hasSelection());
+	}
+
+	ctx_menu->exec(QCursor::pos());
+	delete(ctx_menu);
+}
+
+void NumberedTextEditor::changeSelectionToLower(void)
+{
+	changeSelectionCase(true);
+}
+
+void NumberedTextEditor::changeSelectionToUpper(void)
+{
+	changeSelectionCase(false);
+}
+
+void NumberedTextEditor::changeSelectionCase(bool lower)
+{
+	QTextCursor cursor=textCursor();
+
+	if(cursor.hasSelection())
+	{
+		int start=cursor.selectionStart(),
+				end=cursor.selectionEnd();
+
+		if(!lower)
+			cursor.insertText(cursor.selectedText().toUpper());
+		else
+			cursor.insertText(cursor.selectedText().toLower());
+
+		cursor.setPosition(start);
+		cursor.setPosition(end, QTextCursor::KeepAnchor);
+		setTextCursor(cursor);
+	}
+}
+
+void NumberedTextEditor::identSelectionRight(void)
+{
+	identSelection(true);
+}
+
+void NumberedTextEditor::identSelectionLeft(void)
+{
+	identSelection(false);
+}
+
+void NumberedTextEditor::identSelection(bool ident_right)
+{
+	QTextCursor cursor=textCursor();
+
+	if(cursor.hasSelection())
+	{
+		QStringList lines;
+		int start=-1,	end=-1,
+				factor=(ident_right ? 1 : -1),	count=0;
+
+		/* Forcing the selection of the very beggining of the first line and
+		as well the end of the last line to avoid moving chars and break words wrongly */
+		start=toPlainText().lastIndexOf(QChar('\n'), cursor.selectionStart());
+		end=toPlainText().indexOf(QChar('\n'), cursor.selectionEnd());
+
+		cursor.setPosition(start, QTextCursor::MoveAnchor);
+		cursor.setPosition(end, QTextCursor::KeepAnchor);
+		lines=cursor.selectedText().split(QChar(QChar::ParagraphSeparator));
+
+		for(int i=0; i < lines.size(); i++)
+		{
+			if(!lines[i].isEmpty())
+			{
+				if(ident_right)
+				{
+					lines[i].prepend(QChar('\t'));
+					count++;
+				}
+				else if(lines[i].at(0)==QChar('\t'))
+				{
+					lines[i].remove(0,1);
+					count++;
+				}
+			}
+		}
+
+		if(count > 0)
+		{
+			cursor.insertText(lines.join(QChar('\n')));
+
+			//Preserving the selection in the text to permit user perform several identations
+			cursor.setPosition(start);
+			cursor.setPosition(end + (count * factor), QTextCursor::KeepAnchor);
+			setTextCursor(cursor);
+		}
 	}
 }
 
@@ -155,6 +275,31 @@ void NumberedTextEditor::resizeEvent(QResizeEvent *event)
 {
 	QPlainTextEdit::resizeEvent(event);
 	updateLineNumbersSize();
+}
+
+void NumberedTextEditor::keyPressEvent(QKeyEvent *event)
+{
+	if(!isReadOnly() && textCursor().hasSelection())
+	{
+		if(event->key()==Qt::Key_U && event->modifiers()!=Qt::NoModifier)
+		{
+			if(event->modifiers()==Qt::ControlModifier)
+				changeSelectionToUpper();
+			else if(event->modifiers()==(Qt::ControlModifier | Qt::ShiftModifier))
+				changeSelectionToLower();
+		}
+		else if(event->key()==Qt::Key_Tab || event->key()==Qt::Key_Backtab)
+		{
+			if(event->key()==Qt::Key_Tab)
+				identSelectionRight();
+			else if(event->key()==Qt::Key_Backtab)
+				identSelectionLeft();
+		}
+		else
+			QPlainTextEdit::keyPressEvent(event);
+	}
+	else
+		QPlainTextEdit::keyPressEvent(event);
 }
 
 void NumberedTextEditor::highlightCurrentLine(void)

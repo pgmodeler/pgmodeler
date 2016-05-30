@@ -30,5 +30,12 @@
  
  %if {col-indexes} %then {col-indexes} %end
  %if {constr-indexes} %then {constr-indexes} %end
+ 
+ %if {initial-data} %then
+ $tb <initial-data> $br
+ <! $ob CDATA $ob {initial-data} $cb $cb >
+ $br $tb </initial-data> $br
+ %end
+ 
 
 </table>  $br $br

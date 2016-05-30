@@ -57,8 +57,15 @@ void ObjectSelectorWidget::configureSelector(bool install_highlighter)
 
 		if(install_highlighter)
 		{
-			obj_name_hl=new SyntaxHighlighter(obj_name_txt);
+			obj_name_hl=new SyntaxHighlighter(obj_name_txt, true);
 			obj_name_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		}
+		else
+		{
+			//Adding a custom height to the input if the highlighter isn't installed
+			QFontMetrics fm=obj_name_txt->fontMetrics();
+			obj_name_txt->setMaximumHeight(fm.height() + (fm.lineSpacing()/1.8));
+			this->adjustSize();
 		}
 
 		connect(sel_object_tb, SIGNAL(clicked(bool)), this, SLOT(showObjectView(void)));
@@ -66,9 +73,6 @@ void ObjectSelectorWidget::configureSelector(bool install_highlighter)
 		connect(obj_view_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedObject(BaseObject*, bool)));
 
 		obj_name_txt->installEventFilter(this);
-		QFontMetrics fm=obj_name_txt->fontMetrics();
-		obj_name_txt->setMaximumHeight(fm.height() + (fm.lineSpacing()/1.5));
-		this->adjustSize();
 	}
 	catch(Exception &e)
 	{
@@ -175,6 +179,9 @@ void ObjectSelectorWidget::showObjectView(void)
 
 	for(unsigned i=0; i < sel_obj_types.size(); i++)
 		obj_view_wgt->setObjectVisible(sel_obj_types[i], true);
+
+	if(sel_obj_types.size()==1)
+		obj_view_wgt->setWindowTitle(trUtf8("Select %1").arg(BaseObject::getTypeName(sel_obj_types[0]).toLower()));
 
 	obj_view_wgt->setModel(this->model);
 	obj_view_wgt->show();

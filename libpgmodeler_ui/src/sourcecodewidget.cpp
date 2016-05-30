@@ -197,7 +197,7 @@ void SourceCodeWidget::generateSourceCode(int)
 			{
 				QString code=sqlcode_txt->toPlainText();
 				code=code.mid(0, code.size()/2);
-				code+=trUtf8("\n\n-- SQL code purposely truncated at this point on demo version!");
+				code+=trUtf8("\n\n-- SQL code purposely truncated at this point in demo version!");
 				sqlcode_txt->setPlainText(code);
 			}
 #endif

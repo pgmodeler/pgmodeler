@@ -34,6 +34,10 @@ ModelNavigationWidget::ModelNavigationWidget(QWidget *parent): QWidget(parent)
 			[=](){ models_cmb->setCurrentIndex(models_cmb->currentIndex()-1); });
 
 	connect(models_cmb, SIGNAL(highlighted(int)), this, SLOT(showTooltip(int)));
+
+	previous_tb->setToolTip(previous_tb->toolTip() + QString(" (%1)").arg(previous_tb->shortcut().toString()));
+	next_tb->setToolTip(next_tb->toolTip() + QString(" (%1)").arg(next_tb->shortcut().toString()));
+	close_tb->setToolTip(close_tb->toolTip() + QString(" (%1)").arg(close_tb->shortcut().toString()));
 }
 
 int ModelNavigationWidget::getCurrentIndex(void)
@@ -47,6 +51,11 @@ QString ModelNavigationWidget::getText(int idx)
 		return(QString());
 	else
 		return(models_cmb->itemText(idx));
+}
+
+QList<ModelWidget *> ModelNavigationWidget::getModelWidgets()
+{
+	return(model_wgts);
 }
 
 void ModelNavigationWidget::addModel(ModelWidget *model)
@@ -68,6 +77,9 @@ void ModelNavigationWidget::addModel(ModelWidget *model)
 		models_cmb->setToolTip(tooltip);
 
 		models_cmb->blockSignals(false);
+
+		model_wgts.append(model);
+
 		enableNavigationButtons();
 	}
 }
@@ -93,6 +105,8 @@ void ModelNavigationWidget::removeModel(int idx)
 	if(models_cmb->count() >= 1)
 		models_cmb->setToolTip(models_cmb->currentData().toString());
 	models_cmb->blockSignals(false);
+
+	model_wgts.removeAt(idx);
 
 	enableNavigationButtons();
 	emit s_modelRemoved(idx);

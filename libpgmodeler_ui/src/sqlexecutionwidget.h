@@ -40,16 +40,19 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 
 		SchemaParser schparser;
 
-		//! brief Custom delegate used to avoid cell edition in result set
+		//! \brief Custom delegate used to avoid cell edition in result set
 		ReadOnlyItemDelegate *ro_item_del;
 
-		//! brief Syntax highlighter for sql input field
-		SyntaxHighlighter *sql_cmd_hl;
+		//! \brief Syntax highlighter for sql input field
+		SyntaxHighlighter *sql_cmd_hl,
 
-		//! brief Connection used to run commands specified on sql input field
+		//! \brief Syntax highlighter for command history field
+		*cmd_history_hl;
+
+		//! \brief Connection used to run commands specified on sql input field
 		Connection sql_cmd_conn;
 
-		//! brief Dialog for SQL save/load
+		//! \brief Dialog for SQL save/load
 		QFileDialog sql_file_dlg;
 
 		QMenu snippets_menu;
@@ -58,21 +61,21 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 
 		CodeCompletionWidget *code_compl_wgt;
 
-		/*! brief Enables/Disables the fields for sql input and execution.
+		/*! \brief Enables/Disables the fields for sql input and execution.
 				When enabling a new connection to server will be opened. */
 		void enableSQLExecution(bool enable);
 
-		//! brief Stores the command on the sql command history
-		void registerSQLCommand(const QString &cmd);
+		//! \brief Stores the command on the sql command history
+		void registerSQLCommand(const QString &cmd, unsigned rows=0, const QString &error=QString());
 
-		//! brief Show the exception message in the output widget
+		//! \brief Show the exception message in the output widget
 		void showError(Exception &e);
 
-		//! brief Fills the result grid with the specified result set
+		//! \brief Fills the result grid with the specified result set
 		void fillResultsTable(ResultSet &res);
 
 	protected:
-		//! brief Widget that serves as SQL commands input
+		//! \brief Widget that serves as SQL commands input
 		NumberedTextEditor *sql_cmd_txt;
 
 		void showEvent(QShowEvent *);
@@ -82,39 +85,39 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 	public:
 		SQLExecutionWidget(QWidget * parent = 0);
 
-		//! brief Configures the connection to query the server
+		//! \brief Configures the connection to query the server
 		void setConnection(Connection conn);
 
-		/*! brief Fills up the results grid based upon the specified result set.
+		/*! \brief Fills up the results grid based upon the specified result set.
 				The parameter store_data will make each item store the text as its data */
 		static void fillResultsTable(Catalog &catalog, ResultSet &res, QTableWidget *results_tbw, bool store_data=false);
 
-		//! brief Copy to clipboard (in csv format) the current selected items on results grid
+		//! \brief Copy to clipboard (in csv format) the current selected items on results grid
 		static void copySelection(QTableWidget *results_tbw, bool use_popup=true);
 
-		//! brief Generates a CSV buffer based upon the selection on the results grid
+		//! \brief Generates a CSV buffer based upon the selection on the results grid
 		static QByteArray generateCSVBuffer(QTableWidget *results_tbw, int start_row, int start_col, int row_cnt, int col_cnt);
 
-		//! brief Exports the results to csv file
+		//! \brief Exports the results to csv file
 		static void exportResults(QTableWidget *results_tbw);
 
 	public slots:
 		void configureSnippets(void);
 
 	private slots:
-		//! brief Enables the command buttons when user fills the sql field
+		//! \brief Enables the command buttons when user fills the sql field
 		void enableCommandButtons(void);
 
-		//! brief Runs the current typed sql command
+		//! \brief Runs the current typed sql command
 		void runSQLCommand(void);
 
-		//! brief Save the current typed sql command on a file
+		//! \brief Save the current typed sql command on a file
 		void saveCommands(void);
 
-		//! brief Load a sql command from a file
+		//! \brief Load a sql command from a file
 		void loadCommands(void);
 
-		//! brief Clears the input field as well the results grid
+		//! \brief Clears the input field as well the results grid
 		void clearAll(void);
 
 		void selectSnippet(QAction *act);
@@ -122,6 +125,8 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		void handleSelectedWord(QString word);
 
 		void toggleOutputPane(bool visible);
+
+		void showHistoryContextMenu(void);
 
 		friend class SQLToolWidget;
 };

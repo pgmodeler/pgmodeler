@@ -35,6 +35,9 @@
 <!ATTLIST configuration line-highlight-color CDATA #IMPLIED>
 <!ATTLIST configuration code-tab-width CDATA #IMPLIED>
 <!ATTLIST configuration use-placeholders (false|true) "true">
+<!ATTLIST configuration show-canvas-grid (false|true) "true">
+<!ATTLIST configuration show-page-delimiters (false|true) "true">
+<!ATTLIST configuration align-objs-to-grid (false|true) "true">
 
 <!ELEMENT session (file+)>
 <!ELEMENT recent-models (file+)>

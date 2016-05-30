@@ -121,7 +121,7 @@ class Relationship: public BaseRelationship {
 		 where modified needing to be revalidated */
 		bool invalidated,
 
-		/*! brief Indicates that the generated table primary key must have only a single column instead
+		/*! \brief Indicates that the generated table primary key must have only a single column instead
 		of the two from the foreign keys (only for n-n relationships) */
 		single_pk_column;
 
@@ -175,7 +175,7 @@ class Relationship: public BaseRelationship {
 		//! \brief Stores the unique key that represents the 1-1 relationship (including the fk_rel1n)
 		*uq_rel11;
 
-		//! brief Stores the CHECK constraints copied from the parent table to its child
+		//! \brief Stores the CHECK constraints copied from the parent table to its child
 		vector<Constraint *> ck_constraints;
 
 		//! \brief Table created by the relationship n-n
@@ -423,7 +423,7 @@ class Relationship: public BaseRelationship {
 		//! \brief Gets an attribute using its name
 		Column *getAttribute(const QString &name);
 
-		//! brief Returns the list of user added attributes
+		//! \brief Returns the list of user added attributes
 		vector<TableObject *> getAttributes(void);
 
 		//! \brief Gets an constraint using its index
@@ -432,7 +432,7 @@ class Relationship: public BaseRelationship {
 		//! \brief Gets an constraint using its name
 		Constraint *getConstraint(const QString &name);
 
-		//! brief Returns the list of user added constraints
+		//! \brief Returns the list of user added constraints
 		vector<TableObject *> getConstraints(void);
 
 		/*! \brief Returns the index of a relationship attribute or constraint. Returns -1

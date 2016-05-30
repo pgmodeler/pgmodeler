@@ -33,6 +33,17 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mo
 
 	if(use_custom_tab_width)
 		parent->setTabStopWidth(NumberedTextEditor::getTabWidth());
+
+	//Adjusting the size of the parent input according to the current font size
+	if(single_line_mode)
+	{
+		QFontMetrics fm=QFontMetrics(default_font);
+		int height=fm.height() + (fm.lineSpacing()/static_cast<float>(1.3));
+		parent->setMinimumHeight(height);
+		parent->setMaximumHeight(height);
+		parent->setSizePolicy(parent->sizePolicy().horizontalPolicy(), QSizePolicy::Fixed);
+		parent->adjustSize();
+	}
 }
 
 bool SyntaxHighlighter::eventFilter(QObject *object, QEvent *event)

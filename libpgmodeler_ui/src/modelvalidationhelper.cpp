@@ -547,7 +547,7 @@ void ModelValidationHelper::validateModel(void)
 				if(error_count==0)
 				{
 					export_thread->start();
-					emit s_sqlValidationStarted(true);
+					emit s_sqlValidationStarted();
 				}
 				else
 				{

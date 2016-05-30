@@ -25,8 +25,6 @@ const unsigned DataManipulationForm::NO_OPERATION=0;
 const unsigned DataManipulationForm::OP_INSERT=1;
 const unsigned DataManipulationForm::OP_UPDATE=2;
 const unsigned DataManipulationForm::OP_DELETE=3;
-const QChar DataManipulationForm::UNESC_VALUE_START='{';
-const QChar	DataManipulationForm::UNESC_VALUE_END='}';
 
 DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f): QDialog(parent, f)
 {
@@ -49,6 +47,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	delete_tb->setToolTip(delete_tb->toolTip() + QString(" (%1)").arg(delete_tb->shortcut().toString()));
 	add_tb->setToolTip(add_tb->toolTip() + QString(" (%1)").arg(add_tb->shortcut().toString()));
 	copy_tb->setToolTip(copy_tb->toolTip() + QString(" (%1)").arg(copy_tb->shortcut().toString()));
+	duplicate_tb->setToolTip(duplicate_tb->toolTip() + QString(" (%1)").arg(duplicate_tb->shortcut().toString()));
 	result_info_wgt->setVisible(false);
 
 	//Forcing the splitter that handles the bottom widgets to resize its children to their minimum size
@@ -70,7 +69,8 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(clear_ord_cols_tb, SIGNAL(clicked()), this, SLOT(clearColumnList()));
 	connect(results_tbw, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(markUpdateOnRow(QTableWidgetItem *)));
 	connect(delete_tb, SIGNAL(clicked()), this, SLOT(markDeleteOnRows()));
-	connect(add_tb, SIGNAL(clicked()), this, SLOT(insertRow()));
+	connect(add_tb, SIGNAL(clicked()), this, SLOT(addRow()));
+	connect(duplicate_tb, SIGNAL(clicked()), this, SLOT(duplicateRows()));
 	connect(undo_tb, SIGNAL(clicked()), this, SLOT(undoOperations()));
 	connect(save_tb, SIGNAL(clicked()), this, SLOT(saveChanges()));
 	connect(ord_columns_lst, SIGNAL(currentRowChanged(int)), this, SLOT(enableColumnControlButtons()));
@@ -90,10 +90,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(export_tb, &QToolButton::clicked,
 			[=](){ SQLExecutionWidget::exportResults(results_tbw); });
 
-	connect(results_tbw, &QTableWidget::itemSelectionChanged,
-			[=](){ 	QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
-		copy_tb->setEnabled(!sel_ranges.isEmpty());
-		delete_tb->setEnabled(results_tbw->editTriggers()!=QAbstractItemView::NoEditTriggers && !sel_ranges.isEmpty()); });
+	connect(results_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(enableRowControlButtons()));
 }
 
 void DataManipulationForm::setAttributes(Connection conn, const QString curr_schema, const QString curr_table)
@@ -207,7 +204,7 @@ void DataManipulationForm::retrieveData(void)
 
 		QString query=QString("SELECT * FROM \"%1\".\"%2\"").arg(schema_cmb->currentText()).arg(table_cmb->currentText());
 		ResultSet res;
-		unsigned limit=limit_edt->text().toUInt();
+		unsigned limit=limit_spb->value();
 
 		//Building the where clause
 		if(!filter_txt->toPlainText().isEmpty())
@@ -244,14 +241,14 @@ void DataManipulationForm::retrieveData(void)
 		result_info_wgt->setVisible(results_tbw->rowCount() > 0);
 		result_info_lbl->setText(QString("<em>[%1]</em> ").arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))) +
 								 trUtf8("Rows returned: <strong>%1</strong>&nbsp;&nbsp;&nbsp;").arg(results_tbw->rowCount()) +
-								 trUtf8("<em>(Limit: <strong>%1</strong>)</em>").arg(limit_edt->text().isEmpty() ? trUtf8("none") : limit_edt->text()));
+								 trUtf8("<em>(Limit: <strong>%1</strong>)</em>").arg(limit_spb->value()==0 ? trUtf8("none") : QString::number(limit_spb->value())));
 
 		//Reset the changed rows state
 		clearChangedRows();
 
 		//If the table is empty automatically creates a new row
 		if(results_tbw->rowCount()==0 && table_cmb->currentData(Qt::UserRole).toUInt()==OBJ_TABLE)
-			insertRow();
+			addRow();
 		else
 			results_tbw->setFocus();
 
@@ -274,8 +271,27 @@ void DataManipulationForm::disableControlButtons(void)
 	warning_frm->setVisible(false);
 	hint_frm->setVisible(false);
 	add_tb->setEnabled(false);
+	duplicate_tb->setEnabled(false);
 	export_tb->setEnabled(false);
 	clearChangedRows();
+}
+
+void DataManipulationForm::enableRowControlButtons(void)
+{
+	QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
+	bool cols_selected, rows_selected;
+
+	cols_selected = rows_selected = !sel_ranges.isEmpty();
+
+	for(auto &sel_rng : sel_ranges)
+	{
+		cols_selected &= (sel_rng.columnCount() == results_tbw->columnCount());
+		rows_selected &= (sel_rng.rowCount() == results_tbw->rowCount());
+	}
+
+	delete_tb->setEnabled(cols_selected);
+	duplicate_tb->setEnabled(cols_selected);
+	copy_tb->setEnabled(sel_ranges.count() == 1);
 }
 
 void DataManipulationForm::resetAdvancedControls(void)
@@ -600,21 +616,24 @@ void DataManipulationForm::markDeleteOnRows(void)
 	QTableWidgetItem *item=nullptr;
 	vector<int> ins_rows;
 
-	for(int row=sel_ranges[0].topRow(); row <= sel_ranges[sel_ranges.count()-1].bottomRow(); row++)
+	for(auto &sel_rng : sel_ranges)
 	{
-		item=results_tbw->verticalHeaderItem(row);
+		for(int row=sel_rng.topRow(); row <= sel_rng.bottomRow(); row++)
+		{
+			item=results_tbw->verticalHeaderItem(row);
 
-		if(item->data(Qt::UserRole)==OP_INSERT)
-			ins_rows.push_back(row);
-		else
-			markOperationOnRow(OP_DELETE, row);
+			if(item->data(Qt::UserRole)==OP_INSERT)
+				ins_rows.push_back(row);
+			else
+				markOperationOnRow(OP_DELETE, row);
+		}
 	}
 
 	removeNewRows(ins_rows);
 	results_tbw->clearSelection();
 }
 
-void DataManipulationForm::insertRow(void)
+void DataManipulationForm::addRow(void)
 {
 	int row=results_tbw->rowCount();
 	QTableWidgetItem *item=nullptr;
@@ -649,6 +668,28 @@ void DataManipulationForm::insertRow(void)
 	results_tbw->setCurrentCell(row, 0, QItemSelectionModel::ClearAndSelect);
 	results_tbw->editItem(item);
 	hint_frm->setVisible(true);
+}
+
+void DataManipulationForm::duplicateRows(void)
+{
+	QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
+
+	if(!sel_ranges.isEmpty())
+	{
+		for(auto &sel_rng : sel_ranges)
+		{
+			for(int row=sel_rng.topRow(); row <= sel_rng.bottomRow(); row++)
+			{
+				addRow();
+
+				for(int col=0; col < results_tbw->columnCount(); col++)
+				{
+					results_tbw->item(results_tbw->rowCount() - 1, col)
+							->setText(results_tbw->item(row, col)->text());
+				}
+			}
+		}
+	}
 }
 
 void DataManipulationForm::removeNewRows(vector<int> &ins_rows)
@@ -755,7 +796,7 @@ void DataManipulationForm::insertRowOnTabPress(int curr_row, int curr_col, int p
 	if(qApp->mouseButtons()==Qt::NoButton &&
 			curr_row==0 && curr_col==0 &&
 			prev_row==results_tbw->rowCount()-1 && prev_col==results_tbw->columnCount()-1)
-		insertRow();
+		addRow();
 }
 
 void DataManipulationForm::saveChanges(void)
@@ -879,10 +920,10 @@ QString DataManipulationForm::getDMLCommand(int row)
 
 				if(op_type==OP_INSERT || (op_type==OP_UPDATE && value!=item->data(Qt::UserRole)))
 				{
-					//Checking if the value is a malformed unescaped value, e.g., <value, value>, <value\>
-					if((value.startsWith(UNESC_VALUE_START) && value.endsWith(QString("\\") + UNESC_VALUE_END)) ||
-							(value.startsWith(UNESC_VALUE_START) && !value.endsWith(UNESC_VALUE_END)) ||
-							(!value.startsWith(UNESC_VALUE_START) && !value.endsWith(QString("\\") + UNESC_VALUE_END) && value.endsWith(UNESC_VALUE_END)))
+					//Checking if the value is a malformed unescaped value, e.g., {value, value}, {value\}
+					if((value.startsWith(Table::UNESC_VALUE_START) && value.endsWith(QString("\\") + Table::UNESC_VALUE_END)) ||
+							(value.startsWith(Table::UNESC_VALUE_START) && !value.endsWith(Table::UNESC_VALUE_END)) ||
+							(!value.startsWith(Table::UNESC_VALUE_START) && !value.endsWith(QString("\\") + Table::UNESC_VALUE_END) && value.endsWith(Table::UNESC_VALUE_END)))
 						throw Exception(Exception::getErrorMessage(ERR_MALFORMED_UNESCAPED_VALUE)
 										.arg(row + 1).arg(col_name),
 										ERR_MALFORMED_UNESCAPED_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -895,7 +936,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 						value=QString("DEFAULT");
 					}
 					//Unescaped values will not be enclosed in quotes
-					else if(value.startsWith(UNESC_VALUE_START) && value.endsWith(UNESC_VALUE_END))
+					else if(value.startsWith(Table::UNESC_VALUE_START) && value.endsWith(Table::UNESC_VALUE_END))
 					{
 						value.remove(0,1);
 						value.remove(value.length()-1, 1);
@@ -903,15 +944,15 @@ QString DataManipulationForm::getDMLCommand(int row)
 					//Quoting value
 					else
 					{
-						value.replace(QString("\\") + UNESC_VALUE_START, UNESC_VALUE_START);
-						value.replace(QString("\\") + UNESC_VALUE_END, UNESC_VALUE_END);
+						value.replace(QString("\\") + Table::UNESC_VALUE_START, Table::UNESC_VALUE_START);
+						value.replace(QString("\\") + Table::UNESC_VALUE_END, Table::UNESC_VALUE_END);
 						value=QString("'") + value + QString("'");
 					}
 
 					if(op_type==OP_INSERT)
 						val_list.push_back(value);
 					else
-						val_list.push_back(QString("%1=%2").arg(col_name).arg(value));
+						val_list.push_back(QString("\"%1\"=%2").arg(col_name).arg(value));
 				}
 			}
 		}

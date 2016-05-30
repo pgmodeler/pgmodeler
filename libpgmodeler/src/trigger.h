@@ -167,7 +167,7 @@ class Trigger: public TableObject{
 		 connections and disconnections of relationships */
 		bool isReferRelationshipAddedColumn(void);
 
-		/*! brief Returns the list of all columns that is created by relationships.
+		/*! \brief Returns the list of all columns that is created by relationships.
 	This method is slower than isReferRelationshipAddedColumn() so it's not
 	recommended to use it only check if the object is referencing columns
 	added by relationship */
