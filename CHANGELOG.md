@@ -1,6 +1,59 @@
 Change Log
 ---------
 
+v0.8.2
+------
+<em>Codename: <strong>Faithful Elephant</strong></em><br/>
+<em>Release date: June 3, 2016</em><br/>
+
+* [New] Added the ability to the table to create insert commands from the initial data buffer.
+* [New] Added the support to interpret initial-data tag in DatabaseModel::createTable.
+* [New] Create the attribute initial-data for Table in order to store the initial set of values in a CSV-like buffer.
+* [New] Created the form to handle table's initial data.
+* [New] Added the ability to duplicate rows in DataManipulationForm.
+* [New] Added shortcuts to tabs in TableWidget.
+* [New] Added the ability to clear and copy text from history to the sql command input field using middle mouse button in SQL tool.
+* [New] Added the ability to set the default connection for operations import, export, diff and validation in ConnectionsConfigWidget.
+* [New] Added the usage of default connections in ModelValidationWidget.
+* [New] Added support to save/load default connections in the ConnectionsConfigWidget.
+* [New] Added attributes to the Connection class in order to control wheter the connection is the default for export, import, diff or validation operations.
+* [New] Added the ability to save the current grid options to the pgmodeler.conf file.
+* [New] Added a reference the svg library to the deployment scripts.
+* [New] Added support to export model to SVG file in UI and CLI.
+* [New] Added the support to change case and identation of the selected text in NumberedTextEditor using context menu or shortcuts.
+* [New] Added a method PgModelerUiNS::createOutputListItem which created list items with an icon and text.
+* [New] Connections now can have a timeout between command executions. When this timeout exceeds the next command is not executed. This is a workaround to avoid the crash of the program due to connections being (unexpectedly or not) closed by the server.
+* [New] Added the ability to show connections notice/warning in SQL tool.
+* [Change] Updated all translation dicts with new terms to be translated by their mainterners.
+* [Change] Changes in demo version enabling a limited usage of diff and import features.
+* [Change] Improved the way QTableWidgets instances are emptied.
+* [Change] Improvements done in order to correctly enable the column/row control buttons in DataManipulationForm according to the selected items.
+* [Change] Improved the duplication/delete operation in DataManipulationForm. These operations will happen only if the user selects the entire row.
+* [Change] Renamed the method DataManipulationForm::insertRow to addRow.
+* [Change] Changed the icons for Add, Delete rows in DataManipulationForm.
+* [Change] Improved the metadata handling form. Now the user just need to choose from which model to extract the metadata and the form will do the rest (extract and apply) in one step.
+* [Change] Minor improvement in ModelsDiffHelper in order to avoid the generation of useless SQL code (SET statments) when no effective changes were found in the process.
+* [Change] Minor improvement in ObjectSelectorWidget to change the object selection dialog title according to the handled object type.
+* [Change] Minor improvement in ObjectSelectorWidget to adjust the size of input according to the installed syntax highlighter.
+* [Change] Renamed the method Connection::setCommandExecTimeout to setSQLExecutionTimout.
+* [Change] Minor improvements in SQLExecutionWidget to use the command execution timeout.
+* [Change] Improvements on SQLExecutionWidget to enable the connection stay open in order to permit the usage of commands START TRANSATION, COMMIT and ROLLBACK.
+* [Change] Changed the icon for info message boxes.
+* [Fix] Minor typos fixed in UI components.
+* [Fix] Fix a bug in the Catalog class that was generating broken catalog queries for PostgreSQL releases under 9.3.
+* [Fix] Fixed a bug in DataManipulationForm that was not quoting columns in the generated UPDATE commands.
+* [Fix] Fixed some tooltips and shortcuts.
+* [Fix] Added an step during the connections.conf loading to fix the connection timeout attribute automatically.
+* [Fix] Fixed a bug in import process related to permission creation. Now pgModeler removes extra backslash from role's name to avoid it not to be found in the model.
+* [Fix] Fixed the doxygen 'brief' instructions in code documentation.
+* [Fix] Fixed a bug that was generating broken table's SQL when the object has one or more inherited column.
+* [Fix] Fix on the history text copy. Added the correct mouse button (middle) that triggers the copy from the history to the sql input field.
+* [Fix] Escaping properly columns' comments.
+* [Fix] Minor fix in RelationshipWidget input fields related to receiver and reference tables.
+* [Fix] Minor fixes in QPlainTextEdit instances where the SyntaxHighlighter class is used to adjust the height of the field according to the font size.
+* [Fix] Minor fix in NumberedTextEditor::showContextMenu to use the cursor's postion only when the menu is executed.
+* [Fix] Fixed the way instances of ResultSet are copied.
+
 v0.8.2-beta1
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em><br/>

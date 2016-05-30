@@ -310,7 +310,7 @@ void SQLExecutionWidget::registerSQLCommand(const QString &cmd, unsigned rows, c
 		else
 			fmt_cmd+=QString("-- Rows retrieved: %1\n").arg(rows);
 
-		fmt_cmd+=QString("-- End of execution --\n--\n");
+		fmt_cmd+=QString("--\n");
 
 		cmd_history_txt->appendPlainText(fmt_cmd);
 	}
