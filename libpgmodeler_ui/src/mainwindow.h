@@ -283,7 +283,6 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void toggleDonateWidget(bool show);
 		void removeModelActions(void);
 		void showDemoVersionWarning(void);
-		void quitDemoVersion(void);
 		void changeCurrentView(bool checked);
 		void reportBug(void);
 		void removeOperations(void);

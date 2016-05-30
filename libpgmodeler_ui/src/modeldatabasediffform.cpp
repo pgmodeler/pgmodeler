@@ -115,6 +115,15 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 		connect(drop_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
 		connect(alter_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
 		connect(ignore_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
+
+#ifdef DEMO_VERSION
+	#warning "DEMO VERSION: forcing ignore errors in diff due to the object count limit."
+	ignore_errors_chk->setChecked(true);
+	ignore_errors_chk->setEnabled(false);
+
+	apply_on_server_rb->setChecked(false);
+	apply_on_server_rb->setEnabled(false);
+#endif
 	}
 	catch(Exception &e)
 	{
@@ -586,6 +595,18 @@ void ModelDatabaseDiffForm::handleImportFinished(Exception e)
 void ModelDatabaseDiffForm::handleDiffFinished(void)
 {
 	sqlcode_txt->setPlainText(diff_helper->getDiffDefinition());
+
+#ifdef DEMO_VERSION
+#warning "DEMO VERSION: SQL code preview truncated."
+	if(!sqlcode_txt->toPlainText().isEmpty())
+	{
+		QString code=sqlcode_txt->toPlainText();
+		code=code.mid(0, code.size()/2);
+		code+=trUtf8("\n\n-- SQL code purposely truncated at this point in demo version!");
+		sqlcode_txt->setPlainText(code);
+	}
+#endif
+
 	settings_tbw->setTabEnabled(2, true);
 	diff_thread->quit();
 

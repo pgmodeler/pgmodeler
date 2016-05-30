@@ -83,6 +83,13 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 		import_btn->setEnabled(database_cmb->currentIndex() > 0);
 		objs_parent_wgt->setEnabled(database_cmb->currentIndex() > 0);
 	});
+
+
+#ifdef DEMO_VERSION
+	#warning "DEMO VERSION: forcing ignore errors in reverse engineering due to the object count limit."
+	ignore_errors_chk->setChecked(true);
+	ignore_errors_chk->setEnabled(false);
+#endif
 }
 
 DatabaseImportForm::~DatabaseImportForm(void)

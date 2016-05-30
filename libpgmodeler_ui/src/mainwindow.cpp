@@ -533,10 +533,6 @@ void MainWindow::resizeEvent(QResizeEvent *)
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-#ifdef DEMO_VERSION
-	quitDemoVersion();
-#endif
-
 	//pgModeler will not close when the validation thread is still running
 	if(model_valid_wgt->isValidationRunning())
 		event->ignore();
@@ -1297,21 +1293,6 @@ void MainWindow::saveModel(ModelWidget *model)
 
 void MainWindow::exportModel(void)
 {
-#ifdef DEMO_VERSION
-#warning "DEMO VERSION: export feature execution limit."
-	static unsigned exp_limit=0;
-	exp_limit++;
-
-	if(exp_limit > 2)
-	{
-		Messagebox msg_box;
-		msg_box.show(trUtf8("Warning"),
-					 trUtf8("You're running a demonstration version! The model export feature can be tested twice per pgModeler execution!"),
-					 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
-		return;
-	}
-#endif
-
 	ModelExportForm model_export_form(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 	Messagebox msg_box;
 	DatabaseModel *db_model=current_model->getDatabaseModel();
@@ -1346,13 +1327,6 @@ void MainWindow::exportModel(void)
 
 void MainWindow::importDatabase(void)
 {
-#ifdef DEMO_VERSION
-#warning "DEMO VERSION: reverse engineering feature disabled."
-	Messagebox msg_box;
-	msg_box.show(trUtf8("Warning"),
-				 trUtf8("You're running a demonstration version! The database import (reverse engineering) feature is available only in the full version!"),
-				 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
-#else
 	DatabaseImportForm db_import_form(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
 	stopTimers(true);
@@ -1366,18 +1340,10 @@ void MainWindow::importDatabase(void)
 		this->addModel(db_import_form.getModelWidget());
 	else if(current_model)
 		updateDockWidgets();
-#endif
 }
 
 void MainWindow::diffModelDatabase(void)
 {
-#ifdef DEMO_VERSION
-#warning "DEMO VERSION: model diff feature disabled."
-	Messagebox msg_box;
-	msg_box.show(trUtf8("Warning"),
-				 trUtf8("You're running a demonstration version! The model-database diff feature is available only in the full version!"),
-				 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
-#else
 	ModelDatabaseDiffForm modeldb_diff_frm(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 	Messagebox msg_box;
 	DatabaseModel *db_model=current_model->getDatabaseModel();
@@ -1410,7 +1376,6 @@ void MainWindow::diffModelDatabase(void)
 		modeldb_diff_frm.exec();
 		stopTimers(false);
 	}
-#endif
 }
 
 void MainWindow::printModel(void)
@@ -1777,27 +1742,12 @@ void MainWindow::showDemoVersionWarning(void)
 	Messagebox msg_box;
 	msg_box.show(trUtf8("Warning"),
 				 trUtf8("You're running a demonstration version! Note that you'll be able to create only <strong>%1</strong> instances \
-						of each type of object and some key features will be disabled!<br/><br/>You can purchase a full binary copy or get the source code at <a href='http://pgmodeler.com.br'>pgmodeler.com.br</a>.\
-																																									  <strong>NOTE:</strong> pgModeler is an open source software, but purchasing binary copies or providing some donations will support the project and cover all development costs.<br/><br/><br/><br/>").arg(GlobalAttributes::MAX_OBJECT_COUNT),
+						of each type of object and some key features will be disabled or limited!<br/><br/>You can purchase a full binary copy or get the source code at <a href='http://pgmodeler.com.br'>pgmodeler.com.br</a>.\
+						<strong>NOTE:</strong> pgModeler is an open source software, but purchasing binary copies or providing some donations will support the project and cover all development costs.<br/><br/>\
+						<strong>HINT:</strong> in order to test all features it's recommended to use the <strong>demo.dbm</strong> model located in </strong>Sample models</strong> at <strong>Welcome</strong> view.<br/><br/><br/><br/>").arg(GlobalAttributes::MAX_OBJECT_COUNT),
 						Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
 
 			QTimer::singleShot(150000, this, SLOT(showDemoVersionWarning()));
-#endif
-}
-
-void MainWindow::quitDemoVersion(void)
-{
-#ifdef DEMO_VERSION
-	/*Messagebox msg_box;
-  msg_box.show(trUtf8("The execution of demonstration version has finished!\
-											Did you like pgModeler and want to purchase it? Use the following promocodes and receive good discounts:<br/><br/>\
-											<strong>D3M02BR0NZ3</strong> (Discount on bronze package)<br/>\
-											<strong>D3M02S1LV3R</strong> (Discount on silver package)<br/>\
-											<strong>D3M02G0LD</strong> (Discount on gold package)<br/>\
-											<strong>D3M02PL4T1NUM</strong> (Discount on platinum package)<br/>\
-											<strong>D3M02D14M0ND</strong> (Discount on diamond package)<br/>\
-											<br/>Thank you for testing pgModeler!"),
-			   Messagebox::INFO_ICON, Messagebox::OK_BUTTON); */
 #endif
 }
 
