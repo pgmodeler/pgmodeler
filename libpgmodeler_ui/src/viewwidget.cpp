@@ -70,7 +70,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		cte_expression_cp=new CodeCompletionWidget(cte_expression_txt);
 		expression_cp=new CodeCompletionWidget(expression_txt);
 
-		frame_info=generateInformationFrame(trUtf8("To reference all columns in a table (*) just do not fill the field <strong>Column</strong>, this is the same as write <em><strong>[schema].[tablel].*</strong></em>"));
+		frame_info=generateInformationFrame(trUtf8("To reference all columns in a table (*) just do not fill the field <strong>Column</strong>, this is the same as write <em><strong>[schema].[table].*</strong></em>"));
 
 		referencias_grid->addWidget(table_sel, 2,1,1,2);
 		referencias_grid->addWidget(column_sel, 3,1,1,2);
