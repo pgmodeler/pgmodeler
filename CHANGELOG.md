@@ -24,6 +24,7 @@ v0.8.2
 * [New] Added a method PgModelerUiNS::createOutputListItem which created list items with an icon and text.
 * [New] Connections now can have a timeout between command executions. When this timeout exceeds the next command is not executed. This is a workaround to avoid the crash of the program due to connections being (unexpectedly or not) closed by the server.
 * [New] Added the ability to show connections notice/warning in SQL tool.
+* [New] Added an step during the connections.conf loading to fix the connection timeout attribute automatically.
 * [Change] Updated all translation dicts with new terms to be translated by their mainterners.
 * [Change] Changes in demo version enabling a limited usage of diff and import features.
 * [Change] Improved the way QTableWidgets instances are emptied.
@@ -43,7 +44,6 @@ v0.8.2
 * [Fix] Fix a bug in the Catalog class that was generating broken catalog queries for PostgreSQL releases under 9.3.
 * [Fix] Fixed a bug in DataManipulationForm that was not quoting columns in the generated UPDATE commands.
 * [Fix] Fixed some tooltips and shortcuts.
-* [Fix] Added an step during the connections.conf loading to fix the connection timeout attribute automatically.
 * [Fix] Fixed a bug in import process related to permission creation. Now pgModeler removes extra backslash from role's name to avoid it not to be found in the model.
 * [Fix] Fixed the doxygen 'brief' instructions in code documentation.
 * [Fix] Fixed a bug that was generating broken table's SQL when the object has one or more inherited column.
