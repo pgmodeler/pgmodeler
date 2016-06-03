@@ -331,6 +331,9 @@ void DatabaseImportHelper::createObjects(void)
 		progress=(i/static_cast<float>(creation_order.size())) * 100;
 	}
 
+	#ifdef DEMO_VERSION
+		#warning "DEMO VERSION: disabling object recreation in reverse engineering."
+	#else
 	//Trying to recreate objects that failed to be created previously
 	if(!not_created_objs.empty())
 	{
@@ -399,6 +402,7 @@ void DatabaseImportHelper::createObjects(void)
 		}
 		while(!not_created_objs.empty() && !import_canceled && tries < max_tries);
 	}
+	#endif
 }
 
 void DatabaseImportHelper::createConstraints(void)
