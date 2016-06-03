@@ -1717,7 +1717,9 @@ QString Table::createInsertCommand(const QStringList &col_names, const QStringLi
 		{
 			value.replace(QString("\\") + UNESC_VALUE_START, UNESC_VALUE_START);
 			value.replace(QString("\\") + UNESC_VALUE_END, UNESC_VALUE_END);
-			value=QString("'") + value + QString("'");
+			value.replace(QString("\'"), QString("''"));
+			value.replace(QChar(QChar::LineFeed), QString("\\n"));
+			value=QString("E'") + value + QString("'");
 		}
 
 		val_list.push_back(value);

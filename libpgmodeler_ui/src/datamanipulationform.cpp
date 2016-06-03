@@ -19,6 +19,7 @@
 #include "datamanipulationform.h"
 #include "sqlexecutionwidget.h"
 #include "pgmodeleruins.h"
+#include "plaintextitemdelegate.h"
 
 const QColor DataManipulationForm::ROW_COLORS[3]={ QColor(QString("#C0FFC0")), QColor(QString("#FFFFC0")), QColor(QString("#FFC0C0"))  };
 const unsigned DataManipulationForm::NO_OPERATION=0;
@@ -39,6 +40,8 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	code_compl_wgt=new CodeCompletionWidget(filter_txt);
 	code_compl_wgt->configureCompletion(nullptr, filter_hl);
+
+	results_tbw->setItemDelegate(new PlainTextItemDelegate(this, false));
 
 	refresh_tb->setToolTip(refresh_tb->toolTip() + QString(" (%1)").arg(refresh_tb->shortcut().toString()));
 	save_tb->setToolTip(save_tb->toolTip() + QString(" (%1)").arg(save_tb->shortcut().toString()));
@@ -896,7 +899,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 		for(QString pk_col : pk_col_names)
 		{
 			flt_list.push_back(QString("\"%1\"='%2'").arg(pk_col)
-							   .arg(results_tbw->item(row,  col_names.indexOf(pk_col))->data(Qt::UserRole).toString()));
+								 .arg(results_tbw->item(row,  col_names.indexOf(pk_col))->data(Qt::UserRole).toString().replace("\'","''")));
 		}
 	}
 
@@ -946,7 +949,8 @@ QString DataManipulationForm::getDMLCommand(int row)
 					{
 						value.replace(QString("\\") + Table::UNESC_VALUE_START, Table::UNESC_VALUE_START);
 						value.replace(QString("\\") + Table::UNESC_VALUE_END, Table::UNESC_VALUE_END);
-						value=QString("'") + value + QString("'");
+						value.replace("\'","''");
+						value=QString("E'") + value + QString("'");
 					}
 
 					if(op_type==OP_INSERT)

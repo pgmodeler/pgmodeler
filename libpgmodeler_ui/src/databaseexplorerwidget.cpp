@@ -21,6 +21,7 @@
 #include "sqltoolwidget.h"
 #include "sqlexecutionwidget.h"
 #include "snippetsconfigwidget.h"
+#include "plaintextitemdelegate.h"
 
 using namespace ParsersAttributes;
 
@@ -90,9 +91,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	setupUi(this);
 	splitter->setSizes({ 70, 30 });
 
-	ro_item_deleg=new ReadOnlyItemDelegate(this);
-	properties_tbw->setItemDelegate(ro_item_deleg);
-
+	properties_tbw->setItemDelegate(new PlainTextItemDelegate(this, true));
 	rename_item=nullptr;
 
 	data_grid_tb->setToolTip(data_grid_tb->toolTip() + QString(" (%1)").arg(data_grid_tb->shortcut().toString()));

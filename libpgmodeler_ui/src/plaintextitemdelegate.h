@@ -18,27 +18,30 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class ReadOnlyItemDelegate
-\brief Implements a custom item delegate used avoid item modifications by disabling the editor
+\class PlainTextItemDelegate
+\brief Implements a custom item delegate based upon a QPlainTextEdit to help edit long texts with line breaks
 */
 
-#ifndef READ_ONLY_ITEM_DELEGATE_H
-#define READ_ONLY_ITEM_DELEGATE_H
+#ifndef PLAIN_TEXT_ITEM_DELEGATE_H
+#define PLAIN_TEXT_ITEM_DELEGATE_H
 
 #include <QObject>
 #include <QStyledItemDelegate>
 
-class ReadOnlyItemDelegate : public QStyledItemDelegate {
+class PlainTextItemDelegate : public QStyledItemDelegate {
 	private:
 		Q_OBJECT
+		bool read_only;
 
 	public:
-		ReadOnlyItemDelegate(QObject * parent = 0);
-		~ReadOnlyItemDelegate(void);
+		explicit PlainTextItemDelegate(QObject * parent, bool read_only);
+		~PlainTextItemDelegate(void);
 
 	protected:
 		//! \brief Overrides the default implementation and set the editor as read only/disable to prevent change the item data
 		virtual void setEditorData(QWidget *editor, const QModelIndex &index) const;
+
+		virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &index) const;
 };
 
 #endif

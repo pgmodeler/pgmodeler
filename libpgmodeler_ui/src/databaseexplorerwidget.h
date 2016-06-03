@@ -28,7 +28,6 @@
 #include "ui_databaseexplorerwidget.h"
 #include "databaseimporthelper.h"
 #include "schemaparser.h"
-#include "readonlyitemdelegate.h"
 #include "hinttextwidget.h"
 
 class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget {
@@ -39,9 +38,6 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		DEP_NOT_FOUND,
 		ELEM_SEPARATOR,
 		DEFAULT_SOURCE_CODE;
-		
-		//! \brief Delegate item form object's attributes grid
-		ReadOnlyItemDelegate *ro_item_deleg;
 		
 		//! \brief Stores the translations of all used attributes at properties panel
 		static const attribs_map attribs_i18n;

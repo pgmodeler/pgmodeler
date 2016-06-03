@@ -21,6 +21,7 @@
 #include "databaseexplorerwidget.h"
 #include "snippetsconfigwidget.h"
 #include "pgmodeleruins.h"
+#include "plaintextitemdelegate.h"
 
 SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 {
@@ -62,8 +63,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	output_tb->setToolTip(output_tb->toolTip() + QString(" (%1)").arg(output_tb->shortcut().toString()));
 	find_tb->setToolTip(find_tb->toolTip() + QString(" (%1)").arg(find_tb->shortcut().toString()));
 
-	ro_item_del=new ReadOnlyItemDelegate(this);
-	results_tbw->setItemDelegate(ro_item_del);
+	results_tbw->setItemDelegate(new PlainTextItemDelegate(this, true));
 
 	connect(clear_btn, SIGNAL(clicked(void)), this, SLOT(clearAll(void)));
 	connect(sql_cmd_txt, SIGNAL(textChanged(void)), this, SLOT(enableCommandButtons(void)));

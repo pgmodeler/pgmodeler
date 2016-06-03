@@ -102,12 +102,12 @@ SOURCES += src/mainwindow.cpp \
            src/sqlexecutionwidget.cpp \
            src/htmlitemdelegate.cpp \
            src/donatewidget.cpp \
-    src/readonlyitemdelegate.cpp \
     src/numberedtexteditor.cpp \
 		src/linenumberswidget.cpp \
     src/metadatahandlingform.cpp \
     src/welcomewidget.cpp \
-    src/tabledatawidget.cpp
+		src/tabledatawidget.cpp \
+		src/plaintextitemdelegate.cpp
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
@@ -196,12 +196,12 @@ HEADERS += src/mainwindow.h \
            src/sqlexecutionwidget.h \
            src/htmlitemdelegate.h \
            src/donatewidget.h \
-    src/readonlyitemdelegate.h \
     src/numberedtexteditor.h \
 		src/linenumberswidget.h \
     src/metadatahandlingform.h \
     src/welcomewidget.h \
-    src/tabledatawidget.h
+		src/tabledatawidget.h \
+		src/plaintextitemdelegate.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \
