@@ -31,16 +31,17 @@
 class PlainTextItemDelegate : public QStyledItemDelegate {
 	private:
 		Q_OBJECT
+		bool read_only;
 
 	public:
-		PlainTextItemDelegate(QObject * parent = 0);
+		explicit PlainTextItemDelegate(QObject * parent, bool read_only);
 		~PlainTextItemDelegate(void);
 
 	protected:
 		//! \brief Overrides the default implementation and set the editor as read only/disable to prevent change the item data
 		virtual void setEditorData(QWidget *editor, const QModelIndex &index) const;
 
-		virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+		virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &index) const;
 };
 
 #endif

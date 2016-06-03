@@ -18,10 +18,11 @@
 
 #include "plaintextitemdelegate.h"
 #include <QPlainTextEdit>
+#include <QLineEdit>
 
-PlainTextItemDelegate::PlainTextItemDelegate(QObject *parent) : QStyledItemDelegate(parent)
+PlainTextItemDelegate::PlainTextItemDelegate(QObject *parent, bool read_only) : QStyledItemDelegate(parent)
 {
-
+	this->read_only = read_only;
 }
 
 PlainTextItemDelegate::~PlainTextItemDelegate(void)
@@ -32,16 +33,37 @@ PlainTextItemDelegate::~PlainTextItemDelegate(void)
 void PlainTextItemDelegate::setEditorData(QWidget * editor, const QModelIndex & index) const
 {
 	QPlainTextEdit *text_edt=qobject_cast<QPlainTextEdit *>(editor);
+	QLineEdit *line_edt=qobject_cast<QLineEdit *>(editor);
 
 	if(text_edt)
 	{
+		text_edt->setReadOnly(read_only);
 		text_edt->setPlainText(index.data(Qt::DisplayRole).toString());
+		text_edt->selectAll();
+	}
+	else if(line_edt)
+	{
+		line_edt->setReadOnly(read_only);
+		line_edt->setText(index.data(Qt::DisplayRole).toString());
 	}
 	else
 		QStyledItemDelegate::setEditorData(editor, index);
 }
 
-QWidget *PlainTextItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+QWidget *PlainTextItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &index) const
 {
-	return(new QPlainTextEdit(parent));
+	QWidget *editor = nullptr;
+
+	if(index.data(Qt::DisplayRole).toString().contains(QChar('\n')))
+	{
+		editor = new QPlainTextEdit(parent);
+		qobject_cast<QPlainTextEdit *>(editor)->setFrameShape(QFrame::NoFrame);
+	}
+	else
+	{
+		editor = new QLineEdit(parent);
+		qobject_cast<QLineEdit *>(editor)->setFrame(false);
+	}
+
+	return(editor);
 }

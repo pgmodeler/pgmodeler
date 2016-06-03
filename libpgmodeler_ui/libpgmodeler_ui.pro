@@ -102,7 +102,6 @@ SOURCES += src/mainwindow.cpp \
            src/sqlexecutionwidget.cpp \
            src/htmlitemdelegate.cpp \
            src/donatewidget.cpp \
-    src/readonlyitemdelegate.cpp \
     src/numberedtexteditor.cpp \
 		src/linenumberswidget.cpp \
     src/metadatahandlingform.cpp \
@@ -197,7 +196,6 @@ HEADERS += src/mainwindow.h \
            src/sqlexecutionwidget.h \
            src/htmlitemdelegate.h \
            src/donatewidget.h \
-    src/readonlyitemdelegate.h \
     src/numberedtexteditor.h \
 		src/linenumberswidget.h \
     src/metadatahandlingform.h \

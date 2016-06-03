@@ -20,7 +20,7 @@
 #include <QTextDocument>
 #include <QLineEdit>
 
-HtmlItemDelegate::HtmlItemDelegate(QObject *parent) : ReadOnlyItemDelegate(parent)
+HtmlItemDelegate::HtmlItemDelegate(QObject *parent) : PlainTextItemDelegate(parent, true)
 {
 
 }

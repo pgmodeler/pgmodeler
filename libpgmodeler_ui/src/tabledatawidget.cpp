@@ -33,6 +33,8 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, BASE
 	comment_lbl->setVisible(false);
 	comment_edt->setVisible(false);
 
+	data_tbw->setItemDelegate(new PlainTextItemDelegate(this, false));
+
 	QFont font=name_edt->font();
 	font.setItalic(true);
 	name_edt->setReadOnly(true);

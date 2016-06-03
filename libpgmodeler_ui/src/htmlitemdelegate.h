@@ -27,9 +27,9 @@
 
 #include <QObject>
 #include <QPainter>
-#include "readonlyitemdelegate.h"
+#include "plaintextitemdelegate.h"
 
-class HtmlItemDelegate : public ReadOnlyItemDelegate {
+class HtmlItemDelegate : public PlainTextItemDelegate {
 	private:
 		Q_OBJECT
 
