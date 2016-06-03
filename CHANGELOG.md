@@ -6,6 +6,7 @@ v0.8.2
 <em>Codename: <strong>Faithful Elephant</strong></em><br/>
 <em>Release date: June 3, 2016</em><br/>
 
+* [New] Created the PlainTextItemDelegate replacing the ReadOnlyItemDelegate where needed.
 * [New] Added the ability to the table to create insert commands from the initial data buffer.
 * [New] Added the support to interpret initial-data tag in DatabaseModel::createTable.
 * [New] Create the attribute initial-data for Table in order to store the initial set of values in a CSV-like buffer.
@@ -25,6 +26,9 @@ v0.8.2
 * [New] Connections now can have a timeout between command executions. When this timeout exceeds the next command is not executed. This is a workaround to avoid the crash of the program due to connections being (unexpectedly or not) closed by the server.
 * [New] Added the ability to show connections notice/warning in SQL tool.
 * [New] Added an step during the connections.conf loading to fix the connection timeout attribute automatically.
+* [Change] The class ReadOnlyItemDelegate was removed due to the introduction of PlainTextItemDelegate.
+* [Change] Minor adjustments in queries generated in DataManipulationForm in order to use PostgreSQL like escaping E'' permitting user to use special chars in the middle of values.
+* [Change] Simple quotes (') in DataManipulationForm and TableDataWidget will be automatically replaced by double quotes ('') in order to avoid broken commands.
 * [Change] Updated all translation dicts with new terms to be translated by their mainterners.
 * [Change] Changes in demo version enabling a limited usage of diff and import features.
 * [Change] Improved the way QTableWidgets instances are emptied.
