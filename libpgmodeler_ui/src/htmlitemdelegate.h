@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,18 +27,18 @@
 
 #include <QObject>
 #include <QPainter>
-#include "readonlyitemdelegate.h"
+#include "plaintextitemdelegate.h"
 
-class HtmlItemDelegate : public ReadOnlyItemDelegate {
-  private:
-    Q_OBJECT
+class HtmlItemDelegate : public PlainTextItemDelegate {
+	private:
+		Q_OBJECT
 
-  public:
-    HtmlItemDelegate(QObject * parent = 0);
-    ~HtmlItemDelegate(void);
+	public:
+		HtmlItemDelegate(QObject * parent = 0);
+		~HtmlItemDelegate(void);
 
-  protected:
-    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+	protected:
+		virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 };
 
 #endif

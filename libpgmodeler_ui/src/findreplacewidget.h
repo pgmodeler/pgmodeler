@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,21 +32,21 @@
 class FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {
 	private:
 		Q_OBJECT
-
-		//! brief QTextEdit instance that the finder is attached to
-    QPlainTextEdit *text_edt;
-
-		//! brief Find the text in a backward and/or cyclic way
+		
+		//! \brief QTextEdit instance that the finder is attached to
+		QPlainTextEdit *text_edt;
+		
+		//! \brief Find the text in a backward and/or cyclic way
 		bool findText(bool backward, bool cyclic);
-
-		//! brief Find the text using the specified flags. The regexp param is ignored on Qt versions below 5.3
+		
+		//! \brief Find the text using the specified flags. The regexp param is ignored on Qt versions below 5.3
 		bool findText(const QString &text, bool regexp, QTextDocument::FindFlags flags);
-
+		
 		void showEvent(QShowEvent *);
-
+		
 	public:
-    FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget * parent = 0);
-
+		FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget * parent = 0);
+		
 	public slots:
 		void replaceText(void);
 		void replaceAll(void);

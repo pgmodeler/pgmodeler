@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,12 +41,12 @@ class OperatorClassWidget: public BaseObjectWidget, public Ui::OperatorClassWidg
 
 		//! \brief Family, funciton and operator selectors
 		ObjectSelectorWidget *family_sel,
-												*function_sel,
-												*operator_sel,
-												*elem_family_sel;
+		*function_sel,
+		*operator_sel,
+		*elem_family_sel;
 
 		PgSQLTypeWidget *data_type,
-										*storage_type;
+		*storage_type;
 
 		//! \brief Stores the elements of operator class
 		ObjectTableWidget *elements_tab;

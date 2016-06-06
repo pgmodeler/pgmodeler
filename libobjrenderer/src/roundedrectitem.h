@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,59 +29,59 @@
 #include <QPainter>
 
 class RoundedRectItem: public QGraphicsRectItem {
-  private:
-    //! brief Rect border radius
-    double radius;
+	private:
+		//! \brief Rect border radius
+		double radius;
 
-    //! brief Polygon used to simulate the rounded rectangle with custom rounded corners
-    QPolygonF polygon;
+		//! \brief Polygon used to simulate the rounded rectangle with custom rounded corners
+		QPolygonF polygon;
 
-    //! brief Stores which corners of the rectangle must be rounded
-    unsigned corners;
+		//! \brief Stores which corners of the rectangle must be rounded
+		unsigned corners;
 
-    //! brief Creates the polygon that represents the rounded rectangle
-    void createPolygon(void);
+		//! \brief Creates the polygon that represents the rounded rectangle
+		void createPolygon(void);
 
-    /*! brief Calculates the points to simulate the rounded border. It must be informed
-        the starting point and start/end angles. Based upon those parameters a line
-        is configured and rotated from start_angle to end_angle and its final point
-        (the rounded border point) is detected. The method returns all the calculated
-        points which forms the rounded border. */
-    QVector<QPointF> calculatePoints(QPointF start_pnt, double start_angle, double end_angle);
+		/*! \brief Calculates the points to simulate the rounded border. It must be informed
+		the starting point and start/end angles. Based upon those parameters a line
+		is configured and rotated from start_angle to end_angle and its final point
+		(the rounded border point) is detected. The method returns all the calculated
+		points which forms the rounded border. */
+		QVector<QPointF> calculatePoints(QPointF start_pnt, double start_angle, double end_angle);
 
-  public:
-    //! brief Implies a normal rectangle (no rounded corner)
-    static const unsigned NONE_CORNERS=0,
+	public:
+		//! \brief Implies a normal rectangle (no rounded corner)
+		static const unsigned NONE_CORNERS=0,
 
-    //! brief The top-left corner will be rounded
-    TOPLEFT_CORNER=2,
+		//! \brief The top-left corner will be rounded
+		TOPLEFT_CORNER=2,
 
-    //! brief The top-right corner will be rounded
-    TOPRIGHT_CORNER=4,
+		//! \brief The top-right corner will be rounded
+		TOPRIGHT_CORNER=4,
 
-    //! brief The Bottom-left corner will be rounded
-    BOTTOMLEFT_CORNER=8,
+		//! \brief The Bottom-left corner will be rounded
+		BOTTOMLEFT_CORNER=8,
 
-    //! brief The Bottom-right corner will be rounded
-    BOTTOMRIGHT_CORNER=16,
+		//! \brief The Bottom-right corner will be rounded
+		BOTTOMRIGHT_CORNER=16,
 
-    //! brief All corners will be rounded
-    ALL_CORNERS=32;
+		//! \brief All corners will be rounded
+		ALL_CORNERS=32;
 
-    explicit RoundedRectItem(QGraphicsItem *parent = 0);
+		explicit RoundedRectItem(QGraphicsItem *parent = 0);
 
-    void setBorderRadius(double radius);
-    double getBorderRadius(void);
+		void setBorderRadius(double radius);
+		double getBorderRadius(void);
 
-    void setRoundedCorners(unsigned corners);
-    unsigned getRoundedCorners(void);
+		void setRoundedCorners(unsigned corners);
+		unsigned getRoundedCorners(void);
 
-    //! brief Test if a corners is configured to be rounded
-    bool isCornerRounded(unsigned corner);
+		//! \brief Test if a corners is configured to be rounded
+		bool isCornerRounded(unsigned corner);
 
-    void setRect(const QRectF &rect);
+		void setRect(const QRectF &rect);
 
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
+		void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
 };
 
 #endif

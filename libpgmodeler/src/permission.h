@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -84,18 +84,18 @@ class Permission: public BaseObject {
 
 	public:
 		//! \brief Constants used to reference the privileges
-    static const unsigned PRIV_SELECT=0,
-                          PRIV_INSERT=1,
-                          PRIV_UPDATE=2,
-                          PRIV_DELETE=3,
-                          PRIV_TRUNCATE=4,
-                          PRIV_REFERENCES=5,
-                          PRIV_TRIGGER=6,
-                          PRIV_CREATE=7,
-                          PRIV_CONNECT=8,
-                          PRIV_TEMPORARY=9,
-                          PRIV_EXECUTE=10,
-                          PRIV_USAGE=11;
+		static const unsigned PRIV_SELECT=0,
+		PRIV_INSERT=1,
+		PRIV_UPDATE=2,
+		PRIV_DELETE=3,
+		PRIV_TRUNCATE=4,
+		PRIV_REFERENCES=5,
+		PRIV_TRIGGER=6,
+		PRIV_CREATE=7,
+		PRIV_CONNECT=8,
+		PRIV_TEMPORARY=9,
+		PRIV_EXECUTE=10,
+		PRIV_USAGE=11;
 
 		/*! \brief In the constructor is required to specify which object will receive
 		 the permissions this can not be changed after the object instance of
@@ -124,8 +124,8 @@ class Permission: public BaseObject {
 		//! \brief Gets one role from permission using its index
 		Role *getRole(unsigned role_idx);
 
-    //! brief Returns all the roles that is used by the permission
-    vector<Role *> getRoles(void);
+		//! \brief Returns all the roles that is used by the permission
+		vector<Role *> getRoles(void);
 
 		//! \brief Gets the object that is subject to the privileges
 		BaseObject *getObject(void);
@@ -150,8 +150,8 @@ class Permission: public BaseObject {
 		bool isRevoke(void);
 		bool isCascade(void);
 
-    //! brief Returns the the specified permission is semantically the same as this permission
-    bool isSimilarTo(Permission *perm);
+		//! \brief Returns the the specified permission is semantically the same as this permission
+		bool isSimilarTo(Permission *perm);
 
 		//! \brief Returns if the passed object type accepts permission
 		static bool objectAcceptsPermission(ObjectType obj_type, int privilege=-1);
@@ -159,9 +159,9 @@ class Permission: public BaseObject {
 		//! \brief Returns the SQL / XML definition for the permission
 		virtual QString getCodeDefinition(unsigned def_type) final;
 
-    virtual QString getSignature(bool format=false) final;
+		virtual QString getSignature(bool format=false) final;
 
-    virtual QString getDropDefinition(bool cascade) final;
+		virtual QString getDropDefinition(bool cascade) final;
 };
 
 #endif

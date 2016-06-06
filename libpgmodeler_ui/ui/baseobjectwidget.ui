@@ -22,9 +22,6 @@
     <height>0</height>
    </size>
   </property>
-  <property name="windowTitle">
-   <string>Form</string>
-  </property>
   <widget class="QLabel" name="name_lbl">
    <property name="geometry">
     <rect>
@@ -59,16 +56,22 @@
      <height>25</height>
     </rect>
    </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="minimumSize">
     <size>
      <width>0</width>
-     <height>25</height>
+     <height>0</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
      <width>16777215</width>
-     <height>25</height>
+     <height>16777215</height>
     </size>
    </property>
    <property name="text">
@@ -115,10 +118,16 @@
      <height>25</height>
     </rect>
    </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="minimumSize">
     <size>
      <width>0</width>
-     <height>25</height>
+     <height>0</height>
     </size>
    </property>
   </widget>
@@ -163,14 +172,14 @@
   <widget class="QToolButton" name="edt_perms_tb">
    <property name="geometry">
     <rect>
-     <x>338</x>
-     <y>316</y>
-     <width>148</width>
-     <height>29</height>
+     <x>318</x>
+     <y>311</y>
+     <width>141</width>
+     <height>30</height>
     </rect>
    </property>
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
@@ -178,13 +187,13 @@
    <property name="minimumSize">
     <size>
      <width>0</width>
-     <height>0</height>
+     <height>30</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
      <width>16777215</width>
-     <height>30</height>
+     <height>16777215</height>
     </size>
    </property>
    <property name="focusPolicy">
@@ -198,12 +207,12 @@
    </property>
    <property name="icon">
     <iconset resource="../res/resources.qrc">
-     <normaloff>:/icones/icones/editar.png</normaloff>:/icones/icones/editar.png</iconset>
+     <normaloff>:/icones/icones/permission.png</normaloff>:/icones/icones/permission.png</iconset>
    </property>
    <property name="iconSize">
     <size>
-     <width>20</width>
-     <height>20</height>
+     <width>22</width>
+     <height>22</height>
     </size>
    </property>
    <property name="toolButtonStyle">
@@ -279,12 +288,10 @@
      </widget>
     </item>
     <item row="0" column="1">
-     <widget class="QLabel" name="label_2">
+     <widget class="QLabel" name="protected_obj_lbl">
       <property name="font">
        <font>
-        <pointsize>8</pointsize>
         <weight>50</weight>
-        <italic>true</italic>
         <bold>false</bold>
         <underline>false</underline>
         <strikeout>false</strikeout>
@@ -304,10 +311,10 @@
   <widget class="QCheckBox" name="disable_sql_chk">
    <property name="geometry">
     <rect>
-     <x>490</x>
-     <y>320</y>
-     <width>137</width>
-     <height>21</height>
+     <x>465</x>
+     <y>314</y>
+     <width>131</width>
+     <height>24</height>
     </rect>
    </property>
    <property name="sizePolicy">
@@ -349,14 +356,14 @@ This will disable the code of all child and referrer objects.</string>
   <widget class="QToolButton" name="append_sql_tb">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>320</y>
-     <width>121</width>
-     <height>29</height>
+     <x>197</x>
+     <y>311</y>
+     <width>115</width>
+     <height>30</height>
     </rect>
    </property>
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
@@ -364,13 +371,13 @@ This will disable the code of all child and referrer objects.</string>
    <property name="minimumSize">
     <size>
      <width>0</width>
-     <height>0</height>
+     <height>30</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
      <width>16777215</width>
-     <height>30</height>
+     <height>16777215</height>
     </size>
    </property>
    <property name="focusPolicy">
@@ -388,8 +395,8 @@ This will disable the code of all child and referrer objects.</string>
    </property>
    <property name="iconSize">
     <size>
-     <width>20</width>
-     <height>20</height>
+     <width>22</width>
+     <height>22</height>
     </size>
    </property>
    <property name="toolButtonStyle">

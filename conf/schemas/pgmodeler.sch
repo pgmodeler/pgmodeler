@@ -39,7 +39,11 @@ $sp [<configuration op-list-size="] {op-list-size} ["] $br
 [               highlight-lines="] %if {highlight-lines} %then true %else false %end ["] $br
 [               line-numbers-color="] {line-numbers-color} ["] $br
 [               line-numbers-bg-color="] {line-numbers-bg-color} ["] $br
-[               line-highlight-color="] {line-highlight-color} ["]
+[               line-highlight-color="] {line-highlight-color} ["] $br
+[               use-placeholders="] %if {use-placeholders} %then true %else false %end ["] $br
+[               show-canvas-grid="] %if {show-canvas-grid} %then true %else false %end ["] $br
+[               show-page-delimiters="] %if {show-page-delimiters} %then true %else false %end ["] $br
+[               align-objs-to-grid="] %if {align-objs-to-grid} %then true %else false %end ["]
 [/>] $br
 
 %if {file} %then

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ void OperatorClass::setElementsAttribute(unsigned def_type)
 	{
 		str_elems+=elements[i].getCodeDefinition(def_type);
 		if(def_type==SchemaParser::SQL_DEFINITION &&
-       i < count-1) str_elems+=QString(",\n");
+				i < count-1) str_elems+=QString(",\n");
 	}
 
 	attributes[ParsersAttributes::ELEMENTS]=str_elems;
@@ -181,12 +181,18 @@ QString OperatorClass::getCodeDefinition(unsigned def_type, bool reduced_form)
 		attributes[ParsersAttributes::TYPE]=data_type.getCodeDefinition(def_type);
 
 	if(family)
-		attributes[ParsersAttributes::FAMILY]=family->getName(true);
+	{
+		if(def_type==SchemaParser::SQL_DEFINITION)
+			attributes[ParsersAttributes::FAMILY]=family->getName(true);
+		else
+			attributes[ParsersAttributes::FAMILY]=family->getSignature();
+	}
 
+	attributes[ParsersAttributes::SIGNATURE]=getSignature();
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));
 }
 
 QString OperatorClass::getSignature(bool format)
 {
-  return(BaseObject::getSignature(format) + QString(" USING %1").arg(~indexing_type));
+	return(BaseObject::getSignature(format) + QString(" USING %1").arg(~indexing_type));
 }

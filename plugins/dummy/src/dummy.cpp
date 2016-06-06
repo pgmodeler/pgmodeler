@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,14 +23,14 @@
 Dummy::Dummy(void)
 {
 	configurePluginInfo(getPluginTitle(),
-											getPluginVersion(),
-											getPluginAuthor(),
-											getPluginDescription(),
+						getPluginVersion(),
+						getPluginAuthor(),
+						getPluginDescription(),
 
-											GlobalAttributes::PLUGINS_DIR +
-											GlobalAttributes::DIR_SEPARATOR +
-											QString("dummy") +
-                      GlobalAttributes::DIR_SEPARATOR + QString("dummy.png"));
+						GlobalAttributes::PLUGINS_DIR +
+						GlobalAttributes::DIR_SEPARATOR +
+						QString("dummy") +
+						GlobalAttributes::DIR_SEPARATOR + QString("dummy.png"));
 }
 
 QString Dummy::getPluginTitle(void)
@@ -41,12 +41,12 @@ QString Dummy::getPluginTitle(void)
 
 QString Dummy::getPluginVersion(void)
 {
-  return(QString("0.1"));
+	return(QString("0.1"));
 }
 
 QString Dummy::getPluginAuthor(void)
 {
-  return(QString("Raphael A. Silva"));
+	return(QString("Raphael A. Silva"));
 }
 
 QString Dummy::getPluginDescription(void)
@@ -63,11 +63,11 @@ void Dummy::executePlugin(ModelWidget *)
 {
 	Messagebox msgbox;
 	msgbox.show(trUtf8("Plugin successfully loaded!"),
-							trUtf8("Plugin successfully loaded! Check the <a href='http://www.pgmodeler.com.br/wiki/doku.php?id=plugins'>plugins wiki page</a> to know how to create your own plugins."),
-							Messagebox::INFO_ICON);
+				trUtf8("Plugin successfully loaded! Check the <a href='http://www.pgmodeler.com.br/wiki/doku.php?id=plugins'>plugins wiki page</a> to know how to create your own plugins."),
+				Messagebox::INFO_ICON);
 }
 
 QKeySequence Dummy::getPluginShortcut(void)
 {
-  return(QKeySequence(QString("Ctrl+J")));
+	return(QKeySequence(QString("Ctrl+J")));
 }

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,10 +24,9 @@ TextboxWidget::TextboxWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TEXT
 	configureFormLayout(textbox_grid, OBJ_TEXTBOX);
 
 	text_txt->removeEventFilter(this);
-	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 	connect(color_select_tb, SIGNAL(clicked(void)), this, SLOT(selectTextColor(void)));
-	parent_form->setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
-	parent_form->setMinimumSize(500,250);
+
+	setMinimumSize(500, 200);
 }
 
 void TextboxWidget::hideEvent(QHideEvent *event)
@@ -53,7 +52,7 @@ void TextboxWidget::setAttributes(DatabaseModel *model, OperationList *op_list, 
 		palette.setColor(QPalette::Button, txtbox->getTextColor());
 		color_select_tb->setPalette(palette);
 
-    text_txt->setPlainText(txtbox->getComment());
+		text_txt->setPlainText(txtbox->getComment());
 		bold_chk->setChecked(txtbox->getTextAttribute(Textbox::BOLD_TXT));
 		italic_chk->setChecked(txtbox->getTextAttribute(Textbox::ITALIC_TXT));
 		underline_chk->setChecked(txtbox->getTextAttribute(Textbox::UNDERLINE_TXT));

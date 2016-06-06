@@ -10,7 +10,7 @@
 # Refactored code: https://github.com/pgmodeler/pgmodeler
 
 # General Qt settings
-QT += core widgets printsupport network
+QT += core widgets printsupport network svg
 CONFIG += ordered qt stl rtti exceptions warn_on c++11
 TEMPLATE = subdirs
 MOC_DIR = moc
@@ -113,7 +113,7 @@ macx {
   !defined(SCHEMASDIR, var):    SCHEMASDIR = $$BINDIR/schemas
 
   # Specifies where to find the libraries at runtime
-  QMAKE_RPATHDIR += @executable_path/../Frameworks
+  # QMAKE_RPATHDIR += @executable_path/../Frameworks
 }
 
 # Creating constants based upon the custom paths so the GlobalAttributes
@@ -145,19 +145,18 @@ unix:!macx {
 }
 
 macx {
-  PGSQL_LIB = /Library/PostgreSQL/9.4/lib/libpq.dylib
-  PGSQL_INC = /Library/PostgreSQL/9.4/include
-  XML_INC = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/libxml2
-  XML_LIB = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/libxml2.dylib
-
+  PGSQL_LIB = /Library/PostgreSQL/9.5/lib/libpq.dylib
+  PGSQL_INC = /Library/PostgreSQL/9.5/include
+  XML_INC = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/include/libxml2
+  XML_LIB = /usr/lib/libxml2.dylib
   INCLUDEPATH += $$PGSQL_INC $$XML_INC
 }
 
 windows {
-  !defined(PGSQL_LIB, var): PGSQL_LIB = C:/PostgreSQL/9.4/lib/libpq.dll
-  !defined(PGSQL_INC, var): PGSQL_INC = C:/PostgreSQL/9.4/include
-  !defined(XML_INC, var): XML_INC = C:/PostgreSQL/9.4/include
-  !defined(XML_LIB, var): XML_LIB = C:/PostgreSQL/9.4/bin/libxml2.dll
+  !defined(PGSQL_LIB, var): PGSQL_LIB = C:/PostgreSQL/9.5/lib/libpq.dll
+  !defined(PGSQL_INC, var): PGSQL_INC = C:/PostgreSQL/9.5/include
+  !defined(XML_INC, var): XML_INC = C:/PostgreSQL/9.5/include
+  !defined(XML_LIB, var): XML_LIB = C:/PostgreSQL/9.5/bin/libxml2.dll
 
   # Workaround to solve bug of timespec struct on MingW + PostgreSQL < 9.4
   QMAKE_CXXFLAGS+="-DHAVE_STRUCT_TIMESPEC"

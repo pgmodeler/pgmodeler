@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -44,9 +44,9 @@ class OperatorFamily: public BaseObject {
 
 		//! \brief Returns the SQL / XML code definition for the operator family
 		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) final;
-    virtual QString getCodeDefinition(unsigned def_type) final;
+		virtual QString getCodeDefinition(unsigned def_type) final;
 
-    virtual QString getSignature(bool format=true) final;
+		virtual QString getSignature(bool format=true) final;
 };
 
 #endif

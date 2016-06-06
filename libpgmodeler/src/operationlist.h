@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -121,8 +121,8 @@ class OperationList: public QObject {
 		//! \brief Returns if the operation chaining where started
 		bool isOperationChainStarted(void);
 
-    //! brief Returns if an operation of the specified op_type is already registered for the object
-    bool isObjectRegistered(BaseObject *object, unsigned op_type);
+		//! \brief Returns if an operation of the specified op_type is already registered for the object
+		bool isObjectRegistered(BaseObject *object, unsigned op_type);
 
 		//! \brief Undo the current operation on the list
 		void undoOperation(void);
@@ -145,10 +145,10 @@ class OperationList: public QObject {
 		 This method should ALWAYS be called before the object in question
 		 suffers any operation in the model. If this method is called after an operation on the
 		 object the order of restoration / re-execution of operations can be broken and cause
-     segmentations fault.
+	 segmentations fault.
 
-     In case of success this method returns an integer indicating the last registered operation ID */
-    int registerObject(BaseObject *object, unsigned op_type, int object_idx=-1, BaseObject *parent_obj=nullptr);
+	 In case of success this method returns an integer indicating the last registered operation ID */
+		int registerObject(BaseObject *object, unsigned op_type, int object_idx=-1, BaseObject *parent_obj=nullptr);
 
 		//! \brief Gets the maximum size for the operation list
 		unsigned getMaximumSize(void);
@@ -183,10 +183,6 @@ class OperationList: public QObject {
 		 of the object with the new value for the operations which refer the object is not
 		 executed incorrectly using previous index */
 		void updateObjectIndex(BaseObject *object, unsigned new_idx);
-
-	signals:
-		//! \brief Signal emitted when one operation is executed
-		void s_operationExecuted(int progress, QString object_id, unsigned icon_id);
 };
 
 #endif

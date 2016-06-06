@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,14 +43,9 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 
 		QFrame *frame_info;
 
-    ObjectSelectorWidget *tag_sel;
+		ObjectSelectorWidget *tag_sel;
 
-    NumberedTextEditor *cte_expression_txt, *code_txt;
-
-		/*! \brief Operation list element count before editing the view. This attribute
-		is used to know, in case of cancel the edition, the operation (count) that is needed to
-		be removed. See: cancelConfiguration() */
-		unsigned operation_count;
+		NumberedTextEditor *cte_expression_txt, *code_txt;
 
 		//! \brief Stores all the view references
 		ObjectTableWidget *references_tab;
@@ -58,18 +53,18 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 		map<ObjectType, ObjectTableWidget *> objects_tab_map;
 
 		SyntaxHighlighter *expression_hl,
-											*code_hl,
-											*cte_expression_hl;
+		*code_hl,
+		*cte_expression_hl;
 
 		CodeCompletionWidget *cte_expression_cp,
-												 *expression_cp;
+		*expression_cp;
 
 		ObjectSelectorWidget *table_sel,
-												*column_sel;
+		*column_sel;
 
 		//! \brief Shows the reference at the reference's table
 		void showReferenceData(Reference refer, bool selec_from, bool from_where,
-													 bool after_where, bool view_def, unsigned row);
+							   bool after_where, bool view_def, unsigned row);
 
 		void clearReferenceForm(void);
 
@@ -82,6 +77,11 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 		void showObjectData(TableObject *object, int row);
 
 		void listObjects(ObjectType obj_type);
+
+		/*! \brief Template method that opens the editing form for the specified object.
+				Class and ClassWidget should be compatible, e.g., "Column" can only be edited using ColumnWidget */
+		template<class Class, class ClassWidget>
+		int openEditingForm(TableObject *object);
 
 	public:
 		ViewWidget(QWidget * parent = 0);
@@ -101,10 +101,8 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 		//! \brief Controls the form which are show the table and column names of the reference
 		void showObjectName(void);
 
-    //! \brief Updates the sql code field of the view form
+		//! \brief Updates the sql code field of the view form
 		void updateCodePreview(void);
-
-		void showTableObjectForm(ObjectType obj_type);
 
 		//! \brief Adds or edit a object on the object table that calls the slot
 		void handleObject(void);
@@ -116,7 +114,7 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 		void removeObjects(void);
 
 	public slots:
-		void applyConfiguration(void);		
+		void applyConfiguration(void);
 		void cancelConfiguration(void);
 };
 

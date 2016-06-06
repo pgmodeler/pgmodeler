@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,15 +25,19 @@ ModelNavigationWidget::ModelNavigationWidget(QWidget *parent): QWidget(parent)
 	connect(models_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(setCurrentModel()));
 
 	connect(close_tb, &QToolButton::clicked,
-					[=](){ emit s_modelCloseRequested(models_cmb->currentIndex()); });
+			[=](){ emit s_modelCloseRequested(models_cmb->currentIndex()); });
 
 	connect(next_tb, &QToolButton::clicked,
-					[=](){ models_cmb->setCurrentIndex(models_cmb->currentIndex()+1); });
+			[=](){ models_cmb->setCurrentIndex(models_cmb->currentIndex()+1); });
 
 	connect(previous_tb, &QToolButton::clicked,
-					[=](){ models_cmb->setCurrentIndex(models_cmb->currentIndex()-1); });
+			[=](){ models_cmb->setCurrentIndex(models_cmb->currentIndex()-1); });
 
-  connect(models_cmb, SIGNAL(highlighted(int)), this, SLOT(showTooltip(int)));
+	connect(models_cmb, SIGNAL(highlighted(int)), this, SLOT(showTooltip(int)));
+
+	previous_tb->setToolTip(previous_tb->toolTip() + QString(" (%1)").arg(previous_tb->shortcut().toString()));
+	next_tb->setToolTip(next_tb->toolTip() + QString(" (%1)").arg(next_tb->shortcut().toString()));
+	close_tb->setToolTip(close_tb->toolTip() + QString(" (%1)").arg(close_tb->shortcut().toString()));
 }
 
 int ModelNavigationWidget::getCurrentIndex(void)
@@ -44,30 +48,38 @@ int ModelNavigationWidget::getCurrentIndex(void)
 QString ModelNavigationWidget::getText(int idx)
 {
 	if(idx < 0 || idx >= models_cmb->count())
-    return(QString());
+		return(QString());
 	else
 		return(models_cmb->itemText(idx));
+}
+
+QList<ModelWidget *> ModelNavigationWidget::getModelWidgets()
+{
+	return(model_wgts);
 }
 
 void ModelNavigationWidget::addModel(ModelWidget *model)
 {
 	if(model)
 	{
-    QString tooltip;
+		QString tooltip;
 
 		setEnabled(true);
 		models_cmb->blockSignals(true);
 
-    tooltip=model->getFilename();
+		tooltip=model->getFilename();
 
-    if(tooltip.isEmpty())
-      tooltip=trUtf8("(model not saved yet)");
+		if(tooltip.isEmpty())
+			tooltip=trUtf8("(model not saved yet)");
 
-    models_cmb->addItem(model->getDatabaseModel()->getName(), tooltip);
+		models_cmb->addItem(model->getDatabaseModel()->getName(), tooltip);
 		models_cmb->setCurrentIndex(models_cmb->count()-1);
-    models_cmb->setToolTip(tooltip);
+		models_cmb->setToolTip(tooltip);
 
-    models_cmb->blockSignals(false);
+		models_cmb->blockSignals(false);
+
+		model_wgts.append(model);
+
 		enableNavigationButtons();
 	}
 }
@@ -94,6 +106,8 @@ void ModelNavigationWidget::removeModel(int idx)
 		models_cmb->setToolTip(models_cmb->currentData().toString());
 	models_cmb->blockSignals(false);
 
+	model_wgts.removeAt(idx);
+
 	enableNavigationButtons();
 	emit s_modelRemoved(idx);
 }
@@ -116,6 +130,6 @@ void ModelNavigationWidget::enableNavigationButtons(void)
 
 void ModelNavigationWidget::showTooltip(int idx)
 {
-  QString tooltip=models_cmb->itemData(idx).toString();
-  QToolTip::showText(QCursor::pos(), tooltip);
+	QString tooltip=models_cmb->itemData(idx).toString();
+	QToolTip::showText(QCursor::pos(), tooltip);
 }

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -66,8 +66,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		XMLParser xmlparser;
 
-    //! brief Stores the model widget that is managing this database model instance
-    ModelWidget *model_wgt;
+		//! \brief Stores the model widget that is managing this database model instance
+		ModelWidget *model_wgt;
 
 		//! \brief Database encoding
 		EncodingType encoding;
@@ -75,13 +75,13 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Template database
 		QString template_db,
 
-						//! \brief Model's author
-            author,
+		//! \brief Model's author
+		author,
 
-						//! \brief Database localizations (LC_CTYPE, LC_COLLATE)
-            localizations[2];
+		//! \brief Database localizations (LC_CTYPE, LC_COLLATE)
+		localizations[2];
 
-    map<ObjectType, BaseObject *> default_objs;
+		map<ObjectType, BaseObject *> default_objs;
 
 		//! \brief Maximum number of connections
 		int conn_limit;
@@ -109,7 +109,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		vector<BaseObject *> permissions;
 		vector<BaseObject *> collations;
 		vector<BaseObject *> extensions;
-    vector<BaseObject *> tags;
+		vector<BaseObject *> tags;
 		vector<BaseObject *> eventtriggers;
 
 		/*! \brief Stores the xml definition for special objects. This map is used
@@ -124,15 +124,15 @@ class DatabaseModel:  public QObject, public BaseObject {
 		invalidated,
 
 		//! \brief Indicates that appended SQL commands must be put at the very end of model definition
-    append_at_eod,
+		append_at_eod,
 
-    //! \brief Indicates that prepended SQL commands must be put at the very beginning of model definition
-    prepend_at_bod;
+		//! \brief Indicates that prepended SQL commands must be put at the very beginning of model definition
+		prepend_at_bod;
 
-    //! \brief Stores the last position on the model where the user was editing objects
-    QPoint last_pos;
+		//! \brief Stores the last position on the model where the user was editing objects
+		QPoint last_pos;
 
-    double last_zoom;
+		double last_zoom;
 
 		/*! \brief Returns an object seaching it by its name and type. The third parameter stores
 		 the object index */
@@ -158,19 +158,29 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Creates a IndexElement or ExcludeElement from XML depending on type of the 'elem' param.
 		void createElement(Element &elem, TableObject *tab_obj, BaseObject *parent_obj);
 
-		//! brief Returns extra error info when loading database models
+		//! \brief Returns extra error info when loading database models
 		QString getErrorExtraInfo(void);
 
-  public:
-    DatabaseModel(void);
+	public:
+		static const unsigned META_DB_ATTRIBUTES=1,	//! \brief Handle database model attribute when save/load metadata file
+		META_OBJS_POSITIONING=2,	//! \brief Handle objects' positioning when save/load metadata file
+		META_OBJS_PROTECTION=4,	//! \brief Handle objects' protection status when save/load metadata file
+		META_OBJS_SQLDISABLED=8,	//! \brief Handle objects' sql disabled status when save/load metadata file
+		META_OBJS_CUSTOMSQL=16,	//! \brief Handle object's custom sql when save/load metadata file
+		META_OBJS_CUSTOMCOLORS=32,	//! \brief Handle object's custom colors when save/load metadata file
+		META_TEXTBOX_OBJS=64,	//! \brief Handle textboxes object when save/load metadata file
+		META_TAG_OBJS=128,	//! \brief Handle tags object when save/load metadata file
+		META_ALL_INFO=255;	//! \brief Handle all metadata information about objects when save/load metadata file
 
-    //! brief Creates a database model and assign the model widget which will manage this instance
-    explicit DatabaseModel(ModelWidget *model_wgt);
+		DatabaseModel(void);
 
-    ~DatabaseModel(void);
+		//! \brief Creates a database model and assign the model widget which will manage this instance
+		explicit DatabaseModel(ModelWidget *model_wgt);
 
-    //! brief Returns the model widget that is managing the current database instance
-    ModelWidget *getModelWidget(void);
+		~DatabaseModel(void);
+
+		//! \brief Returns the model widget that is managing the current database instance
+		ModelWidget *getModelWidget(void);
 
 		//! \brief Returns the complete object list according to the type
 		vector<BaseObject *> *getObjectList(ObjectType obj_type);
@@ -209,7 +219,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns an object from the model using its index and type
 		BaseObject *getObject(unsigned obj_idx, ObjectType obj_type);
 
-		//! \brief Loads a database model from a file
+		/*! \brief Loads a database model from a file. In case of loading errors
+	the objects in the model will not be destroyed automatically. The user need to call
+	destroyObjects() or delete the entire model */
 		void loadModel(const QString &filename);
 
 		//! \brief Sets the database encoding
@@ -233,16 +245,16 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Sets the sql appending at end of entire model definition
 		void setAppendAtEOD(bool value);
 
-    //! \brief Sets the sql prepeding at beginning of entire model definition
-    void setPrependAtBOD(bool value);
+		//! \brief Sets the sql prepeding at beginning of entire model definition
+		void setPrependAtBOD(bool value);
 
-    void setDefaultObject(BaseObject *object, ObjectType obj_type=BASE_OBJECT);
+		void setDefaultObject(BaseObject *object, ObjectType obj_type=BASE_OBJECT);
 
 		//! \brief Returns the current state of the sql appeding at end of entire model definition
 		bool isAppendAtEOD(void);
 
-    //! \brief Returns the current state of the sql prepeding at beginning of entire model definition
-    bool isPrependedAtBOD(void);
+		//! \brief Returns the current state of the sql prepeding at beginning of entire model definition
+		bool isPrependedAtBOD(void);
 
 		//! \brief Destroys all the objects
 		void destroyObjects(void);
@@ -268,7 +280,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns the database enconding
 		EncodingType getEncoding(void);
 
-    BaseObject *getDefaultObject(ObjectType obj_type);
+		BaseObject *getDefaultObject(ObjectType obj_type);
 
 		//! \brief Returns if the model is invalidated. When true its recommended to validate model using Model validation tool
 		bool isInvalidated(void);
@@ -290,17 +302,22 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns the code definition only for the database (excluding the definition of the other objects)
 		QString __getCodeDefinition(unsigned def_type);
 
-    /*! brief Returns the creation order of objects in each definition type (SQL or XML).
-        The parameter incl_relnn_objs when 'true' includes the generated objects (table and constraint)
-        of the many-to-many relationships instead of the relationships themselves. The incl_relnn_objs is
-        is accepted only when the creation order for SQL code is being generated, for XML, it'll simply ignored. */
-    map<unsigned, BaseObject *> getCreationOrder(unsigned def_type, bool incl_relnn_objs=false);
+		/*! \brief Returns the creation order of objects in each definition type (SQL or XML).
 
-    /*! brief Returns a list containig all the object need to create the 'object' in the proper order.
-        If 'only_children' is set only children objects will be included in the list (for tables, views or schemas).
-        If 'only_children' is not set, the method will automatically include dependencies, children and permissions of
-        the object. */
-    vector<BaseObject *> getCreationOrder(BaseObject *object, bool only_children);
+		The parameter incl_relnn_objs when 'true' includes the generated objects (table and constraint)
+		of the many-to-many relationships instead of the relationships themselves. The incl_relnn_objs is
+		is accepted only when the creation order for SQL code is being generated, for XML, it'll simply ignored.
+
+		The parameter incl_rel1n_constr when 'true' includes the generated foreign and unique keys
+		of one-to-one|many relationships instead of the relationships themselves. This parameter is
+		is accepted only when the creation order for SQL code is being generated, for XML, it'll simply ignored. */
+		map<unsigned, BaseObject *> getCreationOrder(unsigned def_type, bool incl_relnn_objs=false, bool incl_rel1n_constrs=false);
+
+		/*! \brief Returns a list containig all the object need to create the 'object' in the proper order.
+		If 'only_children' is set only children objects will be included in the list (for tables, views or schemas).
+		If 'only_children' is not set, the method will automatically include dependencies, children and permissions of
+		the object. */
+		vector<BaseObject *> getCreationOrder(BaseObject *object, bool only_children);
 
 		void addRelationship(BaseRelationship *rel, int obj_idx=-1);
 		void removeRelationship(BaseRelationship *rel, int obj_idx=-1);
@@ -312,8 +329,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 participating */
 		BaseRelationship *getRelationship(BaseTable *src_tab, BaseTable *dst_tab);
 
-    //! \brief Searchs and returns all the relationships that the specified table participates
-    vector<BaseRelationship *> getRelationships(BaseTable *tab);
+		//! \brief Searchs and returns all the relationships that the specified table participates
+		vector<BaseRelationship *> getRelationships(BaseTable *tab);
 
 		void addTextbox(Textbox *txtbox, int obj_idx=-1);
 		void removeTextbox(Textbox *txtbox, int obj_idx=-1);
@@ -410,9 +427,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		Extension *getExtension(unsigned obj_idx);
 		Extension *getExtension(const QString &name);
 
-    void addTag(Tag *tag, int obj_idx=-1);
-    void removeTag(Tag *tag, int obj_idx=-1);
-    Tag *getTag(unsigned obj_idx);
+		void addTag(Tag *tag, int obj_idx=-1);
+		void removeTag(Tag *tag, int obj_idx=-1);
+		Tag *getTag(unsigned obj_idx);
 		Tag *getTag(const QString &name);
 
 		void addEventTrigger(EventTrigger *evnttrig, int obj_idx=-1);
@@ -423,14 +440,14 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void addPermission(Permission *perm);
 		void removePermission(Permission *perm);
 
-    /*! brief Returns the specified permission's index. If exact_match is true
-        then all the contents of the permission are compared against other permission,
-        otherwise checks only if the roles and the objects are the same between the specified
-        permission and the ones existent in the model */
-    int getPermissionIndex(Permission *perm, bool exact_match);
+		/*! \brief Returns the specified permission's index. If exact_match is true
+		then all the contents of the permission are compared against other permission,
+		otherwise checks only if the roles and the objects are the same between the specified
+		permission and the ones existent in the model */
+		int getPermissionIndex(Permission *perm, bool exact_match);
 
 		//! \brief Inserts a list of permissions into the model
-    void addPermissions(const vector<Permission *> &perms);
+		void addPermissions(const vector<Permission *> &perms);
 
 		//! \brief Removes all the permission related to the passed object
 		void removePermissions(BaseObject *object);
@@ -441,7 +458,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns the object searching by its name and type
 		BaseObject *getObject(const QString &name, ObjectType obj_type);
 
-    void setBasicAttributes(BaseObject *object);
+		void setBasicAttributes(BaseObject *object);
 
 		void configureDatabase(attribs_map &attribs);
 		PgSQLType createPgSQLType(void);
@@ -467,7 +484,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		View *createView(void);
 		Collation *createCollation(void);
 		Extension *createExtension(void);
-    Tag *createTag(void);
+		Tag *createTag(void);
 		Permission *createPermission(void);
 		Textbox *createTextbox(void);
 		BaseRelationship *createRelationship(void);
@@ -477,8 +494,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 		Trigger *createTrigger(void);
 		EventTrigger *createEventTrigger(void);
 
-    //! \brief Creates/removes the relationship between the passed view and the referecend tables
-    void updateViewRelationships(View *view, bool force_rel_removal=false);
+		//! \brief Creates/removes the relationship between the passed view and the referecend tables
+		void updateViewRelationships(View *view, bool force_rel_removal=false);
 
 		//! \brief Creates/removes the relationship between the passed table and the referecend tables on its foreign keys
 		void updateTableFKRelationships(Table *table);
@@ -502,24 +519,24 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 the informed object, e.g., a schema linked to a table that is referenced in a view */
 		void getObjectDependecies(BaseObject *objeto, vector<BaseObject *> &vet_deps, bool inc_indirect_deps=false);
 
-    /*! brief Recursive version of getObjectDependencies. Returns all the dependencies of the specified object but
-        additionally its children objects (for schemas, tables or views) as well permissions.
-        This method is less efficient than the non recursive version and is used only as an auxiliary operation for
-        getCreationOrder(BaseObject *object) */
-    void __getObjectDependencies(BaseObject *object, vector<BaseObject *> &objs);
+		/*! \brief Recursive version of getObjectDependencies. Returns all the dependencies of the specified object but
+		additionally its children objects (for schemas, tables or views) as well permissions.
+		This method is less efficient than the non recursive version and is used only as an auxiliary operation for
+		getCreationOrder(BaseObject *object) */
+		void __getObjectDependencies(BaseObject *object, vector<BaseObject *> &objs);
 
 		/*! \brief Returns all the objects that references the passed object. The boolean exclusion_mode is used to performance purpose,
 		 generally applied when excluding objects, this means that the method will stop the search when the first
 		 reference is found. The exclude_perms parameter when true will not include permissions in the references list. */
 		void getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclusion_mode=false, bool exclude_perms=false);
 
-    /*! brief Recursive version of getObjectReferences. The only difference here is that the method does not runs in exclusion mode,
-        meaning that ALL objects directly or inderectly linked to the 'object' are retrieved. */
-    void __getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclude_perms=false);
+		/*! \brief Recursive version of getObjectReferences. The only difference here is that the method does not runs in exclusion mode,
+		meaning that ALL objects directly or inderectly linked to the 'object' are retrieved. */
+		void __getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclude_perms=false);
 
-    /*! \brief Marks the graphical objects as modified forcing their redraw. User can specify only a set of
-     graphical objects to be marked */
-    void setObjectsModified(vector<ObjectType> types={});
+		/*! \brief Marks the graphical objects as modified forcing their redraw. User can specify only a set of
+	 graphical objects to be marked */
+		void setObjectsModified(vector<ObjectType> types={});
 
 		/*! \brief Marks the objects with code invalidated forcing their code regeneration. User can specify only a set of
 		 graphical objects to be marked */
@@ -532,27 +549,35 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		/*! \brief Creates the system objects: public schema and languages C, SQL and plpgsql. This method ignores one of these
 		objects if some of them already exists */
-    void createSystemObjects(bool create_public);
+		void createSystemObjects(bool create_public);
 
 		/*! \brief Returns a list of object searching them using the specified pattern. The search can be delimited by filtering the object's types.
 		The additional bool params are: case sensitive name search, name pattern is a regexp, exact match for names. */
 		vector<BaseObject *> findObjects(const QString &pattern, vector<ObjectType> types, bool format_obj_names,
-																		 bool case_sensitive, bool is_regexp, bool exact_match);
+										 bool case_sensitive, bool is_regexp, bool exact_match);
 
-    void setLastPosition(const QPoint &pnt);
-    QPoint getLastPosition(void);
+		void setLastPosition(const QPoint &pnt);
+		QPoint getLastPosition(void);
 
-    void setLastZoomFactor(double zoom);
-    double getLastZoomFactor(void);
+		void setLastZoomFactor(double zoom);
+		double getLastZoomFactor(void);
 
-		/*! brief This method exposes the XML parser for the outside world. In order to create objects from xml code inside the current
+		/*! \brief This method exposes the XML parser for the outside world. In order to create objects from xml code inside the current
 		 database model you need first get the parser (through this method), populate the parser with the desired XML and then call
 		 the create* method.
 
 		\note: This is not the better approach and certainly will be changed in future releases */
 		XMLParser *getXMLParser(void);
 
-    virtual QString getAlterDefinition(BaseObject *object) final;
+		//! \brief Returns the ALTER definition between the current model and the provided one
+		virtual QString getAlterDefinition(BaseObject *object) final;
+
+		/*! \brief Save the graphical objects positions, custom colors and custom points (for relationship lines) to an special file
+				that can be loaded by another model in order to change their objects position */
+		void saveObjectsMetadata(const QString &filename, unsigned options=META_ALL_INFO);
+
+		//! \brief Load the file containing the objects positioning to be applied to the model
+		void loadObjectsMetadata(const QString &filename, unsigned options=META_ALL_INFO);
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model

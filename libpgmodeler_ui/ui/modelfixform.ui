@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>605</width>
-    <height>460</height>
+    <height>499</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -51,112 +51,6 @@
    <property name="bottomMargin">
     <number>2</number>
    </property>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="pixmap">
-      <pixmap resource="../res/resources.qrc">:/imagens/imagens/pgmodeler_name.png</pixmap>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="3">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <spacer>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>186</width>
-         <height>27</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="fix_btn">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>90</width>
-         <height>32</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>&amp;Fix</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../res/resources.qrc">
-         <normaloff>:/icones/icones/fixobject.png</normaloff>:/icones/icones/fixobject.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
-       <property name="default">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="close_btn">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>90</width>
-         <height>32</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>&amp;Close</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../res/resources.qrc">
-         <normaloff>:/icones/icones/fechar1.png</normaloff>:/icones/icones/fechar1.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
-       <property name="flat">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
    <item row="0" column="0" colspan="4">
     <widget class="QFrame" name="frame">
      <property name="enabled">
@@ -270,7 +164,7 @@
          </size>
         </property>
         <property name="frameShape">
-         <enum>QFrame::NoFrame</enum>
+         <enum>QFrame::StyledPanel</enum>
         </property>
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
@@ -317,12 +211,11 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QLabel" name="msg_lbl">
+          <widget class="QLabel" name="not_found_lbl">
            <property name="font">
             <font>
-             <pointsize>8</pointsize>
              <weight>50</weight>
-             <italic>true</italic>
+             <italic>false</italic>
              <bold>false</bold>
              <underline>false</underline>
              <strikeout>false</strikeout>
@@ -366,12 +259,6 @@
           <property name="enabled">
            <bool>true</bool>
           </property>
-          <property name="minimumSize">
-           <size>
-            <width>30</width>
-            <height>23</height>
-           </size>
-          </property>
           <property name="toolTip">
            <string>Browse for pgmodeler-cli tool</string>
           </property>
@@ -384,8 +271,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>16</width>
-            <height>16</height>
+            <width>22</width>
+            <height>22</height>
            </size>
           </property>
          </widget>
@@ -431,8 +318,7 @@
           </property>
           <property name="font">
            <font>
-            <pointsize>8</pointsize>
-            <italic>true</italic>
+            <italic>false</italic>
            </font>
           </property>
           <property name="text">
@@ -589,8 +475,8 @@
          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Monospace'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Waiting process to start...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Monospace'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Waiting process to start...&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="acceptRichText">
          <bool>false</bool>
@@ -610,12 +496,6 @@ p, li { white-space: pre-wrap; }
           <property name="enabled">
            <bool>true</bool>
           </property>
-          <property name="minimumSize">
-           <size>
-            <width>30</width>
-            <height>23</height>
-           </size>
-          </property>
           <property name="toolTip">
            <string>Select input file</string>
           </property>
@@ -628,8 +508,8 @@ p, li { white-space: pre-wrap; }
           </property>
           <property name="iconSize">
            <size>
-            <width>16</width>
-            <height>16</height>
+            <width>22</width>
+            <height>22</height>
            </size>
           </property>
          </widget>
@@ -646,12 +526,6 @@ p, li { white-space: pre-wrap; }
           <property name="enabled">
            <bool>true</bool>
           </property>
-          <property name="minimumSize">
-           <size>
-            <width>30</width>
-            <height>23</height>
-           </size>
-          </property>
           <property name="toolTip">
            <string>Select output file</string>
           </property>
@@ -664,8 +538,8 @@ p, li { white-space: pre-wrap; }
           </property>
           <property name="iconSize">
            <size>
-            <width>16</width>
-            <height>16</height>
+            <width>22</width>
+            <height>22</height>
            </size>
           </property>
          </widget>
@@ -717,7 +591,7 @@ p, li { white-space: pre-wrap; }
          </size>
         </property>
         <property name="frameShape">
-         <enum>QFrame::NoFrame</enum>
+         <enum>QFrame::StyledPanel</enum>
         </property>
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
@@ -764,7 +638,7 @@ p, li { white-space: pre-wrap; }
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QLabel" name="label_3">
+          <widget class="QLabel" name="message_lbl">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
              <horstretch>0</horstretch>
@@ -773,9 +647,8 @@ p, li { white-space: pre-wrap; }
            </property>
            <property name="font">
             <font>
-             <pointsize>8</pointsize>
              <weight>50</weight>
-             <italic>true</italic>
+             <italic>false</italic>
              <bold>false</bold>
              <underline>false</underline>
              <strikeout>false</strikeout>
@@ -795,6 +668,118 @@ p, li { white-space: pre-wrap; }
       </item>
      </layout>
     </widget>
+   </item>
+   <item row="1" column="0" colspan="4">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="../res/resources.qrc">:/imagens/imagens/pgmodeler_name.png</pixmap>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>186</width>
+         <height>27</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="fix_btn">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>90</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>&amp;Fix</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/icones/icones/fixobject.png</normaloff>:/icones/icones/fixobject.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="default">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="close_btn">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>90</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>&amp;Close</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/icones/icones/fechar1.png</normaloff>:/icones/icones/fechar1.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="flat">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

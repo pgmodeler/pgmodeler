@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,37 +32,37 @@
 class CustomSQLWidget: public BaseObjectWidget, public Ui::CustomSQLWidget {
 	private:
 		Q_OBJECT
-
-    SyntaxHighlighter *append_sql_hl, *prepend_sql_hl;
-
-    CodeCompletionWidget *append_sql_cp, *prepend_sql_cp;
-
+		
+		SyntaxHighlighter *append_sql_hl, *prepend_sql_hl;
+		
+		CodeCompletionWidget *append_sql_cp, *prepend_sql_cp;
+		
 		QMenu insert_menu,
-					delete_menu,
-					update_menu,
-					select_menu;
-
+		delete_menu,
+		update_menu,
+		select_menu;
+		
 		QAction *action_gen_insert,
-						*action_gen_select,
-						*action_inc_serials,
-						*action_exc_serials,
-						*action_tab_select,
-						*action_tab_update,
-						*action_gen_update,
-						*action_gen_delete,
-						*action_tab_delete;
-
+		*action_gen_select,
+		*action_inc_serials,
+		*action_exc_serials,
+		*action_tab_select,
+		*action_tab_update,
+		*action_gen_update,
+		*action_gen_delete,
+		*action_tab_delete;
+		
 		//! \brief Configures the code template menus according to the loaded object
 		void configureMenus(void);
-
+		
 	public:
 		CustomSQLWidget(QWidget *parent=0);
-
+		
 		void setAttributes(DatabaseModel *model, BaseObject *object);
 		
 	public slots:
 		void applyConfiguration(void);
-
+		
 	private slots:
 		void addCommand(void);
 		void clearCode(void);

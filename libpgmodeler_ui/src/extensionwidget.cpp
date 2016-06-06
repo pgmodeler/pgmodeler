@@ -5,11 +5,10 @@ ExtensionWidget::ExtensionWidget(QWidget * parent) : BaseObjectWidget(parent, OB
 	Ui_ExtensionWidget::setupUi(this);
 	configureFormLayout(extension_grid, OBJ_EXTENSION);
 
-	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-	parent_form->setMinimumSize(480, 250);
-	parent_form->setMaximumHeight(250);
+	extension_grid->addItem(new QSpacerItem(10,10,QSizePolicy::Minimum,QSizePolicy::Expanding), extension_grid->count()+1, 0, 1, 0);
+	configureTabOrder({ cur_ver_edt, old_ver_edt, handles_type_chk });
 
-  configureTabOrder({ cur_ver_edt, old_ver_edt, handles_type_chk });
+	setMinimumSize(500, 180);
 }
 
 void ExtensionWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Extension *ext)
@@ -28,11 +27,11 @@ void ExtensionWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 
 void ExtensionWidget::hideEvent(QHideEvent *event)
 {
- handles_type_chk->setEnabled(true);
- handles_type_chk->setChecked(false);
- cur_ver_edt->clear();
- old_ver_edt->clear();
- BaseObjectWidget::hideEvent(event);
+	handles_type_chk->setEnabled(true);
+	handles_type_chk->setChecked(false);
+	cur_ver_edt->clear();
+	old_ver_edt->clear();
+	BaseObjectWidget::hideEvent(event);
 }
 
 void ExtensionWidget::applyConfiguration(void)

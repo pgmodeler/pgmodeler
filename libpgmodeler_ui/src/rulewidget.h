@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ class RuleWidget: public BaseObjectWidget, public Ui::RuleWidget {
 		Q_OBJECT
 
 		SyntaxHighlighter *cond_expr_hl,
-											*command_hl;
+		*command_hl;
 
 		CodeCompletionWidget *command_cp;
 
@@ -43,7 +43,7 @@ class RuleWidget: public BaseObjectWidget, public Ui::RuleWidget {
 
 	public:
 		RuleWidget(QWidget * parent = 0);
-		void setAttributes(DatabaseModel *model, BaseTable *parent_tab, OperationList *op_list, Rule *rule);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseTable *parent_tab, Rule *rule);
 
 	private slots:
 		void hideEvent(QHideEvent *event);

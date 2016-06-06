@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ ObjectTableWidget::ObjectTableWidget(unsigned button_conf, bool conf_exclusion, 
 	connect(table_tbw, SIGNAL(cellActivated(int,int)), this, SLOT(setButtonsEnabled(void)));
 	connect(table_tbw, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(editRow(void)));
 	connect(table_tbw, SIGNAL(itemSelectionChanged(void)), this, SLOT(setButtonsEnabled(void)));
-  connect(table_tbw, SIGNAL(itemSelectionChanged(void)), this, SLOT(emitRowSelected(void)));
+	connect(table_tbw, SIGNAL(itemSelectionChanged(void)), this, SLOT(emitRowSelected(void)));
 
 	this->conf_exclusion=conf_exclusion;
 
@@ -103,6 +103,7 @@ void ObjectTableWidget::setColumnCount(unsigned col_count)
 		for(;i < col_count; i++)
 		{
 			item=new QTableWidgetItem;
+			item->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
 			table_tbw->setHorizontalHeaderItem(static_cast<int>(i),item);
 		}
 	}
@@ -160,9 +161,9 @@ void ObjectTableWidget::setCellText(const QString &text, unsigned row_idx, unsig
 
 void ObjectTableWidget::clearCellText(unsigned row_idx, unsigned col_idx)
 {
- try
+	try
 	{
-    setCellText(QString(), row_idx, col_idx);
+		setCellText(QString(), row_idx, col_idx);
 	}
 	catch(Exception &e)
 	{
@@ -196,7 +197,7 @@ void ObjectTableWidget::setRowData(const QVariant &data, unsigned row_idx)
 		throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Gets the vertical header of the row. This header stores the whole row data.
-	item=table_tbw->verticalHeaderItem(row_idx);	
+	item=table_tbw->verticalHeaderItem(row_idx);
 	item->setData(Qt::UserRole, data);
 }
 
@@ -361,22 +362,22 @@ void ObjectTableWidget::removeRow(void)
 	{
 		Messagebox msg_box;
 		unsigned 	row_idx=table_tbw->currentRow();
-    QTableWidgetItem *item=table_tbw->currentItem();
+		QTableWidgetItem *item=table_tbw->currentItem();
 
 		if(item->isSelected())
 		{
 			if(conf_exclusion)
-        msg_box.show(trUtf8("Confirmation"),trUtf8("Do you really want to remove the selected item?"),
-												Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+				msg_box.show(trUtf8("Confirmation"),trUtf8("Do you really want to remove the selected item?"),
+							 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
 			if(!conf_exclusion || (conf_exclusion && msg_box.result()==QDialog::Accepted))
 			{
-        setRowData(QVariant::fromValue<void *>(nullptr), row_idx);
-        item->setData(Qt::UserRole, QVariant::fromValue<void *>(nullptr));
-        emit s_rowRemoved(row_idx);
-        table_tbw->removeRow(row_idx);
-        table_tbw->setCurrentItem(nullptr);
-        setButtonsEnabled();
+				setRowData(QVariant::fromValue<void *>(nullptr), row_idx);
+				item->setData(Qt::UserRole, QVariant::fromValue<void *>(nullptr));
+				emit s_rowRemoved(row_idx);
+				table_tbw->removeRow(row_idx);
+				table_tbw->setCurrentItem(nullptr);
+				setButtonsEnabled();
 			}
 		}
 	}
@@ -392,17 +393,15 @@ void ObjectTableWidget::removeRows(void)
 		/* Only shows the confirmation message if the conf_exclusion is set and the user called the method
 			 activating the 'remove_all_tb' button */
 		if(conf_exclusion && sender_obj==remove_all_tb)
-      msg_box.show(trUtf8("Confirmation"),trUtf8("Do you really want to remove the all items?"),
-											Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+			msg_box.show(trUtf8("Confirmation"),trUtf8("Do you really want to remove all the items?"),
+						 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
 		if(!conf_exclusion || (conf_exclusion && sender_obj!=remove_all_tb) ||
-			 (conf_exclusion &&  sender_obj==remove_all_tb && msg_box.result()==QDialog::Accepted))
+				(conf_exclusion &&  sender_obj==remove_all_tb && msg_box.result()==QDialog::Accepted))
 		{
-			while(table_tbw->rowCount() > 0)
-				table_tbw->removeRow(0);
-
+			table_tbw->clearContents();
+			table_tbw->setRowCount(0);
 			setButtonsEnabled();
-
 			emit s_rowsRemoved();
 		}
 	}
@@ -455,8 +454,8 @@ void ObjectTableWidget::moveRows(void)
 
 	//Checking if the row indexes are valid
 	if(row >= 0 && row < table_tbw->rowCount() &&
-		 row1 >= 0 && row1 < table_tbw->rowCount() &&
-		 row != row1)
+			row1 >= 0 && row1 < table_tbw->rowCount() &&
+			row != row1)
 	{
 		//To swap the rows is necessary to swap all columns one by one
 		for(col=0; col < col_count; col++)
@@ -555,18 +554,18 @@ void ObjectTableWidget::setButtonsEnabled(unsigned button_conf, bool value)
 
 void ObjectTableWidget::setButtonsEnabled(void)
 {
-  //QTableWidgetItem *item=table_tbw->currentItem();
+	//QTableWidgetItem *item=table_tbw->currentItem();
 	setButtonsEnabled(ALL_BUTTONS, true);
 
-  //if(item && item->row() >= 0)
-  //emit s_rowSelected(item->row());
+	//if(item && item->row() >= 0)
+	//emit s_rowSelected(item->row());
 }
 
 void ObjectTableWidget::emitRowSelected(void)
 {
-  QTableWidgetItem *item=table_tbw->currentItem();
+	QTableWidgetItem *item=table_tbw->currentItem();
 
-  if(item && item->row() >= 0)
-   emit s_rowSelected(item->row());
+	if(item && item->row() >= 0)
+		emit s_rowSelected(item->row());
 }
 

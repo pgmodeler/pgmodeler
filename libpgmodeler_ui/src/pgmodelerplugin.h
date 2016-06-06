@@ -1,7 +1,7 @@
 /*
 # Projeto: Modelador de Banco de Dados PostgreSQL (pgsqlDBM)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 #define PGMODELER_PLUGIN_H
 
 #include "modelwidget.h"
+#include "baseform.h"
 
 /*	The plugins in pgModeler must be within the "plugins" folder in its own
 		directory and must have the following basic structure:
@@ -41,10 +42,10 @@
 
 		> Library: it is the shared object that represents the plugin. The prefix (lib) and suffix (so|dylib|dll) are plataform dependent.
 		> Icon: it is a PNG image that represents the plugin on the plugins toolbar.
-    > Plugins can have a optional lang subdir in which are stored the translation for them. The translation files must be named
-      as [plugin name].[lang code].qm, for instance, Brazilian Portuguese translation for "dummy" would be: "dummy.pt_BR.qm".
+	> Plugins can have a optional lang subdir in which are stored the translation for them. The translation files must be named
+	  as [plugin name].[lang code].qm, for instance, Brazilian Portuguese translation for "dummy" would be: "dummy.pt_BR.qm".
 
-    Note: Plugins can have another additional subdirectories but any reference to them must be made programatically by the plugin author. */
+	Note: Plugins can have another additional subdirectories but any reference to them must be made programatically by the plugin author. */
 
 class PgModelerPlugin {
 	protected:
@@ -52,10 +53,10 @@ class PgModelerPlugin {
 
 	private:
 		QLabel	*icon_lbl,
-						*title_lbl,
-						*author_lbl,
-						*version_lbl,
-						*description_lbl;
+		*title_lbl,
+		*author_lbl,
+		*version_lbl,
+		*description_lbl;
 
 	public:
 		PgModelerPlugin(void);
@@ -85,7 +86,7 @@ class PgModelerPlugin {
 
 		//! \brief Sets the plugin's all attributes at once.
 		void configurePluginInfo(const QString &title, const QString &version, const QString &author,
-														 const QString &description, const QString &ico_filename);
+								 const QString &description, const QString &ico_filename);
 };
 
 /* Declares the class PgModelerPlugin as interface, this means that the class is a base

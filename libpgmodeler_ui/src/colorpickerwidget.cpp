@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ ColorPickerWidget::ColorPickerWidget(int color_count, QWidget * parent) : QWidge
 
 	QToolButton *btn=nullptr;
 	QHBoxLayout *hbox=nullptr;
-  QSpacerItem *spacer=new QSpacerItem(10,10, QSizePolicy::Expanding, QSizePolicy::Fixed);
+	QSpacerItem *spacer=new QSpacerItem(10,10, QSizePolicy::Expanding, QSizePolicy::Fixed);
 
 	setupUi(this);
 
@@ -35,26 +35,28 @@ ColorPickerWidget::ColorPickerWidget(int color_count, QWidget * parent) : QWidge
 	else if(color_count > MAX_COLOR_BUTTONS)
 		color_count=MAX_COLOR_BUTTONS;
 
-  hbox=new QHBoxLayout(this);
+	hbox=new QHBoxLayout(this);
 	hbox->setContentsMargins(0,0,0,0);
 
-  for(int i=0; i < color_count; i++)
+	for(int i=0; i < color_count; i++)
 	{
 		btn=new QToolButton(this);
-		btn->setMinimumHeight(random_color_tb->height() - 3);
+		btn->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+		btn->setMinimumHeight(25);
+		btn->setMaximumHeight(random_color_tb->height() - 10);
 		btn->setMinimumWidth(55);
-    btn->installEventFilter(this);
+		btn->installEventFilter(this);
 
-    disable_color=btn->palette().color(QPalette::Button);
+		disable_color=btn->palette().color(QPalette::Button);
 		buttons.push_back(btn);
-    colors.push_back(disable_color);
+		colors.push_back(disable_color);
 
 		hbox->addWidget(btn);
 		connect(btn, SIGNAL(clicked()), this, SLOT(selectColor()));
 	}
 
 	hbox->addWidget(random_color_tb);
-  hbox->addSpacerItem(spacer);
+	hbox->addSpacerItem(spacer);
 	this->adjustSize();
 
 	connect(random_color_tb, SIGNAL(clicked()), this, SLOT(generateRandomColors()));
@@ -62,39 +64,39 @@ ColorPickerWidget::ColorPickerWidget(int color_count, QWidget * parent) : QWidge
 
 bool ColorPickerWidget::eventFilter(QObject *object, QEvent *event)
 {
-  QToolButton *button=qobject_cast<QToolButton *>(object);
+	QToolButton *button=qobject_cast<QToolButton *>(object);
 
-  if(event->type()==QEvent::ToolTip && button && button!=random_color_tb)
-  {
-    QToolTip::showText(QCursor::pos(), button->toolTip());
-    return(true);
-  }
+	if(event->type()==QEvent::ToolTip && button && button!=random_color_tb)
+	{
+		QToolTip::showText(QCursor::pos(), button->toolTip());
+		return(true);
+	}
 
-  return(QWidget::eventFilter(object, event));
+	return(QWidget::eventFilter(object, event));
 }
 
 void ColorPickerWidget::setColor(int color_idx, const QColor &color)
 {
-  QString cl_name;
+	QString cl_name;
 
-  if(color_idx < 0 || color_idx >=  colors.size())
+	if(color_idx < 0 || color_idx >=  colors.size())
 		throw Exception(ERR_REF_ELEM_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  if(this->isEnabled())
-    cl_name=color.name();
-  else
-    cl_name=disable_color.name();
+	if(this->isEnabled())
+		cl_name=color.name();
+	else
+		cl_name=disable_color.name();
 
-  buttons[color_idx]->setStyleSheet(QString("background-color: %1").arg(cl_name));
+	buttons[color_idx]->setStyleSheet(QString("background-color: %1").arg(cl_name));
 	colors[color_idx]=color;
 }
 
 QColor ColorPickerWidget::getColor(int color_idx)
 {
-  if(color_idx < 0 || color_idx >= colors.size())
+	if(color_idx < 0 || color_idx >= colors.size())
 		throw Exception(ERR_REF_ELEM_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  return(colors[color_idx]);
+	return(colors[color_idx]);
 }
 
 unsigned ColorPickerWidget::getColorCount(void)
@@ -104,34 +106,34 @@ unsigned ColorPickerWidget::getColorCount(void)
 
 bool ColorPickerWidget::isButtonVisible(unsigned idx)
 {
-  if(idx >= static_cast<unsigned>(buttons.size()))
+	if(idx >= static_cast<unsigned>(buttons.size()))
 		throw Exception(ERR_REF_ELEM_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  return(buttons[idx]->isVisible());
+	return(buttons[idx]->isVisible());
 }
 
 void ColorPickerWidget::setButtonToolTip(unsigned button_idx, const QString &tooltip)
 {
-  if(button_idx >= static_cast<unsigned>(buttons.size()))
-    throw Exception(ERR_REF_ELEM_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(button_idx >= static_cast<unsigned>(buttons.size()))
+		throw Exception(ERR_REF_ELEM_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  buttons[button_idx]->setToolTip(tooltip);
+	buttons[button_idx]->setToolTip(tooltip);
 }
 
 void ColorPickerWidget::setEnabled(bool value)
 {
 	int i=0;
 
-  for(auto &btn : buttons)
-    btn->setStyleSheet(QString("background-color: %1")
-                       .arg(value ? colors[i++].name() : disable_color.name()));
+	for(auto &btn : buttons)
+		btn->setStyleSheet(QString("background-color: %1")
+						   .arg(value ? colors[i++].name() : disable_color.name()));
 
 	QWidget::setEnabled(value);
 }
 
 void ColorPickerWidget::setButtonVisible(unsigned idx, bool value)
 {
-  if(idx >= static_cast<unsigned>(buttons.size()))
+	if(idx >= static_cast<unsigned>(buttons.size()))
 		throw Exception(ERR_REF_ELEM_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	buttons[idx]->setVisible(value);
@@ -141,15 +143,15 @@ void ColorPickerWidget::selectColor(void)
 {
 	QColorDialog color_dlg;
 	QToolButton *btn=qobject_cast<QToolButton *>(sender());
-  int btn_idx=buttons.indexOf(btn);
+	int btn_idx=buttons.indexOf(btn);
 
 	color_dlg.setWindowTitle(trUtf8("Select color"));
-  color_dlg.setCurrentColor(colors[btn_idx]);
+	color_dlg.setCurrentColor(colors[btn_idx]);
 	color_dlg.exec();
 
 	if(color_dlg.result()==QDialog::Accepted)
 	{
-    setColor(btn_idx, color_dlg.selectedColor());
+		setColor(btn_idx, color_dlg.selectedColor());
 		emit s_colorChanged(static_cast<unsigned>(buttons.indexOf(btn)), color_dlg.selectedColor());
 	}
 }
@@ -160,12 +162,12 @@ void ColorPickerWidget::generateRandomColors(void)
 	uniform_int_distribution<unsigned> dist(0,255);
 	int i=0;
 
-  for(i=0; i < buttons.size(); i++)
+	for(i=0; i < buttons.size(); i++)
 	{
 		color=QColor(dist(rand_num_engine),
-								 dist(rand_num_engine),
-								 dist(rand_num_engine));
-    setColor(i, color);
+					 dist(rand_num_engine),
+					 dist(rand_num_engine));
+		setColor(i, color);
 	}
 
 	emit s_colorsChanged();

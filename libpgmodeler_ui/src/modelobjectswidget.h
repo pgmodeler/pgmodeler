@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,14 +40,14 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 		object selectors. See ObjectSelectorWidget for details. */
 		bool	simplified_view,
 
-					/*! \brief Indicates if the object tree state must be saved, this means, that the current item
+		/*! \brief Indicates if the object tree state must be saved, this means, that the current item
 					expansion is memorized and can be restored at any moment via restoreTreeState() method */
-          save_tree_state,
+		save_tree_state,
 
-    /*! brief Allow the object creation in simplified mode by using the "New [object type]" popup menu.
-        This flag is ignored if the model object widget is used in the complete mode since the main purpose
-        of the widget is to allow the object management */
-    enable_obj_creation;
+		/*! \brief Allow the object creation in simplified mode by using the "New [object type]" popup menu.
+		This flag is ignored if the model object widget is used in the complete mode since the main purpose
+		of the widget is to allow the object management */
+		enable_obj_creation;
 
 		//! \brief Stores the reference to the object currently selected on the tree/list
 		BaseObject *selected_object;
@@ -89,21 +89,21 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 		//! \brief Generates a QVariant containing the passed object reference as data
 		QVariant generateItemValue(BaseObject *object);
 
-    QTreeWidgetItem *createItemForObject(BaseObject *object, QTreeWidgetItem *root=nullptr, bool update_perms=true);
+		QTreeWidgetItem *createItemForObject(BaseObject *object, QTreeWidgetItem *root=nullptr, bool update_perms=true);
 
 		void mouseMoveEvent(QMouseEvent *);
 		void resizeEvent(QResizeEvent *);
 		void closeEvent(QCloseEvent *);
 		void showEvent(QShowEvent *);
-    bool eventFilter(QObject *object, QEvent *event);
+		bool eventFilter(QObject *object, QEvent *event);
 
-  public:
+	public:
 		ModelObjectsWidget(bool simplified_view=false, QWidget * parent = 0);
 
 		BaseObject *getSelectedObject(void);
 
-    //! brief Enables the object creation in simplified view by exposing the popup menu "New [object]"
-    void enableObjectCreation(bool value);
+		//! \brief Enables the object creation in simplified view by exposing the popup menu "New [object]"
+		void enableObjectCreation(bool value);
 
 	protected:
 		//! \brief Saves the currently expanded items on the specified vector
@@ -131,10 +131,10 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 		void showObjectMenu(void);
 		void editObject(void);
 		void collapseAll(void);
-		void filterObjects(void); 
-    void selectCreatedObject(BaseObject *obj);
+		void filterObjects(void);
+		void selectCreatedObject(BaseObject *obj);
 
-signals:
+	signals:
 		void s_visibilityChanged(BaseObject *,bool);
 		void s_visibilityChanged(bool);
 

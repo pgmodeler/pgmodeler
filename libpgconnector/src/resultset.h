@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,87 +37,87 @@ It the resultset contains data the user must call ResultSet::accessTuple() to ac
 #define BYTEAOID 17
 
 class ResultSet {
- private:
- /*! \brief Indicates whether the result was copied, this flag is used
-     to avoid segmentation faults when calling the destructor.
-     As the pointer 'sql_result' is copied
-     to other elements if it is destroyed can cause
-     reference fails. Thus, such a pointer is only deleted
-     when this flag is marked as false */
-  bool is_res_copied;
+	private:
+		/*! \brief Indicates whether the result was copied, this flag is used
+	 to avoid segmentation faults when calling the destructor.
+	 As the pointer 'sql_result' is copied
+	 to other elements if it is destroyed can cause
+	 reference fails. Thus, such a pointer is only deleted
+	 when this flag is marked as false */
+		bool is_res_copied;
 
-  void destroyResultSet(void);
+		void destroyResultSet(void);
 
- protected:
-  //! \brief Stores the current tuple index, just for navigation
-  int current_tuple;
+	protected:
+		//! \brief Stores the current tuple index, just for navigation
+		int current_tuple;
 
-  /*! \brief Indicates that the result was generated from a command
-     which generates no tuples. Example: INSERT, DELETE, CREATE .. */
-  bool empty_result;
+		/*! \brief Indicates that the result was generated from a command
+	 which generates no tuples. Example: INSERT, DELETE, CREATE .. */
+		bool empty_result;
 
-  //! \brief Stores the result object of a SQL command
-  PGresult *sql_result;
+		//! \brief Stores the result object of a SQL command
+		PGresult *sql_result;
 
-  /*! \brief This class may be constructed from a
-     result of SQL command generated in DBConnection class */
-  ResultSet(PGresult *sql_result);
+		/*! \brief This class may be constructed from a
+	 result of SQL command generated in DBConnection class */
+		ResultSet(PGresult *sql_result);
 
- public:
-   //! \brief Constants used to navigate through the resultset
-   static const unsigned FIRST_TUPLE=0,
-														 LAST_TUPLE=1,
-														 PREVIOUS_TUPLE=2,
-														 NEXT_TUPLE=3;
+	public:
+		//! \brief Constants used to navigate through the resultset
+		static const unsigned FIRST_TUPLE=0,
+		LAST_TUPLE=1,
+		PREVIOUS_TUPLE=2,
+		NEXT_TUPLE=3;
 
-   ResultSet(void);
-  ~ResultSet(void);
+		ResultSet(void);
+		~ResultSet(void);
 
-  //! \brief Returns the value of a column (searching by name or index)
-  char *getColumnValue(const QString &column_name);
-  char *getColumnValue(int column_idx);
+		//! \brief Returns the value of a column (searching by name or index)
+		char *getColumnValue(const QString &column_name);
+		char *getColumnValue(int column_idx);
 
-  //! \brief Returns the data allocated size of a column (searching by name or index)
-  int getColumnSize(const QString &column_name);
-  int getColumnSize(int column_idx);
+		//! \brief Returns the data allocated size of a column (searching by name or index)
+		int getColumnSize(const QString &column_name);
+		int getColumnSize(int column_idx);
 
-	//! \brief Returns all the column names / values for the current tuple.
-	attribs_map getTupleValues(void);
+		//! \brief Returns all the column names / values for the current tuple.
+		attribs_map getTupleValues(void);
 
-  /*! \brief Returns the number of rows affected by the command that generated
-     the result if it is an INSERT, DELETE, UPDATE or the number of
-     tuples returned if the command was a SELECT */
-  int getTupleCount(void);
+		/*! \brief Returns the number of rows affected by the command that generated
+	 the result if it is an INSERT, DELETE, UPDATE or the number of
+	 tuples returned if the command was a SELECT */
+		int getTupleCount(void);
 
-  //! \brief Returns the column count present in one tuple
-  int getColumnCount(void);
+		//! \brief Returns the column count present in one tuple
+		int getColumnCount(void);
 
-  //! \brief Returns the name of the column specified by it's index
-  QString getColumnName(int column_idx);
+		//! \brief Returns the name of the column specified by it's index
+		QString getColumnName(int column_idx);
 
-	//! \brief Returns the type OID of the column specified by it's index
-	unsigned getColumnTypeId(int column_idx);
+		//! \brief Returns the type OID of the column specified by it's index
+		unsigned getColumnTypeId(int column_idx);
 
-  //! \brief Returns the index of the column specified by it's name
-  int getColumnIndex(const QString &column_name);
+		//! \brief Returns the index of the column specified by it's name
+		int getColumnIndex(const QString &column_name);
 
-  //! \brief Returns the current tuple where the navigation is
-  int getCurrentTuple(void);
+		//! \brief Returns the current tuple where the navigation is
+		int getCurrentTuple(void);
 
-  //! \brief Informs if the column is in binary format
-  bool isColumnBinaryFormat(const QString &column_name);
-  bool isColumnBinaryFormat(int column_idx);
+		//! \brief Informs if the column is in binary format
+		bool isColumnBinaryFormat(const QString &column_name);
+		bool isColumnBinaryFormat(int column_idx);
 
-  //! \brief Access on tuple on result set via navigation constants
-  bool accessTuple(unsigned tuple_type);
+		//! \brief Access on tuple on result set via navigation constants
+		bool accessTuple(unsigned tuple_type);
 
-  //! \brief Returns if the result set is empty due a DML command that does not returned any data
-  bool isEmpty(void);
+		//! \brief Returns if the result set is empty due a DML command that does not returned any data
+		bool isEmpty(void);
 
-  //! \brief Make a copy between two resultsets
-  void operator = (ResultSet &res);
+		//! \brief Make a copy between two resultsets
+		void operator = (ResultSet &res);
 
-	friend class Connection;
+		friend class Connection;
 };
 
 #endif

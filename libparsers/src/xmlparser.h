@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,8 +45,8 @@ class XMLParser {
 
 		//! \brief Stores the reference to the root element of the element tree
 		xmlNode	*root_elem,
-										//! \brief Stores the current element that parser is analyzing
-										*curr_elem;
+		//! \brief Stores the current element that parser is analyzing
+		*curr_elem;
 
 		/*! \brief Stores the elements that marks the position in the tree before do
 		 a subsequent operation. To configure this element it is necessary
@@ -56,11 +56,11 @@ class XMLParser {
 
 		//! \brief Stores the document DTD declaration
 		QString	dtd_decl,
-										//! \brief Stores XML document to be analyzed
-										xml_buffer,
-										/*! \brief Stores the declaration <?xml?>. If this isn't exists it will be
+		//! \brief Stores XML document to be analyzed
+		xml_buffer,
+		/*! \brief Stores the declaration <?xml?>. If this isn't exists it will be
 										 a default declaration. */
-										xml_decl;
+		xml_decl;
 
 		/*! \brief Remove the original DTD from the document. This is done to evit that
 		 the user insert some external dtd in the model file that is not valid for pgModeler */
@@ -74,10 +74,10 @@ class XMLParser {
 
 	public:
 		//! \brief Constants used to referência the elements on the element tree
-    static const unsigned ROOT_ELEMENT=0,
-															CHILD_ELEMENT=1,
-															NEXT_ELEMENT=2,
-															PREVIOUS_ELEMENT=3;
+		static const unsigned ROOT_ELEMENT=0,
+		CHILD_ELEMENT=1,
+		NEXT_ELEMENT=2,
+		PREVIOUS_ELEMENT=3;
 
 		static const QString CHAR_AMP; //! \brief & = &amp;
 		static const QString CHAR_LT; //! \brief  < = &lt;
@@ -114,7 +114,7 @@ class XMLParser {
 		bool accessElement(unsigned elem_type);
 
 		//! \brief Returns if an element has a root, child, previous or next element
-    bool hasElement(unsigned elem_type, xmlElementType xml_node_type=static_cast<xmlElementType>(0));
+		bool hasElement(unsigned elem_type, xmlElementType xml_node_type=static_cast<xmlElementType>(0));
 
 		//! \brief Retorns if an element has attributes
 		bool hasAttributes(void);

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ void Rule::setCommandsAttribute(void)
 	for(i=0; i < qtd; i++)
 	{
 		str_cmds+=commands[i];
-    if(i < (qtd-1)) str_cmds+=QString(";");
+		if(i < (qtd-1)) str_cmds+=QString(";");
 	}
 
 	attributes[ParsersAttributes::COMMANDS]=str_cmds;
@@ -65,12 +65,12 @@ void Rule::setConditionalExpression(const QString &expr)
 void Rule::addCommand(const QString &cmd)
 {
 	//Raises an error if the command is empty
-  if(cmd.isEmpty())
+	if(cmd.isEmpty())
 		throw Exception(ERR_INS_EMPTY_RULE_COMMAND,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
 		QString cmd_aux=cmd;
-    cmd_aux.remove(';');
+		cmd_aux.remove(';');
 		commands.push_back(cmd_aux);
 		setCodeInvalidated(true);
 	}
@@ -139,8 +139,8 @@ QString Rule::getCodeDefinition(unsigned def_type)
 
 QString Rule::getSignature(bool format)
 {
-  if(!getParentTable())
-    return(BaseObject::getSignature(format));
+	if(!getParentTable())
+		return(BaseObject::getSignature(format));
 
-  return(QString("%1 ON %2").arg(this->getName(format)).arg(getParentTable()->getSignature(true)));
+	return(QString("%1 ON %2").arg(this->getName(format)).arg(getParentTable()->getSignature(true)));
 }

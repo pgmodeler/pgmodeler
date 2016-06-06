@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>373</width>
-    <height>702</height>
+    <width>363</width>
+    <height>688</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout_3">
    <property name="leftMargin">
     <number>4</number>
    </property>
@@ -82,12 +82,6 @@
       <widget class="QToolButton" name="data_grid_tb">
        <property name="enabled">
         <bool>true</bool>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>27</height>
-        </size>
        </property>
        <property name="font">
         <font>
@@ -157,7 +151,7 @@
        </property>
        <property name="icon">
         <iconset resource="../res/resources.qrc">
-         <normaloff>:/icones/icones/atualizar.png</normaloff>:/icones/icones/atualizar.png</iconset>
+         <normaloff>:/icones/icones/refreshdb.png</normaloff>:/icones/icones/refreshdb.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -166,7 +160,7 @@
         </size>
        </property>
        <property name="shortcut">
-        <string>Ctrl+F5</string>
+        <string>Ctrl+S</string>
        </property>
       </widget>
      </item>
@@ -174,12 +168,6 @@
       <widget class="QToolButton" name="drop_db_tb">
        <property name="enabled">
         <bool>true</bool>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>30</width>
-         <height>29</height>
-        </size>
        </property>
        <property name="toolTip">
         <string>Drop this database</string>
@@ -193,8 +181,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>22</width>
+         <height>22</height>
         </size>
        </property>
       </widget>
@@ -238,7 +226,7 @@
           <bool>true</bool>
          </property>
          <property name="selectionMode">
-          <enum>QAbstractItemView::NoSelection</enum>
+          <enum>QAbstractItemView::SingleSelection</enum>
          </property>
          <property name="selectionBehavior">
           <enum>QAbstractItemView::SelectRows</enum>
@@ -271,11 +259,19 @@
           <bool>true</bool>
          </property>
          <property name="columnCount">
-          <number>1</number>
+          <number>2</number>
          </property>
+         <attribute name="headerStretchLastSection">
+          <bool>true</bool>
+         </attribute>
          <column>
           <property name="text">
            <string notr="true">1</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string notr="true">2</string>
           </property>
          </column>
         </widget>
@@ -333,12 +329,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>27</height>
-               </size>
-              </property>
               <property name="toolTip">
                <string>Expands all items</string>
               </property>
@@ -351,8 +341,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>20</width>
-                <height>20</height>
+                <width>22</width>
+                <height>22</height>
                </size>
               </property>
               <property name="checkable">
@@ -371,12 +361,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>27</height>
-               </size>
-              </property>
               <property name="toolTip">
                <string>Collapses all items</string>
               </property>
@@ -389,8 +373,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>20</width>
-                <height>20</height>
+                <width>22</width>
+                <height>22</height>
                </size>
               </property>
               <property name="checkable">
@@ -426,6 +410,9 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="statusTip">
+               <string>Filters the currently loaded items in the tree by using a pattern and matching their names. If &lt;strong&gt;By OID&lt;/strong&gt; is checked the pattern is interpreted as an integer value that represents the object id (OID). &lt;br&gt;&lt;br/&gt;&lt;strong&gt;HINT:&lt;/strong&gt; if you need to search the entire database use the full refresh (&lt;strong&gt;Ctrl+F5&lt;/strong&gt;) prior the filtering.</string>
+              </property>
               <property name="text">
                <string>Filter:</string>
               </property>
@@ -434,6 +421,9 @@
             <item>
              <widget class="QLineEdit" name="filter_edt">
               <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="clearButtonEnabled">
                <bool>true</bool>
               </property>
              </widget>
@@ -445,6 +435,28 @@
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="QWidget" name="filter_hint" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
          </layout>
@@ -452,91 +464,117 @@
        </item>
       </layout>
      </widget>
-     <widget class="QTableWidget" name="properties_tbw">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
+     <widget class="QWidget" name="attributes_wgt" native="true">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>100</height>
+       </size>
       </property>
-      <property name="lineWidth">
-       <number>1</number>
-      </property>
-      <property name="sizeAdjustPolicy">
-       <enum>QAbstractScrollArea::AdjustIgnored</enum>
-      </property>
-      <property name="autoScrollMargin">
-       <number>16</number>
-      </property>
-      <property name="editTriggers">
-       <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
-      </property>
-      <property name="tabKeyNavigation">
-       <bool>false</bool>
-      </property>
-      <property name="showDropIndicator" stdset="0">
-       <bool>false</bool>
-      </property>
-      <property name="dragDropOverwriteMode">
-       <bool>false</bool>
-      </property>
-      <property name="alternatingRowColors">
-       <bool>true</bool>
-      </property>
-      <property name="selectionMode">
-       <enum>QAbstractItemView::ContiguousSelection</enum>
-      </property>
-      <property name="selectionBehavior">
-       <enum>QAbstractItemView::SelectItems</enum>
-      </property>
-      <property name="showGrid">
-       <bool>true</bool>
-      </property>
-      <property name="gridStyle">
-       <enum>Qt::SolidLine</enum>
-      </property>
-      <property name="sortingEnabled">
-       <bool>true</bool>
-      </property>
-      <property name="cornerButtonEnabled">
-       <bool>true</bool>
-      </property>
-      <attribute name="horizontalHeaderVisible">
-       <bool>false</bool>
-      </attribute>
-      <attribute name="horizontalHeaderDefaultSectionSize">
-       <number>100</number>
-      </attribute>
-      <attribute name="horizontalHeaderMinimumSectionSize">
-       <number>20</number>
-      </attribute>
-      <attribute name="horizontalHeaderStretchLastSection">
-       <bool>true</bool>
-      </attribute>
-      <attribute name="verticalHeaderVisible">
-       <bool>false</bool>
-      </attribute>
-      <attribute name="verticalHeaderDefaultSectionSize">
-       <number>20</number>
-      </attribute>
-      <attribute name="verticalHeaderStretchLastSection">
-       <bool>false</bool>
-      </attribute>
-      <column>
-       <property name="text">
-        <string>Attribute</string>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="leftMargin">
+        <number>0</number>
        </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Value</string>
+       <property name="topMargin">
+        <number>0</number>
        </property>
-      </column>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QTableWidget" name="properties_tbw">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="lineWidth">
+          <number>1</number>
+         </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QAbstractScrollArea::AdjustIgnored</enum>
+         </property>
+         <property name="autoScrollMargin">
+          <number>16</number>
+         </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
+         </property>
+         <property name="tabKeyNavigation">
+          <bool>false</bool>
+         </property>
+         <property name="showDropIndicator" stdset="0">
+          <bool>false</bool>
+         </property>
+         <property name="dragDropOverwriteMode">
+          <bool>false</bool>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::ContiguousSelection</enum>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectItems</enum>
+         </property>
+         <property name="showGrid">
+          <bool>true</bool>
+         </property>
+         <property name="gridStyle">
+          <enum>Qt::SolidLine</enum>
+         </property>
+         <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
+         <property name="cornerButtonEnabled">
+          <bool>true</bool>
+         </property>
+         <attribute name="horizontalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="horizontalHeaderDefaultSectionSize">
+          <number>100</number>
+         </attribute>
+         <attribute name="horizontalHeaderMinimumSectionSize">
+          <number>25</number>
+         </attribute>
+         <attribute name="horizontalHeaderStretchLastSection">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="verticalHeaderDefaultSectionSize">
+          <number>25</number>
+         </attribute>
+         <attribute name="verticalHeaderStretchLastSection">
+          <bool>false</bool>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Attribute</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Value</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="raw_attrib_names_chk">
+         <property name="text">
+          <string>Show raw attributes</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+      <zorder>raw_attrib_names_chk</zorder>
+      <zorder>properties_tbw</zorder>
      </widget>
-    </widget>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="raw_attrib_names_chk">
-     <property name="text">
-      <string>Show raw attributes</string>
-     </property>
     </widget>
    </item>
   </layout>

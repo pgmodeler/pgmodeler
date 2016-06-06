@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,10 +33,10 @@ class Domain: public BaseObject{
 	private:
 		//! \brief Constraint name used by the domain
 		QString constraint_name,
-						//! \brief Validation expression used by domain (check) constraint
-						expression,
-						//! \brief Domain default data type value
-						default_value;
+		//! \brief Validation expression used by domain (check) constraint
+		expression,
+		//! \brief Domain default data type value
+		default_value;
 
 		//! \brief Indicates that the domains accepts null values or not
 		bool not_null;
@@ -80,9 +80,9 @@ class Domain: public BaseObject{
 		//! \brief Returns the SQL / XML code definition for the domain
 		virtual QString getCodeDefinition(unsigned def_type) final;
 
-    virtual QString getAlterDefinition(BaseObject *object) final;
+		virtual QString getAlterDefinition(BaseObject *object) final;
 
-    void operator = (Domain &domain);
+		void operator = (Domain &domain);
 };
 
 #endif

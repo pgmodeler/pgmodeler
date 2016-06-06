@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@ class ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
 		bool eventFilter(QObject *object, QEvent *event);
 
 		void showEvent(QShowEvent *);
+		void resizeEvent(QResizeEvent *event);
 
 	public:
 		ObjectFinderWidget(QWidget *parent = 0);

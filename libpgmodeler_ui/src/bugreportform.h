@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,30 +32,30 @@
 class BugReportForm : public QDialog, public Ui::BugReportForm {
 	private:
 		Q_OBJECT
-
+		
 		//! \brief Syntax highlight for model text widget
 		SyntaxHighlighter *hl_model_txt;
-
-  protected:
+		
+	protected:
 		//! \brief Delimiter character which separates the sections of the compressed file
 		const static char CHR_DELIMITER;
-
-    //! brief Generates an uncompressed buffer based upon the data in fields
-    virtual QByteArray generateReportBuffer(void);
-
-    //! brief Generates the bug report file from uncompressed buffer
-    void generateReport(const QByteArray &buf);
-
-  public:
-    BugReportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
-
-  public slots:
+		
+		//! \brief Generates an uncompressed buffer based upon the data in fields
+		virtual QByteArray generateReportBuffer(void);
+		
+		//! \brief Generates the bug report file from uncompressed buffer
+		void generateReport(const QByteArray &buf);
+		
+	public:
+		BugReportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		
+	public slots:
 		void generateReport(void);
-
-  private slots:
-    void enableGeneration(void);
-    void attachModel(void);
-    void selectOutput(void);
+		
+	private slots:
+		void enableGeneration(void);
+		void attachModel(void);
+		void selectOutput(void);
 };
 
 #endif

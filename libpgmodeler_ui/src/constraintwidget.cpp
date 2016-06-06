@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	{
 		QStringList list;
 		map<QString, vector<QWidget *> > fields_map;
+		map<QWidget *, vector<QString> > values_map;
 		QGridLayout *grid=nullptr;
 
 		Ui_ConstraintWidget::setupUi(this);
@@ -34,31 +35,31 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		grid->addWidget(excl_elems_wgt,0,0);
 		excl_elems_grp->setLayout(grid);
 
-    expression_hl=new SyntaxHighlighter(expression_txt, false, true);
-    expression_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		expression_hl=new SyntaxHighlighter(expression_txt, false, true);
+		expression_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		columns_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-																				(ObjectTableWidget::EDIT_BUTTON |
-																				 ObjectTableWidget::UPDATE_BUTTON), true, this);
+										  (ObjectTableWidget::EDIT_BUTTON |
+										   ObjectTableWidget::UPDATE_BUTTON), true, this);
 
 		ref_columns_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-																						(ObjectTableWidget::EDIT_BUTTON |
-																						 ObjectTableWidget::UPDATE_BUTTON), true, this);
+											  (ObjectTableWidget::EDIT_BUTTON |
+											   ObjectTableWidget::UPDATE_BUTTON), true, this);
 
 		ref_table_sel=new ObjectSelectorWidget(OBJ_TABLE, true, this);
 
 		columns_tab->setColumnCount(2);
 		columns_tab->setHeaderLabel(trUtf8("Column"), 0);
-    columns_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
+		columns_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
 		columns_tab->setHeaderLabel(trUtf8("Type"), 1);
-    columns_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+		columns_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
 
 		ref_columns_tab->setEnabled(false);
 		ref_columns_tab->setColumnCount(2);
 		ref_columns_tab->setHeaderLabel(trUtf8("Column"), 0);
-    ref_columns_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
+		ref_columns_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
 		ref_columns_tab->setHeaderLabel(trUtf8("Type"), 1);
-    ref_columns_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+		ref_columns_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
 
 		dynamic_cast<QGridLayout *>(columns_tbw->widget(0)->layout())->addWidget(columns_tab, 1,0,1,3);
 		dynamic_cast<QGridLayout *>(columns_tbw->widget(1)->layout())->addWidget(ref_table_sel, 0,1,1,2);
@@ -86,12 +87,15 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		constraint_grid->addWidget(info_frm, constraint_grid->count()+1, 0, 1, 0);
 		info_frm->setParent(this);
 
-    fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_92)].push_back(no_inherit_lbl);
-		warn_frm=generateVersionWarningFrame(fields_map);
+		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_92)].push_back(no_inherit_lbl);
+		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(indexing_chk);
+		values_map[indexing_chk].push_back(~IndexingType(IndexingType::brin));
+
+		warn_frm=generateVersionWarningFrame(fields_map, &values_map);
 		constraint_grid->addWidget(warn_frm, constraint_grid->count()+1, 0, 1, 0);
 		warn_frm->setParent(this);
 
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+		//connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(constr_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectConstraintType(void)));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_lbl, SLOT(setEnabled(bool)));
@@ -106,11 +110,10 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		connect(ref_table_sel, SIGNAL(s_objectSelected(void)), this, SLOT(selectReferencedTable(void)));
 		connect(fill_factor_chk, SIGNAL(toggled(bool)), fill_factor_sb, SLOT(setEnabled(bool)));
 
-		parent_form->setMinimumSize(600, 640);
+		selectConstraintType();
+		configureTabOrder();
 
-    selectConstraintType();
-
-    configureTabOrder();
+		setMinimumSize(540, 600);
 	}
 	catch(Exception &e)
 	{
@@ -187,8 +190,8 @@ void ConstraintWidget::addColumn(Column *column, unsigned col_id, int row)
 		else
 			table_wgt=ref_columns_tab;
 
-    table_wgt->setCellText(column->getName(),row,0);
-    table_wgt->setCellText(~column->getType(),row,1);
+		table_wgt->setCellText(column->getName(),row,0);
+		table_wgt->setCellText(~column->getType(),row,1);
 		table_wgt->setRowData(QVariant::fromValue<void *>(column), row);
 
 		//Change the table row background color if the column is protected or added by relationship
@@ -256,10 +259,10 @@ void ConstraintWidget::updateColumnsCombo(unsigned col_id)
 
 			//If the column does not exists on the column's table, adds it
 			if(aux_col_tab->getRowIndex(QVariant::fromValue<void *>(column)) < 0)
-        combo->addItem(column->getName() +
-                       QString(" (") +
-                       ~column->getType() +
-                       QString(")"), QVariant::fromValue<void *>(column));
+				combo->addItem(column->getName() +
+							   QString(" (") +
+							   ~column->getType() +
+							   QString(")"), QVariant::fromValue<void *>(column));
 		}
 
 		aux_col_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, (combo->count()!=0));
@@ -291,7 +294,7 @@ void ConstraintWidget::selectReferencedTable(void)
 
 void ConstraintWidget::hideEvent(QHideEvent *event)
 {
-  expression_txt->clear();
+	expression_txt->clear();
 	column_cmb->clear();
 	ref_column_cmb->clear();
 
@@ -325,8 +328,8 @@ void ConstraintWidget::selectConstraintType(void)
 
 	if(!tablespace_sel->isVisible()) tablespace_sel->clearSelector();
 
-  expression_lbl->setVisible(constr_type==ConstraintType::check || constr_type==ConstraintType::exclude);
-  expression_txt->setVisible(constr_type==ConstraintType::check || constr_type==ConstraintType::exclude);
+	expression_lbl->setVisible(constr_type==ConstraintType::check || constr_type==ConstraintType::exclude);
+	expression_txt->setVisible(constr_type==ConstraintType::check || constr_type==ConstraintType::exclude);
 	no_inherit_chk->setVisible(constr_type==ConstraintType::check);
 	no_inherit_lbl->setVisible(constr_type==ConstraintType::check);
 	warn_frm->setVisible(constr_type==ConstraintType::check);
@@ -335,18 +338,18 @@ void ConstraintWidget::selectConstraintType(void)
 															constr_type==ConstraintType::primary_key ||
 															constr_type==ConstraintType::exclude); */
 	fill_factor_chk->setVisible(constr_type==ConstraintType::unique ||
-															constr_type==ConstraintType::primary_key ||
-															constr_type==ConstraintType::exclude);
+								constr_type==ConstraintType::primary_key ||
+								constr_type==ConstraintType::exclude);
 	fill_factor_sb->setVisible(constr_type==ConstraintType::unique ||
-														 constr_type==ConstraintType::primary_key ||
-														 constr_type==ConstraintType::exclude);
+							   constr_type==ConstraintType::primary_key ||
+							   constr_type==ConstraintType::exclude);
 
 	info_frm->setVisible(constr_type==ConstraintType::primary_key);
 
-  deferrable_lbl->setVisible(constr_type!=ConstraintType::check);
-  deferrable_chk->setVisible(constr_type!=ConstraintType::check);
-  deferral_cmb->setVisible(constr_type!=ConstraintType::check);
-  deferral_lbl->setVisible(constr_type!=ConstraintType::check);
+	deferrable_lbl->setVisible(constr_type!=ConstraintType::check);
+	deferrable_chk->setVisible(constr_type!=ConstraintType::check);
+	deferral_cmb->setVisible(constr_type!=ConstraintType::check);
+	deferral_lbl->setVisible(constr_type!=ConstraintType::check);
 
 	match_lbl->setVisible(constr_type==ConstraintType::foreign_key);
 	match_cmb->setVisible(constr_type==ConstraintType::foreign_key);
@@ -356,7 +359,7 @@ void ConstraintWidget::selectConstraintType(void)
 	on_update_lbl->setVisible(constr_type==ConstraintType::foreign_key);
 
 	columns_tbw->setVisible(constr_type!=ConstraintType::check &&
-													constr_type!=ConstraintType::exclude);
+										 constr_type!=ConstraintType::exclude);
 
 	indexing_chk->setVisible(constr_type==ConstraintType::exclude);
 	indexing_cmb->setVisible(constr_type==ConstraintType::exclude);
@@ -373,7 +376,7 @@ void ConstraintWidget::selectConstraintType(void)
 	excl_elems_grp->setVisible(constr_type==ConstraintType::exclude);
 }
 
-void ConstraintWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, OperationList *op_list, Constraint *constr)
+void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_list,  BaseObject *parent_obj, Constraint *constr)
 {
 	ObjectType obj_type;
 	unsigned count, i, row;
@@ -429,7 +432,7 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 		constr_type_cmb->setEnabled(false);
 		constr_type_lbl->setEnabled(false);
 
-    expression_txt->setPlainText(constr->getExpression());
+		expression_txt->setPlainText(constr->getExpression());
 		no_inherit_chk->setChecked(constr->isNoInherit());
 		deferrable_chk->setChecked(constr->isDeferrable());
 		deferral_cmb->setCurrentIndex(deferral_cmb->findText(~constr->getDeferralType()));
@@ -439,7 +442,7 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 
 		fill_factor_chk->setChecked(constr->getFillFactor()!=0);
 		if(fill_factor_chk->isChecked())
-		 fill_factor_sb->setValue(constr->getFillFactor());
+			fill_factor_sb->setValue(constr->getFillFactor());
 
 		ref_table=dynamic_cast<Table *>(constr->getReferencedTable());
 		if(ref_table)
@@ -482,7 +485,7 @@ void ConstraintWidget::applyConfiguration(void)
 
 		constr=dynamic_cast<Constraint *>(this->object);
 		constr->setConstraintType(ConstraintType(constr_type_cmb->currentText()));
-    constr->setExpression(expression_txt->toPlainText().toUtf8());
+		constr->setExpression(expression_txt->toPlainText().toUtf8());
 
 		if(fill_factor_chk->isChecked())
 			constr->setFillFactor(fill_factor_sb->value());
@@ -492,8 +495,8 @@ void ConstraintWidget::applyConfiguration(void)
 		constr->setMatchType(MatchType(match_cmb->currentText()));
 		constr->setDeferrable(deferrable_chk->isChecked());
 		constr->setDeferralType(DeferralType(deferral_cmb->currentText()));
-    constr->setActionType(ActionType(on_delete_cmb->currentText()),Constraint::DELETE_ACTION);
-    constr->setActionType(ActionType(on_update_cmb->currentText()),Constraint::UPDATE_ACTION);
+		constr->setActionType(ActionType(on_delete_cmb->currentText()),Constraint::DELETE_ACTION);
+		constr->setActionType(ActionType(on_update_cmb->currentText()),Constraint::UPDATE_ACTION);
 		constr->setNoInherit(no_inherit_chk->isChecked());
 
 		if(indexing_chk->isChecked())
@@ -522,7 +525,7 @@ void ConstraintWidget::applyConfiguration(void)
 
 		//Raises an error if the user try to create a primary key that has columns added by relationship (not supported)
 		if(constr->getConstraintType()==ConstraintType::primary_key &&
-			 constr->isReferRelationshipAddedColumn())
+				constr->isReferRelationshipAddedColumn())
 			throw Exception(ERR_PK_USING_COLS_ADDED_BY_REL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		BaseObjectWidget::applyConfiguration();
@@ -530,10 +533,10 @@ void ConstraintWidget::applyConfiguration(void)
 		/* Raises an error if the constraint type requires at least one column to be assinged and
 		there is no columns configured on the form */
 		if(((constr->getConstraintType()==ConstraintType::foreign_key ||
-				 constr->getConstraintType()==ConstraintType::primary_key) &&
-				constr->getColumnCount(Constraint::SOURCE_COLS)==0) ||
-			 (constr->getConstraintType()==ConstraintType::foreign_key &&
-				constr->getColumnCount(Constraint::REFERENCED_COLS)==0))
+			 constr->getConstraintType()==ConstraintType::primary_key) &&
+			constr->getColumnCount(Constraint::SOURCE_COLS)==0) ||
+				(constr->getConstraintType()==ConstraintType::foreign_key &&
+				 constr->getColumnCount(Constraint::REFERENCED_COLS)==0))
 			throw Exception(ERR_CONSTR_NO_COLUMNS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		finishConfiguration();

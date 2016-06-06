@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,25 +36,25 @@ class TextboxView: public BaseObjectView {
 		//! \brief Indicates the the font / color styles will be overriden (need to call setColorStyle, setFontStyle)
 		bool override_style;
 
-  protected:
-    //! \brief Graphical item that represent the box
-    QGraphicsPolygonItem *box;
+	protected:
+		//! \brief Graphical item that represent the box
+		QGraphicsPolygonItem *box;
 
-    //! \brief Graphical item that represent the text
-    QGraphicsSimpleTextItem *text;
+		//! \brief Graphical item that represent the text
+		QGraphicsSimpleTextItem *text;
 
-    //! brief Configures the shadow for the textbox
-    void configureObjectShadow(void);
+		//! \brief Configures the shadow for the textbox
+		void configureObjectShadow(void);
 
-    //! brief Configures the selection for the textbox
-    void configureObjectSelection(void);
+		//! \brief Configures the selection for the textbox
+		void configureObjectSelection(void);
 
-    //! brief Configures the basic attributes for textbox
-    void __configureObject(void);
+		//! \brief Configures the basic attributes for textbox
+		void __configureObject(void);
 
 	public:
 		TextboxView(Textbox *txtbox, bool override_style=false);
-    virtual ~TextboxView(void);
+		virtual ~TextboxView(void);
 
 		/*! \brief Sets the fill and border color for the text box. This method has effect only when
 		 the style can be overriden (via constructor) */
@@ -65,7 +65,7 @@ class TextboxView: public BaseObjectView {
 		void setFontStyle(const QTextCharFormat &fmt);
 
 	protected slots:
-    virtual void configureObject(void);
+		virtual void configureObject(void);
 };
 
 #endif

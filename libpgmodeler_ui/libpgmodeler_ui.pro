@@ -25,7 +25,7 @@ SOURCES += src/mainwindow.cpp \
 	   src/baseform.cpp \
 	   src/sourcecodewidget.cpp \
 	   src/syntaxhighlighter.cpp \
-           src/databasewidget.cpp \
+		 src/databasewidget.cpp \
 	   src/schemawidget.cpp \
 	   src/objecttablewidget.cpp \
 	   src/rolewidget.cpp \
@@ -77,17 +77,16 @@ SOURCES += src/mainwindow.cpp \
 	   src/databaseimporthelper.cpp \
 	   src/databaseimportform.cpp \
 	   src/codecompletionwidget.cpp \
-           src/swapobjectsidswidget.cpp \
-           src/sqltoolwidget.cpp \
-           src/tagwidget.cpp \
-           src/modelfixform.cpp \
-           src/updatenotifierwidget.cpp \
-           src/newobjectoverlaywidget.cpp \
+		 src/swapobjectsidswidget.cpp \
+		 src/sqltoolwidget.cpp \
+		 src/tagwidget.cpp \
+		 src/modelfixform.cpp \
+		 src/updatenotifierwidget.cpp \
+		 src/newobjectoverlaywidget.cpp \
            src/eventtriggerwidget.cpp \
            src/aboutwidget.cpp \
            src/colorpickerwidget.cpp \
            src/modelnavigationwidget.cpp \
-           src/centralwidget.cpp \
            src/relationshipconfigwidget.cpp \
            src/datamanipulationform.cpp \
            src/customsqlwidget.cpp \
@@ -103,9 +102,12 @@ SOURCES += src/mainwindow.cpp \
            src/sqlexecutionwidget.cpp \
            src/htmlitemdelegate.cpp \
            src/donatewidget.cpp \
-    src/readonlyitemdelegate.cpp \
     src/numberedtexteditor.cpp \
-    src/linenumberswidget.cpp
+		src/linenumberswidget.cpp \
+    src/metadatahandlingform.cpp \
+    src/welcomewidget.cpp \
+		src/tabledatawidget.cpp \
+		src/plaintextitemdelegate.cpp
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
@@ -179,7 +181,6 @@ HEADERS += src/mainwindow.h \
            src/aboutwidget.h \
            src/colorpickerwidget.h \
            src/modelnavigationwidget.h \
-           src/centralwidget.h \
            src/relationshipconfigwidget.h \
            src/datamanipulationform.h \
            src/customsqlwidget.h \
@@ -195,9 +196,12 @@ HEADERS += src/mainwindow.h \
            src/sqlexecutionwidget.h \
            src/htmlitemdelegate.h \
            src/donatewidget.h \
-    src/readonlyitemdelegate.h \
     src/numberedtexteditor.h \
-    src/linenumberswidget.h
+		src/linenumberswidget.h \
+    src/metadatahandlingform.h \
+    src/welcomewidget.h \
+		src/tabledatawidget.h \
+		src/plaintextitemdelegate.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \
@@ -262,7 +266,6 @@ FORMS += ui/mainwindow.ui \
          ui/aboutwidget.ui \
          ui/colorpickerwidget.ui \
          ui/modelnavigationwidget.ui \
-         ui/centralwidget.ui \
          ui/relationshipconfigwidget.ui \
          ui/datamanipulationform.ui \
          ui/customsqlwidget.ui \
@@ -274,7 +277,9 @@ FORMS += ui/mainwindow.ui \
          ui/bugreportform.ui \
          ui/sqlexecutionwidget.ui \
          ui/donatewidget.ui \
-    ui/sourcecodeeditorform.ui
+    ui/metadatahandlingform.ui \
+    ui/welcomewidget.ui \
+    ui/tabledatawidget.ui
 
 unix|windows: LIBS += -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
                       -L$$OUT_PWD/../libpgconnector/ -lpgconnector \

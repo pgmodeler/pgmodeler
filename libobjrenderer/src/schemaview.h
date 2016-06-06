@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ class SchemaView: public BaseObjectView
 
 		QGraphicsSimpleTextItem *sch_name;
 
-    RoundedRectItem *box;
+		RoundedRectItem *box;
 
 		QPointF last_pos;
 
@@ -65,8 +65,11 @@ class SchemaView: public BaseObjectView
 
 		//! \brief Visually selects all the schema children
 		void selectChildren(void);
+
 		unsigned getChildrenCount(void);
-    QList<BaseObjectView *> getChildren(void);
+		QList<BaseObjectView *> getChildren(void);
+
+		virtual void togglePlaceholder(bool visible);
 
 	public slots:
 		void configureObject(void);

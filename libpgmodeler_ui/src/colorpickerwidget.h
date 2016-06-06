@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,40 +36,40 @@
 class ColorPickerWidget: public QWidget, public Ui::ColorPickerWidget {
 	private:
 		Q_OBJECT
-
-		//! brief Random number generator engine used to generate random colors for buttons
+		
+		//! \brief Random number generator engine used to generate random colors for buttons
 		default_random_engine rand_num_engine;
-
-		//! brief List of buttons used to configure each color
+		
+		//! \brief List of buttons used to configure each color
 		QList<QToolButton *> buttons;
-
-		//! brief List of colors assinged for each button
+		
+		//! \brief List of colors assinged for each button
 		QList<QColor> colors;
-
-		//! brief Palette assinged to buttons when the color picker is disabled
-    QColor disable_color;
-
-  protected:
-    bool eventFilter(QObject *object, QEvent *event);
-
+		
+		//! \brief Palette assinged to buttons when the color picker is disabled
+		QColor disable_color;
+		
+	protected:
+		bool eventFilter(QObject *object, QEvent *event);
+		
 	public:
-    static const int MAX_COLOR_BUTTONS=20;
-
-    explicit ColorPickerWidget(int color_count, QWidget * parent = 0);
-
-    void setColor(int color_idx, const QColor &color);
-    QColor getColor(int color_idx);
-    unsigned getColorCount(void);
-    bool isButtonVisible(unsigned idx);
-
-    void setButtonToolTip(unsigned button_idx, const QString &tooltip);
-
+		static const int MAX_COLOR_BUTTONS=20;
+		
+		explicit ColorPickerWidget(int color_count, QWidget * parent = 0);
+		
+		void setColor(int color_idx, const QColor &color);
+		QColor getColor(int color_idx);
+		unsigned getColorCount(void);
+		bool isButtonVisible(unsigned idx);
+		
+		void setButtonToolTip(unsigned button_idx, const QString &tooltip);
+		
 	public slots:
 		void setEnabled(bool value);
 		void setButtonVisible(unsigned idx, bool value);
-    void selectColor(void);
-    void generateRandomColors(void);
-
+		void selectColor(void);
+		void generateRandomColors(void);
+		
 	signals:
 		void s_colorChanged(unsigned, QColor);
 		void s_colorsChanged(void);

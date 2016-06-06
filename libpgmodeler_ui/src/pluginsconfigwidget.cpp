@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : BaseConfigWidget(par
 	plugins_tab=new ObjectTableWidget(ObjectTableWidget::EDIT_BUTTON, false, this);
 	plugins_tab->setColumnCount(3);
 	plugins_tab->setHeaderLabel(trUtf8("Plugin"),0);
-  plugins_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/plugins.png")),0);
+	plugins_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/plugins.png")),0);
 	plugins_tab->setHeaderLabel(trUtf8("Version"),1);
 	plugins_tab->setHeaderLabel(trUtf8("Library"),2);
 
@@ -53,7 +53,7 @@ PluginsConfigWidget::~PluginsConfigWidget(void)
 
 void PluginsConfigWidget::openRootPluginDiretory(void)
 {
-  QDesktopServices::openUrl(QUrl(QString("file:///") + root_dir_edt->text()));
+	QDesktopServices::openUrl(QUrl(QString("file:///") + root_dir_edt->text()));
 }
 
 void PluginsConfigWidget::showPluginInfo(int idx)
@@ -66,7 +66,7 @@ void PluginsConfigWidget::loadConfiguration(void)
 	vector<Exception> errors;
 	QString lib, plugin_name,
 			dir_plugins=GlobalAttributes::PLUGINS_DIR +
-									GlobalAttributes::DIR_SEPARATOR;
+						GlobalAttributes::DIR_SEPARATOR;
 	QPluginLoader plugin_loader;
 	QStringList dir_list;
 	PgModelerPlugin *plugin=nullptr;
@@ -79,7 +79,7 @@ void PluginsConfigWidget::loadConfiguration(void)
 
 	/* Configures an QDir instance to list only directories on the plugins/ subdir.
 		If the user does not put the plugin in it's directory the file is ignored  */
-  dir_list=QDir(dir_plugins, QString("*"), QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
+	dir_list=QDir(dir_plugins, QString("*"), QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
 
 	while(!dir_list.isEmpty())
 	{
@@ -90,17 +90,17 @@ void PluginsConfigWidget::loadConfiguration(void)
 		 [PLUGINS ROOT DIR]/[PLUGIN NAME]/lib[PLUGIN NAME].[EXTENSION] */
 #ifdef Q_OS_WIN
 		lib=dir_plugins + plugin_name +
-				GlobalAttributes::DIR_SEPARATOR  +
-				plugin_name + QString(".dll");
+			GlobalAttributes::DIR_SEPARATOR  +
+			plugin_name + QString(".dll");
 #else
 #ifdef Q_OS_MAC
 		lib=dir_plugins + plugin_name +
-				GlobalAttributes::DIR_SEPARATOR  +
-				QString("lib") + plugin_name + QString(".dylib");
+			GlobalAttributes::DIR_SEPARATOR  +
+			QString("lib") + plugin_name + QString(".dylib");
 #else
 		lib=dir_plugins + plugin_name +
-				GlobalAttributes::DIR_SEPARATOR  +
-				QString("lib") + plugin_name + QString(".so");
+			GlobalAttributes::DIR_SEPARATOR  +
+			QString("lib") + plugin_name + QString(".so");
 #endif
 #endif
 
@@ -121,8 +121,8 @@ void PluginsConfigWidget::loadConfiguration(void)
 			plugin_action->setShortcut(plugin->getPluginShortcut());
 
 			icon.load(dir_plugins + plugin_name +
-								GlobalAttributes::DIR_SEPARATOR  +
-								plugin_name + QString(".png"));
+					  GlobalAttributes::DIR_SEPARATOR  +
+					  plugin_name + QString(".png"));
 			plugin_action->setIcon(icon);
 
 			plugins_actions.push_back(plugin_action);
@@ -134,10 +134,10 @@ void PluginsConfigWidget::loadConfiguration(void)
 		else
 		{
 			errors.push_back(Exception(Exception::getErrorMessage(ERR_PLUGIN_NOT_LOADED)
-                                 .arg(dir_list.front())
-                                 .arg(lib)
-																 .arg(plugin_loader.errorString()),
-																 ERR_PLUGIN_NOT_LOADED, __PRETTY_FUNCTION__,__FILE__,__LINE__));
+									   .arg(dir_list.front())
+									   .arg(lib)
+									   .arg(plugin_loader.errorString()),
+									   ERR_PLUGIN_NOT_LOADED, __PRETTY_FUNCTION__,__FILE__,__LINE__));
 		}
 		dir_list.pop_front();
 		plugins_tab->clearSelection();

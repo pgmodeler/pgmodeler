@@ -14,15 +14,12 @@
 
 [CREATE ROLE ] {name} [ WITH ]
 
-%if {superuser} %then
-  $br $tb SUPERUSER
-%else
-  %if {createdb} %then $br $tb CREATEDB %end
-  %if {createrole} %then $br $tb CREATEROLE %end
-  %if {inherit} %then $br $tb INHERIT %end
-  %if {login} %then $br $tb LOGIN %end
-  %if {replication} %and ({pgsql-ver} != "9.0") %then $br $tb REPLICATION %end
-%end
+%if {superuser} %then $br $tb SUPERUSER %end
+%if {createdb} %then $br $tb CREATEDB %end
+%if {createrole} %then $br $tb CREATEROLE %end
+%if {inherit} %then $br $tb INHERIT %end
+%if {login} %then $br $tb LOGIN %end
+%if {replication} %and ({pgsql-ver} != "9.0") %then $br $tb REPLICATION %end
 
 %if {password} %then
  $br $tb

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,38 +38,38 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 	private:
 		Q_OBJECT
 
-    class BlockInfo: public QTextBlockUserData {
-      public:
-        QString group;
-        bool has_exprs;
-        bool is_expr_closed;
+		class BlockInfo: public QTextBlockUserData {
+			public:
+				QString group;
+				bool has_exprs;
+				bool is_expr_closed;
 
-        BlockInfo(void)
-        {
-          resetBlockInfo();
-        }
+				BlockInfo(void)
+				{
+					resetBlockInfo();
+				}
 
-        void resetBlockInfo(void)
-        {
-          group.clear();
-          has_exprs=false;
-          is_expr_closed=false;
-        }
-    };
+				void resetBlockInfo(void)
+				{
+					group.clear();
+					has_exprs=false;
+					is_expr_closed=false;
+				}
+		};
 
-    //! brief XML parser used to parse configuration files
-    XMLParser xmlparser;
+		//! \brief XML parser used to parse configuration files
+		XMLParser xmlparser;
 
-    //! brief Default font configuratoin for all instances os syntax highlighter
-    static QFont default_font;
+		//! \brief Default font configuratoin for all instances os syntax highlighter
+		static QFont default_font;
 
-    //! brief Indicates that the current block has no special meaning
-    static const int SIMPLE_BLOCK=-1,
+		//! \brief Indicates that the current block has no special meaning
+		static const int SIMPLE_BLOCK=-1,
 
-    /*! brief Indicates that the current block has an open (but still to close) expression (e.g. multline comments)
-        When the highlighter finds this const it'll do special operation like highlight next blocks with the same
-        configuration as the current one */
-    OPEN_EXPR_BLOCK=0;
+		/*! \brief Indicates that the current block has an open (but still to close) expression (e.g. multline comments)
+		When the highlighter finds this const it'll do special operation like highlight next blocks with the same
+		configuration as the current one */
+		OPEN_EXPR_BLOCK=0;
 
 		/*! \brief Stores the regexp used to identify keywords, identifiers, strings, numbers.
 		Also stores initial regexps used to identify a multiline group */
@@ -94,18 +94,18 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		//! \brief Indicates if the configuration is loaded or not
 		bool conf_loaded,
 
-					/*! \brief This causes the highlighter to ignores any RETURN/ENTER press on QTextEdit causing
+		/*! \brief This causes the highlighter to ignores any RETURN/ENTER press on QTextEdit causing
 							the text to be in a single line. */
-          single_line_mode;
+		single_line_mode;
 
 		//! \brief Stores the chars that indicates word separators
 		QString word_separators,
 
-						//! \brief Stores the chars that indicates word delimiters
-						word_delimiters,
+		//! \brief Stores the chars that indicates word delimiters
+		word_delimiters,
 
-						//! \brief Stores the chars ignored by the highlighter during the word reading
-						ignored_chars;
+		//! \brief Stores the chars ignored by the highlighter during the word reading
+		ignored_chars;
 
 		//! \brief Stores the char that triggers the code completion
 		QChar	completion_trigger;
@@ -114,30 +114,30 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		void configureAttributes(void);
 
 		/*! \brief Indentifies the group which the word belongs to.  The other parameters indicates, respectively,
-    the lookahead char for the group, the current index (column) on the buffer, the initial match index and the
+	the lookahead char for the group, the current index (column) on the buffer, the initial match index and the
 		match length. */
-    QString identifyWordGroup(const QString &palavra, const QChar &lookahead_chr, int &match_idx, int &match_len);
+		QString identifyWordGroup(const QString &palavra, const QChar &lookahead_chr, int &match_idx, int &match_len);
 
 		/*! \brief This event filter is used to nullify the line breaks when the highlighter
 		 is created in single line edit model */
 		bool eventFilter(QObject *object, QEvent *event);
 
-    //! brief Returns if the specified group contains both initial and final expressions
-    bool hasInitialAndFinalExprs(const QString &group);
+		//! \brief Returns if the specified group contains both initial and final expressions
+		bool hasInitialAndFinalExprs(const QString &group);
 
-    //! brief Renders the block format using the configuration of the specified group
-    void setFormat(int start, int count, const QString &group);
+		//! \brief Renders the block format using the configuration of the specified group
+		void setFormat(int start, int count, const QString &group);
 
-    /*! brief Check if the word matches the specified group by searching the vector of expressions related to it.
-        If the word matches then the match_idx and match_len parameters will be configured with the index and length of chars that
-        the expression could match. Additionally this method returns a boolean indicating the if the match was successful */
-    bool isWordMatchGroup(const QString &word, const QString &group, bool use_final_expr, const QChar &lookahead_chr, int &match_idx, int &match_len);
+		/*! \brief Check if the word matches the specified group by searching the vector of expressions related to it.
+		If the word matches then the match_idx and match_len parameters will be configured with the index and length of chars that
+		the expression could match. Additionally this method returns a boolean indicating the if the match was successful */
+		bool isWordMatchGroup(const QString &word, const QString &group, bool use_final_expr, const QChar &lookahead_chr, int &match_idx, int &match_len);
 
-  public:
-    /*! \brief Install the syntax highlighter in a QPlainTextEdit. If single_line_mode is true
-        the highlighter prevents the parent text field to process line breaks. If use_custom_tab_width is true
-        the highlighter will use the same tab size as NumberedTextEdit class */
-    SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode=false, bool use_custom_tab_width=false);
+	public:
+		/*! \brief Install the syntax highlighter in a QPlainTextEdit. If single_line_mode is true
+		the highlighter prevents the parent text field to process line breaks. If use_custom_tab_width is true
+		the highlighter will use the same tab size as NumberedTextEdit class */
+		SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode=false, bool use_custom_tab_width=false);
 
 		//! \brief Loads a highlight configuration from a XML file
 		void loadConfiguration(const QString &filename);
@@ -152,15 +152,15 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		//! \brief Returns the current configured code completion trigger char
 		QChar getCompletionTrigger(void);
 
-    //! brief Sets the default font for all instances of this class
-    static void setDefaultFont(const QFont &fnt);
+		//! \brief Sets the default font for all instances of this class
+		static void setDefaultFont(const QFont &fnt);
 
 	private slots:
 		//! \brief Highlight a line of the text
 		void highlightBlock(const QString &txt);
 
 		//! \brief Clears the loaded configuration
-    void clearConfiguration(void);
+		void clearConfiguration(void);
 };
 
 #endif

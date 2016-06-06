@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,13 +31,14 @@ ConversionWidget::ConversionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		conv_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
 		convcod_grid->addWidget(conv_func_sel,1,1,1,3);
 
-    setRequiredField(src_encoding_lbl);
-    setRequiredField(trg_encoding_lbl);
-    setRequiredField(conv_func_lbl);
-    setRequiredField(conv_func_sel);
+		setRequiredField(src_encoding_lbl);
+		setRequiredField(trg_encoding_lbl);
+		setRequiredField(conv_func_lbl);
+		setRequiredField(conv_func_sel);
 
 		configureFormLayout(convcod_grid, OBJ_CONVERSION);
 		frame=generateInformationFrame(trUtf8("The function to be assigned to an encoding conversion must have the following signature: <em>void function(integer, integer, cstring, internal, integer)</em>."));
+		convcod_grid->addItem(new QSpacerItem(10,10,QSizePolicy::Minimum,QSizePolicy::Expanding), convcod_grid->count()+1, 0, 1, 0);
 		convcod_grid->addWidget(frame, convcod_grid->count()+1, 0, 1, 0);
 		frame->setParent(this);
 
@@ -45,12 +46,9 @@ ConversionWidget::ConversionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		src_encoding_cmb->addItems(encodings);
 		trg_encoding_cmb->addItems(encodings);
 
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+		configureTabOrder({ src_encoding_cmb, trg_encoding_cmb, conv_func_sel });
 
-		parent_form->setMinimumSize(600, 360);
-		parent_form->setMaximumHeight(360);
-
-    configureTabOrder({ src_encoding_cmb, trg_encoding_cmb, conv_func_sel });
+		setMinimumSize(500, 300);
 	}
 	catch(Exception &e)
 	{

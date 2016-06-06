@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -54,16 +54,16 @@ class ModelExportHelper: public QObject {
 		//! \brief Indicates to the exporter to drop database before export
 		drop_db,
 
-    //! \brief Indicates to the exporter to drop the objects that are enabled and have a DROP command attached (see SQL source for objects)
-    drop_objs,
+		//! \brief Indicates to the exporter to drop the objects that are enabled and have a DROP command attached (see SQL source for objects)
+		drop_objs,
 
-    //! \brief Indicates to the exporter to generate random names for database, roles and tablespaces before export (only in thread mode)
-    use_tmp_names,
+		//! \brief Indicates to the exporter to generate random names for database, roles and tablespaces before export (only in thread mode)
+		use_tmp_names,
 
 		//! \brief Indicates if the exporting thread was canceled by the user (only in thread mode)
-    export_canceled,
+		export_canceled,
 
-    db_sql_reenabled;
+		db_sql_reenabled;
 
 		//! \brief Database model used as reference on export operation (only in thread mode)
 		DatabaseModel *db_model;
@@ -71,12 +71,12 @@ class ModelExportHelper: public QObject {
 		//! \brief Database connection used to export data to DBMS (only in thread mode)
 		Connection *connection;
 
-    QString sql_buffer, db_name;
+		QString sql_buffer, db_name;
 
-    //! brief List of ignored error codes
-    QStringList ignored_errors;
+		//! \brief List of ignored error codes
+		QStringList ignored_errors;
 
-    vector<Exception> errors;
+		vector<Exception> errors;
 
 		/*! \brief Indicates which role / tablespaces were created on server (only dbms export).
 		This attribute is used to drop the created roles / tablespaces from server */
@@ -85,19 +85,18 @@ class ModelExportHelper: public QObject {
 		//! \brief Stores the current state of ALTER command generation for table columns/constraints
 		map<Table *, bool> alter_cmds_status;
 
-    //! brief Stores the original object names before the call of generateRandomObjectNames()
-    map<BaseObject *, QString> orig_obj_names;
+		//! \brief Stores the original object names before the call of generateRandomObjectNames()
+		map<BaseObject *, QString> orig_obj_names;
 
-    ObjectsScene *scene;
+		ObjectsScene *scene;
 
-    QGraphicsView *viewp;
+		QGraphicsView *viewp;
 
-    QString filename;
+		QString filename;
 
-    double zoom;
+		double zoom;
 
-    bool show_grid, show_delim, page_by_page;
-
+		bool show_grid, show_delim, page_by_page;
 
 		//! \brief Saves the current state of ALTER command generaton for table columns/constraints
 		void saveGenAtlerCmdsStatus(DatabaseModel *db_model);
@@ -106,74 +105,85 @@ class ModelExportHelper: public QObject {
 		void restoreGenAtlerCmdsStatus(void);
 
 		//! \brief Revert the dbms export process, removing the created database, roles and tablespaces
-    void undoDBMSExport(DatabaseModel *db_model, Connection &conn, bool use_tmp_names);
+		void undoDBMSExport(DatabaseModel *db_model, Connection &conn, bool use_tmp_names);
 
-    /*! brief Cause the names of the database, roles and tablespaces to be replaced by a temporary name in order
-    to avoid duplicity error when exporting. This feature is only useful when validating the model against a
-    server which some of the objects (at cluster level) still exists */
-    void generateTempObjectNames(DatabaseModel *db_model);
+		/*! \brief Cause the names of the database, roles and tablespaces to be replaced by a temporary name in order
+		to avoid duplicity error when exporting. This feature is only useful when validating the model against a
+		server which some of the objects (at cluster level) still exists */
+		void generateTempObjectNames(DatabaseModel *db_model);
 
-    //! brief Restore the original name of the database, roles and tablespaces
-    void restoreObjectNames(void);
+		//! \brief Restore the original name of the database, roles and tablespaces
+		void restoreObjectNames(void);
 
-    //! brief Exports the contents of the buffer to a previously opened connection
-    void exportBufferToDBMS(const QString &buffer, Connection &conn, bool drop_objs=false);
+		//! \brief Exports the contents of the buffer to a previously opened connection
+		void exportBufferToDBMS(const QString &buffer, Connection &conn, bool drop_objs=false);
 
-    //! brief Returns if the error code is one of the treated by the export process as object duplication error
-    bool isDuplicationError(const QString &error_code);
+		//! \brief Returns if the error code is one of the treated by the export process as object duplication error
+		bool isDuplicationError(const QString &error_code);
 
-    void resetExportParams(void);
+		//! \brief Restore the export parameters to their default values
+		void resetExportParams(void);
 
+		/*! \brief Aborts the export process by redirecting the provided exception in form of a signal or
+		to the main loop, depending on the mode the helper is being used (in a thread or locally) */
+		void abortExport(Exception &e);
 
 	public:
 		ModelExportHelper(QObject *parent = 0);
 
-    /*! brief Determines which error codes must be ignored during the export process.
-        There must be some caution when ignore some error codes because the export may
-        create an incomplete database or even reach unknown behaviors.
-        Error catalog is available at: postgresql.org/docs/current/static/errcodes-appendix.html */
-    void setIgnoredErrors(const QStringList &err_codes);
+		/*! \brief Determines which error codes must be ignored during the export process.
+		There must be some caution when ignore some error codes because the export may
+		create an incomplete database or even reach unknown behaviors.
+		Error catalog is available at: postgresql.org/docs/current/static/errcodes-appendix.html */
+		void setIgnoredErrors(const QStringList &err_codes);
 
 		//! \brief Exports the model to a named SQL file. The PostgreSQL version syntax must be specified.
 		void exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver);
 
 		/*! \brief Exports the model to a named PNG image. The boolean parameters controls the grid exhibition
 		as well the page delimiters on the output image. The zoom parameter controls the zoom applied to the viewport
-    before draw it on the pixmap. It is possible to specified an viewport (QGraphicsView instance) previously allocated
-    and the method will use it instead of allocate a local one. This is a workaround to error raised by QCoreApplication::sendPostedEvents
-    when running the helper in a thread */
-    void exportToPNG(ObjectsScene *scene, const QString &filename, double zoom, bool show_grid, bool show_delim,
-                     bool page_by_page, QGraphicsView *viewp=nullptr);
+		before draw it on the pixmap. It is possible to specified an viewport (QGraphicsView instance) previously allocated
+		and the method will use it instead of allocate a local one. This is a workaround to error raised by QCoreApplication::sendPostedEvents
+		when running the helper in a thread */
+		void exportToPNG(ObjectsScene *scene, const QString &filename, double zoom, bool show_grid, bool show_delim,
+										 bool page_by_page, QGraphicsView *viewp=nullptr);
+
+		//! \brief Exports the model to a named SVG file.
+		void exportToSVG(ObjectsScene *scene, const QString &filename, bool show_grid, bool show_delim);
 
 		/*! \brief Exports the model directly to the DBMS. A valid connection must be specified. The PostgreSQL
 		version is optional, since the helper identifies the version from the server. The boolean parameter
-    make the helper to ignore object duplicity errors.
-    \note The params drop_db and drop_objs can't be true at the same time. */
-    void exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver=QString(), bool ignore_dup=false,
-                      bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false);
+		make the helper to ignore object duplicity errors.
+		\note The params drop_db and drop_objs can't be true at the same time. */
+		void exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver=QString(), bool ignore_dup=false,
+											bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false);
 
-    /*! \brief Configures the DBMS export params before start the export thread (when in thread mode).
-        This form receive a database model as input and the sql code to be exported will be generated from it.
-        \note The params drop_db and drop_objs can't be true at the same time. */
-    void setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver=QString(), bool ignore_dup=false,
-                               bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false);
+		/*! \brief Configures the DBMS export params before start the export thread (when in thread mode).
+		This form receive a database model as input and the sql code to be exported will be generated from it.
+		\note The params drop_db and drop_objs can't be true at the same time. */
+		void setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver=QString(), bool ignore_dup=false,
+															 bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false);
 
-    /*! \brief Configures the DBMS export params before start the export thread (when in thread mode).
-        This form receive a previously generated sql buffer to be exported the the helper */
-    void setExportToDBMSParams(const QString &sql_buffer, Connection *conn, const QString &db_name, bool ignore_dup=false);
+		/*! \brief Configures the DBMS export params before start the export thread (when in thread mode).
+		This form receive a previously generated sql buffer to be exported the the helper */
+		void setExportToDBMSParams(const QString &sql_buffer, Connection *conn, const QString &db_name, bool ignore_dup=false);
 
-    /*! \brief Configures the SQL export params before start the export thread (when in thread mode).
-        This form receive the model, output filename and pgsql version to be used */
-    void setExportToSQLParams(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver);
+		/*! \brief Configures the SQL export params before start the export thread (when in thread mode).
+		This form receive the model, output filename and pgsql version to be used */
+		void setExportToSQLParams(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver);
 
-    /*! \brief Configures the PNG export params before start the export thread (when in thread mode).
-        This form receive the objects scene, a viewport, the output filename, zoom factor, grid options and page by page export options */
-    void setExportToPNGParams(ObjectsScene *scene, QGraphicsView *viewp, const QString &filename, double zoom,
-                              bool show_grid, bool show_delim, bool page_by_page);
+		/*! \brief Configures the PNG export params before start the export thread (when in thread mode).
+		This form receive the objects scene, a viewport, the output filename, zoom factor, grid options and page by page export options */
+		void setExportToPNGParams(ObjectsScene *scene, QGraphicsView *viewp, const QString &filename, double zoom,
+															bool show_grid, bool show_delim, bool page_by_page);
 
-  signals:
+		/*! \brief Configures the SVG export params before start the export thread (when in thread mode).
+		This form receive the objects scene, the output filename, grid options. */
+		void setExportToSVGParams(ObjectsScene *scene, const QString &filename, bool show_grid, bool show_delim);
+
+	signals:
 		//! \brief This singal is emitted whenever the export progress changes
-    void s_progressUpdated(int progress, QString msg, ObjectType obj_type=BASE_OBJECT, QString cmd=QString(), bool is_code_gen=false);
+		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=BASE_OBJECT, QString cmd=QString(), bool is_code_gen=false);
 
 		//! \brief This signal is emited when the export has finished
 		void s_exportFinished(void);
@@ -184,22 +194,23 @@ class ModelExportHelper: public QObject {
 		//! \brief This signal is emited when the export has encountered a critical error (only in thread mode)
 		void s_exportAborted(Exception e);
 
-    //! \brief This signal is emited when the export has encountered a ignorable error (only in thread mode)
-    void s_errorIgnored(QString err_code, QString err_msg, QString cmd);
+		//! \brief This signal is emited when the export has encountered a ignorable error (only in thread mode)
+		void s_errorIgnored(QString err_code, QString err_msg, QString cmd);
 
-  public slots:
+	public slots:
 		void exportToDBMS(void);
-    void exportToPNG(void);
-    void exportToSQL(void);
+		void exportToPNG(void);
+		void exportToSVG(void);
+		void exportToSQL(void);
 		void cancelExport(void);
 
 	private slots:
 		//! \brief Updates the exporting progress with the internal progress of sql generation of objects
 		void updateProgress(int progress, QString object_id, unsigned obj_type);
 
-	friend class ModelValidationHelper;
-	friend class ModelExportForm;
-  friend class ModelDatabaseDiffForm;
+		friend class ModelValidationHelper;
+		friend class ModelExportForm;
+		friend class ModelDatabaseDiffForm;
 };
 
 #endif

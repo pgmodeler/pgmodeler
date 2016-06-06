@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,16 +21,7 @@
 BaseForm::BaseForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
-
-	/* Windows System workaround: permitting the windows subject to maximize shows
-	the maximize button as well the editing dialogs stay on top of all other dialogs */
-	#ifdef Q_OS_WIN
-		this->setWindowFlags(this->windowFlags() |
-												 Qt::Dialog |
-												 Qt::WindowMaximizeButtonHint);
-
-		this->generalwidget_wgt->setFrameShape(QFrame::WinPanel);
-  #endif
+	this->setWindowFlags(this->windowFlags() ^ Qt::WindowContextHelpButtonHint);
 }
 
 void BaseForm::setButtonConfiguration(unsigned button_conf)
@@ -47,3 +38,92 @@ void BaseForm::setButtonConfiguration(unsigned button_conf)
 	}
 }
 
+void BaseForm::resizeForm(QWidget *widget)
+{
+	QVBoxLayout *vbox=new QVBoxLayout;
+	QScreen *screen=qApp->screens().at(0);
+	QSize min_size=widget->minimumSize();
+	int max_h = screen->size().height() * 0.70,
+			max_w = screen->size().width() * 0.70,
+			curr_w =0, curr_h = 0;
+
+	vbox->setContentsMargins(2,2,2,2);
+
+	/* If the widget's minimum size is zero then we need to do
+			a size adjustment on the widget prior to insert it into the dialog */
+	if(min_size.height() <= 0 || min_size.width() <= 0)
+	{
+		widget->adjustSize();
+		min_size=widget->size();
+	}
+
+	//Insert the widget into a scroll area if it's minimum size exceeds the 70% of screen's dimensions
+	if(max_w < min_size.width() || max_h < min_size.height())
+	{
+		QScrollArea *scrollarea=nullptr;
+		scrollarea=new QScrollArea(main_frm);
+		scrollarea->setFrameShape(QFrame::NoFrame);
+		scrollarea->setFrameShadow(QFrame::Plain);
+		scrollarea->setWidget(widget);
+		scrollarea->setWidgetResizable(true);
+		widget->setParent(scrollarea);
+		vbox->addWidget(scrollarea);
+	}
+	else
+	{
+		vbox->addWidget(widget);
+		widget->setParent(main_frm);
+	}
+
+	main_frm->setLayout(vbox);
+	this->adjustSize();
+
+	curr_h=this->height(),
+	curr_w=min_size.width();
+
+	// If the current height is greater than the widget's minimum height we will use a medium value
+	if(curr_h > min_size.height() && min_size.height() < max_h)
+		curr_h = (curr_h + min_size.height())/2;
+	//Using the maximum height if the widget's minimum height exceeds the maximum allowed
+	else if(min_size.height() >= max_h)
+		curr_h = max_h;
+
+	curr_w += (vbox->contentsMargins().left() +
+						 vbox->contentsMargins().right()) * 6;
+
+	curr_h += baselogo_lbl->minimumHeight() +
+							((buttons_lt->contentsMargins().top() +
+								buttons_lt->contentsMargins().bottom()) * 6);
+
+	this->setMinimumSize(curr_w, curr_h);
+	this->resize(curr_w, curr_h);
+}
+
+void BaseForm::setMainWidget(BaseObjectWidget *widget)
+{
+	if(!widget)	return;
+
+	if(widget->getHandledObjectType()!=BASE_OBJECT && widget->windowTitle().isEmpty())
+		setWindowTitle(trUtf8("%1 properties").arg(BaseObject::getTypeName(widget->getHandledObjectType())));
+	else
+		setWindowTitle(widget->windowTitle());
+
+	resizeForm(widget);
+	setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
+
+	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(reject()));
+	connect(apply_ok_btn, SIGNAL(clicked(bool)), widget, SLOT(applyConfiguration()));
+	connect(widget, SIGNAL(s_closeRequested()), this, SLOT(accept()));
+}
+
+void BaseForm::setMainWidget(QWidget *widget)
+{
+	if(!widget)	return;
+
+	setWindowTitle(widget->windowTitle());
+	resizeForm(widget);
+	setButtonConfiguration(Messagebox::OK_BUTTON);
+
+	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(reject()));
+	connect(apply_ok_btn, SIGNAL(clicked(bool)), this, SLOT(accept()));
+}

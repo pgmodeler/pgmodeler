@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ enum ObjectType {
 	OBJ_PERMISSION,
 	OBJ_PARAMETER,
 	OBJ_TYPE_ATTRIBUTE,
-  OBJ_TAG,
+	OBJ_TAG,
 	BASE_RELATIONSHIP,
 	BASE_OBJECT,
 	BASE_TABLE
@@ -74,16 +74,16 @@ enum ObjectType {
 
 class BaseObject {
 	private:
-		//! brief Current PostgreSQL version used in SQL code generation
+		//! \brief Current PostgreSQL version used in SQL code generation
 		static QString pgsql_ver;
 
-    //! brief Indicates the the cached code enabled
+		//! \brief Indicates the the cached code enabled
 		static bool use_cached_code;
 
 		//! \brief Stores the database wich the object belongs
 		BaseObject *database;
 
-  protected:
+	protected:
 		SchemaParser schparser;
 
 		/*! \brief This static attribute is used to generate the unique identifier for objects.
@@ -118,16 +118,16 @@ class BaseObject {
 		the role only as a reference since it already exists on the destination server. */
 		sql_disabled,
 
-		/*! brief Indicates if the cached code is invalidated. Some key attributes of this class and other base classes
+		/*! \brief Indicates if the cached code is invalidated. Some key attributes of this class and other base classes
 				automatically change the value of this attribute when the respective set[Attribute]() is called. For all the
 				rest the method setCodeInvalidated() should be explicitly called if you need to invalidate the code and
 				generate it again */
 		code_invalidated;
 
-		//! brief Stores the cached xml and sql code
+		//! \brief Stores the cached xml and sql code
 		QString cached_code[2],
-		//! brief Stores the xml code in reduced form
-						cached_reduced_code;
+		//! \brief Stores the xml code in reduced form
+		cached_reduced_code;
 
 		/*! \brief This map stores the name of each object type associated to a schema file
 		 that generates the object's code definition */
@@ -159,14 +159,14 @@ class BaseObject {
 
 		//! \brief Comments related to object
 		QString comment,
-						//! \brief Object's name (in PostgreSQL accepted format)
-						obj_name,
+		//! \brief Object's name (in PostgreSQL accepted format)
+		obj_name,
 
-            //! brief The set of SQL commands appended on the objectc's definition
-            appended_sql,
+		//! \brief The set of SQL commands appended on the objectc's definition
+		appended_sql,
 
-            //! brief The set of SQL commands prepended on the objectc's definition
-            prepended_sql;
+		//! \brief The set of SQL commands prepended on the objectc's definition
+		prepended_sql;
 
 
 		/*! \brief Stores the attributes and their values ​​shaped in strings to be used
@@ -193,33 +193,33 @@ class BaseObject {
 		cluster level objects (database, tablespace and roles). */
 		static void swapObjectsIds(BaseObject *obj1, BaseObject *obj2, bool enable_cl_obj_swap);
 
-    //! brief Changes the current object id to the most recent global id value.
-    static void updateObjectId(BaseObject *obj);
+		//! \brief Changes the current object id to the most recent global id value.
+		static void updateObjectId(BaseObject *obj);
 
-    //! \brief Clears all the attributes used by the SchemaParser
-    void clearAttributes(void);
+		//! \brief Clears all the attributes used by the SchemaParser
+		void clearAttributes(void);
 
-		/*! brief Returns the cached code for the specified code type. This method returns an empty
+		/*! \brief Returns the cached code for the specified code type. This method returns an empty
 		 string in case of no code is cached */
 		QString getCachedCode(unsigned def_type, bool reduced_form);
 
-    /*! brief Configures the DIF_SQL attribute depending on the type of the object. This attribute is used to know how
-        ALTER, COMMENT and DROP commands must be generated. Refer to schema files for comments, drop and alter. */
-    void setBasicAttributes(bool format_name);
+		/*! \brief Configures the DIF_SQL attribute depending on the type of the object. This attribute is used to know how
+		ALTER, COMMENT and DROP commands must be generated. Refer to schema files for comments, drop and alter. */
+		void setBasicAttributes(bool format_name);
 
-    /*! brief Compares two xml buffers and returns if they differs from each other. The user can specify which attributes
-    and tags must be ignored when makin the comparison. NOTE: only the name for attributes and tags must be informed */
-    bool isCodeDiffersFrom(const QString &xml_def1, const QString &xml_def2, const vector<QString> &ignored_attribs, const vector<QString> &ignored_tags);
+		/*! \brief Compares two xml buffers and returns if they differs from each other. The user can specify which attributes
+	and tags must be ignored when makin the comparison. NOTE: only the name for attributes and tags must be informed */
+		bool isCodeDiffersFrom(const QString &xml_def1, const QString &xml_def2, const vector<QString> &ignored_attribs, const vector<QString> &ignored_tags);
 
-    /*! brief Copies the non-empty attributes on the map at parameter to the own object attributes map. This method is used
-        as an auxiliary when generating alter definition for some objects. When one or more attributes are copied an especial
-        attribute is inserted (HAS_CHANGES) in order to help the atler generatin process to identify which attributes are
-        products of comparison */
-    void copyAttributes(attribs_map &attribs);
+		/*! \brief Copies the non-empty attributes on the map at parameter to the own object attributes map. This method is used
+		as an auxiliary when generating alter definition for some objects. When one or more attributes are copied an especial
+		attribute is inserted (HAS_CHANGES) in order to help the atler generatin process to identify which attributes are
+		products of comparison */
+		void copyAttributes(attribs_map &attribs);
 
-    static QString getAlterDefinition(QString sch_name, attribs_map &attribs, bool ignore_ukn_attribs=false, bool ignore_empty_attribs=false);
+		static QString getAlterDefinition(QString sch_name, attribs_map &attribs, bool ignore_ukn_attribs=false, bool ignore_empty_attribs=false);
 
-  public:
+	public:
 		//! \brief Maximum number of characters that an object name on PostgreSQL can have
 		static const int OBJECT_NAME_MAX_LENGTH=63;
 
@@ -246,15 +246,15 @@ class BaseObject {
 		 In this case, the formatting function just ignores some validations if the parameter is checked */
 		static QString formatName(const QString &name, bool is_operator=false);
 
-    //! \brief Returns the object's type translated name related to the passed object type
+		//! \brief Returns the object's type translated name related to the passed object type
 		static QString getTypeName(ObjectType obj_type);
 
-    /*! \brief Returns the object's type translated name related to the passed object type id (in string format).
-        The string parameter is the value returned by getSchemaName() */
-    static QString getTypeName(const QString &type_str);
+		/*! \brief Returns the object's type translated name related to the passed object type id (in string format).
+		The string parameter is the value returned by getSchemaName() */
+		static QString getTypeName(const QString &type_str);
 
-    //! \brief Returns the object's type related to the passed type name
-    static ObjectType getObjectType(const QString &type_name);
+		//! \brief Returns the object's type related to the passed type name
+		static ObjectType getObjectType(const QString &type_name);
 
 		/*! \brief Returns the schema identifier used to generate the code definition related to the
 		 passed object type */
@@ -272,7 +272,7 @@ class BaseObject {
 		//! \brief Defines the objects name. If the passed name isn't valid it'll raise an error
 		virtual void setName(const QString &name);
 
-			//! \brief Toggles the object's modify protection
+		//! \brief Toggles the object's modify protection
 		virtual void setProtected(bool value);
 
 		/*! \brief Defines the schema that the object belongs. An error is raised if the
@@ -292,13 +292,13 @@ class BaseObject {
 		virtual void setCollation(BaseObject *collation);
 
 		//! \brief Disables the SQL code commenting it on generation
-    virtual void setSQLDisabled(bool value);
+		virtual void setSQLDisabled(bool value);
 
 		//! \brief Assign to the object a set of SQL commands to be appended to it's definition
 		void setAppendedSQL(const QString &sql);
 
-    //! \brief Assign to the object a set of SQL commands to be prepended to it's definition
-    void setPrependedSQL(const QString &sql);
+		//! \brief Assign to the object a set of SQL commands to be prepended to it's definition
+		void setPrependedSQL(const QString &sql);
 
 		//! \brief Returns if the generated SQL is commented
 		bool isSQLDisabled(void);
@@ -312,10 +312,10 @@ class BaseObject {
 		/*! \brief Returns the object's name. The parameter 'format' is used to get
 		 the name properly formated (using quotes when there is uppercase char or extended utf-8),
 		 the parameter 'prepend_schema' includes the schema name on the objects name (defult) */
-    virtual QString getName(bool format=false, bool prepend_schema=true);
+		virtual QString getName(bool format=false, bool prepend_schema=true);
 
-    //! brief Returns the name of the object with schema name (when available) prepended by default
-    virtual QString getSignature(bool format=true);
+		//! \brief Returns the name of the object with schema name (when available) prepended by default
+		virtual QString getSignature(bool format=true);
 
 		//! \brief Retorns the object's comment
 		QString getComment(void);
@@ -344,9 +344,9 @@ class BaseObject {
 		//! \brief Returns the collation that the object makes use
 		BaseObject *getCollation(void);
 
-    QString getAppendedSQL(void);
+		QString getAppendedSQL(void);
 
-    QString getPrependedSQL(void);
+		QString getPrependedSQL(void);
 
 		//! \brief Returns the object's generated id
 		unsigned getObjectId(void);
@@ -355,7 +355,7 @@ class BaseObject {
 		bool isProtected(void);
 
 		//! \brief Assigns an object to other copiyng all the attributes correctly
-    virtual void operator = (BaseObject &obj);
+		virtual void operator = (BaseObject &obj);
 
 		/*! \brief Forcing the class to be virtual. This means that derivated classes may
 		 override this method in order to be possible its instatiation. */
@@ -364,20 +364,20 @@ class BaseObject {
 		/*! \brief Returns the object's SQL or XML code definition. The attribute 'reduced_form'
 		 indicates that the code generation will be an XML minimum representation
 		 of the object. See schema file for: functions, schemas, domains, types. */
-    virtual QString getCodeDefinition(unsigned def_type, bool reduced_form);
+		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form);
 
-    /*! \brief Returns the SQL definition in form of ALTER commands containing the differences between the this and 'object'.
-        This form do the camparison considering the difference on the objects' names (ignore_name_diff=false). This method
-        is used in cases when the objects' name differences are important and can't be discarded */
-    virtual QString getAlterDefinition(BaseObject *object);
+		/*! \brief Returns the SQL definition in form of ALTER commands containing the differences between the this and 'object'.
+		This form do the camparison considering the difference on the objects' names (ignore_name_diff=false). This method
+		is used in cases when the objects' name differences are important and can't be discarded */
+		virtual QString getAlterDefinition(BaseObject *object);
 
-    /*! \brief Returns the SQL definition in form of ALTER commands containing the differences between the this and 'object'.
-        The paramenter ignore_name_diff when true will cause the method to not generate a ALTER ... RENAME TO when the name of
-        objects differs. */
-    virtual QString getAlterDefinition(BaseObject *object, bool ignore_name_diff);
+		/*! \brief Returns the SQL definition in form of ALTER commands containing the differences between the this and 'object'.
+		The paramenter ignore_name_diff when true will cause the method to not generate a ALTER ... RENAME TO when the name of
+		objects differs. */
+		virtual QString getAlterDefinition(BaseObject *object, bool ignore_name_diff);
 
-    //!brief Returns the DROP statement for the object
-    virtual QString getDropDefinition(bool cascade);
+		//!brief Returns the DROP statement for the object
+		virtual QString getDropDefinition(bool cascade);
 
 		//! \brief Returns if the specified type accepts to have a schema assigned
 		static bool acceptsSchema(ObjectType obj_type);
@@ -394,13 +394,13 @@ class BaseObject {
 		//! \brief Returns if the specified type accepts to have appended sql commands
 		static bool acceptsCustomSQL(ObjectType obj_type);
 
-    /*! \brief Returns if the specified type accepts the use of ALTER commands in order to change their attributes
-        This is different from PostgreSQL implementation. In pgModeler, an object accepts ALTER when an attribute
-        other than name, schema or owner can be changed. */
-    static bool acceptsAlterCommand(ObjectType obj_type);
+		/*! \brief Returns if the specified type accepts the use of ALTER commands in order to change their attributes
+		This is different from PostgreSQL implementation. In pgModeler, an object accepts ALTER when an attribute
+		other than name, schema or owner can be changed. */
+		static bool acceptsAlterCommand(ObjectType obj_type);
 
-    //! \brief Returns if the specified type accepts the use of DROP commands
-    static bool acceptsDropCommand(ObjectType obj_type);
+		//! \brief Returns if the specified type accepts the use of DROP commands
+		static bool acceptsDropCommand(ObjectType obj_type);
 
 		//! \brief Returns if the object accepts to have a schema assigned
 		bool acceptsSchema(void);
@@ -417,55 +417,55 @@ class BaseObject {
 		//! \brief Returns if the object accepts to have appended sql commands
 		bool acceptsCustomSQL(void);
 
-    //! \brief Returns if the object accepts the use of ALTER commands to have its attributes changed
-    bool acceptsAlterCommand(void);
+		//! \brief Returns if the object accepts the use of ALTER commands to have its attributes changed
+		bool acceptsAlterCommand(void);
 
-    //! \brief Returns if the object accepts the use of DROP commands
-    bool acceptsDropCommand(void);
+		//! \brief Returns if the object accepts the use of DROP commands
+		bool acceptsDropCommand(void);
 
-		/*! brief Marks the current cached code as invalid and forces its regenaration.
+		/*! \brief Marks the current cached code as invalid and forces its regenaration.
 				Some key attributes / setters in the base classes BaseObject, BaseTable and BaseRelationship
 				will automatically invalidate the code but for all other setters / attributes the user must call
 				this method explicitly in order to force the regeneration of the code.
 				This method has no effect when the cached code support is disables. See enableCachedCode() */
 		virtual void setCodeInvalidated(bool value);
 
-		//! brief Returns if the code (sql and xml) is invalidated
+		//! \brief Returns if the code (sql and xml) is invalidated
 		bool isCodeInvalidated(void);
 
-		/*! brief Compares the xml code between the "this" object and another one. The user can specify which attributes
+		/*! \brief Compares the xml code between the "this" object and another one. The user can specify which attributes
 		and tags must be ignored when makin the comparison. NOTE: only the name for attributes and tags must be informed */
 		virtual bool isCodeDiffersFrom(BaseObject *object, const vector<QString> &ignored_attribs={}, const vector<QString> &ignored_tags={});
 
-		/*! brief Enable/disable the use of cached sql/xml code. When enabled the code generation speed is hugely increased
+		/*! \brief Enable/disable the use of cached sql/xml code. When enabled the code generation speed is hugely increased
 				but the downward is an increasing on memory usage. Make sure to every time when an attribute of any instance derivated
 				of this class changes you need to call setCodeInvalidated() in order to force the update of the code cache */
 		static void enableCachedCode(bool value);
 
-    /*! \brief Returns the valid object types in a vector. The types
+		/*! \brief Returns the valid object types in a vector. The types
 		BASE_OBJECT, TYPE_ATTRIBUTE and BASE_TABLE aren't included in return vector.
 		By default table objects (columns, trigger, constraints, etc) are included. To
 		avoid the insertion of these types set the boolean param to false. */
 		static vector<ObjectType> getObjectTypes(bool inc_table_objs=true, vector<ObjectType> exclude_types={});
 
-    /*! \brief Returns the valid object types that are child or grouped under the specified type.
-    This method works a litte different from getObjectTypes() since this latter returns all valid types
-    and this one returns only the valid types for the current specified type. For now the only accepted
-    types are OBJ_DATABASE, OBJ_SCHEMA and OBJ_TABLE */
-    static vector<ObjectType> getChildObjectTypes(ObjectType obj_type);
+		/*! \brief Returns the valid object types that are child or grouped under the specified type.
+	This method works a litte different from getObjectTypes() since this latter returns all valid types
+	and this one returns only the valid types for the current specified type. For now the only accepted
+	types are OBJ_DATABASE, OBJ_SCHEMA and OBJ_TABLE */
+		static vector<ObjectType> getChildObjectTypes(ObjectType obj_type);
 
-		/*! brief Sets the default version when generating the SQL code. This affects all instances of classes that
+		/*! \brief Sets the default version when generating the SQL code. This affects all instances of classes that
 				is based upon this one */
 		static void setPgSQLVersion(const QString &ver);
 
-		//! brief Returns the current version for SQL code generation
+		//! \brief Returns the current version for SQL code generation
 		static QString getPgSQLVersion(void);
 
 		friend class DatabaseModel;
 		friend class ModelValidationHelper;
 		friend class DatabaseImportHelper;
 		friend class SwapObjectsIdsWidget;
-    friend class ModelWidget;
+		friend class ModelWidget;
 };
 
 #endif

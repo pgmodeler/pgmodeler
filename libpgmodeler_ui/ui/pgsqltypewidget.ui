@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>430</width>
-    <height>187</height>
+    <width>442</width>
+    <height>358</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,7 +18,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>430</width>
+    <width>0</width>
     <height>0</height>
    </size>
   </property>
@@ -618,10 +618,16 @@
       </item>
       <item row="4" column="1" colspan="8">
        <widget class="QPlainTextEdit" name="format_txt">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>25</height>
+          <height>16777215</height>
          </size>
         </property>
         <property name="frameShadow">

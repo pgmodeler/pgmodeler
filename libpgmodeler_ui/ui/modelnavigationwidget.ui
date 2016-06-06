@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>288</width>
-    <height>27</height>
+    <width>300</width>
+    <height>34</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -67,12 +67,12 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>20</width>
-       <height>20</height>
+       <width>22</width>
+       <height>22</height>
       </size>
      </property>
      <property name="shortcut">
-      <string>Ctrl+Up</string>
+      <string>Ctrl+Left</string>
      </property>
      <property name="autoRaise">
       <bool>true</bool>
@@ -108,12 +108,12 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>20</width>
-       <height>20</height>
+       <width>22</width>
+       <height>22</height>
       </size>
      </property>
      <property name="shortcut">
-      <string>Ctrl+Down</string>
+      <string>Ctrl+Right</string>
      </property>
      <property name="autoRaise">
       <bool>true</bool>
@@ -140,14 +140,14 @@
     <widget class="QToolButton" name="close_tb">
      <property name="minimumSize">
       <size>
-       <width>20</width>
-       <height>20</height>
+       <width>0</width>
+       <height>0</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>20</width>
-       <height>20</height>
+       <width>16777215</width>
+       <height>16777215</height>
       </size>
      </property>
      <property name="toolTip">
@@ -162,9 +162,12 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>20</width>
-       <height>20</height>
+       <width>22</width>
+       <height>22</height>
       </size>
+     </property>
+     <property name="shortcut">
+      <string>Alt+C</string>
      </property>
      <property name="autoRaise">
       <bool>true</bool>

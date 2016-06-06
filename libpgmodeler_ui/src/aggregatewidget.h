@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,34 +34,34 @@
 class AggregateWidget: public BaseObjectWidget, public Ui::AggregateWidget {
 	private:
 		Q_OBJECT
-
+		
 		//! \brief Function input data type widget
 		PgSQLTypeWidget *input_type,
-
-										//! \brief Function state type widget
-										*state_type;
-
+		
+		//! \brief Function state type widget
+		*state_type;
+		
 		/*! \brief Table that stores the multiple input data types. The elements
 		in this table are converted to class PgSQLType and assigned as input types
 		to the aggregat */
 		ObjectTableWidget *input_types_tab;
-
+		
 		//! \brief Syntax highlighter used by the initial condition field
 		SyntaxHighlighter *initial_cond_hl;
-
+		
 		//! \brief Aggregate functions selectors
 		ObjectSelectorWidget *sort_op_sel,
-												*final_func_sel,
-												*transition_func_sel;
-
+		*final_func_sel,
+		*transition_func_sel;
+		
 	public:
 		AggregateWidget(QWidget * parent = 0);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Aggregate *aggregate);
-
+		
 	private slots:
 		void hideEvent(QHideEvent *event);
 		void handleDataType(int linha);
-
+		
 	public slots:
 		void applyConfiguration(void);
 };

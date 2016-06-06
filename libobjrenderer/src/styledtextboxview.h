@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,18 +28,18 @@
 #include "textboxview.h"
 
 class StyledTextboxView: public TextboxView {
-  private:
-    Q_OBJECT
+	private:
+		Q_OBJECT
 
-    //! brief Fold indicator appended at bottom-right corner of the object
-    QGraphicsPolygonItem *fold;
+		//! \brief Fold indicator appended at bottom-right corner of the object
+		QGraphicsPolygonItem *fold;
 
-  public:
-    StyledTextboxView(Textbox *txtbox, bool override_style=false);
-    ~StyledTextboxView(void);
+	public:
+		StyledTextboxView(Textbox *txtbox, bool override_style=false);
+		~StyledTextboxView(void);
 
-  protected slots:
-    void configureObject(void);
+	protected slots:
+		void configureObject(void);
 };
 
 #endif

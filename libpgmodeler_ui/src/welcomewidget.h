@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,28 +16,24 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "readonlyitemdelegate.h"
-#include <QLineEdit>
+/**
+\ingroup libpgmodeler_ui
+\class WelcomeWidget
+*/
 
-ReadOnlyItemDelegate::ReadOnlyItemDelegate(QObject *parent) : QStyledItemDelegate(parent)
-{
+#ifndef WELCOME_WIDGET_H
+#define WELCOME_WIDGET_H
 
-}
+#include "ui_welcomewidget.h"
 
-ReadOnlyItemDelegate::~ReadOnlyItemDelegate(void)
-{
+class WelcomeWidget: public QWidget, public Ui::WelcomeWidget {
+	private:
+		Q_OBJECT
+		
+	public:
+		WelcomeWidget(QWidget * parent = 0);
+		
+	public slots:
+};
 
-}
-
-void ReadOnlyItemDelegate::setEditorData(QWidget * editor, const QModelIndex & index) const
-{
-  QLineEdit *line_edt=qobject_cast<QLineEdit *>(editor);
-
-  if(line_edt)
-  {
-    line_edt->setReadOnly(true);
-    line_edt->setText(index.data(Qt::DisplayRole).toString());
-  }
-  else
-    QStyledItemDelegate::setEditorData(editor, index);
-}
+#endif

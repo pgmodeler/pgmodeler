@@ -21,7 +21,7 @@
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://pgmodeler.com.br&quot;&gt;&lt;span style=&quot; font-size:11pt; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;http://pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://pgmodeler.com.br&quot;&gt;&lt;span style=&quot; font-size:11pt; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;http://pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://pgmodeler.com.br&quot;&gt;&lt;span style=&quot; font-size:11pt; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;http://pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>pgModeler is proudly a brazilian software!</source>
@@ -29,7 +29,7 @@
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copyright 2006-2015 - Raphael Araújo e Silva &amp;lt;&lt;a href=&quot;mailto:raphael@pgmodeler.com.br&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;raphael@pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copyright 2006-2015 - Raphael Araújo e Silva &amp;lt;&lt;a href=&quot;mailto:raphael@pgmodeler.com.br&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;raphael@pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copyright 2006-2015 - Raphael Araújo e Silva &amp;lt;&lt;a href=&quot;mailto:raphael@pgmodeler.com.br&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;raphael@pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Contributors</source>
@@ -175,12 +175,44 @@
         <source>Custom packaging first ideas. Tester of first version of custom packaging patch.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>&lt;a href=&quot;http://pgmodeler.com.br&quot;&gt;http://pgmodeler.com.br&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copyright 2006-2016 - Raphael Araújo e Silva &amp;lt;&lt;a href=&quot;mailto:raphael@pgmodeler.com.br&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;raphael@pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copyright 2006-2015 - Raphael Araújo e Silva &amp;lt;&lt;a href=&quot;mailto:raphael@pgmodeler.com.br&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;raphael@pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt; {2006-2016 ?} {0057a?}</translation>
+    </message>
+    <message>
+        <source>7</source>
+        <translation type="unfinished">7</translation>
+    </message>
+    <message>
+        <source>8</source>
+        <translation type="unfinished">8</translation>
+    </message>
+    <message>
+        <source>Jonathan DUPRE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gilberto Castillo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cuba</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Spanish UI translation.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AggregateWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Final Function:</source>
@@ -445,6 +477,10 @@
         <source>Underline</source>
         <translation>Souligné</translation>
     </message>
+    <message>
+        <source>Placeholder: Body</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Application</name>
@@ -474,6 +510,10 @@
     <message>
         <source>&amp;Ok</source>
         <translation>&amp;Ok</translation>
+    </message>
+    <message>
+        <source>%1 properties</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -627,7 +667,7 @@
     <name>BaseObjectWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Name:</source>
@@ -694,7 +734,7 @@ Ceci désactivera le SQL pour les objets enfants dont cet objet est le parent.</
     </message>
     <message>
         <source>Create / Edit: </source>
-        <translation>Créer / Éditer: </translation>
+        <translation type="vanished">Créer / Éditer: </translation>
     </message>
     <message>
         <source>Required field. Leaving this empty will raise errors!</source>
@@ -710,7 +750,11 @@ Ceci désactivera le SQL pour les objets enfants dont cet objet est le parent.</
     </message>
     <message>
         <source>The &lt;em style=&apos;color: %1&apos;&gt;&lt;strong&gt;highlighted&lt;/strong&gt;&lt;/em&gt; fields on the form are available only on specific PostgreSQL versions. 													When generating SQL code for versions other than those specified on fields&apos; tooltips pgModeler will ignore their values.</source>
-        <translation>Les champs en &lt;em style=&apos;color: %1&apos;&gt;&lt;strong&gt;surbrillance&lt;/strong&gt;&lt;/em&gt; dans le formulaire sont disponibles pour certaines versions de PostgreSQL uniquement. 													Ils seront ignorés s&apos;il est demandé un export SQL pour une version de PostgreSQL non spécifiée dans l&apos;infobulle du champ.</translation>
+        <translation type="vanished">Les champs en &lt;em style=&apos;color: %1&apos;&gt;&lt;strong&gt;surbrillance&lt;/strong&gt;&lt;/em&gt; dans le formulaire sont disponibles pour certaines versions de PostgreSQL uniquement. 													Ils seront ignorés s&apos;il est demandé un export SQL pour une version de PostgreSQL non spécifiée dans l&apos;infobulle du champ.</translation>
+    </message>
+    <message>
+        <source>The &lt;em style=&apos;color: %1&apos;&gt;&lt;strong&gt;highlighted&lt;/strong&gt;&lt;/em&gt; fields in the form or one of their values are available only on specific PostgreSQL versions. 							Generating SQL code for versions other than those specified in the fields&apos; tooltips may create incompatible code.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -772,7 +816,7 @@ Ceci désactivera le SQL pour les objets enfants dont cet objet est le parent.</
     </message>
     <message>
         <source>In none occasion the models sent within the report will be published. They are kept safe and are used only for debug purpose. </source>
-        <translation>Les modèles de base de données joints avec les rapports d&apos;erreur NE SONT EN AUCUN CAS publiés. Ils ne sont utilisés qu&apos;à des fins de debogage.</translation>
+        <translation type="vanished">Les modèles de base de données joints avec les rapports d&apos;erreur NE SONT EN AUCUN CAS publiés. Ils ne sont utilisés qu&apos;à des fins de debogage.</translation>
     </message>
     <message>
         <source>Attach the below database model file to be debugged.</source>
@@ -803,7 +847,7 @@ Ceci désactivera le SQL pour les objets enfants dont cet objet est le parent.</
     <name>CastWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Conversion Func.:</source>
@@ -815,11 +859,11 @@ Ceci désactivera le SQL pour les objets enfants dont cet objet est le parent.</
     </message>
     <message>
         <source>Explicit</source>
-        <translation>Explicite</translation>
+        <translation type="vanished">Explicite</translation>
     </message>
     <message>
         <source>Implicit</source>
-        <translation>Implicite</translation>
+        <translation type="vanished">Implicite</translation>
     </message>
     <message>
         <source>Assignment</source>
@@ -841,13 +885,21 @@ Ceci désactivera le SQL pour les objets enfants dont cet objet est le parent.</
         <source>The function to be assigned to a cast from &lt;em&gt;&lt;strong&gt;typeA&lt;/strong&gt;&lt;/em&gt; to &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt;&lt;/em&gt; must have the following signature: &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt; function(&lt;strong&gt;typeA&lt;/strong&gt;, integer, boolean)&lt;/em&gt;.</source>
         <translation>La fonction à affecter à une convertion de &lt;em&gt;&lt;strong&gt;typeA&lt;/strong&gt;&lt;/em&gt; vers &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt;&lt;/em&gt; doit avoir la signature suivante: &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt; fonction(&lt;strong&gt;typeA&lt;/strong&gt;, integer, boolean)&lt;/em&gt;.</translation>
     </message>
+    <message>
+        <source>I&amp;mplicit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>E&amp;xplicit</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Catalog</name>
     <message numerus="yes">
         <source>Object type: %1</source>
         <translatorcomment>?</translatorcomment>
-        <translation>
+        <translation type="vanished">
             <numerusform>Type d&apos;objet: %1</numerusform>
             <numerusform>Types d&apos;objets: %1</numerusform>
         </translation>
@@ -857,27 +909,27 @@ Ceci désactivera le SQL pour les objets enfants dont cet objet est le parent.</
     <name>CentralWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>New model</source>
-        <translation>Nouveau modèle</translation>
+        <translation type="vanished">Nouveau modèle</translation>
     </message>
     <message>
         <source>Open model</source>
-        <translation>Ouvrir modèle</translation>
+        <translation type="vanished">Ouvrir modèle</translation>
     </message>
     <message>
         <source>Sample models</source>
-        <translation>Modèles de démo</translation>
+        <translation type="vanished">Modèles de démo</translation>
     </message>
     <message>
         <source>Recent models</source>
-        <translation>Modèles récents</translation>
+        <translation type="vanished">Modèles récents</translation>
     </message>
     <message>
         <source>Last session</source>
-        <translation>Dernière session</translation>
+        <translation type="vanished">Dernière session</translation>
     </message>
 </context>
 <context>
@@ -903,7 +955,7 @@ Ceci désactivera le SQL pour les objets enfants dont cet objet est le parent.</
     <name>CollationWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Locale:</source>
@@ -953,7 +1005,7 @@ Ceci désactivera le SQL pour les objets enfants dont cet objet est le parent.</
     <name>ColumnWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Default Value:</source>
@@ -961,15 +1013,27 @@ Ceci désactivera le SQL pour les objets enfants dont cet objet est le parent.</
     </message>
     <message>
         <source>Expression:</source>
-        <translation>Expression:</translation>
+        <translation type="vanished">Expression:</translation>
     </message>
     <message>
         <source>NOT NULL</source>
-        <translation>Non-Null</translation>
+        <translation type="vanished">Non-Null</translation>
     </message>
     <message>
         <source>Sequence:</source>
-        <translation>Séquence:</translation>
+        <translation type="vanished">Séquence:</translation>
+    </message>
+    <message>
+        <source>E&amp;xpression:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;NOT NULL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Se&amp;quence:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1023,14 +1087,14 @@ Ceci désactivera le SQL pour les objets enfants dont cet objet est le parent.</
     <name>Connection</name>
     <message>
         <source>ERROR: trying to open an already stablished connection.</source>
-        <translation>ERREUR: impossible de démarrer une connection déjà établie.</translation>
+        <translation type="vanished">ERREUR: impossible de démarrer une connection déjà établie.</translation>
     </message>
 </context>
 <context>
     <name>ConnectionsConfigWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Connections:</source>
@@ -1150,7 +1214,7 @@ Ceci désactivera le SQL pour les objets enfants dont cet objet est le parent.</
     </message>
     <message>
         <source>Kerberus Server:</source>
-        <translation>Serveur Kerberos:</translation>
+        <translation type="vanished">Serveur Kerberos:</translation>
     </message>
     <message>
         <source>Force GSSAPI</source>
@@ -1158,7 +1222,7 @@ Ceci désactivera le SQL pour les objets enfants dont cet objet est le parent.</
     </message>
     <message>
         <source>Options:</source>
-        <translation>Options:</translation>
+        <translation type="vanished">Options:</translation>
     </message>
     <message>
         <source>Add</source>
@@ -1194,14 +1258,78 @@ Version: `%3&apos;</translation>
     </message>
     <message>
         <source>There is an unsaved connection! Want to save it?</source>
-        <translation>Le paramétrage de la connexion n&apos;a pas été sauvegardé! Voulez-vous enregistrer les changements?</translation>
+        <translation type="vanished">Le paramétrage de la connexion n&apos;a pas été sauvegardé! Voulez-vous enregistrer les changements?</translation>
+    </message>
+    <message>
+        <source>Edit database connections</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation type="unfinished">Général</translation>
+    </message>
+    <message>
+        <source>Other params:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specify additional connection parameters in the form [param]=[value]. These parameters are described in the &lt;strong&gt;libpq&lt;/strong&gt; chapter at PostgreSQL docs.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default for:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Diff</source>
+        <translation type="unfinished">Différencier</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation type="unfinished">Exporter</translation>
+    </message>
+    <message>
+        <source>Import</source>
+        <translation type="unfinished">Importer</translation>
+    </message>
+    <message>
+        <source>Validation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kerberos Server:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Indicates in which operations (diff, export, import or validation) the connection is used if none is explicitly specified by the user.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There is a connection being created or edited! Do you want to save it?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Found %1 connection(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No connections found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit connections</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ConstraintWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Constraint Type:</source>
@@ -1284,7 +1412,7 @@ Version: `%3&apos;</translation>
     <name>ConversionWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Source Encoding:</source>
@@ -1366,7 +1494,7 @@ Version: `%3&apos;</translation>
     <name>CustomSQLWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>SQL code</source>
@@ -1432,7 +1560,7 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
     </message>
     <message>
         <source>Append / Prepend SQL code</source>
-        <translation>Code SQL préfixé/suffixé</translation>
+        <translation type="vanished">Code SQL préfixé/suffixé</translation>
     </message>
     <message>
         <source>Type:</source>
@@ -1478,6 +1606,10 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
         <source>&amp;UPDATE</source>
         <translation>&amp;UPDATE</translation>
     </message>
+    <message>
+        <source>Add custom SQL code</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DataManipulationForm</name>
@@ -1491,23 +1623,23 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
     </message>
     <message>
         <source>Rows returned: </source>
-        <translation>Lignes retournées:</translation>
+        <translation type="vanished">Lignes retournées:</translation>
     </message>
     <message>
         <source>0</source>
-        <translation>0</translation>
+        <translation type="vanished">0</translation>
     </message>
     <message>
         <source>Maximum limit of listed rows</source>
-        <translation>Nombre maximum de lignes en retour de résulat</translation>
+        <translation type="vanished">Nombre maximum de lignes en retour de résulat</translation>
     </message>
     <message>
         <source>(Limit: 0)</source>
-        <translation>(Limit: 0)</translation>
+        <translation type="vanished">(Limit: 0)</translation>
     </message>
     <message>
         <source>Empty values are assumed as &lt;strong&gt;DEFAULT&lt;/strong&gt;. To use special values like &lt;strong&gt;NULL&lt;/strong&gt;, a function call like &lt;strong&gt;now()&lt;/strong&gt; or a specific data escaping, enclose values in &lt;strong&gt;&amp;lt;&amp;gt;&lt;/strong&gt;. To use &lt;strong&gt;&amp;lt;&lt;/strong&gt; or &lt;strong&gt;&amp;gt;&lt;/strong&gt; as part of the value prepend the backslash character, e.g., &lt;strong&gt;\&amp;lt;&lt;/strong&gt; or &lt;strong&gt;\&amp;gt;&lt;/strong&gt;.</source>
-        <translation>Les valeurs vides sont affichées en tant que &lt;strong&gt;DEFAULT&lt;/strong&gt;. Pour utiliser les valeurs spéciales telles que &lt;strong&gt;NULL&lt;/strong&gt;, un appel à une fonction comme &lt;strong&gt;now()&lt;/strong&gt; ou toute autre fonction d&apos;échappement spécifique, entourez ces valeurs/fonctions avec &lt;strong&gt;&amp;lt;&amp;gt;&lt;/strong&gt;. Pour utiliser &lt;strong&gt;&amp;lt;&lt;/strong&gt; ou &lt;strong&gt;&amp;gt;&lt;/strong&gt; en tant que caractères à part entière, protégez-les avec un antislash : &lt;strong&gt;\&amp;lt;&lt;/strong&gt; ou &lt;strong&gt;\&amp;gt;&lt;/strong&gt;.</translation>
+        <translation type="vanished">Les valeurs vides sont affichées en tant que &lt;strong&gt;DEFAULT&lt;/strong&gt;. Pour utiliser les valeurs spéciales telles que &lt;strong&gt;NULL&lt;/strong&gt;, un appel à une fonction comme &lt;strong&gt;now()&lt;/strong&gt; ou toute autre fonction d&apos;échappement spécifique, entourez ces valeurs/fonctions avec &lt;strong&gt;&amp;lt;&amp;gt;&lt;/strong&gt;. Pour utiliser &lt;strong&gt;&amp;lt;&lt;/strong&gt; ou &lt;strong&gt;&amp;gt;&lt;/strong&gt; en tant que caractères à part entière, protégez-les avec un antislash : &lt;strong&gt;\&amp;lt;&lt;/strong&gt; ou &lt;strong&gt;\&amp;gt;&lt;/strong&gt;.</translation>
     </message>
     <message>
         <source>Refresh listing</source>
@@ -1571,7 +1703,7 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
     </message>
     <message>
         <source>Add data</source>
-        <translation>Ajouter une ligne</translation>
+        <translation type="vanished">Ajouter une ligne</translation>
     </message>
     <message>
         <source>Add</source>
@@ -1631,15 +1763,15 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
     </message>
     <message>
         <source>000000</source>
-        <translation>000000</translation>
+        <translation type="vanished">000000</translation>
     </message>
     <message>
         <source>100</source>
-        <translation>100</translation>
+        <translation type="vanished">100</translation>
     </message>
     <message>
         <source>results</source>
-        <translation>lignes</translation>
+        <translation type="vanished">lignes</translation>
     </message>
     <message>
         <source>Add Item</source>
@@ -1727,6 +1859,42 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
         <source>delete</source>
         <translation>delete</translation>
     </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Empty values are assumed as &lt;span style=&quot; font-weight:600;&quot;&gt;DEFAULT&lt;/span&gt;. To use special values like &lt;span style=&quot; font-weight:600;&quot;&gt;NULL&lt;/span&gt;, a function call like &lt;span style=&quot; font-weight:600;&quot;&gt;now()&lt;/span&gt; or a specific data escaping, enclose values in &lt;span style=&quot; font-weight:600;&quot;&gt;{}&lt;/span&gt;. To use &lt;span style=&quot; font-weight:600;&quot;&gt;{&lt;/span&gt; or &lt;span style=&quot; font-weight:600;&quot;&gt;}&lt;/span&gt; as part of the value prepend the backslash character, e.g., &lt;span style=&quot; font-weight:600;&quot;&gt;\{&lt;/span&gt; or &lt;span style=&quot; font-weight:600;&quot;&gt;\}&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add empty rows</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Duplicate the selected rows</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+D</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>results (Use &lt;strong&gt;0&lt;/strong&gt; for no limit)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;strong&gt;WARNING: &lt;/strong&gt; There are some changed rows waiting the commit! Do you really want to discard them and retrieve the data now?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rows returned: &lt;strong&gt;%1&lt;/strong&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>none</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DatabaseExplorerWidget</name>
@@ -1740,7 +1908,7 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
     </message>
     <message>
         <source>Sys. objects</source>
-        <translation>Objets syst.</translation>
+        <translation type="vanished">Objets syst.</translation>
     </message>
     <message>
         <source>Toggles the display of extension objects</source>
@@ -1748,11 +1916,11 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
     </message>
     <message>
         <source>Ext. objects</source>
-        <translation>Objets ext.</translation>
+        <translation type="vanished">Objets ext.</translation>
     </message>
     <message>
         <source>Open the grid to visualize or edit data.</source>
-        <translation>Ouvre l&apos;éditeur de données.</translation>
+        <translation type="vanished">Ouvre l&apos;éditeur de données.</translation>
     </message>
     <message>
         <source>Data &amp;Grid</source>
@@ -1764,7 +1932,7 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
     </message>
     <message>
         <source>Open a new SQL execution pane.</source>
-        <translation>Ouvre un nouvel onglet d&apos;exécution SQL.</translation>
+        <translation type="vanished">Ouvre un nouvel onglet d&apos;exécution SQL.</translation>
     </message>
     <message>
         <source>...</source>
@@ -1772,11 +1940,11 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
     </message>
     <message>
         <source>Ctrl+F5</source>
-        <translation>Ctrl+F5</translation>
+        <translation type="vanished">Ctrl+F5</translation>
     </message>
     <message>
         <source>Update the objects tree.</source>
-        <translation>Actualiser l&apos;arbre des objets.</translation>
+        <translation type="vanished">Actualiser l&apos;arbre des objets.</translation>
     </message>
     <message>
         <source>Expands all items</source>
@@ -1804,7 +1972,7 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
     </message>
     <message>
         <source>Show raw attributes names</source>
-        <translation>Afficher le nom réel des attributs</translation>
+        <translation type="vanished">Afficher le nom réel des attributs</translation>
     </message>
     <message>
         <source>(not found, OID: %1)</source>
@@ -1980,7 +2148,7 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
     </message>
     <message>
         <source>Do you really want to &lt;strong&gt;cascade&lt;/strong&gt; drop the object &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt;? This action will drop all the other objects that depends on it?</source>
-        <translation>Voulez-vous vraiment supprimer EN CASCADE l&apos;objet &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt;? Cette action sera susceptible de supprimer en plus d&apos;autres objets qui en dépendent.</translation>
+        <translation type="vanished">Voulez-vous vraiment supprimer EN CASCADE l&apos;objet &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt;? Cette action sera susceptible de supprimer en plus d&apos;autres objets qui en dépendent.</translation>
     </message>
     <message>
         <source>Do you really want to truncate the table &lt;strong&gt;%1&lt;/strong&gt;?</source>
@@ -2470,6 +2638,88 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
         <source>Inherited</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>System</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extension</source>
+        <translation type="unfinished">Extension</translation>
+    </message>
+    <message>
+        <source>Open the grid to visualize or edit data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open a new SQL execution pane</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+F6</source>
+        <translation type="unfinished">Ctrl+F6</translation>
+    </message>
+    <message>
+        <source>Update the objects tree</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+S</source>
+        <translation type="unfinished">Ctrl+S</translation>
+    </message>
+    <message>
+        <source>Drop this database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Filters the currently loaded items in the tree by using a pattern and matching their names. If &lt;strong&gt;By OID&lt;/strong&gt; is checked the pattern is interpreted as an integer value that represents the object id (OID). &lt;br&gt;&lt;br/&gt;&lt;strong&gt;HINT:&lt;/strong&gt; if you need to search the entire database use the full refresh (&lt;strong&gt;Ctrl+F5&lt;/strong&gt;) prior the filtering.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show raw attributes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>-- Source code not generated! Hit F7 or middle-click the item to load it. --</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rename</source>
+        <translation type="unfinished">Renommer</translation>
+    </message>
+    <message>
+        <source>Source code</source>
+        <translation type="unfinished">Code source</translation>
+    </message>
+    <message>
+        <source>Quick refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Full refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do you really want to &lt;strong&gt;cascade&lt;/strong&gt; drop the object &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt;? This action will drop all the other objects that depends on it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Src. table: %1
+Src. column(s): %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ref. table: %1
+Ref. column(s): %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>-- Source code genaration for buil-in and base types currently unavailable --</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>-- Source code unavailable for the object %1 (%2). --</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DatabaseImportForm</name>
@@ -2531,7 +2781,7 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
     </message>
     <message>
         <source>Resolve some of the object&apos;s dependencies by query the catalog when a needed object does not exists on the loaded set. In some cases it&apos;s necessary to combine this option with others below. This option does not applies to database level objects like role, tablespace and language as well for data types and extensions.</source>
-        <translation>Résoudre certaines dépendances entre les objets en interrogeant le catalogue lorsqu&apos;un objet n&apos;existe pas dans la base à importer. Dans certains cas il vous sera nécessaire de combiner cette option avec celles ci-dessous. Cette option ne s&apos;applique pas aux objets situés au niveau du cluster tels que les rôles, les tablespaces, les langues, les types de données ou encore les extentions.</translation>
+        <translation type="vanished">Résoudre certaines dépendances entre les objets en interrogeant le catalogue lorsqu&apos;un objet n&apos;existe pas dans la base à importer. Dans certains cas il vous sera nécessaire de combiner cette option avec celles ci-dessous. Cette option ne s&apos;applique pas aux objets situés au niveau du cluster tels que les rôles, les tablespaces, les langues, les types de données ou encore les extentions.</translation>
     </message>
     <message>
         <source>Origin point:</source>
@@ -2539,7 +2789,7 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
     </message>
     <message>
         <source>Connect and list available databases</source>
-        <translation>Connecter et lister les bases de données disponibles</translation>
+        <translation type="vanished">Connecter et lister les bases de données disponibles</translation>
     </message>
     <message>
         <source>...</source>
@@ -2551,7 +2801,7 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
     </message>
     <message>
         <source>All catalog queries as well the created objects&apos; source code are printed to standard outupt (stdout).</source>
-        <translation>Toutes les requêtes effectuées sur le catalogue ainsi que le code source de tous les objets créés sera affiché sur la sortie standard (stdout).</translation>
+        <translation type="vanished">Toutes les requêtes effectuées sur le catalogue ainsi que le code source de tous les objets créés sera affiché sur la sortie standard (stdout).</translation>
     </message>
     <message>
         <source>Spacing between objects</source>
@@ -2559,7 +2809,7 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
     </message>
     <message>
         <source>Schemas  per row</source>
-        <translation>Nombre maximal de schémas pouvant être placés sur une seule ligne (en longueur)</translation>
+        <translation type="vanished">Nombre maximal de schémas pouvant être placés sur une seule ligne (en longueur)</translation>
     </message>
     <message>
         <source>Tables per row:</source>
@@ -2689,6 +2939,18 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
         <source>&lt;strong&gt;ATTENTION:&lt;/strong&gt; You are about to import objects to the current working model! This action will cause irreversible changes to it even in case of critical errors during the process. Do you want to proceed?</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Schemas per row</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Resolve some of the object&apos;s dependencies by querying the catalog when a needed object does not exists on the loaded set. In some cases it&apos;s necessary to combine this option with others below. This option does not applies to database level objects like role, tablespace and language as well for data types, extensions.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All catalog queries as well the created objects&apos; source code are printed to standard output (stdout).</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DatabaseImportHelper</name>
@@ -2722,7 +2984,7 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
     </message>
     <message>
         <source>Update relationships of `%1&apos; (%2)...</source>
-        <translation>Mise à jour des associations de `%1&apos; (%2)...</translation>
+        <translation type="vanished">Mise à jour des associations de `%1&apos; (%2)...</translation>
     </message>
     <message>
         <source>Destroying unused detached columns...</source>
@@ -2740,6 +3002,18 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
         <source>Creating permissions for object `%1&apos; (%2)...</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Updating relationships of `%1&apos; (%2)...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Validating relationships...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Assigning sequences to columns...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DatabaseModel</name>
@@ -2755,12 +3029,52 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
         <source>Generating %1 of the object `%2&apos; (%3)</source>
         <translation>Génération %1 de l&apos;objet `%2&apos; (%3)</translation>
     </message>
+    <message>
+        <source>Validating relationships...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Saving object `%1&apos; (%2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Saving metadata of the object `%1&apos; (%2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Metadata file successfully saved!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Process successfully ended but no metadata was saved!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Creating object `%1&apos; (%2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Object `%1&apos; (%2) already exists. Ignoring.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading metadata for object `%1&apos; (%2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Object `%1&apos; (%2) not found. Ignoring metadata.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Metadata file successfully loaded!</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DatabaseWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Attributes</source>
@@ -2827,7 +3141,7 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
     <name>DomainWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Constraint</source>
@@ -2848,6 +3162,33 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
     <message>
         <source>Default Value:</source>
         <translation>Valeur par défaut:</translation>
+    </message>
+</context>
+<context>
+    <name>DonateWidget</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">Formulaire</translation>
+    </message>
+    <message>
+        <source>Donate to pgModeler</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide this widget</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation type="unfinished">...</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;pgModeler is brought to you thanks to a &lt;span style=&quot; font-style:italic;&quot;&gt;great effort to create and distribute a quality product&lt;/span&gt;. This project is reaching out levels of maturity never imagined. All this is the result of a joint work between its author and the &lt;span style=&quot; font-weight:600;&quot;&gt;Open Source community&lt;/span&gt;. &lt;br/&gt;&lt;br/&gt;This software has a long way to go yet and with your help we&apos;ll keep maintaining the good job and bringing new improvements on each release. If you did like pgModeler and thinks it deserves a contribution please make a donation!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>I want to help!</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2937,7 +3278,7 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
     <name>EventTriggerWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Event:</source>
@@ -3164,7 +3505,7 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
     <message>
         <source>Invalid use of a view referece as whole SQL definition! The assigned reference must be an expression!</source>
         <translatorcomment>À contrôler</translatorcomment>
-        <translation type="unfinished">Utilisation invalide d&apos;une vue en tant que définition SQL! La référence doit être une expression!</translation>
+        <translation type="obsolete">Utilisation invalide d&apos;une vue en tant que définition SQL! La référence doit être une expression!</translation>
     </message>
     <message>
         <source>Assignment of a second definition expression to the view!</source>
@@ -3214,7 +3555,7 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
     <message>
         <source>Reference to a function id which is incompatible whit the user define type configuration!</source>
         <translatorcomment>Doutes</translatorcomment>
-        <translation type="unfinished">Référence faite à un identifiant de fonction incompatible avec le type configuré!</translation>
+        <translation type="obsolete">Référence faite à un identifiant de fonction incompatible avec le type configuré!</translation>
     </message>
     <message>
         <source>The validation process failed due to an error triggered by the validation helper. For more details about the error check the exception stack!</source>
@@ -3458,7 +3799,7 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
     </message>
     <message>
         <source>Reference to a tuple with index invalid or the result is empty (no tuples)!</source>
-        <translation>Référence à un tuple avec un index invalide ou le résultat est vide (pas de tuple)!</translation>
+        <translation type="vanished">Référence à un tuple avec un index invalide ou le résultat est vide (pas de tuple)!</translation>
     </message>
     <message>
         <source>Assignment of a not allocated column to object `%1&apos; (%2)!</source>
@@ -3553,15 +3894,7 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Assignment of a null type to to object `%1&apos; (%2)!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Assignment of an empty directory to object `%1&apos; (%2)!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The data type `%1&apos; can not be assigned because it already exists in the types list of the aggregate function `%2&apos;!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3601,15 +3934,7 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Unable to write the file `%1&apos;&apos; due to one or more errors in the definition generation process!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>There is already a relationship between `%1&apos; (%2) and `%3&apos; (%4) in the model!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The configuration of the relationship `%1&apos; generates a redundancy between the relationships `%2&apos;. Redundancy on identifier or generalization/copy relationships are not accepted since they result in  incorrect column spreading making the model inconsistent!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3753,10 +4078,6 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>At the moment pgModeler does not support the creation of primary keys which some columns were generated by relationship connection. To create primary keys with this feature you can use the field `Indentifier&apos; or the tab `Primary key&apos; on relationship editing form!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>The object `%1&apos; (%2) cannot reference itself! This operation is not permitted for this kind of object!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3790,10 +4111,6 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Reference to an invalid object name pattern id on the relationship `%1&apos;!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invalid use of variadic parameter mode! This mode can be used only with array data types!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3837,19 +4154,11 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Assignment of an invalid object to `%1&apos; (%2)! The assigned object must be of type `%3&apos;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>The sequence `%1&apos; can&apos;t be assigned to the column `%2&apos; because the data type of the latter is incompatible. The type used must be an integer one!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>The option to generate temporary object names can only be used in simulation mode!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>It&apos;s not possible convert the type of the column `%1&apos; to serial! It must have an `integer&apos; based type and its default value must be a call to `nextval(seq_name::regclass)&apos; function!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3869,10 +4178,6 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Trying to undo/redo an invalid operation over an object that does not exists anymore! The operations history will be cleaned up.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>The object `%1&apos; (%2) can&apos;t be handled because some needed fields are not set! Please, make sure to fill at least the requires fields in order to properly create or update the object.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3880,12 +4185,80 @@ Message returned by the DBMS: `%1&apos;</source>
         <source>A relationship can only be swapped by other object of the same kind!</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Assignment of a null type to object `%1&apos; (%2)!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to create the generalization relationship because the constraint `%1&apos; in table `%2&apos; can not be merged with the constraint `%3&apos; of table `%4&apos; due to their incompatible composition!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to write the file `%1&apos; due to one or more errors in the definition generation process!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The configuration of the relationship `%1&apos; generates a redundancy between the relationships `%2&apos;. Redundancy on identifier or generalization/copy relationships are not accepted since they result in incorrect column spreading making the model inconsistent!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reference to a tuple with an invalid index or the result is empty (no tuples)!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid use of a view reference as whole SQL definition! The assigned reference must be an expression!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>At the moment pgModeler does not support the creation of primary keys which some columns were generated by relationship connection. To create primary keys with this feature you can use the field `Identifier&apos; or the tab `Primary key&apos; on relationship editing form!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reference to a function id which is incompatible with the user define type configuration!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid use of variadic parameter mode! This mode can be used only with an array or &quot;any&quot; data type!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Assignment of an invalid object to `%1&apos; (%2)! The assigned object must be of type `%3&apos;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>It&apos;s not possible convert the type of the column `%1&apos; to serial! It must have an `integer&apos; based type and its default value must be a call to `nextval(seq_name::regclass)&apos; function or a sequence object must be directly assigned to the column!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Trying to undo/redo an invalid operation over an object that does not exists anymore or can&apos;t be handled! The operation history will be cleaned up.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A parent table of `%1&apos; which OID is `%2&apos; was not found in the set of imported objects!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The enumeration `%1&apos; can&apos;t be assigned to the type `%2&apos; because contains invalid characters!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The enumeration `%1&apos; can&apos;t be assigned to the type `%2&apos; because is too long!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The connection was idle for too long and was automatically closed!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The connection was unexpectedly closed by the database server `%1&apos; at port `%2&apos;!</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ExtensionWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Version:</source>
@@ -3975,7 +4348,7 @@ Message returned by the DBMS: `%1&apos;</source>
     <name>FunctionWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Attributes</source>
@@ -4011,7 +4384,7 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Simple</source>
-        <translation>Simple</translation>
+        <translation type="vanished">Simple</translation>
     </message>
     <message>
         <source>Set</source>
@@ -4019,7 +4392,7 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Table</source>
-        <translation>Table</translation>
+        <translation type="vanished">Table</translation>
     </message>
     <message>
         <source>Return Table</source>
@@ -4076,6 +4449,14 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <source>Default Value</source>
         <translation>Valeur par défaut</translation>
+    </message>
+    <message>
+        <source>Si&amp;mple</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tab&amp;le</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4138,7 +4519,7 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Disable antialiasing for lines and texts improving performance on huge models (requires restart)</source>
-        <translation>Désactive l&apos;anticrénelage pour les lignes et les textes afin d&apos;améliorer la réactivité de l&apos;application sur des modèles très etoffés (nécessite un redémarrage)</translation>
+        <translation type="vanished">Désactive l&apos;anticrénelage pour les lignes et les textes afin d&apos;améliorer la réactivité de l&apos;application sur des modèles très etoffés (nécessite un redémarrage)</translation>
     </message>
     <message>
         <source>Disable render smoothness</source>
@@ -4150,7 +4531,7 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Operations like save, export and diff will be executed without asking user to validate the model</source>
-        <translation>Certaines opérations comme l&apos;enregistrement du fichier, l&apos;export ou encore le différenetiel seront lancées sans demander à l&apos;utilisateur de valider le modèle avant</translation>
+        <translation type="vanished">Certaines opérations comme l&apos;enregistrement du fichier, l&apos;export ou encore le différenetiel seront lancées sans demander à l&apos;utilisateur de valider le modèle avant</translation>
     </message>
     <message>
         <source>Validate before save, export or diff</source>
@@ -4170,7 +4551,7 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Toggles the code completion in all fields that accepts the input of SQL commads.</source>
-        <translation>Active la complétion du code SQL dans les zones de texte prévues à cet effet.</translation>
+        <translation type="vanished">Active la complétion du code SQL dans les zones de texte prévues à cet effet.</translation>
     </message>
     <message>
         <source>Enable SQL code completion</source>
@@ -4298,7 +4679,7 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Code font style</source>
-        <translation>Style de police pour le code SQL</translation>
+        <translation type="vanished">Style de police pour le code SQL</translation>
     </message>
     <message>
         <source>Size:</source>
@@ -4456,6 +4837,62 @@ Message returned by the DBMS: `%1&apos;</source>
         <source>Move canvas by keep mouse on corners</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Disable antialiasing for lines and texts improving performance when handling huge models.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Triggers a dialog asking the user to validate the model before a save, export or diff operation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled this option creates a placeholder object at the previous table&apos;s position when starting to move it. This will cause graphical updates on relationship lines to be performed only when the drag &amp; drop action is done improving the performance. Disabling placeholders will cause those updates to be executed every time the table&apos;s position changes a single pixel (classical behavior).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use placeholders when moving tables</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggles the code completion in all fields that accepts the input of SQL commands.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Code style</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Colors:</source>
+        <translation type="unfinished">Couleur:</translation>
+    </message>
+    <message>
+        <source>Display line numbers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Highlight lines at cursor&apos;s position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom tab width:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Line numbers&apos; font color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Line numbers&apos; background color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Highlighted line color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The little brown fox jumps over the lazy dog</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>GraphicalView</name>
@@ -4475,7 +4912,7 @@ Message returned by the DBMS: `%1&apos;</source>
     <name>IndexWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Attributes</source>
@@ -4522,7 +4959,7 @@ Message returned by the DBMS: `%1&apos;</source>
     <name>LanguageWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Trusted:</source>
@@ -4565,7 +5002,7 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>&amp;Plugins</source>
-        <translation>E&amp;xtensions</translation>
+        <translation type="vanished">E&amp;xtensions</translation>
     </message>
     <message>
         <source>Plugins</source>
@@ -4589,7 +5026,7 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Save</source>
-        <translation>Enregistrer</translation>
+        <translation type="vanished">Enregistrer</translation>
     </message>
     <message>
         <source>Ctrl+S</source>
@@ -4617,7 +5054,7 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Load</source>
-        <translation>Ouvrir</translation>
+        <translation type="vanished">Ouvrir</translation>
     </message>
     <message>
         <source>Ctrl+O</source>
@@ -4641,11 +5078,11 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Save as</source>
-        <translation>Enregistrer sous</translation>
+        <translation type="vanished">Enregistrer sous</translation>
     </message>
     <message>
         <source>Exit</source>
-        <translation>Quitter</translation>
+        <translation type="vanished">Quitter</translation>
     </message>
     <message>
         <source>Ctrl+Q</source>
@@ -4653,7 +5090,7 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>About pgModeler</source>
-        <translation>À propos de pgModeler</translation>
+        <translation type="vanished">À propos de pgModeler</translation>
     </message>
     <message>
         <source>Export the current opened model in different modes</source>
@@ -4661,7 +5098,7 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Close</source>
-        <translation>Fermer</translation>
+        <translation type="vanished">Fermer</translation>
     </message>
     <message>
         <source>Close current model</source>
@@ -4673,7 +5110,7 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Settings</source>
-        <translation>Paramètres</translation>
+        <translation type="vanished">Paramètres</translation>
     </message>
     <message>
         <source>Edit pgModeler settings</source>
@@ -4685,11 +5122,11 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Wiki</source>
-        <translation>Wiki</translation>
+        <translation type="vanished">Wiki</translation>
     </message>
     <message>
         <source>Access the wiki pages</source>
-        <translation>Visiter le wiki (site)</translation>
+        <translation type="vanished">Visiter le wiki (site)</translation>
     </message>
     <message>
         <source>CSS</source>
@@ -4701,7 +5138,7 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Recent Models</source>
-        <translation>Modèles récents</translation>
+        <translation type="vanished">Modèles récents</translation>
     </message>
     <message>
         <source>Load recently opened model</source>
@@ -4709,7 +5146,7 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Import</source>
-        <translation>Importer</translation>
+        <translation type="vanished">Importer</translation>
     </message>
     <message>
         <source>Import existing database to new model (reverse engineering)</source>
@@ -4721,11 +5158,11 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Restore Session</source>
-        <translation>Restaurer la session</translation>
+        <translation type="vanished">Restaurer la session</translation>
     </message>
     <message>
         <source>Fix a model</source>
-        <translation>Réparer un modèle</translation>
+        <translation type="vanished">Réparer un modèle</translation>
     </message>
     <message>
         <source>New version found!</source>
@@ -4737,7 +5174,7 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Check for update</source>
-        <translation>Vérifier les mises à jour</translation>
+        <translation type="vanished">Vérifier les mises à jour</translation>
     </message>
     <message>
         <source>Main menu</source>
@@ -4761,7 +5198,7 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Diff</source>
-        <translation>Différencier</translation>
+        <translation type="vanished">Différencier</translation>
     </message>
     <message>
         <source>Determine the changes between model and database</source>
@@ -4781,7 +5218,7 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Design datase models</source>
-        <translation>Modéliser une base de données</translation>
+        <translation type="vanished">Modéliser une base de données</translation>
     </message>
     <message>
         <source>Manage</source>
@@ -4793,7 +5230,7 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Bug report</source>
-        <translation>Rapporter un bug</translation>
+        <translation type="vanished">Rapporter un bug</translation>
     </message>
     <message>
         <source>F1</source>
@@ -4833,11 +5270,11 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>msg</source>
-        <translation>message</translation>
+        <translation type="vanished">message</translation>
     </message>
     <message>
         <source>Help</source>
-        <translation>Aide</translation>
+        <translation type="vanished">Aide</translation>
     </message>
     <message>
         <source>F4</source>
@@ -4845,7 +5282,7 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Print</source>
-        <translation>Imprimer</translation>
+        <translation type="vanished">Imprimer</translation>
     </message>
     <message>
         <source>Ctrl+P</source>
@@ -4853,7 +5290,7 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Undo</source>
-        <translation>Annuler</translation>
+        <translation type="vanished">Annuler</translation>
     </message>
     <message>
         <source>Ctrl+Z</source>
@@ -4861,7 +5298,7 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Redo</source>
-        <translation>Rétablir</translation>
+        <translation type="vanished">Rétablir</translation>
     </message>
     <message>
         <source>Ctrl+Y</source>
@@ -4869,7 +5306,7 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Export</source>
-        <translation>Exporter</translation>
+        <translation type="vanished">Exporter</translation>
     </message>
     <message>
         <source>Ctrl+Shift+S</source>
@@ -4889,7 +5326,7 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Normal zoom</source>
-        <translation>Zoom normal</translation>
+        <translation type="vanished">Zoom normal</translation>
     </message>
     <message>
         <source>Ctrl+0</source>
@@ -4897,7 +5334,7 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Align to grid</source>
-        <translation>Aligner sur la grille</translation>
+        <translation type="vanished">Aligner sur la grille</translation>
     </message>
     <message>
         <source>Align objects position to grid</source>
@@ -4905,7 +5342,7 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Show delimiters</source>
-        <translation>Afficher les délimiteurs</translation>
+        <translation type="vanished">Afficher les délimiteurs</translation>
     </message>
     <message>
         <source>Show the page delimiters</source>
@@ -4921,7 +5358,7 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Overview</source>
-        <translation>Vue d&apos;ensemble</translation>
+        <translation type="vanished">Vue d&apos;ensemble</translation>
     </message>
     <message>
         <source>Show the model overview</source>
@@ -4929,7 +5366,7 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Save all models</source>
-        <translation>Enregistrer tous les modèles</translation>
+        <translation type="vanished">Enregistrer tous les modèles</translation>
     </message>
     <message>
         <source>Clear Menu</source>
@@ -4965,11 +5402,11 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Some models were modified! Do you really want to quit pgModeler without save them?</source>
-        <translation>Des modifications n&apos;ont pas été enregistrées ! Êtes-vous sûr de vouloir QUITTER pgModeler SANS SAUVEGARDER ?</translation>
+        <translation type="vanished">Des modifications n&apos;ont pas été enregistrées ! Êtes-vous sûr de vouloir QUITTER pgModeler SANS SAUVEGARDER ?</translation>
     </message>
     <message>
         <source>The model was modified! Do you really want to close without save it?</source>
-        <translation>Le modèle a été modifié.
+        <translation type="vanished">Le modèle a été modifié.
 Voulez-vous vraiment le FERMER SANS le SAUVEGARDER?</translation>
     </message>
     <message>
@@ -5002,7 +5439,7 @@ Voulez-vous vraiment le FERMER SANS le SAUVEGARDER?</translation>
     </message>
     <message>
         <source>Open Wiki pages</source>
-        <translation>Accèder au Wiki</translation>
+        <translation type="vanished">Accèder au Wiki</translation>
     </message>
     <message>
         <source>This action will open a web browser window! Want to proceed?</source>
@@ -5049,24 +5486,12 @@ Voulez-vous vraiment le FERMER SANS le SAUVEGARDER?</translation>
         <translation> &lt;strong&gt;AVERTISSEMENT:&lt;/strong&gt; Le modèle &lt;strong&gt;%1&lt;/strong&gt; n&apos;a pas été validé ! Avant de l&apos;enregistrer il est recommandé de le valider afin de créer un modèle cohérent, sinon il peut en résulter un fichier mal formé nécessitant une édition manuelle pour pouvoir être chargé à nouveau dans l&apos;application par la suite !</translation>
     </message>
     <message>
-        <source>You&apos;re running a demonstration version! The model export feature can be tested twice per pgModeler execution!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source> &lt;strong&gt;WARNING:&lt;/strong&gt; The model &lt;strong&gt;%1&lt;/strong&gt; is invalidated! Before run the export process it&apos;s recommended to validate in order to correctly create the objects on database server!</source>
         <translation type="unfinished">&lt;strong&gt;AVERTISSEMENT:&lt;/strong&gt; Le modèle &lt;strong&gt;%1&lt;/strong&gt; n&apos;a pas été validé ! Avant de procéder à un export il est recommandé de valider le modèle afin s&apos;assurer de créer correctement les objets en base !</translation>
     </message>
     <message>
         <source>Export anyway</source>
         <translation>Exporter quand même</translation>
-    </message>
-    <message>
-        <source>You&apos;re running a demonstration version! The database import (reverse engineering) feature is available only in the full version!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You&apos;re running a demonstration version! The model-database diff feature is available only in the full version!</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source> &lt;strong&gt;WARNING:&lt;/strong&gt; The model &lt;strong&gt;%1&lt;/strong&gt; is invalidated! Before run the diff process it&apos;s recommended to validate in order to correctly analyze and generate the difference between the model and a database!</source>
@@ -5078,14 +5503,6 @@ Voulez-vous vraiment le FERMER SANS le SAUVEGARDER?</translation>
     </message>
     <message>
         <source>(no samples found)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You&apos;re running a demonstration version! Note that you&apos;ll be able to create only &lt;strong&gt;%1&lt;/strong&gt; instances 											of each type of object and some key features will be disabled!&lt;br/&gt;&lt;br/&gt;You can purchase a full binary copy or get the source code at &lt;a href=&apos;http://pgmodeler.com.br&apos;&gt;pgmodeler.com.br&lt;/a&gt;.											&lt;strong&gt;NOTE:&lt;/strong&gt; pgModeler is an open source software, but purchasing binary copies or providing some donations will support the project and cover all development costs.&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The execution of demonstration version has finished!											Did you like pgModeler and want to purchase it? Use the following promocodes and receive good discounts:&lt;br/&gt;&lt;br/&gt;											&lt;strong&gt;D3M02BR0NZ3&lt;/strong&gt; (Discount on bronze package)&lt;br/&gt;											&lt;strong&gt;D3M02S1LV3R&lt;/strong&gt; (Discount on silver package)&lt;br/&gt;											&lt;strong&gt;D3M02G0LD&lt;/strong&gt; (Discount on gold package)&lt;br/&gt;											&lt;strong&gt;D3M02PL4T1NUM&lt;/strong&gt; (Discount on platinum package)&lt;br/&gt;											&lt;strong&gt;D3M02D14M0ND&lt;/strong&gt; (Discount on diamond package)&lt;br/&gt;											&lt;br/&gt;Thank you for testing pgModeler!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5102,6 +5519,218 @@ Voulez-vous vraiment le FERMER SANS le SAUVEGARDER?</translation>
     </message>
     <message>
         <source>Executing pending &lt;strong&gt;%1&lt;/strong&gt; operation...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>He&amp;lp</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pl&amp;ugins</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New model</source>
+        <translation type="unfinished">Nouveau modèle</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation type="unfinished">E&amp;nregistrer</translation>
+    </message>
+    <message>
+        <source>&amp;Zoom in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Zoo&amp;m out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Load</source>
+        <translation type="unfinished">O&amp;uvrir</translation>
+    </message>
+    <message>
+        <source>Sa&amp;ve as</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>E&amp;xit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Exit pgModeler</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;About pgModeler</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print model</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Undo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Undo operation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Redo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Redo operation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Export</source>
+        <translation type="unfinished">&amp;Exporter</translation>
+    </message>
+    <message>
+        <source>Ctrl+Shift+E</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Show grid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Close</source>
+        <translation type="unfinished">&amp;Fermer</translation>
+    </message>
+    <message>
+        <source>&amp;Normal zoom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Align to grid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show &amp;delimiters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F12</source>
+        <translation type="unfinished">F12</translation>
+    </message>
+    <message>
+        <source>&amp;Overview</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Support</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Access the support page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New object</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Recent Models</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Import</source>
+        <translation type="unfinished">&amp;Importer</translation>
+    </message>
+    <message>
+        <source>Rest&amp;ore Session</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Fix a model</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Check for update</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Diff</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Shift+D</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Shift+W</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Design database models</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Shift+D</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Shift+M</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Bug report</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Report a bug</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Donate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Help pgModeler by donating!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Objects me&amp;tadata</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Objects metadata</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save modified model(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The following models were modified but not saved: %1. Do you really want to quit pgModeler?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The model &lt;strong&gt;%1&lt;/strong&gt; was modified! Do you really want to close without save it?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Access support page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You&apos;re running a demonstration version! Note that you&apos;ll be able to create only &lt;strong&gt;%1&lt;/strong&gt; instances 						of each type of object and some key features will be disabled or limited!&lt;br/&gt;&lt;br/&gt;You can purchase a full binary copy or get the source code at &lt;a href=&apos;http://pgmodeler.com.br&apos;&gt;pgmodeler.com.br&lt;/a&gt;.						&lt;strong&gt;NOTE:&lt;/strong&gt; pgModeler is an open source software, but purchasing binary copies or providing some donations will support the project and cover all development costs.&lt;br/&gt;&lt;br/&gt;						&lt;strong&gt;HINT:&lt;/strong&gt; in order to test all features it&apos;s recommended to use the &lt;strong&gt;demo.dbm&lt;/strong&gt; model located in &lt;/strong&gt;Sample models&lt;/strong&gt; at &lt;strong&gt;Welcome&lt;/strong&gt; view.&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5169,6 +5798,177 @@ Voulez-vous vraiment le FERMER SANS le SAUVEGARDER?</translation>
     </message>
 </context>
 <context>
+    <name>MetadataHandlingForm</name>
+    <message>
+        <source>Handle metadata</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Apply</source>
+        <translation type="unfinished">&amp;Appliquer</translation>
+    </message>
+    <message>
+        <source>&amp;Cancel</source>
+        <translation type="unfinished">A&amp;nnuler</translation>
+    </message>
+    <message>
+        <source>Handle objects metadata</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Settings</source>
+        <translation type="unfinished">Paramètres</translation>
+    </message>
+    <message>
+        <source>Extract from:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading a metadata file to the current model is an irreversible operation so be sure to specify a backup file before proceed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation type="unfinished">Options</translation>
+    </message>
+    <message>
+        <source>Handles the following database model attributes in the metadata file: author, zoom factor, last position and default objects.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Database model metadata</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Handles the objects&apos; positioning in the metadata file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Objects&apos; positioning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Handles the objects&apos; custom colors in the metadata file. Currently available only for relationships and schemas.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom object&apos;s colors</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Handles the objects&apos; protection status in the metadata file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Objects&apos; protection status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Handles the objects&apos; SQL disabled status in the metadata file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Objects&apos; SQL disabled status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Handles the objects&apos; custom SQL commands in the metadata file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom SQL commands</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save textboxes to the output file when extracting metadata. When loading the file textboxes are recreated and duplicated ones are ignored.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Textbox objects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save tags to the output file when extracting metadata. When loading the file tags are recreated and duplicated ones are ignored.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tag objects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Backup file:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation type="unfinished">...</translation>
+    </message>
+    <message>
+        <source>Apply to:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Operation:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extracts the objects metadata from one of the loaded models and apply to the current model.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extract from a &amp;model</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reads the objects metadata from a previously saved backup file and apply to the current model.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restore a bac&amp;kup file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Progress label...</source>
+        <translation type="unfinished">Indicateur de progression...</translation>
+    </message>
+    <message>
+        <source>model not saved yet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The backup file cannot be the same as the input model!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extracting metadata to file `%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Saving backup metadata to file `%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Applying metadata from file `%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Metadata processing aborted!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Objects metadata file (*.omf);;All files (*.*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ModelDatabaseDiffForm</name>
     <message>
         <source>Settings</source>
@@ -5180,7 +5980,7 @@ Voulez-vous vraiment le FERMER SANS le SAUVEGARDER?</translation>
     </message>
     <message>
         <source>Connect and list available databases</source>
-        <translation type="unfinished">Connecter et lister les bases de données disponibles</translation>
+        <translation type="obsolete">Connecter et lister les bases de données disponibles</translation>
     </message>
     <message>
         <source>...</source>
@@ -5255,23 +6055,7 @@ Voulez-vous vraiment le FERMER SANS le SAUVEGARDER?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Ignores as many as possible errors on import step. This option generates a incomplete diff.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Clears the data of all tables which will have columns modified. This is useful to avoid errors related to type casting. &lt;strong&gt;WARNING:&lt;/strong&gt; DO NOT use this option on production server and always make a backup before use this options.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Trucate tables before alter columns</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Import system (built in) objects. Use this if the import step is returning errors.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Import extension objects. Use this if the import step is returning errors even importing built in ones.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5300,10 +6084,6 @@ Voulez-vous vraiment le FERMER SANS le SAUVEGARDER?</translation>
     </message>
     <message>
         <source>Recreate only unmodifiable objects</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Instead of use an ALTER command to modify certain kind of objects a DROP and CREATE will be used in order to do a full modification. This option does not affects database objects.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5343,15 +6123,7 @@ Voulez-vous vraiment le FERMER SANS le SAUVEGARDER?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Store in SQL file</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Compares the model and the input database generating a diff and applying it directly to the latter. &lt;strong&gt;WARNING:&lt;/strong&gt; this mode causes irreversible changes on the database and in case of failure the original structure is not restored, so make sure to have a backup before proceed.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Apply on server</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5458,6 +6230,56 @@ Voulez-vous vraiment le FERMER SANS le SAUVEGARDER?</translation>
         <source>Save diff as...</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Ignores as many as possible errors on import step. This option generates an incomplete diff.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clears the data of all tables which will have columns modified. This is useful to avoid errors related to type casting. &lt;strong&gt;WARNING:&lt;/strong&gt; DO NOT use this option on production servers and always make a backup before use it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import system (built-in) objects. Use this if the import step is returning errors related to missing objects.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import objects created by extensions. Use this if the import step is returning errors even importing built in ones.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Instead of use an ALTER command to modify certain kind of objects a DROP and CREATE will be used in order to do a full modification. This option does not affects the database object.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No command to rename the destination database will be generated even the model&apos;s name differ from database name.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preserve database name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Avoid the generation of DROP commands for objects that exists in database but not in the model. This is useful when diff a partial model against the complete database.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do not drop missing objects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Store in S&amp;QL file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Appl&amp;y on server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>
+
+-- SQL code purposely truncated at this point in demo version!</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ModelExportForm</name>
@@ -5516,11 +6338,11 @@ Voulez-vous vraiment le FERMER SANS le SAUVEGARDER?</translation>
     </message>
     <message>
         <source>Objects</source>
-        <translation>Objets</translation>
+        <translation type="vanished">Objets</translation>
     </message>
     <message>
         <source>PNG Image</source>
-        <translation>Image PNG</translation>
+        <translation type="vanished">Image PNG</translation>
     </message>
     <message>
         <source>Show delimiters</source>
@@ -5552,7 +6374,7 @@ Voulez-vous vraiment le FERMER SANS le SAUVEGARDER?</translation>
     </message>
     <message>
         <source>Image:</source>
-        <translation>Image:</translation>
+        <translation type="vanished">Image:</translation>
     </message>
     <message>
         <source>Show grid</source>
@@ -5616,11 +6438,43 @@ Voulez-vous vraiment le FERMER SANS le SAUVEGARDER?</translation>
     </message>
     <message>
         <source>SQL code (*.sql);;All files (*.*)</source>
-        <translation>Fichiers SQL (*.sql);;Tous les fichiers (*.*)</translation>
+        <translation type="vanished">Fichiers SQL (*.sql);;Tous les fichiers (*.*)</translation>
     </message>
     <message>
         <source>PNG image (*.png);;All files (*.*)</source>
-        <translation>Image PNG (*.png);;Tous les fichiers (*.*)</translation>
+        <translation type="vanished">Image PNG (*.png);;Tous les fichiers (*.*)</translation>
+    </message>
+    <message>
+        <source>Ob&amp;jects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Graphics file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Image (PNG)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type:</source>
+        <translation type="unfinished">Type:</translation>
+    </message>
+    <message>
+        <source>Vectorial (SVG)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SQL script (*.sql);;All files (*.*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Portable Network Graphics (*.png);;All files (*.*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scalable Vector Graphics (*.svg);;All files (*.*)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5678,18 +6532,6 @@ Voulez-vous vraiment le FERMER SANS le SAUVEGARDER?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Creating object `%1&apos; (%2).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Creating database `%1&apos;.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Connecting to database `%1&apos;.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Generating SQL for `%1&apos; objects...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5699,10 +6541,6 @@ Voulez-vous vraiment le FERMER SANS le SAUVEGARDER?</translation>
     </message>
     <message>
         <source>Restoring original names of database, roles and tablespaces.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dropping object `%1&apos; (%2).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5719,6 +6557,34 @@ Voulez-vous vraiment le FERMER SANS le SAUVEGARDER?</translation>
     </message>
     <message>
         <source>Running auxiliary command.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Exporting model to SVG file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SVG representation of database model</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SVG file generated by pgModeler</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Output file `%1&apos; successfully written.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Creating database `%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connecting to database `%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Renaming `%1&apos; (%2) to `%3&apos;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5778,7 +6644,7 @@ Voulez-vous vraiment le FERMER SANS le SAUVEGARDER?</translation>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Monospace&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Waiting process to start...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="vanished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Monospace&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -5812,6 +6678,14 @@ p, li { white-space: pre-wrap; }
         <source>pgModeler command line tool (%1)</source>
         <translation>Outil en ligne de commande de pgModeler (%1)</translation>
     </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Monospace&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Waiting process to start...&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ModelNavigationWidget</name>
@@ -5825,7 +6699,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Ctrl+Up</source>
-        <translation>Ctrl+Haut</translation>
+        <translation type="vanished">Ctrl+Haut</translation>
     </message>
     <message>
         <source>Next model</source>
@@ -5833,7 +6707,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Ctrl+Down</source>
-        <translation>Ctrl+Bas</translation>
+        <translation type="vanished">Ctrl+Bas</translation>
     </message>
     <message>
         <source>Close model</source>
@@ -5846,6 +6720,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>(model not saved yet)</source>
         <translation>(modèle pas encore sauvegardé)</translation>
+    </message>
+    <message>
+        <source>Ctrl+Left</source>
+        <translation type="unfinished">Ctrl+Left</translation>
+    </message>
+    <message>
+        <source>Ctrl+Right</source>
+        <translation type="unfinished">Ctrl+Right</translation>
+    </message>
+    <message>
+        <source>Alt+C</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5940,7 +6826,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ID</translation>
     </message>
     <message>
         <source>By ID</source>
@@ -5970,7 +6856,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Modified: %1</source>
-        <translation>Modifié: %1</translation>
+        <translation type="vanished">Modifié: %1</translation>
     </message>
     <message>
         <source>pgModeler was not closed properly in a previous execution and some models were still being edited. Click &lt;strong&gt;Restore&lt;/strong&gt; to reopen the models or &lt;strong&gt;Cancel&lt;/strong&gt; to abort the restoration.</source>
@@ -5982,6 +6868,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Keep temporary models in case of restoration failure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Database</source>
+        <translation type="unfinished">Base de données</translation>
+    </message>
+    <message>
+        <source>File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Modified</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6028,7 +6930,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Use unique temporary names for database, role and tablespace objects</source>
-        <translation>Utiliser des noms uniques et temporaires pour la base, les rôles et les tablespaces</translation>
+        <translation type="vanished">Utiliser des noms uniques et temporaires pour la base, les rôles et les tablespaces</translation>
     </message>
     <message>
         <source>SQL Validation:</source>
@@ -6036,7 +6938,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Connection alias</source>
-        <translation>Alias de la connexion</translation>
+        <translation type="vanished">Alias de la connexion</translation>
     </message>
     <message>
         <source>PostgreSQL version</source>
@@ -6044,11 +6946,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>SQL validation, if enabled, will occur only on the last step or when there are no warnings.</source>
-        <translation>Validation SQL, si activée, ne sera déclenchée qu&apos;à la fin ou uniquement s&apos;il n&apos;y a pas d&apos;avertissements.</translation>
+        <translation type="vanished">Validation SQL, si activée, ne sera déclenchée qu&apos;à la fin ou uniquement s&apos;il n&apos;y a pas d&apos;avertissements.</translation>
     </message>
     <message>
         <source>Using temporary names will avoid object duplication errors when running the SQL validation.</source>
-        <translation>Utiliser des noms temporaires évite les erreurs dues aux objets dupliqués lors de la validation SQL.</translation>
+        <translation type="vanished">Utiliser des noms temporaires évite les erreurs dues aux objets dupliqués lors de la validation SQL.</translation>
     </message>
     <message>
         <source>Try to resolve the reported issues.</source>
@@ -6088,7 +6990,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Enable validation of SQL code on DBMS (requires connection)</source>
-        <translation>Activer la validation SQL sur le serveur (requiert une connexion)</translation>
+        <translation type="vanished">Activer la validation SQL sur le serveur (requiert une connexion)</translation>
     </message>
     <message>
         <source>Apply Fix</source>
@@ -6120,7 +7022,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Database model sucessfully validated.</source>
-        <translation>Modèle de données validé avec succès.</translation>
+        <translation type="vanished">Modèle de données validé avec succès.</translation>
     </message>
     <message>
         <source>Running SQL validation...</source>
@@ -6140,15 +7042,7 @@ p, li { white-space: pre-wrap; }
         <translation>Objet réferent: &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt; [id: %3].</translation>
     </message>
     <message>
-        <source>The relationship &lt;strong&gt;%1&lt;/strong&gt; [id: %2] is in a permanent invalidation state and need to be rellocated.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>SQL validation failed due to error(s) below. &lt;strong&gt;NOTE:&lt;/strong&gt;&lt;em&gt; These errors does not invalidates the model but may affect operations like &lt;strong&gt;export&lt;/strong&gt; and &lt;strong&gt;diff&lt;/strong&gt;.&lt;/em&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;strong&gt;HINT:&lt;/strong&gt; try to swap the mentioned relationship by another one in order to solve this situation. Note that other objects may be lost in this process.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6163,6 +7057,38 @@ p, li { white-space: pre-wrap; }
         <source>Running SQL commands on server...</source>
         <translation>Execution des commandes SQL sur le serveur...</translation>
     </message>
+    <message>
+        <source>Enables the validation of SQL code in DBMS. This process requires the use of a pre-configured connection. SQL validation will occur only in the last step (when all objects were validated) or when there are no warnings.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connection to be used in the SQL validation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>pgModeler will generate unique and temporary names for database, role and tablespace objects. This option avoids object duplication errors when running the SQL validation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use unique temporary names for cluster level objects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The relationship &lt;strong&gt;%1&lt;/strong&gt; [id: %2] is in a permanent invalidation state and needs to be relocated.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;strong&gt;HINT:&lt;/strong&gt; try to swap the relationship by another ones that somehow are linked to it through generated columns or constraints to solve this issue. Note that other objects may be lost in the swap process.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SQL validation not executed! No connection defined.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Database model successfully validated.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ModelWidget</name>
@@ -6172,7 +7098,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Generalization</source>
-        <translation>Généralisation</translation>
+        <translation type="vanished">Généralisation</translation>
     </message>
     <message>
         <source>Convert</source>
@@ -6462,6 +7388,22 @@ p, li { white-space: pre-wrap; }
         <source>The cascade deletion found some problems when running! Some objects could not be deleted or registered in the operation&apos;s history! Please, refer to error stack for more details.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Inheritance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do you want to %1 the selected schema&apos;s children too?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>protect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>unprotect</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ModelsDiffHelper</name>
@@ -6478,7 +7420,15 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Comparison between model and database finished.</source>
+        <source>Processing `%1&apos; info for object `%2&apos; (%3)...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No differences between the model and database.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preparing diff code...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6746,10 +7696,29 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>NumberedTextEditor</name>
+    <message>
+        <source>Upper case</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lower case</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ident right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ident left</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ObjectDepsRefsWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Dependencies</source>
@@ -6889,7 +7858,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ID</translation>
     </message>
 </context>
 <context>
@@ -6928,6 +7897,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Select Object</source>
         <translation>Sélectionner un objet</translation>
+    </message>
+    <message>
+        <source>Select %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7010,7 +7983,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Confirmação</source>
-        <translation>Confirmation</translation>
+        <translation type="vanished">Confirmation</translation>
     </message>
     <message>
         <source>Do you really want to remove the selected item?</source>
@@ -7020,19 +7993,15 @@ p, li { white-space: pre-wrap; }
         <source>Do you really want to remove the all items?</source>
         <translation>Souhaitez vous réellement supprimer tous les éléments?</translation>
     </message>
+    <message>
+        <source>Confirmation</source>
+        <translation type="unfinished">Confirmation</translation>
+    </message>
 </context>
 <context>
     <name>OperationList</name>
     <message>
         <source>(invalid object)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Undoing change on object `%1&apos; (%2).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Redoing change on object `%1&apos; (%2).</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7108,11 +8077,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Undoing operations...</source>
-        <translation>Annulation des opérations...</translation>
+        <translation type="vanished">Annulation des opérations...</translation>
     </message>
     <message>
         <source>Redoing operations...</source>
-        <translation>Rétablissement des opérations...</translation>
+        <translation type="vanished">Rétablissement des opérations...</translation>
     </message>
     <message>
         <source>Operation history exclusion</source>
@@ -7128,7 +8097,7 @@ p, li { white-space: pre-wrap; }
     <name>OperatorClassWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Default Class:</source>
@@ -7199,7 +8168,7 @@ p, li { white-space: pre-wrap; }
     <name>OperatorFamilyWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Indexing:</source>
@@ -7210,7 +8179,7 @@ p, li { white-space: pre-wrap; }
     <name>OperatorWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Options:</source>
@@ -7269,7 +8238,7 @@ p, li { white-space: pre-wrap; }
     <name>ParameterWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Default Value:</source>
@@ -7296,7 +8265,7 @@ p, li { white-space: pre-wrap; }
     <name>PermissionWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Roles</source>
@@ -7332,11 +8301,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Grant</source>
-        <translation>Grant</translation>
+        <translation type="vanished">Grant</translation>
     </message>
     <message>
         <source>Revoke</source>
-        <translation>Revoke</translation>
+        <translation type="vanished">Revoke</translation>
     </message>
     <message>
         <source>Cascade</source>
@@ -7377,6 +8346,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>/* Could not generate the SQL code preview for permissions!</source>
         <translation>/* Impossible de générer la prévisualisation du code SQL pour les permissions!</translation>
+    </message>
+    <message>
+        <source>Edit permissions</source>
+        <translation type="unfinished">Editer les permissions</translation>
+    </message>
+    <message>
+        <source>&amp;Grant</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Re&amp;voke</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7443,7 +8424,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>PNG export options: </source>
-        <translation>Option d&apos;export PNG: </translation>
+        <translation type="vanished">Option d&apos;export PNG: </translation>
     </message>
     <message>
         <source>   %1, %2		 Draws the grid on the exported png image.</source>
@@ -7475,11 +8456,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>   %1, %2=[USER]		 PosrgreSQL username.</source>
-        <translation>   %1, %2=[USER]		 Nom d&apos;utilisateur.</translation>
+        <translation type="vanished">   %1, %2=[USER]		 Nom d&apos;utilisateur.</translation>
     </message>
     <message>
         <source>   %1, %2=[PASSWORD]	 PosrgreSQL user password.</source>
-        <translation>   %1, %2=[PASSWORD]	 Mot de passe.</translation>
+        <translation type="vanished">   %1, %2=[PASSWORD]	 Mot de passe.</translation>
     </message>
     <message>
         <source>   %1, %2=[DBNAME]	 Connection&apos;s initial database.</source>
@@ -7495,7 +8476,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Multiple export mode especified!</source>
-        <translation>Multiples mode d&apos;exportation spécifiés!</translation>
+        <translation type="vanished">Multiples mode d&apos;exportation spécifiés!</translation>
     </message>
     <message>
         <source>No input file specified!</source>
@@ -7545,7 +8526,7 @@ p, li { white-space: pre-wrap; }
         <source>This CLI tool provides the operations to export pgModeler&apos;s database models without
 the need to load them on graphical interface as well to fix model files to the most recent
 accepted structure. All available options are described below.</source>
-        <translation>Cet outil en ligne de commande permet d&apos;exporter des modèles de base pgModeler sans avoir besoin de les ouvrir via l&apos;interface graphique. Il permet aussi de réparer des fichiers de modèle vers un format de structure le plus récent. Toutes les options disponibles sont décrites ci-dessous.</translation>
+        <translation type="vanished">Cet outil en ligne de commande permet d&apos;exporter des modèles de base pgModeler sans avoir besoin de les ouvrir via l&apos;interface graphique. Il permet aussi de réparer des fichiers de modèle vers un format de structure le plus récent. Toutes les options disponibles sont décrites ci-dessous.</translation>
     </message>
     <message>
         <source>   %1, %2=[FILE]		 Input model file (.dbm). Mandatory use when fixing a model or exporting it.</source>
@@ -7561,14 +8542,6 @@ accepted structure. All available options are described below.</source>
     </message>
     <message>
         <source>   %1, %2		 Model fix tries. When reaching the maximum count the invalid objects will be discard.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2		 Each page will be exported on a separated png image.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2=[FACTOR]		 Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7628,10 +8601,6 @@ accepted structure. All available options are described below.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Mime database sucessfully updated.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Extracting objects&apos; XML...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7670,6 +8639,48 @@ accepted structure. All available options are described below.</source>
     </message>
     <message>
         <source>Running update-mime-database command...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This CLI tool provides the operations to export pgModeler&apos;s database models without
+				  the need to load them on graphical interface as well to fix model files to the most recent
+				  accepted structure. All available options are described below.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>   %1, %2		 Export to a svg file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PNG and SVG export options: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>   %1, %2		 Each page will be exported on a separated png image. (Only for PNG)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>   %1, %2=[FACTOR]		 Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4 (Only for PNG)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>   %1, %2=[USER]		 PostgreSQL username.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>   %1, %2=[PASSWORD]	 PostgreSQL user password.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Multiple export mode specified!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mime database successfully updated.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export to SVG file: </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7988,7 +8999,7 @@ accepted structure. All available options are described below.</source>
     <name>RelationshipWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>General</source>
@@ -8000,7 +9011,7 @@ accepted structure. All available options are described below.</source>
     </message>
     <message>
         <source>1-1</source>
-        <translation>1-1</translation>
+        <translation type="vanished">1-1</translation>
     </message>
     <message>
         <source>One to many relationship</source>
@@ -8024,7 +9035,7 @@ accepted structure. All available options are described below.</source>
     </message>
     <message>
         <source>gen</source>
-        <translation>gen</translation>
+        <translation type="vanished">gen</translation>
     </message>
     <message>
         <source>Dependency / Copy relationship</source>
@@ -8146,7 +9157,7 @@ accepted structure. All available options are described below.</source>
     </message>
     <message>
         <source>EXCLUDING</source>
-        <translation>EXCLURE</translation>
+        <translation type="vanished">EXCLURE</translation>
     </message>
     <message>
         <source>CONSTRAINTS</source>
@@ -8222,23 +9233,23 @@ accepted structure. All available options are described below.</source>
     </message>
     <message>
         <source>Pattern for columns generated based upon reference table&apos;s pk (1-1 and 1-n) or based upon source table&apos;s pk (n-n).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Motif pour les noms de colonnes générées qui sont basées sur la clé primaire d&apos;une table référencée (1:1 et 1:n) ou sur la clé primaire de la table source (n:n).</translation>
     </message>
     <message>
         <source>Pattern for columns generated based upon target table&apos;s pk (n-n).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Motif pour les noms de colonnes générées qui sont basées sur la clé primaire de la table cible (n:n).</translation>
     </message>
     <message>
         <source>Pattern for foreign key generated based upon reference table&apos;s pk (1-1 and 1-n) or based upon source table&apos;s pk (n-n).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Motif pour les noms de clés étrangères générées qui sont basées sur la clé primaire d&apos;une table référencée (1:1 et 1:n) ou sur la clé primaire de la table source (n:n).</translation>
     </message>
     <message>
         <source>Pattern for foreign key generated based upon target table&apos;s pk (n-n).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Motif pour les noms de clés étrangères générées qui sont basées sur une clé primaire de la table cible (n:n).</translation>
     </message>
     <message>
         <source>Pattern for primary key generated by identifier relationship.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Motif pour les noms de clés primaires qui sont générées par une association.</translation>
     </message>
     <message>
         <source>Primary Key Name:</source>
@@ -8246,7 +9257,7 @@ accepted structure. All available options are described below.</source>
     </message>
     <message>
         <source>Pattern for unique key generated by the relationship.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Motif pour les noms de clés uniques qui sont générées par une association.</translation>
     </message>
     <message>
         <source>Unique Key Name:</source>
@@ -8274,10 +9285,6 @@ accepted structure. All available options are described below.</source>
     </message>
     <message>
         <source>Use the special primary key if you want to include a primary key containing generated columns to the receiver table. &lt;strong&gt;Important:&lt;/strong&gt; if this is a new relationship there is a need to finish its creation and reopen this dialog to create the special primary key.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Available tokens to define name patterns:&lt;br/&gt;																					 &lt;strong&gt;%1&lt;/strong&gt; = Reference (source) primary key column name. &lt;em&gt;(Ignored on constraint patterns)&lt;/em&gt;&lt;br/&gt; 																					 &lt;strong&gt;%2&lt;/strong&gt; = Reference (source) table name.&lt;br/&gt; 																					 &lt;strong&gt;%3&lt;/strong&gt; = Receiver (destination) table name.&lt;br/&gt; 																					 &lt;strong&gt;%4&lt;/strong&gt; = Generated table name. &lt;em&gt;(Only for n:n relationships)&lt;/em&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8320,12 +9327,28 @@ accepted structure. All available options are described below.</source>
         <source>In many-to-many relationships both tables are used as reference to generate the table that represents the linking. Columns from both tables are copied to the resultant table and two foreign keys are created as well in order to reference each participant table.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>&amp;1-1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;gen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>E&amp;XCLUDING</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Available tokens to define name patterns:&lt;br/&gt;					&lt;strong&gt;%1&lt;/strong&gt; = Reference (source) primary key column name. &lt;em&gt;(Ignored on constraint patterns)&lt;/em&gt;&lt;br/&gt; 					&lt;strong&gt;%2&lt;/strong&gt; = Reference (source) table name.&lt;br/&gt; 					&lt;strong&gt;%3&lt;/strong&gt; = Receiver (destination) table name.&lt;br/&gt; 					&lt;strong&gt;%4&lt;/strong&gt; = Generated table name. &lt;em&gt;(Only for n:n relationships)&lt;/em&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RoleWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Password:</source>
@@ -8381,7 +9404,7 @@ accepted structure. All available options are described below.</source>
     </message>
     <message>
         <source>Assigning &lt;strong&gt;&lt;em&gt;-1&lt;/em&gt;&lt;/strong&gt; to &lt;strong&gt;&lt;em&gt;Connections&lt;/em&gt;&lt;/strong&gt; creates a role without connection limit.&lt;br/&gt;																				 Unchecking &lt;strong&gt;&lt;em&gt;Validity&lt;/em&gt;&lt;/strong&gt; creates an role that never expires.</source>
-        <translation>Definir &lt;strong&gt;&lt;em&gt;Connexions&lt;/em&gt;&lt;/strong&gt; à &lt;strong&gt;&lt;em&gt;-1&lt;/em&gt;&lt;/strong&gt; créé le rôle sans limite de connexion.&lt;br/&gt;																				 Décocher &lt;strong&gt;&lt;em&gt;Validité&lt;/em&gt;&lt;/strong&gt; créé un rôle qui n&apos;expire jamais.</translation>
+        <translation type="vanished">Definir &lt;strong&gt;&lt;em&gt;Connexions&lt;/em&gt;&lt;/strong&gt; à &lt;strong&gt;&lt;em&gt;-1&lt;/em&gt;&lt;/strong&gt; créé le rôle sans limite de connexion.&lt;br/&gt;																				 Décocher &lt;strong&gt;&lt;em&gt;Validité&lt;/em&gt;&lt;/strong&gt; créé un rôle qui n&apos;expire jamais.</translation>
     </message>
     <message>
         <source>Role</source>
@@ -8395,12 +9418,16 @@ accepted structure. All available options are described below.</source>
         <source>yyyy-MMM-dd hh:mm:ss</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Assigning &lt;strong&gt;&lt;em&gt;-1&lt;/em&gt;&lt;/strong&gt; to &lt;strong&gt;&lt;em&gt;Connections&lt;/em&gt;&lt;/strong&gt; creates a role without connection limit.&lt;br/&gt;										  Unchecking &lt;strong&gt;&lt;em&gt;Validity&lt;/em&gt;&lt;/strong&gt; creates an role that never expires.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RuleWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Event:</source>
@@ -8495,27 +9522,27 @@ accepted structure. All available options are described below.</source>
     </message>
     <message>
         <source>Shows the command history</source>
-        <translation>Afficher l&apos;historique des commandes</translation>
+        <translation type="vanished">Afficher l&apos;historique des commandes</translation>
     </message>
     <message>
         <source>&amp;History</source>
-        <translation>&amp;Historique</translation>
+        <translation type="vanished">&amp;Historique</translation>
     </message>
     <message>
         <source>Alt+H</source>
-        <translation>Alt+H</translation>
+        <translation type="vanished">Alt+H</translation>
     </message>
     <message>
         <source>Command History</source>
-        <translation>Historique des commandes</translation>
+        <translation type="vanished">Historique des commandes</translation>
     </message>
     <message>
         <source>Clear sql input field and results.</source>
-        <translation type="unfinished">Effacer les résultats et le code SQL saisi.</translation>
+        <translation type="obsolete">Effacer les résultats et le code SQL saisi.</translation>
     </message>
     <message>
         <source>Clear</source>
-        <translation>Effacer</translation>
+        <translation type="vanished">Effacer</translation>
     </message>
     <message>
         <source>...</source>
@@ -8523,11 +9550,11 @@ accepted structure. All available options are described below.</source>
     </message>
     <message>
         <source>0</source>
-        <translation>0</translation>
+        <translation type="vanished">0</translation>
     </message>
     <message>
         <source>Rows returned: </source>
-        <translation>Lignes retournées:</translation>
+        <translation type="vanished">Lignes retournées:</translation>
     </message>
     <message>
         <source>SQL file (*.sql);;All files (*.*)</source>
@@ -8550,15 +9577,67 @@ accepted structure. All available options are described below.</source>
         <translation type="unfinished">Tout le code SQL ainsi que la grille des résultats vont être purgés! Continuer?</translation>
     </message>
     <message>
-        <source>[&lt;strong&gt;%1&lt;/strong&gt;] SQL command successfully executed. &lt;em&gt;Rows affected &lt;strong&gt;%2&lt;/strong&gt;&lt;/em&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Load SQL commands</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Copy selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search in SQL code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggles the output pane</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+O</source>
+        <translation type="unfinished">Alt+O</translation>
+    </message>
+    <message>
+        <source>Results</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Messages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>History</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No results retrieved or changes done due to the error above.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Messages (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Results (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[%1]: SQL command successfully executed. &lt;em&gt;%2 &lt;strong&gt;%3&lt;/strong&gt;&lt;/em&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rows affected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rows retrieved</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear history</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8574,27 +9653,27 @@ accepted structure. All available options are described below.</source>
     </message>
     <message>
         <source>Connect to server</source>
-        <translation>Démarrer la connexion</translation>
+        <translation type="vanished">Démarrer la connexion</translation>
     </message>
     <message>
         <source>Disconnect from server</source>
-        <translation>Se déconnecter</translation>
+        <translation type="vanished">Se déconnecter</translation>
     </message>
     <message>
         <source>Browse selected database.</source>
-        <translation>Charger les informations de la base sélectionnée</translation>
+        <translation type="vanished">Charger les informations de la base sélectionnée</translation>
     </message>
     <message>
         <source>Drop the selected database</source>
-        <translation>Supprimer la base de données sélectionnée</translation>
+        <translation type="vanished">Supprimer la base de données sélectionnée</translation>
     </message>
     <message>
         <source>Shift+Del</source>
-        <translation>Shift+Del</translation>
+        <translation type="vanished">Shift+Del</translation>
     </message>
     <message>
         <source>Update the database list.</source>
-        <translation>Actualiser la liste des bases de données.</translation>
+        <translation type="vanished">Actualiser la liste des bases de données.</translation>
     </message>
     <message>
         <source>SQL execution</source>
@@ -8616,12 +9695,44 @@ accepted structure. All available options are described below.</source>
         <source>You&apos;re running a demonstration version! The data manipulation feature is available only in the full version!</source>
         <translation>Vous utilisez la version de démonstration ! Cette fonctionnalité est disponible uniquement sur la version complète !</translation>
     </message>
+    <message>
+        <source>Disconnect from all databases</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update the database list</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle the object&apos;s attributes grid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Attributes</source>
+        <translation type="unfinished">Attributs</translation>
+    </message>
+    <message>
+        <source>Alt+R</source>
+        <translation type="unfinished">Alt+R</translation>
+    </message>
+    <message>
+        <source>Toggle the display of source code pane</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Source code</source>
+        <translation type="unfinished">Code source</translation>
+    </message>
+    <message>
+        <source>&lt;strong&gt;ATTENTION:&lt;/strong&gt; Disconnect from all databases will close any opened tab in this view! Do you really want to proceed?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SchemaWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Show rectangle</source>
@@ -8636,7 +9747,7 @@ accepted structure. All available options are described below.</source>
     <name>SequenceWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Cyclic:</source>
@@ -8801,7 +9912,7 @@ accepted structure. All available options are described below.</source>
     <name>SourceCodeWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Version:</source>
@@ -8868,10 +9979,6 @@ accepted structure. All available options are described below.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;strong&gt;Original:&lt;/strong&gt; displays only the original object&apos;s SQL code.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Dependencies:&lt;/strong&gt; display the original code including all dependencies needed to properly create the selected object.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Children:&lt;/strong&gt; display the original code including all children&apos;s SQL code. This option is used only by schemas, tables and views.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save SQL code as...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8890,13 +9997,17 @@ accepted structure. All available options are described below.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>
-
--- SQL code purposely truncated at this point on demo version!</source>
+        <source>&lt;!-- XML code preview disabled in demonstration version --&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;!-- XML code preview disabled in demonstration version --&gt;</source>
+        <source>&lt;strong&gt;Original:&lt;/strong&gt; displays only the original object&apos;s SQL code.&lt;br/&gt;&lt;br/&gt;						   &lt;strong&gt;Dependencies:&lt;/strong&gt; displays the original code including all dependencies needed to properly create the selected object.&lt;br/&gt;&lt;br/&gt;						   &lt;strong&gt;Children:&lt;/strong&gt; displays the original code including all object&apos;s children SQL code. This option is used only by schemas, tables and views.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>
+
+-- SQL code purposely truncated at this point in demo version!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8904,7 +10015,7 @@ accepted structure. All available options are described below.</source>
     <name>SwapObjectsIdsWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Create:</source>
@@ -8930,6 +10041,10 @@ accepted structure. All available options are described below.</source>
         <source>Swap values</source>
         <translation>Échanger</translation>
     </message>
+    <message>
+        <source>Change objects creation order</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Table</name>
@@ -8939,6 +10054,109 @@ accepted structure. All available options are described below.</source>
     </message>
     <message>
         <source>In demonstration version tables can have only `%1&apos; instances of each child object type or ancestor tables! You&apos;ve reach this limit for the type: `%2&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TableDataWidget</name>
+    <message>
+        <source>Edit table data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add empty rows</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation type="unfinished">Ajouter</translation>
+    </message>
+    <message>
+        <source>Ins</source>
+        <translation type="unfinished">Ins</translation>
+    </message>
+    <message>
+        <source>Some invalid or duplicated columns were detected. In order to solve this issue double-click the header of the highlighted ones in order to define the correct name in which the data belongs to or delete the entire column. Note that these columns are completely igored when generating the &lt;strong&gt;INSERT&lt;/strong&gt; commands.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add an empty column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove all rows from the grid preserving columns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation type="unfinished">Effacer</translation>
+    </message>
+    <message>
+        <source>Shift+Del</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete the selected rows</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished">Supprimer</translation>
+    </message>
+    <message>
+        <source>Del</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Empty values are assumed as &lt;span style=&quot; font-weight:600;&quot;&gt;DEFAULT&lt;/span&gt;. To use special values like &lt;span style=&quot; font-weight:600;&quot;&gt;NULL&lt;/span&gt;, a function call like &lt;span style=&quot; font-weight:600;&quot;&gt;now()&lt;/span&gt; or a specific data escaping, enclose values in &lt;span style=&quot; font-weight:600;&quot;&gt;{}&lt;/span&gt;. To use &lt;span style=&quot; font-weight:600;&quot;&gt;{&lt;/span&gt; or &lt;span style=&quot; font-weight:600;&quot;&gt;}&lt;/span&gt; as part of the value prepend the backslash character, e.g., &lt;span style=&quot; font-weight:600;&quot;&gt;\{&lt;/span&gt; or &lt;span style=&quot; font-weight:600;&quot;&gt;\}&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Duplicate the selected rows</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+D</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete the selected columns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove all columns (and rows) from the grid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Shift+Del</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete columns is an irreversible action! Do you really want to proceed?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove all rows is an irreversible action! Do you really want to proceed?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove all columns is an irreversible action! Do you really want to proceed?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Duplicated column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>(no columns)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8961,7 +10179,7 @@ Relationship: %1</source>
     <name>TableWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Options</source>
@@ -8985,27 +10203,27 @@ Relationship: %1</source>
     </message>
     <message>
         <source>Columns</source>
-        <translation>Colonnes</translation>
+        <translation type="vanished">Colonnes</translation>
     </message>
     <message>
         <source>Constraints</source>
-        <translation>Contraintes</translation>
+        <translation type="vanished">Contraintes</translation>
     </message>
     <message>
         <source>Triggers</source>
-        <translation>Déclencheur</translation>
+        <translation type="vanished">Déclencheur</translation>
     </message>
     <message>
         <source>Rules</source>
-        <translation>Règles</translation>
+        <translation type="vanished">Règles</translation>
     </message>
     <message>
         <source>Indexes</source>
-        <translation>Indexes</translation>
+        <translation type="vanished">Indexes</translation>
     </message>
     <message>
         <source>Tables</source>
-        <translation>Tables</translation>
+        <translation type="vanished">Tables</translation>
     </message>
     <message>
         <source>Name</source>
@@ -9067,6 +10285,38 @@ Relationship: %1</source>
         <source>Copy</source>
         <translation>Copie</translation>
     </message>
+    <message>
+        <source>&amp;Columns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Co&amp;nstraints</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tri&amp;ggers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Rules</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Indexes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Tables</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Define initial data for the table</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TablespaceWidget</name>
@@ -9083,7 +10333,7 @@ Relationship: %1</source>
     <name>TagWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Colors</source>
@@ -9125,7 +10375,7 @@ Relationship: %1</source>
     <name>TextboxWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Font:</source>
@@ -9164,7 +10414,7 @@ Relationship: %1</source>
     <name>TriggerWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Event:</source>
@@ -9247,7 +10497,7 @@ Relationship: %1</source>
     <name>TypeWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>Configuration:</source>
@@ -9263,7 +10513,7 @@ Relationship: %1</source>
     </message>
     <message>
         <source>Composite</source>
-        <translation>Composite</translation>
+        <translation type="vanished">Composite</translation>
     </message>
     <message>
         <source>Enumerations</source>
@@ -9421,6 +10671,10 @@ Relationship: %1</source>
         <source>The functions to be assigned to a range type should have the following signatures:&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Canonical:&lt;/strong&gt; &lt;em&gt;any function(any)&lt;/em&gt; &lt;br/&gt;&lt;strong&gt;Subtype Diff:&lt;/strong&gt; &lt;em&gt;double precision function(subtype, subtype)&lt;/em&gt;</source>
         <translation>Les fonction assignables au type interval (RANGE) doivent avoir la signature suivante:&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Canonique:&lt;/strong&gt; &lt;em&gt;any function(any)&lt;/em&gt; &lt;br/&gt;&lt;strong&gt;Subtype Diff:&lt;/strong&gt; &lt;em&gt;double precision function(subtype, subtype)&lt;/em&gt;</translation>
     </message>
+    <message>
+        <source>Co&amp;mposite</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>UpdateNotifierWidget</name>
@@ -9430,7 +10684,7 @@ Relationship: %1</source>
     </message>
     <message>
         <source>New update found!</source>
-        <translation>Nouvelle mise à jour disponible!</translation>
+        <translation type="vanished">Nouvelle mise à jour disponible!</translation>
     </message>
     <message>
         <source>Hide this widget</source>
@@ -9450,7 +10704,7 @@ Relationship: %1</source>
     </message>
     <message>
         <source>Version:</source>
-        <translation>Version:</translation>
+        <translation type="vanished">Version:</translation>
     </message>
     <message>
         <source>0.0.0</source>
@@ -9478,7 +10732,7 @@ Relationship: %1</source>
     </message>
     <message>
         <source>&lt;strong&gt;Note:&lt;/strong&gt; Both actions below will open a new web browser window</source>
-        <translation>&lt;strong&gt;Remarque:&lt;/strong&gt; Ces boutons entraînent l&apos;ouverture de votre navigateur web</translation>
+        <translation type="vanished">&lt;strong&gt;Remarque:&lt;/strong&gt; Ces boutons entraînent l&apos;ouverture de votre navigateur web</translation>
     </message>
     <message>
         <source>Purchase a new package</source>
@@ -9508,12 +10762,20 @@ Relationship: %1</source>
         <source>Recover a package</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Update found!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New version:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ViewWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulaire</translation>
+        <translation type="vanished">Formulaire</translation>
     </message>
     <message>
         <source>References</source>
@@ -9569,11 +10831,11 @@ Relationship: %1</source>
     </message>
     <message>
         <source>Recursive</source>
-        <translation>Récursif</translation>
+        <translation type="vanished">Récursif</translation>
     </message>
     <message>
         <source>Materialized</source>
-        <translation>Matérialisée</translation>
+        <translation type="vanished">Matérialisée</translation>
     </message>
     <message>
         <source>With no data</source>
@@ -9667,51 +10929,78 @@ Relationship: %1</source>
         <source>To reference all columns in a table (*) just do not fill the field &lt;strong&gt;Column&lt;/strong&gt;, this is the same as write &lt;em&gt;&lt;strong&gt;[schema].[tablel].*&lt;/strong&gt;&lt;/em&gt;</source>
         <translation>Pour référencer toutes les colonnes dans une table (*) ne remplissez pas le champs &lt;strong&gt;Colonne&lt;/strong&gt;, ceci revient à écrire &lt;em&gt;&lt;strong&gt;[schéma].[table].*&lt;/strong&gt;&lt;/em&gt;</translation>
     </message>
+    <message>
+        <source>Recursi&amp;ve</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Materialized</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WelcomeWidget</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">Formulaire</translation>
+    </message>
+    <message>
+        <source>New model</source>
+        <translation type="unfinished">Nouveau modèle</translation>
+    </message>
+    <message>
+        <source>Open model</source>
+        <translation type="unfinished">Ouvrir modèle</translation>
+    </message>
+    <message>
+        <source>Sample models</source>
+        <translation type="unfinished">Modèles de démo</translation>
+    </message>
+    <message>
+        <source>Recent models</source>
+        <translation type="unfinished">Modèles récents</translation>
+    </message>
+    <message>
+        <source>Last session</source>
+        <translation type="unfinished">Dernière session</translation>
+    </message>
 </context>
 <context>
     <name>Xml2Object</name>
     <message>
         <source>Xml2Object</source>
-        <translation>Xml2Object</translation>
-    </message>
-    <message>
-        <source>This plugin permits the creation of objects from XML code and inserting them on the currently opened model.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This plugin must be executed with at least one model opened!</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Xml2Object</translation>
     </message>
 </context>
 <context>
     <name>Xml2ObjectWidget</name>
     <message>
         <source>XML2Object</source>
-        <translation>XML2Object</translation>
+        <translation type="vanished">XML2Object</translation>
     </message>
     <message>
         <source>Load XML</source>
-        <translation>Charger XML</translation>
+        <translation type="vanished">Charger XML</translation>
     </message>
     <message>
         <source>Clear</source>
-        <translation>Effacer</translation>
+        <translation type="vanished">Effacer</translation>
     </message>
     <message>
         <source>Generate</source>
-        <translation>Générer</translation>
+        <translation type="vanished">Générer</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation>Fermer</translation>
+        <translation type="vanished">Fermer</translation>
     </message>
     <message>
         <source>Database model (*.dbm);;XML file (*.xml);;All files (*.*)</source>
-        <translation>Modèle de base de données (*.dbm);;Fichier XML (*.xml);;Tous les fichiers (*.*)</translation>
+        <translation type="vanished">Modèle de base de données (*.dbm);;Fichier XML (*.xml);;Tous les fichiers (*.*)</translation>
     </message>
     <message>
         <source>Load file</source>
-        <translation>Charger un fichier</translation>
+        <translation type="vanished">Charger un fichier</translation>
     </message>
 </context>
 </TS>

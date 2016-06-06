@@ -11,7 +11,7 @@
 <!ATTLIST connection port CDATA #REQUIRED>
 <!ATTLIST connection user CDATA #REQUIRED>
 <!ATTLIST connection password CDATA #IMPLIED>
-<!ATTLIST connection connect_timeout CDATA #IMPLIED>
+<!ATTLIST connection connection-timeout CDATA #IMPLIED>
 <!ATTLIST connection options CDATA #IMPLIED>
 <!ATTLIST connection sslmode (disable|allow|prefer|require|verify-ca|verify-full) "disable">
 <!ATTLIST connection sslcert CDATA #IMPLIED>
@@ -21,4 +21,7 @@
 <!ATTLIST connection krbsrvname CDATA #IMPLIED>
 <!ATTLIST connection gsslib CDATA #IMPLIED>
 <!ATTLIST connection auto-browse-db (true|false) "false">
-
+<!ATTLIST connection default-for-import (true|false) "false">
+<!ATTLIST connection default-for-diff (true|false) "false">
+<!ATTLIST connection default-for-export (true|false) "false">
+<!ATTLIST connection default-for-validation (true|false) "false">

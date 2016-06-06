@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,15 +40,14 @@ LanguageWidget::LanguageWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_LA
 		configureFormLayout(language_grid, OBJ_LANGUAGE);
 
 		frame=generateInformationFrame(trUtf8("The functions to be assigned to the language should have, respectively, the following signatures:<br/><br/>  <strong>Handler Function:</strong> <em>language_handler function()</em><br/>  <strong>Validator Function:</strong> <em>void function(oid)</em><br/>  <strong>Inline Function:</strong> <em>void function(internal)</em>"));
+
+		language_grid->addItem(new QSpacerItem(10,10,QSizePolicy::Minimum,QSizePolicy::Expanding), language_grid->count()+1, 0, 1, 0);
 		language_grid->addWidget(frame, language_grid->count()+1, 0, 1, 0);
 		frame->setParent(this);
 
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+		configureTabOrder({ trusted_chk, func_handler_sel, func_validator_sel, func_inline_sel });
 
-    parent_form->setMinimumSize(540, 400);
-    parent_form->setMaximumHeight(400);
-
-    configureTabOrder({ trusted_chk, func_handler_sel, func_validator_sel, func_inline_sel });
+		setMinimumSize(600, 380);
 	}
 	catch(Exception &e)
 	{

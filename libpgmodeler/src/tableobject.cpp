@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ bool  TableObject::isDeclaredInTable(void)
 bool TableObject::isTableObject(ObjectType type)
 {
 	return(type==OBJ_COLUMN || type==OBJ_CONSTRAINT || type==OBJ_TRIGGER ||
-				 type==OBJ_RULE || type==OBJ_INDEX);
+		   type==OBJ_RULE || type==OBJ_INDEX);
 }
 
 void TableObject::operator = (TableObject &object)
@@ -113,18 +113,18 @@ void TableObject::setCodeInvalidated(bool value)
 
 QString TableObject::getDropDefinition(bool cascade)
 {
-  if(getParentTable())
-    attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
+	if(getParentTable())
+		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
-  attributes[this->getSchemaName()]=ParsersAttributes::_TRUE_;
+	attributes[this->getSchemaName()]=ParsersAttributes::_TRUE_;
 
-  return(BaseObject::getDropDefinition(cascade));
+	return(BaseObject::getDropDefinition(cascade));
 }
 
 QString TableObject::getSignature(bool format)
 {
-  if(!parent_table)
-    return(BaseObject::getSignature(format));
+	if(!parent_table)
+		return(BaseObject::getSignature(format));
 
-  return(QString("%1.%2").arg(parent_table->getSignature(format)).arg(this->getName(format)));
+	return(QString("%1.%2").arg(parent_table->getSignature(format)).arg(this->getName(format)));
 }

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,9 +26,9 @@ TableTitleView::TableTitleView(void) : BaseObjectView(nullptr)
 	obj_name=new QGraphicsSimpleTextItem;
 	obj_name->setZValue(1);
 
-  //box=new QGraphicsPolygonItem;
-  box=new RoundedRectItem;
-  box->setRoundedCorners(RoundedRectItem::TOPLEFT_CORNER | RoundedRectItem::TOPRIGHT_CORNER);
+	//box=new QGraphicsPolygonItem;
+	box=new RoundedRectItem;
+	box->setRoundedCorners(RoundedRectItem::TOPLEFT_CORNER | RoundedRectItem::TOPRIGHT_CORNER);
 	box->setZValue(0);
 
 	this->addToGroup(box);
@@ -53,17 +53,17 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	QPen pen;
 	Schema *schema=dynamic_cast<Schema *>(object->getSchema());
 	QFont font;
-  Tag *tag=dynamic_cast<BaseTable *>(object)->getTag();
+	Tag *tag=dynamic_cast<BaseTable *>(object)->getTag();
 
 	//Raises an error if the object related to the title is not allocated
 	if(!object)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	//Raises an error if the object is invalid
 	else if(object->getObjectType()!=OBJ_TABLE  &&
-					object->getObjectType()!=OBJ_VIEW)
+			object->getObjectType()!=OBJ_VIEW)
 		throw Exception(ERR_OPR_OBJ_INV_TYPE, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-  if(object->getObjectType()==OBJ_VIEW && !tag)
+	if(object->getObjectType()==OBJ_VIEW && !tag)
 	{
 		name_attrib=ParsersAttributes::VIEW_NAME;
 		schema_name_attrib=ParsersAttributes::VIEW_SCHEMA_NAME;
@@ -77,41 +77,41 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	}
 
 	//Strike out the table name when its sql is disabled
-  fmt=font_config[schema_name_attrib];
-  font=fmt.font();
-  schema_name->setFont(font);
+	fmt=font_config[schema_name_attrib];
+	font=fmt.font();
+	schema_name->setFont(font);
 
-  if(!tag)
-    schema_name->setBrush(fmt.foreground());
-  else
-    schema_name->setBrush(tag->getElementColor(schema_name_attrib, Tag::FILL_COLOR1));
+	if(!tag)
+		schema_name->setBrush(fmt.foreground());
+	else
+		schema_name->setBrush(tag->getElementColor(schema_name_attrib, Tag::FILL_COLOR1));
 
 	if(schema->isRectVisible())
-    schema_name->setText(QString(" "));
+		schema_name->setText(QString(" "));
 	else
-    schema_name->setText(schema->getName() + QString("."));
+		schema_name->setText(schema->getName() + QString("."));
 
-  fmt=font_config[name_attrib];
-  font=fmt.font();
+	fmt=font_config[name_attrib];
+	font=fmt.font();
 
-  obj_name->setFont(font);
-  obj_name->setText(object->getName());
+	obj_name->setFont(font);
+	obj_name->setText(object->getName());
 
-  if(!tag)
-  {
-    obj_name->setBrush(fmt.foreground());
-    box->setBrush(this->getFillStyle(title_color_attrib));
-  }
-  else
-  {
-    obj_name->setBrush(tag->getElementColor(name_attrib, Tag::FILL_COLOR1));
-    box->setBrush(tag->getFillStyle(title_color_attrib));
-  }
+	if(!tag)
+	{
+		obj_name->setBrush(fmt.foreground());
+		box->setBrush(this->getFillStyle(title_color_attrib));
+	}
+	else
+	{
+		obj_name->setBrush(tag->getElementColor(name_attrib, Tag::FILL_COLOR1));
+		box->setBrush(tag->getFillStyle(title_color_attrib));
+	}
 
 	pen=this->getBorderStyle(title_color_attrib);
 
-  if(tag)
-    pen.setColor(tag->getElementColor(title_color_attrib, Tag::BORDER_COLOR));
+	if(tag)
+		pen.setColor(tag->getElementColor(title_color_attrib, Tag::BORDER_COLOR));
 
 	if(object->getObjectType()==OBJ_VIEW)
 		pen.setStyle(Qt::DashLine);
@@ -120,17 +120,17 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 
 	if(schema->isRectVisible())
 		this->resizeTitle(obj_name->boundingRect().width()  + (2 * HORIZ_SPACING),
-											obj_name->boundingRect().height() + (2 * VERT_SPACING));
+						  obj_name->boundingRect().height() + (2 * VERT_SPACING));
 	else
 		this->resizeTitle(obj_name->boundingRect().width() + schema_name->boundingRect().width() + (2 * HORIZ_SPACING),
-											schema_name->boundingRect().height() + (2 * VERT_SPACING));
+						  schema_name->boundingRect().height() + (2 * VERT_SPACING));
 }
 
 void TableTitleView::resizeTitle(double width, double height)
 {
-  box->setRect(QRectF(0,0, width, height));
+	box->setRect(QRectF(0,0, width, height));
 
-  if(schema_name->text()==QString(" "))
+	if(schema_name->text()==QString(" "))
 		obj_name->setPos((box->boundingRect().width() - obj_name->boundingRect().width())/2.0f, VERT_SPACING);
 	else
 	{

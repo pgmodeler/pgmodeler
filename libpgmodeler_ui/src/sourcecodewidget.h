@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,32 +31,34 @@
 #include "numberedtexteditor.h"
 
 class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
-  private:
-    Q_OBJECT
+	private:
+		Q_OBJECT
 
-    static const int ORIGINAL_SQL=0,
-    DEPENDENCIES_SQL=1,
-    CHILDREN_SQL=2;
+		static const int ORIGINAL_SQL=0,
+		DEPENDENCIES_SQL=1,
+		CHILDREN_SQL=2;
 
-    NumberedTextEditor *sqlcode_txt,
-    *xmlcode_txt;
+		NumberedTextEditor *sqlcode_txt,
+		*xmlcode_txt;
 
-    SyntaxHighlighter *hl_sqlcode,
-    *hl_xmlcode;
+		SyntaxHighlighter *hl_sqlcode,
+		*hl_xmlcode;
 
-    HintTextWidget *code_options_ht;
+		HintTextWidget *code_options_ht;
 
-    void applyConfiguration(void){}
-    void hideEvent(QHideEvent *event);
+		void hideEvent(QHideEvent *event);
 
-  public:
-    SourceCodeWidget(QWidget * parent = 0);
-    void setAttributes(DatabaseModel *model, BaseObject *object=nullptr);
+	public:
+		SourceCodeWidget(QWidget * parent = 0);
+		void setAttributes(DatabaseModel *model, BaseObject *object=nullptr);
 
-  private slots:
-    void generateSourceCode(int=0);
-    void setSourceCodeTab(int=0);
-    void saveSQLCode(void);
+	public slots:
+		void applyConfiguration(void);
+
+	private slots:
+		void generateSourceCode(int=0);
+		void setSourceCodeTab(int=0);
+		void saveSQLCode(void);
 };
 
 #endif

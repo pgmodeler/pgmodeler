@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,8 +33,8 @@ class LanguageWidget: public BaseObjectWidget, public Ui::LanguageWidget {
 		Q_OBJECT
 
 		ObjectSelectorWidget *func_handler_sel,
-												*func_validator_sel,
-												*func_inline_sel;
+		*func_validator_sel,
+		*func_inline_sel;
 
 		void hideEvent(QHideEvent *event);
 

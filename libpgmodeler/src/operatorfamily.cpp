@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,11 +45,12 @@ QString OperatorFamily::getCodeDefinition(unsigned def_type, bool reduced_form)
 	QString code_def=getCachedCode(def_type, reduced_form);
 	if(!code_def.isEmpty()) return(code_def);
 
+	attributes[ParsersAttributes::SIGNATURE]=getSignature();
 	attributes[ParsersAttributes::INDEX_TYPE]=(~indexing_type);
 	return(BaseObject::getCodeDefinition(def_type,reduced_form));
 }
 
 QString OperatorFamily::getSignature(bool format)
 {
-  return(BaseObject::getSignature(format) + QString(" USING %1").arg(~indexing_type));
+	return(BaseObject::getSignature(format) + QString(" USING %1").arg(~indexing_type));
 }

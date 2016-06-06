@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,11 +31,11 @@ void Tablespace::setName(const QString &name)
 {
 	/* Tablespace names starting with pg_ is reserved to PostgreSQL if its the case
 		raises an error */
-  if(name.mid(0,3)==QString("pg_"))
+	if(name.mid(0,3)==QString("pg_"))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_RESERVED_NAME)
-                    .arg(this->getName())
-										.arg(BaseObject::getTypeName(OBJ_TABLESPACE)),
-										ERR_ASG_RESERVED_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						.arg(this->getName())
+						.arg(BaseObject::getTypeName(OBJ_TABLESPACE)),
+						ERR_ASG_RESERVED_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObject::setName(name);
 }
@@ -43,10 +43,10 @@ void Tablespace::setName(const QString &name)
 void Tablespace::setDirectory(const QString &dir)
 {
 	QString dir_aux=dir;
-  dir_aux.remove('\'');
+	dir_aux.remove('\'');
 
 	//Raises an error if the directory is an empty path
-  if(dir_aux.isEmpty())
+	if(dir_aux.isEmpty())
 		throw Exception(ERR_ASG_EMPTY_DIR_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->directory != dir_aux);
@@ -63,8 +63,8 @@ QString Tablespace::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-  if(!directory.isEmpty())
-    attributes[ParsersAttributes::DIRECTORY]=QString("'") + directory + QString("'");
+	if(!directory.isEmpty())
+		attributes[ParsersAttributes::DIRECTORY]=QString("'") + directory + QString("'");
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }

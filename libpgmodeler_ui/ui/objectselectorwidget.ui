@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>277</width>
-    <height>27</height>
+    <height>192</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -56,7 +56,7 @@
       <bool>false</bool>
      </property>
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -82,8 +82,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>20</width>
-       <height>20</height>
+       <width>22</width>
+       <height>22</height>
       </size>
      </property>
     </widget>
@@ -91,7 +91,7 @@
    <item row="0" column="2">
     <widget class="QToolButton" name="sel_object_tb">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -117,8 +117,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>20</width>
-       <height>20</height>
+       <width>22</width>
+       <height>22</height>
       </size>
      </property>
     </widget>
@@ -134,13 +134,13 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>25</height>
+       <height>0</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
        <width>16777215</width>
-       <height>25</height>
+       <height>16777215</height>
       </size>
      </property>
      <property name="font">

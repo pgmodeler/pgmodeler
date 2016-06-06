@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,9 +43,9 @@ class Collation : public BaseObject {
 		//! \brief LC_CTYPE and LC_COLLATE attributes
 		QString localization[2],
 
-						/*! \brief This attribute sets at once the localization attribute. Using this attribute
+		/*! \brief This attribute sets at once the localization attribute. Using this attribute
 						user cannot change localization attributes */
-						locale;
+		locale;
 
 	public:
 		static const unsigned _LC_CTYPE=0,
@@ -53,7 +53,7 @@ class Collation : public BaseObject {
 
 		Collation(void);
 
-		/*! brief Sets the collation locale and the base encoding. This method specifies at once the LC_CTYPE
+		/*! \brief Sets the collation locale and the base encoding. This method specifies at once the LC_CTYPE
 		and LC_COLLATE attributes. When the user calls this method with 'locale' set the use of setLocalization()
 		has no effect. To use custom localizations the user must reset 'locale' to a empty value. */
 		void setLocale(const QString &locale);
@@ -76,7 +76,7 @@ class Collation : public BaseObject {
 		virtual QString getCodeDefinition(unsigned def_type) final;
 		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) final;
 
-    virtual QString getAlterDefinition(BaseObject *object);
+		virtual QString getAlterDefinition(BaseObject *object);
 };
 
 #endif

@@ -4,13 +4,13 @@
 case `uname -m` in
   "x86_64")
     ARCH="linux64"
-    FALLBACK_QT_ROOT=/opt/qt-5.4.1/5.4/gcc_64
+    FALLBACK_QT_ROOT=/opt/qt-5.5.1/5.5/gcc_64
     FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
     ;;
     
    *)
     ARCH="linux32"
-    FALLBACK_QT_ROOT=/opt/qt-5.4.1/5.4/gcc
+    FALLBACK_QT_ROOT=/opt/qt-5.5.1/5.5/gcc
     FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
     ;;
 esac
@@ -20,7 +20,7 @@ esac
 QMAKE_ARGS="-r -spec linux-clang"
 QMAKE_ROOT=/usr/bin
 LOG="$PWD/linuxdeploy.log"
-QT_IFW_ROOT=/opt/qt-if-1.5.0
+QT_IFW_ROOT=/opt/qt-ifw-1.5.0
 
 STARTUP_SCRIPT="start-pgmodeler.sh"
 MIME_UPDATE_SCRIPT="dbm-mime-type.sh"
@@ -35,7 +35,7 @@ QT_CONF="$BUILD_DIR/$INSTALL_ROOT/qt.conf"
 DEP_PLUGINS_DIR="$BUILD_DIR/$INSTALL_ROOT/lib/qtplugins"
   
 # Detecting current pgModeler version
-DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PGMODELER_VERSION | sed 's/PGMODELER_VERSION=QString("//g' | sed 's/"),//g' | sed 's/^ *//g'`
+DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PGMODELER_VERSION | sed 's/PGMODELER_VERSION=QString("//g' | sed 's/"),//g' | sed 's/^ *//g' | cut -s -f2`
 GEN_INSTALLER_OPT='-gen-installer'
 DEMO_VERSION_OPT='-demo-version'
 NO_QT_LIBS_OPT='-no-qt-libs'
@@ -129,6 +129,8 @@ else
            libQt5Network.so.5 \
            libQt5Gui.so.5 \
            libQt5Core.so.5 \
+           libQt5XcbQpa.so.5 \
+           libQt5Svg.so \
            libicui18n.so.5* \
            libicuuc.so.5* \
            libicudata.so.5*"
@@ -138,7 +140,7 @@ clear
 echo 
 echo "pgModeler Linux deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.com.br"
-echo "Copyright 2006-2015 Raphael A. Silva <raphael@pgmodeler.com.br>"
+echo "Copyright 2006-2016 Raphael A. Silva <raphael@pgmodeler.com.br>"
 
 # Identifying System Qt version
 if [ -e "$QMAKE_ROOT/qmake" ]; then
@@ -245,7 +247,7 @@ if [ $BUNDLE_QT_LIBS = 1 ]; then
  QT_ROOT=`$QMAKE_ROOT/qtpaths --install-prefix`  >> $LOG 2>&1
  
  for lib in $QT_LIBS; do
-  cp $QT_ROOT/lib/$lib $BUILD_DIR/$INSTALL_ROOT/lib >> $LOG 2>&1
+  cp -v $QT_ROOT/lib/$lib $BUILD_DIR/$INSTALL_ROOT/lib >> $LOG 2>&1
  done
  
  if [ $? -ne 0 ]; then
@@ -268,7 +270,7 @@ if [ $BUNDLE_QT_LIBS = 1 ]; then
  for plug in $DEP_PLUGINS; do
    pdir=`dirname $plug`
    mkdir -p $DEP_PLUGINS_DIR/$pdir >> $LOG 2>&1
-   cp $QT_ROOT/plugins/$plug $DEP_PLUGINS_DIR/$pdir >> $LOG 2>&1
+   cp -v $QT_ROOT/plugins/$plug $DEP_PLUGINS_DIR/$pdir >> $LOG 2>&1
 
    if [ $? -ne 0 ]; then
     echo
@@ -281,9 +283,9 @@ if [ $BUNDLE_QT_LIBS = 1 ]; then
 fi
 
 echo "Copying scripts..."
-cp $STARTUP_SCRIPT "$BUILD_DIR/$INSTALL_ROOT" >> $LOG 2>&1
-cp $MIME_UPDATE_SCRIPT "$BUILD_DIR/$INSTALL_ROOT" >> $LOG 2>&1
-cp $ENV_VARS_SCRIPT "$BUILD_DIR/$INSTALL_ROOT" >> $LOG 2>&1
+cp -v $STARTUP_SCRIPT "$BUILD_DIR/$INSTALL_ROOT" >> $LOG 2>&1
+cp -v $MIME_UPDATE_SCRIPT "$BUILD_DIR/$INSTALL_ROOT" >> $LOG 2>&1
+cp -v $ENV_VARS_SCRIPT "$BUILD_DIR/$INSTALL_ROOT" >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
     echo

@@ -7,11 +7,8 @@
     <x>0</x>
     <y>0</y>
     <width>347</width>
-    <height>112</height>
+    <height>124</height>
    </rect>
-  </property>
-  <property name="windowTitle">
-   <string>Form</string>
   </property>
   <layout class="QGridLayout" name="column_grid">
    <property name="leftMargin">
@@ -50,7 +47,7 @@
       <item row="0" column="0">
        <widget class="QRadioButton" name="expression_rb">
         <property name="text">
-         <string>Expression:</string>
+         <string>E&amp;xpression:</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -66,14 +63,14 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>NOT NULL</string>
+         <string>&amp;NOT NULL</string>
         </property>
        </widget>
       </item>
       <item row="1" column="0">
        <widget class="QRadioButton" name="sequence_rb">
         <property name="text">
-         <string>Sequence:</string>
+         <string>Se&amp;quence:</string>
         </property>
        </widget>
       </item>
@@ -82,7 +79,7 @@
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>25</height>
+          <height>16777215</height>
          </size>
         </property>
         <property name="frameShadow">
@@ -99,6 +96,9 @@
         </property>
         <property name="horizontalScrollBarPolicy">
          <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="tabChangesFocus">
+         <bool>true</bool>
         </property>
        </widget>
       </item>

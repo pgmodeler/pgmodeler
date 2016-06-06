@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -46,52 +46,52 @@ class SchemaParser {
 		bool ignore_empty_atribs;
 
 		static const char CHR_COMMENT,			//! \brief Character that starts a comment
-											CHR_LINE_END,			//! \brief Character that indicates end of line
-											CHR_SPACE,        //! \brief Character that indicates spacing
-											CHR_TABULATION,   //! \brief Character that indicates tabulation
-											CHR_INI_ATTRIB,   //! \brief Character that indicates a reference to an attribute
-											CHR_END_ATTRIB,   //! \brief Character that delimits on the right the attribute name
-											CHR_INI_CONDITIONAL,//! \brief Character that starts a conditional instruction
-											CHR_INI_METACHAR,   //! \brief Character that starts a metacharacter
-											CHR_INI_PURETEXT,   //! \brief Character that starts a puretext
-                      CHR_END_PURETEXT,   //! \brief Character that ends a puretext
-                      CHR_INI_CEXPR,      //! \brief Character that starts a comparison expression
-                      CHR_END_CEXPR,      //! \brief Character that ends a comparison expression
-                      CHR_VAL_DELIM,      //! \brief Character that delimiters a value (string)
-                      CHR_VALUE_OF;      /*! \brief Character that is used on %set instructions to
-                                              create an attribute name based upon another attribute value */
+		CHR_LINE_END,			//! \brief Character that indicates end of line
+		CHR_SPACE,        //! \brief Character that indicates spacing
+		CHR_TABULATION,   //! \brief Character that indicates tabulation
+		CHR_INI_ATTRIB,   //! \brief Character that indicates a reference to an attribute
+		CHR_END_ATTRIB,   //! \brief Character that delimits on the right the attribute name
+		CHR_INI_CONDITIONAL,//! \brief Character that starts a conditional instruction
+		CHR_INI_METACHAR,   //! \brief Character that starts a metacharacter
+		CHR_INI_PURETEXT,   //! \brief Character that starts a puretext
+		CHR_END_PURETEXT,   //! \brief Character that ends a puretext
+		CHR_INI_CEXPR,      //! \brief Character that starts a comparison expression
+		CHR_END_CEXPR,      //! \brief Character that ends a comparison expression
+		CHR_VAL_DELIM,      //! \brief Character that delimiters a value (string)
+		CHR_VALUE_OF;      /*! \brief Character that is used on %set instructions to
+											  create an attribute name based upon another attribute value */
 
-    //! \brief Tokens related to conditional instructions and operators
+		//! \brief Tokens related to conditional instructions and operators
 		static const QString	TOKEN_IF,  // %if
-													TOKEN_THEN,// %then
-													TOKEN_ELSE,// %else
-													TOKEN_END, // %end
-													TOKEN_OR,  // %or
-													TOKEN_NOT, // %not
-                          TOKEN_AND, // %and
-                          TOKEN_SET, //%set
-                          TOKEN_UNSET; //%unset
+		TOKEN_THEN,// %then
+		TOKEN_ELSE,// %else
+		TOKEN_END, // %end
+		TOKEN_OR,  // %or
+		TOKEN_NOT, // %not
+		TOKEN_AND, // %and
+		TOKEN_SET, //%set
+		TOKEN_UNSET; //%unset
 
 
 		//! \brief Tokens related to metacharacters
 		static const QString	TOKEN_META_SP,// $sp (space)
-													TOKEN_META_BR,// $br (line break)
-													TOKEN_META_TB,// $tb (tabulation)
-                          TOKEN_META_OB,// $ob (open square bracket '[')
-                          TOKEN_META_CB,// $cb (close square bracket ']')
-                          TOKEN_META_OC,// $ob (open curly bracket '{')
-                          TOKEN_META_CC;// $cb (close curly bracket '}')
+		TOKEN_META_BR,// $br (line break)
+		TOKEN_META_TB,// $tb (tabulation)
+		TOKEN_META_OB,// $ob (open square bracket '[')
+		TOKEN_META_CB,// $cb (close square bracket ']')
+		TOKEN_META_OC,// $ob (open curly bracket '{')
+		TOKEN_META_CC;// $cb (close curly bracket '}')
 
-    //! \brief Tokens related to comparison expressions
-    static const QString	TOKEN_EQ_OP,// == (equal)
-                          TOKEN_NE_OP,// != (not equal)
-                          TOKEN_GT_OP,// > (greater than)
-                          TOKEN_LT_OP,// < (less than)
-                          TOKEN_GT_EQ_OP,// >= (greater or equal to)
-                          TOKEN_LT_EQ_OP;// <= (less or equal to)
+		//! \brief Tokens related to comparison expressions
+		static const QString	TOKEN_EQ_OP,// == (equal)
+		TOKEN_NE_OP,// != (not equal)
+		TOKEN_GT_OP,// > (greater than)
+		TOKEN_LT_OP,// < (less than)
+		TOKEN_GT_EQ_OP,// >= (greater or equal to)
+		TOKEN_LT_EQ_OP;// <= (less or equal to)
 
-    //! brief RegExp used to validate attribute names
-    static const QRegExp ATTR_REGEXP;
+		//! \brief RegExp used to validate attribute names
+		static const QRegExp ATTR_REGEXP;
 
 		//! \brief Get an attribute name from the buffer on the current position
 		QString getAttribute(void);
@@ -110,50 +110,50 @@ class SchemaParser {
 		Let's suppose a1 and a2 has values and a3 is empty, the following expression
 		results will be:
 
-        %if {a1} %or {a2} %and {a3} %then --> FALSE
-        %if {a1} %or {a2} %and %not {a3} %then --> TRUE
-        %if {a1} %or %not {a3} %then --> TRUE
-        %if {a1} %and {a3} %then --> FALSE
+		%if {a1} %or {a2} %and {a3} %then --> FALSE
+		%if {a1} %or {a2} %and %not {a3} %then --> TRUE
+		%if {a1} %or %not {a3} %then --> TRUE
+		%if {a1} %and {a3} %then --> FALSE
 		*/
 		bool evaluateExpression(void);
 
-    /*! \brief Returns the result (true|false) of a comparison expression. A comparison expression
-        have the form: ( {attribute} [operator] "value" ), where:
+		/*! \brief Returns the result (true|false) of a comparison expression. A comparison expression
+		have the form: ( {attribute} [operator] "value" ), where:
 
-        (           --> Starts the expression
-        {attribute} --> Is the attribute to be compared to a value
-        [operator]  --> A valid comparison operator:
-                        == (equal), != (not equal), < (less than), > (greater than)
-                        <= (less or equal to), >= (greater or equal to)
-        )           --> Closes the expression
+		(           --> Starts the expression
+		{attribute} --> Is the attribute to be compared to a value
+		[operator]  --> A valid comparison operator:
+						== (equal), != (not equal), < (less than), > (greater than)
+						<= (less or equal to), >= (greater or equal to)
+		)           --> Closes the expression
 
-        The parenthesis are mandatory otherwise the parser will not recognize the expression
-        and raise an exception. Multiple expressions combined with logical operators
-        %not %and %or in the same () are not supported. */
-    bool evaluateComparisonExpr(void);
+		The parenthesis are mandatory otherwise the parser will not recognize the expression
+		and raise an exception. Multiple expressions combined with logical operators
+		%not %and %or in the same () are not supported. */
+		bool evaluateComparisonExpr(void);
 
-    /*! brief Creates a new attribute when finding:
-        1) %set  {attrib-name} [expr]  or
-        2) %set @{existing-attrib} [expr]
+		/*! \brief Creates a new attribute when finding:
+		1) %set  {attrib-name} [expr]  or
+		2) %set @{existing-attrib} [expr]
 
-        Where [expr] can be pure texts, meta chars or other attributes exists overwrite its value.
+		Where [expr] can be pure texts, meta chars or other attributes exists overwrite its value.
 
-        In the second form note the @ at the beginnig of 'existing-attribute', this variation creates
-        a new attribute which the name is the value of {existing-attribute}. In this case the parser
-        may return error if the value used is an invalid name.
+		In the second form note the @ at the beginnig of 'existing-attribute', this variation creates
+		a new attribute which the name is the value of {existing-attribute}. In this case the parser
+		may return error if the value used is an invalid name.
 
-        The %set construction must be the only one in the line otherwise the parser will return
-        errors if another instruction starting with % is found. */
-    void defineAttribute(void);
+		The %set construction must be the only one in the line otherwise the parser will return
+		errors if another instruction starting with % is found. */
+		void defineAttribute(void);
 
-    //! brief Clears the value of attributes when finding the instruction: %unset {attr1} {attr2}...
-    void unsetAttribute(void);
+		//! \brief Clears the value of attributes when finding the instruction: %unset {attr1} {attr2}...
+		void unsetAttribute(void);
 
-    //! brief Increments the column counter while blank chars (space and tabs) are found on the line
+		//! \brief Increments the column counter while blank chars (space and tabs) are found on the line
 		void ignoreBlankChars(const QString &line);
 
-    //! brief Translates the meta char token to the real character
-    char translateMetaCharacter(const QString &meta);
+		//! \brief Translates the meta char token to the real character
+		char translateMetaCharacter(const QString &meta);
 
 		/*! \brief Get an word from the buffer on the current position (word is any string that isn't
 		 a conditional instruction or comment) */
@@ -171,14 +171,14 @@ class SchemaParser {
 
 		/*! \brief Vectorial representation of the loaded file. This is the buffer that is
 		 analyzed by de parser */
-    QStringList buffer;
+		QStringList buffer;
 
-    int line, //! \brief Current line where the parser reading is
-        column, //! \brief Current column where the parser reading is
+		int line, //! \brief Current line where the parser reading is
+		column, //! \brief Current column where the parser reading is
 
-        /*! \brief Comment line ammout extracted. This attribute is used to make the correct
-                  reference to the line on file that has syntax errors */
-        comment_count;
+		/*! \brief Comment line ammout extracted. This attribute is used to make the correct
+				  reference to the line on file that has syntax errors */
+		comment_count;
 
 		attribs_map attributes;
 
@@ -187,8 +187,8 @@ class SchemaParser {
 
 	public:
 		//! \brief Constants used to get a specific object definition
-    static const unsigned SQL_DEFINITION=0,
-													XML_DEFINITION=1;
+		static const unsigned SQL_DEFINITION=0,
+		XML_DEFINITION=1;
 
 		SchemaParser(void);
 
@@ -222,21 +222,21 @@ class SchemaParser {
 		//! \brief Resets the parser in order to do new analysis
 		void restartParser(void);
 
-    //! \brief Set if the parser must ignore unknown attributes avoiding exception throwing
-    void ignoreUnkownAttributes(bool ignore);
+		//! \brief Set if the parser must ignore unknown attributes avoiding exception throwing
+		void ignoreUnkownAttributes(bool ignore);
 
-    //! \brief Set if the parser must ignore empty attributes avoiding exception throwing
-    void ignoreEmptyAttributes(bool ignore);
+		//! \brief Set if the parser must ignore empty attributes avoiding exception throwing
+		void ignoreEmptyAttributes(bool ignore);
 
 		//! \brief Retorns the current PostgreSQL version used by the parser
 		QString getPgSQLVersion(void);
 
-    //! brief Extracts the attributes names from the currently loaded buffer
-    QStringList extractAttributes(void);
+		//! \brief Extracts the attributes names from the currently loaded buffer
+		QStringList extractAttributes(void);
 
 		/*! \brief Converts any chars (operators) < > " to the respective XML entities. This method is only
-    called when generating XML code and only tag attributes are treated.*/
-    static QString convertCharsToXMLEntities(QString buf);
+	called when generating XML code and only tag attributes are treated.*/
+		static QString convertCharsToXMLEntities(QString buf);
 };
 
 #endif

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,13 +34,13 @@ class CopyOptions {
 
 	public:
 		static const unsigned DEFAULTS=1,
-															CONSTRAINTS=2,
-															INDEXES=4,
-															STORAGE=8,
-															COMMENTS=16,
-															ALL=31,
-															INCLUDING=64,
-															EXCLUDING=128;
+		CONSTRAINTS=2,
+		INDEXES=4,
+		STORAGE=8,
+		COMMENTS=16,
+		ALL=31,
+		INCLUDING=64,
+		EXCLUDING=128;
 
 		CopyOptions(void);
 		CopyOptions(unsigned copy_mode, unsigned copy_op_ids);

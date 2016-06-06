@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,15 +23,14 @@ TablespaceWidget::TablespaceWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	Ui_TablespaceWidget::setupUi(this);
 	configureFormLayout(tablespace_grid, OBJ_TABLESPACE);
 
-	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-
-	parent_form->setMinimumSize(500, 230);
-	parent_form->setMaximumHeight(230);
+	tablespace_grid->addItem(new QSpacerItem(10,0,QSizePolicy::Minimum,QSizePolicy::Expanding), tablespace_grid->count(), 0);
 
 	setRequiredField(directory_lbl);
 	setRequiredField(directory_edt);
 
-  configureTabOrder();
+	configureTabOrder();
+
+	setMinimumSize(480, 140);
 }
 
 void TablespaceWidget::hideEvent(QHideEvent *event)

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #include <QTextDocument>
 #include <QLineEdit>
 
-HtmlItemDelegate::HtmlItemDelegate(QObject *parent) : ReadOnlyItemDelegate(parent)
+HtmlItemDelegate::HtmlItemDelegate(QObject *parent) : PlainTextItemDelegate(parent, true)
 {
 
 }
@@ -32,40 +32,40 @@ HtmlItemDelegate::~HtmlItemDelegate(void)
 
 void HtmlItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-  QString text=index.data().toString();
+	QString text=index.data().toString();
 
-  painter->save();
-  QStyledItemDelegate::paint(painter, option, index);
+	painter->save();
+	QStyledItemDelegate::paint(painter, option, index);
 
-  if(text.contains(QRegExp("(<)(\\/)?(.+)((>)|(\\/>))(\n)?")))
-  {
-    QTextDocument doc;
-    QRect rect;
-    QColor bg_color;
+	if(text.contains(QRegExp("(<)(\\/)?(.+)((>)|(\\/>))(\n)?")))
+	{
+		QTextDocument doc;
+		QRect rect;
+		QColor bg_color;
 
-    text.replace(QString("\n"), QString("<br/>"));
-    rect=QRect(QPoint(option.rect.left() + option.decorationSize.width() + 5,
-                      option.rect.top()), option.rect.size());
+		text.replace(QString("\n"), QString("<br/>"));
+		rect=QRect(QPoint(option.rect.left() + option.decorationSize.width() + 5,
+						  option.rect.top()), option.rect.size());
 
-    //Painting the correct background color according to the item state
-    if((option.state & QStyle::State_Selected) == QStyle::State_Selected)
-      //Selected
-      bg_color=option.palette.color(QPalette::Highlight);
-    else if(option.features==QStyleOptionViewItem::Alternate)
-      //Alternate color
-      bg_color=option.palette.color(QPalette::AlternateBase);
-    else
-      //Base color
-      bg_color=option.palette.color(QPalette::Base);
+		//Painting the correct background color according to the item state
+		if((option.state & QStyle::State_Selected) == QStyle::State_Selected)
+			//Selected
+			bg_color=option.palette.color(QPalette::Highlight);
+		else if(option.features==QStyleOptionViewItem::Alternate)
+			//Alternate color
+			bg_color=option.palette.color(QPalette::AlternateBase);
+		else
+			//Base color
+			bg_color=option.palette.color(QPalette::Base);
 
-    //Repaint the text area
-    painter->fillRect(rect, bg_color);
+		//Repaint the text area
+		painter->fillRect(rect, bg_color);
 
-    //Set the text to a html document instance and draw it to the painter
-    doc.setHtml(text);
-    painter->translate(rect.topLeft());
-    doc.drawContents(painter);
-  }
+		//Set the text to a html document instance and draw it to the painter
+		doc.setHtml(text);
+		painter->translate(rect.topLeft());
+		doc.drawContents(painter);
+	}
 
-  painter->restore();
+	painter->restore();
 }

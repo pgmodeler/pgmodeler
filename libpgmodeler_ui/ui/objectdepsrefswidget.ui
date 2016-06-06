@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Object's dependencies &amp; references</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../res/resources.qrc">
@@ -132,6 +132,9 @@
           <property name="text">
            <string>ID</string>
           </property>
+          <property name="textAlignment">
+           <set>AlignLeading|AlignVCenter</set>
+          </property>
           <property name="icon">
            <iconset resource="../res/resources.qrc">
             <normaloff>:/icones/icones/uid.png</normaloff>:/icones/icones/uid.png</iconset>
@@ -140,6 +143,9 @@
          <column>
           <property name="text">
            <string>Object</string>
+          </property>
+          <property name="textAlignment">
+           <set>AlignLeading|AlignVCenter</set>
           </property>
           <property name="icon">
            <iconset resource="../res/resources.qrc">
@@ -150,6 +156,9 @@
           <property name="text">
            <string>Type</string>
           </property>
+          <property name="textAlignment">
+           <set>AlignLeading|AlignVCenter</set>
+          </property>
           <property name="icon">
            <iconset resource="../res/resources.qrc">
             <normaloff>:/icones/icones/usertype.png</normaloff>:/icones/icones/usertype.png</iconset>
@@ -159,6 +168,9 @@
           <property name="text">
            <string>Parent Object</string>
           </property>
+          <property name="textAlignment">
+           <set>AlignLeading|AlignVCenter</set>
+          </property>
           <property name="icon">
            <iconset resource="../res/resources.qrc">
             <normaloff>:/icones/icones/schema.png</normaloff>:/icones/icones/schema.png</iconset>
@@ -167,6 +179,9 @@
          <column>
           <property name="text">
            <string>Parent Type</string>
+          </property>
+          <property name="textAlignment">
+           <set>AlignLeading|AlignVCenter</set>
           </property>
           <property name="icon">
            <iconset resource="../res/resources.qrc">
@@ -269,6 +284,9 @@
           <property name="text">
            <string>ID</string>
           </property>
+          <property name="textAlignment">
+           <set>AlignLeading|AlignVCenter</set>
+          </property>
           <property name="icon">
            <iconset resource="../res/resources.qrc">
             <normaloff>:/icones/icones/uid.png</normaloff>:/icones/icones/uid.png</iconset>
@@ -277,6 +295,9 @@
          <column>
           <property name="text">
            <string>Object</string>
+          </property>
+          <property name="textAlignment">
+           <set>AlignLeading|AlignVCenter</set>
           </property>
           <property name="icon">
            <iconset resource="../res/resources.qrc">
@@ -287,6 +308,9 @@
           <property name="text">
            <string>Type</string>
           </property>
+          <property name="textAlignment">
+           <set>AlignLeading|AlignVCenter</set>
+          </property>
           <property name="icon">
            <iconset resource="../res/resources.qrc">
             <normaloff>:/icones/icones/usertype.png</normaloff>:/icones/icones/usertype.png</iconset>
@@ -296,6 +320,9 @@
           <property name="text">
            <string>Parent Object</string>
           </property>
+          <property name="textAlignment">
+           <set>AlignLeading|AlignVCenter</set>
+          </property>
           <property name="icon">
            <iconset resource="../res/resources.qrc">
             <normaloff>:/icones/icones/schema.png</normaloff>:/icones/icones/schema.png</iconset>
@@ -304,6 +331,9 @@
          <column>
           <property name="text">
            <string>Parent Type</string>
+          </property>
+          <property name="textAlignment">
+           <set>AlignLeading|AlignVCenter</set>
           </property>
           <property name="icon">
            <iconset resource="../res/resources.qrc">
@@ -385,12 +415,10 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLabel" name="label_4">
+       <widget class="QLabel" name="message_lbl">
         <property name="font">
          <font>
-          <pointsize>8</pointsize>
           <weight>50</weight>
-          <italic>true</italic>
           <bold>false</bold>
           <underline>false</underline>
           <strikeout>false</strikeout>

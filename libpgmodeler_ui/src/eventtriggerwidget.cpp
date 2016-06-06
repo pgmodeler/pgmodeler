@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,15 +20,19 @@
 
 EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_EVENT_TRIGGER)
 {
+	map<QString, vector<QWidget *> > fields_map;
+	map<QWidget *, vector<QString> > values_map;
+	QFrame *frame=nullptr;
+
 	Ui_EventTriggerWidget::setupUi(this);
 
 	function_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
 	filter_tab=new ObjectTableWidget(ObjectTableWidget::ADD_BUTTON |
-																	 ObjectTableWidget::EDIT_BUTTON |
-																	 ObjectTableWidget::UPDATE_BUTTON |
-																	 ObjectTableWidget::REMOVE_BUTTON |
-																	 ObjectTableWidget::REMOVE_ALL_BUTTON |
-																	 ObjectTableWidget::MOVE_BUTTONS, false, this);
+									 ObjectTableWidget::EDIT_BUTTON |
+									 ObjectTableWidget::UPDATE_BUTTON |
+									 ObjectTableWidget::REMOVE_BUTTON |
+									 ObjectTableWidget::REMOVE_ALL_BUTTON |
+									 ObjectTableWidget::MOVE_BUTTONS, false, this);
 	filter_tab->setColumnCount(1);
 	filter_tab->setHeaderLabel(trUtf8("Tag command"), 0);
 
@@ -36,29 +40,37 @@ EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent
 	filter_layout->addWidget(filter_tab);
 
 	configureFormLayout(eventtrigger_grid, OBJ_EVENT_TRIGGER);
+	setRequiredField(function_lbl);
 
-	parent_form->setMinimumSize(530, 450);
+	fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(event_lbl);
+	values_map[event_lbl].push_back(~EventTriggerType(EventTriggerType::table_rewrite));
+
+	frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);
+	frame->setParent(this);
+	eventtrigger_grid->addWidget(frame, eventtrigger_grid->count(), 0, 1, 2);
+
 	configureTabOrder({ event_cmb, function_sel, tag_edt, filter_tab });
 
 	QStringList list;
 	EventTriggerType::getTypes(list);
 	event_cmb->addItems(list);
 
-	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 	connect(filter_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleTagValue(int)));
 	connect(filter_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleTagValue(int)));
 
 	connect(filter_tab, &ObjectTableWidget::s_rowsRemoved,
-					[=](){ filter_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, false); });
+			[=](){ filter_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, false); });
 
 	connect(filter_tab, &ObjectTableWidget::s_rowEdited,
-					[=](int row){ tag_edt->setText(filter_tab->getCellText(row, 0)); });
+			[=](int row){ tag_edt->setText(filter_tab->getCellText(row, 0)); });
 
 	connect(tag_edt, &QLineEdit::textChanged,
-					[=](){
-								 filter_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, !tag_edt->text().isEmpty());
-								 filter_tab->setButtonsEnabled(ObjectTableWidget::UPDATE_BUTTON, !tag_edt->text().isEmpty());
-							 });
+			[=](){
+		filter_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, !tag_edt->text().isEmpty());
+		filter_tab->setButtonsEnabled(ObjectTableWidget::UPDATE_BUTTON, !tag_edt->text().isEmpty());
+	});
+
+	setMinimumSize(500, 400);
 }
 
 void EventTriggerWidget::hideEvent(QHideEvent *)
@@ -85,7 +97,7 @@ void EventTriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 		filter_tab->blockSignals(true);
 
-    for(auto &flt : filter)
+		for(auto &flt : filter)
 		{
 			filter_tab->addRow();
 			filter_tab->setCellText(flt, filter_tab->getRowCount()-1, 0);

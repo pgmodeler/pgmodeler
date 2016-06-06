@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -118,9 +118,9 @@ void Element::configureAttributes(attribs_map &attributes, unsigned def_type)
 bool Element::operator == (Element &elem)
 {
 	return(this->column == elem.column &&
-				 this->expression == elem.expression &&
-				 this->operator_class == elem.operator_class &&
-				 this->sorting_enabled == elem.sorting_enabled &&
-				 this->sorting_attibs[ASC_ORDER] == elem.sorting_attibs[ASC_ORDER] &&
-				 this->sorting_attibs[NULLS_FIRST] == elem.sorting_attibs[NULLS_FIRST]);
+		   this->expression == elem.expression &&
+		   this->operator_class == elem.operator_class &&
+		   this->sorting_enabled == elem.sorting_enabled &&
+		   this->sorting_attibs[ASC_ORDER] == elem.sorting_attibs[ASC_ORDER] &&
+		   this->sorting_attibs[NULLS_FIRST] == elem.sorting_attibs[NULLS_FIRST]);
 }

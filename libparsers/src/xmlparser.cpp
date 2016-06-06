@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ XMLParser::XMLParser(void)
 XMLParser::~XMLParser(void)
 {
 	restartParser();
-  xmlCleanupParser();
+	xmlCleanupParser();
 }
 
 void XMLParser::removeDTD(void)
@@ -48,13 +48,13 @@ void XMLParser::removeDTD(void)
 		/* Removes the current DTD from document.
 		 If the user attempts to manipulate the structure of
 		 document damaging its integrity. */
-    pos1=xml_buffer.indexOf(QLatin1String("<!DOCTYPE"));
-    pos2=xml_buffer.indexOf(QLatin1String("]>\n"));
-    pos3=xml_buffer.indexOf(QLatin1String("\">\n"));
+		pos1=xml_buffer.indexOf(QLatin1String("<!DOCTYPE"));
+		pos2=xml_buffer.indexOf(QLatin1String("]>\n"));
+		pos3=xml_buffer.indexOf(QLatin1String("\">\n"));
 		if(pos1 >=0 && (pos2 >=0 || pos3 >= 0))
 		{
 			len=((pos2 > pos3) ? (pos2-pos1)+3 :  (pos3-pos2)+3);
-      xml_buffer.replace(pos1,len,QString());
+			xml_buffer.replace(pos1,len,QString());
 		}
 	}
 }
@@ -66,7 +66,7 @@ void XMLParser::loadXMLFile(const QString &filename)
 		QFile input;
 		QString buffer;
 
-    if(!filename.isEmpty())
+		if(!filename.isEmpty())
 		{
 			//Opens a file stream using the file name
 			input.setFileName(filename);
@@ -76,7 +76,7 @@ void XMLParser::loadXMLFile(const QString &filename)
 			if(!input.isOpen())
 			{
 				throw Exception(QString(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED)).arg(filename),
-												ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+								ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
 			buffer=input.readAll();
@@ -101,18 +101,18 @@ void XMLParser::loadXMLBuffer(const QString &xml_buf)
 		if(xml_buf.isEmpty())
 			throw Exception(ERR_ASG_EMPTY_XML_BUFFER,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-    pos1=xml_buf.indexOf(QLatin1String("<?xml"));
-    pos2=xml_buf.indexOf(QLatin1String("?>"));
+		pos1=xml_buf.indexOf(QLatin1String("<?xml"));
+		pos2=xml_buf.indexOf(QLatin1String("?>"));
 		xml_buffer=xml_buf;
 
 		if(pos1 >= 0 && pos2 >= 0)
 		{
 			tam=(pos2-pos1)+3;
 			xml_decl=xml_buffer.mid(pos1, tam);
-      xml_buffer.replace(pos1,tam,QString());
+			xml_buffer.replace(pos1,tam,QString());
 		}
 		else
-      xml_decl=QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+			xml_decl=QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 
 		removeDTD();
 		readBuffer();
@@ -133,18 +133,18 @@ void XMLParser::setDTDFile(const QString &dtd_file, const QString &dtd_name)
 	if(dtd_name.isEmpty())
 		throw Exception(ERR_ASG_EMPTY_DTD_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	#ifndef Q_OS_WIN
-    fmt_dtd_file=QString("file://");
-	#else
-    fmt_dtd_file=QString("file:///");
-	#endif
+#ifndef Q_OS_WIN
+	fmt_dtd_file=QString("file://");
+#else
+	fmt_dtd_file=QString("file:///");
+#endif
 
 	//Formats the dtd file path to URL style (converting to percentage format the non reserved chars)
 	fmt_dtd_file=QUrl::toPercentEncoding(QFileInfo(dtd_file).absoluteFilePath(), "/:");
-  dtd_decl=QString("<!DOCTYPE ") + dtd_name +
-           QString(" SYSTEM ") +
-           QString("\"") +
-           fmt_dtd_file + QString("\">\n");
+	dtd_decl=QString("<!DOCTYPE ") + dtd_name +
+			 QString(" SYSTEM ") +
+			 QString("\"") +
+			 fmt_dtd_file + QString("\">\n");
 }
 
 void XMLParser::readBuffer(void)
@@ -186,7 +186,7 @@ void XMLParser::readBuffer(void)
 			//Formats the error
 			msg=xml_error->message;
 			file=xml_error->file;
-      if(!file.isEmpty()) file=QString("(%1)").arg(file);
+			if(!file.isEmpty()) file=QString("(%1)").arg(file);
 			msg.replace("\n"," ");
 
 			//Restarts the parser
@@ -194,8 +194,8 @@ void XMLParser::readBuffer(void)
 
 			//Raise an exception with the error massege from the parser xml
 			throw Exception(QString(Exception::getErrorMessage(ERR_LIBXMLERR))
-											.arg(xml_error->line).arg(xml_error->int2).arg(msg).arg(file),
-											ERR_LIBXMLERR,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							.arg(xml_error->line).arg(xml_error->int2).arg(msg).arg(file),
+							ERR_LIBXMLERR,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
 		//Gets the referênce to the root element on the document
@@ -251,18 +251,18 @@ void XMLParser::restartParser(void)
 {
 	root_elem=curr_elem=nullptr;
 
-  if(xml_doc)
+	if(xml_doc)
 	{
 		xmlFreeDoc(xml_doc);
 		xml_doc=nullptr;
 	}
-  dtd_decl=xml_buffer=xml_decl=QString();
+	dtd_decl=xml_buffer=xml_decl=QString();
 
 	while(!elems_stack.empty())
 		elems_stack.pop();
 
-  xml_doc_filename=QString();
-  xmlResetLastError();
+	xml_doc_filename=QString();
+	xmlResetLastError();
 }
 
 bool XMLParser::accessElement(unsigned elem_type)
@@ -295,24 +295,24 @@ bool XMLParser::hasElement(unsigned elem_type, xmlElementType xml_node_type)
 	if(!root_elem)
 		throw Exception(ERR_OPR_NOT_ALOC_ELEM_TREE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  if(elem_type==ROOT_ELEMENT)
+	if(elem_type==ROOT_ELEMENT)
 		/* Returns the verification if the current element has a parent.
 		 The element must be different from the root, because the root element
 		 is not connected to a parent */
-    return(curr_elem!=root_elem && curr_elem->parent!=nullptr &&
-           (xml_node_type==0 || (xml_node_type!=0 && curr_elem->parent->type==xml_node_type)));
-  else if(elem_type==CHILD_ELEMENT)
+		return(curr_elem!=root_elem && curr_elem->parent!=nullptr &&
+														  (xml_node_type==0 || (xml_node_type!=0 && curr_elem->parent->type==xml_node_type)));
+	else if(elem_type==CHILD_ELEMENT)
 		//Returns the verification if the current element has children
-    return(curr_elem->children!=nullptr &&
-           (xml_node_type==0 || (xml_node_type!=0 && curr_elem->children->type==xml_node_type)));
-  else if(elem_type==NEXT_ELEMENT)
-    return(curr_elem->next!=nullptr &&
-           (xml_node_type==0 || (xml_node_type!=0 && curr_elem->next->type==xml_node_type)));
+		return(curr_elem->children!=nullptr &&
+									(xml_node_type==0 || (xml_node_type!=0 && curr_elem->children->type==xml_node_type)));
+	else if(elem_type==NEXT_ELEMENT)
+		return(curr_elem->next!=nullptr &&
+								(xml_node_type==0 || (xml_node_type!=0 && curr_elem->next->type==xml_node_type)));
 	else
 		/* The second comparison in the expression is made for the root element
 		 because libxml2 places the previous element as the root itself */
-    return(curr_elem->prev!=nullptr && curr_elem->prev!=root_elem &&
-           (xml_node_type==0 || (xml_node_type!=0 && curr_elem->prev->type==xml_node_type)));
+		return(curr_elem->prev!=nullptr && curr_elem->prev!=root_elem &&
+															(xml_node_type==0 || (xml_node_type!=0 && curr_elem->prev->type==xml_node_type)));
 }
 
 bool XMLParser::hasAttributes(void)

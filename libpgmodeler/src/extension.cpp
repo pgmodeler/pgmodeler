@@ -39,12 +39,12 @@ void Extension::setSchema(BaseObject *schema)
 
 		//Renames the PostgreSQL type represented by the extension
 		PgSQLType::renameUserType(prev_name, this, this->getName(true));
-  }
+	}
 }
 
 QString Extension::getSignature(bool format)
 {
-  return(getName(format, false));
+	return(getName(format, false));
 }
 
 void Extension::setHandlesType(bool value)
@@ -54,8 +54,8 @@ void Extension::setHandlesType(bool value)
 	on table columns/functions or any other objects that references PgSQLType */
 	if(!value && PgSQLType::getUserTypeIndex(this->getName(true), this) != BaseType::null)
 		throw Exception(Exception::getErrorMessage(ERR_REG_EXT_NOT_HANDLING_TYPE)
-                    .arg(this->getName(true)),
-                    ERR_REG_EXT_NOT_HANDLING_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						.arg(this->getName(true)),
+						ERR_REG_EXT_NOT_HANDLING_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->handles_type=value;
 }
@@ -91,43 +91,43 @@ QString Extension::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::HANDLES_TYPE]=(handles_type ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::CUR_VERSION]=versions[CUR_VERSION];
 	attributes[ParsersAttributes::OLD_VERSION]=versions[OLD_VERSION];
-  attributes[ParsersAttributes::NAME]=this->getName(def_type==SchemaParser::SQL_DEFINITION, false);
-  return(BaseObject::__getCodeDefinition(def_type));
+	attributes[ParsersAttributes::NAME]=this->getName(def_type==SchemaParser::SQL_DEFINITION, false);
+	return(BaseObject::__getCodeDefinition(def_type));
 }
 
 QString Extension::getAlterDefinition(BaseObject *object)
 {
-  Extension *ext=dynamic_cast<Extension *>(object);
+	Extension *ext=dynamic_cast<Extension *>(object);
 
-  if(!ext)
-    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(!ext)
+		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  try
-  {
-    attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
-    attributes[ParsersAttributes::NEW_VERSION]=QString();
+	try
+	{
+		attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
+		attributes[ParsersAttributes::NEW_VERSION]=QString();
 
-    if(!this->versions[CUR_VERSION].isEmpty() && !ext->versions[CUR_VERSION].isEmpty() &&
-       this->versions[CUR_VERSION].isEmpty() < ext->versions[CUR_VERSION].isEmpty())
-      attributes[ParsersAttributes::NEW_VERSION]=ext->versions[CUR_VERSION];
+		if(!this->versions[CUR_VERSION].isEmpty() && !ext->versions[CUR_VERSION].isEmpty() &&
+				this->versions[CUR_VERSION].isEmpty() < ext->versions[CUR_VERSION].isEmpty())
+			attributes[ParsersAttributes::NEW_VERSION]=ext->versions[CUR_VERSION];
 
-    return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
-  }
-  catch(Exception &e)
-  {
-    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-  }
+		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
 }
 
 void Extension::operator = (Extension &ext)
 {
-  QString prev_name=this->getName(true);
+	QString prev_name=this->getName(true);
 
-  *(dynamic_cast<BaseObject *>(this))=dynamic_cast<BaseObject &>(ext);
-  this->versions[CUR_VERSION]=ext.versions[CUR_VERSION];
-  this->versions[OLD_VERSION]=ext.versions[OLD_VERSION];
-  this->handles_type=ext.handles_type;
+	*(dynamic_cast<BaseObject *>(this))=dynamic_cast<BaseObject &>(ext);
+	this->versions[CUR_VERSION]=ext.versions[CUR_VERSION];
+	this->versions[OLD_VERSION]=ext.versions[OLD_VERSION];
+	this->handles_type=ext.handles_type;
 
-  if(this->handles_type)
-    PgSQLType::renameUserType(prev_name, this, this->getName(true));
+	if(this->handles_type)
+		PgSQLType::renameUserType(prev_name, this, this->getName(true));
 }

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,16 +31,16 @@
 class CollationWidget: public BaseObjectWidget, public Ui::CollationWidget {
 	private:
 		Q_OBJECT
-
+		
 		void hideEvent(QHideEvent *event);
-
+		
 	public:
 		CollationWidget(QWidget * parent = 0);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Collation *collation);
-
+		
 	public slots:
 		void applyConfiguration(void);
-
+		
 	private slots:
 		void resetFields(void);
 };

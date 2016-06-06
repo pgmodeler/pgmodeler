@@ -391,6 +391,9 @@
               <property name="text">
                <string>ID</string>
               </property>
+              <property name="textAlignment">
+               <set>AlignLeading|AlignVCenter</set>
+              </property>
               <property name="icon">
                <iconset resource="../res/resources.qrc">
                 <normaloff>:/icones/icones/uid.png</normaloff>:/icones/icones/uid.png</iconset>
@@ -399,6 +402,9 @@
              <column>
               <property name="text">
                <string>Object</string>
+              </property>
+              <property name="textAlignment">
+               <set>AlignLeading|AlignVCenter</set>
               </property>
               <property name="icon">
                <iconset resource="../res/resources.qrc">
@@ -409,6 +415,9 @@
               <property name="text">
                <string>Type</string>
               </property>
+              <property name="textAlignment">
+               <set>AlignLeading|AlignVCenter</set>
+              </property>
               <property name="icon">
                <iconset resource="../res/resources.qrc">
                 <normaloff>:/icones/icones/usertype.png</normaloff>:/icones/icones/usertype.png</iconset>
@@ -418,6 +427,9 @@
               <property name="text">
                <string>Parent Object</string>
               </property>
+              <property name="textAlignment">
+               <set>AlignLeading|AlignVCenter</set>
+              </property>
               <property name="icon">
                <iconset resource="../res/resources.qrc">
                 <normaloff>:/icones/icones/schema.png</normaloff>:/icones/icones/schema.png</iconset>
@@ -426,6 +438,9 @@
              <column>
               <property name="text">
                <string>Parent Type</string>
+              </property>
+              <property name="textAlignment">
+               <set>AlignLeading|AlignVCenter</set>
               </property>
               <property name="icon">
                <iconset resource="../res/resources.qrc">
@@ -587,7 +602,7 @@
      <item>
       <widget class="QToolButton" name="select_tb">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -610,8 +625,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>22</width>
+         <height>22</height>
         </size>
        </property>
        <property name="shortcut">
@@ -622,7 +637,7 @@
      <item>
       <widget class="QToolButton" name="cancel_tb">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -645,8 +660,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>22</width>
+         <height>22</height>
         </size>
        </property>
        <property name="shortcut">
@@ -657,7 +672,7 @@
      <item>
       <widget class="QToolButton" name="tree_view_tb">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -683,8 +698,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>22</width>
+         <height>22</height>
         </size>
        </property>
        <property name="checkable">
@@ -698,7 +713,7 @@
      <item>
       <widget class="QToolButton" name="list_view_tb">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -721,8 +736,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>22</width>
+         <height>22</height>
         </size>
        </property>
        <property name="checkable">
@@ -733,7 +748,7 @@
      <item>
       <widget class="QToolButton" name="options_tb">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -756,8 +771,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>22</width>
+         <height>22</height>
         </size>
        </property>
        <property name="checkable">
@@ -771,7 +786,7 @@
      <item>
       <widget class="QToolButton" name="expand_all_tb">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -794,8 +809,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>22</width>
+         <height>22</height>
         </size>
        </property>
        <property name="checkable">
@@ -806,7 +821,7 @@
      <item>
       <widget class="QToolButton" name="collapse_all_tb">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -829,8 +844,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>22</width>
+         <height>22</height>
         </size>
        </property>
        <property name="checkable">
@@ -867,6 +882,9 @@
      <item>
       <widget class="QLineEdit" name="filter_edt">
        <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="clearButtonEnabled">
         <bool>true</bool>
        </property>
       </widget>

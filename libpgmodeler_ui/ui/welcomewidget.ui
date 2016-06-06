@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CentralWidget</class>
- <widget class="QWidget" name="CentralWidget">
+ <class>WelcomeWidget</class>
+ <widget class="QWidget" name="WelcomeWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>656</width>
-    <height>355</height>
+    <width>658</width>
+    <height>362</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -86,7 +86,6 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>12</pointsize>
            <weight>50</weight>
            <bold>false</bold>
           </font>
@@ -125,7 +124,6 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>12</pointsize>
            <weight>50</weight>
            <bold>false</bold>
           </font>
@@ -167,7 +165,6 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>12</pointsize>
            <weight>50</weight>
            <bold>false</bold>
           </font>
@@ -212,7 +209,6 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>12</pointsize>
            <weight>50</weight>
            <bold>false</bold>
           </font>
@@ -257,7 +253,6 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>12</pointsize>
            <weight>50</weight>
            <bold>false</bold>
            <stylestrategy>PreferAntialias</stylestrategy>

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,12 +26,12 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 
 		Ui_TriggerWidget::setupUi(this);
 
-    cond_expr_hl=new SyntaxHighlighter(cond_expr_txt, false, true);
-    cond_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		cond_expr_hl=new SyntaxHighlighter(cond_expr_txt, false, true);
+		cond_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		columns_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-																				(ObjectTableWidget::EDIT_BUTTON |
-																				 ObjectTableWidget::UPDATE_BUTTON), true, this);
+										  (ObjectTableWidget::EDIT_BUTTON |
+										   ObjectTableWidget::UPDATE_BUTTON), true, this);
 
 		arguments_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
 
@@ -44,9 +44,9 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 
 		columns_tab->setColumnCount(2);
 		columns_tab->setHeaderLabel(trUtf8("Column"), 0);
-    columns_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
+		columns_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
 		columns_tab->setHeaderLabel(trUtf8("Type"), 1);
-    columns_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+		columns_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
 
 		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(1)->layout())->addWidget(columns_tab, 1,0,1,3);
 		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(0)->layout())->addWidget(arguments_tab, 1,0,1,3);
@@ -58,9 +58,7 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 		firing_mode_cmb->addItems(list);
 
 		configureFormLayout(trigger_grid, OBJ_TRIGGER);
-		parent_form->setMinimumSize(580, 580);
 
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_type_cmb, SLOT(setEnabled(bool)));
 		connect(columns_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addColumn(int)));
 		connect(columns_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(updateColumnsCombo(void)));
@@ -75,6 +73,8 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 		setRequiredField(firing_mode_lbl);
 		setRequiredField(function_lbl);
 		setRequiredField(function_sel);
+
+		setMinimumSize(580, 580);
 	}
 	catch(Exception &e)
 	{
@@ -90,7 +90,7 @@ void TriggerWidget::selectUpdateEvent(void)
 	/* Disable the columns tab when the trigger belongs to a view.
 	pgModeler does not support triggers reference view columns (yet) */
 	arg_cols_tbw->widget(1)->setEnabled(update_chk->isChecked() &&
-																			table->getObjectType()==OBJ_TABLE);
+										table->getObjectType()==OBJ_TABLE);
 }
 
 void TriggerWidget::setConstraintTrigger(bool value)
@@ -100,15 +100,15 @@ void TriggerWidget::setConstraintTrigger(bool value)
 	ref_table_sel->setEnabled(value);
 	ref_table_lbl->setEnabled(value);
 	deferrable_chk->setEnabled(value);
-  firing_mode_cmb->setEnabled(!value);
+	firing_mode_cmb->setEnabled(!value);
 
 	if(!value)
 	{
 		ref_table_sel->clearSelector();
 		deferrable_chk->setChecked(false);
 	}
-  else
-    firing_mode_cmb->setCurrentText(~FiringType(FiringType::after));
+	else
+		firing_mode_cmb->setCurrentText(~FiringType(FiringType::after));
 }
 
 void TriggerWidget::addColumn(int lin_idx)
@@ -133,8 +133,8 @@ void TriggerWidget::addColumn(Column *column, int row)
 {
 	if(column && row >= 0)
 	{
-    columns_tab->setCellText(column->getName(),row,0);
-    columns_tab->setCellText(~column->getType(),row,1);
+		columns_tab->setCellText(column->getName(),row,0);
+		columns_tab->setCellText(~column->getType(),row,1);
 		columns_tab->setRowData(QVariant::fromValue<void *>(column), row);
 	}
 }
@@ -157,9 +157,9 @@ void TriggerWidget::updateColumnsCombo(void)
 
 				if(columns_tab->getRowIndex(QVariant::fromValue<void *>(column)) < 0)
 				{
-          column_cmb->addItem(column->getName() +
-                              QString(" (") + ~column->getType() + QString(")"),
-															QVariant::fromValue<void *>(column));
+					column_cmb->addItem(column->getName() +
+										QString(" (") + ~column->getType() + QString(")"),
+										QVariant::fromValue<void *>(column));
 				}
 			}
 
@@ -218,7 +218,7 @@ void TriggerWidget::hideEvent(QHideEvent *event)
 	arg_cols_tbw->setCurrentIndex(0);
 }
 
-void TriggerWidget::setAttributes(DatabaseModel *model, BaseTable *parent_table, OperationList *op_list, Trigger *trigger)
+void TriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseTable *parent_table, Trigger *trigger)
 {
 	unsigned count=0, i;
 	Column *column=nullptr;
@@ -226,7 +226,7 @@ void TriggerWidget::setAttributes(DatabaseModel *model, BaseTable *parent_table,
 	if(!parent_table)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	BaseObjectWidget::setAttributes(model, op_list, trigger, parent_table);		
+	BaseObjectWidget::setAttributes(model, op_list, trigger, parent_table);
 	ref_table_sel->setModel(model);
 	function_sel->setModel(model);
 
@@ -235,7 +235,7 @@ void TriggerWidget::setAttributes(DatabaseModel *model, BaseTable *parent_table,
 		constr_trig_chk->setChecked(trigger->isConstraint());
 
 		exec_per_row_chk->setChecked(trigger->isExecutePerRow());
-    cond_expr_txt->setPlainText(trigger->getCondition());
+		cond_expr_txt->setPlainText(trigger->getCondition());
 		deferrable_chk->setChecked(trigger->isDeferrable());
 		deferral_type_cmb->setCurrentIndex(deferral_type_cmb->findText(~trigger->getDeferralType()));
 		firing_mode_cmb->setCurrentIndex(firing_mode_cmb->findText(~trigger->getFiringType()));

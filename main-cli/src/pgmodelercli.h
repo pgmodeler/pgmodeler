@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -81,18 +81,19 @@ class PgModelerCLI: public QApplication {
 		double zoom;
 
 		//! \brief Option names constants
-    static const QString INPUT,
+		static const QString INPUT,
 		OUTPUT,
 		EXPORT_TO_FILE,
 		EXPORT_TO_PNG,
+		EXPORT_TO_SVG,
 		EXPORT_TO_DBMS,
 		DROP_DATABASE,
-    DROP_OBJECTS,
+		DROP_OBJECTS,
 		PGSQL_VER,
 		HELP,
 		SHOW_GRID,
 		SHOW_DELIMITERS,
-    PAGE_BY_PAGE,
+		PAGE_BY_PAGE,
 		IGNORE_DUPLICATES,
 		CONN_ALIAS,
 		HOST,
@@ -105,11 +106,15 @@ class PgModelerCLI: public QApplication {
 		SIMULATE,
 		FIX_MODEL,
 		FIX_TRIES,
-    ZOOM_FACTOR,
-    USE_TMP_NAMES,
-    DBM_MIME_TYPE,
-    INSTALL,
-    UNINSTALL;
+		ZOOM_FACTOR,
+		USE_TMP_NAMES,
+		DBM_MIME_TYPE,
+		INSTALL,
+		UNINSTALL,
+
+		TAG_EXPR,
+		END_TAG_EXPR,
+		ATTRIBUTE_EXPR;
 
 		//! \brief Parsers the options and executes the action specified by them
 		void parseOptions(attribs_map &parsed_opts);
@@ -140,19 +145,24 @@ class PgModelerCLI: public QApplication {
 		//! \brief Returns if the specified string contains some of relationship attributes
 		bool containsRelAttributes(const QString &str);
 
-    /*! brief Install the .dbm file association in the mime database (default behaviour).
-        The paramenter 'uninstall' is used to clean up any file association done previously. */
-    void handleMimeDatabase(bool uninstall);
+		/*! \brief Install the .dbm file association in the mime database (default behaviour).
+		The paramenter 'uninstall' is used to clean up any file association done previously. */
+		void handleMimeDatabase(bool uninstall);
 
-  public:
+		/*! \brief Fixes the references to opertor classes and families by replacing tags like
+		<opclass name="name"/> by <opclass signature="name USING index_method"/>. This method operates
+		only over operator classes, indexes and constraints */
+		void fixOpClassesFamiliesReferences(QString &obj_xml);
+
+	public:
 		PgModelerCLI(int argc, char **argv);
 		~PgModelerCLI(void);
 		int exec(void);
 
 	private slots:
 		void handleObjectAddition(BaseObject *);
-    void updateProgress(int progress, QString msg);
-    void handleObjectRemoval(BaseObject *object);
+		void updateProgress(int progress, QString msg);
+		void handleObjectRemoval(BaseObject *object);
 };
 
 #endif

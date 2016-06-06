@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>533</width>
-    <height>180</height>
+    <height>228</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -17,7 +17,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Change objects creation order</string>
   </property>
   <widget class="QLabel" name="create_lbl">
    <property name="geometry">
@@ -163,7 +163,7 @@
      <x>4</x>
      <y>128</y>
      <width>525</width>
-     <height>48</height>
+     <height>71</height>
     </rect>
    </property>
    <property name="sizePolicy">
@@ -181,7 +181,7 @@
    <property name="maximumSize">
     <size>
      <width>16777215</width>
-     <height>48</height>
+     <height>16777215</height>
     </size>
    </property>
    <property name="frameShape">
@@ -204,7 +204,7 @@
      <number>2</number>
     </property>
     <item row="0" column="1">
-     <widget class="QLabel" name="label_2">
+     <widget class="QLabel" name="message_lbl">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -213,9 +213,7 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>8</pointsize>
         <weight>50</weight>
-        <italic>true</italic>
         <bold>false</bold>
         <underline>false</underline>
         <strikeout>false</strikeout>
@@ -269,11 +267,11 @@
      <x>424</x>
      <y>92</y>
      <width>105</width>
-     <height>27</height>
+     <height>31</height>
     </rect>
    </property>
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
@@ -287,7 +285,7 @@
    <property name="maximumSize">
     <size>
      <width>16777215</width>
-     <height>30</height>
+     <height>16777215</height>
     </size>
    </property>
    <property name="focusPolicy">
@@ -305,8 +303,8 @@
    </property>
    <property name="iconSize">
     <size>
-     <width>20</width>
-     <height>20</height>
+     <width>22</width>
+     <height>22</height>
     </size>
    </property>
    <property name="toolButtonStyle">

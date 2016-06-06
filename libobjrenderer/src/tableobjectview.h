@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -53,15 +53,15 @@ class TableObjectView: public BaseObjectView
 
 	public:
 		static const QString	CONSTR_DELIM_END,
-													CONSTR_DELIM_START,
-													TYPE_SEPARATOR,
-													CONSTR_SEPARATOR,
-													TXT_FOREIGN_KEY,
-                          TXT_NOT_NULL,
-													TXT_PRIMARY_KEY,
-													TXT_UNIQUE,
-													TXT_CHECK,
-													TXT_EXCLUDE;
+		CONSTR_DELIM_START,
+		TYPE_SEPARATOR,
+		CONSTR_SEPARATOR,
+		TXT_FOREIGN_KEY,
+		TXT_NOT_NULL,
+		TXT_PRIMARY_KEY,
+		TXT_UNIQUE,
+		TXT_CHECK,
+		TXT_EXCLUDE;
 
 		TableObjectView(TableObject *object=nullptr);
 		~TableObjectView(void);

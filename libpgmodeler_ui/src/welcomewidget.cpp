@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,23 +16,29 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "centralwidget.h"
-#include "QGraphicsDropShadowEffect"
-#include "QTextStream"
+#include "welcomewidget.h"
+#include <QGraphicsDropShadowEffect>
+#include "pgmodeleruins.h"
 
-CentralWidget::CentralWidget(QWidget *parent): QWidget(parent)
+WelcomeWidget::WelcomeWidget(QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
 
 	QList<QToolButton *> btns= { new_tb, open_tb, recent_tb, last_session_tb, sample_tb };
 	QGraphicsDropShadowEffect *shadow=nullptr;
 
-  for(auto &btn : btns)
+	for(auto &btn : btns)
 	{
 		shadow=new QGraphicsDropShadowEffect(this);
 		shadow->setXOffset(3);
 		shadow->setYOffset(3);
 		shadow->setBlurRadius(10);
 		btn->setGraphicsEffect(shadow);
+
+#ifdef Q_OS_LINUX
+    PgModelerUiNS::configureWidgetFont(btn, 1.20f);
+#else
+        PgModelerUiNS::configureWidgetFont(btn, 1.50f);
+#endif
 	}
 }

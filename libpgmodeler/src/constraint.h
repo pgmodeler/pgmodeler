@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,13 +36,13 @@ class Constraint: public TableObject{
 		//! \brief Type of the constraint (primary key, foreign key, unique or check)
 		ConstraintType constr_type;
 
-    //! \brief Indicates if the constraint is deferrable (except for check contraints)
+		//! \brief Indicates if the constraint is deferrable (except for check contraints)
 		bool deferrable,
 
-				 //! \brief Indicates if the constraint will be copied or not to the child tables of the contraint's table (only for check constraint)
-				 no_inherit;
+		//! \brief Indicates if the constraint will be copied or not to the child tables of the contraint's table (only for check constraint)
+		no_inherit;
 
-    //! \brief Deferral type for the constraint (except for check contraints)
+		//! \brief Deferral type for the constraint (except for check contraints)
 		DeferralType deferral_type;
 
 		//! \brief Matching method used by the constraint (only for foreign key)
@@ -69,8 +69,8 @@ class Constraint: public TableObject{
 		//! \brief Stores the exclude elements of the exclude constraint
 		vector<ExcludeElement> excl_elements;
 
-    //! \brief Stores the check expression or the exclude predicate (only for check and exclude constraints)
-    QString expression;
+		//! \brief Stores the check expression or the exclude predicate (only for check and exclude constraints)
+		QString expression;
 
 		//! \brief Stores the referenced table (only for foreign keys)
 		BaseTable *ref_table;
@@ -81,22 +81,22 @@ class Constraint: public TableObject{
 		//! \brief Formats the exclude elements string used by the SchemaParser
 		void setExcludeElementsAttribute(unsigned def_type);
 
-    void setDeclInTableAttribute(void);
+		void setDeclInTableAttribute(void);
 
 	public:
 		/*! \brief Access the source columns that means the columns that constrais
 		is applied (from the constraint's parent table) */
 		static const unsigned SOURCE_COLS=0,
 
-														 /*! \brief Access the referenced columns that means the columns from the
+		/*! \brief Access the referenced columns that means the columns from the
 														 referenced table primary key (only for foreign keys) */
-														 REFERENCED_COLS=1;
+		REFERENCED_COLS=1;
 
-    static const unsigned DELETE_ACTION=0,
-                             UPDATE_ACTION=1;
+		static const unsigned DELETE_ACTION=0,
+		UPDATE_ACTION=1;
 
 		Constraint(void);
-    ~Constraint(void);
+		~Constraint(void);
 
 		/*! \brief Adds one column to the internal column list referenced by the
 		 constants SOURCE_COLS or REFERENCED_COLS */
@@ -108,13 +108,13 @@ class Constraint: public TableObject{
 		//! \brief Defines the constraint type
 		void setConstraintType(ConstraintType constr_type);
 
-    //! \brief Defines the type of action on foreign keys (ON DELETE and ON UPDATE). (only for foreign key)
-    void setActionType(ActionType action_type, unsigned act_id);
+		//! \brief Defines the type of action on foreign keys (ON DELETE and ON UPDATE). (only for foreign key)
+		void setActionType(ActionType action_type, unsigned act_id);
 
-    //! \brief Defines the deferral type for the constraint (except for check contraints)
+		//! \brief Defines the deferral type for the constraint (except for check contraints)
 		void setDeferralType(DeferralType deferral_type);
 
-    //! \brief Defines whether the constraint is deferrable (except for check contraints)
+		//! \brief Defines whether the constraint is deferrable (except for check contraints)
 		void setDeferrable(bool value);
 
 		//! \brief Defines the matching type used by the constraint (only for foreign key)
@@ -123,8 +123,8 @@ class Constraint: public TableObject{
 		//! \brief Defines the indexing type used by the constraint (only for exclude)
 		void setIndexType(IndexingType index_type);
 
-    //! \brief Defines the expresion used by the constraint (only for check and exclude constraint)
-    void setExpression(const QString &expr);
+		//! \brief Defines the expresion used by the constraint (only for check and exclude constraint)
+		void setExpression(const QString &expr);
 
 		//! \brief Defines the referenced table (only for foreign key)
 		void setReferencedTable(BaseTable *tab_ref);
@@ -143,8 +143,8 @@ class Constraint: public TableObject{
 		//! \brief Returns the constraint fill factor
 		unsigned getFillFactor(void);
 
-    //! \brief Retuns the action type (ON DELETE or ON UPDATE) of a foreign key
-    ActionType getActionType(unsigned act_id);
+		//! \brief Retuns the action type (ON DELETE or ON UPDATE) of a foreign key
+		ActionType getActionType(unsigned act_id);
 
 		/*! \brief Returns one column (using its index) from the internal constraint column lists.
 		 Use the constants SOURCE_COLS or REFERENCED_COLS to access the lists */
@@ -175,7 +175,7 @@ class Constraint: public TableObject{
 		ConstraintType getConstraintType(void);
 
 		//! \brief Returns the check expression
-    QString getExpression(void);
+		QString getExpression(void);
 
 		//! \brief Returns the referenced table
 		BaseTable *getReferencedTable(void);
@@ -194,13 +194,13 @@ class Constraint: public TableObject{
 		 to control which constraints reference columns added by the
 		 relationship in order to avoid referece breaking due constants
 		 connections and disconnections of relationships */
-    bool isReferRelationshipAddedColumn(void);
+		bool isReferRelationshipAddedColumn(void);
 
-    /*! brief Returns the list of all columns that is created by relationships.
-    This method is slower than isReferRelationshipAddedColumn() so it's not
-    recommended to use it only check if the object is referencing columns
-    added by relationship */
-    vector<Column *> getRelationshipAddedColumns(void);
+		/*! \brief Returns the list of all columns that is created by relationships.
+	This method is slower than isReferRelationshipAddedColumn() so it's not
+	recommended to use it only check if the object is referencing columns
+	added by relationship */
+		vector<Column *> getRelationshipAddedColumns(void);
 
 		//! \brief Returns the matching type adopted by the constraint
 		MatchType getMatchType(void);
@@ -217,7 +217,7 @@ class Constraint: public TableObject{
 		 whether the columns added by relationship must appear on the code definition */
 		virtual QString getCodeDefinition(unsigned def_type, bool inc_addedbyrel) final;
 
-    virtual QString getDropDefinition(bool cascade) final;
+		virtual QString getDropDefinition(bool cascade) final;
 
 		//! \brief Indicates whether the column exists on the specified internal column list
 		bool isColumnExists(Column *column, unsigned col_type);
@@ -247,14 +247,14 @@ class Constraint: public TableObject{
 		//! \brief Remove all exclude elements from the constraint
 		void removeExcludeElements(void);
 
-    //! \brief Toggles the not-null flag from source columns on primary key constraints. This methods has no effect in other constraint types
-    void setColumnsNotNull(bool value);
+		//! \brief Toggles the not-null flag from source columns on primary key constraints. This methods has no effect in other constraint types
+		void setColumnsNotNull(bool value);
 
-    virtual QString getSignature(bool format) final;
+		virtual QString getSignature(bool format) final;
 
-    /*! brief Compares two constratins XML definition and returns if they differs. This methods varies a little from
-        BaseObject::isCodeDiffersFrom() because here we need to generate xml code including relationship added columns */
-    virtual bool isCodeDiffersFrom(BaseObject *object, const vector<QString> &ignored_attribs={}, const vector<QString> &ignored_tags={});
+		/*! \brief Compares two constratins XML definition and returns if they differs. This methods varies a little from
+		BaseObject::isCodeDiffersFrom() because here we need to generate xml code including relationship added columns */
+		virtual bool isCodeDiffersFrom(BaseObject *object, const vector<QString> &ignored_attribs={}, const vector<QString> &ignored_tags={});
 };
 
 #endif

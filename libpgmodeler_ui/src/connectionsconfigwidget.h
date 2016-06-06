@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,40 +34,58 @@
 class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsConfigWidget {
 	private:
 		Q_OBJECT
+		
+		HintTextWidget *auto_browse_ht, *default_for_ops_ht, *other_params_ht;
 
-    HintTextWidget *auto_browse_ht;
-
-    //! brief Stores the connections created by the user
-    static vector<Connection *> connections;
-
-    /*! brief Stores the connections attributes. This map is used to write the connections.conf file
-        as well to create the connections stored by the 'connections' vector */
-    static map<QString, attribs_map> config_params;
-
+		static const QString DEFAULT_FOR;
+		
+		//! \brief Stores the connections created by the user
+		static vector<Connection *> connections;
+		
+		/*! \brief Stores the connections attributes. This map is used to write the connections.conf file
+		as well to create the connections stored by the 'connections' vector */
+		static map<QString, attribs_map> config_params;
+		
 		//! \brief Configures the passed connection setting it's attributes using the values from the form
 		void configureConnection(Connection *conn);
 
+		/*! \brief Fix the syntax of connections file in the user's config dir by replacing the old
+		connect_timeout attribute by connection-timeout */
+		void fixConnectionsFileSyntax(void);
+		
 		void hideEvent(QHideEvent *);
-		void destroyConnections(void);
+		void showEvent(QShowEvent *);
 
+		void updateConnectionsCombo(void);
+		
 	public:
 		ConnectionsConfigWidget(QWidget * parent=0);
 		~ConnectionsConfigWidget(void);
-
+		
 		void saveConfiguration(void);
 		void loadConfiguration(void);
-    static map<QString, attribs_map> getConfigurationParams(void);
-
+		
+		static map<QString, attribs_map> getConfigurationParams(void);
+		
 		//! \brief Fills the passed map with all the loaded connections.
-    static void getConnections(map<QString, Connection *> &conns, bool inc_hosts=true);
+		static void getConnections(map<QString, Connection *> &conns, bool inc_hosts=true);
+		
+		//! \brief Fills the passed combobox with all the loaded connections
+		static void fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder, unsigned check_def_for=Connection::OP_NONE);
+		
+		//! \brief Opens a local instance of connection config dialog to permit user configures connections on-the-fly
+		static bool openConnectionsConfiguration(QComboBox *combo, bool incl_placeholder);
 
-		//! brief Fills the passed combobox with all the loaded connections
-    static void fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder);
-
-  public slots:
+		//! \brief Returns the first connection found which is defined as the default for the specified operation
+		static Connection *getDefaultConnection(unsigned operation);
+		
+	protected:
+		void destroyConnections(void);
+		
+	public slots:
 		void restoreDefaults(void);
-
-  private slots:
+		
+	private slots:
 		void newConnection(void);
 		void duplicateConnection(void);
 		void handleConnection(void);
@@ -76,7 +94,9 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
 		void removeConnection(void);
 		void enableCertificates(void);
 		void enableConnectionTest(void);
-    void applyConfiguration(void){}
+		void applyConfiguration(void){}
+		
+		friend class ConfigurationForm;
 };
 
 #endif

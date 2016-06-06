@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>734</width>
-    <height>638</height>
+    <width>753</width>
+    <height>1361</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,9 +21,6 @@
     <width>0</width>
     <height>0</height>
    </size>
-  </property>
-  <property name="windowTitle">
-   <string>Form</string>
   </property>
   <layout class="QGridLayout" name="relationship_grid">
    <property name="leftMargin">
@@ -263,13 +260,13 @@
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>25</height>
+                 <height>0</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>25</height>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="verticalScrollBarPolicy">
@@ -291,13 +288,13 @@
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>25</height>
+                 <height>0</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>25</height>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="verticalScrollBarPolicy">
@@ -319,13 +316,13 @@
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>25</height>
+                 <height>0</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>25</height>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="verticalScrollBarPolicy">
@@ -347,13 +344,13 @@
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>25</height>
+                 <height>0</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>25</height>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="verticalScrollBarPolicy">
@@ -375,13 +372,13 @@
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>25</height>
+                 <height>0</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>25</height>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="verticalScrollBarPolicy">
@@ -403,13 +400,13 @@
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>25</height>
+                 <height>0</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>25</height>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="verticalScrollBarPolicy">
@@ -431,13 +428,13 @@
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>25</height>
+                 <height>0</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>25</height>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="verticalScrollBarPolicy">
@@ -867,7 +864,7 @@
             <string>One to one relationship</string>
            </property>
            <property name="text">
-            <string>1-1</string>
+            <string>&amp;1-1</string>
            </property>
           </widget>
          </item>
@@ -975,7 +972,7 @@
             <string>Generalization relationship (inheritance)</string>
            </property>
            <property name="text">
-            <string>gen</string>
+            <string>&amp;gen</string>
            </property>
           </widget>
          </item>
@@ -1261,7 +1258,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>EXCLUDING</string>
+             <string>E&amp;XCLUDING</string>
             </property>
            </widget>
           </item>
@@ -1370,16 +1367,22 @@
        </item>
        <item row="6" column="1">
         <widget class="QPlainTextEdit" name="recv_table_txt">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>25</height>
+           <height>0</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>25</height>
+           <height>16777215</height>
           </size>
          </property>
          <property name="font">
@@ -1397,16 +1400,22 @@
        </item>
        <item row="4" column="1">
         <widget class="QPlainTextEdit" name="ref_table_txt">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>25</height>
+           <height>0</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>25</height>
+           <height>16777215</height>
           </size>
          </property>
          <property name="font">

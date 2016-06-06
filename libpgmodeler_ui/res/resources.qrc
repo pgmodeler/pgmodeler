@@ -208,6 +208,17 @@
         <file>icones/flag_cuba.png</file>
         <file>icones/reference.png</file>
         <file>icones/outputpane.png</file>
+        <file>icones/server.png</file>
+        <file>icones/refreshdb.png</file>
+        <file>icones/objmetadata.png</file>
+        <file>icones/addrow.png</file>
+        <file>icones/delrow.png</file>
+        <file>icones/duprow.png</file>
+        <file>icones/editdata.png</file>
+        <file>icones/addcol.png</file>
+        <file>icones/delcol.png</file>
+        <file>icones/delrows.png</file>
+        <file>icones/delcols.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

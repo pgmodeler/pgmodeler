@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,18 +37,18 @@ void EventTrigger::setFunction(Function *func)
 {
 	if(!func)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
-                    .arg(this->getName())
-										.arg(BaseObject::getTypeName(OBJ_EVENT_TRIGGER)),
-										ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						.arg(this->getName())
+						.arg(BaseObject::getTypeName(OBJ_EVENT_TRIGGER)),
+						ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Functions with return type other that event_trigger are not accepted
-  else if(func->getReturnType()!=QString("event_trigger"))
-    throw Exception(Exception::getErrorMessage(ERR_ASG_INV_TRIGGER_FUNCTION).arg(QString("event_trigger")),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	else if(func->getReturnType()!=QString("event_trigger"))
+		throw Exception(Exception::getErrorMessage(ERR_ASG_INV_TRIGGER_FUNCTION).arg(QString("event_trigger")),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Functions with one or more parameters are not accepted
 	else if(func->getParameterCount()!=0)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
-                    .arg(this->getName())
-										.arg(BaseObject::getTypeName(OBJ_EVENT_TRIGGER)),
-										ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						.arg(this->getName())
+						.arg(BaseObject::getTypeName(OBJ_EVENT_TRIGGER)),
+						ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Functions coded in SQL lang. is not accepted by event triggers
 	else if(func->getLanguage()->getName()==~LanguageType(LanguageType::sql))
 		throw Exception(ERR_ASG_EVNT_TRIG_FUNC_INV_LANG,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -115,22 +115,22 @@ QString EventTrigger::getCodeDefinition(unsigned def_type)
 		if(function)
 			attributes[ParsersAttributes::FUNCTION]=function->getSignature();
 
-    for(auto &flt : filter)
-      str_list.push_back(QString("%1 IN ('%2')").arg(flt.first).arg(flt.second.join(QString("','"))));
+		for(auto &flt : filter)
+			str_list.push_back(QString("%1 IN ('%2')").arg(flt.first).arg(flt.second.join(QString("','"))));
 
-    attributes[ParsersAttributes::FILTER]=str_list.join(QString("\n\t AND "));
+		attributes[ParsersAttributes::FILTER]=str_list.join(QString("\n\t AND "));
 	}
 	else
 	{
 		if(function)
 			attributes[ParsersAttributes::FUNCTION]=function->getCodeDefinition(def_type, true);
 
-    for(auto &flt : filter)
+		for(auto &flt : filter)
 			//Creating an element <filter variable="" values=""/>
 			attributes[ParsersAttributes::FILTER]+=QString("\t<%1 %2=\"%3\" %4=\"%5\"/>\n")
-																						 .arg(ParsersAttributes::FILTER)
-																						 .arg(ParsersAttributes::VARIABLE).arg(flt.first)
-                                             .arg(ParsersAttributes::VALUES).arg(flt.second.join(','));
+												   .arg(ParsersAttributes::FILTER)
+												   .arg(ParsersAttributes::VARIABLE).arg(flt.first)
+												   .arg(ParsersAttributes::VALUES).arg(flt.second.join(','));
 	}
 
 	return(BaseObject::__getCodeDefinition(def_type));
@@ -138,13 +138,13 @@ QString EventTrigger::getCodeDefinition(unsigned def_type)
 
 QString EventTrigger::getAlterDefinition(BaseObject *object)
 {
-  try
-  {
-    attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
-    return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, false));
-  }
-  catch(Exception &e)
-  {
-    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-  }
+	try
+	{
+		attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
+		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, false));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
 }

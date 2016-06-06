@@ -22,9 +22,6 @@
     <height>216</height>
    </size>
   </property>
-  <property name="windowTitle">
-   <string>Form</string>
-  </property>
   <layout class="QGridLayout" name="function_grid">
    <property name="leftMargin">
     <number>2</number>
@@ -300,7 +297,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Simple</string>
+            <string>Si&amp;mple</string>
            </property>
            <property name="checked">
             <bool>true</bool>
@@ -335,7 +332,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Table</string>
+            <string>Tab&amp;le</string>
            </property>
            <property name="autoExclusive">
             <bool>true</bool>

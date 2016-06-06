@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>737</width>
-    <height>489</height>
+    <width>690</width>
+    <height>550</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -328,7 +328,7 @@
                    </sizepolicy>
                   </property>
                   <property name="statusTip">
-                   <string>Resolve some of the object's dependencies by querying the catalog when a needed object does not exists on the loaded set. In some cases it's necessary to combine this option with others below. This option does not applies to database level objects like role, tablespace and language as well for data types and extensions.</string>
+                   <string>Resolve some of the object's dependencies by querying the catalog when a needed object does not exists on the loaded set. In some cases it's necessary to combine this option with others below. This option does not applies to database level objects like role, tablespace and language as well for data types, extensions.</string>
                   </property>
                   <property name="whatsThis">
                    <string/>
@@ -387,6 +387,15 @@
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="sizeAdjustPolicy">
+                   <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>18</width>
+                    <height>18</height>
+                   </size>
                   </property>
                  </widget>
                 </item>
@@ -821,6 +830,9 @@
                      <property name="enabled">
                       <bool>true</bool>
                      </property>
+                     <property name="clearButtonEnabled">
+                      <bool>true</bool>
+                     </property>
                     </widget>
                    </item>
                    <item>
@@ -880,8 +892,8 @@
                    </property>
                    <property name="iconSize">
                     <size>
-                     <width>20</width>
-                     <height>20</height>
+                     <width>22</width>
+                     <height>22</height>
                     </size>
                    </property>
                    <property name="checkable">
@@ -918,8 +930,8 @@
                    </property>
                    <property name="iconSize">
                     <size>
-                     <width>20</width>
-                     <height>20</height>
+                     <width>22</width>
+                     <height>22</height>
                     </size>
                    </property>
                    <property name="checkable">
@@ -956,8 +968,8 @@
                    </property>
                    <property name="iconSize">
                     <size>
-                     <width>20</width>
-                     <height>20</height>
+                     <width>22</width>
+                     <height>22</height>
                     </size>
                    </property>
                    <property name="checkable">
@@ -994,8 +1006,8 @@
                    </property>
                    <property name="iconSize">
                     <size>
-                     <width>20</width>
-                     <height>20</height>
+                     <width>22</width>
+                     <height>22</height>
                     </size>
                    </property>
                    <property name="checkable">
@@ -1114,8 +1126,8 @@
               </property>
               <property name="iconSize">
                <size>
-                <width>20</width>
-                <height>20</height>
+                <width>22</width>
+                <height>22</height>
                </size>
               </property>
               <property name="toolButtonStyle">
@@ -1184,18 +1196,30 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="pixmap">
-      <pixmap resource="../res/resources.qrc">:/imagens/imagens/pgmodeler_name.png</pixmap>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
+   <item row="1" column="0" colspan="3">
     <layout class="QHBoxLayout" name="horizontalLayout_10">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="../res/resources.qrc">:/imagens/imagens/pgmodeler_name.png</pixmap>
+       </property>
+      </widget>
+     </item>
      <item>
       <spacer name="horizontalSpacer_6">
        <property name="orientation">
@@ -1241,8 +1265,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>22</width>
+         <height>22</height>
         </size>
        </property>
        <property name="default">
@@ -1279,8 +1303,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>22</width>
+         <height>22</height>
         </size>
        </property>
        <property name="flat">

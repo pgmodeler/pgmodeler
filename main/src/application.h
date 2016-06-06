@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,16 +42,16 @@
 
 class Application: public QApplication {
 	private:
-    /*! brief Creates the pgModeler's configuration dir on user's home folder.
-        The output path is platform dependant and is ruled by GlobalAttributes::CONFIGURATIONS_DIR */
-    void createUserConfiguration(void);
+		/*! \brief Creates the pgModeler's configuration dir on user's home folder.
+		The output path is platform dependant and is ruled by GlobalAttributes::CONFIGURATIONS_DIR */
+		void createUserConfiguration(void);
 
-    //! brief Copy files from a path to another recursively
-    void copyFilesRecursively(const QString &src_path, const QString &dst_path);
+		//! \brief Copy files from a path to another recursively
+		void copyFilesRecursively(const QString &src_path, const QString &dst_path);
 
-  public:
-    Application(int & argc, char ** argv);
-    bool notify(QObject * receiver, QEvent * event);
+	public:
+		Application(int & argc, char ** argv);
+		bool notify(QObject * receiver, QEvent * event);
 };
 
 #endif

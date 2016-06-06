@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 */
 
 #include "functionwidget.h"
+#include "baseform.h"
 
 FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FUNCTION)
 {
@@ -24,8 +25,8 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 	{
 		QStringList types;
 		QGridLayout *grid=nullptr, *grid1=nullptr;
-    QVBoxLayout *vlayout=nullptr;
-    QSpacerItem *spacer=nullptr;
+		QVBoxLayout *vlayout=nullptr;
+		QSpacerItem *spacer=nullptr;
 
 		map<QString, vector<QWidget *> > fields_map;
 		map<QWidget *, vector<QString> > value_map;
@@ -34,35 +35,33 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		Ui_FunctionWidget::setupUi(this);
 
 		configureFormLayout(function_grid, OBJ_FUNCTION);
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+		source_code_txt=new NumberedTextEditor(this);
+		dynamic_cast<QGridLayout *>(source_code_frm->layout())->addWidget(source_code_txt, 1, 0, 1, 2);
 
-    source_code_txt=new NumberedTextEditor(this);
-    dynamic_cast<QGridLayout *>(source_code_frm->layout())->addWidget(source_code_txt, 1, 0, 1, 2);
-
-    source_code_hl=new SyntaxHighlighter(source_code_txt);
+		source_code_hl=new SyntaxHighlighter(source_code_txt);
 		source_code_cp=new CodeCompletionWidget(source_code_txt);
 
 		ret_type=new PgSQLTypeWidget(this);
-    vlayout=new QVBoxLayout;
-    spacer=new QSpacerItem(5,5,QSizePolicy::Preferred,QSizePolicy::Expanding);
-    vlayout->addWidget(ret_type);
-    vlayout->addSpacerItem(spacer);
+		vlayout=new QVBoxLayout;
+		spacer=new QSpacerItem(5,5,QSizePolicy::Preferred,QSizePolicy::Expanding);
+		vlayout->addWidget(ret_type);
+		vlayout->addSpacerItem(spacer);
 
 		return_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-																			 ObjectTableWidget::UPDATE_BUTTON, true, this);
+										 ObjectTableWidget::UPDATE_BUTTON, true, this);
 		return_tab->setColumnCount(2);
 		return_tab->setHeaderLabel(trUtf8("Column"), 0);
-    return_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
+		return_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
 		return_tab->setHeaderLabel(trUtf8("Type"), 1);
-    return_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+		return_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
 
 		parameters_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-																					 ObjectTableWidget::UPDATE_BUTTON, true, this);
+											 ObjectTableWidget::UPDATE_BUTTON, true, this);
 		parameters_tab->setColumnCount(4);
 		parameters_tab->setHeaderLabel(trUtf8("Name"),0);
-    parameters_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/parameter.png")),0);
+		parameters_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/parameter.png")),0);
 		parameters_tab->setHeaderLabel(trUtf8("Type"),1);
-    parameters_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+		parameters_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
 		parameters_tab->setHeaderLabel(trUtf8("Mode"),2);
 		parameters_tab->setHeaderLabel(trUtf8("Default Value"),3);
 
@@ -72,7 +71,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		func_config_twg->widget(1)->setLayout(grid);
 
 		grid=dynamic_cast<QGridLayout *>(func_config_twg->widget(0)->layout());
-    grid->addLayout(vlayout, grid->count(), 0, 1, 5);
+		grid->addLayout(vlayout, grid->count(), 0, 1, 5);
 		grid->addWidget(ret_table_gb, grid->count()-1, 0, 1, 5);
 
 		grid1=new QGridLayout;
@@ -81,12 +80,10 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		ret_table_gb->setLayout(grid1);
 		ret_table_gb->setVisible(false);
 
-    fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_92)].push_back(leakproof_chk);
+		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_92)].push_back(leakproof_chk);
 		frame=generateVersionWarningFrame(fields_map, &value_map);
 		grid->addWidget(frame, grid->count()+1, 0, 1, 5);
 		frame->setParent(func_config_twg->widget(0));
-
-		parent_form->setMinimumSize(645, 675);
 
 		SecurityType::getTypes(types);
 		security_cmb->addItems(types);
@@ -112,7 +109,9 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		setRequiredField(symbol_lbl);
 		setRequiredField(library_lbl);
 		setRequiredField(sourc_code_lbl);
-    configureTabOrder();
+		configureTabOrder();
+
+		setMinimumSize(650, 700);
 	}
 	catch(Exception &e)
 	{
@@ -159,27 +158,29 @@ void FunctionWidget::showParameterForm(void)
 	ObjectTableWidget *table=nullptr;
 	Parameter aux_param;
 	int lin_idx;
-	ParameterWidget parameter_wgt(this);
+	ParameterWidget *parameter_wgt=new ParameterWidget;
+	BaseForm parent_form;
 
 	if(obj_sender==parameters_tab || obj_sender==return_tab)
 	{
 		table=dynamic_cast<ObjectTableWidget *>(obj_sender);
 
-		parameter_wgt.param_in_chk->setEnabled(obj_sender==parameters_tab);
-		parameter_wgt.param_out_chk->setEnabled(obj_sender==parameters_tab);
-		parameter_wgt.param_variadic_chk->setEnabled(obj_sender==parameters_tab);
-		parameter_wgt.default_value_edt->setEnabled(obj_sender==parameters_tab);
+		parameter_wgt->param_in_chk->setEnabled(obj_sender==parameters_tab);
+		parameter_wgt->param_out_chk->setEnabled(obj_sender==parameters_tab);
+		parameter_wgt->param_variadic_chk->setEnabled(obj_sender==parameters_tab);
+		parameter_wgt->default_value_edt->setEnabled(obj_sender==parameters_tab);
 
 		lin_idx=table->getSelectedRow();
 
 		if(lin_idx >= 0 && !table->getCellText(lin_idx, 0).isEmpty())
 			aux_param=getParameter(table, lin_idx);
 
-		parameter_wgt.setAttributes(aux_param, model);
-		parameter_wgt.show();
+		parameter_wgt->setAttributes(aux_param, model);
+		parent_form.setMainWidget(parameter_wgt);
+		parent_form.exec();
 
-		aux_param=parameter_wgt.getParameter();
-		handleParameter(aux_param, parameter_wgt.result());
+		aux_param=parameter_wgt->getParameter();
+		handleParameter(aux_param, parent_form.result());
 	}
 }
 
@@ -198,9 +199,9 @@ Parameter FunctionWidget::getParameter(ObjectTableWidget *tab, unsigned row)
 			if(tab==parameters_tab)
 			{
 				str_aux=tab->getCellText(row, 2);
-        param.setIn(str_aux.contains(QString("IN")));
-        param.setOut(str_aux.contains(QString("OUT")));
-        param.setVariadic(str_aux==QString("VARIADIC"));
+				param.setIn(str_aux.contains(QString("IN")));
+				param.setOut(str_aux.contains(QString("OUT")));
+				param.setVariadic(str_aux==QString("VARIADIC"));
 				param.setDefaultValue(tab->getCellText(row,3));
 			}
 		}
@@ -219,22 +220,22 @@ void FunctionWidget::showParameterData(Parameter param, ObjectTableWidget *tab, 
 	{
 		QString str_aux;
 
-    tab->setCellText(param.getName(),row,0);
-    tab->setCellText(*param.getType(),row,1);
+		tab->setCellText(param.getName(),row,0);
+		tab->setCellText(*param.getType(),row,1);
 		tab->setRowData(QVariant::fromValue<PgSQLType>(param.getType()), row);
 
 		if(tab==parameters_tab)
 		{
 			if(param.isVariadic())
-        str_aux=QString("VARIADIC");
+				str_aux=QString("VARIADIC");
 			else
 			{
-        if(param.isIn()) str_aux=QString("IN");
-        if(param.isOut()) str_aux+=QString("OUT");
+				if(param.isIn()) str_aux=QString("IN");
+				if(param.isOut()) str_aux+=QString("OUT");
 			}
 
 			tab->setCellText(str_aux,row,2);
-      tab->setCellText(param.getDefaultValue(),row,3);
+			tab->setCellText(param.getDefaultValue(),row,3);
 		}
 	}
 }
@@ -317,7 +318,7 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 		}
 		else
 		{
-      source_code_txt->setPlainText(func->getSourceCode());
+			source_code_txt->setPlainText(func->getSourceCode());
 		}
 
 		parameters_tab->blockSignals(false);
@@ -352,22 +353,22 @@ void FunctionWidget::selectLanguage(void)
 	bool c_lang;
 
 	c_lang=(language_cmb->currentText()==~LanguageType(LanguageType::c));
-  source_code_frm->setVisible(!c_lang);
-  library_frm->setVisible(c_lang);
+	source_code_frm->setVisible(!c_lang);
+	library_frm->setVisible(c_lang);
 
 	if(!c_lang)
 	{
 		try
 		{
 			source_code_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																				 GlobalAttributes::DIR_SEPARATOR +
-																				 language_cmb->currentText() +
-																				 GlobalAttributes::HIGHLIGHT_FILE_SUF +
-																				 GlobalAttributes::CONFIGURATION_EXT);
+											  GlobalAttributes::DIR_SEPARATOR +
+											  language_cmb->currentText() +
+											  GlobalAttributes::HIGHLIGHT_FILE_SUF +
+											  GlobalAttributes::CONFIGURATION_EXT);
 		}
-    catch(Exception &)
+		catch(Exception &)
 		{
-      source_code_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+			source_code_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 		}
 
 		source_code_hl->rehighlight();
@@ -477,10 +478,10 @@ void FunctionWidget::validateConfiguredFunction(void)
 	catch(Exception &e)
 	{
 		throw Exception(Exception::getErrorMessage(ERR_FUNC_CONFIG_INV_OBJECT)
-                    .arg(object->getName(true))
-										.arg(object->getTypeName()),
-										ERR_FUNC_CONFIG_INV_OBJECT,
-										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+						.arg(object->getName(true))
+						.arg(object->getTypeName()),
+						ERR_FUNC_CONFIG_INV_OBJECT,
+						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -515,9 +516,9 @@ void FunctionWidget::applyConfiguration(void)
 			param.setType(parameters_tab->getRowData(i).value<PgSQLType>());
 
 			str_aux=parameters_tab->getCellText(i,2);
-      param.setIn(str_aux.indexOf(QString("IN")) >= 0);
-      param.setOut(str_aux.indexOf(QString("OUT")) >= 0);
-      param.setVariadic(str_aux.indexOf(QString("VARIADIC")) >= 0);
+			param.setIn(str_aux.indexOf(QString("IN")) >= 0);
+			param.setOut(str_aux.indexOf(QString("OUT")) >= 0);
+			param.setVariadic(str_aux.indexOf(QString("VARIADIC")) >= 0);
 
 			param.setDefaultValue(parameters_tab->getCellText(i,3));
 
@@ -546,7 +547,7 @@ void FunctionWidget::applyConfiguration(void)
 			for(i=0; i<count; i++)
 			{
 				func->addReturnedTableColumn(return_tab->getCellText(i,0),
-																		 return_tab->getRowData(i).value<PgSQLType>());
+											 return_tab->getRowData(i).value<PgSQLType>());
 			}
 		}
 

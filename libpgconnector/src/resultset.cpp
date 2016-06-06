@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ ResultSet::ResultSet(PGresult *sql_result)
 			//Generating an error in case the server returns a fatal error
 		case PGRES_FATAL_ERROR:
 			str_aux=QString(Exception::getErrorMessage(ERR_DBMS_FATAL_ERROR))
-							.arg(PQresultErrorMessage(sql_result));
+					.arg(PQresultErrorMessage(sql_result));
 			throw Exception(str_aux,ERR_DBMS_FATAL_ERROR, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		break;
 
@@ -264,10 +264,10 @@ bool ResultSet::isColumnBinaryFormat(int column_idx)
 
 	/* Returns the column format in the current tuple.
 		According to libpq documentation, value = 0, indicates column text format,
-    value = 1 the column has binary format, the other values are reserved.
+	value = 1 the column has binary format, the other values are reserved.
 
-    One additional check is made, if the type of the column is bytea. */
-  return(PQfformat(sql_result, column_idx)==1 || PQftype(sql_result, column_idx)==BYTEAOID);
+	One additional check is made, if the type of the column is bytea. */
+	return(PQfformat(sql_result, column_idx)==1 || PQftype(sql_result, column_idx)==BYTEAOID);
 }
 
 bool ResultSet::accessTuple(unsigned tuple_type)
@@ -309,12 +309,12 @@ bool ResultSet::accessTuple(unsigned tuple_type)
 		}
 
 		return(accessed);
-  }
+	}
 }
 
 bool ResultSet::isEmpty(void)
 {
-  return(empty_result);
+	return(empty_result);
 }
 
 void ResultSet::operator = (ResultSet &res)
@@ -330,7 +330,7 @@ void ResultSet::operator = (ResultSet &res)
 	//Copy the parameter restulset attributes to 'this' resultset
 	this->current_tuple=res.current_tuple;
 	this->empty_result=res.empty_result;
-	this->sql_result=res.sql_result;
+	this->sql_result=PQcopyResult(res.sql_result, PG_COPYRES_TUPLES | PG_COPYRES_ATTRS | PG_COPYRES_EVENTS);
 	this->is_res_copied=false;
 }
 

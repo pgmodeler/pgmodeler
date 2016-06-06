@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,16 +27,16 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RULE)
 
 		Ui_RuleWidget::setupUi(this);
 
-    cond_expr_hl=new SyntaxHighlighter(cond_expr_txt, false, true);
-    cond_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		cond_expr_hl=new SyntaxHighlighter(cond_expr_txt, false, true);
+		cond_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
-    command_hl=new SyntaxHighlighter(comando_txt, false, true);
-    command_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		command_hl=new SyntaxHighlighter(comando_txt, false, true);
+		command_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 		command_cp=new CodeCompletionWidget(comando_txt);
 
 		commands_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
 		commands_tab->setHeaderLabel(trUtf8("SQL command"),0);
-    commands_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/codigosql.png")),0);
+		commands_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/codigosql.png")),0);
 		dynamic_cast<QGridLayout *>(commands_gb->layout())->addWidget(commands_tab, 1, 0, 1, 2);
 
 		frame=generateInformationFrame(trUtf8("To create a rule that does not perform any action (<strong>DO NOTHING</strong>) simply do not specify commands in the SQL commands table."));
@@ -44,7 +44,6 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RULE)
 		frame->setParent(this);
 
 		configureFormLayout(rule_grid, OBJ_RULE);
-		parent_form->setMinimumSize(550, 520);
 
 		EventType::getTypes(list);
 		event_cmb->addItems(list);
@@ -52,13 +51,14 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RULE)
 		ExecutionType::getTypes(list);
 		exec_type_cmb->addItems(list);
 
-		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(commands_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleCommand(int)));
 		connect(commands_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleCommand(int)));
 		connect(commands_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editCommand(int)));
 
 		setRequiredField(event_lbl);
-    configureTabOrder();
+		configureTabOrder();
+
+		setMinimumSize(550, 500);
 	}
 	catch(Exception &e)
 	{
@@ -91,7 +91,7 @@ void RuleWidget::handleCommand(int row)
 		commands_tab->removeRow(row);
 }
 
-void RuleWidget::setAttributes(DatabaseModel *model, BaseTable *parent_tab, OperationList *op_list, Rule *rule)
+void RuleWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseTable *parent_tab, Rule *rule)
 {
 	unsigned qtd, i;
 
@@ -106,14 +106,14 @@ void RuleWidget::setAttributes(DatabaseModel *model, BaseTable *parent_tab, Oper
 	{
 		event_cmb->setCurrentIndex(event_cmb->findText(~rule->getEventType()));
 		exec_type_cmb->setCurrentIndex(exec_type_cmb->findText(~rule->getExecutionType()));
-    cond_expr_txt->setPlainText(rule->getConditionalExpression());
+		cond_expr_txt->setPlainText(rule->getConditionalExpression());
 
 		commands_tab->blockSignals(true);
 		qtd=rule->getCommandCount();
 		for(i=0; i < qtd; i++)
 		{
 			commands_tab->addRow();
-      commands_tab->setCellText(rule->getCommand(i),i,0);
+			commands_tab->setCellText(rule->getCommand(i),i,0);
 		}
 		commands_tab->blockSignals(false);
 	}

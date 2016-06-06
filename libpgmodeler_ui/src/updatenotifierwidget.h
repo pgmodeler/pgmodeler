@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@
  1) When there is a new version:
 
   { "new-version":"[version]",
-    "date":"[release_date]",
-    "changelog":"[change_list]" }
+	"date":"[release_date]",
+	"changelog":"[change_list]" }
 
  2) When there is no new version:
 
@@ -55,41 +55,41 @@ class UpdateNotifierWidget: public QWidget, public Ui::UpdateNotifierWidget {
 	private:
 		Q_OBJECT
 
-  //! brief Object responsible to make request to server
-  QNetworkAccessManager update_chk_manager;
+		//! \brief Object responsible to make request to server
+		QNetworkAccessManager update_chk_manager;
 
-  //! brief This pointer stores the reply after the update manager make a call to server
-  QNetworkReply *update_chk_reply;
+		//! \brief This pointer stores the reply after the update manager make a call to server
+		QNetworkReply *update_chk_reply;
 
-  //! brief Stores the old mouse position to simulate the widget resizing
-  QPoint old_pos;
+		//! \brief Stores the old mouse position to simulate the widget resizing
+		QPoint old_pos;
 
-  /*! brief This attribute indicates wether a message informing that no updates are available
-      must be shown. Generally, this attribute is true when the user call the checkForUpdate()
-      from a QAction */
-  bool show_no_upd_msg;
+		/*! \brief This attribute indicates wether a message informing that no updates are available
+	  must be shown. Generally, this attribute is true when the user call the checkForUpdate()
+	  from a QAction */
+		bool show_no_upd_msg;
 
-  QMenu *get_binary_menu;
+		QMenu *get_binary_menu;
 
-  QAction *action_purchase, *action_recover;
+		QAction *action_purchase, *action_recover;
 
-  //! brief This event filter is used to resize the widget when the mouse is over the notifier
-  bool eventFilter(QObject *obj, QEvent *event);
+		//! \brief This event filter is used to resize the widget when the mouse is over the notifier
+		bool eventFilter(QObject *obj, QEvent *event);
 
-  void activateLink(const QString &link);
+		void activateLink(const QString &link);
 
 	public:
-    UpdateNotifierWidget(QWidget * parent = 0);
+		UpdateNotifierWidget(QWidget * parent = 0);
 
 	public slots:
-    void checkForUpdate(void);
+		void checkForUpdate(void);
 
 	private slots:
-    void handleUpdateChecked(QNetworkReply *reply);
+		void handleUpdateChecked(QNetworkReply *reply);
 
-  signals:
-    void s_updateAvailable(bool value);
-    void s_visibilityChanged(bool visible);
+	signals:
+		void s_updateAvailable(bool value);
+		void s_visibilityChanged(bool visible);
 };
 
 #endif

@@ -625,13 +625,13 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>25</height>
+              <height>0</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
               <width>16777215</width>
-              <height>25</height>
+              <height>16777215</height>
              </size>
             </property>
             <property name="verticalScrollBarPolicy">
@@ -653,13 +653,13 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>25</height>
+              <height>0</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
               <width>16777215</width>
-              <height>25</height>
+              <height>16777215</height>
              </size>
             </property>
             <property name="verticalScrollBarPolicy">
@@ -681,13 +681,13 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>25</height>
+              <height>0</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
               <width>16777215</width>
-              <height>25</height>
+              <height>16777215</height>
              </size>
             </property>
             <property name="verticalScrollBarPolicy">
@@ -709,13 +709,13 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>25</height>
+              <height>0</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
               <width>16777215</width>
-              <height>25</height>
+              <height>16777215</height>
              </size>
             </property>
             <property name="verticalScrollBarPolicy">
@@ -737,13 +737,13 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>25</height>
+              <height>0</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
               <width>16777215</width>
-              <height>25</height>
+              <height>16777215</height>
              </size>
             </property>
             <property name="verticalScrollBarPolicy">
@@ -765,13 +765,13 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>25</height>
+              <height>0</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
               <width>16777215</width>
-              <height>25</height>
+              <height>16777215</height>
              </size>
             </property>
             <property name="verticalScrollBarPolicy">
@@ -793,13 +793,13 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>25</height>
+              <height>0</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
               <width>16777215</width>
-              <height>25</height>
+              <height>16777215</height>
              </size>
             </property>
             <property name="verticalScrollBarPolicy">

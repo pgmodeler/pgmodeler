@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ ObjectSelectorWidget::ObjectSelectorWidget(ObjectType sel_obj_type, bool install
 	try
 	{
 		this->sel_obj_types.push_back(sel_obj_type);
-    configureSelector(install_highlighter);
+		configureSelector(install_highlighter);
 	}
 	catch(Exception &e)
 	{
@@ -36,7 +36,7 @@ ObjectSelectorWidget::ObjectSelectorWidget(vector<ObjectType> sel_obj_types, boo
 	try
 	{
 		this->sel_obj_types=sel_obj_types;
-    configureSelector(install_highlighter);
+		configureSelector(install_highlighter);
 	}
 	catch(Exception &e)
 	{
@@ -57,11 +57,18 @@ void ObjectSelectorWidget::configureSelector(bool install_highlighter)
 
 		if(install_highlighter)
 		{
-      obj_name_hl=new SyntaxHighlighter(obj_name_txt);
-      obj_name_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+			obj_name_hl=new SyntaxHighlighter(obj_name_txt, true);
+			obj_name_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		}
+		else
+		{
+			//Adding a custom height to the input if the highlighter isn't installed
+			QFontMetrics fm=obj_name_txt->fontMetrics();
+			obj_name_txt->setMaximumHeight(fm.height() + (fm.lineSpacing()/1.8));
+			this->adjustSize();
 		}
 
-    connect(sel_object_tb, SIGNAL(clicked(bool)), this, SLOT(showObjectView(void)));
+		connect(sel_object_tb, SIGNAL(clicked(bool)), this, SLOT(showObjectView(void)));
 		connect(rem_object_tb, SIGNAL(clicked(bool)), this, SLOT(clearSelector(void)));
 		connect(obj_view_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedObject(BaseObject*, bool)));
 
@@ -75,34 +82,34 @@ void ObjectSelectorWidget::configureSelector(bool install_highlighter)
 
 bool ObjectSelectorWidget::eventFilter(QObject *obj, QEvent *evnt)
 {
-  if(this->isEnabled() && evnt->type()==QEvent::FocusIn &&
-     QApplication::mouseButtons()==Qt::LeftButton && obj==obj_name_txt)
-  {
+	if(this->isEnabled() && evnt->type()==QEvent::FocusIn &&
+			QApplication::mouseButtons()==Qt::LeftButton && obj==obj_name_txt)
+	{
 		showObjectView();
-    return(true);
-  }
+		return(true);
+	}
 
 	return(QWidget::eventFilter(obj, evnt));
 }
 
 ObjectSelectorWidget::~ObjectSelectorWidget(void)
 {
-  delete(obj_view_wgt);
+	delete(obj_view_wgt);
 }
 
 void ObjectSelectorWidget::enableObjectCreation(bool value)
 {
-  obj_view_wgt->enableObjectCreation(value);
+	obj_view_wgt->enableObjectCreation(value);
 }
 
 BaseObject *ObjectSelectorWidget::getSelectedObject(void)
 {
-  return(selected_obj);
+	return(selected_obj);
 }
 
 QString ObjectSelectorWidget::getSelectedObjectName(void)
 {
-  return(selected_obj->getSignature());
+	return(selected_obj->getSignature());
 }
 
 void ObjectSelectorWidget::setSelectedObject(BaseObject *object)
@@ -113,38 +120,38 @@ void ObjectSelectorWidget::setSelectedObject(BaseObject *object)
 		obj_type=object->getObjectType();
 
 	if(object && std::find(sel_obj_types.begin(), sel_obj_types.end(),obj_type)!=sel_obj_types.end())
-	{   
+	{
 		rem_object_tb->setEnabled(object);
 		this->selected_obj=object;
 
-    if(object->getObjectType()!=OBJ_CONSTRAINT)
-      obj_name_txt->setPlainText(selected_obj->getSignature());
-    else
-      obj_name_txt->setPlainText(QString("%1.%2")
-                                 .arg(dynamic_cast<TableObject *>(selected_obj)->getParentTable()->getSignature())
-                                 .arg(selected_obj->getName(true)));
+		if(object->getObjectType()!=OBJ_CONSTRAINT)
+			obj_name_txt->setPlainText(selected_obj->getSignature());
+		else
+			obj_name_txt->setPlainText(QString("%1.%2")
+									   .arg(dynamic_cast<TableObject *>(selected_obj)->getParentTable()->getSignature())
+									   .arg(selected_obj->getName(true)));
 
 		emit s_objectSelected();
 	}
 	else
-    clearSelector();
+		clearSelector();
 }
 
 void ObjectSelectorWidget::setSelectedObject(const QString &obj_name, ObjectType obj_type)
 {
-  try
-  {
-    BaseObject *object=nullptr;
+	try
+	{
+		BaseObject *object=nullptr;
 
-    if(model && std::find(sel_obj_types.begin(), sel_obj_types.end(),obj_type)!=sel_obj_types.end())
-      object=model->getObject(obj_name, obj_type);
+		if(model && std::find(sel_obj_types.begin(), sel_obj_types.end(),obj_type)!=sel_obj_types.end())
+			object=model->getObject(obj_name, obj_type);
 
-    setSelectedObject(object);
-  }
-  catch(Exception &e)
-  {
-    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-  }
+		setSelectedObject(object);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
 }
 
 void ObjectSelectorWidget::setModel(DatabaseModel *modelo)
@@ -154,8 +161,8 @@ void ObjectSelectorWidget::setModel(DatabaseModel *modelo)
 
 void ObjectSelectorWidget::showSelectedObject(BaseObject *obj_sel, bool)
 {
-  if(obj_sel)
-    setSelectedObject(obj_sel);
+	if(obj_sel)
+		setSelectedObject(obj_sel);
 }
 
 void ObjectSelectorWidget::clearSelector(void)
@@ -168,10 +175,13 @@ void ObjectSelectorWidget::clearSelector(void)
 
 void ObjectSelectorWidget::showObjectView(void)
 {
-  obj_name_txt->clearFocus();
+	obj_name_txt->clearFocus();
 
 	for(unsigned i=0; i < sel_obj_types.size(); i++)
 		obj_view_wgt->setObjectVisible(sel_obj_types[i], true);
+
+	if(sel_obj_types.size()==1)
+		obj_view_wgt->setWindowTitle(trUtf8("Select %1").arg(BaseObject::getTypeName(sel_obj_types[0]).toLower()));
 
 	obj_view_wgt->setModel(this->model);
 	obj_view_wgt->show();

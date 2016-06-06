@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="es_ES">
-<defaultcodec>UTF-8</defaultcodec>
+<TS version="2.1" language="es_ES">
 <context>
     <name>AboutWidget</name>
     <message>
@@ -10,12 +9,12 @@
         <translation>Acerca del pgModeler</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="103"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="102"/>
         <source>PostgreSQL Database Modeler</source>
         <translation>Modelador para Bases de Datos PostgreSQL</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="162"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="163"/>
         <source>Open source data modeling tool designed for PostgreSQL. No more DDL commands written by hand, let pgModeler do the job for you! This software reunites the concepts of entity-relationship diagrams and the features that PostgreSQL implements as extensions of SQL standards. </source>
         <translation>Abrir herramienta de modelado de datos de origen diseñado para PostgreSQL. No más comandos DDL escritas a mano, permiten pgModeler hacer el trabajo para usted! Este software reúne los conceptos de diagramas entidad-relación y las características que PostgreSQL implementa como una extensión de los estándares SQL.</translation>
     </message>
@@ -25,231 +24,270 @@
         <translation>Diseño, configurar, implementar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="228"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://pgmodeler.com.br&quot;&gt;&lt;span style=&quot; font-size:11pt; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;http://pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://pgmodeler.com.br&quot;&gt;&lt;span style=&quot; font-size:11pt; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;http://pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://pgmodeler.com.br&quot;&gt;&lt;span style=&quot; font-size:11pt; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;http://pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="244"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="239"/>
         <source>pgModeler is proudly a brazilian software!</source>
         <translation>pgModeler es orgullosamente un programa brasileño!</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="269"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copyright 2006-2015 - Raphael Araújo e Silva &amp;lt;&lt;a href=&quot;mailto:raphael@pgmodeler.com.br&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;raphael@pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copyright 2006-2015 - Raphael Araújo e Silva &amp;lt;&lt;a href=&quot;mailto:raphael@pgmodeler.com.br&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;raphael@pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copyright 2006-2015 - Raphael Araújo e Silva &amp;lt;&lt;a href=&quot;mailto:raphael@pgmodeler.com.br&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;raphael@pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="299"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="223"/>
+        <source>&lt;a href=&quot;http://pgmodeler.com.br&quot;&gt;http://pgmodeler.com.br&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="264"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copyright 2006-2016 - Raphael Araújo e Silva &amp;lt;&lt;a href=&quot;mailto:raphael@pgmodeler.com.br&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;raphael@pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copyright 2006-2015 - Raphael Araújo e Silva &amp;lt;&lt;a href=&quot;mailto:raphael@pgmodeler.com.br&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;raphael@pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt; {2006-2016 ?} {0057a?}</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="294"/>
         <source>Hide this widget</source>
         <translation>Ocultar este widget</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="302"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="297"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="347"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="341"/>
         <source>0.0.0.0</source>
         <translation>0.0.0.0</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="405"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="398"/>
         <source>(CODE_NAME)</source>
         <translation>(NOMBRE_CÓDIGO)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="439"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="431"/>
         <source>Build:</source>
         <translation>Contruido:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="503"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="494"/>
         <source>(BUILD_NUM)</source>
         <translation>(NUM_CONSTRUIDO)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="525"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="516"/>
         <source>License</source>
         <translation>Licencia</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="582"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="572"/>
         <source>Contributors</source>
         <translation>Colaboradores</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="621"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="610"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This page is dedicated to all contributors who gave a bit of their time in make pgModeler a better software somehow. The complete list of people that helped pgModeler can be found at &lt;a href=&quot;https://github.com/pgmodeler/pgmodeler/graphs/contributors&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#00a489;&quot;&gt;GitHub&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;If you have a great idea to improve pgModeler please submit it &lt;a href=&quot;http://github.com/pgmodeler/pgmodeler/issues&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#00a489;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;. No ideas for now but want to help? Why not donate a few bucks &lt;a href=&quot;http://pgmodeler.com.br/#donate&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#00a489;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;!?&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Esta página está dedicada a todos los colaboradores que dieron un poco de su tiempo en hacer pgModeler un mejor software de alguna manera. La lista completa de las personas que ayudó pgModeler se puede encontrar en &lt;a href=&quot;https://github.com/pgmodeler/pgmodeler/graphs/contributors&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#00a489;&quot;&gt;GitHub&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Si usted tiene una gran idea para mejorar pgModeler favor enviarlo &lt;a href=&quot;http://github.com/pgmodeler/pgmodeler/issues&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#00a489;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;. ¿No hay ideas por ahora, pero quiere ayudar? Por qué no donar un poco de dinero &lt;a href=&quot;http://pgmodeler.com.br/#donate&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#00a489;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;!?&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="707"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="699"/>
         <source>1</source>
         <translation>1</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="712"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="704"/>
         <source>2</source>
         <translation>2</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="717"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="709"/>
         <source>3</source>
         <translation>3</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="722"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="714"/>
         <source>4</source>
         <translation>4</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="727"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="719"/>
         <source>5</source>
         <translation>5</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="732"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="724"/>
         <source>6</source>
         <translation>6</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="737"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="729"/>
+        <source>7</source>
+        <translation type="unfinished">7</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="734"/>
+        <source>8</source>
+        <translation type="unfinished">8</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="739"/>
         <source>Name</source>
         <translation>Nombe</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="742"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="744"/>
         <source>Country</source>
         <translation>País</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="747"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="749"/>
         <source>Contribution</source>
         <translation>Contribución</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="752"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="754"/>
         <source>Damien Degois</source>
         <translation>Damien Degois</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="757"/>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="787"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="759"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="797"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="873"/>
         <source>France</source>
         <translation>Francia</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="762"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="768"/>
         <source>French UI translation and several improvements in auxiliary scripts.</source>
         <translation>Traducción de IU francés y varias mejoras en scripts auxiliares.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="767"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="773"/>
         <source>Ji Bin</source>
         <translation>Ji Bin</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="772"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="778"/>
         <source>China</source>
         <translation>China</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="777"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="787"/>
         <source>Chinese UI translation and small fixes.</source>
         <translation>Traducción de IU chino y pequeñas correcciones.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="782"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="792"/>
         <source>Pierre-Samuel LE STANG</source>
         <translation>Pierre-Samuel LE STANG</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="792"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="806"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="882"/>
         <source>French UI translation.</source>
         <translation>Traducción de IU al francés.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="797"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="811"/>
         <source>Lisandro Damián Nicanor</source>
         <translation>Lisandro Damián Nicanor</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="802"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="816"/>
         <source>Argentina</source>
         <translation>Argentina</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="807"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="825"/>
         <source>Improvements on build scripts enabling the custom packaging in Linux distros; Per-user settings; pgModeler&apos;s package maintainer in Debian Linux.</source>
         <translation>Mejoras en scripts de construcción que permitan el embalaje personalizado en distribuciones de Linux; Por usuario ajustes; pgModeler y apos; s mantenedor de paquetes en Debian Linux.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="812"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="830"/>
         <source>Pavel Alexeev</source>
         <translation>Pavel Alexeev</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="817"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="835"/>
         <source>Russia</source>
         <translation>Rusia</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="822"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="844"/>
         <source>Additional work for packaging in Linux distros; pgModeler&apos;s package maintainer in Fedora Linux.</source>
         <translation>El trabajo adicional para el empaquetado en la distribuciones de Linux; pgModeler&apos;s empaquetador de paquetes en Fedora Linux.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="827"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="849"/>
         <source>Mariusz Fik</source>
         <translation>Mariusz Fik</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="832"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="854"/>
         <source>Poland</source>
         <translation>Polonia</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="837"/>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="863"/>
         <source>Custom packaging first ideas. Tester of first version of custom packaging patch.</source>
         <translation>Empaquetados hechos a medida primeras ideas. Probador de primera versión del parche de empaquetados personalizados.</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="868"/>
+        <source>Jonathan DUPRE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="887"/>
+        <source>Gilberto Castillo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="892"/>
+        <source>Cuba</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/aboutwidget.ui" line="901"/>
+        <source>Spanish UI translation.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>AggregateWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aggregatewidget.ui" line="20"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aggregatewidget.ui" line="41"/>
+        <location filename="../libpgmodeler_ui/ui/aggregatewidget.ui" line="38"/>
         <source>Final Function:</source>
         <translation>Función final:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aggregatewidget.ui" line="48"/>
+        <location filename="../libpgmodeler_ui/ui/aggregatewidget.ui" line="45"/>
         <source>Sort Operator:</source>
         <translation>Operador de Ordenación:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aggregatewidget.ui" line="55"/>
+        <location filename="../libpgmodeler_ui/ui/aggregatewidget.ui" line="52"/>
         <source>Initial Condition:</source>
         <translation>Condition Initial:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aggregatewidget.ui" line="103"/>
+        <location filename="../libpgmodeler_ui/ui/aggregatewidget.ui" line="75"/>
         <source>Funtion Inputs</source>
         <translation>Entradas de Funciones</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aggregatewidget.ui" line="108"/>
+        <location filename="../libpgmodeler_ui/ui/aggregatewidget.ui" line="80"/>
         <source>Function State</source>
         <translation>Estado de Función</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/aggregatewidget.ui" line="116"/>
+        <location filename="../libpgmodeler_ui/ui/aggregatewidget.ui" line="88"/>
         <source>Transition Func.:</source>
         <translation>Función de transición:</translation>
     </message>
@@ -522,32 +560,37 @@
         <translation>Tag: Cuerpo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="316"/>
+        <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="307"/>
+        <source>Placeholder: Body</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="321"/>
         <source>Font:</source>
         <translation>Fuente:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="329"/>
+        <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="334"/>
         <source>Colors:</source>
         <translation>Colores:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="370"/>
+        <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="375"/>
         <source> pt</source>
         <translation> pt</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="385"/>
+        <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="390"/>
         <source>Underline</source>
         <translation>Subrayar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="404"/>
+        <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="409"/>
         <source>Italic</source>
         <translation>Itálico</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="423"/>
+        <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="428"/>
         <source>Bold</source>
         <translation>Negrito</translation>
     </message>
@@ -555,12 +598,12 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../main/src/application.cpp" line="115"/>
+        <location filename="../main/src/application.cpp" line="126"/>
         <source>Unknown exception caught!</source>
         <translation>Excepción desconocido capturada!</translation>
     </message>
     <message>
-        <location filename="../main/src/application.cpp" line="135"/>
+        <location filename="../main/src/application.cpp" line="146"/>
         <source>Failed to create initial configuration in `%1&apos;! Check if the current user has write permission over that path and at least read permission over `%2&apos;.</source>
         <translation>No se pudo crear la configuración inicial en `%1&apos;! Compruebe si el usuario actual tiene permiso de escritura sobre ese camino y al menos permiso de lectura sobre `%2&apos;.</translation>
     </message>
@@ -573,196 +616,202 @@
         <translation>Dialogo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/baseform.ui" line="154"/>
-        <location filename="../libpgmodeler_ui/src/baseform.cpp" line="40"/>
+        <location filename="../libpgmodeler_ui/ui/baseform.ui" line="141"/>
+        <location filename="../libpgmodeler_ui/src/baseform.cpp" line="31"/>
         <source>&amp;Apply</source>
         <translation>&amp;Aplicar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/baseform.ui" line="201"/>
+        <location filename="../libpgmodeler_ui/ui/baseform.ui" line="188"/>
         <source>&amp;Cancel</source>
         <translation>&amp;Cancelar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/baseform.cpp" line="45"/>
+        <location filename="../libpgmodeler_ui/src/baseform.cpp" line="36"/>
         <source>&amp;Ok</source>
         <translation>&amp;Ok</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/baseform.cpp" line="107"/>
+        <source>%1 properties</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>BaseObject</name>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="38"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="39"/>
         <source>Column</source>
         <translation>Columna</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="38"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="39"/>
         <source>Constraint</source>
         <translation>Restricción</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="38"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="39"/>
         <source>Function</source>
         <translation>Función</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="39"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="40"/>
         <source>Trigger</source>
         <translation>Trigger</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="39"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="40"/>
         <source>Index</source>
         <translation>Índice</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="39"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="40"/>
         <source>Rule</source>
         <translation>Regla</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="40"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="41"/>
         <source>Table</source>
         <translation>Tabla</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="40"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="41"/>
         <source>View</source>
         <translation>Vista</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="40"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="41"/>
         <source>Domain</source>
         <translation>Domínio</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="41"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="42"/>
         <source>Schema</source>
         <translation>Esquema</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="41"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="42"/>
         <source>Aggregate</source>
         <translation>Agregado</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="41"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="42"/>
         <source>Operator</source>
         <translation>Operador</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="42"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="43"/>
         <source>Sequence</source>
         <translation>Secuencia</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="42"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="43"/>
         <source>Role</source>
         <translation>Rol</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="42"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="43"/>
         <source>Conversion</source>
         <translation>Conversión</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="43"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="44"/>
         <source>Cast</source>
         <translation>Cast</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="43"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="44"/>
         <source>Language</source>
         <translation>Lenguaje</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="43"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="44"/>
         <source>Type</source>
         <translation>Tipo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="43"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="44"/>
         <source>Tablespace</source>
         <translation>Tablespace</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="44"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="45"/>
         <source>Operator Family</source>
         <translation>Família de Operadores</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="44"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="45"/>
         <source>Operator Class</source>
         <translation>Operador de Clases</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="45"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="46"/>
         <source>Database</source>
         <translation>Base de Dados</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="45"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="46"/>
         <source>Collation</source>
         <translation>Colación</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="45"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="46"/>
         <source>Extension</source>
         <translation>Extensión</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="46"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="47"/>
         <source>Event Trigger</source>
         <translation>Evento Trigger</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="46"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="47"/>
         <source>Relationship</source>
         <translation>Relación</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="46"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="47"/>
         <source>Textbox</source>
         <translation>Cuadro de Texto</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="47"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="48"/>
         <source>Permission</source>
         <translation>Permisos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="47"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="48"/>
         <source>Parameter</source>
         <translation>Parámetro</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="47"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="48"/>
         <source>Type Attribute</source>
         <translation>Tipo atributo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="48"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="49"/>
         <source>Tag</source>
         <translation>Tag</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="48"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="49"/>
         <source>Basic Relationship</source>
         <translation>Relación básica</translation>
     </message>
     <message numerus="yes">
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="94"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="95"/>
         <source>new_object</source>
         <translation>
             <numerusform>nuevo_objecto</numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
 </context>
 <context>
     <name>BaseObjectView</name>
     <message>
-        <location filename="../libobjrenderer/src/baseobjectview.cpp" line="462"/>
+        <location filename="../libobjrenderer/src/baseobjectview.cpp" line="484"/>
         <source>SQL off</source>
         <translation>SQL off</translation>
     </message>
@@ -770,111 +819,113 @@
 <context>
     <name>BaseObjectWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="26"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="50"/>
+        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="47"/>
         <source>Name:</source>
         <translation>Nombre:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="106"/>
+        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="109"/>
         <source>Comment:</source>
         <translation>Comentario:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="141"/>
+        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="150"/>
         <source>Tablespace:</source>
         <translation>Tablespace:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="160"/>
+        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="169"/>
         <source>Schema:</source>
         <translation>Esquema:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="194"/>
+        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="203"/>
         <source>Edit object&apos;s permissions</source>
         <translation>Editar permisos de Objeto&apos;s</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="197"/>
+        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="206"/>
         <source>Edit permissions</source>
         <translation>Editar permisos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="295"/>
+        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="302"/>
         <source>This object is protected thus no change in form will be applied to it.</source>
         <translation>Este objeto está protegido por lo tanto no hay cambio en la forma se aplicará a la misma.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="323"/>
+        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="330"/>
         <source>Disables the generated SQL code using comment tokens (--).
 This will disable the code of all child and referrer objects.</source>
         <translation>Desactiva el código SQL generado utilizando fichas comentario (-).
 Esto desactivará el código de todos los objetos secundarios y referenciales.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="327"/>
+        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="334"/>
         <source>Disable SQL code</source>
         <translation>Desactivar Código SQL</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="346"/>
+        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="353"/>
         <source>Collation:</source>
         <translation>Colación:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="380"/>
+        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="387"/>
         <source>Append or prepend a set of SQL commands to the object&apos;s definition.</source>
         <translation>Anexar o anteponer un conjunto de comandos SQL para la definicióno bjeto&apos;s.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="383"/>
+        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="390"/>
         <source>Custom SQL</source>
         <translation>SQL personalizado</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="415"/>
+        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="422"/>
         <source>Owner:</source>
         <translation>Dueño:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="461"/>
+        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="468"/>
         <source>ID:</source>
         <translation>ID:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="492"/>
+        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="499"/>
         <source>icone</source>
         <translation>icone</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/baseobjectwidget.cpp" line="54"/>
         <source>Create / Edit: </source>
-        <translation>Crear / Editar: </translation>
+        <translation type="vanished">Crear / Editar: </translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/baseobjectwidget.cpp" line="220"/>
+        <location filename="../libpgmodeler_ui/src/baseobjectwidget.cpp" line="183"/>
         <source>Required field. Leaving this empty will raise errors!</source>
         <translation>Campo requerido. Dejando este vacío elevará errores!</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/baseobjectwidget.cpp" line="598"/>
+        <location filename="../libpgmodeler_ui/src/baseobjectwidget.cpp" line="597"/>
         <source>Value(s)</source>
         <translation>Valor(es)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/baseobjectwidget.cpp" line="615"/>
+        <location filename="../libpgmodeler_ui/src/baseobjectwidget.cpp" line="614"/>
         <source>Version</source>
         <translation>Versión</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/baseobjectwidget.cpp" line="653"/>
+        <location filename="../libpgmodeler_ui/src/baseobjectwidget.cpp" line="651"/>
+        <source>The &lt;em style=&apos;color: %1&apos;&gt;&lt;strong&gt;highlighted&lt;/strong&gt;&lt;/em&gt; fields in the form or one of their values are available only on specific PostgreSQL versions. 							Generating SQL code for versions other than those specified in the fields&apos; tooltips may create incompatible code.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>The &lt;em style=&apos;color: %1&apos;&gt;&lt;strong&gt;highlighted&lt;/strong&gt;&lt;/em&gt; fields on the form are available only on specific PostgreSQL versions. 													When generating SQL code for versions other than those specified on fields&apos; tooltips pgModeler will ignore their values.</source>
-        <translation>El &lt;em style=&apos;color: %1&apos;&gt;&lt;strong&gt;highlighted&lt;/strong&gt;&lt;/em&gt; campos del formulario están disponibles sólo en las versiones específicas de PostgreSQL. Al generar código SQL para versiones distintas de las especificadas en los campos y apos; información sobre herramientas pgModeler ignorará sus valores.</translation>
+        <translation type="vanished">El &lt;em style=&apos;color: %1&apos;&gt;&lt;strong&gt;highlighted&lt;/strong&gt;&lt;/em&gt; campos del formulario están disponibles sólo en las versiones específicas de PostgreSQL. Al generar código SQL para versiones distintas de las especificadas en los campos y apos; información sobre herramientas pgModeler ignorará sus valores.</translation>
     </message>
 </context>
 <context>
@@ -898,88 +949,87 @@ Esto desactivará el código de todos los objetos secundarios y referenciales.</
         <translation>Informe bug</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="156"/>
+        <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="203"/>
         <source>Create</source>
         <translation>Crear</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="188"/>
+        <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="146"/>
         <source>&amp;Cancel</source>
         <translation>&amp;Cancel</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="238"/>
+        <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="250"/>
         <source>Use the form below to generate a complete bug report. Please, try to be as clear as possible when describing the actions that can reproduce the bug. Additionally, it&apos;s important to attach a sample database model so that the bug can be quickly discovered and fixed!</source>
         <translation>Utilice el formulario de abajo para generar un informe completo error. Por favor, trate de ser lo más claro posible al describir las acciones que pueden reproducir el error. Adicionalmente, es importante adjuntar un modelo de base de datos de muestra para que el error puede ser descubierto y se fija rápidamente!</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="273"/>
+        <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="285"/>
         <source>Report</source>
         <translation>Reporte</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="291"/>
+        <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="303"/>
         <source>Issue details</source>
         <translation>Detalles del problema</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="340"/>
+        <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="348"/>
         <source>Output:</source>
         <translation>Salida:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="350"/>
+        <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="358"/>
         <source>Select the report&apos;s output folder</source>
         <translation>Seleccione la carpeta de destino del informes</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="353"/>
-        <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="600"/>
+        <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="361"/>
+        <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="524"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="445"/>
+        <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="452"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you prefer it&apos;s possible to report this issue anytime on pgModeler&apos;s project repository at &lt;a href=&quot;http://github.com/pgmodeler/pgmodeler/issues&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;GitHub&lt;/span&gt;&lt;/a&gt;. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Si lo prefiere, se pueden informar de este tema en cualquier momento en repositorio del proyecto de pgModeler en &lt;a href=&quot;http://github.com/pgmodeler/pgmodeler/issues&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;GitHub&lt;/span&gt;&lt;/a&gt;. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="465"/>
+        <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="472"/>
         <source>Database Model</source>
         <translation>Base de datos del modelo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="530"/>
         <source>In none occasion the models sent within the report will be published. They are kept safe and are used only for debug purpose. </source>
-        <translation>En ninguna ocasión se publicarán los modelos enviados dentro del informe. Ellos están a salvo y sólo se utilizan para fines de depuración. </translation>
+        <translation type="vanished">En ninguna ocasión se publicarán los modelos enviados dentro del informe. Ellos están a salvo y sólo se utilizan para fines de depuración. </translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="587"/>
+        <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="511"/>
         <source>Attach the below database model file to be debugged.</source>
         <translation>Adjunte el archivo de modelo de base de datos de abajo para depurar.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="597"/>
+        <location filename="../libpgmodeler_ui/ui/bugreportform.ui" line="521"/>
         <source>Attach a different database model</source>
         <translation>Adjunte un modelo de base de datos diferente</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/bugreportform.cpp" line="117"/>
+        <location filename="../libpgmodeler_ui/src/bugreportform.cpp" line="120"/>
         <source>Bug report successfuly generated! Please, send the file &lt;strong&gt;%1&lt;/strong&gt; to &lt;em&gt;%2&lt;/em&gt; in order be analyzed. Thank you for the collaboration!</source>
         <translation>Informe de error generado exitosamente! Por favor, enviar el archivo &lt;strong&gt;%1&lt;/strong&gt; para &lt;em&gt;%2&lt;/em&gt; con el fin de analizar. Gracias por la colaboración!</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/bugreportform.cpp" line="129"/>
+        <location filename="../libpgmodeler_ui/src/bugreportform.cpp" line="132"/>
         <source>Load model</source>
         <translation>cargar modelo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/bugreportform.cpp" line="130"/>
+        <location filename="../libpgmodeler_ui/src/bugreportform.cpp" line="133"/>
         <source>Database model (*.dbm);;All files (*.*)</source>
         <translation>Modelo de base de datos (*.dbm);;Todos los Archivos (*.*)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/bugreportform.cpp" line="161"/>
+        <location filename="../libpgmodeler_ui/src/bugreportform.cpp" line="164"/>
         <source>Select report output folder</source>
         <translation>Seleccione carpeta de destino del informe</translation>
     </message>
@@ -987,39 +1037,46 @@ Esto desactivará el código de todos los objetos secundarios y referenciales.</
 <context>
     <name>CastWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/castwidget.ui" line="20"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/castwidget.ui" line="59"/>
         <source>Implicit</source>
-        <translation>Implícita</translation>
+        <translation type="vanished">Implícita</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/castwidget.ui" line="87"/>
+        <location filename="../libpgmodeler_ui/ui/castwidget.ui" line="56"/>
+        <source>I&amp;mplicit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/castwidget.ui" line="84"/>
         <source>Assignment</source>
         <translation>Atribuición</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/castwidget.ui" line="100"/>
+        <location filename="../libpgmodeler_ui/ui/castwidget.ui" line="97"/>
         <source>Input / Output</source>
         <translation>Entrada / Salida</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/castwidget.ui" line="125"/>
+        <location filename="../libpgmodeler_ui/ui/castwidget.ui" line="122"/>
         <source>Conversion Func.:</source>
         <translation>Func. de conversión:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/castwidget.ui" line="150"/>
+        <location filename="../libpgmodeler_ui/ui/castwidget.ui" line="147"/>
         <source>Cast Type:</source>
         <translation>Tipo de Conversión:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/castwidget.ui" line="175"/>
+        <location filename="../libpgmodeler_ui/ui/castwidget.ui" line="172"/>
+        <source>E&amp;xplicit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Explicit</source>
-        <translation>Explícito</translation>
+        <translation type="vanished">Explícito</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/castwidget.cpp" line="31"/>
@@ -1040,34 +1097,28 @@ Esto desactivará el código de todos los objetos secundarios y referenciales.</
 <context>
     <name>CentralWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/centralwidget.ui" line="23"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/centralwidget.ui" line="98"/>
         <source>New model</source>
-        <translation>Nuevo modelo</translation>
+        <translation type="vanished">Nuevo modelo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/centralwidget.ui" line="137"/>
         <source>Open model</source>
-        <translation>Abrir modelo</translation>
+        <translation type="vanished">Abrir modelo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/centralwidget.ui" line="179"/>
         <source>Sample models</source>
-        <translation>Ejemplo de modoles</translation>
+        <translation type="vanished">Ejemplo de modoles</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/centralwidget.ui" line="224"/>
         <source>Recent models</source>
-        <translation>Modelos Recientes</translation>
+        <translation type="vanished">Modelos Recientes</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/centralwidget.ui" line="270"/>
         <source>Last session</source>
-        <translation>Última sesión</translation>
+        <translation type="vanished">Última sesión</translation>
     </message>
 </context>
 <context>
@@ -1083,12 +1134,12 @@ Esto desactivará el código de todos los objetos secundarios y referenciales.</
         <translation>Hace el widget que se puede cerrar solamente por tecla ESC o clic del ratón sobre otros controles.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/codecompletionwidget.cpp" line="357"/>
+        <location filename="../libpgmodeler_ui/src/codecompletionwidget.cpp" line="382"/>
         <source>SQL Keyword</source>
         <translation>Palabra clave SQL</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/codecompletionwidget.cpp" line="388"/>
+        <location filename="../libpgmodeler_ui/src/codecompletionwidget.cpp" line="413"/>
         <source>(no items found.)</source>
         <translation>(No se encontró ninguna.)</translation>
     </message>
@@ -1096,27 +1147,26 @@ Esto desactivará el código de todos los objetos secundarios y referenciales.</
 <context>
     <name>CollationWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/collationwidget.ui" line="20"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/collationwidget.ui" line="44"/>
+        <location filename="../libpgmodeler_ui/ui/collationwidget.ui" line="50"/>
         <source>Locale:</source>
         <translation>Local:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/collationwidget.ui" line="79"/>
+        <location filename="../libpgmodeler_ui/ui/collationwidget.ui" line="85"/>
         <source>Encoding:</source>
         <translation>Codificación:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/collationwidget.ui" line="124"/>
+        <location filename="../libpgmodeler_ui/ui/collationwidget.ui" line="130"/>
         <source>LC_COLLATE:</source>
         <translation>LC_COLLATE:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/collationwidget.ui" line="169"/>
+        <location filename="../libpgmodeler_ui/ui/collationwidget.ui" line="175"/>
         <source>LC_CTYPE:</source>
         <translation>LC_CTYPE:</translation>
     </message>
@@ -1126,8 +1176,8 @@ Esto desactivará el código de todos los objetos secundarios y referenciales.</
         <translation>Los campos &lt;strong&gt;&lt;em&gt;Collation&lt;/em&gt;&lt;/strong&gt;, &lt;strong&gt;&lt;em&gt;Locale&lt;/em&gt;&lt;/strong&gt;, &lt;strong&gt;&lt;em&gt;LC_COLLATE &amp; LC_CTYPE&lt;/em&gt;&lt;/strong&gt; son mutuamente excluyentes, así que tienes que configurar sólo uno de ellos con el fin de manejar adecuadamente una colación.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/collationwidget.cpp" line="38"/>
-        <location filename="../libpgmodeler_ui/src/collationwidget.cpp" line="50"/>
+        <location filename="../libpgmodeler_ui/src/collationwidget.cpp" line="39"/>
+        <location filename="../libpgmodeler_ui/src/collationwidget.cpp" line="51"/>
         <source>Not defined</source>
         <translation>No definido</translation>
     </message>
@@ -1150,7 +1200,7 @@ Esto desactivará el código de todos los objetos secundarios y referenciales.</
         <translation>Alt+R</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/colorpickerwidget.cpp" line="123"/>
+        <location filename="../libpgmodeler_ui/src/colorpickerwidget.cpp" line="148"/>
         <source>Select color</source>
         <translation>Seleccionar colores</translation>
     </message>
@@ -1158,29 +1208,40 @@ Esto desactivará el código de todos los objetos secundarios y referenciales.</
 <context>
     <name>ColumnWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/columnwidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/columnwidget.ui" line="35"/>
+        <location filename="../libpgmodeler_ui/ui/columnwidget.ui" line="32"/>
         <source>Default Value:</source>
         <translation>Valor por Defecto:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/columnwidget.ui" line="90"/>
+        <location filename="../libpgmodeler_ui/ui/columnwidget.ui" line="50"/>
+        <source>E&amp;xpression:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/columnwidget.ui" line="66"/>
+        <source>&amp;NOT NULL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/columnwidget.ui" line="73"/>
+        <source>Se&amp;quence:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Expression:</source>
-        <translation>Expresión:</translation>
+        <translation type="vanished">Expresión:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/columnwidget.ui" line="106"/>
         <source>NOT NULL</source>
-        <translation>NOT NULL</translation>
+        <translation type="vanished">NOT NULL</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/columnwidget.ui" line="113"/>
         <source>Sequence:</source>
-        <translation>Secuencia:</translation>
+        <translation type="vanished">Secuencia:</translation>
     </message>
 </context>
 <context>
@@ -1221,22 +1282,22 @@ Esto desactivará el código de todos los objetos secundarios y referenciales.</
         <translation>Plug-ins</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/configurationform.ui" line="329"/>
+        <location filename="../libpgmodeler_ui/ui/configurationform.ui" line="341"/>
         <source>Defaults</source>
         <translation>Valor por Defecto</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/configurationform.ui" line="358"/>
+        <location filename="../libpgmodeler_ui/ui/configurationform.ui" line="382"/>
         <source>&amp;Apply</source>
         <translation>&amp;Aplicar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/configurationform.ui" line="384"/>
+        <location filename="../libpgmodeler_ui/ui/configurationform.ui" line="420"/>
         <source>&amp;Cancel</source>
         <translation>&amp;Cancelar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/configurationform.cpp" line="116"/>
+        <location filename="../libpgmodeler_ui/src/configurationform.cpp" line="126"/>
         <source>Any modification made until now in the current section will be lost! Do you really want to restore default settings?</source>
         <translation>Cualquier modificación realizada hasta ahora en la sección actual se perderá! ¿Realmente desea restaurar la configuración predeterminada?</translation>
     </message>
@@ -1244,192 +1305,250 @@ Esto desactivará el código de todos los objetos secundarios y referenciales.</
 <context>
     <name>ConnectionsConfigWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="59"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="575"/>
         <source>Password:</source>
         <translation>Contraseña:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="85"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="294"/>
         <source>Connection Alias:</source>
         <translation>Alias Conexión:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="98"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="307"/>
         <source>Connection DB:</source>
         <translation>BD Conexión:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="111"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="281"/>
         <source>Host/Port:</source>
         <translation>Host/Puerta:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="124"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="483"/>
         <source>User:</source>
         <translation>Usuário:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="137"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="707"/>
         <source>Timeout:</source>
         <translation>Timeout:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="150"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="854"/>
         <source>SSL Mode:</source>
         <translation>Modo SSL:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="164"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="768"/>
         <source>Disable</source>
         <translation>Desactivado</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="169"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="636"/>
+        <source>Diff</source>
+        <translation type="unfinished">Diff</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="643"/>
+        <source>Export</source>
+        <translation type="unfinished">Exportar</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="650"/>
+        <source>Import</source>
+        <translation type="unfinished">Importar</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="657"/>
+        <source>Validation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="728"/>
+        <source>Security</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="773"/>
         <source>Allow</source>
         <translation>Permitir</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="174"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="778"/>
         <source>Require</source>
         <translation>Requerido</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="179"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="783"/>
         <source>AC verification</source>
         <translation>Verificación de AC</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="184"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="788"/>
         <source>Full verification</source>
         <translation>Verificación Completa</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="201"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="899"/>
+        <source>Kerberos Server:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="960"/>
         <source>Client Certificate:</source>
         <translation>Certificado Cliente:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="217"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="931"/>
         <source>Revoked Certs.:</source>
         <translation>Cert. Revocados:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="233"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="870"/>
         <source>Client Key:</source>
         <translation>Clave Cliente:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="249"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="915"/>
         <source>Root Certificate:</source>
         <translation>Certificado Root:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="262"/>
         <source>Options:</source>
-        <translation>Opciones:</translation>
+        <translation type="vanished">Opciones:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="278"/>
         <source>Kerberus Server:</source>
-        <translation>Servidor Kerberus:</translation>
+        <translation type="vanished">Servidor Kerberus:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="301"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="814"/>
         <source>~/.postgresql/root.crt</source>
         <translation>~/.postgresql/root.crt</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="311"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="65"/>
         <source>Connections:</source>
         <translation>Conexiones:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="333"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="253"/>
         <source>second(s)</source>
         <translation>segundo(s)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="373"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="839"/>
         <source>Force GSSAPI</source>
         <translation>Forzar a GSSAPI</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="385"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="749"/>
         <source>~/.postgresql/postgresql.crt</source>
         <translation>~/.postgresql/postgresql.crt</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="431"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="420"/>
         <source>Add</source>
         <translation>Añadir</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="469"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="458"/>
         <source>Update</source>
         <translation>Actualizar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="507"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="382"/>
         <source>Test</source>
         <translation>Testear</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="568"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="880"/>
         <source>~/.postgresql/root.crl</source>
         <translation>~/.postgresql/root.crl</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="581"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="941"/>
         <source>~/.postgresql/postgresql.key</source>
         <translation>~/.postgresql/postgresql.key</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="631"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="102"/>
         <source>Create new connection</source>
         <translation>Crear nueva conexión</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="660"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="14"/>
+        <location filename="../libpgmodeler_ui/src/connectionsconfigwidget.cpp" line="629"/>
+        <source>Edit database connections</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="125"/>
         <source>Cancel edition</source>
         <translation>Cancelar edición</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="689"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="148"/>
         <source>Duplicate the selected connection</source>
         <translation>Duplicar la conexión seleccionada</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="718"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="171"/>
         <source>Edit selected connection</source>
         <translation>Editar conexión seleccionada</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="747"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="194"/>
         <source>Delete selected connection</source>
         <translation>Eliminar conexión seleccionada</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="809"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="220"/>
+        <source>General</source>
+        <translation type="unfinished">General</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="320"/>
+        <source>Other params:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="492"/>
+        <source>Specify additional connection parameters in the form [param]=[value]. These parameters are described in the &lt;strong&gt;libpq&lt;/strong&gt; chapter at PostgreSQL docs.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="562"/>
+        <source>Default for:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="600"/>
         <source>Automatically browses the named database when using this connection to manage databases on &lt;strong&gt;Manage&lt;/strong&gt; view.</source>
         <translation>Busca automáticamente la base de datos llamada cuando se utiliza esta conexión para administrar bases de datos en la vista &lt;strong&gt;Manage&lt;/strong&gt;.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="812"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="603"/>
         <source>Auto browse</source>
         <translation> Auto explorar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/connectionsconfigwidget.cpp" line="382"/>
+        <location filename="../libpgmodeler_ui/src/connectionsconfigwidget.cpp" line="38"/>
+        <source>Indicates in which operations (diff, export, import or validation) the connection is used if none is explicitly specified by the user.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/connectionsconfigwidget.cpp" line="464"/>
         <source>Success</source>
         <translation>Éxito</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/connectionsconfigwidget.cpp" line="383"/>
+        <location filename="../libpgmodeler_ui/src/connectionsconfigwidget.cpp" line="465"/>
         <source>Connection successfuly stablished!
 
 Server details:
@@ -1446,113 +1565,131 @@ Protocol: `%2&apos;
 Versión: `%3&apos;</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/connectionsconfigwidget.cpp" line="428"/>
+        <location filename="../libpgmodeler_ui/src/connectionsconfigwidget.cpp" line="512"/>
+        <source>There is a connection being created or edited! Do you want to save it?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/connectionsconfigwidget.cpp" line="599"/>
+        <source>Found %1 connection(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/connectionsconfigwidget.cpp" line="601"/>
+        <source>No connections found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/connectionsconfigwidget.cpp" line="613"/>
+        <source>Edit connections</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>There is an unsaved connection! Want to save it?</source>
-        <translation>Existe una conexión no guardado! ¿Quiere guardarla?</translation>
+        <translation type="vanished">Existe una conexión no guardado! ¿Quiere guardarla?</translation>
     </message>
 </context>
 <context>
     <name>ConstraintWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="20"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="59"/>
+        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="56"/>
         <source>Match:</source>
         <translation>Partida:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="97"/>
+        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="94"/>
         <source>Constraint Type:</source>
         <translation>Tipo de Restricción:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="110"/>
+        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="107"/>
         <source>This attribute cannot be changed once the object is created.</source>
         <translation>Este atributo no se puede cambiar una vez que se crea el objeto.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="129"/>
+        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="126"/>
         <source>Expression:</source>
         <translation>Expresión:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="219"/>
+        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="167"/>
         <source>Deferrable:</source>
         <translation>Diferible:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="260"/>
+        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="208"/>
         <source>Deferral:</source>
         <translation>Diferimiento:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="314"/>
+        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="262"/>
         <source>ON DELETE:</source>
         <translation>ON DELETE:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="339"/>
+        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="287"/>
         <source>ON UPDATE:</source>
         <translation>ON UPDATE:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="362"/>
+        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="310"/>
         <source>No inherit:</source>
         <translation>No se hereda:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="382"/>
+        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="330"/>
         <source>Exclude Elements</source>
         <translation>Excluir Elementos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="405"/>
+        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="353"/>
         <source>Columns</source>
         <translation>Columnas</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="432"/>
-        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="546"/>
+        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="380"/>
+        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="494"/>
         <source>Column:</source>
         <translation>Columna:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="478"/>
+        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="426"/>
         <source>Referenced Columns</source>
         <translation>Columnas Referenciadas</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="559"/>
+        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="507"/>
         <source>Table:</source>
         <translation>Tabla:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="576"/>
+        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="524"/>
         <source>Indexing:</source>
         <translation>Indexación:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="596"/>
+        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="544"/>
         <source>Fill Factor:</source>
         <translation>Factor Rellen.:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/constraintwidget.cpp" line="51"/>
-        <location filename="../libpgmodeler_ui/src/constraintwidget.cpp" line="58"/>
+        <location filename="../libpgmodeler_ui/src/constraintwidget.cpp" line="52"/>
+        <location filename="../libpgmodeler_ui/src/constraintwidget.cpp" line="59"/>
         <source>Column</source>
         <translation>Column</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/constraintwidget.cpp" line="53"/>
-        <location filename="../libpgmodeler_ui/src/constraintwidget.cpp" line="60"/>
+        <location filename="../libpgmodeler_ui/src/constraintwidget.cpp" line="54"/>
+        <location filename="../libpgmodeler_ui/src/constraintwidget.cpp" line="61"/>
         <source>Type</source>
         <translation>Tipo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/constraintwidget.cpp" line="85"/>
+        <location filename="../libpgmodeler_ui/src/constraintwidget.cpp" line="86"/>
         <source>Columns which were included by relationship can not be added / removed manually from the primary key. If done such changes they can raise errors. To create primary key using columns included by relationship use the following options: identifier field, attributes &amp; constraints tab or primary key tab on the relationship form.</source>
         <translation>Las columnas que se incluyeron por la relación no se pueden añadir / retirado manualmente de la clave principal. Si se hace este tipo de cambios que pueden elevar los errores. Para crear la clave primaria utilizando columnas incluidas por relación utilizar las siguientes opciones: campo de identificador, atributos &amp; limitaciones ficha o pestaña clave principal en el formulario de la relación.</translation>
     </message>
@@ -1560,27 +1697,26 @@ Versión: `%3&apos;</translation>
 <context>
     <name>ConversionWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/conversionwidget.ui" line="20"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/conversionwidget.ui" line="50"/>
+        <location filename="../libpgmodeler_ui/ui/conversionwidget.ui" line="56"/>
         <source>Source Encoding:</source>
         <translation>Codificación Fuente:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/conversionwidget.ui" line="94"/>
+        <location filename="../libpgmodeler_ui/ui/conversionwidget.ui" line="100"/>
         <source>Target Encoding:</source>
         <translation>Codificación Destino:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/conversionwidget.ui" line="141"/>
+        <location filename="../libpgmodeler_ui/ui/conversionwidget.ui" line="147"/>
         <source>Conversion Func.:</source>
         <translation>Func. Conversión:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/conversionwidget.ui" line="179"/>
+        <location filename="../libpgmodeler_ui/ui/conversionwidget.ui" line="185"/>
         <source>Default Conversion:</source>
         <translation>Conversión por Defecto:</translation>
     </message>
@@ -1638,22 +1774,22 @@ Versión: `%3&apos;</translation>
         <translation>Modelo de Bases de Datos (*.dbm);;Todos los archivo (*.*)</translation>
     </message>
     <message>
-        <location filename="../crashhandler/src/crashhandlerform.cpp" line="236"/>
+        <location filename="../crashhandler/src/crashhandlerform.cpp" line="239"/>
         <source>Crash handler</source>
         <translation>Accidente del Handler</translation>
     </message>
     <message>
-        <location filename="../crashhandler/src/crashhandlerform.cpp" line="237"/>
+        <location filename="../crashhandler/src/crashhandlerform.cpp" line="240"/>
         <source>Bug report analysis mode activated.</source>
         <translation>Modo de análisis para informar de fallos activada.</translation>
     </message>
     <message>
-        <location filename="../crashhandler/src/crashhandlerform.cpp" line="241"/>
+        <location filename="../crashhandler/src/crashhandlerform.cpp" line="244"/>
         <source>Oops! pgModeler just crashed!</source>
         <translation>¡Huy! pgModeler simplemente cayó!</translation>
     </message>
     <message>
-        <location filename="../crashhandler/src/crashhandlerform.cpp" line="242"/>
+        <location filename="../crashhandler/src/crashhandlerform.cpp" line="245"/>
         <source>We apologize for what happened! It is clear that a nasty bug caused that. Please fill out the form below describing your actions before pgModeler quit unexpectedly. This will help on bug extermination and improve the software.</source>
         <translation>Pedimos disculpas por lo que pasó! Es claro que un error desagradable causada eso. Rellene el siguiente formulario describiendo sus acciones antes pgModeler cierre inesperadamente. Esto ayudará en la exterminación de insectos y mejorar el software.</translation>
     </message>
@@ -1661,9 +1797,13 @@ Versión: `%3&apos;</translation>
 <context>
     <name>CustomSQLWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="26"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="26"/>
+        <source>Add custom SQL code</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="44"/>
@@ -1722,7 +1862,7 @@ Versión: `%3&apos;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="290"/>
-        <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="332"/>
+        <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="323"/>
         <source>Append the SQL code at the very end of model definition.
 Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE command.</source>
         <translation>Anexe el código SQL en el final de la determinación del modelo.
@@ -1734,72 +1874,71 @@ Desmarcando esto hará que el SQL que se adjunta al final del mandato CREATE DAT
         <translation>Adjuntar al final de la definición del modelo.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="314"/>
+        <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="305"/>
         <source>Prepend SQL</source>
         <translation>Prefijar SQL</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="336"/>
+        <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="327"/>
         <source>Prepend at beginning of model definition.</source>
         <translation>Prefijar al comienzo de la determinación del modelo.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="431"/>
+        <location filename="../libpgmodeler_ui/ui/customsqlwidget.ui" line="411"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use custom commands with extreme caution because you can change the semantics of the entire model when running SQL validation or export processes. Additionally, depending on the amount of commands, those processes can have their performance sensibly degradated.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Utilice comandos personalizados con extrema precaución ya que puede cambiar la semántica de todo el modelo cuando se ejecutan los procesos de validación de SQL o de exportación. Además, dependiendo de la cantidad de comandos, esos procesos pueden tener su rendimiento sensiblemente degrada.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="20"/>
         <source>Append / Prepend SQL code</source>
-        <translation>Adjuntar / Prefijar código SQL</translation>
+        <translation type="vanished">Adjuntar / Prefijar código SQL</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="30"/>
+        <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="45"/>
         <source>Type:</source>
         <translation>Tipo:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="32"/>
+        <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="49"/>
         <source>Generic INSERT</source>
         <translation>INSERT genérico</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="34"/>
+        <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="51"/>
         <source>Include serial columns</source>
         <translation>Incluir columnas serial</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="36"/>
+        <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="53"/>
         <source>Exclude serial columns</source>
         <translation>Excluir columnas serial</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="38"/>
+        <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="55"/>
         <source>Generic SELECT</source>
         <translation>SELECT genérico</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="40"/>
+        <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="57"/>
         <source>Table SELECT</source>
         <translation>SELECT tabla</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="42"/>
+        <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="59"/>
         <source>Generic UPDATE</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="44"/>
+        <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="61"/>
         <source>Table UPDATE</source>
         <translation>UPDATE genérico</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="46"/>
+        <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="63"/>
         <source>Generic DELETE</source>
         <translation>DELETE genérico</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="48"/>
+        <location filename="../libpgmodeler_ui/src/customsqlwidget.cpp" line="65"/>
         <source>Table DELETE</source>
         <translation>DELETE tabla</translation>
     </message>
@@ -1817,304 +1956,339 @@ Desmarcando esto hará que el SQL que se adjunta al final del mandato CREATE DAT
         <translation>&amp;Cerrar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="177"/>
         <source>Rows returned: </source>
-        <translation>Filas devueltas: </translation>
+        <translation type="vanished">Filas devueltas: </translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="199"/>
         <source>0</source>
-        <translation>0</translation>
+        <translation type="vanished">0</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="216"/>
         <source>Maximum limit of listed rows</source>
-        <translation>Límite máximo de filas listadas</translation>
+        <translation type="vanished">Límite máximo de filas listadas</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="219"/>
         <source>(Limit: 0)</source>
-        <translation>(Límite: 0)</translation>
+        <translation type="vanished">(Límite: 0)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="309"/>
         <source>Empty values are assumed as &lt;strong&gt;DEFAULT&lt;/strong&gt;. To use special values like &lt;strong&gt;NULL&lt;/strong&gt;, a function call like &lt;strong&gt;now()&lt;/strong&gt; or a specific data escaping, enclose values in &lt;strong&gt;&amp;lt;&amp;gt;&lt;/strong&gt;. To use &lt;strong&gt;&amp;lt;&lt;/strong&gt; or &lt;strong&gt;&amp;gt;&lt;/strong&gt; as part of the value prepend the backslash character, e.g., &lt;strong&gt;\&amp;lt;&lt;/strong&gt; or &lt;strong&gt;\&amp;gt;&lt;/strong&gt;.</source>
-        <translation>Los Valores vacíos se asumen como &lt;strong&gt;DEFAULT&lt;/strong&gt;. Para utilizar los valores especiales como &lt;strong&gt;NULL&lt;/strong&gt; una llamada de función como &lt;strong&gt;now()&lt;/strong&gt; o un escape de datos específica, encierran valores &lt;strong&gt;&amp;lt;&amp;gt;&lt;/strong&gt;. Usar &lt;strong&gt;&amp;lt;&lt;/strong&gt; o &lt;strong&gt;&amp;gt;&lt;/strong&gt; como parte del valor de anteponer el carácter de barra invertida, por ejemplo, &lt;strong&gt;\&amp;lt;&lt;/strong&gt; or &lt;strong&gt;\&amp;gt;&lt;/strong&gt;.</translation>
+        <translation type="vanished">Los Valores vacíos se asumen como &lt;strong&gt;DEFAULT&lt;/strong&gt;. Para utilizar los valores especiales como &lt;strong&gt;NULL&lt;/strong&gt; una llamada de función como &lt;strong&gt;now()&lt;/strong&gt; o un escape de datos específica, encierran valores &lt;strong&gt;&amp;lt;&amp;gt;&lt;/strong&gt;. Usar &lt;strong&gt;&amp;lt;&lt;/strong&gt; o &lt;strong&gt;&amp;gt;&lt;/strong&gt; como parte del valor de anteponer el carácter de barra invertida, por ejemplo, &lt;strong&gt;\&amp;lt;&lt;/strong&gt; or &lt;strong&gt;\&amp;gt;&lt;/strong&gt;.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="425"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="373"/>
         <source>Refresh listing</source>
         <translation>Refrescar listado</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="428"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="376"/>
         <source>Refresh</source>
         <translation>Refrescar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="441"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="389"/>
         <source>F5</source>
         <translation>F5</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="465"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="413"/>
         <source>Save changes</source>
         <translation>Salvar cambios</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="468"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="416"/>
         <source>Save</source>
         <translation>Salvar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="481"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="429"/>
         <source>Ctrl+S</source>
         <translation>Ctrl+S</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="505"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="453"/>
         <source>Copy the selection as CSV buffer</source>
         <translation>Copiar la selección como buffer CSV</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="508"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="456"/>
         <source>Copy</source>
         <translation>Copiar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="521"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="469"/>
         <source>Ctrl+C</source>
         <translation>Ctrl+C</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="545"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="493"/>
         <source>Export results to CSV file</source>
         <translation>Exportar resultados a archivo CSV</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="548"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="496"/>
         <source>Export</source>
         <translation>Exportar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="561"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="509"/>
         <source>Ctrl+X</source>
         <translation>Ctrl+X</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="585"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="549"/>
         <source>Undo modifications</source>
         <translation>Deshacer modificaciones</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="588"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="552"/>
         <source>Undo</source>
         <translation>Deshacer</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="601"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="565"/>
         <source>Ctrl+Z</source>
         <translation>Ctrl+Z</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="625"/>
         <source>Add data</source>
-        <translation>Añadir datos</translation>
+        <translation type="vanished">Añadir datos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="628"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="592"/>
         <source>Add</source>
         <translation>Añadir</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="641"/>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1187"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="605"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1123"/>
         <source>Ins</source>
         <translation>Ins</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="665"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="629"/>
         <source>Mark the selected rows to be deleted</source>
         <translation>Marque las filas seleccionadas para ser borradas</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="668"/>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="708"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="632"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="728"/>
         <source>Delete</source>
         <translation>Borrar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="681"/>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="721"/>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1225"/>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1263"/>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1301"/>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1339"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="645"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1161"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1199"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1237"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1275"/>
         <source>Del</source>
         <translation>Del</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="705"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="669"/>
+        <source>Duplicate the selected rows</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="672"/>
+        <source>Duplicate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="685"/>
+        <source>Ctrl+D</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="725"/>
         <source>Filter the result set</source>
         <translation>Filtrar el conjunto de resultados</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="742"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="759"/>
         <source>Table:</source>
         <translation>Tabla:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="755"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="772"/>
         <source>Schema:</source>
         <translation>Esquema:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="833"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="850"/>
         <source>in </source>
         <translation>in </translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="889"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="906"/>
         <source>Hide views</source>
         <translation>Ocultar vista</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="971"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="994"/>
         <source>Filter expression</source>
         <translation>Filtrar expresión</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1015"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1029"/>
         <source>Order &amp;&amp; Limit</source>
         <translation>Order &amp;&amp; Límite</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1039"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1063"/>
+        <source>results (Use &lt;strong&gt;0&lt;/strong&gt; for no limit)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1349"/>
         <source>Column:</source>
         <translation>Columna:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1067"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1318"/>
         <source>ASC</source>
         <translation>ASC</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1083"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="342"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Empty values are assumed as &lt;span style=&quot; font-weight:600;&quot;&gt;DEFAULT&lt;/span&gt;. To use special values like &lt;span style=&quot; font-weight:600;&quot;&gt;NULL&lt;/span&gt;, a function call like &lt;span style=&quot; font-weight:600;&quot;&gt;now()&lt;/span&gt; or a specific data escaping, enclose values in &lt;span style=&quot; font-weight:600;&quot;&gt;{}&lt;/span&gt;. To use &lt;span style=&quot; font-weight:600;&quot;&gt;{&lt;/span&gt; or &lt;span style=&quot; font-weight:600;&quot;&gt;}&lt;/span&gt; as part of the value prepend the backslash character, e.g., &lt;span style=&quot; font-weight:600;&quot;&gt;\{&lt;/span&gt; or &lt;span style=&quot; font-weight:600;&quot;&gt;\}&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="589"/>
+        <source>Add empty rows</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1334"/>
         <source>DESC</source>
         <translation>DESC</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1102"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1070"/>
         <source>Limit in:</source>
         <translation>Límite en:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1118"/>
         <source>000000</source>
-        <translation>000000</translation>
+        <translation type="vanished">000000</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1121"/>
         <source>100</source>
-        <translation>100</translation>
+        <translation type="vanished">100</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1134"/>
         <source>results</source>
-        <translation>resultados</translation>
+        <translation type="vanished">resultados</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1171"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1107"/>
         <source>Add Item</source>
         <translation>Añadir Item</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1209"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1145"/>
         <source>Remove Item</source>
         <translation>Eliminar Item</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1247"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1183"/>
         <source>Clear the order by columns list</source>
         <translation>Desactive el orden de lista columnas</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1285"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1221"/>
         <source>Move selected item up</source>
         <translation>Mover arriba el item seleccionado</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1323"/>
+        <location filename="../libpgmodeler_ui/ui/datamanipulationform.ui" line="1259"/>
         <source>Move selected item down</source>
         <translation>Mover abajo el item seleccionado</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="216"/>
+        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="198"/>
+        <source>&lt;strong&gt;WARNING: &lt;/strong&gt; There are some changed rows waiting the commit! Do you really want to discard them and retrieve the data now?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="243"/>
+        <source>Rows returned: &lt;strong&gt;%1&lt;/strong&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="244"/>
         <source>&lt;em&gt;(Limit: &lt;strong&gt;%1&lt;/strong&gt;)&lt;/em&gt;</source>
         <translation>&lt;em&gt;(Límite: &lt;strong&gt;%1&lt;/strong&gt;)&lt;/em&gt;</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="384"/>
+        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="244"/>
+        <source>none</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="437"/>
         <source>No objects found</source>
         <translation>Objects no encontrado</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="386"/>
+        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="439"/>
         <source>Found %1 object(s)</source>
         <translation>Encontrado %1 objecto(s)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="408"/>
+        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="465"/>
         <source>Views can&apos;t have their data handled through this grid, this way, all operations are disabled.</source>
         <translation>Las vistas no pueden tener sus datos manejados a través de esta red, de esta manera, todas las operaciones están desactivadas.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="417"/>
+        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="476"/>
         <source>The selected table doesn&apos;t owns a primary key! Updates and deletes will be performed by considering all columns as primary key. &lt;strong&gt;WARNING:&lt;/strong&gt; those operations can affect more than one row.</source>
         <translation>La tabla seleccionada no posee una clave primaria! Las actualizaciones y eliminaciones se realizarán teniendo en cuenta todas las columnas como clave primaria. &lt;strong&gt;WARNING:&lt;/strong&gt; estas operaciones pueden afectar a más de una fila.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="450"/>
+        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="518"/>
         <source>This row is marked to be %1</source>
         <translation>Esta fila se marca para ser %1</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="455"/>
+        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="523"/>
         <source>deleted</source>
         <translation>eliminado</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="457"/>
+        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="525"/>
         <source>updated</source>
         <translation>actualizado</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="459"/>
+        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="527"/>
         <source>inserted</source>
         <translation>insertado</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="581"/>
+        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="652"/>
         <source>[binary data]</source>
         <translation>[datos binarios]</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="718"/>
+        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="812"/>
         <source>&lt;strong&gt;WARNING:&lt;/strong&gt; Once commited its not possible to undo the changes! Proceed with saving?</source>
         <translation>&lt;strong&gt;WARNING:&lt;/strong&gt; Una vez que su cometido no es posible deshacer los cambios! Procedo con salvar?</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="748"/>
+        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="843"/>
         <source>delete</source>
         <translation>eliminar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="749"/>
+        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="844"/>
         <source>update</source>
         <translation>actualizar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="750"/>
+        <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="845"/>
         <source>insert</source>
         <translation>insertar</translation>
     </message>
@@ -2122,34 +2296,26 @@ Desmarcando esto hará que el SQL que se adjunta al final del mandato CREATE DAT
 <context>
     <name>DatabaseExplorerWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="14"/>
+        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="20"/>
         <source>Form</source>
         <translation>Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="43"/>
         <source>Toggles the display of system </source>
-        <translation>Cambia la visualización de objects del sistema</translation>
+        <translation type="vanished">Cambia la visualización de objects del sistema</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="46"/>
         <source>Sys. objects</source>
-        <translation>Objectos del Sys</translation>
+        <translation type="vanished">Objectos del Sys</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="65"/>
+        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="71"/>
         <source>Toggles the display of extension objects</source>
         <translation>Cambia la visualización de extensión de objetos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="68"/>
         <source>Ext. objects</source>
-        <translation>Ext. objectos</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="92"/>
-        <source>Open the grid to visualize or edit data.</source>
-        <translation></translation>
+        <translation type="vanished">Ext. objectos</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="95"/>
@@ -2162,892 +2328,999 @@ Desmarcando esto hará que el SQL que se adjunta al final del mandato CREATE DAT
         <translation>Alt+G</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="121"/>
         <source>Open a new SQL execution pane.</source>
-        <translation>Abrir un nuevo panel de ejecución de SQL.</translation>
+        <translation type="vanished">Abrir un nuevo panel de ejecución de SQL.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="124"/>
         <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="150"/>
-        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="307"/>
-        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="345"/>
+        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="176"/>
+        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="336"/>
+        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="368"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="137"/>
-        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="163"/>
         <source>Ctrl+F5</source>
-        <translation>Ctrl+F5</translation>
+        <translation type="vanished">Ctrl+F5</translation>
+    </message>
+    <message>
+        <source>Update the objects tree.</source>
+        <translation type="vanished">Actualizar el árbol de objetos.</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="49"/>
+        <source>Toggles the display of system objects.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="52"/>
+        <source>System</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="74"/>
+        <source>Extension</source>
+        <translation type="unfinished">Extensión</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="92"/>
+        <source>Open the grid to visualize or edit data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="121"/>
+        <source>Open a new SQL execution pane</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="137"/>
+        <source>Ctrl+F6</source>
+        <translation type="unfinished">Ctrl+F6</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="147"/>
-        <source>Update the objects tree.</source>
-        <translation>Actualizar el árbol de objetos.</translation>
+        <source>Update the objects tree</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="304"/>
+        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="163"/>
+        <source>Ctrl+S</source>
+        <translation type="unfinished">Ctrl+S</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="173"/>
+        <source>Drop this database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="333"/>
         <source>Expands all items</source>
         <translation>Expande todos los item</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="342"/>
+        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="365"/>
         <source>Collapses all items</source>
         <translation>Contrae todos los item</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="391"/>
+        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="414"/>
+        <source>Filters the currently loaded items in the tree by using a pattern and matching their names. If &lt;strong&gt;By OID&lt;/strong&gt; is checked the pattern is interpreted as an integer value that represents the object id (OID). &lt;br&gt;&lt;br/&gt;&lt;strong&gt;HINT:&lt;/strong&gt; if you need to search the entire database use the full refresh (&lt;strong&gt;Ctrl+F5&lt;/strong&gt;) prior the filtering.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="417"/>
         <source>Filter:</source>
         <translation>Filtro:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="405"/>
+        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="434"/>
         <source>By OID</source>
         <translation>Por OID</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="485"/>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="35"/>
+        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="557"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="36"/>
         <source>Attribute</source>
         <translation>Atributo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="490"/>
+        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="562"/>
         <source>Value</source>
         <translation>Valor</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="499"/>
-        <source>Show raw attributes names</source>
-        <translation>Mostrar primero nombres de atributos </translation>
+        <location filename="../libpgmodeler_ui/ui/databaseexplorerwidget.ui" line="570"/>
+        <source>Show raw attributes</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="32"/>
+        <source>Show raw attributes names</source>
+        <translation type="vanished">Mostrar primero nombres de atributos </translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="28"/>
+        <source>(not found, OID: %1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="30"/>
+        <source>-- Source code not generated! Hit F7 or middle-click the item to load it. --</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="33"/>
         <source>Admin. roles</source>
         <translation>Admin. roles</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="32"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="33"/>
         <source>Alignment</source>
         <translation>Alineación</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="32"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="33"/>
         <source>Analyze func.</source>
         <translation>Analizar func.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="33"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="34"/>
         <source>Arg. count</source>
         <translation>Arg. Contar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="33"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="34"/>
         <source>Arg. default count</source>
         <translation>Arg. contar por defecto</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="33"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="34"/>
         <source>Arg. defaults</source>
         <translation>Arg. por defecto</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="34"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="35"/>
         <source>Arg. modes</source>
         <translation>Arg. modos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="34"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="35"/>
         <source>Arg. names</source>
         <translation>Arg. nombres</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="34"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="35"/>
         <source>Arg. types</source>
         <translation>Arg. tipos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="35"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="36"/>
         <source>Behavior type</source>
         <translation>Tipo de comportamiento</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="35"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="36"/>
         <source>By value</source>
         <translation>Por valor</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="36"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="37"/>
         <source>Cast type</source>
         <translation>Tipo conversión</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="36"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="37"/>
         <source>Category</source>
         <translation>Categoria</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="36"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="37"/>
         <source>Collatable</source>
         <translation>Intercalable</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="37"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="38"/>
         <source>Collation</source>
         <translation>Intercalación</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="37"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="38"/>
         <source>Comment</source>
         <translation>Comentario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="37"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="38"/>
         <source>Commutator Op.</source>
         <translation>Commutador Op.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="38"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="39"/>
         <source>Configuration</source>
         <translation>Configuración</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="38"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="39"/>
         <source>Conn. limit</source>
         <translation>Conn. límite</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="38"/>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="73"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="39"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="74"/>
         <source>Constraint</source>
         <translation>Restricción</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="39"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="40"/>
         <source>Create DB</source>
         <translation>Crear BD</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="39"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="40"/>
         <source>Create role</source>
         <translation>Crear rol</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="39"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="40"/>
         <source>Curr. version</source>
         <translation>Corr. versión</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="40"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="41"/>
         <source>Default</source>
         <translation>Por defecto</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="40"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="41"/>
         <source>Default value</source>
         <translation>Valor por defecto</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="40"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="41"/>
         <source>Definition</source>
         <translation>Definición</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="41"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="42"/>
         <source>Delimiter</source>
         <translation>Delimitador</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="41"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="42"/>
         <source>Dest. type</source>
         <translation>Dest. tipo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="41"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="42"/>
         <source>Dimension</source>
         <translation>Dimensión</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="42"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="43"/>
         <source>Directory</source>
         <translation>Directorio</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="42"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="43"/>
         <source>Dest. encoding</source>
         <translation>Dest. codificación</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="42"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="43"/>
         <source>Element</source>
         <translation>Elemento</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="43"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="44"/>
         <source>Encoding</source>
         <translation>Codificación</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="43"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="44"/>
         <source>Encrypted</source>
         <translation>Encriptado</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="43"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="44"/>
         <source>Enumerations</source>
         <translation>Enumeraciones</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="44"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="45"/>
         <source>Exec. cost</source>
         <translation>Costo ejec</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="44"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="45"/>
         <source>Expression</source>
         <translation>Expresión</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="44"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="45"/>
         <source>Op. family</source>
         <translation>Op. familia</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="45"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="46"/>
         <source>Final func.</source>
         <translation>Final func.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="45"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="46"/>
         <source>Function</source>
         <translation>Función</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="45"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="46"/>
         <source>Func. type</source>
         <translation>Func. tipo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="46"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="47"/>
         <source>Handler func.</source>
         <translation>Handler func.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="46"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="47"/>
         <source>Handles type</source>
         <translation>Handles tipo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="46"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="47"/>
         <source>Hashes</source>
         <translation>Hashes</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="47"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="48"/>
         <source>Index type</source>
         <translation>Indixe tipo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="47"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="48"/>
         <source>Inherit</source>
         <translation>Heredar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="47"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="48"/>
         <source>Ini. condition</source>
         <translation>Ini. condición</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="48"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="49"/>
         <source>Inline func.</source>
         <translation>En linea func.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="48"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="49"/>
         <source>Input func.</source>
         <translation>Entrada func.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="48"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="49"/>
         <source>Internal length</source>
         <translation>Longitud interna</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="49"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="50"/>
         <source>Interval type</source>
         <translation>Intervalo tipo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="49"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="50"/>
         <source>I/O cast</source>
         <translation>I/O cast</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="49"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="50"/>
         <source>Join func.</source>
         <translation>Join func.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="50"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="51"/>
         <source>Language</source>
         <translation>Languaje</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="50"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="51"/>
         <source>LC COLLATE</source>
         <translation>LC COLLATE</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="50"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="51"/>
         <source>LC CTYPE</source>
         <translation>LC CTYPE</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="51"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="52"/>
         <source>Leak proof</source>
         <translation>Prueba de fugas</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="51"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="52"/>
         <source>Left type</source>
         <translation>Tipo izquierda</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="51"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="52"/>
         <source>Length</source>
         <translation>Longitud</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="52"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="53"/>
         <source>Library</source>
         <translation>Biblioteca</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="52"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="53"/>
         <source>Can login</source>
         <translation>Puede login</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="52"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="53"/>
         <source>Materialized</source>
         <translation>Materializada</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="53"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="54"/>
         <source>Member roles</source>
         <translation>Roles miembros</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="53"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="54"/>
         <source>Merges</source>
         <translation>Unir</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="53"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="54"/>
         <source>Name</source>
         <translation>Nombre</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="54"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="55"/>
         <source>Negator op.</source>
         <translation>Op negador.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="54"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="55"/>
         <source>Not null</source>
         <translation>No null</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="54"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="55"/>
         <source>Object type</source>
         <translation>Tipo object</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="55"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="56"/>
         <source>OID</source>
         <translation>OID</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="55"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="56"/>
         <source>With OIDs</source>
         <translation>Con OIDs</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="55"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="56"/>
         <source>Old version</source>
         <translation>Vieja version</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="56"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="57"/>
         <source>Operator</source>
         <translation>Operador</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="56"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="57"/>
         <source>Operator func.</source>
         <translation>Operador func.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="56"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="57"/>
         <source>Output func.</source>
         <translation>Salida func.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="57"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="58"/>
         <source>Owner</source>
         <translation>Dueño</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="57"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="58"/>
         <source>Owner column</source>
         <translation>Dueño columna</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="57"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="58"/>
         <source>Parents</source>
         <translation>Padres</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="58"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="59"/>
         <source>Password</source>
         <translation>Contraseña</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="58"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="59"/>
         <source>Permissions</source>
         <translation>Permisos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="58"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="59"/>
         <source>Precision</source>
         <translation>Precisión</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="59"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="60"/>
         <source>Preferred</source>
         <translation>Preferido</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="59"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="60"/>
         <source>Range attributes</source>
         <translation>Rango atributos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="59"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="60"/>
         <source>Receive func.</source>
         <translation>Recibe func.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="60"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="61"/>
         <source>Ref. roles</source>
         <translation>Ref. roles</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="60"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="61"/>
         <source>Replication</source>
         <translation>Replicación</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="60"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="61"/>
         <source>Restriction func.</source>
         <translation>Restricción func.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="61"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="62"/>
         <source>Return type</source>
         <translation>Retornar tipo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="61"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="62"/>
         <source>Returns SETOF</source>
         <translation>Retornar SETOF</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="61"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="62"/>
         <source>Right type</source>
         <translation>Tipo a la derecha</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="62"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="63"/>
         <source>Rows amount</source>
         <translation>Cantidad filas</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="62"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="63"/>
         <source>Schema</source>
         <translation>Esquema</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="62"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="63"/>
         <source>Security type</source>
         <translation>Tipo de seguridad</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="63"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="64"/>
         <source>Send func.</source>
         <translation>Envio func.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="63"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="64"/>
         <source>Sort op.</source>
         <translation>Op ordenación.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="63"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="64"/>
         <source>Source type</source>
         <translation>Tipo de fuentes</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="64"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="65"/>
         <source>Src. encoding</source>
         <translation>Fnt. codificación</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="64"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="65"/>
         <source>State type</source>
         <translation>Tipo estado</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="64"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="65"/>
         <source>Storage</source>
         <translation>Almacenamiento</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="65"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="66"/>
         <source>Superuser</source>
         <translation>Superusuario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="65"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="66"/>
         <source>Tablespace</source>
         <translation>Tablespace</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="65"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="66"/>
         <source>Type mod. in func.</source>
         <translation>Tipo mod. entrada func.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="66"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="67"/>
         <source>Type mod. out func.</source>
         <translation>Tipo mod. salida func.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="66"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="67"/>
         <source>Transition func.</source>
         <translation>Transición func.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="66"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="67"/>
         <source>Trusted</source>
         <translation>Verdadero</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="67"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="68"/>
         <source>Type</source>
         <translation>Tipo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="67"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="68"/>
         <source>Type attribute</source>
         <translation>Tipo atributos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="67"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="68"/>
         <source>Types</source>
         <translation>Tipos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="68"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="69"/>
         <source>Unlogged</source>
         <translation>Invitados</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="68"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="69"/>
         <source>Validator func.</source>
         <translation>Validador func.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="68"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="69"/>
         <source>Validity</source>
         <translation>Validez</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="69"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="70"/>
         <source>Windows func.</source>
         <translation>Func. ventana.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="69"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="70"/>
         <source>false</source>
         <translation>falso</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="69"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="70"/>
         <source>true</source>
         <translation>verdadero</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="70"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="71"/>
         <source>Cache value</source>
         <translation>Valor en cache</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="70"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="71"/>
         <source>Cycle</source>
         <translation>Ciclo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="70"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="71"/>
         <source>Increment</source>
         <translation>Incremneto</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="71"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="72"/>
         <source>Max. value</source>
         <translation>Max. valor</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="71"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="72"/>
         <source>Min. value</source>
         <translation>Min valor</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="71"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="72"/>
         <source>Start value</source>
         <translation>Valor inicial</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="72"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="73"/>
         <source>Last value</source>
         <translation>Próximo valor</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="72"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="73"/>
         <source>Subtype</source>
         <translation>Subtipo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="72"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="73"/>
         <source>Op. class</source>
         <translation>Op. clases</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="73"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="74"/>
         <source>Canonical func.</source>
         <translation>func. canonica.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="73"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="74"/>
         <source>Subtype diff func.</source>
         <translation>Subtipo diff func.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="74"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="75"/>
         <source>Deferrable</source>
         <translation>Diferible</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="74"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="75"/>
         <source>For each row</source>
         <translation>For each row</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="74"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="75"/>
         <source>Firing</source>
         <translation>Disparadores</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="75"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="76"/>
         <source>On insert</source>
         <translation>On insert</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="75"/>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="80"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="76"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="81"/>
         <source>On delete</source>
         <translation>On delete</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="75"/>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="83"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="76"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="84"/>
         <source>On update</source>
         <translation>On update</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="76"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="77"/>
         <source>On truncate</source>
         <translation>On truncate</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="76"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="77"/>
         <source>Arguments</source>
         <translation>Argumentos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="76"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="77"/>
         <source>Table</source>
         <translation>Tabla</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="77"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="78"/>
         <source>Trigger func.</source>
         <translation>func. Trigger.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="77"/>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="82"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="78"/>
         <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="83"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="84"/>
         <source>Columns</source>
         <translation>Columnas</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="77"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="78"/>
         <source>Condition</source>
         <translation>Condición</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="78"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="79"/>
         <source>Deferment</source>
         <translation>Diferimiento</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="78"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="79"/>
         <source>Event</source>
         <translation>Evento</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="78"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="79"/>
         <source>Execution mode</source>
         <translation>Modo Ejecución</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="79"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="80"/>
         <source>Commands</source>
         <translation>Comandos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="79"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="80"/>
         <source>Position</source>
         <translation>Posición</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="79"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="80"/>
         <source>Comparison type</source>
         <translation>Tipo comparación</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="80"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="81"/>
         <source>Ref. columns</source>
         <translation>Ref. columnas</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="80"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="81"/>
         <source>Expressions</source>
         <translation>Expresiones</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="81"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="82"/>
         <source>Fill factor</source>
         <translation>Factor de relleno</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="81"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="82"/>
         <source>No inherit</source>
         <translation>No hereda</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="81"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="82"/>
         <source>Op. classes</source>
         <translation>Op. clases</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="82"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="83"/>
         <source>Operators</source>
         <translation>Operador</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="82"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="83"/>
         <source>Ref. table</source>
         <translation>Tabla Ref</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="83"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="84"/>
         <source>Unique</source>
         <translation>Unique</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="84"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="85"/>
         <source>Predicate</source>
         <translation>Predicado</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="84"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="85"/>
         <source>Collations</source>
         <translation>Intercalaciones</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="84"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="85"/>
         <source>Inherited</source>
         <translation>Heredado</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="91"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="102"/>
         <source>Snippets</source>
         <translation>Snippets</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="94"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="105"/>
         <source>Drop object</source>
         <translation>Drop object</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="97"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="108"/>
         <source>Drop cascade</source>
         <translation>Drop cascade</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="100"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="111"/>
         <source>Truncate</source>
         <translation>Truncate</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="101"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="112"/>
         <source>Trunc. cascade</source>
         <translation>Trunc. cascade</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="103"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="114"/>
         <source>Show data</source>
         <translation>Mostrar dato</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="105"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="116"/>
         <source>Reload properties</source>
         <translation>Recargar propiedades</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="107"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="118"/>
         <source>Update</source>
         <translation>Actualizar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="947"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="121"/>
+        <source>Rename</source>
+        <translation type="unfinished">Renombrar</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="124"/>
+        <source>Source code</source>
+        <translation type="unfinished">Código fuente</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="178"/>
+        <source>Quick refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="181"/>
+        <source>Full refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="1112"/>
         <source>Do you really want to drop the object &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt;?</source>
         <translation>¿De verdad quiere borrar el objeto &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt;?</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="950"/>
-        <source>Do you really want to &lt;strong&gt;cascade&lt;/strong&gt; drop the object &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt;? This action will drop all the other objects that depends on it?</source>
-        <translation>¿De verdad quieres borrar en &lt;strong&gt;cascade&lt;/strong&gt; el objecto &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt;?  ¿Esta acción se borra todos los otros objetos que dependen de ella?</translation>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="1115"/>
+        <source>Do you really want to &lt;strong&gt;cascade&lt;/strong&gt; drop the object &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt;? This action will drop all the other objects that depends on it.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="1053"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="1436"/>
+        <source>Src. table: %1
+Src. column(s): %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="1447"/>
+        <source>Ref. table: %1
+Ref. column(s): %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="1612"/>
+        <source>-- Source code genaration for buil-in and base types currently unavailable --</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="1666"/>
+        <source>-- Source code unavailable for the object %1 (%2). --</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do you really want to &lt;strong&gt;cascade&lt;/strong&gt; drop the object &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt;? This action will drop all the other objects that depends on it?</source>
+        <translation type="vanished">¿De verdad quieres borrar en &lt;strong&gt;cascade&lt;/strong&gt; el objecto &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt;?  ¿Esta acción se borra todos los otros objetos que dependen de ella?</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="1183"/>
         <source>Do you really want to truncate the table &lt;strong&gt;%1&lt;/strong&gt;?</source>
         <translation>¿De verdad quiere truncar la tabla &lt;strong&gt;%1&lt;/strong&gt;?</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="1055"/>
+        <location filename="../libpgmodeler_ui/src/databaseexplorerwidget.cpp" line="1185"/>
         <source>Do you really want to &lt;strong&gt;cascade&lt;/strong&gt; truncate the table &lt;strong&gt;%1&lt;/strong&gt;? This action will truncate all the tables that depends on it?</source>
         <translation>¿De verdad quieres truncar en &lt;strong&gt;cascade&lt;/strong&gt; la tabla &lt;strong&gt;%1&lt;/strong&gt;? ¿Esta acción truncar todas las tablas que depende de ella?</translation>
     </message>
@@ -3105,9 +3378,8 @@ Desmarcando esto hará que el SQL que se adjunta al final del mandato CREATE DAT
         <translation>Espaciado:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="278"/>
         <source>Schemas  per row</source>
-        <translation>Esquema por fila</translation>
+        <translation type="vanished">Esquema por fila</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="294"/>
@@ -3120,9 +3392,8 @@ Desmarcando esto hará que el SQL que se adjunta al final del mandato CREATE DAT
         <translation>Esquema por fila:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="331"/>
         <source>Resolve some of the object&apos;s dependencies by query the catalog when a needed object does not exists on the loaded set. In some cases it&apos;s necessary to combine this option with others below. This option does not applies to database level objects like role, tablespace and language as well for data types and extensions.</source>
-        <translation>Resolver algunas de las dependencias del objeto de consulta del catálogo, cuando no existe un objeto necesario en el conjunto cargado. En algunos casos es necesario combinar esta opción con otros de abajo. Esta opción no se aplica a los objetos de nivel de base de datos como el papel, espacio de tabla y el lenguaje, así como para los tipos de datos y extensiones.</translation>
+        <translation type="vanished">Resolver algunas de las dependencias del objeto de consulta del catálogo, cuando no existe un objeto necesario en el conjunto cargado. En algunos casos es necesario combinar esta opción con otros de abajo. Esta opción no se aplica a los objetos de nivel de base de datos como el papel, espacio de tabla y el lenguaje, así como para los tipos de datos y extensiones.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="337"/>
@@ -3130,201 +3401,213 @@ Desmarcando esto hará que el SQL que se adjunta al final del mandato CREATE DAT
         <translation>Resolver dependencias automáticamente</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="396"/>
         <source>Connect and list available databases</source>
-        <translation>Conectar y listar bases de datos disponibles</translation>
+        <translation type="vanished">Conectar y listar bases de datos disponibles</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="399"/>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="895"/>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="933"/>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="971"/>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="1009"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="887"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="925"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="963"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="1001"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="420"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="409"/>
         <source>Random colors will be assigned to imported relationships facilitating the identification of links between tables mainly in large models.</source>
         <translation>Colores al azar serán asignados a las relaciones importados que faciliten la identificación de los vínculos entre las tablas, principalmente en modelos de gran tamaño.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="423"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="278"/>
+        <source>Schemas per row</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="331"/>
+        <source>Resolve some of the object&apos;s dependencies by querying the catalog when a needed object does not exists on the loaded set. In some cases it&apos;s necessary to combine this option with others below. This option does not applies to database level objects like role, tablespace and language as well for data types, extensions.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="412"/>
         <source>Random colors for relationships</source>
         <translation>Colores aleatorios para las relaciones</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="465"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="454"/>
         <source>Enables the import of system built-in objects. It&apos;s recommend to select only those objects that are directly referenced by the ones to be imported. WARNING: Try to import a huge set of system objects can bloat the resultant model or even crash pgModeler due to memory/cpu overuse.</source>
         <translation>Permite la importación de sistema de objetos integrados. Se recomienda seleccionar sólo aquellos objetos que se hace referencia directamente por las que ser importados. ADVERTENCIA: Trate de importar un enorme conjunto de objetos del sistema puede inflar el modelo resultante o incluso estrellarse pgModeler debido a la memoria / CPU uso excesivo.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="471"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="460"/>
         <source>Import system objects</source>
         <translation>Importa objeto del sistema</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="510"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="499"/>
         <source>Enables the import of objects created by extensions. Generally there is no need to check this option but if there are objects in the database that directly references this category of objects this mode must be enabled.</source>
         <translation>Permite la importación de objetos creados por las extensiones. Generalmente no hay necesidad de revisar esta opción, pero si hay objetos en la base de datos que hace referencia directa a esta categoría de objetos de este modo debe estar habilitado.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="516"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="505"/>
         <source>Import extension objects</source>
         <translation>Importar extensiones de objetos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="555"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="544"/>
         <source>pgModeler ignores import errors and will try to create as many as possible objects. By checking this option the import operation will be not aborted but an incomplete model will be constructed. This option generates a log file on pgModeler&apos;s temp directory.</source>
         <translation>pgModeler ignora los errores de importación y tratará de crear el mayor número posible de objetos. Al marcar esta opción, la operación de importación no se concluye, pero un modelo incompleto se construirá. Esta opción genera un archivo de registro en el directorio temporal de pgModeler.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="561"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="550"/>
         <source>Ignore import errors</source>
         <translation>Ignorar errores de importación</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="600"/>
         <source>All catalog queries as well the created objects&apos; source code are printed to standard outupt (stdout).</source>
-        <translation>Todas las consultas de catálogo, así el código fuente de los objetos creados se imprimen a la salida estándar (stdout).</translation>
+        <translation type="vanished">Todas las consultas de catálogo, así el código fuente de los objetos creados se imprimen a la salida estándar (stdout).</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="606"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="589"/>
+        <source>All catalog queries as well the created objects&apos; source code are printed to standard output (stdout).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="595"/>
         <source>Debug mode</source>
         <translation>Modo depurarión</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="639"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="628"/>
         <source>Create all imported objects in the current working model instead of create a new one.</source>
         <translation>Crear todos los objetos importados en el modelo de trabajo actual en lugar de crear uno nuevo.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="642"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="631"/>
         <source>Import objects to the working model</source>
         <translation>Importar objetos al modelo de trabajo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="686"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="675"/>
         <source>Database</source>
         <translation>Base de datos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="835"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="824"/>
         <source>Filter:</source>
         <translation>Filtrar:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="852"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="844"/>
         <source>Filter object by it&apos;s OID</source>
         <translation>Filtrar objeto por OID</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="855"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="847"/>
         <source>By OID</source>
         <translation>Por OID</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="892"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="884"/>
         <source>Select all objects</source>
         <translation>Seleccionar todos los objetos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="930"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="922"/>
         <source>Clear object selection</source>
         <translation>Limpiar los objetos seleccionados</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="968"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="960"/>
         <source>Expands all items</source>
         <translation>Expandir todos los item</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="1006"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="998"/>
         <source>Collapses all items</source>
         <translation>Contrae todos los item</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="1050"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="1042"/>
         <source>Output</source>
         <translation>Salida</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="1119"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="1111"/>
         <source>Progress label...</source>
         <translation>Etiqueta de Progreso...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="1129"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="1121"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="1250"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="1260"/>
         <source>&amp;Import</source>
         <translation>&amp;Importar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="1282"/>
+        <location filename="../libpgmodeler_ui/ui/databaseimportform.ui" line="1298"/>
         <source>&amp;Close</source>
         <translation>&amp;Cerrar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="178"/>
+        <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="186"/>
         <source>&lt;strong&gt;ATTENTION:&lt;/strong&gt; You are about to import objects to the current working model! This action will cause irreversible changes to it even in case of critical errors during the process. Do you want to proceed?</source>
         <translation>&lt;strong&gt;ATENCIÓN:&lt;/strong&gt; Estás a punto de importar objetos al modelo actual de trabajo! Esta acción provocará cambios irreversibles a él, incluso en caso de errores críticos durante el proceso. ¿Quieres proceder?</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="366"/>
+        <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="391"/>
         <source>Importing process aborted!</source>
         <translation>Proceso de Importación abortado!</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="455"/>
+        <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="497"/>
         <source>Importing process canceled by user!</source>
         <translation>Proceso de Importación cancelado por usuario!</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="480"/>
+        <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="522"/>
         <source>Importing process sucessfuly ended!</source>
         <translation>Proceso de Importación terminado satisfactoriamente!</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="533"/>
+        <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="586"/>
         <source>No databases found</source>
         <translation>Base de datos no encontrada</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="555"/>
+        <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="606"/>
         <source>Found %1 database(s)</source>
         <translation>Encontrada %1 bases de dato(s)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="579"/>
+        <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="634"/>
         <source>Retrieving objects from database...</source>
         <translation>Recuperando objetos de base de datos...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="584"/>
+        <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="636"/>
         <source>Retrieving cluster level objects...</source>
         <translation>Recuperando objetos a nivel de clúster...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="613"/>
+        <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="682"/>
         <source>Retrieving objects of schema `%1&apos;...</source>
         <translation>Recuperando objetos del esquema `%1&apos;...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="628"/>
+        <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="695"/>
         <source>Retrieving objects of table `%1&apos;...</source>
         <translation>Recuperando objetos de la tabla `%1&apos;...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="717"/>
+        <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="820"/>
         <source>This is a PostgreSQL built-in data type and cannot be imported.</source>
         <translation>Esta es una tipo de datos incorporado PostgreSQL y no se puede importar.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="729"/>
+        <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="832"/>
         <source>This is a pgModeler&apos;s built-in object. It will be ignored if checked by user.</source>
         <translation>Esta es objeto incorporado del pgModeler. Se ignora si se activa por el usuario.</translation>
     </message>
@@ -3332,59 +3615,73 @@ Desmarcando esto hará que el SQL que se adjunta al final del mandato CREATE DAT
 <context>
     <name>DatabaseImportHelper</name>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="169"/>
+        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="183"/>
         <source>Retrieving system objects... `%1&apos;</source>
         <translation>Recuperando objetos del sistema... `%1&apos;</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="219"/>
-        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="243"/>
+        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="233"/>
+        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="257"/>
         <source>Retrieving objects... `%1&apos;</source>
         <translation>Recuperando objetos... `%1&apos;</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="301"/>
-        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="404"/>
+        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="315"/>
+        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="423"/>
         <source>Creating object `%1&apos; (%2)...</source>
         <translation>Creando objecto `%1&apos; (%2)...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="347"/>
+        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="361"/>
         <source>Trying to recreate object `%1&apos; (%2)...</source>
         <translation>Intentar recrear objeto `%1&apos; (%2)...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="370"/>
+        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="384"/>
         <source>Import failed to recreate some objects in `%1&apos; tries.</source>
         <translation>Importación no pudo recrear algunos objetos en `%1&apos; intento.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="432"/>
+        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="452"/>
         <source>Creating permissions for object `%1&apos; (%2)...</source>
         <translation>Creación permisos por objecto `%1&apos; (%2)...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="450"/>
+        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="470"/>
         <source>Creating columns permissions...</source>
         <translation>Creación permisos de columnas...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="501"/>
-        <source>Update relationships of `%1&apos; (%2)...</source>
-        <translation>Actualizar relaciones de `%1&apos; (%2)...</translation>
+        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="521"/>
+        <source>Updating relationships of `%1&apos; (%2)...</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="556"/>
+        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="558"/>
+        <source>Validating relationships...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="2084"/>
+        <source>Assigning sequences to columns...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update relationships of `%1&apos; (%2)...</source>
+        <translation type="vanished">Actualizar relaciones de `%1&apos; (%2)...</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="586"/>
         <source>The database import ended but some errors were generated and saved into the log file `%1&apos;. This file will last until pgModeler quit.</source>
         <translation>La importación de base de datos terminó pero algunos errores se genera y se guarda en el archivo de registro `%1&apos;. Este archivo se prolongará hasta salga de pgModeler.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="1950"/>
+        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="2047"/>
         <source>Destroying unused detached columns...</source>
         <translation>Destruyendo columnas separadas no utilizados...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="1984"/>
+        <location filename="../libpgmodeler_ui/src/databaseimporthelper.cpp" line="2022"/>
         <source>Creating table inheritances...</source>
         <translation>Creación de herencias de tabla...</translation>
     </message>
@@ -3392,60 +3689,110 @@ Desmarcando esto hará que el SQL que se adjunta al final del mandato CREATE DAT
 <context>
     <name>DatabaseModel</name>
     <message>
-        <location filename="../libpgmodeler/src/databasemodel.cpp" line="347"/>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="358"/>
         <source>The demonstration version can create only `%1&apos; instances of each object type! You&apos;ve reach this limit for the type: `%2&apos;</source>
         <translation>La versión de demostración sólo puede crear `%1&apos; instancias de cada tipo de objeto! Tienes que llegar a este límite para el tipo: `%2&apos;</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/databasemodel.cpp" line="2888"/>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="2961"/>
         <source>Loading: `%1&apos; (%2)</source>
         <translation>Cargando: `%1&apos; (%2)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/databasemodel.cpp" line="6271"/>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="3008"/>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="3020"/>
+        <source>Validating relationships...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="6362"/>
         <source>Generating %1 of the object `%2&apos; (%3)</source>
         <translation>Generando %1 del objecto `%2&apos; (%3)</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="9071"/>
+        <source>Saving object `%1&apos; (%2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="9221"/>
+        <source>Saving metadata of the object `%1&apos; (%2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="9245"/>
+        <source>Metadata file successfully saved!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="9248"/>
+        <source>Process successfully ended but no metadata was saved!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="9325"/>
+        <source>Creating object `%1&apos; (%2)</source>
+        <translation type="unfinished">Creando objecto `%1&apos; (%2)</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="9331"/>
+        <source>Object `%1&apos; (%2) already exists. Ignoring.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="9383"/>
+        <source>Loading metadata for object `%1&apos; (%2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="9503"/>
+        <source>Object `%1&apos; (%2) not found. Ignoring metadata.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="9515"/>
+        <source>Metadata file successfully loaded!</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>DatabaseWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="20"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="42"/>
+        <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="39"/>
         <source>Attributes</source>
         <translation>Atributos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="95"/>
+        <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="92"/>
         <source>LC_COLLATE:</source>
         <translation>LC_COLLATE:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="121"/>
+        <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="118"/>
         <source>LC_CTYPE:</source>
         <translation>LC_CTYPE:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="160"/>
+        <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="157"/>
         <source>Template DB:</source>
         <translation>DB Modelo:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="173"/>
+        <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="170"/>
         <source>Model Author:</source>
         <translation>Autor del Modelo:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="192"/>
+        <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="189"/>
         <source>Encoding:</source>
         <translation>Codificación:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="228"/>
+        <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="225"/>
         <source>Connections:</source>
         <translation>Conexiones:</translation>
     </message>
@@ -3475,20 +3822,20 @@ Desmarcando esto hará que el SQL que se adjunta al final del mandato CREATE DAT
         <translation>Propietario:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databasewidget.cpp" line="39"/>
+        <location filename="../libpgmodeler_ui/src/databasewidget.cpp" line="37"/>
         <source>The fields &lt;strong&gt;LC_COLLATE&lt;/strong&gt; and &lt;strong&gt;LC_CTYPE&lt;/strong&gt; have pre-configured values based upon the running system. You can freely modify those values if you intend to export the model to another host.</source>
         <translation>Los campos &lt;strong&gt;LC_COLLATE&lt;/strong&gt; y &lt;strong&gt;LC_CTYPE&lt;/strong&gt; valores basados en el sistema en funcionamiento han preconfigurado. Usted puede modificar libremente estos valores si tiene intención de exportar el modelo a otro host.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databasewidget.cpp" line="43"/>
+        <location filename="../libpgmodeler_ui/src/databasewidget.cpp" line="42"/>
         <source>Use the above fields to specify the default attributes assigned to new objects created on the database model. Leaving a field empty will cause PostgreSQL to use the default values when exporting the model.</source>
         <translation>Utilice los campos de arriba para especificar los atributos predeterminados asignados a los nuevos objetos creados en el modelo de base de datos. Dejando a un campo vacío hará que PostgreSQL para utilizar los valores predeterminados al exportar el modelo.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databasewidget.cpp" line="59"/>
-        <location filename="../libpgmodeler_ui/src/databasewidget.cpp" line="71"/>
-        <location filename="../libpgmodeler_ui/src/databasewidget.cpp" line="134"/>
-        <location filename="../libpgmodeler_ui/src/databasewidget.cpp" line="139"/>
+        <location filename="../libpgmodeler_ui/src/databasewidget.cpp" line="55"/>
+        <location filename="../libpgmodeler_ui/src/databasewidget.cpp" line="67"/>
+        <location filename="../libpgmodeler_ui/src/databasewidget.cpp" line="132"/>
+        <location filename="../libpgmodeler_ui/src/databasewidget.cpp" line="137"/>
         <source>Default</source>
         <translation>Por Defecto</translation>
     </message>
@@ -3496,34 +3843,66 @@ Desmarcando esto hará que el SQL que se adjunta al final del mandato CREATE DAT
 <context>
     <name>DomainWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/domainwidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/domainwidget.ui" line="32"/>
+        <location filename="../libpgmodeler_ui/ui/domainwidget.ui" line="29"/>
         <source>Default Value:</source>
         <translation>Valor Por Defecto:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/domainwidget.ui" line="42"/>
+        <location filename="../libpgmodeler_ui/ui/domainwidget.ui" line="39"/>
         <source>Constraint</source>
         <translation>Resticción</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/domainwidget.ui" line="60"/>
+        <location filename="../libpgmodeler_ui/ui/domainwidget.ui" line="57"/>
         <source>Name:</source>
         <translation>Nombre:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/domainwidget.ui" line="70"/>
+        <location filename="../libpgmodeler_ui/ui/domainwidget.ui" line="67"/>
         <source>Not Null:</source>
         <translation>No Nulo:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/domainwidget.ui" line="84"/>
+        <location filename="../libpgmodeler_ui/ui/domainwidget.ui" line="81"/>
         <source>Check Expr.:</source>
         <translation>Expr. Chequeo:</translation>
+    </message>
+</context>
+<context>
+    <name>DonateWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/donatewidget.ui" line="26"/>
+        <source>Form</source>
+        <translation type="unfinished">Formulario</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/donatewidget.ui" line="71"/>
+        <source>Donate to pgModeler</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/donatewidget.ui" line="96"/>
+        <source>Hide this widget</source>
+        <translation type="unfinished">Ocultar este widget</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/donatewidget.ui" line="99"/>
+        <source>...</source>
+        <translation type="unfinished">...</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/donatewidget.ui" line="133"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;pgModeler is brought to you thanks to a &lt;span style=&quot; font-style:italic;&quot;&gt;great effort to create and distribute a quality product&lt;/span&gt;. This project is reaching out levels of maturity never imagined. All this is the result of a joint work between its author and the &lt;span style=&quot; font-weight:600;&quot;&gt;Open Source community&lt;/span&gt;. &lt;br/&gt;&lt;br/&gt;This software has a long way to go yet and with your help we&apos;ll keep maintaining the good job and bringing new improvements on each release. If you did like pgModeler and thinks it deserves a contribution please make a donation!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/donatewidget.ui" line="176"/>
+        <source>I want to help!</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3544,37 +3923,37 @@ Desmarcando esto hará que el SQL que se adjunta al final del mandato CREATE DAT
         <translation>Expresión:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/elementswidget.ui" line="181"/>
+        <location filename="../libpgmodeler_ui/ui/elementswidget.ui" line="132"/>
         <source>Collation:</source>
         <translation>Colación:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/elementswidget.ui" line="206"/>
+        <location filename="../libpgmodeler_ui/ui/elementswidget.ui" line="157"/>
         <source>Operator Class:</source>
         <translation>Operador de Clases:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/elementswidget.ui" line="213"/>
+        <location filename="../libpgmodeler_ui/ui/elementswidget.ui" line="164"/>
         <source>Operator:</source>
         <translation>Operador:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/elementswidget.ui" line="226"/>
+        <location filename="../libpgmodeler_ui/ui/elementswidget.ui" line="177"/>
         <source>Sorting:</source>
         <translation>Ordenación:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/elementswidget.ui" line="244"/>
+        <location filename="../libpgmodeler_ui/ui/elementswidget.ui" line="195"/>
         <source>Ascending</source>
         <translation>Ascendente</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/elementswidget.ui" line="260"/>
+        <location filename="../libpgmodeler_ui/ui/elementswidget.ui" line="211"/>
         <source>Descending</source>
         <translation>Descendente</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/elementswidget.ui" line="273"/>
+        <location filename="../libpgmodeler_ui/ui/elementswidget.ui" line="224"/>
         <source>Nulls first</source>
         <translation>Nulos primeros</translation>
     </message>
@@ -3632,32 +4011,31 @@ Desmarcando esto hará que el SQL que se adjunta al final del mandato CREATE DAT
 <context>
     <name>EventTriggerWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/eventtriggerwidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/eventtriggerwidget.ui" line="32"/>
+        <location filename="../libpgmodeler_ui/ui/eventtriggerwidget.ui" line="29"/>
         <source>Event:</source>
         <translation>Evento:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/eventtriggerwidget.ui" line="59"/>
+        <location filename="../libpgmodeler_ui/ui/eventtriggerwidget.ui" line="56"/>
         <source>Function:</source>
         <translation>Función:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/eventtriggerwidget.ui" line="72"/>
+        <location filename="../libpgmodeler_ui/ui/eventtriggerwidget.ui" line="69"/>
         <source>Filter</source>
         <translation>Filtro</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/eventtriggerwidget.ui" line="92"/>
+        <location filename="../libpgmodeler_ui/ui/eventtriggerwidget.ui" line="89"/>
         <source>Tag:</source>
         <translation>Tag:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/eventtriggerwidget.cpp" line="33"/>
+        <location filename="../libpgmodeler_ui/src/eventtriggerwidget.cpp" line="37"/>
         <source>Tag command</source>
         <translation>Comando tag</translation>
     </message>
@@ -4001,8 +4379,87 @@ Desmarcando esto hará que el SQL que se adjunta al final del mandato CREATE DAT
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="90"/>
+        <source>Assignment of a null type to object `%1&apos; (%2)!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libutils/src/exception.cpp" line="129"/>
+        <source>Unable to write the file `%1&apos; due to one or more errors in the definition generation process!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libutils/src/exception.cpp" line="131"/>
+        <source>The configuration of the relationship `%1&apos; generates a redundancy between the relationships `%2&apos;. Redundancy on identifier or generalization/copy relationships are not accepted since they result in incorrect column spreading making the model inconsistent!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libutils/src/exception.cpp" line="196"/>
+        <source>Reference to a tuple with an invalid index or the result is empty (no tuples)!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libutils/src/exception.cpp" line="199"/>
+        <source>Invalid use of a view reference as whole SQL definition! The assigned reference must be an expression!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libutils/src/exception.cpp" line="203"/>
+        <source>At the moment pgModeler does not support the creation of primary keys which some columns were generated by relationship connection. To create primary keys with this feature you can use the field `Identifier&apos; or the tab `Primary key&apos; on relationship editing form!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libutils/src/exception.cpp" line="217"/>
+        <source>Reference to a function id which is incompatible with the user define type configuration!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libutils/src/exception.cpp" line="225"/>
+        <source>Invalid use of variadic parameter mode! This mode can be used only with an array or &quot;any&quot; data type!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libutils/src/exception.cpp" line="236"/>
+        <source>Assignment of an invalid object to `%1&apos; (%2)! The assigned object must be of type `%3&apos;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libutils/src/exception.cpp" line="239"/>
+        <source>It&apos;s not possible convert the type of the column `%1&apos; to serial! It must have an `integer&apos; based type and its default value must be a call to `nextval(seq_name::regclass)&apos; function or a sequence object must be directly assigned to the column!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libutils/src/exception.cpp" line="243"/>
+        <source>Trying to undo/redo an invalid operation over an object that does not exists anymore or can&apos;t be handled! The operation history will be cleaned up.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libutils/src/exception.cpp" line="246"/>
+        <source>A parent table of `%1&apos; which OID is `%2&apos; was not found in the set of imported objects!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libutils/src/exception.cpp" line="247"/>
+        <source>The enumeration `%1&apos; can&apos;t be assigned to the type `%2&apos; because contains invalid characters!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libutils/src/exception.cpp" line="248"/>
+        <source>The enumeration `%1&apos; can&apos;t be assigned to the type `%2&apos; because is too long!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libutils/src/exception.cpp" line="249"/>
+        <source>The connection was idle for too long and was automatically closed!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libutils/src/exception.cpp" line="250"/>
+        <source>The connection was unexpectedly closed by the database server `%1&apos; at port `%2&apos;!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Assignment of a null type to to object `%1&apos; (%2)!</source>
-        <translation>Asignación de un tipo nulo de oponerse a `%1&apos; (%2)!</translation>
+        <translation type="vanished">Asignación de un tipo nulo de oponerse a `%1&apos; (%2)!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="91"/>
@@ -4055,114 +4512,118 @@ Desmarcando esto hará que el SQL que se adjunta al final del mandato CREATE DAT
         <translation>Asignación de configuración no válida para el tipo!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="101"/>
         <source>The data type `%1&apos; can not be assigned because it already exists in the types list of the aggregate function `%2&apos;!</source>
-        <translation>El tipo de dato `%1&apos; no puede ser asignado pues el mismo ya existente en la lista de tipos de la función de agregación `%2&apos;!</translation>
+        <translation type="vanished">El tipo de dato `%1&apos; no puede ser asignado pues el mismo ya existente en la lista de tipos de la función de agregación `%2&apos;!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="102"/>
+        <location filename="../libutils/src/exception.cpp" line="101"/>
         <source>Assignment of an operator which input type count is invalid to aggregate function!</source>
         <translation>Asignación de operador a una función de agregacíon con cantidad de tipos de entrada inválida!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="103"/>
+        <location filename="../libutils/src/exception.cpp" line="102"/>
         <source>Assignment of an operator which types of arguments is invalid!</source>
         <translation>Asignación de operador con argumentos de tipos inválidos!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="104"/>
+        <location filename="../libutils/src/exception.cpp" line="103"/>
         <source>Assignment of system reserved name to the object `%1&apos; (%2)!</source>
         <translation>Asignación de nombre reservado por el sistema a objeto `%1&apos; (%2)!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="105"/>
+        <location filename="../libutils/src/exception.cpp" line="104"/>
         <source>One function with invalid configuration is been used by the object `%1&apos; (%2)!</source>
         <translation>Una función de configuración inválido está siendo usada por el objeto `%1&apos; (%2)!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="106"/>
+        <location filename="../libutils/src/exception.cpp" line="105"/>
         <source>Assignment of an invalid strategy/support number to an operator class element!</source>
         <translation>Asignación de un número inválido de estratégia/suporte del elemento de clase de operadores!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="107"/>
+        <location filename="../libutils/src/exception.cpp" line="106"/>
         <source>Insertion of element which already exists in the element list!</source>
         <translation>Inserción de elemento ya existente en la lista de elementos!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="108"/>
+        <location filename="../libutils/src/exception.cpp" line="107"/>
         <source>Reference to an element which index is out of element list bounds!</source>
         <translation>Referencia a un elemento con índice fuera de límites de la lista de elementos!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="109"/>
+        <location filename="../libutils/src/exception.cpp" line="108"/>
         <source>Reference to an object which index is out of object list bounds!</source>
         <translation>La referencia a un objeto que el índice está fuera de límites de la lista de objetos!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="110"/>
+        <location filename="../libutils/src/exception.cpp" line="109"/>
         <source>Removal of an object not allocated!</source>
         <translation>Eliminación de un objeto no asignado!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="111"/>
+        <location filename="../libutils/src/exception.cpp" line="110"/>
         <source>The object `%1&apos; (%2) can not be removed because it is being referenced by object `%3&apos; (%4)!</source>
         <translation>El objeto `%1&apos; (%2) no puede ser removido pues está siendo referenciado por el objeto `%3&apos; (%4)!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="112"/>
+        <location filename="../libutils/src/exception.cpp" line="111"/>
         <source>The object `%1&apos; (%2) can not be removed because it is being referenced by object `%3&apos; (%4) that belongs to `%5&apos; (%6)!</source>
         <translation>El objeto `%1&apos; (%2) no pode ser removido pues está siendo referenciado por el objeto `%3&apos; (%4) perteneciente a `%5&apos; (%6)!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="113"/>
+        <location filename="../libutils/src/exception.cpp" line="112"/>
         <source>Operation with object(s) which type(s) is invalid!</source>
         <translation>Operación con objeto(s) de tipo(s) inválido(s)!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="114"/>
+        <location filename="../libutils/src/exception.cpp" line="113"/>
         <source>Reference to object with invalid type!</source>
         <translation>Referencia a un objeto con tipo inválido!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="115"/>
+        <location filename="../libutils/src/exception.cpp" line="114"/>
         <source>Operation with object not allocated!</source>
         <translation>Operación con objeto no asignado!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="116"/>
+        <location filename="../libutils/src/exception.cpp" line="115"/>
         <source>The creation of the relationship `%1&apos; between the table `%2&apos; and `%3&apos; can not be done because one does not have a primary key. If the relationship is of the type n-n both tables must have primary keys!</source>
         <translation>La criación de la Relación `%1&apos; entre las tabla `%2&apos; y `%3&apos; no puede ser hecha pues una de ellas no posee una llave primária. Si la relación es del tipo n-n ambas tablas deben tener claves principales!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="117"/>
+        <location filename="../libutils/src/exception.cpp" line="116"/>
         <source>The relationship of the type 1-1 where both tables are mandatory participation is not implemented because it requires fusion between the tables that breaks the modeling done by the user!</source>
         <translation>La relación del tipo 1-1, donde ambas tablas son la participación obligatoria no se aplica, ya que requiere la fusión entre las tablas que rompe el modelado realizado por el usuario!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="118"/>
+        <location filename="../libutils/src/exception.cpp" line="117"/>
         <source>Assignment of an invalid expression to the object!</source>
         <translation>Asignación de expresión inválida a objeto!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="119"/>
+        <location filename="../libutils/src/exception.cpp" line="118"/>
         <source>Assignment of a primary key to a table which already has one!</source>
         <translation>Asignación de llave primaria a una tabla la cual ya poseia una!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="120"/>
+        <location filename="../libutils/src/exception.cpp" line="119"/>
         <source>Identifier relationship can not be created for a self relationship, relationships of the type n-n, copy or generalization!</source>
         <translation>Identificador relación no se puede crear de una relación autorelaciones del tipo n-n, dependencia o la generalización!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="121"/>
+        <location filename="../libutils/src/exception.cpp" line="120"/>
         <source>Unable to create a copy relationship because the column `%1&apos; in table `%2&apos; already exists in table `%3&apos;!</source>
         <translation>Imposible crear una Relación de dependencia pues la columna `%1&apos; de la tabla `%2&apos; ya existe en la tabla `%3&apos;!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="122"/>
+        <location filename="../libutils/src/exception.cpp" line="121"/>
         <source>Unable to create the generalization relationship because the column `%1&apos; in table `%2&apos; can not be merged with the column `%3&apos; of table `%4&apos; because they have incompatible types!</source>
         <translation>Imposible crear una Relación de generalización pues la columna `%1&apos; de la tabla `%2&apos; no puede ser funcionada con la columna `%3&apos; de la tabla `%4&apos; por ser de tipos incompatibles!</translation>
+    </message>
+    <message>
+        <location filename="../libutils/src/exception.cpp" line="122"/>
+        <source>Unable to create the generalization relationship because the constraint `%1&apos; in table `%2&apos; can not be merged with the constraint `%3&apos; of table `%4&apos; due to their incompatible composition!</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="123"/>
@@ -4195,9 +4656,8 @@ Desmarcando esto hará que el SQL que se adjunta al final del mandato CREATE DAT
         <translation>Imposible escribir en el archivo `%1&apos;! Asegurase de que el diretório existe o si el usuário tiene permisos de aceso al mismo!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="129"/>
         <source>Unable to write the file `%1&apos;&apos; due to one or more errors in the definition generation process!</source>
-        <translation>Imposible escribir el modelo en el archivo `%1&apos;&apos; debido a uno o más errores en el proceso de geración de la definición de el mismo!</translation>
+        <translation type="vanished">Imposible escribir el modelo en el archivo `%1&apos;&apos; debido a uno o más errores en el proceso de geración de la definición de el mismo!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="130"/>
@@ -4205,9 +4665,8 @@ Desmarcando esto hará que el SQL que se adjunta al final del mandato CREATE DAT
         <translation>Ya existe una Relación entre `%1&apos; (%2) y `%3&apos; (%4) en el modelo!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="131"/>
         <source>The configuration of the relationship `%1&apos; generates a redundancy between the relationships `%2&apos;. Redundancy on identifier or generalization/copy relationships are not accepted since they result in  incorrect column spreading making the model inconsistent!</source>
-        <translation>La configuración de la Relación `%1&apos; genera una redundancia entre las Relaciones `%2&apos;. Redundancia de Relaciones identificadores o de generalización/dependencia no son acetados pues resulta en una propagación incorreta de columnas tornando el modelo inconsiste!</translation>
+        <translation type="vanished">La configuración de la Relación `%1&apos; genera una redundancia entre las Relaciones `%2&apos;. Redundancia de Relaciones identificadores o de generalización/dependencia no son acetados pues resulta en una propagación incorreta de columnas tornando el modelo inconsiste!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="132"/>
@@ -4544,9 +5003,8 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
         <translation>Referencia a una columna de tupla con nombre no válido!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="196"/>
         <source>Reference to a tuple with index invalid or the result is empty (no tuples)!</source>
-        <translation>La referencia a una tupla con índice no válido o el resultado es vacías (no hay tuplas)!</translation>
+        <translation type="vanished">La referencia a una tupla con índice no válido o el resultado es vacías (no hay tuplas)!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="197"/>
@@ -4561,9 +5019,8 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
  Mensage retornada: %1</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="199"/>
         <source>Invalid use of a view referece as whole SQL definition! The assigned reference must be an expression!</source>
-        <translation>Uso inválido de un referece vista como la definición de SQL entera! La referencia asignado debe ser una expresión!</translation>
+        <translation type="vanished">Uso inválido de un referece vista como la definición de SQL entera! La referencia asignado debe ser una expresión!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="200"/>
@@ -4581,9 +5038,8 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
         <translation>Asignación de objeto que tipo de colación no es válido!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="203"/>
         <source>At the moment pgModeler does not support the creation of primary keys which some columns were generated by relationship connection. To create primary keys with this feature you can use the field `Indentifier&apos; or the tab `Primary key&apos; on relationship editing form!</source>
-        <translation>Por el momento pgModeler no admite la creación de las claves principales que algunas columnas se generaron por la conexión relación. Para crear claves primarias con esta característica, puede usar el campo `Indentifidor&apos; o en la ficha `Clave primaria&apos; en el formulario de edición de la relación!</translation>
+        <translation type="vanished">Por el momento pgModeler no admite la creación de las claves principales que algunas columnas se generaron por la conexión relación. Para crear claves primarias con esta característica, puede usar el campo `Indentifidor&apos; o en la ficha `Clave primaria&apos; en el formulario de edición de la relación!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="204"/>
@@ -4651,9 +5107,8 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
         <translation>Solo las restricción de triggers pueden ser prorrogable o hacer referencia a otra tabla!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="217"/>
         <source>Reference to a function id which is incompatible whit the user define type configuration!</source>
-        <translation>Referencia a un identificador de función que es la pizca incompatibles al usuario definir la configuración de tipo!</translation>
+        <translation type="vanished">Referencia a un identificador de función que es la pizca incompatibles al usuario definir la configuración de tipo!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="218"/>
@@ -4691,9 +5146,8 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
         <translation>Referencia a un inválido nombre del objeto patrón Identificación de la relación `%1&apos;!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="225"/>
         <source>Invalid use of variadic parameter mode! This mode can be used only with array data types!</source>
-        <translation>Uso no válido de modo de parámetros variadic! Este modo sólo se puede utilizar con los tipos de datos serie!</translation>
+        <translation type="vanished">Uso no válido de modo de parámetros variadic! Este modo sólo se puede utilizar con los tipos de datos serie!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="226"/>
@@ -4746,9 +5200,8 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
         <translation>La referencia a un id `%1&apos; de color no válido para el elemento `%2&apos;!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="236"/>
         <source>Assignment of an invalid object to `%1&apos; (%2)! The assigned object must be of type `%3&apos;</source>
-        <translation>Asignación de un objeto no válido a %1&apos; (%2)! El objeto asignado debe ser de tipo `%3&apos;</translation>
+        <translation type="vanished">Asignación de un objeto no válido a %1&apos; (%2)! El objeto asignado debe ser de tipo `%3&apos;</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="237"/>
@@ -4761,9 +5214,8 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
         <translation>La opción para generar nombres de objeto temporal sólo se puede utilizar en el modo de simulación!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="239"/>
         <source>It&apos;s not possible convert the type of the column `%1&apos; to serial! It must have an `integer&apos; based type and its default value must be a call to `nextval(seq_name::regclass)&apos; function!</source>
-        <translation>No es posible convertir el tipo de la columna `%1&apos; a serial! Debe tener una tipo de base `integer&apos; y su valor por defecto debe ser una llamada a la función `nextval(seq_name::regclass)&apos;!</translation>
+        <translation type="vanished">No es posible convertir el tipo de la columna `%1&apos; a serial! Debe tener una tipo de base `integer&apos; y su valor por defecto debe ser una llamada a la función `nextval(seq_name::regclass)&apos;!</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="240"/>
@@ -4789,9 +5241,8 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
         <translation>Valor sin escapar con formato incorrecto en la fila `%1&apos; columna `%2&apos;!</translation>
     </message>
     <message>
-        <location filename="../libutils/src/exception.cpp" line="243"/>
         <source>Trying to undo/redo an invalid operation over an object that does not exists anymore! The operations history will be cleaned up.</source>
-        <translation>Intenta deshacer/rehacer una operación no válida sobre un objeto que no existe más! La historia operaciones se limpiará.</translation>
+        <translation type="vanished">Intenta deshacer/rehacer una operación no válida sobre un objeto que no existe más! La historia operaciones se limpiará.</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="244"/>
@@ -4807,27 +5258,26 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
 <context>
     <name>ExtensionWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/extensionwidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/extensionwidget.ui" line="41"/>
+        <location filename="../libpgmodeler_ui/ui/extensionwidget.ui" line="38"/>
         <source>Version:</source>
         <translation>Versión:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/extensionwidget.ui" line="64"/>
+        <location filename="../libpgmodeler_ui/ui/extensionwidget.ui" line="67"/>
         <source>Old Version:</source>
         <translation>Versión Antigua:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/extensionwidget.ui" line="87"/>
+        <location filename="../libpgmodeler_ui/ui/extensionwidget.ui" line="96"/>
         <source>This attribute cannot be changed once the object is created.</source>
         <translation>Este atributo no se puede cambiar una vez que se crea el objeto.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/extensionwidget.ui" line="90"/>
+        <location filename="../libpgmodeler_ui/ui/extensionwidget.ui" line="99"/>
         <source>Handles data type</source>
         <translation>Tipo de datos Handles</translation>
     </message>
@@ -4840,77 +5290,77 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
         <translation>Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="57"/>
+        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="46"/>
         <source>Replace one occurrence</source>
         <translation>Reemplazar una ocurrencia</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="60"/>
+        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="49"/>
         <source>Replace</source>
         <translation>Reemplazar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="90"/>
+        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="68"/>
         <source>Replace all occurrences</source>
         <translation>Reemplazar todas las ocurrencias</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="93"/>
+        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="71"/>
         <source>Replace All</source>
         <translation>Reemplazar todas</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="123"/>
+        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="90"/>
         <source>Replace the selection and find the next one</source>
         <translation>Reemplace la selección y buscar la siguiente</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="126"/>
+        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="93"/>
         <source>Replace &amp;&amp; Find</source>
         <translation>Reemplazar &amp;&amp; Buscar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="160"/>
+        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="127"/>
         <source>Replace:</source>
         <translation>Reemplazar:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="170"/>
+        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="137"/>
         <source>Find:</source>
         <translation>Buscar:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="193"/>
+        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="154"/>
         <source>Find previous</source>
         <translation>Buscar anterior</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="209"/>
+        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="170"/>
         <source>Shift+F3</source>
         <translation>Shift+F3</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="233"/>
+        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="188"/>
         <source>Find next</source>
         <translation>Buscar siguiente</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="249"/>
+        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="204"/>
         <source>F3</source>
         <translation>F3</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="259"/>
+        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="214"/>
         <source>Case sensitive</source>
         <translation>Caso sensible</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="272"/>
+        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="227"/>
         <source>Regular expression</source>
         <translation>Expresón regular</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="285"/>
+        <location filename="../libpgmodeler_ui/ui/findreplacewidget.ui" line="240"/>
         <source>Whole words</source>
         <translation>Palabras completas</translation>
     </message>
@@ -4918,133 +5368,140 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
 <context>
     <name>FunctionWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="26"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="63"/>
+        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="60"/>
         <source>Attributes</source>
         <translation>Atributos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="100"/>
+        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="97"/>
         <source>Security:</source>
         <translation>Seguridad:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="132"/>
+        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="129"/>
         <source>Function Type:</source>
         <translation>Tipo de Función:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="190"/>
+        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="187"/>
         <source>Rows Returned:</source>
         <translation>Filas Retornadas:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="212"/>
+        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="209"/>
         <source>Langague:</source>
         <translation>Lenguaje:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="259"/>
+        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="256"/>
         <source>Return Method:</source>
         <translation>Método de Retorno:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="278"/>
+        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="275"/>
         <source>Behavior:</source>
         <translation>Comportamiento:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="303"/>
         <source>Simple</source>
-        <translation>Simples</translation>
+        <translation type="vanished">Simples</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="322"/>
+        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="319"/>
         <source>Set</source>
         <translation>Conjunto</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="338"/>
         <source>Table</source>
-        <translation>Tabla</translation>
+        <translation type="vanished">Tabla</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="356"/>
+        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="300"/>
+        <source>Si&amp;mple</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="335"/>
+        <source>Tab&amp;le</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="353"/>
         <source>Return Table</source>
         <translation>Tabla de retorno</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="381"/>
+        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="378"/>
         <source>Execution Cost:</source>
         <translation>Costo ejecución:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="397"/>
+        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="394"/>
         <source>Windown Func.</source>
         <translation>Func. Ventana.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="436"/>
+        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="433"/>
         <source>Leakproof</source>
         <translation>Prueba de fugas</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="444"/>
+        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="441"/>
         <source>Parameters</source>
         <translation>Parámetros</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="449"/>
+        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="446"/>
         <source>Definition</source>
         <translation>Definición</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="500"/>
+        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="497"/>
         <source>Dynamic Library:</source>
         <translation>Biblioteca Dinámica:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="529"/>
+        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="526"/>
         <source>Symbol:</source>
         <translation>Símbolo:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="558"/>
+        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="555"/>
         <source>Library:</source>
         <translation>Biblioteca:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="624"/>
+        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="621"/>
         <source>Source code:</source>
         <translation>Código fuente:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/functionwidget.cpp" line="51"/>
+        <location filename="../libpgmodeler_ui/src/functionwidget.cpp" line="53"/>
         <source>Column</source>
         <translation>Columna</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/functionwidget.cpp" line="53"/>
-        <location filename="../libpgmodeler_ui/src/functionwidget.cpp" line="61"/>
+        <location filename="../libpgmodeler_ui/src/functionwidget.cpp" line="55"/>
+        <location filename="../libpgmodeler_ui/src/functionwidget.cpp" line="63"/>
         <source>Type</source>
         <translation>Tipo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/functionwidget.cpp" line="59"/>
+        <location filename="../libpgmodeler_ui/src/functionwidget.cpp" line="61"/>
         <source>Name</source>
         <translation>Nombre</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/functionwidget.cpp" line="63"/>
+        <location filename="../libpgmodeler_ui/src/functionwidget.cpp" line="65"/>
         <source>Mode</source>
         <translation>Modo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/functionwidget.cpp" line="64"/>
+        <location filename="../libpgmodeler_ui/src/functionwidget.cpp" line="66"/>
         <source>Default Value</source>
         <translation>Valor por defecto</translation>
     </message>
@@ -5117,415 +5574,482 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
         <translation>Diseño</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="348"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="534"/>
         <source>Graphical objects (table, views and textboxes) will be created in a single step without the need to click on canvas </source>
         <translation>Los objetos gráficos (mesa, puntos de vista y los cuadros de texto) se crearán en un solo paso sin la necesidad de hacer clic sobre lienzo </translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="351"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="537"/>
         <source>Simplify creation of graphical objects</source>
         <translation>Simplificar la creación de objetos gráficos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="396"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="582"/>
         <source>After loading the model the last zoom and position on canvas will be restored</source>
         <translation>Después de cargar el modelo se restaurará el último zoom y la posición en la lona</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="399"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="585"/>
         <source>Save and restore last position and zoom</source>
         <translation>Salvar y restaurar la última posición y el zoom</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="441"/>
         <source>Disable antialiasing for lines and texts improving performance on huge models (requires restart)</source>
-        <translation>Deshabilitar antialiasing de líneas y textos mejorar el rendimiento en los modelos grandes (requiere reiniciar)</translation>
+        <translation type="vanished">Deshabilitar antialiasing de líneas y textos mejorar el rendimiento en los modelos grandes (requiere reiniciar)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="444"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="354"/>
         <source>Disable render smoothness</source>
         <translation>Deshabilitar render suave</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="486"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="762"/>
         <source>Hide the object that represents the relationship name</source>
         <translation>Ocultar el objeto que representa el nombre de relación</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="489"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="765"/>
         <source>Hide relationship name</source>
         <translation>Ocultar nombre de la relación</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="525"/>
         <source>Operations like save, export and diff will be executed without asking user to validate the model</source>
-        <translation>Operaciones como guardar, exportar y diff se ejecutarán sin preguntar el usuario para validar el modelo</translation>
+        <translation type="vanished">Operaciones como guardar, exportar y diff se ejecutarán sin preguntar el usuario para validar el modelo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="528"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="393"/>
         <source>Validate before save, export or diff</source>
         <translation>Validar antes de guardar, exportar o diff</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="573"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="717"/>
         <source>Hide the object which represents the tag assigned to the table</source>
         <translation>Ocultar el objeto que representa la etiqueta asignada a la tabla</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="576"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="720"/>
         <source>Hide table tags</source>
         <translation>Ocultar etiquetas de tabla</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="618"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="438"/>
         <source>Start move the canvas when the cursor is on the canvas edges</source>
         <translation>Iniciar mover el lienzo cuando el cursor está en los bordes de la lona</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="621"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="441"/>
         <source>Move canvas by keep mouse on corners</source>
         <translation>Mueva la lona por el ratón torreón en las esquinas</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="666"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="672"/>
         <source>Hide the portion of table which represent triggers, indexes and rules</source>
         <translation>Ocultar la parte de la tabla que representan triggers, índices y reglas</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="669"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="675"/>
         <source>Hide table extended attributes</source>
         <translation>Ocultar atributos de tabla extendida</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="711"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="486"/>
         <source>By default panning mode is triggered with left click and range selection with Shift + left click.</source>
         <translation>Por defecto el modo de paneo se activa con un clic izquierdo y selección de rango con Shift + clic izquierdo.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="714"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="489"/>
         <source>Swap panning and range selection triggers</source>
         <translation>Paneo de Swap y rango de selección disparadores de triggers</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="759"/>
         <source>Toggles the code completion in all fields that accepts the input of SQL commads.</source>
-        <translation>Alterna la finalización de código en todos los campos que acepta la entrada de commads SQL.</translation>
+        <translation type="vanished">Alterna la finalización de código en todos los campos que acepta la entrada de commads SQL.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="762"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="810"/>
         <source>Enable SQL code completion</source>
         <translation>Activar autocompletado de código SQL</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="810"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="858"/>
         <source>Printing &amp;&amp; Code</source>
         <translation>Imprimir &amp;&amp; Cógigo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="828"/>
         <source>Code font style</source>
-        <translation>Estilo de la fuente del código</translation>
+        <translation type="vanished">Estilo de la fuente del código</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="867"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1013"/>
         <source> pt</source>
         <translation> pt</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="905"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="900"/>
         <source>Size:</source>
         <translation>Tamaño:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="918"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="913"/>
         <source>Font:</source>
         <translation>Fuente:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="928"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1080"/>
         <source>Printing</source>
         <translation>Imprimiendo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="946"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="939"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1098"/>
         <source>Options:</source>
         <translation>Opciones:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="959"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="351"/>
+        <source>Disable antialiasing for lines and texts improving performance when handling huge models.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="390"/>
+        <source>Triggers a dialog asking the user to validate the model before a save, export or diff operation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="627"/>
+        <source>When enabled this option creates a placeholder object at the previous table&apos;s position when starting to move it. This will cause graphical updates on relationship lines to be performed only when the drag &amp; drop action is done improving the performance. Disabling placeholders will cause those updates to be executed every time the table&apos;s position changes a single pixel (classical behavior).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="630"/>
+        <source>Use placeholders when moving tables</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="807"/>
+        <source>Toggles the code completion in all fields that accepts the input of SQL commands.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="876"/>
+        <source>Code style</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="926"/>
+        <source>Colors:</source>
+        <translation type="unfinished">Colores:</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="948"/>
+        <source>Display line numbers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="964"/>
+        <source>Highlight lines at cursor&apos;s position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1036"/>
+        <source>Custom tab width:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1111"/>
         <source>Print grid</source>
         <translation>Imprimir cuadrícula</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="975"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1127"/>
         <source>Print page numbers</source>
         <translation>Imprimir número de página</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="991"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1143"/>
         <source>Paper:</source>
         <translation>Papel:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1014"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1166"/>
         <source>A0 (841 x 1189 mm)</source>
         <translation>A0 (841 x 1189 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1019"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1171"/>
         <source>A1 (594 x 841 mm)</source>
         <translation>A1 (594 x 841 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1024"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1176"/>
         <source>A2 (420 x 594 mm)</source>
         <translation>A2 (420 x 594 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1029"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1181"/>
         <source>A3 (297 x 420 mm)</source>
         <translation>A3 (297 x 420 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1034"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1186"/>
         <source>A4 (210 x 297 mm)</source>
         <translation>A4 (210 x 297 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1039"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1191"/>
         <source>A5 (148 x 210 mm)</source>
         <translation>A5 (148 x 210 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1044"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1196"/>
         <source>A6 (105 x 148 mm)</source>
         <translation>A6 (105 x 148 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1049"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1201"/>
         <source>A7 (74 x 105 mm)</source>
         <translation>A7 (74 x 105 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1054"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1206"/>
         <source>A8 (52 x 74 mm)</source>
         <translation>A8 (52 x 74 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1059"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1211"/>
         <source>A9 (37 x 52 mm)</source>
         <translation>A9 (37 x 52 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1064"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1216"/>
         <source>B0 (1030 x 1456 mm)</source>
         <translation>B0 (1030 x 1456 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1069"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1221"/>
         <source>B1 (728 x 1030 mm)</source>
         <translation>B1 (728 x 1030 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1074"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1226"/>
         <source>B10 (32 x 45 mm)</source>
         <translation>B10 (32 x 45 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1079"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1231"/>
         <source>B2 (515 x 728 mm)</source>
         <translation>B2 (515 x 728 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1084"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1236"/>
         <source>B3 (364 x 515 mm)</source>
         <translation>B3 (364 x 515 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1089"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1241"/>
         <source>B4 (257 x 364 mm)</source>
         <translation>B4 (257 x 364 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1094"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1246"/>
         <source>B5 (182 x 257 mm)</source>
         <translation>B5 (182 x 257 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1099"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1251"/>
         <source>B6 (128 x 182 mm)</source>
         <translation>B6 (128 x 182 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1104"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1256"/>
         <source>B7 (91 x 128 mm)</source>
         <translation>B7 (91 x 128 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1109"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1261"/>
         <source>B8 (64 x 91 mm)</source>
         <translation>B8 (64 x 91 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1114"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1266"/>
         <source>B9 (45 x 64 mm)</source>
         <translation>B9 (45 x 64 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1119"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1271"/>
         <source>C5E (163 x 229 mm)</source>
         <translation>C5E (163 x 229 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1124"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1276"/>
         <source>Comm10E (105 x 241 mm)</source>
         <translation>Comm10E (105 x 241 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1129"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1281"/>
         <source>DLE (110 x 220 mm)</source>
         <translation>DLE (110 x 220 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1134"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1286"/>
         <source>Executive (191 x 254 mm)</source>
         <translation>Ejecutivo (191 x 254 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1139"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1291"/>
         <source>Folio (210 x 330 mm)</source>
         <translation>Folio (210 x 330 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1144"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1296"/>
         <source>Ledger (432 x 279 mm)</source>
         <translation>Ledger (432 x 279 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1149"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1301"/>
         <source>Legal (216 x 356 mm)</source>
         <translation>Legal (216 x 356 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1154"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1306"/>
         <source>Letter (216 x 279 mm)</source>
         <translation>Carta (216 x 279 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1159"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1311"/>
         <source>Tabloid (279 x 432 mm)</source>
         <translation>Tabloid (279 x 432 mm)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1164"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1316"/>
         <source>Custom</source>
         <translation>Personalizar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1178"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1330"/>
         <source>Orientation:</source>
         <translation>Orientación:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1191"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1343"/>
         <source>Landscape</source>
         <translation>Landscape</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1207"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1359"/>
         <source>Portrait</source>
         <translation>Portrait</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1214"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1366"/>
         <source>Unity:</source>
         <translation>Unidad:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1221"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1373"/>
         <source>Custom Size:</source>
         <translation>Tamaño Personalizado:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1236"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1388"/>
         <source>Width:</source>
         <translation>Ancho:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1265"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1417"/>
         <source>Height:</source>
         <translation>Altura:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1290"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1442"/>
         <source>Page Margins:</source>
         <translation>Márgenes de página:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1305"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1457"/>
         <source>Left:</source>
         <translation>Izquierdo:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1324"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1476"/>
         <source>Left margin</source>
         <translation>Margen izquierdo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1334"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1486"/>
         <source>Top:</source>
         <translation>Superior:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1353"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1505"/>
         <source>Top margin</source>
         <translation>Margen superior</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1369"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1521"/>
         <source>Right:</source>
         <translation>Derecho:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1388"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1540"/>
         <source>Right margin</source>
         <translation>Margen derecho</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1398"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1550"/>
         <source>Bottom:</source>
         <translation>Inferior:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1417"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1569"/>
         <source>Bottom margin</source>
         <translation>Margen inferior</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1439"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1591"/>
         <source>Milimeters</source>
         <translation>Milímetros</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1444"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1596"/>
         <source>Pixels</source>
         <translation>Pixeles</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1449"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1601"/>
         <source>Inches</source>
         <translation>Pulgadas</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1454"/>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1606"/>
         <source>Centimeter</source>
         <translation>Centímetros</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/generalconfigwidget.cpp" line="43"/>
+        <source>Line numbers&apos; font color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/generalconfigwidget.cpp" line="46"/>
+        <source>Line numbers&apos; background color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/generalconfigwidget.cpp" line="49"/>
+        <source>Highlighted line color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/generalconfigwidget.cpp" line="53"/>
+        <source>The little brown fox jumps over the lazy dog</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>GraphicalView</name>
     <message>
-        <location filename="../libobjrenderer/src/graphicalview.cpp" line="257"/>
+        <location filename="../libobjrenderer/src/graphicalview.cpp" line="258"/>
         <source>Connected rels: %1</source>
         <translation>Rels conectados: %1</translation>
     </message>
@@ -5541,57 +6065,56 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
 <context>
     <name>IndexWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="20"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="45"/>
+        <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="42"/>
         <source>Attributes</source>
         <translation>Atributos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="91"/>
+        <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="88"/>
         <source>Indexing:</source>
         <translation>Indexación:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="136"/>
+        <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="133"/>
         <source>Fill Factor:</source>
         <translation>Factor Relleno:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="195"/>
+        <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="192"/>
         <source>Options:</source>
         <translation>Opciones:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="225"/>
+        <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="222"/>
         <source>Concurrent</source>
         <translation>Concurrente</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="250"/>
+        <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="247"/>
         <source>Unique</source>
         <translation>Unico</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="275"/>
+        <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="272"/>
         <source>Fast update</source>
         <translation>Actual. Rápida</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="288"/>
+        <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="285"/>
         <source>Buffering</source>
         <translation>Buffering</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="315"/>
+        <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="312"/>
         <source>Predicate:</source>
         <translation>Predicado:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="369"/>
+        <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="357"/>
         <source>Elements</source>
         <translation>Elementos</translation>
     </message>
@@ -5599,27 +6122,26 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
 <context>
     <name>LanguageWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/languagewidget.ui" line="20"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/languagewidget.ui" line="66"/>
+        <location filename="../libpgmodeler_ui/ui/languagewidget.ui" line="63"/>
         <source>Trusted:</source>
         <translation>Confiable:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/languagewidget.ui" line="85"/>
+        <location filename="../libpgmodeler_ui/ui/languagewidget.ui" line="82"/>
         <source>Validator Func.:</source>
         <translation>Func. Validador:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/languagewidget.ui" line="104"/>
+        <location filename="../libpgmodeler_ui/ui/languagewidget.ui" line="101"/>
         <source>Handler Func.:</source>
         <translation>Func. Handler:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/languagewidget.ui" line="123"/>
+        <location filename="../libpgmodeler_ui/ui/languagewidget.ui" line="120"/>
         <source>Inline Func.:</source>
         <translation>Func. en linea:</translation>
     </message>
@@ -5637,682 +6159,903 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
         <translation>pgModeler - Modelador de Base de datos PostgreSQL</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="391"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="616"/>
         <source>Toggle the model objects widget</source>
         <translation>Cambiar el modelo de objetos del widget</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="394"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="619"/>
         <source>O&amp;bjects</source>
         <translation>O&amp;bjectos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="407"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="632"/>
         <source>Alt+B</source>
         <translation>Alt+B</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="425"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="482"/>
         <source>Toogle the model validation widgets</source>
         <translation>Cambiar el modelo de validación del widgets</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="428"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="485"/>
         <source>&amp;Validation</source>
         <translation>&amp;Validación</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="441"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="498"/>
         <source>Alt+V</source>
         <translation>Alt+V</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="459"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="565"/>
         <source>Toggle the operation history widget</source>
         <translation>Cambiar el historial de operaciones del widget</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="462"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="568"/>
         <source>&amp;Operations</source>
         <translation>&amp;Operaciones</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="475"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="581"/>
         <source>Alt+O</source>
         <translation>Alt+O</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="493"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="517"/>
         <source>Toggle the object finder</source>
         <translation>Cambiar el buscador objeto</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="496"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="520"/>
         <source>Find Object</source>
         <translation>Buscar Objeto</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="509"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="533"/>
         <source>Ctrl+F</source>
         <translation>Ctrl+F</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="561"/>
         <source>msg</source>
-        <translation>msg</translation>
+        <translation type="vanished">msg</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="618"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="676"/>
         <source>&amp;File</source>
         <translation>&amp;Archivo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="641"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="701"/>
         <source>&amp;Edit</source>
         <translation>&amp;Editar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="651"/>
         <source>Help</source>
-        <translation>A&amp;yuda</translation>
+        <translation type="vanished">A&amp;yuda</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="661"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="721"/>
         <source>&amp;Show</source>
         <translation>&amp;Mostrar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="678"/>
         <source>&amp;Plugins</source>
-        <translation>&amp;Plugins</translation>
+        <translation type="vanished">&amp;Plugins</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="695"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="755"/>
         <source>General</source>
         <translation>General</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="757"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="817"/>
         <source>Controls</source>
         <translation>Controles</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="807"/>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1160"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="946"/>
+        <source>&amp;Load</source>
+        <translation type="unfinished">&amp;Cargar</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="961"/>
+        <source>Sa&amp;ve as</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="970"/>
+        <source>E&amp;xit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="973"/>
+        <source>Exit pgModeler</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="991"/>
+        <source>&amp;About pgModeler</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1009"/>
+        <source>&amp;Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1012"/>
+        <source>Print model</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1027"/>
+        <source>&amp;Undo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1030"/>
+        <source>Undo operation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1045"/>
+        <source>&amp;Redo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1048"/>
+        <source>Redo operation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1063"/>
+        <source>&amp;Export</source>
+        <translation type="unfinished">&amp;Exportar</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1069"/>
+        <source>Ctrl+Shift+E</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1087"/>
+        <source>&amp;Show grid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1105"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished">&amp;Cerrar</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1123"/>
+        <source>&amp;Normal zoom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1144"/>
+        <source>&amp;Align to grid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1168"/>
+        <source>Show &amp;delimiters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1183"/>
+        <source>&amp;Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1189"/>
+        <source>F12</source>
+        <translation type="unfinished">F12</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1212"/>
+        <source>&amp;Overview</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1227"/>
+        <source>&amp;Support</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1230"/>
+        <source>Access the support page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1242"/>
         <source>New</source>
         <translation>Nuevo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="810"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1375"/>
+        <source>&amp;Diff</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1420"/>
+        <source>Design database models</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1423"/>
+        <source>Shift+D</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1441"/>
+        <source>Shift+M</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1450"/>
+        <source>&amp;Bug report</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1453"/>
+        <source>Report a bug</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1465"/>
+        <source>Donate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1468"/>
+        <source>Help pgModeler by donating!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1480"/>
+        <source>Objects me&amp;tadata</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1483"/>
+        <source>Objects metadata</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="874"/>
         <source>Ctrl+N</source>
         <translation>Ctrl+N</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="822"/>
         <source>Save</source>
-        <translation>Guardar</translation>
+        <translation type="vanished">Guardar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="825"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="892"/>
         <source>Ctrl+S</source>
         <translation>Ctrl+S</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="837"/>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="840"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="907"/>
         <source>Zoom in</source>
         <translation>Zoom +</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="843"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="910"/>
         <source>Ctrl+=</source>
         <translation>Ctrl+=</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="861"/>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="867"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="934"/>
         <source>Zoom out</source>
         <translation>Zoom -</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="864"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="931"/>
         <source>Zoom -</source>
         <translation>Zoom -</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="870"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="711"/>
+        <source>He&amp;lp</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="738"/>
+        <source>Pl&amp;ugins</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="868"/>
+        <source>&amp;New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="871"/>
+        <source>New model</source>
+        <translation type="unfinished">Nuevo modelo</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="886"/>
+        <source>&amp;Save</source>
+        <translation type="unfinished">&amp;Guardar</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="904"/>
+        <source>&amp;Zoom in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="928"/>
+        <source>Zoo&amp;m out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="937"/>
         <source>Ctrl+-</source>
         <translation>&gt;Ctrl+-</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="879"/>
         <source>Load</source>
-        <translation>Cargar</translation>
+        <translation type="vanished">Cargar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="882"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="949"/>
         <source>Ctrl+O</source>
         <translation>Ctrl+O</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="894"/>
         <source>Save as</source>
-        <translation>Guardar como</translation>
+        <translation type="vanished">Guardar como</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="903"/>
         <source>Exit</source>
-        <translation>Salir</translation>
+        <translation type="vanished">Salir</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="906"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="976"/>
         <source>Ctrl+Q</source>
         <translation>Ctrl+Q</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="921"/>
         <source>About pgModeler</source>
-        <translation>Acerca de pgModeler</translation>
+        <translation type="vanished">Acerca de pgModeler</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="924"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="994"/>
         <source>F4</source>
         <translation>F4</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="939"/>
         <source>Print</source>
-        <translation>Imprimir</translation>
+        <translation type="vanished">Imprimir</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="942"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1015"/>
         <source>Ctrl+P</source>
         <translation>Ctrl+P</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="954"/>
         <source>Undo</source>
-        <translation>Deshacer</translation>
+        <translation type="vanished">Deshacer</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="957"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1033"/>
         <source>Ctrl+Z</source>
         <translation>Ctrl+Z</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="969"/>
         <source>Redo</source>
-        <translation>Rehacer</translation>
+        <translation type="vanished">Rehacer</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="972"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1051"/>
         <source>Ctrl+Y</source>
         <translation>Ctrl+Y</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="984"/>
         <source>Export</source>
-        <translation>Exportar</translation>
+        <translation type="vanished">Exportar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="987"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1066"/>
         <source>Export the current opened model in different modes</source>
         <translation>Exportar el modelo abierto actual en diferentes modos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="990"/>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1267"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1266"/>
+        <source>&amp;Recent Models</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1281"/>
+        <source>&amp;Import</source>
+        <translation type="unfinished">&amp;Importar</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1296"/>
+        <source>Rest&amp;ore Session</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1305"/>
+        <source>&amp;Fix a model</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1329"/>
+        <source>&amp;Check for update</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1352"/>
         <source>Ctrl+Shift+S</source>
         <translation>Ctrl+Shift+S</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1008"/>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1011"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1090"/>
         <source>Show grid</source>
         <translation>Mostrar cuadrícula</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1014"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1093"/>
         <source>Ctrl+G</source>
         <translation>Ctrl+G</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1026"/>
         <source>Close</source>
-        <translation>Cerrar</translation>
+        <translation type="vanished">Cerrar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1029"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1108"/>
         <source>Close current model</source>
         <translation>Cerrar modelo actual</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1032"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1111"/>
         <source>Ctrl+W</source>
         <translation>Ctrl+W</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1044"/>
         <source>Normal zoom</source>
-        <translation>Zoom normal</translation>
+        <translation type="vanished">Zoom normal</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1047"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1126"/>
         <source>Ctrl+0</source>
         <translation>Ctrl+0</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1065"/>
         <source>Align to grid</source>
-        <translation>Alinear a la cuadrícula</translation>
+        <translation type="vanished">Alinear a la cuadrícula</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1068"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1147"/>
         <source>Align objects position to grid</source>
         <translation>Alinear objetos posición de cuadrícula</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1071"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1150"/>
         <source>Ctrl+H</source>
         <translation>Ctrl+H</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1089"/>
         <source>Show delimiters</source>
-        <translation>Mostrar delimitadores</translation>
+        <translation type="vanished">Mostrar delimitadores</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1092"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1171"/>
         <source>Show the page delimiters</source>
         <translation>Mostrar los delimitadores página</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1095"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1174"/>
         <source>Ctrl+L</source>
         <translation>Ctrl+L</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1104"/>
         <source>Settings</source>
-        <translation>Configuraciones</translation>
+        <translation type="vanished">Configuraciones</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1107"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1186"/>
         <source>Edit pgModeler settings</source>
         <translation>Editar configuraciones de pgModeler</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1115"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1197"/>
         <source>Save all</source>
         <translation>Guardar todos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1130"/>
         <source>Overview</source>
-        <translation>Vista General</translation>
+        <translation type="vanished">Vista General</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1133"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1215"/>
         <source>Show the model overview</source>
         <translation>Mostrar el visión general modelo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1136"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1218"/>
         <source>F10</source>
         <translation>F10</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1145"/>
         <source>Wiki</source>
-        <translation>Wiki</translation>
+        <translation type="vanished">Wiki</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1148"/>
         <source>Access the wiki pages</source>
-        <translation>Accesos a las páginas wiki</translation>
+        <translation type="vanished">Accesos a las páginas wiki</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1151"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1233"/>
         <source>F1</source>
         <translation>F1</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1169"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1245"/>
+        <source>New object</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1254"/>
         <source>Plugins</source>
         <translation>Plugins</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1172"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1257"/>
         <source>Access the list of loaded plugins</source>
         <translation>Acceda a la lista de plugins cargados</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1181"/>
         <source>Recent Models</source>
-        <translation>Modelos Recientes</translation>
+        <translation type="vanished">Modelos Recientes</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1184"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1269"/>
         <source>Load recently opened model</source>
         <translation>Cargar modelo abiertos recientes</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1196"/>
         <source>Import</source>
-        <translation>Importar</translation>
+        <translation type="vanished">Importar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1199"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1284"/>
         <source>Import existing database to new model (reverse engineering)</source>
         <translation>Importación de base de datos existente para nuevo modelo (ingeniería inversa)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1202"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1287"/>
         <source>Ctrl+Shift+I</source>
         <translation>Ctrl+Shift+I</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1211"/>
         <source>Restore Session</source>
-        <translation>Restaurar sesión</translation>
+        <translation type="vanished">Restaurar sesión</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1220"/>
         <source>Fix a model</source>
-        <translation>Fijar un modelo</translation>
+        <translation type="vanished">Fijar un modelo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1232"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1317"/>
         <source>New version found!</source>
         <translation>Nueva versión encontrado!</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1235"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1320"/>
         <source>Update for the current version is available on project&apos;s site</source>
         <translation>Actualización para la versión actual está disponible en el sitio del proyecto</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1244"/>
         <source>Check for update</source>
-        <translation>Buscar actualizaciones</translation>
+        <translation type="vanished">Buscar actualizaciones</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1253"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1338"/>
         <source>action_main_menu</source>
         <translation>action_main_menu</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1256"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1341"/>
         <source>Main menu</source>
         <translation>Menú principal</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1261"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1346"/>
         <source>Show expanded</source>
         <translation>Mostrar expandió</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1264"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1349"/>
         <source>Expands the main menu bar in classical mode</source>
         <translation>Expande la barra de menú principal en el modo clásico</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1272"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1357"/>
         <source>Hide main menu</source>
         <translation>Ocultar menú principal</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1275"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1360"/>
         <source>Hides the main menu bar and put the action on a separated action</source>
         <translation>Oculta la barra de menú principal y poner la acción en una acción separada</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1278"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1363"/>
         <source>Ctrl+Shift+H</source>
         <translation>Ctrl+Shift+H</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1290"/>
         <source>Diff</source>
-        <translation>Diff</translation>
+        <translation type="vanished">Diff</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1293"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1378"/>
         <source>Determine the changes between model and database</source>
         <translation>Determinar los cambios entre el modelo y la base de datos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1308"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1381"/>
+        <source>Ctrl+Shift+D</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1396"/>
         <source>Welcome</source>
         <translation>Bienvenidos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1311"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1399"/>
         <source>Welcome screen</source>
         <translation>Pantalla de bienvenida</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1326"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1402"/>
+        <source>Shift+W</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1417"/>
         <source>Design</source>
         <translation>Diseño</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1329"/>
         <source>Design datase models</source>
-        <translation>Modelos Diseño datase</translation>
+        <translation type="vanished">Modelos Diseño datase</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1341"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1435"/>
         <source>Manage</source>
         <translation>Administrar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1344"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1438"/>
         <source>Manage existent databases</source>
         <translation>Administrar base de datos existente</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="1353"/>
         <source>Bug report</source>
-        <translation>Reporte de Bug</translation>
+        <translation type="vanished">Reporte de Bug</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="216"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="215"/>
         <source> (Demo)</source>
         <translation> (Demo)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="553"/>
         <source>Save all models</source>
-        <translation>Guardar todos los modelos</translation>
+        <translation type="vanished">Guardar todos los modelos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="554"/>
         <source>Some models were modified! Do you really want to quit pgModeler without save them?</source>
-        <translation>Se modificaron algunos modelos! ¿De verdad quiere dejar de fumar pgModeler sin salvarlos?</translation>
+        <translation type="vanished">Se modificaron algunos modelos! ¿De verdad quiere dejar de fumar pgModeler sin salvarlos?</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="675"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="440"/>
         <source>Saving temp. models</source>
         <translation>Guardando modelos temp</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="721"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="739"/>
         <source>Clear Menu</source>
         <translation>Limpiar Menú</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="754"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="784"/>
         <source>The demonstration version can create only `one&apos; instance of database model!</source>
         <translation>La versión de demostración sólo puede crear `una&apos; instancia de modelo de base de datos!</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1057"/>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="889"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1101"/>
         <source>Save model</source>
         <translation>Guardar Modelo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1058"/>
         <source>The model was modified! Do you really want to close without save it?</source>
-        <translation>El modelo fue modificado! ¿De verdad quiere cerrar sin guardarlo?</translation>
+        <translation type="vanished">El modelo fue modificado! ¿De verdad quiere cerrar sin guardarlo?</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1171"/>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1259"/>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1302"/>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1326"/>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1689"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="572"/>
+        <source>Save modified model(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="573"/>
+        <source>The following models were modified but not saved: %1. Do you really want to quit pgModeler?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1102"/>
+        <source>The model &lt;strong&gt;%1&lt;/strong&gt; was modified! Do you really want to close without save it?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1217"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1743"/>
         <source>Warning</source>
         <translation>Advertencia</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1172"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1218"/>
         <source>You&apos;re running a demonstration version! The model saving feature is available only in the full version!</source>
         <translation>Usted está ejecutando una versión de demostración! La función de ahorro de modelo está disponible sólo en la versión completa!</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1188"/>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1274"/>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1338"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1232"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1304"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1355"/>
         <source>Confirmation</source>
         <translation>Confirmación</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1189"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1233"/>
         <source> &lt;strong&gt;WARNING:&lt;/strong&gt; The model &lt;strong&gt;%1&lt;/strong&gt; is invalidated! It&apos;s recommended to validate it before save in order to create a consistent model otherwise the generated file will be broken demanding manual fixes to be loadable again!</source>
         <translation>&lt;strong&gt;ADVERTENCIA:&lt;/strong&gt; El modelo &lt;strong&gt;%1&lt;/strong&gt; está invalidado! Se recomienda para validarlo antes de guardar con el fin de crear un modelo coherente de lo contrario el archivo generado se romperá exigiendo correcciones manuales que sea cargable de nuevo!</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1191"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1235"/>
         <source>Save anyway</source>
         <translation>Guardar de todos modos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1191"/>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1277"/>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1341"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1235"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1307"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1358"/>
         <source>Validate</source>
         <translation>Validar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1220"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1265"/>
         <source>Save &apos;%1&apos; as...</source>
         <translation>Guardar &apos;%1&apos; como...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1221"/>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1427"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1266"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1444"/>
         <source>Database model (*.dbm);;All files (*.*)</source>
         <translation>Modelo de base de datos (*.dbm);; Todos los arquivos (*.*)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1260"/>
-        <source>You&apos;re running a demonstration version! The model export feature can be tested twice per pgModeler execution!</source>
-        <translation>Usted está ejecutando una versión de demostración! La función de exportación modelo puede ser probado dos veces por la ejecución pgModeler!</translation>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1583"/>
+        <source>Access support page</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1275"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1744"/>
+        <source>You&apos;re running a demonstration version! Note that you&apos;ll be able to create only &lt;strong&gt;%1&lt;/strong&gt; instances 						of each type of object and some key features will be disabled or limited!&lt;br/&gt;&lt;br/&gt;You can purchase a full binary copy or get the source code at &lt;a href=&apos;http://pgmodeler.com.br&apos;&gt;pgmodeler.com.br&lt;/a&gt;.						&lt;strong&gt;NOTE:&lt;/strong&gt; pgModeler is an open source software, but purchasing binary copies or providing some donations will support the project and cover all development costs.&lt;br/&gt;&lt;br/&gt;						&lt;strong&gt;HINT:&lt;/strong&gt; in order to test all features it&apos;s recommended to use the &lt;strong&gt;demo.dbm&lt;/strong&gt; model located in &lt;/strong&gt;Sample models&lt;/strong&gt; at &lt;strong&gt;Welcome&lt;/strong&gt; view.&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You&apos;re running a demonstration version! The model export feature can be tested twice per pgModeler execution!</source>
+        <translation type="vanished">Usted está ejecutando una versión de demostración! La función de exportación modelo puede ser probado dos veces por la ejecución pgModeler!</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1305"/>
         <source> &lt;strong&gt;WARNING:&lt;/strong&gt; The model &lt;strong&gt;%1&lt;/strong&gt; is invalidated! Before run the export process it&apos;s recommended to validate in order to correctly create the objects on database server!</source>
         <translation>&lt;strong&gt;ADVERTENCIA:&lt;/strong&gt; El modelo &lt;strong&gt;%1&lt;/strong&gt; está invalidado! Antes de ejecutar el proceso de exportación se recomienda para validar el fin de crear correctamente los objetos en el servidor de base de datos!</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1277"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1307"/>
         <source>Export anyway</source>
         <translation>Exportar de todas modos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1303"/>
         <source>You&apos;re running a demonstration version! The database import (reverse engineering) feature is available only in the full version!</source>
-        <translation>Usted está ejecutando una versión de demostración! La importación de base de datos característica (ingeniería inversa) sólo está disponible en la versión completa!</translation>
+        <translation type="vanished">Usted está ejecutando una versión de demostración! La importación de base de datos característica (ingeniería inversa) sólo está disponible en la versión completa!</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1327"/>
         <source>You&apos;re running a demonstration version! The model-database diff feature is available only in the full version!</source>
-        <translation>Usted está ejecutando una versión de demostración! La función diff modelo de base de datos sólo está disponible en la versión completa!</translation>
+        <translation type="vanished">Usted está ejecutando una versión de demostración! La función diff modelo de base de datos sólo está disponible en la versión completa!</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1339"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1356"/>
         <source> &lt;strong&gt;WARNING:&lt;/strong&gt; The model &lt;strong&gt;%1&lt;/strong&gt; is invalidated! Before run the diff process it&apos;s recommended to validate in order to correctly analyze and generate the difference between the model and a database!</source>
         <translation>&lt;strong&gt;ADVERTENCIA:&lt;/strong&gt; El modelo &lt;strong&gt;%1&lt;/strong&gt; está invalidado! Antes ejecutar el proceso diff se recomienda para validar el fin de analizar correctamente y generar la diferencia entre el modelo y una base de datos!</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1341"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1358"/>
         <source>Diff anyway</source>
         <translation>Diff de todas modo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1378"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1395"/>
         <source>Database model printing</source>
         <translation>Imprimir modelo de Base de datos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1406"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1423"/>
         <source>Changes were detected in the definitions of paper/margin of the model which may cause the incorrect print of the objects. Do you want to continue printing using the new settings? To use the default settings click &apos;No&apos; or &apos;Cancel&apos; to abort printing.</source>
         <translation>Se detectaron cambios en las definiciones de papel / margen del modelo que pueden causar la impresión incorrecta de los objetos. ¿Quieres continuar con la impresión utilizando la nueva configuración? Para utilizar la configuración predeterminada, haga clic &apos;No&apos; o &apos;Cancel&apos; para abortar la impresión.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1429"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1446"/>
         <source>Load model</source>
         <translation>Cargar modelo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1468"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1491"/>
         <source>Could not load the database model file `%1&apos;. Check the error stack to see details. You can try to fix it in order to make it loadable again.</source>
         <translation>No se pudo cargar el archivo de modelo de base de datos `%1&apos;. Compruebe la pila de errores para ver los detalles. Usted puede tratar de arreglarlo con el fin de hacer que se puede cargar de nuevo.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1470"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1493"/>
         <source>Fix model</source>
         <translation>Fijar modelo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1470"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1493"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1559"/>
         <source>Open Wiki pages</source>
-        <translation>Abrir páginas wiki</translation>
+        <translation type="vanished">Abrir páginas wiki</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1560"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1584"/>
         <source>This action will open a web browser window! Want to proceed?</source>
         <translation>Esta acción abrirá una ventana del navegador web! ¿Quieres continuar?</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1636"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1678"/>
         <source>(no samples found)</source>
         <translation>(no hay ejemplos encontradas)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1690"/>
         <source>You&apos;re running a demonstration version! Note that you&apos;ll be able to create only &lt;strong&gt;%1&lt;/strong&gt; instances 											of each type of object and some key features will be disabled!&lt;br/&gt;&lt;br/&gt;You can purchase a full binary copy or get the source code at &lt;a href=&apos;http://pgmodeler.com.br&apos;&gt;pgmodeler.com.br&lt;/a&gt;.											&lt;strong&gt;NOTE:&lt;/strong&gt; pgModeler is an open source software, but purchasing binary copies or providing some donations will support the project and cover all development costs.&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;</source>
-        <translation>Usted está ejecutando una versión de demostración! Tenga en cuenta que y apos; va a ser capaz de crear solamente una instancia &lt;strong&gt;%1&lt;/strong&gt;  											de cada tipo de objeto y algunas características clave se desactivarán!&lt;br/&gt;&lt;br/&gt;Usted puede comprar una copia binaria total o obtener el código fuente de &lt;a href=&apos;http://pgmodeler.com.br&apos;&gt;pgmodeler.com.br&lt;/a&gt;.
+        <translation type="vanished">Usted está ejecutando una versión de demostración! Tenga en cuenta que y apos; va a ser capaz de crear solamente una instancia &lt;strong&gt;%1&lt;/strong&gt;  											de cada tipo de objeto y algunas características clave se desactivarán!&lt;br/&gt;&lt;br/&gt;Usted puede comprar una copia binaria total o obtener el código fuente de &lt;a href=&apos;http://pgmodeler.com.br&apos;&gt;pgmodeler.com.br&lt;/a&gt;.
 &lt;strong&gt;NOTA:&lt;/strong&gt; pgModeler es un software de código abierto, pero la compra de copias binarias o proporcionar algunas donaciones apoyará el proyecto y cubrir todos los costos de desarrollo.&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1703"/>
         <source>The execution of demonstration version has finished!											Did you like pgModeler and want to purchase it? Use the following promocodes and receive good discounts:&lt;br/&gt;&lt;br/&gt;											&lt;strong&gt;D3M02BR0NZ3&lt;/strong&gt; (Discount on bronze package)&lt;br/&gt;											&lt;strong&gt;D3M02S1LV3R&lt;/strong&gt; (Discount on silver package)&lt;br/&gt;											&lt;strong&gt;D3M02G0LD&lt;/strong&gt; (Discount on gold package)&lt;br/&gt;											&lt;strong&gt;D3M02PL4T1NUM&lt;/strong&gt; (Discount on platinum package)&lt;br/&gt;											&lt;strong&gt;D3M02D14M0ND&lt;/strong&gt; (Discount on diamond package)&lt;br/&gt;											&lt;br/&gt;Thank you for testing pgModeler!</source>
-        <translation>La ejecución de la versión de demostración ha terminado!											¿Te ha gustado pgModeler y quiere comprarlo? Utilice los siguientes promocodes y recibir buenos descuentos:&lt;br/&gt;&lt;br/&gt;											&lt;strong&gt;D3M02BR0NZ3&lt;/strong&gt; (Descuento un paquete de bronce)&lt;br/&gt;											&lt;strong&gt;D3M02S1LV3R&lt;/strong&gt; (Descuento un paquete de plata)&lt;br/&gt;											&lt;strong&gt;D3M02G0LD&lt;/strong&gt; (Descuento un paquete de oro)&lt;br/&gt;											&lt;strong&gt;D3M02PL4T1NUM&lt;/strong&gt; (Descuento un paquete de platino)&lt;br/&gt;											&lt;strong&gt;D3M02D14M0ND&lt;/strong&gt; (Descuento un paquete de diamante)&lt;br/&gt;											&lt;br/&gt;Gracias por probar pgModeler!</translation>
+        <translation type="vanished">La ejecución de la versión de demostración ha terminado!											¿Te ha gustado pgModeler y quiere comprarlo? Utilice los siguientes promocodes y recibir buenos descuentos:&lt;br/&gt;&lt;br/&gt;											&lt;strong&gt;D3M02BR0NZ3&lt;/strong&gt; (Descuento un paquete de bronce)&lt;br/&gt;											&lt;strong&gt;D3M02S1LV3R&lt;/strong&gt; (Descuento un paquete de plata)&lt;br/&gt;											&lt;strong&gt;D3M02G0LD&lt;/strong&gt; (Descuento un paquete de oro)&lt;br/&gt;											&lt;strong&gt;D3M02PL4T1NUM&lt;/strong&gt; (Descuento un paquete de platino)&lt;br/&gt;											&lt;strong&gt;D3M02D14M0ND&lt;/strong&gt; (Descuento un paquete de diamante)&lt;br/&gt;											&lt;br/&gt;Gracias por probar pgModeler!</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1719"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1758"/>
         <source>save</source>
         <translation>guardar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1720"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1759"/>
         <source>export</source>
         <translation>exportar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1720"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1759"/>
         <source>diff</source>
         <translation>diff</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1723"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="1762"/>
         <source>Executing pending &lt;strong&gt;%1&lt;/strong&gt; operation...</source>
         <translation>Ejecución de operarienes pendientes &lt;strong&gt;%1&lt;/strong&gt;...</translation>
     </message>
@@ -6335,34 +7078,34 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
         <translation>Excepciones</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/messagebox.ui" line="338"/>
+        <location filename="../libpgmodeler_ui/ui/messagebox.ui" line="337"/>
         <source>Show raw text errors or information.</source>
         <translation>Mostrar errores de texto crudos o información.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/messagebox.ui" line="367"/>
+        <location filename="../libpgmodeler_ui/ui/messagebox.ui" line="366"/>
         <source>Show/hide exceptions stack.</source>
         <translation>Mostrar/ocultar pila excepciones.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/messagebox.ui" line="370"/>
+        <location filename="../libpgmodeler_ui/ui/messagebox.ui" line="369"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/messagebox.ui" line="446"/>
+        <location filename="../libpgmodeler_ui/ui/messagebox.ui" line="439"/>
         <location filename="../libpgmodeler_ui/src/messagebox.cpp" line="181"/>
         <source>&amp;Yes</source>
         <translation>&amp;Si</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/messagebox.ui" line="483"/>
+        <location filename="../libpgmodeler_ui/ui/messagebox.ui" line="470"/>
         <location filename="../libpgmodeler_ui/src/messagebox.cpp" line="185"/>
         <source>&amp;No</source>
         <translation>&amp;No</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/messagebox.ui" line="514"/>
+        <location filename="../libpgmodeler_ui/ui/messagebox.ui" line="495"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
@@ -6398,6 +7141,221 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
     </message>
 </context>
 <context>
+    <name>MetadataHandlingForm</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="14"/>
+        <source>Handle metadata</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="97"/>
+        <source>&amp;Apply</source>
+        <translation type="unfinished">&amp;Aplicar</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="135"/>
+        <source>&amp;Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="215"/>
+        <source>Handle objects metadata</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="234"/>
+        <source>Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="252"/>
+        <source>Extract from:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="336"/>
+        <source>Loading a metadata file to the current model is an irreversible operation so be sure to specify a backup file before proceed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="355"/>
+        <source>Options</source>
+        <translation type="unfinished">Opciones</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="384"/>
+        <source>Handles the following database model attributes in the metadata file: author, zoom factor, last position and default objects.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="387"/>
+        <source>Database model metadata</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="432"/>
+        <source>Handles the objects&apos; positioning in the metadata file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="435"/>
+        <source>Objects&apos; positioning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="493"/>
+        <source>Handles the objects&apos; custom colors in the metadata file. Currently available only for relationships and schemas.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="496"/>
+        <source>Custom object&apos;s colors</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="541"/>
+        <source>Handles the objects&apos; protection status in the metadata file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="544"/>
+        <source>Objects&apos; protection status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="589"/>
+        <source>Handles the objects&apos; SQL disabled status in the metadata file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="592"/>
+        <source>Objects&apos; SQL disabled status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="637"/>
+        <source>Handles the objects&apos; custom SQL commands in the metadata file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="640"/>
+        <source>Custom SQL commands</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="685"/>
+        <source>Save textboxes to the output file when extracting metadata. When loading the file textboxes are recreated and duplicated ones are ignored.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="688"/>
+        <source>Textbox objects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="733"/>
+        <source>Save tags to the output file when extracting metadata. When loading the file tags are recreated and duplicated ones are ignored.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="736"/>
+        <source>Tag objects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="773"/>
+        <source>Backup file:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="788"/>
+        <location filename="../libpgmodeler_ui/src/metadatahandlingform.cpp" line="232"/>
+        <source>Select file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="791"/>
+        <source>...</source>
+        <translation type="unfinished">...</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="813"/>
+        <source>Apply to:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="827"/>
+        <source>Operation:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="842"/>
+        <source>Extracts the objects metadata from one of the loaded models and apply to the current model.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="845"/>
+        <source>Extract from a &amp;model</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="883"/>
+        <source>Reads the objects metadata from a previously saved backup file and apply to the current model.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="886"/>
+        <source>Restore a bac&amp;kup file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="931"/>
+        <source>Output</source>
+        <translation type="unfinished">Salida</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/metadatahandlingform.ui" line="1020"/>
+        <source>Progress label...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/metadatahandlingform.cpp" line="96"/>
+        <location filename="../libpgmodeler_ui/src/metadatahandlingform.cpp" line="107"/>
+        <source>model not saved yet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/metadatahandlingform.cpp" line="116"/>
+        <source>The backup file cannot be the same as the input model!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/metadatahandlingform.cpp" line="158"/>
+        <source>Extracting metadata to file `%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/metadatahandlingform.cpp" line="167"/>
+        <source>Saving backup metadata to file `%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/metadatahandlingform.cpp" line="180"/>
+        <source>Applying metadata from file `%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/metadatahandlingform.cpp" line="212"/>
+        <source>Metadata processing aborted!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/metadatahandlingform.cpp" line="231"/>
+        <source>Objects metadata file (*.omf);;All files (*.*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ModelDatabaseDiffForm</name>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="35"/>
@@ -6425,343 +7383,396 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
         <translation>Conexión:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="219"/>
         <source>Connect and list available databases</source>
-        <translation>Conectar y listar las bases de datos disponibles</translation>
+        <translation type="vanished">Conectar y listar las bases de datos disponibles</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="222"/>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1025"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1094"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="272"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="235"/>
         <source>Database:</source>
         <translation>bases de datos:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="291"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="276"/>
         <source> Options</source>
         <translation> Opciones</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="320"/>
         <source>Ignores as many as possible errors on import step. This option generates a incomplete diff.</source>
-        <translation>Ignora mayor número posible de errores en la etapa de importación. Esta opción genera un diff incompleta.</translation>
+        <translation type="vanished">Ignora mayor número posible de errores en la etapa de importación. Esta opción genera un diff incompleta.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="323"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="308"/>
         <source>Ignore import errors</source>
         <translation>Ignorar errores de importación</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="375"/>
         <source>Clears the data of all tables which will have columns modified. This is useful to avoid errors related to type casting. &lt;strong&gt;WARNING:&lt;/strong&gt; DO NOT use this option on production server and always make a backup before use this options.</source>
-        <translation>Borra los datos de todas las tablas que se han modificado las columnas. Esto es útil para evitar errores relacionados con el tipo de conversión. &lt;strong&gt;ADVERTENCIA:&lt;/strong&gt; NO use esta opción en el servidor de producción y siempre hacer una copia de seguridad antes de utilizar esta opción.</translation>
+        <translation type="vanished">Borra los datos de todas las tablas que se han modificado las columnas. Esto es útil para evitar errores relacionados con el tipo de conversión. &lt;strong&gt;ADVERTENCIA:&lt;/strong&gt; NO use esta opción en el servidor de producción y siempre hacer una copia de seguridad antes de utilizar esta opción.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="378"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="363"/>
         <source>Trucate tables before alter columns</source>
         <translation>Trucate tablas antes alterar las  columnas</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="420"/>
         <source>Import system (built in) objects. Use this if the import step is returning errors.</source>
-        <translation>Sistema de Importación (incorporada) objetos. Utilice esta opción si el paso de importación está volviendo errores.</translation>
+        <translation type="vanished">Sistema de Importación (incorporada) objetos. Utilice esta opción si el paso de importación está volviendo errores.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="423"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="408"/>
         <source>Import system objects</source>
         <translation>Importar objectos del sistema</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="465"/>
         <source>Import extension objects. Use this if the import step is returning errors even importing built in ones.</source>
-        <translation>Importar extensión de objecto. Utilice esta opción si el paso de importación está volviendo errores incluso importadora construidas en unos.</translation>
+        <translation type="vanished">Importar extensión de objecto. Utilice esta opción si el paso de importación está volviendo errores incluso importadora construidas en unos.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="468"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="453"/>
         <source>Import extension objects</source>
         <translation>Importar extensión de objecto</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="507"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="492"/>
         <source>For DROP command, the objects that depends on an object to be dropped will be deleted as well. For TRUNCATE command, tables that are linked to a table to be truncated will be truncate too. &lt;strong&gt;NOTE:&lt;/strong&gt; this option can affect more objects than listed in the output or diff preview.</source>
         <translation>Para comando DROP, los objetos que depende de un objeto que se retiren serán eliminados también. Para comando TRUNCATE, tablas que están vinculadas a una mesa para truncar se truncará también. &lt;strong&gt;NOTA:&lt;/strong&gt; esta opción puede afectar a varios objetos que se enumeran en la salida o diff vista previa.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="510"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="495"/>
         <source>Drop or truncate in cascade mode</source>
         <translation>Drop o truncate en cascada mode</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="549"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="534"/>
         <source>Permissions already set on database objects will be kept.The ones configured on the model will be applied to the database.</source>
         <translation>Permisos ya establecidos en los objetos de base de datos serán los kept.The configuradas en el modelo se puede aplicar a la base de datos.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="552"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="537"/>
         <source>Keep object&apos;s permissions</source>
         <translation>Mantenga los permisos del objeto</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="591"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="576"/>
         <source>Database cluster level objects like roles and tablespaces will not be dropped.</source>
         <translation>No se cayeron objetos de base de datos a nivel de grupo como los roles y espacios de tabla.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="594"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="579"/>
         <source>Keep cluster objects</source>
         <translation>Mantenga objetos clúster</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="636"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="621"/>
         <source>Recreate only unmodifiable objects</source>
         <translation>Recrear objetos sólo no modificables</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="687"/>
         <source>Instead of use an ALTER command to modify certain kind of objects a DROP and CREATE will be used in order to do a full modification. This option does not affects database objects.</source>
-        <translation>En lugar de utilizar el comando ALTER para modificar un cierto tipo de objetos un DROP y CREATE serán utilizados con el fin de hacer una modificación completa. Esta opción no afecta a los objetos de base de datos.</translation>
+        <translation type="vanished">En lugar de utilizar el comando ALTER para modificar un cierto tipo de objetos un DROP y CREATE serán utilizados con el fin de hacer una modificación completa. Esta opción no afecta a los objetos de base de datos.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="690"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="675"/>
         <source>Force recreation of objects</source>
         <translation>Forzar recreación de objetos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="738"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="723"/>
         <source>Ignores errors generated by duplicated objects when exporting the diff to database.</source>
         <translation>Ignora errores generados por objetos duplicados cuando se exporta el diff de base de datos.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="741"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="726"/>
         <source>Ignore duplicity errors</source>
         <translation>Ignorar duplicidad de errores</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="780"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="765"/>
         <source>Serial columns are converted to integer and having the default value changed  to &lt;strong&gt;nextval(sequence)&lt;/strong&gt; function call. By default, a new sequence is created for each serial column but checking this option sequences matching the name on column&apos;s default value will be reused and will not be dropped.</source>
         <translation>Columnas de serie se convierten a entero y haber cambiado el valor predeterminado para llamada a la función &lt;strong&gt;nextval(sequence)&lt;/strong&gt;. De forma predeterminada, se crea una nueva secuencia para cada columna de serie, pero marcando esta opción secuencias que coinciden con el nombre en valor por defecto de la columna se volverá a utilizar y no se borró.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="783"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="768"/>
         <source>Reuse sequences on serial columns</source>
         <translation>Reciclar secuencias sobre columnas de serial</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="826"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="895"/>
         <source>Diff mode</source>
         <translation>Modo diff</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="846"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="915"/>
         <source>Override the PostgreSQL version when generating the diff. The default is to use the same version as the input database.</source>
         <translation>Anular la versión de PostgreSQL al generar el diff. El valor por defecto es usar la misma versión que la base de datos de entrada.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="849"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="918"/>
         <source>Use PostgreSQL:</source>
         <translation>Use PostgreSQL:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="917"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="986"/>
         <source>Compares the model and the input database storing the diff in a SQL file for later usage.</source>
         <translation>Compara el modelo y la base de datos de entrada almacenar el diff en un archivo SQL para un uso posterior.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="920"/>
         <source>Store in SQL file</source>
-        <translation>Almacenar en archivo SQL</translation>
+        <translation type="vanished">Almacenar en archivo SQL</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1006"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1075"/>
         <source>File:</source>
         <translation>Archivo:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1022"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1091"/>
         <source>Select output file</source>
         <translation>Seleccionar archivo de salida</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1075"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1144"/>
         <source>Compares the model and the input database generating a diff and applying it directly to the latter. &lt;strong&gt;WARNING:&lt;/strong&gt; this mode causes irreversible changes on the database and in case of failure the original structure is not restored, so make sure to have a backup before proceed.</source>
         <translation>Compara el modelo y la base de datos de entrada generar un diff y aplicándolo directamente a éste. &lt; strong&gt;ADVERTENCIA:&lt;/strong&gt; este modo provoca cambios irreversibles en la base de datos y en caso de fallo de la estructura original no se restablece, así que asegúrese de tener una copia de seguridad antes de proceder.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1078"/>
         <source>Apply on server</source>
-        <translation>Aplicar en el servidor</translation>
+        <translation type="vanished">Aplicar en el servidor</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1142"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="305"/>
+        <source>Ignores as many as possible errors on import step. This option generates an incomplete diff.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="360"/>
+        <source>Clears the data of all tables which will have columns modified. This is useful to avoid errors related to type casting. &lt;strong&gt;WARNING:&lt;/strong&gt; DO NOT use this option on production servers and always make a backup before use it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="405"/>
+        <source>Import system (built-in) objects. Use this if the import step is returning errors related to missing objects.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="450"/>
+        <source>Import objects created by extensions. Use this if the import step is returning errors even importing built in ones.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="672"/>
+        <source>Instead of use an ALTER command to modify certain kind of objects a DROP and CREATE will be used in order to do a full modification. This option does not affects the database object.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="807"/>
+        <source>No command to rename the destination database will be generated even the model&apos;s name differ from database name.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="810"/>
+        <source>Preserve database name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="849"/>
+        <source>Avoid the generation of DROP commands for objects that exists in database but not in the model. This is useful when diff a partial model against the complete database.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="852"/>
+        <source>Do not drop missing objects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="989"/>
+        <source>Store in S&amp;QL file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1147"/>
+        <source>Appl&amp;y on server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1211"/>
         <source>Output</source>
         <translation>Salida</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1223"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1292"/>
         <source>Changes:</source>
         <translation>Cambios:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1288"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1369"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1356"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1437"/>
         <source>Progress label...</source>
         <translation>Etiqueta de progreso...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1369"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1450"/>
         <source>Step label...</source>
         <translation>Etiqueta de pasos...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1451"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1531"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Objects marked with an &lt;span style=&quot; font-weight:600;&quot;&gt;ALTER&lt;/span&gt; may not be effectively changed unless that the differences detected are in attributes that can be modified through ALTER commands otherwise no operationwill be performed or, if the force recreation is checked, the object will be dropped and created again.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Objetos marcados con un &lt;span style=&quot; font-weight:600;&quot;&gt;ALTER&lt;/span&gt; No se puede cambiar de manera efectiva a menos que las diferencias detectadas son en los atributos que se pueden modificar a través de comandos ALTER de lo contrario no se realizará ninguna operationwill o, si la fuerza de la recreación está marcada, el objeto será dado de baja y creó de nuevo.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1503"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1583"/>
         <source>Objects to be created</source>
         <translation>Objetos que se creen</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1506"/>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1547"/>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1588"/>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1629"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1586"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1627"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1668"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1709"/>
         <source>0</source>
         <translation>0</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1544"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1624"/>
         <source>Objects to be dropped</source>
         <translation>Objetos que se borran</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1585"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1665"/>
         <source>Possible objects to be changed</source>
         <translation>Objetos posibles de ser cambiados</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1626"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1706"/>
         <source>Ignored objects (system ones or with sql disabled)</source>
         <translation>Objetos ignorados (los del sistema o con sql disabilitado)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1672"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1752"/>
         <source>Diff Preview</source>
         <translation>Vista previa Diff</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1708"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1798"/>
         <source>&amp;Apply diff</source>
         <translation>&amp;Aplicar diff</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1793"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1874"/>
         <source>&amp;Generate</source>
         <translation>&amp;Generar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1825"/>
+        <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1912"/>
         <source>&amp;Close</source>
         <translation>&amp;Cerrar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="236"/>
-        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="238"/>
+        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="263"/>
+        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="265"/>
         <source>Waiting process to start...</source>
         <translation>Proceso en espera para iniciar...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="311"/>
+        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="354"/>
         <source>Importing database &lt;strong&gt;%1&lt;/strong&gt;...</source>
         <translation>Importando base de datos &lt;strong&gt;%1&lt;/strong&gt;...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="347"/>
+        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="391"/>
         <source>Comparing the model &lt;strong&gt;%1&lt;/strong&gt; and database &lt;strong&gt;%2&lt;/strong&gt;...</source>
         <translation>Comparando el modelo &lt;strong&gt;%1&lt;/strong&gt; y la base de datos &lt;strong&gt;%2&lt;/strong&gt;...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="382"/>
+        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="428"/>
         <source>Confirmation</source>
         <translation>Confirmación</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="383"/>
+        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="429"/>
         <source> &lt;strong&gt;WARNING:&lt;/strong&gt; The generated diff is ready to be exported! Once started this process will cause irreversible changes on the database. Do you really want to proceed?</source>
         <translation>&lt;strong&gt;ADVERTENCIA:&lt;/strong&gt; El diff generada está listo para ser exportado! Una vez iniciado este proceso provocará cambios irreversibles en la base de datos. ¿Realmente desea continuar?</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="385"/>
+        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="431"/>
         <source>Apply diff</source>
         <translation>Aplicar diff</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="385"/>
+        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="431"/>
         <source>Preview diff</source>
         <translation>Vista previa Diff</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="393"/>
+        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="439"/>
         <source>Exporting diff to database &lt;strong&gt;%1&lt;/strong&gt;...</source>
         <translation>Exportando diff a base de datos &lt;strong&gt;%1&lt;/strong&gt;...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="416"/>
+        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="462"/>
         <source>Diff process paused. Waiting user action...</source>
         <translation>Proceso Diff en pausa. Esperando acción del usuario...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="451"/>
+        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="497"/>
         <source>Saving diff to file &lt;strong&gt;%1&lt;/strong&gt;</source>
         <translation>Guardando diff a archivo &lt;strong&gt;%1&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="474"/>
+        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="520"/>
         <source>Diff process sucessfully ended!</source>
         <translation>Proceso Diff finalizado satisfactoriamente!</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="475"/>
-        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="490"/>
+        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="521"/>
+        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="536"/>
         <source>No operations left.</source>
         <translation>No hay operaciones a la izquierda.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="489"/>
+        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="535"/>
         <source>Operation cancelled by the user.</source>
         <translation>Operación cancelada por el usuario.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="525"/>
+        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="571"/>
         <source>Process aborted due to errors!</source>
         <translation>Proceso abortado debido a errores!</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="563"/>
+        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="605"/>
+        <source>
+
+-- SQL code purposely truncated at this point in demo version!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="621"/>
         <source>-- No differences were detected between model and database. --</source>
         <translation>--  No se detectaron diferencias entre el modelo y la base de datos. --</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="578"/>
+        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="636"/>
         <source>Error code &lt;strong&gt;%1&lt;/strong&gt; found and ignored. Proceeding with export.</source>
         <translation>Error de código encontrado &lt;strong&gt;%1&lt;/strong&gt; y ignorado. Procediendo con la exportación.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="669"/>
+        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="727"/>
         <source>Save diff as...</source>
         <translation>Salvar diff como...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="673"/>
+        <location filename="../libpgmodeler_ui/src/modeldatabasediffform.cpp" line="731"/>
         <source>SQL code (*.sql);;All files (*.*)</source>
         <translation>Código SQL (*.sql);;Todos los archivos (*.*)</translation>
     </message>
@@ -6789,186 +7800,222 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
         <translation>Servidor de Bases de datos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="371"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="380"/>
         <source>pgModeler ignores errors generated by duplicated objects and creates only that ones which does not exists in the database. This option may be used when an object was created after a previous model export.</source>
         <translation>El pgModeler ignora los errores generados por objetos duplicados y sólo crea objetos del modelo que no existen en la base de datos. Esta opción se puede usar cuando un objeto fue creado después de una exportación de modelo posterior.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="374"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="383"/>
         <source>Ignore object duplicity</source>
         <translation>Ignorar duplicidad de objetos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="420"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="429"/>
         <source>Connection:</source>
         <translation>Conexión:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="436"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="445"/>
         <source>PostgreSQL version in which the SQL code should be generated. It is recommended to select this option only when the version of the DBMS, somehow, is not identifiable or if you need to generate a specific version of SQL code for test purposes.</source>
         <translation>PostgreSQL versión en la que se debe generar el código SQL. Se recomienda seleccionar esta opción sólo cuando la versión del SGDB, de alguna manera, no es identificable o si usted necesita para generar una versión específica de código SQL con fines de prueba.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="439"/>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="1008"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="448"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="1062"/>
         <source>PostgreSQL:</source>
         <translation>PostgreSQL:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="463"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="472"/>
         <source>If &lt;strong&gt;DB&lt;/strong&gt; is checked pgModeler will destroy the database if already exists on the server. When &lt;strong&gt;Objects&lt;/strong&gt; is checked pgModeler will execute the DROP command attached to SQL-enabled objects. &lt;strong&gt;WARNING:&lt;/strong&gt; this option leads to data loss so make sure to have a backup first.</source>
         <translation>Si &lt;strong&gt;BD&lt;/strong&gt; se comprueba pgModeler destruirá la base de datos si ya existe en el servidor. Cuando &lt;strong&gt;Objetos&lt;/strong&gt; se comprueba pgModeler ejecutará el comando DROP unido a objetos de SQL-habilitado. &lt;strong&gt;ADVERTENCIA:&lt;/strong&gt; esta opción conduce a la pérdida de datos, así que asegúrese de tener una copia de seguridad primero.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="466"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="475"/>
         <source>Drop:</source>
         <translation>Borrar:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="476"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="485"/>
         <source>DB</source>
         <translation>BD</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="489"/>
         <source>Objects</source>
-        <translation>Objectos</translation>
+        <translation type="vanished">Objectos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="514"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="523"/>
         <source>pgModeler will destroy the database if already exists on the server. Make sure to have a backup before use this option because all data will be lost.</source>
         <translation>pgModeler destruirá la base de datos si ya existe en el servidor. Asegúrese de tener una copia de seguridad antes de usar esta opción porque se perderán todos los datos.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="529"/>
         <source>PNG Image</source>
-        <translation>Imagen PNG</translation>
+        <translation type="vanished">Imagen PNG</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="644"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="651"/>
         <source>Zoom:</source>
         <translation>Zoom:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="675"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="797"/>
         <source>Show grid</source>
         <translation>Mostrar cuadrícula</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="691"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="813"/>
         <source>Show delimiters</source>
         <translation>Mostrar delimitadores</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="707"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="829"/>
         <source>Exporting the model page by page will generate files with a &lt;strong&gt;_p[n]&lt;/strong&gt; suffix where &lt;strong&gt;n&lt;/strong&gt; is the page id. Check if the current user has write permission on output folder.</source>
         <translation>Exportación de la página modelo por página generará archivos con un &lt;strong&gt;_p[n]&lt;/strong&gt; sufijo donde &lt;strong&gt;n&lt;/strong&gt; es el identificador de página. Compruebe si el usuario actual tiene permiso de escritura en la carpeta de salida.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="710"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="832"/>
         <source>Page by page</source>
         <translation>Página por página</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="778"/>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="969"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="751"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="1023"/>
         <source>Select target file</source>
         <translation>Seleccionar archivo de destino</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="781"/>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="972"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="754"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="1026"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="815"/>
         <source>Image:</source>
-        <translation>Imagen:</translation>
+        <translation type="vanished">Imagen:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="828"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="882"/>
         <source>SQL file</source>
         <translation>Archivo SQL</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="938"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="673"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="992"/>
         <source>File:</source>
         <translation>Archivo:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="1032"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="498"/>
+        <source>Ob&amp;jects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="538"/>
+        <source>Graphics file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="599"/>
+        <source>Image (PNG)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="624"/>
+        <source>Type:</source>
+        <translation type="unfinished">Tipo:</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="720"/>
+        <source>Vectorial (SVG)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="1086"/>
         <source>PostgreSQL version in which the SQL code should be generated</source>
         <translation>PostgreSQL versión en la que se debe generar el código SQL</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="1064"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="1131"/>
         <source>Output</source>
         <translation>Salida</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="1150"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="1217"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="1176"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="1243"/>
         <source>Progress label...</source>
         <translation>Etiqueta de progreso...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="1262"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="1354"/>
         <source>&amp;Export</source>
         <translation>&amp;Exportar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="1294"/>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="1392"/>
         <source>&amp;Close</source>
         <translation>&amp;Cerrar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexportform.cpp" line="104"/>
+        <location filename="../libpgmodeler_ui/src/modelexportform.cpp" line="115"/>
         <source>Error code &lt;strong&gt;%1&lt;/strong&gt; found and ignored. Proceeding with export.</source>
         <translation>Error de código encontrado en &lt;strong&gt;%1&lt;/strong&gt; y ignorado. Procediendo con la exportación.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexportform.cpp" line="173"/>
+        <location filename="../libpgmodeler_ui/src/modelexportform.cpp" line="184"/>
         <source>Initializing model export...</source>
         <translation>Inicializando exportación del modelo...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexportform.cpp" line="178"/>
+        <location filename="../libpgmodeler_ui/src/modelexportform.cpp" line="189"/>
         <source>Saving file &apos;%1&apos;</source>
         <translation>Guardar archivo &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexportform.cpp" line="203"/>
-        <location filename="../libpgmodeler_ui/src/modelexportform.cpp" line="274"/>
+        <location filename="../libpgmodeler_ui/src/modelexportform.cpp" line="214"/>
+        <location filename="../libpgmodeler_ui/src/modelexportform.cpp" line="292"/>
         <source>Exporting process aborted!</source>
         <translation>Porceso de exportación abortado!</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexportform.cpp" line="232"/>
+        <location filename="../libpgmodeler_ui/src/modelexportform.cpp" line="243"/>
         <source>Export model as...</source>
         <translation>Exportar modelo como...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexportform.cpp" line="240"/>
+        <location filename="../libpgmodeler_ui/src/modelexportform.cpp" line="251"/>
+        <source>SQL script (*.sql);;All files (*.*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/modelexportform.cpp" line="258"/>
+        <source>Portable Network Graphics (*.png);;All files (*.*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/modelexportform.cpp" line="263"/>
+        <source>Scalable Vector Graphics (*.svg);;All files (*.*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>SQL code (*.sql);;All files (*.*)</source>
-        <translation>Código SQL(*.sql);;Todos los archivos (*.*)</translation>
+        <translation type="vanished">Código SQL(*.sql);;Todos los archivos (*.*)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexportform.cpp" line="245"/>
         <source>Imagen PNG  (*.png);;Todos los archivos (*.*)</source>
-        <translation>Imagen PNG  (*.png);;Todos los archivos (*.*)</translation>
+        <translation type="vanished">Imagen PNG  (*.png);;Todos los archivos (*.*)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexportform.cpp" line="288"/>
+        <location filename="../libpgmodeler_ui/src/modelexportform.cpp" line="306"/>
         <source>Exporting process canceled by user!</source>
         <translation>Proceso de exportación cancelada por el usuario!</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexportform.cpp" line="298"/>
+        <location filename="../libpgmodeler_ui/src/modelexportform.cpp" line="316"/>
         <source>Exporting process sucessfuly ended!</source>
         <translation>Proceso de exportación terminó satisfactoriamente! </translation>
     </message>
@@ -6976,123 +8023,156 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
 <context>
     <name>ModelExportHelper</name>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="40"/>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="52"/>
         <source>Generating SQL code for PostgreSQL `%1&apos;</source>
         <translation>Generación de código SQL para PostgreSQL `%1&apos;</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="45"/>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="57"/>
         <source>Output SQL file `%1&apos; successfully written.</source>
         <translation>Archivo SQL de salida `%1&apos; escrito satisfactoriamente.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="167"/>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="179"/>
         <source>Rendering objects to page %1/%2.</source>
         <translation>Renderiando objetos a la página %1/%2.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="194"/>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="206"/>
         <source>Output image `%1&apos; successfully written.</source>
         <translation>Imagen de salida `%1&apos; escrito satisfactoriamente.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="243"/>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="239"/>
+        <source>Exporting model to SVG file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="244"/>
+        <source>SVG representation of database model</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="245"/>
+        <source>SVG file generated by pgModeler</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="287"/>
+        <source>Output file `%1&apos; successfully written.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="325"/>
         <source>Starting export to DBMS.</source>
         <translation>Comenzando exportación a SGDB.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="249"/>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="331"/>
         <source>PostgreSQL version detection overridden. Using version `%1&apos;.</source>
         <translation>Versión detección PostgreSQL anulado. Al usar la versión. Usar la versión `%1&apos;.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="254"/>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="336"/>
         <source>PostgreSQL `%1&apos; server detected.</source>
         <translation>Servidor PostgreSQL `%1&apos; detectado.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="259"/>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="341"/>
         <source>Generating temporary names for database, roles and tablespaces.</source>
         <translation>Generar nombres temporales para bases de datos, roles y tablespaces.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="270"/>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="352"/>
         <source>Enabling the SQL code for database `%1&apos; to avoid errors.</source>
         <translation>Habilitar el código SQL para la base de datos `%1&apos; para evitar errores.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="276"/>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="358"/>
         <source>Ignoring object duplication errors.</source>
         <translation>Ignorando los errores de duplicación de objetos.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="283"/>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="365"/>
         <source>Ignoring the following error code(s): `%1&apos;.</source>
         <translation>Ignorando el código de error siguiente (s): `%1&apos;.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="287"/>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="369"/>
         <source>Trying to drop database `%1&apos;.</source>
         <translation>Tratando de borrarr la base de datos `%1&apos;.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="292"/>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="374"/>
         <source>Simulation mode activated.</source>
         <translation>Modo de simulación activado.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="310"/>
-        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="740"/>
         <source>Creating object `%1&apos; (%2).</source>
-        <translation>Creación de objetos `%1&apos; (%2).</translation>
+        <translation type="vanished">Creación de objetos `%1&apos; (%2).</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="343"/>
         <source>Creating database `%1&apos;.</source>
-        <translation>Creando basea de datos `%1&apos;.</translation>
+        <translation type="vanished">Creando basea de datos `%1&apos;.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="373"/>
         <source>Connecting to database `%1&apos;.</source>
-        <translation>Conectando a base de datos`%1&apos;.</translation>
+        <translation type="vanished">Conectando a base de datos`%1&apos;.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="381"/>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="463"/>
         <source>Generating SQL for `%1&apos; objects...</source>
         <translation>Generación de SQL para los objetos `%1&apos;...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="510"/>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="592"/>
         <source>Destroying objects created on the server.</source>
         <translation>Destruyendo los objetos creados en el servidor.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="536"/>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="618"/>
         <source>Restoring original names of database, roles and tablespaces.</source>
         <translation>Restauración de los nombres originales de base de datos, roles y tablespaces.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="738"/>
         <source>Dropping object `%1&apos; (%2).</source>
-        <translation>Borrando objetos `%1&apos; (%2).</translation>
+        <translation type="vanished">Borrando objetos `%1&apos; (%2).</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="810"/>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="392"/>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="829"/>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="910"/>
         <source>Creating object `%1&apos; (%2)</source>
         <translation>Creando objecto `%1&apos; (%2)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="812"/>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="425"/>
+        <source>Creating database `%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="455"/>
+        <source>Connecting to database `%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="668"/>
+        <source>Renaming `%1&apos; (%2) to `%3&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="827"/>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="912"/>
         <source>Dropping object `%1&apos; (%2)</source>
         <translation>Borrando objetos `%1&apos; (%2)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="814"/>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="914"/>
         <source>Changing object `%1&apos; (%2)</source>
         <translation>Cambiando objecto `%1&apos; (%2)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="827"/>
+        <location filename="../libpgmodeler_ui/src/modelexporthelper.cpp" line="927"/>
         <source>Running auxiliary command.</source>
         <translation>Ejecución de comandos auxiliar.</translation>
     </message>
@@ -7105,107 +8185,115 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
         <translation>Fijar archivo Modelo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="97"/>
+        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="475"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Monospace&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Waiting process to start...&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="727"/>
         <source>&amp;Fix</source>
         <translation>&amp;Fijar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="129"/>
+        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="765"/>
         <source>&amp;Close</source>
         <translation>&amp;Cerrar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="218"/>
+        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="124"/>
         <source>Fix model file</source>
         <translation>Fijar archivo Modelo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="321"/>
+        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="226"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;[pgmodeler-cli not found error]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;[pgmodeler-error no encontrado]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="340"/>
+        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="245"/>
         <source>pgmodeler-cli:</source>
         <translation>pgmodeler-cli:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="364"/>
+        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="263"/>
         <source>Browse for pgmodeler-cli tool</source>
         <translation>Navegue por herramienta pgmodeler-cli</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="367"/>
-        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="611"/>
-        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="647"/>
+        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="266"/>
+        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="503"/>
+        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="533"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="427"/>
+        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="325"/>
         <source>The specified file is not the pgModeler command line tool (pgmodeler-cli).</source>
         <translation>El archivo especificado no es la herramienta de línea de comandos pgModeler (pgmodeler-cli).</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="442"/>
+        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="340"/>
         <source>Input file:</source>
         <translation>Archivo entrada:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="455"/>
+        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="353"/>
         <source>Output file:</source>
         <translation>Archivo salida:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="462"/>
+        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="360"/>
         <source>Fix tries:</source>
         <translation>Fijar intentos:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="577"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Monospace&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Waiting process to start...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="vanished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Monospace&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Proceso que espera para iniciar...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="608"/>
+        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="500"/>
         <source>Select input file</source>
         <translation>Seleccionar archivo entrada</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="644"/>
+        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="530"/>
         <source>Select output file</source>
         <translation>Seleccionar archivo salida</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="684"/>
+        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="570"/>
         <source>Load fixed model when finish</source>
         <translation>Modelo fijo de carga cuando acabado</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="774"/>
+        <location filename="../libpgmodeler_ui/ui/modelfixform.ui" line="659"/>
         <source>In some cases the fix process will fail to restore all objects within the model demanding manual fixes by changing the file on a text editor. &lt;strong&gt;NOTE:&lt;/strong&gt; relationships may lost their graphical configuration like custom points and line color.</source>
         <translation>En algunos casos, el Proceso Fijar no podrá restaurar todos los objetos dentro del modelo exigir correcciones manuales cambiando el archivo en un editor de texto. &lt;strong&gt;NOTA:&lt;/strong&gt; relaciones pueden perdido su configuración gráfica como puntos de medida y color de la línea.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelfixform.cpp" line="64"/>
+        <location filename="../libpgmodeler_ui/src/modelfixform.cpp" line="69"/>
         <source>Waiting process to start...</source>
         <translation>Proceso esperandi para iniciar...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelfixform.cpp" line="75"/>
+        <location filename="../libpgmodeler_ui/src/modelfixform.cpp" line="80"/>
         <source>Could not locate &lt;strong&gt;%1&lt;/strong&gt; tool on &lt;strong&gt;%2&lt;/strong&gt;. The fix process can&apos;t continue! Please check pgModeler installation or try to manually specify the command below.</source>
         <translation>No se pudo encontrar &lt;strong&gt;%1&lt;/strong&gt; herramienta en &lt;strong&gt;%2&lt;/strong&gt;. El proceso de corrección no puede continuar! Por favor verifique la instalación pgModeler o tratar de especificar manualmente el comando a continuación.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelfixform.cpp" line="146"/>
+        <location filename="../libpgmodeler_ui/src/modelfixform.cpp" line="151"/>
         <source>pgModeler command line tool (%1)</source>
         <translation>pgModeler herramienta de línea de comandos (%1)</translation>
     </message>
@@ -7224,8 +8312,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelnavigationwidget.ui" line="75"/>
+        <source>Ctrl+Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modelnavigationwidget.ui" line="116"/>
+        <source>Ctrl+Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modelnavigationwidget.ui" line="170"/>
+        <source>Alt+C</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Ctrl+Up</source>
-        <translation>Ctrl+Up</translation>
+        <translation type="vanished">Ctrl+Up</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelnavigationwidget.ui" line="100"/>
@@ -7233,9 +8335,8 @@ p, li { white-space: pre-wrap; }
         <translation>Siguiente modelo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelnavigationwidget.ui" line="116"/>
         <source>Ctrl+Down</source>
-        <translation>Ctrl+Down</translation>
+        <translation type="vanished">Ctrl+Down</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelnavigationwidget.ui" line="154"/>
@@ -7248,7 +8349,7 @@ p, li { white-space: pre-wrap; }
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelnavigationwidget.cpp" line="64"/>
+        <location filename="../libpgmodeler_ui/src/modelnavigationwidget.cpp" line="73"/>
         <source>(model not saved yet)</source>
         <translation>(modelo no guarda aún)</translation>
     </message>
@@ -7268,11 +8369,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="124"/>
-        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="683"/>
-        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="721"/>
-        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="756"/>
-        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="794"/>
-        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="829"/>
+        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="693"/>
+        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="731"/>
+        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="766"/>
+        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="804"/>
+        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="839"/>
         <source>...</source>
         <translation>...</translation>
     </message>
@@ -7282,102 +8383,102 @@ p, li { white-space: pre-wrap; }
         <translation>1</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="397"/>
+        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="392"/>
         <source>ID</source>
         <translation>ID</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="406"/>
+        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="404"/>
         <source>Object</source>
         <translation>Objecto</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="415"/>
+        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="416"/>
         <source>Type</source>
         <translation>Tipo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="424"/>
+        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="428"/>
         <source>Parent Object</source>
         <translation>Objeto Padre</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="433"/>
+        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="440"/>
         <source>Parent Type</source>
         <translation>Tipo del Padre</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="459"/>
+        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="469"/>
         <source>Visible Object Types</source>
         <translation>Tipos de objetos visibles</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="532"/>
+        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="542"/>
         <source>Select All</source>
         <translation>Marcar Todos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="545"/>
+        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="555"/>
         <source>Clear All</source>
         <translation>Desmarcar Todos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="607"/>
+        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="617"/>
         <source>Select</source>
         <translation>Selecionar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="623"/>
+        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="633"/>
         <source>Return</source>
         <translation>Retorno</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="642"/>
+        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="652"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="658"/>
+        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="668"/>
         <source>Esc</source>
         <translation>Esc</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="677"/>
+        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="687"/>
         <source>Tree view</source>
         <translation>Vista en árbol</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="718"/>
+        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="728"/>
         <source>List view</source>
         <translation>Vista en lista</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="753"/>
+        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="763"/>
         <source>Objects view configuration</source>
         <translation>Configuración de la Vista de objetos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="791"/>
+        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="801"/>
         <source>Expands all items</source>
         <translation>Expande todos los items</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="826"/>
+        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="836"/>
         <source>Collapses all items</source>
         <translation>Contrae todos los items</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="868"/>
+        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="878"/>
         <source>Filter:</source>
         <translation>Filtrar:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="882"/>
+        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="895"/>
         <source>By ID</source>
         <translation>Por ID</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelobjectswidget.cpp" line="157"/>
+        <location filename="../libpgmodeler_ui/src/modelobjectswidget.cpp" line="165"/>
         <source>New</source>
         <translation>Nuevo</translation>
     </message>
@@ -7398,45 +8499,64 @@ p, li { white-space: pre-wrap; }
         <translation>Restauración de modelos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelrestorationform.ui" line="159"/>
+        <location filename="../libpgmodeler_ui/ui/modelrestorationform.ui" line="214"/>
         <source>pgModeler was not closed properly in a previous execution and some models were still being edited. Click &lt;strong&gt;Restore&lt;/strong&gt; to reopen the models or &lt;strong&gt;Cancel&lt;/strong&gt; to abort the restoration.</source>
         <translation>pgModeler no se cerró correctamente en una ejecución anterior y todavía se está editando algunos modelos. Haga clic en &apos;Restaurar&apos; para reabrir los modelos o &apos;Cancelar&apos; para abortar la restauración.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelrestorationform.ui" line="207"/>
+        <location filename="../libpgmodeler_ui/ui/modelrestorationform.ui" line="238"/>
         <source>pgModeler will try to recover the selected models but will not destroy them in case of loading failure. This option serves as a last resort in order to try to recover the database model. Temporary models will last until the application is closed so the user must try to manually recover the files before exit pgModeler.</source>
         <translation>pgModeler tratará de recuperar los modelos seleccionados, pero no destruirlos en caso de fallo de carga. Esta opción sirve como último recurso con el fin de tratar de recuperar el modelo de base de datos. Modelos temporales durarán hasta que la aplicación está cerrada por lo que el usuario debe intentar recuperar manualmente los archivos antes de la salida pgModeler.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelrestorationform.ui" line="210"/>
+        <location filename="../libpgmodeler_ui/ui/modelrestorationform.ui" line="241"/>
         <source>Keep temporary models in case of restoration failure</source>
         <translation>Mantenga modelos temporales en caso de fallo de restauración</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelrestorationform.ui" line="281"/>
+        <location filename="../libpgmodeler_ui/ui/modelrestorationform.ui" line="294"/>
+        <source>Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modelrestorationform.ui" line="306"/>
+        <source>File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modelrestorationform.ui" line="318"/>
+        <source>Modified</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modelrestorationform.ui" line="330"/>
+        <source>Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modelrestorationform.ui" line="362"/>
         <source>&amp;Cancel</source>
         <translation>&amp;Cancelar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelrestorationform.ui" line="322"/>
+        <location filename="../libpgmodeler_ui/ui/modelrestorationform.ui" line="78"/>
         <source>&amp;Restore</source>
         <translation>&amp;Restaurar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelrestorationform.cpp" line="53"/>
         <source>Modified: %1</source>
-        <translation>Modificado: %1</translation>
+        <translation type="vanished">Modificado: %1</translation>
     </message>
 </context>
 <context>
     <name>ModelValidationHelper</name>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelvalidationhelper.cpp" line="564"/>
+        <location filename="../libpgmodeler_ui/src/modelvalidationhelper.cpp" line="556"/>
         <source>There are pending errors! SQL validation will not be executed.</source>
         <translation>Hay errores pendientes! No se ejecutará la validación de SQL.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelvalidationhelper.cpp" line="647"/>
+        <location filename="../libpgmodeler_ui/src/modelvalidationhelper.cpp" line="639"/>
         <source>Operation canceled by the user.</source>
         <translation>Operación cancelada por el usuario.</translation>
     </message>
@@ -7444,133 +8564,148 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ModelValidationWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="26"/>
+        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="32"/>
         <source>Form</source>
         <translation>Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="91"/>
+        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="156"/>
+        <source>Enables the validation of SQL code in DBMS. This process requires the use of a pre-configured connection. SQL validation will occur only in the last step (when all objects were validated) or when there are no warnings.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="190"/>
+        <source>Connection to be used in the SQL validation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="278"/>
+        <source>pgModeler will generate unique and temporary names for database, role and tablespace objects. This option avoids object duplication errors when running the SQL validation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="281"/>
+        <source>Use unique temporary names for cluster level objects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="524"/>
         <source>Warnings: does not prevents model to be saved.</source>
         <translation>Advertencias: no previene modelo para ser salvos.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="116"/>
-        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="204"/>
+        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="549"/>
+        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="637"/>
         <source>0</source>
         <translation>0</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="176"/>
+        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="609"/>
         <source>Errors: model will not be saved while there are validation errors.</source>
         <translation>Errores: modelo no se guardará mientras que hay errores de validación.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="279"/>
+        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="62"/>
         <source>Hide this widget</source>
         <translation>Ocultar este widget</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="282"/>
+        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="65"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="365"/>
         <source>Use unique temporary names for database, role and tablespace objects</source>
-        <translation>Utilice nombres temporales únicos para objetos de base de datos, de rol y tablespace</translation>
+        <translation type="vanished">Utilice nombres temporales únicos para objetos de base de datos, de rol y tablespace</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="378"/>
         <source>Enable validation of SQL code on DBMS (requires connection)</source>
-        <translation>Habilitar validación de código SQL en DBMS (requiere conexión)</translation>
+        <translation type="vanished">Habilitar validación de código SQL en DBMS (requiere conexión)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="381"/>
+        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="159"/>
         <source>SQL Validation:</source>
         <translation>Validación de SQL:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="406"/>
         <source>Connection alias</source>
-        <translation>Alias de conexión</translation>
+        <translation type="vanished">Alias de conexión</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="422"/>
+        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="256"/>
         <source>PostgreSQL version</source>
         <translation>Versión PostgreSQL</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="472"/>
         <source>SQL validation, if enabled, will occur only on the last step or when there are no warnings.</source>
-        <translation>Validación de SQL, si está habilitado, se producirá sólo en el último paso o cuando no hay advertencias.</translation>
+        <translation type="vanished">Validación de SQL, si está habilitado, se producirá sólo en el último paso o cuando no hay advertencias.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="531"/>
         <source>Using temporary names will avoid object duplication errors when running the SQL validation.</source>
-        <translation>El uso de nombres temporales evitará errores de duplicación de objetos cuando se ejecuta la validación de SQL.</translation>
+        <translation type="vanished">El uso de nombres temporales evitará errores de duplicación de objetos cuando se ejecuta la validación de SQL.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="571"/>
+        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="387"/>
         <source>Try to resolve the reported issues.</source>
         <translation>Trate de resolver los problemas comunicados.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="574"/>
+        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="390"/>
         <source>Apply Fix</source>
         <translation>Aplicar Fijar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="587"/>
+        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="403"/>
         <source>Ctrl+S</source>
         <translation>Ctrl+S</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="608"/>
+        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="313"/>
         <source>Clear validation results</source>
         <translation>Limpiar resultados de la validación</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="611"/>
+        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="316"/>
         <source>Clear</source>
         <translation>Limpiar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="645"/>
+        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="750"/>
         <source>Try to apply a fix on the selected validation info.</source>
         <translation>Trate de aplicar una solución en la información de validación seleccionado.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="648"/>
+        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="753"/>
         <source>Options</source>
         <translation>Opciones</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="692"/>
+        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="709"/>
         <source>Cancel the SQL validation in progress.</source>
         <translation>Cancelar la validación de SQL en curso.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="695"/>
+        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="712"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="708"/>
+        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="725"/>
         <source>Esc</source>
         <translation>Esc</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="723"/>
+        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="422"/>
         <source>Change the creation order for two objects by swapping their ids</source>
         <translation>Cambiar el orden de la creación de dos objetos mediante el canje de sus ids</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="726"/>
+        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="425"/>
         <source>Swap Ids</source>
         <translation>Intercambiar Ids</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="757"/>
+        <location filename="../libpgmodeler_ui/ui/modelvalidationwidget.ui" line="457"/>
         <source>Va&amp;lidate</source>
         <translation>Va&amp;lidar</translation>
     </message>
@@ -7580,67 +8715,84 @@ p, li { white-space: pre-wrap; }
         <translation>Autodetectar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="221"/>
+        <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="216"/>
         <source>The object &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt; [id: %3] is being referenced by &lt;strong&gt;%4&lt;/strong&gt; object(s) before its creation.</source>
         <translation>El objeto &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt; [id:% 3] está siendo referenciado por &lt;strong&gt;%4&lt;/strong&gt; objeto(s) antes de su creación.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="236"/>
+        <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="231"/>
         <source>The object &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt; [id: %3]%4 is referencing columns created by &lt;strong&gt;%5&lt;/strong&gt; relationship(s) but is created before them.</source>
         <translation>El objeto &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt; se hace referencia a las columnas creadas por &lt;strong&gt;%5&lt;/strong&gt; relación (es), pero se crea ante ellos.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="255"/>
+        <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="250"/>
         <source>The object &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt; has a name that conflicts with &lt;strong&gt;%3&lt;/strong&gt; object&apos;s name(s).</source>
         <translation>El objeto &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt; tiene un nombre que entre en conflicto con &lt;strong&gt;%3&lt;/strong&gt; nombre(s) de objteto(s).</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="262"/>
-        <source>The relationship &lt;strong&gt;%1&lt;/strong&gt; [id: %2] is in a permanent invalidation state and need to be rellocated.</source>
-        <translation>La relación &lt;strong&gt;%1&lt;/strong&gt; [id: %2] está en un estado permanente invalidación y necesitan ser recargado.</translation>
+        <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="257"/>
+        <source>The relationship &lt;strong&gt;%1&lt;/strong&gt; [id: %2] is in a permanent invalidation state and needs to be relocated.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="266"/>
+        <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="299"/>
+        <source>&lt;strong&gt;HINT:&lt;/strong&gt; try to swap the relationship by another ones that somehow are linked to it through generated columns or constraints to solve this issue. Note that other objects may be lost in the swap process.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="417"/>
+        <source>SQL validation not executed! No connection defined.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="424"/>
+        <source>Database model successfully validated.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The relationship &lt;strong&gt;%1&lt;/strong&gt; [id: %2] is in a permanent invalidation state and need to be rellocated.</source>
+        <translation type="vanished">La relación &lt;strong&gt;%1&lt;/strong&gt; [id: %2] está en un estado permanente invalidación y necesitan ser recargado.</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="261"/>
         <source>SQL validation failed due to error(s) below. &lt;strong&gt;NOTE:&lt;/strong&gt;&lt;em&gt; These errors does not invalidates the model but may affect operations like &lt;strong&gt;export&lt;/strong&gt; and &lt;strong&gt;diff&lt;/strong&gt;.&lt;/em&gt;</source>
         <translation>Validación de SQL ha fallado debido a un error (s) a continuación. &lt;strong&gt;NOTA:&lt;/strong&gt;&lt;em&gt; Estos errores no invalida el modelo, pero pueden afectar a las operaciones como &lt;strong&gt;export&lt;/strong&gt; and &lt;strong&gt;diff&lt;/strong&gt;.&lt;/em&gt; </translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="304"/>
         <source>&lt;strong&gt;HINT:&lt;/strong&gt; try to swap the mentioned relationship by another one in order to solve this situation. Note that other objects may be lost in this process.</source>
-        <translation>&lt;strong&gt;HINT:&lt;/strong&gt; intentar cambiar la relación mencionada por otro con el fin de resolver esta situación. Tenga en cuenta que otros objetos se pueden perder en este proceso.</translation>
+        <translation type="vanished">&lt;strong&gt;HINT:&lt;/strong&gt; intentar cambiar la relación mencionada por otro con el fin de resolver esta situación. Tenga en cuenta que otros objetos se pueden perder en este proceso.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="337"/>
+        <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="332"/>
         <source>&lt;em&gt;The above object was created by a relationship. Change the name pattern on it&apos;s generator relationship. Fix will not be applied!&lt;/em&gt;</source>
         <translation>&lt;em&gt;El objetivo anterior fue creado por una relación. Cambiar el patrón de nombre en él la relación de generador. Fijar no se aplicará!&lt;/em&gt;</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="343"/>
+        <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="338"/>
         <source>Conflicting object: &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt;.</source>
         <translation>Objeto en conflicto: &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt;.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="350"/>
+        <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="345"/>
         <source>Relationship: &lt;strong&gt;%1&lt;/strong&gt; [id: %2].</source>
         <translation>Relación: &lt;strong&gt;%1&lt;/strong&gt; [id: %2].</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="355"/>
+        <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="350"/>
         <source>Referrer object: &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt; [id: %3].</source>
         <translation>Objeto referente:: &lt;strong&gt;%1&lt;/strong&gt; &lt;em&gt;(%2)&lt;/em&gt; [id: %3].</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="420"/>
         <source>Database model sucessfully validated.</source>
-        <translation>Modelo de base de datos con éxito validado.</translation>
+        <translation type="vanished">Modelo de base de datos con éxito validado.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="446"/>
+        <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="450"/>
         <source>Running SQL commands on server...</source>
         <translation>Ejecución de comandos SQL en el servidor...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="467"/>
+        <location filename="../libpgmodeler_ui/src/modelvalidationwidget.cpp" line="462"/>
         <source>Processing object: %1</source>
         <translation>Procesando object: %1</translation>
     </message>
@@ -7648,30 +8800,34 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ModelWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="77"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="78"/>
         <source>One to One (1-1)</source>
         <translation>Uno a Uno (1-1)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="77"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="78"/>
         <source>One to Many (1-n)</source>
         <translation>Uno a Mucho (1-n)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="78"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="79"/>
         <source>Many to Many (n-n)</source>
         <translation>Mucho a Mucho (n-n)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="78"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="79"/>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="201"/>
         <source>Copy</source>
         <translation>Copiar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="78"/>
         <source>Generalization</source>
-        <translation>Generalización</translation>
+        <translation type="vanished">Generalización</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="79"/>
+        <source>Inheritance</source>
+        <translation type="unfinished">Herencia</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="132"/>
@@ -7695,7 +8851,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="181"/>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="3237"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="3176"/>
         <source>Properties</source>
         <translation>Propiedades</translation>
     </message>
@@ -7711,13 +8867,13 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="185"/>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="3266"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="3205"/>
         <source>Protect</source>
         <translation>Proteger</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="186"/>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="3261"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="3200"/>
         <source>Unprotect</source>
         <translation>Desproteger</translation>
     </message>
@@ -7728,7 +8884,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="189"/>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="3273"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="3212"/>
         <source>Delete</source>
         <translation>Eliminar</translation>
     </message>
@@ -7739,7 +8895,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="192"/>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="3280"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="3219"/>
         <source>Del. cascade</source>
         <translation>Del. cascada</translation>
     </message>
@@ -7934,92 +9090,107 @@ p, li { white-space: pre-wrap; }
         <translation>90° + 90° (horizontal)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="547"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="552"/>
         <source>Zoom: %1%</source>
         <translation>Zoom: %1%</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="879"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="884"/>
         <source>Do you really want to convert the relationship into an intermediate table?</source>
         <translation>¿Realmente desea convertir la relación en una tabla intermedia?</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="1099"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="1104"/>
         <source>Loading database model</source>
         <translation>Cargando modelo de base de datos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="1302"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="1315"/>
         <source>Saving database model</source>
         <translation>Guardando modelo de base de datos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2047"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="1863"/>
+        <source>Do you want to %1 the selected schema&apos;s children too?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="1863"/>
+        <source>protect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="1863"/>
+        <source>unprotect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="1974"/>
         <source>Also copy all dependencies of selected objects? This minimizes the breakdown of references when copied objects are pasted into another model.</source>
         <translation>También copiar todas las dependencias de los objetos seleccionados? Esto minimiza la ruptura de referencias cuando los objetos copiados se pegan en otro modelo.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2148"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2075"/>
         <source>Pasting objects...</source>
         <translation>Pegar Objetos...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2171"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2098"/>
         <source>Validating object: `%1&apos; (%2)</source>
         <translation>Validando El objeto: `%1&apos; (%2)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2268"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2195"/>
         <source>Generating XML for: `%1&apos; (%2)</source>
         <translation>Generando código XML del objeto: `%1&apos; (%2)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2342"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2269"/>
         <source>Pasting object: `%1&apos; (%2)</source>
         <translation>Pegar Objetos: `%1&apos; (%2)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2401"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2328"/>
         <source>Not all objects were pasted to the model due to errors returned during the process! Refer to error stack for more details!</source>
         <translation>No todos los objetos se pegan a la modelo debido a errores devueltos durante el proceso! Consulte a un error de pila para más detalles!</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2474"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2401"/>
         <source>&lt;strong&gt;CAUTION:&lt;/strong&gt; You are about to delete objects in cascade mode which means more objects than the selected will be dropped too. Do you really want to proceed?</source>
         <translation>&lt;strong&gt;PRECAUCIÓN:&lt;/strong&gt; Estás a punto de eliminar objetos en modo de cascada que significa más objetos que el seleccionado se redujo también. ¿Realmente desea continuar?</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2478"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2405"/>
         <source>&lt;strong&gt;CAUTION:&lt;/strong&gt; Remove multiple objects at once can cause irreversible invalidations to other objects in the model causing such invalid objects to be deleted too. Do you really want to proceed?</source>
         <translation>&lt;strong&gt;PRECAUCIÓN:&lt;/strong&gt; Eliminar varios objetos a la vez puede causar invalidaciones irreversibles a otros objetos en el modelo que causa este tipo de objetos no válidos para ser borrados también. ¿Realmente desea continuar?</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2484"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2411"/>
         <source>&lt;strong&gt;CAUTION:&lt;/strong&gt; Remove a relationship can cause irreversible invalidations to other objects in the model causing such invalid objects to be deleted too. Do you really want to proceed?</source>
         <translation>&lt;strong&gt;PRECAUCIÓN:&lt;/strong&gt; Eliminar una relación puede causar invalidaciones irreversibles a otros objetos en el modelo que causa este tipo de objetos no válidos para ser borrados también. ¿Realmente desea continuar?</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2487"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2414"/>
         <source>Do you really want to delete the selected object?</source>
         <translation>¿Realmente desea eliminar el objeto seleccionado?</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2735"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2662"/>
         <source>The cascade deletion found some problems when running! Some objects could not be deleted or registered in the operation&apos;s history! Please, refer to error stack for more details.</source>
         <translation>La eliminación en cascada encontró algunos problemas al ejecutar! Algunos objetos no podían ser borrados o registrados en la historia de la operación! Por favor, consulte a un error de la pila para obtener más detalles.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2885"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="2816"/>
         <source>(no objects)</source>
         <translation>(no hay objetos)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="3244"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="3183"/>
         <source>Source code</source>
         <translation>Código fuente</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="3292"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="3231"/>
         <source>Constraints</source>
         <translation>Restricciones</translation>
     </message>
@@ -8027,24 +9198,38 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ModelsDiffHelper</name>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelsdiffhelper.cpp" line="218"/>
+        <location filename="../libpgmodeler_ui/src/modelsdiffhelper.cpp" line="242"/>
         <source>Processing object `%1&apos; (%2)...</source>
         <translation>Procesando objecto `%1&apos; (%2)...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelsdiffhelper.cpp" line="317"/>
+        <location filename="../libpgmodeler_ui/src/modelsdiffhelper.cpp" line="352"/>
         <source>Skipping object `%1&apos; (%2)...</source>
         <translation>Omitiendo objeto `%1&apos; (%2)...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelsdiffhelper.cpp" line="551"/>
+        <location filename="../libpgmodeler_ui/src/modelsdiffhelper.cpp" line="614"/>
         <source>Processing diff infos...</source>
         <translation>Procesando diff infos...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelsdiffhelper.cpp" line="737"/>
+        <location filename="../libpgmodeler_ui/src/modelsdiffhelper.cpp" line="642"/>
+        <source>Processing `%1&apos; info for object `%2&apos; (%3)...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/modelsdiffhelper.cpp" line="871"/>
+        <source>No differences between the model and database.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/modelsdiffhelper.cpp" line="873"/>
+        <source>Preparing diff code...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Comparison between model and database finished.</source>
-        <translation>Comparación entre el modelo y la base de datos terminado.</translation>
+        <translation type="vanished">Comparación entre el modelo y la base de datos terminado.</translation>
     </message>
 </context>
 <context>
@@ -8055,48 +9240,48 @@ p, li { white-space: pre-wrap; }
         <translation>Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="133"/>
+        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="400"/>
         <source>Role</source>
         <translation>Rol</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="177"/>
+        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="133"/>
         <source>Tag</source>
         <translation>Tag</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="221"/>
+        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="177"/>
         <source>Cast</source>
         <translation>Cast</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="234"/>
+        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="190"/>
         <location filename="../libpgmodeler_ui/src/newobjectoverlaywidget.cpp" line="31"/>
         <source>A</source>
         <translation>A</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="268"/>
+        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="356"/>
         <source>Language</source>
         <translation>Lenguaje</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="312"/>
+        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="224"/>
         <source>Textbox</source>
         <translation>Textbox</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="356"/>
+        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="444"/>
         <source>Event Trigger</source>
         <translation>Evento Trigger</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="400"/>
+        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="268"/>
         <source>Tablespace</source>
         <translation>Tablespace</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="444"/>
+        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="312"/>
         <source>Schema</source>
         <translation>Esquema</translation>
     </message>
@@ -8151,43 +9336,43 @@ p, li { white-space: pre-wrap; }
         <translation>Función</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="955"/>
+        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="1043"/>
         <source>Op. Class</source>
         <translation>Op. Clase</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="999"/>
+        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="1087"/>
         <source>Operator</source>
         <translation>Operador</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="1043"/>
+        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="955"/>
         <source>View</source>
         <translation>Vista</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="1087"/>
-        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="1378"/>
+        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="999"/>
+        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="1246"/>
         <source>Permissions</source>
         <translation>Permisos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="1158"/>
+        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="1378"/>
         <source>Rule</source>
         <translation>Regla</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="1202"/>
+        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="1290"/>
         <source>Index</source>
         <translation>Indice</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="1246"/>
+        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="1202"/>
         <source>Column</source>
         <translation>Columna</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="1290"/>
+        <location filename="../libpgmodeler_ui/ui/newobjectoverlaywidget.ui" line="1158"/>
         <source>Constraint</source>
         <translation>Restricción</translation>
     </message>
@@ -8378,11 +9563,33 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>NumberedTextEditor</name>
+    <message>
+        <location filename="../libpgmodeler_ui/src/numberedtexteditor.cpp" line="93"/>
+        <source>Upper case</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/numberedtexteditor.cpp" line="96"/>
+        <source>Lower case</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/numberedtexteditor.cpp" line="101"/>
+        <source>Ident right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/numberedtexteditor.cpp" line="104"/>
+        <source>Ident left</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ObjectDepsRefsWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="49"/>
@@ -8391,56 +9598,56 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="133"/>
-        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="270"/>
+        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="285"/>
         <source>ID</source>
         <translation>ID</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="142"/>
-        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="279"/>
+        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="145"/>
+        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="297"/>
         <source>Object</source>
         <translation>Objecto</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="151"/>
-        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="288"/>
+        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="157"/>
+        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="309"/>
         <source>Type</source>
         <translation>Tipo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="160"/>
-        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="297"/>
+        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="169"/>
+        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="321"/>
         <source>Parent Object</source>
         <translation>Objeto Padre</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="169"/>
-        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="306"/>
+        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="181"/>
+        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="333"/>
         <source>Parent Type</source>
         <translation>Tipo del Padre</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="181"/>
+        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="196"/>
         <source>Exclude indirect dependencies</source>
         <translation>Excluir dependencias indirectas</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="192"/>
+        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="207"/>
         <source>References</source>
         <translation>Referencias</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="318"/>
+        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="348"/>
         <source>Include indirect references</source>
         <translation>Incluir referencias indirectas</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="401"/>
+        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="429"/>
         <source>This object does not exists anymore. The dependencies and references listing are disabled.</source>
         <translation>Este objeto no existe más. Las dependencias y referencias listadas se deshabilitan.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/objectdepsrefswidget.cpp" line="27"/>
+        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="14"/>
         <source>Object&apos;s dependencies &amp; references</source>
         <translation>Dependencias de objeto &amp; referencias</translation>
     </message>
@@ -8448,118 +9655,118 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ObjectFinderWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="20"/>
+        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="26"/>
         <source>Form</source>
         <translation>Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="50"/>
+        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="56"/>
         <source>Pattern:</source>
         <translation>Patrón:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="84"/>
+        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="642"/>
         <source>Find</source>
         <translation>Buscar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="115"/>
+        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="94"/>
         <source>Defines the search filter</source>
         <translation>Define el filtro de búsqueda</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="118"/>
+        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="97"/>
         <source>Filter</source>
         <translation>Filtro</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="149"/>
+        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="135"/>
         <source>Clears the search results</source>
         <translation>Limpiar los resultados de la búsqueda</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="152"/>
+        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="138"/>
         <source>Clear</source>
         <translation>Limpiar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="180"/>
+        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="173"/>
         <source>Highlight graphical objects when selecting them or their children on the result list</source>
         <translation>Resaltar objetos gráficos al seleccionar a ellos oa sus hijos en la lista de resultados</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="183"/>
+        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="176"/>
         <source>Highlight</source>
         <translation>Resaltar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="212"/>
-        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="253"/>
+        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="205"/>
+        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="246"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="250"/>
+        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="243"/>
         <source>Hide this widget</source>
         <translation>Ocultar este widget</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="319"/>
+        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="312"/>
         <source>Regular Expression</source>
         <translation>Expresión Regular</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="332"/>
+        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="325"/>
         <source>Exact Match</source>
         <translation>Resultado Exacto</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="392"/>
+        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="380"/>
         <source>Select All</source>
         <translation>Selecionar todos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="425"/>
+        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="408"/>
         <source>Clear All</source>
         <translation>Limpiar Todos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="496"/>
+        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="479"/>
         <source>Case Sensitive</source>
         <translation>Sensible Case</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="583"/>
+        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="566"/>
         <source>ID</source>
         <translation>ID</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="592"/>
+        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="578"/>
         <source>Object</source>
         <translation>Objecto</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="601"/>
+        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="590"/>
         <source>Type</source>
         <translation>Tipo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="610"/>
+        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="602"/>
         <source>Parent Object</source>
         <translation>Objecto Padre</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="619"/>
+        <location filename="../libpgmodeler_ui/ui/objectfinderwidget.ui" line="614"/>
         <source>Parent Type</source>
         <translation>Tipo del Padre</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/objectfinderwidget.cpp" line="119"/>
+        <location filename="../libpgmodeler_ui/src/objectfinderwidget.cpp" line="135"/>
         <source>Found &lt;strong&gt;%1&lt;/strong&gt; object(s).</source>
         <translation>Encontrado objecto(s) &lt;strong&gt;%1&lt;/strong&gt;.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/objectfinderwidget.cpp" line="124"/>
+        <location filename="../libpgmodeler_ui/src/objectfinderwidget.cpp" line="140"/>
         <source>No objects found.</source>
         <translation>Objetos no encontrados.</translation>
     </message>
@@ -8583,12 +9790,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/objectrenamewidget.ui" line="194"/>
-        <location filename="../libpgmodeler_ui/ui/objectrenamewidget.ui" line="249"/>
+        <location filename="../libpgmodeler_ui/ui/objectrenamewidget.ui" line="243"/>
         <source>Rename</source>
         <translation>Renombrar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectrenamewidget.ui" line="281"/>
+        <location filename="../libpgmodeler_ui/ui/objectrenamewidget.ui" line="269"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
@@ -8601,14 +9808,19 @@ p, li { white-space: pre-wrap; }
         <translation>Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectselectorwidget.ui" line="125"/>
+        <location filename="../libpgmodeler_ui/ui/objectselectorwidget.ui" line="74"/>
         <source>Clear field</source>
         <translation>Limpiar campo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/objectselectorwidget.ui" line="160"/>
+        <location filename="../libpgmodeler_ui/ui/objectselectorwidget.ui" line="109"/>
         <source>Select Object</source>
         <translation>Seleccionar Objecto</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/objectselectorwidget.cpp" line="184"/>
+        <source>Select %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8709,18 +9921,18 @@ p, li { white-space: pre-wrap; }
         <translation>Ctrl+End, Ctrl+S</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/objecttablewidget.cpp" line="369"/>
-        <location filename="../libpgmodeler_ui/src/objecttablewidget.cpp" line="395"/>
+        <location filename="../libpgmodeler_ui/src/objecttablewidget.cpp" line="370"/>
+        <location filename="../libpgmodeler_ui/src/objecttablewidget.cpp" line="396"/>
         <source>Confirmation</source>
         <translation>Confirmación</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/objecttablewidget.cpp" line="369"/>
+        <location filename="../libpgmodeler_ui/src/objecttablewidget.cpp" line="370"/>
         <source>Do you really want to remove the selected item?</source>
         <translation>¿Realmente desea eliminar el elemento seleccionado?</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/objecttablewidget.cpp" line="395"/>
+        <location filename="../libpgmodeler_ui/src/objecttablewidget.cpp" line="396"/>
         <source>Do you really want to remove the all items?</source>
         <translation>¿Realmente desea eliminar los todos los artículos?</translation>
     </message>
@@ -8728,19 +9940,17 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>OperationList</name>
     <message>
-        <location filename="../libpgmodeler/src/operationlist.cpp" line="508"/>
+        <location filename="../libpgmodeler/src/operationlist.cpp" line="522"/>
         <source>(invalid object)</source>
         <translation>(objeto no válido)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/operationlist.cpp" line="593"/>
         <source>Undoing change on object `%1&apos; (%2).</source>
-        <translation>Deshacer el cambio en el objeto `%1&apos; (%2).</translation>
+        <translation type="vanished">Deshacer el cambio en el objeto `%1&apos; (%2).</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/operationlist.cpp" line="657"/>
         <source>Redoing change on object `%1&apos; (%2).</source>
-        <translation>Rehacer el cambio en el objeto `%1&apos; (%2).</translation>
+        <translation type="vanished">Rehacer el cambio en el objeto `%1&apos; (%2).</translation>
     </message>
 </context>
 <context>
@@ -8833,22 +10043,20 @@ p, li { white-space: pre-wrap; }
         <translation>Operación: %1</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/operationlistwidget.cpp" line="160"/>
         <source>Undoing operations...</source>
-        <translation>Deshacer operaciones...</translation>
+        <translation type="vanished">Deshacer operaciones...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/operationlistwidget.cpp" line="195"/>
         <source>Redoing operations...</source>
-        <translation>Rehacer operaciones...</translation>
+        <translation type="vanished">Rehacer operaciones...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/operationlistwidget.cpp" line="227"/>
+        <location filename="../libpgmodeler_ui/src/operationlistwidget.cpp" line="206"/>
         <source>Operation history exclusion</source>
         <translation>Exclusión del historia de Operación</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/operationlistwidget.cpp" line="228"/>
+        <location filename="../libpgmodeler_ui/src/operationlistwidget.cpp" line="207"/>
         <source>Delete the executed operations history is an irreversible action, do you want to continue?</source>
         <translation>Eliminar el historial de operaciones ejecutadas es una acción irreversible, es lo que quieres continuar?</translation>
     </message>
@@ -8856,88 +10064,87 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>OperatorClassWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="20"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="57"/>
+        <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="54"/>
         <source>Default Class:</source>
         <translation>Clase por Defecto:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="82"/>
+        <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="79"/>
         <source>Indexing:</source>
         <translation>Indexación:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="105"/>
+        <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="102"/>
         <source>Elements</source>
         <translation>Elementos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="126"/>
+        <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="123"/>
         <source>Element Type:</source>
         <translation>Tipo de Elemento:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="140"/>
+        <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="137"/>
         <source>Operator</source>
         <translation>Operador</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="145"/>
+        <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="142"/>
         <source>Function</source>
         <translation>Función</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="150"/>
+        <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="147"/>
         <source>Storage</source>
         <translation>Almacenamiento</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="171"/>
+        <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="168"/>
         <source>Function:</source>
         <translation>Función:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="178"/>
+        <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="175"/>
         <source>Operator:</source>
         <translation>Operador:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="185"/>
+        <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="182"/>
         <source>Support/Strategy:</source>
         <translation>Suporte/Estrategía:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="199"/>
-        <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="221"/>
+        <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="196"/>
+        <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="218"/>
         <source>Op. Family:</source>
         <translation>Op. Familia:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/operatorclasswidget.cpp" line="35"/>
+        <location filename="../libpgmodeler_ui/src/operatorclasswidget.cpp" line="38"/>
         <source>Storage Type</source>
         <translation>Tipo de Almacenamiento</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/operatorclasswidget.cpp" line="39"/>
+        <location filename="../libpgmodeler_ui/src/operatorclasswidget.cpp" line="42"/>
         <source>Object</source>
         <translation>Objecto</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/operatorclasswidget.cpp" line="42"/>
+        <location filename="../libpgmodeler_ui/src/operatorclasswidget.cpp" line="45"/>
         <source>Type</source>
         <translation>Tipo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/operatorclasswidget.cpp" line="45"/>
+        <location filename="../libpgmodeler_ui/src/operatorclasswidget.cpp" line="48"/>
         <source>Support/Strategy</source>
         <translation>Suporte/Estrategía</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/operatorclasswidget.cpp" line="46"/>
+        <location filename="../libpgmodeler_ui/src/operatorclasswidget.cpp" line="49"/>
         <source>Operator Family</source>
         <translation>Operador Familiar</translation>
     </message>
@@ -8945,12 +10152,11 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>OperatorFamilyWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/operatorfamilywidget.ui" line="20"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/operatorfamilywidget.ui" line="44"/>
+        <location filename="../libpgmodeler_ui/ui/operatorfamilywidget.ui" line="50"/>
         <source>Indexing:</source>
         <translation>Indexación:</translation>
     </message>
@@ -8958,72 +10164,71 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>OperatorWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="35"/>
+        <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="147"/>
         <source>MERGES</source>
         <translation>MERGES</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="42"/>
+        <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="127"/>
         <source>HASHES</source>
         <translation>HASHES</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="55"/>
+        <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="140"/>
         <source>Options:</source>
         <translation>Opciones:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="66"/>
+        <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="36"/>
         <source>Arguments</source>
         <translation>Algumentos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="71"/>
+        <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="41"/>
         <source>Advanced</source>
         <translation>Avanzado</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="92"/>
+        <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="62"/>
         <source>Join:</source>
         <translation>Join:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="99"/>
+        <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="69"/>
         <source>Restrict:</source>
         <translation>Restricción:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="106"/>
+        <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="76"/>
         <source>Commutator:</source>
         <translation>Conmutador:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="113"/>
+        <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="83"/>
         <source>Negator:</source>
         <translation>Negación:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="163"/>
+        <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="120"/>
         <source>Operator Func.:</source>
         <translation>Operador Func .:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/operatorwidget.cpp" line="33"/>
+        <location filename="../libpgmodeler_ui/src/operatorwidget.cpp" line="32"/>
         <source>Left Argument Type</source>
         <translation>Tipo Algumento Izquierdo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/operatorwidget.cpp" line="35"/>
+        <location filename="../libpgmodeler_ui/src/operatorwidget.cpp" line="34"/>
         <source>Right Argument Type</source>
         <translation>Tipo Argumento Direcho</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/operatorwidget.cpp" line="42"/>
+        <location filename="../libpgmodeler_ui/src/operatorwidget.cpp" line="44"/>
         <source>To create a unary operator it is necessary to specify as &lt;strong&gt;&lt;em&gt;&apos;any&apos;&lt;/em&gt;&lt;/strong&gt; one of its arguments. Additionally, the function that defines the operator must have only one parameter and this, in turn, must have the same data type of the the argument of unary operator.</source>
         <translation>Para crear un operador unario es necesario especificar como &lt;strong&gt;&lt;em&gt;&apos;any&apos;&lt;/em&gt;&lt;/strong&gt; uno de sus argumentos. Además, la función que define el operador debe tener un solo parámetro y esto, a su vez, debe tener el mismo tipo de datos del argumento del operador unitario.</translation>
     </message>
@@ -9031,32 +10236,31 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ParameterWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/parameterwidget.ui" line="20"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/parameterwidget.ui" line="44"/>
+        <location filename="../libpgmodeler_ui/ui/parameterwidget.ui" line="41"/>
         <source>Default Value:</source>
         <translation>Valor por Defecto:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/parameterwidget.ui" line="73"/>
+        <location filename="../libpgmodeler_ui/ui/parameterwidget.ui" line="70"/>
         <source>Mode:</source>
         <translation>Modo:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/parameterwidget.ui" line="92"/>
+        <location filename="../libpgmodeler_ui/ui/parameterwidget.ui" line="89"/>
         <source>IN</source>
         <translation>IN</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/parameterwidget.ui" line="99"/>
+        <location filename="../libpgmodeler_ui/ui/parameterwidget.ui" line="96"/>
         <source>OUT</source>
         <translation>OUT</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/parameterwidget.ui" line="106"/>
+        <location filename="../libpgmodeler_ui/ui/parameterwidget.ui" line="109"/>
         <source>VARIADIC</source>
         <translation>VARIADIC</translation>
     </message>
@@ -9064,9 +10268,8 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PermissionWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/permissionwidget.ui" line="26"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/permissionwidget.ui" line="51"/>
@@ -9086,25 +10289,38 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/permissionwidget.ui" line="152"/>
-        <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="79"/>
+        <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="71"/>
         <source>Roles</source>
         <translation>Roles</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/permissionwidget.ui" line="175"/>
-        <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="81"/>
+        <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="73"/>
         <source>Privileges</source>
         <translation>Privilégios</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/permissionwidget.ui" line="199"/>
         <source>Grant</source>
-        <translation>Grant</translation>
+        <translation type="vanished">Grant</translation>
+    </message>
+    <message>
+        <source>Revoke</source>
+        <translation type="vanished">Revoke</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/permissionwidget.ui" line="26"/>
+        <source>Edit permissions</source>
+        <translation type="unfinished">Editar permisos</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/permissionwidget.ui" line="199"/>
+        <source>&amp;Grant</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/permissionwidget.ui" line="209"/>
-        <source>Revoke</source>
-        <translation>Revoke</translation>
+        <source>Re&amp;voke</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/permissionwidget.ui" line="219"/>
@@ -9142,32 +10358,32 @@ p, li { white-space: pre-wrap; }
         <translation>Vista previa Código</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="51"/>
+        <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="43"/>
         <source>Type:</source>
         <translation>Tipo:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="65"/>
+        <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="57"/>
         <source>Role</source>
         <translation>Rol</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="77"/>
+        <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="69"/>
         <source>Id</source>
         <translation>Id</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="104"/>
+        <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="96"/>
         <source>Leave the &lt;em&gt;&lt;strong&gt;Roles&lt;/strong&gt;&lt;/em&gt; empty to create a permission applicable to &lt;strong&gt;&lt;em&gt;PUBLIC&lt;/em&gt;&lt;/strong&gt;.</source>
         <translation>Deje los &lt;em&gt;&lt;strong&gt;Roles&lt;/strong&gt;&lt;/em&gt; vacío para crear un permiso aplicable a &lt;strong&gt;&lt;em&gt;PUBLIC&lt;/em&gt;&lt;/strong&gt;.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="554"/>
+        <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="546"/>
         <source>-- No permissions defined for the specified object!</source>
         <translation>-- No hay permisos definidos para el objeto especificado!</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="562"/>
+        <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="554"/>
         <source>/* Could not generate the SQL code preview for permissions!</source>
         <translation>/ * No se pudo generar el código SQL para previsualización permisos!</translation>
     </message>
@@ -9175,262 +10391,255 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PgModelerCLI</name>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="94"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="99"/>
         <source>Unrecognized option &apos;%1&apos;.</source>
         <translation>Opción no reconocido &apos;%1&apos;.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="98"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="103"/>
         <source>Value not specified for option &apos;%1&apos;.</source>
         <translation>El valor no se especifica para la opción &apos;%1&apos;.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="100"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="105"/>
         <source>Option &apos;%1&apos; does not accept values.</source>
         <translation>Opción &apos;%1&apos; no acepta valores.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="139"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="145"/>
         <source>Connection aliased as &apos;%1&apos; was not found on configuration file.</source>
         <translation>Conexión con alias como &apos;%1&apos; no se ha encontrado en el archivo de configuración.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="248"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="256"/>
         <source>Usage: pgmodeler-cli [OPTIONS]</source>
         <translation>El uso: pgmodeler-cli [OPTIONS]</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="249"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="257"/>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="388"/>
         <source> command line interface.</source>
         <translation>interfaz de línea de comandos.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="250"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="258"/>
         <source>PostgreSQL Database Modeler Project - pgmodeler.com.br</source>
         <translation>Proyecto Modelador Base de datos PostgreSQL - pgmodeler.com.br</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="251"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="259"/>
         <source>Copyright 2006-2015 Raphael A. Silva &lt;raphael@pgmodeler.com.br&gt;</source>
         <translation>Copyright 2006-2013 Raphael A. Silva &lt;rkhaotix@gmail.com&gt;</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="253"/>
         <source>This CLI tool provides the operations to export pgModeler&apos;s database models without
 the need to load them on graphical interface as well to fix model files to the most recent
 accepted structure. All available options are described below.</source>
-        <translation>Esta herramienta proporciona una manera de exportar pgModeler&apos;s modelos de base de datos sin
+        <translation type="vanished">Esta herramienta proporciona una manera de exportar pgModeler&apos;s modelos de base de datos sin
 la necesidad de cargarlos en la interfaz gráfica. Todos los disponibles exportación
 modos se describen a continuación.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="257"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="265"/>
         <source>General options: </source>
         <translation>Opciones Generales: </translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="258"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="266"/>
         <source>   %1, %2=[FILE]		 Input model file (.dbm). Mandatory use when fixing a model or exporting it.</source>
         <translation>%1, %2=[FILE]		 Archivo de modelo de entrada (.dbm).Uso obligatorio al fijar un modelo o exportarlo.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="259"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="267"/>
         <source>   %1, %2=[FILE]		 Output file. Mandatory use when fixing model or export to file or png.</source>
         <translation>%1, %2=[FILE]		 Archivo de salida. Disponible sólo en la exportación a un archivo o png.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="260"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="268"/>
         <source>   %1, %2		 Try to fix the structure of the input model file in order to make it loadable again.</source>
         <translation>   %1, %2		 Trate de fijar la estructura del archivo de modelo de entrada con el fin de hacer que se puede cargar de nuevo.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="261"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="269"/>
         <source>   %1, %2		 Model fix tries. When reaching the maximum count the invalid objects will be discard.</source>
         <translation>   %1, %2		 Trata fijar Modelo. Al alcanzar el número máximo se descartan los objetos no válidos.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="262"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="270"/>
         <source>   %1, %2		 Export to a sql script file.</source>
         <translation>   %1, %2		 Exportar a un archivo de secuencia de comandos SQL.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="263"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="271"/>
         <source>   %1, %2		 Export to a png image.</source>
         <translation>   %1, %2		 Exportar una imagen a png.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="264"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="273"/>
         <source>   %1, %2		 Export directly to a PostgreSQL server.</source>
         <translation>   %1, %2		 Exportar directamente a un servidor PostgreSQL.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="265"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="274"/>
         <source>   %1, %2		 List available connections on %3 file.</source>
         <translation>   %1, %2		 Lista de conexiones disponibles en archivo %3.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="266"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="275"/>
         <source>   %1, %2		 Version of generated SQL code. Only for file or dbms export.</source>
         <translation>   %1, %2		 Versión de código SQL generado. Sólo para archivo o dbms exportación.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="267"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="276"/>
         <source>   %1, %2			 Silent execution. Only critical errors are shown during process.</source>
         <translation>   %1, %2			 Ejecución silenciosa. Sólo los errores críticos se muestran durante el proceso.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="268"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="277"/>
         <source>   %1, %2			 Show this help menu.</source>
         <translation>   %1, %2			 Mostrar este menú de ayuda.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="270"/>
         <source>PNG export options: </source>
-        <translation>opciones de exportación PNG: </translation>
+        <translation type="vanished">opciones de exportación PNG: </translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="271"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="280"/>
         <source>   %1, %2		 Draws the grid on the exported png image.</source>
         <translation>   %1, %2		 Dibuja la cuadrícula en la imagen PNG exportado.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="272"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="281"/>
         <source>   %1, %2	 Draws the page delimiters on the exported png image.</source>
         <translation>   %1, %2	 Dibuja los delimitadores de página en la imagen PNG exportado.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="273"/>
         <source>   %1, %2		 Each page will be exported on a separated png image.</source>
-        <translation>   %1, %2		 Cada página se exportará en una imagen png separada.</translation>
+        <translation type="vanished">   %1, %2		 Cada página se exportará en una imagen png separada.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="274"/>
         <source>   %1, %2=[FACTOR]		 Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4</source>
-        <translation>   %1, %2=[FACTOR]		 Aplica un zoom (en porcentaje) antes de la exportación a la imagen png. Intervalo de zoom aceptado: %3-%4</translation>
+        <translation type="vanished">   %1, %2=[FACTOR]		 Aplica un zoom (en porcentaje) antes de la exportación a la imagen png. Intervalo de zoom aceptado: %3-%4</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="276"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="285"/>
         <source>DBMS export options: </source>
         <translation>Opciones de exportación del SGDB: </translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="277"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="286"/>
         <source>   %1, %2	 Ignores errors related to duplicated objects that eventually exists on server side.</source>
         <translation>   %1, %2	 Ignora los errores relacionados con los objetos duplicados que existe el tiempo en el lado del servidor.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="278"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="287"/>
         <source>   %1, %2		 Drop the database before execute a export process.</source>
         <translation>   %1, %2		 Borar la base de datos antes de ejecutar un proceso de exportación.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="279"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="288"/>
         <source>   %1, %2		 Runs the DROP commands attached to SQL-enabled objects.</source>
         <translation>   %1, %2		 Ejecuta los comandos DROP unidos a objetos de SQL-habilitado.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="280"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="289"/>
         <source>   %1, %2		 Simulates a export process. Actually executes all steps but undoing any modification.</source>
         <translation>   %1, %2		 Simula un proceso de exportación. En realidad ejecuta todos los pasos pero deshacer cualquier modificación.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="281"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="290"/>
         <source>   %1, %2		 Generates temporary names for database, roles and tablespaces when in simulation mode.</source>
         <translation>&gt;   %1, %2		 Genera nombres temporales para bases de datos, funciones y espacios de tabla cuando en el modo de simulación.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="282"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="291"/>
         <source>   %1, %2=[ALIAS]	 Connection configuration alias to be used.</source>
         <translation>   %1, %2=[ALIAS]	 Alias de configuración de conexión a utilizar.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="283"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="292"/>
         <source>   %1, %2=[HOST]		 PostgreSQL host which export will operate.</source>
         <translation>   %1, %2=[HOST]		 Host PostgreSQL cuya exportación funcionará.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="284"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="293"/>
         <source>   %1, %2=[PORT]		 PostgreSQL host listening port.</source>
         <translation>   %1, %2=[PORT]		 PostgreSQL host puerto de escucha.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="285"/>
         <source>   %1, %2=[USER]		 PosrgreSQL username.</source>
-        <translation>   %1, %2=[USER]		 Nombre de usuario PosrgreSQL.</translation>
+        <translation type="vanished">   %1, %2=[USER]		 Nombre de usuario PosrgreSQL.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="286"/>
         <source>   %1, %2=[PASSWORD]	 PosrgreSQL user password.</source>
-        <translation>   %1, %2=[PASSWORD]	 Contraseña de usuario PosrgreSQL.</translation>
+        <translation type="vanished">   %1, %2=[PASSWORD]	 Contraseña de usuario PosrgreSQL.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="287"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="296"/>
         <source>   %1, %2=[DBNAME]	 Connection&apos;s initial database.</source>
         <translation>   %1, %2=[DBNAME]	 Base de datos inicial de conexión.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="291"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="300"/>
         <source>Miscellaneous options: </source>
         <translation> Otros Opciones: </translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="292"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="301"/>
         <source>   %1, %2=[ACTION]	 Handles the file association to .dbm files. The ACTION can be [%3 | %4].</source>
         <translation>   %1, %2=[ACTION]	 Maneja la asociación de archivos a .dbm archivos. La acción puede ser [%3 | %4].</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="319"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="323"/>
         <source>There are no connections configured.</source>
         <translation>No hay conexiones configuradas.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="324"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="328"/>
         <source>Available connections (alias : conn. string)</source>
         <translation>Conexiones disponibles (alias:. Conn cadena)</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="348"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="353"/>
         <source>No export mode specified!</source>
         <translation>No se especifica el modo de exportación!</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="351"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="356"/>
         <source>Export, fix model and update mime operations can&apos;t be used at the same time!</source>
         <translation>Las operaciones de exportación, modelo fijo y actualización mime no se pueden utilizar al mismo tiempo!</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="353"/>
         <source>Multiple export mode especified!</source>
-        <translation>Modo de exportación múltiple especifidado!</translation>
+        <translation type="vanished">Modo de exportación múltiple especifidado!</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="355"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="360"/>
         <source>No input file specified!</source>
         <translation>Sin archivo de entrada especificado!</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="357"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="362"/>
         <source>No output file specified!</source>
         <translation>Sin archivo de salida especificado!</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="359"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="364"/>
         <source>Input file must be different from output!</source>
         <translation>Archivo de entrada debe ser diferente de la salida!</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="362"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="367"/>
         <source>Incomplete connection information!</source>
         <translation>Información de conexión incompleto!</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="364"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="369"/>
         <source>Invalid zoom specified!</source>
         <translation>Inválido Zoom especificado!</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="366"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="371"/>
         <source>Invalid action specified to update mime option!</source>
         <translation>Acción inválida para actualizar opción mimo!</translation>
     </message>
@@ -9465,9 +10674,55 @@ modos se describen a continuación.</translation>
         <translation>Modelo fijado correctamente!</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="420"/>
         <source>Mime database sucessfully updated.</source>
-        <translation>Base de datos de Mime actualizada correctamente.</translation>
+        <translation type="vanished">Base de datos de Mime actualizada correctamente.</translation>
+    </message>
+    <message>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="261"/>
+        <source>This CLI tool provides the operations to export pgModeler&apos;s database models without
+				  the need to load them on graphical interface as well to fix model files to the most recent
+				  accepted structure. All available options are described below.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="272"/>
+        <source>   %1, %2		 Export to a svg file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="279"/>
+        <source>PNG and SVG export options: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="282"/>
+        <source>   %1, %2		 Each page will be exported on a separated png image. (Only for PNG)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="283"/>
+        <source>   %1, %2=[FACTOR]		 Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4 (Only for PNG)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="294"/>
+        <source>   %1, %2=[USER]		 PostgreSQL username.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="295"/>
+        <source>   %1, %2=[PASSWORD]	 PostgreSQL user password.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="358"/>
+        <source>Multiple export mode specified!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="420"/>
+        <source>Mime database successfully updated.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="435"/>
@@ -9476,68 +10731,73 @@ modos se describen a continuación.</translation>
     </message>
     <message>
         <location filename="../main-cli/src/pgmodelercli.cpp" line="446"/>
+        <source>Export to SVG file: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="456"/>
         <source>Export to SQL script file: </source>
         <translation>Exportar a archivo de comandos SQL: </translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="454"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="464"/>
         <source>Export to DBMS: </source>
         <translation>Exportar a SGDB: </translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="465"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="475"/>
         <source>Export successfully ended!</source>
         <translation>Exportación terminó correctamente!</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="542"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="569"/>
         <source>Extracting objects&apos; XML...</source>
         <translation>Exportando objetos XML...</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="558"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="585"/>
         <source>Invalid input file! It seems that is not a pgModeler generated model or the file is corrupted!</source>
         <translation>Archivo de entrada no es válido! Parece que no es un modelo pgModeler generada o el archivo está dañado!</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="681"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="708"/>
         <source>Recreating objects...</source>
         <translation>Recreando objetos...</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="801"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="828"/>
         <source>
 ** Object(s) that couldn&apos;t fixed: </source>
         <translation>
 ** Objeto(s) que no podían ser fijado: </translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="813"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="840"/>
         <source>WARNING: There are objects that maybe can&apos;t be fixed. Trying again... (tries %1/%2)</source>
         <translation>ADVERTENCIA: Hay objetos que tal vez no se pueden arreglar. Tratando de nuevo ... (Trata %1/%2)</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="1000"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="1091"/>
         <source>Database model files (.dbm) are already associated to pgModeler!</source>
         <translation>Archivos de modelo de base de datos (.dbm) ya están asociados a pgModeler!</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="1001"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="1092"/>
         <source>There is no file association related to pgModeler and .dbm files!</source>
         <translation>No hay ninguna asociación de archivos relacionados con pgModeler y archivos .dbm!</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="1005"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="1096"/>
         <source>Mime database operation: %1</source>
         <translation>Operación Mime de base de datos: %1</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="1066"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="1157"/>
         <source>Can&apos;t erase the file %1! Check if the current user has permissions to delete it and if the file exists.</source>
         <translation>No se puede borrar el archivo% 1! Compruebe si el usuario actual tiene permisos para eliminarlo y si existe el archivo.</translation>
     </message>
     <message>
-        <location filename="../main-cli/src/pgmodelercli.cpp" line="1142"/>
+        <location filename="../main-cli/src/pgmodelercli.cpp" line="1233"/>
         <source>Running update-mime-database command...</source>
         <translation>Ejecución de comando update-mime-database...</translation>
     </message>
@@ -9545,17 +10805,17 @@ modos se describen a continuación.</translation>
 <context>
     <name>PgModelerPlugin</name>
     <message>
-        <location filename="../libpgmodeler_ui/src/pgmodelerplugin.cpp" line="37"/>
+        <location filename="../libpgmodeler_ui/src/pgmodelerplugin.cpp" line="32"/>
         <source>Plugin Information</source>
         <translation>Información del plugin</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/pgmodelerplugin.cpp" line="92"/>
+        <location filename="../libpgmodeler_ui/src/pgmodelerplugin.cpp" line="86"/>
         <source>Version: %1</source>
         <translation>Versión: %1</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/pgmodelerplugin.cpp" line="93"/>
+        <location filename="../libpgmodeler_ui/src/pgmodelerplugin.cpp" line="87"/>
         <source>Author: %1</source>
         <translation>Autor: %1</translation>
     </message>
@@ -9563,17 +10823,17 @@ modos se describen a continuación.</translation>
 <context>
     <name>PgModelerUiNS</name>
     <message>
-        <location filename="../libpgmodeler_ui/src/pgmodeleruins.cpp" line="56"/>
+        <location filename="../libpgmodeler_ui/src/pgmodeleruins.cpp" line="94"/>
         <source>Do you want to apply the &lt;strong&gt;SQL %1 status&lt;/strong&gt; to the object&apos;s references too? This will avoid problems when exporting or validating the model.</source>
         <translation>¿Desea aplicar el &lt;strong&gt;SQL %1 estatus&lt;/strong&gt; a las referencias del objeto también? Esto evitará problemas al exportar o validar el modelo.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/pgmodeleruins.cpp" line="56"/>
+        <location filename="../libpgmodeler_ui/src/pgmodeleruins.cpp" line="94"/>
         <source>disabling</source>
         <translation>deshabilitando</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/pgmodeleruins.cpp" line="56"/>
+        <location filename="../libpgmodeler_ui/src/pgmodeleruins.cpp" line="94"/>
         <source>enabling</source>
         <translation>habilitando</translation>
     </message>
@@ -9623,7 +10883,7 @@ modos se describen a continuación.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="312"/>
-        <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="643"/>
+        <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="609"/>
         <source>Dimension</source>
         <translation>Dimensión</translation>
     </message>
@@ -9648,28 +10908,28 @@ modos se describen a continuación.</translation>
         <translation>P:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="529"/>
-        <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="571"/>
+        <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="495"/>
+        <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="537"/>
         <source>Length</source>
         <translation>Longitud</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="577"/>
+        <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="543"/>
         <source>L:</source>
         <translation>L:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="613"/>
+        <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="579"/>
         <source>Interval:</source>
         <translation>Intervalo:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="649"/>
+        <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="615"/>
         <source>[ ]:</source>
         <translation>[ ]:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/pgsqltypewidget.cpp" line="44"/>
+        <location filename="../libpgmodeler_ui/src/pgsqltypewidget.cpp" line="45"/>
         <source>NONE</source>
         <translation>NONE</translation>
     </message>
@@ -9715,14 +10975,15 @@ modos se describen a continuación.</translation>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../libpgmodeler/src/databasemodel.cpp" line="30"/>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="31"/>
         <source>new_database</source>
         <translation>new_database</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/databasemodel.cpp" line="2898"/>
-        <location filename="../libpgmodeler/src/databasemodel.cpp" line="2951"/>
-        <location filename="../libpgmodeler/src/databasemodel.cpp" line="3174"/>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="2971"/>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="3030"/>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="3253"/>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="9523"/>
         <source>%1 (line: %2)</source>
         <translation>%1 (line: %2)</translation>
     </message>
@@ -9838,83 +11099,83 @@ modos se describen a continuación.</translation>
         <translation>Tipo de relación:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="565"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="531"/>
         <source>Pattern for columns generated based upon target table&apos;s pk (n-n).</source>
         <translation>Patrón de columnas generadas basa en pk (nn) de las tablas de destino.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="568"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="534"/>
         <source>Column (Target):</source>
         <translation>Columna (Target):</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="610"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="542"/>
         <source>One to one (1:1)</source>
         <translation>Uno a uno (1:1)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="615"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="547"/>
         <source>One to many (1:n)</source>
         <translation>Uno a muchos (1:n)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="620"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="552"/>
         <source>Many to many (n:n)</source>
         <translation>muchos a muchos (n:n)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="625"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="557"/>
         <source>Generalization</source>
         <translation>Generalización</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="630"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="562"/>
         <source>Copy</source>
         <translation>Copia</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="638"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="570"/>
         <source>Pattern for columns generated based upon reference table&apos;s pk (1-1 and 1-n) or based upon source table&apos;s pk (n-n).</source>
         <translation>Patrón de columnas generadas basa en pk de las tablas de referencia (1-1 y 1-n) o basada en pk (nn) de  las tablas de origen.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="641"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="573"/>
         <source>Column (Source):</source>
         <translation>Column (Fuente):</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="682"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="580"/>
         <source>Pattern for foreign key generated based upon target table&apos;s pk (n-n).</source>
         <translation>Patrón de llave foránea generada basa en pk (nn) de las tablaa de destino.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="685"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="583"/>
         <source>Foreign Key (Target):</source>
         <translation>Lave Foránea (Destino):</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="760"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="590"/>
         <source>Pattern for unique key generated by the relationship.</source>
         <translation>Patrón de llave única generada por la relación.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="763"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="593"/>
         <source>Unique Key Name:</source>
         <translation>Nombre Llave Única:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="770"/>
-        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="814"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="600"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="610"/>
         <source>Pattern for primary key generated by identifier relationship.</source>
         <translation>Patrón para la llave primaria generada por la relación identificador.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="773"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="603"/>
         <source>Primary Key Name:</source>
         <translation>Nombre Llave Primaria:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="817"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipconfigwidget.ui" line="613"/>
         <source>Primary Key Column:</source>
         <translation>Columna Llave Primaria:</translation>
     </message>
@@ -9927,426 +11188,445 @@ modos se describen a continuación.</translation>
 <context>
     <name>RelationshipWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="26"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="57"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="54"/>
         <source>General</source>
         <translation>General</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="96"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="93"/>
         <source>Table 1:</source>
         <translation>Tabla 1:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="136"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="133"/>
         <source>Name Patterns</source>
         <translation>Nombre Patrones</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="157"/>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="709"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="154"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="664"/>
         <source>Use the values defined on settings dialogs for the fields below</source>
         <translation>Utilice los valores definidos en la configuración de los cuadros de diálogo de los campos siguientes</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="160"/>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="712"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="157"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="667"/>
         <source>Use global settings for these fields</source>
         <translation>Utilice la configuración global de estos campos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="188"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="185"/>
         <source>Pattern for columns generated based upon reference table&apos;s pk (1-1 and 1-n) or based upon source table&apos;s pk (n-n).</source>
         <translation>Patrón de columnas generadas basa en pk de las tablas de referencia (1-1 y 1-n) o basada en pk (nn) de  las tablas de origen.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="191"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="188"/>
         <source>Column (Source):</source>
         <translation>Columna (Fuente):</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="232"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="195"/>
         <source>Pattern for columns generated based upon target table&apos;s pk (n-n).</source>
         <translation>Patrón de columnas generadas basa en pk (nn) de las tablas de destino.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="235"/>
         <source>Column (Destino):</source>
-        <translation>Columna (Destino):</translation>
+        <translation type="vanished">Columna (Destino):</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="276"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="198"/>
+        <source>Column (Target):</source>
+        <translation type="unfinished">Columna (Target):</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="205"/>
         <source>Pattern for foreign key generated based upon reference table&apos;s pk (1-1 and 1-n) or based upon source table&apos;s pk (n-n).</source>
         <translation>Patrón de llave foránea generada basa en pk de las tablas de referencia (1-1 y 1-n) o basada en pk (nn) de las tablas de origen.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="279"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="208"/>
         <source>Foreign Key (Source):</source>
         <translation>Llave Foránea (Fuente):</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="320"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="215"/>
         <source>Pattern for foreign key generated based upon target table&apos;s pk (n-n).</source>
         <translation>Patrón de llave foránea generada basa en pk (nn) de tabla de destino.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="323"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="218"/>
         <source>Foreign Key (Target):</source>
         <translation>Llave Foránea (Destino):</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="364"/>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="452"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="225"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="245"/>
         <source>Pattern for primary key generated by identifier relationship.</source>
         <translation>Patrón para la llave primaria generada por la relación identificador.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="367"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="228"/>
         <source>Primary Key Name:</source>
         <translation>Nombre Llave Primaria:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="408"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="235"/>
         <source>Pattern for unique key generated by the relationship.</source>
         <translation>Patrón de llave única generada por la relación.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="411"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="238"/>
         <source>Unique Key Name:</source>
         <translation>Nombra Llave Única:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="455"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="248"/>
         <source>Primay Key Column:</source>
         <translation>Columna Llave Primaria:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="520"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="475"/>
         <source>Cardinality:</source>
         <translation>Cardinalidad:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="545"/>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1426"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="500"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1342"/>
         <source>Name of the table generated from many to many relationship</source>
         <translation>Nombre de la tabla generada a partir de relación muchos a muchos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="548"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="503"/>
         <source>Gen. Table Name:</source>
         <translation>Nombre tabla Gen.:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="589"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="544"/>
         <source>Rel. Type:</source>
         <translation>Tipo Rel.:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="636"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="591"/>
         <source>Table 2:</source>
         <translation>Tabla 2:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="651"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="606"/>
         <source>[SRC] is required</source>
         <translation>[SRC] es requirido</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="664"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="619"/>
         <source>[DST] is required</source>
         <translation>[DST] es requirido</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="679"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="634"/>
         <source>Foreign key Settings</source>
         <translation>Configuración de Llave Foránea</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="767"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="722"/>
         <source>Deferrable:</source>
         <translation>Diferible:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="820"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="775"/>
         <source>Deferral:</source>
         <translation>Diferimiento:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="855"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="810"/>
         <source>ON DELETE:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="865"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="820"/>
         <source>ON UPDATE:</source>
         <translation>ON DELETE:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="909"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="864"/>
         <source>One to one relationship</source>
         <translation>Relación uno a uno</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="912"/>
-        <source>1-1</source>
-        <translation>1-1</translation>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="867"/>
+        <source>&amp;1-1</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="945"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="975"/>
+        <source>&amp;gen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1261"/>
+        <source>E&amp;XCLUDING</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>1-1</source>
+        <translation type="vanished">1-1</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="900"/>
         <source>One to many relationship</source>
         <translation>Relación de uno a muchos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="948"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="903"/>
         <source>1-n</source>
         <translation>1-n</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="981"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="936"/>
         <source>Many to many relationship</source>
         <translation>Relación de muchos a muchos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="984"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="939"/>
         <source>n-n</source>
         <translation>n-n</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1017"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="972"/>
         <source>Generalization relationship (inheritance)</source>
         <translation>Relación de generalización (herencia)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1020"/>
         <source>gen</source>
-        <translation>gen</translation>
+        <translation type="vanished">gen</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1053"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1008"/>
         <source>Dependency / Copy relationship</source>
         <translation>Relación de Dependencia / Copia</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1056"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1011"/>
         <source>dep</source>
         <translation>dep</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1083"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1038"/>
         <source>Relationship generated via foreign key</source>
         <translation>Relación generada a través de clave externa</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1086"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1041"/>
         <source>fk</source>
         <translation>fk</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1133"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1088"/>
         <source>The receiver&apos;s primary key will be composed by the generated foreign key columns.</source>
         <translation>Clave principal del receptor estará compuesta por las columnas llave foránea generadas.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1136"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1091"/>
         <source>Identifier</source>
         <translation>Identificador</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1195"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1150"/>
         <source>Instead of create a multi-valued primary key with the generated foreign keys columns a single column is created and used as primary key.</source>
         <translation>En lugar de crear una clave principal de varios valores con las teclas extranjero generada columnas se crea una sola columna y se utiliza como clave principal.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1198"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1153"/>
         <source>Single PK column</source>
         <translation>Una sola columna PK</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1232"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1187"/>
         <source>Custom Color:</source>
         <translation>Color personalizado:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1284"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1200"/>
         <source>Copy Options</source>
         <translation>Opciones de copia</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1305"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1221"/>
         <source>INDEXES</source>
         <translation>INDEXES</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1315"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1231"/>
         <source>COMMENTS</source>
         <translation>COMMENTS</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1322"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1238"/>
         <source>INCLUDING</source>
         <translation>INCLUDING</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1332"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1248"/>
         <source>DEFAULTS</source>
         <translation>DEFAULTS</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1345"/>
         <source>EXCLUDING</source>
-        <translation>EXCLUDING</translation>
+        <translation type="vanished">EXCLUDING</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1355"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1271"/>
         <source>CONSTRAINTS</source>
         <translation>CONSTRAINTS</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1368"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1284"/>
         <source>Use defaults</source>
         <translation>Usar valores predeterminados</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1381"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1297"/>
         <source>ALL</source>
         <translation>ALL</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1391"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1307"/>
         <source>STORAGE</source>
         <translation>STORAGE</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1495"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1438"/>
         <source>Attributes</source>
         <translation>Atributos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1500"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1443"/>
         <source>Constraints</source>
         <translation>Resticciones</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1505"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1448"/>
         <source>Primary key</source>
         <translation>Llave Primaria</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1549"/>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="1492"/>
         <source>Advanced</source>
         <translation>Avanzado</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="80"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="79"/>
         <source>Attribute</source>
         <translation>Atributo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="82"/>
-        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="88"/>
-        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="94"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="81"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="87"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="93"/>
         <source>Type</source>
         <translation>Tipo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="86"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="85"/>
         <source>Constraint</source>
         <translation>Resticción</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="92"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="91"/>
         <source>Name</source>
         <translation>Nombre</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="110"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="109"/>
         <source>Use the special primary key if you want to include a primary key containing generated columns to the receiver table. &lt;strong&gt;Important:&lt;/strong&gt; if this is a new relationship there is a need to finish its creation and reopen this dialog to create the special primary key.</source>
         <translation>Utilice la clave primaria especial si usted desea incluir una clave principal que contiene las columnas generadas de la tabla receptor. &lt;strong&gt;Importante:&lt;/strong&gt; si se trata de una nueva relación es necesario para terminar su creación y vuelva a abrir este cuadro de diálogo para crear la clave primaria especial.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="120"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="119"/>
         <source>This advanced tab shows the objects (columns or table) auto created by the relationship&apos;s connection as well the foreign keys that represents the link between the participant tables.</source>
         <translation>Esta pestaña avanzado muestra los objetos (columnas o tabla) de automóviles creados por la conexión de la relación, así las claves externas que representa el enlace entre las mesas de los participantes.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="136"/>
         <source>Available tokens to define name patterns:&lt;br/&gt;																					 &lt;strong&gt;%1&lt;/strong&gt; = Reference (source) primary key column name. &lt;em&gt;(Ignored on constraint patterns)&lt;/em&gt;&lt;br/&gt; 																					 &lt;strong&gt;%2&lt;/strong&gt; = Reference (source) table name.&lt;br/&gt; 																					 &lt;strong&gt;%3&lt;/strong&gt; = Receiver (destination) table name.&lt;br/&gt; 																					 &lt;strong&gt;%4&lt;/strong&gt; = Generated table name. &lt;em&gt;(Only for n:n relationships)&lt;/em&gt;</source>
-        <translation>Fichas disponibles para definir patrones de nombre:&lt;br/&gt;																					 &lt;strong&gt;%1&lt;/strong&gt; = Referencia (fuente) nombre de la columna de clave principal. &lt;em&gt;(Ignorado en los patrones de restricción)&lt;/em&gt;&lt;br/&gt; 																					 &lt;strong&gt;%2&lt;/strong&gt; = Referencia (fuente) nombre de la tabla.&lt;br/&gt; 																					 &lt;strong&gt;%3&lt;/strong&gt; = Receptor (destino) nombre de la tabla.&lt;br/&gt; 																					 &lt;strong&gt;%4&lt;/strong&gt; = Nombre de la tabla generada. &lt;em&gt;(Sólo para relaciones n: n)&lt;/em&gt;</translation>
+        <translation type="vanished">Fichas disponibles para definir patrones de nombre:&lt;br/&gt;																					 &lt;strong&gt;%1&lt;/strong&gt; = Referencia (fuente) nombre de la columna de clave principal. &lt;em&gt;(Ignorado en los patrones de restricción)&lt;/em&gt;&lt;br/&gt; 																					 &lt;strong&gt;%2&lt;/strong&gt; = Referencia (fuente) nombre de la tabla.&lt;br/&gt; 																					 &lt;strong&gt;%3&lt;/strong&gt; = Receptor (destino) nombre de la tabla.&lt;br/&gt; 																					 &lt;strong&gt;%4&lt;/strong&gt; = Nombre de la tabla generada. &lt;em&gt;(Sólo para relaciones n: n)&lt;/em&gt;</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="149"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="134"/>
+        <source>Available tokens to define name patterns:&lt;br/&gt;					&lt;strong&gt;%1&lt;/strong&gt; = Reference (source) primary key column name. &lt;em&gt;(Ignored on constraint patterns)&lt;/em&gt;&lt;br/&gt; 					&lt;strong&gt;%2&lt;/strong&gt; = Reference (source) table name.&lt;br/&gt; 					&lt;strong&gt;%3&lt;/strong&gt; = Receiver (destination) table name.&lt;br/&gt; 					&lt;strong&gt;%4&lt;/strong&gt; = Generated table name. &lt;em&gt;(Only for n:n relationships)&lt;/em&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="147"/>
         <source>Default</source>
         <translation>por Defecto</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="302"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="284"/>
         <source>Referer View:</source>
         <translation>Vista Intermedia:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="303"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="285"/>
         <source>Referer view references one or more columns of a table to construct it&apos;s own columns.</source>
         <translation>Vista Intermedia hace referencia a una o más columnas de una tabla de construir es propias columnas.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="304"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="286"/>
         <source>Referenced table has its columns referenced by a view in order to construct the columns of this latter.</source>
         <translation>Tabla referenciada tiene sus columnas referenciadas por una vista para construir las columnas de este último.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="308"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="290"/>
         <source>Referer Table:</source>
         <translation>Tabla Intermedia:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="309"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="291"/>
         <source>Referer table references one or more columns of a table through foreign keys. This is the (n) side of relationship.</source>
         <translation>Tabla intermedia referencia a una o más columnas de una tabla a través de claves externas. Este es el lado (n) de relación.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="310"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="292"/>
         <source>Referenced table has its columns referenced by a table&apos;s foreign key. This is the (1) side of relationship.</source>
         <translation>Tabla referenciada tiene sus columnas referenciadas por una mesa y apos; s clave externa. Esta es la (1) lado de relación.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="313"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="295"/>
         <source>Referenced Table:</source>
         <translation>Tabla Referenciada:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="322"/>
-        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="333"/>
-        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="335"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="304"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="315"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="317"/>
         <source>Reference Table:</source>
         <translation>Tabla Referencia:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="323"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="305"/>
         <source>Reference table has the columns from its primary key will copied to the receiver table in order to represent the linking between them. This is the (1) side of relationship.</source>
         <translation>Tabla de referencia tiene las columnas de su clave primaria se copian en la tabla del receptor con el fin de representar a la vinculación entre ellos. Esta es la (1) lado de relación.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="325"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="307"/>
         <source>Receiver Table:</source>
         <translation>Tabla Receptora:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="326"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="308"/>
         <source>Receiver (or referer) table will receive the generated columns and the foreign key in order to represent the linking between them. This is the (n) side of relationship.</source>
         <translation>Receptor tabla (o intermedia) recibirá las columnas generadas y la clave externa con el fin de representar a la vinculación entre ellos. Este es el lado (n) de relación.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="334"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="316"/>
         <source>In many-to-many relationships both tables are used as reference to generate the table that represents the linking. Columns from both tables are copied to the resultant table and two foreign keys are created as well in order to reference each participant table.</source>
         <translation>En muchos-a-muchos relación ambas tablas se utilizan como referencia para generar la tabla que representa la vinculación. Las columnas de ambas tablas se copian en la tabla resultante y dos claves externas se crean así con el fin de hacer referencia a cada mesa participante.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="343"/>
-        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="344"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="325"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="326"/>
         <source> is required</source>
         <translation> es requerido</translation>
     </message>
@@ -10354,98 +11634,101 @@ modos se describen a continuación.</translation>
 <context>
     <name>RoleWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="20"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="53"/>
+        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="50"/>
         <source>yyyy-MMM-dd hh:mm:ss</source>
         <translation>yyyy-MMM-dd hh:mm:ss</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="91"/>
-        <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="63"/>
+        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="88"/>
+        <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="61"/>
         <source>Validity</source>
         <translation>Validez</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="105"/>
+        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="102"/>
         <source>Connections:</source>
         <translation>Conexión:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="112"/>
+        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="109"/>
         <source>Attributes</source>
         <translation>Atributos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="133"/>
+        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="130"/>
         <source>Superuser</source>
         <translation>Superusuário</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="140"/>
+        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="137"/>
         <source>Inherit Permissions</source>
         <translation>Heredar Permisos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="147"/>
+        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="144"/>
         <source>Can create Database</source>
         <translation>Puede Crear Base de Datos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="154"/>
+        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="151"/>
         <source>Can Login</source>
         <translation>Permitir Login</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="161"/>
+        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="158"/>
         <source>Can create Role</source>
         <translation>Puede Crear Rol</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="168"/>
+        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="165"/>
         <source>Can use Replication</source>
         <translation>Puede usar Replicación</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="182"/>
-        <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="69"/>
+        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="179"/>
+        <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="67"/>
         <source>Members</source>
         <translation>Miembros</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="187"/>
-        <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="66"/>
+        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="184"/>
+        <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="64"/>
         <source>Member of</source>
         <translation>Miembro de</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="192"/>
-        <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="72"/>
+        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="189"/>
+        <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="70"/>
         <source>Members (Admin.)</source>
         <translation>Miembros (Admin.)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="200"/>
+        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="197"/>
         <source>Password:</source>
         <translation>Contraseña:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="223"/>
+        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="220"/>
         <source>Encrypted</source>
         <translation>Encriptada</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="35"/>
         <source>Assigning &lt;strong&gt;&lt;em&gt;-1&lt;/em&gt;&lt;/strong&gt; to &lt;strong&gt;&lt;em&gt;Connections&lt;/em&gt;&lt;/strong&gt; creates a role without connection limit.&lt;br/&gt;																				 Unchecking &lt;strong&gt;&lt;em&gt;Validity&lt;/em&gt;&lt;/strong&gt; creates an role that never expires.</source>
-        <translation>Asignación &lt;strong&gt;&lt;em&gt;-1&lt;/em&gt;&lt;/strong&gt; pra &lt;strong&gt;&lt;em&gt;Conexiones/em&gt;&lt;/strong&gt; crea un rol sin límite de conexión.&lt;br
+        <translation type="vanished">Asignación &lt;strong&gt;&lt;em&gt;-1&lt;/em&gt;&lt;/strong&gt; pra &lt;strong&gt;&lt;em&gt;Conexiones/em&gt;&lt;/strong&gt; crea un rol sin límite de conexión.&lt;br
 &gt;
 Desmarcando &lt;strong&gt;&lt;em&gt;Validity&lt;/em&gt;&lt;/strong&gt; crea un rol que nunca expire.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="60"/>
+        <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="35"/>
+        <source>Assigning &lt;strong&gt;&lt;em&gt;-1&lt;/em&gt;&lt;/strong&gt; to &lt;strong&gt;&lt;em&gt;Connections&lt;/em&gt;&lt;/strong&gt; creates a role without connection limit.&lt;br/&gt;										  Unchecking &lt;strong&gt;&lt;em&gt;Validity&lt;/em&gt;&lt;/strong&gt; creates an role that never expires.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="58"/>
         <source>Role</source>
         <translation>Rol</translation>
     </message>
@@ -10453,32 +11736,31 @@ Desmarcando &lt;strong&gt;&lt;em&gt;Validity&lt;/em&gt;&lt;/strong&gt; crea un r
 <context>
     <name>RuleWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/rulewidget.ui" line="20"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/rulewidget.ui" line="53"/>
+        <location filename="../libpgmodeler_ui/ui/rulewidget.ui" line="50"/>
         <source>Event:</source>
         <translation>Evento:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/rulewidget.ui" line="105"/>
+        <location filename="../libpgmodeler_ui/ui/rulewidget.ui" line="102"/>
         <source>Execution Type:</source>
         <translation>Tipo Ejecución:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/rulewidget.ui" line="154"/>
+        <location filename="../libpgmodeler_ui/ui/rulewidget.ui" line="151"/>
         <source>Conditional Expr.:</source>
         <translation>Expr. Condicional:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/rulewidget.ui" line="210"/>
+        <location filename="../libpgmodeler_ui/ui/rulewidget.ui" line="158"/>
         <source>Commands</source>
         <translation>Comandos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/rulewidget.ui" line="243"/>
+        <location filename="../libpgmodeler_ui/ui/rulewidget.ui" line="191"/>
         <source>SQL Command:</source>
         <translation>Comando SQL:</translation>
     </message>
@@ -10496,168 +11778,231 @@ Desmarcando &lt;strong&gt;&lt;em&gt;Validity&lt;/em&gt;&lt;/strong&gt; crea un r
 <context>
     <name>SQLExecutionWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="14"/>
+        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="20"/>
         <source>Form</source>
         <translation>Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="64"/>
+        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="49"/>
         <source>Load SQL script</source>
         <translation>Cargar script de comandos SQL</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="67"/>
+        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="52"/>
         <source>&amp;Load</source>
         <translation>&amp;Cargar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="110"/>
-        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="159"/>
-        <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="282"/>
+        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="90"/>
+        <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="399"/>
         <source>Save SQL commands</source>
         <translation>Guardar comandos SQL</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="113"/>
+        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="93"/>
         <source>&amp;Save</source>
         <translation>&amp;Guardar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="162"/>
+        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="134"/>
+        <source>Search in SQL code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="137"/>
         <source>&amp;Find</source>
         <translation>&amp;Buscar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="175"/>
+        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="150"/>
         <source>Alt+F</source>
         <translation>Alt+F</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="214"/>
+        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="184"/>
         <source>Run the specified SQL command</source>
         <translation>Ejecutar un comando SQL especificada</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="217"/>
+        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="187"/>
         <source>Run SQL</source>
         <translation>Ejecutar SQL</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="230"/>
+        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="200"/>
         <source>F6</source>
         <translation>F6</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="254"/>
+        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="219"/>
         <source>Clear sql input field and results</source>
         <translation>Limpiar campo de entrada de SQL y resultados</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="257"/>
+        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="222"/>
         <source>Clear All</source>
         <translation>Limpiar Todos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="291"/>
-        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="340"/>
+        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="251"/>
+        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="295"/>
         <source>Export results to a CSV file</source>
         <translation>Exportar resultados a un acchivo CSV</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="294"/>
+        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="254"/>
         <source>Snippe&amp;ts</source>
         <translation>Snippe&amp;ts</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="343"/>
+        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="298"/>
         <source>E&amp;xport</source>
         <translation>E&amp;xportar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="386"/>
+        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="336"/>
+        <source>Toggles the output pane</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="339"/>
+        <source>&amp;Output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="352"/>
+        <source>Alt+O</source>
+        <translation type="unfinished">Alt+O</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="514"/>
+        <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="293"/>
+        <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="364"/>
+        <source>Results</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="604"/>
+        <source>Messages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="651"/>
+        <source>History</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Shows the command history</source>
-        <translation>Mostrar histórico de comandos</translation>
+        <translation type="vanished">Mostrar histórico de comandos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="389"/>
         <source>&amp;History</source>
-        <translation>&amp;Histórico</translation>
+        <translation type="vanished">&amp;Histórico</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="402"/>
         <source>Alt+H</source>
-        <translation>Alt+H</translation>
+        <translation type="vanished">Alt+H</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="457"/>
         <source>Command History</source>
-        <translation>Histórico de Comandos</translation>
+        <translation type="vanished">Histórico de Comandos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="502"/>
         <source>Clear sql input field and results.</source>
-        <translation>Limpiar campo de entrada sql y los resultados.</translation>
+        <translation type="vanished">Limpiar campo de entrada sql y los resultados.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="505"/>
         <source>Clear</source>
-        <translation>Limpiar</translation>
+        <translation type="vanished">Limpiar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="618"/>
-        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="623"/>
+        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="587"/>
+        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="592"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="637"/>
         <source>0</source>
-        <translation>0</translation>
+        <translation type="vanished">0</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqlexecutionwidget.ui" line="650"/>
         <source>Rows returned: </source>
-        <translation>Filas retornadas:</translation>
+        <translation type="vanished">Filas retornadas:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="37"/>
+        <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="46"/>
         <source>SQL file (*.sql);;All files (*.*)</source>
         <translation>Archivo SQL (*.sql);;Todos los archivos (*.*)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="176"/>
+        <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="241"/>
         <source>[binary data]</source>
         <translation>[datos binarios]</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="264"/>
         <source>[&lt;strong&gt;%1&lt;/strong&gt;] SQL command successfully executed. &lt;em&gt;Rows affected &lt;strong&gt;%2&lt;/strong&gt;&lt;/em&gt;</source>
-        <translation>[&lt;strong&gt;%1&lt;/strong&gt;] Comando SQL ejecutado con éxito. &lt;em&gt;Filas afectadas &lt;strong&gt;%2&lt;/strong&gt;&lt;/em&gt;</translation>
+        <translation type="vanished">[&lt;strong&gt;%1&lt;/strong&gt;] Comando SQL ejecutado con éxito. &lt;em&gt;Filas afectadas &lt;strong&gt;%2&lt;/strong&gt;&lt;/em&gt;</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="303"/>
+        <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="285"/>
+        <source>No results retrieved or changes done due to the error above.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="294"/>
+        <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="384"/>
+        <source>Messages (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="359"/>
+        <source>Results (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="378"/>
+        <source>[%1]: SQL command successfully executed. &lt;em&gt;%2 &lt;strong&gt;%3&lt;/strong&gt;&lt;/em&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="380"/>
+        <source>Rows affected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="380"/>
+        <source>Rows retrieved</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="420"/>
         <source>Load SQL commands</source>
         <translation>Cargar comandos SQL</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="332"/>
+        <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="449"/>
         <source>Save CSV file</source>
         <translation>Guardar archivos CSV</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="333"/>
+        <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="450"/>
         <source>Comma-separated values file (*.csv);;All files (*.*)</source>
         <translation>Archivo de valores separados por comas (*.csv);;Todos los archivos (*.*)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="399"/>
+        <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="516"/>
         <source>The SQL input field and the results grid will be cleared! Want to proceed?</source>
         <translation>El campo de entrada de SQL y la cuadrícula de resultados se borrará! ¿Quieres continuar?</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="422"/>
+        <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="541"/>
         <source>Copy selection</source>
         <translation>Copiar la selección</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/sqlexecutionwidget.cpp" line="630"/>
+        <source>Clear history</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10673,62 +12018,95 @@ Desmarcando &lt;strong&gt;&lt;em&gt;Validity&lt;/em&gt;&lt;/strong&gt; crea un r
         <translation>Explorar Base de Datos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="123"/>
-        <source>Connect to server</source>
-        <translation>Conectar al servidor</translation>
+        <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="144"/>
+        <source>Disconnect from all databases</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="126"/>
-        <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="149"/>
-        <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="204"/>
-        <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="233"/>
-        <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="259"/>
+        <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="205"/>
+        <source>Update the database list</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="276"/>
+        <source>Toggle the object&apos;s attributes grid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="282"/>
+        <source>Attributes</source>
+        <translation type="unfinished">Atributos</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="295"/>
+        <source>Alt+R</source>
+        <translation type="unfinished">Alt+R</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="317"/>
+        <source>Toggle the display of source code pane</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="323"/>
+        <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="425"/>
+        <source>Source code</source>
+        <translation type="unfinished">Código fuente</translation>
+    </message>
+    <message>
+        <source>Connect to server</source>
+        <translation type="vanished">Conectar al servidor</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="147"/>
+        <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="208"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="146"/>
         <source>Disconnect from server</source>
-        <translation>Desconectar del servidor</translation>
+        <translation type="vanished">Desconectar del servidor</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="201"/>
         <source>Browse selected database.</source>
-        <translation>Explorar base de datos seleccionada.</translation>
+        <translation type="vanished">Explorar base de datos seleccionada.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="230"/>
         <source>Drop the selected database</source>
-        <translation>Borrar base de datos seleccionada</translation>
+        <translation type="vanished">Borrar base de datos seleccionada</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="246"/>
         <source>Shift+Del</source>
-        <translation>Shift+Del</translation>
+        <translation type="vanished">Shift+Del</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="256"/>
         <source>Update the database list.</source>
-        <translation>Actualizar listado de base de datos.</translation>
+        <translation type="vanished">Actualizar listado de base de datos.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="304"/>
+        <location filename="../libpgmodeler_ui/ui/sqltoolwidget.ui" line="381"/>
         <source>SQL execution</source>
         <translation>Ejecutar SQL</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/sqltoolwidget.cpp" line="131"/>
-        <location filename="../libpgmodeler_ui/src/sqltoolwidget.cpp" line="169"/>
+        <location filename="../libpgmodeler_ui/src/sqltoolwidget.cpp" line="139"/>
+        <location filename="../libpgmodeler_ui/src/sqltoolwidget.cpp" line="170"/>
+        <location filename="../libpgmodeler_ui/src/sqltoolwidget.cpp" line="208"/>
         <source>Warning</source>
         <translation>Advertencia</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/sqltoolwidget.cpp" line="132"/>
+        <location filename="../libpgmodeler_ui/src/sqltoolwidget.cpp" line="140"/>
+        <source>&lt;strong&gt;ATTENTION:&lt;/strong&gt; Disconnect from all databases will close any opened tab in this view! Do you really want to proceed?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/sqltoolwidget.cpp" line="171"/>
         <source>&lt;strong&gt;CAUTION:&lt;/strong&gt; You are about to drop the entire database &lt;strong&gt;%1&lt;/strong&gt;! All data will be completely wiped out. Do you really want to proceed?</source>
         <translation>&lt;strong&gt;ATENCION:&lt;/strong&gt; Vas a dejar toda la base de datos &lt;strong&gt;%1&lt;/strong&gt;! Todos los datos serán completamente eliminados. ¿Realmente desea continuar?</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/sqltoolwidget.cpp" line="170"/>
+        <location filename="../libpgmodeler_ui/src/sqltoolwidget.cpp" line="209"/>
         <source>You&apos;re running a demonstration version! The data manipulation feature is available only in the full version!</source>
         <translation>Usted está ejecutando una versión de demostración! La función de manipulación de datos sólo está disponible en la versión completa!</translation>
     </message>
@@ -10736,17 +12114,16 @@ Desmarcando &lt;strong&gt;&lt;em&gt;Validity&lt;/em&gt;&lt;/strong&gt; crea un r
 <context>
     <name>SchemaWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/schemawidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/schemawidget.ui" line="32"/>
+        <location filename="../libpgmodeler_ui/ui/schemawidget.ui" line="29"/>
         <source>Fill color:</source>
         <translation>Color de relleno:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/schemawidget.ui" line="51"/>
+        <location filename="../libpgmodeler_ui/ui/schemawidget.ui" line="48"/>
         <source>Show rectangle</source>
         <translation>Mostrar rectángulo</translation>
     </message>
@@ -10754,42 +12131,41 @@ Desmarcando &lt;strong&gt;&lt;em&gt;Validity&lt;/em&gt;&lt;/strong&gt; crea un r
 <context>
     <name>SequenceWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sequencewidget.ui" line="26"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sequencewidget.ui" line="47"/>
+        <location filename="../libpgmodeler_ui/ui/sequencewidget.ui" line="44"/>
         <source>Cyclic:</source>
         <translation>Cíclico:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sequencewidget.ui" line="61"/>
+        <location filename="../libpgmodeler_ui/ui/sequencewidget.ui" line="58"/>
         <source>Start:</source>
         <translation>Inicio:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sequencewidget.ui" line="89"/>
+        <location filename="../libpgmodeler_ui/ui/sequencewidget.ui" line="86"/>
         <source>Maximum:</source>
         <translation>Maximo:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sequencewidget.ui" line="117"/>
+        <location filename="../libpgmodeler_ui/ui/sequencewidget.ui" line="114"/>
         <source>Minimum:</source>
         <translation>Minimo:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sequencewidget.ui" line="145"/>
+        <location filename="../libpgmodeler_ui/ui/sequencewidget.ui" line="142"/>
         <source>Increment:</source>
         <translation>Incremento:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sequencewidget.ui" line="173"/>
+        <location filename="../libpgmodeler_ui/ui/sequencewidget.ui" line="170"/>
         <source>Cache:</source>
         <translation>Cache:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sequencewidget.ui" line="201"/>
+        <location filename="../libpgmodeler_ui/ui/sequencewidget.ui" line="198"/>
         <source>Owner Col.:</source>
         <translation>Dueño Col.:</translation>
     </message>
@@ -10802,112 +12178,112 @@ Desmarcando &lt;strong&gt;&lt;em&gt;Validity&lt;/em&gt;&lt;/strong&gt; crea un r
         <translation>Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="86"/>
+        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="180"/>
         <source>Create new connection</source>
         <translation>Crear nueva conexión</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="115"/>
+        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="209"/>
         <source>Cancel edition</source>
         <translation>Cancelar edición</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="144"/>
+        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="238"/>
         <source>Edit selected connection</source>
         <translation>Editar conexión seleccionada</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="173"/>
+        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="267"/>
         <source>Delete selected connection</source>
         <translation>Eliminar conexión seleccionada</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="208"/>
+        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="302"/>
         <source>Remove All</source>
         <translation>Borrar Todos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="224"/>
+        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="318"/>
         <source>Shift+Del</source>
         <translation>Shift+Del</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="239"/>
+        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="625"/>
         <source>Filter:</source>
         <translation>Filtrar:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="279"/>
+        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="95"/>
         <source>Label:</source>
         <translation>Etiqueta:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="308"/>
+        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="124"/>
         <source>Applies to:</source>
         <translation>Aplicar a:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="321"/>
+        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="137"/>
         <source>ID:</source>
         <translation>ID:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="351"/>
+        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="515"/>
         <source>Parsable or dynamic snippets are written in the &lt;strong&gt;schema micro language&lt;/strong&gt; syntax. When using a parsable snippet the attributes surrounded in &lt;strong&gt;{}&lt;/strong&gt; will be replaced by the selected object&apos;s matching attributes.</source>
         <translation>Fragmentos analizable o dinámicas están escritos en el sintaxis &lt;strong&gt;esquema micro lenguaje&lt;/strong&gt;. Cuando se utiliza un fragmento parsable los atributos envueltos en &lt;strong&gt;{}&lt;/strong&gt; será reemplazado por atributos coincidentes del objeto seleccionado.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="354"/>
+        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="518"/>
         <source>Parsable</source>
         <translation>Parseable</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="408"/>
+        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="572"/>
         <source>When handling parsable snippets empty attributes will be replaced by a value in the format &lt;strong&gt;{attribute}&lt;/strong&gt;. Note that this option can affect the semantics of the resulting snippet.</source>
         <translation>When handling parsable snippets empty attributes will be replaced by a value in the format &lt;strong&gt;{atributo}&lt;/strong&gt;. Tenga en cuenta que esta opción puede afectar a la semántica del fragmento resultante.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="411"/>
+        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="575"/>
         <source>Placeholders</source>
         <translation>Marcadores de posición</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="491"/>
+        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="376"/>
         <source>Parse the snippet in order to check if there are syntax errors.</source>
         <translation>Analizar el fragmento con el fin de comprobar si hay errores de sintaxis.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="494"/>
+        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="379"/>
         <source>Parse</source>
         <translation>Analizar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="532"/>
+        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="417"/>
         <source>Add</source>
         <translation>Adicionar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="570"/>
+        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="455"/>
         <source>Update</source>
         <translation>Actualizar</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="595"/>
+        <location filename="../libpgmodeler_ui/ui/snippetsconfigwidget.ui" line="333"/>
         <source>Snippets:</source>
         <translation>Fragmentos:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="30"/>
+        <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="31"/>
         <source>General purpose</source>
         <translation>Propósito general</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="52"/>
+        <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="53"/>
         <source>All snippets</source>
         <translation>Todos los fragmentos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="201"/>
+        <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="204"/>
         <source>/* Error parsing the snippet &apos;%1&apos;:
 
  %2 */</source>
@@ -10916,42 +12292,42 @@ Desmarcando &lt;strong&gt;&lt;em&gt;Validity&lt;/em&gt;&lt;/strong&gt; crea un r
  %2 */</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="223"/>
+        <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="226"/>
         <source>Duplicated snippet id &lt;strong&gt;%1&lt;/strong&gt; detected. Please, specify a different one!</source>
         <translation>Duplicado Identificación del fragmento &lt;strong&gt;%1&lt;/strong&gt; detectado. Por favor, especifique uno diferente!</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="225"/>
+        <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="228"/>
         <source>Invalid ID pattern detected &lt;strong&gt;%1&lt;/strong&gt;. This one must start with at leat one letter and be composed by letters, numbers and/or underscore!</source>
         <translation>Patrón de ID no válido detectado &lt;strong&gt;%1&lt;/strong&gt;. Éste debe comenzar con una letra en del acueducto y estar compuesta por letras, números y/o destacar!</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="227"/>
+        <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="230"/>
         <source>Empty label for snippet &lt;strong&gt;%1&lt;/strong&gt;. Please, specify a value for it!</source>
         <translation>Etiqueta vacía para el fragmento &lt;strong&gt;%1&lt;/strong&gt;. Por favor, especifique un valor para él!</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="229"/>
+        <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="232"/>
         <source>Empty code for snippet &lt;strong&gt;%1&lt;/strong&gt;. Please, specify a value for it!</source>
         <translation>Código vacío para el fragmento &lt;strong&gt;%1&lt;/strong&gt;. Por favor, especifique un valor para él!</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="245"/>
+        <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="248"/>
         <source>The dynamic snippet contains syntax error(s). Additional info: &lt;br/&gt;&lt;em&gt;%1&lt;/em&gt;</source>
         <translation>El fragmento de código dinámico contiene error de sintaxis (s). Información adicional: &lt;br/&gt;&lt;em&gt;%1&lt;/em&gt;</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="363"/>
+        <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="366"/>
         <source>Do you really want to remove all snippets?</source>
         <translation>¿De verdad quiere eliminar todos los fragmentos?</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="433"/>
+        <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="436"/>
         <source>No syntax errors found in the snippet.</source>
         <translation>No hay errores de sintaxis encontrados en el fragmento.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="531"/>
+        <location filename="../libpgmodeler_ui/src/snippetsconfigwidget.cpp" line="534"/>
         <source>General</source>
         <translation>General</translation>
     </message>
@@ -10959,9 +12335,8 @@ Desmarcando &lt;strong&gt;&lt;em&gt;Validity&lt;/em&gt;&lt;/strong&gt; crea un r
 <context>
     <name>SourceCodeWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sourcecodewidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/sourcecodewidget.ui" line="49"/>
@@ -11014,42 +12389,46 @@ Desmarcando &lt;strong&gt;&lt;em&gt;Validity&lt;/em&gt;&lt;/strong&gt; crea un r
         <translation>Guardar SQL</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sourcecodewidget.ui" line="302"/>
+        <location filename="../libpgmodeler_ui/ui/sourcecodewidget.ui" line="291"/>
         <source>XML</source>
         <translation>XML</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="30"/>
+        <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="31"/>
         <source>Type:</source>
         <translation>Tipo:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="43"/>
+        <location filename="../libpgmodeler_ui/ui/sourcecodewidget.ui" line="14"/>
         <source>Source code visualization</source>
         <translation>Visualización del código fuente</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="49"/>
         <source>&lt;strong&gt;Original:&lt;/strong&gt; displays only the original object&apos;s SQL code.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Dependencies:&lt;/strong&gt; display the original code including all dependencies needed to properly create the selected object.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Children:&lt;/strong&gt; display the original code including all children&apos;s SQL code. This option is used only by schemas, tables and views.</source>
-        <translation>&lt;strong&gt;Originales:&lt;/strong&gt; muestra sólo el código SQL del objeto original.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Dependencias:&lt;/strong&gt; muestra el código original, incluyendo todas las dependencias necesarias para crear correctamente el objeto seleccionado. &lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Hijos:&lt;/strong&gt; muestra el código original incluyendo el código SQL de todos los hijos. Esta opción sólo se utiliza por esquemas, tablas y vistas.</translation>
+        <translation type="vanished">&lt;strong&gt;Originales:&lt;/strong&gt; muestra sólo el código SQL del objeto original.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Dependencias:&lt;/strong&gt; muestra el código original, incluyendo todas las dependencias necesarias para crear correctamente el objeto seleccionado. &lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Hijos:&lt;/strong&gt; muestra el código original incluyendo el código SQL de todos los hijos. Esta opción sólo se utiliza por esquemas, tablas y vistas.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="109"/>
+        <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="52"/>
+        <source>&lt;strong&gt;Original:&lt;/strong&gt; displays only the original object&apos;s SQL code.&lt;br/&gt;&lt;br/&gt;						   &lt;strong&gt;Dependencies:&lt;/strong&gt; displays the original code including all dependencies needed to properly create the selected object.&lt;br/&gt;&lt;br/&gt;						   &lt;strong&gt;Children:&lt;/strong&gt; displays the original code including all object&apos;s children SQL code. This option is used only by schemas, tables and views.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="113"/>
         <source>Save SQL code as...</source>
         <translation>Guardar código SQL como...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="114"/>
+        <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="118"/>
         <source>SQL code (*.sql);;All files (*.*)</source>
         <translation>Código SQL (*.sql);;Todos los archivos (*.*)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="158"/>
+        <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="162"/>
         <source>Generating source code...</source>
         <translation>Generación de código fuente...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="177"/>
+        <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="181"/>
         <source>-- NOTE: the code below contains the SQL for the selected object
 -- as well for its dependencies and children (if applicable).
 -- 
@@ -11074,21 +12453,27 @@ Desmarcando &lt;strong&gt;&lt;em&gt;Validity&lt;/em&gt;&lt;/strong&gt; crea un r
 </translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="196"/>
+        <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="200"/>
+        <source>
+
+-- SQL code purposely truncated at this point in demo version!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>
 
 -- SQL code purposely truncated at this point on demo version!</source>
-        <translation>
+        <translation type="vanished">
 
 -- Código SQL propósito trunca en este punto en versión demo!</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="205"/>
+        <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="209"/>
         <source>-- SQL code unavailable for this type of object --</source>
         <translation>-- Código SQL disponible para este tipo de objeto --</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="209"/>
+        <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="213"/>
         <source>&lt;!-- XML code preview disabled in demonstration version --&gt;</source>
         <translation>&lt;!-- Código XML previsualización desactivado en la versión de demostración --&gt;</translation>
     </message>
@@ -11096,9 +12481,13 @@ Desmarcando &lt;strong&gt;&lt;em&gt;Validity&lt;/em&gt;&lt;/strong&gt; crea un r
 <context>
     <name>SwapObjectsIdsWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/swapobjectsidswidget.ui" line="20"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/swapobjectsidswidget.ui" line="20"/>
+        <source>Change objects creation order</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/swapobjectsidswidget.ui" line="38"/>
@@ -11117,17 +12506,17 @@ Desmarcando &lt;strong&gt;&lt;em&gt;Validity&lt;/em&gt;&lt;/strong&gt; crea un r
         <translation>Anterior:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/swapobjectsidswidget.ui" line="226"/>
+        <location filename="../libpgmodeler_ui/ui/swapobjectsidswidget.ui" line="224"/>
         <source>It&apos;s recommended to use this feature only when the SQL validation fails in cases when a object is being referenced in portions where the ordinary validation couldn&apos;t reach, e.g., inside of a rule command or check constraint expression.</source>
         <translation>Se recomienda utilizar esta función sólo cuando la validación de SQL falla en los casos cuando un objeto se hace referencia en las partes donde la validación ordinario no podría alcanzar, por ejemplo, en el interior de un comando regla o el chequeo de la expresión de restricción.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/swapobjectsidswidget.ui" line="297"/>
+        <location filename="../libpgmodeler_ui/ui/swapobjectsidswidget.ui" line="295"/>
         <source>Swap the values of the fields</source>
         <translation>Cambie los valores de los campos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/swapobjectsidswidget.ui" line="300"/>
+        <location filename="../libpgmodeler_ui/ui/swapobjectsidswidget.ui" line="298"/>
         <source>Swap values</source>
         <translation>Cambie los valores</translation>
     </message>
@@ -11135,14 +12524,146 @@ Desmarcando &lt;strong&gt;&lt;em&gt;Validity&lt;/em&gt;&lt;/strong&gt; crea un r
 <context>
     <name>Table</name>
     <message>
-        <location filename="../libpgmodeler/src/table.cpp" line="38"/>
+        <location filename="../libpgmodeler/src/table.cpp" line="45"/>
         <source>new_table</source>
         <translation>nueva_tabla</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler/src/table.cpp" line="313"/>
+        <location filename="../libpgmodeler/src/table.cpp" line="328"/>
         <source>In demonstration version tables can have only `%1&apos; instances of each child object type or ancestor tables! You&apos;ve reach this limit for the type: `%2&apos;</source>
         <translation>En la demostración mesas versión sólo pueden tener `%1&apos; instancias de cada tipo de objeto hijo o antepasado de la tabla! Tienes que llegar a este límite para el tipo: `%2&apos;</translation>
+    </message>
+</context>
+<context>
+    <name>TableDataWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/tabledatawidget.ui" line="14"/>
+        <source>Edit table data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/tabledatawidget.ui" line="41"/>
+        <source>Add empty rows</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/tabledatawidget.ui" line="44"/>
+        <location filename="../libpgmodeler_ui/ui/tabledatawidget.ui" line="226"/>
+        <source>Add</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/tabledatawidget.ui" line="57"/>
+        <source>Ins</source>
+        <translation type="unfinished">Ins</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/tabledatawidget.ui" line="143"/>
+        <source>Some invalid or duplicated columns were detected. In order to solve this issue double-click the header of the highlighted ones in order to define the correct name in which the data belongs to or delete the entire column. Note that these columns are completely igored when generating the &lt;strong&gt;INSERT&lt;/strong&gt; commands.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/tabledatawidget.ui" line="223"/>
+        <source>Add an empty column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/tabledatawidget.ui" line="258"/>
+        <source>Remove all rows from the grid preserving columns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/tabledatawidget.ui" line="261"/>
+        <location filename="../libpgmodeler_ui/ui/tabledatawidget.ui" line="548"/>
+        <source>Clear</source>
+        <translation type="unfinished">Limpiar</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/tabledatawidget.ui" line="274"/>
+        <source>Shift+Del</source>
+        <translation type="unfinished">Shift+Del</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/tabledatawidget.ui" line="293"/>
+        <source>Delete the selected rows</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/tabledatawidget.ui" line="296"/>
+        <location filename="../libpgmodeler_ui/ui/tabledatawidget.ui" line="497"/>
+        <source>Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/tabledatawidget.ui" line="309"/>
+        <location filename="../libpgmodeler_ui/ui/tabledatawidget.ui" line="510"/>
+        <source>Del</source>
+        <translation type="unfinished">Del</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/tabledatawidget.ui" line="395"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Empty values are assumed as &lt;span style=&quot; font-weight:600;&quot;&gt;DEFAULT&lt;/span&gt;. To use special values like &lt;span style=&quot; font-weight:600;&quot;&gt;NULL&lt;/span&gt;, a function call like &lt;span style=&quot; font-weight:600;&quot;&gt;now()&lt;/span&gt; or a specific data escaping, enclose values in &lt;span style=&quot; font-weight:600;&quot;&gt;{}&lt;/span&gt;. To use &lt;span style=&quot; font-weight:600;&quot;&gt;{&lt;/span&gt; or &lt;span style=&quot; font-weight:600;&quot;&gt;}&lt;/span&gt; as part of the value prepend the backslash character, e.g., &lt;span style=&quot; font-weight:600;&quot;&gt;\{&lt;/span&gt; or &lt;span style=&quot; font-weight:600;&quot;&gt;\}&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/tabledatawidget.ui" line="417"/>
+        <source>Duplicate the selected rows</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/tabledatawidget.ui" line="420"/>
+        <source>Duplicate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/tabledatawidget.ui" line="433"/>
+        <source>Ctrl+D</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/tabledatawidget.ui" line="494"/>
+        <source>Delete the selected columns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/tabledatawidget.ui" line="545"/>
+        <source>Remove all columns (and rows) from the grid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/tabledatawidget.ui" line="561"/>
+        <source>Ctrl+Shift+Del</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/tabledatawidget.cpp" line="115"/>
+        <source>Delete columns is an irreversible action! Do you really want to proceed?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/tabledatawidget.cpp" line="150"/>
+        <source>Remove all rows is an irreversible action! Do you really want to proceed?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/tabledatawidget.cpp" line="165"/>
+        <source>Remove all columns is an irreversible action! Do you really want to proceed?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/tabledatawidget.cpp" line="290"/>
+        <source>Unknown column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/tabledatawidget.cpp" line="292"/>
+        <source>Duplicated column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/tabledatawidget.cpp" line="357"/>
+        <source>(no columns)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11166,144 +12687,177 @@ Relación:  %1</translation>
 <context>
     <name>TableWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="20"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="41"/>
+        <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="38"/>
         <source>Options</source>
         <translation>Opciones</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="71"/>
+        <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="68"/>
         <source>Tag:</source>
         <translation>Tag:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="78"/>
+        <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="75"/>
         <source>With OID</source>
         <translation>Con OIDs</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="94"/>
+        <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="91"/>
         <source>Generate ALTER for columns/constraints</source>
         <translation>Generar ALTER para columnas/restricciones</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="101"/>
+        <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="98"/>
         <source>Unlogged</source>
         <translation>Invitados</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="115"/>
+        <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="112"/>
+        <source>&amp;Columns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="117"/>
+        <source>Co&amp;nstraints</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="122"/>
+        <source>Tri&amp;ggers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="127"/>
+        <source>&amp;Rules</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="132"/>
+        <source>&amp;Indexes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="137"/>
+        <source>&amp;Tables</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Columns</source>
-        <translation>Columnas</translation>
+        <translation type="vanished">Columnas</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="120"/>
         <source>Constraints</source>
-        <translation>Restricciones</translation>
+        <translation type="vanished">Restricciones</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="125"/>
         <source>Triggers</source>
-        <translation>Triggers</translation>
+        <translation type="vanished">Triggers</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="130"/>
         <source>Rules</source>
-        <translation>Reglas</translation>
+        <translation type="vanished">Reglas</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="135"/>
         <source>Indexes</source>
-        <translation>Índices</translation>
+        <translation type="vanished">Índices</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="140"/>
         <source>Tables</source>
-        <translation>Tablas</translation>
+        <translation type="vanished">Tablas</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="44"/>
-        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="80"/>
-        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="88"/>
-        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="96"/>
-        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="105"/>
-        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="111"/>
+        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="42"/>
+        <source>Edit data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="43"/>
+        <source>Define initial data for the table</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="58"/>
+        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="94"/>
+        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="102"/>
+        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="110"/>
+        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="119"/>
+        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="125"/>
         <source>Name</source>
         <translation>Nombre</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="46"/>
+        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="60"/>
         <source>Schema</source>
         <translation>Esquema</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="48"/>
-        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="82"/>
-        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="90"/>
+        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="62"/>
+        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="96"/>
+        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="104"/>
         <source>Type</source>
         <translation>Tipo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="84"/>
+        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="98"/>
         <source>Default Value</source>
         <translation>Valor por defecto</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="85"/>
+        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="99"/>
         <source>Attribute</source>
         <translation>Atributos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="92"/>
+        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="106"/>
         <source>ON DELETE</source>
         <translation>ON DELETE</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="93"/>
+        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="107"/>
         <source>ON UPDATE</source>
         <translation>ON UPDATE</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="98"/>
+        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="112"/>
         <source>Refer. Table</source>
         <translation>Tabla Refer </translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="100"/>
+        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="114"/>
         <source>Firing</source>
         <translation>Firing</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="102"/>
+        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="116"/>
         <source>Events</source>
         <translation>Eventos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="107"/>
+        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="121"/>
         <source>Execution</source>
         <translation>Ejecución</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="108"/>
+        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="122"/>
         <source>Event</source>
         <translation>Evento</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="113"/>
+        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="127"/>
         <source>Indexing</source>
         <translation>Indezado</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="272"/>
+        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="251"/>
         <source>Parent</source>
         <translation>Padre</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="281"/>
+        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="260"/>
         <source>Copy</source>
         <translation>Copia</translation>
     </message>
@@ -11324,37 +12878,36 @@ Relación:  %1</translation>
 <context>
     <name>TagWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/tagwidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/tagwidget.ui" line="32"/>
+        <location filename="../libpgmodeler_ui/ui/tagwidget.ui" line="29"/>
         <source>Colors</source>
         <translation>Colores</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/tagwidget.ui" line="50"/>
+        <location filename="../libpgmodeler_ui/ui/tagwidget.ui" line="75"/>
         <source>Extended body:</source>
         <translation>Cuerpo extendido:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/tagwidget.ui" line="57"/>
+        <location filename="../libpgmodeler_ui/ui/tagwidget.ui" line="47"/>
         <source>Body:</source>
         <translation>Cuerpo:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/tagwidget.ui" line="64"/>
+        <location filename="../libpgmodeler_ui/ui/tagwidget.ui" line="54"/>
         <source>Title:</source>
         <translation>Título:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/tagwidget.ui" line="71"/>
+        <location filename="../libpgmodeler_ui/ui/tagwidget.ui" line="61"/>
         <source>Schema name:</source>
         <translation>Nombre esquema:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/tagwidget.ui" line="78"/>
+        <location filename="../libpgmodeler_ui/ui/tagwidget.ui" line="68"/>
         <source>Table name:</source>
         <translation>Nombre tabla:</translation>
     </message>
@@ -11376,47 +12929,46 @@ Relación:  %1</translation>
 <context>
     <name>TextboxWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/textboxwidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/textboxwidget.ui" line="38"/>
+        <location filename="../libpgmodeler_ui/ui/textboxwidget.ui" line="35"/>
         <source>Font:</source>
         <translation>Fuente:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/textboxwidget.ui" line="45"/>
+        <location filename="../libpgmodeler_ui/ui/textboxwidget.ui" line="42"/>
         <source>Text</source>
         <translation>Texto</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/textboxwidget.ui" line="96"/>
+        <location filename="../libpgmodeler_ui/ui/textboxwidget.ui" line="93"/>
         <source>pt</source>
         <translation>pt</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/textboxwidget.ui" line="105"/>
+        <location filename="../libpgmodeler_ui/ui/textboxwidget.ui" line="102"/>
         <source>Color:</source>
         <translation>Color:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/textboxwidget.ui" line="203"/>
+        <location filename="../libpgmodeler_ui/ui/textboxwidget.ui" line="200"/>
         <source>Bold</source>
         <translation>Negrita</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/textboxwidget.ui" line="210"/>
+        <location filename="../libpgmodeler_ui/ui/textboxwidget.ui" line="207"/>
         <source>Italic</source>
         <translation>Itálica</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/textboxwidget.ui" line="223"/>
+        <location filename="../libpgmodeler_ui/ui/textboxwidget.ui" line="220"/>
         <source>Underline</source>
         <translation>Subrayado</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/textboxwidget.cpp" line="71"/>
+        <location filename="../libpgmodeler_ui/src/textboxwidget.cpp" line="70"/>
         <source>Select text color</source>
         <translation>Seleccionar color del texto</translation>
     </message>
@@ -11424,92 +12976,91 @@ Relación:  %1</translation>
 <context>
     <name>TriggerWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="20"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="49"/>
+        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="46"/>
         <source>Constraint</source>
         <translation>Restricción</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="77"/>
+        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="74"/>
         <source>Deferrable:</source>
         <translation>Diferible:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="172"/>
+        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="169"/>
         <source>FOR EACH ROW</source>
         <translation>FOR EACH ROW</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="199"/>
+        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="196"/>
         <source>Event:</source>
         <translation>Evento:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="229"/>
+        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="226"/>
         <source>INSERT</source>
         <translation>INSERT</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="254"/>
+        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="251"/>
         <source>DELETE</source>
         <translation>DELETE</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="279"/>
+        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="276"/>
         <source>UPDATE</source>
         <translation>UPDATE</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="304"/>
+        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="301"/>
         <source>TRUNCATE</source>
         <translation>TRUNCATE</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="334"/>
+        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="331"/>
         <source>Refer. Table:</source>
         <translation>Tabla Refer.:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="359"/>
+        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="356"/>
         <source>Condition:</source>
         <translation>Condición:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="416"/>
+        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="367"/>
         <source>Arguments</source>
         <translation>Argumentos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="437"/>
+        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="388"/>
         <source>Argument:</source>
         <translation>Argumento:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="458"/>
+        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="409"/>
         <source>Columns</source>
         <translation>Columnas</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="491"/>
+        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="442"/>
         <source>Column:</source>
         <translation>Columna:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="545"/>
+        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="496"/>
         <source>Function:</source>
         <translation>Función:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="573"/>
+        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="524"/>
         <source>Options:</source>
         <translation>Opciones:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="601"/>
+        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="552"/>
         <source>Excution:</source>
         <translation>Ejecución:</translation>
     </message>
@@ -11527,226 +13078,233 @@ Relación:  %1</translation>
 <context>
     <name>TypeWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="20"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="47"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="44"/>
         <source>Range</source>
         <translation>Rango</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="58"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="55"/>
         <source>Functions</source>
         <translation>Funciones</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="79"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="76"/>
         <source>INPUT:</source>
         <translation>INPUT:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="86"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="83"/>
         <source>OUTPUT:</source>
         <translation>OUTPUT:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="93"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="90"/>
         <source>RECV:</source>
         <translation>RECV:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="100"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="97"/>
         <source>SEND:</source>
         <translation>SEND:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="107"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="104"/>
         <source>TPMOD_IN:</source>
         <translation>TPMOD_IN:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="114"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="111"/>
         <source>TPMOD_OUT:</source>
         <translation>TPMOD_OUT:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="121"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="118"/>
         <source>ANALYZE:</source>
         <translation>ANALYZE:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="129"/>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="440"/>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="493"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="126"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="437"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="490"/>
         <source>Attributes</source>
         <translation>Atributos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="150"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="147"/>
         <source>Internal Length:</source>
         <translation>Longtud Interna:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="173"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="170"/>
         <source>Storage:</source>
         <translation>Almacenar:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="183"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="180"/>
         <source>Options:</source>
         <translation>Opciones:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="198"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="195"/>
         <source>By value</source>
         <translation>Por valor</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="211"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="208"/>
         <source>Preferred</source>
         <translation>Preferida</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="218"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="215"/>
         <source>Collatable</source>
         <translation>Collatable</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="227"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="224"/>
         <source>Category:</source>
         <translation>Categoría:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="237"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="234"/>
         <source>Delimiter:</source>
         <translation>Delimitador:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="251"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="248"/>
         <source>Default Value:</source>
         <translation>Valor por Defecto:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="261"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="258"/>
         <source>Alignment:</source>
         <translation>Aliniación:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="281"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="278"/>
         <source>integer</source>
         <translation>integer</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="286"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="283"/>
         <source>char</source>
         <translation>char</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="291"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="288"/>
         <source>smallint</source>
         <translation>smallint</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="296"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="293"/>
         <source>double precision</source>
         <translation>double precision</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="327"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="324"/>
         <source>Configuration:</source>
         <translation>Configuración:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="340"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="337"/>
         <source>Base Type</source>
         <translation>Tipo Base</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="356"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="353"/>
         <source>Enumeration</source>
         <translation>Enumeración</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="375"/>
-        <source>Composite</source>
-        <translation>Compuesto</translation>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="372"/>
+        <source>Co&amp;mposite</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="394"/>
+        <source>Composite</source>
+        <translation type="vanished">Compuesto</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="391"/>
         <source>Enumerations</source>
         <translation>Enumeraciones</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="415"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="412"/>
         <source>Enumeration:</source>
         <translation>Enumeration:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="461"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="458"/>
         <source>Name:</source>
         <translation>Nombre:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="477"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="474"/>
         <source>Collation:</source>
         <translation>Colación:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="514"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="511"/>
         <source>Subtype Diff Func.:</source>
         <translation>Subtipo Diff Func .:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="521"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="518"/>
         <source>Operator Class:</source>
         <translation>Operador de Clase:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="528"/>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="525"/>
         <source>Canonical Func.:</source>
         <translation>Func. Canónica:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="34"/>
+        <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="33"/>
         <source>Like Type</source>
         <translation>Como Tipo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="35"/>
+        <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="34"/>
         <source>Element Type</source>
         <translation>Elemento Tipo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="36"/>
+        <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="35"/>
         <source>Subtype</source>
         <translation>Subtipo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="60"/>
+        <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="58"/>
         <source>Name</source>
         <translation>Nombre</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="62"/>
+        <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="60"/>
         <source>Type</source>
         <translation>Tipo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="64"/>
+        <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="62"/>
         <source>Collation</source>
         <translation>Colación</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="79"/>
+        <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="77"/>
+        <source>The functions to be assigned to a type should be written in C language and possess, respectively, the following signatures:&lt;br/&gt;  &lt;table&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;INPUT:&lt;/strong&gt; &lt;em&gt;any function(cstring, oid, integer)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;OUTPUT:&lt;/strong&gt; &lt;em&gt;cstring function(any)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;SEND:&lt;/strong&gt; &lt;em&gt;byta function(any)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;RECV:&lt;/strong&gt; &lt;em&gt;any function(internal, oid, integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_IN:&lt;/strong&gt; &lt;em&gt;integer function(cstring[])&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_OUT:&lt;/strong&gt; &lt;em&gt;cstring function(integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;ANALYZE:&lt;/strong&gt; &lt;em&gt;boolean function(internal)&lt;/em&gt;&lt;/td&gt;    &lt;tr&gt;  &lt;/table&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>The functions to be assigned to a type should be written in C language and possess, respectively, the following signatures:&lt;br/&gt;  &lt;table&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;INPUT:&lt;/strong&gt; &lt;em&gt;any function(cstring, oid, integer)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;OUTPUT:&lt;/strong&gt; &lt;em&gt;cstring function(any)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;SEND:&lt;/strong&gt; &lt;em&gt;byta function(any)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;RECV:&lt;/strong&gt; &lt;em&gt;any function(internal, oid, integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_IN:&lt;/strong&gt; &lt;em&gt;integer function(cstring[])&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_OUT:&lt;/strong&gt; &lt;em&gt;cstring function(integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;ANALYZE:&lt;/strong&gt; &lt;em&gt;boolean f
  unction(internal)&lt;/em&gt;&lt;/td&gt;    &lt;tr&gt;  &lt;/table&gt;</source>
-        <translation>Las funciones que se asignará a un tipo deben ser escritos en lenguaje C y poseen, respectivamente, las siguientes firmas:&lt;br/&gt;  &lt;table&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;INPUT:&lt;/strong&gt; &lt;em&gt;any function(cstring, oid, integer)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;OUTPUT:&lt;/strong&gt; &lt;em&gt;cstring function(any)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;SEND:&lt;/strong&gt; &lt;em&gt;byta function(any)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;RECV:&lt;/strong&gt; &lt;em&gt;any function(internal, oid, integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_IN:&lt;/strong&gt; &lt;em&gt;integer function(cstring[])&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_OUT:&lt;/strong&gt; &lt;em&gt;cstring function(integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;ANALYZE:&lt;/strong&gt; &lt;em&gt;bool
+        <translation type="vanished">Las funciones que se asignará a un tipo deben ser escritos en lenguaje C y poseen, respectivamente, las siguientes firmas:&lt;br/&gt;  &lt;table&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;INPUT:&lt;/strong&gt; &lt;em&gt;any function(cstring, oid, integer)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;OUTPUT:&lt;/strong&gt; &lt;em&gt;cstring function(any)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;SEND:&lt;/strong&gt; &lt;em&gt;byta function(any)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;RECV:&lt;/strong&gt; &lt;em&gt;any function(internal, oid, integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_IN:&lt;/strong&gt; &lt;em&gt;integer function(cstring[])&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_OUT:&lt;/strong&gt; &lt;em&gt;cstring function(integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;ANALYZE:&lt;/strong&gt; &lt;em&gt;bool
  ean function(internal)&lt;/em&gt;&lt;/td&gt;    &lt;tr&gt;  &lt;/table&gt;</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="96"/>
+        <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="95"/>
         <source>The functions to be assigned to a range type should have the following signatures:&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Canonical:&lt;/strong&gt; &lt;em&gt;any function(any)&lt;/em&gt; &lt;br/&gt;&lt;strong&gt;Subtype Diff:&lt;/strong&gt; &lt;em&gt;double precision function(subtype, subtype)&lt;/em&gt;</source>
         <translation>Las funciones que se asigna a un tipo de rango deben tener las siguientes firmas:&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Canonical:&lt;/strong&gt; &lt;em&gt;any function(any)&lt;/em&gt; &lt;br/&gt;&lt;strong&gt;Subtype Diff:&lt;/strong&gt; &lt;em&gt;double precision function(subtype, subtype)&lt;/em&gt;</translation>
     </message>
@@ -11759,9 +13317,8 @@ Relación:  %1</translation>
         <translation>Notificación de Actualizaciones</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="81"/>
         <source>New update found!</source>
-        <translation>Nueva actualización encontrado!</translation>
+        <translation type="vanished">Nueva actualización encontrado!</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="131"/>
@@ -11774,54 +13331,62 @@ Relación:  %1</translation>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="173"/>
+        <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="168"/>
         <source>Released in:</source>
         <translation>Liberado en:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="194"/>
+        <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="188"/>
         <source>mmm dd, yyyy</source>
         <translation>mmm dd, yyyy</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="228"/>
         <source>Version:</source>
-        <translation>Versión:</translation>
+        <translation type="vanished">Versión:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="248"/>
+        <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="81"/>
+        <source>Update found!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="217"/>
+        <source>New version:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="236"/>
         <source>0.0.0</source>
         <translation>0.0.0</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="257"/>
+        <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="245"/>
         <source>Changelog</source>
         <translation>Historial de cambios</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="326"/>
+        <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="309"/>
         <source>Redirects to purchase page.</source>
         <translation>Redirige a página de comprar.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="329"/>
+        <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="312"/>
         <source>Get binary package</source>
         <translation>Obtener paquete binario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="361"/>
+        <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="344"/>
         <source>Redirects to GitHub source repository.</source>
         <translation>Redirige al repositorio de fuentes GitHub.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="364"/>
+        <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="347"/>
         <source>Get source code</source>
         <translation>Obtener el código fuente</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/updatenotifierwidget.ui" line="455"/>
         <source>&lt;strong&gt;Note:&lt;/strong&gt; Both actions below will open a new web browser window</source>
-        <translation>&lt;strong&gt;Note:&lt;/strong&gt; Ambas acciones continuación se abrirá una nueva ventana del navegador web</translation>
+        <translation type="vanished">&lt;strong&gt;Note:&lt;/strong&gt; Ambas acciones continuación se abrirá una nueva ventana del navegador web</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/updatenotifierwidget.cpp" line="38"/>
@@ -11834,28 +13399,28 @@ Relación:  %1</translation>
         <translation>Comprar un nuevo paquete</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/updatenotifierwidget.cpp" line="113"/>
-        <location filename="../libpgmodeler_ui/src/updatenotifierwidget.cpp" line="158"/>
+        <location filename="../libpgmodeler_ui/src/updatenotifierwidget.cpp" line="118"/>
+        <location filename="../libpgmodeler_ui/src/updatenotifierwidget.cpp" line="167"/>
         <source>Failed to check updates</source>
         <translation>No se ha podido comprobar las actualizaciones</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/updatenotifierwidget.cpp" line="114"/>
+        <location filename="../libpgmodeler_ui/src/updatenotifierwidget.cpp" line="119"/>
         <source>The update notifier failed to check for new versions! Please, verify your internet connectivity and try again! Connection error returned: &lt;strong&gt;%1&lt;/strong&gt;.</source>
         <translation>El notificador de actualización no pudo comprobar si hay nuevas versiones! Por favor, verifique su conexión a Internet y vuelve a intentarlo! Error de conexión devuelto: &lt;strong&gt;%1&lt;/strong&gt;.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/updatenotifierwidget.cpp" line="149"/>
+        <location filename="../libpgmodeler_ui/src/updatenotifierwidget.cpp" line="158"/>
         <source>No updates found</source>
         <translation>No se encontraron actualizaciones</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/updatenotifierwidget.cpp" line="150"/>
+        <location filename="../libpgmodeler_ui/src/updatenotifierwidget.cpp" line="159"/>
         <source>You are running the most recent pgModeler version! No update needed.</source>
         <translation>Está ejecutando la versión más reciente pgModeler! Ninguna actualización necesaria.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/updatenotifierwidget.cpp" line="159"/>
+        <location filename="../libpgmodeler_ui/src/updatenotifierwidget.cpp" line="168"/>
         <source>The update notifier failed to check for new versions! A HTTP status code was returned: &lt;strong&gt;%1&lt;/strong&gt;</source>
         <translation>El notificador de actualización no pudo comprobar si hay nuevas versiones! Un código de estado HTTP fue devuelto: &lt;strong&gt;%1&lt;/strong&gt;</translation>
     </message>
@@ -11863,200 +13428,240 @@ Relación:  %1</translation>
 <context>
     <name>ViewWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulario</translation>
+        <translation type="vanished">Formulario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="36"/>
+        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="33"/>
         <source>References</source>
         <translation>Referencias</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="63"/>
+        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="60"/>
         <source>Expression Alias:</source>
         <translation>Alias Expresión: </translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="70"/>
+        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="67"/>
         <source>Column:</source>
         <translation>Columna:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="77"/>
+        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="74"/>
         <source>Table:</source>
         <translation>Tabla:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="90"/>
+        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="87"/>
         <source>Table Alias:</source>
         <translation>Alias Tabla:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="97"/>
+        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="94"/>
         <source>Used in:</source>
         <translation>Usado en:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="105"/>
+        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="102"/>
         <source>Column</source>
         <translation>Columna</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="110"/>
+        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="107"/>
         <source>Expression</source>
         <translation>Expresión</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="198"/>
+        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="164"/>
         <source>Reference Type:</source>
         <translation>Tipo de Referencia:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="213"/>
+        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="179"/>
         <source>SELECT-FROM</source>
         <translation>SELECT-FROM</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="226"/>
+        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="192"/>
         <source>FROM-WHERE</source>
         <translation>FROM-WHERE</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="239"/>
+        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="205"/>
         <source>After WHERE</source>
         <translation>After WHERE</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="252"/>
+        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="218"/>
         <source>View Definition</source>
         <translation>Definición de Vista</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="261"/>
+        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="227"/>
         <source>Expression:</source>
         <translation>Expresión:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="274"/>
+        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="240"/>
         <source>Column Alias:</source>
         <translation>Alias de Columna:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="282"/>
+        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="276"/>
         <source>Triggers</source>
         <translation>Triggers</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="287"/>
+        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="281"/>
         <source>Rules</source>
         <translation>Reglas</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="292"/>
+        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="286"/>
         <source>Table Expression</source>
         <translation>Expresión de tabla</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="324"/>
+        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="291"/>
         <source>Code Preview</source>
         <translation>Vista previa código</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="367"/>
+        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="299"/>
         <source>Options</source>
         <translation>Opciones</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="391"/>
+        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="323"/>
         <source>Tag:</source>
         <translation>Tag:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="404"/>
+        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="336"/>
         <source>Mode:</source>
         <translation>Modo:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="413"/>
+        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="345"/>
         <source>Ordinary</source>
         <translation>Ordinario</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="423"/>
+        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="355"/>
+        <source>Recursi&amp;ve</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="365"/>
+        <source>&amp;Materialized</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Recursive</source>
-        <translation>Recursivo</translation>
+        <translation type="vanished">Recursivo</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="433"/>
         <source>Materialized</source>
-        <translation>Materializada</translation>
+        <translation type="vanished">Materializada</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="449"/>
+        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="381"/>
         <source>With no data</source>
         <translation>Sin datos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="55"/>
+        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="65"/>
         <source>Col./Expr.</source>
         <translation>Col./Expr.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="56"/>
+        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="66"/>
         <source>Alias</source>
         <translation>Alias</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="57"/>
+        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="67"/>
         <source>Alias Col.</source>
         <translation>Alias Col.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="58"/>
+        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="68"/>
         <source>Flags: SF FW AW VD</source>
         <translation>Banderas: SF FW AW VD</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="63"/>
+        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="73"/>
         <source>To reference all columns in a table (*) just do not fill the field &lt;strong&gt;Column&lt;/strong&gt;, this is the same as write &lt;em&gt;&lt;strong&gt;[schema].[tablel].*&lt;/strong&gt;&lt;/em&gt;</source>
         <translation>Para hacer referencia a todas las columnas de una tabla (*) simplemente no llenar el campo &lt;strong&gt;Column&lt;/strong&gt;, este es el mismo que el de escritura &lt;em&gt;&lt;strong&gt;[schema].[tablel].*&lt;/strong&gt;&lt;/em&gt;</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="90"/>
-        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="99"/>
+        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="100"/>
+        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="109"/>
         <source>Name</source>
         <translation>Nombre</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="92"/>
+        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="102"/>
         <source>Refer. Table</source>
         <translation>Refer. Tabla</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="94"/>
+        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="104"/>
         <source>Firing</source>
         <translation>Firing</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="96"/>
+        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="106"/>
         <source>Events</source>
         <translation>Eventos</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="101"/>
+        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="111"/>
         <source>Execution</source>
         <translation>Ejecución</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="102"/>
+        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="112"/>
         <source>Event</source>
         <translation>Evento</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="663"/>
+        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="674"/>
         <source>/* Could not generate the SQL code. Make sure all attributes are correctly filled! </source>
         <translation>/ * No se pudo generar el código SQL. Asegúrese de que todos los atributos se rellenan correctamente! </translation>
+    </message>
+</context>
+<context>
+    <name>WelcomeWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/welcomewidget.ui" line="23"/>
+        <source>Form</source>
+        <translation type="unfinished">Formulario</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/welcomewidget.ui" line="97"/>
+        <source>New model</source>
+        <translation type="unfinished">Nuevo modelo</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/welcomewidget.ui" line="135"/>
+        <source>Open model</source>
+        <translation type="unfinished">Abrir modelo</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/welcomewidget.ui" line="176"/>
+        <source>Sample models</source>
+        <translation type="unfinished">Ejemplo de modoles</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/welcomewidget.ui" line="220"/>
+        <source>Recent models</source>
+        <translation type="unfinished">Modelos Recientes</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/welcomewidget.ui" line="265"/>
+        <source>Last session</source>
+        <translation type="unfinished">Última sesión</translation>
     </message>
 </context>
 </TS>

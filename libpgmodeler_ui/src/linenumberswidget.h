@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,36 +29,36 @@
 #include <QPlainTextEdit>
 
 class LineNumbersWidget : public QWidget {
-  private:
-    Q_OBJECT
+	private:
+		Q_OBJECT
 
-    //! brief The first line number that must be drawn
-    unsigned first_line,
+		//! \brief The first line number that must be drawn
+		unsigned first_line,
 
-    //! brief The amount of lines to be drawn
-    line_count;
+		//! \brief The amount of lines to be drawn
+		line_count;
 
-    //! brief The y axis increment to start drawn the line number
-    int dy;
+		//! \brief The y axis increment to start drawn the line number
+		int dy;
 
-    //! brief Font color for drawn line numbers
-    static QColor font_color,
+		//! \brief Font color for drawn line numbers
+		static QColor font_color,
 
-    //! brief Widget's background color
-    bg_color;
+		//! \brief Widget's background color
+		bg_color;
 
-  protected:
-    void paintEvent(QPaintEvent *event);
+	protected:
+		void paintEvent(QPaintEvent *event);
 
-  public:
-    explicit LineNumbersWidget(QPlainTextEdit *parent = 0);
+	public:
+		explicit LineNumbersWidget(QPlainTextEdit *parent = 0);
 
-    /*! brief Draw the lines starting from 'first_line' and stoping at fisrt_line + line_count -1.
-        The dy param. defines an initial Y translation before drawn lines */
-    void drawLineNumbers(unsigned first_line, unsigned line_count, int dy);
+		/*! \brief Draw the lines starting from 'first_line' and stoping at fisrt_line + line_count -1.
+		The dy param. defines an initial Y translation before drawn lines */
+		void drawLineNumbers(unsigned first_line, unsigned line_count, int dy);
 
-    //! brief Configures the lines for both font and widget's background
-    static void setColors(const QColor &font_color, const QColor &bg_color);
+		//! \brief Configures the lines for both font and widget's background
+		static void setColors(const QColor &font_color, const QColor &bg_color);
 };
 
 #endif

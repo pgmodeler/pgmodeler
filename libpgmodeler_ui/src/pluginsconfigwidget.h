@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,18 +43,18 @@ class PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidg
 		//! \brief Table used to show the loaded plugins
 		ObjectTableWidget *plugins_tab;
 
-    /* Disabled methods */
-    void applyConfiguration(void){}
-    void saveConfiguration(void){}
-    void restoreDefaults(void){}    
-    void addConfigurationParam(const QString &, const attribs_map &){}
+		/* Disabled methods */
+		void applyConfiguration(void){}
+		void saveConfiguration(void){}
+		void restoreDefaults(void){}
+		void addConfigurationParam(const QString &, const attribs_map &){}
 
-  public:
+	public:
 		PluginsConfigWidget(QWidget *parent = 0);
 		~PluginsConfigWidget(void);
 
-    //! brief Since plugins has its own configurations this method load all plugins instead
-    void loadConfiguration(void);
+		//! \brief Since plugins has its own configurations this method load all plugins instead
+		void loadConfiguration(void);
 
 		/*! \brief Install the created actions on menu and toolbars. Additionally the user must specify the
 		 receiver object and slot executed when the actions is activated */

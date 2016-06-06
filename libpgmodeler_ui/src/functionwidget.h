@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2015 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,9 +35,9 @@
 
 class FunctionWidget: public BaseObjectWidget, public Ui::FunctionWidget  {
 	private:
-    Q_OBJECT
+		Q_OBJECT
 
-    NumberedTextEditor *source_code_txt;
+		NumberedTextEditor *source_code_txt;
 
 		//! \brief Function's source code highlighter
 		SyntaxHighlighter *source_code_hl;
@@ -51,8 +51,8 @@ class FunctionWidget: public BaseObjectWidget, public Ui::FunctionWidget  {
 		//! \brief Table that represents the table returned by the function
 		ObjectTableWidget *return_tab,
 
-												//! \brief Table used to store the function's parameters
-												*parameters_tab;
+		//! \brief Table used to store the function's parameters
+		*parameters_tab;
 
 		//! \brief Returns a parameter configured based upon the specified table and line
 		Parameter getParameter(ObjectTableWidget *tab, unsigned row);

@@ -7,7 +7,9 @@
 <!ENTITY % constraint SYSTEM "constraint.dtd">
 %constraint;
 
-<!ELEMENT table (schema,role?,tablespace?,comment?,tag?, appended-sql?,prepended-sql?,position,column*,constraint*,customidxs*)>
+<!ELEMENT initial-data (#PCDATA)>
+
+<!ELEMENT table (schema,role?,tablespace?,comment?,tag?, appended-sql?,prepended-sql?,position,column*,constraint*,customidxs*,initial-data?)>
 <!ATTLIST table name CDATA #REQUIRED>
 <!ATTLIST table oids (true | false) "false">
 <!ATTLIST table gen-alter-cmds (true | false) "false">
