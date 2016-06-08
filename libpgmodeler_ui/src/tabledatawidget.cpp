@@ -48,6 +48,15 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, BASE
 
 	add_col_tb->setMenu(&col_names_menu);
 	data_tbw->removeEventFilter(this);
+	csv_load_parent->setVisible(false);
+
+	csv_load_wgt = new CsvLoadWidget(this, true);
+	QVBoxLayout *layout = new QVBoxLayout;
+
+	layout->addWidget(csv_load_wgt);
+	layout->setContentsMargins(0,0,0,0);
+	csv_load_parent->setLayout(layout);
+	csv_load_parent->setMinimumSize(csv_load_wgt->minimumSize());
 
 	setMinimumSize(640, 480);
 
@@ -61,6 +70,11 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, BASE
 	connect(&col_names_menu, SIGNAL(triggered(QAction*)), this, SLOT(addColumn(QAction *)));
 	connect(data_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(enableButtons()));
 	connect(data_tbw->horizontalHeader(), SIGNAL(sectionDoubleClicked(int)), this, SLOT(fixInvalidColumn(int)));
+	connect(csv_load_tb, SIGNAL(toggled(bool)), csv_load_parent, SLOT(setVisible(bool)));
+
+	connect(csv_load_wgt, &CsvLoadWidget::s_csvFileLoaded, [=](){
+		populateDataGrid(csv_load_wgt->getCsvBuffer(Table::DATA_SEPARATOR, Table::DATA_LINE_BREAK));
+	});
 }
 
 void TableDataWidget::insertRowOnTabPress(int curr_row, int curr_col, int prev_row, int prev_col)
@@ -245,7 +259,7 @@ void TableDataWidget::setAttributes(DatabaseModel *model, Table *table)
 		populateDataGrid();
 }
 
-void TableDataWidget::populateDataGrid(void)
+void TableDataWidget::populateDataGrid(const QString &data)
 {
 	Table *table=dynamic_cast<Table *>(this->object);
 	QTableWidgetItem *item=nullptr;
@@ -256,7 +270,12 @@ void TableDataWidget::populateDataGrid(void)
 	Column *column=nullptr;
 
 	clearRows(false);
-	ini_data=table->getInitialData();
+
+	if(!data.isEmpty())
+		ini_data=data;
+	else
+		ini_data=table->getInitialData();
+
 
 	/* If the initial data buffer is preset the columns
 	there have priority over the current table's columns */
@@ -334,8 +353,8 @@ void TableDataWidget::populateDataGrid(void)
 	}
 
 	warn_frm->setVisible(!invalid_cols.isEmpty());
-	data_tbw->resizeRowsToContents();
 	data_tbw->resizeColumnsToContents();
+	data_tbw->resizeRowsToContents();
 
 	add_row_tb->setEnabled(!columns.isEmpty());
 	clear_cols_tb->setEnabled(!columns.isEmpty());

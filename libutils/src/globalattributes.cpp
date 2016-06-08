@@ -25,7 +25,7 @@ namespace GlobalAttributes {
 	PGMODELER_APP_NAME=QString("pgmodeler"),
 	PGMODELER_URI=QString("pgmodeler.com.br"),
 	PGMODELER_REVERSE_URI=QString("br.com.pgmodeler"),
-	PGMODELER_VERSION=QString("0.8.2"),
+	PGMODELER_VERSION=QString("0.9.0-alpha"),
 	PGMODELER_VER_CODENAME=QString("Faithful Elephant"),
 	PGMODELER_BUILD_NUMBER=QString(BUILDNUM),
 	PGMODELER_SITE=QString("http://www.pgmodeler.com.br"),
