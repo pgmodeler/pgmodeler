@@ -21,6 +21,7 @@
 
 const QChar TableDataWidget::UNESC_VALUE_START='{';
 const QChar	TableDataWidget::UNESC_VALUE_END='}';
+const QString TableDataWidget::PLACEHOLDER_COLUMN=QString("$placeholder$");
 
 TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, BASE_OBJECT)
 {
@@ -69,7 +70,7 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, BASE
 	connect(data_tbw, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(insertRowOnTabPress(int,int,int,int)), Qt::QueuedConnection);
 	connect(&col_names_menu, SIGNAL(triggered(QAction*)), this, SLOT(addColumn(QAction *)));
 	connect(data_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(enableButtons()));
-	connect(data_tbw->horizontalHeader(), SIGNAL(sectionDoubleClicked(int)), this, SLOT(fixInvalidColumn(int)));
+	connect(data_tbw->horizontalHeader(), SIGNAL(sectionDoubleClicked(int)), this, SLOT(changeColumnName(int)));
 	connect(csv_load_tb, SIGNAL(toggled(bool)), csv_load_parent, SLOT(setVisible(bool)));
 
 	connect(csv_load_wgt, &CsvLoadWidget::s_csvFileLoaded, [=](){
@@ -192,11 +193,11 @@ void TableDataWidget::clearColumns(void)
 	}
 }
 
-void TableDataWidget::fixInvalidColumn(int col_idx)
+void TableDataWidget::changeColumnName(int col_idx)
 {
 	QTableWidgetItem *item=data_tbw->horizontalHeaderItem(col_idx);
 
-	if(item && item->flags()==Qt::NoItemFlags)
+	if(item)
 	{
 		QAction * act=nullptr;
 
@@ -207,20 +208,41 @@ void TableDataWidget::fixInvalidColumn(int col_idx)
 		if(act && act->isEnabled())
 		{
 			QTableWidgetItem *item=data_tbw->horizontalHeaderItem(col_idx);
+			QString col_name=act->text();
 
-			item->setText(act->text());
-			item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-			item->setForeground(data_tbw->horizontalHeader()->palette().color(QPalette::Foreground));
+			item->setText(col_name);
+
+			if(act->text()==PLACEHOLDER_COLUMN)
+			{
+				item->setFlags(Qt::NoItemFlags);
+				item->setForeground(QColor(Qt::red));
+				item->setToolTip(trUtf8("Unknown column"));
+			}
+			else
+			{
+				Table *table=dynamic_cast<Table *>(this->object);
+				Column *column = table->getColumn(col_name);
+				item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+				item->setForeground(data_tbw->horizontalHeader()->palette().color(QPalette::Foreground));
+				item->setToolTip(QString("%1 [%2]").arg(col_name).arg(~column->getType()));
+			}
 
 			for(int row = 0; row < data_tbw->rowCount(); row++)
 			{
 				item=data_tbw->item(row, col_idx);
-				item->setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-				item->setBackground(item->data(Qt::UserRole).value<QBrush>());
+
+				if(col_name==PLACEHOLDER_COLUMN)
+					setItemInvalid(item);
+				else
+				{
+					item->setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+					item->setBackground(item->data(Qt::UserRole).value<QBrush>());
+				}
 			}
 
 			toggleWarningFrame();
 			configureColumnNamesMenu();
+			data_tbw->horizontalHeader()->update();
 			data_tbw->update();
 		}
 	}
@@ -374,15 +396,16 @@ void TableDataWidget::configureColumnNamesMenu(void)
 	for(int col = 0; col < data_tbw->columnCount(); col++)
 		col_names.removeOne(data_tbw->horizontalHeaderItem(col)->text());
 
-	if(col_names.isEmpty())
-		col_names_menu.addAction(trUtf8("(no columns)"))->setEnabled(false);
-	else
+	if(!col_names.isEmpty())
 	{
 		col_names.sort();
 
 		for(QString col_name : col_names)
 			col_names_menu.addAction(col_name);
 	}
+
+	col_names_menu.addSeparator();
+	col_names_menu.addAction(PLACEHOLDER_COLUMN);
 }
 
 void TableDataWidget::toggleWarningFrame(void)

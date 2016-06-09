@@ -59,6 +59,8 @@ class TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 		static const QChar UNESC_VALUE_START,
 		UNESC_VALUE_END;
 
+		static const QString PLACEHOLDER_COLUMN;
+
 		TableDataWidget(QWidget * parent = 0);
 
 		void setAttributes(DatabaseModel *model, Table *table);
@@ -75,7 +77,7 @@ class TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 		void deleteColumns(void);
 		void clearRows(bool confirm=true);
 		void clearColumns(void);
-		void fixInvalidColumn(int col_idx);
+		void changeColumnName(int col_idx);
 		void enableButtons(void);
 };
 
