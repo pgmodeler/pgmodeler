@@ -58,7 +58,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	v_splitter->setVisible(false);
 	csv_load_parent->setVisible(false);
 
-	csv_load_wgt = new CsvLoadWidget(csv_load_parent, false);
+	csv_load_wgt = new CsvLoadWidget(this, false);
 	QVBoxLayout *layout = new QVBoxLayout;
 
 	layout->addWidget(csv_load_wgt);
@@ -383,6 +383,25 @@ void DataManipulationForm::loadDataFromCsv(void)
 	QList<QStringList> rows=csv_load_wgt->getCsvRows();
 	QStringList cols=csv_load_wgt->getCsvColumns();
 	int row_id = 0, col_id = 0;
+
+	/* If there is only one empty row in the grid, this one will
+	be removed prior the csv loading */
+	if(results_tbw->rowCount()==1)
+	{
+		bool is_empty=true;
+
+		for(int col=0; col < results_tbw->columnCount(); col++)
+		{
+			if(!results_tbw->item(0, col)->text().isEmpty())
+			{
+				is_empty=false;
+				break;
+			}
+		}
+
+		if(is_empty)
+			removeNewRows({0});
+	}
 
 	for(QStringList &values : rows)
 	{
@@ -747,7 +766,7 @@ void DataManipulationForm::duplicateRows(void)
 	}
 }
 
-void DataManipulationForm::removeNewRows(vector<int> &ins_rows)
+void DataManipulationForm::removeNewRows(const vector<int> &ins_rows)
 {
 	if(!ins_rows.empty())
 	{

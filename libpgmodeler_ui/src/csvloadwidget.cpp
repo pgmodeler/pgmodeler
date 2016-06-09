@@ -138,6 +138,7 @@ void CsvLoadWidget::loadCsvFile(void)
 		}
 	}
 
+	file_edt->clear();
 	emit s_csvFileLoaded();
 }
 
