@@ -195,7 +195,7 @@ QString Column::getAlterDefinition(BaseObject *object)
 			attribs[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
 		if(!this->type.isEquivalentTo(col->type) ||
-				(this->type==col->type &&
+				(this->type.isEquivalentTo(col->type) &&
 				 (this->type.hasVariableLength() || this->type.acceptsPrecision()) &&
 				 ((this->type.getLength()!=col->type.getLength()) || (this->type.getPrecision()!=col->type.getPrecision()))))
 			attribs[ParsersAttributes::TYPE]=col->type.getCodeDefinition(SchemaParser::SQL_DEFINITION);
