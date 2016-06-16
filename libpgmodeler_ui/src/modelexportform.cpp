@@ -45,6 +45,9 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	page_by_page_ht=new HintTextWidget(page_by_page_hint, this);
 	page_by_page_ht->setText(page_by_page_chk->statusTip());
 
+	ignore_extra_errors_ht=new HintTextWidget(ignore_extra_errors_hint, this);
+	ignore_extra_errors_ht->setText(ignore_extra_errors_chk->statusTip());
+
 	connect(export_to_file_rb, SIGNAL(clicked()), this, SLOT(selectExportMode(void)));
 	connect(export_to_dbms_rb, SIGNAL(clicked()), this, SLOT(selectExportMode(void)));
 	connect(export_to_img_rb, SIGNAL(clicked()), this, SLOT(selectExportMode(void)));
@@ -81,6 +84,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(svg_rb, SIGNAL(toggled(bool)), zoom_cmb, SLOT(setDisabled(bool)));
 	connect(svg_rb, SIGNAL(toggled(bool)), zoom_lbl, SLOT(setDisabled(bool)));
 	connect(svg_rb, SIGNAL(toggled(bool)), page_by_page_chk, SLOT(setDisabled(bool)));
+	connect(ignore_extra_errors_chk, SIGNAL(toggled(bool)), error_codes_edt, SLOT(setEnabled(bool)));
 
 	pgsqlvers_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
 	pgsqlvers1_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
@@ -203,6 +207,10 @@ void ModelExportForm::exportModel(void)
 				export_hlp.setExportToDBMSParams(model->db_model, conn, version, ignore_dup_chk->isChecked(),
 												 drop_chk->isChecked() && drop_db_rb->isChecked(),
 												 drop_chk->isChecked() && drop_objs_rb->isChecked());
+
+				if(ignore_extra_errors_chk->isChecked())
+					export_hlp.setIgnoredErrors(error_codes_edt->text().simplified().split(' '));
+
 				export_thread->start();
 			}
 		}
