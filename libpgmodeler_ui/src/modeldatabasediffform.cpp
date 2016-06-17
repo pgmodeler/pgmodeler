@@ -91,8 +91,8 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 		keep_not_imported_objs_ht=new HintTextWidget(keep_not_imported_objs_hint, this);
 		keep_not_imported_objs_ht->setText(keep_not_imported_objs_chk->statusTip());
 
-		ignore_extra_errors_ht=new HintTextWidget(ignore_extra_errors_hint, this);
-		ignore_extra_errors_ht->setText(ignore_extra_errors_chk->statusTip());
+		ignore_error_codes_ht=new HintTextWidget(ignore_extra_errors_hint, this);
+		ignore_error_codes_ht->setText(ignore_error_codes_chk->statusTip());
 
 		sqlcode_hl=new SyntaxHighlighter(sqlcode_txt);
 		sqlcode_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
@@ -118,15 +118,15 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 		connect(drop_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
 		connect(alter_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
 		connect(ignore_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
-		connect(ignore_extra_errors_chk, SIGNAL(toggled(bool)), error_codes_edt, SLOT(setEnabled(bool)));
+		connect(ignore_error_codes_chk, SIGNAL(toggled(bool)), error_codes_edt, SLOT(setEnabled(bool)));
 
 #ifdef DEMO_VERSION
 	#warning "DEMO VERSION: forcing ignore errors in diff due to the object count limit."
 	ignore_errors_chk->setChecked(true);
 	ignore_errors_chk->setEnabled(false);
 
-	ignore_extra_errors_chk->setChecked(false);
-	ignore_extra_errors_chk->setEnabled(false);
+	ignore_error_codes_chk->setChecked(false);
+	ignore_error_codes_chk->setEnabled(false);
 
 	apply_on_server_rb->setChecked(false);
 	apply_on_server_rb->setEnabled(false);
@@ -455,7 +455,7 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 		*export_conn=*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 		export_helper->setExportToDBMSParams(sqlcode_txt->toPlainText(), export_conn,
 																				 database_cmb->currentText(), ignore_duplic_chk->isChecked());
-		if(ignore_extra_errors_chk->isChecked())
+		if(ignore_error_codes_chk->isChecked())
 			export_helper->setIgnoredErrors(error_codes_edt->text().simplified().split(' '));
 
 		export_thread->start();
