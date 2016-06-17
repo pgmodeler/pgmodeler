@@ -393,10 +393,8 @@ void DatabaseImportForm::captureThreadError(Exception e)
 	ico=QPixmap(QString(":/icones/icones/msgbox_erro.png"));
 	ico_lbl->setPixmap(ico);
 
-	item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getErrorMessage()), ico, nullptr, true, true);
-
-	if(!e.getExtraInfo().isEmpty())
-		PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getExtraInfo()), ico, item, true, true);
+	item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getErrorMessage()), ico, nullptr, false, true);
+	PgModelerUiNS::createExceptionsTree(output_trw, e, item);
 
 	//Destroy the current import thread and helper to avoid reuse
 	destroyThread();

@@ -175,7 +175,7 @@
             <property name="childrenCollapsible">
              <bool>false</bool>
             </property>
-            <widget class="QWidget" name="">
+            <widget class="QWidget" name="layoutWidget">
              <layout class="QVBoxLayout" name="verticalLayout_6">
               <item>
                <widget class="QGroupBox" name="groupBox">

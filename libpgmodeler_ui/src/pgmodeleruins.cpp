@@ -42,7 +42,7 @@ namespace PgModelerUiNS {
 			label->setText(text);
 			label->setWordWrap(true);
 			label->setTextInteractionFlags(Qt::TextSelectableByMouse);
-			label->setMinimumHeight(output_trw->iconSize().height());
+			label->setMinimumHeight(output_trw->iconSize().height() * 1.5);
 			label->setMaximumHeight(label->heightForWidth(label->width()));
 			output_trw->setItemWidget(item, 0, label);
 		}
@@ -222,5 +222,41 @@ namespace PgModelerUiNS {
 		QFont font=widget->font();
 		font.setPointSizeF(font.pointSizeF() * factor);
 		widget->setFont(font);
+	}
+
+	void createExceptionsTree(QTreeWidget *exceptions_trw, Exception &e, QTreeWidgetItem *root)
+	{
+		vector<Exception> list;
+		QString text;
+		int idx=0;
+		QTreeWidgetItem *item=nullptr, *child_item=nullptr;
+
+		if(!exceptions_trw)
+			return;
+
+		e.getExceptionsList(list);
+
+		for(Exception &ex : list)
+		{
+			text=QString("[%1] - %2").arg(idx).arg(ex.getMethod());
+			item=createOutputTreeItem(exceptions_trw, text, QPixmap(QString(":/icones/icones/funcao.png")), root, false, true);
+
+			text=QString("%1 (%2)").arg(ex.getFile()).arg(ex.getLine());
+			child_item=createOutputTreeItem(exceptions_trw, text, QPixmap(QString(":/icones/icones/codigofonte.png")), item, false, true);
+
+			text=QString("%1 (%2)").arg(Exception::getErrorCode(ex.getErrorType())).arg(ex.getErrorType());
+			child_item=createOutputTreeItem(exceptions_trw, text, QPixmap(QString(":/icones/icones/msgbox_alerta.png")), item, false, true);
+
+			child_item=createOutputTreeItem(exceptions_trw, ex.getErrorMessage(), QPixmap(QString(":/icones/icones/msgbox_erro.png")), item, false, true);
+			exceptions_trw->itemWidget(child_item, 0)->setStyleSheet(QString("color: #ff0000;"));
+
+			if(!ex.getExtraInfo().isEmpty())
+			{
+				child_item=createOutputTreeItem(exceptions_trw, ex.getExtraInfo(), QPixmap(QString(":/icones/icones/msgbox_info.png")), item, false, true);
+				exceptions_trw->itemWidget(child_item, 0)->setStyleSheet(QString("color: #000080;"));
+			}
+
+			idx++;
+		}
 	}
 }

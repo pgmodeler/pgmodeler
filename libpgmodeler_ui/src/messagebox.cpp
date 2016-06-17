@@ -86,76 +86,16 @@ void Messagebox::showExceptionList(void)
 void Messagebox::show(Exception e, const QString &msg, unsigned icon_type, unsigned buttons, const QString &yes_lbl, const QString &no_lbl, const QString &cancel_lbl,
 					  const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
 {
-	vector<Exception> list;
-	vector<Exception>::reverse_iterator itr,itr_end;
-	QTreeWidgetItem *item=nullptr,*item1=nullptr,*item2=nullptr;
-	QLabel *label=nullptr;
-	int idx=0;
-	Exception *ex=nullptr;
 	QString str_aux, title;
-	QFont font=this->font();
 
 	show_raw_info_tb->blockSignals(true);
 	show_raw_info_tb->setChecked(false);
 	show_raw_info_tb->blockSignals(false);
 
 	raw_info_txt->setPlainText(e.getExceptionsText());
-
-	e.getExceptionsList(list);
-
-	itr=list.rbegin();
-	itr_end=list.rend();
-
-	while(itr!=itr_end)
-	{
-		ex=&(*itr);
-
-		item=new QTreeWidgetItem;
-		str_aux=QString("[%1] - %2")
-				.arg(idx)
-				.arg(ex->getMethod());
-		item->setIcon(0,QPixmap(QString(":/icones/icones/funcao.png")));
-		exceptions_trw->insertTopLevelItem(0,item);
-		label=new QLabel;
-		label->setFont(font);
-		label->setWordWrap(true);
-		label->setText(str_aux);
-		exceptions_trw->setItemWidget(item, 0, label);
-
-		item1=new QTreeWidgetItem(item);
-		item1->setIcon(0,QPixmap(QString(":/icones/icones/codigofonte.png")));
-		item1->setText(0,ex->getFile() + QString(" (") + ex->getLine() + QString(")"));
-
-		item2=new QTreeWidgetItem(item);
-		item2->setIcon(0,QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
-		item2->setText(0,Exception::getErrorCode(ex->getErrorType()) +
-					   QString(" (") + QString("%1").arg(ex->getErrorType()) + QString(")"));
-
-		item1=new QTreeWidgetItem(item);
-		item1->setIcon(0,QPixmap(QString(":/icones/icones/msgbox_erro.png")));
-		label=new QLabel;
-		label->setWordWrap(true);
-		label->setFont(font);
-		label->setStyleSheet(QString("color: #ff0000;"));
-		exceptions_trw->setItemWidget(item1, 0, label);
-		label->setText(ex->getErrorMessage());
-
-		if(!ex->getExtraInfo().isEmpty())
-		{
-			item1=new QTreeWidgetItem(item);
-			item1->setIcon(0,QPixmap(QString(":/icones/icones/msgbox_info.png")));
-			label=new QLabel;
-			label->setWordWrap(true);
-			label->setFont(font);
-			label->setStyleSheet(QString("color: #000080;"));
-			label->setTextInteractionFlags(Qt::TextSelectableByMouse);
-			exceptions_trw->setItemWidget(item1, 0, label);
-			label->setText(ex->getExtraInfo());
-		}
-
-		itr++;
-		idx++;
-	}
+	PgModelerUiNS::createExceptionsTree(exceptions_trw, e, nullptr);
+	exceptions_trw->expandAll();
+	exceptions_trw->scrollToTop();
 
 	if(msg.isEmpty())
 		str_aux=PgModelerUiNS::formatMessage(e.getErrorMessage());
