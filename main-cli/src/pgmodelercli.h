@@ -95,6 +95,7 @@ class PgModelerCLI: public QApplication {
 		SHOW_DELIMITERS,
 		PAGE_BY_PAGE,
 		IGNORE_DUPLICATES,
+		IGNORE_ERROR_CODES,
 		CONN_ALIAS,
 		HOST,
 		PORT,
