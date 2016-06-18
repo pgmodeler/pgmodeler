@@ -1448,6 +1448,7 @@ bool PgSQLType::isEquivalentTo(PgSQLType type)
 																		{QString("decimal"),QString("numeric")},
 																		{QString("character varying"),QString("varchar")},
 																		{QString("character"), QString("char")},
+																		{QString("bool"), QString("boolean")},
 																		{QString("bit varying"),QString("varbit")},
 																		{QString("oid"),QString("regproc"),QString("regprocedure"),
 																		 QString("regoper"),QString("regoperator"),QString("regclass"),

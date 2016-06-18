@@ -212,8 +212,11 @@ void ModelDatabaseDiffForm::createThread(unsigned thread_id)
 		export_helper->moveToThread(export_thread);
 
 		connect(apply_on_server_btn, &QPushButton::clicked,
-				[=](){ apply_on_server_btn->setEnabled(false);
-			exportDiff(false); });
+			[=](){
+						apply_on_server_btn->setEnabled(false);
+						if(!export_thread->isRunning())
+							exportDiff(false);
+			});
 
 		connect(export_thread, SIGNAL(started(void)), export_helper, SLOT(exportToDBMS()));
 		connect(export_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString)), this, SLOT(updateProgress(int,QString,ObjectType,QString)), Qt::BlockingQueuedConnection);
