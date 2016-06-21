@@ -136,8 +136,9 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	connect(objects_trw, SIGNAL(itemCollapsed(QTreeWidgetItem*)), this, SLOT(cancelObjectRename()));
 	connect(objects_trw, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(cancelObjectRename()));
 
-	connect(data_grid_tb, &QToolButton::clicked,
-			[=]() { emit s_dataGridOpenRequested(connection.getConnectionParam(Connection::PARAM_DB_NAME)); });
+	connect(data_grid_tb, SIGNAL(clicked(bool)), this, SLOT(openDataGrid()));
+	connect(drop_db_tb, SIGNAL(clicked(bool)), this, SLOT(dropDatabase()));
+	connect(collapse_all_tb, SIGNAL(clicked(bool)), objects_trw, SLOT(collapseAll(void)));
 
 	connect(runsql_tb, &QToolButton::clicked,
 			[=]() { emit s_sqlExecutionRequested(); });
@@ -149,10 +150,6 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 			[=](){ DatabaseImportForm::filterObjects(objects_trw, filter_edt->text(),
 													 (by_oid_chk->isChecked() ? DatabaseImportForm::OBJECT_ID : 0), false); });
 
-	connect(drop_db_tb, &QToolButton::clicked,
-			[=]() { emit s_databaseDropRequested(connection.getConnectionParam(Connection::PARAM_DB_NAME)); });
-
-	connect(collapse_all_tb, SIGNAL(clicked(bool)), objects_trw, SLOT(collapseAll(void)));
 	connect(expand_all_tb, &QToolButton::clicked,
 			[=](){
 						objects_trw->blockSignals(true);
@@ -209,9 +206,10 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
 					obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
 
 					if(oid!=0 && (obj_type==OBJ_TABLE || obj_type==OBJ_VIEW))
-						emit s_dataGridOpenRequested(connection.getConnectionParam(Connection::PARAM_DB_NAME),
-													 item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
-													 item->text(0), obj_type!=OBJ_VIEW);
+					{
+						openDataGrid(item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
+												 item->text(0), obj_type!=OBJ_VIEW);
+					}
 				}
 			}
 			else if(k_event->key()==Qt::Key_F5)
@@ -850,9 +848,10 @@ QString DatabaseExplorerWidget::getObjectName(ObjectType obj_type, const QString
 	}
 }
 
-void DatabaseExplorerWidget::setConnection(Connection conn)
+void DatabaseExplorerWidget::setConnection(Connection conn, const QString &default_db)
 {
 	this->connection=conn;
+	this->default_db=(default_db.isEmpty() ? QString("postgres") : default_db);
 }
 
 Connection DatabaseExplorerWidget::getConnection(void)
@@ -974,10 +973,11 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 		else if(exec_action==source_action)
 			loadObjectSource();
 		else if(exec_action==show_data_action)
-			emit s_dataGridOpenRequested(connection.getConnectionParam(Connection::PARAM_DB_NAME),
-										 item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
-										 item->text(0),
-										 item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt()!=OBJ_VIEW);
+		{
+			openDataGrid(item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
+									 item->text(0),
+									 item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt()!=OBJ_VIEW);
+		}
 		else if(exec_action)
 			handleSelectedSnippet(exec_action->text());
 	}
@@ -1723,4 +1723,58 @@ QString DatabaseExplorerWidget::getObjectSource(BaseObject *object, DatabaseMode
 		source+=perm->getCodeDefinition(SchemaParser::SQL_DEFINITION);
 
 	return(source);
+}
+
+void DatabaseExplorerWidget::openDataGrid(const QString &schema, const QString &table, bool hide_views)
+{
+#ifdef DEMO_VERSION
+#warning "DEMO VERSION: data manipulation feature disabled warning."
+	Messagebox msg_box;
+	msg_box.show(trUtf8("Warning"),
+				 trUtf8("You're running a demonstration version! The data manipulation feature is available only in the full version!"),
+				 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
+#else
+	DataManipulationForm *data_manip=new DataManipulationForm;
+	Connection conn=Connection(this->connection.getConnectionParams());
+
+	data_manip->setWindowModality(Qt::NonModal);
+	data_manip->setAttribute(Qt::WA_DeleteOnClose, true);
+	data_manip->hide_views_chk->setChecked(hide_views);
+
+	data_manip->setAttributes(conn, schema, table);
+	data_manip->show();
+#endif
+}
+
+void DatabaseExplorerWidget::dropDatabase(void)
+{
+	Messagebox msg_box;
+	QString dbname = connection.getConnectionParam(Connection::PARAM_DB_NAME);
+
+	msg_box.show(trUtf8("Warning"),
+				 trUtf8("<strong>CAUTION:</strong> You are about to drop the entire database <strong>%1</strong>! All data will be completely wiped out. Do you really want to proceed?").arg(dbname),
+				 Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
+
+	if(msg_box.result()==QDialog::Accepted)
+	{
+		try
+		{
+			Connection conn=Connection(connection.getConnectionParams());
+			conn.setConnectionParam(Connection::PARAM_DB_NAME, default_db);
+			conn.connect();
+			conn.executeDDLCommand(QString("DROP DATABASE \"%1\";").arg(dbname));
+			conn.close();
+			this->setEnabled(false);
+			emit s_databaseDropped(dbname);
+		}
+		catch(Exception &e)
+		{
+			if(connection.getConnectionParam(Connection::PARAM_DB_NAME) == default_db)
+				throw Exception(Exception::getErrorMessage(ERR_DROP_CURRDB_DEFAULT)
+												.arg(dbname).arg(connection.getConnectionParam(Connection::PARAM_ALIAS)),
+												ERR_DROP_CURRDB_DEFAULT,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			else
+				throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		}
+	}
 }

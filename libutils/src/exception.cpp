@@ -248,6 +248,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_ASG_ENUM_LONG_NAME", QT_TR_NOOP("The enumeration `%1' can't be assigned to the type `%2' because is too long!")},
 	{"ERR_CONNECTION_TIMEOUT", QT_TR_NOOP("The connection was idle for too long and was automatically closed!")},
 	{"ERR_CONNECTION_BROKEN", QT_TR_NOOP("The connection was unexpectedly closed by the database server `%1' at port `%2'!")},
+	{"ERR_DROP_CURRDB_DEFAULT", QT_TR_NOOP("Failed to drop the database `%1' because it is defined as the default database for the connection `%2'!")}
 };
 
 Exception::Exception(void)
