@@ -60,6 +60,8 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 	public slots:
 		void configureSnippets(void);
 
+		void clearDatabases(void);
+
 	private slots:
 		//! \brief Opens a connection to the selected server
 		void connectToServer(void);
@@ -67,11 +69,8 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! \brief Disconnect from server and close any opened database explorer or sql execution tab
 		void disconnectFromDatabases(void);
 
-		//! \brief Drop the named database
-		void dropDatabase(const QString &dbname);
-
-		//! \brief Show the widget to handle data in tables
-		void openDataGrid(const QString &dbname=QString(), const QString &schema=QString("public"), const QString &table=QString(), bool hide_views=true);
+		//! \brief Removes all DatabaseExplorerWidget instances linked to the dropped database
+		void handleDatabaseDropped(const QString &dbname);
 
 		//! \brief Open the current database in a database explorer instance
 		void browseDatabase(void);

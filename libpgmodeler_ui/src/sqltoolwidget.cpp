@@ -92,6 +92,13 @@ void SQLToolWidget::configureSnippets(void)
 	}
 }
 
+void SQLToolWidget::clearDatabases()
+{
+	database_cmb->clear();
+	database_cmb->setEnabled(false);
+	refresh_tb->setEnabled(false);
+}
+
 void SQLToolWidget::connectToServer(void)
 {
 	try
@@ -104,8 +111,7 @@ void SQLToolWidget::connectToServer(void)
 		else
 		{
 			Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-
-			database_cmb->clear();
+			clearDatabases();
 
 			if(conn)
 			{
@@ -163,19 +169,8 @@ void SQLToolWidget::disconnectFromDatabases(void)
 	}
 }
 
-void SQLToolWidget::dropDatabase(const QString &dbname)
+void SQLToolWidget::handleDatabaseDropped(const QString &dbname)
 {
-	Messagebox msg_box;
-
-	msg_box.show(trUtf8("Warning"),
-				 trUtf8("<strong>CAUTION:</strong> You are about to drop the entire database <strong>%1</strong>! All data will be completely wiped out. Do you really want to proceed?").arg(dbname),
-				 Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
-
-	if(msg_box.result()==QDialog::Accepted)
-	{
-		Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-		Connection aux_conn=(*conn);
-
 		try
 		{
 			//Closing tabs related to the database to be dropped
@@ -188,38 +183,12 @@ void SQLToolWidget::dropDatabase(const QString &dbname)
 				}
 			}
 
-			aux_conn.connect();
-			aux_conn.executeDDLCommand(QString("DROP DATABASE \"%1\";").arg(dbname));
-			aux_conn.close();
 			connectToServer();
 		}
 		catch(Exception &e)
 		{
 			throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
-	}
-}
-
-void SQLToolWidget::openDataGrid(const QString &dbname, const QString &schema, const QString &table, bool hide_views)
-{
-#ifdef DEMO_VERSION
-#warning "DEMO VERSION: data manipulation feature disabled warning."
-	Messagebox msg_box;
-	msg_box.show(trUtf8("Warning"),
-				 trUtf8("You're running a demonstration version! The data manipulation feature is available only in the full version!"),
-				 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
-#else
-	DataManipulationForm *data_manip=new DataManipulationForm;
-	Connection conn=*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-
-	data_manip->setWindowModality(Qt::NonModal);
-	data_manip->setAttribute(Qt::WA_DeleteOnClose, true);
-	data_manip->hide_views_chk->setChecked(hide_views);
-
-	conn.setConnectionParam(Connection::PARAM_DB_NAME, (dbname.isEmpty() ? database_cmb->currentText() : dbname));
-	data_manip->setAttributes(conn, schema, table);
-	data_manip->show();
-#endif
 }
 
 void SQLToolWidget::browseDatabase(void)
@@ -230,18 +199,18 @@ void SQLToolWidget::browseDatabase(void)
 		if(database_cmb->currentIndex() > 0)
 		{
 			Connection conn=(*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>()));
+			QString maintainance_db=conn.getConnectionParam(Connection::PARAM_DB_NAME);
 			DatabaseExplorerWidget *db_explorer_wgt=new DatabaseExplorerWidget;
 
 			db_explorer_wgt->setObjectName(database_cmb->currentText());
 			conn.setConnectionParam(Connection::PARAM_DB_NAME, database_cmb->currentText());
-			db_explorer_wgt->setConnection(conn);
+			db_explorer_wgt->setConnection(conn, maintainance_db);
 			db_explorer_wgt->listObjects();
 
 			databases_tbw->addTab(db_explorer_wgt, database_cmb->currentText());
 			databases_tbw->setCurrentWidget(db_explorer_wgt);
 
-			connect(db_explorer_wgt, SIGNAL(s_dataGridOpenRequested(QString,QString,QString,bool)), this, SLOT(openDataGrid(QString,QString,QString,bool)));
-			connect(db_explorer_wgt, SIGNAL(s_databaseDropRequested(QString)), this, SLOT(dropDatabase(QString)));
+			connect(db_explorer_wgt, SIGNAL(s_databaseDropped(QString)), this, SLOT(handleDatabaseDropped(QString)));
 			connect(db_explorer_wgt, SIGNAL(s_sqlExecutionRequested()), this, SLOT(addSQLExecutionTab()));
 			connect(db_explorer_wgt, SIGNAL(s_snippetShowRequested(QString)), this, SLOT(showSnippet(QString)));
 			connect(db_explorer_wgt, SIGNAL(s_sourceCodeShowRequested(QString)), sourcecode_txt, SLOT(setPlainText(QString)));
