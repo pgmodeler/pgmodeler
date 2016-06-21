@@ -34,6 +34,9 @@ class CodeCompletionWidget: public QWidget
 {
 	private:
 		Q_OBJECT
+
+		//! \brief A timer that controls the completion popup
+		QTimer popup_timer;
 		
 		QWidget *completion_wgt;
 		
