@@ -105,32 +105,28 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 				}
 				else if(k_event->key()==Qt::Key_Space || k_event->key()==Qt::Key_Backspace || k_event->key()==Qt::Key_Delete)
 				{
-					if(persistent_chk->isChecked())
-					{
-						this->show();
-					}
-					else
-					{
-						QTextCursor tc=code_field_txt->textCursor();
-						tc.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
+					QTextCursor tc=code_field_txt->textCursor();
+					tc.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
 
-						/* Avoiding deleting text using backspace or delete if the current char is the completion trigger (.).
+					/* Avoiding deleting text using backspace or delete if the current char is the completion trigger (.).
 						 This will block the cursor and cause the list to stay in the current qualifying level */
-						if(completion_wgt->isVisible() &&
-							 (k_event->key()==Qt::Key_Backspace || k_event->key()==Qt::Key_Delete) &&
-							 tc.selectedText().contains(completion_trigger))
-						{
-							event->ignore();
-							return(true);
-						}
-						else if(k_event->key()==Qt::Key_Space)
-						{
-							setQualifyingLevel(nullptr);
-
-							if(!persistent_chk->isChecked())
-								this->close();
-						}
+					if(completion_wgt->isVisible() &&
+						 (k_event->key()==Qt::Key_Backspace || k_event->key()==Qt::Key_Delete) &&
+						 tc.selectedText().contains(completion_trigger))
+					{
+						event->ignore();
+						return(true);
 					}
+					else if(k_event->key()==Qt::Key_Space)
+					{
+						setQualifyingLevel(nullptr);
+
+						if(!persistent_chk->isChecked())
+							this->close();
+					}
+
+					if(persistent_chk->isChecked())
+						this->show();
 				}
 			}
 		}
@@ -181,7 +177,7 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 	return(QWidget::eventFilter(object, event));
 }
 
-void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl, const QString &keywords_grp, bool persistent)
+void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl, const QString &keywords_grp)
 {
 	map<QString, attribs_map> confs=GeneralConfigWidget::getConfigurationParams();
 
@@ -190,9 +186,6 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
 	setQualifyingLevel(nullptr);
 	auto_triggered=false;
 	this->db_model=db_model;
-
-	persistent_chk->setVisible(db_model==nullptr);
-	persistent_chk->setChecked(db_model==nullptr && persistent);
 
 	if(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_COMPLETION]==ParsersAttributes::_TRUE_)
 	{
@@ -489,13 +482,33 @@ void CodeCompletionWidget::selectItem(void)
 			/* Move the cursor to the start of the word because all the chars will be replaced
 			with the object name */
 			prev_txt_cur.movePosition(QTextCursor::StartOfWord, QTextCursor::KeepAnchor);
+
 			tc=prev_txt_cur;
 			tc.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
 
-			if(tc.selectedText().contains('"'))
+			/* An small workaround to correctly write the object name in the current
+			qualifying level without remove the parent's name. This happens only when
+			the completion is marked as persistent */
+			if(persistent_chk->isChecked())
+			{
+				if(tc.selectedText().startsWith('.'))
+				{
+					prev_txt_cur.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
+
+					if(!tc.selectedText().endsWith('.'))
+						prev_txt_cur.insertText(completion_trigger);
+				}
+				else if(qualifying_level >= 0 && !tc.selectedText().endsWith('.'))
+				{
+					prev_txt_cur.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
+					prev_txt_cur.insertText(completion_trigger);
+				}
+			}
+			else if(tc.selectedText().contains('"'))
 				prev_txt_cur=tc;
 
 			code_field_txt->setTextCursor(prev_txt_cur);
+
 			insertObjectName(object);
 			setQualifyingLevel(object);
 		}
