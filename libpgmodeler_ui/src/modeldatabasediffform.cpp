@@ -293,22 +293,20 @@ void ModelDatabaseDiffForm::listDatabases(void)
 		{
 			emit s_connectionsUpdateRequest();
 		}
-		else
+
+		Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+
+		if(conn)
 		{
-			Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-
-			if(conn)
-			{
-				DatabaseImportHelper imp_helper;
-				imp_helper.setConnection(*conn);
-				DatabaseImportForm::listDatabases(imp_helper, database_cmb);
-			}
-			else
-				database_cmb->clear();
-
-			database_cmb->setEnabled(database_cmb->count() > 0);
-			database_lbl->setEnabled(database_cmb->isEnabled());
+			DatabaseImportHelper imp_helper;
+			imp_helper.setConnection(*conn);
+			DatabaseImportForm::listDatabases(imp_helper, database_cmb);
 		}
+		else
+			database_cmb->clear();
+
+		database_cmb->setEnabled(database_cmb->count() > 0);
+		database_lbl->setEnabled(database_cmb->isEnabled());
 	}
 	catch(Exception &e)
 	{
