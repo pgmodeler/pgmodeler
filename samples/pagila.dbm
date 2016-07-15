@@ -3,14 +3,13 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.8.2-beta1" last-position="323,261" last-zoom="1"
-	 default-owner="postgres">
-<database name="pagila" encoding="UTF8" lc-collate="C" lc-ctype="C">
+<dbmodel pgmodeler-ver="0.9.0-alpha" last-position="329,274" last-zoom="1">
+<database name="pagila" encoding="UTF8">
 	<role name="postgres"/>
 	<tablespace name="pg_default"/>
 </database>
 
-<schema name="public" fill-color="#e1e1e1" sql-disabled="true">
+<schema name="public" protected="true" fill-color="#e1e1e1" sql-disabled="true">
 </schema>
 
 <sequence name="actor_actor_id_seq"
@@ -140,7 +139,7 @@ END
 		<type name="text"/>
 	</column>
 	<column name="release_year">
-		<type name="public.year" precision="32731"/>
+		<type name="public.year"/>
 	</column>
 	<column name="language_id" not-null="true">
 		<type name="smallint"/>
@@ -161,7 +160,7 @@ END
 		<type name="numeric" length="5" precision="2"/>
 	</column>
 	<column name="rating" default-value="'G'::mpaa_rating">
-		<type name="public.mpaa_rating" precision="32731"/>
+		<type name="public.mpaa_rating"/>
 	</column>
 	<column name="last_update" not-null="true" default-value="now()">
 		<type name="timestamp"/>
@@ -1135,7 +1134,7 @@ END ]]></definition>
 	<role name="postgres"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
-	<type name="public.customer" precision="0"/>
+	<type name="public.customer"/>
 	</return-type>
 	<parameter name="min_monthly_purchases">
 		<type name="integer"/>
@@ -4527,7 +4526,7 @@ END
 		<type name="date"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[date_cmp_timestamptz]]></definition>
 </function>
@@ -4620,7 +4619,7 @@ END
 		<type name="timestamp"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[timestamp_cmp_timestamptz]]></definition>
 </function>
@@ -4641,10 +4640,10 @@ END
 	<type name="integer"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[timestamp_cmp]]></definition>
 </function>
@@ -4665,7 +4664,7 @@ END
 	<type name="integer"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
 		<type name="date"/>
@@ -4689,7 +4688,7 @@ END
 	<type name="integer"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
 		<type name="timestamp"/>
@@ -5071,7 +5070,7 @@ END
 		<type name="date"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[date_lt_timestamptz]]></definition>
 </function>
@@ -5081,7 +5080,7 @@ END
 	<role name="postgres"/>
 	<comment><![CDATA[less than]]></comment>
 	<type name="date" ref-type="left-type"/>
-	<type name="timestamp" ref-type="right-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.date_lt_timestamptz(date,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -5106,7 +5105,7 @@ END
 		<type name="date"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[date_le_timestamptz]]></definition>
 </function>
@@ -5116,7 +5115,7 @@ END
 	<role name="postgres"/>
 	<comment><![CDATA[less than or equal]]></comment>
 	<type name="date" ref-type="left-type"/>
-	<type name="timestamp" ref-type="right-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.date_le_timestamptz(date,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -5141,7 +5140,7 @@ END
 		<type name="date"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[date_eq_timestamptz]]></definition>
 </function>
@@ -5151,7 +5150,7 @@ END
 	<role name="postgres"/>
 	<comment><![CDATA[equal]]></comment>
 	<type name="date" ref-type="left-type"/>
-	<type name="timestamp" ref-type="right-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.date_eq_timestamptz(date,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.eqjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.eqsel(internal,oid,internal,integer)"/>
@@ -5176,7 +5175,7 @@ END
 		<type name="date"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[date_ge_timestamptz]]></definition>
 </function>
@@ -5186,7 +5185,7 @@ END
 	<role name="postgres"/>
 	<comment><![CDATA[greater than or equal]]></comment>
 	<type name="date" ref-type="left-type"/>
-	<type name="timestamp" ref-type="right-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.date_ge_timestamptz(date,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -5211,7 +5210,7 @@ END
 		<type name="date"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[date_gt_timestamptz]]></definition>
 </function>
@@ -5221,7 +5220,7 @@ END
 	<role name="postgres"/>
 	<comment><![CDATA[greater than]]></comment>
 	<type name="date" ref-type="left-type"/>
-	<type name="timestamp" ref-type="right-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.date_gt_timestamptz(date,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -5602,7 +5601,7 @@ END
 		<type name="timestamp"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[timestamp_lt_timestamptz]]></definition>
 </function>
@@ -5612,7 +5611,7 @@ END
 	<role name="postgres"/>
 	<comment><![CDATA[less than]]></comment>
 	<type name="timestamp" ref-type="left-type"/>
-	<type name="timestamp" ref-type="right-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamp_lt_timestamptz(timestamp,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -5637,7 +5636,7 @@ END
 		<type name="timestamp"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[timestamp_le_timestamptz]]></definition>
 </function>
@@ -5647,7 +5646,7 @@ END
 	<role name="postgres"/>
 	<comment><![CDATA[less than or equal]]></comment>
 	<type name="timestamp" ref-type="left-type"/>
-	<type name="timestamp" ref-type="right-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamp_le_timestamptz(timestamp,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -5672,7 +5671,7 @@ END
 		<type name="timestamp"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[timestamp_eq_timestamptz]]></definition>
 </function>
@@ -5682,7 +5681,7 @@ END
 	<role name="postgres"/>
 	<comment><![CDATA[equal]]></comment>
 	<type name="timestamp" ref-type="left-type"/>
-	<type name="timestamp" ref-type="right-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamp_eq_timestamptz(timestamp,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.eqjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.eqsel(internal,oid,internal,integer)"/>
@@ -5707,7 +5706,7 @@ END
 		<type name="timestamp"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[timestamp_ge_timestamptz]]></definition>
 </function>
@@ -5717,7 +5716,7 @@ END
 	<role name="postgres"/>
 	<comment><![CDATA[greater than or equal]]></comment>
 	<type name="timestamp" ref-type="left-type"/>
-	<type name="timestamp" ref-type="right-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamp_ge_timestamptz(timestamp,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -5742,7 +5741,7 @@ END
 		<type name="timestamp"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[timestamp_gt_timestamptz]]></definition>
 </function>
@@ -5752,7 +5751,7 @@ END
 	<role name="postgres"/>
 	<comment><![CDATA[greater than]]></comment>
 	<type name="timestamp" ref-type="left-type"/>
-	<type name="timestamp" ref-type="right-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamp_gt_timestamptz(timestamp,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -5775,10 +5774,10 @@ END
 	<type name="boolean"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[timestamp_lt]]></definition>
 </function>
@@ -5787,8 +5786,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than]]></comment>
-	<type name="timestamp" ref-type="left-type" with-timezone="true"/>
-	<type name="timestamp" ref-type="right-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_lt(timestamp with time zone,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -5811,10 +5810,10 @@ END
 	<type name="boolean"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[timestamp_le]]></definition>
 </function>
@@ -5823,8 +5822,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than or equal]]></comment>
-	<type name="timestamp" ref-type="left-type" with-timezone="true"/>
-	<type name="timestamp" ref-type="right-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_le(timestamp with time zone,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -5847,10 +5846,10 @@ END
 	<type name="boolean"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[timestamp_eq]]></definition>
 </function>
@@ -5859,8 +5858,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[equal]]></comment>
-	<type name="timestamp" ref-type="left-type" with-timezone="true"/>
-	<type name="timestamp" ref-type="right-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_eq(timestamp with time zone,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.eqjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.eqsel(internal,oid,internal,integer)"/>
@@ -5883,10 +5882,10 @@ END
 	<type name="boolean"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[timestamp_ge]]></definition>
 </function>
@@ -5895,8 +5894,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than or equal]]></comment>
-	<type name="timestamp" ref-type="left-type" with-timezone="true"/>
-	<type name="timestamp" ref-type="right-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_ge(timestamp with time zone,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -5919,10 +5918,10 @@ END
 	<type name="boolean"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[timestamp_gt]]></definition>
 </function>
@@ -5931,8 +5930,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than]]></comment>
-	<type name="timestamp" ref-type="left-type" with-timezone="true"/>
-	<type name="timestamp" ref-type="right-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_gt(timestamp with time zone,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -5954,7 +5953,7 @@ END
 	<type name="boolean"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
 		<type name="date"/>
@@ -5966,7 +5965,7 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than]]></comment>
-	<type name="timestamp" ref-type="left-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
 	<type name="date" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_lt_date(timestamp with time zone,date)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
@@ -5989,7 +5988,7 @@ END
 	<type name="boolean"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
 		<type name="date"/>
@@ -6001,7 +6000,7 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than or equal]]></comment>
-	<type name="timestamp" ref-type="left-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
 	<type name="date" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_le_date(timestamp with time zone,date)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
@@ -6024,7 +6023,7 @@ END
 	<type name="boolean"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
 		<type name="date"/>
@@ -6036,7 +6035,7 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[equal]]></comment>
-	<type name="timestamp" ref-type="left-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
 	<type name="date" ref-type="right-type"/>
 	<operator ref-type="commutator-op" signature="pg_catalog.=(date,timestamp with time zone)"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_eq_date(timestamp with time zone,date)"/>
@@ -6060,7 +6059,7 @@ END
 	<type name="boolean"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
 		<type name="date"/>
@@ -6072,7 +6071,7 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than or equal]]></comment>
-	<type name="timestamp" ref-type="left-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
 	<type name="date" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_ge_date(timestamp with time zone,date)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
@@ -6095,7 +6094,7 @@ END
 	<type name="boolean"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
 		<type name="date"/>
@@ -6107,7 +6106,7 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than]]></comment>
-	<type name="timestamp" ref-type="left-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
 	<type name="date" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_gt_date(timestamp with time zone,date)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
@@ -6130,7 +6129,7 @@ END
 	<type name="boolean"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
 		<type name="timestamp"/>
@@ -6142,7 +6141,7 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than]]></comment>
-	<type name="timestamp" ref-type="left-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
 	<type name="timestamp" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_lt_timestamp(timestamp with time zone,timestamp)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
@@ -6165,7 +6164,7 @@ END
 	<type name="boolean"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
 		<type name="timestamp"/>
@@ -6177,7 +6176,7 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than or equal]]></comment>
-	<type name="timestamp" ref-type="left-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
 	<type name="timestamp" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_le_timestamp(timestamp with time zone,timestamp)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
@@ -6200,7 +6199,7 @@ END
 	<type name="boolean"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
 		<type name="timestamp"/>
@@ -6212,7 +6211,7 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[equal]]></comment>
-	<type name="timestamp" ref-type="left-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
 	<type name="timestamp" ref-type="right-type"/>
 	<operator ref-type="commutator-op" signature="pg_catalog.=(timestamp,timestamp with time zone)"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_eq_timestamp(timestamp with time zone,timestamp)"/>
@@ -6236,7 +6235,7 @@ END
 	<type name="boolean"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
 		<type name="timestamp"/>
@@ -6248,7 +6247,7 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than or equal]]></comment>
-	<type name="timestamp" ref-type="left-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
 	<type name="timestamp" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_ge_timestamp(timestamp with time zone,timestamp)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
@@ -6271,7 +6270,7 @@ END
 	<type name="boolean"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp" with-timezone="true"/>
+		<type name="timestamp with time zone" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
 		<type name="timestamp"/>
@@ -6283,7 +6282,7 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than]]></comment>
-	<type name="timestamp" ref-type="left-type" with-timezone="true"/>
+	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
 	<type name="timestamp" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_gt_timestamp(timestamp with time zone,timestamp)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
@@ -6691,7 +6690,7 @@ END
 </relationship>
 
 <textbox name="pagila_desc" font-size="11">
-	<position x="339" y="283.273"/>
+	<position x="341" y="284.273"/>
 	<comment><![CDATA[[ pagila sample database ]
 
 Pagila is a port of the Sakila example database available for MySQL, which was
@@ -6944,26 +6943,36 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 </constraint>
 
 <relationship name="rel_film_language" type="relfk"
+	 custom-color="#26b51d"
 	 src-table="public.film"
 	 dst-table="public.language"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="4009.23" y="1247.6"/>
+	<position x="4009.23" y="1564.6"/>
+	</line>
+</relationship>
 
 <relationship name="rel_film_actor_actor" type="relfk"
+	 custom-color="#091daa"
 	 src-table="public.film_actor"
 	 dst-table="public.actor"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_film_actor_film" type="relfk"
+	 custom-color="#7500d6"
 	 src-table="public.film_actor"
 	 dst-table="public.film"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_film_category_category" type="relfk"
+	 custom-color="#7a382a"
 	 src-table="public.film_category"
 	 dst-table="public.category"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_film_category_film" type="relfk"
+	 custom-color="#0e4789"
 	 src-table="public.film_category"
 	 dst-table="public.film"
 	 src-required="false" dst-required="false"/>
@@ -6971,164 +6980,395 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 <relationship name="rel_address_city" type="relfk"
 	 src-table="public.address"
 	 dst-table="public.city"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="1931.23" y="604.6"/>
+	<position x="1934" y="330"/>
+	</line>
+</relationship>
 
 <relationship name="rel_city_country" type="relfk"
+	 custom-color="#66bb68"
 	 src-table="public.city"
 	 dst-table="public.country"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_customer_address" type="relfk"
+	 custom-color="#d165b8"
 	 src-table="public.customer"
 	 dst-table="public.address"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_customer_store" type="relfk"
+	 custom-color="#83a4c1"
 	 src-table="public.customer"
 	 dst-table="public.store"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="2038.3" y="1176.91"/>
+	<position x="2207.06" y="718.824"/>
+	<position x="2485.88" y="718.824"/>
+	</line>
+</relationship>
 
 <relationship name="rel_inventory_film" type="relfk"
+	 custom-color="#7f121b"
 	 src-table="public.inventory"
 	 dst-table="public.film"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="3361.18" y="809.412"/>
+	<position x="3370" y="1184"/>
+	</line>
+</relationship>
 
 <relationship name="rel_inventory_store" type="relfk"
+	 custom-color="#1d0b32"
 	 src-table="public.inventory"
 	 dst-table="public.store"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="2948.24" y="824.706"/>
+	<position x="2949.41" y="521.176"/>
+	</line>
+</relationship>
 
 <relationship name="rel_payment_customer" type="relfk"
+	 custom-color="#d6538b"
 	 src-table="public.payment"
 	 dst-table="public.customer"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="664.706" y="1058.82"/>
+	<position x="872.941" y="1061.18"/>
+	</line>
+	<label ref-type="dst-label">
+		<position x="-27.2667" y="-15.8667"/>
+	</label>
+</relationship>
 
 <relationship name="rel_payment_rental" type="relfk"
+	 custom-color="#36a493"
 	 src-table="public.payment"
 	 dst-table="public.rental"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="905.233" y="1430.6"/>
+	<position x="905.233" y="768.6"/>
+	</line>
+	<label ref-type="name-label">
+		<position x="-21.6867" y="74.9276"/>
+	</label>
+</relationship>
 
 <relationship name="rel_payment_staff" type="relfk"
+	 custom-color="#4f996e"
 	 src-table="public.payment"
 	 dst-table="public.staff"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_payment_p2007_01_customer" type="relfk"
+	 custom-color="#bd1cdb"
 	 src-table="public.payment_p2007_01"
 	 dst-table="public.customer"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="862.353" y="1842.35"/>
+	<position x="1140" y="1843.53"/>
+	<position x="1136.47" y="1223.53"/>
+	</line>
+	<label ref-type="dst-label">
+		<position x="0.968582" y="55.898"/>
+	</label>
+</relationship>
 
 <relationship name="rel_payment_p2007_01_rental" type="relfk"
+	 custom-color="#b1ce9e"
 	 src-table="public.payment_p2007_01"
 	 dst-table="public.rental"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="904" y="1890"/>
+	<position x="904" y="1461"/>
+	</line>
+</relationship>
 
 <relationship name="rel_payment_p2007_01_staff" type="relfk"
+	 custom-color="#e4e019"
 	 src-table="public.payment_p2007_01"
 	 dst-table="public.staff"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_payment_p2007_02_customer" type="relfk"
+	 custom-color="#5b8079"
 	 src-table="public.payment_p2007_02"
 	 dst-table="public.customer"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="936.066" y="742.6"/>
+	<position x="936.066" y="1165.27"/>
+	</line>
+	<label ref-type="dst-label">
+		<position x="-80.2079" y="-5.27846"/>
+	</label>
+</relationship>
 
 <relationship name="rel_payment_p2007_02_rental" type="relfk"
+	 custom-color="#b24ded"
 	 src-table="public.payment_p2007_02"
 	 dst-table="public.rental"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="741.176" y="663.529"/>
+	<position x="1045.88" y="663.529"/>
+	</line>
+	<label ref-type="src-label">
+		<position x="20.3237" y="-75.3177"/>
+	</label>
+	<label ref-type="dst-label">
+		<position x="-28.2471" y="-63.9059"/>
+	</label>
+	<label ref-type="name-label">
+		<position x="-0.689102" y="-65.4725"/>
+	</label>
+</relationship>
 
 <relationship name="rel_payment_p2007_02_staff" type="relfk"
+	 custom-color="#5074d4"
 	 src-table="public.payment_p2007_02"
 	 dst-table="public.staff"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="675.294" y="978.824"/>
+	<position x="982.353" y="1712.94"/>
+	</line>
+</relationship>
 
 <relationship name="rel_payment_p2007_03_customer" type="relfk"
+	 custom-color="#30065e"
 	 src-table="public.payment_p2007_03"
 	 dst-table="public.customer"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="2189.48" y="1602.6"/>
+	<position x="2189.48" y="1167.62"/>
+	</line>
+</relationship>
 
 <relationship name="rel_payment_p2007_03_rental" type="relfk"
+	 custom-color="#60580f"
 	 src-table="public.payment_p2007_03"
 	 dst-table="public.rental"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="2267.73" y="1630.6"/>
+	<position x="2267.73" y="768.6"/>
+	</line>
+	<label ref-type="src-label">
+		<position x="8.22347" y="10.5646"/>
+	</label>
+</relationship>
 
 <relationship name="rel_payment_p2007_03_staff" type="relfk"
+	 custom-color="#8f57b5"
 	 src-table="public.payment_p2007_03"
 	 dst-table="public.staff"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="2002.35" y="1610.59"/>
+	<position x="2002.35" y="1845.88"/>
+	<position x="1583.53" y="1892.94"/>
+	</line>
+	<label ref-type="src-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
 
 <relationship name="rel_payment_p2007_04_customer" type="relfk"
+	 custom-color="#99b174"
 	 src-table="public.payment_p2007_04"
 	 dst-table="public.customer"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="2895.29" y="1256.47"/>
+	<position x="1496.96" y="1254.52"/>
+	</line>
+	<label ref-type="src-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
 
 <relationship name="rel_payment_p2007_04_rental" type="relfk"
+	 custom-color="#35a037"
 	 src-table="public.payment_p2007_04"
 	 dst-table="public.rental"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="2265.87" y="1369.42"/>
+	<position x="2265.87" y="768.6"/>
+	</line>
+	<label ref-type="src-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
 
 <relationship name="rel_payment_p2007_04_staff" type="relfk"
+	 custom-color="#dc6da2"
 	 src-table="public.payment_p2007_04"
 	 dst-table="public.staff"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="2098.49" y="1355.42"/>
+	<position x="2098.49" y="1948.6"/>
+	</line>
+	<label ref-type="src-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
 
 <relationship name="rel_payment_p2007_05_customer" type="relfk"
+	 custom-color="#79242c"
 	 src-table="public.payment_p2007_05"
 	 dst-table="public.customer"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="2369.41" y="1874.12"/>
+	<position x="2370.59" y="1017.65"/>
+	<position x="1974.12" y="1018.82"/>
+	</line>
+	<label ref-type="src-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
 
 <relationship name="rel_payment_p2007_05_rental" type="relfk"
+	 custom-color="#62c5ee"
 	 src-table="public.payment_p2007_05"
 	 dst-table="public.rental"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="2430.59" y="2025.88"/>
+	<position x="1928.24" y="2027.06"/>
+	<position x="1923.53" y="875.294"/>
+	</line>
+	<label ref-type="src-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
 
 <relationship name="rel_payment_p2007_05_staff" type="relfk"
+	 custom-color="#79bf2c"
 	 src-table="public.payment_p2007_05"
 	 dst-table="public.staff"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="1898.82" y="1884.71"/>
+	<position x="1896.47" y="1978.82"/>
+	<position x="1727.06" y="1981.18"/>
+	</line>
+	<label ref-type="src-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
 
 <relationship name="rel_payment_p2007_06_customer" type="relfk"
+	 custom-color="#ab2ffe"
 	 src-table="public.payment_p2007_06"
 	 dst-table="public.customer"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="1765.88" y="2140"/>
+	<position x="1763.53" y="1147.06"/>
+	</line>
+	<label ref-type="src-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
 
 <relationship name="rel_payment_p2007_06_rental" type="relfk"
+	 custom-color="#fc430a"
 	 src-table="public.payment_p2007_06"
 	 dst-table="public.rental"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="1689.41" y="2163.53"/>
+	<position x="1690.59" y="840"/>
+	</line>
+	<label ref-type="dst-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
 
 <relationship name="rel_payment_p2007_06_staff" type="relfk"
+	 custom-color="#9637d2"
 	 src-table="public.payment_p2007_06"
 	 dst-table="public.staff"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="1727.06" y="2152.94"/>
+	<position x="1727.06" y="2015.29"/>
+	<position x="1465.88" y="2012.94"/>
+	</line>
+	<label ref-type="src-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
 
 <relationship name="rel_rental_customer" type="relfk"
+	 custom-color="#413a57"
 	 src-table="public.rental"
 	 dst-table="public.customer"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<label ref-type="dst-label">
+		<position x="4.49799" y="-51.1608"/>
+	</label>
+</relationship>
 
 <relationship name="rel_rental_inventory" type="relfk"
+	 custom-color="#8c700c"
 	 src-table="public.rental"
 	 dst-table="public.inventory"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_rental_staff" type="relfk"
+	 custom-color="#ba8ccc"
 	 src-table="public.rental"
 	 dst-table="public.staff"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="1020" y="1244"/>
+	<position x="1022" y="1814"/>
+	</line>
+</relationship>
 
 <relationship name="rel_staff_address" type="relfk"
+	 custom-color="#8828b6"
 	 src-table="public.staff"
 	 dst-table="public.address"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="1320" y="1541.18"/>
+	<position x="1448.24" y="1541.18"/>
+	<position x="1620" y="1544.71"/>
+	<position x="1982.35" y="1543.53"/>
+	</line>
+</relationship>
 
 <relationship name="rel_staff_store" type="relfk"
+	 custom-color="#3e8d1f"
 	 src-table="public.staff"
 	 dst-table="public.store"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="1148.24" y="2258.82"/>
+	<position x="1914.12" y="2260"/>
+	<position x="2482.35" y="1842.35"/>
+	<position x="2747.06" y="864.706"/>
+	</line>
+</relationship>
 
 <relationship name="rel_store_address" type="relfk"
+	 custom-color="#31dbf0"
 	 src-table="public.store"
 	 dst-table="public.address"
 	 src-required="false" dst-required="false"/>
