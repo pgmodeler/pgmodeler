@@ -158,11 +158,12 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
 			else
 			{
 				/* If the current info is ALTER or CREATE, only objects created by generalization or
-		 not created by common relationships will be considered on the comparison. Also,
-		 foreign keys are discarded here, since they will be compared on the main comparison
-		 at diffModels() */
+					 columns created by common relationships will be considered on the comparison. Also,
+					foreign keys are discarded here, since they will be compared on the main comparison
+					at diffModels() */
 				if(aux_obj && diff_type!=ObjectsDiffInfo::DROP_OBJECT &&
-						((tab_obj->isAddedByGeneralization() || !tab_obj->isAddedByLinking()) ||
+						((tab_obj->isAddedByGeneralization() || !tab_obj->isAddedByLinking() ||
+							(aux_obj->getObjectType()==OBJ_COLUMN && tab_obj->isAddedByLinking())) ||
 						 (constr && constr->getConstraintType()!=ConstraintType::foreign_key)))
 				{
 					//If there are some differences on the XML code of the objects
@@ -170,8 +171,8 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
 						generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, tab_obj, aux_obj);
 
 				}
-				/* If the object does not exists it will generate a drop info and the original
-		 one (tab_obj) was not included by generalization (to avoid drop inherited columns) */
+				/*	If the object does not exists it will generate a drop info and the original
+						one (tab_obj) was not included by generalization (to avoid drop inherited columns) */
 				else if(!aux_obj && !tab_obj->isAddedByGeneralization())
 				{
 					if(diff_type!=ObjectsDiffInfo::DROP_OBJECT ||
