@@ -6855,7 +6855,7 @@ void DatabaseModel::__getObjectDependencies(BaseObject *object, vector<BaseObjec
 				{
 					__getObjectDependencies(child, objs);
 
-					if(constr && constr->getReferencedTable())
+					if(constr && constr->getReferencedTable() && std::find(objs.begin(), objs.end(), constr->getReferencedTable())==objs.end())
 						__getObjectDependencies(constr->getReferencedTable(), objs);
 				}
 			}
