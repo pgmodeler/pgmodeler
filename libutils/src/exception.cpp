@@ -21,7 +21,6 @@
 QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_CUSTOM", QString(" ")},
 	{"ERR_ASG_PSDTYPE_COLUMN", QT_TR_NOOP("Assignment of a pseudo-type to the type of the column!")},
-	{"ERR_ASG_ZERO_LENGTH", QT_TR_NOOP("Zero length assignment!")},
 	{"ERR_ASG_INV_PRECISION", QT_TR_NOOP("Assignment of a precision greater than the length of the type!")},
 	{"ERR_ASG_INV_PREC_TIMESTAMP", QT_TR_NOOP("Assignment of an invalid precision to type time, timestamp or interval. The precision in this case must be equal to or less than 6!")},
 	{"ERR_ASG_NOT_ALOC_COLUMN", QT_TR_NOOP("Assignment of a not allocated column to object `%1' (%2)!")},
