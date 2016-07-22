@@ -725,7 +725,7 @@ vector<UserTypeConfig> PgSQLType::user_types;
 PgSQLType::PgSQLType(void)
 {
 	type_idx=offset;
-	length=1;
+	length=0;
 	precision=-1;
 	dimension=0;
 	with_timezone=false;
@@ -1511,10 +1511,6 @@ void PgSQLType::setDimension(unsigned dim)
 
 void PgSQLType::setLength(unsigned len)
 {
-	//Raises an error if the length is 0
-	if(len==0)
-		throw Exception(ERR_ASG_ZERO_LENGTH,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
 	this->length=len;
 }
 
@@ -1522,7 +1518,7 @@ void PgSQLType::setPrecision(int prec)
 {
 	if(!isUserType())
 	{
-		//Raises an error if the user tries to specify a precision > lenght
+		//Raises an error if the user tries to specify a precision > length
 		if(((BaseType::type_list[type_idx]==QString("numeric") ||
 			 BaseType::type_list[type_idx]==QString("decimal")) && prec > static_cast<int>(length)))
 			throw Exception(ERR_ASG_INV_PRECISION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -1572,8 +1568,8 @@ QString PgSQLType::getCodeDefinition(unsigned def_type,QString ref_type)
 
 		attribs[ParsersAttributes::NAME]=(~(*this));
 
-		if(length > 1)
-			attribs[ParsersAttributes::LENGTH]=QString("%1").arg(this->length);
+		//if(length > 1)
+		attribs[ParsersAttributes::LENGTH]=QString("%1").arg(this->length);
 
 		if(dimension > 0)
 			attribs[ParsersAttributes::DIMENSION]=QString("%1").arg(this->dimension);
@@ -1608,15 +1604,16 @@ QString PgSQLType::operator * (void)
 	//Generation the definition for the spatial types (PostGiS)
 	if(type==QString("geometry") || type==QString("geography"))
 		fmt_type=type + (*spatial_type);
-	else if(length > 1 && hasVariableLength())
+	else if(hasVariableLength())
 	{
 		//Configuring the precision
-		if((type==QString("numeric") || type==QString("decimal")) && precision>=0 &&
-				precision<=static_cast<int>(length))
+		if((type==QString("numeric") || type==QString("decimal")) && length >= 1 && precision>=0 && precision<=static_cast<int>(length))
 			aux=QString("%1(%2,%3)").arg(BaseType::type_list[type_idx]).arg(length).arg(precision);
 		//Configuring the length for the type
-		else
+		else if(length >= 1)
 			aux=QString("%1(%2)").arg(BaseType::type_list[type_idx]).arg(length);
+		else
+			aux=type;
 
 		fmt_type=aux;
 	}
