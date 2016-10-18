@@ -1,7 +1,7 @@
 v0.9.0-alpha
 ------
 
-<em>Release date: October 17, 2016</em><br/>
+<em>Release date: October 18, 2016</em><br/>
 <em>Changes since: <strong>v0.8.2</strong></em><br/>
 
 <strong>Summary:</strong> after four months of inactivity we have the first alpha release of 0.9.0. The main purpose of this version is to enable pgModeler to communicate with the recently arrived PostgreSQL 9.6. <br/>

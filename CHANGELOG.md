@@ -3,7 +3,7 @@ Change Log
 
 v0.9.0-alpha
 ------
-<em>Release date: October 17, 2016</em><br/>
+<em>Release date: October 18, 2016</em><br/>
 
 * [New] Enabling pgModeler to connect to PostgreSQL 9.6 servers.
 * [New] Added the option to ignore error codes during the export process in CLI.
