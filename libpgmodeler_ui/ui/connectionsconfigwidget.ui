@@ -990,11 +990,30 @@
   <tabstop>duplicate_tb</tabstop>
   <tabstop>edit_tb</tabstop>
   <tabstop>remove_tb</tabstop>
+  <tabstop>conn_attribs_tbw</tabstop>
+  <tabstop>alias_edt</tabstop>
   <tabstop>conn_db_edt</tabstop>
   <tabstop>auto_browse_chk</tabstop>
   <tabstop>host_edt</tabstop>
   <tabstop>port_sbp</tabstop>
+  <tabstop>user_edt</tabstop>
+  <tabstop>passwd_edt</tabstop>
   <tabstop>timeout_sbp</tabstop>
+  <tabstop>other_params_edt</tabstop>
+  <tabstop>diff_chk</tabstop>
+  <tabstop>export_chk</tabstop>
+  <tabstop>import_chk</tabstop>
+  <tabstop>validation_chk</tabstop>
+  <tabstop>test_tb</tabstop>
+  <tabstop>add_tb</tabstop>
+  <tabstop>update_tb</tabstop>
+  <tabstop>ssl_mode_cmb</tabstop>
+  <tabstop>client_cert_edt</tabstop>
+  <tabstop>client_key_edt</tabstop>
+  <tabstop>root_cert_edt</tabstop>
+  <tabstop>crl_edt</tabstop>
+  <tabstop>krb_server_edt</tabstop>
+  <tabstop>gssapi_auth_chk</tabstop>
  </tabstops>
  <resources>
   <include location="../res/resources.qrc"/>

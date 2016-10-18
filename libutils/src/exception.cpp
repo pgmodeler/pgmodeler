@@ -21,7 +21,6 @@
 QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_CUSTOM", QString(" ")},
 	{"ERR_ASG_PSDTYPE_COLUMN", QT_TR_NOOP("Assignment of a pseudo-type to the type of the column!")},
-	{"ERR_ASG_ZERO_LENGTH", QT_TR_NOOP("Zero length assignment!")},
 	{"ERR_ASG_INV_PRECISION", QT_TR_NOOP("Assignment of a precision greater than the length of the type!")},
 	{"ERR_ASG_INV_PREC_TIMESTAMP", QT_TR_NOOP("Assignment of an invalid precision to type time, timestamp or interval. The precision in this case must be equal to or less than 6!")},
 	{"ERR_ASG_NOT_ALOC_COLUMN", QT_TR_NOOP("Assignment of a not allocated column to object `%1' (%2)!")},
@@ -248,6 +247,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_ASG_ENUM_LONG_NAME", QT_TR_NOOP("The enumeration `%1' can't be assigned to the type `%2' because is too long!")},
 	{"ERR_CONNECTION_TIMEOUT", QT_TR_NOOP("The connection was idle for too long and was automatically closed!")},
 	{"ERR_CONNECTION_BROKEN", QT_TR_NOOP("The connection was unexpectedly closed by the database server `%1' at port `%2'!")},
+	{"ERR_DROP_CURRDB_DEFAULT", QT_TR_NOOP("Failed to drop the database `%1' because it is defined as the default database for the connection `%2'!")}
 };
 
 Exception::Exception(void)

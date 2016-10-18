@@ -128,6 +128,12 @@ class ModelExportHelper: public QObject {
 		to the main loop, depending on the mode the helper is being used (in a thread or locally) */
 		void abortExport(Exception &e);
 
+		/*! brief Handles the provided exception related to the sql command can
+		1) emit a ignored error signal if the error code in the exception is one of the ignored ones
+		2) append the error in a list of errors generated during the export process
+		3) abort the export by immediatelly redirecting the error to the user */
+		void handleSQLError(Exception &e, const QString &sql_cmd, bool ignore_dup);
+
 	public:
 		ModelExportHelper(QObject *parent = 0);
 

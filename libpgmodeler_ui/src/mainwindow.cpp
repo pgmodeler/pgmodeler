@@ -670,7 +670,10 @@ void MainWindow::updateConnections(bool force)
 							sql_tool_wgt->connections_cmb->count()==0)))
 	{
 		if(sender()!=sql_tool_wgt)
+		{
 			ConnectionsConfigWidget::fillConnectionsComboBox(sql_tool_wgt->connections_cmb, true);
+			sql_tool_wgt->clearDatabases();
+		}
 
 		if(sender()!=model_valid_wgt)
 			ConnectionsConfigWidget::fillConnectionsComboBox(model_valid_wgt->connections_cmb, true, Connection::OP_VALIDATION);

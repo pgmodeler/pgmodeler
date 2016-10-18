@@ -29,7 +29,6 @@ AboutWidget::AboutWidget(QWidget *parent) : QWidget(parent)
 	this->setGraphicsEffect(drop_shadow);
 
 	pgmodeler_ver_lbl->setText(QString("v%1").arg(GlobalAttributes::PGMODELER_VERSION));
-	code_name_lbl->setText(QString(" « %1 »").arg(GlobalAttributes::PGMODELER_VER_CODENAME));
 	build_num_lbl->setText(GlobalAttributes::PGMODELER_BUILD_NUMBER);
 
 	for(int row=0; row < contributors_tab->rowCount(); row++)
@@ -47,7 +46,6 @@ AboutWidget::AboutWidget(QWidget *parent) : QWidget(parent)
 	PgModelerUiNS::configureWidgetFont(title_lbl, PgModelerUiNS::HUGE_FONT_FACTOR);
 	PgModelerUiNS::configureWidgetFont(slogan_lbl, PgModelerUiNS::BIG_FONT_FACTOR);
 	PgModelerUiNS::configureWidgetFont(pgmodeler_ver_lbl, PgModelerUiNS::HUGE_FONT_FACTOR);
-	PgModelerUiNS::configureWidgetFont(code_name_lbl, PgModelerUiNS::BIG_FONT_FACTOR);
 	PgModelerUiNS::configureWidgetFont(build_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 	PgModelerUiNS::configureWidgetFont(build_num_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 	this->adjustSize();

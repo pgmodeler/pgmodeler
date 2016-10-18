@@ -158,11 +158,12 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
 			else
 			{
 				/* If the current info is ALTER or CREATE, only objects created by generalization or
-		 not created by common relationships will be considered on the comparison. Also,
-		 foreign keys are discarded here, since they will be compared on the main comparison
-		 at diffModels() */
+					 columns created by common relationships will be considered on the comparison. Also,
+					foreign keys are discarded here, since they will be compared on the main comparison
+					at diffModels() */
 				if(aux_obj && diff_type!=ObjectsDiffInfo::DROP_OBJECT &&
-						((tab_obj->isAddedByGeneralization() || !tab_obj->isAddedByLinking()) ||
+						((tab_obj->isAddedByGeneralization() || !tab_obj->isAddedByLinking() ||
+							(aux_obj->getObjectType()==OBJ_COLUMN && tab_obj->isAddedByLinking())) ||
 						 (constr && constr->getConstraintType()!=ConstraintType::foreign_key)))
 				{
 					//If there are some differences on the XML code of the objects
@@ -170,8 +171,8 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
 						generateDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, tab_obj, aux_obj);
 
 				}
-				/* If the object does not exists it will generate a drop info and the original
-		 one (tab_obj) was not included by generalization (to avoid drop inherited columns) */
+				/*	If the object does not exists it will generate a drop info and the original
+						one (tab_obj) was not included by generalization (to avoid drop inherited columns) */
 				else if(!aux_obj && !tab_obj->isAddedByGeneralization())
 				{
 					if(diff_type!=ObjectsDiffInfo::DROP_OBJECT ||
@@ -747,7 +748,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 						if(!isDiffInfoExists(ObjectsDiffInfo::ALTER_OBJECT, nullptr, obj, false))
 						{
 							/* Special case for constraints, their code will be appeded to a separated variable in order to
-				 create them at the end of diff buffer */
+							 create them at the end of diff buffer */
 							if(obj->getObjectType()==OBJ_CONSTRAINT &&
 									dynamic_cast<Constraint *>(obj)->getConstraintType()==ConstraintType::foreign_key)
 								create_fks[obj->getObjectId()]=getCodeDefinition(obj, false);
@@ -774,12 +775,15 @@ void ModelsDiffHelper::processDiffInfos(void)
 						if(obj_type==OBJ_COLUMN && diff_opts[OPT_TRUCANTE_TABLES])
 						{
 							Column *src_col=dynamic_cast<Column *>(object),
-									*imp_col=dynamic_cast<Column *>(diff.getOldObject());
+									*old_col=dynamic_cast<Column *>(diff.getOldObject());
 							Table *tab=dynamic_cast<Table *>(src_col->getParentTable());
 
-							//If the truncate was not generated previously
-							if((*src_col->getType())!=(*imp_col->getType()) && truncate_tabs.count(tab->getObjectId())==0)
+							if(((old_col->getType().isSerialType() && !src_col->getType().isEquivalentTo(old_col->getType().getAliasType())) ||
+									(!old_col->getType().isSerialType() && !src_col->getType().isEquivalentTo(old_col->getType()))) &&
+								 truncate_tabs.count(tab->getObjectId())==0)
+							{
 								truncate_tabs[tab->getObjectId()]=tab->getTruncateDefinition(diff_opts[OPT_CASCADE_MODE]);
+							}
 						}
 					}
 				}

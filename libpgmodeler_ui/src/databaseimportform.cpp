@@ -337,22 +337,21 @@ void DatabaseImportForm::listDatabases(void)
 		{
 			emit s_connectionsUpdateRequest();
 		}
-		else
+
+		Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+
+		if(conn)
 		{
-			Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-
-			if(conn)
-			{
-				//List the available databases using the selected connection
-				import_helper->setConnection(*conn);
-				DatabaseImportForm::listDatabases(*import_helper, database_cmb);
-			}
-			else
-				database_cmb->clear();
-
-			db_objects_tw->clear();
-			database_cmb->setEnabled(database_cmb->count() > 1);
+			//List the available databases using the selected connection
+			import_helper->setConnection(*conn);
+			DatabaseImportForm::listDatabases(*import_helper, database_cmb);
 		}
+		else
+			database_cmb->clear();
+
+		db_objects_tw->clear();
+		database_cmb->setEnabled(database_cmb->count() > 1);
+
 	}
 	catch(Exception &e)
 	{
@@ -393,10 +392,8 @@ void DatabaseImportForm::captureThreadError(Exception e)
 	ico=QPixmap(QString(":/icones/icones/msgbox_erro.png"));
 	ico_lbl->setPixmap(ico);
 
-	item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getErrorMessage()), ico, nullptr, true, true);
-
-	if(!e.getExtraInfo().isEmpty())
-		PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getExtraInfo()), ico, item, true, true);
+	item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getErrorMessage()), ico, nullptr, false, true);
+	PgModelerUiNS::createExceptionsTree(output_trw, e, item);
 
 	//Destroy the current import thread and helper to avoid reuse
 	destroyThread();

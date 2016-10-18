@@ -56,7 +56,17 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	//Forcing the splitter that handles the bottom widgets to resize its children to their minimum size
 	h_splitter->setSizes({500, 250, 500});
 	v_splitter->setVisible(false);
+	csv_load_parent->setVisible(false);
 
+	csv_load_wgt = new CsvLoadWidget(this, false);
+	QVBoxLayout *layout = new QVBoxLayout;
+
+	layout->addWidget(csv_load_wgt);
+	layout->setContentsMargins(0,0,0,0);
+	csv_load_parent->setLayout(layout);
+	csv_load_parent->setMinimumSize(csv_load_wgt->minimumSize());
+
+	connect(csv_load_tb, SIGNAL(toggled(bool)), csv_load_parent, SLOT(setVisible(bool)));
 	connect(close_btn, SIGNAL(clicked()), this, SLOT(reject()));
 	connect(schema_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(listTables()));
 	connect(hide_views_chk, SIGNAL(toggled(bool)), this, SLOT(listTables()));
@@ -94,6 +104,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 			[=](){ SQLExecutionWidget::exportResults(results_tbw); });
 
 	connect(results_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(enableRowControlButtons()));
+	connect(csv_load_wgt, SIGNAL(s_csvFileLoaded()), this, SLOT(loadDataFromCsv()));
 }
 
 void DataManipulationForm::setAttributes(Connection conn, const QString curr_schema, const QString curr_table)
@@ -131,6 +142,7 @@ void DataManipulationForm::setAttributes(Connection conn, const QString curr_sch
 void DataManipulationForm::listTables(void)
 {
 	table_cmb->clear();
+	csv_load_tb->setChecked(false);
 
 	if(schema_cmb->currentIndex() > 0)
 	{
@@ -255,6 +267,14 @@ void DataManipulationForm::retrieveData(void)
 		else
 			results_tbw->setFocus();
 
+		if(table_cmb->currentData(Qt::UserRole).toUInt()==OBJ_TABLE)
+			csv_load_tb->setEnabled(true);
+		else
+		{
+			csv_load_tb->setEnabled(false);
+			csv_load_tb->setChecked(false);
+		}
+
 		conn_sql.close();
 		catalog.closeConnection();
 	}
@@ -276,6 +296,8 @@ void DataManipulationForm::disableControlButtons(void)
 	add_tb->setEnabled(false);
 	duplicate_tb->setEnabled(false);
 	export_tb->setEnabled(false);
+	csv_load_tb->setEnabled(false);
+	csv_load_tb->setChecked(false);
 	clearChangedRows();
 }
 
@@ -354,6 +376,55 @@ void DataManipulationForm::swapColumns(void)
 	ord_columns_lst->addItems(items);
 	ord_columns_lst->blockSignals(false);
 	ord_columns_lst->setCurrentRow(new_idx);
+}
+
+void DataManipulationForm::loadDataFromCsv(void)
+{
+	QList<QStringList> rows=csv_load_wgt->getCsvRows();
+	QStringList cols=csv_load_wgt->getCsvColumns();
+	int row_id = 0, col_id = 0;
+
+	/* If there is only one empty row in the grid, this one will
+	be removed prior the csv loading */
+	if(results_tbw->rowCount()==1)
+	{
+		bool is_empty=true;
+
+		for(int col=0; col < results_tbw->columnCount(); col++)
+		{
+			if(!results_tbw->item(0, col)->text().isEmpty())
+			{
+				is_empty=false;
+				break;
+			}
+		}
+
+		if(is_empty)
+			removeNewRows({0});
+	}
+
+	for(QStringList &values : rows)
+	{
+		addRow();
+		row_id=results_tbw->rowCount() - 1;
+
+		for(int i = 0; i < values.count(); i++)
+		{
+			if(csv_load_wgt->isColumnsInFirstRow())
+			{
+				//First we need to get the index of the column by its name
+				col_id=col_names.indexOf(cols[i]);
+
+				if(col_id >= 0 && col_id < results_tbw->columnCount())
+					results_tbw->item(row_id, col_id)->setText(values.at(i));
+			}
+			else if(i < results_tbw->columnCount())
+			{
+				//Insert the value to the cell in order of appearance
+				results_tbw->item(row_id, i)->setText(values.at(i));
+			}
+		}
+	}
 }
 
 void DataManipulationForm::removeColumnFromList(void)
@@ -695,7 +766,7 @@ void DataManipulationForm::duplicateRows(void)
 	}
 }
 
-void DataManipulationForm::removeNewRows(vector<int> &ins_rows)
+void DataManipulationForm::removeNewRows(const vector<int> &ins_rows)
 {
 	if(!ins_rows.empty())
 	{

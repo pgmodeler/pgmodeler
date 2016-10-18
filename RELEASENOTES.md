@@ -1,27 +1,34 @@
-v0.8.2
+v0.9.0-alpha
 ------
 
-<em>Codename: <strong>Faithful Elephant</strong></em><br/>
-<em>Release date: June 6, 2016</em><br/>
-<em>Changes since: <strong>v0.8.2-beta1</strong></em><br/>
+<em>Release date: October 18, 2016</em><br/>
+<em>Changes since: <strong>v0.8.2</strong></em><br/>
 
-<strong>Summary:</strong> after two months of work we bring to you the pgModeler 0.8.2! With this release we officially concluded the series 0.8.x. This is by far the most important series in project's lifetime since the introduction of reverse engineering feature and port to Qt 5. This one brings additional improvements that definitively turned pgModeler into a solid application.<br/>
+<strong>Summary:</strong> after four months of inactivity we have the first alpha release of 0.9.0. The main purpose of this version is to enable pgModeler to communicate with the recently arrived PostgreSQL 9.6. <br/>
 
-Several portions of the software were changed or fixed in this final release as the following:
+Also, we have some small fixes and improvements to make pgModeler more user friendly. These set of changes and fixes are:<br/>
 
-* <strong>SQL Tool:</strong> the command history now is part of the output widget having a better appearance by registering commands and their respective affected or retrieved rows and, for broken commands, the error raised in the moment of their execution. Still in SQL tool, the data manipulation dialog was improved enabling the user to duplicate rows making the data handling even more quick.<br/>
+* [New] Enabling pgModeler to connect to PostgreSQL 9.6 servers.
+* [New] Added the option to ignore error codes during the export process in CLI.
+* [New] Added the ability to ignore extra errors by their codes in ModelExportForm and ModelDatabaseDiffForm.
+* [New] Added the ability to load data from CSV file into TableDataWidget and DataManipulationForm.
+* [Change] Minor update in snippets.conf by adding a SELECT * command.
+* [Change] Removed deprecated exception ERR_ASG_ZERO_LENGTH.
+* [Change] Improvements done in CodeCompletionWidget so that the completion can be more accurate mainly when using the form [schema].[table].
+* [Change] Methods responsible for dropping and exploring data were moved from SQLToolWidget to DatabaseExplorerWidget.
+* [Change] Improved the error output in DatabaseImportForm, ModelDatabaseDiffForm, ModelExportForm and Messagebox.
+* [Change] TableDataWidget widget now can have the column names changed freely not only when there are invalid ones.
+* [Change] Removed codename from AboutWidget.
+* [Fix] Fixed a bug in PgSQLType and PgSQLTypeWidget that was not properly setting length = 1 in character, varchar and numeric data types.
+* [Fix] Fixed a bug that was leading to stack overflow when generating object's sql plus its dependencies in huge models.
+* [Fix] Fix the structure of the sample model pagila.dbm.
+* [Fix] Minor fix in diff proccess in order to permit the comparison between a column added by relatinship and other that is not but share the same name.
+* [Fix] Fixed a bug that could cause crashes when editing connections in DatabaseImportForm or ModelDatabaseDiffForm.
+* [Fix] Fixed a crash when the user modified a connection on the fly with the SQL tool activated and trying to resume his work in database management.
+* [Fix] Fixed the tab order in ConnectionsConfigWidget.
+* [Fix] Fixed a bug in ModelDatabaseDiffForm that was running the export thread several times.
+* [Fix] Fix the generation of truncate commands in the diff when the types of columns are incompatible.
+* [Fix] Fixed a bug that was generating broken sql for tables when these objects have no constraints.
+* [Fix] Fixed a bug in diff that was not detecting column types length changes.
 
-* <strong>Connection timeouts:</strong> in previous versions in certain cases when the connection remained open for too long or the server unexpectedly closed it the application could crash. Now, pgModeler implements an internal connection timeout avoiding execution of SQL commands using an invalid connection, instead, an error is raised and the operation is aborted. This will greatly diminish these annoying failures.<br/>
-
-* <strong>Initial data for tables:</strong> in previous versions the user was capable to create custom INSERT commands in order to populate tables after their creation. Now, pgModeler implements a dedicated dialog for this purpose. It's an special grid, very similar to the data manipulation form in SQL tool, that enables data input. The magic here is that the data inserted in the grid is saved as a CSV-like buffer in the table and translated to INSERT commands when the table code is  generated and exported to the server or file. For now, the form is quite simple and surely will be improved in future releases.<br/>
-
-* <strong>Default connections:</strong> in response to some users' requests pgModeler now counts with default connections for each operation that involves export, import, diff and validation. In the moment a connection is being managed the user can check in which operation that connection will be used by default. This is useful when you have multiple databases for different phases of the project like in software factories (e.g. test, homolog, production and etc).<br/>
-
-* <strong>Transactional commands:</strong> in previous versions, due to implementation details, pgModeler was not capable of run transactional commands like START TRANSTION, COMMIT and ROLLBACK. Now, after some tweaks in the core, the user can freely create a transaction session, play around with the tables and commit
-or roll back changes.<br/>
-
-* <strong>SVG support in export:</strong> this long awaited feature now lives in pgModeler. Models can be exported to SVG format opening the possibility to import them in another general purpose modeling tools or even serving as an additional option for documentation.<br/>
-
-* <strong>Miscelaneous:</strong> the metadata handling form was improved and simplified the process of extract and apply objects' metadata in the models. Source code in SQL tool's command input field now can have the case changed or indented by calling the context menu using right-click or specific shortcuts. The annoying error related to new format of connections.conf is now solved automatically when the application detects and older format being used. Several componets in the UI were resized improving usability, missing shortcuts added and many others.<br/>
-
-Finally, in order to give an ideia on how much pgModeler changed since 0.8.1, we have 273 changelog entries divided in: 63 new features, 97 changes/improvements, 113 bug fixes. Obviously, not all changes will be noticeable since they occurred in the core, but what is more important is that if you're running 0.8.1 it is strongly recommended that you upgrade to 0.8.2 to take advantage of all new features and fixes. Also, to get full details about all modifications in the software since 0.8.1 take a look in CHANGELOG.md.
+Since this is not a release that bring major changes compared to the 0.8.2 the update is optional. But if you want to manage PostgreSQL 9.6 servers the update is needed otherwise you are fine with the 0.8.2.

@@ -27,17 +27,20 @@
 
 #include "baseobjectwidget.h"
 #include "ui_tabledatawidget.h"
+#include "csvloadwidget.h"
 
 class TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 	private:
 		Q_OBJECT
+
+		CsvLoadWidget *csv_load_wgt;
 
 		/*! \brief Stores the remaining column names not used in the grid.
 		This menu is used either to add new columns and fix invalid columns in the grid */
 		QMenu col_names_menu;
 
 		//! brief Loads the grid with the initial data of the curret table object
-		void populateDataGrid(void);
+		void populateDataGrid(const QString &data = QString());
 
 		//! brief Configures the col_name_menu with the not used columns names
 		void configureColumnNamesMenu(void);
@@ -56,6 +59,8 @@ class TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 		static const QChar UNESC_VALUE_START,
 		UNESC_VALUE_END;
 
+		static const QString PLACEHOLDER_COLUMN;
+
 		TableDataWidget(QWidget * parent = 0);
 
 		void setAttributes(DatabaseModel *model, Table *table);
@@ -72,7 +77,7 @@ class TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 		void deleteColumns(void);
 		void clearRows(bool confirm=true);
 		void clearColumns(void);
-		void fixInvalidColumn(int col_idx);
+		void changeColumnName(int col_idx);
 		void enableButtons(void);
 };
 

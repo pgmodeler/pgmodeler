@@ -31,7 +31,7 @@
     %if {columns} %then 
         {columns} 
         
-        %if %not {constr-sql-disabled} %then [,] $br %end
+        %if %not {constr-sql-disabled} %and {constraints} %then [,] $br %end
     %end
 
     %if {inh-columns} %then {inh-columns} %end

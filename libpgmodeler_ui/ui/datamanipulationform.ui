@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>709</width>
+    <width>731</width>
     <height>560</height>
    </rect>
   </property>
@@ -176,91 +176,7 @@
       <property name="bottomMargin">
        <number>4</number>
       </property>
-      <item row="0" column="0" colspan="2">
-       <widget class="QFrame" name="warning_frm">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>30</height>
-         </size>
-        </property>
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_4">
-         <property name="leftMargin">
-          <number>2</number>
-         </property>
-         <property name="topMargin">
-          <number>2</number>
-         </property>
-         <property name="rightMargin">
-          <number>2</number>
-         </property>
-         <property name="bottomMargin">
-          <number>2</number>
-         </property>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_2">
-           <property name="minimumSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="textFormat">
-            <enum>Qt::AutoText</enum>
-           </property>
-           <property name="pixmap">
-            <pixmap resource="../res/resources.qrc">:/icones/icones/msgbox_alerta.png</pixmap>
-           </property>
-           <property name="scaledContents">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLabel" name="warning_lbl">
-           <property name="font">
-            <font>
-             <weight>50</weight>
-             <italic>false</italic>
-             <bold>false</bold>
-             <underline>false</underline>
-             <strikeout>false</strikeout>
-             <kerning>true</kerning>
-            </font>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item row="4" column="0" colspan="2">
+      <item row="5" column="0" colspan="2">
        <widget class="QFrame" name="hint_frm">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -349,6 +265,51 @@
         </layout>
        </widget>
       </item>
+      <item row="4" column="0" colspan="2">
+       <widget class="QWidget" name="result_info_wgt" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="result_info_lbl">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <italic>false</italic>
+            </font>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="indent">
+            <number>-1</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
       <item row="1" column="0" colspan="2">
        <layout class="QGridLayout" name="gridLayout">
         <item row="1" column="11">
@@ -371,9 +332,6 @@
             </property>
             <property name="toolTip">
              <string>Refresh listing</string>
-            </property>
-            <property name="text">
-             <string>Refresh</string>
             </property>
             <property name="icon">
              <iconset resource="../res/resources.qrc">
@@ -412,9 +370,6 @@
             <property name="toolTip">
              <string>Save changes</string>
             </property>
-            <property name="text">
-             <string>Save</string>
-            </property>
             <property name="icon">
              <iconset resource="../res/resources.qrc">
               <normaloff>:/icones/icones/salvar.png</normaloff>:/icones/icones/salvar.png</iconset>
@@ -452,9 +407,6 @@
             <property name="toolTip">
              <string>Copy the selection as CSV buffer</string>
             </property>
-            <property name="text">
-             <string>Copy</string>
-            </property>
             <property name="icon">
              <iconset resource="../res/resources.qrc">
               <normaloff>:/icones/icones/copiar.png</normaloff>:/icones/icones/copiar.png</iconset>
@@ -491,9 +443,6 @@
             </property>
             <property name="toolTip">
              <string>Export results to CSV file</string>
-            </property>
-            <property name="text">
-             <string>Export</string>
             </property>
             <property name="icon">
              <iconset resource="../res/resources.qrc">
@@ -548,9 +497,6 @@
             <property name="toolTip">
              <string>Undo modifications</string>
             </property>
-            <property name="text">
-             <string>Undo</string>
-            </property>
             <property name="icon">
              <iconset resource="../res/resources.qrc">
               <normaloff>:/icones/icones/desfazer.png</normaloff>:/icones/icones/desfazer.png</iconset>
@@ -587,9 +533,6 @@
             </property>
             <property name="toolTip">
              <string>Add empty rows</string>
-            </property>
-            <property name="text">
-             <string>Add</string>
             </property>
             <property name="icon">
              <iconset resource="../res/resources.qrc">
@@ -628,9 +571,6 @@
             <property name="toolTip">
              <string>Mark the selected rows to be deleted</string>
             </property>
-            <property name="text">
-             <string>Delete</string>
-            </property>
             <property name="icon">
              <iconset resource="../res/resources.qrc">
               <normaloff>:/icones/icones/delrow.png</normaloff>:/icones/icones/delrow.png</iconset>
@@ -668,9 +608,6 @@
             <property name="toolTip">
              <string>Duplicate the selected rows</string>
             </property>
-            <property name="text">
-             <string>Duplicate</string>
-            </property>
             <property name="icon">
              <iconset resource="../res/resources.qrc">
               <normaloff>:/icones/icones/duprow.png</normaloff>:/icones/icones/duprow.png</iconset>
@@ -706,6 +643,41 @@
            </spacer>
           </item>
           <item>
+           <widget class="QToolButton" name="csv_load_tb">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Add new rows from a CSV file</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../res/resources.qrc">
+              <normaloff>:/icones/icones/loadcsv.png</normaloff>:/icones/icones/loadcsv.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>22</width>
+              <height>22</height>
+             </size>
+            </property>
+            <property name="shortcut">
+             <string/>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonIconOnly</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QToolButton" name="filter_tb">
             <property name="enabled">
              <bool>false</bool>
@@ -723,9 +695,6 @@
             </property>
             <property name="toolTip">
              <string>Filter the result set</string>
-            </property>
-            <property name="text">
-             <string>Delete</string>
             </property>
             <property name="icon">
              <iconset resource="../res/resources.qrc">
@@ -912,7 +881,91 @@
         </item>
        </layout>
       </item>
-      <item row="2" column="0" colspan="2">
+      <item row="0" column="0" colspan="2">
+       <widget class="QFrame" name="warning_frm">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="minimumSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="textFormat">
+            <enum>Qt::AutoText</enum>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="../res/resources.qrc">:/icones/icones/msgbox_alerta.png</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="warning_lbl">
+           <property name="font">
+            <font>
+             <weight>50</weight>
+             <italic>false</italic>
+             <bold>false</bold>
+             <underline>false</underline>
+             <strikeout>false</strikeout>
+             <kerning>true</kerning>
+            </font>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="2">
        <widget class="QSplitter" name="h_splitter">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -1380,49 +1433,14 @@
         </widget>
        </widget>
       </item>
-      <item row="3" column="0" colspan="2">
-       <widget class="QWidget" name="result_info_wgt" native="true">
+      <item row="2" column="0" colspan="2">
+       <widget class="QWidget" name="csv_load_parent" native="true">
         <property name="minimumSize">
          <size>
           <width>0</width>
           <height>0</height>
          </size>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
-         <property name="leftMargin">
-          <number>2</number>
-         </property>
-         <property name="topMargin">
-          <number>2</number>
-         </property>
-         <property name="rightMargin">
-          <number>2</number>
-         </property>
-         <property name="bottomMargin">
-          <number>2</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="result_info_lbl">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="font">
-            <font>
-             <italic>false</italic>
-            </font>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="indent">
-            <number>-1</number>
-           </property>
-          </widget>
-         </item>
-        </layout>
        </widget>
       </item>
      </layout>

@@ -91,6 +91,9 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 		keep_not_imported_objs_ht=new HintTextWidget(keep_not_imported_objs_hint, this);
 		keep_not_imported_objs_ht->setText(keep_not_imported_objs_chk->statusTip());
 
+		ignore_error_codes_ht=new HintTextWidget(ignore_extra_errors_hint, this);
+		ignore_error_codes_ht->setText(ignore_error_codes_chk->statusTip());
+
 		sqlcode_hl=new SyntaxHighlighter(sqlcode_txt);
 		sqlcode_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
@@ -115,11 +118,15 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 		connect(drop_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
 		connect(alter_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
 		connect(ignore_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
+		connect(ignore_error_codes_chk, SIGNAL(toggled(bool)), error_codes_edt, SLOT(setEnabled(bool)));
 
 #ifdef DEMO_VERSION
 	#warning "DEMO VERSION: forcing ignore errors in diff due to the object count limit."
 	ignore_errors_chk->setChecked(true);
 	ignore_errors_chk->setEnabled(false);
+
+	ignore_error_codes_chk->setChecked(false);
+	ignore_error_codes_chk->setEnabled(false);
 
 	apply_on_server_rb->setChecked(false);
 	apply_on_server_rb->setEnabled(false);
@@ -205,8 +212,11 @@ void ModelDatabaseDiffForm::createThread(unsigned thread_id)
 		export_helper->moveToThread(export_thread);
 
 		connect(apply_on_server_btn, &QPushButton::clicked,
-				[=](){ apply_on_server_btn->setEnabled(false);
-			exportDiff(false); });
+			[=](){
+						apply_on_server_btn->setEnabled(false);
+						if(!export_thread->isRunning())
+							exportDiff(false);
+			});
 
 		connect(export_thread, SIGNAL(started(void)), export_helper, SLOT(exportToDBMS()));
 		connect(export_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString)), this, SLOT(updateProgress(int,QString,ObjectType,QString)), Qt::BlockingQueuedConnection);
@@ -283,22 +293,20 @@ void ModelDatabaseDiffForm::listDatabases(void)
 		{
 			emit s_connectionsUpdateRequest();
 		}
-		else
+
+		Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+
+		if(conn)
 		{
-			Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-
-			if(conn)
-			{
-				DatabaseImportHelper imp_helper;
-				imp_helper.setConnection(*conn);
-				DatabaseImportForm::listDatabases(imp_helper, database_cmb);
-			}
-			else
-				database_cmb->clear();
-
-			database_cmb->setEnabled(database_cmb->count() > 0);
-			database_lbl->setEnabled(database_cmb->isEnabled());
+			DatabaseImportHelper imp_helper;
+			imp_helper.setConnection(*conn);
+			DatabaseImportForm::listDatabases(imp_helper, database_cmb);
 		}
+		else
+			database_cmb->clear();
+
+		database_cmb->setEnabled(database_cmb->count() > 0);
+		database_lbl->setEnabled(database_cmb->isEnabled());
 	}
 	catch(Exception &e)
 	{
@@ -447,7 +455,10 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 		export_conn=new Connection;
 		*export_conn=*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 		export_helper->setExportToDBMSParams(sqlcode_txt->toPlainText(), export_conn,
-											 database_cmb->currentText(), ignore_duplic_chk->isChecked());
+																				 database_cmb->currentText(), ignore_duplic_chk->isChecked());
+		if(ignore_error_codes_chk->isChecked())
+			export_helper->setIgnoredErrors(error_codes_edt->text().simplified().split(' '));
+
 		export_thread->start();
 	}
 	else if(msg_box.isCancelled())
@@ -571,10 +582,8 @@ void ModelDatabaseDiffForm::captureThreadError(Exception e)
 	progress_lbl->setText(trUtf8("Process aborted due to errors!"));
 	progress_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_erro.png")));
 
-	item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getErrorMessage()), *progress_ico_lbl->pixmap(), nullptr, true, true);
-
-	if(!e.getExtraInfo().isEmpty())
-		PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getExtraInfo()), *progress_ico_lbl->pixmap(), item, true, true);
+	item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getErrorMessage()), *progress_ico_lbl->pixmap(), nullptr, false, true);
+	PgModelerUiNS::createExceptionsTree(output_trw, e, item);
 
 	throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 }

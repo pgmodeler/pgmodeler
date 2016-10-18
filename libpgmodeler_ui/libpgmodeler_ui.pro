@@ -107,7 +107,8 @@ SOURCES += src/mainwindow.cpp \
     src/metadatahandlingform.cpp \
     src/welcomewidget.cpp \
 		src/tabledatawidget.cpp \
-		src/plaintextitemdelegate.cpp
+		src/plaintextitemdelegate.cpp \
+    src/csvloadwidget.cpp
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
@@ -201,7 +202,8 @@ HEADERS += src/mainwindow.h \
     src/metadatahandlingform.h \
     src/welcomewidget.h \
 		src/tabledatawidget.h \
-		src/plaintextitemdelegate.h
+		src/plaintextitemdelegate.h \
+    src/csvloadwidget.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \
@@ -279,7 +281,8 @@ FORMS += ui/mainwindow.ui \
          ui/donatewidget.ui \
     ui/metadatahandlingform.ui \
     ui/welcomewidget.ui \
-    ui/tabledatawidget.ui
+    ui/tabledatawidget.ui \
+    ui/csvloadwidget.ui
 
 unix|windows: LIBS += -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
                       -L$$OUT_PWD/../libpgconnector/ -lpgconnector \

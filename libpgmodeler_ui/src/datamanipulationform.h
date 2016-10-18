@@ -29,6 +29,7 @@
 #include "catalog.h"
 #include "syntaxhighlighter.h"
 #include "codecompletionwidget.h"
+#include "csvloadwidget.h"
 
 class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 	private:
@@ -40,6 +41,8 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		//! \brief Default row colors for each operation type
 		static const QColor ROW_COLORS[3];
 		
+		CsvLoadWidget *csv_load_wgt;
+
 		SyntaxHighlighter *filter_hl;
 		
 		CodeCompletionWidget *code_compl_wgt;
@@ -73,7 +76,7 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		QString getDMLCommand(int row);
 		
 		//! \brief Remove the rows marked as OP_INSERT which ids are specified on the parameter vector
-		void removeNewRows(vector<int> &ins_rows);
+		void removeNewRows(const vector<int> &ins_rows);
 		
 		//! \brief Reset the state of changed rows, clearing all attributes used to control the modifications on them
 		void clearChangedRows(void);
@@ -141,6 +144,9 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		
 		//! \brief Swap two rows on the order by list
 		void swapColumns(void);
+
+		//! \brief Add new rows to the grid based upon the CSV loaded
+		void loadDataFromCsv(void);
 };
 
 #endif
