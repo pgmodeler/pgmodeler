@@ -492,7 +492,8 @@ QString TableObjectView::getConstraintString(Column *column)
 			itr++;
 
 			//Check if the column is referecend by the constraint
-			if(constr->isColumnReferenced(column, false))
+			if((constr->getConstraintType()!=ConstraintType::exclude && constr->isColumnExists(column, Constraint::SOURCE_COLS)) ||
+				 (constr->getConstraintType()==ConstraintType::exclude && constr->isColumnReferenced(column, false)))
 			{
 				constr_type=constr->getConstraintType();
 

@@ -1342,7 +1342,7 @@ QString ModelWidget::getTempFilename(void)
 	return(this->tmp_filename);
 }
 
-int ModelWidget::__openEditingForm(QWidget *widget, unsigned button_conf)
+int ModelWidget::openEditingForm(QWidget *widget, unsigned button_conf)
 {
 	BaseForm editing_form(this);
 	BaseObjectWidget *base_obj_wgt=qobject_cast<BaseObjectWidget *>(widget);
@@ -1361,7 +1361,7 @@ int ModelWidget::openEditingForm(BaseObject *object)
 {
 	WidgetClass *object_wgt=new WidgetClass;
 	object_wgt->setAttributes(db_model, op_list, dynamic_cast<Class *>(object));
-	return(__openEditingForm(object_wgt));
+	return(openEditingForm(object_wgt));
 }
 
 template<class Class, class WidgetClass, class ParentClass>
@@ -1369,7 +1369,7 @@ int ModelWidget::openEditingForm(BaseObject *object, BaseObject *parent_obj)
 {
 	WidgetClass *object_wgt=new WidgetClass;
 	object_wgt->setAttributes(db_model, op_list, dynamic_cast<ParentClass *>(parent_obj), dynamic_cast<Class *>(object));
-	return(__openEditingForm(object_wgt));
+	return(openEditingForm(object_wgt));
 }
 
 template<class Class, class WidgetClass, class ParentClass>
@@ -1377,7 +1377,7 @@ int ModelWidget::openEditingForm(BaseObject *object, BaseObject *parent_obj, con
 {
 	WidgetClass *object_wgt=new WidgetClass;
 	object_wgt->setAttributes(db_model, op_list, dynamic_cast<ParentClass *>(parent_obj), dynamic_cast<Class *>(object), pos.x(), pos.y());
-	return(__openEditingForm(object_wgt));
+	return(openEditingForm(object_wgt));
 }
 
 void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseObject *parent_obj, const QPointF &pos)
@@ -1497,27 +1497,27 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			else
 				relationship_wgt->setAttributes(db_model, op_list, dynamic_cast<BaseRelationship *>(object));
 
-			res=__openEditingForm(relationship_wgt);
+			res=openEditingForm(relationship_wgt);
 			scene->clearSelection();
 		}
 		else if(obj_type==OBJ_TEXTBOX)
 		{
 			TextboxWidget *textbox_wgt=new TextboxWidget;
 			textbox_wgt->setAttributes(db_model, op_list, dynamic_cast<Textbox *>(object), obj_pos.x(), obj_pos.y());
-			res=__openEditingForm(textbox_wgt);
+			res=openEditingForm(textbox_wgt);
 		}
 		else if(obj_type==OBJ_PERMISSION)
 		{
 			PermissionWidget *permission_wgt=new PermissionWidget;
 			Permission *perm=dynamic_cast<Permission *>(object);
 			permission_wgt->setAttributes(db_model, nullptr, (perm ? perm->getObject() : object));
-			res=__openEditingForm(permission_wgt, Messagebox::OK_BUTTON);
+			res=openEditingForm(permission_wgt, Messagebox::OK_BUTTON);
 		}
 		else
 		{
 			DatabaseWidget *database_wgt=new DatabaseWidget;
 			database_wgt->setAttributes(db_model);
-			res=__openEditingForm(database_wgt);
+			res=openEditingForm(database_wgt);
 		}
 
 		if(res==QDialog::Accepted)
@@ -1550,7 +1550,7 @@ void ModelWidget::showDependenciesReferences(void)
 		{
 			ObjectDepsRefsWidget *deps_refs_wgt=new ObjectDepsRefsWidget;
 			deps_refs_wgt->setAttributes(this, object);
-			__openEditingForm(deps_refs_wgt, Messagebox::OK_BUTTON);
+			openEditingForm(deps_refs_wgt, Messagebox::OK_BUTTON);
 		}
 	}
 }
@@ -1567,7 +1567,7 @@ void ModelWidget::showSourceCode(void)
 		{
 			SourceCodeWidget *sourcecode_wgt=new SourceCodeWidget;
 			sourcecode_wgt->setAttributes(this->db_model, object);
-			__openEditingForm(sourcecode_wgt, Messagebox::OK_BUTTON);
+			openEditingForm(sourcecode_wgt, Messagebox::OK_BUTTON);
 		}
 	}
 }
@@ -1788,7 +1788,7 @@ void ModelWidget::editPermissions(void)
 	BaseObject *obj=reinterpret_cast<BaseObject *>(act->data().value<void *>());
 
 	permission_wgt->setAttributes(this->db_model, nullptr, obj);
-	__openEditingForm(permission_wgt, Messagebox::OK_BUTTON);
+	openEditingForm(permission_wgt, Messagebox::OK_BUTTON);
 
 	this->setModified(true);
 	emit s_objectManipulated();
@@ -2697,7 +2697,7 @@ void ModelWidget::editCustomSQL(void)
 	CustomSQLWidget *customsql_wgt=new CustomSQLWidget;
 
 	customsql_wgt->setAttributes(db_model, obj);
-	this->modified=(__openEditingForm(customsql_wgt)==QDialog::Accepted);
+	this->modified=(openEditingForm(customsql_wgt)==QDialog::Accepted);
 }
 
 void ModelWidget::showObjectMenu(void)

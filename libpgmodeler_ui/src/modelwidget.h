@@ -126,7 +126,7 @@ class ModelWidget: public QWidget {
 		QTimer zoom_info_timer;
 
 		//! \brief Creates a BaseForm instance and insert the widget into it. A custom configuration for dialog buttons can be passed
-		int __openEditingForm(QWidget *widget, unsigned button_conf = Messagebox::OK_CANCEL_BUTTONS);
+		int openEditingForm(QWidget *widget, unsigned button_conf = Messagebox::OK_CANCEL_BUTTONS);
 
 		//! \brief Opens a editing form for objects at database level
 		template<class Class, class WidgetClass>
