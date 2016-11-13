@@ -49,6 +49,8 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		RELINC_LINE_BGCOLOR,
 		RELINC_LINE_FGCOLOR;
 
+		bool object_protected;
+
 		QHBoxLayout *misc_btns_lt;
 
 		//! \brief Store the kind of object being handled by the widget (configured in the constructor)
@@ -167,6 +169,8 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 
 		//! \brief Returns the kind of database object handled
 		ObjectType getHandledObjectType(void);
+
+		bool isHandledObjectProtected(void);
 		
 	protected slots:
 		void editPermissions(void);

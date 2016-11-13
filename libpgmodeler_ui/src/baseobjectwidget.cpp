@@ -50,6 +50,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 		schema_sel=nullptr;
 		owner_sel=nullptr;
 		tablespace_sel=nullptr;
+		object_protected = false;
 
 		PgModelerUiNS::configureWidgetFont(protected_obj_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 
@@ -119,6 +120,11 @@ bool BaseObjectWidget::eventFilter(QObject *object, QEvent *event)
 ObjectType BaseObjectWidget::getHandledObjectType(void)
 {
 	return(handled_obj_type);
+}
+
+bool BaseObjectWidget::isHandledObjectProtected(void)
+{
+	return(object_protected);
 }
 
 void BaseObjectWidget::hideEvent(QHideEvent *)
@@ -357,7 +363,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 
 	if(object)
 	{
-		bool prot;
+		//bool prot = false;
 
 		obj_id_lbl->setVisible(true);
 		obj_id_lbl->setText(QString("ID: %1").arg(object->getObjectId()));
@@ -385,15 +391,16 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 			schema_sel->setSelectedObject(object->getSchema());
 
 		obj_type=object->getObjectType();
-		prot=(parent_type!=OBJ_RELATIONSHIP &&
+		object_protected=(parent_type!=OBJ_RELATIONSHIP &&
 						   (object->isProtected() ||
 							((obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT) &&
 							 dynamic_cast<TableObject *>(object)->isAddedByRelationship())));
-		protected_obj_frm->setVisible(prot);
+		protected_obj_frm->setVisible(object_protected);
 		disable_sql_chk->setChecked(object->isSQLDisabled());
 	}
 	else
 	{
+		object_protected = false;
 		obj_id_lbl->setVisible(false);
 		protected_obj_frm->setVisible(false);
 

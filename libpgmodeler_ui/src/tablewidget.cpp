@@ -167,10 +167,6 @@ int TableWidget::openEditingForm(TableObject *object)
 														dynamic_cast<Table *>(this->object), dynamic_cast<Class *>(object));
 	editing_form.setMainWidget(object_wgt);
 
-	//Disabling the apply button if the object is protected
-	if(object)
-		editing_form.apply_ok_btn->setEnabled(!object->isProtected() && !object->isAddedByRelationship());
-
 	editing_form.adjustSize();
 	return(editing_form.exec());
 }
