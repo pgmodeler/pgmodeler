@@ -187,6 +187,9 @@ class Catalog {
 		//! \brief Returns the attributes for the object specified by its type and OID
 		attribs_map getObjectAttributes(ObjectType obj_type, unsigned oid, const QString sch_name=QString(), const QString tab_name=QString(), attribs_map extra_attribs=attribs_map());
 
+		//! brief This special method returns some server's attributes read from pg_settings
+		attribs_map getServerAttributes(void);
+
 		//! \brief Parse a PostgreSQL array value and return the elements in a string list
 		static QStringList parseArrayValues(const QString &array_val);
 

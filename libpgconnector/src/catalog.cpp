@@ -560,6 +560,45 @@ attribs_map Catalog::getObjectAttributes(ObjectType obj_type, unsigned oid, cons
 	}
 }
 
+attribs_map Catalog::getServerAttributes(void)
+{
+	attribs_map attribs;
+
+	try
+	{
+		ResultSet res = ResultSet();
+		QString sql, attr_name;
+		attribs_map tuple;
+
+		loadCatalogQuery(QString("server"));
+		schparser.ignoreUnkownAttributes(true);
+		schparser.ignoreEmptyAttributes(true);
+		sql = schparser.getCodeDefinition(attribs).simplified();
+		connection.executeDMLCommand(sql, res);
+
+		if(res.accessTuple(ResultSet::FIRST_TUPLE))
+		{
+			do
+			{
+				tuple=res.getTupleValues();
+				attr_name = tuple[ParsersAttributes::ATTRIBUTE];
+				attr_name.replace('_','-');
+				attribs[attr_name]=tuple[ParsersAttributes::VALUE];
+			}
+			while(res.accessTuple(ResultSet::NEXT_TUPLE));
+
+			attribs[ParsersAttributes::CONNECTION] = connection.getConnectionId();
+		}
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
+						QApplication::translate("Catalog","Object type: server","", -1));
+	}
+
+	return(attribs);
+}
+
 QStringList Catalog::parseArrayValues(const QString &array_val)
 {
 	QStringList list;

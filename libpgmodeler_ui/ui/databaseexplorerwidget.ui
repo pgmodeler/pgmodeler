@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>363</width>
-    <height>688</height>
+    <height>697</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -239,6 +239,9 @@
          </property>
          <property name="textElideMode">
           <enum>Qt::ElideRight</enum>
+         </property>
+         <property name="indentation">
+          <number>20</number>
          </property>
          <property name="rootIsDecorated">
           <bool>true</bool>
