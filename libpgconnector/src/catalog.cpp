@@ -568,7 +568,7 @@ attribs_map Catalog::getServerAttributes(void)
 	{
 		ResultSet res = ResultSet();
 		QString sql, attr_name;
-		attribs_map tuple;
+		attribs_map tuple, attribs_aux;
 
 		loadCatalogQuery(QString("server"));
 		schparser.ignoreUnkownAttributes(true);
@@ -588,6 +588,8 @@ attribs_map Catalog::getServerAttributes(void)
 			while(res.accessTuple(ResultSet::NEXT_TUPLE));
 
 			attribs[ParsersAttributes::CONNECTION] = connection.getConnectionId();
+			attribs_aux = connection.getServerInfo();
+			attribs.insert(attribs_aux.begin(), attribs_aux.end()) ;
 		}
 	}
 	catch(Exception &e)

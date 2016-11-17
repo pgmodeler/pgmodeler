@@ -90,7 +90,7 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{SERVER_ENCODING, QT_TR_NOOP("Server encoding")},    {SSL, QT_TR_NOOP("SSL")},                              {SSL_CA_FILE, QT_TR_NOOP("SSL ca file")},
 	{SSL_CERT_FILE, QT_TR_NOOP("SSL cert file")},        {SSL_CRL_FILE, QT_TR_NOOP("SSL crl file")},            {SSL_KEY_FILE, QT_TR_NOOP("SSL key file")},
 	{SERVER_VERSION, QT_TR_NOOP("Server version")},      {IDENT_FILE, QT_TR_NOOP("Ident file")},                {PASSWORD_ENCRYPTION, QT_TR_NOOP("Password encryption")},
-	{CONNECTION, QT_TR_NOOP("Connection ID")}
+	{CONNECTION, QT_TR_NOOP("Connection ID")},           {SERVER_PID, QT_TR_NOOP("Server PID")},                {SERVER_PROTOCOL, QT_TR_NOOP("Server protocol")}
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
@@ -289,17 +289,15 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 		msg_box.show(e);
 	}
 
-	//Excluding the server item
-	if(obj_type != BASE_OBJECT)
-	{
+
 		if(attribs.count(ParsersAttributes::PERMISSION)!=0)
 			attribs[ParsersAttributes::PERMISSION]=Catalog::parseArrayValues(attribs[ParsersAttributes::PERMISSION]).join(ELEM_SEPARATOR);
 
 		//Removing system schemas from object's name
-		if(attribs[ParsersAttributes::NAME].startsWith(QString("pg_catalog.")) ||
-			 attribs[ParsersAttributes::NAME].startsWith(QString("information_schema.")))
+		if(attribs.count(ParsersAttributes::NAME)!=0 &&
+			 (attribs[ParsersAttributes::NAME].startsWith(QString("pg_catalog.")) ||
+				attribs[ParsersAttributes::NAME].startsWith(QString("information_schema."))))
 			attribs[ParsersAttributes::NAME]=attribs[ParsersAttributes::NAME].split('.').at(1);
-	}
 
 	for(auto &attrib : attribs)
 	{
@@ -322,7 +320,7 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 		fmt_attribs[attr_name]=attr_value;
 	}
 
-	if(obj_type != BASE_OBJECT)
+	if(attribs[ParsersAttributes::OID].toUInt() > 0)
 	{
 		attribs[ParsersAttributes::SQL_OBJECT]=BaseObject::getSQLName(obj_type);
 		attribs[ParsersAttributes::OBJECT_TYPE]=BaseObject::getSchemaName(obj_type);
@@ -900,11 +898,10 @@ void DatabaseExplorerWidget::listObjects(void)
 
 		QTreeWidgetItem *root = new QTreeWidgetItem, *curr_root = nullptr;
 
+		//Changing the root item of the generated tree to be a special item containing info about the connected server
 		curr_root = objects_trw->topLevelItem(0);
 		objects_trw->takeTopLevelItem(0);
-		root->setText(0, QString("%1:%2")
-										.arg(connection.getConnectionParam(Connection::PARAM_SERVER_FQDN))
-										.arg(connection.getConnectionParam(Connection::PARAM_PORT)));
+		root->setText(0, connection.getConnectionId(true));
 		root->setIcon(0, QPixmap(QString(":/icones/icones/server.png")));
 		root->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, -1);
 		root->setData(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole, BASE_OBJECT);

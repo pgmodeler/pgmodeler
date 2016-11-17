@@ -304,16 +304,19 @@ QString Connection::getConnectionString(void)
 	return(connection_str);
 }
 
-QString Connection::getConnectionId(void)
+QString Connection::getConnectionId(bool host_port_only)
 {
-	QString alias=connection_params[PARAM_ALIAS], addr;
+	QString addr;
 
 	if(!connection_params[PARAM_SERVER_FQDN].isEmpty())
 		addr=connection_params[PARAM_SERVER_FQDN];
 	else
 		addr=connection_params[PARAM_SERVER_IP];
 
-	return(QString("%1 (%2:%3)").arg(alias, addr, connection_params[PARAM_PORT]));
+	if(host_port_only)
+		return(QString("%1:%3").arg(addr, connection_params[PARAM_PORT]));
+	else
+		return(QString("%1 (%2:%3)").arg(connection_params[PARAM_ALIAS], addr, connection_params[PARAM_PORT]));
 }
 
 bool Connection::isStablished(void)

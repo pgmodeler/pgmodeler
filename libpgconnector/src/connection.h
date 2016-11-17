@@ -189,8 +189,9 @@ class Connection {
 		//! \brief Returns the connection string used to connect to de database
 		QString getConnectionString(void);
 
-		//! \brief Returns a string string containing the following signature: 'alias (host:port)'
-		QString getConnectionId(void);
+		/*! \brief Returns a string containing the following signature 'alias (host:port)' by default.
+			If host_port_only is true the the signature will not contain the alias being in the form 'host:port' */
+		QString getConnectionId(bool host_port_only = false);
 
 		/*! \brief Returns the DBMS version in format XX.YY[.ZZ]
 		If major_only is true only XX.YY portion is returned */

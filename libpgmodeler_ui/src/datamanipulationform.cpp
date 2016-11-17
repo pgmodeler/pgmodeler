@@ -91,6 +91,15 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(move_up_tb, SIGNAL(clicked()), this, SLOT(swapColumns()));
 	connect(filter_tb, SIGNAL(toggled(bool)), v_splitter, SLOT(setVisible(bool)));
 
+	connect(filter_tb, &QToolButton::toggled,
+			[=](bool checked){
+
+				v_splitter->setVisible(checked);
+
+				if(checked)
+					filter_txt->setFocus();
+	});
+
 	//Using the QueuedConnection here to avoid the "edit: editing failed" when editing and navigating through items using tab key
 	connect(results_tbw, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(insertRowOnTabPress(int,int,int,int)), Qt::QueuedConnection);
 

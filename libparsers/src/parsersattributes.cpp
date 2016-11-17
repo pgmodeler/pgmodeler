@@ -410,6 +410,8 @@ namespace ParsersAttributes {
 	SEQUENCE=QString("sequence"),
 	SERVER_ENCODING=QString("server-encoding"),
 	SERVER_VERSION=QString("server-version"),
+	SERVER_PID=QString("server-pid"),
+	SERVER_PROTOCOL=QString("server-protocol"),
 	SET_PERMS=QString("set-perms"),
 	SHARED_OBJ=QString("shared-obj"),
 	SHELL_TYPES=QString("shell-types"),

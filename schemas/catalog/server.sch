@@ -21,7 +21,6 @@ IN (
     'ssl_cert_file',
     'ssl_crl_file',
     'ssl_key_file',
-    'server_version',
     'password_encryption',
     'ident_file'
 );]
