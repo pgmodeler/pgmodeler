@@ -2193,10 +2193,6 @@ void DatabaseImportHelper::configureDatabase(attribs_map &attribs)
 	try
 	{
 		attribs[ParsersAttributes::APPEND_AT_EOD]=QString();
-
-		//Removing the encoding suffix from LC_COLLATE and LC_CTYPE attribs
-		attribs[ParsersAttributes::_LC_COLLATE_].remove(QRegExp(QString("(\\.)(.)+")));
-		attribs[ParsersAttributes::_LC_CTYPE_].remove(QRegExp(QString("(\\.)(.)+")));
 		loadObjectXML(OBJ_DATABASE, attribs);
 		dbmodel->configureDatabase(attribs);
 	}
