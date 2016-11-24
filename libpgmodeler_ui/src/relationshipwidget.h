@@ -73,7 +73,7 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		/*! \brief Template method that opens the editing form for the specified object.
 				Class and ClassWidget should be compatible, e.g., "Column" can only be edited using ColumnWidget */
 		template<class Class, class ClassWidget>
-		int openEditingForm(TableObject *object);
+		int openEditingForm(TableObject *object, BaseObject *parent = nullptr);
 
 	protected:
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Table *src_tab, Table *dst_tab, unsigned rel_type);

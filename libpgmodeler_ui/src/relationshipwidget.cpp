@@ -648,7 +648,6 @@ void RelationshipWidget::listAdvancedObjects(void)
 void RelationshipWidget::showAdvancedObject(int row)
 {
 	BaseObject *object=reinterpret_cast<BaseObject *>(advanced_objs_tab->getRowData(row).value<void *>());
-	bool prot=true;
 	Table *tab=nullptr;
 	Constraint *constr=nullptr;
 	Column *col=nullptr;
@@ -656,44 +655,38 @@ void RelationshipWidget::showAdvancedObject(int row)
 
 	if(obj_type==OBJ_COLUMN)
 	{
-		ColumnWidget column_wgt(this);
 		col=dynamic_cast<Column *>(object);
-		column_wgt.setAttributes(this->model, this->op_list, col->getParentTable(), col);
-		column_wgt.show();
+		openEditingForm<Column,ColumnWidget>(col, col->getParentTable());
 	}
 	else if(obj_type==OBJ_CONSTRAINT)
 	{
-		ConstraintWidget constraint_wgt(this);
 		constr=dynamic_cast<Constraint *>(object);
-
-		if(!constr->isAddedByRelationship())
-		{
-			prot=constr->isProtected();
-			constr->setProtected(true);
-		}
-
-		constraint_wgt.setAttributes(this->model, this->op_list, constr->getParentTable(), constr);
-		constraint_wgt.show();
-		constr->setProtected(prot);
+		openEditingForm<Constraint, ConstraintWidget>(constr, constr->getParentTable());
 	}
 	else
 	{
-		TableWidget table_wgt(this);
+		TableWidget *table_wgt=new TableWidget;
+		BaseForm editing_form(this);
+
 		tab=dynamic_cast<Table *>(object);
 		tab->setProtected(true);
-		table_wgt.setAttributes(this->model, this->op_list, dynamic_cast<Schema *>(tab->getSchema()),
-								tab,	tab->getPosition().x(), tab->getPosition().y());
-		table_wgt.show();
+
+		table_wgt->setAttributes(this->model, this->op_list, dynamic_cast<Schema *>(tab->getSchema()),
+														 tab,	tab->getPosition().x(), tab->getPosition().y());
+
+		editing_form.setMainWidget(table_wgt);
+		editing_form.exec();
 		tab->setProtected(false);
 	}
 }
 
 template<class Class, class WidgetClass>
-int RelationshipWidget::openEditingForm(TableObject *object)
+int RelationshipWidget::openEditingForm(TableObject *object, BaseObject *parent)
 {
 	BaseForm editing_form(this);
 	WidgetClass *object_wgt=new WidgetClass;
-	object_wgt->setAttributes(this->model, this->op_list, this->object, dynamic_cast<Class *>(object));
+
+	object_wgt->setAttributes(this->model, this->op_list, (!parent ? this->object : parent), dynamic_cast<Class *>(object));
 	editing_form.setMainWidget(object_wgt);
 
 	return(editing_form.exec());
