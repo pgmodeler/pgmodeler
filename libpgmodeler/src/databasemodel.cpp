@@ -6294,12 +6294,7 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 		{
 			if(!localizations[i].isEmpty())
 			{
-				attributes[loc_attribs[i]]=localizations[i];
-
-				if(localizations[i]!=QString("C") && encoding!=BaseType::null)
-					attributes[loc_attribs[i]]+= QString(".") + ~encoding;
-
-				attributes[loc_attribs[i]]=QString("'%1'").arg(attributes[loc_attribs[i]]);
+				attributes[loc_attribs[i]]=QString("'%1'").arg(localizations[i]);
 			}
 		}
 
