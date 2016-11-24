@@ -1732,7 +1732,10 @@ void Relationship::addColumnsRelNn(void)
 		if(!single_pk_column)
 		{
 			for(auto &col : gen_columns)
+			{
+				col->setNotNull(true);
 				pk_tabnn->addColumn(col, Constraint::SOURCE_COLS);
+			}
 		}
 		else
 		{
