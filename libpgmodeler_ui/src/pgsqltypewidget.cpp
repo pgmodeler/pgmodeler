@@ -152,13 +152,16 @@ void PgSQLTypeWidget::setAttributes(PgSQLType type, DatabaseModel *model,  unsig
 	try
 	{
 		int idx;
+		QString type_name;
 
 		type_cmb->blockSignals(true);
 		listPgSQLTypes(type_cmb, model, usr_type_conf, oid_types, pseudo_types);
 		type_cmb->blockSignals(false);
 
 		//Get the passed type index
-		idx=type_cmb->findText(~type);
+		type_name=~type;
+		type_name.remove(QRegExp(QString("( )(with)(out)?(.)*")));
+		idx=type_cmb->findText(type_name);
 
 		//Select the type on the combo
 		type_cmb->setCurrentIndex(idx);
