@@ -1476,6 +1476,18 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 
 				if(values.size() >= 2)
 				{
+					// create underlying dependency type if it's not in the model yet
+					// works for composite user-defined types where one UDT contains other UDT that needs to be created first
+					// additional check here to ensure we've not found base type which is a part of UDT
+					QString type_name = values[1].remove('\\');
+					QStringList type_name_split = type_name.split(".");
+					if(PgSQLType::getBaseTypeIndex(type_name) == 0 && dbmodel->getObjectIndex(type_name, OBJ_TYPE) < 0)
+					{
+						attribs_map attribs_req = { { ParsersAttributes::CUSTOM_FILTER, QString("replace(tp.oid::regtype::text, ns.nspname || '.', '') = '%1'").arg(type_name_split[1]) } };
+						vector<attribs_map> attribs_type_dep = catalog.getObjectsAttributes(OBJ_TYPE, type_name_split[0], QString(""), {}, attribs_req );
+						createObject(attribs_type_dep[0]);
+					}
+
 					type_attrib.setName(values[0].remove('"'));
 					type_attrib.setType(PgSQLType::parseString(values[1].remove('\\')));
 					type_attrib.setCollation(dbmodel->getObject(getObjectName(values[2].remove('"')),	OBJ_COLLATION));
