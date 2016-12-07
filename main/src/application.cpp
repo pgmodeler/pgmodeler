@@ -187,3 +187,12 @@ void Application::copyFilesRecursively(const QString &src_path, const QString &d
 						__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 }
+
+Application::~Application(void)
+{
+    // workaround to prevent app crash while exiting
+    // as per https://bugreports.qt.io/browse/QTBUG-56448
+    QColorDialog colorDlg(0);
+    colorDlg.setOption(QColorDialog::NoButtons);
+    colorDlg.setCurrentColor(Qt::white);
+}
