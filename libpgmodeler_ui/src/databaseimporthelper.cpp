@@ -681,7 +681,11 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 			if(attribs.count(ParsersAttributes::SCHEMA))
 				attribs[ParsersAttributes::SCHEMA]=getDependencyObject(attribs[ParsersAttributes::SCHEMA], OBJ_SCHEMA, false, auto_resolve_deps);
 
-			if(!attribs[ParsersAttributes::PERMISSION].isEmpty())
+			/* Due to the object recreation mechanism there are some situations when pgModeler fails to recreate
+			them due to the duplication of permissions. So, to avoid this problem we need to check if the OID of the
+			object was previously registered in the vector of permissions to be created */
+			if(!attribs[ParsersAttributes::PERMISSION].isEmpty() &&
+				 std::find(obj_perms.begin(), obj_perms.end(), oid)==obj_perms.end())
 				obj_perms.push_back(oid);
 
 			if(debug_mode)
