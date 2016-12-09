@@ -176,7 +176,7 @@ void SQLToolWidget::handleDatabaseDropped(const QString &dbname)
 			//Closing tabs related to the database to be dropped
 			for(int i=0; i < databases_tbw->count(); i++)
 			{
-				if(databases_tbw->tabText(i)==dbname)
+				if(databases_tbw->tabText(i).remove('&') == dbname)
 				{
 					closeDatabaseExplorer(i);
 					i=-1;
