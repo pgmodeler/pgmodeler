@@ -196,8 +196,8 @@ QString Column::getAlterDefinition(BaseObject *object)
 
 		if(!this->type.isEquivalentTo(col->type) ||
 				(this->type.isEquivalentTo(col->type) &&
-				 (this->type.hasVariableLength() || this->type.acceptsPrecision()) &&
-				 ((this->type.getLength()!=col->type.getLength()) || (this->type.getPrecision()!=col->type.getPrecision()))))
+				 ((this->type.hasVariableLength() && (this->type.getLength()!=col->type.getLength())) ||
+					(this->type.acceptsPrecision() && (this->type.getPrecision()!=col->type.getPrecision())))))
 			attribs[ParsersAttributes::TYPE]=col->type.getCodeDefinition(SchemaParser::SQL_DEFINITION);
 
 		if(col->sequence)

@@ -1543,7 +1543,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 		bool is_type_registered=false;
 		Column col;
 		vector<unsigned> inh_cols;
-		QString type_def, unknown_obj_xml, type_name;
+		QString type_def, unknown_obj_xml, type_name, def_val;
 		map<unsigned, attribs_map>::iterator itr, itr1, itr_end;
 		attribs_map pos_attrib={{ ParsersAttributes::X_POS, QString("0") },
 								{ ParsersAttributes::Y_POS, QString("0") }};
@@ -1616,7 +1616,34 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 			col.setType(PgSQLType::parseString(type_name));
 			col.setNotNull(!itr->second[ParsersAttributes::NOT_NULL].isEmpty());
 			col.setComment(itr->second[ParsersAttributes::COMMENT]);
-			col.setDefaultValue(itr->second[ParsersAttributes::DEFAULT_VALUE]);
+
+			/* Removing extra/forced type casting in the retrieved default value.
+			 This is done in order to avoid unnecessary entries in the diff results.
+
+			 For instance: say in the model we have a column with the following configutation:
+			 > varchar(3) default 'foo'
+
+			 Now, when importing the same column the default value for it will be something like:
+			 > varchar(3) default 'foo'::character varying
+
+			 Since the extra chars in the default value of the imported column are redundant (casting
+			 varchar to character varying) we remove the '::character varying'. The idea here is to eliminate
+			 the cast if the casting is equivalent to the column type. */
+
+			def_val = itr->second[ParsersAttributes::DEFAULT_VALUE];
+
+			if(!def_val.startsWith(QString("nextval(")) && def_val.contains(QString("::")))
+			{
+				QStringList values = def_val.split(QString("::"));
+
+				if(values.size() > 1 &&
+					 ((~col.getType() == values[1]) ||
+						(~col.getType() == QString("char") && values[1] == QString("bpchar")) ||
+						(col.getType().isUserType() && (~col.getType()).endsWith(values[1]))))
+					def_val=values[0];
+			}
+
+			col.setDefaultValue(def_val);
 
 			//Checking if the collation used by the column exists, if not it'll be created when auto_resolve_deps is checked
 			if(auto_resolve_deps && !itr->second[ParsersAttributes::COLLATION].isEmpty())
