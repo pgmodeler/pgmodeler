@@ -249,8 +249,9 @@ class Relationship: public BaseRelationship {
 		void configureIndentifierRel(Table *recv_tab);
 
 		/*! \brief Copy the columns from the reference table to the receiver table. The parameter not_null indicates
-		 that the columns must not accept null values */
-		void copyColumns(Table *ref_tab, Table *recv_tab, bool not_null);
+		 that the columns must not accept null values. The parameter is_dst_table is used to force the usage of destination table
+		and destination name pattern when creating a self many-to-many relationship */
+		void copyColumns(Table *ref_tab, Table *recv_tab, bool not_null, bool is_dst_table = false);
 
 		/*! \brief This method is always executed before disconnection of the relationship.
 		 Its function is to remove from the specified table all the attributes which
