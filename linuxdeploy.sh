@@ -4,13 +4,13 @@
 case `uname -m` in
   "x86_64")
     ARCH="linux64"
-    FALLBACK_QT_ROOT=/opt/qt-5.5.1/5.5/gcc_64
+    FALLBACK_QT_ROOT=/opt/qt-5.6.2/5.6/gcc_64
     FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
     ;;
     
    *)
     ARCH="linux32"
-    FALLBACK_QT_ROOT=/opt/qt-5.5.1/5.5/gcc
+    FALLBACK_QT_ROOT=/opt/qt-5.6.2/5.6/gcc
     FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
     ;;
 esac
@@ -19,6 +19,7 @@ esac
 #QMAKE_ARGS="-r -spec linux-g++"
 QMAKE_ARGS="-r -spec linux-clang"
 QMAKE_ROOT=/usr/bin
+QMAKE_CMD=qmake
 LOG="$PWD/linuxdeploy.log"
 QT_IFW_ROOT=/opt/qt-ifw-1.5.0
 
@@ -130,7 +131,7 @@ else
            libQt5Gui.so.5 \
            libQt5Core.so.5 \
            libQt5XcbQpa.so.5 \
-           libQt5Svg.so \
+           libQt5Svg.so.5 \
            libicui18n.so.5* \
            libicuuc.so.5* \
            libicudata.so.5*"
@@ -143,14 +144,14 @@ echo "PostgreSQL Database Modeler Project - pgmodeler.com.br"
 echo "Copyright 2006-2016 Raphael A. Silva <raphael@pgmodeler.com.br>"
 
 # Identifying System Qt version
-if [ -e "$QMAKE_ROOT/qmake" ]; then
-  QT_VER_1=`$QMAKE_ROOT/qmake --version | grep --color=never -m 1 -o '[0-9].[0-9].[0-9]'`
+if [ -e "$QMAKE_ROOT/$QMAKE_CMD" ]; then
+  QT_VER_1=`$QMAKE_ROOT/$QMAKE_CMD --version | grep --color=never -m 1 -o '[0-9].[0-9].[0-9]'`
   QT_VER_1=${QT_VER_1:0:5}
 fi
 
 # Identifying Fallback Qt version
-if [ -e "$FALLBACK_QMAKE_ROOT/qmake" ]; then
-  QT_VER_2=`$FALLBACK_QMAKE_ROOT/qmake --version | grep --color=never -m 1 -o '[0-9].[0-9].[0-9]'`
+if [ -e "$FALLBACK_QMAKE_ROOT/$QMAKE_CMD" ]; then
+  QT_VER_2=`$FALLBACK_QMAKE_ROOT/$QMAKE_CMD --version | grep --color=never -m 1 -o '[0-9].[0-9].[0-9]'`
   QT_VER_2=${QT_VER_2:0:5}
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"$FALLBACK_QT_ROOT/lib"
 fi
@@ -212,7 +213,7 @@ fi
 make distclean  >> $LOG 2>&1
 
 echo "Running qmake..."
-$QMAKE_ROOT/qmake $QMAKE_ARGS  >> $LOG 2>&1
+$QMAKE_ROOT/$QMAKE_CMD $QMAKE_ARGS  >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
