@@ -42,7 +42,7 @@ done
 
 # Define the base name of the binary
 if [ $DEMO_VERSION = 1 ]; then
-  PKGNAME="pgmodeler-demo-windows$WIN_BITS"
+  PKGNAME="pgmodeler-$DEPLOY_VER-demo-windows$WIN_BITS"
 else
   PKGNAME="pgmodeler-$DEPLOY_VER-windows$WIN_BITS"
 fi

@@ -34,17 +34,12 @@ UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
 	drop_shadow->setBlurRadius(30);
 	this->setGraphicsEffect(drop_shadow);
 
-	get_binary_menu=new QMenu(this);
-	action_recover=get_binary_menu->addAction(trUtf8("Recover a package"));
-	action_purchase=get_binary_menu->addAction(trUtf8("Purchase a new package"));
-	get_binary_tb->setMenu(get_binary_menu);
-
 	connect(&update_chk_manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(handleUpdateChecked(QNetworkReply*)));
 
 	//C++11 lambda slots
-	connect(action_purchase, &QAction::triggered, this, [=](){ activateLink(GlobalAttributes::PGMODELER_PURCHASE_URL); });
-	connect(action_recover, &QAction::triggered, this, [=](){ activateLink(GlobalAttributes::PGMODELER_RECOVER_URL); });
 	connect(get_source_tb, &QToolButton::clicked, this, [=](){ activateLink(GlobalAttributes::PGMODELER_SRC_URL); });
+	connect(get_binary_tb, &QToolButton::clicked, this, [=](){ activateLink(GlobalAttributes::PGMODELER_DOWNLOAD_URL); });
+
 
 	connect(hide_tb, &QToolButton::clicked, this,
 			[=](){
