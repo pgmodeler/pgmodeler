@@ -41,7 +41,9 @@ GEN_INSTALLER_OPT='-gen-installer'
 DEMO_VERSION_OPT='-demo-version'
 NO_QT_LIBS_OPT='-no-qt-libs'
 BUILD_ALL_OPT='-build-all'
+COMPRESS_INSTALLER_OPT='-comp-installer'
 GEN_INST_PKG=0
+COMP_INST_PKG=0
 DEMO_VERSION=0
 BUNDLE_QT_LIBS=1
 BUILD_ALL=0
@@ -83,6 +85,10 @@ for param in $@; do
    GEN_INST_PKG=1
  fi
 
+ if [[ "$param" == "$COMPRESS_INSTALLER_OPT" ]]; then
+   COMP_INST_PKG=1
+ fi
+ 
  if [[ "$param" == "$DEMO_VERSION_OPT" ]]; then
    DEMO_VERSION=1
    GEN_INST_PKG=1
@@ -106,10 +112,10 @@ else
   PKGNAME="pgmodeler-$DEPLOY_VER-$ARCH"
 fi
 
-PKGFILE=$PKGNAME.tar.gz
+PKGFILE=$PKGNAME.tgz
 
 if [ $BUNDLE_QT_LIBS = 0 ]; then
-  PKGFILE=$PKGNAME.tar.gz
+  PKGFILE=$PKGNAME.tgz
 else 
   #Dependency qt plugins copied to build dir
   DEP_PLUGINS="imageformats/libqgif.so \
@@ -195,6 +201,11 @@ fi
 
 if [ $GEN_INST_PKG = 1 ]; then
   echo "The installer will be generated. (Found $GEN_INSTALLER_OPT)"
+  
+  if [ $COMP_INST_PKG = 1 ]; then
+    echo "The installer will be compressed (Found $COMPRESS_INSTALLER_OPT)"
+  fi
+
 fi
 
 if [ $DEMO_VERSION = 1 ]; then
@@ -270,15 +281,18 @@ if [ $BUNDLE_QT_LIBS = 1 ]; then
  #Copies the qt plugins to build/qtplugins
  for plug in $DEP_PLUGINS; do
    pdir=`dirname $plug`
-   mkdir -p $DEP_PLUGINS_DIR/$pdir >> $LOG 2>&1
-   cp -v $QT_ROOT/plugins/$plug $DEP_PLUGINS_DIR/$pdir >> $LOG 2>&1
+   
+   if [ -e $QT_ROOT/plugins/$plug ]; then
+        mkdir -p $DEP_PLUGINS_DIR/$pdir >> $LOG 2>&1
+        cp -v $QT_ROOT/plugins/$plug $DEP_PLUGINS_DIR/$pdir >> $LOG 2>&1
 
-   if [ $? -ne 0 ]; then
-    echo
-    echo "** Plugins copy failed!"
-    echo
-    exit 1
-  fi
+        if [ $? -ne 0 ]; then
+            echo
+            echo "** Plugins copy failed!"
+            echo
+            exit 1
+        fi
+   fi     
  done
 
 fi
@@ -358,7 +372,25 @@ if [ $GEN_INST_PKG = 1 ]; then
    exit 1
  fi
  
- echo "File created: dist/$PKGNAME.run"
+ if [ $COMP_INST_PKG = 1 ]; then
+   _PWD=`pwd`
+   cd $DIST_DIR  >> $LOG 2>&1
+   tar -zcvf $PKGNAME.run.tgz $PKGNAME.run >> $LOG 2>&1
+   rm $PKGNAME.run >> $LOG 2>&1
+   
+    if [ $? -ne 0 ]; then
+       echo
+       echo "** Failed to create compressed installer!"
+       echo
+       exit 1
+    fi
+    echo "File created: dist/$PKGNAME.run.tgz"
+    cd $_PWD >> $LOG 2>&1
+ else 
+    echo "File created: dist/$PKGNAME.run"
+ fi
+ 
+
 fi
 
 echo "pgModeler successfully deployed!"

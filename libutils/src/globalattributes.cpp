@@ -33,7 +33,7 @@ namespace GlobalAttributes {
 	PGMODELER_PURCHASE_URL=QString("%1/purchase.php").arg(PGMODELER_SITE),
 	PGMODELER_RECOVER_URL=QString("%1/recover.php").arg(PGMODELER_SITE),
 	PGMODELER_DONATE_URL=QString("%1/donate.html").arg(PGMODELER_SITE),
-	PGMODELER_UPD_CHECK_URL=QString("%1/checkupdate.php?current_ver=").arg(PGMODELER_SITE),
+	PGMODELER_UPD_CHECK_URL=QString("%1/checkupdate?version=").arg(PGMODELER_SITE),
 
 	BUG_REPORT_EMAIL=QString("bug@pgmodeler.com.br"),
 	BUG_REPORT_FILE=QString("pgmodeler%1.bug"),
