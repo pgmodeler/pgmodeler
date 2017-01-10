@@ -550,7 +550,7 @@ void PythonDAOsGenerator::generateSelectFromConstraintColumns(std::stringstream 
     text << '\n';
     // execution
     text << "\n        try:";
-    text << "\n            results = self.db.execute(sql, args)";
+    text << "\n            results = self.db.connection.execute(sql, args)";
     text << "\n            if results.rowcount > 1:";
     text << "\n                raise RuntimeError(";
     text << "\n                    \"ERROR: Select by primary/unique key\"";
