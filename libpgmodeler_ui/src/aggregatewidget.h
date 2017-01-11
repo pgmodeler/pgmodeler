@@ -60,7 +60,7 @@ class AggregateWidget: public BaseObjectWidget, public Ui::AggregateWidget {
 		
 	private slots:
 		void hideEvent(QHideEvent *event);
-		void handleDataType(int linha);
+		void handleDataType(int row);
 		
 	public slots:
 		void applyConfiguration(void);
