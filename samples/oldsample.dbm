@@ -402,10 +402,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<type name="text"/>
 	</parameter>
 	<parameter name="param2">
-		<type name="varchar"/>
+		<type name="varchar" length="0"/>
 	</parameter>
 	<parameter name="param3">
-		<type name="char"/>
+		<type name="char" length="0"/>
 	</parameter>
 	<definition library="/usr/local/lib/funcoes.so" symbol="funcao_handler"/>
 </function>
