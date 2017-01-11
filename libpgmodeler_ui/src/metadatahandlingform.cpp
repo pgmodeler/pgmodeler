@@ -175,7 +175,9 @@ void MetadataHandlingForm::handleObjectsMetada(void)
 			metadata_file=backup_file_edt->text();
 		}
 
-		root_item->setExpanded(false);
+		if(root_item)
+			root_item->setExpanded(false);
+
 		root_item=PgModelerUiNS::createOutputTreeItem(output_trw,
 																									PgModelerUiNS::formatMessage(trUtf8("Applying metadata from file `%1'").arg(metadata_file)),
 																									QPixmap(QString(":/icones/icones/msgbox_info.png")), nullptr);
@@ -193,7 +195,6 @@ void MetadataHandlingForm::handleObjectsMetada(void)
 			disconnect(extract_model, nullptr, this, nullptr);
 
 		emit s_metadataHandled();
-		this->accept();
 	}
 	catch(Exception &e)
 	{
