@@ -2202,6 +2202,8 @@ void DatabaseImportHelper::__createTableInheritances(void)
 
 					//Create the inheritance relationship
 					rel=new Relationship(Relationship::RELATIONSHIP_GEN, child_tab, parent_tab);
+					rel->setName(PgModelerNS::generateUniqueName(rel, (*dbmodel->getObjectList(OBJ_RELATIONSHIP))));
+
 					dbmodel->addRelationship(rel);
 					rel=nullptr;
 				}
