@@ -18,6 +18,8 @@
 
 #include "pgsqltypewidget.h"
 
+const QString PgSQLTypeWidget::INVALID_TYPE = QString("invalid_type");
+
 PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidget(parent)
 {
 	try
@@ -45,6 +47,8 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 		spatial_cmb->addItem(trUtf8("NONE"));
 		spatial_cmb->addItems(spatial_lst);
 
+		type_cmb->installEventFilter(this);
+
 		connect(type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(updateTypeFormat(void)));
 		connect(precision_sb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat(void)));
 		connect(length_sb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat(void)));
@@ -60,6 +64,23 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+}
+
+bool PgSQLTypeWidget::eventFilter(QObject *object, QEvent *event)
+{
+	if(event->type() == QEvent::KeyRelease && object == type_cmb)
+	{
+		try
+		{
+			updateTypeFormat();
+		}
+		catch(Exception &)
+		{
+			format_txt->setPlainText(INVALID_TYPE);
+		}
+	}
+
+	return(QWidget::eventFilter(object, event));
 }
 
 void PgSQLTypeWidget::updateTypeFormat(void)
@@ -187,6 +208,9 @@ void PgSQLTypeWidget::setAttributes(PgSQLType type, DatabaseModel *model,  unsig
 
 PgSQLType PgSQLTypeWidget::getPgSQLType(void)
 {
+	if(format_txt->toPlainText() == INVALID_TYPE)
+		throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
 	return(type);
 }
 

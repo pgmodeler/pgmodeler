@@ -42,6 +42,10 @@ class PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
 		//! \brief Syntax highlighter used on the format field
 		SyntaxHighlighter *format_hl;
 
+		bool eventFilter(QObject *watched, QEvent *event);
+
+		static const QString INVALID_TYPE;
+
 	public:
 		PgSQLTypeWidget(QWidget * parent = 0, const QString &label=QString());
 
