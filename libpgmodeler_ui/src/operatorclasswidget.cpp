@@ -36,7 +36,7 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		elem_family_sel=new ObjectSelectorWidget(OBJ_OPFAMILY, true, this);
 		function_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
 		storage_type=new PgSQLTypeWidget(this, trUtf8("Storage Type"));
-		elements_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
+		elements_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^ ObjectTableWidget::DUPLICATE_BUTTON, true, this);
 
 		elements_tab->setColumnCount(4);
 		elements_tab->setHeaderLabel(trUtf8("Object"),0);
