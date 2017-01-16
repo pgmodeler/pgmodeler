@@ -29,6 +29,7 @@ ObjectTableWidget::ObjectTableWidget(unsigned button_conf, bool conf_exclusion, 
 	connect(remove_tb, SIGNAL(clicked(bool)), this, SLOT(removeRow(void)));
 	connect(edit_tb, SIGNAL(clicked(bool)), this, SLOT(editRow(void)));
 	connect(update_tb, SIGNAL(clicked(bool)), this, SLOT(updateRow(void)));
+	connect(duplicate_tb, SIGNAL(clicked(bool)), this, SLOT(duplicateRow(void)));
 	connect(remove_all_tb, SIGNAL(clicked(bool)), this, SLOT(removeRows(void)));
 	connect(table_tbw, SIGNAL(cellClicked(int,int)), this, SLOT(setButtonsEnabled(void)));
 	connect(table_tbw, SIGNAL(cellActivated(int,int)), this, SLOT(setButtonsEnabled(void)));
@@ -46,6 +47,7 @@ ObjectTableWidget::ObjectTableWidget(unsigned button_conf, bool conf_exclusion, 
 	remove_all_tb->setToolTip(remove_all_tb->toolTip() + QString(" (%1)").arg(remove_all_tb->shortcut().toString()));
 	update_tb->setToolTip(update_tb->toolTip() + QString(" (%1)").arg(update_tb->shortcut().toString()));
 	edit_tb->setToolTip(edit_tb->toolTip() + QString(" (%1)").arg(edit_tb->shortcut().toString()));
+	duplicate_tb->setToolTip(duplicate_tb->toolTip() + QString(" (%1)").arg(duplicate_tb->shortcut().toString()));
 	move_last_tb->setToolTip(move_last_tb->toolTip() + QString(" (%1)").arg(move_last_tb->shortcut().toString()));
 	move_first_tb->setToolTip(move_first_tb->toolTip() + QString(" (%1)").arg(move_first_tb->shortcut().toString()));
 	move_up_tb->setToolTip(move_up_tb->toolTip() + QString(" (%1)").arg(move_up_tb->shortcut().toString()));
@@ -54,27 +56,23 @@ ObjectTableWidget::ObjectTableWidget(unsigned button_conf, bool conf_exclusion, 
 
 void ObjectTableWidget::setButtonConfiguration(unsigned button_conf)
 {
-	bool move_btn, edt_btn, add_btn, rem_all_btn, rem_btn, upd_btn;
+	bool move_btn = false;
 
 	//Checking via bitwise operation the buttons available on the 'button_conf'
 	move_btn=(button_conf & MOVE_BUTTONS) == MOVE_BUTTONS;
-	edt_btn=(button_conf & EDIT_BUTTON) == EDIT_BUTTON;
-	add_btn=(button_conf & ADD_BUTTON) == ADD_BUTTON;
-	rem_btn=(button_conf & REMOVE_BUTTON) == REMOVE_BUTTON;
-	rem_all_btn=(button_conf & REMOVE_ALL_BUTTON) == REMOVE_ALL_BUTTON;
-	upd_btn=(button_conf & UPDATE_BUTTON) == UPDATE_BUTTON;
 
 	move_down_tb->setVisible(move_btn);
 	move_up_tb->setVisible(move_btn);
 	move_first_tb->setVisible(move_btn);
 	move_last_tb->setVisible(move_btn);
 
-	edit_tb->setVisible(edt_btn);
-	remove_all_tb->setVisible(rem_all_btn);
+	edit_tb->setVisible((button_conf & EDIT_BUTTON) == EDIT_BUTTON);
+	remove_all_tb->setVisible((button_conf & REMOVE_ALL_BUTTON) == REMOVE_ALL_BUTTON);
 
-	add_tb->setVisible(add_btn);
-	remove_tb->setVisible(rem_btn);
-	update_tb->setVisible(upd_btn);
+	add_tb->setVisible((button_conf & ADD_BUTTON) == ADD_BUTTON);
+	remove_tb->setVisible((button_conf & REMOVE_BUTTON) == REMOVE_BUTTON);
+	update_tb->setVisible((button_conf & UPDATE_BUTTON) == UPDATE_BUTTON);
+	duplicate_tb->setVisible((button_conf & DUPLICATE_BUTTON) == DUPLICATE_BUTTON);
 
 	//Disabling the horizontal spacers when no buttons are visible
 	if(button_conf==NO_BUTTONS)
@@ -383,6 +381,29 @@ void ObjectTableWidget::removeRow(void)
 	}
 }
 
+void ObjectTableWidget::duplicateRow(void)
+{
+	if(table_tbw->currentRow() >= 0)
+	{
+		int row = table_tbw->rowCount(),
+				curr_row = table_tbw->currentRow();
+
+		QTableWidgetItem *curr_item = nullptr,
+				*dup_item=nullptr;
+
+		addRow(row);
+
+		for(int col = 0; col < table_tbw->columnCount(); col++)
+		{
+			curr_item = table_tbw->item(curr_row, col);
+			dup_item = table_tbw->item(row, col);
+			dup_item->setText(curr_item->text());
+		}
+
+		emit s_rowDuplicated(curr_row, row);
+	}
+}
+
 void ObjectTableWidget::removeRows(void)
 {
 	if(table_tbw->rowCount() > 0)
@@ -550,15 +571,14 @@ void ObjectTableWidget::setButtonsEnabled(unsigned button_conf, bool value)
 
 	if((button_conf & UPDATE_BUTTON) == UPDATE_BUTTON)
 		update_tb->setEnabled(value && lin >= 0);
+
+	if((button_conf & DUPLICATE_BUTTON) == DUPLICATE_BUTTON)
+		duplicate_tb->setEnabled(value && lin >= 0);
 }
 
 void ObjectTableWidget::setButtonsEnabled(void)
 {
-	//QTableWidgetItem *item=table_tbw->currentItem();
 	setButtonsEnabled(ALL_BUTTONS, true);
-
-	//if(item && item->row() >= 0)
-	//emit s_rowSelected(item->row());
 }
 
 void ObjectTableWidget::emitRowSelected(void)

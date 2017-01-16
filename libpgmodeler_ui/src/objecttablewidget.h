@@ -47,8 +47,9 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 		UPDATE_BUTTON=4,
 		MOVE_BUTTONS=8,
 		EDIT_BUTTON=16,
-		REMOVE_ALL_BUTTON=32,
-		ALL_BUTTONS=63,
+		DUPLICATE_BUTTON=32,
+		REMOVE_ALL_BUTTON=64,
+		ALL_BUTTONS=127,
 		NO_BUTTONS=0;
 
 		ObjectTableWidget(unsigned button_conf=ALL_BUTTONS,
@@ -119,6 +120,9 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 		//! \brief Removes the currently selected line
 		void removeRow(void);
 
+		//! \brief Duplicate the selected row creating a new item in the end of the grid
+		void duplicateRow(void);
+
 		/*! \brief This method does not execute any action, only emit a signal indicating that the row
 		is ready to the edition. The edit operation must be implemented by the user and be connected to
 		the emitted signal. */
@@ -163,22 +167,25 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 		//! \brief Signal emitted when all rows are removed from table
 		void s_rowsRemoved(void);
 
-		//! \brief Signal emitted when a single row is removed. The row index is send together with the signal
+		//! \brief Signal emitted when a single row is removed. The row index is sent together with the signal
 		void s_rowRemoved(int);
 
-		//! \brief Signal emitted when a row is selected. The row index is send together with the signal
+		//! \brief Signal emitted when a row is selected. The row index is sent together with the signal
 		void s_rowSelected(int);
 
-		//! \brief Signal emitted when a row is edited. The row index is send together with the signal
+		//! \brief Signal emitted when a row is edited. The row index is sent together with the signal
 		void s_rowEdited(int);
 
-		//! \brief Signal emitted when a row is updated. The row index is send together with the signal
+		//! \brief Signal emitted when a row is duplicated. The indexes of the selected and generated rows are sent together with the signal
+		void s_rowDuplicated(int, int);
+
+		//! \brief Signal emitted when a row is updated. The row index is sent together with the signal
 		void s_rowUpdated(int);
 
-		//! \brief Signal emitted when a column is removed. The column index is send together with the signal
+		//! \brief Signal emitted when a column is removed. The column index is sent together with the signal
 		void s_columnRemoved(int);
 
-		//! \brief Signal emitted when a column is added. The column index is send together with the signal
+		//! \brief Signal emitted when a column is added. The column index is sent together with the signal
 		void s_columnAdded(int);
 };
 
