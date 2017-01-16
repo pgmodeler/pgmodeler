@@ -175,7 +175,8 @@ class ModelWidget: public QWidget {
 		*action_remove_rel_points,
 		*action_set_tag,
 		*action_disable_sql,
-		*action_enable_sql;
+		*action_enable_sql,
+		*action_duplicate;
 
 		//! \brief Actions used to create new objects on the model
 		map<ObjectType, QAction *> actions_new_objects;
@@ -327,10 +328,13 @@ class ModelWidget: public QWidget {
 		void selectAllObjects(void);
 
 		//! \brief Copies all the selected objects
-		void copyObjects(void);
+		void copyObjects(bool duplicate_mode = false);
 
 		//! \brief Paste all the objects copied previously
 		void pasteObjects(void);
+
+		//! \brief Duplicate the selected table object in its parent table
+		void duplicateObject(void);
 
 		//! \brief Cuts the selected objects. The effective removal is made when the cutted objects are pasted.
 		void cutObjects(void);
