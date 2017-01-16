@@ -40,11 +40,13 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 
 		columns_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
 										  (ObjectTableWidget::EDIT_BUTTON |
-										   ObjectTableWidget::UPDATE_BUTTON), true, this);
+											 ObjectTableWidget::UPDATE_BUTTON |
+											 ObjectTableWidget::DUPLICATE_BUTTON), true, this);
 
 		ref_columns_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
 											  (ObjectTableWidget::EDIT_BUTTON |
-											   ObjectTableWidget::UPDATE_BUTTON), true, this);
+												 ObjectTableWidget::UPDATE_BUTTON |
+												ObjectTableWidget::DUPLICATE_BUTTON), true, this);
 
 		ref_table_sel=new ObjectSelectorWidget(OBJ_TABLE, true, this);
 

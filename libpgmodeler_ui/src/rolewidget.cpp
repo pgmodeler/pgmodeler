@@ -50,7 +50,7 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 	for(i=0; i < 3; i++)
 	{
 		obj_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-									  ObjectTableWidget::UPDATE_BUTTON, true, this);
+																	(ObjectTableWidget::UPDATE_BUTTON | ObjectTableWidget::DUPLICATE_BUTTON), true, this);
 		members_tab[i]=obj_tab;
 
 		obj_tab->setColumnCount(5);
