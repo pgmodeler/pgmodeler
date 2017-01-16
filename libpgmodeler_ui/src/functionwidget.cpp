@@ -101,8 +101,11 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 
 		connect(parameters_tab, SIGNAL(s_rowAdded(int)), this, SLOT(showParameterForm()));
 		connect(parameters_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showParameterForm()));
+		connect(parameters_tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateParameter(int,int)));
+
 		connect(return_tab, SIGNAL(s_rowAdded(int)), this, SLOT(showParameterForm()));
 		connect(return_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showParameterForm()));
+		connect(return_tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateParameter(int,int)));
 
 		setRequiredField(language_lbl);
 		setRequiredField(ret_method_lbl);
@@ -150,6 +153,21 @@ void FunctionWidget::handleParameter(Parameter param, int result)
 		if(lin_cnt > 0 && table->getCellText(lin_cnt-1,0).isEmpty())
 			table->removeRow(lin_cnt-1);
 	}
+}
+
+void FunctionWidget::duplicateParameter(int curr_row, int new_row)
+{
+	Parameter new_param;
+	ObjectTableWidget *table=nullptr;
+
+	//Selects the table to be handled according to its visibility
+	if(parameters_tab->isVisible())
+		table=parameters_tab;
+	else
+		table=return_tab;
+
+	new_param = getParameter(table, curr_row);
+	showParameterData(new_param, table, new_row);
 }
 
 void FunctionWidget::showParameterForm(void)
