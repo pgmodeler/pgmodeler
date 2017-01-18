@@ -251,6 +251,14 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_duplicate=new QAction(QIcon(QString(":/icones/icones/duplicate.png")), trUtf8("Duplicate"), this);
 
+	action_fade=new QAction(QIcon(QString(":/icones/icones/fade.png")), trUtf8("Fade in/out"), this);
+	action_fade_in=new QAction(QIcon(QString(":/icones/icones/fadein.png")), trUtf8("Fade in"), this);
+	action_fade_out=new QAction(QIcon(QString(":/icones/icones/fadeout.png")), trUtf8("Fade out"), this);
+
+	action_fade->setMenu(&fade_menu);
+	action_fade_in->setMenu(&fade_in_menu);
+	action_fade_out->setMenu(&fade_out_menu);
+
 	action=new QAction(QIcon(QString(":/icones/icones/breakline_90dv.png")), trUtf8("90° (vertical)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine(void)));
 	action->setData(QVariant::fromValue<unsigned>(BREAK_VERT_NINETY_DEGREES));
@@ -2863,7 +2871,7 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 							act->setIcon(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(types[i]) + QString(".png")));
 
 							/* Check the current action only if there is only one selected object and the object representing
-				 the action is assigned to the selected object */
+								 the action is assigned to the selected object */
 							act->setCheckable(sel_objs.size()==1);
 							act->setChecked(sel_objs.size()==1 &&
 											(object->getSchema()==obj_list.back() ||
@@ -2944,6 +2952,25 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 		//Include the quick actions if it is not empty and the model is not protected
 		if(!db_model->isProtected() && !quick_actions_menu.isEmpty())
 			popup_menu.addAction(action_quick_actions);
+	}
+}
+
+void ModelWidget::configureFadeMenu(void)
+{
+	fade_menu.clear();
+	fade_in_menu.clear();
+	fade_out_menu.clear();
+
+	if(selected_objects.empty() || selected_objects.size() > 1 ||
+		 (selected_objects.size() == 1 && selected_objects[0]->getObjectType() == OBJ_DATABASE)) {
+		fade_menu.addAction(action_fade_in);
+		fade_menu.addAction(action_fade_out);
+
+
+	}
+	else
+	{
+
 	}
 }
 
@@ -3280,6 +3307,18 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 				popup_menu.insertMenu(action_edit, submenu);
 			}
 		}
+	}
+	else if(!tab_obj &&
+					(selected_objects.empty() ||
+					 selected_objects.size() > 1 ||
+					 (selected_objects.size() == 1 &&
+						(selected_objects[0]->getObjectType() == OBJ_DATABASE ||
+						 BaseGraphicObject::isGraphicObject(selected_objects[0]->getObjectType())))))
+	{
+		//Adding fade inout action only for graphical objects or when there is no objects selected or many objects seleted
+		popup_menu.addSeparator();
+		popup_menu.addAction(action_fade);
+		configureFadeMenu();
 	}
 
 	//Enable the popup actions that are visible
