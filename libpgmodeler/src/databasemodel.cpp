@@ -7439,6 +7439,14 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 						getObjectDependecies(view->getTrigger(i)->getReferencedTable(), deps, inc_indirect_deps);
 				}
 			}
+
+			if(obj_type == OBJ_TABLE || obj_type == OBJ_VIEW)
+			{
+				BaseTable *tab = dynamic_cast<BaseTable *>(object);
+
+				if(tab->getTag())
+					deps.push_back(tab->getTag());
+			}
 		}
 	}
 }

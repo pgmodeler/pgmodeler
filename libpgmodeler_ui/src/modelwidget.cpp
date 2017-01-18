@@ -1974,7 +1974,8 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 				ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
-	if(!duplicate_mode) {
+	if(!duplicate_mode)
+	{
 		//Ask for confirmation to copy the dependencies of the object(s)
 		msg_box.show(trUtf8("Also copy all dependencies of selected objects? This minimizes the breakdown of references when copied objects are pasted into another model."),
 					 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
@@ -1995,7 +1996,7 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 		//Table-view relationships and FK relationship aren't copied since they are created automatically when pasting the tables/views
 		if(object->getObjectType()!=BASE_RELATIONSHIP)
 		{
-			if(msg_box.result()==QDialog::Accepted || duplicate_mode)
+			if(msg_box.result()==QDialog::Accepted)
 				db_model->getObjectDependecies(object, deps, true);
 			else
 				deps.push_back(object);
@@ -2149,8 +2150,8 @@ void ModelWidget::pasteObjects(void)
 					orig_obj_names[object]=object->getName();
 
 					/* For each object type as follow configures the name and the suffix and store them on the
-			'copy_obj_name' variable. This string is used to check if there are objects with the same name
-			on model. While the 'copy_obj_name' conflicts with other objects (of same type) this validation is made */
+						'copy_obj_name' variable. This string is used to check if there are objects with the same name
+						on model. While the 'copy_obj_name' conflicts with other objects (of same type) this validation is made */
 					if(obj_type==OBJ_FUNCTION)
 					{
 						func=dynamic_cast<Function *>(object);
@@ -2284,7 +2285,12 @@ void ModelWidget::pasteObjects(void)
 				/* Once created, the object is added on the model, except for relationships and table objects
 		because they are inserted automatically */
 				if(object && !tab_obj && !dynamic_cast<Relationship *>(object))
+				{
+					if(db_model->getObjectIndex(object->getSignature(), object->getObjectType()) >= 0)
+						object->setName(PgModelerNS::generateUniqueName(object, *db_model->getObjectList(object->getObjectType()), false, QString("_cp")));
+
 					db_model->addObject(object);
+				}
 
 				//Special case for table objects
 				if(tab_obj)
@@ -2388,7 +2394,8 @@ void ModelWidget::duplicateObject(void)
 
 			emit s_objectCreated();
 		}
-		else if(!selected_objects.empty()){
+		else if(!selected_objects.empty())
+		{
 			copyObjects(true);
 			pasteObjects();
 		}
