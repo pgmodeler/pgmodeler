@@ -164,11 +164,13 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		connect(attributes_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addObject(void)));
 		connect(attributes_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editObject(int)));
 		connect(attributes_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeObject(int)));
+		connect(attributes_tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateObject(int,int)));
 
 		connect(constraints_tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removeObjects(void)));
 		connect(constraints_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addObject(void)));
 		connect(constraints_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editObject(int)));
 		connect(constraints_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeObject(int)));
+		connect(constraints_tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateObject(int,int)));
 
 		connect(defaults_rb, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions(void)));
 		connect(including_rb, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions(void)));
@@ -718,6 +720,60 @@ void RelationshipWidget::addObject(void)
 	}
 	catch(Exception &e)
 	{
+		listObjects(obj_type);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void RelationshipWidget::duplicateObject(int curr_row, int new_row)
+{
+	ObjectType obj_type=BASE_OBJECT;
+	BaseObject *object = nullptr, *dup_object = nullptr;
+	Relationship *rel = dynamic_cast<Relationship *>(this->object);
+	vector<TableObject *> obj_list;
+	ObjectTableWidget *tab = nullptr;
+	int op_id = -1;
+
+	if(!rel)
+		return;
+
+	try
+	{
+		if(sender()==attributes_tab)
+		{
+			obj_type=OBJ_COLUMN;
+			tab=attributes_tab;
+			obj_list = rel->getAttributes();
+		}
+		else
+		{
+			obj_type=OBJ_CONSTRAINT;
+			tab=constraints_tab;
+			obj_list = rel->getConstraints();
+		}
+
+		//Gets the object reference if there is an item select on table
+		if(curr_row >= 0)
+			object = reinterpret_cast<BaseObject *>(tab->getRowData(curr_row).value<void *>());
+
+		PgModelerNS::copyObject(&dup_object, object, obj_type);
+		dup_object->setName(PgModelerNS::generateUniqueName(dup_object, obj_list, false, QString("_cp")));
+
+		op_id=op_list->registerObject(dup_object, Operation::OBJECT_CREATED, new_row, rel);
+
+		rel->addObject(dynamic_cast<TableObject *>(dup_object));
+		listObjects(obj_type);
+	}
+	catch(Exception &e)
+	{
+		//If operation was registered
+		if(op_id >= 0)
+		{
+			op_list->ignoreOperationChain(true);
+			op_list->removeLastOperation();
+			op_list->ignoreOperationChain(false);
+		}
+
 		listObjects(obj_type);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}

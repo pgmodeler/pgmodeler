@@ -87,6 +87,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 		connect(tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeObject(int)));
 		connect(tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleObject(void)));
 		connect(tab, SIGNAL(s_rowEdited(int)), this, SLOT(handleObject(void)));
+		connect(tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateObject(int,int)));
 		connect(tab, SIGNAL(s_rowsMoved(int,int)), this, SLOT(swapObjects(int,int)));
 	}
 
@@ -554,12 +555,56 @@ void TableWidget::removeObject(int row)
 		{
 			op_id=op_list->registerObject(object, Operation::OBJECT_REMOVED, row, this->object);
 			table->removeObject(object);
+			table->setModified(true);
 		}
 		else
 			throw Exception(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT)
 							.arg(object->getName())
 							.arg(object->getTypeName()),
 							ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+	catch(Exception &e)
+	{
+		//If operation was registered
+		if(op_id >= 0)
+		{
+			op_list->ignoreOperationChain(true);
+			op_list->removeLastOperation();
+			op_list->ignoreOperationChain(false);
+		}
+
+		listObjects(obj_type);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void TableWidget::duplicateObject(int sel_row, int new_row)
+{
+	ObjectType obj_type=BASE_OBJECT;
+	BaseObject *object=nullptr, *dup_object=nullptr;
+	ObjectTableWidget *obj_table=nullptr;
+	Table *table = dynamic_cast<Table *>(this->object);
+	int op_id = -1;
+
+	try
+	{
+		obj_type=getObjectType(sender());
+
+		//Selects the object table based upon the passed object type
+		obj_table=getObjectTable(obj_type);
+
+		//Gets the object reference if there is an item select on table
+		if(sel_row >= 0)
+			object = reinterpret_cast<BaseObject *>(obj_table->getRowData(sel_row).value<void *>());
+
+		PgModelerNS::copyObject(&dup_object, object, obj_type);
+		dup_object->setName(PgModelerNS::generateUniqueName(dup_object, *table->getObjectList(obj_type), false, QString("_cp")));
+
+		op_id=op_list->registerObject(dup_object, Operation::OBJECT_CREATED, new_row, this->object);
+
+		table->addObject(dup_object);
+		table->setModified(true);
+		listObjects(obj_type);
 	}
 	catch(Exception &e)
 	{

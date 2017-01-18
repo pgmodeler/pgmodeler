@@ -107,6 +107,9 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 		//! \brief Adds or edit a object on the object table that calls the slot
 		void handleObject(void);
 
+		//! \brief Duplicates a object on the object table that calls the slot
+		void duplicateObject(int curr_row, int new_row);
+
 		//! \brief Removes the selected object from the table that calls the slot
 		void removeObject(int row);
 

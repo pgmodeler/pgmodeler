@@ -249,6 +249,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_enable_sql=new QAction(QIcon(QString(":/icones/icones/codigosql.png")), trUtf8("Enable SQL"), this);
 	action_disable_sql=new QAction(QIcon(QString(":/icones/icones/disablesql.png")), trUtf8("Disable SQL"), this);
 
+	action_duplicate=new QAction(QIcon(QString(":/icones/icones/duplicate.png")), trUtf8("Duplicate"), this);
+
 	action=new QAction(QIcon(QString(":/icones/icones/breakline_90dv.png")), trUtf8("90° (vertical)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine(void)));
 	action->setData(QVariant::fromValue<unsigned>(BREAK_VERT_NINETY_DEGREES));
@@ -314,6 +316,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_copy, SIGNAL(triggered(bool)),this,SLOT(copyObjects(void)));
 	connect(action_paste, SIGNAL(triggered(bool)),this,SLOT(pasteObjects(void)));
 	connect(action_cut, SIGNAL(triggered(bool)),this,SLOT(cutObjects(void)));
+	connect(action_duplicate, SIGNAL(triggered(bool)),this,SLOT(duplicateObject(void)));
 	connect(action_rename, SIGNAL(triggered(bool)), this, SLOT(renameObject(void)));
 	connect(action_edit_perms, SIGNAL(triggered(bool)), this, SLOT(editPermissions(void)));
 	connect(action_sel_sch_children, SIGNAL(triggered(bool)), this, SLOT(selectSchemaChildren(void)));
@@ -1941,7 +1944,7 @@ void ModelWidget::cutObjects(void)
 	this->copyObjects();
 }
 
-void ModelWidget::copyObjects(void)
+void ModelWidget::copyObjects(bool duplicate_mode)
 {
 	map<unsigned, BaseObject *> objs_map;
 	map<unsigned, BaseObject *>::iterator obj_itr;
@@ -1964,9 +1967,11 @@ void ModelWidget::copyObjects(void)
 				ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
-	//Ask for confirmation to copy the dependencies of the object(s)
-	msg_box.show(trUtf8("Also copy all dependencies of selected objects? This minimizes the breakdown of references when copied objects are pasted into another model."),
-				 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+	if(!duplicate_mode) {
+		//Ask for confirmation to copy the dependencies of the object(s)
+		msg_box.show(trUtf8("Also copy all dependencies of selected objects? This minimizes the breakdown of references when copied objects are pasted into another model."),
+					 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+	}
 
 	/* When in cut operation is necessary to store the selected objects in a separeted list
 	in order to correclty cut (remove) the object on the source model */
@@ -1983,7 +1988,7 @@ void ModelWidget::copyObjects(void)
 		//Table-view relationships and FK relationship aren't copied since they are created automatically when pasting the tables/views
 		if(object->getObjectType()!=BASE_RELATIONSHIP)
 		{
-			if(msg_box.result()==QDialog::Accepted)
+			if(msg_box.result()==QDialog::Accepted || duplicate_mode)
 				db_model->getObjectDependecies(object, deps, true);
 			else
 				deps.push_back(object);
@@ -2349,6 +2354,46 @@ void ModelWidget::pasteObjects(void)
 
 	this->configurePopupMenu();
 	this->modified=true;
+}
+
+void ModelWidget::duplicateObject(void)
+{
+	int op_id = -1;
+
+	try
+	{
+		if(selected_objects.size() == 1 && TableObject::isTableObject(selected_objects[0]->getObjectType()))
+		{
+			BaseObject *object = selected_objects[0], *dup_object=nullptr;
+			BaseTable *table = nullptr;
+			ObjectType obj_type = object->getObjectType();
+
+			table = dynamic_cast<TableObject *>(object)->getParentTable();
+			PgModelerNS::copyObject(&dup_object, object, obj_type);
+			dup_object->setName(PgModelerNS::generateUniqueName(dup_object, *dynamic_cast<Table *>(table)->getObjectList(obj_type), false, QString("_cp")));
+
+			op_id=op_list->registerObject(dup_object, Operation::OBJECT_CREATED, -1, table);
+			table->addObject(dup_object);
+			table->setModified(true);
+
+			if(obj_type == OBJ_COLUMN)
+				db_model->validateRelationships();
+
+			emit s_objectCreated();
+		}
+		else if(!selected_objects.empty()){
+			copyObjects(true);
+			pasteObjects();
+		}
+	}
+	catch(Exception &e)
+	{
+		//If operation was registered
+		if(op_id >= 0)
+			op_list->removeLastOperation();
+
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void ModelWidget::removeObjects(bool cascade)
@@ -3104,7 +3149,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 	//Adding the copy and paste if there is selected objects
 	if(!model_protected &&
 			!(objects.size()==1 && (objects[0]==db_model || objects[0]->getObjectType()==BASE_RELATIONSHIP)) &&
-			!objects.empty() && (!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship())))
+			!objects.empty())// && (!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship())))
 	{
 		popup_menu.addAction(action_copy);
 
@@ -3113,7 +3158,10 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 		while(i < count && !protected_obj)
 			protected_obj=objects[i++]->isProtected();
 
-		popup_menu.addAction(action_cut);
+		if(!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship()))
+			popup_menu.addAction(action_cut);
+
+		popup_menu.addAction(action_duplicate);
 	}
 
 	//If there is copied object adds the paste action

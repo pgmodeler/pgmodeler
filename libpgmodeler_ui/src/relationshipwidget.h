@@ -94,6 +94,7 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		void showAdvancedObject(int row);
 		void selectCopyOptions(void);
 		void listSpecialPkColumns(void);
+		void duplicateObject(int curr_row, int new_row);
 
 		void useFKGlobalSettings(bool value);
 		void usePatternGlobalSettings(bool value);

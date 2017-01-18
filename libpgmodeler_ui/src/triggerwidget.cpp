@@ -31,9 +31,10 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 
 		columns_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
 										  (ObjectTableWidget::EDIT_BUTTON |
-										   ObjectTableWidget::UPDATE_BUTTON), true, this);
+											 ObjectTableWidget::UPDATE_BUTTON |
+											 ObjectTableWidget::DUPLICATE_BUTTON), true, this);
 
-		arguments_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
+		arguments_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^ ObjectTableWidget::DUPLICATE_BUTTON, true, this);
 
 		ref_table_sel=new ObjectSelectorWidget(OBJ_TABLE, true, this);
 		function_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);

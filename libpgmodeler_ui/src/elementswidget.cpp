@@ -30,7 +30,7 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 		elem_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		parent_obj=nullptr;
-		elements_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
+		elements_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^ ObjectTableWidget::DUPLICATE_BUTTON, true, this);
 		op_class_sel=new ObjectSelectorWidget(OBJ_OPCLASS, true, this);
 		collation_sel=new ObjectSelectorWidget(OBJ_COLLATION, true, this);
 		operator_sel=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);
