@@ -153,6 +153,8 @@ class ModelWidget: public QWidget {
 		//! \brief Configures the submenu related to fade in/out operations
 		void configureFadeMenu(void);
 
+		void fadeObjects(QAction *action, bool fade_in);
+
 	protected:
 		static const unsigned BREAK_VERT_NINETY_DEGREES, //Break vertically the line in one 90° angle
 		BREAK_HORIZ_NINETY_DEGREES, //Break horizontally the line in one 90° angle
@@ -389,6 +391,10 @@ class ModelWidget: public QWidget {
 		void adjustOverlayPosition(void);
 
 		void toggleObjectSQL(void);
+
+		void fadeObjectsIn(void);
+
+		void fadeObjectsOut(void);
 
 	public slots:
 		void loadModel(const QString &filename);

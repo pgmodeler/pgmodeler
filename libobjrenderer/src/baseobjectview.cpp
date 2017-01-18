@@ -628,13 +628,3 @@ void BaseObjectView::togglePlaceholder(bool visible)
 		placeholder->setVisible(visible);
 	}
 }
-
-void BaseObjectView::fadeIn(void)
-{
-	this->setOpacity(0.15f);
-}
-
-void BaseObjectView::fadeOut(void)
-{
-	this->setOpacity(1.0f);
-}

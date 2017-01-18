@@ -2977,15 +2977,19 @@ void ModelWidget::configureFadeMenu(void)
 		if(is_db_selected)
 		{
 			QAction *action = nullptr;
-			vector<ObjectType> types = { OBJ_SCHEMA, OBJ_TABLE, OBJ_VIEW, BASE_RELATIONSHIP, OBJ_TEXTBOX };
+			vector<ObjectType> types = { OBJ_SCHEMA, OBJ_TABLE, OBJ_VIEW, OBJ_RELATIONSHIP, OBJ_TEXTBOX };
 
 			for(ObjectType type : types)
 			{
 				action = new QAction(QPixmap(PgModelerUiNS::getIconPath(type)), BaseObject::getTypeName(type), &fade_in_menu);
+				action->setData(type);
 				fade_in_menu.addAction(action);
+				connect(action, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
 
 				action = new QAction(QPixmap(PgModelerUiNS::getIconPath(type)), BaseObject::getTypeName(type), &fade_out_menu);
+				action->setData(type);
 				fade_out_menu.addAction(action);
+				connect(action, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
 			}
 		}
 		else
@@ -2997,6 +3001,40 @@ void ModelWidget::configureFadeMenu(void)
 	{
 
 	}
+}
+
+void ModelWidget::fadeObjects(QAction *action, bool fade_in)
+{
+	if(!action)
+		return;
+
+	if(selected_objects.empty() || (selected_objects.size() == 1 && selected_objects[0]->getObjectType() == OBJ_DATABASE))
+	{
+		ObjectType obj_type = static_cast<ObjectType>(action->data().toUInt());
+		BaseObjectView *obj_view = nullptr;
+
+		for(auto obj : *db_model->getObjectList(obj_type))
+		{
+			obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
+
+			if(obj_view)
+				obj_view->setOpacity(fade_in ? 0.10f : 1);
+		}
+	}
+	else
+	{
+
+	}
+}
+
+void ModelWidget::fadeObjectsIn(void)
+{
+	fadeObjects(qobject_cast<QAction *>(sender()), true);
+}
+
+void ModelWidget::fadeObjectsOut(void)
+{
+	fadeObjects(qobject_cast<QAction *>(sender()), false);
 }
 
 void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)

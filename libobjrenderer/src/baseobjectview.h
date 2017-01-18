@@ -174,10 +174,6 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		//! \brief Toggles the wireframe display
 		virtual void togglePlaceholder(bool visible);
 
-		virtual void fadeIn(void);
-
-		virtual void fadeOut(void);
-
 	protected slots:
 		//! \brief Make the basic object operations
 		void __configureObject(void);
