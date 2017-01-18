@@ -41,7 +41,7 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 	//Creates a combo with the accepted object type
 	for(auto &itr : types_map)
 	{
-		ico.load(QString(":/icones/icones/%1.png").arg(BaseObject::getSchemaName(itr.second)));
+		ico.load(PgModelerUiNS::getIconPath(itr.second));
 		applies_to_cmb->addItem(ico, itr.first, itr.second);
 		filter_cmb->addItem(ico, itr.first, itr.second);
 	}
@@ -534,7 +534,7 @@ void SnippetsConfigWidget::configureSnippetsMenu(QMenu *snip_menu, vector<Object
 				type_name=trUtf8("General");
 			}
 			else
-				ico=QPixmap(QString(":/icones/icones/%1.png").arg(object));
+				ico=QPixmap(PgModelerUiNS::getIconPath(object));
 
 			menu=new QMenu(type_name, snip_menu);
 			menu->setIcon(ico);
@@ -548,7 +548,7 @@ void SnippetsConfigWidget::configureSnippetsMenu(QMenu *snip_menu, vector<Object
 		}
 
 		//Creating the action for the current snippet
-		act=new QAction(QPixmap(QString(":/icones/icones/codesnippet.png")), snip_id, submenus[object]);
+		act=new QAction(QPixmap(PgModelerUiNS::getIconPath("codesnippet")), snip_id, submenus[object]);
 		act->setToolTip(snip[ParsersAttributes::LABEL]);
 		submenus[object]->addAction(act);
 	}

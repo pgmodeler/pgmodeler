@@ -276,14 +276,14 @@ void SQLExecutionWidget::showError(Exception &e)
 
 	PgModelerUiNS::createOutputListItem(msgoutput_lst,
 																			QString("%1 %2").arg(time_str).arg(e.getErrorMessage()),
-																			QPixmap(QString(":/icones/icones/msgbox_erro.png")), false);
+																			QPixmap(PgModelerUiNS::getIconPath("msgbox_erro")), false);
 
 	if(e.getErrorType()==ERR_CONNECTION_TIMEOUT ||
 		 e.getErrorType()==ERR_CONNECTION_BROKEN)
 	{
 		PgModelerUiNS::createOutputListItem(msgoutput_lst,
 																				QString("%1 %2").arg(time_str).arg(trUtf8("No results retrieved or changes done due to the error above.")),
-																				QPixmap(QString(":/icones/icones/msgbox_alerta.png")), false);
+																				QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")), false);
 	}
 
 	msgoutput_lst->setVisible(true);
@@ -371,7 +371,7 @@ void SQLExecutionWidget::runSQLCommand(void)
 		{
 			PgModelerUiNS::createOutputListItem(msgoutput_lst,
 																					PgModelerUiNS::formatMessage(QString("[%1]: %2").arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))).arg(notice)),
-																					QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
+																					QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")));
 		}
 
 		PgModelerUiNS::createOutputListItem(msgoutput_lst,
@@ -379,7 +379,7 @@ void SQLExecutionWidget::runSQLCommand(void)
 																																		 .arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz")))
 																																		 .arg(res.isEmpty() ? trUtf8("Rows affected") :  trUtf8("Rows retrieved"))
 																																		 .arg(res.getTupleCount())),
-																				QPixmap(QString(":/icones/icones/msgbox_info.png")));
+																				QPixmap(PgModelerUiNS::getIconPath("msgbox_info")));
 
 		output_tbw->setTabText(1, trUtf8("Messages (%1)").arg(msgoutput_lst->count()));
 
@@ -602,7 +602,7 @@ void SQLExecutionWidget::configureSnippets(void)
 	code_compl_wgt->clearCustomItems();
 	code_compl_wgt->insertCustomItems(SnippetsConfigWidget::getAllSnippetsAttribute(ParsersAttributes::ID),
 									  SnippetsConfigWidget::getAllSnippetsAttribute(ParsersAttributes::LABEL),
-									  QPixmap(QString(":/icones/icones/codesnippet.png")));
+										QPixmap(PgModelerUiNS::getIconPath("codesnippet")));
 }
 
 void SQLExecutionWidget::enableSQLExecution(bool enable)

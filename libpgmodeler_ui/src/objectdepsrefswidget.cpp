@@ -46,8 +46,7 @@ void ObjectDepsRefsWidget::setAttributes(DatabaseModel *model, BaseObject *objec
 	this->comment_edt->setVisible(false);
 	this->comment_lbl->setVisible(false);
 
-	obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") +
-									BaseObject::getSchemaName(object->getObjectType()) + QString(".png")));
+	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(object->getObjectType())));
 
 	updateObjectTables();
 }

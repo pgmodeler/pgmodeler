@@ -101,9 +101,7 @@ void SwapObjectsIdsWidget::showObjectId(void)
 	if(sel_obj)
 	{
 		id_lbl->setText(QString("ID: <strong>%1</strong>").arg(sel_obj->getObjectId()));
-		ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/") +
-								   BaseObject::getSchemaName(sel_obj->getObjectType()) +
-								   QString(".png")));
+		ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(sel_obj->getObjectType())));
 		ico_lbl->setToolTip(sel_obj->getTypeName());
 
 		id_lbl->setVisible(true);

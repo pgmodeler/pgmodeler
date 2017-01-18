@@ -56,19 +56,19 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 		obj_tab->setColumnCount(5);
 
 		obj_tab->setHeaderLabel(trUtf8("Role"),0);
-		obj_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/role.png")),0);
+		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),0);
 
 		obj_tab->setHeaderLabel(trUtf8("Validity"),1);
-		obj_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/validade.png")),1);
+		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("validade")),1);
 
 		obj_tab->setHeaderLabel(trUtf8("Member of"),2);
-		obj_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/role.png")),2);
+		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),2);
 
 		obj_tab->setHeaderLabel(trUtf8("Members"),3);
-		obj_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/role.png")),3);
+		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),3);
 
 		obj_tab->setHeaderLabel(trUtf8("Members (Admin.)"),4);
-		obj_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/role.png")),4);
+		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),4);
 
 		grid=new QGridLayout;
 		grid->addWidget(obj_tab,0,0,1,1);

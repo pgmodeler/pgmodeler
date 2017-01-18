@@ -77,21 +77,21 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 
 		attributes_tab->setColumnCount(2);
 		attributes_tab->setHeaderLabel(trUtf8("Attribute"), 0);
-		attributes_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
+		attributes_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("column")),0);
 		attributes_tab->setHeaderLabel(trUtf8("Type"), 1);
-		attributes_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+		attributes_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
 
 		constraints_tab->setColumnCount(2);
 		constraints_tab->setHeaderLabel(trUtf8("Constraint"), 0);
-		constraints_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/constraint.png")),0);
+		constraints_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("constraint")),0);
 		constraints_tab->setHeaderLabel(trUtf8("Type"), 1);
-		constraints_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+		constraints_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
 
 		advanced_objs_tab->setColumnCount(2);
 		advanced_objs_tab->setHeaderLabel(trUtf8("Name"), 0);
-		advanced_objs_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
+		advanced_objs_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("column")),0);
 		advanced_objs_tab->setHeaderLabel(trUtf8("Type"), 1);
-		advanced_objs_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+		advanced_objs_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
 
 		connect(advanced_objs_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showAdvancedObject(int)));
 
