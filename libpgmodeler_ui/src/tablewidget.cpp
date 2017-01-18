@@ -37,7 +37,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	Ui_TableWidget::setupUi(this);
 
 	edt_data_tb=new QToolButton(this);
-	QPixmap icon=QPixmap(QString(":/icones/icones/editdata.png"));
+	QPixmap icon=QPixmap(PgModelerUiNS::getIconPath("editdata"));
 	edt_data_tb->setMinimumSize(edt_perms_tb->minimumSize());
 	edt_data_tb->setText(trUtf8("Edit data"));
 	edt_data_tb->setToolTip(trUtf8("Define initial data for the table"));
@@ -56,11 +56,11 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	parent_tables = new ObjectTableWidget(ObjectTableWidget::NO_BUTTONS, true, this);
 	parent_tables->setColumnCount(3);
 	parent_tables->setHeaderLabel(trUtf8("Name"), 0);
-	parent_tables->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
+	parent_tables->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 	parent_tables->setHeaderLabel(trUtf8("Schema"), 1);
-	parent_tables->setHeaderIcon(QPixmap(QString(":/icones/icones/schema.png")),1);
+	parent_tables->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("schema")),1);
 	parent_tables->setHeaderLabel(trUtf8("Type"), 2);
-	parent_tables->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),2);
+	parent_tables->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),2);
 
 	tag_sel=new ObjectSelectorWidget(OBJ_TAG, false, this);
 	dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 3);
@@ -93,38 +93,38 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 
 	objects_tab_map[OBJ_COLUMN]->setColumnCount(4);
 	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[OBJ_COLUMN]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
+	objects_tab_map[OBJ_COLUMN]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Type"), 1);
-	objects_tab_map[OBJ_COLUMN]->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+	objects_tab_map[OBJ_COLUMN]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
 	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Default Value"), 2);
 	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Attribute"), 3);
 
 	objects_tab_map[OBJ_CONSTRAINT]->setColumnCount(4);
 	objects_tab_map[OBJ_CONSTRAINT]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[OBJ_CONSTRAINT]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
+	objects_tab_map[OBJ_CONSTRAINT]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 	objects_tab_map[OBJ_CONSTRAINT]->setHeaderLabel(trUtf8("Type"), 1);
-	objects_tab_map[OBJ_CONSTRAINT]->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+	objects_tab_map[OBJ_CONSTRAINT]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
 	objects_tab_map[OBJ_CONSTRAINT]->setHeaderLabel(trUtf8("ON DELETE"), 2);
 	objects_tab_map[OBJ_CONSTRAINT]->setHeaderLabel(trUtf8("ON UPDATE"), 3);
 
 	objects_tab_map[OBJ_TRIGGER]->setColumnCount(4);
 	objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
+	objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 	objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Refer. Table"), 1);
-	objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(QString(":/icones/icones/table.png")),1);
+	objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("table")),1);
 	objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Firing"), 2);
-	objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(QString(":/icones/icones/trigger.png")),2);
+	objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("trigger")),2);
 	objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Events"), 3);
 
 	objects_tab_map[OBJ_RULE]->setColumnCount(3);
 	objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[OBJ_RULE]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
+	objects_tab_map[OBJ_RULE]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 	objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Execution"), 1);
 	objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Event"), 2);
 
 	objects_tab_map[OBJ_INDEX]->setColumnCount(2);
 	objects_tab_map[OBJ_INDEX]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[OBJ_INDEX]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
+	objects_tab_map[OBJ_INDEX]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 	objects_tab_map[OBJ_INDEX]->setHeaderLabel(trUtf8("Indexing"), 1);
 
 	configureFormLayout(table_grid, OBJ_TABLE);

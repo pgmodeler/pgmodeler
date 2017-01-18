@@ -55,7 +55,7 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 									ObjectTableWidget::EDIT_BUTTON, false, this);
 	roles_tab->setColumnCount(1);
 	roles_tab->setHeaderLabel(trUtf8("Role"),0);
-	roles_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/role.png")),0);
+	roles_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),0);
 
 	grid=new QGridLayout;
 	grid->addWidget(roles_tab,0,0,1,1);
@@ -67,11 +67,11 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 										  ObjectTableWidget::REMOVE_ALL_BUTTON, true, this);
 	permissions_tab->setColumnCount(3);
 	permissions_tab->setHeaderLabel(trUtf8("Id"),0);
-	permissions_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
+	permissions_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 	permissions_tab->setHeaderLabel(trUtf8("Roles"),1);
-	permissions_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/role.png")),1);
+	permissions_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),1);
 	permissions_tab->setHeaderLabel(trUtf8("Privileges"),2);
-	permissions_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/grant.png")),2);
+	permissions_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("grant")),2);
 
 	grid=new QGridLayout;
 	grid->addWidget(permissions_tab,0,0,1,1);

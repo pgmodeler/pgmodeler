@@ -28,8 +28,7 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, BASE
 	Ui_TableDataWidget::setupUi(this);
 	configureFormLayout(tabledata_grid, BASE_OBJECT);
 
-	obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") +
-																	BaseObject::getSchemaName(OBJ_TABLE) + QString(".png")));
+	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(OBJ_TABLE)));
 
 	comment_lbl->setVisible(false);
 	comment_edt->setVisible(false);

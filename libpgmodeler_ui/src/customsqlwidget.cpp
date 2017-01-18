@@ -151,9 +151,7 @@ void CustomSQLWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 		protected_obj_frm->setVisible(false);
 		obj_id_lbl->setVisible(false);
 
-		obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") +
-										BaseObject::getSchemaName(object->getObjectType()) +
-										QString(".png")));
+		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(object->getObjectType())));
 
 		configureMenus();
 	}

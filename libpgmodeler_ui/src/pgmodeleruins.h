@@ -65,9 +65,15 @@ namespace PgModelerUiNS {
 	//! \brief Replaces the sequence of chars [`'] by html tags <strong></strong> and [()] by <em></em>
 	extern QString formatMessage(const QString &msg);
 
-	/*! brief Fills a tree widget with all the stack trace provided by the passed Exception. A root item
+	/*! \brief Fills a tree widget with all the stack trace provided by the passed Exception. A root item
 	can be specified so all created child items are appended to it */
 	extern void createExceptionsTree(QTreeWidget *exceptions_trw, Exception &e, QTreeWidgetItem *root);
+
+	//! \brief Returns the path, in the icon resource, to the provided icon name
+	extern QString getIconPath(const QString &icon);
+
+	//! \brief Returns the path, in the icon resource, to the icon of the provided object type
+	extern QString getIconPath(ObjectType obj_type);
 }
 
 #endif

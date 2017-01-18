@@ -30,7 +30,7 @@ PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : BaseConfigWidget(par
 	plugins_tab=new ObjectTableWidget(ObjectTableWidget::EDIT_BUTTON, false, this);
 	plugins_tab->setColumnCount(3);
 	plugins_tab->setHeaderLabel(trUtf8("Plugin"),0);
-	plugins_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/plugins.png")),0);
+	plugins_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("plugins")),0);
 	plugins_tab->setHeaderLabel(trUtf8("Version"),1);
 	plugins_tab->setHeaderLabel(trUtf8("Library"),2);
 

@@ -51,17 +51,17 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 										 ObjectTableWidget::UPDATE_BUTTON, true, this);
 		return_tab->setColumnCount(2);
 		return_tab->setHeaderLabel(trUtf8("Column"), 0);
-		return_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
+		return_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("column")),0);
 		return_tab->setHeaderLabel(trUtf8("Type"), 1);
-		return_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+		return_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
 
 		parameters_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
 											 ObjectTableWidget::UPDATE_BUTTON, true, this);
 		parameters_tab->setColumnCount(4);
 		parameters_tab->setHeaderLabel(trUtf8("Name"),0);
-		parameters_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/parameter.png")),0);
+		parameters_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("parameter")),0);
 		parameters_tab->setHeaderLabel(trUtf8("Type"),1);
-		parameters_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+		parameters_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
 		parameters_tab->setHeaderLabel(trUtf8("Mode"),2);
 		parameters_tab->setHeaderLabel(trUtf8("Default Value"),3);
 
