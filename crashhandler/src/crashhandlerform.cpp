@@ -18,6 +18,7 @@
 
 #include "crashhandlerform.h"
 #include "messagebox.h"
+#include "pgmodeleruins.h"
 
 const QString CrashHandlerForm::ANALYSIS_MODE=QString("-analysis-mode");
 
@@ -81,7 +82,7 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 	layout->addWidget(input_edt);
 
 	load_tb=new QToolButton(input_wgt);
-	load_tb->setIcon(QPixmap(QString(":/icones/icones/abrir.png")));
+	load_tb->setIcon(QPixmap(PgModelerUiNS::getIconPath("abrir")));
 	load_tb->setSizePolicy(output_tb->sizePolicy());
 	load_tb->setToolButtonStyle(output_tb->toolButtonStyle());
 	load_tb->setIconSize(output_tb->iconSize());
@@ -89,7 +90,7 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 	layout->addWidget(load_tb);
 
 	save_tb=new QToolButton(input_wgt);
-	save_tb->setIcon(QPixmap(QString(":/icones/icones/salvar.png")));
+	save_tb->setIcon(QPixmap(PgModelerUiNS::getIconPath("salvar")));
 	save_tb->setSizePolicy(output_tb->sizePolicy());
 	save_tb->setToolButtonStyle(output_tb->toolButtonStyle());
 	save_tb->setIconSize(output_tb->iconSize());

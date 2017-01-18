@@ -52,16 +52,16 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 
 		columns_tab->setColumnCount(2);
 		columns_tab->setHeaderLabel(trUtf8("Column"), 0);
-		columns_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
+		columns_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("column")),0);
 		columns_tab->setHeaderLabel(trUtf8("Type"), 1);
-		columns_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+		columns_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
 
 		ref_columns_tab->setEnabled(false);
 		ref_columns_tab->setColumnCount(2);
 		ref_columns_tab->setHeaderLabel(trUtf8("Column"), 0);
-		ref_columns_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
+		ref_columns_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("column")),0);
 		ref_columns_tab->setHeaderLabel(trUtf8("Type"), 1);
-		ref_columns_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+		ref_columns_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
 
 		dynamic_cast<QGridLayout *>(columns_tbw->widget(0)->layout())->addWidget(columns_tab, 1,0,1,3);
 		dynamic_cast<QGridLayout *>(columns_tbw->widget(1)->layout())->addWidget(ref_table_sel, 0,1,1,2);

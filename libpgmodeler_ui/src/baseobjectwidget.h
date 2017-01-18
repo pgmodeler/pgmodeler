@@ -32,6 +32,7 @@
 #include "objectselectorwidget.h"
 #include "ui_baseobjectwidget.h"
 #include "pgsqltypewidget.h"
+#include "pgmodeleruins.h"
 
 /* Declaring the PgSQLType class as a Qt metatype in order to permit
 	 that instances of the class be used as data of QVariant and QMetaType */

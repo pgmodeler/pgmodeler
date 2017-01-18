@@ -259,4 +259,14 @@ namespace PgModelerUiNS {
 			idx++;
 		}
 	}
+
+	QString getIconPath(const QString &icon)
+	{
+		return(QString(":/icones/icones/%1.png").arg(icon));
+	}
+
+	QString getIconPath(ObjectType obj_type)
+	{
+		return(getIconPath(BaseObject::getSchemaName(obj_type)));
+	}
 }

@@ -2957,16 +2957,35 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 
 void ModelWidget::configureFadeMenu(void)
 {
+	bool is_db_selected = (selected_objects.empty() ||
+												 (selected_objects.size() == 1 && selected_objects[0]->getObjectType() == OBJ_DATABASE));
 	fade_menu.clear();
 	fade_in_menu.clear();
 	fade_out_menu.clear();
 
-	if(selected_objects.empty() || selected_objects.size() > 1 ||
-		 (selected_objects.size() == 1 && selected_objects[0]->getObjectType() == OBJ_DATABASE)) {
+	if(is_db_selected || selected_objects.size() > 1)
+	{
 		fade_menu.addAction(action_fade_in);
 		fade_menu.addAction(action_fade_out);
 
+		if(is_db_selected)
+		{
+			QAction *action = nullptr;
+			vector<ObjectType> types = { OBJ_SCHEMA, OBJ_TABLE, OBJ_VIEW, BASE_RELATIONSHIP, OBJ_TEXTBOX };
 
+			for(ObjectType type : types)
+			{
+				action = new QAction(QPixmap(PgModelerUiNS::getIconPath(type)), BaseObject::getTypeName(type), &fade_in_menu);
+				fade_in_menu.addAction(action);
+
+				action = new QAction(QPixmap(PgModelerUiNS::getIconPath(type)), BaseObject::getTypeName(type), &fade_out_menu);
+				fade_out_menu.addAction(action);
+			}
+		}
+		else
+		{
+
+		}
 	}
 	else
 	{
