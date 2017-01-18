@@ -360,7 +360,7 @@ void ModelDatabaseDiffForm::importDatabase(void)
 
 		conn1=conn;
 		step_lbl->setText(trUtf8("Importing database <strong>%1</strong>...").arg(database_cmb->currentText()));
-		step_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/import.png")));
+		step_ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("import")));
 
 		import_item=PgModelerUiNS::createOutputTreeItem(output_trw, step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
 
@@ -399,7 +399,7 @@ void ModelDatabaseDiffForm::diffModels(void)
 	step_lbl->setText(trUtf8("Comparing the model <strong>%1</strong> and database <strong>%2</strong>...")
 					  .arg(source_model->getName())
 					  .arg(imported_model->getName()));
-	step_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/diff.png")));
+	step_ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("diff")));
 
 	output_trw->collapseItem(import_item);
 	diff_progress=step_pb->value();
@@ -437,7 +437,7 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 					 trUtf8(" <strong>WARNING:</strong> The generated diff is ready to be exported! Once started this process will cause irreversible changes on the database. Do you really want to proceed?"),
 					 Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
 					 trUtf8("Apply diff"), trUtf8("Preview diff"), QString(),
-					 QString(":/icones/icones/diff.png"), QString(":/icones/icones/codigosql.png"));
+					 PgModelerUiNS::getIconPath("diff"), PgModelerUiNS::getIconPath("codigosql"));
 
 	if(!confirm || msg_box.result()==QDialog::Accepted)
 	{
@@ -446,7 +446,7 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 
 		step_lbl->setText(trUtf8("Exporting diff to database <strong>%1</strong>...")
 						  .arg(imported_model->getName()));
-		step_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/exportar.png")));
+		step_ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("exportar")));
 
 		output_trw->collapseItem(diff_item);
 		diff_progress=step_pb->value();
@@ -471,7 +471,7 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 		output_trw->collapseItem(diff_item);
 		PgModelerUiNS::createOutputTreeItem(output_trw,
 											trUtf8("Diff process paused. Waiting user action..."),
-											QPixmap(QString(":/icones/icones/msgbox_alerta.png")), nullptr);
+											QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")), nullptr);
 	}
 }
 
@@ -506,7 +506,7 @@ void ModelDatabaseDiffForm::saveDiffToFile(void)
 		QFile output;
 
 		step_lbl->setText(trUtf8("Saving diff to file <strong>%1</strong>").arg(file_edt->text()));
-		step_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/salvar.png")));
+		step_ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("salvar")));
 		import_item=PgModelerUiNS::createOutputTreeItem(output_trw, step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
 		step_pb->setValue(90);
 		progress_pb->setValue(100);
@@ -531,8 +531,8 @@ void ModelDatabaseDiffForm::finishDiff(void)
 	step_lbl->setText(trUtf8("Diff process sucessfully ended!"));
 	progress_lbl->setText(trUtf8("No operations left."));
 
-	step_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
-	progress_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
+	step_ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("msgbox_info")));
+	progress_ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("msgbox_info")));
 
 	import_item=PgModelerUiNS::createOutputTreeItem(output_trw, step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
 	step_pb->setValue(100);
@@ -546,8 +546,8 @@ void ModelDatabaseDiffForm::cancelOperation(bool cancel_by_user)
 		step_lbl->setText(trUtf8("Operation cancelled by the user."));
 		progress_lbl->setText(trUtf8("No operations left."));
 
-		step_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
-		progress_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
+		step_ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")));
+		progress_ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")));
 
 		PgModelerUiNS::createOutputTreeItem(output_trw, step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
 	}
@@ -580,7 +580,7 @@ void ModelDatabaseDiffForm::captureThreadError(Exception e)
 
 	cancelOperation(false);
 	progress_lbl->setText(trUtf8("Process aborted due to errors!"));
-	progress_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_erro.png")));
+	progress_ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("msgbox_erro")));
 
 	item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getErrorMessage()), *progress_ico_lbl->pixmap(), nullptr, false, true);
 	PgModelerUiNS::createExceptionsTree(output_trw, e, item);
@@ -643,11 +643,11 @@ void ModelDatabaseDiffForm::handleErrorIgnored(QString err_code, QString err_msg
 	QTreeWidgetItem *item=nullptr;
 
 	item=PgModelerUiNS::createOutputTreeItem(output_trw, trUtf8("Error code <strong>%1</strong> found and ignored. Proceeding with export.").arg(err_code),
-											 QPixmap(QString(":/icones/icones/msgbox_alerta.png")),
+											 QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")),
 											 export_item, false);
 
 	PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(err_msg),
-										QPixmap(QString(":/icones/icones/msgbox_alerta.png")),
+										QPixmap(QString("msgbox_alerta")),
 										item, false);
 
 	PgModelerUiNS::createOutputTreeItem(output_trw, cmd,
@@ -665,7 +665,7 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 			step_pb->setValue(step_pb->value() + 5);
 
 		PgModelerUiNS::createOutputTreeItem(output_trw, msg,
-											QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")),
+											QPixmap(PgModelerUiNS::getIconPath(obj_type)),
 											import_item);
 	}
 	else if(diff_thread && diff_thread->isRunning())
@@ -673,7 +673,7 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 		if((progress == 0 || progress == 100) && obj_type==BASE_OBJECT)
 		{
 			PgModelerUiNS::createOutputTreeItem(output_trw, msg,
-												QPixmap(QString(":/icones/icones/msgbox_info.png")),
+												QPixmap(PgModelerUiNS::getIconPath("msgbox_info")),
 												diff_item);
 		}
 
@@ -686,9 +686,9 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 		step_pb->setValue(diff_progress + (progress/3));
 
 		if(obj_type==BASE_OBJECT)
-			ico=QPixmap(QString(":/icones/icones/codigosql.png"));
+			ico=QPixmap(PgModelerUiNS::getIconPath("codigosql"));
 		else
-			ico=QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png"));
+			ico=QPixmap(PgModelerUiNS::getIconPath(obj_type));
 
 		item=PgModelerUiNS::createOutputTreeItem(output_trw, msg, ico, export_item, false);
 
@@ -700,9 +700,9 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 	progress_pb->setValue(progress);
 
 	if(obj_type!=BASE_OBJECT)
-		progress_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
+		progress_ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(obj_type)));
 	else
-		progress_ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
+		progress_ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("msgbox_info")));
 
 	this->repaint();
 }
@@ -720,7 +720,7 @@ void ModelDatabaseDiffForm::updateDiffInfo(ObjectsDiffInfo diff_info)
 
 	item=PgModelerUiNS::createOutputTreeItem(output_trw,
 											 PgModelerUiNS::formatMessage(diff_info.getInfoMessage()),
-											 QPixmap(QString(":/icones/icones/%1.png").arg(diff_info.getObject()->getSchemaName())), diff_item);
+											 QPixmap(PgModelerUiNS::getIconPath(diff_info.getObject()->getSchemaName())), diff_item);
 	item->setData(0, Qt::UserRole, diff_info.getDiffType());
 
 	if(diff_helper)

@@ -114,7 +114,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	label=new QLabel(protected_model_frm);
 	label->setMinimumSize(QSize(32, 32));
 	label->setMaximumSize(QSize(32, 32));
-	label->setPixmap(QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
+	label->setPixmap(QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")));
 
 	grid=new QGridLayout;
 	grid->addWidget(label, 0, 0, 1, 1);
@@ -174,107 +174,107 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	zoom_info_timer.setInterval(3000);
 
-	action_source_code=new QAction(QIcon(QString(":/icones/icones/codigosql.png")), trUtf8("Source"), this);
+	action_source_code=new QAction(QIcon(PgModelerUiNS::getIconPath("codigosql")), trUtf8("Source"), this);
 	action_source_code->setShortcut(QKeySequence(trUtf8("Alt+S")));
 	action_source_code->setToolTip(trUtf8("Show object source code"));
 
-	action_edit=new QAction(QIcon(QString(":/icones/icones/editar.png")), trUtf8("Properties"), this);
+	action_edit=new QAction(QIcon(PgModelerUiNS::getIconPath("editar")), trUtf8("Properties"), this);
 	action_edit->setShortcut(QKeySequence(trUtf8("Space")));
 	action_edit->setToolTip(trUtf8("Edit the object properties"));
 
-	action_protect=new QAction(QIcon(QString(":/icones/icones/bloqobjeto.png")), trUtf8("Protect"), this);
-	action_unprotect=new QAction(QIcon(QString(":/icones/icones/desbloqobjeto.png")), trUtf8("Unprotect"), this);
+	action_protect=new QAction(QIcon(PgModelerUiNS::getIconPath("bloqobjeto")), trUtf8("Protect"), this);
+	action_unprotect=new QAction(QIcon(PgModelerUiNS::getIconPath("desbloqobjeto")), trUtf8("Unprotect"), this);
 	action_protect->setToolTip(trUtf8("Protects object(s) from modifications"));
 
-	action_remove=new QAction(QIcon(QString(":/icones/icones/excluir.png")), trUtf8("Delete"), this);
+	action_remove=new QAction(QIcon(PgModelerUiNS::getIconPath("excluir")), trUtf8("Delete"), this);
 	action_remove->setShortcut(QKeySequence(trUtf8("Del")));
 
-	action_cascade_del=new QAction(QIcon(QString(":/icones/icones/delcascade.png")), trUtf8("Del. cascade"), this);
+	action_cascade_del=new QAction(QIcon(PgModelerUiNS::getIconPath("delcascade")), trUtf8("Del. cascade"), this);
 	action_cascade_del->setShortcut(QKeySequence(trUtf8("Shift+Del")));
 
-	action_select_all=new QAction(QIcon(QString(":/icones/icones/seltodos.png")), trUtf8("Select all"), this);
+	action_select_all=new QAction(QIcon(PgModelerUiNS::getIconPath("seltodos")), trUtf8("Select all"), this);
 	action_select_all->setShortcut(QKeySequence(trUtf8("Ctrl+A")));
 	action_select_all->setToolTip(trUtf8("Selects all the graphical objects in the model"));
 
-	action_convert_relnn=new QAction(QIcon(QString(":/icones/icones/convrelnn.png")), trUtf8("Convert"), this);
+	action_convert_relnn=new QAction(QIcon(PgModelerUiNS::getIconPath("convrelnn")), trUtf8("Convert"), this);
 
-	action_copy=new QAction(QIcon(QString(":/icones/icones/copiar.png")), trUtf8("Copy"), this);
+	action_copy=new QAction(QIcon(PgModelerUiNS::getIconPath("copiar")), trUtf8("Copy"), this);
 	action_copy->setShortcut(QKeySequence(trUtf8("Ctrl+C")));
 
-	action_paste=new QAction(QIcon(QString(":/icones/icones/colar.png")), trUtf8("Paste"), this);
+	action_paste=new QAction(QIcon(PgModelerUiNS::getIconPath("colar")), trUtf8("Paste"), this);
 	action_paste->setShortcut(QKeySequence(trUtf8("Ctrl+V")));
 
-	action_cut=new QAction(QIcon(QString(":/icones/icones/recortar.png")), trUtf8("Cut"), this);
+	action_cut=new QAction(QIcon(PgModelerUiNS::getIconPath("recortar")), trUtf8("Cut"), this);
 	action_cut->setShortcut(QKeySequence(trUtf8("Ctrl+X")));
 
-	action_deps_refs=new QAction(QIcon(QString(":/icones/icones/depsrefs.png")), trUtf8("Deps && Referrers"), this);
+	action_deps_refs=new QAction(QIcon(PgModelerUiNS::getIconPath("depsrefs")), trUtf8("Deps && Referrers"), this);
 
-	action_new_object=new QAction(QIcon(QString(":/icones/icones/novoobjeto.png")), trUtf8("New"), this);
+	action_new_object=new QAction(QIcon(PgModelerUiNS::getIconPath("novoobjeto")), trUtf8("New"), this);
 	action_new_object->setToolTip(trUtf8("Add a new object in the model"));
 
-	action_quick_actions=new QAction(QIcon(QString(":/icones/icones/quickactions.png")), trUtf8("Quick"), this);
+	action_quick_actions=new QAction(QIcon(PgModelerUiNS::getIconPath("quickactions")), trUtf8("Quick"), this);
 	action_quick_actions->setToolTip(trUtf8("Quick action for the selected object"));
 	action_quick_actions->setMenu(&quick_actions_menu);
 
-	action_rename=new QAction(QIcon(QString(":/icones/icones/rename.png")), trUtf8("Rename"), this);
+	action_rename=new QAction(QIcon(PgModelerUiNS::getIconPath("rename")), trUtf8("Rename"), this);
 	action_rename->setShortcut(QKeySequence(trUtf8("F2")));
 	action_rename->setToolTip(trUtf8("Quick rename the object"));
 
-	action_moveto_schema=new QAction(QIcon(QString(":/icones/icones/movetoschema.png")), trUtf8("Move to schema"), this);
+	action_moveto_schema=new QAction(QIcon(PgModelerUiNS::getIconPath("movetoschema")), trUtf8("Move to schema"), this);
 	action_moveto_schema->setMenu(&schemas_menu);
 
-	action_set_tag=new QAction(QIcon(QString(":/icones/icones/tag.png")), trUtf8("Set tag"), this);
+	action_set_tag=new QAction(QIcon(PgModelerUiNS::getIconPath("tag")), trUtf8("Set tag"), this);
 	action_set_tag->setMenu(&tags_menu);
 
-	action_edit_perms=new QAction(QIcon(QString(":/icones/icones/permission.png")), trUtf8("Edit permissions"), this);
+	action_edit_perms=new QAction(QIcon(PgModelerUiNS::getIconPath("permission")), trUtf8("Edit permissions"), this);
 	action_edit_perms->setShortcut(QKeySequence(trUtf8("Ctrl+E")));
 
-	action_change_owner=new QAction(QIcon(QString(":/icones/icones/changeowner.png")), trUtf8("Change owner"), this);
+	action_change_owner=new QAction(QIcon(PgModelerUiNS::getIconPath("changeowner")), trUtf8("Change owner"), this);
 	action_change_owner->setMenu(&owners_menu);
 
-	action_sel_sch_children=new QAction(QIcon(QString(":/icones/icones/seltodos.png")), trUtf8("Select children"), this);
-	action_highlight_object=new QAction(QIcon(QString(":/icones/icones/movimentado.png")), trUtf8("Highlight"), this);
-	action_parent_rel=new QAction(QIcon(QString(":/icones/icones/relationship.png")), trUtf8("Open relationship"), this);
+	action_sel_sch_children=new QAction(QIcon(PgModelerUiNS::getIconPath("seltodos")), trUtf8("Select children"), this);
+	action_highlight_object=new QAction(QIcon(PgModelerUiNS::getIconPath("movimentado")), trUtf8("Highlight"), this);
+	action_parent_rel=new QAction(QIcon(PgModelerUiNS::getIconPath("relationship")), trUtf8("Open relationship"), this);
 
-	action_append_sql=new QAction(QIcon(QString(":/icones/icones/sqlappend.png")), trUtf8("Custom SQL"), this);
+	action_append_sql=new QAction(QIcon(PgModelerUiNS::getIconPath("sqlappend")), trUtf8("Custom SQL"), this);
 	action_append_sql->setShortcut(QKeySequence(trUtf8("Alt+Q")));
 
-	action_create_seq_col=new QAction(QIcon(QString(":/icones/icones/sequence.png")), trUtf8("Convert to sequence"), this);
-	action_conv_int_serial=new QAction(QIcon(QString(":/icones/icones/sequence.png")), trUtf8("Convert to serial"), this);
+	action_create_seq_col=new QAction(QIcon(PgModelerUiNS::getIconPath("sequence")), trUtf8("Convert to sequence"), this);
+	action_conv_int_serial=new QAction(QIcon(PgModelerUiNS::getIconPath("sequence")), trUtf8("Convert to serial"), this);
 
-	action_break_rel_line=new QAction(QIcon(QString(":/icones/icones/breakrelline.png")), trUtf8("Break line"), this);
+	action_break_rel_line=new QAction(QIcon(PgModelerUiNS::getIconPath("breakrelline")), trUtf8("Break line"), this);
 
-	action_remove_rel_points=new QAction(QIcon(QString(":/icones/icones/removepoints.png")), trUtf8("Remove points"), this);
+	action_remove_rel_points=new QAction(QIcon(PgModelerUiNS::getIconPath("removepoints")), trUtf8("Remove points"), this);
 
-	action_enable_sql=new QAction(QIcon(QString(":/icones/icones/codigosql.png")), trUtf8("Enable SQL"), this);
-	action_disable_sql=new QAction(QIcon(QString(":/icones/icones/disablesql.png")), trUtf8("Disable SQL"), this);
+	action_enable_sql=new QAction(QIcon(PgModelerUiNS::getIconPath("codigosql")), trUtf8("Enable SQL"), this);
+	action_disable_sql=new QAction(QIcon(PgModelerUiNS::getIconPath("disablesql")), trUtf8("Disable SQL"), this);
 
-	action_duplicate=new QAction(QIcon(QString(":/icones/icones/duplicate.png")), trUtf8("Duplicate"), this);
+	action_duplicate=new QAction(QIcon(PgModelerUiNS::getIconPath("duplicate")), trUtf8("Duplicate"), this);
 
-	action_fade=new QAction(QIcon(QString(":/icones/icones/fade.png")), trUtf8("Fade in/out"), this);
-	action_fade_in=new QAction(QIcon(QString(":/icones/icones/fadein.png")), trUtf8("Fade in"), this);
-	action_fade_out=new QAction(QIcon(QString(":/icones/icones/fadeout.png")), trUtf8("Fade out"), this);
+	action_fade=new QAction(QIcon(PgModelerUiNS::getIconPath("fade")), trUtf8("Fade in/out"), this);
+	action_fade_in=new QAction(QIcon(PgModelerUiNS::getIconPath("fadein")), trUtf8("Fade in"), this);
+	action_fade_out=new QAction(QIcon(PgModelerUiNS::getIconPath("fadeout")), trUtf8("Fade out"), this);
 
 	action_fade->setMenu(&fade_menu);
 	action_fade_in->setMenu(&fade_in_menu);
 	action_fade_out->setMenu(&fade_out_menu);
 
-	action=new QAction(QIcon(QString(":/icones/icones/breakline_90dv.png")), trUtf8("90° (vertical)"), this);
+	action=new QAction(QIcon(PgModelerUiNS::getIconPath("breakline_90dv")), trUtf8("90° (vertical)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine(void)));
 	action->setData(QVariant::fromValue<unsigned>(BREAK_VERT_NINETY_DEGREES));
 	break_rel_menu.addAction(action);
 
-	action=new QAction(QIcon(QString(":/icones/icones/breakline_90dh.png")), trUtf8("90° (horizontal)"), this);
+	action=new QAction(QIcon(PgModelerUiNS::getIconPath("breakline_90dh")), trUtf8("90° (horizontal)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine(void)));
 	action->setData(QVariant::fromValue<unsigned>(BREAK_HORIZ_NINETY_DEGREES));
 	break_rel_menu.addAction(action);
 
-	action=new QAction(QIcon(QString(":/icones/icones/breakline_290dv.png")), trUtf8("90° + 90° (vertical)"), this);
+	action=new QAction(QIcon(PgModelerUiNS::getIconPath("breakline_290dv")), trUtf8("90° + 90° (vertical)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine(void)));
 	action->setData(QVariant::fromValue<unsigned>(BREAK_VERT_2NINETY_DEGREES));
 	break_rel_menu.addAction(action);
 
-	action=new QAction(QIcon(QString(":/icones/icones/breakline_290dh.png")), trUtf8("90° + 90° (horizontal)"), this);
+	action=new QAction(QIcon(PgModelerUiNS::getIconPath("breakline_290dh")), trUtf8("90° + 90° (horizontal)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine(void)));
 	action->setData(QVariant::fromValue<unsigned>(BREAK_HORIZ_2NINETY_DEGREES));
 	break_rel_menu.addAction(action);
@@ -284,8 +284,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	//Alocatting the object creation actions
 	for(i=0; i < obj_cnt; i++)
 	{
-		actions_new_objects[types[i]]=new QAction(QIcon(QString(":/icones/icones/") +
-														BaseObject::getSchemaName(types[i]) + QString(".png")),
+		actions_new_objects[types[i]]=new QAction(QIcon(PgModelerUiNS::getIconPath(types[i])),
 												  BaseObject::getTypeName(types[i]), this);
 		actions_new_objects[types[i]]->setData(QVariant(types[i]));
 		connect(actions_new_objects[types[i]], SIGNAL(triggered(bool)), this, SLOT(addNewObject(void)));
@@ -297,10 +296,10 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	for(int i=0; i < rel_types_cod.size(); i++)
 	{
-		str_ico=BaseObject::getSchemaName(OBJ_RELATIONSHIP) + rel_types_cod[i] +  QString(".png");
+		str_ico=BaseObject::getSchemaName(OBJ_RELATIONSHIP) + rel_types_cod[i];
 		str_txt=rel_labels[i];
 
-		action=new QAction(QIcon(QString(":/icones/icones/") + str_ico), str_txt, this);
+		action=new QAction(QIcon(PgModelerUiNS::getIconPath(str_ico)), str_txt, this);
 
 		//Storing a unique identifier for the relationship type
 		action->setData(QVariant(OBJ_RELATIONSHIP + rel_types_id[i]));
@@ -2868,7 +2867,7 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 						while(!obj_list.empty())
 						{
 							act=new QAction(obj_list.back()->getName(), menus[i]);
-							act->setIcon(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(types[i]) + QString(".png")));
+							act->setIcon(QPixmap(PgModelerUiNS::getIconPath(types[i])));
 
 							/* Check the current action only if there is only one selected object and the object representing
 								 the action is assigned to the selected object */
@@ -3255,19 +3254,18 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 
 					//For each constaint is created a menu with the edit, source code, protect/unprotect and delete actions
 					submenu=new QMenu(&popup_menu);
-					submenu->setIcon(QPixmap(QString(":/icones/icones/") +
-											 BaseObject::getSchemaName(OBJ_CONSTRAINT) + str_aux + QString(".png")));
+					submenu->setIcon(QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(OBJ_CONSTRAINT) + str_aux)));
 					submenu->setTitle(constr->getName());
 
 					action=new QAction(dynamic_cast<QObject *>(submenu));
-					action->setIcon(QPixmap(QString(":/icones/icones/editar.png")));
+					action->setIcon(QPixmap(PgModelerUiNS::getIconPath("editar")));
 					action->setText(trUtf8("Properties"));
 					action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
 					connect(action, SIGNAL(triggered(bool)), this, SLOT(editObject(void)));
 					submenu->addAction(action);
 
 					action=new QAction(dynamic_cast<QObject *>(submenu));
-					action->setIcon(QPixmap(QString(":/icones/icones/codigosql.png")));
+					action->setIcon(QPixmap(PgModelerUiNS::getIconPath("codigosql")));
 					action->setText(trUtf8("Source code"));
 					action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
 					connect(action, SIGNAL(triggered(bool)), this, SLOT(showSourceCode(void)));
@@ -3284,25 +3282,25 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 
 							if(constr->isProtected())
 							{
-								action->setIcon(QPixmap(QString(":/icones/icones/desbloqobjeto.png")));
+								action->setIcon(QPixmap(PgModelerUiNS::getIconPath("desbloqobjeto")));
 								action->setText(trUtf8("Unprotect"));
 							}
 							else
 							{
-								action->setIcon(QPixmap(QString(":/icones/icones/bloqobjeto.png")));
+								action->setIcon(QPixmap(PgModelerUiNS::getIconPath("bloqobjeto")));
 								action->setText(trUtf8("Protect"));
 							}
 						}
 
 						action=new QAction(dynamic_cast<QObject *>(submenu));
-						action->setIcon(QPixmap(QString(":/icones/icones/excluir.png")));
+						action->setIcon(QPixmap(PgModelerUiNS::getIconPath("excluir")));
 						action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
 						action->setText(trUtf8("Delete"));
 						submenu->addAction(action);
 						connect(action, SIGNAL(triggered()), this, SLOT(removeObjects()));
 
 						action=new QAction(dynamic_cast<QObject *>(submenu));
-						action->setIcon(QPixmap(QString(":/icones/icones/delcascade.png")));
+						action->setIcon(QPixmap(PgModelerUiNS::getIconPath("delcascade")));
 						action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
 						action->setText(trUtf8("Del. cascade"));
 						submenu->addAction(action);
@@ -3317,8 +3315,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 			{
 				submenu=new QMenu(&popup_menu);
 				submenu->setTitle(trUtf8("Constraints"));
-				submenu->setIcon(QPixmap(QString(":/icones/icones/") +
-										 BaseObject::getSchemaName(OBJ_CONSTRAINT) + QString("_grp.png")));
+				submenu->setIcon(QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(OBJ_CONSTRAINT) + QString("_grp"))));
 				count=submenus.size();
 				for(i=0; i < count; i++)
 					submenu->addMenu(submenus[i]);
