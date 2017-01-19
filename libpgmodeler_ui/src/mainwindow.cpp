@@ -967,11 +967,6 @@ void MainWindow::setCurrentModel(void)
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
 		btns.push_back(tool_btn);
 
-		general_tb->addAction(current_model->action_fade);
-		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_fade));
-		tool_btn->setPopupMode(QToolButton::InstantPopup);
-		btns.push_back(tool_btn);
-
 		general_tb->addAction(current_model->action_edit);
 		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_edit));
 		btns.push_back(tool_btn);
@@ -982,6 +977,11 @@ void MainWindow::setCurrentModel(void)
 
 		general_tb->addAction(current_model->action_select_all);
 		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_select_all));
+		btns.push_back(tool_btn);
+
+		general_tb->addAction(current_model->action_fade);
+		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_fade));
+		tool_btn->setPopupMode(QToolButton::InstantPopup);
 		btns.push_back(tool_btn);
 
 		for(QToolButton *btn : btns)
@@ -1194,6 +1194,7 @@ void MainWindow::applyConfigurations(void)
 		for(i=0; i < count; i++)
 		{
 			model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
+			model->updateObjectsOpacity();
 			model->db_model->setObjectsModified();
 			model->update();
 		}

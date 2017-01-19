@@ -3078,10 +3078,12 @@ void ModelWidget::fadeObjects(QAction *action, bool fade_in)
 	vector<BaseObject *> list;
 	BaseObjectView *obj_view = nullptr;
 
+	//If the database object is selected or there is no object select
 	if(selected_objects.empty() || (selected_objects.size() == 1 && selected_objects[0]->getObjectType() == OBJ_DATABASE))
 	{
 		ObjectType obj_type = static_cast<ObjectType>(action->data().toUInt());
 
+		//If the action contains a data of type BASE_OBJECT means that the user wants to fade all objects
 		if(obj_type == BASE_OBJECT)
 		{
 			vector<ObjectType> types = { OBJ_SCHEMA, OBJ_TABLE, OBJ_VIEW,
@@ -3096,6 +3098,7 @@ void ModelWidget::fadeObjects(QAction *action, bool fade_in)
 		}
 		else
 		{
+			//Fading objects of a certain type
 			list = *db_model->getObjectList(obj_type);
 
 			if(obj_type == OBJ_RELATIONSHIP)
@@ -3108,9 +3111,11 @@ void ModelWidget::fadeObjects(QAction *action, bool fade_in)
 	}
 	else
 	{
+		//For tag object the fade is applied in the tables/views related to it
 		if(selected_objects.size() == 1 && selected_objects[0]->getObjectType() == OBJ_TAG)
 			db_model->getObjectReferences(selected_objects[0], list);
 		else
+			//Applying fade to the selected objects
 			list = selected_objects;
 	}
 
@@ -3119,7 +3124,12 @@ void ModelWidget::fadeObjects(QAction *action, bool fade_in)
 		obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
 
 		if(obj_view)
+		{
 			obj_view->setOpacity(fade_in ? 1 : min_object_opacity);
+
+			//If the minimum opacity is zero the object hidden
+			obj_view->setVisible(fade_in || (!fade_in && min_object_opacity > 0));
+		}
 	}
 
 	scene->clearSelection();
@@ -3133,6 +3143,27 @@ void ModelWidget::fadeObjectsIn(void)
 void ModelWidget::fadeObjectsOut(void)
 {
 	fadeObjects(qobject_cast<QAction *>(sender()), false);
+}
+
+void ModelWidget::updateObjectsOpacity(void)
+{
+	vector<ObjectType> types = { OBJ_SCHEMA, OBJ_TABLE, OBJ_VIEW,
+															 OBJ_RELATIONSHIP, BASE_RELATIONSHIP, OBJ_TEXTBOX};
+	BaseObjectView *obj_view = nullptr;
+
+	for(auto type : types)
+	{
+		for(auto object : *db_model->getObjectList(type))
+		{
+			obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(object)->getReceiverObject());
+
+			if(obj_view && obj_view->opacity() < 1.0 && obj_view->opacity() != min_object_opacity)
+			{
+				obj_view->setOpacity(min_object_opacity);
+				obj_view->setVisible(min_object_opacity > 0);
+			}
+		}
+	}
 }
 
 void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
@@ -3528,8 +3559,8 @@ void ModelWidget::setSimplifiedObjectCreation(bool value)
 
 void ModelWidget::setMinimumObjectOpacity(unsigned min_opacity)
 {
-	if(min_opacity > 100)
-		min_opacity = 100;
+	if(min_opacity > 70)
+		min_opacity = 70;
 
 	ModelWidget::min_object_opacity = static_cast<float>(min_opacity)/100.0f;
 }

@@ -120,6 +120,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::LINE_HIGHLIGHT_COLOR]=QString();
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIGHLIGHT_LINES]=QString();
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::USE_PLACEHOLDERS]=QString();
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::MIN_OBJECT_OPACITY]=QString();
 
 	simp_obj_creation_ht=new HintTextWidget(simp_obj_creation_hint, this);
 	simp_obj_creation_ht->setText(simple_obj_creation_chk->statusTip());
@@ -247,6 +248,8 @@ void GeneralConfigWidget::loadConfiguration(void)
 		portrait_rb->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]==ParsersAttributes::PORTRAIT);
 		landscape_rb->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]==ParsersAttributes::LANDSCAPE);
 
+		min_obj_opacity_spb->setValue(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::MIN_OBJECT_OPACITY].toUInt());
+
 		margin=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN].split(',');
 		custom_size=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_CUSTOM_SIZE].split(',');
 
@@ -358,6 +361,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CONFIRM_VALIDATION]=(confirm_validation_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_COMPLETION]=(code_completion_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_TAB_WIDTH]=QString::number(tab_width_chk->isChecked() ? tab_width_spb->value() : 0);
+		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::MIN_OBJECT_OPACITY]=QString::number(min_obj_opacity_spb->value());
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::USE_PLACEHOLDERS]=(use_placeholders_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
 
 		ObjectsScene::getGridOptions(show_grid, align_grid, show_delim);

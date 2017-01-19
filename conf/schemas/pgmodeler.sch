@@ -43,7 +43,8 @@ $sp [<configuration op-list-size="] {op-list-size} ["] $br
 [               use-placeholders="] %if {use-placeholders} %then true %else false %end ["] $br
 [               show-canvas-grid="] %if {show-canvas-grid} %then true %else false %end ["] $br
 [               show-page-delimiters="] %if {show-page-delimiters} %then true %else false %end ["] $br
-[               align-objs-to-grid="] %if {align-objs-to-grid} %then true %else false %end ["]
+[               align-objs-to-grid="] %if {align-objs-to-grid} %then true %else false %end ["] $br
+[               min-object-opacity="] {min-object-opacity} ["]
 [/>] $br
 
 %if {file} %then

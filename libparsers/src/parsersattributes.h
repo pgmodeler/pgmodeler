@@ -295,6 +295,7 @@ namespace ParsersAttributes {
 	MEMBER,
 	MERGES,
 	METADATA,
+	MIN_OBJECT_OPACITY,
 	MIN_VALUE,
 	MODE,
 	MODEL_AUTHOR,

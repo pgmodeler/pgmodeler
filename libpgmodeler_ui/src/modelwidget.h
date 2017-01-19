@@ -291,6 +291,10 @@ class ModelWidget: public QWidget {
 
 		void updateRenderHints(void);
 
+		/*! \brief Updates the opacity factor of the objects faded in the model. This method should be called
+		whenever the min_object_opacity changes */
+		void updateObjectsOpacity(void);
+
 	private slots:
 		//! \brief Handles the signals that indicates the object creation on the reference database model
 		void handleObjectAddition(BaseObject *object);
