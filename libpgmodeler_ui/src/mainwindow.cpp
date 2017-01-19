@@ -67,7 +67,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		plugins_menu->setEnabled(!plugins_menu->isEmpty());
 		action_plugins->setEnabled(!plugins_menu->isEmpty());
 		action_plugins->setMenu(plugins_menu);
-		dynamic_cast<QToolButton *>(general_tb->widgetForAction(action_plugins))->setPopupMode(QToolButton::InstantPopup);
+
 
 		confs=GeneralConfigWidget::getConfigurationParams();
 		itr=confs.begin();
@@ -118,6 +118,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 		control_tb->addWidget(model_nav_wgt);
 		control_tb->addSeparator();
+
+		control_tb->addAction(action_plugins);
+		dynamic_cast<QToolButton *>(control_tb->widgetForAction(action_plugins))->setPopupMode(QToolButton::InstantPopup);
+
 		control_tb->addAction(action_bug_report);
 		control_tb->addAction(action_donate);
 		control_tb->addAction(action_about);
@@ -960,6 +964,11 @@ void MainWindow::setCurrentModel(void)
 
 		general_tb->addAction(current_model->action_quick_actions);
 		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_quick_actions));
+		tool_btn->setPopupMode(QToolButton::InstantPopup);
+		btns.push_back(tool_btn);
+
+		general_tb->addAction(current_model->action_fade);
+		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_fade));
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
 		btns.push_back(tool_btn);
 

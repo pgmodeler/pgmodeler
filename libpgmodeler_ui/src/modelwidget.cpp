@@ -233,6 +233,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_change_owner->setMenu(&owners_menu);
 
 	action_sel_sch_children=new QAction(QIcon(PgModelerUiNS::getIconPath("seltodos")), trUtf8("Select children"), this);
+	action_sel_tagged_tabs=new QAction(QIcon(PgModelerUiNS::getIconPath("seltodos")), trUtf8("Select tagged"), this);
+
 	action_highlight_object=new QAction(QIcon(PgModelerUiNS::getIconPath("movimentado")), trUtf8("Highlight"), this);
 	action_parent_rel=new QAction(QIcon(PgModelerUiNS::getIconPath("relationship")), trUtf8("Open relationship"), this);
 
@@ -327,6 +329,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_rename, SIGNAL(triggered(bool)), this, SLOT(renameObject(void)));
 	connect(action_edit_perms, SIGNAL(triggered(bool)), this, SLOT(editPermissions(void)));
 	connect(action_sel_sch_children, SIGNAL(triggered(bool)), this, SLOT(selectSchemaChildren(void)));
+	connect(action_sel_tagged_tabs, SIGNAL(triggered(bool)), this, SLOT(selectTaggedTables(void)));
 	connect(action_highlight_object, SIGNAL(triggered(bool)), this, SLOT(highlightObject(void)));
 	connect(action_parent_rel, SIGNAL(triggered(bool)), this, SLOT(editObject(void)));
 	connect(action_append_sql, SIGNAL(triggered(bool)), this, SLOT(editCustomSQL(void)));
@@ -338,6 +341,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	connect(action_remove, &QAction::triggered, [=](){ removeObjects(false); });
 	connect(action_cascade_del, &QAction::triggered, [=](){ removeObjects(true); });
+
+	connect(action_fade_in, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
+	connect(action_fade_out, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
 
 	connect(db_model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
 	connect(db_model, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(handleObjectRemoval(BaseObject *)));
@@ -1838,6 +1844,27 @@ void ModelWidget::selectSchemaChildren(void)
 				dynamic_cast<BaseObjectView *>(schema->getReceiverObject()))->selectChildren();
 }
 
+void ModelWidget::selectTaggedTables(void)
+{
+	QObject *obj_sender=dynamic_cast<QAction *>(sender());
+	Tag *tag=nullptr;
+	vector<BaseObject *> objects;
+	BaseObjectView *obj_view = nullptr;
+
+	tag=dynamic_cast<Tag *>(
+				reinterpret_cast<BaseObject *>(
+					dynamic_cast<QAction *>(obj_sender)->data().value<void *>()));
+
+	scene->clearSelection();
+	db_model->getObjectReferences(tag, objects);
+
+	for(auto object : objects)
+	{
+		obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(object)->getReceiverObject());
+		obj_view->setSelected(true);
+	}
+}
+
 void ModelWidget::protectObject(void)
 {
 	try
@@ -2973,6 +3000,8 @@ void ModelWidget::configureFadeMenu(void)
 	{
 		fade_menu.addAction(action_fade_in);
 		fade_menu.addAction(action_fade_out);
+		action_fade_in->setMenu(&fade_in_menu);
+		action_fade_out->setMenu(&fade_out_menu);
 
 		if(is_db_selected)
 		{
@@ -2991,15 +3020,52 @@ void ModelWidget::configureFadeMenu(void)
 				fade_out_menu.addAction(action);
 				connect(action, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
 			}
+
+			action = new QAction(trUtf8("All objects"), &fade_in_menu);
+			action->setData(BASE_OBJECT);
+			connect(action, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
+			fade_in_menu.addSeparator();
+			fade_in_menu.addAction(action);
+
+			action = new QAction(trUtf8("All objects"), &fade_out_menu);
+			action->setData(BASE_OBJECT);
+			connect(action, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
+			fade_out_menu.addSeparator();
+			fade_out_menu.addAction(action);
 		}
 		else
-		{
-
+		{			
+			action_fade_in->setMenu(nullptr);
+			action_fade_out->setMenu(nullptr);
 		}
 	}
 	else
 	{
+		if(selected_objects[0]->getObjectType() == OBJ_TAG)
+		{
+			fade_menu.addAction(action_fade_in);
+			fade_menu.addAction(action_fade_out);
+			action_fade_in->setMenu(nullptr);
+			action_fade_out->setMenu(nullptr);
+		}
+		else
+		{
+			BaseObjectView *obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(selected_objects[0])->getReceiverObject());
 
+			if(obj_view)
+			{
+				if(obj_view->opacity() == 1)
+				{
+					fade_menu.addAction(action_fade_out);
+					action_fade_out->setMenu(nullptr);
+				}
+				else
+				{
+					fade_menu.addAction(action_fade_in);
+					action_fade_in->setMenu(nullptr);
+				}
+			}
+		}
 	}
 }
 
@@ -3008,23 +3074,54 @@ void ModelWidget::fadeObjects(QAction *action, bool fade_in)
 	if(!action)
 		return;
 
+	vector<BaseObject *> list;
+	BaseObjectView *obj_view = nullptr;
+
 	if(selected_objects.empty() || (selected_objects.size() == 1 && selected_objects[0]->getObjectType() == OBJ_DATABASE))
 	{
 		ObjectType obj_type = static_cast<ObjectType>(action->data().toUInt());
-		BaseObjectView *obj_view = nullptr;
 
-		for(auto obj : *db_model->getObjectList(obj_type))
+		if(obj_type == BASE_OBJECT)
 		{
-			obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
+			vector<ObjectType> types = { OBJ_SCHEMA, OBJ_TABLE, OBJ_VIEW,
+																	 OBJ_RELATIONSHIP, BASE_RELATIONSHIP, OBJ_TEXTBOX};
 
-			if(obj_view)
-				obj_view->setOpacity(fade_in ? 0.10f : 1);
+			for(ObjectType type : types)
+			{
+				list.insert(list.end(),
+										db_model->getObjectList(type)->begin(),
+										db_model->getObjectList(type)->end());
+			}
+		}
+		else
+		{
+			list = *db_model->getObjectList(obj_type);
+
+			if(obj_type == OBJ_RELATIONSHIP)
+			{
+				list.insert(list.end(),
+										db_model->getObjectList(BASE_RELATIONSHIP)->begin(),
+										db_model->getObjectList(BASE_RELATIONSHIP)->end());
+			}
 		}
 	}
 	else
 	{
-
+		if(selected_objects.size() == 1 && selected_objects[0]->getObjectType() == OBJ_TAG)
+			db_model->getObjectReferences(selected_objects[0], list);
+		else
+			list = selected_objects;
 	}
+
+	for(auto obj : list)
+	{
+		obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
+
+		if(obj_view)
+			obj_view->setOpacity(fade_in ? 1 : 0.10f);
+	}
+
+	scene->clearSelection();
 }
 
 void ModelWidget::fadeObjectsIn(void)
@@ -3115,7 +3212,8 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 
 			if((obj_type==OBJ_SCHEMA && obj->isSystemObject()) ||
 					(!obj->isProtected() && (obj_type==OBJ_TABLE || obj_type==BASE_RELATIONSHIP ||
-											 obj_type==OBJ_RELATIONSHIP || obj_type==OBJ_SCHEMA)))
+																	 obj_type==OBJ_RELATIONSHIP || obj_type==OBJ_SCHEMA ||
+																	 obj_type == OBJ_TAG)))
 			{
 				if(obj_type==OBJ_TABLE)
 				{
@@ -3160,11 +3258,17 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 				{
 					for(i=0; i < sch_tp_cnt; i++)
 						new_object_menu.addAction(actions_new_objects[sch_types[i]]);
+
 					action_new_object->setMenu(&new_object_menu);
 					popup_menu.insertAction(action_quick_actions, action_new_object);
 
 					popup_menu.addAction(action_sel_sch_children);
 					action_sel_sch_children->setData(QVariant::fromValue<void *>(obj));
+				}
+				else if(obj_type == OBJ_TAG)
+				{
+					popup_menu.addAction(action_sel_tagged_tabs);
+					action_sel_tagged_tabs->setData(QVariant::fromValue<void *>(obj));
 				}
 			}
 
@@ -3231,9 +3335,19 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 				popup_menu.addAction(action_protect);
 			else
 				popup_menu.addAction(action_unprotect);
-
-			popup_menu.addSeparator();
 		}
+	}
+
+	if(!tab_obj &&
+		 (objects.empty() || objects.size() > 1 ||
+			(objects.size() == 1 && (objects[0]->getObjectType() == OBJ_DATABASE ||
+															 objects[0]->getObjectType() == OBJ_TAG ||
+															 BaseGraphicObject::isGraphicObject(objects[0]->getObjectType())))))
+	{
+		//Adding fade inout action only for graphical objects or when there is no objects selected or many objects seleted
+		popup_menu.addAction(action_fade);
+		popup_menu.addSeparator();
+		configureFadeMenu();
 	}
 
 	//Adding the copy and paste if there is selected objects
@@ -3369,18 +3483,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 			}
 		}
 	}
-	else if(!tab_obj &&
-					(selected_objects.empty() ||
-					 selected_objects.size() > 1 ||
-					 (selected_objects.size() == 1 &&
-						(selected_objects[0]->getObjectType() == OBJ_DATABASE ||
-						 BaseGraphicObject::isGraphicObject(selected_objects[0]->getObjectType())))))
-	{
-		//Adding fade inout action only for graphical objects or when there is no objects selected or many objects seleted
-		popup_menu.addSeparator();
-		popup_menu.addAction(action_fade);
-		configureFadeMenu();
-	}
+
 
 	//Enable the popup actions that are visible
 	QList<QAction *> actions=popup_menu.actions();

@@ -153,6 +153,7 @@ class ModelWidget: public QWidget {
 		//! \brief Configures the submenu related to fade in/out operations
 		void configureFadeMenu(void);
 
+		//! \brief Fades in our out the object types held by the specified action
 		void fadeObjects(QAction *action, bool fade_in);
 
 	protected:
@@ -180,6 +181,7 @@ class ModelWidget: public QWidget {
 		*action_change_owner,
 		*action_quick_actions,
 		*action_sel_sch_children,
+		*action_sel_tagged_tabs,
 		*action_highlight_object,
 		*action_parent_rel,
 		*action_append_sql,
@@ -331,6 +333,9 @@ class ModelWidget: public QWidget {
 
 		//! \brief Selects all the graphical objects under the selected schema
 		void selectSchemaChildren(void);
+
+		//! \brief Selects all the tables and views that references the selected tag
+		void selectTaggedTables(void);
 
 		//! \brief Removes the selected objects
 		void removeObjects(bool cascade = false);
