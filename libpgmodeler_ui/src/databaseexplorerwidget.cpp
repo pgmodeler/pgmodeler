@@ -22,6 +22,7 @@
 #include "sqlexecutionwidget.h"
 #include "snippetsconfigwidget.h"
 #include "plaintextitemdelegate.h"
+#include "pgmodeleruins.h"
 
 using namespace ParsersAttributes;
 
@@ -902,7 +903,7 @@ void DatabaseExplorerWidget::listObjects(void)
 		curr_root = objects_trw->topLevelItem(0);
 		objects_trw->takeTopLevelItem(0);
 		root->setText(0, connection.getConnectionId(true));
-		root->setIcon(0, QPixmap(QString(":/icones/icones/server.png")));
+		root->setIcon(0, QPixmap(PgModelerUiNS::getIconPath("server")));
 		root->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, -1);
 		root->setData(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole, BASE_OBJECT);
 		root->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, trUtf8("-- Source code unavailable for this kind of object --"));
@@ -1422,7 +1423,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 					font.setItalic(true);
 					tab_item->setText(attrib.first);
 					tab_item->setFont(font);
-					tab_item->setIcon(QPixmap(QString(":/icones/icones/attribute.png")));
+					tab_item->setIcon(QPixmap(PgModelerUiNS::getIconPath("attribute")));
 					properties_tbw->setItem(row, 0, tab_item);
 
 					values=attrib.second.split(ELEM_SEPARATOR);
@@ -1462,7 +1463,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 
 						src_item=new QTreeWidgetItem(item);
 						src_item->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, QVariant::fromValue<int>(-1));
-						src_item->setIcon(0, QPixmap(QString(":/icones/icones/column.png")));
+						src_item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath("column")));
 						src_item->setText(0, QString("%1(%2)")
 										  .arg(cached_attribs[ParsersAttributes::TABLE])
 								.arg(cached_attribs[ParsersAttributes::SRC_COLUMNS]));
@@ -1473,7 +1474,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 
 						fk_item=new QTreeWidgetItem(item);
 						fk_item->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, QVariant::fromValue<int>(-1));
-						fk_item->setIcon(0, QPixmap(QString(":/icones/icones/reference.png")));
+						fk_item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath("reference")));
 						fk_item->setText(0, QString("%1(%2)")
 										 .arg(cached_attribs[ParsersAttributes::REF_TABLE])
 								.arg(cached_attribs[ParsersAttributes::DST_COLUMNS]));
@@ -1490,7 +1491,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 						{
 							src_item=new QTreeWidgetItem(item);
 							src_item->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, QVariant::fromValue<int>(-1));
-							src_item->setIcon(0, QPixmap(QString(":/icones/icones/column.png")));
+							src_item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath("column")));
 							src_item->setText(0, col);
 						}
 					}

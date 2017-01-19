@@ -280,6 +280,7 @@ namespace ParsersAttributes {
 	MEMBER=QString("member"),
 	MERGES=QString("merges"),
 	METADATA=QString("metadata"),
+	MIN_OBJECT_OPACITY=QString("min-object-opacity"),
 	MIN_VALUE=QString("min-value"),
 	MODE=QString("mode"),
 	MODEL_AUTHOR=QString("author"),

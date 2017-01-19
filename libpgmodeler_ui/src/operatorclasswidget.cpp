@@ -40,13 +40,14 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 
 		elements_tab->setColumnCount(4);
 		elements_tab->setHeaderLabel(trUtf8("Object"),0);
-		elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/table.png")),0);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("table")),0);
 
 		elements_tab->setHeaderLabel(trUtf8("Type"),1);
-		elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
 
 		elements_tab->setHeaderLabel(trUtf8("Support/Strategy"),2);
 		elements_tab->setHeaderLabel(trUtf8("Operator Family"),3);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("opfamily")),3);
 
 		grid=new QGridLayout;
 		grid->setContentsMargins(0,0,0,0);

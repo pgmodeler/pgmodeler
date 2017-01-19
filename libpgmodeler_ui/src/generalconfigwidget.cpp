@@ -120,6 +120,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::LINE_HIGHLIGHT_COLOR]=QString();
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIGHLIGHT_LINES]=QString();
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::USE_PLACEHOLDERS]=QString();
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::MIN_OBJECT_OPACITY]=QString();
 
 	simp_obj_creation_ht=new HintTextWidget(simp_obj_creation_hint, this);
 	simp_obj_creation_ht->setText(simple_obj_creation_chk->statusTip());
@@ -153,6 +154,9 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 
 	use_placeholders_ht=new HintTextWidget(use_placeholders_hint, this);
 	use_placeholders_ht->setText(use_placeholders_chk->statusTip());
+
+	min_obj_opacity_ht=new HintTextWidget(min_obj_opacity_hint, this);
+	min_obj_opacity_ht->setText(min_obj_opacity_spb->statusTip());
 
 	selectPaperSize();
 
@@ -243,6 +247,8 @@ void GeneralConfigWidget::loadConfiguration(void)
 		paper_cmb->setCurrentIndex((config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_TYPE]).toUInt());
 		portrait_rb->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]==ParsersAttributes::PORTRAIT);
 		landscape_rb->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]==ParsersAttributes::LANDSCAPE);
+
+		min_obj_opacity_spb->setValue(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::MIN_OBJECT_OPACITY].toUInt());
 
 		margin=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN].split(',');
 		custom_size=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_CUSTOM_SIZE].split(',');
@@ -355,6 +361,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CONFIRM_VALIDATION]=(confirm_validation_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_COMPLETION]=(code_completion_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_TAB_WIDTH]=QString::number(tab_width_chk->isChecked() ? tab_width_spb->value() : 0);
+		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::MIN_OBJECT_OPACITY]=QString::number(min_obj_opacity_spb->value());
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::USE_PLACEHOLDERS]=(use_placeholders_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
 
 		ObjectsScene::getGridOptions(show_grid, align_grid, show_delim);
@@ -464,7 +471,8 @@ void GeneralConfigWidget::applyConfiguration(void)
 	ModelWidget::setSaveLastCanvasPosition(save_last_pos_chk->isChecked());
 	ModelWidget::setRenderSmoothnessDisabled(disable_smooth_chk->isChecked());
 	ModelWidget::setSimplifiedObjectCreation(simple_obj_creation_chk->isChecked());
-	MainWindow::setConfirmValidation(confirm_validation_chk->isChecked());	
+	ModelWidget::setMinimumObjectOpacity(min_obj_opacity_spb->value());
+	MainWindow::setConfirmValidation(confirm_validation_chk->isChecked());
 	BaseObjectView::setPlaceholderEnabled(use_placeholders_chk->isChecked());
 
 	fnt.setFamily(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]);

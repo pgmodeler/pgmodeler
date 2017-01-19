@@ -188,7 +188,7 @@ void DataManipulationForm::listColumns(void)
 			{
 				col_names.push_back(col[ParsersAttributes::NAME]);
 				code_compl_wgt->insertCustomItem(col[ParsersAttributes::NAME], {},
-				QPixmap(QString(":/icones/icones/column.png")));
+				QPixmap(PgModelerUiNS::getIconPath("column")));
 			}
 
 			ord_column_cmb->addItems(col_names);
@@ -509,7 +509,7 @@ void DataManipulationForm::listObjects(QComboBox *combo, vector<ObjectType> obj_
 
 			for(; idx < count; idx++)
 			{
-				combo->setItemIcon(idx, QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
+				combo->setItemIcon(idx, QPixmap(PgModelerUiNS::getIconPath(obj_type)));
 				combo->setItemData(idx, obj_type);
 			}
 

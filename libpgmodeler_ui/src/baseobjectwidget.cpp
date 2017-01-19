@@ -19,7 +19,6 @@
 #include "baseobjectwidget.h"
 #include "permissionwidget.h"
 #include "customsqlwidget.h"
-#include "pgmodeleruins.h"
 #include "baseform.h"
 
 const QColor BaseObjectWidget::PROT_LINE_BGCOLOR=QColor(255,180,180);
@@ -472,7 +471,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 
 	if(obj_type!=BASE_OBJECT)
 	{
-		obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
+		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(obj_type)));
 		obj_icon_lbl->setToolTip(BaseObject::getTypeName(obj_type));
 
 		if(obj_type!=OBJ_PERMISSION && obj_type!=OBJ_CAST)
@@ -552,7 +551,7 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 	ico_lbl->setMinimumSize(QSize(24, 24));
 	ico_lbl->setMaximumSize(QSize(24, 24));
 	ico_lbl->setScaledContents(true);
-	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
+	ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("msgbox_info")));
 	ico_lbl->setAlignment(Qt::AlignLeft|Qt::AlignTop);
 
 	grid->addWidget(ico_lbl, 0, 0, 1, 1);
@@ -644,7 +643,7 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 	ico_lbl->setMinimumSize(QSize(24, 24));
 	ico_lbl->setMaximumSize(QSize(24, 24));
 	ico_lbl->setScaledContents(true);
-	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
+	ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")));
 	ico_lbl->setAlignment(Qt::AlignLeft|Qt::AlignTop);
 
 	grid->addWidget(ico_lbl, 0, 0, 1, 1);

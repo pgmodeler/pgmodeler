@@ -99,16 +99,16 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 
 		objects_tab_map[OBJ_TRIGGER]->setColumnCount(4);
 		objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Name"), 0);
-		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
+		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 		objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Refer. Table"), 1);
-		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(QString(":/icones/icones/table.png")),1);
+		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("table")),1);
 		objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Firing"), 2);
-		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(QString(":/icones/icones/trigger.png")),2);
+		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("trigger")),2);
 		objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Events"), 3);
 
 		objects_tab_map[OBJ_RULE]->setColumnCount(3);
 		objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Name"), 0);
-		objects_tab_map[OBJ_RULE]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
+		objects_tab_map[OBJ_RULE]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 		objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Execution"), 1);
 		objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Event"), 2);
 

@@ -36,7 +36,7 @@ HintTextWidget::HintTextWidget(QWidget *btn_parent, QWidget *parent): QWidget(pa
 	hint_tb=new QToolButton(this);
 	hint_tb->setCheckable(true);
 	hint_tb->setToolButtonStyle(Qt::ToolButtonIconOnly);
-	hint_tb->setIcon(QPixmap(QString(":/icones/icones/help.png")));
+	hint_tb->setIcon(QPixmap(PgModelerUiNS::getIconPath("help")));
 
 	shadow=new QGraphicsDropShadowEffect(this);
 	shadow->setOffset(5,5);

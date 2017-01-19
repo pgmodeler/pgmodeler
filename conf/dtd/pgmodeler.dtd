@@ -38,6 +38,7 @@
 <!ATTLIST configuration show-canvas-grid (false|true) "true">
 <!ATTLIST configuration show-page-delimiters (false|true) "true">
 <!ATTLIST configuration align-objs-to-grid (false|true) "true">
+<!ATTLIST configuration min-object-opacity CDATA #IMPLIED>
 
 <!ELEMENT session (file+)>
 <!ELEMENT recent-models (file+)>

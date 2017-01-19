@@ -47,9 +47,6 @@ class ModelWidget: public QWidget {
 		//! \brief Indicates if the model was modified by some operation
 		bool modified;
 
-		//! \brief Configures the submenu related to the object
-		void configureSubmenu(BaseObject *object);
-
 		/*! \brief Indicates if the cut operation is currently activated. This flag modifies
 		the way the methods copyObjects() and removeObject() works. */
 		static bool cut_operation;
@@ -61,6 +58,9 @@ class ModelWidget: public QWidget {
 		simple_obj_creation,
 
 		disable_render_smooth;
+
+		//! \brief Indicates if the minimum object opacity used when appliyng fade out to objects
+		static float min_object_opacity;
 
 		/*! \brief Stores the model that generates the copy/cut operation. This model is updated
 		from the destination model whenever a past/cut operation is done. */
@@ -99,7 +99,13 @@ class ModelWidget: public QWidget {
 		//! \brief Stores the tags used by the "set tag" operation
 		tags_menu,
 
-		break_rel_menu;
+		break_rel_menu,
+
+		fade_menu,
+
+		fade_in_menu,
+
+		fade_out_menu;
 
 		//! \brief Stores the selected object on the scene
 		vector<BaseObject *> selected_objects;
@@ -141,6 +147,18 @@ class ModelWidget: public QWidget {
 		template<class Class, class WidgetClass, class ParentClass>
 		int openEditingForm(BaseObject *object, BaseObject *parent_obj, const QPointF &pos);
 
+		//! \brief Configures the popup menu according the the selected objects list
+		void configurePopupMenu(vector<BaseObject *> objects=vector<BaseObject *>());
+
+		//! \brief Configures the submenu related to the object
+		void configureSubmenu(BaseObject *object);
+
+		//! \brief Configures the submenu related to fade in/out operations
+		void configureFadeMenu(void);
+
+		//! \brief Fades in our out the object types held by the specified action
+		void fadeObjects(QAction *action, bool fade_in);
+
 	protected:
 		static const unsigned BREAK_VERT_NINETY_DEGREES, //Break vertically the line in one 90° angle
 		BREAK_HORIZ_NINETY_DEGREES, //Break horizontally the line in one 90° angle
@@ -166,6 +184,7 @@ class ModelWidget: public QWidget {
 		*action_change_owner,
 		*action_quick_actions,
 		*action_sel_sch_children,
+		*action_sel_tagged_tabs,
 		*action_highlight_object,
 		*action_parent_rel,
 		*action_append_sql,
@@ -176,7 +195,10 @@ class ModelWidget: public QWidget {
 		*action_set_tag,
 		*action_disable_sql,
 		*action_enable_sql,
-		*action_duplicate;
+		*action_duplicate,
+		*action_fade,
+		*action_fade_in,
+		*action_fade_out;
 
 		//! \brief Actions used to create new objects on the model
 		map<ObjectType, QAction *> actions_new_objects;
@@ -255,6 +277,9 @@ class ModelWidget: public QWidget {
 		//! \brief Defines if any instance of the class must simiplify the graphical object's creation
 		static void setSimplifiedObjectCreation(bool value);
 
+		//! \brief Defines the minimum object opacity when using fade out feature
+		static void setMinimumObjectOpacity(unsigned min_opacity);
+
 		//! \brief Restore the last editing position on canvas as well the zoom factor
 		void restoreLastCanvasPosition(void);
 
@@ -265,6 +290,10 @@ class ModelWidget: public QWidget {
 		void setUpdatesEnabled(bool value);
 
 		void updateRenderHints(void);
+
+		/*! \brief Updates the opacity factor of the objects faded in the model. This method should be called
+		whenever the min_object_opacity changes */
+		void updateObjectsOpacity(void);
 
 	private slots:
 		//! \brief Handles the signals that indicates the object creation on the reference database model
@@ -281,9 +310,6 @@ class ModelWidget: public QWidget {
 
 		//! \brief Handles the signals that indicates the object was double clicked on the scene
 		void handleObjectDoubleClick(BaseGraphicObject *object);
-
-		//! \brief Configures the popup menu according the the selected objects list
-		void configurePopupMenu(vector<BaseObject *> objects=vector<BaseObject *>());
 
 		//! \brief Configures the popup menu specific for the passed object
 		void configureObjectMenu(BaseObject *object);
@@ -317,6 +343,9 @@ class ModelWidget: public QWidget {
 
 		//! \brief Selects all the graphical objects under the selected schema
 		void selectSchemaChildren(void);
+
+		//! \brief Selects all the tables and views that references the selected tag
+		void selectTaggedTables(void);
 
 		//! \brief Removes the selected objects
 		void removeObjects(bool cascade = false);
@@ -377,6 +406,10 @@ class ModelWidget: public QWidget {
 		void adjustOverlayPosition(void);
 
 		void toggleObjectSQL(void);
+
+		void fadeObjectsIn(void);
+
+		void fadeObjectsOut(void);
 
 	public slots:
 		void loadModel(const QString &filename);
