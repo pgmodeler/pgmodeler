@@ -59,6 +59,9 @@ class ModelWidget: public QWidget {
 
 		disable_render_smooth;
 
+		//! \brief Indicates if the minimum object opacity used when appliyng fade out to objects
+		static float min_object_opacity;
+
 		/*! \brief Stores the model that generates the copy/cut operation. This model is updated
 		from the destination model whenever a past/cut operation is done. */
 		static ModelWidget *src_model;
@@ -273,6 +276,9 @@ class ModelWidget: public QWidget {
 
 		//! \brief Defines if any instance of the class must simiplify the graphical object's creation
 		static void setSimplifiedObjectCreation(bool value);
+
+		//! \brief Defines the minimum object opacity when using fade out feature
+		static void setMinimumObjectOpacity(unsigned min_opacity);
 
 		//! \brief Restore the last editing position on canvas as well the zoom factor
 		void restoreLastCanvasPosition(void);

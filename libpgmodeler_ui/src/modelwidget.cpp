@@ -61,6 +61,7 @@ bool ModelWidget::save_restore_pos=true;
 bool ModelWidget::disable_render_smooth=false;
 bool ModelWidget::simple_obj_creation=true;
 ModelWidget *ModelWidget::src_model=nullptr;
+float ModelWidget::min_object_opacity=0.10f;
 
 const unsigned ModelWidget::BREAK_VERT_NINETY_DEGREES=0;
 const unsigned ModelWidget::BREAK_HORIZ_NINETY_DEGREES=1;
@@ -3118,7 +3119,7 @@ void ModelWidget::fadeObjects(QAction *action, bool fade_in)
 		obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
 
 		if(obj_view)
-			obj_view->setOpacity(fade_in ? 1 : 0.10f);
+			obj_view->setOpacity(fade_in ? 1 : min_object_opacity);
 	}
 
 	scene->clearSelection();
@@ -3523,6 +3524,14 @@ void ModelWidget::setRenderSmoothnessDisabled(bool value)
 void ModelWidget::setSimplifiedObjectCreation(bool value)
 {
 	ModelWidget::simple_obj_creation=value;
+}
+
+void ModelWidget::setMinimumObjectOpacity(unsigned min_opacity)
+{
+	if(min_opacity > 100)
+		min_opacity = 100;
+
+	ModelWidget::min_object_opacity = static_cast<float>(min_opacity)/100.0f;
 }
 
 void ModelWidget::highlightObject(void)

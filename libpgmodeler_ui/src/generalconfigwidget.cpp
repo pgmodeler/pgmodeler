@@ -154,6 +154,9 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	use_placeholders_ht=new HintTextWidget(use_placeholders_hint, this);
 	use_placeholders_ht->setText(use_placeholders_chk->statusTip());
 
+	min_obj_opacity_ht=new HintTextWidget(min_obj_opacity_hint, this);
+	min_obj_opacity_ht->setText(min_obj_opacity_spb->statusTip());
+
 	selectPaperSize();
 
 	QList<QCheckBox *> chk_boxes=this->findChildren<QCheckBox *>();
@@ -464,7 +467,8 @@ void GeneralConfigWidget::applyConfiguration(void)
 	ModelWidget::setSaveLastCanvasPosition(save_last_pos_chk->isChecked());
 	ModelWidget::setRenderSmoothnessDisabled(disable_smooth_chk->isChecked());
 	ModelWidget::setSimplifiedObjectCreation(simple_obj_creation_chk->isChecked());
-	MainWindow::setConfirmValidation(confirm_validation_chk->isChecked());	
+	ModelWidget::setMinimumObjectOpacity(min_obj_opacity_spb->value());
+	MainWindow::setConfirmValidation(confirm_validation_chk->isChecked());
 	BaseObjectView::setPlaceholderEnabled(use_placeholders_chk->isChecked());
 
 	fnt.setFamily(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]);
