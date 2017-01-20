@@ -80,7 +80,7 @@
            </sizepolicy>
           </property>
           <property name="insertPolicy">
-           <enum>QComboBox::InsertAlphabetically</enum>
+           <enum>QComboBox::InsertAtBottom</enum>
           </property>
           <property name="sizeAdjustPolicy">
            <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>

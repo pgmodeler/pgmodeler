@@ -370,6 +370,7 @@ void ConnectionsConfigWidget::configureConnection(Connection *conn)
 	{
 		conn->setAutoBrowseDB(auto_browse_chk->isChecked());
 		conn->setConnectionParam(Connection::PARAM_ALIAS, alias_edt->text());
+		conn->setConnectionParam(Connection::PARAM_SERVER_IP, QString());
 		conn->setConnectionParam(Connection::PARAM_SERVER_FQDN, host_edt->text());
 		conn->setConnectionParam(Connection::PARAM_PORT, QString("%1").arg(port_sbp->value()));
 		conn->setConnectionParam(Connection::PARAM_USER, user_edt->text());
