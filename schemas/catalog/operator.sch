@@ -40,19 +40,19 @@
 	      op.oprcanmerge AS merges_bool, op.oprcanhash AS hashes_bool, op.oprleft AS left_type,
 	      op.oprright AS right_type, op.oprcom AS commutator_op,
 	      op.oprrest::oid AS restriction, op.oprjoin::oid AS "join",
-	      op.oprcode::oid AS operfunc, ]
+	      op.oprcode::oid AS operfunc, op.oprnegate AS negator_op, ]
 
       # This case statement selects the correct negator operator for the current operator
-      [ CASE
-	 WHEN op.oprnegate > 0 THEN
-	  (SELECT _op2.oid FROM pg_operator AS _op1
-	     LEFT JOIN pg_operator AS _op2 ON _op1.oprname=_op2.oprname AND _op1.oprnamespace=_op2.oprnamespace
-	     WHERE _op1.oid=op.oprnegate AND _op2.oprcode > 0
-	       AND _op2.oprnegate=0 AND _op2.oprcom=0 AND _op2.oprrest=0 AND _op2.oprjoin=0
-	       AND ((_op2.oprleft > 0 AND _op2.oprright=0) OR (_op2.oprleft=0 AND _op2.oprright > 0)))
-	 ELSE 0
-       END
-       AS negator_op, ]
+      # [ CASE
+#	 WHEN op.oprnegate > 0 THEN
+#	  (SELECT _op2.oid FROM pg_operator AS _op1
+#	     LEFT JOIN pg_operator AS _op2 ON _op1.oprname=_op2.oprname AND _op1.oprnamespace=_op2.oprnamespace
+#	     WHERE _op1.oid=op.oprnegate AND _op2.oprcode > 0
+#	       AND _op2.oprnegate=0 AND _op2.oprcom=0 AND _op2.oprrest=0 AND _op2.oprjoin=0
+#	       AND ((_op2.oprleft > 0 AND _op2.oprright=0) OR (_op2.oprleft=0 AND _op2.oprright > 0)))
+#	 ELSE 0
+#       END
+#       AS negator_op, ]
 
       ({comment}) [ AS comment ]
 
