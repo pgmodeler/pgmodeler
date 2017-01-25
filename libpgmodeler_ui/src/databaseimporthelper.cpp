@@ -2434,9 +2434,10 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 			/* Prepend the schema name only if it is not a system schema ('pg_catalog' or 'information_schema') and
 		 if the schema's names is already present in the type's name (in case of table types) */
 			sch_name=getObjectName(type_attr[ParsersAttributes::SCHEMA]);
-			if(!sch_name.isEmpty() && sch_name!=QString("pg_catalog") &&
-					sch_name!=QString("information_schema") &&
-					!obj_name.contains(QRegExp(QString("^(\\\")?(%1)(\\\")?(.)").arg(sch_name))))
+			if(!sch_name.isEmpty() &&
+				 ((sch_name!=QString("pg_catalog") && sch_name!=QString("information_schema")) ||
+					type_oid > catalog.getLastSysObjectOID()) &&
+				 !obj_name.contains(QRegExp(QString("^(\\\")?(%1)(\\\")?(.)").arg(sch_name))))
 				obj_name.prepend(sch_name + QString("."));
 
 			/* In case of auto resolve dependencies, if the type is a user defined one and was not created in the database

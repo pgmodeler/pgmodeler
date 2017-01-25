@@ -105,6 +105,7 @@ namespace ParsersAttributes {
 	CONSTR_SQL_DISABLED=QString("constr-sql-disabled"),
 	CONSTRAINT=QString("constraint"),
 	CONSTRAINTS=QString("constraints"),
+	CONSTR_DEFS=QString("constr-defs"),
 	CONTENTS=QString("contents"),
 	COPY_MODE=QString("copy-mode"),
 	COPY_OPTIONS=QString("copy-options"),

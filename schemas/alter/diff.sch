@@ -41,10 +41,10 @@
  
   %if {create-cmds} %then
     $br $br
-    [-- ] $ob [ Created objects ] $cb [ --] $br
+    [-- ] $ob [ Created objects ] $cb [ --] $br   
     {create-cmds}
   %end
-
+  
   %if {truncate-cmds} %then
     $br $br
     [-- ] $ob [ Truncated tables ] $cb [ --] $br
@@ -57,6 +57,12 @@
     {alter-cmds}
   %end
 
+  %if {constr-defs} %then
+    $br $br
+    [-- ] $ob [ Created constraints ] $cb [ --] $br
+    {constr-defs}
+  %end
+  
   %if {fk-defs} %then
     $br $br
     [-- ] $ob [ Created foreign keys ] $cb [ --] $br
