@@ -142,6 +142,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	op_list=new OperationList(db_model);
 	scene=new ObjectsScene;
 	scene->setSceneRect(QRectF(0,0,2000,2000));
+	scene->installEventFilter(this);
 
 	viewport=new QGraphicsView(scene);
 	updateRenderHints();
@@ -438,6 +439,22 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 	{
 		this->keyPressEvent(k_event);
 		return(true);
+	}
+	else if(object == scene && event->type() == QEvent::GraphicsSceneMouseMove)
+	{
+		QGraphicsSceneMouseEvent *m_event = dynamic_cast<QGraphicsSceneMouseEvent *>(event);
+
+		if (m_event->buttons() == Qt::MiddleButton)
+		{
+			QPointF pos = m_event->lastScreenPos() - m_event->screenPos();
+			int dx = viewport->horizontalScrollBar()->value() + pos.x(),
+					dy = viewport->verticalScrollBar()->value() + pos.y();
+
+			viewport->horizontalScrollBar()->setValue(dx);
+			viewport->verticalScrollBar()->setValue(dy);
+
+			return (true);
+		}
 	}
 
 	return(QWidget::eventFilter(object, event));
