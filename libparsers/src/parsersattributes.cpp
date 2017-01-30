@@ -246,7 +246,7 @@ namespace ParsersAttributes {
 	INSERT_PRIV=QString("insert"),
 	INTERNAL_LENGTH=QString("internal-length"),
 	INTERVAL_TYPE=QString("interval-type"),
-	INVERT_PANNING_RANGESEL=QString("invert-panning-rangesel"),
+	INVERT_RANGESEL_TRIGGER=QString("invert-rangesel-trigger"),
 	IO_CAST=QString("io-cast"),
 	ITALIC=QString("italic"),
 	JOIN_FUNC=QString("join"),

@@ -45,7 +45,10 @@ class ModelWidget: public QWidget {
 		double current_zoom;
 
 		//! \brief Indicates if the model was modified by some operation
-		bool modified;
+		bool modified,
+
+		//! brief Indicates if the panning mode was activated via event filter (see eventFilter())
+		panning_mode;
 
 		/*! \brief Indicates if the cut operation is currently activated. This flag modifies
 		the way the methods copyObjects() and removeObject() works. */

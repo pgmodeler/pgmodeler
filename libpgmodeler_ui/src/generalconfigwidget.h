@@ -48,7 +48,7 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 		UNIT_CENTIMETERS=3;
 
 		HintTextWidget *simp_obj_creation_ht, *confirm_validation_ht, *corner_move_ht,
-		*save_last_pos_ht, *invert_pan_range_ht, *disable_smooth_ht,
+		*save_last_pos_ht, *invert_rangesel_ht, *disable_smooth_ht,
 		*hide_ext_attribs_ht, *hide_table_tags_ht, *hide_rel_name_ht,
 		*code_completion_ht, *use_placeholders_ht, *min_obj_opacity_ht;
 

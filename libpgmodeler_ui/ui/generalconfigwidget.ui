@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>597</width>
-    <height>530</height>
+    <width>542</width>
+    <height>515</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -78,48 +78,7 @@
           <property name="bottomMargin">
            <number>4</number>
           </property>
-          <item row="3" column="0">
-           <widget class="QCheckBox" name="autosave_interv_chk">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="toolTip">
-             <string>The opened models will be saved periodically</string>
-            </property>
-            <property name="text">
-             <string>Autosave interval:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="oplist_size_lbl">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Operation history:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1" colspan="2">
+          <item row="4" column="1" colspan="2">
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
              <widget class="QSpinBox" name="autosave_interv_spb">
@@ -170,7 +129,7 @@
             </item>
            </layout>
           </item>
-          <item row="2" column="1" colspan="2">
+          <item row="3" column="1" colspan="2">
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
              <widget class="QSpinBox" name="oplist_size_spb">
@@ -221,20 +180,45 @@
             </item>
            </layout>
           </item>
-          <item row="4" column="0">
-           <widget class="QCheckBox" name="check_upd_chk">
-            <property name="toolTip">
-             <string>Check if there is a new version on server</string>
+          <item row="3" column="0">
+           <widget class="QLabel" name="oplist_size_lbl">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
             </property>
             <property name="text">
-             <string>Check for updates at startup</string>
-            </property>
-            <property name="checked">
-             <bool>false</bool>
+             <string>Operation history:</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1" colspan="2">
+          <item row="2" column="0">
+           <widget class="QLabel" name="grid_size_lbl">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Grid size:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1" colspan="2">
            <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
              <widget class="QSpinBox" name="grid_size_spb">
@@ -291,8 +275,8 @@
             </item>
            </layout>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="grid_size_lbl">
+          <item row="4" column="0">
+           <widget class="QCheckBox" name="autosave_interv_chk">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -305,8 +289,76 @@
               <height>0</height>
              </size>
             </property>
+            <property name="toolTip">
+             <string>The opened models will be saved periodically</string>
+            </property>
             <property name="text">
-             <string>Grid size:</string>
+             <string>Autosave interval:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QCheckBox" name="check_upd_chk">
+            <property name="toolTip">
+             <string>Check if there is a new version on server</string>
+            </property>
+            <property name="text">
+             <string>Check for updates at startup</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Configurations directory:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="confs_dir_edt">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QToolButton" name="open_dir_tb">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Open in file manager</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../res/resources.qrc">
+              <normaloff>:/icones/icones/abrir.png</normaloff>:/icones/icones/abrir.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>22</width>
+              <height>22</height>
+             </size>
             </property>
            </widget>
           </item>
@@ -472,7 +524,7 @@
           <item row="5" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_11">
             <item>
-             <widget class="QCheckBox" name="invert_pan_range_chk">
+             <widget class="QCheckBox" name="invert_rangesel_chk">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -483,10 +535,10 @@
                <string/>
               </property>
               <property name="statusTip">
-               <string>By default panning mode is triggered with left click and range selection with Shift + left click.</string>
+               <string>By default the range selection is triggered with Shift + left click. By checking this option range selection will be activated only with a single click and move.</string>
               </property>
               <property name="text">
-               <string>Swap panning and range selection triggers</string>
+               <string>Trigger range selection with a single click</string>
               </property>
               <property name="checked">
                <bool>false</bool>
@@ -494,7 +546,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QWidget" name="invert_pan_range_hint" native="true">
+             <widget class="QWidget" name="invert_rangesel_hint" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -1733,6 +1785,8 @@
   <tabstop>font_cmb</tabstop>
   <tabstop>font_size_spb</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../res/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

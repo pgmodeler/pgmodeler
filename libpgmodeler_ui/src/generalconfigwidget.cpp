@@ -105,7 +105,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]=QString();
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE]=QString();
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CANVAS_CORNER_MOVE]=QString();
-	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::INVERT_PANNING_RANGESEL]=QString();
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::INVERT_RANGESEL_TRIGGER]=QString();
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]=QString();
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_LAST_POSITION]=QString();
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_MAIN_MENU]=QString();
@@ -134,8 +134,8 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	save_last_pos_ht=new HintTextWidget(save_last_pos_hint, this);
 	save_last_pos_ht->setText(save_last_pos_chk->statusTip());
 
-	invert_pan_range_ht=new HintTextWidget(invert_pan_range_hint, this);
-	invert_pan_range_ht->setText(invert_pan_range_chk->statusTip());
+	invert_rangesel_ht=new HintTextWidget(invert_rangesel_hint, this);
+	invert_rangesel_ht->setText(invert_rangesel_chk->statusTip());
 
 	disable_smooth_ht=new HintTextWidget(disable_smooth_hint, this);
 	disable_smooth_ht->setText(disable_smooth_chk->statusTip());
@@ -196,6 +196,12 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 		connect(radio, SIGNAL(clicked()), this, SLOT(setConfigurationChanged()));
 	}
 
+	confs_dir_edt->setText(GlobalAttributes::CONFIGURATIONS_DIR);
+
+	connect(open_dir_tb, &QToolButton::clicked, [=](){
+		QDesktopServices::openUrl(QUrl(QString("file://") + confs_dir_edt->text()));
+	});
+
 #ifdef NO_UPDATE_CHECK
 	check_upd_chk->setChecked(false);
 	check_upd_chk->setVisible(false);
@@ -232,7 +238,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 		tab_width_spb->setValue(tab_width);
 
 		corner_move_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CANVAS_CORNER_MOVE]==ParsersAttributes::_TRUE_);
-		invert_pan_range_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::INVERT_PANNING_RANGESEL]==ParsersAttributes::_TRUE_);
+		invert_rangesel_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::INVERT_RANGESEL_TRIGGER]==ParsersAttributes::_TRUE_);
 		check_upd_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]==ParsersAttributes::_TRUE_);
 		save_last_pos_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_LAST_POSITION]==ParsersAttributes::_TRUE_);
 		disable_smooth_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DISABLE_SMOOTHNESS]==ParsersAttributes::_TRUE_);
@@ -281,7 +287,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, e.getExtraInfo());
 	}
 }
 
@@ -353,7 +359,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_TYPE]=QString::number(paper_cmb->currentIndex());
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]=(portrait_rb->isChecked() ? ParsersAttributes::PORTRAIT : ParsersAttributes::LANDSCAPE);
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CANVAS_CORNER_MOVE]=(corner_move_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::INVERT_PANNING_RANGESEL]=(invert_pan_range_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
+		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::INVERT_RANGESEL_TRIGGER]=(invert_rangesel_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]=(check_upd_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_LAST_POSITION]=(save_last_pos_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DISABLE_SMOOTHNESS]=(disable_smooth_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
@@ -457,7 +463,7 @@ void GeneralConfigWidget::applyConfiguration(void)
 	unity_cmb->setCurrentIndex(unit);
 
 	ObjectsScene::setEnableCornerMove(corner_move_chk->isChecked());
-	ObjectsScene::setInvertPanningRangeSelection(invert_pan_range_chk->isChecked());
+	ObjectsScene::setInvertRangeSelectionTrigger(invert_rangesel_chk->isChecked());
 	ObjectsScene::setGridSize(grid_size_spb->value());
 
 	ObjectsScene::setGridOptions(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_CANVAS_GRID]!=ParsersAttributes::_FALSE_,
