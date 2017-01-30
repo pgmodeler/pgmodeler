@@ -1,6 +1,45 @@
 Change Log
 ---------
 
+v0.9.0-alpha1
+------
+<em>Release date: February 06, 2017</em><br/>
+
+* [New] Added support to object fading in ModelWidget.
+* [New] Added the support to persist the object opacity factor in config file.
+* [New] Added the method PgModelerUiNS::getIconPath() in order to retrieve icons from resource.
+* [New] Added support to column, constraint, trigger, rule and index duplication in TableWidget.
+* [New] Added support to item duplication in ObjectTableWidget.
+* [New] Added a loading cursor when the user opens the DataManipulationForm.
+* [New] The database explorer now creates the root item in the tree as the server itself which contains data related to this latter.
+* [New] Added the support to parenthesis in the middle of objects' names.
+* [Change] Improvements done in the object duplication feature.
+* [Change] Remove hardcoded icon paths in the code.
+* [Change] Improved the PgSQLTypeWidget to enable the length, precision, dimension fields as the user types the desired datatype. This will avoid jumping to the wrong field when pressing tab.
+* [Change] Updated the urls related to download and donation of the new site.
+* [Change] Changed the url to check for updates in GlobalAttributes to point to the new site.
+* [Change] Improvements done in the linux deploy script to use Qt 5.6.2.
+* [Change] Minor tweaks done in order to minimize the diff detection related to default values of columns.
+* [Change] Changed the default framework version used in the windows deployment script to 5.6.2.
+* [Change] Dropped the automatic LC_COLLATE and LC_CTYPE generation in Database object. Since this was causing more problems than helping when import the database and validating/exporting it.
+* [Change] In DataManipulationForm the filter input field is automatically focused when the filter toggle button is activated.
+* [Fix] Fixed a bug when using diff to create columns and update constraints.
+* [Fix] Fixed a bug that was duplicating the action "New" in the main window's side bar.
+* [Fix] Fixed a problem when importing database that contains citext extension installed in pg_catalog.
+* [Fix] Minor fix in ConnectionsConfigWidget that was causing duplicated connections to share de same host info wrongly.
+* [Fix] Restored the input data type handling in AggregateWidget.
+* [Fix] Fixed the oldsample.dbm model.
+* [Fix] Fixed a crash when restoring objects' metadata from backup file.
+* [Fix] Fixed a bug that was preventing inheritance relationships to be created when the same pair of tables existed in different schemas.
+* [Fix] Fixed a bug that was causing column name patterns to be used wrongly in many-to-many relationships.
+* [Fix] Fixed a bug that was preventing the automatic closing of tabs related to a dropped database in manage view.
+* [Fix] Fixed a bug that was causing the duplication of permissions during the database import which was leading to the complete failure of the entire process.
+* [Fix] Fixed the problem with invalid type error when trying to edit a 'timestamp with timezone' column.
+* [Fix] Fixed a bug in Relationship that was not setting NOT NULL flag for columns of the multi-valued primary key of many-to-many relationships causing the diff process to fail in some specific cases.
+* [Fix] Fixed a regression in RelationshipWidget that was not showing advanced object's form.
+* [Fix] Fixed the constraint codes display in TableObjectView. Now self relationships do not mark the primary key field as foreign keys.
+* [Fix] Fixed a regression that was not properly disabling the apply button in editing forms when the handled object was protected somehow.
+
 v0.9.0-alpha
 ------
 <em>Release date: October 18, 2016</em><br/>

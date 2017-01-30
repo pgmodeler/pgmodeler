@@ -1,34 +1,33 @@
-v0.9.0-alpha
+v0.9.0-alpha1
 ------
 
-<em>Release date: October 18, 2016</em><br/>
-<em>Changes since: <strong>v0.8.2</strong></em><br/>
+<em>Release date: February 06, 2017</em><br/>
+<em>Changes since: <strong>v0.9.0-alpha</strong></em><br/>
 
-<strong>Summary:</strong> after four months of inactivity we have the first alpha release of 0.9.0. The main purpose of this version is to enable pgModeler to communicate with the recently arrived PostgreSQL 9.6. <br/>
+<strong>Summary:</strong> this new alpha release of the major version 0.9.0 brings some design improvements that were requested long time ago and only now they could be implemented.<br/>
 
-Also, we have some small fixes and improvements to make pgModeler more user friendly. These set of changes and fixes are:<br/>
+One feature introduced is the object fade which can be used to isolate certain objects in the model to improve the visualization. This feature can be activated via "Fade in/out" menu item by right clicking the canvas area or using the same action in the main window's side bar. There is an special behavior that applies to tag objects: if you have one or more tables and views tagged you can fade in or out them by the associated tag. To do so just right click the desired tag in the model objects view and choose the available fade options. The fade works for all graphical objects and can be applied for each object type separately or to the current object selection in the canvas. The default fade factor is 10% and may vary from 0% to 70%, which can be adjusted in the general settings. <br/>
 
-* [New] Enabling pgModeler to connect to PostgreSQL 9.6 servers.
-* [New] Added the option to ignore error codes during the export process in CLI.
-* [New] Added the ability to ignore extra errors by their codes in ModelExportForm and ModelDatabaseDiffForm.
-* [New] Added the ability to load data from CSV file into TableDataWidget and DataManipulationForm.
-* [Change] Minor update in snippets.conf by adding a SELECT * command.
-* [Change] Removed deprecated exception ERR_ASG_ZERO_LENGTH.
-* [Change] Improvements done in CodeCompletionWidget so that the completion can be more accurate mainly when using the form [schema].[table].
-* [Change] Methods responsible for dropping and exploring data were moved from SQLToolWidget to DatabaseExplorerWidget.
-* [Change] Improved the error output in DatabaseImportForm, ModelDatabaseDiffForm, ModelExportForm and Messagebox.
-* [Change] TableDataWidget widget now can have the column names changed freely not only when there are invalid ones.
-* [Change] Removed codename from AboutWidget.
-* [Fix] Fixed a bug in PgSQLType and PgSQLTypeWidget that was not properly setting length = 1 in character, varchar and numeric data types.
-* [Fix] Fixed a bug that was leading to stack overflow when generating object's sql plus its dependencies in huge models.
-* [Fix] Fix the structure of the sample model pagila.dbm.
-* [Fix] Minor fix in diff proccess in order to permit the comparison between a column added by relatinship and other that is not but share the same name.
-* [Fix] Fixed a bug that could cause crashes when editing connections in DatabaseImportForm or ModelDatabaseDiffForm.
-* [Fix] Fixed a crash when the user modified a connection on the fly with the SQL tool activated and trying to resume his work in database management.
-* [Fix] Fixed the tab order in ConnectionsConfigWidget.
-* [Fix] Fixed a bug in ModelDatabaseDiffForm that was running the export thread several times.
-* [Fix] Fix the generation of truncate commands in the diff when the types of columns are incompatible.
-* [Fix] Fixed a bug that was generating broken sql for tables when these objects have no constraints.
-* [Fix] Fixed a bug in diff that was not detecting column types length changes.
+Another feature brought after some requests is the column duplication. The original request was to make possible the duplication of columns when editing tables. But we gone further, the user can duplicate almost all kind of objects from columns and tables to functions and aggregates. In order to use this feature right click any object in the canvas or in the model objects view and select 'Duplicate'. This feature is still experimental and will be adjusted in future releases if needed. <br/>
 
-Since this is not a release that bring major changes compared to the 0.8.2 the update is optional. But if you want to manage PostgreSQL 9.6 servers the update is needed otherwise you are fine with the 0.8.2.
+There were other minor features, fixes and improvements just to make pgModeler even better. Below, some highlighted features and fixes, the complete log is available in CHANGELOG.md:<br/>
+
+* [New] Added support to object fading in ModelWidget.
+* [New] Added the support to persist the object opacity factor in config file.
+* [New] Added support to column, constraint, trigger, rule and index duplication in TableWidget.
+* [New] Added support to item duplication in ObjectTableWidget.
+* [New] The database explorer now creates the root item in the tree as the server itself which contains data related to this latter.
+* [New] Added the support to parenthesis in the middle of objects' names.
+* [Change] Improved the PgSQLTypeWidget to enable the length, precision, dimension fields as the user types the desired datatype. This will avoid jumping to the wrong field when pressing tab.
+* [Change] Minor tweaks done in order to minimize the diff detection related to default values of columns.
+* [Change] Dropped the automatic LC_COLLATE and LC_CTYPE generation in Database object. Since this was causing more problems than helping when import the database and validating/exporting it.
+* [Change] In DataManipulationForm the filter input field is automatically focused when the filter toggle button is activated.
+* [Fix] Fixed a bug when using diff to create columns and update constraints.
+* [Fix] Fixed a problem when importing database that contains citext extension installed in pg_catalog.
+* [Fix] Minor fix in ConnectionsConfigWidget that was causing duplicated connections to share de same host info wrongly.
+* [Fix] Fixed a crash when restoring objects' metadata from backup file.
+* [Fix] Fixed a bug that was preventing inheritance relationships to be created when the same pair of tables existed in different schemas.
+* [Fix] Fixed a bug that was causing column name patterns to be used wrongly in many-to-many relationships.
+* [Fix] Fixed a bug that was causing the duplication of permissions during the database import which was leading to the complete failure of the entire process.
+* [Fix] Fixed the problem with invalid type error when trying to edit a 'timestamp with timezone' column.
+* [Fix] Fixed a bug in Relationship that was not setting NOT NULL flag for columns of the multi-valued primary key of many-to-many relationships causing the diff process to fail in some specific cases.
