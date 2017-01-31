@@ -37,6 +37,10 @@ ObjectTableWidget::ObjectTableWidget(unsigned button_conf, bool conf_exclusion, 
 	connect(table_tbw, SIGNAL(itemSelectionChanged(void)), this, SLOT(setButtonsEnabled(void)));
 	connect(table_tbw, SIGNAL(itemSelectionChanged(void)), this, SLOT(emitRowSelected(void)));
 
+	connect(table_tbw, &QTableWidget::cellClicked, [=](int row, int col){
+		emit s_cellClicked(row, col);
+	});
+
 	this->conf_exclusion=conf_exclusion;
 
 	setButtonConfiguration(button_conf);
@@ -88,6 +92,22 @@ void ObjectTableWidget::setButtonConfiguration(unsigned button_conf)
 	}
 }
 
+QTableWidgetItem *ObjectTableWidget::getItem(unsigned row_idx, unsigned col_idx)
+{
+	if(row_idx >= static_cast<unsigned>(table_tbw->rowCount()))
+		throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	if(col_idx >= static_cast<unsigned>(table_tbw->columnCount()))
+		throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	return(table_tbw->item(row_idx, col_idx));
+}
+
+void ObjectTableWidget::adjustColumnToContents(int col)
+{
+	table_tbw->resizeColumnToContents(col);
+}
+
 void ObjectTableWidget::setColumnCount(unsigned col_count)
 {
 	if(col_count > 0)
@@ -131,30 +151,12 @@ void ObjectTableWidget::setHeaderIcon(const QIcon &icon, unsigned col_idx)
 
 void ObjectTableWidget::setCellIcon(const QIcon &icon, unsigned row_idx, unsigned col_idx)
 {
-	QTableWidgetItem *item=nullptr;
-
-	if(row_idx >= static_cast<unsigned>(table_tbw->rowCount()))
-		throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	if(col_idx >= static_cast<unsigned>(table_tbw->columnCount()))
-		throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	item=table_tbw->item(row_idx, col_idx);
-	item->setIcon(icon);
+	getItem(row_idx, col_idx)->setIcon(icon);
 }
 
 void ObjectTableWidget::setCellText(const QString &text, unsigned row_idx, unsigned col_idx)
 {
-	QTableWidgetItem *item=nullptr;
-
-	if(row_idx >= static_cast<unsigned>(table_tbw->rowCount()))
-		throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	if(col_idx >= static_cast<unsigned>(table_tbw->columnCount()))
-		throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	item=table_tbw->item(row_idx,col_idx);
-	item->setText(text);
+	getItem(row_idx, col_idx)->setText(text);
 }
 
 void ObjectTableWidget::clearCellText(unsigned row_idx, unsigned col_idx)
@@ -222,16 +224,32 @@ QString ObjectTableWidget::getHeaderLabel(unsigned col_idx)
 
 QString ObjectTableWidget::getCellText(unsigned row_idx, unsigned col_idx)
 {
-	QTableWidgetItem *item=nullptr;
+	return(getItem(row_idx, col_idx)->text());
+}
 
-	if(row_idx >= static_cast<unsigned>(table_tbw->rowCount()))
-		throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+Qt::CheckState ObjectTableWidget::getCellCheckState(unsigned row_idx, unsigned col_idx)
+{
+	return(getItem(row_idx, col_idx)->checkState());
+}
 
-	if(col_idx >= static_cast<unsigned>(table_tbw->columnCount()))
-		throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+void ObjectTableWidget::setCellCheckState(unsigned row_idx, unsigned col_idx, Qt::CheckState check_state)
+{
+	getItem(row_idx, col_idx)->setCheckState(check_state);
+}
 
-	item=table_tbw->item(row_idx,col_idx);
-	return(item->text());
+void ObjectTableWidget::setCellDisabled(unsigned row_idx, unsigned col_idx, bool disabled)
+{
+	QTableWidgetItem *item = getItem(row_idx, col_idx);
+
+	if(disabled)
+		item->setFlags(Qt::NoItemFlags);
+	else
+		item->setFlags(Qt::ItemIsEnabled);
+}
+
+bool ObjectTableWidget::isCellDisabled(unsigned row_idx, unsigned col_idx)
+{
+	return(getItem(row_idx, col_idx)->flags() == Qt::NoItemFlags);
 }
 
 QVariant ObjectTableWidget::getRowData(unsigned row_idx)
@@ -302,7 +320,7 @@ void ObjectTableWidget::selectRow(int lin_idx)
 void ObjectTableWidget::addRow(unsigned lin_idx)
 {
 	QTableWidgetItem *item=nullptr;
-	unsigned i, col_cont=table_tbw->columnCount();
+	unsigned col_idx, col_cont=table_tbw->columnCount();
 
 	table_tbw->insertRow(lin_idx);
 
@@ -310,10 +328,10 @@ void ObjectTableWidget::addRow(unsigned lin_idx)
 	item->setText(QString("%1").arg(lin_idx+1));
 	table_tbw->setVerticalHeaderItem(lin_idx,item);
 
-	for(i=0; i < col_cont; i++)
+	for(col_idx=0; col_idx < col_cont; col_idx++)
 	{
 		item=new QTableWidgetItem;
-		table_tbw->setItem(lin_idx,i,item);
+		table_tbw->setItem(lin_idx,col_idx,item);
 	}
 
 	item=table_tbw->item(lin_idx,0);

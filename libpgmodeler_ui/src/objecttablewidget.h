@@ -40,6 +40,8 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 		to remove an element from table. By default, the exclusions are made without confirmation */
 		bool conf_exclusion;
 
+		QTableWidgetItem *getItem(unsigned row_idx, unsigned col_idx);
+
 	public:
 		//! \brief Constants used to configure the table buttons
 		static const unsigned ADD_BUTTON=1,
@@ -52,8 +54,7 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 		ALL_BUTTONS=127,
 		NO_BUTTONS=0;
 
-		ObjectTableWidget(unsigned button_conf=ALL_BUTTONS,
-						  bool conf_exclusion=false, QWidget * parent = 0);
+		ObjectTableWidget(unsigned button_conf=ALL_BUTTONS, bool conf_exclusion=false, QWidget * parent = 0);
 
 		//! \brief Sets the table's column count
 		void setColumnCount(unsigned col_count);
@@ -88,6 +89,14 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 		//! \brief Returns the specified cell text
 		QString getCellText(unsigned row_idx, unsigned col_idx);
 
+		Qt::CheckState getCellCheckState(unsigned row_idx, unsigned col_idx);
+
+		void setCellCheckState(unsigned row_idx, unsigned col_idx, Qt::CheckState check_state);
+
+		void setCellDisabled(unsigned row_idx, unsigned col_idx, bool disabled);
+
+		bool isCellDisabled(unsigned row_idx, unsigned col_idx);
+
 		//! \brief Returns the data relative to the specified row
 		QVariant getRowData(unsigned row_idx);
 
@@ -112,6 +121,8 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 
 		//! \brief Sets the table button configuration. Use the constants ???_BUTTON combined via bitwise operation.
 		void setButtonConfiguration(unsigned button_conf);
+
+		void adjustColumnToContents(int col);
 
 	private slots:
 		//! \brief Moves a row up or down according to the button that triggers the slot
@@ -187,6 +198,8 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 
 		//! \brief Signal emitted when a column is added. The column index is sent together with the signal
 		void s_columnAdded(int);
+
+		void s_cellClicked(int, int);
 };
 
 #endif
