@@ -44,7 +44,7 @@ class ObjectsScene: public QGraphicsScene {
 
 		/*! \brief Indicates that panning mode and range selection model are activate in inverse mode.
 		By default panning model is activated with a single left-click and range selection with SHIFT + left-click */
-		invert_panning_rangesel;
+		invert_rangesel_trigger;
 
 		//! \brief Indicates if the scene need to be moved
 		bool move_scene;
@@ -122,7 +122,7 @@ class ObjectsScene: public QGraphicsScene {
 		~ObjectsScene(void);
 
 		static void setEnableCornerMove(bool enable);
-		static void setInvertPanningRangeSelection(bool invert);
+		static void setInvertRangeSelectionTrigger(bool invert);
 		static bool isCornerMoveEnabled(void);
 
 		static void setGridSize(unsigned size);
@@ -149,7 +149,7 @@ class ObjectsScene: public QGraphicsScene {
 		vector<QRectF> getPagesForPrinting(const QSizeF &paper_size, const QSizeF &margin, unsigned &h_page_cnt, unsigned &v_page_cnt);
 
 		bool isRangeSelectionEnabled(void);
-		bool isPanningRangeSelectionInverted(void);
+		bool isRangeSelectionTriggerInverted(void);
 		bool isRelationshipLineVisible(void);
 		bool isMovingObjects(void);
 
@@ -167,9 +167,6 @@ class ObjectsScene: public QGraphicsScene {
 
 		//! \brief Moves the scene when the user puts the mouse cursor on one of scene's edges
 		void moveObjectScene(void);
-
-		//! \brief Enable the panning mode for the viewport
-		void enablePannigMode(bool value);
 
 		//! \brief Handles and redirects the signal emitted by the modified object
 		void emitObjectModification(BaseGraphicObject *object);

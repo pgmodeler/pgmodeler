@@ -122,16 +122,29 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id)
 						ERR_DEFAULT_CONFIG_NOT_REST,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
-		//Overwrites the current file with the default
-		QFile::remove(current_file);
+		QFileInfo fi(current_file);
+		QDir dir;
+		QString bkp_dir = fi.absolutePath() + GlobalAttributes::DIR_SEPARATOR + GlobalAttributes::CONFS_BACKUPS_DIR,
+				bkp_filename = bkp_dir + GlobalAttributes::DIR_SEPARATOR +
+											 QString("%1.bkp_%2").arg(fi.fileName()).arg(QDateTime::currentDateTime().toString("yyyyMMd_hhmmss"));
+
+		dir.mkpath(bkp_dir);
+		QFile::rename(current_file, bkp_filename);
 		QFile::copy(default_file, current_file);
 	}
 }
 
 void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, attribs_map> &config_params, const vector<QString> &key_attribs)
 {
+	QString filename;
+
 	try
 	{
+		filename = GlobalAttributes::CONFIGURATIONS_DIR +
+							 GlobalAttributes::DIR_SEPARATOR +
+							 conf_id +
+							 GlobalAttributes::CONFIGURATION_EXT;
+
 		config_params.clear();
 		xmlparser.restartParser();
 		xmlparser.setDTDFile(GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
@@ -142,10 +155,7 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, at
 							 GlobalAttributes::OBJECT_DTD_EXT,
 							 conf_id);
 
-		xmlparser.loadXMLFile(GlobalAttributes::CONFIGURATIONS_DIR +
-							  GlobalAttributes::DIR_SEPARATOR +
-							  conf_id +
-							  GlobalAttributes::CONFIGURATION_EXT);
+		xmlparser.loadXMLFile(filename);
 
 		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
@@ -178,7 +188,7 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, at
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, filename);
 	}
 }
 

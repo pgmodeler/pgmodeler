@@ -91,13 +91,29 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 		connect(tab, SIGNAL(s_rowsMoved(int,int)), this, SLOT(swapObjects(int,int)));
 	}
 
-	objects_tab_map[OBJ_COLUMN]->setColumnCount(4);
-	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[OBJ_COLUMN]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
-	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Type"), 1);
-	objects_tab_map[OBJ_COLUMN]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
-	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Default Value"), 2);
-	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Attribute"), 3);
+	objects_tab_map[OBJ_COLUMN]->setColumnCount(5);
+	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("PK"), 0);
+	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Name"), 1);
+	objects_tab_map[OBJ_COLUMN]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),1);
+	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Type"), 2);
+	objects_tab_map[OBJ_COLUMN]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),2);
+	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Default Value"), 3);
+	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Attribute(s)"), 4);
+	objects_tab_map[OBJ_COLUMN]->adjustColumnToContents(0);
+
+	connect(objects_tab_map[OBJ_COLUMN], &ObjectTableWidget::s_cellClicked, [=](int row, int col){
+		if(col == 0 && objects_tab_map[OBJ_COLUMN]->isCellDisabled(static_cast<unsigned>(row), static_cast<unsigned>(col)))
+		{
+			Messagebox msg_box;
+			Table *table = dynamic_cast<Table *>(this->object);
+			Constraint *pk = table->getPrimaryKey();
+
+			if(pk && pk->isAddedByRelationship())
+				msg_box.show(trUtf8("It is not possible to mark a column as primary key when the table already has a primary key which was created by a relationship! This action should be done in the section <strong>Primary key</strong> of the relationship's editing form."), Messagebox::ALERT_ICON);
+			else
+				msg_box.show(trUtf8("It is not possible to mark a column created by a relationship as primary key! This action should be done in the section <strong>Primary key</strong> of the relationship's editing form."), Messagebox::ALERT_ICON);
+		}
+	});
 
 	objects_tab_map[OBJ_CONSTRAINT]->setColumnCount(4);
 	objects_tab_map[OBJ_CONSTRAINT]->setHeaderLabel(trUtf8("Name"), 0);
@@ -342,6 +358,9 @@ void TableWidget::handleObject(void)
 			openEditingForm<Rule, RuleWidget>(object);
 
 		listObjects(obj_type);
+
+		if(obj_type == OBJ_CONSTRAINT)
+			listObjects(OBJ_COLUMN);
 	}
 	catch(Exception &e)
 	{
@@ -364,7 +383,11 @@ void TableWidget::showObjectData(TableObject *object, int row)
 	QStringList contr_types={ ~ConstraintType(ConstraintType::primary_key), ~ConstraintType(ConstraintType::foreign_key),
 							  ~ConstraintType(ConstraintType::check), ~ConstraintType(ConstraintType::unique),
 							  QString("NOT NULL") },
-			constr_codes={ QString("pk"), QString("fk"), QString("ck"), QString("uq"), QString("nn")};
+			constr_codes={ TableObjectView::TXT_PRIMARY_KEY,
+										 TableObjectView::TXT_FOREIGN_KEY,
+										 TableObjectView::TXT_CHECK,
+										 TableObjectView::TXT_UNIQUE,
+										 TableObjectView::TXT_NOT_NULL};
 
 	QFont font;
 	unsigned i;
@@ -374,27 +397,32 @@ void TableWidget::showObjectData(TableObject *object, int row)
 	obj_type=object->getObjectType();
 	tab=objects_tab_map[obj_type];
 
-	//Column 0: Object name
-	tab->setCellText(object->getName(),row,0);
+
+	if(obj_type==OBJ_COLUMN)
+		tab->setCellText(object->getName(),row,1);
+	else
+		tab->setCellText(object->getName(),row,0);
 
 	//For each object type there is a use for the columns from 1 to 3
 	if(obj_type==OBJ_COLUMN)
 	{
+		Table *table = dynamic_cast<Table *>(this->object);
+		Constraint *pk = table->getPrimaryKey();
 		column=dynamic_cast<Column *>(object);
 
-		//Column 1: Column data type
-		tab->setCellText(*column->getType(),row,1);
+		//Column 2: Column data type
+		tab->setCellText(*column->getType(),row,2);
 
-		//Column 2: Column defaul value
+		//Column 3: Column defaul value
 		if(column->getSequence())
 			str_aux=QString("nextval('%1'::regclass)").arg(column->getSequence()->getName(true).remove('"'));
 		else
 			str_aux=column->getDefaultValue();
 
 		if(str_aux.isEmpty()) str_aux=QString("-");
-		tab->setCellText(str_aux,row,2);
+		tab->setCellText(str_aux,row,3);
 
-		//Column 3: Column attributes (constraints which belongs)
+		//Column 4: Column attributes (constraints which belongs)
 		str_aux=TableObjectView::getConstraintString(column);
 		for(int i=0; i < constr_codes.size(); i++)
 		{
@@ -402,10 +430,22 @@ void TableWidget::showObjectData(TableObject *object, int row)
 				str_aux1+=contr_types[i]  + QString(", ");
 		}
 
-		if(str_aux1.isEmpty()) str_aux1=QString("-");
-		else str_aux1.remove(str_aux1.size()-2, 2);
+		if(str_aux1.isEmpty())
+			str_aux1=QString("-");
+		else
+			str_aux1.remove(str_aux1.size()-2, 2);
 
-		tab->setCellText(str_aux1,row,3);
+		tab->setCellText(str_aux1,row,4);
+
+		if(str_aux.indexOf(TableObjectView::TXT_PRIMARY_KEY) >= 0)
+			tab->setCellCheckState(row, 0, Qt::Checked);
+		else
+			tab->setCellCheckState(row, 0, Qt::Unchecked);
+
+		if(column->isAddedByRelationship() || (pk && pk->isAddedByRelationship()))
+			tab->setCellDisabled(row, 0, true);
+
+		tab->adjustColumnToContents(0);
 	}
 	else if(obj_type==OBJ_CONSTRAINT)
 	{
@@ -513,6 +553,9 @@ void TableWidget::removeObjects(void)
 								.arg(object->getTypeName()),
 								ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
+
+		if(obj_type == OBJ_CONSTRAINT)
+			listObjects(OBJ_COLUMN);
 	}
 	catch(Exception &e)
 	{
@@ -562,6 +605,9 @@ void TableWidget::removeObject(int row)
 							.arg(object->getName())
 							.arg(object->getTypeName()),
 							ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		if(obj_type == OBJ_CONSTRAINT)
+			listObjects(OBJ_COLUMN);
 	}
 	catch(Exception &e)
 	{
@@ -670,7 +716,10 @@ void TableWidget::applyConfiguration(void)
 	try
 	{
 		Table *table=nullptr;
+		Constraint *pk = nullptr;
 		vector<BaseRelationship *> rels;
+		vector<Column *> pk_cols;
+		ObjectTableWidget *col_tab = objects_tab_map[OBJ_COLUMN];
 
 		if(!this->new_object)
 			op_list->registerObject(this->object, Operation::OBJECT_MODIFIED);
@@ -684,6 +733,50 @@ void TableWidget::applyConfiguration(void)
 		table->setTag(dynamic_cast<Tag *>(tag_sel->getSelectedObject()));
 
 		BaseObjectWidget::applyConfiguration();
+
+		//Retrieving all columns marked as primary key
+		for(unsigned row = 0; row < col_tab->getRowCount(); row++)
+		{
+			if(col_tab->getCellCheckState(row, 0) == Qt::Checked)
+				pk_cols.push_back(reinterpret_cast<Column *>(col_tab->getRowData(row).value<void *>()));
+		}
+
+		pk = table->getPrimaryKey();
+
+		//If there is at least one column marked as pk
+		if(!pk_cols.empty())
+		{
+			if(!pk)
+			{
+				//Create the primary key if the table does not own one
+				QString pk_name = QString("%1_pk").arg(table->getName());
+
+				pk = new Constraint;
+				pk->setName(pk_name);
+				pk->setName(PgModelerNS::generateUniqueName(pk, *table->getObjectList(OBJ_CONSTRAINT)));
+
+				for(Column *col : pk_cols)
+					pk->addColumn(col, Constraint::SOURCE_COLS);
+
+				table->addConstraint(pk);
+				op_list->registerObject(pk, Operation::OBJECT_CREATED, -1, table);
+			}
+			else if(!pk->isAddedByRelationship())
+			{
+				//If the table owns a pk we only update the columns
+				op_list->registerObject(pk, Operation::OBJECT_MODIFIED, -1, table);
+				pk->removeColumns();
+
+				for(Column *col : pk_cols)
+					pk->addColumn(col, Constraint::SOURCE_COLS);
+			}
+		}
+		else if(pk_cols.empty() && pk && !pk->isAddedByRelationship())
+		{
+			//Removing the primary key from the table when no column is checked as pk
+			op_list->registerObject(pk, Operation::OBJECT_REMOVED, -1, table);
+			table->removeObject(pk);
+		}
 
 		try
 		{

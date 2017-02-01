@@ -91,7 +91,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 							 BaseRelationship::RELATIONSHIP_GEN };
 
 	current_zoom=1;
-	modified=false;
+	modified=panning_mode=false;
 	new_obj_type=BASE_OBJECT;
 
 	//Generating a temporary file name for the model
@@ -142,6 +142,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	op_list=new OperationList(db_model);
 	scene=new ObjectsScene;
 	scene->setSceneRect(QRectF(0,0,2000,2000));
+	scene->installEventFilter(this);
 
 	viewport=new QGraphicsView(scene);
 	updateRenderHints();
@@ -163,10 +164,10 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	zoom_info_lbl->setText(QString("Zoom: 100%"));
 	zoom_info_lbl->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
 	zoom_info_lbl->setStyleSheet(QString("color: #C8000000; \
-										 background-color: #C8FFFF80;\
+								 background-color: #C8FFFF80;\
 								 border: 1px solid #C8B16351;"));
 
-			font=zoom_info_lbl->font();
+	font=zoom_info_lbl->font();
 	font.setBold(true);
 	font.setPointSizeF(12);
 	zoom_info_lbl->setFont(font);
@@ -426,6 +427,7 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 {
 	QWheelEvent *w_event=dynamic_cast<QWheelEvent *>(event);
 	QKeyEvent *k_event=dynamic_cast<QKeyEvent *>(event);
+	QGraphicsSceneMouseEvent *m_event = dynamic_cast<QGraphicsSceneMouseEvent *>(event);
 
 	//Filters the Wheel event if it is raised by the viewport scrollbars
 	if(event->type() == QEvent::Wheel && w_event->modifiers()==Qt::ControlModifier)
@@ -438,6 +440,46 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 	{
 		this->keyPressEvent(k_event);
 		return(true);
+	}
+	else if(object == scene && m_event)
+	{
+		//Forcing the panning mode using the middle mouse button
+		if(m_event->buttons() == Qt::MiddleButton && event->type() == QEvent::GraphicsSceneMouseMove)
+		{
+			if(!panning_mode)
+			{
+				panning_mode = true;
+
+				//Forcing the closed hand cursor because the default behavior of panning mode in QGraphicsView is to set an open hand cursor
+				QApplication::setOverrideCursor(Qt::ClosedHandCursor);
+			}
+
+			QPointF pos = m_event->lastScreenPos() - m_event->screenPos();
+			int dx = viewport->horizontalScrollBar()->value() + pos.x(),
+					dy = viewport->verticalScrollBar()->value() + pos.y();
+
+			viewport->horizontalScrollBar()->setValue(dx);
+			viewport->verticalScrollBar()->setValue(dy);
+
+			return (true);
+		}
+		//Activating the panning mode
+		else if(m_event->button() == Qt::MiddleButton && event->type() == QEvent::GraphicsSceneMousePress)
+		{
+			viewport->setDragMode(QGraphicsView::ScrollHandDrag);
+			QApplication::restoreOverrideCursor();
+			QApplication::setOverrideCursor(Qt::OpenHandCursor);
+			return (true);
+		}
+		//Deactivating the panning mode
+		else if(m_event->button() == Qt::MiddleButton && event->type() == QEvent::GraphicsSceneMouseRelease)
+		{
+			panning_mode = false;
+			viewport->setDragMode(QGraphicsView::NoDrag);
+			QApplication::restoreOverrideCursor();
+			QApplication::setOverrideCursor(Qt::ArrowCursor);
+			return (true);
+		}
 	}
 
 	return(QWidget::eventFilter(object, event));

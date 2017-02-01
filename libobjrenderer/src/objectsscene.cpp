@@ -28,7 +28,7 @@ QRectF ObjectsScene::page_margins=QRectF(2,2,2,2);
 QSizeF ObjectsScene::custom_paper_size=QSizeF(0,0);
 QBrush ObjectsScene::grid;
 bool ObjectsScene::corner_move=true;
-bool ObjectsScene::invert_panning_rangesel=false;
+bool ObjectsScene::invert_rangesel_trigger=false;
 
 ObjectsScene::ObjectsScene(void)
 {
@@ -114,9 +114,9 @@ void ObjectsScene::setEnableCornerMove(bool enable)
 	ObjectsScene::corner_move=enable;
 }
 
-void ObjectsScene::setInvertPanningRangeSelection(bool invert)
+void ObjectsScene::setInvertRangeSelectionTrigger(bool invert)
 {
-	ObjectsScene::invert_panning_rangesel=invert;
+	ObjectsScene::invert_rangesel_trigger=invert;
 }
 
 bool ObjectsScene::isCornerMoveEnabled(void)
@@ -443,7 +443,7 @@ void ObjectsScene::removeItem(QGraphicsItem *item)
 void ObjectsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
 	QGraphicsScene::mouseDoubleClickEvent(event);
-	enablePannigMode(false);
+	//enablePannigMode(false);
 
 	if(this->selectedItems().size()==1 && event->buttons()==Qt::LeftButton && !rel_line->isVisible())
 	{
@@ -460,7 +460,7 @@ void ObjectsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 
 void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-	QGraphicsView *view=getActiveViewport();
+	//QGraphicsView *view=getActiveViewport();
 
 	//Gets the item at mouse position
 	QGraphicsItem* item=this->itemAt(event->scenePos().x(), event->scenePos().y(), QTransform());
@@ -481,8 +481,8 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	{
 		sel_ini_pnt=event->scenePos();
 
-		if((!invert_panning_rangesel && event->modifiers()==Qt::ShiftModifier) ||
-				(invert_panning_rangesel && event->modifiers()==Qt::NoModifier))
+		if((!invert_rangesel_trigger && event->modifiers()==Qt::ShiftModifier) ||
+				(invert_rangesel_trigger && event->modifiers()==Qt::NoModifier))
 		{
 			if(enable_range_sel && this->selectedItems().isEmpty())
 			{
@@ -495,11 +495,6 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 			//Selects the object (without press control) if the user is creating a relationship
 			if(item && item->isEnabled() && !item->isSelected() &&  rel_line->isVisible())
 				item->setSelected(true);
-			/* Workaround to avoid the panning mode to be activated when user is only adding a
-		 graphical object (table / textbox / relationship / view) */
-			else if(((invert_panning_rangesel && event->modifiers()==Qt::ShiftModifier) || !invert_panning_rangesel)  &&
-					view && view->cursor().shape()==Qt::ArrowCursor)
-				enablePannigMode(true);
 		}
 	}
 	else if(event->buttons()==Qt::RightButton)
@@ -584,14 +579,6 @@ void ObjectsScene::moveObjectScene(void)
 			scene_move_timer.stop();
 		}
 	}
-}
-
-void ObjectsScene::enablePannigMode(bool value)
-{
-	QGraphicsView *view=getActiveViewport();
-
-	if(view)
-		view->setDragMode((value ? QGraphicsView::ScrollHandDrag : QGraphicsView::NoDrag));
 }
 
 void ObjectsScene::enableSceneMove(bool value)
@@ -683,13 +670,8 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
 	QGraphicsScene::mouseReleaseEvent(event);
 
-	if(event->button()==Qt::LeftButton)
-	{
-		enablePannigMode(false);
-
-		if(corner_move)
-			enableSceneMove(false);
-	}
+	if(event->button()==Qt::LeftButton && corner_move)
+		enableSceneMove(false);
 
 	//If there is selected object and the user ends the object moviment
 	if(!this->selectedItems().isEmpty() && moving_objs &&
@@ -985,9 +967,9 @@ bool ObjectsScene::isRangeSelectionEnabled(void)
 	return(enable_range_sel);
 }
 
-bool ObjectsScene::isPanningRangeSelectionInverted(void)
+bool ObjectsScene::isRangeSelectionTriggerInverted(void)
 {
-	return(invert_panning_rangesel);
+	return(invert_rangesel_trigger);
 }
 
 bool ObjectsScene::isRelationshipLineVisible(void)

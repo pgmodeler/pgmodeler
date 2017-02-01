@@ -40,6 +40,7 @@ namespace GlobalAttributes {
 
 	DIR_SEPARATOR=QString("/"),
 	DEFAULT_CONFS_DIR=QString("defaults"),
+	CONFS_BACKUPS_DIR=QString("backups"),
 	SCHEMAS_DIR=QString("schemas"),
 	SQL_SCHEMA_DIR=QString("sql"),
 	XML_SCHEMA_DIR=QString("xml"),

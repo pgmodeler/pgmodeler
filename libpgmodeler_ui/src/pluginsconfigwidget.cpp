@@ -53,7 +53,7 @@ PluginsConfigWidget::~PluginsConfigWidget(void)
 
 void PluginsConfigWidget::openRootPluginDiretory(void)
 {
-	QDesktopServices::openUrl(QUrl(QString("file:///") + root_dir_edt->text()));
+	QDesktopServices::openUrl(QUrl(QString("file://") + root_dir_edt->text()));
 }
 
 void PluginsConfigWidget::showPluginInfo(int idx)
