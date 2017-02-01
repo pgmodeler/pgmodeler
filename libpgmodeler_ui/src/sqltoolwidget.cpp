@@ -26,7 +26,10 @@
 SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 {
 	setupUi(this);
-	h_splitter->setSizes({0, 10000});
+
+	h_splitter->setSizes({315, 10000});
+	h_splitter->handle(1)->installEventFilter(this);
+
 	v_splitter->setSizes({1000, 400});
 
 	QVBoxLayout *vbox=new QVBoxLayout;
@@ -66,6 +69,22 @@ SQLToolWidget::~SQLToolWidget(void)
 {
 	while(databases_tbw->count() > 0)
 		closeDatabaseExplorer(0);
+}
+
+bool SQLToolWidget::eventFilter(QObject *object, QEvent *event)
+{
+	if(event->type() == QEvent::MouseButtonDblClick &&
+		 qobject_cast<QSplitterHandle *>(object) == h_splitter->handle(1))
+	{
+		if(h_splitter->sizes().at(0) != 0)
+			h_splitter->setSizes({0, 10000});
+		else
+			h_splitter->setSizes({315, 10000});
+
+		return(true);
+	}
+
+	return(QWidget::eventFilter(object, event));
 }
 
 void SQLToolWidget::updateTabs(void)
