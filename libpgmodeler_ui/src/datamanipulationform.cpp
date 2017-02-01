@@ -254,6 +254,8 @@ void DataManipulationForm::retrieveData(void)
 		if(limit > 0)
 			query+=QString(" LIMIT %1").arg(limit);
 
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+
 		catalog.setConnection(conn_cat);
 		conn_sql.connect();
 		conn_sql.executeDMLCommand(query, res);
@@ -286,6 +288,8 @@ void DataManipulationForm::retrieveData(void)
 
 		conn_sql.close();
 		catalog.closeConnection();
+
+		QApplication::restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{
@@ -490,6 +494,8 @@ void DataManipulationForm::listObjects(QComboBox *combo, vector<ObjectType> obj_
 		QStringList items;
 		int idx=0, count=0;
 
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+
 		catalog.setConnection(conn);
 		catalog.setFilter(Catalog::LIST_ALL_OBJS);
 		combo->blockSignals(true);
@@ -524,6 +530,8 @@ void DataManipulationForm::listObjects(QComboBox *combo, vector<ObjectType> obj_
 		combo->setCurrentIndex(0);
 		combo->blockSignals(false);
 		catalog.closeConnection();
+
+		QApplication::restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{

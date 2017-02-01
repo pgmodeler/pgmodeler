@@ -1777,14 +1777,12 @@ void DatabaseExplorerWidget::openDataGrid(const QString &schema, const QString &
 	DataManipulationForm *data_manip=new DataManipulationForm;
 	Connection conn=Connection(this->connection.getConnectionParams());
 
-	QApplication::setOverrideCursor(Qt::WaitCursor);
 	data_manip->setWindowModality(Qt::NonModal);
 	data_manip->setAttribute(Qt::WA_DeleteOnClose, true);
 	data_manip->hide_views_chk->setChecked(hide_views);
 
 	data_manip->setAttributes(conn, schema, table);
 	data_manip->show();
-	QApplication::restoreOverrideCursor();
 #endif
 }
 
