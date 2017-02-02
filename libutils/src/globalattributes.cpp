@@ -59,6 +59,7 @@ namespace GlobalAttributes {
 	CONNECTIONS_CONF=QString("connections"),
 	RELATIONSHIPS_CONF=QString("relationships"),
 	SNIPPETS_CONF=QString("snippets"),
+	SQL_HISTORY_CONF=QString("sql-history"),
 
 	SQL_HIGHLIGHT_CONF=QString("sql-highlight"),
 	XML_HIGHLIGHT_CONF=QString("xml-highlight"),

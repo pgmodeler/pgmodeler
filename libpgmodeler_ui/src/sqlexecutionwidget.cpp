@@ -23,6 +23,8 @@
 #include "pgmodeleruins.h"
 #include "plaintextitemdelegate.h"
 
+map<QString, QStringList> SQLExecutionWidget::cmd_history;
+
 SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 {
 	setupUi(this);
@@ -150,6 +152,8 @@ void SQLExecutionWidget::fillResultsTable(ResultSet &res)
 void SQLExecutionWidget::showEvent(QShowEvent *)
 {
 	sql_cmd_txt->setFocus();
+	cmd_history_txt->clear();
+	cmd_history_txt->appendPlainText(cmd_history[sql_cmd_conn.getConnectionId(true,true)].join(QChar()));
 }
 
 void SQLExecutionWidget::resizeEvent(QResizeEvent *event)
@@ -312,6 +316,7 @@ void SQLExecutionWidget::registerSQLCommand(const QString &cmd, unsigned rows, c
 
 		fmt_cmd+=QString("--\n");
 
+		cmd_history[sql_cmd_conn.getConnectionId(true,true)].append(fmt_cmd);
 		cmd_history_txt->appendPlainText(fmt_cmd);
 	}
 }
@@ -602,7 +607,105 @@ void SQLExecutionWidget::configureSnippets(void)
 	code_compl_wgt->clearCustomItems();
 	code_compl_wgt->insertCustomItems(SnippetsConfigWidget::getAllSnippetsAttribute(ParsersAttributes::ID),
 									  SnippetsConfigWidget::getAllSnippetsAttribute(ParsersAttributes::LABEL),
-										QPixmap(PgModelerUiNS::getIconPath("codesnippet")));
+																		QPixmap(PgModelerUiNS::getIconPath("codesnippet")));
+}
+
+void SQLExecutionWidget::saveCommandHistory(void)
+{
+	try
+	{
+		SchemaParser schparser;
+		attribs_map attribs;
+		QString commands;
+		QByteArray buffer;
+		QFile file;
+
+		schparser.loadFile(GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
+											 GlobalAttributes::DIR_SEPARATOR +
+											 GlobalAttributes::SCHEMAS_DIR +
+											 GlobalAttributes::DIR_SEPARATOR +
+											 ParsersAttributes::COMMANDS +
+											 GlobalAttributes::SCHEMA_EXT);
+
+		for(auto hist : cmd_history)
+		{
+			attribs[ParsersAttributes::ID] = hist.first;
+			attribs[ParsersAttributes::COMMANDS] = hist.second.join(QChar('\n'));
+			commands += (schparser.getCodeDefinition(attribs));
+		}
+
+		schparser.loadFile(GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
+											 GlobalAttributes::DIR_SEPARATOR +
+											 GlobalAttributes::SCHEMAS_DIR +
+											 GlobalAttributes::DIR_SEPARATOR +
+											 GlobalAttributes::SQL_HISTORY_CONF +
+											 GlobalAttributes::SCHEMA_EXT);
+
+		attribs.clear();
+		attribs[ParsersAttributes::COMMANDS] = commands;
+		buffer.append(schparser.getCodeDefinition(attribs));
+
+
+		file.setFileName(GlobalAttributes::CONFIGURATIONS_DIR +
+										 GlobalAttributes::DIR_SEPARATOR +
+										 GlobalAttributes::SQL_HISTORY_CONF +
+										 GlobalAttributes::CONFIGURATION_EXT);
+
+		if(!file.open(QFile::WriteOnly))
+			throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(file.fileName()),
+											ERR_FILE_DIR_NOT_ACCESSED, __PRETTY_FUNCTION__, __FILE__ ,__LINE__);
+
+		file.write(buffer);
+		file.close();
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void SQLExecutionWidget::loadCommandHistory(void)
+{
+	try
+	{
+		XMLParser xmlparser;
+		attribs_map attribs;
+
+		xmlparser.setDTDFile(GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
+												 GlobalAttributes::DIR_SEPARATOR +
+												 GlobalAttributes::OBJECT_DTD_DIR +
+												 GlobalAttributes::DIR_SEPARATOR +
+												 GlobalAttributes::SQL_HISTORY_CONF +
+												 GlobalAttributes::OBJECT_DTD_EXT,
+												 GlobalAttributes::SQL_HISTORY_CONF);
+
+		xmlparser.loadXMLFile(GlobalAttributes::CONFIGURATIONS_DIR +
+													GlobalAttributes::DIR_SEPARATOR +
+													GlobalAttributes::SQL_HISTORY_CONF +
+													GlobalAttributes::CONFIGURATION_EXT);
+
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
+		{
+			do
+			{
+				if(xmlparser.getElementName() == ParsersAttributes::COMMANDS)
+				{
+					xmlparser.getElementAttributes(attribs);
+					xmlparser.savePosition();
+
+					if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
+						cmd_history[attribs[ParsersAttributes::ID]].append(xmlparser.getElementContent());
+
+					xmlparser.restorePosition();
+				}
+			}
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
+		}
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void SQLExecutionWidget::enableSQLExecution(bool enable)
@@ -627,13 +730,40 @@ void SQLExecutionWidget::enableSQLExecution(bool enable)
 void SQLExecutionWidget::showHistoryContextMenu(void)
 {
 	QMenu *ctx_menu=cmd_history_txt->createStandardContextMenu();
-	QAction *act=new QAction(trUtf8("Clear history"), ctx_menu);
+	QAction *action_clear = new QAction(trUtf8("Clear history"), ctx_menu),
+			*action_save = new QAction(trUtf8("Save history"), ctx_menu),
+			*action_reload = new QAction(trUtf8("Reload history"), ctx_menu),
+			*exec_act = nullptr;
 
 	ctx_menu->addSeparator();
-	ctx_menu->addAction(act);
+	ctx_menu->addAction(action_reload);
+	ctx_menu->addAction(action_save);
+	ctx_menu->addSeparator();
+	ctx_menu->addAction(action_clear);
 
-	if(ctx_menu->exec(QCursor::pos())==act)
+	exec_act = ctx_menu->exec(QCursor::pos());
+
+	if(exec_act == action_clear)
+	{
+		Messagebox msg_box;
+
+		msg_box.show(trUtf8("This action will wipe out all the command history for this connection! Do you really want to proceed?"),
+									Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+
+		if(msg_box.result() == QDialog::Accepted)
+		{
+			cmd_history_txt->clear();
+			cmd_history[sql_cmd_conn.getConnectionId(true,true)].clear();
+		}
+	}
+	else if(exec_act == action_save)
+		SQLExecutionWidget::saveCommandHistory();
+	else if(exec_act == action_reload)
+	{
+		SQLExecutionWidget::loadCommandHistory();
 		cmd_history_txt->clear();
+		cmd_history_txt->appendPlainText(cmd_history[sql_cmd_conn.getConnectionId(true,true)].join(QChar()));
+	}
 
 	delete(ctx_menu);
 }

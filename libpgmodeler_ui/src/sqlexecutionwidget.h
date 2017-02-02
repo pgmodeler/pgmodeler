@@ -37,6 +37,8 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 	private:
 		Q_OBJECT
 
+		static map<QString, QStringList> cmd_history;
+
 		SchemaParser schparser;
 
 		//! \brief Syntax highlighter for sql input field
@@ -99,6 +101,12 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 
 	public slots:
 		void configureSnippets(void);
+
+		//! \brief Save the history of all connections open in the SQL Execution to the sql-history.conf
+		static void saveCommandHistory(void);
+
+		//! \brief Load the history from the file sql-history.conf
+		static void loadCommandHistory(void);
 
 	private slots:
 		//! \brief Enables the command buttons when user fills the sql field

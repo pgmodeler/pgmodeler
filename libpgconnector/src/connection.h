@@ -190,8 +190,9 @@ class Connection {
 		QString getConnectionString(void);
 
 		/*! \brief Returns a string containing the following signature 'alias (host:port)' by default.
-			If host_port_only is true the the signature will not contain the alias being in the form 'host:port' */
-		QString getConnectionId(bool host_port_only = false);
+			If host_port_only is true the signature will not contain the alias being in the form 'host:port'
+			If incl_db_name is true the database name will be prepended to the final signature 'dbname@host:port' */
+		QString getConnectionId(bool host_port_only = false, bool incl_db_name = false);
 
 		/*! \brief Returns the DBMS version in format XX.YY[.ZZ]
 		If major_only is true only XX.YY portion is returned */

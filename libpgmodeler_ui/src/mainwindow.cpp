@@ -20,6 +20,7 @@
 #include "pgmodeleruins.h"
 #include "bugreportform.h"
 #include "metadatahandlingform.h"
+#include "sqlexecutionwidget.h"
 
 bool MainWindow::confirm_validation=true;
 
@@ -67,7 +68,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		plugins_menu->setEnabled(!plugins_menu->isEmpty());
 		action_plugins->setEnabled(!plugins_menu->isEmpty());
 		action_plugins->setMenu(plugins_menu);
-
 
 		confs=GeneralConfigWidget::getConfigurationParams();
 		itr=confs.begin();
@@ -397,6 +397,12 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		if(!act->shortcut().toString().isEmpty())
 			act->setToolTip(act->toolTip() + QString(" (%1)").arg(act->shortcut().toString()));
 	}
+
+	try
+	{
+		SQLExecutionWidget::loadCommandHistory();
+	}
+	catch(Exception &){}
 }
 
 MainWindow::~MainWindow(void)
