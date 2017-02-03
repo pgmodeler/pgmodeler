@@ -67,7 +67,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <table name="table1">
 	<schema name="public"/>
-	<position x="375" y="305"/>
+	<position x="378" y="260"/>
 	<column name="column" not-null="true">
 		<type name="serial" length="1"/>
 	</column>
@@ -111,7 +111,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="public.&quot;table&quot;"
 	 src-required="false" dst-required="false">
 	<line>
-		<position x="302" y="319"/>
+		<position x="300" y="260"/>
 	<position x="300" y="120"/>
 	</line>
 	<label ref-type="name-label">
@@ -124,7 +124,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <view name="view">
 	<schema name="public"/>
-	<position x="15" y="323"/>
+	<position x="9" y="278"/>
 	<reference table="public.&quot;table&quot;" column="column1" alias="t1" column-alias="col1"/>
 	<reference table="public.table1" column="column2" alias="t2" column-alias="col2"/>
 	<reference alias="expr">
@@ -150,18 +150,18 @@ CAUTION: Do not modify this file unless you know what you are doing.
 </relationship>
 
 <textbox name="textbox" font-size="9">
-	<position x="401" y="159"/>
+	<position x="400" y="160"/>
 	<comment><![CDATA[Selected Textbox]]></comment>
 </textbox>
 
 <textbox name="textbox1" protected="true" font-size="9">
-	<position x="401" y="255"/>
+	<position x="400" y="220"/>
 	<comment><![CDATA[Protected Textbox]]></comment>
 </textbox>
 
 <table name="table2" oids="true">
 	<schema name="public"/>
-	<position x="370" y="40"/>
+	<position x="380" y="40"/>
 	<column name="column" not-null="true">
 		<type name="serial" length="1"/>
 	</column>
@@ -204,11 +204,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="public.&quot;table&quot;"
 	 src-required="false" dst-required="false">
 	<line>
-		<position x="319" y="96"/>
-	<position x="319" y="48"/>
+		<position x="322" y="97"/>
+	<position x="321" y="48"/>
 	</line>
 	<label ref-type="name-label">
-		<position x="45.4757" y="-73.8485"/>
+		<position x="-9.02426" y="-75.3485"/>
 	</label>
 </relationship>
 

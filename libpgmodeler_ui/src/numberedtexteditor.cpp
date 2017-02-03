@@ -28,16 +28,31 @@ QColor NumberedTextEditor::line_hl_color=Qt::yellow;
 QFont NumberedTextEditor::default_font=QFont(QString("DejaVu Sans Mono"), 10);
 int NumberedTextEditor::tab_width=0;
 
+
 NumberedTextEditor::NumberedTextEditor(QWidget * parent) : QPlainTextEdit(parent)
 {
 	line_number_wgt=new LineNumbersWidget(this);
 	setWordWrapMode(QTextOption::NoWrap);
-	setContextMenuPolicy(Qt::CustomContextMenu);
 
 	connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightCurrentLine()));
 	connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateLineNumbers(void)));
 	connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumbersSize()));
-	connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu()));
+
+	setCustomContextMenuEnabled(true);
+}
+
+void NumberedTextEditor::setCustomContextMenuEnabled(bool enabled)
+{
+	if(!enabled)
+	{
+		setContextMenuPolicy(Qt::NoContextMenu);
+		disconnect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu()));
+	}
+	else
+	{
+		setContextMenuPolicy(Qt::CustomContextMenu);
+		connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu()), Qt::UniqueConnection);
+	}
 }
 
 void NumberedTextEditor::setDefaultFont(const QFont &font)

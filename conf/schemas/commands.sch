@@ -3,4 +3,4 @@
 
 [    <commands id=] "{id}"> $br
 [<!] $ob CDATA $ob {commands} $cb $cb > $br
-[    </commands>] $br $br
+[    </commands>] $br

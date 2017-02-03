@@ -69,6 +69,11 @@ class NumberedTextEditor : public QPlainTextEdit {
 		static void setTabWidth(int value);
 		static int getTabWidth(void);
 
+		/*! brief Disable the custom context menu designed specifically for this class.
+		This method is useful when the user needs to create another context menu that executes actions
+		differents from the original ones */
+		void setCustomContextMenuEnabled(bool enabled);
+
 	private slots:
 		void showContextMenu(void);
 

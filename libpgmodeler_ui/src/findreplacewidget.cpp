@@ -58,6 +58,9 @@ FindReplaceWidget::FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget *parent):
 void FindReplaceWidget::showEvent(QShowEvent *)
 {
 	find_edt->setFocus();
+	replace_btns_parent->setVisible(!text_edt->isReadOnly());
+	replace_lbl->setVisible(!text_edt->isReadOnly());
+	replace_edt->setVisible(!text_edt->isReadOnly());
 }
 
 void FindReplaceWidget::replaceText(void)

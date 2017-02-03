@@ -400,7 +400,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	try
 	{
-		SQLExecutionWidget::loadCommandHistory();
+		SQLExecutionWidget::loadSQLHistory();
 	}
 	catch(Exception &){}
 }
@@ -665,6 +665,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 				log_files.pop_front();
 			}
 
+			SQLExecutionWidget::saveSQLHistory();
 			qApp->quit();
 		}
 	}
