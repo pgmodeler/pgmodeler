@@ -5,4 +5,4 @@
 <!ELEMENT sql-history (commands*)>
 
 <!ELEMENT commands (#PCDATA)>
-<!ATTLIST commands id CDATA #REQUIRED>
+<!ATTLIST commands connection CDATA #REQUIRED>

@@ -40,7 +40,7 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 
 		static map<QString, QString> cmd_history;
 
-		static int max_history_length;
+		static int cmd_history_max_len;
 
 		SchemaParser schparser;
 
@@ -111,6 +111,16 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 	public slots:
 		void configureSnippets(void);
 
+		//! \brief Save the history of all connections open in the SQL Execution to the sql-history.conf
+		static void saveSQLHistory(void);
+
+		//! \brief Load the history from the file sql-history.conf
+		static void loadSQLHistory(void);
+
+		static void setSQLHistoryMaxLength(int len);
+
+		static int getSQLHistoryMaxLength(void);
+
 	private slots:
 		//! \brief Enables the command buttons when user fills the sql field
 		void enableCommandButtons(void);
@@ -134,12 +144,6 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		void toggleOutputPane(bool visible);
 
 		void showHistoryContextMenu(void);
-
-		//! \brief Save the history of all connections open in the SQL Execution to the sql-history.conf
-		static void saveSQLHistory(void);
-
-		//! \brief Load the history from the file sql-history.conf
-		static void loadSQLHistory(void);
 
 		friend class SQLToolWidget;
 };

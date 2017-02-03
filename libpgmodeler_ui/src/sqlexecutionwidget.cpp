@@ -24,7 +24,8 @@
 #include "plaintextitemdelegate.h"
 
 map<QString, QString> SQLExecutionWidget::cmd_history;
-int SQLExecutionWidget::max_history_length = 10;
+
+int SQLExecutionWidget::cmd_history_max_len = 1000;
 
 SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 {
@@ -38,6 +39,8 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	cmd_history_txt->setContextMenuPolicy(Qt::CustomContextMenu);
 	cmd_history_txt->setReadOnly(true);
 	cmd_history_txt->installEventFilter(this);
+
+	output_tbw->widget(2)->installEventFilter(this);
 
 	find_history_wgt = new FindReplaceWidget(cmd_history_txt, find_history_parent);
 	QVBoxLayout *layout = new QVBoxLayout;
@@ -106,21 +109,31 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 
 bool SQLExecutionWidget::eventFilter(QObject *object, QEvent *event)
 {
-	if(event->type() == QEvent::MouseButtonDblClick &&
-			qobject_cast<QSplitterHandle *>(object) == v_splitter->handle(1))
+	if(event->type() == QEvent::MouseButtonDblClick && object == v_splitter->handle(1))
 	{
 		output_tb->setChecked(!v_splitter->handle(1)->isEnabled());
 		return(true);
 	}
 	else if(event->type()== QEvent::MouseButtonPress &&
 					dynamic_cast<QMouseEvent *>(event)->button()==Qt::MiddleButton &&
-					qobject_cast<QPlainTextEdit *>(object)==cmd_history_txt &&
+					object == cmd_history_txt &&
 					cmd_history_txt->textCursor().hasSelection())
 	{
 		sql_cmd_txt->appendPlainText(cmd_history_txt->textCursor().selectedText());
 		return(true);
 	}
+	else if(event->type() == QEvent::Show && object == output_tbw->widget(2))
+	{
+		if(cmd_history_txt->toPlainText().count(QChar('\n')) !=
+			 cmd_history[sql_cmd_conn.getConnectionId(true,true)].count(QChar('\n')))
+		{
+			cmd_history_txt->clear();
+			cmd_history_txt->appendPlainText(cmd_history[sql_cmd_conn.getConnectionId(true,true)]);
+			cmd_history_txt->updateLineNumbers();
+		}
 
+		return(true);
+	}
 	return(QWidget::eventFilter(object, event));
 }
 
@@ -163,8 +176,6 @@ void SQLExecutionWidget::fillResultsTable(ResultSet &res)
 void SQLExecutionWidget::showEvent(QShowEvent *)
 {
 	sql_cmd_txt->setFocus();
-	cmd_history_txt->clear();
-	cmd_history_txt->appendPlainText(cmd_history[sql_cmd_conn.getConnectionId(true,true)]);
 }
 
 void SQLExecutionWidget::resizeEvent(QResizeEvent *event)
@@ -316,17 +327,24 @@ void SQLExecutionWidget::addToSQLHistory(const QString &cmd, unsigned rows, cons
 	if(!cmd.isEmpty())
 	{
 		QString fmt_cmd;
-		fmt_cmd=QString("\n-- Executed at [%1] -- \n").arg(QDateTime::currentDateTime().toString(QString("yyyy-MM-dd hh:mm:ss.zzz")));
-		fmt_cmd+=cmd;
-		fmt_cmd+=QChar('\n');
+
+		if(!cmd_history_txt->toPlainText().isEmpty())
+			fmt_cmd += QString("\n");
+
+		fmt_cmd += QString("-- Executed at [%1] -- \n").arg(QDateTime::currentDateTime().toString(QString("yyyy-MM-dd hh:mm:ss.zzz")));
+		fmt_cmd += cmd;
+		fmt_cmd += QChar('\n');
 
 		if(!error.isEmpty())
 		{
-			fmt_cmd+=QString("-- Query failed --\n");
-			fmt_cmd+=QString("/*\n%1\n*/\n").arg(error);
+			fmt_cmd += QString("-- Query failed --\n");
+			fmt_cmd += QString("/*\n%1\n*/\n").arg(error);
 		}
 		else
-			fmt_cmd+=QString("-- Rows retrieved: %1\n").arg(rows);
+			fmt_cmd += QString("-- Rows retrieved: %1\n").arg(rows);
+
+		if(!fmt_cmd.trimmed().endsWith(ParsersAttributes::DDL_END_TOKEN))
+			fmt_cmd += ParsersAttributes::DDL_END_TOKEN + QChar('\n');
 
 		SQLExecutionWidget::validateSQLHistoryLength(sql_cmd_conn.getConnectionId(true,true), fmt_cmd, cmd_history_txt);
 	}
@@ -335,17 +353,18 @@ void SQLExecutionWidget::addToSQLHistory(const QString &cmd, unsigned rows, cons
 void SQLExecutionWidget::validateSQLHistoryLength(const QString &conn_id, const QString &fmt_cmd, NumberedTextEditor *cmd_history_txt)
 {
 	QString cmds;
-	int chr_count = 0;
+	int ln_count = 0;
 
 	cmds = cmd_history[conn_id];
-	chr_count = cmds.count(QChar('\n'));
-	chr_count += fmt_cmd.count(QChar('\n'));
+	ln_count = cmds.count(QChar('\n'));
+	ln_count += fmt_cmd.count(QChar('\n'));
 
-	if(chr_count > max_history_length)
+	if(ln_count > cmd_history_max_len)
 	{
 		QStringList buffer = cmds.split(QChar('\n'));
-		cmds = buffer.mid(buffer.size()/2, max_history_length).join(QChar('\n'));
-		cmd_history[conn_id] = cmds;
+		cmds = buffer.mid(buffer.size()/2).join(QChar('\n'));
+		cmds = cmds.mid(cmds.indexOf(ParsersAttributes::DDL_END_TOKEN) + ParsersAttributes::DDL_END_TOKEN.length());
+		cmd_history[conn_id] = cmds.trimmed();
 
 		if(cmd_history_txt)
 		{
@@ -659,19 +678,17 @@ void SQLExecutionWidget::saveSQLHistory(void)
 		QByteArray buffer;
 		QFile file;
 
-		schparser.loadFile(GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
-											 GlobalAttributes::DIR_SEPARATOR +
-											 GlobalAttributes::SCHEMAS_DIR +
-											 GlobalAttributes::DIR_SEPARATOR +
-											 ParsersAttributes::COMMANDS +
-											 GlobalAttributes::SCHEMA_EXT);
-
 		for(auto hist : cmd_history)
 		{
-			attribs[ParsersAttributes::ID] = hist.first;
+			attribs[ParsersAttributes::CONNECTION] = hist.first;
 			attribs[ParsersAttributes::COMMANDS] = hist.second;
 			schparser.ignoreEmptyAttributes(true);
-			commands += (schparser.getCodeDefinition(attribs));
+			commands += schparser.getCodeDefinition(GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
+																							GlobalAttributes::DIR_SEPARATOR +
+																							GlobalAttributes::SCHEMAS_DIR +
+																							GlobalAttributes::DIR_SEPARATOR +
+																							ParsersAttributes::COMMANDS +
+																							GlobalAttributes::SCHEMA_EXT, attribs);
 		}
 
 		schparser.loadFile(GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
@@ -736,7 +753,7 @@ void SQLExecutionWidget::loadSQLHistory(void)
 					xmlparser.savePosition();
 
 					if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
-						cmd_history[attribs[ParsersAttributes::ID]].append(xmlparser.getElementContent());
+						cmd_history[attribs[ParsersAttributes::CONNECTION]].append(xmlparser.getElementContent());
 
 					xmlparser.restorePosition();
 				}
@@ -748,6 +765,19 @@ void SQLExecutionWidget::loadSQLHistory(void)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+}
+
+void SQLExecutionWidget::setSQLHistoryMaxLength(int len)
+{
+	if(len < 100 || len > 2000)
+		len = 1000;
+
+	SQLExecutionWidget::cmd_history_max_len = len;
+}
+
+int SQLExecutionWidget::getSQLHistoryMaxLength(void)
+{
+	return(SQLExecutionWidget::cmd_history_max_len);
 }
 
 void SQLExecutionWidget::enableSQLExecution(bool enable)

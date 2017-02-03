@@ -1005,7 +1005,7 @@
           <item row="4" column="1" colspan="2">
            <layout class="QHBoxLayout" name="horizontalLayout_19">
             <item>
-             <widget class="QSpinBox" name="sql_history_size_spb">
+             <widget class="QSpinBox" name="history_max_length_spb">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -1019,7 +1019,7 @@
                </size>
               </property>
               <property name="minimum">
-               <number>1</number>
+               <number>100</number>
               </property>
               <property name="maximum">
                <number>2000</number>
@@ -1063,7 +1063,7 @@
                <enum>Qt::Horizontal</enum>
               </property>
               <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
+               <enum>QSizePolicy::Expanding</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>

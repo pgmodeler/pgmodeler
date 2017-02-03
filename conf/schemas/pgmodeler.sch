@@ -44,7 +44,8 @@ $sp [<configuration op-list-size="] {op-list-size} ["] $br
 [               show-canvas-grid="] %if {show-canvas-grid} %then true %else false %end ["] $br
 [               show-page-delimiters="] %if {show-page-delimiters} %then true %else false %end ["] $br
 [               align-objs-to-grid="] %if {align-objs-to-grid} %then true %else false %end ["] $br
-[               min-object-opacity="] {min-object-opacity} ["]
+[               min-object-opacity="] {min-object-opacity} ["] $br
+[               history-max-length="] {history-max-length} ["]
 [/>] $br
 
 %if {file} %then

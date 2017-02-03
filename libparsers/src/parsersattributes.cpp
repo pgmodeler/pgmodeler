@@ -220,6 +220,7 @@ namespace ParsersAttributes {
 	HIGHLIGHT_LINES=QString("highlight-lines"),
 	HIGHLIGHT_OBJECTS=QString("highlight-objects"),
 	HIGHLIGHT_ORDER=QString("highlight-order"),
+	HISTORY_MAX_LENGTH=QString("history-max-length"),
 	ICON=QString("icon"),
 	ID=QString("id"),
 	IDENTIFIER=QString("identifier"),
