@@ -94,9 +94,13 @@ void SQLToolWidget::updateTabs(void)
 	for(int i=0; i < sql_exec_tbw->count(); i++)
 	{
 		sql_exec_wgt=dynamic_cast<SQLExecutionWidget *>(sql_exec_tbw->widget(i));
-		sql_exec_wgt-> sql_cmd_txt->updateLineNumbersSize();
-		sql_exec_wgt-> sql_cmd_txt->updateLineNumbers();
+		sql_exec_wgt->sql_cmd_txt->updateLineNumbersSize();
+		sql_exec_wgt->sql_cmd_txt->updateLineNumbers();
 		sql_exec_wgt->sql_cmd_hl->rehighlight();
+
+		//Forcing the update of the sql history widget (see SQLExecutionWidget::eventFilter)
+		sql_exec_wgt->output_tbw->widget(2)->hide();
+		sql_exec_wgt->output_tbw->widget(2)->show();
 	}
 }
 

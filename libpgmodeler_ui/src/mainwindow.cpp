@@ -1207,7 +1207,7 @@ void MainWindow::applyConfigurations(void)
 		}
 
 		updateConnections();
-		sql_tool_wgt->configureSnippets();
+		sql_tool_wgt->configureSnippets();		
 	}
 
 	sql_tool_wgt->updateTabs();

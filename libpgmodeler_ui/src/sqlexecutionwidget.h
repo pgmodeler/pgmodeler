@@ -87,7 +87,6 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 
 		void showEvent(QShowEvent *);
 		void resizeEvent(QResizeEvent *);
-		void focusInEvent(QFocusEvent *);
 		bool eventFilter(QObject *object, QEvent *event);
 
 	public:
