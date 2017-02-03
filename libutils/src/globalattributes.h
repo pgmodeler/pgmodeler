@@ -78,6 +78,7 @@ namespace GlobalAttributes {
 	SQL_HIGHLIGHT_CONF, //! \brief Configuration file for SQL language highlight
 	XML_HIGHLIGHT_CONF, //! \brief Configuration file for XML language highlight
 	PATTERN_HIGHLIGHT_CONF, //! \brief Configuration file for name patterns highlight (relationship editing form)
+	SQL_HISTORY_CONF,		//! \brief Default name for the SQL commands history configuration file
 
 	EXAMPLE_MODEL, //! \brief Default name for the sample model loaded on appearence configuration form
 	UI_STYLE_CONF, //! \brief Configuration file ui style

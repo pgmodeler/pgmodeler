@@ -24,6 +24,7 @@
 #include "mainwindow.h"
 #include "numberedtexteditor.h"
 #include "linenumberswidget.h"
+#include "sqlexecutionwidget.h"
 
 map<QString, attribs_map> GeneralConfigWidget::config_params;
 
@@ -121,6 +122,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HIGHLIGHT_LINES]=QString();
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::USE_PLACEHOLDERS]=QString();
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::MIN_OBJECT_OPACITY]=QString();
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HISTORY_MAX_LENGTH]=QString();
 
 	simp_obj_creation_ht=new HintTextWidget(simp_obj_creation_hint, this);
 	simp_obj_creation_ht->setText(simple_obj_creation_chk->statusTip());
@@ -225,6 +227,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 
 		grid_size_spb->setValue((config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]).toUInt());
 		oplist_size_spb->setValue((config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]).toUInt());
+		history_max_length_spb->setValue(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HISTORY_MAX_LENGTH].toUInt());
 
 		interv=(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::AUTOSAVE_INTERVAL]).toUInt();
 		tab_width=(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_TAB_WIDTH]).toInt();
@@ -369,6 +372,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_TAB_WIDTH]=QString::number(tab_width_chk->isChecked() ? tab_width_spb->value() : 0);
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::MIN_OBJECT_OPACITY]=QString::number(min_obj_opacity_spb->value());
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::USE_PLACEHOLDERS]=(use_placeholders_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
+		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HISTORY_MAX_LENGTH]=QString::number(history_max_length_spb->value());
 
 		ObjectsScene::getGridOptions(show_grid, align_grid, show_delim);
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_CANVAS_GRID]=(show_grid ? ParsersAttributes::_TRUE_ : QString());
@@ -480,6 +484,7 @@ void GeneralConfigWidget::applyConfiguration(void)
 	ModelWidget::setMinimumObjectOpacity(min_obj_opacity_spb->value());
 	MainWindow::setConfirmValidation(confirm_validation_chk->isChecked());
 	BaseObjectView::setPlaceholderEnabled(use_placeholders_chk->isChecked());
+	SQLExecutionWidget::setSQLHistoryMaxLength(history_max_length_spb->value());
 
 	fnt.setFamily(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]);
 	fnt.setPointSize(fnt_size);
