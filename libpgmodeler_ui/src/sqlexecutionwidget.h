@@ -87,6 +87,7 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 
 		void showEvent(QShowEvent *);
 		void resizeEvent(QResizeEvent *);
+		void focusInEvent(QFocusEvent *);
 		bool eventFilter(QObject *object, QEvent *event);
 
 	public:
@@ -116,6 +117,8 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 
 		//! \brief Load the history from the file sql-history.conf
 		static void loadSQLHistory(void);
+
+		static void destroySQLHistory(void);
 
 		static void setSQLHistoryMaxLength(int len);
 

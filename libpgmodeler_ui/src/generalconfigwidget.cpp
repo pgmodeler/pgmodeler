@@ -204,6 +204,10 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 		QDesktopServices::openUrl(QUrl(QString("file://") + confs_dir_edt->text()));
 	});
 
+	connect(clear_sql_history_tb, &QToolButton::clicked, [=](){
+		SQLExecutionWidget::destroySQLHistory();
+	});
+
 #ifdef NO_UPDATE_CHECK
 	check_upd_chk->setChecked(false);
 	check_upd_chk->setVisible(false);

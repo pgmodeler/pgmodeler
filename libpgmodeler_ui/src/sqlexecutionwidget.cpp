@@ -134,6 +134,7 @@ bool SQLExecutionWidget::eventFilter(QObject *object, QEvent *event)
 
 		return(true);
 	}
+
 	return(QWidget::eventFilter(object, event));
 }
 
@@ -767,6 +768,24 @@ void SQLExecutionWidget::loadSQLHistory(void)
 	}
 }
 
+void SQLExecutionWidget::destroySQLHistory(void)
+{
+	Messagebox msg_box;
+
+	msg_box.show(trUtf8("This action will wipe out all the SQL commands history for all connections! Do you really want to proceed?"),
+								Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+
+	if(msg_box.result() == QDialog::Accepted)
+	{
+		QFile::remove(GlobalAttributes::CONFIGURATIONS_DIR +
+									GlobalAttributes::DIR_SEPARATOR +
+									GlobalAttributes::SQL_HISTORY_CONF +
+									GlobalAttributes::CONFIGURATION_EXT);
+
+		SQLExecutionWidget::cmd_history.clear();
+	}
+}
+
 void SQLExecutionWidget::setSQLHistoryMaxLength(int len)
 {
 	if(len < 100 || len > 2000)
@@ -826,7 +845,7 @@ void SQLExecutionWidget::showHistoryContextMenu(void)
 	{
 		Messagebox msg_box;
 
-		msg_box.show(trUtf8("This action will wipe out all the command history for this connection! Do you really want to proceed?"),
+		msg_box.show(trUtf8("This action will wipe out all the SQL commands history for the current connection! Do you really want to proceed?"),
 									Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
 		if(msg_box.result() == QDialog::Accepted)
