@@ -17,6 +17,7 @@
 */
 
 #include "baseconfigwidget.h"
+#include "messagebox.h"
 
 BaseConfigWidget::BaseConfigWidget(QWidget *parent) : QWidget(parent)
 {
@@ -122,6 +123,7 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id)
 						ERR_DEFAULT_CONFIG_NOT_REST,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
+		bool bkp_saved = false;
 		QFileInfo fi(current_file);
 		QDir dir;
 		QString bkp_dir = fi.absolutePath() + GlobalAttributes::DIR_SEPARATOR + GlobalAttributes::CONFS_BACKUPS_DIR,
@@ -129,8 +131,14 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id)
 											 QString("%1.bkp_%2").arg(fi.fileName()).arg(QDateTime::currentDateTime().toString("yyyyMMd_hhmmss"));
 
 		dir.mkpath(bkp_dir);
-		QFile::rename(current_file, bkp_filename);
+		bkp_saved = QFile::rename(current_file, bkp_filename);
 		QFile::copy(default_file, current_file);
+
+		if(bkp_saved)
+		{
+			Messagebox msg_box;
+			msg_box.show(trUtf8("A backup of the previous settings was saved into <strong>%1</strong>!").arg(bkp_filename), Messagebox::INFO_ICON);
+		}
 	}
 }
 
