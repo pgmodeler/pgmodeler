@@ -5,6 +5,7 @@ v0.9.0-alpha1
 ------
 <em>Release date: February 07, 2017</em><br/>
 
+* [New] Added support to object moving via arrow keys in canvas area.
 * [New] Added support to easily create primary keys just by checking the desired columns in table's editing form.
 * [New] Added support to use middle button to handle panning mode.
 * [New] Added a more user friendly message at startup whenever a missing or corrupted configuration file is detected. The user is now presented to an option to restore default settings for the problematic file.
