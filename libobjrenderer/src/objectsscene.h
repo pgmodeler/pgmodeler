@@ -105,6 +105,14 @@ class ObjectsScene: public QGraphicsScene {
 
 		QGraphicsView *getActiveViewport(void);
 
+		//! brief Performs the final steps when moving the objects like adjusting position to grid, moving children object, etc
+		void finishObjectsMove(const QPointF &pnt_end);
+
+		/*! brief Performs the scene position adjustment when pressing/releasing the arrow keys to avoid objects to be hidden in the corners.
+		This method will adjust the scene size automatically when moving objects right or down if the selected items bounding rects
+		exceeds the scene's size limits */
+		void adjustScenePositionOnKeyEvent(int key);
+
 	protected:
 		//! \brief Brush used to draw the grid over the scene
 		static QBrush grid;
@@ -113,6 +121,8 @@ class ObjectsScene: public QGraphicsScene {
 		void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 		void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 		void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
+		void keyPressEvent(QKeyEvent *event);
+		void keyReleaseEvent(QKeyEvent *event);
 
 		//! \brief Draws a line from the point 'p_start' to the cursor position and simulates the relationship creation
 		void showRelationshipLine(bool value, const QPointF &p_start=QPointF(NAN,NAN));
@@ -142,8 +152,12 @@ class ObjectsScene: public QGraphicsScene {
 		/*! \brief Returns the items bounding rect. By default the method returns the same as QGraphicsScene::itemsBoundingRect.
 		If the parameter seek_only_db_objs is true the returned rect will have the origin point calculated based upon the
 		visible objects that inherits BaseObjectView and are database model objects (tables, views, textboxes, schemas and relationships).
+
+		If the paramenter selected_only is true only selected objects will have the bounding rect calculated.
+		Currently this parameter is ignored when using seek_only_db_objs = false
+
 		Note: using this method with seek_only_db_objs=true can be time expensive depending on the size of the model so use it wisely. */
-		QRectF itemsBoundingRect(bool seek_only_db_objs=false);
+		QRectF itemsBoundingRect(bool seek_only_db_objs=false, bool selected_only = false);
 
 		//! \brief Returns a vector containing all the page rects.
 		vector<QRectF> getPagesForPrinting(const QSizeF &paper_size, const QSizeF &margin, unsigned &h_page_cnt, unsigned &v_page_cnt);

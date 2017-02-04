@@ -504,28 +504,6 @@ void ModelWidget::keyPressEvent(QKeyEvent *event)
 	{
 		toggleNewObjectOverlay();
 	}
-	else if((event->modifiers()==Qt::ControlModifier ||
-			 (event->modifiers()==(Qt::ControlModifier | Qt::ShiftModifier))) &&
-			(event->key()==Qt::Key_Left || event->key()==Qt::Key_Right ||
-			 event->key()==Qt::Key_Down || event->key()==Qt::Key_Up))
-	{
-		int dx=0, dy=0, factor=1;
-
-		if(event->key()==Qt::Key_Left)
-			dx=-ObjectsScene::SCENE_MOVE_STEP;
-		else if(event->key()==Qt::Key_Right)
-			dx=ObjectsScene::SCENE_MOVE_STEP;
-		else if(event->key()==Qt::Key_Up)
-			dy=-ObjectsScene::SCENE_MOVE_STEP;
-		else
-			dy=ObjectsScene::SCENE_MOVE_STEP;
-
-		if((event->modifiers() & Qt::ShiftModifier)==Qt::ShiftModifier)
-			factor=4;
-
-		viewport->horizontalScrollBar()->setValue(viewport->horizontalScrollBar()->value() + (dx * factor));
-		viewport->verticalScrollBar()->setValue(viewport->verticalScrollBar()->value() + (dy * factor));
-	}
 }
 
 void ModelWidget::mousePressEvent(QMouseEvent *event)

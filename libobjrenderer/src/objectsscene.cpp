@@ -140,15 +140,15 @@ void ObjectsScene::setSceneRect(const QRectF &rect)
 	QGraphicsScene::setSceneRect(0, 0, rect.width(), rect.height());
 }
 
-QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs)
+QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_only)
 {
 	if(!seek_only_db_objs)
 		return(QGraphicsScene::itemsBoundingRect());
 	else
 	{
 		QRectF rect=QGraphicsScene::itemsBoundingRect();
-		QList<QGraphicsItem *> items=this->items();
-		double x=rect.width(), y=rect.height();
+		QList<QGraphicsItem *> items= (selected_only ? this->selectedItems() : this->items());
+		double x=rect.width(), y=rect.height(), x2 = -10000, y2 = -10000;
 		BaseObjectView *obj_view=nullptr;
 		QPointF pnt;
 		BaseGraphicObject *graph_obj=nullptr;
@@ -174,11 +174,29 @@ QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs)
 
 					if(pnt.y() < y)
 						y=pnt.y();
+
+					if(selected_only)
+					{
+						if(graph_obj->getObjectType()!=OBJ_RELATIONSHIP &&
+							 graph_obj->getObjectType()!=BASE_RELATIONSHIP)
+							pnt = pnt + dynamic_cast<BaseObjectView *>(obj_view)->boundingRect().bottomRight();
+						else
+							pnt = pnt +  dynamic_cast<RelationshipView *>(obj_view)->__boundingRect().bottomRight();
+
+						if(pnt.x() > x2)
+							x2 = pnt.x();
+
+						if(pnt.y() > y2)
+							y2 = pnt.y();
+					}
 				}
 			}
 		}
 
-		return(QRectF(QPointF(x, y), rect.bottomRight()));
+		if(selected_only)
+			return(QRectF(QPointF(x, y), QPointF(x2, y2)));
+		else
+			return(QRectF(QPointF(x, y), rect.bottomRight()));
 	}
 }
 
@@ -460,8 +478,6 @@ void ObjectsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 
 void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-	//QGraphicsView *view=getActiveViewport();
-
 	//Gets the item at mouse position
 	QGraphicsItem* item=this->itemAt(event->scenePos().x(), event->scenePos().y(), QTransform());
 
@@ -516,7 +532,6 @@ bool ObjectsScene::mouseIsAtCorner(void)
 
 	if(view)
 	{
-
 		QPoint pos=view->mapFromGlobal(QCursor::pos());
 		QRect rect=view->rect();
 
@@ -605,6 +620,117 @@ void ObjectsScene::enableRangeSelection(bool value)
 		selection_rect->setVisible(value);
 }
 
+void ObjectsScene::adjustScenePositionOnKeyEvent(int key)
+{
+	QGraphicsView *view = getActiveViewport();
+
+	if(view)
+	{
+		QRectF brect = itemsBoundingRect(true, true);
+		QRectF view_rect = QRectF(view->mapToScene(view->rect().topLeft()),
+															view->mapToScene(view->rect().bottomRight())),
+				scene_rect = sceneRect();
+
+		if(view_rect.right() < brect.right() && key == Qt::Key_Right)
+		{
+			/* If the objects are being moved right and the scene width is lesser than the items bounding rect's width
+			we need to resize the scene prior the position adjustment */
+			scene_rect.setRight(brect.right());
+			setSceneRect(scene_rect);
+			view->horizontalScrollBar()->setValue(view->horizontalScrollBar()->value() + ((brect.right() - view_rect.right()) * 2));
+		}
+		else if(view_rect.left() > brect.left()  && key == Qt::Key_Left)
+			view->horizontalScrollBar()->setValue(view->horizontalScrollBar()->value() - ((view_rect.left() - brect.left()) * 2));
+
+		if(view_rect.bottom() < brect.bottom() && key == Qt::Key_Down)
+		{
+			/* If the objects are being moved down and the scene hight is lesser than the items bounding rect's height
+			we need to resize the scene prior the position adjustment */
+			scene_rect.setBottom(brect.bottom());
+			setSceneRect(scene_rect);
+			view->verticalScrollBar()->setValue(view->verticalScrollBar()->value() + ((brect.bottom() - view_rect.bottom()) * 2));
+		}
+		else if(view_rect.top() > brect.top()  && key == Qt::Key_Up)
+			view->verticalScrollBar()->setValue(view->verticalScrollBar()->value() - ((view_rect.top() - brect.top()) * 2));
+	}
+}
+
+void ObjectsScene::keyPressEvent(QKeyEvent *event)
+{
+	if((event->key() == Qt::Key_Up || event->key() == Qt::Key_Down ||
+			event->key() == Qt::Key_Left || event->key() == Qt::Key_Right) &&
+		 !selectedItems().isEmpty())
+	{
+		float dx = 0, dy = 0;
+		BaseObjectView *obj_view=nullptr;
+		QRectF brect = itemsBoundingRect(true, true);
+
+		if(!moving_objs)
+		{
+			sel_ini_pnt = brect.center();
+			moving_objs = true;
+			emit s_objectsMoved(false);
+
+			for(auto item : selectedItems())
+			{
+				obj_view=dynamic_cast<BaseObjectView *>(item);
+
+				if(obj_view && BaseObjectView::isPlaceholderEnabled())
+					obj_view->togglePlaceholder(true);
+			}
+		}
+
+		if(event->key() == Qt::Key_Up)
+			dy = -1;
+		else if(event->key() == Qt::Key_Down)
+			dy = 1;
+
+		if(event->key() == Qt::Key_Left)
+			dx = -1;
+		else if(event->key() == Qt::Key_Right)
+			dx = 1;
+
+		if(event->modifiers() == Qt::ControlModifier)
+		{
+			dx *= 10;
+			dy *= 10;
+		}
+		else if(event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
+		{
+			dx *= 100;
+			dy *= 100;
+		}
+
+		for(auto item : selectedItems())
+		{
+			obj_view=dynamic_cast<BaseObjectView *>(item);
+
+			if(obj_view && !dynamic_cast<RelationshipView *>(obj_view))
+				obj_view->moveBy(dx, dy);
+		}
+
+		adjustScenePositionOnKeyEvent(event->key());
+	}
+	else
+		QGraphicsScene::keyPressEvent(event);
+}
+
+void ObjectsScene::keyReleaseEvent(QKeyEvent *event)
+{
+	if((event->key() == Qt::Key_Up || event->key() == Qt::Key_Down ||
+			event->key() == Qt::Key_Left || event->key() == Qt::Key_Right) &&
+		 !event->isAutoRepeat() && !selectedItems().isEmpty())
+	{
+		if(moving_objs)
+		{
+			finishObjectsMove(itemsBoundingRect(true, true).center());
+			adjustScenePositionOnKeyEvent(event->key());
+		}
+	}
+	else
+		QGraphicsScene::keyReleaseEvent(event);
+}
+
 void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
 	if(event->buttons()==Qt::LeftButton || rel_line->isVisible())
@@ -677,157 +803,7 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 	if(!this->selectedItems().isEmpty() && moving_objs &&
 			event->button()==Qt::LeftButton && event->modifiers()==Qt::NoModifier)
 	{
-		unsigned i, count;
-		QList<QGraphicsItem *> items=this->selectedItems(), rel_list;
-		double x1,y1,x2,y2, dx, dy;
-		QRectF rect;
-		SchemaView *sch_view=nullptr;
-		vector<QPointF> points;
-		vector<QPointF>::iterator itr;
-		vector<BaseObject *> rels, base_rels;
-		BaseRelationship *base_rel=nullptr;
-		RelationshipView *rel=nullptr;
-		BaseObjectView *obj_view=nullptr;
-		BaseTableView *tab_view=nullptr;
-		QList<BaseObjectView *> tables;
-
-		//Gathering the relationships inside the selected schemsa in order to move their points too
-		for(auto &item : items)
-		{
-			obj_view=dynamic_cast<BaseObjectView *>(item);
-			sch_view=dynamic_cast<SchemaView *>(item);
-			tab_view=dynamic_cast<BaseTableView *>(item);
-
-			if(obj_view)
-				obj_view->togglePlaceholder(false);
-
-			if(tab_view)
-				tables.push_back(tab_view);
-			else if(sch_view)
-			{
-				//Get the schema object
-				Schema *schema=dynamic_cast<Schema *>(sch_view->getSourceObject());
-
-				if(!schema->isProtected())
-				{
-					//Get the table-table and table-view relationships
-					rels=dynamic_cast<DatabaseModel *>(schema->getDatabase())->getObjects(OBJ_RELATIONSHIP, schema);
-					base_rels=dynamic_cast<DatabaseModel *>(schema->getDatabase())->getObjects(BASE_RELATIONSHIP, schema);
-					rels.insert(rels.end(), base_rels.begin(), base_rels.end());
-
-					for(auto &rel : rels)
-					{
-						base_rel=dynamic_cast<BaseRelationship *>(rel);
-
-						/* If the relationship contains points and it is not selected then it will be included on the list
-			   in order to move their custom line points */
-						if(!dynamic_cast<RelationshipView *>(base_rel->getReceiverObject())->isSelected() &&
-								!base_rel->getPoints().empty())
-							rel_list.push_back(dynamic_cast<QGraphicsItem *>(base_rel->getReceiverObject()));
-					}
-
-					tables.append(sch_view->getChildren());
-				}
-			}
-		}
-
-		items.append(rel_list);
-
-		/* Get the extreme points of the scene to check if some objects are out the area
-	 forcing the scene to be resized */
-		x1=this->sceneRect().left();
-		y1=this->sceneRect().top();
-		x2=this->sceneRect().right();
-		y2=this->sceneRect().bottom();
-		dx=event->scenePos().x() - sel_ini_pnt.x();
-		dy=event->scenePos().y() - sel_ini_pnt.y();
-
-		count=items.size();
-		for(i=0; i < count; i++)
-		{
-			rel=dynamic_cast<RelationshipView *>(items[i]);
-
-			if(!rel)
-			{
-				if(align_objs_grid)
-					items[i]->setPos(alignPointToGrid(items[i]->pos()));
-				else
-				{
-					QPointF p=items[i]->pos();
-					if(p.x() < 0) p.setX(0);
-					if(p.y() < 0) p.setY(0);
-					items[i]->setPos(p);
-				}
-
-				rect.setTopLeft(items[i]->pos());
-				rect.setSize(items[i]->boundingRect().size());
-			}
-			else
-			{
-				/* If the relationship has points added to the line is necessary to move the points
-		too. Since relationships cannot be moved naturally (by user) this will be done
-		by the scene. NOTE: this operation is done ONLY WHEN there is more than one object selected! */
-				points=rel->getSourceObject()->getPoints();
-				if(count > 1 && !points.empty())
-				{
-					itr=points.begin();
-					while(itr!=points.end())
-					{
-						//Translate the points
-						itr->setX(itr->x() + dx);
-						itr->setY(itr->y() + dy);
-
-						//Align to grid if the flag is set
-						if(align_objs_grid)
-							(*itr)=alignPointToGrid(*itr);
-
-						itr++;
-					}
-
-					//Assing the new points to relationship and reconfigure its line
-					rel->getSourceObject()->setPoints(points);
-					rel->configureLine();
-				}
-
-				rect=rel->__boundingRect();
-			}
-
-			//Made the comparisson between the scene extremity and the object's bounding rect
-			if(rect.left() < x1) x1=rect.left();
-			if(rect.top() < y1) y1=rect.top();
-			if(rect.right() > x2) x2=rect.right();
-			if(rect.bottom() > y2) y2=rect.bottom();
-		}
-
-		//Reconfigures the rectangle with the most extreme points
-		rect.setCoords(x1, y1, x2, y2);
-
-		//If the new rect is greater than the scene bounding rect, this latter is resized
-		if(rect!=this->sceneRect())
-		{
-			rect=this->itemsBoundingRect();
-			rect.setTopLeft(QPointF(0,0));
-			rect.setWidth(rect.width() * 1.05f);
-			rect.setHeight(rect.height() * 1.05f);
-			this->setSceneRect(rect);
-		}
-
-		if(BaseObjectView::isPlaceholderEnabled())
-		{
-			/* Updating relationships related to moved tables. Converting the list of table to a set
-	   in order to remove the duplicated elements */
-			for(auto &obj : tables.toSet())
-			{
-				tab_view=dynamic_cast<BaseTableView *>(obj);
-				if(tab_view)
-					tab_view->requestRelationshipsUpdate();
-			}
-		}
-
-		emit s_objectsMoved(true);
-		moving_objs=false;
-		sel_ini_pnt.setX(NAN);
-		sel_ini_pnt.setY(NAN);
+		finishObjectsMove(event->scenePos());
 	}
 	else if(selection_rect->isVisible() && event->button()==Qt::LeftButton)
 	{
@@ -842,6 +818,161 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 		sel_ini_pnt.setX(NAN);
 		sel_ini_pnt.setY(NAN);
 	}
+}
+
+void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
+{
+	unsigned i, count;
+	QList<QGraphicsItem *> items=this->selectedItems(), rel_list;
+	double x1,y1,x2,y2, dx, dy;
+	QRectF rect;
+	SchemaView *sch_view=nullptr;
+	vector<QPointF> points;
+	vector<QPointF>::iterator itr;
+	vector<BaseObject *> rels, base_rels;
+	BaseRelationship *base_rel=nullptr;
+	RelationshipView *rel=nullptr;
+	BaseObjectView *obj_view=nullptr;
+	BaseTableView *tab_view=nullptr;
+	QList<BaseObjectView *> tables;
+
+	//Gathering the relationships inside the selected schemsa in order to move their points too
+	for(auto &item : items)
+	{
+		obj_view=dynamic_cast<BaseObjectView *>(item);
+		sch_view=dynamic_cast<SchemaView *>(item);
+		tab_view=dynamic_cast<BaseTableView *>(item);
+
+		if(obj_view)
+			obj_view->togglePlaceholder(false);
+
+		if(tab_view)
+			tables.push_back(tab_view);
+		else if(sch_view)
+		{
+			//Get the schema object
+			Schema *schema=dynamic_cast<Schema *>(sch_view->getSourceObject());
+
+			if(!schema->isProtected())
+			{
+				//Get the table-table and table-view relationships
+				rels=dynamic_cast<DatabaseModel *>(schema->getDatabase())->getObjects(OBJ_RELATIONSHIP, schema);
+				base_rels=dynamic_cast<DatabaseModel *>(schema->getDatabase())->getObjects(BASE_RELATIONSHIP, schema);
+				rels.insert(rels.end(), base_rels.begin(), base_rels.end());
+
+				for(auto &rel : rels)
+				{
+					base_rel=dynamic_cast<BaseRelationship *>(rel);
+
+					/* If the relationship contains points and it is not selected then it will be included on the list
+						 in order to move their custom line points */
+					if(!dynamic_cast<RelationshipView *>(base_rel->getReceiverObject())->isSelected() &&
+							!base_rel->getPoints().empty())
+						rel_list.push_back(dynamic_cast<QGraphicsItem *>(base_rel->getReceiverObject()));
+				}
+
+				tables.append(sch_view->getChildren());
+			}
+		}
+	}
+
+	items.append(rel_list);
+
+	/* Get the extreme points of the scene to check if some objects are out the area
+	forcing the scene to be resized */
+	x1=this->sceneRect().left();
+	y1=this->sceneRect().top();
+	x2=this->sceneRect().right();
+	y2=this->sceneRect().bottom();
+	dx=pnt_end.x() - sel_ini_pnt.x();
+	dy=pnt_end.y() - sel_ini_pnt.y();
+
+	count=items.size();
+	for(i=0; i < count; i++)
+	{
+		rel=dynamic_cast<RelationshipView *>(items[i]);
+
+		if(!rel)
+		{
+			if(align_objs_grid)
+				items[i]->setPos(alignPointToGrid(items[i]->pos()));
+			else
+			{
+				QPointF p=items[i]->pos();
+				if(p.x() < 0) p.setX(0);
+				if(p.y() < 0) p.setY(0);
+				items[i]->setPos(p);
+			}
+
+			rect.setTopLeft(items[i]->pos());
+			rect.setSize(items[i]->boundingRect().size());
+		}
+		else
+		{
+			/* If the relationship has points added to the line is necessary to move the points
+				 too. Since relationships cannot be moved naturally (by user) this will be done
+				 by the scene. NOTE: this operation is done ONLY WHEN there is more than one object selected! */
+			points=rel->getSourceObject()->getPoints();
+			if(count > 1 && !points.empty())
+			{
+				itr=points.begin();
+				while(itr!=points.end())
+				{
+					//Translate the points
+					itr->setX(itr->x() + dx);
+					itr->setY(itr->y() + dy);
+
+					//Align to grid if the flag is set
+					if(align_objs_grid)
+						(*itr)=alignPointToGrid(*itr);
+
+					itr++;
+				}
+
+				//Assing the new points to relationship and reconfigure its line
+				rel->getSourceObject()->setPoints(points);
+				rel->configureLine();
+			}
+
+			rect=rel->__boundingRect();
+		}
+
+		//Made the comparisson between the scene extremity and the object's bounding rect
+		if(rect.left() < x1) x1=rect.left();
+		if(rect.top() < y1) y1=rect.top();
+		if(rect.right() > x2) x2=rect.right();
+		if(rect.bottom() > y2) y2=rect.bottom();
+	}
+
+	//Reconfigures the rectangle with the most extreme points
+	rect.setCoords(x1, y1, x2, y2);
+
+	//If the new rect is greater than the scene bounding rect, this latter is resized
+	if(rect!=this->sceneRect())
+	{
+		rect=this->itemsBoundingRect();
+		rect.setTopLeft(QPointF(0,0));
+		rect.setWidth(rect.width() * 1.05f);
+		rect.setHeight(rect.height() * 1.05f);
+		this->setSceneRect(rect);
+	}
+
+	if(BaseObjectView::isPlaceholderEnabled())
+	{
+		/* Updating relationships related to moved tables. Converting the list of table to a set
+	 in order to remove the duplicated elements */
+		for(auto &obj : tables.toSet())
+		{
+			tab_view=dynamic_cast<BaseTableView *>(obj);
+			if(tab_view)
+				tab_view->requestRelationshipsUpdate();
+		}
+	}
+
+	emit s_objectsMoved(true);
+	moving_objs=false;
+	sel_ini_pnt.setX(NAN);
+	sel_ini_pnt.setY(NAN);
 }
 
 void ObjectsScene::alignObjectsToGrid(void)
