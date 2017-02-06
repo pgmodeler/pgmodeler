@@ -113,7 +113,8 @@ macx {
   !defined(SCHEMASDIR, var):    SCHEMASDIR = $$BINDIR/schemas
 
   # Specifies where to find the libraries at runtime
-  # QMAKE_RPATHDIR += @executable_path/../Frameworks
+  QMAKE_RPATHDIR += @executable_path/../Frameworks
+  QMAKE_LFLAGS_SONAME = -Wl,-install_name,@loader_path/../Frameworks/
 }
 
 # Creating constants based upon the custom paths so the GlobalAttributes
