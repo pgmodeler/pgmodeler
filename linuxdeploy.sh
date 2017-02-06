@@ -397,5 +397,9 @@ echo "pgModeler successfully deployed!"
 echo
 
 if [ $BUILD_ALL = 1 ]; then
- ./linuxdeploy.sh -demo-version
+    if [ $COMP_INST_PKG = 1 ]; then
+        ./linuxdeploy.sh $DEMO_VERSION_OPT $COMPRESS_INSTALLER_OPT
+    else
+        ./linuxdeploy.sh $DEMO_VERSION_OPT 
+    fi    
 fi
