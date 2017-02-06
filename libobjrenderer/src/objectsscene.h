@@ -58,7 +58,16 @@ class ObjectsScene: public QGraphicsScene {
 
 		/*! \brief Timer responsible to check if the user puts cursor at corners for a certain amount of time.
 		When this timeout the scene_move_timer will be triggered and the scene will be moved */
-		corner_hover_timer;
+		corner_hover_timer,
+
+		/*! brief Timer responsible to control the interval between key presses/releases when moving objects with the keyboard.
+		This timer is started whenever the user releases the arrow keys. If the timer emits timeout() signal
+		indicates that the user take more than 500ms to press and release the arrow keys again, this indicates to the scene
+		to emit the signal s_objectsMove(true) to alert the end of the objects moving. If the user presses/releases the keys when
+		the timer is still running the same will be restarted, until its timeout is reached. This trick avoids 'spamming' the
+		operation list in ModelWidget creating registries only when the user starts and ends the objects movement. Intermediate
+		key presses/releases aren't not registered in the operation history */
+		object_move_timer;
 
 		//! \brief Attributes used to control the direction of scene movement when user puts cursor at corners
 		int scene_move_dx, scene_move_dy;
