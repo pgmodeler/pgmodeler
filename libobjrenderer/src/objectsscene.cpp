@@ -56,8 +56,15 @@ ObjectsScene::ObjectsScene(void)
 	connect(&scene_move_timer, SIGNAL(timeout()), this, SLOT(moveObjectScene()));
 	connect(&corner_hover_timer, SIGNAL(timeout()), this, SLOT(enableSceneMove()));
 
+	connect(&object_move_timer, &QTimer::timeout, [=](){
+		//If the timer reaches its timeout we execute the procedures to finish the objects movement
+		finishObjectsMove(itemsBoundingRect(true, true).center());
+		object_move_timer.stop();
+	});
+
 	scene_move_timer.setInterval(SCENE_MOVE_TIMEOUT);
 	corner_hover_timer.setInterval(SCENE_MOVE_TIMEOUT * 10);
+	object_move_timer.setInterval(SCENE_MOVE_TIMEOUT * 10);
 }
 
 ObjectsScene::~ObjectsScene(void)
@@ -669,7 +676,12 @@ void ObjectsScene::keyPressEvent(QKeyEvent *event)
 		{
 			sel_ini_pnt = brect.center();
 			moving_objs = true;
-			emit s_objectsMoved(false);
+
+			/* If the object move timer is not active we need to send the
+			s_objectsMoved() signal in order to alert the classes like ModelWidget to
+			save the current objects' position in the operation history */
+			if(!object_move_timer.isActive())
+				emit s_objectsMoved(false);
 
 			for(auto item : selectedItems())
 			{
@@ -723,7 +735,7 @@ void ObjectsScene::keyReleaseEvent(QKeyEvent *event)
 	{
 		if(moving_objs)
 		{
-			finishObjectsMove(itemsBoundingRect(true, true).center());
+			object_move_timer.start();
 			adjustScenePositionOnKeyEvent(event->key());
 		}
 	}
