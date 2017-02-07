@@ -108,7 +108,9 @@ class ModelWidget: public QWidget {
 
 		fade_in_menu,
 
-		fade_out_menu;
+		fade_out_menu,
+
+		fade_rels_menu;
 
 		//! \brief Stores the selected object on the scene
 		vector<BaseObject *> selected_objects;
@@ -201,7 +203,10 @@ class ModelWidget: public QWidget {
 		*action_duplicate,
 		*action_fade,
 		*action_fade_in,
-		*action_fade_out;
+		*action_fade_out,
+		*action_fade_rels,
+		*action_fade_rels_in,
+		*action_fade_rels_out;
 
 		//! \brief Actions used to create new objects on the model
 		map<ObjectType, QAction *> actions_new_objects;

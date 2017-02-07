@@ -259,6 +259,15 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_fade_in=new QAction(QIcon(PgModelerUiNS::getIconPath("fadein")), trUtf8("Fade in"), this);
 	action_fade_out=new QAction(QIcon(PgModelerUiNS::getIconPath("fadeout")), trUtf8("Fade out"), this);
 
+	action_fade_rels_in=new QAction(QIcon(PgModelerUiNS::getIconPath("fadein")), trUtf8("Fade in"), this);
+	action_fade_rels_out=new QAction(QIcon(PgModelerUiNS::getIconPath("fadeout")), trUtf8("Fade out"), this);
+
+	fade_rels_menu.addAction(action_fade_rels_in);
+	fade_rels_menu.addAction(action_fade_rels_out);
+
+	action_fade_rels=new QAction(QIcon(PgModelerUiNS::getIconPath("relationship_grp")), trUtf8("Relationships"), this);
+	action_fade_rels->setMenu(&fade_rels_menu);
+
 	action_fade->setMenu(&fade_menu);
 	action_fade_in->setMenu(&fade_in_menu);
 	action_fade_out->setMenu(&fade_out_menu);
@@ -346,6 +355,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	connect(action_fade_in, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
 	connect(action_fade_out, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
+	connect(action_fade_rels_in, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
+	connect(action_fade_rels_out, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
 
 	connect(db_model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
 	connect(db_model, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(handleObjectRemoval(BaseObject *)));
@@ -3028,17 +3039,23 @@ void ModelWidget::configureFadeMenu(void)
 		{
 			QAction *action = nullptr;
 			vector<ObjectType> types = { OBJ_SCHEMA, OBJ_TABLE, OBJ_VIEW, OBJ_RELATIONSHIP, OBJ_TEXTBOX };
+			QStringList labels = { trUtf8("Schemas"), trUtf8("Tables"), trUtf8("Views"), trUtf8("Relationships"), trUtf8("Textboxes") };
+			unsigned id = 0;
 
 			for(ObjectType type : types)
 			{
-				action = new QAction(QPixmap(PgModelerUiNS::getIconPath(type)), BaseObject::getTypeName(type), &fade_in_menu);
+				action = new QAction(QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))),
+																		 labels[id], &fade_in_menu);
 				action->setData(type);
 				fade_in_menu.addAction(action);
 				connect(action, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
 
-				action = new QAction(QPixmap(PgModelerUiNS::getIconPath(type)), BaseObject::getTypeName(type), &fade_out_menu);
+				action = new QAction(QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))),
+																		 labels[id], &fade_out_menu);
 				action->setData(type);
 				fade_out_menu.addAction(action);
+
+				id++;
 				connect(action, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
 			}
 
@@ -3062,7 +3079,9 @@ void ModelWidget::configureFadeMenu(void)
 	}
 	else
 	{
-		if(selected_objects[0]->getObjectType() == OBJ_TAG)
+		ObjectType obj_type = selected_objects[0]->getObjectType();
+
+		if(obj_type == OBJ_TAG)
 		{
 			fade_menu.addAction(action_fade_in);
 			fade_menu.addAction(action_fade_out);
@@ -3086,6 +3105,9 @@ void ModelWidget::configureFadeMenu(void)
 					action_fade_in->setMenu(nullptr);
 				}
 			}
+
+			if(obj_type == OBJ_TABLE || obj_type == OBJ_VIEW)
+				fade_menu.addAction(action_fade_rels);
 		}
 	}
 }
@@ -3135,9 +3157,21 @@ void ModelWidget::fadeObjects(QAction *action, bool fade_in)
 		if(selected_objects.size() == 1 && selected_objects[0]->getObjectType() == OBJ_TAG)
 			db_model->getObjectReferences(selected_objects[0], list);
 		else
-			//Applying fade to the selected objects
-			list = selected_objects;
+		{
+			if(action == action_fade_rels_in || action == action_fade_rels_out)
+			{
+				//Applying fade to the relationships linked to the selected table/view
+				vector<BaseRelationship *> rel_list = db_model->getRelationships(dynamic_cast<BaseTable *>(selected_objects[0]));
+
+				for(auto rel : rel_list)
+					list.push_back(rel);
+			}
+			else
+				//Applying fade to the selected objects
+				list = selected_objects;
+		}
 	}
+
 
 	for(auto obj : list)
 	{
@@ -3151,6 +3185,7 @@ void ModelWidget::fadeObjects(QAction *action, bool fade_in)
 			obj_view->setVisible(fade_in || (!fade_in && min_object_opacity > 0));
 		}
 	}
+
 
 	scene->clearSelection();
 }
