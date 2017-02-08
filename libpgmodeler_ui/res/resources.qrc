@@ -220,6 +220,10 @@
         <file>icones/delrows.png</file>
         <file>icones/delcols.png</file>
         <file>icones/loadcsv.png</file>
+        <file>icones/duplicate.png</file>
+        <file>icones/fade.png</file>
+        <file>icones/fadein.png</file>
+        <file>icones/fadeout.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

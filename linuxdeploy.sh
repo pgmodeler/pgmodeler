@@ -4,13 +4,13 @@
 case `uname -m` in
   "x86_64")
     ARCH="linux64"
-    FALLBACK_QT_ROOT=/opt/qt-5.5.1/5.5/gcc_64
+    FALLBACK_QT_ROOT=/opt/qt-5.6.2/5.6/gcc_64
     FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
     ;;
     
    *)
     ARCH="linux32"
-    FALLBACK_QT_ROOT=/opt/qt-5.5.1/5.5/gcc
+    FALLBACK_QT_ROOT=/opt/qt-5.6.2/5.6/gcc
     FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
     ;;
 esac
@@ -19,6 +19,7 @@ esac
 #QMAKE_ARGS="-r -spec linux-g++"
 QMAKE_ARGS="-r -spec linux-clang"
 QMAKE_ROOT=/usr/bin
+QMAKE_CMD=qmake
 LOG="$PWD/linuxdeploy.log"
 QT_IFW_ROOT=/opt/qt-ifw-1.5.0
 
@@ -40,7 +41,9 @@ GEN_INSTALLER_OPT='-gen-installer'
 DEMO_VERSION_OPT='-demo-version'
 NO_QT_LIBS_OPT='-no-qt-libs'
 BUILD_ALL_OPT='-build-all'
+COMPRESS_INSTALLER_OPT='-comp-installer'
 GEN_INST_PKG=0
+COMP_INST_PKG=0
 DEMO_VERSION=0
 BUNDLE_QT_LIBS=1
 BUILD_ALL=0
@@ -82,6 +85,10 @@ for param in $@; do
    GEN_INST_PKG=1
  fi
 
+ if [[ "$param" == "$COMPRESS_INSTALLER_OPT" ]]; then
+   COMP_INST_PKG=1
+ fi
+ 
  if [[ "$param" == "$DEMO_VERSION_OPT" ]]; then
    DEMO_VERSION=1
    GEN_INST_PKG=1
@@ -105,10 +112,10 @@ else
   PKGNAME="pgmodeler-$DEPLOY_VER-$ARCH"
 fi
 
-PKGFILE=$PKGNAME.tar.gz
+PKGFILE=$PKGNAME.tgz
 
 if [ $BUNDLE_QT_LIBS = 0 ]; then
-  PKGFILE=$PKGNAME.tar.gz
+  PKGFILE=$PKGNAME.tgz
 else 
   #Dependency qt plugins copied to build dir
   DEP_PLUGINS="imageformats/libqgif.so \
@@ -130,7 +137,7 @@ else
            libQt5Gui.so.5 \
            libQt5Core.so.5 \
            libQt5XcbQpa.so.5 \
-           libQt5Svg.so \
+           libQt5Svg.so.5 \
            libicui18n.so.5* \
            libicuuc.so.5* \
            libicudata.so.5*"
@@ -143,14 +150,14 @@ echo "PostgreSQL Database Modeler Project - pgmodeler.com.br"
 echo "Copyright 2006-2016 Raphael A. Silva <raphael@pgmodeler.com.br>"
 
 # Identifying System Qt version
-if [ -e "$QMAKE_ROOT/qmake" ]; then
-  QT_VER_1=`$QMAKE_ROOT/qmake --version | grep --color=never -m 1 -o '[0-9].[0-9].[0-9]'`
+if [ -e "$QMAKE_ROOT/$QMAKE_CMD" ]; then
+  QT_VER_1=`$QMAKE_ROOT/$QMAKE_CMD --version | grep --color=never -m 1 -o '[0-9].[0-9].[0-9]'`
   QT_VER_1=${QT_VER_1:0:5}
 fi
 
 # Identifying Fallback Qt version
-if [ -e "$FALLBACK_QMAKE_ROOT/qmake" ]; then
-  QT_VER_2=`$FALLBACK_QMAKE_ROOT/qmake --version | grep --color=never -m 1 -o '[0-9].[0-9].[0-9]'`
+if [ -e "$FALLBACK_QMAKE_ROOT/$QMAKE_CMD" ]; then
+  QT_VER_2=`$FALLBACK_QMAKE_ROOT/$QMAKE_CMD --version | grep --color=never -m 1 -o '[0-9].[0-9].[0-9]'`
   QT_VER_2=${QT_VER_2:0:5}
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"$FALLBACK_QT_ROOT/lib"
 fi
@@ -194,6 +201,11 @@ fi
 
 if [ $GEN_INST_PKG = 1 ]; then
   echo "The installer will be generated. (Found $GEN_INSTALLER_OPT)"
+  
+  if [ $COMP_INST_PKG = 1 ]; then
+    echo "The installer will be compressed (Found $COMPRESS_INSTALLER_OPT)"
+  fi
+
 fi
 
 if [ $DEMO_VERSION = 1 ]; then
@@ -212,7 +224,7 @@ fi
 make distclean  >> $LOG 2>&1
 
 echo "Running qmake..."
-$QMAKE_ROOT/qmake $QMAKE_ARGS  >> $LOG 2>&1
+$QMAKE_ROOT/$QMAKE_CMD $QMAKE_ARGS  >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
@@ -269,15 +281,18 @@ if [ $BUNDLE_QT_LIBS = 1 ]; then
  #Copies the qt plugins to build/qtplugins
  for plug in $DEP_PLUGINS; do
    pdir=`dirname $plug`
-   mkdir -p $DEP_PLUGINS_DIR/$pdir >> $LOG 2>&1
-   cp -v $QT_ROOT/plugins/$plug $DEP_PLUGINS_DIR/$pdir >> $LOG 2>&1
+   
+   if [ -e $QT_ROOT/plugins/$plug ]; then
+        mkdir -p $DEP_PLUGINS_DIR/$pdir >> $LOG 2>&1
+        cp -v $QT_ROOT/plugins/$plug $DEP_PLUGINS_DIR/$pdir >> $LOG 2>&1
 
-   if [ $? -ne 0 ]; then
-    echo
-    echo "** Plugins copy failed!"
-    echo
-    exit 1
-  fi
+        if [ $? -ne 0 ]; then
+            echo
+            echo "** Plugins copy failed!"
+            echo
+            exit 1
+        fi
+   fi     
  done
 
 fi
@@ -357,12 +372,34 @@ if [ $GEN_INST_PKG = 1 ]; then
    exit 1
  fi
  
- echo "File created: dist/$PKGNAME.run"
+ if [ $COMP_INST_PKG = 1 ]; then
+   _PWD=`pwd`
+   cd $DIST_DIR  >> $LOG 2>&1
+   tar -zcvf $PKGNAME.run.tgz $PKGNAME.run >> $LOG 2>&1
+   rm $PKGNAME.run >> $LOG 2>&1
+   
+    if [ $? -ne 0 ]; then
+       echo
+       echo "** Failed to create compressed installer!"
+       echo
+       exit 1
+    fi
+    echo "File created: dist/$PKGNAME.run.tgz"
+    cd $_PWD >> $LOG 2>&1
+ else 
+    echo "File created: dist/$PKGNAME.run"
+ fi
+ 
+
 fi
 
 echo "pgModeler successfully deployed!"
 echo
 
 if [ $BUILD_ALL = 1 ]; then
- ./linuxdeploy.sh -demo-version
+    if [ $COMP_INST_PKG = 1 ]; then
+        ./linuxdeploy.sh $DEMO_VERSION_OPT $COMPRESS_INSTALLER_OPT
+    else
+        ./linuxdeploy.sh $DEMO_VERSION_OPT 
+    fi    
 fi

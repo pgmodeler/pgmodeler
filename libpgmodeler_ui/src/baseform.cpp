@@ -108,6 +108,7 @@ void BaseForm::setMainWidget(BaseObjectWidget *widget)
 	else
 		setWindowTitle(widget->windowTitle());
 
+	apply_ok_btn->setDisabled(widget->isHandledObjectProtected());
 	resizeForm(widget);
 	setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
 

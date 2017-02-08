@@ -156,7 +156,7 @@ void MetadataHandlingForm::handleObjectsMetada(void)
 
 			root_item=PgModelerUiNS::createOutputTreeItem(output_trw,
 																										PgModelerUiNS::formatMessage(trUtf8("Extracting metadata to file `%1'").arg(metadata_file)),
-																										QPixmap(QString(":/icones/icones/msgbox_info.png")), nullptr);
+																										QPixmap(PgModelerUiNS::getIconPath("msgbox_info")), nullptr);
 
 			extract_model->saveObjectsMetadata(metadata_file, options);
 
@@ -165,7 +165,7 @@ void MetadataHandlingForm::handleObjectsMetada(void)
 				root_item->setExpanded(false);
 				root_item=PgModelerUiNS::createOutputTreeItem(output_trw,
 																											PgModelerUiNS::formatMessage(trUtf8("Saving backup metadata to file `%1'").arg(backup_file_edt->text())),
-																											QPixmap(QString(":/icones/icones/msgbox_info.png")), nullptr);
+																											QPixmap(PgModelerUiNS::getIconPath("msgbox_info")), nullptr);
 
 				model_wgt->getDatabaseModel()->saveObjectsMetadata(backup_file_edt->text());
 			}
@@ -175,10 +175,12 @@ void MetadataHandlingForm::handleObjectsMetada(void)
 			metadata_file=backup_file_edt->text();
 		}
 
-		root_item->setExpanded(false);
+		if(root_item)
+			root_item->setExpanded(false);
+
 		root_item=PgModelerUiNS::createOutputTreeItem(output_trw,
 																									PgModelerUiNS::formatMessage(trUtf8("Applying metadata from file `%1'").arg(metadata_file)),
-																									QPixmap(QString(":/icones/icones/msgbox_info.png")), nullptr);
+																									QPixmap(PgModelerUiNS::getIconPath("msgbox_info")), nullptr);
 
 		model_wgt->setUpdatesEnabled(false);
 		model_wgt->getDatabaseModel()->loadObjectsMetadata(metadata_file, options);
@@ -193,11 +195,10 @@ void MetadataHandlingForm::handleObjectsMetada(void)
 			disconnect(extract_model, nullptr, this, nullptr);
 
 		emit s_metadataHandled();
-		this->accept();
 	}
 	catch(Exception &e)
 	{
-		QPixmap icon=QPixmap(QString(":/icones/icones/msgbox_erro.png"));
+		QPixmap icon=QPixmap(PgModelerUiNS::getIconPath("msgbox_erro"));
 
 		disconnect(model_wgt->getDatabaseModel(), nullptr, this, nullptr);
 
@@ -258,12 +259,12 @@ void MetadataHandlingForm::updateProgress(int progress, QString msg, unsigned in
 	if(obj_type==BASE_OBJECT)
 	{
 		if(progress==100)
-			icon=QPixmap(QString(":/icones/icones/msgbox_info.png"));
+			icon=QPixmap(PgModelerUiNS::getIconPath("msgbox_info"));
 		else
-			icon=QPixmap(QString(":/icones/icones/msgbox_alerta.png"));
+			icon=QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta"));
 	}
 	else
-		icon=QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png"));
+		icon=QPixmap(PgModelerUiNS::getIconPath(obj_type));
 
 	PgModelerUiNS::createOutputTreeItem(output_trw, fmt_msg, icon, root_item);
 	progress_lbl->setText(fmt_msg);

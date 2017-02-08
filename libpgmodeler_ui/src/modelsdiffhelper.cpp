@@ -591,7 +591,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 {
 	BaseObject *object=nullptr;
 	Relationship *rel=nullptr;
-	map<unsigned, QString> drop_objs, create_objs, alter_objs, truncate_tabs;
+	map<unsigned, QString> drop_objs, create_objs, alter_objs, truncate_tabs, create_fks, create_constrs;
 	vector<BaseObject *> drop_vect, create_vect, drop_cols;
 	unsigned diff_type, schema_id=0, idx=0;
 	ObjectType obj_type;
@@ -607,7 +607,6 @@ void ModelsDiffHelper::processDiffInfos(void)
 	Table *parent_tab=nullptr;
 	bool skip_obj=false;
 	QStringList sch_names;
-	map<unsigned, QString> create_fks;
 
 	try
 	{
@@ -712,10 +711,15 @@ void ModelsDiffHelper::processDiffInfos(void)
 					set_perms+=object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
 				else
 				{
-					//Generating fks definitions in a separated variable in order to append them at create commands maps
-					if(object->getObjectType()==OBJ_CONSTRAINT &&
-							dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::foreign_key)
-						create_fks[object->getObjectId()]=getCodeDefinition(object, false);
+					/* Special case for constaints: the creation commands for these objects are appended at the very end of create commands secion.
+						Primary keys, unique keys, check constraints and exclude constraints are created after foreign keys */
+					if(object->getObjectType()==OBJ_CONSTRAINT)
+					{
+						if(dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::foreign_key)
+							create_fks[object->getObjectId()]=getCodeDefinition(object, false);
+						else
+							create_constrs[object->getObjectId()]=getCodeDefinition(object, false);
+					}
 					else
 					{
 						create_objs[object->getObjectId()]=getCodeDefinition(object, false);
@@ -749,9 +753,13 @@ void ModelsDiffHelper::processDiffInfos(void)
 						{
 							/* Special case for constraints, their code will be appeded to a separated variable in order to
 							 create them at the end of diff buffer */
-							if(obj->getObjectType()==OBJ_CONSTRAINT &&
-									dynamic_cast<Constraint *>(obj)->getConstraintType()==ConstraintType::foreign_key)
-								create_fks[obj->getObjectId()]=getCodeDefinition(obj, false);
+							if(obj->getObjectType()==OBJ_CONSTRAINT)
+							{
+								if(dynamic_cast<Constraint *>(obj)->getConstraintType()==ConstraintType::foreign_key)
+									create_fks[obj->getObjectId()]=getCodeDefinition(obj, false);
+								else
+									create_constrs[obj->getObjectId()]=getCodeDefinition(obj, false);
+							}
 							else
 								create_objs[obj->getObjectId()]=getCodeDefinition(obj, false);
 						}
@@ -830,6 +838,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 			attribs[ParsersAttributes::DROP_CMDS]=QString();
 			attribs[ParsersAttributes::CREATE_CMDS]=QString();
 			attribs[ParsersAttributes::TRUNCATE_CMDS]=QString();
+			attribs[ParsersAttributes::CONSTR_DEFS]=QString();
 			attribs[ParsersAttributes::FK_DEFS]=QString();
 			attribs[ParsersAttributes::UNSET_PERMS]=unset_perms;
 			attribs[ParsersAttributes::SET_PERMS]=set_perms;
@@ -854,6 +863,9 @@ void ModelsDiffHelper::processDiffInfos(void)
 				attribs[ParsersAttributes::CREATE_CMDS]+=itr.second;
 
 			attribs[ParsersAttributes::CREATE_CMDS]+=inherit_def;
+
+			for(auto &itr : create_constrs)
+				attribs[ParsersAttributes::CONSTR_DEFS]+=itr.second;
 
 			for(auto &itr : create_fks)
 				attribs[ParsersAttributes::FK_DEFS]+=itr.second;

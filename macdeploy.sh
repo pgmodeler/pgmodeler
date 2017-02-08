@@ -1,7 +1,7 @@
 #!/bin/bash
 
 USR=`whoami`
-QT_ROOT=/Users/$USR/Qt5.5.1/5.5/clang_64
+QT_ROOT=/Users/$USR/Qt5.6.2/5.6/clang_64
 QMAKE_ARGS="-r CONFIG+=x86_64 CONFIG+=release -spec macx-clang"
 LOG=macdeploy.log
 
@@ -87,7 +87,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Compiling code..."
-make   >> $LOG 2>&1
+make -j6 >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo

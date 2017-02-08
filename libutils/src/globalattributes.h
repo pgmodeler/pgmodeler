@@ -45,8 +45,7 @@ namespace GlobalAttributes {
 	PGMODELER_SITE,
 	PGMODELER_SUPPORT,
 	PGMODELER_SRC_URL,
-	PGMODELER_PURCHASE_URL,
-	PGMODELER_RECOVER_URL,
+	PGMODELER_DOWNLOAD_URL,
 	PGMODELER_DONATE_URL,
 	PGMODELER_UPD_CHECK_URL,
 
@@ -56,6 +55,7 @@ namespace GlobalAttributes {
 
 	DIR_SEPARATOR,
 	DEFAULT_CONFS_DIR,  //! \brief Directory name which holds the default pgModeler configuration
+	CONFS_BACKUPS_DIR,  //! \brief Directory name which holds the pgModeler configuration backups
 	SCHEMAS_DIR,        //! \brief Default name for the schemas directory
 	SQL_SCHEMA_DIR,     //! \brief Default name for the sql schemas directory
 	XML_SCHEMA_DIR,     //! \brief Default name for the xml schemas directory
@@ -78,6 +78,7 @@ namespace GlobalAttributes {
 	SQL_HIGHLIGHT_CONF, //! \brief Configuration file for SQL language highlight
 	XML_HIGHLIGHT_CONF, //! \brief Configuration file for XML language highlight
 	PATTERN_HIGHLIGHT_CONF, //! \brief Configuration file for name patterns highlight (relationship editing form)
+	SQL_HISTORY_CONF,		//! \brief Default name for the SQL commands history configuration file
 
 	EXAMPLE_MODEL, //! \brief Default name for the sample model loaded on appearence configuration form
 	UI_STYLE_CONF, //! \brief Configuration file ui style

@@ -18,6 +18,7 @@
 
 #include "modelobjectswidget.h"
 #include "databaseimportform.h"
+#include "pgmodeleruins.h"
 
 ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : QWidget(parent)
 {
@@ -161,7 +162,7 @@ void ModelObjectsWidget::selectObject(void)
 				obj_type!=OBJ_COLUMN && obj_type!=OBJ_CONSTRAINT && obj_type!=OBJ_RULE &&
 				obj_type!=OBJ_INDEX && obj_type!=OBJ_TRIGGER && obj_type!=OBJ_PERMISSION)
 		{
-			QAction act(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")),
+			QAction act(QPixmap(PgModelerUiNS::getIconPath(obj_type)),
 						trUtf8("New") + QString(" ") + BaseObject::getTypeName(obj_type), nullptr);
 			QMenu popup;
 
@@ -314,8 +315,7 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
 			str_aux=QString("_%1").arg(TableObjectView::TXT_EXCLUDE);
 	}
 
-	str_aux=BaseObject::getSchemaName(obj_type) + str_aux;
-	item->setIcon(0,QPixmap(QString(":/icones/icones/") + str_aux + QString(".png")));
+	item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(obj_type) + str_aux)));
 
 	return(item);
 }
@@ -470,10 +470,7 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 							 OBJ_SEQUENCE, OBJ_COLLATION, OBJ_EXTENSION };
 		int count, count2, type_cnt=sizeof(types)/sizeof(ObjectType), i, i1, i2;
 
-		QPixmap group_icon=QPixmap(QString(":/icones/icones/") +
-								   QString(BaseObject::getSchemaName(OBJ_SCHEMA)) +
-								   QString("_grp") +
-								   QString(".png"));
+		QPixmap group_icon=QPixmap(PgModelerUiNS::getIconPath(QString(BaseObject::getSchemaName(OBJ_SCHEMA)) + QString("_grp")));
 
 		//Get the current schema count on database
 		count=(db_model->getObjectCount(OBJ_SCHEMA));
@@ -517,10 +514,7 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 					if(visible_objs_map[types[i1]])
 					{
 						item3=new QTreeWidgetItem(item2);
-						item3->setIcon(0,QPixmap(QString(":/icones/icones/") +
-												 QString(BaseObject::getSchemaName(types[i1])) +
-												 QString("_grp") +
-												 QString(".png")));
+						item3->setIcon(0,QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(types[i1]) + QString("_grp"))));
 
 						//Get the objects that belongs to the current schema
 						obj_list=db_model->getObjects(types[i1], schema);
@@ -563,9 +557,7 @@ void ModelObjectsWidget::updateTableTree(QTreeWidgetItem *root, BaseObject *sche
 		ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE,
 							 OBJ_TRIGGER, OBJ_INDEX };
 		int count, count1, type_cnt=sizeof(types)/sizeof(ObjectType), i, i1, i2;
-		QPixmap group_icon=QPixmap(QString(":/icones/icones/") +
-								   QString(BaseObject::getSchemaName(OBJ_TABLE)) +
-								   QString("_grp") + QString(".png"));
+		QPixmap group_icon=QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(OBJ_TABLE) + QString("_grp")));
 
 		try
 		{
@@ -595,10 +587,7 @@ void ModelObjectsWidget::updateTableTree(QTreeWidgetItem *root, BaseObject *sche
 					if(visible_objs_map[types[i1]])
 					{
 						item2=new QTreeWidgetItem(item1);
-						item2->setIcon(0,QPixmap(QString(":/icones/icones/") +
-												 QString(BaseObject::getSchemaName(types[i1])) +
-												 QString("_grp") +
-												 QString(".png")));
+						item2->setIcon(0,QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(types[i1]) + QString("_grp"))));
 						font=item2->font(0);
 						font.setItalic(true);
 						item2->setFont(0, font);
@@ -634,9 +623,7 @@ void ModelObjectsWidget::updateViewTree(QTreeWidgetItem *root, BaseObject *schem
 		QFont font;
 		ObjectType types[]={ OBJ_RULE, OBJ_TRIGGER };
 		int count, count1, type_cnt=sizeof(types)/sizeof(ObjectType), i, i1, i2;
-		QPixmap group_icon=QPixmap(QString(":/icones/icones/") +
-								   QString(BaseObject::getSchemaName(OBJ_VIEW)) +
-								   QString("_grp") + QString(".png"));
+		QPixmap group_icon=QPixmap(PgModelerUiNS::getIconPath(QString(BaseObject::getSchemaName(OBJ_VIEW)) + QString("_grp")));
 
 		try
 		{
@@ -666,10 +653,7 @@ void ModelObjectsWidget::updateViewTree(QTreeWidgetItem *root, BaseObject *schem
 					if(visible_objs_map[types[i1]])
 					{
 						item2=new QTreeWidgetItem(item1);
-						item2->setIcon(0,QPixmap(QString(":/icones/icones/") +
-												 QString(BaseObject::getSchemaName(types[i1])) +
-												 QString("_grp") +
-												 QString(".png")));
+						item2->setIcon(0,QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(types[i1]) + QString("_grp"))));
 						font=item2->font(0);
 						font.setItalic(true);
 						item2->setFont(0, font);
@@ -706,7 +690,7 @@ void ModelObjectsWidget::updatePermissionTree(QTreeWidgetItem *root, BaseObject 
 			QFont font=item->font(0);
 
 			db_model->getPermissions(object, perms);
-			item->setIcon(0,QPixmap(QString(":/icones/icones/permission_grp.png")));
+			item->setIcon(0,QPixmap(PgModelerUiNS::getIconPath("permission_grp")));
 
 			font.setItalic(true);
 			item->setFont(0, font);
@@ -761,8 +745,7 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 						item1=new QTreeWidgetItem(root);
 						str_aux=QString(BaseObject::getSchemaName(types[i]));
 
-						item1->setIcon(0,QPixmap(QString(":/icones/icones/") +
-												 str_aux + QString("_grp") + QString(".png")));
+						item1->setIcon(0,QPixmap(PgModelerUiNS::getIconPath(str_aux + QString("_grp"))));
 						item1->setData(1, Qt::UserRole, QVariant::fromValue<unsigned>(types[i]));
 
 						obj_list=(*db_model->getObjectList(types[i]));

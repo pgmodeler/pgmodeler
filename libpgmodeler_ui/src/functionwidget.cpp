@@ -51,17 +51,17 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 										 ObjectTableWidget::UPDATE_BUTTON, true, this);
 		return_tab->setColumnCount(2);
 		return_tab->setHeaderLabel(trUtf8("Column"), 0);
-		return_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
+		return_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("column")),0);
 		return_tab->setHeaderLabel(trUtf8("Type"), 1);
-		return_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+		return_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
 
 		parameters_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
 											 ObjectTableWidget::UPDATE_BUTTON, true, this);
 		parameters_tab->setColumnCount(4);
 		parameters_tab->setHeaderLabel(trUtf8("Name"),0);
-		parameters_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/parameter.png")),0);
+		parameters_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("parameter")),0);
 		parameters_tab->setHeaderLabel(trUtf8("Type"),1);
-		parameters_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+		parameters_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
 		parameters_tab->setHeaderLabel(trUtf8("Mode"),2);
 		parameters_tab->setHeaderLabel(trUtf8("Default Value"),3);
 
@@ -101,8 +101,11 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 
 		connect(parameters_tab, SIGNAL(s_rowAdded(int)), this, SLOT(showParameterForm()));
 		connect(parameters_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showParameterForm()));
+		connect(parameters_tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateParameter(int,int)));
+
 		connect(return_tab, SIGNAL(s_rowAdded(int)), this, SLOT(showParameterForm()));
 		connect(return_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showParameterForm()));
+		connect(return_tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateParameter(int,int)));
 
 		setRequiredField(language_lbl);
 		setRequiredField(ret_method_lbl);
@@ -150,6 +153,21 @@ void FunctionWidget::handleParameter(Parameter param, int result)
 		if(lin_cnt > 0 && table->getCellText(lin_cnt-1,0).isEmpty())
 			table->removeRow(lin_cnt-1);
 	}
+}
+
+void FunctionWidget::duplicateParameter(int curr_row, int new_row)
+{
+	Parameter new_param;
+	ObjectTableWidget *table=nullptr;
+
+	//Selects the table to be handled according to its visibility
+	if(parameters_tab->isVisible())
+		table=parameters_tab;
+	else
+		table=return_tab;
+
+	new_param = getParameter(table, curr_row);
+	showParameterData(new_param, table, new_row);
 }
 
 void FunctionWidget::showParameterForm(void)

@@ -91,6 +91,15 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(move_up_tb, SIGNAL(clicked()), this, SLOT(swapColumns()));
 	connect(filter_tb, SIGNAL(toggled(bool)), v_splitter, SLOT(setVisible(bool)));
 
+	connect(filter_tb, &QToolButton::toggled,
+			[=](bool checked){
+
+				v_splitter->setVisible(checked);
+
+				if(checked)
+					filter_txt->setFocus();
+	});
+
 	//Using the QueuedConnection here to avoid the "edit: editing failed" when editing and navigating through items using tab key
 	connect(results_tbw, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(insertRowOnTabPress(int,int,int,int)), Qt::QueuedConnection);
 
@@ -179,7 +188,7 @@ void DataManipulationForm::listColumns(void)
 			{
 				col_names.push_back(col[ParsersAttributes::NAME]);
 				code_compl_wgt->insertCustomItem(col[ParsersAttributes::NAME], {},
-				QPixmap(QString(":/icones/icones/column.png")));
+				QPixmap(PgModelerUiNS::getIconPath("column")));
 			}
 
 			ord_column_cmb->addItems(col_names);
@@ -245,6 +254,8 @@ void DataManipulationForm::retrieveData(void)
 		if(limit > 0)
 			query+=QString(" LIMIT %1").arg(limit);
 
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+
 		catalog.setConnection(conn_cat);
 		conn_sql.connect();
 		conn_sql.executeDMLCommand(query, res);
@@ -277,6 +288,8 @@ void DataManipulationForm::retrieveData(void)
 
 		conn_sql.close();
 		catalog.closeConnection();
+
+		QApplication::restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{
@@ -481,6 +494,8 @@ void DataManipulationForm::listObjects(QComboBox *combo, vector<ObjectType> obj_
 		QStringList items;
 		int idx=0, count=0;
 
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+
 		catalog.setConnection(conn);
 		catalog.setFilter(Catalog::LIST_ALL_OBJS);
 		combo->blockSignals(true);
@@ -500,7 +515,7 @@ void DataManipulationForm::listObjects(QComboBox *combo, vector<ObjectType> obj_
 
 			for(; idx < count; idx++)
 			{
-				combo->setItemIcon(idx, QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
+				combo->setItemIcon(idx, QPixmap(PgModelerUiNS::getIconPath(obj_type)));
 				combo->setItemData(idx, obj_type);
 			}
 
@@ -515,6 +530,8 @@ void DataManipulationForm::listObjects(QComboBox *combo, vector<ObjectType> obj_
 		combo->setCurrentIndex(0);
 		combo->blockSignals(false);
 		catalog.closeConnection();
+
+		QApplication::restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{

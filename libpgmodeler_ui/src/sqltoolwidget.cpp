@@ -26,7 +26,10 @@
 SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 {
 	setupUi(this);
-	h_splitter->setSizes({0, 10000});
+
+	h_splitter->setSizes({315, 10000});
+	h_splitter->handle(1)->installEventFilter(this);
+
 	v_splitter->setSizes({1000, 400});
 
 	QVBoxLayout *vbox=new QVBoxLayout;
@@ -68,6 +71,22 @@ SQLToolWidget::~SQLToolWidget(void)
 		closeDatabaseExplorer(0);
 }
 
+bool SQLToolWidget::eventFilter(QObject *object, QEvent *event)
+{
+	if(event->type() == QEvent::MouseButtonDblClick &&
+		 qobject_cast<QSplitterHandle *>(object) == h_splitter->handle(1))
+	{
+		if(h_splitter->sizes().at(0) != 0)
+			h_splitter->setSizes({0, 10000});
+		else
+			h_splitter->setSizes({315, 10000});
+
+		return(true);
+	}
+
+	return(QWidget::eventFilter(object, event));
+}
+
 void SQLToolWidget::updateTabs(void)
 {
 	SQLExecutionWidget *sql_exec_wgt=nullptr;
@@ -75,9 +94,13 @@ void SQLToolWidget::updateTabs(void)
 	for(int i=0; i < sql_exec_tbw->count(); i++)
 	{
 		sql_exec_wgt=dynamic_cast<SQLExecutionWidget *>(sql_exec_tbw->widget(i));
-		sql_exec_wgt-> sql_cmd_txt->updateLineNumbersSize();
-		sql_exec_wgt-> sql_cmd_txt->updateLineNumbers();
+		sql_exec_wgt->sql_cmd_txt->updateLineNumbersSize();
+		sql_exec_wgt->sql_cmd_txt->updateLineNumbers();
 		sql_exec_wgt->sql_cmd_hl->rehighlight();
+
+		//Forcing the update of the sql history widget (see SQLExecutionWidget::eventFilter)
+		sql_exec_wgt->output_tbw->widget(2)->hide();
+		sql_exec_wgt->output_tbw->widget(2)->show();
 	}
 }
 
@@ -176,7 +199,7 @@ void SQLToolWidget::handleDatabaseDropped(const QString &dbname)
 			//Closing tabs related to the database to be dropped
 			for(int i=0; i < databases_tbw->count(); i++)
 			{
-				if(databases_tbw->tabText(i)==dbname)
+				if(databases_tbw->tabText(i).remove('&') == dbname)
 				{
 					closeDatabaseExplorer(i);
 					i=-1;

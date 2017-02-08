@@ -72,6 +72,9 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 		//! \brief Removes the selected object from the table that calls the slot
 		void removeObject(int row);
 
+		//! \brief Duplicate the selected object. This method will desambigate names if needed
+		void duplicateObject(int sel_row, int new_row);
+
 		//! \brief Removes all objects from the table that calls the slot
 		void removeObjects(void);
 

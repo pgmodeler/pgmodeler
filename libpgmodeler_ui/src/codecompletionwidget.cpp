@@ -18,6 +18,7 @@
 
 #include "codecompletionwidget.h"
 #include "generalconfigwidget.h"
+#include "pgmodeleruins.h"
 
 CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt) :	QWidget(dynamic_cast<QWidget *>(code_field_txt))
 {
@@ -266,7 +267,7 @@ void CodeCompletionWidget::populateNameList(vector<BaseObject *> &objects, QStri
 		//The object will be inserted if its name matches the filter or there is no filter set
 		if(filter.isEmpty() || regexp.exactMatch(obj_name))
 		{
-			item=new QListWidgetItem(QPixmap(QString(":/icones/icones/") + objects[i]->getSchemaName() + QString(".png")), obj_name);
+			item=new QListWidgetItem(QPixmap(PgModelerUiNS::getIconPath(objects[i]->getSchemaName())), obj_name);
 			item->setToolTip(QString("%1 (%2)").arg(objects[i]->getName(true)).arg(objects[i]->getTypeName()));
 			item->setData(Qt::UserRole, QVariant::fromValue<void *>(objects[i]));
 			item->setToolTip(BaseObject::getTypeName(obj_type));
@@ -418,7 +419,7 @@ void CodeCompletionWidget::updateList(void)
 		list=keywords.filter(regexp);
 		for(int i=0; i < list.size(); i++)
 		{
-			item=new QListWidgetItem(QPixmap(QString(":/icones/icones/keyword.png")), list[i]);
+			item=new QListWidgetItem(QPixmap(PgModelerUiNS::getIconPath("keyword")), list[i]);
 			item->setToolTip(trUtf8("SQL Keyword"));
 			name_list->addItem(item);
 		}

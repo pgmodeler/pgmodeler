@@ -32,6 +32,7 @@
 #include "objectselectorwidget.h"
 #include "ui_baseobjectwidget.h"
 #include "pgsqltypewidget.h"
+#include "pgmodeleruins.h"
 
 /* Declaring the PgSQLType class as a Qt metatype in order to permit
 	 that instances of the class be used as data of QVariant and QMetaType */
@@ -48,6 +49,8 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		PROT_LINE_FGCOLOR,
 		RELINC_LINE_BGCOLOR,
 		RELINC_LINE_FGCOLOR;
+
+		bool object_protected;
 
 		QHBoxLayout *misc_btns_lt;
 
@@ -167,6 +170,8 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 
 		//! \brief Returns the kind of database object handled
 		ObjectType getHandledObjectType(void);
+
+		bool isHandledObjectProtected(void);
 		
 	protected slots:
 		void editPermissions(void);

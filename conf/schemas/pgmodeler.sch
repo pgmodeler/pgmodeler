@@ -27,7 +27,7 @@ $sp [<configuration op-list-size="] {op-list-size} ["] $br
 [               code-font-size="] {code-font-size} ["] $br
 [               code-tab-width="] {code-tab-width} ["] $br
 [               canvas-corner-move="] %if {canvas-corner-move} %then true %else false %end ["] $br
-[               invert-panning-rangesel="] %if {invert-panning-rangesel} %then true %else false %end ["] $br
+[               invert-rangesel-trigger="] %if {invert-rangesel-trigger} %then true %else false %end ["] $br
 [               check-update="] %if {check-update} %then true %else false %end ["] $br
 [               save-last-position="] %if {save-last-position} %then true %else false %end ["] $br
 [               show-main-menu="] %if {show-main-menu} %then true %else false %end ["] $br
@@ -43,7 +43,9 @@ $sp [<configuration op-list-size="] {op-list-size} ["] $br
 [               use-placeholders="] %if {use-placeholders} %then true %else false %end ["] $br
 [               show-canvas-grid="] %if {show-canvas-grid} %then true %else false %end ["] $br
 [               show-page-delimiters="] %if {show-page-delimiters} %then true %else false %end ["] $br
-[               align-objs-to-grid="] %if {align-objs-to-grid} %then true %else false %end ["]
+[               align-objs-to-grid="] %if {align-objs-to-grid} %then true %else false %end ["] $br
+[               min-object-opacity="] {min-object-opacity} ["] $br
+[               history-max-length="] {history-max-length} ["]
 [/>] $br
 
 %if {file} %then

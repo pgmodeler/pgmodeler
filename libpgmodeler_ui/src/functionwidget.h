@@ -83,6 +83,9 @@ class FunctionWidget: public BaseObjectWidget, public Ui::FunctionWidget  {
 		//! \brief Shows the configured parameter on the table that called the form
 		void handleParameter(Parameter param, int result);
 
+		//! brief Duplicates the parameter in the curr_row placing it in new_row
+		void duplicateParameter(int curr_row, int new_row);
+
 	public slots:
 		void applyConfiguration(void);
 };

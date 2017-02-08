@@ -112,8 +112,9 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 
 		destroyConnections();
 		key_attribs.push_back(ParsersAttributes::ALIAS);
+		BaseConfigWidget::loadConfiguration(GlobalAttributes::CONNECTIONS_CONF, config_params, key_attribs);
 
-		try
+		/*try
 		{
 			BaseConfigWidget::loadConfiguration(GlobalAttributes::CONNECTIONS_CONF, config_params, key_attribs);
 		}
@@ -124,7 +125,7 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 				fixConnectionsFileSyntax();
 				BaseConfigWidget::loadConfiguration(GlobalAttributes::CONNECTIONS_CONF, config_params, key_attribs);
 			}
-		}
+		}*/
 
 		itr=config_params.begin();
 		itr_end=config_params.end();
@@ -164,7 +165,7 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, e.getExtraInfo());
 	}
 }
 
@@ -370,6 +371,7 @@ void ConnectionsConfigWidget::configureConnection(Connection *conn)
 	{
 		conn->setAutoBrowseDB(auto_browse_chk->isChecked());
 		conn->setConnectionParam(Connection::PARAM_ALIAS, alias_edt->text());
+		conn->setConnectionParam(Connection::PARAM_SERVER_IP, QString());
 		conn->setConnectionParam(Connection::PARAM_SERVER_FQDN, host_edt->text());
 		conn->setConnectionParam(Connection::PARAM_PORT, QString("%1").arg(port_sbp->value()));
 		conn->setConnectionParam(Connection::PARAM_USER, user_edt->text());
@@ -421,35 +423,6 @@ void ConnectionsConfigWidget::configureConnection(Connection *conn)
 	}
 }
 
-void ConnectionsConfigWidget::fixConnectionsFileSyntax(void)
-{
-	QFile file;
-
-	file.setFileName(GlobalAttributes::CONFIGURATIONS_DIR +
-									 GlobalAttributes::DIR_SEPARATOR +
-									 GlobalAttributes::CONNECTIONS_CONF + GlobalAttributes::CONFIGURATION_EXT);
-	file.open(QFile::ReadWrite);
-
-	if(file.isOpen())
-	{
-		QByteArray buffer,
-				old_attrib = QByteArray(QString("%1=").arg(Connection::PARAM_CONN_TIMEOUT).toStdString().c_str()),
-				new_attrib = QByteArray(QString("%1=").arg(ParsersAttributes::CONNECTION_TIMEOUT).toStdString().c_str());
-
-		buffer = file.readAll();
-
-		if(buffer.contains(old_attrib))
-		{
-			buffer.replace(old_attrib, new_attrib);
-			file.reset();
-			file.resize(0);
-			file.write(buffer);
-		}
-
-		file.close();
-	}
-}
-
 void ConnectionsConfigWidget::testConnection(void)
 {
 	Connection conn;
@@ -462,7 +435,7 @@ void ConnectionsConfigWidget::testConnection(void)
 		conn.connect();
 		srv_info=conn.getServerInfo();
 		msg_box.show(trUtf8("Success"),
-					 PgModelerUiNS::formatMessage(trUtf8("Connection successfuly stablished!\n\nServer details:\n\nPID: `%1'\nProtocol: `%2'\nVersion: `%3'"))
+					 PgModelerUiNS::formatMessage(trUtf8("Connection successfully established!\n\nServer details:\n\nPID: `%1'\nProtocol: `%2'\nVersion: `%3'"))
 					 .arg(srv_info[Connection::SERVER_PID])
 				.arg(srv_info[Connection::SERVER_PROTOCOL])
 				.arg(srv_info[Connection::SERVER_VERSION]), Messagebox::INFO_ICON);

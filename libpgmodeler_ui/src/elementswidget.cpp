@@ -30,7 +30,7 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 		elem_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		parent_obj=nullptr;
-		elements_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
+		elements_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^ ObjectTableWidget::DUPLICATE_BUTTON, true, this);
 		op_class_sel=new ObjectSelectorWidget(OBJ_OPCLASS, true, this);
 		collation_sel=new ObjectSelectorWidget(OBJ_COLLATION, true, this);
 		operator_sel=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);
@@ -38,11 +38,11 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 
 		elements_tab->setColumnCount(6);
 		elements_tab->setHeaderLabel(trUtf8("Element"), 0);
-		elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("column")),0);
 		elements_tab->setHeaderLabel(trUtf8("Type"), 1);
-		elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
 		elements_tab->setHeaderLabel(trUtf8("Operator Class"), 3);
-		elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/opclass.png")),3);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("opclass")),3);
 		elements_tab->setHeaderLabel(trUtf8("Sorting"), 4);
 		elements_tab->setHeaderLabel(trUtf8("Nulls First"), 5);
 
@@ -124,7 +124,7 @@ void ElementsWidget::setAttributes(DatabaseModel *model, Table *table, vector<In
 	collation_lbl->setVisible(true);
 
 	elements_tab->setHeaderLabel(trUtf8("Collation"), 2);
-	elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/collation.png")),2);
+	elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("collation")),2);
 	elements_tab->blockSignals(true);
 
 	for(unsigned i=0; i < elems.size(); i++)
@@ -143,7 +143,7 @@ void ElementsWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj,
 	operator_lbl->setVisible(true);
 
 	elements_tab->setHeaderLabel(trUtf8("Operator"), 2);
-	elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/operator.png")),2);
+	elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("operator")),2);
 	elements_tab->blockSignals(true);
 
 	for(unsigned i=0; i < elems.size(); i++)

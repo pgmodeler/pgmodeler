@@ -18,7 +18,7 @@
 <!ATTLIST configuration hide-ext-attribs (false|true) "false">
 <!ATTLIST configuration hide-table-tags (false|true) "false">
 <!ATTLIST configuration canvas-corner-move (false|true) "true">
-<!ATTLIST configuration invert-panning-rangesel (false|true) "false">
+<!ATTLIST configuration invert-rangesel-trigger (false|true) "false">
 <!ATTLIST configuration check-update (false|true) "false">
 <!ATTLIST configuration save-last-position (false|true) "false">
 <!ATTLIST configuration show-main-menu (false|true) "false">
@@ -38,6 +38,8 @@
 <!ATTLIST configuration show-canvas-grid (false|true) "true">
 <!ATTLIST configuration show-page-delimiters (false|true) "true">
 <!ATTLIST configuration align-objs-to-grid (false|true) "true">
+<!ATTLIST configuration min-object-opacity CDATA #IMPLIED>
+<!ATTLIST configuration history-max-length CDATA #IMPLIED>
 
 <!ELEMENT session (file+)>
 <!ELEMENT recent-models (file+)>

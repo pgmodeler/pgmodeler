@@ -50,6 +50,8 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		(see addSQLExecutionTab and closeSQLExecutionTab for deitails) */
 		QMap<QWidget *, QWidgetList> sql_exec_wgts;
 
+		bool eventFilter(QObject *object, QEvent *event);
+
 	public:
 		SQLToolWidget(QWidget * parent = 0);
 		~SQLToolWidget(void);

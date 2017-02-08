@@ -20,6 +20,7 @@
 #include "pgmodeleruins.h"
 #include "bugreportform.h"
 #include "metadatahandlingform.h"
+#include "sqlexecutionwidget.h"
 
 bool MainWindow::confirm_validation=true;
 
@@ -67,7 +68,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		plugins_menu->setEnabled(!plugins_menu->isEmpty());
 		action_plugins->setEnabled(!plugins_menu->isEmpty());
 		action_plugins->setMenu(plugins_menu);
-		dynamic_cast<QToolButton *>(general_tb->widgetForAction(action_plugins))->setPopupMode(QToolButton::InstantPopup);
 
 		confs=GeneralConfigWidget::getConfigurationParams();
 		itr=confs.begin();
@@ -118,6 +118,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 		control_tb->addWidget(model_nav_wgt);
 		control_tb->addSeparator();
+
+		control_tb->addAction(action_plugins);
+		dynamic_cast<QToolButton *>(control_tb->widgetForAction(action_plugins))->setPopupMode(QToolButton::InstantPopup);
+
 		control_tb->addAction(action_bug_report);
 		control_tb->addAction(action_donate);
 		control_tb->addAction(action_about);
@@ -393,6 +397,12 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		if(!act->shortcut().toString().isEmpty())
 			act->setToolTip(act->toolTip() + QString(" (%1)").arg(act->shortcut().toString()));
 	}
+
+	try
+	{
+		SQLExecutionWidget::loadSQLHistory();
+	}
+	catch(Exception &){}
 }
 
 MainWindow::~MainWindow(void)
@@ -655,6 +665,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 				log_files.pop_front();
 			}
 
+			SQLExecutionWidget::saveSQLHistory();
 			qApp->quit();
 		}
 	}
@@ -975,6 +986,11 @@ void MainWindow::setCurrentModel(void)
 		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_select_all));
 		btns.push_back(tool_btn);
 
+		general_tb->addAction(current_model->action_fade);
+		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_fade));
+		tool_btn->setPopupMode(QToolButton::InstantPopup);
+		btns.push_back(tool_btn);
+
 		for(QToolButton *btn : btns)
 		{
 			PgModelerUiNS::configureWidgetFont(btn, PgModelerUiNS::SMALL_FONT_FACTOR);
@@ -1185,12 +1201,13 @@ void MainWindow::applyConfigurations(void)
 		for(i=0; i < count; i++)
 		{
 			model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
+			model->updateObjectsOpacity();
 			model->db_model->setObjectsModified();
 			model->update();
 		}
 
 		updateConnections();
-		sql_tool_wgt->configureSnippets();
+		sql_tool_wgt->configureSnippets();		
 	}
 
 	sql_tool_wgt->updateTabs();
@@ -1236,7 +1253,7 @@ void MainWindow::saveModel(ModelWidget *model)
 							 trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! It's recommended to validate it before save in order to create a consistent model otherwise the generated file will be broken demanding manual fixes to be loadable again!").arg(db_model->getName()),
 							 Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
 							 trUtf8("Save anyway"), trUtf8("Validate"),QString(),
-							 QString(":/icones/icones/salvar.png"), QString(":/icones/icones/validation.png"));
+							 PgModelerUiNS::getIconPath("salvar"), PgModelerUiNS::getIconPath("validation"));
 
 				//If the user cancel the saving force the stopping of autosave timer to give user the chance to validate the model
 				if(msg_box.isCancelled())
@@ -1308,7 +1325,7 @@ void MainWindow::exportModel(void)
 					 trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the export process it's recommended to validate in order to correctly create the objects on database server!").arg(db_model->getName()),
 					 Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
 					 trUtf8("Export anyway"), trUtf8("Validate"), QString(),
-					 QString(":/icones/icones/exportar.png"), QString(":/icones/icones/validation.png"));
+					 PgModelerUiNS::getIconPath("exportar"), PgModelerUiNS::getIconPath("validation"));
 
 		if(!msg_box.isCancelled() && msg_box.result()==QDialog::Rejected)
 		{
@@ -1359,7 +1376,7 @@ void MainWindow::diffModelDatabase(void)
 					 trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the diff process it's recommended to validate in order to correctly analyze and generate the difference between the model and a database!").arg(db_model->getName()),
 					 Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
 					 trUtf8("Diff anyway"), trUtf8("Validate"), QString(),
-					 QString(":/icones/icones/diff.png"), QString(":/icones/icones/validation.png"));
+					 PgModelerUiNS::getIconPath("diff"), PgModelerUiNS::getIconPath("validation"));
 
 		if(!msg_box.isCancelled() && msg_box.result()==QDialog::Rejected)
 		{
@@ -1445,7 +1462,7 @@ void MainWindow::loadModel(void)
 	try
 	{
 		file_dlg.setNameFilter(trUtf8("Database model (*.dbm);;All files (*.*)"));
-		file_dlg.setWindowIcon(QPixmap(QString(":/icones/icones/pgsqlModeler48x48.png")));
+		file_dlg.setWindowIcon(QPixmap(PgModelerUiNS::getIconPath("pgsqlModeler48x48")));
 		file_dlg.setWindowTitle(trUtf8("Load model"));
 		file_dlg.setFileMode(QFileDialog::ExistingFiles);
 		file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
@@ -1494,7 +1511,7 @@ void MainWindow::showFixMessage(Exception &e, const QString &filename)
 				 trUtf8("Could not load the database model file `%1'. Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(filename),
 				 Messagebox::ERROR_ICON, Messagebox::YES_NO_BUTTONS,
 				 trUtf8("Fix model"), trUtf8("Cancel"), QString(),
-				 QString(":/icones/icones/fixobject.png"), QString(":/icones/icones/msgbox_erro.png"));
+				 PgModelerUiNS::getIconPath("fixobject"), PgModelerUiNS::getIconPath("msgbox_erro"));
 
 	if(msg_box.result()==QDialog::Accepted)
 		fixModel(filename);

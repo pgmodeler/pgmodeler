@@ -1423,7 +1423,7 @@ void Relationship::addAttributes(Table *recv_tab)
 	}
 }
 
-void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
+void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null, bool is_dst_table)
 {
 	Constraint *dst_pk=nullptr, *src_pk=nullptr, *pk=nullptr;
 	unsigned i, count;
@@ -1469,7 +1469,7 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 				name=generateObjectName(SRC_COL_PATTERN, column_aux);
 			else
 			{
-				if(ref_tab==src_table)
+				if(ref_tab==src_table && (!isSelfRelationship() || (isSelfRelationship() && !is_dst_table)))
 					name=generateObjectName(SRC_COL_PATTERN, column_aux);
 				else
 					name=generateObjectName(DST_COL_PATTERN, column_aux);
@@ -1712,7 +1712,7 @@ void Relationship::addColumnsRelNn(void)
 		/* Copy the columns from the primary keys of the source and destination tables
 		 to the table that represents the n-n relationship */
 		copyColumns(tab, table_relnn, src_not_null);
-		copyColumns(tab1, table_relnn, dst_not_null);
+		copyColumns(tab1, table_relnn, dst_not_null, true);
 
 		if(single_pk_column)
 		{
@@ -1732,7 +1732,10 @@ void Relationship::addColumnsRelNn(void)
 		if(!single_pk_column)
 		{
 			for(auto &col : gen_columns)
+			{
+				col->setNotNull(true);
 				pk_tabnn->addColumn(col, Constraint::SOURCE_COLS);
+			}
 		}
 		else
 		{

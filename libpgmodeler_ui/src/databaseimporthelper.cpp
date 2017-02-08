@@ -681,7 +681,11 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 			if(attribs.count(ParsersAttributes::SCHEMA))
 				attribs[ParsersAttributes::SCHEMA]=getDependencyObject(attribs[ParsersAttributes::SCHEMA], OBJ_SCHEMA, false, auto_resolve_deps);
 
-			if(!attribs[ParsersAttributes::PERMISSION].isEmpty())
+			/* Due to the object recreation mechanism there are some situations when pgModeler fails to recreate
+			them due to the duplication of permissions. So, to avoid this problem we need to check if the OID of the
+			object was previously registered in the vector of permissions to be created */
+			if(!attribs[ParsersAttributes::PERMISSION].isEmpty() &&
+				 std::find(obj_perms.begin(), obj_perms.end(), oid)==obj_perms.end())
 				obj_perms.push_back(oid);
 
 			if(debug_mode)
@@ -1539,7 +1543,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 		bool is_type_registered=false;
 		Column col;
 		vector<unsigned> inh_cols;
-		QString type_def, unknown_obj_xml, type_name;
+		QString type_def, unknown_obj_xml, type_name, def_val;
 		map<unsigned, attribs_map>::iterator itr, itr1, itr_end;
 		attribs_map pos_attrib={{ ParsersAttributes::X_POS, QString("0") },
 								{ ParsersAttributes::Y_POS, QString("0") }};
@@ -1612,7 +1616,34 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 			col.setType(PgSQLType::parseString(type_name));
 			col.setNotNull(!itr->second[ParsersAttributes::NOT_NULL].isEmpty());
 			col.setComment(itr->second[ParsersAttributes::COMMENT]);
-			col.setDefaultValue(itr->second[ParsersAttributes::DEFAULT_VALUE]);
+
+			/* Removing extra/forced type casting in the retrieved default value.
+			 This is done in order to avoid unnecessary entries in the diff results.
+
+			 For instance: say in the model we have a column with the following configutation:
+			 > varchar(3) default 'foo'
+
+			 Now, when importing the same column the default value for it will be something like:
+			 > varchar(3) default 'foo'::character varying
+
+			 Since the extra chars in the default value of the imported column are redundant (casting
+			 varchar to character varying) we remove the '::character varying'. The idea here is to eliminate
+			 the cast if the casting is equivalent to the column type. */
+
+			def_val = itr->second[ParsersAttributes::DEFAULT_VALUE];
+
+			if(!def_val.startsWith(QString("nextval(")) && def_val.contains(QString("::")))
+			{
+				QStringList values = def_val.split(QString("::"));
+
+				if(values.size() > 1 &&
+					 ((~col.getType() == values[1]) ||
+						(~col.getType() == QString("char") && values[1] == QString("bpchar")) ||
+						(col.getType().isUserType() && (~col.getType()).endsWith(values[1]))))
+					def_val=values[0];
+			}
+
+			col.setDefaultValue(def_val);
 
 			//Checking if the collation used by the column exists, if not it'll be created when auto_resolve_deps is checked
 			if(auto_resolve_deps && !itr->second[ParsersAttributes::COLLATION].isEmpty())
@@ -2171,6 +2202,8 @@ void DatabaseImportHelper::__createTableInheritances(void)
 
 					//Create the inheritance relationship
 					rel=new Relationship(Relationship::RELATIONSHIP_GEN, child_tab, parent_tab);
+					rel->setName(PgModelerNS::generateUniqueName(rel, (*dbmodel->getObjectList(OBJ_RELATIONSHIP))));
+
 					dbmodel->addRelationship(rel);
 					rel=nullptr;
 				}
@@ -2193,10 +2226,6 @@ void DatabaseImportHelper::configureDatabase(attribs_map &attribs)
 	try
 	{
 		attribs[ParsersAttributes::APPEND_AT_EOD]=QString();
-
-		//Removing the encoding suffix from LC_COLLATE and LC_CTYPE attribs
-		attribs[ParsersAttributes::_LC_COLLATE_].remove(QRegExp(QString("(\\.)(.)+")));
-		attribs[ParsersAttributes::_LC_CTYPE_].remove(QRegExp(QString("(\\.)(.)+")));
 		loadObjectXML(OBJ_DATABASE, attribs);
 		dbmodel->configureDatabase(attribs);
 	}
@@ -2405,9 +2434,10 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 			/* Prepend the schema name only if it is not a system schema ('pg_catalog' or 'information_schema') and
 		 if the schema's names is already present in the type's name (in case of table types) */
 			sch_name=getObjectName(type_attr[ParsersAttributes::SCHEMA]);
-			if(!sch_name.isEmpty() && sch_name!=QString("pg_catalog") &&
-					sch_name!=QString("information_schema") &&
-					!obj_name.contains(QRegExp(QString("^(\\\")?(%1)(\\\")?(.)").arg(sch_name))))
+			if(!sch_name.isEmpty() &&
+				 ((sch_name!=QString("pg_catalog") && sch_name!=QString("information_schema")) ||
+					type_oid > catalog.getLastSysObjectOID()) &&
+				 !obj_name.contains(QRegExp(QString("^(\\\")?(%1)(\\\")?(.)").arg(sch_name))))
 				obj_name.prepend(sch_name + QString("."));
 
 			/* In case of auto resolve dependencies, if the type is a user defined one and was not created in the database

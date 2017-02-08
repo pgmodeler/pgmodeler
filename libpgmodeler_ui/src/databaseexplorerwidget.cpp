@@ -22,6 +22,7 @@
 #include "sqlexecutionwidget.h"
 #include "snippetsconfigwidget.h"
 #include "plaintextitemdelegate.h"
+#include "pgmodeleruins.h"
 
 using namespace ParsersAttributes;
 
@@ -83,7 +84,14 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{FACTOR, QT_TR_NOOP("Fill factor")},                 {NO_INHERIT, QT_TR_NOOP("No inherit")},                {OP_CLASSES, QT_TR_NOOP("Op. classes")},
 	{OPERATORS, QT_TR_NOOP("Operators")},                {REF_TABLE, QT_TR_NOOP("Ref. table")},                 {COLUMNS, QT_TR_NOOP("Columns")},
 	{UPD_ACTION, QT_TR_NOOP("On update")},               {SRC_COLUMNS, QT_TR_NOOP("Columns")},                  {UNIQUE, QT_TR_NOOP("Unique")},
-	{PREDICATE, QT_TR_NOOP("Predicate")},                {COLLATIONS, QT_TR_NOOP("Collations")},                {INHERITED, QT_TR_NOOP("Inherited")}
+	{PREDICATE, QT_TR_NOOP("Predicate")},                {COLLATIONS, QT_TR_NOOP("Collations")},                {INHERITED, QT_TR_NOOP("Inherited")},
+	{CLIENT_ENCODING, QT_TR_NOOP("Client encoding")},    {CONFIG_FILE, QT_TR_NOOP("Configuration file")},       {DATA_DIRECTORY, QT_TR_NOOP("Data directory")},
+	{DYNAMIC_LIBRARY_PATH, QT_TR_NOOP("Dynamic library path")},	{DYNAMIC_SHARED_MEMORY, QT_TR_NOOP("Dynamic shared memory")}, {HBA_FILE, QT_TR_NOOP("Hba file")},
+	{LISTEN_ADDRESSES, QT_TR_NOOP("Listen addresses")},  {MAX_CONNECTIONS, QT_TR_NOOP("Max. connections")},     {PORT, QT_TR_NOOP("Listen port")},
+	{SERVER_ENCODING, QT_TR_NOOP("Server encoding")},    {SSL, QT_TR_NOOP("SSL")},                              {SSL_CA_FILE, QT_TR_NOOP("SSL ca file")},
+	{SSL_CERT_FILE, QT_TR_NOOP("SSL cert file")},        {SSL_CRL_FILE, QT_TR_NOOP("SSL crl file")},            {SSL_KEY_FILE, QT_TR_NOOP("SSL key file")},
+	{SERVER_VERSION, QT_TR_NOOP("Server version")},      {IDENT_FILE, QT_TR_NOOP("Ident file")},                {PASSWORD_ENCRYPTION, QT_TR_NOOP("Password encryption")},
+	{CONNECTION, QT_TR_NOOP("Connection ID")},           {SERVER_PID, QT_TR_NOOP("Server PID")},                {SERVER_PROTOCOL, QT_TR_NOOP("Server protocol")}
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
@@ -282,13 +290,15 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 		msg_box.show(e);
 	}
 
-	if(attribs.count(ParsersAttributes::PERMISSION)!=0)
-		attribs[ParsersAttributes::PERMISSION]=Catalog::parseArrayValues(attribs[ParsersAttributes::PERMISSION]).join(ELEM_SEPARATOR);
 
-	//Removing system schemas from object's name
-	if(attribs[ParsersAttributes::NAME].startsWith(QString("pg_catalog.")) ||
-			attribs[ParsersAttributes::NAME].startsWith(QString("information_schema.")))
-		attribs[ParsersAttributes::NAME]=attribs[ParsersAttributes::NAME].split('.').at(1);
+		if(attribs.count(ParsersAttributes::PERMISSION)!=0)
+			attribs[ParsersAttributes::PERMISSION]=Catalog::parseArrayValues(attribs[ParsersAttributes::PERMISSION]).join(ELEM_SEPARATOR);
+
+		//Removing system schemas from object's name
+		if(attribs.count(ParsersAttributes::NAME)!=0 &&
+			 (attribs[ParsersAttributes::NAME].startsWith(QString("pg_catalog.")) ||
+				attribs[ParsersAttributes::NAME].startsWith(QString("information_schema."))))
+			attribs[ParsersAttributes::NAME]=attribs[ParsersAttributes::NAME].split('.').at(1);
 
 	for(auto &attrib : attribs)
 	{
@@ -311,16 +321,19 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 		fmt_attribs[attr_name]=attr_value;
 	}
 
-	attribs[ParsersAttributes::SQL_OBJECT]=BaseObject::getSQLName(obj_type);
-	attribs[ParsersAttributes::OBJECT_TYPE]=BaseObject::getSchemaName(obj_type);
+	if(attribs[ParsersAttributes::OID].toUInt() > 0)
+	{
+		attribs[ParsersAttributes::SQL_OBJECT]=BaseObject::getSQLName(obj_type);
+		attribs[ParsersAttributes::OBJECT_TYPE]=BaseObject::getSchemaName(obj_type);
 
-	if(attribs.count(ParsersAttributes::SIGNATURE)==0)
-		attribs[ParsersAttributes::SIGNATURE]=BaseObject::formatName(attribs[ParsersAttributes::NAME]);
+		if(attribs.count(ParsersAttributes::SIGNATURE)==0)
+			attribs[ParsersAttributes::SIGNATURE]=BaseObject::formatName(attribs[ParsersAttributes::NAME]);
 
-	if(attribs.count(ParsersAttributes::SCHEMA)!=0)
-		attribs[ParsersAttributes::SIGNATURE]=QString("%1.%2")
-											  .arg(BaseObject::formatName(attribs[ParsersAttributes::SCHEMA]))
-				.arg(attribs[ParsersAttributes::SIGNATURE]);
+		if(attribs.count(ParsersAttributes::SCHEMA)!=0)
+			attribs[ParsersAttributes::SIGNATURE]=QString("%1.%2")
+																						.arg(BaseObject::formatName(attribs[ParsersAttributes::SCHEMA]))
+																						.arg(attribs[ParsersAttributes::SIGNATURE]);
+	}
 
 	return(fmt_attribs);
 }
@@ -883,9 +896,25 @@ void DatabaseExplorerWidget::listObjects(void)
 			QApplication::setOverrideCursor(Qt::WaitCursor);
 
 		DatabaseImportForm::listObjects(import_helper, objects_trw, false, false, true, quick_refresh);
+
+		QTreeWidgetItem *root = new QTreeWidgetItem, *curr_root = nullptr;
+
+		//Changing the root item of the generated tree to be a special item containing info about the connected server
+		curr_root = objects_trw->topLevelItem(0);
+		objects_trw->takeTopLevelItem(0);
+		root->setText(0, connection.getConnectionId(true));
+		root->setIcon(0, QPixmap(PgModelerUiNS::getIconPath("server")));
+		root->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, -1);
+		root->setData(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole, BASE_OBJECT);
+		root->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, trUtf8("-- Source code unavailable for this kind of object --"));
+		root->addChild(curr_root);
+		objects_trw->addTopLevelItem(root);
+		root->setExpanded(true);
+
 		QApplication::restoreOverrideCursor();
 
 		objects_trw->blockSignals(false);
+
 		import_helper.closeConnection();
 		catalog.closeConnection();
 	}
@@ -1219,7 +1248,7 @@ void DatabaseExplorerWidget::truncateTable(QTreeWidgetItem *item, bool cascade)
 
 void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item)
 {
-	if(item)
+	if(item && item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toInt() >= 0)
 	{
 		QTreeWidgetItem *root=nullptr, *parent=nullptr, *aux_item=nullptr;
 		ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
@@ -1302,11 +1331,10 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
 		QTreeWidgetItem *item=objects_trw->currentItem();
 		unsigned oid=item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt();
 
-		if(oid != 0)
+		if(oid != 0 || (item == objects_trw->topLevelItem(0)))
 		{
 			ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
 			attribs_map orig_attribs, fmt_attribs;
-
 
 			//First, retrieve the attributes stored on the item as a result of a previous properties listing
 			orig_attribs=item->data(DatabaseImportForm::OBJECT_ATTRIBS, Qt::UserRole).value<attribs_map>();
@@ -1317,8 +1345,11 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
 				QApplication::setOverrideCursor(Qt::WaitCursor);
 				catalog.setConnection(connection);
 
+				//Loading the server properties
+				if(item == objects_trw->topLevelItem(0))
+					orig_attribs=catalog.getServerAttributes();
 				//Retrieve them from the catalog
-				if(obj_type!=OBJ_COLUMN)
+				else if(obj_type!=OBJ_COLUMN)
 					orig_attribs=catalog.getObjectAttributes(obj_type, oid);
 				else
 				{
@@ -1339,7 +1370,9 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
 
 				//Store the attributes on the item to avoid repeatedly query the database
 				item->setData(DatabaseImportForm::OBJECT_ATTRIBS, Qt::UserRole, QVariant::fromValue<attribs_map>(fmt_attribs));
-				item->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, DEFAULT_SOURCE_CODE);
+
+				if(item != objects_trw->topLevelItem(0))
+					item->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, DEFAULT_SOURCE_CODE);
 
 				catalog.closeConnection();
 				QApplication::restoreOverrideCursor();
@@ -1360,7 +1393,9 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 		QTreeWidgetItem *item=objects_trw->currentItem();
 		clearObjectProperties();
 
-		if(item && item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toInt() >= 0)
+		if(item &&
+			 ((item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toInt() >= 0) ||
+				(item == objects_trw->topLevelItem(0))))
 		{
 			attribs_map cached_attribs;
 			QTableWidgetItem *tab_item=nullptr;
@@ -1388,7 +1423,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 					font.setItalic(true);
 					tab_item->setText(attrib.first);
 					tab_item->setFont(font);
-					tab_item->setIcon(QPixmap(QString(":/icones/icones/attribute.png")));
+					tab_item->setIcon(QPixmap(PgModelerUiNS::getIconPath("attribute")));
 					properties_tbw->setItem(row, 0, tab_item);
 
 					values=attrib.second.split(ELEM_SEPARATOR);
@@ -1428,7 +1463,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 
 						src_item=new QTreeWidgetItem(item);
 						src_item->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, QVariant::fromValue<int>(-1));
-						src_item->setIcon(0, QPixmap(QString(":/icones/icones/column.png")));
+						src_item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath("column")));
 						src_item->setText(0, QString("%1(%2)")
 										  .arg(cached_attribs[ParsersAttributes::TABLE])
 								.arg(cached_attribs[ParsersAttributes::SRC_COLUMNS]));
@@ -1439,7 +1474,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 
 						fk_item=new QTreeWidgetItem(item);
 						fk_item->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, QVariant::fromValue<int>(-1));
-						fk_item->setIcon(0, QPixmap(QString(":/icones/icones/reference.png")));
+						fk_item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath("reference")));
 						fk_item->setText(0, QString("%1(%2)")
 										 .arg(cached_attribs[ParsersAttributes::REF_TABLE])
 								.arg(cached_attribs[ParsersAttributes::DST_COLUMNS]));
@@ -1456,7 +1491,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 						{
 							src_item=new QTreeWidgetItem(item);
 							src_item->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, QVariant::fromValue<int>(-1));
-							src_item->setIcon(0, QPixmap(QString(":/icones/icones/column.png")));
+							src_item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath("column")));
 							src_item->setText(0, col);
 						}
 					}
@@ -1551,7 +1586,12 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 
 	try
 	{
-		if(item)
+		if(item == objects_trw->topLevelItem(0))
+		{
+			QString n = item->text(0);
+			emit s_sourceCodeShowRequested(item->data(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole).toString());
+		}
+		else if(item)
 		{
 			QString source=item->data(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole).toString();
 
@@ -1676,9 +1716,9 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 
 				if(obj_type != OBJ_DATABASE)
 				{
-					//Generating the code for the database itself and storing it in the root item in the tree
+					//Generating the code for the database itself and storing it in the first child of the root item in the tree
 					objects_trw->setCurrentItem(objects_trw->topLevelItem(0));
-					objects_trw->topLevelItem(0)->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, getObjectSource(&dbmodel, &dbmodel));
+					objects_trw->topLevelItem(0)->child(0)->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, getObjectSource(&dbmodel, &dbmodel));
 				}
 
 				item->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, source);

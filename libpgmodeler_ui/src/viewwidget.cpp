@@ -94,20 +94,21 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 			connect(tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeObject(int)));
 			connect(tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleObject(void)));
 			connect(tab, SIGNAL(s_rowEdited(int)), this, SLOT(handleObject(void)));
+			connect(tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateObject(int,int)));
 		}
 
 		objects_tab_map[OBJ_TRIGGER]->setColumnCount(4);
 		objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Name"), 0);
-		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
+		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 		objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Refer. Table"), 1);
-		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(QString(":/icones/icones/table.png")),1);
+		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("table")),1);
 		objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Firing"), 2);
-		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(QString(":/icones/icones/trigger.png")),2);
+		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("trigger")),2);
 		objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Events"), 3);
 
 		objects_tab_map[OBJ_RULE]->setColumnCount(3);
 		objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Name"), 0);
-		objects_tab_map[OBJ_RULE]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
+		objects_tab_map[OBJ_RULE]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 		objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Execution"), 1);
 		objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Event"), 2);
 
@@ -180,10 +181,6 @@ int ViewWidget::openEditingForm(TableObject *object)
 														dynamic_cast<Class *>(object));
 	editing_form.setMainWidget(object_wgt);
 
-	//Disabling the apply button if the object is protected
-	if(object)
-		editing_form.apply_ok_btn->setEnabled(!object->isProtected());
-
 	return(editing_form.exec());
 }
 
@@ -210,6 +207,49 @@ void ViewWidget::handleObject(void)
 	}
 	catch(Exception &e)
 	{
+		listObjects(obj_type);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void ViewWidget::duplicateObject(int curr_row, int new_row)
+{
+	ObjectType obj_type=BASE_OBJECT;
+	BaseObject *object=nullptr, *dup_object=nullptr;
+	ObjectTableWidget *obj_table=nullptr;
+	View *view = dynamic_cast<View *>(this->object);
+	int op_id = -1;
+
+	try
+	{
+		obj_type=getObjectType(sender());
+
+		//Selects the object table based upon the passed object type
+		obj_table=getObjectTable(obj_type);
+
+		//Gets the object reference if there is an item select on table
+		if(curr_row >= 0)
+			object = reinterpret_cast<BaseObject *>(obj_table->getRowData(curr_row).value<void *>());
+
+		PgModelerNS::copyObject(&dup_object, object, obj_type);
+		dup_object->setName(PgModelerNS::generateUniqueName(dup_object, *view->getObjectList(obj_type), false, QString("_cp")));
+
+		op_id=op_list->registerObject(dup_object, Operation::OBJECT_CREATED, new_row, this->object);
+
+		view->addObject(dup_object);
+		view->setModified(true);
+		listObjects(obj_type);
+	}
+	catch(Exception &e)
+	{
+		//If operation was registered
+		if(op_id >= 0)
+		{
+			op_list->ignoreOperationChain(true);
+			op_list->removeLastOperation();
+			op_list->ignoreOperationChain(false);
+		}
+
 		listObjects(obj_type);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}

@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.8.0-alpha2" author="Raphael Araújo e Silva" last-position="0,0" last-zoom="1">
+<dbmodel pgmodeler-ver="0.9.0-alpha1" author="Raphael Araújo e Silva" last-position="0,0" last-zoom="1">
 <database name="exampledb" encoding="UTF8">
 	<comment><![CDATA[Example Database Model]]></comment>
 </database>
@@ -31,7 +31,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="public"/>
 	<language name="testlang" protected="true"/>
 	<return-type>
-	<type name="trigger"/>
+	<type name="trigger" length="1"/>
 	</return-type>
 	<definition><![CDATA[SELECT 1+1;]]></definition>
 </function>
@@ -41,44 +41,44 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<tag name="sample tag"/>
 	<position x="20" y="20"/>
 	<column name="column" not-null="true">
-		<type name="serial"/>
+		<type name="serial" length="1"/>
 	</column>
 	<column name="column1">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</column>
-	<constraint name="table_pk" type="pk-constr" factor="10" table="public.table">
+	<constraint name="table_pk" type="pk-constr" factor="10" table="public.&quot;table&quot;">
 		<columns names="column" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="table_uq" type="uq-constr" factor="10" table="public.table">
+	<constraint name="table_uq" type="uq-constr" factor="10" table="public.&quot;table&quot;">
 		<columns names="column1" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="table_ck" type="ck-constr" table="public.table">
+	<constraint name="table_ck" type="ck-constr" table="public.&quot;table&quot;">
 			<expression><![CDATA[ column1 > 0 ]]></expression>
 	</constraint>
 </table>
 
-<index name="index" table="public.table"
+<index name="index" table="public.&quot;table&quot;"
 	 concurrent="true" unique="true" fast-update="false" buffering="false"
 	 index-type="hash" factor="0">
-		<idxelement use-sorting="true" nulls-first="false" asc-order="false">
+		<idxelement use-sorting="false">
 			<column name="column1"/>
 		</idxelement>
 </index>
 
 <table name="table1">
 	<schema name="public"/>
-	<position x="377" y="234"/>
+	<position x="378" y="260"/>
 	<column name="column" not-null="true">
-		<type name="serial"/>
+		<type name="serial" length="1"/>
 	</column>
 	<column name="column1">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</column>
 	<column name="column2" not-null="true">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="column3">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</column>
 	<constraint name="table_pk" type="pk-constr" factor="10" table="public.table1">
 		<columns names="column" ref-type="src-columns"/>
@@ -108,24 +108,24 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
 	 src-table="public.table1"
-	 dst-table="public.table"
+	 dst-table="public.&quot;table&quot;"
 	 src-required="false" dst-required="false">
 	<line>
-		<position x="307" y="248"/>
-	<position x="306" y="111"/>
+		<position x="300" y="260"/>
+	<position x="300" y="120"/>
 	</line>
 	<label ref-type="name-label">
 		<position x="12.6257" y="16.0515"/>
 	</label>
 	<column name="attribute">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 </relationship>
 
 <view name="view">
 	<schema name="public"/>
-	<position x="12" y="244"/>
-	<reference table="public.table" column="column1" alias="t1" column-alias="col1"/>
+	<position x="9" y="278"/>
+	<reference table="public.&quot;table&quot;" column="column1" alias="t1" column-alias="col1"/>
 	<reference table="public.table1" column="column2" alias="t2" column-alias="col2"/>
 	<reference alias="expr">
 		<expression><![CDATA[extract(month from now())]]></expression>
@@ -137,7 +137,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <relationship name="rel_view_table" type="reltv"
 	 src-table="public.view"
-	 dst-table="public.table"
+	 dst-table="public.&quot;table&quot;"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_view_table1" type="reltv"
@@ -150,29 +150,29 @@ CAUTION: Do not modify this file unless you know what you are doing.
 </relationship>
 
 <textbox name="textbox" font-size="9">
-	<position x="406" y="156"/>
+	<position x="400" y="160"/>
 	<comment><![CDATA[Selected Textbox]]></comment>
 </textbox>
 
 <textbox name="textbox1" protected="true" font-size="9">
-	<position x="401" y="193"/>
+	<position x="400" y="220"/>
 	<comment><![CDATA[Protected Textbox]]></comment>
 </textbox>
 
 <table name="table2" oids="true">
 	<schema name="public"/>
-	<position x="368" y="37"/>
+	<position x="380" y="40"/>
 	<column name="column" not-null="true">
-		<type name="serial"/>
+		<type name="serial" length="1"/>
 	</column>
 	<column name="column1">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</column>
 	<column name="column2" not-null="true">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="column3">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</column>
 	<constraint name="table_pk" type="pk-constr" factor="10" table="public.table2">
 		<columns names="column" ref-type="src-columns"/>
@@ -188,27 +188,27 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <index name="index" table="public.table2"
 	 concurrent="true" unique="true" fast-update="false" buffering="false"
 	 index-type="hash" factor="0">
-		<idxelement use-sorting="true" nulls-first="false" asc-order="false">
+		<idxelement use-sorting="false">
 			<column name="column1"/>
 		</idxelement>
 </index>
 
 <constraint name="table2_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.table" table="public.table2">
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.&quot;table&quot;" table="public.table2">
 	<columns names="column2" ref-type="src-columns"/>
 	<columns names="column" ref-type="dst-columns"/>
 </constraint>
 
 <relationship name="rel_table2_table" type="relfk"
 	 src-table="public.table2"
-	 dst-table="public.table"
+	 dst-table="public.&quot;table&quot;"
 	 src-required="false" dst-required="false">
 	<line>
-		<position x="315" y="93"/>
-	<position x="311.85" y="48.6"/>
+		<position x="322" y="97"/>
+	<position x="321" y="48"/>
 	</line>
 	<label ref-type="name-label">
-		<position x="-0.374268" y="-85.9485"/>
+		<position x="-9.02426" y="-75.3485"/>
 	</label>
 </relationship>
 
