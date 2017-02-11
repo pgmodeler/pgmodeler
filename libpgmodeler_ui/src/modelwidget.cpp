@@ -91,6 +91,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 							 BaseRelationship::RELATIONSHIP_GEN };
 
 	current_zoom=1;
+	zoom_on_scroll=1; // @etosan: temporary, I have no clue how to connect this to GUI
 	modified=panning_mode=false;
 	new_obj_type=BASE_OBJECT;
 
@@ -441,7 +442,7 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 	QGraphicsSceneMouseEvent *m_event = dynamic_cast<QGraphicsSceneMouseEvent *>(event);
 
 	//Filters the Wheel event if it is raised by the viewport scrollbars
-	if(event->type() == QEvent::Wheel && w_event->modifiers()==Qt::ControlModifier)
+	if(event->type() == QEvent::Wheel && (zoom_on_scroll || w_event->modifiers()==Qt::ControlModifier) )
 	{
 		//Redirects the event to the wheelEvent() method of the model widget
 		this->wheelEvent(w_event);
@@ -535,12 +536,19 @@ void ModelWidget::mousePressEvent(QMouseEvent *event)
 
 void ModelWidget::wheelEvent(QWheelEvent * event)
 {
-	if(event->modifiers()==Qt::ControlModifier)
-	{
+	if(zoom_on_scroll || event->modifiers()==Qt::ControlModifier) {
+		int numDegrees = abs(event->delta()/8);
+		int numSteps = numDegrees/15;
+		double newZoom = ZOOM_INCREMENT * numSteps;
+
 		if(event->delta() < 0)
-			this->applyZoom(this->current_zoom - ZOOM_INCREMENT);
-		else
-			this->applyZoom(this->current_zoom + ZOOM_INCREMENT);
+		{
+			this->applyZoom(this->current_zoom - newZoom);
+		}
+		else if(event->delta() > 0)
+		{
+			this->applyZoom(this->current_zoom + newZoom);
+		}
 	}
 }
 
