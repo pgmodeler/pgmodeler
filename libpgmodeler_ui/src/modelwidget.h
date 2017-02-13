@@ -47,6 +47,9 @@ class ModelWidget: public QWidget {
 		//! \brief Indicates if the model was modified by some operation
 		bool modified,
 
+		zoom_on_scroll,
+		//! \brief Indicates whether we want to zoom by default when user rolls the mousewheel
+
 		//! brief Indicates if the panning mode was activated via event filter (see eventFilter())
 		panning_mode;
 
