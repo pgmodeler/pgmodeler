@@ -73,6 +73,7 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 		void applyConfiguration(void);
 		void restoreDefaults(void);
 		void selectPaperSize(void);
+		void selectSourceEditor(void);
 
 	private slots:
 		void convertMarginUnity(void);

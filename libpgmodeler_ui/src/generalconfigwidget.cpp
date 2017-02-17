@@ -87,6 +87,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	connect(tab_width_chk, SIGNAL(toggled(bool)), this, SLOT(updateFontPreview()));
 
 	connect(font_preview_txt, SIGNAL(cursorPositionChanged()), this, SLOT(updateFontPreview()));
+	connect(select_editor_btn, SIGNAL(clicked(bool)), this, SLOT(selectSourceEditor()));
 
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]=QString();
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]=QString();
@@ -123,6 +124,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::USE_PLACEHOLDERS]=QString();
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::MIN_OBJECT_OPACITY]=QString();
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HISTORY_MAX_LENGTH]=QString();
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SOURCE_EDITOR_APP]=QString();
 
 	simp_obj_creation_ht=new HintTextWidget(simp_obj_creation_hint, this);
 	simp_obj_creation_ht->setText(simple_obj_creation_chk->statusTip());
@@ -286,6 +288,8 @@ void GeneralConfigWidget::loadConfiguration(void)
 		line_numbers_bg_cp->setColor(0, config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::LINE_NUMBERS_BG_COLOR]);
 		line_highlight_cp->setColor(0, config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::LINE_HIGHLIGHT_COLOR]);
 
+		source_editor_edt->setText(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SOURCE_EDITOR_APP]);
+
 		for(QWidget *wgt : child_wgts)
 			wgt->blockSignals(false);
 
@@ -409,6 +413,8 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::LINE_NUMBERS_BG_COLOR]=line_numbers_bg_cp->getColor(0).name();
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::LINE_HIGHLIGHT_COLOR]=line_highlight_cp->getColor(0).name();
 
+		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SOURCE_EDITOR_APP]=source_editor_edt->text();
+
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]=QString();
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]=QString();
 
@@ -496,6 +502,7 @@ void GeneralConfigWidget::applyConfiguration(void)
 	NumberedTextEditor::setLineHighlightColor(line_highlight_cp->getColor(0));
 	NumberedTextEditor::setHighlightLines(hightlight_lines_chk->isChecked());
 	NumberedTextEditor::setDefaultFont(fnt);
+	NumberedTextEditor::setSourceEditorApp(source_editor_edt->text());
 	LineNumbersWidget::setColors(line_numbers_cp->getColor(0), line_numbers_bg_cp->getColor(0));
 	SyntaxHighlighter::setDefaultFont(fnt);
 }
@@ -570,6 +577,21 @@ void GeneralConfigWidget::selectPaperSize(void)
 	height_lbl->setVisible(visible);
 	width_spb->setVisible(visible);
 	height_spb->setVisible(visible);
+}
+
+void GeneralConfigWidget::selectSourceEditor(void)
+{
+	QFileDialog sel_editor_dlg;
+
+	sel_editor_dlg.setFileMode(QFileDialog::ExistingFile);
+	sel_editor_dlg.setNameFilter(trUtf8("All files (*.*)"));
+	sel_editor_dlg.setModal(true);
+	sel_editor_dlg.setWindowTitle(trUtf8("Load file"));
+	sel_editor_dlg.setAcceptMode(QFileDialog::AcceptOpen);
+	sel_editor_dlg.exec();
+
+	if(sel_editor_dlg.result()==QDialog::Accepted)
+		source_editor_edt->setText(sel_editor_dlg.selectedFiles().at(0));
 }
 
 void GeneralConfigWidget::hideEvent(QHideEvent *)

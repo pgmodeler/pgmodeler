@@ -29,6 +29,7 @@ bool NumberedTextEditor::highlight_lines=true;
 QColor NumberedTextEditor::line_hl_color=Qt::yellow;
 QFont NumberedTextEditor::default_font=QFont(QString("DejaVu Sans Mono"), 10);
 int NumberedTextEditor::tab_width=0;
+QString NumberedTextEditor::source_editor_app=QString();
 
 NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) : QPlainTextEdit(parent)
 {
@@ -66,6 +67,17 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		load_file_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		hbox->addWidget(load_file_btn);
 		connect(load_file_btn, SIGNAL(clicked(bool)), this, SLOT(loadFile()));
+
+		edit_src_btn = new QToolButton(top_widget);
+		edit_src_btn->setIcon(QPixmap(PgModelerUiNS::getIconPath("editar")));
+		edit_src_btn->setIconSize(QSize(16,16));
+		edit_src_btn->setAutoRaise(true);
+		edit_src_btn->setText(trUtf8("Edit source"));
+		edit_src_btn->setToolTip(trUtf8("Edit the source code in the preferred external editor"));
+		edit_src_btn->setFont(font);
+		edit_src_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+		hbox->addWidget(edit_src_btn);
+		connect(edit_src_btn, SIGNAL(clicked(bool)), this, SLOT(editSource()));
 
 		clear_btn = new QToolButton(top_widget);
 		clear_btn->setIcon(QPixmap(PgModelerUiNS::getIconPath("limpartexto")));
@@ -149,6 +161,11 @@ int NumberedTextEditor::getTabWidth(void)
 		QFontMetrics fm(default_font);
 		return(tab_width * fm.width(' '));
 	}
+}
+
+void NumberedTextEditor::setSourceEditorApp(const QString &app)
+{
+	NumberedTextEditor::source_editor_app = app;
 }
 
 void NumberedTextEditor::showContextMenu(void)
@@ -298,6 +315,11 @@ void NumberedTextEditor::loadFile(void)
 
 		clear_btn->setEnabled(!this->toPlainText().isEmpty());
 	}
+}
+
+void NumberedTextEditor::editSource(void)
+{
+
 }
 
 void NumberedTextEditor::setReadOnly(bool ro)
