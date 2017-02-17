@@ -21,6 +21,8 @@
 #include <QTextBlock>
 #include <QScrollBar>
 #include <QDebug>
+#include <QFileDialog>
+#include "pgmodeleruins.h"
 
 bool NumberedTextEditor::line_nums_visible=true;
 bool NumberedTextEditor::highlight_lines=true;
@@ -28,10 +30,65 @@ QColor NumberedTextEditor::line_hl_color=Qt::yellow;
 QFont NumberedTextEditor::default_font=QFont(QString("DejaVu Sans Mono"), 10);
 int NumberedTextEditor::tab_width=0;
 
-
-NumberedTextEditor::NumberedTextEditor(QWidget * parent) : QPlainTextEdit(parent)
+NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) : QPlainTextEdit(parent)
 {
+	this->handle_ext_files = handle_ext_files;
 	line_number_wgt=new LineNumbersWidget(this);
+	top_widget = nullptr;
+	load_file_btn = clear_btn	 = nullptr;
+
+	if(handle_ext_files)
+	{
+		QPalette pal;
+		QHBoxLayout *hbox = new QHBoxLayout;
+		QFont font = this->font();
+
+		font.setPointSizeF(font.pointSizeF() * 0.95f);
+
+		top_widget = new QWidget(this);
+		top_widget->setAutoFillBackground(true);
+
+		pal.setColor(QPalette::Window, LineNumbersWidget::getBackgroundColor());
+		top_widget->setPalette(pal);
+		top_widget->setVisible(handle_ext_files);
+		top_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+
+		hbox->setContentsMargins(2,2,2,2);
+		hbox->addSpacerItem(new QSpacerItem(10,10, QSizePolicy::Expanding));
+
+		load_file_btn = new QToolButton(top_widget);
+		load_file_btn->setIcon(QPixmap(PgModelerUiNS::getIconPath("abrir")));
+		load_file_btn->setIconSize(QSize(16,16));
+		load_file_btn->setAutoRaise(true);
+		load_file_btn->setText(trUtf8("Load file"));
+		load_file_btn->setToolTip(trUtf8("Load the object's source code from an external file"));
+		load_file_btn->setFont(font);
+		load_file_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+		hbox->addWidget(load_file_btn);
+		connect(load_file_btn, SIGNAL(clicked(bool)), this, SLOT(loadFile()));
+
+		clear_btn = new QToolButton(top_widget);
+		clear_btn->setIcon(QPixmap(PgModelerUiNS::getIconPath("limpartexto")));
+		clear_btn->setIconSize(QSize(16,16));
+		clear_btn->setAutoRaise(true);
+		clear_btn->setText(trUtf8("Clear"));
+		clear_btn->setFont(font);
+		clear_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+		clear_btn->setDisabled(true);
+
+		connect(clear_btn, &QToolButton::clicked, [=](){
+			this->clear();
+			clear_btn->setEnabled(false);
+		});
+
+		connect(this, &NumberedTextEditor::textChanged, [=](){
+			clear_btn->setEnabled(!this->toPlainText().isEmpty() && !this->isReadOnly());
+		});
+
+		hbox->addWidget(clear_btn);
+		top_widget->setLayout(hbox);
+	}
+
 	setWordWrapMode(QTextOption::NoWrap);
 
 	connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightCurrentLine()));
@@ -212,6 +269,48 @@ void NumberedTextEditor::identSelection(bool ident_right)
 	}
 }
 
+void NumberedTextEditor::loadFile(void)
+{
+	QFileDialog sql_file_dlg;
+
+	sql_file_dlg.setDefaultSuffix(QString("sql"));
+	sql_file_dlg.setFileMode(QFileDialog::AnyFile);
+	sql_file_dlg.setNameFilter(trUtf8("SQL file (*.sql);;All files (*.*)"));
+	sql_file_dlg.setModal(true);
+	sql_file_dlg.setWindowTitle(trUtf8("Load file"));
+	sql_file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
+	sql_file_dlg.exec();
+
+	if(sql_file_dlg.result()==QDialog::Accepted)
+	{
+		QFile file;
+		file.setFileName(sql_file_dlg.selectedFiles().at(0));
+
+		if(!file.open(QFile::ReadOnly))
+			throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED)
+											.arg(sql_file_dlg.selectedFiles().at(0))
+											,ERR_FILE_DIR_NOT_ACCESSED ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		this->clear();
+		this->setPlainText(file.readAll());
+		file.close();
+
+
+		clear_btn->setEnabled(!this->toPlainText().isEmpty());
+	}
+}
+
+void NumberedTextEditor::setReadOnly(bool ro)
+{
+	if(handle_ext_files)
+	{
+		load_file_btn->setEnabled(!ro);
+		clear_btn->setEnabled(!ro && !this->toPlainText().isEmpty());
+	}
+
+	QPlainTextEdit::setReadOnly(ro);
+}
+
 void NumberedTextEditor::setFocus(void)
 {
 	QPlainTextEdit::setFocus();
@@ -263,14 +362,22 @@ void NumberedTextEditor::updateLineNumbers(void)
 
 void NumberedTextEditor::updateLineNumbersSize(void)
 {
+	int py = (handle_ext_files && top_widget ? top_widget->height() : 0);
+
 	if(line_nums_visible)
 	{
 		QRect rect=contentsRect();
-		setViewportMargins(getLineNumbersWidth(), 0, 0, 0);
-		line_number_wgt->setGeometry(QRect(rect.left(), rect.top(), getLineNumbersWidth(), rect.height()));
+
+		setViewportMargins(getLineNumbersWidth(), py, 0, 0);
+		line_number_wgt->setGeometry(QRect(rect.left(), rect.top() + py, getLineNumbersWidth(), rect.height() - py));
+
+		if(top_widget)
+			top_widget->setGeometry(rect.left(), rect.top(),
+															rect.width() - (this->verticalScrollBar()->isVisible() ? this->verticalScrollBar()->width() : 0),
+															top_widget->height());
 	}
 	else
-		setViewportMargins(0, 0, 0, 0);
+		setViewportMargins(0, py, 0, 0);
 }
 
 int NumberedTextEditor::getLineNumbersWidth(void)

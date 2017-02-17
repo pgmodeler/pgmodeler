@@ -44,7 +44,7 @@ namespace PgModelerUiNS {
 	  This method will create a layout if 'parent' doesn't has one. If parent has a layout
 	  the method will do nothing. If parent is null creates an orphan object which means the
 	  user must take care of the destruction of the object */
-	extern NumberedTextEditor *createNumberedTextEditor(QWidget *parent);
+	extern NumberedTextEditor *createNumberedTextEditor(QWidget *parent, bool handle_ext_files = false);
 
 	/*! \brief Creates an item in the specified QTreeWidget instance.
 	  The new item is automatically inserted on the QTreeWidget object.
