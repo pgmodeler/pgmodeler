@@ -29,7 +29,7 @@ bool NumberedTextEditor::highlight_lines=true;
 QColor NumberedTextEditor::line_hl_color=Qt::yellow;
 QFont NumberedTextEditor::default_font=QFont(QString("DejaVu Sans Mono"), 10);
 int NumberedTextEditor::tab_width=0;
-QString NumberedTextEditor::source_editor_app=QString();
+QString NumberedTextEditor::src_editor_app=QString();
 
 NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) : QPlainTextEdit(parent)
 {
@@ -99,6 +99,9 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 
 		hbox->addWidget(clear_btn);
 		top_widget->setLayout(hbox);
+
+		connect(&src_editor_proc, SIGNAL(finished(int)), this, SLOT(updateSource()));
+		connect(&src_editor_proc, SIGNAL(error(QProcess::ProcessError)), this, SLOT(handleProcessError()));
 	}
 
 	setWordWrapMode(QTextOption::NoWrap);
@@ -108,6 +111,16 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 	connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumbersSize()));
 
 	setCustomContextMenuEnabled(true);
+}
+
+NumberedTextEditor::~NumberedTextEditor(void)
+{
+	if(src_editor_proc.state() != QProcess::NotRunning)
+	{
+		disconnect(&src_editor_proc, nullptr, this, nullptr);
+		src_editor_proc.terminate();
+		src_editor_proc.waitForFinished();
+	}
 }
 
 void NumberedTextEditor::setCustomContextMenuEnabled(bool enabled)
@@ -165,7 +178,7 @@ int NumberedTextEditor::getTabWidth(void)
 
 void NumberedTextEditor::setSourceEditorApp(const QString &app)
 {
-	NumberedTextEditor::source_editor_app = app;
+	NumberedTextEditor::src_editor_app = app;
 }
 
 void NumberedTextEditor::showContextMenu(void)
@@ -319,9 +332,54 @@ void NumberedTextEditor::loadFile(void)
 
 void NumberedTextEditor::editSource(void)
 {
-	//Generate the temporary sql file containing the current source
-	//Trigger the default editor using QDesktopServices::openUrl if there is no custom editor defined
-	//If there is a custom editor, use QProcess to start it
+	//If the editor process is already running we block a second try to start the editor process
+	if(src_editor_proc.state() != QProcess::NotRunning)
+	{
+		Messagebox msg_box;
+		msg_box.show(PgModelerUiNS::formatMessage(trUtf8("The source code is currently being edited in the application `%1' (pid: %2)! Only one instance of the source code editor application is allowed.")
+																							.arg(src_editor_proc.program()).arg(src_editor_proc.pid())), Messagebox::ALERT_ICON);
+		return;
+	}
+
+	QByteArray buffer;
+
+	tmp_src_file.setAutoRemove(false);
+	tmp_src_file.setFileTemplate(GlobalAttributes::TEMPORARY_DIR + GlobalAttributes::DIR_SEPARATOR + QString("source_XXXXXX") + QString(".sql"));
+
+	if(!tmp_src_file.open())
+		throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED)
+										.arg(tmp_src_file.fileName())
+										,ERR_FILE_DIR_NOT_ACCESSED ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	buffer.append(this->toPlainText());
+	tmp_src_file.write(buffer);
+	tmp_src_file.close();
+
+	//Starting the source editor application using the temp source file as input
+	src_editor_proc.setProgram(NumberedTextEditor::src_editor_app + "_");
+	src_editor_proc.setArguments({ tmp_src_file.fileName() });
+	src_editor_proc.start();
+}
+
+void NumberedTextEditor::updateSource(void)
+{
+	QFile input(tmp_src_file.fileName());
+
+	if(!input.open(QFile::ReadOnly))
+		throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED)
+										.arg(tmp_src_file.fileName())
+										,ERR_FILE_DIR_NOT_ACCESSED ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	this->setPlainText(input.readAll());
+	input.close();
+	input.remove();
+}
+
+void NumberedTextEditor::handleProcessError(void)
+{
+	Messagebox msg_box;
+	msg_box.show(PgModelerUiNS::formatMessage(trUtf8("Could not start the source code editor application `%1'! Make to sure that the source editor path defined in the general settings points to a valid executable and the current user has permission to run the application. Error message returned: `%2'")
+																						.arg(src_editor_proc.program()).arg(src_editor_proc.errorString())), Messagebox::ERROR_ICON);
 }
 
 void NumberedTextEditor::setReadOnly(bool ro)
