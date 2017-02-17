@@ -319,7 +319,9 @@ void NumberedTextEditor::loadFile(void)
 
 void NumberedTextEditor::editSource(void)
 {
-
+	//Generate the temporary sql file containing the current source
+	//Trigger the default editor using QDesktopServices::openUrl if there is no custom editor defined
+	//If there is a custom editor, use QProcess to start it
 }
 
 void NumberedTextEditor::setReadOnly(bool ro)
@@ -327,6 +329,7 @@ void NumberedTextEditor::setReadOnly(bool ro)
 	if(handle_ext_files)
 	{
 		load_file_btn->setEnabled(!ro);
+		edit_src_btn->setEnabled(!ro);
 		clear_btn->setEnabled(!ro && !this->toPlainText().isEmpty());
 	}
 
