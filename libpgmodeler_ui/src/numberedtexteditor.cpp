@@ -356,7 +356,7 @@ void NumberedTextEditor::editSource(void)
 	tmp_src_file.close();
 
 	//Starting the source editor application using the temp source file as input
-	src_editor_proc.setProgram(NumberedTextEditor::src_editor_app + "_");
+	src_editor_proc.setProgram(NumberedTextEditor::src_editor_app);
 	src_editor_proc.setArguments({ tmp_src_file.fileName() });
 	src_editor_proc.start();
 }
