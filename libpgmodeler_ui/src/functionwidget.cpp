@@ -35,7 +35,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		Ui_FunctionWidget::setupUi(this);
 
 		configureFormLayout(function_grid, OBJ_FUNCTION);
-		source_code_txt=new NumberedTextEditor(this);
+		source_code_txt=new NumberedTextEditor(this, true);
 		dynamic_cast<QGridLayout *>(source_code_frm->layout())->addWidget(source_code_txt, 1, 0, 1, 2);
 
 		source_code_hl=new SyntaxHighlighter(source_code_txt);
@@ -279,6 +279,7 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 
 	list.sort();
 	language_cmb->addItems(list);
+	language_cmb->setCurrentText(~LanguageType(LanguageType::sql));
 
 	if(func)
 	{

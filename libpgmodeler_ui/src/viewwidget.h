@@ -45,7 +45,7 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 
 		ObjectSelectorWidget *tag_sel;
 
-		NumberedTextEditor *cte_expression_txt, *code_txt;
+		NumberedTextEditor *cte_expression_txt, *code_txt, *expression_txt;
 
 		//! \brief Stores all the view references
 		ObjectTableWidget *references_tab;

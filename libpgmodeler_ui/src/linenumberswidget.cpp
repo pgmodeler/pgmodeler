@@ -67,4 +67,9 @@ void LineNumbersWidget::paintEvent(QPaintEvent *event)
 	}
 }
 
+QColor LineNumbersWidget::getBackgroundColor(void)
+{
+	return(LineNumbersWidget::bg_color);
+}
+
 

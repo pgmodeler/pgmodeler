@@ -445,6 +445,7 @@ namespace ParsersAttributes {
 	SIZE,
 	SNIPPET,
 	SORT_OP,
+	SOURCE_EDITOR_APP,
 	SOURCE_TYPE,
 	SRC_TYPE,
 	SPATIAL_TYPE,

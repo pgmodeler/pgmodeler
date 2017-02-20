@@ -6,9 +6,9 @@
 
 namespace PgModelerUiNS {
 
-	NumberedTextEditor *createNumberedTextEditor(QWidget *parent)
+	NumberedTextEditor *createNumberedTextEditor(QWidget *parent, bool handle_ext_files)
 	{
-		NumberedTextEditor *editor=new NumberedTextEditor(parent);
+		NumberedTextEditor *editor=new NumberedTextEditor(parent, handle_ext_files);
 
 		if(parent && !parent->layout())
 		{

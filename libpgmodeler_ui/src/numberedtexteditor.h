@@ -28,6 +28,9 @@ based upon the code editor example provided by Qt
 
 #include <QPlainTextEdit>
 #include <QMenu>
+#include <QToolButton>
+#include <QTemporaryFile>
+#include <QProcess>
 #include "linenumberswidget.h"
 
 class NumberedTextEditor : public QPlainTextEdit {
@@ -49,8 +52,23 @@ class NumberedTextEditor : public QPlainTextEdit {
 		//! \brief Default tab size for texts
 		static int tab_width;
 
+		static QString src_editor_app;
+
 		//! \brief Widget used to expose document line numbers
 		LineNumbersWidget *line_number_wgt;
+
+		//! \brief Indicates if the text editor can handle external files
+		bool handle_ext_files;
+
+		QWidget *top_widget;
+
+		QToolButton *load_file_btn, *edit_src_btn, *clear_btn;
+
+		//! \brief The name of the temp file currently being used to edit the souce
+		QTemporaryFile tmp_src_file;
+
+		//! \brief The process object that holds the source code editor app
+		QProcess src_editor_proc;
 
 		//! \brief Determines and returns the line numbers widget width
 		int getLineNumbersWidth(void);
@@ -60,7 +78,8 @@ class NumberedTextEditor : public QPlainTextEdit {
 		void keyPressEvent(QKeyEvent *event);
 
 	public:
-		NumberedTextEditor(QWidget * parent = 0);
+		NumberedTextEditor(QWidget * parent = 0, bool handle_ext_files = false);
+		~NumberedTextEditor(void);
 
 		static void setDefaultFont(const QFont &font);
 		static void setLineNumbersVisible(bool value);
@@ -68,6 +87,7 @@ class NumberedTextEditor : public QPlainTextEdit {
 		static void setLineHighlightColor(const QColor &color);
 		static void setTabWidth(int value);
 		static int getTabWidth(void);
+		static void setSourceEditorApp(const QString &app);
 
 		/*! brief Disable the custom context menu designed specifically for this class.
 		This method is useful when the user needs to create another context menu that executes actions
@@ -85,7 +105,14 @@ class NumberedTextEditor : public QPlainTextEdit {
 		void identSelectionLeft(void);
 		void identSelection(bool ident_right);
 
+		void loadFile(void);
+		void editSource(void);
+		void updateSource(void);
+		void handleProcessError(void);
+
 	public slots:
+		void setReadOnly(bool ro);
+
 		//! \brief Grabs the keyboard input and also highlight the current line
 		void setFocus(void);
 

@@ -35,17 +35,20 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 
 		Ui_ViewWidget::setupUi(this);
 
+		expression_txt=new NumberedTextEditor(this, true);
 		expression_hl=new SyntaxHighlighter(expression_txt, false, true);
 		expression_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		referencias_grid->addWidget(expression_txt, 4, 1, 1, 4);
 
 		code_txt=new NumberedTextEditor(this);
+		code_txt->setReadOnly(true);
 		code_hl=new SyntaxHighlighter(code_txt);
 		code_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 		vbox=new QVBoxLayout(code_prev_tab);
 		vbox->setContentsMargins(4,4,4,4);
 		vbox->addWidget(code_txt);
 
-		cte_expression_txt=new NumberedTextEditor(this);
+		cte_expression_txt=new NumberedTextEditor(this, true);
 		cte_expression_hl=new SyntaxHighlighter(cte_expression_txt);
 		cte_expression_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 		vbox=new QVBoxLayout(cte_tab);

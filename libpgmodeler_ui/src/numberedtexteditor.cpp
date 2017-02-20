@@ -21,17 +21,89 @@
 #include <QTextBlock>
 #include <QScrollBar>
 #include <QDebug>
+#include <QFileDialog>
+#include "pgmodeleruins.h"
 
 bool NumberedTextEditor::line_nums_visible=true;
 bool NumberedTextEditor::highlight_lines=true;
 QColor NumberedTextEditor::line_hl_color=Qt::yellow;
 QFont NumberedTextEditor::default_font=QFont(QString("DejaVu Sans Mono"), 10);
 int NumberedTextEditor::tab_width=0;
+QString NumberedTextEditor::src_editor_app=QString();
 
-
-NumberedTextEditor::NumberedTextEditor(QWidget * parent) : QPlainTextEdit(parent)
+NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) : QPlainTextEdit(parent)
 {
+	this->handle_ext_files = handle_ext_files;
 	line_number_wgt=new LineNumbersWidget(this);
+	top_widget = nullptr;
+	load_file_btn = clear_btn	 = nullptr;
+
+	if(handle_ext_files)
+	{
+		QPalette pal;
+		QHBoxLayout *hbox = new QHBoxLayout;
+		QFont font = this->font();
+
+		font.setPointSizeF(font.pointSizeF() * 0.95f);
+
+		top_widget = new QWidget(this);
+		top_widget->setAutoFillBackground(true);
+
+		pal.setColor(QPalette::Window, LineNumbersWidget::getBackgroundColor());
+		top_widget->setPalette(pal);
+		top_widget->setVisible(handle_ext_files);
+		top_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+
+		hbox->setContentsMargins(2,2,2,2);
+		hbox->addSpacerItem(new QSpacerItem(10,10, QSizePolicy::Expanding));
+
+		load_file_btn = new QToolButton(top_widget);
+		load_file_btn->setIcon(QPixmap(PgModelerUiNS::getIconPath("abrir")));
+		load_file_btn->setIconSize(QSize(16,16));
+		load_file_btn->setAutoRaise(true);
+		load_file_btn->setText(trUtf8("Load file"));
+		load_file_btn->setToolTip(trUtf8("Load the object's source code from an external file"));
+		load_file_btn->setFont(font);
+		load_file_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+		hbox->addWidget(load_file_btn);
+		connect(load_file_btn, SIGNAL(clicked(bool)), this, SLOT(loadFile()));
+
+		edit_src_btn = new QToolButton(top_widget);
+		edit_src_btn->setIcon(QPixmap(PgModelerUiNS::getIconPath("editar")));
+		edit_src_btn->setIconSize(QSize(16,16));
+		edit_src_btn->setAutoRaise(true);
+		edit_src_btn->setText(trUtf8("Edit source"));
+		edit_src_btn->setToolTip(trUtf8("Edit the source code in the preferred external editor"));
+		edit_src_btn->setFont(font);
+		edit_src_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+		hbox->addWidget(edit_src_btn);
+		connect(edit_src_btn, SIGNAL(clicked(bool)), this, SLOT(editSource()));
+
+		clear_btn = new QToolButton(top_widget);
+		clear_btn->setIcon(QPixmap(PgModelerUiNS::getIconPath("limpartexto")));
+		clear_btn->setIconSize(QSize(16,16));
+		clear_btn->setAutoRaise(true);
+		clear_btn->setText(trUtf8("Clear"));
+		clear_btn->setFont(font);
+		clear_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+		clear_btn->setDisabled(true);
+
+		connect(clear_btn, &QToolButton::clicked, [=](){
+			this->clear();
+			clear_btn->setEnabled(false);
+		});
+
+		connect(this, &NumberedTextEditor::textChanged, [=](){
+			clear_btn->setEnabled(!this->toPlainText().isEmpty() && !this->isReadOnly());
+		});
+
+		hbox->addWidget(clear_btn);
+		top_widget->setLayout(hbox);
+
+		connect(&src_editor_proc, SIGNAL(finished(int)), this, SLOT(updateSource()));
+		connect(&src_editor_proc, SIGNAL(error(QProcess::ProcessError)), this, SLOT(handleProcessError()));
+	}
+
 	setWordWrapMode(QTextOption::NoWrap);
 
 	connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightCurrentLine()));
@@ -39,6 +111,16 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent) : QPlainTextEdit(parent
 	connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumbersSize()));
 
 	setCustomContextMenuEnabled(true);
+}
+
+NumberedTextEditor::~NumberedTextEditor(void)
+{
+	if(src_editor_proc.state() != QProcess::NotRunning)
+	{
+		disconnect(&src_editor_proc, nullptr, this, nullptr);
+		src_editor_proc.terminate();
+		src_editor_proc.waitForFinished();
+	}
 }
 
 void NumberedTextEditor::setCustomContextMenuEnabled(bool enabled)
@@ -92,6 +174,11 @@ int NumberedTextEditor::getTabWidth(void)
 		QFontMetrics fm(default_font);
 		return(tab_width * fm.width(' '));
 	}
+}
+
+void NumberedTextEditor::setSourceEditorApp(const QString &app)
+{
+	NumberedTextEditor::src_editor_app = app;
 }
 
 void NumberedTextEditor::showContextMenu(void)
@@ -212,6 +299,101 @@ void NumberedTextEditor::identSelection(bool ident_right)
 	}
 }
 
+void NumberedTextEditor::loadFile(void)
+{
+	QFileDialog sql_file_dlg;
+
+	sql_file_dlg.setDefaultSuffix(QString("sql"));
+	sql_file_dlg.setFileMode(QFileDialog::AnyFile);
+	sql_file_dlg.setNameFilter(trUtf8("SQL file (*.sql);;All files (*.*)"));
+	sql_file_dlg.setModal(true);
+	sql_file_dlg.setWindowTitle(trUtf8("Load file"));
+	sql_file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
+	sql_file_dlg.exec();
+
+	if(sql_file_dlg.result()==QDialog::Accepted)
+	{
+		QFile file;
+		file.setFileName(sql_file_dlg.selectedFiles().at(0));
+
+		if(!file.open(QFile::ReadOnly))
+			throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED)
+											.arg(sql_file_dlg.selectedFiles().at(0))
+											,ERR_FILE_DIR_NOT_ACCESSED ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		this->clear();
+		this->setPlainText(file.readAll());
+		file.close();
+
+
+		clear_btn->setEnabled(!this->toPlainText().isEmpty());
+	}
+}
+
+void NumberedTextEditor::editSource(void)
+{
+	//If the editor process is already running we block a second try to start the editor process
+	if(src_editor_proc.state() != QProcess::NotRunning)
+	{
+		Messagebox msg_box;
+		msg_box.show(PgModelerUiNS::formatMessage(trUtf8("The source code is currently being edited in the application `%1' (pid: %2)! Only one instance of the source code editor application is allowed.")
+																							.arg(src_editor_proc.program()).arg(src_editor_proc.pid())), Messagebox::ALERT_ICON);
+		return;
+	}
+
+	QByteArray buffer;
+
+	tmp_src_file.setAutoRemove(false);
+	tmp_src_file.setFileTemplate(GlobalAttributes::TEMPORARY_DIR + GlobalAttributes::DIR_SEPARATOR + QString("source_XXXXXX") + QString(".sql"));
+
+	if(!tmp_src_file.open())
+		throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED)
+										.arg(tmp_src_file.fileName())
+										,ERR_FILE_DIR_NOT_ACCESSED ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	buffer.append(this->toPlainText());
+	tmp_src_file.write(buffer);
+	tmp_src_file.close();
+
+	//Starting the source editor application using the temp source file as input
+	src_editor_proc.setProgram(NumberedTextEditor::src_editor_app + "_");
+	src_editor_proc.setArguments({ tmp_src_file.fileName() });
+	src_editor_proc.start();
+}
+
+void NumberedTextEditor::updateSource(void)
+{
+	QFile input(tmp_src_file.fileName());
+
+	if(!input.open(QFile::ReadOnly))
+		throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED)
+										.arg(tmp_src_file.fileName())
+										,ERR_FILE_DIR_NOT_ACCESSED ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	this->setPlainText(input.readAll());
+	input.close();
+	input.remove();
+}
+
+void NumberedTextEditor::handleProcessError(void)
+{
+	Messagebox msg_box;
+	msg_box.show(PgModelerUiNS::formatMessage(trUtf8("Could not start the source code editor application `%1'! Make to sure that the source editor path defined in the general settings points to a valid executable and the current user has permission to run the application. Error message returned: `%2'")
+																						.arg(src_editor_proc.program()).arg(src_editor_proc.errorString())), Messagebox::ERROR_ICON);
+}
+
+void NumberedTextEditor::setReadOnly(bool ro)
+{
+	if(handle_ext_files)
+	{
+		load_file_btn->setEnabled(!ro);
+		edit_src_btn->setEnabled(!ro);
+		clear_btn->setEnabled(!ro && !this->toPlainText().isEmpty());
+	}
+
+	QPlainTextEdit::setReadOnly(ro);
+}
+
 void NumberedTextEditor::setFocus(void)
 {
 	QPlainTextEdit::setFocus();
@@ -263,14 +445,22 @@ void NumberedTextEditor::updateLineNumbers(void)
 
 void NumberedTextEditor::updateLineNumbersSize(void)
 {
+	int py = (handle_ext_files && top_widget ? top_widget->height() : 0);
+
 	if(line_nums_visible)
 	{
 		QRect rect=contentsRect();
-		setViewportMargins(getLineNumbersWidth(), 0, 0, 0);
-		line_number_wgt->setGeometry(QRect(rect.left(), rect.top(), getLineNumbersWidth(), rect.height()));
+
+		setViewportMargins(getLineNumbersWidth(), py, 0, 0);
+		line_number_wgt->setGeometry(QRect(rect.left(), rect.top() + py, getLineNumbersWidth(), rect.height() - py));
+
+		if(top_widget)
+			top_widget->setGeometry(rect.left(), rect.top(),
+															rect.width() - (this->verticalScrollBar()->isVisible() ? this->verticalScrollBar()->width() : 0),
+															top_widget->height());
 	}
 	else
-		setViewportMargins(0, 0, 0, 0);
+		setViewportMargins(0, py, 0, 0);
 }
 
 int NumberedTextEditor::getLineNumbersWidth(void)
