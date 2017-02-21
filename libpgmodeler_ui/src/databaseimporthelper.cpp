@@ -311,11 +311,11 @@ void DatabaseImportHelper::createObjects(void)
 				 in order to be created later */
 			if(obj_type!=OBJ_CONSTRAINT)
 			{
-				emit s_progressUpdated(progress,
-										 trUtf8("Creating object `%1' (%2)...")
-									   .arg(attribs[ParsersAttributes::NAME])
-						.arg(BaseObject::getTypeName(obj_type)),
-						obj_type);
+				emit s_progressUpdated(progress, trUtf8("Creating object `%1' (%2), oid `%3'...")
+															.arg(attribs[ParsersAttributes::NAME])
+															.arg(BaseObject::getTypeName(obj_type))
+															.arg(attribs[ParsersAttributes::OID]),
+															obj_type);
 
 				createObject(attribs);
 			}
@@ -361,9 +361,10 @@ void DatabaseImportHelper::createObjects(void)
 				itr++;
 
 				emit s_progressUpdated(progress,
-										 trUtf8("Trying to recreate object `%1' (%2)...")
-									   .arg(attribs[ParsersAttributes::NAME])
-						.arg(BaseObject::getTypeName(obj_type)),
+										 trUtf8("Trying to recreate object `%1' (%2), oid `%3'...")
+										.arg(attribs[ParsersAttributes::NAME])
+										.arg(BaseObject::getTypeName(obj_type))
+										.arg(attribs[ParsersAttributes::OID]),
 						obj_type);
 
 				try
@@ -737,8 +738,8 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 	catch(Exception &e)
 	{
 		throw Exception(Exception::getErrorMessage(ERR_OBJECT_NOT_IMPORTED)
-						.arg(obj_name).arg(BaseObject::getTypeName(obj_type)),
-						ERR_OBJECT_NOT_IMPORTED,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+										.arg(obj_name).arg(BaseObject::getTypeName(obj_type)).arg(attribs[ParsersAttributes::OID]),
+										ERR_OBJECT_NOT_IMPORTED,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, dumpObjectAttributes(attribs));
 	}
 }
 
@@ -1017,9 +1018,9 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 	Parameter param;
 	PgSQLType type;
 	unsigned dim=0;
-	QStringList param_types, param_names, param_modes, param_def_vals;
-	int def_val_idx=0;
+	QStringList param_types, param_names, param_modes, param_def_vals, param_xmls;
 	QString param_tmpl_name=QString("_param%1");
+	vector<Parameter> parameters;
 
 	try
 	{
@@ -1072,15 +1073,36 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 				param.setVariadic(param_modes[i]==QString("v"));
 			}
 
-			//Setting the default value for the current paramenter. OUT parameter doesn't receive default values.
-			if(def_val_idx < param_def_vals.size() && (!param.isOut() || (param.isIn() && param.isOut())))
-				param.setDefaultValue(param_def_vals[def_val_idx++]);
-
 			//If the mode is 't' indicates that the current parameter will be used as a return table colum
 			if(!param_modes.isEmpty() && param_modes[i]==QString("t"))
 				attribs[ParsersAttributes::RETURN_TABLE]+=param.getCodeDefinition(SchemaParser::XML_DEFINITION);
 			else
-				attribs[ParsersAttributes::PARAMETERS]+=param.getCodeDefinition(SchemaParser::XML_DEFINITION);
+				parameters.push_back(param);
+		}
+
+		if(!parameters.empty())
+		{
+			vector<Parameter>::reverse_iterator ritr, ritr_end;
+
+			ritr = parameters.rbegin();
+			ritr_end = parameters.rend();
+
+			while(ritr != ritr_end)
+			{
+				param = *ritr;
+				ritr++;
+
+				//Setting the default value for the current paramenter. OUT parameter doesn't receive default values.
+				if(!param_def_vals.isEmpty() && (!param.isOut() || (param.isIn() && param.isOut())))
+				{
+					param.setDefaultValue(param_def_vals.back());
+					param_def_vals.pop_back();
+				}
+
+				param_xmls.push_front(param.getCodeDefinition(SchemaParser::XML_DEFINITION));
+			}
+
+			attribs[ParsersAttributes::PARAMETERS]+=param_xmls.join(QChar('\n'));
 		}
 
 		//Case the function's language is C the symbol is the 'definition' attribute
@@ -2384,8 +2406,9 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 	try
 	{
 		attribs_map type_attr;
-		QString xml_def, sch_name, obj_name;
-		unsigned type_oid=oid_str.toUInt(), dimension=0, object_id=type_attr[ParsersAttributes::OBJECT_ID].toUInt();
+		QString xml_def, sch_name, obj_name, aux_name;
+		unsigned type_oid=oid_str.toUInt(), elem_tp_oid = 0,
+				dimension=0, object_id=type_attr[ParsersAttributes::OBJECT_ID].toUInt();
 
 		if(type_oid > 0)
 		{
@@ -2397,6 +2420,8 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 					type_attr[ParsersAttributes::NAME].contains(QString("[]")))
 			{
 				obj_name=type_attr[ParsersAttributes::NAME];
+				elem_tp_oid=type_attr[ParsersAttributes::ELEMENT].toUInt();
+
 				if(generate_xml)
 				{
 					dimension=type_attr[ParsersAttributes::NAME].count(QString("[]"));
@@ -2437,14 +2462,24 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 			if(!sch_name.isEmpty() &&
 				 ((sch_name!=QString("pg_catalog") && sch_name!=QString("information_schema")) ||
 					type_oid > catalog.getLastSysObjectOID()) &&
-				 !obj_name.contains(QRegExp(QString("^(\\\")?(%1)(\\\")?(.)").arg(sch_name))))
+				 !obj_name.contains(QRegExp(QString("^(\\\")?(%1)(\\\")?(\\.)").arg(sch_name))))
 				obj_name.prepend(sch_name + QString("."));
 
 			/* In case of auto resolve dependencies, if the type is a user defined one and was not created in the database
 					model but its attributes were retrieved the object will be created to avoid reference errors */
+			aux_name = obj_name;
+			aux_name.remove(QString("[]"));
 			if(auto_resolve_deps && !type_attr.empty() &&
-				 type_oid > catalog.getLastSysObjectOID() && !dbmodel->getType(obj_name))
-				createObject(type_attr);
+				 type_oid > catalog.getLastSysObjectOID() && !dbmodel->getType(aux_name))
+			{
+				//If the type is not an array one we simply use the current type attributes map
+				 if(type_attr[ParsersAttributes::CATEGORY] != QString("A"))
+					createObject(type_attr);
+				 /* In case the type is an array one we should use the oid held by "element" attribute to
+				 create the type related to current one */
+				 else if(elem_tp_oid > catalog.getLastSysObjectOID() &&	 types.count(elem_tp_oid))
+					createObject(types[elem_tp_oid]);
+			}
 
 			if(generate_xml)
 			{
