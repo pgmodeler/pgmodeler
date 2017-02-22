@@ -287,7 +287,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 						if(obj_type==OBJ_TABLE && !aux_object)
 							aux_object=getRelNNTable(obj_name, aux_model);
 
-						if(diff_type!=ObjectsDiffInfo::DROP_OBJECT && aux_object)
+						if(diff_type != ObjectsDiffInfo::DROP_OBJECT && aux_object)
 						{
 							/* Try to get a diff from the retrieve object and the current object,
 				 comparing only basic attributes like schema, tablespace and owner
@@ -326,7 +326,8 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 						}
 						else if(!aux_object)
 						{
-							if(!diff_opts[OPT_KEEP_NOT_IMPORTED_OBJS])
+							if(diff_type != ObjectsDiffInfo::DROP_OBJECT ||
+								 (diff_type == ObjectsDiffInfo::DROP_OBJECT && !diff_opts[OPT_KEEP_NOT_IMPORTED_OBJS]))
 								generateDiffInfo(diff_type, object);
 							else
 								generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, object);
@@ -407,7 +408,8 @@ void ModelsDiffHelper::diffTableObject(TableObject *tab_obj, unsigned diff_type)
 
 	if(!aux_tab_obj)
 	{
-		if(!diff_opts[OPT_KEEP_NOT_IMPORTED_OBJS])
+		if(diff_type!=ObjectsDiffInfo::DROP_OBJECT ||
+			 (diff_type==ObjectsDiffInfo::DROP_OBJECT && !diff_opts[OPT_KEEP_NOT_IMPORTED_OBJS]))
 			generateDiffInfo(diff_type, tab_obj);
 		else
 			generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, tab_obj);
