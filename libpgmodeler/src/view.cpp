@@ -731,6 +731,18 @@ void View::addRule(Rule *rule, int obj_idx)
 	}
 }
 
+void View::addIndex(Index *index, int obj_idx)
+{
+	try
+	{
+		addObject(index, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
 void View::removeObject(unsigned obj_idx, ObjectType obj_type)
 {
 	vector<TableObject *> *obj_list = getObjectList(obj_type);
@@ -794,6 +806,18 @@ void View::removeRule(unsigned idx)
 	}
 }
 
+void View::removeIndex(unsigned idx)
+{
+	try
+	{
+		removeObject(idx, OBJ_INDEX);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
 TableObject *View::getObject(unsigned obj_idx, ObjectType obj_type)
 {
 	vector<TableObject *> *obj_list=getObjectList(obj_type);
@@ -847,6 +871,18 @@ Rule *View::getRule(unsigned obj_idx)
 	}
 }
 
+Index *View::getIndex(unsigned obj_idx)
+{
+	try
+	{
+		return(dynamic_cast<Index *>(getObject(obj_idx, OBJ_INDEX)));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
 unsigned View::getObjectCount(ObjectType obj_type, bool)
 {
 	try
@@ -869,12 +905,19 @@ unsigned View::getRuleCount(void)
 	return(rules.size());
 }
 
+unsigned View::getIndexCount()
+{
+	return(indexes.size());
+}
+
 vector<TableObject *> *View::getObjectList(ObjectType obj_type)
 {
 	if(obj_type==OBJ_TRIGGER)
 		return(&triggers);
 	else if(obj_type==OBJ_RULE)
 		return(&rules);
+	else if(obj_type==OBJ_INDEX)
+		return(&indexes);
 	else
 		throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }

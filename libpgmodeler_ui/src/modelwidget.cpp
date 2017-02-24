@@ -1511,7 +1511,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		else if(obj_type== OBJ_TRIGGER)
 			res=openEditingForm<Trigger, TriggerWidget, BaseTable>(object, parent_obj);
 		else if(obj_type== OBJ_INDEX)
-			res=openEditingForm<Index, IndexWidget, Table>(object, parent_obj);
+			res=openEditingForm<Index, IndexWidget, BaseTable>(object, parent_obj);
 		else if(obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT)
 		{
 			TableObject *tab_obj=dynamic_cast<TableObject *>(object);
@@ -1857,8 +1857,7 @@ void ModelWidget::editObject(void)
 	tab_obj=dynamic_cast<TableObject *>(object);
 
 	if(object)
-		showObjectForm(object->getObjectType(), object,
-					   (tab_obj ? tab_obj->getParentTable() : nullptr));
+		showObjectForm(object->getObjectType(), object, (tab_obj ? tab_obj->getParentTable() : nullptr));
 }
 
 void ModelWidget::selectSchemaChildren(void)

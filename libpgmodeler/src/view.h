@@ -41,6 +41,7 @@ class View: public BaseTable {
 
 		vector<TableObject *> triggers;
 		vector<TableObject *> rules;
+		vector<TableObject *> indexes;
 
 		/*! \brief Commom table expression. This is prepend on the views definition.
 		CTE's are available since PostgreSQL 8.4:
@@ -108,6 +109,9 @@ class View: public BaseTable {
 		//! \brief Adds a rule into the view
 		void addRule(Rule *rule, int obj_idx=-1);
 
+		//! \brief Adds an index into the view
+		void addIndex(Index *index, int obj_idx=-1);
+
 		//! \brief Remove a object from view using its reference
 		void removeObject(BaseObject *obj);
 
@@ -122,6 +126,9 @@ class View: public BaseTable {
 
 		//! \brief Remove a rule from view using its index
 		void removeRule(unsigned idx);
+
+		//! \brief Remove an index from view using its index
+		void removeIndex(unsigned idx);
 
 		//! \brief Returns the object index searching by its reference
 		int getObjectIndex(BaseObject *obj);
@@ -144,6 +151,9 @@ class View: public BaseTable {
 		//! \brief Returns a rule searching by its index
 		Rule *getRule(unsigned obj_idx);
 
+		//! \brief Returns a index searching by its index
+		Index *getIndex(unsigned obj_idx);
+
 		//! \brief Returns the view's child object count
 		unsigned getObjectCount(ObjectType obj_type, bool=false);
 
@@ -152,6 +162,9 @@ class View: public BaseTable {
 
 		//! \brief Returns the view's rule count
 		unsigned getRuleCount(void);
+
+		//! \brief Returns the view's index count
+		unsigned getIndexCount(void);
 
 		//! \brief Removes all objects (triggers / roles) from view
 		void removeObjects(void);

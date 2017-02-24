@@ -243,6 +243,11 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Index</string>
+      </attribute>
+     </widget>
      <widget class="QWidget" name="triggers_tab">
       <attribute name="title">
        <string>Triggers</string>

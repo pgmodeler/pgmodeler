@@ -19,6 +19,7 @@
 #include "viewwidget.h"
 #include "rulewidget.h"
 #include "triggerwidget.h"
+#include "indexwidget.h"
 #include "baseform.h"
 
 ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
@@ -26,7 +27,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 	try
 	{
 		ObjectTableWidget *tab=nullptr;
-		ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE };
+		ObjectType types[]={ OBJ_INDEX, OBJ_TRIGGER, OBJ_RULE };
 		QGridLayout *grid=nullptr;
 		QVBoxLayout *vbox=nullptr;
 
@@ -108,6 +109,11 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Firing"), 2);
 		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("trigger")),2);
 		objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Events"), 3);
+
+		objects_tab_map[OBJ_INDEX]->setColumnCount(2);
+		objects_tab_map[OBJ_INDEX]->setHeaderLabel(trUtf8("Name"), 0);
+		objects_tab_map[OBJ_INDEX]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
+		objects_tab_map[OBJ_INDEX]->setHeaderLabel(trUtf8("Indexing"), 1);
 
 		objects_tab_map[OBJ_RULE]->setColumnCount(3);
 		objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Name"), 0);
@@ -203,6 +209,8 @@ void ViewWidget::handleObject(void)
 
 		if(obj_type==OBJ_TRIGGER)
 			openEditingForm<Trigger,TriggerWidget>(object);
+		else if(obj_type==OBJ_INDEX)
+			openEditingForm<Index,IndexWidget>(object);
 		else
 			openEditingForm<Rule,RuleWidget>(object);
 
@@ -346,6 +354,7 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 	ObjectTableWidget *tab=nullptr;
 	Trigger *trigger=nullptr;
 	Rule *rule=nullptr;
+	Index *index=nullptr;
 	ObjectType obj_type;
 	QString str_aux;
 	unsigned i;
@@ -389,6 +398,13 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 
 		//Column 2: Rule event type
 		tab->setCellText(~rule->getEventType(),row,2);
+	}
+	else
+	{
+		index=dynamic_cast<Index *>(object);
+
+		//Column 1: Indexing type
+		tab->setCellText(~index->getIndexingType(),row,1);
 	}
 
 	tab->setRowData(QVariant::fromValue<void *>(object), row);

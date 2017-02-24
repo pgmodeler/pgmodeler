@@ -120,8 +120,7 @@ void ModelObjectsWidget::editObject(void)
 		//If the user double-clicked the item "Permission (n)" on tree view
 		if(sender()==objectstree_tw && objectstree_tw->currentItem() &&
 				objectstree_tw->currentItem()->data(1, Qt::UserRole).toUInt()==OBJ_PERMISSION)
-			model_wgt->showObjectForm(OBJ_PERMISSION,
-									  reinterpret_cast<BaseObject *>(objectstree_tw->currentItem()->data(0, Qt::UserRole).value<void *>()));
+			model_wgt->showObjectForm(OBJ_PERMISSION, reinterpret_cast<BaseObject *>(objectstree_tw->currentItem()->data(0, Qt::UserRole).value<void *>()));
 		//If the user double-clicked a permission on  list view
 		else if(sender()==objectslist_tbw && objectslist_tbw->currentRow() >= 0)
 		{
@@ -555,7 +554,7 @@ void ModelObjectsWidget::updateTableTree(QTreeWidgetItem *root, BaseObject *sche
 		QTreeWidgetItem *item=nullptr, *item1=nullptr, *item2=nullptr;
 		QFont font;
 		ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE,
-							 OBJ_TRIGGER, OBJ_INDEX };
+												 OBJ_TRIGGER, OBJ_INDEX };
 		int count, count1, type_cnt=sizeof(types)/sizeof(ObjectType), i, i1, i2;
 		QPixmap group_icon=QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(OBJ_TABLE) + QString("_grp")));
 
@@ -621,7 +620,7 @@ void ModelObjectsWidget::updateViewTree(QTreeWidgetItem *root, BaseObject *schem
 		View *view=nullptr;
 		QTreeWidgetItem *item=nullptr, *item1=nullptr, *item2=nullptr;
 		QFont font;
-		ObjectType types[]={ OBJ_RULE, OBJ_TRIGGER };
+		ObjectType types[]={ OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX };
 		int count, count1, type_cnt=sizeof(types)/sizeof(ObjectType), i, i1, i2;
 		QPixmap group_icon=QPixmap(PgModelerUiNS::getIconPath(QString(BaseObject::getSchemaName(OBJ_VIEW)) + QString("_grp")));
 

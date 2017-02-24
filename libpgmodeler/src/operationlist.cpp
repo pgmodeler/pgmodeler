@@ -357,9 +357,7 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 				(((obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT) &&
 				  (parent_obj->getObjectType()!=OBJ_RELATIONSHIP && parent_obj->getObjectType()!=OBJ_TABLE)) ||
 
-				 ((obj_type==OBJ_TRIGGER || obj_type==OBJ_RULE) && !dynamic_cast<BaseTable *>(parent_obj)) ||
-
-				 (obj_type==OBJ_INDEX && parent_obj->getObjectType()!=OBJ_TABLE)))
+				 ((obj_type==OBJ_TRIGGER || obj_type==OBJ_RULE || obj_type==OBJ_INDEX) && !dynamic_cast<BaseTable *>(parent_obj))))
 			throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//If the operations list is full makes the automatic cleaning before inserting a new operation

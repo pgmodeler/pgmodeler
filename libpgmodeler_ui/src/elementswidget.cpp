@@ -104,7 +104,8 @@ void ElementsWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 	else if(parent_obj->getObjectType()!=OBJ_TABLE &&
-			parent_obj->getObjectType()!=OBJ_RELATIONSHIP)
+					parent_obj->getObjectType()!=OBJ_VIEW &&
+					parent_obj->getObjectType()!=OBJ_RELATIONSHIP)
 		throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->setEnabled(true);
@@ -117,7 +118,7 @@ void ElementsWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj)
 	updateColumnsCombo();
 }
 
-void ElementsWidget::setAttributes(DatabaseModel *model, Table *table, vector<IndexElement> &elems)
+void ElementsWidget::setAttributes(DatabaseModel *model, BaseTable *table, vector<IndexElement> &elems)
 {
 	setAttributes(model, table);
 	collation_sel->setVisible(true);
@@ -186,6 +187,8 @@ void ElementsWidget::updateColumnsCombo(void)
 	try
 	{
 		column_cmb->clear();
+		column_cmb->setVisible(true);
+		column_rb->setVisible(true);
 
 		if(table)
 		{
@@ -197,7 +200,7 @@ void ElementsWidget::updateColumnsCombo(void)
 									QVariant::fromValue<void *>(column));
 			}
 		}
-		else
+		else if(rel)
 		{
 			col_count=rel->getAttributeCount();
 			for(i=0; i < col_count; i++)
