@@ -12,7 +12,7 @@
       WHERE nspname= ] '{schema}'
 
    %if {table} %then
-     [ AND tb.relkind = 'r' AND tb.relname = ] '{table}'
+     [ AND ((tb.relkind = 'r' OR tb.relkind = 'm') AND tb.relname = ] '{table}' [)]
    %end
  %end
 
@@ -71,7 +71,7 @@
 	    WHERE ns.nspname= ] '{schema}'
 
 	%if {table} %then
-	  [ AND tb.relkind='r' AND tb.relname= ] '{table}'
+	  [ AND ((tb.relkind = 'r' OR tb.relkind = 'm') AND tb.relname = ] '{table}' [)]
 	%end
      %end
 

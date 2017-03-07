@@ -795,7 +795,7 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 
 	listObjects(OBJ_TRIGGER);
 	listObjects(OBJ_RULE);
-
+	listObjects(OBJ_INDEX);
 }
 
 void ViewWidget::applyConfiguration(void)
@@ -803,7 +803,7 @@ void ViewWidget::applyConfiguration(void)
 	try
 	{
 		View *view=nullptr;
-		ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE };
+		ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX };
 		unsigned expr_type[]={ Reference::SQL_REFER_SELECT,
 							   Reference::SQL_REFER_FROM,
 							   Reference::SQL_REFER_WHERE,

@@ -1712,6 +1712,8 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 		loadObjectXML(OBJ_VIEW, attribs);
 		view=dbmodel->createView();
 		dbmodel->addView(view);
+
+		retrieveTableColumns(view->getSchema()->getName(), view->getName());
 	}
 	catch(Exception &e)
 	{
@@ -1785,7 +1787,7 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 	{
 		QStringList cols, exprs, opclasses, collations;
 		IndexElement elem;
-		Table *table=nullptr;
+		BaseTable *parent_tab=nullptr;
 		Collation *coll=nullptr;
 		OperatorClass *opclass=nullptr;
 		QString tab_name, coll_name, opc_name;
@@ -1793,13 +1795,19 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 
 		attribs[ParsersAttributes::FACTOR]=QString("90");
 		tab_name=getDependencyObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE, true, auto_resolve_deps, false);
-		table=dynamic_cast<Table *>(dbmodel->getObject(tab_name, OBJ_TABLE));
+		parent_tab=dynamic_cast<BaseTable *>(dbmodel->getObject(tab_name, OBJ_TABLE));
 
-		if(!table)
-			throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-							.arg(attribs[ParsersAttributes::NAME]).arg(BaseObject::getTypeName(OBJ_INDEX))
-				.arg(tab_name).arg(BaseObject::getTypeName(OBJ_TABLE))
-				,ERR_REF_OBJ_INEXISTS_MODEL ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		if(!parent_tab)
+		{
+			tab_name=getDependencyObject(attribs[ParsersAttributes::TABLE], OBJ_VIEW, true, auto_resolve_deps, false);
+			parent_tab=dynamic_cast<BaseTable *>(dbmodel->getObject(tab_name, OBJ_VIEW));
+
+			if(!parent_tab)
+				throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+												.arg(attribs[ParsersAttributes::NAME]).arg(BaseObject::getTypeName(OBJ_INDEX))
+												.arg(tab_name).arg(BaseObject::getTypeName(OBJ_TABLE)),
+												ERR_REF_OBJ_INEXISTS_MODEL ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
 
 		cols=Catalog::parseArrayValues(attribs[ParsersAttributes::COLUMNS]);
 		exprs=Catalog::parseArrayValues(attribs[ParsersAttributes::EXPRESSIONS]);
@@ -1811,7 +1819,12 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 			elem=IndexElement();
 
 			if(cols[i]!=QString("0"))
-				elem.setColumn(table->getColumn(getColumnName(attribs[ParsersAttributes::TABLE], cols[i])));
+			{
+				if(parent_tab->getObjectType() == OBJ_TABLE)
+					elem.setColumn(dynamic_cast<Table *>(parent_tab)->getColumn(getColumnName(attribs[ParsersAttributes::TABLE], cols[i])));
+				else
+					elem.setExpression(getColumnName(attribs[ParsersAttributes::TABLE], cols[i]));
+			}
 			else if(id_expr < exprs.size())
 				elem.setExpression(exprs[id_expr++]);
 

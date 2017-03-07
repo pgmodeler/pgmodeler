@@ -671,6 +671,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 			}
 			else
 			{
+				ObjectType obj_type = BASE_OBJECT;
 				aux_prog=task_prog_wgt.progress_pb->value();
 				inc=40/static_cast<float>(sch_items.size());
 
@@ -689,9 +690,10 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 						aux_prog+=inc1;
 						if(aux_prog > 99)	aux_prog=99;
 
-						task_prog_wgt.updateProgress(static_cast<int>(aux_prog), trUtf8("Retrieving objects of table `%1'...").arg(tab_items.back()->text(0)), OBJ_TABLE);
+						obj_type = static_cast<ObjectType>(tab_items.back()->data(OBJECT_TYPE, Qt::UserRole).toUInt());
+						task_prog_wgt.updateProgress(static_cast<int>(aux_prog), trUtf8("Retrieving objects of `%1' (%2)...").arg(tab_items.back()->text(0)).arg(BaseObject::getTypeName(obj_type)), obj_type);
 						DatabaseImportForm::updateObjectsTree(import_helper, tree_wgt,
-																									BaseObject::getChildObjectTypes(OBJ_TABLE), checkable_items, disable_empty_grps,
+																									BaseObject::getChildObjectTypes(obj_type), checkable_items, disable_empty_grps,
 																									tab_items.back(), sch_items.back()->text(0), tab_items.back()->text(0));
 						tab_items.pop_back();
 					}
@@ -845,7 +847,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 				item->setData(OBJECT_SCHEMA, Qt::UserRole, schema);
 				item->setData(OBJECT_TABLE, Qt::UserRole, table);
 
-				if(obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLE)
+				if(obj_type==OBJ_SCHEMA || obj_type == OBJ_TABLE || obj_type == OBJ_VIEW)
 					items_vect.push_back(item);
 			}
 
