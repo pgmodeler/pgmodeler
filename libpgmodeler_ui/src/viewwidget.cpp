@@ -27,7 +27,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 	try
 	{
 		ObjectTableWidget *tab=nullptr;
-		ObjectType types[]={ OBJ_INDEX, OBJ_TRIGGER, OBJ_RULE };
+		ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX };
 		QGridLayout *grid=nullptr;
 		QVBoxLayout *vbox=nullptr;
 

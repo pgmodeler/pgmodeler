@@ -46,9 +46,9 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 		elements_tab->setHeaderLabel(trUtf8("Sorting"), 4);
 		elements_tab->setHeaderLabel(trUtf8("Nulls First"), 5);
 
-		element_grid->addWidget(collation_sel, 2,1,1,2);
-		element_grid->addWidget(op_class_sel, 3,1,1,2);
-		element_grid->addWidget(operator_sel, 4,1,1,2);
+		element_grid->addWidget(collation_sel, 3,1,1,2);
+		element_grid->addWidget(op_class_sel, 4,1,1,2);
+		element_grid->addWidget(operator_sel, 5,1,1,2);
 		element_grid->addWidget(elements_tab, 6,0,1,3);
 
 		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_91)].push_back(collation_lbl);
@@ -115,7 +115,12 @@ void ElementsWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj)
 	collation_sel->setModel(model);
 	operator_sel->setModel(model);
 
-	updateColumnsCombo();
+	cols_combo_parent->setVisible(parent_obj->getObjectType() == OBJ_TABLE);
+	column_rb->setVisible(parent_obj->getObjectType() == OBJ_TABLE);
+	expression_rb->setChecked(parent_obj->getObjectType() == OBJ_VIEW);
+
+	if(parent_obj->getObjectType() == OBJ_TABLE)
+		updateColumnsCombo();
 }
 
 void ElementsWidget::setAttributes(DatabaseModel *model, BaseTable *table, vector<IndexElement> &elems)

@@ -3299,12 +3299,17 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 			if((obj_type==OBJ_SCHEMA && obj->isSystemObject()) ||
 					(!obj->isProtected() && (obj_type==OBJ_TABLE || obj_type==BASE_RELATIONSHIP ||
 																	 obj_type==OBJ_RELATIONSHIP || obj_type==OBJ_SCHEMA ||
-																	 obj_type == OBJ_TAG)))
+																	 obj_type == OBJ_TAG || obj_type==OBJ_VIEW)))
 			{
-				if(obj_type==OBJ_TABLE)
+				if(obj_type==OBJ_TABLE || obj_type == OBJ_VIEW)
 				{
 					for(i=0; i < tab_tp_cnt; i++)
+					{
+						if(obj_type == OBJ_VIEW && (types[i] == OBJ_COLUMN || types[i] == OBJ_CONSTRAINT))
+							continue;
+
 						new_object_menu.addAction(actions_new_objects[types[i]]);
+					}
 					action_new_object->setMenu(&new_object_menu);
 					popup_menu.insertAction(action_quick_actions, action_new_object);
 				}
