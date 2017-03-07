@@ -935,6 +935,12 @@ void View::removeObjects(void)
 		rules.back()->setParentTable(nullptr);
 		rules.pop_back();
 	}
+
+	while(!indexes.empty())
+	{
+		indexes.back()->setParentTable(nullptr);
+		indexes.pop_back();
+	}
 }
 
 void View::operator = (View &view)
@@ -961,6 +967,7 @@ vector<BaseObject *> View::getObjects(void)
 
 	list.assign(triggers.begin(), triggers.end());
 	list.insert(list.end(), rules.begin(), rules.end());
+	list.insert(list.end(), indexes.begin(), indexes.end());
 
 	return(list);
 }
