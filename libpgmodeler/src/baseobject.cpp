@@ -175,6 +175,8 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 					name.indexOf(':')>=0 ||
 					name.indexOf('(')>=0 ||
 					name.indexOf(')')>=0 ||
+					name.indexOf('/')>=0 ||
+					name.indexOf('\\')>=0 ||
 					name.contains(QRegExp("^[0-9]+"))));
 
 		i=0;
@@ -232,7 +234,7 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 bool BaseObject::isValidName(const QString &name)
 {
 	QString aux_name=name;
-	QByteArray special_chars=QByteArray("_-.@ $:()");
+	QByteArray special_chars=QByteArray("_-.@ $:()/\\");
 
 	if(aux_name.contains(QRegExp("^(\")(.)+(\")$")))
 	{
