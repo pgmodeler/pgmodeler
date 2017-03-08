@@ -920,6 +920,7 @@ void DatabaseExplorerWidget::listObjects(void)
 	}
 	catch(Exception &e)
 	{
+		QApplication::restoreOverrideCursor();
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }

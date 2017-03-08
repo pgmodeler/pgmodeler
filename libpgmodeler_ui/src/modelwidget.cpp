@@ -488,7 +488,7 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 			panning_mode = false;
 			viewport->setDragMode(QGraphicsView::NoDrag);
 			QApplication::restoreOverrideCursor();
-			QApplication::setOverrideCursor(Qt::ArrowCursor);
+			QApplication::restoreOverrideCursor();
 			return (true);
 		}
 	}
