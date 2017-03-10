@@ -488,7 +488,7 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 			panning_mode = false;
 			viewport->setDragMode(QGraphicsView::NoDrag);
 			QApplication::restoreOverrideCursor();
-			QApplication::setOverrideCursor(Qt::ArrowCursor);
+			QApplication::restoreOverrideCursor();
 			return (true);
 		}
 	}
@@ -1511,7 +1511,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		else if(obj_type== OBJ_TRIGGER)
 			res=openEditingForm<Trigger, TriggerWidget, BaseTable>(object, parent_obj);
 		else if(obj_type== OBJ_INDEX)
-			res=openEditingForm<Index, IndexWidget, Table>(object, parent_obj);
+			res=openEditingForm<Index, IndexWidget, BaseTable>(object, parent_obj);
 		else if(obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT)
 		{
 			TableObject *tab_obj=dynamic_cast<TableObject *>(object);
@@ -1857,8 +1857,7 @@ void ModelWidget::editObject(void)
 	tab_obj=dynamic_cast<TableObject *>(object);
 
 	if(object)
-		showObjectForm(object->getObjectType(), object,
-					   (tab_obj ? tab_obj->getParentTable() : nullptr));
+		showObjectForm(object->getObjectType(), object, (tab_obj ? tab_obj->getParentTable() : nullptr));
 }
 
 void ModelWidget::selectSchemaChildren(void)
@@ -3300,12 +3299,17 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 			if((obj_type==OBJ_SCHEMA && obj->isSystemObject()) ||
 					(!obj->isProtected() && (obj_type==OBJ_TABLE || obj_type==BASE_RELATIONSHIP ||
 																	 obj_type==OBJ_RELATIONSHIP || obj_type==OBJ_SCHEMA ||
-																	 obj_type == OBJ_TAG)))
+																	 obj_type == OBJ_TAG || obj_type==OBJ_VIEW)))
 			{
-				if(obj_type==OBJ_TABLE)
+				if(obj_type==OBJ_TABLE || obj_type == OBJ_VIEW)
 				{
 					for(i=0; i < tab_tp_cnt; i++)
+					{
+						if(obj_type == OBJ_VIEW && (types[i] == OBJ_COLUMN || types[i] == OBJ_CONSTRAINT))
+							continue;
+
 						new_object_menu.addAction(actions_new_objects[types[i]]);
+					}
 					action_new_object->setMenu(&new_object_menu);
 					popup_menu.insertAction(action_quick_actions, action_new_object);
 				}

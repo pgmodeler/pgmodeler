@@ -253,6 +253,11 @@
        <string>Rules</string>
       </attribute>
      </widget>
+     <widget class="QWidget" name="indexes_tab">
+      <attribute name="title">
+       <string>Indexes</string>
+      </attribute>
+     </widget>
      <widget class="QWidget" name="cte_tab">
       <attribute name="title">
        <string>Table Expression</string>

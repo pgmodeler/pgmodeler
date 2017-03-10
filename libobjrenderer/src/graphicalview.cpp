@@ -103,6 +103,9 @@ void GraphicalView::configureObject(void)
 	tab_objs.insert(tab_objs.end(),
 					view->getObjectList(OBJ_TRIGGER)->begin(),
 					view->getObjectList(OBJ_TRIGGER)->end());
+	tab_objs.insert(tab_objs.end(),
+					view->getObjectList(OBJ_INDEX)->begin(),
+					view->getObjectList(OBJ_INDEX)->end());
 
 	ext_attribs->setVisible(!tab_objs.empty() && !hide_ext_attribs);
 	ext_attribs_body->setVisible(!tab_objs.empty() && !hide_ext_attribs);

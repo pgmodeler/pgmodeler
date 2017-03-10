@@ -280,7 +280,6 @@ void RoleWidget::applyConfiguration(void)
 		startConfiguration<Role>();
 
 		role=dynamic_cast<Role *>(this->object);
-		//role->setSysid(sysid_sb->value());
 		role->setConnectionLimit(conn_limit_sb->value());
 		role->setPassword(passwd_edt->text());
 
@@ -299,8 +298,8 @@ void RoleWidget::applyConfiguration(void)
 
 		for(type_id=0; type_id < 3; type_id++)
 		{
-			count=members_tab[type_id]->getRowCount();
-			if(count > 0) role->removeRoles(role_types[type_id]);
+			count = members_tab[type_id]->getRowCount();
+			role->removeRoles(role_types[type_id]);
 
 			for(i=0; i < count; i++)
 			{

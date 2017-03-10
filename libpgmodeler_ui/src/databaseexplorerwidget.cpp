@@ -170,7 +170,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 				ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
 				unsigned oid=item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt();
 
-				if((obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLE) && oid > 0 && item->childCount() <= 1)
+				if((obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLE || obj_type==OBJ_VIEW) && oid > 0 && item->childCount() <= 1)
 				{
 					updateItem(item);
 				}
@@ -720,6 +720,9 @@ void DatabaseExplorerWidget::formatIndexAttribs(attribs_map &attribs)
 {
 	QStringList names=getObjectName(OBJ_TABLE, attribs[ParsersAttributes::TABLE]).split('.');
 
+	if(names.isEmpty() || names.size() == 1)
+		names=getObjectName(OBJ_VIEW, attribs[ParsersAttributes::TABLE]).split('.');
+
 	formatBooleanAttribs(attribs, { ParsersAttributes::UNIQUE });
 
 	attribs[ParsersAttributes::EXPRESSIONS]=Catalog::parseArrayValues(attribs[ParsersAttributes::EXPRESSIONS]).join(ELEM_SEPARATOR);
@@ -732,7 +735,7 @@ void DatabaseExplorerWidget::formatIndexAttribs(attribs_map &attribs)
 
 	attribs[ParsersAttributes::COLUMNS]=getObjectsNames(OBJ_COLUMN,
 														Catalog::parseArrayValues(attribs[ParsersAttributes::COLUMNS]),
-			names[0], names[1]).join(ELEM_SEPARATOR);
+														names[0], names[1]).join(ELEM_SEPARATOR);
 }
 
 QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
@@ -920,6 +923,7 @@ void DatabaseExplorerWidget::listObjects(void)
 	}
 	catch(Exception &e)
 	{
+		QApplication::restoreOverrideCursor();
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -1276,15 +1280,15 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item)
 				}
 				else
 				{
-					if(obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLE)
+					if(obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLE || obj_type == OBJ_VIEW)
 					{
 						root=item;
 						root->takeChildren();
 
-						if(obj_type==OBJ_TABLE)
-							tab_name=item->text(0);
-						else
+						if(obj_type == OBJ_SCHEMA)
 							sch_name=item->text(0);
+						else
+							tab_name=item->text(0);
 					}
 					else
 					{
@@ -1297,15 +1301,15 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item)
 			configureImportHelper();
 
 			//Updates the group type only
-			if(obj_id==0 || (obj_type!=OBJ_TABLE && obj_type!=OBJ_SCHEMA))
+			if(obj_id==0 || (obj_type!=OBJ_TABLE && obj_type!=OBJ_VIEW && obj_type!=OBJ_SCHEMA))
 				gen_items=DatabaseImportForm::updateObjectsTree(import_helper, objects_trw, { obj_type }, false, false, root, sch_name, tab_name);
 			else
-				//Updates all child objcts when the selected object is a schema or table
+				//Updates all child objcts when the selected object is a schema or table or view
 				gen_items=DatabaseImportForm::updateObjectsTree(import_helper, objects_trw,
 																BaseObject::getChildObjectTypes(obj_type), false, false, root, sch_name, tab_name);
 
 			//Creating dummy items for schemas and tables
-			if(obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLE)
+			if(obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLE || obj_type==OBJ_VIEW)
 			{
 				for(auto &item : gen_items)
 				{

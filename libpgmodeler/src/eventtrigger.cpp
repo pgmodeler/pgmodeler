@@ -98,7 +98,10 @@ Function *EventTrigger::getFunction(void)
 
 QStringList EventTrigger::getFilter(const QString &variable)
 {
-	return(filter.at(variable));
+	if(filter.count(variable))
+		return(filter.at(variable));
+	else
+		return(QStringList());
 }
 
 QString EventTrigger::getCodeDefinition(unsigned def_type)

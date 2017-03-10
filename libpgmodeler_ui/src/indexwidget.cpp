@@ -105,7 +105,7 @@ void IndexWidget::enableSortingOptions(void)
 	}
 }
 
-void IndexWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Table *parent_obj, Index *index)
+void IndexWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseTable *parent_obj, Index *index)
 {
 	vector<IndexElement> idx_elems;
 

@@ -2952,7 +2952,7 @@ void DatabaseModel::loadModel(const QString &filename)
 										addObject(object);
 
 									/* If there is at least one inheritance relationship we need to flag this situation
-					 in order to do an addtional rel. validation in the end of loading */
+									 in order to do an addtional rel. validation in the end of loading */
 									if(!found_inh_rel && object->getObjectType()==OBJ_RELATIONSHIP &&
 											dynamic_cast<Relationship *>(object)->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN)
 										found_inh_rel=true;
@@ -5043,13 +5043,16 @@ Index *DatabaseModel::createIndex(void)
 	Index *index=nullptr;
 	QString elem, str_aux;
 	IndexElement idx_elem;
-	Table *table=nullptr;
+	BaseTable *table=nullptr;
 
 	try
 	{
 		xmlparser.getElementAttributes(attribs);
 
-		table=dynamic_cast<Table *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE));
+		table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE));
+
+		if(!table)
+			table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_VIEW));
 
 		//Raises an error if the parent table doesn't exists
 		if(!table)
@@ -5099,7 +5102,7 @@ Index *DatabaseModel::createIndex(void)
 			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 
-		table->addIndex(index);
+		table->addObject(index);
 		table->setModified(true);
 	}
 	catch(Exception &e)
@@ -6678,6 +6681,13 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 		{
 			rule=view->getRule(i);
 			objects_map[rule->getObjectId()]=rule;
+		}
+
+		count=view->getIndexCount();
+		for(i=0; i < count; i++)
+		{
+			index=view->getIndex(i);
+			objects_map[index->getObjectId()]=index;
 		}
 	}
 

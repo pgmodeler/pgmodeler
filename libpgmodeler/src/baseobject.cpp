@@ -175,6 +175,8 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 					name.indexOf(':')>=0 ||
 					name.indexOf('(')>=0 ||
 					name.indexOf(')')>=0 ||
+					name.indexOf('/')>=0 ||
+					name.indexOf('\\')>=0 ||
 					name.contains(QRegExp("^[0-9]+"))));
 
 		i=0;
@@ -232,7 +234,7 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 bool BaseObject::isValidName(const QString &name)
 {
 	QString aux_name=name;
-	QByteArray special_chars=QByteArray("_-.@ $:()");
+	QByteArray special_chars=QByteArray("_-.@ $:()/\\");
 
 	if(aux_name.contains(QRegExp("^(\")(.)+(\")$")))
 	{
@@ -957,6 +959,8 @@ vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
 									OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_SEQUENCE, OBJ_TYPE, OBJ_TABLE, OBJ_VIEW});
 	else if(obj_type==OBJ_TABLE)
 		return(vector<ObjectType>()={OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX});
+	else if(obj_type==OBJ_VIEW)
+		return(vector<ObjectType>()={OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX});
 	else
 		return(vector<ObjectType>()={});
 }

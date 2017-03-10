@@ -397,7 +397,7 @@ void ModelsDiffHelper::diffTableObject(TableObject *tab_obj, unsigned diff_type)
 
 	if(aux_base_tab)
 	{
-		if(obj_type==OBJ_INDEX || obj_type==OBJ_CONSTRAINT)
+		if(obj_type==OBJ_CONSTRAINT)
 		{
 			Table *aux_table=dynamic_cast<Table *>(aux_base_tab);
 			aux_tab_obj=aux_table->getObject(obj_name, obj_type);
@@ -973,8 +973,8 @@ void ModelsDiffHelper::recreateObject(BaseObject *object, vector<BaseObject *> &
 			if(tab_obj->getParentTable())
 			{
 				/* If the object is a table's child object, first we get a table from the database which
-		   name is the same as the 'object' parent table's name. Sencond, we try to get a child
-		   object from that table using the same name as the 'object' */
+				name is the same as the 'object' parent table's name. Sencond, we try to get a child
+				object from that table using the same name as the 'object' */
 				BaseTable *tab=dynamic_cast<BaseTable *>(imported_model->getObject(tab_obj->getParentTable()->getSignature(), tab_obj->getParentTable()->getObjectType()));
 				aux_obj=tab->getObject(tab_obj->getName(true), tab_obj->getObjectType());
 			}
@@ -984,7 +984,7 @@ void ModelsDiffHelper::recreateObject(BaseObject *object, vector<BaseObject *> &
 		imported_model->getObjectReferences(aux_obj, ref_objs, false, true);
 
 		/* If the to-be recreate object is a constraint check if it's a pk,
-	   if so, the fk's linked to it need to be recreated as well */
+		 if so, the fk's linked to it need to be recreated as well */
 		if(aux_obj->getObjectType()==OBJ_CONSTRAINT)
 		{
 			Constraint *constr=dynamic_cast<Constraint *>(aux_obj);

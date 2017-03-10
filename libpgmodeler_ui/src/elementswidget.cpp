@@ -46,9 +46,9 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 		elements_tab->setHeaderLabel(trUtf8("Sorting"), 4);
 		elements_tab->setHeaderLabel(trUtf8("Nulls First"), 5);
 
-		element_grid->addWidget(collation_sel, 2,1,1,2);
-		element_grid->addWidget(op_class_sel, 3,1,1,2);
-		element_grid->addWidget(operator_sel, 4,1,1,2);
+		element_grid->addWidget(collation_sel, 3,1,1,2);
+		element_grid->addWidget(op_class_sel, 4,1,1,2);
+		element_grid->addWidget(operator_sel, 5,1,1,2);
 		element_grid->addWidget(elements_tab, 6,0,1,3);
 
 		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_91)].push_back(collation_lbl);
@@ -104,7 +104,8 @@ void ElementsWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 	else if(parent_obj->getObjectType()!=OBJ_TABLE &&
-			parent_obj->getObjectType()!=OBJ_RELATIONSHIP)
+					parent_obj->getObjectType()!=OBJ_VIEW &&
+					parent_obj->getObjectType()!=OBJ_RELATIONSHIP)
 		throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->setEnabled(true);
@@ -114,10 +115,15 @@ void ElementsWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj)
 	collation_sel->setModel(model);
 	operator_sel->setModel(model);
 
-	updateColumnsCombo();
+	cols_combo_parent->setVisible(parent_obj->getObjectType() == OBJ_TABLE);
+	column_rb->setVisible(parent_obj->getObjectType() == OBJ_TABLE);
+	expression_rb->setChecked(parent_obj->getObjectType() == OBJ_VIEW);
+
+	if(parent_obj->getObjectType() == OBJ_TABLE)
+		updateColumnsCombo();
 }
 
-void ElementsWidget::setAttributes(DatabaseModel *model, Table *table, vector<IndexElement> &elems)
+void ElementsWidget::setAttributes(DatabaseModel *model, BaseTable *table, vector<IndexElement> &elems)
 {
 	setAttributes(model, table);
 	collation_sel->setVisible(true);
@@ -186,6 +192,8 @@ void ElementsWidget::updateColumnsCombo(void)
 	try
 	{
 		column_cmb->clear();
+		column_cmb->setVisible(true);
+		column_rb->setVisible(true);
 
 		if(table)
 		{
@@ -197,7 +205,7 @@ void ElementsWidget::updateColumnsCombo(void)
 									QVariant::fromValue<void *>(column));
 			}
 		}
-		else
+		else if(rel)
 		{
 			col_count=rel->getAttributeCount();
 			for(i=0; i < col_count; i++)

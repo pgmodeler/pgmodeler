@@ -293,6 +293,7 @@ void DataManipulationForm::retrieveData(void)
 	}
 	catch(Exception &e)
 	{
+		QApplication::restoreOverrideCursor();
 		conn_sql.close();
 		catalog.closeConnection();
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);

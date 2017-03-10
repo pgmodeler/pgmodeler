@@ -71,7 +71,7 @@ class ElementsWidget: public QWidget, public Ui::ElementsWidget {
 		ElementsWidget(QWidget *parent = 0);
 		
 		//! \brief Enables the widget to handle index elements
-		void setAttributes(DatabaseModel *model, Table *table, vector<IndexElement> &elems);
+		void setAttributes(DatabaseModel *model, BaseTable *table, vector<IndexElement> &elems);
 		
 		//! \brief Enables the widget to handle exclude constraint elements
 		void setAttributes(DatabaseModel *model, BaseObject *parent_obj, vector<ExcludeElement> &elems);
