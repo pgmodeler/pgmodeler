@@ -999,6 +999,7 @@ void MainWindow::setCurrentModel(void)
 
 		edit_menu->addAction(current_model->action_copy);
 		edit_menu->addAction(current_model->action_cut);
+		edit_menu->addAction(current_model->action_duplicate);
 		edit_menu->addAction(current_model->action_paste);
 		edit_menu->addAction(current_model->action_remove);
 		edit_menu->addAction(current_model->action_cascade_del);

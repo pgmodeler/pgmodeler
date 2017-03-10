@@ -254,6 +254,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_disable_sql=new QAction(QIcon(PgModelerUiNS::getIconPath("disablesql")), trUtf8("Disable SQL"), this);
 
 	action_duplicate=new QAction(QIcon(PgModelerUiNS::getIconPath("duplicate")), trUtf8("Duplicate"), this);
+	action_duplicate->setShortcut(QKeySequence(trUtf8("Ctrl+D")));
 
 	action_fade=new QAction(QIcon(PgModelerUiNS::getIconPath("fade")), trUtf8("Fade in/out"), this);
 	action_fade_in=new QAction(QIcon(PgModelerUiNS::getIconPath("fadein")), trUtf8("Fade in"), this);
@@ -2425,6 +2426,10 @@ void ModelWidget::pasteObjects(void)
 
 	this->configurePopupMenu();
 	this->modified=true;
+
+	//Restoring the viewport position after paste objects
+	viewport->verticalScrollBar()->setValue(db_model->getLastPosition().y());
+	viewport->horizontalScrollBar()->setValue(db_model->getLastPosition().x());
 }
 
 void ModelWidget::duplicateObject(void)
@@ -2863,6 +2868,7 @@ void ModelWidget::enableModelActions(bool value)
 	action_deps_refs->setEnabled(value);
 	action_new_object->setEnabled(value);
 	action_copy->setEnabled(value);
+	action_duplicate->setEnabled(value);
 	action_paste->setEnabled(value);
 	action_cut->setEnabled(value);
 	action_remove->setEnabled(value);
