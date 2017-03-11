@@ -234,7 +234,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Compiling code..."
-make -j7  >> $LOG 2>&1
+make -j8  >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
