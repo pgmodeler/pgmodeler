@@ -2,7 +2,7 @@
 
 QT_INSTALL_VERSION='5.6.2'
 QT_BASE_VERSION='5.6'
-PGSQL_VERSION='9.5'
+PGSQL_VERSION='9.6'
 INNOSETUP_CMD='/c/Program Files (x86)/Inno Setup 5/ISCC.exe'
 LOG=windeploy.log
 
@@ -183,7 +183,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Compiling code..."
-$MINGW_ROOT/mingw32-make.exe -j5 >> $LOG 2>&1
+$MINGW_ROOT/mingw32-make.exe -j7 >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo

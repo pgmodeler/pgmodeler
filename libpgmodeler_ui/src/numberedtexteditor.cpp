@@ -337,7 +337,7 @@ void NumberedTextEditor::editSource(void)
 	{
 		Messagebox msg_box;
 		msg_box.show(PgModelerUiNS::formatMessage(trUtf8("The source code is currently being edited in the application `%1' (pid: %2)! Only one instance of the source code editor application is allowed.")
-																							.arg(src_editor_proc.program()).arg(src_editor_proc.pid())), Messagebox::ALERT_ICON);
+                                                                                            .arg(src_editor_proc.program()).arg(src_editor_proc.processId())), Messagebox::ALERT_ICON);
 		return;
 	}
 

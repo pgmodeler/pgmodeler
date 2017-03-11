@@ -154,10 +154,10 @@ macx {
 }
 
 windows {
-  !defined(PGSQL_LIB, var): PGSQL_LIB = C:/PostgreSQL/9.5/lib/libpq.dll
-  !defined(PGSQL_INC, var): PGSQL_INC = C:/PostgreSQL/9.5/include
-  !defined(XML_INC, var): XML_INC = C:/PostgreSQL/9.5/include
-  !defined(XML_LIB, var): XML_LIB = C:/PostgreSQL/9.5/bin/libxml2.dll
+  !defined(PGSQL_LIB, var): PGSQL_LIB = C:/PostgreSQL/9.6/lib/libpq.dll
+  !defined(PGSQL_INC, var): PGSQL_INC = C:/PostgreSQL/9.6/include
+  !defined(XML_INC, var): XML_INC = C:/PostgreSQL/9.6/include
+  !defined(XML_LIB, var): XML_LIB = C:/PostgreSQL/9.6/bin/libxml2.dll
 
   # Workaround to solve bug of timespec struct on MingW + PostgreSQL < 9.4
   QMAKE_CXXFLAGS+="-DHAVE_STRUCT_TIMESPEC"
