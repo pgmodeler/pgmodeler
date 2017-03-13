@@ -153,6 +153,12 @@ unsigned Cast::getCastType(void)
 	return(cast_type);
 }
 
+QString Cast::getDropDefinition(bool cascade)
+{
+	attributes[ParsersAttributes::SIGNATURE].replace(QString(","), QString(" AS "));
+	return(BaseObject::getDropDefinition(cascade));
+}
+
 QString Cast::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
