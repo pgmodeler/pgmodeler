@@ -538,7 +538,7 @@ void ModelWidget::wheelEvent(QWheelEvent * event)
 {
 	if(event->modifiers()==Qt::ControlModifier)
 	{
-		if(event->delta() < 0)
+		if(event->angleDelta().y() < 0)
 			this->applyZoom(this->current_zoom - ZOOM_INCREMENT);
 		else
 			this->applyZoom(this->current_zoom + ZOOM_INCREMENT);

@@ -64,6 +64,8 @@ void ModelOverviewWidget::show(ModelWidget *model)
 
 		this->move(this->model->geometry().right() - this->width(),
 				   this->model->geometry().bottom() - this->height());
+
+		frame->installEventFilter(this);
 	}
 
 	this->raise();
@@ -81,6 +83,24 @@ void ModelOverviewWidget::showEvent(QShowEvent *event)
 {
 	emit s_overviewVisible(true);
 	QWidget::showEvent(event);
+}
+
+bool ModelOverviewWidget::eventFilter(QObject *object, QEvent *event)
+{
+	if(object == frame && event->type()==QEvent::Wheel)
+	{
+		QWheelEvent *w_event = static_cast<QWheelEvent *>(event);
+		QPoint dt_angle = w_event->angleDelta();
+
+		if(dt_angle.y() < 0)
+			model->applyZoom(model->getCurrentZoom() - ModelWidget::ZOOM_INCREMENT);
+		else
+			model->applyZoom(model->getCurrentZoom() + ModelWidget::ZOOM_INCREMENT);
+
+		return(false);
+	}
+
+	return(QWidget::eventFilter(object, event));
 }
 
 void ModelOverviewWidget::updateOverview(void)

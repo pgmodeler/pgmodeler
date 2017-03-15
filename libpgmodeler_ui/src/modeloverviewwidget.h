@@ -58,6 +58,7 @@ class ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
 		void mouseMoveEvent(QMouseEvent *event);
 		void closeEvent(QCloseEvent *event);
 		void showEvent(QShowEvent *event);
+		bool eventFilter(QObject *object, QEvent *event);
 
 		/*! \brief Updates the overview with the last modifications on the scene. The bool parameter
 		is used to force the update even if the overview widget is not visible */
