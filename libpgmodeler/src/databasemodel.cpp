@@ -270,6 +270,8 @@ void DatabaseModel::removeObject(BaseObject *object, int obj_idx)
 				removeTag(dynamic_cast<Tag *>(object), obj_idx);
 			else if(obj_type==OBJ_PERMISSION)
 				removePermission(dynamic_cast<Permission *>(object));
+			else if(obj_type==OBJ_EVENT_TRIGGER)
+				removeEventTrigger(dynamic_cast<EventTrigger *>(object));
 		}
 		catch(Exception &e)
 		{
@@ -5362,6 +5364,7 @@ EventTrigger *DatabaseModel::createEventTrigger(void)
 		event_trig=new EventTrigger;
 		setBasicAttributes(event_trig);
 		xmlparser.getElementAttributes(attribs);
+		event_trig->setEvent(EventTriggerType(attribs[ParsersAttributes::EVENT]));
 
 		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
