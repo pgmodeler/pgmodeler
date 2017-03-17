@@ -337,23 +337,26 @@ void NumberedTextEditor::editSource(void)
 	{
 		Messagebox msg_box;
 		msg_box.show(PgModelerUiNS::formatMessage(trUtf8("The source code is currently being edited in the application `%1' (pid: %2)! Only one instance of the source code editor application is allowed.")
-                                                                                            .arg(src_editor_proc.program()).arg(src_editor_proc.processId())), Messagebox::ALERT_ICON);
+																							.arg(src_editor_proc.program()).arg(src_editor_proc.processId())), Messagebox::ALERT_ICON);
 		return;
 	}
 
 	QByteArray buffer;
+	QFile input;
 
-	tmp_src_file.setAutoRemove(false);
 	tmp_src_file.setFileTemplate(GlobalAttributes::TEMPORARY_DIR + GlobalAttributes::DIR_SEPARATOR + QString("source_XXXXXX") + QString(".sql"));
+	tmp_src_file.open();
+	tmp_src_file.close();
+	input.setFileName(tmp_src_file.fileName());
 
-	if(!tmp_src_file.open())
+	if(!input.open(QFile::WriteOnly | QFile::Truncate))
 		throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED)
 										.arg(tmp_src_file.fileName())
 										,ERR_FILE_DIR_NOT_ACCESSED ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	buffer.append(this->toPlainText());
-	tmp_src_file.write(buffer);
-	tmp_src_file.close();
+	input.write(buffer);
+	input.close();
 
 	//Starting the source editor application using the temp source file as input
 	src_editor_proc.setProgram(NumberedTextEditor::src_editor_app);
