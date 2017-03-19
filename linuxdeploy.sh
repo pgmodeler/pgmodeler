@@ -258,8 +258,14 @@ if [ $BUNDLE_QT_LIBS = 1 ]; then
  
  QT_ROOT=`$QMAKE_ROOT/qtpaths --install-prefix`  >> $LOG 2>&1
  
+ LIB_DIR=
+ MULTIARCH=`gcc -print-multiarch` >> $LOG 2>&1
+ if [ -n "$MULTIARCH" ]; then
+   LIB_DIR="$MULTIARCH/"
+ fi
+
  for lib in $QT_LIBS; do
-  cp -v $QT_ROOT/lib/$lib $BUILD_DIR/$INSTALL_ROOT/lib >> $LOG 2>&1
+  cp -v $QT_ROOT/lib/$LIB_DIR$lib $BUILD_DIR/$INSTALL_ROOT/lib >> $LOG 2>&1
  done
  
  if [ $? -ne 0 ]; then
