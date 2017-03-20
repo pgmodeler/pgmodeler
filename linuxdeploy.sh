@@ -279,12 +279,13 @@ if [ $BUNDLE_QT_LIBS = 1 ]; then
  echo "Libraries=." >> $QT_CONF
 
  #Copies the qt plugins to build/qtplugins
+ QT_PLUGIN_ROOT=`$QMAKE_ROOT/qtpaths --plugin-dir` >> $LOG 2>&1
  for plug in $DEP_PLUGINS; do
    pdir=`dirname $plug`
    
-   if [ -e $QT_ROOT/plugins/$plug ]; then
+   if [ -e $QT_PLUGIN_ROOT/$plug ]; then
         mkdir -p $DEP_PLUGINS_DIR/$pdir >> $LOG 2>&1
-        cp -v $QT_ROOT/plugins/$plug $DEP_PLUGINS_DIR/$pdir >> $LOG 2>&1
+        cp -v $QT_PLUGIN_ROOT/$plug $DEP_PLUGINS_DIR/$pdir >> $LOG 2>&1
 
         if [ $? -ne 0 ]; then
             echo
