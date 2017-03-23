@@ -58,14 +58,17 @@ void TableView::configureObject(void)
 		}
 		else
 		{
-			tab_objs.assign(table->getObjectList(OBJ_RULE)->begin(),
-							table->getObjectList(OBJ_RULE)->end());
+			tab_objs.assign(table->getObjectList(OBJ_CONSTRAINT)->begin(),
+											table->getObjectList(OBJ_CONSTRAINT)->end());
 			tab_objs.insert(tab_objs.end(),
 							table->getObjectList(OBJ_TRIGGER)->begin(),
 							table->getObjectList(OBJ_TRIGGER)->end());
 			tab_objs.insert(tab_objs.end(),
 							table->getObjectList(OBJ_INDEX)->begin(),
 							table->getObjectList(OBJ_INDEX)->end());
+			tab_objs.insert(tab_objs.end(),
+							table->getObjectList(OBJ_RULE)->begin(),
+							table->getObjectList(OBJ_RULE)->end());
 		}
 
 		//Gets the subitems of the current group
