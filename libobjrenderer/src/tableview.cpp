@@ -143,18 +143,7 @@ void TableView::configureObject(void)
 		}
 	}
 
-	/* Calculating the maximum width between the title, columns and extended attributes.
-		This width is used to set the uniform width of table */
-	if(!columns->childItems().isEmpty() &&
-			(columns->boundingRect().width() > title->boundingRect().width() &&
-			 (hide_ext_attribs || (columns->boundingRect().width() > ext_attribs->boundingRect().width()))))
-		width=columns->boundingRect().width() + (2 * HORIZ_SPACING);
-	else if(!ext_attribs->childItems().isEmpty() && !hide_ext_attribs &&
-			(ext_attribs->boundingRect().width() > title->boundingRect().width() &&
-			 ext_attribs->boundingRect().width() > columns->boundingRect().width()))
-		width=ext_attribs->boundingRect().width() + (2 * HORIZ_SPACING);
-	else
-		width=title->boundingRect().width() + (2 * HORIZ_SPACING);
+	width = calculateWidth();
 
 	//Resizes the title using the new width
 	title->resizeTitle(width, title->boundingRect().height());
@@ -204,40 +193,10 @@ void TableView::configureObject(void)
 		}
 	}
 
-	//Set the protected icon position to the top-right on the title
-	protected_icon->setPos(title->pos().x() + title->boundingRect().width() * 0.90f,
-						   2 * VERT_SPACING);
-
-	this->bounding_rect.setTopLeft(title->boundingRect().topLeft());
-	this->bounding_rect.setWidth(title->boundingRect().width());
-
-	if(!ext_attribs->isVisible())
-	{
-		this->bounding_rect.setHeight(title->boundingRect().height() +
-									  body->boundingRect().height() - 1);
-		body->setRoundedCorners(RoundedRectItem::BOTTOMLEFT_CORNER | RoundedRectItem::BOTTOMRIGHT_CORNER);
-	}
-	else
-	{
-		this->bounding_rect.setHeight(title->boundingRect().height() +
-									  body->boundingRect().height() +
-									  ext_attribs_body->boundingRect().height() -2);
-		body->setRoundedCorners(RoundedRectItem::NONE_CORNERS);
-	}
-
+	BaseTableView::__configureObject(width);
 	BaseObjectView::__configureObject();
 	BaseObjectView::configureObjectShadow();
 	BaseObjectView::configureObjectSelection();
-
-	this->table_tooltip=table->getName(true) +
-						QString(" (") + table->getTypeName() + QString(") \n") +
-						QString("Id: %1\n").arg(table->getObjectId()) +
-						TableObjectView::CONSTR_DELIM_START +
-						trUtf8("Connected rels: %1").arg(this->getConnectRelsCount()) +
-						TableObjectView::CONSTR_DELIM_END;
-
-	this->setToolTip(this->table_tooltip);
-
 	configureTag();
 	configureSQLDisabledInfo();
 

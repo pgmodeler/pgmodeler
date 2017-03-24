@@ -65,7 +65,7 @@ void RoundedRectItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
 	painter->setPen(this->pen());
 	painter->setBrush(this->brush());
 
-	if(corners==NONE_CORNERS)
+	if(corners==NO_CORNERS)
 		painter->drawRect(this->rect());
 	else if(corners==ALL_CORNERS)
 		painter->drawRoundedRect(this->rect(), radius, radius);
@@ -77,7 +77,7 @@ void RoundedRectItem::createPolygon(void)
 {
 	polygon.clear();
 
-	if(corners!=NONE_CORNERS && corners!=ALL_CORNERS && this->rect().isValid())
+	if(corners!=NO_CORNERS && corners!=ALL_CORNERS && this->rect().isValid())
 	{
 		QRectF rect=this->rect();
 

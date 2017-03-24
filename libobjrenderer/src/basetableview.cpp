@@ -32,10 +32,17 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 	title=new TableTitleView;
 
 	ext_attribs_body=new RoundedRectItem;
-	ext_attribs_body->setRoundedCorners(RoundedRectItem::BOTTOMLEFT_CORNER | RoundedRectItem::BOTTOMRIGHT_CORNER);
+	ext_attribs_body->setRoundedCorners(RoundedRectItem::NO_CORNERS);
+
+	ext_attribs_toggler=new RoundedRectItem;
+	ext_attribs_toggler->setRoundedCorners(RoundedRectItem::BOTTOMLEFT_CORNER | RoundedRectItem::BOTTOMRIGHT_CORNER);
+	ext_attribs_toggler->setZValue(-1);
 
 	ext_attribs=new QGraphicsItemGroup;
 	ext_attribs->setZValue(1);
+
+	ext_attribs_tog_arrow=new QGraphicsPolygonItem;
+	ext_attribs_tog_arrow->setZValue(2);
 
 	columns=new QGraphicsItemGroup;
 	columns->setZValue(1);
@@ -62,6 +69,8 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 	this->addToGroup(tag_body);
 	this->addToGroup(ext_attribs);
 	this->addToGroup(ext_attribs_body);
+	this->addToGroup(ext_attribs_toggler);
+	this->addToGroup(ext_attribs_tog_arrow);
 
 	this->setAcceptHoverEvents(true);
 	sel_child_obj=nullptr;
@@ -75,10 +84,14 @@ BaseTableView::~BaseTableView(void)
 	this->removeFromGroup(body);
 	this->removeFromGroup(title);
 	this->removeFromGroup(ext_attribs_body);
+	this->removeFromGroup(ext_attribs_toggler);
+	this->removeFromGroup(ext_attribs_tog_arrow);
 	this->removeFromGroup(ext_attribs);
 	this->removeFromGroup(columns);
 	this->removeFromGroup(tag_name);
 	this->removeFromGroup(tag_body);
+	delete(ext_attribs_tog_arrow);
+	delete(ext_attribs_toggler);
 	delete(ext_attribs_body);
 	delete(ext_attribs);
 	delete(body);
@@ -139,7 +152,30 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		emit s_childObjectSelected(sel_child_obj);
 	}
 	else
+	{
+		QPointF pnt = this->ext_attribs_toggler->mapFromScene(event->scenePos());
+
+		//If the user clicks the extended attributes toggler
+		if(!this->isSelected() && event->buttons()==Qt::LeftButton &&
+			 this->ext_attribs_toggler->boundingRect().contains(pnt))
+		{
+			//We need to force the object to be not selectable so further calls to mousePressEvent doesn't select the object
+			this->setFlag(QGraphicsItem::ItemIsSelectable, false);
+
+			dynamic_cast<BaseTable *>(this->getSourceObject())
+					->setExtAttribsHidden(!dynamic_cast<BaseTable *>(this->getSourceObject())->isExtAttribsHidden());
+
+			//Updating the object geometry to show/hide the extended attributes
+			this->configureObject();
+
+			obj_selection->setVisible(false);
+
+			// Using a single shot time to restore the selectable flag
+			QTimer::singleShot(300, [=]{ this->setFlag(QGraphicsItem::ItemIsSelectable, true); });
+		}
+
 		BaseObjectView::mousePressEvent(event);
+	}
 }
 
 void BaseTableView::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
@@ -159,10 +195,12 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 		QList<QGraphicsItem *> items;
 		double cols_height, item_idx, ext_height=0;
 		QRectF rect, rect1;
+		QPointF pnt = this->ext_attribs_toggler->mapFromScene(event->scenePos());
 
 		items.append(columns->childItems());
 
-		if(!hide_ext_attribs)
+		if(!hide_ext_attribs &&
+			 !dynamic_cast<BaseTable *>(this->getSourceObject())->isExtAttribsHidden())
 		{
 			items.append(ext_attribs->childItems());
 			ext_height=ext_attribs->boundingRect().height();
@@ -175,8 +213,21 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 		rect=this->mapRectToItem(title, title->boundingRect());
 		item_idx=(event->pos().y() - rect.bottom()) / cols_height;
 
+		if(ext_attribs_toggler->isVisible() && 	this->ext_attribs_toggler->boundingRect().contains(pnt))
+		{
+			dynamic_cast<RoundedRectItem *>(obj_selection)->setBorderRadius(2);
+			dynamic_cast<RoundedRectItem *>(obj_selection)->setRect(QRectF(0,0,
+																			title->boundingRect().width() - (2.5 * HORIZ_SPACING),
+																			ext_attribs_toggler->boundingRect().height() * 0.65f));
+
+			//Sets the selection position as same as item's position
+			rect1=this->mapRectToItem(ext_attribs_toggler, ext_attribs_toggler->boundingRect());
+			obj_selection->setVisible(true);
+			obj_selection->setPos(QPointF(title->pos().x() + HORIZ_SPACING, -rect1.top() + 1.5f));
+			this->setToolTip(trUtf8("Toggles the extended attributes display"));
+		}
 		//If the index is invalid clears the selection
-		if(item_idx < 0 || item_idx >= items.size())
+		else if(item_idx < 0 || item_idx >= items.size())
 		{
 			this->hoverLeaveEvent(event);
 			this->setToolTip(this->table_tooltip);
@@ -233,8 +284,8 @@ void BaseTableView::configureTag(void)
 		tag_name->setText(tag->getName());
 		tag_name->setBrush(BaseObjectView::getFontStyle(ParsersAttributes::TAG).foreground());
 
-		p1=tag_name->boundingRect().topLeft(),
-				p2=tag_name->boundingRect().bottomRight();
+		p1=tag_name->boundingRect().topLeft();
+		p2=tag_name->boundingRect().bottomRight();
 		bottom=this->boundingRect().bottom();
 
 		pol.append(QPointF(p1.x()-BaseObjectView::HORIZ_SPACING, p1.y() - BaseObjectView::VERT_SPACING));
@@ -251,6 +302,124 @@ void BaseTableView::configureTag(void)
 		tag_name->setPos(-5, bottom - 1.5f);
 		tag_body->setPos(-5, bottom - 1.5f);
 	}
+}
+
+void BaseTableView::__configureObject(float width)
+{
+	BaseTable *tab = dynamic_cast<BaseTable *>(this->getSourceObject());
+
+	if(!ext_attribs->childItems().isEmpty() && !hide_ext_attribs)
+	{
+		QPen pen = ext_attribs_body->pen();
+		float py = 0;
+
+		ext_attribs_toggler->setVisible(true);
+		ext_attribs_tog_arrow->setVisible(true);
+
+		ext_attribs_toggler->setPen(pen);
+		ext_attribs_toggler->setBrush(ext_attribs_body->brush());
+		ext_attribs_toggler->setRect(QRectF(0, 0, width, 12));
+
+		if(!tab->isExtAttribsHidden())
+		{
+			py = title->boundingRect().height() +
+					 body->boundingRect().height() +
+					 ext_attribs_body->boundingRect().height() - VERT_SPACING - 1;
+		}
+		else
+		{
+			py = title->boundingRect().height() +
+					 body->boundingRect().height() - 2;
+		}
+
+		ext_attribs_toggler->setPos(ext_attribs_body->pos().x(), py);
+
+		QPolygonF pol;
+
+		if(!tab->isExtAttribsHidden())
+		{
+			pol.append(QPointF(0,0));
+			pol.append(QPointF(-5, 6));
+			pol.append(QPointF(5, 6));
+		}
+		else
+		{
+			pol.append(QPointF(0,6));
+			pol.append(QPointF(-5, 0));
+			pol.append(QPointF(5, 0));
+		}
+
+		QLinearGradient grad(QPointF(0,0),QPointF(0,1));
+		grad.setCoordinateMode(QGradient::ObjectBoundingMode);
+		grad.setColorAt(0, ext_attribs_body->pen().color().lighter(200));
+		grad.setColorAt(1, ext_attribs_body->pen().color().lighter());
+
+		pen.setStyle(Qt::SolidLine);
+		ext_attribs_tog_arrow->setPen(pen);
+		ext_attribs_tog_arrow->setBrush(grad);
+		ext_attribs_tog_arrow->setPolygon(pol);
+
+		ext_attribs_tog_arrow->setPos(ext_attribs_body->boundingRect().width() * 0.51f,
+																	ext_attribs_toggler->pos().y() + pol.boundingRect().height() * 0.525f);
+	}
+	else
+	{
+		ext_attribs_tog_arrow->setVisible(false);
+		ext_attribs_toggler->setVisible(false);
+	}
+
+	//Set the protected icon position to the top-right on the title
+	protected_icon->setPos(title->pos().x() + title->boundingRect().width() * 0.90f, 2 * VERT_SPACING);
+
+	this->bounding_rect.setTopLeft(title->boundingRect().topLeft());
+	this->bounding_rect.setWidth(title->boundingRect().width());
+
+	if(!ext_attribs->isVisible())
+	{
+		this->bounding_rect.setHeight(title->boundingRect().height() +
+																	body->boundingRect().height() - 1);
+		body->setRoundedCorners(RoundedRectItem::BOTTOMLEFT_CORNER | RoundedRectItem::BOTTOMRIGHT_CORNER);
+	}
+	else
+	{
+		ext_attribs->setVisible(!tab->isExtAttribsHidden());
+		ext_attribs_body->setVisible(!tab->isExtAttribsHidden());
+
+		this->bounding_rect.setHeight(title->boundingRect().height() +
+										body->boundingRect().height() +
+										(!tab->isExtAttribsHidden() ? ext_attribs_body->boundingRect().height() : 0) +
+										ext_attribs_toggler->boundingRect().height() - VERT_SPACING - 1);
+
+		body->setRoundedCorners(RoundedRectItem::NO_CORNERS);
+	}
+
+	this->table_tooltip=this->getSourceObject()->getName(true) +
+						QString(" (") + this->getSourceObject()->getTypeName() + QString(") \n") +
+						QString("Id: %1\n").arg(this->getSourceObject()->getObjectId()) +
+						TableObjectView::CONSTR_DELIM_START +
+						trUtf8("Connected rels: %1").arg(this->getConnectRelsCount()) +
+						TableObjectView::CONSTR_DELIM_END;
+
+	this->setToolTip(this->table_tooltip);
+}
+
+float BaseTableView::calculateWidth(void)
+{
+	/* Calculating the maximum width between the title, columns and extended attributes.
+		This width is used to set the uniform width of table */
+	if(!columns->childItems().isEmpty() &&
+			(columns->boundingRect().width() > title->boundingRect().width() &&
+			 (hide_ext_attribs || dynamic_cast<BaseTable *>(this->getSourceObject())->isExtAttribsHidden() ||
+				(columns->boundingRect().width() > ext_attribs->boundingRect().width()))))
+		return(columns->boundingRect().width() + (2 * HORIZ_SPACING));
+
+	if(!ext_attribs->childItems().isEmpty() && !hide_ext_attribs &&
+		 !dynamic_cast<BaseTable *>(this->getSourceObject())->isExtAttribsHidden() &&
+			(ext_attribs->boundingRect().width() > title->boundingRect().width() &&
+			 ext_attribs->boundingRect().width() > columns->boundingRect().width()))
+		return(ext_attribs->boundingRect().width() + (2 * HORIZ_SPACING));
+
+	return(title->boundingRect().width() + (2 * HORIZ_SPACING));
 }
 
 int BaseTableView::getConnectRelsCount(void)
