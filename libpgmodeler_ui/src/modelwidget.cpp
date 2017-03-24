@@ -256,6 +256,14 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_duplicate=new QAction(QIcon(PgModelerUiNS::getIconPath("duplicate")), trUtf8("Duplicate"), this);
 	action_duplicate->setShortcut(QKeySequence(trUtf8("Ctrl+D")));
 
+	action_extended_attribs=new QAction(QIcon(PgModelerUiNS::getIconPath("toggleattribs")), trUtf8("Extended attributes"), this);
+	action_show_ext_attribs=new QAction(trUtf8("Show"), this);
+	action_hide_ext_attribs=new QAction(trUtf8("Hide"), this);
+
+	toggle_attrs_menu.addAction(action_show_ext_attribs);
+	toggle_attrs_menu.addAction(action_hide_ext_attribs);
+	action_extended_attribs->setMenu(&toggle_attrs_menu);
+
 	action_fade=new QAction(QIcon(PgModelerUiNS::getIconPath("fade")), trUtf8("Fade in/out"), this);
 	action_fade_in=new QAction(QIcon(PgModelerUiNS::getIconPath("fadein")), trUtf8("Fade in"), this);
 	action_fade_out=new QAction(QIcon(PgModelerUiNS::getIconPath("fadeout")), trUtf8("Fade out"), this);
@@ -358,6 +366,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_fade_out, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
 	connect(action_fade_rels_in, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
 	connect(action_fade_rels_out, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
+
+	connect(action_show_ext_attribs, SIGNAL(triggered(bool)), this, SLOT(toggleExtendedAttributes()));
+	connect(action_hide_ext_attribs, SIGNAL(triggered(bool)), this, SLOT(toggleExtendedAttributes()));
 
 	connect(db_model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
 	connect(db_model, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(handleObjectRemoval(BaseObject *)));
@@ -3177,7 +3188,6 @@ void ModelWidget::fadeObjects(QAction *action, bool fade_in)
 		}
 	}
 
-
 	for(auto obj : list)
 	{
 		obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
@@ -3191,7 +3201,6 @@ void ModelWidget::fadeObjects(QAction *action, bool fade_in)
 		}
 	}
 
-
 	scene->clearSelection();
 }
 
@@ -3203,6 +3212,37 @@ void ModelWidget::fadeObjectsIn(void)
 void ModelWidget::fadeObjectsOut(void)
 {
 	fadeObjects(qobject_cast<QAction *>(sender()), false);
+}
+
+void ModelWidget::toggleExtendedAttributes(void)
+{
+	bool hide = sender() == action_hide_ext_attribs;
+
+	if(selected_objects.empty())
+	{
+		vector<BaseObject *> tables;
+		BaseTable *base_tab = nullptr;
+
+		tables.assign(db_model->getObjectList(OBJ_TABLE)->begin(), db_model->getObjectList(OBJ_TABLE)->end());
+		tables.insert(tables.end(), db_model->getObjectList(OBJ_VIEW)->begin(), db_model->getObjectList(OBJ_VIEW)->end());
+
+		for(auto tab : tables)
+		{
+			base_tab = dynamic_cast<BaseTable *>(tab);
+
+			if(base_tab->isExtAttribsHidden() != hide)
+			{
+				base_tab->setExtAttribsHidden(hide);
+				base_tab->setModified(true);
+			}
+		}
+	}
+	else
+	{
+
+	}
+
+	this->setModified(true);
 }
 
 void ModelWidget::updateObjectsOpacity(void)
@@ -3433,6 +3473,12 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 			else
 				popup_menu.addAction(action_unprotect);
 		}
+	}
+
+	if((objects.empty() && (db_model->getObjectCount(OBJ_TABLE) > 0 || db_model->getObjectCount(OBJ_VIEW) > 0)) ||
+		 (objects.size() == 1 && (objects[0]->getObjectType() == OBJ_TABLE || objects[0]->getObjectType() == OBJ_VIEW)))
+	{
+		popup_menu.addAction(action_extended_attribs);
 	}
 
 	if(!tab_obj &&
