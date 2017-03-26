@@ -3217,29 +3217,27 @@ void ModelWidget::fadeObjectsOut(void)
 void ModelWidget::toggleExtendedAttributes(void)
 {
 	bool hide = sender() == action_hide_ext_attribs;
+	BaseTable *base_tab = nullptr;
+	vector<BaseObject *> objects;
 
-	if(selected_objects.empty())
+	if(selected_objects.empty() || (selected_objects.size() == 1 && selected_objects[0] == db_model))
 	{
-		vector<BaseObject *> tables;
-		BaseTable *base_tab = nullptr;
 
-		tables.assign(db_model->getObjectList(OBJ_TABLE)->begin(), db_model->getObjectList(OBJ_TABLE)->end());
-		tables.insert(tables.end(), db_model->getObjectList(OBJ_VIEW)->begin(), db_model->getObjectList(OBJ_VIEW)->end());
-
-		for(auto tab : tables)
-		{
-			base_tab = dynamic_cast<BaseTable *>(tab);
-
-			if(base_tab->isExtAttribsHidden() != hide)
-			{
-				base_tab->setExtAttribsHidden(hide);
-				base_tab->setModified(true);
-			}
-		}
+		objects.assign(db_model->getObjectList(OBJ_TABLE)->begin(), db_model->getObjectList(OBJ_TABLE)->end());
+		objects.insert(objects.end(), db_model->getObjectList(OBJ_VIEW)->begin(), db_model->getObjectList(OBJ_VIEW)->end());
 	}
 	else
-	{
+		objects = selected_objects;
 
+	for(auto obj : objects)
+	{
+		base_tab = dynamic_cast<BaseTable *>(obj);
+
+		if(base_tab && base_tab->isExtAttribsHidden() != hide)
+		{
+			base_tab->setExtAttribsHidden(hide);
+			base_tab->setModified(true);
+		}
 	}
 
 	this->setModified(true);
@@ -3475,10 +3473,26 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 		}
 	}
 
-	if((objects.empty() && (db_model->getObjectCount(OBJ_TABLE) > 0 || db_model->getObjectCount(OBJ_VIEW) > 0)) ||
-		 (objects.size() == 1 && (objects[0]->getObjectType() == OBJ_TABLE || objects[0]->getObjectType() == OBJ_VIEW)))
+	//Adding the extended attributes action (only for table/view/database)
+	if(objects.size() > 1 ||
+		 (objects.empty() && (db_model->getObjectCount(OBJ_TABLE) > 0 || db_model->getObjectCount(OBJ_VIEW) > 0)) ||
+		 (objects.size() == 1 && (objects[0]->getObjectType() == OBJ_TABLE ||
+															objects[0]->getObjectType() == OBJ_VIEW ||
+															objects[0]->getObjectType() == OBJ_DATABASE)))
 	{
-		popup_menu.addAction(action_extended_attribs);
+		bool tab_or_view = false;
+
+		for(BaseObject *obj : objects)
+		{
+			if(!tab_or_view)
+			{
+				tab_or_view=(obj->getObjectType()==OBJ_TABLE || obj->getObjectType()==OBJ_VIEW);
+				break;
+			}
+		}
+
+		if(tab_or_view ||  objects.empty() || objects.size() == 1)
+			popup_menu.addAction(action_extended_attribs);
 	}
 
 	if(!tab_obj &&
@@ -3496,7 +3510,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 	//Adding the copy and paste if there is selected objects
 	if(!model_protected &&
 			!(objects.size()==1 && (objects[0]==db_model || objects[0]->getObjectType()==BASE_RELATIONSHIP)) &&
-			!objects.empty())// && (!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship())))
+			!objects.empty())
 	{
 		popup_menu.addAction(action_copy);
 
