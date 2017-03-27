@@ -8999,7 +8999,8 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 	int idx=0;
 	bool save_db_attribs=false, save_objs_pos=false, save_objs_prot=false,
 			save_objs_sqldis=false, save_textboxes=false, save_tags=false,
-			save_custom_sql=false, save_custom_colors=false;
+			save_custom_sql=false, save_custom_colors=false, save_fadeout=false,
+			save_extattribs=false;
 	QStringList labels_attrs={ ParsersAttributes::SRC_LABEL,
 														 ParsersAttributes::DST_LABEL,
 														 ParsersAttributes::NAME_LABEL };
@@ -9012,6 +9013,8 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 	save_tags=(META_TAG_OBJS & options) == META_TAG_OBJS;
 	save_custom_sql=(META_OBJS_CUSTOMSQL & options) == META_OBJS_CUSTOMSQL;
 	save_custom_colors=(META_OBJS_CUSTOMCOLORS & options) == META_OBJS_CUSTOMCOLORS;
+	save_fadeout=(META_OBJS_FADEDOUT & options) == META_OBJS_FADEDOUT;
+	save_extattribs=(META_OBJS_EXTATTRIBS & options) == META_OBJS_EXTATTRIBS;
 
 	output.open(QFile::WriteOnly);
 
@@ -9104,6 +9107,9 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			attribs[ParsersAttributes::TAG]=(save_tags && base_tab && base_tab->getTag() ? base_tab->getTag()->getName() : QString());
 			attribs[ParsersAttributes::APPENDED_SQL]=object->getAppendedSQL();
 			attribs[ParsersAttributes::PREPENDED_SQL]=object->getPrependedSQL();
+
+			attribs[ParsersAttributes::HIDE_EXT_ATTRIBS]=(save_extattribs && base_tab && base_tab->isExtAttribsHidden() ? ParsersAttributes::_TRUE_ : QString());
+			attribs[ParsersAttributes::FADED_OUT]=(save_fadeout && graph_obj && graph_obj->isFadedOut() ? ParsersAttributes::_TRUE_ : QString());
 
 			if(save_custom_sql && obj_type==OBJ_DATABASE)
 			{
@@ -9234,7 +9240,9 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 				 (save_objs_prot && !attribs[ParsersAttributes::PROTECTED].isEmpty()) ||
 				 (save_objs_sqldis && !attribs[ParsersAttributes::SQL_DISABLED].isEmpty()) ||
 				 (save_custom_sql && (!attribs[ParsersAttributes::APPENDED_SQL].isEmpty() ||
-															!attribs[ParsersAttributes::PREPENDED_SQL].isEmpty())))
+															!attribs[ParsersAttributes::PREPENDED_SQL].isEmpty())) ||
+				 (save_fadeout && !attribs[ParsersAttributes::FADED_OUT].isEmpty()) ||
+				 (save_extattribs && !attribs[ParsersAttributes::HIDE_EXT_ATTRIBS].isEmpty()))
 			{
 				emit s_objectLoaded(((idx++)/static_cast<float>(objects.size()))*100,
 														trUtf8("Saving metadata of the object `%1' (%2)")
@@ -9288,7 +9296,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 	attribs_map attribs, aux_attrib;
 	ObjectType obj_type;
 	BaseObject *object=nullptr, *new_object=nullptr;
-	BaseTable *src_tab=nullptr, *dst_tab=nullptr;
+	BaseTable *src_tab=nullptr, *dst_tab=nullptr, *base_tab=nullptr;
 	vector<QPointF> points;
 	map<QString, unsigned> labels_attrs;
 	vector<QPointF> labels_pos={ QPointF(NAN,NAN), QPointF(NAN,NAN), QPointF(NAN,NAN) };
@@ -9299,7 +9307,8 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 	int progress=0;
 	bool load_db_attribs=false, load_objs_pos=false, load_objs_prot=false,
 			load_objs_sqldis=false, load_textboxes=false, load_tags=false,
-			load_custom_sql=false, load_custom_colors=false;
+			load_custom_sql=false, load_custom_colors=false, load_fadeout=false,
+			load_extattribs=false;
 
 	load_db_attribs=(META_DB_ATTRIBUTES & options) == META_DB_ATTRIBUTES;
 	load_objs_pos=(META_OBJS_POSITIONING & options) == META_OBJS_POSITIONING;
@@ -9309,6 +9318,8 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 	load_tags=(META_TAG_OBJS & options) == META_TAG_OBJS;
 	load_custom_sql=(META_OBJS_CUSTOMSQL & options) == META_OBJS_CUSTOMSQL;
 	load_custom_colors=(META_OBJS_CUSTOMCOLORS & options) == META_OBJS_CUSTOMCOLORS;
+	load_fadeout=(META_OBJS_FADEDOUT & options) == META_OBJS_FADEDOUT;
+	load_extattribs=(META_OBJS_EXTATTRIBS & options) == META_OBJS_EXTATTRIBS;
 
 	try
 	{
@@ -9478,6 +9489,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 							if(BaseGraphicObject::isGraphicObject(obj_type))
 							{
+								base_tab=dynamic_cast<BaseTable *>(object);
 								rel=dynamic_cast<BaseRelationship *>(object);
 								schema=dynamic_cast<Schema *>(object);
 
@@ -9511,8 +9523,13 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 									schema->setRectVisible(attribs[ParsersAttributes::RECT_VISIBLE]==ParsersAttributes::_TRUE_);
 								}
-							}
 
+								if(load_fadeout)
+									dynamic_cast<BaseGraphicObject *>(object)->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::_TRUE_);
+
+								if(load_extattribs && base_tab)
+									base_tab->setExtAttribsHidden(attribs[ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::_TRUE_);
+							}
 
 							points.clear();
 

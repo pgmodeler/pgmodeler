@@ -40,6 +40,12 @@ MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) :
 	objs_sql_disabled_ht=new HintTextWidget(objs_sql_disabled_hint, this);
 	objs_sql_disabled_ht->setText(objs_sql_disabled_chk->statusTip());
 
+	objs_fadedout_ht=new HintTextWidget(objs_fadedout_hint, this);
+	objs_fadedout_ht->setText(objs_fadedout_chk->statusTip());
+
+	objs_extattribs_ht=new HintTextWidget(objs_extattribs_hint, this);
+	objs_extattribs_ht->setText(objs_extattribs_chk->statusTip());
+
 	custom_sql_ht=new HintTextWidget(custom_sql_hint, this);
 	custom_sql_ht->setText(custom_sql_chk->statusTip());
 
@@ -136,6 +142,8 @@ void MetadataHandlingForm::handleObjectsMetada(void)
 		options+=(objs_sql_disabled_chk->isChecked() ? DatabaseModel::META_OBJS_SQLDISABLED : 0);
 		options+=(tag_objs_chk->isChecked() ? DatabaseModel::META_TAG_OBJS : 0);
 		options+=(textbox_objs_chk->isChecked() ? DatabaseModel::META_TEXTBOX_OBJS : 0);
+		options+=(objs_fadedout_chk->isChecked() ? DatabaseModel::META_OBJS_FADEDOUT : 0);
+		options+=(objs_extattribs_chk->isChecked() ? DatabaseModel::META_OBJS_EXTATTRIBS : 0);
 
 		connect(model_wgt->getDatabaseModel(), SIGNAL(s_objectLoaded(int,QString,unsigned)), this, SLOT(updateProgress(int,QString,unsigned)));
 
@@ -188,6 +196,7 @@ void MetadataHandlingForm::handleObjectsMetada(void)
 		model_wgt->restoreLastCanvasPosition();
 		model_wgt->setUpdatesEnabled(true);
 		model_wgt->setModified(true);
+		model_wgt->updateObjectsOpacity();
 
 		disconnect(model_wgt->getDatabaseModel(), nullptr, this, nullptr);
 

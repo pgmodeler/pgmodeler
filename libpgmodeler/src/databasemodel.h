@@ -168,9 +168,11 @@ class DatabaseModel:  public QObject, public BaseObject {
 		META_OBJS_SQLDISABLED=8,	//! \brief Handle objects' sql disabled status when save/load metadata file
 		META_OBJS_CUSTOMSQL=16,	//! \brief Handle object's custom sql when save/load metadata file
 		META_OBJS_CUSTOMCOLORS=32,	//! \brief Handle object's custom colors when save/load metadata file
-		META_TEXTBOX_OBJS=64,	//! \brief Handle textboxes object when save/load metadata file
-		META_TAG_OBJS=128,	//! \brief Handle tags object when save/load metadata file
-		META_ALL_INFO=255;	//! \brief Handle all metadata information about objects when save/load metadata file
+		META_OBJS_FADEDOUT=64,	//! \brief Handle graphical object's fade out status when save/load metadata file
+		META_OBJS_EXTATTRIBS=128,	//! \brief Handle tables and views extended attributes display when save/load metadata file
+		META_TEXTBOX_OBJS=256,	//! \brief Handle textboxes object when save/load metadata file
+		META_TAG_OBJS=512,	//! \brief Handle tags object when save/load metadata file
+		META_ALL_INFO=1023;	//! \brief Handle all metadata information about objects when save/load metadata file
 
 		DatabaseModel(void);
 
