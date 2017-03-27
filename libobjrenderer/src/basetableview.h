@@ -126,6 +126,9 @@ class BaseTableView: public BaseObjectView {
 		//! \brief Signal emitted when the user right-click a focused table child object
 		void s_childObjectSelected(TableObject *);
 
+		//! \brief Signal emitted when the user toggles the table's extended attributes area
+		void s_extAttributesToggled(void);
+
 		friend class RelationshipView;
 };
 

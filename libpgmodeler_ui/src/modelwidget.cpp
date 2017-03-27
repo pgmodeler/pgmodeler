@@ -380,6 +380,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, SIGNAL(s_popupMenuRequested(void)), this, SLOT(showObjectMenu(void)));
 	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(configureObjectSelection(void)));
 
+	connect(scene, &ObjectsScene::s_extAttributesToggled, [=](){ modified = true; });
+
 	connect(scene, SIGNAL(s_popupMenuRequested(BaseObject*)), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_popupMenuRequested(void)), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), new_obj_overlay_wgt, SLOT(hide()));

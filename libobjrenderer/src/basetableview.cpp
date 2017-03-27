@@ -172,6 +172,8 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 			// Using a single shot time to restore the selectable flag
 			QTimer::singleShot(300, [=]{ this->setFlag(QGraphicsItem::ItemIsSelectable, true); });
+
+			emit s_extAttributesToggled();
 		}
 
 		BaseObjectView::mousePressEvent(event);

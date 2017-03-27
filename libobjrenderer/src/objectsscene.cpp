@@ -402,6 +402,11 @@ void ObjectsScene::emitObjectModification(BaseGraphicObject *object)
 	emit s_objectModified(object);
 }
 
+void ObjectsScene::emitExtAttributesToggled(void)
+{
+	emit s_extAttributesToggled();
+}
+
 void ObjectsScene::emitChildObjectSelection(TableObject *child_obj)
 {
 	/* Treats the TableView::s_childObjectSelect() only when there is no
@@ -428,8 +433,12 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 			connect(rel, SIGNAL(s_relationshipModified(BaseGraphicObject*)),
 					this, SLOT(emitObjectModification(BaseGraphicObject*)));
 		else if(tab)
+		{
 			connect(tab, SIGNAL(s_childObjectSelected(TableObject*)),
-					this, SLOT(emitChildObjectSelection(TableObject*)));
+							this, SLOT(emitChildObjectSelection(TableObject*)));
+			connect(tab, SIGNAL(s_extAttributesToggled()),
+							this, SLOT(emitExtAttributesToggled()));
+		}
 
 		if(obj)
 		{

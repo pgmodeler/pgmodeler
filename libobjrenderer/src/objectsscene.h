@@ -200,12 +200,18 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Handles and redirects the signal emitted by the selected object
 		void emitObjectSelection(BaseGraphicObject *object, bool selected);
 
+		//! \brief Handles and redirects the signal emitted by the tables/views when the extended attributes are toggled
+		void emitExtAttributesToggled(void);
+
 	signals:
 		//! \brief Signal emitted when the user start or finalizes a object movement.
 		void s_objectsMoved(bool end_moviment);
 
 		//! \brief Signal emitted when a object is modified on scene
 		void s_objectModified(BaseGraphicObject *objeto);
+
+		//! \brief Signal emitted when the user toggles a table's extended attributes in the scene
+		void s_extAttributesToggled(void);
 
 		//! \brief Signal emitted when the user right-click a specific object on the scene requesting the popup menu
 		void s_popupMenuRequested(BaseObject *);
