@@ -69,5 +69,7 @@ QString Schema::getCodeDefinition(unsigned def_type)
 
 	attributes[ParsersAttributes::FILL_COLOR]=fill_color.name();
 	attributes[ParsersAttributes::RECT_VISIBLE]=(rect_visible ? ParsersAttributes::_TRUE_ : QString());
+	setFadedOutAttribute();
+
 	return(BaseObject::__getCodeDefinition(def_type));
 }

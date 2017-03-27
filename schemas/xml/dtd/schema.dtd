@@ -8,3 +8,4 @@
 <!ATTLIST schema rect-visible (false|true) "false">
 <!ATTLIST schema fill-color CDATA #IMPLIED>
 <!ATTLIST schema sql-disabled (false|true) "false">
+<!ATTLIST schema faded-out (false|true) "false">

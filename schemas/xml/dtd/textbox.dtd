@@ -10,3 +10,4 @@
 <!ATTLIST textbox bold (false|true) "false">
 <!ATTLIST textbox underline (false|true) "false">
 <!ATTLIST textbox color CDATA #IMPLIED>
+<!ATTLIST textbox faded-out (false|true) "false">

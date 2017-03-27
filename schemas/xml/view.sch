@@ -9,6 +9,7 @@
  %if {with-no-data} %then [ with-no-data=] "true" %end
  %if {sql-disabled} %then [ sql-disabled=] "true" %end
  %if {hide-ext-attribs} %then [ hide-ext-attribs=] "true" %end
+ %if {faded-out} %then [ faded-out=] "true" %end
 
  > $br
 

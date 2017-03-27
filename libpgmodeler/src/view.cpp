@@ -584,6 +584,7 @@ QString View::getCodeDefinition(unsigned def_type)
 	else
 	{
 		setPositionAttribute();
+		setFadedOutAttribute();
 		setReferencesAttribute();
 	}
 

@@ -1169,6 +1169,7 @@ void ModelWidget::loadModel(const QString &filename)
 		db_model->loadModel(filename);
 		this->filename=filename;
 		this->adjustSceneSize();
+		this->updateObjectsOpacity();
 
 		task_prog_wgt.close();
 		protected_model_frm->setVisible(db_model->isProtected());
@@ -3196,10 +3197,14 @@ void ModelWidget::fadeObjects(QAction *action, bool fade_in)
 
 		if(obj_view)
 		{
+			dynamic_cast<BaseGraphicObject *>(obj)->setFadedOut(!fade_in);
+
 			obj_view->setOpacity(fade_in ? 1 : min_object_opacity);
 
 			//If the minimum opacity is zero the object hidden
 			obj_view->setVisible(fade_in || (!fade_in && min_object_opacity > 0));
+
+			this->modified = true;
 		}
 	}
 
@@ -3250,14 +3255,18 @@ void ModelWidget::updateObjectsOpacity(void)
 	vector<ObjectType> types = { OBJ_SCHEMA, OBJ_TABLE, OBJ_VIEW,
 															 OBJ_RELATIONSHIP, BASE_RELATIONSHIP, OBJ_TEXTBOX};
 	BaseObjectView *obj_view = nullptr;
+	BaseGraphicObject *base_obj = nullptr;
 
 	for(auto type : types)
 	{
 		for(auto object : *db_model->getObjectList(type))
 		{
-			obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(object)->getReceiverObject());
+			base_obj = dynamic_cast<BaseGraphicObject *>(object);
+			obj_view = dynamic_cast<BaseObjectView *>(base_obj->getReceiverObject());
 
-			if(obj_view && obj_view->opacity() < 1.0 && obj_view->opacity() != min_object_opacity)
+			if(obj_view &&
+				 ((base_obj->isFadedOut() && obj_view->opacity() == 1) ||
+					(obj_view->opacity() < 1.0 && obj_view->opacity() != min_object_opacity)))
 			{
 				obj_view->setOpacity(min_object_opacity);
 				obj_view->setVisible(min_object_opacity > 0);

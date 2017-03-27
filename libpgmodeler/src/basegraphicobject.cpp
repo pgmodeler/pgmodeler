@@ -21,9 +21,11 @@
 BaseGraphicObject::BaseGraphicObject(void)
 {
 	is_modified=true;
+	is_faded_out=false;
 	attributes[ParsersAttributes::X_POS]=QString();
 	attributes[ParsersAttributes::Y_POS]=QString();
 	attributes[ParsersAttributes::POSITION]=QString();
+	attributes[ParsersAttributes::FADED_OUT]=QString();
 	receiver_object=nullptr;
 }
 
@@ -56,9 +58,25 @@ void BaseGraphicObject::setSQLDisabled(bool value)
 		emit s_objectModified();
 }
 
+void BaseGraphicObject::setFadedOut(bool value)
+{
+	setCodeInvalidated(is_faded_out != value);
+	is_faded_out = value;
+}
+
 bool BaseGraphicObject::isModified(void)
 {
 	return(is_modified);
+}
+
+bool BaseGraphicObject::isFadedOut(void)
+{
+	return(is_faded_out);
+}
+
+void BaseGraphicObject::setFadedOutAttribute(void)
+{
+	attributes[ParsersAttributes::FADED_OUT]=(is_faded_out ? ParsersAttributes::_TRUE_ : QString());
 }
 
 void BaseGraphicObject::setPositionAttribute(void)

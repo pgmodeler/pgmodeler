@@ -3413,6 +3413,7 @@ Schema *DatabaseModel::createSchema(void)
 		setBasicAttributes(schema);
 		schema->setFillColor(QColor(attribs[ParsersAttributes::FILL_COLOR]));
 		schema->setRectVisible(attribs[ParsersAttributes::RECT_VISIBLE]==ParsersAttributes::_TRUE_);
+		schema->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::_TRUE_);
 	}
 	catch(Exception &e)
 	{
@@ -4512,6 +4513,7 @@ Table *DatabaseModel::createTable(void)
 		table->setUnlogged(attribs[ParsersAttributes::UNLOGGED]==ParsersAttributes::_TRUE_);
 		table->setGenerateAlterCmds(attribs[ParsersAttributes::GEN_ALTER_CMDS]==ParsersAttributes::_TRUE_);
 		table->setExtAttribsHidden(attribs[ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::_TRUE_);
+		table->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::_TRUE_);
 
 		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
@@ -5515,6 +5517,7 @@ View *DatabaseModel::createView(void)
 		view->setRecursive(attribs[ParsersAttributes::RECURSIVE]==ParsersAttributes::_TRUE_);
 		view->setWithNoData(attribs[ParsersAttributes::WITH_NO_DATA]==ParsersAttributes::_TRUE_);
 		view->setExtAttribsHidden(attribs[ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::_TRUE_);
+		view->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::_TRUE_);
 
 		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
@@ -5799,14 +5802,10 @@ Textbox *DatabaseModel::createTextbox(void)
 
 		xmlparser.getElementAttributes(attribs);
 
-		if(attribs[ParsersAttributes::ITALIC]==ParsersAttributes::_TRUE_)
-			txtbox->setTextAttribute(Textbox::ITALIC_TXT, true);
-
-		if(attribs[ParsersAttributes::BOLD]==ParsersAttributes::_TRUE_)
-			txtbox->setTextAttribute(Textbox::BOLD_TXT, true);
-
-		if(attribs[ParsersAttributes::UNDERLINE]==ParsersAttributes::_TRUE_)
-			txtbox->setTextAttribute(Textbox::UNDERLINE_TXT, true);
+		txtbox->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::_TRUE_);
+		txtbox->setTextAttribute(Textbox::ITALIC_TXT, attribs[ParsersAttributes::ITALIC]==ParsersAttributes::_TRUE_);
+		txtbox->setTextAttribute(Textbox::BOLD_TXT, attribs[ParsersAttributes::BOLD]==ParsersAttributes::_TRUE_);
+		txtbox->setTextAttribute(Textbox::UNDERLINE_TXT, attribs[ParsersAttributes::UNDERLINE]==ParsersAttributes::_TRUE_);
 
 		if(!attribs[ParsersAttributes::COLOR].isEmpty())
 			txtbox->setTextColor(QColor(attribs[ParsersAttributes::COLOR]));
@@ -5831,7 +5830,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 	BaseRelationship *base_rel=nullptr;
 	Relationship *rel=nullptr;
 	BaseTable *tables[2]={nullptr, nullptr};
-	bool src_mand, dst_mand, identifier, protect, deferrable, sql_disabled, single_pk_col;
+	bool src_mand, dst_mand, identifier, protect, deferrable, sql_disabled, single_pk_col, faded_out;
 	DeferralType defer_type;
 	ActionType del_action, upd_action;
 	unsigned rel_type=0, i;
@@ -5849,6 +5848,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 
 		xmlparser.getElementAttributes(attribs);
 		protect=(attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
+		faded_out=(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::_TRUE_);
 
 		if(!attribs[ParsersAttributes::CUSTOM_COLOR].isEmpty())
 			custom_color=QColor(attribs[ParsersAttributes::CUSTOM_COLOR]);
@@ -6064,6 +6064,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 		addRelationship(rel);
 	}
 
+	base_rel->setFadedOut(faded_out);
 	base_rel->setProtected(protect);
 	base_rel->setCustomColor(custom_color);
 

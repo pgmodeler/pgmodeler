@@ -10,6 +10,7 @@
 <!ATTLIST view with-no-data (false|true) "true">
 <!ATTLIST view sql-disabled (false|true) "false">
 <!ATTLIST view hide-ext-attribs (false|true) "false">
+<!ATTLIST view faded-out (false|true) "false">
 
 <!ELEMENT reference (expression?)>
 <!ATTLIST reference alias CDATA #IMPLIED>

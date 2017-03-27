@@ -22,6 +22,10 @@
  %if {color} %then
   [ color=] "{color}"
  %end
+ 
+ %if {faded-out} %then
+  [ faded-out=] "true"
+ %end
 
   [ font-size=] "{font-size}"
  > $br

@@ -40,6 +40,7 @@ QString Textbox::getCodeDefinition(unsigned def_type)
 		if(!code_def.isEmpty()) return(code_def);
 
 		setPositionAttribute();
+		setFadedOutAttribute();
 
 		if(text_attributes[ITALIC_TXT])
 			attributes[ParsersAttributes::ITALIC]=ParsersAttributes::_TRUE_;

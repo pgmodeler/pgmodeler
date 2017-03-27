@@ -1380,6 +1380,7 @@ QString Table::getCodeDefinition(unsigned def_type)
 	{
 		setRelObjectsIndexesAttribute();
 		setPositionAttribute();
+		setFadedOutAttribute();
 		attributes[ParsersAttributes::INITIAL_DATA]=initial_data;
 	}
 	else
