@@ -33,9 +33,13 @@
    $br $tb [ sql-disabled=] "true"
   %end
 
- %if {protected} %then 
-  $br [ protected=] "true"
- %end
+  %if {protected} %then 
+   $br [ protected=] "true"
+  %end
+ 
+  %if {faded-out} %then
+    [ faded-out=] "true"
+  %end
 
 $br $tb [ src-table=] "{src-table}" 
 $br $tb [ dst-table=] "{dst-table}"

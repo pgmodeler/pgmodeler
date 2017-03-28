@@ -1362,6 +1362,7 @@ QString Table::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::COPY_TABLE]=QString();
 	attributes[ParsersAttributes::ANCESTOR_TABLE]=QString();
 	attributes[ParsersAttributes::TAG]=QString();
+	attributes[ParsersAttributes::HIDE_EXT_ATTRIBS]=(isExtAttribsHidden() ? ParsersAttributes::_TRUE_ : QString());
 
 	if(def_type==SchemaParser::SQL_DEFINITION && copy_table)
 		attributes[ParsersAttributes::COPY_TABLE]=copy_table->getName(true) + copy_op.getSQLDefinition();
@@ -1379,6 +1380,7 @@ QString Table::getCodeDefinition(unsigned def_type)
 	{
 		setRelObjectsIndexesAttribute();
 		setPositionAttribute();
+		setFadedOutAttribute();
 		attributes[ParsersAttributes::INITIAL_DATA]=initial_data;
 	}
 	else

@@ -381,6 +381,7 @@ void BaseRelationship::setRelationshipAttributes(void)
 
 	attributes[ParsersAttributes::LABELS_POS]=str_aux;
 	attributes[ParsersAttributes::CUSTOM_COLOR]=(custom_color!=Qt::transparent ? custom_color.name() : QString());
+	setFadedOutAttribute();
 }
 
 QString BaseRelationship::getCachedCode(unsigned def_type)

@@ -569,6 +569,7 @@ QString View::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::WITH_NO_DATA]=(with_no_data ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::COLUMNS]=QString();
 	attributes[ParsersAttributes::TAG]=QString();
+	attributes[ParsersAttributes::HIDE_EXT_ATTRIBS]=(isExtAttribsHidden() ? ParsersAttributes::_TRUE_ : QString());
 
 	setSQLObjectAttribute();
 
@@ -583,6 +584,7 @@ QString View::getCodeDefinition(unsigned def_type)
 	else
 	{
 		setPositionAttribute();
+		setFadedOutAttribute();
 		setReferencesAttribute();
 	}
 

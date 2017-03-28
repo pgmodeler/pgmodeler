@@ -110,7 +110,9 @@ class ModelWidget: public QWidget {
 
 		fade_out_menu,
 
-		fade_rels_menu;
+		fade_rels_menu,
+
+		toggle_attrs_menu;
 
 		//! \brief Stores the selected object on the scene
 		vector<BaseObject *> selected_objects;
@@ -206,7 +208,10 @@ class ModelWidget: public QWidget {
 		*action_fade_out,
 		*action_fade_rels,
 		*action_fade_rels_in,
-		*action_fade_rels_out;
+		*action_fade_rels_out,
+		*action_extended_attribs,
+		*action_show_ext_attribs,
+		*action_hide_ext_attribs;
 
 		//! \brief Actions used to create new objects on the model
 		map<ObjectType, QAction *> actions_new_objects;
@@ -418,6 +423,8 @@ class ModelWidget: public QWidget {
 		void fadeObjectsIn(void);
 
 		void fadeObjectsOut(void);
+
+		void toggleExtendedAttributes(void);
 
 	public slots:
 		void loadModel(const QString &filename);

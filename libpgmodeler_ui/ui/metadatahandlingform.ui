@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>562</width>
-    <height>507</height>
+    <height>539</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -367,54 +367,6 @@
              <property name="horizontalSpacing">
               <number>10</number>
              </property>
-             <item row="0" column="0">
-              <layout class="QHBoxLayout" name="horizontalLayout_10">
-               <item>
-                <widget class="QCheckBox" name="db_metadata_chk">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="toolTip">
-                  <string/>
-                 </property>
-                 <property name="statusTip">
-                  <string>Handles the following database model attributes in the metadata file: author, zoom factor, last position and default objects.</string>
-                 </property>
-                 <property name="text">
-                  <string>Database model metadata</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QWidget" name="db_metadata_hint" native="true">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>22</width>
-                   <height>22</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>22</width>
-                   <height>22</height>
-                  </size>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
              <item row="1" column="0">
               <layout class="QHBoxLayout" name="horizontalLayout_15">
                <item>
@@ -463,7 +415,7 @@
                </item>
               </layout>
              </item>
-             <item row="5" column="0" colspan="2">
+             <item row="6" column="0" colspan="2">
               <spacer name="verticalSpacer">
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
@@ -620,10 +572,10 @@
                </item>
               </layout>
              </item>
-             <item row="1" column="1">
-              <layout class="QHBoxLayout" name="horizontalLayout_16">
+             <item row="0" column="0">
+              <layout class="QHBoxLayout" name="horizontalLayout_10">
                <item>
-                <widget class="QCheckBox" name="custom_sql_chk">
+                <widget class="QCheckBox" name="db_metadata_chk">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -634,10 +586,10 @@
                   <string/>
                  </property>
                  <property name="statusTip">
-                  <string>Handles the objects' custom SQL commands in the metadata file.</string>
+                  <string>Handles the following database model attributes in the metadata file: author, zoom factor, last position and default objects.</string>
                  </property>
                  <property name="text">
-                  <string>Custom SQL commands</string>
+                  <string>Database model metadata</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -645,7 +597,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QWidget" name="custom_sql_hint" native="true">
+                <widget class="QWidget" name="db_metadata_hint" native="true">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -668,7 +620,103 @@
                </item>
               </layout>
              </item>
-             <item row="2" column="1">
+             <item row="5" column="0">
+              <layout class="QHBoxLayout" name="horizontalLayout_18">
+               <item>
+                <widget class="QCheckBox" name="objs_fadedout_chk">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string/>
+                 </property>
+                 <property name="statusTip">
+                  <string>Handles the objects' fade out status in the metadata file.</string>
+                 </property>
+                 <property name="text">
+                  <string>Objects' fade out status</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QWidget" name="objs_fadedout_hint" native="true">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="5" column="1">
+              <layout class="QHBoxLayout" name="horizontalLayout_14">
+               <item>
+                <widget class="QCheckBox" name="tag_objs_chk">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string/>
+                 </property>
+                 <property name="statusTip">
+                  <string>Save tags to the output file when extracting metadata. When loading the file tags are recreated and duplicated ones are ignored.</string>
+                 </property>
+                 <property name="text">
+                  <string>Tag objects</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QWidget" name="tag_objs_hint" native="true">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="3" column="1">
               <layout class="QHBoxLayout" name="horizontalLayout_13">
                <item>
                 <widget class="QCheckBox" name="textbox_objs_chk">
@@ -716,10 +764,10 @@
                </item>
               </layout>
              </item>
-             <item row="3" column="1">
-              <layout class="QHBoxLayout" name="horizontalLayout_14">
+             <item row="2" column="1">
+              <layout class="QHBoxLayout" name="horizontalLayout_16">
                <item>
-                <widget class="QCheckBox" name="tag_objs_chk">
+                <widget class="QCheckBox" name="custom_sql_chk">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -730,10 +778,10 @@
                   <string/>
                  </property>
                  <property name="statusTip">
-                  <string>Save tags to the output file when extracting metadata. When loading the file tags are recreated and duplicated ones are ignored.</string>
+                  <string>Handles the objects' custom SQL commands in the metadata file.</string>
                  </property>
                  <property name="text">
-                  <string>Tag objects</string>
+                  <string>Custom SQL commands</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -741,7 +789,55 @@
                 </widget>
                </item>
                <item>
-                <widget class="QWidget" name="tag_objs_hint" native="true">
+                <widget class="QWidget" name="custom_sql_hint" native="true">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="1" column="1">
+              <layout class="QHBoxLayout" name="horizontalLayout_19">
+               <item>
+                <widget class="QCheckBox" name="objs_extattribs_chk">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string/>
+                 </property>
+                 <property name="statusTip">
+                  <string>Handles the tables' and views' extended attributes display status in the metadata file.</string>
+                 </property>
+                 <property name="text">
+                  <string>Tables' extended attributes display</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QWidget" name="objs_extattribs_hint" native="true">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>

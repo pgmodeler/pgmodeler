@@ -30,11 +30,17 @@
 #include "tag.h"
 
 class BaseTable: public BaseGraphicObject {
+	private:
+		bool hide_ext_attribs;
+
 	protected:
 		Tag *tag;
 
 	public:
 		BaseTable(void);
+
+		virtual void setExtAttribsHidden(bool value);
+		virtual bool isExtAttribsHidden(void);
 
 		virtual void setTag(Tag *tag);
 		virtual Tag *getTag(void);

@@ -23,6 +23,19 @@ BaseTable::BaseTable(void)
 	tag=nullptr;
 	obj_type=BASE_TABLE;
 	attributes[ParsersAttributes::TAG]=QString();
+	attributes[ParsersAttributes::HIDE_EXT_ATTRIBS]=QString();
+	hide_ext_attribs=false;
+}
+
+void BaseTable::setExtAttribsHidden(bool value)
+{
+	setCodeInvalidated(hide_ext_attribs != value);
+	hide_ext_attribs = value;
+}
+
+bool BaseTable::isExtAttribsHidden(void)
+{
+	return(hide_ext_attribs);
 }
 
 void BaseTable::setTag(Tag *tag)

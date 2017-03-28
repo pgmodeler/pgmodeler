@@ -3,25 +3,13 @@
 #          Code generation can be broken if incorrect changes are made.
 [<view name=] "{name}" 
 
- %if {protected} %then 
-  [ protected=] "true"
- %end
-
- %if {materialized} %then
-  [ materialized=] "true"
- %end
-
- %if {recursive} %then
-  [ recursive=] "true"
- %end
-
- %if {with-no-data} %then
-  [ with-no-data=] "true"
- %end
-
-  %if {sql-disabled} %then
-   [ sql-disabled=] "true"
-  %end
+ %if {protected} %then [ protected=] "true" %end
+ %if {materialized} %then [ materialized=] "true" %end
+ %if {recursive} %then [ recursive=] "true" %end
+ %if {with-no-data} %then [ with-no-data=] "true" %end
+ %if {sql-disabled} %then [ sql-disabled=] "true" %end
+ %if {hide-ext-attribs} %then [ hide-ext-attribs=] "true" %end
+ %if {faded-out} %then [ faded-out=] "true" %end
 
  > $br
 

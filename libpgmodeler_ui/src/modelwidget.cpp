@@ -256,6 +256,14 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_duplicate=new QAction(QIcon(PgModelerUiNS::getIconPath("duplicate")), trUtf8("Duplicate"), this);
 	action_duplicate->setShortcut(QKeySequence(trUtf8("Ctrl+D")));
 
+	action_extended_attribs=new QAction(QIcon(PgModelerUiNS::getIconPath("toggleattribs")), trUtf8("Extended attributes"), this);
+	action_show_ext_attribs=new QAction(trUtf8("Show"), this);
+	action_hide_ext_attribs=new QAction(trUtf8("Hide"), this);
+
+	toggle_attrs_menu.addAction(action_show_ext_attribs);
+	toggle_attrs_menu.addAction(action_hide_ext_attribs);
+	action_extended_attribs->setMenu(&toggle_attrs_menu);
+
 	action_fade=new QAction(QIcon(PgModelerUiNS::getIconPath("fade")), trUtf8("Fade in/out"), this);
 	action_fade_in=new QAction(QIcon(PgModelerUiNS::getIconPath("fadein")), trUtf8("Fade in"), this);
 	action_fade_out=new QAction(QIcon(PgModelerUiNS::getIconPath("fadeout")), trUtf8("Fade out"), this);
@@ -359,6 +367,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_fade_rels_in, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
 	connect(action_fade_rels_out, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
 
+	connect(action_show_ext_attribs, SIGNAL(triggered(bool)), this, SLOT(toggleExtendedAttributes()));
+	connect(action_hide_ext_attribs, SIGNAL(triggered(bool)), this, SLOT(toggleExtendedAttributes()));
+
 	connect(db_model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
 	connect(db_model, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(handleObjectRemoval(BaseObject *)));
 
@@ -368,6 +379,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, SIGNAL(s_popupMenuRequested(BaseObject*)), this, SLOT(configureObjectMenu(BaseObject *)));
 	connect(scene, SIGNAL(s_popupMenuRequested(void)), this, SLOT(showObjectMenu(void)));
 	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(configureObjectSelection(void)));
+
+	connect(scene, &ObjectsScene::s_extAttributesToggled, [=](){ modified = true; });
 
 	connect(scene, SIGNAL(s_popupMenuRequested(BaseObject*)), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_popupMenuRequested(void)), new_obj_overlay_wgt, SLOT(hide()));
@@ -1156,6 +1169,7 @@ void ModelWidget::loadModel(const QString &filename)
 		db_model->loadModel(filename);
 		this->filename=filename;
 		this->adjustSceneSize();
+		this->updateObjectsOpacity();
 
 		task_prog_wgt.close();
 		protected_model_frm->setVisible(db_model->isProtected());
@@ -3177,20 +3191,22 @@ void ModelWidget::fadeObjects(QAction *action, bool fade_in)
 		}
 	}
 
-
 	for(auto obj : list)
 	{
 		obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
 
 		if(obj_view)
 		{
+			dynamic_cast<BaseGraphicObject *>(obj)->setFadedOut(!fade_in);
+
 			obj_view->setOpacity(fade_in ? 1 : min_object_opacity);
 
 			//If the minimum opacity is zero the object hidden
 			obj_view->setVisible(fade_in || (!fade_in && min_object_opacity > 0));
+
+			this->modified = true;
 		}
 	}
-
 
 	scene->clearSelection();
 }
@@ -3205,19 +3221,52 @@ void ModelWidget::fadeObjectsOut(void)
 	fadeObjects(qobject_cast<QAction *>(sender()), false);
 }
 
+void ModelWidget::toggleExtendedAttributes(void)
+{
+	bool hide = sender() == action_hide_ext_attribs;
+	BaseTable *base_tab = nullptr;
+	vector<BaseObject *> objects;
+
+	if(selected_objects.empty() || (selected_objects.size() == 1 && selected_objects[0] == db_model))
+	{
+
+		objects.assign(db_model->getObjectList(OBJ_TABLE)->begin(), db_model->getObjectList(OBJ_TABLE)->end());
+		objects.insert(objects.end(), db_model->getObjectList(OBJ_VIEW)->begin(), db_model->getObjectList(OBJ_VIEW)->end());
+	}
+	else
+		objects = selected_objects;
+
+	for(auto obj : objects)
+	{
+		base_tab = dynamic_cast<BaseTable *>(obj);
+
+		if(base_tab && base_tab->isExtAttribsHidden() != hide)
+		{
+			base_tab->setExtAttribsHidden(hide);
+			base_tab->setModified(true);
+		}
+	}
+
+	this->setModified(true);
+}
+
 void ModelWidget::updateObjectsOpacity(void)
 {
 	vector<ObjectType> types = { OBJ_SCHEMA, OBJ_TABLE, OBJ_VIEW,
 															 OBJ_RELATIONSHIP, BASE_RELATIONSHIP, OBJ_TEXTBOX};
 	BaseObjectView *obj_view = nullptr;
+	BaseGraphicObject *base_obj = nullptr;
 
 	for(auto type : types)
 	{
 		for(auto object : *db_model->getObjectList(type))
 		{
-			obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(object)->getReceiverObject());
+			base_obj = dynamic_cast<BaseGraphicObject *>(object);
+			obj_view = dynamic_cast<BaseObjectView *>(base_obj->getReceiverObject());
 
-			if(obj_view && obj_view->opacity() < 1.0 && obj_view->opacity() != min_object_opacity)
+			if(obj_view &&
+				 ((base_obj->isFadedOut() && obj_view->opacity() == 1) ||
+					(obj_view->opacity() < 1.0 && obj_view->opacity() != min_object_opacity)))
 			{
 				obj_view->setOpacity(min_object_opacity);
 				obj_view->setVisible(min_object_opacity > 0);
@@ -3435,6 +3484,28 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 		}
 	}
 
+	//Adding the extended attributes action (only for table/view/database)
+	if(objects.size() > 1 ||
+		 (objects.empty() && (db_model->getObjectCount(OBJ_TABLE) > 0 || db_model->getObjectCount(OBJ_VIEW) > 0)) ||
+		 (objects.size() == 1 && (objects[0]->getObjectType() == OBJ_TABLE ||
+															objects[0]->getObjectType() == OBJ_VIEW ||
+															objects[0]->getObjectType() == OBJ_DATABASE)))
+	{
+		bool tab_or_view = false;
+
+		for(BaseObject *obj : objects)
+		{
+			if(!tab_or_view)
+			{
+				tab_or_view=(obj->getObjectType()==OBJ_TABLE || obj->getObjectType()==OBJ_VIEW);
+				break;
+			}
+		}
+
+		if(tab_or_view ||  objects.empty() || objects.size() == 1)
+			popup_menu.addAction(action_extended_attribs);
+	}
+
 	if(!tab_obj &&
 		 (objects.empty() || objects.size() > 1 ||
 			(objects.size() == 1 && (objects[0]->getObjectType() == OBJ_DATABASE ||
@@ -3450,7 +3521,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 	//Adding the copy and paste if there is selected objects
 	if(!model_protected &&
 			!(objects.size()==1 && (objects[0]==db_model || objects[0]->getObjectType()==BASE_RELATIONSHIP)) &&
-			!objects.empty())// && (!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship())))
+			!objects.empty())
 	{
 		popup_menu.addAction(action_copy);
 

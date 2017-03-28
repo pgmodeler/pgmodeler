@@ -41,7 +41,7 @@ class MetadataHandlingForm: public QDialog, public Ui::MetadataHandlingForm {
 
 		HintTextWidget *db_metadata_ht, *objs_positioning_ht, *objs_protection_ht,
 		*objs_sql_disabled_ht, *custom_sql_ht, *textbox_objs_ht, *tag_objs_ht,
-		*custom_colors_ht, *extract_ht, *restore_ht;
+		*custom_colors_ht, *extract_ht, *restore_ht, *objs_fadedout_ht, *objs_extattribs_ht;
 
 		void showEvent(QShowEvent *);
 		void selectFile(bool is_output);

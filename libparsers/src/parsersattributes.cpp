@@ -184,6 +184,7 @@ namespace ParsersAttributes {
 	EXPRESSIONS=QString("expressions"),
 	EXT_OBJ_OIDS=QString("ext-obj-oids"),
 	FACTOR=QString("factor"),
+	FADED_OUT=QString("faded-out"),
 	FAMILY=QString("family"),
 	FAST_UPDATE=QString("fast-update"),
 	FILE_ASSOCIATED=QString("file-associated"),

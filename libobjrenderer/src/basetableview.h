@@ -52,9 +52,11 @@ class BaseTableView: public BaseObjectView {
 		//! \brief Extended table attributes (indexes, rules, triggers) section body
 		*ext_attribs_body,
 
-		*placeholder;
+		*placeholder,
 
-		QGraphicsPolygonItem *tag_body;
+		*ext_attribs_toggler;
+
+		QGraphicsPolygonItem *tag_body, *ext_attribs_tog_arrow;
 
 		QGraphicsSimpleTextItem *tag_name;
 
@@ -74,6 +76,13 @@ class BaseTableView: public BaseObjectView {
 
 		//! \brief Configures the tag object when the source object has one.
 		void configureTag(void);
+
+		/*! \brief Configures basic attributes of the table. A width need to be provided so
+		the extended attributes section can follow the same width as the body and title */
+		void __configureObject(float width);
+
+		//! \brief Determines the table width based upon its subsection (title, body and extended attribs)
+		float calculateWidth(void);
 
 	public:
 		static const unsigned LEFT_CONN_POINT=0,
@@ -116,6 +125,9 @@ class BaseTableView: public BaseObjectView {
 
 		//! \brief Signal emitted when the user right-click a focused table child object
 		void s_childObjectSelected(TableObject *);
+
+		//! \brief Signal emitted when the user toggles the table's extended attributes area
+		void s_extAttributesToggled(void);
 
 		friend class RelationshipView;
 };

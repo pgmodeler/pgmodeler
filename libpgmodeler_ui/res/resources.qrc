@@ -224,6 +224,7 @@
         <file>icones/fade.png</file>
         <file>icones/fadein.png</file>
         <file>icones/fadeout.png</file>
+        <file>icones/toggleattribs.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

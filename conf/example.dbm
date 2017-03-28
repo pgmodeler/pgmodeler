@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0-alpha1" author="Raphael Araújo e Silva" last-position="0,0" last-zoom="1">
+<dbmodel pgmodeler-ver="0.9.0-beta" author="Raphael Araújo e Silva" last-position="0,0" last-zoom="1">
 <database name="exampledb" encoding="UTF8">
 	<comment><![CDATA[Example Database Model]]></comment>
 </database>
@@ -67,7 +67,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <table name="table1">
 	<schema name="public"/>
-	<position x="378" y="260"/>
+	<position x="366" y="265"/>
 	<column name="column" not-null="true">
 		<type name="serial" length="1"/>
 	</column>
@@ -111,11 +111,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="public.&quot;table&quot;"
 	 src-required="false" dst-required="false">
 	<line>
-		<position x="300" y="260"/>
+		<position x="303" y="294"/>
 	<position x="300" y="120"/>
 	</line>
 	<label ref-type="name-label">
-		<position x="12.6257" y="16.0515"/>
+		<position x="45.4757" y="2.15147"/>
 	</label>
 	<column name="attribute">
 		<type name="integer" length="1"/>
@@ -124,7 +124,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <view name="view">
 	<schema name="public"/>
-	<position x="9" y="278"/>
+	<position x="18" y="317"/>
 	<reference table="public.&quot;table&quot;" column="column1" alias="t1" column-alias="col1"/>
 	<reference table="public.table1" column="column2" alias="t2" column-alias="col2"/>
 	<reference alias="expr">
@@ -150,18 +150,18 @@ CAUTION: Do not modify this file unless you know what you are doing.
 </relationship>
 
 <textbox name="textbox" font-size="9">
-	<position x="400" y="160"/>
+	<position x="20" y="275"/>
 	<comment><![CDATA[Selected Textbox]]></comment>
 </textbox>
 
-<textbox name="textbox1" protected="true" font-size="9">
-	<position x="400" y="220"/>
+<textbox name="textbox1" font-size="9">
+	<position x="430" y="215"/>
 	<comment><![CDATA[Protected Textbox]]></comment>
 </textbox>
 
 <table name="table2" oids="true">
 	<schema name="public"/>
-	<position x="380" y="40"/>
+	<position x="380" y="21"/>
 	<column name="column" not-null="true">
 		<type name="serial" length="1"/>
 	</column>
@@ -203,12 +203,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-table="public.table2"
 	 dst-table="public.&quot;table&quot;"
 	 src-required="false" dst-required="false">
-	<line>
-		<position x="322" y="97"/>
-	<position x="321" y="48"/>
-	</line>
 	<label ref-type="name-label">
-		<position x="-9.02426" y="-75.3485"/>
+		<position x="2.43432" y="-59.4485"/>
 	</label>
 </relationship>
 

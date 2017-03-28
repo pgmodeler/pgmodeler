@@ -406,7 +406,7 @@ QVariant BaseObjectView::itemChange(GraphicsItemChange change, const QVariant &v
 			this->configurePositionInfo(this->pos());
 		}
 	}
-	else if(change==ItemSelectedHasChanged && obj_selection)
+	else if(change == ItemSelectedHasChanged && obj_selection)
 	{
 		this->setSelectionOrder(value.toBool());
 		pos_info_rect->setVisible(value.toBool());

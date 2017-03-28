@@ -35,5 +35,7 @@
 <!ATTLIST info default-owner CDATA #IMPLIED>
 <!ATTLIST info default-collation CDATA #IMPLIED>
 <!ATTLIST info default-tablespace CDATA #IMPLIED>
+<!ATTLIST info faded-out (false|true) "false">
+<!ATTLIST info hide-ext-attribs (false|true) "false">
 
 <!ELEMENT metadata (textbox*, tag*, info*)>

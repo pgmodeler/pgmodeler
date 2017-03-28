@@ -29,11 +29,13 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 		ParsersAttributes::POSITION_INFO, ParsersAttributes::POSITION_INFO,
 		ParsersAttributes::OBJECT_TYPE, ParsersAttributes::LOCKER_ARC, ParsersAttributes::LOCKER_BODY,
 		ParsersAttributes::TABLE_SCHEMA_NAME, ParsersAttributes::TABLE_NAME, ParsersAttributes::TABLE_BODY,
-		ParsersAttributes::TABLE_EXT_BODY, ParsersAttributes::TABLE_TITLE, BaseObject::getSchemaName(OBJ_RULE),
-		BaseObject::getSchemaName(OBJ_RULE), BaseObject::getSchemaName(OBJ_INDEX),
-		BaseObject::getSchemaName(OBJ_INDEX), BaseObject::getSchemaName(OBJ_TRIGGER),
-		BaseObject::getSchemaName(OBJ_TRIGGER), ParsersAttributes::VIEW_SCHEMA_NAME, ParsersAttributes::VIEW_NAME,
-		ParsersAttributes::VIEW_BODY /*21*/, ParsersAttributes::VIEW_EXT_BODY /*22*/, ParsersAttributes::VIEW_TITLE /*23*/, ParsersAttributes::ALIAS,
+		ParsersAttributes::TABLE_EXT_BODY, ParsersAttributes::TABLE_TITLE,
+		BaseObject::getSchemaName(OBJ_RULE), BaseObject::getSchemaName(OBJ_RULE),
+		BaseObject::getSchemaName(OBJ_INDEX),	BaseObject::getSchemaName(OBJ_INDEX),
+		BaseObject::getSchemaName(OBJ_TRIGGER),	BaseObject::getSchemaName(OBJ_TRIGGER),
+		BaseObject::getSchemaName(OBJ_CONSTRAINT),	BaseObject::getSchemaName(OBJ_CONSTRAINT),
+		ParsersAttributes::VIEW_SCHEMA_NAME, ParsersAttributes::VIEW_NAME,
+		ParsersAttributes::VIEW_BODY /*23*/, ParsersAttributes::VIEW_EXT_BODY /*24*/, ParsersAttributes::VIEW_TITLE /*25*/, ParsersAttributes::ALIAS,
 		ParsersAttributes::REF_COLUMN, ParsersAttributes::REF_TABLE, ParsersAttributes::REFERENCE,
 		BaseObject::getSchemaName(OBJ_TEXTBOX), ParsersAttributes::COLUMN, ParsersAttributes::COLUMN,
 		ParsersAttributes::INH_COLUMN, ParsersAttributes::PROT_COLUMN, ParsersAttributes::PK_COLUMN,
@@ -44,8 +46,8 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 		ParsersAttributes::TAG, ParsersAttributes::TAG, ParsersAttributes::PLACEHOLDER};
 	int i, count=element_cmb->count(),
 			//This auxiliary vector stores the id of elements that represents color/font conf. of objects
-			obj_conf_ids_vect[]={ 2, 4, 6, 7, 10, 11, 12, 14, 16, 18, 21, 22, 23,
-								  27, 28, 30, 34, 36, 38, 40, 41, 43, 45, 47, 48 };
+			obj_conf_ids_vect[]={ 2, 4, 6, 7, 10, 11, 12, 14, 16, 18, 20, 23, 24, 25,
+														29, 30, 32, 36, 38, 40, 42, 43, 45, 47, 49, 50 };
 	vector<int> conf_obj_ids(obj_conf_ids_vect, obj_conf_ids_vect + sizeof(obj_conf_ids_vect) / sizeof(int));
 
 	conf_items.resize(count);
@@ -162,7 +164,7 @@ void AppearanceConfigWidget::loadExampleModel(void)
 				scene->addItem(txtbox);
 			}
 
-			placeholder->setRect(QRectF(170, 130, 100,50));
+			placeholder->setRect(QRectF(170, 190, 100,50));
 			updatePlaceholderItem();
 			scene->addItem(placeholder);
 		}
@@ -300,8 +302,8 @@ void AppearanceConfigWidget::enableConfigElement(void)
 	color_picker->setVisible(colors_lbl->isVisible());
 
 	//Buttons visible when a object configuration element is selected
-	color_picker->setButtonVisible(1, conf_items[idx].obj_conf);
-	color_picker->setButtonVisible(2, conf_items[idx].obj_conf);
+	//color_picker->setButtonVisible(1, conf_items[idx].obj_conf);
+	//color_picker->setButtonVisible(2, conf_items[idx].obj_conf);
 
 	underline_chk->blockSignals(true);
 	italic_chk->blockSignals(true);
@@ -347,7 +349,7 @@ void AppearanceConfigWidget::applyElementColor(unsigned color_idx, QColor color)
 		BaseObjectView::setElementColor(conf_items[element_cmb->currentIndex()].conf_id, color, color_idx);
 		updatePlaceholderItem();
 	}
-	else
+	else if(color_idx == 0)
 	{
 		conf_items[element_cmb->currentIndex()].font_fmt.setForeground(color);
 		BaseObjectView::setFontStyle(conf_items[element_cmb->currentIndex()].conf_id,

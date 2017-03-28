@@ -24,6 +24,10 @@
    [ sql-disabled=] "true"
   %end
   
+  %if {faded-out} %then
+   [ faded-out=] "true"
+  %end
+  
   > $br
 
   %if {owner} %then {owner} %end
