@@ -54,6 +54,8 @@ class NumberedTextEditor : public QPlainTextEdit {
 
 		static QString src_editor_app;
 
+		static QString src_editor_app_args;
+
 		//! \brief Widget used to expose document line numbers
 		LineNumbersWidget *line_number_wgt;
 
@@ -88,6 +90,7 @@ class NumberedTextEditor : public QPlainTextEdit {
 		static void setTabWidth(int value);
 		static int getTabWidth(void);
 		static void setSourceEditorApp(const QString &app);
+		static void setSourceEditorAppArgs(const QString &args);
 
 		/*! brief Disable the custom context menu designed specifically for this class.
 		This method is useful when the user needs to create another context menu that executes actions

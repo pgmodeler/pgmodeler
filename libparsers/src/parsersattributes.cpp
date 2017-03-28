@@ -432,6 +432,7 @@ namespace ParsersAttributes {
 	SNIPPET=QString("snippet"),
 	SORT_OP=QString("sort-op"),
 	SOURCE_EDITOR_APP=QString("source-editor-app"),
+	SOURCE_EDITOR_ARGS=QString("source-editor-args"),
 	SOURCE_TYPE=QString("source-type"),
 	SRC_TYPE=QString("src-type"),
 	SPATIAL_TYPE=QString("spatial-type"),

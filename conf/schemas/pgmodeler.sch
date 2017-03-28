@@ -46,7 +46,15 @@ $sp [<configuration op-list-size="] {op-list-size} ["] $br
 [               align-objs-to-grid="] %if {align-objs-to-grid} %then true %else false %end ["] $br
 [               min-object-opacity="] {min-object-opacity} ["] $br
 [               history-max-length="] {history-max-length} ["] $br
+
+%if {source-editor-app} %then
 [               source-editor-app="] {source-editor-app} ["] $br
+%end
+
+%if {source-editor-app} %and {source-editor-args} %then
+[               source-editor-args="] {source-editor-args} ["] $br
+%end
+
 [/>] $br
 
 %if {file} %then

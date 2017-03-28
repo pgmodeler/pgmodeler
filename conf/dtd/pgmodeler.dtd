@@ -41,6 +41,7 @@
 <!ATTLIST configuration min-object-opacity CDATA #IMPLIED>
 <!ATTLIST configuration history-max-length CDATA #IMPLIED>
 <!ATTLIST configuration source-editor-app CDATA #IMPLIED>
+<!ATTLIST configuration source-editor-args CDATA #IMPLIED>
 
 <!ELEMENT session (file+)>
 <!ELEMENT recent-models (file+)>

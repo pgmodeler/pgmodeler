@@ -30,6 +30,7 @@ QColor NumberedTextEditor::line_hl_color=Qt::yellow;
 QFont NumberedTextEditor::default_font=QFont(QString("DejaVu Sans Mono"), 10);
 int NumberedTextEditor::tab_width=0;
 QString NumberedTextEditor::src_editor_app=QString();
+QString NumberedTextEditor::src_editor_app_args=QString();
 
 NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) : QPlainTextEdit(parent)
 {
@@ -179,6 +180,11 @@ int NumberedTextEditor::getTabWidth(void)
 void NumberedTextEditor::setSourceEditorApp(const QString &app)
 {
 	NumberedTextEditor::src_editor_app = app;
+}
+
+void NumberedTextEditor::setSourceEditorAppArgs(const QString &args)
+{
+	NumberedTextEditor::src_editor_app_args = args;
 }
 
 void NumberedTextEditor::showContextMenu(void)
@@ -360,7 +366,7 @@ void NumberedTextEditor::editSource(void)
 
 	//Starting the source editor application using the temp source file as input
 	src_editor_proc.setProgram(NumberedTextEditor::src_editor_app);
-	src_editor_proc.setArguments({ tmp_src_file.fileName() });
+	src_editor_proc.setArguments({ src_editor_app_args, tmp_src_file.fileName() });
 	src_editor_proc.start();
 }
 
