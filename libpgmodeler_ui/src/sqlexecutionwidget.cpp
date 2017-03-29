@@ -74,18 +74,28 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 
 	run_sql_tb->setToolTip(run_sql_tb->toolTip() + QString(" (%1)").arg(run_sql_tb->shortcut().toString()));
 	export_tb->setToolTip(export_tb->toolTip() + QString(" (%1)").arg(export_tb->shortcut().toString()));
-	load_tb->setToolTip(load_tb->toolTip() + QString(" (%1)").arg(load_tb->shortcut().toString()));
-	save_tb->setToolTip(save_tb->toolTip() + QString(" (%1)").arg(save_tb->shortcut().toString()));
+	file_tb->setToolTip(file_tb->toolTip() + QString(" (%1)").arg(file_tb->shortcut().toString()));
 	output_tb->setToolTip(output_tb->toolTip() + QString(" (%1)").arg(output_tb->shortcut().toString()));
 	find_tb->setToolTip(find_tb->toolTip() + QString(" (%1)").arg(find_tb->shortcut().toString()));
 
 	results_tbw->setItemDelegate(new PlainTextItemDelegate(this, true));
 
+	action_load=new QAction(QIcon(PgModelerUiNS::getIconPath("abrir")), trUtf8("Load"), this);
+	action_save=new QAction(QIcon(PgModelerUiNS::getIconPath("salvar")), trUtf8("Save"), this);
+	action_save_as=new QAction(QIcon(PgModelerUiNS::getIconPath("salvar_como")), trUtf8("Save as"), this);
+
+	file_menu.addAction(action_load);
+	file_menu.addAction(action_save);
+	file_menu.addAction(action_save_as);
+	file_tb->setMenu(&file_menu);
+
+	connect(action_load, SIGNAL(triggered(bool)), this, SLOT(loadCommands()));
+	connect(action_save, SIGNAL(triggered(bool)), this, SLOT(saveCommands()));
+	connect(action_save_as, SIGNAL(triggered(bool)), this, SLOT(saveCommands()));
+
 	connect(clear_btn, SIGNAL(clicked(void)), this, SLOT(clearAll(void)));
 	connect(sql_cmd_txt, SIGNAL(textChanged(void)), this, SLOT(enableCommandButtons(void)));
 	connect(run_sql_tb, SIGNAL(clicked(void)), this, SLOT(runSQLCommand(void)));
-	connect(save_tb, SIGNAL(clicked(void)), this, SLOT(saveCommands(void)));
-	connect(load_tb, SIGNAL(clicked(void)), this, SLOT(loadCommands(void)));
 	connect(find_tb, SIGNAL(toggled(bool)), find_wgt_parent, SLOT(setVisible(bool)));
 	connect(output_tb, SIGNAL(toggled(bool)), this, SLOT(toggleOutputPane(bool)));
 
@@ -153,7 +163,6 @@ void SQLExecutionWidget::enableCommandButtons(void)
 	run_sql_tb->setEnabled(!sql_cmd_txt->toPlainText().isEmpty());
 	find_tb->setEnabled(!sql_cmd_txt->toPlainText().isEmpty());
 	clear_btn->setEnabled(run_sql_tb->isEnabled());
-	save_tb->setEnabled(run_sql_tb->isEnabled());
 }
 
 void SQLExecutionWidget::fillResultsTable(ResultSet &res)
@@ -187,10 +196,9 @@ void SQLExecutionWidget::resizeEvent(QResizeEvent *event)
 		style=Qt::ToolButtonIconOnly;
 
 
-	if(load_tb->toolButtonStyle()!=style)
+	if(file_tb->toolButtonStyle()!=style)
 	{
-		load_tb->setToolButtonStyle(style);
-		save_tb->setToolButtonStyle(style);
+		file_tb->setToolButtonStyle(style);
 		run_sql_tb->setToolButtonStyle(style);
 		clear_btn->setToolButtonStyle(style);
 		find_tb->setToolButtonStyle(style);
@@ -460,22 +468,33 @@ void SQLExecutionWidget::runSQLCommand(void)
 
 void SQLExecutionWidget::saveCommands(void)
 {
-	sql_file_dlg.setWindowTitle(trUtf8("Save SQL commands"));
-	sql_file_dlg.setAcceptMode(QFileDialog::AcceptSave);
-	sql_file_dlg.exec();
+	bool browse_file = (sender() == action_save_as || filename_edt->text().isEmpty());
+	QString filename = filename_edt->text();
 
-	if(sql_file_dlg.result()==QDialog::Accepted)
+	if(browse_file)
+	{
+		sql_file_dlg.setWindowTitle(trUtf8("Save SQL commands"));
+		sql_file_dlg.setAcceptMode(QFileDialog::AcceptSave);
+		sql_file_dlg.exec();
+
+		if(sql_file_dlg.result()==QDialog::Accepted)
+			filename = sql_file_dlg.selectedFiles().at(0);
+	}
+	else
+		filename = filename_edt->text();
+
+	if(!filename.isEmpty())
 	{
 		QFile file;
-		file.setFileName(sql_file_dlg.selectedFiles().at(0));
+		file.setFileName(filename);
 
 		if(!file.open(QFile::WriteOnly))
-			throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED)
-							.arg(sql_file_dlg.selectedFiles().at(0))
-							, ERR_FILE_DIR_NOT_ACCESSED ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(filename),
+											ERR_FILE_DIR_NOT_ACCESSED ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		file.write(sql_cmd_txt->toPlainText().toUtf8());
 		file.close();
+		filename_edt->setText(filename);
 	}
 }
 
@@ -498,6 +517,8 @@ void SQLExecutionWidget::loadCommands(void)
 		sql_cmd_txt->clear();
 		sql_cmd_txt->setPlainText(file.readAll());
 		file.close();
+
+		filename_edt->setText(sql_file_dlg.selectedFiles().at(0));
 	}
 }
 
@@ -804,9 +825,7 @@ void SQLExecutionWidget::enableSQLExecution(bool enable)
 	try
 	{
 		sql_cmd_txt->setEnabled(enable);
-		load_tb->setEnabled(enable);
 		snippets_tb->setEnabled(enable);
-		save_tb->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
 		clear_btn->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
 		run_sql_tb->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
 		find_tb->setEnabled(enable);

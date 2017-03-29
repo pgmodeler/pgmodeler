@@ -56,7 +56,11 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		//! \brief Dialog for SQL save/load
 		QFileDialog sql_file_dlg;
 
-		QMenu snippets_menu;
+		QMenu snippets_menu,
+
+		file_menu;
+
+		QAction *action_save, *action_save_as, *action_load;
 
 		FindReplaceWidget *find_replace_wgt;
 
