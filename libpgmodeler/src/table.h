@@ -114,10 +114,6 @@ class Table: public BaseTable {
 		//! \brief Default char for data line break in initial-data tag
 		DATA_LINE_BREAK;
 
-		//! \brief Default chars used as unescaped value delimiter ({ and })
-		static const QChar UNESC_VALUE_START,
-		UNESC_VALUE_END;
-
 		Table(void);
 		~Table(void);
 

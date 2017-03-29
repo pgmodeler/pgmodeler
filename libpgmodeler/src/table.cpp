@@ -17,11 +17,10 @@
 */
 
 #include "table.h"
+#include "pgmodelerns.h"
 
 const QString Table::DATA_SEPARATOR = QString("•");
 const QString Table::DATA_LINE_BREAK = QString("%1%2").arg("⸣").arg('\n');
-const QChar Table::UNESC_VALUE_START='{';
-const QChar	Table::UNESC_VALUE_END='}';
 
 Table::Table(void) : BaseTable()
 {
@@ -1709,7 +1708,7 @@ QString Table::createInsertCommand(const QStringList &col_names, const QStringLi
 			value=QString("DEFAULT");
 		}
 		//Unescaped values will not be enclosed in quotes
-		else if(value.startsWith(UNESC_VALUE_START) && value.endsWith(UNESC_VALUE_END))
+		else if(value.startsWith(PgModelerNS::UNESC_VALUE_START) && value.endsWith(PgModelerNS::UNESC_VALUE_END))
 		{
 			value.remove(0,1);
 			value.remove(value.length()-1, 1);
@@ -1717,8 +1716,8 @@ QString Table::createInsertCommand(const QStringList &col_names, const QStringLi
 		//Quoting value
 		else
 		{
-			value.replace(QString("\\") + UNESC_VALUE_START, UNESC_VALUE_START);
-			value.replace(QString("\\") + UNESC_VALUE_END, UNESC_VALUE_END);
+			value.replace(QString("\\") + PgModelerNS::UNESC_VALUE_START, PgModelerNS::UNESC_VALUE_START);
+			value.replace(QString("\\") + PgModelerNS::UNESC_VALUE_END, PgModelerNS::UNESC_VALUE_END);
 			value.replace(QString("\'"), QString("''"));
 			value.replace(QChar(QChar::LineFeed), QString("\\n"));
 			value=QString("E'") + value + QString("'");

@@ -19,8 +19,6 @@
 #include "tabledatawidget.h"
 #include "htmlitemdelegate.h"
 
-const QChar TableDataWidget::UNESC_VALUE_START='{';
-const QChar	TableDataWidget::UNESC_VALUE_END='}';
 const QString TableDataWidget::PLACEHOLDER_COLUMN=QString("$placeholder$");
 
 TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, BASE_OBJECT)
@@ -446,9 +444,9 @@ QString TableDataWidget::generateDataBuffer(void)
 			value = data_tbw->item(row, col)->text();
 
 			//Checking if the value is a malformed unescaped value, e.g., {value, value}, {value\}
-			if((value.startsWith(Table::UNESC_VALUE_START) && value.endsWith(QString("\\") + Table::UNESC_VALUE_END)) ||
-					(value.startsWith(Table::UNESC_VALUE_START) && !value.endsWith(Table::UNESC_VALUE_END)) ||
-					(!value.startsWith(Table::UNESC_VALUE_START) && !value.endsWith(QString("\\") + Table::UNESC_VALUE_END) && value.endsWith(Table::UNESC_VALUE_END)))
+			if((value.startsWith(PgModelerNS::UNESC_VALUE_START) && value.endsWith(QString("\\") + PgModelerNS::UNESC_VALUE_END)) ||
+					(value.startsWith(PgModelerNS::UNESC_VALUE_START) && !value.endsWith(PgModelerNS::UNESC_VALUE_END)) ||
+					(!value.startsWith(PgModelerNS::UNESC_VALUE_START) && !value.endsWith(QString("\\") + PgModelerNS::UNESC_VALUE_END) && value.endsWith(PgModelerNS::UNESC_VALUE_END)))
 				throw Exception(Exception::getErrorMessage(ERR_MALFORMED_UNESCAPED_VALUE)
 								.arg(row + 1).arg(col_names[col]),
 								ERR_MALFORMED_UNESCAPED_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);

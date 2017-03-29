@@ -19,6 +19,7 @@
 #include "datamanipulationform.h"
 #include "sqlexecutionwidget.h"
 #include "pgmodeleruins.h"
+#include "pgmodelerns.h"
 #include "plaintextitemdelegate.h"
 
 const QColor DataManipulationForm::ROW_COLORS[3]={ QColor(QString("#C0FFC0")), QColor(QString("#FFFFC0")), QColor(QString("#FFC0C0"))  };
@@ -1013,9 +1014,9 @@ QString DataManipulationForm::getDMLCommand(int row)
 				if(op_type==OP_INSERT || (op_type==OP_UPDATE && value!=item->data(Qt::UserRole)))
 				{
 					//Checking if the value is a malformed unescaped value, e.g., {value, value}, {value\}
-					if((value.startsWith(Table::UNESC_VALUE_START) && value.endsWith(QString("\\") + Table::UNESC_VALUE_END)) ||
-							(value.startsWith(Table::UNESC_VALUE_START) && !value.endsWith(Table::UNESC_VALUE_END)) ||
-							(!value.startsWith(Table::UNESC_VALUE_START) && !value.endsWith(QString("\\") + Table::UNESC_VALUE_END) && value.endsWith(Table::UNESC_VALUE_END)))
+					if((value.startsWith(PgModelerNS::UNESC_VALUE_START) && value.endsWith(QString("\\") + PgModelerNS::UNESC_VALUE_END)) ||
+							(value.startsWith(PgModelerNS::UNESC_VALUE_START) && !value.endsWith(PgModelerNS::UNESC_VALUE_END)) ||
+							(!value.startsWith(PgModelerNS::UNESC_VALUE_START) && !value.endsWith(QString("\\") + PgModelerNS::UNESC_VALUE_END) && value.endsWith(PgModelerNS::UNESC_VALUE_END)))
 						throw Exception(Exception::getErrorMessage(ERR_MALFORMED_UNESCAPED_VALUE)
 										.arg(row + 1).arg(col_name),
 										ERR_MALFORMED_UNESCAPED_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -1028,7 +1029,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 						value=QString("DEFAULT");
 					}
 					//Unescaped values will not be enclosed in quotes
-					else if(value.startsWith(Table::UNESC_VALUE_START) && value.endsWith(Table::UNESC_VALUE_END))
+					else if(value.startsWith(PgModelerNS::UNESC_VALUE_START) && value.endsWith(PgModelerNS::UNESC_VALUE_END))
 					{
 						value.remove(0,1);
 						value.remove(value.length()-1, 1);
@@ -1036,8 +1037,8 @@ QString DataManipulationForm::getDMLCommand(int row)
 					//Quoting value
 					else
 					{
-						value.replace(QString("\\") + Table::UNESC_VALUE_START, Table::UNESC_VALUE_START);
-						value.replace(QString("\\") + Table::UNESC_VALUE_END, Table::UNESC_VALUE_END);
+						value.replace(QString("\\") + PgModelerNS::UNESC_VALUE_START, PgModelerNS::UNESC_VALUE_START);
+						value.replace(QString("\\") + PgModelerNS::UNESC_VALUE_END, PgModelerNS::UNESC_VALUE_END);
 						value.replace("\'","''");
 						value=QString("E'") + value + QString("'");
 					}
