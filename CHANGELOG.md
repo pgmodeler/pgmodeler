@@ -1,6 +1,42 @@
 Change Log
 ---------
 
+v0.9.0-beta
+------
+<em>Release date: April 2, 2017</em><br/>
+
+* [New] Added support to indexes in Views.
+* [New] Added the support to edit/load the source code in NumberedTextEditor in external application.
+* [New] Added the ability to save/load metadata related to fade out status and extended attributes display status.
+* [New] Added the ability toggle the extended attributes area in tables and views. The toggle status is persisted in the model file and restores during loading
+* [New] Added constraints to the extended attributes section in the tables at canvas area in order to improve the quick access to these objects.
+* [New] Enabled the importing of view's indexes.
+* [New] Fade status is now persisted in the dbm file and restored during loading.
+* [New] Added the ability to control zoom factor from overview widget.
+* [New] Added a shortcut for "Duplicate" action in design view.
+* [New] Added support to (back)slash char in object's names.
+* [New] Enabled the usage of NewObjectOverlayWidget for views.
+* [Change] Changed the default characters used to escape values in DataManipulationForm and TableDataWidget from {} to // due to problems with json data.
+* [Change] Improved the file manipulation in SQLExecutionWidget. Added option to save the commands to the current file or in another file (save as).
+* [Change] Minor improvements done in Linux deployment script to support multiarch systems. 
+* [Change] View's children (indexes, rules, triggers) are now listed under their respective parent view in DatabaseExplorerWidget.
+* [Change] Minor improvement in ElementsWidget to disable/hide columns combo when creating index elements for a index associated to a view.
+* [Change] Improved the diff between the complete database and a partial model representing it.
+* [Fix] Minor fix in AppearanceConfigWidget in order to set the font color correctly.
+* [Fix] Minor fix in the default file objects-style.conf
+* [Fix] Added the missing support to drop event triggers from database model.
+* [Fix] Fixed the drop cast command generation.
+* [Fix] Minor fix in windows deploy script to use newer PostgreSQL.
+* [Fix] Minor fix in template connections.conf file.
+* [Fix] Minor fix in config files related to installer generation (Linux).
+* [Fix] Minor fix in paste operation to restore the viewport position in design view.
+* [Fix] Minor fix in diff process to detect view's index changes.
+* [Fix] Fixed a bug in EventTrigger that was causing unknown exception to be thrown.
+* [Fix] Fixed a bug on RoleWidget that was preventing roles to be removed from "Members Of" tab.
+* [Fix] Minor fix in mouse cursor override operations.
+* [Fix] Fixed a bug when importing functions and composite types that somehow depend upon array types.
+* [Fix] Fixed a bug in function importing that was causing default values of parameters to be placed in the wrong position.
+
 v0.9.0-alpha1
 ------
 <em>Release date: February 07, 2017</em><br/>

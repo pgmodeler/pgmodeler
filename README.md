@@ -32,6 +32,7 @@ For details about installation process from source code visit the [Installation]
 Known Issues
 -----------
 
+* pgModeler does not runs fine in high resolution screens. In many parts of the software the texts and dialogs don't scales to a higher resolution automatically leading to a poor readability.
 * The diff process still presents false-positive results due its limitations. Sometimes, there is the need to run the process twice to get the full changes.
 * pgModeler does not fully supports the [quoted identifier notation](http://www.postgresql.org/docs/current/static/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS). When using quoted identifiers only the following characters are accepted in the middle of names: a-z A-Z 0-9 _ . @ $ - space
 * pgModeler is unusable in sandboxed Mac OS X installations. To workaround this issue you'll need to deactivate sandbox usage to run pgModeler properly. There is no planning to adapt this tool for sandbox feature in Mac OS X.
