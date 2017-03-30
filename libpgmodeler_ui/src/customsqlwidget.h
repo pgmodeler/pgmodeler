@@ -33,6 +33,8 @@ class CustomSQLWidget: public BaseObjectWidget, public Ui::CustomSQLWidget {
 	private:
 		Q_OBJECT
 		
+		NumberedTextEditor *append_sql_txt, *prepend_sql_txt;
+
 		SyntaxHighlighter *append_sql_hl, *prepend_sql_hl;
 		
 		CodeCompletionWidget *append_sql_cp, *prepend_sql_cp;

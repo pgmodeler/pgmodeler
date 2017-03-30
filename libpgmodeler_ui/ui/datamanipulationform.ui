@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
+    <width>714</width>
     <height>560</height>
    </rect>
   </property>
@@ -1110,26 +1110,6 @@
              </property>
             </widget>
            </item>
-           <item row="3" column="3">
-            <widget class="QLabel" name="results_lbl">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>results (Use &lt;strong&gt;0&lt;/strong&gt; for no limit)</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="limit_in_lbl">
-             <property name="text">
-              <string>Limit in:</string>
-             </property>
-            </widget>
-           </item>
            <item row="1" column="0" colspan="4">
             <layout class="QHBoxLayout" name="horizontalLayout">
              <item>
@@ -1350,19 +1330,6 @@
              </item>
             </layout>
            </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="column_lbl">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Column:</string>
-             </property>
-            </widget>
-           </item>
            <item row="3" column="1" colspan="2">
             <widget class="QSpinBox" name="limit_spb">
              <property name="sizePolicy">
@@ -1379,6 +1346,39 @@
              </property>
              <property name="value">
               <number>500</number>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="column_lbl">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Column:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="3">
+            <widget class="QLabel" name="results_lbl">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>results (Use &lt;strong&gt;0&lt;/strong&gt; for no limit)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="limit_in_lbl">
+             <property name="text">
+              <string>Limit in:</string>
              </property>
             </widget>
            </item>

@@ -28,6 +28,9 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 		Ui_CustomSQLWidget::setupUi(this);
 		configureFormLayout(sqlappend_grid, BASE_OBJECT);
 
+		append_sql_txt=PgModelerUiNS::createNumberedTextEditor(append_sql_wgt, true);
+		prepend_sql_txt=PgModelerUiNS::createNumberedTextEditor(prepend_sql_wgt, true);
+
 		append_sql_hl=new SyntaxHighlighter(append_sql_txt);
 		append_sql_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 		append_sql_cp=new CodeCompletionWidget(append_sql_txt);
