@@ -494,6 +494,7 @@ void SQLExecutionWidget::saveCommands(void)
 
 		file.write(sql_cmd_txt->toPlainText().toUtf8());
 		file.close();
+
 		filename_edt->setText(filename);
 	}
 }
