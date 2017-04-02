@@ -3,7 +3,7 @@ Change Log
 
 v0.9.0-beta
 ------
-<em>Release date: April 2, 2017</em><br/>
+<em>Release date: April 4, 2017</em><br/>
 
 * [New] Added support to indexes in Views.
 * [New] Added the support to edit/load the source code in NumberedTextEditor in external application.

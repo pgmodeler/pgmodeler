@@ -1,7 +1,7 @@
 v0.9.0-alpha1
 ------
 
-<em>Release date: April 2, 2017</em><br/>
+<em>Release date: April 4, 2017</em><br/>
 <em>Changes since: <strong>v0.9.0-alpha1</strong></em><br/>
 
 <strong>Summary:</strong> in this first beta release we have added some new design improvements as well important features and fixes that will improve the user's expirience.<br/>
