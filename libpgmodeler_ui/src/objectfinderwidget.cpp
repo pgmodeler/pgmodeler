@@ -24,9 +24,16 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	setupUi(this);
 
 	filter_frm->setVisible(false);
+	splitter->handle(1)->setEnabled(false);
 	updateObjectTypeList(obj_types_lst);
 
 	connect(filter_btn, SIGNAL(toggled(bool)), filter_frm, SLOT(setVisible(bool)));
+	connect(filter_btn, &QToolButton::toggled, [=](){
+		splitter->setSizes({0, 1000});
+		splitter->handle(1)->setEnabled(filter_btn->isChecked());
+	});
+
+
 	connect(find_btn, SIGNAL(clicked(bool)), this, SLOT(findObjects(void)));
 	connect(hide_tb, SIGNAL(clicked(void)), this, SLOT(hide(void)));
 	connect(result_tbw, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(selectObject(void)));
