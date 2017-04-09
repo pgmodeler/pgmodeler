@@ -476,7 +476,7 @@ QString Permission::getCodeDefinition(unsigned def_type)
 		}
 
 		attributes[ParsersAttributes::PRIVILEGES] = priv_list.join(QChar(','));
-		attributes[ParsersAttributes::PRIVILEGES_GOP] = priv_list.join(QChar(','));
+		attributes[ParsersAttributes::PRIVILEGES_GOP] = gop_priv_list.join(QChar(','));
 	}
 
 	count=roles.size();
