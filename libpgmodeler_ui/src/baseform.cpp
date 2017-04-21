@@ -41,12 +41,15 @@ void BaseForm::setButtonConfiguration(unsigned button_conf)
 void BaseForm::resizeForm(QWidget *widget)
 {
 	QVBoxLayout *vbox=new QVBoxLayout;
-	QScreen *screen=qApp->screens().at(0);
 	QSize min_size=widget->minimumSize();
-	int max_h = screen->size().height() * 0.70,
-			max_w = screen->size().width() * 0.70,
-			curr_w =0, curr_h = 0;
+	int max_h = 0, max_w = 0, curr_w =0, curr_h = 0,
+			screen_id = qApp->desktop()->screenNumber(qApp->activeWindow());
+	QScreen *screen=qApp->screens().at(screen_id);
+	float dpi_factor = 0;
 
+	max_w = screen->size().width() * 0.70;
+	max_h = screen->size().height() * 0.70;
+	dpi_factor = screen->logicalDotsPerInch() / 96.0f;
 	vbox->setContentsMargins(2,2,2,2);
 
 	/* If the widget's minimum size is zero then we need to do
@@ -95,8 +98,8 @@ void BaseForm::resizeForm(QWidget *widget)
 							((buttons_lt->contentsMargins().top() +
 								buttons_lt->contentsMargins().bottom()) * 6);
 
-	this->setMinimumSize(curr_w, curr_h);
-	this->resize(curr_w, curr_h);
+	this->setMinimumSize(curr_w * dpi_factor, curr_h * dpi_factor);
+	this->resize(this->minimumSize());
 }
 
 void BaseForm::setMainWidget(BaseObjectWidget *widget)
