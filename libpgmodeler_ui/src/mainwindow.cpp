@@ -61,6 +61,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		views_stw->widget(MANAGE_VIEW)->setLayout(grid);
 
 		configuration_form=new ConfigurationForm(nullptr, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
+		PgModelerUiNS::resizeDialog(configuration_form);
 		configuration_form->loadConfiguration();
 
 		plugins_conf_wgt=dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PLUGINS_CONF_WGT));
@@ -130,6 +131,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		about_wgt=new AboutWidget(this);
 		donate_wgt=new DonateWidget(this);
 		restoration_form=new ModelRestorationForm(nullptr, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+		PgModelerUiNS::resizeDialog(restoration_form);
 
 #ifdef NO_UPDATE_CHECK
 		update_notifier_wgt=nullptr;
@@ -192,7 +194,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(model_nav_wgt, SIGNAL(s_currentModelChanged(int)), this, SLOT(setCurrentModel()));
 
 	connect(action_print, SIGNAL(triggered(bool)), this, SLOT(printModel(void)));
-	connect(action_configuration, SIGNAL(triggered(bool)), configuration_form, SLOT(show(void)));
+	connect(action_configuration, SIGNAL(triggered(bool)), configuration_form, SLOT(show()));
 
 	connect(oper_list_wgt, SIGNAL(s_operationExecuted(void)), overview_wgt, SLOT(updateOverview(void)));
 	connect(configuration_form, SIGNAL(finished(int)), this, SLOT(applyConfigurations(void)));
@@ -480,6 +482,7 @@ void MainWindow::fixModel(const QString &filename)
 		model_fix_form.output_file_edt->setText(fi.absolutePath() + GlobalAttributes::DIR_SEPARATOR + fi.baseName() + QString("_fixed.") + fi.suffix());
 	}
 
+	PgModelerUiNS::resizeDialog(&model_fix_form);
 	model_fix_form.exec();
 	disconnect(&model_fix_form, nullptr, this, nullptr);
 }
@@ -1341,6 +1344,7 @@ void MainWindow::exportModel(void)
 	{
 		stopTimers(true);
 		connect(&model_export_form, &ModelExportForm::s_connectionsUpdateRequest, [=](){ updateConnections(true); });
+		PgModelerUiNS::resizeDialog(&model_export_form);
 		model_export_form.exec(current_model);
 		stopTimers(false);
 	}
@@ -1354,6 +1358,7 @@ void MainWindow::importDatabase(void)
 
 	connect(&db_import_form, &DatabaseImportForm::s_connectionsUpdateRequest, [=](){ updateConnections(true); });
 	db_import_form.setModelWidget(current_model);
+	PgModelerUiNS::resizeDialog(&db_import_form);
 	db_import_form.exec();
 	stopTimers(false);
 
@@ -1394,6 +1399,7 @@ void MainWindow::diffModelDatabase(void)
 
 		stopTimers(true);
 		connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_connectionsUpdateRequest, [=](){ updateConnections(true); });
+		PgModelerUiNS::resizeDialog(&modeldb_diff_frm);
 		modeldb_diff_frm.exec();
 		stopTimers(false);
 	}
@@ -1848,6 +1854,7 @@ void MainWindow::changeCurrentView(bool checked)
 void MainWindow::reportBug(void)
 {
 	BugReportForm bugrep_frm;
+	PgModelerUiNS::resizeDialog(&bugrep_frm);
 	bugrep_frm.exec();
 }
 

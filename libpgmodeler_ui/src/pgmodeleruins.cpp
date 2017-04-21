@@ -3,6 +3,8 @@
 #include "databasemodel.h"
 #include <QLabel>
 #include "numberedtexteditor.h"
+#include <QScreen>
+#include <QDesktopWidget>
 
 namespace PgModelerUiNS {
 
@@ -268,5 +270,45 @@ namespace PgModelerUiNS {
 	QString getIconPath(ObjectType obj_type)
 	{
 		return(getIconPath(BaseObject::getSchemaName(obj_type)));
+	}
+
+	void resizeDialog(QDialog *widget)
+	{
+		QSize min_size=widget->minimumSize();
+		int max_h = 0, max_w = 0, curr_w =0, curr_h = 0,
+				screen_id = qApp->desktop()->screenNumber(qApp->activeWindow());
+		QScreen *screen=qApp->screens().at(screen_id);
+		float dpi_factor = 0;
+
+		dpi_factor = screen->logicalDotsPerInch() / 96.0f;
+
+		//If the dpi_factor is unchanged (1) we keep the dialog original dimension
+		if(dpi_factor <= 1)
+			return;
+
+		max_w = screen->size().width() * 0.70;
+		max_h = screen->size().height() * 0.70;
+
+		/* If the widget's minimum size is zero then we need to do
+				a size adjustment on the widget prior to insert it into the dialog */
+		if(min_size.height() <= 0 || min_size.width() <= 0)
+		{
+			widget->adjustSize();
+			min_size=widget->size();
+		}
+
+		widget->adjustSize();
+		curr_h=widget->height();
+		curr_w=min_size.width();
+
+		// If the current height is greater than the widget's minimum height we will use a medium value
+		if(curr_h > min_size.height() && min_size.height() < max_h)
+			curr_h = (curr_h + min_size.height())/2;
+		//Using the maximum height if the widget's minimum height exceeds the maximum allowed
+		else if(min_size.height() >= max_h)
+			curr_h = max_h;
+
+		widget->setMinimumSize(curr_w * dpi_factor, curr_h * dpi_factor);
+		widget->resize(widget->minimumSize());
 	}
 }
