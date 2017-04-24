@@ -38,12 +38,12 @@ void TaskProgressWidget::addIcon(unsigned id, const QIcon &ico)
 
 void TaskProgressWidget::show(void)
 {
-
 	/* Using a event loop as a workaround to give a little time to task progress
 	 to be shown before start the progress update. In tasks too quick, if the event loop above
 	 isn't used the task is not shown properly and sometimes stay only on taskbar not poping up
 	 to the user. */
 	QEventLoop eventLoop;
+	PgModelerUiNS::resizeDialog(this);
 	QDialog::show();
 	QTimer t;
 
