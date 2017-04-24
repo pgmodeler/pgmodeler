@@ -427,7 +427,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		for(int i=0; i < constr_codes.size(); i++)
 		{
 			if(str_aux.indexOf(constr_codes[i]) >= 0)
-				str_aux1+=contr_types[i]  + QString(", ");
+				str_aux1+=contr_types[i] + QString(", ");
 		}
 
 		if(str_aux1.isEmpty())

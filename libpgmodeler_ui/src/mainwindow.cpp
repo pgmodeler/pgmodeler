@@ -131,7 +131,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		about_wgt=new AboutWidget(this);
 		donate_wgt=new DonateWidget(this);
 		restoration_form=new ModelRestorationForm(nullptr, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
-		PgModelerUiNS::resizeDialog(restoration_form);
 
 #ifdef NO_UPDATE_CHECK
 		update_notifier_wgt=nullptr;
@@ -309,46 +308,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	showRightWidgetsBar();
 	showBottomWidgetsBar();
 
-	//Restore temporary models (if exists)
-	if(restoration_form->hasTemporaryModels())
-	{
-		restoration_form->exec();
-
-		if(restoration_form->result()==QDialog::Accepted)
-		{
-			ModelWidget *model=nullptr;
-			QString model_file;
-			QStringList tmp_models=restoration_form->getSelectedModels();
-
-			while(!tmp_models.isEmpty())
-			{
-				try
-				{
-					model_file=tmp_models.front();
-					tmp_models.pop_front();
-					this->addModel(model_file);
-
-					//Get the model widget generated from file
-					model=dynamic_cast<ModelWidget *>(models_tbw->widget(models_tbw->count()-1));
-
-					//Set the model as modified forcing the user to save when the autosave timer ends
-					model->setModified(true);
-					model->filename.clear();
-					restoration_form->removeTemporaryModel(model_file);
-				}
-				catch(Exception &e)
-				{
-					//Destroy the temp file if the "keep  models" isn't checked
-					if(!restoration_form->keep_models_chk->isChecked())
-						restoration_form->removeTemporaryModel(model_file);
-
-					Messagebox msg_box;
-					msg_box.show(e);
-				}
-			}
-		}
-	}
-
 	//If a previous session was restored save the temp models
 	updateConnections();
 	updateRecentModelsMenu();
@@ -415,6 +374,51 @@ MainWindow::~MainWindow(void)
 	delete(restoration_form);
 	delete(overview_wgt);
 	delete(configuration_form);
+}
+
+void MainWindow::restoreTemporaryModels(void)
+{
+	PgModelerUiNS::resizeDialog(restoration_form);
+
+	//Restore temporary models (if exists)
+	if(restoration_form->hasTemporaryModels())
+	{
+		restoration_form->exec();
+
+		if(restoration_form->result()==QDialog::Accepted)
+		{
+			ModelWidget *model=nullptr;
+			QString model_file;
+			QStringList tmp_models=restoration_form->getSelectedModels();
+
+			while(!tmp_models.isEmpty())
+			{
+				try
+				{
+					model_file=tmp_models.front();
+					tmp_models.pop_front();
+					this->addModel(model_file);
+
+					//Get the model widget generated from file
+					model=dynamic_cast<ModelWidget *>(models_tbw->widget(models_tbw->count()-1));
+
+					//Set the model as modified forcing the user to save when the autosave timer ends
+					model->setModified(true);
+					model->filename.clear();
+					restoration_form->removeTemporaryModel(model_file);
+				}
+				catch(Exception &e)
+				{
+					//Destroy the temp file if the "keep  models" isn't checked
+					if(!restoration_form->keep_models_chk->isChecked())
+						restoration_form->removeTemporaryModel(model_file);
+
+					Messagebox msg_box;
+					msg_box.show(e);
+				}
+			}
+		}
+	}
 }
 
 void MainWindow::showRightWidgetsBar(void)
@@ -516,18 +520,19 @@ void MainWindow::showEvent(QShowEvent *)
 	//Positioning the update notifier widget before showing it (if there is an update)
 	setFloatingWidgetPos(update_notifier_wgt, action_update_found, control_tb, false);
 	action_update_found->setVisible(false);
+	QTimer::singleShot(1000, this, SLOT(restoreTemporaryModels()));
 
 #ifdef NO_UPDATE_CHECK
 #warning "NO UPDATE CHECK: Update checking is disabled."
 #else
 	//Enabling update check at startup
 	if(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]==ParsersAttributes::_TRUE_)
-		QTimer::singleShot(2000, update_notifier_wgt, SLOT(checkForUpdate()));
+		QTimer::singleShot(3000, update_notifier_wgt, SLOT(checkForUpdate()));
 #endif
 
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: demonstration version startup alert."
-	QTimer::singleShot(1500, this, SLOT(showDemoVersionWarning()));
+	QTimer::singleShot(2000, this, SLOT(showDemoVersionWarning()));
 #endif
 }
 

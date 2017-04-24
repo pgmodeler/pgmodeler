@@ -200,6 +200,9 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 		void s_columnAdded(int);
 
 		void s_cellClicked(int, int);
+
+	protected:
+		void resizeEvent(QResizeEvent *);
 };
 
 #endif

@@ -106,6 +106,7 @@ QTableWidgetItem *ObjectTableWidget::getItem(unsigned row_idx, unsigned col_idx)
 void ObjectTableWidget::adjustColumnToContents(int col)
 {
 	table_tbw->resizeColumnToContents(col);
+	table_tbw->resizeRowsToContents();
 }
 
 void ObjectTableWidget::setColumnCount(unsigned col_count)
@@ -187,8 +188,6 @@ void ObjectTableWidget::setRowFont(int row_idx, const QFont &font, const QColor 
 		item->setForeground(fg_color);
 		item->setBackgroundColor(bg_color);
 	}
-
-	table_tbw->resizeRowsToContents();
 }
 
 void ObjectTableWidget::setRowData(const QVariant &data, unsigned row_idx)
@@ -609,4 +608,9 @@ void ObjectTableWidget::emitRowSelected(void)
 
 	if(item && item->row() >= 0)
 		emit s_rowSelected(item->row());
+}
+
+void ObjectTableWidget::resizeEvent(QResizeEvent *)
+{
+	table_tbw->resizeRowsToContents();
 }
