@@ -57,8 +57,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 	ObjectType obj_type=BASE_OBJECT;
 	Column *column=dynamic_cast<Column *>(this->getSourceObject());
 	bool ellipse_desc=false;
-	double factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE) *
-			qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->logicalDotsPerInch() / 96.0f;
+	double factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE) * BaseObjectView::getScreenDpiFactor();
 
 	//Based upon the source object type the descriptor is allocated
 	if(this->getSourceObject())

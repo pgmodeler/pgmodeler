@@ -18,6 +18,7 @@
 
 #include "aboutwidget.h"
 #include "pgmodeleruins.h"
+#include "baseobjectview.h"
 #include <QScreen>
 #include <QDesktopWidget>
 
@@ -51,7 +52,7 @@ AboutWidget::AboutWidget(QWidget *parent) : QWidget(parent)
 	PgModelerUiNS::configureWidgetFont(build_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 	PgModelerUiNS::configureWidgetFont(build_num_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 
-	float factor = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->logicalDotsPerInch() / 96.0f;
+	float factor = BaseObjectView::getScreenDpiFactor();
 	this->adjustSize();
 	this->resize(this->minimumWidth() * factor, this->minimumHeight() * factor);
 }

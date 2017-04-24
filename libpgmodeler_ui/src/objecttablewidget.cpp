@@ -187,6 +187,8 @@ void ObjectTableWidget::setRowFont(int row_idx, const QFont &font, const QColor 
 		item->setForeground(fg_color);
 		item->setBackgroundColor(bg_color);
 	}
+
+	table_tbw->resizeRowsToContents();
 }
 
 void ObjectTableWidget::setRowData(const QVariant &data, unsigned row_idx)
@@ -343,6 +345,7 @@ void ObjectTableWidget::addRow(void)
 {
 	this->addRow(table_tbw->rowCount());
 	setButtonsEnabled();
+	table_tbw->resizeRowsToContents();
 
 	emit s_rowAdded(table_tbw->rowCount()-1);
 }
@@ -538,6 +541,7 @@ void ObjectTableWidget::moveRows(void)
 		}
 
 		setButtonsEnabled();
+		table_tbw->resizeRowsToContents();
 		emit s_rowsMoved(row, row1);
 	}
 }
@@ -606,4 +610,3 @@ void ObjectTableWidget::emitRowSelected(void)
 	if(item && item->row() >= 0)
 		emit s_rowSelected(item->row());
 }
-
