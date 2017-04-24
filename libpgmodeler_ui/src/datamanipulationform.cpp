@@ -240,7 +240,7 @@ void DataManipulationForm::retrieveData(void)
 		{
 			QStringList ord_cols, col;
 
-			query+=QString(" ORDER BY ");
+			query+=QString("\n ORDER BY ");
 
 			for(int idx=0; idx < ord_columns_lst->count(); idx++)
 			{
