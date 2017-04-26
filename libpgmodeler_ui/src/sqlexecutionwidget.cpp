@@ -106,6 +106,15 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(export_tb, &QToolButton::clicked,
 			[=](){ SQLExecutionWidget::exportResults(results_tbw); });
 
+	connect(close_file_tb, &QToolButton::clicked,
+	[=](){
+			if(clearAll() == QDialog::Accepted)
+			{
+				filename_edt->clear();
+				filename_wgt->setVisible(false);
+			}
+	});
+
 	connect(&snippets_menu, SIGNAL(triggered(QAction*)), this, SLOT(selectSnippet(QAction *)));
 
 	connect(code_compl_wgt, SIGNAL(s_wordSelected(QString)), this, SLOT(handleSelectedWord(QString)));
@@ -114,6 +123,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 
 	configureSnippets();
 	toggleOutputPane(false);
+	filename_wgt->setVisible(false);
 	v_splitter->handle(1)->installEventFilter(this);
 }
 
@@ -496,6 +506,7 @@ void SQLExecutionWidget::saveCommands(void)
 		file.close();
 
 		filename_edt->setText(filename);
+		filename_wgt->setVisible(true);
 	}
 }
 
@@ -520,6 +531,7 @@ void SQLExecutionWidget::loadCommands(void)
 		file.close();
 
 		filename_edt->setText(sql_file_dlg.selectedFiles().at(0));
+		filename_wgt->setVisible(true);
 	}
 }
 
@@ -595,14 +607,17 @@ QByteArray SQLExecutionWidget::generateCSVBuffer(QTableWidget *results_tbw, int 
 	return(buf);
 }
 
-void SQLExecutionWidget::clearAll(void)
+int SQLExecutionWidget::clearAll(void)
 {
 	Messagebox msg_box;
+	int res = 0;
 
 	msg_box.show(trUtf8("The SQL input field and the results grid will be cleared! Want to proceed?"),
-				 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+							 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
-	if(msg_box.result()==QDialog::Accepted)
+	res = msg_box.result();
+
+	if(res==QDialog::Accepted)
 	{
 		sql_cmd_txt->setPlainText(QString());
 		msgoutput_lst->clear();
@@ -610,6 +625,8 @@ void SQLExecutionWidget::clearAll(void)
 		results_parent->setVisible(false);
 		export_tb->setEnabled(false);
 	}
+
+	return(res);
 }
 
 void SQLExecutionWidget::copySelection(QTableWidget *results_tbw, bool use_popup)

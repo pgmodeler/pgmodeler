@@ -141,7 +141,7 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		void loadCommands(void);
 
 		//! \brief Clears the input field as well the results grid
-		void clearAll(void);
+		int clearAll(void);
 
 		void selectSnippet(QAction *act);
 
