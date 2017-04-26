@@ -100,6 +100,7 @@ void UpdateNotifierWidget::checkForUpdate(void)
 	QUrl url(GlobalAttributes::PGMODELER_UPD_CHECK_URL + GlobalAttributes::PGMODELER_VERSION);
 	QNetworkRequest req(url);
 
+	req.setRawHeader("User-Agent", "pgModelerUpdateCheck");
 	show_no_upd_msg=(dynamic_cast<QAction *>(sender())!=nullptr);
 	update_chk_reply=update_chk_manager.get(req);
 }
@@ -107,19 +108,18 @@ void UpdateNotifierWidget::checkForUpdate(void)
 void UpdateNotifierWidget::handleUpdateChecked(QNetworkReply *reply)
 {
 	Messagebox msg_box;
+	unsigned http_status=reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toUInt();
 
 	if(reply->error()!=QNetworkReply::NoError)
 	{
 		msg_box.show(trUtf8("Failed to check updates"),
-					 trUtf8("The update notifier failed to check for new versions! Please, verify your internet connectivity and try again! Connection error returned: <strong>%1</strong>.").arg(reply->errorString()),
+					 trUtf8("The update notifier failed to check for new versions! Please, verify your internet connectivity and try again! Connection error returned: <em>%1</em> - <strong>%2</strong>.").arg(http_status).arg(reply->errorString()),
 					 Messagebox::ERROR_ICON, Messagebox::OK_BUTTON);
 	}
 	else
 	{
-		unsigned http_status=reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toUInt();
-
 		/* In case of [301 - Move permanently] there is the need to make a new request to
-	   reach the final destination */
+			 reach the final destination */
 		if(http_status==301 || http_status==302)
 		{
 			QString url=reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString();
