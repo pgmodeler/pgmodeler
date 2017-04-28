@@ -61,12 +61,16 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		
 		//! \brief Stores the previous color of the rows before being marked with some operation
 		map<int, QBrush> prev_row_colors;
+
+		map<QString, attribs_map> fk_col_names;
 		
 		//! \brief Fills a combobox with the names of objects retrieved from catalog
 		void listObjects(QComboBox *combo, vector<ObjectType> obj_types, const QString &schema=QString());
 		
 		//! \brief Retrieve the primary key column ids for the specified table
 		void retrievePKColumns(const QString &schema, const QString &table);
+
+		void retrieveFKColumns(const QString &schema, const QString &table);
 		
 		/*! \brief Mark the line as changed, changing its background color and applying the respective operation (see OP_??? constant)
 				when user call saveChanged() */

@@ -136,12 +136,9 @@ void DataManipulationForm::setAttributes(Connection conn, const QString curr_sch
 		schema_cmb->clear();
 		listObjects(schema_cmb, { OBJ_SCHEMA });
 
+		disableControlButtons();
 		schema_cmb->setCurrentText(curr_schema);
 		table_cmb->setCurrentText(curr_table);
-		disableControlButtons();
-
-		if(!curr_table.isEmpty())
-			retrieveData();
 	}
 	catch(Exception &e)
 	{
@@ -262,6 +259,7 @@ void DataManipulationForm::retrieveData(void)
 		conn_sql.executeDMLCommand(query, res);
 
 		retrievePKColumns(schema_cmb->currentText(), table_cmb->currentText());
+		retrieveFKColumns(schema_cmb->currentText(), table_cmb->currentText());
 		SQLExecutionWidget::fillResultsTable(catalog, res, results_tbw, true);
 
 		export_tb->setEnabled(results_tbw->rowCount() > 0);
@@ -594,6 +592,73 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 			results_tbw->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::AnyKeyPressed);
 		else
 			results_tbw->setEditTriggers(QAbstractItemView::NoEditTriggers);
+	}
+	catch(Exception &e)
+	{
+		catalog.closeConnection();
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void DataManipulationForm::retrieveFKColumns(const QString &schema, const QString &table)
+{
+	Catalog catalog;
+	Connection conn=Connection(tmpl_conn_params);
+
+	try
+	{
+		vector<attribs_map> fks;
+		ObjectType obj_type=static_cast<ObjectType>(table_cmb->currentData().toUInt());
+
+		if(obj_type==OBJ_VIEW)
+			return;
+
+		fk_col_names.clear();
+		catalog.setConnection(conn);
+
+		//Retrieving the constraints from catalog using a custom filter to select only foreign keys (contype=f)
+		fks=catalog.getObjectsAttributes(OBJ_CONSTRAINT, schema, table, {}, {{ParsersAttributes::CUSTOM_FILTER, QString("contype='f'")}});
+
+		if(!fks.empty())
+		{
+			vector<unsigned> col_ids;
+
+			attribs_map ref_tab, ref_schema;
+			QStringList name_list;
+
+			for(auto &fk : fks)
+			{
+				ref_tab = catalog.getObjectAttributes(OBJ_TABLE, fk[ParsersAttributes::REF_TABLE].toUInt());
+				ref_schema = catalog.getObjectAttributes(OBJ_SCHEMA, ref_tab[ParsersAttributes::SCHEMA].toUInt());
+
+				//Store the referenced schema and table names
+				fk_col_names[fk[ParsersAttributes::NAME]][ParsersAttributes::REF_TABLE] = ref_tab[ParsersAttributes::NAME];
+				fk_col_names[fk[ParsersAttributes::NAME]][ParsersAttributes::SCHEMA] = ref_schema[ParsersAttributes::SCHEMA];
+
+				//Storing the source columns in a string
+				for(QString id : Catalog::parseArrayValues(fk[ParsersAttributes::SRC_COLUMNS]))
+					col_ids.push_back(id.toUInt());
+
+				for(auto &col : catalog.getObjectsAttributes(OBJ_COLUMN, schema, table, col_ids))
+					name_list.push_back(BaseObject::formatName(col[ParsersAttributes::NAME]));
+
+				fk_col_names[fk[ParsersAttributes::NAME]][ParsersAttributes::SRC_COLUMNS] = name_list.join(Table::DATA_SEPARATOR);
+
+				col_ids.clear();
+				name_list.clear();
+
+				//Storing the referenced columns in a string
+				for(QString id : Catalog::parseArrayValues(fk[ParsersAttributes::COLUMNS]))
+					col_ids.push_back(id.toUInt());
+
+				for(auto &col : catalog.getObjectsAttributes(OBJ_COLUMN, ref_schema[ParsersAttributes::NAME], ref_tab[ParsersAttributes::NAME], col_ids))
+					name_list.push_back(BaseObject::formatName(col[ParsersAttributes::NAME]));
+
+				fk_col_names[fk[ParsersAttributes::NAME]][ParsersAttributes::COLUMNS] = name_list.join(Table::DATA_SEPARATOR);
+			}
+		}
+
+		catalog.closeConnection();
 	}
 	catch(Exception &e)
 	{
