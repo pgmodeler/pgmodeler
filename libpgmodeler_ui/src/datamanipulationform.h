@@ -46,6 +46,8 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		SyntaxHighlighter *filter_hl;
 		
 		CodeCompletionWidget *code_compl_wgt;
+
+		QMenu fks_menu;
 		
 		//! \brief Store the template connection params to be used by catalogs and command execution connections
 		attribs_map tmpl_conn_params;

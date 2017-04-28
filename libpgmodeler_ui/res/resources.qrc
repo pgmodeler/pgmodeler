@@ -225,6 +225,7 @@
         <file>icones/fadein.png</file>
         <file>icones/fadeout.png</file>
         <file>icones/toggleattribs.png</file>
+        <file>icones/browsetable.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

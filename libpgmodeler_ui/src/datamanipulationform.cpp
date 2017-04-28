@@ -44,6 +44,8 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	results_tbw->setItemDelegate(new PlainTextItemDelegate(this, false));
 
+	browse_tabs_tb->setMenu(&fks_menu);
+
 	refresh_tb->setToolTip(refresh_tb->toolTip() + QString(" (%1)").arg(refresh_tb->shortcut().toString()));
 	save_tb->setToolTip(save_tb->toolTip() + QString(" (%1)").arg(save_tb->shortcut().toString()));
 	undo_tb->setToolTip(undo_tb->toolTip() + QString(" (%1)").arg(undo_tb->shortcut().toString()));
@@ -330,6 +332,7 @@ void DataManipulationForm::enableRowControlButtons(void)
 	delete_tb->setEnabled(cols_selected);
 	duplicate_tb->setEnabled(cols_selected);
 	copy_tb->setEnabled(sel_ranges.count() == 1);
+	browse_tabs_tb->setEnabled(!fk_col_names.empty() && sel_ranges.count() == 1);
 }
 
 void DataManipulationForm::resetAdvancedControls(void)
@@ -613,6 +616,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 		if(obj_type==OBJ_VIEW)
 			return;
 
+		fks_menu.clear();
 		fk_col_names.clear();
 		catalog.setConnection(conn);
 
@@ -627,13 +631,18 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 			QStringList name_list;
 
 			for(auto &fk : fks)
-			{
+			{				
 				ref_tab = catalog.getObjectAttributes(OBJ_TABLE, fk[ParsersAttributes::REF_TABLE].toUInt());
 				ref_schema = catalog.getObjectAttributes(OBJ_SCHEMA, ref_tab[ParsersAttributes::SCHEMA].toUInt());
 
 				//Store the referenced schema and table names
 				fk_col_names[fk[ParsersAttributes::NAME]][ParsersAttributes::REF_TABLE] = ref_tab[ParsersAttributes::NAME];
-				fk_col_names[fk[ParsersAttributes::NAME]][ParsersAttributes::SCHEMA] = ref_schema[ParsersAttributes::SCHEMA];
+				fk_col_names[fk[ParsersAttributes::NAME]][ParsersAttributes::SCHEMA] = ref_schema[ParsersAttributes::NAME];
+				fks_menu.addAction(QPixmap(PgModelerUiNS::getIconPath("table")),
+													 QString("%1.%2 (%3)")
+														.arg(ref_schema[ParsersAttributes::NAME])
+														.arg(ref_tab[ParsersAttributes::NAME])
+														.arg(fk[ParsersAttributes::NAME]));
 
 				//Storing the source columns in a string
 				for(QString id : Catalog::parseArrayValues(fk[ParsersAttributes::SRC_COLUMNS]))
