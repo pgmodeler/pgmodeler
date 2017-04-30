@@ -64,7 +64,7 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		//! \brief Stores the previous color of the rows before being marked with some operation
 		map<int, QBrush> prev_row_colors;
 
-		map<QString, attribs_map> fk_col_names;
+		map<QString, attribs_map> fk_infos;
 		
 		//! \brief Fills a combobox with the names of objects retrieved from catalog
 		void listObjects(QComboBox *combo, vector<ObjectType> obj_types, const QString &schema=QString());
@@ -72,6 +72,8 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		//! \brief Retrieve the primary key column ids for the specified table
 		void retrievePKColumns(const QString &schema, const QString &table);
 
+		/*! \brief Retrieve the foreign key columns info for the specified table. These data is used to browse referenced tables in the data
+		 that the selected line holds */
 		void retrieveFKColumns(const QString &schema, const QString &table);
 		
 		/*! \brief Mark the line as changed, changing its background color and applying the respective operation (see OP_??? constant)
@@ -91,7 +93,7 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		DataManipulationForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 		
 		//! \brief Defines the connection and current schema and table to be handled, this method should be called before show the dialog
-		void setAttributes(Connection conn, const QString curr_schema=QString("public"), const QString curr_table=QString());
+		void setAttributes(Connection conn, const QString curr_schema=QString("public"), const QString curr_table=QString(), const QString &filter=QString());
 		
 	private slots:
 		//! \brief List the tables based upon the current schema
@@ -153,6 +155,8 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 
 		//! \brief Add new rows to the grid based upon the CSV loaded
 		void loadDataFromCsv(void);
+
+		void browseReferencedTable(void);
 };
 
 #endif
