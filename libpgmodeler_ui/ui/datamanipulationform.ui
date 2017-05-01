@@ -417,8 +417,8 @@
               <height>22</height>
              </size>
             </property>
-            <property name="shortcut">
-             <string>Ctrl+C</string>
+            <property name="popupMode">
+             <enum>QToolButton::InstantPopup</enum>
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonIconOnly</enum>

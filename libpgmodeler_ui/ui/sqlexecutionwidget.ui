@@ -54,35 +54,48 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QLabel" name="filename_lbl">
+       <widget class="QToolButton" name="close_file_tb">
         <property name="minimumSize">
+         <size>
+          <width>25</width>
+          <height>25</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>25</width>
+          <height>25</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Close the current SQL script</string>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../res/resources.qrc">
+          <normaloff>:/icones/icones/fechar.png</normaloff>:/icones/icones/fechar.png</iconset>
+        </property>
+        <property name="iconSize">
          <size>
           <width>20</width>
           <height>20</height>
          </size>
         </property>
-        <property name="maximumSize">
-         <size>
-          <width>22</width>
-          <height>22</height>
-         </size>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="pixmap">
-         <pixmap resource="../res/resources.qrc">:/icones/icones/codigofonte.png</pixmap>
-        </property>
-        <property name="scaledContents">
+        <property name="autoRaise">
          <bool>true</bool>
-        </property>
-        <property name="indent">
-         <number>-1</number>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QLineEdit" name="filename_edt">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>25</height>
+         </size>
+        </property>
         <property name="toolTip">
          <string>SQL script currently handled</string>
         </property>
@@ -106,41 +119,6 @@
         </property>
         <property name="placeholderText">
          <string>(not saved)</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="close_file_tb">
-        <property name="minimumSize">
-         <size>
-          <width>22</width>
-          <height>22</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>22</width>
-          <height>22</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Close the current SQL script</string>
-        </property>
-        <property name="text">
-         <string>...</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../res/resources.qrc">
-          <normaloff>:/icones/icones/fechar.png</normaloff>:/icones/icones/fechar.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>22</width>
-          <height>16</height>
-         </size>
-        </property>
-        <property name="autoRaise">
-         <bool>true</bool>
         </property>
        </widget>
       </item>

@@ -572,6 +572,7 @@ QByteArray SQLExecutionWidget::generateCSVBuffer(QTableWidget *results_tbw, int 
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	QByteArray buf;
+	QStringList line;
 
 	//If the selection interval is valid
 	if(start_row >=0 && start_col >=0 &&
@@ -584,22 +585,54 @@ QByteArray SQLExecutionWidget::generateCSVBuffer(QTableWidget *results_tbw, int 
 
 		//Creating the header of csv
 		for(col=start_col; col < max_col; col++)
-		{
-			buf.append(QString("\"%1\"").arg(results_tbw->horizontalHeaderItem(col)->text()));
-			buf.append(';');
-		}
+			line.append(QString("\"%1\"").arg(results_tbw->horizontalHeaderItem(col)->text()));
 
+		buf.append(line.join(';'));
 		buf.append('\n');
+		line.clear();
+
+		//Creating the content
+		for(row=start_row; row < max_row; row++)
+		{
+			for(col=start_col; col < max_col; col++)
+				line.append(QString("\"%1\"").arg(results_tbw->item(row, col)->text()));
+
+			buf.append(line.join(';'));
+			line.clear();
+			buf.append('\n');
+		}
+	}
+
+	return(buf);
+}
+
+QByteArray SQLExecutionWidget::generateTextBuffer(QTableWidget *results_tbw, int start_row, int start_col, int row_cnt, int col_cnt)
+{
+	if(!results_tbw)
+		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	QByteArray buf;
+	QStringList line;
+
+	//If the selection interval is valid
+	if(start_row >=0 && start_col >=0 &&
+			start_row + row_cnt <= results_tbw->rowCount() &&
+			start_col + col_cnt <= results_tbw->columnCount())
+	{
+		int col=0, row=0,
+				max_col=start_col + col_cnt,
+				max_row=start_row + row_cnt;
 
 		//Creating the content
 		for(row=start_row; row < max_row; row++)
 		{
 			for(col=start_col; col < max_col; col++)
 			{
-				buf.append(QString("\"%1\"").arg(results_tbw->item(row, col)->text()));
-				buf.append(';');
+				line.push_back(results_tbw->item(row, col)->text());
+				buf.append(line.join('\t'));
 			}
 
+			line.clear();
 			buf.append('\n');
 		}
 	}
@@ -629,7 +662,7 @@ int SQLExecutionWidget::clearAll(void)
 	return(res);
 }
 
-void SQLExecutionWidget::copySelection(QTableWidget *results_tbw, bool use_popup)
+void SQLExecutionWidget::copySelection(QTableWidget *results_tbw, bool use_popup, bool csv_is_default)
 {
 	if(!results_tbw)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -638,19 +671,37 @@ void SQLExecutionWidget::copySelection(QTableWidget *results_tbw, bool use_popup
 
 	if(sel_ranges.count()==1 && (!use_popup || (use_popup && QApplication::mouseButtons()==Qt::RightButton)))
 	{
-		QMenu copy_menu;
+		QMenu copy_menu, copy_mode_menu;
+		QAction *act = nullptr, *act_csv = nullptr, *act_txt = nullptr;
 
 		if(use_popup)
-			copy_menu.addAction(trUtf8("Copy selection"));
+		{
+			act = copy_menu.addAction(trUtf8("Copy selection"));
+			act_txt = copy_mode_menu.addAction(trUtf8("Plain format"));
+			act_csv = copy_mode_menu.addAction(trUtf8("CVS format"));
+			act->setMenu(&copy_mode_menu);
+			act = copy_menu.exec(QCursor::pos());
+		}
 
-		if(!use_popup || (use_popup && copy_menu.exec(QCursor::pos())))
+		if(!use_popup || act)
 		{
 			QTableWidgetSelectionRange selection=sel_ranges.at(0);
+			QByteArray buf;
 
-			//Generates the csv buffer and assigns it to application's clipboard
-			QByteArray buf=generateCSVBuffer(results_tbw,
-																			 selection.topRow(), selection.leftColumn(),
-																			 selection.rowCount(), selection.columnCount());
+			if((use_popup && act == act_csv) || (!use_popup && csv_is_default))
+			{
+				//Generates the csv buffer and assigns it to application's clipboard
+				buf=generateCSVBuffer(results_tbw,
+															selection.topRow(), selection.leftColumn(),
+															selection.rowCount(), selection.columnCount());
+			}
+			else if((use_popup && act == act_txt) || (!use_popup && !csv_is_default))
+			{
+				buf=generateTextBuffer(results_tbw,
+															 selection.topRow(), selection.leftColumn(),
+															 selection.rowCount(), selection.columnCount());
+			}
+
 			qApp->clipboard()->setText(buf);
 		}
 	}

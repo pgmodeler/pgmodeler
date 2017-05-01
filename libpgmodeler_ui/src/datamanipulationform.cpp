@@ -43,8 +43,11 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	code_compl_wgt->configureCompletion(nullptr, filter_hl);
 
 	results_tbw->setItemDelegate(new PlainTextItemDelegate(this, false));
-
 	browse_tabs_tb->setMenu(&fks_menu);
+
+	copy_menu.addAction(trUtf8("Copy as text"), [=](){ SQLExecutionWidget::copySelection(results_tbw, false, false); }, QKeySequence("Ctrl+C"));
+	copy_menu.addAction(trUtf8("Copy as CSV"), [=](){ SQLExecutionWidget::copySelection(results_tbw, false, true); }, QKeySequence("Ctrl+Shift+C"));
+	copy_tb->setMenu(&copy_menu);
 
 	refresh_tb->setToolTip(refresh_tb->toolTip() + QString(" (%1)").arg(refresh_tb->shortcut().toString()));
 	save_tb->setToolTip(save_tb->toolTip() + QString(" (%1)").arg(save_tb->shortcut().toString()));
@@ -107,10 +110,35 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(results_tbw, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(insertRowOnTabPress(int,int,int,int)), Qt::QueuedConnection);
 
 	connect(results_tbw, &QTableWidget::itemPressed,
-			[=](){ SQLExecutionWidget::copySelection(results_tbw); });
+	[=](){
+					if(QApplication::mouseButtons()==Qt::RightButton)
+					{
+						QMenu item_menu;
+						QAction *act = nullptr;
+						ObjectType obj_type=static_cast<ObjectType>(table_cmb->currentData().toUInt());
 
-	connect(copy_tb, &QToolButton::clicked,
-			[=](){ SQLExecutionWidget::copySelection(results_tbw, false); });
+						act = item_menu.addAction(trUtf8("Copy selection"));
+						act->setMenu(&copy_menu);
+
+						if(obj_type == OBJ_TABLE)
+						{
+							item_menu.addSeparator();
+							act = item_menu.addAction(browse_tabs_tb->icon(), trUtf8("Browse ref. tables"));
+							act->setMenu(&fks_menu);
+							act->setEnabled(browse_tabs_tb->isEnabled());
+
+							item_menu.addSeparator();
+							act = item_menu.addAction(duplicate_tb->icon(), trUtf8("Duplicate row(s)"), this, SLOT(duplicateRows()), duplicate_tb->shortcut());
+							act->setEnabled(duplicate_tb->isEnabled());
+
+							act = item_menu.addAction(delete_tb->icon(), trUtf8("Delete row(s)"), this, SLOT(markDeleteOnRows()), delete_tb->shortcut());
+							act->setEnabled(delete_tb->isEnabled());
+						}
+
+						item_menu.exec(QCursor::pos());
+					}
+		});
+
 
 	connect(export_tb, &QToolButton::clicked,
 			[=](){ SQLExecutionWidget::exportResults(results_tbw); });
@@ -345,7 +373,7 @@ void DataManipulationForm::enableRowControlButtons(void)
 	delete_tb->setEnabled(cols_selected);
 	duplicate_tb->setEnabled(cols_selected);
 	copy_tb->setEnabled(sel_ranges.count() == 1);
-	browse_tabs_tb->setEnabled(!fk_infos.empty() && sel_ranges.count() == 1);
+	browse_tabs_tb->setEnabled(!fk_infos.empty() && sel_ranges.count() == 1 && sel_ranges.at(0).rowCount() == 1);
 }
 
 void DataManipulationForm::resetAdvancedControls(void)
@@ -627,11 +655,12 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 		vector<attribs_map> fks;
 		ObjectType obj_type=static_cast<ObjectType>(table_cmb->currentData().toUInt());
 
+		fks_menu.clear();
+		fk_infos.clear();
+
 		if(obj_type==OBJ_VIEW)
 			return;
 
-		fks_menu.clear();
-		fk_infos.clear();
 		catalog.setConnection(conn);
 
 		//Retrieving the constraints from catalog using a custom filter to select only foreign keys (contype=f)
