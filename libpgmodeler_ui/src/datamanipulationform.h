@@ -57,6 +57,10 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		
 		//! \brief Current editing table pk columns names
 		pk_col_names;
+
+		/*! \brief Stores the current opened table's oid. This attribute is filled only the table has an primary
+		and it is used to retrieve all foreign keys that references the current table */
+		unsigned table_oid;
 		
 		//! \brief Stores the ids of changed rows. These ids are handled on saveChanges() method
 		vector<int> changed_rows;
@@ -64,7 +68,11 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		//! \brief Stores the previous color of the rows before being marked with some operation
 		map<int, QBrush> prev_row_colors;
 
-		map<QString, attribs_map> fk_infos;
+		//! \brief Stores the fk informations about referenced tables
+		map<QString, attribs_map> fk_infos,
+
+		//! \brief Stores the fk informations about referencing tables
+		ref_fk_infos;
 		
 		//! \brief Fills a combobox with the names of objects retrieved from catalog
 		void listObjects(QComboBox *combo, vector<ObjectType> obj_types, const QString &schema=QString());
@@ -88,6 +96,9 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		
 		//! \brief Reset the state of changed rows, clearing all attributes used to control the modifications on them
 		void clearChangedRows(void);
+
+		//! brief Browse a referenced or referencing table by the provided foreign key name
+		void browseTable(const QString &fk_name, bool browse_ref_tab);
 
 	public:
 		DataManipulationForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -156,7 +167,11 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		//! \brief Add new rows to the grid based upon the CSV loaded
 		void loadDataFromCsv(void);
 
+		//! brief Browse the referenced table data using the selected row in the results grid
 		void browseReferencedTable(void);
+
+		//! brief Browse the referencing table data using the selected row in the results grid
+		void browseReferencingTable(void);
 };
 
 #endif

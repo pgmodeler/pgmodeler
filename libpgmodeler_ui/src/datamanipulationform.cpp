@@ -33,6 +33,8 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	setupUi(this);
 	setWindowFlags(Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
+	table_oid=0;
+
 	PgModelerUiNS::configureWidgetFont(hint_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 	PgModelerUiNS::configureWidgetFont(warning_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 
@@ -123,7 +125,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 						if(obj_type == OBJ_TABLE)
 						{
 							item_menu.addSeparator();
-							act = item_menu.addAction(browse_tabs_tb->icon(), trUtf8("Browse ref. tables"));
+							act = item_menu.addAction(browse_tabs_tb->icon(), trUtf8("Browse tables"));
 							act->setMenu(&fks_menu);
 							act->setEnabled(browse_tabs_tb->isEnabled());
 
@@ -373,7 +375,7 @@ void DataManipulationForm::enableRowControlButtons(void)
 	delete_tb->setEnabled(cols_selected);
 	duplicate_tb->setEnabled(cols_selected);
 	copy_tb->setEnabled(sel_ranges.count() == 1);
-	browse_tabs_tb->setEnabled(!fk_infos.empty() && sel_ranges.count() == 1 && sel_ranges.at(0).rowCount() == 1);
+	browse_tabs_tb->setEnabled((!fk_infos.empty() || !ref_fk_infos.empty()) && sel_ranges.count() == 1 && sel_ranges.at(0).rowCount() == 1);
 }
 
 void DataManipulationForm::resetAdvancedControls(void)
@@ -594,6 +596,8 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 		vector<attribs_map> pks, columns;
 		ObjectType obj_type=static_cast<ObjectType>(table_cmb->currentData().toUInt());
 
+		table_oid = 0;
+
 		if(obj_type==OBJ_VIEW)
 		{
 			warning_frm->setVisible(true);
@@ -609,6 +613,8 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 
 			if(pks.empty())
 				warning_lbl->setText(trUtf8("The selected table doesn't owns a primary key! Updates and deletes will be performed by considering all columns as primary key. <strong>WARNING:</strong> those operations can affect more than one row."));
+			else
+				table_oid = pks[0][ParsersAttributes::TABLE].toUInt();
 		}
 
 		hint_frm->setVisible(obj_type==OBJ_TABLE);
@@ -652,10 +658,12 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 	try
 	{
 		QAction *action = nullptr;
-		vector<attribs_map> fks;
+		vector<attribs_map> fks, ref_fks;
 		ObjectType obj_type=static_cast<ObjectType>(table_cmb->currentData().toUInt());
+		QString fk_name;
 
 		fks_menu.clear();
+		ref_fk_infos.clear();
 		fk_infos.clear();
 
 		if(obj_type==OBJ_VIEW)
@@ -665,27 +673,39 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 
 		//Retrieving the constraints from catalog using a custom filter to select only foreign keys (contype=f)
 		fks=catalog.getObjectsAttributes(OBJ_CONSTRAINT, schema, table, {}, {{ParsersAttributes::CUSTOM_FILTER, QString("contype='f'")}});
+		ref_fks=catalog.getObjectsAttributes(OBJ_CONSTRAINT, QString(), QString(), {}, {{ParsersAttributes::CUSTOM_FILTER, QString("contype='f' AND cs.confrelid=%1").arg(table_oid)}});
 
-		if(!fks.empty())
+		if(!fks.empty() || !ref_fks.empty())
 		{
 			vector<unsigned> col_ids;
+			QMenu *submenu = nullptr;
 
-			attribs_map ref_tab, ref_schema;
+			attribs_map aux_table, aux_schema;
 			QStringList name_list;
+
+			submenu = new QMenu;
+			fks_menu.addAction(QPixmap(PgModelerUiNS::getIconPath("referenced")), trUtf8("Referenced tables"))->setMenu(submenu);
+
+			if(fks.empty())
+				submenu->addAction(trUtf8("(none)"))->setEnabled(false);
 
 			for(auto &fk : fks)
 			{				
-				ref_tab = catalog.getObjectAttributes(OBJ_TABLE, fk[ParsersAttributes::REF_TABLE].toUInt());
-				ref_schema = catalog.getObjectAttributes(OBJ_SCHEMA, ref_tab[ParsersAttributes::SCHEMA].toUInt());
+				aux_table = catalog.getObjectAttributes(OBJ_TABLE, fk[ParsersAttributes::REF_TABLE].toUInt());
+				aux_schema = catalog.getObjectAttributes(OBJ_SCHEMA, aux_table[ParsersAttributes::SCHEMA].toUInt());
+				fk_name = QString("%1.%2.%3")
+									.arg(aux_schema[ParsersAttributes::NAME])
+									.arg(aux_table[ParsersAttributes::NAME])
+									.arg(fk[ParsersAttributes::NAME]);
 
 				//Store the referenced schema and table names
-				fk_infos[fk[ParsersAttributes::NAME]][ParsersAttributes::REF_TABLE] = ref_tab[ParsersAttributes::NAME];
-				fk_infos[fk[ParsersAttributes::NAME]][ParsersAttributes::SCHEMA] = ref_schema[ParsersAttributes::NAME];
-				action = fks_menu.addAction(QPixmap(PgModelerUiNS::getIconPath("table")),
-																		QString("%1.%2 (%3)").arg(ref_schema[ParsersAttributes::NAME])
-																													.arg(ref_tab[ParsersAttributes::NAME])
+				fk_infos[fk_name][ParsersAttributes::REF_TABLE] = aux_table[ParsersAttributes::NAME];
+				fk_infos[fk_name][ParsersAttributes::SCHEMA] = aux_schema[ParsersAttributes::NAME];
+				action = submenu->addAction(QPixmap(PgModelerUiNS::getIconPath("table")),
+																		QString("%1.%2 (%3)").arg(aux_schema[ParsersAttributes::NAME])
+																													.arg(aux_table[ParsersAttributes::NAME])
 																													.arg(fk[ParsersAttributes::NAME]), this, SLOT(browseReferencedTable()));
-				action->setData(fk[ParsersAttributes::NAME]);
+				action->setData(fk_name);
 
 				col_ids.clear();
 				name_list.clear();
@@ -697,19 +717,55 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				for(auto &col : catalog.getObjectsAttributes(OBJ_COLUMN, schema, table, col_ids))
 					name_list.push_back(BaseObject::formatName(col[ParsersAttributes::NAME]));
 
-				fk_infos[fk[ParsersAttributes::NAME]][ParsersAttributes::SRC_COLUMNS] = name_list.join(Table::DATA_SEPARATOR);
+				fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS] = name_list.join(Table::DATA_SEPARATOR);
 
 				col_ids.clear();
 				name_list.clear();
 
 				//Storing the referenced columns in a string
-				for(QString id : Catalog::parseArrayValues(fk[ParsersAttributes::COLUMNS]))
+				for(QString id : Catalog::parseArrayValues(fk[ParsersAttributes::DST_COLUMNS]))
 					col_ids.push_back(id.toUInt());
 
-				for(auto &col : catalog.getObjectsAttributes(OBJ_COLUMN, ref_schema[ParsersAttributes::NAME], ref_tab[ParsersAttributes::NAME], col_ids))
+				for(auto &col : catalog.getObjectsAttributes(OBJ_COLUMN, aux_schema[ParsersAttributes::NAME], aux_table[ParsersAttributes::NAME], col_ids))
 					name_list.push_back(BaseObject::formatName(col[ParsersAttributes::NAME]));
 
-				fk_infos[fk[ParsersAttributes::NAME]][ParsersAttributes::COLUMNS] = name_list.join(Table::DATA_SEPARATOR);
+				fk_infos[fk_name][ParsersAttributes::DST_COLUMNS] = name_list.join(Table::DATA_SEPARATOR);
+			}
+
+			submenu = new QMenu;
+			fks_menu.addAction(QPixmap(PgModelerUiNS::getIconPath("referencing")), trUtf8("Referencing tables"))->setMenu(submenu);
+
+			if(ref_fks.empty())
+				submenu->addAction(trUtf8("(none)"))->setEnabled(false);
+
+			for(auto &fk : ref_fks)
+			{
+				col_ids.clear();
+				name_list.clear();
+
+				aux_table = catalog.getObjectAttributes(OBJ_TABLE, fk[ParsersAttributes::TABLE].toUInt());
+				aux_schema = catalog.getObjectAttributes(OBJ_SCHEMA, aux_table[ParsersAttributes::SCHEMA].toUInt());
+				fk_name = QString("%1.%2.%3")
+									.arg(aux_schema[ParsersAttributes::NAME])
+									.arg(aux_table[ParsersAttributes::NAME])
+									.arg(fk[ParsersAttributes::NAME]);
+
+				//Storing the source columns in a string
+				for(QString id : Catalog::parseArrayValues(fk[ParsersAttributes::SRC_COLUMNS]))
+					col_ids.push_back(id.toUInt());
+
+				for(auto &col : catalog.getObjectsAttributes(OBJ_COLUMN, aux_schema[ParsersAttributes::NAME], aux_table[ParsersAttributes::NAME], col_ids))
+					name_list.push_back(BaseObject::formatName(col[ParsersAttributes::NAME]));
+
+				action = submenu->addAction(QPixmap(PgModelerUiNS::getIconPath("table")),
+																		QString("%1.%2 (%3)").arg(aux_schema[ParsersAttributes::NAME])
+																													.arg(aux_table[ParsersAttributes::NAME])
+																													.arg(fk[ParsersAttributes::NAME]), this, SLOT(browseReferencingTable()));
+				action->setData(fk_name);
+
+				ref_fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS] = name_list.join(Table::DATA_SEPARATOR);
+				ref_fk_infos[fk_name][ParsersAttributes::TABLE] = aux_table[ParsersAttributes::NAME];
+				ref_fk_infos[fk_name][ParsersAttributes::SCHEMA] = aux_schema[ParsersAttributes::NAME];
 			}
 		}
 
@@ -949,14 +1005,27 @@ void DataManipulationForm::clearChangedRows(void)
 	save_tb->setEnabled(false);
 }
 
-void DataManipulationForm::browseReferencedTable(void)
+void DataManipulationForm::browseTable(const QString &fk_name, bool browse_ref_tab)
 {
-	QString value, fk_name = qobject_cast<QAction *>(sender())->data().toString();
+	QString value, schema, table;
 	DataManipulationForm *data_manip = new DataManipulationForm;
 	Connection conn = Connection(tmpl_conn_params);
-	QStringList filter,
-			src_cols =  fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS].split(Table::DATA_SEPARATOR),
-			ref_cols = fk_infos[fk_name][ParsersAttributes::COLUMNS].split(Table::DATA_SEPARATOR);
+	QStringList filter, src_cols, ref_cols;
+
+	if(browse_ref_tab)
+	{
+		src_cols =  pk_col_names;
+		ref_cols = ref_fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS].split(Table::DATA_SEPARATOR);
+		schema = ref_fk_infos[fk_name][ParsersAttributes::SCHEMA];
+		table = ref_fk_infos[fk_name][ParsersAttributes::TABLE];
+	}
+	else
+	{
+		src_cols =  fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS].split(Table::DATA_SEPARATOR);
+		ref_cols = fk_infos[fk_name][ParsersAttributes::DST_COLUMNS].split(Table::DATA_SEPARATOR);
+		schema = fk_infos[fk_name][ParsersAttributes::SCHEMA];
+		table = fk_infos[fk_name][ParsersAttributes::REF_TABLE];
+	}
 
 	for(QString col_name : src_cols)
 	{
@@ -972,10 +1041,72 @@ void DataManipulationForm::browseReferencedTable(void)
 
 	data_manip->setWindowModality(Qt::NonModal);
 	data_manip->setAttribute(Qt::WA_DeleteOnClose, true);
-	data_manip->setAttributes(conn, fk_infos[fk_name][ParsersAttributes::SCHEMA], fk_infos[fk_name][ParsersAttributes::REF_TABLE], filter.join(QString("AND")));
+	data_manip->setAttributes(conn, schema, table, filter.join(QString("AND")));
 
 	PgModelerUiNS::resizeDialog(data_manip);
 	data_manip->show();
+}
+
+void DataManipulationForm::browseReferencingTable(void)
+{
+	browseTable(qobject_cast<QAction *>(sender())->data().toString(), true);
+
+	/*QString value, fk_name = qobject_cast<QAction *>(sender())->data().toString();
+	 DataManipulationForm *data_manip = new DataManipulationForm;
+	Connection conn = Connection(tmpl_conn_params);
+	QStringList filter,
+			src_cols =  ref_fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS].split(Table::DATA_SEPARATOR),
+			ref_cols = pk_col_names;
+
+	for(QString col_name : pk_col_names)
+	{
+		value = results_tbw->item(results_tbw->currentRow(), col_names.indexOf(col_name))->text();
+
+		if(value.isEmpty())
+			filter.push_back(QString("%1 IS NULL").arg(src_cols.front()));
+		else
+			filter.push_back(QString("%1 = '%2'").arg(src_cols.front()).arg(value));
+
+		ref_cols.pop_front();
+	}
+
+	data_manip->setWindowModality(Qt::NonModal);
+	data_manip->setAttribute(Qt::WA_DeleteOnClose, true);
+	data_manip->setAttributes(conn, ref_fk_infos[fk_name][ParsersAttributes::SCHEMA],ref_fk_infos[fk_name][ParsersAttributes::TABLE], filter.join(QString("AND")));
+
+	PgModelerUiNS::resizeDialog(data_manip);
+	data_manip->show();*/
+}
+
+void DataManipulationForm::browseReferencedTable(void)
+{
+	browseTable(qobject_cast<QAction *>(sender())->data().toString(), false);
+
+	/*QString value, fk_name = qobject_cast<QAction *>(sender())->data().toString();
+	DataManipulationForm *data_manip = new DataManipulationForm;
+	Connection conn = Connection(tmpl_conn_params);
+	QStringList filter,
+			src_cols =  dep_fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS].split(Table::DATA_SEPARATOR),
+			ref_cols = dep_fk_infos[fk_name][ParsersAttributes::DST_COLUMNS].split(Table::DATA_SEPARATOR);
+
+	for(QString col_name : src_cols)
+	{
+		value = results_tbw->item(results_tbw->currentRow(), col_names.indexOf(col_name))->text();
+
+		if(value.isEmpty())
+			filter.push_back(QString("%1 IS NULL").arg(ref_cols.front()));
+		else
+			filter.push_back(QString("%1 = '%2'").arg(ref_cols.front()).arg(value));
+
+		ref_cols.pop_front();
+	}
+
+	data_manip->setWindowModality(Qt::NonModal);
+	data_manip->setAttribute(Qt::WA_DeleteOnClose, true);
+	data_manip->setAttributes(conn, dep_fk_infos[fk_name][ParsersAttributes::SCHEMA], dep_fk_infos[fk_name][ParsersAttributes::REF_TABLE], filter.join(QString("AND")));
+
+	PgModelerUiNS::resizeDialog(data_manip);
+	data_manip->show();*/
 }
 
 void DataManipulationForm::undoOperations(void)
