@@ -1535,8 +1535,13 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 				{
 					QTreeWidgetItem *refs_item=nullptr, *tab_item=nullptr;
 					QStringList ref_tab_names = cached_attribs[ParsersAttributes::REFERRERS].split(Table::DATA_SEPARATOR);
+					QFont font;
 
 					refs_item=new QTreeWidgetItem(item);
+					font = refs_item->font(0);
+					font.setItalic(true);
+
+					refs_item->setFont(0, font);
 					refs_item->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, QVariant::fromValue<int>(-1));
 					refs_item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath("referrer")));
 					refs_item->setText(0, QString("%1 (%2)")
