@@ -227,7 +227,7 @@
         <file>icones/toggleattribs.png</file>
         <file>icones/browsetable.png</file>
         <file>icones/referenced.png</file>
-        <file>icones/referencing.png</file>
+        <file>icones/referrer.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

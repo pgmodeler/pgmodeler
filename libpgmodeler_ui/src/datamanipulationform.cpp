@@ -733,7 +733,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 			}
 
 			submenu = new QMenu;
-			fks_menu.addAction(QPixmap(PgModelerUiNS::getIconPath("referencing")), trUtf8("Referencing tables"))->setMenu(submenu);
+			fks_menu.addAction(QPixmap(PgModelerUiNS::getIconPath("referrer")), trUtf8("Referrer tables"))->setMenu(submenu);
 
 			if(ref_fks.empty())
 				submenu->addAction(trUtf8("(none)"))->setEnabled(false);
@@ -760,7 +760,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				action = submenu->addAction(QPixmap(PgModelerUiNS::getIconPath("table")),
 																		QString("%1.%2 (%3)").arg(aux_schema[ParsersAttributes::NAME])
 																													.arg(aux_table[ParsersAttributes::NAME])
-																													.arg(fk[ParsersAttributes::NAME]), this, SLOT(browseReferencingTable()));
+																													.arg(fk[ParsersAttributes::NAME]), this, SLOT(browseReferrerTable()));
 				action->setData(fk_name);
 
 				ref_fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS] = name_list.join(Table::DATA_SEPARATOR);
@@ -1047,66 +1047,14 @@ void DataManipulationForm::browseTable(const QString &fk_name, bool browse_ref_t
 	data_manip->show();
 }
 
-void DataManipulationForm::browseReferencingTable(void)
+void DataManipulationForm::browseReferrerTable(void)
 {
 	browseTable(qobject_cast<QAction *>(sender())->data().toString(), true);
-
-	/*QString value, fk_name = qobject_cast<QAction *>(sender())->data().toString();
-	 DataManipulationForm *data_manip = new DataManipulationForm;
-	Connection conn = Connection(tmpl_conn_params);
-	QStringList filter,
-			src_cols =  ref_fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS].split(Table::DATA_SEPARATOR),
-			ref_cols = pk_col_names;
-
-	for(QString col_name : pk_col_names)
-	{
-		value = results_tbw->item(results_tbw->currentRow(), col_names.indexOf(col_name))->text();
-
-		if(value.isEmpty())
-			filter.push_back(QString("%1 IS NULL").arg(src_cols.front()));
-		else
-			filter.push_back(QString("%1 = '%2'").arg(src_cols.front()).arg(value));
-
-		ref_cols.pop_front();
-	}
-
-	data_manip->setWindowModality(Qt::NonModal);
-	data_manip->setAttribute(Qt::WA_DeleteOnClose, true);
-	data_manip->setAttributes(conn, ref_fk_infos[fk_name][ParsersAttributes::SCHEMA],ref_fk_infos[fk_name][ParsersAttributes::TABLE], filter.join(QString("AND")));
-
-	PgModelerUiNS::resizeDialog(data_manip);
-	data_manip->show();*/
 }
 
 void DataManipulationForm::browseReferencedTable(void)
 {
 	browseTable(qobject_cast<QAction *>(sender())->data().toString(), false);
-
-	/*QString value, fk_name = qobject_cast<QAction *>(sender())->data().toString();
-	DataManipulationForm *data_manip = new DataManipulationForm;
-	Connection conn = Connection(tmpl_conn_params);
-	QStringList filter,
-			src_cols =  dep_fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS].split(Table::DATA_SEPARATOR),
-			ref_cols = dep_fk_infos[fk_name][ParsersAttributes::DST_COLUMNS].split(Table::DATA_SEPARATOR);
-
-	for(QString col_name : src_cols)
-	{
-		value = results_tbw->item(results_tbw->currentRow(), col_names.indexOf(col_name))->text();
-
-		if(value.isEmpty())
-			filter.push_back(QString("%1 IS NULL").arg(ref_cols.front()));
-		else
-			filter.push_back(QString("%1 = '%2'").arg(ref_cols.front()).arg(value));
-
-		ref_cols.pop_front();
-	}
-
-	data_manip->setWindowModality(Qt::NonModal);
-	data_manip->setAttribute(Qt::WA_DeleteOnClose, true);
-	data_manip->setAttributes(conn, dep_fk_infos[fk_name][ParsersAttributes::SCHEMA], dep_fk_infos[fk_name][ParsersAttributes::REF_TABLE], filter.join(QString("AND")));
-
-	PgModelerUiNS::resizeDialog(data_manip);
-	data_manip->show();*/
 }
 
 void DataManipulationForm::undoOperations(void)

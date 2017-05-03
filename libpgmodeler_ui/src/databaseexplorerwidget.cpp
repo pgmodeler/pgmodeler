@@ -91,7 +91,8 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{SERVER_ENCODING, QT_TR_NOOP("Server encoding")},    {SSL, QT_TR_NOOP("SSL")},                              {SSL_CA_FILE, QT_TR_NOOP("SSL ca file")},
 	{SSL_CERT_FILE, QT_TR_NOOP("SSL cert file")},        {SSL_CRL_FILE, QT_TR_NOOP("SSL crl file")},            {SSL_KEY_FILE, QT_TR_NOOP("SSL key file")},
 	{SERVER_VERSION, QT_TR_NOOP("Server version")},      {IDENT_FILE, QT_TR_NOOP("Ident file")},                {PASSWORD_ENCRYPTION, QT_TR_NOOP("Password encryption")},
-	{CONNECTION, QT_TR_NOOP("Connection ID")},           {SERVER_PID, QT_TR_NOOP("Server PID")},                {SERVER_PROTOCOL, QT_TR_NOOP("Server protocol")}
+	{CONNECTION, QT_TR_NOOP("Connection ID")},           {SERVER_PID, QT_TR_NOOP("Server PID")},                {SERVER_PROTOCOL, QT_TR_NOOP("Server protocol")},
+	{REFERRERS, QT_TR_NOOP("Referrers")}
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
@@ -1322,6 +1323,15 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item)
 			import_helper.closeConnection();
 			objects_trw->sortItems(0, Qt::AscendingOrder);
 			objects_trw->setCurrentItem(nullptr);
+
+			if(obj_type==OBJ_TABLE)
+			{
+				objects_trw->blockSignals(true);
+				objects_trw->setCurrentItem(item);
+				showObjectProperties(true);
+				objects_trw->setCurrentItem(nullptr);
+				objects_trw->blockSignals(false);
+			}
 		}
 
 		QApplication::restoreOverrideCursor();
@@ -1354,7 +1364,28 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
 					orig_attribs=catalog.getServerAttributes();
 				//Retrieve them from the catalog
 				else if(obj_type!=OBJ_COLUMN)
+				{
 					orig_attribs=catalog.getObjectAttributes(obj_type, oid);
+
+					if(obj_type == OBJ_TABLE)
+					{
+						vector<attribs_map> ref_fks;
+						attribs_map ref_table, ref_schema;
+						QStringList tab_list;
+
+						ref_fks = catalog.getObjectsAttributes(OBJ_CONSTRAINT, QString(), QString(), {}, {{ ParsersAttributes::CUSTOM_FILTER, QString("contype='f' AND cs.confrelid=%1").arg(orig_attribs[ParsersAttributes::OID])}});
+
+						for(auto &fk : ref_fks)
+						{
+							ref_table = catalog.getObjectAttributes(OBJ_TABLE, fk[ParsersAttributes::TABLE].toUInt());
+							ref_schema = catalog.getObjectAttributes(OBJ_SCHEMA, ref_table[ParsersAttributes::SCHEMA].toUInt());
+							tab_list.push_back(QString("%1.%2").arg(ref_schema[ParsersAttributes::NAME]).arg(ref_table[ParsersAttributes::NAME]));
+						}
+
+						if(!tab_list.isEmpty())
+							orig_attribs[ParsersAttributes::REFERRERS] = tab_list.join(Table::DATA_SEPARATOR);
+					}
+				}
 				else
 				{
 					QString tab_name=item->data(DatabaseImportForm::OBJECT_TABLE, Qt::UserRole).toString(),
@@ -1469,25 +1500,24 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 						src_item->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, QVariant::fromValue<int>(-1));
 						src_item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath("column")));
 						src_item->setText(0, QString("%1(%2)")
-										  .arg(cached_attribs[ParsersAttributes::TABLE])
-								.arg(cached_attribs[ParsersAttributes::SRC_COLUMNS]));
+															.arg(cached_attribs[ParsersAttributes::TABLE])
+															.arg(cached_attribs[ParsersAttributes::SRC_COLUMNS]));
 						src_item->setToolTip(0, trUtf8("Src. table: %1\nSrc. column(s): %2")
-											 .arg(cached_attribs[ParsersAttributes::TABLE])
-								.arg(cached_attribs[ParsersAttributes::SRC_COLUMNS]));
-
+																	.arg(cached_attribs[ParsersAttributes::TABLE])
+																	.arg(cached_attribs[ParsersAttributes::SRC_COLUMNS]));
 
 						fk_item=new QTreeWidgetItem(item);
 						fk_item->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, QVariant::fromValue<int>(-1));
-						fk_item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath("reference")));
+						fk_item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath("referenced")));
 						fk_item->setText(0, QString("%1(%2)")
-										 .arg(cached_attribs[ParsersAttributes::REF_TABLE])
-								.arg(cached_attribs[ParsersAttributes::DST_COLUMNS]));
+														.arg(cached_attribs[ParsersAttributes::REF_TABLE])
+														.arg(cached_attribs[ParsersAttributes::DST_COLUMNS]));
 						fk_item->setToolTip(0, trUtf8("Ref. table: %1\nRef. column(s): %2")
-											.arg(cached_attribs[ParsersAttributes::REF_TABLE])
-								.arg(cached_attribs[ParsersAttributes::DST_COLUMNS]));
+																.arg(cached_attribs[ParsersAttributes::REF_TABLE])
+																.arg(cached_attribs[ParsersAttributes::DST_COLUMNS]));
 					}
 					else if(cached_attribs[ParsersAttributes::TYPE]==~ConstraintType(ConstraintType::unique) ||
-							cached_attribs[ParsersAttributes::TYPE]==~ConstraintType(ConstraintType::primary_key))
+									cached_attribs[ParsersAttributes::TYPE]==~ConstraintType(ConstraintType::primary_key))
 					{
 						QStringList columns=cached_attribs[ParsersAttributes::SRC_COLUMNS].split(ELEM_SEPARATOR);
 
@@ -1498,6 +1528,28 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 							src_item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath("column")));
 							src_item->setText(0, col);
 						}
+					}
+				}
+				else if(cached_attribs[ParsersAttributes::OBJECT_TYPE] == BaseObject::getSchemaName(OBJ_TABLE) &&
+								!cached_attribs[ParsersAttributes::REFERRERS].isEmpty() && item->childCount() == 5)
+				{
+					QTreeWidgetItem *refs_item=nullptr, *tab_item=nullptr;
+					QStringList ref_tab_names = cached_attribs[ParsersAttributes::REFERRERS].split(Table::DATA_SEPARATOR);
+
+					refs_item=new QTreeWidgetItem(item);
+					refs_item->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, QVariant::fromValue<int>(-1));
+					refs_item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath("referrer")));
+					refs_item->setText(0, QString("%1 (%2)")
+															.arg(attribs_i18n.at(ParsersAttributes::REFERRERS))
+															.arg(ref_tab_names.length()));
+					refs_item->setToolTip(0, trUtf8("Tables that reference the selected one"));
+
+					for(QString tab_name : ref_tab_names)
+					{
+						tab_item=new QTreeWidgetItem(refs_item);
+						tab_item->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, QVariant::fromValue<int>(-1));
+						tab_item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath("table")));
+						tab_item->setText(0, tab_name);
 					}
 				}
 			}
@@ -1516,7 +1568,6 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
-
 
 void DatabaseExplorerWidget::startObjectRename(QTreeWidgetItem *item)
 {
