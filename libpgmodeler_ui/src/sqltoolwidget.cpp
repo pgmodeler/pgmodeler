@@ -54,6 +54,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	connect(databases_tbw, &QTabWidget::currentChanged,
 			[=](){
 				DatabaseExplorerWidget *dbexplorer=qobject_cast<DatabaseExplorerWidget *>(databases_tbw->currentWidget());
+				QMap<QWidget *, QWidgetList> ::iterator itr=sql_exec_wgts.begin();
 
 				sourcecode_txt->clear();
 
@@ -61,12 +62,30 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 					sourcecode_txt->setPlainText(dbexplorer->objects_trw->currentItem()->
 																			 data(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole).toString());
 
+				while(itr != sql_exec_wgts.end())
+				{
+					if(itr.key() != dbexplorer)
+					{
+						for(auto &wgt : itr.value())
+							sql_exec_tbw->removeTab(sql_exec_tbw->indexOf(wgt));
+					}
+					else
+					{
+						for(auto &wgt : itr.value())
+							sql_exec_tbw->addTab(wgt, dbexplorer->getConnection().getConnectionParam(Connection::PARAM_DB_NAME));
+					}
+
+					itr++;
+				}
+
 				disconnect_tb->setEnabled(databases_tbw->count() > 0);
 			});
 }
 
 SQLToolWidget::~SQLToolWidget(void)
 {
+	databases_tbw->blockSignals(true);
+
 	while(databases_tbw->count() > 0)
 		closeDatabaseExplorer(0);
 }
