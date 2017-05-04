@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>740</width>
+    <width>750</width>
     <height>600</height>
    </rect>
   </property>
@@ -21,7 +21,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>680</width>
+    <width>750</width>
     <height>600</height>
    </size>
   </property>
@@ -85,13 +85,13 @@
         </property>
         <property name="minimumSize">
          <size>
-          <width>140</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>140</width>
+          <width>16777215</width>
           <height>16777215</height>
          </size>
         </property>
@@ -320,7 +320,7 @@
      <item>
       <widget class="QPushButton" name="defaults_btn">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -328,7 +328,7 @@
        <property name="minimumSize">
         <size>
          <width>90</width>
-         <height>32</height>
+         <height>35</height>
         </size>
        </property>
        <property name="maximumSize">
@@ -361,7 +361,7 @@
      <item>
       <widget class="QPushButton" name="apply_btn">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -369,7 +369,7 @@
        <property name="minimumSize">
         <size>
          <width>90</width>
-         <height>32</height>
+         <height>35</height>
         </size>
        </property>
        <property name="maximumSize">
@@ -399,7 +399,7 @@
      <item>
       <widget class="QPushButton" name="cancel_btn">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -407,7 +407,7 @@
        <property name="minimumSize">
         <size>
          <width>90</width>
-         <height>32</height>
+         <height>35</height>
         </size>
        </property>
        <property name="maximumSize">

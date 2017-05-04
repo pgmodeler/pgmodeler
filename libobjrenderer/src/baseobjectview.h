@@ -174,6 +174,10 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		//! \brief Toggles the wireframe display
 		virtual void togglePlaceholder(bool visible);
 
+		/*! \brief Returns the current font DPI factor of the screen. This factor is used to resize
+		 * objects according to the screen's resolution/font dpi */
+		static float getScreenDpiFactor(void);
+
 	protected slots:
 		//! \brief Make the basic object operations
 		void __configureObject(void);

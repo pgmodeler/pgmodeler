@@ -381,6 +381,7 @@ namespace ParsersAttributes {
 	REFERENCE=QString("reference"),
 	REFERENCES_PRIV=QString("references"),
 	REFERENCES=QString("references"),
+	REFERRERS=QString("referrers"),
 	REGULAR_EXP=QString("regexp"),
 	RELATION_TAB_VIEW=QString("reltv"),
 	RELATIONSHIP_11=QString("rel11"),

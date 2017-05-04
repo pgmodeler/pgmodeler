@@ -106,6 +106,15 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(export_tb, &QToolButton::clicked,
 			[=](){ SQLExecutionWidget::exportResults(results_tbw); });
 
+	connect(close_file_tb, &QToolButton::clicked,
+	[=](){
+			if(clearAll() == QDialog::Accepted)
+			{
+				filename_edt->clear();
+				filename_wgt->setVisible(false);
+			}
+	});
+
 	connect(&snippets_menu, SIGNAL(triggered(QAction*)), this, SLOT(selectSnippet(QAction *)));
 
 	connect(code_compl_wgt, SIGNAL(s_wordSelected(QString)), this, SLOT(handleSelectedWord(QString)));
@@ -114,6 +123,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 
 	configureSnippets();
 	toggleOutputPane(false);
+	filename_wgt->setVisible(false);
 	v_splitter->handle(1)->installEventFilter(this);
 }
 
@@ -496,6 +506,7 @@ void SQLExecutionWidget::saveCommands(void)
 		file.close();
 
 		filename_edt->setText(filename);
+		filename_wgt->setVisible(true);
 	}
 }
 
@@ -520,6 +531,7 @@ void SQLExecutionWidget::loadCommands(void)
 		file.close();
 
 		filename_edt->setText(sql_file_dlg.selectedFiles().at(0));
+		filename_wgt->setVisible(true);
 	}
 }
 
@@ -560,6 +572,7 @@ QByteArray SQLExecutionWidget::generateCSVBuffer(QTableWidget *results_tbw, int 
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	QByteArray buf;
+	QStringList line;
 
 	//If the selection interval is valid
 	if(start_row >=0 && start_col >=0 &&
@@ -572,22 +585,20 @@ QByteArray SQLExecutionWidget::generateCSVBuffer(QTableWidget *results_tbw, int 
 
 		//Creating the header of csv
 		for(col=start_col; col < max_col; col++)
-		{
-			buf.append(QString("\"%1\"").arg(results_tbw->horizontalHeaderItem(col)->text()));
-			buf.append(';');
-		}
+			line.append(QString("\"%1\"").arg(results_tbw->horizontalHeaderItem(col)->text()));
 
+		buf.append(line.join(';'));
 		buf.append('\n');
+		line.clear();
 
 		//Creating the content
 		for(row=start_row; row < max_row; row++)
 		{
 			for(col=start_col; col < max_col; col++)
-			{
-				buf.append(QString("\"%1\"").arg(results_tbw->item(row, col)->text()));
-				buf.append(';');
-			}
+				line.append(QString("\"%1\"").arg(results_tbw->item(row, col)->text()));
 
+			buf.append(line.join(';'));
+			line.clear();
 			buf.append('\n');
 		}
 	}
@@ -595,14 +606,51 @@ QByteArray SQLExecutionWidget::generateCSVBuffer(QTableWidget *results_tbw, int 
 	return(buf);
 }
 
-void SQLExecutionWidget::clearAll(void)
+QByteArray SQLExecutionWidget::generateTextBuffer(QTableWidget *results_tbw, int start_row, int start_col, int row_cnt, int col_cnt)
+{
+	if(!results_tbw)
+		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	QByteArray buf;
+	QStringList line;
+
+	//If the selection interval is valid
+	if(start_row >=0 && start_col >=0 &&
+			start_row + row_cnt <= results_tbw->rowCount() &&
+			start_col + col_cnt <= results_tbw->columnCount())
+	{
+		int col=0, row=0,
+				max_col=start_col + col_cnt,
+				max_row=start_row + row_cnt;
+
+		//Creating the content
+		for(row=start_row; row < max_row; row++)
+		{
+			for(col=start_col; col < max_col; col++)
+			{
+				line.push_back(results_tbw->item(row, col)->text());
+				buf.append(line.join('\t'));
+			}
+
+			line.clear();
+			buf.append('\n');
+		}
+	}
+
+	return(buf);
+}
+
+int SQLExecutionWidget::clearAll(void)
 {
 	Messagebox msg_box;
+	int res = 0;
 
 	msg_box.show(trUtf8("The SQL input field and the results grid will be cleared! Want to proceed?"),
-				 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+							 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
-	if(msg_box.result()==QDialog::Accepted)
+	res = msg_box.result();
+
+	if(res==QDialog::Accepted)
 	{
 		sql_cmd_txt->setPlainText(QString());
 		msgoutput_lst->clear();
@@ -610,9 +658,11 @@ void SQLExecutionWidget::clearAll(void)
 		results_parent->setVisible(false);
 		export_tb->setEnabled(false);
 	}
+
+	return(res);
 }
 
-void SQLExecutionWidget::copySelection(QTableWidget *results_tbw, bool use_popup)
+void SQLExecutionWidget::copySelection(QTableWidget *results_tbw, bool use_popup, bool csv_is_default)
 {
 	if(!results_tbw)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -621,19 +671,37 @@ void SQLExecutionWidget::copySelection(QTableWidget *results_tbw, bool use_popup
 
 	if(sel_ranges.count()==1 && (!use_popup || (use_popup && QApplication::mouseButtons()==Qt::RightButton)))
 	{
-		QMenu copy_menu;
+		QMenu copy_menu, copy_mode_menu;
+		QAction *act = nullptr, *act_csv = nullptr, *act_txt = nullptr;
 
 		if(use_popup)
-			copy_menu.addAction(trUtf8("Copy selection"));
+		{
+			act = copy_menu.addAction(trUtf8("Copy selection"));
+			act_txt = copy_mode_menu.addAction(trUtf8("Plain format"));
+			act_csv = copy_mode_menu.addAction(trUtf8("CVS format"));
+			act->setMenu(&copy_mode_menu);
+			act = copy_menu.exec(QCursor::pos());
+		}
 
-		if(!use_popup || (use_popup && copy_menu.exec(QCursor::pos())))
+		if(!use_popup || act)
 		{
 			QTableWidgetSelectionRange selection=sel_ranges.at(0);
+			QByteArray buf;
 
-			//Generates the csv buffer and assigns it to application's clipboard
-			QByteArray buf=generateCSVBuffer(results_tbw,
-																			 selection.topRow(), selection.leftColumn(),
-																			 selection.rowCount(), selection.columnCount());
+			if((use_popup && act == act_csv) || (!use_popup && csv_is_default))
+			{
+				//Generates the csv buffer and assigns it to application's clipboard
+				buf=generateCSVBuffer(results_tbw,
+															selection.topRow(), selection.leftColumn(),
+															selection.rowCount(), selection.columnCount());
+			}
+			else if((use_popup && act == act_txt) || (!use_popup && !csv_is_default))
+			{
+				buf=generateTextBuffer(results_tbw,
+															 selection.topRow(), selection.leftColumn(),
+															 selection.rowCount(), selection.columnCount());
+			}
+
 			qApp->clipboard()->setText(buf);
 		}
 	}

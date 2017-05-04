@@ -885,7 +885,7 @@ void RelationshipView::configureDescriptor(void)
 	BaseRelationship *base_rel=this->getSourceObject();
 	Relationship *rel=dynamic_cast<Relationship *>(base_rel);
 	unsigned rel_type=base_rel->getRelationshipType();
-	double x, y, x1, y1, factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
+	double x, y, x1, y1, factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE) * BaseObjectView::getScreenDpiFactor();
 	QPen pen;
 	QPointF pnt;
 	vector<QPointF> points=base_rel->getPoints();

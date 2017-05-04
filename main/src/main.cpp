@@ -104,6 +104,8 @@ int main(int argc, char **argv)
 		for(int i=0; i < argc && !using_style; i++)
 			using_style=QString(argv[i]).contains("-style");
 
+		Application::setAttribute(Qt::AA_UseHighDpiPixmaps);
+		Application::setAttribute(Qt::AA_EnableHighDpiScaling);
 		Application app(argc,argv);
 		int res=0;
 
@@ -116,7 +118,7 @@ int main(int argc, char **argv)
 		QPixmap pix(QPixmap(QString(":imagens/imagens/pgmodeler_splash.png")));
 		splash.setPixmap(pix);
 		splash.setMask(pix.mask());
-        splash.show();
+		splash.show();
 		app.processEvents();
 
 		//Creates the main form
