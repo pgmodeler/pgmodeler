@@ -1,6 +1,29 @@
 Change Log
 ---------
 
+v0.9.0-beta1
+------
+<em>Release date: May 13, 2017</em><br/>
+
+* [New] Added the ability to standalone dialogs like import, diff, export and others to be resized according to the screen dpi and resolution.
+* [New] Added an experimental routine that will resize windows according to the current screen resolution and font dpi.
+* [New] Added support to browse referrer and referenced in DataManipulationForm.
+* [New] Added an item under table items that stores the referrer tables in the DatabaseExplorerWidget.
+* [New] Added the method BaseObjectView::getScreenDpiFactor to help resize scene objects according to the screen dpi/resolution.
+* [Change] Minor adjustment on readonly items regarding to referenced and referrer tables in DatabaseExplorerWidget.
+* [Change] Improved the tabs handling in SQLToolWidget in order to avoid confusion related to which database is being managed or queried currently.
+* [Change] Improvements done in the context menu at DataManipulationForm to include the key actions related to the control buttons at the top right portion of the dialog.
+* [Change] Improved the external script handling in SQLExecutionWidget.
+* [Change] Applied automatic resize for TaskProgressWidget.
+* [Change] Improvement done in model restoration dialog that is now displayed after the main windows is exposed.
+* [Fix] Fixed a problem in UpdateNotifierWidget that was receiving error 403 from the site.
+* [Fix] Fix a bug in DataManipulationForm that was causing order by clause to be nullified by comments added in the filter field.
+* [Fix] Fixed a regression in permission code generation.
+* [Fix] Fixed a bug in the generation of grant/revoke commands for columns.
+* [Fix] Fixed a bug that was causing the sorting options of index elements to be wrongly hidden.
+* [Fix] Minor fix in the site url.
+* [Fix] Minor fix in the filter toggling action in ObjectFinderWidget.
+
 v0.9.0-beta
 ------
 <em>Release date: April 4, 2017</em><br/>
