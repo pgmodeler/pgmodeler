@@ -1505,6 +1505,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 						src_item->setToolTip(0, trUtf8("Src. table: %1\nSrc. column(s): %2")
 																	.arg(cached_attribs[ParsersAttributes::TABLE])
 																	.arg(cached_attribs[ParsersAttributes::SRC_COLUMNS]));
+						src_item->setFlags(Qt::ItemIsEnabled);
 
 						fk_item=new QTreeWidgetItem(item);
 						fk_item->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, QVariant::fromValue<int>(-1));
@@ -1515,6 +1516,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 						fk_item->setToolTip(0, trUtf8("Ref. table: %1\nRef. column(s): %2")
 																.arg(cached_attribs[ParsersAttributes::REF_TABLE])
 																.arg(cached_attribs[ParsersAttributes::DST_COLUMNS]));
+						fk_item->setFlags(Qt::ItemIsEnabled);
 					}
 					else if(cached_attribs[ParsersAttributes::TYPE]==~ConstraintType(ConstraintType::unique) ||
 									cached_attribs[ParsersAttributes::TYPE]==~ConstraintType(ConstraintType::primary_key))
@@ -1527,6 +1529,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 							src_item->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, QVariant::fromValue<int>(-1));
 							src_item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath("column")));
 							src_item->setText(0, col);
+							src_item->setFlags(Qt::ItemIsEnabled);
 						}
 					}
 				}
@@ -1547,7 +1550,6 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 					refs_item->setText(0, QString("%1 (%2)")
 															.arg(attribs_i18n.at(ParsersAttributes::REFERRERS))
 															.arg(ref_tab_names.length()));
-					refs_item->setToolTip(0, trUtf8("Tables that reference the selected one"));
 
 					for(QString tab_name : ref_tab_names)
 					{
@@ -1555,6 +1557,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 						tab_item->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, QVariant::fromValue<int>(-1));
 						tab_item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath("table")));
 						tab_item->setText(0, tab_name);
+						tab_item->setFlags(Qt::ItemIsEnabled);
 					}
 				}
 			}
