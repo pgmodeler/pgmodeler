@@ -105,7 +105,12 @@ int main(int argc, char **argv)
 			using_style=QString(argv[i]).contains("-style");
 
 		Application::setAttribute(Qt::AA_UseHighDpiPixmaps);
-		Application::setAttribute(Qt::AA_EnableHighDpiScaling);
+
+		//High DPI suport via application attributes is available only from Qt 5.6.0
+		#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
+			Application::setAttribute(Qt::AA_EnableHighDpiScaling);
+		#endif
+
 		Application app(argc,argv);
 		int res=0;
 

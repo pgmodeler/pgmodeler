@@ -30,6 +30,7 @@ const unsigned DataManipulationForm::OP_DELETE=3;
 
 DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f): QDialog(parent, f)
 {
+	QAction *act = nullptr;
 	setupUi(this);
 	setWindowFlags(Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
@@ -47,8 +48,14 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	results_tbw->setItemDelegate(new PlainTextItemDelegate(this, false));
 	browse_tabs_tb->setMenu(&fks_menu);
 
-	copy_menu.addAction(trUtf8("Copy as text"), [=](){ SQLExecutionWidget::copySelection(results_tbw, false, false); }, QKeySequence("Ctrl+C"));
-	copy_menu.addAction(trUtf8("Copy as CSV"), [=](){ SQLExecutionWidget::copySelection(results_tbw, false, true); }, QKeySequence("Ctrl+Shift+C"));
+	act = copy_menu.addAction(trUtf8("Copy as text"));
+	act->setShortcut(QKeySequence("Ctrl+C"));
+	connect(act, &QAction::triggered,	[=](){ SQLExecutionWidget::copySelection(results_tbw, false, false); });
+
+	act = copy_menu.addAction(trUtf8("Copy as CSV"));
+	act->setShortcut(QKeySequence("Ctrl+Shift+C"));
+	connect(act, &QAction::triggered, [=](){ SQLExecutionWidget::copySelection(results_tbw, false, true); });
+
 	copy_tb->setMenu(&copy_menu);
 
 	refresh_tb->setToolTip(refresh_tb->toolTip() + QString(" (%1)").arg(refresh_tb->shortcut().toString()));
