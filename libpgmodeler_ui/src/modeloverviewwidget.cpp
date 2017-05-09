@@ -19,7 +19,7 @@
 #include "modeloverviewwidget.h"
 #include "modelwidget.h"
 
-ModelOverviewWidget::ModelOverviewWidget(QWidget *parent) : QWidget(parent, Qt::WindowCloseButtonHint)
+ModelOverviewWidget::ModelOverviewWidget(QWidget *parent) : QWidget(parent, Qt::WindowCloseButtonHint | Qt::Tool)
 {
 	setupUi(this);
 	this->model=nullptr;
