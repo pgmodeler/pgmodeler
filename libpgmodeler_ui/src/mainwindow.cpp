@@ -1778,8 +1778,6 @@ void MainWindow::showDemoVersionWarning(void)
 						<strong>NOTE:</strong> pgModeler is an open source software, but purchasing binary copies or providing some donations will support the project and cover all development costs.<br/><br/>\
 						<strong>HINT:</strong> in order to test all features it's recommended to use the <strong>demo.dbm</strong> model located in </strong>Sample models</strong> at <strong>Welcome</strong> view.<br/><br/><br/><br/>").arg(GlobalAttributes::MAX_OBJECT_COUNT),
 						Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
-
-			QTimer::singleShot(150000, this, SLOT(showDemoVersionWarning()));
 #endif
 }
 
