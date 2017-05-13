@@ -1,40 +1,32 @@
-v0.9.0-alpha1
+v0.9.0-beta1
 ------
 
-<em>Release date: April 4, 2017</em><br/>
-<em>Changes since: <strong>v0.9.0-alpha1</strong></em><br/>
+<em>Release date: May 13, 2017</em><br/>
+<em>Changes since: <strong>v0.9.0-beta</strong></em><br/>
 
-<strong>Summary:</strong> in this first beta release we have added some new design improvements as well important features and fixes that will improve the user's expirience.<br/>
+<strong>Summary:</strong> this is the last release before we can finally launch the stable 0.9.0. This version was focused on improving the user's experience on high resulotion screens by introducing an automatic machanism that is capable to resize dialogs, objects and fonts according to the current screen settings. This support is quite experimental and will be polished in the next releases. <br/>
 
-One important feature introduced was the support to indexes in materialized views. This behavior is replicated to all areas of expertise of the software: design, code generation, reverse engineering, model/database comparison and database administration. This is a new step into the full support to all PostgreSQL objects and main features.<br/>
+The only downside of the support to bigger screens is that the icons still can't be resized properly due to their low resolution. The solution for this issue is the complete redesign of the whole icon set, task that is planned to be done in any moment in pgModeler 1.0 development timeline. But I'll try to antecipate this job if there's some room for it.<br/>
 
-Instead of reinventing the wheel by creating an advanced source code editor we have added the ability to load contents of external source files and assigning them to objects which demands the usage of a SQL source, for instance, functions, views or custom SQL code attached to many objects. Also, the user can edit the current source in his/her prefered source code editor application. The default application used as well its startup parameters can be configured in the general settings.<br/>
+Another feature introduced by this version is the support to browse the referenced rows as well the referrer rows in data manipulation dialog which will improve the the whole data handling experience. Basically, for a certain relationship between tables A -> B, pgModeler will indicate which row(s) in B are referenced by the selected row in A. The inverse indication, from B to A, is done as well when B references A through a foreign key, of course.<br/>
 
-Another cool improvement done in the design view was the ability of toggling the extended attributes area of tables and views on the fly. We call extended attributes those objects that are displayed at the bottom of tables and views which can be indexes, rules, triggers and constraints. Many users think that the extended attributes display is an useful feature for quick access purposes but others don't think the same and sometimes think that they can be annoying or take too much space in the canvas area. So we decided to provide a way, other than via general settings, to hide those attributes and persist their statuses (shown/hidden) in the dbm file so the current state can be restored in the next model loading. Talking about persisting statuses, we now added the ability to persist in the model file the fade out state of the objects in the design area. Still in the design area, the user can now control the zoom when navigating through the model via overview widget. To do that, just use the mouse wheel while the cursor is within the overview widget.<br/>
+Below the change log for this release. Refer to the file CHANGELOG.md for the complete changes history:<br/>
 
-Finally, there were other minor features, fixes and improvements just to make pgModeler even better (some highlighted features below). The complete change log is available in the file CHANGELOG.md:<br/>
-
-* [New] Added support to indexes in Views.
-* [New] Added the support to edit/load the source code in NumberedTextEditor in external application.
-* [New] Added the ability to save/load metadata related to fade out status and extended attributes display status.
-* [New] Added the ability toggle the extended attributes area in tables and views. The toggle status is persisted in the model file and restores during loading
-* [New] Added constraints to the extended attributes section in the tables at canvas area in order to improve the quick access to these objects.
-* [New] Enabled the importing of view's indexes.
-* [New] Fade status is now persisted in the dbm file and restored during loading.
-* [New] Added the ability to control zoom factor from overview widget.
-* [New] Added a shortcut for "Duplicate" action in design view.
-* [New] Added support to (back)slash char in object's names.
-* [New] Enabled the usage of NewObjectOverlayWidget for views.
-* [Change] Changed the default characters used to escape values in DataManipulationForm and TableDataWidget from {} to // due to problems with json data.
-* [Change] Improved the file manipulation in SQLExecutionWidget. Added option to save the commands to the current file or in another file (save as).
-* [Change] View's children (indexes, rules, triggers) are now listed under their respective parent view in DatabaseExplorerWidget.
-* [Change] Improved the diff between the complete database and a partial model representing it.
-* [Fix] Added the missing support to drop event triggers from database model.
-* [Fix] Fixed the drop cast command generation.
-* [Fix] Minor fix in paste operation to restore the viewport position in design view.
-* [Fix] Minor fix in diff process to detect view's index changes.
-* [Fix] Fixed a bug in EventTrigger that was causing unknown exception to be thrown.
-* [Fix] Fixed a bug on RoleWidget that was preventing roles to be removed from "Members Of" tab.
-* [Fix] Minor fix in mouse cursor override operations.
-* [Fix] Fixed a bug when importing functions and composite types that somehow depend upon array types.
-* [Fix] Fixed a bug in function importing that was causing default values of parameters to be placed in the wrong position.
+* [New] Added the ability to standalone dialogs like import, diff, export and others to be resized according to the screen dpi and resolution.
+* [New] Added an experimental routine that will resize windows according to the current screen resolution and font dpi.
+* [New] Added support to browse referrer and referenced in DataManipulationForm.
+* [New] Added an item under table items that stores the referrer tables in the DatabaseExplorerWidget.
+* [New] Added the method BaseObjectView::getScreenDpiFactor to help resize scene objects according to the screen dpi/resolution.
+* [Change] Minor adjustment on readonly items regarding to referenced and referrer tables in DatabaseExplorerWidget.
+* [Change] Improved the tabs handling in SQLToolWidget in order to avoid confusion related to which database is being managed or queried currently.
+* [Change] Improvements done in the context menu at DataManipulationForm to include the key actions related to the control buttons at the top right portion of the dialog.
+* [Change] Improved the external script handling in SQLExecutionWidget.
+* [Change] Applied automatic resize for TaskProgressWidget.
+* [Change] Improvement done in model restoration dialog that is now displayed after the main windows is exposed.
+* [Fix] Fixed a problem in UpdateNotifierWidget that was receiving error 403 from the site.
+* [Fix] Fix a bug in DataManipulationForm that was causing order by clause to be nullified by comments added in the filter field.
+* [Fix] Fixed a regression in permission code generation.
+* [Fix] Fixed a bug in the generation of grant/revoke commands for columns.
+* [Fix] Fixed a bug that was causing the sorting options of index elements to be wrongly hidden.
+* [Fix] Minor fix in the site url.
+* [Fix] Minor fix in the filter toggling action in ObjectFinderWidget.

@@ -49,7 +49,7 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 		element_grid->addWidget(collation_sel, 3,1,1,2);
 		element_grid->addWidget(op_class_sel, 4,1,1,2);
 		element_grid->addWidget(operator_sel, 5,1,1,2);
-		element_grid->addWidget(elements_tab, 6,0,1,3);
+		element_grid->addWidget(elements_tab, 7,0,1,3);
 
 		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_91)].push_back(collation_lbl);
 		frame=BaseObjectWidget::generateVersionWarningFrame(fields_map);

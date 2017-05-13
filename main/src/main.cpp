@@ -104,6 +104,13 @@ int main(int argc, char **argv)
 		for(int i=0; i < argc && !using_style; i++)
 			using_style=QString(argv[i]).contains("-style");
 
+		Application::setAttribute(Qt::AA_UseHighDpiPixmaps);
+
+		//High DPI suport via application attributes is available only from Qt 5.6.0
+		#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
+			Application::setAttribute(Qt::AA_EnableHighDpiScaling);
+		#endif
+
 		Application app(argc,argv);
 		int res=0;
 
@@ -116,7 +123,7 @@ int main(int argc, char **argv)
 		QPixmap pix(QPixmap(QString(":imagens/imagens/pgmodeler_splash.png")));
 		splash.setPixmap(pix);
 		splash.setMask(pix.mask());
-        splash.show();
+		splash.show();
 		app.processEvents();
 
 		//Creates the main form

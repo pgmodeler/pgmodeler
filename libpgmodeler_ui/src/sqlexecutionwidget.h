@@ -104,10 +104,13 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		static void fillResultsTable(Catalog &catalog, ResultSet &res, QTableWidget *results_tbw, bool store_data=false);
 
 		//! \brief Copy to clipboard (in csv format) the current selected items on results grid
-		static void copySelection(QTableWidget *results_tbw, bool use_popup=true);
+		static void copySelection(QTableWidget *results_tbw, bool use_popup=true, bool csv_is_default = false);
 
 		//! \brief Generates a CSV buffer based upon the selection on the results grid
 		static QByteArray generateCSVBuffer(QTableWidget *results_tbw, int start_row, int start_col, int row_cnt, int col_cnt);
+
+		//! \brief Generates a Plain text buffer based upon the selection on the results grid (this method does not include the column names)
+		static QByteArray generateTextBuffer(QTableWidget *results_tbw, int start_row, int start_col, int row_cnt, int col_cnt);
 
 		//! \brief Exports the results to csv file
 		static void exportResults(QTableWidget *results_tbw);
@@ -141,7 +144,7 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		void loadCommands(void);
 
 		//! \brief Clears the input field as well the results grid
-		void clearAll(void);
+		int clearAll(void);
 
 		void selectSnippet(QAction *act);
 

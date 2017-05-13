@@ -18,6 +18,7 @@
 
 #include "messagebox.h"
 #include "pgmodeleruins.h"
+#include "baseobjectview.h"
 
 Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -204,7 +205,8 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	else if(size.height() >= max_h)
 		this->setMinimumHeight(max_h);
 
-	this->resize(this->minimumWidth(), this->minimumHeight());
+	float factor = BaseObjectView::getScreenDpiFactor();
+	this->resize(this->minimumWidth() * factor, this->minimumHeight() * factor);
 
 	QDialog::exec();
 }

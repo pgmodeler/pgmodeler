@@ -19,6 +19,7 @@
 #include "crashhandlerform.h"
 #include <QApplication>
 #include <QTranslator>
+#include "pgmodeleruins.h"
 
 int main(int argc, char **argv)
 {
@@ -33,6 +34,7 @@ int main(int argc, char **argv)
 		app.installTranslator(&translator);
 
 		CrashHandlerForm crashhandler(args.size() > 1 && args[1]==CrashHandlerForm::ANALYSIS_MODE);
+		PgModelerUiNS::resizeDialog(&crashhandler);
 		crashhandler.show();
 		app.exec();
 

@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>550</width>
-    <height>556</height>
+    <width>575</width>
+    <height>550</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,8 +21,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>550</width>
-    <height>0</height>
+    <width>575</width>
+    <height>550</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -327,7 +327,7 @@
           <property name="maximumSize">
            <size>
             <width>16777215</width>
-            <height>18</height>
+            <height>16777215</height>
            </size>
           </property>
           <property name="font">
@@ -447,6 +447,12 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
         </property>
         <property name="currentIndex">
          <number>0</number>
@@ -624,12 +630,6 @@ p, li { white-space: pre-wrap; }
             </attribute>
             <attribute name="verticalHeaderCascadingSectionResizes">
              <bool>false</bool>
-            </attribute>
-            <attribute name="verticalHeaderDefaultSectionSize">
-             <number>20</number>
-            </attribute>
-            <attribute name="verticalHeaderMinimumSectionSize">
-             <number>20</number>
             </attribute>
             <attribute name="verticalHeaderStretchLastSection">
              <bool>false</bool>

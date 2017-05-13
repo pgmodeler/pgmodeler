@@ -106,6 +106,7 @@ QTableWidgetItem *ObjectTableWidget::getItem(unsigned row_idx, unsigned col_idx)
 void ObjectTableWidget::adjustColumnToContents(int col)
 {
 	table_tbw->resizeColumnToContents(col);
+	table_tbw->resizeRowsToContents();
 }
 
 void ObjectTableWidget::setColumnCount(unsigned col_count)
@@ -343,6 +344,7 @@ void ObjectTableWidget::addRow(void)
 {
 	this->addRow(table_tbw->rowCount());
 	setButtonsEnabled();
+	table_tbw->resizeRowsToContents();
 
 	emit s_rowAdded(table_tbw->rowCount()-1);
 }
@@ -538,6 +540,7 @@ void ObjectTableWidget::moveRows(void)
 		}
 
 		setButtonsEnabled();
+		table_tbw->resizeRowsToContents();
 		emit s_rowsMoved(row, row1);
 	}
 }
@@ -607,3 +610,7 @@ void ObjectTableWidget::emitRowSelected(void)
 		emit s_rowSelected(item->row());
 }
 
+void ObjectTableWidget::resizeEvent(QResizeEvent *)
+{
+	table_tbw->resizeRowsToContents();
+}

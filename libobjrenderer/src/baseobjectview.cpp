@@ -628,3 +628,13 @@ void BaseObjectView::togglePlaceholder(bool visible)
 		placeholder->setVisible(visible);
 	}
 }
+
+float BaseObjectView::getScreenDpiFactor(void)
+{
+	float factor = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->logicalDotsPerInch() / 96.0f;
+
+	if(factor < 1)
+		return (1);
+
+	return(factor);
+}

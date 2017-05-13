@@ -287,6 +287,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void reportBug(void);
 		void removeOperations(void);
 		void handleObjectsMetadata(void);
+		void restoreTemporaryModels(void);
 };
 
 #endif

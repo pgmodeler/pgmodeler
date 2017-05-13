@@ -36,6 +36,8 @@
        <string>0.8.0</string>
        <key>CSResourcesFileMapped</key>
        <true/>
+       <key>NSPrincipalClass</key>
+       <string>NSApplication</string>
        <key>NSHighResolutionCapable</key>
        <string>True</string>
     </dict>

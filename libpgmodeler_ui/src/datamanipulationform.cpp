@@ -30,8 +30,11 @@ const unsigned DataManipulationForm::OP_DELETE=3;
 
 DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f): QDialog(parent, f)
 {
+	QAction *act = nullptr;
 	setupUi(this);
 	setWindowFlags(Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+
+	table_oid=0;
 
 	PgModelerUiNS::configureWidgetFont(hint_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 	PgModelerUiNS::configureWidgetFont(warning_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
@@ -43,6 +46,17 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	code_compl_wgt->configureCompletion(nullptr, filter_hl);
 
 	results_tbw->setItemDelegate(new PlainTextItemDelegate(this, false));
+	browse_tabs_tb->setMenu(&fks_menu);
+
+	act = copy_menu.addAction(trUtf8("Copy as text"));
+	act->setShortcut(QKeySequence("Ctrl+C"));
+	connect(act, &QAction::triggered,	[=](){ SQLExecutionWidget::copySelection(results_tbw, false, false); });
+
+	act = copy_menu.addAction(trUtf8("Copy as CSV"));
+	act->setShortcut(QKeySequence("Ctrl+Shift+C"));
+	connect(act, &QAction::triggered, [=](){ SQLExecutionWidget::copySelection(results_tbw, false, true); });
+
+	copy_tb->setMenu(&copy_menu);
 
 	refresh_tb->setToolTip(refresh_tb->toolTip() + QString(" (%1)").arg(refresh_tb->shortcut().toString()));
 	save_tb->setToolTip(save_tb->toolTip() + QString(" (%1)").arg(save_tb->shortcut().toString()));
@@ -105,10 +119,35 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(results_tbw, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(insertRowOnTabPress(int,int,int,int)), Qt::QueuedConnection);
 
 	connect(results_tbw, &QTableWidget::itemPressed,
-			[=](){ SQLExecutionWidget::copySelection(results_tbw); });
+	[=](){
+					if(QApplication::mouseButtons()==Qt::RightButton)
+					{
+						QMenu item_menu;
+						QAction *act = nullptr;
+						ObjectType obj_type=static_cast<ObjectType>(table_cmb->currentData().toUInt());
 
-	connect(copy_tb, &QToolButton::clicked,
-			[=](){ SQLExecutionWidget::copySelection(results_tbw, false); });
+						act = item_menu.addAction(trUtf8("Copy selection"));
+						act->setMenu(&copy_menu);
+
+						if(obj_type == OBJ_TABLE)
+						{
+							item_menu.addSeparator();
+							act = item_menu.addAction(browse_tabs_tb->icon(), trUtf8("Browse tables"));
+							act->setMenu(&fks_menu);
+							act->setEnabled(browse_tabs_tb->isEnabled());
+
+							item_menu.addSeparator();
+							act = item_menu.addAction(duplicate_tb->icon(), trUtf8("Duplicate row(s)"), this, SLOT(duplicateRows()), duplicate_tb->shortcut());
+							act->setEnabled(duplicate_tb->isEnabled());
+
+							act = item_menu.addAction(delete_tb->icon(), trUtf8("Delete row(s)"), this, SLOT(markDeleteOnRows()), delete_tb->shortcut());
+							act->setEnabled(delete_tb->isEnabled());
+						}
+
+						item_menu.exec(QCursor::pos());
+					}
+		});
+
 
 	connect(export_tb, &QToolButton::clicked,
 			[=](){ SQLExecutionWidget::exportResults(results_tbw); });
@@ -117,7 +156,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(csv_load_wgt, SIGNAL(s_csvFileLoaded()), this, SLOT(loadDataFromCsv()));
 }
 
-void DataManipulationForm::setAttributes(Connection conn, const QString curr_schema, const QString curr_table)
+void DataManipulationForm::setAttributes(Connection conn, const QString curr_schema, const QString curr_table, const QString &filter)
 {
 	try
 	{
@@ -136,12 +175,22 @@ void DataManipulationForm::setAttributes(Connection conn, const QString curr_sch
 		schema_cmb->clear();
 		listObjects(schema_cmb, { OBJ_SCHEMA });
 
-		schema_cmb->setCurrentText(curr_schema);
-		table_cmb->setCurrentText(curr_table);
 		disableControlButtons();
+		schema_cmb->setCurrentText(curr_schema);
 
-		if(!curr_table.isEmpty())
+		if(!filter.isEmpty() && !curr_schema.isEmpty() && !curr_table.isEmpty())
+		{
+			table_cmb->blockSignals(true);
+			table_cmb->setCurrentText(curr_table);
+			table_cmb->blockSignals(false);
+
+			listColumns();
+			filter_txt->setPlainText(filter);
 			retrieveData();
+			refresh_tb->setEnabled(true);
+		}
+		else
+			table_cmb->setCurrentText(curr_table);
 	}
 	catch(Exception &e)
 	{
@@ -240,7 +289,7 @@ void DataManipulationForm::retrieveData(void)
 		{
 			QStringList ord_cols, col;
 
-			query+=QString(" ORDER BY ");
+			query+=QString("\n ORDER BY ");
 
 			for(int idx=0; idx < ord_columns_lst->count(); idx++)
 			{
@@ -262,6 +311,7 @@ void DataManipulationForm::retrieveData(void)
 		conn_sql.executeDMLCommand(query, res);
 
 		retrievePKColumns(schema_cmb->currentText(), table_cmb->currentText());
+		retrieveFKColumns(schema_cmb->currentText(), table_cmb->currentText());
 		SQLExecutionWidget::fillResultsTable(catalog, res, results_tbw, true);
 
 		export_tb->setEnabled(results_tbw->rowCount() > 0);
@@ -332,6 +382,7 @@ void DataManipulationForm::enableRowControlButtons(void)
 	delete_tb->setEnabled(cols_selected);
 	duplicate_tb->setEnabled(cols_selected);
 	copy_tb->setEnabled(sel_ranges.count() == 1);
+	browse_tabs_tb->setEnabled((!fk_infos.empty() || !ref_fk_infos.empty()) && sel_ranges.count() == 1 && sel_ranges.at(0).rowCount() == 1);
 }
 
 void DataManipulationForm::resetAdvancedControls(void)
@@ -552,6 +603,8 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 		vector<attribs_map> pks, columns;
 		ObjectType obj_type=static_cast<ObjectType>(table_cmb->currentData().toUInt());
 
+		table_oid = 0;
+
 		if(obj_type==OBJ_VIEW)
 		{
 			warning_frm->setVisible(true);
@@ -567,6 +620,8 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 
 			if(pks.empty())
 				warning_lbl->setText(trUtf8("The selected table doesn't owns a primary key! Updates and deletes will be performed by considering all columns as primary key. <strong>WARNING:</strong> those operations can affect more than one row."));
+			else
+				table_oid = pks[0][ParsersAttributes::TABLE].toUInt();
 		}
 
 		hint_frm->setVisible(obj_type==OBJ_TABLE);
@@ -594,6 +649,134 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 			results_tbw->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::AnyKeyPressed);
 		else
 			results_tbw->setEditTriggers(QAbstractItemView::NoEditTriggers);
+	}
+	catch(Exception &e)
+	{
+		catalog.closeConnection();
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void DataManipulationForm::retrieveFKColumns(const QString &schema, const QString &table)
+{
+	Catalog catalog;
+	Connection conn=Connection(tmpl_conn_params);
+
+	try
+	{
+		QAction *action = nullptr;
+		vector<attribs_map> fks, ref_fks;
+		ObjectType obj_type=static_cast<ObjectType>(table_cmb->currentData().toUInt());
+		QString fk_name;
+
+		fks_menu.clear();
+		ref_fk_infos.clear();
+		fk_infos.clear();
+
+		if(obj_type==OBJ_VIEW)
+			return;
+
+		catalog.setConnection(conn);
+
+		//Retrieving the constraints from catalog using a custom filter to select only foreign keys (contype=f)
+		fks=catalog.getObjectsAttributes(OBJ_CONSTRAINT, schema, table, {}, {{ParsersAttributes::CUSTOM_FILTER, QString("contype='f'")}});
+		ref_fks=catalog.getObjectsAttributes(OBJ_CONSTRAINT, QString(), QString(), {}, {{ParsersAttributes::CUSTOM_FILTER, QString("contype='f' AND cs.confrelid=%1").arg(table_oid)}});
+
+		if(!fks.empty() || !ref_fks.empty())
+		{
+			vector<unsigned> col_ids;
+			QMenu *submenu = nullptr;
+
+			attribs_map aux_table, aux_schema;
+			QStringList name_list;
+
+			submenu = new QMenu;
+			fks_menu.addAction(QPixmap(PgModelerUiNS::getIconPath("referenced")), trUtf8("Referenced tables"))->setMenu(submenu);
+
+			if(fks.empty())
+				submenu->addAction(trUtf8("(none)"))->setEnabled(false);
+
+			for(auto &fk : fks)
+			{				
+				aux_table = catalog.getObjectAttributes(OBJ_TABLE, fk[ParsersAttributes::REF_TABLE].toUInt());
+				aux_schema = catalog.getObjectAttributes(OBJ_SCHEMA, aux_table[ParsersAttributes::SCHEMA].toUInt());
+				fk_name = QString("%1.%2.%3")
+									.arg(aux_schema[ParsersAttributes::NAME])
+									.arg(aux_table[ParsersAttributes::NAME])
+									.arg(fk[ParsersAttributes::NAME]);
+
+				//Store the referenced schema and table names
+				fk_infos[fk_name][ParsersAttributes::REF_TABLE] = aux_table[ParsersAttributes::NAME];
+				fk_infos[fk_name][ParsersAttributes::SCHEMA] = aux_schema[ParsersAttributes::NAME];
+				action = submenu->addAction(QPixmap(PgModelerUiNS::getIconPath("table")),
+																		QString("%1.%2 (%3)").arg(aux_schema[ParsersAttributes::NAME])
+																													.arg(aux_table[ParsersAttributes::NAME])
+																													.arg(fk[ParsersAttributes::NAME]), this, SLOT(browseReferencedTable()));
+				action->setData(fk_name);
+
+				col_ids.clear();
+				name_list.clear();
+
+				//Storing the source columns in a string
+				for(QString id : Catalog::parseArrayValues(fk[ParsersAttributes::SRC_COLUMNS]))
+					col_ids.push_back(id.toUInt());
+
+				for(auto &col : catalog.getObjectsAttributes(OBJ_COLUMN, schema, table, col_ids))
+					name_list.push_back(BaseObject::formatName(col[ParsersAttributes::NAME]));
+
+				fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS] = name_list.join(Table::DATA_SEPARATOR);
+
+				col_ids.clear();
+				name_list.clear();
+
+				//Storing the referenced columns in a string
+				for(QString id : Catalog::parseArrayValues(fk[ParsersAttributes::DST_COLUMNS]))
+					col_ids.push_back(id.toUInt());
+
+				for(auto &col : catalog.getObjectsAttributes(OBJ_COLUMN, aux_schema[ParsersAttributes::NAME], aux_table[ParsersAttributes::NAME], col_ids))
+					name_list.push_back(BaseObject::formatName(col[ParsersAttributes::NAME]));
+
+				fk_infos[fk_name][ParsersAttributes::DST_COLUMNS] = name_list.join(Table::DATA_SEPARATOR);
+			}
+
+			submenu = new QMenu;
+			fks_menu.addAction(QPixmap(PgModelerUiNS::getIconPath("referrer")), trUtf8("Referrer tables"))->setMenu(submenu);
+
+			if(ref_fks.empty())
+				submenu->addAction(trUtf8("(none)"))->setEnabled(false);
+
+			for(auto &fk : ref_fks)
+			{
+				col_ids.clear();
+				name_list.clear();
+
+				aux_table = catalog.getObjectAttributes(OBJ_TABLE, fk[ParsersAttributes::TABLE].toUInt());
+				aux_schema = catalog.getObjectAttributes(OBJ_SCHEMA, aux_table[ParsersAttributes::SCHEMA].toUInt());
+				fk_name = QString("%1.%2.%3")
+									.arg(aux_schema[ParsersAttributes::NAME])
+									.arg(aux_table[ParsersAttributes::NAME])
+									.arg(fk[ParsersAttributes::NAME]);
+
+				//Storing the source columns in a string
+				for(QString id : Catalog::parseArrayValues(fk[ParsersAttributes::SRC_COLUMNS]))
+					col_ids.push_back(id.toUInt());
+
+				for(auto &col : catalog.getObjectsAttributes(OBJ_COLUMN, aux_schema[ParsersAttributes::NAME], aux_table[ParsersAttributes::NAME], col_ids))
+					name_list.push_back(BaseObject::formatName(col[ParsersAttributes::NAME]));
+
+				action = submenu->addAction(QPixmap(PgModelerUiNS::getIconPath("table")),
+																		QString("%1.%2 (%3)").arg(aux_schema[ParsersAttributes::NAME])
+																													.arg(aux_table[ParsersAttributes::NAME])
+																													.arg(fk[ParsersAttributes::NAME]), this, SLOT(browseReferrerTable()));
+				action->setData(fk_name);
+
+				ref_fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS] = name_list.join(Table::DATA_SEPARATOR);
+				ref_fk_infos[fk_name][ParsersAttributes::TABLE] = aux_table[ParsersAttributes::NAME];
+				ref_fk_infos[fk_name][ParsersAttributes::SCHEMA] = aux_schema[ParsersAttributes::NAME];
+			}
+		}
+
+		catalog.closeConnection();
 	}
 	catch(Exception &e)
 	{
@@ -827,6 +1010,58 @@ void DataManipulationForm::clearChangedRows(void)
 	prev_row_colors.clear();
 	undo_tb->setEnabled(false);
 	save_tb->setEnabled(false);
+}
+
+void DataManipulationForm::browseTable(const QString &fk_name, bool browse_ref_tab)
+{
+	QString value, schema, table;
+	DataManipulationForm *data_manip = new DataManipulationForm;
+	Connection conn = Connection(tmpl_conn_params);
+	QStringList filter, src_cols, ref_cols;
+
+	if(browse_ref_tab)
+	{
+		src_cols =  pk_col_names;
+		ref_cols = ref_fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS].split(Table::DATA_SEPARATOR);
+		schema = ref_fk_infos[fk_name][ParsersAttributes::SCHEMA];
+		table = ref_fk_infos[fk_name][ParsersAttributes::TABLE];
+	}
+	else
+	{
+		src_cols =  fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS].split(Table::DATA_SEPARATOR);
+		ref_cols = fk_infos[fk_name][ParsersAttributes::DST_COLUMNS].split(Table::DATA_SEPARATOR);
+		schema = fk_infos[fk_name][ParsersAttributes::SCHEMA];
+		table = fk_infos[fk_name][ParsersAttributes::REF_TABLE];
+	}
+
+	for(QString col_name : src_cols)
+	{
+		value = results_tbw->item(results_tbw->currentRow(), col_names.indexOf(col_name))->text();
+
+		if(value.isEmpty())
+			filter.push_back(QString("%1 IS NULL").arg(ref_cols.front()));
+		else
+			filter.push_back(QString("%1 = '%2'").arg(ref_cols.front()).arg(value));
+
+		ref_cols.pop_front();
+	}
+
+	data_manip->setWindowModality(Qt::NonModal);
+	data_manip->setAttribute(Qt::WA_DeleteOnClose, true);
+	data_manip->setAttributes(conn, schema, table, filter.join(QString("AND")));
+
+	PgModelerUiNS::resizeDialog(data_manip);
+	data_manip->show();
+}
+
+void DataManipulationForm::browseReferrerTable(void)
+{
+	browseTable(qobject_cast<QAction *>(sender())->data().toString(), true);
+}
+
+void DataManipulationForm::browseReferencedTable(void)
+{
+	browseTable(qobject_cast<QAction *>(sender())->data().toString(), false);
 }
 
 void DataManipulationForm::undoOperations(void)

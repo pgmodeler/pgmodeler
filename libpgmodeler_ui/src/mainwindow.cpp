@@ -61,6 +61,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		views_stw->widget(MANAGE_VIEW)->setLayout(grid);
 
 		configuration_form=new ConfigurationForm(nullptr, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
+		PgModelerUiNS::resizeDialog(configuration_form);
 		configuration_form->loadConfiguration();
 
 		plugins_conf_wgt=dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PLUGINS_CONF_WGT));
@@ -192,7 +193,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(model_nav_wgt, SIGNAL(s_currentModelChanged(int)), this, SLOT(setCurrentModel()));
 
 	connect(action_print, SIGNAL(triggered(bool)), this, SLOT(printModel(void)));
-	connect(action_configuration, SIGNAL(triggered(bool)), configuration_form, SLOT(show(void)));
+	connect(action_configuration, SIGNAL(triggered(bool)), configuration_form, SLOT(show()));
 
 	connect(oper_list_wgt, SIGNAL(s_operationExecuted(void)), overview_wgt, SLOT(updateOverview(void)));
 	connect(configuration_form, SIGNAL(finished(int)), this, SLOT(applyConfigurations(void)));
@@ -307,46 +308,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	showRightWidgetsBar();
 	showBottomWidgetsBar();
 
-	//Restore temporary models (if exists)
-	if(restoration_form->hasTemporaryModels())
-	{
-		restoration_form->exec();
-
-		if(restoration_form->result()==QDialog::Accepted)
-		{
-			ModelWidget *model=nullptr;
-			QString model_file;
-			QStringList tmp_models=restoration_form->getSelectedModels();
-
-			while(!tmp_models.isEmpty())
-			{
-				try
-				{
-					model_file=tmp_models.front();
-					tmp_models.pop_front();
-					this->addModel(model_file);
-
-					//Get the model widget generated from file
-					model=dynamic_cast<ModelWidget *>(models_tbw->widget(models_tbw->count()-1));
-
-					//Set the model as modified forcing the user to save when the autosave timer ends
-					model->setModified(true);
-					model->filename.clear();
-					restoration_form->removeTemporaryModel(model_file);
-				}
-				catch(Exception &e)
-				{
-					//Destroy the temp file if the "keep  models" isn't checked
-					if(!restoration_form->keep_models_chk->isChecked())
-						restoration_form->removeTemporaryModel(model_file);
-
-					Messagebox msg_box;
-					msg_box.show(e);
-				}
-			}
-		}
-	}
-
 	//If a previous session was restored save the temp models
 	updateConnections();
 	updateRecentModelsMenu();
@@ -415,6 +376,51 @@ MainWindow::~MainWindow(void)
 	delete(configuration_form);
 }
 
+void MainWindow::restoreTemporaryModels(void)
+{
+	PgModelerUiNS::resizeDialog(restoration_form);
+
+	//Restore temporary models (if exists)
+	if(restoration_form->hasTemporaryModels())
+	{
+		restoration_form->exec();
+
+		if(restoration_form->result()==QDialog::Accepted)
+		{
+			ModelWidget *model=nullptr;
+			QString model_file;
+			QStringList tmp_models=restoration_form->getSelectedModels();
+
+			while(!tmp_models.isEmpty())
+			{
+				try
+				{
+					model_file=tmp_models.front();
+					tmp_models.pop_front();
+					this->addModel(model_file);
+
+					//Get the model widget generated from file
+					model=dynamic_cast<ModelWidget *>(models_tbw->widget(models_tbw->count()-1));
+
+					//Set the model as modified forcing the user to save when the autosave timer ends
+					model->setModified(true);
+					model->filename.clear();
+					restoration_form->removeTemporaryModel(model_file);
+				}
+				catch(Exception &e)
+				{
+					//Destroy the temp file if the "keep  models" isn't checked
+					if(!restoration_form->keep_models_chk->isChecked())
+						restoration_form->removeTemporaryModel(model_file);
+
+					Messagebox msg_box;
+					msg_box.show(e);
+				}
+			}
+		}
+	}
+}
+
 void MainWindow::showRightWidgetsBar(void)
 {
 	right_wgt_bar->setVisible(objects_btn->isChecked() || operations_btn->isChecked());
@@ -480,6 +486,7 @@ void MainWindow::fixModel(const QString &filename)
 		model_fix_form.output_file_edt->setText(fi.absolutePath() + GlobalAttributes::DIR_SEPARATOR + fi.baseName() + QString("_fixed.") + fi.suffix());
 	}
 
+	PgModelerUiNS::resizeDialog(&model_fix_form);
 	model_fix_form.exec();
 	disconnect(&model_fix_form, nullptr, this, nullptr);
 }
@@ -513,18 +520,19 @@ void MainWindow::showEvent(QShowEvent *)
 	//Positioning the update notifier widget before showing it (if there is an update)
 	setFloatingWidgetPos(update_notifier_wgt, action_update_found, control_tb, false);
 	action_update_found->setVisible(false);
+	QTimer::singleShot(1000, this, SLOT(restoreTemporaryModels()));
 
 #ifdef NO_UPDATE_CHECK
 #warning "NO UPDATE CHECK: Update checking is disabled."
 #else
 	//Enabling update check at startup
 	if(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]==ParsersAttributes::_TRUE_)
-		QTimer::singleShot(2000, update_notifier_wgt, SLOT(checkForUpdate()));
+		QTimer::singleShot(3000, update_notifier_wgt, SLOT(checkForUpdate()));
 #endif
 
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: demonstration version startup alert."
-	QTimer::singleShot(1500, this, SLOT(showDemoVersionWarning()));
+	QTimer::singleShot(2000, this, SLOT(showDemoVersionWarning()));
 #endif
 }
 
@@ -1341,6 +1349,7 @@ void MainWindow::exportModel(void)
 	{
 		stopTimers(true);
 		connect(&model_export_form, &ModelExportForm::s_connectionsUpdateRequest, [=](){ updateConnections(true); });
+		PgModelerUiNS::resizeDialog(&model_export_form);
 		model_export_form.exec(current_model);
 		stopTimers(false);
 	}
@@ -1354,6 +1363,7 @@ void MainWindow::importDatabase(void)
 
 	connect(&db_import_form, &DatabaseImportForm::s_connectionsUpdateRequest, [=](){ updateConnections(true); });
 	db_import_form.setModelWidget(current_model);
+	PgModelerUiNS::resizeDialog(&db_import_form);
 	db_import_form.exec();
 	stopTimers(false);
 
@@ -1394,6 +1404,7 @@ void MainWindow::diffModelDatabase(void)
 
 		stopTimers(true);
 		connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_connectionsUpdateRequest, [=](){ updateConnections(true); });
+		PgModelerUiNS::resizeDialog(&modeldb_diff_frm);
 		modeldb_diff_frm.exec();
 		stopTimers(false);
 	}
@@ -1767,8 +1778,6 @@ void MainWindow::showDemoVersionWarning(void)
 						<strong>NOTE:</strong> pgModeler is an open source software, but purchasing binary copies or providing some donations will support the project and cover all development costs.<br/><br/>\
 						<strong>HINT:</strong> in order to test all features it's recommended to use the <strong>demo.dbm</strong> model located in </strong>Sample models</strong> at <strong>Welcome</strong> view.<br/><br/><br/><br/>").arg(GlobalAttributes::MAX_OBJECT_COUNT),
 						Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
-
-			QTimer::singleShot(150000, this, SLOT(showDemoVersionWarning()));
 #endif
 }
 
@@ -1848,6 +1857,7 @@ void MainWindow::changeCurrentView(bool checked)
 void MainWindow::reportBug(void)
 {
 	BugReportForm bugrep_frm;
+	PgModelerUiNS::resizeDialog(&bugrep_frm);
 	bugrep_frm.exec();
 }
 

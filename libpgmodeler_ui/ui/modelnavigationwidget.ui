@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>300</width>
-    <height>34</height>
+    <width>328</width>
+    <height>29</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -122,6 +122,12 @@
    </item>
    <item>
     <widget class="QComboBox" name="models_cmb">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="minimumSize">
       <size>
        <width>200</width>

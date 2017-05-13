@@ -74,6 +74,9 @@ namespace PgModelerUiNS {
 
 	//! \brief Returns the path, in the icon resource, to the icon of the provided object type
 	extern QString getIconPath(ObjectType obj_type);
+
+	//! \brief Resizes the provided dialog considering font dpi changes as well screen size
+	extern void resizeDialog(QDialog *dialog);
 }
 
 #endif
