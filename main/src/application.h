@@ -39,6 +39,7 @@
 #include <QTextStream>
 #include <QTranslator>
 #include <QFile>
+#include <QtWidgets>
 
 class Application: public QApplication {
 	private:
@@ -52,6 +53,7 @@ class Application: public QApplication {
 	public:
 		Application(int & argc, char ** argv);
 		bool notify(QObject * receiver, QEvent * event);
+        virtual ~Application(void);
 };
 
 #endif
