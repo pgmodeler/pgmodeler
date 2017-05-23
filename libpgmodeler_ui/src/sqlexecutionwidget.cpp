@@ -629,9 +629,9 @@ QByteArray SQLExecutionWidget::generateTextBuffer(QTableWidget *results_tbw, int
 			for(col=start_col; col < max_col; col++)
 			{
 				line.push_back(results_tbw->item(row, col)->text());
-				buf.append(line.join('\t'));
 			}
 
+			buf.append(line.join('\t'));
 			line.clear();
 			buf.append('\n');
 		}

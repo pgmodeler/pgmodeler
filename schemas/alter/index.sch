@@ -19,7 +19,7 @@
    [FASTUPDATE = ] %if ({fast-update} == "unset") %then OFF %else ON %end
   %end
 
-  %if {buffering} %and ({pgsql-ver} >= "9.2") %then   
+	%if {buffering} %and ({pgsql-ver} >=f "9.2") %then
     %if {factor} %then [, ] %end
     [BUFFERING = ] %if ({buffering} == "unset") %then OFF %else ON %end
   %end

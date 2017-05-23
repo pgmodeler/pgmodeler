@@ -340,14 +340,29 @@ QString  Connection::getPgSQLVersion(bool major_only)
 		throw Exception(ERR_OPR_NOT_ALOC_CONN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	raw_ver=QString("%1").arg(PQserverVersion(connection));
-	fmt_ver=QString("%1.%2")
-			.arg(raw_ver.mid(0,2).toInt()/10)
-			.arg(raw_ver.mid(2,2).toInt()/10);
 
-	if(major_only)
-		return(fmt_ver);
+	//If the version is 10+
+	if(raw_ver.contains(QRegExp("^((1)[0-9])(.)+")))
+	{
+		fmt_ver=QString("%1.%2")
+				.arg(raw_ver.mid(0,2))
+				.arg(raw_ver.mid(2,2).toInt()/10);
+
+		if(!major_only)
+			return(QString("%1.%2").arg(fmt_ver).arg(raw_ver.mid(5,1)));
+	}
+	//For versions below or equal to 9.6
 	else
-		return(QString("%1.%2").arg(fmt_ver).arg(raw_ver.mid(4,1).toInt()));
+	{
+		fmt_ver=QString("%1.%2")
+				.arg(raw_ver.mid(0,2).toInt()/10)
+				.arg(raw_ver.mid(2,2).toInt()/10);
+
+		if(!major_only)
+			return(QString("%1.%2").arg(fmt_ver).arg(raw_ver.mid(4,1)));
+	}
+
+	return(fmt_ver);
 }
 
 QStringList Connection::getNotices(void)
