@@ -71,10 +71,10 @@ MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) :
 	connect(apply_btn, SIGNAL(clicked()), this, SLOT(handleObjectsMetada()));
 
 	connect(extract_from_cmb, &QComboBox::currentTextChanged,
-					[=](){ apply_btn->setDisabled(extract_from_cmb->count() == 0); });
+					[&](){ apply_btn->setDisabled(extract_from_cmb->count() == 0); });
 
 	connect(select_file_tb, &QToolButton::clicked,
-					[=](){	selectFile(extract_rb->isChecked()); });
+					[&](){	selectFile(extract_rb->isChecked()); });
 
 	connect(restore_rb, SIGNAL(toggled(bool)), extract_from_cmb, SLOT(setDisabled(bool)));
 	connect(extract_from_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableMetadataHandling()));

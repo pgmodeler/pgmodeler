@@ -90,7 +90,7 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 	connect(color_picker, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(applyElementColor(unsigned, QColor)));
 
 	connect(color_picker, &ColorPickerWidget::s_colorsChanged,
-			[=](){
+			[&](){
 		for(unsigned i=0; i < color_picker->getColorCount(); i++)
 			applyElementColor(i, color_picker->getColor(i));
 	});

@@ -33,13 +33,13 @@ DonateWidget::DonateWidget(QWidget *parent) : QWidget(parent)
 	this->setGraphicsEffect(drop_shadow);
 
 	connect(hide_tb, &QToolButton::clicked,
-			[=](){
+			[&](){
 		this->close();
 		emit s_visibilityChanged(false);
 	});
 
 	connect(donate_tb, &QToolButton::clicked,
-			[=](){
+			[&](){
 		QDesktopServices::openUrl(QUrl(GlobalAttributes::PGMODELER_DONATE_URL));
 		this->close();
 		emit s_visibilityChanged(false);

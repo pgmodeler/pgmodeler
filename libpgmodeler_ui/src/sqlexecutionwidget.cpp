@@ -101,13 +101,13 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 
 	//Signal handling with C++11 lambdas Slots
 	connect(results_tbw, &QTableWidget::itemPressed,
-			[=](){ SQLExecutionWidget::copySelection(results_tbw); });
+			[&](){ SQLExecutionWidget::copySelection(results_tbw); });
 
 	connect(export_tb, &QToolButton::clicked,
-			[=](){ SQLExecutionWidget::exportResults(results_tbw); });
+			[&](){ SQLExecutionWidget::exportResults(results_tbw); });
 
 	connect(close_file_tb, &QToolButton::clicked,
-	[=](){
+	[&](){
 			if(clearAll() == QDialog::Accepted)
 			{
 				filename_edt->clear();

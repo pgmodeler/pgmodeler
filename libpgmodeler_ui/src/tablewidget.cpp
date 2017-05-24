@@ -101,7 +101,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Attribute(s)"), 4);
 	objects_tab_map[OBJ_COLUMN]->adjustColumnToContents(0);
 
-	connect(objects_tab_map[OBJ_COLUMN], &ObjectTableWidget::s_cellClicked, [=](int row, int col){
+	connect(objects_tab_map[OBJ_COLUMN], &ObjectTableWidget::s_cellClicked, [&](int row, int col){
 		if(col == 0 && objects_tab_map[OBJ_COLUMN]->isCellDisabled(static_cast<unsigned>(row), static_cast<unsigned>(col)))
 		{
 			Messagebox msg_box;

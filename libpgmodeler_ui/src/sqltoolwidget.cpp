@@ -52,7 +52,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	connect(source_pane_tb, SIGNAL(toggled(bool)), sourcecode_gb, SLOT(setVisible(bool)));
 
 	connect(databases_tbw, &QTabWidget::currentChanged,
-			[=](){
+			[&](){
 				DatabaseExplorerWidget *dbexplorer=qobject_cast<DatabaseExplorerWidget *>(databases_tbw->currentWidget());
 				QMap<QWidget *, QWidgetList> ::iterator itr=sql_exec_wgts.begin();
 

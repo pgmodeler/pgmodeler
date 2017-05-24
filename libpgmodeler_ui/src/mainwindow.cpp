@@ -211,8 +211,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(action_bug_report, SIGNAL(triggered()), this, SLOT(reportBug()));
 	connect(action_handle_metadata, SIGNAL(triggered(bool)), this, SLOT(handleObjectsMetadata()));
 
-	connect(model_valid_wgt, &ModelValidationWidget::s_connectionsUpdateRequest, [=](){ updateConnections(true); });
-	connect(sql_tool_wgt, &SQLToolWidget::s_connectionsUpdateRequest, [=](){ updateConnections(true); });
+	connect(model_valid_wgt, &ModelValidationWidget::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
+	connect(sql_tool_wgt, &SQLToolWidget::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
 
 	window_title=this->windowTitle() + QString(" ") + GlobalAttributes::PGMODELER_VERSION;
 
@@ -291,14 +291,14 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), models_tbw, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), this, SLOT(stopTimers(bool)));
 
-	connect(model_valid_wgt, &ModelValidationWidget::s_validationCanceled, [=](){ pending_op=NO_PENDING_OPER; });
+	connect(model_valid_wgt, &ModelValidationWidget::s_validationCanceled, [&](){ pending_op=NO_PENDING_OPER; });
 	connect(model_valid_wgt, SIGNAL(s_validationFinished(bool)), this, SLOT(executePendingOperation(bool)));
 	connect(model_valid_wgt, SIGNAL(s_fixApplied()), this, SLOT(removeOperations()), Qt::QueuedConnection);
 	connect(model_valid_wgt, SIGNAL(s_graphicalObjectsUpdated()), model_objs_wgt, SLOT(updateObjectsView()), Qt::QueuedConnection);
 
 	connect(&tmpmodel_save_timer, SIGNAL(timeout()), &tmpmodel_thread, SLOT(start()));
 	connect(&tmpmodel_thread, SIGNAL(started()), this, SLOT(saveTemporaryModels()));
-	connect(&tmpmodel_thread, &QThread::started, [=](){ tmpmodel_thread.setPriority(QThread::HighPriority); });
+	connect(&tmpmodel_thread, &QThread::started, [&](){ tmpmodel_thread.setPriority(QThread::HighPriority); });
 
 	models_tbw_parent->resize(QSize(models_tbw_parent->maximumWidth(), models_tbw_parent->height()));
 
@@ -999,6 +999,10 @@ void MainWindow::setCurrentModel(void)
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
 		btns.push_back(tool_btn);
 
+		general_tb->addAction(current_model->action_edit_creation_order);
+		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_edit_creation_order));
+		btns.push_back(tool_btn);
+
 		for(QToolButton *btn : btns)
 		{
 			PgModelerUiNS::configureWidgetFont(btn, PgModelerUiNS::SMALL_FONT_FACTOR);
@@ -1348,7 +1352,7 @@ void MainWindow::exportModel(void)
 			(!db_model->isInvalidated() || (confirm_validation && msg_box.result()==QDialog::Accepted)))
 	{
 		stopTimers(true);
-		connect(&model_export_form, &ModelExportForm::s_connectionsUpdateRequest, [=](){ updateConnections(true); });
+		connect(&model_export_form, &ModelExportForm::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
 		PgModelerUiNS::resizeDialog(&model_export_form);
 		model_export_form.exec(current_model);
 		stopTimers(false);
@@ -1361,7 +1365,7 @@ void MainWindow::importDatabase(void)
 
 	stopTimers(true);
 
-	connect(&db_import_form, &DatabaseImportForm::s_connectionsUpdateRequest, [=](){ updateConnections(true); });
+	connect(&db_import_form, &DatabaseImportForm::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
 	db_import_form.setModelWidget(current_model);
 	PgModelerUiNS::resizeDialog(&db_import_form);
 	db_import_form.exec();
@@ -1403,7 +1407,7 @@ void MainWindow::diffModelDatabase(void)
 		modeldb_diff_frm.setDatabaseModel(db_model);
 
 		stopTimers(true);
-		connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_connectionsUpdateRequest, [=](){ updateConnections(true); });
+		connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
 		PgModelerUiNS::resizeDialog(&modeldb_diff_frm);
 		modeldb_diff_frm.exec();
 		stopTimers(false);

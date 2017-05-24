@@ -70,7 +70,7 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, BASE
 	connect(data_tbw->horizontalHeader(), SIGNAL(sectionDoubleClicked(int)), this, SLOT(changeColumnName(int)));
 	connect(csv_load_tb, SIGNAL(toggled(bool)), csv_load_parent, SLOT(setVisible(bool)));
 
-	connect(csv_load_wgt, &CsvLoadWidget::s_csvFileLoaded, [=](){
+	connect(csv_load_wgt, &CsvLoadWidget::s_csvFileLoaded, [&](){
 		populateDataGrid(csv_load_wgt->getCsvBuffer(Table::DATA_SEPARATOR, Table::DATA_LINE_BREAK));
 	});
 }
