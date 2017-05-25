@@ -53,7 +53,6 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		connect(sql_validation_chk, SIGNAL(toggled(bool)), use_tmp_names_chk, SLOT(setEnabled(bool)));
 		connect(validate_btn, SIGNAL(clicked(void)), this, SLOT(validateModel(void)));
 		connect(fix_btn, SIGNAL(clicked(void)), this, SLOT(applyFixes(void)));
-		connect(swap_ids_btn, SIGNAL(clicked(void)), this, SLOT(swapObjectsIds(void)));
 		connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(cancelValidation(void)));
 		connect(connections_cmb, SIGNAL(activated(int)), this, SLOT(editConnections()));
 
@@ -90,13 +89,13 @@ void ModelValidationWidget::createThread(void)
 		connect(validation_helper, SIGNAL(s_relsValidationRequested(void)), this, SLOT(validateRelationships(void)));
 
 		connect(validation_helper, &ModelValidationHelper::s_validationCanceled,
-				[=](){ emit s_validationCanceled(); });
+				[&](){ emit s_validationCanceled(); });
 
 		connect(validation_helper, &ModelValidationHelper::s_fixApplied,
-				[=](){ emit s_fixApplied(); });
+				[&](){ emit s_fixApplied(); });
 
 		connect(validation_helper, &ModelValidationHelper::s_objectIdChanged,
-				[=](BaseObject *obj) {
+				[&](BaseObject *obj) {
 			BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(obj);
 			if(graph_obj) graph_objects.push_back(graph_obj);
 		});
@@ -128,7 +127,6 @@ void ModelValidationWidget::reenableValidation(void)
 		validation_thread->quit();
 		model_wgt->setEnabled(true);
 		validate_btn->setEnabled(true);
-		swap_ids_btn->setEnabled(true);
 		cancel_btn->setEnabled(false);
 		fix_btn->setEnabled(model_wgt->getDatabaseModel()->isInvalidated());
 		clear_btn->setEnabled(true);
@@ -150,7 +148,6 @@ void ModelValidationWidget::emitValidationInProgress(void)
 	object_lbl->setVisible(true);
 	prog_info_wgt->setVisible(true);
 	validate_btn->setEnabled(false);
-	swap_ids_btn->setEnabled(false);
 	options_btn->setEnabled(false);
 	model_wgt->setEnabled(false);
 	cancel_btn->setEnabled(true);
@@ -182,7 +179,6 @@ void ModelValidationWidget::setModel(ModelWidget *model_wgt)
 	this->model_wgt=model_wgt;
 	output_trw->setEnabled(enable);
 	validate_btn->setEnabled(enable);
-	swap_ids_btn->setEnabled(enable);
 	options_btn->setEnabled(enable);
 	options_frm->setEnabled(enable);
 	fix_btn->setEnabled(false);
@@ -492,27 +488,10 @@ void ModelValidationWidget::resizeEvent(QResizeEvent *event)
 	{
 		validate_btn->setToolButtonStyle(style);
 		fix_btn->setToolButtonStyle(style);
-		swap_ids_btn->setToolButtonStyle(style);
 		clear_btn->setToolButtonStyle(style);
 		cancel_btn->setToolButtonStyle(style);
 		options_btn->setToolButtonStyle(style);
 	}
-}
-
-void ModelValidationWidget::swapObjectsIds(void)
-{
-	BaseForm parent_form(this);
-	SwapObjectsIdsWidget *swap_ids_wgt=new SwapObjectsIdsWidget;
-
-	swap_ids_wgt->setModel(model_wgt->getDatabaseModel());
-
-	connect(swap_ids_wgt, SIGNAL(s_objectsIdSwapEnabled(bool)), parent_form.apply_ok_btn, SLOT(setEnabled(bool)));
-	connect(parent_form.apply_ok_btn, SIGNAL(clicked(bool)), swap_ids_wgt, SLOT(swapObjectsIds()));
-
-	parent_form.setMainWidget(swap_ids_wgt);
-	parent_form.apply_ok_btn->setEnabled(false);
-
-	parent_form.exec();
 }
 
 void ModelValidationWidget::validateRelationships(void)

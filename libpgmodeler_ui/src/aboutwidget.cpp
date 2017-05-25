@@ -41,7 +41,7 @@ AboutWidget::AboutWidget(QWidget *parent) : QWidget(parent)
 	contributors_tab->resizeColumnsToContents();
 
 	connect(hide_tb, &QToolButton::clicked, this,
-			[=](){
+			[&](){
 		this->close();
 		emit s_visibilityChanged(false);
 	});

@@ -50,11 +50,11 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	act = copy_menu.addAction(trUtf8("Copy as text"));
 	act->setShortcut(QKeySequence("Ctrl+C"));
-	connect(act, &QAction::triggered,	[=](){ SQLExecutionWidget::copySelection(results_tbw, false, false); });
+	connect(act, &QAction::triggered,	[&](){ SQLExecutionWidget::copySelection(results_tbw, false, false); });
 
 	act = copy_menu.addAction(trUtf8("Copy as CSV"));
 	act->setShortcut(QKeySequence("Ctrl+Shift+C"));
-	connect(act, &QAction::triggered, [=](){ SQLExecutionWidget::copySelection(results_tbw, false, true); });
+	connect(act, &QAction::triggered, [&](){ SQLExecutionWidget::copySelection(results_tbw, false, true); });
 
 	copy_tb->setMenu(&copy_menu);
 
@@ -107,7 +107,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(filter_tb, SIGNAL(toggled(bool)), v_splitter, SLOT(setVisible(bool)));
 
 	connect(filter_tb, &QToolButton::toggled,
-			[=](bool checked){
+			[&](bool checked){
 
 				v_splitter->setVisible(checked);
 
@@ -119,7 +119,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(results_tbw, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(insertRowOnTabPress(int,int,int,int)), Qt::QueuedConnection);
 
 	connect(results_tbw, &QTableWidget::itemPressed,
-	[=](){
+	[&](){
 					if(QApplication::mouseButtons()==Qt::RightButton)
 					{
 						QMenu item_menu;
@@ -150,7 +150,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 
 	connect(export_tb, &QToolButton::clicked,
-			[=](){ SQLExecutionWidget::exportResults(results_tbw); });
+			[&](){ SQLExecutionWidget::exportResults(results_tbw); });
 
 	connect(results_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(enableRowControlButtons()));
 	connect(csv_load_wgt, SIGNAL(s_csvFileLoaded()), this, SLOT(loadDataFromCsv()));

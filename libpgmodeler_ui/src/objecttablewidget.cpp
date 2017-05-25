@@ -37,7 +37,7 @@ ObjectTableWidget::ObjectTableWidget(unsigned button_conf, bool conf_exclusion, 
 	connect(table_tbw, SIGNAL(itemSelectionChanged(void)), this, SLOT(setButtonsEnabled(void)));
 	connect(table_tbw, SIGNAL(itemSelectionChanged(void)), this, SLOT(emitRowSelected(void)));
 
-	connect(table_tbw, &QTableWidget::cellClicked, [=](int row, int col){
+	connect(table_tbw, &QTableWidget::cellClicked, [&](int row, int col){
 		emit s_cellClicked(row, col);
 	});
 

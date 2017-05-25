@@ -53,6 +53,7 @@
 #include "tagwidget.h"
 #include "eventtriggerwidget.h"
 #include "pgmodeleruins.h"
+#include "swapobjectsidswidget.h"
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
@@ -281,6 +282,10 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_fade_in->setMenu(&fade_in_menu);
 	action_fade_out->setMenu(&fade_out_menu);
 
+	action_edit_creation_order=new QAction(QIcon(PgModelerUiNS::getIconPath("swapobjs")), trUtf8("Swap ids"), this);
+	action_edit_creation_order->setToolTip(trUtf8("Edit the objects creation order by swapping their ids"));
+	connect(action_edit_creation_order, SIGNAL(triggered(bool)), this, SLOT(editCreationOrder()));
+
 	action=new QAction(QIcon(PgModelerUiNS::getIconPath("breakline_90dv")), trUtf8("90° (vertical)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine(void)));
 	action->setData(QVariant::fromValue<unsigned>(BREAK_VERT_NINETY_DEGREES));
@@ -359,8 +364,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_enable_sql, SIGNAL(triggered(bool)), this, SLOT(toggleObjectSQL(void)));
 	connect(action_disable_sql, SIGNAL(triggered(bool)), this, SLOT(toggleObjectSQL(void)));
 
-	connect(action_remove, &QAction::triggered, [=](){ removeObjects(false); });
-	connect(action_cascade_del, &QAction::triggered, [=](){ removeObjects(true); });
+	connect(action_remove, &QAction::triggered, [&](){ removeObjects(false); });
+	connect(action_cascade_del, &QAction::triggered, [&](){ removeObjects(true); });
 
 	connect(action_fade_in, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
 	connect(action_fade_out, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
@@ -380,7 +385,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, SIGNAL(s_popupMenuRequested(void)), this, SLOT(showObjectMenu(void)));
 	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(configureObjectSelection(void)));
 
-	connect(scene, &ObjectsScene::s_extAttributesToggled, [=](){ modified = true; });
+	connect(scene, &ObjectsScene::s_extAttributesToggled, [&](){ modified = true; });
 
 	connect(scene, SIGNAL(s_popupMenuRequested(BaseObject*)), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_popupMenuRequested(void)), new_obj_overlay_wgt, SLOT(hide()));
@@ -3661,6 +3666,12 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 		actions.back()->setEnabled(true);
 		actions.pop_back();
 	}
+
+	if(objects.empty() || (objects.size()==1 && objects[0]==db_model))
+	{
+		popup_menu.addSeparator();
+		popup_menu.addAction(action_edit_creation_order);
+	}
 }
 
 bool ModelWidget::isModified(void)
@@ -4024,4 +4035,21 @@ void ModelWidget::rearrangeTables(Schema *schema, QPointF origin, unsigned tabs_
 			itr++;
 		}
 	}
+}
+
+void ModelWidget::editCreationOrder(void)
+{
+	BaseForm parent_form(this);
+	SwapObjectsIdsWidget *swap_ids_wgt=new SwapObjectsIdsWidget;
+
+	swap_ids_wgt->setModel(this->getDatabaseModel());
+
+	connect(swap_ids_wgt, &SwapObjectsIdsWidget::s_objectsIdsSwapped, [&](){
+			this->op_list->removeOperations();
+			emit s_objectManipulated();
+	});
+
+	parent_form.apply_ok_btn->setVisible(true);
+	parent_form.setMainWidget(swap_ids_wgt);
+	parent_form.exec();
 }

@@ -28,7 +28,7 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	updateObjectTypeList(obj_types_lst);
 
 	connect(filter_btn, SIGNAL(toggled(bool)), filter_frm, SLOT(setVisible(bool)));
-	connect(filter_btn, &QToolButton::toggled, [=](){
+	connect(filter_btn, &QToolButton::toggled, [&](){
 		splitter->setSizes({0, 1000});
 		splitter->handle(1)->setEnabled(filter_btn->isChecked());
 	});

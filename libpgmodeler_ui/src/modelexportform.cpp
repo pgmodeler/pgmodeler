@@ -60,7 +60,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(drop_chk, SIGNAL(toggled(bool)), drop_objs_rb, SLOT(setEnabled(bool)));
 
 	connect(export_thread, &QThread::started,
-			[=](){
+			[&](){
 		if(export_to_dbms_rb->isChecked())
 			export_hlp.exportToDBMS();
 		else if(export_to_img_rb->isChecked())

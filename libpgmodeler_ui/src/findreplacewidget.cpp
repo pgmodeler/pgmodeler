@@ -34,13 +34,13 @@ FindReplaceWidget::FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget *parent):
 	connect(replace_all_tb, SIGNAL(clicked()), this, SLOT(replaceAll()));
 
 	connect(next_tb, &QToolButton::clicked,
-			[=]() { findText(false, true); });
+			[&]() { findText(false, true); });
 
 	connect(previous_tb, &QToolButton::clicked,
-			[=]() { findText(true, true); });
+			[&]() { findText(true, true); });
 
 	connect(find_edt, &QLineEdit::textChanged,
-			[=]() { bool enable=!find_edt->text().isEmpty();
+			[&]() { bool enable=!find_edt->text().isEmpty();
 		next_tb->setEnabled(enable);
 		previous_tb->setEnabled(enable);
 		replace_tb->setEnabled(enable);

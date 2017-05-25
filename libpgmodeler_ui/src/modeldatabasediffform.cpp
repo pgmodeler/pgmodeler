@@ -101,7 +101,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 
 		PgModelerUiNS::configureWidgetFont(message_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 
-		connect(cancel_btn, &QToolButton::clicked, [=](){ cancelOperation(true); });
+		connect(cancel_btn, &QToolButton::clicked, [&](){ cancelOperation(true); });
 		connect(pgsql_ver_chk, SIGNAL(toggled(bool)), pgsql_ver_cmb, SLOT(setEnabled(bool)));
 		connect(connections_cmb, SIGNAL(activated(int)), this, SLOT(listDatabases()));
 		connect(store_in_file_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
@@ -212,7 +212,7 @@ void ModelDatabaseDiffForm::createThread(unsigned thread_id)
 		export_helper->moveToThread(export_thread);
 
 		connect(apply_on_server_btn, &QPushButton::clicked,
-			[=](){
+			[&](){
 						apply_on_server_btn->setEnabled(false);
 						if(!export_thread->isRunning())
 							exportDiff(false);

@@ -72,9 +72,9 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 	connect(deferrable_chk, SIGNAL(toggled(bool)), this, SLOT(setConfigurationChanged(bool)));
 
 	connect(rel_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(fillNamePatterns()));
-	connect(del_action_cmb, &QComboBox::currentTextChanged, [=](){ setConfigurationChanged(true); });
-	connect(upd_action_cmb, &QComboBox::currentTextChanged, [=](){ setConfigurationChanged(true); });
-	connect(deferral_cmb, &QComboBox::currentTextChanged, [=](){ setConfigurationChanged(true); });
+	connect(del_action_cmb, &QComboBox::currentTextChanged, [&](){ setConfigurationChanged(true); });
+	connect(upd_action_cmb, &QComboBox::currentTextChanged, [&](){ setConfigurationChanged(true); });
+	connect(deferral_cmb, &QComboBox::currentTextChanged, [&](){ setConfigurationChanged(true); });
 }
 
 map<QString, attribs_map> RelationshipConfigWidget::getConfigurationParams(void)

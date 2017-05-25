@@ -73,10 +73,10 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelImport(void)));
 
 	connect(import_to_model_chk, &QCheckBox::toggled,
-			[=](bool checked){ create_model=!checked; });
+			[&](bool checked){ create_model=!checked; });
 
 	connect(database_cmb, &QComboBox::currentTextChanged,
-			[=]() {
+			[&]() {
 		if(database_cmb->currentIndex()==0)
 			db_objects_tw->clear();
 

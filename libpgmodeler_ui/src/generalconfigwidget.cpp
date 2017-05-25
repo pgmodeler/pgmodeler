@@ -202,11 +202,11 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 
 	confs_dir_edt->setText(GlobalAttributes::CONFIGURATIONS_DIR);
 
-	connect(open_dir_tb, &QToolButton::clicked, [=](){
+	connect(open_dir_tb, &QToolButton::clicked, [&](){
 		QDesktopServices::openUrl(QUrl(QString("file://") + confs_dir_edt->text()));
 	});
 
-	connect(clear_sql_history_tb, &QToolButton::clicked, [=](){
+	connect(clear_sql_history_tb, &QToolButton::clicked, [](){
 		SQLExecutionWidget::destroySQLHistory();
 	});
 

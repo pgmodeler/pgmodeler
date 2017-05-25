@@ -89,7 +89,6 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		void updateObjectName(QString obj_name, ObjectType obj_type);
 		void reenableValidation(void);
 		void cancelValidation(void);
-		void swapObjectsIds(void);
 		void validateRelationships(void);
 		void destroyThread(bool force=false);
 		void updateGraphicalObjects(void);

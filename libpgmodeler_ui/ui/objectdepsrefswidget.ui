@@ -99,7 +99,7 @@
           <number>96</number>
          </attribute>
          <attribute name="horizontalHeaderMinimumSectionSize">
-          <number>23</number>
+          <number>30</number>
          </attribute>
          <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
           <bool>true</bool>
@@ -114,13 +114,13 @@
           <bool>false</bool>
          </attribute>
          <attribute name="verticalHeaderDefaultSectionSize">
-          <number>20</number>
+          <number>25</number>
          </attribute>
          <attribute name="verticalHeaderHighlightSections">
           <bool>false</bool>
          </attribute>
          <attribute name="verticalHeaderMinimumSectionSize">
-          <number>19</number>
+          <number>25</number>
          </attribute>
          <attribute name="verticalHeaderShowSortIndicator" stdset="0">
           <bool>false</bool>
@@ -256,6 +256,9 @@
          <attribute name="horizontalHeaderDefaultSectionSize">
           <number>96</number>
          </attribute>
+         <attribute name="horizontalHeaderMinimumSectionSize">
+          <number>30</number>
+         </attribute>
          <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
           <bool>true</bool>
          </attribute>
@@ -269,10 +272,13 @@
           <bool>false</bool>
          </attribute>
          <attribute name="verticalHeaderDefaultSectionSize">
-          <number>20</number>
+          <number>25</number>
          </attribute>
          <attribute name="verticalHeaderHighlightSections">
           <bool>false</bool>
+         </attribute>
+         <attribute name="verticalHeaderMinimumSectionSize">
+          <number>25</number>
          </attribute>
          <attribute name="verticalHeaderShowSortIndicator" stdset="0">
           <bool>false</bool>

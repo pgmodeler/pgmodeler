@@ -89,12 +89,12 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		clear_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		clear_btn->setDisabled(true);
 
-		connect(clear_btn, &QToolButton::clicked, [=](){
+		connect(clear_btn, &QToolButton::clicked, [&](){
 			this->clear();
 			clear_btn->setEnabled(false);
 		});
 
-		connect(this, &NumberedTextEditor::textChanged, [=](){
+		connect(this, &NumberedTextEditor::textChanged, [&](){
 			clear_btn->setEnabled(!this->toPlainText().isEmpty() && !this->isReadOnly());
 		});
 

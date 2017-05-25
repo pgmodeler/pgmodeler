@@ -37,12 +37,12 @@ UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
 	connect(&update_chk_manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(handleUpdateChecked(QNetworkReply*)));
 
 	//C++11 lambda slots
-	connect(get_source_tb, &QToolButton::clicked, this, [=](){ activateLink(GlobalAttributes::PGMODELER_SRC_URL); });
-	connect(get_binary_tb, &QToolButton::clicked, this, [=](){ activateLink(GlobalAttributes::PGMODELER_DOWNLOAD_URL); });
+	connect(get_source_tb, &QToolButton::clicked, this, [&](){ activateLink(GlobalAttributes::PGMODELER_SRC_URL); });
+	connect(get_binary_tb, &QToolButton::clicked, this, [&](){ activateLink(GlobalAttributes::PGMODELER_DOWNLOAD_URL); });
 
 
 	connect(hide_tb, &QToolButton::clicked, this,
-			[=](){
+			[&](){
 		this->close();
 		emit s_visibilityChanged(false);
 	});

@@ -48,10 +48,10 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN
 		configureTabOrder({ data_type });
 
 		connect(sequence_rb, &QRadioButton::clicked,
-				[=](){ sequence_sel->setEnabled(true); def_value_txt->setEnabled(false); });
+				[&](){ sequence_sel->setEnabled(true); def_value_txt->setEnabled(false); });
 
 		connect(expression_rb, &QRadioButton::clicked,
-				[=](){ sequence_sel->setEnabled(false); def_value_txt->setEnabled(true); });
+				[&](){ sequence_sel->setEnabled(false); def_value_txt->setEnabled(true); });
 
 		setMinimumSize(540, 460);
 	}
