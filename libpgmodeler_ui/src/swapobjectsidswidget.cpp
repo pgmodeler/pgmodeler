@@ -43,8 +43,7 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 		hlayout->addSpacerItem(new QSpacerItem(10,10, QSizePolicy::Expanding));
 
 		swap_objs_grid->addLayout(hlayout, 2, 0, 1, 4);
-		swap_objs_grid->addItem(new QSpacerItem(10,0,QSizePolicy::Minimum,QSizePolicy::Expanding), swap_objs_grid->count()+1, 0);
-
+		swap_objs_grid->addWidget(filter_wgt, swap_objs_grid->count(), 0, 1, 4);
 		swap_objs_grid->addWidget(objects_tbw, swap_objs_grid->count(), 0, 1, 4);
 		swap_objs_grid->addWidget(alert_frm, swap_objs_grid->count(), 0, 1, 4);
 
@@ -85,7 +84,9 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 		});
 
 		setMinimumSize(640,480);
+
 		connect(swap_ids_tb, SIGNAL(clicked(bool)), this, SLOT(swapObjectsIds()));
+		connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterObjects()));
 	}
 	catch(Exception &e)
 	{
@@ -224,5 +225,19 @@ void SwapObjectsIdsWidget::swapObjectsIds(void)
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void SwapObjectsIdsWidget::filterObjects(void)
+{
+	QList<QTableWidgetItem*> items=objects_tbw->findItems(filter_edt->text(), Qt::MatchStartsWith | Qt::MatchRecursive);
+
+	for(int row=0; row < objects_tbw->rowCount(); row++)
+		objects_tbw->setRowHidden(row, true);
+
+	while(!items.isEmpty())
+	{
+		objects_tbw->setRowHidden(items.front()->row(), false);
+		items.pop_front();
 	}
 }

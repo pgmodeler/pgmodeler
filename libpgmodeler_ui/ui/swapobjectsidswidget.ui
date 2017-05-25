@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>568</width>
-    <height>461</height>
+    <height>567</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -172,8 +172,8 @@
   <widget class="QFrame" name="alert_frm">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>370</y>
+     <x>20</x>
+     <y>500</y>
      <width>451</width>
      <height>60</height>
     </rect>
@@ -233,7 +233,7 @@
        </font>
       </property>
       <property name="text">
-       <string>Note that the creation order modified here may change when validating the model anytime after closing this dialog. Also, by changing the creation order of the objects the operations history is automatically cleared.</string>
+       <string>Change objects creation is an irreversible operation and cause the operations history to be automatically cleared. Note that the creation order configured in this form are not definitive and may change after a model validation.</string>
       </property>
       <property name="wordWrap">
        <bool>true</bool>
@@ -376,16 +376,66 @@
     <enum>Qt::ToolButtonTextBesideIcon</enum>
    </property>
   </widget>
+  <widget class="QWidget" name="filter_wgt" native="true">
+   <property name="geometry">
+    <rect>
+     <x>60</x>
+     <y>160</y>
+     <width>274</width>
+     <height>44</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QLabel" name="filter_lbl">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>Filter:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="filter_edt">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="clearButtonEnabled">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
   <widget class="QTableWidget" name="objects_tbw">
    <property name="enabled">
     <bool>true</bool>
    </property>
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>190</y>
+     <x>60</x>
+     <y>230</y>
      <width>421</width>
-     <height>119</height>
+     <height>81</height>
     </rect>
    </property>
    <property name="font">

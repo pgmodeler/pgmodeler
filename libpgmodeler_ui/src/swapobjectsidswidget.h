@@ -51,6 +51,7 @@ class SwapObjectsIdsWidget: public QWidget, public Ui::SwapObjectsIdsWidget {
 	private slots:
 		void showObjectId(void);
 		void swapObjectsIds(void);
+		void filterObjects(void);
 
 	signals:
 		void s_objectsIdsSwapped(void);
