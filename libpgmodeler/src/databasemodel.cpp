@@ -145,6 +145,8 @@ vector<BaseObject *> *DatabaseModel::getObjectList(ObjectType obj_type)
 		return(&tags);
 	else if(obj_type==OBJ_EVENT_TRIGGER)
 		return(&eventtriggers);
+	else if(obj_type==OBJ_GENERIC_SQL)
+		return(&genericsqls);
 	else
 		return(nullptr);
 }
@@ -206,6 +208,8 @@ void DatabaseModel::addObject(BaseObject *object, int obj_idx)
 				addPermission(dynamic_cast<Permission *>(object));
 			else if(obj_type==OBJ_EVENT_TRIGGER)
 				addEventTrigger(dynamic_cast<EventTrigger *>(object));
+			else if(obj_type==OBJ_GENERIC_SQL)
+				addGenericSQL(dynamic_cast<GenericSQL *>(object));
 		}
 		catch(Exception &e)
 		{
@@ -272,6 +276,8 @@ void DatabaseModel::removeObject(BaseObject *object, int obj_idx)
 				removePermission(dynamic_cast<Permission *>(object));
 			else if(obj_type==OBJ_EVENT_TRIGGER)
 				removeEventTrigger(dynamic_cast<EventTrigger *>(object));
+			else if(obj_type==OBJ_GENERIC_SQL)
+				removeGenericSQL(dynamic_cast<GenericSQL *>(object));
 		}
 		catch(Exception &e)
 		{
@@ -337,6 +343,10 @@ void DatabaseModel::removeObject(unsigned obj_idx, ObjectType obj_type)
 			removeRelationship(dynamic_cast<BaseRelationship *>(object), obj_idx);
 		else if(obj_type==OBJ_PERMISSION)
 			removePermission(dynamic_cast<Permission *>(object));
+		else if(obj_type==OBJ_EVENT_TRIGGER)
+			removeEventTrigger(dynamic_cast<EventTrigger *>(object), obj_idx);
+		else if(obj_type==OBJ_GENERIC_SQL)
+			removeGenericSQL(dynamic_cast<GenericSQL *>(object), obj_idx);
 	}
 }
 
@@ -982,6 +992,40 @@ EventTrigger *DatabaseModel::getEventTrigger(unsigned obj_idx)
 EventTrigger *DatabaseModel::getEventTrigger(const QString &name)
 {
 	return(dynamic_cast<EventTrigger *>(getObject(name, OBJ_EVENT_TRIGGER)));
+}
+
+void DatabaseModel::addGenericSQL(GenericSQL *genericsql, int obj_idx)
+{
+	try
+	{
+		__addObject(genericsql, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void DatabaseModel::removeGenericSQL(GenericSQL *genericsql, int obj_idx)
+{
+	try
+	{
+		__removeObject(genericsql, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+GenericSQL *DatabaseModel::getGenericSQL(unsigned obj_idx)
+{
+	return(dynamic_cast<GenericSQL *>(getObject(obj_idx, OBJ_GENERIC_SQL)));
+}
+
+GenericSQL *DatabaseModel::getGenericSQL(const QString &name)
+{
+	return(dynamic_cast<GenericSQL *>(getObject(name, OBJ_GENERIC_SQL)));
 }
 
 void DatabaseModel::removeExtension(Extension *extension, int obj_idx)
@@ -6570,7 +6614,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 						  OBJ_CAST, OBJ_CONVERSION, OBJ_EXTENSION,
 						  OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_OPCLASS,
 						  OBJ_AGGREGATE, OBJ_DOMAIN, OBJ_TEXTBOX, BASE_RELATIONSHIP,
-						  OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW, OBJ_SEQUENCE };
+							OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW, OBJ_SEQUENCE, OBJ_GENERIC_SQL };
 	unsigned i=0, aux_obj_cnt=sizeof(aux_obj_types)/sizeof(ObjectType), count=sizeof(obj_types)/sizeof(ObjectType);
 
 	//The first objects on the map will be roles, tablespaces, schemas and tags

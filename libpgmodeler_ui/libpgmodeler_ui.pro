@@ -108,7 +108,9 @@ SOURCES += src/mainwindow.cpp \
     src/welcomewidget.cpp \
 		src/tabledatawidget.cpp \
 		src/plaintextitemdelegate.cpp \
-    src/csvloadwidget.cpp
+		src/csvloadwidget.cpp \
+		src/genericsqlwidget.cpp
+
 
 HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
@@ -203,7 +205,8 @@ HEADERS += src/mainwindow.h \
     src/welcomewidget.h \
 		src/tabledatawidget.h \
 		src/plaintextitemdelegate.h \
-    src/csvloadwidget.h
+		src/csvloadwidget.h \
+		src/genericsqlwidget.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \
@@ -282,7 +285,8 @@ FORMS += ui/mainwindow.ui \
     ui/metadatahandlingform.ui \
     ui/welcomewidget.ui \
     ui/tabledatawidget.ui \
-    ui/csvloadwidget.ui
+    ui/csvloadwidget.ui \
+    ui/genericsqlwidget.ui
 
 unix|windows: LIBS += -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
                       -L$$OUT_PWD/../libpgconnector/ -lpgconnector \

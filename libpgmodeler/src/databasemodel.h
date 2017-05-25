@@ -53,6 +53,7 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 #include "extension.h"
 #include "tag.h"
 #include "eventtrigger.h"
+#include "genericsql.h"
 #include <algorithm>
 #include <locale.h>
 
@@ -111,6 +112,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		vector<BaseObject *> extensions;
 		vector<BaseObject *> tags;
 		vector<BaseObject *> eventtriggers;
+		vector<BaseObject *> genericsqls;
 
 		/*! \brief Stores the xml definition for special objects. This map is used
 		 when revalidating the relationships */
@@ -438,6 +440,11 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void removeEventTrigger(EventTrigger *evnttrig, int obj_idx=-1);
 		EventTrigger *getEventTrigger(unsigned obj_idx);
 		EventTrigger *getEventTrigger(const QString &name);
+
+		void addGenericSQL(GenericSQL *genericsql, int obj_idx=-1);
+		void removeGenericSQL(GenericSQL *genericsql, int obj_idx=-1);
+		GenericSQL *getGenericSQL(unsigned obj_idx);
+		GenericSQL *getGenericSQL(const QString &name);
 
 		void addPermission(Permission *perm);
 		void removePermission(Permission *perm);

@@ -720,7 +720,7 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 		vector<BaseObject *> ref_list, tree_state, obj_list;
 		ObjectType types[]={ OBJ_ROLE, OBJ_TABLESPACE,
 							 OBJ_LANGUAGE, OBJ_CAST, OBJ_TEXTBOX,
-							 OBJ_RELATIONSHIP, OBJ_EVENT_TRIGGER, OBJ_TAG };
+							 OBJ_RELATIONSHIP, OBJ_EVENT_TRIGGER, OBJ_TAG, OBJ_GENERIC_SQL };
 		unsigned count, i, i1, type_cnt=sizeof(types)/sizeof(ObjectType);
 
 		try

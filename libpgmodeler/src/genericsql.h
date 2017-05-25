@@ -17,30 +17,30 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
-\class NewObjectOverlayWidget
-\brief Implements the a basic overlay to quicly trigger action to create new objects.
+\ingroup libpgmodeler
+\class GenericSQL
+\brief This class is used to represent generic sql commands as database objects
 */
 
-#ifndef NEW_OBJECT_OVERLAY_WIDGET_H
-#define NEW_OBJECT_OVERLAY_WIDGET_H
+#ifndef GENERIC_SQL_H
+#define GENERIC_SQL_H
 
-#include <vector>
-#include <QWidget>
 #include "baseobject.h"
-#include "ui_newobjectoverlaywidget.h"
 
-//Adding the declaration of ModelWidget class in order to be visible to NewObjectOverlayWidget
-class ModelWidget;
-
-class NewObjectOverlayWidget: public QWidget, public Ui::NewObjectOverlayWidget {
+class GenericSQL: public BaseObject{
 	private:
-		Q_OBJECT
+		QString definition;
 
 	public:
-		explicit NewObjectOverlayWidget(ModelWidget * parent);
-		void setSelectedObjects(vector<BaseObject *> &sel_objs);
-		void configureOverlayButtons(void);
+		GenericSQL(void);
+
+		void setDefinition(const QString &def);
+		QString getDefinition(void);
+
+		//! \brief Copies the attributes between generic sql objects
+		void operator = (GenericSQL &genericsql);
+
+		virtual QString getCodeDefinition(unsigned def_type);
 };
 
 #endif

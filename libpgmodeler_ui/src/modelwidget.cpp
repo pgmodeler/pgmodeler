@@ -54,6 +54,7 @@
 #include "eventtriggerwidget.h"
 #include "pgmodeleruins.h"
 #include "swapobjectsidswidget.h"
+#include "genericsqlwidget.h"
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
@@ -85,7 +86,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 						 OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY,
 						 OBJ_ROLE, OBJ_SCHEMA, OBJ_SEQUENCE, OBJ_TYPE,
 						 OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX, OBJ_TABLESPACE,
-						 OBJ_COLLATION, OBJ_EXTENSION, OBJ_EVENT_TRIGGER, OBJ_TAG };
+						 OBJ_COLLATION, OBJ_EXTENSION, OBJ_EVENT_TRIGGER, OBJ_TAG, OBJ_GENERIC_SQL };
 	unsigned i, obj_cnt=sizeof(types)/sizeof(ObjectType),
 			rel_types_id[]={ BaseRelationship::RELATIONSHIP_11, BaseRelationship::RELATIONSHIP_1N,
 							 BaseRelationship::RELATIONSHIP_NN, BaseRelationship::RELATIONSHIP_DEP,
@@ -311,8 +312,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	//Alocatting the object creation actions
 	for(i=0; i < obj_cnt; i++)
 	{
-		actions_new_objects[types[i]]=new QAction(QIcon(PgModelerUiNS::getIconPath(types[i])),
-												  BaseObject::getTypeName(types[i]), this);
+		actions_new_objects[types[i]]=new QAction(QIcon(PgModelerUiNS::getIconPath(types[i])), BaseObject::getTypeName(types[i]), this);
 		actions_new_objects[types[i]]->setData(QVariant(types[i]));
 		connect(actions_new_objects[types[i]], SIGNAL(triggered(bool)), this, SLOT(addNewObject(void)));
 	}
@@ -1580,6 +1580,12 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			Permission *perm=dynamic_cast<Permission *>(object);
 			permission_wgt->setAttributes(db_model, nullptr, (perm ? perm->getObject() : object));
 			res=openEditingForm(permission_wgt, Messagebox::OK_BUTTON);
+		}
+		else if(obj_type==OBJ_GENERIC_SQL)
+		{
+			GenericSQLWidget *genericsql_wgt=new GenericSQLWidget;
+			genericsql_wgt->setAttributes(db_model, op_list, dynamic_cast<GenericSQL *>(object));
+			res=openEditingForm(genericsql_wgt);
 		}
 		else
 		{
@@ -3306,7 +3312,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 		if(objects.empty() || (objects.size()==1 && objects[0]==db_model))
 		{
 			ObjectType types[]={ OBJ_AGGREGATE, OBJ_CAST, OBJ_EVENT_TRIGGER, OBJ_COLLATION, OBJ_CONVERSION, OBJ_DOMAIN,
-								 OBJ_EXTENSION, OBJ_FUNCTION, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
+								 OBJ_EXTENSION, OBJ_FUNCTION, OBJ_GENERIC_SQL, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
 								 OBJ_OPFAMILY, OBJ_RELATIONSHIP, OBJ_ROLE, OBJ_SCHEMA, OBJ_SEQUENCE,
 								 OBJ_TABLE, OBJ_TABLESPACE, OBJ_TEXTBOX, OBJ_TYPE, OBJ_VIEW, OBJ_TAG };
 			unsigned cnt = sizeof(types)/sizeof(ObjectType);
