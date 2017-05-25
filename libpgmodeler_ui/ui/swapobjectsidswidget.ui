@@ -215,31 +215,6 @@
     <property name="bottomMargin">
      <number>2</number>
     </property>
-    <item row="0" column="1">
-     <widget class="QLabel" name="message_lbl">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="font">
-       <font>
-        <weight>50</weight>
-        <bold>false</bold>
-        <underline>false</underline>
-        <strikeout>false</strikeout>
-        <kerning>true</kerning>
-       </font>
-      </property>
-      <property name="text">
-       <string>Change objects creation is an irreversible operation and cause the operations history to be automatically cleared. Note that the creation order configured in this form are not definitive and may change after a model validation.</string>
-      </property>
-      <property name="wordWrap">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
     <item row="0" column="0">
      <widget class="QLabel" name="label">
       <property name="minimumSize">
@@ -264,6 +239,31 @@
        <pixmap resource="../res/resources.qrc">:/icones/icones/msgbox_alerta.png</pixmap>
       </property>
       <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLabel" name="message_lbl">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <kerning>true</kerning>
+       </font>
+      </property>
+      <property name="text">
+       <string>Change the objects creation order is an irreversible operation and cause the operations history to be automatically erased. Note that the creation order configured in this form is not definitive and may change after a model validation.</string>
+      </property>
+      <property name="wordWrap">
        <bool>true</bool>
       </property>
      </widget>
@@ -432,8 +432,8 @@
    </property>
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>230</y>
+     <x>40</x>
+     <y>240</y>
      <width>421</width>
      <height>81</height>
     </rect>
