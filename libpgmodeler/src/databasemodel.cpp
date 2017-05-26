@@ -3129,13 +3129,13 @@ BaseObject *DatabaseModel::createObject(ObjectType obj_type)
 		else if(obj_type==OBJ_CONSTRAINT)
 			object=createConstraint(nullptr);
 		else if(obj_type==OBJ_TRIGGER)
-			object=createTrigger();//nullptr);
+			object=createTrigger();
 		else if(obj_type==OBJ_INDEX)
-			object=createIndex();//nullptr);
+			object=createIndex();
 		else if(obj_type==OBJ_COLUMN)
 			object=createColumn();
 		else if(obj_type==OBJ_RULE)
-			object=createRule();//nullptr);
+			object=createRule();
 		else if(obj_type==OBJ_RELATIONSHIP ||
 				obj_type==BASE_RELATIONSHIP)
 			object=createRelationship();
@@ -3149,6 +3149,8 @@ BaseObject *DatabaseModel::createObject(ObjectType obj_type)
 			object=createPermission();
 		else if(obj_type==OBJ_EVENT_TRIGGER)
 			object=createEventTrigger();
+		else if(obj_type==OBJ_GENERIC_SQL)
+			object=createGenericSQL();
 	}
 
 	return(object);
@@ -5457,6 +5459,34 @@ EventTrigger *DatabaseModel::createEventTrigger(void)
 	}
 
 	return(event_trig);
+}
+
+GenericSQL *DatabaseModel::createGenericSQL(void)
+{
+	GenericSQL *genericsql=nullptr;
+	attribs_map attribs;
+
+	try
+	{
+		genericsql=new GenericSQL;
+		setBasicAttributes(genericsql);
+
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
+		{
+			if(xmlparser.getElementType()==XML_ELEMENT_NODE && xmlparser.getElementName() == ParsersAttributes::DEFINITION)
+			{
+				xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
+				genericsql->setDefinition(xmlparser.getElementContent());
+			}
+		}
+	}
+	catch(Exception &e)
+	{
+		if(genericsql) delete(genericsql);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
+	}
+
+	return(genericsql);
 }
 
 Sequence *DatabaseModel::createSequence(bool ignore_onwer)

@@ -502,6 +502,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		Index *createIndex(void);
 		Trigger *createTrigger(void);
 		EventTrigger *createEventTrigger(void);
+		GenericSQL *createGenericSQL(void);
 
 		//! \brief Creates/removes the relationship between the passed view and the referecend tables
 		void updateViewRelationships(View *view, bool force_rel_removal=false);
