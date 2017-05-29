@@ -14,6 +14,9 @@
 <!ENTITY % tag SYSTEM "tag.dtd">
 %tag;
 
+<!ENTITY % genericsql SYSTEM "genericsql.dtd">
+%genericsql;
+
 <!ELEMENT info (position*, label*, appended-sql?, prepended-sql?)>
 <!ATTLIST info object CDATA #REQUIRED>
 <!ATTLIST info type CDATA #IMPLIED>
@@ -38,4 +41,4 @@
 <!ATTLIST info faded-out (false|true) "false">
 <!ATTLIST info hide-ext-attribs (false|true) "false">
 
-<!ELEMENT metadata (textbox*, tag*, info*)>
+<!ELEMENT metadata (textbox*, tag*, genericsql*, info*)>

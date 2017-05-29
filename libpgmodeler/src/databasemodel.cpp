@@ -9074,7 +9074,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 	bool save_db_attribs=false, save_objs_pos=false, save_objs_prot=false,
 			save_objs_sqldis=false, save_textboxes=false, save_tags=false,
 			save_custom_sql=false, save_custom_colors=false, save_fadeout=false,
-			save_extattribs=false;
+			save_extattribs=false, save_genericsqls=false;
 	QStringList labels_attrs={ ParsersAttributes::SRC_LABEL,
 														 ParsersAttributes::DST_LABEL,
 														 ParsersAttributes::NAME_LABEL };
@@ -9089,6 +9089,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 	save_custom_colors=(META_OBJS_CUSTOMCOLORS & options) == META_OBJS_CUSTOMCOLORS;
 	save_fadeout=(META_OBJS_FADEDOUT & options) == META_OBJS_FADEDOUT;
 	save_extattribs=(META_OBJS_EXTATTRIBS & options) == META_OBJS_EXTATTRIBS;
+	save_genericsqls=(META_GENERIC_SQL_OBJS & options) == META_GENERIC_SQL_OBJS;
 
 	output.open(QFile::WriteOnly);
 
@@ -9098,13 +9099,16 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 
 	try
 	{
-		if(save_textboxes || save_tags)
+		if(save_textboxes || save_tags || save_genericsqls)
 		{
 			if(save_textboxes)
 				objects.insert(objects.end(), textboxes.begin(), textboxes.end());
 
 			if(save_tags)
 				objects.insert(objects.end(), tags.begin(), tags.end());
+
+			if(save_genericsqls)
+				objects.insert(objects.end(), genericsqls.begin(), genericsqls.end());
 		}
 
 		if(save_db_attribs)
@@ -9160,8 +9164,8 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 		{
 			obj_type=object->getObjectType();
 
-			//When handling a tag or textbox we just extract their XML code
-			if(obj_type==OBJ_TEXTBOX || obj_type==OBJ_TAG)
+			//When handling a tag , textbox or generic sql we just extract their XML code
+			if(obj_type==OBJ_TEXTBOX || obj_type==OBJ_TAG || obj_type == OBJ_GENERIC_SQL)
 			{
 				emit s_objectLoaded(((idx++)/static_cast<float>(objects.size()))*100,
 														trUtf8("Saving object `%1' (%2)")
@@ -9382,7 +9386,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 	bool load_db_attribs=false, load_objs_pos=false, load_objs_prot=false,
 			load_objs_sqldis=false, load_textboxes=false, load_tags=false,
 			load_custom_sql=false, load_custom_colors=false, load_fadeout=false,
-			load_extattribs=false;
+			load_extattribs=false, load_genericsqls=false;
 
 	load_db_attribs=(META_DB_ATTRIBUTES & options) == META_DB_ATTRIBUTES;
 	load_objs_pos=(META_OBJS_POSITIONING & options) == META_OBJS_POSITIONING;
@@ -9394,6 +9398,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 	load_custom_colors=(META_OBJS_CUSTOMCOLORS & options) == META_OBJS_CUSTOMCOLORS;
 	load_fadeout=(META_OBJS_FADEDOUT & options) == META_OBJS_FADEDOUT;
 	load_extattribs=(META_OBJS_EXTATTRIBS & options) == META_OBJS_EXTATTRIBS;
+	load_genericsqls=(META_GENERIC_SQL_OBJS & options) == META_GENERIC_SQL_OBJS;
 
 	try
 	{
@@ -9418,7 +9423,8 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 					elem_name=xmlparser.getElementName();
 
 					if((elem_name==BaseObject::getSchemaName(OBJ_TAG) && load_tags) ||
-						 (elem_name==BaseObject::getSchemaName(OBJ_TEXTBOX) && load_textboxes))
+						 (elem_name==BaseObject::getSchemaName(OBJ_TEXTBOX) && load_textboxes) ||
+						 (elem_name==BaseObject::getSchemaName(OBJ_GENERIC_SQL) && load_genericsqls))
 					{
 						xmlparser.savePosition();
 						obj_type=BaseObject::getObjectType(elem_name);

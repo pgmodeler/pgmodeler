@@ -174,7 +174,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 		META_OBJS_EXTATTRIBS=128,	//! \brief Handle tables and views extended attributes display when save/load metadata file
 		META_TEXTBOX_OBJS=256,	//! \brief Handle textboxes object when save/load metadata file
 		META_TAG_OBJS=512,	//! \brief Handle tags object when save/load metadata file
-		META_ALL_INFO=1023;	//! \brief Handle all metadata information about objects when save/load metadata file
+		META_GENERIC_SQL_OBJS=1024,	//! \brief Handle generic sql object when save/load metadata file
+		META_ALL_INFO=2047;	//! \brief Handle all metadata information about objects when save/load metadata file
 
 		DatabaseModel(void);
 
