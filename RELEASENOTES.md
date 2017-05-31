@@ -4,7 +4,7 @@ v0.9.0-beta1
 <em>Release date: May 13, 2017</em><br/>
 <em>Changes since: <strong>v0.9.0-beta</strong></em><br/>
 
-<strong>Summary:</strong> this is the last release before we can finally launch the stable 0.9.0. This version was focused on improving the user's experience on high resulotion screens by introducing an automatic machanism that is capable to resize dialogs, objects and fonts according to the current screen settings. This support is quite experimental and will be polished in the next releases. <br/>
+<strong>Summary:</strong> this is the last release before we can finally launch the stable 0.9.0. This version was focused on improving the user's experience on high resolution screens by introducing an automatic machanism that is capable to resize dialogs, objects and fonts according to the current screen settings. This support is quite experimental and will be polished in the next releases. <br/>
 
 The only downside of the support to bigger screens is that the icons still can't be resized properly due to their low resolution. The solution for this issue is the complete redesign of the whole icon set, task that is planned to be done in any moment in pgModeler 1.0 development timeline. But I'll try to antecipate this job if there's some room for it.<br/>
 
