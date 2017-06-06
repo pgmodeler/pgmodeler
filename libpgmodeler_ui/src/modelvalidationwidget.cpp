@@ -55,6 +55,7 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		connect(fix_btn, SIGNAL(clicked(void)), this, SLOT(applyFixes(void)));
 		connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(cancelValidation(void)));
 		connect(connections_cmb, SIGNAL(activated(int)), this, SLOT(editConnections()));
+		connect(swap_ids_btn, SIGNAL(clicked(void)), this, SLOT(swapObjectsIds(void)));
 
 		ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true);
 	}
@@ -134,6 +135,7 @@ void ModelValidationWidget::reenableValidation(void)
 		options_frm->setEnabled(true);
 		ico_lbl->setVisible(false);
 		object_lbl->setVisible(false);
+		swap_ids_btn->setEnabled(true);
 
 		emit s_validationInProgress(false);
 	}
@@ -152,6 +154,7 @@ void ModelValidationWidget::emitValidationInProgress(void)
 	model_wgt->setEnabled(false);
 	cancel_btn->setEnabled(true);
 	options_frm->setEnabled(false);
+	swap_ids_btn->setEnabled(false);
 }
 
 void ModelValidationWidget::clearOutput(void)
@@ -182,6 +185,7 @@ void ModelValidationWidget::setModel(ModelWidget *model_wgt)
 	options_btn->setEnabled(enable);
 	options_frm->setEnabled(enable);
 	fix_btn->setEnabled(false);
+	swap_ids_btn->setEnabled(enable);
 	curr_step=0;
 	clearOutput();
 	destroyThread(true);
@@ -491,6 +495,7 @@ void ModelValidationWidget::resizeEvent(QResizeEvent *event)
 		clear_btn->setToolButtonStyle(style);
 		cancel_btn->setToolButtonStyle(style);
 		options_btn->setToolButtonStyle(style);
+		swap_ids_btn->setToolButtonStyle(style);
 	}
 }
 
@@ -540,4 +545,13 @@ void ModelValidationWidget::handleSQLValidationStarted(void)
 	options_btn->setEnabled(false);
 	clear_btn->setEnabled(false);
 	options_frm->setEnabled(false);
+}
+
+void ModelValidationWidget::swapObjectsIds(void)
+{
+	BaseForm parent_form(this);
+	SwapObjectsIdsWidget *swap_ids_wgt=new SwapObjectsIdsWidget;
+	swap_ids_wgt->setModel(model_wgt->getDatabaseModel());
+	parent_form.setMainWidget(swap_ids_wgt);
+	parent_form.exec();
 }

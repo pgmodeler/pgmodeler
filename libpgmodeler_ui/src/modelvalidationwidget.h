@@ -94,6 +94,7 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		void updateGraphicalObjects(void);
 		void editConnections(void);
 		void handleSQLValidationStarted(void);
+		void swapObjectsIds(void);
 
 	public slots:
 		void hide(void);
