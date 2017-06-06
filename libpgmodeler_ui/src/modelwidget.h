@@ -166,6 +166,10 @@ class ModelWidget: public QWidget {
 		//! \brief Fades in our out the object types held by the specified action
 		void fadeObjects(QAction *action, bool fade_in);
 
+		void breakRelationshipLine(BaseRelationship *rel, unsigned break_type);
+
+		void arrangeTablesAsTree(BaseTableView *root, float &py, vector<BaseTable *> &evaluated_tabs);
+
 	protected:
 		static const unsigned BREAK_VERT_NINETY_DEGREES, //Break vertically the line in one 90° angle
 		BREAK_HORIZ_NINETY_DEGREES, //Break horizontally the line in one 90° angle
@@ -308,6 +312,10 @@ class ModelWidget: public QWidget {
 		/*! \brief Updates the opacity factor of the objects faded in the model. This method should be called
 		whenever the min_object_opacity changes */
 		void updateObjectsOpacity(void);
+
+		void arrangeObjectsAutomatically(void);
+
+		void arrangeTablesAsTree(void);
 
 	private slots:
 		//! \brief Handles the signals that indicates the object creation on the reference database model

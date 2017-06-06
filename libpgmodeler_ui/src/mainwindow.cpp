@@ -214,6 +214,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(model_valid_wgt, &ModelValidationWidget::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
 	connect(sql_tool_wgt, &SQLToolWidget::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
 
+	connect(action_arrange_objects, SIGNAL(triggered(bool)), this, SLOT(arrangeObjects()));
+
 	window_title=this->windowTitle() + QString(" ") + GlobalAttributes::PGMODELER_VERSION;
 
 #ifdef DEMO_VERSION
@@ -963,6 +965,7 @@ void MainWindow::setCurrentModel(void)
 
 	models_tbw->setCurrentIndex(model_nav_wgt->getCurrentIndex());
 	current_model=dynamic_cast<ModelWidget *>(models_tbw->currentWidget());
+	action_arrange_objects->setEnabled(current_model != nullptr);
 
 	if(current_model)
 	{
@@ -1882,4 +1885,12 @@ void MainWindow::handleObjectsMetadata(void)
 	objs_meta_frm.setModelWidgets(model_nav_wgt->getModelWidgets());
 	connect(&objs_meta_frm, SIGNAL(s_metadataHandled()), model_objs_wgt, SLOT(updateObjectsView()));
 	objs_meta_frm.exec();
+}
+
+void MainWindow::arrangeObjects(void)
+{
+	if(!current_model)
+		return;
+
+	current_model->arrangeTablesAsTree();
 }
