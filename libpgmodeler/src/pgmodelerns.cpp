@@ -144,6 +144,9 @@ namespace PgModelerNS {
 			case OBJ_EVENT_TRIGGER:
 				copyObject(psrc_obj, dynamic_cast<EventTrigger *>(copy_obj));
 			break;
+			case OBJ_GENERIC_SQL:
+				copyObject(psrc_obj, dynamic_cast<GenericSQL *>(copy_obj));
+			break;
 			default:
 				throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			break;

@@ -125,7 +125,9 @@ void SwapObjectsIdsWidget::fillCreationOrderGrid(void)
 
 	//Using an stl function to extract all the values (objects) from the map and put them into a list
 	std::for_each(creation_order.begin(), creation_order.end(), [&](const std::pair<unsigned, BaseObject *> &itr) {
-		objects.push_back(itr.second);
+		if(itr.second->getObjectType() != OBJ_CONSTRAINT) {
+			objects.push_back(itr.second);
+		}
 	});
 
 	ObjectFinderWidget::updateObjectTable(objects_tbw, objects);

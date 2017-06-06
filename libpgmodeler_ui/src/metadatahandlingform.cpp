@@ -64,6 +64,9 @@ MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) :
 	restore_ht=new HintTextWidget(restore_hint, this);
 	restore_ht->setText(restore_rb->statusTip());
 
+	generic_sql_objs_ht=new HintTextWidget(generic_sql_objs_hint, this);
+	generic_sql_objs_ht->setText(generic_sql_objs_chk->statusTip());
+
 	htmlitem_deleg=new HtmlItemDelegate;
 	output_trw->setItemDelegateForColumn(0, htmlitem_deleg);
 
@@ -144,6 +147,7 @@ void MetadataHandlingForm::handleObjectsMetada(void)
 		options+=(textbox_objs_chk->isChecked() ? DatabaseModel::META_TEXTBOX_OBJS : 0);
 		options+=(objs_fadedout_chk->isChecked() ? DatabaseModel::META_OBJS_FADEDOUT : 0);
 		options+=(objs_extattribs_chk->isChecked() ? DatabaseModel::META_OBJS_EXTATTRIBS : 0);
+		options+=(generic_sql_objs_chk->isChecked() ? DatabaseModel::META_GENERIC_SQL_OBJS : 0);
 
 		connect(model_wgt->getDatabaseModel(), SIGNAL(s_objectLoaded(int,QString,unsigned)), this, SLOT(updateProgress(int,QString,unsigned)));
 

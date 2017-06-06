@@ -18,29 +18,34 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class NewObjectOverlayWidget
-\brief Implements the a basic overlay to quicly trigger action to create new objects.
+\class GenericSQLWidget
+\brief Implements the operations to create/edit generic sql objects via form.
 */
 
-#ifndef NEW_OBJECT_OVERLAY_WIDGET_H
-#define NEW_OBJECT_OVERLAY_WIDGET_H
+#ifndef GENERIC_SQL_WIDGET_H
+#define GENERIC_SQL_WIDGET_H
 
-#include <vector>
-#include <QWidget>
-#include "baseobject.h"
-#include "ui_newobjectoverlaywidget.h"
+#include "ui_genericsqlwidget.h"
+#include "baseobjectwidget.h"
+#include "codecompletionwidget.h"
 
-//Adding the declaration of ModelWidget class in order to be visible to NewObjectOverlayWidget
-class ModelWidget;
-
-class NewObjectOverlayWidget: public QWidget, public Ui::NewObjectOverlayWidget {
+class GenericSQLWidget: public BaseObjectWidget, public Ui::GenericSQLWidget {
 	private:
 		Q_OBJECT
 
+		NumberedTextEditor *definition_txt;
+
+		SyntaxHighlighter *definition_hl;
+
+		CodeCompletionWidget *definition_cp;
+
 	public:
-		explicit NewObjectOverlayWidget(ModelWidget * parent);
-		void setSelectedObjects(vector<BaseObject *> &sel_objs);
-		void configureOverlayButtons(void);
+		GenericSQLWidget(QWidget * parent = 0);
+
+		void setAttributes(DatabaseModel *model, OperationList *op_list, GenericSQL *genericsql=nullptr);
+
+	public slots:
+		void applyConfiguration(void);
 };
 
 #endif

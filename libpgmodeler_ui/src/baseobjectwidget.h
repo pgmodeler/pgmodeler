@@ -171,7 +171,7 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		//! \brief Returns the kind of database object handled
 		ObjectType getHandledObjectType(void);
 
-		bool isHandledObjectProtected(void);
+		virtual bool isHandledObjectProtected(void);
 		
 	protected slots:
 		void editPermissions(void);

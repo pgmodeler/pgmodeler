@@ -62,6 +62,8 @@
 %customidxs;
 <!ENTITY % eventtrigger SYSTEM "eventtrigger.dtd">
 %eventtrigger;
+<!ENTITY % genericsql SYSTEM "genericsql.dtd">
+%genericsql;
 
 <!ELEMENT dbmodel ANY>
 

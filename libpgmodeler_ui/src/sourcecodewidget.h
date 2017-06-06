@@ -50,7 +50,13 @@ class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
 
 	public:
 		SourceCodeWidget(QWidget * parent = 0);
+
 		void setAttributes(DatabaseModel *model, BaseObject *object=nullptr);
+
+		/* Forcing the widget to indicate that the handled object is not protected
+		even if it IS protected. This will avoid the ok button of the parent dialog
+		to be disabled */
+		virtual bool isHandledObjectProtected(void){ return(false); }
 
 	public slots:
 		void applyConfiguration(void);

@@ -53,6 +53,7 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 #include "extension.h"
 #include "tag.h"
 #include "eventtrigger.h"
+#include "genericsql.h"
 #include <algorithm>
 #include <locale.h>
 
@@ -111,6 +112,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		vector<BaseObject *> extensions;
 		vector<BaseObject *> tags;
 		vector<BaseObject *> eventtriggers;
+		vector<BaseObject *> genericsqls;
 
 		/*! \brief Stores the xml definition for special objects. This map is used
 		 when revalidating the relationships */
@@ -172,7 +174,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 		META_OBJS_EXTATTRIBS=128,	//! \brief Handle tables and views extended attributes display when save/load metadata file
 		META_TEXTBOX_OBJS=256,	//! \brief Handle textboxes object when save/load metadata file
 		META_TAG_OBJS=512,	//! \brief Handle tags object when save/load metadata file
-		META_ALL_INFO=1023;	//! \brief Handle all metadata information about objects when save/load metadata file
+		META_GENERIC_SQL_OBJS=1024,	//! \brief Handle generic sql object when save/load metadata file
+		META_ALL_INFO=2047;	//! \brief Handle all metadata information about objects when save/load metadata file
 
 		DatabaseModel(void);
 
@@ -439,6 +442,11 @@ class DatabaseModel:  public QObject, public BaseObject {
 		EventTrigger *getEventTrigger(unsigned obj_idx);
 		EventTrigger *getEventTrigger(const QString &name);
 
+		void addGenericSQL(GenericSQL *genericsql, int obj_idx=-1);
+		void removeGenericSQL(GenericSQL *genericsql, int obj_idx=-1);
+		GenericSQL *getGenericSQL(unsigned obj_idx);
+		GenericSQL *getGenericSQL(const QString &name);
+
 		void addPermission(Permission *perm);
 		void removePermission(Permission *perm);
 
@@ -495,6 +503,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		Index *createIndex(void);
 		Trigger *createTrigger(void);
 		EventTrigger *createEventTrigger(void);
+		GenericSQL *createGenericSQL(void);
 
 		//! \brief Creates/removes the relationship between the passed view and the referecend tables
 		void updateViewRelationships(View *view, bool force_rel_removal=false);

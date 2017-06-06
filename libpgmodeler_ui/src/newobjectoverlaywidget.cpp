@@ -28,7 +28,8 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 	QString shortcut;
 	int action_idx=0;
 	QList<QAction *> rel_actions=parent->rels_menu->actions();
-	map<QToolButton *, tuple<QString, ObjectType>>  obj_shortcuts={ { aggregate_tb,    std::make_tuple(trUtf8("A"), OBJ_AGGREGATE)    },
+	map<QToolButton *, tuple<QString, ObjectType>>  obj_shortcuts={
+																	{ aggregate_tb,    std::make_tuple(trUtf8("A"), OBJ_AGGREGATE)    },
 																	{ cast_tb,         std::make_tuple(trUtf8("G"), OBJ_CAST)         },
 																	{ eventtrigger_tb, std::make_tuple(trUtf8("K"), OBJ_EVENT_TRIGGER)},
 																	{ collation_tb,    std::make_tuple(trUtf8("H"), OBJ_COLLATION)    },
@@ -53,7 +54,8 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 																	{ index_tb,        std::make_tuple(trUtf8("X"), OBJ_INDEX)        },
 																	{ column_tb,       std::make_tuple(trUtf8("C"), OBJ_COLUMN)       },
 																	{ rule_tb,         std::make_tuple(trUtf8("V"), OBJ_RULE)         },
-																	{ trigger_tb,      std::make_tuple(trUtf8("B"), OBJ_TRIGGER)      } };
+																	{ trigger_tb,      std::make_tuple(trUtf8("B"), OBJ_TRIGGER)      },
+																	{ genericsql_tb,   std::make_tuple(trUtf8("8"), OBJ_GENERIC_SQL)  } };
 
 	map<QToolButton *, tuple<QString, int>> rel_shortcuts={ { rel11_tb,  std::make_tuple(trUtf8("1"), 0) },
 															{ rel1n_tb,  std::make_tuple(trUtf8("2"), 1) },

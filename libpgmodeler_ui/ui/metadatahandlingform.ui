@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>569</width>
-    <height>539</height>
+    <width>666</width>
+    <height>564</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -415,7 +415,7 @@
                </item>
               </layout>
              </item>
-             <item row="6" column="0" colspan="2">
+             <item row="7" column="0" colspan="2">
               <spacer name="verticalSpacer">
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
@@ -682,7 +682,7 @@
                   <string/>
                  </property>
                  <property name="statusTip">
-                  <string>Save tags to the output file when extracting metadata. When loading the file tags are recreated and duplicated ones are ignored.</string>
+                  <string>Save tags to the output file when extracting metadata. When loading the file, the tags are recreated and duplicated ones are ignored.</string>
                  </property>
                  <property name="text">
                   <string>Tag objects</string>
@@ -730,7 +730,7 @@
                   <string/>
                  </property>
                  <property name="statusTip">
-                  <string>Save textboxes to the output file when extracting metadata. When loading the file textboxes are recreated and duplicated ones are ignored.</string>
+                  <string>Save textboxes to the output file when extracting metadata. When loading the file, the textboxes are recreated and duplicated ones are ignored.</string>
                  </property>
                  <property name="text">
                   <string>Textbox objects</string>
@@ -860,6 +860,54 @@
                </item>
               </layout>
              </item>
+             <item row="6" column="0">
+              <layout class="QHBoxLayout" name="horizontalLayout_20">
+               <item>
+                <widget class="QCheckBox" name="generic_sql_objs_chk">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string/>
+                 </property>
+                 <property name="statusTip">
+                  <string>Save generic SQL objects to the output file when extracting metadata. When loading the file, the objects are recreated and duplicated ones are ignored.</string>
+                 </property>
+                 <property name="text">
+                  <string>Generic SQL objects</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QWidget" name="generic_sql_objs_hint" native="true">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
             </layout>
            </widget>
           </item>
@@ -966,6 +1014,22 @@
                </size>
               </property>
              </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>10</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
             </item>
             <item>
              <widget class="QRadioButton" name="restore_rb">
