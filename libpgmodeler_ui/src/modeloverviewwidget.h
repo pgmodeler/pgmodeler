@@ -49,6 +49,8 @@ class ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
 		//! \brief Current scene rectangle
 		QRectF scene_rect;
 
+		QSize pixmap_size;
+
 		//! \brief Resize factor applied to overview widgets (default: 20% of the scene original size)
 		static constexpr double RESIZE_FACTOR=0.20f;
 
