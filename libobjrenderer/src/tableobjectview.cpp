@@ -94,8 +94,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 		{
 			QGraphicsEllipseItem *desc=dynamic_cast<QGraphicsEllipseItem *>(descriptor);
 
-			desc->setRect(QRectF(QPointF(0,0),
-								 QSizeF(9.0f * factor, 9.0f * factor)));
+			desc->setRect(QRectF(QPointF(0,0), QSizeF(9.0f * factor, 9.0f * factor)));
 
 			if(column->isNotNull())
 				attrib=ParsersAttributes::NN_COLUMN;
