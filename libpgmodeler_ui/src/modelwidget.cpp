@@ -4075,8 +4075,7 @@ void ModelWidget::arrangeObjects(void)
 {
 	vector<BaseObject *> objects;
 	BaseGraphicObject *graph_obj = nullptr;
-	BaseTableView *tab_view = nullptr;
-	BaseTableView *root = nullptr;
+	BaseTableView *tab_view = nullptr, *root = nullptr;
 	int num_rels = 0;
 
 	objects.assign(db_model->getObjectList(OBJ_TABLE)->begin(), db_model->getObjectList(OBJ_TABLE)->end());
@@ -4098,12 +4097,81 @@ void ModelWidget::arrangeObjects(void)
 
 	if(root)
 	{
+		BaseObjectView *obj_view = nullptr;
 		BaseRelationship *rel = nullptr;
 		QRectF items_rect;
-		vector<BaseObject *> evaluated_tabs;
+		vector<BaseObject *> evaluated_tabs, not_evaluated, not_linked_tabs;
+		float px = 0, py = 0;
 
 		root->setPos(QPointF(50, 50));
+		evaluated_tabs.push_back(root->getSourceObject());
 		items_rect = arrangeTablesHierarchically(root, evaluated_tabs);
+
+		objects.clear();
+		objects.assign(db_model->getObjectList(OBJ_TABLE)->begin(), db_model->getObjectList(OBJ_TABLE)->end());
+		objects.insert(objects.end(), db_model->getObjectList(OBJ_VIEW)->begin(), db_model->getObjectList(OBJ_VIEW)->end());
+
+		//Retrieving the rest of tables/views that were not evaluated in the previous iteration
+		std::sort(objects.begin(), objects.end());
+		std::sort(evaluated_tabs.begin(), evaluated_tabs.end());
+		std::set_difference(objects.begin(), objects.end(), evaluated_tabs.begin(), evaluated_tabs.end(),
+												 std::inserter(not_evaluated, not_evaluated.begin()));
+
+		while(!not_evaluated.empty())
+		{
+			num_rels = 0;
+			root = nullptr;
+
+			for(auto &tab : not_evaluated)
+			{
+				tab_view = dynamic_cast<BaseTableView *>(dynamic_cast<BaseTable *>(tab)->getReceiverObject());
+
+				if(tab_view->getConnectRelsCount() > num_rels)
+				{
+					root = tab_view;
+					num_rels = tab_view->getConnectRelsCount();
+				}
+			}
+
+			if(root && std::find(evaluated_tabs.begin(), evaluated_tabs.end(), root->getSourceObject()) == evaluated_tabs.end())
+			{
+				root->setPos(QPointF(50, items_rect.bottom() + 50));
+				evaluated_tabs.push_back(root->getSourceObject());
+				items_rect = arrangeTablesHierarchically(root, evaluated_tabs);
+				not_evaluated.erase(std::find(not_evaluated.begin(), not_evaluated.end(),  root->getSourceObject()));
+			}
+			else
+			{
+				tab_view = dynamic_cast<BaseTableView *>(dynamic_cast<BaseTable *>(not_evaluated.front())->getReceiverObject());
+
+				if(tab_view->getConnectRelsCount() == 0)
+					not_linked_tabs.push_back(not_evaluated.front());
+
+				not_evaluated.erase(not_evaluated.begin());
+			}
+		}
+
+
+		//Repositioning remaining tables and textboxes
+		objects.clear();
+		objects.assign(not_linked_tabs.begin(), not_linked_tabs.end());
+		objects.insert(objects.end(), db_model->getObjectList(OBJ_TEXTBOX)->begin(), db_model->getObjectList(OBJ_TEXTBOX)->end());
+
+		px = 50;
+		py = items_rect.bottom() + 50;
+
+		for(auto &obj : objects)
+		{
+			obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
+			obj_view->setPos(px, py);
+			px += obj_view->boundingRect().width() + 50;
+
+			if(px > scene->sceneRect().right())
+			{
+				px = 50;
+				py += obj_view->boundingRect().height();
+			}
+		}
 
 		objects.clear();
 		objects.assign(db_model->getObjectList(OBJ_RELATIONSHIP)->begin(), db_model->getObjectList(OBJ_RELATIONSHIP)->end());
@@ -4119,12 +4187,9 @@ void ModelWidget::arrangeObjects(void)
 				breakRelationshipLine(dynamic_cast<BaseRelationship *>(obj), ModelWidget::BREAK_VERT_2NINETY_DEGREES);
 		}
 
-		//TODO: Arrage tables/views without connections as well text boxes
-
-
 		db_model->setObjectsModified({ OBJ_TABLE, OBJ_VIEW, OBJ_SCHEMA, OBJ_RELATIONSHIP, BASE_RELATIONSHIP });
 		adjustSceneSize();
-		viewport->update();
+		viewport->updateScene({ scene->sceneRect() });
 	}
 }
 
@@ -4137,9 +4202,6 @@ QRectF ModelWidget::arrangeTablesHierarchically(BaseTableView *root, vector<Base
 	BaseTableView *tab_view = nullptr;
 	vector<BaseTable *> tabs = { base_tab }, next_tabs;
 	bool is_protected = false;
-
-	evaluated_tabs.clear();
-	evaluated_tabs.push_back(root->getSourceObject());
 
 	while(!tabs.empty())
 	{
