@@ -198,7 +198,10 @@ void ModelOverviewWidget::resizeOverview(void)
 			curr_size.setHeight(curr_size.height() * curr_resize_factor);
 		}
 		else
+		{
 			curr_resize_factor=RESIZE_FACTOR;
+			pixmap_size=scene_rect.size().toSize();
+		}
 
 		this->resize(curr_size.toSize());
 		this->setMaximumSize(curr_size.toSize());

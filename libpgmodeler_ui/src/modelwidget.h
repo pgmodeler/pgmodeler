@@ -168,7 +168,7 @@ class ModelWidget: public QWidget {
 
 		void breakRelationshipLine(BaseRelationship *rel, unsigned break_type);
 
-		void arrangeTablesAsTree(BaseTableView *root, float &py, vector<BaseTable *> &evaluated_tabs);
+		QRectF arrangeTablesHierarchically(BaseTableView *root, vector<BaseObject *> &evaluated_tabs);
 
 	protected:
 		static const unsigned BREAK_VERT_NINETY_DEGREES, //Break vertically the line in one 90° angle
@@ -315,7 +315,7 @@ class ModelWidget: public QWidget {
 
 		void arrangeObjectsAutomatically(void);
 
-		void arrangeTablesAsTree(void);
+		void arrangeObjects(void);
 
 	private slots:
 		//! \brief Handles the signals that indicates the object creation on the reference database model

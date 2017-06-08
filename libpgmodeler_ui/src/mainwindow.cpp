@@ -1892,5 +1892,5 @@ void MainWindow::arrangeObjects(void)
 	if(!current_model)
 		return;
 
-	current_model->arrangeTablesAsTree();
+	current_model->arrangeObjects();
 }

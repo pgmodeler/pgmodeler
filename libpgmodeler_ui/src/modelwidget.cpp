@@ -4071,14 +4071,13 @@ void ModelWidget::editCreationOrder(void)
 	parent_form.exec();
 }
 
-void ModelWidget::arrangeTablesAsTree(void)
+void ModelWidget::arrangeObjects(void)
 {
 	vector<BaseObject *> objects;
 	BaseGraphicObject *graph_obj = nullptr;
 	BaseTableView *tab_view = nullptr;
 	BaseTableView *root = nullptr;
 	int num_rels = 0;
-	float px = 0, py = 0;
 
 	objects.assign(db_model->getObjectList(OBJ_TABLE)->begin(), db_model->getObjectList(OBJ_TABLE)->end());
 	objects.insert(objects.end(), db_model->getObjectList(OBJ_VIEW)->begin(), db_model->getObjectList(OBJ_VIEW)->end());
@@ -4099,16 +4098,12 @@ void ModelWidget::arrangeTablesAsTree(void)
 
 	if(root)
 	{
-		float py = 50;
-		vector<BaseTable *> tabs = { dynamic_cast<BaseTable *>(root->getSourceObject()) };
-
-		QTextStream txt(stdout);
-
-		txt << root->getSourceObject()->getName() << endl;
+		BaseRelationship *rel = nullptr;
+		QRectF items_rect;
+		vector<BaseObject *> evaluated_tabs;
 
 		root->setPos(QPointF(50, 50));
-		arrangeTablesAsTree(root, py, tabs);
-		db_model->setObjectsModified({ OBJ_TABLE, OBJ_VIEW, OBJ_SCHEMA });
+		items_rect = arrangeTablesHierarchically(root, evaluated_tabs);
 
 		objects.clear();
 		objects.assign(db_model->getObjectList(OBJ_RELATIONSHIP)->begin(), db_model->getObjectList(OBJ_RELATIONSHIP)->end());
@@ -4116,156 +4111,96 @@ void ModelWidget::arrangeTablesAsTree(void)
 
 		for(auto obj : objects)
 		{
-			dynamic_cast<BaseRelationship *>(obj)->setPoints({});
-			breakRelationshipLine(dynamic_cast<BaseRelationship *>(obj), ModelWidget::BREAK_VERT_2NINETY_DEGREES);
+			rel = dynamic_cast<BaseRelationship *>(obj);
+			rel->setPoints({});
+
+			if(rel->getTable(BaseRelationship::SRC_TABLE)->getPosition().y() !=
+				 rel->getTable(BaseRelationship::DST_TABLE)->getPosition().y())
+				breakRelationshipLine(dynamic_cast<BaseRelationship *>(obj), ModelWidget::BREAK_VERT_2NINETY_DEGREES);
 		}
 
-		db_model->setObjectsModified({ OBJ_RELATIONSHIP, BASE_RELATIONSHIP });
+		//TODO: Arrage tables/views without connections as well text boxes
+
+
+		db_model->setObjectsModified({ OBJ_TABLE, OBJ_VIEW, OBJ_SCHEMA, OBJ_RELATIONSHIP, BASE_RELATIONSHIP });
 		adjustSceneSize();
+		viewport->update();
 	}
 }
 
-void ModelWidget::arrangeTablesAsTree(BaseTableView *root, float &py, vector<BaseTable *> &evaluated_tabs)
+QRectF ModelWidget::arrangeTablesHierarchically(BaseTableView *root, vector<BaseObject *> &evaluated_tabs)
 {
 	BaseTable *base_tab = dynamic_cast<BaseTable *>(root->getSourceObject()),
-			*src_tab = nullptr, *dst_tab = nullptr, *new_root = nullptr;
-	vector<BaseRelationship *> rels = db_model->getRelationships(base_tab);
-	float px = root->pos().x() + (root->boundingRect().width() * 1.75);
-	BaseTableView *new_root_view = nullptr;
-
-	for(auto &rel : rels)
-	{
-		if(rel->isSelfRelationship())
-			continue;
-
-		src_tab = rel->getTable(BaseRelationship::SRC_TABLE);
-		dst_tab = rel->getTable(BaseRelationship::DST_TABLE);
-
-		if(src_tab != base_tab)
-			new_root = src_tab;
-		else if(dst_tab != base_tab)
-			new_root = dst_tab;
-		else
-			new_root = nullptr;
-
-		if(new_root && std::find(evaluated_tabs.begin(), evaluated_tabs.end(), new_root) == evaluated_tabs.end())
-		{
-			evaluated_tabs.push_back(new_root);
-			new_root_view = dynamic_cast<BaseTableView *>(new_root->getReceiverObject());
-			new_root_view->setPos(QPointF(px, py));
-			arrangeTablesAsTree(new_root_view, py, evaluated_tabs);
-			py += new_root_view->boundingRect().height();// * 1.5f;
-			//px += 50;
-		}
-	}
-}
-
-void ModelWidget::arrangeObjectsAutomatically(void)
-{
-	vector<BaseObject *> objects;
-	BaseGraphicObject *graph_obj = nullptr;
+			*src_tab = nullptr, *dst_tab = nullptr, *curr_tab = nullptr;
+	vector<BaseRelationship *> rels ;
+	float px = 0, py = 0, px1 = 0, py1 = 0;
 	BaseTableView *tab_view = nullptr;
-	map<int, vector<BaseTableView *>> rel_count_map;
-	float max_h = 0, py = 0, px = 0, w_center = 0, h_center = 0,
-			px_right = 0, px_left = 0, py_top = 0, py_bottom = 0, max_w = 0, max_w_aux = 0;
-	int x_signal = 1, y_signal = 1;
-	QPointF pnt;
-	unsigned tab_count = 0;
-	map<int, vector<BaseTableView *>>::reverse_iterator ritr, ritr_end;
+	vector<BaseTable *> tabs = { base_tab }, next_tabs;
+	bool is_protected = false;
 
-	w_center = scene->sceneRect().width()/2.0f;
-	h_center = scene->sceneRect().height()/2.0f;
-	objects.assign(db_model->getObjectList(OBJ_TABLE)->begin(), db_model->getObjectList(OBJ_TABLE)->end());
-	objects.insert(objects.end(), db_model->getObjectList(OBJ_VIEW)->begin(), db_model->getObjectList(OBJ_VIEW)->end());
+	evaluated_tabs.clear();
+	evaluated_tabs.push_back(root->getSourceObject());
 
-	for(auto obj : objects)
+	while(!tabs.empty())
 	{
-		graph_obj = dynamic_cast<BaseGraphicObject *>(obj);
-		dynamic_cast<Schema *>(graph_obj->getSchema())->setRectVisible(false);
+		base_tab = tabs.front();
+		tabs.erase(tabs.begin());
+		tab_view = dynamic_cast<BaseTableView *>(base_tab->getReceiverObject());
+		rels = db_model->getRelationships(base_tab);
 
-		tab_view = dynamic_cast<BaseTableView *>(graph_obj->getReceiverObject());
-		rel_count_map[tab_view->getConnectRelsCount()].push_back(tab_view);
-
-		if(max_w < tab_view->boundingRect().width())
-			max_w = tab_view->boundingRect().width();
-	}
-
-	for(auto itr : rel_count_map)
-	{
-		if(itr.second.size() > tab_count)
-			tab_count = itr.second.size();
-	}
-
-	max_w_aux = (max_w * tab_count) / 2.0f;
-
-	if((w_center - max_w_aux) < 0)
-	{
-		QRectF rect = scene->sceneRect();
-		rect.setWidth(rect.width() + max_w_aux);
-		scene->setSceneRect(rect);
-		w_center = scene->sceneRect().width()/2.0f;
-	}
-
-	ritr = rel_count_map.rbegin();
-	ritr_end = rel_count_map.rend();
-	py = py_top = py_bottom = h_center;
-
-	while(ritr != ritr_end)
-	{
-		px = px_left = px_right = w_center;
-
-		for(BaseTableView * tab : ritr->second)
+		for(auto &rel : rels)
 		{
-			if(max_h < tab->boundingRect().height())
-				max_h = tab->boundingRect().height();
+			if(rel->isSelfRelationship())
+				continue;
 
-			pnt.setX(px);
-			pnt.setY(py);
-			tab->setPos(pnt);
+			src_tab = rel->getTable(BaseRelationship::SRC_TABLE);
+			dst_tab = rel->getTable(BaseRelationship::DST_TABLE);
 
-			if(x_signal > 0)
-			{
-				px_right += tab->boundingRect().width() * 1.85;
-				px = px_right;
-			}
+			if(src_tab != base_tab)
+				curr_tab = src_tab;
+			else if(dst_tab != base_tab)
+				curr_tab = dst_tab;
 			else
+				curr_tab = nullptr;
+
+			if(curr_tab && std::find(evaluated_tabs.begin(), evaluated_tabs.end(), dynamic_cast<BaseObject *>(curr_tab)) == evaluated_tabs.end())
 			{
-				px_left -= tab->boundingRect().width() * 1.85;
-				px = px_left;
+				next_tabs.push_back(curr_tab);
+				evaluated_tabs.push_back(dynamic_cast<BaseObject *>(curr_tab));
+			}
+		}
+
+		if(tabs.empty())
+		{
+			px = tab_view->pos().x() + (tab_view->boundingRect().width() * 1.50);
+			py = root->pos().y() + 25;
+
+			for(auto &next_tab : next_tabs)
+			{
+				tab_view = dynamic_cast<BaseTableView *>(next_tab->getReceiverObject());
+
+				if(next_tab->isProtected())
+				{
+					next_tab->setProtected(false);
+					is_protected = true;
+				}
+				else
+					is_protected = false;
+
+				tab_view->setPos(QPointF(px, py));
+				next_tab->setProtected(is_protected);
+
+				py += tab_view->boundingRect().height() + 50;
+				px += 50;
 			}
 
-			x_signal *= -1;
-		}
+			if(px > px1) px1 = px;
+			if(py > py1) py1 = py;
 
-		if(y_signal < 0)
-		{
-			py_top -= max_h * 1.80;
-			py = py_top;
+			tabs.assign(next_tabs.begin(), next_tabs.end());
+			next_tabs.clear();
 		}
-		else
-		{
-			py_bottom += max_h * 1.80;
-			py = py_bottom;
-		}
-
-		y_signal *= -1;
-		x_signal = 1;
-		max_h = 0;
-		ritr++;
 	}
 
-	db_model->setObjectsModified({ OBJ_TABLE, OBJ_VIEW, OBJ_SCHEMA });
-
-	objects.clear();
-	objects.assign(db_model->getObjectList(OBJ_RELATIONSHIP)->begin(), db_model->getObjectList(OBJ_RELATIONSHIP)->end());
-	objects.insert(objects.end(), db_model->getObjectList(BASE_RELATIONSHIP)->begin(), db_model->getObjectList(BASE_RELATIONSHIP)->end());
-
-	for(auto obj : objects)
-	{
-		dynamic_cast<BaseRelationship *>(obj)->setPoints({});
-		breakRelationshipLine(dynamic_cast<BaseRelationship *>(obj), ModelWidget::BREAK_VERT_2NINETY_DEGREES);
-	}
-
-	db_model->setObjectsModified({ OBJ_RELATIONSHIP, BASE_RELATIONSHIP });
-	adjustSceneSize();
+	return(QRectF(root->pos(), QPointF(px1, py1)));
 }
