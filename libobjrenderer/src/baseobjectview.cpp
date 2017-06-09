@@ -629,6 +629,11 @@ void BaseObjectView::togglePlaceholder(bool visible)
 	}
 }
 
+float BaseObjectView::getFontFactor(void)
+{
+	return(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE);
+}
+
 float BaseObjectView::getScreenDpiFactor(void)
 {
 	float factor = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->logicalDotsPerInch() / 96.0f;

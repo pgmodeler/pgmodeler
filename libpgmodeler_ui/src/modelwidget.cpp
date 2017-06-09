@@ -160,6 +160,20 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	grid->addWidget(viewport, 1,0,1,1);
 	this->setLayout(grid);
 
+	magnifier_area_lbl = new QLabel(this);
+	magnifier_area_lbl->raise();
+	magnifier_area_lbl->setAutoFillBackground(false);
+	magnifier_area_lbl->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	magnifier_area_lbl->setStyleSheet(QString("background-color: #C8f0f0f0;\
+										border: 1px solid #C8808080;"));
+	magnifier_area_lbl->setVisible(false);
+	magnifier_area_lbl->setGeometry(0,0,
+																	400 * BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor(),
+																	400 * BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor());
+	magnifier_area_lbl->setMouseTracking(true);
+	magnifier_area_lbl->installEventFilter(this);
+	magnifier_area_lbl->setCursor(Qt::BlankCursor);
+
 	zoom_info_lbl=new QLabel(this);
 	zoom_info_lbl->raise();
 	zoom_info_lbl->setAutoFillBackground(false);
@@ -460,7 +474,7 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 	QGraphicsSceneMouseEvent *m_event = dynamic_cast<QGraphicsSceneMouseEvent *>(event);
 
 	//Filters the Wheel event if it is raised by the viewport scrollbars
-	if(event->type() == QEvent::Wheel && w_event->modifiers()==Qt::ControlModifier)
+	if(object != this && event->type() == QEvent::Wheel && w_event->modifiers()==Qt::ControlModifier)
 	{
 		//Redirects the event to the wheelEvent() method of the model widget
 		this->wheelEvent(w_event);
@@ -469,6 +483,30 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 	else if(event->type() == QEvent::KeyPress && k_event->modifiers()==Qt::AltModifier)
 	{
 		this->keyPressEvent(k_event);
+		return(true);
+	}
+	else if(object == magnifier_area_lbl && (event->type() == QEvent::MouseMove || event->type() == QEvent::KeyRelease))
+	{
+		if(event->type() == QEvent::KeyRelease)
+			showMagnifierArea(false);
+		else
+			updateMagnifierArea();
+
+		return(true);
+	}
+	else if(object == magnifier_area_lbl && event->type() == QEvent::MouseButtonPress)
+	{
+		/* Sends a mouse press event to scene when the user press the mouse over the magnifier widget
+		this will allow to select the current focused object or activate the popup menu */
+		QMouseEvent *aux_event = dynamic_cast<QMouseEvent *>(event);
+		m_event = new QGraphicsSceneMouseEvent(QEvent::GraphicsSceneMousePress);
+		m_event->setButton(aux_event->button());
+		m_event->setButtons(aux_event->buttons());
+		m_event->setScreenPos(QCursor::pos());
+		m_event->setScenePos(viewport->mapToScene(this->mapFromGlobal(QCursor::pos())));
+		qApp->postEvent(scene, m_event);
+		showMagnifierArea(false);
+
 		return(true);
 	}
 	else if(object == scene && m_event)
@@ -492,6 +530,10 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 			viewport->verticalScrollBar()->setValue(dy);
 
 			return (true);
+		}
+		else if(m_event->button() == Qt::NoButton && event->type() == QEvent::GraphicsSceneMouseMove)
+		{
+			updateMagnifierArea();
 		}
 		//Activating the panning mode
 		else if(m_event->button() == Qt::MiddleButton && event->type() == QEvent::GraphicsSceneMousePress)
@@ -534,6 +576,18 @@ void ModelWidget::keyPressEvent(QKeyEvent *event)
 	{
 		toggleNewObjectOverlay();
 	}
+	else if(event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier) && current_zoom != 1)
+	{
+		showMagnifierArea(true);
+	}
+}
+
+void ModelWidget::keyReleaseEvent(QKeyEvent *event)
+{
+	if(event->key() == Qt::Key_Control || event->key() == Qt::Key_Shift)
+	{
+		showMagnifierArea(false);
+	}
 }
 
 void ModelWidget::mousePressEvent(QMouseEvent *event)
@@ -561,6 +615,11 @@ void ModelWidget::wheelEvent(QWheelEvent * event)
 		else
 			this->applyZoom(this->current_zoom + ZOOM_INCREMENT);
 	}
+}
+
+void ModelWidget::hideEvent(QHideEvent *)
+{
+	magnifier_area_lbl->hide();
 }
 
 bool ModelWidget::saveLastCanvasPosition(void)
@@ -610,18 +669,20 @@ void ModelWidget::restoreLastCanvasPosition(void)
 
 void ModelWidget::applyZoom(double zoom)
 {
-	if(zoom > (MINIMUM_ZOOM - ZOOM_INCREMENT) && zoom <= MAXIMUM_ZOOM)
-	{
-		viewport->resetTransform();
-		viewport->scale(zoom, zoom);
-		this->current_zoom=zoom;
+	if(zoom < MINIMUM_ZOOM)
+		zoom = MINIMUM_ZOOM;
+	else if(zoom > MAXIMUM_ZOOM)
+		zoom = MAXIMUM_ZOOM;
 
-		zoom_info_lbl->setText(trUtf8("Zoom: %1%").arg(QString::number(this->current_zoom * 100, 'g' , 3)));
-		zoom_info_lbl->setVisible(true);
-		zoom_info_timer.start();
+	viewport->resetTransform();
+	viewport->scale(zoom, zoom);
+	this->current_zoom=zoom;
 
-		emit s_zoomModified(zoom);
-	}
+	zoom_info_lbl->setText(trUtf8("Zoom: %1%").arg(QString::number(this->current_zoom * 100, 'g' , 3)));
+	zoom_info_lbl->setVisible(true);
+	zoom_info_timer.start();
+
+	emit s_zoomModified(zoom);
 }
 
 double ModelWidget::getCurrentZoom(void)
@@ -4277,4 +4338,46 @@ QRectF ModelWidget::rearrangeTablesHierarchically(BaseTableView *root, vector<Ba
 	}
 
 	return(QRectF(root->pos(), QPointF(px1, py1)));
+}
+
+void ModelWidget::updateMagnifierArea(void)
+{
+	if(magnifier_area_lbl->isVisible())
+	{
+		QPoint pos = this->mapFromGlobal(QCursor::pos());
+		QPointF scene_pos = viewport->mapToScene(pos);
+		QSize size = magnifier_area_lbl->size();
+		QPixmap pix = QPixmap(size);
+		int x_center = size.width() / 2,
+				y_center = size.height() / 2;
+
+		magnifier_area_lbl->move(pos - QPoint(x_center, y_center));
+
+		QPainter p(&pix);
+
+		p.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
+		scene->render(&p, QRectF(QPointF(0,0), size), QRectF(scene_pos - QPointF(x_center, y_center), size));
+
+		p.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing, false);
+		p.setPen(QColor(128,0,0));
+		p.drawLine(x_center - 10, y_center, x_center + 10, y_center);
+		p.drawLine(x_center, y_center - 10, x_center, y_center + 10);
+
+		magnifier_area_lbl->setPixmap(pix);
+	}
+}
+
+void ModelWidget::showMagnifierArea(bool show)
+{
+	if(show)
+	{
+		viewport->setCursor(Qt::BlankCursor);
+		magnifier_area_lbl->setVisible(true);
+		updateMagnifierArea();
+	}
+	else
+	{
+		viewport->setCursor(Qt::ArrowCursor);
+		magnifier_area_lbl->setVisible(false);
+	}
 }

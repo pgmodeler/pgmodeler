@@ -178,6 +178,9 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		 * objects according to the screen's resolution/font dpi */
 		static float getScreenDpiFactor(void);
 
+		//! \brief Returns the current factor between the default font size and the current defined one
+		static float getFontFactor(void);
+
 	protected slots:
 		//! \brief Make the basic object operations
 		void __configureObject(void);

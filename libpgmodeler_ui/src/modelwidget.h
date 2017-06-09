@@ -133,7 +133,10 @@ class ModelWidget: public QWidget {
 		tmp_filename;
 
 		//! \brief This label shows the user the current applied zoom
-		QLabel *zoom_info_lbl;
+		QLabel *zoom_info_lbl,
+
+		//! \brief This label shows a small portion of the canvas in normal zoom at the current cursor position
+		*magnifier_area_lbl;
 
 		//! \brief This timer controls the interval the zoom label is visible
 		QTimer zoom_info_timer;
@@ -172,6 +175,10 @@ class ModelWidget: public QWidget {
 		where for a certain table its child (or related) tables are places aside from left to right and top to bottom.
 		This method returns the bounding rect of the items after the rearrangement */
 		QRectF rearrangeTablesHierarchically(BaseTableView *root, vector<BaseObject *> &evaluated_tabs);
+
+		void updateMagnifierArea(void);
+
+		void showMagnifierArea(bool show);
 
 	protected:
 		static const unsigned BREAK_VERT_NINETY_DEGREES, //Break vertically the line in one 90° angle
@@ -230,7 +237,9 @@ class ModelWidget: public QWidget {
 		void resizeEvent(QResizeEvent *);
 		void mousePressEvent(QMouseEvent *event);
 		void keyPressEvent(QKeyEvent *event);
+		void keyReleaseEvent(QKeyEvent *event);
 		void wheelEvent(QWheelEvent * event);
+		void hideEvent(QHideEvent *);
 
 		//! \brief Captures and handles the QWeelEvent raised on the viewport scrollbars
 		bool eventFilter(QObject *object, QEvent *event);
