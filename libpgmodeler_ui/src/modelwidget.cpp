@@ -170,8 +170,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	magnifier_area_lbl->setGeometry(0,0,
 																	400 * BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor(),
 																	400 * BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor());
-	magnifier_area_lbl->setMouseTracking(true);
-	magnifier_area_lbl->installEventFilter(this);
 	magnifier_area_lbl->setCursor(Qt::BlankCursor);
 
 	zoom_info_lbl=new QLabel(this);
@@ -491,21 +489,6 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 			showMagnifierArea(false);
 		else
 			updateMagnifierArea();
-
-		return(true);
-	}
-	else if(object == magnifier_area_lbl && event->type() == QEvent::MouseButtonPress)
-	{
-		/* Sends a mouse press event to scene when the user press the mouse over the magnifier widget
-		this will allow to select the current focused object or activate the popup menu */
-		QMouseEvent *aux_event = dynamic_cast<QMouseEvent *>(event);
-		m_event = new QGraphicsSceneMouseEvent(QEvent::GraphicsSceneMousePress);
-		m_event->setButton(aux_event->button());
-		m_event->setButtons(aux_event->buttons());
-		m_event->setScreenPos(QCursor::pos());
-		m_event->setScenePos(viewport->mapToScene(this->mapFromGlobal(QCursor::pos())));
-		qApp->postEvent(scene, m_event);
-		showMagnifierArea(false);
 
 		return(true);
 	}
@@ -990,6 +973,8 @@ void ModelWidget::configureObjectSelection(void)
 	}
 	else
 		this->configurePopupMenu(selected_objects);
+
+	updateMagnifierArea();
 }
 
 void ModelWidget::selectAllObjects(void)
@@ -2924,6 +2909,7 @@ void ModelWidget::showObjectMenu(void)
 			tab=dynamic_cast<BaseTableView *>(tab_obj->getParentTable()->getReceiverObject());
 	}
 
+	magnifier_area_lbl->hide();
 	popup_menu.exec(QCursor::pos());
 
 	//If the table object has a parent table
@@ -4139,6 +4125,8 @@ void ModelWidget::rearrangeObjects(void)
 	BaseTableView *tab_view = nullptr, *root = nullptr;
 	int num_rels = 0;
 
+	scene->clearSelection();
+
 	objects.assign(db_model->getObjectList(OBJ_TABLE)->begin(), db_model->getObjectList(OBJ_TABLE)->end());
 	objects.insert(objects.end(), db_model->getObjectList(OBJ_VIEW)->begin(), db_model->getObjectList(OBJ_VIEW)->end());
 
@@ -4344,25 +4332,26 @@ void ModelWidget::updateMagnifierArea(void)
 {
 	if(magnifier_area_lbl->isVisible())
 	{
-		QPoint pos = this->mapFromGlobal(QCursor::pos());
+		QPoint pos = viewport->mapFromGlobal(QCursor::pos()),
+				new_pos = pos + QPoint(20, 20);
 		QPointF scene_pos = viewport->mapToScene(pos);
 		QSize size = magnifier_area_lbl->size();
 		QPixmap pix = QPixmap(size);
-		int x_center = size.width() / 2,
-				y_center = size.height() / 2;
+		QRect rect = QRect(new_pos, size);
+		QRect rect1 = this->geometry();
 
-		magnifier_area_lbl->move(pos - QPoint(x_center, y_center));
+		if(rect.right() > rect1.right())
+			new_pos.setX(pos.x() - rect.width() - 20);
+
+		if(rect.bottom() > rect1.bottom())
+			new_pos.setY(pos.y() - rect.height() - 20);
+
+		magnifier_area_lbl->move(new_pos);
 
 		QPainter p(&pix);
 
 		p.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
-		scene->render(&p, QRectF(QPointF(0,0), size), QRectF(scene_pos - QPointF(x_center, y_center), size));
-
-		p.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing, false);
-		p.setPen(QColor(128,0,0));
-		p.drawLine(x_center - 10, y_center, x_center + 10, y_center);
-		p.drawLine(x_center, y_center - 10, x_center, y_center + 10);
-
+		scene->render(&p, QRectF(QPointF(0,0), size), QRectF(scene_pos - QPointF(size.width() / 2, size.height() / 2), size));
 		magnifier_area_lbl->setPixmap(pix);
 	}
 }
@@ -4371,7 +4360,7 @@ void ModelWidget::showMagnifierArea(bool show)
 {
 	if(show)
 	{
-		viewport->setCursor(Qt::BlankCursor);
+		viewport->setCursor(Qt::CrossCursor);
 		magnifier_area_lbl->setVisible(true);
 		updateMagnifierArea();
 	}
