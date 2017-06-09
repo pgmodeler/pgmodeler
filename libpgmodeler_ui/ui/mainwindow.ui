@@ -1489,13 +1489,13 @@
    </property>
    <property name="icon">
     <iconset resource="../res/resources.qrc">
-     <normaloff>:/icones/icones/alinhargrade.png</normaloff>:/icones/icones/alinhargrade.png</iconset>
+     <normaloff>:/icones/icones/arrangetables.png</normaloff>:/icones/icones/arrangetables.png</iconset>
    </property>
    <property name="text">
     <string>Arrange objects</string>
    </property>
    <property name="toolTip">
-    <string>Automatically arrange objects on the canvas</string>
+    <string>Rearrange objects on the canvas in hierarchically</string>
    </property>
   </action>
  </widget>

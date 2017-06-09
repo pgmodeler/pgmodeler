@@ -168,7 +168,10 @@ class ModelWidget: public QWidget {
 
 		void breakRelationshipLine(BaseRelationship *rel, unsigned break_type);
 
-		QRectF arrangeTablesHierarchically(BaseTableView *root, vector<BaseObject *> &evaluated_tabs);
+		/*! \brief Arrange tables starting from a specified root in a hierarchical way
+		where for a certain table its child (or related) tables are places aside from left to right and top to bottom.
+		This method returns the bounding rect of the items after the rearrangement */
+		QRectF rearrangeTablesHierarchically(BaseTableView *root, vector<BaseObject *> &evaluated_tabs);
 
 	protected:
 		static const unsigned BREAK_VERT_NINETY_DEGREES, //Break vertically the line in one 90° angle
@@ -313,9 +316,9 @@ class ModelWidget: public QWidget {
 		whenever the min_object_opacity changes */
 		void updateObjectsOpacity(void);
 
-		void arrangeObjectsAutomatically(void);
-
-		void arrangeObjects(void);
+		/*! \brief Rearrange table/view/textboxes in the canvas in such way to provide better visualization
+		 * of the whole model. Currently only hierachical arrangement is possible. See rearrangeTablesHierarchically() */
+		void rearrangeObjects(void);
 
 	private slots:
 		//! \brief Handles the signals that indicates the object creation on the reference database model

@@ -231,6 +231,7 @@
         <file>icones/genericsql.png</file>
         <file>icones/genericsql_grp.png</file>
         <file>icones/aligntogrid.png</file>
+        <file>icones/arrangetables.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

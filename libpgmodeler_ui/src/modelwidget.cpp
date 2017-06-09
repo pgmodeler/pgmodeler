@@ -4071,7 +4071,7 @@ void ModelWidget::editCreationOrder(void)
 	parent_form.exec();
 }
 
-void ModelWidget::arrangeObjects(void)
+void ModelWidget::rearrangeObjects(void)
 {
 	vector<BaseObject *> objects;
 	BaseGraphicObject *graph_obj = nullptr;
@@ -4081,6 +4081,7 @@ void ModelWidget::arrangeObjects(void)
 	objects.assign(db_model->getObjectList(OBJ_TABLE)->begin(), db_model->getObjectList(OBJ_TABLE)->end());
 	objects.insert(objects.end(), db_model->getObjectList(OBJ_VIEW)->begin(), db_model->getObjectList(OBJ_VIEW)->end());
 
+	//We determine the root by searching the table/view which contains the more amount of relationships connected
 	for(auto obj : objects)
 	{
 		graph_obj = dynamic_cast<BaseGraphicObject *>(obj);
@@ -4101,11 +4102,12 @@ void ModelWidget::arrangeObjects(void)
 		BaseRelationship *rel = nullptr;
 		QRectF items_rect;
 		vector<BaseObject *> evaluated_tabs, not_evaluated, not_linked_tabs;
-		float px = 0, py = 0;
+		double px = 0, py = 0, max_h = 0;
 
+		//Positioning the root object at the top-left portion of canvas
 		root->setPos(QPointF(50, 50));
 		evaluated_tabs.push_back(root->getSourceObject());
-		items_rect = arrangeTablesHierarchically(root, evaluated_tabs);
+		items_rect = rearrangeTablesHierarchically(root, evaluated_tabs);
 
 		objects.clear();
 		objects.assign(db_model->getObjectList(OBJ_TABLE)->begin(), db_model->getObjectList(OBJ_TABLE)->end());
@@ -4117,11 +4119,15 @@ void ModelWidget::arrangeObjects(void)
 		std::set_difference(objects.begin(), objects.end(), evaluated_tabs.begin(), evaluated_tabs.end(),
 												 std::inserter(not_evaluated, not_evaluated.begin()));
 
+		/* While there is not evaluated objects (tables/views that are linked to each other but
+		none of them are linked to the root (in)directly) we need to perform the same operation
+		done for the root previously */
 		while(!not_evaluated.empty())
 		{
 			num_rels = 0;
 			root = nullptr;
 
+			//Determining which table has the greater number of relationships attached
 			for(auto &tab : not_evaluated)
 			{
 				tab_view = dynamic_cast<BaseTableView *>(dynamic_cast<BaseTable *>(tab)->getReceiverObject());
@@ -4133,17 +4139,19 @@ void ModelWidget::arrangeObjects(void)
 				}
 			}
 
+			//Once determined the new root we perform the positioning of its "children"
 			if(root && std::find(evaluated_tabs.begin(), evaluated_tabs.end(), root->getSourceObject()) == evaluated_tabs.end())
 			{
 				root->setPos(QPointF(50, items_rect.bottom() + 50));
 				evaluated_tabs.push_back(root->getSourceObject());
-				items_rect = arrangeTablesHierarchically(root, evaluated_tabs);
+				items_rect = rearrangeTablesHierarchically(root, evaluated_tabs);
 				not_evaluated.erase(std::find(not_evaluated.begin(), not_evaluated.end(),  root->getSourceObject()));
 			}
 			else
 			{
 				tab_view = dynamic_cast<BaseTableView *>(dynamic_cast<BaseTable *>(not_evaluated.front())->getReceiverObject());
 
+				//If the table/view has not relationships connected we separate it in a new list for further rearrangement
 				if(tab_view->getConnectRelsCount() == 0)
 					not_linked_tabs.push_back(not_evaluated.front());
 
@@ -4151,14 +4159,14 @@ void ModelWidget::arrangeObjects(void)
 			}
 		}
 
-
-		//Repositioning remaining tables and textboxes
+		//Repositioning remaining tables (without relationships) and textboxes
 		objects.clear();
 		objects.assign(not_linked_tabs.begin(), not_linked_tabs.end());
 		objects.insert(objects.end(), db_model->getObjectList(OBJ_TEXTBOX)->begin(), db_model->getObjectList(OBJ_TEXTBOX)->end());
 
 		px = 50;
 		py = items_rect.bottom() + 50;
+		max_h = 0;
 
 		for(auto &obj : objects)
 		{
@@ -4166,10 +4174,13 @@ void ModelWidget::arrangeObjects(void)
 			obj_view->setPos(px, py);
 			px += obj_view->boundingRect().width() + 50;
 
-			if(px > scene->sceneRect().right())
+			if(obj_view->boundingRect().height() > max_h)
+				max_h = obj_view->boundingRect().height();
+
+			if(px > items_rect.right())
 			{
 				px = 50;
-				py += obj_view->boundingRect().height();
+				py += max_h + 50;
 			}
 		}
 
@@ -4193,12 +4204,12 @@ void ModelWidget::arrangeObjects(void)
 	}
 }
 
-QRectF ModelWidget::arrangeTablesHierarchically(BaseTableView *root, vector<BaseObject *> &evaluated_tabs)
+QRectF ModelWidget::rearrangeTablesHierarchically(BaseTableView *root, vector<BaseObject *> &evaluated_tabs)
 {
 	BaseTable *base_tab = dynamic_cast<BaseTable *>(root->getSourceObject()),
 			*src_tab = nullptr, *dst_tab = nullptr, *curr_tab = nullptr;
 	vector<BaseRelationship *> rels ;
-	float px = 0, py = 0, px1 = 0, py1 = 0;
+	double px = 0, py = 0, px1 = 0, py1 = 0;
 	BaseTableView *tab_view = nullptr;
 	vector<BaseTable *> tabs = { base_tab }, next_tabs;
 	bool is_protected = false;
@@ -4241,6 +4252,7 @@ QRectF ModelWidget::arrangeTablesHierarchically(BaseTableView *root, vector<Base
 			{
 				tab_view = dynamic_cast<BaseTableView *>(next_tab->getReceiverObject());
 
+				//Temporarily unprotecting the table so it can be moved
 				if(next_tab->isProtected())
 				{
 					next_tab->setProtected(false);
