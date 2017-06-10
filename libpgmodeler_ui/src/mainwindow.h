@@ -143,9 +143,6 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief QMainWindow::closeEvent() overload: Saves the configurations before close the application
 		void closeEvent(QCloseEvent *event);
 
-		//! \brief QMainWindow::showEvent(): Start the countdown to model autosave
-		void showEvent(QShowEvent *);
-
 		void resizeEvent(QResizeEvent *);
 
 		//! \brief Set the postion of a floating widget based upon an action at a tool bar

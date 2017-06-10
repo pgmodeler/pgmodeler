@@ -310,6 +310,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	showRightWidgetsBar();
 	showBottomWidgetsBar();
 
+	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+	confs=conf_wgt->getConfigurationParams();
+
 	//If a previous session was restored save the temp models
 	updateConnections();
 	updateRecentModelsMenu();
@@ -366,6 +369,45 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		SQLExecutionWidget::loadSQLHistory();
 	}
 	catch(Exception &){}
+
+#ifndef Q_OS_MAC
+	//Restoring the canvas grid options
+	action_show_grid->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_CANVAS_GRID]==ParsersAttributes::_TRUE_);
+	action_alin_objs_grade->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::ALIGN_OBJS_TO_GRID]==ParsersAttributes::_TRUE_);
+	action_show_delimiters->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_PAGE_DELIMITERS]==ParsersAttributes::_TRUE_);
+
+	ObjectsScene::setGridOptions(action_show_grid->isChecked(),
+															 action_alin_objs_grade->isChecked(),
+															 action_show_delimiters->isChecked());
+
+	//Hiding/showing the main menu bar depending on the retrieved conf
+	main_menu_mb->setVisible(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_MAIN_MENU]==ParsersAttributes::_TRUE_);
+
+	if(main_menu_mb->isVisible())
+		file_menu->addAction(action_hide_main_menu);
+
+	action_main_menu->setVisible(!main_menu_mb->isVisible());
+#endif
+
+	restoreDockWidgetsSettings();
+
+	//Positioning the update notifier widget before showing it (if there is an update)
+	setFloatingWidgetPos(update_notifier_wgt, action_update_found, control_tb, false);
+	action_update_found->setVisible(false);
+	QTimer::singleShot(1000, this, SLOT(restoreTemporaryModels()));
+
+#ifdef NO_UPDATE_CHECK
+#warning "NO UPDATE CHECK: Update checking is disabled."
+#else
+	//Enabling update check at startup
+	if(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]==ParsersAttributes::_TRUE_)
+		QTimer::singleShot(10000, update_notifier_wgt, SLOT(checkForUpdate()));
+#endif
+
+#ifdef DEMO_VERSION
+#warning "DEMO VERSION: demonstration version startup alert."
+	QTimer::singleShot(5000, this, SLOT(showDemoVersionWarning()));
+#endif
 }
 
 MainWindow::~MainWindow(void)
@@ -491,51 +533,6 @@ void MainWindow::fixModel(const QString &filename)
 	PgModelerUiNS::resizeDialog(&model_fix_form);
 	model_fix_form.exec();
 	disconnect(&model_fix_form, nullptr, this, nullptr);
-}
-
-void MainWindow::showEvent(QShowEvent *)
-{
-	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
-	map<QString, attribs_map> confs=conf_wgt->getConfigurationParams();
-
-#ifndef Q_OS_MAC
-	//Restoring the canvas grid options
-	action_show_grid->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_CANVAS_GRID]==ParsersAttributes::_TRUE_);
-	action_alin_objs_grade->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::ALIGN_OBJS_TO_GRID]==ParsersAttributes::_TRUE_);
-	action_show_delimiters->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_PAGE_DELIMITERS]==ParsersAttributes::_TRUE_);
-
-	ObjectsScene::setGridOptions(action_show_grid->isChecked(),
-															 action_alin_objs_grade->isChecked(),
-															 action_show_delimiters->isChecked());
-
-	//Hiding/showing the main menu bar depending on the retrieved conf
-	main_menu_mb->setVisible(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_MAIN_MENU]==ParsersAttributes::_TRUE_);
-
-	if(main_menu_mb->isVisible())
-		file_menu->addAction(action_hide_main_menu);
-
-	action_main_menu->setVisible(!main_menu_mb->isVisible());
-#endif
-
-	restoreDockWidgetsSettings();
-
-	//Positioning the update notifier widget before showing it (if there is an update)
-	setFloatingWidgetPos(update_notifier_wgt, action_update_found, control_tb, false);
-	action_update_found->setVisible(false);
-	QTimer::singleShot(1000, this, SLOT(restoreTemporaryModels()));
-
-#ifdef NO_UPDATE_CHECK
-#warning "NO UPDATE CHECK: Update checking is disabled."
-#else
-	//Enabling update check at startup
-	if(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]==ParsersAttributes::_TRUE_)
-		QTimer::singleShot(3000, update_notifier_wgt, SLOT(checkForUpdate()));
-#endif
-
-#ifdef DEMO_VERSION
-#warning "DEMO VERSION: demonstration version startup alert."
-	QTimer::singleShot(2000, this, SLOT(showDemoVersionWarning()));
-#endif
 }
 
 void MainWindow::resizeEvent(QResizeEvent *)
