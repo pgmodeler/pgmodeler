@@ -772,7 +772,7 @@ void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 		if(!rel_line->isVisible())
 		{
 			//Case the user starts a object moviment
-			if(!this->selectedItems().isEmpty() && !moving_objs && event->modifiers()==Qt::NoModifier)
+			if(!this->selectedItems().isEmpty() && !moving_objs /*&& event->modifiers()==Qt::NoModifier*/)
 			{
 				if(BaseObjectView::isPlaceholderEnabled())
 				{
@@ -821,8 +821,7 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 		enableSceneMove(false);
 
 	//If there is selected object and the user ends the object moviment
-	if(!this->selectedItems().isEmpty() && moving_objs &&
-			event->button()==Qt::LeftButton && event->modifiers()==Qt::NoModifier)
+	if(!this->selectedItems().isEmpty() && moving_objs && event->button()==Qt::LeftButton/* && event->modifiers()==Qt::NoModifier */)
 	{
 		finishObjectsMove(event->scenePos());
 	}

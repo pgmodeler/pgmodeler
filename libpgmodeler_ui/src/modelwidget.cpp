@@ -472,24 +472,20 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 	QGraphicsSceneMouseEvent *m_event = dynamic_cast<QGraphicsSceneMouseEvent *>(event);
 
 	//Filters the Wheel event if it is raised by the viewport scrollbars
-	if(object != this && event->type() == QEvent::Wheel && w_event->modifiers()==Qt::ControlModifier)
+	if((object == viewport->horizontalScrollBar() ||
+			object == viewport->verticalScrollBar())
+		 && event->type() == QEvent::Wheel && w_event->modifiers()==Qt::ControlModifier)
 	{
-		//Redirects the event to the wheelEvent() method of the model widget
-		this->wheelEvent(w_event);
+		if(w_event->angleDelta().y() < 0)
+			this->applyZoom(this->current_zoom - ZOOM_INCREMENT);
+		else
+			this->applyZoom(this->current_zoom + ZOOM_INCREMENT);
+
 		return(true);
 	}
 	else if(event->type() == QEvent::KeyPress && k_event->modifiers()==Qt::AltModifier)
 	{
 		this->keyPressEvent(k_event);
-		return(true);
-	}
-	else if(object == magnifier_area_lbl && (event->type() == QEvent::MouseMove || event->type() == QEvent::KeyRelease))
-	{
-		if(event->type() == QEvent::KeyRelease)
-			showMagnifierArea(false);
-		else
-			updateMagnifierArea();
-
 		return(true);
 	}
 	else if(object == scene && m_event)
@@ -559,7 +555,7 @@ void ModelWidget::keyPressEvent(QKeyEvent *event)
 	{
 		toggleNewObjectOverlay();
 	}
-	else if(event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier) && current_zoom != 1)
+	else if(event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
 	{
 		showMagnifierArea(true);
 	}
@@ -589,7 +585,7 @@ void ModelWidget::mousePressEvent(QMouseEvent *event)
 	}
 }
 
-void ModelWidget::wheelEvent(QWheelEvent * event)
+/*void ModelWidget::wheelEvent(QWheelEvent * event)
 {
 	if(event->modifiers()==Qt::ControlModifier)
 	{
@@ -598,7 +594,7 @@ void ModelWidget::wheelEvent(QWheelEvent * event)
 		else
 			this->applyZoom(this->current_zoom + ZOOM_INCREMENT);
 	}
-}
+} */
 
 void ModelWidget::hideEvent(QHideEvent *)
 {
@@ -815,7 +811,6 @@ void ModelWidget::handleObjectsMovement(bool end_moviment)
 	vector<BaseObject *>::iterator itr, itr_end;
 	vector<BaseObject *> reg_tables;
 	QList<BaseObjectView *> tables;
-
 	BaseGraphicObject *obj=nullptr;
 	Schema *schema=nullptr;
 
