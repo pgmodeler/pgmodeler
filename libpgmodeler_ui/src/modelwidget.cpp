@@ -189,39 +189,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	zoom_info_lbl->setFont(font);
 	zoom_info_lbl->adjustSize();
 	zoom_info_lbl->setVisible(false);
-
 	zoom_info_timer.setInterval(3000);
-
-	menu_title_wgt = new QWidget(this);
-	menu_title_wgt->setObjectName("menu_title_wgt");
-
-	menu_title_name_lbl = new QLabel(menu_title_wgt);
-	menu_title_name_lbl->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-
-	font.setItalic(true);
-	font.setPointSizeF(menu_title_name_lbl->font().pointSizeF());
-	menu_title_name_lbl->setFont(font);
-
-	font.setBold(false);
-	menu_title_type_lbl = new QLabel(menu_title_wgt);
-	menu_title_type_lbl->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-	menu_title_type_lbl->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-	menu_title_type_lbl->setFont(font);
-	menu_title_type_lbl->setIndent(5);
-
-	menu_title_ico_lbl = new QLabel(menu_title_wgt);
-	menu_title_ico_lbl->setMaximumSize(22,22);
-	menu_title_ico_lbl->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-	menu_title_ico_lbl->setScaledContents(true);
-
-	QHBoxLayout *hbox = new QHBoxLayout(menu_title_wgt);
-	hbox->addWidget(menu_title_ico_lbl);
-	hbox->addWidget(menu_title_name_lbl);
-	hbox->addWidget(menu_title_type_lbl);
-	hbox->setContentsMargins(4,4,4,4);
-
-	action_menu_title = new QWidgetAction(this);
-	action_menu_title->setDefaultWidget(menu_title_wgt);
 
 	action_source_code=new QAction(QIcon(PgModelerUiNS::getIconPath("codigosql")), trUtf8("Source"), this);
 	action_source_code->setShortcut(QKeySequence(trUtf8("Alt+S")));
@@ -3429,35 +3397,6 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 	quick_actions_menu.clear();
 	popup_menu.clear();
 
-	popup_menu.addAction(action_menu_title);
-
-	if(objects.size() <= 1)
-	{
-		BaseObject *obj = objects.empty() ? db_model : objects[0];
-		ObjectType obj_type = obj->getObjectType();
-		QString name;
-
-		if(obj_type != OBJ_COLUMN && TableObject::isTableObject(obj_type))
-			name = dynamic_cast<TableObject *>(obj)->TableObject::getSignature(false);
-		else
-			name = obj->getSignature(true);
-
-		name.remove(QChar('"'));
-		menu_title_name_lbl->setText(name);
-		menu_title_ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(obj_type)));
-
-		if(obj_type == BASE_RELATIONSHIP)
-			menu_title_type_lbl->setText(BaseObject::getTypeName(OBJ_RELATIONSHIP));
-		else
-			menu_title_type_lbl->setText(obj->getTypeName());
-	}
-	else
-	{
-		menu_title_name_lbl->setText(trUtf8("Selected object(s): %1").arg(objects.size()));
-		menu_title_ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("seltodos")));
-		menu_title_type_lbl->setText(QString());
-	}
-
 	this->enableModelActions(false);
 	this->selected_objects=objects;
 	new_object_menu.setEnabled(!this->db_model->isProtected());
@@ -4526,8 +4465,8 @@ void ModelWidget::updateMagnifierArea(void)
 		magnifier_area_lbl->move(new_pos);
 
 		QPainter p(&pix);
-
 		p.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
+		scene->blockSignals(true);
 		scene->render(&p, QRectF(QPointF(0,0), size), QRectF(scene_pos - QPointF(cx, cy), size));
 
 		p.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing, false);
@@ -4536,6 +4475,7 @@ void ModelWidget::updateMagnifierArea(void)
 		p.drawLine(QPointF(cx - 5, cy), QPointF(cx + 5, cy));
 
 		magnifier_area_lbl->setPixmap(pix);
+		scene->blockSignals(false);
 	}
 }
 
