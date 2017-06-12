@@ -112,7 +112,9 @@ class ModelWidget: public QWidget {
 
 		fade_rels_menu,
 
-		toggle_attrs_menu;
+		toggle_attrs_menu,
+
+		select_all_menu;
 
 		//! \brief Stores the selected object on the scene
 		vector<BaseObject *> selected_objects;

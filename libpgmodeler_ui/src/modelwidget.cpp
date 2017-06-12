@@ -210,9 +210,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_cascade_del=new QAction(QIcon(PgModelerUiNS::getIconPath("delcascade")), trUtf8("Del. cascade"), this);
 	action_cascade_del->setShortcut(QKeySequence(trUtf8("Shift+Del")));
 
-	action_select_all=new QAction(QIcon(PgModelerUiNS::getIconPath("seltodos")), trUtf8("Select all"), this);
-	action_select_all->setShortcut(QKeySequence(trUtf8("Ctrl+A")));
+	action_select_all=new QAction(QIcon(PgModelerUiNS::getIconPath("seltodos")), trUtf8("Select all"), this);	
 	action_select_all->setToolTip(trUtf8("Selects all the graphical objects in the model"));
+	action_select_all->setMenu(&select_all_menu);
 
 	action_convert_relnn=new QAction(QIcon(PgModelerUiNS::getIconPath("convrelnn")), trUtf8("Convert"), this);
 
@@ -352,6 +352,25 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	new_obj_overlay_wgt=new NewObjectOverlayWidget(this);
 	new_obj_overlay_wgt->setObjectName(QString("new_obj_overlay_wgt"));
 	new_obj_overlay_wgt->setVisible(false);
+
+	for(auto &obj_type : vector<ObjectType>({ BASE_OBJECT, OBJ_SCHEMA, OBJ_TABLE, OBJ_VIEW, OBJ_RELATIONSHIP, OBJ_TEXTBOX }))
+	{
+		if(obj_type == BASE_OBJECT)
+		{
+			action=new QAction(trUtf8("All objects"), this);
+			action->setShortcut(QKeySequence(trUtf8("Ctrl+A")));
+			select_all_menu.addAction(action);
+			select_all_menu.addSeparator();
+		}
+		else
+		{
+			action=new QAction(QIcon(PgModelerUiNS::getIconPath(obj_type)), BaseObject::getTypeName(obj_type), this);
+			select_all_menu.addAction(action);
+		}
+
+		action->setData(QVariant(obj_type));
+		connect(action, SIGNAL(triggered(bool)), this, SLOT(selectAllObjects()));
+	}
 
 	connect(&zoom_info_timer, SIGNAL(timeout()), zoom_info_lbl, SLOT(hide()));
 	connect(action_source_code, SIGNAL(triggered(bool)), this, SLOT(showSourceCode(void)));
@@ -561,7 +580,7 @@ void ModelWidget::keyPressEvent(QKeyEvent *event)
 	{
 		toggleNewObjectOverlay();
 	}
-	else if(event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
+	else if(event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier) && current_zoom < 1)
 	{
 		showMagnifierArea(true);
 	}
@@ -980,9 +999,35 @@ void ModelWidget::configureObjectSelection(void)
 
 void ModelWidget::selectAllObjects(void)
 {
-	QPainterPath pth;
-	pth.addRect(scene->sceneRect());
-	scene->setSelectionArea(pth);
+	QAction *act = qobject_cast<QAction *>(sender());
+
+	if(!act)
+		return;
+
+	ObjectType obj_type = static_cast<ObjectType>(act->data().toUInt());
+
+	if(obj_type == BASE_OBJECT)
+	{
+		QPainterPath pth;
+		pth.addRect(scene->sceneRect());
+		scene->setSelectionArea(pth);
+	}
+	else
+	{
+		BaseObjectView *obj_view = nullptr;
+		vector<BaseObject *> objs = *db_model->getObjectList(obj_type);
+
+		if(obj_type == OBJ_RELATIONSHIP)
+			objs.insert(objs.end(), db_model->getObjectList(BASE_RELATIONSHIP)->begin(),  db_model->getObjectList(BASE_RELATIONSHIP)->end());
+
+		for(auto &obj : objs)
+		{
+			obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
+
+			if(obj_view)
+				obj_view->setSelected(true);
+		}
+	}
 }
 
 void ModelWidget::convertRelationshipNN(void)
@@ -3525,6 +3570,23 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 		configureSubmenu(nullptr);
 	}
 
+	if(objects.size() > 1)
+	{
+		bool rem_points = true;
+
+		for(auto &obj : objects)
+		{
+			rem_points = obj->getObjectType() == OBJ_RELATIONSHIP || obj->getObjectType() == BASE_RELATIONSHIP;
+			if(!rem_points) break;
+		}
+
+		if(rem_points)
+		{
+			action_remove_rel_points->setData(QVariant());
+			popup_menu.addAction(action_remove_rel_points);
+		}
+	}
+
 	/* Adds the protect/unprotect action when the selected object was not included by relationship
 	and if its a table object and the parent table is not protected. */
 	if(!objects.empty() &&
@@ -3974,11 +4036,36 @@ void ModelWidget::removeRelationshipPoints(void)
 		QAction *action=dynamic_cast<QAction *>(sender());
 		BaseRelationship *rel=reinterpret_cast<BaseRelationship *>(action->data().value<void *>());
 
-		op_list->registerObject(rel, Operation::OBJECT_MODIFIED);
-		rel->setPoints({});
-		scene->clearSelection();
+		//Remove points from all selected relationships
+		if(!rel && !selected_objects.empty())
+		{
+			vector<BaseObject *> rels;
 
-		rel->setModified(true);
+			rels = *db_model->getObjectList(BASE_RELATIONSHIP);
+			rels.insert(rels.end(), db_model->getObjectList(OBJ_RELATIONSHIP)->begin(),  db_model->getObjectList(OBJ_RELATIONSHIP)->end());
+
+			op_list->startOperationChain();
+			for(auto &obj : rels)
+			{
+				rel = dynamic_cast<BaseRelationship *>(obj);
+
+				if(!rel->isProtected())
+				{
+					op_list->registerObject(rel, Operation::OBJECT_MODIFIED);
+					rel->setPoints({});
+					rel->setModified(true);
+				}
+			}
+			op_list->finishOperationChain();
+		}
+		else
+		{
+			op_list->registerObject(rel, Operation::OBJECT_MODIFIED);
+			rel->setPoints({});
+			rel->setModified(true);
+		}
+
+		scene->clearSelection();
 		this->setModified(true);
 		emit s_objectModified();
 	}
