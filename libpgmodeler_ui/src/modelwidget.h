@@ -114,7 +114,9 @@ class ModelWidget: public QWidget {
 
 		toggle_attrs_menu,
 
-		select_all_menu;
+		select_all_menu,
+
+		jump_to_tab_menu;
 
 		//! \brief Stores the selected object on the scene
 		vector<BaseObject *> selected_objects;
@@ -138,7 +140,17 @@ class ModelWidget: public QWidget {
 		QLabel *zoom_info_lbl,
 
 		//! \brief This label shows a small portion of the canvas in normal zoom at the current cursor position
-		*magnifier_area_lbl;
+		*magnifier_area_lbl,
+
+		*menu_title_ico_lbl,
+
+		*menu_title_name_lbl,
+
+		*menu_title_type_lbl;
+
+		QWidget *menu_title_wgt;
+
+		QWidgetAction *action_menu_title;
 
 		//! \brief This timer controls the interval the zoom label is visible
 		QTimer zoom_info_timer;
@@ -228,7 +240,8 @@ class ModelWidget: public QWidget {
 		*action_extended_attribs,
 		*action_show_ext_attribs,
 		*action_hide_ext_attribs,
-		*action_edit_creation_order;
+		*action_edit_creation_order,
+		*action_jump_to_table;
 
 		//! \brief Actions used to create new objects on the model
 		map<ObjectType, QAction *> actions_new_objects;
@@ -449,6 +462,8 @@ class ModelWidget: public QWidget {
 		void toggleExtendedAttributes(void);
 
 		void editCreationOrder(void);
+
+		void jumpToTable(void);
 
 	public slots:
 		void loadModel(const QString &filename);

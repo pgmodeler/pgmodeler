@@ -192,6 +192,37 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	zoom_info_timer.setInterval(3000);
 
+	menu_title_wgt = new QWidget(this);
+	menu_title_wgt->setObjectName("menu_title_wgt");
+
+	menu_title_name_lbl = new QLabel(menu_title_wgt);
+	menu_title_name_lbl->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+
+	font.setItalic(true);
+	font.setPointSizeF(menu_title_name_lbl->font().pointSizeF());
+	menu_title_name_lbl->setFont(font);
+
+	font.setBold(false);
+	menu_title_type_lbl = new QLabel(menu_title_wgt);
+	menu_title_type_lbl->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+	menu_title_type_lbl->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+	menu_title_type_lbl->setFont(font);
+	menu_title_type_lbl->setIndent(5);
+
+	menu_title_ico_lbl = new QLabel(menu_title_wgt);
+	menu_title_ico_lbl->setMaximumSize(22,22);
+	menu_title_ico_lbl->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+	menu_title_ico_lbl->setScaledContents(true);
+
+	QHBoxLayout *hbox = new QHBoxLayout(menu_title_wgt);
+	hbox->addWidget(menu_title_ico_lbl);
+	hbox->addWidget(menu_title_name_lbl);
+	hbox->addWidget(menu_title_type_lbl);
+	hbox->setContentsMargins(4,4,4,4);
+
+	action_menu_title = new QWidgetAction(this);
+	action_menu_title->setDefaultWidget(menu_title_wgt);
+
 	action_source_code=new QAction(QIcon(PgModelerUiNS::getIconPath("codigosql")), trUtf8("Source"), this);
 	action_source_code->setShortcut(QKeySequence(trUtf8("Alt+S")));
 	action_source_code->setToolTip(trUtf8("Show object source code"));
@@ -275,6 +306,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_extended_attribs=new QAction(QIcon(PgModelerUiNS::getIconPath("toggleattribs")), trUtf8("Extended attributes"), this);
 	action_show_ext_attribs=new QAction(trUtf8("Show"), this);
 	action_hide_ext_attribs=new QAction(trUtf8("Hide"), this);
+
+	action_jump_to_table=new QAction(QIcon(PgModelerUiNS::getIconPath("jumptotable")), trUtf8("Jump to table"), this);
+	action_jump_to_table->setMenu(&jump_to_tab_menu);
 
 	toggle_attrs_menu.addAction(action_show_ext_attribs);
 	toggle_attrs_menu.addAction(action_hide_ext_attribs);
@@ -3395,6 +3429,35 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 	quick_actions_menu.clear();
 	popup_menu.clear();
 
+	popup_menu.addAction(action_menu_title);
+
+	if(objects.size() <= 1)
+	{
+		BaseObject *obj = objects.empty() ? db_model : objects[0];
+		ObjectType obj_type = obj->getObjectType();
+		QString name;
+
+		if(obj_type != OBJ_COLUMN && TableObject::isTableObject(obj_type))
+			name = dynamic_cast<TableObject *>(obj)->TableObject::getSignature(false);
+		else
+			name = obj->getSignature(true);
+
+		name.remove(QChar('"'));
+		menu_title_name_lbl->setText(name);
+		menu_title_ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(obj_type)));
+
+		if(obj_type == BASE_RELATIONSHIP)
+			menu_title_type_lbl->setText(BaseObject::getTypeName(OBJ_RELATIONSHIP));
+		else
+			menu_title_type_lbl->setText(obj->getTypeName());
+	}
+	else
+	{
+		menu_title_name_lbl->setText(trUtf8("Selected object(s): %1").arg(objects.size()));
+		menu_title_ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("seltodos")));
+		menu_title_type_lbl->setText(QString());
+	}
+
 	this->enableModelActions(false);
 	this->selected_objects=objects;
 	new_object_menu.setEnabled(!this->db_model->isProtected());
@@ -3502,6 +3565,17 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 							action_remove_rel_points->setData(QVariant::fromValue<void *>(rel));
 							popup_menu.addAction(action_remove_rel_points);
 						}
+
+						popup_menu.addAction(action_jump_to_table);
+						jump_to_tab_menu.clear();
+
+						action = jump_to_tab_menu.addAction(QIcon(PgModelerUiNS::getIconPath(rel->getTable(BaseRelationship::SRC_TABLE)->getObjectType())),
+																								rel->getTable(BaseRelationship::SRC_TABLE)->getSignature(), this, SLOT(jumpToTable()));
+						action->setData(QVariant::fromValue<void *>(reinterpret_cast<void *>(rel->getTable(BaseRelationship::SRC_TABLE))));
+
+						action = jump_to_tab_menu.addAction(QIcon(PgModelerUiNS::getIconPath(rel->getTable(BaseRelationship::DST_TABLE)->getObjectType())),
+																								rel->getTable(BaseRelationship::DST_TABLE)->getSignature(), this, SLOT(jumpToTable()));
+						action->setData(QVariant::fromValue<void *>(reinterpret_cast<void *>(rel->getTable(BaseRelationship::DST_TABLE))));
 					}
 				}
 				else if(obj_type == OBJ_SCHEMA)
@@ -3535,7 +3609,6 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 			action_source_code->setData(QVariant::fromValue<void *>(obj));
 			action_deps_refs->setData(QVariant::fromValue<void *>(obj));
 			tab_obj=dynamic_cast<TableObject *>(obj);
-
 
 			if(tab_obj &&  tab_obj->getObjectType()==OBJ_COLUMN)
 			{
@@ -4204,6 +4277,22 @@ void ModelWidget::editCreationOrder(void)
 	parent_form.apply_ok_btn->setVisible(true);
 	parent_form.setMainWidget(swap_ids_wgt);
 	parent_form.exec();
+}
+
+void ModelWidget::jumpToTable(void)
+{
+	QAction *act = qobject_cast<QAction *>(sender());
+	BaseTable *tab = nullptr;
+	BaseTableView *tab_view = nullptr;
+
+	if(!act)
+		return;
+
+	tab = reinterpret_cast<BaseTable *>(act->data().value<void *>());
+	scene->clearSelection();
+	tab_view = dynamic_cast<BaseTableView *>(tab->getReceiverObject());
+	tab_view->setSelected(true);
+	viewport->centerOn(tab_view);
 }
 
 void ModelWidget::rearrangeObjects(void)
