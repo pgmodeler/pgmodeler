@@ -171,6 +171,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 																	400 * BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor(),
 																	400 * BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor());
 	magnifier_area_lbl->setCursor(Qt::BlankCursor);
+	magnifier_area_lbl->installEventFilter(this);
+	magnifier_area_lbl->setMouseTracking(true);
 
 	zoom_info_lbl=new QLabel(this);
 	zoom_info_lbl->raise();
@@ -487,6 +489,10 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 	{
 		this->keyPressEvent(k_event);
 		return(true);
+	}
+	else if(object == magnifier_area_lbl && event->type() == QEvent::MouseMove)
+	{
+		updateMagnifierArea();
 	}
 	else if(object == scene && m_event)
 	{
@@ -4332,8 +4338,8 @@ void ModelWidget::updateMagnifierArea(void)
 		QPointF scene_pos = viewport->mapToScene(pos);
 		QSize size = magnifier_area_lbl->size();
 		QPixmap pix = QPixmap(size);
-		QRect rect = QRect(new_pos, size);
-		QRect rect1 = this->geometry();
+		QRect rect = QRect(new_pos, size), rect1 = this->geometry();
+		double cx =  size.width() / 2, cy = size.height() / 2;
 
 		if(rect.right() > rect1.right())
 			new_pos.setX(pos.x() - rect.width() - 20);
@@ -4346,7 +4352,13 @@ void ModelWidget::updateMagnifierArea(void)
 		QPainter p(&pix);
 
 		p.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
-		scene->render(&p, QRectF(QPointF(0,0), size), QRectF(scene_pos - QPointF(size.width() / 2, size.height() / 2), size));
+		scene->render(&p, QRectF(QPointF(0,0), size), QRectF(scene_pos - QPointF(cx, cy), size));
+
+		p.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing, false);
+		p.setPen(QColor(80,0,0));
+		p.drawLine(QPointF(cx, cy - 5), QPointF(cx, cy + 5));
+		p.drawLine(QPointF(cx - 5, cy), QPointF(cx + 5, cy));
+
 		magnifier_area_lbl->setPixmap(pix);
 	}
 }

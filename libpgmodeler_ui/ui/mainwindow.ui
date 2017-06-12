@@ -1495,7 +1495,7 @@
     <string>Arrange objects</string>
    </property>
    <property name="toolTip">
-    <string>Rearrange objects on the canvas in hierarchically</string>
+    <string>Rearrange objects on the canvas hierarchically</string>
    </property>
   </action>
  </widget>
