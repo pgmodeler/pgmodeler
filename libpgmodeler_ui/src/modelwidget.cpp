@@ -4364,14 +4364,15 @@ void ModelWidget::rearrangeObjects(void)
 		}
 
 		db_model->setObjectsModified({ OBJ_TABLE, OBJ_VIEW, OBJ_SCHEMA, OBJ_RELATIONSHIP, BASE_RELATIONSHIP });
-		adjustSceneSize();
-		viewport->updateScene({ scene->sceneRect() });
 	}
 	else
 	{
 		//This is a fallback arrangement when the model does not have relationships
 		rearrangeSchemas(QPointF(50,50), 10, 5, 50);
 	}
+
+	adjustSceneSize();
+	viewport->updateScene({ scene->sceneRect() });
 }
 
 QRectF ModelWidget::rearrangeTablesHierarchically(BaseTableView *root, vector<BaseObject *> &evaluated_tabs)
