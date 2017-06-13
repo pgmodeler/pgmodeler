@@ -64,7 +64,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	sql_file_dlg.setModal(true);
 
 	snippets_tb->setMenu(&snippets_menu);
-	code_compl_wgt=new CodeCompletionWidget(sql_cmd_txt);
+	code_compl_wgt=new CodeCompletionWidget(sql_cmd_txt, true);
 
 	find_replace_wgt=new FindReplaceWidget(sql_cmd_txt, find_wgt_parent);
 	QHBoxLayout *hbox=new QHBoxLayout(find_wgt_parent);
@@ -116,9 +116,6 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	});
 
 	connect(&snippets_menu, SIGNAL(triggered(QAction*)), this, SLOT(selectSnippet(QAction *)));
-
-	connect(code_compl_wgt, SIGNAL(s_wordSelected(QString)), this, SLOT(handleSelectedWord(QString)));
-
 	connect(cmd_history_txt, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showHistoryContextMenu()));
 
 	configureSnippets();
@@ -716,7 +713,7 @@ void SQLExecutionWidget::selectSnippet(QAction *act)
 	sql_cmd_txt->setTextCursor(cursor);
 }
 
-void SQLExecutionWidget::handleSelectedWord(QString word)
+/*void SQLExecutionWidget::handleSelectedWord(QString word)
 {
 	if(SnippetsConfigWidget::isSnippetExists(word))
 	{
@@ -725,7 +722,7 @@ void SQLExecutionWidget::handleSelectedWord(QString word)
 		tc.removeSelectedText();
 		tc.insertText(SnippetsConfigWidget::getParsedSnippet(word));
 	}
-}
+}*/
 
 void SQLExecutionWidget::toggleOutputPane(bool visible)
 {
@@ -753,10 +750,6 @@ void SQLExecutionWidget::configureSnippets(void)
 { 
 	SnippetsConfigWidget::configureSnippetsMenu(&snippets_menu);
 	code_compl_wgt->configureCompletion(nullptr, sql_cmd_hl);
-	code_compl_wgt->clearCustomItems();
-	code_compl_wgt->insertCustomItems(SnippetsConfigWidget::getAllSnippetsAttribute(ParsersAttributes::ID),
-									  SnippetsConfigWidget::getAllSnippetsAttribute(ParsersAttributes::LABEL),
-																		QPixmap(PgModelerUiNS::getIconPath("codesnippet")));
 }
 
 void SQLExecutionWidget::saveSQLHistory(void)

@@ -80,7 +80,9 @@ class CodeCompletionWidget: public QWidget
 		int qualifying_level;
 		
 		//! \brief Indicates if the completion was triggered by typing the completion char
-		bool auto_triggered;
+		bool auto_triggered,
+
+		enable_snippets;
 		
 		//! \brief Store the objects selected for each qualifying level
 		vector<BaseObject *> sel_objects;
@@ -103,7 +105,7 @@ class CodeCompletionWidget: public QWidget
 		void setQualifyingLevel(BaseObject *obj);
 		
 	public:
-		CodeCompletionWidget(QPlainTextEdit *code_field_txt);
+		CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool enable_snippets = false);
 		
 		/*! \brief Configures the completion. If an syntax highlighter is specified, the completion widget will
 		retrive the keywords and the trigger char from it. The keyword group name can be also specified in case the
@@ -137,6 +139,9 @@ class CodeCompletionWidget: public QWidget
 	signals:
 		//! \brief This signal is emitted whenever a word is placed into the parent textbox through the completion popup.
 		void s_wordSelected(QString);
+
+	private slots:
+		void handleSelectedWord(QString word);
 };
 
 #endif

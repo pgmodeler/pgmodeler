@@ -148,7 +148,7 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 
 		void selectSnippet(QAction *act);
 
-		void handleSelectedWord(QString word);
+		//void handleSelectedWord(QString word);
 
 		void toggleOutputPane(bool visible);
 

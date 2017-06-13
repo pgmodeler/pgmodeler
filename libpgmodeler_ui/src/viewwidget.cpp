@@ -71,8 +71,8 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		references_tab->setHeaderLabel(trUtf8("Alias Col."),2);
 		references_tab->setHeaderLabel(trUtf8("Flags: SF FW AW VD"),3);
 
-		cte_expression_cp=new CodeCompletionWidget(cte_expression_txt);
-		expression_cp=new CodeCompletionWidget(expression_txt);
+		cte_expression_cp=new CodeCompletionWidget(cte_expression_txt, true);
+		expression_cp=new CodeCompletionWidget(expression_txt, true);
 
 		frame_info=generateInformationFrame(trUtf8("To reference all columns in a table (*) just do not fill the field <strong>Column</strong>, this is the same as write <em><strong>[schema].[table].*</strong></em>"));
 

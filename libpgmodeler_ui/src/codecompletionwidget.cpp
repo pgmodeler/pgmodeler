@@ -19,12 +19,14 @@
 #include "codecompletionwidget.h"
 #include "generalconfigwidget.h"
 #include "pgmodeleruins.h"
+#include "snippetsconfigwidget.h"
 
-CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt) :	QWidget(dynamic_cast<QWidget *>(code_field_txt))
+CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool enable_snippets) :	QWidget(dynamic_cast<QWidget *>(code_field_txt))
 {
 	if(!code_field_txt)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	this->enable_snippets = enable_snippets;
 	popup_timer.setInterval(300);
 
 	completion_wgt=new QWidget(this);
@@ -69,6 +71,20 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt) :	QWi
 	});
 
 	this->setVisible(false);
+
+	if(enable_snippets)
+		connect(this, SIGNAL(s_wordSelected(QString)), this, SLOT(handleSelectedWord(QString)));
+}
+
+void CodeCompletionWidget::handleSelectedWord(QString word)
+{
+	if(SnippetsConfigWidget::isSnippetExists(word))
+	{
+		QTextCursor tc=code_field_txt->textCursor();
+		tc.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor);
+		tc.removeSelectedText();
+		tc.insertText(SnippetsConfigWidget::getParsedSnippet(word));
+	}
 }
 
 bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
@@ -208,6 +224,14 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
 		}
 		else
 			completion_trigger=QChar('.');
+
+		if(enable_snippets)
+		{
+			clearCustomItems();
+			insertCustomItems(SnippetsConfigWidget::getAllSnippetsAttribute(ParsersAttributes::ID),
+												SnippetsConfigWidget::getAllSnippetsAttribute(ParsersAttributes::LABEL),
+												QPixmap(PgModelerUiNS::getIconPath("codesnippet")));
+		}
 	}
 	else
 	{

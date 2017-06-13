@@ -27,7 +27,7 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	definition_hl = new SyntaxHighlighter(definition_txt);
 	definition_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
-	definition_cp=new CodeCompletionWidget(definition_txt);
+	definition_cp=new CodeCompletionWidget(definition_txt, true);
 
 	comment_edt->setVisible(false);
 	comment_lbl->setVisible(false);
