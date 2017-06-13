@@ -535,7 +535,7 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 	{
 		if(event->type() == QEvent::MouseMove)
 			updateMagnifierArea();
-		else if(k_event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
+		else if(k_event->modifiers() == (Qt::ControlModifier | Qt::AltModifier))
 			showMagnifierArea(false);
 
 		return(true);
@@ -621,7 +621,7 @@ void ModelWidget::keyPressEvent(QKeyEvent *event)
 	{
 		toggleNewObjectOverlay();
 	}
-	else if(event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier) && current_zoom < 1)
+	else if(event->modifiers() == (Qt::ControlModifier | Qt::AltModifier) && current_zoom < 1)
 	{
 		showMagnifierArea(true);
 	}
@@ -1023,8 +1023,6 @@ void ModelWidget::configureObjectSelection(void)
 	}
 	else
 		this->configurePopupMenu(selected_objects);
-
-	updateMagnifierArea();
 }
 
 void ModelWidget::selectAllObjects(void)
