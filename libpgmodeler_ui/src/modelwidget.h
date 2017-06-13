@@ -142,6 +142,8 @@ class ModelWidget: public QWidget {
 		//! \brief This label shows a small portion of the canvas in normal zoom at the current cursor position
 		*magnifier_area_lbl;
 
+		QFrame	*magnifier_frm;
+
 		//! \brief This timer controls the interval the zoom label is visible
 		QTimer zoom_info_timer;
 
