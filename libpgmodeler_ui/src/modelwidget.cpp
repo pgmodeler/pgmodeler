@@ -4293,12 +4293,13 @@ void ModelWidget::rearrangeObjects(void)
 		BaseRelationship *rel = nullptr;
 		QRectF items_rect;
 		vector<BaseObject *> evaluated_tabs, not_evaluated, not_linked_tabs;
-		double px = 0, py = 0, max_h = 0;
+		double px = 0, py = 0, max_h = 0, max_w = 0;
 
 		//Positioning the root object at the top-left portion of canvas
 		root->setPos(QPointF(50, 50));
 		evaluated_tabs.push_back(root->getSourceObject());
 		items_rect = rearrangeTablesHierarchically(root, evaluated_tabs);
+		max_w = items_rect.width();
 
 		objects.clear();
 		objects.assign(db_model->getObjectList(OBJ_TABLE)->begin(), db_model->getObjectList(OBJ_TABLE)->end());
@@ -4337,6 +4338,9 @@ void ModelWidget::rearrangeObjects(void)
 				evaluated_tabs.push_back(root->getSourceObject());
 				items_rect = rearrangeTablesHierarchically(root, evaluated_tabs);
 				not_evaluated.erase(std::find(not_evaluated.begin(), not_evaluated.end(),  root->getSourceObject()));
+
+				if(items_rect.width() > max_w)
+					max_w = items_rect.width();
 			}
 			else
 			{
@@ -4368,7 +4372,7 @@ void ModelWidget::rearrangeObjects(void)
 			if(obj_view->boundingRect().height() > max_h)
 				max_h = obj_view->boundingRect().height();
 
-			if(px > items_rect.right())
+			if(px > max_w)
 			{
 				px = 50;
 				py += max_h + 50;
