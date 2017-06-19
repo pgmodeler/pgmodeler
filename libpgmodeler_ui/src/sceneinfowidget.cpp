@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 #include "sceneinfowidget.h"
 #include "pgmodeleruins.h"
+#include "relationshipview.h"
 
 SceneInfoWidget::SceneInfoWidget(QWidget *parent): QWidget(parent)
 {
@@ -43,13 +44,20 @@ void SceneInfoWidget::updateSelectedObject(BaseObjectView *object)
 	}
 	else
 	{
+		RelationshipView *rel_view = dynamic_cast<RelationshipView *>(object);
+		QRectF rect = rel_view ? rel_view->__boundingRect() :
+														 QRectF(object->pos().x(),
+																		object->pos().y(),
+																		object->boundingRect().width(),
+																		object->boundingRect().height());
+
 		obj_icon_lbl->setPixmap(PgModelerUiNS::getIconPath(object->getSourceObject()->getSchemaName()));
 		obj_name_lbl->setText(QString("<strong>%1</strong> <em>(%2)</em>").arg(object->getSourceObject()->getSignature()).arg(object->getSourceObject()->getTypeName()));
 		obj_pos_info_lbl->setText(QString("(%1, %2) [w: %3, h: %4]")
-															.arg(roundf(object->pos().x()))
-															.arg(roundf(object->pos().y()))
-															.arg(static_cast<int>(object->boundingRect().width()))
-															.arg(static_cast<int>(object->boundingRect().height())));
+															.arg(roundf(rect.left()))
+															.arg(roundf(rect.top()))
+															.arg(roundf(rect.width()))
+															.arg(roundf(rect.height())));
 	}
 }
 
