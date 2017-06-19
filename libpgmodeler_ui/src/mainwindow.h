@@ -49,6 +49,7 @@
 #include "welcomewidget.h"
 #include "configurationform.h"
 #include "donatewidget.h"
+#include "sceneinfowidget.h"
 
 class MainWindow: public QMainWindow, public Ui::MainWindow {
 	private:
@@ -77,6 +78,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		AboutWidget *about_wgt;
 
 		DonateWidget *donate_wgt;
+
+		SceneInfoWidget *canvas_info_wgt;
 
 		/*! \brief Widget positioned on the center of main window that contains some basic operations like
 		create new model, open a file, restore session */

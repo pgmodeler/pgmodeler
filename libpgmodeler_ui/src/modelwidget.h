@@ -335,6 +335,8 @@ class ModelWidget: public QWidget {
 		 * of the whole model. Currently only hierachical arrangement is possible. See rearrangeTablesHierarchically() */
 		void rearrangeObjects(void);
 
+		void emitSceneInteracted(void);
+
 	private slots:
 		//! \brief Handles the signals that indicates the object creation on the reference database model
 		void handleObjectAddition(BaseObject *object);
@@ -478,6 +480,11 @@ class ModelWidget: public QWidget {
 		/*! \brief Signal emitted whenever the user open an object in its editing form but cancel the operation
 		by closing the form */
 		void s_manipulationCanceled(void);
+
+		void s_sceneInteracted(BaseObjectView *sel_obj);
+		void s_sceneInteracted(const QSizeF &scene_size);
+		void s_sceneInteracted(const QPointF &mouse_pos);
+		void s_sceneInteracted(int obj_count, const QRectF &objs_rect);
 
 		friend class MainWindow;
 		friend class ModelExportForm;

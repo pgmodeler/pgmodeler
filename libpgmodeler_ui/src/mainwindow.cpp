@@ -37,6 +37,12 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	pending_op=NO_PENDING_OPER;
 	central_wgt=nullptr;
 
+	canvas_info_wgt = new SceneInfoWidget(this);
+	QHBoxLayout *hbox = new QHBoxLayout(canvas_info_parent);
+	hbox->addWidget(canvas_info_wgt);
+	hbox->setContentsMargins(4,4,4,4);
+	canvas_info_parent->setLayout(hbox);
+
 	try
 	{
 		models_tbw->tabBar()->setVisible(false);
@@ -710,6 +716,7 @@ void MainWindow::saveTemporaryModels(void)
 
 		if(count > 0)
 		{
+			canvas_info_parent->setVisible(false);
 			bg_saving_wgt->setVisible(true);
 			bg_saving_pb->setValue(0);
 			bg_saving_wgt->repaint();
@@ -727,6 +734,7 @@ void MainWindow::saveTemporaryModels(void)
 
 			bg_saving_pb->setValue(100);
 			bg_saving_wgt->setVisible(false);
+			canvas_info_parent->setVisible(true);
 		}
 
 		tmpmodel_thread.quit();
@@ -992,6 +1000,7 @@ void MainWindow::setCurrentModel(void)
 
 		general_tb->addAction(current_model->action_select_all);
 		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_select_all));
+		tool_btn->setPopupMode(QToolButton::InstantPopup);
 		btns.push_back(tool_btn);
 
 		general_tb->addAction(current_model->action_fade);
@@ -1021,26 +1030,34 @@ void MainWindow::setCurrentModel(void)
 		else
 			this->setWindowTitle(window_title + QString(" - ") + QDir::toNativeSeparators(current_model->getFilename()));
 
-		connect(current_model, SIGNAL(s_manipulationCanceled(void)),this, SLOT(updateDockWidgets(void)));
-		connect(current_model, SIGNAL(s_objectsMoved(void)),oper_list_wgt, SLOT(updateOperationList(void)));
-		connect(current_model, SIGNAL(s_objectModified(void)),this, SLOT(updateDockWidgets(void)));
-		connect(current_model, SIGNAL(s_objectCreated(void)),this, SLOT(updateDockWidgets(void)));
-		connect(current_model, SIGNAL(s_objectRemoved(void)),this, SLOT(updateDockWidgets(void)));
-		connect(current_model, SIGNAL(s_objectManipulated(void)),this, SLOT(updateDockWidgets(void)));
-		connect(current_model, SIGNAL(s_objectManipulated(void)), this, SLOT(updateModelTabName(void)));
+		connect(current_model, SIGNAL(s_manipulationCanceled(void)),this, SLOT(updateDockWidgets(void)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_objectsMoved(void)),oper_list_wgt, SLOT(updateOperationList(void)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_objectModified(void)),this, SLOT(updateDockWidgets(void)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_objectCreated(void)),this, SLOT(updateDockWidgets(void)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_objectRemoved(void)),this, SLOT(updateDockWidgets(void)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_objectManipulated(void)),this, SLOT(updateDockWidgets(void)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_objectManipulated(void)), this, SLOT(updateModelTabName(void)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_zoomModified(double)), this, SLOT(updateToolsState(void)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_objectModified(void)), this, SLOT(updateModelTabName(void)), Qt::UniqueConnection);
 
-		connect(current_model, SIGNAL(s_zoomModified(double)), this, SLOT(updateToolsState(void)));
-		connect(current_model, SIGNAL(s_objectModified(void)), this, SLOT(updateModelTabName(void)));
+		connect(current_model, SIGNAL(s_sceneInteracted(BaseObjectView*)), canvas_info_wgt, SLOT(updateSelectedObject(BaseObjectView*)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_sceneInteracted(int,QRectF)), canvas_info_wgt, SLOT(updateSelectedObjects(int,QRectF)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_sceneInteracted(QPointF)), canvas_info_wgt, SLOT(updateMousePosition(QPointF)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_zoomModified(double)), canvas_info_wgt, SLOT(updateSceneZoom(double)), Qt::UniqueConnection);
 
-		connect(action_alin_objs_grade, SIGNAL(triggered(bool)), this, SLOT(setGridOptions(void)));
-		connect(action_show_grid, SIGNAL(triggered(bool)), this, SLOT(setGridOptions(void)));
-		connect(action_show_delimiters, SIGNAL(triggered(bool)), this, SLOT(setGridOptions(void)));
+		connect(action_alin_objs_grade, SIGNAL(triggered(bool)), this, SLOT(setGridOptions(void)), Qt::UniqueConnection);
+		connect(action_show_grid, SIGNAL(triggered(bool)), this, SLOT(setGridOptions(void)), Qt::UniqueConnection);
+		connect(action_show_delimiters, SIGNAL(triggered(bool)), this, SLOT(setGridOptions(void)), Qt::UniqueConnection);
 
-		connect(action_overview, SIGNAL(toggled(bool)), this, SLOT(showOverview(bool)));
-		connect(overview_wgt, SIGNAL(s_overviewVisible(bool)), action_overview, SLOT(setChecked(bool)));
+		connect(action_overview, SIGNAL(toggled(bool)), this, SLOT(showOverview(bool)), Qt::UniqueConnection);
+		connect(overview_wgt, SIGNAL(s_overviewVisible(bool)), action_overview, SLOT(setChecked(bool)), Qt::UniqueConnection);
 
 		if(action_overview->isChecked())
 			overview_wgt->show(current_model);
+
+		canvas_info_wgt->updateMousePosition(QPointF(0,0));
+		canvas_info_wgt->updateSceneZoom(current_model->getCurrentZoom());
+		current_model->emitSceneInteracted();
 	}
 	else
 		this->setWindowTitle(window_title);

@@ -382,7 +382,7 @@
              <property name="spacing">
               <number>0</number>
              </property>
-             <item row="0" column="6">
+             <item row="0" column="7">
               <spacer name="horizontalSpacer_2">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -408,7 +408,7 @@
                </property>
               </spacer>
              </item>
-             <item row="0" column="5">
+             <item row="0" column="6">
               <widget class="QWidget" name="bg_saving_wgt" native="true">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -542,7 +542,7 @@
                </item>
               </layout>
              </item>
-             <item row="0" column="9">
+             <item row="0" column="10">
               <layout class="QHBoxLayout" name="horizontalLayout_4">
                <property name="spacing">
                 <number>0</number>
@@ -640,6 +640,22 @@
                 </widget>
                </item>
               </layout>
+             </item>
+             <item row="0" column="5">
+              <widget class="QWidget" name="canvas_info_parent" native="true">
+               <property name="minimumSize">
+                <size>
+                 <width>20</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
              </item>
             </layout>
            </widget>

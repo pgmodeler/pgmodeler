@@ -154,6 +154,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	viewport->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 	viewport->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
 	viewport->centerOn(0,0);
+	viewport->setMouseTracking(true);
 
 	grid=new QGridLayout;
 	grid->addWidget(protected_model_frm, 0,0,1,1);
@@ -555,6 +556,12 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 	}
 	else if(object == scene && m_event)
 	{
+		if(event->type() == QEvent::GraphicsSceneMouseMove)
+		{
+			emit s_sceneInteracted(m_event->scenePos());
+			emitSceneInteracted();
+		}
+
 		//Forcing the panning mode using the middle mouse button
 		if(m_event->buttons() == Qt::MiddleButton && event->type() == QEvent::GraphicsSceneMouseMove)
 		{
@@ -946,6 +953,23 @@ void ModelWidget::handleObjectModification(BaseGraphicObject *object)
 	emit s_objectModified();
 }
 
+void ModelWidget::emitSceneInteracted(void)
+{
+	if(selected_objects.empty())
+		emit s_sceneInteracted(nullptr);
+	else if(selected_objects.size() == 1)
+	{
+		BaseGraphicObject *base_obj = dynamic_cast<BaseGraphicObject *>(selected_objects[0]);
+
+		if(base_obj)
+			emit s_sceneInteracted(dynamic_cast<BaseObjectView *>(base_obj->getReceiverObject()));
+		else
+			emit s_sceneInteracted(nullptr);
+	}
+	else
+		emit s_sceneInteracted(selected_objects.size(), scene->itemsBoundingRect(true, true));
+}
+
 void ModelWidget::configureObjectSelection(void)
 {
 	QList<QGraphicsItem *> items=scene->selectedItems();
@@ -1023,6 +1047,8 @@ void ModelWidget::configureObjectSelection(void)
 	}
 	else
 		this->configurePopupMenu(selected_objects);
+
+	emitSceneInteracted();
 }
 
 void ModelWidget::selectAllObjects(void)
@@ -1329,6 +1355,8 @@ void ModelWidget::adjustSceneSize(void)
 
 	if(align_objs)
 		scene->alignObjectsToGrid();
+
+	emit s_sceneInteracted(scene_rect.size());
 }
 
 void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page_nums)
