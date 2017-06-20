@@ -4415,6 +4415,7 @@ void ModelWidget::rearrangeObjects(void)
 		{
 			rel = dynamic_cast<BaseRelationship *>(obj);
 			rel->setPoints({});
+			rel->resetLabelsDistance();
 
 			if(rel->getTable(BaseRelationship::SRC_TABLE)->getPosition().y() !=
 				 rel->getTable(BaseRelationship::DST_TABLE)->getPosition().y())

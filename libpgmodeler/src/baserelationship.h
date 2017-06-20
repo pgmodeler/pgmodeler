@@ -158,6 +158,8 @@ class BaseRelationship: public BaseGraphicObject  {
 
 		QColor getCustomColor(void);
 
+		void resetLabelsDistance(void);
+
 		//! \brief Assigns one relationship to other making the appropriate attribute copy
 		void operator = (BaseRelationship &rel);
 

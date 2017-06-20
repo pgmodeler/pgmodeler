@@ -472,6 +472,12 @@ QColor BaseRelationship::getCustomColor(void)
 	return(custom_color);
 }
 
+void BaseRelationship::resetLabelsDistance(void)
+{
+	for(unsigned i=0; i < 3; i++)
+		this->setLabelDistance(i, QPointF(NAN,NAN));
+}
+
 vector<QPointF> BaseRelationship::getPoints(void)
 {
 	return(points);

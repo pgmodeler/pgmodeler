@@ -255,8 +255,7 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		//Resets the labels position when mid-button is pressed
 		if(event->buttons()==Qt::MidButton)
 		{
-			for(unsigned i=0; i < 3; i++)
-				base_rel->setLabelDistance(i, QPointF(NAN,NAN));
+			base_rel->resetLabelsDistance();
 			this->configureLabels();
 		}
 		else if(event->modifiers()==Qt::ShiftModifier)

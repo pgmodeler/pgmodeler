@@ -461,7 +461,7 @@ void BaseObjectView::configurePositionInfo(QPointF pos)
 		pos_info_txt->setFont(fnt);
 		pos_info_txt->setBrush(font_config[ParsersAttributes::POSITION_INFO].foreground());
 
-		pos_info_txt->setText(QString(" x:%1 y:%2 ").arg(pos.x()).arg(pos.y()));
+		pos_info_txt->setText(QString(" x:%1 y:%2 ").arg(roundf(pos.x())).arg(roundf(pos.y())));
 		pos_info_rect->setRect(pos_info_txt->boundingRect());
 		pos_info_txt->setPos(-0.5, -pos_info_txt->boundingRect().height()/2);
 		pos_info_rect->setPos(-0.5, -pos_info_rect->boundingRect().height()/2);
