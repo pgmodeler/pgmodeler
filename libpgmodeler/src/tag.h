@@ -36,7 +36,7 @@ class Tag: public BaseObject {
 		static unsigned tag_id;
 
 		//! \brief Stores the object colors configuration
-		map<QString, QColor*> color_config;
+		map<QString, vector<QColor>> color_config;
 
 		/*! \brief Validates the element id and the color id. This method will
 	raise an error if some of parameters are invalid */
@@ -49,7 +49,6 @@ class Tag: public BaseObject {
 		COLOR_COUNT=3;
 
 		Tag(void);
-		~Tag(void);
 
 		/*! \brief Set the tag name. Different from regular database model object there is no rule
 	when setting the name. The only exception is that the name cannot be greater than

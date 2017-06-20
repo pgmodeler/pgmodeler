@@ -742,9 +742,9 @@ void DatabaseModel::destroyObjects(void)
 		BASE_RELATIONSHIP, OBJ_TEXTBOX,
 		OBJ_DOMAIN, OBJ_TYPE, OBJ_FUNCTION,
 		OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_ROLE, OBJ_COLLATION,
-		OBJ_EXTENSION, OBJ_SCHEMA, OBJ_PERMISSION };
-	ObjectType graph_types[]={ OBJ_SCHEMA, BASE_RELATIONSHIP, OBJ_RELATIONSHIP,
-							   OBJ_TABLE, OBJ_VIEW };
+		OBJ_EXTENSION, OBJ_SCHEMA, OBJ_PERMISSION, OBJ_TAG, OBJ_GENERIC_SQL };
+
+	ObjectType graph_types[]={ OBJ_SCHEMA, BASE_RELATIONSHIP, OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW };
 	vector<BaseObject *> *list=nullptr;
 	BaseObject *object=nullptr;
 	unsigned i, cnt=sizeof(types)/sizeof(ObjectType);

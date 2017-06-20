@@ -88,7 +88,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 		//Check if the .qm file exists for the current plugin. If so create and install a translator
 		if(QFileInfo(plug_lang_dir + plug_lang_file + QString(".qm")).exists())
 		{
-			plugin_translator=new QTranslator;
+			plugin_translator=new QTranslator(this);
 			plugin_translator->load(plug_lang_file, plug_lang_dir);
 			this->installTranslator(plugin_translator);
 		}
