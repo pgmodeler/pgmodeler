@@ -2138,7 +2138,7 @@ void ModelWidget::protectObject(void)
 			while(itr!=itr_end)
 			{
 				object=(*itr);
-				graph_obj=dynamic_cast<BaseGraphicObject *>(object);
+
 				itr++;
 
 				obj_type=object->getObjectType();

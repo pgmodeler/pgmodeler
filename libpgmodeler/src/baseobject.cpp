@@ -1026,8 +1026,6 @@ bool BaseObject::isCodeDiffersFrom(const QString &xml_def1, const QString &xml_d
 	for(int i=0; i < 2; i++)
 	{
 		xml=xml_defs[i].simplified();
-		start=xml.indexOf(tag) + tag.length();
-		end=-1;
 
 		//Removing ignored attributes
 		for(QString attr : ignored_attribs)
@@ -1036,7 +1034,7 @@ bool BaseObject::isCodeDiffersFrom(const QString &xml_def1, const QString &xml_d
 			{
 				regexp=QRegExp(attr_regex.arg(attr));
 				tag_end=xml.indexOf(QRegExp(QString("(\\\\)?(>)")));
-				start=regexp.indexIn(xml);//, start);
+				start=regexp.indexIn(xml);
 				end=xml.indexOf('"', start + regexp.matchedLength());
 
 				if(end > tag_end)

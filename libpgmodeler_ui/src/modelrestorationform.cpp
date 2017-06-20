@@ -85,7 +85,6 @@ int ModelRestorationForm::exec(void)
 		file_list.pop_front();
 		buffer.clear();
 		tmp_info.clear();
-		start=end=-1;
 	}
 
 	tmp_files_tbw->resizeColumnsToContents();

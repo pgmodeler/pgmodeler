@@ -487,7 +487,7 @@ void TableDataWidget::addRow(void)
 	data_tbw->clearSelection();
 	data_tbw->setCurrentCell(row, 0, QItemSelectionModel::ClearAndSelect);
 
-	if(item->flags()!=Qt::NoItemFlags)
+	if(item && item->flags()!=Qt::NoItemFlags)
 		data_tbw->editItem(data_tbw->item(row, 0));
 
 	data_tbw->blockSignals(false);

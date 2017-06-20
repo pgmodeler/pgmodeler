@@ -1698,8 +1698,6 @@ QString Table::createInsertCommand(const QStringList &col_names, const QStringLi
 	for(QString col_name : col_names)
 		col_list.push_back(BaseObject::formatName(col_name));
 
-	curr_col=0;
-
 	for(QString value : values)
 	{
 		//Empty values as considered as DEFAULT

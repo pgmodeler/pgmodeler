@@ -1744,11 +1744,11 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 						constr=dynamic_cast<Constraint *>(tab_obj);
 
 						/* A constraint is considered special in this case when it is referencing
-				 relationship added column and the constraint itself was not added by
-				 relationship (created manually by the user) */
+							 relationship added column and the constraint itself was not added by
+							 relationship (created manually by the user) */
 						found=(!constr->isAddedByRelationship() &&
-								 constr->isReferRelationshipAddedColumn() &&
-								 constr->getConstraintType()!=ConstraintType::primary_key);
+									 constr->isReferRelationshipAddedColumn() &&
+									 constr->getConstraintType()!=ConstraintType::primary_key);
 
 						//When found some special object, stores is xml definition
 						if(found)

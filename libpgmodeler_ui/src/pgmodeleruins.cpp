@@ -244,10 +244,10 @@ namespace PgModelerUiNS {
 			item=createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("funcao")), root, false, true);
 
 			text=QString("%1 (%2)").arg(ex.getFile()).arg(ex.getLine());
-			child_item=createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("codigofonte")), item, false, true);
+			createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("codigofonte")), item, false, true);
 
 			text=QString("%1 (%2)").arg(Exception::getErrorCode(ex.getErrorType())).arg(ex.getErrorType());
-			child_item=createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("msgbox_alerta")), item, false, true);
+			createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("msgbox_alerta")), item, false, true);
 
 			child_item=createOutputTreeItem(exceptions_trw, ex.getErrorMessage(), QPixmap(getIconPath("msgbox_erro")), item, false, true);
 			exceptions_trw->itemWidget(child_item, 0)->setStyleSheet(QString("color: #ff0000;"));
@@ -275,7 +275,7 @@ namespace PgModelerUiNS {
 	void resizeDialog(QDialog *widget)
 	{
 		QSize min_size=widget->minimumSize();
-		int max_h = 0, max_w = 0, curr_w =0, curr_h = 0,
+		int max_h = 0, curr_w =0, curr_h = 0,
 				screen_id = qApp->desktop()->screenNumber(qApp->activeWindow());
 		QScreen *screen=qApp->screens().at(screen_id);
 		float dpi_factor = 0;
@@ -286,7 +286,6 @@ namespace PgModelerUiNS {
 		if(dpi_factor <= 1)
 			return;
 
-		max_w = screen->size().width() * 0.70;
 		max_h = screen->size().height() * 0.70;
 
 		/* If the widget's minimum size is zero then we need to do

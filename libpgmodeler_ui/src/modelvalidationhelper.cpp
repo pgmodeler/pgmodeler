@@ -85,7 +85,6 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 					if(obj_id > refs.back()->getObjectId())
 					{
 						obj=refs.back();
-						obj_id=obj->getObjectId();
 					}
 
 					//Swap the id of the validation object and the found object (minor id)
