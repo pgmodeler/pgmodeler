@@ -21,7 +21,7 @@
 #include "roundedrectitem.h"
 
 map<QString, QTextCharFormat> BaseObjectView::font_config;
-map<QString, QColor *> BaseObjectView::color_config;
+map<QString, vector<QColor>> BaseObjectView::color_config;
 unsigned BaseObjectView::global_sel_order=1;
 bool BaseObjectView::use_placeholder=true;
 
@@ -201,7 +201,6 @@ void BaseObjectView::resizePolygon(QPolygonF &pol, double width, double height)
 
 void BaseObjectView::loadObjectsStyle(void)
 {
-	QColor *colors=nullptr;
 	QTextCharFormat font_fmt;
 	QFont font;
 	attribs_map attribs;
@@ -256,10 +255,12 @@ void BaseObjectView::loadObjectsStyle(void)
 					else if(elem==ParsersAttributes::OBJECT)
 					{
 						list=attribs[ParsersAttributes::FILL_COLOR].split(',');
-						colors=new QColor[3];
-						colors[0]=(!list.isEmpty() ? QColor(list[0]) : QColor(0,0,0));
-						colors[1]=(list.size()==2 ? QColor(list[1]) : colors[0]);
-						colors[2]=QColor(attribs[ParsersAttributes::BORDER_COLOR]);
+
+						vector<QColor> colors;
+						colors.push_back(!list.isEmpty() ? QColor(list[0]) : QColor(0,0,0));
+						colors.push_back(list.size()==2 ? QColor(list[1]) : colors[0]);
+						colors.push_back(QColor(attribs[ParsersAttributes::BORDER_COLOR]));
+
 						color_config[attribs[ParsersAttributes::ID]]=colors;
 					}
 				}
@@ -332,13 +333,14 @@ void BaseObjectView::getFillStyle(const QString &id, QColor &color1, QColor &col
 
 QLinearGradient BaseObjectView::getFillStyle(const QString &id)
 {
-	QColor *colors=nullptr;
+	vector<QColor> colors;
 	QLinearGradient grad(QPointF(0,0),QPointF(0,1));
 
 	if(color_config.count(id) > 0)
 	{
 		colors=color_config[id];
-		if(colors)
+
+		if(!colors.empty())
 		{
 			if(id==ParsersAttributes::OBJ_SELECTION || id==ParsersAttributes::PLACEHOLDER)
 			{
@@ -358,12 +360,13 @@ QLinearGradient BaseObjectView::getFillStyle(const QString &id)
 QPen BaseObjectView::getBorderStyle(const QString &id)
 {
 	QPen pen;
-	QColor *colors=nullptr;
+	vector<QColor> colors;
 
 	if(color_config.count(id) > 0)
 	{
 		colors=color_config[id];
-		if(colors)
+
+		if(!colors.empty())
 		{
 			if(id==ParsersAttributes::OBJ_SELECTION)
 				colors[2].setAlpha(128);

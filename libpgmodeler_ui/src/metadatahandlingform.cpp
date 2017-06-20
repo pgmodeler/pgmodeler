@@ -67,7 +67,7 @@ MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) :
 	generic_sql_objs_ht=new HintTextWidget(generic_sql_objs_hint, this);
 	generic_sql_objs_ht->setText(generic_sql_objs_chk->statusTip());
 
-	htmlitem_deleg=new HtmlItemDelegate;
+	htmlitem_deleg=new HtmlItemDelegate(this);
 	output_trw->setItemDelegateForColumn(0, htmlitem_deleg);
 
 	connect(cancel_btn, SIGNAL(clicked()), this, SLOT(reject()));

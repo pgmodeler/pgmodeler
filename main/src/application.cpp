@@ -63,7 +63,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 	}
 
 	//Tries to load the main ui translation according to the system's locale
-	main_translator=new QTranslator;
+	main_translator=new QTranslator(this);
 	main_translator->load(QLocale::system().name(), GlobalAttributes::LANGUAGES_DIR);
 	this->installTranslator(main_translator);
 

@@ -84,7 +84,7 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		static map<QString, QTextCharFormat> font_config;
 
 		//! \brief Stores the object colors configuration
-		static map<QString, QColor*> color_config;
+		static map<QString, vector<QColor>> color_config;
 
 		//! \brief Resizes to the specified dimension the passed polygon
 		void resizePolygon(QPolygonF &pol, double width, double height);

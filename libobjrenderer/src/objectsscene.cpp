@@ -78,6 +78,9 @@ ObjectsScene::~ObjectsScene(void)
 	this->removeItem(selection_rect);
 	this->removeItem(rel_line);
 
+	delete(selection_rect);
+	delete(rel_line);
+
 	//Destroy the objects in the order defined on obj_types vector
 	for(i=0; i < count; i++)
 	{

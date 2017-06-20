@@ -39,6 +39,17 @@ Tag::Tag(void)
 	}
 }
 
+Tag::~Tag(void)
+{
+	for(auto &cfg : color_config)
+	{
+		delete(cfg.second);
+		cfg.second = nullptr;
+	}
+
+	color_config.clear();
+}
+
 void Tag::setName(const QString &name)
 {
 	if(name.isEmpty())

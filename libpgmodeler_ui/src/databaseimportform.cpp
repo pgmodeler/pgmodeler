@@ -29,7 +29,7 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	model_wgt=nullptr;
 	create_model=true;
 
-	htmlitem_del=new HtmlItemDelegate;
+	htmlitem_del=new HtmlItemDelegate(this);
 	output_trw->setItemDelegateForColumn(0, htmlitem_del);
 
 	rand_color_ht=new HintTextWidget(rand_color_hint, this);

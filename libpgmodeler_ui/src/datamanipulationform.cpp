@@ -690,7 +690,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 			attribs_map aux_table, aux_schema;
 			QStringList name_list;
 
-			submenu = new QMenu;
+			submenu = new QMenu(this);
 			fks_menu.addAction(QPixmap(PgModelerUiNS::getIconPath("referenced")), trUtf8("Referenced tables"))->setMenu(submenu);
 
 			if(fks.empty())
@@ -739,7 +739,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				fk_infos[fk_name][ParsersAttributes::DST_COLUMNS] = name_list.join(Table::DATA_SEPARATOR);
 			}
 
-			submenu = new QMenu;
+			submenu = new QMenu(this);
 			fks_menu.addAction(QPixmap(PgModelerUiNS::getIconPath("referrer")), trUtf8("Referrer tables"))->setMenu(submenu);
 
 			if(ref_fks.empty())

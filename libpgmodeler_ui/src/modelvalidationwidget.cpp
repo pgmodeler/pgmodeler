@@ -26,7 +26,7 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 	{
 		setupUi(this);
 
-		htmlitem_del=new HtmlItemDelegate;
+		htmlitem_del=new HtmlItemDelegate(this);
 		output_trw->setItemDelegateForColumn(0, htmlitem_del);
 
 		version_cmb->addItem(trUtf8("Autodetect"));

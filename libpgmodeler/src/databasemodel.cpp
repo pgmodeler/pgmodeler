@@ -2923,7 +2923,7 @@ void DatabaseModel::loadModel(const QString &filename)
 		ObjectType obj_type;
 		attribs_map attribs;
 		BaseObject *object=nullptr;
-		bool protected_model=false, found_inh_rel;
+		bool protected_model=false, found_inh_rel = false;
 		QStringList pos_str;
 		map<ObjectType, QString> def_objs;
 

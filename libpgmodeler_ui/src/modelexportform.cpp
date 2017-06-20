@@ -27,7 +27,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	viewp=nullptr;
 	setupUi(this);
 
-	htmlitem_del=new HtmlItemDelegate;
+	htmlitem_del=new HtmlItemDelegate(this);
 	output_trw->setItemDelegateForColumn(0, htmlitem_del);
 
 	export_thread=new QThread(this);

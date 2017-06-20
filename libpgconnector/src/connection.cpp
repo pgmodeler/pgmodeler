@@ -409,6 +409,7 @@ void Connection::executeDMLCommand(const QString &sql, ResultSet &result)
 
 	//Deallocate the new resultset
 	delete(new_res);
+	PQclear(sql_res);
 }
 
 void Connection::executeDDLCommand(const QString &sql)
@@ -433,11 +434,16 @@ void Connection::executeDDLCommand(const QString &sql)
 	//Raise an error in case the command sql execution is not sucessful
 	if(strlen(PQerrorMessage(connection)) > 0)
 	{
+		QString field = QString(PQresultErrorField(sql_res, PG_DIAG_SQLSTATE));
+
+		PQclear(sql_res);
+
 		throw Exception(QString(Exception::getErrorMessage(ERR_CMD_SQL_NOT_EXECUTED))
 						.arg(PQerrorMessage(connection)),
-						ERR_CMD_SQL_NOT_EXECUTED, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,
-						QString(PQresultErrorField(sql_res, PG_DIAG_SQLSTATE)));
+						ERR_CMD_SQL_NOT_EXECUTED, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,	field);
 	}
+
+	PQclear(sql_res);
 }
 
 void Connection::setDefaultForOperation(unsigned op_id, bool value)
