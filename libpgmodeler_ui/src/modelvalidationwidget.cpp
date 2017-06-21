@@ -73,9 +73,16 @@ void ModelValidationWidget::createThread(void)
 		validation_helper=new ModelValidationHelper;
 		validation_helper->moveToThread(validation_thread);
 
+		connect(validation_thread, &QThread::started, [&](){
+			output_trw->setUniformRowHeights(true);
+		});
+
+		connect(validation_thread, &QThread::finished, [&](){
+			output_trw->setUniformRowHeights(false);
+		});
+
 		connect(validation_thread, SIGNAL(started(void)), validation_helper, SLOT(validateModel(void)));
 		connect(validation_thread, SIGNAL(started(void)), validation_helper, SLOT(applyFixes(void)));
-
 		connect(validation_thread, SIGNAL(finished(void)), this, SLOT(updateGraphicalObjects(void)));
 		connect(validation_thread, SIGNAL(finished(void)), this, SLOT(destroyThread(void)));
 

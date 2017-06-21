@@ -420,7 +420,7 @@
       <number>20</number>
      </property>
      <property name="uniformRowHeights">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <attribute name="headerVisible">
       <bool>false</bool>

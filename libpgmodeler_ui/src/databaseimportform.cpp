@@ -109,6 +109,14 @@ void DatabaseImportForm::createThread(void)
 	import_helper=new DatabaseImportHelper;
 	import_helper->moveToThread(import_thread);
 
+	connect(import_thread, &QThread::started, [&](){
+		output_trw->setUniformRowHeights(true);
+	});
+
+	connect(import_thread, &QThread::finished, [&](){
+		output_trw->setUniformRowHeights(false);
+	});
+
 	connect(import_thread, SIGNAL(started(void)), import_helper, SLOT(importDatabase()));
 	connect(import_helper, SIGNAL(s_importCanceled()), this, SLOT(handleImportCanceled()));
 	connect(import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)));

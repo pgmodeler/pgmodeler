@@ -60,7 +60,10 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(drop_chk, SIGNAL(toggled(bool)), drop_objs_rb, SLOT(setEnabled(bool)));
 
 	connect(export_thread, &QThread::started,
-			[&](){
+	[&](){
+
+		output_trw->setUniformRowHeights(true);
+
 		if(export_to_dbms_rb->isChecked())
 			export_hlp.exportToDBMS();
 		else if(export_to_img_rb->isChecked())
@@ -72,6 +75,10 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 		}
 		else
 			export_hlp.exportToSQL();
+	});
+
+	connect(export_thread, &QThread::finished, [&](){
+		output_trw->setUniformRowHeights(false);
 	});
 
 	connect(&export_hlp, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString,bool)), this, SLOT(updateProgress(int,QString,ObjectType,QString,bool)), Qt::BlockingQueuedConnection);
