@@ -1,6 +1,40 @@
 Change Log
 ---------
 
+v0.9.0-beta2
+------
+<em>Release date: July 1st, 2017</em><br/>
+
+* [New] Added an action to reset labels distance in BaseRelationship and ModelWidget.
+* [New] Added a widget that shows some info about the canvas and the selected objects at the bottom of main window in design view.
+* [New] Enabled the usage of snippets in other portions of the software like GenericSQLWidget, FunctionWidget, ViewWidget, CustomSQLWidget.
+* [New] Added the ability to quickly jump to the tables related to a relationship.
+* [New] Added support to select all objects in the canvas by type (table, view, textbox, schema, relationship).
+* [New] Added support to bulk relationship points removal.
+* [New] Added a magnifier tool so the user can visualize objects when the zoom is too small. This tool allows the user to click to select or activate the context menu over the objects.
+* [New] Added support to generic sql objects that serve as an improved way to use custom SQL.
+* [New] Added support to handle metadata related to generic sql objects.
+* [New] Added the first object auto-arrange algorithm.
+* [Change] pgModeler will now accept (connect) to a PostgreSQL server even if the version of the server is not supported falling back to the most recent supported.
+* [Change] Minor improvements on DatabaseImportForm, ModelExportForm, ModelDatabaseDiffForm and MetadataHandlingForm to toggle uniformRowsHeight of the output tree at the start and the end of each process to avoid slowdowns and allow the items to be resized correctly when expanded.
+* [Change] Changed the way color are stored in Tag.
+* [Change] Minor adjustement on position info of objects in canvas.
+* [Change] Improvements on import/diff/export performances by adjusting the way the output widget handles items height.
+* [Change] Move the code from MainWindow::showEvent to the constructor of that class so all operations that load resources and restore configurations can be performed prior the window display.
+* [Change] Improved the ModelOverviewWidget to handle huge models better.
+* [Change] Improved the objects swapping by adding an objects grid where user can interact with it in order to choose which objects to swap.
+* [Change] Improved the schema parser to allow comparisons forcing the cast of values to float or int in the expression by using special letters attached to logical operators.
+* [Fix] Fixed the DatabaseModel::destroyObjects in order to include missing object types and avoiding leaks.
+* [Fix] Several memory leaks removed in different portions of the application.
+* [Fix] Minor fix in RelationshipView to show the line circles for n:n relationships.
+* [Fix] Minor warning fixes related to unused variables/values.
+* [Fix] Minor fix in Catalog that was trying to retrieve catalog info for generic sql objects.
+* [Fix] Fixed a bug when zooming out using wheel that was causing duplicated zoom in a single wheel turn.
+* [Fix] Minor fix in TableView and TableObjectView to present tables in a more compact fashion minimizing the space used in the canvas.
+* [Fix] Minor typo fix in swapobjectsidswidget.ui.
+* [Fix] Minor fix in lambdas slots usages.
+* [Fix] Fixed a bug in generateTextBuffer method in SQLExecutionWidget.
+
 v0.9.0-beta1
 ------
 <em>Release date: May 13, 2017</em><br/>
