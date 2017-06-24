@@ -107,7 +107,7 @@ if [ $BUILD_ALL = 1 ]; then
 fi
 
 if [ $DEMO_VERSION = 1 ]; then
-  PKGNAME="pgmodeler-demo-$ARCH"
+  PKGNAME="pgmodeler-$DEPLOY_VER-demo-$ARCH"
 else
   PKGNAME="pgmodeler-$DEPLOY_VER-$ARCH"
 fi

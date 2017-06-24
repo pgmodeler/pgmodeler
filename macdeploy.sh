@@ -25,9 +25,9 @@ for param in $@; do
 done
 
 if [ $DEMO_VERSION = 1 ]; then
-  PKGNAME="pgmodeler-demo-macosx"
+  PKGNAME="pgmodeler-$DEPLOY_VER-demo-macos"
 else
-  PKGNAME="pgmodeler-$DEPLOY_VER-macosx"
+  PKGNAME="pgmodeler-$DEPLOY_VER-macos"
 fi
 
 PKGFILE=$PKGNAME.dmg
