@@ -74,6 +74,7 @@ fi
 
 echo "Cleaning previous compilation..."
 rm -r $INSTALL_ROOT/* &> $LOG
+mkdir -p ./dist  >> $LOG 2>&1
 make distclean  >> $LOG 2>&1
 
 echo "Running qmake..."
@@ -117,6 +118,7 @@ mv $BUNDLE $INSTALL_ROOT >> $LOG 2>&1
 rm -r "$INSTALL_ROOT/$APP_PREFIX" >> $LOG 2>&1
 ln -s /Applications $INSTALL_ROOT/Applications >> $LOG 2>&1
 
+rm $PKGFILE >> $LOG 2>&1
 hdiutil create -format UDRW -fs HFS+ $PKGFILE -volname $APPNAME -srcfolder $INSTALL_ROOT >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
@@ -139,8 +141,8 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-mv $PKGFILE $INSTALL_ROOT >> $LOG 2>&1
-PKGFILE="build/$PKGFILE"
+mv $PKGFILE ./dist/ >> $LOG 2>&1
+PKGFILE="dist/$PKGFILE"
 
 echo "File created: $PKGFILE"
 echo "pgModeler successfully deployed!"
