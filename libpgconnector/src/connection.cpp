@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -340,14 +340,29 @@ QString  Connection::getPgSQLVersion(bool major_only)
 		throw Exception(ERR_OPR_NOT_ALOC_CONN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	raw_ver=QString("%1").arg(PQserverVersion(connection));
-	fmt_ver=QString("%1.%2")
-			.arg(raw_ver.mid(0,2).toInt()/10)
-			.arg(raw_ver.mid(2,2).toInt()/10);
 
-	if(major_only)
-		return(fmt_ver);
+	//If the version is 10+
+	if(raw_ver.contains(QRegExp("^((1)[0-9])(.)+")))
+	{
+		fmt_ver=QString("%1.%2")
+				.arg(raw_ver.mid(0,2))
+				.arg(raw_ver.mid(2,2).toInt()/10);
+
+		if(!major_only)
+			return(QString("%1.%2").arg(fmt_ver).arg(raw_ver.mid(5,1)));
+	}
+	//For versions below or equal to 9.6
 	else
-		return(QString("%1.%2").arg(fmt_ver).arg(raw_ver.mid(4,1).toInt()));
+	{
+		fmt_ver=QString("%1.%2")
+				.arg(raw_ver.mid(0,2).toInt()/10)
+				.arg(raw_ver.mid(2,2).toInt()/10);
+
+		if(!major_only)
+			return(QString("%1.%2").arg(fmt_ver).arg(raw_ver.mid(4,1)));
+	}
+
+	return(fmt_ver);
 }
 
 QStringList Connection::getNotices(void)
@@ -394,6 +409,7 @@ void Connection::executeDMLCommand(const QString &sql, ResultSet &result)
 
 	//Deallocate the new resultset
 	delete(new_res);
+	PQclear(sql_res);
 }
 
 void Connection::executeDDLCommand(const QString &sql)
@@ -418,11 +434,16 @@ void Connection::executeDDLCommand(const QString &sql)
 	//Raise an error in case the command sql execution is not sucessful
 	if(strlen(PQerrorMessage(connection)) > 0)
 	{
+		QString field = QString(PQresultErrorField(sql_res, PG_DIAG_SQLSTATE));
+
+		PQclear(sql_res);
+
 		throw Exception(QString(Exception::getErrorMessage(ERR_CMD_SQL_NOT_EXECUTED))
 						.arg(PQerrorMessage(connection)),
-						ERR_CMD_SQL_NOT_EXECUTED, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,
-						QString(PQresultErrorField(sql_res, PG_DIAG_SQLSTATE)));
+						ERR_CMD_SQL_NOT_EXECUTED, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,	field);
 	}
+
+	PQclear(sql_res);
 }
 
 void Connection::setDefaultForOperation(unsigned op_id, bool value)

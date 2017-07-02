@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -255,8 +255,7 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		//Resets the labels position when mid-button is pressed
 		if(event->buttons()==Qt::MidButton)
 		{
-			for(unsigned i=0; i < 3; i++)
-				base_rel->setLabelDistance(i, QPointF(NAN,NAN));
+			base_rel->resetLabelsDistance();
 			this->configureLabels();
 		}
 		else if(event->modifiers()==Qt::ShiftModifier)
@@ -834,7 +833,8 @@ void RelationshipView::configureLine(void)
 
 		if(line_conn_mode==CONNECT_CENTER_PNTS ||
 				base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_DEP ||
-				base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN)
+				base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN ||
+				base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN)
 		{
 			for(i=0; i < 2; i++)
 			{

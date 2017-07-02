@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	sql_file_dlg.setModal(true);
 
 	snippets_tb->setMenu(&snippets_menu);
-	code_compl_wgt=new CodeCompletionWidget(sql_cmd_txt);
+	code_compl_wgt=new CodeCompletionWidget(sql_cmd_txt, true);
 
 	find_replace_wgt=new FindReplaceWidget(sql_cmd_txt, find_wgt_parent);
 	QHBoxLayout *hbox=new QHBoxLayout(find_wgt_parent);
@@ -101,13 +101,13 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 
 	//Signal handling with C++11 lambdas Slots
 	connect(results_tbw, &QTableWidget::itemPressed,
-			[=](){ SQLExecutionWidget::copySelection(results_tbw); });
+			[&](){ SQLExecutionWidget::copySelection(results_tbw); });
 
 	connect(export_tb, &QToolButton::clicked,
-			[=](){ SQLExecutionWidget::exportResults(results_tbw); });
+			[&](){ SQLExecutionWidget::exportResults(results_tbw); });
 
 	connect(close_file_tb, &QToolButton::clicked,
-	[=](){
+	[&](){
 			if(clearAll() == QDialog::Accepted)
 			{
 				filename_edt->clear();
@@ -116,9 +116,6 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	});
 
 	connect(&snippets_menu, SIGNAL(triggered(QAction*)), this, SLOT(selectSnippet(QAction *)));
-
-	connect(code_compl_wgt, SIGNAL(s_wordSelected(QString)), this, SLOT(handleSelectedWord(QString)));
-
 	connect(cmd_history_txt, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showHistoryContextMenu()));
 
 	configureSnippets();
@@ -629,9 +626,9 @@ QByteArray SQLExecutionWidget::generateTextBuffer(QTableWidget *results_tbw, int
 			for(col=start_col; col < max_col; col++)
 			{
 				line.push_back(results_tbw->item(row, col)->text());
-				buf.append(line.join('\t'));
 			}
 
+			buf.append(line.join('\t'));
 			line.clear();
 			buf.append('\n');
 		}
@@ -716,7 +713,7 @@ void SQLExecutionWidget::selectSnippet(QAction *act)
 	sql_cmd_txt->setTextCursor(cursor);
 }
 
-void SQLExecutionWidget::handleSelectedWord(QString word)
+/*void SQLExecutionWidget::handleSelectedWord(QString word)
 {
 	if(SnippetsConfigWidget::isSnippetExists(word))
 	{
@@ -725,7 +722,7 @@ void SQLExecutionWidget::handleSelectedWord(QString word)
 		tc.removeSelectedText();
 		tc.insertText(SnippetsConfigWidget::getParsedSnippet(word));
 	}
-}
+}*/
 
 void SQLExecutionWidget::toggleOutputPane(bool visible)
 {
@@ -753,10 +750,6 @@ void SQLExecutionWidget::configureSnippets(void)
 { 
 	SnippetsConfigWidget::configureSnippetsMenu(&snippets_menu);
 	code_compl_wgt->configureCompletion(nullptr, sql_cmd_hl);
-	code_compl_wgt->clearCustomItems();
-	code_compl_wgt->insertCustomItems(SnippetsConfigWidget::getAllSnippetsAttribute(ParsersAttributes::ID),
-									  SnippetsConfigWidget::getAllSnippetsAttribute(ParsersAttributes::LABEL),
-																		QPixmap(PgModelerUiNS::getIconPath("codesnippet")));
 }
 
 void SQLExecutionWidget::saveSQLHistory(void)

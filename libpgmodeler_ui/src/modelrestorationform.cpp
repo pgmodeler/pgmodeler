@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -85,7 +85,6 @@ int ModelRestorationForm::exec(void)
 		file_list.pop_front();
 		buffer.clear();
 		tmp_info.clear();
-		start=end=-1;
 	}
 
 	tmp_files_tbw->resizeColumnsToContents();

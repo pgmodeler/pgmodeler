@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -77,8 +77,8 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 	connect(edit_tb, SIGNAL(clicked()), this, SLOT(editSnippet()));
 	connect(remove_tb, SIGNAL(clicked()), this, SLOT(removeSnippet()));
 	connect(remove_all_tb, SIGNAL(clicked()), this, SLOT(removeAllSnippets()));
-	connect(cancel_tb, &QToolButton::clicked, [=](){ enableEditMode(false); });
-	connect(snippets_cmb, &QComboBox::currentTextChanged, [=](){ enableEditMode(false); });
+	connect(cancel_tb, &QToolButton::clicked, [&](){ enableEditMode(false); });
+	connect(snippets_cmb, &QComboBox::currentTextChanged, [&](){ enableEditMode(false); });
 	connect(id_edt, SIGNAL(textChanged(QString)), this, SLOT(enableSaveButtons()));
 	connect(label_edt, SIGNAL(textChanged(QString)), this, SLOT(enableSaveButtons()));
 	connect(snippet_txt, SIGNAL(textChanged()), this, SLOT(enableSaveButtons()));

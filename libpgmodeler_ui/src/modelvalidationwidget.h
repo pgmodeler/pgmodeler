@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -89,12 +89,12 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		void updateObjectName(QString obj_name, ObjectType obj_type);
 		void reenableValidation(void);
 		void cancelValidation(void);
-		void swapObjectsIds(void);
 		void validateRelationships(void);
 		void destroyThread(bool force=false);
 		void updateGraphicalObjects(void);
 		void editConnections(void);
 		void handleSQLValidationStarted(void);
+		void swapObjectsIds(void);
 
 	public slots:
 		void hide(void);

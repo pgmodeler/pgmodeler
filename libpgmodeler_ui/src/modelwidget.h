@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -112,7 +112,11 @@ class ModelWidget: public QWidget {
 
 		fade_rels_menu,
 
-		toggle_attrs_menu;
+		toggle_attrs_menu,
+
+		select_all_menu,
+
+		jump_to_tab_menu;
 
 		//! \brief Stores the selected object on the scene
 		vector<BaseObject *> selected_objects;
@@ -133,7 +137,12 @@ class ModelWidget: public QWidget {
 		tmp_filename;
 
 		//! \brief This label shows the user the current applied zoom
-		QLabel *zoom_info_lbl;
+		QLabel *zoom_info_lbl,
+
+		//! \brief This label shows a small portion of the canvas in normal zoom at the current cursor position
+		*magnifier_area_lbl;
+
+		QFrame	*magnifier_frm;
 
 		//! \brief This timer controls the interval the zoom label is visible
 		QTimer zoom_info_timer;
@@ -165,6 +174,17 @@ class ModelWidget: public QWidget {
 
 		//! \brief Fades in our out the object types held by the specified action
 		void fadeObjects(QAction *action, bool fade_in);
+
+		void breakRelationshipLine(BaseRelationship *rel, unsigned break_type);
+
+		/*! \brief Arrange tables starting from a specified root in a hierarchical way
+		where for a certain table its child (or related) tables are places aside from left to right and top to bottom.
+		This method returns the bounding rect of the items after the rearrangement */
+		QRectF rearrangeTablesHierarchically(BaseTableView *root, vector<BaseObject *> &evaluated_tabs);
+
+		void updateMagnifierArea(void);
+
+		void showMagnifierArea(bool show);
 
 	protected:
 		static const unsigned BREAK_VERT_NINETY_DEGREES, //Break vertically the line in one 90° angle
@@ -211,7 +231,9 @@ class ModelWidget: public QWidget {
 		*action_fade_rels_out,
 		*action_extended_attribs,
 		*action_show_ext_attribs,
-		*action_hide_ext_attribs;
+		*action_hide_ext_attribs,
+		*action_edit_creation_order,
+		*action_jump_to_table;
 
 		//! \brief Actions used to create new objects on the model
 		map<ObjectType, QAction *> actions_new_objects;
@@ -222,7 +244,8 @@ class ModelWidget: public QWidget {
 		void resizeEvent(QResizeEvent *);
 		void mousePressEvent(QMouseEvent *event);
 		void keyPressEvent(QKeyEvent *event);
-		void wheelEvent(QWheelEvent * event);
+		void keyReleaseEvent(QKeyEvent *event);
+		void hideEvent(QHideEvent *);
 
 		//! \brief Captures and handles the QWeelEvent raised on the viewport scrollbars
 		bool eventFilter(QObject *object, QEvent *event);
@@ -307,6 +330,12 @@ class ModelWidget: public QWidget {
 		/*! \brief Updates the opacity factor of the objects faded in the model. This method should be called
 		whenever the min_object_opacity changes */
 		void updateObjectsOpacity(void);
+
+		/*! \brief Rearrange table/view/textboxes in the canvas in such way to provide better visualization
+		 * of the whole model. Currently only hierachical arrangement is possible. See rearrangeTablesHierarchically() */
+		void rearrangeObjects(void);
+
+		void emitSceneInteracted(void);
 
 	private slots:
 		//! \brief Handles the signals that indicates the object creation on the reference database model
@@ -426,6 +455,10 @@ class ModelWidget: public QWidget {
 
 		void toggleExtendedAttributes(void);
 
+		void editCreationOrder(void);
+
+		void jumpToTable(void);
+
 	public slots:
 		void loadModel(const QString &filename);
 		void saveModel(const QString &filename);
@@ -447,6 +480,11 @@ class ModelWidget: public QWidget {
 		/*! \brief Signal emitted whenever the user open an object in its editing form but cancel the operation
 		by closing the form */
 		void s_manipulationCanceled(void);
+
+		void s_sceneInteracted(BaseObjectView *sel_obj);
+		void s_sceneInteracted(const QSizeF &scene_size);
+		void s_sceneInteracted(const QPointF &mouse_pos);
+		void s_sceneInteracted(int obj_count, const QRectF &objs_rect);
 
 		friend class MainWindow;
 		friend class ModelExportForm;

@@ -14,7 +14,7 @@
 
 [CREATE ]
 
-%if ({pgsql-ver} >= "9.3") %then
+%if ({pgsql-ver} >=f "9.3") %then
   %if {recursive} %then
     [RECURSIVE ]
   %else
@@ -32,7 +32,7 @@ VIEW $sp {name}
 
 $br
 
-%if ({pgsql-ver} >= "9.3") %then
+%if ({pgsql-ver} >=f "9.3") %then
   %if {materialized} %and {tablespace} %then
     TABLESPACE $sp {tablespace} $br
   %end
@@ -47,7 +47,7 @@ $br
 
 $br {definition}
 
-%if ({pgsql-ver} >= "9.3") %then
+%if ({pgsql-ver} >=f "9.3") %then
   %if {materialized} %and {with-no-data} %then
     $br [WITH NO DATA]
   %end

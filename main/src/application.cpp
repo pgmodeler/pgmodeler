@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 	}
 
 	//Tries to load the main ui translation according to the system's locale
-	main_translator=new QTranslator;
+	main_translator=new QTranslator(this);
 	main_translator->load(QLocale::system().name(), GlobalAttributes::LANGUAGES_DIR);
 	this->installTranslator(main_translator);
 
@@ -88,7 +88,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 		//Check if the .qm file exists for the current plugin. If so create and install a translator
 		if(QFileInfo(plug_lang_dir + plug_lang_file + QString(".qm")).exists())
 		{
-			plugin_translator=new QTranslator;
+			plugin_translator=new QTranslator(this);
 			plugin_translator->load(plug_lang_file, plug_lang_dir);
 			this->installTranslator(plugin_translator);
 		}

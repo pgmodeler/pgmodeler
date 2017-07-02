@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	viewp=nullptr;
 	setupUi(this);
 
-	htmlitem_del=new HtmlItemDelegate;
+	htmlitem_del=new HtmlItemDelegate(this);
 	output_trw->setItemDelegateForColumn(0, htmlitem_del);
 
 	export_thread=new QThread(this);
@@ -60,7 +60,10 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(drop_chk, SIGNAL(toggled(bool)), drop_objs_rb, SLOT(setEnabled(bool)));
 
 	connect(export_thread, &QThread::started,
-			[=](){
+	[&](){
+
+		output_trw->setUniformRowHeights(true);
+
 		if(export_to_dbms_rb->isChecked())
 			export_hlp.exportToDBMS();
 		else if(export_to_img_rb->isChecked())
@@ -72,6 +75,10 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 		}
 		else
 			export_hlp.exportToSQL();
+	});
+
+	connect(export_thread, &QThread::finished, [&](){
+		output_trw->setUniformRowHeights(false);
 	});
 
 	connect(&export_hlp, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString,bool)), this, SLOT(updateProgress(int,QString,ObjectType,QString,bool)), Qt::BlockingQueuedConnection);

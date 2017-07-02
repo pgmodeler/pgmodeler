@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,13 +34,13 @@ FindReplaceWidget::FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget *parent):
 	connect(replace_all_tb, SIGNAL(clicked()), this, SLOT(replaceAll()));
 
 	connect(next_tb, &QToolButton::clicked,
-			[=]() { findText(false, true); });
+			[&]() { findText(false, true); });
 
 	connect(previous_tb, &QToolButton::clicked,
-			[=]() { findText(true, true); });
+			[&]() { findText(true, true); });
 
 	connect(find_edt, &QLineEdit::textChanged,
-			[=]() { bool enable=!find_edt->text().isEmpty();
+			[&]() { bool enable=!find_edt->text().isEmpty();
 		next_tb->setEnabled(enable);
 		previous_tb->setEnabled(enable);
 		replace_tb->setEnabled(enable);

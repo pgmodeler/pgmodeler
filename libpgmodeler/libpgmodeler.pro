@@ -23,7 +23,7 @@ HEADERS += src/textbox.h \
 	   src/column.h \
 	   src/domain.h \
 	   src/aggregate.h \
-           src/permission.h \
+		 src/permission.h \
 	   src/databasemodel.h \
 	   src/role.h \
 	   src/constraint.h \
@@ -56,10 +56,10 @@ HEADERS += src/textbox.h \
 	   src/copyoptions.h \
 	   src/typeattribute.h \
 	   src/extension.h \
-	   src/pgmodelerns.h \
-           src/tag.h \
-           src/eventtrigger.h
-
+		 src/pgmodelerns.h \
+		 src/tag.h \
+		 src/eventtrigger.h \
+		 src/genericsql.h
 
 SOURCES +=  src/textbox.cpp \
 	    src/domain.cpp \
@@ -81,7 +81,7 @@ SOURCES +=  src/textbox.cpp \
 	    src/view.cpp \
 	    src/conversion.cpp \
 	    src/function.cpp \
-            src/permission.cpp \
+			src/permission.cpp \
 	    src/databasemodel.cpp \
 	    src/rule.cpp \
 	    src/table.cpp \
@@ -104,9 +104,10 @@ SOURCES +=  src/textbox.cpp \
 	    src/typeattribute.cpp \
 	    src/extension.cpp \
 	    src/pgmodelerns.cpp \
-            src/tag.cpp \
-            src/eventtrigger.cpp \
-    src/operation.cpp
+			src/tag.cpp \
+			src/eventtrigger.cpp \
+			src/operation.cpp \
+			src/genericsql.cpp
 
 unix|windows: LIBS += -L$$OUT_PWD/../libparsers/ -lparsers \
                     -L$$OUT_PWD/../libutils/ -lutils

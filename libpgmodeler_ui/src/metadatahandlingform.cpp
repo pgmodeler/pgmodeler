@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -64,17 +64,20 @@ MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) :
 	restore_ht=new HintTextWidget(restore_hint, this);
 	restore_ht->setText(restore_rb->statusTip());
 
-	htmlitem_deleg=new HtmlItemDelegate;
+	generic_sql_objs_ht=new HintTextWidget(generic_sql_objs_hint, this);
+	generic_sql_objs_ht->setText(generic_sql_objs_chk->statusTip());
+
+	htmlitem_deleg=new HtmlItemDelegate(this);
 	output_trw->setItemDelegateForColumn(0, htmlitem_deleg);
 
 	connect(cancel_btn, SIGNAL(clicked()), this, SLOT(reject()));
 	connect(apply_btn, SIGNAL(clicked()), this, SLOT(handleObjectsMetada()));
 
 	connect(extract_from_cmb, &QComboBox::currentTextChanged,
-					[=](){ apply_btn->setDisabled(extract_from_cmb->count() == 0); });
+					[&](){ apply_btn->setDisabled(extract_from_cmb->count() == 0); });
 
 	connect(select_file_tb, &QToolButton::clicked,
-					[=](){	selectFile(extract_rb->isChecked()); });
+					[&](){	selectFile(extract_rb->isChecked()); });
 
 	connect(restore_rb, SIGNAL(toggled(bool)), extract_from_cmb, SLOT(setDisabled(bool)));
 	connect(extract_from_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableMetadataHandling()));
@@ -144,6 +147,7 @@ void MetadataHandlingForm::handleObjectsMetada(void)
 		options+=(textbox_objs_chk->isChecked() ? DatabaseModel::META_TEXTBOX_OBJS : 0);
 		options+=(objs_fadedout_chk->isChecked() ? DatabaseModel::META_OBJS_FADEDOUT : 0);
 		options+=(objs_extattribs_chk->isChecked() ? DatabaseModel::META_OBJS_EXTATTRIBS : 0);
+		options+=(generic_sql_objs_chk->isChecked() ? DatabaseModel::META_GENERIC_SQL_OBJS : 0);
 
 		connect(model_wgt->getDatabaseModel(), SIGNAL(s_objectLoaded(int,QString,unsigned)), this, SLOT(updateProgress(int,QString,unsigned)));
 

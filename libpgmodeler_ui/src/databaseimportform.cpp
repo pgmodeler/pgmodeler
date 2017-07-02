@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	model_wgt=nullptr;
 	create_model=true;
 
-	htmlitem_del=new HtmlItemDelegate;
+	htmlitem_del=new HtmlItemDelegate(this);
 	output_trw->setItemDelegateForColumn(0, htmlitem_del);
 
 	rand_color_ht=new HintTextWidget(rand_color_hint, this);
@@ -73,10 +73,10 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelImport(void)));
 
 	connect(import_to_model_chk, &QCheckBox::toggled,
-			[=](bool checked){ create_model=!checked; });
+			[&](bool checked){ create_model=!checked; });
 
 	connect(database_cmb, &QComboBox::currentTextChanged,
-			[=]() {
+			[&]() {
 		if(database_cmb->currentIndex()==0)
 			db_objects_tw->clear();
 
@@ -108,6 +108,14 @@ void DatabaseImportForm::createThread(void)
 	import_thread=new QThread;
 	import_helper=new DatabaseImportHelper;
 	import_helper->moveToThread(import_thread);
+
+	connect(import_thread, &QThread::started, [&](){
+		output_trw->setUniformRowHeights(true);
+	});
+
+	connect(import_thread, &QThread::finished, [&](){
+		output_trw->setUniformRowHeights(false);
+	});
 
 	connect(import_thread, SIGNAL(started(void)), import_helper, SLOT(importDatabase()));
 	connect(import_helper, SIGNAL(s_importCanceled()), this, SLOT(handleImportCanceled()));

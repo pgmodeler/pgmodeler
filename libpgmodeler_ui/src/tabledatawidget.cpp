@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, BASE
 	connect(data_tbw->horizontalHeader(), SIGNAL(sectionDoubleClicked(int)), this, SLOT(changeColumnName(int)));
 	connect(csv_load_tb, SIGNAL(toggled(bool)), csv_load_parent, SLOT(setVisible(bool)));
 
-	connect(csv_load_wgt, &CsvLoadWidget::s_csvFileLoaded, [=](){
+	connect(csv_load_wgt, &CsvLoadWidget::s_csvFileLoaded, [&](){
 		populateDataGrid(csv_load_wgt->getCsvBuffer(Table::DATA_SEPARATOR, Table::DATA_LINE_BREAK));
 	});
 }
@@ -487,7 +487,7 @@ void TableDataWidget::addRow(void)
 	data_tbw->clearSelection();
 	data_tbw->setCurrentCell(row, 0, QItemSelectionModel::ClearAndSelect);
 
-	if(item->flags()!=Qt::NoItemFlags)
+	if(item && item->flags()!=Qt::NoItemFlags)
 		data_tbw->editItem(data_tbw->item(row, 0));
 
 	data_tbw->blockSignals(false);

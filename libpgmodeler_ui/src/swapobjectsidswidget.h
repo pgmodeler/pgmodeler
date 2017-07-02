@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,25 +33,28 @@ class SwapObjectsIdsWidget: public QWidget, public Ui::SwapObjectsIdsWidget {
 	private:
 		Q_OBJECT
 
+		static const QString ID_LABEL;
+
 		//! \brief Reference database model
 		DatabaseModel *model;
 
 		//! \brief Source and destination object selectors
 		ObjectSelectorWidget *src_object_sel, *dst_object_sel;
 
+		void fillCreationOrderGrid(void);
+
 	public:
 		SwapObjectsIdsWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);
 		~SwapObjectsIdsWidget(void);
 		void setModel(DatabaseModel *model);
-		
-	signals:
-		/*! \brief This signal is emitted whenever the object selectores changes their values.
-				If both selectors are filled the 'enabled' will true otherwise false */
-		void s_objectsIdSwapEnabled(bool enabled);
 
 	private slots:
 		void showObjectId(void);
 		void swapObjectsIds(void);
+		void filterObjects(void);
+
+	signals:
+		void s_objectsIdsSwapped(void);
 };
 
 #endif

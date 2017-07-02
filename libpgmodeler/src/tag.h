@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ class Tag: public BaseObject {
 		static unsigned tag_id;
 
 		//! \brief Stores the object colors configuration
-		map<QString, QColor*> color_config;
+		map<QString, vector<QColor>> color_config;
 
 		/*! \brief Validates the element id and the color id. This method will
 	raise an error if some of parameters are invalid */

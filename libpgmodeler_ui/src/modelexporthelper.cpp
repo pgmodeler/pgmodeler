@@ -813,9 +813,6 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 					obj_type=(aux_cmd.contains(QString("COLUMN")) ? OBJ_COLUMN : OBJ_CONSTRAINT);
 					reg_aux=QRegExp(QString("(COLUMN|CONSTRAINT)( )+"));
 
-					pos+=tab_obj_reg.matchedLength();
-					pos1=aux_cmd.indexOf(' ', pos);
-
 					//Extracting the table name
 					pos=aux_cmd.indexOf(alter_tab) + alter_tab.size();
 					pos1=aux_cmd.indexOf(QString("ADD"));

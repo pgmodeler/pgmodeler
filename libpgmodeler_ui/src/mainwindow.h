@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -49,13 +49,14 @@
 #include "welcomewidget.h"
 #include "configurationform.h"
 #include "donatewidget.h"
+#include "sceneinfowidget.h"
 
 class MainWindow: public QMainWindow, public Ui::MainWindow {
 	private:
 		Q_OBJECT
 
 		//! \brief Maximum number of files listed on recent models menu
-		const static int MAX_RECENT_MODELS=10;
+		const static int MAX_RECENT_MODELS=15;
 
 		const static int GENERAL_ACTIONS_COUNT=8;
 
@@ -77,6 +78,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		AboutWidget *about_wgt;
 
 		DonateWidget *donate_wgt;
+
+		SceneInfoWidget *canvas_info_wgt;
 
 		/*! \brief Widget positioned on the center of main window that contains some basic operations like
 		create new model, open a file, restore session */
@@ -142,9 +145,6 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief QMainWindow::closeEvent() overload: Saves the configurations before close the application
 		void closeEvent(QCloseEvent *event);
-
-		//! \brief QMainWindow::showEvent(): Start the countdown to model autosave
-		void showEvent(QShowEvent *);
 
 		void resizeEvent(QResizeEvent *);
 
@@ -288,6 +288,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void removeOperations(void);
 		void handleObjectsMetadata(void);
 		void restoreTemporaryModels(void);
+		void arrangeObjects(void);
 };
 
 #endif

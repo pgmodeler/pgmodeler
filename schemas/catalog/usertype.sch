@@ -47,7 +47,7 @@
         END AS type_class FROM pg_class WHERE oid=tp.typrelid), tp.typrelid AS object_id, ]
 
     #TODO: Discover which field is the acl for user defined types on PgSQL 9.0
-    %if ({pgsql-ver} <= "9.1") %then
+		%if ({pgsql-ver} <=f "9.1") %then
       [ NULL AS permission, ]
     %else
       [ tp.typacl AS permission,]
@@ -87,7 +87,7 @@
        END AS typeattrib, ]
 
     # Retrieve the range type attributes (is null when the type is not a range) (pgsql >= 9.2)
-    %if ({pgsql-ver} >= "9.2") %then
+		%if ({pgsql-ver} >=f "9.2") %then
     [ CASE WHEN typtype = 'r' THEN (SELECT string_to_array(rngsubtype||':'||rngcollation||':'||rngsubopc::oid||':'||
 					   rngcanonical::oid||':'||rngsubdiff::oid, ':')
                                     FROM pg_range WHERE rngtypid=tp.oid)

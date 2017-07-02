@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -53,6 +53,8 @@
 #include "tagwidget.h"
 #include "eventtriggerwidget.h"
 #include "pgmodeleruins.h"
+#include "swapobjectsidswidget.h"
+#include "genericsqlwidget.h"
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
@@ -84,7 +86,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 						 OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY,
 						 OBJ_ROLE, OBJ_SCHEMA, OBJ_SEQUENCE, OBJ_TYPE,
 						 OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX, OBJ_TABLESPACE,
-						 OBJ_COLLATION, OBJ_EXTENSION, OBJ_EVENT_TRIGGER, OBJ_TAG };
+						 OBJ_COLLATION, OBJ_EXTENSION, OBJ_EVENT_TRIGGER, OBJ_TAG, OBJ_GENERIC_SQL };
 	unsigned i, obj_cnt=sizeof(types)/sizeof(ObjectType),
 			rel_types_id[]={ BaseRelationship::RELATIONSHIP_11, BaseRelationship::RELATIONSHIP_1N,
 							 BaseRelationship::RELATIONSHIP_NN, BaseRelationship::RELATIONSHIP_DEP,
@@ -152,11 +154,41 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	viewport->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 	viewport->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
 	viewport->centerOn(0,0);
+	viewport->setMouseTracking(true);
 
 	grid=new QGridLayout;
 	grid->addWidget(protected_model_frm, 0,0,1,1);
 	grid->addWidget(viewport, 1,0,1,1);
 	this->setLayout(grid);
+
+	magnifier_frm = new QFrame(this);
+	magnifier_frm->setVisible(false);
+	magnifier_frm->installEventFilter(this);
+	magnifier_frm->setMouseTracking(true);
+	magnifier_frm->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	magnifier_frm->setGeometry(0,0,
+														500 * BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor(),
+														500 * BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor());
+	magnifier_frm->setCursor(Qt::CrossCursor);
+
+	QColor c1, c2;
+	BaseObjectView::getFillStyle(ParsersAttributes::OBJ_SELECTION, c1, c2);
+	c1.setAlpha(50);
+	magnifier_frm->setStyleSheet(QString("background-color: %1; border: 1px solid %2;")
+															 .arg(c1.name(QColor::HexArgb))
+															 .arg(BaseObjectView::getBorderStyle(ParsersAttributes::OBJ_SELECTION).color().name(QColor::HexArgb)));
+
+	magnifier_area_lbl = new QLabel(this);
+	magnifier_area_lbl->raise();
+	magnifier_area_lbl->setAutoFillBackground(false);
+	magnifier_area_lbl->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	magnifier_area_lbl->setStyleSheet(QString("background-color: #C8f0f0f0;\
+										border: 1px solid #C8808080;"));
+	magnifier_area_lbl->setVisible(false);
+	magnifier_area_lbl->setGeometry(magnifier_frm->geometry());
+	magnifier_area_lbl->setCursor(Qt::BlankCursor);
+	magnifier_area_lbl->installEventFilter(this);
+	magnifier_area_lbl->setMouseTracking(true);
 
 	zoom_info_lbl=new QLabel(this);
 	zoom_info_lbl->raise();
@@ -173,7 +205,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	zoom_info_lbl->setFont(font);
 	zoom_info_lbl->adjustSize();
 	zoom_info_lbl->setVisible(false);
-
 	zoom_info_timer.setInterval(3000);
 
 	action_source_code=new QAction(QIcon(PgModelerUiNS::getIconPath("codigosql")), trUtf8("Source"), this);
@@ -194,9 +225,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_cascade_del=new QAction(QIcon(PgModelerUiNS::getIconPath("delcascade")), trUtf8("Del. cascade"), this);
 	action_cascade_del->setShortcut(QKeySequence(trUtf8("Shift+Del")));
 
-	action_select_all=new QAction(QIcon(PgModelerUiNS::getIconPath("seltodos")), trUtf8("Select all"), this);
-	action_select_all->setShortcut(QKeySequence(trUtf8("Ctrl+A")));
+	action_select_all=new QAction(QIcon(PgModelerUiNS::getIconPath("seltodos")), trUtf8("Select all"), this);	
 	action_select_all->setToolTip(trUtf8("Selects all the graphical objects in the model"));
+	action_select_all->setMenu(&select_all_menu);
 
 	action_convert_relnn=new QAction(QIcon(PgModelerUiNS::getIconPath("convrelnn")), trUtf8("Convert"), this);
 
@@ -260,6 +291,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_show_ext_attribs=new QAction(trUtf8("Show"), this);
 	action_hide_ext_attribs=new QAction(trUtf8("Hide"), this);
 
+	action_jump_to_table=new QAction(QIcon(PgModelerUiNS::getIconPath("jumptotable")), trUtf8("Jump to table"), this);
+	action_jump_to_table->setMenu(&jump_to_tab_menu);
+
 	toggle_attrs_menu.addAction(action_show_ext_attribs);
 	toggle_attrs_menu.addAction(action_hide_ext_attribs);
 	action_extended_attribs->setMenu(&toggle_attrs_menu);
@@ -280,6 +314,10 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_fade->setMenu(&fade_menu);
 	action_fade_in->setMenu(&fade_in_menu);
 	action_fade_out->setMenu(&fade_out_menu);
+
+	action_edit_creation_order=new QAction(QIcon(PgModelerUiNS::getIconPath("swapobjs")), trUtf8("Swap ids"), this);
+	action_edit_creation_order->setToolTip(trUtf8("Edit the objects creation order by swapping their ids"));
+	connect(action_edit_creation_order, SIGNAL(triggered(bool)), this, SLOT(editCreationOrder()));
 
 	action=new QAction(QIcon(PgModelerUiNS::getIconPath("breakline_90dv")), trUtf8("90° (vertical)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine(void)));
@@ -306,8 +344,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	//Alocatting the object creation actions
 	for(i=0; i < obj_cnt; i++)
 	{
-		actions_new_objects[types[i]]=new QAction(QIcon(PgModelerUiNS::getIconPath(types[i])),
-												  BaseObject::getTypeName(types[i]), this);
+		actions_new_objects[types[i]]=new QAction(QIcon(PgModelerUiNS::getIconPath(types[i])), BaseObject::getTypeName(types[i]), this);
 		actions_new_objects[types[i]]->setData(QVariant(types[i]));
 		connect(actions_new_objects[types[i]], SIGNAL(triggered(bool)), this, SLOT(addNewObject(void)));
 	}
@@ -334,6 +371,25 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	new_obj_overlay_wgt->setObjectName(QString("new_obj_overlay_wgt"));
 	new_obj_overlay_wgt->setVisible(false);
 
+	for(auto &obj_type : vector<ObjectType>({ BASE_OBJECT, OBJ_SCHEMA, OBJ_TABLE, OBJ_VIEW, OBJ_RELATIONSHIP, OBJ_TEXTBOX }))
+	{
+		if(obj_type == BASE_OBJECT)
+		{
+			action=new QAction(trUtf8("All objects"), this);
+			action->setShortcut(QKeySequence(trUtf8("Ctrl+A")));
+			select_all_menu.addAction(action);
+			select_all_menu.addSeparator();
+		}
+		else
+		{
+			action=new QAction(QIcon(PgModelerUiNS::getIconPath(obj_type)), BaseObject::getTypeName(obj_type), this);
+			select_all_menu.addAction(action);
+		}
+
+		action->setData(QVariant(obj_type));
+		connect(action, SIGNAL(triggered(bool)), this, SLOT(selectAllObjects()));
+	}
+
 	connect(&zoom_info_timer, SIGNAL(timeout()), zoom_info_lbl, SLOT(hide()));
 	connect(action_source_code, SIGNAL(triggered(bool)), this, SLOT(showSourceCode(void)));
 	connect(action_edit, SIGNAL(triggered(bool)),this,SLOT(editObject(void)));
@@ -359,8 +415,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_enable_sql, SIGNAL(triggered(bool)), this, SLOT(toggleObjectSQL(void)));
 	connect(action_disable_sql, SIGNAL(triggered(bool)), this, SLOT(toggleObjectSQL(void)));
 
-	connect(action_remove, &QAction::triggered, [=](){ removeObjects(false); });
-	connect(action_cascade_del, &QAction::triggered, [=](){ removeObjects(true); });
+	connect(action_remove, &QAction::triggered, [&](){ removeObjects(false); });
+	connect(action_cascade_del, &QAction::triggered, [&](){ removeObjects(true); });
 
 	connect(action_fade_in, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
 	connect(action_fade_out, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
@@ -380,7 +436,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, SIGNAL(s_popupMenuRequested(void)), this, SLOT(showObjectMenu(void)));
 	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(configureObjectSelection(void)));
 
-	connect(scene, &ObjectsScene::s_extAttributesToggled, [=](){ modified = true; });
+	connect(scene, &ObjectsScene::s_extAttributesToggled, [&](){ modified = true; });
 
 	connect(scene, SIGNAL(s_popupMenuRequested(BaseObject*)), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_popupMenuRequested(void)), new_obj_overlay_wgt, SLOT(hide()));
@@ -442,9 +498,13 @@ void ModelWidget::resizeEvent(QResizeEvent *)
 	scene->setSceneRect(ret);
 
 	zoom_info_lbl->move((this->width()/2) - (zoom_info_lbl->width()/2),
-						(this->height()/2)  - (zoom_info_lbl->height()/2));
+											(this->height()/2)  - (zoom_info_lbl->height()/2));
+
+	magnifier_area_lbl->move(viewport->width() - magnifier_area_lbl->width(),
+													 viewport->height() - magnifier_area_lbl->height());
 
 	adjustOverlayPosition();
+
 	emit s_modelResized();
 }
 
@@ -455,10 +515,15 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 	QGraphicsSceneMouseEvent *m_event = dynamic_cast<QGraphicsSceneMouseEvent *>(event);
 
 	//Filters the Wheel event if it is raised by the viewport scrollbars
-	if(event->type() == QEvent::Wheel && w_event->modifiers()==Qt::ControlModifier)
+	if((object == viewport->horizontalScrollBar() ||
+			object == viewport->verticalScrollBar())
+		 && event->type() == QEvent::Wheel && w_event->modifiers()==Qt::ControlModifier)
 	{
-		//Redirects the event to the wheelEvent() method of the model widget
-		this->wheelEvent(w_event);
+		if(w_event->angleDelta().y() < 0)
+			this->applyZoom(this->current_zoom - ZOOM_INCREMENT);
+		else
+			this->applyZoom(this->current_zoom + ZOOM_INCREMENT);
+
 		return(true);
 	}
 	else if(event->type() == QEvent::KeyPress && k_event->modifiers()==Qt::AltModifier)
@@ -466,8 +531,37 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 		this->keyPressEvent(k_event);
 		return(true);
 	}
+	else if((object == magnifier_area_lbl || object == magnifier_frm) &&
+					(event->type() == QEvent::MouseMove || event->type() == QEvent::KeyRelease))
+	{
+		if(event->type() == QEvent::MouseMove)
+			updateMagnifierArea();
+		else if(k_event->modifiers() == (Qt::ControlModifier | Qt::AltModifier))
+			showMagnifierArea(false);
+
+		return(true);
+	}
+	else if(object == magnifier_frm && event->type() == QEvent::MouseButtonPress)
+	{
+		QGraphicsSceneMouseEvent *gm_event = new QGraphicsSceneMouseEvent(QEvent::GraphicsSceneMousePress);
+		QMouseEvent *m_event = dynamic_cast<QMouseEvent *>(event);
+
+		showMagnifierArea(false);
+		gm_event->setButton(m_event->button());
+		gm_event->setButtons(m_event->buttons());
+		gm_event->setScenePos(viewport->mapToScene(viewport->mapFromGlobal(QCursor::pos())));
+		qApp->postEvent(scene, gm_event);
+
+		return(true);
+	}
 	else if(object == scene && m_event)
 	{
+		if(event->type() == QEvent::GraphicsSceneMouseMove)
+		{
+			emit s_sceneInteracted(m_event->scenePos());
+			emitSceneInteracted();
+		}
+
 		//Forcing the panning mode using the middle mouse button
 		if(m_event->buttons() == Qt::MiddleButton && event->type() == QEvent::GraphicsSceneMouseMove)
 		{
@@ -487,6 +581,11 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 			viewport->verticalScrollBar()->setValue(dy);
 
 			return (true);
+		}
+		else if(m_event->button() == Qt::NoButton && event->type() == QEvent::GraphicsSceneMouseMove)
+		{
+			if(magnifier_frm->isVisible())
+				updateMagnifierArea();
 		}
 		//Activating the panning mode
 		else if(m_event->button() == Qt::MiddleButton && event->type() == QEvent::GraphicsSceneMousePress)
@@ -529,6 +628,18 @@ void ModelWidget::keyPressEvent(QKeyEvent *event)
 	{
 		toggleNewObjectOverlay();
 	}
+	else if(event->modifiers() == (Qt::ControlModifier | Qt::AltModifier) && current_zoom < 1)
+	{
+		showMagnifierArea(true);
+	}
+}
+
+void ModelWidget::keyReleaseEvent(QKeyEvent *event)
+{
+	if(event->key() == Qt::Key_Control || event->key() == Qt::Key_Shift)
+	{
+		showMagnifierArea(false);
+	}
 }
 
 void ModelWidget::mousePressEvent(QMouseEvent *event)
@@ -547,15 +658,9 @@ void ModelWidget::mousePressEvent(QMouseEvent *event)
 	}
 }
 
-void ModelWidget::wheelEvent(QWheelEvent * event)
+void ModelWidget::hideEvent(QHideEvent *)
 {
-	if(event->modifiers()==Qt::ControlModifier)
-	{
-		if(event->angleDelta().y() < 0)
-			this->applyZoom(this->current_zoom - ZOOM_INCREMENT);
-		else
-			this->applyZoom(this->current_zoom + ZOOM_INCREMENT);
-	}
+	magnifier_area_lbl->hide();
 }
 
 bool ModelWidget::saveLastCanvasPosition(void)
@@ -605,18 +710,20 @@ void ModelWidget::restoreLastCanvasPosition(void)
 
 void ModelWidget::applyZoom(double zoom)
 {
-	if(zoom > (MINIMUM_ZOOM - ZOOM_INCREMENT) && zoom <= MAXIMUM_ZOOM)
-	{
-		viewport->resetTransform();
-		viewport->scale(zoom, zoom);
-		this->current_zoom=zoom;
+	if(zoom < MINIMUM_ZOOM)
+		zoom = MINIMUM_ZOOM;
+	else if(zoom > MAXIMUM_ZOOM)
+		zoom = MAXIMUM_ZOOM;
 
-		zoom_info_lbl->setText(trUtf8("Zoom: %1%").arg(QString::number(this->current_zoom * 100, 'g' , 3)));
-		zoom_info_lbl->setVisible(true);
-		zoom_info_timer.start();
+	viewport->resetTransform();
+	viewport->scale(zoom, zoom);
+	this->current_zoom=zoom;
 
-		emit s_zoomModified(zoom);
-	}
+	zoom_info_lbl->setText(trUtf8("Zoom: %1%").arg(QString::number(this->current_zoom * 100, 'g' , 3)));
+	zoom_info_lbl->setVisible(true);
+	zoom_info_timer.start();
+
+	emit s_zoomModified(zoom);
 }
 
 double ModelWidget::getCurrentZoom(void)
@@ -766,7 +873,6 @@ void ModelWidget::handleObjectsMovement(bool end_moviment)
 	vector<BaseObject *>::iterator itr, itr_end;
 	vector<BaseObject *> reg_tables;
 	QList<BaseObjectView *> tables;
-
 	BaseGraphicObject *obj=nullptr;
 	Schema *schema=nullptr;
 
@@ -847,6 +953,23 @@ void ModelWidget::handleObjectModification(BaseGraphicObject *object)
 	emit s_objectModified();
 }
 
+void ModelWidget::emitSceneInteracted(void)
+{
+	if(selected_objects.empty())
+		emit s_sceneInteracted(nullptr);
+	else if(selected_objects.size() == 1)
+	{
+		BaseGraphicObject *base_obj = dynamic_cast<BaseGraphicObject *>(selected_objects[0]);
+
+		if(base_obj)
+			emit s_sceneInteracted(dynamic_cast<BaseObjectView *>(base_obj->getReceiverObject()));
+		else
+			emit s_sceneInteracted(nullptr);
+	}
+	else
+		emit s_sceneInteracted(selected_objects.size(), scene->itemsBoundingRect(true, true));
+}
+
 void ModelWidget::configureObjectSelection(void)
 {
 	QList<QGraphicsItem *> items=scene->selectedItems();
@@ -924,13 +1047,41 @@ void ModelWidget::configureObjectSelection(void)
 	}
 	else
 		this->configurePopupMenu(selected_objects);
+
+	emitSceneInteracted();
 }
 
 void ModelWidget::selectAllObjects(void)
 {
-	QPainterPath pth;
-	pth.addRect(scene->sceneRect());
-	scene->setSelectionArea(pth);
+	QAction *act = qobject_cast<QAction *>(sender());
+
+	if(!act)
+		return;
+
+	ObjectType obj_type = static_cast<ObjectType>(act->data().toUInt());
+
+	if(obj_type == BASE_OBJECT)
+	{
+		QPainterPath pth;
+		pth.addRect(scene->sceneRect());
+		scene->setSelectionArea(pth);
+	}
+	else
+	{
+		BaseObjectView *obj_view = nullptr;
+		vector<BaseObject *> objs = *db_model->getObjectList(obj_type);
+
+		if(obj_type == OBJ_RELATIONSHIP)
+			objs.insert(objs.end(), db_model->getObjectList(BASE_RELATIONSHIP)->begin(),  db_model->getObjectList(BASE_RELATIONSHIP)->end());
+
+		for(auto &obj : objs)
+		{
+			obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
+
+			if(obj_view)
+				obj_view->setSelected(true);
+		}
+	}
 }
 
 void ModelWidget::convertRelationshipNN(void)
@@ -1204,6 +1355,8 @@ void ModelWidget::adjustSceneSize(void)
 
 	if(align_objs)
 		scene->alignObjectsToGrid();
+
+	emit s_sceneInteracted(scene_rect.size());
 }
 
 void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page_nums)
@@ -1575,6 +1728,12 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			Permission *perm=dynamic_cast<Permission *>(object);
 			permission_wgt->setAttributes(db_model, nullptr, (perm ? perm->getObject() : object));
 			res=openEditingForm(permission_wgt, Messagebox::OK_BUTTON);
+		}
+		else if(obj_type==OBJ_GENERIC_SQL)
+		{
+			GenericSQLWidget *genericsql_wgt=new GenericSQLWidget;
+			genericsql_wgt->setAttributes(db_model, op_list, dynamic_cast<GenericSQL *>(object));
+			res=openEditingForm(genericsql_wgt);
 		}
 		else
 		{
@@ -1979,7 +2138,7 @@ void ModelWidget::protectObject(void)
 			while(itr!=itr_end)
 			{
 				object=(*itr);
-				graph_obj=dynamic_cast<BaseGraphicObject *>(object);
+
 				itr++;
 
 				obj_type=object->getObjectType();
@@ -2852,6 +3011,7 @@ void ModelWidget::showObjectMenu(void)
 			tab=dynamic_cast<BaseTableView *>(tab_obj->getParentTable()->getReceiverObject());
 	}
 
+	magnifier_area_lbl->hide();
 	popup_menu.exec(QCursor::pos());
 
 	//If the table object has a parent table
@@ -3301,7 +3461,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 		if(objects.empty() || (objects.size()==1 && objects[0]==db_model))
 		{
 			ObjectType types[]={ OBJ_AGGREGATE, OBJ_CAST, OBJ_EVENT_TRIGGER, OBJ_COLLATION, OBJ_CONVERSION, OBJ_DOMAIN,
-								 OBJ_EXTENSION, OBJ_FUNCTION, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
+								 OBJ_EXTENSION, OBJ_FUNCTION, OBJ_GENERIC_SQL, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
 								 OBJ_OPFAMILY, OBJ_RELATIONSHIP, OBJ_ROLE, OBJ_SCHEMA, OBJ_SEQUENCE,
 								 OBJ_TABLE, OBJ_TABLESPACE, OBJ_TEXTBOX, OBJ_TYPE, OBJ_VIEW, OBJ_TAG };
 			unsigned cnt = sizeof(types)/sizeof(ObjectType);
@@ -3398,6 +3558,17 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 							action_remove_rel_points->setData(QVariant::fromValue<void *>(rel));
 							popup_menu.addAction(action_remove_rel_points);
 						}
+
+						popup_menu.addAction(action_jump_to_table);
+						jump_to_tab_menu.clear();
+
+						action = jump_to_tab_menu.addAction(QIcon(PgModelerUiNS::getIconPath(rel->getTable(BaseRelationship::SRC_TABLE)->getObjectType())),
+																								rel->getTable(BaseRelationship::SRC_TABLE)->getSignature(), this, SLOT(jumpToTable()));
+						action->setData(QVariant::fromValue<void *>(reinterpret_cast<void *>(rel->getTable(BaseRelationship::SRC_TABLE))));
+
+						action = jump_to_tab_menu.addAction(QIcon(PgModelerUiNS::getIconPath(rel->getTable(BaseRelationship::DST_TABLE)->getObjectType())),
+																								rel->getTable(BaseRelationship::DST_TABLE)->getSignature(), this, SLOT(jumpToTable()));
+						action->setData(QVariant::fromValue<void *>(reinterpret_cast<void *>(rel->getTable(BaseRelationship::DST_TABLE))));
 					}
 				}
 				else if(obj_type == OBJ_SCHEMA)
@@ -3432,7 +3603,6 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 			action_deps_refs->setData(QVariant::fromValue<void *>(obj));
 			tab_obj=dynamic_cast<TableObject *>(obj);
 
-
 			if(tab_obj &&  tab_obj->getObjectType()==OBJ_COLUMN)
 			{
 				Column *col=dynamic_cast<Column *>(tab_obj);
@@ -3464,6 +3634,23 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 	else
 	{
 		configureSubmenu(nullptr);
+	}
+
+	if(objects.size() > 1)
+	{
+		bool rem_points = true;
+
+		for(auto &obj : objects)
+		{
+			rem_points = obj->getObjectType() == OBJ_RELATIONSHIP || obj->getObjectType() == BASE_RELATIONSHIP;
+			if(!rem_points) break;
+		}
+
+		if(rem_points)
+		{
+			action_remove_rel_points->setData(QVariant());
+			popup_menu.addAction(action_remove_rel_points);
+		}
 	}
 
 	/* Adds the protect/unprotect action when the selected object was not included by relationship
@@ -3661,6 +3848,12 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 		actions.back()->setEnabled(true);
 		actions.pop_back();
 	}
+
+	if(objects.empty() || (objects.size()==1 && objects[0]==db_model))
+	{
+		popup_menu.addSeparator();
+		popup_menu.addAction(action_edit_creation_order);
+	}
 }
 
 bool ModelWidget::isModified(void)
@@ -3848,12 +4041,29 @@ void ModelWidget::breakRelationshipLine(void)
 	{
 		QAction *action=dynamic_cast<QAction *>(sender());
 		BaseRelationship *rel=dynamic_cast<BaseRelationship *>(selected_objects[0]);
-		RelationshipView *rel_view=dynamic_cast<RelationshipView *>(rel->getReceiverObject());
-		double dx, dy;
-		unsigned break_type=action->data().toUInt();
-		QPointF src_pnt, dst_pnt;
 
 		op_list->registerObject(rel, Operation::OBJECT_MODIFIED);
+		breakRelationshipLine(rel, action->data().toUInt());
+		rel->setModified(true);
+		this->setModified(true);
+
+		emit s_objectModified();
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void ModelWidget::breakRelationshipLine(BaseRelationship *rel, unsigned break_type)
+{
+	if(!rel) return;
+
+	try
+	{
+		RelationshipView *rel_view=dynamic_cast<RelationshipView *>(rel->getReceiverObject());
+		double dx, dy;
+		QPointF src_pnt, dst_pnt;
 
 		src_pnt=rel_view->getConnectionPoint(BaseRelationship::SRC_TABLE);
 		dst_pnt=rel_view->getConnectionPoint(BaseRelationship::DST_TABLE);
@@ -3868,8 +4078,7 @@ void ModelWidget::breakRelationshipLine(void)
 			dy=(src_pnt.y() + dst_pnt.y())/2;
 
 			//Adds two points on the middle space between tables creating two 90° angles
-			rel->setPoints({ QPointF(src_pnt.x(), dy),
-							 QPointF(dst_pnt.x(), dy) });
+			rel->setPoints({ QPointF(src_pnt.x(), dy), QPointF(dst_pnt.x(), dy) });
 		}
 		else
 		{
@@ -3877,13 +4086,8 @@ void ModelWidget::breakRelationshipLine(void)
 			dx=(src_pnt.x() + dst_pnt.x())/2;
 
 			//Adds two points on the middle space between tables creating two 90° angles
-			rel->setPoints({ QPointF(dx, src_pnt.y()),
-							 QPointF(dx, dst_pnt.y()) });
+			rel->setPoints({ QPointF(dx, src_pnt.y()), QPointF(dx, dst_pnt.y()) });
 		}
-
-		rel->setModified(true);
-		this->setModified(true);
-		emit s_objectModified();
 	}
 	catch(Exception &e)
 	{
@@ -3898,11 +4102,36 @@ void ModelWidget::removeRelationshipPoints(void)
 		QAction *action=dynamic_cast<QAction *>(sender());
 		BaseRelationship *rel=reinterpret_cast<BaseRelationship *>(action->data().value<void *>());
 
-		op_list->registerObject(rel, Operation::OBJECT_MODIFIED);
-		rel->setPoints({});
-		scene->clearSelection();
+		//Remove points from all selected relationships
+		if(!rel && !selected_objects.empty())
+		{
+			vector<BaseObject *> rels;
 
-		rel->setModified(true);
+			rels = *db_model->getObjectList(BASE_RELATIONSHIP);
+			rels.insert(rels.end(), db_model->getObjectList(OBJ_RELATIONSHIP)->begin(),  db_model->getObjectList(OBJ_RELATIONSHIP)->end());
+
+			op_list->startOperationChain();
+			for(auto &obj : rels)
+			{
+				rel = dynamic_cast<BaseRelationship *>(obj);
+
+				if(!rel->isProtected())
+				{
+					op_list->registerObject(rel, Operation::OBJECT_MODIFIED);
+					rel->setPoints({});
+					rel->setModified(true);
+				}
+			}
+			op_list->finishOperationChain();
+		}
+		else
+		{
+			op_list->registerObject(rel, Operation::OBJECT_MODIFIED);
+			rel->setPoints({});
+			rel->setModified(true);
+		}
+
+		scene->clearSelection();
 		this->setModified(true);
 		emit s_objectModified();
 	}
@@ -4024,4 +4253,306 @@ void ModelWidget::rearrangeTables(Schema *schema, QPointF origin, unsigned tabs_
 			itr++;
 		}
 	}
+}
+
+void ModelWidget::editCreationOrder(void)
+{
+	BaseForm parent_form(this);
+	SwapObjectsIdsWidget *swap_ids_wgt=new SwapObjectsIdsWidget;
+
+	swap_ids_wgt->setModel(this->getDatabaseModel());
+
+	connect(swap_ids_wgt, &SwapObjectsIdsWidget::s_objectsIdsSwapped, [&](){
+			this->op_list->removeOperations();
+			emit s_objectManipulated();
+	});
+
+	parent_form.apply_ok_btn->setVisible(true);
+	parent_form.setMainWidget(swap_ids_wgt);
+	parent_form.exec();
+}
+
+void ModelWidget::jumpToTable(void)
+{
+	QAction *act = qobject_cast<QAction *>(sender());
+	BaseTable *tab = nullptr;
+	BaseTableView *tab_view = nullptr;
+
+	if(!act)
+		return;
+
+	tab = reinterpret_cast<BaseTable *>(act->data().value<void *>());
+	scene->clearSelection();
+	tab_view = dynamic_cast<BaseTableView *>(tab->getReceiverObject());
+	tab_view->setSelected(true);
+	viewport->centerOn(tab_view);
+}
+
+void ModelWidget::rearrangeObjects(void)
+{
+	vector<BaseObject *> objects;
+	BaseGraphicObject *graph_obj = nullptr;
+	BaseTableView *tab_view = nullptr, *root = nullptr;
+	int num_rels = 0;
+
+	scene->clearSelection();
+
+	objects.assign(db_model->getObjectList(OBJ_TABLE)->begin(), db_model->getObjectList(OBJ_TABLE)->end());
+	objects.insert(objects.end(), db_model->getObjectList(OBJ_VIEW)->begin(), db_model->getObjectList(OBJ_VIEW)->end());
+
+	//We determine the root by searching the table/view which contains the more amount of relationships connected
+	for(auto obj : objects)
+	{
+		graph_obj = dynamic_cast<BaseGraphicObject *>(obj);
+		dynamic_cast<Schema *>(graph_obj->getSchema())->setRectVisible(false);
+
+		tab_view = dynamic_cast<BaseTableView *>(graph_obj->getReceiverObject());
+
+		if(tab_view->getConnectRelsCount() > num_rels)
+		{
+			root = tab_view;
+			num_rels = tab_view->getConnectRelsCount();
+		}
+	}
+
+	if(root)
+	{
+		BaseObjectView *obj_view = nullptr;
+		BaseRelationship *rel = nullptr;
+		QRectF items_rect;
+		vector<BaseObject *> evaluated_tabs, not_evaluated, not_linked_tabs;
+		double px = 0, py = 0, max_h = 0, max_w = 0;
+
+		//Positioning the root object at the top-left portion of canvas
+		root->setPos(QPointF(50, 50));
+		evaluated_tabs.push_back(root->getSourceObject());
+		items_rect = rearrangeTablesHierarchically(root, evaluated_tabs);
+		max_w = items_rect.width();
+
+		objects.clear();
+		objects.assign(db_model->getObjectList(OBJ_TABLE)->begin(), db_model->getObjectList(OBJ_TABLE)->end());
+		objects.insert(objects.end(), db_model->getObjectList(OBJ_VIEW)->begin(), db_model->getObjectList(OBJ_VIEW)->end());
+
+		//Retrieving the rest of tables/views that were not evaluated in the previous iteration
+		std::sort(objects.begin(), objects.end());
+		std::sort(evaluated_tabs.begin(), evaluated_tabs.end());
+		std::set_difference(objects.begin(), objects.end(), evaluated_tabs.begin(), evaluated_tabs.end(),
+												 std::inserter(not_evaluated, not_evaluated.begin()));
+
+		/* While there is not evaluated objects (tables/views that are linked to each other but
+		none of them are linked to the root (in)directly) we need to perform the same operation
+		done for the root previously */
+		while(!not_evaluated.empty())
+		{
+			num_rels = 0;
+			root = nullptr;
+
+			//Determining which table has the greater number of relationships attached
+			for(auto &tab : not_evaluated)
+			{
+				tab_view = dynamic_cast<BaseTableView *>(dynamic_cast<BaseTable *>(tab)->getReceiverObject());
+
+				if(tab_view->getConnectRelsCount() > num_rels)
+				{
+					root = tab_view;
+					num_rels = tab_view->getConnectRelsCount();
+				}
+			}
+
+			//Once determined the new root we perform the positioning of its "children"
+			if(root && std::find(evaluated_tabs.begin(), evaluated_tabs.end(), root->getSourceObject()) == evaluated_tabs.end())
+			{
+				root->setPos(QPointF(50, items_rect.bottom() + 50));
+				evaluated_tabs.push_back(root->getSourceObject());
+				items_rect = rearrangeTablesHierarchically(root, evaluated_tabs);
+				not_evaluated.erase(std::find(not_evaluated.begin(), not_evaluated.end(),  root->getSourceObject()));
+
+				if(items_rect.width() > max_w)
+					max_w = items_rect.width();
+			}
+			else
+			{
+				tab_view = dynamic_cast<BaseTableView *>(dynamic_cast<BaseTable *>(not_evaluated.front())->getReceiverObject());
+
+				//If the table/view has not relationships connected we separate it in a new list for further rearrangement
+				if(tab_view->getConnectRelsCount() == 0)
+					not_linked_tabs.push_back(not_evaluated.front());
+
+				not_evaluated.erase(not_evaluated.begin());
+			}
+		}
+
+		//Repositioning remaining tables (without relationships) and textboxes
+		objects.clear();
+		objects.assign(not_linked_tabs.begin(), not_linked_tabs.end());
+		objects.insert(objects.end(), db_model->getObjectList(OBJ_TEXTBOX)->begin(), db_model->getObjectList(OBJ_TEXTBOX)->end());
+
+		px = 50;
+		py = items_rect.bottom() + 50;
+		max_h = 0;
+
+		for(auto &obj : objects)
+		{
+			obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
+			obj_view->setPos(px, py);
+			px += obj_view->boundingRect().width() + 50;
+
+			if(obj_view->boundingRect().height() > max_h)
+				max_h = obj_view->boundingRect().height();
+
+			if(px > max_w)
+			{
+				px = 50;
+				py += max_h + 50;
+			}
+		}
+
+		objects.clear();
+		objects.assign(db_model->getObjectList(OBJ_RELATIONSHIP)->begin(), db_model->getObjectList(OBJ_RELATIONSHIP)->end());
+		objects.insert(objects.end(), db_model->getObjectList(BASE_RELATIONSHIP)->begin(), db_model->getObjectList(BASE_RELATIONSHIP)->end());
+
+		for(auto obj : objects)
+		{
+			rel = dynamic_cast<BaseRelationship *>(obj);
+			rel->setPoints({});
+			rel->resetLabelsDistance();
+
+			if(rel->getTable(BaseRelationship::SRC_TABLE)->getPosition().y() !=
+				 rel->getTable(BaseRelationship::DST_TABLE)->getPosition().y())
+				breakRelationshipLine(dynamic_cast<BaseRelationship *>(obj), ModelWidget::BREAK_VERT_2NINETY_DEGREES);
+		}
+
+		db_model->setObjectsModified({ OBJ_TABLE, OBJ_VIEW, OBJ_SCHEMA, OBJ_RELATIONSHIP, BASE_RELATIONSHIP });
+	}
+	else
+	{
+		//This is a fallback arrangement when the model does not have relationships
+		rearrangeSchemas(QPointF(50,50), 10, 5, 50);
+	}
+
+	adjustSceneSize();
+	viewport->updateScene({ scene->sceneRect() });
+}
+
+QRectF ModelWidget::rearrangeTablesHierarchically(BaseTableView *root, vector<BaseObject *> &evaluated_tabs)
+{
+	BaseTable *base_tab = dynamic_cast<BaseTable *>(root->getSourceObject()),
+			*src_tab = nullptr, *dst_tab = nullptr, *curr_tab = nullptr;
+	vector<BaseRelationship *> rels ;
+	double px = 0, py = 0, px1 = 0, py1 = 0;
+	BaseTableView *tab_view = nullptr;
+	vector<BaseTable *> tabs = { base_tab }, next_tabs;
+	bool is_protected = false;
+
+	while(!tabs.empty())
+	{
+		base_tab = tabs.front();
+		tabs.erase(tabs.begin());
+		tab_view = dynamic_cast<BaseTableView *>(base_tab->getReceiverObject());
+		rels = db_model->getRelationships(base_tab);
+
+		for(auto &rel : rels)
+		{
+			if(rel->isSelfRelationship())
+				continue;
+
+			src_tab = rel->getTable(BaseRelationship::SRC_TABLE);
+			dst_tab = rel->getTable(BaseRelationship::DST_TABLE);
+
+			if(src_tab != base_tab)
+				curr_tab = src_tab;
+			else if(dst_tab != base_tab)
+				curr_tab = dst_tab;
+			else
+				curr_tab = nullptr;
+
+			if(curr_tab && std::find(evaluated_tabs.begin(), evaluated_tabs.end(), dynamic_cast<BaseObject *>(curr_tab)) == evaluated_tabs.end())
+			{
+				next_tabs.push_back(curr_tab);
+				evaluated_tabs.push_back(dynamic_cast<BaseObject *>(curr_tab));
+			}
+		}
+
+		if(tabs.empty())
+		{
+			px = tab_view->pos().x() + (tab_view->boundingRect().width() * 1.50);
+			py = root->pos().y() + 25;
+
+			for(auto &next_tab : next_tabs)
+			{
+				tab_view = dynamic_cast<BaseTableView *>(next_tab->getReceiverObject());
+
+				//Temporarily unprotecting the table so it can be moved
+				if(next_tab->isProtected())
+				{
+					next_tab->setProtected(false);
+					is_protected = true;
+				}
+				else
+					is_protected = false;
+
+				tab_view->setPos(QPointF(px, py));
+				next_tab->setProtected(is_protected);
+
+				py += tab_view->boundingRect().height() + 50;
+				px += 50;
+			}
+
+			if(px > px1) px1 = px;
+			if(py > py1) py1 = py;
+
+			tabs.assign(next_tabs.begin(), next_tabs.end());
+			next_tabs.clear();
+		}
+	}
+
+	return(QRectF(root->pos(), QPointF(px1, py1)));
+}
+
+void ModelWidget::updateMagnifierArea(void)
+{
+	QPoint pos = viewport->mapFromGlobal(QCursor::pos());
+	QPointF scene_pos = viewport->mapToScene(pos);
+	QSize size = magnifier_area_lbl->size();
+	QPixmap pix = QPixmap(size);
+	double cx = magnifier_area_lbl->width() / 2, cy =  magnifier_area_lbl->height() / 2;
+
+	magnifier_frm->setGeometry(0, 0,
+														 magnifier_area_lbl->width() * current_zoom,
+														 magnifier_area_lbl->height() * current_zoom);
+	magnifier_frm->move(pos - QPoint(magnifier_frm->width()/2, magnifier_frm->height()/2));
+
+	if(magnifier_frm->geometry().left() <= magnifier_area_lbl->geometry().right())
+		magnifier_area_lbl->move(viewport->width() - magnifier_area_lbl->width(), magnifier_area_lbl->geometry().top());
+
+	if(magnifier_frm->geometry().right() >= magnifier_area_lbl->geometry().left())
+		magnifier_area_lbl->move(5, magnifier_area_lbl->geometry().top());
+
+	QPainter p(&pix);
+	p.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
+
+	scene->blockSignals(true);
+	scene->render(&p, QRectF(QPointF(0,0), size), QRectF(scene_pos - QPointF(cx, cy), size));
+
+	p.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing, false);
+	p.setPen(QColor(80,0,0));
+	p.drawLine(QPointF(cx, cy - 10), QPointF(cx, cy + 10));
+	p.drawLine(QPointF(cx - 10, cy), QPointF(cx + 10, cy));
+
+	magnifier_area_lbl->setPixmap(pix);
+	scene->blockSignals(false);
+}
+
+void ModelWidget::showMagnifierArea(bool show)
+{
+	if(show)
+	{
+		updateMagnifierArea();
+		viewport->setCursor(Qt::CrossCursor);
+	}
+	else
+		viewport->setCursor(Qt::ArrowCursor);
+
+	magnifier_area_lbl->setVisible(show);
+	magnifier_frm->setVisible(show);
 }

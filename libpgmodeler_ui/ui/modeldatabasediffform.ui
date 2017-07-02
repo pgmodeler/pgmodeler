@@ -1403,15 +1403,15 @@
             </property>
             <property name="iconSize">
              <size>
-              <width>18</width>
-              <height>18</height>
+              <width>20</width>
+              <height>20</height>
              </size>
             </property>
             <property name="indentation">
              <number>20</number>
             </property>
             <property name="uniformRowHeights">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="wordWrap">
              <bool>false</bool>
@@ -1424,6 +1424,9 @@
             </attribute>
             <attribute name="headerDefaultSectionSize">
              <number>100</number>
+            </attribute>
+            <attribute name="headerMinimumSectionSize">
+             <number>25</number>
             </attribute>
             <attribute name="headerStretchLastSection">
              <bool>true</bool>

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ ObjectsScene::ObjectsScene(void)
 	connect(&scene_move_timer, SIGNAL(timeout()), this, SLOT(moveObjectScene()));
 	connect(&corner_hover_timer, SIGNAL(timeout()), this, SLOT(enableSceneMove()));
 
-	connect(&object_move_timer, &QTimer::timeout, [=](){
+	connect(&object_move_timer, &QTimer::timeout, [&](){
 		//If the timer reaches its timeout we execute the procedures to finish the objects movement
 		finishObjectsMove(itemsBoundingRect(true, true).center());
 		object_move_timer.stop();
@@ -77,6 +77,9 @@ ObjectsScene::~ObjectsScene(void)
 
 	this->removeItem(selection_rect);
 	this->removeItem(rel_line);
+
+	delete(selection_rect);
+	delete(rel_line);
 
 	//Destroy the objects in the order defined on obj_types vector
 	for(i=0; i < count; i++)
@@ -772,7 +775,7 @@ void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 		if(!rel_line->isVisible())
 		{
 			//Case the user starts a object moviment
-			if(!this->selectedItems().isEmpty() && !moving_objs && event->modifiers()==Qt::NoModifier)
+			if(!this->selectedItems().isEmpty() && !moving_objs /*&& event->modifiers()==Qt::NoModifier*/)
 			{
 				if(BaseObjectView::isPlaceholderEnabled())
 				{
@@ -821,8 +824,7 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 		enableSceneMove(false);
 
 	//If there is selected object and the user ends the object moviment
-	if(!this->selectedItems().isEmpty() && moving_objs &&
-			event->button()==Qt::LeftButton && event->modifiers()==Qt::NoModifier)
+	if(!this->selectedItems().isEmpty() && moving_objs && event->button()==Qt::LeftButton/* && event->modifiers()==Qt::NoModifier */)
 	{
 		finishObjectsMove(event->scenePos());
 	}

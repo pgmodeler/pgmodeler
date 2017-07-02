@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -94,8 +94,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 		{
 			QGraphicsEllipseItem *desc=dynamic_cast<QGraphicsEllipseItem *>(descriptor);
 
-			desc->setRect(QRectF(QPointF(0,0),
-								 QSizeF(9.0f * factor, 9.0f * factor)));
+			desc->setRect(QRectF(QPointF(0,0), QSizeF(9.0f * factor, 9.0f * factor)));
 
 			if(column->isNotNull())
 				attrib=ParsersAttributes::NN_COLUMN;

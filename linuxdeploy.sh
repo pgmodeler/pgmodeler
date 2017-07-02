@@ -107,7 +107,7 @@ if [ $BUILD_ALL = 1 ]; then
 fi
 
 if [ $DEMO_VERSION = 1 ]; then
-  PKGNAME="pgmodeler-demo-$ARCH"
+  PKGNAME="pgmodeler-$DEPLOY_VER-demo-$ARCH"
 else
   PKGNAME="pgmodeler-$DEPLOY_VER-$ARCH"
 fi
@@ -147,7 +147,7 @@ clear
 echo 
 echo "pgModeler Linux deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.com.br"
-echo "Copyright 2006-2016 Raphael A. Silva <raphael@pgmodeler.com.br>"
+echo "Copyright 2006-2017 Raphael A. Silva <raphael@pgmodeler.com.br>"
 
 # Identifying System Qt version
 if [ -e "$QMAKE_ROOT/$QMAKE_CMD" ]; then

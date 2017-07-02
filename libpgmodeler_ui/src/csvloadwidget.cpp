@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,11 +42,11 @@ CsvLoadWidget::CsvLoadWidget(QWidget * parent, bool cols_in_first_row) : QWidget
 	connect(txt_delim_chk, SIGNAL(toggled(bool)), txt_delim_edt, SLOT(setEnabled(bool)));
 	connect(load_btn, SIGNAL(clicked(bool)), this, SLOT(loadCsvFile()));
 
-	connect(separator_cmb, &QComboBox::currentTextChanged, [=](){
+	connect(separator_cmb, &QComboBox::currentTextChanged, [&](){
 			separator_edt->setVisible(separator_cmb->currentIndex() == separator_cmb->count()-1);
 	});
 
-	connect(file_edt, &QLineEdit::textChanged, [=](){
+	connect(file_edt, &QLineEdit::textChanged, [&](){
 		load_btn->setEnabled(!file_edt->text().isEmpty());
 	});
 }

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,12 +37,12 @@ UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
 	connect(&update_chk_manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(handleUpdateChecked(QNetworkReply*)));
 
 	//C++11 lambda slots
-	connect(get_source_tb, &QToolButton::clicked, this, [=](){ activateLink(GlobalAttributes::PGMODELER_SRC_URL); });
-	connect(get_binary_tb, &QToolButton::clicked, this, [=](){ activateLink(GlobalAttributes::PGMODELER_DOWNLOAD_URL); });
+	connect(get_source_tb, &QToolButton::clicked, this, [&](){ activateLink(GlobalAttributes::PGMODELER_SRC_URL); });
+	connect(get_binary_tb, &QToolButton::clicked, this, [&](){ activateLink(GlobalAttributes::PGMODELER_DOWNLOAD_URL); });
 
 
 	connect(hide_tb, &QToolButton::clicked, this,
-			[=](){
+			[&](){
 		this->close();
 		emit s_visibilityChanged(false);
 	});

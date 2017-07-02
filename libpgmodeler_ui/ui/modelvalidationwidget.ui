@@ -44,32 +44,108 @@
    <property name="bottomMargin">
     <number>4</number>
    </property>
-   <item row="0" column="10">
-    <widget class="QToolButton" name="hide_tb">
+   <item row="0" column="0">
+    <widget class="QToolButton" name="validate_btn">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="minimumSize">
       <size>
-       <width>20</width>
-       <height>20</height>
+       <width>0</width>
+       <height>30</height>
       </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>20</width>
-       <height>20</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string>Hide this widget</string>
      </property>
      <property name="text">
-      <string>...</string>
+      <string>Va&amp;lidate</string>
      </property>
      <property name="icon">
       <iconset resource="../res/resources.qrc">
-       <normaloff>:/icones/icones/fechar1.png</normaloff>:/icones/icones/fechar1.png</iconset>
+       <normaloff>:/icones/icones/validation.png</normaloff>:/icones/icones/validation.png</iconset>
      </property>
-     <property name="autoRaise">
+     <property name="iconSize">
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonTextBesideIcon</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="4">
+    <widget class="QToolButton" name="options_btn">
+     <property name="enabled">
       <bool>true</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>30</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Try to apply a fix on the selected validation info.</string>
+     </property>
+     <property name="text">
+      <string>Options</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../res/resources.qrc">
+       <normaloff>:/icones/icones/config.png</normaloff>:/icones/icones/config.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonTextBesideIcon</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="3">
+    <widget class="QToolButton" name="clear_btn">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>30</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Clear validation results</string>
+     </property>
+     <property name="text">
+      <string>Clear</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../res/resources.qrc">
+       <normaloff>:/icones/icones/limpartexto.png</normaloff>:/icones/icones/limpartexto.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonTextBesideIcon</enum>
      </property>
     </widget>
    </item>
@@ -285,21 +361,8 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="6" colspan="4">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>405</width>
-       <height>17</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="0" column="3">
-    <widget class="QToolButton" name="clear_btn">
+   <item row="0" column="5">
+    <widget class="QToolButton" name="cancel_btn">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -310,20 +373,23 @@
       </size>
      </property>
      <property name="toolTip">
-      <string>Clear validation results</string>
+      <string>Cancel the SQL validation in progress.</string>
      </property>
      <property name="text">
-      <string>Clear</string>
+      <string>Cancel</string>
      </property>
      <property name="icon">
       <iconset resource="../res/resources.qrc">
-       <normaloff>:/icones/icones/limpartexto.png</normaloff>:/icones/icones/limpartexto.png</iconset>
+       <normaloff>:/icones/icones/msgbox_erro.png</normaloff>:/icones/icones/msgbox_erro.png</iconset>
      </property>
      <property name="iconSize">
       <size>
        <width>20</width>
        <height>20</height>
       </size>
+     </property>
+     <property name="shortcut">
+      <string>Esc</string>
      </property>
      <property name="toolButtonStyle">
       <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -346,15 +412,15 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>18</width>
-       <height>18</height>
+       <width>20</width>
+       <height>20</height>
       </size>
      </property>
      <property name="indentation">
       <number>20</number>
      </property>
      <property name="uniformRowHeights">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <attribute name="headerVisible">
       <bool>false</bool>
@@ -366,110 +432,18 @@
      </column>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QToolButton" name="fix_btn">
-     <property name="enabled">
-      <bool>false</bool>
+   <item row="0" column="6" colspan="4">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
+     <property name="sizeHint" stdset="0">
       <size>
-       <width>0</width>
-       <height>30</height>
+       <width>405</width>
+       <height>17</height>
       </size>
      </property>
-     <property name="toolTip">
-      <string>Try to resolve the reported issues.</string>
-     </property>
-     <property name="text">
-      <string>Apply Fix</string>
-     </property>
-     <property name="icon">
-      <iconset resource="../res/resources.qrc">
-       <normaloff>:/icones/icones/fixobject.png</normaloff>:/icones/icones/fixobject.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>20</width>
-       <height>20</height>
-      </size>
-     </property>
-     <property name="shortcut">
-      <string>Ctrl+S</string>
-     </property>
-     <property name="toolButtonStyle">
-      <enum>Qt::ToolButtonTextBesideIcon</enum>
-     </property>
-     <property name="arrowType">
-      <enum>Qt::NoArrow</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="2">
-    <widget class="QToolButton" name="swap_ids_btn">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>30</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string>Change the creation order for two objects by swapping their ids</string>
-     </property>
-     <property name="text">
-      <string>Swap Ids</string>
-     </property>
-     <property name="icon">
-      <iconset resource="../res/resources.qrc">
-       <normaloff>:/icones/icones/swapobjs.png</normaloff>:/icones/icones/swapobjs.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>20</width>
-       <height>20</height>
-      </size>
-     </property>
-     <property name="toolButtonStyle">
-      <enum>Qt::ToolButtonTextBesideIcon</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QToolButton" name="validate_btn">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>30</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>Va&amp;lidate</string>
-     </property>
-     <property name="icon">
-      <iconset resource="../res/resources.qrc">
-       <normaloff>:/icones/icones/validation.png</normaloff>:/icones/icones/validation.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>20</width>
-       <height>20</height>
-      </size>
-     </property>
-     <property name="toolButtonStyle">
-      <enum>Qt::ToolButtonTextBesideIcon</enum>
-     </property>
-    </widget>
+    </spacer>
    </item>
    <item row="2" column="0" colspan="11">
     <widget class="QWidget" name="prog_info_wgt" native="true">
@@ -694,45 +668,39 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="5">
-    <widget class="QToolButton" name="cancel_btn">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
+   <item row="0" column="10">
+    <widget class="QToolButton" name="hide_tb">
      <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>30</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string>Cancel the SQL validation in progress.</string>
-     </property>
-     <property name="text">
-      <string>Cancel</string>
-     </property>
-     <property name="icon">
-      <iconset resource="../res/resources.qrc">
-       <normaloff>:/icones/icones/msgbox_erro.png</normaloff>:/icones/icones/msgbox_erro.png</iconset>
-     </property>
-     <property name="iconSize">
       <size>
        <width>20</width>
        <height>20</height>
       </size>
      </property>
-     <property name="shortcut">
-      <string>Esc</string>
+     <property name="maximumSize">
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
      </property>
-     <property name="toolButtonStyle">
-      <enum>Qt::ToolButtonTextBesideIcon</enum>
+     <property name="toolTip">
+      <string>Hide this widget</string>
+     </property>
+     <property name="text">
+      <string>...</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../res/resources.qrc">
+       <normaloff>:/icones/icones/fechar1.png</normaloff>:/icones/icones/fechar1.png</iconset>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="0" column="4">
-    <widget class="QToolButton" name="options_btn">
+   <item row="0" column="1">
+    <widget class="QToolButton" name="fix_btn">
      <property name="enabled">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -747,14 +715,14 @@
       </size>
      </property>
      <property name="toolTip">
-      <string>Try to apply a fix on the selected validation info.</string>
+      <string>Try to resolve the reported issues.</string>
      </property>
      <property name="text">
-      <string>Options</string>
+      <string>Apply Fix</string>
      </property>
      <property name="icon">
       <iconset resource="../res/resources.qrc">
-       <normaloff>:/icones/icones/config.png</normaloff>:/icones/icones/config.png</iconset>
+       <normaloff>:/icones/icones/fixobject.png</normaloff>:/icones/icones/fixobject.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -762,8 +730,40 @@
        <height>20</height>
       </size>
      </property>
-     <property name="checkable">
-      <bool>true</bool>
+     <property name="shortcut">
+      <string>Ctrl+S</string>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonTextBesideIcon</enum>
+     </property>
+     <property name="arrowType">
+      <enum>Qt::NoArrow</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QToolButton" name="swap_ids_btn">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>30</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Change the creation order for two objects by swapping their ids</string>
+     </property>
+     <property name="text">
+      <string>Swap Ids</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../res/resources.qrc">
+       <normaloff>:/icones/icones/swapobjs.png</normaloff>:/icones/icones/swapobjs.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
      </property>
      <property name="toolButtonStyle">
       <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -775,7 +775,6 @@
  <tabstops>
   <tabstop>validate_btn</tabstop>
   <tabstop>fix_btn</tabstop>
-  <tabstop>swap_ids_btn</tabstop>
   <tabstop>clear_btn</tabstop>
   <tabstop>options_btn</tabstop>
   <tabstop>cancel_btn</tabstop>

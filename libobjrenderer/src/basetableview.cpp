@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -171,7 +171,7 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 			obj_selection->setVisible(false);
 
 			// Using a single shot time to restore the selectable flag
-			QTimer::singleShot(300, [=]{ this->setFlag(QGraphicsItem::ItemIsSelectable, true); });
+			QTimer::singleShot(300, [&]{ this->setFlag(QGraphicsItem::ItemIsSelectable, true); });
 
 			emit s_extAttributesToggled();
 		}

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 	{
 		setupUi(this);
 
-		htmlitem_del=new HtmlItemDelegate;
+		htmlitem_del=new HtmlItemDelegate(this);
 		output_trw->setItemDelegateForColumn(0, htmlitem_del);
 
 		version_cmb->addItem(trUtf8("Autodetect"));
@@ -53,9 +53,9 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		connect(sql_validation_chk, SIGNAL(toggled(bool)), use_tmp_names_chk, SLOT(setEnabled(bool)));
 		connect(validate_btn, SIGNAL(clicked(void)), this, SLOT(validateModel(void)));
 		connect(fix_btn, SIGNAL(clicked(void)), this, SLOT(applyFixes(void)));
-		connect(swap_ids_btn, SIGNAL(clicked(void)), this, SLOT(swapObjectsIds(void)));
 		connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(cancelValidation(void)));
 		connect(connections_cmb, SIGNAL(activated(int)), this, SLOT(editConnections()));
+		connect(swap_ids_btn, SIGNAL(clicked(void)), this, SLOT(swapObjectsIds(void)));
 
 		ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true);
 	}
@@ -73,9 +73,16 @@ void ModelValidationWidget::createThread(void)
 		validation_helper=new ModelValidationHelper;
 		validation_helper->moveToThread(validation_thread);
 
+		connect(validation_thread, &QThread::started, [&](){
+			output_trw->setUniformRowHeights(true);
+		});
+
+		connect(validation_thread, &QThread::finished, [&](){
+			output_trw->setUniformRowHeights(false);
+		});
+
 		connect(validation_thread, SIGNAL(started(void)), validation_helper, SLOT(validateModel(void)));
 		connect(validation_thread, SIGNAL(started(void)), validation_helper, SLOT(applyFixes(void)));
-
 		connect(validation_thread, SIGNAL(finished(void)), this, SLOT(updateGraphicalObjects(void)));
 		connect(validation_thread, SIGNAL(finished(void)), this, SLOT(destroyThread(void)));
 
@@ -90,13 +97,13 @@ void ModelValidationWidget::createThread(void)
 		connect(validation_helper, SIGNAL(s_relsValidationRequested(void)), this, SLOT(validateRelationships(void)));
 
 		connect(validation_helper, &ModelValidationHelper::s_validationCanceled,
-				[=](){ emit s_validationCanceled(); });
+				[&](){ emit s_validationCanceled(); });
 
 		connect(validation_helper, &ModelValidationHelper::s_fixApplied,
-				[=](){ emit s_fixApplied(); });
+				[&](){ emit s_fixApplied(); });
 
 		connect(validation_helper, &ModelValidationHelper::s_objectIdChanged,
-				[=](BaseObject *obj) {
+				[&](BaseObject *obj) {
 			BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(obj);
 			if(graph_obj) graph_objects.push_back(graph_obj);
 		});
@@ -128,7 +135,6 @@ void ModelValidationWidget::reenableValidation(void)
 		validation_thread->quit();
 		model_wgt->setEnabled(true);
 		validate_btn->setEnabled(true);
-		swap_ids_btn->setEnabled(true);
 		cancel_btn->setEnabled(false);
 		fix_btn->setEnabled(model_wgt->getDatabaseModel()->isInvalidated());
 		clear_btn->setEnabled(true);
@@ -136,6 +142,7 @@ void ModelValidationWidget::reenableValidation(void)
 		options_frm->setEnabled(true);
 		ico_lbl->setVisible(false);
 		object_lbl->setVisible(false);
+		swap_ids_btn->setEnabled(true);
 
 		emit s_validationInProgress(false);
 	}
@@ -150,11 +157,11 @@ void ModelValidationWidget::emitValidationInProgress(void)
 	object_lbl->setVisible(true);
 	prog_info_wgt->setVisible(true);
 	validate_btn->setEnabled(false);
-	swap_ids_btn->setEnabled(false);
 	options_btn->setEnabled(false);
 	model_wgt->setEnabled(false);
 	cancel_btn->setEnabled(true);
 	options_frm->setEnabled(false);
+	swap_ids_btn->setEnabled(false);
 }
 
 void ModelValidationWidget::clearOutput(void)
@@ -182,10 +189,10 @@ void ModelValidationWidget::setModel(ModelWidget *model_wgt)
 	this->model_wgt=model_wgt;
 	output_trw->setEnabled(enable);
 	validate_btn->setEnabled(enable);
-	swap_ids_btn->setEnabled(enable);
 	options_btn->setEnabled(enable);
 	options_frm->setEnabled(enable);
 	fix_btn->setEnabled(false);
+	swap_ids_btn->setEnabled(enable);
 	curr_step=0;
 	clearOutput();
 	destroyThread(true);
@@ -492,27 +499,11 @@ void ModelValidationWidget::resizeEvent(QResizeEvent *event)
 	{
 		validate_btn->setToolButtonStyle(style);
 		fix_btn->setToolButtonStyle(style);
-		swap_ids_btn->setToolButtonStyle(style);
 		clear_btn->setToolButtonStyle(style);
 		cancel_btn->setToolButtonStyle(style);
 		options_btn->setToolButtonStyle(style);
+		swap_ids_btn->setToolButtonStyle(style);
 	}
-}
-
-void ModelValidationWidget::swapObjectsIds(void)
-{
-	BaseForm parent_form(this);
-	SwapObjectsIdsWidget *swap_ids_wgt=new SwapObjectsIdsWidget;
-
-	swap_ids_wgt->setModel(model_wgt->getDatabaseModel());
-
-	connect(swap_ids_wgt, SIGNAL(s_objectsIdSwapEnabled(bool)), parent_form.apply_ok_btn, SLOT(setEnabled(bool)));
-	connect(parent_form.apply_ok_btn, SIGNAL(clicked(bool)), swap_ids_wgt, SLOT(swapObjectsIds()));
-
-	parent_form.setMainWidget(swap_ids_wgt);
-	parent_form.apply_ok_btn->setEnabled(false);
-
-	parent_form.exec();
 }
 
 void ModelValidationWidget::validateRelationships(void)
@@ -561,4 +552,13 @@ void ModelValidationWidget::handleSQLValidationStarted(void)
 	options_btn->setEnabled(false);
 	clear_btn->setEnabled(false);
 	options_frm->setEnabled(false);
+}
+
+void ModelValidationWidget::swapObjectsIds(void)
+{
+	BaseForm parent_form(this);
+	SwapObjectsIdsWidget *swap_ids_wgt=new SwapObjectsIdsWidget;
+	swap_ids_wgt->setModel(model_wgt->getDatabaseModel());
+	parent_form.setMainWidget(swap_ids_wgt);
+	parent_form.exec();
 }

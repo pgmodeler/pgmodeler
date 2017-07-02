@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -150,24 +150,24 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	connect(collapse_all_tb, SIGNAL(clicked(bool)), objects_trw, SLOT(collapseAll(void)));
 
 	connect(runsql_tb, &QToolButton::clicked,
-			[=]() { emit s_sqlExecutionRequested(); });
+			[&]() { emit s_sqlExecutionRequested(); });
 
 	connect(properties_tbw, &QTableWidget::itemPressed,
-			[=]() { SQLExecutionWidget::copySelection(properties_tbw, true); });
+			[&]() { SQLExecutionWidget::copySelection(properties_tbw, true); });
 
 	connect(filter_edt, &QLineEdit::textChanged,
-			[=](){ DatabaseImportForm::filterObjects(objects_trw, filter_edt->text(),
+			[&](){ DatabaseImportForm::filterObjects(objects_trw, filter_edt->text(),
 													 (by_oid_chk->isChecked() ? DatabaseImportForm::OBJECT_ID : 0), false); });
 
 	connect(expand_all_tb, &QToolButton::clicked,
-			[=](){
+			[&](){
 						objects_trw->blockSignals(true);
 						objects_trw->expandAll();
 						objects_trw->blockSignals(false);
 			});
 
 	connect(objects_trw, &QTreeWidget::itemExpanded,
-			[=](QTreeWidgetItem *item){
+			[&](QTreeWidgetItem *item){
 				ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
 				unsigned oid=item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt();
 

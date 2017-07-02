@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		dynamic_cast<QGridLayout *>(source_code_frm->layout())->addWidget(source_code_txt, 1, 0, 1, 2);
 
 		source_code_hl=new SyntaxHighlighter(source_code_txt);
-		source_code_cp=new CodeCompletionWidget(source_code_txt);
+		source_code_cp=new CodeCompletionWidget(source_code_txt, true);
 
 		ret_type=new PgSQLTypeWidget(this);
 		vlayout=new QVBoxLayout;

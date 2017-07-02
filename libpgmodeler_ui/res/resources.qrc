@@ -228,6 +228,11 @@
         <file>icones/browsetable.png</file>
         <file>icones/referenced.png</file>
         <file>icones/referrer.png</file>
+        <file>icones/genericsql.png</file>
+        <file>icones/genericsql_grp.png</file>
+        <file>icones/aligntogrid.png</file>
+        <file>icones/arrangetables.png</file>
+        <file>icones/jumptotable.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

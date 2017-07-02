@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -171,7 +171,7 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		//! \brief Returns the kind of database object handled
 		ObjectType getHandledObjectType(void);
 
-		bool isHandledObjectProtected(void);
+		virtual bool isHandledObjectProtected(void);
 		
 	protected slots:
 		void editPermissions(void);

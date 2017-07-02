@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ void TableView::configureObject(void)
 {
 	Table *table=dynamic_cast<Table *>(this->getSourceObject());
 	int i, count, obj_idx;
-	double width=0, type_width=0, px=0, cy=0, old_width=0, old_height=0;
+	double width=0, px=0, cy=0, old_width=0, old_height=0;
 	QPen pen;
 	TableObjectView *col_item=nullptr;
 	QList<QGraphicsItem *> subitems;
@@ -107,12 +107,10 @@ void TableView::configureObject(void)
 			/* Calculates the width of the name + type of the object. This is used to align all
 			the constraint labels on table */
 			width=col_item->getChildObject(0)->boundingRect().width() +
-				  col_item->getChildObject(1)->boundingRect().width() + (3 * HORIZ_SPACING);
-			if(px < width)  px=width;
+						col_item->getChildObject(1)->boundingRect().width() + (6 * HORIZ_SPACING);
 
-			//Gets the maximum width of the column type label to align all at same horizontal position
-			if(type_width < col_item->getChildObject(2)->boundingRect().width())
-				type_width=col_item->getChildObject(2)->boundingRect().width() + (3 * HORIZ_SPACING);
+			if(px < width)
+				px=width;
 
 			col_items.push_back(col_item);
 		}
@@ -138,7 +136,10 @@ void TableView::configureObject(void)
 			col_item->setChildObjectXPos(2, px);
 
 			//Positioning the constraints label
-			col_item->setChildObjectXPos(3, px + type_width);
+			col_item->setChildObjectXPos(3, px +
+																			((col_item->getChildObject(2)->boundingRect().width() +
+																				col_item->getChildObject(3)->boundingRect().width()) * 0.90));
+
 			groups[obj_idx]->addToGroup(col_item);
 		}
 	}

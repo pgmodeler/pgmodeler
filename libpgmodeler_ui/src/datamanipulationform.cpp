@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -50,11 +50,11 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	act = copy_menu.addAction(trUtf8("Copy as text"));
 	act->setShortcut(QKeySequence("Ctrl+C"));
-	connect(act, &QAction::triggered,	[=](){ SQLExecutionWidget::copySelection(results_tbw, false, false); });
+	connect(act, &QAction::triggered,	[&](){ SQLExecutionWidget::copySelection(results_tbw, false, false); });
 
 	act = copy_menu.addAction(trUtf8("Copy as CSV"));
 	act->setShortcut(QKeySequence("Ctrl+Shift+C"));
-	connect(act, &QAction::triggered, [=](){ SQLExecutionWidget::copySelection(results_tbw, false, true); });
+	connect(act, &QAction::triggered, [&](){ SQLExecutionWidget::copySelection(results_tbw, false, true); });
 
 	copy_tb->setMenu(&copy_menu);
 
@@ -107,7 +107,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(filter_tb, SIGNAL(toggled(bool)), v_splitter, SLOT(setVisible(bool)));
 
 	connect(filter_tb, &QToolButton::toggled,
-			[=](bool checked){
+			[&](bool checked){
 
 				v_splitter->setVisible(checked);
 
@@ -119,7 +119,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(results_tbw, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(insertRowOnTabPress(int,int,int,int)), Qt::QueuedConnection);
 
 	connect(results_tbw, &QTableWidget::itemPressed,
-	[=](){
+	[&](){
 					if(QApplication::mouseButtons()==Qt::RightButton)
 					{
 						QMenu item_menu;
@@ -150,7 +150,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 
 	connect(export_tb, &QToolButton::clicked,
-			[=](){ SQLExecutionWidget::exportResults(results_tbw); });
+			[&](){ SQLExecutionWidget::exportResults(results_tbw); });
 
 	connect(results_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(enableRowControlButtons()));
 	connect(csv_load_wgt, SIGNAL(s_csvFileLoaded()), this, SLOT(loadDataFromCsv()));
@@ -690,7 +690,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 			attribs_map aux_table, aux_schema;
 			QStringList name_list;
 
-			submenu = new QMenu;
+			submenu = new QMenu(this);
 			fks_menu.addAction(QPixmap(PgModelerUiNS::getIconPath("referenced")), trUtf8("Referenced tables"))->setMenu(submenu);
 
 			if(fks.empty())
@@ -739,7 +739,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				fk_infos[fk_name][ParsersAttributes::DST_COLUMNS] = name_list.join(Table::DATA_SEPARATOR);
 			}
 
-			submenu = new QMenu;
+			submenu = new QMenu(this);
 			fks_menu.addAction(QPixmap(PgModelerUiNS::getIconPath("referrer")), trUtf8("Referrer tables"))->setMenu(submenu);
 
 			if(ref_fks.empty())

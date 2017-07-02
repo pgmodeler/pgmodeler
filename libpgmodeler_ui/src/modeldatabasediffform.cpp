@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 		sqlcode_txt=PgModelerUiNS::createNumberedTextEditor(sqlcode_wgt);
 		sqlcode_txt->setReadOnly(true);
 
-		htmlitem_del=new HtmlItemDelegate;
+		htmlitem_del=new HtmlItemDelegate(this);
 		output_trw->setItemDelegateForColumn(0, htmlitem_del);
 
 		imported_model=nullptr;
@@ -101,7 +101,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 
 		PgModelerUiNS::configureWidgetFont(message_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 
-		connect(cancel_btn, &QToolButton::clicked, [=](){ cancelOperation(true); });
+		connect(cancel_btn, &QToolButton::clicked, [&](){ cancelOperation(true); });
 		connect(pgsql_ver_chk, SIGNAL(toggled(bool)), pgsql_ver_cmb, SLOT(setEnabled(bool)));
 		connect(connections_cmb, SIGNAL(activated(int)), this, SLOT(listDatabases()));
 		connect(store_in_file_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
@@ -187,6 +187,8 @@ void ModelDatabaseDiffForm::createThread(unsigned thread_id)
 		import_helper=new DatabaseImportHelper;
 		import_helper->moveToThread(import_thread);
 
+		output_trw->setUniformRowHeights(true);
+
 		connect(import_thread, SIGNAL(started(void)), import_helper, SLOT(importDatabase()));
 		connect(import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)), Qt::BlockingQueuedConnection);
 		connect(import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)));
@@ -212,13 +214,18 @@ void ModelDatabaseDiffForm::createThread(unsigned thread_id)
 		export_helper->moveToThread(export_thread);
 
 		connect(apply_on_server_btn, &QPushButton::clicked,
-			[=](){
+			[&](){
 						apply_on_server_btn->setEnabled(false);
 						if(!export_thread->isRunning())
 							exportDiff(false);
 			});
 
 		connect(export_thread, SIGNAL(started(void)), export_helper, SLOT(exportToDBMS()));
+
+		connect(export_thread, &QThread::finished, [&](){
+			output_trw->setUniformRowHeights(false);
+		});
+
 		connect(export_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString)), this, SLOT(updateProgress(int,QString,ObjectType,QString)), Qt::BlockingQueuedConnection);
 		connect(export_helper, SIGNAL(s_errorIgnored(QString,QString, QString)), this, SLOT(handleErrorIgnored(QString,QString,QString)));
 		connect(export_helper, SIGNAL(s_exportFinished()), this, SLOT(handleExportFinished()));

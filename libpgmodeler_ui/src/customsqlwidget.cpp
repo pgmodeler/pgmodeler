@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,11 +33,11 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 
 		append_sql_hl=new SyntaxHighlighter(append_sql_txt);
 		append_sql_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
-		append_sql_cp=new CodeCompletionWidget(append_sql_txt);
+		append_sql_cp=new CodeCompletionWidget(append_sql_txt, true);
 
 		prepend_sql_hl=new SyntaxHighlighter(prepend_sql_txt);
 		prepend_sql_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
-		prepend_sql_cp=new CodeCompletionWidget(prepend_sql_txt);
+		prepend_sql_cp=new CodeCompletionWidget(prepend_sql_txt, true);
 
 		font=name_edt->font();
 		font.setItalic(true);

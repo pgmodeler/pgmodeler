@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -1355,7 +1355,7 @@ void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del
 		}
 
 		//Configures the foreign key name
-		i=1;
+
 		aux.clear();
 
 		if(rel_type!=RELATIONSHIP_NN)
@@ -2232,8 +2232,6 @@ bool Relationship::isInvalidated(void)
 			{
 				//Gets the amount of columns from the primary key
 				tab_cols_count=pk->getColumnCount(Constraint::SOURCE_COLS);
-
-				table1=getReceiverTable();
 
 				//Compares the column quantity
 				valid=(rel_cols_count==tab_cols_count);

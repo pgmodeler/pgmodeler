@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ void ModelOverviewWidget::show(ModelWidget *model)
 		this->updateOverview(true);
 
 		this->move(this->model->geometry().right() - this->width(),
-				   this->model->geometry().bottom() - this->height());
+							 this->model->geometry().bottom() - this->height());
 
 		frame->installEventFilter(this);
 	}
@@ -113,17 +113,29 @@ void ModelOverviewWidget::updateOverview(bool force_update)
 	if(this->model && (this->isVisible() || force_update))
 	{
 		QPixmap pix;
-		QSize size=scene_rect.size().toSize();
 
 		//Creates a pixmap with the size of the scene
-		pix=QPixmap(size);
+		pix=QPixmap(pixmap_size);
 
 		//Draw the scene onto the pixmap
 		QPainter p(&pix);
-		this->model->scene->render(&p, pix.rect(), scene_rect.toRect());
 
-		//Resizes the pixmap to the previous configured QSize
-		label->setPixmap(pix.scaled(curr_size.toSize(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+		if(!p.isActive())
+		{
+			label->setPixmap(QPixmap());
+			label->setText(trUtf8("Failed to generate the overview image.\nThe requested size %1 x %2 was too big and there was not enough memory to allocate!")
+										 .arg(pixmap_size.width()).arg(pixmap_size.height()));
+			frame->setEnabled(false);
+		}
+		else
+		{
+			frame->setEnabled(true);
+			this->model->scene->render(&p, pix.rect(), scene_rect.toRect());
+
+			//Resizes the pixmap to the previous configured QSize
+			label->setPixmap(pix.scaled(curr_size.toSize(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+		}
+
 		label->resize(curr_size.toSize());
 	}
 }
@@ -163,17 +175,33 @@ void ModelOverviewWidget::resizeOverview(void)
 		curr_size.setHeight(curr_size.height() * RESIZE_FACTOR);
 
 		//If the size exceeds the screen half width or height
-		if(curr_size.width() > screen_rect.width()/2 ||
-				curr_size.height() > screen_rect.height()/2)
+		if(curr_size.width() > screen_rect.width() * 0.80f ||
+			 curr_size.height() > screen_rect.height() * 0.80f)
 		{
+			int max_val = std::max(scene_rect.width(), scene_rect.height());
+
 			//Reduce the resize factor and recalculates the new size
-			curr_resize_factor=RESIZE_FACTOR/2;
+			if(max_val >= 16384)
+			{
+				curr_resize_factor=screen_rect.width()/static_cast<double>(max_val);
+				pixmap_size.setWidth(scene_rect.size().width() * (curr_resize_factor * 10));
+				pixmap_size.setHeight(scene_rect.size().height() * (curr_resize_factor * 10));
+			}
+			else
+			{
+				curr_resize_factor=RESIZE_FACTOR/2;
+				pixmap_size=scene_rect.size().toSize();
+			}
+
 			curr_size=scene_rect.size();
 			curr_size.setWidth(curr_size.width() * curr_resize_factor);
 			curr_size.setHeight(curr_size.height() * curr_resize_factor);
 		}
 		else
+		{
 			curr_resize_factor=RESIZE_FACTOR;
+			pixmap_size=scene_rect.size().toSize();
+		}
 
 		this->resize(curr_size.toSize());
 		this->setMaximumSize(curr_size.toSize());
@@ -194,6 +222,9 @@ void ModelOverviewWidget::mouseDoubleClickEvent(QMouseEvent *)
 
 void ModelOverviewWidget::mouseMoveEvent(QMouseEvent *event)
 {
+	if(!frame->isEnabled())
+		return;
+
 	if(event->buttons()==Qt::LeftButton)
 	{
 		QRect rect=window_frm->geometry(), rect1;
