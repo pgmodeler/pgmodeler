@@ -20,6 +20,7 @@
 [  <font id="index" color="] {index-fcolor} [" italic="] {index-italic} [" bold="] {index-bold} [" underline="] {index-underline} ["/>] $br
 [  <font id="rule" color="] {rule-fcolor} [" italic="] {rule-italic} [" bold="] {rule-bold} [" underline="] {rule-underline} ["/>] $br  
 [  <font id="trigger" color="] {trigger-fcolor} [" italic="] {trigger-italic} [" bold="] {trigger-bold} [" underline="] {trigger-underline} ["/>] $br
+[  <font id="constraint" color="] {constraint-fcolor} [" italic="] {constraint-italic} [" bold="] {constraint-bold} [" underline="] {constraint-underline} ["/>] $br
 [  <font id="view-name" color="] {view-name-fcolor} [" italic="] {view-name-italic} [" bold="] {view-name-bold} [" underline="] {view-name-underline} ["/>] $br
 [  <font id="view-schema-name" color="] {view-schema-name-fcolor} [" italic="] {view-schema-name-italic} [" bold="] {view-schema-name-bold} [" underline="] {view-schema-name-underline} ["/>] $br
 [  <font id="ref-table" color="] {ref-table-fcolor} [" italic="] {ref-table-italic} [" bold="] {ref-table-bold} [" underline="] {ref-table-underline} ["/>] $br
@@ -50,6 +51,7 @@ $br
 [  <object id="rule" fill-color="] {rule-color} [" border-color="] {rule-bcolor} ["/>] $br
 [  <object id="trigger" fill-color="] {trigger-color} [" border-color="] {trigger-bcolor} ["/>] $br
 [  <object id="index" fill-color="] {index-color} [" border-color="] {index-bcolor} ["/>] $br
+[  <object id="constraint" fill-color="] {constraint-color} [" border-color="] {constraint-bcolor} ["/>] $br
 [  <object id="locker-body" fill-color="] {locker-body-color} [" border-color="] {locker-body-bcolor} ["/>] $br
 [  <object id="locker-arc" fill-color="] {locker-arc-color} [" border-color="] {locker-arc-bcolor} ["/>] $br
 [  <object id="obj-selection" fill-color="] {obj-selection-color} [" border-color="] {obj-selection-bcolor} ["/>] $br
