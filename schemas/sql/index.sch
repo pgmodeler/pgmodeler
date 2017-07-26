@@ -31,7 +31,7 @@ $br $tb ( {elements} $br $tb )
 %end
 
 %if {stg-params} %then
- $tb [WITH (]
+ $br $tb [WITH (]
 
  %if {factor} %then
   [FILLFACTOR = ] {factor}

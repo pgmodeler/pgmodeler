@@ -48,7 +48,7 @@
      [ id.indkey::oid] $ob $cb [ AS columns,
        id. indclass::oid] $ob $cb [ AS opclasses,
        pg_get_expr(id.indpred, id.indexrelid) AS condition,
-       string_to_array(pg_get_expr(id.indexprs, id.indexrelid),',') AS expressions, ]
+       pg_get_expr(id.indexprs, id.indexrelid) AS expressions, ]
 
 		 %if ({pgsql-ver} <=f "9.1") %then
      [ FALSE AS no_inherit_bool, ]

@@ -1785,13 +1785,13 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 {
 	try
 	{
-		QStringList cols, exprs, opclasses, collations;
+		QStringList cols, opclasses, collations;
 		IndexElement elem;
 		BaseTable *parent_tab=nullptr;
 		Collation *coll=nullptr;
 		OperatorClass *opclass=nullptr;
 		QString tab_name, coll_name, opc_name;
-		int i, id_expr;
+		int i;
 
 		attribs[ParsersAttributes::FACTOR]=QString("90");
 		tab_name=getDependencyObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE, true, auto_resolve_deps, false);
@@ -1810,11 +1810,16 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 		}
 
 		cols=Catalog::parseArrayValues(attribs[ParsersAttributes::COLUMNS]);
-		exprs=Catalog::parseArrayValues(attribs[ParsersAttributes::EXPRESSIONS]);
 		collations=Catalog::parseArrayValues(attribs[ParsersAttributes::COLLATIONS]);
 		opclasses=Catalog::parseArrayValues(attribs[ParsersAttributes::OP_CLASSES]);
 
-		for(i=0, id_expr=0; i < cols.size(); i++)
+		if(!attribs[ParsersAttributes::EXPRESSIONS].isEmpty())
+		{
+			elem.setExpression(attribs[ParsersAttributes::EXPRESSIONS]);
+			attribs[ParsersAttributes::ELEMENTS]+=elem.getCodeDefinition(SchemaParser::XML_DEFINITION);
+		}
+
+		for(i=0; i < cols.size(); i++)
 		{
 			elem=IndexElement();
 
@@ -1825,8 +1830,6 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 				else
 					elem.setExpression(getColumnName(attribs[ParsersAttributes::TABLE], cols[i]));
 			}
-			else if(id_expr < exprs.size())
-				elem.setExpression(exprs[id_expr++]);
 
 			if(i < collations.size() && collations[i]!=QString("0"))
 			{
@@ -1846,7 +1849,8 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 					elem.setOperatorClass(opclass);
 			}
 
-			attribs[ParsersAttributes::ELEMENTS]+=elem.getCodeDefinition(SchemaParser::XML_DEFINITION);
+			if(elem.getColumn() || !elem.getExpression().isEmpty())
+				attribs[ParsersAttributes::ELEMENTS]+=elem.getCodeDefinition(SchemaParser::XML_DEFINITION);
 		}
 
 		attribs[ParsersAttributes::TABLE]=tab_name;
@@ -1887,7 +1891,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 
 			if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::EX_CONSTR)
 			{
-				QStringList cols, exprs, opclasses, opers;
+				QStringList cols, opclasses, opers;
 				ExcludeElement elem;
 				QString opc_name, op_name;
 				OperatorClass *opclass=nullptr;
@@ -1897,18 +1901,21 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 				attribs[ParsersAttributes::EXPRESSION]=attribs[ParsersAttributes::CONDITION];
 
 				cols=Catalog::parseArrayValues(attribs[ParsersAttributes::COLUMNS]);
-				exprs=Catalog::parseArrayValues(attribs[ParsersAttributes::EXPRESSIONS]);
 				opers=Catalog::parseArrayValues(attribs[ParsersAttributes::OPERATORS]);
 				opclasses=Catalog::parseArrayValues(attribs[ParsersAttributes::OP_CLASSES]);
 
-				for(int i=0, id_expr=0; i < cols.size(); i++)
+				if(!attribs[ParsersAttributes::EXPRESSIONS].isEmpty())
+				{
+					elem.setExpression(attribs[ParsersAttributes::EXPRESSIONS]);
+					attribs[ParsersAttributes::ELEMENTS]+=elem.getCodeDefinition(SchemaParser::XML_DEFINITION);
+				}
+
+				for(int i=0; i < cols.size(); i++)
 				{
 					elem=ExcludeElement();
 
 					if(cols[i]!=QString("0"))
 						elem.setColumn(table->getColumn(getColumnName(table_oid, cols[i])));
-					else if(id_expr < exprs.size())
-						elem.setExpression(exprs[id_expr++]);
 
 					if(i < opclasses.size() && opclasses[i]!=QString("0"))
 					{
@@ -1928,9 +1935,9 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 							elem.setOperator(oper);
 					}
 
-					attribs[ParsersAttributes::ELEMENTS]+=elem.getCodeDefinition(SchemaParser::XML_DEFINITION);
+					if(elem.getColumn())
+						attribs[ParsersAttributes::ELEMENTS]+=elem.getCodeDefinition(SchemaParser::XML_DEFINITION);
 				}
-
 			}
 			else
 			{
