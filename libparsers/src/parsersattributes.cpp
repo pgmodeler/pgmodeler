@@ -495,6 +495,7 @@ namespace ParsersAttributes {
 	TYPE=QString("type"),
 	TYPES=QString("types"),
 	TYPE_CLASS=QString("type-class"),
+	UI_LANGUAGE=QString("ui-language"),
 	UNDERLINE=QString("underline"),
 	UNIQUE=QString("unique"),
 	UNLOGGED=QString("unlogged"),

@@ -42,6 +42,7 @@
 <!ATTLIST configuration history-max-length CDATA #IMPLIED>
 <!ATTLIST configuration source-editor-app CDATA #IMPLIED>
 <!ATTLIST configuration source-editor-args CDATA #IMPLIED>
+<!ATTLIST configuration ui-language CDATA #IMPLIED>
 
 <!ELEMENT session (file+)>
 <!ELEMENT recent-models (file+)>

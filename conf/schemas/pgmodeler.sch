@@ -55,6 +55,10 @@ $sp [<configuration op-list-size="] {op-list-size} ["] $br
 [               source-editor-args="] {source-editor-args} ["] $br
 %end
 
+%if {ui-language} %then
+[               ui-language="] {ui-language} ["] $br
+%end
+
 [/>] $br
 
 %if {file} %then

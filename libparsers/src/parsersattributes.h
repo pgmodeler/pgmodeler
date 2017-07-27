@@ -510,6 +510,7 @@ namespace ParsersAttributes {
 	TYPE,
 	TYPES,
 	TYPE_CLASS,
+	UI_LANGUAGE,
 	UNDERLINE,
 	UNIQUE,
 	UNLOGGED,
