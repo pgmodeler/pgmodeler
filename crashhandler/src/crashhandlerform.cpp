@@ -33,7 +33,7 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 
 	stack_txt=new QPlainTextEdit(this);
 	stack_txt->setReadOnly(true);
-	stack_txt->setFont(QFont("DejaVu Sans Mono"));
+	stack_txt->setFont(QFont("Source Code Pro"));
 	stack_txt->setLineWrapMode(QPlainTextEdit::NoWrap);
 
 	layout->addWidget(stack_txt);

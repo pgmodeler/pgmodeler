@@ -1198,10 +1198,6 @@ END
 ]]></definition>
 </function>
 
-<language name="internal" sql-disabled="true" trusted="false">
-	<role name="postgres"/>
-</language>
-
 <function name="gtsvector_consistent" sql-disabled="true"
 		window-func="false"
 		returns-setof="false"

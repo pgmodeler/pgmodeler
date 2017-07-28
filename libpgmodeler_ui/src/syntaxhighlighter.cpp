@@ -19,7 +19,7 @@
 #include "syntaxhighlighter.h"
 #include "numberedtexteditor.h"
 
-QFont SyntaxHighlighter::default_font=QFont(QString("DejaVu Sans Mono"), 10);
+QFont SyntaxHighlighter::default_font=QFont(QString("Source Code Pro"), 10);
 
 SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode, bool use_custom_tab_width) : QSyntaxHighlighter(parent)
 {

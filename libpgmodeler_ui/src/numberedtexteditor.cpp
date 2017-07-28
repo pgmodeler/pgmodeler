@@ -27,7 +27,7 @@
 bool NumberedTextEditor::line_nums_visible=true;
 bool NumberedTextEditor::highlight_lines=true;
 QColor NumberedTextEditor::line_hl_color=Qt::yellow;
-QFont NumberedTextEditor::default_font=QFont(QString("DejaVu Sans Mono"), 10);
+QFont NumberedTextEditor::default_font=QFont(QString("Source Code Pro"), 10);
 int NumberedTextEditor::tab_width=0;
 QString NumberedTextEditor::src_editor_app=QString();
 QString NumberedTextEditor::src_editor_app_args=QString();
