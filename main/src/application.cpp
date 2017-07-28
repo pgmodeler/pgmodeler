@@ -18,6 +18,7 @@
 #include "application.h"
 #include "globalattributes.h"
 #include "messagebox.h"
+#include "parsersattributes.h"
 
 Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 {
@@ -62,15 +63,37 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 		}
 	}
 
+	//Trying to identify if the user defined a custom UI language in the pgmodeler.conf file
+	QString conf_file =	GlobalAttributes::CONFIGURATIONS_DIR +
+											GlobalAttributes::DIR_SEPARATOR +
+											GlobalAttributes::GENERAL_CONF +
+											GlobalAttributes::CONFIGURATION_EXT;
+	QFile input;
+	QString lang_id = QLocale::system().name();
+
+	input.setFileName(conf_file);
+
+	if(input.open(QFile::ReadOnly))
+	{
+		QString buf = QString(input.readAll());
+		QRegExp regexp = QRegExp(QString("(%1)(.*)(=)(\\\")(.)+(\\\")(\\\n)").arg(ParsersAttributes::UI_LANGUAGE));
+		int idx =	regexp.indexIn(QString(buf));
+
+		//Extract the value of the ui-language attribute in the conf file
+		lang_id = buf.mid(idx, regexp.matchedLength());
+		lang_id.remove(ParsersAttributes::UI_LANGUAGE);
+		lang_id.remove(QChar('"')).remove(QChar('=')).remove(QChar('\n'));
+	}
+
 	//Tries to load the main ui translation according to the system's locale
 	main_translator=new QTranslator(this);
-	main_translator->load(QLocale::system().name(), GlobalAttributes::LANGUAGES_DIR);
+	main_translator->load(lang_id, GlobalAttributes::LANGUAGES_DIR);
 	this->installTranslator(main_translator);
 
 	//Trying to load plugins translations
 	dir_list=QDir(GlobalAttributes::PLUGINS_DIR +
-				  GlobalAttributes::DIR_SEPARATOR,
-				  QString("*"), QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
+								GlobalAttributes::DIR_SEPARATOR,
+								QString("*"), QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
 
 	while(!dir_list.isEmpty())
 	{
@@ -83,7 +106,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 					  GlobalAttributes::DIR_SEPARATOR + QString("lang") +
 					  GlobalAttributes::DIR_SEPARATOR;
 
-		plug_lang_file=plugin_name + QString(".") + QLocale::system().name();
+		plug_lang_file=plugin_name + QString(".") + lang_id;
 
 		//Check if the .qm file exists for the current plugin. If so create and install a translator
 		if(QFileInfo(plug_lang_dir + plug_lang_file + QString(".qm")).exists())

@@ -323,6 +323,9 @@ void GeneralConfigWidget::loadConfiguration(void)
 		source_editor_edt->setText(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SOURCE_EDITOR_APP]);
 		source_editor_args_edt->setText(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SOURCE_EDITOR_ARGS]);
 
+		int ui_idx = ui_language_cmb->findData(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::UI_LANGUAGE]);
+		ui_language_cmb->setCurrentIndex(ui_idx >= 0 ? ui_idx : 0);
+
 		for(QWidget *wgt : child_wgts)
 			wgt->blockSignals(false);
 
