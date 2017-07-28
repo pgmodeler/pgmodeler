@@ -89,7 +89,7 @@ void BaseForm::resizeForm(QWidget *widget)
 
 	// If the current height is greater than the widget's minimum height we will use a medium value
 	if(curr_h > min_size.height() && min_size.height() < max_h)
-		curr_h = (curr_h + min_size.height())/2;
+		curr_h = (curr_h + min_size.height())/2.5;
 	//Using the maximum height if the widget's minimum height exceeds the maximum allowed
 	else if(min_size.height() >= max_h)
 		curr_h = max_h;
