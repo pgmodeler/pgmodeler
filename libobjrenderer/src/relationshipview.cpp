@@ -515,9 +515,9 @@ void RelationshipView::configureLine(void)
 			p_central[1].setX(pos.x() + (rect.width()/1.5f));
 			p_central[1].setY(pos.y());
 
-			points.push_back(QPointF(p_central[0].x() + (9 * fator),  p_central[0].y()));
-			points.push_back(QPointF(p_central[0].x() + (9 * fator),  p_central[1].y() - (9 * fator)));
-			points.push_back(QPointF(p_central[1].x(),  p_central[1].y() - (9 * fator)));
+			points.push_back(QPointF(p_central[0].x() + (11 * fator),  p_central[0].y()));
+			points.push_back(QPointF(p_central[0].x() + (11 * fator),  p_central[1].y() - (11 * fator)));
+			points.push_back(QPointF(p_central[1].x(),  p_central[1].y() - (11 * fator)));
 			base_rel->setPoints(points);
 		}
 		else
