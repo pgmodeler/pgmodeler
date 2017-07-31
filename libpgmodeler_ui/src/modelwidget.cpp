@@ -1016,28 +1016,31 @@ void ModelWidget::configureObjectSelection(void)
 
 			//If there is only one selected object and this is a table, activates the relationship creation
 			if(!scene->isRelationshipLineVisible() &&
-					count==1 && obj_type1==OBJ_TABLE && new_obj_type > BASE_TABLE &&	 QApplication::keyboardModifiers()==0)
+				 count==1 && obj_type1==OBJ_TABLE && new_obj_type > BASE_TABLE &&	 QApplication::keyboardModifiers()==0)
 			{
 				BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(selected_objects[0]);
 				BaseObjectView *object=dynamic_cast<BaseObjectView *>(graph_obj->getReceiverObject());
 
 				scene->showRelationshipLine(true,
-											QPointF(object->scenePos().x() + object->boundingRect().width()/2,
-													object->scenePos().y() + object->boundingRect().height()/2));
+																		QPointF(object->scenePos().x() + object->boundingRect().width()/2,
+																						object->scenePos().y() + object->boundingRect().height()/2));
 			}
 			//If the user has selected object that are not tables, cancel the operation
-			else if(obj_type1!=OBJ_TABLE ||
-					(obj_type2!=OBJ_TABLE && obj_type2!=BASE_OBJECT))
+			else if(obj_type1!=OBJ_TABLE || (obj_type2!=OBJ_TABLE && obj_type2!=BASE_OBJECT))
 			{
 				this->cancelObjectAddition();
 			}
 
 			/* Case there is only one selected object (table) and the SHIFT key is pressed too, creates a self-relationship.
 				 Case there is two selected objects, create a relationship between them */
-			else if((count==1 && obj_type1==OBJ_TABLE &&  QApplication::keyboardModifiers()==Qt::ShiftModifier) ||
-					(count==2 && obj_type1==OBJ_TABLE && obj_type2==OBJ_TABLE))
+			else if((count==1 && obj_type1==OBJ_TABLE && QApplication::keyboardModifiers()==Qt::ShiftModifier) ||
+							(count==2 && obj_type1==OBJ_TABLE && obj_type2==OBJ_TABLE))
 			{
+				/* Forcing no signals to be emitted by the scene while the relationship is being configured to avoid this
+				 * method to be called unecessarily */
+				scene->blockSignals(true);
 				this->showObjectForm(new_obj_type);
+				scene->blockSignals(false);
 
 				//Cancels the operation after showing the relationship editing form
 				scene->clearSelection();

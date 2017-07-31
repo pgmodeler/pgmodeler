@@ -523,14 +523,14 @@ void RelationshipView::configureLine(void)
 		else
 		{
 			Relationship *rel=dynamic_cast<Relationship *>(base_rel);
-			bool rel_1n=( !bidirectional &&
-						  (base_rel->getRelationshipType()==Relationship::RELATIONSHIP_11 ||
-						   base_rel->getRelationshipType()==Relationship::RELATIONSHIP_1N ||
-						   base_rel->getRelationshipType()==Relationship::RELATIONSHIP_FK));
+			bool rel_1n=(!bidirectional &&
+									 (base_rel->getRelationshipType()==Relationship::RELATIONSHIP_11 ||
+										base_rel->getRelationshipType()==Relationship::RELATIONSHIP_1N ||
+										base_rel->getRelationshipType()==Relationship::RELATIONSHIP_FK));
 
 			if(rel &&
-					rel->getRelationshipType()==Relationship::RELATIONSHIP_11 &&
-					rel->isIdentifier())
+				 rel->getRelationshipType()==Relationship::RELATIONSHIP_11 &&
+				 rel->isIdentifier())
 			{
 				tables[0]=dynamic_cast<BaseTableView *>(rel->getReferenceTable()->getReceiverObject());
 				tables[1]=dynamic_cast<BaseTableView *>(rel->getReceiverTable()->getReceiverObject());
@@ -650,10 +650,10 @@ void RelationshipView::configureLine(void)
 				else
 				{
 					/* Fallback configuration: If no fk was found in the receiver table uses
-			 the tables' center points to configure the line in order to avoid glitched lines.
-			 This situation may happen when the relationship is being validated and the needed fks was not
-			 created yet. In a second interaction of the rel. validation they are created
-			 and the relationship is properly configured */
+					 * the tables' center points to configure the line in order to avoid glitched lines.
+					 * This situation may happen when the relationship is being validated and the needed fks was not
+					 * created yet. In a second interaction of the rel. validation they are created
+					 *  and the relationship is properly configured */
 					if(base_rel->getRelationshipType()==Relationship::RELATIONSHIP_FK)
 					{
 						p_central[1]=pk_pnt=ref_tab_view->getCenter();
@@ -834,7 +834,7 @@ void RelationshipView::configureLine(void)
 		if(line_conn_mode==CONNECT_CENTER_PNTS ||
 				base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_DEP ||
 				base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN ||
-				base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN)
+				(base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN && !base_rel->isSelfRelationship()))
 		{
 			for(i=0; i < 2; i++)
 			{

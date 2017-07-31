@@ -417,8 +417,7 @@ QVariant BaseObjectView::itemChange(GraphicsItemChange change, const QVariant &v
 		obj_selection->setVisible(value.toBool());
 
 		this->configurePositionInfo(this->pos());
-		emit s_objectSelected(dynamic_cast<BaseGraphicObject *>(this->getSourceObject()),
-							  value.toBool());
+		emit s_objectSelected(dynamic_cast<BaseGraphicObject *>(this->getSourceObject()), value.toBool());
 	}
 
 	return(value);
