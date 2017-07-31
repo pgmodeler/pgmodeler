@@ -371,18 +371,22 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	new_obj_overlay_wgt->setObjectName(QString("new_obj_overlay_wgt"));
 	new_obj_overlay_wgt->setVisible(false);
 
-	for(auto &obj_type : vector<ObjectType>({ BASE_OBJECT, OBJ_SCHEMA, OBJ_TABLE, OBJ_VIEW, OBJ_RELATIONSHIP, OBJ_TEXTBOX }))
+	vector<ObjectType> graph_types = { BASE_OBJECT, OBJ_SCHEMA, OBJ_TABLE, OBJ_VIEW, OBJ_RELATIONSHIP, OBJ_TEXTBOX };
+	QStringList labels = { trUtf8("All objects"), trUtf8("Schemas"), trUtf8("Tables"), trUtf8("Views"), trUtf8("Relationships"), trUtf8("Textboxes") };
+
+	i=0;
+	for(auto &obj_type : graph_types)
 	{
 		if(obj_type == BASE_OBJECT)
 		{
-			action=new QAction(trUtf8("All objects"), this);
+			action=new QAction(labels[i++], this);
 			action->setShortcut(QKeySequence(trUtf8("Ctrl+A")));
 			select_all_menu.addAction(action);
 			select_all_menu.addSeparator();
 		}
 		else
 		{
-			action=new QAction(QIcon(PgModelerUiNS::getIconPath(obj_type)), BaseObject::getTypeName(obj_type), this);
+			action=new QAction(QIcon(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(obj_type) + QString("_grp"))), labels[i++], this);
 			select_all_menu.addAction(action);
 		}
 
