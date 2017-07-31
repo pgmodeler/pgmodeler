@@ -283,7 +283,7 @@ namespace PgModelerUiNS {
 		dpi_factor = screen->logicalDotsPerInch() / 96.0f;
 
 		//If the dpi_factor is unchanged (1) we keep the dialog original dimension
-		if(dpi_factor <= 1)
+		if(dpi_factor <= 1.01f)
 			return;
 
 		max_h = screen->size().height() * 0.70;
