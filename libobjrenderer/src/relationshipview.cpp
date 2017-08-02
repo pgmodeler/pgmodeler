@@ -26,6 +26,9 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 	if(!rel)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
+	//path = new QGraphicsPathItem;
+	//this->addToGroup(path);
+
 	for(unsigned i=BaseRelationship::SRC_CARD_LABEL;
 		i <= BaseRelationship::REL_NAME_LABEL; i++)
 	{
@@ -76,6 +79,14 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 RelationshipView::~RelationshipView(void)
 {
 	QGraphicsItem *item=nullptr;
+
+	while(!curves.empty())
+	{
+		this->removeFromGroup(curves.back());
+		item = curves.back();
+		curves.pop_back();
+		delete(item);
+	}
 
 	for(int i=0; i < 2; i++)
 	{
@@ -228,6 +239,13 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 			pen=lin->pen();
 			pen.setColor(color);
 			lin->setPen(pen);
+		}
+
+		for(auto &curve : curves)
+		{
+			pen = curve->pen();
+			pen.setColor(color);
+			curve->setPen(pen);
 		}
 
 		//Shows/hides the attribute's selection
@@ -831,10 +849,11 @@ void RelationshipView::configureLine(void)
 			}
 		}
 
-		if(line_conn_mode==CONNECT_CENTER_PNTS ||
+		//Exposing the line ending circles
+		if((!base_rel->isSelfRelationship() && line_conn_mode==CONNECT_CENTER_PNTS) ||
 				base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_DEP ||
 				base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN ||
-				(base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN && !base_rel->isSelfRelationship()))
+				base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN)
 		{
 			for(i=0; i < 2; i++)
 			{
@@ -848,6 +867,50 @@ void RelationshipView::configureLine(void)
 		{
 			line_circles[0]->setVisible(false);
 			line_circles[1]->setVisible(false);
+		}
+
+		//Using bezier curves instead of straight lines to denote the relationship line
+		while(!curves.empty())
+		{
+			this->removeFromGroup(curves.back());
+			delete(curves.back());
+			curves.pop_back();
+		}
+
+		if(!base_rel->isSelfRelationship())
+		{
+			QGraphicsPathItem * path = nullptr;
+			QRectF brect;
+			QPainterPath ppath;
+
+			for(auto &line : lines)
+			{
+				path = new QGraphicsPathItem;
+				path->setZValue(line->zValue());
+
+				if(line->line().p1().x() < line->line().p2().x())
+				{
+					brect.setTopLeft(line->line().p1());
+					brect.setBottomRight(line->line().p2());
+				}
+				else
+				{
+					brect.setTopLeft(line->line().p2());
+					brect.setBottomRight(line->line().p1());
+				}
+
+				ppath = QPainterPath(brect.topLeft());
+				ppath.cubicTo(QPointF(brect.center().x(), brect.top()),
+											QPointF(brect.center().x(), brect.bottom()),
+											brect.bottomRight());
+
+				path->setPen(line->pen());
+				path->setPath(ppath);
+
+				curves.push_back(path);
+				this->addToGroup(path);
+				//line->setVisible(false);
+			}
 		}
 
 		this->configureDescriptor();
@@ -958,16 +1021,51 @@ void RelationshipView::configureDescriptor(void)
 			pnt.setY((lin.p1().y() + lin.p2().y()) / 2.0f);
 		}
 
-		descriptor->setRotation(-lin.angle());
-		obj_selection->setRotation(-lin.angle());
-		obj_shadow->setRotation(-lin.angle());
+		if(!curves.empty())
+		{
+			QPainterPath path(lin.p1());
+			QRectF rect;
+
+			if(lin.p1().x() < lin.p2().x())
+			{
+				rect.setTopLeft(lin.p1());
+				rect.setBottomRight(lin.p2());
+			}
+			else
+			{
+				rect.setTopLeft(lin.p2());
+				rect.setBottomRight(lin.p1());
+			}
+
+			path.cubicTo(rect.bottomLeft(), rect.topRight(), lin.p2());
+
+			/*qreal ang = QLineF(path.pointAtPercent(0.4), path.pointAtPercent(0.7)).angle();
+			qreal ang1 = lin.angle();
+
+			QTextStream out(stdout);
+			out << ang << endl;
+			out << ang1 << endl;
+			out << "--"<<endl;
+
+			descriptor->setRotation((ang + ang1)/2); */
+
+			QGraphicsLineItem * ln = new QGraphicsLineItem(QLineF(path.pointAtPercent(0.45), path.pointAtPercent(0.55)));
+			this->addToGroup(ln);
+			descriptor->setRotation(-lin.angle());
+		}
+		else
+		{
+			descriptor->setRotation(-lin.angle());
+			obj_selection->setRotation(-lin.angle());
+			obj_shadow->setRotation(-lin.angle());
+		}
 	}
 
 	x=x1=pnt.x() - (pol.boundingRect().width()/2.0f);
 	y=y1=pnt.y() - (pol.boundingRect().height()/2.0f);
 
 	protected_icon->setPos(x + ((pol.boundingRect().width()/2.0f) * 0.60f),
-						   y + ((pol.boundingRect().height()/2.0f) * 0.55f));
+												 y + ((pol.boundingRect().height()/2.0f) * 0.55f));
 
 	configureSQLDisabledInfo();
 	x1+=6 * HORIZ_SPACING;

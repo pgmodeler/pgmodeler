@@ -93,6 +93,8 @@ class RelationshipView: public BaseObjectView {
 
 		QGraphicsEllipseItem *line_circles[2];
 
+		vector<QGraphicsPathItem *> curves;
+
 		//! \brief Stores the selected child object index
 		int sel_object_idx;
 
