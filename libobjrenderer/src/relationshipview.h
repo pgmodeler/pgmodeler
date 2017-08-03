@@ -42,6 +42,9 @@ class RelationshipView: public BaseObjectView {
 		//! \brief Indicates that the relationship labels must be hidden
 		static bool hide_name_label;
 
+		//! \brief Indicates that the relationship lines should be curved
+		static bool use_curved_lines;
+
 		/*! \brief Specify the type of connection used by the lines. The first (classical)
 		is to connect the line to tables through their central points. The second (better semantics)
 		makes the line start from the fk columns on receiver table and connecting to the pk columns on reference table */
@@ -157,6 +160,12 @@ class RelationshipView: public BaseObjectView {
 
 		//! \brief Returns the current visibility state of name label
 		static bool isNameLabelHidden(void);
+
+		//! \brief Enables the usage of curved lines for all relationships
+		static void setCurvedLines(bool value);
+
+		//! \brief Returns the current state of curved lines usage
+		static bool isCurvedLines(void);
 
 		/*! \brief Configures the mode in which the lines are connected on tables.
 		The first one is the CONNECT_CENTER_PNTS (the classical one) which connects the

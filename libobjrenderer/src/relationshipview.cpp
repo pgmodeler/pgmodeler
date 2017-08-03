@@ -19,15 +19,13 @@
 #include "relationshipview.h"
 
 bool RelationshipView::hide_name_label=false;
+bool RelationshipView::use_curved_lines=true;
 unsigned RelationshipView::line_conn_mode=RelationshipView::CONNECT_FK_TO_PK;
 
 RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 {
 	if(!rel)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-
-	//path = new QGraphicsPathItem;
-	//this->addToGroup(path);
 
 	for(unsigned i=BaseRelationship::SRC_CARD_LABEL;
 		i <= BaseRelationship::REL_NAME_LABEL; i++)
@@ -147,6 +145,16 @@ void RelationshipView::setHideNameLabel(bool value)
 bool RelationshipView::isNameLabelHidden(void)
 {
 	return(hide_name_label);
+}
+
+void RelationshipView::setCurvedLines(bool value)
+{
+	use_curved_lines = value;
+}
+
+bool RelationshipView::isCurvedLines(void)
+{
+	return(use_curved_lines);
 }
 
 void RelationshipView::setLineConnectionMode(unsigned mode)
@@ -870,23 +878,27 @@ void RelationshipView::configureLine(void)
 		}
 
 		//Using bezier curves instead of straight lines to denote the relationship line
-		while(!curves.empty())
-		{
-			this->removeFromGroup(curves.back());
-			delete(curves.back());
-			curves.pop_back();
-		}
-
-		if(!base_rel->isSelfRelationship())
+		if(use_curved_lines && !base_rel->isSelfRelationship())
 		{
 			QGraphicsPathItem * path = nullptr;
 			QRectF brect;
 			QPainterPath ppath;
 
+			i = 0;
+
 			for(auto &line : lines)
 			{
-				path = new QGraphicsPathItem;
-				path->setZValue(line->zValue());
+				if(i >= static_cast<int>(curves.size()))
+				{
+					path = new QGraphicsPathItem;
+					path->setZValue(line->zValue());
+					this->addToGroup(path);
+					curves.push_back(path);
+				}
+				else
+					path = curves[i];
+
+				i++;
 
 				if(line->line().p1().x() < line->line().p2().x())
 				{
@@ -904,12 +916,37 @@ void RelationshipView::configureLine(void)
 											QPointF(brect.center().x(), brect.bottom()),
 											brect.bottomRight());
 
+				path->setPath(ppath);		
 				path->setPen(line->pen());
-				path->setPath(ppath);
+				line->setVisible(false);
+			}
 
-				curves.push_back(path);
-				this->addToGroup(path);
-				//line->setVisible(false);
+			//Removing unused curves
+			i=lines.size();
+			i1=curves.size();
+
+			while(i1 > i)
+			{
+				path=curves.back();
+				curves.pop_back();
+				this->removeFromGroup(path);
+				delete(path);
+				i1--;
+			}
+		}
+		else if(!use_curved_lines && !lines.empty() && !curves.empty())
+		{
+			QGraphicsPathItem *path = nullptr;
+
+			for(auto &line : lines)
+				line->setVisible(true);
+
+			while(!curves.empty())
+			{
+				path=curves.back();
+				curves.pop_back();
+				this->removeFromGroup(path);
+				delete(path);
 			}
 		}
 
@@ -948,7 +985,8 @@ void RelationshipView::configureDescriptor(void)
 	BaseRelationship *base_rel=this->getSourceObject();
 	Relationship *rel=dynamic_cast<Relationship *>(base_rel);
 	unsigned rel_type=base_rel->getRelationshipType();
-	double x, y, x1, y1, factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE) * BaseObjectView::getScreenDpiFactor();
+	double x, y, x1, y1, angle = 0,
+			factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE) * BaseObjectView::getScreenDpiFactor();
 	QPen pen;
 	QPointF pnt;
 	vector<QPointF> points=base_rel->getPoints();
@@ -1023,42 +1061,24 @@ void RelationshipView::configureDescriptor(void)
 
 		if(!curves.empty())
 		{
-			QPainterPath path(lin.p1());
-			QRectF rect;
+			QPainterPath ppath(lin.p1());
+			QRectF brect(lin.p1(), lin.p2());
 
-			if(lin.p1().x() < lin.p2().x())
-			{
-				rect.setTopLeft(lin.p1());
-				rect.setBottomRight(lin.p2());
-			}
-			else
-			{
-				rect.setTopLeft(lin.p2());
-				rect.setBottomRight(lin.p1());
-			}
+			ppath = QPainterPath(brect.topLeft());
+			ppath.cubicTo(QPointF(brect.center().x(), brect.top()),
+										QPointF(brect.center().x(), brect.bottom()),
+										lin.p2());
 
-			path.cubicTo(rect.bottomLeft(), rect.topRight(), lin.p2());
-
-			/*qreal ang = QLineF(path.pointAtPercent(0.4), path.pointAtPercent(0.7)).angle();
-			qreal ang1 = lin.angle();
-
-			QTextStream out(stdout);
-			out << ang << endl;
-			out << ang1 << endl;
-			out << "--"<<endl;
-
-			descriptor->setRotation((ang + ang1)/2); */
-
-			QGraphicsLineItem * ln = new QGraphicsLineItem(QLineF(path.pointAtPercent(0.45), path.pointAtPercent(0.55)));
-			this->addToGroup(ln);
-			descriptor->setRotation(-lin.angle());
+			angle = -ppath.angleAtPercent(0.63);
 		}
 		else
 		{
-			descriptor->setRotation(-lin.angle());
-			obj_selection->setRotation(-lin.angle());
-			obj_shadow->setRotation(-lin.angle());
+			angle = -lin.angle();
 		}
+
+		descriptor->setRotation(angle);
+		obj_selection->setRotation(angle);
+		obj_shadow->setRotation(angle);
 	}
 
 	x=x1=pnt.x() - (pol.boundingRect().width()/2.0f);
