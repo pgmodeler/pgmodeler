@@ -279,7 +279,7 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		BaseRelationship *base_rel=this->getSourceObject();
 
 		//Resets the labels position when mid-button is pressed
-		if(event->buttons()==Qt::MidButton)
+		if(event->buttons()==Qt::LeftButton && event->modifiers()==(Qt::AltModifier | Qt::ControlModifier))
 		{
 			base_rel->resetLabelsDistance();
 			this->configureLabels();
@@ -327,7 +327,6 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 				 must be inserted */
 						lin.setP1(QPointF(event->pos().x()-50, event->pos().y()-50));
 						lin.setP2(QPointF(event->pos().x()+50, event->pos().y()+50));
-
 
 						//Case the auxiliary line intercepts one relationship line
 						if(lines[i]->line().intersect(lin,&p)==QLineF::BoundedIntersection)
@@ -695,8 +694,8 @@ void RelationshipView::configureLine(void)
 
 			points=base_rel->getPoints();
 			count=points.size();
-			pol_aux.append(QPointF(0,0)); pol_aux.append(QPointF(5,0));
-			pol_aux.append(QPointF(5,5)); pol_aux.append(QPointF(0,5));
+			pol_aux.append(QPointF(0,0)); pol_aux.append(QPointF(6,0));
+			pol_aux.append(QPointF(6,6)); pol_aux.append(QPointF(0,6));
 
 			for(i=0; i < count; i++)
 			{
@@ -899,24 +898,15 @@ void RelationshipView::configureLine(void)
 					path = curves[i];
 
 				i++;
-
-				if(line->line().p1().x() < line->line().p2().x())
-				{
-					brect.setTopLeft(line->line().p1());
-					brect.setBottomRight(line->line().p2());
-				}
-				else
-				{
-					brect.setTopLeft(line->line().p2());
-					brect.setBottomRight(line->line().p1());
-				}
-
+				brect.setTopLeft(line->line().p1());
+				brect.setBottomRight(line->line().p2());
 				ppath = QPainterPath(brect.topLeft());
+
 				ppath.cubicTo(QPointF(brect.center().x(), brect.top()),
 											QPointF(brect.center().x(), brect.bottom()),
 											brect.bottomRight());
 
-				path->setPath(ppath);		
+				path->setPath(ppath);
 				path->setPen(line->pen());
 				line->setVisible(false);
 			}
@@ -1020,7 +1010,7 @@ void RelationshipView::configureDescriptor(void)
 			grad.setColorAt(i, colors[i]);
 		}
 
-		grad.setCoordinateMode(QGradient::ObjectBoundingMode);;
+		grad.setCoordinateMode(QGradient::ObjectBoundingMode);
 		descriptor->setBrush(grad);
 	}
 	else
