@@ -291,7 +291,7 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 			QRectF rect;
 			unsigned i, count;
 			bool pnt_rem=false;
-			vector<QPointF> pontos=base_rel->getPoints();
+			vector<QPointF> points=base_rel->getPoints();
 
 			if(!base_rel->isSelfRelationship())
 			{
@@ -310,8 +310,8 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 						//Case the mouse pos is inside the point rect
 						if(rect.contains(event->pos()))
 						{
-							pontos.erase(pontos.begin()+i);
-							base_rel->setPoints(pontos);
+							points.erase(points.begin()+i);
+							base_rel->setPoints(points);
 							this->configureLine();
 							pnt_rem=true;
 							break;
@@ -323,22 +323,24 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 					for(i=0; i < count && !pnt_rem; i++)
 					{
 						/* Creates a auxiliary line based upon the cursor position. This
-				 line is used to calculate the exact point (intersection) where the new one
-				 must be inserted */
-						lin.setP1(QPointF(event->pos().x()-50, event->pos().y()-50));
-						lin.setP2(QPointF(event->pos().x()+50, event->pos().y()+50));
+						 * line is used to calculate the exact point (intersection) where the new one
+						 * must be inserted */
+						lin.setP1(QPointF(event->pos().x() - 50, event->pos().y() - 50));
+						lin.setP2(QPointF(event->pos().x() + 50, event->pos().y() + 50));
 
 						//Case the auxiliary line intercepts one relationship line
-						if(lines[i]->line().intersect(lin,&p)==QLineF::BoundedIntersection)
+						if((!use_curved_lines && lines[i]->line().intersect(lin, &p) == QLineF::BoundedIntersection) ||
+							 (use_curved_lines && curves[i]->path().contains(event->pos())))
 						{
 							//Inserts the point to the line
-							if(i >= pontos.size())
-								pontos.push_back( event->pos());
+							if(i >= points.size())
+								points.push_back(event->pos());
 							else
-								pontos.insert(pontos.begin() + i, event->pos());
-							base_rel->setPoints(pontos);
+								points.insert(points.begin() + i, event->pos());
 
+							base_rel->setPoints(points);
 							this->configureLine();
+
 							break;
 						}
 					}
@@ -879,35 +881,24 @@ void RelationshipView::configureLine(void)
 		//Using bezier curves instead of straight lines to denote the relationship line
 		if(use_curved_lines && !base_rel->isSelfRelationship())
 		{
-			QGraphicsPathItem * path = nullptr;
-			QRectF brect;
-			QPainterPath ppath;
-
+			BezierCurve * curve = nullptr;
 			i = 0;
 
 			for(auto &line : lines)
 			{
 				if(i >= static_cast<int>(curves.size()))
 				{
-					path = new QGraphicsPathItem;
-					path->setZValue(line->zValue());
-					this->addToGroup(path);
-					curves.push_back(path);
+					curve = new BezierCurve;
+					curve->setZValue(line->zValue());
+					this->addToGroup(curve);
+					curves.push_back(curve);
 				}
 				else
-					path = curves[i];
+					curve = curves[i];
 
 				i++;
-				brect.setTopLeft(line->line().p1());
-				brect.setBottomRight(line->line().p2());
-				ppath = QPainterPath(brect.topLeft());
-
-				ppath.cubicTo(QPointF(brect.center().x(), brect.top()),
-											QPointF(brect.center().x(), brect.bottom()),
-											brect.bottomRight());
-
-				path->setPath(ppath);
-				path->setPen(line->pen());
+				curve->setLine(line->line());
+				curve->setPen(line->pen());
 				line->setVisible(false);
 			}
 
@@ -917,26 +908,26 @@ void RelationshipView::configureLine(void)
 
 			while(i1 > i)
 			{
-				path=curves.back();
+				curve=curves.back();
 				curves.pop_back();
-				this->removeFromGroup(path);
-				delete(path);
+				this->removeFromGroup(curve);
+				delete(curve);
 				i1--;
 			}
 		}
 		else if(!use_curved_lines && !lines.empty() && !curves.empty())
 		{
-			QGraphicsPathItem *path = nullptr;
+			BezierCurve *curve = nullptr;
 
 			for(auto &line : lines)
 				line->setVisible(true);
 
 			while(!curves.empty())
 			{
-				path=curves.back();
+				curve=curves.back();
 				curves.pop_back();
-				this->removeFromGroup(path);
-				delete(path);
+				this->removeFromGroup(curve);
+				delete(curve);
 			}
 		}
 
@@ -1051,15 +1042,8 @@ void RelationshipView::configureDescriptor(void)
 
 		if(!curves.empty())
 		{
-			QPainterPath ppath(lin.p1());
-			QRectF brect(lin.p1(), lin.p2());
-
-			ppath = QPainterPath(brect.topLeft());
-			ppath.cubicTo(QPointF(brect.center().x(), brect.top()),
-										QPointF(brect.center().x(), brect.bottom()),
-										lin.p2());
-
-			angle = -ppath.angleAtPercent(0.63);
+			QPainterPath path = curves.at(curves.size()/2)->path();
+			angle = -path.angleAtPercent(0.60);
 		}
 		else
 		{
