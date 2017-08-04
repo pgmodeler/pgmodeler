@@ -41,7 +41,4 @@
 
     %end
  %end
-
-%else
-    SELECT FROM bla;
 %end
