@@ -330,7 +330,7 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 						//Case the auxiliary line intercepts one relationship line
 						if((!use_curved_lines && lines[i]->line().intersect(lin, &p) == QLineF::BoundedIntersection) ||
-							 (use_curved_lines && curves[i]->path().contains(event->pos())))
+							 (use_curved_lines && curves[i]->contains(event->pos())))
 						{
 							//Inserts the point to the line
 							if(i >= points.size())
@@ -515,7 +515,7 @@ void RelationshipView::configureLine(void)
 		QString tool_tip;
 		QGraphicsItem *item=nullptr;
 		int i, i1, count, idx_lin_desc=0;
-		bool bidirectional=base_rel->isBidirectional();
+		bool conn_same_sides = false, bidirectional=base_rel->isBidirectional();
 
 		configuring_line=true;
 		pen.setCapStyle(Qt::RoundCap);
@@ -617,6 +617,8 @@ void RelationshipView::configureLine(void)
 				if(ref_tab_rect.intersects(rec_tab_rect))
 				{
 					//Connects the rectangle at the same sides on both tables
+					conn_same_sides = true;
+
 					if(rec_tab_rect.center().x() >= ref_tab_rect.center().x())
 						pk_pnt_type=fk_pnt_type=BaseTableView::LEFT_CONN_POINT;
 					else if(rec_tab_rect.center().x() < ref_tab_rect.center().x())
@@ -881,14 +883,14 @@ void RelationshipView::configureLine(void)
 		//Using bezier curves instead of straight lines to denote the relationship line
 		if(use_curved_lines && !base_rel->isSelfRelationship())
 		{
-			BezierCurve * curve = nullptr;
+			BezierCurveItem * curve = nullptr;
 			i = 0;
 
 			for(auto &line : lines)
 			{
 				if(i >= static_cast<int>(curves.size()))
 				{
-					curve = new BezierCurve;
+					curve = new BezierCurveItem;
 					curve->setZValue(line->zValue());
 					this->addToGroup(curve);
 					curves.push_back(curve);
@@ -897,7 +899,10 @@ void RelationshipView::configureLine(void)
 					curve = curves[i];
 
 				i++;
-				curve->setLine(line->line());
+				curve->setLine(line->line(),
+											 conn_same_sides && lines.size() == 1,
+											 base_rel->getRelationshipType());
+
 				curve->setPen(line->pen());
 				line->setVisible(false);
 			}
@@ -917,7 +922,7 @@ void RelationshipView::configureLine(void)
 		}
 		else if(!use_curved_lines && !lines.empty() && !curves.empty())
 		{
-			BezierCurve *curve = nullptr;
+			BezierCurveItem *curve = nullptr;
 
 			for(auto &line : lines)
 				line->setVisible(true);
@@ -1042,8 +1047,19 @@ void RelationshipView::configureDescriptor(void)
 
 		if(!curves.empty())
 		{
-			QPainterPath path = curves.at(curves.size()/2)->path();
-			angle = -path.angleAtPercent(0.60);
+			BezierCurveItem *curve =  curves.at(curves.size()/2);
+			QPainterPath path = curve->path();
+
+			if(curve->isSimpleCurve())
+			{
+				angle = -path.angleAtPercent(0.65);
+				pnt = path.pointAtPercent(0.65);
+			}
+			else
+			{
+				angle = -path.angleAtPercent(0.60);
+				pnt = path.pointAtPercent(0.50);
+			}
 		}
 		else
 		{

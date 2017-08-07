@@ -28,44 +28,10 @@
 #include "textboxview.h"
 #include "tableview.h"
 #include "relationship.h"
+#include "beziercurveitem.h"
 
 class RelationshipView: public BaseObjectView {
 	private:
-		/* Custom implementation of QGraphicsPathItem to simulate
-		 * Bezier curves derivated from lines */
-		class BezierCurve: public QGraphicsPathItem {
-			private:
-				QPainterPath stroke;
-
-			protected:
-				void setPath(const QPainterPath &path)
-				{
-					QPainterPathStroker ps;
-					QGraphicsPathItem::setPath(path);
-					stroke = ps.createStroke(path);
-				}
-
-			public:
-				void setLine(const QLineF &line)
-				{
-					QPainterPath path;
-					QRectF brect;
-
-					brect.setTopLeft(line.p1());
-					brect.setBottomRight(line.p2());
-					path = QPainterPath(brect.topLeft());
-					path.cubicTo(QPointF(brect.center().x(), brect.top()),
-											 QPointF(brect.center().x(), brect.bottom()),
-											 brect.bottomRight());
-					this->setPath(path);
-				}
-
-				virtual bool collidesWithPath(const QPainterPath &path, Qt::ItemSelectionMode) const
-				{
-					return(stroke.intersects(path));
-				}
-		};
-
 		Q_OBJECT
 
 		//! \brief Graphical point radius
@@ -131,7 +97,7 @@ class RelationshipView: public BaseObjectView {
 
 		QGraphicsEllipseItem *line_circles[2];
 
-		vector<BezierCurve *> curves;
+		vector<BezierCurveItem *> curves;
 
 		//! \brief Stores the selected child object index
 		int sel_object_idx;
