@@ -717,7 +717,7 @@ void RelationshipView::configureLine(void)
 					pol=graph_points[i];
 
 				pol->setPos(points[i]);
-				pol->moveBy(-GRAPHIC_PNT_RADIUS/2.5, -GRAPHIC_PNT_RADIUS/2.5);
+				pol->moveBy(-GRAPHIC_PNT_RADIUS/2, -GRAPHIC_PNT_RADIUS/2);
 				pol->setVisible(this->isSelected());
 			}
 
@@ -736,13 +736,19 @@ void RelationshipView::configureLine(void)
 		conn_points[0]=p_central[0];
 		conn_points[1]=p_central[1];
 
-		//Configuring the relationship line color
-		if(base_rel->getCustomColor()!=Qt::transparent)
-			//Using custom color
-			pen.setColor(base_rel->getCustomColor());
+		//If the relationship is selected we do not change the lines colors
+		if(this->isSelected() && !lines.empty())
+			pen = lines[0]->pen();
 		else
-			//Using the default color
-			pen=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP);
+		{
+			//Configuring the relationship line color
+			if(base_rel->getCustomColor()!=Qt::transparent)
+				//Using custom color
+				pen.setColor(base_rel->getCustomColor());
+			else
+				//Using the default color
+				pen=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP);
+		}
 
 		//For dependency relationships the line is dashed
 		if(base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_DEP)
