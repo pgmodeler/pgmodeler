@@ -1050,16 +1050,9 @@ void RelationshipView::configureDescriptor(void)
 			}
 			else
 			{
-				if(curve->isSimpleCurve())
-				{
-					angle = -path.angleAtPercent(0.65);
-					pnt = path.pointAtPercent(0.65);
-				}
-				else
-				{
-					angle = -path.angleAtPercent(0.60);
-					pnt = path.pointAtPercent(0.50);
-				}
+				double percent = path.percentAtLength(path.length()/2);
+				angle = -path.angleAtPercent(percent);
+				pnt = path.pointAtPercent(percent);
 			}
 		}
 		else
