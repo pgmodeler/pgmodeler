@@ -97,6 +97,7 @@ class RelationshipView: public BaseObjectView {
 
 		QGraphicsEllipseItem *line_circles[2];
 
+		//! \brief Stores the curved lines representing the relationship
 		vector<BezierCurveItem *> curves;
 
 		//! \brief Stores the selected child object index
