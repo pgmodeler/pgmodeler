@@ -1035,34 +1035,45 @@ void RelationshipView::configureDescriptor(void)
 		pnt=points.at(points.size()/2);
 	else
 	{
-		lin=lines.at(lines.size()/2)->line();
-
-		if(rel && rel->isIdentifier())
-			pnt=lin.p1();
-		else
-		{
-			pnt.setX((lin.p1().x() + lin.p2().x()) / 2.0f);
-			pnt.setY((lin.p1().y() + lin.p2().y()) / 2.0f);
-		}
-
 		if(!curves.empty())
 		{
-			BezierCurveItem *curve =  curves.at(curves.size()/2);
+			int idx = curves.size()/2;
+			BezierCurveItem *curve =  curves.at(idx);
 			QPainterPath path = curve->path();
 
-			if(curve->isSimpleCurve())
+			if(rel && rel->isIdentifier())
 			{
-				angle = -path.angleAtPercent(0.65);
-				pnt = path.pointAtPercent(0.65);
+				BezierCurveItem *curve_aux =  curves.at(idx - 1);
+				QLineF lin_aux = QLineF(path.pointAtPercent(0.10), curve_aux->path().pointAtPercent(0.90));
+				angle = -lin_aux.angle();
+				pnt = path.pointAtPercent(0);
 			}
 			else
 			{
-				angle = -path.angleAtPercent(0.60);
-				pnt = path.pointAtPercent(0.50);
+				if(curve->isSimpleCurve())
+				{
+					angle = -path.angleAtPercent(0.65);
+					pnt = path.pointAtPercent(0.65);
+				}
+				else
+				{
+					angle = -path.angleAtPercent(0.60);
+					pnt = path.pointAtPercent(0.50);
+				}
 			}
 		}
 		else
 		{
+			lin=lines.at(lines.size()/2)->line();
+
+			if(rel && rel->isIdentifier())
+				pnt=lin.p1();
+			else
+			{
+				pnt.setX((lin.p1().x() + lin.p2().x()) / 2.0f);
+				pnt.setY((lin.p1().y() + lin.p2().y()) / 2.0f);
+			}
+
 			angle = -lin.angle();
 		}
 
