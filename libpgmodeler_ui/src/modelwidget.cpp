@@ -4394,23 +4394,23 @@ void ModelWidget::rearrangeObjects(void)
 		objects.assign(not_linked_tabs.begin(), not_linked_tabs.end());
 		objects.insert(objects.end(), db_model->getObjectList(OBJ_TEXTBOX)->begin(), db_model->getObjectList(OBJ_TEXTBOX)->end());
 
-		px = 50;
-		py = items_rect.bottom() + 50;
+		px = 100;
+		py = items_rect.bottom() + 100;
 		max_h = 0;
 
 		for(auto &obj : objects)
 		{
 			obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
 			obj_view->setPos(px, py);
-			px += obj_view->boundingRect().width() + 50;
+			px += obj_view->boundingRect().width() + 100;
 
 			if(obj_view->boundingRect().height() > max_h)
 				max_h = obj_view->boundingRect().height();
 
 			if(px > max_w)
 			{
-				px = 50;
-				py += max_h + 50;
+				px = 100;
+				py += max_h + 100;
 			}
 		}
 
@@ -4424,7 +4424,8 @@ void ModelWidget::rearrangeObjects(void)
 			rel->setPoints({});
 			rel->resetLabelsDistance();
 
-			if(rel->getTable(BaseRelationship::SRC_TABLE)->getPosition().y() !=
+			if(!RelationshipView::isCurvedLines() &&
+				 rel->getTable(BaseRelationship::SRC_TABLE)->getPosition().y() !=
 				 rel->getTable(BaseRelationship::DST_TABLE)->getPosition().y())
 				breakRelationshipLine(dynamic_cast<BaseRelationship *>(obj), ModelWidget::BREAK_VERT_2NINETY_DEGREES);
 		}

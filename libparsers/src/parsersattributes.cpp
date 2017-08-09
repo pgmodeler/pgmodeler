@@ -508,6 +508,7 @@ namespace ParsersAttributes {
 	UQ_CONSTR=QString("uq-constr"),
 	UQ_PATTERN=QString("uq-pattern"),
 	USAGE_PRIV=QString("usage"),
+	USE_CURVED_LINES=QString("use-curved-lines"),
 	USE_PLACEHOLDERS=QString("use-placeholders"),
 	USE_SORTING=QString("use-sorting"),
 	USE_UNIQUE_NAMES=QString("use-unique-names"),
