@@ -35,7 +35,6 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	setupUi(this);
 	setWindowFlags(Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
-	results_tbw->installEventFilter(this);
 	table_oid=0;
 
 	PgModelerUiNS::configureWidgetFont(hint_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
@@ -50,30 +49,31 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	results_tbw->setItemDelegate(new PlainTextItemDelegate(this, false));
 	browse_tabs_tb->setMenu(&fks_menu);
 
-	act = copy_menu.addAction(trUtf8("Copy as text"));
-	act->setShortcut(QKeySequence("Ctrl+C"));
-	connect(act, &QAction::triggered,	[&](){
-		SQLExecutionWidget::copySelection(results_tbw, false, false);
-		has_csv_clipboard = false;
-	});
-
 	act = copy_menu.addAction(trUtf8("Copy as CSV"));
-	act->setShortcut(QKeySequence("Ctrl+Shift+C"));
+	act->setShortcut(QKeySequence("Ctrl+C"));
 	connect(act, &QAction::triggered, [&](){
 		SQLExecutionWidget::copySelection(results_tbw, false, true);
 		has_csv_clipboard = true;
+		paste_tb->setEnabled(true);
+	});
+
+	act = copy_menu.addAction(trUtf8("Copy as text"));
+	act->setShortcut(QKeySequence("Ctrl+Shift+C"));
+	connect(act, &QAction::triggered,	[&](){
+		SQLExecutionWidget::copySelection(results_tbw, false, false);
+		has_csv_clipboard = false;
+		paste_tb->setEnabled(true);
 	});
 
 	copy_tb->setMenu(&copy_menu);
-
 	refresh_tb->setToolTip(refresh_tb->toolTip() + QString(" (%1)").arg(refresh_tb->shortcut().toString()));
 	save_tb->setToolTip(save_tb->toolTip() + QString(" (%1)").arg(save_tb->shortcut().toString()));
 	undo_tb->setToolTip(undo_tb->toolTip() + QString(" (%1)").arg(undo_tb->shortcut().toString()));
 	export_tb->setToolTip(export_tb->toolTip() + QString(" (%1)").arg(export_tb->shortcut().toString()));
 	delete_tb->setToolTip(delete_tb->toolTip() + QString(" (%1)").arg(delete_tb->shortcut().toString()));
 	add_tb->setToolTip(add_tb->toolTip() + QString(" (%1)").arg(add_tb->shortcut().toString()));
-	copy_tb->setToolTip(copy_tb->toolTip() + QString(" (%1)").arg(copy_tb->shortcut().toString()));
 	duplicate_tb->setToolTip(duplicate_tb->toolTip() + QString(" (%1)").arg(duplicate_tb->shortcut().toString()));
+	paste_tb->setToolTip(paste_tb->toolTip() + QString(" (%1)").arg(paste_tb->shortcut().toString()));
 	result_info_wgt->setVisible(false);
 
 	//Forcing the splitter that handles the bottom widgets to resize its children to their minimum size
@@ -88,6 +88,11 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	layout->setContentsMargins(0,0,0,0);
 	csv_load_parent->setLayout(layout);
 	csv_load_parent->setMinimumSize(csv_load_wgt->minimumSize());
+
+	connect(paste_tb, &QToolButton::clicked, [&]{
+		loadDataFromCsv(true);
+		paste_tb->setEnabled(false);
+	});
 
 	connect(csv_load_tb, SIGNAL(toggled(bool)), csv_load_parent, SLOT(setVisible(bool)));
 	connect(close_btn, SIGNAL(clicked()), this, SLOT(reject()));
@@ -137,15 +142,13 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 						act = item_menu.addAction(QIcon(PgModelerUiNS::getIconPath("copiar")), trUtf8("Copy items"));
 						act->setMenu(&copy_menu);
 
+						act = item_menu.addAction(QIcon(PgModelerUiNS::getIconPath("colar")), trUtf8("Pase items"));
+						act->setShortcut(paste_tb->shortcut());
+						connect(act, SIGNAL(triggered(bool)), paste_tb, SLOT(click()));
+						act->setEnabled(obj_type == OBJ_TABLE);
+
 						if(obj_type == OBJ_TABLE)
 						{
-							if(qApp->clipboard()->ownsClipboard())
-							{
-								act = item_menu.addAction(QIcon(PgModelerUiNS::getIconPath("colar")), trUtf8("Paste items"));
-								act->setShortcut(QKeySequence("Ctrl+V"));
-								connect(act, &QAction::triggered, [&]{ loadDataFromCsv(true); });
-							}
-
 							item_menu.addSeparator();
 							act = item_menu.addAction(browse_tabs_tb->icon(), trUtf8("Browse tables"));
 							act->setMenu(&fks_menu);
@@ -397,6 +400,7 @@ void DataManipulationForm::enableRowControlButtons(void)
 	delete_tb->setEnabled(cols_selected);
 	duplicate_tb->setEnabled(cols_selected);
 	copy_tb->setEnabled(sel_ranges.count() == 1);
+	paste_tb->setEnabled(qApp->clipboard()->ownsClipboard());
 	browse_tabs_tb->setEnabled((!fk_infos.empty() || !ref_fk_infos.empty()) && sel_ranges.count() == 1 && sel_ranges.at(0).rowCount() == 1);
 }
 
@@ -1093,17 +1097,10 @@ void DataManipulationForm::browseTable(const QString &fk_name, bool browse_ref_t
 	data_manip->show();
 }
 
-bool DataManipulationForm::eventFilter(QObject *object, QEvent *event)
+void DataManipulationForm::showEvent(QShowEvent *)
 {
-	if(object == results_tbw && event->type() == QEvent::KeyPress)
-	{
-		QKeyEvent *k_event = dynamic_cast<QKeyEvent *>(event);
-
-		if(k_event->modifiers() == Qt::ControlModifier && k_event->key() == Qt::Key_V)
-			loadDataFromCsv(true);
-	}
-
-	return(QDialog::eventFilter(object, event));
+	paste_tb->setEnabled(qApp->clipboard()->ownsClipboard() &&
+											 table_cmb->currentData().toUInt() == OBJ_TABLE);
 }
 
 void DataManipulationForm::browseReferrerTable(void)
