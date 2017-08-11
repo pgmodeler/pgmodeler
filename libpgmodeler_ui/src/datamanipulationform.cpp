@@ -27,6 +27,7 @@ const unsigned DataManipulationForm::NO_OPERATION=0;
 const unsigned DataManipulationForm::OP_INSERT=1;
 const unsigned DataManipulationForm::OP_UPDATE=2;
 const unsigned DataManipulationForm::OP_DELETE=3;
+bool DataManipulationForm::has_csv_clipboard=false;
 
 DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f): QDialog(parent, f)
 {
@@ -34,6 +35,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	setupUi(this);
 	setWindowFlags(Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
+	results_tbw->installEventFilter(this);
 	table_oid=0;
 
 	PgModelerUiNS::configureWidgetFont(hint_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
@@ -50,11 +52,17 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	act = copy_menu.addAction(trUtf8("Copy as text"));
 	act->setShortcut(QKeySequence("Ctrl+C"));
-	connect(act, &QAction::triggered,	[&](){ SQLExecutionWidget::copySelection(results_tbw, false, false); });
+	connect(act, &QAction::triggered,	[&](){
+		SQLExecutionWidget::copySelection(results_tbw, false, false);
+		has_csv_clipboard = false;
+	});
 
 	act = copy_menu.addAction(trUtf8("Copy as CSV"));
 	act->setShortcut(QKeySequence("Ctrl+Shift+C"));
-	connect(act, &QAction::triggered, [&](){ SQLExecutionWidget::copySelection(results_tbw, false, true); });
+	connect(act, &QAction::triggered, [&](){
+		SQLExecutionWidget::copySelection(results_tbw, false, true);
+		has_csv_clipboard = true;
+	});
 
 	copy_tb->setMenu(&copy_menu);
 
@@ -126,11 +134,18 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 						QAction *act = nullptr;
 						ObjectType obj_type=static_cast<ObjectType>(table_cmb->currentData().toUInt());
 
-						act = item_menu.addAction(trUtf8("Copy selection"));
+						act = item_menu.addAction(QIcon(PgModelerUiNS::getIconPath("copiar")), trUtf8("Copy items"));
 						act->setMenu(&copy_menu);
 
 						if(obj_type == OBJ_TABLE)
 						{
+							if(qApp->clipboard()->ownsClipboard())
+							{
+								act = item_menu.addAction(QIcon(PgModelerUiNS::getIconPath("colar")), trUtf8("Paste items"));
+								act->setShortcut(QKeySequence("Ctrl+V"));
+								connect(act, &QAction::triggered, [&]{ loadDataFromCsv(true); });
+							}
+
 							item_menu.addSeparator();
 							act = item_menu.addAction(browse_tabs_tb->icon(), trUtf8("Browse tables"));
 							act->setMenu(&fks_menu);
@@ -444,11 +459,30 @@ void DataManipulationForm::swapColumns(void)
 	ord_columns_lst->setCurrentRow(new_idx);
 }
 
-void DataManipulationForm::loadDataFromCsv(void)
+void DataManipulationForm::loadDataFromCsv(bool load_from_clipboard)
 {
-	QList<QStringList> rows=csv_load_wgt->getCsvRows();
-	QStringList cols=csv_load_wgt->getCsvColumns();
+	QList<QStringList> rows;
+	QStringList cols;
 	int row_id = 0, col_id = 0;
+
+	if(load_from_clipboard)
+	{
+		if(!qApp->clipboard()->ownsClipboard())
+			return;
+
+		if(has_csv_clipboard)
+			rows = CsvLoadWidget::loadCsvFromBuffer(qApp->clipboard()->text(), QString(";"), QString("\""), true, cols);
+		else
+			rows = CsvLoadWidget::loadCsvFromBuffer(qApp->clipboard()->text(), QString("\t"), QString(), false, cols);
+
+		has_csv_clipboard = false;
+		qApp->clipboard()->clear();
+	}
+	else
+	{
+		rows = csv_load_wgt->getCsvRows();
+		cols = csv_load_wgt->getCsvColumns();
+	}
 
 	/* If there is only one empty row in the grid, this one will
 	be removed prior the csv loading */
@@ -476,10 +510,15 @@ void DataManipulationForm::loadDataFromCsv(void)
 
 		for(int i = 0; i < values.count(); i++)
 		{
-			if(csv_load_wgt->isColumnsInFirstRow())
+			if((!load_from_clipboard && csv_load_wgt->isColumnsInFirstRow()) ||
+				 (load_from_clipboard && !cols.isEmpty()))
 			{
 				//First we need to get the index of the column by its name
 				col_id=col_names.indexOf(cols[i]);
+
+				//If a matching column is not found we add the value at the current position
+				if(col_id < 0)
+					col_id = i;
 
 				if(col_id >= 0 && col_id < results_tbw->columnCount())
 					results_tbw->item(row_id, col_id)->setText(values.at(i));
@@ -1052,6 +1091,19 @@ void DataManipulationForm::browseTable(const QString &fk_name, bool browse_ref_t
 
 	PgModelerUiNS::resizeDialog(data_manip);
 	data_manip->show();
+}
+
+bool DataManipulationForm::eventFilter(QObject *object, QEvent *event)
+{
+	if(object == results_tbw && event->type() == QEvent::KeyPress)
+	{
+		QKeyEvent *k_event = dynamic_cast<QKeyEvent *>(event);
+
+		if(k_event->modifiers() == Qt::ControlModifier && k_event->key() == Qt::Key_V)
+			loadDataFromCsv(true);
+	}
+
+	return(QDialog::eventFilter(object, event));
 }
 
 void DataManipulationForm::browseReferrerTable(void)
