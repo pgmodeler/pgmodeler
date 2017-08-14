@@ -145,7 +145,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 						act = item_menu.addAction(QIcon(PgModelerUiNS::getIconPath("colar")), trUtf8("Pase items"));
 						act->setShortcut(paste_tb->shortcut());
 						connect(act, SIGNAL(triggered(bool)), paste_tb, SLOT(click()));
-						act->setEnabled(obj_type == OBJ_TABLE);
+						act->setEnabled(qApp->clipboard()->ownsClipboard() && obj_type == OBJ_TABLE);
 
 						if(obj_type == OBJ_TABLE)
 						{
