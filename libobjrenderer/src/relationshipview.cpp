@@ -868,9 +868,10 @@ void RelationshipView::configureLine(void)
 
 		//Exposing the line ending circles
 		if((!base_rel->isSelfRelationship() && line_conn_mode==CONNECT_CENTER_PNTS) ||
-				base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_DEP ||
-				base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN ||
-				base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN)
+			 (!base_rel->isSelfRelationship() &&
+				((base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_DEP) ||
+				 (base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN) ||
+				 (base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN))))
 		{
 			for(i=0; i < 2; i++)
 			{
