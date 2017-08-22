@@ -26,6 +26,7 @@ v0.9.0
 * [Change] Minor size adjustment for DatabaseImportForm.
 * [Change] Minor adjustment in the methods which automatically resize dialogs depending on the resolution.
 * [Change] Changed the default font for objects and source code.
+* [Fix] Minor fix in RelationshipView to hide the circles at end of lines for self relationships.
 * [Fix] Fixed the catalog query for event triggers.
 * [Fix] Fixed the icons and labels of the "Select all" submenu in ModelWidget.
 * [Fix] Fixed a rare crash when configuring self relationships.
