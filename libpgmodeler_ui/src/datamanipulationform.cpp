@@ -348,7 +348,7 @@ void DataManipulationForm::retrieveData(void)
 			results_tbw->setFocus();
 
 		if(table_cmb->currentData(Qt::UserRole).toUInt()==OBJ_TABLE)
-			csv_load_tb->setEnabled(true);
+			csv_load_tb->setEnabled(!col_names.isEmpty());
 		else
 		{
 			csv_load_tb->setEnabled(false);
@@ -359,6 +359,10 @@ void DataManipulationForm::retrieveData(void)
 		catalog.closeConnection();
 
 		QApplication::restoreOverrideCursor();
+
+		paste_tb->setEnabled(qApp->clipboard()->ownsClipboard() &&
+												 table_cmb->currentData().toUInt() == OBJ_TABLE &&
+												 !col_names.isEmpty());
 	}
 	catch(Exception &e)
 	{
@@ -400,7 +404,7 @@ void DataManipulationForm::enableRowControlButtons(void)
 	delete_tb->setEnabled(cols_selected);
 	duplicate_tb->setEnabled(cols_selected);
 	copy_tb->setEnabled(sel_ranges.count() == 1);
-	paste_tb->setEnabled(qApp->clipboard()->ownsClipboard());
+	paste_tb->setEnabled(qApp->clipboard()->ownsClipboard() && col_names.isEmpty());
 	browse_tabs_tb->setEnabled((!fk_infos.empty() || !ref_fk_infos.empty()) && sel_ranges.count() == 1 && sel_ranges.at(0).rowCount() == 1);
 }
 
@@ -668,7 +672,7 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 		}
 
 		hint_frm->setVisible(obj_type==OBJ_TABLE);
-		add_tb->setEnabled(obj_type==OBJ_TABLE);
+		add_tb->setEnabled(obj_type==OBJ_TABLE && !col_names.empty());
 		pk_col_names.clear();
 
 		if(!pks.empty())
@@ -1095,12 +1099,6 @@ void DataManipulationForm::browseTable(const QString &fk_name, bool browse_ref_t
 
 	PgModelerUiNS::resizeDialog(data_manip);
 	data_manip->show();
-}
-
-void DataManipulationForm::showEvent(QShowEvent *)
-{
-	paste_tb->setEnabled(qApp->clipboard()->ownsClipboard() &&
-											 table_cmb->currentData().toUInt() == OBJ_TABLE);
 }
 
 void DataManipulationForm::browseReferrerTable(void)

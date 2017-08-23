@@ -102,8 +102,6 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		//! brief Browse a referenced or referencing table by the provided foreign key name
 		void browseTable(const QString &fk_name, bool browse_ref_tab);
 
-		void showEvent(QShowEvent *);
-
 	public:
 		DataManipulationForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 		
