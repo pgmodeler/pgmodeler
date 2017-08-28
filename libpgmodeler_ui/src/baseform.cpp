@@ -101,7 +101,16 @@ void BaseForm::resizeForm(QWidget *widget)
 							((buttons_lt->contentsMargins().top() +
 								buttons_lt->contentsMargins().bottom()) * 6);
 
-	this->setMinimumSize(curr_w * dpi_factor, curr_h * dpi_factor);
+	curr_w *= dpi_factor;
+	curr_h *= dpi_factor;
+
+	if(curr_w > screen->size().width())
+		curr_w = screen->size().width() * 0.80;
+
+	if(curr_h > screen->size().height())
+		curr_h = screen->size().height() * 0.80;
+
+	this->setMinimumSize(curr_w, curr_h);
 	this->resize(this->minimumSize());
 }
 

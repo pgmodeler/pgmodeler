@@ -307,7 +307,16 @@ namespace PgModelerUiNS {
 		else if(min_size.height() >= max_h)
 			curr_h = max_h;
 
-		widget->setMinimumSize(curr_w * dpi_factor, curr_h * dpi_factor);
+		curr_w *= dpi_factor;
+		curr_h *= dpi_factor;
+
+		if(curr_w > screen->size().width())
+			curr_w = screen->size().width() * 0.80;
+
+		if(curr_h > screen->size().height())
+			curr_h = screen->size().height() * 0.80;
+
+		widget->setMinimumSize(curr_w, curr_h);
 		widget->resize(widget->minimumSize());
 	}
 }
