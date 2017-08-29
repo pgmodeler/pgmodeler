@@ -51,7 +51,8 @@ void BaseForm::resizeForm(QWidget *widget)
 	max_h = screen->size().height() * 0.70;
 	dpi_factor = screen->logicalDotsPerInch() / 96.0f;
 
-	if(dpi_factor < 1.0f) dpi_factor = 1.0f;
+	if(dpi_factor <= 1.01f)
+		dpi_factor = 1.0f;
 
 	vbox->setContentsMargins(2,2,2,2);
 
