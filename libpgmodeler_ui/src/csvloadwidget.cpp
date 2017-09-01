@@ -80,6 +80,53 @@ void CsvLoadWidget::selectCsvFile(void)
 	}
 }
 
+QList<QStringList> CsvLoadWidget::loadCsvFromBuffer(const QString &csv_buffer, const QString &separator, const QString &text_delim, bool cols_in_first_row, QStringList &csv_cols)
+{
+	QList<QStringList> csv_rows;
+
+	if(!csv_buffer.isEmpty())
+	{
+		QString	double_quote=QString("%1%1").arg(text_delim),
+				placeholder = QString("⁋");
+		QStringList values, rows;
+		QRegExp empty_val;
+
+		//If no custom separator is specified we use the default ';'
+		rows=csv_buffer.split(QChar::LineFeed, QString::SkipEmptyParts);
+
+		if(cols_in_first_row)
+		{
+			csv_cols=rows[0].split(separator);
+			csv_cols.replaceInStrings(text_delim, QString());
+			rows.removeAt(0);
+		}
+
+		//Configuring an regexp to remove empty quoted values, e.g, "",
+		if(!text_delim.isEmpty())
+			empty_val = QRegExp(QString("(\\%1\\%1)(\\%2)").arg(text_delim).arg(separator));
+
+		for(QString row : rows)
+		{
+			if(!empty_val.pattern().isEmpty())
+				row.replace(empty_val, separator);
+
+			/* In order to preserve double quotes (double delimiters) inside the values,
+			 we first replace them by a placeholder, erase the delimiters and restore the previous value */
+			row.replace(double_quote, placeholder);
+			row.replace(text_delim, QString());
+			row.replace(placeholder, double_quote);
+
+			values = row.split(separator);
+			for(int i =0; i < values.count(); i++)
+				values[i] = values[i].trimmed();
+
+			csv_rows.append(values);
+		}
+	}
+
+	return (csv_rows);
+}
+
 void CsvLoadWidget::loadCsvFile(void)
 {
 	QFile file;
@@ -98,44 +145,13 @@ void CsvLoadWidget::loadCsvFile(void)
 
 	if(!csv_buffer.isEmpty())
 	{
-		QString	double_quote=QString("%1%1").arg(txt_delim_edt->text()),
-				placeholder = QString("⁋"), separator;
-		QStringList separators={ QString(";"), QString(","), QString(" "), QString("\t") },
-				values, rows;
-		QRegExp empty_val;
-
-		//If no custom separator is specified we use the default ';'
+		QString separator;
+		QStringList separators={ QString(";"), QString(","), QString(" "), QString("\t") };
 		separators += (separator_edt->text().isEmpty() ? QString(";") : separator_edt->text());
 		separator = separators[separator_cmb->currentIndex()];
-		rows=csv_buffer.split(QChar::LineFeed, QString::SkipEmptyParts);
-
-		if(col_names_chk->isChecked())
-		{
-			csv_columns=rows[0].split(separator);
-			rows.removeAt(0);
-		}
-
-		//Configuring an regexp to remove empty quoted values, e.g, "",
-		if(txt_delim_chk->isChecked() && !txt_delim_edt->text().isEmpty())
-			empty_val = QRegExp(QString("(\\%1\\%1)(\\%2)").arg(txt_delim_edt->text()).arg(separator));
-
-		for(QString row : rows)
-		{
-			if(!empty_val.pattern().isEmpty())
-				row.replace(empty_val, separator);
-
-			/* In order to preserve double quotes (double delimiters) inside the values,
-			 we first replace them by a placeholder, erase the delimiters and restore the previous value */
-			row.replace(double_quote, placeholder);
-			row.replace(txt_delim_edt->text(), QString());
-			row.replace(placeholder, double_quote);
-
-			values = row.split(separator);
-			for(int i =0; i < values.count(); i++)
-				values[i] = values[i].trimmed();
-
-			csv_rows.append(values);
-		}
+		csv_rows = loadCsvFromBuffer(csv_buffer, separator,
+																 txt_delim_chk->isChecked() ? txt_delim_edt->text() : QString(),
+																 col_names_chk->isChecked(), csv_columns);
 	}
 
 	file_edt->clear();

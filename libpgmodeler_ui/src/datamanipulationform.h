@@ -40,6 +40,8 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		
 		//! \brief Default row colors for each operation type
 		static const QColor ROW_COLORS[3];
+
+		static bool has_csv_clipboard;
 		
 		CsvLoadWidget *csv_load_wgt;
 
@@ -105,7 +107,7 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		
 		//! \brief Defines the connection and current schema and table to be handled, this method should be called before show the dialog
 		void setAttributes(Connection conn, const QString curr_schema=QString("public"), const QString curr_table=QString(), const QString &filter=QString());
-		
+
 	private slots:
 		//! \brief List the tables based upon the current schema
 		void listTables(void);
@@ -165,7 +167,7 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		void swapColumns(void);
 
 		//! \brief Add new rows to the grid based upon the CSV loaded
-		void loadDataFromCsv(void);
+		void loadDataFromCsv(bool load_from_clipboard = false);
 
 		//! brief Browse the referenced table data using the selected row in the results grid
 		void browseReferencedTable(void);

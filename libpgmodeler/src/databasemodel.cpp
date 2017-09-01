@@ -8834,7 +8834,7 @@ void DatabaseModel::createSystemObjects(bool create_public)
 	Schema *public_sch=nullptr, *pg_catalog=nullptr;
 	Language *lang=nullptr;
 	Tablespace *tbspace=nullptr;
-	LanguageType lang_types[]={ LanguageType::c, LanguageType::sql, LanguageType::plpgsql };
+	LanguageType lang_types[]={ LanguageType::c, LanguageType::sql, LanguageType::plpgsql, LanguageType::internal };
 	Role *postgres=nullptr;
 	Collation *collation=nullptr;
 	QString collnames[]={ "default", "C", "POSIX" };

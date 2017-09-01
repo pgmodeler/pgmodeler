@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0-alpha" last-position="329,274" last-zoom="1">
+<dbmodel pgmodeler-ver="0.9.0" last-position="261,203" last-zoom="0.8">
 <database name="pagila" encoding="UTF8">
 	<role name="postgres"/>
 	<tablespace name="pg_default"/>
@@ -23,9 +23,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="actor">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="4406" y="1404"/>
+	<position x="4400" y="1400"/>
 	<column name="actor_id" not-null="true" default-value="nextval('actor_actor_id_seq'::regclass)">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="first_name" not-null="true">
 		<type name="character varying" length="45"/>
@@ -34,7 +34,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<type name="character varying" length="45"/>
 	</column>
 	<column name="last_update" not-null="true" default-value="now()">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</column>
 	<constraint name="actor_pkey" type="pk-constr" factor="100" table="public.actor">
 		<columns names="actor_id" ref-type="src-columns"/>
@@ -66,13 +66,13 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<role name="postgres"/>
 	<language name="sql" sql-disabled="true"/>
 	<return-type>
-	<type name="text"/>
+	<type name="text" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</parameter>
 	<definition><![CDATA[
 SELECT CASE
@@ -86,8 +86,8 @@ END
 <aggregate name="group_concat">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<type name="text"/>
-	<type name="text" ref-type="state-type"/>
+	<type name="text" length="1"/>
+	<type name="text" length="1" ref-type="state-type"/>
 	<function ref-type="transition" signature="public._group_concat(text,text)"/>
 </aggregate>
 
@@ -102,15 +102,15 @@ END
 <table name="category">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="4116" y="912"/>
+	<position x="4120" y="920"/>
 	<column name="category_id" not-null="true" default-value="nextval('category_category_id_seq'::regclass)">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="name" not-null="true">
 		<type name="character varying" length="25"/>
 	</column>
 	<column name="last_update" not-null="true" default-value="now()">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</column>
 	<constraint name="category_pkey" type="pk-constr" factor="100" table="public.category">
 		<columns names="category_id" ref-type="src-columns"/>
@@ -128,48 +128,48 @@ END
 <table name="film">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="3510" y="1156"/>
+	<position x="3580" y="1180"/>
 	<column name="film_id" not-null="true" default-value="nextval('film_film_id_seq'::regclass)">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="title" not-null="true">
 		<type name="character varying" length="255"/>
 	</column>
 	<column name="description">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</column>
 	<column name="release_year">
-		<type name="public.year"/>
+		<type name="public.year" length="1"/>
 	</column>
 	<column name="language_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="original_language_id">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="rental_duration" not-null="true" default-value="3">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="rental_rate" not-null="true" default-value="4.99">
 		<type name="numeric" length="4" precision="2"/>
 	</column>
 	<column name="length">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="replacement_cost" not-null="true" default-value="19.99">
 		<type name="numeric" length="5" precision="2"/>
 	</column>
 	<column name="rating" default-value="'G'::mpaa_rating">
-		<type name="public.mpaa_rating"/>
+		<type name="public.mpaa_rating" length="1"/>
 	</column>
 	<column name="last_update" not-null="true" default-value="now()">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</column>
 	<column name="special_features">
-		<type name="text" dimension="1"/>
+		<type name="text" length="1" dimension="1"/>
 	</column>
 	<column name="fulltext" not-null="true">
-		<type name="tsvector"/>
+		<type name="tsvector" length="1"/>
 	</column>
 	<constraint name="film_pkey" type="pk-constr" factor="100" table="public.film">
 		<columns names="film_id" ref-type="src-columns"/>
@@ -179,15 +179,15 @@ END
 <table name="film_actor">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="4138" y="1140"/>
+	<position x="4140" y="1140"/>
 	<column name="actor_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="film_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="last_update" not-null="true" default-value="now()">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</column>
 	<constraint name="film_actor_pkey" type="pk-constr" factor="100" table="public.film_actor">
 		<columns names="actor_id,film_id" ref-type="src-columns"/>
@@ -197,15 +197,15 @@ END
 <table name="film_category">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="3670" y="898"/>
+	<position x="3680" y="840"/>
 	<column name="film_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="category_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="last_update" not-null="true" default-value="now()">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</column>
 	<constraint name="film_category_pkey" type="pk-constr" factor="100" table="public.film_category">
 		<columns names="film_id,category_id" ref-type="src-columns"/>
@@ -215,7 +215,7 @@ END
 <view name="actor_info">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="3238.33" y="1740"/>
+	<position x="3240" y="1740"/>
 	<reference>
 		<expression><![CDATA[ SELECT a.actor_id,
     a.first_name,
@@ -245,9 +245,9 @@ END
 <table name="address">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="2000" y="520"/>
+	<position x="1860" y="400"/>
 	<column name="address_id" not-null="true" default-value="nextval('address_address_id_seq'::regclass)">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="address" not-null="true">
 		<type name="character varying" length="50"/>
@@ -259,7 +259,7 @@ END
 		<type name="character varying" length="20"/>
 	</column>
 	<column name="city_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="postal_code">
 		<type name="character varying" length="10"/>
@@ -268,7 +268,7 @@ END
 		<type name="character varying" length="20"/>
 	</column>
 	<column name="last_update" not-null="true" default-value="now()">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</column>
 	<constraint name="address_pkey" type="pk-constr" factor="100" table="public.address">
 		<columns names="address_id" ref-type="src-columns"/>
@@ -286,18 +286,18 @@ END
 <table name="city">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="1533.33" y="300"/>
+	<position x="2600" y="260"/>
 	<column name="city_id" not-null="true" default-value="nextval('city_city_id_seq'::regclass)">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="city" not-null="true">
 		<type name="character varying" length="50"/>
 	</column>
 	<column name="country_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="last_update" not-null="true" default-value="now()">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</column>
 	<constraint name="city_pkey" type="pk-constr" factor="100" table="public.city">
 		<columns names="city_id" ref-type="src-columns"/>
@@ -312,18 +312,18 @@ END
 	<role name="postgres"/>
 </sequence>
 
-<table name="country">
+<table name="country" hide-ext-attribs="true">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="2146" y="335.334"/>
+	<position x="2220" y="540"/>
 	<column name="country_id" not-null="true" default-value="nextval('country_country_id_seq'::regclass)">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="country" not-null="true">
 		<type name="character varying" length="50"/>
 	</column>
 	<column name="last_update" not-null="true" default-value="now()">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</column>
 	<constraint name="country_pkey" type="pk-constr" factor="100" table="public.country">
 		<columns names="country_id" ref-type="src-columns"/>
@@ -341,12 +341,12 @@ END
 <table name="customer">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="1153.14" y="1134.31"/>
+	<position x="1100" y="1120"/>
 	<column name="customer_id" not-null="true" default-value="nextval('customer_customer_id_seq'::regclass)">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="store_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="first_name" not-null="true">
 		<type name="character varying" length="45"/>
@@ -358,19 +358,19 @@ END
 		<type name="character varying" length="50"/>
 	</column>
 	<column name="address_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="activebool" not-null="true" default-value="true">
-		<type name="boolean"/>
+		<type name="boolean" length="1"/>
 	</column>
 	<column name="create_date" not-null="true" default-value="('now'::text)::date">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</column>
 	<column name="last_update" default-value="now()">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</column>
 	<column name="active">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<constraint name="customer_pkey" type="pk-constr" factor="100" table="public.customer">
 		<columns names="customer_id" ref-type="src-columns"/>
@@ -380,7 +380,7 @@ END
 <view name="customer_list">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="3478.33" y="1740"/>
+	<position x="3480" y="1740"/>
 	<reference>
 		<expression><![CDATA[ SELECT cu.customer_id AS id,
     (((cu.first_name)::text || ' '::text) || (cu.last_name)::text) AS name,
@@ -404,7 +404,7 @@ END
 <view name="film_list">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="3238.33" y="1860"/>
+	<position x="3240" y="1860"/>
 	<reference>
 		<expression><![CDATA[ SELECT film.film_id AS fid,
     film.title,
@@ -434,18 +434,18 @@ END
 <table name="inventory">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="2993.33" y="766.667"/>
+	<position x="3140" y="840"/>
 	<column name="inventory_id" not-null="true" default-value="nextval('inventory_inventory_id_seq'::regclass)">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="film_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="store_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="last_update" not-null="true" default-value="now()">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</column>
 	<constraint name="inventory_pkey" type="pk-constr" factor="100" table="public.inventory">
 		<columns names="inventory_id" ref-type="src-columns"/>
@@ -463,18 +463,18 @@ END
 <table name="language">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="4112" y="1536"/>
+	<position x="4120" y="1540"/>
 	<column name="language_id" not-null="true" default-value="nextval('language_language_id_seq'::regclass)">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="name" not-null="true">
 		<type name="character" length="20"/>
 	</column>
 	<column name="last_update" not-null="true" default-value="now()">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</column>
 	<column name="asdf">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<constraint name="language_pkey" type="pk-constr" factor="100" table="public.language">
 		<columns names="language_id" ref-type="src-columns"/>
@@ -484,7 +484,7 @@ END
 <view name="nicer_but_slower_film_list">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="3481.66" y="1856.67"/>
+	<position x="3480" y="1860"/>
 	<reference>
 		<expression><![CDATA[ SELECT film.film_id AS fid,
     film.title,
@@ -516,22 +516,22 @@ END
 	<role name="postgres"/>
 	<position x="340" y="1360"/>
 	<column name="payment_id" not-null="true" default-value="nextval('payment_payment_id_seq'::regclass)">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="customer_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="staff_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="rental_id" not-null="true">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="amount" not-null="true">
 		<type name="numeric" length="5" precision="2"/>
 	</column>
 	<column name="payment_date" not-null="true">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</column>
 	<constraint name="payment_pkey" type="pk-constr" factor="100" table="public.payment">
 		<columns names="payment_id" ref-type="src-columns"/>
@@ -541,24 +541,24 @@ END
 <table name="payment_p2007_01">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="340" y="1894.12"/>
+	<position x="340" y="1900"/>
 	<column name="payment_id" not-null="true" default-value="nextval('payment_payment_id_seq'::regclass)">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="customer_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="staff_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="rental_id" not-null="true">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="amount" not-null="true">
 		<type name="numeric" length="5" precision="2"/>
 	</column>
 	<column name="payment_date" not-null="true">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</column>
 	<constraint name="payment_p2007_01_payment_date_check" type="ck-constr" table="public.payment_p2007_01">
 			<expression><![CDATA[((payment_date >= '2007-01-01 00:00:00'::timestamp without time zone) AND (payment_date < '2007-02-01 00:00:00'::timestamp without time zone))]]></expression>
@@ -568,24 +568,24 @@ END
 <table name="payment_p2007_02">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="350" y="700"/>
+	<position x="360" y="700"/>
 	<column name="payment_id" not-null="true" default-value="nextval('payment_payment_id_seq'::regclass)">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="customer_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="staff_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="rental_id" not-null="true">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="amount" not-null="true">
 		<type name="numeric" length="5" precision="2"/>
 	</column>
 	<column name="payment_date" not-null="true">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</column>
 	<constraint name="payment_p2007_02_payment_date_check" type="ck-constr" table="public.payment_p2007_02">
 			<expression><![CDATA[((payment_date >= '2007-02-01 00:00:00'::timestamp without time zone) AND (payment_date < '2007-03-01 00:00:00'::timestamp without time zone))]]></expression>
@@ -595,24 +595,24 @@ END
 <table name="payment_p2007_03">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="2783.53" y="1558.82"/>
+	<position x="2680" y="1380"/>
 	<column name="payment_id" not-null="true" default-value="nextval('payment_payment_id_seq'::regclass)">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="customer_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="staff_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="rental_id" not-null="true">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="amount" not-null="true">
 		<type name="numeric" length="5" precision="2"/>
 	</column>
 	<column name="payment_date" not-null="true">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</column>
 	<constraint name="payment_p2007_03_payment_date_check" type="ck-constr" table="public.payment_p2007_03">
 			<expression><![CDATA[((payment_date >= '2007-03-01 00:00:00'::timestamp without time zone) AND (payment_date < '2007-04-01 00:00:00'::timestamp without time zone))]]></expression>
@@ -622,24 +622,24 @@ END
 <table name="payment_p2007_04">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="2913.92" y="1292.94"/>
+	<position x="3080" y="1140"/>
 	<column name="payment_id" not-null="true" default-value="nextval('payment_payment_id_seq'::regclass)">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="customer_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="staff_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="rental_id" not-null="true">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="amount" not-null="true">
 		<type name="numeric" length="5" precision="2"/>
 	</column>
 	<column name="payment_date" not-null="true">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</column>
 	<constraint name="payment_p2007_04_payment_date_check" type="ck-constr" table="public.payment_p2007_04">
 			<expression><![CDATA[((payment_date >= '2007-04-01 00:00:00'::timestamp without time zone) AND (payment_date < '2007-05-01 00:00:00'::timestamp without time zone))]]></expression>
@@ -649,24 +649,24 @@ END
 <table name="payment_p2007_05">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="2618.82" y="1831.76"/>
+	<position x="2660" y="1800"/>
 	<column name="payment_id" not-null="true" default-value="nextval('payment_payment_id_seq'::regclass)">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="customer_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="staff_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="rental_id" not-null="true">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="amount" not-null="true">
 		<type name="numeric" length="5" precision="2"/>
 	</column>
 	<column name="payment_date" not-null="true">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</column>
 	<constraint name="payment_p2007_05_payment_date_check" type="ck-constr" table="public.payment_p2007_05">
 			<expression><![CDATA[((payment_date >= '2007-05-01 00:00:00'::timestamp without time zone) AND (payment_date < '2007-06-01 00:00:00'::timestamp without time zone))]]></expression>
@@ -676,24 +676,24 @@ END
 <table name="payment_p2007_06">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="2421.18" y="2101.18"/>
+	<position x="2280" y="2100"/>
 	<column name="payment_id" not-null="true" default-value="nextval('payment_payment_id_seq'::regclass)">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="customer_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="staff_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="rental_id" not-null="true">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="amount" not-null="true">
 		<type name="numeric" length="5" precision="2"/>
 	</column>
 	<column name="payment_date" not-null="true">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</column>
 	<constraint name="payment_p2007_06_payment_date_check" type="ck-constr" table="public.payment_p2007_06">
 			<expression><![CDATA[((payment_date >= '2007-06-01 00:00:00'::timestamp without time zone) AND (payment_date < '2007-07-01 00:00:00'::timestamp without time zone))]]></expression>
@@ -711,27 +711,27 @@ END
 <table name="rental">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="1160" y="740"/>
+	<position x="1100" y="580"/>
 	<column name="rental_id" not-null="true" default-value="nextval('rental_rental_id_seq'::regclass)">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="rental_date" not-null="true">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</column>
 	<column name="inventory_id" not-null="true">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="customer_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="return_date">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</column>
 	<column name="staff_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="last_update" not-null="true" default-value="now()">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</column>
 	<constraint name="rental_pkey" type="pk-constr" factor="100" table="public.rental">
 		<columns names="rental_id" ref-type="src-columns"/>
@@ -741,7 +741,7 @@ END
 <view name="sales_by_film_category">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="3481.66" y="1943.33"/>
+	<position x="3480" y="1940"/>
 	<reference>
 		<expression><![CDATA[ SELECT c.name AS category,
     sum(p.amount) AS total_sales
@@ -769,7 +769,7 @@ END
 	<role name="postgres"/>
 	<position x="1000" y="1920"/>
 	<column name="staff_id" not-null="true" default-value="nextval('staff_staff_id_seq'::regclass)">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="first_name" not-null="true">
 		<type name="character varying" length="45"/>
@@ -778,16 +778,16 @@ END
 		<type name="character varying" length="45"/>
 	</column>
 	<column name="address_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="email">
 		<type name="character varying" length="50"/>
 	</column>
 	<column name="store_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="active" not-null="true" default-value="true">
-		<type name="boolean"/>
+		<type name="boolean" length="1"/>
 	</column>
 	<column name="username" not-null="true">
 		<type name="character varying" length="16"/>
@@ -796,10 +796,10 @@ END
 		<type name="character varying" length="40"/>
 	</column>
 	<column name="last_update" not-null="true" default-value="now()">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</column>
 	<column name="picture">
-		<type name="bytea"/>
+		<type name="bytea" length="1"/>
 	</column>
 	<constraint name="staff_pkey" type="pk-constr" factor="100" table="public.staff">
 		<columns names="staff_id" ref-type="src-columns"/>
@@ -817,18 +817,18 @@ END
 <table name="store">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="2589.02" y="492.941"/>
+	<position x="3040" y="480"/>
 	<column name="store_id" not-null="true" default-value="nextval('store_store_id_seq'::regclass)">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="manager_staff_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="address_id" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</column>
 	<column name="last_update" not-null="true" default-value="now()">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</column>
 	<constraint name="store_pkey" type="pk-constr" factor="100" table="public.store">
 		<columns names="store_id" ref-type="src-columns"/>
@@ -838,7 +838,7 @@ END
 <view name="sales_by_store">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="3238.33" y="1940"/>
+	<position x="3240" y="1940"/>
 	<reference>
 		<expression><![CDATA[ SELECT (((c.city)::text || ','::text) || (cy.country)::text) AS store,
     (((m.first_name)::text || ' '::text) || (m.last_name)::text) AS manager,
@@ -859,7 +859,7 @@ END
 <view name="staff_list">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="3238.33" y="2060"/>
+	<position x="3240" y="2060"/>
 	<reference>
 		<expression><![CDATA[ SELECT s.staff_id AS id,
     (((s.first_name)::text || ' '::text) || (s.last_name)::text) AS name,
@@ -888,16 +888,16 @@ END
 	<role name="postgres"/>
 	<language name="sql" sql-disabled="true"/>
 	<return-type>
-	<type name="integer"/>
+	<type name="integer" length="1"/>
 	</return-type>
 	<parameter name="p_film_id" in="true">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<parameter name="p_store_id" in="true">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<parameter name="p_film_count" out="true">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<definition><![CDATA[
      SELECT inventory_id
@@ -920,16 +920,16 @@ END
 	<role name="postgres"/>
 	<language name="sql" sql-disabled="true"/>
 	<return-type>
-	<type name="integer"/>
+	<type name="integer" length="1"/>
 	</return-type>
 	<parameter name="p_film_id" in="true">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<parameter name="p_store_id" in="true">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<parameter name="p_film_count" out="true">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<definition><![CDATA[
     SELECT inventory_id
@@ -952,13 +952,13 @@ END
 	<role name="postgres"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
-	<type name="numeric"/>
+	<type name="numeric" length="1"/>
 	</return-type>
 	<parameter name="p_customer_id">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<parameter name="p_effective_date">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<definition><![CDATA[
        --#OK, WE NEED TO CALCULATE THE CURRENT BALANCE GIVEN A CUSTOMER_ID AND A DATE
@@ -1009,10 +1009,10 @@ END
 	<role name="postgres"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
-	<type name="integer"/>
+	<type name="integer" length="1"/>
 	</return-type>
 	<parameter name="p_inventory_id">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<definition><![CDATA[
 DECLARE
@@ -1040,10 +1040,10 @@ END ]]></definition>
 	<role name="postgres"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="p_inventory_id">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<definition><![CDATA[
 DECLARE
@@ -1086,10 +1086,10 @@ END ]]></definition>
 	<role name="postgres"/>
 	<language name="sql" sql-disabled="true"/>
 	<return-type>
-	<type name="date"/>
+	<type name="date" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<definition><![CDATA[
   SELECT CASE
@@ -1113,7 +1113,7 @@ END ]]></definition>
 	<role name="postgres"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
-	<type name="trigger"/>
+	<type name="trigger" length="1"/>
 	</return-type>
 	<definition><![CDATA[
 BEGIN
@@ -1134,13 +1134,13 @@ END ]]></definition>
 	<role name="postgres"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
-	<type name="public.customer"/>
+	<type name="public.customer" length="1"/>
 	</return-type>
 	<parameter name="min_monthly_purchases">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<parameter name="min_dollar_amount_purchased">
-		<type name="numeric"/>
+		<type name="numeric" length="1"/>
 	</parameter>
 	<definition><![CDATA[
 DECLARE
@@ -1198,10 +1198,6 @@ END
 ]]></definition>
 </function>
 
-<language name="internal" sql-disabled="true" trusted="false">
-	<role name="postgres"/>
-</language>
-
 <function name="gtsvector_consistent" sql-disabled="true"
 		window-func="false"
 		returns-setof="false"
@@ -1215,22 +1211,22 @@ END
 	<comment><![CDATA[GiST tsvector support]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="gtsvector"/>
+		<type name="gtsvector" length="1"/>
 	</parameter>
 	<parameter name="_param3">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<parameter name="_param4">
-		<type name="oid"/>
+		<type name="oid" length="1"/>
 	</parameter>
 	<parameter name="_param5">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<definition><![CDATA[gtsvector_consistent]]></definition>
 </function>
@@ -1248,13 +1244,13 @@ END
 	<comment><![CDATA[GiST tsvector support]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="internal"/>
+	<type name="internal" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<definition><![CDATA[gtsvector_union]]></definition>
 </function>
@@ -1272,10 +1268,10 @@ END
 	<comment><![CDATA[GiST tsvector support]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="internal"/>
+	<type name="internal" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<definition><![CDATA[gtsvector_compress]]></definition>
 </function>
@@ -1293,10 +1289,10 @@ END
 	<comment><![CDATA[GiST tsvector support]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="internal"/>
+	<type name="internal" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<definition><![CDATA[gtsvector_decompress]]></definition>
 </function>
@@ -1314,16 +1310,16 @@ END
 	<comment><![CDATA[GiST tsvector support]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="internal"/>
+	<type name="internal" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<parameter name="_param3">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<definition><![CDATA[gtsvector_penalty]]></definition>
 </function>
@@ -1341,13 +1337,13 @@ END
 	<comment><![CDATA[GiST tsvector support]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="internal"/>
+	<type name="internal" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<definition><![CDATA[gtsvector_picksplit]]></definition>
 </function>
@@ -1365,16 +1361,16 @@ END
 	<comment><![CDATA[GiST tsvector support]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="internal"/>
+	<type name="internal" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="gtsvector"/>
+		<type name="gtsvector" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="gtsvector"/>
+		<type name="gtsvector" length="1"/>
 	</parameter>
 	<parameter name="_param3">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<definition><![CDATA[gtsvector_same]]></definition>
 </function>
@@ -1392,13 +1388,13 @@ END
 	<comment><![CDATA[implementation of @@ operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="tsvector"/>
+		<type name="tsvector" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="tsquery"/>
+		<type name="tsquery" length="1"/>
 	</parameter>
 	<definition><![CDATA[ts_match_vq]]></definition>
 </function>
@@ -1416,19 +1412,19 @@ END
 	<comment><![CDATA[restriction selectivity of tsvector @@ tsquery]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="double precision"/>
+	<type name="double precision" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="oid"/>
+		<type name="oid" length="1"/>
 	</parameter>
 	<parameter name="_param3">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<parameter name="_param4">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<definition><![CDATA[tsmatchsel]]></definition>
 </function>
@@ -1446,22 +1442,22 @@ END
 	<comment><![CDATA[join selectivity of tsvector @@ tsquery]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="double precision"/>
+	<type name="double precision" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="oid"/>
+		<type name="oid" length="1"/>
 	</parameter>
 	<parameter name="_param3">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<parameter name="_param4">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<parameter name="_param5">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<definition><![CDATA[tsmatchjoinsel]]></definition>
 </function>
@@ -1470,8 +1466,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[text search match]]></comment>
-	<type name="tsvector" ref-type="left-type"/>
-	<type name="tsquery" ref-type="right-type"/>
+	<type name="tsvector" length="1" ref-type="left-type"/>
+	<type name="tsquery" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.ts_match_vq(tsvector,tsquery)"/>
 	<function ref-type="join" signature="pg_catalog.tsmatchjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.tsmatchsel(internal,oid,internal,integer)"/>
@@ -1480,9 +1476,9 @@ END
 <opclass  name="tsvector_ops" index-type="gist" default="true" sql-disabled="true">
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
-	<type name="tsvector"/>
+	<type name="tsvector" length="1"/>
 	<element type="storage">
-		<type name="gtsvector"/>
+		<type name="gtsvector" length="1"/>
 	</element>
 	<element type="function" stg-number="1">
 		<function signature="pg_catalog.gtsvector_consistent(internal,gtsvector,integer,oid,internal)"/>
@@ -1532,13 +1528,13 @@ END
 	<comment><![CDATA[less-equal-greater]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="integer"/>
+	<type name="integer" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</parameter>
 	<definition><![CDATA[bttextcmp]]></definition>
 </function>
@@ -1556,13 +1552,13 @@ END
 	<comment><![CDATA[implementation of < operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</parameter>
 	<definition><![CDATA[text_lt]]></definition>
 </function>
@@ -1580,19 +1576,19 @@ END
 	<comment><![CDATA[restriction selectivity of < and related operators on scalar datatypes]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="double precision"/>
+	<type name="double precision" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="oid"/>
+		<type name="oid" length="1"/>
 	</parameter>
 	<parameter name="_param3">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<parameter name="_param4">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<definition><![CDATA[scalarltsel]]></definition>
 </function>
@@ -1610,22 +1606,22 @@ END
 	<comment><![CDATA[join selectivity of < and related operators on scalar datatypes]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="double precision"/>
+	<type name="double precision" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="oid"/>
+		<type name="oid" length="1"/>
 	</parameter>
 	<parameter name="_param3">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<parameter name="_param4">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<parameter name="_param5">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<definition><![CDATA[scalarltjoinsel]]></definition>
 </function>
@@ -1634,8 +1630,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than]]></comment>
-	<type name="text" ref-type="left-type"/>
-	<type name="text" ref-type="right-type"/>
+	<type name="text" length="1" ref-type="left-type"/>
+	<type name="text" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.text_lt(text,text)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -1654,13 +1650,13 @@ END
 	<comment><![CDATA[implementation of <= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</parameter>
 	<definition><![CDATA[text_le]]></definition>
 </function>
@@ -1669,8 +1665,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than or equal]]></comment>
-	<type name="text" ref-type="left-type"/>
-	<type name="text" ref-type="right-type"/>
+	<type name="text" length="1" ref-type="left-type"/>
+	<type name="text" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.text_le(text,text)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -1690,13 +1686,13 @@ END
 	<comment><![CDATA[implementation of = operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</parameter>
 	<definition><![CDATA[texteq]]></definition>
 </function>
@@ -1714,19 +1710,19 @@ END
 	<comment><![CDATA[restriction selectivity of = and related operators]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="double precision"/>
+	<type name="double precision" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="oid"/>
+		<type name="oid" length="1"/>
 	</parameter>
 	<parameter name="_param3">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<parameter name="_param4">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<definition><![CDATA[eqsel]]></definition>
 </function>
@@ -1744,22 +1740,22 @@ END
 	<comment><![CDATA[join selectivity of = and related operators]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="double precision"/>
+	<type name="double precision" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="oid"/>
+		<type name="oid" length="1"/>
 	</parameter>
 	<parameter name="_param3">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<parameter name="_param4">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<parameter name="_param5">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<definition><![CDATA[eqjoinsel]]></definition>
 </function>
@@ -1768,8 +1764,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[equal]]></comment>
-	<type name="text" ref-type="left-type"/>
-	<type name="text" ref-type="right-type"/>
+	<type name="text" length="1" ref-type="left-type"/>
+	<type name="text" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.texteq(text,text)"/>
 	<function ref-type="join" signature="pg_catalog.eqjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.eqsel(internal,oid,internal,integer)"/>
@@ -1788,13 +1784,13 @@ END
 	<comment><![CDATA[implementation of >= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</parameter>
 	<definition><![CDATA[text_ge]]></definition>
 </function>
@@ -1812,19 +1808,19 @@ END
 	<comment><![CDATA[restriction selectivity of > and related operators on scalar datatypes]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="double precision"/>
+	<type name="double precision" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="oid"/>
+		<type name="oid" length="1"/>
 	</parameter>
 	<parameter name="_param3">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<parameter name="_param4">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<definition><![CDATA[scalargtsel]]></definition>
 </function>
@@ -1842,22 +1838,22 @@ END
 	<comment><![CDATA[join selectivity of > and related operators on scalar datatypes]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="double precision"/>
+	<type name="double precision" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="oid"/>
+		<type name="oid" length="1"/>
 	</parameter>
 	<parameter name="_param3">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<parameter name="_param4">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<parameter name="_param5">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<definition><![CDATA[scalargtjoinsel]]></definition>
 </function>
@@ -1866,8 +1862,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than or equal]]></comment>
-	<type name="text" ref-type="left-type"/>
-	<type name="text" ref-type="right-type"/>
+	<type name="text" length="1" ref-type="left-type"/>
+	<type name="text" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.text_ge(text,text)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -1886,13 +1882,13 @@ END
 	<comment><![CDATA[implementation of > operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</parameter>
 	<definition><![CDATA[text_gt]]></definition>
 </function>
@@ -1901,8 +1897,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than]]></comment>
-	<type name="text" ref-type="left-type"/>
-	<type name="text" ref-type="right-type"/>
+	<type name="text" length="1" ref-type="left-type"/>
+	<type name="text" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.text_gt(text,text)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -1911,7 +1907,7 @@ END
 <opclass  name="text_ops" index-type="btree" default="true" sql-disabled="true">
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
-	<type name="text"/>
+	<type name="text" length="1"/>
 	<element type="function" stg-number="1">
 		<function signature="pg_catalog.bttextcmp(text,text)"/>
 	</element>
@@ -1955,13 +1951,13 @@ END
 	<comment><![CDATA[less-equal-greater]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="integer"/>
+	<type name="integer" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<definition><![CDATA[btint2cmp]]></definition>
 </function>
@@ -1979,10 +1975,10 @@ END
 	<comment><![CDATA[sort support]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="void"/>
+	<type name="void" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<definition><![CDATA[btint2sortsupport]]></definition>
 </function>
@@ -2000,13 +1996,13 @@ END
 	<comment><![CDATA[less-equal-greater]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="integer"/>
+	<type name="integer" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<definition><![CDATA[btint24cmp]]></definition>
 </function>
@@ -2024,13 +2020,13 @@ END
 	<comment><![CDATA[less-equal-greater]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="integer"/>
+	<type name="integer" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<definition><![CDATA[btint28cmp]]></definition>
 </function>
@@ -2048,13 +2044,13 @@ END
 	<comment><![CDATA[less-equal-greater]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="integer"/>
+	<type name="integer" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<definition><![CDATA[btint4cmp]]></definition>
 </function>
@@ -2072,10 +2068,10 @@ END
 	<comment><![CDATA[sort support]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="void"/>
+	<type name="void" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<definition><![CDATA[btint4sortsupport]]></definition>
 </function>
@@ -2093,13 +2089,13 @@ END
 	<comment><![CDATA[less-equal-greater]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="integer"/>
+	<type name="integer" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<definition><![CDATA[btint48cmp]]></definition>
 </function>
@@ -2117,13 +2113,13 @@ END
 	<comment><![CDATA[less-equal-greater]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="integer"/>
+	<type name="integer" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<definition><![CDATA[btint42cmp]]></definition>
 </function>
@@ -2141,13 +2137,13 @@ END
 	<comment><![CDATA[less-equal-greater]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="integer"/>
+	<type name="integer" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<definition><![CDATA[btint8cmp]]></definition>
 </function>
@@ -2165,10 +2161,10 @@ END
 	<comment><![CDATA[sort support]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="void"/>
+	<type name="void" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<definition><![CDATA[btint8sortsupport]]></definition>
 </function>
@@ -2186,13 +2182,13 @@ END
 	<comment><![CDATA[less-equal-greater]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="integer"/>
+	<type name="integer" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<definition><![CDATA[btint84cmp]]></definition>
 </function>
@@ -2210,13 +2206,13 @@ END
 	<comment><![CDATA[less-equal-greater]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="integer"/>
+	<type name="integer" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<definition><![CDATA[btint82cmp]]></definition>
 </function>
@@ -2235,13 +2231,13 @@ END
 	<comment><![CDATA[implementation of < operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int2lt]]></definition>
 </function>
@@ -2250,8 +2246,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than]]></comment>
-	<type name="smallint" ref-type="left-type"/>
-	<type name="smallint" ref-type="right-type"/>
+	<type name="smallint" length="1" ref-type="left-type"/>
+	<type name="smallint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int2lt(smallint,smallint)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -2271,13 +2267,13 @@ END
 	<comment><![CDATA[implementation of <= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int2le]]></definition>
 </function>
@@ -2286,8 +2282,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than or equal]]></comment>
-	<type name="smallint" ref-type="left-type"/>
-	<type name="smallint" ref-type="right-type"/>
+	<type name="smallint" length="1" ref-type="left-type"/>
+	<type name="smallint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int2le(smallint,smallint)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -2307,13 +2303,13 @@ END
 	<comment><![CDATA[implementation of = operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int2eq]]></definition>
 </function>
@@ -2322,8 +2318,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[equal]]></comment>
-	<type name="smallint" ref-type="left-type"/>
-	<type name="smallint" ref-type="right-type"/>
+	<type name="smallint" length="1" ref-type="left-type"/>
+	<type name="smallint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int2eq(smallint,smallint)"/>
 	<function ref-type="join" signature="pg_catalog.eqjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.eqsel(internal,oid,internal,integer)"/>
@@ -2343,13 +2339,13 @@ END
 	<comment><![CDATA[implementation of >= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int2ge]]></definition>
 </function>
@@ -2358,8 +2354,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than or equal]]></comment>
-	<type name="smallint" ref-type="left-type"/>
-	<type name="smallint" ref-type="right-type"/>
+	<type name="smallint" length="1" ref-type="left-type"/>
+	<type name="smallint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int2ge(smallint,smallint)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -2379,13 +2375,13 @@ END
 	<comment><![CDATA[implementation of > operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int2gt]]></definition>
 </function>
@@ -2394,8 +2390,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than]]></comment>
-	<type name="smallint" ref-type="left-type"/>
-	<type name="smallint" ref-type="right-type"/>
+	<type name="smallint" length="1" ref-type="left-type"/>
+	<type name="smallint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int2gt(smallint,smallint)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -2415,13 +2411,13 @@ END
 	<comment><![CDATA[implementation of < operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<definition><![CDATA[int24lt]]></definition>
 </function>
@@ -2430,8 +2426,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than]]></comment>
-	<type name="smallint" ref-type="left-type"/>
-	<type name="integer" ref-type="right-type"/>
+	<type name="smallint" length="1" ref-type="left-type"/>
+	<type name="integer" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int24lt(smallint,integer)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -2451,13 +2447,13 @@ END
 	<comment><![CDATA[implementation of <= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<definition><![CDATA[int24le]]></definition>
 </function>
@@ -2466,8 +2462,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than or equal]]></comment>
-	<type name="smallint" ref-type="left-type"/>
-	<type name="integer" ref-type="right-type"/>
+	<type name="smallint" length="1" ref-type="left-type"/>
+	<type name="integer" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int24le(smallint,integer)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -2487,13 +2483,13 @@ END
 	<comment><![CDATA[implementation of = operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<definition><![CDATA[int24eq]]></definition>
 </function>
@@ -2502,8 +2498,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[equal]]></comment>
-	<type name="smallint" ref-type="left-type"/>
-	<type name="integer" ref-type="right-type"/>
+	<type name="smallint" length="1" ref-type="left-type"/>
+	<type name="integer" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int24eq(smallint,integer)"/>
 	<function ref-type="join" signature="pg_catalog.eqjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.eqsel(internal,oid,internal,integer)"/>
@@ -2523,13 +2519,13 @@ END
 	<comment><![CDATA[implementation of >= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<definition><![CDATA[int24ge]]></definition>
 </function>
@@ -2538,8 +2534,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than or equal]]></comment>
-	<type name="smallint" ref-type="left-type"/>
-	<type name="integer" ref-type="right-type"/>
+	<type name="smallint" length="1" ref-type="left-type"/>
+	<type name="integer" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int24ge(smallint,integer)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -2559,13 +2555,13 @@ END
 	<comment><![CDATA[implementation of > operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<definition><![CDATA[int24gt]]></definition>
 </function>
@@ -2574,8 +2570,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than]]></comment>
-	<type name="smallint" ref-type="left-type"/>
-	<type name="integer" ref-type="right-type"/>
+	<type name="smallint" length="1" ref-type="left-type"/>
+	<type name="integer" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int24gt(smallint,integer)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -2595,13 +2591,13 @@ END
 	<comment><![CDATA[implementation of < operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int28lt]]></definition>
 </function>
@@ -2610,8 +2606,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than]]></comment>
-	<type name="smallint" ref-type="left-type"/>
-	<type name="bigint" ref-type="right-type"/>
+	<type name="smallint" length="1" ref-type="left-type"/>
+	<type name="bigint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int28lt(smallint,bigint)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -2631,13 +2627,13 @@ END
 	<comment><![CDATA[implementation of <= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int28le]]></definition>
 </function>
@@ -2646,8 +2642,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than or equal]]></comment>
-	<type name="smallint" ref-type="left-type"/>
-	<type name="bigint" ref-type="right-type"/>
+	<type name="smallint" length="1" ref-type="left-type"/>
+	<type name="bigint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int28le(smallint,bigint)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -2667,13 +2663,13 @@ END
 	<comment><![CDATA[implementation of = operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int28eq]]></definition>
 </function>
@@ -2682,8 +2678,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[equal]]></comment>
-	<type name="smallint" ref-type="left-type"/>
-	<type name="bigint" ref-type="right-type"/>
+	<type name="smallint" length="1" ref-type="left-type"/>
+	<type name="bigint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int28eq(smallint,bigint)"/>
 	<function ref-type="join" signature="pg_catalog.eqjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.eqsel(internal,oid,internal,integer)"/>
@@ -2703,13 +2699,13 @@ END
 	<comment><![CDATA[implementation of >= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int28ge]]></definition>
 </function>
@@ -2718,8 +2714,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than or equal]]></comment>
-	<type name="smallint" ref-type="left-type"/>
-	<type name="bigint" ref-type="right-type"/>
+	<type name="smallint" length="1" ref-type="left-type"/>
+	<type name="bigint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int28ge(smallint,bigint)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -2739,13 +2735,13 @@ END
 	<comment><![CDATA[implementation of > operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int28gt]]></definition>
 </function>
@@ -2754,8 +2750,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than]]></comment>
-	<type name="smallint" ref-type="left-type"/>
-	<type name="bigint" ref-type="right-type"/>
+	<type name="smallint" length="1" ref-type="left-type"/>
+	<type name="bigint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int28gt(smallint,bigint)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -2775,13 +2771,13 @@ END
 	<comment><![CDATA[implementation of < operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<definition><![CDATA[int4lt]]></definition>
 </function>
@@ -2790,8 +2786,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than]]></comment>
-	<type name="integer" ref-type="left-type"/>
-	<type name="integer" ref-type="right-type"/>
+	<type name="integer" length="1" ref-type="left-type"/>
+	<type name="integer" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int4lt(integer,integer)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -2811,13 +2807,13 @@ END
 	<comment><![CDATA[implementation of <= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<definition><![CDATA[int4le]]></definition>
 </function>
@@ -2826,8 +2822,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than or equal]]></comment>
-	<type name="integer" ref-type="left-type"/>
-	<type name="integer" ref-type="right-type"/>
+	<type name="integer" length="1" ref-type="left-type"/>
+	<type name="integer" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int4le(integer,integer)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -2847,13 +2843,13 @@ END
 	<comment><![CDATA[implementation of = operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<definition><![CDATA[int4eq]]></definition>
 </function>
@@ -2862,8 +2858,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[equal]]></comment>
-	<type name="integer" ref-type="left-type"/>
-	<type name="integer" ref-type="right-type"/>
+	<type name="integer" length="1" ref-type="left-type"/>
+	<type name="integer" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int4eq(integer,integer)"/>
 	<function ref-type="join" signature="pg_catalog.eqjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.eqsel(internal,oid,internal,integer)"/>
@@ -2883,13 +2879,13 @@ END
 	<comment><![CDATA[implementation of >= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<definition><![CDATA[int4ge]]></definition>
 </function>
@@ -2898,8 +2894,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than or equal]]></comment>
-	<type name="integer" ref-type="left-type"/>
-	<type name="integer" ref-type="right-type"/>
+	<type name="integer" length="1" ref-type="left-type"/>
+	<type name="integer" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int4ge(integer,integer)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -2919,13 +2915,13 @@ END
 	<comment><![CDATA[implementation of > operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<definition><![CDATA[int4gt]]></definition>
 </function>
@@ -2934,8 +2930,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than]]></comment>
-	<type name="integer" ref-type="left-type"/>
-	<type name="integer" ref-type="right-type"/>
+	<type name="integer" length="1" ref-type="left-type"/>
+	<type name="integer" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int4gt(integer,integer)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -2955,13 +2951,13 @@ END
 	<comment><![CDATA[implementation of < operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int42lt]]></definition>
 </function>
@@ -2970,8 +2966,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than]]></comment>
-	<type name="integer" ref-type="left-type"/>
-	<type name="smallint" ref-type="right-type"/>
+	<type name="integer" length="1" ref-type="left-type"/>
+	<type name="smallint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int42lt(integer,smallint)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -2991,13 +2987,13 @@ END
 	<comment><![CDATA[implementation of <= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int42le]]></definition>
 </function>
@@ -3006,8 +3002,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than or equal]]></comment>
-	<type name="integer" ref-type="left-type"/>
-	<type name="smallint" ref-type="right-type"/>
+	<type name="integer" length="1" ref-type="left-type"/>
+	<type name="smallint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int42le(integer,smallint)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -3027,13 +3023,13 @@ END
 	<comment><![CDATA[implementation of = operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int42eq]]></definition>
 </function>
@@ -3042,8 +3038,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[equal]]></comment>
-	<type name="integer" ref-type="left-type"/>
-	<type name="smallint" ref-type="right-type"/>
+	<type name="integer" length="1" ref-type="left-type"/>
+	<type name="smallint" length="1" ref-type="right-type"/>
 	<operator ref-type="commutator-op" signature="pg_catalog.=(smallint,integer)"/>
 	<function ref-type="operfunc" signature="pg_catalog.int42eq(integer,smallint)"/>
 	<function ref-type="join" signature="pg_catalog.eqjoinsel(internal,oid,internal,smallint,internal)"/>
@@ -3064,13 +3060,13 @@ END
 	<comment><![CDATA[implementation of >= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int42ge]]></definition>
 </function>
@@ -3079,8 +3075,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than or equal]]></comment>
-	<type name="integer" ref-type="left-type"/>
-	<type name="smallint" ref-type="right-type"/>
+	<type name="integer" length="1" ref-type="left-type"/>
+	<type name="smallint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int42ge(integer,smallint)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -3100,13 +3096,13 @@ END
 	<comment><![CDATA[implementation of > operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int42gt]]></definition>
 </function>
@@ -3115,8 +3111,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than]]></comment>
-	<type name="integer" ref-type="left-type"/>
-	<type name="smallint" ref-type="right-type"/>
+	<type name="integer" length="1" ref-type="left-type"/>
+	<type name="smallint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int42gt(integer,smallint)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -3136,13 +3132,13 @@ END
 	<comment><![CDATA[implementation of < operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int48lt]]></definition>
 </function>
@@ -3151,8 +3147,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than]]></comment>
-	<type name="integer" ref-type="left-type"/>
-	<type name="bigint" ref-type="right-type"/>
+	<type name="integer" length="1" ref-type="left-type"/>
+	<type name="bigint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int48lt(integer,bigint)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -3172,13 +3168,13 @@ END
 	<comment><![CDATA[implementation of <= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int48le]]></definition>
 </function>
@@ -3187,8 +3183,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than or equal]]></comment>
-	<type name="integer" ref-type="left-type"/>
-	<type name="bigint" ref-type="right-type"/>
+	<type name="integer" length="1" ref-type="left-type"/>
+	<type name="bigint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int48le(integer,bigint)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -3208,13 +3204,13 @@ END
 	<comment><![CDATA[implementation of = operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int48eq]]></definition>
 </function>
@@ -3223,8 +3219,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[equal]]></comment>
-	<type name="integer" ref-type="left-type"/>
-	<type name="bigint" ref-type="right-type"/>
+	<type name="integer" length="1" ref-type="left-type"/>
+	<type name="bigint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int48eq(integer,bigint)"/>
 	<function ref-type="join" signature="pg_catalog.eqjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.eqsel(internal,oid,internal,integer)"/>
@@ -3244,13 +3240,13 @@ END
 	<comment><![CDATA[implementation of >= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int48ge]]></definition>
 </function>
@@ -3259,8 +3255,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than or equal]]></comment>
-	<type name="integer" ref-type="left-type"/>
-	<type name="bigint" ref-type="right-type"/>
+	<type name="integer" length="1" ref-type="left-type"/>
+	<type name="bigint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int48ge(integer,bigint)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -3280,13 +3276,13 @@ END
 	<comment><![CDATA[implementation of > operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int48gt]]></definition>
 </function>
@@ -3295,8 +3291,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than]]></comment>
-	<type name="integer" ref-type="left-type"/>
-	<type name="bigint" ref-type="right-type"/>
+	<type name="integer" length="1" ref-type="left-type"/>
+	<type name="bigint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int48gt(integer,bigint)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -3316,13 +3312,13 @@ END
 	<comment><![CDATA[implementation of < operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int8lt]]></definition>
 </function>
@@ -3331,8 +3327,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than]]></comment>
-	<type name="bigint" ref-type="left-type"/>
-	<type name="bigint" ref-type="right-type"/>
+	<type name="bigint" length="1" ref-type="left-type"/>
+	<type name="bigint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int8lt(bigint,bigint)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -3352,13 +3348,13 @@ END
 	<comment><![CDATA[implementation of <= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int8le]]></definition>
 </function>
@@ -3367,8 +3363,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than or equal]]></comment>
-	<type name="bigint" ref-type="left-type"/>
-	<type name="bigint" ref-type="right-type"/>
+	<type name="bigint" length="1" ref-type="left-type"/>
+	<type name="bigint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int8le(bigint,bigint)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -3388,13 +3384,13 @@ END
 	<comment><![CDATA[implementation of = operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int8eq]]></definition>
 </function>
@@ -3403,8 +3399,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[equal]]></comment>
-	<type name="bigint" ref-type="left-type"/>
-	<type name="bigint" ref-type="right-type"/>
+	<type name="bigint" length="1" ref-type="left-type"/>
+	<type name="bigint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int8eq(bigint,bigint)"/>
 	<function ref-type="join" signature="pg_catalog.eqjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.eqsel(internal,oid,internal,integer)"/>
@@ -3424,13 +3420,13 @@ END
 	<comment><![CDATA[implementation of >= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int8ge]]></definition>
 </function>
@@ -3439,8 +3435,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than or equal]]></comment>
-	<type name="bigint" ref-type="left-type"/>
-	<type name="bigint" ref-type="right-type"/>
+	<type name="bigint" length="1" ref-type="left-type"/>
+	<type name="bigint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int8ge(bigint,bigint)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -3460,13 +3456,13 @@ END
 	<comment><![CDATA[implementation of > operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int8gt]]></definition>
 </function>
@@ -3475,8 +3471,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than]]></comment>
-	<type name="bigint" ref-type="left-type"/>
-	<type name="bigint" ref-type="right-type"/>
+	<type name="bigint" length="1" ref-type="left-type"/>
+	<type name="bigint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int8gt(bigint,bigint)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -3496,13 +3492,13 @@ END
 	<comment><![CDATA[implementation of < operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int82lt]]></definition>
 </function>
@@ -3511,8 +3507,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than]]></comment>
-	<type name="bigint" ref-type="left-type"/>
-	<type name="smallint" ref-type="right-type"/>
+	<type name="bigint" length="1" ref-type="left-type"/>
+	<type name="smallint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int82lt(bigint,smallint)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -3532,13 +3528,13 @@ END
 	<comment><![CDATA[implementation of <= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int82le]]></definition>
 </function>
@@ -3547,8 +3543,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than or equal]]></comment>
-	<type name="bigint" ref-type="left-type"/>
-	<type name="smallint" ref-type="right-type"/>
+	<type name="bigint" length="1" ref-type="left-type"/>
+	<type name="smallint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int82le(bigint,smallint)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -3568,13 +3564,13 @@ END
 	<comment><![CDATA[implementation of = operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int82eq]]></definition>
 </function>
@@ -3583,8 +3579,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[equal]]></comment>
-	<type name="bigint" ref-type="left-type"/>
-	<type name="smallint" ref-type="right-type"/>
+	<type name="bigint" length="1" ref-type="left-type"/>
+	<type name="smallint" length="1" ref-type="right-type"/>
 	<operator ref-type="commutator-op" signature="pg_catalog.=(smallint,bigint)"/>
 	<function ref-type="operfunc" signature="pg_catalog.int82eq(bigint,smallint)"/>
 	<function ref-type="join" signature="pg_catalog.eqjoinsel(internal,oid,internal,smallint,internal)"/>
@@ -3605,13 +3601,13 @@ END
 	<comment><![CDATA[implementation of >= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int82ge]]></definition>
 </function>
@@ -3620,8 +3616,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than or equal]]></comment>
-	<type name="bigint" ref-type="left-type"/>
-	<type name="smallint" ref-type="right-type"/>
+	<type name="bigint" length="1" ref-type="left-type"/>
+	<type name="smallint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int82ge(bigint,smallint)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -3641,13 +3637,13 @@ END
 	<comment><![CDATA[implementation of > operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</parameter>
 	<definition><![CDATA[int82gt]]></definition>
 </function>
@@ -3656,8 +3652,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than]]></comment>
-	<type name="bigint" ref-type="left-type"/>
-	<type name="smallint" ref-type="right-type"/>
+	<type name="bigint" length="1" ref-type="left-type"/>
+	<type name="smallint" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int82gt(bigint,smallint)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -3677,13 +3673,13 @@ END
 	<comment><![CDATA[implementation of < operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<definition><![CDATA[int84lt]]></definition>
 </function>
@@ -3692,8 +3688,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than]]></comment>
-	<type name="bigint" ref-type="left-type"/>
-	<type name="integer" ref-type="right-type"/>
+	<type name="bigint" length="1" ref-type="left-type"/>
+	<type name="integer" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int84lt(bigint,integer)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -3713,13 +3709,13 @@ END
 	<comment><![CDATA[implementation of <= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<definition><![CDATA[int84le]]></definition>
 </function>
@@ -3728,8 +3724,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than or equal]]></comment>
-	<type name="bigint" ref-type="left-type"/>
-	<type name="integer" ref-type="right-type"/>
+	<type name="bigint" length="1" ref-type="left-type"/>
+	<type name="integer" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int84le(bigint,integer)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -3749,13 +3745,13 @@ END
 	<comment><![CDATA[implementation of = operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<definition><![CDATA[int84eq]]></definition>
 </function>
@@ -3764,8 +3760,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[equal]]></comment>
-	<type name="bigint" ref-type="left-type"/>
-	<type name="integer" ref-type="right-type"/>
+	<type name="bigint" length="1" ref-type="left-type"/>
+	<type name="integer" length="1" ref-type="right-type"/>
 	<operator ref-type="commutator-op" signature="pg_catalog.=(integer,bigint)"/>
 	<function ref-type="operfunc" signature="pg_catalog.int84eq(bigint,integer)"/>
 	<function ref-type="join" signature="pg_catalog.eqjoinsel(internal,oid,internal,smallint,internal)"/>
@@ -3786,13 +3782,13 @@ END
 	<comment><![CDATA[implementation of >= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<definition><![CDATA[int84ge]]></definition>
 </function>
@@ -3801,8 +3797,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than or equal]]></comment>
-	<type name="bigint" ref-type="left-type"/>
-	<type name="integer" ref-type="right-type"/>
+	<type name="bigint" length="1" ref-type="left-type"/>
+	<type name="integer" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int84ge(bigint,integer)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -3822,13 +3818,13 @@ END
 	<comment><![CDATA[implementation of > operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="bigint"/>
+		<type name="bigint" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</parameter>
 	<definition><![CDATA[int84gt]]></definition>
 </function>
@@ -3837,8 +3833,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than]]></comment>
-	<type name="bigint" ref-type="left-type"/>
-	<type name="integer" ref-type="right-type"/>
+	<type name="bigint" length="1" ref-type="left-type"/>
+	<type name="integer" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.int84gt(bigint,integer)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -3847,7 +3843,7 @@ END
 <opclass  name="int2_ops" index-type="btree" default="true" sql-disabled="true">
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
-	<type name="smallint"/>
+	<type name="smallint" length="1"/>
 	<element type="function" stg-number="1">
 		<function signature="pg_catalog.btint2cmp(smallint,smallint)"/>
 	</element>
@@ -4069,7 +4065,7 @@ END
 <opclass  name="int4_ops" index-type="btree" default="true" sql-disabled="true">
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
-	<type name="integer"/>
+	<type name="integer" length="1"/>
 	<element type="function" stg-number="1">
 		<function signature="pg_catalog.btint2cmp(smallint,smallint)"/>
 	</element>
@@ -4451,13 +4447,13 @@ END
 	<comment><![CDATA[less-equal-greater]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="integer"/>
+	<type name="integer" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<definition><![CDATA[date_cmp]]></definition>
 </function>
@@ -4475,10 +4471,10 @@ END
 	<comment><![CDATA[sort support]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="void"/>
+	<type name="void" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<definition><![CDATA[date_sortsupport]]></definition>
 </function>
@@ -4496,13 +4492,13 @@ END
 	<comment><![CDATA[less-equal-greater]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="integer"/>
+	<type name="integer" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<definition><![CDATA[date_cmp_timestamp]]></definition>
 </function>
@@ -4520,13 +4516,13 @@ END
 	<comment><![CDATA[less-equal-greater]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="integer"/>
+	<type name="integer" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[date_cmp_timestamptz]]></definition>
 </function>
@@ -4544,13 +4540,13 @@ END
 	<comment><![CDATA[less-equal-greater]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="integer"/>
+	<type name="integer" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<definition><![CDATA[timestamp_cmp]]></definition>
 </function>
@@ -4568,10 +4564,10 @@ END
 	<comment><![CDATA[sort support]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="void"/>
+	<type name="void" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="internal"/>
+		<type name="internal" length="1"/>
 	</parameter>
 	<definition><![CDATA[timestamp_sortsupport]]></definition>
 </function>
@@ -4589,13 +4585,13 @@ END
 	<comment><![CDATA[less-equal-greater]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="integer"/>
+	<type name="integer" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<definition><![CDATA[timestamp_cmp_date]]></definition>
 </function>
@@ -4613,13 +4609,13 @@ END
 	<comment><![CDATA[less-equal-greater]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="integer"/>
+	<type name="integer" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[timestamp_cmp_timestamptz]]></definition>
 </function>
@@ -4637,13 +4633,13 @@ END
 	<comment><![CDATA[less-equal-greater]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="integer"/>
+	<type name="integer" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[timestamp_cmp]]></definition>
 </function>
@@ -4661,13 +4657,13 @@ END
 	<comment><![CDATA[less-equal-greater]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="integer"/>
+	<type name="integer" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<definition><![CDATA[timestamptz_cmp_date]]></definition>
 </function>
@@ -4685,13 +4681,13 @@ END
 	<comment><![CDATA[less-equal-greater]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="integer"/>
+	<type name="integer" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<definition><![CDATA[timestamptz_cmp_timestamp]]></definition>
 </function>
@@ -4710,13 +4706,13 @@ END
 	<comment><![CDATA[implementation of < operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<definition><![CDATA[date_lt]]></definition>
 </function>
@@ -4725,8 +4721,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than]]></comment>
-	<type name="date" ref-type="left-type"/>
-	<type name="date" ref-type="right-type"/>
+	<type name="date" length="1" ref-type="left-type"/>
+	<type name="date" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.date_lt(date,date)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -4746,13 +4742,13 @@ END
 	<comment><![CDATA[implementation of <= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<definition><![CDATA[date_le]]></definition>
 </function>
@@ -4761,8 +4757,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than or equal]]></comment>
-	<type name="date" ref-type="left-type"/>
-	<type name="date" ref-type="right-type"/>
+	<type name="date" length="1" ref-type="left-type"/>
+	<type name="date" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.date_le(date,date)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -4782,13 +4778,13 @@ END
 	<comment><![CDATA[implementation of = operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<definition><![CDATA[date_eq]]></definition>
 </function>
@@ -4797,8 +4793,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[equal]]></comment>
-	<type name="date" ref-type="left-type"/>
-	<type name="date" ref-type="right-type"/>
+	<type name="date" length="1" ref-type="left-type"/>
+	<type name="date" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.date_eq(date,date)"/>
 	<function ref-type="join" signature="pg_catalog.eqjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.eqsel(internal,oid,internal,integer)"/>
@@ -4818,13 +4814,13 @@ END
 	<comment><![CDATA[implementation of >= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<definition><![CDATA[date_ge]]></definition>
 </function>
@@ -4833,8 +4829,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than or equal]]></comment>
-	<type name="date" ref-type="left-type"/>
-	<type name="date" ref-type="right-type"/>
+	<type name="date" length="1" ref-type="left-type"/>
+	<type name="date" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.date_ge(date,date)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -4854,13 +4850,13 @@ END
 	<comment><![CDATA[implementation of > operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<definition><![CDATA[date_gt]]></definition>
 </function>
@@ -4869,8 +4865,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than]]></comment>
-	<type name="date" ref-type="left-type"/>
-	<type name="date" ref-type="right-type"/>
+	<type name="date" length="1" ref-type="left-type"/>
+	<type name="date" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.date_gt(date,date)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -4889,13 +4885,13 @@ END
 	<comment><![CDATA[implementation of < operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<definition><![CDATA[date_lt_timestamp]]></definition>
 </function>
@@ -4904,8 +4900,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than]]></comment>
-	<type name="date" ref-type="left-type"/>
-	<type name="timestamp" ref-type="right-type"/>
+	<type name="date" length="1" ref-type="left-type"/>
+	<type name="timestamp" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.date_lt_timestamp(date,timestamp)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -4924,13 +4920,13 @@ END
 	<comment><![CDATA[implementation of <= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<definition><![CDATA[date_le_timestamp]]></definition>
 </function>
@@ -4939,8 +4935,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than or equal]]></comment>
-	<type name="date" ref-type="left-type"/>
-	<type name="timestamp" ref-type="right-type"/>
+	<type name="date" length="1" ref-type="left-type"/>
+	<type name="timestamp" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.date_le_timestamp(date,timestamp)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -4959,13 +4955,13 @@ END
 	<comment><![CDATA[implementation of = operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<definition><![CDATA[date_eq_timestamp]]></definition>
 </function>
@@ -4974,8 +4970,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[equal]]></comment>
-	<type name="date" ref-type="left-type"/>
-	<type name="timestamp" ref-type="right-type"/>
+	<type name="date" length="1" ref-type="left-type"/>
+	<type name="timestamp" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.date_eq_timestamp(date,timestamp)"/>
 	<function ref-type="join" signature="pg_catalog.eqjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.eqsel(internal,oid,internal,integer)"/>
@@ -4994,13 +4990,13 @@ END
 	<comment><![CDATA[implementation of >= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<definition><![CDATA[date_ge_timestamp]]></definition>
 </function>
@@ -5009,8 +5005,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than or equal]]></comment>
-	<type name="date" ref-type="left-type"/>
-	<type name="timestamp" ref-type="right-type"/>
+	<type name="date" length="1" ref-type="left-type"/>
+	<type name="timestamp" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.date_ge_timestamp(date,timestamp)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -5029,13 +5025,13 @@ END
 	<comment><![CDATA[implementation of > operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<definition><![CDATA[date_gt_timestamp]]></definition>
 </function>
@@ -5044,8 +5040,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than]]></comment>
-	<type name="date" ref-type="left-type"/>
-	<type name="timestamp" ref-type="right-type"/>
+	<type name="date" length="1" ref-type="left-type"/>
+	<type name="timestamp" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.date_gt_timestamp(date,timestamp)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -5064,13 +5060,13 @@ END
 	<comment><![CDATA[implementation of < operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[date_lt_timestamptz]]></definition>
 </function>
@@ -5079,8 +5075,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than]]></comment>
-	<type name="date" ref-type="left-type"/>
-	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
+	<type name="date" length="1" ref-type="left-type"/>
+	<type name="timestamp with time zone" length="1" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.date_lt_timestamptz(date,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -5099,13 +5095,13 @@ END
 	<comment><![CDATA[implementation of <= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[date_le_timestamptz]]></definition>
 </function>
@@ -5114,8 +5110,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than or equal]]></comment>
-	<type name="date" ref-type="left-type"/>
-	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
+	<type name="date" length="1" ref-type="left-type"/>
+	<type name="timestamp with time zone" length="1" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.date_le_timestamptz(date,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -5134,13 +5130,13 @@ END
 	<comment><![CDATA[implementation of = operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[date_eq_timestamptz]]></definition>
 </function>
@@ -5149,8 +5145,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[equal]]></comment>
-	<type name="date" ref-type="left-type"/>
-	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
+	<type name="date" length="1" ref-type="left-type"/>
+	<type name="timestamp with time zone" length="1" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.date_eq_timestamptz(date,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.eqjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.eqsel(internal,oid,internal,integer)"/>
@@ -5169,13 +5165,13 @@ END
 	<comment><![CDATA[implementation of >= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[date_ge_timestamptz]]></definition>
 </function>
@@ -5184,8 +5180,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than or equal]]></comment>
-	<type name="date" ref-type="left-type"/>
-	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
+	<type name="date" length="1" ref-type="left-type"/>
+	<type name="timestamp with time zone" length="1" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.date_ge_timestamptz(date,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -5204,13 +5200,13 @@ END
 	<comment><![CDATA[implementation of > operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[date_gt_timestamptz]]></definition>
 </function>
@@ -5219,8 +5215,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than]]></comment>
-	<type name="date" ref-type="left-type"/>
-	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
+	<type name="date" length="1" ref-type="left-type"/>
+	<type name="timestamp with time zone" length="1" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.date_gt_timestamptz(date,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -5240,13 +5236,13 @@ END
 	<comment><![CDATA[implementation of < operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<definition><![CDATA[timestamp_lt]]></definition>
 </function>
@@ -5255,8 +5251,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than]]></comment>
-	<type name="timestamp" ref-type="left-type"/>
-	<type name="timestamp" ref-type="right-type"/>
+	<type name="timestamp" length="1" ref-type="left-type"/>
+	<type name="timestamp" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamp_lt(timestamp,timestamp)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -5276,13 +5272,13 @@ END
 	<comment><![CDATA[implementation of <= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<definition><![CDATA[timestamp_le]]></definition>
 </function>
@@ -5291,8 +5287,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than or equal]]></comment>
-	<type name="timestamp" ref-type="left-type"/>
-	<type name="timestamp" ref-type="right-type"/>
+	<type name="timestamp" length="1" ref-type="left-type"/>
+	<type name="timestamp" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamp_le(timestamp,timestamp)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -5312,13 +5308,13 @@ END
 	<comment><![CDATA[implementation of = operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<definition><![CDATA[timestamp_eq]]></definition>
 </function>
@@ -5327,8 +5323,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[equal]]></comment>
-	<type name="timestamp" ref-type="left-type"/>
-	<type name="timestamp" ref-type="right-type"/>
+	<type name="timestamp" length="1" ref-type="left-type"/>
+	<type name="timestamp" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamp_eq(timestamp,timestamp)"/>
 	<function ref-type="join" signature="pg_catalog.eqjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.eqsel(internal,oid,internal,integer)"/>
@@ -5348,13 +5344,13 @@ END
 	<comment><![CDATA[implementation of >= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<definition><![CDATA[timestamp_ge]]></definition>
 </function>
@@ -5363,8 +5359,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than or equal]]></comment>
-	<type name="timestamp" ref-type="left-type"/>
-	<type name="timestamp" ref-type="right-type"/>
+	<type name="timestamp" length="1" ref-type="left-type"/>
+	<type name="timestamp" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamp_ge(timestamp,timestamp)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -5384,13 +5380,13 @@ END
 	<comment><![CDATA[implementation of > operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<definition><![CDATA[timestamp_gt]]></definition>
 </function>
@@ -5399,8 +5395,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than]]></comment>
-	<type name="timestamp" ref-type="left-type"/>
-	<type name="timestamp" ref-type="right-type"/>
+	<type name="timestamp" length="1" ref-type="left-type"/>
+	<type name="timestamp" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamp_gt(timestamp,timestamp)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -5419,13 +5415,13 @@ END
 	<comment><![CDATA[implementation of < operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<definition><![CDATA[timestamp_lt_date]]></definition>
 </function>
@@ -5434,8 +5430,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than]]></comment>
-	<type name="timestamp" ref-type="left-type"/>
-	<type name="date" ref-type="right-type"/>
+	<type name="timestamp" length="1" ref-type="left-type"/>
+	<type name="date" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamp_lt_date(timestamp,date)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -5454,13 +5450,13 @@ END
 	<comment><![CDATA[implementation of <= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<definition><![CDATA[timestamp_le_date]]></definition>
 </function>
@@ -5469,8 +5465,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than or equal]]></comment>
-	<type name="timestamp" ref-type="left-type"/>
-	<type name="date" ref-type="right-type"/>
+	<type name="timestamp" length="1" ref-type="left-type"/>
+	<type name="date" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamp_le_date(timestamp,date)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -5489,13 +5485,13 @@ END
 	<comment><![CDATA[implementation of = operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<definition><![CDATA[timestamp_eq_date]]></definition>
 </function>
@@ -5504,8 +5500,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[equal]]></comment>
-	<type name="timestamp" ref-type="left-type"/>
-	<type name="date" ref-type="right-type"/>
+	<type name="timestamp" length="1" ref-type="left-type"/>
+	<type name="date" length="1" ref-type="right-type"/>
 	<operator ref-type="commutator-op" signature="pg_catalog.=(date,timestamp)"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamp_eq_date(timestamp,date)"/>
 	<function ref-type="join" signature="pg_catalog.eqjoinsel(internal,oid,internal,smallint,internal)"/>
@@ -5525,13 +5521,13 @@ END
 	<comment><![CDATA[implementation of >= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<definition><![CDATA[timestamp_ge_date]]></definition>
 </function>
@@ -5540,8 +5536,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than or equal]]></comment>
-	<type name="timestamp" ref-type="left-type"/>
-	<type name="date" ref-type="right-type"/>
+	<type name="timestamp" length="1" ref-type="left-type"/>
+	<type name="date" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamp_ge_date(timestamp,date)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -5560,13 +5556,13 @@ END
 	<comment><![CDATA[implementation of > operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<definition><![CDATA[timestamp_gt_date]]></definition>
 </function>
@@ -5575,8 +5571,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than]]></comment>
-	<type name="timestamp" ref-type="left-type"/>
-	<type name="date" ref-type="right-type"/>
+	<type name="timestamp" length="1" ref-type="left-type"/>
+	<type name="date" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamp_gt_date(timestamp,date)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -5595,13 +5591,13 @@ END
 	<comment><![CDATA[implementation of < operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[timestamp_lt_timestamptz]]></definition>
 </function>
@@ -5610,8 +5606,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than]]></comment>
-	<type name="timestamp" ref-type="left-type"/>
-	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
+	<type name="timestamp" length="1" ref-type="left-type"/>
+	<type name="timestamp with time zone" length="1" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamp_lt_timestamptz(timestamp,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -5630,13 +5626,13 @@ END
 	<comment><![CDATA[implementation of <= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[timestamp_le_timestamptz]]></definition>
 </function>
@@ -5645,8 +5641,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than or equal]]></comment>
-	<type name="timestamp" ref-type="left-type"/>
-	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
+	<type name="timestamp" length="1" ref-type="left-type"/>
+	<type name="timestamp with time zone" length="1" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamp_le_timestamptz(timestamp,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -5665,13 +5661,13 @@ END
 	<comment><![CDATA[implementation of = operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[timestamp_eq_timestamptz]]></definition>
 </function>
@@ -5680,8 +5676,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[equal]]></comment>
-	<type name="timestamp" ref-type="left-type"/>
-	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
+	<type name="timestamp" length="1" ref-type="left-type"/>
+	<type name="timestamp with time zone" length="1" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamp_eq_timestamptz(timestamp,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.eqjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.eqsel(internal,oid,internal,integer)"/>
@@ -5700,13 +5696,13 @@ END
 	<comment><![CDATA[implementation of >= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[timestamp_ge_timestamptz]]></definition>
 </function>
@@ -5715,8 +5711,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than or equal]]></comment>
-	<type name="timestamp" ref-type="left-type"/>
-	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
+	<type name="timestamp" length="1" ref-type="left-type"/>
+	<type name="timestamp with time zone" length="1" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamp_ge_timestamptz(timestamp,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -5735,13 +5731,13 @@ END
 	<comment><![CDATA[implementation of > operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[timestamp_gt_timestamptz]]></definition>
 </function>
@@ -5750,8 +5746,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than]]></comment>
-	<type name="timestamp" ref-type="left-type"/>
-	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
+	<type name="timestamp" length="1" ref-type="left-type"/>
+	<type name="timestamp with time zone" length="1" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamp_gt_timestamptz(timestamp,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -5771,13 +5767,13 @@ END
 	<comment><![CDATA[implementation of < operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[timestamp_lt]]></definition>
 </function>
@@ -5786,8 +5782,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than]]></comment>
-	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
-	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
+	<type name="timestamp with time zone" length="1" ref-type="left-type" with-timezone="true"/>
+	<type name="timestamp with time zone" length="1" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_lt(timestamp with time zone,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -5807,13 +5803,13 @@ END
 	<comment><![CDATA[implementation of <= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[timestamp_le]]></definition>
 </function>
@@ -5822,8 +5818,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than or equal]]></comment>
-	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
-	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
+	<type name="timestamp with time zone" length="1" ref-type="left-type" with-timezone="true"/>
+	<type name="timestamp with time zone" length="1" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_le(timestamp with time zone,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -5843,13 +5839,13 @@ END
 	<comment><![CDATA[implementation of = operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[timestamp_eq]]></definition>
 </function>
@@ -5858,8 +5854,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[equal]]></comment>
-	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
-	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
+	<type name="timestamp with time zone" length="1" ref-type="left-type" with-timezone="true"/>
+	<type name="timestamp with time zone" length="1" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_eq(timestamp with time zone,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.eqjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.eqsel(internal,oid,internal,integer)"/>
@@ -5879,13 +5875,13 @@ END
 	<comment><![CDATA[implementation of >= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[timestamp_ge]]></definition>
 </function>
@@ -5894,8 +5890,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than or equal]]></comment>
-	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
-	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
+	<type name="timestamp with time zone" length="1" ref-type="left-type" with-timezone="true"/>
+	<type name="timestamp with time zone" length="1" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_ge(timestamp with time zone,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -5915,13 +5911,13 @@ END
 	<comment><![CDATA[implementation of > operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<definition><![CDATA[timestamp_gt]]></definition>
 </function>
@@ -5930,8 +5926,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than]]></comment>
-	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
-	<type name="timestamp with time zone" ref-type="right-type" with-timezone="true"/>
+	<type name="timestamp with time zone" length="1" ref-type="left-type" with-timezone="true"/>
+	<type name="timestamp with time zone" length="1" ref-type="right-type" with-timezone="true"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_gt(timestamp with time zone,timestamp with time zone)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -5950,13 +5946,13 @@ END
 	<comment><![CDATA[implementation of < operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<definition><![CDATA[timestamptz_lt_date]]></definition>
 </function>
@@ -5965,8 +5961,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than]]></comment>
-	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
-	<type name="date" ref-type="right-type"/>
+	<type name="timestamp with time zone" length="1" ref-type="left-type" with-timezone="true"/>
+	<type name="date" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_lt_date(timestamp with time zone,date)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -5985,13 +5981,13 @@ END
 	<comment><![CDATA[implementation of <= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<definition><![CDATA[timestamptz_le_date]]></definition>
 </function>
@@ -6000,8 +5996,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than or equal]]></comment>
-	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
-	<type name="date" ref-type="right-type"/>
+	<type name="timestamp with time zone" length="1" ref-type="left-type" with-timezone="true"/>
+	<type name="date" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_le_date(timestamp with time zone,date)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -6020,13 +6016,13 @@ END
 	<comment><![CDATA[implementation of = operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<definition><![CDATA[timestamptz_eq_date]]></definition>
 </function>
@@ -6035,8 +6031,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[equal]]></comment>
-	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
-	<type name="date" ref-type="right-type"/>
+	<type name="timestamp with time zone" length="1" ref-type="left-type" with-timezone="true"/>
+	<type name="date" length="1" ref-type="right-type"/>
 	<operator ref-type="commutator-op" signature="pg_catalog.=(date,timestamp with time zone)"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_eq_date(timestamp with time zone,date)"/>
 	<function ref-type="join" signature="pg_catalog.eqjoinsel(internal,oid,internal,smallint,internal)"/>
@@ -6056,13 +6052,13 @@ END
 	<comment><![CDATA[implementation of >= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<definition><![CDATA[timestamptz_ge_date]]></definition>
 </function>
@@ -6071,8 +6067,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than or equal]]></comment>
-	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
-	<type name="date" ref-type="right-type"/>
+	<type name="timestamp with time zone" length="1" ref-type="left-type" with-timezone="true"/>
+	<type name="date" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_ge_date(timestamp with time zone,date)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -6091,13 +6087,13 @@ END
 	<comment><![CDATA[implementation of > operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<definition><![CDATA[timestamptz_gt_date]]></definition>
 </function>
@@ -6106,8 +6102,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than]]></comment>
-	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
-	<type name="date" ref-type="right-type"/>
+	<type name="timestamp with time zone" length="1" ref-type="left-type" with-timezone="true"/>
+	<type name="date" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_gt_date(timestamp with time zone,date)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -6126,13 +6122,13 @@ END
 	<comment><![CDATA[implementation of < operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<definition><![CDATA[timestamptz_lt_timestamp]]></definition>
 </function>
@@ -6141,8 +6137,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than]]></comment>
-	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
-	<type name="timestamp" ref-type="right-type"/>
+	<type name="timestamp with time zone" length="1" ref-type="left-type" with-timezone="true"/>
+	<type name="timestamp" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_lt_timestamp(timestamp with time zone,timestamp)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -6161,13 +6157,13 @@ END
 	<comment><![CDATA[implementation of <= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<definition><![CDATA[timestamptz_le_timestamp]]></definition>
 </function>
@@ -6176,8 +6172,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[less than or equal]]></comment>
-	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
-	<type name="timestamp" ref-type="right-type"/>
+	<type name="timestamp with time zone" length="1" ref-type="left-type" with-timezone="true"/>
+	<type name="timestamp" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_le_timestamp(timestamp with time zone,timestamp)"/>
 	<function ref-type="join" signature="pg_catalog.scalarltjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalarltsel(internal,oid,internal,integer)"/>
@@ -6196,13 +6192,13 @@ END
 	<comment><![CDATA[implementation of = operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<definition><![CDATA[timestamptz_eq_timestamp]]></definition>
 </function>
@@ -6211,8 +6207,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[equal]]></comment>
-	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
-	<type name="timestamp" ref-type="right-type"/>
+	<type name="timestamp with time zone" length="1" ref-type="left-type" with-timezone="true"/>
+	<type name="timestamp" length="1" ref-type="right-type"/>
 	<operator ref-type="commutator-op" signature="pg_catalog.=(timestamp,timestamp with time zone)"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_eq_timestamp(timestamp with time zone,timestamp)"/>
 	<function ref-type="join" signature="pg_catalog.eqjoinsel(internal,oid,internal,smallint,internal)"/>
@@ -6232,13 +6228,13 @@ END
 	<comment><![CDATA[implementation of >= operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<definition><![CDATA[timestamptz_ge_timestamp]]></definition>
 </function>
@@ -6247,8 +6243,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than or equal]]></comment>
-	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
-	<type name="timestamp" ref-type="right-type"/>
+	<type name="timestamp with time zone" length="1" ref-type="left-type" with-timezone="true"/>
+	<type name="timestamp" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_ge_timestamp(timestamp with time zone,timestamp)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -6267,13 +6263,13 @@ END
 	<comment><![CDATA[implementation of > operator]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="_param1">
-		<type name="timestamp with time zone" with-timezone="true"/>
+		<type name="timestamp with time zone" length="1" with-timezone="true"/>
 	</parameter>
 	<parameter name="_param2">
-		<type name="timestamp"/>
+		<type name="timestamp" length="1"/>
 	</parameter>
 	<definition><![CDATA[timestamptz_gt_timestamp]]></definition>
 </function>
@@ -6282,8 +6278,8 @@ END
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
 	<comment><![CDATA[greater than]]></comment>
-	<type name="timestamp with time zone" ref-type="left-type" with-timezone="true"/>
-	<type name="timestamp" ref-type="right-type"/>
+	<type name="timestamp with time zone" length="1" ref-type="left-type" with-timezone="true"/>
+	<type name="timestamp" length="1" ref-type="right-type"/>
 	<function ref-type="operfunc" signature="pg_catalog.timestamptz_gt_timestamp(timestamp with time zone,timestamp)"/>
 	<function ref-type="join" signature="pg_catalog.scalargtjoinsel(internal,oid,internal,smallint,internal)"/>
 	<function ref-type="restriction" signature="pg_catalog.scalargtsel(internal,oid,internal,integer)"/>
@@ -6292,7 +6288,7 @@ END
 <opclass  name="timestamp_ops" index-type="btree" default="true" sql-disabled="true">
 	<schema name="pg_catalog"/>
 	<role name="postgres"/>
-	<type name="timestamp"/>
+	<type name="timestamp" length="1"/>
 	<element type="function" stg-number="1">
 		<function signature="pg_catalog.date_cmp(date,date)"/>
 	</element>
@@ -6538,7 +6534,7 @@ END
 	<comment><![CDATA[trigger for automatic update of tsvector column]]></comment>
 	<language name="internal" sql-disabled="true"/>
 	<return-type>
-	<type name="trigger"/>
+	<type name="trigger" length="1"/>
 	</return-type>
 	<definition><![CDATA[tsvector_update_trigger_byid]]></definition>
 </function>
@@ -6649,48 +6645,28 @@ END
 	 pk-pattern="{dt}_pk"
 	 custom-color="#ddc2d5"
 	 src-table="public.payment_p2007_03"
-	 dst-table="public.payment">
-	<line>
-		<position x="1774.63" y="1629.6"/>
-	<position x="1774.63" y="1471.6"/>
-	</line>
-</relationship>
+	 dst-table="public.payment"/>
 
 <relationship name="payment_p2007_04_inherits_payment" type="relgen"
 	 pk-pattern="{dt}_pk"
 	 custom-color="#e7c791"
 	 src-table="public.payment_p2007_04"
-	 dst-table="public.payment">
-	<line>
-		<position x="1772.77" y="1368.42"/>
-	<position x="1772.77" y="1471.6"/>
-	</line>
-</relationship>
+	 dst-table="public.payment"/>
 
 <relationship name="payment_p2007_05_inherits_payment" type="relgen"
 	 pk-pattern="{dt}_pk"
 	 custom-color="#87bbf0"
 	 src-table="public.payment_p2007_05"
-	 dst-table="public.payment">
-	<line>
-		<position x="1861.18" y="1904.71"/>
-	<position x="1860" y="1476.47"/>
-	</line>
-</relationship>
+	 dst-table="public.payment"/>
 
 <relationship name="payment_p2007_06_inherits_payment" type="relgen"
 	 pk-pattern="{dt}_pk"
 	 custom-color="#2b0aa0"
 	 src-table="public.payment_p2007_06"
-	 dst-table="public.payment">
-	<line>
-		<position x="1661.18" y="2175.29"/>
-	<position x="1664.71" y="1478.82"/>
-	</line>
-</relationship>
+	 dst-table="public.payment"/>
 
 <textbox name="pagila_desc" font-size="11">
-	<position x="341" y="284.273"/>
+	<position x="340" y="280"/>
 	<comment><![CDATA[[ pagila sample database ]
 
 Pagila is a port of the Sakila example database available for MySQL, which was
@@ -6946,12 +6922,7 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	 custom-color="#26b51d"
 	 src-table="public.film"
 	 dst-table="public.language"
-	 src-required="false" dst-required="false">
-	<line>
-		<position x="4009.23" y="1247.6"/>
-	<position x="4009.23" y="1564.6"/>
-	</line>
-</relationship>
+	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_film_actor_actor" type="relfk"
 	 custom-color="#091daa"
@@ -6980,12 +6951,7 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 <relationship name="rel_address_city" type="relfk"
 	 src-table="public.address"
 	 dst-table="public.city"
-	 src-required="false" dst-required="false">
-	<line>
-		<position x="1931.23" y="604.6"/>
-	<position x="1934" y="330"/>
-	</line>
-</relationship>
+	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_city_country" type="relfk"
 	 custom-color="#66bb68"
@@ -7003,45 +6969,25 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	 custom-color="#83a4c1"
 	 src-table="public.customer"
 	 dst-table="public.store"
-	 src-required="false" dst-required="false">
-	<line>
-		<position x="2038.3" y="1176.91"/>
-	<position x="2207.06" y="718.824"/>
-	<position x="2485.88" y="718.824"/>
-	</line>
-</relationship>
+	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_inventory_film" type="relfk"
 	 custom-color="#7f121b"
 	 src-table="public.inventory"
 	 dst-table="public.film"
-	 src-required="false" dst-required="false">
-	<line>
-		<position x="3361.18" y="809.412"/>
-	<position x="3370" y="1184"/>
-	</line>
-</relationship>
+	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_inventory_store" type="relfk"
 	 custom-color="#1d0b32"
 	 src-table="public.inventory"
 	 dst-table="public.store"
-	 src-required="false" dst-required="false">
-	<line>
-		<position x="2948.24" y="824.706"/>
-	<position x="2949.41" y="521.176"/>
-	</line>
-</relationship>
+	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_payment_customer" type="relfk"
 	 custom-color="#d6538b"
 	 src-table="public.payment"
 	 dst-table="public.customer"
 	 src-required="false" dst-required="false">
-	<line>
-		<position x="664.706" y="1058.82"/>
-	<position x="872.941" y="1061.18"/>
-	</line>
 	<label ref-type="dst-label">
 		<position x="-27.2667" y="-15.8667"/>
 	</label>
@@ -7051,15 +6997,7 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	 custom-color="#36a493"
 	 src-table="public.payment"
 	 dst-table="public.rental"
-	 src-required="false" dst-required="false">
-	<line>
-		<position x="905.233" y="1430.6"/>
-	<position x="905.233" y="768.6"/>
-	</line>
-	<label ref-type="name-label">
-		<position x="-21.6867" y="74.9276"/>
-	</label>
-</relationship>
+	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_payment_staff" type="relfk"
 	 custom-color="#4f996e"
@@ -7072,11 +7010,6 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	 src-table="public.payment_p2007_01"
 	 dst-table="public.customer"
 	 src-required="false" dst-required="false">
-	<line>
-		<position x="862.353" y="1842.35"/>
-	<position x="1140" y="1843.53"/>
-	<position x="1136.47" y="1223.53"/>
-	</line>
 	<label ref-type="dst-label">
 		<position x="0.968582" y="55.898"/>
 	</label>
@@ -7086,12 +7019,7 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	 custom-color="#b1ce9e"
 	 src-table="public.payment_p2007_01"
 	 dst-table="public.rental"
-	 src-required="false" dst-required="false">
-	<line>
-		<position x="904" y="1890"/>
-	<position x="904" y="1461"/>
-	</line>
-</relationship>
+	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_payment_p2007_01_staff" type="relfk"
 	 custom-color="#e4e019"
@@ -7103,67 +7031,31 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	 custom-color="#5b8079"
 	 src-table="public.payment_p2007_02"
 	 dst-table="public.customer"
-	 src-required="false" dst-required="false">
-	<line>
-		<position x="936.066" y="742.6"/>
-	<position x="936.066" y="1165.27"/>
-	</line>
-	<label ref-type="dst-label">
-		<position x="-80.2079" y="-5.27846"/>
-	</label>
-</relationship>
+	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_payment_p2007_02_rental" type="relfk"
 	 custom-color="#b24ded"
 	 src-table="public.payment_p2007_02"
 	 dst-table="public.rental"
-	 src-required="false" dst-required="false">
-	<line>
-		<position x="741.176" y="663.529"/>
-	<position x="1045.88" y="663.529"/>
-	</line>
-	<label ref-type="src-label">
-		<position x="20.3237" y="-75.3177"/>
-	</label>
-	<label ref-type="dst-label">
-		<position x="-28.2471" y="-63.9059"/>
-	</label>
-	<label ref-type="name-label">
-		<position x="-0.689102" y="-65.4725"/>
-	</label>
-</relationship>
+	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_payment_p2007_02_staff" type="relfk"
 	 custom-color="#5074d4"
 	 src-table="public.payment_p2007_02"
 	 dst-table="public.staff"
-	 src-required="false" dst-required="false">
-	<line>
-		<position x="675.294" y="978.824"/>
-	<position x="982.353" y="1712.94"/>
-	</line>
-</relationship>
+	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_payment_p2007_03_customer" type="relfk"
 	 custom-color="#30065e"
 	 src-table="public.payment_p2007_03"
 	 dst-table="public.customer"
-	 src-required="false" dst-required="false">
-	<line>
-		<position x="2189.48" y="1602.6"/>
-	<position x="2189.48" y="1167.62"/>
-	</line>
-</relationship>
+	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_payment_p2007_03_rental" type="relfk"
 	 custom-color="#60580f"
 	 src-table="public.payment_p2007_03"
 	 dst-table="public.rental"
 	 src-required="false" dst-required="false">
-	<line>
-		<position x="2267.73" y="1630.6"/>
-	<position x="2267.73" y="768.6"/>
-	</line>
 	<label ref-type="src-label">
 		<position x="8.22347" y="10.5646"/>
 	</label>
@@ -7174,11 +7066,6 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	 src-table="public.payment_p2007_03"
 	 dst-table="public.staff"
 	 src-required="false" dst-required="false">
-	<line>
-		<position x="2002.35" y="1610.59"/>
-	<position x="2002.35" y="1845.88"/>
-	<position x="1583.53" y="1892.94"/>
-	</line>
 	<label ref-type="src-label">
 		<position x="0" y="0"/>
 	</label>
@@ -7189,10 +7076,6 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	 src-table="public.payment_p2007_04"
 	 dst-table="public.customer"
 	 src-required="false" dst-required="false">
-	<line>
-		<position x="2895.29" y="1256.47"/>
-	<position x="1496.96" y="1254.52"/>
-	</line>
 	<label ref-type="src-label">
 		<position x="0" y="0"/>
 	</label>
@@ -7203,10 +7086,6 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	 src-table="public.payment_p2007_04"
 	 dst-table="public.rental"
 	 src-required="false" dst-required="false">
-	<line>
-		<position x="2265.87" y="1369.42"/>
-	<position x="2265.87" y="768.6"/>
-	</line>
 	<label ref-type="src-label">
 		<position x="0" y="0"/>
 	</label>
@@ -7217,10 +7096,6 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	 src-table="public.payment_p2007_04"
 	 dst-table="public.staff"
 	 src-required="false" dst-required="false">
-	<line>
-		<position x="2098.49" y="1355.42"/>
-	<position x="2098.49" y="1948.6"/>
-	</line>
 	<label ref-type="src-label">
 		<position x="0" y="0"/>
 	</label>
@@ -7231,11 +7106,6 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	 src-table="public.payment_p2007_05"
 	 dst-table="public.customer"
 	 src-required="false" dst-required="false">
-	<line>
-		<position x="2369.41" y="1874.12"/>
-	<position x="2370.59" y="1017.65"/>
-	<position x="1974.12" y="1018.82"/>
-	</line>
 	<label ref-type="src-label">
 		<position x="0" y="0"/>
 	</label>
@@ -7246,11 +7116,6 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	 src-table="public.payment_p2007_05"
 	 dst-table="public.rental"
 	 src-required="false" dst-required="false">
-	<line>
-		<position x="2430.59" y="2025.88"/>
-	<position x="1928.24" y="2027.06"/>
-	<position x="1923.53" y="875.294"/>
-	</line>
 	<label ref-type="src-label">
 		<position x="0" y="0"/>
 	</label>
@@ -7261,11 +7126,6 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	 src-table="public.payment_p2007_05"
 	 dst-table="public.staff"
 	 src-required="false" dst-required="false">
-	<line>
-		<position x="1898.82" y="1884.71"/>
-	<position x="1896.47" y="1978.82"/>
-	<position x="1727.06" y="1981.18"/>
-	</line>
 	<label ref-type="src-label">
 		<position x="0" y="0"/>
 	</label>
@@ -7276,10 +7136,6 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	 src-table="public.payment_p2007_06"
 	 dst-table="public.customer"
 	 src-required="false" dst-required="false">
-	<line>
-		<position x="1765.88" y="2140"/>
-	<position x="1763.53" y="1147.06"/>
-	</line>
 	<label ref-type="src-label">
 		<position x="0" y="0"/>
 	</label>
@@ -7290,10 +7146,6 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	 src-table="public.payment_p2007_06"
 	 dst-table="public.rental"
 	 src-required="false" dst-required="false">
-	<line>
-		<position x="1689.41" y="2163.53"/>
-	<position x="1690.59" y="840"/>
-	</line>
 	<label ref-type="dst-label">
 		<position x="0" y="0"/>
 	</label>
@@ -7304,11 +7156,6 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	 src-table="public.payment_p2007_06"
 	 dst-table="public.staff"
 	 src-required="false" dst-required="false">
-	<line>
-		<position x="1727.06" y="2152.94"/>
-	<position x="1727.06" y="2015.29"/>
-	<position x="1465.88" y="2012.94"/>
-	</line>
 	<label ref-type="src-label">
 		<position x="0" y="0"/>
 	</label>
@@ -7334,38 +7181,19 @@ on this link: http://pgfoundry.org/projects/dbsamples]]></comment>
 	 custom-color="#ba8ccc"
 	 src-table="public.rental"
 	 dst-table="public.staff"
-	 src-required="false" dst-required="false">
-	<line>
-		<position x="1020" y="1244"/>
-	<position x="1022" y="1814"/>
-	</line>
-</relationship>
+	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_staff_address" type="relfk"
 	 custom-color="#8828b6"
 	 src-table="public.staff"
 	 dst-table="public.address"
-	 src-required="false" dst-required="false">
-	<line>
-		<position x="1320" y="1541.18"/>
-	<position x="1448.24" y="1541.18"/>
-	<position x="1620" y="1544.71"/>
-	<position x="1982.35" y="1543.53"/>
-	</line>
-</relationship>
+	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_staff_store" type="relfk"
 	 custom-color="#3e8d1f"
 	 src-table="public.staff"
 	 dst-table="public.store"
-	 src-required="false" dst-required="false">
-	<line>
-		<position x="1148.24" y="2258.82"/>
-	<position x="1914.12" y="2260"/>
-	<position x="2482.35" y="1842.35"/>
-	<position x="2747.06" y="864.706"/>
-	</line>
-</relationship>
+	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_store_address" type="relfk"
 	 custom-color="#31dbf0"

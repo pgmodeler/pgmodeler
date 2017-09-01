@@ -1,6 +1,42 @@
 Change Log
 ---------
 
+v0.9.0
+------
+<em>Release date: September 1st, 2017</em><br/>
+
+* [New] Added the ability to paste text from clipboard to data grid in DataManipulationForm.
+* [New] Created the method CsvLoadWidget::loadCsvFromBuffer to make the code that extract csv document from string buffer reusable by other classes.
+* [New] Added a new sample model donated by the maintainers of 3D City DB project.
+* [New] Added the language "internal" to the set of system languages available when creating a new model.
+* [New] Added support to override the default language settings via GeneralConfigWidget.
+* [New] Added support to toggle curved relationship lines in GeneralConfigWidget.
+* [Change] Improved the MetadataHandlingForm enabling user to only extract metada to a backup file.
+* [Change] Small update on sample models.
+* [Change] Minor adjustments in the graphical points when relationships are selected.
+* [Change] Adjusted the calculation of the descriptor object.
+* [Change] Fixed the rotation of the descriptor object for identifier relationship when curved lines are activated.
+* [Change] Minor code documentation.
+* [Change] Moved the class BezierCurve to its own source files.
+* [Change] Improved the way bezier curves are generated for relationships.
+* [Change] Changed the default action to reset label's position from middle button click to Alt + Ctrl + left click.
+* [Change] Minor enhancement in auto arrange feature to avoid breaking lines when curved relationship lines are enabled.
+* [Change] Minor size adjustment in GeneralConfigWidget.
+* [Change] Minor update in README.md.
+* [Change] Minor size adjustment for DatabaseImportForm.
+* [Change] Minor adjustment in the methods which automatically resize dialogs depending on the resolution.
+* [Change] Changed the default font for objects and source code.
+* [Fix] Minor fix in RelationshipView to hide the circles at end of lines for self relationships.
+* [Fix] Fixed the catalog query for event triggers.
+* [Fix] Fixed the icons and labels of the "Select all" submenu in ModelWidget.
+* [Fix] Fixed a rare crash when configuring self relationships.
+* [Fix] Minor fix when rendering self n:n relationships.
+* [Fix] Minor fix in the HintTextWidget to resize more properly according to the held text.
+* [Fix] Minor adjustment in SceneInfoWidget.
+* [Fix] Minor fix in default confs for source code font style.
+* [Fix] Fixed the generation of objects style configuration file that was missing constraints settings.
+* [Fix] Fixed a bug in the index / exclude constraint import which was not creating expressions of these objects correctly and sometimes trucating them.
+
 v0.9.0-beta2
 ------
 <em>Release date: July 1st, 2017</em><br/>

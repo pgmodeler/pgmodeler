@@ -371,18 +371,22 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	new_obj_overlay_wgt->setObjectName(QString("new_obj_overlay_wgt"));
 	new_obj_overlay_wgt->setVisible(false);
 
-	for(auto &obj_type : vector<ObjectType>({ BASE_OBJECT, OBJ_SCHEMA, OBJ_TABLE, OBJ_VIEW, OBJ_RELATIONSHIP, OBJ_TEXTBOX }))
+	vector<ObjectType> graph_types = { BASE_OBJECT, OBJ_SCHEMA, OBJ_TABLE, OBJ_VIEW, OBJ_RELATIONSHIP, OBJ_TEXTBOX };
+	QStringList labels = { trUtf8("All objects"), trUtf8("Schemas"), trUtf8("Tables"), trUtf8("Views"), trUtf8("Relationships"), trUtf8("Textboxes") };
+
+	i=0;
+	for(auto &obj_type : graph_types)
 	{
 		if(obj_type == BASE_OBJECT)
 		{
-			action=new QAction(trUtf8("All objects"), this);
+			action=new QAction(labels[i++], this);
 			action->setShortcut(QKeySequence(trUtf8("Ctrl+A")));
 			select_all_menu.addAction(action);
 			select_all_menu.addSeparator();
 		}
 		else
 		{
-			action=new QAction(QIcon(PgModelerUiNS::getIconPath(obj_type)), BaseObject::getTypeName(obj_type), this);
+			action=new QAction(QIcon(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(obj_type) + QString("_grp"))), labels[i++], this);
 			select_all_menu.addAction(action);
 		}
 
@@ -1016,28 +1020,31 @@ void ModelWidget::configureObjectSelection(void)
 
 			//If there is only one selected object and this is a table, activates the relationship creation
 			if(!scene->isRelationshipLineVisible() &&
-					count==1 && obj_type1==OBJ_TABLE && new_obj_type > BASE_TABLE &&	 QApplication::keyboardModifiers()==0)
+				 count==1 && obj_type1==OBJ_TABLE && new_obj_type > BASE_TABLE &&	 QApplication::keyboardModifiers()==0)
 			{
 				BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(selected_objects[0]);
 				BaseObjectView *object=dynamic_cast<BaseObjectView *>(graph_obj->getReceiverObject());
 
 				scene->showRelationshipLine(true,
-											QPointF(object->scenePos().x() + object->boundingRect().width()/2,
-													object->scenePos().y() + object->boundingRect().height()/2));
+																		QPointF(object->scenePos().x() + object->boundingRect().width()/2,
+																						object->scenePos().y() + object->boundingRect().height()/2));
 			}
 			//If the user has selected object that are not tables, cancel the operation
-			else if(obj_type1!=OBJ_TABLE ||
-					(obj_type2!=OBJ_TABLE && obj_type2!=BASE_OBJECT))
+			else if(obj_type1!=OBJ_TABLE || (obj_type2!=OBJ_TABLE && obj_type2!=BASE_OBJECT))
 			{
 				this->cancelObjectAddition();
 			}
 
 			/* Case there is only one selected object (table) and the SHIFT key is pressed too, creates a self-relationship.
 				 Case there is two selected objects, create a relationship between them */
-			else if((count==1 && obj_type1==OBJ_TABLE &&  QApplication::keyboardModifiers()==Qt::ShiftModifier) ||
-					(count==2 && obj_type1==OBJ_TABLE && obj_type2==OBJ_TABLE))
+			else if((count==1 && obj_type1==OBJ_TABLE && QApplication::keyboardModifiers()==Qt::ShiftModifier) ||
+							(count==2 && obj_type1==OBJ_TABLE && obj_type2==OBJ_TABLE))
 			{
+				/* Forcing no signals to be emitted by the scene while the relationship is being configured to avoid this
+				 * method to be called unecessarily */
+				scene->blockSignals(true);
 				this->showObjectForm(new_obj_type);
+				scene->blockSignals(false);
 
 				//Cancels the operation after showing the relationship editing form
 				scene->clearSelection();
@@ -4387,23 +4394,23 @@ void ModelWidget::rearrangeObjects(void)
 		objects.assign(not_linked_tabs.begin(), not_linked_tabs.end());
 		objects.insert(objects.end(), db_model->getObjectList(OBJ_TEXTBOX)->begin(), db_model->getObjectList(OBJ_TEXTBOX)->end());
 
-		px = 50;
-		py = items_rect.bottom() + 50;
+		px = 100;
+		py = items_rect.bottom() + 100;
 		max_h = 0;
 
 		for(auto &obj : objects)
 		{
 			obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
 			obj_view->setPos(px, py);
-			px += obj_view->boundingRect().width() + 50;
+			px += obj_view->boundingRect().width() + 100;
 
 			if(obj_view->boundingRect().height() > max_h)
 				max_h = obj_view->boundingRect().height();
 
 			if(px > max_w)
 			{
-				px = 50;
-				py += max_h + 50;
+				px = 100;
+				py += max_h + 100;
 			}
 		}
 
@@ -4417,7 +4424,8 @@ void ModelWidget::rearrangeObjects(void)
 			rel->setPoints({});
 			rel->resetLabelsDistance();
 
-			if(rel->getTable(BaseRelationship::SRC_TABLE)->getPosition().y() !=
+			if(!RelationshipView::isCurvedLines() &&
+				 rel->getTable(BaseRelationship::SRC_TABLE)->getPosition().y() !=
 				 rel->getTable(BaseRelationship::DST_TABLE)->getPosition().y())
 				breakRelationshipLine(dynamic_cast<BaseRelationship *>(obj), ModelWidget::BREAK_VERT_2NINETY_DEGREES);
 		}

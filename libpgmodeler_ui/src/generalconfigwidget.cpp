@@ -125,6 +125,8 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::MIN_OBJECT_OPACITY]=QString();
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HISTORY_MAX_LENGTH]=QString();
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SOURCE_EDITOR_APP]=QString();
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::UI_LANGUAGE]=QString();
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::USE_CURVED_LINES]=QString();
 
 	simp_obj_creation_ht=new HintTextWidget(simp_obj_creation_hint, this);
 	simp_obj_creation_ht->setText(simple_obj_creation_chk->statusTip());
@@ -161,6 +163,21 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 
 	min_obj_opacity_ht=new HintTextWidget(min_obj_opacity_hint, this);
 	min_obj_opacity_ht->setText(min_obj_opacity_spb->statusTip());
+
+	autosave_ht=new HintTextWidget(autosave_hint, this);
+	autosave_ht->setText(autosave_interv_chk->statusTip());
+
+	op_history_ht=new HintTextWidget(op_history_hint, this);
+	op_history_ht->setText(oplist_size_spb->statusTip());
+
+	ui_language_ht=new HintTextWidget(ui_language_hint, this);
+	ui_language_ht->setText(ui_language_cmb->statusTip());
+
+	grid_size_ht=new HintTextWidget(grid_size_hint, this);
+	grid_size_ht->setText(grid_size_spb->statusTip());
+
+	use_curved_lines_ht=new HintTextWidget(use_curved_lines_hint, this);
+	use_curved_lines_ht->setText(use_curved_lines_chk->statusTip());
 
 	selectPaperSize();
 
@@ -214,6 +231,25 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	check_upd_chk->setChecked(false);
 	check_upd_chk->setVisible(false);
 #endif
+
+	//Retrieving the available UI dictionaries
+	QStringList langs = QDir(GlobalAttributes::LANGUAGES_DIR +
+													 GlobalAttributes::DIR_SEPARATOR,
+													 QString("*.qm"), QDir::Name, QDir::AllEntries | QDir::NoDotAndDotDot).entryList();
+
+	langs.replaceInStrings(QString(".qm"), QString());
+	ui_language_cmb->addItem(trUtf8("System default"));
+	QString native_lang;
+
+	for(QString lang : langs)
+	{
+		native_lang = QLocale(lang).nativeLanguageName();
+		native_lang[0] = native_lang[0].toUpper();
+		ui_language_cmb->addItem(QString("%1 (%2 : %3)")
+														 .arg(native_lang)
+														 .arg(QLocale::languageToString(QLocale(lang).language()))
+														 .arg(lang), lang);
+	}
 }
 
 void GeneralConfigWidget::loadConfiguration(void)
@@ -255,6 +291,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 		confirm_validation_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CONFIRM_VALIDATION]==ParsersAttributes::_TRUE_);
 		code_completion_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_COMPLETION]==ParsersAttributes::_TRUE_);
 		use_placeholders_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::USE_PLACEHOLDERS]==ParsersAttributes::_TRUE_);
+		use_curved_lines_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::USE_CURVED_LINES]==ParsersAttributes::_TRUE_);
 
 		print_grid_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]==ParsersAttributes::_TRUE_);
 		print_pg_num_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]==ParsersAttributes::_TRUE_);
@@ -290,6 +327,9 @@ void GeneralConfigWidget::loadConfiguration(void)
 
 		source_editor_edt->setText(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SOURCE_EDITOR_APP]);
 		source_editor_args_edt->setText(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SOURCE_EDITOR_ARGS]);
+
+		int ui_idx = ui_language_cmb->findData(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::UI_LANGUAGE]);
+		ui_language_cmb->setCurrentIndex(ui_idx >= 0 ? ui_idx : 0);
 
 		for(QWidget *wgt : child_wgts)
 			wgt->blockSignals(false);
@@ -382,6 +422,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::MIN_OBJECT_OPACITY]=QString::number(min_obj_opacity_spb->value());
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::USE_PLACEHOLDERS]=(use_placeholders_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HISTORY_MAX_LENGTH]=QString::number(history_max_length_spb->value());
+		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::USE_CURVED_LINES]=(use_curved_lines_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
 
 		ObjectsScene::getGridOptions(show_grid, align_grid, show_delim);
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_CANVAS_GRID]=(show_grid ? ParsersAttributes::_TRUE_ : QString());
@@ -416,6 +457,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SOURCE_EDITOR_APP]=source_editor_edt->text();
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SOURCE_EDITOR_ARGS]=source_editor_args_edt->text();
+		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::UI_LANGUAGE]=ui_language_cmb->currentData().toString();
 
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]=QString();
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]=QString();
@@ -490,6 +532,7 @@ void GeneralConfigWidget::applyConfiguration(void)
 	BaseTableView::setHideExtAttributes(hide_ext_attribs_chk->isChecked());
 	BaseTableView::setHideTags(hide_table_tags_chk->isChecked());
 	RelationshipView::setHideNameLabel(hide_rel_name_chk->isChecked());
+	RelationshipView::setCurvedLines(use_curved_lines_chk->isChecked());
 	ModelWidget::setSaveLastCanvasPosition(save_last_pos_chk->isChecked());
 	ModelWidget::setRenderSmoothnessDisabled(disable_smooth_chk->isChecked());
 	ModelWidget::setSimplifiedObjectCreation(simple_obj_creation_chk->isChecked());

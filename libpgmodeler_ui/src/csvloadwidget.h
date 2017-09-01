@@ -55,6 +55,10 @@ class CsvLoadWidget : public QWidget, Ui::CsvLoadWidget {
 
 		bool isColumnsInFirstRow(void);
 
+		/*! \brief Loads a csv document from a buffer. The user can specify the value separator, text delimiter and an object which will store the column names.
+		 *  In that case, the column names are only extracted from the first row if the cols_in_first_row is true */
+		static QList<QStringList> loadCsvFromBuffer(const QString &csv_buffer, const QString &separator, const QString &text_delim, bool cols_in_first_row, QStringList &csv_cols);
+
 	private slots:
 		void selectCsvFile(void);
 		void loadCsvFile(void);

@@ -19,6 +19,7 @@
 #include "relationshipview.h"
 
 bool RelationshipView::hide_name_label=false;
+bool RelationshipView::use_curved_lines=true;
 unsigned RelationshipView::line_conn_mode=RelationshipView::CONNECT_FK_TO_PK;
 
 RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
@@ -76,6 +77,14 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 RelationshipView::~RelationshipView(void)
 {
 	QGraphicsItem *item=nullptr;
+
+	while(!curves.empty())
+	{
+		this->removeFromGroup(curves.back());
+		item = curves.back();
+		curves.pop_back();
+		delete(item);
+	}
 
 	for(int i=0; i < 2; i++)
 	{
@@ -136,6 +145,16 @@ void RelationshipView::setHideNameLabel(bool value)
 bool RelationshipView::isNameLabelHidden(void)
 {
 	return(hide_name_label);
+}
+
+void RelationshipView::setCurvedLines(bool value)
+{
+	use_curved_lines = value;
+}
+
+bool RelationshipView::isCurvedLines(void)
+{
+	return(use_curved_lines);
 }
 
 void RelationshipView::setLineConnectionMode(unsigned mode)
@@ -230,6 +249,13 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 			lin->setPen(pen);
 		}
 
+		for(auto &curve : curves)
+		{
+			pen = curve->pen();
+			pen.setColor(color);
+			curve->setPen(pen);
+		}
+
 		//Shows/hides the attribute's selection
 		count=attributes.size();
 		for(i=0; i < count; i++)
@@ -253,7 +279,7 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		BaseRelationship *base_rel=this->getSourceObject();
 
 		//Resets the labels position when mid-button is pressed
-		if(event->buttons()==Qt::MidButton)
+		if(event->buttons()==Qt::LeftButton && event->modifiers()==(Qt::AltModifier | Qt::ControlModifier))
 		{
 			base_rel->resetLabelsDistance();
 			this->configureLabels();
@@ -265,7 +291,7 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 			QRectF rect;
 			unsigned i, count;
 			bool pnt_rem=false;
-			vector<QPointF> pontos=base_rel->getPoints();
+			vector<QPointF> points=base_rel->getPoints();
 
 			if(!base_rel->isSelfRelationship())
 			{
@@ -284,8 +310,8 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 						//Case the mouse pos is inside the point rect
 						if(rect.contains(event->pos()))
 						{
-							pontos.erase(pontos.begin()+i);
-							base_rel->setPoints(pontos);
+							points.erase(points.begin()+i);
+							base_rel->setPoints(points);
 							this->configureLine();
 							pnt_rem=true;
 							break;
@@ -297,23 +323,24 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 					for(i=0; i < count && !pnt_rem; i++)
 					{
 						/* Creates a auxiliary line based upon the cursor position. This
-				 line is used to calculate the exact point (intersection) where the new one
-				 must be inserted */
-						lin.setP1(QPointF(event->pos().x()-50, event->pos().y()-50));
-						lin.setP2(QPointF(event->pos().x()+50, event->pos().y()+50));
-
+						 * line is used to calculate the exact point (intersection) where the new one
+						 * must be inserted */
+						lin.setP1(QPointF(event->pos().x() - 50, event->pos().y() - 50));
+						lin.setP2(QPointF(event->pos().x() + 50, event->pos().y() + 50));
 
 						//Case the auxiliary line intercepts one relationship line
-						if(lines[i]->line().intersect(lin,&p)==QLineF::BoundedIntersection)
+						if((!use_curved_lines && lines[i]->line().intersect(lin, &p) == QLineF::BoundedIntersection) ||
+							 (use_curved_lines && curves[i]->contains(event->pos())))
 						{
 							//Inserts the point to the line
-							if(i >= pontos.size())
-								pontos.push_back( event->pos());
+							if(i >= points.size())
+								points.push_back(event->pos());
 							else
-								pontos.insert(pontos.begin() + i, event->pos());
-							base_rel->setPoints(pontos);
+								points.insert(points.begin() + i, event->pos());
 
+							base_rel->setPoints(points);
 							this->configureLine();
+
 							break;
 						}
 					}
@@ -488,7 +515,7 @@ void RelationshipView::configureLine(void)
 		QString tool_tip;
 		QGraphicsItem *item=nullptr;
 		int i, i1, count, idx_lin_desc=0;
-		bool bidirectional=base_rel->isBidirectional();
+		bool conn_same_sides = false, bidirectional=base_rel->isBidirectional();
 
 		configuring_line=true;
 		pen.setCapStyle(Qt::RoundCap);
@@ -515,22 +542,22 @@ void RelationshipView::configureLine(void)
 			p_central[1].setX(pos.x() + (rect.width()/1.5f));
 			p_central[1].setY(pos.y());
 
-			points.push_back(QPointF(p_central[0].x() + (9 * fator),  p_central[0].y()));
-			points.push_back(QPointF(p_central[0].x() + (9 * fator),  p_central[1].y() - (9 * fator)));
-			points.push_back(QPointF(p_central[1].x(),  p_central[1].y() - (9 * fator)));
+			points.push_back(QPointF(p_central[0].x() + (11 * fator),  p_central[0].y()));
+			points.push_back(QPointF(p_central[0].x() + (11 * fator),  p_central[1].y() - (11 * fator)));
+			points.push_back(QPointF(p_central[1].x(),  p_central[1].y() - (11 * fator)));
 			base_rel->setPoints(points);
 		}
 		else
 		{
 			Relationship *rel=dynamic_cast<Relationship *>(base_rel);
-			bool rel_1n=( !bidirectional &&
-						  (base_rel->getRelationshipType()==Relationship::RELATIONSHIP_11 ||
-						   base_rel->getRelationshipType()==Relationship::RELATIONSHIP_1N ||
-						   base_rel->getRelationshipType()==Relationship::RELATIONSHIP_FK));
+			bool rel_1n=(!bidirectional &&
+									 (base_rel->getRelationshipType()==Relationship::RELATIONSHIP_11 ||
+										base_rel->getRelationshipType()==Relationship::RELATIONSHIP_1N ||
+										base_rel->getRelationshipType()==Relationship::RELATIONSHIP_FK));
 
 			if(rel &&
-					rel->getRelationshipType()==Relationship::RELATIONSHIP_11 &&
-					rel->isIdentifier())
+				 rel->getRelationshipType()==Relationship::RELATIONSHIP_11 &&
+				 rel->isIdentifier())
 			{
 				tables[0]=dynamic_cast<BaseTableView *>(rel->getReferenceTable()->getReceiverObject());
 				tables[1]=dynamic_cast<BaseTableView *>(rel->getReceiverTable()->getReceiverObject());
@@ -590,6 +617,8 @@ void RelationshipView::configureLine(void)
 				if(ref_tab_rect.intersects(rec_tab_rect))
 				{
 					//Connects the rectangle at the same sides on both tables
+					conn_same_sides = true;
+
 					if(rec_tab_rect.center().x() >= ref_tab_rect.center().x())
 						pk_pnt_type=fk_pnt_type=BaseTableView::LEFT_CONN_POINT;
 					else if(rec_tab_rect.center().x() < ref_tab_rect.center().x())
@@ -650,10 +679,10 @@ void RelationshipView::configureLine(void)
 				else
 				{
 					/* Fallback configuration: If no fk was found in the receiver table uses
-			 the tables' center points to configure the line in order to avoid glitched lines.
-			 This situation may happen when the relationship is being validated and the needed fks was not
-			 created yet. In a second interaction of the rel. validation they are created
-			 and the relationship is properly configured */
+					 * the tables' center points to configure the line in order to avoid glitched lines.
+					 * This situation may happen when the relationship is being validated and the needed fks was not
+					 * created yet. In a second interaction of the rel. validation they are created
+					 *  and the relationship is properly configured */
 					if(base_rel->getRelationshipType()==Relationship::RELATIONSHIP_FK)
 					{
 						p_central[1]=pk_pnt=ref_tab_view->getCenter();
@@ -669,8 +698,8 @@ void RelationshipView::configureLine(void)
 
 			points=base_rel->getPoints();
 			count=points.size();
-			pol_aux.append(QPointF(0,0)); pol_aux.append(QPointF(5,0));
-			pol_aux.append(QPointF(5,5)); pol_aux.append(QPointF(0,5));
+			pol_aux.append(QPointF(0,0)); pol_aux.append(QPointF(6,0));
+			pol_aux.append(QPointF(6,6)); pol_aux.append(QPointF(0,6));
 
 			for(i=0; i < count; i++)
 			{
@@ -688,7 +717,7 @@ void RelationshipView::configureLine(void)
 					pol=graph_points[i];
 
 				pol->setPos(points[i]);
-				pol->moveBy(-GRAPHIC_PNT_RADIUS/2.5, -GRAPHIC_PNT_RADIUS/2.5);
+				pol->moveBy(-GRAPHIC_PNT_RADIUS/2, -GRAPHIC_PNT_RADIUS/2);
 				pol->setVisible(this->isSelected());
 			}
 
@@ -707,13 +736,19 @@ void RelationshipView::configureLine(void)
 		conn_points[0]=p_central[0];
 		conn_points[1]=p_central[1];
 
-		//Configuring the relationship line color
-		if(base_rel->getCustomColor()!=Qt::transparent)
-			//Using custom color
-			pen.setColor(base_rel->getCustomColor());
+		//If the relationship is selected we do not change the lines colors
+		if(this->isSelected() && !lines.empty())
+			pen = lines[0]->pen();
 		else
-			//Using the default color
-			pen=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP);
+		{
+			//Configuring the relationship line color
+			if(base_rel->getCustomColor()!=Qt::transparent)
+				//Using custom color
+				pen.setColor(base_rel->getCustomColor());
+			else
+				//Using the default color
+				pen=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP);
+		}
 
 		//For dependency relationships the line is dashed
 		if(base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_DEP)
@@ -831,10 +866,12 @@ void RelationshipView::configureLine(void)
 			}
 		}
 
-		if(line_conn_mode==CONNECT_CENTER_PNTS ||
-				base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_DEP ||
-				base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN ||
-				base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN)
+		//Exposing the line ending circles
+		if((!base_rel->isSelfRelationship() && line_conn_mode==CONNECT_CENTER_PNTS) ||
+			 (!base_rel->isSelfRelationship() &&
+				((base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_DEP) ||
+				 (base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN) ||
+				 (base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN))))
 		{
 			for(i=0; i < 2; i++)
 			{
@@ -848,6 +885,62 @@ void RelationshipView::configureLine(void)
 		{
 			line_circles[0]->setVisible(false);
 			line_circles[1]->setVisible(false);
+		}
+
+		//Using bezier curves instead of straight lines to denote the relationship line
+		if(use_curved_lines && !base_rel->isSelfRelationship())
+		{
+			BezierCurveItem * curve = nullptr;
+			i = 0;
+
+			for(auto &line : lines)
+			{
+				if(i >= static_cast<int>(curves.size()))
+				{
+					curve = new BezierCurveItem;
+					curve->setZValue(line->zValue());
+					this->addToGroup(curve);
+					curves.push_back(curve);
+				}
+				else
+					curve = curves[i];
+
+				i++;
+				curve->setLine(line->line(),
+											 conn_same_sides && lines.size() == 1,
+											 base_rel->getRelationshipType());
+
+				curve->setPen(line->pen());
+				line->setVisible(false);
+			}
+
+			//Removing unused curves
+			i=lines.size();
+			i1=curves.size();
+
+			while(i1 > i)
+			{
+				curve=curves.back();
+				curves.pop_back();
+				this->removeFromGroup(curve);
+				delete(curve);
+				i1--;
+			}
+		}
+		else if(!use_curved_lines && !lines.empty() && !curves.empty())
+		{
+			BezierCurveItem *curve = nullptr;
+
+			for(auto &line : lines)
+				line->setVisible(true);
+
+			while(!curves.empty())
+			{
+				curve=curves.back();
+				curves.pop_back();
+				this->removeFromGroup(curve);
+				delete(curve);
+			}
 		}
 
 		this->configureDescriptor();
@@ -885,7 +978,8 @@ void RelationshipView::configureDescriptor(void)
 	BaseRelationship *base_rel=this->getSourceObject();
 	Relationship *rel=dynamic_cast<Relationship *>(base_rel);
 	unsigned rel_type=base_rel->getRelationshipType();
-	double x, y, x1, y1, factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE) * BaseObjectView::getScreenDpiFactor();
+	double x, y, x1, y1, angle = 0,
+			factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE) * BaseObjectView::getScreenDpiFactor();
 	QPen pen;
 	QPointF pnt;
 	vector<QPointF> points=base_rel->getPoints();
@@ -919,7 +1013,7 @@ void RelationshipView::configureDescriptor(void)
 			grad.setColorAt(i, colors[i]);
 		}
 
-		grad.setCoordinateMode(QGradient::ObjectBoundingMode);;
+		grad.setCoordinateMode(QGradient::ObjectBoundingMode);
 		descriptor->setBrush(grad);
 	}
 	else
@@ -948,26 +1042,51 @@ void RelationshipView::configureDescriptor(void)
 		pnt=points.at(points.size()/2);
 	else
 	{
-		lin=lines.at(lines.size()/2)->line();
+		if(!curves.empty())
+		{
+			int idx = curves.size()/2;
+			BezierCurveItem *curve =  curves.at(idx);
+			QPainterPath path = curve->path();
 
-		if(rel && rel->isIdentifier())
-			pnt=lin.p1();
+			if(rel && rel->isIdentifier())
+			{
+				BezierCurveItem *curve_aux =  curves.at(idx - 1);
+				QLineF lin_aux = QLineF(path.pointAtPercent(0.10), curve_aux->path().pointAtPercent(0.90));
+				angle = -lin_aux.angle();
+				pnt = path.pointAtPercent(0);
+			}
+			else
+			{
+				double percent = path.percentAtLength(path.length()/2);
+				angle = -path.angleAtPercent(percent);
+				pnt = path.pointAtPercent(percent);
+			}
+		}
 		else
 		{
-			pnt.setX((lin.p1().x() + lin.p2().x()) / 2.0f);
-			pnt.setY((lin.p1().y() + lin.p2().y()) / 2.0f);
+			lin=lines.at(lines.size()/2)->line();
+
+			if(rel && rel->isIdentifier())
+				pnt=lin.p1();
+			else
+			{
+				pnt.setX((lin.p1().x() + lin.p2().x()) / 2.0f);
+				pnt.setY((lin.p1().y() + lin.p2().y()) / 2.0f);
+			}
+
+			angle = -lin.angle();
 		}
 
-		descriptor->setRotation(-lin.angle());
-		obj_selection->setRotation(-lin.angle());
-		obj_shadow->setRotation(-lin.angle());
+		descriptor->setRotation(angle);
+		obj_selection->setRotation(angle);
+		obj_shadow->setRotation(angle);
 	}
 
 	x=x1=pnt.x() - (pol.boundingRect().width()/2.0f);
 	y=y1=pnt.y() - (pol.boundingRect().height()/2.0f);
 
 	protected_icon->setPos(x + ((pol.boundingRect().width()/2.0f) * 0.60f),
-						   y + ((pol.boundingRect().height()/2.0f) * 0.55f));
+												 y + ((pol.boundingRect().height()/2.0f) * 0.55f));
 
 	configureSQLDisabledInfo();
 	x1+=6 * HORIZ_SPACING;

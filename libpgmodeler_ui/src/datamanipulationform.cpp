@@ -27,6 +27,7 @@ const unsigned DataManipulationForm::NO_OPERATION=0;
 const unsigned DataManipulationForm::OP_INSERT=1;
 const unsigned DataManipulationForm::OP_UPDATE=2;
 const unsigned DataManipulationForm::OP_DELETE=3;
+bool DataManipulationForm::has_csv_clipboard=false;
 
 DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f): QDialog(parent, f)
 {
@@ -48,24 +49,31 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	results_tbw->setItemDelegate(new PlainTextItemDelegate(this, false));
 	browse_tabs_tb->setMenu(&fks_menu);
 
-	act = copy_menu.addAction(trUtf8("Copy as text"));
-	act->setShortcut(QKeySequence("Ctrl+C"));
-	connect(act, &QAction::triggered,	[&](){ SQLExecutionWidget::copySelection(results_tbw, false, false); });
-
 	act = copy_menu.addAction(trUtf8("Copy as CSV"));
+	act->setShortcut(QKeySequence("Ctrl+C"));
+	connect(act, &QAction::triggered, [&](){
+		SQLExecutionWidget::copySelection(results_tbw, false, true);
+		has_csv_clipboard = true;
+		paste_tb->setEnabled(true);
+	});
+
+	act = copy_menu.addAction(trUtf8("Copy as text"));
 	act->setShortcut(QKeySequence("Ctrl+Shift+C"));
-	connect(act, &QAction::triggered, [&](){ SQLExecutionWidget::copySelection(results_tbw, false, true); });
+	connect(act, &QAction::triggered,	[&](){
+		SQLExecutionWidget::copySelection(results_tbw, false, false);
+		has_csv_clipboard = false;
+		paste_tb->setEnabled(true);
+	});
 
 	copy_tb->setMenu(&copy_menu);
-
 	refresh_tb->setToolTip(refresh_tb->toolTip() + QString(" (%1)").arg(refresh_tb->shortcut().toString()));
 	save_tb->setToolTip(save_tb->toolTip() + QString(" (%1)").arg(save_tb->shortcut().toString()));
 	undo_tb->setToolTip(undo_tb->toolTip() + QString(" (%1)").arg(undo_tb->shortcut().toString()));
 	export_tb->setToolTip(export_tb->toolTip() + QString(" (%1)").arg(export_tb->shortcut().toString()));
 	delete_tb->setToolTip(delete_tb->toolTip() + QString(" (%1)").arg(delete_tb->shortcut().toString()));
 	add_tb->setToolTip(add_tb->toolTip() + QString(" (%1)").arg(add_tb->shortcut().toString()));
-	copy_tb->setToolTip(copy_tb->toolTip() + QString(" (%1)").arg(copy_tb->shortcut().toString()));
 	duplicate_tb->setToolTip(duplicate_tb->toolTip() + QString(" (%1)").arg(duplicate_tb->shortcut().toString()));
+	paste_tb->setToolTip(paste_tb->toolTip() + QString(" (%1)").arg(paste_tb->shortcut().toString()));
 	result_info_wgt->setVisible(false);
 
 	//Forcing the splitter that handles the bottom widgets to resize its children to their minimum size
@@ -80,6 +88,11 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	layout->setContentsMargins(0,0,0,0);
 	csv_load_parent->setLayout(layout);
 	csv_load_parent->setMinimumSize(csv_load_wgt->minimumSize());
+
+	connect(paste_tb, &QToolButton::clicked, [&]{
+		loadDataFromCsv(true);
+		paste_tb->setEnabled(false);
+	});
 
 	connect(csv_load_tb, SIGNAL(toggled(bool)), csv_load_parent, SLOT(setVisible(bool)));
 	connect(close_btn, SIGNAL(clicked()), this, SLOT(reject()));
@@ -126,8 +139,13 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 						QAction *act = nullptr;
 						ObjectType obj_type=static_cast<ObjectType>(table_cmb->currentData().toUInt());
 
-						act = item_menu.addAction(trUtf8("Copy selection"));
+						act = item_menu.addAction(QIcon(PgModelerUiNS::getIconPath("copiar")), trUtf8("Copy items"));
 						act->setMenu(&copy_menu);
+
+						act = item_menu.addAction(QIcon(PgModelerUiNS::getIconPath("colar")), trUtf8("Pase items"));
+						act->setShortcut(paste_tb->shortcut());
+						connect(act, SIGNAL(triggered(bool)), paste_tb, SLOT(click()));
+						act->setEnabled(qApp->clipboard()->ownsClipboard() && obj_type == OBJ_TABLE);
 
 						if(obj_type == OBJ_TABLE)
 						{
@@ -330,7 +348,7 @@ void DataManipulationForm::retrieveData(void)
 			results_tbw->setFocus();
 
 		if(table_cmb->currentData(Qt::UserRole).toUInt()==OBJ_TABLE)
-			csv_load_tb->setEnabled(true);
+			csv_load_tb->setEnabled(!col_names.isEmpty());
 		else
 		{
 			csv_load_tb->setEnabled(false);
@@ -341,6 +359,10 @@ void DataManipulationForm::retrieveData(void)
 		catalog.closeConnection();
 
 		QApplication::restoreOverrideCursor();
+
+		paste_tb->setEnabled(qApp->clipboard()->ownsClipboard() &&
+												 table_cmb->currentData().toUInt() == OBJ_TABLE &&
+												 !col_names.isEmpty());
 	}
 	catch(Exception &e)
 	{
@@ -382,6 +404,9 @@ void DataManipulationForm::enableRowControlButtons(void)
 	delete_tb->setEnabled(cols_selected);
 	duplicate_tb->setEnabled(cols_selected);
 	copy_tb->setEnabled(sel_ranges.count() == 1);
+	paste_tb->setEnabled(qApp->clipboard()->ownsClipboard() &&
+											 table_cmb->currentData().toUInt() == OBJ_TABLE  &&
+											 !col_names.isEmpty());
 	browse_tabs_tb->setEnabled((!fk_infos.empty() || !ref_fk_infos.empty()) && sel_ranges.count() == 1 && sel_ranges.at(0).rowCount() == 1);
 }
 
@@ -444,11 +469,30 @@ void DataManipulationForm::swapColumns(void)
 	ord_columns_lst->setCurrentRow(new_idx);
 }
 
-void DataManipulationForm::loadDataFromCsv(void)
+void DataManipulationForm::loadDataFromCsv(bool load_from_clipboard)
 {
-	QList<QStringList> rows=csv_load_wgt->getCsvRows();
-	QStringList cols=csv_load_wgt->getCsvColumns();
+	QList<QStringList> rows;
+	QStringList cols;
 	int row_id = 0, col_id = 0;
+
+	if(load_from_clipboard)
+	{
+		if(!qApp->clipboard()->ownsClipboard())
+			return;
+
+		if(has_csv_clipboard)
+			rows = CsvLoadWidget::loadCsvFromBuffer(qApp->clipboard()->text(), QString(";"), QString("\""), true, cols);
+		else
+			rows = CsvLoadWidget::loadCsvFromBuffer(qApp->clipboard()->text(), QString("\t"), QString(), false, cols);
+
+		has_csv_clipboard = false;
+		qApp->clipboard()->clear();
+	}
+	else
+	{
+		rows = csv_load_wgt->getCsvRows();
+		cols = csv_load_wgt->getCsvColumns();
+	}
 
 	/* If there is only one empty row in the grid, this one will
 	be removed prior the csv loading */
@@ -476,10 +520,15 @@ void DataManipulationForm::loadDataFromCsv(void)
 
 		for(int i = 0; i < values.count(); i++)
 		{
-			if(csv_load_wgt->isColumnsInFirstRow())
+			if((!load_from_clipboard && csv_load_wgt->isColumnsInFirstRow()) ||
+				 (load_from_clipboard && !cols.isEmpty()))
 			{
 				//First we need to get the index of the column by its name
 				col_id=col_names.indexOf(cols[i]);
+
+				//If a matching column is not found we add the value at the current position
+				if(col_id < 0)
+					col_id = i;
 
 				if(col_id >= 0 && col_id < results_tbw->columnCount())
 					results_tbw->item(row_id, col_id)->setText(values.at(i));
@@ -625,7 +674,7 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 		}
 
 		hint_frm->setVisible(obj_type==OBJ_TABLE);
-		add_tb->setEnabled(obj_type==OBJ_TABLE);
+		add_tb->setEnabled(obj_type==OBJ_TABLE && !col_names.empty());
 		pk_col_names.clear();
 
 		if(!pks.empty())
