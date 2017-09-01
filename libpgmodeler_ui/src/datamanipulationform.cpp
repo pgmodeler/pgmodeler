@@ -404,7 +404,9 @@ void DataManipulationForm::enableRowControlButtons(void)
 	delete_tb->setEnabled(cols_selected);
 	duplicate_tb->setEnabled(cols_selected);
 	copy_tb->setEnabled(sel_ranges.count() == 1);
-	paste_tb->setEnabled(qApp->clipboard()->ownsClipboard() && col_names.isEmpty());
+	paste_tb->setEnabled(qApp->clipboard()->ownsClipboard() &&
+											 table_cmb->currentData().toUInt() == OBJ_TABLE  &&
+											 !col_names.isEmpty());
 	browse_tabs_tb->setEnabled((!fk_infos.empty() || !ref_fk_infos.empty()) && sel_ranges.count() == 1 && sel_ranges.at(0).rowCount() == 1);
 }
 
