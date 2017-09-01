@@ -145,7 +145,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 						act = item_menu.addAction(QIcon(PgModelerUiNS::getIconPath("colar")), trUtf8("Pase items"));
 						act->setShortcut(paste_tb->shortcut());
 						connect(act, SIGNAL(triggered(bool)), paste_tb, SLOT(click()));
-						act->setEnabled(qApp->clipboard()->ownsClipboard() && obj_type == OBJ_TABLE);
+						act->setEnabled(!qApp->clipboard()->text().isEmpty() && obj_type == OBJ_TABLE);
 
 						if(obj_type == OBJ_TABLE)
 						{
@@ -360,7 +360,7 @@ void DataManipulationForm::retrieveData(void)
 
 		QApplication::restoreOverrideCursor();
 
-		paste_tb->setEnabled(qApp->clipboard()->ownsClipboard() &&
+		paste_tb->setEnabled(!qApp->clipboard()->text().isEmpty() &&
 												 table_cmb->currentData().toUInt() == OBJ_TABLE &&
 												 !col_names.isEmpty());
 	}
@@ -404,7 +404,7 @@ void DataManipulationForm::enableRowControlButtons(void)
 	delete_tb->setEnabled(cols_selected);
 	duplicate_tb->setEnabled(cols_selected);
 	copy_tb->setEnabled(sel_ranges.count() == 1);
-	paste_tb->setEnabled(qApp->clipboard()->ownsClipboard() &&
+	paste_tb->setEnabled(!qApp->clipboard()->text().isEmpty() &&
 											 table_cmb->currentData().toUInt() == OBJ_TABLE  &&
 											 !col_names.isEmpty());
 	browse_tabs_tb->setEnabled((!fk_infos.empty() || !ref_fk_infos.empty()) && sel_ranges.count() == 1 && sel_ranges.at(0).rowCount() == 1);
@@ -477,7 +477,7 @@ void DataManipulationForm::loadDataFromCsv(bool load_from_clipboard)
 
 	if(load_from_clipboard)
 	{
-		if(!qApp->clipboard()->ownsClipboard())
+		if(qApp->clipboard()->text().isEmpty())
 			return;
 
 		if(has_csv_clipboard)
