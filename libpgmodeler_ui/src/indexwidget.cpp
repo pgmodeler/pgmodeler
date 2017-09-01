@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -105,7 +105,7 @@ void IndexWidget::enableSortingOptions(void)
 	}
 }
 
-void IndexWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Table *parent_obj, Index *index)
+void IndexWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseTable *parent_obj, Index *index)
 {
 	vector<IndexElement> idx_elems;
 

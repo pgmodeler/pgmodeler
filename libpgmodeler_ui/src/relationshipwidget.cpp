@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -77,21 +77,21 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 
 		attributes_tab->setColumnCount(2);
 		attributes_tab->setHeaderLabel(trUtf8("Attribute"), 0);
-		attributes_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
+		attributes_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("column")),0);
 		attributes_tab->setHeaderLabel(trUtf8("Type"), 1);
-		attributes_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+		attributes_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
 
 		constraints_tab->setColumnCount(2);
 		constraints_tab->setHeaderLabel(trUtf8("Constraint"), 0);
-		constraints_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/constraint.png")),0);
+		constraints_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("constraint")),0);
 		constraints_tab->setHeaderLabel(trUtf8("Type"), 1);
-		constraints_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+		constraints_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
 
 		advanced_objs_tab->setColumnCount(2);
 		advanced_objs_tab->setHeaderLabel(trUtf8("Name"), 0);
-		advanced_objs_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
+		advanced_objs_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("column")),0);
 		advanced_objs_tab->setHeaderLabel(trUtf8("Type"), 1);
-		advanced_objs_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+		advanced_objs_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
 
 		connect(advanced_objs_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showAdvancedObject(int)));
 
@@ -164,11 +164,13 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		connect(attributes_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addObject(void)));
 		connect(attributes_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editObject(int)));
 		connect(attributes_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeObject(int)));
+		connect(attributes_tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateObject(int,int)));
 
 		connect(constraints_tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removeObjects(void)));
 		connect(constraints_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addObject(void)));
 		connect(constraints_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editObject(int)));
 		connect(constraints_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeObject(int)));
+		connect(constraints_tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateObject(int,int)));
 
 		connect(defaults_rb, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions(void)));
 		connect(including_rb, SIGNAL(toggled(bool)), this, SLOT(selectCopyOptions(void)));
@@ -186,7 +188,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		connect(fk_gconf_chk, SIGNAL(toggled(bool)), this, SLOT(useFKGlobalSettings(bool)));
 		connect(patterns_gconf_chk, SIGNAL(toggled(bool)), this, SLOT(usePatternGlobalSettings(bool)));
 
-		setMinimumSize(600, 0);
+		setMinimumSize(620, 670);
 	}
 	catch(Exception &e)
 	{
@@ -648,7 +650,6 @@ void RelationshipWidget::listAdvancedObjects(void)
 void RelationshipWidget::showAdvancedObject(int row)
 {
 	BaseObject *object=reinterpret_cast<BaseObject *>(advanced_objs_tab->getRowData(row).value<void *>());
-	bool prot=true;
 	Table *tab=nullptr;
 	Constraint *constr=nullptr;
 	Column *col=nullptr;
@@ -656,44 +657,38 @@ void RelationshipWidget::showAdvancedObject(int row)
 
 	if(obj_type==OBJ_COLUMN)
 	{
-		ColumnWidget column_wgt(this);
 		col=dynamic_cast<Column *>(object);
-		column_wgt.setAttributes(this->model, this->op_list, col->getParentTable(), col);
-		column_wgt.show();
+		openEditingForm<Column,ColumnWidget>(col, col->getParentTable());
 	}
 	else if(obj_type==OBJ_CONSTRAINT)
 	{
-		ConstraintWidget constraint_wgt(this);
 		constr=dynamic_cast<Constraint *>(object);
-
-		if(!constr->isAddedByRelationship())
-		{
-			prot=constr->isProtected();
-			constr->setProtected(true);
-		}
-
-		constraint_wgt.setAttributes(this->model, this->op_list, constr->getParentTable(), constr);
-		constraint_wgt.show();
-		constr->setProtected(prot);
+		openEditingForm<Constraint, ConstraintWidget>(constr, constr->getParentTable());
 	}
 	else
 	{
-		TableWidget table_wgt(this);
+		TableWidget *table_wgt=new TableWidget;
+		BaseForm editing_form(this);
+
 		tab=dynamic_cast<Table *>(object);
 		tab->setProtected(true);
-		table_wgt.setAttributes(this->model, this->op_list, dynamic_cast<Schema *>(tab->getSchema()),
-								tab,	tab->getPosition().x(), tab->getPosition().y());
-		table_wgt.show();
+
+		table_wgt->setAttributes(this->model, this->op_list, dynamic_cast<Schema *>(tab->getSchema()),
+														 tab,	tab->getPosition().x(), tab->getPosition().y());
+
+		editing_form.setMainWidget(table_wgt);
+		editing_form.exec();
 		tab->setProtected(false);
 	}
 }
 
 template<class Class, class WidgetClass>
-int RelationshipWidget::openEditingForm(TableObject *object)
+int RelationshipWidget::openEditingForm(TableObject *object, BaseObject *parent)
 {
 	BaseForm editing_form(this);
 	WidgetClass *object_wgt=new WidgetClass;
-	object_wgt->setAttributes(this->model, this->op_list, this->object, dynamic_cast<Class *>(object));
+
+	object_wgt->setAttributes(this->model, this->op_list, (!parent ? this->object : parent), dynamic_cast<Class *>(object));
 	editing_form.setMainWidget(object_wgt);
 
 	return(editing_form.exec());
@@ -725,6 +720,60 @@ void RelationshipWidget::addObject(void)
 	}
 	catch(Exception &e)
 	{
+		listObjects(obj_type);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void RelationshipWidget::duplicateObject(int curr_row, int new_row)
+{
+	ObjectType obj_type=BASE_OBJECT;
+	BaseObject *object = nullptr, *dup_object = nullptr;
+	Relationship *rel = dynamic_cast<Relationship *>(this->object);
+	vector<TableObject *> obj_list;
+	ObjectTableWidget *tab = nullptr;
+	int op_id = -1;
+
+	if(!rel)
+		return;
+
+	try
+	{
+		if(sender()==attributes_tab)
+		{
+			obj_type=OBJ_COLUMN;
+			tab=attributes_tab;
+			obj_list = rel->getAttributes();
+		}
+		else
+		{
+			obj_type=OBJ_CONSTRAINT;
+			tab=constraints_tab;
+			obj_list = rel->getConstraints();
+		}
+
+		//Gets the object reference if there is an item select on table
+		if(curr_row >= 0)
+			object = reinterpret_cast<BaseObject *>(tab->getRowData(curr_row).value<void *>());
+
+		PgModelerNS::copyObject(&dup_object, object, obj_type);
+		dup_object->setName(PgModelerNS::generateUniqueName(dup_object, obj_list, false, QString("_cp")));
+
+		op_id=op_list->registerObject(dup_object, Operation::OBJECT_CREATED, new_row, rel);
+
+		rel->addObject(dynamic_cast<TableObject *>(dup_object));
+		listObjects(obj_type);
+	}
+	catch(Exception &e)
+	{
+		//If operation was registered
+		if(op_id >= 0)
+		{
+			op_list->ignoreOperationChain(true);
+			op_list->removeLastOperation();
+			op_list->ignoreOperationChain(false);
+		}
+
 		listObjects(obj_type);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}

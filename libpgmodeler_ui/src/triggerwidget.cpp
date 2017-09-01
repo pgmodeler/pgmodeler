@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,9 +31,10 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 
 		columns_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
 										  (ObjectTableWidget::EDIT_BUTTON |
-										   ObjectTableWidget::UPDATE_BUTTON), true, this);
+											 ObjectTableWidget::UPDATE_BUTTON |
+											 ObjectTableWidget::DUPLICATE_BUTTON), true, this);
 
-		arguments_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
+		arguments_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^ ObjectTableWidget::DUPLICATE_BUTTON, true, this);
 
 		ref_table_sel=new ObjectSelectorWidget(OBJ_TABLE, true, this);
 		function_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
@@ -44,9 +45,9 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 
 		columns_tab->setColumnCount(2);
 		columns_tab->setHeaderLabel(trUtf8("Column"), 0);
-		columns_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
+		columns_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("column")),0);
 		columns_tab->setHeaderLabel(trUtf8("Type"), 1);
-		columns_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+		columns_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
 
 		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(1)->layout())->addWidget(columns_tab, 1,0,1,3);
 		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(0)->layout())->addWidget(arguments_tab, 1,0,1,3);

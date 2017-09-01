@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ class ElementsWidget: public QWidget, public Ui::ElementsWidget {
 		ElementsWidget(QWidget *parent = 0);
 		
 		//! \brief Enables the widget to handle index elements
-		void setAttributes(DatabaseModel *model, Table *table, vector<IndexElement> &elems);
+		void setAttributes(DatabaseModel *model, BaseTable *table, vector<IndexElement> &elems);
 		
 		//! \brief Enables the widget to handle exclude constraint elements
 		void setAttributes(DatabaseModel *model, BaseObject *parent_obj, vector<ExcludeElement> &elems);

@@ -31,7 +31,7 @@ $br $tb ( {elements} $br $tb )
 %end
 
 %if {stg-params} %then
- $tb [WITH (]
+ $br $tb [WITH (]
 
  %if {factor} %then
   [FILLFACTOR = ] {factor}
@@ -42,7 +42,7 @@ $br $tb ( {elements} $br $tb )
   [FASTUPDATE = ON]
  %end
 
- %if {buffering} %and ({pgsql-ver} >= "9.2") %then
+ %if {buffering} %and ({pgsql-ver} >=f "9.2") %then
   %if {factor} %then [, ] %end
   [BUFFERING = ON]
  %end

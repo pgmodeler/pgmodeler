@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ QRectF ObjectsScene::page_margins=QRectF(2,2,2,2);
 QSizeF ObjectsScene::custom_paper_size=QSizeF(0,0);
 QBrush ObjectsScene::grid;
 bool ObjectsScene::corner_move=true;
-bool ObjectsScene::invert_panning_rangesel=false;
+bool ObjectsScene::invert_rangesel_trigger=false;
 
 ObjectsScene::ObjectsScene(void)
 {
@@ -56,8 +56,15 @@ ObjectsScene::ObjectsScene(void)
 	connect(&scene_move_timer, SIGNAL(timeout()), this, SLOT(moveObjectScene()));
 	connect(&corner_hover_timer, SIGNAL(timeout()), this, SLOT(enableSceneMove()));
 
+	connect(&object_move_timer, &QTimer::timeout, [&](){
+		//If the timer reaches its timeout we execute the procedures to finish the objects movement
+		finishObjectsMove(itemsBoundingRect(true, true).center());
+		object_move_timer.stop();
+	});
+
 	scene_move_timer.setInterval(SCENE_MOVE_TIMEOUT);
 	corner_hover_timer.setInterval(SCENE_MOVE_TIMEOUT * 10);
+	object_move_timer.setInterval(SCENE_MOVE_TIMEOUT * 10);
 }
 
 ObjectsScene::~ObjectsScene(void)
@@ -70,6 +77,9 @@ ObjectsScene::~ObjectsScene(void)
 
 	this->removeItem(selection_rect);
 	this->removeItem(rel_line);
+
+	delete(selection_rect);
+	delete(rel_line);
 
 	//Destroy the objects in the order defined on obj_types vector
 	for(i=0; i < count; i++)
@@ -114,9 +124,9 @@ void ObjectsScene::setEnableCornerMove(bool enable)
 	ObjectsScene::corner_move=enable;
 }
 
-void ObjectsScene::setInvertPanningRangeSelection(bool invert)
+void ObjectsScene::setInvertRangeSelectionTrigger(bool invert)
 {
-	ObjectsScene::invert_panning_rangesel=invert;
+	ObjectsScene::invert_rangesel_trigger=invert;
 }
 
 bool ObjectsScene::isCornerMoveEnabled(void)
@@ -140,15 +150,15 @@ void ObjectsScene::setSceneRect(const QRectF &rect)
 	QGraphicsScene::setSceneRect(0, 0, rect.width(), rect.height());
 }
 
-QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs)
+QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_only)
 {
 	if(!seek_only_db_objs)
 		return(QGraphicsScene::itemsBoundingRect());
 	else
 	{
 		QRectF rect=QGraphicsScene::itemsBoundingRect();
-		QList<QGraphicsItem *> items=this->items();
-		double x=rect.width(), y=rect.height();
+		QList<QGraphicsItem *> items= (selected_only ? this->selectedItems() : this->items());
+		double x=rect.width(), y=rect.height(), x2 = -10000, y2 = -10000;
 		BaseObjectView *obj_view=nullptr;
 		QPointF pnt;
 		BaseGraphicObject *graph_obj=nullptr;
@@ -174,11 +184,29 @@ QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs)
 
 					if(pnt.y() < y)
 						y=pnt.y();
+
+					if(selected_only)
+					{
+						if(graph_obj->getObjectType()!=OBJ_RELATIONSHIP &&
+							 graph_obj->getObjectType()!=BASE_RELATIONSHIP)
+							pnt = pnt + dynamic_cast<BaseObjectView *>(obj_view)->boundingRect().bottomRight();
+						else
+							pnt = pnt +  dynamic_cast<RelationshipView *>(obj_view)->__boundingRect().bottomRight();
+
+						if(pnt.x() > x2)
+							x2 = pnt.x();
+
+						if(pnt.y() > y2)
+							y2 = pnt.y();
+					}
 				}
 			}
 		}
 
-		return(QRectF(QPointF(x, y), rect.bottomRight()));
+		if(selected_only)
+			return(QRectF(QPointF(x, y), QPointF(x2, y2)));
+		else
+			return(QRectF(QPointF(x, y), rect.bottomRight()));
 	}
 }
 
@@ -377,6 +405,11 @@ void ObjectsScene::emitObjectModification(BaseGraphicObject *object)
 	emit s_objectModified(object);
 }
 
+void ObjectsScene::emitExtAttributesToggled(void)
+{
+	emit s_extAttributesToggled();
+}
+
 void ObjectsScene::emitChildObjectSelection(TableObject *child_obj)
 {
 	/* Treats the TableView::s_childObjectSelect() only when there is no
@@ -403,8 +436,12 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 			connect(rel, SIGNAL(s_relationshipModified(BaseGraphicObject*)),
 					this, SLOT(emitObjectModification(BaseGraphicObject*)));
 		else if(tab)
+		{
 			connect(tab, SIGNAL(s_childObjectSelected(TableObject*)),
-					this, SLOT(emitChildObjectSelection(TableObject*)));
+							this, SLOT(emitChildObjectSelection(TableObject*)));
+			connect(tab, SIGNAL(s_extAttributesToggled()),
+							this, SLOT(emitExtAttributesToggled()));
+		}
 
 		if(obj)
 		{
@@ -443,7 +480,7 @@ void ObjectsScene::removeItem(QGraphicsItem *item)
 void ObjectsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
 	QGraphicsScene::mouseDoubleClickEvent(event);
-	enablePannigMode(false);
+	//enablePannigMode(false);
 
 	if(this->selectedItems().size()==1 && event->buttons()==Qt::LeftButton && !rel_line->isVisible())
 	{
@@ -460,8 +497,6 @@ void ObjectsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 
 void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-	QGraphicsView *view=getActiveViewport();
-
 	//Gets the item at mouse position
 	QGraphicsItem* item=this->itemAt(event->scenePos().x(), event->scenePos().y(), QTransform());
 
@@ -481,8 +516,8 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	{
 		sel_ini_pnt=event->scenePos();
 
-		if((!invert_panning_rangesel && event->modifiers()==Qt::ShiftModifier) ||
-				(invert_panning_rangesel && event->modifiers()==Qt::NoModifier))
+		if((!invert_rangesel_trigger && event->modifiers()==Qt::ShiftModifier) ||
+				(invert_rangesel_trigger && event->modifiers()==Qt::NoModifier))
 		{
 			if(enable_range_sel && this->selectedItems().isEmpty())
 			{
@@ -495,11 +530,6 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 			//Selects the object (without press control) if the user is creating a relationship
 			if(item && item->isEnabled() && !item->isSelected() &&  rel_line->isVisible())
 				item->setSelected(true);
-			/* Workaround to avoid the panning mode to be activated when user is only adding a
-		 graphical object (table / textbox / relationship / view) */
-			else if(((invert_panning_rangesel && event->modifiers()==Qt::ShiftModifier) || !invert_panning_rangesel)  &&
-					view && view->cursor().shape()==Qt::ArrowCursor)
-				enablePannigMode(true);
 		}
 	}
 	else if(event->buttons()==Qt::RightButton)
@@ -521,7 +551,6 @@ bool ObjectsScene::mouseIsAtCorner(void)
 
 	if(view)
 	{
-
 		QPoint pos=view->mapFromGlobal(QCursor::pos());
 		QRect rect=view->rect();
 
@@ -586,14 +615,6 @@ void ObjectsScene::moveObjectScene(void)
 	}
 }
 
-void ObjectsScene::enablePannigMode(bool value)
-{
-	QGraphicsView *view=getActiveViewport();
-
-	if(view)
-		view->setDragMode((value ? QGraphicsView::ScrollHandDrag : QGraphicsView::NoDrag));
-}
-
 void ObjectsScene::enableSceneMove(bool value)
 {
 	if(value)
@@ -618,6 +639,122 @@ void ObjectsScene::enableRangeSelection(bool value)
 		selection_rect->setVisible(value);
 }
 
+void ObjectsScene::adjustScenePositionOnKeyEvent(int key)
+{
+	QGraphicsView *view = getActiveViewport();
+
+	if(view)
+	{
+		QRectF brect = itemsBoundingRect(true, true);
+		QRectF view_rect = QRectF(view->mapToScene(view->rect().topLeft()),
+															view->mapToScene(view->rect().bottomRight())),
+				scene_rect = sceneRect();
+
+		if(view_rect.right() < brect.right() && key == Qt::Key_Right)
+		{
+			/* If the objects are being moved right and the scene width is lesser than the items bounding rect's width
+			we need to resize the scene prior the position adjustment */
+			scene_rect.setRight(brect.right());
+			setSceneRect(scene_rect);
+			view->horizontalScrollBar()->setValue(view->horizontalScrollBar()->value() + ((brect.right() - view_rect.right()) * 2));
+		}
+		else if(view_rect.left() > brect.left()  && key == Qt::Key_Left)
+			view->horizontalScrollBar()->setValue(view->horizontalScrollBar()->value() - ((view_rect.left() - brect.left()) * 2));
+
+		if(view_rect.bottom() < brect.bottom() && key == Qt::Key_Down)
+		{
+			/* If the objects are being moved down and the scene hight is lesser than the items bounding rect's height
+			we need to resize the scene prior the position adjustment */
+			scene_rect.setBottom(brect.bottom());
+			setSceneRect(scene_rect);
+			view->verticalScrollBar()->setValue(view->verticalScrollBar()->value() + ((brect.bottom() - view_rect.bottom()) * 2));
+		}
+		else if(view_rect.top() > brect.top()  && key == Qt::Key_Up)
+			view->verticalScrollBar()->setValue(view->verticalScrollBar()->value() - ((view_rect.top() - brect.top()) * 2));
+	}
+}
+
+void ObjectsScene::keyPressEvent(QKeyEvent *event)
+{
+	if((event->key() == Qt::Key_Up || event->key() == Qt::Key_Down ||
+			event->key() == Qt::Key_Left || event->key() == Qt::Key_Right) &&
+		 !selectedItems().isEmpty())
+	{
+		float dx = 0, dy = 0;
+		BaseObjectView *obj_view=nullptr;
+		QRectF brect = itemsBoundingRect(true, true);
+
+		if(!moving_objs)
+		{
+			sel_ini_pnt = brect.center();
+			moving_objs = true;
+
+			/* If the object move timer is not active we need to send the
+			s_objectsMoved() signal in order to alert the classes like ModelWidget to
+			save the current objects' position in the operation history */
+			if(!object_move_timer.isActive())
+				emit s_objectsMoved(false);
+
+			for(auto item : selectedItems())
+			{
+				obj_view=dynamic_cast<BaseObjectView *>(item);
+
+				if(obj_view && BaseObjectView::isPlaceholderEnabled())
+					obj_view->togglePlaceholder(true);
+			}
+		}
+
+		if(event->key() == Qt::Key_Up)
+			dy = -1;
+		else if(event->key() == Qt::Key_Down)
+			dy = 1;
+
+		if(event->key() == Qt::Key_Left)
+			dx = -1;
+		else if(event->key() == Qt::Key_Right)
+			dx = 1;
+
+		if(event->modifiers() == Qt::ControlModifier)
+		{
+			dx *= 10;
+			dy *= 10;
+		}
+		else if(event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
+		{
+			dx *= 100;
+			dy *= 100;
+		}
+
+		for(auto item : selectedItems())
+		{
+			obj_view=dynamic_cast<BaseObjectView *>(item);
+
+			if(obj_view && !dynamic_cast<RelationshipView *>(obj_view))
+				obj_view->moveBy(dx, dy);
+		}
+
+		adjustScenePositionOnKeyEvent(event->key());
+	}
+	else
+		QGraphicsScene::keyPressEvent(event);
+}
+
+void ObjectsScene::keyReleaseEvent(QKeyEvent *event)
+{
+	if((event->key() == Qt::Key_Up || event->key() == Qt::Key_Down ||
+			event->key() == Qt::Key_Left || event->key() == Qt::Key_Right) &&
+		 !event->isAutoRepeat() && !selectedItems().isEmpty())
+	{
+		if(moving_objs)
+		{
+			object_move_timer.start();
+			adjustScenePositionOnKeyEvent(event->key());
+		}
+	}
+	else
+		QGraphicsScene::keyReleaseEvent(event);
+}
+
 void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
 	if(event->buttons()==Qt::LeftButton || rel_line->isVisible())
@@ -638,7 +775,7 @@ void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 		if(!rel_line->isVisible())
 		{
 			//Case the user starts a object moviment
-			if(!this->selectedItems().isEmpty() && !moving_objs && event->modifiers()==Qt::NoModifier)
+			if(!this->selectedItems().isEmpty() && !moving_objs /*&& event->modifiers()==Qt::NoModifier*/)
 			{
 				if(BaseObjectView::isPlaceholderEnabled())
 				{
@@ -683,169 +820,13 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
 	QGraphicsScene::mouseReleaseEvent(event);
 
-	if(event->button()==Qt::LeftButton)
-	{
-		enablePannigMode(false);
-
-		if(corner_move)
-			enableSceneMove(false);
-	}
+	if(event->button()==Qt::LeftButton && corner_move)
+		enableSceneMove(false);
 
 	//If there is selected object and the user ends the object moviment
-	if(!this->selectedItems().isEmpty() && moving_objs &&
-			event->button()==Qt::LeftButton && event->modifiers()==Qt::NoModifier)
+	if(!this->selectedItems().isEmpty() && moving_objs && event->button()==Qt::LeftButton/* && event->modifiers()==Qt::NoModifier */)
 	{
-		unsigned i, count;
-		QList<QGraphicsItem *> items=this->selectedItems(), rel_list;
-		double x1,y1,x2,y2, dx, dy;
-		QRectF rect;
-		SchemaView *sch_view=nullptr;
-		vector<QPointF> points;
-		vector<QPointF>::iterator itr;
-		vector<BaseObject *> rels, base_rels;
-		BaseRelationship *base_rel=nullptr;
-		RelationshipView *rel=nullptr;
-		BaseObjectView *obj_view=nullptr;
-		BaseTableView *tab_view=nullptr;
-		QList<BaseObjectView *> tables;
-
-		//Gathering the relationships inside the selected schemsa in order to move their points too
-		for(auto &item : items)
-		{
-			obj_view=dynamic_cast<BaseObjectView *>(item);
-			sch_view=dynamic_cast<SchemaView *>(item);
-			tab_view=dynamic_cast<BaseTableView *>(item);
-
-			if(obj_view)
-				obj_view->togglePlaceholder(false);
-
-			if(tab_view)
-				tables.push_back(tab_view);
-			else if(sch_view)
-			{
-				//Get the schema object
-				Schema *schema=dynamic_cast<Schema *>(sch_view->getSourceObject());
-
-				if(!schema->isProtected())
-				{
-					//Get the table-table and table-view relationships
-					rels=dynamic_cast<DatabaseModel *>(schema->getDatabase())->getObjects(OBJ_RELATIONSHIP, schema);
-					base_rels=dynamic_cast<DatabaseModel *>(schema->getDatabase())->getObjects(BASE_RELATIONSHIP, schema);
-					rels.insert(rels.end(), base_rels.begin(), base_rels.end());
-
-					for(auto &rel : rels)
-					{
-						base_rel=dynamic_cast<BaseRelationship *>(rel);
-
-						/* If the relationship contains points and it is not selected then it will be included on the list
-			   in order to move their custom line points */
-						if(!dynamic_cast<RelationshipView *>(base_rel->getReceiverObject())->isSelected() &&
-								!base_rel->getPoints().empty())
-							rel_list.push_back(dynamic_cast<QGraphicsItem *>(base_rel->getReceiverObject()));
-					}
-
-					tables.append(sch_view->getChildren());
-				}
-			}
-		}
-
-		items.append(rel_list);
-
-		/* Get the extreme points of the scene to check if some objects are out the area
-	 forcing the scene to be resized */
-		x1=this->sceneRect().left();
-		y1=this->sceneRect().top();
-		x2=this->sceneRect().right();
-		y2=this->sceneRect().bottom();
-		dx=event->scenePos().x() - sel_ini_pnt.x();
-		dy=event->scenePos().y() - sel_ini_pnt.y();
-
-		count=items.size();
-		for(i=0; i < count; i++)
-		{
-			rel=dynamic_cast<RelationshipView *>(items[i]);
-
-			if(!rel)
-			{
-				if(align_objs_grid)
-					items[i]->setPos(alignPointToGrid(items[i]->pos()));
-				else
-				{
-					QPointF p=items[i]->pos();
-					if(p.x() < 0) p.setX(0);
-					if(p.y() < 0) p.setY(0);
-					items[i]->setPos(p);
-				}
-
-				rect.setTopLeft(items[i]->pos());
-				rect.setSize(items[i]->boundingRect().size());
-			}
-			else
-			{
-				/* If the relationship has points added to the line is necessary to move the points
-		too. Since relationships cannot be moved naturally (by user) this will be done
-		by the scene. NOTE: this operation is done ONLY WHEN there is more than one object selected! */
-				points=rel->getSourceObject()->getPoints();
-				if(count > 1 && !points.empty())
-				{
-					itr=points.begin();
-					while(itr!=points.end())
-					{
-						//Translate the points
-						itr->setX(itr->x() + dx);
-						itr->setY(itr->y() + dy);
-
-						//Align to grid if the flag is set
-						if(align_objs_grid)
-							(*itr)=alignPointToGrid(*itr);
-
-						itr++;
-					}
-
-					//Assing the new points to relationship and reconfigure its line
-					rel->getSourceObject()->setPoints(points);
-					rel->configureLine();
-				}
-
-				rect=rel->__boundingRect();
-			}
-
-			//Made the comparisson between the scene extremity and the object's bounding rect
-			if(rect.left() < x1) x1=rect.left();
-			if(rect.top() < y1) y1=rect.top();
-			if(rect.right() > x2) x2=rect.right();
-			if(rect.bottom() > y2) y2=rect.bottom();
-		}
-
-		//Reconfigures the rectangle with the most extreme points
-		rect.setCoords(x1, y1, x2, y2);
-
-		//If the new rect is greater than the scene bounding rect, this latter is resized
-		if(rect!=this->sceneRect())
-		{
-			rect=this->itemsBoundingRect();
-			rect.setTopLeft(QPointF(0,0));
-			rect.setWidth(rect.width() * 1.05f);
-			rect.setHeight(rect.height() * 1.05f);
-			this->setSceneRect(rect);
-		}
-
-		if(BaseObjectView::isPlaceholderEnabled())
-		{
-			/* Updating relationships related to moved tables. Converting the list of table to a set
-	   in order to remove the duplicated elements */
-			for(auto &obj : tables.toSet())
-			{
-				tab_view=dynamic_cast<BaseTableView *>(obj);
-				if(tab_view)
-					tab_view->requestRelationshipsUpdate();
-			}
-		}
-
-		emit s_objectsMoved(true);
-		moving_objs=false;
-		sel_ini_pnt.setX(NAN);
-		sel_ini_pnt.setY(NAN);
+		finishObjectsMove(event->scenePos());
 	}
 	else if(selection_rect->isVisible() && event->button()==Qt::LeftButton)
 	{
@@ -860,6 +841,161 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 		sel_ini_pnt.setX(NAN);
 		sel_ini_pnt.setY(NAN);
 	}
+}
+
+void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
+{
+	unsigned i, count;
+	QList<QGraphicsItem *> items=this->selectedItems(), rel_list;
+	double x1,y1,x2,y2, dx, dy;
+	QRectF rect;
+	SchemaView *sch_view=nullptr;
+	vector<QPointF> points;
+	vector<QPointF>::iterator itr;
+	vector<BaseObject *> rels, base_rels;
+	BaseRelationship *base_rel=nullptr;
+	RelationshipView *rel=nullptr;
+	BaseObjectView *obj_view=nullptr;
+	BaseTableView *tab_view=nullptr;
+	QList<BaseObjectView *> tables;
+
+	//Gathering the relationships inside the selected schemsa in order to move their points too
+	for(auto &item : items)
+	{
+		obj_view=dynamic_cast<BaseObjectView *>(item);
+		sch_view=dynamic_cast<SchemaView *>(item);
+		tab_view=dynamic_cast<BaseTableView *>(item);
+
+		if(obj_view)
+			obj_view->togglePlaceholder(false);
+
+		if(tab_view)
+			tables.push_back(tab_view);
+		else if(sch_view)
+		{
+			//Get the schema object
+			Schema *schema=dynamic_cast<Schema *>(sch_view->getSourceObject());
+
+			if(!schema->isProtected())
+			{
+				//Get the table-table and table-view relationships
+				rels=dynamic_cast<DatabaseModel *>(schema->getDatabase())->getObjects(OBJ_RELATIONSHIP, schema);
+				base_rels=dynamic_cast<DatabaseModel *>(schema->getDatabase())->getObjects(BASE_RELATIONSHIP, schema);
+				rels.insert(rels.end(), base_rels.begin(), base_rels.end());
+
+				for(auto &rel : rels)
+				{
+					base_rel=dynamic_cast<BaseRelationship *>(rel);
+
+					/* If the relationship contains points and it is not selected then it will be included on the list
+						 in order to move their custom line points */
+					if(!dynamic_cast<RelationshipView *>(base_rel->getReceiverObject())->isSelected() &&
+							!base_rel->getPoints().empty())
+						rel_list.push_back(dynamic_cast<QGraphicsItem *>(base_rel->getReceiverObject()));
+				}
+
+				tables.append(sch_view->getChildren());
+			}
+		}
+	}
+
+	items.append(rel_list);
+
+	/* Get the extreme points of the scene to check if some objects are out the area
+	forcing the scene to be resized */
+	x1=this->sceneRect().left();
+	y1=this->sceneRect().top();
+	x2=this->sceneRect().right();
+	y2=this->sceneRect().bottom();
+	dx=pnt_end.x() - sel_ini_pnt.x();
+	dy=pnt_end.y() - sel_ini_pnt.y();
+
+	count=items.size();
+	for(i=0; i < count; i++)
+	{
+		rel=dynamic_cast<RelationshipView *>(items[i]);
+
+		if(!rel)
+		{
+			if(align_objs_grid)
+				items[i]->setPos(alignPointToGrid(items[i]->pos()));
+			else
+			{
+				QPointF p=items[i]->pos();
+				if(p.x() < 0) p.setX(0);
+				if(p.y() < 0) p.setY(0);
+				items[i]->setPos(p);
+			}
+
+			rect.setTopLeft(items[i]->pos());
+			rect.setSize(items[i]->boundingRect().size());
+		}
+		else
+		{
+			/* If the relationship has points added to the line is necessary to move the points
+				 too. Since relationships cannot be moved naturally (by user) this will be done
+				 by the scene. NOTE: this operation is done ONLY WHEN there is more than one object selected! */
+			points=rel->getSourceObject()->getPoints();
+			if(count > 1 && !points.empty())
+			{
+				itr=points.begin();
+				while(itr!=points.end())
+				{
+					//Translate the points
+					itr->setX(itr->x() + dx);
+					itr->setY(itr->y() + dy);
+
+					//Align to grid if the flag is set
+					if(align_objs_grid)
+						(*itr)=alignPointToGrid(*itr);
+
+					itr++;
+				}
+
+				//Assing the new points to relationship and reconfigure its line
+				rel->getSourceObject()->setPoints(points);
+				rel->configureLine();
+			}
+
+			rect=rel->__boundingRect();
+		}
+
+		//Made the comparisson between the scene extremity and the object's bounding rect
+		if(rect.left() < x1) x1=rect.left();
+		if(rect.top() < y1) y1=rect.top();
+		if(rect.right() > x2) x2=rect.right();
+		if(rect.bottom() > y2) y2=rect.bottom();
+	}
+
+	//Reconfigures the rectangle with the most extreme points
+	rect.setCoords(x1, y1, x2, y2);
+
+	//If the new rect is greater than the scene bounding rect, this latter is resized
+	if(rect!=this->sceneRect())
+	{
+		rect=this->itemsBoundingRect();
+		rect.setTopLeft(QPointF(0,0));
+		rect.setWidth(rect.width() * 1.05f);
+		rect.setHeight(rect.height() * 1.05f);
+		this->setSceneRect(rect);
+	}
+
+	if(BaseObjectView::isPlaceholderEnabled())
+	{
+		/* Updating relationships related to moved tables. Converting the list of table to a set
+	 in order to remove the duplicated elements */
+		for(auto &obj : tables.toSet())
+		{
+			tab_view=dynamic_cast<BaseTableView *>(obj);
+			if(tab_view)
+				tab_view->requestRelationshipsUpdate();
+		}
+	}
+
+	emit s_objectsMoved(true);
+	moving_objs=false;
+	sel_ini_pnt.setX(NAN);
+	sel_ini_pnt.setY(NAN);
 }
 
 void ObjectsScene::alignObjectsToGrid(void)
@@ -985,9 +1121,9 @@ bool ObjectsScene::isRangeSelectionEnabled(void)
 	return(enable_range_sel);
 }
 
-bool ObjectsScene::isPanningRangeSelectionInverted(void)
+bool ObjectsScene::isRangeSelectionTriggerInverted(void)
 {
-	return(invert_panning_rangesel);
+	return(invert_rangesel_trigger);
 }
 
 bool ObjectsScene::isRelationshipLineVisible(void)

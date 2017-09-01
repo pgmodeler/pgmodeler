@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,10 +45,10 @@ class ModelWidget: public QWidget {
 		double current_zoom;
 
 		//! \brief Indicates if the model was modified by some operation
-		bool modified;
+		bool modified,
 
-		//! \brief Configures the submenu related to the object
-		void configureSubmenu(BaseObject *object);
+		//! brief Indicates if the panning mode was activated via event filter (see eventFilter())
+		panning_mode;
 
 		/*! \brief Indicates if the cut operation is currently activated. This flag modifies
 		the way the methods copyObjects() and removeObject() works. */
@@ -61,6 +61,9 @@ class ModelWidget: public QWidget {
 		simple_obj_creation,
 
 		disable_render_smooth;
+
+		//! \brief Indicates if the minimum object opacity used when appliyng fade out to objects
+		static float min_object_opacity;
 
 		/*! \brief Stores the model that generates the copy/cut operation. This model is updated
 		from the destination model whenever a past/cut operation is done. */
@@ -99,7 +102,21 @@ class ModelWidget: public QWidget {
 		//! \brief Stores the tags used by the "set tag" operation
 		tags_menu,
 
-		break_rel_menu;
+		break_rel_menu,
+
+		fade_menu,
+
+		fade_in_menu,
+
+		fade_out_menu,
+
+		fade_rels_menu,
+
+		toggle_attrs_menu,
+
+		select_all_menu,
+
+		jump_to_tab_menu;
 
 		//! \brief Stores the selected object on the scene
 		vector<BaseObject *> selected_objects;
@@ -120,13 +137,18 @@ class ModelWidget: public QWidget {
 		tmp_filename;
 
 		//! \brief This label shows the user the current applied zoom
-		QLabel *zoom_info_lbl;
+		QLabel *zoom_info_lbl,
+
+		//! \brief This label shows a small portion of the canvas in normal zoom at the current cursor position
+		*magnifier_area_lbl;
+
+		QFrame	*magnifier_frm;
 
 		//! \brief This timer controls the interval the zoom label is visible
 		QTimer zoom_info_timer;
 
-		//! \brief Creates a BaseForm instance in insert the widget into it. A custom configuration for dialog buttons can be passed
-		int openEditingForm(QWidget *widget, BaseObject *object = nullptr, unsigned button_conf = Messagebox::OK_CANCEL_BUTTONS);
+		//! \brief Creates a BaseForm instance and insert the widget into it. A custom configuration for dialog buttons can be passed
+		int openEditingForm(QWidget *widget, unsigned button_conf = Messagebox::OK_CANCEL_BUTTONS);
 
 		//! \brief Opens a editing form for objects at database level
 		template<class Class, class WidgetClass>
@@ -140,6 +162,29 @@ class ModelWidget: public QWidget {
 		//! \brief Opens a editing form for objects that can have a position in the canvas area
 		template<class Class, class WidgetClass, class ParentClass>
 		int openEditingForm(BaseObject *object, BaseObject *parent_obj, const QPointF &pos);
+
+		//! \brief Configures the popup menu according the the selected objects list
+		void configurePopupMenu(vector<BaseObject *> objects=vector<BaseObject *>());
+
+		//! \brief Configures the submenu related to the object
+		void configureSubmenu(BaseObject *object);
+
+		//! \brief Configures the submenu related to fade in/out operations
+		void configureFadeMenu(void);
+
+		//! \brief Fades in our out the object types held by the specified action
+		void fadeObjects(QAction *action, bool fade_in);
+
+		void breakRelationshipLine(BaseRelationship *rel, unsigned break_type);
+
+		/*! \brief Arrange tables starting from a specified root in a hierarchical way
+		where for a certain table its child (or related) tables are places aside from left to right and top to bottom.
+		This method returns the bounding rect of the items after the rearrangement */
+		QRectF rearrangeTablesHierarchically(BaseTableView *root, vector<BaseObject *> &evaluated_tabs);
+
+		void updateMagnifierArea(void);
+
+		void showMagnifierArea(bool show);
 
 	protected:
 		static const unsigned BREAK_VERT_NINETY_DEGREES, //Break vertically the line in one 90° angle
@@ -166,6 +211,7 @@ class ModelWidget: public QWidget {
 		*action_change_owner,
 		*action_quick_actions,
 		*action_sel_sch_children,
+		*action_sel_tagged_tabs,
 		*action_highlight_object,
 		*action_parent_rel,
 		*action_append_sql,
@@ -175,7 +221,19 @@ class ModelWidget: public QWidget {
 		*action_remove_rel_points,
 		*action_set_tag,
 		*action_disable_sql,
-		*action_enable_sql;
+		*action_enable_sql,
+		*action_duplicate,
+		*action_fade,
+		*action_fade_in,
+		*action_fade_out,
+		*action_fade_rels,
+		*action_fade_rels_in,
+		*action_fade_rels_out,
+		*action_extended_attribs,
+		*action_show_ext_attribs,
+		*action_hide_ext_attribs,
+		*action_edit_creation_order,
+		*action_jump_to_table;
 
 		//! \brief Actions used to create new objects on the model
 		map<ObjectType, QAction *> actions_new_objects;
@@ -186,7 +244,8 @@ class ModelWidget: public QWidget {
 		void resizeEvent(QResizeEvent *);
 		void mousePressEvent(QMouseEvent *event);
 		void keyPressEvent(QKeyEvent *event);
-		void wheelEvent(QWheelEvent * event);
+		void keyReleaseEvent(QKeyEvent *event);
+		void hideEvent(QHideEvent *);
 
 		//! \brief Captures and handles the QWeelEvent raised on the viewport scrollbars
 		bool eventFilter(QObject *object, QEvent *event);
@@ -254,6 +313,9 @@ class ModelWidget: public QWidget {
 		//! \brief Defines if any instance of the class must simiplify the graphical object's creation
 		static void setSimplifiedObjectCreation(bool value);
 
+		//! \brief Defines the minimum object opacity when using fade out feature
+		static void setMinimumObjectOpacity(unsigned min_opacity);
+
 		//! \brief Restore the last editing position on canvas as well the zoom factor
 		void restoreLastCanvasPosition(void);
 
@@ -264,6 +326,16 @@ class ModelWidget: public QWidget {
 		void setUpdatesEnabled(bool value);
 
 		void updateRenderHints(void);
+
+		/*! \brief Updates the opacity factor of the objects faded in the model. This method should be called
+		whenever the min_object_opacity changes */
+		void updateObjectsOpacity(void);
+
+		/*! \brief Rearrange table/view/textboxes in the canvas in such way to provide better visualization
+		 * of the whole model. Currently only hierachical arrangement is possible. See rearrangeTablesHierarchically() */
+		void rearrangeObjects(void);
+
+		void emitSceneInteracted(void);
 
 	private slots:
 		//! \brief Handles the signals that indicates the object creation on the reference database model
@@ -280,9 +352,6 @@ class ModelWidget: public QWidget {
 
 		//! \brief Handles the signals that indicates the object was double clicked on the scene
 		void handleObjectDoubleClick(BaseGraphicObject *object);
-
-		//! \brief Configures the popup menu according the the selected objects list
-		void configurePopupMenu(vector<BaseObject *> objects=vector<BaseObject *>());
 
 		//! \brief Configures the popup menu specific for the passed object
 		void configureObjectMenu(BaseObject *object);
@@ -317,6 +386,9 @@ class ModelWidget: public QWidget {
 		//! \brief Selects all the graphical objects under the selected schema
 		void selectSchemaChildren(void);
 
+		//! \brief Selects all the tables and views that references the selected tag
+		void selectTaggedTables(void);
+
 		//! \brief Removes the selected objects
 		void removeObjects(bool cascade = false);
 
@@ -327,10 +399,13 @@ class ModelWidget: public QWidget {
 		void selectAllObjects(void);
 
 		//! \brief Copies all the selected objects
-		void copyObjects(void);
+		void copyObjects(bool duplicate_mode = false);
 
 		//! \brief Paste all the objects copied previously
 		void pasteObjects(void);
+
+		//! \brief Duplicate the selected table object in its parent table
+		void duplicateObject(void);
 
 		//! \brief Cuts the selected objects. The effective removal is made when the cutted objects are pasted.
 		void cutObjects(void);
@@ -374,6 +449,16 @@ class ModelWidget: public QWidget {
 
 		void toggleObjectSQL(void);
 
+		void fadeObjectsIn(void);
+
+		void fadeObjectsOut(void);
+
+		void toggleExtendedAttributes(void);
+
+		void editCreationOrder(void);
+
+		void jumpToTable(void);
+
 	public slots:
 		void loadModel(const QString &filename);
 		void saveModel(const QString &filename);
@@ -395,6 +480,11 @@ class ModelWidget: public QWidget {
 		/*! \brief Signal emitted whenever the user open an object in its editing form but cancel the operation
 		by closing the form */
 		void s_manipulationCanceled(void);
+
+		void s_sceneInteracted(BaseObjectView *sel_obj);
+		void s_sceneInteracted(const QSizeF &scene_size);
+		void s_sceneInteracted(const QPointF &mouse_pos);
+		void s_sceneInteracted(int obj_count, const QRectF &objs_rect);
 
 		friend class MainWindow;
 		friend class ModelExportForm;

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include "roundedrectitem.h"
 
 map<QString, QTextCharFormat> BaseObjectView::font_config;
-map<QString, QColor *> BaseObjectView::color_config;
+map<QString, vector<QColor>> BaseObjectView::color_config;
 unsigned BaseObjectView::global_sel_order=1;
 bool BaseObjectView::use_placeholder=true;
 
@@ -201,7 +201,6 @@ void BaseObjectView::resizePolygon(QPolygonF &pol, double width, double height)
 
 void BaseObjectView::loadObjectsStyle(void)
 {
-	QColor *colors=nullptr;
 	QTextCharFormat font_fmt;
 	QFont font;
 	attribs_map attribs;
@@ -256,10 +255,12 @@ void BaseObjectView::loadObjectsStyle(void)
 					else if(elem==ParsersAttributes::OBJECT)
 					{
 						list=attribs[ParsersAttributes::FILL_COLOR].split(',');
-						colors=new QColor[3];
-						colors[0]=(!list.isEmpty() ? QColor(list[0]) : QColor(0,0,0));
-						colors[1]=(list.size()==2 ? QColor(list[1]) : colors[0]);
-						colors[2]=QColor(attribs[ParsersAttributes::BORDER_COLOR]);
+
+						vector<QColor> colors;
+						colors.push_back(!list.isEmpty() ? QColor(list[0]) : QColor(0,0,0));
+						colors.push_back(list.size()==2 ? QColor(list[1]) : colors[0]);
+						colors.push_back(QColor(attribs[ParsersAttributes::BORDER_COLOR]));
+
 						color_config[attribs[ParsersAttributes::ID]]=colors;
 					}
 				}
@@ -269,7 +270,7 @@ void BaseObjectView::loadObjectsStyle(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorType(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e, config_file);
 	}
 }
 
@@ -332,13 +333,14 @@ void BaseObjectView::getFillStyle(const QString &id, QColor &color1, QColor &col
 
 QLinearGradient BaseObjectView::getFillStyle(const QString &id)
 {
-	QColor *colors=nullptr;
+	vector<QColor> colors;
 	QLinearGradient grad(QPointF(0,0),QPointF(0,1));
 
 	if(color_config.count(id) > 0)
 	{
 		colors=color_config[id];
-		if(colors)
+
+		if(!colors.empty())
 		{
 			if(id==ParsersAttributes::OBJ_SELECTION || id==ParsersAttributes::PLACEHOLDER)
 			{
@@ -358,12 +360,13 @@ QLinearGradient BaseObjectView::getFillStyle(const QString &id)
 QPen BaseObjectView::getBorderStyle(const QString &id)
 {
 	QPen pen;
-	QColor *colors=nullptr;
+	vector<QColor> colors;
 
 	if(color_config.count(id) > 0)
 	{
 		colors=color_config[id];
-		if(colors)
+
+		if(!colors.empty())
 		{
 			if(id==ParsersAttributes::OBJ_SELECTION)
 				colors[2].setAlpha(128);
@@ -406,7 +409,7 @@ QVariant BaseObjectView::itemChange(GraphicsItemChange change, const QVariant &v
 			this->configurePositionInfo(this->pos());
 		}
 	}
-	else if(change==ItemSelectedHasChanged && obj_selection)
+	else if(change == ItemSelectedHasChanged && obj_selection)
 	{
 		this->setSelectionOrder(value.toBool());
 		pos_info_rect->setVisible(value.toBool());
@@ -414,8 +417,7 @@ QVariant BaseObjectView::itemChange(GraphicsItemChange change, const QVariant &v
 		obj_selection->setVisible(value.toBool());
 
 		this->configurePositionInfo(this->pos());
-		emit s_objectSelected(dynamic_cast<BaseGraphicObject *>(this->getSourceObject()),
-							  value.toBool());
+		emit s_objectSelected(dynamic_cast<BaseGraphicObject *>(this->getSourceObject()), value.toBool());
 	}
 
 	return(value);
@@ -458,7 +460,7 @@ void BaseObjectView::configurePositionInfo(QPointF pos)
 		pos_info_txt->setFont(fnt);
 		pos_info_txt->setBrush(font_config[ParsersAttributes::POSITION_INFO].foreground());
 
-		pos_info_txt->setText(QString(" x:%1 y:%2 ").arg(pos.x()).arg(pos.y()));
+		pos_info_txt->setText(QString(" x:%1 y:%2 ").arg(roundf(pos.x())).arg(roundf(pos.y())));
 		pos_info_rect->setRect(pos_info_txt->boundingRect());
 		pos_info_txt->setPos(-0.5, -pos_info_txt->boundingRect().height()/2);
 		pos_info_rect->setPos(-0.5, -pos_info_rect->boundingRect().height()/2);
@@ -627,4 +629,19 @@ void BaseObjectView::togglePlaceholder(bool visible)
 
 		placeholder->setVisible(visible);
 	}
+}
+
+float BaseObjectView::getFontFactor(void)
+{
+	return(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE);
+}
+
+float BaseObjectView::getScreenDpiFactor(void)
+{
+	float factor = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->logicalDotsPerInch() / 96.0f;
+
+	if(factor < 1)
+		return (1);
+
+	return(factor);
 }

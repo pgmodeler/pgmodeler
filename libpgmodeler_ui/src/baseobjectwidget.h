@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
 #include "objectselectorwidget.h"
 #include "ui_baseobjectwidget.h"
 #include "pgsqltypewidget.h"
+#include "pgmodeleruins.h"
 
 /* Declaring the PgSQLType class as a Qt metatype in order to permit
 	 that instances of the class be used as data of QVariant and QMetaType */
@@ -48,6 +49,8 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		PROT_LINE_FGCOLOR,
 		RELINC_LINE_BGCOLOR,
 		RELINC_LINE_FGCOLOR;
+
+		bool object_protected;
 
 		QHBoxLayout *misc_btns_lt;
 
@@ -167,6 +170,8 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 
 		//! \brief Returns the kind of database object handled
 		ObjectType getHandledObjectType(void);
+
+		virtual bool isHandledObjectProtected(void);
 		
 	protected slots:
 		void editPermissions(void);

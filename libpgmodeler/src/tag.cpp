@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,9 +33,9 @@ Tag::Tag(void)
 	for(auto &attr : attribs)
 	{
 		if(attr!=ParsersAttributes::TABLE_NAME && attr!=ParsersAttributes::TABLE_SCHEMA_NAME)
-			color_config[attr]=new QColor[COLOR_COUNT];
+			color_config[attr] = { QColor(0,0,0), QColor(0,0,0), QColor(0,0,0) };
 		else
-			color_config[attr]=new QColor;
+			color_config[attr] = { QColor(0,0,0) };
 	}
 }
 
@@ -109,10 +109,10 @@ void Tag::validateElementId(const QString &id, unsigned color_id)
 		throw Exception(Exception::getErrorMessage(ERR_OPR_INV_ELEMENT_ID).arg(id),
 						ERR_OPR_INV_ELEMENT_ID ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if((color_id > COLOR_COUNT) ||
-			(color_id > 0 &&
-			 (id==ParsersAttributes::TABLE_NAME || id==ParsersAttributes::TABLE_SCHEMA_NAME)))
+					(color_id > 0 &&
+					 (id==ParsersAttributes::TABLE_NAME || id==ParsersAttributes::TABLE_SCHEMA_NAME)))
 		throw Exception(Exception::getErrorMessage(ERR_REF_ELEMENT_COLOR_ID).arg(id).arg(color_id),
-						ERR_REF_ELEMENT_COLOR_ID ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+										ERR_REF_ELEMENT_COLOR_ID ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 QLinearGradient Tag::getFillStyle(const QString &elem_id)
@@ -180,13 +180,5 @@ void Tag::operator = (Tag &tag)
 	(*dynamic_cast<BaseObject *>(this))=dynamic_cast<BaseObject &>(tag);
 
 	for(auto &attr : tag.color_config)
-	{
-		if(attr.first!=ParsersAttributes::TABLE_NAME && attr.first!=ParsersAttributes::TABLE_SCHEMA_NAME)
-		{
-			for(unsigned i=FILL_COLOR1; i < COLOR_COUNT; i++)
-				this->color_config[attr.first][i]=attr.second[i];
-		}
-		else
-			(*this->color_config[attr.first])=(*attr.second);
-	}
+		this->color_config[attr.first]=attr.second;
 }

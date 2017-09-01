@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 #include "crashhandlerform.h"
 #include "messagebox.h"
+#include "pgmodeleruins.h"
 
 const QString CrashHandlerForm::ANALYSIS_MODE=QString("-analysis-mode");
 
@@ -32,7 +33,7 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 
 	stack_txt=new QPlainTextEdit(this);
 	stack_txt->setReadOnly(true);
-	stack_txt->setFont(QFont("DejaVu Sans Mono"));
+	stack_txt->setFont(QFont("Source Code Pro"));
 	stack_txt->setLineWrapMode(QPlainTextEdit::NoWrap);
 
 	layout->addWidget(stack_txt);
@@ -81,7 +82,7 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 	layout->addWidget(input_edt);
 
 	load_tb=new QToolButton(input_wgt);
-	load_tb->setIcon(QPixmap(QString(":/icones/icones/abrir.png")));
+	load_tb->setIcon(QPixmap(PgModelerUiNS::getIconPath("abrir")));
 	load_tb->setSizePolicy(output_tb->sizePolicy());
 	load_tb->setToolButtonStyle(output_tb->toolButtonStyle());
 	load_tb->setIconSize(output_tb->iconSize());
@@ -89,7 +90,7 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 	layout->addWidget(load_tb);
 
 	save_tb=new QToolButton(input_wgt);
-	save_tb->setIcon(QPixmap(QString(":/icones/icones/salvar.png")));
+	save_tb->setIcon(QPixmap(PgModelerUiNS::getIconPath("salvar")));
 	save_tb->setSizePolicy(output_tb->sizePolicy());
 	save_tb->setToolButtonStyle(output_tb->toolButtonStyle());
 	save_tb->setIconSize(output_tb->iconSize());

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -95,6 +95,7 @@ class PgModelerCLI: public QApplication {
 		SHOW_DELIMITERS,
 		PAGE_BY_PAGE,
 		IGNORE_DUPLICATES,
+		IGNORE_ERROR_CODES,
 		CONN_ALIAS,
 		HOST,
 		PORT,

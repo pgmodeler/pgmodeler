@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -357,9 +357,7 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 				(((obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT) &&
 				  (parent_obj->getObjectType()!=OBJ_RELATIONSHIP && parent_obj->getObjectType()!=OBJ_TABLE)) ||
 
-				 ((obj_type==OBJ_TRIGGER || obj_type==OBJ_RULE) && !dynamic_cast<BaseTable *>(parent_obj)) ||
-
-				 (obj_type==OBJ_INDEX && parent_obj->getObjectType()!=OBJ_TABLE)))
+				 ((obj_type==OBJ_TRIGGER || obj_type==OBJ_RULE || obj_type==OBJ_INDEX) && !dynamic_cast<BaseTable *>(parent_obj))))
 			throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//If the operations list is full makes the automatic cleaning before inserting a new operation

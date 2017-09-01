@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -143,6 +143,9 @@ namespace PgModelerNS {
 			break;
 			case OBJ_EVENT_TRIGGER:
 				copyObject(psrc_obj, dynamic_cast<EventTrigger *>(copy_obj));
+			break;
+			case OBJ_GENERIC_SQL:
+				copyObject(psrc_obj, dynamic_cast<GenericSQL *>(copy_obj));
 			break;
 			default:
 				throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);

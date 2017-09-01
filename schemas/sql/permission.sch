@@ -18,7 +18,7 @@
   {privileges} $br
 
   %if {parent} %then
-    $sp $sp ({object}) [ ON TABLE ] {parent} $br
+    $sp $sp  [ ON TABLE ] {parent} $br
   %else
     $sp $sp  [ ON ] {type} $sp {object} $br
   %end
@@ -52,7 +52,7 @@
   {privileges-gop} $br
 
   %if {parent} %then
-    $sp $sp ({object}) [ ON TABLE ] {parent} $br
+    $sp $sp  [ ON TABLE ] {parent} $br
   %else
     $sp $sp  [ ON ] {type} $sp {object} $br
   %end

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -50,25 +50,25 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 	for(i=0; i < 3; i++)
 	{
 		obj_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-									  ObjectTableWidget::UPDATE_BUTTON, true, this);
+																	(ObjectTableWidget::UPDATE_BUTTON | ObjectTableWidget::DUPLICATE_BUTTON), true, this);
 		members_tab[i]=obj_tab;
 
 		obj_tab->setColumnCount(5);
 
 		obj_tab->setHeaderLabel(trUtf8("Role"),0);
-		obj_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/role.png")),0);
+		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),0);
 
 		obj_tab->setHeaderLabel(trUtf8("Validity"),1);
-		obj_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/validade.png")),1);
+		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("validade")),1);
 
 		obj_tab->setHeaderLabel(trUtf8("Member of"),2);
-		obj_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/role.png")),2);
+		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),2);
 
 		obj_tab->setHeaderLabel(trUtf8("Members"),3);
-		obj_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/role.png")),3);
+		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),3);
 
 		obj_tab->setHeaderLabel(trUtf8("Members (Admin.)"),4);
-		obj_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/role.png")),4);
+		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),4);
 
 		grid=new QGridLayout;
 		grid->addWidget(obj_tab,0,0,1,1);
@@ -280,7 +280,6 @@ void RoleWidget::applyConfiguration(void)
 		startConfiguration<Role>();
 
 		role=dynamic_cast<Role *>(this->object);
-		//role->setSysid(sysid_sb->value());
 		role->setConnectionLimit(conn_limit_sb->value());
 		role->setPassword(passwd_edt->text());
 
@@ -299,8 +298,8 @@ void RoleWidget::applyConfiguration(void)
 
 		for(type_id=0; type_id < 3; type_id++)
 		{
-			count=members_tab[type_id]->getRowCount();
-			if(count > 0) role->removeRoles(role_types[type_id]);
+			count = members_tab[type_id]->getRowCount();
+			role->removeRoles(role_types[type_id]);
 
 			for(i=0; i < count; i++)
 			{

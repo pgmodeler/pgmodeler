@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,6 +23,19 @@ BaseTable::BaseTable(void)
 	tag=nullptr;
 	obj_type=BASE_TABLE;
 	attributes[ParsersAttributes::TAG]=QString();
+	attributes[ParsersAttributes::HIDE_EXT_ATTRIBS]=QString();
+	hide_ext_attribs=false;
+}
+
+void BaseTable::setExtAttribsHidden(bool value)
+{
+	setCodeInvalidated(hide_ext_attribs != value);
+	hide_ext_attribs = value;
+}
+
+bool BaseTable::isExtAttribsHidden(void)
+{
+	return(hide_ext_attribs);
 }
 
 void BaseTable::setTag(Tag *tag)

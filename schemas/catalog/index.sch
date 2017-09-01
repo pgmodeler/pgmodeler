@@ -12,7 +12,7 @@
       WHERE nspname= ] '{schema}'
 
    %if {table} %then
-     [ AND tb.relkind = 'r' AND tb.relname = ] '{table}'
+     [ AND ((tb.relkind = 'r' OR tb.relkind = 'm') AND tb.relname = ] '{table}' [)]
    %end
  %end
 
@@ -57,8 +57,8 @@
 
       [       id.indkey::oid] $ob $cb [ AS columns,
 	      id.indclass::oid] $ob $cb [ AS opclasses,
-	      string_to_array(pg_get_expr(indexprs, indrelid),',') AS expressions,
-              pg_get_expr(indpred, indrelid, true) predicate,
+	      pg_get_expr(indexprs, indrelid) AS expressions,
+          pg_get_expr(indpred, indrelid, true) predicate,
 	      ds.description AS comment
 	FROM pg_index AS id
 	LEFT JOIN pg_class AS cl ON cl.oid = id.indexrelid
@@ -71,7 +71,7 @@
 	    WHERE ns.nspname= ] '{schema}'
 
 	%if {table} %then
-	  [ AND tb.relkind='r' AND tb.relname= ] '{table}'
+	  [ AND ((tb.relkind = 'r' OR tb.relkind = 'm') AND tb.relname = ] '{table}' [)]
 	%end
      %end
 

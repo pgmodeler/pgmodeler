@@ -11,4 +11,6 @@ SUBDIRS = src/main \
 					src/baseobjecttest \
 					src/roletest \
 					src/syntaxhighlightertest \
-					src/databasemodeltest
+					src/databasemodeltest \
+					src/schemaparsertest
+

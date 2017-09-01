@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -311,11 +311,11 @@ void DatabaseImportHelper::createObjects(void)
 				 in order to be created later */
 			if(obj_type!=OBJ_CONSTRAINT)
 			{
-				emit s_progressUpdated(progress,
-										 trUtf8("Creating object `%1' (%2)...")
-									   .arg(attribs[ParsersAttributes::NAME])
-						.arg(BaseObject::getTypeName(obj_type)),
-						obj_type);
+				emit s_progressUpdated(progress, trUtf8("Creating object `%1' (%2), oid `%3'...")
+															.arg(attribs[ParsersAttributes::NAME])
+															.arg(BaseObject::getTypeName(obj_type))
+															.arg(attribs[ParsersAttributes::OID]),
+															obj_type);
 
 				createObject(attribs);
 			}
@@ -361,9 +361,10 @@ void DatabaseImportHelper::createObjects(void)
 				itr++;
 
 				emit s_progressUpdated(progress,
-										 trUtf8("Trying to recreate object `%1' (%2)...")
-									   .arg(attribs[ParsersAttributes::NAME])
-						.arg(BaseObject::getTypeName(obj_type)),
+										 trUtf8("Trying to recreate object `%1' (%2), oid `%3'...")
+										.arg(attribs[ParsersAttributes::NAME])
+										.arg(BaseObject::getTypeName(obj_type))
+										.arg(attribs[ParsersAttributes::OID]),
 						obj_type);
 
 				try
@@ -681,7 +682,11 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 			if(attribs.count(ParsersAttributes::SCHEMA))
 				attribs[ParsersAttributes::SCHEMA]=getDependencyObject(attribs[ParsersAttributes::SCHEMA], OBJ_SCHEMA, false, auto_resolve_deps);
 
-			if(!attribs[ParsersAttributes::PERMISSION].isEmpty())
+			/* Due to the object recreation mechanism there are some situations when pgModeler fails to recreate
+			them due to the duplication of permissions. So, to avoid this problem we need to check if the OID of the
+			object was previously registered in the vector of permissions to be created */
+			if(!attribs[ParsersAttributes::PERMISSION].isEmpty() &&
+				 std::find(obj_perms.begin(), obj_perms.end(), oid)==obj_perms.end())
 				obj_perms.push_back(oid);
 
 			if(debug_mode)
@@ -733,8 +738,8 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 	catch(Exception &e)
 	{
 		throw Exception(Exception::getErrorMessage(ERR_OBJECT_NOT_IMPORTED)
-						.arg(obj_name).arg(BaseObject::getTypeName(obj_type)),
-						ERR_OBJECT_NOT_IMPORTED,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+										.arg(obj_name).arg(BaseObject::getTypeName(obj_type)).arg(attribs[ParsersAttributes::OID]),
+										ERR_OBJECT_NOT_IMPORTED,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, dumpObjectAttributes(attribs));
 	}
 }
 
@@ -1013,9 +1018,9 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 	Parameter param;
 	PgSQLType type;
 	unsigned dim=0;
-	QStringList param_types, param_names, param_modes, param_def_vals;
-	int def_val_idx=0;
+	QStringList param_types, param_names, param_modes, param_def_vals, param_xmls;
 	QString param_tmpl_name=QString("_param%1");
+	vector<Parameter> parameters;
 
 	try
 	{
@@ -1068,15 +1073,36 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 				param.setVariadic(param_modes[i]==QString("v"));
 			}
 
-			//Setting the default value for the current paramenter. OUT parameter doesn't receive default values.
-			if(def_val_idx < param_def_vals.size() && (!param.isOut() || (param.isIn() && param.isOut())))
-				param.setDefaultValue(param_def_vals[def_val_idx++]);
-
 			//If the mode is 't' indicates that the current parameter will be used as a return table colum
 			if(!param_modes.isEmpty() && param_modes[i]==QString("t"))
 				attribs[ParsersAttributes::RETURN_TABLE]+=param.getCodeDefinition(SchemaParser::XML_DEFINITION);
 			else
-				attribs[ParsersAttributes::PARAMETERS]+=param.getCodeDefinition(SchemaParser::XML_DEFINITION);
+				parameters.push_back(param);
+		}
+
+		if(!parameters.empty())
+		{
+			vector<Parameter>::reverse_iterator ritr, ritr_end;
+
+			ritr = parameters.rbegin();
+			ritr_end = parameters.rend();
+
+			while(ritr != ritr_end)
+			{
+				param = *ritr;
+				ritr++;
+
+				//Setting the default value for the current paramenter. OUT parameter doesn't receive default values.
+				if(!param_def_vals.isEmpty() && (!param.isOut() || (param.isIn() && param.isOut())))
+				{
+					param.setDefaultValue(param_def_vals.back());
+					param_def_vals.pop_back();
+				}
+
+				param_xmls.push_front(param.getCodeDefinition(SchemaParser::XML_DEFINITION));
+			}
+
+			attribs[ParsersAttributes::PARAMETERS]+=param_xmls.join(QChar('\n'));
 		}
 
 		//Case the function's language is C the symbol is the 'definition' attribute
@@ -1539,7 +1565,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 		bool is_type_registered=false;
 		Column col;
 		vector<unsigned> inh_cols;
-		QString type_def, unknown_obj_xml, type_name;
+		QString type_def, unknown_obj_xml, type_name, def_val;
 		map<unsigned, attribs_map>::iterator itr, itr1, itr_end;
 		attribs_map pos_attrib={{ ParsersAttributes::X_POS, QString("0") },
 								{ ParsersAttributes::Y_POS, QString("0") }};
@@ -1612,7 +1638,34 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 			col.setType(PgSQLType::parseString(type_name));
 			col.setNotNull(!itr->second[ParsersAttributes::NOT_NULL].isEmpty());
 			col.setComment(itr->second[ParsersAttributes::COMMENT]);
-			col.setDefaultValue(itr->second[ParsersAttributes::DEFAULT_VALUE]);
+
+			/* Removing extra/forced type casting in the retrieved default value.
+			 This is done in order to avoid unnecessary entries in the diff results.
+
+			 For instance: say in the model we have a column with the following configutation:
+			 > varchar(3) default 'foo'
+
+			 Now, when importing the same column the default value for it will be something like:
+			 > varchar(3) default 'foo'::character varying
+
+			 Since the extra chars in the default value of the imported column are redundant (casting
+			 varchar to character varying) we remove the '::character varying'. The idea here is to eliminate
+			 the cast if the casting is equivalent to the column type. */
+
+			def_val = itr->second[ParsersAttributes::DEFAULT_VALUE];
+
+			if(!def_val.startsWith(QString("nextval(")) && def_val.contains(QString("::")))
+			{
+				QStringList values = def_val.split(QString("::"));
+
+				if(values.size() > 1 &&
+					 ((~col.getType() == values[1]) ||
+						(~col.getType() == QString("char") && values[1] == QString("bpchar")) ||
+						(col.getType().isUserType() && (~col.getType()).endsWith(values[1]))))
+					def_val=values[0];
+			}
+
+			col.setDefaultValue(def_val);
 
 			//Checking if the collation used by the column exists, if not it'll be created when auto_resolve_deps is checked
 			if(auto_resolve_deps && !itr->second[ParsersAttributes::COLLATION].isEmpty())
@@ -1659,6 +1712,8 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 		loadObjectXML(OBJ_VIEW, attribs);
 		view=dbmodel->createView();
 		dbmodel->addView(view);
+
+		retrieveTableColumns(view->getSchema()->getName(), view->getName());
 	}
 	catch(Exception &e)
 	{
@@ -1730,37 +1785,51 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 {
 	try
 	{
-		QStringList cols, exprs, opclasses, collations;
+		QStringList cols, opclasses, collations;
 		IndexElement elem;
-		Table *table=nullptr;
+		BaseTable *parent_tab=nullptr;
 		Collation *coll=nullptr;
 		OperatorClass *opclass=nullptr;
 		QString tab_name, coll_name, opc_name;
-		int i, id_expr;
+		int i;
 
 		attribs[ParsersAttributes::FACTOR]=QString("90");
 		tab_name=getDependencyObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE, true, auto_resolve_deps, false);
-		table=dynamic_cast<Table *>(dbmodel->getObject(tab_name, OBJ_TABLE));
+		parent_tab=dynamic_cast<BaseTable *>(dbmodel->getObject(tab_name, OBJ_TABLE));
 
-		if(!table)
-			throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-							.arg(attribs[ParsersAttributes::NAME]).arg(BaseObject::getTypeName(OBJ_INDEX))
-				.arg(tab_name).arg(BaseObject::getTypeName(OBJ_TABLE))
-				,ERR_REF_OBJ_INEXISTS_MODEL ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		if(!parent_tab)
+		{
+			tab_name=getDependencyObject(attribs[ParsersAttributes::TABLE], OBJ_VIEW, true, auto_resolve_deps, false);
+			parent_tab=dynamic_cast<BaseTable *>(dbmodel->getObject(tab_name, OBJ_VIEW));
+
+			if(!parent_tab)
+				throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+												.arg(attribs[ParsersAttributes::NAME]).arg(BaseObject::getTypeName(OBJ_INDEX))
+												.arg(tab_name).arg(BaseObject::getTypeName(OBJ_TABLE)),
+												ERR_REF_OBJ_INEXISTS_MODEL ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
 
 		cols=Catalog::parseArrayValues(attribs[ParsersAttributes::COLUMNS]);
-		exprs=Catalog::parseArrayValues(attribs[ParsersAttributes::EXPRESSIONS]);
 		collations=Catalog::parseArrayValues(attribs[ParsersAttributes::COLLATIONS]);
 		opclasses=Catalog::parseArrayValues(attribs[ParsersAttributes::OP_CLASSES]);
 
-		for(i=0, id_expr=0; i < cols.size(); i++)
+		if(!attribs[ParsersAttributes::EXPRESSIONS].isEmpty())
+		{
+			elem.setExpression(attribs[ParsersAttributes::EXPRESSIONS]);
+			attribs[ParsersAttributes::ELEMENTS]+=elem.getCodeDefinition(SchemaParser::XML_DEFINITION);
+		}
+
+		for(i=0; i < cols.size(); i++)
 		{
 			elem=IndexElement();
 
 			if(cols[i]!=QString("0"))
-				elem.setColumn(table->getColumn(getColumnName(attribs[ParsersAttributes::TABLE], cols[i])));
-			else if(id_expr < exprs.size())
-				elem.setExpression(exprs[id_expr++]);
+			{
+				if(parent_tab->getObjectType() == OBJ_TABLE)
+					elem.setColumn(dynamic_cast<Table *>(parent_tab)->getColumn(getColumnName(attribs[ParsersAttributes::TABLE], cols[i])));
+				else
+					elem.setExpression(getColumnName(attribs[ParsersAttributes::TABLE], cols[i]));
+			}
 
 			if(i < collations.size() && collations[i]!=QString("0"))
 			{
@@ -1780,7 +1849,8 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 					elem.setOperatorClass(opclass);
 			}
 
-			attribs[ParsersAttributes::ELEMENTS]+=elem.getCodeDefinition(SchemaParser::XML_DEFINITION);
+			if(elem.getColumn() || !elem.getExpression().isEmpty())
+				attribs[ParsersAttributes::ELEMENTS]+=elem.getCodeDefinition(SchemaParser::XML_DEFINITION);
 		}
 
 		attribs[ParsersAttributes::TABLE]=tab_name;
@@ -1821,7 +1891,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 
 			if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::EX_CONSTR)
 			{
-				QStringList cols, exprs, opclasses, opers;
+				QStringList cols, opclasses, opers;
 				ExcludeElement elem;
 				QString opc_name, op_name;
 				OperatorClass *opclass=nullptr;
@@ -1831,18 +1901,21 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 				attribs[ParsersAttributes::EXPRESSION]=attribs[ParsersAttributes::CONDITION];
 
 				cols=Catalog::parseArrayValues(attribs[ParsersAttributes::COLUMNS]);
-				exprs=Catalog::parseArrayValues(attribs[ParsersAttributes::EXPRESSIONS]);
 				opers=Catalog::parseArrayValues(attribs[ParsersAttributes::OPERATORS]);
 				opclasses=Catalog::parseArrayValues(attribs[ParsersAttributes::OP_CLASSES]);
 
-				for(int i=0, id_expr=0; i < cols.size(); i++)
+				if(!attribs[ParsersAttributes::EXPRESSIONS].isEmpty())
+				{
+					elem.setExpression(attribs[ParsersAttributes::EXPRESSIONS]);
+					attribs[ParsersAttributes::ELEMENTS]+=elem.getCodeDefinition(SchemaParser::XML_DEFINITION);
+				}
+
+				for(int i=0; i < cols.size(); i++)
 				{
 					elem=ExcludeElement();
 
 					if(cols[i]!=QString("0"))
 						elem.setColumn(table->getColumn(getColumnName(table_oid, cols[i])));
-					else if(id_expr < exprs.size())
-						elem.setExpression(exprs[id_expr++]);
 
 					if(i < opclasses.size() && opclasses[i]!=QString("0"))
 					{
@@ -1862,9 +1935,9 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 							elem.setOperator(oper);
 					}
 
-					attribs[ParsersAttributes::ELEMENTS]+=elem.getCodeDefinition(SchemaParser::XML_DEFINITION);
+					if(elem.getColumn())
+						attribs[ParsersAttributes::ELEMENTS]+=elem.getCodeDefinition(SchemaParser::XML_DEFINITION);
 				}
-
 			}
 			else
 			{
@@ -2171,6 +2244,8 @@ void DatabaseImportHelper::__createTableInheritances(void)
 
 					//Create the inheritance relationship
 					rel=new Relationship(Relationship::RELATIONSHIP_GEN, child_tab, parent_tab);
+					rel->setName(PgModelerNS::generateUniqueName(rel, (*dbmodel->getObjectList(OBJ_RELATIONSHIP))));
+
 					dbmodel->addRelationship(rel);
 					rel=nullptr;
 				}
@@ -2193,10 +2268,6 @@ void DatabaseImportHelper::configureDatabase(attribs_map &attribs)
 	try
 	{
 		attribs[ParsersAttributes::APPEND_AT_EOD]=QString();
-
-		//Removing the encoding suffix from LC_COLLATE and LC_CTYPE attribs
-		attribs[ParsersAttributes::_LC_COLLATE_].remove(QRegExp(QString("(\\.)(.)+")));
-		attribs[ParsersAttributes::_LC_CTYPE_].remove(QRegExp(QString("(\\.)(.)+")));
 		loadObjectXML(OBJ_DATABASE, attribs);
 		dbmodel->configureDatabase(attribs);
 	}
@@ -2355,8 +2426,9 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 	try
 	{
 		attribs_map type_attr;
-		QString xml_def, sch_name, obj_name;
-		unsigned type_oid=oid_str.toUInt(), dimension=0, object_id=type_attr[ParsersAttributes::OBJECT_ID].toUInt();
+		QString xml_def, sch_name, obj_name, aux_name;
+		unsigned type_oid=oid_str.toUInt(), elem_tp_oid = 0,
+				dimension=0, object_id=type_attr[ParsersAttributes::OBJECT_ID].toUInt();
 
 		if(type_oid > 0)
 		{
@@ -2368,6 +2440,8 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 					type_attr[ParsersAttributes::NAME].contains(QString("[]")))
 			{
 				obj_name=type_attr[ParsersAttributes::NAME];
+				elem_tp_oid=type_attr[ParsersAttributes::ELEMENT].toUInt();
+
 				if(generate_xml)
 				{
 					dimension=type_attr[ParsersAttributes::NAME].count(QString("[]"));
@@ -2405,16 +2479,27 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 			/* Prepend the schema name only if it is not a system schema ('pg_catalog' or 'information_schema') and
 		 if the schema's names is already present in the type's name (in case of table types) */
 			sch_name=getObjectName(type_attr[ParsersAttributes::SCHEMA]);
-			if(!sch_name.isEmpty() && sch_name!=QString("pg_catalog") &&
-					sch_name!=QString("information_schema") &&
-					!obj_name.contains(QRegExp(QString("^(\\\")?(%1)(\\\")?(.)").arg(sch_name))))
+			if(!sch_name.isEmpty() &&
+				 ((sch_name!=QString("pg_catalog") && sch_name!=QString("information_schema")) ||
+					type_oid > catalog.getLastSysObjectOID()) &&
+				 !obj_name.contains(QRegExp(QString("^(\\\")?(%1)(\\\")?(\\.)").arg(sch_name))))
 				obj_name.prepend(sch_name + QString("."));
 
 			/* In case of auto resolve dependencies, if the type is a user defined one and was not created in the database
 					model but its attributes were retrieved the object will be created to avoid reference errors */
+			aux_name = obj_name;
+			aux_name.remove(QString("[]"));
 			if(auto_resolve_deps && !type_attr.empty() &&
-				 type_oid > catalog.getLastSysObjectOID() && !dbmodel->getType(obj_name))
-				createObject(type_attr);
+				 type_oid > catalog.getLastSysObjectOID() && !dbmodel->getType(aux_name))
+			{
+				//If the type is not an array one we simply use the current type attributes map
+				 if(type_attr[ParsersAttributes::CATEGORY] != QString("A"))
+					createObject(type_attr);
+				 /* In case the type is an array one we should use the oid held by "element" attribute to
+				 create the type related to current one */
+				 else if(elem_tp_oid > catalog.getLastSysObjectOID() &&	 types.count(elem_tp_oid))
+					createObject(types[elem_tp_oid]);
+			}
 
 			if(generate_xml)
 			{

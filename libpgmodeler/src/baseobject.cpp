@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ QString BaseObject::objs_schemas[OBJECT_TYPE_COUNT]={
 	"opfamily", "opclass", "database","collation",
 	"extension", "eventtrigger", "relationship",
 	"textbox",	"permission", "parameter", "typeattribute",
-	"tag", "relationship"
+	"tag", "genericsql", "relationship"
 };
 
 QString BaseObject::obj_type_names[OBJECT_TYPE_COUNT]={
@@ -46,7 +46,7 @@ QString BaseObject::obj_type_names[OBJECT_TYPE_COUNT]={
 	QT_TR_NOOP("Database"), QT_TR_NOOP("Collation"), QT_TR_NOOP("Extension"),
 	QT_TR_NOOP("Event Trigger"), QT_TR_NOOP("Relationship"),	QT_TR_NOOP("Textbox"),
 	QT_TR_NOOP("Permission"), QT_TR_NOOP("Parameter"), QT_TR_NOOP("Type Attribute"),
-	QT_TR_NOOP("Tag"),  QT_TR_NOOP("Basic Relationship")
+	QT_TR_NOOP("Tag"), QT_TR_NOOP("Generic SQL"),  QT_TR_NOOP("Basic Relationship")
 };
 
 QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
@@ -167,12 +167,16 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 		 case the name will be enclosed in quotes */
 		qtd=name.size();
 		needs_fmt=(!is_operator &&
-				   (name.indexOf('-')>=0 ||
+				 (name.indexOf('-')>=0 ||
 					name.indexOf('.')>=0 ||
 					name.indexOf('@')>=0 ||
 					name.indexOf(' ')>=0 ||
 					name.indexOf('$')>=0 ||
 					name.indexOf(':')>=0 ||
+					name.indexOf('(')>=0 ||
+					name.indexOf(')')>=0 ||
+					name.indexOf('/')>=0 ||
+					name.indexOf('\\')>=0 ||
 					name.contains(QRegExp("^[0-9]+"))));
 
 		i=0;
@@ -230,6 +234,7 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 bool BaseObject::isValidName(const QString &name)
 {
 	QString aux_name=name;
+	QByteArray special_chars=QByteArray("_-.@ $:()/\\");
 
 	if(aux_name.contains(QRegExp("^(\")(.)+(\")$")))
 	{
@@ -270,13 +275,9 @@ bool BaseObject::isValidName(const QString &name)
 			chr=raw_name[i];
 
 			/* Validation of simple ASCI characters.
-	  Checks if the name has the characters in the set [ a-z A-Z 0-9 _ . @ $ - : space ] */
-			if((chr >= 'a' && chr <='z') ||
-					(chr >= 'A' && chr <='Z') ||
-					(chr >= '0' && chr <='9') ||
-					chr == '_' || chr == '-' ||
-					chr == '.' || chr == '@' ||
-					chr == ' ' ||	chr=='$' || chr==':')
+				Checks if the name has the characters in the set [ a-z A-Z 0-9 _ . @ $ - : space ()] */
+			if((chr >= 'a' && chr <='z') || (chr >= 'A' && chr <='Z') ||
+					(chr >= '0' && chr <='9') || special_chars.contains(chr))
 			{
 				valid=true;
 				i++;
@@ -435,11 +436,10 @@ bool BaseObject::acceptsCollation(void)
 bool BaseObject::acceptsCustomSQL(ObjectType obj_type)
 {
 	return(obj_type!=OBJ_COLUMN && obj_type!=OBJ_CONSTRAINT &&
-											 obj_type!=OBJ_RELATIONSHIP &&
-													   obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_PARAMETER &&
-																						  obj_type!=OBJ_TYPE_ATTRIBUTE && obj_type!=BASE_RELATIONSHIP  &&
-																																	obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE &&
-																																									   obj_type!=OBJ_PERMISSION && obj_type!=OBJ_TAG);
+				 obj_type!=OBJ_RELATIONSHIP && obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_PARAMETER &&
+				 obj_type!=OBJ_TYPE_ATTRIBUTE && obj_type!=BASE_RELATIONSHIP  &&
+				 obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE && obj_type!=OBJ_PERMISSION &&
+				 obj_type!=OBJ_TAG && obj_type!=OBJ_GENERIC_SQL);
 }
 
 bool BaseObject::acceptsAlterCommand(ObjectType obj_type)
@@ -456,10 +456,10 @@ bool BaseObject::acceptsAlterCommand(ObjectType obj_type)
 bool BaseObject::acceptsDropCommand(ObjectType obj_type)
 {
 	return(obj_type!=OBJ_PERMISSION && obj_type!=OBJ_RELATIONSHIP &&
-												 obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_TYPE_ATTRIBUTE &&
-																					obj_type!=OBJ_PARAMETER && obj_type!=BASE_OBJECT &&
-																														 obj_type!=OBJ_TAG && obj_type!=BASE_RELATIONSHIP &&
-																																						obj_type!=BASE_TABLE);
+									obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_TYPE_ATTRIBUTE &&
+									obj_type!=OBJ_PARAMETER && obj_type!=BASE_OBJECT &&
+									obj_type!=OBJ_TAG && obj_type!=BASE_RELATIONSHIP &&
+									obj_type!=BASE_TABLE);
 }
 
 bool BaseObject::acceptsCustomSQL(void)
@@ -927,7 +927,7 @@ vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, vector<Object
 								   OBJ_TAG, OBJ_FUNCTION, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
 								   OBJ_OPFAMILY, OBJ_RELATIONSHIP, OBJ_ROLE, OBJ_SCHEMA,
 								   OBJ_SEQUENCE, OBJ_TABLE, OBJ_TABLESPACE, OBJ_TEXTBOX,
-								   OBJ_TYPE, OBJ_VIEW, OBJ_PERMISSION };
+									 OBJ_TYPE, OBJ_VIEW, OBJ_PERMISSION, OBJ_GENERIC_SQL };
 	vector<ObjectType>::iterator itr;
 
 	if(inc_table_objs)
@@ -958,6 +958,8 @@ vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
 									OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_SEQUENCE, OBJ_TYPE, OBJ_TABLE, OBJ_VIEW});
 	else if(obj_type==OBJ_TABLE)
 		return(vector<ObjectType>()={OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX});
+	else if(obj_type==OBJ_VIEW)
+		return(vector<ObjectType>()={OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX});
 	else
 		return(vector<ObjectType>()={});
 }
@@ -1024,8 +1026,6 @@ bool BaseObject::isCodeDiffersFrom(const QString &xml_def1, const QString &xml_d
 	for(int i=0; i < 2; i++)
 	{
 		xml=xml_defs[i].simplified();
-		start=xml.indexOf(tag) + tag.length();
-		end=-1;
 
 		//Removing ignored attributes
 		for(QString attr : ignored_attribs)
@@ -1034,7 +1034,7 @@ bool BaseObject::isCodeDiffersFrom(const QString &xml_def1, const QString &xml_d
 			{
 				regexp=QRegExp(attr_regex.arg(attr));
 				tag_end=xml.indexOf(QRegExp(QString("(\\\\)?(>)")));
-				start=regexp.indexIn(xml);//, start);
+				start=regexp.indexIn(xml);
 				end=xml.indexOf('"', start + regexp.matchedLength());
 
 				if(end > tag_end)

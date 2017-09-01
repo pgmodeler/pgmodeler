@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -113,10 +113,6 @@ class Table: public BaseTable {
 
 		//! \brief Default char for data line break in initial-data tag
 		DATA_LINE_BREAK;
-
-		//! \brief Default chars used as unescaped value delimiter ({ and })
-		static const QChar UNESC_VALUE_START,
-		UNESC_VALUE_END;
 
 		Table(void);
 		~Table(void);

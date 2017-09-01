@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -569,6 +569,7 @@ QString View::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::WITH_NO_DATA]=(with_no_data ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::COLUMNS]=QString();
 	attributes[ParsersAttributes::TAG]=QString();
+	attributes[ParsersAttributes::HIDE_EXT_ATTRIBS]=(isExtAttribsHidden() ? ParsersAttributes::_TRUE_ : QString());
 
 	setSQLObjectAttribute();
 
@@ -583,6 +584,7 @@ QString View::getCodeDefinition(unsigned def_type)
 	else
 	{
 		setPositionAttribute();
+		setFadedOutAttribute();
 		setReferencesAttribute();
 	}
 
@@ -731,6 +733,18 @@ void View::addRule(Rule *rule, int obj_idx)
 	}
 }
 
+void View::addIndex(Index *index, int obj_idx)
+{
+	try
+	{
+		addObject(index, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
 void View::removeObject(unsigned obj_idx, ObjectType obj_type)
 {
 	vector<TableObject *> *obj_list = getObjectList(obj_type);
@@ -794,6 +808,18 @@ void View::removeRule(unsigned idx)
 	}
 }
 
+void View::removeIndex(unsigned idx)
+{
+	try
+	{
+		removeObject(idx, OBJ_INDEX);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
 TableObject *View::getObject(unsigned obj_idx, ObjectType obj_type)
 {
 	vector<TableObject *> *obj_list=getObjectList(obj_type);
@@ -847,6 +873,18 @@ Rule *View::getRule(unsigned obj_idx)
 	}
 }
 
+Index *View::getIndex(unsigned obj_idx)
+{
+	try
+	{
+		return(dynamic_cast<Index *>(getObject(obj_idx, OBJ_INDEX)));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
 unsigned View::getObjectCount(ObjectType obj_type, bool)
 {
 	try
@@ -869,12 +907,19 @@ unsigned View::getRuleCount(void)
 	return(rules.size());
 }
 
+unsigned View::getIndexCount()
+{
+	return(indexes.size());
+}
+
 vector<TableObject *> *View::getObjectList(ObjectType obj_type)
 {
 	if(obj_type==OBJ_TRIGGER)
 		return(&triggers);
 	else if(obj_type==OBJ_RULE)
 		return(&rules);
+	else if(obj_type==OBJ_INDEX)
+		return(&indexes);
 	else
 		throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
@@ -891,6 +936,12 @@ void View::removeObjects(void)
 	{
 		rules.back()->setParentTable(nullptr);
 		rules.pop_back();
+	}
+
+	while(!indexes.empty())
+	{
+		indexes.back()->setParentTable(nullptr);
+		indexes.pop_back();
 	}
 }
 
@@ -918,6 +969,7 @@ vector<BaseObject *> View::getObjects(void)
 
 	list.assign(triggers.begin(), triggers.end());
 	list.insert(list.end(), rules.begin(), rules.end());
+	list.insert(list.end(), indexes.begin(), indexes.end());
 
 	return(list);
 }

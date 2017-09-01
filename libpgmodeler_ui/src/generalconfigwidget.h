@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -48,9 +48,10 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 		UNIT_CENTIMETERS=3;
 
 		HintTextWidget *simp_obj_creation_ht, *confirm_validation_ht, *corner_move_ht,
-		*save_last_pos_ht, *invert_pan_range_ht, *disable_smooth_ht,
+		*save_last_pos_ht, *invert_rangesel_ht, *disable_smooth_ht,
 		*hide_ext_attribs_ht, *hide_table_tags_ht, *hide_rel_name_ht,
-		*code_completion_ht, *use_placeholders_ht;
+		*code_completion_ht, *use_placeholders_ht, *min_obj_opacity_ht,
+		*autosave_ht, *op_history_ht, *ui_language_ht, *grid_size_ht, *use_curved_lines_ht;
 
 		ColorPickerWidget *line_numbers_cp, *line_numbers_bg_cp, *line_highlight_cp;
 
@@ -73,6 +74,7 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 		void applyConfiguration(void);
 		void restoreDefaults(void);
 		void selectPaperSize(void);
+		void selectSourceEditor(void);
 
 	private slots:
 		void convertMarginUnity(void);

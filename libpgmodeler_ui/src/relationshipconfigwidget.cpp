@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -72,9 +72,9 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 	connect(deferrable_chk, SIGNAL(toggled(bool)), this, SLOT(setConfigurationChanged(bool)));
 
 	connect(rel_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(fillNamePatterns()));
-	connect(del_action_cmb, &QComboBox::currentTextChanged, [=](){ setConfigurationChanged(true); });
-	connect(upd_action_cmb, &QComboBox::currentTextChanged, [=](){ setConfigurationChanged(true); });
-	connect(deferral_cmb, &QComboBox::currentTextChanged, [=](){ setConfigurationChanged(true); });
+	connect(del_action_cmb, &QComboBox::currentTextChanged, [&](){ setConfigurationChanged(true); });
+	connect(upd_action_cmb, &QComboBox::currentTextChanged, [&](){ setConfigurationChanged(true); });
+	connect(deferral_cmb, &QComboBox::currentTextChanged, [&](){ setConfigurationChanged(true); });
 }
 
 map<QString, attribs_map> RelationshipConfigWidget::getConfigurationParams(void)
@@ -113,7 +113,7 @@ void RelationshipConfigWidget::loadConfiguration(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, e.getExtraInfo());
 	}
 }
 

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,6 +45,8 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		/*! \brief Connection used to handle objects on database. This connection is copied
 		whenever a new operation must be performed on database */
 		Connection connection;
+
+		QString default_db;
 		
 		//! \brief Database import helper used to list objects from current connection
 		DatabaseImportHelper import_helper;
@@ -140,7 +142,7 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		DatabaseExplorerWidget(QWidget * parent = 0);
 		
 		//! \brief Configures the connection used to retrieve and manipulate objects on database
-		void setConnection(Connection conn);
+		void setConnection(Connection conn, const QString &default_db);
 		
 		//! \brief Returns a copy of the connection used by this explorer instance
 		Connection getConnection(void);
@@ -170,17 +172,20 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		//! \brief Cancels the rename and restore the original item's name
 		void cancelObjectRename(void);
 
+		//! \brief Show the widget to handle data in tables
+		void openDataGrid(const QString &schema=QString("public"), const QString &table=QString(), bool hide_views=true);
+
+		//! \brief Drop the database
+		void dropDatabase(void);
+
 		void loadObjectSource(void);
-		
+
 	signals:
-		//! \brief This signal is emmited to indicate that the data manipulation dialog need to be opened
-		void s_dataGridOpenRequested(QString dbname="", QString schema="", QString table="", bool hide_views=true);
-		
 		//! \brief This signal is emmited to indicate that a sql execution widget need to be opened
 		void s_sqlExecutionRequested(void);
 		
-		//! \brief This signal is emmited to indicate that the named database must be dropped
-		void s_databaseDropRequested(QString dbname);
+		//! \brief This signal is emmited to indicate that the named database was dropped
+		void s_databaseDropped(QString dbname);
 		
 		//! \brief This signal is emmited containing the processed snippet to be shown in an input field
 		void s_snippetShowRequested(QString snippet);

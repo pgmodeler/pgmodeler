@@ -70,13 +70,16 @@
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
+        <property name="handleWidth">
+         <number>4</number>
+        </property>
         <property name="childrenCollapsible">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <widget class="QGroupBox" name="database_gb">
          <property name="minimumSize">
           <size>
-           <width>325</width>
+           <width>0</width>
            <height>0</height>
           </size>
          </property>
@@ -237,6 +240,9 @@
             </property>
             <property name="movable">
              <bool>true</bool>
+            </property>
+            <property name="tabBarAutoHide">
+             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -409,6 +415,9 @@
                 </property>
                 <property name="movable">
                  <bool>true</bool>
+                </property>
+                <property name="tabBarAutoHide">
+                 <bool>false</bool>
                 </property>
                </widget>
               </item>

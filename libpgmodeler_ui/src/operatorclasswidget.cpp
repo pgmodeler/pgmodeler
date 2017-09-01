@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,17 +36,18 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		elem_family_sel=new ObjectSelectorWidget(OBJ_OPFAMILY, true, this);
 		function_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
 		storage_type=new PgSQLTypeWidget(this, trUtf8("Storage Type"));
-		elements_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
+		elements_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^ ObjectTableWidget::DUPLICATE_BUTTON, true, this);
 
 		elements_tab->setColumnCount(4);
 		elements_tab->setHeaderLabel(trUtf8("Object"),0);
-		elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/table.png")),0);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("table")),0);
 
 		elements_tab->setHeaderLabel(trUtf8("Type"),1);
-		elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
 
 		elements_tab->setHeaderLabel(trUtf8("Support/Strategy"),2);
 		elements_tab->setHeaderLabel(trUtf8("Operator Family"),3);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("opfamily")),3);
 
 		grid=new QGridLayout;
 		grid->setContentsMargins(0,0,0,0);

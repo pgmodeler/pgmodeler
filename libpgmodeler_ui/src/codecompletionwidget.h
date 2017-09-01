@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,6 +34,9 @@ class CodeCompletionWidget: public QWidget
 {
 	private:
 		Q_OBJECT
+
+		//! \brief A timer that controls the completion popup
+		QTimer popup_timer;
 		
 		QWidget *completion_wgt;
 		
@@ -77,7 +80,9 @@ class CodeCompletionWidget: public QWidget
 		int qualifying_level;
 		
 		//! \brief Indicates if the completion was triggered by typing the completion char
-		bool auto_triggered;
+		bool auto_triggered,
+
+		enable_snippets;
 		
 		//! \brief Store the objects selected for each qualifying level
 		vector<BaseObject *> sel_objects;
@@ -100,12 +105,12 @@ class CodeCompletionWidget: public QWidget
 		void setQualifyingLevel(BaseObject *obj);
 		
 	public:
-		CodeCompletionWidget(QPlainTextEdit *code_field_txt);
+		CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool enable_snippets = false);
 		
 		/*! \brief Configures the completion. If an syntax highlighter is specified, the completion widget will
 		retrive the keywords and the trigger char from it. The keyword group name can be also specified in case the
 		highlighter uses an different configuration */
-		void configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl=nullptr, const QString &keywords_grp=QString("keywords"), bool persistent=false);
+		void configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl=nullptr, const QString &keywords_grp=QString("keywords"));
 		
 		//! \brief Inserts a custom named item on the list with a custom icon. Custom item will be always appear at the beggining of the list
 		void insertCustomItem(const QString &name, const QString &tooltip, const QPixmap &icon);
@@ -134,6 +139,9 @@ class CodeCompletionWidget: public QWidget
 	signals:
 		//! \brief This signal is emitted whenever a word is placed into the parent textbox through the completion popup.
 		void s_wordSelected(QString);
+
+	private slots:
+		void handleSelectedWord(QString word);
 };
 
 #endif

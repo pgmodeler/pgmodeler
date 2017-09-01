@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 		elem_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		parent_obj=nullptr;
-		elements_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
+		elements_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^ ObjectTableWidget::DUPLICATE_BUTTON, true, this);
 		op_class_sel=new ObjectSelectorWidget(OBJ_OPCLASS, true, this);
 		collation_sel=new ObjectSelectorWidget(OBJ_COLLATION, true, this);
 		operator_sel=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);
@@ -38,18 +38,18 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 
 		elements_tab->setColumnCount(6);
 		elements_tab->setHeaderLabel(trUtf8("Element"), 0);
-		elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/column.png")),0);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("column")),0);
 		elements_tab->setHeaderLabel(trUtf8("Type"), 1);
-		elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
 		elements_tab->setHeaderLabel(trUtf8("Operator Class"), 3);
-		elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/opclass.png")),3);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("opclass")),3);
 		elements_tab->setHeaderLabel(trUtf8("Sorting"), 4);
 		elements_tab->setHeaderLabel(trUtf8("Nulls First"), 5);
 
-		element_grid->addWidget(collation_sel, 2,1,1,2);
-		element_grid->addWidget(op_class_sel, 3,1,1,2);
-		element_grid->addWidget(operator_sel, 4,1,1,2);
-		element_grid->addWidget(elements_tab, 6,0,1,3);
+		element_grid->addWidget(collation_sel, 3,1,1,2);
+		element_grid->addWidget(op_class_sel, 4,1,1,2);
+		element_grid->addWidget(operator_sel, 5,1,1,2);
+		element_grid->addWidget(elements_tab, 7,0,1,3);
 
 		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_91)].push_back(collation_lbl);
 		frame=BaseObjectWidget::generateVersionWarningFrame(fields_map);
@@ -104,7 +104,8 @@ void ElementsWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 	else if(parent_obj->getObjectType()!=OBJ_TABLE &&
-			parent_obj->getObjectType()!=OBJ_RELATIONSHIP)
+					parent_obj->getObjectType()!=OBJ_VIEW &&
+					parent_obj->getObjectType()!=OBJ_RELATIONSHIP)
 		throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->setEnabled(true);
@@ -114,17 +115,22 @@ void ElementsWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj)
 	collation_sel->setModel(model);
 	operator_sel->setModel(model);
 
-	updateColumnsCombo();
+	cols_combo_parent->setVisible(parent_obj->getObjectType() == OBJ_TABLE);
+	column_rb->setVisible(parent_obj->getObjectType() == OBJ_TABLE);
+	expression_rb->setChecked(parent_obj->getObjectType() == OBJ_VIEW);
+
+	if(parent_obj->getObjectType() == OBJ_TABLE)
+		updateColumnsCombo();
 }
 
-void ElementsWidget::setAttributes(DatabaseModel *model, Table *table, vector<IndexElement> &elems)
+void ElementsWidget::setAttributes(DatabaseModel *model, BaseTable *table, vector<IndexElement> &elems)
 {
 	setAttributes(model, table);
 	collation_sel->setVisible(true);
 	collation_lbl->setVisible(true);
 
 	elements_tab->setHeaderLabel(trUtf8("Collation"), 2);
-	elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/collation.png")),2);
+	elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("collation")),2);
 	elements_tab->blockSignals(true);
 
 	for(unsigned i=0; i < elems.size(); i++)
@@ -143,7 +149,7 @@ void ElementsWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj,
 	operator_lbl->setVisible(true);
 
 	elements_tab->setHeaderLabel(trUtf8("Operator"), 2);
-	elements_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/operator.png")),2);
+	elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("operator")),2);
 	elements_tab->blockSignals(true);
 
 	for(unsigned i=0; i < elems.size(); i++)
@@ -186,6 +192,8 @@ void ElementsWidget::updateColumnsCombo(void)
 	try
 	{
 		column_cmb->clear();
+		column_cmb->setVisible(true);
+		column_rb->setVisible(true);
 
 		if(table)
 		{
@@ -197,7 +205,7 @@ void ElementsWidget::updateColumnsCombo(void)
 									QVariant::fromValue<void *>(column));
 			}
 		}
-		else
+		else if(rel)
 		{
 			col_count=rel->getAttributeCount();
 			for(i=0; i < col_count; i++)

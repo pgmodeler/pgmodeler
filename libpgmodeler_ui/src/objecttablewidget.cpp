@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,12 +29,17 @@ ObjectTableWidget::ObjectTableWidget(unsigned button_conf, bool conf_exclusion, 
 	connect(remove_tb, SIGNAL(clicked(bool)), this, SLOT(removeRow(void)));
 	connect(edit_tb, SIGNAL(clicked(bool)), this, SLOT(editRow(void)));
 	connect(update_tb, SIGNAL(clicked(bool)), this, SLOT(updateRow(void)));
+	connect(duplicate_tb, SIGNAL(clicked(bool)), this, SLOT(duplicateRow(void)));
 	connect(remove_all_tb, SIGNAL(clicked(bool)), this, SLOT(removeRows(void)));
 	connect(table_tbw, SIGNAL(cellClicked(int,int)), this, SLOT(setButtonsEnabled(void)));
 	connect(table_tbw, SIGNAL(cellActivated(int,int)), this, SLOT(setButtonsEnabled(void)));
 	connect(table_tbw, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(editRow(void)));
 	connect(table_tbw, SIGNAL(itemSelectionChanged(void)), this, SLOT(setButtonsEnabled(void)));
 	connect(table_tbw, SIGNAL(itemSelectionChanged(void)), this, SLOT(emitRowSelected(void)));
+
+	connect(table_tbw, &QTableWidget::cellClicked, [&](int row, int col){
+		emit s_cellClicked(row, col);
+	});
 
 	this->conf_exclusion=conf_exclusion;
 
@@ -46,6 +51,7 @@ ObjectTableWidget::ObjectTableWidget(unsigned button_conf, bool conf_exclusion, 
 	remove_all_tb->setToolTip(remove_all_tb->toolTip() + QString(" (%1)").arg(remove_all_tb->shortcut().toString()));
 	update_tb->setToolTip(update_tb->toolTip() + QString(" (%1)").arg(update_tb->shortcut().toString()));
 	edit_tb->setToolTip(edit_tb->toolTip() + QString(" (%1)").arg(edit_tb->shortcut().toString()));
+	duplicate_tb->setToolTip(duplicate_tb->toolTip() + QString(" (%1)").arg(duplicate_tb->shortcut().toString()));
 	move_last_tb->setToolTip(move_last_tb->toolTip() + QString(" (%1)").arg(move_last_tb->shortcut().toString()));
 	move_first_tb->setToolTip(move_first_tb->toolTip() + QString(" (%1)").arg(move_first_tb->shortcut().toString()));
 	move_up_tb->setToolTip(move_up_tb->toolTip() + QString(" (%1)").arg(move_up_tb->shortcut().toString()));
@@ -54,27 +60,23 @@ ObjectTableWidget::ObjectTableWidget(unsigned button_conf, bool conf_exclusion, 
 
 void ObjectTableWidget::setButtonConfiguration(unsigned button_conf)
 {
-	bool move_btn, edt_btn, add_btn, rem_all_btn, rem_btn, upd_btn;
+	bool move_btn = false;
 
 	//Checking via bitwise operation the buttons available on the 'button_conf'
 	move_btn=(button_conf & MOVE_BUTTONS) == MOVE_BUTTONS;
-	edt_btn=(button_conf & EDIT_BUTTON) == EDIT_BUTTON;
-	add_btn=(button_conf & ADD_BUTTON) == ADD_BUTTON;
-	rem_btn=(button_conf & REMOVE_BUTTON) == REMOVE_BUTTON;
-	rem_all_btn=(button_conf & REMOVE_ALL_BUTTON) == REMOVE_ALL_BUTTON;
-	upd_btn=(button_conf & UPDATE_BUTTON) == UPDATE_BUTTON;
 
 	move_down_tb->setVisible(move_btn);
 	move_up_tb->setVisible(move_btn);
 	move_first_tb->setVisible(move_btn);
 	move_last_tb->setVisible(move_btn);
 
-	edit_tb->setVisible(edt_btn);
-	remove_all_tb->setVisible(rem_all_btn);
+	edit_tb->setVisible((button_conf & EDIT_BUTTON) == EDIT_BUTTON);
+	remove_all_tb->setVisible((button_conf & REMOVE_ALL_BUTTON) == REMOVE_ALL_BUTTON);
 
-	add_tb->setVisible(add_btn);
-	remove_tb->setVisible(rem_btn);
-	update_tb->setVisible(upd_btn);
+	add_tb->setVisible((button_conf & ADD_BUTTON) == ADD_BUTTON);
+	remove_tb->setVisible((button_conf & REMOVE_BUTTON) == REMOVE_BUTTON);
+	update_tb->setVisible((button_conf & UPDATE_BUTTON) == UPDATE_BUTTON);
+	duplicate_tb->setVisible((button_conf & DUPLICATE_BUTTON) == DUPLICATE_BUTTON);
 
 	//Disabling the horizontal spacers when no buttons are visible
 	if(button_conf==NO_BUTTONS)
@@ -88,6 +90,23 @@ void ObjectTableWidget::setButtonConfiguration(unsigned button_conf)
 		left_spc->changeSize(10,10,QSizePolicy::Expanding,QSizePolicy::Preferred);
 		right_spc->changeSize(10,10,QSizePolicy::Expanding,QSizePolicy::Preferred);
 	}
+}
+
+QTableWidgetItem *ObjectTableWidget::getItem(unsigned row_idx, unsigned col_idx)
+{
+	if(row_idx >= static_cast<unsigned>(table_tbw->rowCount()))
+		throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	if(col_idx >= static_cast<unsigned>(table_tbw->columnCount()))
+		throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	return(table_tbw->item(row_idx, col_idx));
+}
+
+void ObjectTableWidget::adjustColumnToContents(int col)
+{
+	table_tbw->resizeColumnToContents(col);
+	table_tbw->resizeRowsToContents();
 }
 
 void ObjectTableWidget::setColumnCount(unsigned col_count)
@@ -133,30 +152,12 @@ void ObjectTableWidget::setHeaderIcon(const QIcon &icon, unsigned col_idx)
 
 void ObjectTableWidget::setCellIcon(const QIcon &icon, unsigned row_idx, unsigned col_idx)
 {
-	QTableWidgetItem *item=nullptr;
-
-	if(row_idx >= static_cast<unsigned>(table_tbw->rowCount()))
-		throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	if(col_idx >= static_cast<unsigned>(table_tbw->columnCount()))
-		throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	item=table_tbw->item(row_idx, col_idx);
-	item->setIcon(icon);
+	getItem(row_idx, col_idx)->setIcon(icon);
 }
 
 void ObjectTableWidget::setCellText(const QString &text, unsigned row_idx, unsigned col_idx)
 {
-	QTableWidgetItem *item=nullptr;
-
-	if(row_idx >= static_cast<unsigned>(table_tbw->rowCount()))
-		throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	if(col_idx >= static_cast<unsigned>(table_tbw->columnCount()))
-		throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	item=table_tbw->item(row_idx,col_idx);
-	item->setText(text);
+	getItem(row_idx, col_idx)->setText(text);
 }
 
 void ObjectTableWidget::clearCellText(unsigned row_idx, unsigned col_idx)
@@ -224,16 +225,32 @@ QString ObjectTableWidget::getHeaderLabel(unsigned col_idx)
 
 QString ObjectTableWidget::getCellText(unsigned row_idx, unsigned col_idx)
 {
-	QTableWidgetItem *item=nullptr;
+	return(getItem(row_idx, col_idx)->text());
+}
 
-	if(row_idx >= static_cast<unsigned>(table_tbw->rowCount()))
-		throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+Qt::CheckState ObjectTableWidget::getCellCheckState(unsigned row_idx, unsigned col_idx)
+{
+	return(getItem(row_idx, col_idx)->checkState());
+}
 
-	if(col_idx >= static_cast<unsigned>(table_tbw->columnCount()))
-		throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+void ObjectTableWidget::setCellCheckState(unsigned row_idx, unsigned col_idx, Qt::CheckState check_state)
+{
+	getItem(row_idx, col_idx)->setCheckState(check_state);
+}
 
-	item=table_tbw->item(row_idx,col_idx);
-	return(item->text());
+void ObjectTableWidget::setCellDisabled(unsigned row_idx, unsigned col_idx, bool disabled)
+{
+	QTableWidgetItem *item = getItem(row_idx, col_idx);
+
+	if(disabled)
+		item->setFlags(Qt::NoItemFlags);
+	else
+		item->setFlags(Qt::ItemIsEnabled);
+}
+
+bool ObjectTableWidget::isCellDisabled(unsigned row_idx, unsigned col_idx)
+{
+	return(getItem(row_idx, col_idx)->flags() == Qt::NoItemFlags);
 }
 
 QVariant ObjectTableWidget::getRowData(unsigned row_idx)
@@ -304,7 +321,7 @@ void ObjectTableWidget::selectRow(int lin_idx)
 void ObjectTableWidget::addRow(unsigned lin_idx)
 {
 	QTableWidgetItem *item=nullptr;
-	unsigned i, col_cont=table_tbw->columnCount();
+	unsigned col_idx, col_cont=table_tbw->columnCount();
 
 	table_tbw->insertRow(lin_idx);
 
@@ -312,10 +329,10 @@ void ObjectTableWidget::addRow(unsigned lin_idx)
 	item->setText(QString("%1").arg(lin_idx+1));
 	table_tbw->setVerticalHeaderItem(lin_idx,item);
 
-	for(i=0; i < col_cont; i++)
+	for(col_idx=0; col_idx < col_cont; col_idx++)
 	{
 		item=new QTableWidgetItem;
-		table_tbw->setItem(lin_idx,i,item);
+		table_tbw->setItem(lin_idx,col_idx,item);
 	}
 
 	item=table_tbw->item(lin_idx,0);
@@ -327,6 +344,7 @@ void ObjectTableWidget::addRow(void)
 {
 	this->addRow(table_tbw->rowCount());
 	setButtonsEnabled();
+	table_tbw->resizeRowsToContents();
 
 	emit s_rowAdded(table_tbw->rowCount()-1);
 }
@@ -380,6 +398,29 @@ void ObjectTableWidget::removeRow(void)
 				setButtonsEnabled();
 			}
 		}
+	}
+}
+
+void ObjectTableWidget::duplicateRow(void)
+{
+	if(table_tbw->currentRow() >= 0)
+	{
+		int row = table_tbw->rowCount(),
+				curr_row = table_tbw->currentRow();
+
+		QTableWidgetItem *curr_item = nullptr,
+				*dup_item=nullptr;
+
+		addRow(row);
+
+		for(int col = 0; col < table_tbw->columnCount(); col++)
+		{
+			curr_item = table_tbw->item(curr_row, col);
+			dup_item = table_tbw->item(row, col);
+			dup_item->setText(curr_item->text());
+		}
+
+		emit s_rowDuplicated(curr_row, row);
 	}
 }
 
@@ -499,6 +540,7 @@ void ObjectTableWidget::moveRows(void)
 		}
 
 		setButtonsEnabled();
+		table_tbw->resizeRowsToContents();
 		emit s_rowsMoved(row, row1);
 	}
 }
@@ -550,15 +592,14 @@ void ObjectTableWidget::setButtonsEnabled(unsigned button_conf, bool value)
 
 	if((button_conf & UPDATE_BUTTON) == UPDATE_BUTTON)
 		update_tb->setEnabled(value && lin >= 0);
+
+	if((button_conf & DUPLICATE_BUTTON) == DUPLICATE_BUTTON)
+		duplicate_tb->setEnabled(value && lin >= 0);
 }
 
 void ObjectTableWidget::setButtonsEnabled(void)
 {
-	//QTableWidgetItem *item=table_tbw->currentItem();
 	setButtonsEnabled(ALL_BUTTONS, true);
-
-	//if(item && item->row() >= 0)
-	//emit s_rowSelected(item->row());
 }
 
 void ObjectTableWidget::emitRowSelected(void)
@@ -569,3 +610,7 @@ void ObjectTableWidget::emitRowSelected(void)
 		emit s_rowSelected(item->row());
 }
 
+void ObjectTableWidget::resizeEvent(QResizeEvent *)
+{
+	table_tbw->resizeRowsToContents();
+}

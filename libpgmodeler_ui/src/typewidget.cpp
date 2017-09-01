@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -48,19 +48,19 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 		}
 
 		enumerations_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-											   ObjectTableWidget::EDIT_BUTTON, true, this);
+												 (ObjectTableWidget::EDIT_BUTTON | ObjectTableWidget::DUPLICATE_BUTTON), true, this);
 		grid=dynamic_cast<QGridLayout *>(enumerations_gb->layout());
 		grid->addWidget(enumerations_tab,1,0,1,2);
 		enumerations_gb->setVisible(false);
 
-		attributes_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
+		attributes_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^ ObjectTableWidget::DUPLICATE_BUTTON, true, this);
 		attributes_tab->setColumnCount(3);
 		attributes_tab->setHeaderLabel(trUtf8("Name"),0);
-		attributes_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
+		attributes_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 		attributes_tab->setHeaderLabel(trUtf8("Type"),1);
-		attributes_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+		attributes_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
 		attributes_tab->setHeaderLabel(trUtf8("Collation"),2);
-		attributes_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/collation.png")),2);
+		attributes_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("collation")),2);
 
 		grid=dynamic_cast<QGridLayout *>(attributes_gb->layout());
 

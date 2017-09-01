@@ -159,6 +159,16 @@
         </item>
         <item>
          <property name="text">
+          <string>Constraint: Name</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Constraint: Descriptor</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
           <string>View: Schema name</string>
          </property>
         </item>

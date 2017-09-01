@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -145,6 +145,8 @@ vector<BaseObject *> *DatabaseModel::getObjectList(ObjectType obj_type)
 		return(&tags);
 	else if(obj_type==OBJ_EVENT_TRIGGER)
 		return(&eventtriggers);
+	else if(obj_type==OBJ_GENERIC_SQL)
+		return(&genericsqls);
 	else
 		return(nullptr);
 }
@@ -206,6 +208,8 @@ void DatabaseModel::addObject(BaseObject *object, int obj_idx)
 				addPermission(dynamic_cast<Permission *>(object));
 			else if(obj_type==OBJ_EVENT_TRIGGER)
 				addEventTrigger(dynamic_cast<EventTrigger *>(object));
+			else if(obj_type==OBJ_GENERIC_SQL)
+				addGenericSQL(dynamic_cast<GenericSQL *>(object));
 		}
 		catch(Exception &e)
 		{
@@ -270,6 +274,10 @@ void DatabaseModel::removeObject(BaseObject *object, int obj_idx)
 				removeTag(dynamic_cast<Tag *>(object), obj_idx);
 			else if(obj_type==OBJ_PERMISSION)
 				removePermission(dynamic_cast<Permission *>(object));
+			else if(obj_type==OBJ_EVENT_TRIGGER)
+				removeEventTrigger(dynamic_cast<EventTrigger *>(object));
+			else if(obj_type==OBJ_GENERIC_SQL)
+				removeGenericSQL(dynamic_cast<GenericSQL *>(object));
 		}
 		catch(Exception &e)
 		{
@@ -335,6 +343,10 @@ void DatabaseModel::removeObject(unsigned obj_idx, ObjectType obj_type)
 			removeRelationship(dynamic_cast<BaseRelationship *>(object), obj_idx);
 		else if(obj_type==OBJ_PERMISSION)
 			removePermission(dynamic_cast<Permission *>(object));
+		else if(obj_type==OBJ_EVENT_TRIGGER)
+			removeEventTrigger(dynamic_cast<EventTrigger *>(object), obj_idx);
+		else if(obj_type==OBJ_GENERIC_SQL)
+			removeGenericSQL(dynamic_cast<GenericSQL *>(object), obj_idx);
 	}
 }
 
@@ -730,9 +742,9 @@ void DatabaseModel::destroyObjects(void)
 		BASE_RELATIONSHIP, OBJ_TEXTBOX,
 		OBJ_DOMAIN, OBJ_TYPE, OBJ_FUNCTION,
 		OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_ROLE, OBJ_COLLATION,
-		OBJ_EXTENSION, OBJ_SCHEMA, OBJ_PERMISSION };
-	ObjectType graph_types[]={ OBJ_SCHEMA, BASE_RELATIONSHIP, OBJ_RELATIONSHIP,
-							   OBJ_TABLE, OBJ_VIEW };
+		OBJ_EXTENSION, OBJ_SCHEMA, OBJ_PERMISSION, OBJ_TAG, OBJ_GENERIC_SQL };
+
+	ObjectType graph_types[]={ OBJ_SCHEMA, BASE_RELATIONSHIP, OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW };
 	vector<BaseObject *> *list=nullptr;
 	BaseObject *object=nullptr;
 	unsigned i, cnt=sizeof(types)/sizeof(ObjectType);
@@ -980,6 +992,40 @@ EventTrigger *DatabaseModel::getEventTrigger(unsigned obj_idx)
 EventTrigger *DatabaseModel::getEventTrigger(const QString &name)
 {
 	return(dynamic_cast<EventTrigger *>(getObject(name, OBJ_EVENT_TRIGGER)));
+}
+
+void DatabaseModel::addGenericSQL(GenericSQL *genericsql, int obj_idx)
+{
+	try
+	{
+		__addObject(genericsql, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void DatabaseModel::removeGenericSQL(GenericSQL *genericsql, int obj_idx)
+{
+	try
+	{
+		__removeObject(genericsql, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+GenericSQL *DatabaseModel::getGenericSQL(unsigned obj_idx)
+{
+	return(dynamic_cast<GenericSQL *>(getObject(obj_idx, OBJ_GENERIC_SQL)));
+}
+
+GenericSQL *DatabaseModel::getGenericSQL(const QString &name)
+{
+	return(dynamic_cast<GenericSQL *>(getObject(name, OBJ_GENERIC_SQL)));
 }
 
 void DatabaseModel::removeExtension(Extension *extension, int obj_idx)
@@ -1698,11 +1744,11 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 						constr=dynamic_cast<Constraint *>(tab_obj);
 
 						/* A constraint is considered special in this case when it is referencing
-				 relationship added column and the constraint itself was not added by
-				 relationship (created manually by the user) */
+							 relationship added column and the constraint itself was not added by
+							 relationship (created manually by the user) */
 						found=(!constr->isAddedByRelationship() &&
-								 constr->isReferRelationshipAddedColumn() &&
-								 constr->getConstraintType()!=ConstraintType::primary_key);
+									 constr->isReferRelationshipAddedColumn() &&
+									 constr->getConstraintType()!=ConstraintType::primary_key);
 
 						//When found some special object, stores is xml definition
 						if(found)
@@ -2877,7 +2923,7 @@ void DatabaseModel::loadModel(const QString &filename)
 		ObjectType obj_type;
 		attribs_map attribs;
 		BaseObject *object=nullptr;
-		bool protected_model=false, found_inh_rel;
+		bool protected_model=false, found_inh_rel = false;
 		QStringList pos_str;
 		map<ObjectType, QString> def_objs;
 
@@ -2952,7 +2998,7 @@ void DatabaseModel::loadModel(const QString &filename)
 										addObject(object);
 
 									/* If there is at least one inheritance relationship we need to flag this situation
-					 in order to do an addtional rel. validation in the end of loading */
+									 in order to do an addtional rel. validation in the end of loading */
 									if(!found_inh_rel && object->getObjectType()==OBJ_RELATIONSHIP &&
 											dynamic_cast<Relationship *>(object)->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN)
 										found_inh_rel=true;
@@ -3083,13 +3129,13 @@ BaseObject *DatabaseModel::createObject(ObjectType obj_type)
 		else if(obj_type==OBJ_CONSTRAINT)
 			object=createConstraint(nullptr);
 		else if(obj_type==OBJ_TRIGGER)
-			object=createTrigger();//nullptr);
+			object=createTrigger();
 		else if(obj_type==OBJ_INDEX)
-			object=createIndex();//nullptr);
+			object=createIndex();
 		else if(obj_type==OBJ_COLUMN)
 			object=createColumn();
 		else if(obj_type==OBJ_RULE)
-			object=createRule();//nullptr);
+			object=createRule();
 		else if(obj_type==OBJ_RELATIONSHIP ||
 				obj_type==BASE_RELATIONSHIP)
 			object=createRelationship();
@@ -3103,6 +3149,8 @@ BaseObject *DatabaseModel::createObject(ObjectType obj_type)
 			object=createPermission();
 		else if(obj_type==OBJ_EVENT_TRIGGER)
 			object=createEventTrigger();
+		else if(obj_type==OBJ_GENERIC_SQL)
+			object=createGenericSQL();
 	}
 
 	return(object);
@@ -3411,6 +3459,7 @@ Schema *DatabaseModel::createSchema(void)
 		setBasicAttributes(schema);
 		schema->setFillColor(QColor(attribs[ParsersAttributes::FILL_COLOR]));
 		schema->setRectVisible(attribs[ParsersAttributes::RECT_VISIBLE]==ParsersAttributes::_TRUE_);
+		schema->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::_TRUE_);
 	}
 	catch(Exception &e)
 	{
@@ -4509,6 +4558,8 @@ Table *DatabaseModel::createTable(void)
 		table->setWithOIDs(attribs[ParsersAttributes::OIDS]==ParsersAttributes::_TRUE_);
 		table->setUnlogged(attribs[ParsersAttributes::UNLOGGED]==ParsersAttributes::_TRUE_);
 		table->setGenerateAlterCmds(attribs[ParsersAttributes::GEN_ALTER_CMDS]==ParsersAttributes::_TRUE_);
+		table->setExtAttribsHidden(attribs[ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::_TRUE_);
+		table->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::_TRUE_);
 
 		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
@@ -5043,13 +5094,16 @@ Index *DatabaseModel::createIndex(void)
 	Index *index=nullptr;
 	QString elem, str_aux;
 	IndexElement idx_elem;
-	Table *table=nullptr;
+	BaseTable *table=nullptr;
 
 	try
 	{
 		xmlparser.getElementAttributes(attribs);
 
-		table=dynamic_cast<Table *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE));
+		table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE));
+
+		if(!table)
+			table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_VIEW));
 
 		//Raises an error if the parent table doesn't exists
 		if(!table)
@@ -5099,7 +5153,7 @@ Index *DatabaseModel::createIndex(void)
 			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
 		}
 
-		table->addIndex(index);
+		table->addObject(index);
 		table->setModified(true);
 	}
 	catch(Exception &e)
@@ -5359,6 +5413,7 @@ EventTrigger *DatabaseModel::createEventTrigger(void)
 		event_trig=new EventTrigger;
 		setBasicAttributes(event_trig);
 		xmlparser.getElementAttributes(attribs);
+		event_trig->setEvent(EventTriggerType(attribs[ParsersAttributes::EVENT]));
 
 		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
@@ -5404,6 +5459,34 @@ EventTrigger *DatabaseModel::createEventTrigger(void)
 	}
 
 	return(event_trig);
+}
+
+GenericSQL *DatabaseModel::createGenericSQL(void)
+{
+	GenericSQL *genericsql=nullptr;
+	attribs_map attribs;
+
+	try
+	{
+		genericsql=new GenericSQL;
+		setBasicAttributes(genericsql);
+
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
+		{
+			if(xmlparser.getElementType()==XML_ELEMENT_NODE && xmlparser.getElementName() == ParsersAttributes::DEFINITION)
+			{
+				xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
+				genericsql->setDefinition(xmlparser.getElementContent());
+			}
+		}
+	}
+	catch(Exception &e)
+	{
+		if(genericsql) delete(genericsql);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
+	}
+
+	return(genericsql);
 }
 
 Sequence *DatabaseModel::createSequence(bool ignore_onwer)
@@ -5507,6 +5590,8 @@ View *DatabaseModel::createView(void)
 		view->setMaterialized(attribs[ParsersAttributes::MATERIALIZED]==ParsersAttributes::_TRUE_);
 		view->setRecursive(attribs[ParsersAttributes::RECURSIVE]==ParsersAttributes::_TRUE_);
 		view->setWithNoData(attribs[ParsersAttributes::WITH_NO_DATA]==ParsersAttributes::_TRUE_);
+		view->setExtAttribsHidden(attribs[ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::_TRUE_);
+		view->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::_TRUE_);
 
 		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
@@ -5791,14 +5876,10 @@ Textbox *DatabaseModel::createTextbox(void)
 
 		xmlparser.getElementAttributes(attribs);
 
-		if(attribs[ParsersAttributes::ITALIC]==ParsersAttributes::_TRUE_)
-			txtbox->setTextAttribute(Textbox::ITALIC_TXT, true);
-
-		if(attribs[ParsersAttributes::BOLD]==ParsersAttributes::_TRUE_)
-			txtbox->setTextAttribute(Textbox::BOLD_TXT, true);
-
-		if(attribs[ParsersAttributes::UNDERLINE]==ParsersAttributes::_TRUE_)
-			txtbox->setTextAttribute(Textbox::UNDERLINE_TXT, true);
+		txtbox->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::_TRUE_);
+		txtbox->setTextAttribute(Textbox::ITALIC_TXT, attribs[ParsersAttributes::ITALIC]==ParsersAttributes::_TRUE_);
+		txtbox->setTextAttribute(Textbox::BOLD_TXT, attribs[ParsersAttributes::BOLD]==ParsersAttributes::_TRUE_);
+		txtbox->setTextAttribute(Textbox::UNDERLINE_TXT, attribs[ParsersAttributes::UNDERLINE]==ParsersAttributes::_TRUE_);
 
 		if(!attribs[ParsersAttributes::COLOR].isEmpty())
 			txtbox->setTextColor(QColor(attribs[ParsersAttributes::COLOR]));
@@ -5823,7 +5904,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 	BaseRelationship *base_rel=nullptr;
 	Relationship *rel=nullptr;
 	BaseTable *tables[2]={nullptr, nullptr};
-	bool src_mand, dst_mand, identifier, protect, deferrable, sql_disabled, single_pk_col;
+	bool src_mand, dst_mand, identifier, protect, deferrable, sql_disabled, single_pk_col, faded_out;
 	DeferralType defer_type;
 	ActionType del_action, upd_action;
 	unsigned rel_type=0, i;
@@ -5841,6 +5922,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 
 		xmlparser.getElementAttributes(attribs);
 		protect=(attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
+		faded_out=(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::_TRUE_);
 
 		if(!attribs[ParsersAttributes::CUSTOM_COLOR].isEmpty())
 			custom_color=QColor(attribs[ParsersAttributes::CUSTOM_COLOR]);
@@ -6056,6 +6138,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 		addRelationship(rel);
 	}
 
+	base_rel->setFadedOut(faded_out);
 	base_rel->setProtected(protect);
 	base_rel->setCustomColor(custom_color);
 
@@ -6294,12 +6377,7 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 		{
 			if(!localizations[i].isEmpty())
 			{
-				attributes[loc_attribs[i]]=localizations[i];
-
-				if(localizations[i]!=QString("C") && encoding!=BaseType::null)
-					attributes[loc_attribs[i]]+= QString(".") + ~encoding;
-
-				attributes[loc_attribs[i]]=QString("'%1'").arg(attributes[loc_attribs[i]]);
+				attributes[loc_attribs[i]]=QString("'%1'").arg(localizations[i]);
 			}
 		}
 
@@ -6566,7 +6644,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 						  OBJ_CAST, OBJ_CONVERSION, OBJ_EXTENSION,
 						  OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_OPCLASS,
 						  OBJ_AGGREGATE, OBJ_DOMAIN, OBJ_TEXTBOX, BASE_RELATIONSHIP,
-						  OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW, OBJ_SEQUENCE };
+							OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW, OBJ_SEQUENCE, OBJ_GENERIC_SQL };
 	unsigned i=0, aux_obj_cnt=sizeof(aux_obj_types)/sizeof(ObjectType), count=sizeof(obj_types)/sizeof(ObjectType);
 
 	//The first objects on the map will be roles, tablespaces, schemas and tags
@@ -6683,6 +6761,13 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 		{
 			rule=view->getRule(i);
 			objects_map[rule->getObjectId()]=rule;
+		}
+
+		count=view->getIndexCount();
+		for(i=0; i < count; i++)
+		{
+			index=view->getIndex(i);
+			objects_map[index->getObjectId()]=index;
 		}
 	}
 
@@ -6855,7 +6940,7 @@ void DatabaseModel::__getObjectDependencies(BaseObject *object, vector<BaseObjec
 				{
 					__getObjectDependencies(child, objs);
 
-					if(constr && constr->getReferencedTable())
+					if(constr && constr->getReferencedTable() && std::find(objs.begin(), objs.end(), constr->getReferencedTable())==objs.end())
 						__getObjectDependencies(constr->getReferencedTable(), objs);
 				}
 			}
@@ -7443,6 +7528,14 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 					if(view->getTrigger(i)->getReferencedTable())
 						getObjectDependecies(view->getTrigger(i)->getReferencedTable(), deps, inc_indirect_deps);
 				}
+			}
+
+			if(obj_type == OBJ_TABLE || obj_type == OBJ_VIEW)
+			{
+				BaseTable *tab = dynamic_cast<BaseTable *>(object);
+
+				if(tab->getTag())
+					deps.push_back(tab->getTag());
 			}
 		}
 	}
@@ -8741,7 +8834,7 @@ void DatabaseModel::createSystemObjects(bool create_public)
 	Schema *public_sch=nullptr, *pg_catalog=nullptr;
 	Language *lang=nullptr;
 	Tablespace *tbspace=nullptr;
-	LanguageType lang_types[]={ LanguageType::c, LanguageType::sql, LanguageType::plpgsql };
+	LanguageType lang_types[]={ LanguageType::c, LanguageType::sql, LanguageType::plpgsql, LanguageType::internal };
 	Role *postgres=nullptr;
 	Collation *collation=nullptr;
 	QString collnames[]={ "default", "C", "POSIX" };
@@ -8980,7 +9073,8 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 	int idx=0;
 	bool save_db_attribs=false, save_objs_pos=false, save_objs_prot=false,
 			save_objs_sqldis=false, save_textboxes=false, save_tags=false,
-			save_custom_sql=false, save_custom_colors=false;
+			save_custom_sql=false, save_custom_colors=false, save_fadeout=false,
+			save_extattribs=false, save_genericsqls=false;
 	QStringList labels_attrs={ ParsersAttributes::SRC_LABEL,
 														 ParsersAttributes::DST_LABEL,
 														 ParsersAttributes::NAME_LABEL };
@@ -8993,6 +9087,9 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 	save_tags=(META_TAG_OBJS & options) == META_TAG_OBJS;
 	save_custom_sql=(META_OBJS_CUSTOMSQL & options) == META_OBJS_CUSTOMSQL;
 	save_custom_colors=(META_OBJS_CUSTOMCOLORS & options) == META_OBJS_CUSTOMCOLORS;
+	save_fadeout=(META_OBJS_FADEDOUT & options) == META_OBJS_FADEDOUT;
+	save_extattribs=(META_OBJS_EXTATTRIBS & options) == META_OBJS_EXTATTRIBS;
+	save_genericsqls=(META_GENERIC_SQL_OBJS & options) == META_GENERIC_SQL_OBJS;
 
 	output.open(QFile::WriteOnly);
 
@@ -9002,13 +9099,16 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 
 	try
 	{
-		if(save_textboxes || save_tags)
+		if(save_textboxes || save_tags || save_genericsqls)
 		{
 			if(save_textboxes)
 				objects.insert(objects.end(), textboxes.begin(), textboxes.end());
 
 			if(save_tags)
 				objects.insert(objects.end(), tags.begin(), tags.end());
+
+			if(save_genericsqls)
+				objects.insert(objects.end(), genericsqls.begin(), genericsqls.end());
 		}
 
 		if(save_db_attribs)
@@ -9064,8 +9164,8 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 		{
 			obj_type=object->getObjectType();
 
-			//When handling a tag or textbox we just extract their XML code
-			if(obj_type==OBJ_TEXTBOX || obj_type==OBJ_TAG)
+			//When handling a tag , textbox or generic sql we just extract their XML code
+			if(obj_type==OBJ_TEXTBOX || obj_type==OBJ_TAG || obj_type == OBJ_GENERIC_SQL)
 			{
 				emit s_objectLoaded(((idx++)/static_cast<float>(objects.size()))*100,
 														trUtf8("Saving object `%1' (%2)")
@@ -9085,6 +9185,9 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			attribs[ParsersAttributes::TAG]=(save_tags && base_tab && base_tab->getTag() ? base_tab->getTag()->getName() : QString());
 			attribs[ParsersAttributes::APPENDED_SQL]=object->getAppendedSQL();
 			attribs[ParsersAttributes::PREPENDED_SQL]=object->getPrependedSQL();
+
+			attribs[ParsersAttributes::HIDE_EXT_ATTRIBS]=(save_extattribs && base_tab && base_tab->isExtAttribsHidden() ? ParsersAttributes::_TRUE_ : QString());
+			attribs[ParsersAttributes::FADED_OUT]=(save_fadeout && graph_obj && graph_obj->isFadedOut() ? ParsersAttributes::_TRUE_ : QString());
 
 			if(save_custom_sql && obj_type==OBJ_DATABASE)
 			{
@@ -9215,7 +9318,9 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 				 (save_objs_prot && !attribs[ParsersAttributes::PROTECTED].isEmpty()) ||
 				 (save_objs_sqldis && !attribs[ParsersAttributes::SQL_DISABLED].isEmpty()) ||
 				 (save_custom_sql && (!attribs[ParsersAttributes::APPENDED_SQL].isEmpty() ||
-															!attribs[ParsersAttributes::PREPENDED_SQL].isEmpty())))
+															!attribs[ParsersAttributes::PREPENDED_SQL].isEmpty())) ||
+				 (save_fadeout && !attribs[ParsersAttributes::FADED_OUT].isEmpty()) ||
+				 (save_extattribs && !attribs[ParsersAttributes::HIDE_EXT_ATTRIBS].isEmpty()))
 			{
 				emit s_objectLoaded(((idx++)/static_cast<float>(objects.size()))*100,
 														trUtf8("Saving metadata of the object `%1' (%2)")
@@ -9269,7 +9374,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 	attribs_map attribs, aux_attrib;
 	ObjectType obj_type;
 	BaseObject *object=nullptr, *new_object=nullptr;
-	BaseTable *src_tab=nullptr, *dst_tab=nullptr;
+	BaseTable *src_tab=nullptr, *dst_tab=nullptr, *base_tab=nullptr;
 	vector<QPointF> points;
 	map<QString, unsigned> labels_attrs;
 	vector<QPointF> labels_pos={ QPointF(NAN,NAN), QPointF(NAN,NAN), QPointF(NAN,NAN) };
@@ -9280,7 +9385,8 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 	int progress=0;
 	bool load_db_attribs=false, load_objs_pos=false, load_objs_prot=false,
 			load_objs_sqldis=false, load_textboxes=false, load_tags=false,
-			load_custom_sql=false, load_custom_colors=false;
+			load_custom_sql=false, load_custom_colors=false, load_fadeout=false,
+			load_extattribs=false, load_genericsqls=false;
 
 	load_db_attribs=(META_DB_ATTRIBUTES & options) == META_DB_ATTRIBUTES;
 	load_objs_pos=(META_OBJS_POSITIONING & options) == META_OBJS_POSITIONING;
@@ -9290,6 +9396,9 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 	load_tags=(META_TAG_OBJS & options) == META_TAG_OBJS;
 	load_custom_sql=(META_OBJS_CUSTOMSQL & options) == META_OBJS_CUSTOMSQL;
 	load_custom_colors=(META_OBJS_CUSTOMCOLORS & options) == META_OBJS_CUSTOMCOLORS;
+	load_fadeout=(META_OBJS_FADEDOUT & options) == META_OBJS_FADEDOUT;
+	load_extattribs=(META_OBJS_EXTATTRIBS & options) == META_OBJS_EXTATTRIBS;
+	load_genericsqls=(META_GENERIC_SQL_OBJS & options) == META_GENERIC_SQL_OBJS;
 
 	try
 	{
@@ -9314,7 +9423,8 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 					elem_name=xmlparser.getElementName();
 
 					if((elem_name==BaseObject::getSchemaName(OBJ_TAG) && load_tags) ||
-						 (elem_name==BaseObject::getSchemaName(OBJ_TEXTBOX) && load_textboxes))
+						 (elem_name==BaseObject::getSchemaName(OBJ_TEXTBOX) && load_textboxes) ||
+						 (elem_name==BaseObject::getSchemaName(OBJ_GENERIC_SQL) && load_genericsqls))
 					{
 						xmlparser.savePosition();
 						obj_type=BaseObject::getObjectType(elem_name);
@@ -9459,6 +9569,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 							if(BaseGraphicObject::isGraphicObject(obj_type))
 							{
+								base_tab=dynamic_cast<BaseTable *>(object);
 								rel=dynamic_cast<BaseRelationship *>(object);
 								schema=dynamic_cast<Schema *>(object);
 
@@ -9492,8 +9603,13 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 									schema->setRectVisible(attribs[ParsersAttributes::RECT_VISIBLE]==ParsersAttributes::_TRUE_);
 								}
-							}
 
+								if(load_fadeout)
+									dynamic_cast<BaseGraphicObject *>(object)->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::_TRUE_);
+
+								if(load_extattribs && base_tab)
+									base_tab->setExtAttribsHidden(attribs[ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::_TRUE_);
+							}
 
 							points.clear();
 

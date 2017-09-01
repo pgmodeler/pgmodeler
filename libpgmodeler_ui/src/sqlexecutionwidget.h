@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,10 +32,15 @@
 #include "findreplacewidget.h"
 #include "codecompletionwidget.h"
 #include "numberedtexteditor.h"
+#include "findreplacewidget.h"
 
 class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 	private:
 		Q_OBJECT
+
+		static map<QString, QString> cmd_history;
+
+		static int cmd_history_max_len;
 
 		SchemaParser schparser;
 
@@ -51,18 +56,24 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		//! \brief Dialog for SQL save/load
 		QFileDialog sql_file_dlg;
 
-		QMenu snippets_menu;
+		QMenu snippets_menu,
+
+		file_menu;
+
+		QAction *action_save, *action_save_as, *action_load;
 
 		FindReplaceWidget *find_replace_wgt;
 
 		CodeCompletionWidget *code_compl_wgt;
+
+		FindReplaceWidget *find_history_wgt;
 
 		/*! \brief Enables/Disables the fields for sql input and execution.
 				When enabling a new connection to server will be opened. */
 		void enableSQLExecution(bool enable);
 
 		//! \brief Stores the command on the sql command history
-		void registerSQLCommand(const QString &cmd, unsigned rows=0, const QString &error=QString());
+		void addToSQLHistory(const QString &cmd, unsigned rows=0, const QString &error=QString());
 
 		//! \brief Show the exception message in the output widget
 		void showError(Exception &e);
@@ -70,9 +81,13 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		//! \brief Fills the result grid with the specified result set
 		void fillResultsTable(ResultSet &res);
 
+		static void validateSQLHistoryLength(const QString &conn_id, const QString &fmt_cmd = QString(), NumberedTextEditor *cmd_history_txt = nullptr);
+
 	protected:
 		//! \brief Widget that serves as SQL commands input
-		NumberedTextEditor *sql_cmd_txt;
+		NumberedTextEditor *sql_cmd_txt,
+
+		*cmd_history_txt;
 
 		void showEvent(QShowEvent *);
 		void resizeEvent(QResizeEvent *);
@@ -89,16 +104,31 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		static void fillResultsTable(Catalog &catalog, ResultSet &res, QTableWidget *results_tbw, bool store_data=false);
 
 		//! \brief Copy to clipboard (in csv format) the current selected items on results grid
-		static void copySelection(QTableWidget *results_tbw, bool use_popup=true);
+		static void copySelection(QTableWidget *results_tbw, bool use_popup=true, bool csv_is_default = false);
 
 		//! \brief Generates a CSV buffer based upon the selection on the results grid
 		static QByteArray generateCSVBuffer(QTableWidget *results_tbw, int start_row, int start_col, int row_cnt, int col_cnt);
+
+		//! \brief Generates a Plain text buffer based upon the selection on the results grid (this method does not include the column names)
+		static QByteArray generateTextBuffer(QTableWidget *results_tbw, int start_row, int start_col, int row_cnt, int col_cnt);
 
 		//! \brief Exports the results to csv file
 		static void exportResults(QTableWidget *results_tbw);
 
 	public slots:
 		void configureSnippets(void);
+
+		//! \brief Save the history of all connections open in the SQL Execution to the sql-history.conf
+		static void saveSQLHistory(void);
+
+		//! \brief Load the history from the file sql-history.conf
+		static void loadSQLHistory(void);
+
+		static void destroySQLHistory(void);
+
+		static void setSQLHistoryMaxLength(int len);
+
+		static int getSQLHistoryMaxLength(void);
 
 	private slots:
 		//! \brief Enables the command buttons when user fills the sql field
@@ -114,11 +144,11 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		void loadCommands(void);
 
 		//! \brief Clears the input field as well the results grid
-		void clearAll(void);
+		int clearAll(void);
 
 		void selectSnippet(QAction *act);
 
-		void handleSelectedWord(QString word);
+		//void handleSelectedWord(QString word);
 
 		void toggleOutputPane(bool visible);
 

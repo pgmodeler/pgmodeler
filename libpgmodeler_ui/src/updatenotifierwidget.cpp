@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,20 +34,15 @@ UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
 	drop_shadow->setBlurRadius(30);
 	this->setGraphicsEffect(drop_shadow);
 
-	get_binary_menu=new QMenu(this);
-	action_recover=get_binary_menu->addAction(trUtf8("Recover a package"));
-	action_purchase=get_binary_menu->addAction(trUtf8("Purchase a new package"));
-	get_binary_tb->setMenu(get_binary_menu);
-
 	connect(&update_chk_manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(handleUpdateChecked(QNetworkReply*)));
 
 	//C++11 lambda slots
-	connect(action_purchase, &QAction::triggered, this, [=](){ activateLink(GlobalAttributes::PGMODELER_PURCHASE_URL); });
-	connect(action_recover, &QAction::triggered, this, [=](){ activateLink(GlobalAttributes::PGMODELER_RECOVER_URL); });
-	connect(get_source_tb, &QToolButton::clicked, this, [=](){ activateLink(GlobalAttributes::PGMODELER_SRC_URL); });
+	connect(get_source_tb, &QToolButton::clicked, this, [&](){ activateLink(GlobalAttributes::PGMODELER_SRC_URL); });
+	connect(get_binary_tb, &QToolButton::clicked, this, [&](){ activateLink(GlobalAttributes::PGMODELER_DOWNLOAD_URL); });
+
 
 	connect(hide_tb, &QToolButton::clicked, this,
-			[=](){
+			[&](){
 		this->close();
 		emit s_visibilityChanged(false);
 	});
@@ -105,6 +100,7 @@ void UpdateNotifierWidget::checkForUpdate(void)
 	QUrl url(GlobalAttributes::PGMODELER_UPD_CHECK_URL + GlobalAttributes::PGMODELER_VERSION);
 	QNetworkRequest req(url);
 
+	req.setRawHeader("User-Agent", "pgModelerUpdateCheck");
 	show_no_upd_msg=(dynamic_cast<QAction *>(sender())!=nullptr);
 	update_chk_reply=update_chk_manager.get(req);
 }
@@ -112,19 +108,18 @@ void UpdateNotifierWidget::checkForUpdate(void)
 void UpdateNotifierWidget::handleUpdateChecked(QNetworkReply *reply)
 {
 	Messagebox msg_box;
+	unsigned http_status=reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toUInt();
 
 	if(reply->error()!=QNetworkReply::NoError)
 	{
 		msg_box.show(trUtf8("Failed to check updates"),
-					 trUtf8("The update notifier failed to check for new versions! Please, verify your internet connectivity and try again! Connection error returned: <strong>%1</strong>.").arg(reply->errorString()),
+					 trUtf8("The update notifier failed to check for new versions! Please, verify your internet connectivity and try again! Connection error returned: <em>%1</em> - <strong>%2</strong>.").arg(http_status).arg(reply->errorString()),
 					 Messagebox::ERROR_ICON, Messagebox::OK_BUTTON);
 	}
 	else
 	{
-		unsigned http_status=reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toUInt();
-
 		/* In case of [301 - Move permanently] there is the need to make a new request to
-	   reach the final destination */
+			 reach the final destination */
 		if(http_status==301 || http_status==302)
 		{
 			QString url=reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString();

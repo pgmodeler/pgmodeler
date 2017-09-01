@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -70,14 +70,18 @@ SchemaParser::SchemaParser(void)
 
 void SchemaParser::setPgSQLVersion(const QString &pgsql_ver)
 {
-	if(!pgsql_ver.isEmpty() &&
-			(pgsql_ver < PgSQLVersions::PGSQL_VERSION_90 || pgsql_ver > PgSQLVersions::DEFAULT_VERSION))
+	unsigned curr_ver = QString(pgsql_ver).remove('.').toUInt(),
+			version90 = QString(PgSQLVersions::PGSQL_VERSION_90).remove('.').toUInt(),
+			default_ver = QString(PgSQLVersions::DEFAULT_VERSION).remove('.').toUInt();
+
+	if(curr_ver != 0 && (curr_ver < version90))
 		throw Exception(Exception::getErrorMessage(ERR_INV_POSTGRESQL_VERSION)
 						.arg(pgsql_ver)
-						.arg(PgSQLVersions::ALL_VERSIONS.join(", ")),
+						.arg(PgSQLVersions::PGSQL_VERSION_90)
+						.arg(PgSQLVersions::DEFAULT_VERSION),
 						ERR_INV_POSTGRESQL_VERSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	if(!pgsql_ver.isEmpty())
+	if(curr_ver > 0 && curr_ver <= default_ver)
 		pgsql_version=pgsql_ver;
 	else
 		pgsql_version=PgSQLVersions::DEFAULT_VERSION;
@@ -419,10 +423,10 @@ bool SchemaParser::isSpecialCharacter(char chr)
 
 bool SchemaParser::evaluateComparisonExpr(void)
 {
-	QString curr_line, attrib, value, oper, valid_op_chrs="=!<>";
+	QString curr_line, attrib, value, oper, valid_op_chrs="=!<>fi";
 	bool error=false, end_eval=false, expr_is_true=true;
 	static QStringList opers = { TOKEN_EQ_OP, TOKEN_NE_OP, TOKEN_GT_OP,
-								 TOKEN_LT_OP, TOKEN_GT_EQ_OP, TOKEN_LT_EQ_OP };
+															 TOKEN_LT_OP, TOKEN_GT_EQ_OP, TOKEN_LT_EQ_OP };
 
 	try
 	{
@@ -479,7 +483,7 @@ bool SchemaParser::evaluateComparisonExpr(void)
 					//If one of the elements are missing, raise an syntax error
 					if(attrib.isEmpty() || oper.isEmpty() || value.isEmpty())
 						error=true;
-					else if(!opers.contains(oper))
+					else if(!opers.contains(QString(oper).remove('f').remove('i')))
 					{
 						throw Exception(QString(Exception::getErrorMessage(ERR_INV_OPERATOR_IN_EXPR))
 										.arg(oper).arg(filename).arg((line + comment_count + 1)).arg((column+1)),
@@ -493,15 +497,34 @@ bool SchemaParser::evaluateComparisonExpr(void)
 					}
 					else
 					{
+						QVariant left_val, right_val;
 						value.remove(CHR_VAL_DELIM);
 
-						//Evaluating the attribute value against the one captured on the expression
-						expr_is_true=((oper==TOKEN_EQ_OP && (attributes[attrib] == value)) ||
-									  (oper==TOKEN_NE_OP && (attributes[attrib] != value)) ||
-									  (oper==TOKEN_GT_OP && (attributes[attrib] > value)) ||
-									  (oper==TOKEN_LT_OP && (attributes[attrib] < value)) ||
-									  (oper==TOKEN_GT_EQ_OP && (attributes[attrib] >= value)) ||
-									  (oper==TOKEN_LT_EQ_OP && (attributes[attrib] <= value)));
+						//Evaluating the attribute value against the one captured on the expression without casting
+						if(oper.endsWith('f'))
+						{
+							left_val = QVariant(attributes[attrib].toFloat());
+							right_val = QVariant(value.toFloat());
+							oper.remove('f');
+						}
+						else if(oper.endsWith('i'))
+						{
+							left_val = QVariant(attributes[attrib].toInt());
+							right_val = QVariant(value.toInt());
+							oper.remove('i');
+						}
+						else
+						{
+							left_val = QVariant(attributes[attrib]);
+							right_val = QVariant(value);
+						}
+
+						expr_is_true=((oper==TOKEN_EQ_OP && (left_val == right_val)) ||
+													(oper==TOKEN_NE_OP && (left_val != right_val)) ||
+													(oper==TOKEN_GT_OP && (left_val > right_val)) ||
+													(oper==TOKEN_LT_OP && (left_val < right_val)) ||
+													(oper==TOKEN_GT_EQ_OP && (left_val >= right_val)) ||
+													(oper==TOKEN_LT_EQ_OP && (left_val <= right_val)));
 
 						end_eval=true;
 					}
@@ -510,7 +533,7 @@ bool SchemaParser::evaluateComparisonExpr(void)
 				default:
 					/* Extract the operator (the second element in the expression) only
 			 if the attribute was extracted and the value not */
-					if(oper.size() <= 2 && !attrib.isEmpty() && value.isEmpty())
+					if(oper.size() <= 3 && !attrib.isEmpty() && value.isEmpty())
 					{
 						//If the current char is a valid operator capture it otherwise raise an error
 						if(valid_op_chrs.indexOf(curr_line[column]) >= 0)

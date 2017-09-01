@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -50,7 +50,6 @@ static const int ERROR_COUNT=229;
 enum ErrorType {
 	ERR_CUSTOM,
 	ERR_ASG_PSDTYPE_COLUMN,
-	ERR_ASG_ZERO_LENGTH,
 	ERR_ASG_INV_PRECISION,
 	ERR_ASG_INV_PREC_TIMESTAMP,
 	ERR_ASG_NOT_ALOC_COLUMN,
@@ -276,7 +275,8 @@ enum ErrorType {
 	ERR_ASG_ENUM_INV_CHARS,
 	ERR_ASG_ENUM_LONG_NAME,
 	ERR_CONNECTION_TIMEOUT,
-	ERR_CONNECTION_BROKEN
+	ERR_CONNECTION_BROKEN,
+	ERR_DROP_CURRDB_DEFAULT
 };
 
 class Exception {

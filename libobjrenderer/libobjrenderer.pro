@@ -24,7 +24,8 @@ HEADERS +=  src/baseobjectview.h \
 	    src/objectsscene.h \
             src/schemaview.h \
             src/roundedrectitem.h \
-            src/styledtextboxview.h
+            src/styledtextboxview.h \
+    src/beziercurveitem.h
 
 SOURCES +=  src/baseobjectview.cpp \
 	    src/textboxview.cpp \
@@ -37,7 +38,8 @@ SOURCES +=  src/baseobjectview.cpp \
 	    src/objectsscene.cpp \
 	    src/schemaview.cpp \
             src/roundedrectitem.cpp \
-            src/styledtextboxview.cpp
+            src/styledtextboxview.cpp \
+    src/beziercurveitem.cpp
 
 unix|windows: LIBS += -L$$OUT_PWD/../libpgmodeler/ -lpgmodeler \
                     -L$$OUT_PWD/../libparsers/ -lparsers \
@@ -45,11 +47,11 @@ unix|windows: LIBS += -L$$OUT_PWD/../libpgmodeler/ -lpgmodeler \
 
 INCLUDEPATH += $$PWD/../libpgmodeler/src \
                $$PWD/../libparsers/src \
-               $$PWD/../libutils/src
+	       $$PWD/../libutils/src
 
 DEPENDPATH += $$PWD/../libpgmodeler \
               $$PWD/../libparsers \
-              $$PWD/../libutils
+	      $$PWD/../libutils
 
 # Deployment settings
 target.path = $$PRIVATELIBDIR

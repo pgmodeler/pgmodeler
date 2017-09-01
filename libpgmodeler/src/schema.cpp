@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -69,5 +69,7 @@ QString Schema::getCodeDefinition(unsigned def_type)
 
 	attributes[ParsersAttributes::FILL_COLOR]=fill_color.name();
 	attributes[ParsersAttributes::RECT_VISIBLE]=(rect_visible ? ParsersAttributes::_TRUE_ : QString());
+	setFadedOutAttribute();
+
 	return(BaseObject::__getCodeDefinition(def_type));
 }

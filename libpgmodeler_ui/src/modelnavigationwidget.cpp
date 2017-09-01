@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,13 +25,13 @@ ModelNavigationWidget::ModelNavigationWidget(QWidget *parent): QWidget(parent)
 	connect(models_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(setCurrentModel()));
 
 	connect(close_tb, &QToolButton::clicked,
-			[=](){ emit s_modelCloseRequested(models_cmb->currentIndex()); });
+			[&](){ emit s_modelCloseRequested(models_cmb->currentIndex()); });
 
 	connect(next_tb, &QToolButton::clicked,
-			[=](){ models_cmb->setCurrentIndex(models_cmb->currentIndex()+1); });
+			[&](){ models_cmb->setCurrentIndex(models_cmb->currentIndex()+1); });
 
 	connect(previous_tb, &QToolButton::clicked,
-			[=](){ models_cmb->setCurrentIndex(models_cmb->currentIndex()-1); });
+			[&](){ models_cmb->setCurrentIndex(models_cmb->currentIndex()-1); });
 
 	connect(models_cmb, SIGNAL(highlighted(int)), this, SLOT(showTooltip(int)));
 

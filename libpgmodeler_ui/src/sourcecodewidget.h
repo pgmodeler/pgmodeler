@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -50,7 +50,13 @@ class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
 
 	public:
 		SourceCodeWidget(QWidget * parent = 0);
+
 		void setAttributes(DatabaseModel *model, BaseObject *object=nullptr);
+
+		/* Forcing the widget to indicate that the handled object is not protected
+		even if it IS protected. This will avoid the ok button of the parent dialog
+		to be disabled */
+		virtual bool isHandledObjectProtected(void){ return(false); }
 
 	public slots:
 		void applyConfiguration(void);

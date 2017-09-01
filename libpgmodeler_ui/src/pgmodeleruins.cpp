@@ -3,12 +3,14 @@
 #include "databasemodel.h"
 #include <QLabel>
 #include "numberedtexteditor.h"
+#include <QScreen>
+#include <QDesktopWidget>
 
 namespace PgModelerUiNS {
 
-	NumberedTextEditor *createNumberedTextEditor(QWidget *parent)
+	NumberedTextEditor *createNumberedTextEditor(QWidget *parent, bool handle_ext_files)
 	{
-		NumberedTextEditor *editor=new NumberedTextEditor(parent);
+		NumberedTextEditor *editor=new NumberedTextEditor(parent, handle_ext_files);
 
 		if(parent && !parent->layout())
 		{
@@ -42,7 +44,7 @@ namespace PgModelerUiNS {
 			label->setText(text);
 			label->setWordWrap(true);
 			label->setTextInteractionFlags(Qt::TextSelectableByMouse);
-			label->setMinimumHeight(output_trw->iconSize().height());
+			label->setMinimumHeight(output_trw->iconSize().height() * 1.5);
 			label->setMaximumHeight(label->heightForWidth(label->width()));
 			output_trw->setItemWidget(item, 0, label);
 		}
@@ -222,5 +224,99 @@ namespace PgModelerUiNS {
 		QFont font=widget->font();
 		font.setPointSizeF(font.pointSizeF() * factor);
 		widget->setFont(font);
+	}
+
+	void createExceptionsTree(QTreeWidget *exceptions_trw, Exception &e, QTreeWidgetItem *root)
+	{
+		vector<Exception> list;
+		QString text;
+		int idx=0;
+		QTreeWidgetItem *item=nullptr, *child_item=nullptr;
+
+		if(!exceptions_trw)
+			return;
+
+		e.getExceptionsList(list);
+
+		for(Exception &ex : list)
+		{
+			text=QString("[%1] - %2").arg(idx).arg(ex.getMethod());
+			item=createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("funcao")), root, false, true);
+
+			text=QString("%1 (%2)").arg(ex.getFile()).arg(ex.getLine());
+			createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("codigofonte")), item, false, true);
+
+			text=QString("%1 (%2)").arg(Exception::getErrorCode(ex.getErrorType())).arg(ex.getErrorType());
+			createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("msgbox_alerta")), item, false, true);
+
+			child_item=createOutputTreeItem(exceptions_trw, ex.getErrorMessage(), QPixmap(getIconPath("msgbox_erro")), item, false, true);
+			exceptions_trw->itemWidget(child_item, 0)->setStyleSheet(QString("color: #ff0000;"));
+
+			if(!ex.getExtraInfo().isEmpty())
+			{
+				child_item=createOutputTreeItem(exceptions_trw, ex.getExtraInfo(), QPixmap(getIconPath("msgbox_info")), item, false, true);
+				exceptions_trw->itemWidget(child_item, 0)->setStyleSheet(QString("color: #000080;"));
+			}
+
+			idx++;
+		}
+	}
+
+	QString getIconPath(const QString &icon)
+	{
+		return(QString(":/icones/icones/%1.png").arg(icon));
+	}
+
+	QString getIconPath(ObjectType obj_type)
+	{
+		return(getIconPath(BaseObject::getSchemaName(obj_type)));
+	}
+
+	void resizeDialog(QDialog *widget)
+	{
+		QSize min_size=widget->minimumSize();
+		int max_h = 0, curr_w =0, curr_h = 0,
+				screen_id = qApp->desktop()->screenNumber(qApp->activeWindow());
+		QScreen *screen=qApp->screens().at(screen_id);
+		float dpi_factor = 0;
+
+		dpi_factor = screen->logicalDotsPerInch() / 96.0f;
+
+		//If the dpi_factor is unchanged (1) we keep the dialog original dimension
+		if(dpi_factor <= 1.01f)
+			return;
+
+		max_h = screen->size().height() * 0.70;
+
+		/* If the widget's minimum size is zero then we need to do
+				a size adjustment on the widget prior to insert it into the dialog */
+		if(min_size.height() <= 0 || min_size.width() <= 0)
+		{
+			widget->adjustSize();
+			min_size=widget->size();
+		}
+
+		widget->adjustSize();
+		curr_h=widget->height();
+		curr_w=min_size.width();
+
+		// If the current height is greater than the widget's minimum height we will use a medium value
+		if(curr_h > min_size.height() && min_size.height() < max_h)
+			curr_h = (curr_h + min_size.height())/2.5;
+		//Using the maximum height if the widget's minimum height exceeds the maximum allowed
+		else if(min_size.height() >= max_h)
+			curr_h = max_h;
+
+		curr_w *= dpi_factor;
+		curr_h *= dpi_factor;
+
+		if(curr_w > screen->size().width())
+			curr_w = screen->size().width() * 0.80;
+
+		if(curr_h > screen->size().height())
+			curr_h = screen->size().height() * 0.80;
+
+		widget->setMinimumSize(curr_w, curr_h);
+		widget->resize(widget->minimumSize());
 	}
 }

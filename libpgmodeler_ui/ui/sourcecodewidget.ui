@@ -82,7 +82,7 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>65</width>
+         <width>16777215</width>
          <height>16777215</height>
         </size>
        </property>
@@ -95,6 +95,22 @@
         <string>PostgreSQL</string>
        </property>
       </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>5</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
      </item>
      <item>
       <widget class="QComboBox" name="version_cmb">

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -90,16 +90,16 @@ void SourceCodeWidget::setSourceCodeTab(int)
 	ObjectType obj_type=object->getObjectType();
 
 	if(sourcecode_twg->currentIndex()==0)
-		code_icon=QString("codigosql.png");
+		code_icon=QString("codigosql");
 	else
-		code_icon=QString("codigoxml.png");
+		code_icon=QString("codigoxml");
 
 	enabled=(sourcecode_twg->currentIndex()==0 &&
 			 ((obj_type==BASE_RELATIONSHIP &&
 			   dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
 			  || (obj_type!=BASE_RELATIONSHIP && obj_type!=OBJ_TEXTBOX)));
 
-	icone=QPixmap(QString(":/icones/icones/") + code_icon);
+	icone=QPixmap(PgModelerUiNS::getIconPath(code_icon));
 	icon_lbl->setPixmap(icone);
 	version_cmb->setEnabled(enabled);
 	pgsql_lbl->setEnabled(enabled);
@@ -257,8 +257,7 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 			code_options_cmb->setEnabled(false);
 #endif
 
-			obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") +
-											BaseObject::getSchemaName(object->getObjectType()) + QString(".png")));
+			obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(object->getObjectType())));
 
 			comment_edt->setText(object->getTypeName());
 

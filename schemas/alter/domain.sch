@@ -53,7 +53,7 @@
 %end
 
 #Changing constraint name (only in 9.2 or above)
-%if ({pgsql-ver} >= "9.2") %and {old-name} %and {new-name} %then
+%if ({pgsql-ver} >=f "9.2") %and {old-name} %and {new-name} %then
   [ALTER ] {sql-object} $sp {signature} 
   [ RENAME CONSTRAINT ] {old-name} [ TO ] {new-name} ; $br
   [-- ddl-end --] $br

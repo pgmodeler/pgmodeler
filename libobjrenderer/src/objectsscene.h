@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ class ObjectsScene: public QGraphicsScene {
 
 		/*! \brief Indicates that panning mode and range selection model are activate in inverse mode.
 		By default panning model is activated with a single left-click and range selection with SHIFT + left-click */
-		invert_panning_rangesel;
+		invert_rangesel_trigger;
 
 		//! \brief Indicates if the scene need to be moved
 		bool move_scene;
@@ -58,7 +58,16 @@ class ObjectsScene: public QGraphicsScene {
 
 		/*! \brief Timer responsible to check if the user puts cursor at corners for a certain amount of time.
 		When this timeout the scene_move_timer will be triggered and the scene will be moved */
-		corner_hover_timer;
+		corner_hover_timer,
+
+		/*! brief Timer responsible to control the interval between key presses/releases when moving objects with the keyboard.
+		This timer is started whenever the user releases the arrow keys. If the timer emits timeout() signal
+		indicates that the user take more than 500ms to press and release the arrow keys again, this indicates to the scene
+		to emit the signal s_objectsMove(true) to alert the end of the objects moving. If the user presses/releases the keys when
+		the timer is still running the same will be restarted, until its timeout is reached. This trick avoids 'spamming' the
+		operation list in ModelWidget creating registries only when the user starts and ends the objects movement. Intermediate
+		key presses/releases aren't not registered in the operation history */
+		object_move_timer;
 
 		//! \brief Attributes used to control the direction of scene movement when user puts cursor at corners
 		int scene_move_dx, scene_move_dy;
@@ -105,6 +114,14 @@ class ObjectsScene: public QGraphicsScene {
 
 		QGraphicsView *getActiveViewport(void);
 
+		//! brief Performs the final steps when moving the objects like adjusting position to grid, moving children object, etc
+		void finishObjectsMove(const QPointF &pnt_end);
+
+		/*! brief Performs the scene position adjustment when pressing/releasing the arrow keys to avoid objects to be hidden in the corners.
+		This method will adjust the scene size automatically when moving objects right or down if the selected items bounding rects
+		exceeds the scene's size limits */
+		void adjustScenePositionOnKeyEvent(int key);
+
 	protected:
 		//! \brief Brush used to draw the grid over the scene
 		static QBrush grid;
@@ -113,6 +130,8 @@ class ObjectsScene: public QGraphicsScene {
 		void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 		void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 		void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
+		void keyPressEvent(QKeyEvent *event);
+		void keyReleaseEvent(QKeyEvent *event);
 
 		//! \brief Draws a line from the point 'p_start' to the cursor position and simulates the relationship creation
 		void showRelationshipLine(bool value, const QPointF &p_start=QPointF(NAN,NAN));
@@ -122,7 +141,7 @@ class ObjectsScene: public QGraphicsScene {
 		~ObjectsScene(void);
 
 		static void setEnableCornerMove(bool enable);
-		static void setInvertPanningRangeSelection(bool invert);
+		static void setInvertRangeSelectionTrigger(bool invert);
 		static bool isCornerMoveEnabled(void);
 
 		static void setGridSize(unsigned size);
@@ -142,14 +161,18 @@ class ObjectsScene: public QGraphicsScene {
 		/*! \brief Returns the items bounding rect. By default the method returns the same as QGraphicsScene::itemsBoundingRect.
 		If the parameter seek_only_db_objs is true the returned rect will have the origin point calculated based upon the
 		visible objects that inherits BaseObjectView and are database model objects (tables, views, textboxes, schemas and relationships).
+
+		If the paramenter selected_only is true only selected objects will have the bounding rect calculated.
+		Currently this parameter is ignored when using seek_only_db_objs = false
+
 		Note: using this method with seek_only_db_objs=true can be time expensive depending on the size of the model so use it wisely. */
-		QRectF itemsBoundingRect(bool seek_only_db_objs=false);
+		QRectF itemsBoundingRect(bool seek_only_db_objs=false, bool selected_only = false);
 
 		//! \brief Returns a vector containing all the page rects.
 		vector<QRectF> getPagesForPrinting(const QSizeF &paper_size, const QSizeF &margin, unsigned &h_page_cnt, unsigned &v_page_cnt);
 
 		bool isRangeSelectionEnabled(void);
-		bool isPanningRangeSelectionInverted(void);
+		bool isRangeSelectionTriggerInverted(void);
 		bool isRelationshipLineVisible(void);
 		bool isMovingObjects(void);
 
@@ -168,9 +191,6 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Moves the scene when the user puts the mouse cursor on one of scene's edges
 		void moveObjectScene(void);
 
-		//! \brief Enable the panning mode for the viewport
-		void enablePannigMode(bool value);
-
 		//! \brief Handles and redirects the signal emitted by the modified object
 		void emitObjectModification(BaseGraphicObject *object);
 
@@ -180,12 +200,18 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Handles and redirects the signal emitted by the selected object
 		void emitObjectSelection(BaseGraphicObject *object, bool selected);
 
+		//! \brief Handles and redirects the signal emitted by the tables/views when the extended attributes are toggled
+		void emitExtAttributesToggled(void);
+
 	signals:
 		//! \brief Signal emitted when the user start or finalizes a object movement.
 		void s_objectsMoved(bool end_moviment);
 
 		//! \brief Signal emitted when a object is modified on scene
 		void s_objectModified(BaseGraphicObject *objeto);
+
+		//! \brief Signal emitted when the user toggles a table's extended attributes in the scene
+		void s_extAttributesToggled(void);
 
 		//! \brief Signal emitted when the user right-click a specific object on the scene requesting the popup menu
 		void s_popupMenuRequested(BaseObject *);

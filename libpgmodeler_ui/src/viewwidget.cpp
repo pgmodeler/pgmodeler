@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #include "viewwidget.h"
 #include "rulewidget.h"
 #include "triggerwidget.h"
+#include "indexwidget.h"
 #include "baseform.h"
 
 ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
@@ -26,7 +27,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 	try
 	{
 		ObjectTableWidget *tab=nullptr;
-		ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE };
+		ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX };
 		QGridLayout *grid=nullptr;
 		QVBoxLayout *vbox=nullptr;
 
@@ -35,17 +36,20 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 
 		Ui_ViewWidget::setupUi(this);
 
+		expression_txt=new NumberedTextEditor(this, true);
 		expression_hl=new SyntaxHighlighter(expression_txt, false, true);
 		expression_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		referencias_grid->addWidget(expression_txt, 4, 1, 1, 4);
 
 		code_txt=new NumberedTextEditor(this);
+		code_txt->setReadOnly(true);
 		code_hl=new SyntaxHighlighter(code_txt);
 		code_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 		vbox=new QVBoxLayout(code_prev_tab);
 		vbox->setContentsMargins(4,4,4,4);
 		vbox->addWidget(code_txt);
 
-		cte_expression_txt=new NumberedTextEditor(this);
+		cte_expression_txt=new NumberedTextEditor(this, true);
 		cte_expression_hl=new SyntaxHighlighter(cte_expression_txt);
 		cte_expression_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 		vbox=new QVBoxLayout(cte_tab);
@@ -67,8 +71,8 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		references_tab->setHeaderLabel(trUtf8("Alias Col."),2);
 		references_tab->setHeaderLabel(trUtf8("Flags: SF FW AW VD"),3);
 
-		cte_expression_cp=new CodeCompletionWidget(cte_expression_txt);
-		expression_cp=new CodeCompletionWidget(expression_txt);
+		cte_expression_cp=new CodeCompletionWidget(cte_expression_txt, true);
+		expression_cp=new CodeCompletionWidget(expression_txt, true);
 
 		frame_info=generateInformationFrame(trUtf8("To reference all columns in a table (*) just do not fill the field <strong>Column</strong>, this is the same as write <em><strong>[schema].[table].*</strong></em>"));
 
@@ -94,20 +98,26 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 			connect(tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeObject(int)));
 			connect(tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleObject(void)));
 			connect(tab, SIGNAL(s_rowEdited(int)), this, SLOT(handleObject(void)));
+			connect(tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateObject(int,int)));
 		}
 
 		objects_tab_map[OBJ_TRIGGER]->setColumnCount(4);
 		objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Name"), 0);
-		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
+		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 		objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Refer. Table"), 1);
-		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(QString(":/icones/icones/table.png")),1);
+		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("table")),1);
 		objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Firing"), 2);
-		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(QString(":/icones/icones/trigger.png")),2);
+		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("trigger")),2);
 		objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Events"), 3);
+
+		objects_tab_map[OBJ_INDEX]->setColumnCount(2);
+		objects_tab_map[OBJ_INDEX]->setHeaderLabel(trUtf8("Name"), 0);
+		objects_tab_map[OBJ_INDEX]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
+		objects_tab_map[OBJ_INDEX]->setHeaderLabel(trUtf8("Indexing"), 1);
 
 		objects_tab_map[OBJ_RULE]->setColumnCount(3);
 		objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Name"), 0);
-		objects_tab_map[OBJ_RULE]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
+		objects_tab_map[OBJ_RULE]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 		objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Execution"), 1);
 		objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Event"), 2);
 
@@ -180,10 +190,6 @@ int ViewWidget::openEditingForm(TableObject *object)
 														dynamic_cast<Class *>(object));
 	editing_form.setMainWidget(object_wgt);
 
-	//Disabling the apply button if the object is protected
-	if(object)
-		editing_form.apply_ok_btn->setEnabled(!object->isProtected());
-
 	return(editing_form.exec());
 }
 
@@ -203,6 +209,8 @@ void ViewWidget::handleObject(void)
 
 		if(obj_type==OBJ_TRIGGER)
 			openEditingForm<Trigger,TriggerWidget>(object);
+		else if(obj_type==OBJ_INDEX)
+			openEditingForm<Index,IndexWidget>(object);
 		else
 			openEditingForm<Rule,RuleWidget>(object);
 
@@ -210,6 +218,49 @@ void ViewWidget::handleObject(void)
 	}
 	catch(Exception &e)
 	{
+		listObjects(obj_type);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void ViewWidget::duplicateObject(int curr_row, int new_row)
+{
+	ObjectType obj_type=BASE_OBJECT;
+	BaseObject *object=nullptr, *dup_object=nullptr;
+	ObjectTableWidget *obj_table=nullptr;
+	View *view = dynamic_cast<View *>(this->object);
+	int op_id = -1;
+
+	try
+	{
+		obj_type=getObjectType(sender());
+
+		//Selects the object table based upon the passed object type
+		obj_table=getObjectTable(obj_type);
+
+		//Gets the object reference if there is an item select on table
+		if(curr_row >= 0)
+			object = reinterpret_cast<BaseObject *>(obj_table->getRowData(curr_row).value<void *>());
+
+		PgModelerNS::copyObject(&dup_object, object, obj_type);
+		dup_object->setName(PgModelerNS::generateUniqueName(dup_object, *view->getObjectList(obj_type), false, QString("_cp")));
+
+		op_id=op_list->registerObject(dup_object, Operation::OBJECT_CREATED, new_row, this->object);
+
+		view->addObject(dup_object);
+		view->setModified(true);
+		listObjects(obj_type);
+	}
+	catch(Exception &e)
+	{
+		//If operation was registered
+		if(op_id >= 0)
+		{
+			op_list->ignoreOperationChain(true);
+			op_list->removeLastOperation();
+			op_list->ignoreOperationChain(false);
+		}
+
 		listObjects(obj_type);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -303,6 +354,7 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 	ObjectTableWidget *tab=nullptr;
 	Trigger *trigger=nullptr;
 	Rule *rule=nullptr;
+	Index *index=nullptr;
 	ObjectType obj_type;
 	QString str_aux;
 	unsigned i;
@@ -346,6 +398,13 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 
 		//Column 2: Rule event type
 		tab->setCellText(~rule->getEventType(),row,2);
+	}
+	else
+	{
+		index=dynamic_cast<Index *>(object);
+
+		//Column 1: Indexing type
+		tab->setCellText(~index->getIndexingType(),row,1);
 	}
 
 	tab->setRowData(QVariant::fromValue<void *>(object), row);
@@ -736,7 +795,7 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 
 	listObjects(OBJ_TRIGGER);
 	listObjects(OBJ_RULE);
-
+	listObjects(OBJ_INDEX);
 }
 
 void ViewWidget::applyConfiguration(void)
@@ -744,7 +803,7 @@ void ViewWidget::applyConfiguration(void)
 	try
 	{
 		View *view=nullptr;
-		ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE };
+		ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX };
 		unsigned expr_type[]={ Reference::SQL_REFER_SELECT,
 							   Reference::SQL_REFER_FROM,
 							   Reference::SQL_REFER_WHERE,

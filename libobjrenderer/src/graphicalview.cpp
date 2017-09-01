@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -103,6 +103,9 @@ void GraphicalView::configureObject(void)
 	tab_objs.insert(tab_objs.end(),
 					view->getObjectList(OBJ_TRIGGER)->begin(),
 					view->getObjectList(OBJ_TRIGGER)->end());
+	tab_objs.insert(tab_objs.end(),
+					view->getObjectList(OBJ_INDEX)->begin(),
+					view->getObjectList(OBJ_INDEX)->end());
 
 	ext_attribs->setVisible(!tab_objs.empty() && !hide_ext_attribs);
 	ext_attribs_body->setVisible(!tab_objs.empty() && !hide_ext_attribs);
@@ -174,18 +177,7 @@ void GraphicalView::configureObject(void)
 		}
 	}
 
-	/* Calculating the maximum width between the title, columns and extended attributes.
-		This width is used to set the uniform width of table */
-	if(!columns->childItems().isEmpty() &&
-			(columns->boundingRect().width() > title->boundingRect().width() &&
-			 ((hide_ext_attribs || (columns->boundingRect().width() > ext_attribs->boundingRect().width())))))
-		width=columns->boundingRect().width() + (2 * HORIZ_SPACING);
-	else if(!ext_attribs->childItems().isEmpty() &&  !hide_ext_attribs &&
-			(ext_attribs->boundingRect().width() > title->boundingRect().width() &&
-			 ext_attribs->boundingRect().width() > columns->boundingRect().width()))
-		width=ext_attribs->boundingRect().width() + (2 * HORIZ_SPACING);
-	else
-		width=title->boundingRect().width() + (2 * HORIZ_SPACING);
+	width = calculateWidth();
 
 	//Resizes the title using the new width
 	title->resizeTitle(width, title->boundingRect().height());
@@ -229,36 +221,10 @@ void GraphicalView::configureObject(void)
 	this->bounding_rect.setTopLeft(title->boundingRect().topLeft());
 	this->bounding_rect.setWidth(title->boundingRect().width());
 
-	if(!ext_attribs->isVisible())
-	{
-		this->bounding_rect.setHeight(title->boundingRect().height() +
-									  body->boundingRect().height() - 1);
-		body->setRoundedCorners(RoundedRectItem::BOTTOMLEFT_CORNER | RoundedRectItem::BOTTOMRIGHT_CORNER);
-	}
-	else
-	{
-		this->bounding_rect.setHeight(title->boundingRect().height() +
-									  body->boundingRect().height() +
-									  ext_attribs_body->boundingRect().height() -2);
-		body->setRoundedCorners(RoundedRectItem::NONE_CORNERS);
-	}
-
-	//Set the protected icon position to the top-right on the title
-	protected_icon->setPos(title->pos().x() + title->boundingRect().width() * 0.90f,
-						   2 * VERT_SPACING);
-
+	BaseTableView::__configureObject(width);
 	BaseObjectView::__configureObject();
 	BaseObjectView::configureObjectShadow();
 	BaseObjectView::configureObjectSelection();
-
-	this->table_tooltip=view->getName(true) +
-						QString(" (") + view->getTypeName() + QString(") \n") +
-						QString("Id: %1\n").arg(view->getObjectId()) +
-						TableObjectView::CONSTR_DELIM_START +
-						trUtf8("Connected rels: %1").arg(this->getConnectRelsCount()) +
-						TableObjectView::CONSTR_DELIM_END;
-
-	this->setToolTip(this->table_tooltip);
 	configureTag();
 	configureSQLDisabledInfo();
 	requestRelationshipsUpdate();

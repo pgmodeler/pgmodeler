@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 #include "baseobjectwidget.h"
 #include "permissionwidget.h"
 #include "customsqlwidget.h"
-#include "pgmodeleruins.h"
 #include "baseform.h"
 
 const QColor BaseObjectWidget::PROT_LINE_BGCOLOR=QColor(255,180,180);
@@ -50,6 +49,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 		schema_sel=nullptr;
 		owner_sel=nullptr;
 		tablespace_sel=nullptr;
+		object_protected = false;
 
 		PgModelerUiNS::configureWidgetFont(protected_obj_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 
@@ -119,6 +119,11 @@ bool BaseObjectWidget::eventFilter(QObject *object, QEvent *event)
 ObjectType BaseObjectWidget::getHandledObjectType(void)
 {
 	return(handled_obj_type);
+}
+
+bool BaseObjectWidget::isHandledObjectProtected(void)
+{
+	return(object_protected);
 }
 
 void BaseObjectWidget::hideEvent(QHideEvent *)
@@ -357,7 +362,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 
 	if(object)
 	{
-		bool prot;
+		//bool prot = false;
 
 		obj_id_lbl->setVisible(true);
 		obj_id_lbl->setText(QString("ID: %1").arg(object->getObjectId()));
@@ -385,15 +390,16 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 			schema_sel->setSelectedObject(object->getSchema());
 
 		obj_type=object->getObjectType();
-		prot=(parent_type!=OBJ_RELATIONSHIP &&
+		object_protected=(parent_type!=OBJ_RELATIONSHIP &&
 						   (object->isProtected() ||
 							((obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT) &&
 							 dynamic_cast<TableObject *>(object)->isAddedByRelationship())));
-		protected_obj_frm->setVisible(prot);
+		protected_obj_frm->setVisible(object_protected);
 		disable_sql_chk->setChecked(object->isSQLDisabled());
 	}
 	else
 	{
+		object_protected = false;
 		obj_id_lbl->setVisible(false);
 		protected_obj_frm->setVisible(false);
 
@@ -465,7 +471,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 
 	if(obj_type!=BASE_OBJECT)
 	{
-		obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
+		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(obj_type)));
 		obj_icon_lbl->setToolTip(BaseObject::getTypeName(obj_type));
 
 		if(obj_type!=OBJ_PERMISSION && obj_type!=OBJ_CAST)
@@ -545,7 +551,7 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 	ico_lbl->setMinimumSize(QSize(24, 24));
 	ico_lbl->setMaximumSize(QSize(24, 24));
 	ico_lbl->setScaledContents(true);
-	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
+	ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("msgbox_info")));
 	ico_lbl->setAlignment(Qt::AlignLeft|Qt::AlignTop);
 
 	grid->addWidget(ico_lbl, 0, 0, 1, 1);
@@ -637,7 +643,7 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 	ico_lbl->setMinimumSize(QSize(24, 24));
 	ico_lbl->setMaximumSize(QSize(24, 24));
 	ico_lbl->setScaledContents(true);
-	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
+	ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")));
 	ico_lbl->setAlignment(Qt::AlignLeft|Qt::AlignTop);
 
 	grid->addWidget(ico_lbl, 0, 0, 1, 1);

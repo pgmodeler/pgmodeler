@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,6 +40,8 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 		to remove an element from table. By default, the exclusions are made without confirmation */
 		bool conf_exclusion;
 
+		QTableWidgetItem *getItem(unsigned row_idx, unsigned col_idx);
+
 	public:
 		//! \brief Constants used to configure the table buttons
 		static const unsigned ADD_BUTTON=1,
@@ -47,12 +49,12 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 		UPDATE_BUTTON=4,
 		MOVE_BUTTONS=8,
 		EDIT_BUTTON=16,
-		REMOVE_ALL_BUTTON=32,
-		ALL_BUTTONS=63,
+		DUPLICATE_BUTTON=32,
+		REMOVE_ALL_BUTTON=64,
+		ALL_BUTTONS=127,
 		NO_BUTTONS=0;
 
-		ObjectTableWidget(unsigned button_conf=ALL_BUTTONS,
-						  bool conf_exclusion=false, QWidget * parent = 0);
+		ObjectTableWidget(unsigned button_conf=ALL_BUTTONS, bool conf_exclusion=false, QWidget * parent = 0);
 
 		//! \brief Sets the table's column count
 		void setColumnCount(unsigned col_count);
@@ -87,6 +89,14 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 		//! \brief Returns the specified cell text
 		QString getCellText(unsigned row_idx, unsigned col_idx);
 
+		Qt::CheckState getCellCheckState(unsigned row_idx, unsigned col_idx);
+
+		void setCellCheckState(unsigned row_idx, unsigned col_idx, Qt::CheckState check_state);
+
+		void setCellDisabled(unsigned row_idx, unsigned col_idx, bool disabled);
+
+		bool isCellDisabled(unsigned row_idx, unsigned col_idx);
+
 		//! \brief Returns the data relative to the specified row
 		QVariant getRowData(unsigned row_idx);
 
@@ -112,12 +122,17 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 		//! \brief Sets the table button configuration. Use the constants ???_BUTTON combined via bitwise operation.
 		void setButtonConfiguration(unsigned button_conf);
 
+		void adjustColumnToContents(int col);
+
 	private slots:
 		//! \brief Moves a row up or down according to the button that triggers the slot
 		void moveRows(void);
 
 		//! \brief Removes the currently selected line
 		void removeRow(void);
+
+		//! \brief Duplicate the selected row creating a new item in the end of the grid
+		void duplicateRow(void);
 
 		/*! \brief This method does not execute any action, only emit a signal indicating that the row
 		is ready to the edition. The edit operation must be implemented by the user and be connected to
@@ -163,23 +178,31 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 		//! \brief Signal emitted when all rows are removed from table
 		void s_rowsRemoved(void);
 
-		//! \brief Signal emitted when a single row is removed. The row index is send together with the signal
+		//! \brief Signal emitted when a single row is removed. The row index is sent together with the signal
 		void s_rowRemoved(int);
 
-		//! \brief Signal emitted when a row is selected. The row index is send together with the signal
+		//! \brief Signal emitted when a row is selected. The row index is sent together with the signal
 		void s_rowSelected(int);
 
-		//! \brief Signal emitted when a row is edited. The row index is send together with the signal
+		//! \brief Signal emitted when a row is edited. The row index is sent together with the signal
 		void s_rowEdited(int);
 
-		//! \brief Signal emitted when a row is updated. The row index is send together with the signal
+		//! \brief Signal emitted when a row is duplicated. The indexes of the selected and generated rows are sent together with the signal
+		void s_rowDuplicated(int, int);
+
+		//! \brief Signal emitted when a row is updated. The row index is sent together with the signal
 		void s_rowUpdated(int);
 
-		//! \brief Signal emitted when a column is removed. The column index is send together with the signal
+		//! \brief Signal emitted when a column is removed. The column index is sent together with the signal
 		void s_columnRemoved(int);
 
-		//! \brief Signal emitted when a column is added. The column index is send together with the signal
+		//! \brief Signal emitted when a column is added. The column index is sent together with the signal
 		void s_columnAdded(int);
+
+		void s_cellClicked(int, int);
+
+	protected:
+		void resizeEvent(QResizeEvent *);
 };
 
 #endif

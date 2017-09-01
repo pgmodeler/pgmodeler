@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	model_wgt=nullptr;
 	create_model=true;
 
-	htmlitem_del=new HtmlItemDelegate;
+	htmlitem_del=new HtmlItemDelegate(this);
 	output_trw->setItemDelegateForColumn(0, htmlitem_del);
 
 	rand_color_ht=new HintTextWidget(rand_color_hint, this);
@@ -73,10 +73,10 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelImport(void)));
 
 	connect(import_to_model_chk, &QCheckBox::toggled,
-			[=](bool checked){ create_model=!checked; });
+			[&](bool checked){ create_model=!checked; });
 
 	connect(database_cmb, &QComboBox::currentTextChanged,
-			[=]() {
+			[&]() {
 		if(database_cmb->currentIndex()==0)
 			db_objects_tw->clear();
 
@@ -109,6 +109,14 @@ void DatabaseImportForm::createThread(void)
 	import_helper=new DatabaseImportHelper;
 	import_helper->moveToThread(import_thread);
 
+	connect(import_thread, &QThread::started, [&](){
+		output_trw->setUniformRowHeights(true);
+	});
+
+	connect(import_thread, &QThread::finished, [&](){
+		output_trw->setUniformRowHeights(false);
+	});
+
 	connect(import_thread, SIGNAL(started(void)), import_helper, SLOT(importDatabase()));
 	connect(import_helper, SIGNAL(s_importCanceled()), this, SLOT(handleImportCanceled()));
 	connect(import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)));
@@ -138,9 +146,9 @@ void DatabaseImportForm::updateProgress(int progress, QString msg, ObjectType ob
 	progress_pb->setValue(progress);
 
 	if(obj_type!=BASE_OBJECT)
-		ico=QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png"));
+		ico=QPixmap(PgModelerUiNS::getIconPath(obj_type));
 	else
-		ico=QPixmap(QString(":/icones/icones/msgbox_info.png"));
+		ico=QPixmap(PgModelerUiNS::getIconPath("msgbox_info"));
 
 	ico_lbl->setPixmap(ico);
 	PgModelerUiNS::createOutputTreeItem(output_trw, msg, ico);
@@ -337,22 +345,21 @@ void DatabaseImportForm::listDatabases(void)
 		{
 			emit s_connectionsUpdateRequest();
 		}
-		else
+
+		Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+
+		if(conn)
 		{
-			Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-
-			if(conn)
-			{
-				//List the available databases using the selected connection
-				import_helper->setConnection(*conn);
-				DatabaseImportForm::listDatabases(*import_helper, database_cmb);
-			}
-			else
-				database_cmb->clear();
-
-			db_objects_tw->clear();
-			database_cmb->setEnabled(database_cmb->count() > 1);
+			//List the available databases using the selected connection
+			import_helper->setConnection(*conn);
+			DatabaseImportForm::listDatabases(*import_helper, database_cmb);
 		}
+		else
+			database_cmb->clear();
+
+		db_objects_tw->clear();
+		database_cmb->setEnabled(database_cmb->count() > 1);
+
 	}
 	catch(Exception &e)
 	{
@@ -390,13 +397,11 @@ void DatabaseImportForm::captureThreadError(Exception e)
 	destroyModelWidget();
 	finishImport(trUtf8("Importing process aborted!"));
 
-	ico=QPixmap(QString(":/icones/icones/msgbox_erro.png"));
+	ico=QPixmap(PgModelerUiNS::getIconPath("msgbox_erro"));
 	ico_lbl->setPixmap(ico);
 
-	item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getErrorMessage()), ico, nullptr, true, true);
-
-	if(!e.getExtraInfo().isEmpty())
-		PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getExtraInfo()), ico, item, true, true);
+	item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getErrorMessage()), ico, nullptr, false, true);
+	PgModelerUiNS::createExceptionsTree(output_trw, e, item);
 
 	//Destroy the current import thread and helper to avoid reuse
 	destroyThread();
@@ -493,7 +498,7 @@ void DatabaseImportForm::destroyModelWidget(void)
 
 void DatabaseImportForm::handleImportCanceled(void)
 {
-	QPixmap ico=QPixmap(QString(":/icones/icones/msgbox_alerta.png"));
+	QPixmap ico=QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta"));
 	QString msg=trUtf8("Importing process canceled by user!");
 
 	if(!create_model)
@@ -520,7 +525,7 @@ void DatabaseImportForm::handleImportFinished(Exception e)
 	model_wgt->getDatabaseModel()->setInvalidated(false);
 
 	finishImport(trUtf8("Importing process sucessfuly ended!"));
-	ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
+	ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("msgbox_info")));
 
 	import_helper->closeConnection();
 	import_thread->quit();
@@ -599,7 +604,7 @@ void DatabaseImportForm::listDatabases(DatabaseImportHelper &import_helper, QCom
 
 				for(int i=0; i < list.count(); i++)
 				{
-					dbcombo->setItemIcon(i, QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(OBJ_DATABASE) + QString(".png")));
+					dbcombo->setItemIcon(i, QPixmap(PgModelerUiNS::getIconPath(OBJ_DATABASE)));
 					dbcombo->setItemData(i, oids[list[i]]);
 				}
 
@@ -647,7 +652,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 				//Creating database item
 				db_item=new QTreeWidgetItem;
 				db_item->setText(0, import_helper.getCurrentDatabase());
-				db_item->setIcon(0, QPixmap(QString(":/icones/icones/database.png")));
+				db_item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath(OBJ_DATABASE)));
 				attribs=catalog.getObjectsAttributes(OBJ_DATABASE, QString(), QString(), {}, {{ParsersAttributes::NAME, import_helper.getCurrentDatabase()}});
 
 				db_item->setData(OBJECT_ID, Qt::UserRole, attribs[0].at(ParsersAttributes::OID));
@@ -674,6 +679,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 			}
 			else
 			{
+				ObjectType obj_type = BASE_OBJECT;
 				aux_prog=task_prog_wgt.progress_pb->value();
 				inc=40/static_cast<float>(sch_items.size());
 
@@ -692,9 +698,10 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 						aux_prog+=inc1;
 						if(aux_prog > 99)	aux_prog=99;
 
-						task_prog_wgt.updateProgress(static_cast<int>(aux_prog), trUtf8("Retrieving objects of table `%1'...").arg(tab_items.back()->text(0)), OBJ_TABLE);
+						obj_type = static_cast<ObjectType>(tab_items.back()->data(OBJECT_TYPE, Qt::UserRole).toUInt());
+						task_prog_wgt.updateProgress(static_cast<int>(aux_prog), trUtf8("Retrieving objects of `%1' (%2)...").arg(tab_items.back()->text(0)).arg(BaseObject::getTypeName(obj_type)), obj_type);
 						DatabaseImportForm::updateObjectsTree(import_helper, tree_wgt,
-																									BaseObject::getChildObjectTypes(OBJ_TABLE), checkable_items, disable_empty_grps,
+																									BaseObject::getChildObjectTypes(obj_type), checkable_items, disable_empty_grps,
 																									tab_items.back(), sch_items.back()->text(0), tab_items.back()->text(0));
 						tab_items.pop_back();
 					}
@@ -757,7 +764,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 			{
 				//Create a group item for the current type
 				group=new QTreeWidgetItem(root);
-				group->setIcon(0, QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(grp_type) + QString("_grp.png")));
+				group->setIcon(0, QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(grp_type) + QString("_grp"))));
 				group->setFont(0, grp_fnt);
 
 				//Group items does contains a zero valued id to indicate that is not a valide object
@@ -796,7 +803,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 				}
 
 				item=new QTreeWidgetItem(group);
-				item->setIcon(0, QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
+				item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath(obj_type)));
 				item->setText(0, label);
 				item->setText(OBJECT_ID, attribs[ParsersAttributes::OID]);
 				item->setData(OBJECT_NAME, Qt::UserRole, name);
@@ -848,7 +855,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 				item->setData(OBJECT_SCHEMA, Qt::UserRole, schema);
 				item->setData(OBJECT_TABLE, Qt::UserRole, table);
 
-				if(obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLE)
+				if(obj_type==OBJ_SCHEMA || obj_type == OBJ_TABLE || obj_type == OBJ_VIEW)
 					items_vect.push_back(item);
 			}
 

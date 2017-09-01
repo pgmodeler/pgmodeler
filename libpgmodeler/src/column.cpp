@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -195,9 +195,9 @@ QString Column::getAlterDefinition(BaseObject *object)
 			attribs[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
 		if(!this->type.isEquivalentTo(col->type) ||
-				(this->type==col->type &&
-				 (this->type.hasVariableLength() || this->type.acceptsPrecision()) &&
-				 ((this->type.getLength()!=col->type.getLength()) || (this->type.getPrecision()!=col->type.getPrecision()))))
+				(this->type.isEquivalentTo(col->type) &&
+				 ((this->type.hasVariableLength() && (this->type.getLength()!=col->type.getLength())) ||
+					(this->type.acceptsPrecision() && (this->type.getPrecision()!=col->type.getPrecision())))))
 			attribs[ParsersAttributes::TYPE]=col->type.getCodeDefinition(SchemaParser::SQL_DEFINITION);
 
 		if(col->sequence)

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,6 +40,12 @@ MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) :
 	objs_sql_disabled_ht=new HintTextWidget(objs_sql_disabled_hint, this);
 	objs_sql_disabled_ht->setText(objs_sql_disabled_chk->statusTip());
 
+	objs_fadedout_ht=new HintTextWidget(objs_fadedout_hint, this);
+	objs_fadedout_ht->setText(objs_fadedout_chk->statusTip());
+
+	objs_extattribs_ht=new HintTextWidget(objs_extattribs_hint, this);
+	objs_extattribs_ht->setText(objs_extattribs_chk->statusTip());
+
 	custom_sql_ht=new HintTextWidget(custom_sql_hint, this);
 	custom_sql_ht->setText(custom_sql_chk->statusTip());
 
@@ -52,36 +58,49 @@ MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) :
 	custom_colors_ht=new HintTextWidget(custom_colors_hint, this);
 	custom_colors_ht->setText(custom_colors_chk->statusTip());
 
-	extract_ht=new HintTextWidget(extract_hint, this);
-	extract_ht->setText(extract_rb->statusTip());
+	extract_restore_ht=new HintTextWidget(extract_restore_hint, this);
+	extract_restore_ht->setText(extract_restore_rb->statusTip());
+
+	extract_only_ht=new HintTextWidget(extract_only_hint, this);
+	extract_only_ht->setText(extract_only_rb->statusTip());
 
 	restore_ht=new HintTextWidget(restore_hint, this);
 	restore_ht->setText(restore_rb->statusTip());
 
-	htmlitem_deleg=new HtmlItemDelegate;
+	generic_sql_objs_ht=new HintTextWidget(generic_sql_objs_hint, this);
+	generic_sql_objs_ht->setText(generic_sql_objs_chk->statusTip());
+
+	htmlitem_deleg=new HtmlItemDelegate(this);
 	output_trw->setItemDelegateForColumn(0, htmlitem_deleg);
 
 	connect(cancel_btn, SIGNAL(clicked()), this, SLOT(reject()));
 	connect(apply_btn, SIGNAL(clicked()), this, SLOT(handleObjectsMetada()));
 
 	connect(extract_from_cmb, &QComboBox::currentTextChanged,
-					[=](){ apply_btn->setDisabled(extract_from_cmb->count() == 0); });
+					[&](){ apply_btn->setDisabled(extract_from_cmb->count() == 0); });
 
 	connect(select_file_tb, &QToolButton::clicked,
-					[=](){	selectFile(extract_rb->isChecked()); });
+					[&](){	selectFile(extract_restore_rb->isChecked() ||
+														 extract_only_rb->isChecked()); });
 
-	connect(restore_rb, SIGNAL(toggled(bool)), extract_from_cmb, SLOT(setDisabled(bool)));
 	connect(extract_from_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableMetadataHandling()));
 	connect(backup_file_edt, SIGNAL(textChanged(QString)), this, SLOT(enableMetadataHandling()));
 	connect(restore_rb, SIGNAL(toggled(bool)), this, SLOT(enableMetadataHandling()));
-	connect(extract_rb, SIGNAL(toggled(bool)), this, SLOT(enableMetadataHandling()));
+	connect(extract_restore_rb, SIGNAL(toggled(bool)), this, SLOT(enableMetadataHandling()));
+	connect(extract_only_rb, SIGNAL(toggled(bool)), this, SLOT(enableMetadataHandling()));
 }
 
 void MetadataHandlingForm::enableMetadataHandling(void)
 {
+	extract_from_cmb->setVisible(!restore_rb->isChecked());
+	extract_from_lbl->setVisible(!restore_rb->isChecked());
+	apply_to_lbl->setVisible(!extract_only_rb->isChecked());
+	apply_to_edt->setVisible(!extract_only_rb->isChecked());
+
 	apply_btn->setEnabled(model_wgt &&
-												(	(extract_rb->isChecked() && extract_from_cmb->count() > 0) ||
-													(restore_rb->isChecked() && !backup_file_edt->text().isEmpty())));
+												(((extract_restore_rb->isChecked() && extract_from_cmb->count() > 0) ||
+													(extract_only_rb->isChecked() && extract_from_cmb->count() > 0 && !backup_file_edt->text().isEmpty()) ||
+													(restore_rb->isChecked() && !backup_file_edt->text().isEmpty()))));
 }
 
 void MetadataHandlingForm::setModelWidget(ModelWidget *model_wgt)
@@ -136,36 +155,44 @@ void MetadataHandlingForm::handleObjectsMetada(void)
 		options+=(objs_sql_disabled_chk->isChecked() ? DatabaseModel::META_OBJS_SQLDISABLED : 0);
 		options+=(tag_objs_chk->isChecked() ? DatabaseModel::META_TAG_OBJS : 0);
 		options+=(textbox_objs_chk->isChecked() ? DatabaseModel::META_TEXTBOX_OBJS : 0);
+		options+=(objs_fadedout_chk->isChecked() ? DatabaseModel::META_OBJS_FADEDOUT : 0);
+		options+=(objs_extattribs_chk->isChecked() ? DatabaseModel::META_OBJS_EXTATTRIBS : 0);
+		options+=(generic_sql_objs_chk->isChecked() ? DatabaseModel::META_GENERIC_SQL_OBJS : 0);
 
 		connect(model_wgt->getDatabaseModel(), SIGNAL(s_objectLoaded(int,QString,unsigned)), this, SLOT(updateProgress(int,QString,unsigned)));
 
-		if(extract_rb->isChecked())
+		if(extract_restore_rb->isChecked() || extract_only_rb->isChecked())
 		{
 			extract_model=reinterpret_cast<DatabaseModel *>(extract_from_cmb->currentData(Qt::UserRole).value<void *>());
 
-			//Configuring the temporary metadata file
-			tmp_file.setFileTemplate(GlobalAttributes::TEMPORARY_DIR +
-															 GlobalAttributes::DIR_SEPARATOR +
-															 QString("%1_metadata_XXXXXX.%2").arg(extract_model->getName()).arg(QString("omf")));
+			if(extract_only_rb->isChecked())
+				metadata_file = backup_file_edt->text();
+			else
+			{
+				//Configuring the temporary metadata file
+				tmp_file.setFileTemplate(GlobalAttributes::TEMPORARY_DIR +
+																 GlobalAttributes::DIR_SEPARATOR +
+																 QString("%1_metadata_XXXXXX.%2").arg(extract_model->getName()).arg(QString("omf")));
 
-			tmp_file.open();
-			metadata_file=tmp_file.fileName();
-			tmp_file.close();
+				tmp_file.open();
+				metadata_file=tmp_file.fileName();
+				tmp_file.close();
+			}
 
 			connect(extract_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), this, SLOT(updateProgress(int,QString,unsigned)));
 
 			root_item=PgModelerUiNS::createOutputTreeItem(output_trw,
 																										PgModelerUiNS::formatMessage(trUtf8("Extracting metadata to file `%1'").arg(metadata_file)),
-																										QPixmap(QString(":/icones/icones/msgbox_info.png")), nullptr);
+																										QPixmap(PgModelerUiNS::getIconPath("msgbox_info")), nullptr);
 
 			extract_model->saveObjectsMetadata(metadata_file, options);
 
-			if(!backup_file_edt->text().isEmpty())
+			if(extract_restore_rb->isChecked() && !backup_file_edt->text().isEmpty())
 			{
 				root_item->setExpanded(false);
 				root_item=PgModelerUiNS::createOutputTreeItem(output_trw,
 																											PgModelerUiNS::formatMessage(trUtf8("Saving backup metadata to file `%1'").arg(backup_file_edt->text())),
-																											QPixmap(QString(":/icones/icones/msgbox_info.png")), nullptr);
+																											QPixmap(PgModelerUiNS::getIconPath("msgbox_info")), nullptr);
 
 				model_wgt->getDatabaseModel()->saveObjectsMetadata(backup_file_edt->text());
 			}
@@ -175,17 +202,23 @@ void MetadataHandlingForm::handleObjectsMetada(void)
 			metadata_file=backup_file_edt->text();
 		}
 
-		root_item->setExpanded(false);
-		root_item=PgModelerUiNS::createOutputTreeItem(output_trw,
-																									PgModelerUiNS::formatMessage(trUtf8("Applying metadata from file `%1'").arg(metadata_file)),
-																									QPixmap(QString(":/icones/icones/msgbox_info.png")), nullptr);
+		if(root_item)
+			root_item->setExpanded(false);
 
-		model_wgt->setUpdatesEnabled(false);
-		model_wgt->getDatabaseModel()->loadObjectsMetadata(metadata_file, options);
-		model_wgt->adjustSceneSize();
-		model_wgt->restoreLastCanvasPosition();
-		model_wgt->setUpdatesEnabled(true);
-		model_wgt->setModified(true);
+		if(!extract_only_rb->isChecked())
+		{
+			root_item=PgModelerUiNS::createOutputTreeItem(output_trw,
+																										PgModelerUiNS::formatMessage(trUtf8("Applying metadata from file `%1'").arg(metadata_file)),
+																										QPixmap(PgModelerUiNS::getIconPath("msgbox_info")), nullptr);
+
+			model_wgt->setUpdatesEnabled(false);
+			model_wgt->getDatabaseModel()->loadObjectsMetadata(metadata_file, options);
+			model_wgt->adjustSceneSize();
+			model_wgt->restoreLastCanvasPosition();
+			model_wgt->setUpdatesEnabled(true);
+			model_wgt->setModified(true);
+			model_wgt->updateObjectsOpacity();
+		}
 
 		disconnect(model_wgt->getDatabaseModel(), nullptr, this, nullptr);
 
@@ -193,11 +226,10 @@ void MetadataHandlingForm::handleObjectsMetada(void)
 			disconnect(extract_model, nullptr, this, nullptr);
 
 		emit s_metadataHandled();
-		this->accept();
 	}
 	catch(Exception &e)
 	{
-		QPixmap icon=QPixmap(QString(":/icones/icones/msgbox_erro.png"));
+		QPixmap icon=QPixmap(PgModelerUiNS::getIconPath("msgbox_erro"));
 
 		disconnect(model_wgt->getDatabaseModel(), nullptr, this, nullptr);
 
@@ -258,12 +290,12 @@ void MetadataHandlingForm::updateProgress(int progress, QString msg, unsigned in
 	if(obj_type==BASE_OBJECT)
 	{
 		if(progress==100)
-			icon=QPixmap(QString(":/icones/icones/msgbox_info.png"));
+			icon=QPixmap(PgModelerUiNS::getIconPath("msgbox_info"));
 		else
-			icon=QPixmap(QString(":/icones/icones/msgbox_alerta.png"));
+			icon=QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta"));
 	}
 	else
-		icon=QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png"));
+		icon=QPixmap(PgModelerUiNS::getIconPath(obj_type));
 
 	PgModelerUiNS::createOutputTreeItem(output_trw, fmt_msg, icon, root_item);
 	progress_lbl->setText(fmt_msg);

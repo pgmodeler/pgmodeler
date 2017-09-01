@@ -1,8 +1,8 @@
 #!/bin/bash
 
-QT_INSTALL_VERSION='5.5.1'
-QT_BASE_VERSION='5.5'
-PGSQL_VERSION='9.5'
+QT_INSTALL_VERSION='5.6.2'
+QT_BASE_VERSION='5.6'
+PGSQL_VERSION='9.6'
 INNOSETUP_CMD='/c/Program Files (x86)/Inno Setup 5/ISCC.exe'
 LOG=windeploy.log
 
@@ -42,7 +42,7 @@ done
 
 # Define the base name of the binary
 if [ $DEMO_VERSION = 1 ]; then
-  PKGNAME="pgmodeler-demo-windows$WIN_BITS"
+  PKGNAME="pgmodeler-$DEPLOY_VER-demo-windows$WIN_BITS"
 else
   PKGNAME="pgmodeler-$DEPLOY_VER-windows$WIN_BITS"
 fi
@@ -64,11 +64,11 @@ if [ $X64_BUILD = 1 ]; then
 		    $MINGW_ROOT/libgcc_s_seh-1.dll \
 		    $MINGW_ROOT/libstdc++-6.dll \
 		    $MINGW_ROOT/libwinpthread-1.dll \
-			$PGSQL_ROOT/iconv-2.dll \
+			$PGSQL_ROOT/libiconv-2.dll \
 			$PGSQL_ROOT/libintl-8.dll"
 else
   # Default setting for x86 build
-  QT_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/${QT_BASE_VERSION}/mingw492_32/"
+  QT_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/${QT_BASE_VERSION}/mingw49_32/"
   QMAKE_ROOT=$QT_ROOT/bin
   QMAKE_ARGS="-r -spec win32-g++ CONFIG+=release"
   MINGW_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/Tools/mingw492_32/bin"
@@ -110,14 +110,16 @@ DEP_LIBS+=" $QMAKE_ROOT/Qt5Core.dll \
 		  $PGSQL_ROOT/zlib1.dll"
 		  
 #Dependency qt plugins copied to build dir
-DEP_PLUGINS="imageformats/qgif.dll \
+DEP_PLUGINS="imageformats/qdds.dll \
+			 imageformats/qgif.dll \
+			 imageformats/qicns.dll \
 			 imageformats/qico.dll \
 			 imageformats/qjpeg.dll \
-			 imageformats/qmng.dll \
 			 imageformats/qsvg.dll \
 			 imageformats/qtga.dll \
 			 imageformats/qtiff.dll \
 			 imageformats/qwbmp.dll \
+			 imageformats/qwebp.dll \
 			 platforms/qwindows.dll \
 			 printsupport/windowsprintersupport.dll"
 		 
@@ -127,7 +129,7 @@ clear
 echo
 echo "pgModeler Windows deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.com.br"
-echo "Copyright 2006-2016 Raphael A. Silva <raphael@pgmodeler.com.br>"
+echo "Copyright 2006-2017 Raphael A. Silva <raphael@pgmodeler.com.br>"
 
 # Identifying Qt version
 if [ -e "$QMAKE_ROOT/qmake" ]; then
@@ -181,7 +183,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Compiling code..."
-$MINGW_ROOT/mingw32-make.exe -j5 >> $LOG 2>&1
+$MINGW_ROOT/mingw32-make.exe -j7 >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo

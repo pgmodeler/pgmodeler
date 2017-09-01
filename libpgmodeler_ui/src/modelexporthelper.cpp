@@ -31,10 +31,32 @@ void ModelExportHelper::abortExport(Exception &e)
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 }
 
+void ModelExportHelper::handleSQLError(Exception &e, const QString &sql_cmd, bool ignore_dup)
+{
+	//Ignoring the error if it is in the ignored list
+	if(ignored_errors.indexOf(e.getExtraInfo()) >= 0 ||
+			(ignore_dup && isDuplicationError(e.getExtraInfo())))
+		emit s_errorIgnored(e.getExtraInfo(), e.getErrorMessage(), sql_cmd);
+	//Raises an excpetion if the error returned by the database is not listed in the ignored list of errors
+	else if(ignored_errors.indexOf(e.getExtraInfo()) < 0)
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
+	else
+		errors.push_back(e);
+}
+
 void ModelExportHelper::setIgnoredErrors(const QStringList &err_codes)
 {
-	ignored_errors=err_codes;
-	ignored_errors.removeDuplicates();
+	QRegExp valid_code = QRegExp("([a-z]|[A-Z]|[0-9])+");
+	QStringList error_codes=err_codes;
+
+	ignored_errors.clear();
+	error_codes.removeDuplicates();
+
+	for(QString code : error_codes)
+	{
+		if(valid_code.exactMatch(code))
+			ignored_errors.push_back(code);
+	}
 }
 
 void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver)
@@ -367,7 +389,18 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		if(drop_db)
 		{
 			emit s_progressUpdated(progress, trUtf8("Trying to drop database `%1'.").arg(db_model->getName()));
-			conn.executeDDLCommand(QString("DROP DATABASE IF EXISTS %1;").arg(db_model->getName(true)));
+
+			try
+			{
+				sql_cmd = QString("DROP DATABASE IF EXISTS %1;").arg(db_model->getName(true));
+				conn.executeDDLCommand(sql_cmd);
+			}
+			catch(Exception &e)
+			{
+				handleSQLError(e, sql_cmd, ignore_dup);
+			}
+
+			sql_cmd.clear();
 		}
 
 		if(simulate)
@@ -400,16 +433,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 				}
 				catch(Exception &e)
 				{
-					//Ignoring the error if it is in the ignored list
-					if(ignored_errors.indexOf(e.getExtraInfo()) >= 0 ||
-							(ignore_dup && isDuplicationError(e.getExtraInfo())))
-						emit s_errorIgnored(e.getExtraInfo(), e.getErrorMessage(), sql_cmd);
-					//Raises an excpetion if the error returned by the database is not listed in the ignored list of errors
-					else if(ignored_errors.indexOf(e.getExtraInfo()) < 0)
-						throw Exception(e.getErrorMessage(),
-										e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
-					else
-						errors.push_back(e);
+					handleSQLError(e, sql_cmd, ignore_dup);
 				}
 
 				created_objs[types[type_id]]++;
@@ -433,16 +457,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		}
 		catch(Exception &e)
 		{
-			//Ignoring the error if it is in the ignored list
-			if(ignored_errors.indexOf(e.getExtraInfo()) >= 0 ||
-					(ignore_dup && isDuplicationError(e.getExtraInfo())))
-				emit s_errorIgnored(e.getExtraInfo(), e.getErrorMessage(), sql_cmd);
-			//Raises an excpetion if the error returned by the database is not listed in the ignored list of errors
-			else if(ignored_errors.indexOf(e.getExtraInfo()) < 0)
-				throw Exception(e.getErrorMessage(),
-								e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
-			else
-				errors.push_back(e);
+			handleSQLError(e, sql_cmd, ignore_dup);
 		}
 
 		if(!export_canceled)
@@ -798,9 +813,6 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 					obj_type=(aux_cmd.contains(QString("COLUMN")) ? OBJ_COLUMN : OBJ_CONSTRAINT);
 					reg_aux=QRegExp(QString("(COLUMN|CONSTRAINT)( )+"));
 
-					pos+=tab_obj_reg.matchedLength();
-					pos1=aux_cmd.indexOf(' ', pos);
-
 					//Extracting the table name
 					pos=aux_cmd.indexOf(alter_tab) + alter_tab.size();
 					pos1=aux_cmd.indexOf(QString("ADD"));
@@ -953,16 +965,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 		{
 			if(ddl_tk_found) ddl_tk_found=false;
 
-			//Ignoring the error if it is in the ignored list
-			if(ignored_errors.indexOf(e.getExtraInfo()) >= 0 ||
-					(ignore_dup && isDuplicationError(e.getExtraInfo())))
-				emit s_errorIgnored(e.getExtraInfo(), e.getErrorMessage(), sql_cmd);
-			//Raises an excpetion if the error returned by the database is not listed in the ignored list of errors
-			else if(ignored_errors.indexOf(e.getExtraInfo()) < 0)
-				throw Exception(e.getErrorMessage(),
-								e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
-			else
-				errors.push_back(e);
+			handleSQLError(e, sql_cmd, ignore_dup);
 
 			sql_cmd.clear();
 		}

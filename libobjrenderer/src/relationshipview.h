@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #include "textboxview.h"
 #include "tableview.h"
 #include "relationship.h"
+#include "beziercurveitem.h"
 
 class RelationshipView: public BaseObjectView {
 	private:
@@ -41,6 +42,9 @@ class RelationshipView: public BaseObjectView {
 
 		//! \brief Indicates that the relationship labels must be hidden
 		static bool hide_name_label;
+
+		//! \brief Indicates that the relationship lines should be curved
+		static bool use_curved_lines;
 
 		/*! \brief Specify the type of connection used by the lines. The first (classical)
 		is to connect the line to tables through their central points. The second (better semantics)
@@ -92,6 +96,9 @@ class RelationshipView: public BaseObjectView {
 		QPointF labels_ini_pos[3];
 
 		QGraphicsEllipseItem *line_circles[2];
+
+		//! \brief Stores the curved lines representing the relationship
+		vector<BezierCurveItem *> curves;
 
 		//! \brief Stores the selected child object index
 		int sel_object_idx;
@@ -155,6 +162,12 @@ class RelationshipView: public BaseObjectView {
 
 		//! \brief Returns the current visibility state of name label
 		static bool isNameLabelHidden(void);
+
+		//! \brief Enables the usage of curved lines for all relationships
+		static void setCurvedLines(bool value);
+
+		//! \brief Returns the current state of curved lines usage
+		static bool isCurvedLines(void);
 
 		/*! \brief Configures the mode in which the lines are connected on tables.
 		The first one is the CONNECT_CENTER_PNTS (the classical one) which connects the

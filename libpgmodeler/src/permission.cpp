@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -445,7 +445,7 @@ QString Permission::getCodeDefinition(unsigned def_type)
 
 	if(obj_type==OBJ_COLUMN)
 	{
-		attributes[ParsersAttributes::OBJECT]=object->getName();
+		attributes[ParsersAttributes::OBJECT]=object->getName(true);
 		attributes[ParsersAttributes::PARENT]=dynamic_cast<Column *>(object)->getParentTable()->getName(true);
 	}
 	else
@@ -465,16 +465,18 @@ QString Permission::getCodeDefinition(unsigned def_type)
 	}
 	else
 	{
+		QStringList priv_list, gop_priv_list;
+
 		for(i=0; i < 12; i++)
 		{
 			if(privileges[i] && !grant_option[i])
-				attributes[ParsersAttributes::PRIVILEGES]+=priv_vect[i].toUpper() + QString(",");
+				priv_list.push_back(object->getObjectType() == OBJ_COLUMN ? QString("%1(%2)").arg(priv_vect[i].toUpper()).arg(object->getName(true)) : priv_vect[i].toUpper());
 			else if(grant_option[i])
-				attributes[ParsersAttributes::PRIVILEGES_GOP]+=priv_vect[i].toUpper() + QString(",");
+				gop_priv_list.push_back(object->getObjectType() == OBJ_COLUMN ? QString("%1(%2)").arg(priv_vect[i].toUpper()).arg(object->getName(true)) : priv_vect[i].toUpper());
 		}
 
-		attributes[ParsersAttributes::PRIVILEGES].remove(attributes[ParsersAttributes::PRIVILEGES].size()-1,1);
-		attributes[ParsersAttributes::PRIVILEGES_GOP].remove(attributes[ParsersAttributes::PRIVILEGES_GOP].size()-1,1);
+		attributes[ParsersAttributes::PRIVILEGES] = priv_list.join(QChar(','));
+		attributes[ParsersAttributes::PRIVILEGES_GOP] = gop_priv_list.join(QChar(','));
 	}
 
 	count=roles.size();

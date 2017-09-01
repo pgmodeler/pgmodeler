@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -56,8 +56,8 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 {
 	ObjectType obj_type=BASE_OBJECT;
 	Column *column=dynamic_cast<Column *>(this->getSourceObject());
-	double factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
 	bool ellipse_desc=false;
+	double factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE) * BaseObjectView::getScreenDpiFactor();
 
 	//Based upon the source object type the descriptor is allocated
 	if(this->getSourceObject())
@@ -65,12 +65,10 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 
 	/* Elliptical descriptor is used to columns (with or without not-null constraint),
 		for other object types, polygonal descriptor is usded */
-	ellipse_desc=((column && constr_type==BaseType::null) ||
-				  (obj_type!=OBJ_INDEX && obj_type!=OBJ_RULE &&
-													obj_type!=OBJ_TRIGGER && obj_type!=OBJ_COLUMN));
+	ellipse_desc=((column && constr_type==BaseType::null) || (!TableObject::isTableObject(obj_type)));
 
 	if(descriptor && ((ellipse_desc && !dynamic_cast<QGraphicsEllipseItem *>(descriptor)) ||
-					  (!ellipse_desc && dynamic_cast<QGraphicsEllipseItem *>(descriptor))))
+										(!ellipse_desc && dynamic_cast<QGraphicsEllipseItem *>(descriptor))))
 	{
 		this->removeFromGroup(descriptor);
 		delete(descriptor);
@@ -96,8 +94,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 		{
 			QGraphicsEllipseItem *desc=dynamic_cast<QGraphicsEllipseItem *>(descriptor);
 
-			desc->setRect(QRectF(QPointF(0,0),
-								 QSizeF(9.0f * factor, 9.0f * factor)));
+			desc->setRect(QRectF(QPointF(0,0), QSizeF(9.0f * factor, 9.0f * factor)));
 
 			if(column->isNotNull())
 				attrib=ParsersAttributes::NN_COLUMN;
@@ -146,9 +143,8 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 			desc->setPen(this->getBorderStyle(attrib));
 		}
 	}
-	else if(obj_type==OBJ_INDEX ||
-			obj_type==OBJ_RULE ||
-			obj_type==OBJ_TRIGGER)
+	else if(obj_type==OBJ_INDEX || obj_type==OBJ_RULE ||
+					obj_type==OBJ_TRIGGER || obj_type==OBJ_CONSTRAINT)
 	{
 		TableObject *tab_obj=dynamic_cast<TableObject *>(this->getSourceObject());
 		QGraphicsPolygonItem *desc=dynamic_cast<QGraphicsPolygonItem *>(descriptor);
@@ -242,10 +238,12 @@ void TableObjectView::configureObject(void)
 		}
 		else
 		{
-			if(!tab_obj->isProtected())
-				fmt=font_config[tab_obj->getSchemaName()];
-			else
+			if(tab_obj->isAddedByRelationship())
+				fmt=font_config[ParsersAttributes::INH_COLUMN];
+			else if(tab_obj->isProtected())
 				fmt=font_config[ParsersAttributes::PROT_COLUMN];
+			else
+				fmt=font_config[tab_obj->getSchemaName()];
 		}
 
 		configureDescriptor(constr_type);
@@ -289,6 +287,7 @@ void TableObjectView::configureObject(void)
 			Rule *rule=dynamic_cast<Rule *>(tab_obj);
 			Trigger *trigger=dynamic_cast<Trigger *>(tab_obj);
 			Index *index=dynamic_cast<Index *>(tab_obj);
+			Constraint *constr=dynamic_cast<Constraint *>(tab_obj);
 
 			if(rule)
 			{
@@ -343,6 +342,19 @@ void TableObjectView::configureObject(void)
 					str_constr+=QString("b");
 					atribs_tip += QString("buffering");
 				}
+			}
+			else if(constr)
+			{
+				ConstraintType type = constr->getConstraintType();
+
+				if(type == ConstraintType::primary_key)
+					str_constr = TXT_PRIMARY_KEY;
+				else if(type == ConstraintType::foreign_key)
+					str_constr = TXT_FOREIGN_KEY;
+				else if(type == ConstraintType::unique)
+					str_constr = TXT_UNIQUE;
+				else if(type == ConstraintType::exclude)
+					str_constr = TXT_EXCLUDE;
 			}
 
 			if(!str_constr.isEmpty())
@@ -492,7 +504,8 @@ QString TableObjectView::getConstraintString(Column *column)
 			itr++;
 
 			//Check if the column is referecend by the constraint
-			if(constr->isColumnReferenced(column, false))//constr->isColumnExists(column, Constraint::SOURCE_COLS))
+			if((constr->getConstraintType()!=ConstraintType::exclude && constr->isColumnExists(column, Constraint::SOURCE_COLS)) ||
+				 (constr->getConstraintType()==ConstraintType::exclude && constr->isColumnReferenced(column, false)))
 			{
 				constr_type=constr->getConstraintType();
 

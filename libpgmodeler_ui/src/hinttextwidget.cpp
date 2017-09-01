@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ HintTextWidget::HintTextWidget(QWidget *btn_parent, QWidget *parent): QWidget(pa
 	hint_tb=new QToolButton(this);
 	hint_tb->setCheckable(true);
 	hint_tb->setToolButtonStyle(Qt::ToolButtonIconOnly);
-	hint_tb->setIcon(QPixmap(QString(":/icones/icones/help.png")));
+	hint_tb->setIcon(QPixmap(PgModelerUiNS::getIconPath("help")));
 
 	shadow=new QGraphicsDropShadowEffect(this);
 	shadow->setOffset(5,5);
@@ -99,13 +99,14 @@ void HintTextWidget::setText(const QString &text)
 
 	txt.replace(QRegExp(QString("(<)(br)(/)?(>)")), QString("\n"));
 	txt.remove(QRegExp(QString("(<)(/)?([a-z]|[A-Z])+(>)")));
-	ret=f.boundingRect(0,0, this->maximumWidth(), this->maximumHeight(), Qt::TextWordWrap, txt);
-	txt_size=QSize(ret.size().width(), ret.size().height() + f.lineSpacing() + (text_lbl->margin() * 1.5));
+	ret=f.boundingRect(0,0, this->maximumWidth(), this->maximumHeight(), Qt::TextWordWrap | Qt::AlignLeft | Qt::AlignTop , txt);
+	txt_size=QSize(ret.size().width() + 15, ret.size().height() + 15);
 
+	text_lbl->setMargin(5);
 	text_lbl->setText(text);
 	text_lbl->setMaximumSize(txt_size);
 	text_lbl->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
-	this->setMinimumSize(txt_size + QSize(0, text_lbl->margin()/2));
+	this->setMinimumSize(txt_size);
 	this->adjustSize();
 }
 

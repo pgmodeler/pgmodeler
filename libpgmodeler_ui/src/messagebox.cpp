@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 #include "messagebox.h"
 #include "pgmodeleruins.h"
+#include "baseobjectview.h"
 
 Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -65,7 +66,7 @@ void Messagebox::showExceptionList(void)
 {
 	if(show_errors_tb->isChecked())
 	{
-		show_errors_tb->setIcon(QPixmap(QString(":/icones/icones/desfazer.png")));
+		show_errors_tb->setIcon(QPixmap(PgModelerUiNS::getIconPath("desfazer")));
 
 		if(show_raw_info_tb->isChecked())
 			objs_group_wgt->setCurrentIndex(2);
@@ -78,7 +79,7 @@ void Messagebox::showExceptionList(void)
 	}
 	else
 	{
-		show_errors_tb->setIcon(QPixmap(QString(":/icones/icones/refazer.png")));
+		show_errors_tb->setIcon(QPixmap(PgModelerUiNS::getIconPath("refazer")));
 		objs_group_wgt->setCurrentIndex(0);
 	}
 }
@@ -86,76 +87,16 @@ void Messagebox::showExceptionList(void)
 void Messagebox::show(Exception e, const QString &msg, unsigned icon_type, unsigned buttons, const QString &yes_lbl, const QString &no_lbl, const QString &cancel_lbl,
 					  const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
 {
-	vector<Exception> list;
-	vector<Exception>::reverse_iterator itr,itr_end;
-	QTreeWidgetItem *item=nullptr,*item1=nullptr,*item2=nullptr;
-	QLabel *label=nullptr;
-	int idx=0;
-	Exception *ex=nullptr;
 	QString str_aux, title;
-	QFont font=this->font();
 
 	show_raw_info_tb->blockSignals(true);
 	show_raw_info_tb->setChecked(false);
 	show_raw_info_tb->blockSignals(false);
 
 	raw_info_txt->setPlainText(e.getExceptionsText());
-
-	e.getExceptionsList(list);
-
-	itr=list.rbegin();
-	itr_end=list.rend();
-
-	while(itr!=itr_end)
-	{
-		ex=&(*itr);
-
-		item=new QTreeWidgetItem;
-		str_aux=QString("[%1] - %2")
-				.arg(idx)
-				.arg(ex->getMethod());
-		item->setIcon(0,QPixmap(QString(":/icones/icones/funcao.png")));
-		exceptions_trw->insertTopLevelItem(0,item);
-		label=new QLabel;
-		label->setFont(font);
-		label->setWordWrap(true);
-		label->setText(str_aux);
-		exceptions_trw->setItemWidget(item, 0, label);
-
-		item1=new QTreeWidgetItem(item);
-		item1->setIcon(0,QPixmap(QString(":/icones/icones/codigofonte.png")));
-		item1->setText(0,ex->getFile() + QString(" (") + ex->getLine() + QString(")"));
-
-		item2=new QTreeWidgetItem(item);
-		item2->setIcon(0,QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
-		item2->setText(0,Exception::getErrorCode(ex->getErrorType()) +
-					   QString(" (") + QString("%1").arg(ex->getErrorType()) + QString(")"));
-
-		item1=new QTreeWidgetItem(item);
-		item1->setIcon(0,QPixmap(QString(":/icones/icones/msgbox_erro.png")));
-		label=new QLabel;
-		label->setWordWrap(true);
-		label->setFont(font);
-		label->setStyleSheet(QString("color: #ff0000;"));
-		exceptions_trw->setItemWidget(item1, 0, label);
-		label->setText(ex->getErrorMessage());
-
-		if(!ex->getExtraInfo().isEmpty())
-		{
-			item1=new QTreeWidgetItem(item);
-			item1->setIcon(0,QPixmap(QString(":/icones/icones/msgbox_info.png")));
-			label=new QLabel;
-			label->setWordWrap(true);
-			label->setFont(font);
-			label->setStyleSheet(QString("color: #000080;"));
-			label->setTextInteractionFlags(Qt::TextSelectableByMouse);
-			exceptions_trw->setItemWidget(item1, 0, label);
-			label->setText(ex->getExtraInfo());
-		}
-
-		itr++;
-		idx++;
-	}
+	PgModelerUiNS::createExceptionsTree(exceptions_trw, e, nullptr);
+	exceptions_trw->expandAll();
+	exceptions_trw->scrollToTop();
 
 	if(msg.isEmpty())
 		str_aux=PgModelerUiNS::formatMessage(e.getErrorMessage());
@@ -180,13 +121,13 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	else
 		yes_ok_btn->setText(buttons==OK_BUTTON ? trUtf8("&Ok") : trUtf8("&Yes"));
 
-	yes_ok_btn->setIcon(!yes_ico.isEmpty() ? QIcon(yes_ico) : QPixmap(QString(":/icones/icones/confirmar.png")));
+	yes_ok_btn->setIcon(!yes_ico.isEmpty() ? QIcon(yes_ico) : QPixmap(PgModelerUiNS::getIconPath("confirmar")));
 
 	no_btn->setText(!no_lbl.isEmpty() ? no_lbl : trUtf8("&No"));
-	no_btn->setIcon(!no_ico.isEmpty() ? QIcon(no_ico) : QPixmap(QString(":/icones/icones/fechar1.png")));
+	no_btn->setIcon(!no_ico.isEmpty() ? QIcon(no_ico) : QPixmap(PgModelerUiNS::getIconPath("fechar1")));
 
 	cancel_btn->setText(!cancel_lbl.isEmpty() ? cancel_lbl : trUtf8("&Cancel"));
-	cancel_btn->setIcon(!cancel_ico.isEmpty() ? QIcon(cancel_ico) : QPixmap(QString(":/icones/icones/cancelar.png")));
+	cancel_btn->setIcon(!cancel_ico.isEmpty() ? QIcon(cancel_ico) : QPixmap(PgModelerUiNS::getIconPath("cancelar")));
 
 	no_btn->setVisible(buttons==YES_NO_BUTTONS || buttons==ALL_BUTTONS);
 	cancel_btn->setVisible(buttons==OK_CANCEL_BUTTONS || buttons==ALL_BUTTONS);
@@ -216,19 +157,19 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	switch(icon_type)
 	{
 		case ERROR_ICON:
-			icon_name=QString("msgbox_erro.png");
+			icon_name=QString("msgbox_erro");
 		break;
 
 		case INFO_ICON:
-			icon_name=QString("msgbox_info.png");
+			icon_name=QString("msgbox_info");
 		break;
 
 		case ALERT_ICON:
-			icon_name=QString("msgbox_alerta.png");
+			icon_name=QString("msgbox_alerta");
 		break;
 
 		case CONFIRM_ICON:
-			icon_name=QString("msgbox_quest.png");
+			icon_name=QString("msgbox_quest");
 		break;
 
 		default:
@@ -240,7 +181,7 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	icon_lbl->setVisible(!icon_name.isEmpty());
 
 	if(!icon_name.isEmpty())
-		icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + icon_name));
+		icon_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(icon_name)));
 
 	msg_lbl->setText(msg);
 
@@ -264,7 +205,8 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	else if(size.height() >= max_h)
 		this->setMinimumHeight(max_h);
 
-	this->resize(this->minimumWidth(), this->minimumHeight());
+	float factor = BaseObjectView::getScreenDpiFactor();
+	this->resize(this->minimumWidth() * factor, this->minimumHeight() * factor);
 
 	QDialog::exec();
 }

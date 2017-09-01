@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -68,10 +68,6 @@ class UpdateNotifierWidget: public QWidget, public Ui::UpdateNotifierWidget {
 	  must be shown. Generally, this attribute is true when the user call the checkForUpdate()
 	  from a QAction */
 		bool show_no_upd_msg;
-
-		QMenu *get_binary_menu;
-
-		QAction *action_purchase, *action_recover;
 
 		//! \brief This event filter is used to resize the widget when the mouse is over the notifier
 		bool eventFilter(QObject *obj, QEvent *event);

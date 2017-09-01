@@ -206,7 +206,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Langague:</string>
+          <string>Language:</string>
          </property>
         </widget>
        </item>

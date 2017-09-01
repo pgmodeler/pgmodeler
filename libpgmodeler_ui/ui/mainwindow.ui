@@ -382,7 +382,7 @@
              <property name="spacing">
               <number>0</number>
              </property>
-             <item row="0" column="6">
+             <item row="0" column="7">
               <spacer name="horizontalSpacer_2">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -408,7 +408,7 @@
                </property>
               </spacer>
              </item>
-             <item row="0" column="5">
+             <item row="0" column="6">
               <widget class="QWidget" name="bg_saving_wgt" native="true">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -542,7 +542,7 @@
                </item>
               </layout>
              </item>
-             <item row="0" column="9">
+             <item row="0" column="10">
               <layout class="QHBoxLayout" name="horizontalLayout_4">
                <property name="spacing">
                 <number>0</number>
@@ -640,6 +640,22 @@
                 </widget>
                </item>
               </layout>
+             </item>
+             <item row="0" column="5">
+              <widget class="QWidget" name="canvas_info_parent" native="true">
+               <property name="minimumSize">
+                <size>
+                 <width>20</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
              </item>
             </layout>
            </widget>
@@ -787,7 +803,6 @@
    <addaction name="action_import"/>
    <addaction name="action_export"/>
    <addaction name="action_diff"/>
-   <addaction name="action_plugins"/>
    <addaction name="action_configuration"/>
    <addaction name="action_support"/>
   </widget>
@@ -854,6 +869,7 @@
    <addaction name="action_normal_zoom"/>
    <addaction name="action_inc_zoom"/>
    <addaction name="action_overview"/>
+   <addaction name="action_arrange_objects"/>
    <addaction name="action_show_delimiters"/>
    <addaction name="action_show_grid"/>
    <addaction name="action_alin_objs_grade"/>
@@ -1138,7 +1154,7 @@
    </property>
    <property name="icon">
     <iconset resource="../res/resources.qrc">
-     <normaloff>:/icones/icones/alinhargrade.png</normaloff>:/icones/icones/alinhargrade.png</iconset>
+     <normaloff>:/icones/icones/aligntogrid.png</normaloff>:/icones/icones/aligntogrid.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Align to grid</string>
@@ -1481,6 +1497,21 @@
    </property>
    <property name="toolTip">
     <string>Objects metadata</string>
+   </property>
+  </action>
+  <action name="action_arrange_objects">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icones/icones/arrangetables.png</normaloff>:/icones/icones/arrangetables.png</iconset>
+   </property>
+   <property name="text">
+    <string>Arrange objects</string>
+   </property>
+   <property name="toolTip">
+    <string>Rearrange objects on the canvas hierarchically</string>
    </property>
   </action>
  </widget>

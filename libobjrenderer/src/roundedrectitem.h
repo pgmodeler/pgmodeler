@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ class RoundedRectItem: public QGraphicsRectItem {
 
 	public:
 		//! \brief Implies a normal rectangle (no rounded corner)
-		static const unsigned NONE_CORNERS=0,
+		static const unsigned NO_CORNERS=0,
 
 		//! \brief The top-left corner will be rounded
 		TOPLEFT_CORNER=2,

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ const QString PgModelerCLI::SHOW_GRID=QString("--show-grid");
 const QString PgModelerCLI::SHOW_DELIMITERS=QString("--show-delimiters");
 const QString PgModelerCLI::PAGE_BY_PAGE=QString("--page-by-page");
 const QString PgModelerCLI::IGNORE_DUPLICATES=QString("--ignore-duplicates");
+const QString PgModelerCLI::IGNORE_ERROR_CODES=QString("--ignore-error-codes");
 const QString PgModelerCLI::CONN_ALIAS=QString("--conn-alias");
 const QString PgModelerCLI::HOST=QString("--host");
 const QString PgModelerCLI::PORT=QString("--port");
@@ -190,6 +191,7 @@ void PgModelerCLI::initializeOptions(void)
 	long_opts[SHOW_DELIMITERS]=false;
 	long_opts[PAGE_BY_PAGE]=false;
 	long_opts[IGNORE_DUPLICATES]=false;
+	long_opts[IGNORE_ERROR_CODES]=true;
 	long_opts[CONN_ALIAS]=true;
 	long_opts[HOST]=true;
 	long_opts[PORT]=true;
@@ -218,6 +220,7 @@ void PgModelerCLI::initializeOptions(void)
 	short_opts[SHOW_DELIMITERS]=QString("-l");
 	short_opts[PAGE_BY_PAGE]=QString("-b");
 	short_opts[IGNORE_DUPLICATES]=QString("-I");
+	short_opts[IGNORE_ERROR_CODES]=QString("-x");
 	short_opts[CONN_ALIAS]=QString("-c");
 	short_opts[HOST]=QString("-H");
 	short_opts[PORT]=QString("-P");
@@ -259,46 +262,47 @@ void PgModelerCLI::showMenu(void)
 	out << trUtf8("Copyright 2006-2015 Raphael A. Silva <raphael@pgmodeler.com.br>") << endl;
 	out << endl;
 	out << trUtf8("This CLI tool provides the operations to export pgModeler's database models without\n\
-				  the need to load them on graphical interface as well to fix model files to the most recent\n\
-				  accepted structure. All available options are described below.") << endl;
+the need to load them on graphical interface as well to fix model files to the most recent\n\
+accepted structure. All available options are described below.") << endl;
 	out << endl;
 	out << trUtf8("General options: ") << endl;
-	out << trUtf8("   %1, %2=[FILE]\t\t Input model file (.dbm). Mandatory use when fixing a model or exporting it.").arg(short_opts[INPUT]).arg(INPUT) << endl;
-	out << trUtf8("   %1, %2=[FILE]\t\t Output file. Mandatory use when fixing model or export to file or png.").arg(short_opts[OUTPUT]).arg(OUTPUT) << endl;
-	out << trUtf8("   %1, %2\t\t Try to fix the structure of the input model file in order to make it loadable again.").arg(short_opts[FIX_MODEL]).arg(FIX_MODEL) << endl;
-	out << trUtf8("   %1, %2\t\t Model fix tries. When reaching the maximum count the invalid objects will be discard.").arg(short_opts[FIX_TRIES]).arg(FIX_TRIES) << endl;
-	out << trUtf8("   %1, %2\t\t Export to a sql script file.").arg(short_opts[EXPORT_TO_FILE]).arg(EXPORT_TO_FILE)<< endl;
-	out << trUtf8("   %1, %2\t\t Export to a png image.").arg(short_opts[EXPORT_TO_PNG]).arg(EXPORT_TO_PNG) << endl;
-	out << trUtf8("   %1, %2\t\t Export to a svg file.").arg(short_opts[EXPORT_TO_SVG]).arg(EXPORT_TO_SVG) << endl;
-	out << trUtf8("   %1, %2\t\t Export directly to a PostgreSQL server.").arg(short_opts[EXPORT_TO_DBMS]).arg(EXPORT_TO_DBMS) << endl;
-	out << trUtf8("   %1, %2\t\t List available connections on %3 file.").arg(short_opts[LIST_CONNS]).arg(LIST_CONNS).arg(GlobalAttributes::CONNECTIONS_CONF + GlobalAttributes::CONFIGURATION_EXT) << endl;
-	out << trUtf8("   %1, %2\t\t Version of generated SQL code. Only for file or dbms export.").arg(short_opts[PGSQL_VER]).arg(PGSQL_VER) << endl;
-	out << trUtf8("   %1, %2\t\t\t Silent execution. Only critical errors are shown during process.").arg(short_opts[SILENT]).arg(SILENT) << endl;
-	out << trUtf8("   %1, %2\t\t\t Show this help menu.").arg(short_opts[HELP]).arg(HELP) << endl;
+	out << trUtf8("  %1, %2=[FILE]\t\t   Input model file (.dbm). Mandatory use when fixing a model or exporting it.").arg(short_opts[INPUT]).arg(INPUT) << endl;
+	out << trUtf8("  %1, %2=[FILE]\t\t   Output file. Mandatory use when fixing model or export to file or png.").arg(short_opts[OUTPUT]).arg(OUTPUT) << endl;
+	out << trUtf8("  %1, %2\t\t   Try to fix the structure of the input model file in order to make it loadable again.").arg(short_opts[FIX_MODEL]).arg(FIX_MODEL) << endl;
+	out << trUtf8("  %1, %2\t\t   Model fix tries. When reaching the maximum count the invalid objects will be discard.").arg(short_opts[FIX_TRIES]).arg(FIX_TRIES) << endl;
+	out << trUtf8("  %1, %2\t\t   Export to a sql script file.").arg(short_opts[EXPORT_TO_FILE]).arg(EXPORT_TO_FILE)<< endl;
+	out << trUtf8("  %1, %2\t\t   Export to a png image.").arg(short_opts[EXPORT_TO_PNG]).arg(EXPORT_TO_PNG) << endl;
+	out << trUtf8("  %1, %2\t\t   Export to a svg file.").arg(short_opts[EXPORT_TO_SVG]).arg(EXPORT_TO_SVG) << endl;
+	out << trUtf8("  %1, %2\t\t   Export directly to a PostgreSQL server.").arg(short_opts[EXPORT_TO_DBMS]).arg(EXPORT_TO_DBMS) << endl;
+	out << trUtf8("  %1, %2\t\t   List available connections on %3 file.").arg(short_opts[LIST_CONNS]).arg(LIST_CONNS).arg(GlobalAttributes::CONNECTIONS_CONF + GlobalAttributes::CONFIGURATION_EXT) << endl;
+	out << trUtf8("  %1, %2\t\t   Version of generated SQL code. Only for file or dbms export.").arg(short_opts[PGSQL_VER]).arg(PGSQL_VER) << endl;
+	out << trUtf8("  %1, %2\t\t\t   Silent execution. Only critical errors are shown during process.").arg(short_opts[SILENT]).arg(SILENT) << endl;
+	out << trUtf8("  %1, %2\t\t\t   Show this help menu.").arg(short_opts[HELP]).arg(HELP) << endl;
 	out << endl;
 	out << trUtf8("PNG and SVG export options: ") << endl;
-	out << trUtf8("   %1, %2\t\t Draws the grid on the exported png image.").arg(short_opts[SHOW_GRID]).arg(SHOW_GRID) << endl;
-	out << trUtf8("   %1, %2\t Draws the page delimiters on the exported png image.").arg(short_opts[SHOW_DELIMITERS]).arg(SHOW_DELIMITERS) << endl;
-	out << trUtf8("   %1, %2\t\t Each page will be exported on a separated png image. (Only for PNG)").arg(short_opts[PAGE_BY_PAGE]).arg(PAGE_BY_PAGE) << endl;
-	out << trUtf8("   %1, %2=[FACTOR]\t\t Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4 (Only for PNG)").arg(short_opts[ZOOM_FACTOR]).arg(ZOOM_FACTOR).arg(ModelWidget::MINIMUM_ZOOM*100).arg(ModelWidget::MAXIMUM_ZOOM*100) << endl;
+	out << trUtf8("  %1, %2\t\t   Draws the grid on the exported png image.").arg(short_opts[SHOW_GRID]).arg(SHOW_GRID) << endl;
+	out << trUtf8("  %1, %2\t\t   Draws the page delimiters on the exported png image.").arg(short_opts[SHOW_DELIMITERS]).arg(SHOW_DELIMITERS) << endl;
+	out << trUtf8("  %1, %2\t\t   Each page will be exported on a separated png image. (Only for PNG)").arg(short_opts[PAGE_BY_PAGE]).arg(PAGE_BY_PAGE) << endl;
+	out << trUtf8("  %1, %2=[FACTOR]\t\t   Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4 (Only for PNG)").arg(short_opts[ZOOM_FACTOR]).arg(ZOOM_FACTOR).arg(ModelWidget::MINIMUM_ZOOM*100).arg(ModelWidget::MAXIMUM_ZOOM*100) << endl;
 	out << endl;
 	out << trUtf8("DBMS export options: ") << endl;
-	out << trUtf8("   %1, %2\t Ignores errors related to duplicated objects that eventually exists on server side.").arg(short_opts[IGNORE_DUPLICATES]).arg(IGNORE_DUPLICATES) << endl;
-	out << trUtf8("   %1, %2\t\t Drop the database before execute a export process.").arg(short_opts[DROP_DATABASE]).arg(DROP_DATABASE) << endl;
-	out << trUtf8("   %1, %2\t\t Runs the DROP commands attached to SQL-enabled objects.").arg(short_opts[DROP_OBJECTS]).arg(DROP_OBJECTS) << endl;
-	out << trUtf8("   %1, %2\t\t Simulates a export process. Actually executes all steps but undoing any modification.").arg(short_opts[SIMULATE]).arg(SIMULATE) << endl;
-	out << trUtf8("   %1, %2\t\t Generates temporary names for database, roles and tablespaces when in simulation mode.").arg(short_opts[USE_TMP_NAMES]).arg(USE_TMP_NAMES) << endl;
-	out << trUtf8("   %1, %2=[ALIAS]\t Connection configuration alias to be used.").arg(short_opts[CONN_ALIAS]).arg(CONN_ALIAS) << endl;
-	out << trUtf8("   %1, %2=[HOST]\t\t PostgreSQL host which export will operate.").arg(short_opts[HOST]).arg(HOST) << endl;
-	out << trUtf8("   %1, %2=[PORT]\t\t PostgreSQL host listening port.").arg(short_opts[PORT]).arg(PORT) << endl;
-	out << trUtf8("   %1, %2=[USER]\t\t PostgreSQL username.").arg(short_opts[USER]).arg(USER) << endl;
-	out << trUtf8("   %1, %2=[PASSWORD]\t PostgreSQL user password.").arg(short_opts[PASSWD]).arg(PASSWD) << endl;
-	out << trUtf8("   %1, %2=[DBNAME]\t Connection's initial database.").arg(short_opts[INITIAL_DB]).arg(INITIAL_DB) << endl;
+	out << trUtf8("  %1, %2\t   Ignores errors related to duplicated objects that eventually exists on server side.").arg(short_opts[IGNORE_DUPLICATES]).arg(IGNORE_DUPLICATES) << endl;
+	out << trUtf8("  %1, %2=[CODES] Ignores additional errors by their codes. A comma-separated list of alphanumeric codes should be provided.").arg(short_opts[IGNORE_ERROR_CODES]).arg(IGNORE_ERROR_CODES) << endl;
+	out << trUtf8("  %1, %2\t\t   Drop the database before execute a export process.").arg(short_opts[DROP_DATABASE]).arg(DROP_DATABASE) << endl;
+	out << trUtf8("  %1, %2\t\t   Runs the DROP commands attached to SQL-enabled objects.").arg(short_opts[DROP_OBJECTS]).arg(DROP_OBJECTS) << endl;
+	out << trUtf8("  %1, %2\t\t   Simulates a export process. Actually executes all steps but undoing any modification.").arg(short_opts[SIMULATE]).arg(SIMULATE) << endl;
+	out << trUtf8("  %1, %2\t\t   Generates temporary names for database, roles and tablespaces when in simulation mode.").arg(short_opts[USE_TMP_NAMES]).arg(USE_TMP_NAMES) << endl;
+	out << trUtf8("  %1, %2=[ALIAS]\t   Connection configuration alias to be used.").arg(short_opts[CONN_ALIAS]).arg(CONN_ALIAS) << endl;
+	out << trUtf8("  %1, %2=[HOST]\t\t   PostgreSQL host which export will operate.").arg(short_opts[HOST]).arg(HOST) << endl;
+	out << trUtf8("  %1, %2=[PORT]\t\t   PostgreSQL host listening port.").arg(short_opts[PORT]).arg(PORT) << endl;
+	out << trUtf8("  %1, %2=[USER]\t\t   PostgreSQL username.").arg(short_opts[USER]).arg(USER) << endl;
+	out << trUtf8("  %1, %2=[PASSWORD]\t   PostgreSQL user password.").arg(short_opts[PASSWD]).arg(PASSWD) << endl;
+	out << trUtf8("  %1, %2=[DBNAME]\t   Connection's initial database.").arg(short_opts[INITIAL_DB]).arg(INITIAL_DB) << endl;
 	out << endl;
 
 #ifndef Q_OS_MAC
 	out << trUtf8("Miscellaneous options: ") << endl;
-	out << trUtf8("   %1, %2=[ACTION]\t Handles the file association to .dbm files. The ACTION can be [%3 | %4].").arg(short_opts[DBM_MIME_TYPE]).arg(DBM_MIME_TYPE).arg(INSTALL).arg(UNINSTALL) << endl;
+	out << trUtf8("   %1, %2=[ACTION]\t   Handles the file association to .dbm files. The ACTION can be [%3 | %4].").arg(short_opts[DBM_MIME_TYPE]).arg(DBM_MIME_TYPE).arg(INSTALL).arg(UNINSTALL) << endl;
 	out << endl;
 #endif
 }
@@ -462,6 +466,9 @@ int PgModelerCLI::exec(void)
 				{
 					if(!silent_mode)
 						out << trUtf8("Export to DBMS: ") <<  connection.getConnectionString() << endl;
+
+					if(parsed_opts.count(IGNORE_ERROR_CODES))
+						export_hlp.setIgnoredErrors(parsed_opts[IGNORE_ERROR_CODES].split(','));
 
 					export_hlp.exportToDBMS(model, connection, parsed_opts[PGSQL_VER],
 											parsed_opts.count(IGNORE_DUPLICATES) > 0,

@@ -16,7 +16,7 @@
       $br $tb {function-type}
     %end
 
-    %if ({pgsql-ver} >= "9.2") %and {leakproof} %then
+		%if ({pgsql-ver} >=f "9.2") %and {leakproof} %then
      $br $tb
     %if ({leakproof} == "unset") %then [ NOT ] %end 
       LEAKPROOF

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -50,7 +50,8 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		*trunc_tables_ht, *ignore_errors_ht, *force_recreation_ht,
 		*cascade_mode_ht, *pgsql_ver_ht, *recreate_unmod_ht,
 		*keep_obj_perms_ht, *ignore_duplic_ht, *reuse_sequences_ht,
-		*preserve_db_name_ht, *keep_not_imported_objs_ht;
+		*preserve_db_name_ht, *keep_not_imported_objs_ht,
+		*ignore_error_codes_ht;
 
 		//! \brief Syntax highlighter used on the diff preview tab
 		SyntaxHighlighter *sqlcode_hl;

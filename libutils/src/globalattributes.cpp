@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,16 +25,14 @@ namespace GlobalAttributes {
 	PGMODELER_APP_NAME=QString("pgmodeler"),
 	PGMODELER_URI=QString("pgmodeler.com.br"),
 	PGMODELER_REVERSE_URI=QString("br.com.pgmodeler"),
-	PGMODELER_VERSION=QString("0.8.2"),
-	PGMODELER_VER_CODENAME=QString("Faithful Elephant"),
+	PGMODELER_VERSION=QString("0.9.0"),
 	PGMODELER_BUILD_NUMBER=QString(BUILDNUM),
-	PGMODELER_SITE=QString("http://www.pgmodeler.com.br"),
+	PGMODELER_SITE=QString("https://www.pgmodeler.com.br"),
 	PGMODELER_SUPPORT=QString("https://github.com/pgmodeler/pgmodeler/issues"),
 	PGMODELER_SRC_URL=QString("https://github.com/pgmodeler/pgmodeler/releases"),
-	PGMODELER_PURCHASE_URL=QString("%1/purchase.php").arg(PGMODELER_SITE),
-	PGMODELER_RECOVER_URL=QString("%1/recover.php").arg(PGMODELER_SITE),
-	PGMODELER_DONATE_URL=QString("%1/donate.html").arg(PGMODELER_SITE),
-	PGMODELER_UPD_CHECK_URL=QString("%1/checkupdate.php?current_ver=").arg(PGMODELER_SITE),
+	PGMODELER_DOWNLOAD_URL=QString("%1/download").arg(PGMODELER_SITE),
+	PGMODELER_DONATE_URL=QString("%1/#donationForm").arg(PGMODELER_SITE),
+	PGMODELER_UPD_CHECK_URL=QString("%1/checkupdate?version=").arg(PGMODELER_SITE),
 
 	BUG_REPORT_EMAIL=QString("bug@pgmodeler.com.br"),
 	BUG_REPORT_FILE=QString("pgmodeler%1.bug"),
@@ -42,6 +40,7 @@ namespace GlobalAttributes {
 
 	DIR_SEPARATOR=QString("/"),
 	DEFAULT_CONFS_DIR=QString("defaults"),
+	CONFS_BACKUPS_DIR=QString("backups"),
 	SCHEMAS_DIR=QString("schemas"),
 	SQL_SCHEMA_DIR=QString("sql"),
 	XML_SCHEMA_DIR=QString("xml"),
@@ -60,6 +59,7 @@ namespace GlobalAttributes {
 	CONNECTIONS_CONF=QString("connections"),
 	RELATIONSHIPS_CONF=QString("relationships"),
 	SNIPPETS_CONF=QString("snippets"),
+	SQL_HISTORY_CONF=QString("sql-history"),
 
 	SQL_HIGHLIGHT_CONF=QString("sql-highlight"),
 	XML_HIGHLIGHT_CONF=QString("xml-highlight"),

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,7 +26,10 @@
 SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 {
 	setupUi(this);
-	h_splitter->setSizes({0, 10000});
+
+	h_splitter->setSizes({315, 10000});
+	h_splitter->handle(1)->installEventFilter(this);
+
 	v_splitter->setSizes({1000, 400});
 
 	QVBoxLayout *vbox=new QVBoxLayout;
@@ -49,8 +52,9 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	connect(source_pane_tb, SIGNAL(toggled(bool)), sourcecode_gb, SLOT(setVisible(bool)));
 
 	connect(databases_tbw, &QTabWidget::currentChanged,
-			[=](){
+			[&](){
 				DatabaseExplorerWidget *dbexplorer=qobject_cast<DatabaseExplorerWidget *>(databases_tbw->currentWidget());
+				QMap<QWidget *, QWidgetList> ::iterator itr=sql_exec_wgts.begin();
 
 				sourcecode_txt->clear();
 
@@ -58,14 +62,48 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 					sourcecode_txt->setPlainText(dbexplorer->objects_trw->currentItem()->
 																			 data(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole).toString());
 
+				while(itr != sql_exec_wgts.end())
+				{
+					if(itr.key() != dbexplorer)
+					{
+						for(auto &wgt : itr.value())
+							sql_exec_tbw->removeTab(sql_exec_tbw->indexOf(wgt));
+					}
+					else
+					{
+						for(auto &wgt : itr.value())
+							sql_exec_tbw->addTab(wgt, dbexplorer->getConnection().getConnectionParam(Connection::PARAM_DB_NAME));
+					}
+
+					itr++;
+				}
+
 				disconnect_tb->setEnabled(databases_tbw->count() > 0);
 			});
 }
 
 SQLToolWidget::~SQLToolWidget(void)
 {
+	databases_tbw->blockSignals(true);
+
 	while(databases_tbw->count() > 0)
 		closeDatabaseExplorer(0);
+}
+
+bool SQLToolWidget::eventFilter(QObject *object, QEvent *event)
+{
+	if(event->type() == QEvent::MouseButtonDblClick &&
+		 qobject_cast<QSplitterHandle *>(object) == h_splitter->handle(1))
+	{
+		if(h_splitter->sizes().at(0) != 0)
+			h_splitter->setSizes({0, 10000});
+		else
+			h_splitter->setSizes({315, 10000});
+
+		return(true);
+	}
+
+	return(QWidget::eventFilter(object, event));
 }
 
 void SQLToolWidget::updateTabs(void)
@@ -75,9 +113,13 @@ void SQLToolWidget::updateTabs(void)
 	for(int i=0; i < sql_exec_tbw->count(); i++)
 	{
 		sql_exec_wgt=dynamic_cast<SQLExecutionWidget *>(sql_exec_tbw->widget(i));
-		sql_exec_wgt-> sql_cmd_txt->updateLineNumbersSize();
-		sql_exec_wgt-> sql_cmd_txt->updateLineNumbers();
+		sql_exec_wgt->sql_cmd_txt->updateLineNumbersSize();
+		sql_exec_wgt->sql_cmd_txt->updateLineNumbers();
 		sql_exec_wgt->sql_cmd_hl->rehighlight();
+
+		//Forcing the update of the sql history widget (see SQLExecutionWidget::eventFilter)
+		sql_exec_wgt->output_tbw->widget(2)->hide();
+		sql_exec_wgt->output_tbw->widget(2)->show();
 	}
 }
 
@@ -92,6 +134,13 @@ void SQLToolWidget::configureSnippets(void)
 	}
 }
 
+void SQLToolWidget::clearDatabases()
+{
+	database_cmb->clear();
+	database_cmb->setEnabled(false);
+	refresh_tb->setEnabled(false);
+}
+
 void SQLToolWidget::connectToServer(void)
 {
 	try
@@ -104,8 +153,7 @@ void SQLToolWidget::connectToServer(void)
 		else
 		{
 			Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-
-			database_cmb->clear();
+			clearDatabases();
 
 			if(conn)
 			{
@@ -163,63 +211,26 @@ void SQLToolWidget::disconnectFromDatabases(void)
 	}
 }
 
-void SQLToolWidget::dropDatabase(const QString &dbname)
+void SQLToolWidget::handleDatabaseDropped(const QString &dbname)
 {
-	Messagebox msg_box;
-
-	msg_box.show(trUtf8("Warning"),
-				 trUtf8("<strong>CAUTION:</strong> You are about to drop the entire database <strong>%1</strong>! All data will be completely wiped out. Do you really want to proceed?").arg(dbname),
-				 Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
-
-	if(msg_box.result()==QDialog::Accepted)
-	{
-		Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-		Connection aux_conn=(*conn);
-
 		try
 		{
 			//Closing tabs related to the database to be dropped
 			for(int i=0; i < databases_tbw->count(); i++)
 			{
-				if(databases_tbw->tabText(i)==dbname)
+				if(databases_tbw->tabText(i).remove('&') == dbname)
 				{
 					closeDatabaseExplorer(i);
 					i=-1;
 				}
 			}
 
-			aux_conn.connect();
-			aux_conn.executeDDLCommand(QString("DROP DATABASE \"%1\";").arg(dbname));
-			aux_conn.close();
 			connectToServer();
 		}
 		catch(Exception &e)
 		{
 			throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
-	}
-}
-
-void SQLToolWidget::openDataGrid(const QString &dbname, const QString &schema, const QString &table, bool hide_views)
-{
-#ifdef DEMO_VERSION
-#warning "DEMO VERSION: data manipulation feature disabled warning."
-	Messagebox msg_box;
-	msg_box.show(trUtf8("Warning"),
-				 trUtf8("You're running a demonstration version! The data manipulation feature is available only in the full version!"),
-				 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
-#else
-	DataManipulationForm *data_manip=new DataManipulationForm;
-	Connection conn=*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-
-	data_manip->setWindowModality(Qt::NonModal);
-	data_manip->setAttribute(Qt::WA_DeleteOnClose, true);
-	data_manip->hide_views_chk->setChecked(hide_views);
-
-	conn.setConnectionParam(Connection::PARAM_DB_NAME, (dbname.isEmpty() ? database_cmb->currentText() : dbname));
-	data_manip->setAttributes(conn, schema, table);
-	data_manip->show();
-#endif
 }
 
 void SQLToolWidget::browseDatabase(void)
@@ -230,18 +241,18 @@ void SQLToolWidget::browseDatabase(void)
 		if(database_cmb->currentIndex() > 0)
 		{
 			Connection conn=(*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>()));
+			QString maintainance_db=conn.getConnectionParam(Connection::PARAM_DB_NAME);
 			DatabaseExplorerWidget *db_explorer_wgt=new DatabaseExplorerWidget;
 
 			db_explorer_wgt->setObjectName(database_cmb->currentText());
 			conn.setConnectionParam(Connection::PARAM_DB_NAME, database_cmb->currentText());
-			db_explorer_wgt->setConnection(conn);
+			db_explorer_wgt->setConnection(conn, maintainance_db);
 			db_explorer_wgt->listObjects();
 
 			databases_tbw->addTab(db_explorer_wgt, database_cmb->currentText());
 			databases_tbw->setCurrentWidget(db_explorer_wgt);
 
-			connect(db_explorer_wgt, SIGNAL(s_dataGridOpenRequested(QString,QString,QString,bool)), this, SLOT(openDataGrid(QString,QString,QString,bool)));
-			connect(db_explorer_wgt, SIGNAL(s_databaseDropRequested(QString)), this, SLOT(dropDatabase(QString)));
+			connect(db_explorer_wgt, SIGNAL(s_databaseDropped(QString)), this, SLOT(handleDatabaseDropped(QString)));
 			connect(db_explorer_wgt, SIGNAL(s_sqlExecutionRequested()), this, SLOT(addSQLExecutionTab()));
 			connect(db_explorer_wgt, SIGNAL(s_snippetShowRequested(QString)), this, SLOT(showSnippet(QString)));
 			connect(db_explorer_wgt, SIGNAL(s_sourceCodeShowRequested(QString)), sourcecode_txt, SLOT(setPlainText(QString)));

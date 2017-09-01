@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ namespace PgModelerUiNS {
 	  This method will create a layout if 'parent' doesn't has one. If parent has a layout
 	  the method will do nothing. If parent is null creates an orphan object which means the
 	  user must take care of the destruction of the object */
-	extern NumberedTextEditor *createNumberedTextEditor(QWidget *parent);
+	extern NumberedTextEditor *createNumberedTextEditor(QWidget *parent, bool handle_ext_files = false);
 
 	/*! \brief Creates an item in the specified QTreeWidget instance.
 	  The new item is automatically inserted on the QTreeWidget object.
@@ -64,6 +64,19 @@ namespace PgModelerUiNS {
 
 	//! \brief Replaces the sequence of chars [`'] by html tags <strong></strong> and [()] by <em></em>
 	extern QString formatMessage(const QString &msg);
+
+	/*! \brief Fills a tree widget with all the stack trace provided by the passed Exception. A root item
+	can be specified so all created child items are appended to it */
+	extern void createExceptionsTree(QTreeWidget *exceptions_trw, Exception &e, QTreeWidgetItem *root);
+
+	//! \brief Returns the path, in the icon resource, to the provided icon name
+	extern QString getIconPath(const QString &icon);
+
+	//! \brief Returns the path, in the icon resource, to the icon of the provided object type
+	extern QString getIconPath(ObjectType obj_type);
+
+	//! \brief Resizes the provided dialog considering font dpi changes as well screen size
+	extern void resizeDialog(QDialog *dialog);
 }
 
 #endif

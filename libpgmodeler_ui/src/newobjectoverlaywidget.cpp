@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,8 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 	QString shortcut;
 	int action_idx=0;
 	QList<QAction *> rel_actions=parent->rels_menu->actions();
-	map<QToolButton *, tuple<QString, ObjectType>>  obj_shortcuts={ { aggregate_tb,    std::make_tuple(trUtf8("A"), OBJ_AGGREGATE)    },
+	map<QToolButton *, tuple<QString, ObjectType>>  obj_shortcuts={
+																	{ aggregate_tb,    std::make_tuple(trUtf8("A"), OBJ_AGGREGATE)    },
 																	{ cast_tb,         std::make_tuple(trUtf8("G"), OBJ_CAST)         },
 																	{ eventtrigger_tb, std::make_tuple(trUtf8("K"), OBJ_EVENT_TRIGGER)},
 																	{ collation_tb,    std::make_tuple(trUtf8("H"), OBJ_COLLATION)    },
@@ -53,7 +54,8 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 																	{ index_tb,        std::make_tuple(trUtf8("X"), OBJ_INDEX)        },
 																	{ column_tb,       std::make_tuple(trUtf8("C"), OBJ_COLUMN)       },
 																	{ rule_tb,         std::make_tuple(trUtf8("V"), OBJ_RULE)         },
-																	{ trigger_tb,      std::make_tuple(trUtf8("B"), OBJ_TRIGGER)      } };
+																	{ trigger_tb,      std::make_tuple(trUtf8("B"), OBJ_TRIGGER)      },
+																	{ genericsql_tb,   std::make_tuple(trUtf8("8"), OBJ_GENERIC_SQL)  } };
 
 	map<QToolButton *, tuple<QString, int>> rel_shortcuts={ { rel11_tb,  std::make_tuple(trUtf8("1"), 0) },
 															{ rel1n_tb,  std::make_tuple(trUtf8("2"), 1) },
@@ -113,11 +115,13 @@ void NewObjectOverlayWidget::setSelectedObjects(vector<BaseObject *> &sel_objs)
 	db_objs_btns_wgt->setVisible(obj_type==OBJ_DATABASE);
 	sch_objs_btns_wgt->setVisible(obj_type==OBJ_DATABASE || obj_type==OBJ_SCHEMA);
 
-	tab_objs_btns_wgt->setVisible(obj_type==OBJ_TABLE || obj_type==OBJ_RELATIONSHIP);
-	index_tb->setVisible(obj_type==OBJ_TABLE);
-	rule_tb->setVisible(obj_type==OBJ_TABLE);
-	trigger_tb->setVisible(obj_type==OBJ_TABLE);
-	tab_perms_tb->setVisible(obj_type==OBJ_TABLE);
+	tab_objs_btns_wgt->setVisible(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW || obj_type==OBJ_RELATIONSHIP);
+	column_tb->setDisabled(obj_type==OBJ_VIEW);
+	constraint_tb->setDisabled(obj_type==OBJ_VIEW);
+	index_tb->setVisible(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW);
+	rule_tb->setVisible(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW);
+	trigger_tb->setVisible(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW);
+	tab_perms_tb->setVisible(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW);
 	rel_btns_wgt->setVisible(sel_objs.size()==2 &&
 							 sel_objs.at(0)->getObjectType()==OBJ_TABLE && sel_objs.at(1)->getObjectType()==OBJ_TABLE);
 

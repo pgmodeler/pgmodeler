@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : BaseConfigWidget(par
 	plugins_tab=new ObjectTableWidget(ObjectTableWidget::EDIT_BUTTON, false, this);
 	plugins_tab->setColumnCount(3);
 	plugins_tab->setHeaderLabel(trUtf8("Plugin"),0);
-	plugins_tab->setHeaderIcon(QPixmap(QString(":/icones/icones/plugins.png")),0);
+	plugins_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("plugins")),0);
 	plugins_tab->setHeaderLabel(trUtf8("Version"),1);
 	plugins_tab->setHeaderLabel(trUtf8("Library"),2);
 
@@ -53,7 +53,7 @@ PluginsConfigWidget::~PluginsConfigWidget(void)
 
 void PluginsConfigWidget::openRootPluginDiretory(void)
 {
-	QDesktopServices::openUrl(QUrl(QString("file:///") + root_dir_edt->text()));
+	QDesktopServices::openUrl(QUrl(QString("file://") + root_dir_edt->text()));
 }
 
 void PluginsConfigWidget::showPluginInfo(int idx)

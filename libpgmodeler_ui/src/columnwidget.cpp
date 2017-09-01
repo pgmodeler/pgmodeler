@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -48,10 +48,10 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN
 		configureTabOrder({ data_type });
 
 		connect(sequence_rb, &QRadioButton::clicked,
-				[=](){ sequence_sel->setEnabled(true); def_value_txt->setEnabled(false); });
+				[&](){ sequence_sel->setEnabled(true); def_value_txt->setEnabled(false); });
 
 		connect(expression_rb, &QRadioButton::clicked,
-				[=](){ sequence_sel->setEnabled(false); def_value_txt->setEnabled(true); });
+				[&](){ sequence_sel->setEnabled(false); def_value_txt->setEnabled(true); });
 
 		setMinimumSize(540, 460);
 	}

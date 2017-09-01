@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,7 +42,10 @@ class BaseGraphicObject: public QObject, public BaseObject {
 
 		/*! \brief Indicates that the object structure was modified somehow
 		 and it is needed to be updated or specially treated */
-		bool is_modified;
+		bool is_modified,
+
+		//! \bried Indicates if the graphical representation of this object is faded out
+		is_faded_out;
 
 		/*! \brief Stores a reference to the object which is currently the receiver
 		 of signals emitted by the instance of this class. The receiver is an object that
@@ -59,6 +62,8 @@ class BaseGraphicObject: public QObject, public BaseObject {
 
 		//! \brief Defines the receveir objects that represents the 'this' object on the QGraphicsScene
 		void setReceiverObject(QObject *obj);
+
+		void setFadedOutAttribute(void);
 
 	public:
 		BaseGraphicObject(void);
@@ -83,8 +88,14 @@ class BaseGraphicObject: public QObject, public BaseObject {
 
 		virtual void setSQLDisabled(bool value);
 
+		//! \brief Sets the fade out status of the receiver object
+		void setFadedOut(bool value);
+
 		//! \brief Returns the modified status of the object
 		bool isModified(void);
+
+		//! \brief Returns the fade out status of the object
+		bool isFadedOut(void);
 
 		//! \brief Returns the current position of the object
 		QPointF getPosition();

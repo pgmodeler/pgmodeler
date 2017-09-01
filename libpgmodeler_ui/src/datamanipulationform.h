@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 #include "catalog.h"
 #include "syntaxhighlighter.h"
 #include "codecompletionwidget.h"
+#include "csvloadwidget.h"
 
 class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 	private:
@@ -39,10 +40,16 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		
 		//! \brief Default row colors for each operation type
 		static const QColor ROW_COLORS[3];
+
+		static bool has_csv_clipboard;
 		
+		CsvLoadWidget *csv_load_wgt;
+
 		SyntaxHighlighter *filter_hl;
 		
 		CodeCompletionWidget *code_compl_wgt;
+
+		QMenu fks_menu, copy_menu;
 		
 		//! \brief Store the template connection params to be used by catalogs and command execution connections
 		attribs_map tmpl_conn_params;
@@ -52,18 +59,32 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		
 		//! \brief Current editing table pk columns names
 		pk_col_names;
+
+		/*! \brief Stores the current opened table's oid. This attribute is filled only the table has an primary
+		and it is used to retrieve all foreign keys that references the current table */
+		unsigned table_oid;
 		
 		//! \brief Stores the ids of changed rows. These ids are handled on saveChanges() method
 		vector<int> changed_rows;
 		
 		//! \brief Stores the previous color of the rows before being marked with some operation
 		map<int, QBrush> prev_row_colors;
+
+		//! \brief Stores the fk informations about referenced tables
+		map<QString, attribs_map> fk_infos,
+
+		//! \brief Stores the fk informations about referencing tables
+		ref_fk_infos;
 		
 		//! \brief Fills a combobox with the names of objects retrieved from catalog
 		void listObjects(QComboBox *combo, vector<ObjectType> obj_types, const QString &schema=QString());
 		
 		//! \brief Retrieve the primary key column ids for the specified table
 		void retrievePKColumns(const QString &schema, const QString &table);
+
+		/*! \brief Retrieve the foreign key columns info for the specified table. These data is used to browse referenced tables in the data
+		 that the selected line holds */
+		void retrieveFKColumns(const QString &schema, const QString &table);
 		
 		/*! \brief Mark the line as changed, changing its background color and applying the respective operation (see OP_??? constant)
 				when user call saveChanged() */
@@ -73,17 +94,20 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		QString getDMLCommand(int row);
 		
 		//! \brief Remove the rows marked as OP_INSERT which ids are specified on the parameter vector
-		void removeNewRows(vector<int> &ins_rows);
+		void removeNewRows(const vector<int> &ins_rows);
 		
 		//! \brief Reset the state of changed rows, clearing all attributes used to control the modifications on them
 		void clearChangedRows(void);
+
+		//! brief Browse a referenced or referencing table by the provided foreign key name
+		void browseTable(const QString &fk_name, bool browse_ref_tab);
 
 	public:
 		DataManipulationForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 		
 		//! \brief Defines the connection and current schema and table to be handled, this method should be called before show the dialog
-		void setAttributes(Connection conn, const QString curr_schema=QString("public"), const QString curr_table=QString());
-		
+		void setAttributes(Connection conn, const QString curr_schema=QString("public"), const QString curr_table=QString(), const QString &filter=QString());
+
 	private slots:
 		//! \brief List the tables based upon the current schema
 		void listTables(void);
@@ -141,6 +165,15 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		
 		//! \brief Swap two rows on the order by list
 		void swapColumns(void);
+
+		//! \brief Add new rows to the grid based upon the CSV loaded
+		void loadDataFromCsv(bool load_from_clipboard = false);
+
+		//! brief Browse the referenced table data using the selected row in the results grid
+		void browseReferencedTable(void);
+
+		//! brief Browse the referencing table data using the selected row in the results grid
+		void browseReferrerTable(void);
 };
 
 #endif

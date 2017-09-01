@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,11 +17,10 @@
 */
 
 #include "table.h"
+#include "pgmodelerns.h"
 
 const QString Table::DATA_SEPARATOR = QString("•");
 const QString Table::DATA_LINE_BREAK = QString("%1%2").arg("⸣").arg('\n');
-const QChar Table::UNESC_VALUE_START='{';
-const QChar	Table::UNESC_VALUE_END='}';
 
 Table::Table(void) : BaseTable()
 {
@@ -1362,6 +1361,7 @@ QString Table::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::COPY_TABLE]=QString();
 	attributes[ParsersAttributes::ANCESTOR_TABLE]=QString();
 	attributes[ParsersAttributes::TAG]=QString();
+	attributes[ParsersAttributes::HIDE_EXT_ATTRIBS]=(isExtAttribsHidden() ? ParsersAttributes::_TRUE_ : QString());
 
 	if(def_type==SchemaParser::SQL_DEFINITION && copy_table)
 		attributes[ParsersAttributes::COPY_TABLE]=copy_table->getName(true) + copy_op.getSQLDefinition();
@@ -1379,6 +1379,7 @@ QString Table::getCodeDefinition(unsigned def_type)
 	{
 		setRelObjectsIndexesAttribute();
 		setPositionAttribute();
+		setFadedOutAttribute();
 		attributes[ParsersAttributes::INITIAL_DATA]=initial_data;
 	}
 	else
@@ -1697,8 +1698,6 @@ QString Table::createInsertCommand(const QStringList &col_names, const QStringLi
 	for(QString col_name : col_names)
 		col_list.push_back(BaseObject::formatName(col_name));
 
-	curr_col=0;
-
 	for(QString value : values)
 	{
 		//Empty values as considered as DEFAULT
@@ -1707,7 +1706,7 @@ QString Table::createInsertCommand(const QStringList &col_names, const QStringLi
 			value=QString("DEFAULT");
 		}
 		//Unescaped values will not be enclosed in quotes
-		else if(value.startsWith(UNESC_VALUE_START) && value.endsWith(UNESC_VALUE_END))
+		else if(value.startsWith(PgModelerNS::UNESC_VALUE_START) && value.endsWith(PgModelerNS::UNESC_VALUE_END))
 		{
 			value.remove(0,1);
 			value.remove(value.length()-1, 1);
@@ -1715,8 +1714,8 @@ QString Table::createInsertCommand(const QStringList &col_names, const QStringLi
 		//Quoting value
 		else
 		{
-			value.replace(QString("\\") + UNESC_VALUE_START, UNESC_VALUE_START);
-			value.replace(QString("\\") + UNESC_VALUE_END, UNESC_VALUE_END);
+			value.replace(QString("\\") + PgModelerNS::UNESC_VALUE_START, PgModelerNS::UNESC_VALUE_START);
+			value.replace(QString("\\") + PgModelerNS::UNESC_VALUE_END, PgModelerNS::UNESC_VALUE_END);
 			value.replace(QString("\'"), QString("''"));
 			value.replace(QChar(QChar::LineFeed), QString("\\n"));
 			value=QString("E'") + value + QString("'");

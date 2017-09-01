@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 */
 
 #include "baseconfigwidget.h"
+#include "messagebox.h"
 
 BaseConfigWidget::BaseConfigWidget(QWidget *parent) : QWidget(parent)
 {
@@ -122,16 +123,36 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id)
 						ERR_DEFAULT_CONFIG_NOT_REST,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
-		//Overwrites the current file with the default
-		QFile::remove(current_file);
+		bool bkp_saved = false;
+		QFileInfo fi(current_file);
+		QDir dir;
+		QString bkp_dir = fi.absolutePath() + GlobalAttributes::DIR_SEPARATOR + GlobalAttributes::CONFS_BACKUPS_DIR,
+				bkp_filename = bkp_dir + GlobalAttributes::DIR_SEPARATOR +
+											 QString("%1.bkp_%2").arg(fi.fileName()).arg(QDateTime::currentDateTime().toString("yyyyMMd_hhmmss"));
+
+		dir.mkpath(bkp_dir);
+		bkp_saved = QFile::rename(current_file, bkp_filename);
 		QFile::copy(default_file, current_file);
+
+		if(bkp_saved)
+		{
+			Messagebox msg_box;
+			msg_box.show(trUtf8("A backup of the previous settings was saved into <strong>%1</strong>!").arg(bkp_filename), Messagebox::INFO_ICON);
+		}
 	}
 }
 
 void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, attribs_map> &config_params, const vector<QString> &key_attribs)
 {
+	QString filename;
+
 	try
 	{
+		filename = GlobalAttributes::CONFIGURATIONS_DIR +
+							 GlobalAttributes::DIR_SEPARATOR +
+							 conf_id +
+							 GlobalAttributes::CONFIGURATION_EXT;
+
 		config_params.clear();
 		xmlparser.restartParser();
 		xmlparser.setDTDFile(GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
@@ -142,10 +163,7 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, at
 							 GlobalAttributes::OBJECT_DTD_EXT,
 							 conf_id);
 
-		xmlparser.loadXMLFile(GlobalAttributes::CONFIGURATIONS_DIR +
-							  GlobalAttributes::DIR_SEPARATOR +
-							  conf_id +
-							  GlobalAttributes::CONFIGURATION_EXT);
+		xmlparser.loadXMLFile(filename);
 
 		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
@@ -178,7 +196,7 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, at
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, filename);
 	}
 }
 

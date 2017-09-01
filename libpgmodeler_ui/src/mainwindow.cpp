@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include "pgmodeleruins.h"
 #include "bugreportform.h"
 #include "metadatahandlingform.h"
+#include "sqlexecutionwidget.h"
 
 bool MainWindow::confirm_validation=true;
 
@@ -35,6 +36,12 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	pending_op=NO_PENDING_OPER;
 	central_wgt=nullptr;
+
+	canvas_info_wgt = new SceneInfoWidget(this);
+	QHBoxLayout *hbox = new QHBoxLayout(canvas_info_parent);
+	hbox->addWidget(canvas_info_wgt);
+	hbox->setContentsMargins(4,4,4,4);
+	canvas_info_parent->setLayout(hbox);
 
 	try
 	{
@@ -60,6 +67,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		views_stw->widget(MANAGE_VIEW)->setLayout(grid);
 
 		configuration_form=new ConfigurationForm(nullptr, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
+		PgModelerUiNS::resizeDialog(configuration_form);
 		configuration_form->loadConfiguration();
 
 		plugins_conf_wgt=dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PLUGINS_CONF_WGT));
@@ -67,7 +75,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		plugins_menu->setEnabled(!plugins_menu->isEmpty());
 		action_plugins->setEnabled(!plugins_menu->isEmpty());
 		action_plugins->setMenu(plugins_menu);
-		dynamic_cast<QToolButton *>(general_tb->widgetForAction(action_plugins))->setPopupMode(QToolButton::InstantPopup);
 
 		confs=GeneralConfigWidget::getConfigurationParams();
 		itr=confs.begin();
@@ -118,6 +125,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 		control_tb->addWidget(model_nav_wgt);
 		control_tb->addSeparator();
+
+		control_tb->addAction(action_plugins);
+		dynamic_cast<QToolButton *>(control_tb->widgetForAction(action_plugins))->setPopupMode(QToolButton::InstantPopup);
+
 		control_tb->addAction(action_bug_report);
 		control_tb->addAction(action_donate);
 		control_tb->addAction(action_about);
@@ -188,7 +199,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(model_nav_wgt, SIGNAL(s_currentModelChanged(int)), this, SLOT(setCurrentModel()));
 
 	connect(action_print, SIGNAL(triggered(bool)), this, SLOT(printModel(void)));
-	connect(action_configuration, SIGNAL(triggered(bool)), configuration_form, SLOT(show(void)));
+	connect(action_configuration, SIGNAL(triggered(bool)), configuration_form, SLOT(show()));
 
 	connect(oper_list_wgt, SIGNAL(s_operationExecuted(void)), overview_wgt, SLOT(updateOverview(void)));
 	connect(configuration_form, SIGNAL(finished(int)), this, SLOT(applyConfigurations(void)));
@@ -206,8 +217,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(action_bug_report, SIGNAL(triggered()), this, SLOT(reportBug()));
 	connect(action_handle_metadata, SIGNAL(triggered(bool)), this, SLOT(handleObjectsMetadata()));
 
-	connect(model_valid_wgt, &ModelValidationWidget::s_connectionsUpdateRequest, [=](){ updateConnections(true); });
-	connect(sql_tool_wgt, &SQLToolWidget::s_connectionsUpdateRequest, [=](){ updateConnections(true); });
+	connect(model_valid_wgt, &ModelValidationWidget::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
+	connect(sql_tool_wgt, &SQLToolWidget::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
+
+	connect(action_arrange_objects, SIGNAL(triggered(bool)), this, SLOT(arrangeObjects()));
 
 	window_title=this->windowTitle() + QString(" ") + GlobalAttributes::PGMODELER_VERSION;
 
@@ -286,14 +299,14 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), models_tbw, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), this, SLOT(stopTimers(bool)));
 
-	connect(model_valid_wgt, &ModelValidationWidget::s_validationCanceled, [=](){ pending_op=NO_PENDING_OPER; });
+	connect(model_valid_wgt, &ModelValidationWidget::s_validationCanceled, [&](){ pending_op=NO_PENDING_OPER; });
 	connect(model_valid_wgt, SIGNAL(s_validationFinished(bool)), this, SLOT(executePendingOperation(bool)));
 	connect(model_valid_wgt, SIGNAL(s_fixApplied()), this, SLOT(removeOperations()), Qt::QueuedConnection);
 	connect(model_valid_wgt, SIGNAL(s_graphicalObjectsUpdated()), model_objs_wgt, SLOT(updateObjectsView()), Qt::QueuedConnection);
 
 	connect(&tmpmodel_save_timer, SIGNAL(timeout()), &tmpmodel_thread, SLOT(start()));
 	connect(&tmpmodel_thread, SIGNAL(started()), this, SLOT(saveTemporaryModels()));
-	connect(&tmpmodel_thread, &QThread::started, [=](){ tmpmodel_thread.setPriority(QThread::HighPriority); });
+	connect(&tmpmodel_thread, &QThread::started, [&](){ tmpmodel_thread.setPriority(QThread::HighPriority); });
 
 	models_tbw_parent->resize(QSize(models_tbw_parent->maximumWidth(), models_tbw_parent->height()));
 
@@ -303,45 +316,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	showRightWidgetsBar();
 	showBottomWidgetsBar();
 
-	//Restore temporary models (if exists)
-	if(restoration_form->hasTemporaryModels())
-	{
-		restoration_form->exec();
-
-		if(restoration_form->result()==QDialog::Accepted)
-		{
-			ModelWidget *model=nullptr;
-			QString model_file;
-			QStringList tmp_models=restoration_form->getSelectedModels();
-
-			while(!tmp_models.isEmpty())
-			{
-				try
-				{
-					model_file=tmp_models.front();
-					tmp_models.pop_front();
-					this->addModel(model_file);
-
-					//Get the model widget generated from file
-					model=dynamic_cast<ModelWidget *>(models_tbw->widget(models_tbw->count()-1));
-
-					//Set the model as modified forcing the user to save when the autosave timer ends
-					model->setModified(true);
-					model->filename.clear();
-					restoration_form->removeTemporaryModel(model_file);
-				}
-				catch(Exception &e)
-				{
-					//Destroy the temp file if the "keep  models" isn't checked
-					if(!restoration_form->keep_models_chk->isChecked())
-						restoration_form->removeTemporaryModel(model_file);
-
-					Messagebox msg_box;
-					msg_box.show(e);
-				}
-			}
-		}
-	}
+	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+	confs=conf_wgt->getConfigurationParams();
 
 	//If a previous session was restored save the temp models
 	updateConnections();
@@ -393,6 +369,51 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		if(!act->shortcut().toString().isEmpty())
 			act->setToolTip(act->toolTip() + QString(" (%1)").arg(act->shortcut().toString()));
 	}
+
+	try
+	{
+		SQLExecutionWidget::loadSQLHistory();
+	}
+	catch(Exception &){}
+
+#ifndef Q_OS_MAC
+	//Restoring the canvas grid options
+	action_show_grid->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_CANVAS_GRID]==ParsersAttributes::_TRUE_);
+	action_alin_objs_grade->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::ALIGN_OBJS_TO_GRID]==ParsersAttributes::_TRUE_);
+	action_show_delimiters->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_PAGE_DELIMITERS]==ParsersAttributes::_TRUE_);
+
+	ObjectsScene::setGridOptions(action_show_grid->isChecked(),
+															 action_alin_objs_grade->isChecked(),
+															 action_show_delimiters->isChecked());
+
+	//Hiding/showing the main menu bar depending on the retrieved conf
+	main_menu_mb->setVisible(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_MAIN_MENU]==ParsersAttributes::_TRUE_);
+
+	if(main_menu_mb->isVisible())
+		file_menu->addAction(action_hide_main_menu);
+
+	action_main_menu->setVisible(!main_menu_mb->isVisible());
+#endif
+
+	restoreDockWidgetsSettings();
+
+	//Positioning the update notifier widget before showing it (if there is an update)
+	setFloatingWidgetPos(update_notifier_wgt, action_update_found, control_tb, false);
+	action_update_found->setVisible(false);
+	QTimer::singleShot(1000, this, SLOT(restoreTemporaryModels()));
+
+#ifdef NO_UPDATE_CHECK
+#warning "NO UPDATE CHECK: Update checking is disabled."
+#else
+	//Enabling update check at startup
+	if(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]==ParsersAttributes::_TRUE_)
+		QTimer::singleShot(10000, update_notifier_wgt, SLOT(checkForUpdate()));
+#endif
+
+#ifdef DEMO_VERSION
+#warning "DEMO VERSION: demonstration version startup alert."
+	QTimer::singleShot(5000, this, SLOT(showDemoVersionWarning()));
+#endif
 }
 
 MainWindow::~MainWindow(void)
@@ -403,6 +424,51 @@ MainWindow::~MainWindow(void)
 	delete(restoration_form);
 	delete(overview_wgt);
 	delete(configuration_form);
+}
+
+void MainWindow::restoreTemporaryModels(void)
+{
+	PgModelerUiNS::resizeDialog(restoration_form);
+
+	//Restore temporary models (if exists)
+	if(restoration_form->hasTemporaryModels())
+	{
+		restoration_form->exec();
+
+		if(restoration_form->result()==QDialog::Accepted)
+		{
+			ModelWidget *model=nullptr;
+			QString model_file;
+			QStringList tmp_models=restoration_form->getSelectedModels();
+
+			while(!tmp_models.isEmpty())
+			{
+				try
+				{
+					model_file=tmp_models.front();
+					tmp_models.pop_front();
+					this->addModel(model_file);
+
+					//Get the model widget generated from file
+					model=dynamic_cast<ModelWidget *>(models_tbw->widget(models_tbw->count()-1));
+
+					//Set the model as modified forcing the user to save when the autosave timer ends
+					model->setModified(true);
+					model->filename.clear();
+					restoration_form->removeTemporaryModel(model_file);
+				}
+				catch(Exception &e)
+				{
+					//Destroy the temp file if the "keep  models" isn't checked
+					if(!restoration_form->keep_models_chk->isChecked())
+						restoration_form->removeTemporaryModel(model_file);
+
+					Messagebox msg_box;
+					msg_box.show(e);
+				}
+			}
+		}
+	}
 }
 
 void MainWindow::showRightWidgetsBar(void)
@@ -470,52 +536,9 @@ void MainWindow::fixModel(const QString &filename)
 		model_fix_form.output_file_edt->setText(fi.absolutePath() + GlobalAttributes::DIR_SEPARATOR + fi.baseName() + QString("_fixed.") + fi.suffix());
 	}
 
+	PgModelerUiNS::resizeDialog(&model_fix_form);
 	model_fix_form.exec();
 	disconnect(&model_fix_form, nullptr, this, nullptr);
-}
-
-void MainWindow::showEvent(QShowEvent *)
-{
-	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
-	map<QString, attribs_map> confs=conf_wgt->getConfigurationParams();
-
-#ifndef Q_OS_MAC
-	//Restoring the canvas grid options
-	action_show_grid->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_CANVAS_GRID]==ParsersAttributes::_TRUE_);
-	action_alin_objs_grade->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::ALIGN_OBJS_TO_GRID]==ParsersAttributes::_TRUE_);
-	action_show_delimiters->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_PAGE_DELIMITERS]==ParsersAttributes::_TRUE_);
-
-	ObjectsScene::setGridOptions(action_show_grid->isChecked(),
-															 action_alin_objs_grade->isChecked(),
-															 action_show_delimiters->isChecked());
-
-	//Hiding/showing the main menu bar depending on the retrieved conf
-	main_menu_mb->setVisible(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_MAIN_MENU]==ParsersAttributes::_TRUE_);
-
-	if(main_menu_mb->isVisible())
-		file_menu->addAction(action_hide_main_menu);
-
-	action_main_menu->setVisible(!main_menu_mb->isVisible());
-#endif
-
-	restoreDockWidgetsSettings();
-
-	//Positioning the update notifier widget before showing it (if there is an update)
-	setFloatingWidgetPos(update_notifier_wgt, action_update_found, control_tb, false);
-	action_update_found->setVisible(false);
-
-#ifdef NO_UPDATE_CHECK
-#warning "NO UPDATE CHECK: Update checking is disabled."
-#else
-	//Enabling update check at startup
-	if(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]==ParsersAttributes::_TRUE_)
-		QTimer::singleShot(2000, update_notifier_wgt, SLOT(checkForUpdate()));
-#endif
-
-#ifdef DEMO_VERSION
-#warning "DEMO VERSION: demonstration version startup alert."
-	QTimer::singleShot(1500, this, SLOT(showDemoVersionWarning()));
-#endif
 }
 
 void MainWindow::resizeEvent(QResizeEvent *)
@@ -655,6 +678,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 				log_files.pop_front();
 			}
 
+			SQLExecutionWidget::saveSQLHistory();
 			qApp->quit();
 		}
 	}
@@ -670,7 +694,10 @@ void MainWindow::updateConnections(bool force)
 							sql_tool_wgt->connections_cmb->count()==0)))
 	{
 		if(sender()!=sql_tool_wgt)
+		{
 			ConnectionsConfigWidget::fillConnectionsComboBox(sql_tool_wgt->connections_cmb, true);
+			sql_tool_wgt->clearDatabases();
+		}
 
 		if(sender()!=model_valid_wgt)
 			ConnectionsConfigWidget::fillConnectionsComboBox(model_valid_wgt->connections_cmb, true, Connection::OP_VALIDATION);
@@ -689,6 +716,7 @@ void MainWindow::saveTemporaryModels(void)
 
 		if(count > 0)
 		{
+			canvas_info_parent->setVisible(false);
 			bg_saving_wgt->setVisible(true);
 			bg_saving_pb->setValue(0);
 			bg_saving_wgt->repaint();
@@ -706,6 +734,7 @@ void MainWindow::saveTemporaryModels(void)
 
 			bg_saving_pb->setValue(100);
 			bg_saving_wgt->setVisible(false);
+			canvas_info_parent->setVisible(true);
 		}
 
 		tmpmodel_thread.quit();
@@ -941,6 +970,7 @@ void MainWindow::setCurrentModel(void)
 
 	models_tbw->setCurrentIndex(model_nav_wgt->getCurrentIndex());
 	current_model=dynamic_cast<ModelWidget *>(models_tbw->currentWidget());
+	action_arrange_objects->setEnabled(current_model != nullptr);
 
 	if(current_model)
 	{
@@ -970,6 +1000,16 @@ void MainWindow::setCurrentModel(void)
 
 		general_tb->addAction(current_model->action_select_all);
 		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_select_all));
+		tool_btn->setPopupMode(QToolButton::InstantPopup);
+		btns.push_back(tool_btn);
+
+		general_tb->addAction(current_model->action_fade);
+		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_fade));
+		tool_btn->setPopupMode(QToolButton::InstantPopup);
+		btns.push_back(tool_btn);
+
+		general_tb->addAction(current_model->action_edit_creation_order);
+		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_edit_creation_order));
 		btns.push_back(tool_btn);
 
 		for(QToolButton *btn : btns)
@@ -980,6 +1020,7 @@ void MainWindow::setCurrentModel(void)
 
 		edit_menu->addAction(current_model->action_copy);
 		edit_menu->addAction(current_model->action_cut);
+		edit_menu->addAction(current_model->action_duplicate);
 		edit_menu->addAction(current_model->action_paste);
 		edit_menu->addAction(current_model->action_remove);
 		edit_menu->addAction(current_model->action_cascade_del);
@@ -989,26 +1030,34 @@ void MainWindow::setCurrentModel(void)
 		else
 			this->setWindowTitle(window_title + QString(" - ") + QDir::toNativeSeparators(current_model->getFilename()));
 
-		connect(current_model, SIGNAL(s_manipulationCanceled(void)),this, SLOT(updateDockWidgets(void)));
-		connect(current_model, SIGNAL(s_objectsMoved(void)),oper_list_wgt, SLOT(updateOperationList(void)));
-		connect(current_model, SIGNAL(s_objectModified(void)),this, SLOT(updateDockWidgets(void)));
-		connect(current_model, SIGNAL(s_objectCreated(void)),this, SLOT(updateDockWidgets(void)));
-		connect(current_model, SIGNAL(s_objectRemoved(void)),this, SLOT(updateDockWidgets(void)));
-		connect(current_model, SIGNAL(s_objectManipulated(void)),this, SLOT(updateDockWidgets(void)));
-		connect(current_model, SIGNAL(s_objectManipulated(void)), this, SLOT(updateModelTabName(void)));
+		connect(current_model, SIGNAL(s_manipulationCanceled(void)),this, SLOT(updateDockWidgets(void)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_objectsMoved(void)),oper_list_wgt, SLOT(updateOperationList(void)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_objectModified(void)),this, SLOT(updateDockWidgets(void)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_objectCreated(void)),this, SLOT(updateDockWidgets(void)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_objectRemoved(void)),this, SLOT(updateDockWidgets(void)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_objectManipulated(void)),this, SLOT(updateDockWidgets(void)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_objectManipulated(void)), this, SLOT(updateModelTabName(void)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_zoomModified(double)), this, SLOT(updateToolsState(void)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_objectModified(void)), this, SLOT(updateModelTabName(void)), Qt::UniqueConnection);
 
-		connect(current_model, SIGNAL(s_zoomModified(double)), this, SLOT(updateToolsState(void)));
-		connect(current_model, SIGNAL(s_objectModified(void)), this, SLOT(updateModelTabName(void)));
+		connect(current_model, SIGNAL(s_sceneInteracted(BaseObjectView*)), canvas_info_wgt, SLOT(updateSelectedObject(BaseObjectView*)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_sceneInteracted(int,QRectF)), canvas_info_wgt, SLOT(updateSelectedObjects(int,QRectF)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_sceneInteracted(QPointF)), canvas_info_wgt, SLOT(updateMousePosition(QPointF)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_zoomModified(double)), canvas_info_wgt, SLOT(updateSceneZoom(double)), Qt::UniqueConnection);
 
-		connect(action_alin_objs_grade, SIGNAL(triggered(bool)), this, SLOT(setGridOptions(void)));
-		connect(action_show_grid, SIGNAL(triggered(bool)), this, SLOT(setGridOptions(void)));
-		connect(action_show_delimiters, SIGNAL(triggered(bool)), this, SLOT(setGridOptions(void)));
+		connect(action_alin_objs_grade, SIGNAL(triggered(bool)), this, SLOT(setGridOptions(void)), Qt::UniqueConnection);
+		connect(action_show_grid, SIGNAL(triggered(bool)), this, SLOT(setGridOptions(void)), Qt::UniqueConnection);
+		connect(action_show_delimiters, SIGNAL(triggered(bool)), this, SLOT(setGridOptions(void)), Qt::UniqueConnection);
 
-		connect(action_overview, SIGNAL(toggled(bool)), this, SLOT(showOverview(bool)));
-		connect(overview_wgt, SIGNAL(s_overviewVisible(bool)), action_overview, SLOT(setChecked(bool)));
+		connect(action_overview, SIGNAL(toggled(bool)), this, SLOT(showOverview(bool)), Qt::UniqueConnection);
+		connect(overview_wgt, SIGNAL(s_overviewVisible(bool)), action_overview, SLOT(setChecked(bool)), Qt::UniqueConnection);
 
 		if(action_overview->isChecked())
 			overview_wgt->show(current_model);
+
+		canvas_info_wgt->updateMousePosition(QPointF(0,0));
+		canvas_info_wgt->updateSceneZoom(current_model->getCurrentZoom());
+		current_model->emitSceneInteracted();
 	}
 	else
 		this->setWindowTitle(window_title);
@@ -1182,12 +1231,13 @@ void MainWindow::applyConfigurations(void)
 		for(i=0; i < count; i++)
 		{
 			model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
+			model->updateObjectsOpacity();
 			model->db_model->setObjectsModified();
 			model->update();
 		}
 
 		updateConnections();
-		sql_tool_wgt->configureSnippets();
+		sql_tool_wgt->configureSnippets();		
 	}
 
 	sql_tool_wgt->updateTabs();
@@ -1233,7 +1283,7 @@ void MainWindow::saveModel(ModelWidget *model)
 							 trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! It's recommended to validate it before save in order to create a consistent model otherwise the generated file will be broken demanding manual fixes to be loadable again!").arg(db_model->getName()),
 							 Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
 							 trUtf8("Save anyway"), trUtf8("Validate"),QString(),
-							 QString(":/icones/icones/salvar.png"), QString(":/icones/icones/validation.png"));
+							 PgModelerUiNS::getIconPath("salvar"), PgModelerUiNS::getIconPath("validation"));
 
 				//If the user cancel the saving force the stopping of autosave timer to give user the chance to validate the model
 				if(msg_box.isCancelled())
@@ -1305,7 +1355,7 @@ void MainWindow::exportModel(void)
 					 trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the export process it's recommended to validate in order to correctly create the objects on database server!").arg(db_model->getName()),
 					 Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
 					 trUtf8("Export anyway"), trUtf8("Validate"), QString(),
-					 QString(":/icones/icones/exportar.png"), QString(":/icones/icones/validation.png"));
+					 PgModelerUiNS::getIconPath("exportar"), PgModelerUiNS::getIconPath("validation"));
 
 		if(!msg_box.isCancelled() && msg_box.result()==QDialog::Rejected)
 		{
@@ -1319,7 +1369,8 @@ void MainWindow::exportModel(void)
 			(!db_model->isInvalidated() || (confirm_validation && msg_box.result()==QDialog::Accepted)))
 	{
 		stopTimers(true);
-		connect(&model_export_form, &ModelExportForm::s_connectionsUpdateRequest, [=](){ updateConnections(true); });
+		connect(&model_export_form, &ModelExportForm::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
+		PgModelerUiNS::resizeDialog(&model_export_form);
 		model_export_form.exec(current_model);
 		stopTimers(false);
 	}
@@ -1331,8 +1382,9 @@ void MainWindow::importDatabase(void)
 
 	stopTimers(true);
 
-	connect(&db_import_form, &DatabaseImportForm::s_connectionsUpdateRequest, [=](){ updateConnections(true); });
+	connect(&db_import_form, &DatabaseImportForm::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
 	db_import_form.setModelWidget(current_model);
+	PgModelerUiNS::resizeDialog(&db_import_form);
 	db_import_form.exec();
 	stopTimers(false);
 
@@ -1356,7 +1408,7 @@ void MainWindow::diffModelDatabase(void)
 					 trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the diff process it's recommended to validate in order to correctly analyze and generate the difference between the model and a database!").arg(db_model->getName()),
 					 Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
 					 trUtf8("Diff anyway"), trUtf8("Validate"), QString(),
-					 QString(":/icones/icones/diff.png"), QString(":/icones/icones/validation.png"));
+					 PgModelerUiNS::getIconPath("diff"), PgModelerUiNS::getIconPath("validation"));
 
 		if(!msg_box.isCancelled() && msg_box.result()==QDialog::Rejected)
 		{
@@ -1372,7 +1424,8 @@ void MainWindow::diffModelDatabase(void)
 		modeldb_diff_frm.setDatabaseModel(db_model);
 
 		stopTimers(true);
-		connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_connectionsUpdateRequest, [=](){ updateConnections(true); });
+		connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
+		PgModelerUiNS::resizeDialog(&modeldb_diff_frm);
 		modeldb_diff_frm.exec();
 		stopTimers(false);
 	}
@@ -1442,7 +1495,7 @@ void MainWindow::loadModel(void)
 	try
 	{
 		file_dlg.setNameFilter(trUtf8("Database model (*.dbm);;All files (*.*)"));
-		file_dlg.setWindowIcon(QPixmap(QString(":/icones/icones/pgsqlModeler48x48.png")));
+		file_dlg.setWindowIcon(QPixmap(PgModelerUiNS::getIconPath("pgsqlModeler48x48")));
 		file_dlg.setWindowTitle(trUtf8("Load model"));
 		file_dlg.setFileMode(QFileDialog::ExistingFiles);
 		file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
@@ -1491,7 +1544,7 @@ void MainWindow::showFixMessage(Exception &e, const QString &filename)
 				 trUtf8("Could not load the database model file `%1'. Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(filename),
 				 Messagebox::ERROR_ICON, Messagebox::YES_NO_BUTTONS,
 				 trUtf8("Fix model"), trUtf8("Cancel"), QString(),
-				 QString(":/icones/icones/fixobject.png"), QString(":/icones/icones/msgbox_erro.png"));
+				 PgModelerUiNS::getIconPath("fixobject"), PgModelerUiNS::getIconPath("msgbox_erro"));
 
 	if(msg_box.result()==QDialog::Accepted)
 		fixModel(filename);
@@ -1746,8 +1799,6 @@ void MainWindow::showDemoVersionWarning(void)
 						<strong>NOTE:</strong> pgModeler is an open source software, but purchasing binary copies or providing some donations will support the project and cover all development costs.<br/><br/>\
 						<strong>HINT:</strong> in order to test all features it's recommended to use the <strong>demo.dbm</strong> model located in </strong>Sample models</strong> at <strong>Welcome</strong> view.<br/><br/><br/><br/>").arg(GlobalAttributes::MAX_OBJECT_COUNT),
 						Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
-
-			QTimer::singleShot(150000, this, SLOT(showDemoVersionWarning()));
 #endif
 }
 
@@ -1827,6 +1878,7 @@ void MainWindow::changeCurrentView(bool checked)
 void MainWindow::reportBug(void)
 {
 	BugReportForm bugrep_frm;
+	PgModelerUiNS::resizeDialog(&bugrep_frm);
 	bugrep_frm.exec();
 }
 
@@ -1847,4 +1899,16 @@ void MainWindow::handleObjectsMetadata(void)
 	objs_meta_frm.setModelWidgets(model_nav_wgt->getModelWidgets());
 	connect(&objs_meta_frm, SIGNAL(s_metadataHandled()), model_objs_wgt, SLOT(updateObjectsView()));
 	objs_meta_frm.exec();
+}
+
+void MainWindow::arrangeObjects(void)
+{
+	if(!current_model)
+		return;
+
+	Messagebox msgbox;
+	msgbox.show(trUtf8("Rearrange objects over the canvas is an irreversible operation! Would like to proceed?"), Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+
+	if(msgbox.result() == QDialog::Accepted)
+		current_model->rearrangeObjects();
 }

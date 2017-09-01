@@ -5,15 +5,10 @@
   %if {oids} %then [ oids="true"] %end
   %if {gen-alter-cmds} %then [ gen-alter-cmds="true"] %end
   %if {unlogged} %then [ unlogged="true"] %end
- 
- %if {protected} %then 
-  [ protected=] "true"
- %end
-
-  %if {sql-disabled} %then
-   [ sql-disabled=] "true"
-  %end
-
+  %if {protected} %then [ protected=] "true"  %end
+  %if {sql-disabled} %then [ sql-disabled=] "true" %end
+  %if {hide-ext-attribs} %then [ hide-ext-attribs=] "true" %end
+  %if {faded-out} %then [ faded-out=] "true" %end
 > $br
 
  {schema}

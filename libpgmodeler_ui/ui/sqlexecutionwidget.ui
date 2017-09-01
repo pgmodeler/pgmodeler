@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>905</width>
+    <width>843</width>
     <height>478</height>
    </rect>
   </property>
@@ -32,10 +32,103 @@
    <property name="bottomMargin">
     <number>2</number>
    </property>
+   <item row="1" column="0">
+    <widget class="QWidget" name="filename_wgt" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QToolButton" name="close_file_tb">
+        <property name="minimumSize">
+         <size>
+          <width>25</width>
+          <height>25</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>25</width>
+          <height>25</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Close the current SQL script</string>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../res/resources.qrc">
+          <normaloff>:/icones/icones/fechar.png</normaloff>:/icones/icones/fechar.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="filename_edt">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>25</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>SQL script currently handled</string>
+        </property>
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background: transparent;</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="frame">
+         <bool>false</bool>
+        </property>
+        <property name="cursorPosition">
+         <number>0</number>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+        <property name="placeholderText">
+         <string>(not saved)</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QToolButton" name="load_tb">
+      <widget class="QToolButton" name="file_tb">
        <property name="enabled">
         <bool>true</bool>
        </property>
@@ -46,14 +139,14 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Load SQL script</string>
+        <string>Handle external SQL script</string>
        </property>
        <property name="text">
-        <string>&amp;Load</string>
+        <string>&amp;Script</string>
        </property>
        <property name="icon">
         <iconset resource="../res/resources.qrc">
-         <normaloff>:/icones/icones/abrir.png</normaloff>:/icones/icones/abrir.png</iconset>
+         <normaloff>:/icones/icones/codigosql.png</normaloff>:/icones/icones/codigosql.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -62,48 +155,7 @@
         </size>
        </property>
        <property name="shortcut">
-        <string notr="true">Alt+L</string>
-       </property>
-       <property name="checkable">
-        <bool>false</bool>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextBesideIcon</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="save_tb">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Save SQL commands</string>
-       </property>
-       <property name="text">
-        <string>&amp;Save</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../res/resources.qrc">
-         <normaloff>:/icones/icones/salvar.png</normaloff>:/icones/icones/salvar.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>22</width>
-         <height>22</height>
-        </size>
-       </property>
-       <property name="shortcut">
-        <string notr="true">Alt+S</string>
+        <string>Alt+F</string>
        </property>
        <property name="checkable">
         <bool>false</bool>
@@ -134,7 +186,7 @@
         <string>Search in SQL code</string>
        </property>
        <property name="text">
-        <string>&amp;Find</string>
+        <string>Fi&amp;nd</string>
        </property>
        <property name="icon">
         <iconset resource="../res/resources.qrc">
@@ -147,7 +199,7 @@
         </size>
        </property>
        <property name="shortcut">
-        <string>Alt+F</string>
+        <string>Ctrl+S</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -367,9 +419,12 @@
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>40</width>
+         <width>10</width>
          <height>20</height>
         </size>
        </property>
@@ -378,7 +433,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <property name="spacing">
-        <number>2</number>
+        <number>0</number>
        </property>
        <property name="leftMargin">
         <number>0</number>
@@ -419,6 +474,9 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="toolTip">
+          <string>Current working database</string>
+         </property>
          <property name="text">
           <string/>
          </property>
@@ -431,7 +489,7 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QSplitter" name="v_splitter">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -666,10 +724,16 @@
               <property name="bottomMargin">
                <number>4</number>
               </property>
+              <item row="1" column="0">
+               <widget class="QWidget" name="find_history_parent" native="true"/>
+              </item>
               <item row="0" column="0">
-               <widget class="QPlainTextEdit" name="cmd_history_txt">
-                <property name="readOnly">
-                 <bool>true</bool>
+               <widget class="QWidget" name="cmd_history_parent" native="true">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
                 </property>
                </widget>
               </item>

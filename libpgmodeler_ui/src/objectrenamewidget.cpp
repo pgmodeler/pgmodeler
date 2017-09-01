@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 */
 
 #include "objectrenamewidget.h"
+#include "pgmodeleruins.h"
 
 ObjectRenameWidget::ObjectRenameWidget(QWidget * parent) : QDialog(parent)
 {
@@ -49,7 +50,7 @@ void ObjectRenameWidget::setAttributes(BaseObject *object, DatabaseModel *model,
 	this->op_list=op_list;
 	this->model=model;
 
-	obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + object->getSchemaName() + QString(".png")));
+	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(object->getSchemaName())));
 	obj_icon_lbl->setToolTip(object->getTypeName());
 
 	obj_name_lbl->setText(object->getName());

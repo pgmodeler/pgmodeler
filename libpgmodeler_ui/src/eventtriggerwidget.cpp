@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -59,13 +59,13 @@ EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent
 	connect(filter_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleTagValue(int)));
 
 	connect(filter_tab, &ObjectTableWidget::s_rowsRemoved,
-			[=](){ filter_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, false); });
+			[&](){ filter_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, false); });
 
 	connect(filter_tab, &ObjectTableWidget::s_rowEdited,
-			[=](int row){ tag_edt->setText(filter_tab->getCellText(row, 0)); });
+			[&](int row){ tag_edt->setText(filter_tab->getCellText(row, 0)); });
 
 	connect(tag_edt, &QLineEdit::textChanged,
-			[=](){
+			[&](){
 		filter_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, !tag_edt->text().isEmpty());
 		filter_tab->setButtonsEnabled(ObjectTableWidget::UPDATE_BUTTON, !tag_edt->text().isEmpty());
 	});

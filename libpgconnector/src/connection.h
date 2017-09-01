@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -189,8 +189,10 @@ class Connection {
 		//! \brief Returns the connection string used to connect to de database
 		QString getConnectionString(void);
 
-		//! \brief Returns a string string containing the following signature: 'alias (host:port)'
-		QString getConnectionId(void);
+		/*! \brief Returns a string containing the following signature 'alias (host:port)' by default.
+			If host_port_only is true the signature will not contain the alias being in the form 'host:port'
+			If incl_db_name is true the database name will be prepended to the final signature 'dbname@host:port' */
+		QString getConnectionId(bool host_port_only = false, bool incl_db_name = false);
 
 		/*! \brief Returns the DBMS version in format XX.YY[.ZZ]
 		If major_only is true only XX.YY portion is returned */

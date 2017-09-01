@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 
 		ObjectSelectorWidget *tag_sel;
 
-		NumberedTextEditor *cte_expression_txt, *code_txt;
+		NumberedTextEditor *cte_expression_txt, *code_txt, *expression_txt;
 
 		//! \brief Stores all the view references
 		ObjectTableWidget *references_tab;
@@ -106,6 +106,9 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 
 		//! \brief Adds or edit a object on the object table that calls the slot
 		void handleObject(void);
+
+		//! \brief Duplicates a object on the object table that calls the slot
+		void duplicateObject(int curr_row, int new_row);
 
 		//! \brief Removes the selected object from the table that calls the slot
 		void removeObject(int row);

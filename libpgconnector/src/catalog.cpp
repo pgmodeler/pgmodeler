@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -258,7 +258,8 @@ void Catalog::getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<u
 	try
 	{
 		vector<ObjectType> types=BaseObject::getObjectTypes(true, { OBJ_DATABASE, OBJ_RELATIONSHIP, BASE_RELATIONSHIP,
-																	OBJ_TEXTBOX, OBJ_TAG, OBJ_COLUMN, OBJ_PERMISSION });
+																																OBJ_TEXTBOX, OBJ_TAG, OBJ_COLUMN, OBJ_PERMISSION,
+																																OBJ_GENERIC_SQL });
 		attribs_map attribs, col_attribs, sch_names;
 		vector<attribs_map> tab_attribs;
 		unsigned tab_oid=0;
@@ -558,6 +559,47 @@ attribs_map Catalog::getObjectAttributes(ObjectType obj_type, unsigned oid, cons
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
 						QApplication::translate("Catalog","Object type: %1","", -1).arg(BaseObject::getSchemaName(obj_type)));
 	}
+}
+
+attribs_map Catalog::getServerAttributes(void)
+{
+	attribs_map attribs;
+
+	try
+	{
+		ResultSet res = ResultSet();
+		QString sql, attr_name;
+		attribs_map tuple, attribs_aux;
+
+		loadCatalogQuery(QString("server"));
+		schparser.ignoreUnkownAttributes(true);
+		schparser.ignoreEmptyAttributes(true);
+		sql = schparser.getCodeDefinition(attribs).simplified();
+		connection.executeDMLCommand(sql, res);
+
+		if(res.accessTuple(ResultSet::FIRST_TUPLE))
+		{
+			do
+			{
+				tuple=res.getTupleValues();
+				attr_name = tuple[ParsersAttributes::ATTRIBUTE];
+				attr_name.replace('_','-');
+				attribs[attr_name]=tuple[ParsersAttributes::VALUE];
+			}
+			while(res.accessTuple(ResultSet::NEXT_TUPLE));
+
+			attribs[ParsersAttributes::CONNECTION] = connection.getConnectionId();
+			attribs_aux = connection.getServerInfo();
+			attribs.insert(attribs_aux.begin(), attribs_aux.end()) ;
+		}
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
+						QApplication::translate("Catalog","Object type: server","", -1));
+	}
+
+	return(attribs);
 }
 
 QStringList Catalog::parseArrayValues(const QString &array_val)

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ TaskProgressWidget::TaskProgressWidget(QWidget *parent, Qt::WindowFlags f) : QDi
 	this->setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 
 	for(auto &obj_tp : obj_types)
-		addIcon(obj_tp, QIcon(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_tp) + QString(".png")));
+		addIcon(obj_tp, QIcon(PgModelerUiNS::getIconPath(obj_tp)));
 }
 
 void TaskProgressWidget::addIcon(unsigned id, const QIcon &ico)
@@ -43,6 +43,7 @@ void TaskProgressWidget::show(void)
 	 isn't used the task is not shown properly and sometimes stay only on taskbar not poping up
 	 to the user. */
 	QEventLoop eventLoop;
+	PgModelerUiNS::resizeDialog(this);
 	QDialog::show();
 	QTimer t;
 

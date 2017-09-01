@@ -2,7 +2,7 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-%if ({pgsql-ver} >= "9.3") %then
+%if ({pgsql-ver} >=f "9.3") %then
   %if {list} %then
      [SELECT oid, evtname AS name FROM pg_event_trigger AS et ]
 
@@ -41,5 +41,4 @@
 
     %end
  %end
-
 %end

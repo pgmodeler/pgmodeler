@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,11 +41,18 @@ void BaseForm::setButtonConfiguration(unsigned button_conf)
 void BaseForm::resizeForm(QWidget *widget)
 {
 	QVBoxLayout *vbox=new QVBoxLayout;
-	QScreen *screen=qApp->screens().at(0);
 	QSize min_size=widget->minimumSize();
-	int max_h = screen->size().height() * 0.70,
-			max_w = screen->size().width() * 0.70,
-			curr_w =0, curr_h = 0;
+	int max_h = 0, max_w = 0, curr_w =0, curr_h = 0,
+			screen_id = qApp->desktop()->screenNumber(qApp->activeWindow());
+	QScreen *screen=qApp->screens().at(screen_id);
+	float dpi_factor = 0;
+
+	max_w = screen->size().width() * 0.70;
+	max_h = screen->size().height() * 0.70;
+	dpi_factor = screen->logicalDotsPerInch() / 96.0f;
+
+	if(dpi_factor <= 1.01f)
+		dpi_factor = 1.0f;
 
 	vbox->setContentsMargins(2,2,2,2);
 
@@ -83,7 +90,7 @@ void BaseForm::resizeForm(QWidget *widget)
 
 	// If the current height is greater than the widget's minimum height we will use a medium value
 	if(curr_h > min_size.height() && min_size.height() < max_h)
-		curr_h = (curr_h + min_size.height())/2;
+		curr_h = (curr_h + min_size.height())/2.5;
 	//Using the maximum height if the widget's minimum height exceeds the maximum allowed
 	else if(min_size.height() >= max_h)
 		curr_h = max_h;
@@ -95,8 +102,17 @@ void BaseForm::resizeForm(QWidget *widget)
 							((buttons_lt->contentsMargins().top() +
 								buttons_lt->contentsMargins().bottom()) * 6);
 
+	curr_w *= dpi_factor;
+	curr_h *= dpi_factor;
+
+	if(curr_w > screen->size().width())
+		curr_w = screen->size().width() * 0.80;
+
+	if(curr_h > screen->size().height())
+		curr_h = screen->size().height() * 0.80;
+
 	this->setMinimumSize(curr_w, curr_h);
-	this->resize(curr_w, curr_h);
+	this->resize(this->minimumSize());
 }
 
 void BaseForm::setMainWidget(BaseObjectWidget *widget)
@@ -108,6 +124,7 @@ void BaseForm::setMainWidget(BaseObjectWidget *widget)
 	else
 		setWindowTitle(widget->windowTitle());
 
+	apply_ok_btn->setDisabled(widget->isHandledObjectProtected());
 	resizeForm(widget);
 	setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
 

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 	//Creates a combo with the accepted object type
 	for(auto &itr : types_map)
 	{
-		ico.load(QString(":/icones/icones/%1.png").arg(BaseObject::getSchemaName(itr.second)));
+		ico.load(PgModelerUiNS::getIconPath(itr.second));
 		applies_to_cmb->addItem(ico, itr.first, itr.second);
 		filter_cmb->addItem(ico, itr.first, itr.second);
 	}
@@ -77,8 +77,8 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 	connect(edit_tb, SIGNAL(clicked()), this, SLOT(editSnippet()));
 	connect(remove_tb, SIGNAL(clicked()), this, SLOT(removeSnippet()));
 	connect(remove_all_tb, SIGNAL(clicked()), this, SLOT(removeAllSnippets()));
-	connect(cancel_tb, &QToolButton::clicked, [=](){ enableEditMode(false); });
-	connect(snippets_cmb, &QComboBox::currentTextChanged, [=](){ enableEditMode(false); });
+	connect(cancel_tb, &QToolButton::clicked, [&](){ enableEditMode(false); });
+	connect(snippets_cmb, &QComboBox::currentTextChanged, [&](){ enableEditMode(false); });
 	connect(id_edt, SIGNAL(textChanged(QString)), this, SLOT(enableSaveButtons()));
 	connect(label_edt, SIGNAL(textChanged(QString)), this, SLOT(enableSaveButtons()));
 	connect(snippet_txt, SIGNAL(textChanged()), this, SLOT(enableSaveButtons()));
@@ -287,7 +287,7 @@ void SnippetsConfigWidget::loadConfiguration(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, e.getExtraInfo());
 	}
 }
 
@@ -534,7 +534,7 @@ void SnippetsConfigWidget::configureSnippetsMenu(QMenu *snip_menu, vector<Object
 				type_name=trUtf8("General");
 			}
 			else
-				ico=QPixmap(QString(":/icones/icones/%1.png").arg(object));
+				ico=QPixmap(PgModelerUiNS::getIconPath(object));
 
 			menu=new QMenu(type_name, snip_menu);
 			menu->setIcon(ico);
@@ -548,7 +548,7 @@ void SnippetsConfigWidget::configureSnippetsMenu(QMenu *snip_menu, vector<Object
 		}
 
 		//Creating the action for the current snippet
-		act=new QAction(QPixmap(QString(":/icones/icones/codesnippet.png")), snip_id, submenus[object]);
+		act=new QAction(QPixmap(PgModelerUiNS::getIconPath("codesnippet")), snip_id, submenus[object]);
 		act->setToolTip(snip[ParsersAttributes::LABEL]);
 		submenus[object]->addAction(act);
 	}

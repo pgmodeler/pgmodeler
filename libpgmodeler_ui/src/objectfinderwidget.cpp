@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,15 +17,23 @@
 */
 
 #include "objectfinderwidget.h"
+#include "pgmodeleruins.h"
 
 ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
 
 	filter_frm->setVisible(false);
+	splitter->handle(1)->setEnabled(false);
 	updateObjectTypeList(obj_types_lst);
 
 	connect(filter_btn, SIGNAL(toggled(bool)), filter_frm, SLOT(setVisible(bool)));
+	connect(filter_btn, &QToolButton::toggled, [&](){
+		splitter->setSizes({0, 1000});
+		splitter->handle(1)->setEnabled(filter_btn->isChecked());
+	});
+
+
 	connect(find_btn, SIGNAL(clicked(bool)), this, SLOT(findObjects(void)));
 	connect(hide_tb, SIGNAL(clicked(void)), this, SLOT(hide(void)));
 	connect(result_tbw, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(selectObject(void)));
@@ -244,9 +252,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 				fnt=tab_item->font();
 
 				tab_item->setText(objs[i]->getName());
-				tab_item->setIcon(QPixmap(QString(":/icones/icones/") +
-										  BaseObject::getSchemaName(objs[i]->getObjectType()) +
-										  str_aux + QString(".png")));
+				tab_item->setIcon(QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(objs[i]->getObjectType()) + str_aux)));
 				tab_wgt->setItem(lin_idx, 1, tab_item);
 
 				if(objs[i]->isProtected() || objs[i]->isSystemObject())
@@ -304,8 +310,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 						tab_item->setForeground(BaseObjectView::getFontStyle(ParsersAttributes::PROT_COLUMN).foreground());
 					}
 
-					tab_item->setIcon(QPixmap(QString(":/icones/icones/") +
-											  BaseObject::getSchemaName(parent_obj->getObjectType())+ QString(".png")));
+					tab_item->setIcon(QPixmap(PgModelerUiNS::getIconPath(parent_obj->getObjectType())));
 				}
 			}
 
@@ -347,7 +352,7 @@ void ObjectFinderWidget::updateObjectTypeList(QListWidget *list_wgt)
 			else
 				str_aux=QString(BaseObject::getSchemaName(types[type_id]));
 
-			icon=QPixmap(QString(":/icones/icones/") + str_aux + QString(".png"));
+			icon=QPixmap(PgModelerUiNS::getIconPath(str_aux));
 
 			item->setText(BaseObject::getTypeName(types[type_id]));
 			item->setIcon(icon);

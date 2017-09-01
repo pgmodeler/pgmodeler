@@ -1,6 +1,212 @@
 Change Log
 ---------
 
+v0.9.0
+------
+<em>Release date: September 1st, 2017</em><br/>
+
+* [New] Added the ability to paste text from clipboard to data grid in DataManipulationForm.
+* [New] Created the method CsvLoadWidget::loadCsvFromBuffer to make the code that extract csv document from string buffer reusable by other classes.
+* [New] Added a new sample model donated by the maintainers of 3D City DB project.
+* [New] Added the language "internal" to the set of system languages available when creating a new model.
+* [New] Added support to override the default language settings via GeneralConfigWidget.
+* [New] Added support to toggle curved relationship lines in GeneralConfigWidget.
+* [Change] Improved the MetadataHandlingForm enabling user to only extract metada to a backup file.
+* [Change] Small update on sample models.
+* [Change] Minor adjustments in the graphical points when relationships are selected.
+* [Change] Adjusted the calculation of the descriptor object.
+* [Change] Fixed the rotation of the descriptor object for identifier relationship when curved lines are activated.
+* [Change] Minor code documentation.
+* [Change] Moved the class BezierCurve to its own source files.
+* [Change] Improved the way bezier curves are generated for relationships.
+* [Change] Changed the default action to reset label's position from middle button click to Alt + Ctrl + left click.
+* [Change] Minor enhancement in auto arrange feature to avoid breaking lines when curved relationship lines are enabled.
+* [Change] Minor size adjustment in GeneralConfigWidget.
+* [Change] Minor update in README.md.
+* [Change] Minor size adjustment for DatabaseImportForm.
+* [Change] Minor adjustment in the methods which automatically resize dialogs depending on the resolution.
+* [Change] Changed the default font for objects and source code.
+* [Fix] Minor fix in RelationshipView to hide the circles at end of lines for self relationships.
+* [Fix] Fixed the catalog query for event triggers.
+* [Fix] Fixed the icons and labels of the "Select all" submenu in ModelWidget.
+* [Fix] Fixed a rare crash when configuring self relationships.
+* [Fix] Minor fix when rendering self n:n relationships.
+* [Fix] Minor fix in the HintTextWidget to resize more properly according to the held text.
+* [Fix] Minor adjustment in SceneInfoWidget.
+* [Fix] Minor fix in default confs for source code font style.
+* [Fix] Fixed the generation of objects style configuration file that was missing constraints settings.
+* [Fix] Fixed a bug in the index / exclude constraint import which was not creating expressions of these objects correctly and sometimes trucating them.
+
+v0.9.0-beta2
+------
+<em>Release date: July 1st, 2017</em><br/>
+
+* [New] Added an action to reset labels distance in BaseRelationship and ModelWidget.
+* [New] Added a widget that shows some info about the canvas and the selected objects at the bottom of main window in design view.
+* [New] Enabled the usage of snippets in other portions of the software like GenericSQLWidget, FunctionWidget, ViewWidget, CustomSQLWidget.
+* [New] Added the ability to quickly jump to the tables related to a relationship.
+* [New] Added support to select all objects in the canvas by type (table, view, textbox, schema, relationship).
+* [New] Added support to bulk relationship points removal.
+* [New] Added a magnifier tool so the user can visualize objects when the zoom is too small. This tool allows the user to click to select or activate the context menu over the objects.
+* [New] Added support to generic sql objects that serve as an improved way to use custom SQL.
+* [New] Added support to handle metadata related to generic sql objects.
+* [New] Added the first object auto-arrange algorithm.
+* [Change] pgModeler will now accept (connect) to a PostgreSQL server even if the version of the server is not supported falling back to the most recent supported.
+* [Change] Minor improvements on DatabaseImportForm, ModelExportForm, ModelDatabaseDiffForm and MetadataHandlingForm to toggle uniformRowsHeight of the output tree at the start and the end of each process to avoid slowdowns and allow the items to be resized correctly when expanded.
+* [Change] Changed the way color are stored in Tag.
+* [Change] Minor adjustement on position info of objects in canvas.
+* [Change] Improvements on import/diff/export performances by adjusting the way the output widget handles items height.
+* [Change] Move the code from MainWindow::showEvent to the constructor of that class so all operations that load resources and restore configurations can be performed prior the window display.
+* [Change] Improved the ModelOverviewWidget to handle huge models better.
+* [Change] Improved the objects swapping by adding an objects grid where user can interact with it in order to choose which objects to swap.
+* [Change] Improved the schema parser to allow comparisons forcing the cast of values to float or int in the expression by using special letters attached to logical operators.
+* [Fix] Fixed the DatabaseModel::destroyObjects in order to include missing object types and avoiding leaks.
+* [Fix] Several memory leaks removed in different portions of the application.
+* [Fix] Minor fix in RelationshipView to show the line circles for n:n relationships.
+* [Fix] Minor warning fixes related to unused variables/values.
+* [Fix] Minor fix in Catalog that was trying to retrieve catalog info for generic sql objects.
+* [Fix] Fixed a bug when zooming out using wheel that was causing duplicated zoom in a single wheel turn.
+* [Fix] Minor fix in TableView and TableObjectView to present tables in a more compact fashion minimizing the space used in the canvas.
+* [Fix] Minor typo fix in swapobjectsidswidget.ui.
+* [Fix] Minor fix in lambdas slots usages.
+* [Fix] Fixed a bug in generateTextBuffer method in SQLExecutionWidget.
+
+v0.9.0-beta1
+------
+<em>Release date: May 13, 2017</em><br/>
+
+* [New] Added the ability to standalone dialogs like import, diff, export and others to be resized according to the screen dpi and resolution.
+* [New] Added an experimental routine that will resize windows according to the current screen resolution and font dpi.
+* [New] Added support to browse referrer and referenced in DataManipulationForm.
+* [New] Added an item under table items that stores the referrer tables in the DatabaseExplorerWidget.
+* [New] Added the method BaseObjectView::getScreenDpiFactor to help resize scene objects according to the screen dpi/resolution.
+* [Change] Minor adjustment on readonly items regarding to referenced and referrer tables in DatabaseExplorerWidget.
+* [Change] Improved the tabs handling in SQLToolWidget in order to avoid confusion related to which database is being managed or queried currently.
+* [Change] Improvements done in the context menu at DataManipulationForm to include the key actions related to the control buttons at the top right portion of the dialog.
+* [Change] Improved the external script handling in SQLExecutionWidget.
+* [Change] Applied automatic resize for TaskProgressWidget.
+* [Change] Improvement done in model restoration dialog that is now displayed after the main windows is exposed.
+* [Fix] Fixed a problem in UpdateNotifierWidget that was receiving error 403 from the site.
+* [Fix] Fix a bug in DataManipulationForm that was causing order by clause to be nullified by comments added in the filter field.
+* [Fix] Fixed a regression in permission code generation.
+* [Fix] Fixed a bug in the generation of grant/revoke commands for columns.
+* [Fix] Fixed a bug that was causing the sorting options of index elements to be wrongly hidden.
+* [Fix] Minor fix in the site url.
+* [Fix] Minor fix in the filter toggling action in ObjectFinderWidget.
+
+v0.9.0-beta
+------
+<em>Release date: April 4, 2017</em><br/>
+
+* [New] Added support to indexes in Views.
+* [New] Added the support to edit/load the source code in NumberedTextEditor in external application.
+* [New] Added the ability to save/load metadata related to fade out status and extended attributes display status.
+* [New] Added the ability toggle the extended attributes area in tables and views. The toggle status is persisted in the model file and restores during loading
+* [New] Added constraints to the extended attributes section in the tables at canvas area in order to improve the quick access to these objects.
+* [New] Enabled the importing of view's indexes.
+* [New] Fade status is now persisted in the dbm file and restored during loading.
+* [New] Added the ability to control zoom factor from overview widget.
+* [New] Added a shortcut for "Duplicate" action in design view.
+* [New] Added support to (back)slash char in object's names.
+* [New] Enabled the usage of NewObjectOverlayWidget for views.
+* [Change] Changed the default characters used to escape values in DataManipulationForm and TableDataWidget from {} to // due to problems with json data.
+* [Change] Improved the file manipulation in SQLExecutionWidget. Added option to save the commands to the current file or in another file (save as).
+* [Change] Minor improvements done in Linux deployment script to support multiarch systems. 
+* [Change] View's children (indexes, rules, triggers) are now listed under their respective parent view in DatabaseExplorerWidget.
+* [Change] Minor improvement in ElementsWidget to disable/hide columns combo when creating index elements for a index associated to a view.
+* [Change] Improved the diff between the complete database and a partial model representing it.
+* [Fix] Minor fix in AppearanceConfigWidget in order to set the font color correctly.
+* [Fix] Minor fix in the default file objects-style.conf
+* [Fix] Added the missing support to drop event triggers from database model.
+* [Fix] Fixed the drop cast command generation.
+* [Fix] Minor fix in windows deploy script to use newer PostgreSQL.
+* [Fix] Minor fix in template connections.conf file.
+* [Fix] Minor fix in config files related to installer generation (Linux).
+* [Fix] Minor fix in paste operation to restore the viewport position in design view.
+* [Fix] Minor fix in diff process to detect view's index changes.
+* [Fix] Fixed a bug in EventTrigger that was causing unknown exception to be thrown.
+* [Fix] Fixed a bug on RoleWidget that was preventing roles to be removed from "Members Of" tab.
+* [Fix] Minor fix in mouse cursor override operations.
+* [Fix] Fixed a bug when importing functions and composite types that somehow depend upon array types.
+* [Fix] Fixed a bug in function importing that was causing default values of parameters to be placed in the wrong position.
+
+v0.9.0-alpha1
+------
+<em>Release date: February 07, 2017</em><br/>
+
+* [New] Added support to object moving via arrow keys in canvas area.
+* [New] Added support to easily create primary keys just by checking the desired columns in table's editing form.
+* [New] Added support to use middle button to handle panning mode.
+* [New] Added a more user friendly message at startup whenever a missing or corrupted configuration file is detected. The user is now presented to an option to restore default settings for the problematic file.
+* [New] Now any default file restored in ConfigurationForm has a backup saved into the directory 'backups' inside the configuration storage.
+* [New] Added support to hide the database explorer widget in SQL tool via splitter handler.
+* [New] Added a method to disable the custom context menu of the class NumberedTextEditor.
+* [New] Added support to object fading in ModelWidget.
+* [New] Added the support to persist the object opacity factor in config file.
+* [New] Added the method PgModelerUiNS::getIconPath() in order to retrieve icons from resource.
+* [New] Added support to column, constraint, trigger, rule and index duplication in TableWidget.
+* [New] Added support to item duplication in ObjectTableWidget.
+* [New] Added a loading cursor when the user opens the DataManipulationForm.
+* [New] The database explorer now creates the root item in the tree as the server itself which contains data related to this latter.
+* [New] Added the support to parenthesis in the middle of objects' names.
+* [Change] Improvements done in the SQL history at SQL execution widget. Now the command history is saved into a specific file and restored when the application starts.
+* [Change] Minor improvement in DataManipulationForm to show a wait cursor while filtering results.
+* [Change] Minor improvements in GeneralConfigWidget. Added an readonly input that exposes the path to the current user's configuration storage.
+* [Change] Improvements done in the object duplication feature.
+* [Change] Remove hardcoded icon paths in the code.
+* [Change] Improved the PgSQLTypeWidget to enable the length, precision, dimension fields as the user types the desired datatype. This will avoid jumping to the wrong field when pressing tab.
+* [Change] Updated the urls related to download and donation of the new site.
+* [Change] Changed the url to check for updates in GlobalAttributes to point to the new site.
+* [Change] Improvements done in the linux deploy script to use Qt 5.6.2.
+* [Change] Minor tweaks done in order to minimize the diff detection related to default values of columns.
+* [Change] Changed the default framework version used in the windows deployment script to 5.6.2.
+* [Change] Dropped the automatic LC_COLLATE and LC_CTYPE generation in Database object. Since this was causing more problems than helping when import the database and validating/exporting it.
+* [Change] In DataManipulationForm the filter input field is automatically focused when the filter toggle button is activated.
+* [Fix] Fixed a bug when using diff to create columns and update constraints.
+* [Fix] Fixed a bug that was duplicating the action "New" in the main window's side bar.
+* [Fix] Fixed a problem when importing database that contains citext extension installed in pg_catalog.
+* [Fix] Minor fix in ConnectionsConfigWidget that was causing duplicated connections to share de same host info wrongly.
+* [Fix] Restored the input data type handling in AggregateWidget.
+* [Fix] Fixed the oldsample.dbm model.
+* [Fix] Fixed a crash when restoring objects' metadata from backup file.
+* [Fix] Fixed a bug that was preventing inheritance relationships to be created when the same pair of tables existed in different schemas.
+* [Fix] Fixed a bug that was causing column name patterns to be used wrongly in many-to-many relationships.
+* [Fix] Fixed a bug that was preventing the automatic closing of tabs related to a dropped database in manage view.
+* [Fix] Fixed a bug that was causing the duplication of permissions during the database import which was leading to the complete failure of the entire process.
+* [Fix] Fixed the problem with invalid type error when trying to edit a 'timestamp with timezone' column.
+* [Fix] Fixed a bug in Relationship that was not setting NOT NULL flag for columns of the multi-valued primary key of many-to-many relationships causing the diff process to fail in some specific cases.
+* [Fix] Fixed a regression in RelationshipWidget that was not showing advanced object's form.
+* [Fix] Fixed the constraint codes display in TableObjectView. Now self relationships do not mark the primary key field as foreign keys.
+* [Fix] Fixed a regression that was not properly disabling the apply button in editing forms when the handled object was protected somehow.
+* [Fix] Minor typos fixes in some widgets.
+
+v0.9.0-alpha
+------
+<em>Release date: October 18, 2016</em><br/>
+
+* [New] Enabling pgModeler to connect to PostgreSQL 9.6 servers.
+* [New] Added the option to ignore error codes during the export process in CLI.
+* [New] Added the ability to ignore extra errors by their codes in ModelExportForm and ModelDatabaseDiffForm.
+* [New] Added the ability to load data from CSV file into TableDataWidget and DataManipulationForm.
+* [Change] Minor update in snippets.conf by adding a SELECT * command.
+* [Change] Removed deprecated exception ERR_ASG_ZERO_LENGTH.
+* [Change] Improvements done in CodeCompletionWidget so that the completion can be more accurate mainly when using the form [schema].[table].
+* [Change] Methods responsible for dropping and exploring data were moved from SQLToolWidget to DatabaseExplorerWidget.
+* [Change] Improved the error output in DatabaseImportForm, ModelDatabaseDiffForm, ModelExportForm and Messagebox.
+* [Change] TableDataWidget widget now can have the column names changed freely not only when there are invalid ones.
+* [Change] Removed codename from AboutWidget.
+* [Fix] Fixed a bug in PgSQLType and PgSQLTypeWidget that was not properly setting length = 1 in character, varchar and numeric data types.
+* [Fix] Fixed a bug that was leading to stack overflow when generating object's sql plus its dependencies in huge models.
+* [Fix] Fix the structure of the sample model pagila.dbm.
+* [Fix] Minor fix in diff proccess in order to permit the comparison between a column added by relatinship and other that is not but share the same name.
+* [Fix] Fixed a bug that could cause crashes when editing connections in DatabaseImportForm or ModelDatabaseDiffForm.
+* [Fix] Fixed a crash when the user modified a connection on the fly with the SQL tool activated and trying to resume his work in database management.
+* [Fix] Fixed the tab order in ConnectionsConfigWidget.
+* [Fix] Fixed a bug in ModelDatabaseDiffForm that was running the export thread several times.
+* [Fix] Fix the generation of truncate commands in the diff when the types of columns are incompatible.
+* [Fix] Fixed a bug that was generating broken sql for tables when these objects have no constraints.
+* [Fix] Fixed a bug in diff that was not detecting column types length changes.
+
 v0.8.2
 ------
 <em>Codename: <strong>Faithful Elephant</strong></em><br/>

@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -67,6 +67,7 @@ enum ObjectType {
 	OBJ_PARAMETER,
 	OBJ_TYPE_ATTRIBUTE,
 	OBJ_TAG,
+	OBJ_GENERIC_SQL,
 	BASE_RELATIONSHIP,
 	BASE_OBJECT,
 	BASE_TABLE
@@ -99,8 +100,8 @@ class BaseObject {
 		 in which the objects were created */
 		unsigned object_id;
 
-		//! \brief Objects type count declared on enum ObjectType (excluding BASE_OBJECT and BASE_TABLE).
-		static const int OBJECT_TYPE_COUNT=35;
+		//! \brief Objects type count declared on enum ObjectType
+		static const int OBJECT_TYPE_COUNT=36;
 
 		/*! \brief Indicates whether the object is protected or not.
 		 A protected object indicates that it can not suffer changes in position

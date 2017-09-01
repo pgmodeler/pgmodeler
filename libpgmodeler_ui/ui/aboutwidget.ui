@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>550</width>
-    <height>556</height>
+    <width>575</width>
+    <height>550</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,8 +21,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>550</width>
-    <height>0</height>
+    <width>575</width>
+    <height>550</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -313,7 +313,7 @@
         <item>
          <widget class="QLabel" name="pgmodeler_ver_lbl">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -327,7 +327,7 @@
           <property name="maximumSize">
            <size>
             <width>16777215</width>
-            <height>18</height>
+            <height>16777215</height>
            </size>
           </property>
           <property name="font">
@@ -339,66 +339,6 @@
           </property>
           <property name="text">
            <string>0.0.0.0</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="code_name_lbl">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="palette">
-           <palette>
-            <active>
-             <colorrole role="WindowText">
-              <brush brushstyle="SolidPattern">
-               <color alpha="255">
-                <red>73</red>
-                <green>147</green>
-                <blue>221</blue>
-               </color>
-              </brush>
-             </colorrole>
-            </active>
-            <inactive>
-             <colorrole role="WindowText">
-              <brush brushstyle="SolidPattern">
-               <color alpha="255">
-                <red>73</red>
-                <green>147</green>
-                <blue>221</blue>
-               </color>
-              </brush>
-             </colorrole>
-            </inactive>
-            <disabled>
-             <colorrole role="WindowText">
-              <brush brushstyle="SolidPattern">
-               <color alpha="255">
-                <red>128</red>
-                <green>128</green>
-                <blue>128</blue>
-               </color>
-              </brush>
-             </colorrole>
-            </disabled>
-           </palette>
-          </property>
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <italic>true</italic>
-            <bold>false</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>(CODE_NAME)</string>
-          </property>
-          <property name="indent">
-           <number>-1</number>
           </property>
          </widget>
         </item>
@@ -507,6 +447,12 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
         </property>
         <property name="currentIndex">
          <number>0</number>
@@ -684,12 +630,6 @@ p, li { white-space: pre-wrap; }
             </attribute>
             <attribute name="verticalHeaderCascadingSectionResizes">
              <bool>false</bool>
-            </attribute>
-            <attribute name="verticalHeaderDefaultSectionSize">
-             <number>20</number>
-            </attribute>
-            <attribute name="verticalHeaderMinimumSectionSize">
-             <number>20</number>
             </attribute>
             <attribute name="verticalHeaderStretchLastSection">
              <bool>false</bool>

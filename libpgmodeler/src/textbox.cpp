@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@ QString Textbox::getCodeDefinition(unsigned def_type)
 		if(!code_def.isEmpty()) return(code_def);
 
 		setPositionAttribute();
+		setFadedOutAttribute();
 
 		if(text_attributes[ITALIC_TXT])
 			attributes[ParsersAttributes::ITALIC]=ParsersAttributes::_TRUE_;

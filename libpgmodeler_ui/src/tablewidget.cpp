@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	Ui_TableWidget::setupUi(this);
 
 	edt_data_tb=new QToolButton(this);
-	QPixmap icon=QPixmap(QString(":/icones/icones/editdata.png"));
+	QPixmap icon=QPixmap(PgModelerUiNS::getIconPath("editdata"));
 	edt_data_tb->setMinimumSize(edt_perms_tb->minimumSize());
 	edt_data_tb->setText(trUtf8("Edit data"));
 	edt_data_tb->setToolTip(trUtf8("Define initial data for the table"));
@@ -56,11 +56,11 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	parent_tables = new ObjectTableWidget(ObjectTableWidget::NO_BUTTONS, true, this);
 	parent_tables->setColumnCount(3);
 	parent_tables->setHeaderLabel(trUtf8("Name"), 0);
-	parent_tables->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
+	parent_tables->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 	parent_tables->setHeaderLabel(trUtf8("Schema"), 1);
-	parent_tables->setHeaderIcon(QPixmap(QString(":/icones/icones/schema.png")),1);
+	parent_tables->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("schema")),1);
 	parent_tables->setHeaderLabel(trUtf8("Type"), 2);
-	parent_tables->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),2);
+	parent_tables->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),2);
 
 	tag_sel=new ObjectSelectorWidget(OBJ_TAG, false, this);
 	dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 3);
@@ -87,43 +87,60 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 		connect(tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeObject(int)));
 		connect(tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleObject(void)));
 		connect(tab, SIGNAL(s_rowEdited(int)), this, SLOT(handleObject(void)));
+		connect(tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateObject(int,int)));
 		connect(tab, SIGNAL(s_rowsMoved(int,int)), this, SLOT(swapObjects(int,int)));
 	}
 
-	objects_tab_map[OBJ_COLUMN]->setColumnCount(4);
-	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[OBJ_COLUMN]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
-	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Type"), 1);
-	objects_tab_map[OBJ_COLUMN]->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
-	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Default Value"), 2);
-	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Attribute"), 3);
+	objects_tab_map[OBJ_COLUMN]->setColumnCount(5);
+	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("PK"), 0);
+	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Name"), 1);
+	objects_tab_map[OBJ_COLUMN]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),1);
+	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Type"), 2);
+	objects_tab_map[OBJ_COLUMN]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),2);
+	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Default Value"), 3);
+	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Attribute(s)"), 4);
+	objects_tab_map[OBJ_COLUMN]->adjustColumnToContents(0);
+
+	connect(objects_tab_map[OBJ_COLUMN], &ObjectTableWidget::s_cellClicked, [&](int row, int col){
+		if(col == 0 && objects_tab_map[OBJ_COLUMN]->isCellDisabled(static_cast<unsigned>(row), static_cast<unsigned>(col)))
+		{
+			Messagebox msg_box;
+			Table *table = dynamic_cast<Table *>(this->object);
+			Constraint *pk = table->getPrimaryKey();
+
+			if(pk && pk->isAddedByRelationship())
+				msg_box.show(trUtf8("It is not possible to mark a column as primary key when the table already has a primary key which was created by a relationship! This action should be done in the section <strong>Primary key</strong> of the relationship's editing form."), Messagebox::ALERT_ICON);
+			else
+				msg_box.show(trUtf8("It is not possible to mark a column created by a relationship as primary key! This action should be done in the section <strong>Primary key</strong> of the relationship's editing form."), Messagebox::ALERT_ICON);
+		}
+	});
 
 	objects_tab_map[OBJ_CONSTRAINT]->setColumnCount(4);
 	objects_tab_map[OBJ_CONSTRAINT]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[OBJ_CONSTRAINT]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
+	objects_tab_map[OBJ_CONSTRAINT]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 	objects_tab_map[OBJ_CONSTRAINT]->setHeaderLabel(trUtf8("Type"), 1);
-	objects_tab_map[OBJ_CONSTRAINT]->setHeaderIcon(QPixmap(QString(":/icones/icones/usertype.png")),1);
+	objects_tab_map[OBJ_CONSTRAINT]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
 	objects_tab_map[OBJ_CONSTRAINT]->setHeaderLabel(trUtf8("ON DELETE"), 2);
 	objects_tab_map[OBJ_CONSTRAINT]->setHeaderLabel(trUtf8("ON UPDATE"), 3);
 
 	objects_tab_map[OBJ_TRIGGER]->setColumnCount(4);
 	objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
+	objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 	objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Refer. Table"), 1);
-	objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(QString(":/icones/icones/table.png")),1);
+	objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("table")),1);
 	objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Firing"), 2);
-	objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(QString(":/icones/icones/trigger.png")),2);
+	objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("trigger")),2);
 	objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Events"), 3);
 
 	objects_tab_map[OBJ_RULE]->setColumnCount(3);
 	objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[OBJ_RULE]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
+	objects_tab_map[OBJ_RULE]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 	objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Execution"), 1);
 	objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Event"), 2);
 
 	objects_tab_map[OBJ_INDEX]->setColumnCount(2);
 	objects_tab_map[OBJ_INDEX]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[OBJ_INDEX]->setHeaderIcon(QPixmap(QString(":/icones/icones/uid.png")),0);
+	objects_tab_map[OBJ_INDEX]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 	objects_tab_map[OBJ_INDEX]->setHeaderLabel(trUtf8("Indexing"), 1);
 
 	configureFormLayout(table_grid, OBJ_TABLE);
@@ -166,10 +183,6 @@ int TableWidget::openEditingForm(TableObject *object)
 	object_wgt->setAttributes(this->model, this->op_list,
 														dynamic_cast<Table *>(this->object), dynamic_cast<Class *>(object));
 	editing_form.setMainWidget(object_wgt);
-
-	//Disabling the apply button if the object is protected
-	if(object)
-		editing_form.apply_ok_btn->setEnabled(!object->isProtected() && !object->isAddedByRelationship());
 
 	editing_form.adjustSize();
 	return(editing_form.exec());
@@ -345,6 +358,9 @@ void TableWidget::handleObject(void)
 			openEditingForm<Rule, RuleWidget>(object);
 
 		listObjects(obj_type);
+
+		if(obj_type == OBJ_CONSTRAINT)
+			listObjects(OBJ_COLUMN);
 	}
 	catch(Exception &e)
 	{
@@ -367,7 +383,11 @@ void TableWidget::showObjectData(TableObject *object, int row)
 	QStringList contr_types={ ~ConstraintType(ConstraintType::primary_key), ~ConstraintType(ConstraintType::foreign_key),
 							  ~ConstraintType(ConstraintType::check), ~ConstraintType(ConstraintType::unique),
 							  QString("NOT NULL") },
-			constr_codes={ QString("pk"), QString("fk"), QString("ck"), QString("uq"), QString("nn")};
+			constr_codes={ TableObjectView::TXT_PRIMARY_KEY,
+										 TableObjectView::TXT_FOREIGN_KEY,
+										 TableObjectView::TXT_CHECK,
+										 TableObjectView::TXT_UNIQUE,
+										 TableObjectView::TXT_NOT_NULL};
 
 	QFont font;
 	unsigned i;
@@ -377,38 +397,55 @@ void TableWidget::showObjectData(TableObject *object, int row)
 	obj_type=object->getObjectType();
 	tab=objects_tab_map[obj_type];
 
-	//Column 0: Object name
-	tab->setCellText(object->getName(),row,0);
+
+	if(obj_type==OBJ_COLUMN)
+		tab->setCellText(object->getName(),row,1);
+	else
+		tab->setCellText(object->getName(),row,0);
 
 	//For each object type there is a use for the columns from 1 to 3
 	if(obj_type==OBJ_COLUMN)
 	{
+		Table *table = dynamic_cast<Table *>(this->object);
+		Constraint *pk = table->getPrimaryKey();
 		column=dynamic_cast<Column *>(object);
 
-		//Column 1: Column data type
-		tab->setCellText(*column->getType(),row,1);
+		//Column 2: Column data type
+		tab->setCellText(*column->getType(),row,2);
 
-		//Column 2: Column defaul value
+		//Column 3: Column defaul value
 		if(column->getSequence())
 			str_aux=QString("nextval('%1'::regclass)").arg(column->getSequence()->getName(true).remove('"'));
 		else
 			str_aux=column->getDefaultValue();
 
 		if(str_aux.isEmpty()) str_aux=QString("-");
-		tab->setCellText(str_aux,row,2);
+		tab->setCellText(str_aux,row,3);
 
-		//Column 3: Column attributes (constraints which belongs)
+		//Column 4: Column attributes (constraints which belongs)
 		str_aux=TableObjectView::getConstraintString(column);
 		for(int i=0; i < constr_codes.size(); i++)
 		{
 			if(str_aux.indexOf(constr_codes[i]) >= 0)
-				str_aux1+=contr_types[i]  + QString(", ");
+				str_aux1+=contr_types[i] + QString(", ");
 		}
 
-		if(str_aux1.isEmpty()) str_aux1=QString("-");
-		else str_aux1.remove(str_aux1.size()-2, 2);
+		if(str_aux1.isEmpty())
+			str_aux1=QString("-");
+		else
+			str_aux1.remove(str_aux1.size()-2, 2);
 
-		tab->setCellText(str_aux1,row,3);
+		tab->setCellText(str_aux1,row,4);
+
+		if(str_aux.indexOf(TableObjectView::TXT_PRIMARY_KEY) >= 0)
+			tab->setCellCheckState(row, 0, Qt::Checked);
+		else
+			tab->setCellCheckState(row, 0, Qt::Unchecked);
+
+		if(column->isAddedByRelationship() || (pk && pk->isAddedByRelationship()))
+			tab->setCellDisabled(row, 0, true);
+
+		tab->adjustColumnToContents(0);
 	}
 	else if(obj_type==OBJ_CONSTRAINT)
 	{
@@ -516,6 +553,9 @@ void TableWidget::removeObjects(void)
 								.arg(object->getTypeName()),
 								ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
+
+		if(obj_type == OBJ_CONSTRAINT)
+			listObjects(OBJ_COLUMN);
 	}
 	catch(Exception &e)
 	{
@@ -558,12 +598,59 @@ void TableWidget::removeObject(int row)
 		{
 			op_id=op_list->registerObject(object, Operation::OBJECT_REMOVED, row, this->object);
 			table->removeObject(object);
+			table->setModified(true);
 		}
 		else
 			throw Exception(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT)
 							.arg(object->getName())
 							.arg(object->getTypeName()),
 							ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		if(obj_type == OBJ_CONSTRAINT)
+			listObjects(OBJ_COLUMN);
+	}
+	catch(Exception &e)
+	{
+		//If operation was registered
+		if(op_id >= 0)
+		{
+			op_list->ignoreOperationChain(true);
+			op_list->removeLastOperation();
+			op_list->ignoreOperationChain(false);
+		}
+
+		listObjects(obj_type);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void TableWidget::duplicateObject(int sel_row, int new_row)
+{
+	ObjectType obj_type=BASE_OBJECT;
+	BaseObject *object=nullptr, *dup_object=nullptr;
+	ObjectTableWidget *obj_table=nullptr;
+	Table *table = dynamic_cast<Table *>(this->object);
+	int op_id = -1;
+
+	try
+	{
+		obj_type=getObjectType(sender());
+
+		//Selects the object table based upon the passed object type
+		obj_table=getObjectTable(obj_type);
+
+		//Gets the object reference if there is an item select on table
+		if(sel_row >= 0)
+			object = reinterpret_cast<BaseObject *>(obj_table->getRowData(sel_row).value<void *>());
+
+		PgModelerNS::copyObject(&dup_object, object, obj_type);
+		dup_object->setName(PgModelerNS::generateUniqueName(dup_object, *table->getObjectList(obj_type), false, QString("_cp")));
+
+		op_id=op_list->registerObject(dup_object, Operation::OBJECT_CREATED, new_row, this->object);
+
+		table->addObject(dup_object);
+		table->setModified(true);
+		listObjects(obj_type);
 	}
 	catch(Exception &e)
 	{
@@ -629,7 +716,10 @@ void TableWidget::applyConfiguration(void)
 	try
 	{
 		Table *table=nullptr;
+		Constraint *pk = nullptr;
 		vector<BaseRelationship *> rels;
+		vector<Column *> pk_cols;
+		ObjectTableWidget *col_tab = objects_tab_map[OBJ_COLUMN];
 
 		if(!this->new_object)
 			op_list->registerObject(this->object, Operation::OBJECT_MODIFIED);
@@ -643,6 +733,50 @@ void TableWidget::applyConfiguration(void)
 		table->setTag(dynamic_cast<Tag *>(tag_sel->getSelectedObject()));
 
 		BaseObjectWidget::applyConfiguration();
+
+		//Retrieving all columns marked as primary key
+		for(unsigned row = 0; row < col_tab->getRowCount(); row++)
+		{
+			if(col_tab->getCellCheckState(row, 0) == Qt::Checked)
+				pk_cols.push_back(reinterpret_cast<Column *>(col_tab->getRowData(row).value<void *>()));
+		}
+
+		pk = table->getPrimaryKey();
+
+		//If there is at least one column marked as pk
+		if(!pk_cols.empty())
+		{
+			if(!pk)
+			{
+				//Create the primary key if the table does not own one
+				QString pk_name = QString("%1_pk").arg(table->getName());
+
+				pk = new Constraint;
+				pk->setName(pk_name);
+				pk->setName(PgModelerNS::generateUniqueName(pk, *table->getObjectList(OBJ_CONSTRAINT)));
+
+				for(Column *col : pk_cols)
+					pk->addColumn(col, Constraint::SOURCE_COLS);
+
+				table->addConstraint(pk);
+				op_list->registerObject(pk, Operation::OBJECT_CREATED, -1, table);
+			}
+			else if(!pk->isAddedByRelationship())
+			{
+				//If the table owns a pk we only update the columns
+				op_list->registerObject(pk, Operation::OBJECT_MODIFIED, -1, table);
+				pk->removeColumns();
+
+				for(Column *col : pk_cols)
+					pk->addColumn(col, Constraint::SOURCE_COLS);
+			}
+		}
+		else if(pk_cols.empty() && pk && !pk->isAddedByRelationship())
+		{
+			//Removing the primary key from the table when no column is checked as pk
+			op_list->registerObject(pk, Operation::OBJECT_REMOVED, -1, table);
+			table->removeObject(pk);
+		}
 
 		try
 		{

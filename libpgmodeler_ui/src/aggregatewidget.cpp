@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -59,6 +59,9 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		grid->addItem(spacer,1,0);
 		state_input_types_twg->widget(1)->setLayout(grid);
 
+		connect(input_types_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleDataType(int)));
+		connect(input_types_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleDataType(int)));
+
 		frame=generateInformationFrame(trUtf8("An aggregate function that accepts the types <em><strong>typeA</strong></em> and <em><strong>typeB</strong></em> as input types and which type of state is <em><strong>state_type</strong></em>, must obey the following rules: <br/><br/> <strong> &nbsp;&nbsp;&nbsp;• Final Function:</strong> <em>void final_function(<strong>state_type</strong>)</em><br/>  <strong> &nbsp;&nbsp;&nbsp;• Transition Function:</strong> <em><strong>state_type</strong> transition_function(<strong>state_type</strong>, <strong>typeA</strong>, <strong>typeB</strong>)</em>"));
 		funcaoagregacao_grid->addWidget(frame, funcaoagregacao_grid->count()+1, 0, 1, 2);
 		frame->setParent(this);
@@ -72,6 +75,7 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 
 		configureTabOrder({ final_func_sel, transition_func_sel, sort_op_sel });
 		setMinimumSize(620,700);
+
 	}
 	catch(Exception &e)
 	{
@@ -126,13 +130,23 @@ void AggregateWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 	}
 }
 
-void AggregateWidget::handleDataType(int linha)
+void AggregateWidget::handleDataType(int row)
 {
-	PgSQLType type;
+	try
+	{
+		PgSQLType type;
 
-	type=input_type->getPgSQLType();
-	input_types_tab->setRowData(QVariant::fromValue<PgSQLType>(type), linha);
-	input_types_tab->setCellText(*type,linha,0);
+		type=input_type->getPgSQLType();
+		input_types_tab->setRowData(QVariant::fromValue<PgSQLType>(type), row);
+		input_types_tab->setCellText(*type,row,0);
+	}
+	catch(Exception &e)
+	{
+		if(input_types_tab->getCellText(row, 0).isEmpty())
+			input_types_tab->removeRow(row);
+
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void AggregateWidget::applyConfiguration(void)

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -82,6 +82,9 @@ class FunctionWidget: public BaseObjectWidget, public Ui::FunctionWidget  {
 
 		//! \brief Shows the configured parameter on the table that called the form
 		void handleParameter(Parameter param, int result);
+
+		//! brief Duplicates the parameter in the curr_row placing it in new_row
+		void duplicateParameter(int curr_row, int new_row);
 
 	public slots:
 		void applyConfiguration(void);

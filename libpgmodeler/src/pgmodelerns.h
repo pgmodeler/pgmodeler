@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,6 +28,12 @@
 #include "baseobject.h"
 
 namespace PgModelerNS {
+	//! \brief Default char used as unescaped value start delimiter
+	const static QChar UNESC_VALUE_START='/';
+
+	//! \brief Default char used as unescaped value end delimiter
+	const static QChar	UNESC_VALUE_END='/';
+
 	/*! \brief Template function that makes a copy from 'copy_obj' to 'psrc_obj' doing the cast to the
 		 correct object type. If the source object (psrc_obj) is not allocated the function allocates the attributes
 		 before copying. Both objects must be the same type if both are allocated.

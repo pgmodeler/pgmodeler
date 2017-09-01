@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,16 +19,14 @@
 #include "tabledatawidget.h"
 #include "htmlitemdelegate.h"
 
-const QChar TableDataWidget::UNESC_VALUE_START='{';
-const QChar	TableDataWidget::UNESC_VALUE_END='}';
+const QString TableDataWidget::PLACEHOLDER_COLUMN=QString("$placeholder$");
 
 TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, BASE_OBJECT)
 {
 	Ui_TableDataWidget::setupUi(this);
 	configureFormLayout(tabledata_grid, BASE_OBJECT);
 
-	obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") +
-									BaseObject::getSchemaName(OBJ_TABLE) + QString(".png")));
+	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(OBJ_TABLE)));
 
 	comment_lbl->setVisible(false);
 	comment_edt->setVisible(false);
@@ -48,6 +46,15 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, BASE
 
 	add_col_tb->setMenu(&col_names_menu);
 	data_tbw->removeEventFilter(this);
+	csv_load_parent->setVisible(false);
+
+	csv_load_wgt = new CsvLoadWidget(this, true);
+	QVBoxLayout *layout = new QVBoxLayout;
+
+	layout->addWidget(csv_load_wgt);
+	layout->setContentsMargins(0,0,0,0);
+	csv_load_parent->setLayout(layout);
+	csv_load_parent->setMinimumSize(csv_load_wgt->minimumSize());
 
 	setMinimumSize(640, 480);
 
@@ -60,7 +67,12 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, BASE
 	connect(data_tbw, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(insertRowOnTabPress(int,int,int,int)), Qt::QueuedConnection);
 	connect(&col_names_menu, SIGNAL(triggered(QAction*)), this, SLOT(addColumn(QAction *)));
 	connect(data_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(enableButtons()));
-	connect(data_tbw->horizontalHeader(), SIGNAL(sectionDoubleClicked(int)), this, SLOT(fixInvalidColumn(int)));
+	connect(data_tbw->horizontalHeader(), SIGNAL(sectionDoubleClicked(int)), this, SLOT(changeColumnName(int)));
+	connect(csv_load_tb, SIGNAL(toggled(bool)), csv_load_parent, SLOT(setVisible(bool)));
+
+	connect(csv_load_wgt, &CsvLoadWidget::s_csvFileLoaded, [&](){
+		populateDataGrid(csv_load_wgt->getCsvBuffer(Table::DATA_SEPARATOR, Table::DATA_LINE_BREAK));
+	});
 }
 
 void TableDataWidget::insertRowOnTabPress(int curr_row, int curr_col, int prev_row, int prev_col)
@@ -178,11 +190,11 @@ void TableDataWidget::clearColumns(void)
 	}
 }
 
-void TableDataWidget::fixInvalidColumn(int col_idx)
+void TableDataWidget::changeColumnName(int col_idx)
 {
 	QTableWidgetItem *item=data_tbw->horizontalHeaderItem(col_idx);
 
-	if(item && item->flags()==Qt::NoItemFlags)
+	if(item)
 	{
 		QAction * act=nullptr;
 
@@ -193,20 +205,41 @@ void TableDataWidget::fixInvalidColumn(int col_idx)
 		if(act && act->isEnabled())
 		{
 			QTableWidgetItem *item=data_tbw->horizontalHeaderItem(col_idx);
+			QString col_name=act->text();
 
-			item->setText(act->text());
-			item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-			item->setForeground(data_tbw->horizontalHeader()->palette().color(QPalette::Foreground));
+			item->setText(col_name);
+
+			if(act->text()==PLACEHOLDER_COLUMN)
+			{
+				item->setFlags(Qt::NoItemFlags);
+				item->setForeground(QColor(Qt::red));
+				item->setToolTip(trUtf8("Unknown column"));
+			}
+			else
+			{
+				Table *table=dynamic_cast<Table *>(this->object);
+				Column *column = table->getColumn(col_name);
+				item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+				item->setForeground(data_tbw->horizontalHeader()->palette().color(QPalette::Foreground));
+				item->setToolTip(QString("%1 [%2]").arg(col_name).arg(~column->getType()));
+			}
 
 			for(int row = 0; row < data_tbw->rowCount(); row++)
 			{
 				item=data_tbw->item(row, col_idx);
-				item->setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-				item->setBackground(item->data(Qt::UserRole).value<QBrush>());
+
+				if(col_name==PLACEHOLDER_COLUMN)
+					setItemInvalid(item);
+				else
+				{
+					item->setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+					item->setBackground(item->data(Qt::UserRole).value<QBrush>());
+				}
 			}
 
 			toggleWarningFrame();
 			configureColumnNamesMenu();
+			data_tbw->horizontalHeader()->update();
 			data_tbw->update();
 		}
 	}
@@ -245,7 +278,7 @@ void TableDataWidget::setAttributes(DatabaseModel *model, Table *table)
 		populateDataGrid();
 }
 
-void TableDataWidget::populateDataGrid(void)
+void TableDataWidget::populateDataGrid(const QString &data)
 {
 	Table *table=dynamic_cast<Table *>(this->object);
 	QTableWidgetItem *item=nullptr;
@@ -256,7 +289,12 @@ void TableDataWidget::populateDataGrid(void)
 	Column *column=nullptr;
 
 	clearRows(false);
-	ini_data=table->getInitialData();
+
+	if(!data.isEmpty())
+		ini_data=data;
+	else
+		ini_data=table->getInitialData();
+
 
 	/* If the initial data buffer is preset the columns
 	there have priority over the current table's columns */
@@ -334,8 +372,8 @@ void TableDataWidget::populateDataGrid(void)
 	}
 
 	warn_frm->setVisible(!invalid_cols.isEmpty());
-	data_tbw->resizeRowsToContents();
 	data_tbw->resizeColumnsToContents();
+	data_tbw->resizeRowsToContents();
 
 	add_row_tb->setEnabled(!columns.isEmpty());
 	clear_cols_tb->setEnabled(!columns.isEmpty());
@@ -355,15 +393,16 @@ void TableDataWidget::configureColumnNamesMenu(void)
 	for(int col = 0; col < data_tbw->columnCount(); col++)
 		col_names.removeOne(data_tbw->horizontalHeaderItem(col)->text());
 
-	if(col_names.isEmpty())
-		col_names_menu.addAction(trUtf8("(no columns)"))->setEnabled(false);
-	else
+	if(!col_names.isEmpty())
 	{
 		col_names.sort();
 
 		for(QString col_name : col_names)
 			col_names_menu.addAction(col_name);
 	}
+
+	col_names_menu.addSeparator();
+	col_names_menu.addAction(PLACEHOLDER_COLUMN);
 }
 
 void TableDataWidget::toggleWarningFrame(void)
@@ -405,9 +444,9 @@ QString TableDataWidget::generateDataBuffer(void)
 			value = data_tbw->item(row, col)->text();
 
 			//Checking if the value is a malformed unescaped value, e.g., {value, value}, {value\}
-			if((value.startsWith(Table::UNESC_VALUE_START) && value.endsWith(QString("\\") + Table::UNESC_VALUE_END)) ||
-					(value.startsWith(Table::UNESC_VALUE_START) && !value.endsWith(Table::UNESC_VALUE_END)) ||
-					(!value.startsWith(Table::UNESC_VALUE_START) && !value.endsWith(QString("\\") + Table::UNESC_VALUE_END) && value.endsWith(Table::UNESC_VALUE_END)))
+			if((value.startsWith(PgModelerNS::UNESC_VALUE_START) && value.endsWith(QString("\\") + PgModelerNS::UNESC_VALUE_END)) ||
+					(value.startsWith(PgModelerNS::UNESC_VALUE_START) && !value.endsWith(PgModelerNS::UNESC_VALUE_END)) ||
+					(!value.startsWith(PgModelerNS::UNESC_VALUE_START) && !value.endsWith(QString("\\") + PgModelerNS::UNESC_VALUE_END) && value.endsWith(PgModelerNS::UNESC_VALUE_END)))
 				throw Exception(Exception::getErrorMessage(ERR_MALFORMED_UNESCAPED_VALUE)
 								.arg(row + 1).arg(col_names[col]),
 								ERR_MALFORMED_UNESCAPED_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -448,7 +487,7 @@ void TableDataWidget::addRow(void)
 	data_tbw->clearSelection();
 	data_tbw->setCurrentCell(row, 0, QItemSelectionModel::ClearAndSelect);
 
-	if(item->flags()!=Qt::NoItemFlags)
+	if(item && item->flags()!=Qt::NoItemFlags)
 		data_tbw->editItem(data_tbw->item(row, 0));
 
 	data_tbw->blockSignals(false);

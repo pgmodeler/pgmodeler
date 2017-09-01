@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
 QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_CUSTOM", QString(" ")},
 	{"ERR_ASG_PSDTYPE_COLUMN", QT_TR_NOOP("Assignment of a pseudo-type to the type of the column!")},
-	{"ERR_ASG_ZERO_LENGTH", QT_TR_NOOP("Zero length assignment!")},
 	{"ERR_ASG_INV_PRECISION", QT_TR_NOOP("Assignment of a precision greater than the length of the type!")},
 	{"ERR_ASG_INV_PREC_TIMESTAMP", QT_TR_NOOP("Assignment of an invalid precision to type time, timestamp or interval. The precision in this case must be equal to or less than 6!")},
 	{"ERR_ASG_NOT_ALOC_COLUMN", QT_TR_NOOP("Assignment of a not allocated column to object `%1' (%2)!")},
@@ -162,25 +161,25 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_FUNC_CONFIG_INV_OBJECT", QT_TR_NOOP("The new configuration of the function invalidates the object `%1' (%2)! In this case it is needed to undo the relationship between the affected object and function in order to the new configuration to take effect!")},
 	{"ERR_SQL_SCOPE_INV_VIEW_REF", QT_TR_NOOP("A view reference must be used in at least one these SQL scopes: View Definition, SELECT-FROM, FROM-WHERE or After WHERE!")},
 	{"ERR_CONSTR_NO_COLUMNS", QT_TR_NOOP("Constraints like primary key, foreign key or unique must have at least one column related to them! For foreign keys must be selected, in addition, the referenced columns!")},
-	{"ERR_CONFIG_NOT_LOADED", QT_TR_NOOP("Unable to load one or more configuration files! Please check if files exists in the configuration folder and if they are not corrupted to preventing this error to occur again on the next startup!")},
+	{"ERR_CONFIG_NOT_LOADED", QT_TR_NOOP("Unable to load the configuration file `%1'! Please check if file exists in its folder and/or if it is not corrupted!")},
 	{"ERR_DEFAULT_CONFIG_NOT_REST", QT_TR_NOOP("Could not find the default settings file `%1'! To restore default settings check the existence of the file and try again!")},
 	{"ERR_EXPORT_FAILURE", QT_TR_NOOP("The export process failed due to an error triggered by the PostgreSQL server in an attempt to execute a SQL command. For more details about the error check the exception stack!\n\n** Executed SQL command: **\n\n%1")},
 	{"ERR_PLUGIN_NOT_LOADED", QT_TR_NOOP("Could not load the plugin `%1' from the library `%2'! Message returned by plugin manager: `%3'")},
 	{"ERR_PLUGINS_NOT_LOADED", QT_TR_NOOP("One or more plugins were not activated due to errors during the loading process! Check the exception stack for more details.")},
-	{"ERR_INV_SYNTAX", QT_TR_NOOP("Invalid syntax in file %1, line %2, column %3!")},
-	{"ERR_INV_INSTRUCTION", QT_TR_NOOP("Invalid instruction `%1' on file %2, line %3, column %4!")},
-	{"ERR_UNK_ATTRIBUTE", QT_TR_NOOP("Unknown attribute `%1' in file %2, line %3, column %4!")},
-	{"ERR_INV_METACHARACTER", QT_TR_NOOP("Invalid metacharacter `%1' in file %2, line %3, column %4!")},
-	{"ERR_INV_OPERATOR_IN_EXPR", QT_TR_NOOP("Invalid operator `%1' in comparison expression, file %2, line %3, column %4!")},
-	{"ERR_UNDEF_ATTRIB_VALUE", QT_TR_NOOP("Attribute `%1' with an undefined value in file %2, line %3, column %4!")},
-	{"ERR_INV_ATTRIBUTE", QT_TR_NOOP("Attribute `%1' with an invalid name in file %2, line %3, column %4!")},
+	{"ERR_INV_SYNTAX", QT_TR_NOOP("Invalid syntax in file `%1', line %2, column %3!")},
+	{"ERR_INV_INSTRUCTION", QT_TR_NOOP("Invalid instruction `%1' on file `%2', line %3, column %4!")},
+	{"ERR_UNK_ATTRIBUTE", QT_TR_NOOP("Unknown attribute `%1' in file `%2', line %3, column %4!")},
+	{"ERR_INV_METACHARACTER", QT_TR_NOOP("Invalid metacharacter `%1' in file `%2', line %3, column %4!")},
+	{"ERR_INV_OPERATOR_IN_EXPR", QT_TR_NOOP("Invalid operator `%1' in comparison expression, file `%2', line %3, column %4!")},
+	{"ERR_UNDEF_ATTRIB_VALUE", QT_TR_NOOP("Attribute `%1' with an undefined value in file `%2', line %3, column %4!")},
+	{"ERR_INV_ATTRIBUTE", QT_TR_NOOP("Attribute `%1' with an invalid name in file `%2', line %3, column %4!")},
 	{"ERR_ASG_EMPTY_XML_BUFFER", QT_TR_NOOP("Assignment of empty XML buffer to parser!")},
-	{"ERR_FILE_DIR_NOT_ACCESSED", QT_TR_NOOP("Could not access the file or directory %1! Make sure that it exists or if the user has access permissions on it!")},
+	{"ERR_FILE_DIR_NOT_ACCESSED", QT_TR_NOOP("Could not access the file or directory `%1'! Make sure that it exists or if the user has access permissions on it!")},
 	{"ERR_ASG_EMPTY_DTD_FILE", QT_TR_NOOP("Assignment of empty DTD file name!")},
 	{"ERR_ASG_EMPTY_DTD_NAME", QT_TR_NOOP("Assignment of empty name to the DTD declaration!")},
 	{"ERR_LIBXMLERR", QT_TR_NOOP("Error while interpreting XML buffer at line %1 column %2.\nMessage generated by the parser: %3. %4")},
 	{"ERR_OPR_NOT_ALOC_ELEM_TREE", QT_TR_NOOP("Operation on unallocated element tree! It is necessary to load the XML parser buffer and interpret it so that the tree is generated!")},
-	{"ERR_LOAD_INV_MODEL_FILE", QT_TR_NOOP("Could not load file %1. The same appears to be inconsistent or one of its dependencies (DTD files) has errors or is missing!")},
+	{"ERR_LOAD_INV_MODEL_FILE", QT_TR_NOOP("Could not load file `%1'. The same appears to be inconsistent or one of its dependencies (DTD files) has errors or is missing!")},
 	{"ERR_OPR_NOT_ALOC_ELEMENT", QT_TR_NOOP("Operation with unallocated tree element!")},
 	{"ERR_OPR_INEXIST_ELEMENT", QT_TR_NOOP("Operation with element which does not exists in the element tree currently loaded!")},
 	{"ERR_ASG_INV_CONN_PARAM", QT_TR_NOOP("Assignment of a value to an invalid connection parameter!")},
@@ -216,7 +215,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_TRIG_USING_CONSTRIG_ATRIBS",QT_TR_NOOP("Only constraint triggers can be deferrable or reference another table!")},
 	{"ERR_REF_FUNCTION_INV_TYPE_CONF", QT_TR_NOOP("Reference to a function id which is incompatible with the user define type configuration!")},
 	{"ERR_ASG_INV_OPCLASS_OBJ", QT_TR_NOOP("The operator class assigned to the object `%1' (%2) must use `btree' as indexing method!")},
-	{"ERR_INV_POSTGRESQL_VERSION", QT_TR_NOOP("Unsupported PostgreSQL version (%1) detected! Valid versions are: %2")},
+	{"ERR_INV_POSTGRESQL_VERSION", QT_TR_NOOP("Unsupported PostgreSQL version (%1) detected! Valid versions are between %2 and %3.")},
 	{"ERR_VALIDATION_FAILURE", QT_TR_NOOP("The validation process failed due to an error triggered by the validation helper. For more details about the error check the exception stack!")},
 	{"ERR_REG_EXT_NOT_HANDLING_TYPE", QT_TR_NOOP("The extension `%1' is registered as a data type and cannot have the attribute `handles datatype' modified!")},
 	{"ERR_ALOC_INV_FK_RELATIONSHIP", QT_TR_NOOP("The fk relationship `%1' cannot be created because the foreign-key that represents it was not created on table `%2'!")},
@@ -228,7 +227,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_INV_ID_SWAP_SAME_OBJECT", QT_TR_NOOP("Invalid object id swapping operation! The objects involved are the same!")},
 	{"ERR_INV_ID_SWAP_INV_OBJ_TYPE", QT_TR_NOOP("Invalid object id swapping operation! The database itself, tablespaces or roles cannot have the ids swapped!")},
 	{"ERR_ASG_WGT_ALREADY_HAS_PARENT", QT_TR_NOOP("The widget already has a parent and cannot be assigned to a different object!")},
-	{"ERR_OBJECT_NOT_IMPORTED",  QT_TR_NOOP("The object `%1' (%2) could not be imported due to one or more errors! Check the exception stack for more details.")},
+	{"ERR_OBJECT_NOT_IMPORTED",  QT_TR_NOOP("The object `%1' (%2), oid `%3', could not be imported due to one or more errors! Check the exception stack for more details.")},
 	{"ERR_MODEL_FILE_NOT_LOADED", QT_TR_NOOP("Could not load the database model file `%1'. Check the error stack to see details. Try to run `pgmodeler-cli --fix-model' in order to correct the structure of the file if that is the case.")},
 	{"ERR_INV_COLUMN_TABLE_TYPE", QT_TR_NOOP("The column `%1' cannot reference it's parent table `%2' as data type!")},
 	{"ERR_OPR_INV_ELEMENT_ID", QT_TR_NOOP("Operation with an invalid element id `%1'!")},
@@ -248,6 +247,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_ASG_ENUM_LONG_NAME", QT_TR_NOOP("The enumeration `%1' can't be assigned to the type `%2' because is too long!")},
 	{"ERR_CONNECTION_TIMEOUT", QT_TR_NOOP("The connection was idle for too long and was automatically closed!")},
 	{"ERR_CONNECTION_BROKEN", QT_TR_NOOP("The connection was unexpectedly closed by the database server `%1' at port `%2'!")},
+	{"ERR_DROP_CURRDB_DEFAULT", QT_TR_NOOP("Failed to drop the database `%1' because it is defined as the default database for the connection `%2'!")}
 };
 
 Exception::Exception(void)

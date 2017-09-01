@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -71,6 +71,9 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 
 		//! \brief Removes the selected object from the table that calls the slot
 		void removeObject(int row);
+
+		//! \brief Duplicate the selected object. This method will desambigate names if needed
+		void duplicateObject(int sel_row, int new_row);
 
 		//! \brief Removes all objects from the table that calls the slot
 		void removeObjects(void);

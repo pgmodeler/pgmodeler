@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "sqlexecutionwidget.h"
 #include "snippetsconfigwidget.h"
 #include "plaintextitemdelegate.h"
+#include "pgmodeleruins.h"
 
 using namespace ParsersAttributes;
 
@@ -83,7 +84,15 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{FACTOR, QT_TR_NOOP("Fill factor")},                 {NO_INHERIT, QT_TR_NOOP("No inherit")},                {OP_CLASSES, QT_TR_NOOP("Op. classes")},
 	{OPERATORS, QT_TR_NOOP("Operators")},                {REF_TABLE, QT_TR_NOOP("Ref. table")},                 {COLUMNS, QT_TR_NOOP("Columns")},
 	{UPD_ACTION, QT_TR_NOOP("On update")},               {SRC_COLUMNS, QT_TR_NOOP("Columns")},                  {UNIQUE, QT_TR_NOOP("Unique")},
-	{PREDICATE, QT_TR_NOOP("Predicate")},                {COLLATIONS, QT_TR_NOOP("Collations")},                {INHERITED, QT_TR_NOOP("Inherited")}
+	{PREDICATE, QT_TR_NOOP("Predicate")},                {COLLATIONS, QT_TR_NOOP("Collations")},                {INHERITED, QT_TR_NOOP("Inherited")},
+	{CLIENT_ENCODING, QT_TR_NOOP("Client encoding")},    {CONFIG_FILE, QT_TR_NOOP("Configuration file")},       {DATA_DIRECTORY, QT_TR_NOOP("Data directory")},
+	{DYNAMIC_LIBRARY_PATH, QT_TR_NOOP("Dynamic library path")},	{DYNAMIC_SHARED_MEMORY, QT_TR_NOOP("Dynamic shared memory")}, {HBA_FILE, QT_TR_NOOP("Hba file")},
+	{LISTEN_ADDRESSES, QT_TR_NOOP("Listen addresses")},  {MAX_CONNECTIONS, QT_TR_NOOP("Max. connections")},     {PORT, QT_TR_NOOP("Listen port")},
+	{SERVER_ENCODING, QT_TR_NOOP("Server encoding")},    {SSL, QT_TR_NOOP("SSL")},                              {SSL_CA_FILE, QT_TR_NOOP("SSL ca file")},
+	{SSL_CERT_FILE, QT_TR_NOOP("SSL cert file")},        {SSL_CRL_FILE, QT_TR_NOOP("SSL crl file")},            {SSL_KEY_FILE, QT_TR_NOOP("SSL key file")},
+	{SERVER_VERSION, QT_TR_NOOP("Server version")},      {IDENT_FILE, QT_TR_NOOP("Ident file")},                {PASSWORD_ENCRYPTION, QT_TR_NOOP("Password encryption")},
+	{CONNECTION, QT_TR_NOOP("Connection ID")},           {SERVER_PID, QT_TR_NOOP("Server PID")},                {SERVER_PROTOCOL, QT_TR_NOOP("Server protocol")},
+	{REFERRERS, QT_TR_NOOP("Referrers")}
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
@@ -136,36 +145,33 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	connect(objects_trw, SIGNAL(itemCollapsed(QTreeWidgetItem*)), this, SLOT(cancelObjectRename()));
 	connect(objects_trw, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(cancelObjectRename()));
 
-	connect(data_grid_tb, &QToolButton::clicked,
-			[=]() { emit s_dataGridOpenRequested(connection.getConnectionParam(Connection::PARAM_DB_NAME)); });
+	connect(data_grid_tb, SIGNAL(clicked(bool)), this, SLOT(openDataGrid()));
+	connect(drop_db_tb, SIGNAL(clicked(bool)), this, SLOT(dropDatabase()));
+	connect(collapse_all_tb, SIGNAL(clicked(bool)), objects_trw, SLOT(collapseAll(void)));
 
 	connect(runsql_tb, &QToolButton::clicked,
-			[=]() { emit s_sqlExecutionRequested(); });
+			[&]() { emit s_sqlExecutionRequested(); });
 
 	connect(properties_tbw, &QTableWidget::itemPressed,
-			[=]() { SQLExecutionWidget::copySelection(properties_tbw, true); });
+			[&]() { SQLExecutionWidget::copySelection(properties_tbw, true); });
 
 	connect(filter_edt, &QLineEdit::textChanged,
-			[=](){ DatabaseImportForm::filterObjects(objects_trw, filter_edt->text(),
+			[&](){ DatabaseImportForm::filterObjects(objects_trw, filter_edt->text(),
 													 (by_oid_chk->isChecked() ? DatabaseImportForm::OBJECT_ID : 0), false); });
 
-	connect(drop_db_tb, &QToolButton::clicked,
-			[=]() { emit s_databaseDropRequested(connection.getConnectionParam(Connection::PARAM_DB_NAME)); });
-
-	connect(collapse_all_tb, SIGNAL(clicked(bool)), objects_trw, SLOT(collapseAll(void)));
 	connect(expand_all_tb, &QToolButton::clicked,
-			[=](){
+			[&](){
 						objects_trw->blockSignals(true);
 						objects_trw->expandAll();
 						objects_trw->blockSignals(false);
 			});
 
 	connect(objects_trw, &QTreeWidget::itemExpanded,
-			[=](QTreeWidgetItem *item){
+			[&](QTreeWidgetItem *item){
 				ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
 				unsigned oid=item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt();
 
-				if((obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLE) && oid > 0 && item->childCount() <= 1)
+				if((obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLE || obj_type==OBJ_VIEW) && oid > 0 && item->childCount() <= 1)
 				{
 					updateItem(item);
 				}
@@ -209,9 +215,10 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
 					obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
 
 					if(oid!=0 && (obj_type==OBJ_TABLE || obj_type==OBJ_VIEW))
-						emit s_dataGridOpenRequested(connection.getConnectionParam(Connection::PARAM_DB_NAME),
-													 item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
-													 item->text(0), obj_type!=OBJ_VIEW);
+					{
+						openDataGrid(item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
+												 item->text(0), obj_type!=OBJ_VIEW);
+					}
 				}
 			}
 			else if(k_event->key()==Qt::Key_F5)
@@ -284,13 +291,15 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 		msg_box.show(e);
 	}
 
-	if(attribs.count(ParsersAttributes::PERMISSION)!=0)
-		attribs[ParsersAttributes::PERMISSION]=Catalog::parseArrayValues(attribs[ParsersAttributes::PERMISSION]).join(ELEM_SEPARATOR);
 
-	//Removing system schemas from object's name
-	if(attribs[ParsersAttributes::NAME].startsWith(QString("pg_catalog.")) ||
-			attribs[ParsersAttributes::NAME].startsWith(QString("information_schema.")))
-		attribs[ParsersAttributes::NAME]=attribs[ParsersAttributes::NAME].split('.').at(1);
+		if(attribs.count(ParsersAttributes::PERMISSION)!=0)
+			attribs[ParsersAttributes::PERMISSION]=Catalog::parseArrayValues(attribs[ParsersAttributes::PERMISSION]).join(ELEM_SEPARATOR);
+
+		//Removing system schemas from object's name
+		if(attribs.count(ParsersAttributes::NAME)!=0 &&
+			 (attribs[ParsersAttributes::NAME].startsWith(QString("pg_catalog.")) ||
+				attribs[ParsersAttributes::NAME].startsWith(QString("information_schema."))))
+			attribs[ParsersAttributes::NAME]=attribs[ParsersAttributes::NAME].split('.').at(1);
 
 	for(auto &attrib : attribs)
 	{
@@ -313,16 +322,19 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 		fmt_attribs[attr_name]=attr_value;
 	}
 
-	attribs[ParsersAttributes::SQL_OBJECT]=BaseObject::getSQLName(obj_type);
-	attribs[ParsersAttributes::OBJECT_TYPE]=BaseObject::getSchemaName(obj_type);
+	if(attribs[ParsersAttributes::OID].toUInt() > 0)
+	{
+		attribs[ParsersAttributes::SQL_OBJECT]=BaseObject::getSQLName(obj_type);
+		attribs[ParsersAttributes::OBJECT_TYPE]=BaseObject::getSchemaName(obj_type);
 
-	if(attribs.count(ParsersAttributes::SIGNATURE)==0)
-		attribs[ParsersAttributes::SIGNATURE]=BaseObject::formatName(attribs[ParsersAttributes::NAME]);
+		if(attribs.count(ParsersAttributes::SIGNATURE)==0)
+			attribs[ParsersAttributes::SIGNATURE]=BaseObject::formatName(attribs[ParsersAttributes::NAME]);
 
-	if(attribs.count(ParsersAttributes::SCHEMA)!=0)
-		attribs[ParsersAttributes::SIGNATURE]=QString("%1.%2")
-											  .arg(BaseObject::formatName(attribs[ParsersAttributes::SCHEMA]))
-				.arg(attribs[ParsersAttributes::SIGNATURE]);
+		if(attribs.count(ParsersAttributes::SCHEMA)!=0)
+			attribs[ParsersAttributes::SIGNATURE]=QString("%1.%2")
+																						.arg(BaseObject::formatName(attribs[ParsersAttributes::SCHEMA]))
+																						.arg(attribs[ParsersAttributes::SIGNATURE]);
+	}
 
 	return(fmt_attribs);
 }
@@ -709,6 +721,9 @@ void DatabaseExplorerWidget::formatIndexAttribs(attribs_map &attribs)
 {
 	QStringList names=getObjectName(OBJ_TABLE, attribs[ParsersAttributes::TABLE]).split('.');
 
+	if(names.isEmpty() || names.size() == 1)
+		names=getObjectName(OBJ_VIEW, attribs[ParsersAttributes::TABLE]).split('.');
+
 	formatBooleanAttribs(attribs, { ParsersAttributes::UNIQUE });
 
 	attribs[ParsersAttributes::EXPRESSIONS]=Catalog::parseArrayValues(attribs[ParsersAttributes::EXPRESSIONS]).join(ELEM_SEPARATOR);
@@ -721,7 +736,7 @@ void DatabaseExplorerWidget::formatIndexAttribs(attribs_map &attribs)
 
 	attribs[ParsersAttributes::COLUMNS]=getObjectsNames(OBJ_COLUMN,
 														Catalog::parseArrayValues(attribs[ParsersAttributes::COLUMNS]),
-			names[0], names[1]).join(ELEM_SEPARATOR);
+														names[0], names[1]).join(ELEM_SEPARATOR);
 }
 
 QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
@@ -850,9 +865,10 @@ QString DatabaseExplorerWidget::getObjectName(ObjectType obj_type, const QString
 	}
 }
 
-void DatabaseExplorerWidget::setConnection(Connection conn)
+void DatabaseExplorerWidget::setConnection(Connection conn, const QString &default_db)
 {
 	this->connection=conn;
+	this->default_db=(default_db.isEmpty() ? QString("postgres") : default_db);
 }
 
 Connection DatabaseExplorerWidget::getConnection(void)
@@ -884,14 +900,31 @@ void DatabaseExplorerWidget::listObjects(void)
 			QApplication::setOverrideCursor(Qt::WaitCursor);
 
 		DatabaseImportForm::listObjects(import_helper, objects_trw, false, false, true, quick_refresh);
+
+		QTreeWidgetItem *root = new QTreeWidgetItem, *curr_root = nullptr;
+
+		//Changing the root item of the generated tree to be a special item containing info about the connected server
+		curr_root = objects_trw->topLevelItem(0);
+		objects_trw->takeTopLevelItem(0);
+		root->setText(0, connection.getConnectionId(true));
+		root->setIcon(0, QPixmap(PgModelerUiNS::getIconPath("server")));
+		root->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, -1);
+		root->setData(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole, BASE_OBJECT);
+		root->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, trUtf8("-- Source code unavailable for this kind of object --"));
+		root->addChild(curr_root);
+		objects_trw->addTopLevelItem(root);
+		root->setExpanded(true);
+
 		QApplication::restoreOverrideCursor();
 
 		objects_trw->blockSignals(false);
+
 		import_helper.closeConnection();
 		catalog.closeConnection();
 	}
 	catch(Exception &e)
 	{
+		QApplication::restoreOverrideCursor();
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -974,10 +1007,11 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 		else if(exec_action==source_action)
 			loadObjectSource();
 		else if(exec_action==show_data_action)
-			emit s_dataGridOpenRequested(connection.getConnectionParam(Connection::PARAM_DB_NAME),
-										 item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
-										 item->text(0),
-										 item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt()!=OBJ_VIEW);
+		{
+			openDataGrid(item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString(),
+									 item->text(0),
+									 item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt()!=OBJ_VIEW);
+		}
 		else if(exec_action)
 			handleSelectedSnippet(exec_action->text());
 	}
@@ -1219,7 +1253,7 @@ void DatabaseExplorerWidget::truncateTable(QTreeWidgetItem *item, bool cascade)
 
 void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item)
 {
-	if(item)
+	if(item && item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toInt() >= 0)
 	{
 		QTreeWidgetItem *root=nullptr, *parent=nullptr, *aux_item=nullptr;
 		ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
@@ -1247,15 +1281,15 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item)
 				}
 				else
 				{
-					if(obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLE)
+					if(obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLE || obj_type == OBJ_VIEW)
 					{
 						root=item;
 						root->takeChildren();
 
-						if(obj_type==OBJ_TABLE)
-							tab_name=item->text(0);
-						else
+						if(obj_type == OBJ_SCHEMA)
 							sch_name=item->text(0);
+						else
+							tab_name=item->text(0);
 					}
 					else
 					{
@@ -1268,15 +1302,15 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item)
 			configureImportHelper();
 
 			//Updates the group type only
-			if(obj_id==0 || (obj_type!=OBJ_TABLE && obj_type!=OBJ_SCHEMA))
+			if(obj_id==0 || (obj_type!=OBJ_TABLE && obj_type!=OBJ_VIEW && obj_type!=OBJ_SCHEMA))
 				gen_items=DatabaseImportForm::updateObjectsTree(import_helper, objects_trw, { obj_type }, false, false, root, sch_name, tab_name);
 			else
-				//Updates all child objcts when the selected object is a schema or table
+				//Updates all child objcts when the selected object is a schema or table or view
 				gen_items=DatabaseImportForm::updateObjectsTree(import_helper, objects_trw,
 																BaseObject::getChildObjectTypes(obj_type), false, false, root, sch_name, tab_name);
 
 			//Creating dummy items for schemas and tables
-			if(obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLE)
+			if(obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLE || obj_type==OBJ_VIEW)
 			{
 				for(auto &item : gen_items)
 				{
@@ -1289,6 +1323,15 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item)
 			import_helper.closeConnection();
 			objects_trw->sortItems(0, Qt::AscendingOrder);
 			objects_trw->setCurrentItem(nullptr);
+
+			if(obj_type==OBJ_TABLE)
+			{
+				objects_trw->blockSignals(true);
+				objects_trw->setCurrentItem(item);
+				showObjectProperties(true);
+				objects_trw->setCurrentItem(nullptr);
+				objects_trw->blockSignals(false);
+			}
 		}
 
 		QApplication::restoreOverrideCursor();
@@ -1302,11 +1345,10 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
 		QTreeWidgetItem *item=objects_trw->currentItem();
 		unsigned oid=item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt();
 
-		if(oid != 0)
+		if(oid != 0 || (item == objects_trw->topLevelItem(0)))
 		{
 			ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
 			attribs_map orig_attribs, fmt_attribs;
-
 
 			//First, retrieve the attributes stored on the item as a result of a previous properties listing
 			orig_attribs=item->data(DatabaseImportForm::OBJECT_ATTRIBS, Qt::UserRole).value<attribs_map>();
@@ -1317,9 +1359,33 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
 				QApplication::setOverrideCursor(Qt::WaitCursor);
 				catalog.setConnection(connection);
 
+				//Loading the server properties
+				if(item == objects_trw->topLevelItem(0))
+					orig_attribs=catalog.getServerAttributes();
 				//Retrieve them from the catalog
-				if(obj_type!=OBJ_COLUMN)
+				else if(obj_type!=OBJ_COLUMN)
+				{
 					orig_attribs=catalog.getObjectAttributes(obj_type, oid);
+
+					if(obj_type == OBJ_TABLE)
+					{
+						vector<attribs_map> ref_fks;
+						attribs_map ref_table, ref_schema;
+						QStringList tab_list;
+
+						ref_fks = catalog.getObjectsAttributes(OBJ_CONSTRAINT, QString(), QString(), {}, {{ ParsersAttributes::CUSTOM_FILTER, QString("contype='f' AND cs.confrelid=%1").arg(orig_attribs[ParsersAttributes::OID])}});
+
+						for(auto &fk : ref_fks)
+						{
+							ref_table = catalog.getObjectAttributes(OBJ_TABLE, fk[ParsersAttributes::TABLE].toUInt());
+							ref_schema = catalog.getObjectAttributes(OBJ_SCHEMA, ref_table[ParsersAttributes::SCHEMA].toUInt());
+							tab_list.push_back(QString("%1.%2").arg(ref_schema[ParsersAttributes::NAME]).arg(ref_table[ParsersAttributes::NAME]));
+						}
+
+						if(!tab_list.isEmpty())
+							orig_attribs[ParsersAttributes::REFERRERS] = tab_list.join(Table::DATA_SEPARATOR);
+					}
+				}
 				else
 				{
 					QString tab_name=item->data(DatabaseImportForm::OBJECT_TABLE, Qt::UserRole).toString(),
@@ -1339,7 +1405,9 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
 
 				//Store the attributes on the item to avoid repeatedly query the database
 				item->setData(DatabaseImportForm::OBJECT_ATTRIBS, Qt::UserRole, QVariant::fromValue<attribs_map>(fmt_attribs));
-				item->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, DEFAULT_SOURCE_CODE);
+
+				if(item != objects_trw->topLevelItem(0))
+					item->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, DEFAULT_SOURCE_CODE);
 
 				catalog.closeConnection();
 				QApplication::restoreOverrideCursor();
@@ -1360,7 +1428,9 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 		QTreeWidgetItem *item=objects_trw->currentItem();
 		clearObjectProperties();
 
-		if(item && item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toInt() >= 0)
+		if(item &&
+			 ((item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toInt() >= 0) ||
+				(item == objects_trw->topLevelItem(0))))
 		{
 			attribs_map cached_attribs;
 			QTableWidgetItem *tab_item=nullptr;
@@ -1388,7 +1458,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 					font.setItalic(true);
 					tab_item->setText(attrib.first);
 					tab_item->setFont(font);
-					tab_item->setIcon(QPixmap(QString(":/icones/icones/attribute.png")));
+					tab_item->setIcon(QPixmap(PgModelerUiNS::getIconPath("attribute")));
 					properties_tbw->setItem(row, 0, tab_item);
 
 					values=attrib.second.split(ELEM_SEPARATOR);
@@ -1428,27 +1498,28 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 
 						src_item=new QTreeWidgetItem(item);
 						src_item->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, QVariant::fromValue<int>(-1));
-						src_item->setIcon(0, QPixmap(QString(":/icones/icones/column.png")));
+						src_item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath("column")));
 						src_item->setText(0, QString("%1(%2)")
-										  .arg(cached_attribs[ParsersAttributes::TABLE])
-								.arg(cached_attribs[ParsersAttributes::SRC_COLUMNS]));
+															.arg(cached_attribs[ParsersAttributes::TABLE])
+															.arg(cached_attribs[ParsersAttributes::SRC_COLUMNS]));
 						src_item->setToolTip(0, trUtf8("Src. table: %1\nSrc. column(s): %2")
-											 .arg(cached_attribs[ParsersAttributes::TABLE])
-								.arg(cached_attribs[ParsersAttributes::SRC_COLUMNS]));
-
+																	.arg(cached_attribs[ParsersAttributes::TABLE])
+																	.arg(cached_attribs[ParsersAttributes::SRC_COLUMNS]));
+						src_item->setFlags(Qt::ItemIsEnabled);
 
 						fk_item=new QTreeWidgetItem(item);
 						fk_item->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, QVariant::fromValue<int>(-1));
-						fk_item->setIcon(0, QPixmap(QString(":/icones/icones/reference.png")));
+						fk_item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath("referenced")));
 						fk_item->setText(0, QString("%1(%2)")
-										 .arg(cached_attribs[ParsersAttributes::REF_TABLE])
-								.arg(cached_attribs[ParsersAttributes::DST_COLUMNS]));
+														.arg(cached_attribs[ParsersAttributes::REF_TABLE])
+														.arg(cached_attribs[ParsersAttributes::DST_COLUMNS]));
 						fk_item->setToolTip(0, trUtf8("Ref. table: %1\nRef. column(s): %2")
-											.arg(cached_attribs[ParsersAttributes::REF_TABLE])
-								.arg(cached_attribs[ParsersAttributes::DST_COLUMNS]));
+																.arg(cached_attribs[ParsersAttributes::REF_TABLE])
+																.arg(cached_attribs[ParsersAttributes::DST_COLUMNS]));
+						fk_item->setFlags(Qt::ItemIsEnabled);
 					}
 					else if(cached_attribs[ParsersAttributes::TYPE]==~ConstraintType(ConstraintType::unique) ||
-							cached_attribs[ParsersAttributes::TYPE]==~ConstraintType(ConstraintType::primary_key))
+									cached_attribs[ParsersAttributes::TYPE]==~ConstraintType(ConstraintType::primary_key))
 					{
 						QStringList columns=cached_attribs[ParsersAttributes::SRC_COLUMNS].split(ELEM_SEPARATOR);
 
@@ -1456,9 +1527,37 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 						{
 							src_item=new QTreeWidgetItem(item);
 							src_item->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, QVariant::fromValue<int>(-1));
-							src_item->setIcon(0, QPixmap(QString(":/icones/icones/column.png")));
+							src_item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath("column")));
 							src_item->setText(0, col);
+							src_item->setFlags(Qt::ItemIsEnabled);
 						}
+					}
+				}
+				else if(cached_attribs[ParsersAttributes::OBJECT_TYPE] == BaseObject::getSchemaName(OBJ_TABLE) &&
+								!cached_attribs[ParsersAttributes::REFERRERS].isEmpty() && item->childCount() == 5)
+				{
+					QTreeWidgetItem *refs_item=nullptr, *tab_item=nullptr;
+					QStringList ref_tab_names = cached_attribs[ParsersAttributes::REFERRERS].split(Table::DATA_SEPARATOR);
+					QFont font;
+
+					refs_item=new QTreeWidgetItem(item);
+					font = refs_item->font(0);
+					font.setItalic(true);
+
+					refs_item->setFont(0, font);
+					refs_item->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, QVariant::fromValue<int>(-1));
+					refs_item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath("referrer")));
+					refs_item->setText(0, QString("%1 (%2)")
+															.arg(attribs_i18n.at(ParsersAttributes::REFERRERS))
+															.arg(ref_tab_names.length()));
+
+					for(QString tab_name : ref_tab_names)
+					{
+						tab_item=new QTreeWidgetItem(refs_item);
+						tab_item->setData(DatabaseImportForm::OBJECT_ID, Qt::UserRole, QVariant::fromValue<int>(-1));
+						tab_item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath("table")));
+						tab_item->setText(0, tab_name);
+						tab_item->setFlags(Qt::ItemIsEnabled);
 					}
 				}
 			}
@@ -1477,7 +1576,6 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
-
 
 void DatabaseExplorerWidget::startObjectRename(QTreeWidgetItem *item)
 {
@@ -1551,7 +1649,12 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 
 	try
 	{
-		if(item)
+		if(item == objects_trw->topLevelItem(0))
+		{
+			QString n = item->text(0);
+			emit s_sourceCodeShowRequested(item->data(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole).toString());
+		}
+		else if(item)
 		{
 			QString source=item->data(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole).toString();
 
@@ -1676,9 +1779,9 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 
 				if(obj_type != OBJ_DATABASE)
 				{
-					//Generating the code for the database itself and storing it in the root item in the tree
+					//Generating the code for the database itself and storing it in the first child of the root item in the tree
 					objects_trw->setCurrentItem(objects_trw->topLevelItem(0));
-					objects_trw->topLevelItem(0)->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, getObjectSource(&dbmodel, &dbmodel));
+					objects_trw->topLevelItem(0)->child(0)->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, getObjectSource(&dbmodel, &dbmodel));
 				}
 
 				item->setData(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole, source);
@@ -1723,4 +1826,60 @@ QString DatabaseExplorerWidget::getObjectSource(BaseObject *object, DatabaseMode
 		source+=perm->getCodeDefinition(SchemaParser::SQL_DEFINITION);
 
 	return(source);
+}
+
+void DatabaseExplorerWidget::openDataGrid(const QString &schema, const QString &table, bool hide_views)
+{
+#ifdef DEMO_VERSION
+#warning "DEMO VERSION: data manipulation feature disabled warning."
+	Messagebox msg_box;
+	msg_box.show(trUtf8("Warning"),
+				 trUtf8("You're running a demonstration version! The data manipulation feature is available only in the full version!"),
+				 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
+#else
+	DataManipulationForm *data_manip=new DataManipulationForm;
+	Connection conn=Connection(this->connection.getConnectionParams());
+
+	data_manip->setWindowModality(Qt::NonModal);
+	data_manip->setAttribute(Qt::WA_DeleteOnClose, true);
+	data_manip->hide_views_chk->setChecked(hide_views);
+
+	data_manip->setAttributes(conn, schema, table);
+
+	PgModelerUiNS::resizeDialog(data_manip);
+	data_manip->show();
+#endif
+}
+
+void DatabaseExplorerWidget::dropDatabase(void)
+{
+	Messagebox msg_box;
+	QString dbname = connection.getConnectionParam(Connection::PARAM_DB_NAME);
+
+	msg_box.show(trUtf8("Warning"),
+				 trUtf8("<strong>CAUTION:</strong> You are about to drop the entire database <strong>%1</strong>! All data will be completely wiped out. Do you really want to proceed?").arg(dbname),
+				 Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
+
+	if(msg_box.result()==QDialog::Accepted)
+	{
+		try
+		{
+			Connection conn=Connection(connection.getConnectionParams());
+			conn.setConnectionParam(Connection::PARAM_DB_NAME, default_db);
+			conn.connect();
+			conn.executeDDLCommand(QString("DROP DATABASE \"%1\";").arg(dbname));
+			conn.close();
+			this->setEnabled(false);
+			emit s_databaseDropped(dbname);
+		}
+		catch(Exception &e)
+		{
+			if(connection.getConnectionParam(Connection::PARAM_DB_NAME) == default_db)
+				throw Exception(Exception::getErrorMessage(ERR_DROP_CURRDB_DEFAULT)
+												.arg(dbname).arg(connection.getConnectionParam(Connection::PARAM_ALIAS)),
+												ERR_DROP_CURRDB_DEFAULT,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			else
+				throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		}
+	}
 }

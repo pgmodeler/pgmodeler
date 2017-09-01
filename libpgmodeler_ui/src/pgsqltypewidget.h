@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,6 +41,10 @@ class PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
 
 		//! \brief Syntax highlighter used on the format field
 		SyntaxHighlighter *format_hl;
+
+		bool eventFilter(QObject *watched, QEvent *event);
+
+		static const QString INVALID_TYPE;
 
 	public:
 		PgSQLTypeWidget(QWidget * parent = 0, const QString &label=QString());

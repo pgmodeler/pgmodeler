@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 #include "operationlistwidget.h"
 #include "taskprogresswidget.h"
+#include "pgmodeleruins.h"
 
 OperationListWidget::OperationListWidget(QWidget *parent) : QWidget(parent)
 {
@@ -96,14 +97,14 @@ void OperationListWidget::updateOperationList(void)
 			if(obj_type==BASE_RELATIONSHIP)
 				str_aux+=QString("tv");
 
-			item->setIcon(0,QPixmap(QString(":/icones/icones/") + str_aux + QString(".png")));
+			item->setIcon(0,QPixmap(PgModelerUiNS::getIconPath(str_aux)));
 
 			operations_tw->insertTopLevelItem(i,item);
 			item->setFont(0,font);
 			item->setText(0,trUtf8("Object: %1").arg(BaseObject::getTypeName(obj_type)));
 
 			item2=new QTreeWidgetItem(item);
-			item2->setIcon(0,QPixmap(QString(":/icones/icones/uid.png")));
+			item2->setIcon(0,QPixmap(PgModelerUiNS::getIconPath("uid")));
 			item2->setFont(0,font);
 			item2->setText(0,trUtf8("Name: %1").arg(obj_name));
 
@@ -129,7 +130,7 @@ void OperationListWidget::updateOperationList(void)
 			}
 
 			item1=new QTreeWidgetItem(item);
-			item1->setIcon(0,QPixmap(QString(":/icones/icones/") + op_icon + QString(".png")));
+			item1->setIcon(0,QPixmap(PgModelerUiNS::getIconPath(op_icon)));
 			item1->setFont(0,font);
 			item1->setText(0,trUtf8("Operation: %1").arg(op_name));
 

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2016 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -50,6 +50,8 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		(see addSQLExecutionTab and closeSQLExecutionTab for deitails) */
 		QMap<QWidget *, QWidgetList> sql_exec_wgts;
 
+		bool eventFilter(QObject *object, QEvent *event);
+
 	public:
 		SQLToolWidget(QWidget * parent = 0);
 		~SQLToolWidget(void);
@@ -60,6 +62,8 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 	public slots:
 		void configureSnippets(void);
 
+		void clearDatabases(void);
+
 	private slots:
 		//! \brief Opens a connection to the selected server
 		void connectToServer(void);
@@ -67,11 +71,8 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! \brief Disconnect from server and close any opened database explorer or sql execution tab
 		void disconnectFromDatabases(void);
 
-		//! \brief Drop the named database
-		void dropDatabase(const QString &dbname);
-
-		//! \brief Show the widget to handle data in tables
-		void openDataGrid(const QString &dbname=QString(), const QString &schema=QString("public"), const QString &table=QString(), bool hide_views=true);
+		//! \brief Removes all DatabaseExplorerWidget instances linked to the dropped database
+		void handleDatabaseDropped(const QString &dbname);
 
 		//! \brief Open the current database in a database explorer instance
 		void browseDatabase(void);
