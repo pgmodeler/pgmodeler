@@ -778,8 +778,8 @@ PgSQLType PgSQLType::parseString(const QString &str)
 {
 	QString type_str=str.toLower().simplified(), sptype, interv;
 	bool with_tz=false;
-	unsigned len=0, dim=0, srid=0;
-	int prec=-1;
+	unsigned dim=0, srid=0;
+	int prec=-1, len = -1;
 	int start=-1, end=-1;
 	QStringList value, intervals;
 	PgSQLType type;
@@ -816,7 +816,7 @@ PgSQLType PgSQLType::parseString(const QString &str)
 	{
 		start=type_str.indexOf('(');
 		end=type_str.indexOf(')', start);
-		len=type_str.mid(start+1, end-start-1).toUInt();
+		len=type_str.mid(start+1, end-start-1).toInt();
 	}
 	//Check if the type is a numeric type, e.g, numeric(10,2)
 	else if(QRegExp(QString("(.)+\\(( )*[0-9]+( )*(,)( )*[0-9]+( )*\\)")).indexIn(type_str) >=0)
@@ -824,7 +824,7 @@ PgSQLType PgSQLType::parseString(const QString &str)
 		start=type_str.indexOf('(');
 		end=type_str.indexOf(')', start);
 		value=type_str.mid(start+1, end-start-1).split(',');
-		len=value[0].toUInt();
+		len=value[0].toInt();
 		prec=value[1].toUInt();
 	}
 	//Check if the type is a spatial type (PostGiS), e.g, geography(POINTZ, 4296)
@@ -879,7 +879,7 @@ PgSQLType PgSQLType::parseString(const QString &str)
 			type.setLength(len);
 			type.setPrecision(prec);
 		}
-		else if(type.isDateTimeType() && len > 0)
+		else if(type.isDateTimeType() && len >= 0)
 			type.setPrecision(len);
 		else if(type.hasVariableLength() && len > 0)
 			type.setLength(len);
@@ -1567,8 +1567,6 @@ QString PgSQLType::getCodeDefinition(unsigned def_type,QString ref_type)
 		attribs[ParsersAttributes::REF_TYPE]=ref_type;
 
 		attribs[ParsersAttributes::NAME]=(~(*this));
-
-		//if(length > 1)
 		attribs[ParsersAttributes::LENGTH]=QString("%1").arg(this->length);
 
 		if(dimension > 0)
