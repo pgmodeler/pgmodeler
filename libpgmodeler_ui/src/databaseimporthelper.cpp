@@ -1890,7 +1890,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 
 			if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::EX_CONSTR)
 			{
-				QStringList cols, opclasses, opers;
+				QStringList cols, opclasses, opers, exprs;
 				ExcludeElement elem;
 				QString opc_name, op_name;
 				OperatorClass *opclass=nullptr;
@@ -1903,18 +1903,27 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 				opers=Catalog::parseArrayValues(attribs[ParsersAttributes::OPERATORS]);
 				opclasses=Catalog::parseArrayValues(attribs[ParsersAttributes::OP_CLASSES]);
 
-				if(!attribs[ParsersAttributes::EXPRESSIONS].isEmpty())
-				{
-					elem.setExpression(attribs[ParsersAttributes::EXPRESSIONS]);
-					attribs[ParsersAttributes::ELEMENTS]+=elem.getCodeDefinition(SchemaParser::XML_DEFINITION);
-				}
+				/* Due to the way exclude constraints are constructed (similar to indexes),
+				 * we get the constraint's definition in for of expressions. Internally we use pg_get_constraintdef.
+				 * This way we will get EXCLUDE USING [index type](elements). The elements in this case is a set of expression
+				 * which we work to separate column only references from complex expression. Only complex expression will be used
+				 * and assigned to their exclude constraint elements. Column references are used in exclude elements but relying in
+				 * the cols list above */
+				exprs=attribs[ParsersAttributes::EXPRESSIONS]
+							.replace(QString("EXCLUDE USING %1 (").arg(attribs[ParsersAttributes::INDEX_TYPE]), QString())
+							.split(QRegExp("(WITH )(\\+|\\-|\\*|\\/|\\<|\\>|\\=|\\~|\\!|\\@|\\#|\\%|\\^|\\&|\\||\\'|\\?)+((,)?|(\\))?)"),
+										 QString::SkipEmptyParts);
 
 				for(int i=0; i < cols.size(); i++)
 				{
 					elem=ExcludeElement();
 
-					if(cols[i]!=QString("0"))
+					if(cols[i] != QString("0"))
 						elem.setColumn(table->getColumn(getColumnName(table_oid, cols[i])));
+					else
+						elem.setExpression(exprs.front().trimmed());
+
+					exprs.pop_front();
 
 					if(i < opclasses.size() && opclasses[i]!=QString("0"))
 					{
@@ -1934,8 +1943,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 							elem.setOperator(oper);
 					}
 
-					if(elem.getColumn())
-						attribs[ParsersAttributes::ELEMENTS]+=elem.getCodeDefinition(SchemaParser::XML_DEFINITION);
+					attribs[ParsersAttributes::ELEMENTS]+=elem.getCodeDefinition(SchemaParser::XML_DEFINITION);
 				}
 			}
 			else

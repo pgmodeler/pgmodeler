@@ -48,9 +48,9 @@
      [ id.indkey::oid] $ob $cb [ AS columns,
        id. indclass::oid] $ob $cb [ AS opclasses,
        pg_get_expr(id.indpred, id.indexrelid) AS condition,
-       pg_get_expr(id.indexprs, id.indexrelid) AS expressions, ]
+       pg_get_constraintdef(cs.oid) AS expressions, ]
 
-		 %if ({pgsql-ver} <=f "9.1") %then
+     %if ({pgsql-ver} <=f "9.1") %then
      [ FALSE AS no_inherit_bool, ]
      %else
      [ cs.connoinherit AS no_inherit_bool, ]
@@ -97,7 +97,7 @@
 	  WHEN 'f' THEN 'MATCH FULL'
 	  WHEN 'p' THEN 'MATCH PARTIAL' ]
 
-					[ WHEN ] %if ({pgsql-ver} >=f "9.3") %then 's' %else 'u' %end [ THEN 'MATCH SIMPLE' ]
+	[ WHEN ] %if ({pgsql-ver} >=f "9.3") %then 's' %else 'u' %end [ THEN 'MATCH SIMPLE' ]
 
 	[ ELSE NULL
 	END AS comparison_type
