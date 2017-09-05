@@ -1841,7 +1841,7 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 
 			if(i < opclasses.size() && opclasses[i]!=QString("0"))
 			{
-				opc_name=getDependencyObject(opclasses[i], OBJ_OPCLASS, false, true, false);
+				opc_name=getDependencyObject(opclasses[i], OBJ_OPCLASS, true, true, false);
 				opclass=dynamic_cast<OperatorClass *>(dbmodel->getObject(opc_name, OBJ_OPCLASS));
 
 				if(opclass)
@@ -1927,7 +1927,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 
 					if(i < opclasses.size() && opclasses[i]!=QString("0"))
 					{
-						opc_name=getDependencyObject(opclasses[i], OBJ_OPCLASS, false, true, false);
+						opc_name=getDependencyObject(opclasses[i], OBJ_OPCLASS, true, true, false);
 						opclass=dynamic_cast<OperatorClass *>(dbmodel->getObject(opc_name, OBJ_OPCLASS));
 
 						if(opclass)
@@ -2317,7 +2317,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 				obj_name.prepend(sch_name + QString("."));
 
 			//Formatting the name in form of signature (only for functions and operators)
-			if(signature_form && (obj_type==OBJ_FUNCTION || obj_type==OBJ_OPERATOR || obj_type==OBJ_AGGREGATE || obj_type==OBJ_OPFAMILY))
+			if(signature_form && (obj_type==OBJ_FUNCTION || obj_type==OBJ_OPERATOR || obj_type==OBJ_AGGREGATE || obj_type==OBJ_OPFAMILY || obj_type==OBJ_OPCLASS))
 			{
 				QStringList params;
 
@@ -2365,7 +2365,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 					obj_name += QString(" USING %1").arg(obj_attr[ParsersAttributes::INDEX_TYPE]);
 				}
 
-				if(obj_type != OBJ_OPFAMILY)
+				if(obj_type != OBJ_OPFAMILY && obj_type != OBJ_OPCLASS)
 					obj_name+=QString("(") + params.join(',') + QString(")");
 			}
 
