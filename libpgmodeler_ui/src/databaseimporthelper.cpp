@@ -1780,11 +1780,54 @@ void DatabaseImportHelper::createTrigger(attribs_map &attribs)
 	}
 }
 
+QStringList DatabaseImportHelper::parseIndexExpressions(const QString &expr)
+{
+	int open_paren = 0, close_paren = 0, pos = 0;
+	QStringList expressions;
+	QChar chr;
+	QString word;
+	bool open_apos = false;
+
+	if(!expr.isEmpty())
+	{
+		while(pos < expr.length())
+		{
+			chr = expr[pos++];
+			word += chr;
+
+			if(chr == QChar('\''))
+				open_apos = !open_apos;
+
+			if(!open_apos && chr == QChar('('))
+				open_paren++;
+			else if(!open_apos && chr == QChar(')'))
+				close_paren++;
+
+			if(chr == QChar(',') || pos == expr.length())
+			{
+				if(open_paren == close_paren)
+				{
+					if(word.endsWith(QChar(',')))
+						word.remove(word.length() - 1, 1);
+
+					if(word.contains('(') && word.contains(')'))
+						expressions.push_back(word.trimmed());
+
+					word.clear();
+					open_paren = close_paren = 0;
+				}
+			}
+		}
+	}
+
+	return(expressions);
+}
+
 void DatabaseImportHelper::createIndex(attribs_map &attribs)
 {
 	try
 	{
-		QStringList cols, opclasses, collations;
+		QStringList cols, opclasses, collations, exprs;
 		IndexElement elem;
 		BaseTable *parent_tab=nullptr;
 		Collation *coll=nullptr;
@@ -1811,12 +1854,7 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 		cols=Catalog::parseArrayValues(attribs[ParsersAttributes::COLUMNS]);
 		collations=Catalog::parseArrayValues(attribs[ParsersAttributes::COLLATIONS]);
 		opclasses=Catalog::parseArrayValues(attribs[ParsersAttributes::OP_CLASSES]);
-
-		if(!attribs[ParsersAttributes::EXPRESSIONS].isEmpty())
-		{
-			elem.setExpression(attribs[ParsersAttributes::EXPRESSIONS]);
-			attribs[ParsersAttributes::ELEMENTS]+=elem.getCodeDefinition(SchemaParser::XML_DEFINITION);
-		}
+		exprs = parseIndexExpressions(attribs[ParsersAttributes::EXPRESSIONS]);
 
 		for(i=0; i < cols.size(); i++)
 		{
@@ -1829,13 +1867,20 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 				else
 					elem.setExpression(getColumnName(attribs[ParsersAttributes::TABLE], cols[i]));
 			}
+			else if(!exprs.isEmpty())
+			{
+				elem.setExpression(exprs.front());
+				exprs.pop_front();
+			}
 
 			if(i < collations.size() && collations[i]!=QString("0"))
 			{
 				coll_name=getDependencyObject(collations[i], OBJ_COLLATION, false, true, false);
 				coll=dynamic_cast<Collation *>(dbmodel->getObject(coll_name, OBJ_COLLATION));
 
-				if(coll)
+				//Even if the collation exists we'll ignore it when it is the "pg_catalog.default"
+				if(coll && (!coll->isSystemObject() ||
+										(coll->isSystemObject() && coll->getName() != QString("default"))))
 					elem.setCollation(coll);
 			}
 
