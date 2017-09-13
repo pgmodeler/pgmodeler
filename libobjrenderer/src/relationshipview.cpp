@@ -1171,17 +1171,22 @@ void RelationshipView::configureCrowsFeetDescriptors(void)
 		QGraphicsItemGroup *desc = nullptr, *feet = nullptr;
 		BaseTableView *src_tab = nullptr, *dst_tab = nullptr;
 		QLineF line;
+		bool src_mandatory = false,	dst_mandatory = false;
 		unsigned rel_type = rel->getRelationshipType();
 
 		if(rel_type == BaseRelationship::RELATIONSHIP_NN)
 		{
 			src_tab = dynamic_cast<BaseTableView *>(rel->getTable(BaseRelationship::SRC_TABLE)->getReceiverObject());
 			dst_tab = dynamic_cast<BaseTableView *>(rel->getTable(BaseRelationship::DST_TABLE)->getReceiverObject());
+			src_mandatory = rel->isTableMandatory(BaseRelationship::SRC_TABLE);
+			dst_mandatory = rel->isTableMandatory(BaseRelationship::DST_TABLE);
 		}
 		else
 		{
 			src_tab = dynamic_cast<BaseTableView *>(rel->getReferenceTable()->getReceiverObject());
 			dst_tab = dynamic_cast<BaseTableView *>(rel->getReceiverTable()->getReceiverObject());
+			src_mandatory = rel->isReferenceTableMandatory(),
+			dst_mandatory =  rel->isReceiverTableMandatory();
 		}
 
 		for(unsigned i = 0; i < 2; i++)
@@ -1204,11 +1209,7 @@ void RelationshipView::configureCrowsFeetDescriptors(void)
 			}
 		}
 
-		if(rel_type == BaseRelationship::RELATIONSHIP_11)
-		{
-			bool src_mandatory = rel->isTableMandatory(BaseRelationship::SRC_TABLE),
-					dst_mandatory =  rel->isTableMandatory(BaseRelationship::DST_TABLE);
-			double px, py, factor = 5 * VERT_SPACING;
+			double factor = 5 * VERT_SPACING;
 			QRectF brect;
 			QLineF edge, rel_line = lines.front()->line();
 			QPointF pi;
@@ -1220,13 +1221,30 @@ void RelationshipView::configureCrowsFeetDescriptors(void)
 			pol = QPolygonF(brect);
 			desc = new QGraphicsItemGroup;
 
-			line_item = new QGraphicsLineItem;
-			line_item->setLine(QLineF(QPointF(0, -10), QPointF(0, 10)));
-			line_item->setPos(10, 0);
-			line_item->setPen(pen);
-			desc->addToGroup(line_item);
+			if(rel_type != BaseRelationship::RELATIONSHIP_NN)
+			{
+				line_item = new QGraphicsLineItem;
+				line_item->setLine(QLineF(QPointF(0, -10), QPointF(0, 10)));
+				line_item->setPos(10, 0);
+				line_item->setPen(pen);
+				desc->addToGroup(line_item);
+			}
+			else
+			{
+				line_item = new QGraphicsLineItem;
+				line_item->setLine(QLineF(QPointF(15, 0), QPointF(0, -7)));
+				line_item->setPos(0, 0);
+				line_item->setPen(pen);
+				desc->addToGroup(line_item);
 
-			if(src_mandatory)
+				line_item = new QGraphicsLineItem;
+				line_item->setLine(QLineF(QPointF(15, 0), QPointF(0, 7)));
+				line_item->setPos(0, 0);
+				line_item->setPen(pen);
+				desc->addToGroup(line_item);
+			}
+
+			if(src_mandatory || rel_type == BaseRelationship::RELATIONSHIP_NN)
 			{
 				line_item = new QGraphicsLineItem;
 				line_item->setLine(QLineF(QPointF(0, -10), QPointF(0, 10)));
@@ -1260,21 +1278,36 @@ void RelationshipView::configureCrowsFeetDescriptors(void)
 
 			cf_descriptors[0]->addToGroup(desc);
 
-
-
 			rel_line = lines.back()->line();
 			brect = QRectF(dst_tab->pos() - QPointF(factor, factor),
 										 dst_tab->boundingRect().size() + QSizeF(factor, factor));
 			pol = QPolygonF(brect);
 			desc = new QGraphicsItemGroup;
 
-			line_item = new QGraphicsLineItem;
-			line_item->setLine(QLineF(QPointF(0, -10), QPointF(0, 10)));
-			line_item->setPos(0, 0);
-			line_item->setPen(pen);
-			desc->addToGroup(line_item);
+			if(rel_type == BaseRelationship::RELATIONSHIP_11)
+			{
+				line_item = new QGraphicsLineItem;
+				line_item->setLine(QLineF(QPointF(0, -10), QPointF(0, 10)));
+				line_item->setPos(0, 0);
+				line_item->setPen(pen);
+				desc->addToGroup(line_item);
+			}
+			else
+			{
+				line_item = new QGraphicsLineItem;
+				line_item->setLine(QLineF(QPointF(-5, 0), QPointF(10, -7)));
+				line_item->setPos(0, 0);
+				line_item->setPen(pen);
+				desc->addToGroup(line_item);
 
-			if(dst_mandatory)
+				line_item = new QGraphicsLineItem;
+				line_item->setLine(QLineF(QPointF(-5, 0), QPointF(10, 7)));
+				line_item->setPos(0, 0);
+				line_item->setPen(pen);
+				desc->addToGroup(line_item);
+			}
+
+			if(dst_mandatory || rel_type == BaseRelationship::RELATIONSHIP_NN)
 			{
 				line_item = new QGraphicsLineItem;
 				line_item->setLine(QLineF(QPointF(0, -10), QPointF(0, 10)));
@@ -1307,7 +1340,7 @@ void RelationshipView::configureCrowsFeetDescriptors(void)
 			}
 
 			cf_descriptors[1]->addToGroup(desc);
-		}
+
 	}
 }
 

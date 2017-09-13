@@ -2542,3 +2542,15 @@ QString Relationship::getInheritDefinition(bool undo_inherit)
 	return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes));
 }
 
+
+bool Relationship::isReferenceTableMandatory(void)
+{
+	return((getReferenceTable() == src_table && isTableMandatory(SRC_TABLE)) ||
+				 (getReferenceTable() == dst_table && isTableMandatory(DST_TABLE)));
+}
+
+bool Relationship::isReceiverTableMandatory(void)
+{
+	return((getReceiverTable() == src_table && isTableMandatory(SRC_TABLE)) ||
+				 (getReceiverTable() == dst_table && isTableMandatory(DST_TABLE)));
+}

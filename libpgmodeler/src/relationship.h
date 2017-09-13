@@ -484,6 +484,12 @@ class Relationship: public BaseRelationship {
 
 		QString getInheritDefinition(bool undo_inherit);
 
+		//! \brief Returns true when the reference table is mandatory in the relationship
+		bool isReferenceTableMandatory(void);
+
+		//! \brief Returns true when the receiver table is mandatory in the relationship
+		bool isReceiverTableMandatory(void);
+
 		friend class DatabaseModel;
 		friend class ModelWidget;
 		friend class RelationshipWidget;
