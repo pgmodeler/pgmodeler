@@ -20,6 +20,7 @@
 
 bool RelationshipView::hide_name_label=false;
 bool RelationshipView::use_curved_lines=true;
+bool RelationshipView::use_crows_foot=false;
 unsigned RelationshipView::line_conn_mode=RelationshipView::CONNECT_FK_TO_PK;
 
 RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
@@ -68,6 +69,8 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 		line_circles[i]->setVisible(false);
 		this->addToGroup(line_circles[i]);
 	}
+
+	cf_descriptors[0] = cf_descriptors[1] = nullptr;
 
 	//Relationship has the minor Z, being on the bottom of scene object's stack
 	this->setZValue(-1);
@@ -149,7 +152,7 @@ bool RelationshipView::isNameLabelHidden(void)
 
 void RelationshipView::setCurvedLines(bool value)
 {
-	use_curved_lines = value;
+	use_curved_lines = value && !use_crows_foot;
 }
 
 bool RelationshipView::isCurvedLines(void)
@@ -157,12 +160,33 @@ bool RelationshipView::isCurvedLines(void)
 	return(use_curved_lines);
 }
 
+void RelationshipView::setCrowsFoot(bool value)
+{
+	use_crows_foot = value;
+
+	if(value)
+	{
+		line_conn_mode=RelationshipView::CONNECT_CENTER_PNTS;
+		use_curved_lines=false;
+	}
+}
+
+bool RelationshipView::isCrowsFoot(void)
+{
+	return(use_crows_foot);
+}
+
 void RelationshipView::setLineConnectionMode(unsigned mode)
 {
-	if(mode > CONNECT_FK_TO_PK)
-		mode=CONNECT_FK_TO_PK;
+	if(use_crows_foot)
+		mode=CONNECT_CENTER_PNTS;
+	else
+	{
+		if(mode > CONNECT_FK_TO_PK)
+			mode=CONNECT_FK_TO_PK;
 
-	line_conn_mode=mode;
+		line_conn_mode=mode;
+	}
 }
 
 unsigned RelationshipView::getLineConnectinMode(void)
@@ -207,7 +231,7 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 		this->setSelectionOrder(value.toBool());
 		pos_info_rect->setVisible(value.toBool());
 		pos_info_txt->setVisible(value.toBool());
-		obj_selection->setVisible(value.toBool());
+		obj_selection->setVisible(value.toBool() && descriptor->isVisible());
 		this->configurePositionInfo();
 
 		for(i=0; i < 3; i++)
@@ -943,8 +967,15 @@ void RelationshipView::configureLine(void)
 			}
 		}
 
+#warning "Crow's feet: hide/destroy the classical relationship descriptor"
 		this->configureDescriptor();
+
+		this->configureCrowsFeetDescriptors();
+
+#warning "Crow's feet: setup relationship name label and hide/destroy cardinality ones"
 		this->configureLabels();
+
+#warning "Crow's feet: setup protected icon"
 		this->configureProtectedIcon();
 
 		configuring_line=false;
@@ -1114,6 +1145,170 @@ void RelationshipView::configureDescriptor(void)
 
 	this->configureAttributes();
 	this->configurePositionInfo();
+
+	/* If the crow's feet is enabled the relationship descriptor is hidden
+	 * for 1:1, 1:n, n:n and fk relationship. For generalization and dependency
+	 * relationships the descriptor is still displayed. */
+	descriptor->setVisible(!use_crows_foot ||
+												 (use_crows_foot && (
+														rel_type == BaseRelationship::RELATIONSHIP_DEP ||
+														rel_type == BaseRelationship::RELATIONSHIP_GEN)));
+	obj_shadow->setVisible(descriptor->isVisible());
+}
+
+void RelationshipView::configureCrowsFeetDescriptors(void)
+{
+	Relationship *rel=dynamic_cast<Relationship *>(this->getSourceObject());
+
+	if(use_crows_foot && rel &&
+		 (rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_11 ||
+			rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_1N ||
+			rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_NN ||
+			rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_FK))
+	{
+		QGraphicsLineItem *line_item = nullptr;
+		QGraphicsEllipseItem *circle_item = nullptr;
+		QGraphicsItemGroup *desc = nullptr, *feet = nullptr;
+		BaseTableView *src_tab = nullptr, *dst_tab = nullptr;
+		QLineF line;
+		unsigned rel_type = rel->getRelationshipType();
+
+		if(rel_type == BaseRelationship::RELATIONSHIP_NN)
+		{
+			src_tab = dynamic_cast<BaseTableView *>(rel->getTable(BaseRelationship::SRC_TABLE)->getReceiverObject());
+			dst_tab = dynamic_cast<BaseTableView *>(rel->getTable(BaseRelationship::DST_TABLE)->getReceiverObject());
+		}
+		else
+		{
+			src_tab = dynamic_cast<BaseTableView *>(rel->getReferenceTable()->getReceiverObject());
+			dst_tab = dynamic_cast<BaseTableView *>(rel->getReceiverTable()->getReceiverObject());
+		}
+
+		for(unsigned i = 0; i < 2; i++)
+		{
+			if(cf_descriptors[i] == nullptr)
+			{
+				cf_descriptors[i] = new QGraphicsItemGroup;
+				this->addToGroup(cf_descriptors[i]);
+			}
+			else
+			{
+				QList<QGraphicsItem *> items = cf_descriptors[i]->childItems();
+
+				while(!items.isEmpty())
+				{
+					cf_descriptors[i]->removeFromGroup(items.front());
+					delete(items.front());
+					items.pop_front();
+				}
+			}
+		}
+
+		if(rel_type == BaseRelationship::RELATIONSHIP_11)
+		{
+			bool src_mandatory = rel->isTableMandatory(BaseRelationship::SRC_TABLE),
+					dst_mandatory =  rel->isTableMandatory(BaseRelationship::DST_TABLE);
+			double px, py, factor = 5 * VERT_SPACING;
+			QRectF brect;
+			QLineF edge, rel_line = lines.front()->line();
+			QPointF pi;
+			QPolygonF pol;
+			QPen pen = lines.front()->pen();
+
+			brect = QRectF(src_tab->pos() - QPointF(factor, factor),
+										 src_tab->boundingRect().size() + QSizeF(factor, factor));
+			pol = QPolygonF(brect);
+			desc = new QGraphicsItemGroup;
+
+			line_item = new QGraphicsLineItem;
+			line_item->setLine(QLineF(QPointF(0, -10), QPointF(0, 10)));
+			line_item->setPos(10, 0);
+			line_item->setPen(pen);
+			desc->addToGroup(line_item);
+
+			if(src_mandatory)
+			{
+				line_item = new QGraphicsLineItem;
+				line_item->setLine(QLineF(QPointF(0, -10), QPointF(0, 10)));
+				line_item->setPos(15, 0);
+				line_item->setPen(pen);
+				desc->addToGroup(line_item);
+			}
+			else
+			{
+				circle_item = new QGraphicsEllipseItem;
+				circle_item->setRect(QRectF(0, 0, 15, 15));
+				circle_item->setPos(15, -(circle_item->boundingRect().height()/2));
+				circle_item->setBrush(Qt::white);
+				circle_item->setPen(pen);
+				desc->addToGroup(circle_item);
+			}
+
+			desc->setRotation(-rel_line.angle());
+
+			for(int idx = 0; idx < pol.size() - 1; idx++)
+			{
+				edge.setP1(pol.at(idx));
+				edge.setP2(pol.at(idx + 1));
+
+				if(rel_line.intersect(edge, &pi)==QLineF::BoundedIntersection)
+				{
+					desc->setPos(pi);
+					break;
+				}
+			}
+
+			cf_descriptors[0]->addToGroup(desc);
+
+
+
+			rel_line = lines.back()->line();
+			brect = QRectF(dst_tab->pos() - QPointF(factor, factor),
+										 dst_tab->boundingRect().size() + QSizeF(factor, factor));
+			pol = QPolygonF(brect);
+			desc = new QGraphicsItemGroup;
+
+			line_item = new QGraphicsLineItem;
+			line_item->setLine(QLineF(QPointF(0, -10), QPointF(0, 10)));
+			line_item->setPos(0, 0);
+			line_item->setPen(pen);
+			desc->addToGroup(line_item);
+
+			if(dst_mandatory)
+			{
+				line_item = new QGraphicsLineItem;
+				line_item->setLine(QLineF(QPointF(0, -10), QPointF(0, 10)));
+				line_item->setPos(-20, 0);
+				line_item->setPen(pen);
+				desc->addToGroup(line_item);
+			}
+			else
+			{
+				circle_item = new QGraphicsEllipseItem;
+				circle_item->setRect(QRectF(0, 0, 15, 15));
+				circle_item->setPos(-20, -(circle_item->boundingRect().height()/2));
+				circle_item->setBrush(Qt::white);
+				circle_item->setPen(pen);
+				desc->addToGroup(circle_item);
+			}
+
+			desc->setRotation(-rel_line.angle());
+
+			for(int idx = 0; idx < pol.size() - 1; idx++)
+			{
+				edge.setP1(pol.at(idx));
+				edge.setP2(pol.at(idx + 1));
+
+				if(rel_line.intersect(edge, &pi)==QLineF::BoundedIntersection)
+				{
+					desc->setPos(pi);
+					break;
+				}
+			}
+
+			cf_descriptors[1]->addToGroup(desc);
+		}
+	}
 }
 
 void RelationshipView::configureAttributes(void)
@@ -1256,8 +1451,16 @@ void RelationshipView::configureLabels(void)
 	labels[BaseRelationship::REL_NAME_LABEL]->setVisible(!hide_name_label);
 	configureLabelPosition(BaseRelationship::REL_NAME_LABEL, x, y);
 
-	if(rel_type!=BaseRelationship::RELATIONSHIP_GEN &&
-			rel_type!=BaseRelationship::RELATIONSHIP_DEP)
+	//Hides the cardinality labels when crow's feet is enabled
+	if(labels[BaseRelationship::SRC_CARD_LABEL] && labels[BaseRelationship::DST_CARD_LABEL])
+	{
+		labels[BaseRelationship::SRC_CARD_LABEL]->setVisible(!use_crows_foot);
+		labels[BaseRelationship::DST_CARD_LABEL]->setVisible(!use_crows_foot);
+	}
+
+	if(!use_crows_foot &&
+		 rel_type!=BaseRelationship::RELATIONSHIP_GEN &&
+		 rel_type!=BaseRelationship::RELATIONSHIP_DEP)
 	{
 		QPointF pi, pf, p_int, pos;
 		unsigned idx, i1;
@@ -1265,7 +1468,7 @@ void RelationshipView::configureLabels(void)
 		QLineF lins[2], borders[2][4];
 		QRectF tab_rect, rect;
 		unsigned label_ids[2]={ BaseRelationship::SRC_CARD_LABEL,
-								BaseRelationship::DST_CARD_LABEL };
+														BaseRelationship::DST_CARD_LABEL };
 
 		if(!base_rel->isSelfRelationship() &&
 				line_conn_mode==CONNECT_FK_TO_PK && rel_type!=BaseRelationship::RELATIONSHIP_NN)

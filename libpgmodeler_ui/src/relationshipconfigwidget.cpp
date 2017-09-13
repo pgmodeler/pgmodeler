@@ -164,6 +164,9 @@ void RelationshipConfigWidget::applyConfiguration(void)
 		RelationshipView::setLineConnectionMode(RelationshipView::CONNECT_FK_TO_PK);
 	else
 		RelationshipView::setLineConnectionMode(RelationshipView::CONNECT_CENTER_PNTS);
+
+#warning "Crow's feet: testing crows feet support. This setup will be moved to an configuration paramenter"
+	RelationshipView::setCrowsFoot(true);
 }
 
 void RelationshipConfigWidget::restoreDefaults(void)

@@ -46,6 +46,9 @@ class RelationshipView: public BaseObjectView {
 		//! \brief Indicates that the relationship lines should be curved
 		static bool use_curved_lines;
 
+		//! \brief Indicates that the relationship should be drawn in Crow's foot notation
+		static bool use_crows_foot;
+
 		/*! \brief Specify the type of connection used by the lines. The first (classical)
 		is to connect the line to tables through their central points. The second (better semantics)
 		makes the line start from the fk columns on receiver table and connecting to the pk columns on reference table */
@@ -100,6 +103,9 @@ class RelationshipView: public BaseObjectView {
 		//! \brief Stores the curved lines representing the relationship
 		vector<BezierCurveItem *> curves;
 
+		//! \brief Stores the crow's foot notation descriptors
+		QGraphicsItemGroup * cf_descriptors[2];
+
 		//! \brief Stores the selected child object index
 		int sel_object_idx;
 
@@ -108,6 +114,9 @@ class RelationshipView: public BaseObjectView {
 
 		//! \brief Configures the descriptor form and positioning
 		void configureDescriptor(void);
+
+		//! \brief Configures the crow's feet descriptors form and positioning
+		void configureCrowsFeetDescriptors(void);
 
 		//! \brief Configures the attributes positioning
 		void configureAttributes(void);
@@ -168,6 +177,12 @@ class RelationshipView: public BaseObjectView {
 
 		//! \brief Returns the current state of curved lines usage
 		static bool isCurvedLines(void);
+
+		//! \brief Enables the usage of Crow's foot notation for all relationships
+		static void setCrowsFoot(bool value);
+
+		//! \brief Returns the current state of Crow's foot notation usage
+		static bool isCrowsFoot(void);
 
 		/*! \brief Configures the mode in which the lines are connected on tables.
 		The first one is the CONNECT_CENTER_PNTS (the classical one) which connects the
