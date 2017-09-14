@@ -280,6 +280,28 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 			curve->setPen(pen);
 		}
 
+		//If the crow's foot descriptors are allocated we change their border color
+		if(cf_descriptors[0] != nullptr)
+		{
+			QList<QGraphicsItem *> items;
+			QGraphicsLineItem *line = nullptr;
+			QGraphicsEllipseItem *circle = nullptr;
+
+			items.append(cf_descriptors[0]->childItems().at(0)->childItems());
+			items.append(cf_descriptors[1]->childItems().at(0)->childItems());
+
+			for(auto &item : items)
+			{
+				line = dynamic_cast<QGraphicsLineItem *>(item);
+				circle = dynamic_cast<QGraphicsEllipseItem *>(item);
+
+				if(line)
+					line->setPen(pen);
+				else if(circle)
+					circle->setPen(pen);
+			}
+		}
+
 		//Shows/hides the attribute's selection
 		count=attributes.size();
 		for(i=0; i < count; i++)
@@ -546,7 +568,7 @@ void RelationshipView::configureLine(void)
 
 		if(base_rel->isSelfRelationship())
 		{
-			double fator=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
+			double factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
 
 			/* Sefl-relationshihp line format:
 
@@ -566,9 +588,19 @@ void RelationshipView::configureLine(void)
 			p_central[1].setX(pos.x() + (rect.width()/1.5f));
 			p_central[1].setY(pos.y());
 
-			points.push_back(QPointF(p_central[0].x() + (11 * fator),  p_central[0].y()));
-			points.push_back(QPointF(p_central[0].x() + (11 * fator),  p_central[1].y() - (11 * fator)));
-			points.push_back(QPointF(p_central[1].x(),  p_central[1].y() - (11 * fator)));
+			if(!use_crows_foot)
+			{
+				points.push_back(QPointF(p_central[0].x() + (11 * factor),  p_central[0].y()));
+				points.push_back(QPointF(p_central[0].x() + (11 * factor),  p_central[1].y() - (11 * factor)));
+				points.push_back(QPointF(p_central[1].x(),  p_central[1].y() - (11 * factor)));
+			}
+			else
+			{
+				points.push_back(QPointF(p_central[0].x() + (22 * factor),  p_central[0].y()));
+				points.push_back(QPointF(p_central[0].x() + (22 * factor),  p_central[1].y() - (25 * factor)));
+				points.push_back(QPointF(p_central[1].x(),  p_central[1].y() - (25 * factor)));
+			}
+
 			base_rel->setPoints(points);
 		}
 		else
@@ -636,7 +668,7 @@ void RelationshipView::configureLine(void)
 
 				//In this case the receiver table rect Y must be equal to reference table Y in order to do the correct comparison
 				rec_tab_rect=QRectF(QPointF(rec_tab_view->pos().x(),
-											ref_tab_view->pos().y()), rec_tab_view->boundingRect().size());
+																		ref_tab_view->pos().y()), rec_tab_view->boundingRect().size());
 
 				if(ref_tab_rect.intersects(rec_tab_rect))
 				{
@@ -1054,13 +1086,13 @@ void RelationshipView::configureDescriptor(void)
 	if(rel_type==BaseRelationship::RELATIONSHIP_DEP ||
 			rel_type==BaseRelationship::RELATIONSHIP_GEN)
 	{
-		pol.append(QPointF(0,0)); pol.append(QPointF(21,13));
-		pol.append(QPointF(0,26)); pol.append(QPointF(0,13));
+		pol.append(QPointF(0,0)); pol.append(QPointF(18,10));
+		pol.append(QPointF(0,20)); pol.append(QPointF(0,10));
 	}
 	else
 	{
-		pol.append(QPointF(13,0)); pol.append(QPointF(26,13));
-		pol.append(QPointF(13,26)); pol.append(QPointF(0,13));
+		pol.append(QPointF(11,0)); pol.append(QPointF(22,11));
+		pol.append(QPointF(11,22)); pol.append(QPointF(0,11));
 	}
 
 	//Resizes the polygon according the font factor
@@ -1168,11 +1200,11 @@ void RelationshipView::configureCrowsFeetDescriptors(void)
 	{
 		QGraphicsLineItem *line_item = nullptr;
 		QGraphicsEllipseItem *circle_item = nullptr;
-		QGraphicsItemGroup *desc = nullptr, *feet = nullptr;
+		QGraphicsItemGroup *desc = nullptr;
 		BaseTableView *src_tab = nullptr, *dst_tab = nullptr;
-		QLineF line;
 		bool src_mandatory = false,	dst_mandatory = false;
 		unsigned rel_type = rel->getRelationshipType();
+		double factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE) * BaseObjectView::getScreenDpiFactor();
 
 		if(rel_type == BaseRelationship::RELATIONSHIP_NN)
 		{
@@ -1209,138 +1241,171 @@ void RelationshipView::configureCrowsFeetDescriptors(void)
 			}
 		}
 
-			double factor = 5 * VERT_SPACING;
-			QRectF brect;
-			QLineF edge, rel_line = lines.front()->line();
-			QPointF pi;
-			QPolygonF pol;
-			QPen pen = lines.front()->pen();
+		QRectF brect;
+		QLineF edge, rel_line = lines.front()->line();
+		QPointF pi;
+		QPolygonF pol;
+		QPen pen = lines.front()->pen();
 
-			brect = QRectF(src_tab->pos() - QPointF(factor, factor),
-										 src_tab->boundingRect().size() + QSizeF(factor, factor));
-			pol = QPolygonF(brect);
-			desc = new QGraphicsItemGroup;
+		brect = QRectF(src_tab->pos(), src_tab->boundingRect().size());
+		pol = QPolygonF(brect);
+		desc = new QGraphicsItemGroup;
 
-			if(rel_type != BaseRelationship::RELATIONSHIP_NN)
-			{
-				line_item = new QGraphicsLineItem;
-				line_item->setLine(QLineF(QPointF(0, -10), QPointF(0, 10)));
-				line_item->setPos(10, 0);
-				line_item->setPen(pen);
-				desc->addToGroup(line_item);
-			}
-			else
-			{
-				line_item = new QGraphicsLineItem;
-				line_item->setLine(QLineF(QPointF(15, 0), QPointF(0, -7)));
-				line_item->setPos(0, 0);
-				line_item->setPen(pen);
-				desc->addToGroup(line_item);
+		if(rel_type != BaseRelationship::RELATIONSHIP_NN)
+		{
+			line_item = new QGraphicsLineItem;
+			line_item->setLine(QLineF(QPointF(0, -10 * factor), QPointF(0, 10 * factor)));
+			line_item->setPos(10, 0);
+			line_item->setPen(pen);
+			desc->addToGroup(line_item);
+		}
+		else
+		{
+			line_item = new QGraphicsLineItem;
+			line_item->setLine(QLineF(QPointF(14, 0), QPointF(0, -10 * factor)));
+			line_item->setPos(0, 0);
+			line_item->setPen(pen);
+			desc->addToGroup(line_item);
 
-				line_item = new QGraphicsLineItem;
-				line_item->setLine(QLineF(QPointF(15, 0), QPointF(0, 7)));
-				line_item->setPos(0, 0);
-				line_item->setPen(pen);
-				desc->addToGroup(line_item);
-			}
+		/*	line_item = new QGraphicsLineItem;
+			line_item->setLine(QLineF(QPointF(0, -10  * factor), QPointF(-20, -15)));
+			line_item->setPos(0, 0);
+			line_item->setPen(pen);
+			desc->addToGroup(line_item); */
 
-			if(src_mandatory || rel_type == BaseRelationship::RELATIONSHIP_NN)
-			{
-				line_item = new QGraphicsLineItem;
-				line_item->setLine(QLineF(QPointF(0, -10), QPointF(0, 10)));
-				line_item->setPos(15, 0);
-				line_item->setPen(pen);
-				desc->addToGroup(line_item);
-			}
-			else
-			{
-				circle_item = new QGraphicsEllipseItem;
-				circle_item->setRect(QRectF(0, 0, 15, 15));
+			line_item = new QGraphicsLineItem;
+			line_item->setLine(QLineF(QPointF(14, 0), QPointF(0, 10 * factor)));
+			line_item->setPos(0, 0);
+			line_item->setPen(pen);
+			desc->addToGroup(line_item);
+
+			/*line_item = new QGraphicsLineItem;
+			line_item->setLine(QLineF(QPointF(0, 10  * factor), QPointF(-20, 15)));
+			line_item->setPos(0, 0);
+			line_item->setPen(pen);
+			desc->addToGroup(line_item); */
+		}
+
+		if(src_mandatory || rel_type == BaseRelationship::RELATIONSHIP_NN)
+		{
+			line_item = new QGraphicsLineItem;
+			line_item->setLine(QLineF(QPointF(0, -10 * factor), QPointF(0, 10 * factor)));
+			line_item->setPos(15, 0);
+			line_item->setPen(pen);
+			desc->addToGroup(line_item);
+		}
+		else
+		{
+			circle_item = new QGraphicsEllipseItem;
+			circle_item->setRect(QRectF(0, 0, GRAPHIC_PNT_RADIUS * 2.5 * factor, GRAPHIC_PNT_RADIUS * 2.5 * factor));
+
+			if(rel->isSelfRelationship() || rel_type != BaseRelationship::RELATIONSHIP_NN)
 				circle_item->setPos(15, -(circle_item->boundingRect().height()/2));
-				circle_item->setBrush(Qt::white);
-				circle_item->setPen(pen);
-				desc->addToGroup(circle_item);
-			}
+			else
+				circle_item->setPos(11, -(circle_item->boundingRect().height()/2));
 
-			desc->setRotation(-rel_line.angle());
+			circle_item->setPen(pen);
+			circle_item->setBrush(Qt::white);
+			desc->addToGroup(circle_item);
+		}
 
-			for(int idx = 0; idx < pol.size() - 1; idx++)
+		desc->setRotation(-rel_line.angle());
+
+		for(int idx = 0; idx < pol.size() - 1; idx++)
+		{
+			edge.setP1(pol.at(idx));
+			edge.setP2(pol.at(idx + 1));
+
+			if(rel_line.intersect(edge, &pi)==QLineF::BoundedIntersection)
 			{
-				edge.setP1(pol.at(idx));
-				edge.setP2(pol.at(idx + 1));
-
-				if(rel_line.intersect(edge, &pi)==QLineF::BoundedIntersection)
-				{
-					desc->setPos(pi);
-					break;
-				}
+				desc->setPos(pi);
+				break;
 			}
+		}
 
-			cf_descriptors[0]->addToGroup(desc);
+		cf_descriptors[0]->addToGroup(desc);
+		cf_descriptors[0]->setZValue(lines.front()->zValue() + 1);
 
-			rel_line = lines.back()->line();
-			brect = QRectF(dst_tab->pos() - QPointF(factor, factor),
-										 dst_tab->boundingRect().size() + QSizeF(factor, factor));
-			pol = QPolygonF(brect);
-			desc = new QGraphicsItemGroup;
+		rel_line = lines.back()->line();
+		brect = QRectF(dst_tab->pos(), dst_tab->boundingRect().size());
+		pol = QPolygonF(brect);
+		desc = new QGraphicsItemGroup;
+		pen = lines.back()->pen();
+
+		if(rel_type == BaseRelationship::RELATIONSHIP_11)
+		{
+			line_item = new QGraphicsLineItem;
+			line_item->setLine(QLineF(QPointF(0, -10 * factor), QPointF(0, 10 * factor)));
+			line_item->setPos(-10, 0);
+			line_item->setPen(pen);
+			desc->addToGroup(line_item);
+		}
+		else
+		{
+			line_item = new QGraphicsLineItem;
+			line_item->setLine(QLineF(QPointF(0, 0), QPointF(14, - 10 * factor)));
+			line_item->setPos(-line_item->boundingRect().width() + 1, 0);
+			line_item->setPen(pen);
+			desc->addToGroup(line_item);
+
+			/*line_item = new QGraphicsLineItem;
+			line_item->setLine(QLineF(QPointF(10, -9), QPointF(22, -9)));
+			line_item->setPos(-line_item->boundingRect().width() + 2, 0);
+			line_item->setPen(pen);
+			desc->addToGroup(line_item);*/
+
+			line_item = new QGraphicsLineItem;
+			line_item->setLine(QLineF(QPointF(0, 0), QPointF(14, 10 * factor)));
+			line_item->setPos(-line_item->boundingRect().width() + 1, 0);
+			line_item->setPen(pen);
+			desc->addToGroup(line_item);
+
+			/*line_item = new QGraphicsLineItem;
+			line_item->setLine(QLineF(QPointF(10, 9), QPointF(22, 9)));
+			line_item->setPos(-line_item->boundingRect().width() + 2, 0);
+			line_item->setPen(pen);
+			desc->addToGroup(line_item);*/
+		}
+
+		if(dst_mandatory || rel_type == BaseRelationship::RELATIONSHIP_NN)
+		{
+			line_item = new QGraphicsLineItem;
+			line_item->setLine(QLineF(QPointF(0, -10 * factor), QPointF(0, 10  * factor)));
+			line_item->setPos(-15.5, 0);
+			line_item->setPen(pen);
+			desc->addToGroup(line_item);
+		}
+		else
+		{
+			circle_item = new QGraphicsEllipseItem;
+			circle_item->setRect(QRectF(0, 0, GRAPHIC_PNT_RADIUS * 2.5 * factor, GRAPHIC_PNT_RADIUS * 2.5 * factor));
 
 			if(rel_type == BaseRelationship::RELATIONSHIP_11)
-			{
-				line_item = new QGraphicsLineItem;
-				line_item->setLine(QLineF(QPointF(0, -10), QPointF(0, 10)));
-				line_item->setPos(0, 0);
-				line_item->setPen(pen);
-				desc->addToGroup(line_item);
-			}
+				circle_item->setPos(-13 - circle_item->boundingRect().width(), -(circle_item->boundingRect().height()/2));
 			else
+				circle_item->setPos(-15 - circle_item->boundingRect().width(), -(circle_item->boundingRect().height()/2));
+
+			circle_item->setPen(pen);
+			circle_item->setBrush(Qt::white);
+			desc->addToGroup(circle_item);
+		}
+
+		desc->setRotation(-rel_line.angle());
+
+		for(int idx = 0; idx < pol.size() - 1; idx++)
+		{
+			edge.setP1(pol.at(idx));
+			edge.setP2(pol.at(idx + 1));
+
+			if(rel_line.intersect(edge, &pi)==QLineF::BoundedIntersection)
 			{
-				line_item = new QGraphicsLineItem;
-				line_item->setLine(QLineF(QPointF(-5, 0), QPointF(10, -7)));
-				line_item->setPos(0, 0);
-				line_item->setPen(pen);
-				desc->addToGroup(line_item);
-
-				line_item = new QGraphicsLineItem;
-				line_item->setLine(QLineF(QPointF(-5, 0), QPointF(10, 7)));
-				line_item->setPos(0, 0);
-				line_item->setPen(pen);
-				desc->addToGroup(line_item);
+				desc->setPos(pi);
+				break;
 			}
+		}
 
-			if(dst_mandatory || rel_type == BaseRelationship::RELATIONSHIP_NN)
-			{
-				line_item = new QGraphicsLineItem;
-				line_item->setLine(QLineF(QPointF(0, -10), QPointF(0, 10)));
-				line_item->setPos(-20, 0);
-				line_item->setPen(pen);
-				desc->addToGroup(line_item);
-			}
-			else
-			{
-				circle_item = new QGraphicsEllipseItem;
-				circle_item->setRect(QRectF(0, 0, 15, 15));
-				circle_item->setPos(-20, -(circle_item->boundingRect().height()/2));
-				circle_item->setBrush(Qt::white);
-				circle_item->setPen(pen);
-				desc->addToGroup(circle_item);
-			}
-
-			desc->setRotation(-rel_line.angle());
-
-			for(int idx = 0; idx < pol.size() - 1; idx++)
-			{
-				edge.setP1(pol.at(idx));
-				edge.setP2(pol.at(idx + 1));
-
-				if(rel_line.intersect(edge, &pi)==QLineF::BoundedIntersection)
-				{
-					desc->setPos(pi);
-					break;
-				}
-			}
-
-			cf_descriptors[1]->addToGroup(desc);
-
+		cf_descriptors[1]->addToGroup(desc);
+		cf_descriptors[1]->setZValue(lines.back()->zValue() + 1);
 	}
 }
 
