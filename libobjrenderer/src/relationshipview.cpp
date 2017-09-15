@@ -34,7 +34,7 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 		if(rel->getLabel(i))
 		{
 			labels[i]=new TextboxView(rel->getLabel(i), true);
-			labels[i]->setZValue(i==BaseRelationship::REL_NAME_LABEL ? 0 : 1);
+			labels[i]->setZValue(i==BaseRelationship::REL_NAME_LABEL ? 1 : 2);
 			this->addToGroup(labels[i]);
 		}
 		else
@@ -439,12 +439,21 @@ void RelationshipView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 	{
 		if(dynamic_cast<QGraphicsPolygonItem *>(sel_object))
 		{
-			BaseRelationship *rel_base=this->getSourceObject();
-			vector<QPointF> points=rel_base->getPoints();
+			QRectF brect = QRectF(tables[0]->pos() - QPointF(20,20),
+														tables[0]->pos() + QPointF(tables[0]->boundingRect().width() + 20, tables[0]->boundingRect().height()  + 20)),
+					brect1 = QRectF(tables[1]->pos() - QPointF(20,20),
+													tables[1]->pos() + QPointF(tables[1]->boundingRect().width() + 20, tables[1]->boundingRect().height() + 20));
 
-			points[sel_object_idx]=event->pos();
-			rel_base->setPoints(points);
-			this->configureLine();
+			//We only include the point if it is not inside the tables' bounding rect
+			if(!brect.contains(event->pos()) && !brect1.contains(event->pos()))
+			{
+				BaseRelationship *rel_base=this->getSourceObject();
+				vector<QPointF> points=rel_base->getPoints();
+
+				points[sel_object_idx]=event->pos();
+				rel_base->setPoints(points);
+				this->configureLine();
+			}
 		}
 		else if(dynamic_cast<TextboxView *>(sel_object))
 			sel_object->setPos(event->pos());
@@ -597,8 +606,8 @@ void RelationshipView::configureLine(void)
 			else
 			{
 				points.push_back(QPointF(p_central[0].x() + (22 * factor),  p_central[0].y()));
-				points.push_back(QPointF(p_central[0].x() + (22 * factor),  p_central[1].y() - (25 * factor)));
-				points.push_back(QPointF(p_central[1].x(),  p_central[1].y() - (25 * factor)));
+				points.push_back(QPointF(p_central[0].x() + (22 * factor),  p_central[1].y() - (24 * factor)));
+				points.push_back(QPointF(p_central[1].x(),  p_central[1].y() - (24 * factor)));
 			}
 
 			base_rel->setPoints(points);
@@ -1190,35 +1199,46 @@ void RelationshipView::configureDescriptor(void)
 
 void RelationshipView::configureCrowsFeetDescriptors(void)
 {
-	Relationship *rel=dynamic_cast<Relationship *>(this->getSourceObject());
+	BaseRelationship * base_rel = dynamic_cast<BaseRelationship *>(this->getSourceObject());
+	Relationship *rel=dynamic_cast<Relationship *>(base_rel);
 
-	if(use_crows_foot && rel &&
-		 (rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_11 ||
-			rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_1N ||
-			rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_NN ||
-			rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_FK))
+	if(use_crows_foot && base_rel &&
+		 (base_rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_11 ||
+			base_rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_1N ||
+			base_rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_NN ||
+			base_rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_FK))
 	{
 		QGraphicsLineItem *line_item = nullptr;
 		QGraphicsEllipseItem *circle_item = nullptr;
 		QGraphicsItemGroup *desc = nullptr;
 		BaseTableView *src_tab = nullptr, *dst_tab = nullptr;
-		bool src_mandatory = false,	dst_mandatory = false;
-		unsigned rel_type = rel->getRelationshipType();
+		bool ref_mandatory = false,	recv_mandatory = false;
+		unsigned rel_type = base_rel->getRelationshipType();
 		double factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE) * BaseObjectView::getScreenDpiFactor();
+		int signal = 1;
 
-		if(rel_type == BaseRelationship::RELATIONSHIP_NN)
+		if(rel_type == BaseRelationship::RELATIONSHIP_NN || rel_type == BaseRelationship::RELATIONSHIP_FK)
 		{
-			src_tab = dynamic_cast<BaseTableView *>(rel->getTable(BaseRelationship::SRC_TABLE)->getReceiverObject());
-			dst_tab = dynamic_cast<BaseTableView *>(rel->getTable(BaseRelationship::DST_TABLE)->getReceiverObject());
-			src_mandatory = rel->isTableMandatory(BaseRelationship::SRC_TABLE);
-			dst_mandatory = rel->isTableMandatory(BaseRelationship::DST_TABLE);
+			src_tab = dynamic_cast<BaseTableView *>(base_rel->getTable(BaseRelationship::SRC_TABLE)->getReceiverObject());
+			dst_tab = dynamic_cast<BaseTableView *>(base_rel->getTable(BaseRelationship::DST_TABLE)->getReceiverObject());
+			ref_mandatory = base_rel->isTableMandatory(BaseRelationship::SRC_TABLE);
+			recv_mandatory = base_rel->isTableMandatory(BaseRelationship::DST_TABLE);
 		}
 		else
 		{
 			src_tab = dynamic_cast<BaseTableView *>(rel->getReferenceTable()->getReceiverObject());
 			dst_tab = dynamic_cast<BaseTableView *>(rel->getReceiverTable()->getReceiverObject());
-			src_mandatory = rel->isReferenceTableMandatory(),
-			dst_mandatory =  rel->isReceiverTableMandatory();
+			ref_mandatory = rel->isReferenceTableMandatory(),
+			recv_mandatory =  rel->isReceiverTableMandatory();
+
+			/* There's a special case for one-to-one relationships that will cause the crow's foot
+			 * descriptors to be positioned in the oposite sides when compared to other relationships.
+			 * This because pgModeler switches automatically the receiver table to be the destination one
+			 * when the mandatory table of the relationship is the destination. So we use and auxiliary (signal inverter)
+			 * variable to alter the descriptors position */
+			if(ref_mandatory && rel_type == BaseRelationship::RELATIONSHIP_11 &&
+				 rel->getTable(BaseRelationship::DST_TABLE) == rel->getReferenceTable())
+				signal = -1;
 		}
 
 		for(unsigned i = 0; i < 2; i++)
@@ -1254,12 +1274,12 @@ void RelationshipView::configureCrowsFeetDescriptors(void)
 		if(rel_type != BaseRelationship::RELATIONSHIP_NN)
 		{
 			line_item = new QGraphicsLineItem;
-			line_item->setLine(QLineF(QPointF(0, -10 * factor), QPointF(0, 10 * factor)));
-			line_item->setPos(10, 0);
+			line_item->setLine(QLineF(QPointF(0, -8 * factor), QPointF(0, 8 * factor)));
+			line_item->setPos(10 * signal, 0);
 			line_item->setPen(pen);
 			desc->addToGroup(line_item);
 		}
-		else
+		else if(rel_type == BaseRelationship::RELATIONSHIP_NN)
 		{
 			line_item = new QGraphicsLineItem;
 			line_item->setLine(QLineF(QPointF(14, 0), QPointF(0, -10 * factor)));
@@ -1286,26 +1306,26 @@ void RelationshipView::configureCrowsFeetDescriptors(void)
 			desc->addToGroup(line_item); */
 		}
 
-		if(src_mandatory || rel_type == BaseRelationship::RELATIONSHIP_NN)
+		if(ref_mandatory || rel_type == BaseRelationship::RELATIONSHIP_NN)
 		{
 			line_item = new QGraphicsLineItem;
-			line_item->setLine(QLineF(QPointF(0, -10 * factor), QPointF(0, 10 * factor)));
-			line_item->setPos(15, 0);
+			line_item->setLine(QLineF(QPointF(0, -8 * factor), QPointF(0, 8 * factor)));
+			line_item->setPos(15 * signal, 0);
 			line_item->setPen(pen);
 			desc->addToGroup(line_item);
 		}
-		else
+		else if(rel_type != BaseRelationship::RELATIONSHIP_FK)
 		{
 			circle_item = new QGraphicsEllipseItem;
-			circle_item->setRect(QRectF(0, 0, GRAPHIC_PNT_RADIUS * 2.5 * factor, GRAPHIC_PNT_RADIUS * 2.5 * factor));
+			circle_item->setRect(QRectF(0, 0, GRAPHIC_PNT_RADIUS * 2.20 * factor, GRAPHIC_PNT_RADIUS * 2.20 * factor));
 
-			if(rel->isSelfRelationship() || rel_type != BaseRelationship::RELATIONSHIP_NN)
-				circle_item->setPos(15, -(circle_item->boundingRect().height()/2));
+			if(base_rel->isSelfRelationship() || rel_type != BaseRelationship::RELATIONSHIP_NN)
+				circle_item->setPos(15, -(circle_item->boundingRect().height()/2.20));
 			else
-				circle_item->setPos(11, -(circle_item->boundingRect().height()/2));
+				circle_item->setPos(11, -(circle_item->boundingRect().height()/2.20));
 
 			circle_item->setPen(pen);
-			circle_item->setBrush(Qt::white);
+			circle_item->setBrush(descriptor->brush());
 			desc->addToGroup(circle_item);
 		}
 
@@ -1321,6 +1341,8 @@ void RelationshipView::configureCrowsFeetDescriptors(void)
 				desc->setPos(pi);
 				break;
 			}
+			else
+				desc->setPos(tables[0]->getCenter());
 		}
 
 		cf_descriptors[0]->addToGroup(desc);
@@ -1335,8 +1357,8 @@ void RelationshipView::configureCrowsFeetDescriptors(void)
 		if(rel_type == BaseRelationship::RELATIONSHIP_11)
 		{
 			line_item = new QGraphicsLineItem;
-			line_item->setLine(QLineF(QPointF(0, -10 * factor), QPointF(0, 10 * factor)));
-			line_item->setPos(-10, 0);
+			line_item->setLine(QLineF(QPointF(0, -8 * factor), QPointF(0, 8 * factor)));
+			line_item->setPos(-10 * signal, 0);
 			line_item->setPen(pen);
 			desc->addToGroup(line_item);
 		}
@@ -1367,26 +1389,31 @@ void RelationshipView::configureCrowsFeetDescriptors(void)
 			desc->addToGroup(line_item);*/
 		}
 
-		if(dst_mandatory || rel_type == BaseRelationship::RELATIONSHIP_NN)
+		if(recv_mandatory || rel_type == BaseRelationship::RELATIONSHIP_NN)
 		{
 			line_item = new QGraphicsLineItem;
-			line_item->setLine(QLineF(QPointF(0, -10 * factor), QPointF(0, 10  * factor)));
+			line_item->setLine(QLineF(QPointF(0, -8 * factor), QPointF(0, 8  * factor)));
 			line_item->setPos(-15.5, 0);
 			line_item->setPen(pen);
 			desc->addToGroup(line_item);
 		}
-		else
+		else if(rel_type != BaseRelationship::RELATIONSHIP_FK)
 		{
 			circle_item = new QGraphicsEllipseItem;
-			circle_item->setRect(QRectF(0, 0, GRAPHIC_PNT_RADIUS * 2.5 * factor, GRAPHIC_PNT_RADIUS * 2.5 * factor));
+			circle_item->setRect(QRectF(0, 0, GRAPHIC_PNT_RADIUS * 2.20 * factor, GRAPHIC_PNT_RADIUS * 2.20 * factor));
 
 			if(rel_type == BaseRelationship::RELATIONSHIP_11)
-				circle_item->setPos(-13 - circle_item->boundingRect().width(), -(circle_item->boundingRect().height()/2));
+			{
+				if(signal < 0)
+					circle_item->setPos(15, -(circle_item->boundingRect().height()/2.20));
+				else
+					circle_item->setPos(-13 - circle_item->boundingRect().width(), -(circle_item->boundingRect().height()/2.20));
+			}
 			else
-				circle_item->setPos(-15 - circle_item->boundingRect().width(), -(circle_item->boundingRect().height()/2));
+				circle_item->setPos(-15 - circle_item->boundingRect().width(), -(circle_item->boundingRect().height()/2.20));
 
 			circle_item->setPen(pen);
-			circle_item->setBrush(Qt::white);
+			circle_item->setBrush(descriptor->brush());
 			desc->addToGroup(circle_item);
 		}
 
@@ -1402,6 +1429,8 @@ void RelationshipView::configureCrowsFeetDescriptors(void)
 				desc->setPos(pi);
 				break;
 			}
+			else
+				desc->setPos(tables[1]->getCenter());
 		}
 
 		cf_descriptors[1]->addToGroup(desc);

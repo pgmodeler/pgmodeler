@@ -2545,12 +2545,18 @@ QString Relationship::getInheritDefinition(bool undo_inherit)
 
 bool Relationship::isReferenceTableMandatory(void)
 {
-	return((getReferenceTable() == src_table && isTableMandatory(SRC_TABLE)) ||
-				 (getReferenceTable() == dst_table && isTableMandatory(DST_TABLE)));
+	if(rel_type == BaseRelationship::RELATIONSHIP_11 && getReferenceTable() == dst_table && !src_mandatory)
+		return(dst_mandatory);
+	else
+		return((getReferenceTable() == src_table && isTableMandatory(SRC_TABLE)) ||
+					 (getReferenceTable() == dst_table && isTableMandatory(DST_TABLE)));
 }
 
 bool Relationship::isReceiverTableMandatory(void)
 {
-	return((getReceiverTable() == src_table && isTableMandatory(SRC_TABLE)) ||
-				 (getReceiverTable() == dst_table && isTableMandatory(DST_TABLE)));
+	if(rel_type == BaseRelationship::RELATIONSHIP_11 && getReferenceTable() == dst_table && !src_mandatory)
+		return(false);
+	else
+		return((getReceiverTable() == src_table && isTableMandatory(SRC_TABLE)) ||
+					 (getReceiverTable() == dst_table && isTableMandatory(DST_TABLE)));
 }
