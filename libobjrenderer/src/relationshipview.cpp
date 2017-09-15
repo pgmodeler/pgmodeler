@@ -286,7 +286,13 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 			QList<QGraphicsItem *> items;
 			QGraphicsLineItem *line = nullptr;
 			QGraphicsEllipseItem *circle = nullptr;
+			QVector<QGradientStop> grad_stops = descriptor->brush().gradient()->stops();
+			QColor sel_color = BaseObjectView::getBorderStyle(ParsersAttributes::OBJ_SELECTION).color();
+			QLinearGradient grad(QPointF(0,0),QPointF(0,1));
+			int color_id = 0;
 
+
+			grad.setCoordinateMode(QGradient::ObjectBoundingMode);
 			items.append(cf_descriptors[0]->childItems().at(0)->childItems());
 			items.append(cf_descriptors[1]->childItems().at(0)->childItems());
 
@@ -298,7 +304,29 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 				if(line)
 					line->setPen(pen);
 				else if(circle)
+				{
+					/* If we have a circle that describes optional cardinality we should
+					 merge its color with the object selection color in order to simulate the
+					 that the descriptor is selected as well */
+					if(value.toBool())
+					{
+						color_id = 0;
+						for(auto &stop : grad_stops)
+						{
+							color = stop.second;
+							color.setRedF((color.redF() + sel_color.greenF())/2.0f);
+							color.setGreenF((color.greenF() + sel_color.greenF())/2.0f);
+							color.setBlueF((color.blueF() + sel_color.blueF())/2.0f);
+							grad.setColorAt(color_id++, color);
+						}
+
+						circle->setBrush(grad);
+					}
+					else
+						circle->setBrush(descriptor->brush());
+
 					circle->setPen(pen);
+				}
 			}
 		}
 
@@ -605,8 +633,8 @@ void RelationshipView::configureLine(void)
 			}
 			else
 			{
-				points.push_back(QPointF(p_central[0].x() + (22 * factor),  p_central[0].y()));
-				points.push_back(QPointF(p_central[0].x() + (22 * factor),  p_central[1].y() - (24 * factor)));
+				points.push_back(QPointF(p_central[0].x() + (23 * factor),  p_central[0].y()));
+				points.push_back(QPointF(p_central[0].x() + (23 * factor),  p_central[1].y() - (24 * factor)));
 				points.push_back(QPointF(p_central[1].x(),  p_central[1].y() - (24 * factor)));
 			}
 
@@ -1262,7 +1290,7 @@ void RelationshipView::configureCrowsFeetDescriptors(void)
 		}
 
 		QRectF brect;
-		QLineF edge, rel_line = lines.front()->line();
+		QLineF edge, rel_line = (signal < 0 ? lines.back()->line() : lines.front()->line());
 		QPointF pi;
 		QPolygonF pol;
 		QPen pen = lines.front()->pen();
@@ -1348,7 +1376,7 @@ void RelationshipView::configureCrowsFeetDescriptors(void)
 		cf_descriptors[0]->addToGroup(desc);
 		cf_descriptors[0]->setZValue(lines.front()->zValue() + 1);
 
-		rel_line = lines.back()->line();
+		rel_line = (signal < 0 ? lines.front()->line() : lines.back()->line());
 		brect = QRectF(dst_tab->pos(), dst_tab->boundingRect().size());
 		pol = QPolygonF(brect);
 		desc = new QGraphicsItemGroup;
