@@ -106,6 +106,10 @@ class RelationshipView: public BaseObjectView {
 		//! \brief Stores the crow's foot notation descriptors
 		QGraphicsItemGroup * cf_descriptors[2];
 
+		vector<QGraphicsLineItem *> src_cf_lines,	dst_cf_lines;
+
+		QGraphicsEllipseItem *round_cf_descriptors[2];
+
 		//! \brief Stores the selected child object index
 		int sel_object_idx;
 
@@ -117,6 +121,8 @@ class RelationshipView: public BaseObjectView {
 
 		//! \brief Configures the crow's feet descriptors form and positioning
 		void configureCrowsFeetDescriptors(void);
+
+		void configureCrowsFeetDescriptors2(void);
 
 		//! \brief Configures the attributes positioning
 		void configureAttributes(void);
