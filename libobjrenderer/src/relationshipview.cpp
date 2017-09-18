@@ -827,8 +827,91 @@ void RelationshipView::configureLine(void)
 			}
 		}
 
-		conn_points[0]=p_central[0];
-		conn_points[1]=p_central[1];
+		if(!use_crows_foot ||
+			 base_rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_DEP ||
+			 base_rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_GEN)
+		{
+			conn_points[0]=p_central[0];
+			conn_points[1]=p_central[1];
+
+			points.insert(points.begin(),p_central[0]);
+			points.push_back(p_central[1]);
+		}
+		else
+		{
+			QRectF brect;
+			QPolygonF pol;
+			QLineF edge, line = QLineF(tables[0]->getCenter(), tables[1]->getCenter());
+			QPointF pi, center, p_aux[2];
+			double factor;
+
+			for(int tab_idx = 0; tab_idx < 2; tab_idx++)
+			{
+				if(!points.empty())
+				{
+					if(tab_idx == 0)
+						line = QLineF(tables[0]->getCenter(), points[0]);
+					else
+						line = QLineF(tables[1]->getCenter(), points[points.size() - 1]);
+				}
+
+				if((tab_idx == 0 && base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK) ||
+					 (tab_idx == 0 &&
+						base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_1N &&
+						!base_rel->isTableMandatory(BaseRelationship::SRC_TABLE)) ||
+					 (tab_idx == 1 && base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_1N) ||
+					 (base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_11 &&
+						!base_rel->isTableMandatory(BaseRelationship::SRC_TABLE) &&
+						!base_rel->isTableMandatory(BaseRelationship::DST_TABLE)) ||
+					 (base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_11 &&
+						tab_idx == 0 &&
+						base_rel->isTableMandatory(BaseRelationship::DST_TABLE)))
+				{
+					factor = 1.7;
+				}
+				else
+					factor = 1;
+
+				brect = QRectF(tables[tab_idx]->pos(), tables[tab_idx]->boundingRect().size());
+				pol = QPolygonF(brect);
+				center = tables[tab_idx]->getCenter();
+
+				for(int idx = 0; idx < pol.size() - 1; idx++)
+				{
+					edge.setP1(pol.at(idx));
+					edge.setP2(pol.at(idx + 1));
+
+					if(line.intersect(edge, &pi)==QLineF::BoundedIntersection)
+					{
+						conn_points[tab_idx] = p_central[tab_idx] = pi;
+
+						if(edge.dx() == 0)
+						{
+							if(pi.x() < center.x())
+								pi.setX(pi.x() - CONN_LINE_LENGTH * factor);
+							else
+								pi.setX(pi.x() + CONN_LINE_LENGTH * factor);
+						}
+						else
+						{
+							if(pi.y() < center.y())
+								pi.setY(pi.y() - CONN_LINE_LENGTH * factor);
+							else
+								pi.setY(pi.y() + CONN_LINE_LENGTH * factor);
+						}
+
+						p_aux[tab_idx] = pi;
+						break;
+					}
+				}
+			}
+
+			points.insert(points.begin(), p_central[0]);
+			points.insert(points.begin() + 1, p_aux[0]);
+
+			points.push_back(p_aux[1]);
+			points.push_back(p_central[1]);
+		}
 
 		//If the relationship is selected we do not change the lines colors
 		if(this->isSelected() && !lines.empty())
@@ -847,9 +930,6 @@ void RelationshipView::configureLine(void)
 		//For dependency relationships the line is dashed
 		if(base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_DEP)
 			pen.setStyle(Qt::DashLine);
-
-		points.insert(points.begin(),p_central[0]);
-		points.push_back(p_central[1]);
 
 		/* For identifier relationships an additional point is created on the center of the
 		 line that supports the descriptor in order to modify the line thickness on the
@@ -961,11 +1041,11 @@ void RelationshipView::configureLine(void)
 		}
 
 		//Exposing the line ending circles
-		if((!base_rel->isSelfRelationship() && line_conn_mode==CONNECT_CENTER_PNTS) ||
+		if((!base_rel->isSelfRelationship() && line_conn_mode==CONNECT_CENTER_PNTS && !use_crows_foot) ||
 			 (!base_rel->isSelfRelationship() &&
 				((base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_DEP) ||
 				 (base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN) ||
-				 (base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN))))
+				 (base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN  && !use_crows_foot))))
 		{
 			for(i=0; i < 2; i++)
 			{
