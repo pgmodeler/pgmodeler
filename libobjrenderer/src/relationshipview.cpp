@@ -81,6 +81,7 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 RelationshipView::~RelationshipView(void)
 {
 	QGraphicsItem *item=nullptr;
+	vector<vector<QGraphicsLineItem *> *> rel_lines = { &lines, &fk_lines, &pk_lines, &src_cf_lines, &dst_cf_lines };
 
 	while(!curves.empty())
 	{
@@ -105,30 +106,6 @@ RelationshipView::~RelationshipView(void)
 		}
 	}
 
-	while(!lines.empty())
-	{
-		item=lines.back();
-		this->removeFromGroup(item);
-		lines.pop_back();
-		delete(item);
-	}
-
-	while(!fk_lines.empty())
-	{
-		item=fk_lines.back();
-		this->removeFromGroup(item);
-		fk_lines.pop_back();
-		delete(item);
-	}
-
-	while(!pk_lines.empty())
-	{
-		item=pk_lines.back();
-		this->removeFromGroup(item);
-		pk_lines.pop_back();
-		delete(item);
-	}
-
 	while(!attributes.empty())
 	{
 		item=attributes.back();
@@ -137,8 +114,35 @@ RelationshipView::~RelationshipView(void)
 		delete(item);
 	}
 
+	for(auto &lines : rel_lines)
+	{
+		while(!lines->empty())
+		{
+			item = lines->back();
+			this->removeFromGroup(item);
+			lines->pop_back();
+			delete(item);
+		}
+	}
+
 	this->removeFromGroup(descriptor);
 	delete(descriptor);
+
+	for(int i =0; i < 2; i++)
+	{
+		if(cf_descriptors[i])
+		{
+			for(auto &item : cf_descriptors[i]->childItems())
+			{
+				cf_descriptors[i]->removeFromGroup(item);
+				this->removeFromGroup(item);
+				delete(item);
+			}
+
+			this->removeFromGroup(cf_descriptors[i]);
+			delete(cf_descriptors[i]);
+		}
+	}
 }
 
 void RelationshipView::setHideNameLabel(bool value)
@@ -263,6 +267,7 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 		else
 			color=line_color;
 
+		color.setAlpha(255);
 		rel_lines=lines;
 		rel_lines.insert(rel_lines.end(), fk_lines.begin(), fk_lines.end());
 		rel_lines.insert(rel_lines.end(), pk_lines.begin(), pk_lines.end());
@@ -284,50 +289,45 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 		//If the crow's foot descriptors are allocated we change their border color
 		if(cf_descriptors[0] != nullptr)
 		{
-			QList<QGraphicsItem *> items;
-			QGraphicsLineItem *line = nullptr;
-			QGraphicsEllipseItem *circle = nullptr;
+			vector<QGraphicsLineItem *> lines;
 			QVector<QGradientStop> grad_stops = descriptor->brush().gradient()->stops();
 			QColor sel_color = BaseObjectView::getBorderStyle(ParsersAttributes::OBJ_SELECTION).color();
 			QLinearGradient grad(QPointF(0,0),QPointF(0,1));
 			int color_id = 0;
 
-
 			grad.setCoordinateMode(QGradient::ObjectBoundingMode);
-			items.append(cf_descriptors[0]->childItems().at(0)->childItems());
-			items.append(cf_descriptors[1]->childItems().at(0)->childItems());
+			lines.assign(src_cf_lines.begin(), src_cf_lines.end());
+			lines.insert(lines.end(), dst_cf_lines.begin(), dst_cf_lines.end());
 
-			for(auto &item : items)
+			for(auto &line : lines)
+				line->setPen(pen);
+
+			for(int idx = 0; idx < 2; idx++)
 			{
-				line = dynamic_cast<QGraphicsLineItem *>(item);
-				circle = dynamic_cast<QGraphicsEllipseItem *>(item);
-
-				if(line)
-					line->setPen(pen);
-				else if(circle)
+				/* If we have a circle that describes optional cardinality we should
+				 * merge its color with the object selection color in order to simulate the
+				 * that the descriptor is selected as well */
+				if(value.toBool())
 				{
-					/* If we have a circle that describes optional cardinality we should
-					 merge its color with the object selection color in order to simulate the
-					 that the descriptor is selected as well */
-					if(value.toBool())
+					color_id = 0;
+					for(auto &stop : grad_stops)
 					{
-						color_id = 0;
-						for(auto &stop : grad_stops)
-						{
-							color = stop.second;
-							color.setRedF((color.redF() + sel_color.greenF())/2.0f);
-							color.setGreenF((color.greenF() + sel_color.greenF())/2.0f);
-							color.setBlueF((color.blueF() + sel_color.blueF())/2.0f);
-							grad.setColorAt(color_id++, color);
-						}
-
-						circle->setBrush(grad);
+						color = stop.second;
+						color.setRedF((color.redF() + sel_color.greenF())/2.0f);
+						color.setGreenF((color.greenF() + sel_color.greenF())/2.0f);
+						color.setBlueF((color.blueF() + sel_color.blueF())/2.0f);
+						grad.setColorAt(color_id++, color);
 					}
-					else
-						circle->setBrush(descriptor->brush());
 
-					circle->setPen(pen);
+					round_cf_descriptors[idx]->setBrush(grad);
 				}
+				else
+					round_cf_descriptors[idx]->setBrush(descriptor->brush());
+
+				if(this->getSourceObject()->getRelationshipType() == BaseRelationship::RELATIONSHIP_FK)
+					pen.setStyle(Qt::DashLine);
+
+				round_cf_descriptors[idx]->setPen(pen);
 			}
 		}
 
@@ -1040,8 +1040,7 @@ void RelationshipView::configureLine(void)
 #warning "Crow's feet: hide/destroy the classical relationship descriptor"
 		this->configureDescriptor();
 
-		//this->configureCrowsFeetDescriptors();
-		this->configureCrowsFeetDescriptors2();
+		this->configureCrowsFeetDescriptors();
 
 #warning "Crow's feet: setup relationship name label and hide/destroy cardinality ones"
 		this->configureLabels();
@@ -1240,247 +1239,6 @@ void RelationshipView::configureCrowsFeetDescriptors(void)
 	{
 		QGraphicsLineItem *line_item = nullptr;
 		QGraphicsEllipseItem *circle_item = nullptr;
-		QGraphicsItemGroup *desc = nullptr;
-		BaseTableView *src_tab = nullptr, *dst_tab = nullptr;
-		bool ref_mandatory = false,	recv_mandatory = false;
-		unsigned rel_type = base_rel->getRelationshipType();
-		double factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE) * BaseObjectView::getScreenDpiFactor();
-		int signal = 1;
-
-		if(rel_type == BaseRelationship::RELATIONSHIP_NN || rel_type == BaseRelationship::RELATIONSHIP_FK)
-		{
-			src_tab = dynamic_cast<BaseTableView *>(base_rel->getTable(BaseRelationship::SRC_TABLE)->getReceiverObject());
-			dst_tab = dynamic_cast<BaseTableView *>(base_rel->getTable(BaseRelationship::DST_TABLE)->getReceiverObject());
-			ref_mandatory = base_rel->isTableMandatory(BaseRelationship::SRC_TABLE);
-			recv_mandatory = base_rel->isTableMandatory(BaseRelationship::DST_TABLE);
-		}
-		else
-		{
-			src_tab = dynamic_cast<BaseTableView *>(rel->getReferenceTable()->getReceiverObject());
-			dst_tab = dynamic_cast<BaseTableView *>(rel->getReceiverTable()->getReceiverObject());
-			ref_mandatory = rel->isReferenceTableMandatory(),
-			recv_mandatory =  rel->isReceiverTableMandatory();
-
-			/* There's a special case for one-to-one relationships that will cause the crow's foot
-			 * descriptors to be positioned in the oposite sides when compared to other relationships.
-			 * This because pgModeler switches automatically the receiver table to be the destination one
-			 * when the mandatory table of the relationship is the destination. So we use and auxiliary (signal inverter)
-			 * variable to alter the descriptors position */
-			if(ref_mandatory && rel_type == BaseRelationship::RELATIONSHIP_11 &&
-				 rel->getTable(BaseRelationship::DST_TABLE) == rel->getReferenceTable())
-				signal = -1;
-		}
-
-		for(unsigned i = 0; i < 2; i++)
-		{
-			if(cf_descriptors[i] == nullptr)
-			{
-				cf_descriptors[i] = new QGraphicsItemGroup;
-				this->addToGroup(cf_descriptors[i]);
-			}
-			else
-			{
-				QList<QGraphicsItem *> items = cf_descriptors[i]->childItems();
-
-				while(!items.isEmpty())
-				{
-					cf_descriptors[i]->removeFromGroup(items.front());
-					delete(items.front());
-					items.pop_front();
-				}
-			}
-		}
-
-		QRectF brect;
-		QLineF edge, rel_line = (signal < 0 ? lines.back()->line() : lines.front()->line());
-		QPointF pi;
-		QPolygonF pol;
-		QPen pen = lines.front()->pen();
-
-		brect = QRectF(src_tab->pos(), src_tab->boundingRect().size());
-		pol = QPolygonF(brect);
-		desc = new QGraphicsItemGroup;
-
-		if(rel_type != BaseRelationship::RELATIONSHIP_NN)
-		{
-			line_item = new QGraphicsLineItem;
-			line_item->setLine(QLineF(QPointF(0, -8 * factor), QPointF(0, 8 * factor)));
-			line_item->setPos(10 * signal, 0);
-			line_item->setPen(pen);
-			desc->addToGroup(line_item);
-		}
-		else if(rel_type == BaseRelationship::RELATIONSHIP_NN)
-		{
-			line_item = new QGraphicsLineItem;
-			line_item->setLine(QLineF(QPointF(14, 0), QPointF(0, -10 * factor)));
-			line_item->setPos(0, 0);
-			line_item->setPen(pen);
-			desc->addToGroup(line_item);
-
-		/*	line_item = new QGraphicsLineItem;
-			line_item->setLine(QLineF(QPointF(0, -10  * factor), QPointF(-20, -15)));
-			line_item->setPos(0, 0);
-			line_item->setPen(pen);
-			desc->addToGroup(line_item); */
-
-			line_item = new QGraphicsLineItem;
-			line_item->setLine(QLineF(QPointF(14, 0), QPointF(0, 10 * factor)));
-			line_item->setPos(0, 0);
-			line_item->setPen(pen);
-			desc->addToGroup(line_item);
-
-			/*line_item = new QGraphicsLineItem;
-			line_item->setLine(QLineF(QPointF(0, 10  * factor), QPointF(-20, 15)));
-			line_item->setPos(0, 0);
-			line_item->setPen(pen);
-			desc->addToGroup(line_item); */
-		}
-
-		if(ref_mandatory || rel_type == BaseRelationship::RELATIONSHIP_NN)
-		{
-			line_item = new QGraphicsLineItem;
-			line_item->setLine(QLineF(QPointF(0, -8 * factor), QPointF(0, 8 * factor)));
-			line_item->setPos(15 * signal, 0);
-			line_item->setPen(pen);
-			desc->addToGroup(line_item);
-		}
-		else if(rel_type != BaseRelationship::RELATIONSHIP_FK)
-		{
-			circle_item = new QGraphicsEllipseItem;
-			circle_item->setRect(QRectF(0, 0, GRAPHIC_PNT_RADIUS * 2.20 * factor, GRAPHIC_PNT_RADIUS * 2.20 * factor));
-
-			if(base_rel->isSelfRelationship() || rel_type != BaseRelationship::RELATIONSHIP_NN)
-				circle_item->setPos(15, -(circle_item->boundingRect().height()/2.20));
-			else
-				circle_item->setPos(11, -(circle_item->boundingRect().height()/2.20));
-
-			circle_item->setPen(pen);
-			circle_item->setBrush(descriptor->brush());
-			desc->addToGroup(circle_item);
-		}
-
-		desc->setRotation(-rel_line.angle());
-
-		for(int idx = 0; idx < pol.size() - 1; idx++)
-		{
-			edge.setP1(pol.at(idx));
-			edge.setP2(pol.at(idx + 1));
-
-			if(rel_line.intersect(edge, &pi)==QLineF::BoundedIntersection)
-			{
-				desc->setPos(pi);
-				break;
-			}
-			else
-				desc->setPos(tables[0]->getCenter());
-		}
-
-		cf_descriptors[0]->addToGroup(desc);
-		cf_descriptors[0]->setZValue(lines.front()->zValue() + 1);
-
-		rel_line = (signal < 0 ? lines.front()->line() : lines.back()->line());
-		brect = QRectF(dst_tab->pos(), dst_tab->boundingRect().size());
-		pol = QPolygonF(brect);
-		desc = new QGraphicsItemGroup;
-		pen = lines.back()->pen();
-
-		if(rel_type == BaseRelationship::RELATIONSHIP_11)
-		{
-			line_item = new QGraphicsLineItem;
-			line_item->setLine(QLineF(QPointF(0, -8 * factor), QPointF(0, 8 * factor)));
-			line_item->setPos(-10 * signal, 0);
-			line_item->setPen(pen);
-			desc->addToGroup(line_item);
-		}
-		else
-		{
-			line_item = new QGraphicsLineItem;
-			line_item->setLine(QLineF(QPointF(0, 0), QPointF(14, - 10 * factor)));
-			line_item->setPos(-line_item->boundingRect().width() + 1, 0);
-			line_item->setPen(pen);
-			desc->addToGroup(line_item);
-
-			/*line_item = new QGraphicsLineItem;
-			line_item->setLine(QLineF(QPointF(10, -9), QPointF(22, -9)));
-			line_item->setPos(-line_item->boundingRect().width() + 2, 0);
-			line_item->setPen(pen);
-			desc->addToGroup(line_item);*/
-
-			line_item = new QGraphicsLineItem;
-			line_item->setLine(QLineF(QPointF(0, 0), QPointF(14, 10 * factor)));
-			line_item->setPos(-line_item->boundingRect().width() + 1, 0);
-			line_item->setPen(pen);
-			desc->addToGroup(line_item);
-
-			/*line_item = new QGraphicsLineItem;
-			line_item->setLine(QLineF(QPointF(10, 9), QPointF(22, 9)));
-			line_item->setPos(-line_item->boundingRect().width() + 2, 0);
-			line_item->setPen(pen);
-			desc->addToGroup(line_item);*/
-		}
-
-		if(recv_mandatory || rel_type == BaseRelationship::RELATIONSHIP_NN)
-		{
-			line_item = new QGraphicsLineItem;
-			line_item->setLine(QLineF(QPointF(0, -8 * factor), QPointF(0, 8  * factor)));
-			line_item->setPos(-15.5, 0);
-			line_item->setPen(pen);
-			desc->addToGroup(line_item);
-		}
-		else if(rel_type != BaseRelationship::RELATIONSHIP_FK)
-		{
-			circle_item = new QGraphicsEllipseItem;
-			circle_item->setRect(QRectF(0, 0, GRAPHIC_PNT_RADIUS * 2.20 * factor, GRAPHIC_PNT_RADIUS * 2.20 * factor));
-
-			if(rel_type == BaseRelationship::RELATIONSHIP_11)
-			{
-				if(signal < 0)
-					circle_item->setPos(15, -(circle_item->boundingRect().height()/2.20));
-				else
-					circle_item->setPos(-13 - circle_item->boundingRect().width(), -(circle_item->boundingRect().height()/2.20));
-			}
-			else
-				circle_item->setPos(-15 - circle_item->boundingRect().width(), -(circle_item->boundingRect().height()/2.20));
-
-			circle_item->setPen(pen);
-			circle_item->setBrush(descriptor->brush());
-			desc->addToGroup(circle_item);
-		}
-
-		desc->setRotation(-rel_line.angle());
-
-		for(int idx = 0; idx < pol.size() - 1; idx++)
-		{
-			edge.setP1(pol.at(idx));
-			edge.setP2(pol.at(idx + 1));
-
-			if(rel_line.intersect(edge, &pi)==QLineF::BoundedIntersection)
-			{
-				desc->setPos(pi);
-				break;
-			}
-			else
-				desc->setPos(tables[1]->getCenter());
-		}
-
-		cf_descriptors[1]->addToGroup(desc);
-		cf_descriptors[1]->setZValue(lines.back()->zValue() + 1);
-	}
-}
-
-void RelationshipView::configureCrowsFeetDescriptors2(void)
-{
-	BaseRelationship * base_rel = dynamic_cast<BaseRelationship *>(this->getSourceObject());
-	Relationship *rel=dynamic_cast<Relationship *>(base_rel);
-
-	if(use_crows_foot && base_rel &&
-		 (base_rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_11 ||
-			base_rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_1N ||
-			base_rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_NN ||
-			base_rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_FK))
-	{
-		QGraphicsLineItem *line_item = nullptr;
-		QGraphicsEllipseItem *circle_item = nullptr;
 		unsigned rel_type = base_rel->getRelationshipType();
 		double factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE) * BaseObjectView::getScreenDpiFactor();
 		int signal = 1;
@@ -1521,34 +1279,25 @@ void RelationshipView::configureCrowsFeetDescriptors2(void)
 			for(int idx = 0; idx < 2; idx++)
 			{
 				cf_descriptors[idx] = new QGraphicsItemGroup;
-
 				round_cf_descriptors[idx] = new QGraphicsEllipseItem;
-				round_cf_descriptors[idx]->setVisible(false);
-
-				cf_descriptors[idx]->addToGroup(round_cf_descriptors[idx]);
 				this->addToGroup(cf_descriptors[idx]);
 			}
 
 			for(int idx = 0; idx < 4; idx++)
 			{
 				line_item = new QGraphicsLineItem;
-				line_item->setVisible(false);
-
 				src_cf_lines.push_back(line_item);
-				cf_descriptors[BaseRelationship::SRC_TABLE]->addToGroup(line_item);
 				cf_descriptors[BaseRelationship::SRC_TABLE]->setZValue(src_zvalue);
 
 				line_item = new QGraphicsLineItem;
-				line_item->setVisible(false);
 				dst_cf_lines.push_back(line_item);
-				cf_descriptors[BaseRelationship::DST_TABLE]->addToGroup(line_item);
 				cf_descriptors[BaseRelationship::DST_TABLE]->setZValue(dst_zvalue);
 			}
 		}
 
 		QPointF pi;
 		QRectF brect;
-		QPen pens[2] = { lines.front()->pen(), lines.back()->pen() };
+		QPen pen, pens[2] = { lines.front()->pen(), lines.back()->pen() };
 		QLineF line, line1, edge, rel_lines[2] = {(signal < 0 ? lines.back()->line() : lines.front()->line()),
 															 (signal < 0 ? lines.front()->line() : lines.back()->line())};
 		QPolygonF pol;
@@ -1558,21 +1307,31 @@ void RelationshipView::configureCrowsFeetDescriptors2(void)
 
 		for(unsigned tab_id = BaseRelationship::SRC_TABLE; tab_id <= BaseRelationship::DST_TABLE; tab_id++)
 		{
-			for(unsigned idx = 0; idx < cf_lines[tab_id]->size(); idx++)
-				cf_lines[tab_id]->at(idx)->setVisible(false);
+			for(auto &line : *cf_lines[tab_id])
+			{
+				cf_descriptors[tab_id]->setRotation(0);
+				cf_descriptors[tab_id]->removeFromGroup(line);
+				this->removeFromGroup(line);
+				line->setVisible(false);
+			}
 
 			//Configuring the minimum cardinality descriptor
 			if((tab_id == BaseRelationship::SRC_TABLE && rel_type != BaseRelationship::RELATIONSHIP_NN) ||
 				 (tab_id == BaseRelationship::DST_TABLE && rel_type == BaseRelationship::RELATIONSHIP_11))
 			{
+
 				line_item = cf_lines[tab_id]->at(lin_idx++);
+				cf_descriptors[tab_id]->addToGroup(line_item);
+				line_item->setVisible(true);
+
 				line_item->setLine(QLineF(QPointF(0, -8 * factor), QPointF(0, 8 * factor)));
 				line_item->setPos((10 * signal) * (tab_id == BaseRelationship::DST_TABLE ? -1 : 1), 0);
 				line_item->setPen(pens[tab_id]);
-				line_item->setVisible(true);
+
 			}
 			else
 			{
+				//Configuring the crow's foot descriptor
 				if(tab_id == BaseRelationship::SRC_TABLE)
 				{
 					px = 0;
@@ -1583,36 +1342,48 @@ void RelationshipView::configureCrowsFeetDescriptors2(void)
 				{
 					line = QLineF(QPointF(0, 0), QPointF(14, - 10 * factor));
 					line1 = QLineF(QPointF(0, 0), QPointF(14, 10 * factor));
-					px = -line.dx() + 1;
+					px = -line.dx();
 				}
 
 				line_item = cf_lines[tab_id]->at(lin_idx++);
+				cf_descriptors[tab_id]->addToGroup(line_item);
+				line_item->setVisible(true);
 				line_item->setLine(line);
 				line_item->setPos(px, 0);
 				line_item->setPen(pens[tab_id]);
-				line_item->setVisible(true);
 
 				line_item = cf_lines[tab_id]->at(lin_idx++);
+				cf_descriptors[tab_id]->addToGroup(line_item);
+				line_item->setVisible(true);
 				line_item->setLine(line1);
 				line_item->setPos(px, 0);
 				line_item->setPen(pens[tab_id]);
-				line_item->setVisible(true);
 			}
 
+
+			cf_descriptors[tab_id]->removeFromGroup(round_cf_descriptors[tab_id]);
+			this->removeFromGroup(round_cf_descriptors[tab_id]);
 			round_cf_descriptors[tab_id]->setVisible(false);
 
 			//Configuring the maximum cardinality descriptor
-			if((tab_id == BaseRelationship::SRC_TABLE && mandatory[tab_id]) || rel_type == BaseRelationship::RELATIONSHIP_NN)
+			if((tab_id == BaseRelationship::SRC_TABLE && mandatory[tab_id]) || rel_type == BaseRelationship::RELATIONSHIP_NN )
 			{
 				line_item = cf_lines[tab_id]->at(lin_idx++);
+				cf_descriptors[tab_id]->addToGroup(line_item);
+				line_item->setVisible(true);
+
 				line_item->setLine(QLineF(QPointF(0, -8 * factor), QPointF(0, 8 * factor)));
 				line_item->setPos(15 * signal * (tab_id == BaseRelationship::DST_TABLE ? -1 : 1), 0);
 				line_item->setPen(pens[tab_id]);
-				line_item->setVisible(true);
 			}
-			else if(!mandatory[tab_id] && rel_type != BaseRelationship::RELATIONSHIP_FK)
+			else if(!mandatory[tab_id] &&
+							((rel_type != BaseRelationship::RELATIONSHIP_FK) ||
+							 (tab_id == BaseRelationship::DST_TABLE && rel_type == BaseRelationship::RELATIONSHIP_FK)))
 			{
+				//Configuring the circle which describes the optional cardinality
 				circle_item = round_cf_descriptors[tab_id];
+				cf_descriptors[tab_id]->addToGroup(circle_item);
+				circle_item->setVisible(true);
 				circle_item->setRect(QRectF(0, 0, GRAPHIC_PNT_RADIUS * 2.20 * factor, GRAPHIC_PNT_RADIUS * 2.20 * factor));
 
 				py = -(circle_item->boundingRect().height()/2.20);
@@ -1637,16 +1408,22 @@ void RelationshipView::configureCrowsFeetDescriptors2(void)
 						px = -15 - circle_item->boundingRect().width();
 				}
 
+				pen = pens[tab_id];
+
+				if(rel_type == BaseRelationship::RELATIONSHIP_FK)
+					pen.setStyle(Qt::DashLine);
+
 				circle_item->setPos(px, py);
-				circle_item->setPen(pens[tab_id]);
+				circle_item->setPen(pen);
 				circle_item->setBrush(descriptor->brush());
-				circle_item->setVisible(true);
 			}
 
 			lin_idx = 0;
-
 			brect = QRectF(tables[tab_id]->pos(), tables[tab_id]->boundingRect().size());
 			pol = QPolygonF(brect);
+
+			/* Configuring the position of the descriptor based upon the intersection
+			 * point of the relationship line and the edge of the bounding rect of the table */
 			cf_descriptors[tab_id]->setRotation(-rel_lines[tab_id].angle());
 
 			for(int idx = 0; idx < pol.size() - 1; idx++)

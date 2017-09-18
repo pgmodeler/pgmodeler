@@ -122,8 +122,6 @@ class RelationshipView: public BaseObjectView {
 		//! \brief Configures the crow's feet descriptors form and positioning
 		void configureCrowsFeetDescriptors(void);
 
-		void configureCrowsFeetDescriptors2(void);
-
 		//! \brief Configures the attributes positioning
 		void configureAttributes(void);
 
