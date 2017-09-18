@@ -1316,8 +1316,11 @@ void RelationshipView::configureCrowsFeetDescriptors(void)
 			}
 
 			//Configuring the minimum cardinality descriptor
-			if((tab_id == BaseRelationship::SRC_TABLE && rel_type != BaseRelationship::RELATIONSHIP_NN) ||
-				 (tab_id == BaseRelationship::DST_TABLE && rel_type == BaseRelationship::RELATIONSHIP_11))
+			if((tab_id == BaseRelationship::SRC_TABLE &&
+					rel_type != BaseRelationship::RELATIONSHIP_NN && rel_type != BaseRelationship::RELATIONSHIP_FK) ||
+
+				 (tab_id == BaseRelationship::DST_TABLE &&
+					(rel_type == BaseRelationship::RELATIONSHIP_11 || (rel_type == BaseRelationship::RELATIONSHIP_FK && !base_rel->isBidirectional()))))
 			{
 
 				line_item = cf_lines[tab_id]->at(lin_idx++);
@@ -1366,7 +1369,7 @@ void RelationshipView::configureCrowsFeetDescriptors(void)
 			round_cf_descriptors[tab_id]->setVisible(false);
 
 			//Configuring the maximum cardinality descriptor
-			if((tab_id == BaseRelationship::SRC_TABLE && mandatory[tab_id]) || rel_type == BaseRelationship::RELATIONSHIP_NN )
+			if((tab_id == BaseRelationship::SRC_TABLE && mandatory[tab_id]) || rel_type == BaseRelationship::RELATIONSHIP_NN)
 			{
 				line_item = cf_lines[tab_id]->at(lin_idx++);
 				cf_descriptors[tab_id]->addToGroup(line_item);
@@ -1378,7 +1381,8 @@ void RelationshipView::configureCrowsFeetDescriptors(void)
 			}
 			else if(!mandatory[tab_id] &&
 							((rel_type != BaseRelationship::RELATIONSHIP_FK) ||
-							 (tab_id == BaseRelationship::DST_TABLE && rel_type == BaseRelationship::RELATIONSHIP_FK)))
+							 (tab_id == BaseRelationship::SRC_TABLE && rel_type == BaseRelationship::RELATIONSHIP_FK) ||
+							 (tab_id == BaseRelationship::DST_TABLE && rel_type == BaseRelationship::RELATIONSHIP_FK && base_rel->isBidirectional())))
 			{
 				//Configuring the circle which describes the optional cardinality
 				circle_item = round_cf_descriptors[tab_id];
