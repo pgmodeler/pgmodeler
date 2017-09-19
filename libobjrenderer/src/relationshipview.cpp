@@ -596,7 +596,7 @@ void RelationshipView::configureLine(void)
 		QString tool_tip;
 		QGraphicsItem *item=nullptr;
 		int i, i1, count, idx_lin_desc=0;
-		bool conn_same_sides = false, vertical_rel = false, bidirectional=base_rel->isBidirectional(),
+		bool conn_same_sides = false, bidirectional=base_rel->isBidirectional(),
 				conn_horiz_sides[2] = { false, false };
 		unsigned rel_type = base_rel->getRelationshipType();
 
@@ -1387,7 +1387,7 @@ void RelationshipView::configureCrowsFeetDescriptors(void)
 		QPolygonF pol;
 		vector<vector<QGraphicsLineItem *> *> cf_lines = { &src_cf_lines, &dst_cf_lines };
 		unsigned lin_idx = 0;
-		double px, py;
+		double px = 0, py = 0, min_x = 0, max_x = 0, min_y = 0, max_y = 0;
 
 		for(unsigned tab_id = BaseRelationship::SRC_TABLE; tab_id <= BaseRelationship::DST_TABLE; tab_id++)
 		{
@@ -1525,7 +1525,22 @@ void RelationshipView::configureCrowsFeetDescriptors(void)
 					break;
 				}
 				else
-					cf_descriptors[tab_id]->setPos(tables[tab_id]->getCenter());
+				{
+					/* There some cases in which the intersection point can't be determined in BoundedIntersection mode
+					 * so as a fallback we check if one of the coordinates of the identified intersection point
+					 * is between  one of the coordinates of the relationship line used in the operation.
+					 *
+					 * If it matches we'll use the use one of the extremes of the relationship line in the matching coordinate */
+					min_x = qMin<double>(rel_lines[tab_id].p1().x(), rel_lines[tab_id].p2().x()),
+					max_x = qMax<double>(rel_lines[tab_id].p1().x(), rel_lines[tab_id].p2().x()),
+					min_y = qMin<double>(rel_lines[tab_id].p1().y(), rel_lines[tab_id].p2().y()),
+					max_y = qMax<double>(rel_lines[tab_id].p1().y(), rel_lines[tab_id].p2().y());
+
+					if(pi.x() >= min_x && pi.x() <= max_x)
+						cf_descriptors[tab_id]->setPos(QPointF(pi.x(), (rel_lines[tab_id].dy() >= 0 ? max_y : min_y)));
+					else if(pi.y() >= min_y && pi.y() <= max_y)
+						cf_descriptors[tab_id]->setPos(QPointF((rel_lines[tab_id].dx() >= 0 ? max_x : min_x), pi.y()));
+				}
 			}
 		}
 	}
