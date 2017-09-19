@@ -21,7 +21,7 @@
 
 BezierCurveItem::BezierCurveItem(QGraphicsItem *parent) :  QGraphicsPathItem(parent)
 {
-	simple_curve = false;
+
 }
 
 void BezierCurveItem::setPath(const QPainterPath &path)
@@ -31,13 +31,11 @@ void BezierCurveItem::setPath(const QPainterPath &path)
 	stroke = ps.createStroke(path);
 }
 
-void BezierCurveItem::setLine(const QLineF &line, bool simple_curve, unsigned rel_type)
+void BezierCurveItem::setLine(const QLineF &line, bool simple_curve, bool invert_brect, unsigned rel_type)
 {
 	QPainterPath path;
 	QRectF brect;
 	QPointF control_pnt;
-
-	this->simple_curve = simple_curve;
 
 	if(simple_curve)
 	{
@@ -62,28 +60,44 @@ void BezierCurveItem::setLine(const QLineF &line, bool simple_curve, unsigned re
 				control_pnt = QPointF(brect.right(), brect.top());
 			}
 		}
+
+		path = QPainterPath(brect.topLeft());
 	}
 	else
 	{
-		brect.setTopLeft(line.p1());
-		brect.setBottomRight(line.p2());
+		if(!invert_brect)
+		{
+			brect.setTopLeft(line.p1());
+			brect.setBottomRight(line.p2());
+			path = QPainterPath(brect.topLeft());
+		}
+		else
+		{
+			brect.setBottomLeft(line.p1());
+			brect.setTopRight(line.p2());
+			path = QPainterPath(brect.topRight());
+		}
 	}
-
-	path = QPainterPath(brect.topLeft());
 
 	if(simple_curve)
 		path.quadTo(control_pnt, brect.bottomRight());
 	else
-		path.cubicTo(QPointF(brect.center().x(), brect.top()),
-								 QPointF(brect.center().x(), brect.bottom()),
-								 brect.bottomRight());
+	{
+		if(!invert_brect)
+		{
+			path.cubicTo(QPointF(brect.center().x(), brect.top()),
+									 QPointF(brect.center().x(), brect.bottom()),
+									 brect.bottomRight());
+		}
+		else
+		{
+			path.cubicTo(QPointF(brect.right(), brect.center().y()),
+									 QPointF(brect.left(), brect.center().y()),
+									 brect.bottomLeft());
+		}
+	}
 
 	this->setPath(path);
-}
-
-bool BezierCurveItem::isSimpleCurve(void)
-{
-	return(simple_curve);
 }
 
 bool BezierCurveItem::contains(const QPointF &pnt) const

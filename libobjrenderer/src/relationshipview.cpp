@@ -157,7 +157,7 @@ bool RelationshipView::isNameLabelHidden(void)
 
 void RelationshipView::setCurvedLines(bool value)
 {
-	use_curved_lines = value && !use_crows_foot;
+	use_curved_lines = value;
 }
 
 bool RelationshipView::isCurvedLines(void)
@@ -170,10 +170,7 @@ void RelationshipView::setCrowsFoot(bool value)
 	use_crows_foot = value;
 
 	if(value)
-	{
 		line_conn_mode=RelationshipView::CONNECT_CENTER_PNTS;
-		use_curved_lines=false;
-	}
 }
 
 bool RelationshipView::isCrowsFoot(void)
@@ -599,7 +596,9 @@ void RelationshipView::configureLine(void)
 		QString tool_tip;
 		QGraphicsItem *item=nullptr;
 		int i, i1, count, idx_lin_desc=0;
-		bool conn_same_sides = false, bidirectional=base_rel->isBidirectional();
+		bool conn_same_sides = false, vertical_rel = false, bidirectional=base_rel->isBidirectional(),
+				conn_horiz_sides[2] = { false, false };
+		unsigned rel_type = base_rel->getRelationshipType();
 
 		configuring_line=true;
 		pen.setCapStyle(Qt::RoundCap);
@@ -645,9 +644,9 @@ void RelationshipView::configureLine(void)
 		{
 			Relationship *rel=dynamic_cast<Relationship *>(base_rel);
 			bool rel_1n=(!bidirectional &&
-									 (base_rel->getRelationshipType()==Relationship::RELATIONSHIP_11 ||
-										base_rel->getRelationshipType()==Relationship::RELATIONSHIP_1N ||
-										base_rel->getRelationshipType()==Relationship::RELATIONSHIP_FK));
+									 (rel_type==Relationship::RELATIONSHIP_11 ||
+										rel_type==Relationship::RELATIONSHIP_1N ||
+										rel_type==Relationship::RELATIONSHIP_FK));
 
 			if(rel &&
 				 rel->getRelationshipType()==Relationship::RELATIONSHIP_11 &&
@@ -759,7 +758,7 @@ void RelationshipView::configureLine(void)
 					pk_pnt=this->mapFromItem(ref_tab_view, QPointF(pk_px + pk_dx, pk_py/pk_points.size()));
 					fk_pnt=this->mapFromItem(rec_tab_view, QPointF(fk_px + fk_dx, fk_py/fk_points.size()));
 
-					if(base_rel->getRelationshipType()==Relationship::RELATIONSHIP_FK)
+					if(rel_type==Relationship::RELATIONSHIP_FK)
 					{
 						p_central[1]=pk_pnt;
 						p_central[0]=fk_pnt;
@@ -777,7 +776,7 @@ void RelationshipView::configureLine(void)
 					 * This situation may happen when the relationship is being validated and the needed fks was not
 					 * created yet. In a second interaction of the rel. validation they are created
 					 *  and the relationship is properly configured */
-					if(base_rel->getRelationshipType()==Relationship::RELATIONSHIP_FK)
+					if(rel_type==Relationship::RELATIONSHIP_FK)
 					{
 						p_central[1]=pk_pnt=ref_tab_view->getCenter();
 						p_central[0]=fk_pnt=rec_tab_view->getCenter();
@@ -828,8 +827,9 @@ void RelationshipView::configureLine(void)
 		}
 
 		if(!use_crows_foot ||
-			 base_rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_DEP ||
-			 base_rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_GEN)
+			 base_rel->isSelfRelationship() ||
+			 rel_type == BaseRelationship::RELATIONSHIP_DEP ||
+			 rel_type == BaseRelationship::RELATIONSHIP_GEN)
 		{
 			conn_points[0]=p_central[0];
 			conn_points[1]=p_central[1];
@@ -855,22 +855,16 @@ void RelationshipView::configureLine(void)
 						line = QLineF(tables[1]->getCenter(), points[points.size() - 1]);
 				}
 
-				if((tab_idx == 0 && base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK) ||
-					 (tab_idx == 0 &&
-						base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_1N &&
-						!base_rel->isTableMandatory(BaseRelationship::SRC_TABLE)) ||
-					 (tab_idx == 1 && base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_1N) ||
-					 (base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_11 &&
-						!base_rel->isTableMandatory(BaseRelationship::SRC_TABLE) &&
-						!base_rel->isTableMandatory(BaseRelationship::DST_TABLE)) ||
-					 (base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_11 &&
-						tab_idx == 0 &&
-						base_rel->isTableMandatory(BaseRelationship::DST_TABLE)))
+				if(rel_type==BaseRelationship::RELATIONSHIP_NN ||
+					 (tab_idx == 1 && rel_type==BaseRelationship::RELATIONSHIP_FK) ||
+					 (tab_idx == 0 &&	rel_type==BaseRelationship::RELATIONSHIP_1N && base_rel->isTableMandatory(BaseRelationship::SRC_TABLE)) ||
+					 (tab_idx == 0 && rel_type==BaseRelationship::RELATIONSHIP_11 && base_rel->isTableMandatory(BaseRelationship::SRC_TABLE)) ||
+					 (tab_idx == 1 && rel_type==BaseRelationship::RELATIONSHIP_11 && base_rel->isTableMandatory(BaseRelationship::DST_TABLE)))
 				{
-					factor = 1.7;
+					factor = 1;
 				}
 				else
-					factor = 1;
+					factor = 1.7;
 
 				brect = QRectF(tables[tab_idx]->pos(), tables[tab_idx]->boundingRect().size());
 				pol = QPolygonF(brect);
@@ -898,6 +892,8 @@ void RelationshipView::configureLine(void)
 								pi.setY(pi.y() - CONN_LINE_LENGTH * factor);
 							else
 								pi.setY(pi.y() + CONN_LINE_LENGTH * factor);
+
+							conn_horiz_sides[tab_idx] = true;
 						}
 
 						p_aux[tab_idx] = pi;
@@ -928,7 +924,7 @@ void RelationshipView::configureLine(void)
 		}
 
 		//For dependency relationships the line is dashed
-		if(base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_DEP)
+		if(rel_type==BaseRelationship::RELATIONSHIP_DEP)
 			pen.setStyle(Qt::DashLine);
 
 		/* For identifier relationships an additional point is created on the center of the
@@ -1043,9 +1039,9 @@ void RelationshipView::configureLine(void)
 		//Exposing the line ending circles
 		if((!base_rel->isSelfRelationship() && line_conn_mode==CONNECT_CENTER_PNTS && !use_crows_foot) ||
 			 (!base_rel->isSelfRelationship() &&
-				((base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_DEP) ||
-				 (base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN) ||
-				 (base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN  && !use_crows_foot))))
+				((rel_type==BaseRelationship::RELATIONSHIP_DEP) ||
+				 (rel_type==BaseRelationship::RELATIONSHIP_GEN) ||
+				 (rel_type==BaseRelationship::RELATIONSHIP_NN  && !use_crows_foot))))
 		{
 			for(i=0; i < 2; i++)
 			{
@@ -1080,9 +1076,17 @@ void RelationshipView::configureLine(void)
 					curve = curves[i];
 
 				i++;
+
+				/* Creates simple a curved line in the following situations:
+				 * 1) The crow's foot is not enabled but the relationship connects in the same sides on tables (conn_same_sides)
+				 * 2) The crow's foot is enabled and one of the connection point is not in the horizontal edges of one of the tables (conn_horiz_sides) */
+
+				/* We invert the curve's bounding rect when crow's foot is enabled and the relationship connects
+				 * at the top/bottom edges of both tables */
 				curve->setLine(line->line(),
-											 conn_same_sides && lines.size() == 1,
-											 base_rel->getRelationshipType());
+											 (conn_same_sides && lines.size() == 1) || (conn_horiz_sides[0] != conn_horiz_sides[1] && lines.size() == 3),
+											 (conn_horiz_sides[0] && conn_horiz_sides[1] && lines.size() == 3),
+											 rel_type);
 
 				curve->setPen(line->pen());
 				line->setVisible(false);
@@ -1132,7 +1136,7 @@ void RelationshipView::configureLine(void)
 
 		/* Making a little tweak on the foreign key type name. Despite being of class BaseRelationship,
 		for semantics purposes shows the type of this relationship as "Relationship" unlike "Link" */
-		if(base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
+		if(rel_type==BaseRelationship::RELATIONSHIP_FK)
 			tool_tip=base_rel->getName(true) +
 					 QString(" (") + BaseObject::getTypeName(OBJ_RELATIONSHIP) + QString(")");
 		else

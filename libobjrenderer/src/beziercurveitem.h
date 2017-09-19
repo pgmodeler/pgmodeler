@@ -33,23 +33,22 @@ class BezierCurveItem: public QGraphicsPathItem {
 		 * This object is used to do a better colision detection */
 		QPainterPath stroke;
 
-		/*! \brief Indicate if the curve is a simple one.
-		 * Simple curves in this case are quadratic ones where only a single
-		 * control point is used. Non-simple curves are cubic where two control points are used.
-		 * See QPainterPath::quadTo and QPainterPath::cubicTo for details. */
-		bool simple_curve;
-
 	protected:
 		void setPath(const QPainterPath &path);
 
 	public:
 		BezierCurveItem(QGraphicsItem *parent = 0);
 
-		//! \brief Configures the curve based upon a straight line.
-		void setLine(const QLineF &line, bool simple_curve, unsigned rel_type);
-
-		//! \brief Returns if the curve is a simple one (quardatic - one control point) or not (cubic - two control points)
-		bool isSimpleCurve(void);
+		/*! \brief Configures the curve based upon a straight line.
+		 *
+		 * The simple_curve param causes the curve to be drawn using the quadratic mode and one control point.
+		 * Non-simple curves are cubic ones where two control points are used.
+		 * See QPainterPath::quadTo and QPainterPath::cubicTo for details.
+		 *
+		 * The invert_brect param causes the bounding rect of the curve to be inverted.
+		 * Inverting the bounding rect causes de curve to be drawn inverted as well.
+		 * This attribute is used only simple curve is not enabled. */
+		void setLine(const QLineF &line, bool simple_curve, bool invert_brect, unsigned rel_type);
 
 		//! \brief Returns if the specified point is contained by the curve (specifically, by the stroke)
 		virtual bool contains(const QPointF &pnt) const;
