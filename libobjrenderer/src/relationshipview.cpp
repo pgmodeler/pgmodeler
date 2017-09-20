@@ -597,7 +597,7 @@ void RelationshipView::configureLine(void)
 		QGraphicsItem *item=nullptr;
 		int i, i1, count, idx_lin_desc=0;
 		bool conn_same_sides = false, bidirectional=base_rel->isBidirectional(),
-				conn_horiz_sides[2] = { false, false };
+				conn_horiz_sides[2] = { false, false }, conn_vert_sides[2] = { false, false };
 		unsigned rel_type = base_rel->getRelationshipType();
 
 		configuring_line=true;
@@ -885,6 +885,8 @@ void RelationshipView::configureLine(void)
 								pi.setX(pi.x() - CONN_LINE_LENGTH * factor);
 							else
 								pi.setX(pi.x() + CONN_LINE_LENGTH * factor);
+
+							conn_vert_sides[tab_idx] = true;
 						}
 						else
 						{
@@ -1061,6 +1063,7 @@ void RelationshipView::configureLine(void)
 		if(use_curved_lines && !base_rel->isSelfRelationship())
 		{
 			BezierCurveItem * curve = nullptr;
+			bool invert_cpoints = false, simple_curve = false;
 			i = 0;
 
 			for(auto &line : lines)
@@ -1083,11 +1086,14 @@ void RelationshipView::configureLine(void)
 
 				/* We invert the curve's bounding rect when crow's foot is enabled and the relationship connects
 				 * at the top/bottom edges of both tables */
-				curve->setLine(line->line(),
-											 (conn_same_sides && lines.size() == 1) || (conn_horiz_sides[0] != conn_horiz_sides[1] && lines.size() == 3),
-											 (conn_horiz_sides[0] && conn_horiz_sides[1] && lines.size() == 3),
-											 rel_type);
+				simple_curve = (conn_same_sides && lines.size() == 1) || (conn_horiz_sides[0] != conn_horiz_sides[1] && lines.size() == 3);
 
+				if(!simple_curve)
+					invert_cpoints = (conn_horiz_sides[0] && conn_horiz_sides[1] && lines.size() == 3);
+				else
+					invert_cpoints = (!conn_horiz_sides[0] && conn_horiz_sides[1] && conn_vert_sides[0] && !conn_vert_sides[1]);
+
+				curve->setLine(line->line(), simple_curve, invert_cpoints);
 				curve->setPen(line->pen());
 				line->setVisible(false);
 			}

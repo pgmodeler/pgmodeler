@@ -45,10 +45,9 @@ class BezierCurveItem: public QGraphicsPathItem {
 		 * Non-simple curves are cubic ones where two control points are used.
 		 * See QPainterPath::quadTo and QPainterPath::cubicTo for details.
 		 *
-		 * The invert_brect param causes the bounding rect of the curve to be inverted.
-		 * Inverting the bounding rect causes de curve to be drawn inverted as well.
-		 * This attribute is used only simple curve is not enabled. */
-		void setLine(const QLineF &line, bool simple_curve, bool invert_brect, unsigned rel_type);
+		 * The invert_cpoints param causes the control points of the curve to be inverted
+		 * making the curve to be drawn inverted. */
+		void setLine(const QLineF &line, bool simple_curve, bool invert_cpoints);
 
 		//! \brief Returns if the specified point is contained by the curve (specifically, by the stroke)
 		virtual bool contains(const QPointF &pnt) const;

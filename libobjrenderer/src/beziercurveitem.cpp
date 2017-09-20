@@ -31,69 +31,57 @@ void BezierCurveItem::setPath(const QPainterPath &path)
 	stroke = ps.createStroke(path);
 }
 
-void BezierCurveItem::setLine(const QLineF &line, bool simple_curve, bool invert_brect, unsigned rel_type)
+void BezierCurveItem::setLine(const QLineF &line, bool simple_curve, bool invert_cpoints)
 {
 	QPainterPath path;
-	QRectF brect;
-	QPointF control_pnt;
 
-	if(simple_curve)
+	if(line.dx() == 0 || line.dy() == 0)
 	{
-		if(rel_type == BaseRelationship::RELATIONSHIP_FK)
+		path = QPainterPath(line.p1());
+		path.lineTo(line.p2());
+	}
+	else
+	{
+		if(simple_curve)
 		{
-			brect.setTopLeft(line.p1());
-			brect.setBottomRight(line.p2());
-			control_pnt = QPointF(brect.right(), brect.top());
+			QPointF cp1, start, end;
+
+			start = line.p1();
+			end = line.p2();
+
+			if(!invert_cpoints)
+				cp1 = QPointF(start.x(), end.y());
+			else
+				cp1 = QPointF(end.x(), start.y());
+
+			path = QPainterPath(start);
+			path.quadTo(cp1, end);
 		}
 		else
 		{
-			if(line.angle() >= 0 && line.angle() <= 180)
+			QRectF brect;
+
+			if(!invert_cpoints)
 			{
 				brect.setTopLeft(line.p1());
 				brect.setBottomRight(line.p2());
-				control_pnt = QPointF(brect.left(), brect.bottom());
+				path = QPainterPath(brect.topLeft());
+
+				path.cubicTo(QPointF(brect.center().x(), brect.top()),
+										 QPointF(brect.center().x(), brect.bottom()),
+										 brect.bottomRight());
 			}
 			else
 			{
-				brect.setTopLeft(line.p2());
-				brect.setBottomRight(line.p1());
-				control_pnt = QPointF(brect.right(), brect.top());
+				brect.setBottomLeft(line.p1());
+				brect.setTopRight(line.p2());
+				path = QPainterPath(brect.topRight());
+
+				path.cubicTo(QPointF(brect.right(), brect.center().y()),
+										 QPointF(brect.left(), brect.center().y()),
+										 brect.bottomLeft());
+
 			}
-		}
-
-		path = QPainterPath(brect.topLeft());
-	}
-	else
-	{
-		if(!invert_brect)
-		{
-			brect.setTopLeft(line.p1());
-			brect.setBottomRight(line.p2());
-			path = QPainterPath(brect.topLeft());
-		}
-		else
-		{
-			brect.setBottomLeft(line.p1());
-			brect.setTopRight(line.p2());
-			path = QPainterPath(brect.topRight());
-		}
-	}
-
-	if(simple_curve)
-		path.quadTo(control_pnt, brect.bottomRight());
-	else
-	{
-		if(!invert_brect)
-		{
-			path.cubicTo(QPointF(brect.center().x(), brect.top()),
-									 QPointF(brect.center().x(), brect.bottom()),
-									 brect.bottomRight());
-		}
-		else
-		{
-			path.cubicTo(QPointF(brect.right(), brect.center().y()),
-									 QPointF(brect.left(), brect.center().y()),
-									 brect.bottomLeft());
 		}
 	}
 
