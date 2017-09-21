@@ -1129,12 +1129,10 @@ void RelationshipView::configureLine(void)
 
 		this->configureDescriptor();
 
-		this->configureCrowsFeetDescriptors();
+		this->configureCrowsFootDescriptors();
 
-#warning "Crow's feet: setup relationship name label and hide/destroy cardinality ones"
 		this->configureLabels();
 
-#warning "Crow's feet: setup protected icon"
 		this->configureProtectedIcon();
 
 		configuring_line=false;
@@ -1314,13 +1312,13 @@ void RelationshipView::configureDescriptor(void)
 	obj_shadow->setVisible(descriptor->isVisible());
 }
 
-void RelationshipView::configureCrowsFeetDescriptors(void)
+void RelationshipView::configureCrowsFootDescriptors(void)
 {
 	BaseRelationship * base_rel = dynamic_cast<BaseRelationship *>(this->getSourceObject());
 	Relationship *rel=dynamic_cast<Relationship *>(base_rel);
 
 	//Hiding all descriptors related to crow's foot when the notation is not being used
-	if(!use_crows_foot)
+	if(!use_crows_foot && cf_descriptors[BaseRelationship::SRC_TABLE])
 	{
 		for(unsigned tab_id = BaseRelationship::SRC_TABLE; tab_id <= BaseRelationship::DST_TABLE; tab_id++)
 		{
@@ -1414,8 +1412,6 @@ void RelationshipView::configureCrowsFeetDescriptors(void)
 
 		for(unsigned tab_id = BaseRelationship::SRC_TABLE; tab_id <= BaseRelationship::DST_TABLE; tab_id++)
 		{
-			cf_descriptors[tab_id]->setRotation(0);
-
 			for(auto &line : *cf_lines[tab_id])
 			{
 				cf_descriptors[tab_id]->removeFromGroup(line);
@@ -1648,8 +1644,8 @@ void RelationshipView::configureAttributes(void)
 
 			desc->setRect(rect);
 			desc->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::ATTRIBUTE));
-			desc->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::ATTRIBUTE));
-			lin->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP));
+			desc->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::ATTRIBUTE));			
+			lin->setPen(descriptor->pen());
 			text->setBrush(fmt.foreground());
 			text->setFont(font);
 			sel_attrib->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::OBJ_SELECTION));
