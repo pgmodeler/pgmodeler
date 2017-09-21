@@ -439,6 +439,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, SIGNAL(s_popupMenuRequested(BaseObject*)), this, SLOT(configureObjectMenu(BaseObject *)));
 	connect(scene, SIGNAL(s_popupMenuRequested(void)), this, SLOT(showObjectMenu(void)));
 	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(configureObjectSelection(void)));
+	connect(scene, SIGNAL(s_objectsSelectedInRange(void)), this, SLOT(configureObjectSelection(void)));
 
 	connect(scene, &ObjectsScene::s_extAttributesToggled, [&](){ modified = true; });
 
@@ -1071,7 +1072,10 @@ void ModelWidget::selectAllObjects(void)
 	{
 		QPainterPath pth;
 		pth.addRect(scene->sceneRect());
+
+		scene->blockItemsSignals(true);
 		scene->setSelectionArea(pth);
+		scene->blockItemsSignals(false);
 	}
 	else
 	{
@@ -1086,9 +1090,15 @@ void ModelWidget::selectAllObjects(void)
 			obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
 
 			if(obj_view)
+			{
+				obj_view->blockSignals(true);
 				obj_view->setSelected(true);
+				obj_view->blockSignals(false);
+			}
 		}
 	}
+
+	configureObjectSelection();
 }
 
 void ModelWidget::convertRelationshipNN(void)
