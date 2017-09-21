@@ -40,7 +40,7 @@ class RelationshipConfigWidget:  public BaseConfigWidget, public Ui::Relationshi
 
 		map<QString, attribs_map> patterns;
 
-		HintTextWidget *fk_to_pk_ht, *center_pnts_ht;
+		HintTextWidget *fk_to_pk_ht, *center_pnts_ht, *tab_edges_ht;
 
 		void hideEvent(QHideEvent *);
 

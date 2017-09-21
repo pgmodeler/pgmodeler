@@ -159,7 +159,8 @@ class RelationshipView: public BaseObjectView {
 
 	public:
 		static const unsigned CONNECT_CENTER_PNTS=0,
-		CONNECT_FK_TO_PK=1;
+		CONNECT_FK_TO_PK=1,
+		CONNECT_TABLE_EGDES=2;
 
 		RelationshipView(BaseRelationship *rel);
 		~RelationshipView(void);

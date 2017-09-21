@@ -50,6 +50,9 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 	center_pnts_ht=new HintTextWidget(center_pnts_hint, this);
 	center_pnts_ht->setText(center_pnts_rb->statusTip());
 
+	tab_edges_ht=new HintTextWidget(tab_edges_hint, this);
+	tab_edges_ht->setText(tab_edges_rb->statusTip());
+
 	DeferralType::getTypes(list);
 	deferral_cmb->addItems(list);
 
@@ -75,13 +78,20 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 
 	connect(classic_notation_rb, &QRadioButton::toggled, [&](){
 			conn_cnt_pnts_lbl->setEnabled(classic_notation_rb->isChecked() && center_pnts_rb->isChecked());
+			conn_tab_edges_lbl->setEnabled(classic_notation_rb->isChecked() && tab_edges_rb->isChecked());
 	});
 
 	connect(fk_to_pk_chk, SIGNAL(toggled(bool)), conn_cnt_pnts_lbl, SLOT(setDisabled(bool)));
+	connect(fk_to_pk_chk, SIGNAL(toggled(bool)), conn_tab_edges_lbl, SLOT(setDisabled(bool)));
 	connect(fk_to_pk_chk, SIGNAL(toggled(bool)), this, SLOT(setConfigurationChanged(bool)));
 
 	connect(center_pnts_rb, SIGNAL(toggled(bool)), conn_fk_pk_lbl, SLOT(setDisabled(bool)));
+	connect(center_pnts_rb, SIGNAL(toggled(bool)), conn_tab_edges_lbl, SLOT(setDisabled(bool)));
 	connect(center_pnts_rb, SIGNAL(toggled(bool)), this, SLOT(setConfigurationChanged(bool)));
+
+	connect(tab_edges_rb, SIGNAL(toggled(bool)), conn_fk_pk_lbl, SLOT(setDisabled(bool)));
+	connect(tab_edges_rb, SIGNAL(toggled(bool)), conn_cnt_pnts_lbl, SLOT(setDisabled(bool)));
+	connect(tab_edges_rb, SIGNAL(toggled(bool)), this, SLOT(setConfigurationChanged(bool)));
 
 	connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_lbl, SLOT(setEnabled(bool)));
 	connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
@@ -108,6 +118,7 @@ void RelationshipConfigWidget::loadConfiguration(void)
 
 		fk_to_pk_chk->setChecked(config_params[ParsersAttributes::CONNECTION][ParsersAttributes::MODE]==ParsersAttributes::CONNECT_FK_TO_PK);
 		center_pnts_rb->setChecked(config_params[ParsersAttributes::CONNECTION][ParsersAttributes::MODE]==ParsersAttributes::CONNECT_CENTER_PNTS);
+		tab_edges_rb->setChecked(config_params[ParsersAttributes::CONNECTION][ParsersAttributes::MODE]==ParsersAttributes::CONNECT_TABLE_EDGES);
 		crows_foot_notation_rb->setChecked(config_params[ParsersAttributes::CONNECTION][ParsersAttributes::CROWS_FOOT_NOTATION]==ParsersAttributes::_TRUE_);
 		classic_notation_rb->setChecked(config_params[ParsersAttributes::CONNECTION][ParsersAttributes::CROWS_FOOT_NOTATION]==ParsersAttributes::_FALSE_);
 
@@ -151,7 +162,14 @@ void RelationshipConfigWidget::saveConfiguration(void)
 					 GlobalAttributes::SCHEMA_EXT;
 
 
-		config_params[ParsersAttributes::CONNECTION][ParsersAttributes::MODE]=(fk_to_pk_chk->isChecked() ? ParsersAttributes::CONNECT_FK_TO_PK : ParsersAttributes::CONNECT_CENTER_PNTS);
+		if(fk_to_pk_chk->isChecked())
+			config_params[ParsersAttributes::CONNECTION][ParsersAttributes::MODE]=ParsersAttributes::CONNECT_FK_TO_PK;
+		else if(tab_edges_rb)
+			config_params[ParsersAttributes::CONNECTION][ParsersAttributes::MODE]=ParsersAttributes::CONNECT_TABLE_EDGES;
+		else
+			config_params[ParsersAttributes::CONNECTION][ParsersAttributes::MODE]=ParsersAttributes::CONNECT_CENTER_PNTS;
+
+
 		config_params[ParsersAttributes::CONNECTION][ParsersAttributes::CROWS_FOOT_NOTATION]=(crows_foot_notation_rb->isChecked() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
 
 		config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEFERRABLE]=(deferrable_chk->isChecked() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
@@ -183,6 +201,8 @@ void RelationshipConfigWidget::applyConfiguration(void)
 
 	if(fk_to_pk_chk->isChecked())
 		RelationshipView::setLineConnectionMode(RelationshipView::CONNECT_FK_TO_PK);
+	else if(tab_edges_rb->isChecked())
+		RelationshipView::setLineConnectionMode(RelationshipView::CONNECT_TABLE_EGDES);
 	else
 		RelationshipView::setLineConnectionMode(RelationshipView::CONNECT_CENTER_PNTS);
 }

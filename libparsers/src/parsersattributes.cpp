@@ -97,6 +97,7 @@ namespace ParsersAttributes {
 	CONN_LIMIT=QString("connlimit"),
 	CONNECT_CENTER_PNTS=QString("center-pnts"),
 	CONNECT_FK_TO_PK=QString("fk-to-pk"),
+	CONNECT_TABLE_EDGES=QString("table-edges"),
 	CONNECT_PRIV=QString("connect"),
 	CONNECTION=QString("connection"),
 	CONNECTIONS=QString("connections"),

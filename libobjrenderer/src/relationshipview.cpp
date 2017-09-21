@@ -170,7 +170,7 @@ void RelationshipView::setCrowsFoot(bool value)
 	use_crows_foot = value;
 
 	if(value)
-		line_conn_mode=RelationshipView::CONNECT_CENTER_PNTS;
+		line_conn_mode=RelationshipView::CONNECT_TABLE_EGDES;
 }
 
 bool RelationshipView::isCrowsFoot(void)
@@ -181,11 +181,11 @@ bool RelationshipView::isCrowsFoot(void)
 void RelationshipView::setLineConnectionMode(unsigned mode)
 {
 	if(use_crows_foot)
-		line_conn_mode=CONNECT_CENTER_PNTS;
+		line_conn_mode=CONNECT_TABLE_EGDES;
 	else
 	{
-		if(mode > CONNECT_FK_TO_PK)
-			mode=CONNECT_FK_TO_PK;
+		if(mode > CONNECT_TABLE_EGDES)
+			mode=CONNECT_TABLE_EGDES;
 
 		line_conn_mode=mode;
 	}
@@ -656,7 +656,7 @@ void RelationshipView::configureLine(void)
 				tables[1]=dynamic_cast<BaseTableView *>(rel->getReceiverTable()->getReceiverObject());
 			}
 
-			if(line_conn_mode==CONNECT_CENTER_PNTS || !rel_1n)
+			if(line_conn_mode==CONNECT_CENTER_PNTS || line_conn_mode==CONNECT_TABLE_EGDES || !rel_1n)
 			{
 				vector<vector<QGraphicsLineItem *> *> ref_lines={ &fk_lines, &pk_lines };
 
@@ -826,10 +826,7 @@ void RelationshipView::configureLine(void)
 			}
 		}
 
-		if(!use_crows_foot ||
-			 base_rel->isSelfRelationship() ||
-			 rel_type == BaseRelationship::RELATIONSHIP_DEP ||
-			 rel_type == BaseRelationship::RELATIONSHIP_GEN)
+		if(base_rel->isSelfRelationship() || line_conn_mode != CONNECT_TABLE_EGDES)
 		{
 			conn_points[0]=p_central[0];
 			conn_points[1]=p_central[1];
@@ -837,13 +834,13 @@ void RelationshipView::configureLine(void)
 			points.insert(points.begin(),p_central[0]);
 			points.push_back(p_central[1]);
 		}
-		else
+		else if(line_conn_mode == CONNECT_TABLE_EGDES)
 		{
 			QRectF brect;
 			QPolygonF pol;
 			QLineF edge, line = QLineF(tables[0]->getCenter(), tables[1]->getCenter());
 			QPointF pi, center, p_aux[2];
-			double factor;
+			double factor = 0.5;
 
 			for(int tab_idx = 0; tab_idx < 2; tab_idx++)
 			{
@@ -855,16 +852,22 @@ void RelationshipView::configureLine(void)
 						line = QLineF(tables[1]->getCenter(), points[points.size() - 1]);
 				}
 
-				if(rel_type==BaseRelationship::RELATIONSHIP_NN ||
-					 (tab_idx == 1 && rel_type==BaseRelationship::RELATIONSHIP_FK) ||
-					 (tab_idx == 0 &&	rel_type==BaseRelationship::RELATIONSHIP_1N && base_rel->isTableMandatory(BaseRelationship::SRC_TABLE)) ||
-					 (tab_idx == 0 && rel_type==BaseRelationship::RELATIONSHIP_11 && base_rel->isTableMandatory(BaseRelationship::SRC_TABLE)) ||
-					 (tab_idx == 1 && rel_type==BaseRelationship::RELATIONSHIP_11 && base_rel->isTableMandatory(BaseRelationship::DST_TABLE)))
+				if(use_crows_foot)
 				{
-					factor = 1;
+					if(rel_type==BaseRelationship::RELATIONSHIP_GEN ||
+							rel_type==BaseRelationship::RELATIONSHIP_DEP)
+						factor = 0.5;
+					else if(rel_type==BaseRelationship::RELATIONSHIP_NN ||
+						 (tab_idx == 1 && rel_type==BaseRelationship::RELATIONSHIP_FK) ||
+						 (tab_idx == 0 &&	rel_type==BaseRelationship::RELATIONSHIP_1N && base_rel->isTableMandatory(BaseRelationship::SRC_TABLE)) ||
+						 (tab_idx == 0 && rel_type==BaseRelationship::RELATIONSHIP_11 && base_rel->isTableMandatory(BaseRelationship::SRC_TABLE)) ||
+						 (tab_idx == 1 && rel_type==BaseRelationship::RELATIONSHIP_11 && base_rel->isTableMandatory(BaseRelationship::DST_TABLE)))
+					{
+						factor = 1;
+					}
+					else
+						factor = 1.7;
 				}
-				else
-					factor = 1.7;
 
 				brect = QRectF(tables[tab_idx]->pos(), tables[tab_idx]->boundingRect().size());
 				pol = QPolygonF(brect);
@@ -1041,8 +1044,8 @@ void RelationshipView::configureLine(void)
 		//Exposing the line ending circles
 		if((!base_rel->isSelfRelationship() && line_conn_mode==CONNECT_CENTER_PNTS && !use_crows_foot) ||
 			 (!base_rel->isSelfRelationship() &&
-				((rel_type==BaseRelationship::RELATIONSHIP_DEP) ||
-				 (rel_type==BaseRelationship::RELATIONSHIP_GEN) ||
+				((line_conn_mode != CONNECT_TABLE_EGDES && rel_type==BaseRelationship::RELATIONSHIP_DEP) ||
+				 (line_conn_mode != CONNECT_TABLE_EGDES && rel_type==BaseRelationship::RELATIONSHIP_GEN) ||
 				 (rel_type==BaseRelationship::RELATIONSHIP_NN  && !use_crows_foot))))
 		{
 			for(i=0; i < 2; i++)
