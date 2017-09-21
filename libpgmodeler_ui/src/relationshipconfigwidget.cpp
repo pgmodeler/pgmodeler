@@ -73,6 +73,10 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 	connect(classic_notation_rb, SIGNAL(toggled(bool)), classic_notation_wgt, SLOT(setEnabled(bool)));
 	connect(classic_notation_rb, SIGNAL(toggled(bool)), this, SLOT(setConfigurationChanged(bool)));
 
+	connect(classic_notation_rb, &QRadioButton::toggled, [&](){
+			conn_cnt_pnts_lbl->setEnabled(classic_notation_rb->isChecked() && center_pnts_rb->isChecked());
+	});
+
 	connect(fk_to_pk_chk, SIGNAL(toggled(bool)), conn_cnt_pnts_lbl, SLOT(setDisabled(bool)));
 	connect(fk_to_pk_chk, SIGNAL(toggled(bool)), this, SLOT(setConfigurationChanged(bool)));
 
@@ -105,6 +109,7 @@ void RelationshipConfigWidget::loadConfiguration(void)
 		fk_to_pk_chk->setChecked(config_params[ParsersAttributes::CONNECTION][ParsersAttributes::MODE]==ParsersAttributes::CONNECT_FK_TO_PK);
 		center_pnts_rb->setChecked(config_params[ParsersAttributes::CONNECTION][ParsersAttributes::MODE]==ParsersAttributes::CONNECT_CENTER_PNTS);
 		crows_foot_notation_rb->setChecked(config_params[ParsersAttributes::CONNECTION][ParsersAttributes::CROWS_FOOT_NOTATION]==ParsersAttributes::_TRUE_);
+		classic_notation_rb->setChecked(config_params[ParsersAttributes::CONNECTION][ParsersAttributes::CROWS_FOOT_NOTATION]==ParsersAttributes::_FALSE_);
 
 		deferrable_chk->setChecked(config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEFERRABLE]==ParsersAttributes::_TRUE_);
 		deferral_cmb->setCurrentText(config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEFER_TYPE]);
