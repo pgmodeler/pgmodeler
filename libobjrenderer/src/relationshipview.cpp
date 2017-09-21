@@ -840,7 +840,8 @@ void RelationshipView::configureLine(void)
 			QPolygonF pol;
 			QLineF edge, line = QLineF(tables[0]->getCenter(), tables[1]->getCenter());
 			QPointF pi, center, p_aux[2];
-			double factor = 0.5;
+			double font_factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE) * BaseObjectView::getScreenDpiFactor(),
+					size_factor = 0.65 * font_factor;
 
 			for(int tab_idx = 0; tab_idx < 2; tab_idx++)
 			{
@@ -856,17 +857,17 @@ void RelationshipView::configureLine(void)
 				{
 					if(rel_type==BaseRelationship::RELATIONSHIP_GEN ||
 							rel_type==BaseRelationship::RELATIONSHIP_DEP)
-						factor = 0.5;
+						size_factor = 0.65 * font_factor;
 					else if(rel_type==BaseRelationship::RELATIONSHIP_NN ||
 						 (tab_idx == 1 && rel_type==BaseRelationship::RELATIONSHIP_FK) ||
 						 (tab_idx == 0 &&	rel_type==BaseRelationship::RELATIONSHIP_1N && base_rel->isTableMandatory(BaseRelationship::SRC_TABLE)) ||
 						 (tab_idx == 0 && rel_type==BaseRelationship::RELATIONSHIP_11 && base_rel->isTableMandatory(BaseRelationship::SRC_TABLE)) ||
 						 (tab_idx == 1 && rel_type==BaseRelationship::RELATIONSHIP_11 && base_rel->isTableMandatory(BaseRelationship::DST_TABLE)))
 					{
-						factor = 1;
+						size_factor = 1 * font_factor;
 					}
 					else
-						factor = 1.7;
+						size_factor = 1.5 * font_factor;
 				}
 
 				brect = QRectF(tables[tab_idx]->pos(), tables[tab_idx]->boundingRect().size());
@@ -885,18 +886,18 @@ void RelationshipView::configureLine(void)
 						if(edge.dx() == 0)
 						{
 							if(pi.x() < center.x())
-								pi.setX(pi.x() - CONN_LINE_LENGTH * factor);
+								pi.setX(pi.x() - CONN_LINE_LENGTH * size_factor);
 							else
-								pi.setX(pi.x() + CONN_LINE_LENGTH * factor);
+								pi.setX(pi.x() + CONN_LINE_LENGTH * size_factor);
 
 							conn_vert_sides[tab_idx] = true;
 						}
 						else
 						{
 							if(pi.y() < center.y())
-								pi.setY(pi.y() - CONN_LINE_LENGTH * factor);
+								pi.setY(pi.y() - CONN_LINE_LENGTH * size_factor);
 							else
-								pi.setY(pi.y() + CONN_LINE_LENGTH * factor);
+								pi.setY(pi.y() + CONN_LINE_LENGTH * size_factor);
 
 							conn_horiz_sides[tab_idx] = true;
 						}
@@ -1046,7 +1047,7 @@ void RelationshipView::configureLine(void)
 			 (!base_rel->isSelfRelationship() &&
 				((line_conn_mode != CONNECT_TABLE_EGDES && rel_type==BaseRelationship::RELATIONSHIP_DEP) ||
 				 (line_conn_mode != CONNECT_TABLE_EGDES && rel_type==BaseRelationship::RELATIONSHIP_GEN) ||
-				 (rel_type==BaseRelationship::RELATIONSHIP_NN  && !use_crows_foot))))
+				 (line_conn_mode != CONNECT_TABLE_EGDES && rel_type==BaseRelationship::RELATIONSHIP_NN  && !use_crows_foot))))
 		{
 			for(i=0; i < 2; i++)
 			{
