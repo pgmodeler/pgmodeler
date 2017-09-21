@@ -48,7 +48,7 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 	fk_to_pk_ht->setText(fk_to_pk_chk->statusTip());
 
 	center_pnts_ht=new HintTextWidget(center_pnts_hint, this);
-	center_pnts_ht->setText(center_pnts_chk->statusTip());
+	center_pnts_ht->setText(center_pnts_rb->statusTip());
 
 	DeferralType::getTypes(list);
 	deferral_cmb->addItems(list);
@@ -58,14 +58,26 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 	del_action_cmb->addItems(list);
 	upd_action_cmb->addItems(list);
 
+	/* Nesting the radiobuttons related to the notation settings in order to
+	 * use the auto exclusive feature */
+	QButtonGroup *btn_group = new QButtonGroup(this);
+	btn_group->addButton(crows_foot_notation_rb);
+	btn_group->addButton(classic_notation_rb);
+
 	for(int i=0; i < rel_types.size(); i++)
 		rel_type_cmb->setItemData(i, rel_types[i]);
+
+	connect(crows_foot_notation_rb, SIGNAL(toggled(bool)), crows_foot_lbl, SLOT(setEnabled(bool)));
+	connect(crows_foot_notation_rb, SIGNAL(toggled(bool)), this, SLOT(setConfigurationChanged(bool)));
+
+	connect(classic_notation_rb, SIGNAL(toggled(bool)), classic_notation_wgt, SLOT(setEnabled(bool)));
+	connect(classic_notation_rb, SIGNAL(toggled(bool)), this, SLOT(setConfigurationChanged(bool)));
 
 	connect(fk_to_pk_chk, SIGNAL(toggled(bool)), conn_cnt_pnts_lbl, SLOT(setDisabled(bool)));
 	connect(fk_to_pk_chk, SIGNAL(toggled(bool)), this, SLOT(setConfigurationChanged(bool)));
 
-	connect(center_pnts_chk, SIGNAL(toggled(bool)), conn_fk_pk_lbl, SLOT(setDisabled(bool)));
-	connect(center_pnts_chk, SIGNAL(toggled(bool)), this, SLOT(setConfigurationChanged(bool)));
+	connect(center_pnts_rb, SIGNAL(toggled(bool)), conn_fk_pk_lbl, SLOT(setDisabled(bool)));
+	connect(center_pnts_rb, SIGNAL(toggled(bool)), this, SLOT(setConfigurationChanged(bool)));
 
 	connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_lbl, SLOT(setEnabled(bool)));
 	connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
@@ -91,7 +103,8 @@ void RelationshipConfigWidget::loadConfiguration(void)
 		BaseConfigWidget::loadConfiguration(GlobalAttributes::RELATIONSHIPS_CONF, config_params, key_attribs);
 
 		fk_to_pk_chk->setChecked(config_params[ParsersAttributes::CONNECTION][ParsersAttributes::MODE]==ParsersAttributes::CONNECT_FK_TO_PK);
-		center_pnts_chk->setChecked(config_params[ParsersAttributes::CONNECTION][ParsersAttributes::MODE]==ParsersAttributes::CONNECT_CENTER_PNTS);
+		center_pnts_rb->setChecked(config_params[ParsersAttributes::CONNECTION][ParsersAttributes::MODE]==ParsersAttributes::CONNECT_CENTER_PNTS);
+		crows_foot_notation_rb->setChecked(config_params[ParsersAttributes::CONNECTION][ParsersAttributes::CROWS_FOOT_NOTATION]==ParsersAttributes::_TRUE_);
 
 		deferrable_chk->setChecked(config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEFERRABLE]==ParsersAttributes::_TRUE_);
 		deferral_cmb->setCurrentText(config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEFER_TYPE]);
@@ -134,6 +147,7 @@ void RelationshipConfigWidget::saveConfiguration(void)
 
 
 		config_params[ParsersAttributes::CONNECTION][ParsersAttributes::MODE]=(fk_to_pk_chk->isChecked() ? ParsersAttributes::CONNECT_FK_TO_PK : ParsersAttributes::CONNECT_CENTER_PNTS);
+		config_params[ParsersAttributes::CONNECTION][ParsersAttributes::CROWS_FOOT_NOTATION]=(crows_foot_notation_rb->isChecked() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
 
 		config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEFERRABLE]=(deferrable_chk->isChecked() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
 		config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEFER_TYPE]=deferral_cmb->currentText();
@@ -160,13 +174,12 @@ void RelationshipConfigWidget::saveConfiguration(void)
 
 void RelationshipConfigWidget::applyConfiguration(void)
 {
+	RelationshipView::setCrowsFoot(crows_foot_notation_rb->isChecked());
+
 	if(fk_to_pk_chk->isChecked())
 		RelationshipView::setLineConnectionMode(RelationshipView::CONNECT_FK_TO_PK);
 	else
 		RelationshipView::setLineConnectionMode(RelationshipView::CONNECT_CENTER_PNTS);
-
-#warning "Crow's feet: testing crows feet support. This setup will be moved to an configuration paramenter"
-	RelationshipView::setCrowsFoot(true);
 }
 
 void RelationshipConfigWidget::restoreDefaults(void)

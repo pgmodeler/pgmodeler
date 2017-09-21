@@ -6,6 +6,7 @@
 
 <!ELEMENT connection EMPTY>
 <!ATTLIST connection mode (fk-to-pk|center-pnts) "fk-to-pk">
+<!ATTLIST connection crows-foot-notation (false|true) "false">
 
 <!ELEMENT foreign-keys EMPTY>
 <!ATTLIST foreign-keys deferrable (false|true) "false">

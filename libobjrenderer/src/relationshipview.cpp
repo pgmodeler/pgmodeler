@@ -181,7 +181,7 @@ bool RelationshipView::isCrowsFoot(void)
 void RelationshipView::setLineConnectionMode(unsigned mode)
 {
 	if(use_crows_foot)
-		mode=CONNECT_CENTER_PNTS;
+		line_conn_mode=CONNECT_CENTER_PNTS;
 	else
 	{
 		if(mode > CONNECT_FK_TO_PK)
@@ -1127,7 +1127,6 @@ void RelationshipView::configureLine(void)
 			}
 		}
 
-#warning "Crow's feet: hide/destroy the classical relationship descriptor"
 		this->configureDescriptor();
 
 		this->configureCrowsFeetDescriptors();
@@ -1209,7 +1208,6 @@ void RelationshipView::configureDescriptor(void)
 	}
 	else
 		descriptor->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::RELATIONSHIP));
-
 
 	if(rel_type==BaseRelationship::RELATIONSHIP_DEP ||
 			rel_type==BaseRelationship::RELATIONSHIP_GEN)
@@ -1321,7 +1319,21 @@ void RelationshipView::configureCrowsFeetDescriptors(void)
 	BaseRelationship * base_rel = dynamic_cast<BaseRelationship *>(this->getSourceObject());
 	Relationship *rel=dynamic_cast<Relationship *>(base_rel);
 
-	if(use_crows_foot && base_rel &&
+	//Hiding all descriptors related to crow's foot when the notation is not being used
+	if(!use_crows_foot)
+	{
+		for(unsigned tab_id = BaseRelationship::SRC_TABLE; tab_id <= BaseRelationship::DST_TABLE; tab_id++)
+		{
+			for(auto &item : cf_descriptors[tab_id]->childItems())
+			{
+				cf_descriptors[tab_id]->removeFromGroup(item);
+				this->removeFromGroup(item);
+				item->setVisible(false);
+				cf_descriptors[tab_id]->setVisible(false);
+			}
+		}
+	}
+	else if(use_crows_foot && base_rel &&
 		 (base_rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_11 ||
 			base_rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_1N ||
 			base_rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_NN ||
@@ -1384,6 +1396,11 @@ void RelationshipView::configureCrowsFeetDescriptors(void)
 				cf_descriptors[BaseRelationship::DST_TABLE]->setZValue(dst_zvalue);
 			}
 		}
+		else
+		{
+			cf_descriptors[BaseRelationship::SRC_TABLE]->setVisible(true);
+			cf_descriptors[BaseRelationship::DST_TABLE]->setVisible(true);
+		}
 
 		QPointF pi;
 		QRectF brect;
@@ -1397,9 +1414,10 @@ void RelationshipView::configureCrowsFeetDescriptors(void)
 
 		for(unsigned tab_id = BaseRelationship::SRC_TABLE; tab_id <= BaseRelationship::DST_TABLE; tab_id++)
 		{
+			cf_descriptors[tab_id]->setRotation(0);
+
 			for(auto &line : *cf_lines[tab_id])
 			{
-				cf_descriptors[tab_id]->setRotation(0);
 				cf_descriptors[tab_id]->removeFromGroup(line);
 				this->removeFromGroup(line);
 				line->setVisible(false);

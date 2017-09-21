@@ -115,6 +115,7 @@ namespace ParsersAttributes {
 	CREATE=QString("create"),
 	CREATEDB=QString("createdb"),
 	CREATEROLE=QString("createrole"),
+	CROWS_FOOT_NOTATION=QString("crows-foot-notation"),
 	CTE_EXPRESSION=QString("cte-exp"),
 	CUR_VERSION=QString("cur-version"),
 	CUSTOM_COLOR=QString("custom-color"),
