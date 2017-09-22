@@ -33,6 +33,10 @@ class BezierCurveItem: public QGraphicsPathItem {
 		 * This object is used to do a better colision detection */
 		QPainterPath stroke;
 
+		bool invert_cpoints;
+
+		bool simple_curve;
+
 	protected:
 		void setPath(const QPainterPath &path);
 
@@ -48,6 +52,10 @@ class BezierCurveItem: public QGraphicsPathItem {
 		 * The invert_cpoints param causes the control points of the curve to be inverted
 		 * making the curve to be drawn inverted. */
 		void setLine(const QLineF &line, bool simple_curve, bool invert_cpoints);
+
+		bool isControlPointsInverted(void);
+
+		bool isSimpleCurve(void);
 
 		//! \brief Returns if the specified point is contained by the curve (specifically, by the stroke)
 		virtual bool contains(const QPointF &pnt) const;

@@ -21,7 +21,7 @@
 
 BezierCurveItem::BezierCurveItem(QGraphicsItem *parent) :  QGraphicsPathItem(parent)
 {
-
+	invert_cpoints = simple_curve = false;
 }
 
 void BezierCurveItem::setPath(const QPainterPath &path)
@@ -34,6 +34,9 @@ void BezierCurveItem::setPath(const QPainterPath &path)
 void BezierCurveItem::setLine(const QLineF &line, bool simple_curve, bool invert_cpoints)
 {
 	QPainterPath path;
+
+	this->invert_cpoints = invert_cpoints;
+	this->simple_curve = simple_curve;
 
 	if(line.dx() == 0 || line.dy() == 0)
 	{
@@ -86,6 +89,16 @@ void BezierCurveItem::setLine(const QLineF &line, bool simple_curve, bool invert
 	}
 
 	this->setPath(path);
+}
+
+bool BezierCurveItem::isControlPointsInverted(void)
+{
+	return(invert_cpoints);
+}
+
+bool BezierCurveItem::isSimpleCurve(void)
+{
+	return(simple_curve);
 }
 
 bool BezierCurveItem::contains(const QPointF &pnt) const

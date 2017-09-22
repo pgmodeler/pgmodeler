@@ -841,7 +841,7 @@ void RelationshipView::configureLine(void)
 			QLineF edge, line = QLineF(tables[0]->getCenter(), tables[1]->getCenter());
 			QPointF pi, center, p_aux[2];
 			double font_factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE) * BaseObjectView::getScreenDpiFactor(),
-					size_factor = 0.65 * font_factor,
+					size_factor = 1,
 					border_factor = CONN_LINE_LENGTH * 0.30,
 					min_lim = 0, max_lim = 0;
 
@@ -855,12 +855,11 @@ void RelationshipView::configureLine(void)
 						line = QLineF(tables[1]->getCenter(), points[points.size() - 1]);
 				}
 
-				if(use_crows_foot)
+				if(rel_type==BaseRelationship::RELATIONSHIP_GEN || rel_type==BaseRelationship::RELATIONSHIP_DEP)
+					size_factor = 0.40;
+				else if(use_crows_foot)
 				{
-					if(rel_type==BaseRelationship::RELATIONSHIP_GEN ||
-							rel_type==BaseRelationship::RELATIONSHIP_DEP)
-						size_factor = 0.65 * font_factor;
-					else if(rel_type==BaseRelationship::RELATIONSHIP_NN ||
+					if(rel_type==BaseRelationship::RELATIONSHIP_NN ||
 						 (tab_idx == 1 && rel_type==BaseRelationship::RELATIONSHIP_FK) ||
 						 (tab_idx == 0 &&	rel_type==BaseRelationship::RELATIONSHIP_1N && base_rel->isTableMandatory(BaseRelationship::SRC_TABLE)) ||
 						 (tab_idx == 0 && rel_type==BaseRelationship::RELATIONSHIP_11 && base_rel->isTableMandatory(BaseRelationship::SRC_TABLE)) ||
@@ -877,6 +876,8 @@ void RelationshipView::configureLine(void)
 					else
 						border_factor = CONN_LINE_LENGTH * 0.75;
 				}
+				else
+					size_factor = 0.65 * font_factor;
 
 				brect = QRectF(tables[tab_idx]->pos(), tables[tab_idx]->boundingRect().size());
 				pol = QPolygonF(brect);
@@ -1278,9 +1279,22 @@ void RelationshipView::configureDescriptor(void)
 			}
 			else
 			{
-				double percent = path.percentAtLength(path.length()/2);
-				angle = -path.angleAtPercent(percent);
-				pnt = path.pointAtPercent(percent);
+				/* Workaround to avoid the inheritance / dependency relationship to get the descriptor rotated to the wrong side
+				 * We create and auxiliary line with points from the position at 65% of the curve to the 45% and use the
+				 * angle of that line instead of the angle at 50% of the curve */
+				if((rel_type == BaseRelationship::RELATIONSHIP_DEP || rel_type == BaseRelationship::RELATIONSHIP_GEN) &&
+					 curve->isControlPointsInverted() && !curve->isSimpleCurve())
+				{
+					QLineF lin_aux = QLineF(path.pointAtPercent(0.65), path.pointAtPercent(0.45));
+					angle = -lin_aux.angle();
+					pnt = path.pointAtPercent(0.5);
+				}
+				else
+				{
+					double percent = path.percentAtLength(path.length()/2);
+					angle = -path.angleAtPercent(percent);
+					pnt = path.pointAtPercent(percent);
+				}
 			}
 		}
 		else
