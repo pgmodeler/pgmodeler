@@ -176,10 +176,10 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 
 		/*! \brief Returns the current font DPI factor of the screen. This factor is used to resize
 		 * objects according to the screen's resolution/font dpi */
-		static float getScreenDpiFactor(void);
+		static double getScreenDpiFactor(void);
 
 		//! \brief Returns the current factor between the default font size and the current defined one
-		static float getFontFactor(void);
+		static double getFontFactor(void);
 
 	protected slots:
 		//! \brief Make the basic object operations

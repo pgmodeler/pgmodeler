@@ -477,10 +477,21 @@ void ObjectsScene::removeItem(QGraphicsItem *item)
 	}
 }
 
+void ObjectsScene::blockItemsSignals(bool block)
+{
+	BaseObjectView *obj_view = nullptr;
+
+	for(auto &item : this->items())
+	{
+		obj_view = dynamic_cast<BaseObjectView *>(item);
+		if(obj_view)
+			obj_view->blockSignals(block);
+	}
+}
+
 void ObjectsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
 	QGraphicsScene::mouseDoubleClickEvent(event);
-	//enablePannigMode(false);
 
 	if(this->selectedItems().size()==1 && event->buttons()==Qt::LeftButton && !rel_line->isVisible())
 	{
@@ -499,6 +510,7 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
 	//Gets the item at mouse position
 	QGraphicsItem* item=this->itemAt(event->scenePos().x(), event->scenePos().y(), QTransform());
+	bool is_deselection = !this->selectedItems().isEmpty() && !this->itemAt(event->scenePos(), QTransform());
 
 	if(selectedItems().empty())
 		emit s_objectsScenePressed(event->buttons());
@@ -510,7 +522,13 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	if(rel_line->isVisible())
 		event->setModifiers(Qt::ControlModifier);
 
+	if(is_deselection)
+		this->blockItemsSignals(true);
+
 	QGraphicsScene::mousePressEvent(event);
+
+	if(is_deselection)
+		this->blockItemsSignals(false);
 
 	if(event->buttons()==Qt::LeftButton)
 	{
@@ -834,12 +852,18 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 		QPainterPath sel_area;
 
 		sel_area.addRect(selection_rect->polygon().boundingRect());
+
+		this->blockItemsSignals(true);
 		this->setSelectionArea(sel_area, Qt::IntersectsItemShape);
+		this->blockItemsSignals(false);
 
 		selection_rect->setVisible(false);
 		selection_rect->setPolygon(pol);
 		sel_ini_pnt.setX(NAN);
 		sel_ini_pnt.setY(NAN);
+
+		if(!this->selectedItems().isEmpty())
+			emit s_objectsSelectedInRange();
 	}
 }
 

@@ -136,6 +136,8 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Draws a line from the point 'p_start' to the cursor position and simulates the relationship creation
 		void showRelationshipLine(bool value, const QPointF &p_start=QPointF(NAN,NAN));
 
+		void blockItemsSignals(bool block);
+
 	public:
 		ObjectsScene(void);
 		~ObjectsScene(void);
@@ -224,6 +226,9 @@ class ObjectsScene: public QGraphicsScene {
 
 		//! \brief Signal emitted when a object is selected
 		void s_objectSelected(BaseGraphicObject *objeto, bool selecionado);
+
+		//! \brief Signal emitted when objects are selected via range selection
+		void s_objectsSelectedInRange(void);
 
 		//! \brief Signal emtted when a blank area of the canvas is pressed
 		void s_objectsScenePressed(Qt::MouseButtons);

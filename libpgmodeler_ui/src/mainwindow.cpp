@@ -1080,10 +1080,17 @@ void MainWindow::setCurrentModel(void)
 
 void MainWindow::setGridOptions(void)
 {
+	GeneralConfigWidget *conf_wgt = dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+	map<QString, attribs_map> attribs = conf_wgt->getConfigurationParams();
+
 	//Configures the global settings for the scene grid
 	ObjectsScene::setGridOptions(action_show_grid->isChecked(),
 								 action_alin_objs_grade->isChecked(),
 								 action_show_delimiters->isChecked());
+
+	attribs[ParsersAttributes::CONFIGURATION][ParsersAttributes::ALIGN_OBJS_TO_GRID] = (action_alin_objs_grade->isChecked() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
+	attribs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_CANVAS_GRID] = (action_show_grid->isChecked() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
+	attribs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_PAGE_DELIMITERS] = (action_show_delimiters->isChecked() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
 
 	if(current_model)
 	{
@@ -1094,6 +1101,8 @@ void MainWindow::setGridOptions(void)
 		//Redraw the scene to apply the new grid options
 		current_model->scene->update();
 	}
+
+	conf_wgt->addConfigurationParam(ParsersAttributes::CONFIGURATION, attribs[ParsersAttributes::CONFIGURATION]);
 }
 
 void MainWindow::applyZoom(void)

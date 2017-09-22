@@ -524,9 +524,9 @@ void GeneralConfigWidget::applyConfiguration(void)
 	ObjectsScene::setInvertRangeSelectionTrigger(invert_rangesel_chk->isChecked());
 	ObjectsScene::setGridSize(grid_size_spb->value());
 
-	ObjectsScene::setGridOptions(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_CANVAS_GRID]!=ParsersAttributes::_FALSE_,
-															 config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::ALIGN_OBJS_TO_GRID]!=ParsersAttributes::_FALSE_,
-															 config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_PAGE_DELIMITERS]!=ParsersAttributes::_FALSE_);
+	ObjectsScene::setGridOptions(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_CANVAS_GRID]==ParsersAttributes::_TRUE_,
+															 config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::ALIGN_OBJS_TO_GRID]==ParsersAttributes::_TRUE_,
+															 config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_PAGE_DELIMITERS]==ParsersAttributes::_TRUE_);
 
 	OperationList::setMaximumSize(oplist_size_spb->value());
 	BaseTableView::setHideExtAttributes(hide_ext_attribs_chk->isChecked());

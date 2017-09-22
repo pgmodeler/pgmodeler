@@ -5,7 +5,7 @@
 <!ELEMENT relationships (connection, foreign-keys, name-patterns)>
 
 <!ELEMENT connection EMPTY>
-<!ATTLIST connection mode (fk-to-pk|center-pnts) "fk-to-pk">
+<!ATTLIST connection mode (fk-to-pk|center-pnts|table-edges|crows-foot) "fk-to-pk">
 
 <!ELEMENT foreign-keys EMPTY>
 <!ATTLIST foreign-keys deferrable (false|true) "false">

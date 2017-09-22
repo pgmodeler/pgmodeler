@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0-beta" author="Raphael Araújo e Silva" last-position="0,0" last-zoom="1">
+<dbmodel pgmodeler-ver="0.9.1-alpha" author="Raphael Araújo e Silva" last-position="0,0" last-zoom="1">
 <database name="exampledb" encoding="UTF8">
 	<comment><![CDATA[Example Database Model]]></comment>
 </database>
@@ -36,7 +36,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<definition><![CDATA[SELECT 1+1;]]></definition>
 </function>
 
-<table name="table">
+<table name="table" hide-ext-attribs="true">
 	<schema name="public"/>
 	<tag name="sample tag"/>
 	<position x="20" y="20"/>
@@ -65,9 +65,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		</idxelement>
 </index>
 
-<table name="table1">
+<table name="table1" hide-ext-attribs="true">
 	<schema name="public"/>
-	<position x="366" y="265"/>
+	<position x="396" y="312"/>
 	<column name="column" not-null="true">
 		<type name="serial" length="1"/>
 	</column>
@@ -159,7 +159,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<comment><![CDATA[Protected Textbox]]></comment>
 </textbox>
 
-<table name="table2" oids="true">
+<table name="table2" oids="true" hide-ext-attribs="true">
 	<schema name="public"/>
 	<position x="380" y="21"/>
 	<column name="column" not-null="true">
