@@ -312,12 +312,14 @@ void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename
 
 void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool drop_objs, bool simulate, bool use_tmp_names)
 {
-	int type_id;
-	QString  version, sql_cmd, buf;
+	int type_id = 0, pos = -1;
+	QString  version, sql_cmd, buf, sql_cmd_comment;
 	Connection new_db_conn;
 	unsigned i, count;
 	ObjectType types[]={OBJ_ROLE, OBJ_TABLESPACE};
 	BaseObject *object=nullptr;
+	QString tmpl_comm_regexp = QString("(COMMENT)( )+(ON)( )+(%1)(.)+(\n)(") + ParsersAttributes::DDL_END_TOKEN + QString(")");
+	QRegExp comm_regexp;
 
 	try
 	{
@@ -428,7 +430,26 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 											   object->getObjectType());
 
 						sql_cmd=object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+
+						if(types[type_id] == OBJ_TABLESPACE)
+						{
+							comm_regexp = QRegExp(tmpl_comm_regexp.arg(object->getSQLName()));
+							pos = comm_regexp.indexIn(sql_cmd);
+
+							/* If we find a comment on statement we should strip it from the tablespace definition in
+							 * order to execute it after creating the db */
+							if(pos >= 0)
+							{
+								sql_cmd_comment = sql_cmd.mid(pos, comm_regexp.matchedLength());
+								sql_cmd.remove(pos, comm_regexp.matchedLength());
+								pos = -1;
+							}
+						}
+
 						conn.executeDDLCommand(sql_cmd);
+
+						if(!sql_cmd_comment.isEmpty())
+							conn.executeDDLCommand(sql_cmd_comment);
 					}
 				}
 				catch(Exception &e)
@@ -444,6 +465,8 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		{
 			if(!db_model->isSQLDisabled() && !export_canceled)
 			{
+				comm_regexp = QRegExp(tmpl_comm_regexp.arg(db_model->getSQLName()));
+
 				//Creating the database on the DBMS
 				emit s_progressUpdated(progress,
 									   trUtf8("Creating database `%1'")
@@ -451,8 +474,21 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 									   OBJ_DATABASE);
 
 				sql_cmd=db_model->__getCodeDefinition(SchemaParser::SQL_DEFINITION);
+				pos = comm_regexp.indexIn(sql_cmd);
+
+				/* If we find a comment on statment we should strip it from the DB definition in
+				 * order to execute it after creating the db */
+				if(pos >= 0)
+				{
+					sql_cmd_comment = sql_cmd.mid(pos, comm_regexp.matchedLength());
+					sql_cmd.remove(pos, comm_regexp.matchedLength());
+				}
+
 				conn.executeDDLCommand(sql_cmd);
 				db_created=true;
+
+				if(!sql_cmd_comment.isEmpty())
+					conn.executeDDLCommand(sql_cmd_comment);
 			}
 		}
 		catch(Exception &e)
@@ -474,8 +510,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			progress=30;
 
 			//Creating the other object types
-			emit s_progressUpdated(progress,
-								   trUtf8("Generating SQL for `%1' objects...").arg(db_model->getObjectCount()));
+			emit s_progressUpdated(progress, trUtf8("Generating SQL for `%1' objects...").arg(db_model->getObjectCount()));
 
 			//Exporting the database model definition using the opened connection
 			buf=db_model->getCodeDefinition(SchemaParser::SQL_DEFINITION, false);

@@ -753,16 +753,10 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			else
 				attributes[ParsersAttributes::COMMENT]=comment;
 
-			if((def_type==SchemaParser::SQL_DEFINITION &&
-				obj_type!=OBJ_TABLESPACE &&
-				obj_type!=OBJ_DATABASE) ||
-					def_type==SchemaParser::XML_DEFINITION)
-			{
-				schparser.ignoreUnkownAttributes(true);
+			schparser.ignoreUnkownAttributes(true);
 
-				attributes[ParsersAttributes::COMMENT]=
-						schparser.getCodeDefinition(ParsersAttributes::COMMENT, attributes, def_type);
-			}
+			attributes[ParsersAttributes::COMMENT]=
+					schparser.getCodeDefinition(ParsersAttributes::COMMENT, attributes, def_type);
 		}
 
 		if(!appended_sql.isEmpty())

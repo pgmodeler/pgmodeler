@@ -5,8 +5,6 @@
 
 [-- object: ] {name} [ | type: ] {sql-object} [ --] $br
 
-%if {comment} %then [-- ] {comment} [ --] $br %end
-
 [-- ] {drop}
 
  %if {prepended-sql} %then
@@ -49,6 +47,8 @@
 # This is a special token that pgModeler recognizes as end of DDL command
 # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
 [-- ddl-end --] $br
+
+%if {comment} %then {comment} %end
 
 %if {appended-sql} %then
  {appended-sql}

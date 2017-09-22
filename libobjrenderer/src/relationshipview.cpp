@@ -498,7 +498,7 @@ void RelationshipView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 		{
 			//Calculates the displacement of the label from the initial pos to the current
 			base_rel->setLabelDistance(sel_object_idx,
-									   QPointF(sel_object->pos() - labels_ini_pos[sel_object_idx]));
+										 QPointF(sel_object->pos() - labels_ini_pos[sel_object_idx]));
 		}
 
 		sel_object_idx=-1;
@@ -569,7 +569,7 @@ void RelationshipView::configurePositionInfo(void)
 		pos_info_txt->setPos(descriptor->pos().x(),
 							 descriptor->pos().y() - pos_info_txt->boundingRect().height());
 		pos_info_rect->setPos(descriptor->pos().x(),
-							  descriptor->pos().y() - pos_info_rect->boundingRect().height());
+								descriptor->pos().y() - pos_info_rect->boundingRect().height());
 	}
 }
 
@@ -1678,7 +1678,7 @@ void RelationshipView::configureAttributes(void)
 
 			desc->setRect(rect);
 			desc->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::ATTRIBUTE));
-			desc->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::ATTRIBUTE));			
+			desc->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::ATTRIBUTE));
 			lin->setPen(descriptor->pen());
 			text->setBrush(fmt.foreground());
 			text->setFont(font);
@@ -1699,7 +1699,7 @@ void RelationshipView::configureAttributes(void)
 			sel_attrib->setPolygon(pol);
 
 			p_aux=this->mapToItem(attrib, descriptor->pos().x() + (descriptor->boundingRect().width()/2.0f),
-								  descriptor->pos().y() + (descriptor->boundingRect().height()/2.0f));
+									descriptor->pos().y() + (descriptor->boundingRect().height()/2.0f));
 			lin->setLine(QLineF(p_aux, desc->boundingRect().center()));
 
 			py+=desc->boundingRect().height() + (2 * VERT_SPACING);
@@ -1729,8 +1729,8 @@ void RelationshipView::configureLabels(void)
 
 	pnt=descriptor->pos();
 	x=pnt.x() -
-	  ((labels[BaseRelationship::REL_NAME_LABEL]->boundingRect().width() -
-	   descriptor->boundingRect().width())/2.0f);
+		((labels[BaseRelationship::REL_NAME_LABEL]->boundingRect().width() -
+		 descriptor->boundingRect().width())/2.0f);
 
 	if(base_rel->isSelfRelationship())
 		y=pnt.y() -	labels[BaseRelationship::REL_NAME_LABEL]->boundingRect().height() - (2 * VERT_SPACING);
@@ -1796,9 +1796,9 @@ void RelationshipView::configureLabels(void)
 
 				borders[idx][0].setPoints(pos, QPointF(pos.x(), pos.y() + rect.height()));
 				borders[idx][1].setPoints(QPointF(pos.x(), pos.y() + rect.height()),
-										  QPointF(pos.x() + rect.width(), pos.y() + rect.height()));
+											QPointF(pos.x() + rect.width(), pos.y() + rect.height()));
 				borders[idx][2].setPoints(QPointF(pos.x() + rect.width(), pos.y()),
-										  QPointF(pos.x() + rect.width(), pos.y() + rect.height()));
+											QPointF(pos.x() + rect.width(), pos.y() + rect.height()));
 				borders[idx][3].setPoints(pos, QPointF(pos.x() + rect.width(), pos.y()));
 			}
 

@@ -7,10 +7,6 @@
 
 [-- ] {drop}
 
-%if {comment} %then
- -- {comment} -- $br
-%end
-
  %if {prepended-sql} %then
    {prepended-sql}
    $br [-- ddl-end --] $br $br
@@ -27,6 +23,8 @@ $tb [LOCATION ] {directory}; $br
 # This is a special token that pgModeler recognizes as end of DDL command
 # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
 [-- ddl-end --] $br
+
+%if {comment} %then {comment} %end
 
 %if {appended-sql} %then
  {appended-sql}
