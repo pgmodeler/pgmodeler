@@ -841,7 +841,9 @@ void RelationshipView::configureLine(void)
 			QLineF edge, line = QLineF(tables[0]->getCenter(), tables[1]->getCenter());
 			QPointF pi, center, p_aux[2];
 			double font_factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE) * BaseObjectView::getScreenDpiFactor(),
-					size_factor = 0.65 * font_factor;
+					size_factor = 0.65 * font_factor,
+					border_factor = CONN_LINE_LENGTH * 0.30,
+					min_lim = 0, max_lim = 0;
 
 			for(int tab_idx = 0; tab_idx < 2; tab_idx++)
 			{
@@ -863,11 +865,17 @@ void RelationshipView::configureLine(void)
 						 (tab_idx == 0 &&	rel_type==BaseRelationship::RELATIONSHIP_1N && base_rel->isTableMandatory(BaseRelationship::SRC_TABLE)) ||
 						 (tab_idx == 0 && rel_type==BaseRelationship::RELATIONSHIP_11 && base_rel->isTableMandatory(BaseRelationship::SRC_TABLE)) ||
 						 (tab_idx == 1 && rel_type==BaseRelationship::RELATIONSHIP_11 && base_rel->isTableMandatory(BaseRelationship::DST_TABLE)))
-					{
 						size_factor = 1 * font_factor;
-					}
 					else
 						size_factor = 1.5 * font_factor;
+
+					if(rel_type == BaseRelationship::RELATIONSHIP_GEN ||
+						 rel_type == BaseRelationship::RELATIONSHIP_DEP ||
+						 rel_type == BaseRelationship::RELATIONSHIP_11 ||
+						 (tab_idx == 0 && (rel_type == BaseRelationship::RELATIONSHIP_1N || rel_type == BaseRelationship::RELATIONSHIP_FK)))
+						border_factor = CONN_LINE_LENGTH * 0.30;
+					else
+						border_factor = CONN_LINE_LENGTH * 0.75;
 				}
 
 				brect = QRectF(tables[tab_idx]->pos(), tables[tab_idx]->boundingRect().size());
@@ -881,6 +889,28 @@ void RelationshipView::configureLine(void)
 
 					if(line.intersect(edge, &pi)==QLineF::BoundedIntersection)
 					{
+						//Avoiding the line to be exposed in the rounded corners of the tables
+						if(edge.dx() == 0)
+						{
+							min_lim = brect.top() + border_factor;
+							max_lim = brect.bottom() - border_factor;
+
+							if(pi.y() < min_lim)
+								pi.setY(min_lim);
+							else if(pi.y() > max_lim)
+								pi.setY(max_lim);
+						}
+						else
+						{
+							min_lim = brect.left() + border_factor;
+							max_lim = brect.right() - border_factor;
+
+							if(pi.x() < min_lim)
+								pi.setX(min_lim);
+							else if(pi.x() > max_lim)
+								pi.setX(max_lim);
+						}
+
 						conn_points[tab_idx] = p_central[tab_idx] = pi;
 
 						if(edge.dx() == 0)
