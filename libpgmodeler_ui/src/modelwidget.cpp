@@ -1371,7 +1371,10 @@ void ModelWidget::adjustSceneSize(void)
 	viewport->centerOn(0,0);
 
 	if(align_objs)
+	{
 		scene->alignObjectsToGrid();
+		db_model->setObjectsModified({ OBJ_RELATIONSHIP, BASE_RELATIONSHIP });
+	}
 
 	emit s_sceneInteracted(scene_rect.size());
 }

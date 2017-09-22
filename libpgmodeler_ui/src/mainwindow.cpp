@@ -1096,7 +1096,12 @@ void MainWindow::setGridOptions(void)
 	{
 		//Align the object to grid is the option is checked
 		if(action_alin_objs_grade->isChecked())
+		{
 			current_model->scene->alignObjectsToGrid();
+
+			//Forcing the relationship updating to fit the new position of the tables
+			current_model->getDatabaseModel()->setObjectsModified({ OBJ_RELATIONSHIP, BASE_RELATIONSHIP });
+		}
 
 		//Redraw the scene to apply the new grid options
 		current_model->scene->update();
