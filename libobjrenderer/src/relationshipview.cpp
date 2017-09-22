@@ -1283,7 +1283,7 @@ void RelationshipView::configureDescriptor(void)
 				 * We create and auxiliary line with points from the position at 65% of the curve to the 45% and use the
 				 * angle of that line instead of the angle at 50% of the curve */
 				if((rel_type == BaseRelationship::RELATIONSHIP_DEP || rel_type == BaseRelationship::RELATIONSHIP_GEN) &&
-					 curve->isControlPointsInverted() && !curve->isSimpleCurve())
+					 curve->isControlPointsInverted() && !curve->isSimpleCurve() && !curve->isStraightLine())
 				{
 					QLineF lin_aux = QLineF(path.pointAtPercent(0.65), path.pointAtPercent(0.45));
 					angle = -lin_aux.angle();
