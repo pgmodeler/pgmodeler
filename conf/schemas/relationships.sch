@@ -8,7 +8,7 @@
 
 <relationships> $br
 
-$tb [<connection crows-foot-notation=] "{crows-foot-notation}" [ mode=] "{mode}" [/>] $br
+$tb [<connection mode=] "{mode}" [/>] $br
 $tb [<foreign-keys deferrable=] "{deferrable}" [ defer-type=] "{defer-type}" [ upd-action=] "{upd-action}" [ del-action=] "{del-action}" [/>] $br
 $tb <name-patterns> $br
 {patterns}    

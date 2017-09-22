@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>612</width>
-    <height>656</height>
+    <width>584</width>
+    <height>605</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -68,7 +68,7 @@
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
+         <layout class="QVBoxLayout" name="verticalLayout">
           <property name="leftMargin">
            <number>4</number>
           </property>
@@ -83,23 +83,65 @@
           </property>
           <item>
            <layout class="QGridLayout" name="gridLayout_6">
-            <item row="1" column="0">
+            <item row="0" column="0">
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <item>
+               <widget class="QRadioButton" name="crows_foot_rb">
+                <property name="statusTip">
+                 <string>This mode renders the relationships in crow's foot notation which has a better semantics and readability. It also determines the optimal point where the relationship is connected on the tables' edges taking their position into account.</string>
+                </property>
+                <property name="text">
+                 <string>Crow's foot notation</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+                <property name="autoRepeat">
+                 <bool>true</bool>
+                </property>
+                <property name="autoExclusive">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="crows_foot_hint" native="true">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>22</width>
+                  <height>22</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>22</width>
+                  <height>22</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="0" column="1">
              <spacer name="horizontalSpacer_3">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>20</width>
+                <width>368</width>
                 <height>20</height>
                </size>
               </property>
              </spacer>
             </item>
-            <item row="1" column="1" colspan="2">
+            <item row="1" column="0" colspan="2">
              <widget class="QLabel" name="crows_foot_lbl">
               <property name="enabled">
                <bool>true</bool>
@@ -142,371 +184,310 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="0" colspan="3">
-             <widget class="QRadioButton" name="crows_foot_notation_rb">
-              <property name="statusTip">
-               <string/>
+           </layout>
+          </item>
+          <item>
+           <layout class="QGridLayout" name="gridLayout_7">
+            <item row="0" column="0">
+             <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <item>
+               <widget class="QRadioButton" name="tab_edges_rb">
+                <property name="statusTip">
+                 <string>This mode determines the optimal point where the relationship is connected on the tables' edges taking their position into account. It implies the usage of the classical ER notation.</string>
+                </property>
+                <property name="text">
+                 <string>Connect tables' edges</string>
+                </property>
+                <property name="autoRepeat">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="tab_edges_hint" native="true">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>22</width>
+                  <height>22</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>22</width>
+                  <height>22</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="0" column="1">
+             <spacer name="horizontalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>338</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="1" column="0" colspan="2">
+             <widget class="QLabel" name="conn_tab_edges_lbl">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>555</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Sunken</enum>
               </property>
               <property name="text">
-               <string>Crow's foot notation</string>
+               <string/>
               </property>
-              <property name="checked">
-               <bool>true</bool>
+              <property name="textFormat">
+               <enum>Qt::PlainText</enum>
               </property>
-              <property name="autoExclusive">
-               <bool>true</bool>
+              <property name="pixmap">
+               <pixmap resource="../res/resources.qrc">:/imagens/imagens/rel_tab_edges.png</pixmap>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::NoTextInteraction</set>
               </property>
              </widget>
             </item>
            </layout>
           </item>
           <item>
-           <layout class="QGridLayout" name="gridLayout_8">
-            <item row="0" column="0" colspan="2">
-             <widget class="QRadioButton" name="classic_notation_rb">
-              <property name="statusTip">
-               <string/>
-              </property>
-              <property name="text">
-               <string>Classic ER notation</string>
-              </property>
-              <property name="checked">
-               <bool>false</bool>
-              </property>
-              <property name="autoExclusive">
-               <bool>true</bool>
-              </property>
-             </widget>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="0" column="0">
+             <layout class="QHBoxLayout" name="horizontalLayout">
+              <item>
+               <widget class="QRadioButton" name="fk_to_pk_rb">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="statusTip">
+                 <string>This mode is available only for &lt;strong&gt;one-to-one&lt;/strong&gt;, &lt;strong&gt;one-to-many&lt;/strong&gt; and &lt;strong&gt;fk relationships&lt;/strong&gt; but provides a better semantics when linking tables by placing the lines on the exact point where the relationship occurs. It implies the usage of the classical ER notation.</string>
+                </property>
+                <property name="text">
+                 <string>Connect FK to PK columns</string>
+                </property>
+                <property name="checked">
+                 <bool>false</bool>
+                </property>
+                <property name="autoRepeat">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="fk_to_pk_hint" native="true">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>22</width>
+                  <height>22</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>22</width>
+                  <height>22</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
-            <item row="1" column="0">
-             <spacer name="horizontalSpacer_4">
+            <item row="0" column="1">
+             <spacer name="horizontalSpacer">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>20</width>
-                <height>278</height>
+                <width>318</width>
+                <height>20</height>
                </size>
               </property>
              </spacer>
             </item>
-            <item row="1" column="1">
-             <widget class="QWidget" name="classic_notation_wgt" native="true">
+            <item row="1" column="0" colspan="2">
+             <widget class="QLabel" name="conn_fk_pk_lbl">
               <property name="enabled">
                <bool>false</bool>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout">
-               <property name="leftMargin">
-                <number>0</number>
-               </property>
-               <property name="topMargin">
-                <number>0</number>
-               </property>
-               <property name="rightMargin">
-                <number>0</number>
-               </property>
-               <property name="bottomMargin">
-                <number>0</number>
-               </property>
-               <item>
-                <layout class="QGridLayout" name="gridLayout">
-                 <item row="0" column="0">
-                  <layout class="QHBoxLayout" name="horizontalLayout">
-                   <item>
-                    <widget class="QRadioButton" name="fk_to_pk_chk">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="statusTip">
-                      <string>This mode is available only for &lt;strong&gt;one-to-one&lt;/strong&gt;, &lt;strong&gt;one-to-many&lt;/strong&gt; and &lt;strong&gt;fk relationships&lt;/strong&gt; but provides a better semantics when linking tables by placing the lines on the exact point where the relationship occurs.</string>
-                     </property>
-                     <property name="text">
-                      <string>Connect FK to PK columns</string>
-                     </property>
-                     <property name="checked">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QWidget" name="fk_to_pk_hint" native="true">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="minimumSize">
-                      <size>
-                       <width>22</width>
-                       <height>22</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>22</width>
-                       <height>22</height>
-                      </size>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </item>
-                 <item row="0" column="1">
-                  <spacer name="horizontalSpacer">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>318</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item row="1" column="0" colspan="2">
-                  <widget class="QLabel" name="conn_fk_pk_lbl">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>0</width>
-                     <height>101</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>555</width>
-                     <height>101</height>
-                    </size>
-                   </property>
-                   <property name="frameShape">
-                    <enum>QFrame::StyledPanel</enum>
-                   </property>
-                   <property name="frameShadow">
-                    <enum>QFrame::Sunken</enum>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                   <property name="textFormat">
-                    <enum>Qt::PlainText</enum>
-                   </property>
-                   <property name="pixmap">
-                    <pixmap resource="../res/resources.qrc">:/imagens/imagens/rel_fk_to_pk.png</pixmap>
-                   </property>
-                   <property name="textInteractionFlags">
-                    <set>Qt::NoTextInteraction</set>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <layout class="QGridLayout" name="gridLayout_4">
-                 <item row="0" column="0">
-                  <layout class="QHBoxLayout" name="horizontalLayout_2">
-                   <item>
-                    <widget class="QRadioButton" name="center_pnts_rb">
-                     <property name="statusTip">
-                      <string>This mode is the classical one. It connects the relationship to tables through their central points.</string>
-                     </property>
-                     <property name="text">
-                      <string>Connect tables' center points</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QWidget" name="center_pnts_hint" native="true">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="minimumSize">
-                      <size>
-                       <width>22</width>
-                       <height>22</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>22</width>
-                       <height>22</height>
-                      </size>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </item>
-                 <item row="0" column="1">
-                  <spacer name="horizontalSpacer_2">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>298</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item row="1" column="0" colspan="2">
-                  <widget class="QLabel" name="conn_cnt_pnts_lbl">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>0</width>
-                     <height>101</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>555</width>
-                     <height>101</height>
-                    </size>
-                   </property>
-                   <property name="frameShape">
-                    <enum>QFrame::StyledPanel</enum>
-                   </property>
-                   <property name="frameShadow">
-                    <enum>QFrame::Sunken</enum>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                   <property name="textFormat">
-                    <enum>Qt::PlainText</enum>
-                   </property>
-                   <property name="pixmap">
-                    <pixmap resource="../res/resources.qrc">:/imagens/imagens/rel_center_pnts.png</pixmap>
-                   </property>
-                   <property name="textInteractionFlags">
-                    <set>Qt::NoTextInteraction</set>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <layout class="QGridLayout" name="gridLayout_7">
-                 <item row="0" column="0">
-                  <layout class="QHBoxLayout" name="horizontalLayout_3">
-                   <item>
-                    <widget class="QRadioButton" name="tab_edges_rb">
-                     <property name="statusTip">
-                      <string>This mode determines the optimal point where the relationship is connected in the tables' edges taking their position into account.</string>
-                     </property>
-                     <property name="text">
-                      <string>Connect tables' edges</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QWidget" name="tab_edges_hint" native="true">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="minimumSize">
-                      <size>
-                       <width>22</width>
-                       <height>22</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>22</width>
-                       <height>22</height>
-                      </size>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </item>
-                 <item row="0" column="1">
-                  <spacer name="horizontalSpacer_5">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>338</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item row="1" column="0" colspan="2">
-                  <widget class="QLabel" name="conn_tab_edges_lbl">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>0</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>555</width>
-                     <height>16777215</height>
-                    </size>
-                   </property>
-                   <property name="frameShape">
-                    <enum>QFrame::StyledPanel</enum>
-                   </property>
-                   <property name="frameShadow">
-                    <enum>QFrame::Sunken</enum>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                   <property name="textFormat">
-                    <enum>Qt::PlainText</enum>
-                   </property>
-                   <property name="pixmap">
-                    <pixmap resource="../res/resources.qrc">:/imagens/imagens/rel_tab_edges.png</pixmap>
-                   </property>
-                   <property name="textInteractionFlags">
-                    <set>Qt::NoTextInteraction</set>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-              </layout>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>101</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>555</width>
+                <height>101</height>
+               </size>
+              </property>
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Sunken</enum>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="textFormat">
+               <enum>Qt::PlainText</enum>
+              </property>
+              <property name="pixmap">
+               <pixmap resource="../res/resources.qrc">:/imagens/imagens/rel_fk_to_pk.png</pixmap>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::NoTextInteraction</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QGridLayout" name="gridLayout_4">
+            <item row="0" column="0">
+             <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <item>
+               <widget class="QRadioButton" name="center_pnts_rb">
+                <property name="statusTip">
+                 <string>This mode is the classical one. It connects the relationship to tables through their central points. It implies the usage of the classical ER notation.</string>
+                </property>
+                <property name="text">
+                 <string>Connect tables' center points</string>
+                </property>
+                <property name="autoRepeat">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="center_pnts_hint" native="true">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>22</width>
+                  <height>22</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>22</width>
+                  <height>22</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="0" column="1">
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>298</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="1" column="0" colspan="2">
+             <widget class="QLabel" name="conn_cnt_pnts_lbl">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>101</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>555</width>
+                <height>101</height>
+               </size>
+              </property>
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Sunken</enum>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="textFormat">
+               <enum>Qt::PlainText</enum>
+              </property>
+              <property name="pixmap">
+               <pixmap resource="../res/resources.qrc">:/imagens/imagens/rel_center_pnts.png</pixmap>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::NoTextInteraction</set>
+              </property>
              </widget>
             </item>
            </layout>
@@ -1066,7 +1047,7 @@
  </widget>
  <tabstops>
   <tabstop>settings_twg</tabstop>
-  <tabstop>fk_to_pk_chk</tabstop>
+  <tabstop>fk_to_pk_rb</tabstop>
   <tabstop>center_pnts_rb</tabstop>
   <tabstop>deferrable_chk</tabstop>
   <tabstop>deferral_cmb</tabstop>
