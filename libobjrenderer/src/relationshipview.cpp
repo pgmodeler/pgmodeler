@@ -1460,6 +1460,8 @@ void RelationshipView::configureCrowsFootDescriptors(void)
 
 		for(unsigned tab_id = BaseRelationship::SRC_TABLE; tab_id <= BaseRelationship::DST_TABLE; tab_id++)
 		{
+			cf_descriptors[tab_id]->setRotation(0);
+
 			for(auto &line : *cf_lines[tab_id])
 			{
 				cf_descriptors[tab_id]->removeFromGroup(line);
