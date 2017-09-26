@@ -871,7 +871,8 @@ void RelationshipView::configureLine(void)
 					if(rel_type == BaseRelationship::RELATIONSHIP_GEN ||
 						 rel_type == BaseRelationship::RELATIONSHIP_DEP ||
 						 rel_type == BaseRelationship::RELATIONSHIP_11 ||
-						 (tab_idx == 0 && (rel_type == BaseRelationship::RELATIONSHIP_1N || rel_type == BaseRelationship::RELATIONSHIP_FK)))
+						 (tab_idx == 0 && rel_type == BaseRelationship::RELATIONSHIP_1N) ||
+						 (tab_idx == 1 && rel_type == BaseRelationship::RELATIONSHIP_FK))
 						border_factor = CONN_LINE_LENGTH * 0.30;
 					else
 						border_factor = CONN_LINE_LENGTH * 0.75;
