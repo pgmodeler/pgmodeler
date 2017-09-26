@@ -1013,9 +1013,9 @@ void RelationshipView::configureLine(void)
 
 					//If the relationship is identifier or bidirectional, the line has its thickness modified
 					if(rel && (rel->isIdentifier() && vet_idx==0))
-						pen.setWidthF(1.75f);
+						pen.setWidthF(OBJ_BORDER_WIDTH * 1.90f);
 					else
-						pen.setWidthF(1.15f);
+						pen.setWidthF(OBJ_BORDER_WIDTH * 1.45f);
 
 					lin->setLine(QLineF(ref_pnt->at(i), ref_points[vet_idx]));
 					lin->setPen(pen);
@@ -1050,9 +1050,9 @@ void RelationshipView::configureLine(void)
 
 			//If the relationship is identifier or bidirectional, the line has its thickness modified
 			if(bidirectional || (rel && (rel->isIdentifier() && i >= idx_lin_desc)))
-				pen.setWidthF(1.75f);
+				pen.setWidthF(OBJ_BORDER_WIDTH * 1.90f);
 			else
-				pen.setWidthF(1.15f);
+				pen.setWidthF(OBJ_BORDER_WIDTH * 1.45f);
 
 			lin->setLine(QLineF(points[i], points[i+1]));
 			lin->setPen(pen);

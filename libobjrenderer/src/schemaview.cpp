@@ -223,7 +223,7 @@ void SchemaView::configureObject(void)
 		this->setFlag(ItemSendsGeometryChanges, true);
 
 		color=schema->getFillColor();
-		color.setAlpha(80);
+		color.setAlpha(OBJ_ALPHA_CHANNEL * 0.80);
 		box->setBrush(color);
 
 		color=QColor(color.red()/3,color.green()/3,color.blue()/3, 80);

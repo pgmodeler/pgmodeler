@@ -114,7 +114,9 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		static constexpr double VERT_SPACING=2.0f,
 		HORIZ_SPACING=2.0f,
 		DEFAULT_FONT_SIZE=9.0f,
-		OBJ_BORDER_WIDTH=0.80f;
+		OBJ_BORDER_WIDTH=0.85f;
+
+		static constexpr int OBJ_ALPHA_CHANNEL=128;
 
 		BaseObjectView(BaseObject *object=nullptr);
 		virtual ~BaseObjectView(void);

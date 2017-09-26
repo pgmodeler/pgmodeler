@@ -58,6 +58,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 	Column *column=dynamic_cast<Column *>(this->getSourceObject());
 	bool ellipse_desc=false;
 	double factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE) * BaseObjectView::getScreenDpiFactor();
+	QPen pen;
 
 	//Based upon the source object type the descriptor is allocated
 	if(this->getSourceObject())
@@ -102,7 +103,10 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 				attrib=ParsersAttributes::COLUMN;
 
 			desc->setBrush(this->getFillStyle(attrib));
-			desc->setPen(this->getBorderStyle(attrib));
+
+			pen = this->getBorderStyle(attrib);
+			pen.setWidthF(OBJ_BORDER_WIDTH * 1.15f);
+			desc->setPen(pen);
 		}
 		else
 		{
@@ -140,7 +144,10 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 
 			desc->setPolygon(pol);
 			desc->setBrush(this->getFillStyle(attrib));
-			desc->setPen(this->getBorderStyle(attrib));
+
+			pen = this->getBorderStyle(attrib);
+			pen.setWidthF(OBJ_BORDER_WIDTH * 1.15f);
+			desc->setPen(pen);
 		}
 	}
 	else if(obj_type==OBJ_INDEX || obj_type==OBJ_RULE ||
@@ -160,7 +167,10 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 
 		desc->setPolygon(pol);
 		desc->setBrush(this->getFillStyle(tab_obj->getSchemaName()));
-		desc->setPen(this->getBorderStyle(tab_obj->getSchemaName()));
+
+		pen = this->getBorderStyle(tab_obj->getSchemaName());
+		pen.setWidthF(OBJ_BORDER_WIDTH * 1.15f);
+		desc->setPen(pen);
 	}
 	else
 	{
@@ -169,7 +179,10 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 		desc->setRect(QRectF(QPointF(0,0),
 							 QSizeF(9.0f * factor, 9.0f * factor)));
 		desc->setBrush(this->getFillStyle(ParsersAttributes::REFERENCE));
-		desc->setPen(this->getBorderStyle(ParsersAttributes::REFERENCE));
+
+		pen = this->getBorderStyle(ParsersAttributes::REFERENCE);
+		pen.setWidthF(OBJ_BORDER_WIDTH * 1.15f);
+		desc->setPen(pen);
 	}
 }
 

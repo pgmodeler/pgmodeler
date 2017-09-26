@@ -344,8 +344,8 @@ QLinearGradient BaseObjectView::getFillStyle(const QString &id)
 		{
 			if(id==ParsersAttributes::OBJ_SELECTION || id==ParsersAttributes::PLACEHOLDER)
 			{
-				colors[0].setAlpha(128);
-				colors[1].setAlpha(128);
+				colors[0].setAlpha(OBJ_ALPHA_CHANNEL);
+				colors[1].setAlpha(OBJ_ALPHA_CHANNEL);
 			}
 
 			grad.setCoordinateMode(QGradient::ObjectBoundingMode);
@@ -369,7 +369,7 @@ QPen BaseObjectView::getBorderStyle(const QString &id)
 		if(!colors.empty())
 		{
 			if(id==ParsersAttributes::OBJ_SELECTION)
-				colors[2].setAlpha(128);
+				colors[2].setAlpha(OBJ_ALPHA_CHANNEL);
 
 			pen.setWidthF(OBJ_BORDER_WIDTH);
 			pen.setColor(colors[2]);
