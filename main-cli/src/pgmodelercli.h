@@ -34,6 +34,8 @@
 #include "modelexporthelper.h"
 #include "generalconfigwidget.h"
 #include "connectionsconfigwidget.h"
+#include "relationshipconfigwidget.h"
+#include "generalconfigwidget.h"
 
 class PgModelerCLI: public QApplication {
 	private:
@@ -58,6 +60,11 @@ class PgModelerCLI: public QApplication {
 
 		//! \brief Connection configuration widget used to load available connections from file
 		ConnectionsConfigWidget conn_conf;
+
+		//! \brief Relationship configuration widget used to load custom relationship settings
+		RelationshipConfigWidget rel_conf;
+
+		GeneralConfigWidget general_conf;
 
 		//! \brief Creates an standard out to handles QStrings
 		static QTextStream out;

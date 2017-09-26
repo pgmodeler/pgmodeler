@@ -315,6 +315,12 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 		conn_conf.loadConfiguration();
 		conn_conf.getConnections(connections, false);
 	}
+	//Loading general and relationship settings when exporting to image formats
+	else if(opts.count(EXPORT_TO_PNG) || opts.count(EXPORT_TO_SVG))
+	{
+		general_conf.loadConfiguration();
+		rel_conf.loadConfiguration();
+	}
 
 	if(opts.empty() || opts.count(HELP))
 		showMenu();
