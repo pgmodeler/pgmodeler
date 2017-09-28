@@ -821,11 +821,11 @@ void ModelsDiffHelper::processDiffInfos(void)
 
 		diff_def.clear();
 
-		if(!drop_objs.empty() || !create_objs.empty() || !alter_objs.empty() || !create_fks.empty() ||
-				!inherit_def.isEmpty() || !no_inherit_def.isEmpty() || !set_perms.isEmpty() ||
-				!col_drop_def.isEmpty())
+		if(!drop_objs.empty() || !create_objs.empty() || !alter_objs.empty() ||
+			 !create_fks.empty() || !create_constrs.empty() || !inherit_def.isEmpty() ||
+			 !no_inherit_def.isEmpty() || !set_perms.isEmpty() || !col_drop_def.isEmpty())
 		{
-			unsigned create_objs_count=create_objs.size() + create_fks.size();
+			unsigned create_objs_count=create_objs.size() + create_constrs.size() + create_fks.size();
 			bool has_diffs=false;
 
 			sch_names.removeDuplicates();
