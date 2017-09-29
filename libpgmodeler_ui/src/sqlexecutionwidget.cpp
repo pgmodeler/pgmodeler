@@ -22,6 +22,7 @@
 #include "snippetsconfigwidget.h"
 #include "pgmodeleruins.h"
 #include "plaintextitemdelegate.h"
+#include "datamanipulationform.h"
 
 map<QString, QString> SQLExecutionWidget::cmd_history;
 
@@ -691,6 +692,10 @@ void SQLExecutionWidget::copySelection(QTableWidget *results_tbw, bool use_popup
 				buf=generateCSVBuffer(results_tbw,
 															selection.topRow(), selection.leftColumn(),
 															selection.rowCount(), selection.columnCount());
+
+				/* Making DataManipulationForm instances know that the clipboard has csv buffer
+				 * in order to paste the contents properly */
+				DataManipulationForm::setHasCsvClipboard(true);
 			}
 			else if((use_popup && act == act_txt) || (!use_popup && !csv_is_default))
 			{

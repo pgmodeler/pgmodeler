@@ -216,6 +216,11 @@ void DataManipulationForm::setAttributes(Connection conn, const QString curr_sch
 	}
 }
 
+void DataManipulationForm::setHasCsvClipboard(bool value)
+{
+	has_csv_clipboard = value;
+}
+
 void DataManipulationForm::listTables(void)
 {
 	table_cmb->clear();
