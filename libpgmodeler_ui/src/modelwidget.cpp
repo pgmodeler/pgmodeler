@@ -298,6 +298,13 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	toggle_attrs_menu.addAction(action_hide_ext_attribs);
 	action_extended_attribs->setMenu(&toggle_attrs_menu);
 
+	action_schemas_rects=new QAction(QIcon(PgModelerUiNS::getIconPath("schemarect")), trUtf8("Schemas rectangles"), this);
+	action_show_schemas_rects=new QAction(trUtf8("Show"), this);
+	action_hide_schemas_rects=new QAction(trUtf8("Hide"), this);
+	toggle_sch_rects_menu.addAction(action_show_schemas_rects);
+	toggle_sch_rects_menu.addAction(action_hide_schemas_rects);
+	action_schemas_rects->setMenu(&toggle_sch_rects_menu);
+
 	action_fade=new QAction(QIcon(PgModelerUiNS::getIconPath("fade")), trUtf8("Fade in/out"), this);
 	action_fade_in=new QAction(QIcon(PgModelerUiNS::getIconPath("fadein")), trUtf8("Fade in"), this);
 	action_fade_out=new QAction(QIcon(PgModelerUiNS::getIconPath("fadeout")), trUtf8("Fade out"), this);
@@ -429,6 +436,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	connect(action_show_ext_attribs, SIGNAL(triggered(bool)), this, SLOT(toggleExtendedAttributes()));
 	connect(action_hide_ext_attribs, SIGNAL(triggered(bool)), this, SLOT(toggleExtendedAttributes()));
+
+	connect(action_show_schemas_rects, SIGNAL(triggered(bool)), this, SLOT(toggleSchemasRectangles()));
+	connect(action_hide_schemas_rects, SIGNAL(triggered(bool)), this, SLOT(toggleSchemasRectangles()));
 
 	connect(db_model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
 	connect(db_model, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(handleObjectRemoval(BaseObject *)));
@@ -3409,7 +3419,6 @@ void ModelWidget::toggleExtendedAttributes(void)
 
 	if(selected_objects.empty() || (selected_objects.size() == 1 && selected_objects[0] == db_model))
 	{
-
 		objects.assign(db_model->getObjectList(OBJ_TABLE)->begin(), db_model->getObjectList(OBJ_TABLE)->end());
 		objects.insert(objects.end(), db_model->getObjectList(OBJ_VIEW)->begin(), db_model->getObjectList(OBJ_VIEW)->end());
 	}
@@ -3424,6 +3433,26 @@ void ModelWidget::toggleExtendedAttributes(void)
 		{
 			base_tab->setExtAttribsHidden(hide);
 			base_tab->setModified(true);
+		}
+	}
+
+	db_model->setObjectsModified({ OBJ_SCHEMA });
+	this->setModified(true);
+}
+
+void ModelWidget::toggleSchemasRectangles(void)
+{
+	bool visible = sender() == action_show_schemas_rects;
+	Schema *schema = nullptr;
+
+	for(auto obj : *db_model->getObjectList(OBJ_SCHEMA))
+	{
+		schema = dynamic_cast<Schema *>(obj);
+
+		if(schema && schema->isRectVisible() != visible)
+		{
+			schema->setRectVisible(visible);
+			schema->setModified(true);
 		}
 	}
 
@@ -3711,6 +3740,9 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 
 		if(tab_or_view ||  objects.empty() || objects.size() == 1)
 			popup_menu.addAction(action_extended_attribs);
+
+		if(objects.empty() || (objects.size() == 1 && objects[0]->getObjectType() == OBJ_DATABASE))
+			popup_menu.addAction(action_schemas_rects);
 	}
 
 	if(!tab_obj &&

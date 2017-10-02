@@ -116,7 +116,9 @@ class ModelWidget: public QWidget {
 
 		select_all_menu,
 
-		jump_to_tab_menu;
+		jump_to_tab_menu,
+
+		toggle_sch_rects_menu;
 
 		//! \brief Stores the selected object on the scene
 		vector<BaseObject *> selected_objects;
@@ -233,7 +235,10 @@ class ModelWidget: public QWidget {
 		*action_show_ext_attribs,
 		*action_hide_ext_attribs,
 		*action_edit_creation_order,
-		*action_jump_to_table;
+		*action_jump_to_table,
+		*action_schemas_rects,
+		*action_show_schemas_rects,
+		*action_hide_schemas_rects;
 
 		//! \brief Actions used to create new objects on the model
 		map<ObjectType, QAction *> actions_new_objects;
@@ -454,6 +459,8 @@ class ModelWidget: public QWidget {
 		void fadeObjectsOut(void);
 
 		void toggleExtendedAttributes(void);
+
+		void toggleSchemasRectangles(void);
 
 		void editCreationOrder(void);
 
