@@ -1924,5 +1924,6 @@ void MainWindow::arrangeObjects(void)
 	msgbox.show(trUtf8("Rearrange objects over the canvas is an irreversible operation! Would like to proceed?"), Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
 	if(msgbox.result() == QDialog::Accepted)
-		current_model->rearrangeObjects();
+		//current_model->rearrangeObjects();
+		current_model->rearrangeTablesInSchemas();
 }

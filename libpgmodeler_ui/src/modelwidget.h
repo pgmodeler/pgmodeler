@@ -184,6 +184,10 @@ class ModelWidget: public QWidget {
 		This method returns the bounding rect of the items after the rearrangement */
 		QRectF rearrangeTablesHierarchically(BaseTableView *root, vector<BaseObject *> &evaluated_tabs);
 
+		void rearrangeTablesInSchema(Schema *schema, QPointF start);
+
+		void rearrangeTablesInSchemas(void);
+
 		void updateMagnifierArea(void);
 
 		void showMagnifierArea(bool show);

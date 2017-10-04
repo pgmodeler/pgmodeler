@@ -4562,6 +4562,142 @@ QRectF ModelWidget::rearrangeTablesHierarchically(BaseTableView *root, vector<Ba
 	return(QRectF(root->pos(), QPointF(px1, py1)));
 }
 
+void ModelWidget::rearrangeTablesInSchema(Schema *schema, QPointF start)
+{
+	vector<BaseObject *> tables, views;
+
+	tables = db_model->getObjects(OBJ_TABLE, schema);
+	views = db_model->getObjects(OBJ_VIEW, schema);
+	tables.insert(tables.end(), views.begin(), views.end());
+
+	if(!tables.empty())
+	{
+		BaseTable *base_tab = nullptr;
+		BaseTableView *tab_view = nullptr, *center_tab = nullptr, *prev_tab = nullptr;
+		double max_dim = 0, angle_inc = 0, dx = 0, dy = 0;
+		int num_rels = 0, count = tables.size();
+		QLineF line;
+		QPointF pos;
+		QRectF curr_brect, prev_brect, irect;
+		//SchemaView *sch_view = dynamic_cast<SchemaView *>(schema->getReceiverObject());
+
+		for(auto &tab : tables)
+		{
+			base_tab = dynamic_cast<BaseTable *>(tab);
+			tab_view = dynamic_cast<BaseTableView *>(base_tab->getReceiverObject());
+
+			if(tab_view->boundingRect().width() > max_dim)
+				max_dim = tab_view->boundingRect().width();
+
+			/*if(tab_view->boundingRect().height() > max_dim)
+				max_dim = tab_view->boundingRect().height(); */
+
+			if(tab_view->getConnectRelsCount() > num_rels)
+			{
+				num_rels = tab_view->getConnectRelsCount();
+				center_tab = tab_view;
+			}
+		}
+
+		/*dx = start.x() - max_dim;
+		if(dx < 0)
+			start.setX(start.x() + fabs(dx));
+
+		dy = start.y() - max_dim;
+		if(dy < 0)
+			start.setY(start.y() + fabs(dy));*/
+
+		if(tables.size() == 1)
+		{
+			base_tab = dynamic_cast<BaseTable *>(tables[0]);
+			tab_view = dynamic_cast<BaseTableView *>(base_tab->getReceiverObject());
+			tab_view->setPos(start);
+		}
+		else
+		{
+			int num_intercepts = 0;
+			double angle = 0;
+
+			if(center_tab)
+			{
+				count--;
+				center_tab->setPos(start);
+				//tables.erase(std::find(tables.begin(), tables.end(), center_tab->getSourceObject()));
+			}
+
+			angle_inc = 360 / count;
+
+			do
+			{
+				line = QLineF(start, start + QPointF(max_dim, 0));
+				angle = line.angle();
+				num_intercepts = 0;
+
+				for(auto &tab : tables)
+				{
+					base_tab = dynamic_cast<BaseTable *>(tab);
+					tab_view = dynamic_cast<BaseTableView *>(base_tab->getReceiverObject());
+
+					dx = line.dx() / fabs(line.dx());
+					dy = line.dy() / fabs(line.dy());
+					pos = line.p2();
+
+					if(tab_view != center_tab)
+					{
+						tab_view->setPos(pos);
+
+						if(prev_tab)
+						{
+							prev_brect = QRectF(prev_tab->pos(), prev_tab->boundingRect().size());
+							curr_brect = QRectF(tab_view->pos(), tab_view->boundingRect().size());
+							irect = curr_brect.intersected(prev_brect);
+
+							if(irect.isValid())
+							{
+								pos.setX(pos.x() + ((irect.width()/3) * dx) + (max_dim * 0.005));
+								pos.setY(pos.y() + ((irect.height()/3) * dy) + (max_dim * 0.005));
+								tab_view->setPos(pos);
+								num_intercepts++;
+							}
+						}
+
+						line.setP2(pos);
+						angle += angle_inc;
+						line.setAngle(angle);
+						prev_tab = tab_view;
+					}
+				}
+
+				schema->setRectVisible(true);
+				schema->setModified(true);
+				max_dim *= 1.005;
+			}
+			while(num_intercepts > 0);
+		}
+	}
+}
+
+void ModelWidget::rearrangeTablesInSchemas(void)
+{
+	Schema *schema = nullptr;
+
+	random_device rand_seed;
+	default_random_engine rand_num_engine;
+	uniform_int_distribution<unsigned> dist(0,scene->itemsBoundingRect().width());
+
+	rand_num_engine.seed(rand_seed());
+
+	for(auto &sch : *db_model->getObjectList(OBJ_SCHEMA))
+	{
+		schema = dynamic_cast<Schema *>(sch);
+		rearrangeTablesInSchema(schema, QPointF(dist(rand_num_engine), dist(rand_num_engine)));
+	}
+
+	db_model->setObjectsModified({ OBJ_TABLE, OBJ_VIEW, OBJ_SCHEMA, OBJ_RELATIONSHIP, BASE_RELATIONSHIP });
+	adjustSceneSize();
+	viewport->updateScene({ scene->sceneRect() });
+}
+
 void ModelWidget::updateMagnifierArea(void)
 {
 	QPoint pos = viewport->mapFromGlobal(QCursor::pos());
