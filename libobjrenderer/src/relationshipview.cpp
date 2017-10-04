@@ -937,6 +937,10 @@ void RelationshipView::configureLine(void)
 						p_aux[tab_idx] = pi;
 						break;
 					}
+					else
+					{
+						p_aux[tab_idx] = p_central[tab_idx];
+					}
 				}
 			}
 
