@@ -4687,13 +4687,16 @@ void ModelWidget::rearrangeTablesInSchemas(void)
 {
 	Schema *schema = nullptr;
 	SchemaView *sch_view = nullptr, *sch_view_aux = nullptr;
-	QRectF curr_brect, comp_brect, irect, scene_brect = QRectF(QPointF(0,0), scene->itemsBoundingRect().size());
+	QRectF curr_brect, comp_brect, irect;
 	random_device rand_seed;
 	default_random_engine rand_num_engine;
-	double max_w = scene_brect.width(), max_h = scene_brect.height();
+	double max_w = 1000, max_h = 1000;
 	vector<BaseObject *> schemas = *db_model->getObjectList(OBJ_SCHEMA);
 	bool has_collision = false;
-	unsigned tries = 0;
+	unsigned tries = 0,
+			max_tries = (db_model->getObjectCount(OBJ_TABLE) +
+									 db_model->getObjectCount(OBJ_VIEW) +
+									 db_model->getObjectCount(OBJ_SCHEMA)) * 100;
 	uniform_int_distribution<unsigned> dist_x(0, max_w), dist_y(0, max_h);
 
 	rand_num_engine.seed(rand_seed());
@@ -4707,9 +4710,15 @@ void ModelWidget::rearrangeTablesInSchemas(void)
 
 		rearrangeTablesInSchema(schema, QPointF(dist_x(rand_num_engine), dist_y(rand_num_engine)));
 
-		max_w = sch_view->boundingRect().width();
-		max_h = sch_view->boundingRect().height();
+		max_w += sch_view->boundingRect().width();
+		max_h += sch_view->boundingRect().height();
 	}
+
+	uniform_int_distribution<unsigned>::param_type new_dx(0, max_w * 0.40);
+	dist_x.param(new_dx);
+
+	uniform_int_distribution<unsigned>::param_type new_dy(0, max_h * 0.40);
+	dist_y.param(new_dy);
 
 	for(auto &sch : schemas)
 	{
@@ -4747,7 +4756,7 @@ void ModelWidget::rearrangeTablesInSchemas(void)
 
 			tries++;
 		}
-		while(has_collision && tries < (schemas.size() * 100));
+		while(has_collision && tries < max_tries);
 	}
 
 	db_model->setObjectsModified({ OBJ_TABLE, OBJ_VIEW, OBJ_SCHEMA, OBJ_RELATIONSHIP, BASE_RELATIONSHIP });
