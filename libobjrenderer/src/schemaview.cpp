@@ -148,9 +148,19 @@ QList<BaseObjectView *> SchemaView::getChildren(void)
 
 void SchemaView::togglePlaceholder(bool visible)
 {
-	//BaseObjectView::togglePlaceholder(visible);
 	for(auto &obj : getChildren())
 		obj->togglePlaceholder(visible);
+}
+
+void SchemaView::moveTo(QPointF new_pos)
+{
+	double dx=new_pos.x() - pos().x(),
+			dy=new_pos.y() - pos().y();
+
+	this->setPos(new_pos);
+
+	for(auto &child : children)
+		child->moveBy(dx, dy);
 }
 
 void SchemaView::configureObject(void)

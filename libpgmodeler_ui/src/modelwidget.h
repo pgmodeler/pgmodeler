@@ -184,8 +184,12 @@ class ModelWidget: public QWidget {
 		This method returns the bounding rect of the items after the rearrangement */
 		QRectF rearrangeTablesHierarchically(BaseTableView *root, vector<BaseObject *> &evaluated_tabs);
 
+		/*! \brief Arrange tables inside the provided schema randomly (scattered). An start point should
+		 * be provided. The method will avoid to put two or more tables in the same position causing
+		 * overlaping. This method causes the schema rectangle to be enabled. */
 		void rearrangeTablesInSchema(Schema *schema, QPointF start);
 
+		//! \brief Arrange all tables it their schemas randomly (scattered)
 		void rearrangeTablesInSchemas(void);
 
 		void updateMagnifierArea(void);
