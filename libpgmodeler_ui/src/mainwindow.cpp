@@ -43,6 +43,12 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	hbox->setContentsMargins(4,4,4,4);
 	canvas_info_parent->setLayout(hbox);
 
+	QToolButton *tool_btn = qobject_cast<QToolButton *>(control_tb->widgetForAction(action_arrange_objects));
+	tool_btn->setMenu(&arrange_menu);
+	tool_btn->setPopupMode(QToolButton::InstantPopup);
+	arrange_menu.addAction(trUtf8("Hierarchically"), this, SLOT(arrangeObjects()));
+	arrange_menu.addAction(trUtf8("Scattered (random)"), this, SLOT(arrangeObjects()));
+
 	try
 	{
 		models_tbw->tabBar()->setVisible(false);
@@ -219,8 +225,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	connect(model_valid_wgt, &ModelValidationWidget::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
 	connect(sql_tool_wgt, &SQLToolWidget::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
-
-	connect(action_arrange_objects, SIGNAL(triggered(bool)), this, SLOT(arrangeObjects()));
 
 	window_title=this->windowTitle() + QString(" ") + GlobalAttributes::PGMODELER_VERSION;
 
@@ -1924,6 +1928,14 @@ void MainWindow::arrangeObjects(void)
 	msgbox.show(trUtf8("Rearrange objects over the canvas is an irreversible operation! Would like to proceed?"), Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
 	if(msgbox.result() == QDialog::Accepted)
-		//current_model->rearrangeObjects();
-		current_model->rearrangeTablesInSchemas();
+	{
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+
+		if(sender() == arrange_menu.actions().at(0))
+			current_model->rearrangeObjects();
+		else
+			current_model->rearrangeTablesInSchemas();
+
+		QApplication::restoreOverrideCursor();
+	}
 }
