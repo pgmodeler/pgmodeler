@@ -141,7 +141,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		main_menu,
 
-		sample_mdls_menu;
+		sample_mdls_menu,
+
+		arrange_menu;
 
 		//! \brief QMainWindow::closeEvent() overload: Saves the configurations before close the application
 		void closeEvent(QCloseEvent *event);

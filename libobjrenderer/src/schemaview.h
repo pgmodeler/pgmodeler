@@ -67,9 +67,12 @@ class SchemaView: public BaseObjectView
 		void selectChildren(void);
 
 		unsigned getChildrenCount(void);
+
 		QList<BaseObjectView *> getChildren(void);
 
 		virtual void togglePlaceholder(bool visible);
+
+		void moveTo(QPointF new_pos);
 
 	public slots:
 		void configureObject(void);

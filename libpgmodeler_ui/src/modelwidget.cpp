@@ -4193,7 +4193,7 @@ void ModelWidget::removeRelationshipPoints(void)
 	}
 }
 
-void ModelWidget::rearrangeSchemas(QPointF origin, unsigned tabs_per_row, unsigned sch_per_row, double obj_spacing)
+void ModelWidget::rearrangeSchemasInGrid(QPointF origin, unsigned tabs_per_row, unsigned sch_per_row, double obj_spacing)
 {
 	vector<BaseObject *> *objects=nullptr;
 	Schema *schema=nullptr;
@@ -4218,7 +4218,7 @@ void ModelWidget::rearrangeSchemas(QPointF origin, unsigned tabs_per_row, unsign
 		if(sch_view && sch_view->getChildrenCount() > 0)
 		{
 			//Organizing the tables inside the schema
-			rearrangeTables(schema, QPointF(x,y), tabs_per_row, obj_spacing);
+			rearrangeTablesInGrid(schema, QPointF(x,y), tabs_per_row, obj_spacing);
 			schema->setModified(true);
 
 			cy=sch_view->pos().y() + sch_view->boundingRect().height();
@@ -4260,7 +4260,7 @@ void ModelWidget::rearrangeSchemas(QPointF origin, unsigned tabs_per_row, unsign
 	this->adjustSceneSize();
 }
 
-void ModelWidget::rearrangeTables(Schema *schema, QPointF origin, unsigned tabs_per_row, double obj_spacing)
+void ModelWidget::rearrangeTablesInGrid(Schema *schema, QPointF origin, unsigned tabs_per_row, double obj_spacing)
 {
 	if(schema)
 	{
@@ -4480,7 +4480,7 @@ void ModelWidget::rearrangeObjects(void)
 	else
 	{
 		//This is a fallback arrangement when the model does not have relationships
-		rearrangeSchemas(QPointF(50,50), 10, 5, 50);
+		rearrangeSchemasInGrid(QPointF(50,50), 10, 5, 50);
 	}
 
 	adjustSceneSize();
@@ -4560,6 +4560,226 @@ QRectF ModelWidget::rearrangeTablesHierarchically(BaseTableView *root, vector<Ba
 	}
 
 	return(QRectF(root->pos(), QPointF(px1, py1)));
+}
+
+void ModelWidget::rearrangeTablesInSchema(Schema *schema, QPointF start)
+{
+	vector<BaseObject *> tables, views;
+
+	if(!schema) return;
+
+	tables = db_model->getObjects(OBJ_TABLE, schema);
+	views = db_model->getObjects(OBJ_VIEW, schema);
+	tables.insert(tables.end(), views.begin(), views.end());
+
+	if(!tables.empty())
+	{
+		BaseTable *base_tab = nullptr;
+		BaseTableView *tab_view = nullptr,  *comp_tab = nullptr, *curr_tab = nullptr;
+
+		//If there two or less tables we put them side-by-side
+		if(tables.size() <= 2)
+		{
+			base_tab = dynamic_cast<BaseTable *>(tables[0]);
+			curr_tab = dynamic_cast<BaseTableView *>(base_tab->getReceiverObject());
+			curr_tab->setPos(start);
+
+			if(tables.size() > 1)
+			{
+				tab_view = curr_tab;
+				base_tab = dynamic_cast<BaseTable *>(tables[1]);
+				curr_tab = dynamic_cast<BaseTableView *>(base_tab->getReceiverObject());
+				curr_tab->setPos(start + QPointF(tab_view->boundingRect().width() * 1.25, 0));
+			}
+		}
+		else
+		{
+			double max_w = 0, max_h = 0;
+			bool has_collision = false;
+			QRectF curr_brect, comp_brect, irect;
+			QPointF pos;
+			random_device rand_seed;
+			default_random_engine rand_num_engine;
+			unsigned tries = 0;
+
+			rand_num_engine.seed(rand_seed());
+
+			/* Calculating the maximum width and height
+			 * The new tables' positions are calculated using these dimensions */
+			for(auto &tab : tables)
+			{
+				base_tab = dynamic_cast<BaseTable *>(tab);
+				curr_tab = dynamic_cast<BaseTableView *>(base_tab->getReceiverObject());
+				max_w += curr_tab->boundingRect().width();
+				max_h += curr_tab->boundingRect().height();
+			}
+
+			if(tables.size() >= 4)
+			{
+				max_w *= 0.50f;
+				max_h *= 0.50f;
+			}
+			else
+			{
+				max_w *= 1.15f;
+				max_h *= 1.15f;
+			}
+
+			uniform_int_distribution<unsigned> dist_x(start.x(), start.x() + max_w),
+					dist_y(start.y(), start.y() + max_h);
+
+			//Doing the first random positioning on all tables
+			for(auto &tab : tables)
+			{
+				base_tab = dynamic_cast<BaseTable *>(tab);
+				curr_tab = dynamic_cast<BaseTableView *>(base_tab->getReceiverObject());
+				pos.setX(dist_x(rand_num_engine));
+				pos.setY(dist_y(rand_num_engine));
+				curr_tab->setPos(pos);
+			}
+
+			/* Collision detection: If a table collides with other tables it'll then repositioned
+			 * until no interception is detected */
+			for(auto &tab : tables)
+			{
+				base_tab = dynamic_cast<BaseTable *>(tab);
+				curr_tab = dynamic_cast<BaseTableView *>(base_tab->getReceiverObject());
+				curr_brect = QRectF(curr_tab->pos(), curr_tab->boundingRect().size());
+				tries = 0;
+
+				do
+				{
+					has_collision = false;
+
+					for(auto &tab1 : tables)
+					{
+						if(tab == tab1)
+							continue;
+
+						base_tab = dynamic_cast<BaseTable *>(tab1);
+						comp_tab = dynamic_cast<BaseTableView *>(base_tab->getReceiverObject());
+						comp_brect = QRectF(comp_tab->pos(), comp_tab->boundingRect().size());
+						irect = comp_brect.intersected(curr_brect);
+
+						if(irect.isValid())
+						{
+							has_collision = true;
+							pos.setX(dist_x(rand_num_engine));
+							pos.setY(dist_y(rand_num_engine));
+							curr_tab->setPos(pos);
+							curr_brect = QRectF(curr_tab->pos(), curr_tab->boundingRect().size());
+							break;
+						}
+					}
+
+					tries++;
+				}
+				while(has_collision && tries < (tables.size() * 100));
+			}
+		}
+
+		schema->setRectVisible(true);
+		schema->setModified(true);
+	}
+}
+
+void ModelWidget::rearrangeTablesInSchemas(void)
+{
+	BaseRelationship *base_rel = nullptr;
+	Schema *schema = nullptr;
+	SchemaView *sch_view = nullptr, *sch_view_aux = nullptr;
+	QRectF curr_brect, comp_brect, irect;
+	random_device rand_seed;
+	default_random_engine rand_num_engine;
+	double max_w = 1000, max_h = 1000;
+	vector<BaseObject *> schemas = *db_model->getObjectList(OBJ_SCHEMA), rels;
+	bool has_collision = false;
+	uniform_int_distribution<unsigned> dist_x(0, max_w), dist_y(0, max_h);
+	unsigned tries = 0,
+			max_tries = (db_model->getObjectCount(OBJ_TABLE) +
+									 db_model->getObjectCount(OBJ_VIEW) +
+									 db_model->getObjectCount(OBJ_SCHEMA)) * 100;
+
+
+	rand_num_engine.seed(rand_seed());
+
+	/* Rearraging tables inside schemas and determining the maximum width and height by summing
+	 * all schemas widths and heights. These values will be serve as the maximum
+	 * position limit for the schemas */
+	for(auto &sch : schemas)
+	{
+		schema = dynamic_cast<Schema *>(sch);
+		sch_view = dynamic_cast<SchemaView *>(schema->getReceiverObject());
+
+		if(!sch_view)	continue;
+
+		rearrangeTablesInSchema(schema, QPointF(dist_x(rand_num_engine), dist_y(rand_num_engine)));
+
+		max_w += sch_view->boundingRect().width();
+		max_h += sch_view->boundingRect().height();
+	}
+
+	uniform_int_distribution<unsigned>::param_type new_dx(0, max_w * 0.40);
+	dist_x.param(new_dx);
+
+	uniform_int_distribution<unsigned>::param_type new_dy(0, max_h * 0.40);
+	dist_y.param(new_dy);
+
+	/* Collision detection: If a schema collides with other schemas it'll then repositioned
+	 * until no interception is detected or the tries reached the max_tries value */
+	for(auto &sch : schemas)
+	{
+		schema = dynamic_cast<Schema *>(sch);
+		sch_view = dynamic_cast<SchemaView *>(schema->getReceiverObject());
+		tries = 0;
+
+		if(!sch_view)	continue;
+
+		curr_brect = QRectF(sch_view->pos(), sch_view->boundingRect().size());
+
+		do
+		{
+			has_collision = false;
+
+			for(auto &sch1 : schemas)
+			{
+				schema = dynamic_cast<Schema *>(sch1);
+				sch_view_aux = dynamic_cast<SchemaView *>(schema->getReceiverObject());
+
+				if(sch == sch1 || !sch_view_aux)
+					continue;
+
+				comp_brect = QRectF(sch_view_aux->pos(), sch_view_aux->boundingRect().size());
+				irect = comp_brect.intersected(curr_brect);
+
+				if(irect.isValid())
+				{
+					has_collision = true;
+					sch_view->moveTo(QPointF(dist_x(rand_num_engine), dist_y(rand_num_engine)));
+					curr_brect = QRectF(sch_view->pos(), sch_view->boundingRect().size());
+					break;
+				}
+			}
+
+			tries++;
+		}
+		while(has_collision && tries < max_tries);
+	}
+
+	//Removing all custom points from relationships
+	rels.assign(db_model->getObjectList(OBJ_RELATIONSHIP)->begin(), db_model->getObjectList(OBJ_RELATIONSHIP)->end());
+	rels.insert(rels.end(), db_model->getObjectList(BASE_RELATIONSHIP)->begin(), db_model->getObjectList(BASE_RELATIONSHIP)->end());
+
+	for(auto &rel : rels)
+	{
+		base_rel = dynamic_cast<BaseRelationship *>(rel);
+		base_rel->setPoints({});
+		base_rel->resetLabelsDistance();
+	}
+
+	db_model->setObjectsModified({ OBJ_TABLE, OBJ_VIEW, OBJ_SCHEMA, OBJ_RELATIONSHIP, BASE_RELATIONSHIP });
+	adjustSceneSize();
+	viewport->updateScene({ scene->sceneRect() });
 }
 
 void ModelWidget::updateMagnifierArea(void)
