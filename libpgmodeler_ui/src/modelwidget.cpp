@@ -4340,7 +4340,7 @@ void ModelWidget::jumpToTable(void)
 	viewport->centerOn(tab_view);
 }
 
-void ModelWidget::rearrangeObjects(void)
+void ModelWidget::rearrangeTablesHierarchically(void)
 {
 	vector<BaseObject *> objects;
 	BaseGraphicObject *graph_obj = nullptr;
@@ -4480,7 +4480,7 @@ void ModelWidget::rearrangeObjects(void)
 	else
 	{
 		//This is a fallback arrangement when the model does not have relationships
-		rearrangeSchemasInGrid(QPointF(50,50), 10, 5, 50);
+		rearrangeSchemasInGrid(QPointF(50, 50), 10, 5, 50);
 	}
 
 	adjustSceneSize();

@@ -46,7 +46,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	QToolButton *tool_btn = qobject_cast<QToolButton *>(control_tb->widgetForAction(action_arrange_objects));
 	tool_btn->setMenu(&arrange_menu);
 	tool_btn->setPopupMode(QToolButton::InstantPopup);
-	arrange_menu.addAction(trUtf8("Hierarchically"), this, SLOT(arrangeObjects()));
+	arrange_menu.addAction(trUtf8("Grid"), this, SLOT(arrangeObjects()));
+	arrange_menu.addAction(trUtf8("Hierarchical"), this, SLOT(arrangeObjects()));
 	arrange_menu.addAction(trUtf8("Scattered"), this, SLOT(arrangeObjects()));
 
 	try
@@ -1932,7 +1933,9 @@ void MainWindow::arrangeObjects(void)
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 
 		if(sender() == arrange_menu.actions().at(0))
-			current_model->rearrangeObjects();
+			current_model->rearrangeSchemasInGrid();
+		else if(sender() == arrange_menu.actions().at(1))
+			current_model->rearrangeTablesHierarchically();
 		else
 			current_model->rearrangeTablesInSchemas();
 

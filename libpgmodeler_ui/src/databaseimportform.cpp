@@ -391,8 +391,7 @@ void DatabaseImportForm::captureThreadError(Exception e)
 	QTreeWidgetItem *item=nullptr;
 
 	if(!create_model)
-		model_wgt->rearrangeSchemasInGrid(QPointF(origin_sb->value(), origin_sb->value()),
-									tabs_per_row_sb->value(), sch_per_row_sb->value(), obj_spacing_sb->value());
+		model_wgt->rearrangeSchemasInGrid();
 
 	destroyModelWidget();
 	finishImport(trUtf8("Importing process aborted!"));
@@ -502,8 +501,7 @@ void DatabaseImportForm::handleImportCanceled(void)
 	QString msg=trUtf8("Importing process canceled by user!");
 
 	if(!create_model)
-		model_wgt->rearrangeSchemasInGrid(QPointF(origin_sb->value(), origin_sb->value()),
-									tabs_per_row_sb->value(), sch_per_row_sb->value(), obj_spacing_sb->value());
+		model_wgt->rearrangeSchemasInGrid();
 
 	destroyModelWidget();
 	finishImport(msg);
@@ -520,8 +518,8 @@ void DatabaseImportForm::handleImportFinished(Exception e)
 		msgbox.show(e, e.getErrorMessage(), Messagebox::ALERT_ICON);
 	}
 
-	model_wgt->rearrangeSchemasInGrid(QPointF(origin_sb->value(), origin_sb->value()),
-															tabs_per_row_sb->value(), sch_per_row_sb->value(), obj_spacing_sb->value());
+	model_wgt->rearrangeSchemasInGrid();
+
 	model_wgt->getDatabaseModel()->setInvalidated(false);
 
 	finishImport(trUtf8("Importing process sucessfuly ended!"));

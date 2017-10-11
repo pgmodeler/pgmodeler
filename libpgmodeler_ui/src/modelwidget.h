@@ -271,7 +271,7 @@ class ModelWidget: public QWidget {
 
 		/*! \brief Reorganizes the schemas over the scene in a grid form. The parameters are: an origin point,
 		number of tables per row, schemas per row and a object spacing */
-		void rearrangeSchemasInGrid(QPointF origin, unsigned tabs_per_row, unsigned sch_per_row, double obj_spacing);
+		void rearrangeSchemasInGrid(QPointF origin = QPointF(50, 50), unsigned tabs_per_row = 5, unsigned sch_per_row = 3, double obj_spacing = 50);
 
 		/*! \brief Reorganizes the tables of a specific schema over the scene. The parameter are:
 		 the schema in which the tables will be rearranged, an origin point, number of tables per row
@@ -346,7 +346,7 @@ class ModelWidget: public QWidget {
 
 		/*! \brief Rearrange table/view/textboxes in the canvas in such way to provide better visualization
 		 * of the whole model. Currently only hierachical arrangement is possible. See rearrangeTablesHierarchically() */
-		void rearrangeObjects(void);
+		void rearrangeTablesHierarchically(void);
 
 		void emitSceneInteracted(void);
 
