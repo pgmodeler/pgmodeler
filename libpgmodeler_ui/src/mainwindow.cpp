@@ -47,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	tool_btn->setMenu(&arrange_menu);
 	tool_btn->setPopupMode(QToolButton::InstantPopup);
 	arrange_menu.addAction(trUtf8("Hierarchically"), this, SLOT(arrangeObjects()));
-	arrange_menu.addAction(trUtf8("Scattered (random)"), this, SLOT(arrangeObjects()));
+	arrange_menu.addAction(trUtf8("Scattered"), this, SLOT(arrangeObjects()));
 
 	try
 	{

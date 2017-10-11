@@ -4193,7 +4193,7 @@ void ModelWidget::removeRelationshipPoints(void)
 	}
 }
 
-void ModelWidget::rearrangeSchemas(QPointF origin, unsigned tabs_per_row, unsigned sch_per_row, double obj_spacing)
+void ModelWidget::rearrangeSchemasInGrid(QPointF origin, unsigned tabs_per_row, unsigned sch_per_row, double obj_spacing)
 {
 	vector<BaseObject *> *objects=nullptr;
 	Schema *schema=nullptr;
@@ -4218,7 +4218,7 @@ void ModelWidget::rearrangeSchemas(QPointF origin, unsigned tabs_per_row, unsign
 		if(sch_view && sch_view->getChildrenCount() > 0)
 		{
 			//Organizing the tables inside the schema
-			rearrangeTables(schema, QPointF(x,y), tabs_per_row, obj_spacing);
+			rearrangeTablesInGrid(schema, QPointF(x,y), tabs_per_row, obj_spacing);
 			schema->setModified(true);
 
 			cy=sch_view->pos().y() + sch_view->boundingRect().height();
@@ -4260,7 +4260,7 @@ void ModelWidget::rearrangeSchemas(QPointF origin, unsigned tabs_per_row, unsign
 	this->adjustSceneSize();
 }
 
-void ModelWidget::rearrangeTables(Schema *schema, QPointF origin, unsigned tabs_per_row, double obj_spacing)
+void ModelWidget::rearrangeTablesInGrid(Schema *schema, QPointF origin, unsigned tabs_per_row, double obj_spacing)
 {
 	if(schema)
 	{
@@ -4480,7 +4480,7 @@ void ModelWidget::rearrangeObjects(void)
 	else
 	{
 		//This is a fallback arrangement when the model does not have relationships
-		rearrangeSchemas(QPointF(50,50), 10, 5, 50);
+		rearrangeSchemasInGrid(QPointF(50,50), 10, 5, 50);
 	}
 
 	adjustSceneSize();
@@ -4685,22 +4685,27 @@ void ModelWidget::rearrangeTablesInSchema(Schema *schema, QPointF start)
 
 void ModelWidget::rearrangeTablesInSchemas(void)
 {
+	BaseRelationship *base_rel = nullptr;
 	Schema *schema = nullptr;
 	SchemaView *sch_view = nullptr, *sch_view_aux = nullptr;
 	QRectF curr_brect, comp_brect, irect;
 	random_device rand_seed;
 	default_random_engine rand_num_engine;
 	double max_w = 1000, max_h = 1000;
-	vector<BaseObject *> schemas = *db_model->getObjectList(OBJ_SCHEMA);
+	vector<BaseObject *> schemas = *db_model->getObjectList(OBJ_SCHEMA), rels;
 	bool has_collision = false;
+	uniform_int_distribution<unsigned> dist_x(0, max_w), dist_y(0, max_h);
 	unsigned tries = 0,
 			max_tries = (db_model->getObjectCount(OBJ_TABLE) +
 									 db_model->getObjectCount(OBJ_VIEW) +
 									 db_model->getObjectCount(OBJ_SCHEMA)) * 100;
-	uniform_int_distribution<unsigned> dist_x(0, max_w), dist_y(0, max_h);
+
 
 	rand_num_engine.seed(rand_seed());
 
+	/* Rearraging tables inside schemas and determining the maximum width and height by summing
+	 * all schemas widths and heights. These values will be serve as the maximum
+	 * position limit for the schemas */
 	for(auto &sch : schemas)
 	{
 		schema = dynamic_cast<Schema *>(sch);
@@ -4720,6 +4725,8 @@ void ModelWidget::rearrangeTablesInSchemas(void)
 	uniform_int_distribution<unsigned>::param_type new_dy(0, max_h * 0.40);
 	dist_y.param(new_dy);
 
+	/* Collision detection: If a schema collides with other schemas it'll then repositioned
+	 * until no interception is detected or the tries reached the max_tries value */
 	for(auto &sch : schemas)
 	{
 		schema = dynamic_cast<Schema *>(sch);
@@ -4757,6 +4764,17 @@ void ModelWidget::rearrangeTablesInSchemas(void)
 			tries++;
 		}
 		while(has_collision && tries < max_tries);
+	}
+
+	//Removing all custom points from relationships
+	rels.assign(db_model->getObjectList(OBJ_RELATIONSHIP)->begin(), db_model->getObjectList(OBJ_RELATIONSHIP)->end());
+	rels.insert(rels.end(), db_model->getObjectList(BASE_RELATIONSHIP)->begin(), db_model->getObjectList(BASE_RELATIONSHIP)->end());
+
+	for(auto &rel : rels)
+	{
+		base_rel = dynamic_cast<BaseRelationship *>(rel);
+		base_rel->setPoints({});
+		base_rel->resetLabelsDistance();
 	}
 
 	db_model->setObjectsModified({ OBJ_TABLE, OBJ_VIEW, OBJ_SCHEMA, OBJ_RELATIONSHIP, BASE_RELATIONSHIP });
