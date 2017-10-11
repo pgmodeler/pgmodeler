@@ -203,6 +203,7 @@ void SQLToolWidget::disconnectFromDatabases(void)
 
 			connections_cmb->setCurrentIndex(0);
 			disconnect_tb->setEnabled(false);
+			sourcecode_txt->clear();
 		}
 	}
 	catch(Exception &e)

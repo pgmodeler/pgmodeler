@@ -528,7 +528,10 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	QGraphicsScene::mousePressEvent(event);
 
 	if(is_deselection)
+	{
 		this->blockItemsSignals(false);
+		emit s_objectSelected(nullptr, false);
+	}
 
 	if(event->buttons()==Qt::LeftButton)
 	{
