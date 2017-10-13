@@ -1,6 +1,47 @@
 Change Log
 ---------
 
+v0.9.1-alpha
+------
+<em>Release date: October 20, 2017</em><br/>
+
+* [New] Added support to crow's foot notation.
+* [New] Added the crow's foot notation switch in RelationshipConfigWidget.
+* [New] Added the grid arrangement in the arrangment menu at MainWindow.
+* [New] Added the schema arrangement (scattered).
+* [New] Added an action to toggle schemas rectangle on ModelWidget.
+* [New] CLI now loads the relationship and general settings to reflect relationship styles in export modes.
+* [New] Added support to connect relatinship on tables' edges when using classical notation.
+* [Change] Removed the controls related to arragement in DatabaseImportForm.
+* [Change] Minor adjustments in tables' spacing in auto arrangement process.
+* [Change] Minor improvement on SQLExecutionWidget and DataManipulationForm in order to make possible to paste csv buffer from SQLExecutionWidget to DataManipulationForm.
+* [Change] Improvements done in the Spanish UI translation.
+* [Change] Changed the position of the zoom info icon in SceneInfoWidget.
+* [Change] Minor adjustments in the pen width of relationship lines and objects borders.
+* [Change] Minor improvement when aligning objects to grid forcing the relationships updating.
+* [Change] Minor arrangement of the connection modes in RelationshipConfigWidget.
+* [Change] Improved the performance of (de)selection of several objects at once in ModelWidget and ObjectsScene.
+* [Change] Removed unused attributes from BezierCurveItem.
+* [Change] Improved the BezierCurveItem class to enable the drawing of inverted curve by inverting its bounding rect.
+* [Change] Improved the import of index objects.
+* [Change] Minor tweak to enable clipboard usage in macOS when copying data in DataManipulationForm.
+* [Fix] Fixed a bug in ObjectsScene that was not emitting signals of deselection correctly.
+* [Fix] Fixed a bug in SQLToolWidget that was not cleaning up the source code pane when all databases were disconnected.
+* [Fix] Fixed a bug that was causing the diff process to try to remove the not null constraint of a primary key.
+* [Fix] Fixed a bug that was causing relationship line to be wrongly constructed in case the tables bounding rects don't intercepted.
+* [Fix] Fixed a bug that was recognizing the creation of a constraint but wasn't generating the SQL in diff process.
+* [Fix] Minor fix in order to avoid the inheritance/dependency descriptor to be rotated to the wrong size when curved lines are being used.
+* [Fix] Fixed the generation of sql comments for database and tablespace.
+* [Fix] Minor fix in example.dbm
+* [Fix] Fixed the configuration of bidirectional fk relationships when crow's foot is enabled.
+* [Fix] Fix a bug in GeneralConfigWidget that was reverting the grid optins everytime the user applyed settings.
+* [Fix] Fixed the genaration of index elements containing expressions.
+* [Fix] Fixed the import of operators and operator classes.
+* [Fix] Fixed the generation of operator signature by removing the length/precision of the types.
+* [Fix] Minor fix in CSVLoadWidget::loadCsvFromBuffer in order to preserve the line breaks avoiding the creation of unecessary lines.
+* [Fix] Fixed the import of exclude constraint.
+* [Fix] Fixed the import of timestamp(0) type.
+
 v0.9.0
 ------
 <em>Release date: September 1st, 2017</em><br/>
