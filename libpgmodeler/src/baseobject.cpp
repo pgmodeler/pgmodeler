@@ -167,7 +167,8 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 		 case the name will be enclosed in quotes */
 		qtd=name.size();
 		needs_fmt=(!is_operator &&
-				 (name.indexOf('-')>=0 ||
+				 (name.indexOf('\'')>=0 ||
+					name.indexOf('-')>=0 ||
 					name.indexOf('.')>=0 ||
 					name.indexOf('@')>=0 ||
 					name.indexOf(' ')>=0 ||
@@ -234,7 +235,7 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 bool BaseObject::isValidName(const QString &name)
 {
 	QString aux_name=name;
-	QByteArray special_chars=QByteArray("_-.@ $:()/\\");
+	QByteArray special_chars=QByteArray("'_-.@ $:()/\\");
 
 	if(aux_name.contains(QRegExp("^(\")(.)+(\")$")))
 	{

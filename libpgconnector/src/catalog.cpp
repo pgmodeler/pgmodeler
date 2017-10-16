@@ -161,6 +161,14 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 {
 	QString sql, custom_filter;
 
+	/* Escaping apostrophe (') in the attributes values to avoid SQL errors
+	 * due to support to this char in the middle of objects' names */
+	for(auto &attr : attribs)
+	{
+		if(attr.second.contains(QChar('\'')))
+			attr.second.replace(QChar('\''), QString("''"));
+	}
+
 	schparser.setPgSQLVersion(connection.getPgSQLVersion(true));
 	attribs[qry_type]=ParsersAttributes::_TRUE_;
 
