@@ -165,7 +165,7 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 	 * due to support to this char in the middle of objects' names */
 	for(auto &attr : attribs)
 	{
-		if(attr.second.contains(QChar('\'')))
+		if(attr.first != ParsersAttributes::CUSTOM_FILTER && attr.second.contains(QChar('\'')))
 			attr.second.replace(QChar('\''), QString("''"));
 	}
 

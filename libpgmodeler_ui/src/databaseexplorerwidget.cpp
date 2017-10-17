@@ -1226,7 +1226,7 @@ void DatabaseExplorerWidget::truncateTable(QTreeWidgetItem *item, bool cascade)
 				Connection conn;
 
 				attribs[ParsersAttributes::SQL_OBJECT]=BaseObject::getSQLName(OBJ_TABLE);
-				attribs[ParsersAttributes::SIGNATURE]=sch_name + QString(".") + obj_name;
+				attribs[ParsersAttributes::SIGNATURE]=sch_name + QString(".\"%1\"").arg(obj_name);
 				attribs[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : "");
 
 
