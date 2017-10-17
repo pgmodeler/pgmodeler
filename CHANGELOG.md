@@ -12,6 +12,7 @@ v0.9.1-alpha
 * [New] Added an action to toggle schemas rectangle on ModelWidget.
 * [New] CLI now loads the relationship and general settings to reflect relationship styles in export modes.
 * [New] Added support to connect relatinship on tables' edges when using classical notation.
+* [New] Added support to apostrophes in the middle of object's name.
 * [Change] Removed the controls related to arragement in DatabaseImportForm.
 * [Change] Minor adjustments in tables' spacing in auto arrangement process.
 * [Change] Minor improvement on SQLExecutionWidget and DataManipulationForm in order to make possible to paste csv buffer from SQLExecutionWidget to DataManipulationForm.
