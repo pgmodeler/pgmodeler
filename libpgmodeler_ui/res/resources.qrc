@@ -234,6 +234,7 @@
         <file>icones/arrangetables.png</file>
         <file>icones/jumptotable.png</file>
         <file>icones/schemarect.png</file>
+        <file>icones/flag_ecuador.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>
