@@ -1377,6 +1377,7 @@ void RelationshipView::configureCrowsFootDescriptors(void)
 		{
 			for(auto &item : cf_descriptors[tab_id]->childItems())
 			{
+				cf_descriptors[tab_id]->setRotation(0);
 				cf_descriptors[tab_id]->removeFromGroup(item);
 				this->removeFromGroup(item);
 				item->setVisible(false);
