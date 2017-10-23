@@ -1767,7 +1767,8 @@ void MainWindow::storeDockWidgetsSettings(void)
 	params.clear();
 
 	params[ParsersAttributes::OBJECT_FINDER]=ParsersAttributes::_TRUE_;
-	params[ParsersAttributes::HIGHLIGHT_OBJECTS]=(obj_finder_wgt->highlight_btn->isChecked() ? ParsersAttributes::_TRUE_ : QString());
+	params[ParsersAttributes::SELECT_OBJECTS]=(obj_finder_wgt->select_btn->isChecked() ? ParsersAttributes::_TRUE_ : QString());
+	params[ParsersAttributes::FADEIN_OBJECTS]=(obj_finder_wgt->fade_btn->isChecked() ? ParsersAttributes::_TRUE_ : QString());
 	params[ParsersAttributes::REGULAR_EXP]=(obj_finder_wgt->regexp_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
 	params[ParsersAttributes::CASE_SENSITIVE]=(obj_finder_wgt->case_sensitive_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
 	params[ParsersAttributes::EXACT_MATCH]=(obj_finder_wgt->exact_match_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
@@ -1795,7 +1796,8 @@ void MainWindow::restoreDockWidgetsSettings(void)
 
 	if(confs.count(ParsersAttributes::OBJECT_FINDER))
 	{
-		obj_finder_wgt->highlight_btn->setChecked(confs[ParsersAttributes::OBJECT_FINDER][ParsersAttributes::HIGHLIGHT_OBJECTS]==ParsersAttributes::_TRUE_);
+		obj_finder_wgt->select_btn->setChecked(confs[ParsersAttributes::OBJECT_FINDER][ParsersAttributes::SELECT_OBJECTS]==ParsersAttributes::_TRUE_);
+		obj_finder_wgt->fade_btn->setChecked(confs[ParsersAttributes::OBJECT_FINDER][ParsersAttributes::FADEIN_OBJECTS]==ParsersAttributes::_TRUE_);
 		obj_finder_wgt->regexp_chk->setChecked(confs[ParsersAttributes::OBJECT_FINDER][ParsersAttributes::REGULAR_EXP]==ParsersAttributes::_TRUE_);
 		obj_finder_wgt->case_sensitive_chk->setChecked(confs[ParsersAttributes::OBJECT_FINDER][ParsersAttributes::CASE_SENSITIVE]==ParsersAttributes::_TRUE_);
 		obj_finder_wgt->exact_match_chk->setChecked(confs[ParsersAttributes::OBJECT_FINDER][ParsersAttributes::EXACT_MATCH]==ParsersAttributes::_TRUE_);

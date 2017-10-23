@@ -13,7 +13,8 @@ $tb [<widget]
     [ regexp="] %if {regexp} %then true %else false %end ["]
     [ case-sensitive="] %if {case-sensitive} %then true %else false %end ["]
     [ exact-match="] %if {exact-match} %then true %else false %end ["]
-    [ highlight-objects="] %if {highlight-objects} %then true %else false %end ["]
+    [ select-objects="] %if {select-objects} %then true %else false %end ["]
+    [ fadein-objects="] %if {fadein-objects} %then true %else false %end ["]
   %else 
     %if {sqltool} %then
       [ id="sqltool"]
