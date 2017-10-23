@@ -33,7 +33,6 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 		splitter->handle(1)->setEnabled(filter_btn->isChecked());
 	});
 
-
 	connect(find_btn, SIGNAL(clicked(bool)), this, SLOT(findObjects(void)));
 	connect(hide_tb, SIGNAL(clicked(void)), this, SLOT(hide(void)));
 	connect(result_tbw, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(selectObject(void)));
@@ -41,6 +40,8 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	connect(clear_res_btn, SIGNAL(clicked(void)), this, SLOT(clearResult(void)));
 	connect(select_all_btn, SIGNAL(clicked(void)), this, SLOT(setAllObjectsChecked(void)));
 	connect(clear_all_btn, SIGNAL(clicked(void)), this, SLOT(setAllObjectsChecked(void)));
+
+
 	this->setModel(nullptr);
 	pattern_edt->installEventFilter(this);
 }
@@ -83,8 +84,37 @@ void ObjectFinderWidget::resizeEvent(QResizeEvent *event)
 		filter_btn->setToolButtonStyle(style);
 		find_btn->setToolButtonStyle(style);
 		clear_res_btn->setToolButtonStyle(style);
-		highlight_btn->setToolButtonStyle(style);
+		select_btn->setToolButtonStyle(style);
 	}
+}
+
+void ObjectFinderWidget::fadeObjects(void)
+{
+	if(!model_wgt)
+		return;
+
+	vector<BaseObject *> objects, other_objs;
+
+	for(auto obj_type : {OBJ_TABLE, OBJ_VIEW, OBJ_TEXTBOX, OBJ_RELATIONSHIP, BASE_RELATIONSHIP, OBJ_SCHEMA})
+	{
+		objects.insert(objects.end(),
+									 model_wgt->getDatabaseModel()->getObjectList(obj_type)->begin(),
+									 model_wgt->getDatabaseModel()->getObjectList(obj_type)->end());
+	}
+
+	if(!fade_btn->isChecked())
+	{
+		model_wgt->fadeObjects(objects, true);
+		return;
+	}
+
+	std::sort(objects.begin(), objects.end());
+	std::sort(found_objs.begin(), found_objs.end());
+	std::set_difference(objects.begin(), objects.end(), found_objs.begin(), found_objs.end(),
+											std::inserter(other_objs, other_objs.begin()));
+
+	model_wgt->fadeObjects(found_objs, true);
+	model_wgt->fadeObjects(other_objs, false);
 }
 
 void ObjectFinderWidget::setModel(ModelWidget *model_wgt)
@@ -99,12 +129,13 @@ void ObjectFinderWidget::setModel(ModelWidget *model_wgt)
 	pattern_lbl->setEnabled(enable);
 	find_btn->setEnabled(enable);
 	result_tbw->setEnabled(enable);
-	highlight_btn->setEnabled(enable);
+	select_btn->setEnabled(enable);
 }
 
 void ObjectFinderWidget::clearResult(void)
 {
 	selected_obj=nullptr;
+	found_objs.clear();
 
 	result_tbw->clearContents();
 	result_tbw->setRowCount(0);
@@ -117,7 +148,6 @@ void ObjectFinderWidget::findObjects(void)
 {
 	if(model_wgt)
 	{
-		vector<BaseObject *> objs;
 		vector<ObjectType> types;
 
 		clearResult();
@@ -130,24 +160,25 @@ void ObjectFinderWidget::findObjects(void)
 		}
 
 		//Search the objects on model
-		objs=model_wgt->getDatabaseModel()->findObjects(pattern_edt->text(), types, true,
+		found_objs=model_wgt->getDatabaseModel()->findObjects(pattern_edt->text(), types, true,
 														case_sensitive_chk->isChecked(), regexp_chk->isChecked(), exact_match_chk->isChecked());
 
 		//Show the found objects on the result table
-		updateObjectTable(result_tbw, objs);
+		updateObjectTable(result_tbw, found_objs);
 		found_lbl->setVisible(true);
 
 		//Show a message indicating the number of found objects
-		if(!objs.empty())
+		if(!found_objs.empty())
 		{
-			found_lbl->setText(trUtf8("Found <strong>%1</strong> object(s).").arg(objs.size()));
+			found_lbl->setText(trUtf8("Found <strong>%1</strong> object(s).").arg(found_objs.size()));
 			result_tbw->resizeColumnsToContents();
 			result_tbw->horizontalHeader()->setStretchLastSection(true);
 		}
 		else
 			found_lbl->setText(trUtf8("No objects found."));
 
-		clear_res_btn->setEnabled(!objs.empty());
+		clear_res_btn->setEnabled(!found_objs.empty());
+		fadeObjects();
 	}
 }
 
@@ -168,7 +199,7 @@ void ObjectFinderWidget::selectObject(void)
 				graph_obj=dynamic_cast<BaseGraphicObject *>(tab_obj->getParentTable());
 
 			//Highlight the graphical object when the 'highlight' button is checked
-			if(graph_obj && highlight_btn->isChecked())
+			if(graph_obj && select_btn->isChecked())
 			{
 				BaseObjectView *obj=dynamic_cast<BaseObjectView *>(graph_obj->getReceiverObject());
 				model_wgt->scene->clearSelection();

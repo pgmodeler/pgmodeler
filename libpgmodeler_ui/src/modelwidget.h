@@ -222,7 +222,7 @@ class ModelWidget: public QWidget {
 		*action_quick_actions,
 		*action_sel_sch_children,
 		*action_sel_tagged_tabs,
-		*action_highlight_object,
+		*action_select_object,
 		*action_parent_rel,
 		*action_append_sql,
 		*action_create_seq_col,
@@ -277,6 +277,8 @@ class ModelWidget: public QWidget {
 		 the schema in which the tables will be rearranged, an origin point, number of tables per row
 		 a object spacing */
 		void rearrangeTablesInGrid(Schema *schema, QPointF origin, unsigned tabs_per_row, double obj_spacing);
+
+		void fadeObjects(const vector<BaseObject *> &objects, bool fade_in);
 
 	public:
 		static constexpr double MINIMUM_ZOOM=0.050000,
