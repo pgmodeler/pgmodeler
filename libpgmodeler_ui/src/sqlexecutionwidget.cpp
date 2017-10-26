@@ -27,6 +27,7 @@
 map<QString, QString> SQLExecutionWidget::cmd_history;
 
 int SQLExecutionWidget::cmd_history_max_len = 1000;
+const QString SQLExecutionWidget::COLUMN_NULL_VALUE = QString("␀");
 
 SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 {
@@ -287,8 +288,10 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 					{
 						item->setText(res.getColumnValue(col));
 
+						/* When storing column values in the QTableWidget items we need distinguish empty from null values
+						 * Since it may affect the generation of SQL like delete when the field value is used somehow (see DataManipulationForm::getDMLCommand) */
 						if(store_data)
-							item->setData(Qt::UserRole, item->text());
+							item->setData(Qt::UserRole, res.isColumnValueNull(col) ? COLUMN_NULL_VALUE : item->text());
 					}
 
 					results_tbw->setItem(row, col, item);

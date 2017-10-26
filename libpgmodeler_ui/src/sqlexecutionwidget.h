@@ -94,6 +94,8 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		bool eventFilter(QObject *object, QEvent *event);
 
 	public:
+		static const QString COLUMN_NULL_VALUE;
+
 		SQLExecutionWidget(QWidget * parent = 0);
 
 		//! \brief Configures the connection to query the server
