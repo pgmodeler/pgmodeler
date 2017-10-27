@@ -827,7 +827,7 @@ void ModelWidget::addNewObject(void)
 			this->showObjectForm(obj_type, nullptr, parent_obj, pos);
 		}
 		else if(obj_type!=OBJ_TABLE && obj_type!=OBJ_VIEW &&
-				obj_type!=OBJ_TEXTBOX && obj_type <= BASE_TABLE)
+						obj_type!=OBJ_TEXTBOX && obj_type <= BASE_TABLE)
 			this->showObjectForm(obj_type, nullptr, parent_obj);
 		else
 		{
@@ -852,6 +852,13 @@ void ModelWidget::addNewObject(void)
 					viewport->setCursor(QCursor(action->icon().pixmap(QSize(22,22)),0,0));
 					this->new_obj_type=obj_type;
 					this->enableModelActions(false);
+
+					/* If a single table is selected and the user triggered a relationship creation action via popup menu,
+					 * we force the enabling of the relationship creation steps. This will automatically selects the current table
+					 * as source table of the relationship */
+					if(selected_objects.size() == 1 &&
+						 selected_objects[0]->getObjectType() == OBJ_TABLE && new_obj_type > BASE_TABLE)
+						configureObjectSelection();
 				}
 			}
 		}
@@ -3576,8 +3583,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 			BaseObject *obj=objects[0];
 			BaseRelationship *rel=dynamic_cast<BaseRelationship *>(obj);
 			ObjectType obj_type=obj->getObjectType(),
-					types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_INDEX,
-								OBJ_RULE, OBJ_TRIGGER },
+					types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_INDEX, OBJ_RULE, OBJ_TRIGGER },
 					sch_types[]={ OBJ_AGGREGATE, OBJ_COLLATION, OBJ_CONVERSION,
 									OBJ_DOMAIN, OBJ_EXTENSION, OBJ_FUNCTION, OBJ_OPCLASS,
 									OBJ_OPERATOR,	OBJ_OPFAMILY,	OBJ_SEQUENCE,	OBJ_TABLE,
@@ -3602,6 +3608,10 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 
 						new_object_menu.addAction(actions_new_objects[types[i]]);
 					}
+
+					if(obj_type==OBJ_TABLE)
+						new_object_menu.addAction(actions_new_objects[OBJ_RELATIONSHIP]);
+
 					action_new_object->setMenu(&new_object_menu);
 					popup_menu.insertAction(action_quick_actions, action_new_object);
 				}
