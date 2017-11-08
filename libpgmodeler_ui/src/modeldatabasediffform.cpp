@@ -32,12 +32,12 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 		htmlitem_del=new HtmlItemDelegate(this);
 		output_trw->setItemDelegateForColumn(0, htmlitem_del);
 
-		imported_model=nullptr;
-		import_helper=nullptr;
+		imported_model=loaded_model=source_model=nullptr;
+		src_import_helper=import_helper=nullptr;
 		diff_helper=nullptr;
 		export_helper=nullptr;
-		import_thread=diff_thread=export_thread=nullptr;
-		import_item=diff_item=export_item=nullptr;
+		src_import_thread=import_thread=diff_thread=export_thread=nullptr;
+		src_import_item=import_item=diff_item=export_item=nullptr;
 		export_conn=nullptr;
 		process_paused=false;
 		diff_progress=0;
@@ -119,6 +119,12 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 		connect(alter_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
 		connect(ignore_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
 		connect(ignore_error_codes_chk, SIGNAL(toggled(bool)), error_codes_edt, SLOT(setEnabled(bool)));
+		connect(src_database_rb, SIGNAL(toggled(bool)), src_database_wgt, SLOT(setEnabled(bool)));
+		connect(src_model_rb, SIGNAL(toggled(bool)), src_model_name_lbl, SLOT(setEnabled(bool)));
+		connect(src_connections_cmb, SIGNAL(activated(int)), this, SLOT(listDatabases()));
+		connect(src_database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableDiffMode()));
+		connect(src_model_rb, SIGNAL(toggled(bool)), this, SLOT(enableDiffMode()));
+		connect(src_database_rb, SIGNAL(toggled(bool)), this, SLOT(enableDiffMode()));
 
 #ifdef DEMO_VERSION
 	#warning "DEMO VERSION: forcing ignore errors in diff due to the object count limit."
@@ -146,16 +152,33 @@ ModelDatabaseDiffForm::~ModelDatabaseDiffForm(void)
 	destroyModel();
 }
 
-void ModelDatabaseDiffForm::setDatabaseModel(DatabaseModel *model)
+void ModelDatabaseDiffForm::setModelWidget(ModelWidget *model_wgt)
 {
-	source_model=model;
+	if(model_wgt)
+	{
+		source_model=loaded_model=model_wgt->getDatabaseModel();
+		src_model_name_lbl->setText(QString("%1 [%2]").arg(source_model->getName()).arg(QFileInfo(model_wgt->getFilename()).fileName()));
+		src_model_name_lbl->setToolTip(model_wgt->getFilename().isEmpty() ? trUtf8("model not saved yet") : model_wgt->getFilename());
+	}
+	else
+	{
+		src_model_name_lbl->setText(trUtf8("(none)"));
+		src_model_name_lbl->setToolTip("");
+		src_database_rb->setChecked(true);
+		src_model_rb->setEnabled(false);
+	}
 }
 
 void ModelDatabaseDiffForm::resetForm(void)
 {
+	ConnectionsConfigWidget::fillConnectionsComboBox(src_connections_cmb, true);
+	src_connections_cmb->setEnabled(src_connections_cmb->count() > 0);
+	src_connection_lbl->setEnabled(src_connections_cmb->isEnabled());
+
 	ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true, Connection::OP_DIFF);
 	connections_cmb->setEnabled(connections_cmb->count() > 0);
 	connection_lbl->setEnabled(connections_cmb->isEnabled());
+
 	enableDiffMode();
 	settings_tbw->setTabEnabled(1, false);
 	settings_tbw->setTabEnabled(2, false);
@@ -181,7 +204,20 @@ void ModelDatabaseDiffForm::showEvent(QShowEvent *)
 
 void ModelDatabaseDiffForm::createThread(unsigned thread_id)
 {
-	if(thread_id==IMPORT_THREAD)
+	if(thread_id==SRC_IMPORT_THREAD)
+	{
+		src_import_thread=new QThread;
+		src_import_helper=new DatabaseImportHelper;
+		src_import_helper->moveToThread(src_import_thread);
+
+		output_trw->setUniformRowHeights(true);
+
+		connect(src_import_thread, SIGNAL(started(void)), src_import_helper, SLOT(importDatabase()));
+		connect(src_import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)), Qt::BlockingQueuedConnection);
+		connect(src_import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)));
+		connect(src_import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)));
+	}
+	else if(thread_id==IMPORT_THREAD)
 	{
 		import_thread=new QThread;
 		import_helper=new DatabaseImportHelper;
@@ -235,7 +271,14 @@ void ModelDatabaseDiffForm::createThread(unsigned thread_id)
 
 void ModelDatabaseDiffForm::destroyThread(unsigned thread_id)
 {
-	if(thread_id==IMPORT_THREAD && import_thread)
+	if(thread_id==SRC_IMPORT_THREAD && src_import_thread)
+	{
+		delete(src_import_thread);
+		delete(src_import_helper);
+		src_import_thread=nullptr;
+		src_import_helper=nullptr;
+	}
+	else if(thread_id==IMPORT_THREAD && import_thread)
 	{
 		delete(import_thread);
 		delete(import_helper);
@@ -269,13 +312,19 @@ void ModelDatabaseDiffForm::destroyModel(void)
 	if(imported_model)
 		delete(imported_model);
 
+	if(source_model && source_model != loaded_model && src_database_rb->isChecked())
+	{
+		delete(source_model);
+		source_model = nullptr;
+	}
+
 	imported_model=nullptr;
 }
 
 void ModelDatabaseDiffForm::clearOutput(void)
 {
 	output_trw->clear();
-	import_item=diff_item=export_item=nullptr;
+	src_import_item=import_item=diff_item=export_item=nullptr;
 
 	step_lbl->setText(trUtf8("Waiting process to start..."));
 	step_ico_lbl->setPixmap(QPixmap());
@@ -293,33 +342,37 @@ void ModelDatabaseDiffForm::clearOutput(void)
 
 void ModelDatabaseDiffForm::listDatabases(void)
 {
+	QComboBox *conn_cmb = (sender() == src_connections_cmb ? src_connections_cmb : connections_cmb),
+			*db_cmb = (conn_cmb == src_connections_cmb ? src_database_cmb : database_cmb);
+	QLabel *db_lbl = (conn_cmb == src_connections_cmb ? src_database_lbl : database_lbl);
+
 	try
 	{
-		if(connections_cmb->currentIndex()==connections_cmb->count()-1 &&
-				ConnectionsConfigWidget::openConnectionsConfiguration(connections_cmb, true))
+		if(conn_cmb->currentIndex()==conn_cmb->count()-1 &&
+			 ConnectionsConfigWidget::openConnectionsConfiguration(conn_cmb, true))
 		{
 			emit s_connectionsUpdateRequest();
 		}
 
-		Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+		Connection *conn=reinterpret_cast<Connection *>(conn_cmb->itemData(conn_cmb->currentIndex()).value<void *>());
 
 		if(conn)
 		{
 			DatabaseImportHelper imp_helper;
 			imp_helper.setConnection(*conn);
-			DatabaseImportForm::listDatabases(imp_helper, database_cmb);
+			DatabaseImportForm::listDatabases(imp_helper, db_cmb);
 		}
 		else
-			database_cmb->clear();
+			db_cmb->clear();
 
-		database_cmb->setEnabled(database_cmb->count() > 0);
-		database_lbl->setEnabled(database_cmb->isEnabled());
+		db_cmb->setEnabled(db_cmb->count() > 0);
+		db_lbl->setEnabled(db_cmb->isEnabled());
 	}
 	catch(Exception &e)
 	{
-		database_cmb->clear();
-		database_cmb->setEnabled(false);
-		database_lbl->setEnabled(false);
+		db_cmb->clear();
+		db_cmb->setEnabled(false);
+		db_lbl->setEnabled(false);
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -329,20 +382,27 @@ void ModelDatabaseDiffForm::enableDiffMode(void)
 	store_in_file_wgt->setEnabled(store_in_file_rb->isChecked());
 
 	generate_btn->setEnabled(database_cmb->currentIndex() > 0 &&
-							 ((store_in_file_rb->isChecked() && !file_edt->text().isEmpty()) ||
-							  (apply_on_server_rb->isChecked())));
+													 ((src_database_rb->isChecked() && src_database_cmb->currentIndex() > 0) ||
+														(src_model_rb->isChecked() && loaded_model)) &&
+													 ((store_in_file_rb->isChecked() && !file_edt->text().isEmpty()) ||
+														(apply_on_server_rb->isChecked())));
 }
 
 void ModelDatabaseDiffForm::generateDiff(void)
 {
 	//Destroy previously allocated threads and helper before start over.
 	destroyModel();
+	destroyThread(SRC_IMPORT_THREAD);
 	destroyThread(IMPORT_THREAD);
 	destroyThread(DIFF_THREAD);
 	destroyThread(EXPORT_THREAD);
 
 	clearOutput();
-	importDatabase();
+
+	if(src_model_rb->isChecked())
+		source_model = loaded_model;
+
+	importDatabase(src_database_rb->isChecked() ? SRC_IMPORT_THREAD : IMPORT_THREAD);
 
 	buttons_wgt->setEnabled(false);
 	cancel_btn->setEnabled(true);
@@ -354,24 +414,35 @@ void ModelDatabaseDiffForm::generateDiff(void)
 	settings_tbw->setCurrentIndex(1);
 }
 
-void ModelDatabaseDiffForm::importDatabase(void)
+void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 {
 	try
 	{
-		createThread(IMPORT_THREAD);
+		if(thread_id != SRC_IMPORT_THREAD && thread_id != IMPORT_THREAD)
+			throw Exception(ERR_ALOC_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		Connection conn=(*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>())), conn1;
+		createThread(thread_id);
+
+		QThread *thread = (thread_id == SRC_IMPORT_THREAD ? src_import_thread : import_thread);
+		DatabaseImportHelper *import_hlp = (thread_id == SRC_IMPORT_THREAD ? src_import_helper : import_helper);
+		QComboBox *conn_cmb = (thread_id == SRC_IMPORT_THREAD ? src_connections_cmb : connections_cmb),
+				*db_cmb = (thread_id == SRC_IMPORT_THREAD ? src_database_cmb : database_cmb);
+		Connection conn=(*reinterpret_cast<Connection *>(conn_cmb->itemData(conn_cmb->currentIndex()).value<void *>())), conn1;
 		map<ObjectType, vector<unsigned>> obj_oids;
 		map<unsigned, vector<unsigned>> col_oids;
 		Catalog catalog;
+		DatabaseModel *db_model = nullptr;
 
 		conn1=conn;
-		step_lbl->setText(trUtf8("Importing database <strong>%1</strong>...").arg(database_cmb->currentText()));
+		step_lbl->setText(trUtf8("Importing database <strong>%1</strong>...").arg(db_cmb->currentText()));
 		step_ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("import")));
 
-		import_item=PgModelerUiNS::createOutputTreeItem(output_trw, step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
+		if(thread_id == SRC_IMPORT_THREAD)
+			src_import_item=PgModelerUiNS::createOutputTreeItem(output_trw, step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
+		else
+			import_item=PgModelerUiNS::createOutputTreeItem(output_trw, step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
 
-		conn.switchToDatabase(database_cmb->currentText());
+		conn.switchToDatabase(db_cmb->currentText());
 		pgsql_ver=conn.getPgSQLVersion(true);
 
 		catalog.setConnection(conn);
@@ -380,18 +451,27 @@ void ModelDatabaseDiffForm::importDatabase(void)
 		catalog.setFilter(Catalog::LIST_ALL_OBJS | Catalog::EXCL_BUILTIN_ARRAY_TYPES |
 						  Catalog::EXCL_EXTENSION_OBJS | Catalog::EXCL_SYSTEM_OBJS);
 		catalog.getObjectsOIDs(obj_oids, col_oids, {{ParsersAttributes::FILTER_TABLE_TYPES, ParsersAttributes::_TRUE_}});
-		obj_oids[OBJ_DATABASE].push_back(database_cmb->currentData().value<unsigned>());
+		obj_oids[OBJ_DATABASE].push_back(db_cmb->currentData().value<unsigned>());
 
-		imported_model=new DatabaseModel;
-		imported_model->createSystemObjects(true);
+		if(thread_id == SRC_IMPORT_THREAD)
+		{
+			source_model=new DatabaseModel;
+			source_model->createSystemObjects(true);
+			db_model = source_model;
+		}
+		else
+		{
+			imported_model=new DatabaseModel;
+			imported_model->createSystemObjects(true);
+			db_model = imported_model;
+		}
 
-		import_helper->setConnection(conn1);
-		import_helper->setSelectedOIDs(imported_model, obj_oids, col_oids);
-		import_helper->setCurrentDatabase(database_cmb->currentText());
-		import_helper->setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(), true,
+		import_hlp->setConnection(conn1);
+		import_hlp->setSelectedOIDs(db_model, obj_oids, col_oids);
+		import_hlp->setCurrentDatabase(db_cmb->currentText());
+		import_hlp->setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(), true,
 										ignore_errors_chk->isChecked(), false, false, false);
-
-		import_thread->start();
+		thread->start();
 	}
 	catch(Exception &e)
 	{
@@ -403,7 +483,7 @@ void ModelDatabaseDiffForm::diffModels(void)
 {
 	createThread(DIFF_THREAD);
 
-	step_lbl->setText(trUtf8("Comparing the model <strong>%1</strong> and database <strong>%2</strong>...")
+	step_lbl->setText(trUtf8("Comparing <strong>%1</strong> and <strong>%2</strong>...")
 					  .arg(source_model->getName())
 					  .arg(imported_model->getName()));
 	step_ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("diff")));
@@ -559,6 +639,12 @@ void ModelDatabaseDiffForm::cancelOperation(bool cancel_by_user)
 		PgModelerUiNS::createOutputTreeItem(output_trw, step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
 	}
 
+	if(src_import_helper && src_import_thread->isRunning())
+	{
+		src_import_helper->cancelImport();
+		src_import_thread->quit();
+	}
+
 	if(import_helper && import_thread->isRunning())
 	{
 		import_helper->cancelImport();
@@ -603,9 +689,18 @@ void ModelDatabaseDiffForm::handleImportFinished(Exception e)
 		msgbox.show(e, e.getErrorMessage(), Messagebox::ALERT_ICON);
 	}
 
-	import_thread->quit();
-	step_pb->setValue(30);
-	diffModels();
+	if(src_import_thread && src_import_thread->isRunning())
+	{
+		src_import_thread->quit();
+		src_import_item->setExpanded(false);
+		importDatabase(IMPORT_THREAD);
+	}
+	else
+	{
+		import_thread->quit();
+		step_pb->setValue(30);
+		diffModels();
+	}
 }
 
 void ModelDatabaseDiffForm::handleDiffFinished(void)
@@ -666,7 +761,16 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 {
 	msg=PgModelerUiNS::formatMessage(msg);
 
-	if(import_thread && import_thread->isRunning())
+	if(src_import_thread && src_import_thread->isRunning())
+	{
+		if(progress > 90)
+			step_pb->setValue(step_pb->value() + 5);
+
+		PgModelerUiNS::createOutputTreeItem(output_trw, msg,
+											QPixmap(PgModelerUiNS::getIconPath(obj_type)),
+											src_import_item);
+	}
+	else if(import_thread && import_thread->isRunning())
 	{
 		if(progress > 90)
 			step_pb->setValue(step_pb->value() + 5);
@@ -757,4 +861,3 @@ void ModelDatabaseDiffForm::selectOutputFile(void)
 		file_edt->setText(file);
 	}
 }
-

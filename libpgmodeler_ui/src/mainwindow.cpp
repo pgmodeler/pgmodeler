@@ -1417,11 +1417,12 @@ void MainWindow::diffModelDatabase(void)
 {
 	ModelDatabaseDiffForm modeldb_diff_frm(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 	Messagebox msg_box;
-	DatabaseModel *db_model=current_model->getDatabaseModel();
+	DatabaseModel *db_model=(current_model ? current_model->getDatabaseModel() : nullptr);
 
-	action_design->setChecked(true);
+	if(current_model)
+		action_design->setChecked(true);
 
-	if(confirm_validation && db_model->isInvalidated())
+	if(confirm_validation && db_model && db_model->isInvalidated())
 	{
 		msg_box.show(trUtf8("Confirmation"),
 					 trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the diff process it's recommended to validate in order to correctly analyze and generate the difference between the model and a database!").arg(db_model->getName()),
@@ -1437,10 +1438,10 @@ void MainWindow::diffModelDatabase(void)
 		}
 	}
 
-	if(!confirm_validation ||
-			(!db_model->isInvalidated() || (confirm_validation && msg_box.result()==QDialog::Accepted)))
+	if(!confirm_validation || !db_model ||
+			((db_model && !db_model->isInvalidated()) || (confirm_validation && msg_box.result()==QDialog::Accepted)))
 	{
-		modeldb_diff_frm.setDatabaseModel(db_model);
+		modeldb_diff_frm.setModelWidget(current_model);
 
 		stopTimers(true);
 		connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
@@ -1588,7 +1589,7 @@ void MainWindow::updateToolsState(bool model_closed)
 	action_save_model->setEnabled(enabled);
 	action_save_all->setEnabled(enabled);
 	action_export->setEnabled(enabled);
-	action_diff->setEnabled(enabled);
+	//action_diff->setEnabled(enabled);
 	action_close_model->setEnabled(enabled);
 	action_show_grid->setEnabled(enabled);
 	action_show_delimiters->setEnabled(enabled);
