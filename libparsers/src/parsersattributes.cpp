@@ -125,6 +125,7 @@ namespace ParsersAttributes {
 	CYCLE=QString("cycle"),
 	DATA_DIRECTORY=QString("data-directory"),
 	DATE=QString("date"),
+	DATABASE=QString("database"),
 	DB_MODEL=QString("dbmodel"),
 	DDL_END_TOKEN=QString("-- ddl-end --"),
 	DECL_IN_TABLE=QString("decl-in-table"),

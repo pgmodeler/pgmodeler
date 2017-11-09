@@ -87,7 +87,7 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		//! \brief PostgreSQL version used by the diff process
 		QString pgsql_ver;
 
-		int diff_progress;
+		int diff_progress, curr_step, total_steps;
 
 		bool process_paused;
 

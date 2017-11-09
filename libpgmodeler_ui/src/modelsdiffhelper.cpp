@@ -834,6 +834,10 @@ void ModelsDiffHelper::processDiffInfos(void)
 			//Attributes used on the diff schema file
 			attribs[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::_TRUE_;
 			attribs[ParsersAttributes::PGMODELER_VERSION]=GlobalAttributes::PGMODELER_VERSION;
+			attribs[ParsersAttributes::DB_MODEL]=source_model->getName();
+			attribs[ParsersAttributes::DATABASE]=imported_model->getName();
+			attribs[ParsersAttributes::DATE]=QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+			attribs[ParsersAttributes::CONNECTION]=imported_model->getName();
 			attribs[ParsersAttributes::CHANGE]=QString::number(alter_objs.size());
 			attribs[ParsersAttributes::CREATE]=QString::number(create_objs_count);
 			attribs[ParsersAttributes::DROP]=QString::number(drop_objs.size());

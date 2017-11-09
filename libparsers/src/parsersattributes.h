@@ -138,6 +138,7 @@ namespace ParsersAttributes {
 	CUSTOM_FILTER,
 	CUSTOMIDXS,
 	CYCLE,
+	DATABASE,
 	DATA_DIRECTORY,
 	DATE,
 	DB_MODEL,

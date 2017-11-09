@@ -40,7 +40,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 		src_import_item=import_item=diff_item=export_item=nullptr;
 		export_conn=nullptr;
 		process_paused=false;
-		diff_progress=0;
+		diff_progress=curr_step=total_steps=0;
 
 		apply_on_server_ht=new HintTextWidget(apply_on_server_hint, this);
 		apply_on_server_ht->setText(apply_on_server_rb->statusTip());
@@ -398,9 +398,15 @@ void ModelDatabaseDiffForm::generateDiff(void)
 	destroyThread(EXPORT_THREAD);
 
 	clearOutput();
+	curr_step = 1;
 
 	if(src_model_rb->isChecked())
+	{
 		source_model = loaded_model;
+		total_steps=3;
+	}
+	else
+		total_steps=4;
 
 	importDatabase(src_database_rb->isChecked() ? SRC_IMPORT_THREAD : IMPORT_THREAD);
 
@@ -434,7 +440,11 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 		DatabaseModel *db_model = nullptr;
 
 		conn1=conn;
-		step_lbl->setText(trUtf8("Importing database <strong>%1</strong>...").arg(db_cmb->currentText()));
+		step_lbl->setText(trUtf8("Step %1/%2: Importing database <strong>%3</strong>...")
+											.arg(curr_step)
+											.arg(total_steps)
+											.arg(db_cmb->currentText()));
+
 		step_ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("import")));
 
 		if(thread_id == SRC_IMPORT_THREAD)
@@ -483,7 +493,9 @@ void ModelDatabaseDiffForm::diffModels(void)
 {
 	createThread(DIFF_THREAD);
 
-	step_lbl->setText(trUtf8("Comparing <strong>%1</strong> and <strong>%2</strong>...")
+	step_lbl->setText(trUtf8("Step %1/%2: Comparing <strong>%3</strong> and <strong>%4</strong>...")
+						.arg(curr_step)
+						.arg(total_steps)
 					  .arg(source_model->getName())
 					  .arg(imported_model->getName()));
 	step_ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("diff")));
@@ -531,8 +543,10 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 		settings_tbw->setCurrentIndex(1);
 		apply_on_server_btn->setEnabled(true);
 
-		step_lbl->setText(trUtf8("Exporting diff to database <strong>%1</strong>...")
-						  .arg(imported_model->getName()));
+		step_lbl->setText(trUtf8("Step %1/%2: Exporting diff to database <strong>%3</strong>...")
+											.arg(curr_step)
+											.arg(total_steps)
+											.arg(imported_model->getName()));
 		step_ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("exportar")));
 
 		output_trw->collapseItem(diff_item);
@@ -689,6 +703,8 @@ void ModelDatabaseDiffForm::handleImportFinished(Exception e)
 		msgbox.show(e, e.getErrorMessage(), Messagebox::ALERT_ICON);
 	}
 
+	curr_step++;
+
 	if(src_import_thread && src_import_thread->isRunning())
 	{
 		src_import_thread->quit();
@@ -698,13 +714,13 @@ void ModelDatabaseDiffForm::handleImportFinished(Exception e)
 	else
 	{
 		import_thread->quit();
-		step_pb->setValue(30);
 		diffModels();
 	}
 }
 
 void ModelDatabaseDiffForm::handleDiffFinished(void)
 {
+	curr_step++;
 	sqlcode_txt->setPlainText(diff_helper->getDiffDefinition());
 
 #ifdef DEMO_VERSION
@@ -759,12 +775,14 @@ void ModelDatabaseDiffForm::handleErrorIgnored(QString err_code, QString err_msg
 
 void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd)
 {
+	int progress_aux = 0;
+
 	msg=PgModelerUiNS::formatMessage(msg);
+
 
 	if(src_import_thread && src_import_thread->isRunning())
 	{
-		if(progress > 90)
-			step_pb->setValue(step_pb->value() + 5);
+		progress_aux = progress/5;
 
 		PgModelerUiNS::createOutputTreeItem(output_trw, msg,
 											QPixmap(PgModelerUiNS::getIconPath(obj_type)),
@@ -772,8 +790,10 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 	}
 	else if(import_thread && import_thread->isRunning())
 	{
-		if(progress > 90)
-			step_pb->setValue(step_pb->value() + 5);
+		if(src_model_rb->isChecked())
+			progress_aux = progress/4;
+		else
+			progress_aux = 20 + (progress/5);
 
 		PgModelerUiNS::createOutputTreeItem(output_trw, msg,
 											QPixmap(PgModelerUiNS::getIconPath(obj_type)),
@@ -788,13 +808,14 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 												diff_item);
 		}
 
-		step_pb->setValue(diff_progress + (progress/3));
+		progress_aux = diff_progress + (progress/3);
 	}
 	else if(export_thread && export_thread->isRunning())
 	{
 		QTreeWidgetItem *item=nullptr;
 		QPixmap ico;
-		step_pb->setValue(diff_progress + (progress/3));
+
+		progress_aux = diff_progress + (progress/3);
 
 		if(obj_type==BASE_OBJECT)
 			ico=QPixmap(PgModelerUiNS::getIconPath("codigosql"));
@@ -806,6 +827,9 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 		if(!cmd.isEmpty())
 			PgModelerUiNS::createOutputTreeItem(output_trw, cmd, QPixmap(), item, false);
 	}
+
+	if(progress_aux > step_pb->value())
+		step_pb->setValue(progress_aux);
 
 	progress_lbl->setText(msg);
 	progress_pb->setValue(progress);
