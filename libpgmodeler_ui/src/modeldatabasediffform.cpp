@@ -352,6 +352,7 @@ void ModelDatabaseDiffForm::listDatabases(void)
 			 ConnectionsConfigWidget::openConnectionsConfiguration(conn_cmb, true))
 		{
 			emit s_connectionsUpdateRequest();
+			resetForm();
 		}
 
 		Connection *conn=reinterpret_cast<Connection *>(conn_cmb->itemData(conn_cmb->currentIndex()).value<void *>());
