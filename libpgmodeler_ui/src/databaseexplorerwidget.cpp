@@ -521,7 +521,7 @@ void DatabaseExplorerWidget::formatSequenceAttribs(attribs_map &attribs)
 		ResultSet res;
 
 		conn.connect();
-		conn.executeDMLCommand(QString("SELECT last_value FROM %1.%2").arg(sch_name).arg(BaseObject::formatName(attribs[ParsersAttributes::NAME])), res);
+		conn.executeDMLCommand(QString("SELECT last_value FROM \"%1\".\"%2\"").arg(sch_name).arg(BaseObject::formatName(attribs[ParsersAttributes::NAME])), res);
 
 		if(res.accessTuple(ResultSet::FIRST_TUPLE))
 			attribs[ParsersAttributes::LAST_VALUE]=res.getColumnValue(QString("last_value"));
