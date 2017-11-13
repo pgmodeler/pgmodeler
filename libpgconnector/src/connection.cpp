@@ -344,12 +344,13 @@ QString  Connection::getPgSQLVersion(bool major_only)
 	//If the version is 10+
 	if(raw_ver.contains(QRegExp("^((1)[0-9])(.)+")))
 	{
+		//New PostgreSQL 10+ versioning: 100001 means 10.1 (Major.Minor)
 		fmt_ver=QString("%1.%2")
 				.arg(raw_ver.mid(0,2))
-				.arg(raw_ver.mid(2,2).toInt()/10);
+				.arg(raw_ver.mid(3,1).toInt());
 
 		if(!major_only)
-			return(QString("%1.%2").arg(fmt_ver).arg(raw_ver.mid(5,1)));
+			return(QString("%1.%2").arg(raw_ver.mid(0,2)).arg(raw_ver.mid(4,2).toInt()));
 	}
 	//For versions below or equal to 9.6
 	else
