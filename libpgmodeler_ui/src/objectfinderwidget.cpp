@@ -40,7 +40,7 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	connect(clear_res_btn, SIGNAL(clicked(void)), this, SLOT(clearResult(void)));
 	connect(select_all_btn, SIGNAL(clicked(void)), this, SLOT(setAllObjectsChecked(void)));
 	connect(clear_all_btn, SIGNAL(clicked(void)), this, SLOT(setAllObjectsChecked(void)));
-
+	connect(fade_btn, SIGNAL(toggled(bool)), this, SLOT(fadeObjects()));
 
 	this->setModel(nullptr);
 	pattern_edt->installEventFilter(this);
