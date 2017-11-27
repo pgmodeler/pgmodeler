@@ -666,14 +666,14 @@
       </size>
      </property>
      <property name="toolTip">
-      <string>Fades in the graphical objects in the result list fading out the rest. The current fade in/out state of all objects is modified.</string>
+      <string>Fades outs all the graphical objects that aren't in the result list. Those within the results will be faded in. The current fade in/out state of all objects is modified.</string>
      </property>
      <property name="text">
-      <string>Fade in</string>
+      <string>Fade out</string>
      </property>
      <property name="icon">
       <iconset resource="../res/resources.qrc">
-       <normaloff>:/icones/icones/fadein.png</normaloff>:/icones/icones/fadein.png</iconset>
+       <normaloff>:/icones/icones/fadeout.png</normaloff>:/icones/icones/fadeout.png</iconset>
      </property>
      <property name="iconSize">
       <size>
