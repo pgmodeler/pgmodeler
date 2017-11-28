@@ -874,7 +874,9 @@ void ModelDatabaseDiffForm::selectOutputFile(void)
 	file_dlg.setAcceptMode(QFileDialog::AcceptSave);
 	file_dlg.setModal(true);
 	file_dlg.setNameFilter(trUtf8("SQL code (*.sql);;All files (*.*)"));
-	file_dlg.selectFile(source_model->getName() + QString("-diff.sql"));
+
+	if(source_model)
+		file_dlg.selectFile(source_model->getName() + QString("-diff.sql"));
 
 	if(file_dlg.exec()==QFileDialog::Accepted)
 	{
