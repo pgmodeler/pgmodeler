@@ -268,7 +268,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_sel_sch_children=new QAction(QIcon(PgModelerUiNS::getIconPath("seltodos")), trUtf8("Select children"), this);
 	action_sel_tagged_tabs=new QAction(QIcon(PgModelerUiNS::getIconPath("seltodos")), trUtf8("Select tagged"), this);
 
-	action_highlight_object=new QAction(QIcon(PgModelerUiNS::getIconPath("movimentado")), trUtf8("Highlight"), this);
+	action_select_object=new QAction(QIcon(PgModelerUiNS::getIconPath("movimentado")), trUtf8("Select"), this);
 	action_parent_rel=new QAction(QIcon(PgModelerUiNS::getIconPath("relationship")), trUtf8("Open relationship"), this);
 
 	action_append_sql=new QAction(QIcon(PgModelerUiNS::getIconPath("sqlappend")), trUtf8("Custom SQL"), this);
@@ -417,7 +417,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_edit_perms, SIGNAL(triggered(bool)), this, SLOT(editPermissions(void)));
 	connect(action_sel_sch_children, SIGNAL(triggered(bool)), this, SLOT(selectSchemaChildren(void)));
 	connect(action_sel_tagged_tabs, SIGNAL(triggered(bool)), this, SLOT(selectTaggedTables(void)));
-	connect(action_highlight_object, SIGNAL(triggered(bool)), this, SLOT(highlightObject(void)));
+	connect(action_select_object, SIGNAL(triggered(bool)), this, SLOT(highlightObject(void)));
 	connect(action_parent_rel, SIGNAL(triggered(bool)), this, SLOT(editObject(void)));
 	connect(action_append_sql, SIGNAL(triggered(bool)), this, SLOT(editCustomSQL(void)));
 	connect(action_create_seq_col, SIGNAL(triggered(bool)), this, SLOT(createSequenceFromColumn(void)));
@@ -827,7 +827,7 @@ void ModelWidget::addNewObject(void)
 			this->showObjectForm(obj_type, nullptr, parent_obj, pos);
 		}
 		else if(obj_type!=OBJ_TABLE && obj_type!=OBJ_VIEW &&
-				obj_type!=OBJ_TEXTBOX && obj_type <= BASE_TABLE)
+						obj_type!=OBJ_TEXTBOX && obj_type <= BASE_TABLE)
 			this->showObjectForm(obj_type, nullptr, parent_obj);
 		else
 		{
@@ -852,6 +852,13 @@ void ModelWidget::addNewObject(void)
 					viewport->setCursor(QCursor(action->icon().pixmap(QSize(22,22)),0,0));
 					this->new_obj_type=obj_type;
 					this->enableModelActions(false);
+
+					/* If a single table is selected and the user triggered a relationship creation action via popup menu,
+					 * we force the enabling of the relationship creation steps. This will automatically selects the current table
+					 * as source table of the relationship */
+					if(selected_objects.size() == 1 &&
+						 selected_objects[0]->getObjectType() == OBJ_TABLE && new_obj_type > BASE_TABLE)
+						configureObjectSelection();
 				}
 			}
 		}
@@ -3321,13 +3328,40 @@ void ModelWidget::configureFadeMenu(void)
 	}
 }
 
+void ModelWidget::fadeObjects(const vector<BaseObject *> &objects, bool fade_in)
+{
+	BaseObjectView *obj_view = nullptr;
+
+	for(auto obj : objects)
+	{
+		if(!BaseGraphicObject::isGraphicObject(obj->getObjectType()))
+			continue;
+
+		obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
+
+		if(obj_view)
+		{
+			dynamic_cast<BaseGraphicObject *>(obj)->setFadedOut(!fade_in);
+
+			obj_view->setOpacity(fade_in ? 1 : min_object_opacity);
+
+			//If the minimum opacity is zero the object hidden
+			obj_view->setVisible(fade_in || (!fade_in && min_object_opacity > 0));
+
+			this->modified = true;
+		}
+	}
+
+	scene->clearSelection();
+}
+
 void ModelWidget::fadeObjects(QAction *action, bool fade_in)
 {
 	if(!action)
 		return;
 
 	vector<BaseObject *> list;
-	BaseObjectView *obj_view = nullptr;
+	//BaseObjectView *obj_view = nullptr;
 
 	//If the database object is selected or there is no object select
 	if(selected_objects.empty() || (selected_objects.size() == 1 && selected_objects[0]->getObjectType() == OBJ_DATABASE))
@@ -3381,7 +3415,7 @@ void ModelWidget::fadeObjects(QAction *action, bool fade_in)
 		}
 	}
 
-	for(auto obj : list)
+	/*for(auto obj : list)
 	{
 		obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
 
@@ -3396,8 +3430,9 @@ void ModelWidget::fadeObjects(QAction *action, bool fade_in)
 
 			this->modified = true;
 		}
-	}
+	} */
 
+	fadeObjects(list, fade_in);
 	scene->clearSelection();
 }
 
@@ -3548,8 +3583,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 			BaseObject *obj=objects[0];
 			BaseRelationship *rel=dynamic_cast<BaseRelationship *>(obj);
 			ObjectType obj_type=obj->getObjectType(),
-					types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_INDEX,
-								OBJ_RULE, OBJ_TRIGGER },
+					types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_INDEX, OBJ_RULE, OBJ_TRIGGER },
 					sch_types[]={ OBJ_AGGREGATE, OBJ_COLLATION, OBJ_CONVERSION,
 									OBJ_DOMAIN, OBJ_EXTENSION, OBJ_FUNCTION, OBJ_OPCLASS,
 									OBJ_OPERATOR,	OBJ_OPFAMILY,	OBJ_SEQUENCE,	OBJ_TABLE,
@@ -3574,6 +3608,10 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 
 						new_object_menu.addAction(actions_new_objects[types[i]]);
 					}
+
+					if(obj_type==OBJ_TABLE)
+						new_object_menu.addAction(actions_new_objects[OBJ_RELATIONSHIP]);
+
 					action_new_object->setMenu(&new_object_menu);
 					popup_menu.insertAction(action_quick_actions, action_new_object);
 				}
@@ -3643,8 +3681,8 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 			is mainly used when the user wants to find a graphical object from the ModelObjects dockwidget*/
 			if((sender()!=this && sender()!=scene) && dynamic_cast<BaseGraphicObject *>(obj))
 			{
-				popup_menu.addAction(action_highlight_object);
-				action_highlight_object->setData(QVariant::fromValue<void *>(obj));
+				popup_menu.addAction(action_select_object);
+				action_select_object->setData(QVariant::fromValue<void *>(obj));
 			}
 
 			action_edit->setData(QVariant::fromValue<void *>(obj));

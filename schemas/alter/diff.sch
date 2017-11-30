@@ -4,8 +4,11 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {has-changes} %then
-  [-- Database diff generated with pgModeler (PostgreSQL Database Modeler).] $br
-  [-- pgModeler  version: ] {pgmodeler-ver} $br
+  [-- Diff code generated with pgModeler (PostgreSQL Database Modeler)] $br
+  [-- pgModeler version: ] {pgmodeler-ver} $br
+  [-- Diff date: ] {date} $br
+  [-- Source model: ] {dbmodel} $br
+  [-- Database: ] {database} $br
   [-- PostgreSQL version: ] {pgsql-ver} $br
 
   $br

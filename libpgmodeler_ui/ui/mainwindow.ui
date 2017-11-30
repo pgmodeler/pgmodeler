@@ -1381,7 +1381,7 @@
   </action>
   <action name="action_diff">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="icon">
     <iconset resource="../res/resources.qrc">
@@ -1391,7 +1391,7 @@
     <string>&amp;Diff</string>
    </property>
    <property name="toolTip">
-    <string>Determine the changes between model and database</string>
+    <string>Determine the changes between model/database and another database</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+D</string>

@@ -1,6 +1,25 @@
 Change Log
 ---------
 
+v0.9.1-alpha1
+------
+<em>Release date: November 30, 2017</em><br/>
+
+* [New] Added the ability to compare two databases, and not only a model and a database, in diff tool.
+* [New] Added the relationship creation buttons on the object overlay when a single table is selected.
+* [New] Added the "Relationship" action in "New" submenu on table's popup menu so the user can create relationships using the selected table as source. This avoids the need to use blank areas of the canvas to start creating relationships.
+* [New] Improved the data manipulation dialog in such way that when dealing with deletes in tables without PK, tuples with NULL values can be correctly considered.
+* [New] Improved the validations on ResultSet class.
+* [New] Added a method to indicate if a column value is null in ResultSet.
+* [New] Added support to fade in/out objects in object finder in order to highlight the graphical objects retrieved from the search.
+* [New] Added an attribute in pgmodeler.conf to store the current status of the "Fade in" button in object finder widget.
+* [Change] Minor improvement in the diff generated metadata.
+* [Change] Increased the maximum allowed amount of lines in command history.
+* [Change] Minor adjustment on diff tool so the connections combo can be correctly updated when the user edit connections from within that form.
+* [Change] Improved the progress info of diff process so it can be more accurate.
+* [Fix] Fixed the way PostgreSQL 10+ version is returned from Connection::getPgSQLVersion.
+* [Fix] Fixed the sequence importing on PostgreSQL 10.
+
 v0.9.1-alpha
 ------
 <em>Release date: October 20, 2017</em><br/>

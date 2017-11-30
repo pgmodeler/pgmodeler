@@ -119,10 +119,8 @@ int ResultSet::getColumnIndex(const QString &column_name)
 	return(col_idx);
 }
 
-char *ResultSet::getColumnValue(const QString &column_name)
+int ResultSet::validateColumnName(const QString &column_name)
 {
-	int col_idx=-1;
-
 	try
 	{
 		/* Raises an error if the user try to get the value of a column in
@@ -134,19 +132,22 @@ char *ResultSet::getColumnValue(const QString &column_name)
 			throw Exception(ERR_REF_INV_TUPLE_COLUMN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 		//Get the column index through its name
-		col_idx=getColumnIndex(column_name);
+		return (getColumnIndex(column_name));
 	}
 	catch(Exception &e)
 	{
 		//Capture and redirect any generated exception
 		throw Exception(e.getErrorMessage(), e.getErrorType(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
-
-	//Returns the column value on the current tuple
-	return(PQgetvalue(sql_result, current_tuple, col_idx));
 }
 
-char *ResultSet::getColumnValue(int column_idx)
+char *ResultSet::getColumnValue(const QString &column_name)
+{
+	//Returns the column value on the current tuple
+	return(PQgetvalue(sql_result, current_tuple, validateColumnName(column_name)));
+}
+
+void ResultSet::validateColumnIndex(int column_idx)
 {
 	//Raise an error in case the column index is invalid
 	if(column_idx < 0 || column_idx >= getColumnCount())
@@ -158,36 +159,34 @@ char *ResultSet::getColumnValue(int column_idx)
 		throw Exception(ERR_REF_TUPLE_INEXISTENT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	else if(current_tuple < 0 || current_tuple >= getTupleCount())
 		throw Exception(ERR_REF_INV_TUPLE_COLUMN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+}
+
+char *ResultSet::getColumnValue(int column_idx)
+{
+	validateColumnIndex(column_idx);
 
 	//Returns the column value on the current tuple
 	return(PQgetvalue(sql_result, current_tuple, column_idx));
 }
 
+bool ResultSet::isColumnValueNull(int column_idx)
+{
+	validateColumnIndex(column_idx);
+
+	//Returns the null state of the column on the current tuple
+	return(PQgetisnull(sql_result, current_tuple, column_idx));
+}
+
+bool ResultSet::isColumnValueNull(const QString &column_name)
+{
+	//Returns the null state of the column on the current tuple
+	return(PQgetisnull(sql_result, current_tuple, validateColumnName(column_name)));
+}
+
 int ResultSet::getColumnSize(const QString &column_name)
 {
-	int col_idx=-1;
-
-	try
-	{
-		/* Raises an error if the user try to get the value of a column in
-		 a tuple of an empty result or generated from an INSERT, DELETE, UPDATE,
-		 that is, which command do not return lines but only do updates or removal */
-		if(getTupleCount()==0 || empty_result)
-			throw Exception(ERR_REF_TUPLE_INEXISTENT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-		else if(current_tuple < 0 || current_tuple >= getTupleCount())
-			throw Exception(ERR_REF_INV_TUPLE_COLUMN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-
-		//Get the column index wich length must be detected
-		col_idx=getColumnIndex(column_name);
-	}
-	catch(Exception &e)
-	{
-		//Capture and redirect any generated exception
-		throw Exception(e.getErrorMessage(), e.getErrorType(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
-	}
-
 	//Returns the column value length on the current tuple
-	return(PQgetlength(sql_result, current_tuple, col_idx));
+	return(PQgetlength(sql_result, current_tuple, validateColumnName(column_name)));
 }
 
 int ResultSet::getColumnSize(int column_idx)

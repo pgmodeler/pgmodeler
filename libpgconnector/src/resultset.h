@@ -48,6 +48,10 @@ class ResultSet {
 
 		void destroyResultSet(void);
 
+		void validateColumnIndex(int column_idx);
+
+		int validateColumnName(const QString &column_name);
+
 	protected:
 		//! \brief Stores the current tuple index, just for navigation
 		int current_tuple;
@@ -107,6 +111,10 @@ class ResultSet {
 		//! \brief Informs if the column is in binary format
 		bool isColumnBinaryFormat(const QString &column_name);
 		bool isColumnBinaryFormat(int column_idx);
+
+		//! \brief Informs if the column has a null value. In PostgreSQL null =/= empty
+		bool isColumnValueNull(int column_idx);
+		bool isColumnValueNull(const QString &column_name);
 
 		//! \brief Access on tuple on result set via navigation constants
 		bool accessTuple(unsigned tuple_type);

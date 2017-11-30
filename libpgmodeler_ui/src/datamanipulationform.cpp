@@ -1261,6 +1261,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 	unsigned op_type=results_tbw->verticalHeaderItem(row)->data(Qt::UserRole).toUInt();
 	QStringList val_list, col_list, flt_list;
 	QString col_name, value;
+	QVariant data;
 
 	if(op_type==OP_DELETE || op_type==OP_UPDATE)
 	{
@@ -1277,8 +1278,12 @@ QString DataManipulationForm::getDMLCommand(int row)
 		//Creating the where clause with original column's values
 		for(QString pk_col : pk_col_names)
 		{
-			flt_list.push_back(QString("\"%1\"='%2'").arg(pk_col)
-								 .arg(results_tbw->item(row,  col_names.indexOf(pk_col))->data(Qt::UserRole).toString().replace("\'","''")));
+			data = results_tbw->item(row,  col_names.indexOf(pk_col))->data(Qt::UserRole);
+
+			if(data.toString() == SQLExecutionWidget::COLUMN_NULL_VALUE)
+				flt_list.push_back(QString("\"%1\" IS NULL").arg(pk_col));
+			else
+				flt_list.push_back(QString("\"%1\"='%2'").arg(pk_col).arg(data.toString().replace("\'","''")));
 		}
 	}
 
