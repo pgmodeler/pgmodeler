@@ -115,12 +115,15 @@ void ColumnWidget::applyConfiguration(void)
 		else
 			column->setSequence(sequence_sel->getSelectedObject());
 
-		pk = dynamic_cast<Table *>(table)->getPrimaryKey();
-		if(pk && pk->isColumnReferenced(column) && !notnull_chk->isChecked())
-			throw Exception(Exception::getErrorMessage(ERR_NULL_PK_COLUMN)
-											.arg(column->getName())
-											.arg(pk->getParentTable()->getSignature(true)),
-											ERR_NULL_PK_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		if(table)
+		{
+			pk = dynamic_cast<Table *>(table)->getPrimaryKey();
+			if(pk && pk->isColumnReferenced(column) && !notnull_chk->isChecked())
+				throw Exception(Exception::getErrorMessage(ERR_NULL_PK_COLUMN)
+												.arg(column->getName())
+												.arg(pk->getParentTable()->getSignature(true)),
+												ERR_NULL_PK_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
 
 		BaseObjectWidget::applyConfiguration();
 		finishConfiguration();
