@@ -1951,7 +1951,7 @@ QRectF RelationshipView::__boundingRect(void)
 	//Checks if some label is out of reference dimension
 	for(i=0; i < 3; i++)
 	{
-		if(labels[i])
+		if(labels[i] && labels[i]->isVisible())
 		{
 			rect.setTopLeft(labels[i]->scenePos());
 			rect.setSize(labels[i]->boundingRect().size());
