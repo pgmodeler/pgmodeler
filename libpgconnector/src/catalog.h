@@ -155,6 +155,9 @@ class Catalog {
 		//! \brief Returns the last system object oid registered on the database
 		unsigned getLastSysObjectOID(void);
 
+		//! \brief Returns if the specified oid is amongst the system objects' oids
+		bool isSystemObject(unsigned oid);
+
 		//! \brief Returns if the specified oid is amongst the extension created objects' oids
 		bool isExtensionObject(unsigned oid);
 

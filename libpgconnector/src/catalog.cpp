@@ -131,6 +131,11 @@ unsigned Catalog::getLastSysObjectOID(void)
 	return(last_sys_oid);
 }
 
+bool Catalog::isSystemObject(unsigned oid)
+{
+	return(oid <= last_sys_oid);
+}
+
 bool Catalog::isExtensionObject(unsigned oid)
 {
 	return(ext_obj_oids.contains(QString::number(oid)));
