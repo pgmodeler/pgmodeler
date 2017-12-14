@@ -967,8 +967,20 @@ unsigned PgSQLType::getTypeId(void)
 	return(!(*this));
 }
 
-QString PgSQLType::getTypeName(void)
+QString PgSQLType::getTypeName(bool incl_dimension)
 {
+	if(incl_dimension)
+	{
+		QString type;
+
+		type=~(*this);
+
+		if(type!=QString("void") && dimension > 0)
+			type+=QString("[]").repeated(dimension);
+
+		return(type);
+	}
+
 	return(~(*this));
 }
 

@@ -457,7 +457,7 @@ class PgSQLType: public BaseType{
 		QString getCodeDefinition(unsigned def_type, QString ref_type=QString());
 		QString operator ~ (void);
 
-		//! \brief Retorns the SQL definition for the type
+		//! \brief Returns the SQL definition for the type
 		QString operator * (void);
 
 		unsigned operator << (void *ptype);
@@ -481,8 +481,10 @@ class PgSQLType: public BaseType{
 		//! \brief Returns the code (id) of the type. This is equivalent to call !type
 		unsigned getTypeId(void);
 
-		//! \brief Returns the name of the type. This is equivalent to call ~type
-		QString getTypeName(void);
+		/*! \brief Returns the name of the type. This is equivalent to call ~type.
+		 * If incl_dimension is true then returns only the type name appending the dimension descriptor [] if the type's dimension is > 0.
+		 * Other attributes of the type are discarded. */
+		QString getTypeName(bool incl_dimension);
 
 		//! \brief Returns the name of the type in SQL form including length, precision and other parameters. This is equivalent to call *type
 		QString getSQLTypeName(void);
