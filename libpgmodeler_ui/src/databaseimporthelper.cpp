@@ -670,7 +670,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				attribs[ParsersAttributes::DECL_IN_TABLE]=QString();
 
 			//System objects will have the sql disabled by default
-			attribs[ParsersAttributes::SQL_DISABLED]=(oid > catalog.getLastSysObjectOID() ? QString() : ParsersAttributes::_TRUE_);
+			attribs[ParsersAttributes::SQL_DISABLED]=(catalog.isSystemObject(oid) || catalog.isExtensionObject(oid) ? ParsersAttributes::_TRUE_ : QString());
 			attribs[ParsersAttributes::COMMENT]=getComment(attribs);
 
 			if(attribs.count(ParsersAttributes::OWNER))
@@ -1533,13 +1533,18 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 
 			attribs[ParsersAttributes::ELEMENT]=getType(attribs[ParsersAttributes::ELEMENT], false);
 
-			for(i=0; i < count; i++)
+			/* Workaround: if importing a datatype that is part of an extension we avoid the importing of
+			 * its supporting functions (since they will not be necessary here because the type will be sql-disabled)*/
+			if(!catalog.isExtensionObject(attribs[ParsersAttributes::OID].toUInt()))
 			{
-				attribs[func_types[i]]=getDependencyObject(attribs[func_types[i]], OBJ_FUNCTION, true, true, true, {{ParsersAttributes::REF_TYPE, func_types[i]}});
+				for(i=0; i < count; i++)
+				{
+					attribs[func_types[i]]=getDependencyObject(attribs[func_types[i]], OBJ_FUNCTION, true, true, true, {{ParsersAttributes::REF_TYPE, func_types[i]}});
 
-				/* Since pgModeler requires that type functions refers to the constructing type as "any"
-					 it's necessary to replace the function parameter types names */
-				attribs[func_types[i]].replace(QString("IN ") + type_name, QString("IN any"));
+					/* Since pgModeler requires that type functions refers to the constructing type as "any"
+						 it's necessary to replace the function parameter types names */
+					attribs[func_types[i]].replace(QString("IN ") + type_name, QString("IN any"));
+				}
 			}
 		}
 
