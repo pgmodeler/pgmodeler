@@ -64,7 +64,7 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 
 		//! \brief Shows the reference at the reference's table
 		void showReferenceData(Reference refer, bool selec_from, bool from_where,
-							   bool after_where, bool view_def, unsigned row);
+													 bool after_where, bool end_expr, bool view_def, unsigned row);
 
 		void clearReferenceForm(void);
 

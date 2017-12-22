@@ -182,6 +182,7 @@ namespace ParsersAttributes {
 	ELEMENTS,
 	ENCODING,
 	ENCRYPTED,
+	END_EXP,
 	ENUM_TYPE,
 	ENUMERATIONS,
 	EVENT_TYPE,

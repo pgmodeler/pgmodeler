@@ -34,10 +34,11 @@ class View: public BaseTable {
 		vector<Reference> references;
 
 		/*! \brief Vectors that stores indexes to the view references in each
-		 SQL part: SELECT-FROM, FROM-WHERE, after WHERE*/
+		 SQL part: SELECT-FROM, FROM-WHERE, after WHERE, expressions at the very end of definition (e.g. group by) */
 		vector<unsigned>	exp_select,
 		exp_from,
-		exp_where;
+		exp_where,
+		exp_end;
 
 		vector<TableObject *> triggers;
 		vector<TableObject *> rules;

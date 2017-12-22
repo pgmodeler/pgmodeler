@@ -56,7 +56,8 @@ class Reference {
 		static const unsigned SQL_REFER_WHERE=10,
 		SQL_REFER_SELECT=20,
 		SQL_REFER_FROM=30,
-		SQL_VIEW_DEFINITION=40;
+		SQL_REFER_END_EXPR=40,
+		SQL_VIEW_DEFINITION=50;
 
 		Reference(void);
 

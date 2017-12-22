@@ -5675,9 +5675,10 @@ View *DatabaseModel::createView(void)
 								type=Reference::SQL_REFER_SELECT;
 							else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::FROM_EXP)
 								type=Reference::SQL_REFER_FROM;
-							else
+							else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::SIMPLE_EXP)
 								type=Reference::SQL_REFER_WHERE;
-
+							else
+								type=Reference::SQL_REFER_END_EXPR;
 
 							list_aux=xmlparser.getElementContent().split(',');
 							count=list_aux.size();

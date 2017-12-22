@@ -34,6 +34,10 @@
  %if {simple-exp} %then
   $tb [<expression type="simple-exp">] {simple-exp} </expression> $br
  %end
+ 
+ %if {end-exp} %then
+  $tb [<expression type="end-exp">] {end-exp} </expression> $br
+ %end
 
  %if {cte-exp} %then
   $tb [<expression type="cte-exp">] <! $ob CDATA $ob {cte-exp} $cb $cb ></expression> $br
