@@ -1115,6 +1115,20 @@ attribs_map DatabaseExplorerWidget::extractAttributesFromItem(QTreeWidgetItem *i
 	}
 	else
 	{
+		/* If we are handling a view we need to append the MATERIALIZED keyword in the sql-object in order
+		 * to construct DDL commands correctly for this kind of object */
+		if(obj_type==OBJ_VIEW)
+		{
+			attribs_map aux_attribs=item->data(DatabaseImportForm::OBJECT_OTHER_DATA, Qt::UserRole).value<attribs_map>();
+
+			if(aux_attribs[ParsersAttributes::MATERIALIZED] == ParsersAttributes::_TRUE_)
+			{
+				attribs[ParsersAttributes::SQL_OBJECT] =
+						QString("%1 %2").arg(ParsersAttributes::MATERIALIZED.toUpper())
+														.arg(BaseObject::getSQLName(OBJ_VIEW));
+			}
+		}
+
 		if(!attribs[ParsersAttributes::SCHEMA].isEmpty() &&
 				attribs[ParsersAttributes::NAME].indexOf(attribs[ParsersAttributes::SCHEMA] + QString(".")) < 0)
 			attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::SCHEMA] + QString(".") + attribs[ParsersAttributes::NAME];
