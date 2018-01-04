@@ -1,8 +1,8 @@
 #!/bin/bash
 
 USR=`whoami`
-PGSQL_ROOT=/Library/PostgreSQL/9.6
-QT_ROOT=/Users/$USR/Qt5.6.2/5.6/clang_64
+PGSQL_ROOT=/Library/PostgreSQL/10.1
+QT_ROOT=/Users/$USR/Qt5.9.3/5.9.3/clang_64
 QMAKE_ARGS="-r CONFIG+=x86_64 CONFIG+=release -spec macx-clang"
 LOG=macdeploy.log
 
@@ -41,7 +41,7 @@ clear
 echo
 echo "pgModeler Mac OSX deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.com.br"
-echo "Copyright 2006-2017 Raphael A. Silva <raphael@pgmodeler.com.br>"
+echo "Copyright 2006-2018 Raphael A. Silva <raphael@pgmodeler.com.br>"
 
 # Identifying System Qt version
 if [ -e "$QT_ROOT/bin/qmake" ]; then
