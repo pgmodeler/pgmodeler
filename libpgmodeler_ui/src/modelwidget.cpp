@@ -2344,7 +2344,7 @@ void ModelWidget::pasteObjects(void)
 	Operator *oper=nullptr;
 	QString aux_name, copy_obj_name;
 	ObjectType obj_type;
-	Exception error;
+	vector<Exception> errors;
 	unsigned pos=0;
 	TaskProgressWidget task_prog_wgt(this);
 
@@ -2533,10 +2533,13 @@ void ModelWidget::pasteObjects(void)
 
 	while(itr!=itr_end)
 	{
-		if(xml_objs.count(*itr))
+		object = *itr;
+		itr++;
+
+		if(xml_objs.count(object))
 		{
 			xmlparser->restartParser();
-			xmlparser->loadXMLBuffer(xml_objs[*itr]);
+			xmlparser->loadXMLBuffer(xml_objs[object]);
 
 			try
 			{
@@ -2587,11 +2590,9 @@ void ModelWidget::pasteObjects(void)
 			}
 			catch(Exception &e)
 			{
-				error=e;
+				errors.push_back(e);
 			}
 		}
-
-		itr++;
 	}
 	op_list->finishOperationChain();
 
@@ -2602,12 +2603,12 @@ void ModelWidget::pasteObjects(void)
 	task_prog_wgt.close();
 
 	//If some error occur during the process show it to the user
-	if(error.getErrorType()!=ERR_CUSTOM)
+	if(!errors.empty())
 	{
 		Messagebox msg_box;
-		msg_box.show(error,
-					 trUtf8("Not all objects were pasted to the model due to errors returned during the process! Refer to error stack for more details!"),
-					 Messagebox::ALERT_ICON);
+		msg_box.show(Exception(trUtf8("Not all objects were pasted to the model due to errors returned during the process! Refer to error stack for more details!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors),
+								 QString(),
+								 Messagebox::ALERT_ICON);
 	}
 
 	if(!ModelWidget::cut_operation)

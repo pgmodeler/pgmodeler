@@ -7403,7 +7403,7 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 			else if(obj_type==OBJ_TABLE)
 			{
 				Table *tab=dynamic_cast<Table *>(object);
-				BaseObject *usr_type=nullptr;
+				BaseObject *usr_type=nullptr,  *seq=nullptr;
 				Constraint *constr=nullptr;
 				Trigger *trig=nullptr;
 				Index *index=nullptr;
@@ -7415,9 +7415,16 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 				{
 					col=tab->getColumn(i);
 					usr_type=getObjectPgSQLType(col->getType());
+					seq=col->getSequence();
 
-					if(!col->isAddedByLinking() && usr_type)
-						getObjectDependecies(usr_type, deps, inc_indirect_deps);
+					if(!col->isAddedByLinking())
+					{
+						if(usr_type)
+							getObjectDependecies(usr_type, deps, inc_indirect_deps);
+
+						if(seq)
+							getObjectDependecies(seq, deps, inc_indirect_deps);
+					}
 				}
 
 				count=tab->getConstraintCount();
