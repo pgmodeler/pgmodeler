@@ -2438,9 +2438,9 @@ void ModelWidget::pasteObjects(void)
 					else
 					{
 						if(tab_obj)
-							tab_obj->setName(PgModelerNS::generateUniqueName(tab_obj, (*sel_table->getObjectList(tab_obj->getObjectType())), false, QString("_cp")));
+							tab_obj->setName(PgModelerNS::generateUniqueName(tab_obj, (*sel_table->getObjectList(tab_obj->getObjectType())), false, QString("_cp"), true));
 						else
-							object->setName(PgModelerNS::generateUniqueName(object, (*db_model->getObjectList(object->getObjectType())), false, QString("_cp")));
+							object->setName(PgModelerNS::generateUniqueName(object, (*db_model->getObjectList(object->getObjectType())), false, QString("_cp"), true));
 
 						copy_obj_name=object->getName();
 						object->setName(orig_obj_names[object]);
