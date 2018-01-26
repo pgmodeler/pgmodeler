@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,10 +34,11 @@ class View: public BaseTable {
 		vector<Reference> references;
 
 		/*! \brief Vectors that stores indexes to the view references in each
-		 SQL part: SELECT-FROM, FROM-WHERE, after WHERE*/
+		 SQL part: SELECT-FROM, FROM-WHERE, after WHERE, expressions at the very end of definition (e.g. group by) */
 		vector<unsigned>	exp_select,
 		exp_from,
-		exp_where;
+		exp_where,
+		exp_end;
 
 		vector<TableObject *> triggers;
 		vector<TableObject *> rules;

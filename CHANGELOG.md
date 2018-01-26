@@ -1,6 +1,23 @@
 Change Log
 ---------
 
+v0.9.1-beta
+------
+<em>Release date: January 26, 2018</em><br/>
+
+* [New] Added support to GROUP BY/HAVING clauses in Views by adding a new kind of reference. Proper changes done in ViewWidget to allow configuring those clauses.
+* [New] Added the method Catalog::isSystemObject(oid) which indicates if the provided OID is related to a system object.
+* [Change] Minor adjustment in the copy/paste operation to generate suffix in the pasted objects only when there're conflics.
+* [Change] Removed the port range limitation in connection configuration dialog.
+* [Change] Updated the default version of Qt and PostgreSQL to, respectively, 5.9.3 and 10.1 in deployment scripts.
+* [Change] Changed the method PgSQLType::getTypeName by adding a bool parameter so the name can be returned with dimension descriptor (when dimension is > 0). Useful for configuring operator's signatures.
+* [Fix] Fixed the drop action for materialized views in database explorer.
+* [Fix] Fixed a crash when importing extension objects.
+* [Fix] Fixed the generation of operator's signature that must consider dimensions of the arguments' types.
+* [Fix] Fixed the bounding rect calculation for relationship instances when one or more labels are hidden.
+* [Fix] Fixed the SVG & PNG export to properly determine the area to be drawn in the destination graphics file.
+* [Fix] Fixed a crash when adding attributes into many-to-many relationships.
+
 v0.9.1-alpha1
 ------
 <em>Release date: November 30, 2017</em><br/>

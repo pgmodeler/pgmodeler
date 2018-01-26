@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -967,8 +967,20 @@ unsigned PgSQLType::getTypeId(void)
 	return(!(*this));
 }
 
-QString PgSQLType::getTypeName(void)
+QString PgSQLType::getTypeName(bool incl_dimension)
 {
+	if(incl_dimension)
+	{
+		QString type;
+
+		type=~(*this);
+
+		if(type!=QString("void") && dimension > 0)
+			type+=QString("[]").repeated(dimension);
+
+		return(type);
+	}
+
 	return(~(*this));
 }
 

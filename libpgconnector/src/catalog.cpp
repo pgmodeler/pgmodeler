@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -129,6 +129,11 @@ void Catalog::setFilter(unsigned filter)
 unsigned Catalog::getLastSysObjectOID(void)
 {
 	return(last_sys_oid);
+}
+
+bool Catalog::isSystemObject(unsigned oid)
+{
+	return(oid <= last_sys_oid);
 }
 
 bool Catalog::isExtensionObject(unsigned oid)

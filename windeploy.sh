@@ -1,8 +1,8 @@
 #!/bin/bash
 
-QT_INSTALL_VERSION='5.6.2'
-QT_BASE_VERSION='5.6'
-PGSQL_VERSION='9.6'
+QT_INSTALL_VERSION='5.9.3'
+QT_BASE_VERSION='5.9.3'
+PGSQL_VERSION='10.1'
 INNOSETUP_CMD='/c/Program Files (x86)/Inno Setup 5/ISCC.exe'
 LOG=windeploy.log
 
@@ -51,36 +51,41 @@ if [ $X64_BUILD = 1 ]; then
   # Settings for x64 build
   QT_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}-x64/"
   QMAKE_ROOT=$QT_ROOT/bin
-  MINGW_ROOT="/c/msys64/mingw64/bin"
+  MINGW_ROOT="/c/msys_64/mingw64/bin"
   PGSQL_ROOT="/c/PostgreSQL/${PGSQL_VERSION}-x64/bin"  
   QMAKE_ARGS="-r -spec win32-g++ CONFIG+=release \
-              XML_INC+=$PGSQL_ROOT/../include \
-			  XML_LIB=$PGSQL_ROOT/libxml2.dll \
-			  PGSQL_INC+=$PGSQL_ROOT/../include \
-			  PGSQL_LIB+=$PGSQL_ROOT/libpq.dll"
-  DEP_LIBS="$QMAKE_ROOT/icudt55.dll \
-		    $QMAKE_ROOT/icuin55.dll \
-		    $QMAKE_ROOT/icuuc55.dll \
-		    $MINGW_ROOT/libgcc_s_seh-1.dll \
+              XML_INC+=$MINGW_ROOT/../include/libxml2 \
+			  XML_LIB+=$MINGW_ROOT/libxml2-2.dll \
+			  PGSQL_INC+=$MINGW_ROOT/../include \
+			  PGSQL_LIB+=$MINGW_ROOT/libpq.dll"
+  DEP_LIBS="$MINGW_ROOT/libgcc_s_seh-1.dll \
 		    $MINGW_ROOT/libstdc++-6.dll \
 		    $MINGW_ROOT/libwinpthread-1.dll \
-			$PGSQL_ROOT/libiconv-2.dll \
-			$PGSQL_ROOT/libintl-8.dll"
+			$MINGW_ROOT/libiconv-2.dll \
+			$MINGW_ROOT/libintl-8.dll \
+			$MINGW_ROOT/zlib1.dll \
+		    $MINGW_ROOT/libxml2-2.dll \
+		    $MINGW_ROOT/libpq.dll \
+		    $MINGW_ROOT/libeay32.dll \
+		    $MINGW_ROOT/ssleay32.dll \
+			$MINGW_ROOT/liblzma-5.dll"
 else
   # Default setting for x86 build
-  QT_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/${QT_BASE_VERSION}/mingw49_32/"
+  QT_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/${QT_BASE_VERSION}/mingw53_32/"
   QMAKE_ROOT=$QT_ROOT/bin
   QMAKE_ARGS="-r -spec win32-g++ CONFIG+=release"
-  MINGW_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/Tools/mingw492_32/bin"
+  MINGW_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/Tools/mingw530_32/bin"
   PGSQL_ROOT="/c/PostgreSQL/${PGSQL_VERSION}/bin"
-  DEP_LIBS="$QMAKE_ROOT/icudt54.dll \
-		   $QMAKE_ROOT/icuin54.dll \
-		   $QMAKE_ROOT/icuuc54.dll \
-		   $QMAKE_ROOT/libgcc_s_dw2-1.dll \
+  DEP_LIBS="$QMAKE_ROOT/libgcc_s_dw2-1.dll \
 		   $QMAKE_ROOT/libstdc++-6.dll \
 		   $QMAKE_ROOT/libwinpthread-1.dll \
 		   $PGSQL_ROOT/libiconv-2.dll \
-		   $PGSQL_ROOT/libintl-8.dll"
+		   $PGSQL_ROOT/libintl-8.dll \
+ 		   $PGSQL_ROOT/zlib1.dll \
+		   $PGSQL_ROOT/libxml2.dll \
+		   $PGSQL_ROOT/libpq.dll \
+		   $PGSQL_ROOT/libeay32.dll \
+		   $PGSQL_ROOT/ssleay32.dll"
 fi
 
 if [ $DEMO_VERSION = 1 ]; then
@@ -102,17 +107,10 @@ DEP_LIBS+=" $QMAKE_ROOT/Qt5Core.dll \
 		  $QMAKE_ROOT/Qt5Widgets.dll \
 		  $QMAKE_ROOT/Qt5PrintSupport.dll \
 		  $QMAKE_ROOT/Qt5Network.dll \
-		  $QMAKE_ROOT/Qt5Svg.dll \
-		  $PGSQL_ROOT/libxml2.dll \
-		  $PGSQL_ROOT/libpq.dll \
-		  $PGSQL_ROOT/libeay32.dll \
-		  $PGSQL_ROOT/ssleay32.dll \
-		  $PGSQL_ROOT/zlib1.dll"
+		  $QMAKE_ROOT/Qt5Svg.dll "
 		  
 #Dependency qt plugins copied to build dir
-DEP_PLUGINS="imageformats/qdds.dll \
-			 imageformats/qgif.dll \
-			 imageformats/qicns.dll \
+DEP_PLUGINS="imageformats/qicns.dll \
 			 imageformats/qico.dll \
 			 imageformats/qjpeg.dll \
 			 imageformats/qsvg.dll \
@@ -129,7 +127,7 @@ clear
 echo
 echo "pgModeler Windows deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.com.br"
-echo "Copyright 2006-2017 Raphael A. Silva <raphael@pgmodeler.com.br>"
+echo "Copyright 2006-2018 Raphael A. Silva <raphael@pgmodeler.com.br>"
 
 # Identifying Qt version
 if [ -e "$QMAKE_ROOT/qmake" ]; then

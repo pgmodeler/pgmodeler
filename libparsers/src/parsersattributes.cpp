@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -139,7 +139,7 @@ namespace ParsersAttributes {
 	DEFAULT=QString("default"),
 	DEFER_TYPE=QString("defer-type"),
 	DEFERRABLE=QString("deferrable"),
-	DEFINITION=QString("definition"),
+	DEFINITION=QString("definition"),	
 	DEL_ACTION=QString("del-action"),
 	DEL_EVENT=QString("del-event"),
 	DELETE_PRIV=QString("delete"),
@@ -163,6 +163,7 @@ namespace ParsersAttributes {
 	DST_TABLE=QString("dst-table"),
 	DYNAMIC_LIBRARY_PATH=QString("dynamic-library-path"),
 	DYNAMIC_SHARED_MEMORY=QString("dynamic-shared-memory-type"),
+	END_EXP=QString("end-exp"),
 	ELEMENT=QString("element"),
 	ELEMENTS=QString("elements"),
 	ENCODING=QString("encoding"),

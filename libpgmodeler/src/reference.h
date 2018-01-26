@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -56,7 +56,8 @@ class Reference {
 		static const unsigned SQL_REFER_WHERE=10,
 		SQL_REFER_SELECT=20,
 		SQL_REFER_FROM=30,
-		SQL_VIEW_DEFINITION=40;
+		SQL_REFER_END_EXPR=40,
+		SQL_VIEW_DEFINITION=50;
 
 		Reference(void);
 

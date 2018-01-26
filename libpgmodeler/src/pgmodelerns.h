@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -50,11 +50,11 @@ namespace PgModelerNS {
 
 	/*! \brief Generates a unique name based upon the specified object and the list of objects of the same type.
   User can specify a suffix for the generated name as well if the comparison inside the method must be done with
-  formated names */
+	formated names. The last optinal parameter indicates that the suffix should be used only in case of conflicts */
 	template <class Class>
-	QString generateUniqueName(BaseObject *obj, vector<Class *> &obj_vector, bool fmt_name=false, const QString &suffix=QString())
+	QString generateUniqueName(BaseObject *obj, vector<Class *> &obj_vector, bool fmt_name=false, const QString &suffix=QString(), bool use_suf_on_conflict=false)
 	{
-		unsigned counter=1;
+		unsigned counter=0;
 		int len=0;
 		QString aux_name, obj_name, id;
 		Class *aux_obj=nullptr;
@@ -71,9 +71,10 @@ namespace PgModelerNS {
 		obj_name=obj->getName(fmt_name);
 		obj_type=obj->getObjectType();
 
-		if(obj_type!=OBJ_OPERATOR)
+		if(!use_suf_on_conflict && obj_type!=OBJ_OPERATOR)
 			obj_name += suffix;
 
+		counter = (use_suf_on_conflict && obj_type!= OBJ_OPERATOR? 0 : 1);
 		id=QString::number(obj->getObjectId());
 		len=obj_name.size() + id.size();
 
@@ -97,13 +98,19 @@ namespace PgModelerNS {
 			itr++;
 
 			//If a conflicting object is found
-			if(aux_obj!=obj && aux_obj->getName(fmt_name)==aux_name)
+			if(/*aux_obj!=obj &&*/ aux_obj->getName(fmt_name)==aux_name)
 			{
 				//For operators is appended a '?' on the name
 				if(obj_type==OBJ_OPERATOR)
 					aux_name=QString("%1%2").arg(obj_name).arg(QString("").leftJustified(counter++, oper_uniq_chr));
 				else
-					aux_name=QString("%1%2").arg(obj_name).arg(counter++);
+				{
+					aux_name=QString("%1%2%3")
+									 .arg(obj_name)
+									 .arg(use_suf_on_conflict ? suffix : QString())
+									 .arg(use_suf_on_conflict && counter == 0 ? QString() : QString::number(counter));
+					counter++;
+				}
 
 				itr=obj_vector.begin();
 			}

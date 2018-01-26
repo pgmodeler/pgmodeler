@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -5675,9 +5675,10 @@ View *DatabaseModel::createView(void)
 								type=Reference::SQL_REFER_SELECT;
 							else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::FROM_EXP)
 								type=Reference::SQL_REFER_FROM;
-							else
+							else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::SIMPLE_EXP)
 								type=Reference::SQL_REFER_WHERE;
-
+							else
+								type=Reference::SQL_REFER_END_EXPR;
 
 							list_aux=xmlparser.getElementContent().split(',');
 							count=list_aux.size();
@@ -7402,7 +7403,7 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 			else if(obj_type==OBJ_TABLE)
 			{
 				Table *tab=dynamic_cast<Table *>(object);
-				BaseObject *usr_type=nullptr;
+				BaseObject *usr_type=nullptr,  *seq=nullptr;
 				Constraint *constr=nullptr;
 				Trigger *trig=nullptr;
 				Index *index=nullptr;
@@ -7414,9 +7415,16 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 				{
 					col=tab->getColumn(i);
 					usr_type=getObjectPgSQLType(col->getType());
+					seq=col->getSequence();
 
-					if(!col->isAddedByLinking() && usr_type)
-						getObjectDependecies(usr_type, deps, inc_indirect_deps);
+					if(!col->isAddedByLinking())
+					{
+						if(usr_type)
+							getObjectDependecies(usr_type, deps, inc_indirect_deps);
+
+						if(seq)
+							getObjectDependecies(seq, deps, inc_indirect_deps);
+					}
 				}
 
 				count=tab->getConstraintCount();

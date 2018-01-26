@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -154,6 +154,9 @@ class Catalog {
 
 		//! \brief Returns the last system object oid registered on the database
 		unsigned getLastSysObjectOID(void);
+
+		//! \brief Returns if the specified oid is amongst the system objects' oids
+		bool isSystemObject(unsigned oid);
 
 		//! \brief Returns if the specified oid is amongst the extension created objects' oids
 		bool isExtensionObject(unsigned oid);

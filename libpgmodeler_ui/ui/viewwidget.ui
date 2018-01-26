@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>639</width>
+    <width>816</width>
     <height>453</height>
    </rect>
   </property>
@@ -34,37 +34,51 @@
       </attribute>
       <layout class="QGridLayout" name="referencias_grid">
        <property name="leftMargin">
-        <number>4</number>
+        <number>6</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>6</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>6</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>6</number>
        </property>
        <property name="spacing">
         <number>6</number>
        </property>
-       <item row="6" column="0">
-        <widget class="QLabel" name="expr_alias_lbl">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+       <item row="0" column="0">
+        <widget class="QLabel" name="ref_type_lbl">
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>0</height>
+          </size>
          </property>
          <property name="text">
-          <string>Expression Alias:</string>
+          <string>Reference Type:</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="column_lbl">
+       <item row="0" column="1">
+        <widget class="QComboBox" name="ref_type_cmb">
+         <item>
+          <property name="text">
+           <string>Column</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Expression</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="used_in_lbl">
          <property name="text">
-          <string>Column:</string>
+          <string>Used in:</string>
          </property>
         </widget>
        </item>
@@ -88,10 +102,33 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="used_in_lbl">
+       <item row="2" column="4">
+        <widget class="QLineEdit" name="tab_alias_edt">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="column_lbl">
          <property name="text">
-          <string>Used in:</string>
+          <string>Column:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="3">
+        <widget class="QLabel" name="col_alias_lbl">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Column Alias:</string>
          </property>
         </widget>
        </item>
@@ -105,31 +142,27 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="4">
-        <widget class="QLineEdit" name="tab_alias_edt">
+       <item row="4" column="0">
+        <widget class="QLabel" name="expression_lbl">
+         <property name="text">
+          <string>Expression:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="expr_alias_lbl">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="text">
+          <string>Expression Alias:</string>
+         </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QComboBox" name="ref_type_cmb">
-         <item>
-          <property name="text">
-           <string>Column</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Expression</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="6" column="1" colspan="2">
+       <item row="5" column="1">
         <widget class="QLineEdit" name="expr_alias_edt">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -152,22 +185,9 @@
          </property>
         </spacer>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="ref_type_lbl">
-         <property name="minimumSize">
-          <size>
-           <width>100</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Reference Type:</string>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="1" colspan="4">
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <item>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="0">
           <widget class="QCheckBox" name="select_from_chk">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -175,25 +195,15 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="toolTip">
+            <string>The element will be used as part of the SELECT statement to retrieve columns or expressions that will compose the view's columns</string>
+           </property>
            <property name="text">
-            <string>SELECT-FROM</string>
+            <string>SELECT ...</string>
            </property>
           </widget>
          </item>
-         <item>
-          <widget class="QCheckBox" name="from_where_chk">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>FROM-WHERE</string>
-           </property>
-          </widget>
-         </item>
-         <item>
+         <item row="0" column="2">
           <widget class="QCheckBox" name="after_where_chk">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -201,12 +211,37 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="toolTip">
+            <string>The element will be used as part of the WHERE clause in form of conditional expression</string>
+           </property>
            <property name="text">
-            <string>After WHERE</string>
+            <string>WHERE ...</string>
            </property>
           </widget>
          </item>
-         <item>
+         <item row="0" column="1">
+          <widget class="QCheckBox" name="from_where_chk">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>137</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>The element is used in the FROM portion of the command in order to reference tables or construct JOIN statements</string>
+           </property>
+           <property name="text">
+            <string>FROM ...</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" colspan="2">
           <widget class="QCheckBox" name="view_def_chk">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -214,32 +249,44 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="toolTip">
+            <string>The element's expression is used exclusively as the view's definition</string>
+           </property>
            <property name="text">
             <string>View Definition</string>
            </property>
           </widget>
          </item>
+         <item row="1" column="0">
+          <widget class="QCheckBox" name="end_expr_chk">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>The element will be appended to the very end of the view's definition. This is useful when using GROUP BY/HAVING statements</string>
+           </property>
+           <property name="text">
+            <string>End expression</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3">
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
         </layout>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="expression_lbl">
-         <property name="text">
-          <string>Expression:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="3">
-        <widget class="QLabel" name="col_alias_lbl">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Column Alias:</string>
-         </property>
-        </widget>
        </item>
       </layout>
      </widget>
