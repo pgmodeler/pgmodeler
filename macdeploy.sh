@@ -40,8 +40,8 @@ BUNDLE="$INSTALL_ROOT/$APP_PREFIX/$APPNAME.app"
 clear
 echo
 echo "pgModeler Mac OSX deployment script"
-echo "PostgreSQL Database Modeler Project - pgmodeler.com.br"
-echo "Copyright 2006-2018 Raphael A. Silva <raphael@pgmodeler.com.br>"
+echo "PostgreSQL Database Modeler Project - pgmodeler.io"
+echo "Copyright 2006-2018 Raphael A. Silva <raphael@pgmodeler.io>"
 
 # Identifying System Qt version
 if [ -e "$QT_ROOT/bin/qmake" ]; then

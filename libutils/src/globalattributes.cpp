@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,18 +23,18 @@
 namespace GlobalAttributes {
 	const QString
 	PGMODELER_APP_NAME=QString("pgmodeler"),
-	PGMODELER_URI=QString("pgmodeler.com.br"),
-	PGMODELER_REVERSE_URI=QString("br.com.pgmodeler"),
+	PGMODELER_URI=QString("pgmodeler.io"),
+	PGMODELER_REVERSE_URI=QString("io.pgmodeler"),
 	PGMODELER_VERSION=QString("0.9.1-beta"),
 	PGMODELER_BUILD_NUMBER=QString(BUILDNUM),
-	PGMODELER_SITE=QString("https://www.pgmodeler.com.br"),
+	PGMODELER_SITE=QString("https://pgmodeler.io"),
 	PGMODELER_SUPPORT=QString("https://github.com/pgmodeler/pgmodeler/issues"),
 	PGMODELER_SRC_URL=QString("https://github.com/pgmodeler/pgmodeler/releases"),
 	PGMODELER_DOWNLOAD_URL=QString("%1/download").arg(PGMODELER_SITE),
 	PGMODELER_DONATE_URL=QString("%1/#donationForm").arg(PGMODELER_SITE),
 	PGMODELER_UPD_CHECK_URL=QString("%1/checkupdate?version=").arg(PGMODELER_SITE),
 
-	BUG_REPORT_EMAIL=QString("bug@pgmodeler.com.br"),
+	BUG_REPORT_EMAIL=QString("bug@pgmodeler.io"),
 	BUG_REPORT_FILE=QString("pgmodeler%1.bug"),
 	STACKTRACE_FILE=QString(".stacktrace"),
 

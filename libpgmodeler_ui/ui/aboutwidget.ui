@@ -220,7 +220,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>&lt;a href=&quot;http://pgmodeler.com.br&quot;&gt;http://pgmodeler.com.br&lt;/a&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://pgmodeler.com.br&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;https://pgmodeler.io&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="textFormat">
            <enum>Qt::RichText</enum>
@@ -261,7 +261,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copyright 2006-2016 - Raphael Araújo e Silva &amp;lt;&lt;a href=&quot;mailto:raphael@pgmodeler.com.br&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;raphael@pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copyright 2006-2016 - Raphael Araújo e Silva &amp;lt;&lt;a href=&quot;mailto:raphael@pgmodeler.com.br&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;raphael@pgmodeler.io&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="textFormat">
            <enum>Qt::AutoText</enum>
