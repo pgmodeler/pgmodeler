@@ -317,6 +317,7 @@
        </property>
        <property name="shortcut">
         <string notr="true">Alt+X</string>
+        <string>Alt+X</string>
        </property>
        <property name="checkable">
         <bool>false</bool>
@@ -361,6 +362,7 @@
        </property>
        <property name="shortcut">
         <string notr="true">Alt+X</string>
+        <string>Alt+X</string>
        </property>
        <property name="checkable">
         <bool>false</bool>
