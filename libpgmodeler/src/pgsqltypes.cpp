@@ -1584,7 +1584,8 @@ QString PgSQLType::getCodeDefinition(unsigned def_type,QString ref_type)
 		if(dimension > 0)
 			attribs[ParsersAttributes::DIMENSION]=QString("%1").arg(this->dimension);
 
-		if(precision >= 0)
+		if(precision >= 0 &&
+		   precision < 1000000) // Ignore rubbish precision values.
 			attribs[ParsersAttributes::PRECISION]=QString("%1").arg(this->precision);
 
 		if(interval_type != BaseType::null)
