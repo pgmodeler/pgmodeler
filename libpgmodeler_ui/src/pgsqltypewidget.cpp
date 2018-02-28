@@ -195,6 +195,10 @@ void PgSQLTypeWidget::setAttributes(PgSQLType type, DatabaseModel *model,  unsig
 		idx=interval_cmb->findText(~(type.getIntervalType()));
 		interval_cmb->setCurrentIndex(idx);
 
+		idx=spatial_cmb->findText(~(type.getSpatialType()));
+		if(idx < 0) idx = 0;
+		spatial_cmb->setCurrentIndex(idx);
+
 		timezone_chk->setChecked(type.isWithTimezone());
 
 		this->type=type;
