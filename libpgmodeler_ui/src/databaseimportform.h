@@ -106,7 +106,8 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		item representing the database itself. The parameter 'create_dummy_item' create an empty child item that represent schema or table
 		child. In this case the generation of schema's or table's children need to be done manually. */
 		static void listObjects(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, bool checkable_items,
-														bool disable_empty_grps, bool create_db_item, bool create_dummy_item = false);
+														bool disable_empty_grps, bool create_db_item, bool create_dummy_item = false,
+														unsigned sort_by = 0);
 		
 		/*! \brief Filters an tree widget using a pattern. The 'search_column' indicates in which column the pattern is applied.
 		The paramenter 'sel_single_leaf' indicates if the single leaf (resulting from filtering) must be selected. */
@@ -118,7 +119,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		This method automatically returns a list of QTreeWidgetItem when the vector "types" contains OBJ_SCHEMA or OBJ_TABLE or OBJ_VIEW */
 		static vector<QTreeWidgetItem *> updateObjectsTree(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, vector<ObjectType> types,
 																											 bool checkable_items=false, bool disable_empty_grps=true, QTreeWidgetItem *root=nullptr,
-																											 const QString &schema=QString(), const QString &table=QString());
+																											 const QString &schema=QString(), const QString &table=QString(), unsigned sort_by = 0);
 
 	private slots:
 		void importDatabase(void);

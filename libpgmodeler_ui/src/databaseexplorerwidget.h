@@ -60,7 +60,9 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		QMenu handle_menu,
 		
 		//! \brief Stores the snippets' actions
-		snippets_menu;
+		snippets_menu,
+
+		toggle_disp_menu;
 		
 		QAction *copy_action, *drop_action, *drop_cascade_action,
 		*show_data_action, *refresh_action, *properties_action,
@@ -70,6 +72,8 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		QTreeWidgetItem *rename_item;
 		
 		HintTextWidget *filter_ht;
+
+		unsigned sort_column;
 
 		void configureImportHelper(void);
 		

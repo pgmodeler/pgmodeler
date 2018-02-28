@@ -98,6 +98,8 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
+
+	sort_column = 0;
 	splitter->setSizes({ 70, 30 });
 
 	properties_tbw->setItemDelegate(new PlainTextItemDelegate(this, true));
@@ -106,6 +108,18 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	data_grid_tb->setToolTip(data_grid_tb->toolTip() + QString(" (%1)").arg(data_grid_tb->shortcut().toString()));
 	runsql_tb->setToolTip(runsql_tb->toolTip() + QString(" (%1)").arg(runsql_tb->shortcut().toString()));
 	refresh_tb->setToolTip(refresh_tb->toolTip() + QString(" (%1)").arg(refresh_tb->shortcut().toString()));
+
+	QAction *act = nullptr;
+
+	act = toggle_disp_menu.addAction(trUtf8("Show system objects"));
+	act->setCheckable(true);
+	connect(act, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
+
+	act = toggle_disp_menu.addAction(trUtf8("Show extension objects"));
+	act->setCheckable(true);
+	connect(act, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
+
+	toggle_display_tb->setMenu(&toggle_disp_menu);
 
 	snippets_menu.setTitle(trUtf8("Snippets"));
 	snippets_menu.setIcon(QIcon(QString(":icones/icones/codesnippet.png")));
@@ -135,8 +149,6 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	objects_trw->installEventFilter(this);
 
 	connect(refresh_tb, SIGNAL(clicked(void)), this, SLOT(listObjects(void)));
-	connect(ext_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
-	connect(sys_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
 	connect(objects_trw, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(handleObject(QTreeWidgetItem *,int)));
 	connect(objects_trw, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(showObjectProperties()));
 	connect(raw_attrib_names_chk, SIGNAL(toggled(bool)), this, SLOT(showObjectProperties()));
@@ -177,8 +189,13 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 				}
 			});
 
+	connect(sort_by_name_tb, &QToolButton::clicked,
+	[&]() {
+			sort_column = sort_by_name_tb->isChecked() ? 0 : DatabaseImportForm::OBJECT_ID;
+			objects_trw->sortByColumn(sort_column);
+	});
+
 	QMenu *refresh_menu=new QMenu(refresh_tb);
-	QAction *act=nullptr;
 
 	act=refresh_menu->addAction(trUtf8("Quick refresh"), this, SLOT(listObjects()), QKeySequence("F5"));
 	act->setData(QVariant::fromValue<bool>(true));
@@ -899,7 +916,7 @@ void DatabaseExplorerWidget::listObjects(void)
 		if(quick_refresh)
 			QApplication::setOverrideCursor(Qt::WaitCursor);
 
-		DatabaseImportForm::listObjects(import_helper, objects_trw, false, false, true, quick_refresh);
+		DatabaseImportForm::listObjects(import_helper, objects_trw, false, false, true, quick_refresh, sort_column);
 
 		QTreeWidgetItem *root = new QTreeWidgetItem, *curr_root = nullptr;
 
@@ -933,7 +950,9 @@ void DatabaseExplorerWidget::configureImportHelper(void)
 {
 	import_helper.setConnection(connection);
 	import_helper.setCurrentDatabase(connection.getConnectionParam(Connection::PARAM_DB_NAME));
-	import_helper.setImportOptions(sys_objs_chk->isChecked(), ext_objs_chk->isChecked(), false, false, false, false, false);
+	import_helper.setImportOptions(toggle_disp_menu.actions().at(0)->isChecked(),
+																 toggle_disp_menu.actions().at(1)->isChecked(),
+																 false, false, false, false, false);
 
 	catalog.closeConnection();
 	catalog.setFilter(Catalog::LIST_ALL_OBJS);
@@ -1317,11 +1336,11 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item)
 
 			//Updates the group type only
 			if(obj_id==0 || (obj_type!=OBJ_TABLE && obj_type!=OBJ_VIEW && obj_type!=OBJ_SCHEMA))
-				gen_items=DatabaseImportForm::updateObjectsTree(import_helper, objects_trw, { obj_type }, false, false, root, sch_name, tab_name);
+				gen_items=DatabaseImportForm::updateObjectsTree(import_helper, objects_trw, { obj_type }, false, false, root, sch_name, tab_name, sort_column);
 			else
 				//Updates all child objcts when the selected object is a schema or table or view
 				gen_items=DatabaseImportForm::updateObjectsTree(import_helper, objects_trw,
-																BaseObject::getChildObjectTypes(obj_type), false, false, root, sch_name, tab_name);
+																BaseObject::getChildObjectTypes(obj_type), false, false, root, sch_name, tab_name, sort_column);
 
 			//Creating dummy items for schemas and tables
 			if(obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLE || obj_type==OBJ_VIEW)
@@ -1335,7 +1354,7 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item)
 			}
 
 			import_helper.closeConnection();
-			objects_trw->sortItems(0, Qt::AscendingOrder);
+			objects_trw->sortItems(sort_column, Qt::AscendingOrder);
 			objects_trw->setCurrentItem(nullptr);
 
 			if(obj_type==OBJ_TABLE)
@@ -1717,7 +1736,9 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 				dbmodel.createSystemObjects(false);
 				import_hlp.setConnection(connection);
 				import_hlp.setCurrentDatabase(connection.getConnectionParam(Connection::PARAM_DB_NAME));
-				import_hlp.setImportOptions(sys_objs_chk->isChecked(), ext_objs_chk->isChecked(), true, false, false, false, false);
+				import_hlp.setImportOptions(toggle_disp_menu.actions().at(0)->isChecked(),
+																		toggle_disp_menu.actions().at(1)->isChecked(),
+																		true, false, false, false, false);
 				import_hlp.setSelectedOIDs(&dbmodel, {{OBJ_DATABASE, {db_oid}}, {obj_type,{oid}}}, {});
 				sys_oid=import_hlp.getLastSystemOID();
 
