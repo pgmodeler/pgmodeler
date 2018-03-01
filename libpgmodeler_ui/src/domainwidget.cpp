@@ -31,15 +31,32 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DOMAIN
 
 		data_type=nullptr;
 		data_type=new PgSQLTypeWidget(this);
-		domain_grid->addWidget(data_type,4,0,1,2);
-		domain_grid->addItem(new QSpacerItem(10,1,QSizePolicy::Fixed,QSizePolicy::Expanding), domain_grid->count()+1, 0, 1, 0);
+
+		QGridLayout *grid = dynamic_cast<QGridLayout *>(dom_attribs_tbw->widget(0)->layout());
+		grid->addWidget(data_type, 1, 0, 1, 2);
+		grid->addItem(new QSpacerItem(10, 1, QSizePolicy::Fixed,QSizePolicy::Expanding), 2, 0, 1, 1);
+
+		constr_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^ (ObjectTableWidget::DUPLICATE_BUTTON), true, this);
+		constr_tab->setColumnCount(2);
+
+		constr_tab->setHeaderLabel(trUtf8("Name"), 0);
+		constr_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("constraint_ck")), 0);
+
+		constr_tab->setHeaderLabel(trUtf8("Expression"), 1);
+		constr_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("codigofonte")), 1);
+
+		grid = dynamic_cast<QGridLayout *>(dom_attribs_tbw->widget(1)->layout());
+		grid->addWidget(constr_tab, 2, 0, 1, 2);
+
+		connect(constr_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleConstraint(int)));
+		connect(constr_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleConstraint(int)));
+		connect(constr_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editConstraint(int)));
 
 		configureFormLayout(domain_grid, OBJ_DOMAIN);
 		setRequiredField(data_type);
-		configureTabOrder({ def_value_edt, constr_name_edt, not_null_chk,
-							check_expr_txt, data_type });
+		configureTabOrder({ def_value_edt, not_null_chk,	data_type, constr_name_edt, check_expr_txt });
 
-		setMinimumSize(580, 530);
+		setMinimumSize(580, 580);
 	}
 	catch(Exception &e)
 	{
@@ -69,9 +86,40 @@ void DomainWidget::setAttributes(DatabaseModel *model, OperationList *op_list, S
 		check_expr_txt->setPlainText(domain->getExpression());
 		constr_name_edt->setText(domain->getConstraintName());
 		not_null_chk->setChecked(domain->isNotNull());
+
+		constr_tab->blockSignals(true);
+
+		for(auto itr : domain->getCheckConstraints())
+		{
+			constr_tab->addRow();
+			constr_tab->setCellText(itr.first, constr_tab->getRowCount() - 1, 0);
+			constr_tab->setCellText(itr.second, constr_tab->getRowCount() - 1, 1);
+		}
+
+		constr_tab->clearSelection();
+		constr_tab->blockSignals(false);
 	}
 
 	data_type->setAttributes(type, model);
+}
+
+void DomainWidget::handleConstraint(int row)
+{
+	if(!constr_name_edt->text().isEmpty() && !check_expr_txt->toPlainText().isEmpty())
+	{
+		constr_tab->setCellText(constr_name_edt->text(), row, 0);
+		constr_tab->setCellText(check_expr_txt->toPlainText(), row, 1);
+		constr_name_edt->clear();
+		check_expr_txt->clear();
+	}
+	else if(constr_tab->getCellText(row, 0).isEmpty())
+		constr_tab->removeRow(row);
+}
+
+void DomainWidget::editConstraint(int row)
+{
+	constr_name_edt->setText(constr_tab->getCellText(row, 0));
+	check_expr_txt->setPlainText(constr_tab->getCellText(row, 1));
 }
 
 void DomainWidget::applyConfiguration(void)
@@ -84,9 +132,11 @@ void DomainWidget::applyConfiguration(void)
 		domain=dynamic_cast<Domain *>(this->object);
 		domain->setType(data_type->getPgSQLType());
 		domain->setDefaultValue(def_value_edt->text());
-		domain->setExpression(check_expr_txt->toPlainText());
-		domain->setConstraintName(constr_name_edt->text());
 		domain->setNotNull(not_null_chk->isChecked());
+		domain->removeCheckConstraints();
+
+		for(unsigned row = 0; row < constr_tab->getRowCount(); row++)
+			domain->addCheckConstraint(constr_tab->getCellText(row, 0), constr_tab->getCellText(row, 1));
 
 		BaseObjectWidget::applyConfiguration();
 		finishConfiguration();

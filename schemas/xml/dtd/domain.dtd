@@ -2,7 +2,7 @@
   CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
            Unexpected results may occur if the code is changed deliberately.
 -->
-<!ELEMENT domain (schema, role?, collation?, comment?, appended-sql?,prepended-sql?, type?, expression?)>
+<!ELEMENT domain (schema, role?, collation?, comment?, appended-sql?, prepended-sql?, type?, constraint*)>
 <!ATTLIST domain name CDATA #REQUIRED>
 <!ATTLIST domain not-null (true | false) "false">
 <!ATTLIST domain default-value CDATA #IMPLIED>

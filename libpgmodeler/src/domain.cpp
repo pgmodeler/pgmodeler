@@ -26,7 +26,40 @@ Domain::Domain(void)
 	attributes[ParsersAttributes::NOT_NULL]=QString();
 	attributes[ParsersAttributes::EXPRESSION]=QString();
 	attributes[ParsersAttributes::TYPE]=QString();
-	attributes[ParsersAttributes::CONSTRAINT]=QString();
+	attributes[ParsersAttributes::CONSTRAINTS]=QString();
+}
+
+void Domain::addCheckConstraint(const QString &name, const QString &expr)
+{
+	//Raises an error if the constraint name is invalid
+	if(!name.isEmpty() && !BaseObject::isValidName(name))
+		throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	if(expr.isEmpty())
+		throw Exception(ERR_ASG_INV_EXPR_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	if(chk_constrs.count(name))
+	{
+		throw Exception(QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
+						.arg(name)
+						.arg(BaseObject::getTypeName(OBJ_CONSTRAINT))
+						.arg(this->getName(true))
+						.arg(this->getTypeName()),
+						ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+
+	chk_constrs[name] = expr;
+	setCodeInvalidated(true);
+}
+
+void Domain::removeCheckConstraints(void)
+{
+	chk_constrs.clear();
+}
+
+attribs_map Domain::getCheckConstraints(void)
+{
+	return(chk_constrs);
 }
 
 void Domain::setName(const QString &name)
@@ -118,17 +151,23 @@ QString Domain::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
+	attribs_map aux_attribs;
+
 	attributes[ParsersAttributes::NOT_NULL]=(not_null ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
 	attributes[ParsersAttributes::EXPRESSION]=expression;
-	attributes[ParsersAttributes::CONSTRAINT]=BaseObject::formatName(constraint_name);
+
+	for(auto itr : chk_constrs)
+	{
+		aux_attribs[ParsersAttributes::NAME] = itr.first;
+		aux_attribs[ParsersAttributes::EXPRESSION] = itr.second;
+		attributes[ParsersAttributes::CONSTRAINTS]+=schparser.getCodeDefinition(ParsersAttributes::DOM_CONSTRAINT, aux_attribs, def_type);
+	}
 
 	if(def_type==SchemaParser::SQL_DEFINITION)
 		attributes[ParsersAttributes::TYPE]=(*type);
 	else
-	{
 		attributes[ParsersAttributes::TYPE]=type.getCodeDefinition(def_type);
-	}
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }
@@ -143,6 +182,7 @@ void Domain::operator = (Domain &domain)
 	this->not_null=domain.not_null;
 	this->default_value=domain.default_value;
 	this->type=domain.type;
+	this->chk_constrs=domain.chk_constrs;
 	PgSQLType::renameUserType(prev_name, this, this->getName(true));
 }
 
@@ -159,7 +199,7 @@ QString Domain::getAlterDefinition(BaseObject *object)
 
 		attributes[ParsersAttributes::DEFAULT_VALUE]=QString();
 		attributes[ParsersAttributes::NOT_NULL]=QString();
-		attributes[ParsersAttributes::CONSTRAINT]=QString();
+		attributes[ParsersAttributes::CONSTRAINTS]=QString();
 		attributes[ParsersAttributes::EXPRESSION]=QString();
 		attributes[ParsersAttributes::OLD_NAME]=QString();
 		attributes[ParsersAttributes::NEW_NAME]=QString();
@@ -170,7 +210,7 @@ QString Domain::getAlterDefinition(BaseObject *object)
 		if(this->not_null!=domain->not_null)
 			attributes[ParsersAttributes::NOT_NULL]=(domain->not_null ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
 
-		if(this->expression!=domain->expression)
+		/*if(this->expression!=domain->expression)
 		{
 			attributes[ParsersAttributes::CONSTRAINT]=domain->constraint_name;
 			attributes[ParsersAttributes::EXPRESSION]=(!domain->expression.isEmpty() ? domain->expression : ParsersAttributes::UNSET);
@@ -181,7 +221,7 @@ QString Domain::getAlterDefinition(BaseObject *object)
 		{
 			attributes[ParsersAttributes::OLD_NAME]=this->constraint_name;
 			attributes[ParsersAttributes::NEW_NAME]=domain->constraint_name;
-		}
+		}*/
 
 		alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
 		return(alter_def);

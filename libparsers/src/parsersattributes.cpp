@@ -151,6 +151,7 @@ namespace ParsersAttributes {
 	DIRECTORY=QString("directory"),
 	DISABLE_SMOOTHNESS=QString("disable-smoothness"),
 	DISPLAY_LINE_NUMBERS=QString("display-line-numbers"),
+	DOM_CONSTRAINT=QString("domconstraint"),
 	DOCK_WIDGETS=QString("dock-widgets"),
 	DROP_CMDS=QString("drop-cmds"),
 	DROP=QString("drop"),

@@ -6,9 +6,10 @@
 %if {reduced-form} %then
   /> $br
 %else
- %if {constraint} %then
-   [ constraint=] "{constraint}"
-  %end
+  
+  #%if {constraint} %then
+  # [ constraint=] "{constraint}"
+  #%end
 
   [ not-null=] %if {not-null} %then "true" %else "false" %end
   %if {default-value} %then [ default-value=] "{default-value}" %end
@@ -30,11 +31,11 @@
   %if {appended-sql} %then {appended-sql} %end
   %if {prepended-sql} %then {prepended-sql} %end
 
-  $tb {type}
+  {type}
 
-  %if {expression} %then
-   $tb <expression> <! $ob CDATA $ob {expression} $cb $cb > </expression>$br
+  %if {constraints} %then
+   {constraints}
   %end
 
-  </domain>  $br $br
+  </domain> $br $br
 %end

@@ -83,10 +83,15 @@ void ObjectSelectorWidget::configureSelector(bool install_highlighter)
 bool ObjectSelectorWidget::eventFilter(QObject *obj, QEvent *evnt)
 {
 	if(this->isEnabled() && evnt->type()==QEvent::FocusIn &&
-			QApplication::mouseButtons()==Qt::LeftButton && obj==obj_name_txt)
+		 QApplication::mouseButtons()==Qt::LeftButton && obj==obj_name_txt)
 	{
-		showObjectView();
-		return(true);
+		QFocusEvent *focus_evnt = dynamic_cast<QFocusEvent *>(evnt);
+
+		if(focus_evnt->reason() == Qt::MouseFocusReason)
+		{
+			showObjectView();
+			return(true);
+		}
 	}
 
 	return(QWidget::eventFilter(obj, evnt));
