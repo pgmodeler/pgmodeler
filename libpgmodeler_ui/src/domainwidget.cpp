@@ -83,8 +83,6 @@ void DomainWidget::setAttributes(DatabaseModel *model, OperationList *op_list, S
 	{
 		type=domain->getType();
 		def_value_edt->setText(domain->getDefaultValue());
-		check_expr_txt->setPlainText(domain->getExpression());
-		constr_name_edt->setText(domain->getConstraintName());
 		not_null_chk->setChecked(domain->isNotNull());
 
 		constr_tab->blockSignals(true);
