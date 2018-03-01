@@ -975,6 +975,28 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 		obj_xml.replace(END_TAG_EXPR.arg(QString("grant")), END_TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_PERMISSION)));
 	}
 
+	//Replace the constraint attribute and tag expression by constraint tag in <domain>.
+	if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_DOMAIN))) &&
+		 obj_xml.contains(TAG_EXPR.arg(ParsersAttributes::EXPRESSION)))
+	{
+		int start_idx=-1, end_idx=-1;
+		QRegExp regexp = QRegExp(ATTRIBUTE_EXPR.arg(ParsersAttributes::CONSTRAINT));
+		QString constr_name;
+
+		regexp.indexIn(obj_xml);
+		constr_name = regexp.capturedTexts().at(0);
+		constr_name.remove(QString("%1=\"").arg(ParsersAttributes::CONSTRAINT));
+		constr_name.remove(constr_name.length() - 1, 1);
+
+		obj_xml.remove(QRegExp(ATTRIBUTE_EXPR.arg(ParsersAttributes::CONSTRAINT)));
+
+		start_idx = obj_xml.indexOf(TAG_EXPR.arg(ParsersAttributes::EXPRESSION));
+		obj_xml.insert(start_idx, QString("\n\t<constraint name=\"%1\" type=\"check\">\n\t\t").arg(constr_name));
+
+		end_idx = obj_xml.indexOf(END_TAG_EXPR.arg(ParsersAttributes::EXPRESSION));
+		obj_xml.insert(end_idx + END_TAG_EXPR.arg(ParsersAttributes::EXPRESSION).length() + 1, QString("\n\t</constraint>\n"));
+	}
+
 	//Fix the references to op. classes and families if needed
 	fixOpClassesFamiliesReferences(obj_xml);
 }
