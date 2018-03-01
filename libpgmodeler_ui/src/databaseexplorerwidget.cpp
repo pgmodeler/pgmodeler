@@ -160,16 +160,14 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	connect(data_grid_tb, SIGNAL(clicked(bool)), this, SLOT(openDataGrid()));
 	connect(drop_db_tb, SIGNAL(clicked(bool)), this, SLOT(dropDatabase()));
 	connect(collapse_all_tb, SIGNAL(clicked(bool)), objects_trw, SLOT(collapseAll(void)));
+	connect(by_oid_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects(void)));
+	connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterObjects(void)));
 
 	connect(runsql_tb, &QToolButton::clicked,
 			[&]() { emit s_sqlExecutionRequested(); });
 
 	connect(properties_tbw, &QTableWidget::itemPressed,
 			[&]() { SQLExecutionWidget::copySelection(properties_tbw, true); });
-
-	connect(filter_edt, &QLineEdit::textChanged,
-			[&](){ DatabaseImportForm::filterObjects(objects_trw, filter_edt->text(),
-													 (by_oid_chk->isChecked() ? DatabaseImportForm::OBJECT_ID : 0), false); });
 
 	connect(expand_all_tb, &QToolButton::clicked,
 			[&](){
@@ -1837,6 +1835,12 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 		QApplication::restoreOverrideCursor();
 		emit s_sourceCodeShowRequested(QString("/* Could not generate source code due to one or more errors! \n \n %1 */").arg(e.getExceptionsText()));
 	}
+}
+
+void DatabaseExplorerWidget::filterObjects(void)
+{
+	DatabaseImportForm::filterObjects(objects_trw, filter_edt->text(),
+																		(by_oid_chk->isChecked() ? DatabaseImportForm::OBJECT_ID : 0), false);
 }
 
 QString DatabaseExplorerWidget::getObjectSource(BaseObject *object, DatabaseModel *dbmodel)

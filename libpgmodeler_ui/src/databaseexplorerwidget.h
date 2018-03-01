@@ -184,6 +184,8 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 
 		void loadObjectSource(void);
 
+		void filterObjects(void);
+
 	signals:
 		//! \brief This signal is emmited to indicate that a sql execution widget need to be opened
 		void s_sqlExecutionRequested(void);
