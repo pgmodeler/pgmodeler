@@ -38,7 +38,8 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 4);
 	frame->setParent(this);
 
-	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_90)].push_back(can_replicate_chk);
+	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_91)].push_back(can_replicate_chk);
+	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(bypass_rls_chk);
 	frame=generateVersionWarningFrame(fields_map);
 	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 0);
 	frame->setParent(this);
@@ -128,6 +129,7 @@ void RoleWidget::hideEvent(QHideEvent *event)
 	can_login_chk->setChecked(false);
 	create_role_chk->setChecked(false);
 	encrypt_pass_chk->setChecked(false);
+	bypass_rls_chk->setChecked(false);
 
 	BaseObjectWidget::hideEvent(event);
 }
@@ -149,6 +151,7 @@ void RoleWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Rol
 		inh_perm_chk->setChecked(role->getOption(Role::OP_INHERIT));
 		can_login_chk->setChecked(role->getOption(Role::OP_LOGIN));
 		can_replicate_chk->setChecked(role->getOption(Role::OP_REPLICATION));
+		bypass_rls_chk->setChecked(role->getOption(Role::OP_BYPASSRLS));
 	}
 
 	BaseObjectWidget::setAttributes(model, op_list, role);
@@ -295,6 +298,7 @@ void RoleWidget::applyConfiguration(void)
 		role->setOption(Role::OP_INHERIT, inh_perm_chk->isChecked());
 		role->setOption(Role::OP_LOGIN, can_login_chk->isChecked());
 		role->setOption(Role::OP_REPLICATION, can_replicate_chk->isChecked());
+		role->setOption(Role::OP_BYPASSRLS, bypass_rls_chk->isChecked());
 
 		for(type_id=0; type_id < 3; type_id++)
 		{

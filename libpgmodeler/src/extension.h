@@ -67,6 +67,8 @@ class Extension: public BaseObject {
 
 		virtual QString getAlterDefinition(BaseObject *object) final;
 
+		virtual QString getDropDefinition(bool cascade) final;
+
 		void operator = (Extension &ext);
 };
 

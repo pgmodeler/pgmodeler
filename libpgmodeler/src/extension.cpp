@@ -119,6 +119,12 @@ QString Extension::getAlterDefinition(BaseObject *object)
 	}
 }
 
+QString Extension::getDropDefinition(bool cascade)
+{
+	attributes[ParsersAttributes::NAME] = this->getName();
+	return(BaseObject::getDropDefinition(cascade));
+}
+
 void Extension::operator = (Extension &ext)
 {
 	QString prev_name=this->getName(true);

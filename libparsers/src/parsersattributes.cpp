@@ -58,6 +58,7 @@ namespace ParsersAttributes {
 	BOTTOM=QString("bottom"),
 	BUFFERING=QString("buffering"),
 	BY_VALUE=QString("by-value"),
+	BYPASSRLS=QString("bypassrls"),
 	CACHE=QString("cache"),
 	CANONICAL_FUNC=QString("canonical"),
 	CANVAS_CORNER_MOVE=QString("canvas-corner-move"),

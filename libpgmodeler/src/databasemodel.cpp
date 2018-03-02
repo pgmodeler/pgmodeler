@@ -3349,12 +3349,12 @@ Role *DatabaseModel::createRole(void)
 	QString op_attribs[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
 						   ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,
 						   ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED,
-						   ParsersAttributes::REPLICATION };
+							 ParsersAttributes::REPLICATION, ParsersAttributes::BYPASSRLS };
 
 	unsigned op_vect[]={ Role::OP_SUPERUSER, Role::OP_CREATEDB,
 						 Role::OP_CREATEROLE, Role::OP_INHERIT,
 						 Role::OP_LOGIN, Role::OP_ENCRYPTED,
-						 Role::OP_REPLICATION };
+						 Role::OP_REPLICATION, Role::OP_BYPASSRLS };
 
 	try
 	{
@@ -3371,7 +3371,7 @@ Role *DatabaseModel::createRole(void)
 			role->setConnectionLimit(attribs[ParsersAttributes::CONN_LIMIT].toInt());
 
 		//Setting up the role options according to the configured on the XML
-		for(i=0; i < 7; i++)
+		for(i=0; i < 8; i++)
 		{
 			marked=attribs[op_attribs[i]]==ParsersAttributes::_TRUE_;
 			role->setOption(op_vect[i], marked);
