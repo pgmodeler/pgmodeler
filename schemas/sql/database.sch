@@ -12,34 +12,44 @@
    $br [-- ddl-end --] $br $br
  %end
 
-[CREATE DATABASE ] {name} $br
+[CREATE DATABASE ] {name} 
 
 %if {template} %then
-  $tb [TEMPLATE = ] {template} $br
+  $br $tb [TEMPLATE = ] {template} 
 %end
 
 %if {encoding} %then
-  $tb [ENCODING = ] {encoding} $br
+  $br $tb [ENCODING = ] {encoding}
 %end
 
-  %if {lc-collate} %then
-	$tb [LC_COLLATE = ] {lc-collate} $br
-  %end
+%if {lc-collate} %then
+    $br $tb [LC_COLLATE = ] {lc-collate} 
+%end
 
-  %if {lc-ctype} %then
-	$tb [LC_CTYPE = ] {lc-ctype} $br
-  %end
+%if {lc-ctype} %then
+    $br $tb [LC_CTYPE = ] {lc-ctype}
+%end
 
 %if {tablespace} %then
-  $tb [TABLESPACE = ] {tablespace} $br
+  $br $tb [TABLESPACE = ] {tablespace}
 %end
 
 %if {owner} %then
-  $tb [OWNER = ] {owner} $br
+  $br $tb [OWNER = ] {owner} 
 %end
 
 %if {connlimit} %then
-  $tb [CONNECTION LIMIT = ] {connlimit} $br
+  $br $tb [CONNECTION LIMIT = ] {connlimit}
+%end
+
+%if ({pgsql-ver} >=f "9.5") %then
+    %if ({is-template} == "true") %then
+        $br $tb [IS_TEMPLATE = ] {is-template}
+    %end
+
+    %if ({allow-conns} == "false") %then
+        $br $tb [ALLOW_CONNECTIONS = ] {allow-conns} 
+    %end
 %end
 
 ; $br

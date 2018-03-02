@@ -87,6 +87,12 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Maximum number of connections
 		int conn_limit;
 
+		//! \brief Indicates if the database can be used as template
+		bool is_template,
+
+		//! \brief Indicates if the database accepts connection
+		allow_conns;
+
 		//! \brief Vectors that stores all the objects types
 		vector<BaseObject *> textboxes;
 		vector<BaseObject *> relationships;
@@ -255,11 +261,19 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		void setDefaultObject(BaseObject *object, ObjectType obj_type=BASE_OBJECT);
 
+		void setIsTemplate(bool value);
+
+		void setAllowConnections(bool value);
+
 		//! \brief Returns the current state of the sql appeding at end of entire model definition
 		bool isAppendAtEOD(void);
 
 		//! \brief Returns the current state of the sql prepeding at beginning of entire model definition
 		bool isPrependedAtBOD(void);
+
+		bool isTemplate(void);
+
+		bool isAllowConnections(void);
 
 		//! \brief Destroys all the objects
 		void destroyObjects(void);

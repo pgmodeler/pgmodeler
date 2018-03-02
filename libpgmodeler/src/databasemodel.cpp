@@ -27,6 +27,9 @@ DatabaseModel::DatabaseModel(void)
 	object_id=DatabaseModel::dbmodel_id++;
 	obj_type=OBJ_DATABASE;
 
+	is_template = false;
+	allow_conns = true;
+
 	encoding=BaseType::null;
 	BaseObject::setName(QObject::trUtf8("new_database").toUtf8());
 
@@ -45,6 +48,8 @@ DatabaseModel::DatabaseModel(void)
 	attributes[ParsersAttributes::_LC_CTYPE_]=QString();
 	attributes[ParsersAttributes::APPEND_AT_EOD]=QString();
 	attributes[ParsersAttributes::PREPEND_AT_BOD]=QString();
+	attributes[ParsersAttributes::ALLOW_CONNS]=QString();
+	attributes[ParsersAttributes::IS_TEMPLATE]=QString();
 }
 
 DatabaseModel::DatabaseModel(ModelWidget *model_wgt):DatabaseModel()
@@ -2907,7 +2912,8 @@ void DatabaseModel::configureDatabase(attribs_map &attribs)
 	localizations[1]=attribs[ParsersAttributes::_LC_COLLATE_];
 	append_at_eod=attribs[ParsersAttributes::APPEND_AT_EOD]==ParsersAttributes::_TRUE_;
 	prepend_at_bod=attribs[ParsersAttributes::PREPEND_AT_BOD]==ParsersAttributes::_TRUE_;
-
+	is_template=attribs[ParsersAttributes::IS_TEMPLATE]==ParsersAttributes::_TRUE_;
+	allow_conns=attribs[ParsersAttributes::ALLOW_CONNS]==ParsersAttributes::_TRUE_;
 
 	if(!attribs[ParsersAttributes::CONN_LIMIT].isEmpty())
 		conn_limit=attribs[ParsersAttributes::CONN_LIMIT].toInt();
@@ -2960,6 +2966,10 @@ void DatabaseModel::loadModel(const QString &filename)
 
 			this->last_zoom=attribs[ParsersAttributes::LAST_ZOOM].toDouble();
 			if(this->last_zoom <= 0) this->last_zoom=1;
+
+			this->is_template = attribs[ParsersAttributes::IS_TEMPLATE] == ParsersAttributes::_TRUE_;
+			this->allow_conns = (attribs[ParsersAttributes::ALLOW_CONNS].isEmpty() ||
+													 attribs[ParsersAttributes::ALLOW_CONNS] == ParsersAttributes::_TRUE_);
 
 			protected_model=(attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
 
@@ -5070,13 +5080,23 @@ QString DatabaseModel::getAlterDefinition(BaseObject *object)
 
 	try
 	{
-		QString alter_def=BaseObject::getAlterDefinition(object);
+		QString alter_def;
+		attribs_map aux_attribs;
+
+		aux_attribs[ParsersAttributes::SIGNATURE] = this->getSignature();
+		aux_attribs[ParsersAttributes::SQL_OBJECT] = this->getSQLName();
 
 		if(this->conn_limit!=db_aux->conn_limit)
-		{
-			attributes[ParsersAttributes::CONN_LIMIT]=QString::number(db_aux->conn_limit);
-			alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, false);
-		}
+			aux_attribs[ParsersAttributes::CONN_LIMIT]=QString::number(db_aux->conn_limit);
+
+		if(this->is_template != db_aux->is_template)
+			aux_attribs[ParsersAttributes::IS_TEMPLATE] = (db_aux->is_template ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
+
+		if(this->allow_conns != db_aux->allow_conns)
+			aux_attribs[ParsersAttributes::ALLOW_CONNS] = (db_aux->allow_conns ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
+
+		alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), aux_attribs, true, false);
+		alter_def+=BaseObject::getAlterDefinition(object);
 
 		return(alter_def);
 	}
@@ -6379,7 +6399,6 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 				attributes[loc_attribs[i]]=QString("'%1'").arg(localizations[i]);
 			}
 		}
-
 	}
 	else
 	{
@@ -6390,6 +6409,8 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 		attributes[ParsersAttributes::PREPEND_AT_BOD]=(prepend_at_bod ? ParsersAttributes::_TRUE_ : QString());
 	}
 
+	attributes[ParsersAttributes::IS_TEMPLATE]=(is_template ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
+	attributes[ParsersAttributes::ALLOW_CONNS]=(allow_conns ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
 	attributes[ParsersAttributes::TEMPLATE_DB]=template_db;
 
 	if(def_type==SchemaParser::SQL_DEFINITION && append_at_eod)
@@ -9052,6 +9073,16 @@ void DatabaseModel::setDefaultObject(BaseObject *object, ObjectType obj_type)
 		default_objs[object->getObjectType()]=object;
 }
 
+void DatabaseModel::setIsTemplate(bool value)
+{
+	is_template = value;
+}
+
+void DatabaseModel::setAllowConnections(bool value)
+{
+	allow_conns = value;
+}
+
 bool  DatabaseModel::isAppendAtEOD(void)
 {
 	return(append_at_eod);
@@ -9060,6 +9091,16 @@ bool  DatabaseModel::isAppendAtEOD(void)
 bool DatabaseModel::isPrependedAtBOD(void)
 {
 	return(prepend_at_bod);
+}
+
+bool DatabaseModel::isTemplate(void)
+{
+	return(is_template);
+}
+
+bool DatabaseModel::isAllowConnections(void)
+{
+	return(allow_conns);
 }
 
 void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned options)

@@ -602,7 +602,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 	map<unsigned, QString>::reverse_iterator ritr, ritr_end;
 	attribs_map attribs;
 	QString alter_def, no_inherit_def, inherit_def, set_perms,
-			unset_perms, col_drop_def;
+			unset_perms, col_drop_def, curr_pgsql_ver = BaseObject::getPgSQLVersion();
 	SchemaParser schparser;
 	Type *type=nullptr;
 	vector<Type *> types;
@@ -614,6 +614,9 @@ void ModelsDiffHelper::processDiffInfos(void)
 
 	try
 	{
+		//Overriding the global PostgreSQL version so the diff code can match the destination server version
+		BaseObject::setPgSQLVersion(pgsql_version);
+
 		if(!diff_infos.empty())
 			emit s_progressUpdated(0, trUtf8("Processing diff infos..."));
 
@@ -779,8 +782,10 @@ void ModelsDiffHelper::processDiffInfos(void)
 
 					if(!alter_def.isEmpty())
 					{
-						if(obj_type!=OBJ_DATABASE || !diff_opts[OPT_PRESERVE_DB_NAME])
-							alter_objs[object->getObjectId()]=alter_def;
+						if(obj_type == OBJ_DATABASE && diff_opts[OPT_PRESERVE_DB_NAME])
+							alter_def.remove(QRegExp(QString("(ALTER)( )+(DATABASE)( )+(%1)( )+(RENAME)( )+(TO)(.)*(\\n)").arg(diff.getOldObject()->getSignature())));
+
+						alter_objs[object->getObjectId()]=alter_def;
 
 						/* If the object is a column checks if the types of the columns are differents,
 							generating a TRUNCATE TABLE for the parent table */
@@ -895,9 +900,14 @@ void ModelsDiffHelper::processDiffInfos(void)
 			emit s_progressUpdated(100, trUtf8("No differences between the model and database."));
 		else
 			emit s_progressUpdated(100, trUtf8("Preparing diff code..."));
+
+		//Restoring the global PostgreSQL version
+		BaseObject::setPgSQLVersion(curr_pgsql_ver);
 	}
 	catch(Exception &e)
 	{
+		BaseObject::setPgSQLVersion(curr_pgsql_ver);
+
 		for(Type *type : types)
 			type->convertFunctionParameters(true);
 
