@@ -47,11 +47,13 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<enumeration values="G,PG,PG-13,R,NC-17"/>
 </usertype>
 
-<domain name="year" constraint="year_check" not-null="false">
+<domain name="year" not-null="false">
 	<schema name="public"/>
 	<role name="postgres"/>
-		<type name="integer" length="2" precision="0"/>
-	<expression><![CDATA[((VALUE >= 1901) AND (VALUE <= 2155))]]></expression>
+        <type name="integer" length="2" precision="0"/>
+        <constraint name="year_check" type="check">
+            <expression><![CDATA[((VALUE >= 1901) AND (VALUE <= 2155))]]></expression>
+        </constraint>
 </domain>
 
 <function name="_group_concat"

@@ -4060,14 +4060,10 @@ Domain *DatabaseModel::createDomain(void)
 		setBasicAttributes(domain);
 		xmlparser.getElementAttributes(attribs);
 
-		if(!attribs[ParsersAttributes::CONSTRAINT].isEmpty())
-			domain->setConstraintName(attribs[ParsersAttributes::CONSTRAINT]);
-
 		if(!attribs[ParsersAttributes::DEFAULT_VALUE].isEmpty())
 			domain->setDefaultValue(attribs[ParsersAttributes::DEFAULT_VALUE]);
 
-		domain->setNotNull(attribs[ParsersAttributes::NOT_NULL]==
-				ParsersAttributes::_TRUE_);
+		domain->setNotNull(attribs[ParsersAttributes::NOT_NULL]==ParsersAttributes::_TRUE_);
 
 		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
@@ -4082,11 +4078,13 @@ Domain *DatabaseModel::createDomain(void)
 					{
 						domain->setType(createPgSQLType());
 					}
-					else if(elem==ParsersAttributes::EXPRESSION)
+					else if(elem==ParsersAttributes::CONSTRAINT)
 					{
 						xmlparser.savePosition();
+						xmlparser.getElementAttributes(attribs);
 						xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
-						domain->setExpression(xmlparser.getElementContent());
+						xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
+						domain->addCheckConstraint(attribs[ParsersAttributes::NAME], xmlparser.getElementContent());
 						xmlparser.restorePosition();
 					}
 				}

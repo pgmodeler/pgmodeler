@@ -977,9 +977,31 @@ void DatabaseImportHelper::createRole(attribs_map &attribs)
 void DatabaseImportHelper::createDomain(attribs_map &attribs)
 {
 	Domain *dom=nullptr;
+	QStringList constraints, constr_attrs;
+	attribs_map aux_attribs;
+	QString expr;
 
 	try
 	{
+		constraints = Catalog::parseArrayValues(attribs[ParsersAttributes::CONSTRAINTS]);
+		attribs[ParsersAttributes::CONSTRAINTS].clear();
+
+		for(auto constr : constraints)
+		{
+			constr.remove(0, 1);
+			constr.remove(constr.length() - 1, 1);
+			constr_attrs = constr.split(QChar(':'));
+
+			aux_attribs[ParsersAttributes::NAME] = constr_attrs.at(0);
+
+			expr = constr_attrs.at(1);
+			expr.remove(0,1);
+			expr.remove(expr.length() - 1,1);
+			aux_attribs[ParsersAttributes::EXPRESSION] = expr;
+
+			attribs[ParsersAttributes::CONSTRAINTS]+= schparser.getCodeDefinition(ParsersAttributes::DOM_CONSTRAINT, aux_attribs, SchemaParser::XML_DEFINITION);
+		}
+
 		attribs[ParsersAttributes::TYPE]=getType(attribs[ParsersAttributes::TYPE], true, attribs);
 		attribs[ParsersAttributes::COLLATION]=getDependencyObject(attribs[ParsersAttributes::COLLATION], OBJ_COLLATION);
 		loadObjectXML(OBJ_DOMAIN, attribs);

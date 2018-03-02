@@ -31,30 +31,6 @@
 %end
 
 #Changing CHECK expression
-%if {expression} %then
-  [ALTER ] {sql-object} $sp {signature} 
-
-  %if ({expression} == "unset") %then
-    [ DROP CONSTRAINT ]
-  %else
-    [ ADD CONSTRAINT ]
-  %end
-  
-  %if {constraint} %then
-    {constraint}
-  %end
-  
-  %if ({expression} != "unset") %then
-    $sp CHECK({expression})
-  %end
-  
-  ; $br
-  [-- ddl-end --] $br
-%end
-
-#Changing constraint name (only in 9.2 or above)
-%if ({pgsql-ver} >=f "9.2") %and {old-name} %and {new-name} %then
-  [ALTER ] {sql-object} $sp {signature} 
-  [ RENAME CONSTRAINT ] {old-name} [ TO ] {new-name} ; $br
-  [-- ddl-end --] $br
+%if {constraints} %then
+ {constraints}
 %end
