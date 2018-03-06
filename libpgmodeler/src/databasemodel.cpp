@@ -4681,7 +4681,9 @@ Column *DatabaseModel::createColumn(void)
 		xmlparser.getElementAttributes(attribs);
 		column->setNotNull(attribs[ParsersAttributes::NOT_NULL]==ParsersAttributes::_TRUE_);
 		column->setDefaultValue(attribs[ParsersAttributes::DEFAULT_VALUE]);
-		column->setIdentityType(IdentityType(attribs[ParsersAttributes::IDENTITY_TYPE]));
+
+		if(!attribs[ParsersAttributes::IDENTITY_TYPE].isEmpty())
+			column->setIdentityType(IdentityType(attribs[ParsersAttributes::IDENTITY_TYPE]));
 
 		if(!attribs[ParsersAttributes::SEQUENCE].isEmpty())
 		{

@@ -58,6 +58,7 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN
 						sequence_sel->setEnabled(true);
 						def_value_txt->setEnabled(false);
 						identity_type_cmb->setEnabled(false);
+						notnull_chk->setEnabled(true);
 				});
 
 		connect(expression_rb, &QRadioButton::clicked,
@@ -65,6 +66,7 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN
 						sequence_sel->setEnabled(false);
 						def_value_txt->setEnabled(true);
 						identity_type_cmb->setEnabled(false);
+						notnull_chk->setEnabled(true);
 				});
 
 		connect(identity_rb, &QRadioButton::clicked,
@@ -72,6 +74,8 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN
 						sequence_sel->setEnabled(false);
 						def_value_txt->setEnabled(false);
 						identity_type_cmb->setEnabled(true);
+						notnull_chk->setChecked(true);
+						notnull_chk->setEnabled(false);
 				});
 
 		setMinimumSize(540, 480);
@@ -118,6 +122,7 @@ void ColumnWidget::setAttributes(DatabaseModel *model, OperationList *op_list, B
 			identity_rb->setChecked(true);
 			identity_type_cmb->setEnabled(true);
 			identity_type_cmb->setCurrentText(~column->getIdentityType());
+			notnull_chk->setEnabled(false);
 		}
 	}
 

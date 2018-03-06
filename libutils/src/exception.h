@@ -33,7 +33,7 @@
 #include <deque>
 
 using namespace std;
-static const int ERROR_COUNT=230;
+static const int ERROR_COUNT=231;
 
 /*
  ErrorType enum format: ERR_[[OPERATION_CODE][ERROR_CODE]] where:
@@ -277,7 +277,8 @@ enum ErrorType {
 	ERR_CONNECTION_TIMEOUT,
 	ERR_CONNECTION_BROKEN,
 	ERR_DROP_CURRDB_DEFAULT,
-	ERR_NULL_PK_COLUMN
+	ERR_NULL_PK_COLUMN,
+	ERR_INV_IDENTITY_COLUMN,
 };
 
 class Exception {

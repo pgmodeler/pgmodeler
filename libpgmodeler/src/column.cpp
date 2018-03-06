@@ -60,17 +60,32 @@ void Column::setType(PgSQLType type)
 	//An error is raised if the column receive a pseudo-type as data type.
 	if(type.isPseudoType())
 		throw Exception(ERR_ASG_PSDTYPE_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	else if(this->identity_type != BaseType::null && !type.isIntegerType())
+	{
+		throw Exception(Exception::getErrorMessage(ERR_INV_IDENTITY_COLUMN).arg(getSignature()),
+										ERR_INV_IDENTITY_COLUMN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 
 	setCodeInvalidated(this->type != type);
 	this->type=type;
 }
 
-void Column::setIdentityType(IdentityType mode)
+void Column::setIdentityType(IdentityType id_type)
 {
-	setCodeInvalidated(identity_type != mode);
-	identity_type = mode;
+	if(id_type != BaseType::null && !type.isIntegerType())
+	{
+		throw Exception(Exception::getErrorMessage(ERR_INV_IDENTITY_COLUMN).arg(getSignature()),
+										ERR_INV_IDENTITY_COLUMN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
+
+	setCodeInvalidated(identity_type != id_type);
+	identity_type = id_type;
 	default_value.clear();
 	sequence = nullptr;
+
+	//Identity column implies NOT NULL constraint
+	if(id_type != BaseType::null)
+		setNotNull(true);
 }
 
 void Column::setDefaultValue(const QString &value)
@@ -100,6 +115,11 @@ IdentityType Column::getIdentityType(void)
 bool Column::isNotNull(void)
 {
 	return(not_null);
+}
+
+bool Column::isIdentity(void)
+{
+	return(identity_type != BaseType::null);
 }
 
 QString Column::getTypeReference(void)
@@ -233,6 +253,16 @@ QString Column::getAlterDefinition(BaseObject *object)
 		if(this->not_null!=col->not_null)
 			attribs[ParsersAttributes::NOT_NULL]=(!col->not_null ? ParsersAttributes::UNSET : ParsersAttributes::_TRUE_);
 
+		attribs[ParsersAttributes::NEW_IDENTITY_TYPE] = QString();
+
+		if(this->identity_type == BaseType::null && col->identity_type != BaseType::null)
+			attribs[ParsersAttributes::IDENTITY_TYPE] = ~col->identity_type;
+		else if(this->identity_type != BaseType::null && col->identity_type == BaseType::null)
+			attribs[ParsersAttributes::IDENTITY_TYPE] = ParsersAttributes::UNSET;
+		else if(this->identity_type != BaseType::null && col->identity_type != BaseType::null &&
+						this->identity_type != col->identity_type)
+			attribs[ParsersAttributes::NEW_IDENTITY_TYPE] = ~col->identity_type;
+
 		copyAttributes(attribs);
 		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
 	}
@@ -256,6 +286,7 @@ void Column::operator = (Column &col)
 	this->not_null=col.not_null;
 	this->parent_rel=col.parent_rel;
 	this->sequence=col.sequence;
+	this->identity_type=col.identity_type;
 
 	this->setParentTable(col.getParentTable());
 	this->setAddedByCopy(false);

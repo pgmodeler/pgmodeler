@@ -387,8 +387,7 @@ void ModelsDiffHelper::diffTableObject(TableObject *tab_obj, unsigned diff_type)
 		if(!aux_base_tab)
 			aux_base_tab=dynamic_cast<BaseTable *>(getRelNNTable(tab_name, source_model));
 	}
-	else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT ||
-			diff_type==ObjectsDiffInfo::ALTER_OBJECT)
+	else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT || diff_type==ObjectsDiffInfo::ALTER_OBJECT)
 	{
 		aux_base_tab=dynamic_cast<BaseTable *>(imported_model->getObject(tab_name, base_tab->getObjectType()));
 
