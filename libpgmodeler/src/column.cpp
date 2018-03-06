@@ -28,7 +28,9 @@ Column::Column(void)
 	attributes[ParsersAttributes::TABLE]=QString();
 	attributes[ParsersAttributes::SEQUENCE]=QString();
 	attributes[ParsersAttributes::DECL_IN_TABLE]=QString();
+	attributes[ParsersAttributes::IDENTITY_TYPE]=QString();
 	parent_rel=sequence=nullptr;
+	identity_type=BaseType::null;
 }
 
 void Column::setName(const QString &name)
@@ -63,11 +65,20 @@ void Column::setType(PgSQLType type)
 	this->type=type;
 }
 
+void Column::setIdentityType(IdentityType mode)
+{
+	setCodeInvalidated(identity_type != mode);
+	identity_type = mode;
+	default_value.clear();
+	sequence = nullptr;
+}
+
 void Column::setDefaultValue(const QString &value)
 {
 	setCodeInvalidated(default_value != value);
 	default_value=value.trimmed();
 	sequence=nullptr;
+	identity_type=BaseType::null;
 }
 
 void Column::setNotNull(bool value)
@@ -79,6 +90,11 @@ void Column::setNotNull(bool value)
 PgSQLType Column::getType(void)
 {
 	return(type);
+}
+
+IdentityType Column::getIdentityType(void)
+{
+	return(identity_type);
 }
 
 bool Column::isNotNull(void)
@@ -137,6 +153,7 @@ void Column::setSequence(BaseObject *seq)
 							ERR_INCOMP_COL_TYPE_FOR_SEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		default_value=QString();
+		identity_type=BaseType::null;
 	}
 
 	setCodeInvalidated(sequence != seq);
@@ -156,19 +173,24 @@ QString Column::getCodeDefinition(unsigned def_type)
 	if(getParentTable())
 		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
-	attributes[ParsersAttributes::TYPE]=type.getCodeDefinition(def_type);
-
+	attributes[ParsersAttributes::TYPE]=type.getCodeDefinition(def_type);	
 	attributes[ParsersAttributes::DEFAULT_VALUE]=QString();
+	attributes[ParsersAttributes::IDENTITY_TYPE]=QString();
 
-	if(!sequence)
-		attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
+	if(identity_type != BaseType::null)
+		attributes[ParsersAttributes::IDENTITY_TYPE] = ~identity_type;
 	else
 	{
-		//Configuring the default value of the column to get the next value of the sequence
-		if(def_type==SchemaParser::SQL_DEFINITION)
-			attributes[ParsersAttributes::DEFAULT_VALUE]=QString("nextval('%1'::regclass)").arg(sequence->getSignature());//.remove("\""));
+		if(!sequence)
+			attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
+		else
+		{
+			//Configuring the default value of the column to get the next value of the sequence
+			if(def_type==SchemaParser::SQL_DEFINITION)
+				attributes[ParsersAttributes::DEFAULT_VALUE]=QString("nextval('%1'::regclass)").arg(sequence->getSignature());//.remove("\""));
 
-		attributes[ParsersAttributes::SEQUENCE]=sequence->getName(true);
+			attributes[ParsersAttributes::SEQUENCE]=sequence->getName(true);
+		}
 	}
 
 	attributes[ParsersAttributes::NOT_NULL]=(!not_null ? QString() : ParsersAttributes::_TRUE_);

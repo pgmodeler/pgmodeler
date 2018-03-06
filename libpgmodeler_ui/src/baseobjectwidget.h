@@ -161,6 +161,8 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		
 		//! \brief Generates a informative frame containing the specified message
 		static QFrame *generateInformationFrame(const QString &msg);
+
+		static void highlightVersionSpecificFields(map<QString, vector<QWidget *> > &fields, map<QWidget *, vector<QString> > *values=nullptr);
 		
 		//! \brief Highlights the specified widget as a required field
 		static void setRequiredField(QWidget *widget);

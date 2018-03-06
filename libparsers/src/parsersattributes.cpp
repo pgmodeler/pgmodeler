@@ -232,6 +232,7 @@ namespace ParsersAttributes {
 	ICON=QString("icon"),
 	ID=QString("id"),
 	IDENTIFIER=QString("identifier"),
+	IDENTITY_TYPE=QString("identity-type"),
 	IDENT_FILE=QString("ident-file"),
 	IGNORED_CHARS=QString("ignored-chars"),
 	IMPLICIT=QString("implicit"),

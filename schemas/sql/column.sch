@@ -19,8 +19,12 @@
  [ NOT NULL]
 %end
 
-%if {default-value} %then
- [ DEFAULT ] {default-value}
+%if ({pgsql-ver} >=f "10.0") %and {identity-type} %then
+    [ GENERATED ] {identity-type} [ AS IDENTITY ]
+%else
+    %if {default-value} %then
+        [ DEFAULT ] {default-value}
+    %end
 %end
 
 %if {decl-in-table} %then

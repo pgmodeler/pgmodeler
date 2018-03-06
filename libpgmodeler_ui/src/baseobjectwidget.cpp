@@ -149,26 +149,22 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 {
 	if(widget)
 	{
-		QLabel *lbl=dynamic_cast<QLabel *>(widget);
-		QLineEdit *edt=dynamic_cast<QLineEdit *>(widget);
-		QTextEdit *txt=dynamic_cast<QTextEdit *>(widget);
-		QGroupBox *grp=dynamic_cast<QGroupBox *>(widget);
+		QLabel *lbl=qobject_cast<QLabel *>(widget);
+		QLineEdit *edt=qobject_cast<QLineEdit *>(widget);
+		QTextEdit *txt=qobject_cast<QTextEdit *>(widget);
+		QGroupBox *grp=qobject_cast<QGroupBox *>(widget);
 		ObjectSelectorWidget *sel=dynamic_cast<ObjectSelectorWidget *>(widget);
 		PgSQLTypeWidget *pgtype=dynamic_cast<PgSQLTypeWidget *>(widget);
 		QString str_aux=QString(" <span style='color: #ff0000;'>*</span> ");
 		QColor bgcolor=QColor(QString("#ffffc0"));
 
-		QFont fnt=widget->font();
-
 		if(lbl || pgtype || grp)
 		{
-			fnt.setBold(true);
-
 			if(lbl)
 				lbl->setText(str_aux + lbl->text());
 
 			if(!grp)
-				widget->setFont(fnt);
+				widget->setStyleSheet(QString("QWidget {	font-weight: bold; }"));
 			else
 				grp->setStyleSheet(QString("QGroupBox {	font-weight: bold; }"));
 		}
@@ -570,59 +566,47 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 	return(info_frm);
 }
 
+void BaseObjectWidget::highlightVersionSpecificFields(map<QString, vector<QWidget *> > &fields,
+																											map< QWidget *, vector<QString> > *values)
+{
+	QString field_name;
+	QColor color=QColor(0,0,128);
+
+	for(auto itr : fields)
+	{
+		for(auto wgt : itr.second)
+		{
+			if(values && values->count(wgt) > 0)
+			{
+				field_name+=QString("<br/>") + trUtf8("Value(s)") + QString(": (");
+				for(auto value : values->at(wgt))
+				{
+					field_name += value;
+					field_name+=", ";
+				}
+
+				field_name.remove(field_name.length() - 2, 2);
+				field_name+=")";
+			}
+
+			wgt->setStyleSheet(QString("QWidget {	font-weight: bold; font-style: italic; color: %1}").arg(color.name()));
+			wgt->setToolTip(QString("<em style='font-size: 8pt'>") +
+											trUtf8("Version") +
+											itr.first + QString(" %1</em>").arg(field_name));
+		}
+	}
+}
+
 QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidget *> > &fields,
-													  map< QWidget *, vector<QString> > *values)
+																											map< QWidget *, vector<QString> > *values)
 {
 	QFrame *alert_frm=nullptr;
 	QGridLayout *grid=nullptr;
 	QLabel *ico_lbl=nullptr, *msg_lbl=nullptr;
-	QString field_name;
 	QFont font;
-	QWidget *wgt=nullptr;
-	QPalette pal;
 	QColor color=QColor(0,0,128);
-	map<QString, vector<QWidget *> >::iterator itr, itr_end;
-	vector<QString> values_vect;
-	unsigned i, count, count1, i1;
 
-	itr=fields.begin();
-	itr_end=fields.end();
-
-	while(itr!=itr_end)
-	{
-		count=itr->second.size();
-
-		for(i=0; i < count; i++)
-		{
-			wgt=itr->second.at(i);
-			if(values && values->count(wgt) > 0)
-			{
-				values_vect=values->at(wgt);
-				count1=values_vect.size();
-
-				field_name+=QString("<br/>") + trUtf8("Value(s)") + QString(": (");
-				for(i1=0; i1 < count1; i1++)
-				{
-					field_name+=values_vect.at(i1);
-					if(i1 < count1-1) field_name+=", ";
-				}
-				field_name+=")";
-			}
-
-			font=wgt->font();
-
-			pal.setBrush(QPalette::Active, QPalette::WindowText, color);
-			wgt->setPalette(pal);
-
-			font.setBold(true);
-			font.setItalic(true);
-			wgt->setFont(font);
-			wgt->setToolTip(QString("<em style='font-size: 8pt'>") + trUtf8("Version") +
-							itr->first + QString(" %1</em>").arg(field_name));
-		}
-		itr++;
-	}
-
+	highlightVersionSpecificFields(fields, values);
 
 	alert_frm = new QFrame;
 	font.setItalic(false);
