@@ -33,7 +33,7 @@
 
 class BaseType{
 	protected:
-		static const unsigned types_count=249;
+		static const unsigned types_count=251;
 		static QString type_list[types_count];
 
 		//! \brief Index of the type on the type_list vector
@@ -701,6 +701,24 @@ class EventTriggerType: public BaseType{
 		EventTriggerType(const QString &type_name);
 		EventTriggerType(unsigned type_id);
 		EventTriggerType(void);
+
+		static void getTypes(QStringList&type_list);
+		unsigned operator = (unsigned type_id);
+		unsigned operator = (const QString &type_name);
+};
+
+class IdentityType: public BaseType{
+	private:
+		static const unsigned offset=249;
+		static const unsigned types_count=2;
+
+	public:
+		static const unsigned always=offset;
+		static const unsigned by_default=offset+1;
+
+		IdentityType(const QString &type_name);
+		IdentityType(unsigned type_id);
+		IdentityType(void);
 
 		static void getTypes(QStringList&type_list);
 		unsigned operator = (unsigned type_id);

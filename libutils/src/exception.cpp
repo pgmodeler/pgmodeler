@@ -248,7 +248,8 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_CONNECTION_TIMEOUT", QT_TR_NOOP("The connection was idle for too long and was automatically closed!")},
 	{"ERR_CONNECTION_BROKEN", QT_TR_NOOP("The connection was unexpectedly closed by the database server `%1' at port `%2'!")},
 	{"ERR_DROP_CURRDB_DEFAULT", QT_TR_NOOP("Failed to drop the database `%1' because it is defined as the default database for the connection `%2'!")},
-	{"ERR_NULL_PK_COLUMN", QT_TR_NOOP("The column `%1' should be `NOT NULL' because it composes the primary key of the table `%2'. You need to remove the column from the mentioned contraint in order to disable the `NOT NULL' on it!")}
+	{"ERR_NULL_PK_COLUMN", QT_TR_NOOP("The column `%1' should be `NOT NULL' because it composes the primary key of the table `%2'. You need to remove the column from the mentioned contraint in order to disable the `NOT NULL' on it!")},
+	{"ERR_ASG_INV_IDENTITY_COLUMN", QT_TR_NOOP("The identity column `%1' has an invalid data type! The data type should be `smallint', `integer' or `bigint'.")}
 };
 
 Exception::Exception(void)

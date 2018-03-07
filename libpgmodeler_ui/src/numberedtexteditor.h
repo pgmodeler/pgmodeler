@@ -31,6 +31,7 @@ based upon the code editor example provided by Qt
 #include <QToolButton>
 #include <QTemporaryFile>
 #include <QProcess>
+#include <QLabel>
 #include "linenumberswidget.h"
 
 class NumberedTextEditor : public QPlainTextEdit {
@@ -62,7 +63,11 @@ class NumberedTextEditor : public QPlainTextEdit {
 		//! \brief Indicates if the text editor can handle external files
 		bool handle_ext_files;
 
-		QWidget *top_widget;
+		QWidget *top_widget,
+
+		*editor_alert_wgt;
+
+		QLabel *msg_lbl;
 
 		QToolButton *load_file_btn, *edit_src_btn, *clear_btn;
 

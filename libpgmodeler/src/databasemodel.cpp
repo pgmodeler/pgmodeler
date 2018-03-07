@@ -4682,6 +4682,9 @@ Column *DatabaseModel::createColumn(void)
 		column->setNotNull(attribs[ParsersAttributes::NOT_NULL]==ParsersAttributes::_TRUE_);
 		column->setDefaultValue(attribs[ParsersAttributes::DEFAULT_VALUE]);
 
+		if(!attribs[ParsersAttributes::IDENTITY_TYPE].isEmpty())
+			column->setIdentityType(IdentityType(attribs[ParsersAttributes::IDENTITY_TYPE]));
+
 		if(!attribs[ParsersAttributes::SEQUENCE].isEmpty())
 		{
 			seq=getObject(attribs[ParsersAttributes::SEQUENCE], OBJ_SEQUENCE);
