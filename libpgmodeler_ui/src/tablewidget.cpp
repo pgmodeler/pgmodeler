@@ -49,6 +49,8 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	misc_btns_lt->insertWidget(1, edt_data_tb);
 
 	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_91)].push_back(unlogged_chk);
+	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(enable_rls_chk);
+	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(force_rls_chk);
 	frame=generateVersionWarningFrame(fields_map);
 	table_grid->addWidget(frame, table_grid->count()+1, 0, 1, 2);
 	frame->setParent(this);
@@ -63,7 +65,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	parent_tables->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),2);
 
 	tag_sel=new ObjectSelectorWidget(OBJ_TAG, false, this);
-	dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 3);
+	dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1,1,3);
 
 	grid=new QGridLayout;
 	grid->addWidget(parent_tables, 0,0,1,1);
@@ -143,6 +145,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	objects_tab_map[OBJ_INDEX]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 	objects_tab_map[OBJ_INDEX]->setHeaderLabel(trUtf8("Indexing"), 1);
 
+	connect(enable_rls_chk, SIGNAL(toggled(bool)), force_rls_chk, SLOT(setEnabled(bool)));
 	configureFormLayout(table_grid, OBJ_TABLE);
 	configureTabOrder({ tag_sel });
 
@@ -277,6 +280,8 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 		with_oids_chk->setChecked(table->isWithOIDs());
 		unlogged_chk->setChecked(table->isUnlogged());
 		gen_alter_cmds_chk->setChecked(table->isGenerateAlterCmds());
+		enable_rls_chk->setChecked(table->isRLSEnabled());
+		force_rls_chk->setChecked(table->isRLSForced());
 
 		tag_sel->setModel(this->model);
 		tag_sel->setSelectedObject(table->getTag());
@@ -731,6 +736,8 @@ void TableWidget::applyConfiguration(void)
 		table=dynamic_cast<Table *>(this->object);
 		table->setWithOIDs(with_oids_chk->isChecked());
 		table->setGenerateAlterCmds(gen_alter_cmds_chk->isChecked());
+		table->setRLSEnabled(enable_rls_chk->isChecked());
+		table->setRLSForced(force_rls_chk->isChecked());
 		table->setUnlogged(unlogged_chk->isChecked());
 		table->setTag(dynamic_cast<Tag *>(tag_sel->getSelectedObject()));
 

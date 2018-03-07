@@ -25,7 +25,7 @@ const QString Table::DATA_LINE_BREAK = QString("%1%2").arg("⸣").arg('\n');
 Table::Table(void) : BaseTable()
 {
 	obj_type=OBJ_TABLE;
-	with_oid=gen_alter_cmds=unlogged=false;
+	with_oid=gen_alter_cmds=unlogged=rls_enabled=rls_forced=false;
 	attributes[ParsersAttributes::COLUMNS]=QString();
 	attributes[ParsersAttributes::INH_COLUMNS]=QString();
 	attributes[ParsersAttributes::CONSTRAINTS]=QString();
@@ -39,6 +39,8 @@ Table::Table(void) : BaseTable()
 	attributes[ParsersAttributes::CONSTR_INDEXES]=QString();
 	attributes[ParsersAttributes::UNLOGGED]=QString();
 	attributes[ParsersAttributes::INITIAL_DATA]=QString();
+	attributes[ParsersAttributes::RLS_ENABLED]=QString();
+	attributes[ParsersAttributes::RLS_FORCED]=QString();
 
 	copy_table=nullptr;
 	this->setName(trUtf8("new_table").toUtf8());
@@ -81,6 +83,21 @@ void Table::setUnlogged(bool value)
 {
 	setCodeInvalidated(unlogged != value);
 	unlogged=value;
+}
+
+void Table::setRLSEnabled(bool value)
+{
+	setCodeInvalidated(rls_enabled != value);
+	rls_enabled = value;
+
+	if(!value)
+		setRLSForced(false);
+}
+
+void Table::setRLSForced(bool value)
+{
+	setCodeInvalidated(rls_forced != value);
+	rls_forced = rls_enabled && value;
 }
 
 void Table::setProtected(bool value)
@@ -1131,6 +1148,16 @@ bool Table::isUnlogged(void)
 	return(unlogged);
 }
 
+bool Table::isRLSEnabled(void)
+{
+	return(rls_enabled);
+}
+
+bool Table::isRLSForced(void)
+{
+	return(rls_forced);
+}
+
 bool Table::isReferTableOnForeignKey(Table *ref_tab)
 {
 	unsigned count,i;
@@ -1358,6 +1385,8 @@ QString Table::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::OIDS]=(with_oid ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::GEN_ALTER_CMDS]=(gen_alter_cmds ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::UNLOGGED]=(unlogged ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::RLS_ENABLED]=(rls_enabled ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::RLS_FORCED]=(rls_forced ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::COPY_TABLE]=QString();
 	attributes[ParsersAttributes::ANCESTOR_TABLE]=QString();
 	attributes[ParsersAttributes::TAG]=QString();

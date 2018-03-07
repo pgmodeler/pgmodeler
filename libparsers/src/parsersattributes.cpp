@@ -411,6 +411,8 @@ namespace ParsersAttributes {
 	REVOKE=QString("revoke"),
 	RIGHT_TYPE=QString("right-type"),
 	RIGHT=QString("right"),
+	RLS_ENABLED=QString("rls-enabled"),
+	RLS_FORCED=QString("rls-forced"),
 	ROLE_TYPE=QString("role-type"),
 	ROLE=QString("role"),
 	ROLES=QString("roles"),

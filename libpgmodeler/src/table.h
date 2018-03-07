@@ -68,7 +68,12 @@ class Table: public BaseTable {
 		gen_alter_cmds,
 
 		//! \brief Indicates if the table is unlogged, which means, is not controled by the WAL (write ahead logs)
-		unlogged;
+		unlogged,
+
+		//! \brief Indicates if the row level security is enabled
+		rls_enabled,
+
+		rls_forced;
 
 		//! \brief Stores the relationship added column / constraints indexes
 		map<QString, unsigned> col_indexes,	constr_indexes;
@@ -125,6 +130,12 @@ class Table: public BaseTable {
 
 		//! \brief Defines if the table is unlogged
 		void setUnlogged(bool value);
+
+		//! \brief Defines if the row level security on table is enabled
+		void setRLSEnabled(bool value);
+
+		//! \brief Defines if the row level security on table is forced for the table owner
+		void setRLSForced(bool value);
 
 		//! \brief Adds an object to the table. It can be inserted at a specified index 'obj_idx'.
 		void addObject(BaseObject *obj, int obj_idx=-1);
@@ -287,6 +298,12 @@ class Table: public BaseTable {
 
 		//! \brief Returns if the table is configured as unlogged
 		bool isUnlogged(void);
+
+		//! \brief Returns if RLS is enabled on the table
+		bool isRLSEnabled(void);
+
+		//! \brief Returns if RLS is forced on the table
+		bool isRLSForced(void);
 
 		//! \brief Protects the table and its aggregated objects against modification
 		void setProtected(bool value);

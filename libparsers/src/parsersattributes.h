@@ -426,6 +426,8 @@ namespace ParsersAttributes {
 	REVOKE,
 	RIGHT_TYPE,
 	RIGHT,
+	RLS_ENABLED,
+	RLS_FORCED,
 	ROLE_TYPE,
 	ROLE,
 	ROLES,
