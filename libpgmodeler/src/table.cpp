@@ -89,15 +89,12 @@ void Table::setRLSEnabled(bool value)
 {
 	setCodeInvalidated(rls_enabled != value);
 	rls_enabled = value;
-
-	if(!value)
-		setRLSForced(false);
 }
 
 void Table::setRLSForced(bool value)
 {
 	setCodeInvalidated(rls_forced != value);
-	rls_forced = rls_enabled && value;
+	rls_forced = value;
 }
 
 void Table::setProtected(bool value)
@@ -1628,10 +1625,21 @@ QString Table::getAlterDefinition(BaseObject *object)
 		attributes[ParsersAttributes::HAS_CHANGES]=QString();
 		attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object, true);
 
-		if(this->getName()==tab->getName() && this->with_oid!=tab->with_oid)
+		if(this->getName()==tab->getName())
 		{
-			attributes[ParsersAttributes::OIDS]=(tab->with_oid ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
 			attributes[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::_TRUE_;
+
+			if(this->with_oid!=tab->with_oid)
+				attributes[ParsersAttributes::OIDS]=(tab->with_oid ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+
+			if(this->unlogged!=tab->unlogged)
+				attributes[ParsersAttributes::UNLOGGED]=(tab->unlogged ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+
+			if(this->rls_enabled!=tab->rls_enabled)
+				attributes[ParsersAttributes::RLS_ENABLED]=(tab->rls_enabled ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+
+			if(this->rls_forced!=tab->rls_forced)
+				attributes[ParsersAttributes::RLS_FORCED]=(tab->rls_forced ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
 		}
 
 		alter_def=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
