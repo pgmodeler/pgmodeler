@@ -2534,6 +2534,7 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 		QString xml_def, sch_name, obj_name, aux_name;
 		unsigned type_oid=oid_str.toUInt(), elem_tp_oid = 0,
 				dimension=0, object_id=type_attr[ParsersAttributes::OBJECT_ID].toUInt();
+		bool is_derivated_from_obj = false;
 
 		if(type_oid > 0)
 		{
@@ -2572,6 +2573,7 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 				else
 					obj_type=OBJ_SEQUENCE;
 
+				is_derivated_from_obj = true;
 				getDependencyObject(type_attr[ParsersAttributes::OBJECT_ID], obj_type, true, true, false);
 			}
 
@@ -2590,19 +2592,19 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 				 !obj_name.contains(QRegExp(QString("^(\\\")?(%1)(\\\")?(\\.)").arg(sch_name))))
 				obj_name.prepend(sch_name + QString("."));
 
-			/* In case of auto resolve dependencies, if the type is a user defined one and was not created in the database
-					model but its attributes were retrieved the object will be created to avoid reference errors */
+			/* In case of auto resolve dependencies, if the type is a user defined one and is not derivated from table/view/sequence and
+			 was not created in the database model but its attributes were retrieved, the object will be created to avoid reference errors */
 			aux_name = obj_name;
 			aux_name.remove(QString("[]"));
-			if(auto_resolve_deps && !type_attr.empty() &&
+			if(auto_resolve_deps && !type_attr.empty() && !is_derivated_from_obj &&
 				 type_oid > catalog.getLastSysObjectOID() && !dbmodel->getType(aux_name))
 			{
 				//If the type is not an array one we simply use the current type attributes map
-				 if(type_attr[ParsersAttributes::CATEGORY] != QString("A"))
+				if(type_attr[ParsersAttributes::CATEGORY] != QString("A"))
 					createObject(type_attr);
 				 /* In case the type is an array one we should use the oid held by "element" attribute to
 				 create the type related to current one */
-				 else if(elem_tp_oid > catalog.getLastSysObjectOID() &&	 types.count(elem_tp_oid))
+				else if(elem_tp_oid > catalog.getLastSysObjectOID() &&	types.count(elem_tp_oid))
 					createObject(types[elem_tp_oid]);
 			}
 
