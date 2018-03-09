@@ -35,7 +35,8 @@ ModelsDiffHelper::ModelsDiffHelper(void)
 	diff_opts[OPT_KEEP_OBJ_PERMS]=true;
 	diff_opts[OPT_REUSE_SEQUENCES]=true;
 	diff_opts[OPT_PRESERVE_DB_NAME]=true;
-	diff_opts[OPT_KEEP_NOT_IMPORTED_OBJS]=false;
+	diff_opts[OPT_DONT_DROP_MISSING_OBJS]=false;
+	diff_opts[OPT_DROP_MISSING_COLS_CONSTR]=false;
 }
 
 ModelsDiffHelper::~ModelsDiffHelper(void)
@@ -45,10 +46,13 @@ ModelsDiffHelper::~ModelsDiffHelper(void)
 
 void ModelsDiffHelper::setDiffOption(unsigned opt_id, bool value)
 {
-	if(opt_id > OPT_KEEP_NOT_IMPORTED_OBJS)
+	if(opt_id > OPT_DROP_MISSING_COLS_CONSTR)
 		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	diff_opts[opt_id]=value;
+	if(opt_id == OPT_DROP_MISSING_COLS_CONSTR)
+		diff_opts[opt_id]=value & !diff_opts[OPT_DROP_MISSING_COLS_CONSTR];
+	else
+		diff_opts[opt_id]=value;
 }
 
 void ModelsDiffHelper::setPgSQLVersion(const QString pgsql_ver)
@@ -149,11 +153,12 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
 			aux_obj=comp_tab->getObject(tab_obj->getName(), tab_obj->getObjectType());
 			constr=dynamic_cast<Constraint *>(tab_obj);
 
-			//Ignoring check constraints added by generalizations
-			if(constr && constr->isAddedByGeneralization() &&
-					constr->getConstraintType()==ConstraintType::check)
+			//Ignoring object with sql disabled or check constraints added by generalizations
+			if(tab_obj->isSQLDisabled() ||
+				 (constr && constr->isAddedByGeneralization() &&
+					constr->getConstraintType()==ConstraintType::check))
 			{
-				generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, constr);
+				generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, tab_obj);
 			}
 			else
 			{
@@ -176,7 +181,8 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
 				else if(!aux_obj && !tab_obj->isAddedByGeneralization())
 				{
 					if(diff_type!=ObjectsDiffInfo::DROP_OBJECT ||
-						 (diff_type==ObjectsDiffInfo::DROP_OBJECT && !diff_opts[OPT_KEEP_NOT_IMPORTED_OBJS]))
+						 (diff_type==ObjectsDiffInfo::DROP_OBJECT && !diff_opts[OPT_DONT_DROP_MISSING_OBJS]) ||
+						 (diff_type==ObjectsDiffInfo::DROP_OBJECT && diff_opts[OPT_DROP_MISSING_COLS_CONSTR]))
 						generateDiffInfo(diff_type, tab_obj);
 					else
 						generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, tab_obj);
@@ -329,7 +335,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 						else if(!aux_object)
 						{
 							if(diff_type != ObjectsDiffInfo::DROP_OBJECT ||
-								 (diff_type == ObjectsDiffInfo::DROP_OBJECT && !diff_opts[OPT_KEEP_NOT_IMPORTED_OBJS]))
+								 (diff_type == ObjectsDiffInfo::DROP_OBJECT && !diff_opts[OPT_DONT_DROP_MISSING_OBJS]))
 								generateDiffInfo(diff_type, object);
 							else
 								generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, object);
@@ -410,7 +416,7 @@ void ModelsDiffHelper::diffTableObject(TableObject *tab_obj, unsigned diff_type)
 	if(!aux_tab_obj)
 	{
 		if(diff_type!=ObjectsDiffInfo::DROP_OBJECT ||
-			 (diff_type==ObjectsDiffInfo::DROP_OBJECT && !diff_opts[OPT_KEEP_NOT_IMPORTED_OBJS]))
+			 (diff_type==ObjectsDiffInfo::DROP_OBJECT && !diff_opts[OPT_DONT_DROP_MISSING_OBJS]))
 			generateDiffInfo(diff_type, tab_obj);
 		else
 			generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, tab_obj);
