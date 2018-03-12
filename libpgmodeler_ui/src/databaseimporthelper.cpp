@@ -1419,6 +1419,7 @@ void DatabaseImportHelper::createConversion(attribs_map &attribs)
 void DatabaseImportHelper::createSequence(attribs_map &attribs)
 {
 	Sequence *seq=nullptr;
+	Column *col = nullptr;
 
 	try
 	{
@@ -1435,7 +1436,8 @@ void DatabaseImportHelper::createSequence(attribs_map &attribs)
 		avoid reference breaking when generation SQL code */
 		if(owner_col.size()==2)
 		{
-			QString col_name;
+			Table *tab = nullptr;
+			QString col_name, tab_name;
 			attribs_map pos_attrib={
 				{ ParsersAttributes::X_POS, QString("0") },
 				{ ParsersAttributes::Y_POS, QString("0") }};
@@ -1443,12 +1445,17 @@ void DatabaseImportHelper::createSequence(attribs_map &attribs)
 			if(attribs[ParsersAttributes::OID].toUInt() > owner_col[0].toUInt())
 				seq_tab_swap[attribs[ParsersAttributes::OID]]=owner_col[0];
 
-			getDependencyObject(owner_col[0], OBJ_TABLE, true, auto_resolve_deps, true,
-				{{ ParsersAttributes::POSITION,
-					 schparser.getCodeDefinition(ParsersAttributes::POSITION, pos_attrib, SchemaParser::XML_DEFINITION)}});
+			/* Get the table and the owner column instances so the sequence code can be disabled if the
+				column is an identity one */
+			tab_name = getDependencyObject(owner_col[0], OBJ_TABLE, true, auto_resolve_deps, false,
+			{{ ParsersAttributes::POSITION,
+				 schparser.getCodeDefinition(ParsersAttributes::POSITION, pos_attrib, SchemaParser::XML_DEFINITION)}});
 
-			col_name=getColumnName(owner_col[0], owner_col[1], true);
-			attribs[ParsersAttributes::OWNER_COLUMN]=col_name;
+			col_name=getColumnName(owner_col[0], owner_col[1]);
+			tab = dbmodel->getTable(tab_name);
+
+			if(tab)
+				col = tab->getColumn(col_name);
 		}
 
 		for(int i=0; i < seq_attribs.size(); i++)
@@ -1459,8 +1466,8 @@ void DatabaseImportHelper::createSequence(attribs_map &attribs)
 		dbmodel->addSequence(seq);
 
 		//Disable the sequence's SQL when the owner column is identity
-		if(seq->getOwnerColumn())
-			seq->setSQLDisabled(seq->getOwnerColumn()->isIdentity());
+		if(col && col->isIdentity())
+			seq->setSQLDisabled(true);
 	}
 	catch(Exception &e)
 	{
