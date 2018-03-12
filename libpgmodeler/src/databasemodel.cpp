@@ -2913,7 +2913,7 @@ void DatabaseModel::configureDatabase(attribs_map &attribs)
 	append_at_eod=attribs[ParsersAttributes::APPEND_AT_EOD]==ParsersAttributes::_TRUE_;
 	prepend_at_bod=attribs[ParsersAttributes::PREPEND_AT_BOD]==ParsersAttributes::_TRUE_;
 	is_template=attribs[ParsersAttributes::IS_TEMPLATE]==ParsersAttributes::_TRUE_;
-	allow_conns=attribs[ParsersAttributes::ALLOW_CONNS]==ParsersAttributes::_TRUE_;
+	allow_conns=attribs[ParsersAttributes::ALLOW_CONNS] != ParsersAttributes::_FALSE_;
 
 	if(!attribs[ParsersAttributes::CONN_LIMIT].isEmpty())
 		conn_limit=attribs[ParsersAttributes::CONN_LIMIT].toInt();
