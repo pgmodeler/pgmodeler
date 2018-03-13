@@ -110,7 +110,8 @@ SOURCES += src/mainwindow.cpp \
 		src/plaintextitemdelegate.cpp \
 		src/csvloadwidget.cpp \
 		src/genericsqlwidget.cpp \
-    src/sceneinfowidget.cpp
+    src/sceneinfowidget.cpp \
+    src/bulkdataeditwidget.cpp
 
 
 HEADERS += src/mainwindow.h \
@@ -208,7 +209,8 @@ HEADERS += src/mainwindow.h \
 		src/plaintextitemdelegate.h \
 		src/csvloadwidget.h \
 		src/genericsqlwidget.h \
-    src/sceneinfowidget.h
+    src/sceneinfowidget.h \
+    src/bulkdataeditwidget.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \
@@ -289,7 +291,8 @@ FORMS += ui/mainwindow.ui \
     ui/tabledatawidget.ui \
     ui/csvloadwidget.ui \
     ui/genericsqlwidget.ui \
-    ui/sceneinfowidget.ui
+    ui/sceneinfowidget.ui \
+    ui/bulkdataeditwidget.ui
 
 unix|windows: LIBS += -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
                       -L$$OUT_PWD/../libpgconnector/ -lpgconnector \

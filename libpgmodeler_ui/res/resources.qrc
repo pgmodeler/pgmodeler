@@ -236,6 +236,7 @@
         <file>icones/schemarect.png</file>
         <file>icones/flag_ecuador.png</file>
         <file>icones/sortasc.png</file>
+        <file>icones/bulkedit.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

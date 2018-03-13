@@ -1877,7 +1877,15 @@ void MainWindow::changeCurrentView(bool checked)
 
 		actions=general_tb->actions();
 		for(int i=GENERAL_ACTIONS_COUNT; i < actions.count(); i++)
+		{
 			actions[i]->setEnabled(enable);
+
+			if(actions[i]->menu())
+			{
+				for(auto action : actions[i]->menu()->actions())
+					action->setEnabled(enable);
+			}
+		}
 
 		if(!enable)
 			overview_wgt->close();
