@@ -68,7 +68,7 @@ class TableObject: public BaseObject {
 		TableObject(void);
 
 		//! \brief Defines the parent table for the object
-		void setParentTable(BaseTable *table);
+		virtual void setParentTable(BaseTable *table);
 
 		//! \brief Returns the object parent table
 		BaseTable *getParentTable(void);

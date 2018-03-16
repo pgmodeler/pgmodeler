@@ -1190,6 +1190,9 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 
 				attribs=extractAttributesFromItem(item);
 
+				if(obj_type==OBJ_OPERATOR || obj_type==OBJ_FUNCTION)
+						attribs[ParsersAttributes::SIGNATURE].replace(ELEM_SEPARATOR, QChar(','));
+
 				//Generate the drop command
 				schparser.ignoreEmptyAttributes(true);
 				schparser.ignoreUnkownAttributes(true);

@@ -55,6 +55,7 @@
 #include "pgmodeleruins.h"
 #include "swapobjectsidswidget.h"
 #include "genericsqlwidget.h"
+#include "policywidget.h"
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
@@ -85,8 +86,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 						 OBJ_FUNCTION, OBJ_AGGREGATE, OBJ_LANGUAGE,
 						 OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY,
 						 OBJ_ROLE, OBJ_SCHEMA, OBJ_SEQUENCE, OBJ_TYPE,
-						 OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX, OBJ_TABLESPACE,
-						 OBJ_COLLATION, OBJ_EXTENSION, OBJ_EVENT_TRIGGER, OBJ_TAG, OBJ_GENERIC_SQL };
+						 OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX, OBJ_POLICY,
+						 OBJ_TABLESPACE, OBJ_COLLATION, OBJ_EXTENSION, OBJ_EVENT_TRIGGER, OBJ_TAG,
+						 OBJ_GENERIC_SQL };
 	unsigned i, obj_cnt=sizeof(types)/sizeof(ObjectType),
 			rel_types_id[]={ BaseRelationship::RELATIONSHIP_11, BaseRelationship::RELATIONSHIP_1N,
 							 BaseRelationship::RELATIONSHIP_NN, BaseRelationship::RELATIONSHIP_DEP,
@@ -1723,6 +1725,8 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			res=openEditingForm<Trigger, TriggerWidget, BaseTable>(object, parent_obj);
 		else if(obj_type== OBJ_INDEX)
 			res=openEditingForm<Index, IndexWidget, BaseTable>(object, parent_obj);
+		else if(obj_type== OBJ_POLICY)
+			res=openEditingForm<Policy, PolicyWidget, BaseTable>(object, parent_obj);
 		else if(obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT)
 		{
 			TableObject *tab_obj=dynamic_cast<TableObject *>(object);
@@ -3590,7 +3594,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 			BaseObject *obj=objects[0];
 			BaseRelationship *rel=dynamic_cast<BaseRelationship *>(obj);
 			ObjectType obj_type=obj->getObjectType(),
-					types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_INDEX, OBJ_RULE, OBJ_TRIGGER },
+					types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_INDEX, OBJ_RULE, OBJ_TRIGGER, OBJ_POLICY },
 					sch_types[]={ OBJ_AGGREGATE, OBJ_COLLATION, OBJ_CONVERSION,
 									OBJ_DOMAIN, OBJ_EXTENSION, OBJ_FUNCTION, OBJ_OPCLASS,
 									OBJ_OPERATOR,	OBJ_OPFAMILY,	OBJ_SEQUENCE,	OBJ_TABLE,

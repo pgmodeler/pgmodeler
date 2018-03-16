@@ -317,6 +317,8 @@ vector<TableObject *> *Table::getObjectList(ObjectType obj_type)
 		return(&triggers);
 	else if(obj_type==OBJ_INDEX)
 		return(&indexes);
+	else if(obj_type==OBJ_POLICY)
+		return(&policies);
 	else
 		throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }

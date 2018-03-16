@@ -49,6 +49,7 @@ class Table: public BaseTable {
 		vector<TableObject *> indexes;
 		vector<TableObject *> rules;
 		vector<TableObject *> triggers;
+		vector<TableObject *> policies;
 
 		//! \brief Stores the tables that 'this' object inherits attributes
 		vector<Table *> ancestor_tables;

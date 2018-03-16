@@ -165,7 +165,7 @@ void Column::setSequence(BaseObject *seq)
 							.arg(this->obj_name)
 							.arg(this->getTypeName())
 							.arg(BaseObject::getTypeName(OBJ_SEQUENCE)),
-							ERR_INCOMP_COL_TYPE_FOR_SEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ERR_ASG_INV_OBJECT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(!type.isIntegerType())
 			throw Exception(Exception::getErrorMessage(ERR_INCOMP_COL_TYPE_FOR_SEQ)
 							.arg(seq->getName(true))

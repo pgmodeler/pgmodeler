@@ -1351,7 +1351,51 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="4">
+         <item row="0" column="9">
+          <widget class="QToolButton" name="rule_tb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>95</width>
+             <height>50</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>Rule</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../res/resources.qrc">
+             <normaloff>:/icones/icones/rule.png</normaloff>:/icones/icones/rule.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="popupMode">
+            <enum>QToolButton::InstantPopup</enum>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
           <widget class="QToolButton" name="trigger_tb">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -1395,8 +1439,8 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="2">
-          <widget class="QToolButton" name="rule_tb">
+         <item row="1" column="4">
+          <widget class="QToolButton" name="policy_tb">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1419,11 +1463,11 @@
             <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
-            <string>Rule</string>
+            <string>Policy</string>
            </property>
            <property name="icon">
             <iconset resource="../res/resources.qrc">
-             <normaloff>:/icones/icones/rule.png</normaloff>:/icones/icones/rule.png</iconset>
+             <normaloff>:/icones/icones/policy.png</normaloff>:/icones/icones/policy.png</iconset>
            </property>
            <property name="iconSize">
             <size>

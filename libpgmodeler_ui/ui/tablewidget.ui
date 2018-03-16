@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>513</width>
-    <height>255</height>
+    <height>348</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -165,6 +165,11 @@
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
        <string>&amp;Indexes</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="tab_7">
+      <attribute name="title">
+       <string>&amp;Policies</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab_2">

@@ -30,7 +30,7 @@ QString BaseObject::objs_schemas[OBJECT_TYPE_COUNT]={
 	"sequence", "role", "conversion", "cast",
 	"language", "usertype", "tablespace",
 	"opfamily", "opclass", "database","collation",
-	"extension", "eventtrigger", "relationship",
+	"extension", "eventtrigger", "policy", "relationship",
 	"textbox",	"permission", "parameter", "typeattribute",
 	"tag", "genericsql", "relationship"
 };
@@ -44,9 +44,9 @@ QString BaseObject::obj_type_names[OBJECT_TYPE_COUNT]={
 	QT_TR_NOOP("Cast"), QT_TR_NOOP("Language"), QT_TR_NOOP("Type"), QT_TR_NOOP("Tablespace"),
 	QT_TR_NOOP("Operator Family"), QT_TR_NOOP("Operator Class"),
 	QT_TR_NOOP("Database"), QT_TR_NOOP("Collation"), QT_TR_NOOP("Extension"),
-	QT_TR_NOOP("Event Trigger"), QT_TR_NOOP("Relationship"),	QT_TR_NOOP("Textbox"),
-	QT_TR_NOOP("Permission"), QT_TR_NOOP("Parameter"), QT_TR_NOOP("Type Attribute"),
-	QT_TR_NOOP("Tag"), QT_TR_NOOP("Generic SQL"),  QT_TR_NOOP("Basic Relationship")
+	QT_TR_NOOP("Event Trigger"), QT_TR_NOOP("Policy"), QT_TR_NOOP("Relationship"),
+	QT_TR_NOOP("Textbox"), QT_TR_NOOP("Permission"), QT_TR_NOOP("Parameter"), QT_TR_NOOP("Type Attribute"),
+	QT_TR_NOOP("Tag"), QT_TR_NOOP("Generic SQL"),	QT_TR_NOOP("Basic Relationship")
 };
 
 QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
@@ -56,7 +56,7 @@ QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
 	QString("OPERATOR"), QString("SEQUENCE"), QString("ROLE"), QString("CONVERSION"),
 	QString("CAST"), QString("LANGUAGE"), QString("TYPE"), QString("TABLESPACE"),
 	QString("OPERATOR FAMILY"), QString("OPERATOR CLASS"), QString("DATABASE"),
-	QString("COLLATION"), QString("EXTENSION"), QString("EVENT TRIGGER")
+	QString("COLLATION"), QString("EXTENSION"), QString("EVENT TRIGGER"), QString("POLICY")
 };
 
 /* Initializes the global id which is shared between instances
@@ -932,6 +932,7 @@ vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, vector<Object
 		vet_types.push_back(OBJ_TRIGGER);
 		vet_types.push_back(OBJ_RULE);
 		vet_types.push_back(OBJ_INDEX);
+		vet_types.push_back(OBJ_POLICY);
 	}
 
 	for(ObjectType type : exclude_types)
@@ -952,7 +953,7 @@ vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
 		return(vector<ObjectType>()={OBJ_AGGREGATE, OBJ_CONVERSION, OBJ_COLLATION, OBJ_DOMAIN, OBJ_EXTENSION, OBJ_FUNCTION,
 									OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_SEQUENCE, OBJ_TYPE, OBJ_TABLE, OBJ_VIEW});
 	else if(obj_type==OBJ_TABLE)
-		return(vector<ObjectType>()={OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX});
+		return(vector<ObjectType>()={OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX, OBJ_POLICY});
 	else if(obj_type==OBJ_VIEW)
 		return(vector<ObjectType>()={OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX});
 	else

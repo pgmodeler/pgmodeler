@@ -29,7 +29,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 {
 	QGridLayout *grid=nullptr;
 	ObjectTableWidget *tab=nullptr;
-	ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX };
+	ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX, OBJ_POLICY };
 	map<QString, vector<QWidget *> > fields_map;
 	QFrame *frame=nullptr;
 	QToolButton *edt_data_tb=nullptr;
@@ -70,10 +70,10 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	grid=new QGridLayout;
 	grid->addWidget(parent_tables, 0,0,1,1);
 	grid->setContentsMargins(4,4,4,4);
-	attributes_tbw->widget(5)->setLayout(grid);
+	attributes_tbw->widget(6)->setLayout(grid);
 
 	//Configuring the table objects that stores the columns, triggers, constraints, rules and indexes
-	for(unsigned i=0; i < 5; i++)
+	for(unsigned i=0; i <= 5; i++)
 	{
 		tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
 								  (ObjectTableWidget::UPDATE_BUTTON), true, this);
@@ -144,6 +144,16 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	objects_tab_map[OBJ_INDEX]->setHeaderLabel(trUtf8("Name"), 0);
 	objects_tab_map[OBJ_INDEX]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 	objects_tab_map[OBJ_INDEX]->setHeaderLabel(trUtf8("Indexing"), 1);
+
+	objects_tab_map[OBJ_POLICY]->setColumnCount(5);
+	objects_tab_map[OBJ_POLICY]->setHeaderLabel(trUtf8("Name"), 0);
+	objects_tab_map[OBJ_POLICY]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
+	objects_tab_map[OBJ_POLICY]->setHeaderLabel(trUtf8("Restrictive"), 1);
+	objects_tab_map[OBJ_POLICY]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("cancelar")),1);
+	objects_tab_map[OBJ_POLICY]->setHeaderLabel(trUtf8("Commands"), 2);
+	objects_tab_map[OBJ_POLICY]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("keyword")),2);
+	objects_tab_map[OBJ_POLICY]->setHeaderLabel(trUtf8("USING expression"), 3);
+	objects_tab_map[OBJ_POLICY]->setHeaderLabel(trUtf8("CHECK expression"), 4);
 
 	configureFormLayout(table_grid, OBJ_TABLE);
 	configureTabOrder({ tag_sel });
@@ -227,7 +237,7 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 	{
 		unsigned i, count;
 		Table *aux_tab=nullptr;
-		ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX };
+		ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX, OBJ_POLICY };
 
 		if(!table)
 		{
@@ -248,7 +258,7 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 
 		/* Listing all objects (column, constraint, trigger, index, rule) on the
 		respective table objects */
-		for(i=0; i < 5; i++)
+		for(i=0; i < 6; i++)
 		{
 			listObjects(types[i]);
 			objects_tab_map[types[i]]->setButtonConfiguration(ObjectTableWidget::ALL_BUTTONS ^
@@ -358,7 +368,7 @@ void TableWidget::handleObject(void)
 			openEditingForm<Trigger, TriggerWidget>(object);
 		else if(obj_type==OBJ_INDEX)
 			openEditingForm<Index, IndexWidget>(object);
-		else
+		else  if(obj_type==OBJ_RULE)
 			openEditingForm<Rule, RuleWidget>(object);
 
 		listObjects(obj_type);
@@ -505,7 +515,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		//Column 2: Rule event type
 		tab->setCellText(~rule->getEventType(),row,2);
 	}
-	else
+	else if(obj_type==OBJ_INDEX)
 	{
 		index=dynamic_cast<Index *>(object);
 
