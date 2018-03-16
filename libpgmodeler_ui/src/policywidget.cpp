@@ -21,10 +21,13 @@
 PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_POLICY)
 {
 	Ui_PolicyWidget::setupUi(this);
-	configureFormLayout(nullptr, OBJ_POLICY);
+	configureFormLayout(policy_grid, OBJ_POLICY);
 }
 
 void PolicyWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *parent_obj, Policy *policy)
 {
+	if(!parent_obj)
+		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	BaseObjectWidget::setAttributes(model, op_list, policy, parent_obj);
 }

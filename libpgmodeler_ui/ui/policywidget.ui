@@ -11,8 +11,17 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string/>
   </property>
+  <layout class="QGridLayout" name="policy_grid">
+   <item row="0" column="0">
+    <widget class="QCheckBox" name="restrictive_chk">
+     <property name="text">
+      <string>Restrictive</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>

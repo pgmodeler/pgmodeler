@@ -24,6 +24,7 @@
 #include "triggerwidget.h"
 #include "baseform.h"
 #include "tabledatawidget.h"
+#include "policywidget.h"
 
 TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 {
@@ -368,8 +369,10 @@ void TableWidget::handleObject(void)
 			openEditingForm<Trigger, TriggerWidget>(object);
 		else if(obj_type==OBJ_INDEX)
 			openEditingForm<Index, IndexWidget>(object);
-		else  if(obj_type==OBJ_RULE)
+		else if(obj_type==OBJ_RULE)
 			openEditingForm<Rule, RuleWidget>(object);
+		else
+			openEditingForm<Policy, PolicyWidget>(object);
 
 		listObjects(obj_type);
 

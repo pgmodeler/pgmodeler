@@ -20,9 +20,9 @@
 #define POLICY_WIDGET_H
 
 #include <QWidget>
-#include "policy.h"
 #include "baseobjectwidget.h"
 #include "ui_policywidget.h"
+#include "policy.h"
 
 class PolicyWidget : public BaseObjectWidget, Ui::PolicyWidget {
 	private:
