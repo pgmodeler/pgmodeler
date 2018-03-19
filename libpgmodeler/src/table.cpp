@@ -1629,31 +1629,36 @@ void Table::getColumnReferences(Column *column, vector<TableObject *> &refs, boo
 	}
 }
 
-vector<BaseObject *> Table::getObjects(void)
+vector<BaseObject *> Table::getObjects(bool excl_cols_constr)
 {
 	vector<BaseObject *> list;
-	ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT,
-						 OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE };
-	unsigned cnt=sizeof(types)/sizeof(ObjectType);
+	vector<ObjectType> types={ OBJ_COLUMN, OBJ_CONSTRAINT,
+														 OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE, OBJ_POLICY };
 
-	for(unsigned i=0; i < cnt; i++)
-		list.insert(list.end(), getObjectList(types[i])->begin(), getObjectList(types[i])->end()) ;
+	for(auto type : types)
+	{
+		if(excl_cols_constr && (type == OBJ_COLUMN || type == OBJ_CONSTRAINT))
+			continue;
+
+		list.insert(list.end(), getObjectList(type)->begin(), getObjectList(type)->end()) ;
+	}
 
 	return(list);
 }
 
+vector<BaseObject *> Table::getObjects(void)
+{
+	return(getObjects(false));
+}
+
 void Table::setCodeInvalidated(bool value)
 {
-	ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT,
-						 OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE };
-	unsigned cnt=sizeof(types)/sizeof(ObjectType);
-	vector<TableObject *> *list=nullptr;
+	vector<ObjectType> types={ OBJ_COLUMN, OBJ_CONSTRAINT,
+														 OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE, OBJ_POLICY };
 
-	for(unsigned i=0; i < cnt; i++)
+	for(auto type : types)
 	{
-		list=getObjectList(types[i]);
-
-		for(auto &obj : *list)
+		for(auto &obj : *getObjectList(type))
 			obj->setCodeInvalidated(value);
 	}
 

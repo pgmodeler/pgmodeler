@@ -5432,14 +5432,9 @@ Policy *DatabaseModel::createPolicy(void)
 	Policy *policy=nullptr;
 	QString elem;
 	BaseTable *table=nullptr;
-	map<QString, unsigned> special_roles;
 
 	try
 	{
-		special_roles[ParsersAttributes::ROLE_CURRENT_USER] = Policy::ROLE_CURRENT_USER;
-		special_roles[ParsersAttributes::ROLE_SESSION_USER] = Policy::ROLE_SESSION_USER;
-		special_roles[ParsersAttributes::ROLE_PUBLIC] = Policy::ROLE_PUBLIC;
-
 		policy=new Policy;
 		setBasicAttributes(policy);
 
@@ -5455,11 +5450,8 @@ Policy *DatabaseModel::createPolicy(void)
 											.arg(BaseObject::getTypeName(OBJ_TABLE)),
 				ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		policy->setRestrictive(attribs[ParsersAttributes::RESTRICTIVE] == ParsersAttributes::_TRUE_);
-		policy->setAffectedCommand(Policy::CMD_SELECT, attribs[ParsersAttributes::SELECT_PRIV] == ParsersAttributes::_TRUE_);
-		policy->setAffectedCommand(Policy::CMD_INSERT, attribs[ParsersAttributes::INSERT_PRIV] == ParsersAttributes::_TRUE_);
-		policy->setAffectedCommand(Policy::CMD_UPDATE, attribs[ParsersAttributes::UPDATE_PRIV] == ParsersAttributes::_TRUE_);
-		policy->setAffectedCommand(Policy::CMD_DELETE, attribs[ParsersAttributes::DELETE_PRIV] == ParsersAttributes::_TRUE_);
+		policy->setPermissive(attribs[ParsersAttributes::PERMISSIVE] == ParsersAttributes::_TRUE_);
+		policy->setPolicyCommand(PolicyCmdType(attribs[ParsersAttributes::COMMAND]));
 
 		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
@@ -5493,27 +5485,20 @@ Policy *DatabaseModel::createPolicy(void)
 
 						for(auto &name : rol_names)
 						{
-							name = name.trimmed();
+							role=dynamic_cast<Role *>(getObject(name.trimmed(), OBJ_ROLE));
 
-							if(special_roles.count(name.toUpper()))
-								policy->setSpecialRole(special_roles[name.toUpper()], true);
-							else
+							//Raises an error if the referenced role doesn't exists
+							if(!role)
 							{
-								role=dynamic_cast<Role *>(getObject(name, OBJ_ROLE));
-
-								//Raises an error if the referenced role doesn't exists
-								if(!role)
-								{
-									throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-																	.arg(policy->getName())
-																	.arg(policy->getTypeName())
-																	.arg(name)
-																	.arg(BaseObject::getTypeName(OBJ_ROLE)),
-																	ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-								}
-
-								policy->addRole(role);
+								throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+																.arg(policy->getName())
+																.arg(policy->getTypeName())
+																.arg(name)
+																.arg(BaseObject::getTypeName(OBJ_ROLE)),
+																ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 							}
+
+							policy->addRole(role);
 						}
 					}
 				}
@@ -6767,10 +6752,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 	vector<BaseObject *>::iterator itr, itr_end;
 	map<unsigned, BaseObject *> objects_map;
 	Table *table=nullptr;
-	Index *index=nullptr;
-	Trigger *trigger=nullptr;
 	Constraint *constr=nullptr;
-	Rule *rule=nullptr;
 	View *view=nullptr;
 	Relationship *rel=nullptr;
 	ObjectType aux_obj_types[]={ OBJ_ROLE, OBJ_TABLESPACE, OBJ_SCHEMA, OBJ_TAG },
@@ -6855,26 +6837,8 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 				fkeys.push_back(constr);
 		}
 
-		count=table->getTriggerCount();
-		for(i=0; i < count; i++)
-		{
-			trigger=table->getTrigger(i);
-			objects_map[trigger->getObjectId()]=trigger;
-		}
-
-		count=table->getIndexCount();
-		for(i=0; i < count; i++)
-		{
-			index=table->getIndex(i);
-			objects_map[index->getObjectId()]=index;
-		}
-
-		count=table->getRuleCount();
-		for(i=0; i < count; i++)
-		{
-			rule=table->getRule(i);
-			objects_map[rule->getObjectId()]=rule;
-		}
+		for(auto obj : table->getObjects(true))
+			objects_map[obj->getObjectId()]=obj;
 	}
 
 	/* Getting and storing the special objects (which reference columns of tables added for relationships)
@@ -6883,26 +6847,8 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 	{
 		view=dynamic_cast<View *>(obj);
 
-		count=view->getTriggerCount();
-		for(i=0; i < count; i++)
-		{
-			trigger=view->getTrigger(i);
-			objects_map[trigger->getObjectId()]=trigger;
-		}
-
-		count=view->getRuleCount();
-		for(i=0; i < count; i++)
-		{
-			rule=view->getRule(i);
-			objects_map[rule->getObjectId()]=rule;
-		}
-
-		count=view->getIndexCount();
-		for(i=0; i < count; i++)
-		{
-			index=view->getIndex(i);
-			objects_map[index->getObjectId()]=index;
-		}
+		for(auto obj : view->getObjects())
+			objects_map[obj->getObjectId()]=obj;
 	}
 
 	/* SPECIAL CASE: Generating the correct order for tables, views, relationships and sequences
@@ -7736,9 +7682,9 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			vector<BaseObject *>::iterator itr, itr_end;
 			vector<TableObject *> *tab_objs;
 			unsigned i, count;
-			ObjectType tab_obj_types[3]={ OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX };
+			ObjectType tab_obj_types[4]={ OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX, OBJ_POLICY };
 
-			for(i=0; i < 3; i++)
+			for(i=0; i < 4; i++)
 			{
 				tab_objs=table->getObjectList(tab_obj_types[i]);
 				refs.insert(refs.end(), tab_objs->begin(), tab_objs->end());
@@ -8332,6 +8278,19 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						refer=true;
 						refs.push_back(*itr);
 					}
+
+					if((*itr)->getObjectType() == OBJ_TABLE)
+					{
+						for(auto obj : *(dynamic_cast<Table *>(*itr))->getObjectList(OBJ_POLICY))
+						{
+							if(dynamic_cast<Policy *>(obj)->isRoleExists(role))
+							{
+								refer=true;
+								refs.push_back(obj);
+							}
+						}
+					}
+
 					itr++;
 				}
 			}

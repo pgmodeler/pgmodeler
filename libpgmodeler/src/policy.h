@@ -41,49 +41,29 @@ class Policy : public TableObject {
 		//! \brief Defines the CHECK expression applied to INSERT/UPDATE queries
 		check_expr;
 
-		/*! \brief Indicates if the policy is retrictive. Restrictive policies are combined using AND operator by PostgreSQL
-		 and reducing the set of records accessed by a query. By default, a policy is permissive. */
-		bool restrictive,
+		/*! \brief Indicates if the policy is permissive. Permissive policies are combined using OR operator by PostgreSQL
+		 and reducing the set of records accessed by a query. When the policy is restrictive the policies are combined using AND.
+		By default, a policy is permissive. */
+		bool permissive;
 
-		//! \brief Stores which commands (CMD_???) are affected by the policy
-		affected_cms[4],
-
-		//! \brief Stores which special roles (ROL_???) are affected by the policy
-		special_roles[3];
+		PolicyCmdType policy_cmd;
 
 	public:
-		//! \brief Constants used to reference the commands affected by the policy
-		static const unsigned CMD_SELECT=0,
-		CMD_INSERT=1,
-		CMD_UPDATE=2,
-		CMD_DELETE=3;
-
-		//! \brief Constants used to reference the special roles affected by the policy
-		static const unsigned ROLE_CURRENT_USER=0,
-		ROLE_SESSION_USER=1,
-		ROLE_PUBLIC=2;
-
 		Policy(void);
 
 		virtual void setParentTable(BaseTable *table) final;
 
-		//! \brief Defines if the the policy is retrictive (true) or permissive (false)
-		void setRestrictive(bool value);
+		//! \brief Defines if the the policy is permissive or restrictive
+		void setPermissive(bool value);
 
-		//! \brief Returns if the policy is restrictive (true) or permissive (false)
-		bool isRestrictive(void);
+		//! \brief Returns if the policy is permissive or restrictive
+		bool isPermissive(void);
 
-		//! \brief Defines the commands (CMD_???) affected by the policy. The commands need to be specified via bit wise operation
-		void setAffectedCommand(unsigned cmd, bool value);
+		//! \brief Defines the command affected by the policy.
+		void setPolicyCommand(PolicyCmdType cmd);
 
-		//! \brief Returns if the specified command (CMD_???) is affected
-		bool isCommandAffected(unsigned cmd);
-
-		//! \brief Defines if special (system roles - CURRENT_USER and SESSION_USER) should be affected by the policy
-		void setSpecialRole(unsigned rol_id, bool value);
-
-		//! \brief Returns if the special (system roles - CURRENT_USER and SESSION_USER) are affected by the policy
-		bool isSpecialRoleSet(unsigned rol_id);
+		//! \brief Returns the policy affected command
+		PolicyCmdType getPolicyCommand(void);
 
 		//! \brief Defines the USING expresion of the policy
 		void setUsingExpression(const QString &expr);
@@ -112,6 +92,8 @@ class Policy : public TableObject {
 		virtual QString getSignature(bool format=false) final;
 
 		virtual QString getAlterDefinition(BaseObject *object) final;
+
+		bool isRoleExists(Role *role);
 };
 
 #endif

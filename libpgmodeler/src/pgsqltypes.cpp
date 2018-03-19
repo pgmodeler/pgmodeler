@@ -232,7 +232,15 @@ QString BaseType::type_list[types_count]=
 	//Types used by the class IdentityType
 	//offsets 249 to 250
 	"ALWAYS",
-	"BY DEFAULT"
+	"BY DEFAULT",
+
+	//Types used by the class PolicyCmdType
+	//offsets 251 to 255
+	"ALL",
+	"SELECT",
+	"INSERT",
+	"DELETE",
+	"UPDATE"
 };
 
 BaseType::BaseType(void)
@@ -2140,6 +2148,44 @@ unsigned IdentityType::operator = (unsigned type_id)
 }
 
 unsigned IdentityType::operator = (const QString &type_name)
+{
+	unsigned type_id;
+
+	type_id=BaseType::getType(type_name, offset, types_count);
+	BaseType::setType(type_id,offset,types_count);
+	return(type_id);
+}
+
+/***************************
+ * CLASS: PolicyCmdType *
+ ***************************/
+PolicyCmdType::PolicyCmdType(void)
+{
+	type_idx=offset;
+}
+
+PolicyCmdType::PolicyCmdType(unsigned type_id)
+{
+	(*this)=type_id;
+}
+
+PolicyCmdType::PolicyCmdType(const QString &type_name)
+{
+	(*this)=type_name;
+}
+
+void PolicyCmdType::getTypes(QStringList &tipos)
+{
+	BaseType::getTypes(tipos,offset,types_count);
+}
+
+unsigned PolicyCmdType::operator = (unsigned type_id)
+{
+	BaseType::setType(type_id,offset,types_count);
+	return(type_idx);
+}
+
+unsigned PolicyCmdType::operator = (const QString &type_name)
 {
 	unsigned type_id;
 
