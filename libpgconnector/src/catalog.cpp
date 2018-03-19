@@ -38,14 +38,15 @@ map<ObjectType, QString> Catalog::oid_fields=
   {OBJ_SEQUENCE, "sq.oid"}, {OBJ_DOMAIN, "dm.oid"}, {OBJ_TYPE, "tp.oid"},
   {OBJ_TABLE, "tb.oid"}, {OBJ_COLUMN, "cl.oid"}, {OBJ_CONSTRAINT, "cs.oid"},
   {OBJ_RULE, "rl.oid"}, {OBJ_TRIGGER, "tg.oid"}, {OBJ_INDEX, "id.oid"},
-  {OBJ_EVENT_TRIGGER, "et.oid"},
+	{OBJ_EVENT_TRIGGER, "et.oid"}
 };
 
 map<ObjectType, QString> Catalog::ext_oid_fields={
 	{OBJ_CONSTRAINT, "cs.conrelid"},
 	{OBJ_INDEX, "id.indexrelid"},
 	{OBJ_TRIGGER, "tg.tgrelid"},
-	{OBJ_RULE, "rl.ev_class"}
+	{OBJ_RULE, "rl.ev_class"},
+	{OBJ_POLICY, "pl.oid"}
 };
 
 Catalog::Catalog(void)

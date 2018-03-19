@@ -33,7 +33,7 @@ class Policy : public TableObject {
 		/*! \brief Roles that has permissions over the object. This vector can be
 			empty indicating that all roles on the cluster has permission over
 			the object. */
-		vector<BaseObject *> roles;
+		vector<Role *> roles;
 
 		//! \brief Defines the USING expression applied to queries referencing the table which policy is applied
 		QString using_expr,
@@ -45,12 +45,11 @@ class Policy : public TableObject {
 		 and reducing the set of records accessed by a query. By default, a policy is permissive. */
 		bool restrictive,
 
-		affected_cms[4];
+		//! \brief Stores which commands (CMD_???) are affected by the policy
+		affected_cms[4],
 
-		/*! \brief Generates a unique identifier for policy using the attribute
-			'name' of base class BaseObject. This is only used to avoid
-			 duplicate permissions ids in the model */
-		void generatePolicyId(void);
+		//! \brief Stores which special roles (ROL_???) are affected by the policy
+		special_roles[3];
 
 	public:
 		//! \brief Constants used to reference the commands affected by the policy
@@ -58,6 +57,11 @@ class Policy : public TableObject {
 		CMD_INSERT=1,
 		CMD_UPDATE=2,
 		CMD_DELETE=3;
+
+		//! \brief Constants used to reference the special roles affected by the policy
+		static const unsigned ROLE_CURRENT_USER=0,
+		ROLE_SESSION_USER=1,
+		ROLE_PUBLIC=2;
 
 		Policy(void);
 
@@ -74,6 +78,12 @@ class Policy : public TableObject {
 
 		//! \brief Returns if the specified command (CMD_???) is affected
 		bool isCommandAffected(unsigned cmd);
+
+		//! \brief Defines if special (system roles - CURRENT_USER and SESSION_USER) should be affected by the policy
+		void setSpecialRole(unsigned rol_id, bool value);
+
+		//! \brief Returns if the special (system roles - CURRENT_USER and SESSION_USER) are affected by the policy
+		bool isSpecialRoleSet(unsigned rol_id);
 
 		//! \brief Defines the USING expresion of the policy
 		void setUsingExpression(const QString &expr);
@@ -100,8 +110,6 @@ class Policy : public TableObject {
 		virtual QString getCodeDefinition(unsigned def_type) final;
 
 		virtual QString getSignature(bool format=false) final;
-
-		virtual QString getDropDefinition(bool cascade) final;
 
 		virtual QString getAlterDefinition(BaseObject *object) final;
 };

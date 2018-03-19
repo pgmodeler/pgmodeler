@@ -34,6 +34,7 @@
 #include "trigger.h"
 #include "function.h"
 #include "role.h"
+#include "policy.h"
 #include "copyoptions.h"
 #include <QStringList>
 
@@ -171,6 +172,9 @@ class Table: public BaseTable {
 		//! \brief Adds a rule to table (optionally the user can add the object at the specified index 'idx')
 		void addRule(Rule *reg, int idx_reg=-1);
 
+		//! \brief Adds a policy to table (optionally the user can add the object at the specified index 'idx')
+		void addPolicy(Policy *pol, int idx_pol=-1);
+
 		//! \brief Configures the copy table
 		void setCopyTable(Table *tab);
 
@@ -213,6 +217,12 @@ class Table: public BaseTable {
 
 		//! \brief Gets a rule through its index
 		Rule *getRule(unsigned idx);
+
+		//! \brief Gets a policy through its name
+		Policy *getPolicy(const QString &name);
+
+		//! \brief Gets a policy through its index
+		Policy *getPolicy(unsigned idx);
 
 		//! \brief Gets a ancestor table through its name
 		Table *getAncestorTable(const QString &name);
@@ -271,6 +281,12 @@ class Table: public BaseTable {
 
 		//! \brief Removes a rule through its index
 		void removeRule(unsigned idx);
+
+		//! \brief Removes a policy through its name
+		void removePolicy(const QString &name);
+
+		//! \brief Removes a policy through its index
+		void removePolicy(unsigned idx);
 
 		//! \brief Returns the SQL / XML definition for table
 		virtual QString getCodeDefinition(unsigned def_type) final;

@@ -864,7 +864,7 @@ void MainWindow::addModel(const QString &filename)
 			}
 			catch(Exception &e)
 			{
-                models_tbw->setUpdatesEnabled(true);
+				models_tbw->setUpdatesEnabled(true);
 				central_wgt->update();
 				models_tbw->removeTab(models_tbw->indexOf(model_tab));
 				model_tab->setParent(nullptr);

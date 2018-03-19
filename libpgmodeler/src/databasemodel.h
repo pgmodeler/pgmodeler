@@ -516,6 +516,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		Rule *createRule(void);
 		Index *createIndex(void);
 		Trigger *createTrigger(void);
+		Policy *createPolicy(void);
 		EventTrigger *createEventTrigger(void);
 		GenericSQL *createGenericSQL(void);
 

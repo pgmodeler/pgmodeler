@@ -2704,7 +2704,7 @@ void DatabaseModel::addPermission(Permission *perm)
 							.arg(perm->getObject()->getTypeName())
 							.arg(perm->getObject()->getName())
 							.arg(perm->getObject()->getTypeName()),
-							ERR_ASG_DUPLIC_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		permissions.push_back(perm);
 		perm->setDatabase(this);
@@ -3161,6 +3161,8 @@ BaseObject *DatabaseModel::createObject(ObjectType obj_type)
 			object=createEventTrigger();
 		else if(obj_type==OBJ_GENERIC_SQL)
 			object=createGenericSQL();
+		else if(obj_type==OBJ_POLICY)
+			object=createPolicy();
 	}
 
 	return(object);
@@ -5422,6 +5424,113 @@ Trigger *DatabaseModel::createTrigger(void)
 	}
 
 	return(trigger);
+}
+
+Policy *DatabaseModel::createPolicy(void)
+{
+	attribs_map attribs;
+	Policy *policy=nullptr;
+	QString elem;
+	BaseTable *table=nullptr;
+	map<QString, unsigned> special_roles;
+
+	try
+	{
+		special_roles[ParsersAttributes::ROLE_CURRENT_USER] = Policy::ROLE_CURRENT_USER;
+		special_roles[ParsersAttributes::ROLE_SESSION_USER] = Policy::ROLE_SESSION_USER;
+		special_roles[ParsersAttributes::ROLE_PUBLIC] = Policy::ROLE_PUBLIC;
+
+		policy=new Policy;
+		setBasicAttributes(policy);
+
+		xmlparser.getElementAttributes(attribs);
+
+		table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE));
+
+		if(!table)
+			throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+											.arg(attribs[ParsersAttributes::NAME])
+											.arg(BaseObject::getTypeName(OBJ_POLICY))
+											.arg(attribs[ParsersAttributes::TABLE])
+											.arg(BaseObject::getTypeName(OBJ_TABLE)),
+				ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		policy->setRestrictive(attribs[ParsersAttributes::RESTRICTIVE] == ParsersAttributes::_TRUE_);
+		policy->setAffectedCommand(Policy::CMD_SELECT, attribs[ParsersAttributes::SELECT_PRIV] == ParsersAttributes::_TRUE_);
+		policy->setAffectedCommand(Policy::CMD_INSERT, attribs[ParsersAttributes::INSERT_PRIV] == ParsersAttributes::_TRUE_);
+		policy->setAffectedCommand(Policy::CMD_UPDATE, attribs[ParsersAttributes::UPDATE_PRIV] == ParsersAttributes::_TRUE_);
+		policy->setAffectedCommand(Policy::CMD_DELETE, attribs[ParsersAttributes::DELETE_PRIV] == ParsersAttributes::_TRUE_);
+
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
+		{
+			do
+			{
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
+				{
+					elem=xmlparser.getElementName();
+
+					if(elem==ParsersAttributes::EXPRESSION)
+					{
+						xmlparser.getElementAttributes(attribs);
+						xmlparser.savePosition();
+						xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
+
+						if(attribs[ParsersAttributes::TYPE] == ParsersAttributes::USING_EXP)
+							policy->setUsingExpression(xmlparser.getElementContent());
+						else if(attribs[ParsersAttributes::TYPE] == ParsersAttributes::CHECK_EXP)
+							policy->setCheckExpression(xmlparser.getElementContent());
+
+						xmlparser.restorePosition();
+					}
+					else if(xmlparser.getElementName()==ParsersAttributes::ROLES)
+					{
+						QStringList rol_names;
+						Role *role = nullptr;
+
+						xmlparser.getElementAttributes(attribs);
+
+						rol_names = attribs[ParsersAttributes::NAMES].split(',');
+
+						for(auto &name : rol_names)
+						{
+							name = name.trimmed();
+
+							if(special_roles.count(name.toUpper()))
+								policy->setSpecialRole(special_roles[name.toUpper()], true);
+							else
+							{
+								role=dynamic_cast<Role *>(getObject(name, OBJ_ROLE));
+
+								//Raises an error if the referenced role doesn't exists
+								if(!role)
+								{
+									throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+																	.arg(policy->getName())
+																	.arg(policy->getTypeName())
+																	.arg(name)
+																	.arg(BaseObject::getTypeName(OBJ_ROLE)),
+																	ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+								}
+
+								policy->addRole(role);
+							}
+						}
+					}
+				}
+			}
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
+		}
+
+		table->addObject(policy);
+		table->setModified(true);
+	}
+	catch(Exception &e)
+	{
+		if(policy) delete(policy);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
+	}
+
+	return(policy);
 }
 
 EventTrigger *DatabaseModel::createEventTrigger(void)

@@ -278,12 +278,13 @@ enum ErrorType {
 	ERR_DROP_CURRDB_DEFAULT,
 	ERR_NULL_PK_COLUMN,
 	ERR_INV_IDENTITY_COLUMN,
-	ERR_REF_INV_AFFECTED_CMD
+	ERR_REF_INV_AFFECTED_CMD,
+	ERR_REF_INV_SPECIAL_ROLE
 };
 
 class Exception {
 	private:
-		static const int ERROR_COUNT=232;
+		static const int ERROR_COUNT=233;
 
 		/*! \brief Stores other exceptions before raise the 'this' exception.
 		 This structure can be used to simulate a stack trace to improve the debug */

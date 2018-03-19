@@ -371,6 +371,7 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 				case OBJ_TRIGGER:
 				case OBJ_INDEX:
 				case OBJ_RULE:
+				case OBJ_POLICY:
 					TableObject *tab_obj;
 					vector<TableObject *> *obj_list;
 					Column *col;
@@ -502,6 +503,18 @@ void Table::addRule(Rule *reg, int idx_reg)
 	try
 	{
 		addObject(reg, idx_reg);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void Table::addPolicy(Policy *pol, int idx_pol)
+{
+	try
+	{
+		addObject(pol, idx_pol);
 	}
 	catch(Exception &e)
 	{
@@ -763,6 +776,30 @@ void Table::removeRule(unsigned idx)
 	try
 	{
 		removeObject(idx,OBJ_RULE);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void Table::removePolicy(const QString &name)
+{
+	try
+	{
+		removeObject(name, OBJ_POLICY);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void Table::removePolicy(unsigned idx)
+{
+	try
+	{
+		removeObject(idx, OBJ_POLICY);
 	}
 	catch(Exception &e)
 	{
@@ -1036,6 +1073,17 @@ Rule *Table::getRule(const QString &name)
 Rule *Table::getRule(unsigned idx)
 {
 	return(dynamic_cast<Rule *>(getObject(idx,OBJ_RULE)));
+}
+
+Policy *Table::getPolicy(const QString &name)
+{
+	int idx;
+	return(dynamic_cast<Policy *>(getObject(name, OBJ_POLICY,idx)));
+}
+
+Policy *Table::getPolicy(unsigned idx)
+{
+	return(dynamic_cast<Policy *>(getObject(idx, OBJ_POLICY)));
 }
 
 unsigned Table::getColumnCount(void)
