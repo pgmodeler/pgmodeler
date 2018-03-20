@@ -197,8 +197,6 @@ int TableWidget::openEditingForm(TableObject *object)
 	object_wgt->setAttributes(this->model, this->op_list,
 														dynamic_cast<Table *>(this->object), dynamic_cast<Class *>(object));
 	editing_form.setMainWidget(object_wgt);
-
-	editing_form.adjustSize();
 	return(editing_form.exec());
 }
 
