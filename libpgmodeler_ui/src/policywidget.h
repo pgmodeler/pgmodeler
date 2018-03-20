@@ -23,15 +23,31 @@
 #include "baseobjectwidget.h"
 #include "ui_policywidget.h"
 #include "policy.h"
+#include "objectstablewidget.h"
+#include "modelobjectswidget.h"
 
 class PolicyWidget : public BaseObjectWidget, Ui::PolicyWidget {
 	private:
 		Q_OBJECT
 
+		ModelObjectsWidget *model_objs_wgt;
+
+		ObjectsTableWidget *roles_tab;
+
+		SyntaxHighlighter *using_hl, *check_hl;
+
+		NumberedTextEditor *using_edt, *check_edt;
+
 	public:
 		PolicyWidget(QWidget *parent = 0);
 
 		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *parent_obj, Policy *policy);
+
+	public slots:
+		void applyConfiguration(void);
+
+	private slots:
+		void selectRole(BaseObject *role, bool show_wgt);
 };
 
 #endif

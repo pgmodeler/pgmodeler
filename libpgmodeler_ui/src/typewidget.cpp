@@ -47,13 +47,13 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 			grid->addWidget(functions_sel[i],i,1,1,1);
 		}
 
-		enumerations_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-												 (ObjectTableWidget::EDIT_BUTTON | ObjectTableWidget::DUPLICATE_BUTTON), true, this);
+		enumerations_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
+												 (ObjectsTableWidget::EDIT_BUTTON | ObjectsTableWidget::DUPLICATE_BUTTON), true, this);
 		grid=dynamic_cast<QGridLayout *>(enumerations_gb->layout());
 		grid->addWidget(enumerations_tab,1,0,1,2);
 		enumerations_gb->setVisible(false);
 
-		attributes_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^ ObjectTableWidget::DUPLICATE_BUTTON, true, this);
+		attributes_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^ ObjectsTableWidget::DUPLICATE_BUTTON, true, this);
 		attributes_tab->setColumnCount(3);
 		attributes_tab->setHeaderLabel(trUtf8("Name"),0);
 		attributes_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);

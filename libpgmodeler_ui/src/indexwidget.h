@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_indexwidget.h"
-#include "objecttablewidget.h"
+#include "objectstablewidget.h"
 #include "elementswidget.h"
 
 class IndexWidget: public BaseObjectWidget, public Ui::IndexWidget {

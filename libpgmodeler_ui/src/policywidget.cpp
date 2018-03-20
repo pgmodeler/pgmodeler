@@ -20,8 +20,47 @@
 
 PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_POLICY)
 {
-	Ui_PolicyWidget::setupUi(this);
-	configureFormLayout(policy_grid, OBJ_POLICY);
+	try
+	{
+		Ui_PolicyWidget::setupUi(this);
+
+		model_objs_wgt = new ModelObjectsWidget(true, this);
+		model_objs_wgt->setObjectVisible(OBJ_ROLE, true);
+
+		check_edt = PgModelerUiNS::createNumberedTextEditor(check_wgt);
+		check_hl = new SyntaxHighlighter(check_edt);
+		check_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+
+		using_edt = PgModelerUiNS::createNumberedTextEditor(using_wgt);
+		using_hl = new SyntaxHighlighter(using_edt);
+		using_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+
+		roles_tab = new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
+																			 (ObjectsTableWidget::DUPLICATE_BUTTON |
+																				ObjectsTableWidget::UPDATE_BUTTON |
+																				ObjectsTableWidget::EDIT_BUTTON), true, this);
+		roles_tab->setColumnCount(1);
+		roles_tab->setHeaderLabel(trUtf8("Name"), 0);
+		roles_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")), 0);
+
+		QVBoxLayout *vbox = new QVBoxLayout;
+		vbox->addWidget(roles_tab);
+		vbox->setContentsMargins(4,4,4,4);
+		attribs_tbw->widget(0)->setLayout(vbox);
+
+		QStringList cmds;
+		PolicyCmdType::getTypes(cmds);
+		command_cmb->addItems(cmds);
+
+		configureFormLayout(policy_grid, OBJ_POLICY);
+
+		connect(roles_tab, SIGNAL(s_rowAdded(int)), model_objs_wgt, SLOT(show()));
+		connect(model_objs_wgt, SIGNAL(s_visibilityChanged(BaseObject*, bool)), this, SLOT(selectRole(BaseObject*, bool)));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void PolicyWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *parent_obj, Policy *policy)
@@ -30,4 +69,69 @@ void PolicyWidget::setAttributes(DatabaseModel *model, OperationList *op_list, B
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObjectWidget::setAttributes(model, op_list, policy, parent_obj);
+	model_objs_wgt->setModel(model);
+
+	if(policy)
+	{
+		command_cmb->setCurrentText(~policy->getPolicyCommand());
+		permissive_chk->setChecked(policy->isPermissive());
+		check_edt->setPlainText(policy->getCheckExpression());
+		using_edt->setPlainText(policy->getUsingExpression());
+
+		roles_tab->blockSignals(true);
+
+		for(auto role : policy->getRoles())
+		{
+			roles_tab->addRow();
+			roles_tab->setCellText(role->getName(), roles_tab->getRowCount() - 1, 0);
+			roles_tab->setRowData(QVariant::fromValue<void *>(reinterpret_cast<void*>(role)), roles_tab->getRowCount() - 1);
+		}
+
+		roles_tab->blockSignals(false);
+	}
+}
+
+void PolicyWidget::selectRole(BaseObject *role, bool show_wgt)
+{
+	if(!show_wgt)
+	{
+		if(!role)
+			roles_tab->removeRow(roles_tab->getRowCount() - 1);
+		else
+		{
+			roles_tab->setCellText(role->getName(), roles_tab->getRowCount() - 1, 0);
+			roles_tab->setRowData(QVariant::fromValue<void *>(reinterpret_cast<void*>(role)), roles_tab->getRowCount() - 1);
+		}
+	}
+}
+
+void PolicyWidget::applyConfiguration(void)
+{
+	try
+	{
+		Policy *policy = nullptr;
+		unsigned count, i;
+
+		startConfiguration<Policy>();
+
+		policy =dynamic_cast<Policy *>(this->object);
+		policy->removeRoles();
+		policy->setUsingExpression(using_edt->toPlainText());
+		policy->setCheckExpression(check_edt->toPlainText());
+		policy->setPermissive(permissive_chk->isChecked());
+		policy->setPolicyCommand(command_cmb->currentText());
+
+		count=roles_tab->getRowCount();
+
+		for(i=0; i < count; i++)
+			policy->addRole(reinterpret_cast<Role *>(roles_tab->getRowData(i).value<void *>()));
+
+		BaseObjectWidget::applyConfiguration();
+		finishConfiguration();
+	}
+	catch(Exception &e)
+	{
+		cancelConfiguration();
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }

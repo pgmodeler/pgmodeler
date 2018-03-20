@@ -21,7 +21,7 @@
 
 RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 {
-	ObjectTableWidget *obj_tab=nullptr;
+	ObjectsTableWidget *obj_tab=nullptr;
 	QGridLayout *grid=nullptr;
 	QFrame *frame=nullptr;
 	map<QString, vector<QWidget *> > fields_map;
@@ -50,8 +50,8 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 	//Alocation of the member role tables
 	for(i=0; i < 3; i++)
 	{
-		obj_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-																	(ObjectTableWidget::UPDATE_BUTTON | ObjectTableWidget::DUPLICATE_BUTTON), true, this);
+		obj_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
+																	(ObjectsTableWidget::UPDATE_BUTTON | ObjectsTableWidget::DUPLICATE_BUTTON), true, this);
 		members_tab[i]=obj_tab;
 
 		obj_tab->setColumnCount(5);

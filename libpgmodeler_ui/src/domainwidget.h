@@ -28,7 +28,7 @@
 #include "baseobjectwidget.h"
 #include "ui_domainwidget.h"
 #include "pgsqltypewidget.h"
-#include "objecttablewidget.h"
+#include "objectstablewidget.h"
 
 class DomainWidget: public BaseObjectWidget, public Ui::DomainWidget {
 	private:
@@ -36,7 +36,7 @@ class DomainWidget: public BaseObjectWidget, public Ui::DomainWidget {
 		
 		SyntaxHighlighter *check_expr_hl;
 		PgSQLTypeWidget *data_type;
-		ObjectTableWidget *constr_tab;
+		ObjectsTableWidget *constr_tab;
 		
 	public:
 		DomainWidget(QWidget * parent = 0);

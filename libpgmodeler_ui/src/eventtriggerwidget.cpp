@@ -27,12 +27,12 @@ EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent
 	Ui_EventTriggerWidget::setupUi(this);
 
 	function_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
-	filter_tab=new ObjectTableWidget(ObjectTableWidget::ADD_BUTTON |
-									 ObjectTableWidget::EDIT_BUTTON |
-									 ObjectTableWidget::UPDATE_BUTTON |
-									 ObjectTableWidget::REMOVE_BUTTON |
-									 ObjectTableWidget::REMOVE_ALL_BUTTON |
-									 ObjectTableWidget::MOVE_BUTTONS, false, this);
+	filter_tab=new ObjectsTableWidget(ObjectsTableWidget::ADD_BUTTON |
+									 ObjectsTableWidget::EDIT_BUTTON |
+									 ObjectsTableWidget::UPDATE_BUTTON |
+									 ObjectsTableWidget::REMOVE_BUTTON |
+									 ObjectsTableWidget::REMOVE_ALL_BUTTON |
+									 ObjectsTableWidget::MOVE_BUTTONS, false, this);
 	filter_tab->setColumnCount(1);
 	filter_tab->setHeaderLabel(trUtf8("Tag command"), 0);
 
@@ -58,16 +58,16 @@ EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent
 	connect(filter_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleTagValue(int)));
 	connect(filter_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleTagValue(int)));
 
-	connect(filter_tab, &ObjectTableWidget::s_rowsRemoved,
-			[&](){ filter_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, false); });
+	connect(filter_tab, &ObjectsTableWidget::s_rowsRemoved,
+			[&](){ filter_tab->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON, false); });
 
-	connect(filter_tab, &ObjectTableWidget::s_rowEdited,
+	connect(filter_tab, &ObjectsTableWidget::s_rowEdited,
 			[&](int row){ tag_edt->setText(filter_tab->getCellText(row, 0)); });
 
 	connect(tag_edt, &QLineEdit::textChanged,
 			[&](){
-		filter_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, !tag_edt->text().isEmpty());
-		filter_tab->setButtonsEnabled(ObjectTableWidget::UPDATE_BUTTON, !tag_edt->text().isEmpty());
+		filter_tab->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON, !tag_edt->text().isEmpty());
+		filter_tab->setButtonsEnabled(ObjectsTableWidget::UPDATE_BUTTON, !tag_edt->text().isEmpty());
 	});
 
 	setMinimumSize(500, 400);
@@ -107,7 +107,7 @@ void EventTriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		filter_tab->clearSelection();
 	}
 
-	filter_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, false);
+	filter_tab->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON, false);
 }
 
 void EventTriggerWidget::applyConfiguration(void)
@@ -143,7 +143,7 @@ void EventTriggerWidget::handleTagValue(int row)
 		filter_tab->setCellText(tag_edt->text().simplified(), row, 0);
 		tag_edt->clear();
 		filter_tab->clearSelection();
-		filter_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, false);
+		filter_tab->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON, false);
 	}
 	else if(filter_tab->getCellText(row, 0).isEmpty())
 		filter_tab->removeRow(row);

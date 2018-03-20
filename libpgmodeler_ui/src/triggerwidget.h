@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_triggerwidget.h"
-#include "objecttablewidget.h"
+#include "objectstablewidget.h"
 
 class TriggerWidget: public BaseObjectWidget, public Ui::TriggerWidget {
 	private:
@@ -37,7 +37,7 @@ class TriggerWidget: public BaseObjectWidget, public Ui::TriggerWidget {
 		SyntaxHighlighter *cond_expr_hl;
 
 		//! \brief Object tables used to control columns and agruments
-		ObjectTableWidget *columns_tab,
+		ObjectsTableWidget *columns_tab,
 		*arguments_tab;
 
 		//! \brief Selectors for reference table and trigger function

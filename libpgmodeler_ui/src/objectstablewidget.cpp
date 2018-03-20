@@ -16,9 +16,9 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "objecttablewidget.h"
+#include "objectstablewidget.h"
 
-ObjectTableWidget::ObjectTableWidget(unsigned button_conf, bool conf_exclusion, QWidget *parent): QWidget(parent)
+ObjectsTableWidget::ObjectsTableWidget(unsigned button_conf, bool conf_exclusion, QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
 	connect(move_down_tb, SIGNAL(clicked(bool)), this, SLOT(moveRows(void)));
@@ -58,7 +58,7 @@ ObjectTableWidget::ObjectTableWidget(unsigned button_conf, bool conf_exclusion, 
 	move_down_tb->setToolTip(move_down_tb->toolTip() + QString(" (%1)").arg(move_down_tb->shortcut().toString()));
 }
 
-void ObjectTableWidget::setButtonConfiguration(unsigned button_conf)
+void ObjectsTableWidget::setButtonConfiguration(unsigned button_conf)
 {
 	bool move_btn = false;
 
@@ -92,7 +92,7 @@ void ObjectTableWidget::setButtonConfiguration(unsigned button_conf)
 	}
 }
 
-QTableWidgetItem *ObjectTableWidget::getItem(unsigned row_idx, unsigned col_idx)
+QTableWidgetItem *ObjectsTableWidget::getItem(unsigned row_idx, unsigned col_idx)
 {
 	if(row_idx >= static_cast<unsigned>(table_tbw->rowCount()))
 		throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -103,13 +103,13 @@ QTableWidgetItem *ObjectTableWidget::getItem(unsigned row_idx, unsigned col_idx)
 	return(table_tbw->item(row_idx, col_idx));
 }
 
-void ObjectTableWidget::adjustColumnToContents(int col)
+void ObjectsTableWidget::adjustColumnToContents(int col)
 {
 	table_tbw->resizeColumnToContents(col);
 	table_tbw->resizeRowsToContents();
 }
 
-void ObjectTableWidget::setColumnCount(unsigned col_count)
+void ObjectsTableWidget::setColumnCount(unsigned col_count)
 {
 	if(col_count > 0)
 	{
@@ -128,7 +128,7 @@ void ObjectTableWidget::setColumnCount(unsigned col_count)
 	}
 }
 
-void ObjectTableWidget::setHeaderLabel(const QString &label, unsigned col_idx)
+void ObjectsTableWidget::setHeaderLabel(const QString &label, unsigned col_idx)
 {
 	QTableWidgetItem *item=nullptr;
 
@@ -139,7 +139,7 @@ void ObjectTableWidget::setHeaderLabel(const QString &label, unsigned col_idx)
 	item->setText(label);
 }
 
-void ObjectTableWidget::setHeaderIcon(const QIcon &icon, unsigned col_idx)
+void ObjectsTableWidget::setHeaderIcon(const QIcon &icon, unsigned col_idx)
 {
 	QTableWidgetItem *item=nullptr;
 
@@ -150,17 +150,17 @@ void ObjectTableWidget::setHeaderIcon(const QIcon &icon, unsigned col_idx)
 	item->setIcon(icon);
 }
 
-void ObjectTableWidget::setCellIcon(const QIcon &icon, unsigned row_idx, unsigned col_idx)
+void ObjectsTableWidget::setCellIcon(const QIcon &icon, unsigned row_idx, unsigned col_idx)
 {
 	getItem(row_idx, col_idx)->setIcon(icon);
 }
 
-void ObjectTableWidget::setCellText(const QString &text, unsigned row_idx, unsigned col_idx)
+void ObjectsTableWidget::setCellText(const QString &text, unsigned row_idx, unsigned col_idx)
 {
 	getItem(row_idx, col_idx)->setText(text);
 }
 
-void ObjectTableWidget::clearCellText(unsigned row_idx, unsigned col_idx)
+void ObjectsTableWidget::clearCellText(unsigned row_idx, unsigned col_idx)
 {
 	try
 	{
@@ -172,7 +172,7 @@ void ObjectTableWidget::clearCellText(unsigned row_idx, unsigned col_idx)
 	}
 }
 
-void ObjectTableWidget::setRowFont(int row_idx, const QFont &font, const QColor &fg_color, const QColor &bg_color)
+void ObjectsTableWidget::setRowFont(int row_idx, const QFont &font, const QColor &fg_color, const QColor &bg_color)
 {
 	QTableWidgetItem *item=nullptr;
 	int col_count, i;
@@ -190,7 +190,7 @@ void ObjectTableWidget::setRowFont(int row_idx, const QFont &font, const QColor 
 	}
 }
 
-void ObjectTableWidget::setRowData(const QVariant &data, unsigned row_idx)
+void ObjectsTableWidget::setRowData(const QVariant &data, unsigned row_idx)
 {
 	QTableWidgetItem *item=nullptr;
 
@@ -202,17 +202,17 @@ void ObjectTableWidget::setRowData(const QVariant &data, unsigned row_idx)
 	item->setData(Qt::UserRole, data);
 }
 
-unsigned ObjectTableWidget::getColumnCount(void)
+unsigned ObjectsTableWidget::getColumnCount(void)
 {
 	return(table_tbw->columnCount());
 }
 
-unsigned ObjectTableWidget::getRowCount(void)
+unsigned ObjectsTableWidget::getRowCount(void)
 {
 	return(table_tbw->rowCount());
 }
 
-QString ObjectTableWidget::getHeaderLabel(unsigned col_idx)
+QString ObjectsTableWidget::getHeaderLabel(unsigned col_idx)
 {
 	QTableWidgetItem *item=nullptr;
 
@@ -223,22 +223,22 @@ QString ObjectTableWidget::getHeaderLabel(unsigned col_idx)
 	return(item->text());
 }
 
-QString ObjectTableWidget::getCellText(unsigned row_idx, unsigned col_idx)
+QString ObjectsTableWidget::getCellText(unsigned row_idx, unsigned col_idx)
 {
 	return(getItem(row_idx, col_idx)->text());
 }
 
-Qt::CheckState ObjectTableWidget::getCellCheckState(unsigned row_idx, unsigned col_idx)
+Qt::CheckState ObjectsTableWidget::getCellCheckState(unsigned row_idx, unsigned col_idx)
 {
 	return(getItem(row_idx, col_idx)->checkState());
 }
 
-void ObjectTableWidget::setCellCheckState(unsigned row_idx, unsigned col_idx, Qt::CheckState check_state)
+void ObjectsTableWidget::setCellCheckState(unsigned row_idx, unsigned col_idx, Qt::CheckState check_state)
 {
 	getItem(row_idx, col_idx)->setCheckState(check_state);
 }
 
-void ObjectTableWidget::setCellDisabled(unsigned row_idx, unsigned col_idx, bool disabled)
+void ObjectsTableWidget::setCellDisabled(unsigned row_idx, unsigned col_idx, bool disabled)
 {
 	QTableWidgetItem *item = getItem(row_idx, col_idx);
 
@@ -248,12 +248,12 @@ void ObjectTableWidget::setCellDisabled(unsigned row_idx, unsigned col_idx, bool
 		item->setFlags(Qt::ItemIsEnabled);
 }
 
-bool ObjectTableWidget::isCellDisabled(unsigned row_idx, unsigned col_idx)
+bool ObjectsTableWidget::isCellDisabled(unsigned row_idx, unsigned col_idx)
 {
 	return(getItem(row_idx, col_idx)->flags() == Qt::NoItemFlags);
 }
 
-QVariant ObjectTableWidget::getRowData(unsigned row_idx)
+QVariant ObjectsTableWidget::getRowData(unsigned row_idx)
 {
 	QTableWidgetItem *item=nullptr;
 
@@ -264,12 +264,12 @@ QVariant ObjectTableWidget::getRowData(unsigned row_idx)
 	return(item->data(Qt::UserRole));
 }
 
-int ObjectTableWidget::getSelectedRow(void)
+int ObjectsTableWidget::getSelectedRow(void)
 {
 	return(table_tbw->currentRow());
 }
 
-int ObjectTableWidget::getRowIndex(const QVariant &data)
+int ObjectsTableWidget::getRowIndex(const QVariant &data)
 {
 	unsigned i, count;
 	QTableWidgetItem *item=nullptr;
@@ -291,7 +291,7 @@ int ObjectTableWidget::getRowIndex(const QVariant &data)
 		return(i);
 }
 
-void ObjectTableWidget::addColumn(unsigned col_idx)
+void ObjectsTableWidget::addColumn(unsigned col_idx)
 {
 	if(col_idx >= static_cast<unsigned>(table_tbw->columnCount()))
 		col_idx=table_tbw->columnCount();
@@ -303,7 +303,7 @@ void ObjectTableWidget::addColumn(unsigned col_idx)
 	emit s_columnAdded(col_idx);
 }
 
-void ObjectTableWidget::selectRow(int lin_idx)
+void ObjectsTableWidget::selectRow(int lin_idx)
 {
 	QTableWidgetItem *item=nullptr;
 
@@ -318,7 +318,7 @@ void ObjectTableWidget::selectRow(int lin_idx)
 	}
 }
 
-void ObjectTableWidget::addRow(unsigned lin_idx)
+void ObjectsTableWidget::addRow(unsigned lin_idx)
 {
 	QTableWidgetItem *item=nullptr;
 	unsigned col_idx, col_cont=table_tbw->columnCount();
@@ -340,7 +340,7 @@ void ObjectTableWidget::addRow(unsigned lin_idx)
 	table_tbw->setCurrentItem(item);
 }
 
-void ObjectTableWidget::addRow(void)
+void ObjectsTableWidget::addRow(void)
 {
 	this->addRow(table_tbw->rowCount());
 	setButtonsEnabled();
@@ -349,7 +349,7 @@ void ObjectTableWidget::addRow(void)
 	emit s_rowAdded(table_tbw->rowCount()-1);
 }
 
-void ObjectTableWidget::removeRow(unsigned row_idx)
+void ObjectsTableWidget::removeRow(unsigned row_idx)
 {
 	unsigned i, count;
 	bool conf;
@@ -374,7 +374,7 @@ void ObjectTableWidget::removeRow(unsigned row_idx)
 	conf_exclusion=conf;
 }
 
-void ObjectTableWidget::removeRow(void)
+void ObjectsTableWidget::removeRow(void)
 {
 	if(table_tbw->currentRow()>=0)
 	{
@@ -401,7 +401,7 @@ void ObjectTableWidget::removeRow(void)
 	}
 }
 
-void ObjectTableWidget::duplicateRow(void)
+void ObjectsTableWidget::duplicateRow(void)
 {
 	if(table_tbw->currentRow() >= 0)
 	{
@@ -424,7 +424,7 @@ void ObjectTableWidget::duplicateRow(void)
 	}
 }
 
-void ObjectTableWidget::removeRows(void)
+void ObjectsTableWidget::removeRows(void)
 {
 	if(table_tbw->rowCount() > 0)
 	{
@@ -448,7 +448,7 @@ void ObjectTableWidget::removeRows(void)
 	}
 }
 
-void ObjectTableWidget::removeColumn(unsigned col_idx)
+void ObjectsTableWidget::removeColumn(unsigned col_idx)
 {
 	if(col_idx >= static_cast<unsigned>(table_tbw->columnCount()))
 		throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -460,7 +460,7 @@ void ObjectTableWidget::removeColumn(unsigned col_idx)
 	emit s_columnRemoved(col_idx);
 }
 
-void ObjectTableWidget::moveRows(void)
+void ObjectsTableWidget::moveRows(void)
 {
 	QObject *sender_obj=sender();
 	QTableWidgetItem *item=nullptr, *item1=nullptr;
@@ -545,24 +545,24 @@ void ObjectTableWidget::moveRows(void)
 	}
 }
 
-void ObjectTableWidget::editRow(void)
+void ObjectsTableWidget::editRow(void)
 {
 	emit s_rowEdited(table_tbw->currentRow());
 }
 
-void ObjectTableWidget::updateRow(void)
+void ObjectsTableWidget::updateRow(void)
 {
 	emit s_rowUpdated(table_tbw->currentRow());
 }
 
-void ObjectTableWidget::clearSelection(void)
+void ObjectsTableWidget::clearSelection(void)
 {
 	table_tbw->clearSelection();
 	table_tbw->setCurrentItem(nullptr);
 	setButtonsEnabled();
 }
 
-void ObjectTableWidget::setButtonsEnabled(unsigned button_conf, bool value)
+void ObjectsTableWidget::setButtonsEnabled(unsigned button_conf, bool value)
 {
 	int lin=-1;
 	QTableWidgetItem *item=table_tbw->currentItem();
@@ -597,12 +597,12 @@ void ObjectTableWidget::setButtonsEnabled(unsigned button_conf, bool value)
 		duplicate_tb->setEnabled(value && lin >= 0);
 }
 
-void ObjectTableWidget::setButtonsEnabled(void)
+void ObjectsTableWidget::setButtonsEnabled(void)
 {
 	setButtonsEnabled(ALL_BUTTONS, true);
 }
 
-void ObjectTableWidget::emitRowSelected(void)
+void ObjectsTableWidget::emitRowSelected(void)
 {
 	QTableWidgetItem *item=table_tbw->currentItem();
 
@@ -610,7 +610,7 @@ void ObjectTableWidget::emitRowSelected(void)
 		emit s_rowSelected(item->row());
 }
 
-void ObjectTableWidget::resizeEvent(QResizeEvent *)
+void ObjectsTableWidget::resizeEvent(QResizeEvent *)
 {
 	table_tbw->resizeRowsToContents();
 }

@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_constraintwidget.h"
-#include "objecttablewidget.h"
+#include "objectstablewidget.h"
 #include "messagebox.h"
 #include "elementswidget.h"
 
@@ -43,7 +43,7 @@ class ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
 		
 		/*! \brief Table widgets used to store the columns that forms the constraint as well the
 		referenced columns (only for foreign keys) */
-		ObjectTableWidget *columns_tab,
+		ObjectsTableWidget *columns_tab,
 		*ref_columns_tab;
 		
 		//! \brief Referenced table selector

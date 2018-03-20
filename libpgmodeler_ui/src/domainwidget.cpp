@@ -36,7 +36,7 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DOMAIN
 		grid->addWidget(data_type, 1, 0, 1, 2);
 		grid->addItem(new QSpacerItem(10, 1, QSizePolicy::Fixed,QSizePolicy::Expanding), 2, 0, 1, 1);
 
-		constr_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^ (ObjectTableWidget::DUPLICATE_BUTTON), true, this);
+		constr_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^ (ObjectsTableWidget::DUPLICATE_BUTTON), true, this);
 		constr_tab->setColumnCount(2);
 
 		constr_tab->setHeaderLabel(trUtf8("Name"), 0);

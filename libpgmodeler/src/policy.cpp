@@ -61,6 +61,11 @@ void Policy::setPolicyCommand(PolicyCmdType cmd)
 	policy_cmd = cmd;
 }
 
+PolicyCmdType Policy::getPolicyCommand(void)
+{
+	return(policy_cmd);
+}
+
 void Policy::setUsingExpression(const QString &expr)
 {
 	setCodeInvalidated(using_expr != expr);
@@ -96,6 +101,11 @@ void Policy::removeRoles(void)
 {
 	roles.clear();
 	setCodeInvalidated(true);
+}
+
+vector<Role *> Policy::getRoles(void)
+{
+	return(roles);
 }
 
 QString Policy::getCodeDefinition(unsigned def_type)

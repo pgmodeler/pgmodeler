@@ -37,8 +37,8 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		input_type=new PgSQLTypeWidget(this, trUtf8("Input Data Type"));
 		state_type=new PgSQLTypeWidget(this, trUtf8("State Data Type"));
 
-		input_types_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-											  ObjectTableWidget::EDIT_BUTTON, true, this);
+		input_types_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
+											  ObjectsTableWidget::EDIT_BUTTON, true, this);
 		input_types_tab->setColumnCount(1);
 
 		funcaoagregacao_grid->addWidget(final_func_sel,0,1,1,1);
