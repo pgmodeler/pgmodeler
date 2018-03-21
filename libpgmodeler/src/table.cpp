@@ -1111,6 +1111,11 @@ unsigned Table::getRuleCount(void)
 	return(rules.size());
 }
 
+unsigned Table::getPolicyCount(void)
+{
+	return(policies.size());
+}
+
 unsigned Table::getAncestorTableCount(void)
 {
 	return(ancestor_tables.size());
@@ -1675,30 +1680,30 @@ QString Table::getAlterDefinition(BaseObject *object)
 	try
 	{
 		QString alter_def;
+		attribs_map attribs;
 
-		attributes[ParsersAttributes::OIDS]=QString();
-		attributes[ParsersAttributes::HAS_CHANGES]=QString();
-		attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object, true);
+		attribs[ParsersAttributes::OIDS]=QString();
+		attribs[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object, true);
 
 		if(this->getName()==tab->getName())
 		{
-			attributes[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::_TRUE_;
+			attribs[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::_TRUE_;
 
 			if(this->with_oid!=tab->with_oid)
-				attributes[ParsersAttributes::OIDS]=(tab->with_oid ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+				attribs[ParsersAttributes::OIDS]=(tab->with_oid ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
 
 			if(this->unlogged!=tab->unlogged)
-				attributes[ParsersAttributes::UNLOGGED]=(tab->unlogged ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+				attribs[ParsersAttributes::UNLOGGED]=(tab->unlogged ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
 
 			if(this->rls_enabled!=tab->rls_enabled)
-				attributes[ParsersAttributes::RLS_ENABLED]=(tab->rls_enabled ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+				attribs[ParsersAttributes::RLS_ENABLED]=(tab->rls_enabled ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
 
 			if(this->rls_forced!=tab->rls_forced)
-				attributes[ParsersAttributes::RLS_FORCED]=(tab->rls_forced ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+				attribs[ParsersAttributes::RLS_FORCED]=(tab->rls_forced ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
 		}
 
+		copyAttributes(attribs);
 		alter_def=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
-		attributes[ParsersAttributes::OIDS]=QString();
 
 		return(alter_def);
 	}

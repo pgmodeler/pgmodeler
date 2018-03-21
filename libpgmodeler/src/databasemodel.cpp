@@ -7478,6 +7478,13 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 						getObjectDependecies(index->getIndexElement(i).getCollation(), deps, inc_indirect_deps);
 				}
 			}
+			else if(obj_type==OBJ_POLICY)
+			{
+				Policy *pol=dynamic_cast<Policy *>(object);
+
+				for(auto role : pol->getRoles())
+					getObjectDependecies(role, deps, inc_indirect_deps);
+			}
 			//** Getting the dependecies for table **
 			else if(obj_type==OBJ_TABLE)
 			{
@@ -7487,6 +7494,7 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 				Trigger *trig=nullptr;
 				Index *index=nullptr;
 				Column *col=nullptr;
+				Policy *pol=nullptr;
 				unsigned count, i, count1, i1;
 
 				count=tab->getColumnCount();
@@ -7563,6 +7571,15 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 						if(index->getIndexElement(i1).getCollation())
 							getObjectDependecies(index->getIndexElement(i1).getCollation(), deps, inc_indirect_deps);
 					}
+				}
+
+				count=tab->getPolicyCount();
+				for(i=0; i < count; i++)
+				{
+					pol=dynamic_cast<Policy *>(tab->getPolicy(i));
+
+					for(auto role : pol->getRoles())
+						getObjectDependecies(role, deps, inc_indirect_deps);
 				}
 			}
 			//** Getting the dependecies for user defined type **

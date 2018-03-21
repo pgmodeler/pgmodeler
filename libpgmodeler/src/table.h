@@ -245,6 +245,9 @@ class Table: public BaseTable {
 		//! \brief Gets the rule count
 		unsigned getRuleCount(void);
 
+		//! \brief Gets the policy count
+		unsigned getPolicyCount(void);
+
 		//! \brief Gets the ancestor table count
 		unsigned getAncestorTableCount(void);
 

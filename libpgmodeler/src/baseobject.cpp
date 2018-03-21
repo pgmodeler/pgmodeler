@@ -451,7 +451,7 @@ bool BaseObject::acceptsAlterCommand(ObjectType obj_type)
 		   obj_type==OBJ_INDEX || obj_type==OBJ_ROLE ||
 		   obj_type==OBJ_SCHEMA || obj_type==OBJ_SEQUENCE ||
 		   obj_type==OBJ_TABLE || obj_type==OBJ_TABLESPACE ||
-		   obj_type==OBJ_TYPE);
+			 obj_type==OBJ_TYPE || obj_type==OBJ_POLICY);
 }
 
 bool BaseObject::acceptsDropCommand(ObjectType obj_type)

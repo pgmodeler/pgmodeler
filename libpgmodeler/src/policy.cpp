@@ -141,7 +141,45 @@ QString Policy::getSignature(bool format)
 
 QString Policy::getAlterDefinition(BaseObject *object)
 {
-	return("");
+	Policy *policy=dynamic_cast<Policy *>(object);
+
+	if(!policy)
+		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	try
+	{
+		QStringList rol_names, aux_rol_names;
+		attribs_map attribs;
+
+		attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
+
+		if(this->using_expr.simplified() != policy->using_expr.simplified())
+			attribs[ParsersAttributes::USING_EXP] = policy->using_expr;
+
+		if(this->check_expr.simplified() != policy->check_expr.simplified())
+			attribs[ParsersAttributes::CHECK_EXP] = policy->check_expr;
+
+		for(auto role : this->roles)
+			rol_names.append(role->getName(true));
+
+		for(auto role : policy->roles)
+			aux_rol_names.append(role->getName(true));
+
+		rol_names.sort();
+		aux_rol_names.sort();
+
+		if(!rol_names.isEmpty() && aux_rol_names.isEmpty())
+			attribs[ParsersAttributes::ROLES] = ParsersAttributes::UNSET;
+		else if(rol_names.join(QString(", ")) != aux_rol_names.join(QString(", ")))
+			attribs[ParsersAttributes::ROLES] = aux_rol_names.join(QString(", "));
+
+		copyAttributes(attribs);
+		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
 }
 
 bool Policy::isRoleExists(Role *role)
