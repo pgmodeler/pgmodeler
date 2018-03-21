@@ -92,7 +92,8 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{SSL_CERT_FILE, QT_TR_NOOP("SSL cert file")},        {SSL_CRL_FILE, QT_TR_NOOP("SSL crl file")},            {SSL_KEY_FILE, QT_TR_NOOP("SSL key file")},
 	{SERVER_VERSION, QT_TR_NOOP("Server version")},      {IDENT_FILE, QT_TR_NOOP("Ident file")},                {PASSWORD_ENCRYPTION, QT_TR_NOOP("Password encryption")},
 	{CONNECTION, QT_TR_NOOP("Connection ID")},           {SERVER_PID, QT_TR_NOOP("Server PID")},                {SERVER_PROTOCOL, QT_TR_NOOP("Server protocol")},
-	{REFERRERS, QT_TR_NOOP("Referrers")},                {IDENTITY_TYPE, QT_TR_NOOP("Identity")}
+	{REFERRERS, QT_TR_NOOP("Referrers")},                {IDENTITY_TYPE, QT_TR_NOOP("Identity")},               {COMMAND, QT_TR_NOOP("Command")},
+	{USING_EXP, QT_TR_NOOP("USING expr.")},              {CHECK_EXP, QT_TR_NOOP("CHECK expr.")},                {ROLES, QT_TR_NOOP("Roles")}
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
@@ -297,6 +298,7 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 			case OBJ_COLUMN: formatColumnAttribs(attribs); break;
 			case OBJ_CONSTRAINT: formatConstraintAttribs(attribs); break;
 			case OBJ_INDEX: formatIndexAttribs(attribs); break;
+			case OBJ_POLICY: formatPolicyAttribs(attribs); break;
 			default: break;
 		}
 	}
@@ -750,8 +752,12 @@ void DatabaseExplorerWidget::formatIndexAttribs(attribs_map &attribs)
 														   Catalog::parseArrayValues(attribs[ParsersAttributes::OP_CLASSES])).join(ELEM_SEPARATOR);
 
 	attribs[ParsersAttributes::COLUMNS]=getObjectsNames(OBJ_COLUMN,
-														Catalog::parseArrayValues(attribs[ParsersAttributes::COLUMNS]),
-														names[0], names[1]).join(ELEM_SEPARATOR);
+														Catalog::parseArrayValues(attribs[ParsersAttributes::COLUMNS]),	names[0], names[1]).join(ELEM_SEPARATOR);
+}
+
+void DatabaseExplorerWidget::formatPolicyAttribs(attribs_map &attribs)
+{
+	attribs[ParsersAttributes::ROLES] = getObjectsNames(OBJ_ROLE, Catalog::parseArrayValues(attribs[ParsersAttributes::ROLES])).join(ELEM_SEPARATOR);
 }
 
 QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
