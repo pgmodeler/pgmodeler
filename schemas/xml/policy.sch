@@ -10,7 +10,7 @@
 %if {sql-disabled} %then [ sql-disabled=] "true" %end
 > $br
     
-%if {comment} %then $tb {comment} %end
+%if {comment} %then {comment} %end
 %if {appended-sql} %then {appended-sql} %end
 %if {prepended-sql} %then {prepended-sql} %end    
 

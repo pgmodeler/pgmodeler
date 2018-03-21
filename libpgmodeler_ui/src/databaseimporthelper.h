@@ -154,6 +154,7 @@ class DatabaseImportHelper: public QObject {
 		void createTrigger(attribs_map &attribs);
 		void createIndex(attribs_map &attribs);
 		void createConstraint(attribs_map &attribs);
+		void createPolicy(attribs_map &attribs);
 		void createPermission(attribs_map &attribs);
 		void createEventTrigger(attribs_map &attribs);
 		void __createTableInheritances(void);

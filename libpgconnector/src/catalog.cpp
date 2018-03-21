@@ -460,12 +460,12 @@ vector<attribs_map> Catalog::getMultipleAttributes(ObjectType obj_type, attribs_
 
 QString Catalog::getCommentQuery(const QString &oid_field, bool is_shared_obj)
 {
-	QString query_id=QString("get") + ParsersAttributes::COMMENT;
+	QString query_id=ParsersAttributes::COMMENT;
 
 	try
 	{
 		attribs_map attribs={{ParsersAttributes::OID, oid_field},
-							 {ParsersAttributes::SHARED_OBJ, (is_shared_obj ? ParsersAttributes::_TRUE_ : QString())}};
+												 {ParsersAttributes::SHARED_OBJ, (is_shared_obj ? ParsersAttributes::_TRUE_ : QString())}};
 
 		loadCatalogQuery(query_id);
 		return(schparser.getCodeDefinition(attribs).simplified());
@@ -541,7 +541,7 @@ vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QSt
 	try
 	{
 		bool is_shared_obj=(obj_type==OBJ_DATABASE ||	obj_type==OBJ_ROLE ||	obj_type==OBJ_TABLESPACE ||
-							obj_type==OBJ_LANGUAGE || obj_type==OBJ_CAST);
+												obj_type==OBJ_LANGUAGE || obj_type==OBJ_CAST);
 
 		extra_attribs[ParsersAttributes::SCHEMA]=schema;
 		extra_attribs[ParsersAttributes::TABLE]=table;
@@ -549,8 +549,12 @@ vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QSt
 		if(!filter_oids.empty())
 			extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
 
-		if(!TableObject::isTableObject(obj_type))
-			extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery(oid_fields[obj_type], is_shared_obj);
+		//Retrieve the comment catalog query. Only columns need to retreive columns in their own catalog query file
+		if(obj_type != OBJ_COLUMN)
+		{
+			extra_attribs[ParsersAttributes::COMMENT]=
+					getCommentQuery(!TableObject::isTableObject(obj_type) ? oid_fields[obj_type] : ext_oid_fields[obj_type], is_shared_obj);
+		}
 
 		return(getMultipleAttributes(obj_type, extra_attribs));
 	}

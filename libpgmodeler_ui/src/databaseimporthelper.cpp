@@ -720,6 +720,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				case OBJ_TRIGGER: createTrigger(attribs); break;
 				case OBJ_INDEX: createIndex(attribs); break;
 				case OBJ_CONSTRAINT: createConstraint(attribs); break;
+				case OBJ_POLICY: createPolicy(attribs); break;
 				case OBJ_EVENT_TRIGGER: createEventTrigger(attribs); break;
 
 				default:
@@ -2073,6 +2074,22 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 				table->setModified(true);
 			}
 		}
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),
+						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
+	}
+}
+
+void DatabaseImportHelper::createPolicy(attribs_map &attribs)
+{
+	try
+	{
+		attribs[ParsersAttributes::TABLE]=getDependencyObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE, true, auto_resolve_deps, false);
+		attribs[ParsersAttributes::ROLES]=getObjectNames(attribs[ParsersAttributes::ROLES]).join(',');
+		loadObjectXML(OBJ_POLICY, attribs);
+		dbmodel->createPolicy();
 	}
 	catch(Exception &e)
 	{

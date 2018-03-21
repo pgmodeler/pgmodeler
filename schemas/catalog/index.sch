@@ -58,12 +58,15 @@
       [       id.indkey::oid] $ob $cb [ AS columns,
 	      id.indclass::oid] $ob $cb [ AS opclasses,
 	      pg_get_expr(indexprs, indrelid) AS expressions,
-              pg_get_expr(indpred, indrelid, true) predicate,
-	      ds.description AS comment
+              pg_get_expr(indpred, indrelid, true) predicate, ]
+        
+        ({comment}) [ AS comment ]
+        
+      [        
 	FROM pg_index AS id
 	LEFT JOIN pg_class AS cl ON cl.oid = id.indexrelid
 	LEFT JOIN pg_am AS am ON cl.relam  = am.oid
-	LEFT JOIN pg_description ds ON ds.objoid = id.indexrelid ]
+        ]
 
      %if {schema} %then
 	  [ LEFT JOIN pg_class AS tb ON id.indrelid = tb.oid
