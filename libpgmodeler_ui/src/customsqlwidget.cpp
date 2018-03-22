@@ -150,7 +150,7 @@ void CustomSQLWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 		end_of_model_chk->setVisible(object->getObjectType()==OBJ_DATABASE);
 		begin_of_model_chk->setVisible(object->getObjectType()==OBJ_DATABASE);
 
-		comment_edt->setText(object->getTypeName());
+		comment_edt->setPlainText(object->getTypeName());
 		protected_obj_frm->setVisible(false);
 		obj_id_lbl->setVisible(false);
 

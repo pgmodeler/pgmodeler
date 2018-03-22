@@ -368,7 +368,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 		else
 			name_edt->setText(object->getSignature());
 
-		comment_edt->setText(object->getComment());
+		comment_edt->setPlainText(object->getComment());
 
 		/* When creating a new table or relationship the object is pre allocated and the flag new_object is set.
 	   In order to avoid the selectors to have empty values, we check if the flag is false which means
@@ -748,7 +748,7 @@ void BaseObjectWidget::applyConfiguration(void)
 
 			//Sets the object's comment
 			if(comment_edt->isVisible())
-				object->setComment(comment_edt->text().toUtf8());
+				object->setComment(comment_edt->toPlainText().toUtf8());
 
 			//Sets the object's tablespace
 			if(tablespace_sel->isVisible())
