@@ -70,7 +70,7 @@ EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent
 		filter_tab->setButtonsEnabled(ObjectsTableWidget::UPDATE_BUTTON, !tag_edt->text().isEmpty());
 	});
 
-	setMinimumSize(500, 400);
+	setMinimumSize(500, 440);
 }
 
 void EventTriggerWidget::hideEvent(QHideEvent *)
