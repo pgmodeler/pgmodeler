@@ -45,6 +45,11 @@ PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_POLICY
 
 		QVBoxLayout *vbox = new QVBoxLayout;
 		vbox->addWidget(roles_tab);
+
+		QFrame *frame=generateInformationFrame(trUtf8("Leave the <em><strong>Roles</strong></em> grid empty in order to create a %1 applicable to <strong><em>PUBLIC</em></strong>.")
+																					 .arg(BaseObject::getTypeName(OBJ_POLICY).toLower()));
+		vbox->addWidget(frame);
+		frame->setParent(this);
 		vbox->setContentsMargins(4,4,4,4);
 		attribs_tbw->widget(0)->setLayout(vbox);
 

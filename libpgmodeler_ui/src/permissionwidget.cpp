@@ -54,8 +54,8 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 									ObjectsTableWidget::REMOVE_BUTTON |
 									ObjectsTableWidget::EDIT_BUTTON, false, this);
 	roles_tab->setColumnCount(1);
-	roles_tab->setHeaderLabel(trUtf8("Role"),0);
-	roles_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),0);
+	roles_tab->setHeaderLabel(trUtf8("Name"),0);
+	roles_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 
 	grid=new QGridLayout;
 	grid->addWidget(roles_tab,0,0,1,1);
@@ -93,7 +93,8 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		connect(check, SIGNAL(clicked(bool)), this, SLOT(checkPrivilege(void)));
 	}
 
-	frame=generateInformationFrame(trUtf8("Leave the <em><strong>Roles</strong></em> empty to create a permission applicable to <strong><em>PUBLIC</em></strong>."));
+	frame=generateInformationFrame(trUtf8("Leave the <em><strong>Roles</strong></em> grid empty in order to create a %1 applicable to <strong><em>PUBLIC</em></strong>.")
+																 .arg(BaseObject::getTypeName(OBJ_PERMISSION).toLower()));
 	permission_grid->addWidget(frame, permission_grid->count()+1, 0, 1, 0);
 	frame->setParent(this);
 
