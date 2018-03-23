@@ -100,8 +100,10 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
 
+	filter_parent->setVisible(false);
+
 	sort_column = 0;
-	splitter->setSizes({ 70, 30 });
+	splitter->setSizes({ 80, 20 });
 
 	properties_tbw->setItemDelegate(new PlainTextItemDelegate(this, true));
 	rename_item=nullptr;
@@ -111,6 +113,12 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	refresh_tb->setToolTip(refresh_tb->toolTip() + QString(" (%1)").arg(refresh_tb->shortcut().toString()));
 
 	QAction *act = nullptr;
+
+	act = toggle_disp_menu.addAction(trUtf8("Show objects filter"));
+	act->setCheckable(true);
+	connect(act, SIGNAL(toggled(bool)), filter_parent, SLOT(setVisible(bool)));
+
+	toggle_disp_menu.addSeparator();
 
 	act = toggle_disp_menu.addAction(trUtf8("Show system objects"));
 	act->setCheckable(true);
