@@ -410,15 +410,16 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 		 Special cases are for: functions/operator that are search by signature and views
 		 that are search on tables and views list */
 	if((obj_type==OBJ_VIEW &&	(getObject(object->getName(true), obj_type, idx) ||
-								 getObject(object->getName(true), OBJ_TABLE, idx))) ||
+														 getObject(object->getName(true), OBJ_TABLE, idx))) ||
 			(obj_type==OBJ_TABLE && (getObject(object->getName(true), obj_type, idx) ||
-									 getObject(object->getName(true), OBJ_VIEW, idx))) ||
+															 getObject(object->getName(true), OBJ_VIEW, idx))) ||
+			(obj_type==OBJ_EXTENSION &&	(getObject(object->getName(false), obj_type, idx))) ||
 			(getObject(object->getSignature(), obj_type, idx)))
 	{
 		QString str_aux;
 
 		str_aux=QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
-				.arg(object->getName(true))
+				.arg(object->getName(obj_type != OBJ_EXTENSION))
 				.arg(object->getTypeName())
 				.arg(this->getName(true))
 				.arg(this->getTypeName());
