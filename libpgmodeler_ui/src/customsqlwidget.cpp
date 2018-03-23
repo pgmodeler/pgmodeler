@@ -39,13 +39,9 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 		prepend_sql_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 		prepend_sql_cp=new CodeCompletionWidget(prepend_sql_txt, true);
 
-		font=name_edt->font();
-		font.setItalic(true);
-
 		name_edt->setReadOnly(true);
-		comment_edt->setFont(font);
-		comment_edt->setReadOnly(true);
-		comment_lbl->setText(trUtf8("Type:"));
+		comment_edt->setVisible(false);
+		comment_lbl->setVisible(false);
 
 		PgModelerUiNS::configureWidgetFont(message_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 
@@ -134,6 +130,8 @@ void CustomSQLWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 	{
 		BaseObjectWidget::setAttributes(model, object, nullptr);
 
+		name_edt->setText(QString("%1 (%2)").arg(object->getSignature()).arg(object->getTypeName()));
+
 		if(object->getObjectType()==OBJ_DATABASE)
 			end_of_model_chk->setChecked(dynamic_cast<DatabaseModel *>(object)->isAppendAtEOD());
 
@@ -150,7 +148,6 @@ void CustomSQLWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 		end_of_model_chk->setVisible(object->getObjectType()==OBJ_DATABASE);
 		begin_of_model_chk->setVisible(object->getObjectType()==OBJ_DATABASE);
 
-		comment_edt->setPlainText(object->getTypeName());
 		protected_obj_frm->setVisible(false);
 		obj_id_lbl->setVisible(false);
 
