@@ -108,8 +108,10 @@ void CastWidget::applyConfiguration(void)
 
 		if(implicit_rb->isChecked())
 			cast->setCastType(Cast::IMPLICIT);
-		else
+		else if(assignment_rb->isChecked())
 			cast->setCastType(Cast::ASSIGNMENT);
+		else
+			cast->setCastType(Cast::EXPLICIT);
 
 		cast->setCastFunction(dynamic_cast<Function*>(conv_func_sel->getSelectedObject()));
 
