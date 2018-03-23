@@ -42,11 +42,6 @@ void Extension::setSchema(BaseObject *schema)
 	}
 }
 
-QString Extension::getSignature(bool format)
-{
-	return(getName(format, false));
-}
-
 void Extension::setHandlesType(bool value)
 {
 	/* Raises an error if the extension is already registered as a data type and the
@@ -123,6 +118,16 @@ QString Extension::getDropDefinition(bool cascade)
 {
 	attributes[ParsersAttributes::NAME] = this->getName();
 	return(BaseObject::getDropDefinition(cascade));
+}
+
+QString Extension::getSignature(bool format)
+{
+	return(this->getName(format, false));
+}
+
+QString Extension::getName(bool format, bool)
+{
+	return(BaseObject::getName(format, false));
 }
 
 void Extension::operator = (Extension &ext)

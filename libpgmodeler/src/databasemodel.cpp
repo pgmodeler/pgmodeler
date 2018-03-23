@@ -567,7 +567,7 @@ vector<BaseObject *> DatabaseModel::getObjects(BaseObject *schema)
 	vector<BaseObject *>::iterator itr, itr_end;
 	ObjectType types[]={	OBJ_FUNCTION, OBJ_TABLE, OBJ_VIEW, OBJ_DOMAIN,
 							OBJ_AGGREGATE, OBJ_OPERATOR, OBJ_SEQUENCE, OBJ_CONVERSION,
-							OBJ_TYPE, OBJ_OPCLASS, OBJ_OPFAMILY, OBJ_COLLATION,	OBJ_EXTENSION };
+							OBJ_TYPE, OBJ_OPCLASS, OBJ_OPFAMILY, OBJ_COLLATION };
 	unsigned i, count=sizeof(types)/sizeof(ObjectType);
 
 	for(i=0; i < count; i++)

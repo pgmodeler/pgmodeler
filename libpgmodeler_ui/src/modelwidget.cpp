@@ -3563,10 +3563,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 
 			//Configures the "New object" menu with the types at database level
 			for(i=0; i < cnt; i++)
-			{
-				//actions_new_objects[types[i]]->setShortcut(QKeySequence(shortcuts[i]));
 				new_object_menu.addAction(actions_new_objects[types[i]]);
-			}
 
 			action_new_object->setMenu(&new_object_menu);
 			popup_menu.addAction(action_new_object);
@@ -3593,14 +3590,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 		{
 			BaseObject *obj=objects[0];
 			BaseRelationship *rel=dynamic_cast<BaseRelationship *>(obj);
-			ObjectType obj_type=obj->getObjectType(),
-					types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_INDEX, OBJ_RULE, OBJ_TRIGGER, OBJ_POLICY },
-					sch_types[]={ OBJ_AGGREGATE, OBJ_COLLATION, OBJ_CONVERSION,
-									OBJ_DOMAIN, OBJ_EXTENSION, OBJ_FUNCTION, OBJ_OPCLASS,
-									OBJ_OPERATOR,	OBJ_OPFAMILY,	OBJ_SEQUENCE,	OBJ_TABLE,
-									OBJ_TYPE,	OBJ_VIEW };
-			unsigned tab_tp_cnt=sizeof(types)/sizeof(ObjectType),
-					sch_tp_cnt=sizeof(sch_types)/sizeof(ObjectType);
+			ObjectType obj_type=obj->getObjectType();
 
 			configureSubmenu(obj);
 			popup_menu.addAction(action_edit);
@@ -3612,13 +3602,8 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 			{
 				if(obj_type==OBJ_TABLE || obj_type == OBJ_VIEW)
 				{
-					for(i=0; i < tab_tp_cnt; i++)
-					{
-						if(obj_type == OBJ_VIEW && (types[i] == OBJ_COLUMN || types[i] == OBJ_CONSTRAINT))
-							continue;
-
-						new_object_menu.addAction(actions_new_objects[types[i]]);
-					}
+					for(auto type : BaseObject::getChildObjectTypes(obj_type))
+						new_object_menu.addAction(actions_new_objects[type]);
 
 					if(obj_type==OBJ_TABLE)
 						new_object_menu.addAction(actions_new_objects[OBJ_RELATIONSHIP]);
@@ -3628,11 +3613,10 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 				}
 				else if(obj_type==OBJ_RELATIONSHIP || obj_type==BASE_RELATIONSHIP)
 				{
-
 					if(obj_type==OBJ_RELATIONSHIP)
 					{
-						for(i=0; i < 2; i++)
-							new_object_menu.addAction(actions_new_objects[types[i]]);
+						new_object_menu.addAction(actions_new_objects[OBJ_COLUMN]);
+						new_object_menu.addAction(actions_new_objects[OBJ_CONSTRAINT]);
 
 						action_new_object->setMenu(&new_object_menu);
 						popup_menu.insertAction(action_quick_actions, action_new_object);
@@ -3671,8 +3655,8 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 				}
 				else if(obj_type == OBJ_SCHEMA)
 				{
-					for(i=0; i < sch_tp_cnt; i++)
-						new_object_menu.addAction(actions_new_objects[sch_types[i]]);
+					for(auto type : BaseObject::getChildObjectTypes(OBJ_SCHEMA))
+						new_object_menu.addAction(actions_new_objects[type]);
 
 					action_new_object->setMenu(&new_object_menu);
 					popup_menu.insertAction(action_quick_actions, action_new_object);

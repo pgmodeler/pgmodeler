@@ -120,13 +120,13 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 
 	toggle_disp_menu.addSeparator();
 
-	act = toggle_disp_menu.addAction(trUtf8("Show system objects"));
-	act->setCheckable(true);
-	connect(act, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
+	show_sys_objs = toggle_disp_menu.addAction(trUtf8("Show system objects"));
+	show_sys_objs->setCheckable(true);
+	connect(show_sys_objs, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
 
-	act = toggle_disp_menu.addAction(trUtf8("Show extension objects"));
-	act->setCheckable(true);
-	connect(act, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
+	show_ext_objs = toggle_disp_menu.addAction(trUtf8("Show extension objects"));
+	show_ext_objs->setCheckable(true);
+	connect(show_ext_objs, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
 
 	toggle_display_tb->setMenu(&toggle_disp_menu);
 
@@ -962,8 +962,8 @@ void DatabaseExplorerWidget::configureImportHelper(void)
 {
 	import_helper.setConnection(connection);
 	import_helper.setCurrentDatabase(connection.getConnectionParam(Connection::PARAM_DB_NAME));
-	import_helper.setImportOptions(toggle_disp_menu.actions().at(0)->isChecked(),
-																 toggle_disp_menu.actions().at(1)->isChecked(),
+	import_helper.setImportOptions(show_sys_objs->isChecked(),
+																 show_ext_objs->isChecked(),
 																 false, false, false, false, false);
 
 	catalog.closeConnection();

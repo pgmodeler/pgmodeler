@@ -67,7 +67,7 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		QAction *copy_action, *drop_action, *drop_cascade_action,
 		*show_data_action, *refresh_action, *properties_action,
 		*trunc_cascade_action, *truncate_action, *rename_action,
-		*source_action;
+		*source_action, *show_sys_objs, *show_ext_objs;
 		
 		QTreeWidgetItem *rename_item;
 		
