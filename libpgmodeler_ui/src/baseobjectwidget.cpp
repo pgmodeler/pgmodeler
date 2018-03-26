@@ -476,8 +476,11 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 			setRequiredField(name_edt);
 		}
 
-		setRequiredField(schema_lbl);
-		setRequiredField(schema_sel);
+		if(obj_type!=OBJ_EXTENSION)
+		{
+			setRequiredField(schema_lbl);
+			setRequiredField(schema_sel);
+		}
 	}
 
 	if(BaseObject::acceptsCollation(obj_type))

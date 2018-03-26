@@ -28,17 +28,20 @@ void Extension::setName(const QString &name)
 
 void Extension::setSchema(BaseObject *schema)
 {
-	if(!handles_type)
-		BaseObject::setSchema(schema);
+	if(!schema)
+		this->schema = schema;
 	else
 	{
-		QString prev_name;
-
-		prev_name=this->getName(true);
 		BaseObject::setSchema(schema);
 
-		//Renames the PostgreSQL type represented by the extension
-		PgSQLType::renameUserType(prev_name, this, this->getName(true));
+		if(handles_type)
+		{
+			QString prev_name;
+			prev_name=this->getName(true);
+
+			//Renames the PostgreSQL type represented by the extension
+			PgSQLType::renameUserType(prev_name, this, this->getName(true));
+		}
 	}
 }
 
