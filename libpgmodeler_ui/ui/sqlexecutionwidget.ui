@@ -198,9 +198,6 @@
          <height>22</height>
         </size>
        </property>
-       <property name="shortcut">
-        <string notr="true"/>
-       </property>
        <property name="checkable">
         <bool>true</bool>
        </property>

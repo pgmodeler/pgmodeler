@@ -100,8 +100,10 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
 
+	filter_parent->setVisible(false);
+
 	sort_column = 0;
-	splitter->setSizes({ 70, 30 });
+	splitter->setSizes({ 80, 20 });
 
 	properties_tbw->setItemDelegate(new PlainTextItemDelegate(this, true));
 	rename_item=nullptr;
@@ -112,13 +114,19 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 
 	QAction *act = nullptr;
 
-	act = toggle_disp_menu.addAction(trUtf8("Show system objects"));
+	act = toggle_disp_menu.addAction(trUtf8("Show objects filter"));
 	act->setCheckable(true);
-	connect(act, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
+	connect(act, SIGNAL(toggled(bool)), filter_parent, SLOT(setVisible(bool)));
 
-	act = toggle_disp_menu.addAction(trUtf8("Show extension objects"));
-	act->setCheckable(true);
-	connect(act, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
+	toggle_disp_menu.addSeparator();
+
+	show_sys_objs = toggle_disp_menu.addAction(trUtf8("Show system objects"));
+	show_sys_objs->setCheckable(true);
+	connect(show_sys_objs, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
+
+	show_ext_objs = toggle_disp_menu.addAction(trUtf8("Show extension objects"));
+	show_ext_objs->setCheckable(true);
+	connect(show_ext_objs, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
 
 	toggle_display_tb->setMenu(&toggle_disp_menu);
 
@@ -954,8 +962,8 @@ void DatabaseExplorerWidget::configureImportHelper(void)
 {
 	import_helper.setConnection(connection);
 	import_helper.setCurrentDatabase(connection.getConnectionParam(Connection::PARAM_DB_NAME));
-	import_helper.setImportOptions(toggle_disp_menu.actions().at(0)->isChecked(),
-																 toggle_disp_menu.actions().at(1)->isChecked(),
+	import_helper.setImportOptions(show_sys_objs->isChecked(),
+																 show_ext_objs->isChecked(),
 																 false, false, false, false, false);
 
 	catalog.closeConnection();

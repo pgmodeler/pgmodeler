@@ -36,6 +36,7 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 	cancel_tb->setVisible(simplified_view);
 	options_tb->setVisible(!simplified_view);
 	visibleobjects_grp->setVisible(false);
+	filter_wgt->setVisible(simplified_view);
 
 	selected_object=nullptr;
 	splitter->handle(1)->setEnabled(false);
@@ -380,6 +381,7 @@ void ModelObjectsWidget::changeObjectsView(void)
 	}
 	else if(sender()==options_tb)
 	{
+		filter_wgt->setVisible(options_tb->isChecked());
 		visibleobjects_grp->setVisible(options_tb->isChecked());
 		splitter->handle(1)->setEnabled(options_tb->isChecked());
 
@@ -705,7 +707,8 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 		vector<BaseObject *> ref_list, tree_state, obj_list;
 		ObjectType types[]={ OBJ_ROLE, OBJ_TABLESPACE,
 							 OBJ_LANGUAGE, OBJ_CAST, OBJ_TEXTBOX,
-							 OBJ_RELATIONSHIP, OBJ_EVENT_TRIGGER, OBJ_TAG, OBJ_GENERIC_SQL };
+							 OBJ_RELATIONSHIP, OBJ_EVENT_TRIGGER,
+							 OBJ_TAG, OBJ_GENERIC_SQL, OBJ_EXTENSION };
 		unsigned count, i, i1, type_cnt=sizeof(types)/sizeof(ObjectType);
 
 		try

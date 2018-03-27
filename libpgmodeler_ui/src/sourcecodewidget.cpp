@@ -24,11 +24,10 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 {
 	try
 	{
-		QFont font;
-
 		Ui_SourceCodeWidget::setupUi(this);
 		configureFormLayout(codigofonte_grid, BASE_OBJECT);
-		comment_lbl->setText(trUtf8("Type:"));
+		comment_lbl->setVisible(false);
+		comment_edt->setVisible(false);
 
 		hl_sqlcode=nullptr;
 		hl_xmlcode=nullptr;
@@ -39,11 +38,6 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 		xmlcode_txt=PgModelerUiNS::createNumberedTextEditor(xmlcode_wgt);
 		xmlcode_txt->setReadOnly(true);
 
-		font=name_edt->font();
-		font.setItalic(true);
-		comment_edt->setFont(font);
-		comment_edt->setReadOnly(true);
-		name_edt->setFont(font);
 		name_edt->setReadOnly(true);
 		version_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
 
@@ -245,6 +239,7 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 			BaseObjectWidget::setAttributes(model, object, nullptr);
 			ObjectType obj_type=object->getObjectType();
 
+			this->name_edt->setText(QString("%1 (%2)").arg(object->getSignature()).arg(object->getTypeName()));
 			this->protected_obj_frm->setVisible(false);
 			this->obj_id_lbl->setVisible(false);
 			this->code_options_cmb->setEnabled(obj_type!=OBJ_DATABASE &&
@@ -258,8 +253,6 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 #endif
 
 			obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(object->getObjectType())));
-
-			comment_edt->setText(object->getTypeName());
 
 			if(!hl_sqlcode->isConfigurationLoaded())
 				hl_sqlcode->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);

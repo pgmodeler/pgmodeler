@@ -15,7 +15,10 @@
  %end
 
   [CREATE EXTENSION ] {name} $br
-  [      WITH SCHEMA ] {schema}
+  
+  %if {schema} %then
+   [      WITH SCHEMA ] {schema}
+  %end
     
   %if {cur-version} %then
     $br [      VERSION ] '{cur-version}'

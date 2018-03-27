@@ -20,6 +20,8 @@
 #include "pgmodelerns.h"
 #include <QApplication>
 
+const QByteArray BaseObject::special_chars = QByteArray("'_-.@ $:()/<>+*\\=~!#%^&|?{}[]`;");
+
 /* CAUTION: If both amount and order of the enumerations are modified
 	 then the order and amount of the elements of this vector
 	 must also be modified */
@@ -159,27 +161,18 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 	if(!is_formated && (is_operator || isValidName(name)))
 	{
 		bool needs_fmt=false;
-		unsigned i, qtd;
+		unsigned i = 0, qtd = 0;
 
 		raw_name.append(name);
 
 		/* Checks if the name has some upper case letter. If its the
 		 case the name will be enclosed in quotes */
-		qtd=name.size();
-		needs_fmt=(!is_operator &&
-				 (name.indexOf('\'')>=0 ||
-					name.indexOf('-')>=0 ||
-					name.indexOf('.')>=0 ||
-					name.indexOf('@')>=0 ||
-					name.indexOf(' ')>=0 ||
-					name.indexOf('$')>=0 ||
-					name.indexOf(':')>=0 ||
-					name.indexOf('(')>=0 ||
-					name.indexOf(')')>=0 ||
-					name.indexOf('/')>=0 ||
-					name.indexOf('\\')>=0 ||
-					name.contains(QRegExp("^[0-9]+"))));
+		needs_fmt = (!is_operator && name.contains(QRegExp("^[0-9]+")));
 
+		for(int idx = 0; idx < special_chars.size() && !needs_fmt; idx++)
+			needs_fmt = (!is_operator && special_chars.at(idx) != '_' && name.indexOf(special_chars.at(idx)) >= 0);
+
+		qtd=name.size();
 		i=0;
 		while(i < qtd && !needs_fmt)
 		{
@@ -235,7 +228,6 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 bool BaseObject::isValidName(const QString &name)
 {
 	QString aux_name=name;
-	QByteArray special_chars=QByteArray("'_-.@ $:()/\\");
 
 	if(aux_name.contains(QRegExp("^(\")(.)+(\")$")))
 	{
@@ -276,7 +268,7 @@ bool BaseObject::isValidName(const QString &name)
 			chr=raw_name[i];
 
 			/* Validation of simple ASCI characters.
-				Checks if the name has the characters in the set [ a-z A-Z 0-9 _ . @ $ - : space ()] */
+				Checks if the name has the characters in the set [ a-z A-Z 0-9 _ . @ $ - : space () <>] */
 			if((chr >= 'a' && chr <='z') || (chr >= 'A' && chr <='Z') ||
 					(chr >= '0' && chr <='9') || special_chars.contains(chr))
 			{
@@ -948,9 +940,9 @@ vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, vector<Object
 vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
 {
 	if(obj_type==OBJ_DATABASE)
-		return(vector<ObjectType>()={OBJ_CAST, OBJ_ROLE, OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_SCHEMA, OBJ_EVENT_TRIGGER});
+		return(vector<ObjectType>()={OBJ_CAST, OBJ_ROLE, OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_SCHEMA, OBJ_EXTENSION, OBJ_EVENT_TRIGGER});
 	else if(obj_type==OBJ_SCHEMA)
-		return(vector<ObjectType>()={OBJ_AGGREGATE, OBJ_CONVERSION, OBJ_COLLATION, OBJ_DOMAIN, OBJ_EXTENSION, OBJ_FUNCTION,
+		return(vector<ObjectType>()={OBJ_AGGREGATE, OBJ_CONVERSION, OBJ_COLLATION, OBJ_DOMAIN, OBJ_FUNCTION,
 									OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_SEQUENCE, OBJ_TYPE, OBJ_TABLE, OBJ_VIEW});
 	else if(obj_type==OBJ_TABLE)
 		return(vector<ObjectType>()={OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX, OBJ_POLICY});

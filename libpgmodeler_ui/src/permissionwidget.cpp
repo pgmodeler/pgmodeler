@@ -22,7 +22,6 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 {
 	QGridLayout *grid=nullptr;
 	QFrame *frame=nullptr;
-	QFont font;
 	QCheckBox *check=nullptr;
 	unsigned i;
 	QString privs[]={ ParsersAttributes::SELECT_PRIV, ParsersAttributes::INSERT_PRIV,
@@ -40,15 +39,11 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	object_selection_wgt=new ModelObjectsWidget(true);
 	permission=nullptr;
 
-	comment_lbl->setText(trUtf8("Type:"));
-	font=name_edt->font();
-	font.setItalic(true);
-	comment_edt->setFont(font);
-	comment_edt->setReadOnly(true);
-	name_edt->setFont(font);
-	name_edt->setReadOnly(true);
-
 	configureFormLayout(permission_grid, OBJ_PERMISSION);
+
+	name_edt->setReadOnly(true);
+	comment_edt->setVisible(false);
+	comment_lbl->setVisible(false);
 
 	roles_tab=new ObjectsTableWidget(ObjectsTableWidget::ADD_BUTTON |
 									ObjectsTableWidget::REMOVE_BUTTON |
@@ -158,8 +153,7 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 		connect(roles_tab, SIGNAL(s_rowAdded(int)), this, SLOT(selectRole(void)));
 		connect(permissions_tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removePermissions(void)));
 
-		name_edt->setText(object->getName(true));
-		comment_edt->setText(object->getTypeName());
+		name_edt->setText(QString("%1 (%2)").arg(object->getSignature()).arg(object->getTypeName()));
 
 		for(priv=Permission::PRIV_SELECT; priv<=Permission::PRIV_USAGE; priv++)
 		{

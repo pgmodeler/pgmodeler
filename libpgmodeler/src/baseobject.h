@@ -85,6 +85,9 @@ class BaseObject {
 		//! \brief Stores the database wich the object belongs
 		BaseObject *database;
 
+		//! \brief Stores the set of special (valid) chars that forces the object's name quoting
+		static const QByteArray special_chars;
+
 	protected:
 		SchemaParser schparser;
 

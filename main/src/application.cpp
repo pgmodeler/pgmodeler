@@ -39,18 +39,10 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 
 	//Adding paths which executable will find plugins and it's dependecies
 	this->addLibraryPath(this->applicationDirPath());
-	this->addLibraryPath(GlobalAttributes::PLUGINS_DIR);
 
-	//Try to create plugins dir if it does not exists
-	if(!dir.exists(GlobalAttributes::PLUGINS_DIR))
-	{
-		if(!dir.mkdir(GlobalAttributes::PLUGINS_DIR))
-		{
-			Messagebox msg;
-			msg.show(Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(GlobalAttributes::PLUGINS_DIR),
-							   ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__));
-		}
-	}
+	//If pgModeler bundles plugins, add the root plugins path to lib search paths
+	if(dir.exists(GlobalAttributes::PLUGINS_DIR))
+		this->addLibraryPath(GlobalAttributes::PLUGINS_DIR);
 
 	//Check if the temporary dir exists, if not, creates it.
 	if(!dir.exists(GlobalAttributes::TEMPORARY_DIR))

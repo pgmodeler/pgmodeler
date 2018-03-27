@@ -32,7 +32,7 @@ SequenceWidget::SequenceWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_SE
 		sequence_grid->addItem(new QSpacerItem(10,0,QSizePolicy::Minimum,QSizePolicy::Expanding), sequence_grid->count(), 0);
 		configureTabOrder();
 
-		setMinimumSize(520, 280);
+		setMinimumSize(520, 320);
 	}
 	catch(Exception &e)
 	{
