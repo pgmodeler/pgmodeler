@@ -205,6 +205,12 @@
            <height>16777215</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
          <property name="text">
           <string>Language:</string>
          </property>

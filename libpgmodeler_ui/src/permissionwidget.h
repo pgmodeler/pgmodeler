@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_permissionwidget.h"
-#include "objecttablewidget.h"
+#include "objectstablewidget.h"
 #include "modelobjectswidget.h"
 
 class PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
@@ -40,7 +40,7 @@ class PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
 		Permission *permission;
 
 		//! \brief Table widget that stores the roles that has permission over the object
-		ObjectTableWidget *roles_tab,
+		ObjectsTableWidget *roles_tab,
 
 		//! \brief Table widget that stores the permissions related to the object
 		*permissions_tab;

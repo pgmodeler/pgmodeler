@@ -776,7 +776,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 			drop_tab_obj_reg(QString("^((\\-\\-)+( )*)+(%1)(.)+(DROP)(.)+").arg(alter_tab)),
 			reg_aux;
 
-	vector<ObjectType> obj_types={ OBJ_ROLE, OBJ_FUNCTION, OBJ_TRIGGER, OBJ_INDEX,
+	vector<ObjectType> obj_types={ OBJ_ROLE, OBJ_FUNCTION, OBJ_TRIGGER, OBJ_INDEX, OBJ_POLICY,
 								   OBJ_RULE,	OBJ_TABLE, OBJ_VIEW, OBJ_DOMAIN,
 								   OBJ_SCHEMA,	OBJ_AGGREGATE, OBJ_OPFAMILY,
 								   OBJ_OPCLASS, OBJ_OPERATOR,  OBJ_SEQUENCE,

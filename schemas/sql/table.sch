@@ -63,6 +63,16 @@ $br )
 %if {cols-comment} %then {cols-comment} %end
 %if {owner} %then {owner} %end
 
+%if ({pgsql-ver} >=f "9.5") %and {rls-enabled} %then
+  [ALTER TABLE ] {name} [ ENABLE ROW LEVEL SECURITY;]
+  $br [-- ddl-end --] $br
+  
+  %if {rls-forced} %then
+    [ALTER TABLE ] {name} [ FORCE ROW LEVEL SECURITY;]
+    $br [-- ddl-end --] $br
+  %end
+%end
+
 %if {appended-sql} %then
  {appended-sql}
  $br [-- ddl-end --] $br

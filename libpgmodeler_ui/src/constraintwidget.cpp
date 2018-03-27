@@ -38,15 +38,15 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		expression_hl=new SyntaxHighlighter(expression_txt, false, true);
 		expression_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
-		columns_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-										  (ObjectTableWidget::EDIT_BUTTON |
-											 ObjectTableWidget::UPDATE_BUTTON |
-											 ObjectTableWidget::DUPLICATE_BUTTON), true, this);
+		columns_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
+										  (ObjectsTableWidget::EDIT_BUTTON |
+											 ObjectsTableWidget::UPDATE_BUTTON |
+											 ObjectsTableWidget::DUPLICATE_BUTTON), true, this);
 
-		ref_columns_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-											  (ObjectTableWidget::EDIT_BUTTON |
-												 ObjectTableWidget::UPDATE_BUTTON |
-												ObjectTableWidget::DUPLICATE_BUTTON), true, this);
+		ref_columns_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
+											  (ObjectsTableWidget::EDIT_BUTTON |
+												 ObjectsTableWidget::UPDATE_BUTTON |
+												ObjectsTableWidget::DUPLICATE_BUTTON), true, this);
 
 		ref_table_sel=new ObjectSelectorWidget(OBJ_TABLE, true, this);
 
@@ -126,7 +126,7 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 void ConstraintWidget::addColumn(int row)
 {
 	QObject *sender_obj=sender();
-	ObjectTableWidget *aux_col_tab=nullptr;
+	ObjectsTableWidget *aux_col_tab=nullptr;
 	QComboBox *combo=nullptr;
 	Column *column=nullptr;
 	unsigned col_id;
@@ -156,7 +156,7 @@ void ConstraintWidget::addColumn(int row)
 		addColumn(column, col_id, row);
 
 		//When there is no items con the combo the insert button of the table is disabled
-		aux_col_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, (combo->count()!=0));
+		aux_col_tab->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON, (combo->count()!=0));
 	}
 	catch(Exception &e)
 	{
@@ -183,7 +183,7 @@ void ConstraintWidget::removeColumns(void)
 
 void ConstraintWidget::addColumn(Column *column, unsigned col_id, int row)
 {
-	ObjectTableWidget *table_wgt=nullptr;
+	ObjectsTableWidget *table_wgt=nullptr;
 
 	if(column && row >= 0)
 	{
@@ -213,7 +213,7 @@ void ConstraintWidget::addColumn(Column *column, unsigned col_id, int row)
 
 void ConstraintWidget::updateColumnsCombo(unsigned col_id)
 {
-	ObjectTableWidget *aux_col_tab=nullptr;
+	ObjectsTableWidget *aux_col_tab=nullptr;
 	Column *column=nullptr;
 	Table *table=nullptr;
 	QComboBox *combo=nullptr;
@@ -267,7 +267,7 @@ void ConstraintWidget::updateColumnsCombo(unsigned col_id)
 							   QString(")"), QVariant::fromValue<void *>(column));
 		}
 
-		aux_col_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, (combo->count()!=0));
+		aux_col_tab->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON, (combo->count()!=0));
 	}
 	catch(Exception &e)
 	{
@@ -420,7 +420,7 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	}
 
 	updateColumnsCombo(Constraint::SOURCE_COLS);
-	columns_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
+	columns_tab->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
 	columns_tab->blockSignals(false);
 
 	if(constr)
@@ -465,7 +465,7 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 			}
 
 			updateColumnsCombo(Constraint::REFERENCED_COLS);
-			ref_columns_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
+			ref_columns_tab->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
 			ref_columns_tab->blockSignals(false);
 		}
 	}
@@ -480,7 +480,7 @@ void ConstraintWidget::applyConfiguration(void)
 		Constraint *constr=nullptr;
 		unsigned i, col_id, count;
 		Column *column=nullptr;
-		ObjectTableWidget *aux_col_tab=nullptr;
+		ObjectsTableWidget *aux_col_tab=nullptr;
 		vector<ExcludeElement> excl_elems;
 
 		startConfiguration<Constraint>();

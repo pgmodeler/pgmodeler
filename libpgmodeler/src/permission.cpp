@@ -115,19 +115,8 @@ bool Permission::objectAcceptsPermission(ObjectType obj_type, int privilege)
 
 bool Permission::isRoleExists(Role *role)
 {
-	vector<Role *>::iterator itr, itr_end;
-	bool found=false;
-
-	itr=roles.begin();
-	itr_end=roles.end();
-
-	while(itr!=itr_end && !found)
-	{
-		found=((*itr)==role);
-		itr++;
-	}
-
-	return(found);
+	if(!role)	return(false);
+	return(std::find(roles.begin(), roles.end(), role) != roles.end());
 }
 
 void Permission::addRole(Role *role)

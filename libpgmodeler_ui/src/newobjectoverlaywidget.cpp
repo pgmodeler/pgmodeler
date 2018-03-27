@@ -55,6 +55,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 																	{ column_tb,       std::make_tuple(trUtf8("C"), OBJ_COLUMN)       },
 																	{ rule_tb,         std::make_tuple(trUtf8("V"), OBJ_RULE)         },
 																	{ trigger_tb,      std::make_tuple(trUtf8("B"), OBJ_TRIGGER)      },
+																	{ policy_tb,       std::make_tuple(trUtf8("9"), OBJ_POLICY)       },
 																	{ genericsql_tb,   std::make_tuple(trUtf8("8"), OBJ_GENERIC_SQL)  } };
 
 	map<QToolButton *, tuple<QString, int>> rel_shortcuts={ { rel11_tb,  std::make_tuple(trUtf8("1"), 0) },

@@ -59,7 +59,8 @@ HEADERS += src/textbox.h \
 		 src/pgmodelerns.h \
 		 src/tag.h \
 		 src/eventtrigger.h \
-		 src/genericsql.h
+		 src/genericsql.h \
+		 src/policy.h
 
 SOURCES +=  src/textbox.cpp \
 	    src/domain.cpp \
@@ -107,7 +108,8 @@ SOURCES +=  src/textbox.cpp \
 			src/tag.cpp \
 			src/eventtrigger.cpp \
 			src/operation.cpp \
-			src/genericsql.cpp
+			src/genericsql.cpp \
+			src/policy.cpp
 
 unix|windows: LIBS += -L$$OUT_PWD/../libparsers/ -lparsers \
                     -L$$OUT_PWD/../libutils/ -lutils

@@ -43,7 +43,7 @@ class ModelsDiffHelper: public QObject {
 		bool diff_canceled,
 
 		//!brief Diff options. See OPT_??? constants
-		diff_opts[9];
+		diff_opts[10];
 
 		//! \brief Stores the count of objects to be dropped, changed or created
 		unsigned diffs_counter[4];
@@ -128,8 +128,12 @@ class ModelsDiffHelper: public QObject {
 		/*! \brief Indicates to not generate and execute commands to drop missing objects. For instance, if user
 		try to diff a partial model against the original database DROP commands will be generated, this option
 		will avoid this situation and preserve the missing (not imported) objects. */
-		OPT_KEEP_NOT_IMPORTED_OBJS=8;
+		OPT_DONT_DROP_MISSING_OBJS=8,
 
+		/*! \brief Indicates to generate and execute commands to drop missing columns and constraints. For instance, if user
+		try to diff a partial model against the original database and the OPT_DONT_DROP_MISSING_OBJS is set, DROP commands will not be generated,
+		except for columns and constraints. This option is only considered in the process when OPT_DONT_DROP_MISSING_OBJS is enabled. */
+		OPT_DROP_MISSING_COLS_CONSTR=9;
 
 		ModelsDiffHelper(void);
 		~ModelsDiffHelper(void);

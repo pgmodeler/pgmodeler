@@ -92,15 +92,18 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{SSL_CERT_FILE, QT_TR_NOOP("SSL cert file")},        {SSL_CRL_FILE, QT_TR_NOOP("SSL crl file")},            {SSL_KEY_FILE, QT_TR_NOOP("SSL key file")},
 	{SERVER_VERSION, QT_TR_NOOP("Server version")},      {IDENT_FILE, QT_TR_NOOP("Ident file")},                {PASSWORD_ENCRYPTION, QT_TR_NOOP("Password encryption")},
 	{CONNECTION, QT_TR_NOOP("Connection ID")},           {SERVER_PID, QT_TR_NOOP("Server PID")},                {SERVER_PROTOCOL, QT_TR_NOOP("Server protocol")},
-	{REFERRERS, QT_TR_NOOP("Referrers")}
+	{REFERRERS, QT_TR_NOOP("Referrers")},                {IDENTITY_TYPE, QT_TR_NOOP("Identity")},               {COMMAND, QT_TR_NOOP("Command")},
+	{USING_EXP, QT_TR_NOOP("USING expr.")},              {CHECK_EXP, QT_TR_NOOP("CHECK expr.")},                {ROLES, QT_TR_NOOP("Roles")}
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
 
+	filter_parent->setVisible(false);
+
 	sort_column = 0;
-	splitter->setSizes({ 70, 30 });
+	splitter->setSizes({ 80, 20 });
 
 	properties_tbw->setItemDelegate(new PlainTextItemDelegate(this, true));
 	rename_item=nullptr;
@@ -111,13 +114,19 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 
 	QAction *act = nullptr;
 
-	act = toggle_disp_menu.addAction(trUtf8("Show system objects"));
+	act = toggle_disp_menu.addAction(trUtf8("Show objects filter"));
 	act->setCheckable(true);
-	connect(act, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
+	connect(act, SIGNAL(toggled(bool)), filter_parent, SLOT(setVisible(bool)));
 
-	act = toggle_disp_menu.addAction(trUtf8("Show extension objects"));
-	act->setCheckable(true);
-	connect(act, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
+	toggle_disp_menu.addSeparator();
+
+	show_sys_objs = toggle_disp_menu.addAction(trUtf8("Show system objects"));
+	show_sys_objs->setCheckable(true);
+	connect(show_sys_objs, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
+
+	show_ext_objs = toggle_disp_menu.addAction(trUtf8("Show extension objects"));
+	show_ext_objs->setCheckable(true);
+	connect(show_ext_objs, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
 
 	toggle_display_tb->setMenu(&toggle_disp_menu);
 
@@ -297,6 +306,7 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 			case OBJ_COLUMN: formatColumnAttribs(attribs); break;
 			case OBJ_CONSTRAINT: formatConstraintAttribs(attribs); break;
 			case OBJ_INDEX: formatIndexAttribs(attribs); break;
+			case OBJ_POLICY: formatPolicyAttribs(attribs); break;
 			default: break;
 		}
 	}
@@ -750,8 +760,12 @@ void DatabaseExplorerWidget::formatIndexAttribs(attribs_map &attribs)
 														   Catalog::parseArrayValues(attribs[ParsersAttributes::OP_CLASSES])).join(ELEM_SEPARATOR);
 
 	attribs[ParsersAttributes::COLUMNS]=getObjectsNames(OBJ_COLUMN,
-														Catalog::parseArrayValues(attribs[ParsersAttributes::COLUMNS]),
-														names[0], names[1]).join(ELEM_SEPARATOR);
+														Catalog::parseArrayValues(attribs[ParsersAttributes::COLUMNS]),	names[0], names[1]).join(ELEM_SEPARATOR);
+}
+
+void DatabaseExplorerWidget::formatPolicyAttribs(attribs_map &attribs)
+{
+	attribs[ParsersAttributes::ROLES] = getObjectsNames(OBJ_ROLE, Catalog::parseArrayValues(attribs[ParsersAttributes::ROLES])).join(ELEM_SEPARATOR);
 }
 
 QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
@@ -948,8 +962,8 @@ void DatabaseExplorerWidget::configureImportHelper(void)
 {
 	import_helper.setConnection(connection);
 	import_helper.setCurrentDatabase(connection.getConnectionParam(Connection::PARAM_DB_NAME));
-	import_helper.setImportOptions(toggle_disp_menu.actions().at(0)->isChecked(),
-																 toggle_disp_menu.actions().at(1)->isChecked(),
+	import_helper.setImportOptions(show_sys_objs->isChecked(),
+																 show_ext_objs->isChecked(),
 																 false, false, false, false, false);
 
 	catalog.closeConnection();
@@ -1189,6 +1203,9 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 				Connection conn;
 
 				attribs=extractAttributesFromItem(item);
+
+				if(obj_type==OBJ_OPERATOR || obj_type==OBJ_FUNCTION)
+						attribs[ParsersAttributes::SIGNATURE].replace(ELEM_SEPARATOR, QChar(','));
 
 				//Generate the drop command
 				schparser.ignoreEmptyAttributes(true);

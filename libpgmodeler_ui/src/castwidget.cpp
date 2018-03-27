@@ -54,7 +54,7 @@ CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_CAST)
 		configureTabOrder({ explicit_rb, implicit_rb, assignment_rb, input_output_chk,
 							conv_func_sel, src_datatype, trg_datatype });
 
-		setMinimumSize(520, 420);
+		setMinimumSize(520, 460);
 	}
 	catch(Exception &e)
 	{
@@ -108,8 +108,10 @@ void CastWidget::applyConfiguration(void)
 
 		if(implicit_rb->isChecked())
 			cast->setCastType(Cast::IMPLICIT);
-		else
+		else if(assignment_rb->isChecked())
 			cast->setCastType(Cast::ASSIGNMENT);
+		else
+			cast->setCastType(Cast::EXPLICIT);
 
 		cast->setCastFunction(dynamic_cast<Function*>(conv_func_sel->getSelectedObject()));
 

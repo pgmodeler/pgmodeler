@@ -88,8 +88,11 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 		preserve_db_name_ht=new HintTextWidget(preserve_db_name_hint, this);
 		preserve_db_name_ht->setText(preserve_db_name_chk->statusTip());
 
-		keep_not_imported_objs_ht=new HintTextWidget(keep_not_imported_objs_hint, this);
-		keep_not_imported_objs_ht->setText(keep_not_imported_objs_chk->statusTip());
+		dont_drop_missing_objs_ht=new HintTextWidget(dont_drop_missing_objs_hint, this);
+		dont_drop_missing_objs_ht->setText(dont_drop_missing_objs_chk->statusTip());
+
+		drop_missing_cols_constr_ht=new HintTextWidget(drop_missing_cols_constr_hint, this);
+		drop_missing_cols_constr_ht->setText(drop_missing_cols_constr_chk->statusTip());
 
 		ignore_error_codes_ht=new HintTextWidget(ignore_extra_errors_hint, this);
 		ignore_error_codes_ht->setText(ignore_error_codes_chk->statusTip());
@@ -114,6 +117,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 		connect(select_file_tb, SIGNAL(clicked()), this, SLOT(selectOutputFile()));
 		connect(file_edt, SIGNAL(textChanged(QString)), this, SLOT(enableDiffMode()));
 		connect(force_recreation_chk, SIGNAL(toggled(bool)), recreate_unmod_chk, SLOT(setEnabled(bool)));
+		connect(dont_drop_missing_objs_chk, SIGNAL(toggled(bool)), drop_missing_cols_constr_chk, SLOT(setEnabled(bool)));
 		connect(create_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
 		connect(drop_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
 		connect(alter_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
@@ -514,7 +518,8 @@ void ModelDatabaseDiffForm::diffModels(void)
 	diff_helper->setDiffOption(ModelsDiffHelper::OPT_KEEP_OBJ_PERMS, keep_obj_perms_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OPT_REUSE_SEQUENCES, reuse_sequences_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OPT_PRESERVE_DB_NAME, preserve_db_name_chk->isChecked());
-	diff_helper->setDiffOption(ModelsDiffHelper::OPT_KEEP_NOT_IMPORTED_OBJS, keep_not_imported_objs_chk->isChecked());
+	diff_helper->setDiffOption(ModelsDiffHelper::OPT_DONT_DROP_MISSING_OBJS, dont_drop_missing_objs_chk->isChecked());
+	diff_helper->setDiffOption(ModelsDiffHelper::OPT_DROP_MISSING_COLS_CONSTR, drop_missing_cols_constr_chk->isChecked());
 
 	diff_helper->setModels(source_model, imported_model);
 

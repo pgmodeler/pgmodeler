@@ -22,7 +22,6 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 {
 	QGridLayout *grid=nullptr;
 	QFrame *frame=nullptr;
-	QFont font;
 	QCheckBox *check=nullptr;
 	unsigned i;
 	QString privs[]={ ParsersAttributes::SELECT_PRIV, ParsersAttributes::INSERT_PRIV,
@@ -40,31 +39,27 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	object_selection_wgt=new ModelObjectsWidget(true);
 	permission=nullptr;
 
-	comment_lbl->setText(trUtf8("Type:"));
-	font=name_edt->font();
-	font.setItalic(true);
-	comment_edt->setFont(font);
-	comment_edt->setReadOnly(true);
-	name_edt->setFont(font);
-	name_edt->setReadOnly(true);
-
 	configureFormLayout(permission_grid, OBJ_PERMISSION);
 
-	roles_tab=new ObjectTableWidget(ObjectTableWidget::ADD_BUTTON |
-									ObjectTableWidget::REMOVE_BUTTON |
-									ObjectTableWidget::EDIT_BUTTON, false, this);
+	name_edt->setReadOnly(true);
+	comment_edt->setVisible(false);
+	comment_lbl->setVisible(false);
+
+	roles_tab=new ObjectsTableWidget(ObjectsTableWidget::ADD_BUTTON |
+									ObjectsTableWidget::REMOVE_BUTTON |
+									ObjectsTableWidget::EDIT_BUTTON, false, this);
 	roles_tab->setColumnCount(1);
-	roles_tab->setHeaderLabel(trUtf8("Role"),0);
-	roles_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),0);
+	roles_tab->setHeaderLabel(trUtf8("Name"),0);
+	roles_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 
 	grid=new QGridLayout;
 	grid->addWidget(roles_tab,0,0,1,1);
 	grid->setContentsMargins(2,2,2,2);
 	roles_gb->setLayout(grid);
 
-	permissions_tab=new ObjectTableWidget(ObjectTableWidget::REMOVE_BUTTON |
-										  ObjectTableWidget::EDIT_BUTTON |
-										  ObjectTableWidget::REMOVE_ALL_BUTTON, true, this);
+	permissions_tab=new ObjectsTableWidget(ObjectsTableWidget::REMOVE_BUTTON |
+										  ObjectsTableWidget::EDIT_BUTTON |
+										  ObjectsTableWidget::REMOVE_ALL_BUTTON, true, this);
 	permissions_tab->setColumnCount(3);
 	permissions_tab->setHeaderLabel(trUtf8("Id"),0);
 	permissions_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
@@ -93,7 +88,8 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		connect(check, SIGNAL(clicked(bool)), this, SLOT(checkPrivilege(void)));
 	}
 
-	frame=generateInformationFrame(trUtf8("Leave the <em><strong>Roles</strong></em> empty to create a permission applicable to <strong><em>PUBLIC</em></strong>."));
+	frame=generateInformationFrame(trUtf8("Leave the <em><strong>Roles</strong></em> grid empty in order to create a %1 applicable to <strong><em>PUBLIC</em></strong>.")
+																 .arg(BaseObject::getTypeName(OBJ_PERMISSION).toLower()));
 	permission_grid->addWidget(frame, permission_grid->count()+1, 0, 1, 0);
 	frame->setParent(this);
 
@@ -157,8 +153,7 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 		connect(roles_tab, SIGNAL(s_rowAdded(int)), this, SLOT(selectRole(void)));
 		connect(permissions_tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removePermissions(void)));
 
-		name_edt->setText(object->getName(true));
-		comment_edt->setText(object->getTypeName());
+		name_edt->setText(QString("%1 (%2)").arg(object->getSignature()).arg(object->getTypeName()));
 
 		for(priv=Permission::PRIV_SELECT; priv<=Permission::PRIV_USAGE; priv++)
 		{

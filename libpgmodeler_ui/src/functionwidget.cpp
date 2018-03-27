@@ -47,16 +47,16 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		vlayout->addWidget(ret_type);
 		vlayout->addSpacerItem(spacer);
 
-		return_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-										 ObjectTableWidget::UPDATE_BUTTON, true, this);
+		return_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
+										 ObjectsTableWidget::UPDATE_BUTTON, true, this);
 		return_tab->setColumnCount(2);
 		return_tab->setHeaderLabel(trUtf8("Column"), 0);
 		return_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("column")),0);
 		return_tab->setHeaderLabel(trUtf8("Type"), 1);
 		return_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
 
-		parameters_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-											 ObjectTableWidget::UPDATE_BUTTON, true, this);
+		parameters_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
+											 ObjectsTableWidget::UPDATE_BUTTON, true, this);
 		parameters_tab->setColumnCount(4);
 		parameters_tab->setHeaderLabel(trUtf8("Name"),0);
 		parameters_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("parameter")),0);
@@ -125,7 +125,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 void FunctionWidget::handleParameter(Parameter param, int result)
 {
 	int lin_cnt, lin;
-	ObjectTableWidget *table=nullptr;
+	ObjectsTableWidget *table=nullptr;
 
 	//Selects the table to be handled according to its visibility
 	if(parameters_tab->isVisible())
@@ -158,7 +158,7 @@ void FunctionWidget::handleParameter(Parameter param, int result)
 void FunctionWidget::duplicateParameter(int curr_row, int new_row)
 {
 	Parameter new_param;
-	ObjectTableWidget *table=nullptr;
+	ObjectsTableWidget *table=nullptr;
 
 	//Selects the table to be handled according to its visibility
 	if(parameters_tab->isVisible())
@@ -173,7 +173,7 @@ void FunctionWidget::duplicateParameter(int curr_row, int new_row)
 void FunctionWidget::showParameterForm(void)
 {
 	QObject *obj_sender=sender();
-	ObjectTableWidget *table=nullptr;
+	ObjectsTableWidget *table=nullptr;
 	Parameter aux_param;
 	int lin_idx;
 	ParameterWidget *parameter_wgt=new ParameterWidget;
@@ -181,7 +181,7 @@ void FunctionWidget::showParameterForm(void)
 
 	if(obj_sender==parameters_tab || obj_sender==return_tab)
 	{
-		table=dynamic_cast<ObjectTableWidget *>(obj_sender);
+		table=dynamic_cast<ObjectsTableWidget *>(obj_sender);
 
 		parameter_wgt->param_in_chk->setEnabled(obj_sender==parameters_tab);
 		parameter_wgt->param_out_chk->setEnabled(obj_sender==parameters_tab);
@@ -202,7 +202,7 @@ void FunctionWidget::showParameterForm(void)
 	}
 }
 
-Parameter FunctionWidget::getParameter(ObjectTableWidget *tab, unsigned row)
+Parameter FunctionWidget::getParameter(ObjectsTableWidget *tab, unsigned row)
 {
 	Parameter param;
 	QString str_aux;
@@ -232,7 +232,7 @@ Parameter FunctionWidget::getParameter(ObjectTableWidget *tab, unsigned row)
 	return(param);
 }
 
-void FunctionWidget::showParameterData(Parameter param, ObjectTableWidget *tab, unsigned row)
+void FunctionWidget::showParameterData(Parameter param, ObjectsTableWidget *tab, unsigned row)
 {
 	if(tab)
 	{

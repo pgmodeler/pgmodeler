@@ -34,6 +34,7 @@
 #include "trigger.h"
 #include "function.h"
 #include "role.h"
+#include "policy.h"
 #include "copyoptions.h"
 #include <QStringList>
 
@@ -49,6 +50,7 @@ class Table: public BaseTable {
 		vector<TableObject *> indexes;
 		vector<TableObject *> rules;
 		vector<TableObject *> triggers;
+		vector<TableObject *> policies;
 
 		//! \brief Stores the tables that 'this' object inherits attributes
 		vector<Table *> ancestor_tables;
@@ -68,7 +70,12 @@ class Table: public BaseTable {
 		gen_alter_cmds,
 
 		//! \brief Indicates if the table is unlogged, which means, is not controled by the WAL (write ahead logs)
-		unlogged;
+		unlogged,
+
+		//! \brief Indicates if the row level security is enabled
+		rls_enabled,
+
+		rls_forced;
 
 		//! \brief Stores the relationship added column / constraints indexes
 		map<QString, unsigned> col_indexes,	constr_indexes;
@@ -126,6 +133,12 @@ class Table: public BaseTable {
 		//! \brief Defines if the table is unlogged
 		void setUnlogged(bool value);
 
+		//! \brief Defines if the row level security on table is enabled
+		void setRLSEnabled(bool value);
+
+		//! \brief Defines if the row level security on table is forced for the table owner
+		void setRLSForced(bool value);
+
 		//! \brief Adds an object to the table. It can be inserted at a specified index 'obj_idx'.
 		void addObject(BaseObject *obj, int obj_idx=-1);
 
@@ -158,6 +171,9 @@ class Table: public BaseTable {
 
 		//! \brief Adds a rule to table (optionally the user can add the object at the specified index 'idx')
 		void addRule(Rule *reg, int idx_reg=-1);
+
+		//! \brief Adds a policy to table (optionally the user can add the object at the specified index 'idx')
+		void addPolicy(Policy *pol, int idx_pol=-1);
 
 		//! \brief Configures the copy table
 		void setCopyTable(Table *tab);
@@ -202,6 +218,12 @@ class Table: public BaseTable {
 		//! \brief Gets a rule through its index
 		Rule *getRule(unsigned idx);
 
+		//! \brief Gets a policy through its name
+		Policy *getPolicy(const QString &name);
+
+		//! \brief Gets a policy through its index
+		Policy *getPolicy(unsigned idx);
+
 		//! \brief Gets a ancestor table through its name
 		Table *getAncestorTable(const QString &name);
 
@@ -222,6 +244,9 @@ class Table: public BaseTable {
 
 		//! \brief Gets the rule count
 		unsigned getRuleCount(void);
+
+		//! \brief Gets the policy count
+		unsigned getPolicyCount(void);
 
 		//! \brief Gets the ancestor table count
 		unsigned getAncestorTableCount(void);
@@ -260,6 +285,12 @@ class Table: public BaseTable {
 		//! \brief Removes a rule through its index
 		void removeRule(unsigned idx);
 
+		//! \brief Removes a policy through its name
+		void removePolicy(const QString &name);
+
+		//! \brief Removes a policy through its index
+		void removePolicy(unsigned idx);
+
 		//! \brief Returns the SQL / XML definition for table
 		virtual QString getCodeDefinition(unsigned def_type) final;
 
@@ -274,7 +305,11 @@ class Table: public BaseTable {
 		//! \brief Returns the primary key of the table. Returns nullptr when it doesn't exists
 		Constraint *getPrimaryKey(void);
 
-		//! \brief Returns all child objects of the table
+		/*! \brief Returns all child objects of the table. If the excl_cols_contr is true
+		then the method will return all objects except columns and constraint */
+		vector<BaseObject *> getObjects(bool excl_cols_constr);
+
+		//! \brief Returns all child objects of the table. This is the same as call getObjects(false)
 		vector<BaseObject *> getObjects(void);
 
 		/*! \brief Stores on the specified vector 'fks' the foreign key present on table. The
@@ -287,6 +322,12 @@ class Table: public BaseTable {
 
 		//! \brief Returns if the table is configured as unlogged
 		bool isUnlogged(void);
+
+		//! \brief Returns if RLS is enabled on the table
+		bool isRLSEnabled(void);
+
+		//! \brief Returns if RLS is forced on the table
+		bool isRLSForced(void);
 
 		//! \brief Protects the table and its aggregated objects against modification
 		void setProtected(bool value);

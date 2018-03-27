@@ -67,7 +67,7 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		QAction *copy_action, *drop_action, *drop_cascade_action,
 		*show_data_action, *refresh_action, *properties_action,
 		*trunc_cascade_action, *truncate_action, *rename_action,
-		*source_action;
+		*source_action, *show_sys_objs, *show_ext_objs;
 		
 		QTreeWidgetItem *rename_item;
 		
@@ -131,6 +131,7 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		void formatColumnAttribs(attribs_map &attribs);
 		void formatConstraintAttribs(attribs_map &attribs);
 		void formatIndexAttribs(attribs_map &attribs);
+		void formatPolicyAttribs(attribs_map &attribs);
 		void handleSelectedSnippet(const QString &snip_id);
 		
 		//! \brief Extract an attribute map containing the basic attributes for drop/rename commands

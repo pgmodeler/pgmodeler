@@ -21,6 +21,8 @@
 #include "pgmodeleruins.h"
 #include "pgmodelerns.h"
 #include "plaintextitemdelegate.h"
+#include "baseform.h"
+#include "bulkdataeditwidget.h"
 
 const QColor DataManipulationForm::ROW_COLORS[3]={ QColor(QString("#C0FFC0")), QColor(QString("#FFFFC0")), QColor(QString("#FFC0C0"))  };
 const unsigned DataManipulationForm::NO_OPERATION=0;
@@ -114,6 +116,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(duplicate_tb, SIGNAL(clicked()), this, SLOT(duplicateRows()));
 	connect(undo_tb, SIGNAL(clicked()), this, SLOT(undoOperations()));
 	connect(save_tb, SIGNAL(clicked()), this, SLOT(saveChanges()));
+	connect(bulkedit_tb, SIGNAL(clicked()), this, SLOT(bulkDataEdit()));
 	connect(ord_columns_lst, SIGNAL(currentRowChanged(int)), this, SLOT(enableColumnControlButtons()));
 	connect(move_down_tb, SIGNAL(clicked()), this, SLOT(swapColumns()));
 	connect(move_up_tb, SIGNAL(clicked()), this, SLOT(swapColumns()));
@@ -413,6 +416,7 @@ void DataManipulationForm::enableRowControlButtons(void)
 											 table_cmb->currentData().toUInt() == OBJ_TABLE  &&
 											 !col_names.isEmpty());
 	browse_tabs_tb->setEnabled((!fk_infos.empty() || !ref_fk_infos.empty()) && sel_ranges.count() == 1 && sel_ranges.at(0).rowCount() == 1);
+	bulkedit_tb->setEnabled(sel_ranges.count() != 0);
 }
 
 void DataManipulationForm::resetAdvancedControls(void)
@@ -1111,6 +1115,31 @@ void DataManipulationForm::browseTable(const QString &fk_name, bool browse_ref_t
 void DataManipulationForm::browseReferrerTable(void)
 {
 	browseTable(qobject_cast<QAction *>(sender())->data().toString(), true);
+}
+
+void DataManipulationForm::bulkDataEdit(void)
+{
+	BaseForm base_frm;
+	BulkDataEditWidget *bulkedit_wgt = new BulkDataEditWidget;
+
+	base_frm.setMainWidget(bulkedit_wgt);
+	base_frm.setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
+
+	if(base_frm.exec() == QDialog::Accepted)
+	{
+		QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
+
+		for(auto range : sel_ranges)
+		{
+			for(int row = range.topRow(); row <= range.bottomRow(); row++)
+			{
+				for(int col = range.leftColumn(); col <= range.rightColumn(); col++)
+				{
+					results_tbw->item(row, col)->setText(bulkedit_wgt->value_edt->toPlainText());
+				}
+			}
+		}
+	}
 }
 
 void DataManipulationForm::browseReferencedTable(void)

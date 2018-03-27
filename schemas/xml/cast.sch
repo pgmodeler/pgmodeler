@@ -1,7 +1,11 @@
 # XML definition for type casts
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
-[<cast cast-type=] "{cast-type}" 
+[<cast ]
+
+ %if {cast-type} %then
+  [ cast-type=] "{cast-type}"
+ %end 
 
  %if {io-cast} %then 
   [ io-cast=] "true"

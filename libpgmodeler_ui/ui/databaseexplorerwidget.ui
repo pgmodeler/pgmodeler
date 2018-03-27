@@ -45,7 +45,7 @@
         </font>
        </property>
        <property name="toolTip">
-        <string>Toggle the display of system/extension objects.</string>
+        <string>Toggle the display of filter widget as well the system/extension objects.</string>
        </property>
        <property name="text">
         <string>Data &amp;Grid</string>

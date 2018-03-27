@@ -28,7 +28,9 @@ Column::Column(void)
 	attributes[ParsersAttributes::TABLE]=QString();
 	attributes[ParsersAttributes::SEQUENCE]=QString();
 	attributes[ParsersAttributes::DECL_IN_TABLE]=QString();
+	attributes[ParsersAttributes::IDENTITY_TYPE]=QString();
 	parent_rel=sequence=nullptr;
+	identity_type=BaseType::null;
 }
 
 void Column::setName(const QString &name)
@@ -58,9 +60,32 @@ void Column::setType(PgSQLType type)
 	//An error is raised if the column receive a pseudo-type as data type.
 	if(type.isPseudoType())
 		throw Exception(ERR_ASG_PSDTYPE_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	else if(this->identity_type != BaseType::null && !type.isIntegerType())
+	{
+		throw Exception(Exception::getErrorMessage(ERR_INV_IDENTITY_COLUMN).arg(getSignature()),
+										ERR_INV_IDENTITY_COLUMN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 
 	setCodeInvalidated(this->type != type);
 	this->type=type;
+}
+
+void Column::setIdentityType(IdentityType id_type)
+{
+	if(id_type != BaseType::null && !type.isIntegerType())
+	{
+		throw Exception(Exception::getErrorMessage(ERR_INV_IDENTITY_COLUMN).arg(getSignature()),
+										ERR_INV_IDENTITY_COLUMN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
+
+	setCodeInvalidated(identity_type != id_type);
+	identity_type = id_type;
+	default_value.clear();
+	sequence = nullptr;
+
+	//Identity column implies NOT NULL constraint
+	if(id_type != BaseType::null)
+		setNotNull(true);
 }
 
 void Column::setDefaultValue(const QString &value)
@@ -68,6 +93,7 @@ void Column::setDefaultValue(const QString &value)
 	setCodeInvalidated(default_value != value);
 	default_value=value.trimmed();
 	sequence=nullptr;
+	identity_type=BaseType::null;
 }
 
 void Column::setNotNull(bool value)
@@ -81,9 +107,19 @@ PgSQLType Column::getType(void)
 	return(type);
 }
 
+IdentityType Column::getIdentityType(void)
+{
+	return(identity_type);
+}
+
 bool Column::isNotNull(void)
 {
 	return(not_null);
+}
+
+bool Column::isIdentity(void)
+{
+	return(identity_type != BaseType::null);
 }
 
 QString Column::getTypeReference(void)
@@ -129,7 +165,7 @@ void Column::setSequence(BaseObject *seq)
 							.arg(this->obj_name)
 							.arg(this->getTypeName())
 							.arg(BaseObject::getTypeName(OBJ_SEQUENCE)),
-							ERR_INCOMP_COL_TYPE_FOR_SEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ERR_ASG_INV_OBJECT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(!type.isIntegerType())
 			throw Exception(Exception::getErrorMessage(ERR_INCOMP_COL_TYPE_FOR_SEQ)
 							.arg(seq->getName(true))
@@ -137,6 +173,7 @@ void Column::setSequence(BaseObject *seq)
 							ERR_INCOMP_COL_TYPE_FOR_SEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		default_value=QString();
+		identity_type=BaseType::null;
 	}
 
 	setCodeInvalidated(sequence != seq);
@@ -156,19 +193,24 @@ QString Column::getCodeDefinition(unsigned def_type)
 	if(getParentTable())
 		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
-	attributes[ParsersAttributes::TYPE]=type.getCodeDefinition(def_type);
-
+	attributes[ParsersAttributes::TYPE]=type.getCodeDefinition(def_type);	
 	attributes[ParsersAttributes::DEFAULT_VALUE]=QString();
+	attributes[ParsersAttributes::IDENTITY_TYPE]=QString();
 
-	if(!sequence)
-		attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
+	if(identity_type != BaseType::null)
+		attributes[ParsersAttributes::IDENTITY_TYPE] = ~identity_type;
 	else
 	{
-		//Configuring the default value of the column to get the next value of the sequence
-		if(def_type==SchemaParser::SQL_DEFINITION)
-			attributes[ParsersAttributes::DEFAULT_VALUE]=QString("nextval('%1'::regclass)").arg(sequence->getSignature());//.remove("\""));
+		if(!sequence)
+			attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
+		else
+		{
+			//Configuring the default value of the column to get the next value of the sequence
+			if(def_type==SchemaParser::SQL_DEFINITION)
+				attributes[ParsersAttributes::DEFAULT_VALUE]=QString("nextval('%1'::regclass)").arg(sequence->getSignature());//.remove("\""));
 
-		attributes[ParsersAttributes::SEQUENCE]=sequence->getName(true);
+			attributes[ParsersAttributes::SEQUENCE]=sequence->getName(true);
+		}
 	}
 
 	attributes[ParsersAttributes::NOT_NULL]=(!not_null ? QString() : ParsersAttributes::_TRUE_);
@@ -211,6 +253,16 @@ QString Column::getAlterDefinition(BaseObject *object)
 		if(this->not_null!=col->not_null)
 			attribs[ParsersAttributes::NOT_NULL]=(!col->not_null ? ParsersAttributes::UNSET : ParsersAttributes::_TRUE_);
 
+		attribs[ParsersAttributes::NEW_IDENTITY_TYPE] = QString();
+
+		if(this->identity_type == BaseType::null && col->identity_type != BaseType::null)
+			attribs[ParsersAttributes::IDENTITY_TYPE] = ~col->identity_type;
+		else if(this->identity_type != BaseType::null && col->identity_type == BaseType::null)
+			attribs[ParsersAttributes::IDENTITY_TYPE] = ParsersAttributes::UNSET;
+		else if(this->identity_type != BaseType::null && col->identity_type != BaseType::null &&
+						this->identity_type != col->identity_type)
+			attribs[ParsersAttributes::NEW_IDENTITY_TYPE] = ~col->identity_type;
+
 		copyAttributes(attribs);
 		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
 	}
@@ -234,6 +286,7 @@ void Column::operator = (Column &col)
 	this->not_null=col.not_null;
 	this->parent_rel=col.parent_rel;
 	this->sequence=col.sequence;
+	this->identity_type=col.identity_type;
 
 	this->setParentTable(col.getParentTable());
 	this->setAddedByCopy(false);

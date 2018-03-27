@@ -102,6 +102,7 @@ void ObjectDepsRefsWidget::updateObjectTables(void)
 	else
 		model->__getObjectReferences(object, objs);
 
+	objs.clear();
 	ObjectFinderWidget::updateObjectTable(references_tbw, objs);
 
 	references_tbw->resizeColumnsToContents();

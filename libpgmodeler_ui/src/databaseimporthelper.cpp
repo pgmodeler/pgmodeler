@@ -720,6 +720,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				case OBJ_TRIGGER: createTrigger(attribs); break;
 				case OBJ_INDEX: createIndex(attribs); break;
 				case OBJ_CONSTRAINT: createConstraint(attribs); break;
+				case OBJ_POLICY: createPolicy(attribs); break;
 				case OBJ_EVENT_TRIGGER: createEventTrigger(attribs); break;
 
 				default:
@@ -1419,6 +1420,7 @@ void DatabaseImportHelper::createConversion(attribs_map &attribs)
 void DatabaseImportHelper::createSequence(attribs_map &attribs)
 {
 	Sequence *seq=nullptr;
+	Column *col = nullptr;
 
 	try
 	{
@@ -1430,11 +1432,32 @@ void DatabaseImportHelper::createSequence(attribs_map &attribs)
 
 		attribs[ParsersAttributes::OWNER_COLUMN]=QString();
 
-		/* If there are owner columns and the oid of sequence is greater that the owner column's table oid
+		/* If there are owner columns and the oid of sequence is greater than the owner column's table oid
 		stores the oid of both (sequence and table) in order to swap it's ids at the end of import to
 		avoid reference breaking when generation SQL code */
-		if(owner_col.size()==2 && attribs[ParsersAttributes::OID].toUInt() > owner_col[0].toUInt())
-			seq_tab_swap[attribs[ParsersAttributes::OID]]=owner_col[0];
+		if(owner_col.size()==2)
+		{
+			Table *tab = nullptr;
+			QString col_name, tab_name;
+			attribs_map pos_attrib={
+				{ ParsersAttributes::X_POS, QString("0") },
+				{ ParsersAttributes::Y_POS, QString("0") }};
+
+			if(attribs[ParsersAttributes::OID].toUInt() > owner_col[0].toUInt())
+				seq_tab_swap[attribs[ParsersAttributes::OID]]=owner_col[0];
+
+			/* Get the table and the owner column instances so the sequence code can be disabled if the
+				column is an identity one */
+			tab_name = getDependencyObject(owner_col[0], OBJ_TABLE, true, auto_resolve_deps, false,
+			{{ ParsersAttributes::POSITION,
+				 schparser.getCodeDefinition(ParsersAttributes::POSITION, pos_attrib, SchemaParser::XML_DEFINITION)}});
+
+			col_name=getColumnName(owner_col[0], owner_col[1]);
+			tab = dbmodel->getTable(tab_name);
+
+			if(tab)
+				col = tab->getColumn(col_name);
+		}
 
 		for(int i=0; i < seq_attribs.size(); i++)
 			attribs[attr[i]]=seq_attribs[i];
@@ -1442,6 +1465,10 @@ void DatabaseImportHelper::createSequence(attribs_map &attribs)
 		loadObjectXML(OBJ_SEQUENCE, attribs);
 		seq=dbmodel->createSequence();
 		dbmodel->addSequence(seq);
+
+		//Disable the sequence's SQL when the owner column is identity
+		if(col && col->isIdentity())
+			seq->setSQLDisabled(true);
 	}
 	catch(Exception &e)
 	{
@@ -1594,8 +1621,9 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 		vector<unsigned> inh_cols;
 		QString type_def, unknown_obj_xml, type_name, def_val;
 		map<unsigned, attribs_map>::iterator itr, itr1, itr_end;
-		attribs_map pos_attrib={{ ParsersAttributes::X_POS, QString("0") },
-								{ ParsersAttributes::Y_POS, QString("0") }};
+		attribs_map pos_attrib={
+			{ ParsersAttributes::X_POS, QString("0") },
+			{ ParsersAttributes::Y_POS, QString("0") }};
 
 		attribs[ParsersAttributes::COLUMNS]=QString();
 		attribs[ParsersAttributes::POSITION]=schparser.getCodeDefinition(ParsersAttributes::POSITION, pos_attrib, SchemaParser::XML_DEFINITION);
@@ -1665,33 +1693,39 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 			col.setNotNull(!itr->second[ParsersAttributes::NOT_NULL].isEmpty());
 			col.setComment(itr->second[ParsersAttributes::COMMENT]);
 
-			/* Removing extra/forced type casting in the retrieved default value.
-			 This is done in order to avoid unnecessary entries in the diff results.
-
-			 For instance: say in the model we have a column with the following configutation:
-			 > varchar(3) default 'foo'
-
-			 Now, when importing the same column the default value for it will be something like:
-			 > varchar(3) default 'foo'::character varying
-
-			 Since the extra chars in the default value of the imported column are redundant (casting
-			 varchar to character varying) we remove the '::character varying'. The idea here is to eliminate
-			 the cast if the casting is equivalent to the column type. */
-
-			def_val = itr->second[ParsersAttributes::DEFAULT_VALUE];
-
-			if(!def_val.startsWith(QString("nextval(")) && def_val.contains(QString("::")))
+			//Overriding the default value if the column is identity
+			if(!itr->second[ParsersAttributes::IDENTITY_TYPE].isEmpty())
+				col.setIdentityType(itr->second[ParsersAttributes::IDENTITY_TYPE]);
+			else
 			{
-				QStringList values = def_val.split(QString("::"));
+				/* Removing extra/forced type casting in the retrieved default value.
+				 This is done in order to avoid unnecessary entries in the diff results.
 
-				if(values.size() > 1 &&
-					 ((~col.getType() == values[1]) ||
-						(~col.getType() == QString("char") && values[1] == QString("bpchar")) ||
-						(col.getType().isUserType() && (~col.getType()).endsWith(values[1]))))
-					def_val=values[0];
+				 For instance: say in the model we have a column with the following configutation:
+				 > varchar(3) default 'foo'
+
+				 Now, when importing the same column the default value for it will be something like:
+				 > varchar(3) default 'foo'::character varying
+
+				 Since the extra chars in the default value of the imported column are redundant (casting
+				 varchar to character varying) we remove the '::character varying'. The idea here is to eliminate
+				 the cast if the casting is equivalent to the column type. */
+
+				def_val = itr->second[ParsersAttributes::DEFAULT_VALUE];
+
+				if(!def_val.startsWith(QString("nextval(")) && def_val.contains(QString("::")))
+				{
+					QStringList values = def_val.split(QString("::"));
+
+					if(values.size() > 1 &&
+						 ((~col.getType() == values[1]) ||
+							(~col.getType() == QString("char") && values[1] == QString("bpchar")) ||
+							(col.getType().isUserType() && (~col.getType()).endsWith(values[1]))))
+						def_val=values[0];
+				}
+
+				col.setDefaultValue(def_val);
 			}
-
-			col.setDefaultValue(def_val);
 
 			//Checking if the collation used by the column exists, if not it'll be created when auto_resolve_deps is checked
 			if(auto_resolve_deps && !itr->second[ParsersAttributes::COLLATION].isEmpty())
@@ -2040,6 +2074,22 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 				table->setModified(true);
 			}
 		}
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),
+						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
+	}
+}
+
+void DatabaseImportHelper::createPolicy(attribs_map &attribs)
+{
+	try
+	{
+		attribs[ParsersAttributes::TABLE]=getDependencyObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE, true, auto_resolve_deps, false);
+		attribs[ParsersAttributes::ROLES]=getObjectNames(attribs[ParsersAttributes::ROLES]).join(',');
+		loadObjectXML(OBJ_POLICY, attribs);
+		dbmodel->createPolicy();
 	}
 	catch(Exception &e)
 	{
@@ -2508,6 +2558,7 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 		QString xml_def, sch_name, obj_name, aux_name;
 		unsigned type_oid=oid_str.toUInt(), elem_tp_oid = 0,
 				dimension=0, object_id=type_attr[ParsersAttributes::OBJECT_ID].toUInt();
+		bool is_derivated_from_obj = false;
 
 		if(type_oid > 0)
 		{
@@ -2546,6 +2597,7 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 				else
 					obj_type=OBJ_SEQUENCE;
 
+				is_derivated_from_obj = true;
 				getDependencyObject(type_attr[ParsersAttributes::OBJECT_ID], obj_type, true, true, false);
 			}
 
@@ -2564,19 +2616,19 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 				 !obj_name.contains(QRegExp(QString("^(\\\")?(%1)(\\\")?(\\.)").arg(sch_name))))
 				obj_name.prepend(sch_name + QString("."));
 
-			/* In case of auto resolve dependencies, if the type is a user defined one and was not created in the database
-					model but its attributes were retrieved the object will be created to avoid reference errors */
+			/* In case of auto resolve dependencies, if the type is a user defined one and is not derivated from table/view/sequence and
+			 was not created in the database model but its attributes were retrieved, the object will be created to avoid reference errors */
 			aux_name = obj_name;
 			aux_name.remove(QString("[]"));
-			if(auto_resolve_deps && !type_attr.empty() &&
+			if(auto_resolve_deps && !type_attr.empty() && !is_derivated_from_obj &&
 				 type_oid > catalog.getLastSysObjectOID() && !dbmodel->getType(aux_name))
 			{
 				//If the type is not an array one we simply use the current type attributes map
-				 if(type_attr[ParsersAttributes::CATEGORY] != QString("A"))
+				if(type_attr[ParsersAttributes::CATEGORY] != QString("A"))
 					createObject(type_attr);
 				 /* In case the type is an array one we should use the oid held by "element" attribute to
 				 create the type related to current one */
-				 else if(elem_tp_oid > catalog.getLastSysObjectOID() &&	 types.count(elem_tp_oid))
+				else if(elem_tp_oid > catalog.getLastSysObjectOID() &&	types.count(elem_tp_oid))
 					createObject(types[elem_tp_oid]);
 			}
 

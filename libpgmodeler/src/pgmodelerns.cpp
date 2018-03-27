@@ -81,6 +81,9 @@ namespace PgModelerNS {
 			case OBJ_INDEX:
 				copyObject(psrc_obj, dynamic_cast<Index *>(copy_obj));
 			break;
+			case OBJ_POLICY:
+				copyObject(psrc_obj, dynamic_cast<Policy *>(copy_obj));
+			break;
 			case OBJ_TABLE:
 				copyObject(psrc_obj, dynamic_cast<Table *>(copy_obj));
 			break;

@@ -410,15 +410,16 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 		 Special cases are for: functions/operator that are search by signature and views
 		 that are search on tables and views list */
 	if((obj_type==OBJ_VIEW &&	(getObject(object->getName(true), obj_type, idx) ||
-								 getObject(object->getName(true), OBJ_TABLE, idx))) ||
+														 getObject(object->getName(true), OBJ_TABLE, idx))) ||
 			(obj_type==OBJ_TABLE && (getObject(object->getName(true), obj_type, idx) ||
-									 getObject(object->getName(true), OBJ_VIEW, idx))) ||
+															 getObject(object->getName(true), OBJ_VIEW, idx))) ||
+			(obj_type==OBJ_EXTENSION &&	(getObject(object->getName(false), obj_type, idx))) ||
 			(getObject(object->getSignature(), obj_type, idx)))
 	{
 		QString str_aux;
 
 		str_aux=QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
-				.arg(object->getName(true))
+				.arg(object->getName(obj_type != OBJ_EXTENSION))
 				.arg(object->getTypeName())
 				.arg(this->getName(true))
 				.arg(this->getTypeName());
@@ -566,7 +567,7 @@ vector<BaseObject *> DatabaseModel::getObjects(BaseObject *schema)
 	vector<BaseObject *>::iterator itr, itr_end;
 	ObjectType types[]={	OBJ_FUNCTION, OBJ_TABLE, OBJ_VIEW, OBJ_DOMAIN,
 							OBJ_AGGREGATE, OBJ_OPERATOR, OBJ_SEQUENCE, OBJ_CONVERSION,
-							OBJ_TYPE, OBJ_OPCLASS, OBJ_OPFAMILY, OBJ_COLLATION,	OBJ_EXTENSION };
+							OBJ_TYPE, OBJ_OPCLASS, OBJ_OPFAMILY, OBJ_COLLATION };
 	unsigned i, count=sizeof(types)/sizeof(ObjectType);
 
 	for(i=0; i < count; i++)
@@ -2704,7 +2705,7 @@ void DatabaseModel::addPermission(Permission *perm)
 							.arg(perm->getObject()->getTypeName())
 							.arg(perm->getObject()->getName())
 							.arg(perm->getObject()->getTypeName()),
-							ERR_ASG_DUPLIC_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		permissions.push_back(perm);
 		perm->setDatabase(this);
@@ -2913,7 +2914,7 @@ void DatabaseModel::configureDatabase(attribs_map &attribs)
 	append_at_eod=attribs[ParsersAttributes::APPEND_AT_EOD]==ParsersAttributes::_TRUE_;
 	prepend_at_bod=attribs[ParsersAttributes::PREPEND_AT_BOD]==ParsersAttributes::_TRUE_;
 	is_template=attribs[ParsersAttributes::IS_TEMPLATE]==ParsersAttributes::_TRUE_;
-	allow_conns=attribs[ParsersAttributes::ALLOW_CONNS]==ParsersAttributes::_TRUE_;
+	allow_conns=attribs[ParsersAttributes::ALLOW_CONNS] != ParsersAttributes::_FALSE_;
 
 	if(!attribs[ParsersAttributes::CONN_LIMIT].isEmpty())
 		conn_limit=attribs[ParsersAttributes::CONN_LIMIT].toInt();
@@ -3161,6 +3162,8 @@ BaseObject *DatabaseModel::createObject(ObjectType obj_type)
 			object=createEventTrigger();
 		else if(obj_type==OBJ_GENERIC_SQL)
 			object=createGenericSQL();
+		else if(obj_type==OBJ_POLICY)
+			object=createPolicy();
 	}
 
 	return(object);
@@ -3349,12 +3352,12 @@ Role *DatabaseModel::createRole(void)
 	QString op_attribs[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
 						   ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,
 						   ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED,
-						   ParsersAttributes::REPLICATION };
+							 ParsersAttributes::REPLICATION, ParsersAttributes::BYPASSRLS };
 
 	unsigned op_vect[]={ Role::OP_SUPERUSER, Role::OP_CREATEDB,
 						 Role::OP_CREATEROLE, Role::OP_INHERIT,
 						 Role::OP_LOGIN, Role::OP_ENCRYPTED,
-						 Role::OP_REPLICATION };
+						 Role::OP_REPLICATION, Role::OP_BYPASSRLS };
 
 	try
 	{
@@ -3371,7 +3374,7 @@ Role *DatabaseModel::createRole(void)
 			role->setConnectionLimit(attribs[ParsersAttributes::CONN_LIMIT].toInt());
 
 		//Setting up the role options according to the configured on the XML
-		for(i=0; i < 7; i++)
+		for(i=0; i < 8; i++)
 		{
 			marked=attribs[op_attribs[i]]==ParsersAttributes::_TRUE_;
 			role->setOption(op_vect[i], marked);
@@ -4565,6 +4568,8 @@ Table *DatabaseModel::createTable(void)
 
 		table->setWithOIDs(attribs[ParsersAttributes::OIDS]==ParsersAttributes::_TRUE_);
 		table->setUnlogged(attribs[ParsersAttributes::UNLOGGED]==ParsersAttributes::_TRUE_);
+		table->setRLSEnabled(attribs[ParsersAttributes::RLS_ENABLED]==ParsersAttributes::_TRUE_);
+		table->setRLSForced(attribs[ParsersAttributes::RLS_FORCED]==ParsersAttributes::_TRUE_);
 		table->setGenerateAlterCmds(attribs[ParsersAttributes::GEN_ALTER_CMDS]==ParsersAttributes::_TRUE_);
 		table->setExtAttribsHidden(attribs[ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::_TRUE_);
 		table->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::_TRUE_);
@@ -4681,6 +4686,9 @@ Column *DatabaseModel::createColumn(void)
 		xmlparser.getElementAttributes(attribs);
 		column->setNotNull(attribs[ParsersAttributes::NOT_NULL]==ParsersAttributes::_TRUE_);
 		column->setDefaultValue(attribs[ParsersAttributes::DEFAULT_VALUE]);
+
+		if(!attribs[ParsersAttributes::IDENTITY_TYPE].isEmpty())
+			column->setIdentityType(IdentityType(attribs[ParsersAttributes::IDENTITY_TYPE]));
 
 		if(!attribs[ParsersAttributes::SEQUENCE].isEmpty())
 		{
@@ -5417,6 +5425,98 @@ Trigger *DatabaseModel::createTrigger(void)
 	}
 
 	return(trigger);
+}
+
+Policy *DatabaseModel::createPolicy(void)
+{
+	attribs_map attribs;
+	Policy *policy=nullptr;
+	QString elem;
+	BaseTable *table=nullptr;
+
+	try
+	{
+		policy=new Policy;
+		setBasicAttributes(policy);
+
+		xmlparser.getElementAttributes(attribs);
+
+		table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE));
+
+		if(!table)
+			throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+											.arg(attribs[ParsersAttributes::NAME])
+											.arg(BaseObject::getTypeName(OBJ_POLICY))
+											.arg(attribs[ParsersAttributes::TABLE])
+											.arg(BaseObject::getTypeName(OBJ_TABLE)),
+				ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		policy->setPermissive(attribs[ParsersAttributes::PERMISSIVE] == ParsersAttributes::_TRUE_);
+		policy->setPolicyCommand(PolicyCmdType(attribs[ParsersAttributes::COMMAND]));
+
+		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
+		{
+			do
+			{
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
+				{
+					elem=xmlparser.getElementName();
+
+					if(elem==ParsersAttributes::EXPRESSION)
+					{
+						xmlparser.getElementAttributes(attribs);
+						xmlparser.savePosition();
+						xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
+
+						if(attribs[ParsersAttributes::TYPE] == ParsersAttributes::USING_EXP)
+							policy->setUsingExpression(xmlparser.getElementContent());
+						else if(attribs[ParsersAttributes::TYPE] == ParsersAttributes::CHECK_EXP)
+							policy->setCheckExpression(xmlparser.getElementContent());
+
+						xmlparser.restorePosition();
+					}
+					else if(xmlparser.getElementName()==ParsersAttributes::ROLES)
+					{
+						QStringList rol_names;
+						Role *role = nullptr;
+
+						xmlparser.getElementAttributes(attribs);
+
+						rol_names = attribs[ParsersAttributes::NAMES].split(',');
+
+						for(auto &name : rol_names)
+						{
+							role=dynamic_cast<Role *>(getObject(name.trimmed(), OBJ_ROLE));
+
+							//Raises an error if the referenced role doesn't exists
+							if(!role)
+							{
+								throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+																.arg(policy->getName())
+																.arg(policy->getTypeName())
+																.arg(name)
+																.arg(BaseObject::getTypeName(OBJ_ROLE)),
+																ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							}
+
+							policy->addRole(role);
+						}
+					}
+				}
+			}
+			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
+		}
+
+		table->addObject(policy);
+		table->setModified(true);
+	}
+	catch(Exception &e)
+	{
+		if(policy) delete(policy);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
+	}
+
+	return(policy);
 }
 
 EventTrigger *DatabaseModel::createEventTrigger(void)
@@ -6653,10 +6753,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 	vector<BaseObject *>::iterator itr, itr_end;
 	map<unsigned, BaseObject *> objects_map;
 	Table *table=nullptr;
-	Index *index=nullptr;
-	Trigger *trigger=nullptr;
 	Constraint *constr=nullptr;
-	Rule *rule=nullptr;
 	View *view=nullptr;
 	Relationship *rel=nullptr;
 	ObjectType aux_obj_types[]={ OBJ_ROLE, OBJ_TABLESPACE, OBJ_SCHEMA, OBJ_TAG },
@@ -6741,26 +6838,8 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 				fkeys.push_back(constr);
 		}
 
-		count=table->getTriggerCount();
-		for(i=0; i < count; i++)
-		{
-			trigger=table->getTrigger(i);
-			objects_map[trigger->getObjectId()]=trigger;
-		}
-
-		count=table->getIndexCount();
-		for(i=0; i < count; i++)
-		{
-			index=table->getIndex(i);
-			objects_map[index->getObjectId()]=index;
-		}
-
-		count=table->getRuleCount();
-		for(i=0; i < count; i++)
-		{
-			rule=table->getRule(i);
-			objects_map[rule->getObjectId()]=rule;
-		}
+		for(auto obj : table->getObjects(true))
+			objects_map[obj->getObjectId()]=obj;
 	}
 
 	/* Getting and storing the special objects (which reference columns of tables added for relationships)
@@ -6769,26 +6848,8 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 	{
 		view=dynamic_cast<View *>(obj);
 
-		count=view->getTriggerCount();
-		for(i=0; i < count; i++)
-		{
-			trigger=view->getTrigger(i);
-			objects_map[trigger->getObjectId()]=trigger;
-		}
-
-		count=view->getRuleCount();
-		for(i=0; i < count; i++)
-		{
-			rule=view->getRule(i);
-			objects_map[rule->getObjectId()]=rule;
-		}
-
-		count=view->getIndexCount();
-		for(i=0; i < count; i++)
-		{
-			index=view->getIndex(i);
-			objects_map[index->getObjectId()]=index;
-		}
+		for(auto obj : view->getObjects())
+			objects_map[obj->getObjectId()]=obj;
 	}
 
 	/* SPECIAL CASE: Generating the correct order for tables, views, relationships and sequences
@@ -7418,6 +7479,13 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 						getObjectDependecies(index->getIndexElement(i).getCollation(), deps, inc_indirect_deps);
 				}
 			}
+			else if(obj_type==OBJ_POLICY)
+			{
+				Policy *pol=dynamic_cast<Policy *>(object);
+
+				for(auto role : pol->getRoles())
+					getObjectDependecies(role, deps, inc_indirect_deps);
+			}
 			//** Getting the dependecies for table **
 			else if(obj_type==OBJ_TABLE)
 			{
@@ -7427,6 +7495,7 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 				Trigger *trig=nullptr;
 				Index *index=nullptr;
 				Column *col=nullptr;
+				Policy *pol=nullptr;
 				unsigned count, i, count1, i1;
 
 				count=tab->getColumnCount();
@@ -7503,6 +7572,15 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 						if(index->getIndexElement(i1).getCollation())
 							getObjectDependecies(index->getIndexElement(i1).getCollation(), deps, inc_indirect_deps);
 					}
+				}
+
+				count=tab->getPolicyCount();
+				for(i=0; i < count; i++)
+				{
+					pol=dynamic_cast<Policy *>(tab->getPolicy(i));
+
+					for(auto role : pol->getRoles())
+						getObjectDependecies(role, deps, inc_indirect_deps);
 				}
 			}
 			//** Getting the dependecies for user defined type **
@@ -7622,9 +7700,9 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			vector<BaseObject *>::iterator itr, itr_end;
 			vector<TableObject *> *tab_objs;
 			unsigned i, count;
-			ObjectType tab_obj_types[3]={ OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX };
+			ObjectType tab_obj_types[4]={ OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX, OBJ_POLICY };
 
-			for(i=0; i < 3; i++)
+			for(i=0; i < 4; i++)
 			{
 				tab_objs=table->getObjectList(tab_obj_types[i]);
 				refs.insert(refs.end(), tab_objs->begin(), tab_objs->end());
@@ -8218,6 +8296,19 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						refer=true;
 						refs.push_back(*itr);
 					}
+
+					if((*itr)->getObjectType() == OBJ_TABLE)
+					{
+						for(auto obj : *(dynamic_cast<Table *>(*itr))->getObjectList(OBJ_POLICY))
+						{
+							if(dynamic_cast<Policy *>(obj)->isRoleExists(role))
+							{
+								refer=true;
+								refs.push_back(obj);
+							}
+						}
+					}
+
 					itr++;
 				}
 			}

@@ -227,12 +227,25 @@ QString BaseType::type_list[types_count]=
 	"ddl_command_start",
 	"ddl_command_end",
 	"sql_drop",
-	"table_rewrite"
+	"table_rewrite",
+
+	//Types used by the class IdentityType
+	//offsets 249 to 250
+	"ALWAYS",
+	"BY DEFAULT",
+
+	//Types used by the class PolicyCmdType
+	//offsets 251 to 255
+	"ALL",
+	"SELECT",
+	"INSERT",
+	"DELETE",
+	"UPDATE"
 };
 
 BaseType::BaseType(void)
 {
-	type_idx=0;
+	type_idx=BaseType::null;
 }
 
 QString BaseType::getTypeString(unsigned type_id)
@@ -258,7 +271,7 @@ void BaseType::setType(unsigned type_id,unsigned offset,unsigned count)
 bool BaseType::isTypeValid(unsigned type_id,unsigned offset,unsigned count)
 {
 	//Returns if the type id is valid according to the specified interval (offset-count)
-	return((type_id>=offset && type_id<=(offset+count-1)) || type_id==0);
+	return((type_id>=offset && type_id<=(offset+count-1)) || type_id==BaseType::null);
 }
 
 void BaseType::getTypes(QStringList &types,unsigned offset,unsigned count)
@@ -2097,6 +2110,82 @@ unsigned EventTriggerType::operator = (unsigned type_id)
 }
 
 unsigned EventTriggerType::operator = (const QString &type_name)
+{
+	unsigned type_id;
+
+	type_id=BaseType::getType(type_name, offset, types_count);
+	BaseType::setType(type_id,offset,types_count);
+	return(type_id);
+}
+
+/***************************
+ * CLASS: IdentityMode *
+ ***************************/
+IdentityType::IdentityType(void)
+{
+	type_idx=offset;
+}
+
+IdentityType::IdentityType(unsigned type_id)
+{
+	(*this)=type_id;
+}
+
+IdentityType::IdentityType(const QString &type_name)
+{
+	(*this)=type_name;
+}
+
+void IdentityType::getTypes(QStringList &tipos)
+{
+	BaseType::getTypes(tipos,offset,types_count);
+}
+
+unsigned IdentityType::operator = (unsigned type_id)
+{
+	BaseType::setType(type_id,offset,types_count);
+	return(type_idx);
+}
+
+unsigned IdentityType::operator = (const QString &type_name)
+{
+	unsigned type_id;
+
+	type_id=BaseType::getType(type_name, offset, types_count);
+	BaseType::setType(type_id,offset,types_count);
+	return(type_id);
+}
+
+/***************************
+ * CLASS: PolicyCmdType *
+ ***************************/
+PolicyCmdType::PolicyCmdType(void)
+{
+	type_idx=offset;
+}
+
+PolicyCmdType::PolicyCmdType(unsigned type_id)
+{
+	(*this)=type_id;
+}
+
+PolicyCmdType::PolicyCmdType(const QString &type_name)
+{
+	(*this)=type_name;
+}
+
+void PolicyCmdType::getTypes(QStringList &tipos)
+{
+	BaseType::getTypes(tipos,offset,types_count);
+}
+
+unsigned PolicyCmdType::operator = (unsigned type_id)
+{
+	BaseType::setType(type_id,offset,types_count);
+	return(type_idx);
+}
+
+unsigned PolicyCmdType::operator = (const QString &type_name)
 {
 	unsigned type_id;
 

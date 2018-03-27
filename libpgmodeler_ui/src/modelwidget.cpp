@@ -55,6 +55,7 @@
 #include "pgmodeleruins.h"
 #include "swapobjectsidswidget.h"
 #include "genericsqlwidget.h"
+#include "policywidget.h"
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
@@ -85,8 +86,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 						 OBJ_FUNCTION, OBJ_AGGREGATE, OBJ_LANGUAGE,
 						 OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY,
 						 OBJ_ROLE, OBJ_SCHEMA, OBJ_SEQUENCE, OBJ_TYPE,
-						 OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX, OBJ_TABLESPACE,
-						 OBJ_COLLATION, OBJ_EXTENSION, OBJ_EVENT_TRIGGER, OBJ_TAG, OBJ_GENERIC_SQL };
+						 OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX, OBJ_POLICY,
+						 OBJ_TABLESPACE, OBJ_COLLATION, OBJ_EXTENSION, OBJ_EVENT_TRIGGER, OBJ_TAG,
+						 OBJ_GENERIC_SQL };
 	unsigned i, obj_cnt=sizeof(types)/sizeof(ObjectType),
 			rel_types_id[]={ BaseRelationship::RELATIONSHIP_11, BaseRelationship::RELATIONSHIP_1N,
 							 BaseRelationship::RELATIONSHIP_NN, BaseRelationship::RELATIONSHIP_DEP,
@@ -221,9 +223,11 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_remove=new QAction(QIcon(PgModelerUiNS::getIconPath("excluir")), trUtf8("Delete"), this);
 	action_remove->setShortcut(QKeySequence(trUtf8("Del")));
+    action_remove->setMenuRole(QAction::NoRole);
 
 	action_cascade_del=new QAction(QIcon(PgModelerUiNS::getIconPath("delcascade")), trUtf8("Del. cascade"), this);
 	action_cascade_del->setShortcut(QKeySequence(trUtf8("Shift+Del")));
+    action_cascade_del->setMenuRole(QAction::NoRole);
 
 	action_select_all=new QAction(QIcon(PgModelerUiNS::getIconPath("seltodos")), trUtf8("Select all"), this);
 	action_select_all->setToolTip(trUtf8("Selects all the graphical objects in the model"));
@@ -233,12 +237,15 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_copy=new QAction(QIcon(PgModelerUiNS::getIconPath("copiar")), trUtf8("Copy"), this);
 	action_copy->setShortcut(QKeySequence(trUtf8("Ctrl+C")));
+    action_copy->setMenuRole(QAction::NoRole);
 
 	action_paste=new QAction(QIcon(PgModelerUiNS::getIconPath("colar")), trUtf8("Paste"), this);
 	action_paste->setShortcut(QKeySequence(trUtf8("Ctrl+V")));
+    action_paste->setMenuRole(QAction::NoRole);
 
 	action_cut=new QAction(QIcon(PgModelerUiNS::getIconPath("recortar")), trUtf8("Cut"), this);
 	action_cut->setShortcut(QKeySequence(trUtf8("Ctrl+X")));
+    action_cut->setMenuRole(QAction::NoRole);
 
 	action_deps_refs=new QAction(QIcon(PgModelerUiNS::getIconPath("depsrefs")), trUtf8("Deps && Referrers"), this);
 
@@ -286,6 +293,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_duplicate=new QAction(QIcon(PgModelerUiNS::getIconPath("duplicate")), trUtf8("Duplicate"), this);
 	action_duplicate->setShortcut(QKeySequence(trUtf8("Ctrl+D")));
+    action_duplicate->setMenuRole(QAction::NoRole);
 
 	action_extended_attribs=new QAction(QIcon(PgModelerUiNS::getIconPath("toggleattribs")), trUtf8("Extended attributes"), this);
 	action_show_ext_attribs=new QAction(trUtf8("Show"), this);
@@ -1717,6 +1725,8 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			res=openEditingForm<Trigger, TriggerWidget, BaseTable>(object, parent_obj);
 		else if(obj_type== OBJ_INDEX)
 			res=openEditingForm<Index, IndexWidget, BaseTable>(object, parent_obj);
+		else if(obj_type== OBJ_POLICY)
+			res=openEditingForm<Policy, PolicyWidget, BaseTable>(object, parent_obj);
 		else if(obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT)
 		{
 			TableObject *tab_obj=dynamic_cast<TableObject *>(object);
@@ -3553,10 +3563,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 
 			//Configures the "New object" menu with the types at database level
 			for(i=0; i < cnt; i++)
-			{
-				//actions_new_objects[types[i]]->setShortcut(QKeySequence(shortcuts[i]));
 				new_object_menu.addAction(actions_new_objects[types[i]]);
-			}
 
 			action_new_object->setMenu(&new_object_menu);
 			popup_menu.addAction(action_new_object);
@@ -3583,14 +3590,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 		{
 			BaseObject *obj=objects[0];
 			BaseRelationship *rel=dynamic_cast<BaseRelationship *>(obj);
-			ObjectType obj_type=obj->getObjectType(),
-					types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_INDEX, OBJ_RULE, OBJ_TRIGGER },
-					sch_types[]={ OBJ_AGGREGATE, OBJ_COLLATION, OBJ_CONVERSION,
-									OBJ_DOMAIN, OBJ_EXTENSION, OBJ_FUNCTION, OBJ_OPCLASS,
-									OBJ_OPERATOR,	OBJ_OPFAMILY,	OBJ_SEQUENCE,	OBJ_TABLE,
-									OBJ_TYPE,	OBJ_VIEW };
-			unsigned tab_tp_cnt=sizeof(types)/sizeof(ObjectType),
-					sch_tp_cnt=sizeof(sch_types)/sizeof(ObjectType);
+			ObjectType obj_type=obj->getObjectType();
 
 			configureSubmenu(obj);
 			popup_menu.addAction(action_edit);
@@ -3602,13 +3602,8 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 			{
 				if(obj_type==OBJ_TABLE || obj_type == OBJ_VIEW)
 				{
-					for(i=0; i < tab_tp_cnt; i++)
-					{
-						if(obj_type == OBJ_VIEW && (types[i] == OBJ_COLUMN || types[i] == OBJ_CONSTRAINT))
-							continue;
-
-						new_object_menu.addAction(actions_new_objects[types[i]]);
-					}
+					for(auto type : BaseObject::getChildObjectTypes(obj_type))
+						new_object_menu.addAction(actions_new_objects[type]);
 
 					if(obj_type==OBJ_TABLE)
 						new_object_menu.addAction(actions_new_objects[OBJ_RELATIONSHIP]);
@@ -3618,11 +3613,10 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 				}
 				else if(obj_type==OBJ_RELATIONSHIP || obj_type==BASE_RELATIONSHIP)
 				{
-
 					if(obj_type==OBJ_RELATIONSHIP)
 					{
-						for(i=0; i < 2; i++)
-							new_object_menu.addAction(actions_new_objects[types[i]]);
+						new_object_menu.addAction(actions_new_objects[OBJ_COLUMN]);
+						new_object_menu.addAction(actions_new_objects[OBJ_CONSTRAINT]);
 
 						action_new_object->setMenu(&new_object_menu);
 						popup_menu.insertAction(action_quick_actions, action_new_object);
@@ -3661,8 +3655,8 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 				}
 				else if(obj_type == OBJ_SCHEMA)
 				{
-					for(i=0; i < sch_tp_cnt; i++)
-						new_object_menu.addAction(actions_new_objects[sch_types[i]]);
+					for(auto type : BaseObject::getChildObjectTypes(OBJ_SCHEMA))
+						new_object_menu.addAction(actions_new_objects[type]);
 
 					action_new_object->setMenu(&new_object_menu);
 					popup_menu.insertAction(action_quick_actions, action_new_object);
