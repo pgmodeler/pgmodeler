@@ -163,6 +163,9 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 							act = item_menu.addAction(delete_tb->icon(), trUtf8("Delete row(s)"), this, SLOT(markDeleteOnRows()), delete_tb->shortcut());
 							act->setEnabled(delete_tb->isEnabled());
+
+							act = item_menu.addAction(bulkedit_tb->icon(), trUtf8("Edit cell(s)"), this, SLOT(bulkDataEdit()), bulkedit_tb->shortcut());
+							act->setEnabled(bulkedit_tb->isEnabled());
 						}
 
 						item_menu.exec(QCursor::pos());
