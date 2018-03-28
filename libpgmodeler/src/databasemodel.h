@@ -345,8 +345,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		/*! \brief Searchs and returns the relationship between the specified tables. If the second parameter
 		 is ommited (nullptr), the method returns the first relationship where the source table is
-		 participating */
-		BaseRelationship *getRelationship(BaseTable *src_tab, BaseTable *dst_tab);
+		 participating. The optional parameter ref_fk will search for foreign key relationships which the reference foreign key
+		is the one provided */
+		BaseRelationship *getRelationship(BaseTable *src_tab, BaseTable *dst_tab, Constraint *ref_fk = nullptr);
 
 		//! \brief Searchs and returns all the relationships that the specified table participates
 		vector<BaseRelationship *> getRelationships(BaseTable *tab);

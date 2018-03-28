@@ -617,23 +617,18 @@ void RelationshipWidget::listAdvancedObjects(void)
 		}
 		else if(base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
 		{
-			tab=dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::DST_TABLE));
-			dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SRC_TABLE))->getForeignKeys(constrs,false,tab);
+			Constraint *fk = base_rel->getReferenceForeignKey();
 
-			if(!base_rel->isSelfRelationship())
+			if(fk)
 			{
-				tab=dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SRC_TABLE));
-				dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::DST_TABLE))->getForeignKeys(constrs,false,tab);
-			}
+				int row = 0;
 
-			count=constrs.size();
-
-			for(i=0, i1=advanced_objs_tab->getRowCount(); i < count; i++, i1++)
-			{
 				advanced_objs_tab->addRow();
-				advanced_objs_tab->setCellText(constrs[i]->getName(),i1,0);
-				advanced_objs_tab->setCellText(constrs[i]->getTypeName(),i1,1);
-				advanced_objs_tab->setRowData(QVariant::fromValue<void *>(constrs[i]), i1);
+				row = advanced_objs_tab->getRowCount() - 1;
+
+				advanced_objs_tab->setCellText(fk->getName(), row ,0);
+				advanced_objs_tab->setCellText(fk->getTypeName(), row, 1);
+				advanced_objs_tab->setRowData(QVariant::fromValue<void *>(fk), row);
 			}
 		}
 

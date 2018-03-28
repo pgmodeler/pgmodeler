@@ -1124,15 +1124,14 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 					(rel->getTable(BaseRelationship::SRC_TABLE)==table ||
 					 rel->getTable(BaseRelationship::DST_TABLE)==table))
 			{
+				Constraint *fk = rel->getReferenceForeignKey();
 				if(rel->getTable(BaseRelationship::SRC_TABLE)==table)
 					ref_tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DST_TABLE));
 				else
 					ref_tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::SRC_TABLE));
 
 				//Removes the relationship if the table does'nt references the 'ref_tab'
-				if(!table->isReferTableOnForeignKey(ref_tab) &&
-						(rel->isSelfRelationship() ||
-						 (!rel->isSelfRelationship() && !ref_tab->isReferTableOnForeignKey(table))))
+				if(fk->getReferencedTable() == ref_tab && table->getObjectIndex(fk) < 0)
 				{
 					removeRelationship(rel);
 					itr1=base_relationships.begin() + idx;
@@ -1140,9 +1139,7 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 				}
 				else
 				{
-					if(!rel->isSelfRelationship() && ref_tab->isReferTableOnForeignKey(table))
-						rel->setModified(true);
-
+					rel->setModified(true);
 					itr1++; idx++;
 				}
 			}
@@ -1160,11 +1157,12 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 			itr++;
 
 			//Only creates the relationship if does'nt exist one between the tables
-			rel=getRelationship(table, ref_tab);
+			rel=getRelationship(table, ref_tab, fk);
 
 			if(!rel && ref_tab->getDatabase()==this)
 			{
 				rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_FK, table, ref_tab, false, false);
+				rel->setReferenceForeignKey(fk);
 				rel->setCustomColor(Qt::transparent);
 
 				/* Workaround: In some cases the combination of the two tablenames can generate a duplicated relationship
@@ -1175,10 +1173,7 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 
 				addRelationship(rel);
 			}
-			else if(rel && rel->isBidirectional())
-				rel->setModified(true);
 		}
-
 	}
 }
 
@@ -1938,7 +1933,10 @@ void DatabaseModel::addRelationship(BaseRelationship *rel, int obj_idx)
 			tab2=rel->getTable(BaseRelationship::DST_TABLE);
 
 			//Raises an error if already exists an relationship between the tables
-			if(getRelationship(tab1,tab2))
+			if(rel->getRelationshipType() != Relationship::RELATIONSHIP_1N &&
+				 rel->getRelationshipType() != Relationship::RELATIONSHIP_NN &&
+				 rel->getRelationshipType() != Relationship::RELATIONSHIP_FK &&
+				 getRelationship(tab1,tab2))
 			{
 				msg=Exception::getErrorMessage(ERR_DUPLIC_RELATIONSHIP)
 					.arg(tab1->getName(true))
@@ -2029,7 +2027,7 @@ BaseRelationship *DatabaseModel::getRelationship(const QString &name)
 	return(rel);
 }
 
-BaseRelationship *DatabaseModel::getRelationship(BaseTable *src_tab, BaseTable *dst_tab)
+BaseRelationship *DatabaseModel::getRelationship(BaseTable *src_tab, BaseTable *dst_tab, Constraint *ref_fk)
 {
 	vector<BaseObject *>::iterator itr, itr_end;
 	vector<BaseObject *> rel_list;
@@ -2045,9 +2043,7 @@ BaseRelationship *DatabaseModel::getRelationship(BaseTable *src_tab, BaseTable *
 			search_uniq_tab=true;
 		}
 
-
-		if(src_tab->getObjectType()==OBJ_VIEW ||
-				dst_tab->getObjectType()==OBJ_VIEW)
+		if(ref_fk || src_tab->getObjectType()==OBJ_VIEW || dst_tab->getObjectType()==OBJ_VIEW)
 		{
 			itr=base_relationships.begin();
 			itr_end=base_relationships.end();
@@ -2066,9 +2062,10 @@ BaseRelationship *DatabaseModel::getRelationship(BaseTable *src_tab, BaseTable *
 			tab1=rel->getTable(BaseRelationship::SRC_TABLE);
 			tab2=rel->getTable(BaseRelationship::DST_TABLE);
 
-			found=((tab1==src_tab && tab2==dst_tab) ||
-				   (tab2==src_tab && tab1==dst_tab) ||
-				   (search_uniq_tab && (tab1==src_tab || tab2==src_tab)));
+			found=((!ref_fk || (ref_fk && rel->getReferenceForeignKey() == ref_fk)) &&
+						 ((tab1==src_tab && tab2==dst_tab) ||
+							(tab2==src_tab && tab1==dst_tab) ||
+							(search_uniq_tab && (tab1==src_tab || tab2==src_tab))));
 
 			if(!found)
 			{ rel=nullptr; itr++; }
@@ -6084,7 +6081,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 
 			/* Creates the fk relationship if it not exists. This generally happens when a foreign key is
 			added to the table after its creation. */
-			if(!base_rel && attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_FK)
+			if(/*!base_rel &&*/ attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_FK)
 			{
 				vector<Constraint *> fks;
 				dynamic_cast<Table *>(tables[0])->getForeignKeys(fks, false, dynamic_cast<Table *>(tables[1]));
@@ -6261,8 +6258,30 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 	base_rel->setProtected(protect);
 	base_rel->setCustomColor(custom_color);
 
+	/* If the FK relationship does not reference a foreign key (models generated in older versions)
+	 * we need to assign them to the respective relationships */
 	if(base_rel && base_rel->getObjectType()==BASE_RELATIONSHIP)
 		base_rel->connectRelationship();
+
+	if(base_rel &&
+		 base_rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_FK &&
+		 !base_rel->getReferenceForeignKey())
+	{
+		Table *src_tab = dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SRC_TABLE)),
+				*dst_tab = dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::DST_TABLE));
+		vector<Constraint *> fks;
+
+		src_tab->getForeignKeys(fks, false, dst_tab);
+
+		for(auto fk : fks)
+		{
+			if(!getRelationship(src_tab, dst_tab, fk))
+			{
+				base_rel->setReferenceForeignKey(fk);
+				break;
+			}
+		}
+	}
 
 	return(base_rel);
 }

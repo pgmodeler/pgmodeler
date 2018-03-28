@@ -596,7 +596,7 @@ void RelationshipView::configureLine(void)
 		QString tool_tip;
 		QGraphicsItem *item=nullptr;
 		int i, i1, count, idx_lin_desc=0;
-		bool conn_same_sides = false, bidirectional=base_rel->isBidirectional(),
+		bool conn_same_sides = false,
 				conn_horiz_sides[2] = { false, false }, conn_vert_sides[2] = { false, false };
 		unsigned rel_type = base_rel->getRelationshipType();
 
@@ -643,10 +643,9 @@ void RelationshipView::configureLine(void)
 		else
 		{
 			Relationship *rel=dynamic_cast<Relationship *>(base_rel);
-			bool rel_1n=(!bidirectional &&
-									 (rel_type==Relationship::RELATIONSHIP_11 ||
+			bool rel_1n= (rel_type==Relationship::RELATIONSHIP_11 ||
 										rel_type==Relationship::RELATIONSHIP_1N ||
-										rel_type==Relationship::RELATIONSHIP_FK));
+										rel_type==Relationship::RELATIONSHIP_FK);
 
 			if(rel &&
 				 rel->getRelationshipType()==Relationship::RELATIONSHIP_11 &&
@@ -1054,7 +1053,7 @@ void RelationshipView::configureLine(void)
 				lin=lines[i];
 
 			//If the relationship is identifier or bidirectional, the line has its thickness modified
-			if(bidirectional || (rel && (rel->isIdentifier() && i >= idx_lin_desc)))
+			if(rel && (rel->isIdentifier() && i >= idx_lin_desc))
 				pen.setWidthF(OBJ_BORDER_WIDTH * 1.90f);
 			else
 				pen.setWidthF(OBJ_BORDER_WIDTH * 1.45f);
@@ -1480,7 +1479,7 @@ void RelationshipView::configureCrowsFootDescriptors(void)
 					rel_type != BaseRelationship::RELATIONSHIP_NN && rel_type != BaseRelationship::RELATIONSHIP_FK) ||
 
 				 (tab_id == BaseRelationship::DST_TABLE &&
-					(rel_type == BaseRelationship::RELATIONSHIP_11 || (rel_type == BaseRelationship::RELATIONSHIP_FK && !base_rel->isBidirectional()))))
+					(rel_type == BaseRelationship::RELATIONSHIP_11 || rel_type == BaseRelationship::RELATIONSHIP_FK)))
 			{
 
 				line_item = cf_lines[tab_id]->at(lin_idx++);
@@ -1541,8 +1540,7 @@ void RelationshipView::configureCrowsFootDescriptors(void)
 			}
 			else if(!mandatory[tab_id] &&
 							((rel_type != BaseRelationship::RELATIONSHIP_FK) ||
-							 (tab_id == BaseRelationship::SRC_TABLE && rel_type == BaseRelationship::RELATIONSHIP_FK) ||
-							 (tab_id == BaseRelationship::DST_TABLE && rel_type == BaseRelationship::RELATIONSHIP_FK && base_rel->isBidirectional())))
+							 (tab_id == BaseRelationship::SRC_TABLE && rel_type == BaseRelationship::RELATIONSHIP_FK)))
 			{
 				//Configuring the circle which describes the optional cardinality
 				circle_item = round_cf_descriptors[tab_id];
