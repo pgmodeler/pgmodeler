@@ -2089,7 +2089,7 @@ vector<BaseRelationship *> DatabaseModel::getRelationships(BaseTable *tab)
 		base_rel=dynamic_cast<BaseRelationship *>(obj);
 
 		if(base_rel->getTable(BaseRelationship::SRC_TABLE)==tab ||
-				base_rel->getTable(BaseRelationship::DST_TABLE)==tab)
+			 base_rel->getTable(BaseRelationship::DST_TABLE)==tab)
 			aux_rels.push_back(base_rel);
 	}
 
