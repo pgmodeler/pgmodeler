@@ -649,16 +649,28 @@ void RelationshipWidget::showAdvancedObject(int row)
 	Constraint *constr=nullptr;
 	Column *col=nullptr;
 	ObjectType obj_type=object->getObjectType();
+	bool is_protected = false;
 
 	if(obj_type==OBJ_COLUMN)
 	{
 		col=dynamic_cast<Column *>(object);
+		is_protected = col->isProtected();
 		openEditingForm<Column,ColumnWidget>(col, col->getParentTable());
 	}
 	else if(obj_type==OBJ_CONSTRAINT)
 	{
 		constr=dynamic_cast<Constraint *>(object);
+
+		if(!constr->isAddedByRelationship())
+		{
+			is_protected = constr->isProtected();
+			constr->setProtected(true);
+		}
+
 		openEditingForm<Constraint, ConstraintWidget>(constr, constr->getParentTable());
+
+		if(!constr->isAddedByRelationship())
+			constr->setProtected(is_protected);
 	}
 	else
 	{
