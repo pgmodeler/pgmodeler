@@ -121,21 +121,6 @@ PermissionWidget::~PermissionWidget(void)
 	delete(object_selection_wgt);
 }
 
-void PermissionWidget::hideEvent(QHideEvent *event)
-{
-	disconnect(object_selection_wgt,0,this,0);
-	cancelOperation();
-
-	permissions_tab->blockSignals(true);
-	permissions_tab->removeRows();
-	permissions_tab->blockSignals(false);
-
-	if(perms_changed)
-		emit s_objectManipulated();
-
-	BaseObjectWidget::hideEvent(event);
-}
-
 void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, BaseObject *object)
 {
 	BaseObjectWidget::setAttributes(model,object,parent_obj);
@@ -554,5 +539,8 @@ void PermissionWidget::updateCodePreview(void)
 
 void PermissionWidget::applyConfiguration(void)
 {
+	if(perms_changed)
+		emit s_objectManipulated();
+
 	emit s_closeRequested();
 }

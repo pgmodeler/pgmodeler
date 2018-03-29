@@ -55,8 +55,6 @@ class ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
 		//! \brief Adds the column to the column's table at the specified row
 		void addColumn(Column *column, unsigned col_id, int row);
 		
-		void hideEvent(QHideEvent *event);
-		
 	public:
 		ConstraintWidget(QWidget * parent = 0);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *parent_obj, Constraint *constr);

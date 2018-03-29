@@ -46,7 +46,6 @@ class RuleWidget: public BaseObjectWidget, public Ui::RuleWidget {
 		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseTable *parent_tab, Rule *rule);
 
 	private slots:
-		void hideEvent(QHideEvent *event);
 		void handleCommand(int row);
 		void editCommand(int row);
 

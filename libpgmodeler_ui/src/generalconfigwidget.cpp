@@ -641,8 +641,3 @@ void GeneralConfigWidget::selectSourceEditor(void)
 	if(sel_editor_dlg.result()==QDialog::Accepted)
 		source_editor_edt->setText(sel_editor_dlg.selectedFiles().at(0));
 }
-
-void GeneralConfigWidget::hideEvent(QHideEvent *)
-{
-	settings_twg->setCurrentIndex(0);
-}

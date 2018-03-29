@@ -68,8 +68,6 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 
 		void clearReferenceForm(void);
 
-		void hideEvent(QHideEvent *);
-
 		//! \brief Returns the object table according with the child type
 		ObjectsTableWidget *getObjectTable(ObjectType obj_type);
 		ObjectType getObjectType(QObject *sender);

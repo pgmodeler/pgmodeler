@@ -85,8 +85,6 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		QSize getIdealSize(void);
 
 	private slots:
-		void hideEvent(QHideEvent *event);
-
 		void addObject(void);
 		void editObject(int row);
 		void removeObject(int row);

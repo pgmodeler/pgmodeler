@@ -40,12 +40,6 @@ SequenceWidget::SequenceWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_SE
 	}
 }
 
-void SequenceWidget::hideEvent(QHideEvent *event)
-{
-	column_sel->clearSelector();
-	BaseObjectWidget::hideEvent(event);
-}
-
 void SequenceWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Sequence *sequence)
 {
 	column_sel->setModel(model);

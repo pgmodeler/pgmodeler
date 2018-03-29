@@ -36,8 +36,6 @@ class ParameterWidget: public BaseObjectWidget, public Ui::ParameterWidget {
 		PgSQLTypeWidget *data_type;
 		Parameter parameter;
 
-		void hideEvent(QHideEvent *event);
-
 	public:
 		ParameterWidget(QWidget * parent = 0);
 		void setAttributes(Parameter parameter, DatabaseModel *model);

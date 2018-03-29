@@ -58,8 +58,6 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 		template<class Class, class ClassWidget>
 		int openEditingForm(TableObject *object);
 
-		void hideEvent(QHideEvent *event);
-
 	public:
 		TableWidget(QWidget * parent = 0);
 

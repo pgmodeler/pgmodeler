@@ -52,8 +52,6 @@ class PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
 		emit the signal s_objectManipulated() */
 		bool perms_changed;
 
-		void hideEvent(QHideEvent *event);
-
 	public:
 		PermissionWidget(QWidget * parent = 0);
 		~PermissionWidget(void);

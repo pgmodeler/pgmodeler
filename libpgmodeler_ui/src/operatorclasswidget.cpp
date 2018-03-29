@@ -98,16 +98,6 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 	}
 }
 
-void OperatorClassWidget::hideEvent(QHideEvent *event)
-{
-	function_sel->clearSelector();
-	operator_sel->clearSelector();
-	stg_num_sb->setValue(1);
-	elements_tab->removeRows();
-	selectElementType(0);
-	BaseObjectWidget::hideEvent(event);
-}
-
 void OperatorClassWidget::selectElementType(int elem_type)
 {
 	unsigned sel_idx=static_cast<unsigned>(elem_type);

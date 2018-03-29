@@ -66,15 +66,6 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RULE)
 	}
 }
 
-void RuleWidget::hideEvent(QHideEvent *event)
-{
-	BaseObjectWidget::hideEvent(event);
-	comando_txt->clear();
-	commands_tab->removeRows();
-	event_cmb->setCurrentIndex(0);
-	exec_type_cmb->setCurrentIndex(0);
-}
-
 void RuleWidget::editCommand(int row)
 {
 	comando_txt->setPlainText(commands_tab->getCellText(row,0));

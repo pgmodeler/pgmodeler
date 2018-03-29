@@ -135,32 +135,6 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 	}
 }
 
-void TypeWidget::hideEvent(QHideEvent *event)
-{
-	enumerations_tab->removeRows();
-	attributes_tab->removeRows();
-
-	for(unsigned i=Type::INPUT_FUNC; i <= Type::SUBTYPE_DIFF_FUNC; i++)
-		functions_sel[i]->clearSelector();
-
-	base_type_rb->setChecked(true);
-	internal_len_sb->setValue(0);
-	by_value_chk->setChecked(false);
-	preferred_chk->setChecked(false);
-	delimiter_edt->clear();
-	default_value_edt->clear();;
-	category_cmb->setCurrentIndex(0);
-	storage_cmb->setCurrentIndex(0);
-	alignment_cmb->setCurrentIndex(0);
-	base_attribs_twg->setCurrentIndex(0);
-	opclass_sel->clearSelector();
-
-	collation_sel->setEnabled(true);
-	collation_lbl->setEnabled(true);
-
-	BaseObjectWidget::hideEvent(event);
-}
-
 void TypeWidget::selectTypeConfiguration(void)
 {
 	base_attribs_twg->setVisible(base_type_rb->isChecked());

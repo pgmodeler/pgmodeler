@@ -196,36 +196,6 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 	}
 }
 
-void RelationshipWidget::hideEvent(QHideEvent *event)
-{
-	BaseRelationship *rel=dynamic_cast<BaseRelationship *>(this->object);
-
-	custom_color_chk->setChecked(false);
-	identifier_chk->setChecked(false);
-	table1_mand_chk->setChecked(false);
-	table2_mand_chk->setChecked(false);
-	relnn_tab_name_edt->clear();
-	deferrable_chk->setChecked(false);
-	deferral_cmb->setCurrentIndex(0);
-	rel_attribs_tbw->setCurrentIndex(0);
-	del_action_cmb->setCurrentIndex(0);
-	upd_action_cmb->setCurrentIndex(0);
-
-	attributes_tab->blockSignals(true);
-	constraints_tab->blockSignals(true);
-	attributes_tab->removeRows();
-	constraints_tab->removeRows();
-	attributes_tab->blockSignals(false);
-	constraints_tab->blockSignals(false);
-
-	rel_columns_lst->clear();
-
-	if(rel && !rel->isModified())
-		this->cancelConfiguration();
-
-	BaseObjectWidget::hideEvent(event);
-}
-
 void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Table *src_tab, Table *dst_tab, unsigned rel_type)
 {
 	Relationship *rel=nullptr;

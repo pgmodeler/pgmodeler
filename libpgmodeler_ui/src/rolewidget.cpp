@@ -107,33 +107,6 @@ void RoleWidget::selectMemberRole(void)
 	object_selection_wgt->show();
 }
 
-void RoleWidget::hideEvent(QHideEvent *event)
-{
-	unsigned i;
-
-	for(i=0; i < 3; i++)
-		members_tab[i]->blockSignals(true);
-
-	for(i=0; i < 3; i++)
-	{
-		members_tab[i]->removeRows();
-		members_tab[i]->blockSignals(false);
-	}
-
-	members_twg->setCurrentIndex(0);
-	passwd_edt->clear();
-	conn_limit_sb->setValue(conn_limit_sb->minimum());
-	superusr_chk->setChecked(false);
-	inh_perm_chk->setChecked(false);
-	create_db_chk->setChecked(false);
-	can_login_chk->setChecked(false);
-	create_role_chk->setChecked(false);
-	encrypt_pass_chk->setChecked(false);
-	bypass_rls_chk->setChecked(false);
-
-	BaseObjectWidget::hideEvent(event);
-}
-
 void RoleWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Role *role)
 {
 	if(role)

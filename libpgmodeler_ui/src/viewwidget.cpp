@@ -440,30 +440,6 @@ void ViewWidget::listObjects(ObjectType obj_type)
 	}
 }
 
-void ViewWidget::hideEvent(QHideEvent *evento)
-{
-	//View *view=dynamic_cast<View *>(this->object);
-	ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE };
-
-	references_tab->removeRows();
-	tabWidget->setCurrentIndex(0);
-	cte_expression_txt->clear();
-
-	clearReferenceForm();
-
-	for(unsigned i=0; i < sizeof(types)/sizeof(ObjectType); i++)
-	{
-		objects_tab_map[types[i]]->blockSignals(true);
-		objects_tab_map[types[i]]->removeRows();
-		objects_tab_map[types[i]]->blockSignals(false);
-	}
-
-	if(this->new_object)// && !view->isModified())
-		this->cancelConfiguration();
-
-	BaseObjectWidget::hideEvent(evento);
-}
-
 void ViewWidget::clearReferenceForm(void)
 {
 	column_sel->clearSelector();

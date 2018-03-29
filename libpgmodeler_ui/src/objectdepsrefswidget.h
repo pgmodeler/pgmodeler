@@ -32,9 +32,9 @@
 class ObjectDepsRefsWidget: public BaseObjectWidget, public Ui::ObjectDepsRefsWidget {
 	private:
 		Q_OBJECT
+
 		ModelWidget *model_wgt;
 
-		void hideEvent(QHideEvent *event);
 		void setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj);
 
 	public:

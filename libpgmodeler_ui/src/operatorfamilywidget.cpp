@@ -45,12 +45,6 @@ OperatorFamilyWidget::OperatorFamilyWidget(QWidget *parent): BaseObjectWidget(pa
 	setMinimumSize(500, 290);
 }
 
-void OperatorFamilyWidget::hideEvent(QHideEvent *event)
-{
-	indexing_cmb->setCurrentIndex(0);
-	BaseObjectWidget::hideEvent(event);
-}
-
 void OperatorFamilyWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, OperatorFamily *op_family)
 {
 	BaseObjectWidget::setAttributes(model, op_list, op_family, schema);

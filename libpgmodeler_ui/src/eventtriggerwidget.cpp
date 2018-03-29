@@ -73,13 +73,6 @@ EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent
 	setMinimumSize(500, 440);
 }
 
-void EventTriggerWidget::hideEvent(QHideEvent *)
-{
-	filter_tab->removeRows();
-	event_cmb->setCurrentIndex(0);
-	tag_edt->clear();
-}
-
 void EventTriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_list, EventTrigger *event_trig)
 {
 	BaseObjectWidget::setAttributes(model, op_list, event_trig);

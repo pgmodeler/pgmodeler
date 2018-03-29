@@ -86,15 +86,6 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN
 	}
 }
 
-void ColumnWidget::hideEvent(QHideEvent *event)
-{
-	def_value_txt->clear();
-	notnull_chk->setChecked(false);
-	sequence_sel->clearSelector();
-	expression_rb->setChecked(true);
-	BaseObjectWidget::hideEvent(event);
-}
-
 void ColumnWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *parent_obj, Column *column)
 {
 	PgSQLType type;

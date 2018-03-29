@@ -78,23 +78,6 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_OP
 	}
 }
 
-void OperatorWidget::hideEvent(QHideEvent *event)
-{
-	unsigned i;
-
-	hashes_chk->setChecked(false);
-	merges_chk->setChecked(false);
-
-	for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICT; i++)
-		functions_sel[i]->clearSelector();
-
-	for(i=Operator::OPER_COMMUTATOR; i <= Operator::OPER_NEGATOR; i++)
-		operators_sel[i]->clearSelector();
-
-	attributes_twg->setCurrentIndex(0);
-	BaseObjectWidget::hideEvent(event);
-}
-
 void OperatorWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Operator *oper)
 {
 	unsigned i;

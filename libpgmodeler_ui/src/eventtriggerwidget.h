@@ -37,8 +37,6 @@ class EventTriggerWidget: public BaseObjectWidget, public Ui::EventTriggerWidget
 		
 		ObjectSelectorWidget *function_sel;
 		
-		void hideEvent(QHideEvent*);
-		
 	public:
 		EventTriggerWidget(QWidget * parent = 0);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, EventTrigger *event_trig);

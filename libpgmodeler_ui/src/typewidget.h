@@ -60,8 +60,6 @@ class TypeWidget: public BaseObjectWidget, public Ui::TypeWidget {
 		//! \brief Composite type attribute datatype configurator
 		PgSQLTypeWidget *attrib_type_wgt;
 
-		void hideEvent(QHideEvent *event);
-
 	public:
 		TypeWidget(QWidget * parent = 0);
 

@@ -83,16 +83,6 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 	}
 }
 
-void AggregateWidget::hideEvent(QHideEvent *event)
-{
-	final_func_sel->clearSelector();
-	transition_func_sel->clearSelector();
-	sort_op_sel->clearSelector();
-	input_types_tab->removeRows();
-	initial_cond_txt->clear();
-	BaseObjectWidget::hideEvent(event);
-}
-
 void AggregateWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Aggregate *aggregate)
 {
 	unsigned count, i;

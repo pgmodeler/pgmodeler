@@ -36,8 +36,6 @@ class LanguageWidget: public BaseObjectWidget, public Ui::LanguageWidget {
 		*func_validator_sel,
 		*func_inline_sel;
 
-		void hideEvent(QHideEvent *event);
-
 	public:
 		LanguageWidget(QWidget * parent = 0);
 
