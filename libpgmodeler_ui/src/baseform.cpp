@@ -115,6 +115,11 @@ void BaseForm::resizeForm(QWidget *widget)
 	this->resize(this->minimumSize());
 }
 
+void BaseForm::closeEvent(QCloseEvent *)
+{
+	this->reject();
+}
+
 void BaseForm::setMainWidget(BaseObjectWidget *widget)
 {
 	if(!widget)	return;
@@ -128,8 +133,8 @@ void BaseForm::setMainWidget(BaseObjectWidget *widget)
 	resizeForm(widget);
 	setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
 
-	connect(cancel_btn, SIGNAL(clicked(bool)), widget, SLOT(cancelConfiguration()));
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(reject()));
+	connect(this, SIGNAL(rejected()), widget, SLOT(cancelConfiguration()));
 	connect(apply_ok_btn, SIGNAL(clicked(bool)), widget, SLOT(applyConfiguration()));
 	connect(widget, SIGNAL(s_closeRequested()), this, SLOT(accept()));
 }
