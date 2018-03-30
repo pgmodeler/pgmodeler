@@ -111,8 +111,8 @@ void BaseForm::resizeForm(QWidget *widget)
 	if(curr_h > screen->size().height())
 		curr_h = screen->size().height() * 0.80;
 
-	this->setMinimumSize(curr_w, curr_h);
-	this->resize(this->minimumSize());
+	this->setMinimumSize(min_size);
+	this->resize(curr_w, curr_h);
 }
 
 void BaseForm::closeEvent(QCloseEvent *)
