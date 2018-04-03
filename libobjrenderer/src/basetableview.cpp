@@ -74,8 +74,6 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 
 	this->setAcceptHoverEvents(true);
 	sel_child_obj=nullptr;
-	connected_rels=0;
-
 	configurePlaceholder();
 }
 
@@ -260,10 +258,48 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 	}
 }
 
-void BaseTableView::updateConnectedRelsCount(int inc)
+void BaseTableView::addConnectedRelationship(BaseRelationship *base_rel)
 {
-	connected_rels+=inc;
-	if(connected_rels < 0) connected_rels=0;
+	BaseTable *tab = dynamic_cast<BaseTable *>(getSourceObject());
+
+	if(!base_rel ||
+		 (base_rel &&
+			base_rel->getTable(BaseRelationship::SRC_TABLE) != tab &&
+			base_rel->getTable(BaseRelationship::DST_TABLE) != tab))
+		return;
+
+	connected_rels.push_back(base_rel);
+}
+
+void BaseTableView::removeConnectedRelationship(BaseRelationship *base_rel)
+{
+	connected_rels.erase(std::find(connected_rels.begin(), connected_rels.end(), base_rel));
+}
+
+int BaseTableView::getConnectedRelationshipIndex(BaseRelationship *base_rel)
+{
+	vector<BaseRelationship *>::iterator itr = std::find(connected_rels.begin(), connected_rels.end(), base_rel);
+
+	if(itr != connected_rels.end())
+		return(itr - connected_rels.begin());
+
+	return(-1);
+}
+
+unsigned BaseTableView::getConnectedRelsCount(BaseTable *src_tab, BaseTable *dst_tab)
+{
+	unsigned count = 0;
+
+	for(auto rel : connected_rels)
+	{
+		if((rel->getTable(BaseRelationship::SRC_TABLE) == src_tab &&
+				rel->getTable(BaseRelationship::DST_TABLE) == dst_tab) ||
+			 (rel->getTable(BaseRelationship::SRC_TABLE) == dst_tab &&
+							 rel->getTable(BaseRelationship::DST_TABLE) == src_tab))
+			count++;
+	}
+
+	return(count);
 }
 
 void BaseTableView::configureTag(void)
@@ -427,7 +463,7 @@ float BaseTableView::calculateWidth(void)
 
 int BaseTableView::getConnectRelsCount(void)
 {
-	return(connected_rels);
+	return(connected_rels.size());
 }
 
 void BaseTableView::requestRelationshipsUpdate(void)
@@ -437,6 +473,6 @@ void BaseTableView::requestRelationshipsUpdate(void)
 
 void BaseTableView::togglePlaceholder(bool value)
 {
-	BaseObjectView::togglePlaceholder(connected_rels > 0 && value);
+	BaseObjectView::togglePlaceholder(!connected_rels.empty() && value);
 }
 
