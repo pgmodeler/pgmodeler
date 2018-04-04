@@ -29,21 +29,6 @@ TextboxWidget::TextboxWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TEXT
 	setMinimumSize(500, 200);
 }
 
-void TextboxWidget::hideEvent(QHideEvent *event)
-{
-	QPalette palette;
-
-	text_txt->clear();
-	bold_chk->setChecked(false);
-	italic_chk->setChecked(false);
-	underline_chk->setChecked(false);
-
-	palette.setColor(QPalette::Button, QColor(0,0,0));
-	color_select_tb->setPalette(palette);
-
-	BaseObjectWidget::hideEvent(event);
-}
-
 void TextboxWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Textbox *txtbox, double obj_px, double obj_py)
 {
 	if(txtbox)

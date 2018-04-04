@@ -31,7 +31,6 @@
 class TextboxWidget: public BaseObjectWidget, public Ui::TextboxWidget {
 	private:
 		Q_OBJECT
-		void hideEvent(QHideEvent *event);
 
 	public:
 		TextboxWidget(QWidget * parent = 0);

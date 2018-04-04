@@ -64,15 +64,6 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DOMAIN
 	}
 }
 
-void DomainWidget::hideEvent(QHideEvent *event)
-{
-	def_value_edt->clear();
-	check_expr_txt->clear();
-	constr_name_edt->clear();
-	not_null_chk->setChecked(false);
-	BaseObjectWidget::hideEvent(event);
-}
-
 void DomainWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Domain *domain)
 {
 	PgSQLType type;

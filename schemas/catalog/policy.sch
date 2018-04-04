@@ -5,20 +5,30 @@
 %if ({pgsql-ver} >=f "9.5") %then
 
     %if {list} %then
-        [SELECT pl.oid, polname AS name FROM pg_policy AS pl]
+        [SELECT pl.oid, polname AS name FROM pg_policy AS pl ]
+
+        %if {schema} %then
+        [ LEFT JOIN pg_class AS tb ON pl.polrelid = tb.oid
+          LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace
+          WHERE nspname= ] '{schema}'
+
+            %if {table} %then
+                [ AND tb.relkind='r' AND tb.relname=] '{table}'
+            %end
+            
+          [ AND ] 
+        %else
+         [ WHERE ]
+        %end
 
         %if {last-sys-oid} %then
-            [ WHERE pl.oid ] {oid-filter-op} $sp {last-sys-oid}
+            [ pl.oid ] {oid-filter-op} $sp {last-sys-oid}
+        %end
+                
+        %if {not-ext-object} %then
+            [ AND ]( {not-ext-object} )
         %end
 
-        %if {not-ext-object} %then
-            %if {last-sys-oid} %then
-                [ AND ]
-            %else
-                [ WHERE ]
-            %end
-            ( {not-ext-object} )
-        %end
     %else
         [SELECT pl.oid, pl.polname AS name, pl.polrelid AS table, ]
 

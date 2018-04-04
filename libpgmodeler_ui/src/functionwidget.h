@@ -63,8 +63,6 @@ class FunctionWidget: public BaseObjectWidget, public Ui::FunctionWidget  {
 		//! \brief Validates the new function configuration in relation to the other objects that references it.
 		void validateConfiguredFunction(void);
 
-		void hideEvent(QHideEvent *event);
-
 	public:
 		FunctionWidget(QWidget * parent = 0);
 

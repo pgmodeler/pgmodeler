@@ -56,13 +56,6 @@ ConversionWidget::ConversionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	}
 }
 
-void ConversionWidget::hideEvent(QHideEvent *event)
-{
-	conv_func_sel->clearSelector();
-	default_conv_chk->setChecked(false);
-	BaseObjectWidget::hideEvent(event);
-}
-
 void ConversionWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Conversion *conv)
 {
 	BaseObjectWidget::setAttributes(model, op_list, conv, schema);

@@ -44,6 +44,10 @@
 $br $tb [ src-table=] "{src-table}" 
 $br $tb [ dst-table=] "{dst-table}"
 
+%if {reference-fk} %then
+[ reference-fk=] "{reference-fk}" 
+%end
+
 
 %if %not {relgen} %and %not {reldep} %then
   $br $tb

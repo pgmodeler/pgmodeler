@@ -163,32 +163,6 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	setMinimumSize(600, 610);
 }
 
-void TableWidget::hideEvent(QHideEvent *event)
-{
-	map<ObjectType, ObjectsTableWidget *>::iterator itr, itr_end;
-	Table *tab=dynamic_cast<Table *>(this->object);
-
-	parent_tables->removeRows();
-	with_oids_chk->setChecked(false);
-	unlogged_chk->setChecked(false);
-	attributes_tbw->setCurrentIndex(0);
-
-	itr=objects_tab_map.begin();
-	itr_end=objects_tab_map.end();
-	while(itr!=itr_end)
-	{
-		(itr->second)->blockSignals(true);
-		(itr->second)->removeRows();
-		(itr->second)->blockSignals(false);
-		itr++;
-	}
-
-	if(this->new_object && !tab->isModified())
-		this->cancelConfiguration();
-
-	BaseObjectWidget::hideEvent(event);
-}
-
 template<class Class, class WidgetClass>
 int TableWidget::openEditingForm(TableObject *object)
 {

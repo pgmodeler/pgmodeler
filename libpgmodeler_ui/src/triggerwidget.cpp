@@ -189,36 +189,6 @@ void TriggerWidget::editArgument(int lin_idx)
 	argument_edt->setText(arguments_tab->getCellText(lin_idx, 0));
 }
 
-void TriggerWidget::hideEvent(QHideEvent *event)
-{
-	BaseObjectWidget::hideEvent(event);
-
-	cond_expr_txt->clear();
-	column_cmb->clear();
-	argument_edt->clear();
-
-	deferrable_chk->setChecked(false);
-	firing_mode_cmb->setCurrentIndex(0);
-	deferral_type_cmb->setCurrentIndex(0);
-
-	columns_tab->blockSignals(true);
-	arguments_tab->blockSignals(true);
-	columns_tab->removeRows();
-	arguments_tab->removeRows();
-	columns_tab->blockSignals(false);
-	arguments_tab->blockSignals(false);
-
-	insert_chk->setChecked(false);
-	update_chk->setChecked(false);
-	delete_chk->setChecked(false);
-	truncate_chk->setChecked(false);
-
-	function_sel->clearSelector();
-	ref_table_sel->clearSelector();
-
-	arg_cols_tbw->setCurrentIndex(0);
-}
-
 void TriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseTable *parent_table, Trigger *trigger)
 {
 	unsigned count=0, i;

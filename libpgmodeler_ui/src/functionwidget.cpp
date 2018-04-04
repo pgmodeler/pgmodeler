@@ -347,19 +347,6 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 	ret_type->setAttributes(aux_type, model);
 }
 
-void FunctionWidget::hideEvent(QHideEvent *event)
-{
-	language_cmb->clear();
-	parameters_tab->removeRows();
-	return_tab->removeRows();
-	source_code_txt->clear();
-	symbol_edt->clear();
-	library_edt->clear();
-	func_config_twg->setCurrentIndex(0);
-
-	BaseObjectWidget::hideEvent(event);
-}
-
 void FunctionWidget::alternateReturnTypes(void)
 {
 	QObject *obj_sender=sender();

@@ -45,8 +45,6 @@ class RoleWidget: public BaseObjectWidget, public Ui::RoleWidget {
 		//! \brief Show the specified role data on the specified table index at the specified row
 		void showRoleData(Role *role, unsigned table_id, unsigned row);
 
-		void hideEvent(QHideEvent *event);
-
 	public:
 		RoleWidget(QWidget * parent = 0);
 		~RoleWidget(void);

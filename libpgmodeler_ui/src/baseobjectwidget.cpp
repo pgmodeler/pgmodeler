@@ -126,20 +126,6 @@ bool BaseObjectWidget::isHandledObjectProtected(void)
 	return(object_protected);
 }
 
-void BaseObjectWidget::hideEvent(QHideEvent *)
-{
-	name_edt->clear();
-	comment_edt->clear();
-
-	tablespace_sel->clearSelector();
-	schema_sel->clearSelector();
-	owner_sel->clearSelector();
-	collation_sel->clearSelector();
-
-	disable_sql_chk->setChecked(false);
-	new_object=false;
-}
-
 void BaseObjectWidget::showEvent(QShowEvent *)
 {
 	name_edt->setFocus();
@@ -879,8 +865,10 @@ void BaseObjectWidget::finishConfiguration(void)
 
 void BaseObjectWidget::cancelConfiguration(void)
 {
-	ObjectType obj_type;
+	if(!object)
+		return;
 
+	ObjectType obj_type;
 	obj_type=this->object->getObjectType();
 
 	if(new_object)

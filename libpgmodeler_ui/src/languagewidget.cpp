@@ -55,15 +55,6 @@ LanguageWidget::LanguageWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_LA
 	}
 }
 
-void LanguageWidget::hideEvent(QHideEvent *event)
-{
-	func_handler_sel->clearSelector();
-	func_validator_sel->clearSelector();
-	func_inline_sel->clearSelector();
-	trusted_chk->setChecked(false);
-	BaseObjectWidget::hideEvent(event);
-}
-
 void LanguageWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Language *language)
 {
 	BaseObjectWidget::setAttributes(model, op_list, language);

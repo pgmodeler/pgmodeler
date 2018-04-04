@@ -39,8 +39,6 @@ class CastWidget: public BaseObjectWidget, public Ui::CastWidget {
 		//! \brief Conversion function selector
 		ObjectSelectorWidget *conv_func_sel;
 		
-		void hideEvent(QHideEvent *event);
-		
 	public:
 		CastWidget(QWidget * parent = 0);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Cast *cast);

@@ -62,14 +62,6 @@ CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_CAST)
 	}
 }
 
-void CastWidget::hideEvent(QHideEvent *event)
-{
-	input_output_chk->setChecked(false);
-	implicit_rb->setChecked(true);
-	conv_func_sel->clearSelector();
-	BaseObjectWidget::hideEvent(event);
-}
-
 void CastWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Cast *cast)
 {
 	PgSQLType src_type, trg_type;

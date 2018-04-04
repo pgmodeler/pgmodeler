@@ -63,19 +63,6 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 	}
 }
 
-void SourceCodeWidget::hideEvent(QHideEvent *event)
-{
-	version_cmb->blockSignals(true);
-	sourcecode_twg->blockSignals(true);
-	version_cmb->setCurrentIndex(0);
-	sourcecode_twg->setCurrentIndex(0);
-	version_cmb->blockSignals(false);
-	sourcecode_twg->blockSignals(false);
-	sqlcode_txt->clear();
-	xmlcode_txt->clear();
-	BaseObjectWidget::hideEvent(event);
-}
-
 void SourceCodeWidget::setSourceCodeTab(int)
 {
 	QString code_icon;

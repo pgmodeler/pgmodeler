@@ -294,33 +294,6 @@ void ConstraintWidget::selectReferencedTable(void)
 	}
 }
 
-void ConstraintWidget::hideEvent(QHideEvent *event)
-{
-	expression_txt->clear();
-	column_cmb->clear();
-	ref_column_cmb->clear();
-
-	no_inherit_chk->setChecked(false);
-	deferrable_chk->setChecked(false);
-	constr_type_lbl->setEnabled(true);
-	constr_type_cmb->setEnabled(true);
-	constr_type_cmb->setCurrentIndex(0);
-	match_cmb->setCurrentIndex(0);
-	deferral_cmb->setCurrentIndex(0);
-
-	columns_tab->blockSignals(true);
-	ref_columns_tab->blockSignals(true);
-	columns_tab->removeRows();
-	ref_columns_tab->removeRows();
-	columns_tab->blockSignals(false);
-	ref_columns_tab->blockSignals(false);
-
-	ref_table_sel->clearSelector();
-	excl_elems_wgt->clear();
-
-	BaseObjectWidget::hideEvent(event);
-}
-
 void ConstraintWidget::selectConstraintType(void)
 {
 	ConstraintType constr_type=ConstraintType(constr_type_cmb->currentText());

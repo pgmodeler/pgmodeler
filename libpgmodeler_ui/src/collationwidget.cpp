@@ -98,12 +98,6 @@ void CollationWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 	}
 }
 
-void CollationWidget::hideEvent(QHideEvent *event)
-{
-	resetFields();
-	BaseObjectWidget::hideEvent(event);
-}
-
 void CollationWidget::resetFields(void)
 {
 	//Block object's signals to evict an infinite call to this method

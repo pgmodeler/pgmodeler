@@ -46,8 +46,6 @@ class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
 
 		HintTextWidget *code_options_ht;
 
-		void hideEvent(QHideEvent *event);
-
 	public:
 		SourceCodeWidget(QWidget * parent = 0);
 

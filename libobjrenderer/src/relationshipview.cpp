@@ -351,7 +351,7 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		BaseRelationship *base_rel=this->getSourceObject();
 
 		//Resets the labels position when mid-button is pressed
-		if(event->buttons()==Qt::LeftButton && event->modifiers()==(Qt::AltModifier | Qt::ControlModifier))
+		if(event->buttons()==Qt::LeftButton && event->modifiers()==(Qt::AltModifier | Qt::ShiftModifier))
 		{
 			base_rel->resetLabelsDistance();
 			this->configureLabels();
@@ -513,10 +513,11 @@ void RelationshipView::disconnectTables(void)
 	if(tables[0] && tables[1])
 	{
 		BaseRelationship *rel_base=this->getSourceObject();
-		tables[0]->updateConnectedRelsCount(-1);
+
+		tables[0]->removeConnectedRelationship(rel_base);
 
 		if(!rel_base->isSelfRelationship())
-			tables[1]->updateConnectedRelsCount(-1);
+			tables[1]->removeConnectedRelationship(rel_base);
 
 		for(unsigned i=0; i < 2; i++)
 		{
@@ -551,10 +552,10 @@ void RelationshipView::configureObject(void)
 	tables[0]=dynamic_cast<BaseTableView *>(rel_base->getTable(BaseRelationship::SRC_TABLE)->getReceiverObject());
 	tables[1]=dynamic_cast<BaseTableView *>(rel_base->getTable(BaseRelationship::DST_TABLE)->getReceiverObject());
 
-	tables[0]->updateConnectedRelsCount(1);
+	tables[0]->addConnectedRelationship(rel_base);
 
 	if(!rel_base->isSelfRelationship())
-		tables[1]->updateConnectedRelsCount(1);
+		tables[1]->addConnectedRelationship(rel_base);
 
 	configureLine();
 	connectTables();
@@ -596,7 +597,7 @@ void RelationshipView::configureLine(void)
 		QString tool_tip;
 		QGraphicsItem *item=nullptr;
 		int i, i1, count, idx_lin_desc=0;
-		bool conn_same_sides = false, bidirectional=base_rel->isBidirectional(),
+		bool conn_same_sides = false,
 				conn_horiz_sides[2] = { false, false }, conn_vert_sides[2] = { false, false };
 		unsigned rel_type = base_rel->getRelationshipType();
 
@@ -605,7 +606,10 @@ void RelationshipView::configureLine(void)
 
 		if(base_rel->isSelfRelationship())
 		{
-			double factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
+			double fnt_factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE,
+					pos_factor = 0, offset = 0;
+			unsigned rel_cnt = tables[0]->getConnectedRelsCount(base_rel->getTable(BaseRelationship::SRC_TABLE),
+																													base_rel->getTable(BaseRelationship::DST_TABLE));
 
 			/* Sefl-relationshihp line format:
 
@@ -619,34 +623,40 @@ void RelationshipView::configureLine(void)
 			pos=tables[0]->pos();
 			rect=tables[0]->boundingRect();
 
-			p_central[0].setX(pos.x() + rect.width());
-			p_central[0].setY(pos.y() + (rect.height()/2.5f));
+			if(rel_cnt > 1)
+			{
+				int idx = tables[0]->getConnectedRelationshipIndex(base_rel);
+				double min_val = min<double>(rect.width(), rect.height());
 
-			p_central[1].setX(pos.x() + (rect.width()/1.5f));
+				if(idx < 0) idx =0;
+				pos_factor = min_val * 0.08f * idx;
+			}
+
+			p_central[0].setX(pos.x() + rect.width());
+			p_central[0].setY(pos.y() + (rect.height() / 3.0f) + pos_factor);
+			p_central[1].setX(pos.x() + (rect.width() / 1.5f) - pos_factor);
 			p_central[1].setY(pos.y());
 
-			if(!use_crows_foot)
-			{
-				points.push_back(QPointF(p_central[0].x() + (11 * factor),  p_central[0].y()));
-				points.push_back(QPointF(p_central[0].x() + (11 * factor),  p_central[1].y() - (11 * factor)));
-				points.push_back(QPointF(p_central[1].x(),  p_central[1].y() - (11 * factor)));
-			}
-			else
-			{
-				points.push_back(QPointF(p_central[0].x() + (23 * factor),  p_central[0].y()));
-				points.push_back(QPointF(p_central[0].x() + (23 * factor),  p_central[1].y() - (24 * factor)));
-				points.push_back(QPointF(p_central[1].x(),  p_central[1].y() - (24 * factor)));
-			}
+			if(p_central[0].y() > pos.y() + rect.height())
+				p_central[0].setY(pos.y() + rect.height());
+
+			if(p_central[1].x() < pos.x())
+				p_central[1].setX(pos.x());
+
+			offset = use_crows_foot ? 23 : 11;
+
+			points.push_back(QPointF(p_central[0].x() + (offset * fnt_factor) + pos_factor,  p_central[0].y()));
+			points.push_back(QPointF(p_central[0].x() + (offset * fnt_factor) + pos_factor,  p_central[1].y() - (offset * fnt_factor) - pos_factor));
+			points.push_back(QPointF(p_central[1].x(),  p_central[1].y() - (offset * fnt_factor) - pos_factor));
 
 			base_rel->setPoints(points);
 		}
 		else
 		{
 			Relationship *rel=dynamic_cast<Relationship *>(base_rel);
-			bool rel_1n=(!bidirectional &&
-									 (rel_type==Relationship::RELATIONSHIP_11 ||
+			bool rel_1n= (rel_type==Relationship::RELATIONSHIP_11 ||
 										rel_type==Relationship::RELATIONSHIP_1N ||
-										rel_type==Relationship::RELATIONSHIP_FK));
+										rel_type==Relationship::RELATIONSHIP_FK);
 
 			if(rel &&
 				 rel->getRelationshipType()==Relationship::RELATIONSHIP_11 &&
@@ -843,10 +853,16 @@ void RelationshipView::configureLine(void)
 			double font_factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE) * BaseObjectView::getScreenDpiFactor(),
 					size_factor = 1,
 					border_factor = CONN_LINE_LENGTH * 0.30,
-					min_lim = 0, max_lim = 0;
+					min_lim = 0, max_lim = 0,
+					conn_rels_factors[2] = { 0, 0 };
+			unsigned conn_rels_cnt[2] = { 0, 0 };
 
 			for(int tab_idx = 0; tab_idx < 2; tab_idx++)
 			{
+				conn_rels_cnt[tab_idx] = tables[tab_idx]->getConnectedRelsCount(base_rel->getTable(BaseRelationship::SRC_TABLE),
+																																				base_rel->getTable(BaseRelationship::DST_TABLE));
+				conn_rels_factors[tab_idx] = conn_rels_cnt[tab_idx] == 1 ? 1 : 0.08f * (tables[tab_idx]->getConnectedRelationshipIndex(base_rel));
+
 				if(!points.empty())
 				{
 					if(tab_idx == 0)
@@ -891,6 +907,32 @@ void RelationshipView::configureLine(void)
 
 					if(line.intersect(edge, &pi)==QLineF::BoundedIntersection)
 					{
+						/* Adjusting the intersection point if there're more than one relationship connected the current table
+						 * this will cause all relationships to be aligned together */
+						if(conn_rels_cnt[tab_idx] > 1)
+						{							
+							double max_dim = max<double>(brect.height(), brect.width());
+							int signal = 0;
+
+							if(edge.dx() == 0)
+							{
+								signal = edge.dy()/fabs(edge.dy()) * (tab_idx == 0 ? 1 : -1);
+								pi.setY(pi.y() - (conn_rels_factors[tab_idx] * max_dim) * signal);
+
+								// Adjusting the position of the interesection point to make is as close to the center of the edge as possible
+								pi.setY(pi.y() + (max_dim * 0.05) * signal);
+							}
+
+							if(edge.dy() == 0)
+							{
+								signal = edge.dx()/fabs(edge.dx()) * (tab_idx == 0 ? 1 : -1);
+								pi.setX(pi.x() - (conn_rels_factors[tab_idx] * max_dim) * signal);
+
+								// Adjusting the position of the interesection point to make is as close to the center of the edge as possible
+								pi.setX(pi.x() + (max_dim * 0.05) * signal);
+							}
+						}
+
 						//Avoiding the line to be exposed in the rounded corners of the tables
 						if(edge.dx() == 0)
 						{
@@ -1054,7 +1096,7 @@ void RelationshipView::configureLine(void)
 				lin=lines[i];
 
 			//If the relationship is identifier or bidirectional, the line has its thickness modified
-			if(bidirectional || (rel && (rel->isIdentifier() && i >= idx_lin_desc)))
+			if(rel && (rel->isIdentifier() && i >= idx_lin_desc))
 				pen.setWidthF(OBJ_BORDER_WIDTH * 1.90f);
 			else
 				pen.setWidthF(OBJ_BORDER_WIDTH * 1.45f);
@@ -1480,7 +1522,7 @@ void RelationshipView::configureCrowsFootDescriptors(void)
 					rel_type != BaseRelationship::RELATIONSHIP_NN && rel_type != BaseRelationship::RELATIONSHIP_FK) ||
 
 				 (tab_id == BaseRelationship::DST_TABLE &&
-					(rel_type == BaseRelationship::RELATIONSHIP_11 || (rel_type == BaseRelationship::RELATIONSHIP_FK && !base_rel->isBidirectional()))))
+					(rel_type == BaseRelationship::RELATIONSHIP_11 || rel_type == BaseRelationship::RELATIONSHIP_FK)))
 			{
 
 				line_item = cf_lines[tab_id]->at(lin_idx++);
@@ -1541,8 +1583,7 @@ void RelationshipView::configureCrowsFootDescriptors(void)
 			}
 			else if(!mandatory[tab_id] &&
 							((rel_type != BaseRelationship::RELATIONSHIP_FK) ||
-							 (tab_id == BaseRelationship::SRC_TABLE && rel_type == BaseRelationship::RELATIONSHIP_FK) ||
-							 (tab_id == BaseRelationship::DST_TABLE && rel_type == BaseRelationship::RELATIONSHIP_FK && base_rel->isBidirectional())))
+							 (tab_id == BaseRelationship::SRC_TABLE && rel_type == BaseRelationship::RELATIONSHIP_FK)))
 			{
 				//Configuring the circle which describes the optional cardinality
 				circle_item = round_cf_descriptors[tab_id];

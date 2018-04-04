@@ -61,14 +61,6 @@ void ParameterWidget::enableVariadic(void)
 								   !param_out_chk->isChecked());
 }
 
-void ParameterWidget::hideEvent(QHideEvent *event)
-{
-	param_in_chk->setChecked(false);
-	param_out_chk->setChecked(false);
-	default_value_edt->clear();
-	BaseObjectWidget::hideEvent(event);
-}
-
 void ParameterWidget::setAttributes(Parameter param, DatabaseModel *model)
 {
 	this->parameter=param;

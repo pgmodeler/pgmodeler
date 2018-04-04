@@ -2806,7 +2806,7 @@ void ModelWidget::removeObjects(bool cascade)
 					//If the object is as FK relationship remove the foreign keys that generates it
 					if(obj_type==BASE_RELATIONSHIP)
 					{
-						rel=dynamic_cast<BaseRelationship *>(object);
+						/*rel=dynamic_cast<BaseRelationship *>(object);
 						if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
 						{
 							aux_table=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DST_TABLE));
@@ -2834,6 +2834,24 @@ void ModelWidget::removeObjects(bool cascade)
 
 								}
 								constrs.pop_back();
+							}
+						}*/
+
+						rel = dynamic_cast<BaseRelationship *>(object);
+
+						if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
+						{
+							tab_obj=rel->getReferenceForeignKey();
+							obj_id=tab_obj->getObjectId();
+
+							if(objs_map.count(obj_id)==0)
+							{
+								objs_map[tab_obj->getObjectId()]=std::make_tuple(tab_obj,
+																																 tab_obj->getName(true),
+																																 tab_obj->getObjectType(),
+																																 tab_obj->getParentTable()->getName(true),
+																																 tab_obj->getParentTable()->getObjectType());
+
 							}
 						}
 					}

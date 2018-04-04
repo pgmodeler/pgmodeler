@@ -393,6 +393,7 @@ namespace ParsersAttributes {
 	REF_TYPE=QString("ref-type"),
 	REFER=QString("refer"),
 	REFERENCE=QString("reference"),
+	REFERENCE_FK=QString("reference-fk"),
 	REFERENCES_PRIV=QString("references"),
 	REFERENCES=QString("references"),
 	REFERRERS=QString("referrers"),

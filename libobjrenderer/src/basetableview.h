@@ -30,14 +30,14 @@
 #include "tabletitleview.h"
 #include "tableobjectview.h"
 #include "roundedrectitem.h"
+#include "baserelationship.h"
 
 class BaseTableView: public BaseObjectView {
 	private:
 		Q_OBJECT
 
-		/*! \brief Stores the number of relationships connected to this table. This attribute is used
-		by the rearrange method on ModelWidget */
-		int connected_rels;
+		/*! \brief Stores the references to the relationships connected to this table. */
+		vector<BaseRelationship *> connected_rels;
 
 	protected:
 		//! \brief Item groups that stores columns and extended attributes, respectively
@@ -71,8 +71,11 @@ class BaseTableView: public BaseObjectView {
 
 		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
-		//! \brief Updates the current connected relationship count
-		void updateConnectedRelsCount(int inc);
+		void addConnectedRelationship(BaseRelationship *base_rel);
+
+		void removeConnectedRelationship(BaseRelationship *base_rel);
+
+		int getConnectedRelationshipIndex(BaseRelationship *base_rel);
 
 		//! \brief Configures the tag object when the source object has one.
 		void configureTag(void);
@@ -115,6 +118,8 @@ class BaseTableView: public BaseObjectView {
 
 		//! \brief Toggles the placeholder object when there is at least one relationship connected to the object
 		virtual void togglePlaceholder(bool value);
+
+		unsigned getConnectedRelsCount(BaseTable *src_tab, BaseTable *dst_tab);
 
 	signals:
 		//! \brief Signal emitted when a table is moved over the scene

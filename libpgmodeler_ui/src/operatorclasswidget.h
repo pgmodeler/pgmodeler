@@ -51,8 +51,6 @@ class OperatorClassWidget: public BaseObjectWidget, public Ui::OperatorClassWidg
 		//! \brief Stores the elements of operator class
 		ObjectsTableWidget *elements_tab;
 
-		void hideEvent(QHideEvent *event);
-
 	public:
 		OperatorClassWidget(QWidget * parent = 0);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, OperatorClass *op_class);
