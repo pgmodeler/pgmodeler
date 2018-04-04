@@ -351,7 +351,7 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		BaseRelationship *base_rel=this->getSourceObject();
 
 		//Resets the labels position when mid-button is pressed
-		if(event->buttons()==Qt::LeftButton && event->modifiers()==(Qt::AltModifier | Qt::ControlModifier))
+		if(event->buttons()==Qt::LeftButton && event->modifiers()==(Qt::AltModifier | Qt::ShiftModifier))
 		{
 			base_rel->resetLabelsDistance();
 			this->configureLabels();
@@ -920,7 +920,7 @@ void RelationshipView::configureLine(void)
 								pi.setY(pi.y() - (conn_rels_factors[tab_idx] * max_dim) * signal);
 
 								// Adjusting the position of the interesection point to make is as close to the center of the edge as possible
-								//pi.setY(pi.y() + (max_dim * 0.25) * signal);
+								pi.setY(pi.y() + (max_dim * 0.05) * signal);
 							}
 
 							if(edge.dy() == 0)
@@ -929,7 +929,7 @@ void RelationshipView::configureLine(void)
 								pi.setX(pi.x() - (conn_rels_factors[tab_idx] * max_dim) * signal);
 
 								// Adjusting the position of the interesection point to make is as close to the center of the edge as possible
-								//pi.setX(pi.x() + (max_dim * 0.25) * signal);
+								pi.setX(pi.x() + (max_dim * 0.05) * signal);
 							}
 						}
 
