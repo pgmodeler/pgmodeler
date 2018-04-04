@@ -5,6 +5,7 @@ v0.9.1-beta1
 ------
 <em>Release date: April 6, 2018</em><br/>
 
+* [New] Added the ability to create multiples one-to-many and many-to-many relatationships between the same pair of tables.
 * [New] Added the ability to use more special ascii chars in the middle of object names.
 * [New] Added missing SQL keywords into sql-highlight.conf
 * [New] Added support to multi line comments in UI.

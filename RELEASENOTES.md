@@ -1,30 +1,35 @@
-v0.9.1-alpha1
+v0.9.1-beta1
 ------
 
-<em>Release date: January 26, 2018</em><br/>
-<em>Changes since: <strong>v0.9.1-alpha1</strong></em><br/>
+<em>Release date: April 6, 2018</em><br/>
+<em>Changes since: <strong>v0.9.1-beta</strong></em><br/>
 
-<strong>Summary:</strong> this is the first release of 2018 and the penultimate until we get the stable 0.9.1. We can consider it more a patch release than a fully featured version since it does not brings substantial changes to pgModeler but fixing some minor bugs detected in prior versions. <br/>
+<strong>Summary:</strong> <br/>
 
-In this version we've started to adopt Qt 5.9.x LTS and PostgreSQL 10.x. The code still builds in prior versions of both Qt and PostgreSQL but we strongly recommend that the users always use the same version as the development environment to avoid any headache related to build problems. <br/>
-
-We've added the support to GROUP BY/HAVING clauses in views. Actually, we've added the ability to append any kind of expression at the end of view's definition using expressions but the main usage for it is for GROUP/HAVING statements. Prior to that, there was the need to make some hacks in the view's references like adding a WHERE TRUE expression to enable the usage of GROUP/HAVING at the end of the code which is pretty ugly. <br/>
-
-In the design module, we have fixed the copy/paste operation and now it copies almost any object in the canvas without much problem. The name conflict resolution was adjusted in such way that a desambiguation suffix will be appended to the pasted object's name when there really is the need and not always the paste operation is executed. The export to SVG and PNG was fixed too and now no unecessary blank areas are exported to the output file making the resulting graphics more compact.<br/>
-
-Finally, some crashes related to attributes adding in many-to-many relationships as well to import operation were fixed.<br/>
-
-Below the log entries for this version. Consider to read the complete CHANGELOG.md to take note of all changes.<br/>
-
-* [New] Added support to GROUP BY/HAVING clauses in Views by adding a new kind of reference. Proper changes done in ViewWidget to allow configuring those clauses.
-* [New] Added the method Catalog::isSystemObject(oid) which indicates if the provided OID is related to a system object.
-* [Change] Minor adjustment in the copy/paste operation to generate suffix in the pasted objects only when there're conflics.
-* [Change] Removed the port range limitation in connection configuration dialog.
-* [Change] Updated the default version of Qt and PostgreSQL to, respectively, 5.9.3 and 10.1 in deployment scripts.
-* [Change] Changed the method PgSQLType::getTypeName by adding a bool parameter so the name can be returned with dimension descriptor (when dimension is > 0). Useful for configuring operator's signatures.
-* [Fix] Fixed the drop action for materialized views in database explorer.
-* [Fix] Fixed a crash when importing extension objects.
-* [Fix] Fixed the generation of operator's signature that must consider dimensions of the arguments' types.
-* [Fix] Fixed the bounding rect calculation for relationship instances when one or more labels are hidden.
-* [Fix] Fixed the SVG & PNG export to properly determine the area to be drawn in the destination graphics file.
-* [Fix] Fixed a crash when adding attributes into many-to-many relationships.
+* [New] Added the ability to create multiples one-to-many and many-to-many relatationships between the same pair of tables.
+* [New] Added the ability to use more special ascii chars in the middle of object names.
+* [New] Added support to multi line comments in UI.
+* [New] Added full support to row level security (RLS), including export, import and diff of this kind of object.
+* [New] Added support to bulk data editing in DataManipulationForm.
+* [New] Added an option to diff process to force the generation of DROP commands for columns and constraints even if the missing objects need to be preserved. This is useful to work with partial models and the user need to remove columns/constraints and preserve the rest of objects.
+* [New] Added support to identity columns (PostgreSQL 10).
+* [New] Added the support to BYPASSRLS option on roles.
+* [New] Added support to IS_TEMPLATE and ALLOW_CONNECTIONS options in database object.
+* [New] Added the procedures to fix old style domains in CLI.
+* [New] Added support to multiple check constraint in domains.
+* [New] Added support to sort items alphabetically (ascending) or by oid in DatabaseExplorerWidget.
+* [Change] Changed the input mode of the password field in ConnectionsConfigWidget in order to hide the passwords in the form. NOTE: the passwords are still in plain text in the config file.
+* [Change] Moved extensions from schema level to database level in order to reproduce better the PostgreSQL's behavior.
+* [Change] In GeneralConfigWidget when restoring default settings the default settings for syntax highlight are restored as well.
+* [Change] pgModeler will not try to create the plugins path anymore. This will avoid constant error messages during startup. Now, it'll silently ignore the absence of that folder and skip the plugin loading.
+* [Change] Improved the source editing in external application. The use is informed about the app running state and the contents for the source editor field are locked until the user closes the external app.
+* [Fix] Fixed the extension creation, allowing only one instance of the named extension per database no matter the schema used to allocate its children objects.
+* [Fix] Fixed a bug when dropping Functions in DatabaseExplorerWidget.
+* [Fix] Fixed a bug that was causing the disabling of connections for database models created prior to 0.9.1-beta1.
+* [Fix] Fixed a bug on import process that was wrongly creating types derivated from tables/sequence/views causing duplication problems during validation.
+* [Fix] Fixed a crash on macOs when opening a second model.
+* [Fix] Fixed an issue in diff process that was generating a malformed DROP command for extensions.
+* [Fix] Fixed the diff for domains which contain multiple check constraints.
+* [Fix] Fixed a bug that was not selecting the correct spatial type in the widget.
+* [Fix] Fixed a conflict of shortcuts in DatabaseExplorerWidget. Now F5 updates a leaf/subtree and Alt+F5 performs quick refresh of the tree.
+* [Fix] Fixed a problem with sqlexecutionwidget.ui that is not building properly in Qt 5.10.
