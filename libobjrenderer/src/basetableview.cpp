@@ -290,12 +290,12 @@ unsigned BaseTableView::getConnectedRelsCount(BaseTable *src_tab, BaseTable *dst
 {
 	unsigned count = 0;
 
-	for(auto rel : connected_rels)
+	for(auto &rel : connected_rels)
 	{
 		if((rel->getTable(BaseRelationship::SRC_TABLE) == src_tab &&
 				rel->getTable(BaseRelationship::DST_TABLE) == dst_tab) ||
 			 (rel->getTable(BaseRelationship::SRC_TABLE) == dst_tab &&
-							 rel->getTable(BaseRelationship::DST_TABLE) == src_tab))
+				rel->getTable(BaseRelationship::DST_TABLE) == src_tab))
 			count++;
 	}
 

@@ -853,7 +853,7 @@ void RelationshipView::configureLine(void)
 			double font_factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE) * BaseObjectView::getScreenDpiFactor(),
 					size_factor = 1,
 					border_factor = CONN_LINE_LENGTH * 0.30,
-					min_lim = 0, max_lim = 0, max_dim = 0,
+					min_lim = 0, max_lim = 0,
 					conn_rels_factors[2] = { 0, 0 };
 			unsigned conn_rels_cnt[2] = { 0, 0 };
 
@@ -899,7 +899,6 @@ void RelationshipView::configureLine(void)
 				brect = QRectF(tables[tab_idx]->pos(), tables[tab_idx]->boundingRect().size());
 				pol = QPolygonF(brect);
 				center = tables[tab_idx]->getCenter();
-				max_dim = max<double>(brect.height(), brect.width());
 
 				for(int idx = 0; idx < pol.size() - 1; idx++)
 				{
@@ -912,6 +911,7 @@ void RelationshipView::configureLine(void)
 						 * this will cause all relationships to be aligned together */
 						if(conn_rels_cnt[tab_idx] > 1)
 						{							
+							double max_dim = max<double>(brect.height(), brect.width());
 							int signal = 0;
 
 							if(edge.dx() == 0)
@@ -920,7 +920,7 @@ void RelationshipView::configureLine(void)
 								pi.setY(pi.y() - (conn_rels_factors[tab_idx] * max_dim) * signal);
 
 								// Adjusting the position of the interesection point to make is as close to the center of the edge as possible
-								pi.setY(pi.y() + (max_dim * 0.25) * signal);
+								//pi.setY(pi.y() + (max_dim * 0.25) * signal);
 							}
 
 							if(edge.dy() == 0)
@@ -929,7 +929,7 @@ void RelationshipView::configureLine(void)
 								pi.setX(pi.x() - (conn_rels_factors[tab_idx] * max_dim) * signal);
 
 								// Adjusting the position of the interesection point to make is as close to the center of the edge as possible
-								pi.setX(pi.x() + (max_dim * 0.25) * signal);
+								//pi.setX(pi.x() + (max_dim * 0.25) * signal);
 							}
 						}
 
