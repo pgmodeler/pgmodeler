@@ -35,6 +35,7 @@ v0.9.1-beta1
 * [Change] Improved the source editing in external application. The use is informed about the app running state and the contents for the source editor field are locked until the user closes the external app.
 * [Change] Improved the model loading on macOs in such way to avoid showing the visual objects creation while they are being loaded from file.
 * [Change] Improved the reverse engineering and diff process to accept the new attributes of database object.
+* [Fix] Fixed the query catalog for built-in types to include the types related to domains.
 * [Fix] Fixed the Extension::setSchema method to accept null schemas.
 * [Fix] Fixed the generation of XML code for casts.
 * [Fix] Fixed the extension creation, allowing only one instance of the named extension per database no matter the schema used to allocate its children objects.
