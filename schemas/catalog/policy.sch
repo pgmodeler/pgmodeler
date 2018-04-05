@@ -26,7 +26,12 @@
         %end
                 
         %if {not-ext-object} %then
-            [ AND ]( {not-ext-object} )
+            
+            %if {last-sys-oid} %then
+                [ AND ]
+            %end
+            
+            ( {not-ext-object} )
         %end
 
     %else
