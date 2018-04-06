@@ -73,7 +73,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		grid->addWidget(sql_tool_wgt, 0, 0);
 		views_stw->widget(MANAGE_VIEW)->setLayout(grid);
 
-		configuration_form=new ConfigurationForm(nullptr, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
+        configuration_form=new ConfigurationForm(nullptr, Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 		PgModelerUiNS::resizeDialog(configuration_form);
 		configuration_form->loadConfiguration();
 
