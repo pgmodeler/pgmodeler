@@ -21,7 +21,7 @@
 
 RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 {
-	ObjectTableWidget *obj_tab=nullptr;
+	ObjectsTableWidget *obj_tab=nullptr;
 	QGridLayout *grid=nullptr;
 	QFrame *frame=nullptr;
 	map<QString, vector<QWidget *> > fields_map;
@@ -38,7 +38,8 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 4);
 	frame->setParent(this);
 
-	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_90)].push_back(can_replicate_chk);
+	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_91)].push_back(can_replicate_chk);
+	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(bypass_rls_chk);
 	frame=generateVersionWarningFrame(fields_map);
 	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 0);
 	frame->setParent(this);
@@ -49,8 +50,8 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 	//Alocation of the member role tables
 	for(i=0; i < 3; i++)
 	{
-		obj_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-																	(ObjectTableWidget::UPDATE_BUTTON | ObjectTableWidget::DUPLICATE_BUTTON), true, this);
+		obj_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
+																	(ObjectsTableWidget::UPDATE_BUTTON | ObjectsTableWidget::DUPLICATE_BUTTON), true, this);
 		members_tab[i]=obj_tab;
 
 		obj_tab->setColumnCount(5);
@@ -106,32 +107,6 @@ void RoleWidget::selectMemberRole(void)
 	object_selection_wgt->show();
 }
 
-void RoleWidget::hideEvent(QHideEvent *event)
-{
-	unsigned i;
-
-	for(i=0; i < 3; i++)
-		members_tab[i]->blockSignals(true);
-
-	for(i=0; i < 3; i++)
-	{
-		members_tab[i]->removeRows();
-		members_tab[i]->blockSignals(false);
-	}
-
-	members_twg->setCurrentIndex(0);
-	passwd_edt->clear();
-	conn_limit_sb->setValue(conn_limit_sb->minimum());
-	superusr_chk->setChecked(false);
-	inh_perm_chk->setChecked(false);
-	create_db_chk->setChecked(false);
-	can_login_chk->setChecked(false);
-	create_role_chk->setChecked(false);
-	encrypt_pass_chk->setChecked(false);
-
-	BaseObjectWidget::hideEvent(event);
-}
-
 void RoleWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Role *role)
 {
 	if(role)
@@ -149,6 +124,7 @@ void RoleWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Rol
 		inh_perm_chk->setChecked(role->getOption(Role::OP_INHERIT));
 		can_login_chk->setChecked(role->getOption(Role::OP_LOGIN));
 		can_replicate_chk->setChecked(role->getOption(Role::OP_REPLICATION));
+		bypass_rls_chk->setChecked(role->getOption(Role::OP_BYPASSRLS));
 	}
 
 	BaseObjectWidget::setAttributes(model, op_list, role);
@@ -295,6 +271,7 @@ void RoleWidget::applyConfiguration(void)
 		role->setOption(Role::OP_INHERIT, inh_perm_chk->isChecked());
 		role->setOption(Role::OP_LOGIN, can_login_chk->isChecked());
 		role->setOption(Role::OP_REPLICATION, can_replicate_chk->isChecked());
+		role->setOption(Role::OP_BYPASSRLS, bypass_rls_chk->isChecked());
 
 		for(type_id=0; type_id < 3; type_id++)
 		{

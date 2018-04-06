@@ -112,15 +112,10 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		/*! \brief Finishes the edition / creation of object, registering it on the operation list
 			and inserts is on the parent object */
 		void finishConfiguration(void);
-		
-		/*! \brief Aborts the object configuration, deallocation it if necessary or restoring it to
-			its previous configuration */
-		virtual void cancelConfiguration(void);
-		
+			
 		//! \brief Apply the basic configurations to the object (name, schema, comment, owner, tablespace)
 		virtual void applyConfiguration(void);
 		
-		void hideEvent(QHideEvent *);
 		void showEvent(QShowEvent *);
 		
 		void setAttributes(DatabaseModel *model, OperationList *op_list,
@@ -136,10 +131,7 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		void disableReferencesSQL(BaseObject *object);
 		
 		void configureTabOrder(vector<QWidget *> widgets={});
-		
-		//! \brief Executes the proper actions to cancel chained operations.
-		void cancelChainedOperation(void);
-		
+			
 	public:
 		//! \brief Constants used to generate version intervals for version alert frame
 		static const unsigned UNTIL_VERSION=0,
@@ -161,6 +153,8 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		
 		//! \brief Generates a informative frame containing the specified message
 		static QFrame *generateInformationFrame(const QString &msg);
+
+		static void highlightVersionSpecificFields(map<QString, vector<QWidget *> > &fields, map<QWidget *, vector<QString> > *values=nullptr);
 		
 		//! \brief Highlights the specified widget as a required field
 		static void setRequiredField(QWidget *widget);
@@ -179,6 +173,13 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		
 		//! \brief Register the new object in the operation history if it is not registered already
 		void registerNewObject(void);
+
+		/*! \brief Aborts the object configuration, deallocation it if necessary or restoring it to
+			its previous configuration */
+		virtual void cancelConfiguration(void);
+
+		//! \brief Executes the proper actions to cancel chained operations.
+		virtual void cancelChainedOperation(void);
 		
 	signals:
 		//! \brief Signal emitted whenever a object is created / edited using the form
@@ -186,6 +187,8 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 
 		//! \brief Signal emitted whenever the object editing was successful and the form need to be closed
 		void s_closeRequested(void);
+
+	friend class BaseForm;
 };
 
 template<class Class>

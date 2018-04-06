@@ -27,7 +27,7 @@
 
 #include <QtWidgets>
 #include "ui_elementswidget.h"
-#include "objecttablewidget.h"
+#include "objectstablewidget.h"
 #include "objectselectorwidget.h"
 #include "baseobjectwidget.h"
 
@@ -47,7 +47,7 @@ class ElementsWidget: public QWidget, public Ui::ElementsWidget {
 		SyntaxHighlighter	*elem_expr_hl;
 		
 		//! \brief Table widget used to control the index elements
-		ObjectTableWidget *elements_tab;
+		ObjectsTableWidget *elements_tab;
 		
 		//! \brief Operator class selector
 		ObjectSelectorWidget *op_class_sel,

@@ -47,13 +47,13 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 			grid->addWidget(functions_sel[i],i,1,1,1);
 		}
 
-		enumerations_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-												 (ObjectTableWidget::EDIT_BUTTON | ObjectTableWidget::DUPLICATE_BUTTON), true, this);
+		enumerations_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
+												 (ObjectsTableWidget::EDIT_BUTTON | ObjectsTableWidget::DUPLICATE_BUTTON), true, this);
 		grid=dynamic_cast<QGridLayout *>(enumerations_gb->layout());
 		grid->addWidget(enumerations_tab,1,0,1,2);
 		enumerations_gb->setVisible(false);
 
-		attributes_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^ ObjectTableWidget::DUPLICATE_BUTTON, true, this);
+		attributes_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^ ObjectsTableWidget::DUPLICATE_BUTTON, true, this);
 		attributes_tab->setColumnCount(3);
 		attributes_tab->setHeaderLabel(trUtf8("Name"),0);
 		attributes_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
@@ -133,32 +133,6 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
-}
-
-void TypeWidget::hideEvent(QHideEvent *event)
-{
-	enumerations_tab->removeRows();
-	attributes_tab->removeRows();
-
-	for(unsigned i=Type::INPUT_FUNC; i <= Type::SUBTYPE_DIFF_FUNC; i++)
-		functions_sel[i]->clearSelector();
-
-	base_type_rb->setChecked(true);
-	internal_len_sb->setValue(0);
-	by_value_chk->setChecked(false);
-	preferred_chk->setChecked(false);
-	delimiter_edt->clear();
-	default_value_edt->clear();;
-	category_cmb->setCurrentIndex(0);
-	storage_cmb->setCurrentIndex(0);
-	alignment_cmb->setCurrentIndex(0);
-	base_attribs_twg->setCurrentIndex(0);
-	opclass_sel->clearSelector();
-
-	collation_sel->setEnabled(true);
-	collation_lbl->setEnabled(true);
-
-	BaseObjectWidget::hideEvent(event);
 }
 
 void TypeWidget::selectTypeConfiguration(void)

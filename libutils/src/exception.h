@@ -33,7 +33,6 @@
 #include <deque>
 
 using namespace std;
-static const int ERROR_COUNT=230;
 
 /*
  ErrorType enum format: ERR_[[OPERATION_CODE][ERROR_CODE]] where:
@@ -277,11 +276,15 @@ enum ErrorType {
 	ERR_CONNECTION_TIMEOUT,
 	ERR_CONNECTION_BROKEN,
 	ERR_DROP_CURRDB_DEFAULT,
-	ERR_NULL_PK_COLUMN
+	ERR_NULL_PK_COLUMN,
+	ERR_INV_IDENTITY_COLUMN,
+	ERR_REF_INV_AFFECTED_CMD,
+	ERR_REF_INV_SPECIAL_ROLE
 };
 
 class Exception {
 	private:
+		static const int ERROR_COUNT=233;
 
 		/*! \brief Stores other exceptions before raise the 'this' exception.
 		 This structure can be used to simulate a stack trace to improve the debug */

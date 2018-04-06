@@ -28,7 +28,7 @@
 #include <QtWidgets>
 #include "baseobjectwidget.h"
 #include "ui_viewwidget.h"
-#include "objecttablewidget.h"
+#include "objectstablewidget.h"
 #include "codecompletionwidget.h"
 #include "numberedtexteditor.h"
 
@@ -48,9 +48,9 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 		NumberedTextEditor *cte_expression_txt, *code_txt, *expression_txt;
 
 		//! \brief Stores all the view references
-		ObjectTableWidget *references_tab;
+		ObjectsTableWidget *references_tab;
 
-		map<ObjectType, ObjectTableWidget *> objects_tab_map;
+		map<ObjectType, ObjectsTableWidget *> objects_tab_map;
 
 		SyntaxHighlighter *expression_hl,
 		*code_hl,
@@ -68,10 +68,8 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 
 		void clearReferenceForm(void);
 
-		void hideEvent(QHideEvent *);
-
 		//! \brief Returns the object table according with the child type
-		ObjectTableWidget *getObjectTable(ObjectType obj_type);
+		ObjectsTableWidget *getObjectTable(ObjectType obj_type);
 		ObjectType getObjectType(QObject *sender);
 
 		void showObjectData(TableObject *object, int row);

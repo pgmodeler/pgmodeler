@@ -69,7 +69,7 @@ DatabaseWidget::DatabaseWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DA
 		lccollate_cmb->addItems(loc_list);
 		lcctype_cmb->addItems(loc_list);
 
-		setMinimumSize(560, 340);
+		setMinimumSize(560, 380);
 	}
 	catch(Exception &e)
 	{
@@ -109,6 +109,9 @@ void DatabaseWidget::setAttributes(DatabaseModel *model)
 		def_tablespace_sel->setModel(model);
 		def_tablespace_sel->setSelectedObject(model->getDefaultObject(OBJ_TABLESPACE));
 
+		allow_conn_chk->setChecked(model->isAllowConnections());
+		is_template_chk->setChecked(model->isTemplate());
+
 		BaseObjectWidget::setAttributes(model, model, nullptr);
 	}
 }
@@ -143,6 +146,8 @@ void DatabaseWidget::applyConfiguration(void)
 		model->setDefaultObject(def_owner_sel->getSelectedObject(), OBJ_ROLE);
 		model->setDefaultObject(def_collation_sel->getSelectedObject(), OBJ_COLLATION);
 		model->setDefaultObject(def_tablespace_sel->getSelectedObject(), OBJ_TABLESPACE);
+		model->setIsTemplate(is_template_chk->isChecked());
+		model->setAllowConnections(allow_conn_chk->isChecked());
 
 		finishConfiguration();
 	}

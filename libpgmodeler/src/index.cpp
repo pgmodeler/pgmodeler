@@ -384,12 +384,11 @@ QString Index::getAlterDefinition(BaseObject *object)
 
 	try
 	{
+		attribs_map attribs;
 		attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
 
 		if(this->indexing_type==index->indexing_type)
 		{
-			attribs_map attribs;
-
 			if(this->fill_factor!=index->fill_factor && index->fill_factor >= 10)
 				attribs[ParsersAttributes::FACTOR]=QString::number(index->fill_factor);
 
@@ -400,10 +399,9 @@ QString Index::getAlterDefinition(BaseObject *object)
 			if(this->indexing_type==IndexingType::gist &&
 					this->index_attribs[BUFFERING] != index->index_attribs[BUFFERING])
 				attribs[ParsersAttributes::BUFFERING]=(index->index_attribs[BUFFERING] ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
-
-			copyAttributes(attribs);
 		}
 
+		copyAttributes(attribs);
 		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
 	}
 	catch(Exception &e)

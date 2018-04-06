@@ -73,7 +73,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		grid->addWidget(sql_tool_wgt, 0, 0);
 		views_stw->widget(MANAGE_VIEW)->setLayout(grid);
 
-		configuration_form=new ConfigurationForm(nullptr, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
+        configuration_form=new ConfigurationForm(nullptr, Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 		PgModelerUiNS::resizeDialog(configuration_form);
 		configuration_form->loadConfiguration();
 
@@ -203,7 +203,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(action_redo,SIGNAL(triggered(bool)),oper_list_wgt,SLOT(redoOperation(void)));
 
 	connect(model_nav_wgt, SIGNAL(s_modelCloseRequested(int)), this, SLOT(closeModel(int)));
-	connect(model_nav_wgt, SIGNAL(s_currentModelChanged(int)), this, SLOT(setCurrentModel()));
+    connect(model_nav_wgt, SIGNAL(s_currentModelChanged(int)), this, SLOT(setCurrentModel()));
 
 	connect(action_print, SIGNAL(triggered(bool)), this, SLOT(printModel(void)));
 	connect(action_configuration, SIGNAL(triggered(bool)), configuration_form, SLOT(show()));
@@ -839,6 +839,7 @@ void MainWindow::addModel(const QString &filename)
 		obj_name=model_tab->db_model->getName();
 
 		models_tbw->blockSignals(true);
+        models_tbw->setUpdatesEnabled(false);
 		models_tbw->addTab(model_tab, obj_name);
 		models_tbw->setCurrentIndex(models_tbw->count()-1);
 		models_tbw->blockSignals(false);
@@ -863,6 +864,7 @@ void MainWindow::addModel(const QString &filename)
 			}
 			catch(Exception &e)
 			{
+				models_tbw->setUpdatesEnabled(true);
 				central_wgt->update();
 				models_tbw->removeTab(models_tbw->indexOf(model_tab));
 				model_tab->setParent(nullptr);
@@ -878,20 +880,23 @@ void MainWindow::addModel(const QString &filename)
 		}
 
 		model_nav_wgt->addModel(model_tab);
+        models_tbw->setUpdatesEnabled(true);
 		setCurrentModel();
 
-		if(start_timers)
+        if(start_timers)
 		{
-			if(model_save_timer.interval() > 0)
+            if(model_save_timer.interval() > 0)
 				model_save_timer.start();
 
 			tmpmodel_save_timer.start();
-		}
+        }
 
 		model_tab->setModified(false);
 
 		if(action_alin_objs_grade->isChecked())
 			current_model->scene->alignObjectsToGrid();
+
+        models_tbw->update();
 	}
 	catch(Exception &e)
 	{
@@ -962,10 +967,10 @@ void MainWindow::setCurrentModel(void)
 
 	removeModelActions();
 
-	edit_menu->clear();
-	edit_menu->addAction(action_undo);
-	edit_menu->addAction(action_redo);
-	edit_menu->addSeparator();
+    edit_menu->clear();
+    edit_menu->addAction(action_undo);
+    edit_menu->addAction(action_redo);
+    edit_menu->addSeparator();
 
 	//Avoids the tree state saving in order to restore the current model tree state
 	model_objs_wgt->saveTreeState(false);
@@ -974,7 +979,7 @@ void MainWindow::setCurrentModel(void)
 	if(current_model)
 		model_objs_wgt->saveTreeState(model_tree_states[current_model]);
 
-	models_tbw->setCurrentIndex(model_nav_wgt->getCurrentIndex());
+    models_tbw->setCurrentIndex(model_nav_wgt->getCurrentIndex());
 	current_model=dynamic_cast<ModelWidget *>(models_tbw->currentWidget());
 	action_arrange_objects->setEnabled(current_model != nullptr);
 
@@ -986,7 +991,7 @@ void MainWindow::setCurrentModel(void)
 		current_model->setFocus(Qt::OtherFocusReason);
 		current_model->cancelObjectAddition();
 
-		general_tb->addAction(current_model->action_new_object);
+        general_tb->addAction(current_model->action_new_object);
 		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_new_object));
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
 		btns.push_back(tool_btn);
@@ -1022,14 +1027,14 @@ void MainWindow::setCurrentModel(void)
 		{
 			PgModelerUiNS::configureWidgetFont(btn, PgModelerUiNS::SMALL_FONT_FACTOR);
 			btn->setGraphicsEffect(createDropShadow(tool_btn));
-		}
+        }
 
-		edit_menu->addAction(current_model->action_copy);
-		edit_menu->addAction(current_model->action_cut);
-		edit_menu->addAction(current_model->action_duplicate);
-		edit_menu->addAction(current_model->action_paste);
-		edit_menu->addAction(current_model->action_remove);
-		edit_menu->addAction(current_model->action_cascade_del);
+        edit_menu->addAction(current_model->action_copy);
+        edit_menu->addAction(current_model->action_cut);
+        edit_menu->addAction(current_model->action_duplicate);
+        edit_menu->addAction(current_model->action_paste);
+        edit_menu->addAction(current_model->action_remove);
+        edit_menu->addAction(current_model->action_cascade_del);
 
 		if(current_model->getFilename().isEmpty())
 			this->setWindowTitle(window_title);
@@ -1872,7 +1877,15 @@ void MainWindow::changeCurrentView(bool checked)
 
 		actions=general_tb->actions();
 		for(int i=GENERAL_ACTIONS_COUNT; i < actions.count(); i++)
+		{
 			actions[i]->setEnabled(enable);
+
+			if(actions[i]->menu())
+			{
+				for(auto action : actions[i]->menu()->actions())
+					action->setEnabled(enable);
+			}
+		}
 
 		if(!enable)
 			overview_wgt->close();

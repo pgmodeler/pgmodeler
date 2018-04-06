@@ -44,6 +44,12 @@
     REPLICATION 
   %end
   
+  %if {bypassrls} %and ({pgsql-ver} >=f "9.5") %then 
+    $br $tb 
+    %if ({bypassrls}=="unset") %then NO %end
+    BYPASSRLS 
+  %end
+  
   %if {password} %then
    $br $tb
    

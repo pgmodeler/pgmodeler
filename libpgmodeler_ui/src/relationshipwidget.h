@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_relationshipwidget.h"
-#include "objecttablewidget.h"
+#include "objectstablewidget.h"
 #include "colorpickerwidget.h"
 #include "hinttextwidget.h"
 
@@ -56,7 +56,7 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		*patterns_hl[7];
 
 		//! \brief Table widgets that stores the attributes, constraint and advanced objects of relationship
-		ObjectTableWidget *attributes_tab,
+		ObjectsTableWidget *attributes_tab,
 		*constraints_tab,
 		*advanced_objs_tab;
 
@@ -85,8 +85,6 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		QSize getIdealSize(void);
 
 	private slots:
-		void hideEvent(QHideEvent *event);
-
 		void addObject(void);
 		void editObject(int row);
 		void removeObject(int row);

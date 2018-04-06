@@ -62,7 +62,7 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 
 		configureTabOrder({ locale_cmb, encoding_cmb, lccollate_cmb, lcctype_cmb });
 
-		setMinimumSize(520, 380);
+		setMinimumSize(520, 420);
 	}
 	catch(Exception &e)
 	{
@@ -96,12 +96,6 @@ void CollationWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 			}
 		}
 	}
-}
-
-void CollationWidget::hideEvent(QHideEvent *event)
-{
-	resetFields();
-	BaseObjectWidget::hideEvent(event);
 }
 
 void CollationWidget::resetFields(void)

@@ -109,28 +109,6 @@
     <string>Comment:</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="comment_edt">
-   <property name="geometry">
-    <rect>
-     <x>80</x>
-     <y>170</y>
-     <width>114</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>0</width>
-     <height>0</height>
-    </size>
-   </property>
-  </widget>
   <widget class="QLabel" name="tablespace_lbl">
    <property name="geometry">
     <rect>
@@ -508,10 +486,31 @@ This will disable the code of all child and referrer objects.</string>
     </item>
    </layout>
   </widget>
+  <widget class="QPlainTextEdit" name="comment_edt">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>160</y>
+     <width>104</width>
+     <height>70</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>80</height>
+    </size>
+   </property>
+  </widget>
  </widget>
  <tabstops>
   <tabstop>name_edt</tabstop>
-  <tabstop>comment_edt</tabstop>
   <tabstop>append_sql_tb</tabstop>
   <tabstop>edt_perms_tb</tabstop>
   <tabstop>disable_sql_chk</tabstop>

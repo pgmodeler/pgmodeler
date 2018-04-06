@@ -69,20 +69,6 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 	}
 }
 
-void IndexWidget::hideEvent(QHideEvent *event)
-{
-	BaseObjectWidget::hideEvent(event);
-
-	predicate_txt->clear();
-	concurrent_chk->setChecked(false);
-	unique_chk->setChecked(false);
-	buffering_chk->setChecked(false);
-	indexing_cmb->setCurrentIndex(0);
-	fill_factor_sb->setValue(90);
-	tabWidget->setCurrentIndex(0);
-	elements_wgt->clear();
-}
-
 void IndexWidget::selectIndexingType(void)
 {
 	fast_update_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::gin);

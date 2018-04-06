@@ -198,9 +198,6 @@
          <height>22</height>
         </size>
        </property>
-       <property name="shortcut">
-        <string>Ctrl+S</string>
-       </property>
        <property name="checkable">
         <bool>true</bool>
        </property>
@@ -316,7 +313,7 @@
         </size>
        </property>
        <property name="shortcut">
-        <string notr="true">Alt+X</string>
+        <string>Alt+T</string>
        </property>
        <property name="checkable">
         <bool>false</bool>
@@ -360,7 +357,7 @@
         </size>
        </property>
        <property name="shortcut">
-        <string notr="true">Alt+X</string>
+        <string>Alt+X</string>
        </property>
        <property name="checkable">
         <bool>false</bool>

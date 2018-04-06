@@ -130,7 +130,7 @@
       LEFT JOIN pg_namespace AS ns ON tp.typnamespace = ns.oid ]
 
     #Excluding types related to tables/views/sequeces
-    [ WHERE typtype IN ('p','b','c','e','r') AND typname NOT LIKE 'pg_%' ]
+    [ WHERE typtype IN ('p','b','c','e','r', 'd') AND typname NOT LIKE 'pg_%' ]
 
     #Excluding types related to tables/views/sequeces/materialized views
     %if {filter-tab-types} %then

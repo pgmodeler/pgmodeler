@@ -24,12 +24,13 @@
 #include "triggerwidget.h"
 #include "baseform.h"
 #include "tabledatawidget.h"
+#include "policywidget.h"
 
 TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 {
 	QGridLayout *grid=nullptr;
-	ObjectTableWidget *tab=nullptr;
-	ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX };
+	ObjectsTableWidget *tab=nullptr;
+	ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX, OBJ_POLICY };
 	map<QString, vector<QWidget *> > fields_map;
 	QFrame *frame=nullptr;
 	QToolButton *edt_data_tb=nullptr;
@@ -49,11 +50,13 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	misc_btns_lt->insertWidget(1, edt_data_tb);
 
 	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_91)].push_back(unlogged_chk);
+	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(enable_rls_chk);
+	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(force_rls_chk);
 	frame=generateVersionWarningFrame(fields_map);
 	table_grid->addWidget(frame, table_grid->count()+1, 0, 1, 2);
 	frame->setParent(this);
 
-	parent_tables = new ObjectTableWidget(ObjectTableWidget::NO_BUTTONS, true, this);
+	parent_tables = new ObjectsTableWidget(ObjectsTableWidget::NO_BUTTONS, true, this);
 	parent_tables->setColumnCount(3);
 	parent_tables->setHeaderLabel(trUtf8("Name"), 0);
 	parent_tables->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
@@ -63,18 +66,18 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	parent_tables->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),2);
 
 	tag_sel=new ObjectSelectorWidget(OBJ_TAG, false, this);
-	dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 3);
+	dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1,1,3);
 
 	grid=new QGridLayout;
 	grid->addWidget(parent_tables, 0,0,1,1);
 	grid->setContentsMargins(4,4,4,4);
-	attributes_tbw->widget(5)->setLayout(grid);
+	attributes_tbw->widget(6)->setLayout(grid);
 
 	//Configuring the table objects that stores the columns, triggers, constraints, rules and indexes
-	for(unsigned i=0; i < 5; i++)
+	for(unsigned i=0; i <= 5; i++)
 	{
-		tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-								  (ObjectTableWidget::UPDATE_BUTTON), true, this);
+		tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
+								  (ObjectsTableWidget::UPDATE_BUTTON), true, this);
 
 		objects_tab_map[types[i]]=tab;
 
@@ -101,7 +104,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Attribute(s)"), 4);
 	objects_tab_map[OBJ_COLUMN]->adjustColumnToContents(0);
 
-	connect(objects_tab_map[OBJ_COLUMN], &ObjectTableWidget::s_cellClicked, [&](int row, int col){
+	connect(objects_tab_map[OBJ_COLUMN], &ObjectsTableWidget::s_cellClicked, [&](int row, int col){
 		if(col == 0 && objects_tab_map[OBJ_COLUMN]->isCellDisabled(static_cast<unsigned>(row), static_cast<unsigned>(col)))
 		{
 			Messagebox msg_box;
@@ -143,36 +146,21 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	objects_tab_map[OBJ_INDEX]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 	objects_tab_map[OBJ_INDEX]->setHeaderLabel(trUtf8("Indexing"), 1);
 
+	objects_tab_map[OBJ_POLICY]->setColumnCount(6);
+	objects_tab_map[OBJ_POLICY]->setHeaderLabel(trUtf8("Name"), 0);
+	objects_tab_map[OBJ_POLICY]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
+	objects_tab_map[OBJ_POLICY]->setHeaderLabel(trUtf8("Command"), 1);
+	objects_tab_map[OBJ_POLICY]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("keyword")),1);
+	objects_tab_map[OBJ_POLICY]->setHeaderLabel(trUtf8("Permissive"), 2);
+	objects_tab_map[OBJ_POLICY]->setHeaderLabel(trUtf8("USING expression"), 3);
+	objects_tab_map[OBJ_POLICY]->setHeaderLabel(trUtf8("CHECK expression"), 4);
+	objects_tab_map[OBJ_POLICY]->setHeaderLabel(trUtf8("Roles"), 5);
+	objects_tab_map[OBJ_POLICY]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),5);
+
 	configureFormLayout(table_grid, OBJ_TABLE);
 	configureTabOrder({ tag_sel });
 
 	setMinimumSize(600, 610);
-}
-
-void TableWidget::hideEvent(QHideEvent *event)
-{
-	map<ObjectType, ObjectTableWidget *>::iterator itr, itr_end;
-	Table *tab=dynamic_cast<Table *>(this->object);
-
-	parent_tables->removeRows();
-	with_oids_chk->setChecked(false);
-	unlogged_chk->setChecked(false);
-	attributes_tbw->setCurrentIndex(0);
-
-	itr=objects_tab_map.begin();
-	itr_end=objects_tab_map.end();
-	while(itr!=itr_end)
-	{
-		(itr->second)->blockSignals(true);
-		(itr->second)->removeRows();
-		(itr->second)->blockSignals(false);
-		itr++;
-	}
-
-	if(this->new_object && !tab->isModified())
-		this->cancelConfiguration();
-
-	BaseObjectWidget::hideEvent(event);
 }
 
 template<class Class, class WidgetClass>
@@ -183,12 +171,10 @@ int TableWidget::openEditingForm(TableObject *object)
 	object_wgt->setAttributes(this->model, this->op_list,
 														dynamic_cast<Table *>(this->object), dynamic_cast<Class *>(object));
 	editing_form.setMainWidget(object_wgt);
-
-	editing_form.adjustSize();
 	return(editing_form.exec());
 }
 
-ObjectTableWidget *TableWidget::getObjectTable(ObjectType obj_type)
+ObjectsTableWidget *TableWidget::getObjectTable(ObjectType obj_type)
 {
 	if(objects_tab_map.count(obj_type) > 0)
 		return(objects_tab_map[obj_type]);
@@ -202,7 +188,7 @@ ObjectType TableWidget::getObjectType(QObject *sender)
 
 	if(sender)
 	{
-		map<ObjectType, ObjectTableWidget *>::iterator itr, itr_end;
+		map<ObjectType, ObjectsTableWidget *>::iterator itr, itr_end;
 
 		itr=objects_tab_map.begin();
 		itr_end=objects_tab_map.end();
@@ -225,7 +211,7 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 	{
 		unsigned i, count;
 		Table *aux_tab=nullptr;
-		ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX };
+		ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX, OBJ_POLICY };
 
 		if(!table)
 		{
@@ -246,11 +232,11 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 
 		/* Listing all objects (column, constraint, trigger, index, rule) on the
 		respective table objects */
-		for(i=0; i < 5; i++)
+		for(i=0; i < 6; i++)
 		{
 			listObjects(types[i]);
-			objects_tab_map[types[i]]->setButtonConfiguration(ObjectTableWidget::ALL_BUTTONS ^
-															  (ObjectTableWidget::UPDATE_BUTTON));
+			objects_tab_map[types[i]]->setButtonConfiguration(ObjectsTableWidget::ALL_BUTTONS ^
+															  (ObjectsTableWidget::UPDATE_BUTTON));
 		}
 
 		//Listing the ancestor tables
@@ -277,6 +263,8 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 		with_oids_chk->setChecked(table->isWithOIDs());
 		unlogged_chk->setChecked(table->isUnlogged());
 		gen_alter_cmds_chk->setChecked(table->isGenerateAlterCmds());
+		enable_rls_chk->setChecked(table->isRLSEnabled());
+		force_rls_chk->setChecked(table->isRLSForced());
 
 		tag_sel->setModel(this->model);
 		tag_sel->setSelectedObject(table->getTag());
@@ -289,7 +277,7 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 
 void TableWidget::listObjects(ObjectType obj_type)
 {
-	ObjectTableWidget *tab=nullptr;
+	ObjectsTableWidget *tab=nullptr;
 	unsigned count, i;
 	Table *table=nullptr;
 
@@ -315,11 +303,11 @@ void TableWidget::listObjects(ObjectType obj_type)
 		//Enables the add button on the constraints, triggers and index tab only when there is columns created
 		if(obj_type==OBJ_COLUMN)
 		{
-			objects_tab_map[OBJ_CONSTRAINT]->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON,
+			objects_tab_map[OBJ_CONSTRAINT]->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON,
 															   objects_tab_map[OBJ_COLUMN]->getRowCount() > 0);
-			objects_tab_map[OBJ_TRIGGER]->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON,
+			objects_tab_map[OBJ_TRIGGER]->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON,
 															objects_tab_map[OBJ_COLUMN]->getRowCount() > 0);
-			objects_tab_map[OBJ_INDEX]->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON,
+			objects_tab_map[OBJ_INDEX]->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON,
 														  objects_tab_map[OBJ_COLUMN]->getRowCount() > 0);
 		}
 	}
@@ -333,7 +321,7 @@ void TableWidget::handleObject(void)
 {
 	ObjectType obj_type=BASE_OBJECT;
 	TableObject *object=nullptr;
-	ObjectTableWidget *obj_table=nullptr;
+	ObjectsTableWidget *obj_table=nullptr;
 
 	try
 	{
@@ -354,8 +342,10 @@ void TableWidget::handleObject(void)
 			openEditingForm<Trigger, TriggerWidget>(object);
 		else if(obj_type==OBJ_INDEX)
 			openEditingForm<Index, IndexWidget>(object);
-		else
+		else if(obj_type==OBJ_RULE)
 			openEditingForm<Rule, RuleWidget>(object);
+		else
+			openEditingForm<Policy, PolicyWidget>(object);
 
 		listObjects(obj_type);
 
@@ -371,12 +361,13 @@ void TableWidget::handleObject(void)
 
 void TableWidget::showObjectData(TableObject *object, int row)
 {
-	ObjectTableWidget *tab=nullptr;
+	ObjectsTableWidget *tab=nullptr;
 	Column *column=nullptr;
 	Constraint *constr=nullptr;
 	Trigger *trigger=nullptr;
 	Rule *rule=nullptr;
 	Index *index=nullptr;
+	Policy *policy=nullptr;
 	ObjectType obj_type;
 	QString str_aux, str_aux1;
 
@@ -416,6 +407,8 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		//Column 3: Column defaul value
 		if(column->getSequence())
 			str_aux=QString("nextval('%1'::regclass)").arg(column->getSequence()->getName(true).remove('"'));
+		else if(column->getIdentityType() != BaseType::null)
+			str_aux=QString("GENERATED %1 AS IDENTITY").arg(~column->getIdentityType());
 		else
 			str_aux=column->getDefaultValue();
 
@@ -499,12 +492,36 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		//Column 2: Rule event type
 		tab->setCellText(~rule->getEventType(),row,2);
 	}
-	else
+	else if(obj_type==OBJ_INDEX)
 	{
 		index=dynamic_cast<Index *>(object);
 
 		//Coluna 1: Indexing type
 		tab->setCellText(~index->getIndexingType(),row,1);
+	}
+	else if(obj_type==OBJ_POLICY)
+	{
+		QStringList rol_names;
+
+		policy = dynamic_cast<Policy *>(object);
+
+		//Column 1: Command
+		tab->setCellText(~policy->getPolicyCommand(), row, 1);
+
+		//Column 2: Permissive
+		tab->setCellText(QString("%1").arg(policy->isPermissive() ? trUtf8("Yes") : trUtf8("No")), row, 2);
+
+		//Column 3: USING expression
+		tab->setCellText(policy->getUsingExpression(), row, 3);
+
+		//Column 4: CHECK expression
+		tab->setCellText(policy->getCheckExpression(), row, 4);
+
+		for(auto role : policy->getRoles())
+			rol_names.append(role->getName());
+
+		//Column 5: Roles
+		tab->setCellText(!rol_names.isEmpty() ? rol_names.join(", ") : QString("PUBLIC"), row, 5);
 	}
 
 	//Changes the foreground/background color of the table row if the object is protected or added by relationship
@@ -628,7 +645,7 @@ void TableWidget::duplicateObject(int sel_row, int new_row)
 {
 	ObjectType obj_type=BASE_OBJECT;
 	BaseObject *object=nullptr, *dup_object=nullptr;
-	ObjectTableWidget *obj_table=nullptr;
+	ObjectsTableWidget *obj_table=nullptr;
 	Table *table = dynamic_cast<Table *>(this->object);
 	int op_id = -1;
 
@@ -719,7 +736,7 @@ void TableWidget::applyConfiguration(void)
 		Constraint *pk = nullptr;
 		vector<BaseRelationship *> rels;
 		vector<Column *> pk_cols;
-		ObjectTableWidget *col_tab = objects_tab_map[OBJ_COLUMN];
+		ObjectsTableWidget *col_tab = objects_tab_map[OBJ_COLUMN];
 
 		if(!this->new_object)
 			op_list->registerObject(this->object, Operation::OBJECT_MODIFIED);
@@ -729,6 +746,8 @@ void TableWidget::applyConfiguration(void)
 		table=dynamic_cast<Table *>(this->object);
 		table->setWithOIDs(with_oids_chk->isChecked());
 		table->setGenerateAlterCmds(gen_alter_cmds_chk->isChecked());
+		table->setRLSEnabled(enable_rls_chk->isChecked());
+		table->setRLSForced(force_rls_chk->isChecked());
 		table->setUnlogged(unlogged_chk->isChecked());
 		table->setTag(dynamic_cast<Tag *>(tag_sel->getSelectedObject()));
 

@@ -31,6 +31,7 @@
 <!ATTLIST relationship del-action CDATA #IMPLIED>
 <!ATTLIST relationship custom-color CDATA #IMPLIED>
 <!ATTLIST relationship single-pk-col CDATA #IMPLIED>
+<!ATTLIST relationship reference-fk CDATA #IMPLIED>
 <!ATTLIST relationship faded-out (false|true) "false">
 
 <!ELEMENT line (position+)>

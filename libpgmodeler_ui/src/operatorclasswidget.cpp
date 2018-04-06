@@ -36,7 +36,7 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		elem_family_sel=new ObjectSelectorWidget(OBJ_OPFAMILY, true, this);
 		function_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
 		storage_type=new PgSQLTypeWidget(this, trUtf8("Storage Type"));
-		elements_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^ ObjectTableWidget::DUPLICATE_BUTTON, true, this);
+		elements_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^ ObjectsTableWidget::DUPLICATE_BUTTON, true, this);
 
 		elements_tab->setColumnCount(4);
 		elements_tab->setHeaderLabel(trUtf8("Object"),0);
@@ -96,16 +96,6 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
-}
-
-void OperatorClassWidget::hideEvent(QHideEvent *event)
-{
-	function_sel->clearSelector();
-	operator_sel->clearSelector();
-	stg_num_sb->setValue(1);
-	elements_tab->removeRows();
-	selectElementType(0);
-	BaseObjectWidget::hideEvent(event);
 }
 
 void OperatorClassWidget::selectElementType(int elem_type)

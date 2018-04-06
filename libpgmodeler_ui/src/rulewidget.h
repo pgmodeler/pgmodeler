@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_rulewidget.h"
-#include "objecttablewidget.h"
+#include "objectstablewidget.h"
 #include "codecompletionwidget.h"
 
 class RuleWidget: public BaseObjectWidget, public Ui::RuleWidget {
@@ -39,14 +39,13 @@ class RuleWidget: public BaseObjectWidget, public Ui::RuleWidget {
 
 		CodeCompletionWidget *command_cp;
 
-		ObjectTableWidget *commands_tab;
+		ObjectsTableWidget *commands_tab;
 
 	public:
 		RuleWidget(QWidget * parent = 0);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseTable *parent_tab, Rule *rule);
 
 	private slots:
-		void hideEvent(QHideEvent *event);
 		void handleCommand(int row);
 		void editCommand(int row);
 

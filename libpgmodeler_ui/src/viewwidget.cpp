@@ -26,7 +26,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 {
 	try
 	{
-		ObjectTableWidget *tab=nullptr;
+		ObjectsTableWidget *tab=nullptr;
 		ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX };
 		QGridLayout *grid=nullptr;
 		QVBoxLayout *vbox=nullptr;
@@ -64,7 +64,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		column_sel=new ObjectSelectorWidget(OBJ_COLUMN, true, this);
 		column_sel->enableObjectCreation(false);
 
-		references_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
+		references_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS, true, this);
 		references_tab->setColumnCount(4);
 		references_tab->setHeaderLabel(trUtf8("Col./Expr."),0);
 		references_tab->setHeaderLabel(trUtf8("Alias"),1);
@@ -84,8 +84,8 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		//Configuring the table objects that stores the triggers and rules
 		for(unsigned i=0, tab_id=1; i < sizeof(types)/sizeof(ObjectType); i++, tab_id++)
 		{
-			tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-									  (ObjectTableWidget::UPDATE_BUTTON  | ObjectTableWidget::MOVE_BUTTONS), true, this);
+			tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
+									  (ObjectsTableWidget::UPDATE_BUTTON  | ObjectsTableWidget::MOVE_BUTTONS), true, this);
 
 			objects_tab_map[types[i]]=tab;
 
@@ -172,7 +172,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 	}
 }
 
-ObjectTableWidget *ViewWidget::getObjectTable(ObjectType obj_type)
+ObjectsTableWidget *ViewWidget::getObjectTable(ObjectType obj_type)
 {
 	if(objects_tab_map.count(obj_type) > 0)
 		return(objects_tab_map[obj_type]);
@@ -197,7 +197,7 @@ void ViewWidget::handleObject(void)
 {
 	ObjectType obj_type=BASE_OBJECT;
 	TableObject *object=nullptr;
-	ObjectTableWidget *obj_table=nullptr;
+	ObjectsTableWidget *obj_table=nullptr;
 
 	try
 	{
@@ -227,7 +227,7 @@ void ViewWidget::duplicateObject(int curr_row, int new_row)
 {
 	ObjectType obj_type=BASE_OBJECT;
 	BaseObject *object=nullptr, *dup_object=nullptr;
-	ObjectTableWidget *obj_table=nullptr;
+	ObjectsTableWidget *obj_table=nullptr;
 	View *view = dynamic_cast<View *>(this->object);
 	int op_id = -1;
 
@@ -332,7 +332,7 @@ ObjectType ViewWidget::getObjectType(QObject *sender)
 
 	if(sender)
 	{
-		map<ObjectType, ObjectTableWidget *>::iterator itr, itr_end;
+		map<ObjectType, ObjectsTableWidget *>::iterator itr, itr_end;
 
 		itr=objects_tab_map.begin();
 		itr_end=objects_tab_map.end();
@@ -351,7 +351,7 @@ ObjectType ViewWidget::getObjectType(QObject *sender)
 
 void ViewWidget::showObjectData(TableObject *object, int row)
 {
-	ObjectTableWidget *tab=nullptr;
+	ObjectsTableWidget *tab=nullptr;
 	Trigger *trigger=nullptr;
 	Rule *rule=nullptr;
 	Index *index=nullptr;
@@ -412,7 +412,7 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 
 void ViewWidget::listObjects(ObjectType obj_type)
 {
-	ObjectTableWidget *tab=nullptr;
+	ObjectsTableWidget *tab=nullptr;
 	unsigned count, i;
 	View *view=nullptr;
 
@@ -438,30 +438,6 @@ void ViewWidget::listObjects(ObjectType obj_type)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
-}
-
-void ViewWidget::hideEvent(QHideEvent *evento)
-{
-	//View *view=dynamic_cast<View *>(this->object);
-	ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE };
-
-	references_tab->removeRows();
-	tabWidget->setCurrentIndex(0);
-	cte_expression_txt->clear();
-
-	clearReferenceForm();
-
-	for(unsigned i=0; i < sizeof(types)/sizeof(ObjectType); i++)
-	{
-		objects_tab_map[types[i]]->blockSignals(true);
-		objects_tab_map[types[i]]->removeRows();
-		objects_tab_map[types[i]]->blockSignals(false);
-	}
-
-	if(this->new_object)// && !view->isModified())
-		this->cancelConfiguration();
-
-	BaseObjectWidget::hideEvent(evento);
 }
 
 void ViewWidget::clearReferenceForm(void)
@@ -664,7 +640,7 @@ void ViewWidget::updateCodePreview(void)
 			Reference refer;
 			QString str_aux;
 			TableObject *tab_obj=nullptr;
-			map<ObjectType, ObjectTableWidget *>::iterator itr, itr_end;
+			map<ObjectType, ObjectsTableWidget *>::iterator itr, itr_end;
 			unsigned i, count, i1, expr_type[]={
 												Reference::SQL_REFER_SELECT,
 												Reference::SQL_REFER_FROM,

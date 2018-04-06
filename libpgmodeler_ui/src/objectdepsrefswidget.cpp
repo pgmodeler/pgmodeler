@@ -74,19 +74,6 @@ void ObjectDepsRefsWidget::clearTables(void)
 	references_tbw->setRowCount(0);
 }
 
-void ObjectDepsRefsWidget::hideEvent(QHideEvent *event)
-{
-	tabWidget->setCurrentIndex(0);
-	model_wgt=nullptr;
-	references_tbw->setEnabled(true);
-	dependences_tbw->setEnabled(true);
-	exc_ind_deps_chk->setEnabled(true);
-	alert_frm->setVisible(false);
-
-	clearTables();
-	BaseObjectWidget::hideEvent(event);
-}
-
 void ObjectDepsRefsWidget::updateObjectTables(void)
 {
 	vector<BaseObject *> objs;
@@ -102,6 +89,7 @@ void ObjectDepsRefsWidget::updateObjectTables(void)
 	else
 		model->__getObjectReferences(object, objs);
 
+	objs.clear();
 	ObjectFinderWidget::updateObjectTable(references_tbw, objs);
 
 	references_tbw->resizeColumnsToContents();

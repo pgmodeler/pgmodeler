@@ -41,6 +41,7 @@ Sequence::Sequence(void)
 	attributes[ParsersAttributes::OWNER_COLUMN]=QString();
 	attributes[ParsersAttributes::TABLE]=QString();
 	attributes[ParsersAttributes::COLUMN]=QString();
+	attributes[ParsersAttributes::COL_IS_IDENTITY]=QString();
 }
 
 bool Sequence::isNullValue(const QString &value)
@@ -393,6 +394,9 @@ QString Sequence::getCodeDefinition(unsigned def_type)
 
 	attributes[ParsersAttributes::TABLE]=(table ? table->getName(true) : QString());
 	attributes[ParsersAttributes::COLUMN]=(owner_col ? owner_col->getName(true) : QString());
+
+	attributes[ParsersAttributes::COL_IS_IDENTITY]=
+			(owner_col && owner_col->getIdentityType() != BaseType::null ? ParsersAttributes::_TRUE_ : QString());
 
 	attributes[ParsersAttributes::INCREMENT]=increment;
 	attributes[ParsersAttributes::MIN_VALUE]=min_value;

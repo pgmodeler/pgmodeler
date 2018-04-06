@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_indexwidget.h"
-#include "objecttablewidget.h"
+#include "objectstablewidget.h"
 #include "elementswidget.h"
 
 class IndexWidget: public BaseObjectWidget, public Ui::IndexWidget {
@@ -44,7 +44,6 @@ class IndexWidget: public BaseObjectWidget, public Ui::IndexWidget {
 		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseTable *parent_obj, Index *index);
 
 	private slots:
-		void hideEvent(QHideEvent *event);
 		void selectIndexingType(void);
 		void enableSortingOptions(void);
 

@@ -37,8 +37,8 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		input_type=new PgSQLTypeWidget(this, trUtf8("Input Data Type"));
 		state_type=new PgSQLTypeWidget(this, trUtf8("State Data Type"));
 
-		input_types_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-											  ObjectTableWidget::EDIT_BUTTON, true, this);
+		input_types_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
+											  ObjectsTableWidget::EDIT_BUTTON, true, this);
 		input_types_tab->setColumnCount(1);
 
 		funcaoagregacao_grid->addWidget(final_func_sel,0,1,1,1);
@@ -81,16 +81,6 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
-}
-
-void AggregateWidget::hideEvent(QHideEvent *event)
-{
-	final_func_sel->clearSelector();
-	transition_func_sel->clearSelector();
-	sort_op_sel->clearSelector();
-	input_types_tab->removeRows();
-	initial_cond_txt->clear();
-	BaseObjectWidget::hideEvent(event);
 }
 
 void AggregateWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Aggregate *aggregate)

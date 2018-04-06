@@ -32,10 +32,10 @@ BaseRelationship::BaseRelationship(BaseRelationship *rel)
 	(*(this))=(*rel);
 
 	custom_color=QColor(Qt::transparent);
+	reference_fk = nullptr;
 }
 
-BaseRelationship::BaseRelationship(unsigned rel_type, BaseTable *src_tab, BaseTable *dst_tab,
-								   bool src_mandatory, bool dst_mandatory)
+BaseRelationship::BaseRelationship(unsigned rel_type, BaseTable *src_tab, BaseTable *dst_tab, bool src_mandatory, bool dst_mandatory)
 
 {
 	try
@@ -49,6 +49,7 @@ BaseRelationship::BaseRelationship(unsigned rel_type, BaseTable *src_tab, BaseTa
 		this->dst_table=dst_tab;
 		this->rel_type=rel_type;
 		this->custom_color=QColor(Qt::transparent);
+		this->reference_fk=nullptr;
 
 		for(unsigned i=0; i < 3; i++)
 		{
@@ -112,6 +113,7 @@ void BaseRelationship::configureRelationship(void)
 	attributes[ParsersAttributes::UPD_ACTION]=QString();
 	attributes[ParsersAttributes::DEL_ACTION]=QString();
 	attributes[ParsersAttributes::CUSTOM_COLOR]=QString();
+	attributes[ParsersAttributes::REFERENCE_FK]=QString();
 
 	//Check if the relationship type is valid
 	if(rel_type <= RELATIONSHIP_FK)
@@ -224,20 +226,13 @@ void BaseRelationship::setMandatoryTable(unsigned table_id, bool value)
 		}
 		else if(rel_type==RELATIONSHIP_FK)
 		{
-			/* If the relationship isn't bidirectinal is necessary to check where to put
-				 the 'n' descriptor. The 'n' label is put on the table where the foreign key resides. */
-			if(!isBidirectional())
-			{
-				if((table_id==SRC_TABLE && dynamic_cast<Table *>(src_table)->isReferTableOnForeignKey(dynamic_cast<Table *>(dst_table))) ||
-						(!isSelfRelationship() && table_id==DST_TABLE && dynamic_cast<Table *>(dst_table)->isReferTableOnForeignKey(dynamic_cast<Table *>(src_table))))
-					aux=QString("n");
-				else
-					aux=QString("1");
-
-				lables[label_id]->setComment(aux);
-			}
+			if((table_id==SRC_TABLE && dynamic_cast<Table *>(src_table)->isReferTableOnForeignKey(dynamic_cast<Table *>(dst_table))) ||
+				 (!isSelfRelationship() && table_id==DST_TABLE && dynamic_cast<Table *>(dst_table)->isReferTableOnForeignKey(dynamic_cast<Table *>(src_table))))
+				aux=QString("n");
 			else
-				lables[label_id]->setComment(QString("1:n"));
+				aux=QString("1");
+
+			lables[label_id]->setComment(aux);
 		}
 		else if(rel_type==RELATIONSHIP_NN)
 			lables[label_id]->setComment(QString("n"));
@@ -323,20 +318,6 @@ bool BaseRelationship::isSelfRelationship(void)
 	return(dst_table==src_table);
 }
 
-bool BaseRelationship::isBidirectional(void)
-{
-	if(rel_type!=RELATIONSHIP_FK || isSelfRelationship())
-		return(false);
-	else
-	{
-		Table *src_tab=dynamic_cast<Table *>(src_table),
-				*dst_tab=dynamic_cast<Table *>(dst_table);
-
-		return(src_tab->isReferTableOnForeignKey(dst_tab) &&
-			   dst_tab->isReferTableOnForeignKey(src_tab));
-	}
-}
-
 void BaseRelationship::setRelationshipAttributes(void)
 {
 	unsigned count, i;
@@ -381,6 +362,7 @@ void BaseRelationship::setRelationshipAttributes(void)
 
 	attributes[ParsersAttributes::LABELS_POS]=str_aux;
 	attributes[ParsersAttributes::CUSTOM_COLOR]=(custom_color!=Qt::transparent ? custom_color.name() : QString());
+	attributes[ParsersAttributes::REFERENCE_FK]=(reference_fk ? reference_fk->getName() : QString());
 	setFadedOutAttribute();
 }
 
@@ -399,6 +381,19 @@ QString BaseRelationship::getCachedCode(unsigned def_type)
 		return(QString());
 }
 
+void BaseRelationship::setReferenceForeignKey(Constraint *ref_fk)
+{
+	//if(ref_fk && rel_type != RELATIONSHIP_FK)
+		//Throw error...
+
+	this->reference_fk = ref_fk;
+}
+
+Constraint *BaseRelationship::getReferenceForeignKey(void)
+{
+	return(reference_fk);
+}
+
 QString BaseRelationship::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type);
@@ -410,19 +405,8 @@ QString BaseRelationship::getCodeDefinition(unsigned def_type)
 			return(QString());
 		else
 		{
-			QString sql_code;
-			vector<Constraint *> fks;
-
-			dynamic_cast<Table *>(src_table)->getForeignKeys(fks, false, dynamic_cast<Table *>(dst_table));
-
-			while(!fks.empty())
-			{
-				sql_code+=fks.back()->getCodeDefinition(SchemaParser::SQL_DEFINITION);
-				fks.pop_back();
-			}
-
-			cached_code[def_type]=sql_code;
-			return(sql_code);
+			cached_code[def_type] = reference_fk->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+			return(cached_code[def_type]);
 		}
 	}
 	else

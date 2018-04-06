@@ -25,7 +25,7 @@ const QString Table::DATA_LINE_BREAK = QString("%1%2").arg("⸣").arg('\n');
 Table::Table(void) : BaseTable()
 {
 	obj_type=OBJ_TABLE;
-	with_oid=gen_alter_cmds=unlogged=false;
+	with_oid=gen_alter_cmds=unlogged=rls_enabled=rls_forced=false;
 	attributes[ParsersAttributes::COLUMNS]=QString();
 	attributes[ParsersAttributes::INH_COLUMNS]=QString();
 	attributes[ParsersAttributes::CONSTRAINTS]=QString();
@@ -39,6 +39,8 @@ Table::Table(void) : BaseTable()
 	attributes[ParsersAttributes::CONSTR_INDEXES]=QString();
 	attributes[ParsersAttributes::UNLOGGED]=QString();
 	attributes[ParsersAttributes::INITIAL_DATA]=QString();
+	attributes[ParsersAttributes::RLS_ENABLED]=QString();
+	attributes[ParsersAttributes::RLS_FORCED]=QString();
 
 	copy_table=nullptr;
 	this->setName(trUtf8("new_table").toUtf8());
@@ -81,6 +83,18 @@ void Table::setUnlogged(bool value)
 {
 	setCodeInvalidated(unlogged != value);
 	unlogged=value;
+}
+
+void Table::setRLSEnabled(bool value)
+{
+	setCodeInvalidated(rls_enabled != value);
+	rls_enabled = value;
+}
+
+void Table::setRLSForced(bool value)
+{
+	setCodeInvalidated(rls_forced != value);
+	rls_forced = value;
 }
 
 void Table::setProtected(bool value)
@@ -303,6 +317,8 @@ vector<TableObject *> *Table::getObjectList(ObjectType obj_type)
 		return(&triggers);
 	else if(obj_type==OBJ_INDEX)
 		return(&indexes);
+	else if(obj_type==OBJ_POLICY)
+		return(&policies);
 	else
 		throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
@@ -355,6 +371,7 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 				case OBJ_TRIGGER:
 				case OBJ_INDEX:
 				case OBJ_RULE:
+				case OBJ_POLICY:
 					TableObject *tab_obj;
 					vector<TableObject *> *obj_list;
 					Column *col;
@@ -486,6 +503,18 @@ void Table::addRule(Rule *reg, int idx_reg)
 	try
 	{
 		addObject(reg, idx_reg);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void Table::addPolicy(Policy *pol, int idx_pol)
+{
+	try
+	{
+		addObject(pol, idx_pol);
 	}
 	catch(Exception &e)
 	{
@@ -747,6 +776,30 @@ void Table::removeRule(unsigned idx)
 	try
 	{
 		removeObject(idx,OBJ_RULE);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void Table::removePolicy(const QString &name)
+{
+	try
+	{
+		removeObject(name, OBJ_POLICY);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void Table::removePolicy(unsigned idx)
+{
+	try
+	{
+		removeObject(idx, OBJ_POLICY);
 	}
 	catch(Exception &e)
 	{
@@ -1022,6 +1075,17 @@ Rule *Table::getRule(unsigned idx)
 	return(dynamic_cast<Rule *>(getObject(idx,OBJ_RULE)));
 }
 
+Policy *Table::getPolicy(const QString &name)
+{
+	int idx;
+	return(dynamic_cast<Policy *>(getObject(name, OBJ_POLICY,idx)));
+}
+
+Policy *Table::getPolicy(unsigned idx)
+{
+	return(dynamic_cast<Policy *>(getObject(idx, OBJ_POLICY)));
+}
+
 unsigned Table::getColumnCount(void)
 {
 	return(columns.size());
@@ -1045,6 +1109,11 @@ unsigned Table::getIndexCount(void)
 unsigned Table::getRuleCount(void)
 {
 	return(rules.size());
+}
+
+unsigned Table::getPolicyCount(void)
+{
+	return(policies.size());
 }
 
 unsigned Table::getAncestorTableCount(void)
@@ -1129,6 +1198,16 @@ bool Table::isWithOIDs(void)
 bool Table::isUnlogged(void)
 {
 	return(unlogged);
+}
+
+bool Table::isRLSEnabled(void)
+{
+	return(rls_enabled);
+}
+
+bool Table::isRLSForced(void)
+{
+	return(rls_forced);
 }
 
 bool Table::isReferTableOnForeignKey(Table *ref_tab)
@@ -1358,6 +1437,8 @@ QString Table::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::OIDS]=(with_oid ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::GEN_ALTER_CMDS]=(gen_alter_cmds ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::UNLOGGED]=(unlogged ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::RLS_ENABLED]=(rls_enabled ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::RLS_FORCED]=(rls_forced ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::COPY_TABLE]=QString();
 	attributes[ParsersAttributes::ANCESTOR_TABLE]=QString();
 	attributes[ParsersAttributes::TAG]=QString();
@@ -1553,31 +1634,36 @@ void Table::getColumnReferences(Column *column, vector<TableObject *> &refs, boo
 	}
 }
 
-vector<BaseObject *> Table::getObjects(void)
+vector<BaseObject *> Table::getObjects(bool excl_cols_constr)
 {
 	vector<BaseObject *> list;
-	ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT,
-						 OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE };
-	unsigned cnt=sizeof(types)/sizeof(ObjectType);
+	vector<ObjectType> types={ OBJ_COLUMN, OBJ_CONSTRAINT,
+														 OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE, OBJ_POLICY };
 
-	for(unsigned i=0; i < cnt; i++)
-		list.insert(list.end(), getObjectList(types[i])->begin(), getObjectList(types[i])->end()) ;
+	for(auto type : types)
+	{
+		if(excl_cols_constr && (type == OBJ_COLUMN || type == OBJ_CONSTRAINT))
+			continue;
+
+		list.insert(list.end(), getObjectList(type)->begin(), getObjectList(type)->end()) ;
+	}
 
 	return(list);
 }
 
+vector<BaseObject *> Table::getObjects(void)
+{
+	return(getObjects(false));
+}
+
 void Table::setCodeInvalidated(bool value)
 {
-	ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT,
-						 OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE };
-	unsigned cnt=sizeof(types)/sizeof(ObjectType);
-	vector<TableObject *> *list=nullptr;
+	vector<ObjectType> types={ OBJ_COLUMN, OBJ_CONSTRAINT,
+														 OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE, OBJ_POLICY };
 
-	for(unsigned i=0; i < cnt; i++)
+	for(auto type : types)
 	{
-		list=getObjectList(types[i]);
-
-		for(auto &obj : *list)
+		for(auto &obj : *getObjectList(type))
 			obj->setCodeInvalidated(value);
 	}
 
@@ -1594,19 +1680,30 @@ QString Table::getAlterDefinition(BaseObject *object)
 	try
 	{
 		QString alter_def;
+		attribs_map attribs;
 
-		attributes[ParsersAttributes::OIDS]=QString();
-		attributes[ParsersAttributes::HAS_CHANGES]=QString();
-		attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object, true);
+		attribs[ParsersAttributes::OIDS]=QString();
+		attribs[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object, true);
 
-		if(this->getName()==tab->getName() && this->with_oid!=tab->with_oid)
+		if(this->getName()==tab->getName())
 		{
-			attributes[ParsersAttributes::OIDS]=(tab->with_oid ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
-			attributes[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::_TRUE_;
+			attribs[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::_TRUE_;
+
+			if(this->with_oid!=tab->with_oid)
+				attribs[ParsersAttributes::OIDS]=(tab->with_oid ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+
+			if(this->unlogged!=tab->unlogged)
+				attribs[ParsersAttributes::UNLOGGED]=(tab->unlogged ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+
+			if(this->rls_enabled!=tab->rls_enabled)
+				attribs[ParsersAttributes::RLS_ENABLED]=(tab->rls_enabled ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+
+			if(this->rls_forced!=tab->rls_forced)
+				attribs[ParsersAttributes::RLS_FORCED]=(tab->rls_forced ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
 		}
 
+		copyAttributes(attribs);
 		alter_def=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
-		attributes[ParsersAttributes::OIDS]=QString();
 
 		return(alter_def);
 	}

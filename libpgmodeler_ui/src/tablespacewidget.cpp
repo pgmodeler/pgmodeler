@@ -33,12 +33,6 @@ TablespaceWidget::TablespaceWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	setMinimumSize(480, 140);
 }
 
-void TablespaceWidget::hideEvent(QHideEvent *event)
-{
-	directory_edt->clear();
-	BaseObjectWidget::hideEvent(event);
-}
-
 void TablespaceWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Tablespace *tablespc)
 {
 	BaseObjectWidget::setAttributes(model, op_list, tablespc);

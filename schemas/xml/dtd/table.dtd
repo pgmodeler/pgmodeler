@@ -20,3 +20,5 @@
 <!ATTLIST table col-indexes CDATA #IMPLIED>
 <!ATTLIST table constr-indexes CDATA #IMPLIED>
 <!ATTLIST table faded-out (false|true) "false">
+<!ATTLIST table rls-enabled (false|true) "false">
+<!ATTLIST table rls-forced (false|true) "false">

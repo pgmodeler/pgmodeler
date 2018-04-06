@@ -9,6 +9,8 @@
 <!ATTLIST database template CDATA #IMPLIED>
 <!ATTLIST database lc-collate CDATA #IMPLIED>
 <!ATTLIST database lc-ctype CDATA #IMPLIED>
+<!ATTLIST database is-template (false|true) "false">
+<!ATTLIST database allow-conns (false|true) "false">
 <!ATTLIST database sql-disabled (false|true) "false">
 <!ATTLIST database append-at-eod (false|true) "false">
 <!ATTLIST database prepend-at-bod (false|true) "false">

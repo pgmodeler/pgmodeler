@@ -23,12 +23,15 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN
 	try
 	{
 		QSpacerItem *spacer=new QSpacerItem(10,10,QSizePolicy::Fixed,QSizePolicy::Expanding);
+		QStringList list;
 
+		Ui_ColumnWidget::setupUi(this);
+
+		IdentityType::getTypes(list);
+		identity_type_cmb->addItems(list);
 
 		data_type=nullptr;
 		data_type=new PgSQLTypeWidget(this);
-
-		Ui_ColumnWidget::setupUi(this);
 
 		hl_default_value=nullptr;
 		hl_default_value=new SyntaxHighlighter(def_value_txt, true);
@@ -37,37 +40,50 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN
 		sequence_sel=new ObjectSelectorWidget(OBJ_SEQUENCE, true, this);
 		sequence_sel->setEnabled(false);
 
-
 		column_grid->addWidget(data_type,0,0,1,0);
 		column_grid->addWidget(default_value_grp,1,0,1,1);
 
 		column_grid->addItem(spacer,column_grid->count(),0);
-		dynamic_cast<QGridLayout *>(default_value_grp->layout())->addWidget(sequence_sel, 1, 1);
+		dynamic_cast<QGridLayout *>(default_value_grp->layout())->addWidget(sequence_sel, 1, 1, 1, 2);
 
 		configureFormLayout(column_grid, OBJ_COLUMN);
 		configureTabOrder({ data_type });
 
+		map<QString, vector<QWidget *> > fields_map;
+		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_100)].push_back(identity_rb);
+		highlightVersionSpecificFields(fields_map);
+
 		connect(sequence_rb, &QRadioButton::clicked,
-				[&](){ sequence_sel->setEnabled(true); def_value_txt->setEnabled(false); });
+				[&](){
+						sequence_sel->setEnabled(true);
+						def_value_txt->setEnabled(false);
+						identity_type_cmb->setEnabled(false);
+						notnull_chk->setEnabled(true);
+				});
 
 		connect(expression_rb, &QRadioButton::clicked,
-				[&](){ sequence_sel->setEnabled(false); def_value_txt->setEnabled(true); });
+				[&](){
+						sequence_sel->setEnabled(false);
+						def_value_txt->setEnabled(true);
+						identity_type_cmb->setEnabled(false);
+						notnull_chk->setEnabled(true);
+				});
 
-		setMinimumSize(540, 460);
+		connect(identity_rb, &QRadioButton::clicked,
+				[&](){
+						sequence_sel->setEnabled(false);
+						def_value_txt->setEnabled(false);
+						identity_type_cmb->setEnabled(true);
+						notnull_chk->setChecked(true);
+						notnull_chk->setEnabled(false);
+				});
+
+		setMinimumSize(540, 480);
 	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
-}
-
-void ColumnWidget::hideEvent(QHideEvent *event)
-{
-	def_value_txt->clear();
-	notnull_chk->setChecked(false);
-	sequence_sel->clearSelector();
-	expression_rb->setChecked(true);
-	BaseObjectWidget::hideEvent(event);
 }
 
 void ColumnWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *parent_obj, Column *column)
@@ -92,10 +108,18 @@ void ColumnWidget::setAttributes(DatabaseModel *model, OperationList *op_list, B
 			sequence_sel->setEnabled(true);
 			sequence_sel->setSelectedObject(column->getSequence());
 		}
+		else if(column->getIdentityType() != BaseType::null)
+		{
+			identity_rb->setChecked(true);
+			identity_type_cmb->setEnabled(true);
+			identity_type_cmb->setCurrentText(~column->getIdentityType());
+			notnull_chk->setEnabled(false);
+		}
 	}
 
-	data_type->setAttributes(type, model, UserTypeConfig::BASE_TYPE | UserTypeConfig::TABLE_TYPE | UserTypeConfig::VIEW_TYPE |
-							 UserTypeConfig::DOMAIN_TYPE | UserTypeConfig::EXTENSION_TYPE, true,false);
+	data_type->setAttributes(type, model,
+													 UserTypeConfig::BASE_TYPE | UserTypeConfig::TABLE_TYPE | UserTypeConfig::VIEW_TYPE |
+													 UserTypeConfig::DOMAIN_TYPE | UserTypeConfig::EXTENSION_TYPE, true,false);
 }
 
 void ColumnWidget::applyConfiguration(void)
@@ -112,8 +136,10 @@ void ColumnWidget::applyConfiguration(void)
 
 		if(expression_rb->isChecked())
 			column->setDefaultValue(def_value_txt->toPlainText());
-		else
+		else if(sequence_rb->isChecked())
 			column->setSequence(sequence_sel->getSelectedObject());
+		else
+			column->setIdentityType(IdentityType(identity_type_cmb->currentText()));
 
 		if(table)
 		{

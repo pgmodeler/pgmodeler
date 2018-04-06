@@ -176,6 +176,9 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 
 		//! brief Browse the referencing table data using the selected row in the results grid
 		void browseReferrerTable(void);
+
+		//! brief Changes the values of the grid selection at once
+		void bulkDataEdit(void);
 };
 
 #endif

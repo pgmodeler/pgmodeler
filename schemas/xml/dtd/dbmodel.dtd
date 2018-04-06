@@ -64,6 +64,8 @@
 %eventtrigger;
 <!ENTITY % genericsql SYSTEM "genericsql.dtd">
 %genericsql;
+<!ENTITY % policy SYSTEM "policy.dtd">
+%policy;
 
 <!ELEMENT dbmodel ANY>
 

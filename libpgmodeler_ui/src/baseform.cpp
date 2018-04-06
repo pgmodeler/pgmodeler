@@ -21,7 +21,7 @@
 BaseForm::BaseForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
-	this->setWindowFlags(this->windowFlags() ^ Qt::WindowContextHelpButtonHint);
+    this->setWindowFlags((this->windowFlags() | Qt::WindowMinMaxButtonsHint) ^ Qt::WindowContextHelpButtonHint);
 }
 
 void BaseForm::setButtonConfiguration(unsigned button_conf)
@@ -111,8 +111,13 @@ void BaseForm::resizeForm(QWidget *widget)
 	if(curr_h > screen->size().height())
 		curr_h = screen->size().height() * 0.80;
 
-	this->setMinimumSize(curr_w, curr_h);
-	this->resize(this->minimumSize());
+	this->setMinimumSize(min_size);
+	this->resize(curr_w, curr_h);
+}
+
+void BaseForm::closeEvent(QCloseEvent *)
+{
+	this->reject();
 }
 
 void BaseForm::setMainWidget(BaseObjectWidget *widget)
@@ -129,6 +134,7 @@ void BaseForm::setMainWidget(BaseObjectWidget *widget)
 	setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
 
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(reject()));
+	connect(this, SIGNAL(rejected()), widget, SLOT(cancelConfiguration()));
 	connect(apply_ok_btn, SIGNAL(clicked(bool)), widget, SLOT(applyConfiguration()));
 	connect(widget, SIGNAL(s_closeRequested()), this, SLOT(accept()));
 }

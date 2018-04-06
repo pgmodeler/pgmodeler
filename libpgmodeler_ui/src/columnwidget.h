@@ -36,9 +36,7 @@ class ColumnWidget: public BaseObjectWidget, public Ui::ColumnWidget {
 		SyntaxHighlighter *hl_default_value;
 		PgSQLTypeWidget *data_type;
 		ObjectSelectorWidget *sequence_sel;
-		
-		void hideEvent(QHideEvent *event);
-		
+
 	public:
 		ColumnWidget(QWidget * parent = 0);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *parent_obj, Column *column);

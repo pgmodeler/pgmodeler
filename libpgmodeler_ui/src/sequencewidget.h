@@ -34,8 +34,6 @@ class SequenceWidget: public BaseObjectWidget, public Ui::SequenceWidget {
 
 		ObjectSelectorWidget *column_sel;
 
-		void hideEvent(QHideEvent *event);
-
 	public:
 		SequenceWidget(QWidget * parent = 0);
 

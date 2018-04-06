@@ -29,12 +29,12 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 		cond_expr_hl=new SyntaxHighlighter(cond_expr_txt, false, true);
 		cond_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
-		columns_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-										  (ObjectTableWidget::EDIT_BUTTON |
-											 ObjectTableWidget::UPDATE_BUTTON |
-											 ObjectTableWidget::DUPLICATE_BUTTON), true, this);
+		columns_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
+										  (ObjectsTableWidget::EDIT_BUTTON |
+											 ObjectsTableWidget::UPDATE_BUTTON |
+											 ObjectsTableWidget::DUPLICATE_BUTTON), true, this);
 
-		arguments_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^ ObjectTableWidget::DUPLICATE_BUTTON, true, this);
+		arguments_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^ ObjectsTableWidget::DUPLICATE_BUTTON, true, this);
 
 		ref_table_sel=new ObjectSelectorWidget(OBJ_TABLE, true, this);
 		function_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
@@ -121,7 +121,7 @@ void TriggerWidget::addColumn(int lin_idx)
 		column=reinterpret_cast<Column *>(column_cmb->itemData(column_cmb->currentIndex(),Qt::UserRole).value<void *>());
 		column_cmb->removeItem(column_cmb->currentIndex());
 		addColumn(column, lin_idx);
-		columns_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
+		columns_tab->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
 	}
 	catch(Exception &e)
 	{
@@ -164,7 +164,7 @@ void TriggerWidget::updateColumnsCombo(void)
 				}
 			}
 
-			columns_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
+			columns_tab->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
 		}
 	}
 	catch(Exception &e)
@@ -187,36 +187,6 @@ void TriggerWidget::handleArgument(int lin_idx)
 void TriggerWidget::editArgument(int lin_idx)
 {
 	argument_edt->setText(arguments_tab->getCellText(lin_idx, 0));
-}
-
-void TriggerWidget::hideEvent(QHideEvent *event)
-{
-	BaseObjectWidget::hideEvent(event);
-
-	cond_expr_txt->clear();
-	column_cmb->clear();
-	argument_edt->clear();
-
-	deferrable_chk->setChecked(false);
-	firing_mode_cmb->setCurrentIndex(0);
-	deferral_type_cmb->setCurrentIndex(0);
-
-	columns_tab->blockSignals(true);
-	arguments_tab->blockSignals(true);
-	columns_tab->removeRows();
-	arguments_tab->removeRows();
-	columns_tab->blockSignals(false);
-	arguments_tab->blockSignals(false);
-
-	insert_chk->setChecked(false);
-	update_chk->setChecked(false);
-	delete_chk->setChecked(false);
-	truncate_chk->setChecked(false);
-
-	function_sel->clearSelector();
-	ref_table_sel->clearSelector();
-
-	arg_cols_tbw->setCurrentIndex(0);
 }
 
 void TriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseTable *parent_table, Trigger *trigger)
@@ -266,7 +236,7 @@ void TriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_list, 
 			arguments_tab->setCellText(trigger->getArgument(i), i, 0);
 		}
 
-		columns_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
+		columns_tab->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
 		arguments_tab->blockSignals(false);
 		columns_tab->blockSignals(false);
 	}

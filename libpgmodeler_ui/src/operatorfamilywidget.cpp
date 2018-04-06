@@ -42,13 +42,7 @@ OperatorFamilyWidget::OperatorFamilyWidget(QWidget *parent): BaseObjectWidget(pa
 	opfamily_grid->addWidget(frame, opfamily_grid->count()+1, 0, 1, 5);
 
 	configureTabOrder();
-	setMinimumSize(500, 250);
-}
-
-void OperatorFamilyWidget::hideEvent(QHideEvent *event)
-{
-	indexing_cmb->setCurrentIndex(0);
-	BaseObjectWidget::hideEvent(event);
+	setMinimumSize(500, 290);
 }
 
 void OperatorFamilyWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, OperatorFamily *op_family)

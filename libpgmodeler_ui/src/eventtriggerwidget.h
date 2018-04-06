@@ -26,18 +26,16 @@
 #define EVENT_TRIGGER_WIDGET_H
 
 #include "baseobjectwidget.h"
-#include "objecttablewidget.h"
+#include "objectstablewidget.h"
 #include "ui_eventtriggerwidget.h"
 
 class EventTriggerWidget: public BaseObjectWidget, public Ui::EventTriggerWidget {
 	private:
 		Q_OBJECT
 		
-		ObjectTableWidget *filter_tab;
+		ObjectsTableWidget *filter_tab;
 		
 		ObjectSelectorWidget *function_sel;
-		
-		void hideEvent(QHideEvent*);
 		
 	public:
 		EventTriggerWidget(QWidget * parent = 0);

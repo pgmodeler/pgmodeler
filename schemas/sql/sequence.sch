@@ -45,7 +45,7 @@ $tb [OWNED BY ]
 %if {owner-col} %then {owner-col} %else NONE %end
 ; $br
 
-%if {owner-col} %then
+%if {owner-col} %and %not {col-is-identity} %then
 $br
 [ALTER TABLE ] {table} [ ALTER COLUMN ] {column} $br
 [      SET DEFAULT nextval('] {name} ['::regclass);] $br

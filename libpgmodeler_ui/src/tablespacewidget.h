@@ -36,9 +36,6 @@ class TablespaceWidget: public BaseObjectWidget, public Ui::TablespaceWidget {
 		TablespaceWidget(QWidget * parent = 0);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Tablespace *tablespc);
 
-	private slots:
-		void hideEvent(QHideEvent *event);
-
 	public slots:
 		void applyConfiguration(void);
 };

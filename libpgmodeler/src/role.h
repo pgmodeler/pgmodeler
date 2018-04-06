@@ -33,8 +33,8 @@ class Role: public BaseObject {
 		static unsigned role_id;
 
 		/*! \brief Options for the role (SUPERUSER, CREATEDB, CREATEROLE,
-		 INHERIT, LOGIN, ENCRYPTED, REPLICATION) */
-		bool options[7];
+		 INHERIT, LOGIN, ENCRYPTED, REPLICATION, BYPASSRLS) */
+		bool options[8];
 
 		//! \brief Connection limit for the role
 		int conn_limit;
@@ -65,7 +65,8 @@ class Role: public BaseObject {
 		OP_INHERIT=3,
 		OP_LOGIN=4,
 		OP_ENCRYPTED=5,
-		OP_REPLICATION=6;
+		OP_REPLICATION=6,
+		OP_BYPASSRLS=7;
 
 		//! \brief Constants used to reference the internal role lists of the class
 		static const unsigned REF_ROLE=10,

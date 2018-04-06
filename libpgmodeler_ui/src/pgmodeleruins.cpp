@@ -316,7 +316,7 @@ namespace PgModelerUiNS {
 		if(curr_h > screen->size().height())
 			curr_h = screen->size().height() * 0.80;
 
-		widget->setMinimumSize(curr_w, curr_h);
-		widget->resize(widget->minimumSize());
+		widget->setMinimumSize(widget->minimumSize());
+		widget->resize(curr_w, curr_h);
 	}
 }

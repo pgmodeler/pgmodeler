@@ -25,6 +25,12 @@
 	%else
 	  [ NULL AS replication_bool, ]
 	%end
+	
+        %if ({pgsql-ver} >=f "9.5") %then
+	  [ rolbypassrls AS bypassrls_bool, ]
+	%else
+	  [ NULL AS bypassrls_bool, ]
+	%end
 
   [   (SELECT array_agg(rl.oid) AS member_roles FROM pg_auth_members AS am
 	     LEFT JOIN pg_roles AS rl ON rl.oid=am.member

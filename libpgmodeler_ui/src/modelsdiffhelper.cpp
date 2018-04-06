@@ -35,7 +35,8 @@ ModelsDiffHelper::ModelsDiffHelper(void)
 	diff_opts[OPT_KEEP_OBJ_PERMS]=true;
 	diff_opts[OPT_REUSE_SEQUENCES]=true;
 	diff_opts[OPT_PRESERVE_DB_NAME]=true;
-	diff_opts[OPT_KEEP_NOT_IMPORTED_OBJS]=false;
+	diff_opts[OPT_DONT_DROP_MISSING_OBJS]=false;
+	diff_opts[OPT_DROP_MISSING_COLS_CONSTR]=false;
 }
 
 ModelsDiffHelper::~ModelsDiffHelper(void)
@@ -45,10 +46,13 @@ ModelsDiffHelper::~ModelsDiffHelper(void)
 
 void ModelsDiffHelper::setDiffOption(unsigned opt_id, bool value)
 {
-	if(opt_id > OPT_KEEP_NOT_IMPORTED_OBJS)
+	if(opt_id > OPT_DROP_MISSING_COLS_CONSTR)
 		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	diff_opts[opt_id]=value;
+	if(opt_id == OPT_DROP_MISSING_COLS_CONSTR)
+		diff_opts[opt_id]=value & !diff_opts[OPT_DROP_MISSING_COLS_CONSTR];
+	else
+		diff_opts[opt_id]=value;
 }
 
 void ModelsDiffHelper::setPgSQLVersion(const QString pgsql_ver)
@@ -149,11 +153,12 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
 			aux_obj=comp_tab->getObject(tab_obj->getName(), tab_obj->getObjectType());
 			constr=dynamic_cast<Constraint *>(tab_obj);
 
-			//Ignoring check constraints added by generalizations
-			if(constr && constr->isAddedByGeneralization() &&
-					constr->getConstraintType()==ConstraintType::check)
+			//Ignoring object with sql disabled or check constraints added by generalizations
+			if(tab_obj->isSQLDisabled() ||
+				 (constr && constr->isAddedByGeneralization() &&
+					constr->getConstraintType()==ConstraintType::check))
 			{
-				generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, constr);
+				generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, tab_obj);
 			}
 			else
 			{
@@ -176,7 +181,8 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
 				else if(!aux_obj && !tab_obj->isAddedByGeneralization())
 				{
 					if(diff_type!=ObjectsDiffInfo::DROP_OBJECT ||
-						 (diff_type==ObjectsDiffInfo::DROP_OBJECT && !diff_opts[OPT_KEEP_NOT_IMPORTED_OBJS]))
+						 (diff_type==ObjectsDiffInfo::DROP_OBJECT && !diff_opts[OPT_DONT_DROP_MISSING_OBJS]) ||
+						 (diff_type==ObjectsDiffInfo::DROP_OBJECT && diff_opts[OPT_DROP_MISSING_COLS_CONSTR]))
 						generateDiffInfo(diff_type, tab_obj);
 					else
 						generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, tab_obj);
@@ -329,7 +335,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 						else if(!aux_object)
 						{
 							if(diff_type != ObjectsDiffInfo::DROP_OBJECT ||
-								 (diff_type == ObjectsDiffInfo::DROP_OBJECT && !diff_opts[OPT_KEEP_NOT_IMPORTED_OBJS]))
+								 (diff_type == ObjectsDiffInfo::DROP_OBJECT && !diff_opts[OPT_DONT_DROP_MISSING_OBJS]))
 								generateDiffInfo(diff_type, object);
 							else
 								generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, object);
@@ -387,8 +393,7 @@ void ModelsDiffHelper::diffTableObject(TableObject *tab_obj, unsigned diff_type)
 		if(!aux_base_tab)
 			aux_base_tab=dynamic_cast<BaseTable *>(getRelNNTable(tab_name, source_model));
 	}
-	else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT ||
-			diff_type==ObjectsDiffInfo::ALTER_OBJECT)
+	else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT || diff_type==ObjectsDiffInfo::ALTER_OBJECT)
 	{
 		aux_base_tab=dynamic_cast<BaseTable *>(imported_model->getObject(tab_name, base_tab->getObjectType()));
 
@@ -411,7 +416,7 @@ void ModelsDiffHelper::diffTableObject(TableObject *tab_obj, unsigned diff_type)
 	if(!aux_tab_obj)
 	{
 		if(diff_type!=ObjectsDiffInfo::DROP_OBJECT ||
-			 (diff_type==ObjectsDiffInfo::DROP_OBJECT && !diff_opts[OPT_KEEP_NOT_IMPORTED_OBJS]))
+			 (diff_type==ObjectsDiffInfo::DROP_OBJECT && !diff_opts[OPT_DONT_DROP_MISSING_OBJS]))
 			generateDiffInfo(diff_type, tab_obj);
 		else
 			generateDiffInfo(ObjectsDiffInfo::IGNORE_OBJECT, tab_obj);
@@ -602,7 +607,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 	map<unsigned, QString>::reverse_iterator ritr, ritr_end;
 	attribs_map attribs;
 	QString alter_def, no_inherit_def, inherit_def, set_perms,
-			unset_perms, col_drop_def;
+			unset_perms, col_drop_def, curr_pgsql_ver = BaseObject::getPgSQLVersion();
 	SchemaParser schparser;
 	Type *type=nullptr;
 	vector<Type *> types;
@@ -614,6 +619,9 @@ void ModelsDiffHelper::processDiffInfos(void)
 
 	try
 	{
+		//Overriding the global PostgreSQL version so the diff code can match the destination server version
+		BaseObject::setPgSQLVersion(pgsql_version);
+
 		if(!diff_infos.empty())
 			emit s_progressUpdated(0, trUtf8("Processing diff infos..."));
 
@@ -779,8 +787,10 @@ void ModelsDiffHelper::processDiffInfos(void)
 
 					if(!alter_def.isEmpty())
 					{
-						if(obj_type!=OBJ_DATABASE || !diff_opts[OPT_PRESERVE_DB_NAME])
-							alter_objs[object->getObjectId()]=alter_def;
+						if(obj_type == OBJ_DATABASE && diff_opts[OPT_PRESERVE_DB_NAME])
+							alter_def.remove(QRegExp(QString("(ALTER)( )+(DATABASE)( )+(%1)( )+(RENAME)( )+(TO)(.)*(\\n)").arg(diff.getOldObject()->getSignature())));
+
+						alter_objs[object->getObjectId()]=alter_def;
 
 						/* If the object is a column checks if the types of the columns are differents,
 							generating a TRUNCATE TABLE for the parent table */
@@ -895,9 +905,14 @@ void ModelsDiffHelper::processDiffInfos(void)
 			emit s_progressUpdated(100, trUtf8("No differences between the model and database."));
 		else
 			emit s_progressUpdated(100, trUtf8("Preparing diff code..."));
+
+		//Restoring the global PostgreSQL version
+		BaseObject::setPgSQLVersion(curr_pgsql_ver);
 	}
 	catch(Exception &e)
 	{
+		BaseObject::setPgSQLVersion(curr_pgsql_ver);
+
 		for(Type *type : types)
 			type->convertFunctionParameters(true);
 

@@ -901,9 +901,9 @@
                 </layout>
                </item>
                <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_22">
-                 <item>
-                  <widget class="QCheckBox" name="keep_not_imported_objs_chk">
+                <layout class="QGridLayout" name="gridLayout_12">
+                 <item row="0" column="0" colspan="2">
+                  <widget class="QCheckBox" name="dont_drop_missing_objs_chk">
                    <property name="toolTip">
                     <string/>
                    </property>
@@ -918,8 +918,65 @@
                    </property>
                   </widget>
                  </item>
-                 <item>
-                  <widget class="QWidget" name="keep_not_imported_objs_hint" native="true">
+                 <item row="0" column="2">
+                  <widget class="QWidget" name="dont_drop_missing_objs_hint" native="true">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>22</width>
+                     <height>22</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>22</width>
+                     <height>22</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <spacer name="horizontalSpacer_8">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeType">
+                    <enum>QSizePolicy::Fixed</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>12</width>
+                     <height>21</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QCheckBox" name="drop_missing_cols_constr_chk">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="toolTip">
+                    <string/>
+                   </property>
+                   <property name="statusTip">
+                    <string>Froce the generation of DROP commands for columns and constraints that exist in database but not in the model. This is useful when diff a partial model against the complete database and the user needs to drop columns and constraint but preserve the rest of the objects.</string>
+                   </property>
+                   <property name="text">
+                    <string>Drop missing columns and constraints</string>
+                   </property>
+                   <property name="checked">
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="2">
+                  <widget class="QWidget" name="drop_missing_cols_constr_hint" native="true">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -1043,7 +1100,7 @@
                     <string>Clears the data of all tables which will have columns modified. This is useful to avoid errors related to type casting. &lt;strong&gt;WARNING:&lt;/strong&gt; DO NOT use this option on production servers and always make a backup before use it.</string>
                    </property>
                    <property name="text">
-                    <string>Trucate tables before alter columns</string>
+                    <string>Truncate tables before alter columns</string>
                    </property>
                   </widget>
                  </item>

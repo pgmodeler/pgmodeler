@@ -37,9 +37,6 @@ class ExtensionWidget: public BaseObjectWidget, public Ui::ExtensionWidget {
 		
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Extension *ext);
 		
-	private slots:
-		void hideEvent(QHideEvent *event);
-		
 	public slots:
 		void applyConfiguration(void);
 };

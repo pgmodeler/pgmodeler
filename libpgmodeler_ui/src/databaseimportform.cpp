@@ -414,7 +414,9 @@ void DatabaseImportForm::captureThreadError(Exception e)
 
 void DatabaseImportForm::filterObjects(void)
 {
-	DatabaseImportForm::filterObjects(db_objects_tw, filter_edt->text(), (by_oid_chk->isChecked() ? OBJECT_ID : 0), false);
+	DatabaseImportForm::filterObjects(db_objects_tw,
+																		filter_edt->text(),
+																		(by_oid_chk->isChecked() ? OBJECT_ID : 0), false);
 }
 
 void DatabaseImportForm::filterObjects(QTreeWidget *tree_wgt, const QString &pattern, int search_column, bool sel_single_leaf)
@@ -422,8 +424,13 @@ void DatabaseImportForm::filterObjects(QTreeWidget *tree_wgt, const QString &pat
 	if(!tree_wgt)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	QList<QTreeWidgetItem*> items=tree_wgt->findItems(pattern, Qt::MatchStartsWith | Qt::MatchRecursive, search_column);
+	QList<QTreeWidgetItem*> items;
 	QTreeWidgetItemIterator itr(tree_wgt);
+
+	if(search_column == DatabaseImportForm::OBJECT_ID)
+		items = tree_wgt->findItems(QString("^(0)*(%1)(.)*").arg(pattern), Qt::MatchRegExp | Qt::MatchRecursive, search_column);
+	else
+		items = tree_wgt->findItems(pattern, Qt::MatchStartsWith | Qt::MatchRecursive, search_column);
 
 	tree_wgt->blockSignals(true);
 	tree_wgt->collapseAll();
@@ -620,7 +627,7 @@ void DatabaseImportForm::listDatabases(DatabaseImportHelper &import_helper, QCom
 }
 
 void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, bool checkable_items,
-																		 bool disable_empty_grps, bool create_db_item, bool create_dummy_item)
+																		 bool disable_empty_grps, bool create_db_item, bool create_dummy_item, unsigned sort_by)
 {
 	TaskProgressWidget task_prog_wgt;
 
@@ -653,7 +660,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 				db_item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath(OBJ_DATABASE)));
 				attribs=catalog.getObjectsAttributes(OBJ_DATABASE, QString(), QString(), {}, {{ParsersAttributes::NAME, import_helper.getCurrentDatabase()}});
 
-				db_item->setData(OBJECT_ID, Qt::UserRole, attribs[0].at(ParsersAttributes::OID));
+				db_item->setData(OBJECT_ID, Qt::UserRole, attribs[0].at(ParsersAttributes::OID).toUInt());
 				db_item->setData(OBJECT_TYPE, Qt::UserRole, OBJ_DATABASE);
 				db_item->setData(OBJECT_TYPE, Qt::UserRole, OBJ_DATABASE);
 				db_item->setToolTip(0, QString("OID: %1").arg(attribs[0].at(ParsersAttributes::OID)));
@@ -712,7 +719,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 				}
 			}
 
-			tree_wgt->sortItems(0, Qt::AscendingOrder);
+			tree_wgt->sortItems(sort_by, Qt::AscendingOrder);
 
 			if(db_item)
 				db_item->setExpanded(true);
@@ -733,7 +740,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 }
 
 vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, vector<ObjectType> types, bool checkable_items,
-																																bool disable_empty_grps, QTreeWidgetItem *root, const QString &schema, const QString &table)
+																																bool disable_empty_grps, QTreeWidgetItem *root, const QString &schema, const QString &table, unsigned sort_by)
 {
 	vector<QTreeWidgetItem *> items_vect;
 
@@ -803,7 +810,8 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 				item=new QTreeWidgetItem(group);
 				item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath(obj_type)));
 				item->setText(0, label);
-				item->setText(OBJECT_ID, attribs[ParsersAttributes::OID]);
+				item->setText(OBJECT_ID, attribs[ParsersAttributes::OID].rightJustified(10, '0'));
+				item->setData(OBJECT_ID, Qt::UserRole, attribs[ParsersAttributes::OID].toUInt());
 				item->setData(OBJECT_NAME, Qt::UserRole, name);
 
 				if(checkable_items)
@@ -874,7 +882,8 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 			}
 
 			tree_wgt->addTopLevelItems(groups_list);
-			tree_wgt->setSortingEnabled(true);
+			//tree_wgt->setSortingEnabled(true);
+			tree_wgt->sortItems(sort_by, Qt::AscendingOrder);
 			tree_wgt->setUpdatesEnabled(true);
 			tree_wgt->blockSignals(false);
 		}

@@ -34,6 +34,14 @@
        END
        AS unlogged_bool, ]
     %end
+    
+    %if ({pgsql-ver} <f "9.5") %then
+     [ FALSE AS rls_enabled_bool, ]
+     [ FALSE AS rls_forced_bool, ]
+    %else
+     [ tb.relrowsecurity AS rls_enabled_bool, ]
+     [ tb.relforcerowsecurity AS rls_forced_bool, ]
+    %end
 
     [(SELECT array_agg(inhparent) AS parents FROM pg_inherits WHERE inhrelid = tb.oid)],
 
