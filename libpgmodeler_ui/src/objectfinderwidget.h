@@ -36,6 +36,8 @@ class ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
 
 		vector<BaseObject *> found_objs;
 
+		QMenu select_menu, fade_menu;
+
 		//! \brief Reference model widget
 		ModelWidget *model_wgt;
 
@@ -69,7 +71,6 @@ class ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
 		void hide(void);
 		void clearResult(void);
 		void findObjects(void);
-		void fadeObjects(void);
 
 	private slots:
 		//! \brief Opens the editing form of the selected object
@@ -79,6 +80,10 @@ class ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
 		void selectObject(void);
 
 		void setAllObjectsChecked(void);
+
+		void fadeObjects(void);
+
+		void selectObjects(void);
 };
 
 #endif

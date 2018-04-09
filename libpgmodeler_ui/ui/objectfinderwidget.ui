@@ -216,7 +216,7 @@
    <item row="0" column="5">
     <widget class="QToolButton" name="select_btn">
      <property name="enabled">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -231,7 +231,7 @@
       </size>
      </property>
      <property name="toolTip">
-      <string>Selects and highlights the graphical objects when selecting them or their children in the result list</string>
+      <string>(Un)selects the graphical objects in the results grid</string>
      </property>
      <property name="text">
       <string>Select</string>
@@ -247,7 +247,10 @@
       </size>
      </property>
      <property name="checkable">
-      <bool>true</bool>
+      <bool>false</bool>
+     </property>
+     <property name="popupMode">
+      <enum>QToolButton::InstantPopup</enum>
      </property>
      <property name="toolButtonStyle">
       <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -653,6 +656,9 @@
    </item>
    <item row="0" column="6">
     <widget class="QToolButton" name="fade_btn">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -666,7 +672,7 @@
       </size>
      </property>
      <property name="toolTip">
-      <string>Fades outs all the graphical objects that aren't in the result list. Those within the results will be faded in. The current fade in/out state of all objects is modified.</string>
+      <string>Fades outs all the graphical objects in the results grid (or those not listed). The current fade in/out state of all objects is modified.</string>
      </property>
      <property name="text">
       <string>Fade out</string>
@@ -682,10 +688,10 @@
       </size>
      </property>
      <property name="checkable">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <property name="popupMode">
-      <enum>QToolButton::DelayedPopup</enum>
+      <enum>QToolButton::InstantPopup</enum>
      </property>
      <property name="toolButtonStyle">
       <enum>Qt::ToolButtonTextBesideIcon</enum>
