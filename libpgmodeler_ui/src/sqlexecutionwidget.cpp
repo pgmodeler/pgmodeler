@@ -27,6 +27,7 @@
 map<QString, QString> SQLExecutionWidget::cmd_history;
 
 int SQLExecutionWidget::cmd_history_max_len = 1000;
+int SQLExecutionWidget::max_result_rows = 20000;
 const QString SQLExecutionWidget::COLUMN_NULL_VALUE = QString("␀");
 
 SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
@@ -269,7 +270,10 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 
 		if(res.accessTuple(ResultSet::FIRST_TUPLE))
 		{
-			results_tbw->setRowCount(res.getTupleCount());
+			if(max_result_rows <= 0 || res.getTupleCount() > max_result_rows)
+				results_tbw->setRowCount(max_result_rows);
+			else
+				results_tbw->setRowCount(res.getTupleCount());
 
 			do
 			{
@@ -439,8 +443,16 @@ void SQLExecutionWidget::runSQLCommand(void)
 		if(!res.isEmpty())
 		{
 			fillResultsTable(res);
-			output_tbw->setTabText(0, trUtf8("Results (%1)").arg(res.getTupleCount()));
-			output_tbw->setCurrentIndex(0);
+			output_tbw->setTabText(0, trUtf8("Results (%1)").arg(results_tbw->rowCount()));
+
+			if(res.getTupleCount() > max_result_rows)
+			{
+				conn_notices.append(trUtf8("The number of retrieved rows exceeds the maximum allowed in the results grid! <em>The data was trucated.</em>"));
+				conn_notices.append(trUtf8("Try to limit the result set by adjusting the query."));
+				output_tbw->setCurrentIndex(1);
+			}
+			else
+				output_tbw->setCurrentIndex(0);
 		}
 		else
 		{
@@ -565,6 +577,16 @@ void SQLExecutionWidget::exportResults(QTableWidget *results_tbw)
 		file.write(generateCSVBuffer(results_tbw, 0, 0, results_tbw->rowCount(), results_tbw->columnCount()));
 		file.close();
 	}
+}
+
+void SQLExecutionWidget::setMaxResultRows(int max_val)
+{
+	max_result_rows = (max_val < 0 ? 0 : max_val);
+}
+
+int SQLExecutionWidget::getMaxResultRows(void)
+{
+	return(max_result_rows);
 }
 
 QByteArray SQLExecutionWidget::generateCSVBuffer(QTableWidget *results_tbw, int start_row, int start_col, int row_cnt, int col_cnt)
@@ -720,17 +742,6 @@ void SQLExecutionWidget::selectSnippet(QAction *act)
 	sql_cmd_txt->appendPlainText(SnippetsConfigWidget::getParsedSnippet(act->text()));
 	sql_cmd_txt->setTextCursor(cursor);
 }
-
-/*void SQLExecutionWidget::handleSelectedWord(QString word)
-{
-	if(SnippetsConfigWidget::isSnippetExists(word))
-	{
-		QTextCursor tc=sql_cmd_txt->textCursor();
-		tc.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor);
-		tc.removeSelectedText();
-		tc.insertText(SnippetsConfigWidget::getParsedSnippet(word));
-	}
-}*/
 
 void SQLExecutionWidget::toggleOutputPane(bool visible)
 {

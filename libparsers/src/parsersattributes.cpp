@@ -291,6 +291,7 @@ namespace ParsersAttributes {
 	MATERIALIZED=QString("materialized"),
 	MAX_CONNECTIONS=QString("max-connections"),
 	MAX_VALUE=QString("max-value"),
+	MAX_RESULT_ROWS=QString("max-result-rows"),
 	MEMBER_ROLES=QString("member-roles"),
 	MEMBER=QString("member"),
 	MERGES=QString("merges"),

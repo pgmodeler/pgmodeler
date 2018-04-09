@@ -48,6 +48,10 @@ $sp [<configuration op-list-size="] {op-list-size} ["] $br
 [               history-max-length="] {history-max-length} ["] $br
 [               use-curved-lines="] %if {use-curved-lines} %then true %else false %end ["] $br
 
+%if {max-result-rows} %then
+[               max-result-rows="] {max-result-rows} ["] $br
+%end
+
 %if {source-editor-app} %then
 [               source-editor-app="] {source-editor-app} ["] $br
 %end
