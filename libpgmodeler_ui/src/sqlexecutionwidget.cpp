@@ -236,7 +236,9 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 		results_tbw->setRowCount(0);
 		results_tbw->setColumnCount(col_cnt);
 		results_tbw->verticalHeader()->setVisible(true);
+		results_tbw->setSortingEnabled(false);
 		results_tbw->blockSignals(true);
+		results_tbw->setUpdatesEnabled(false);
 
 		//Configuring the grid columns with the names of retrived table columns
 		for(col=0; col < col_cnt; col++)
@@ -270,7 +272,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 
 		if(res.accessTuple(ResultSet::FIRST_TUPLE))
 		{
-			if(max_result_rows <= 0 || res.getTupleCount() > max_result_rows)
+			if(max_result_rows != 0 && res.getTupleCount() > max_result_rows)
 				results_tbw->setRowCount(max_result_rows);
 			else
 				results_tbw->setRowCount(res.getTupleCount());
@@ -308,6 +310,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 			while(res.accessTuple(ResultSet::NEXT_TUPLE));
 		}
 
+		results_tbw->setUpdatesEnabled(true);
 		results_tbw->blockSignals(false);
 		results_tbw->resizeColumnsToContents();
 		results_tbw->resizeRowsToContents();

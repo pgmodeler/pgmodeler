@@ -1180,7 +1180,7 @@
                </size>
               </property>
               <property name="statusTip">
-               <string>Maximum number of rows to be displayed in the results grid. This is used as a security measure to avoid memory exhaustion when retrieving a huge set of data from the database.</string>
+               <string>Maximum number of rows to be displayed in the results grid. This is used as a security measure to avoid application crash due to memory exhaustion when retrieving a huge set of data from the database without using filtering keywords like &lt;strong&gt;LIMIT&lt;/strong&gt; or &lt;strong&gt;WHERE&lt;/strong&gt;.</string>
               </property>
               <property name="minimum">
                <number>5000</number>

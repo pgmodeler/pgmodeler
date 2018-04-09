@@ -673,6 +673,7 @@ void BaseObjectWidget::applyConfiguration(void)
 			ObjectType obj_type=object->getObjectType();
 			QString obj_name;
 
+			QApplication::setOverrideCursor(Qt::WaitCursor);
 			obj_name=BaseObject::formatName(name_edt->text().toUtf8(), obj_type==OBJ_OPERATOR);
 
 			if(this->object->acceptsSchema() &&  schema_sel->getSelectedObject())
@@ -764,6 +765,7 @@ void BaseObjectWidget::applyConfiguration(void)
 		}
 		catch(Exception &e)
 		{
+			QApplication::restoreOverrideCursor();
 			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
@@ -851,9 +853,13 @@ void BaseObjectWidget::finishConfiguration(void)
 			emit s_objectManipulated();
 			emit s_closeRequested();
 		}
+
+		QApplication::restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{
+		QApplication::restoreOverrideCursor();
+
 		if(e.getErrorType()==ERR_ASG_OBJ_INV_DEFINITION)
 			throw Exception(Exception::getErrorMessage(ERR_REQ_FIELDS_NOT_FILLED)
 							.arg(this->object->getName()).arg(this->object->getTypeName()),
