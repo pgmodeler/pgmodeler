@@ -425,7 +425,6 @@ MainWindow::~MainWindow(void)
 {
 	//This fix the crash on exit at Mac OSX system (but not sure why) (???)
 	file_menu->clear();
-
 	delete(restoration_form);
 	delete(overview_wgt);
 	delete(configuration_form);
@@ -1327,6 +1326,8 @@ void MainWindow::saveModel(ModelWidget *model)
 				}
 			}
 
+			stopTimers(true);
+
 			if((!confirm_validation ||
 				(!db_model->isInvalidated() || (confirm_validation && db_model->isInvalidated() && msg_box.result()==QDialog::Accepted)))
 					&& (model->isModified() || sender()==action_save_as))
@@ -1357,10 +1358,13 @@ void MainWindow::saveModel(ModelWidget *model)
 				this->setWindowTitle(window_title + QString(" - ") + QDir::toNativeSeparators(model->getFilename()));
 				model_valid_wgt->clearOutput();
 			}
+
+			stopTimers(false);
 		}
 	}
 	catch(Exception &e)
 	{
+		stopTimers(false);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 #endif
