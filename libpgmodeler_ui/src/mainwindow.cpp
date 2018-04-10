@@ -1180,6 +1180,7 @@ void MainWindow::closeModel(int model_id)
 		if(!model->isModified() ||
 				(model->isModified() && msg_box.result()==QDialog::Accepted))
 		{
+			QApplication::setOverrideCursor(Qt::WaitCursor);
 			model_nav_wgt->removeModel(model_id);
 			model_tree_states.erase(model);
 
@@ -1203,6 +1204,7 @@ void MainWindow::closeModel(int model_id)
 				models_tbw->removeTab(models_tbw->currentIndex());
 
 			delete(model);
+			QApplication::restoreOverrideCursor();
 		}
 	}
 

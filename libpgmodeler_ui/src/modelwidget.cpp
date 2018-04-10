@@ -1883,11 +1883,12 @@ void ModelWidget::moveToSchema(void)
 			*prev_schema=nullptr;
 	BaseGraphicObject *obj_graph=nullptr;
 	vector<BaseObject *> ref_objs;
-	vector<BaseRelationship *>rels;
 	int op_id=-1, op_curr_idx=op_list->getCurrentIndex();
 
 	try
 	{
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+
 		op_list->startOperationChain();
 
 		for(BaseObject *obj : selected_objects)
@@ -1913,55 +1914,28 @@ void ModelWidget::moveToSchema(void)
 						p.setY(dst_schema->pos().y() + dst_schema->boundingRect().height() + BaseObjectView::VERT_SPACING);
 						dynamic_cast<BaseObjectView *>(obj_graph->getReceiverObject())->setPos(p);
 					}
-
-					obj_graph->setModified(true);
-					schema->setModified(true);
-					prev_schema->setModified(true);
 				}
 
 				//Invalidating the code of the object's references
 				db_model->getObjectReferences(obj, ref_objs);
+
 				for(BaseObject *ref_obj : ref_objs)
-				{
 					ref_obj->setCodeInvalidated(true);
-
-					//If the ref object is an table child object
-					if(TableObject::isTableObject(ref_obj->getObjectType()))
-					{
-						//Updates the parent table instead of the object
-						obj_graph=dynamic_cast<BaseGraphicObject *>(dynamic_cast<TableObject *>(ref_obj)->getParentTable());
-
-						//Get the relationships that the table participate
-						rels=db_model->getRelationships(dynamic_cast<BaseTable *>(obj_graph));
-
-						obj_graph->setModified(true);
-
-						if(!rels.empty())
-						{
-							//Updating the tables from relationships
-							for(auto &rel : rels)
-							{
-								if(rel->getTable(BaseRelationship::SRC_TABLE)!=obj_graph)
-									rel->getTable(BaseRelationship::SRC_TABLE)->setModified(true);
-
-								if(rel->getTable(BaseRelationship::DST_TABLE)!=obj_graph)
-									rel->getTable(BaseRelationship::DST_TABLE)->setModified(true);
-							}
-						}
-					}
-					else
-						dynamic_cast<BaseGraphicObject *>(ref_obj)->setModified(true);
-				}
 			}
 		}
 
 		op_list->finishOperationChain();
-
+		db_model->setObjectsModified();
 		this->setModified(true);
+
 		emit s_objectModified();
+
+		QApplication::restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{
+		QApplication::restoreOverrideCursor();
+
 		if(op_id >=0 && op_id > op_curr_idx)
 			op_list->removeLastOperation();
 
