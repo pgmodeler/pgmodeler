@@ -48,7 +48,6 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	connect(clear_res_btn, SIGNAL(clicked(void)), this, SLOT(clearResult(void)));
 	connect(select_all_btn, SIGNAL(clicked(void)), this, SLOT(setAllObjectsChecked(void)));
 	connect(clear_all_btn, SIGNAL(clicked(void)), this, SLOT(setAllObjectsChecked(void)));
-	//connect(fade_btn, SIGNAL(toggled(bool)), this, SLOT(fadeObjects()));
 
 	this->setModel(nullptr);
 	pattern_edt->installEventFilter(this);
@@ -145,8 +144,9 @@ void ObjectFinderWidget::selectObjects(void)
 									 model_wgt->getDatabaseModel()->getObjectList(obj_type)->end());
 	}
 
-	model_wgt->scene->clearSelection();
+	model_wgt->scene->blockSignals(true);
 	fadeObjects();
+	model_wgt->scene->blockSignals(false);
 
 	sel_listed = qobject_cast<QAction *>(sender()) == select_menu.actions().at(0);
 
@@ -171,9 +171,15 @@ void ObjectFinderWidget::selectObjects(void)
 			obj_view = dynamic_cast<BaseObjectView *>(graph_obj->getReceiverObject());
 
 			if(obj_view)
+			{
+				obj_view->blockSignals(true);
 				obj_view->setSelected(true);
+				obj_view->blockSignals(false);
+			}
 		}
 	}
+
+	model_wgt->configureObjectSelection();
 }
 
 void ObjectFinderWidget::setModel(ModelWidget *model_wgt)

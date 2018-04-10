@@ -166,7 +166,7 @@ class ModelWidget: public QWidget {
 		int openEditingForm(BaseObject *object, BaseObject *parent_obj, const QPointF &pos);
 
 		//! \brief Configures the popup menu according the the selected objects list
-		void configurePopupMenu(vector<BaseObject *> objects=vector<BaseObject *>());
+		void configurePopupMenu(const vector<BaseObject *> &objects=vector<BaseObject *>());
 
 		//! \brief Configures the submenu related to the object
 		void configureSubmenu(BaseObject *object);

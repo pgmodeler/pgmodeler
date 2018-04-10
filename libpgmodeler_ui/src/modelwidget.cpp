@@ -3548,7 +3548,7 @@ void ModelWidget::updateObjectsOpacity(void)
 	}
 }
 
-void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
+void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 {
 	QMenu *submenu=nullptr;
 	Table *table=nullptr;
