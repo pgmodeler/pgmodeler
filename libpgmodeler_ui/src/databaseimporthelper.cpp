@@ -2169,7 +2169,7 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 			{
 				role=dynamic_cast<Role *>(dbmodel->getObject(role_name, OBJ_ROLE));
 
-				if(auto_resolve_deps && !role)
+				if(auto_resolve_deps && !role_name.isEmpty() && !role)
 				{
 					QString oid = catalog.getObjectOID(role_name, OBJ_ROLE);
 					getDependencyObject(oid, OBJ_ROLE);
