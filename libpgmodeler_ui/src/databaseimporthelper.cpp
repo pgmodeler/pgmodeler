@@ -2169,6 +2169,13 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 			{
 				role=dynamic_cast<Role *>(dbmodel->getObject(role_name, OBJ_ROLE));
 
+				if(auto_resolve_deps && !role)
+				{
+					QString oid = catalog.getObjectOID(role_name, OBJ_ROLE);
+					getDependencyObject(oid, OBJ_ROLE);
+					role=dynamic_cast<Role *>(dbmodel->getObject(role_name, OBJ_ROLE));
+				}
+
 				/* If the role doesn't exists and there is a name defined, throws an error because
 				the roles wasn't found on the model */
 				if(!role && !role_name.isEmpty())
