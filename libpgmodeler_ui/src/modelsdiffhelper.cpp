@@ -978,7 +978,8 @@ void ModelsDiffHelper::recreateObject(BaseObject *object, vector<BaseObject *> &
 {
 	if(object &&
 			object->getObjectType()!=BASE_RELATIONSHIP &&
-			object->getObjectType()!=OBJ_RELATIONSHIP)
+			object->getObjectType()!=OBJ_RELATIONSHIP &&
+			object->getObjectType()!=OBJ_DATABASE)
 	{
 		vector<BaseObject *> ref_objs;
 		BaseObject *aux_obj=nullptr;
