@@ -310,7 +310,7 @@ void DataManipulationForm::retrieveData(void)
 		unsigned limit=limit_spb->value();
 
 		//Building the where clause
-		if(!filter_txt->toPlainText().isEmpty())
+		if(!filter_txt->toPlainText().trimmed().isEmpty())
 			query+=QString(" WHERE ") + filter_txt->toPlainText();
 
 		//Building the order by clause
