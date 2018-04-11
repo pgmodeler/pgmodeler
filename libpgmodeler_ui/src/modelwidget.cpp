@@ -4827,12 +4827,11 @@ void ModelWidget::updateMagnifierArea(void)
 		magnifier_area_lbl->move(5, magnifier_area_lbl->geometry().top());
 
 	QPainter p(&pix);
-	p.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
+	p.setRenderHints(viewport->renderHints());
 
 	scene->blockSignals(true);
 	scene->render(&p, QRectF(QPointF(0,0), size), QRectF(scene_pos - QPointF(cx, cy), size));
 
-	p.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing, false);
 	p.setPen(QColor(80,0,0));
 	p.drawLine(QPointF(cx, cy - 10), QPointF(cx, cy + 10));
 	p.drawLine(QPointF(cx - 10, cy), QPointF(cx + 10, cy));
