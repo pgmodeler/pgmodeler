@@ -285,12 +285,10 @@ void PgModelerCLI::showMenu(void)
 	out << endl;
 	out << trUtf8("Usage: pgmodeler-cli [OPTIONS]") << endl;
 	out << QString("pgModeler ") << GlobalAttributes::PGMODELER_VERSION << trUtf8(" command line interface.") << endl;
-	out << trUtf8("PostgreSQL Database Modeler Project - pgmodeler.com.br") << endl;
-	out << trUtf8("Copyright 2006-2015 Raphael A. Silva <raphael@pgmodeler.com.br>") << endl;
+	out << trUtf8("PostgreSQL Database Modeler Project - pgmodeler.io") << endl;
+	out << trUtf8("Copyright 2006-2018 Raphael A. Silva <raphael@pgmodeler.io>") << endl;
 	out << endl;
-	out << trUtf8("This CLI tool provides the operations to export pgModeler's database models without\n\
-the need to load them on graphical interface as well to fix model files to the most recent\n\
-accepted structure. All available options are described below.") << endl;
+	out << trUtf8("This CLI tool provides several operations over models and databases without the need to perform them\non pgModeler's graphical interface. All available options are described below.") << endl;
 	out << endl;
 	out << trUtf8("General options: ") << endl;
 	out << trUtf8("  %1, %2=[FILE|DBNAME]\t   Input model file (.dbm) or database name. This is mandatory in fix, export and import operations.").arg(short_opts[INPUT]).arg(INPUT) << endl;
