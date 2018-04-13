@@ -328,9 +328,9 @@ accepted structure. All available options are described below.") << endl;
 	out << trUtf8("  %1, %2=[DBNAME]\t   Connection's initial database.").arg(short_opts[INITIAL_DB]).arg(INITIAL_DB) << endl;
 	out << endl;
 	out << trUtf8("Database import options: ") << endl;
-	out << trUtf8("  %1, %2\t\t   Ignores all errors and try to create as many as possible objects.").arg(short_opts[IGNORE_IMPORT_ERRORS]).arg(IGNORE_IMPORT_ERRORS) << endl;
-	out << trUtf8("  %1, %2\t\t   Import system built-in objects.").arg(short_opts[IMPORT_SYSTEM_OBJS]).arg(IMPORT_SYSTEM_OBJS) << endl;
-	out << trUtf8("  %1, %2\t\t   Import extension objects.").arg(short_opts[IMPORT_EXTENSION_OBJS]).arg(IMPORT_EXTENSION_OBJS) << endl;
+	out << trUtf8("  %1, %2\t\t   Ignore all errors and try to create as many as possible objects.").arg(short_opts[IGNORE_IMPORT_ERRORS]).arg(IGNORE_IMPORT_ERRORS) << endl;
+	out << trUtf8("  %1, %2\t\t   Import system built-in objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[IMPORT_SYSTEM_OBJS]).arg(IMPORT_SYSTEM_OBJS) << endl;
+	out << trUtf8("  %1, %2\t\t   Import extension objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[IMPORT_EXTENSION_OBJS]).arg(IMPORT_EXTENSION_OBJS) << endl;
 	out << trUtf8("  %1, %2\t\t   Run import in debug mode printing all queries executed in the server.").arg(short_opts[DEBUG_MODE]).arg(DEBUG_MODE) << endl;
 	out << endl;
 
