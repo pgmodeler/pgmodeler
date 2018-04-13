@@ -1014,6 +1014,11 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 		for(auto &obj : tables.toSet())
 		{
 			tab_view=dynamic_cast<BaseTableView *>(obj);
+
+			//Realign tables if the parent schema had the position adjusted too
+			if(align_objs_grid)
+				tab_view->setPos(alignPointToGrid(tab_view->pos()));
+
 			if(tab_view)
 				tab_view->requestRelationshipsUpdate();
 		}
