@@ -1493,9 +1493,10 @@ void DatabaseImportHelper::createAggregate(attribs_map &attribs)
 			attribs[func_types[i]]=getDependencyObject(attribs[func_types[i]], OBJ_FUNCTION, true, auto_resolve_deps, true, {{ParsersAttributes::REF_TYPE, func_types[i]}});
 
 		types=getTypes(attribs[ParsersAttributes::TYPES], true);
+		attribs[ParsersAttributes::TYPES]=QString();
+
 		if(!types.isEmpty())
 		{
-			attribs[ParsersAttributes::TYPES]=QString();
 			for(int i=0; i < types.size(); i++)
 				attribs[ParsersAttributes::TYPES]+=types[i];
 		}

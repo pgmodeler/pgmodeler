@@ -731,7 +731,8 @@ void ModelExportHelper::restoreObjectNames(void)
 
 	/* Invalidates the codes of all objects on database model in order to generate the SQL referencing the
 		 object's with their original names */
-	db_model->setCodesInvalidated();
+	if(db_model)
+		db_model->setCodesInvalidated();
 }
 
 bool ModelExportHelper::isDuplicationError(const QString &error_code)

@@ -36,6 +36,7 @@
 #include "connectionsconfigwidget.h"
 #include "relationshipconfigwidget.h"
 #include "generalconfigwidget.h"
+#include "databaseimporthelper.h"
 
 class PgModelerCLI: public QApplication {
 	private:
@@ -45,6 +46,9 @@ class PgModelerCLI: public QApplication {
 
 		//! \brief Export helper object
 		ModelExportHelper export_hlp;
+
+		//! \brief Import helper object
+		DatabaseImportHelper import_hlp;
 
 		//! \brief Reference database model
 		DatabaseModel *model;
@@ -87,6 +91,10 @@ class PgModelerCLI: public QApplication {
 		//! \brief Zoom to be applied onto the png export
 		double zoom;
 
+		static const QRegExp PASSWORD_REGEXP;
+
+		static const QString PASSWORD_PLACEHOLDER;
+
 		//! \brief Option names constants
 		static const QString INPUT,
 		OUTPUT,
@@ -94,6 +102,7 @@ class PgModelerCLI: public QApplication {
 		EXPORT_TO_PNG,
 		EXPORT_TO_SVG,
 		EXPORT_TO_DBMS,
+		IMPORT_DB,
 		DROP_DATABASE,
 		DROP_OBJECTS,
 		PGSQL_VER,
@@ -119,6 +128,10 @@ class PgModelerCLI: public QApplication {
 		DBM_MIME_TYPE,
 		INSTALL,
 		UNINSTALL,
+		IGNORE_IMPORT_ERRORS,
+		IMPORT_SYSTEM_OBJS,
+		IMPORT_EXTENSION_OBJS,
+		DEBUG_MODE,
 
 		TAG_EXPR,
 		END_TAG_EXPR,
@@ -162,6 +175,11 @@ class PgModelerCLI: public QApplication {
 		only over operator classes, indexes and constraints */
 		void fixOpClassesFamiliesReferences(QString &obj_xml);
 
+		void fixModel(void);
+		void exportModel(void);
+		void importDatabase(void);
+		void updateMimeType(void);
+
 	public:
 		PgModelerCLI(int argc, char **argv);
 		~PgModelerCLI(void);
@@ -169,7 +187,7 @@ class PgModelerCLI: public QApplication {
 
 	private slots:
 		void handleObjectAddition(BaseObject *);
-		void updateProgress(int progress, QString msg);
+		void updateProgress(int progress, QString msg, ObjectType = BASE_OBJECT);
 		void handleObjectRemoval(BaseObject *object);
 };
 

@@ -19,12 +19,17 @@
 #include "pgmodelercli.h"
 
 QTextStream PgModelerCLI::out(stdout);
+
+const QRegExp PgModelerCLI::PASSWORD_REGEXP=QRegExp("(password)(=)(.)*( )");
+const QString PgModelerCLI::PASSWORD_PLACEHOLDER=QString("password=******");
+
 const QString PgModelerCLI::INPUT=QString("--input");
 const QString PgModelerCLI::OUTPUT=QString("--output");
 const QString PgModelerCLI::EXPORT_TO_FILE=QString("--export-to-file");
 const QString PgModelerCLI::EXPORT_TO_PNG=QString("--export-to-png");
 const QString PgModelerCLI::EXPORT_TO_SVG=QString("--export-to-svg");
 const QString PgModelerCLI::EXPORT_TO_DBMS=QString("--export-to-dbms");
+const QString PgModelerCLI::IMPORT_DB=QString("--import-db");
 const QString PgModelerCLI::DROP_DATABASE=QString("--drop-database");
 const QString PgModelerCLI::DROP_OBJECTS=QString("--drop-objects");
 const QString PgModelerCLI::PGSQL_VER=QString("--pgsql-ver");
@@ -50,6 +55,10 @@ const QString PgModelerCLI::USE_TMP_NAMES=QString("--use-tmp-names");
 const QString PgModelerCLI::DBM_MIME_TYPE=QString("--dbm-mime-type");
 const QString PgModelerCLI::INSTALL=QString("install");
 const QString PgModelerCLI::UNINSTALL=QString("uninstall");
+const QString PgModelerCLI::IGNORE_IMPORT_ERRORS=QString("--ignore-errors");
+const QString PgModelerCLI::IMPORT_SYSTEM_OBJS=QString("--import-sys-objs");
+const QString PgModelerCLI::IMPORT_EXTENSION_OBJS=QString("--import-ext-objs");
+const QString PgModelerCLI::DEBUG_MODE=QString("--debug-mode");
 
 const QString PgModelerCLI::TAG_EXPR=QString("<%1");
 const QString PgModelerCLI::END_TAG_EXPR=QString("</%1");
@@ -120,7 +129,7 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 			silent_mode=(parsed_opts.count(SILENT));
 
 			//If the export is to png or svg loads additional configurations
-			if(parsed_opts.count(EXPORT_TO_PNG) || parsed_opts.count(EXPORT_TO_SVG))
+			if(parsed_opts.count(EXPORT_TO_PNG) || parsed_opts.count(EXPORT_TO_SVG) || parsed_opts.count(IMPORT_DB))
 			{
 				connect(model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
 				connect(model, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(handleObjectRemoval(BaseObject *)));
@@ -137,7 +146,8 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 				//Load the objects styles
 				BaseObjectView::loadObjectsStyle();
 			}
-			else if(parsed_opts.count(EXPORT_TO_DBMS))
+
+			if(parsed_opts.count(EXPORT_TO_DBMS) || parsed_opts.count(IMPORT_DB))
 			{
 				//Getting the connection using its alias
 				if(parsed_opts.count(CONN_ALIAS))
@@ -157,10 +167,17 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 					connection.setConnectionParam(Connection::PARAM_PASSWORD, parsed_opts[PASSWD]);
 					connection.setConnectionParam(Connection::PARAM_DB_NAME, parsed_opts[INITIAL_DB]);
 				}
+
+				//Replacing the initial db parameter for the input database when reverse engineering
+				if(parsed_opts.count(IMPORT_DB))
+					connection.setConnectionParam(Connection::PARAM_DB_NAME, parsed_opts[INPUT]);
 			}
 
 			if(!silent_mode)
+			{
 				connect(&export_hlp, SIGNAL(s_progressUpdated(int,QString)), this, SLOT(updateProgress(int,QString)));
+				connect(&import_hlp, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString)));
+			}
 		}
 	}
 	catch(Exception &e)
@@ -183,6 +200,7 @@ void PgModelerCLI::initializeOptions(void)
 	long_opts[EXPORT_TO_PNG]=false;
 	long_opts[EXPORT_TO_SVG]=false;
 	long_opts[EXPORT_TO_DBMS]=false;
+	long_opts[IMPORT_DB]=false;
 	long_opts[DROP_DATABASE]=false;
 	long_opts[DROP_OBJECTS]=false;
 	long_opts[PGSQL_VER]=true;
@@ -205,6 +223,10 @@ void PgModelerCLI::initializeOptions(void)
 	long_opts[ZOOM_FACTOR]=true;
 	long_opts[USE_TMP_NAMES]=false;
 	long_opts[DBM_MIME_TYPE]=true;
+	long_opts[IGNORE_IMPORT_ERRORS]=false;
+	long_opts[IMPORT_SYSTEM_OBJS]=false;
+	long_opts[IMPORT_EXTENSION_OBJS]=false;
+	long_opts[DEBUG_MODE]=false;
 
 	short_opts[INPUT]=QString("-i");
 	short_opts[OUTPUT]=QString("-o");
@@ -212,6 +234,7 @@ void PgModelerCLI::initializeOptions(void)
 	short_opts[EXPORT_TO_PNG]=QString("-p");
 	short_opts[EXPORT_TO_SVG]=QString("-G");
 	short_opts[EXPORT_TO_DBMS]=QString("-d");
+	short_opts[IMPORT_DB]=QString("-r");
 	short_opts[DROP_DATABASE]=QString("-T");
 	short_opts[DROP_OBJECTS]=QString("-J");
 	short_opts[PGSQL_VER]=QString("-v");
@@ -235,6 +258,10 @@ void PgModelerCLI::initializeOptions(void)
 	short_opts[ZOOM_FACTOR]=QString("-z");
 	short_opts[USE_TMP_NAMES]=QString("-n");
 	short_opts[DBM_MIME_TYPE]=QString("-m");
+	short_opts[IGNORE_IMPORT_ERRORS]=QString("-N");
+	short_opts[IMPORT_SYSTEM_OBJS]=QString("-S");
+	short_opts[IMPORT_EXTENSION_OBJS]=QString("-X");
+	short_opts[DEBUG_MODE]=QString("-M");
 }
 
 bool PgModelerCLI::isOptionRecognized(QString &op, bool &accepts_val)
@@ -266,14 +293,15 @@ the need to load them on graphical interface as well to fix model files to the m
 accepted structure. All available options are described below.") << endl;
 	out << endl;
 	out << trUtf8("General options: ") << endl;
-	out << trUtf8("  %1, %2=[FILE]\t\t   Input model file (.dbm). Mandatory use when fixing a model or exporting it.").arg(short_opts[INPUT]).arg(INPUT) << endl;
-	out << trUtf8("  %1, %2=[FILE]\t\t   Output file. Mandatory use when fixing model or export to file or png.").arg(short_opts[OUTPUT]).arg(OUTPUT) << endl;
+	out << trUtf8("  %1, %2=[FILE|DBNAME]\t   Input model file (.dbm) or database name. This is mandatory in fix, export and import operations.").arg(short_opts[INPUT]).arg(INPUT) << endl;
+	out << trUtf8("  %1, %2=[FILE]\t\t   Output file. Mandatory use in fixing model or exporting to file, png or svg.").arg(short_opts[OUTPUT]).arg(OUTPUT) << endl;
 	out << trUtf8("  %1, %2\t\t   Try to fix the structure of the input model file in order to make it loadable again.").arg(short_opts[FIX_MODEL]).arg(FIX_MODEL) << endl;
 	out << trUtf8("  %1, %2\t\t   Model fix tries. When reaching the maximum count the invalid objects will be discard.").arg(short_opts[FIX_TRIES]).arg(FIX_TRIES) << endl;
 	out << trUtf8("  %1, %2\t\t   Export to a sql script file.").arg(short_opts[EXPORT_TO_FILE]).arg(EXPORT_TO_FILE)<< endl;
 	out << trUtf8("  %1, %2\t\t   Export to a png image.").arg(short_opts[EXPORT_TO_PNG]).arg(EXPORT_TO_PNG) << endl;
 	out << trUtf8("  %1, %2\t\t   Export to a svg file.").arg(short_opts[EXPORT_TO_SVG]).arg(EXPORT_TO_SVG) << endl;
 	out << trUtf8("  %1, %2\t\t   Export directly to a PostgreSQL server.").arg(short_opts[EXPORT_TO_DBMS]).arg(EXPORT_TO_DBMS) << endl;
+	out << trUtf8("  %1, %2\t\t   Import a database to an output file.").arg(short_opts[IMPORT_DB]).arg(IMPORT_DB) << endl;
 	out << trUtf8("  %1, %2\t\t   List available connections on %3 file.").arg(short_opts[LIST_CONNS]).arg(LIST_CONNS).arg(GlobalAttributes::CONNECTIONS_CONF + GlobalAttributes::CONFIGURATION_EXT) << endl;
 	out << trUtf8("  %1, %2\t\t   Version of generated SQL code. Only for file or dbms export.").arg(short_opts[PGSQL_VER]).arg(PGSQL_VER) << endl;
 	out << trUtf8("  %1, %2\t\t\t   Silent execution. Only critical errors are shown during process.").arg(short_opts[SILENT]).arg(SILENT) << endl;
@@ -299,10 +327,16 @@ accepted structure. All available options are described below.") << endl;
 	out << trUtf8("  %1, %2=[PASSWORD]\t   PostgreSQL user password.").arg(short_opts[PASSWD]).arg(PASSWD) << endl;
 	out << trUtf8("  %1, %2=[DBNAME]\t   Connection's initial database.").arg(short_opts[INITIAL_DB]).arg(INITIAL_DB) << endl;
 	out << endl;
+	out << trUtf8("Database import options: ") << endl;
+	out << trUtf8("  %1, %2\t\t   Ignores all errors and try to create as many as possible objects.").arg(short_opts[IGNORE_IMPORT_ERRORS]).arg(IGNORE_IMPORT_ERRORS) << endl;
+	out << trUtf8("  %1, %2\t\t   Import system built-in objects.").arg(short_opts[IMPORT_SYSTEM_OBJS]).arg(IMPORT_SYSTEM_OBJS) << endl;
+	out << trUtf8("  %1, %2\t\t   Import extension objects.").arg(short_opts[IMPORT_EXTENSION_OBJS]).arg(IMPORT_EXTENSION_OBJS) << endl;
+	out << trUtf8("  %1, %2\t\t   Run import in debug mode printing all queries executed in the server.").arg(short_opts[DEBUG_MODE]).arg(DEBUG_MODE) << endl;
+	out << endl;
 
 #ifndef Q_OS_MAC
 	out << trUtf8("Miscellaneous options: ") << endl;
-	out << trUtf8("   %1, %2=[ACTION]\t   Handles the file association to .dbm files. The ACTION can be [%3 | %4].").arg(short_opts[DBM_MIME_TYPE]).arg(DBM_MIME_TYPE).arg(INSTALL).arg(UNINSTALL) << endl;
+	out << trUtf8("  %1, %2=[ACTION]\t   Handles the file association to .dbm files. The ACTION can be [%3 | %4].").arg(short_opts[DBM_MIME_TYPE]).arg(DBM_MIME_TYPE).arg(INSTALL).arg(UNINSTALL) << endl;
 	out << endl;
 #endif
 }
@@ -310,7 +344,7 @@ accepted structure. All available options are described below.") << endl;
 void PgModelerCLI::parseOptions(attribs_map &opts)
 {
 	//Loading connections
-	if(opts.count(LIST_CONNS) || opts.count(EXPORT_TO_DBMS))
+	if(opts.count(LIST_CONNS) || opts.count(EXPORT_TO_DBMS) || opts.count(IMPORT_DB))
 	{
 		conn_conf.loadConfiguration();
 		conn_conf.getConnections(connections, false);
@@ -335,10 +369,12 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 		{
 			unsigned id=0;
 
-			out << endl << trUtf8("Available connections (alias : conn. string)") << endl;
+			out << endl << trUtf8("Available connections (alias : connection string)") << endl;
 			while(itr != connections.end())
 			{
-				out << QString("[") << id++ <<  QString("] ") << itr->first << QString(" : ") << itr->second->getConnectionString() << endl;
+				out << QString("[") << id++ <<  QString("] ") << itr->first << QString(" : ") <<
+							 itr->second->getConnectionString().replace(PASSWORD_REGEXP, PASSWORD_PLACEHOLDER) << endl;
+
 				itr++;
 			}
 			out << endl;
@@ -346,8 +382,9 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 	}
 	else
 	{
-		int mode_cnt=0;
-		bool fix_model=(opts.count(FIX_MODEL) > 0), upd_mime=(opts.count(DBM_MIME_TYPE) > 0);
+		int mode_cnt=0, other_modes_cnt=0;
+		bool fix_model=(opts.count(FIX_MODEL) > 0), upd_mime=(opts.count(DBM_MIME_TYPE) > 0),
+				import_db=(opts.count(IMPORT_DB) > 0);
 		QFileInfo input_fi(opts[INPUT]), output_fi(opts[OUTPUT]);
 
 		//Checking if multiples export modes were specified
@@ -356,14 +393,17 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 		mode_cnt+=opts.count(EXPORT_TO_SVG);
 		mode_cnt+=opts.count(EXPORT_TO_DBMS);
 
+		other_modes_cnt+=opts.count(FIX_MODEL);
+		other_modes_cnt+=opts.count(IMPORT_DB);
+		other_modes_cnt+=opts.count(DBM_MIME_TYPE);
+
 		if(opts.count(ZOOM_FACTOR))
 			zoom=opts[ZOOM_FACTOR].toDouble()/static_cast<double>(100);
 
-		if(!fix_model && !upd_mime && mode_cnt==0)
+		if(other_modes_cnt==0 && mode_cnt==0)
 			throw Exception(trUtf8("No export mode specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		if((mode_cnt > 0 && (fix_model || upd_mime)) ||
-				(mode_cnt==0 && fix_model && upd_mime))
-			throw Exception(trUtf8("Export, fix model and update mime operations can't be used at the same time!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		if((mode_cnt > 0 && (fix_model || upd_mime || import_db)) || (mode_cnt==0 && other_modes_cnt > 1))
+			throw Exception(trUtf8("Export, fix model, import database and update mime operations can't be used at the same time!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(!fix_model && !upd_mime && mode_cnt > 1)
 			throw Exception(trUtf8("Multiple export mode specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else	if(!upd_mime && opts[INPUT].isEmpty())
@@ -381,7 +421,9 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 			throw Exception(trUtf8("Invalid action specified to update mime option!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Converting input and output files to absolute paths to avoid that they are read/written on the app's working dir
-		opts[INPUT]=input_fi.absoluteFilePath();
+		if(!import_db)
+			opts[INPUT]=input_fi.absoluteFilePath();
+
 		opts[OUTPUT]=output_fi.absoluteFilePath();
 		parsed_opts=opts;
 	}
@@ -394,99 +436,16 @@ int PgModelerCLI::exec(void)
 		if(!parsed_opts.empty())
 		{
 			if(!silent_mode)
-			{
 				out << endl << QString("pgModeler ") << GlobalAttributes::PGMODELER_VERSION << trUtf8(" command line interface.") << endl;
 
-				if(parsed_opts.count(FIX_MODEL))
-					out << trUtf8("Starting model fixing...") << endl;
-				else if(parsed_opts.count(DBM_MIME_TYPE))
-					out << trUtf8("Starting mime update...") << endl;
-				else
-					out << trUtf8("Starting model export...") << endl;
-
-				if(parsed_opts.count(DBM_MIME_TYPE)==0)
-					out << trUtf8("Loading input file: ") << parsed_opts[INPUT] << endl;
-			}
-
 			if(parsed_opts.count(FIX_MODEL))
-			{
-				if(!silent_mode)
-					out << trUtf8("Fixed model file: ") << parsed_opts[OUTPUT] << endl;
-
-				extractObjectXML();
-				recreateObjects();
-				model->updateTablesFKRelationships();
-				model->saveModel(parsed_opts[OUTPUT], SchemaParser::XML_DEFINITION);
-
-				if(!silent_mode)
-					out << trUtf8("Model successfully fixed!") << endl << endl;
-			}
+				fixModel();
 			else if(parsed_opts.count(DBM_MIME_TYPE))
-			{
-#ifndef Q_OS_MAC
-				handleMimeDatabase(parsed_opts[DBM_MIME_TYPE]==UNINSTALL);
-
-				if(!silent_mode)
-					PgModelerCLI::out << trUtf8("Mime database successfully updated.") << endl << endl;
-#endif
-			}
+				updateMimeType();
+			else if(parsed_opts.count(IMPORT_DB))
+				importDatabase();
 			else
-			{
-				//Create the systems objects on model before loading it
-				model->createSystemObjects(false);
-
-				//Load the model file
-				model->loadModel(parsed_opts[INPUT]);
-
-				//Export to PNG
-				if(parsed_opts.count(EXPORT_TO_PNG))
-				{
-					if(!silent_mode)
-						out << trUtf8("Export to PNG image: ") << parsed_opts[OUTPUT] << endl;
-
-					export_hlp.exportToPNG(scene, parsed_opts[OUTPUT], zoom,
-										   parsed_opts.count(SHOW_GRID) > 0,
-										   parsed_opts.count(SHOW_DELIMITERS) > 0,
-										   parsed_opts.count(PAGE_BY_PAGE) > 0);
-				}
-				//Export to SVG
-				else if(parsed_opts.count(EXPORT_TO_SVG))
-				{
-					if(!silent_mode)
-						out << trUtf8("Export to SVG file: ") << parsed_opts[OUTPUT] << endl;
-
-					export_hlp.exportToSVG(scene, parsed_opts[OUTPUT],
-																 parsed_opts.count(SHOW_GRID) > 0,
-																 parsed_opts.count(SHOW_DELIMITERS) > 0);
-				}
-				//Export to SQL file
-				else if(parsed_opts.count(EXPORT_TO_FILE))
-				{
-					if(!silent_mode)
-						out << trUtf8("Export to SQL script file: ") << parsed_opts[OUTPUT] << endl;
-
-					export_hlp.exportToSQL(model, parsed_opts[OUTPUT], parsed_opts[PGSQL_VER]);
-				}
-				//Export to DBMS
-				else
-				{
-					if(!silent_mode)
-						out << trUtf8("Export to DBMS: ") <<  connection.getConnectionString() << endl;
-
-					if(parsed_opts.count(IGNORE_ERROR_CODES))
-						export_hlp.setIgnoredErrors(parsed_opts[IGNORE_ERROR_CODES].split(','));
-
-					export_hlp.exportToDBMS(model, connection, parsed_opts[PGSQL_VER],
-											parsed_opts.count(IGNORE_DUPLICATES) > 0,
-											parsed_opts.count(DROP_DATABASE) > 0,
-											parsed_opts.count(DROP_OBJECTS) > 0,
-											parsed_opts.count(SIMULATE) > 0,
-											parsed_opts.count(USE_TMP_NAMES) > 0);
-				}
-
-				if(!silent_mode)
-					out << trUtf8("Export successfully ended!") << endl << endl;
-			}
+				exportModel();
 		}
 
 		return(0);
@@ -497,7 +456,7 @@ int PgModelerCLI::exec(void)
 	}
 }
 
-void PgModelerCLI::updateProgress(int progress, QString msg)
+void PgModelerCLI::updateProgress(int progress, QString msg, ObjectType)
 {
 	if(progress > 0)
 		out << QString("[%1%] ").arg(progress > 100 ? 100 : progress) << msg << endl;
@@ -1063,6 +1022,146 @@ void PgModelerCLI::fixOpClassesFamiliesReferences(QString &obj_xml)
 		}
 	}
 	while(pos >= 0);
+}
+
+void PgModelerCLI::fixModel(void)
+{
+	if(!silent_mode)
+	{
+		out << trUtf8("Starting model fixing...") << endl;
+		out << trUtf8("Loading input file: ") << parsed_opts[INPUT] << endl;
+		out << trUtf8("Fixed model file: ") << parsed_opts[OUTPUT] << endl;
+	}
+
+	extractObjectXML();
+	recreateObjects();
+	model->updateTablesFKRelationships();
+	model->saveModel(parsed_opts[OUTPUT], SchemaParser::XML_DEFINITION);
+
+	if(!silent_mode)
+		out << trUtf8("Model successfully fixed!") << endl << endl;
+}
+
+void PgModelerCLI::exportModel(void)
+{
+	if(!silent_mode)
+	{
+		out << trUtf8("Starting model export...") << endl;
+		out << trUtf8("Loading input file: ") << parsed_opts[INPUT] << endl;
+	}
+
+	//Create the systems objects on model before loading it
+	model->createSystemObjects(false);
+
+	//Load the model file
+	model->loadModel(parsed_opts[INPUT]);
+
+	//Export to PNG
+	if(parsed_opts.count(EXPORT_TO_PNG))
+	{
+		if(!silent_mode)
+			out << trUtf8("Export to PNG image: ") << parsed_opts[OUTPUT] << endl;
+
+		export_hlp.exportToPNG(scene, parsed_opts[OUTPUT], zoom,
+								 parsed_opts.count(SHOW_GRID) > 0,
+								 parsed_opts.count(SHOW_DELIMITERS) > 0,
+								 parsed_opts.count(PAGE_BY_PAGE) > 0);
+	}
+	//Export to SVG
+	else if(parsed_opts.count(EXPORT_TO_SVG))
+	{
+		if(!silent_mode)
+			out << trUtf8("Export to SVG file: ") << parsed_opts[OUTPUT] << endl;
+
+		export_hlp.exportToSVG(scene, parsed_opts[OUTPUT],
+													 parsed_opts.count(SHOW_GRID) > 0,
+													 parsed_opts.count(SHOW_DELIMITERS) > 0);
+	}
+	//Export to SQL file
+	else if(parsed_opts.count(EXPORT_TO_FILE))
+	{
+		if(!silent_mode)
+			out << trUtf8("Export to SQL script file: ") << parsed_opts[OUTPUT] << endl;
+
+		export_hlp.exportToSQL(model, parsed_opts[OUTPUT], parsed_opts[PGSQL_VER]);
+	}
+	//Export to DBMS
+	else
+	{
+		if(!silent_mode)
+			out << trUtf8("Export to DBMS: ") <<  connection.getConnectionString().replace(PASSWORD_REGEXP, PASSWORD_PLACEHOLDER) << endl;
+
+		if(parsed_opts.count(IGNORE_ERROR_CODES))
+			export_hlp.setIgnoredErrors(parsed_opts[IGNORE_ERROR_CODES].split(','));
+
+		export_hlp.exportToDBMS(model, connection, parsed_opts[PGSQL_VER],
+								parsed_opts.count(IGNORE_DUPLICATES) > 0,
+								parsed_opts.count(DROP_DATABASE) > 0,
+								parsed_opts.count(DROP_OBJECTS) > 0,
+								parsed_opts.count(SIMULATE) > 0,
+								parsed_opts.count(USE_TMP_NAMES) > 0);
+	}
+
+	if(!silent_mode)
+		out << trUtf8("Export successfully ended!") << endl << endl;
+}
+
+void PgModelerCLI::importDatabase(void)
+{
+	if(!silent_mode)
+	{
+		out << trUtf8("Starting database import...") << endl;
+		out << trUtf8("Input database: ") <<  connection.getConnectionString().replace(PASSWORD_REGEXP, PASSWORD_PLACEHOLDER) << endl;
+	}
+
+	map<ObjectType, vector<unsigned>> oids;
+	vector<attribs_map> objects;
+	ObjectType obj_type;
+	ModelWidget *model_wgt = new ModelWidget;
+
+	import_hlp.setConnection(connection);
+	import_hlp.setImportOptions(parsed_opts.count(IMPORT_SYSTEM_OBJS) > 0,
+															parsed_opts.count(IMPORT_EXTENSION_OBJS) > 0,
+															true,
+															parsed_opts.count(IGNORE_IMPORT_ERRORS) > 0,
+															parsed_opts.count(DEBUG_MODE) > 0,
+															true, true);
+
+	objects = import_hlp.getObjects(BaseObject::getObjectTypes(true, { OBJ_DATABASE, OBJ_TEXTBOX, OBJ_PERMISSION, OBJ_TAG,
+																																		 BASE_RELATIONSHIP, OBJ_RELATIONSHIP, OBJ_GENERIC_SQL,
+																																		 OBJ_COLUMN, OBJ_TYPE }));
+
+	for(auto &itr : objects)
+	{
+		obj_type = static_cast<ObjectType>(itr[ParsersAttributes::OBJECT_TYPE].toUInt());
+		oids[obj_type].push_back(itr[ParsersAttributes::OID].toUInt());
+	}
+
+	model_wgt->getDatabaseModel()->createSystemObjects(true);
+	import_hlp.setSelectedOIDs(model_wgt->getDatabaseModel(), oids, {});
+	import_hlp.importDatabase();
+	model_wgt->rearrangeSchemasInGrid();
+
+	if(!silent_mode)
+		out << trUtf8("Saving the imported database to file...") << endl;
+
+	model_wgt->getDatabaseModel()->saveModel(parsed_opts[OUTPUT], SchemaParser::XML_DEFINITION);
+
+	if(!silent_mode)
+		out << trUtf8("Import successfully ended!") << endl << endl;
+}
+
+void PgModelerCLI::updateMimeType(void)
+{
+#ifndef Q_OS_MAC
+		if(!silent_mode)
+			out << trUtf8("Starting mime update...") << endl;
+
+		handleMimeDatabase(parsed_opts[DBM_MIME_TYPE]==UNINSTALL);
+
+		if(!silent_mode)
+			PgModelerCLI::out << trUtf8("Mime database successfully updated.") << endl << endl;
+#endif
 }
 
 QStringList PgModelerCLI::extractForeignKeys(QString &obj_xml)

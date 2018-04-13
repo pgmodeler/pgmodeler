@@ -153,7 +153,7 @@ void Aggregate::setTypesAttribute(unsigned def_type)
 
 	/* Case none data type is specified for the aggregate creates
 		an aggregate that accepts any possible data '*' e.g. function(*) */
-	if(str_types.isEmpty()) str_types='*';
+	if(def_type == SchemaParser::SQL_DEFINITION && str_types.isEmpty()) str_types='*';
 
 	attributes[ParsersAttributes::TYPES]=str_types;
 }

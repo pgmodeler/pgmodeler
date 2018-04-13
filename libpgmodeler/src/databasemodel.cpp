@@ -8858,8 +8858,8 @@ void DatabaseModel::setCodesInvalidated(vector<ObjectType> types)
 	else
 	{
 		ObjectType tab_obj_types[]={OBJ_COLUMN, OBJ_CONSTRAINT,
-									OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX};
-		for(unsigned i=0; i < 5; i++)
+									OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX, OBJ_POLICY};
+		for(unsigned i=0; i < 6; i++)
 			sel_types.erase(std::find(sel_types.begin(), sel_types.end(), tab_obj_types[i]));
 
 		sel_types=types;
