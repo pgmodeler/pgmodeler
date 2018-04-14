@@ -1879,8 +1879,7 @@ void ModelWidget::renameObject(void)
 void ModelWidget::moveToSchema(void)
 {
 	QAction *act=dynamic_cast<QAction *>(sender());
-	Schema *schema=dynamic_cast<Schema *>(reinterpret_cast<BaseObject *>(act->data().value<void *>())),
-			*prev_schema=nullptr;
+	Schema *schema=dynamic_cast<Schema *>(reinterpret_cast<BaseObject *>(act->data().value<void *>()));
 	BaseGraphicObject *obj_graph=nullptr;
 	vector<BaseObject *> ref_objs;
 	int op_id=-1, op_curr_idx=op_list->getCurrentIndex();
@@ -1896,7 +1895,6 @@ void ModelWidget::moveToSchema(void)
 			//Change the object's schema only if the new schema is different from the current
 			if(obj->acceptsSchema() && obj->getSchema()!=schema)
 			{
-				prev_schema=dynamic_cast<Schema *>(obj->getSchema());
 				op_id=op_list->registerObject(obj, Operation::OBJECT_MODIFIED, -1);
 
 				obj->setSchema(schema);
