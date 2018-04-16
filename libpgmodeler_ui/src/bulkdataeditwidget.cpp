@@ -21,3 +21,8 @@ BulkDataEditWidget::BulkDataEditWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
 }
+
+void BulkDataEditWidget::showEvent(QShowEvent *)
+{
+	value_edt->setFocus();
+}
