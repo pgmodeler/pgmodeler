@@ -179,6 +179,7 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 			{
 				connect(&export_hlp, SIGNAL(s_progressUpdated(int,QString)), this, SLOT(updateProgress(int,QString)));
 				connect(&import_hlp, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString)));
+				connect(&diff_hlp, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString)));
 			}
 		}
 	}
@@ -1244,32 +1245,9 @@ void PgModelerCLI::importDatabase(void)
 		out << trUtf8("Input database: ") <<  connection.getConnectionString().replace(PASSWORD_REGEXP, PASSWORD_PLACEHOLDER) << endl;
 	}
 
-	map<ObjectType, vector<unsigned>> oids;
-	vector<attribs_map> objects;
-	ObjectType obj_type;
 	ModelWidget *model_wgt = new ModelWidget;
 
-	import_hlp.setConnection(connection);
-	import_hlp.setImportOptions(parsed_opts.count(IMPORT_SYSTEM_OBJS) > 0,
-															parsed_opts.count(IMPORT_EXTENSION_OBJS) > 0,
-															true,
-															parsed_opts.count(IGNORE_IMPORT_ERRORS) > 0,
-															parsed_opts.count(DEBUG_MODE) > 0,
-															true, true);
-
-	objects = import_hlp.getObjects(BaseObject::getObjectTypes(true, { OBJ_DATABASE, OBJ_TEXTBOX, OBJ_PERMISSION, OBJ_TAG,
-																																		 BASE_RELATIONSHIP, OBJ_RELATIONSHIP, OBJ_GENERIC_SQL,
-																																		 OBJ_COLUMN, OBJ_TYPE }));
-
-	for(auto &itr : objects)
-	{
-		obj_type = static_cast<ObjectType>(itr[ParsersAttributes::OBJECT_TYPE].toUInt());
-		oids[obj_type].push_back(itr[ParsersAttributes::OID].toUInt());
-	}
-
-	model_wgt->getDatabaseModel()->createSystemObjects(true);
-	import_hlp.setSelectedOIDs(model_wgt->getDatabaseModel(), oids, {});
-	import_hlp.importDatabase();
+	importDatabase(model_wgt->getDatabaseModel(), connection);
 	model_wgt->rearrangeSchemasInGrid();
 
 	if(!silent_mode)
@@ -1279,10 +1257,51 @@ void PgModelerCLI::importDatabase(void)
 
 	if(!silent_mode)
 		out << trUtf8("Import successfully ended!") << endl << endl;
+
+	delete(model_wgt);
+}
+
+void PgModelerCLI::importDatabase(DatabaseModel *model, Connection conn)
+{
+	try
+	{
+		map<ObjectType, vector<unsigned>> oids;
+		vector<attribs_map> objects;
+		ObjectType obj_type;
+
+		import_hlp.setConnection(conn);
+		import_hlp.setImportOptions(parsed_opts.count(IMPORT_SYSTEM_OBJS) > 0,
+																parsed_opts.count(IMPORT_EXTENSION_OBJS) > 0,
+																true,
+																parsed_opts.count(IGNORE_IMPORT_ERRORS) > 0,
+																parsed_opts.count(DEBUG_MODE) > 0,
+																true, true);
+
+		objects = import_hlp.getObjects(BaseObject::getObjectTypes(true, { OBJ_DATABASE, OBJ_TEXTBOX, OBJ_PERMISSION, OBJ_TAG,
+																																			 BASE_RELATIONSHIP, OBJ_RELATIONSHIP, OBJ_GENERIC_SQL,
+																																			 OBJ_COLUMN, OBJ_TYPE }));
+
+		for(auto &itr : objects)
+		{
+			obj_type = static_cast<ObjectType>(itr[ParsersAttributes::OBJECT_TYPE].toUInt());
+			oids[obj_type].push_back(itr[ParsersAttributes::OID].toUInt());
+		}
+
+		model->createSystemObjects(true);
+		import_hlp.setSelectedOIDs(model, oids, {});
+		import_hlp.importDatabase();
+		import_hlp.closeConnection();
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void PgModelerCLI::diffModelDatabase(void)
 {
+	DatabaseModel *model_aux = new DatabaseModel();
+
 	if(!silent_mode)
 	{
 		out << trUtf8("Starting diff process...") << endl;
@@ -1294,6 +1313,32 @@ void PgModelerCLI::diffModelDatabase(void)
 
 		out << trUtf8("Compare to: ") <<  connection.getConnectionString().replace(PASSWORD_REGEXP, PASSWORD_PLACEHOLDER) << endl;
 	}
+
+	if(!parsed_opts[INPUT].isEmpty())
+		model->loadModel(parsed_opts[INPUT]);
+	else
+	{
+		if(!silent_mode)
+			out << trUtf8("Importing the database `%1'...").arg(connection.getConnectionId(true, true)) << endl;
+
+		importDatabase(model, connection);
+	}
+
+	extra_connection.setConnectionParam(Connection::PARAM_DB_NAME, 	parsed_opts[COMPARE_TO]);
+
+	if(!silent_mode)
+	{
+		QString dbname = extra_connection.isConfigured() ?
+										 extra_connection.getConnectionId(true, true) :
+										 connection.getConnectionId(true, true);
+
+		out << trUtf8("Importing the database `%1'...").arg(dbname) << endl;
+	}
+
+	importDatabase(model_aux, extra_connection.isConfigured() ? extra_connection : connection);
+
+	diff_hlp.setModels(model, model_aux);
+	diff_hlp.diffModels();
 
 	if(!silent_mode)
 		out << trUtf8("Diff successfully ended!") << endl << endl;

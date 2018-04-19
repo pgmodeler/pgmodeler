@@ -123,7 +123,7 @@ void Connection::generateConnectionString(void)
 	QString value, param_str = QString("%1=%2 ");
 
 	//Scans the parameter map concatening the params (itr->first) / values (itr->second)
-	connection_str=QString();
+	connection_str.clear();
 
 	for(auto &itr : connection_params)
 	{
@@ -148,6 +148,9 @@ void Connection::generateConnectionString(void)
 			}
 		}
 	}
+
+	if(!connection_str.contains(PARAM_DB_NAME))
+		connection_str.clear();
 }
 
 void Connection::noticeProcessor(void *, const char *message)
@@ -323,6 +326,11 @@ QString Connection::getConnectionId(bool host_port_only, bool incl_db_name)
 bool Connection::isStablished(void)
 {
 	return(connection!=nullptr);
+}
+
+bool Connection::isConfigured(void)
+{
+	return(!connection_str.isEmpty());
 }
 
 bool Connection::isAutoBrowseDB(void)

@@ -37,6 +37,7 @@
 #include "relationshipconfigwidget.h"
 #include "generalconfigwidget.h"
 #include "databaseimporthelper.h"
+#include "modelsdiffhelper.h"
 
 class PgModelerCLI: public QApplication {
 	private:
@@ -49,6 +50,9 @@ class PgModelerCLI: public QApplication {
 
 		//! \brief Import helper object
 		DatabaseImportHelper import_hlp;
+
+		//! \brief Diff helper object
+		ModelsDiffHelper diff_hlp;
 
 		//! \brief Reference database model
 		DatabaseModel *model;
@@ -203,6 +207,7 @@ class PgModelerCLI: public QApplication {
 		void updateMimeType(void);
 
 		void configureConnection(bool extra_conn);
+		void importDatabase(DatabaseModel *model, Connection conn);
 
 	public:
 		PgModelerCLI(int argc, char **argv);

@@ -891,6 +891,7 @@ void DatabaseImportHelper::resetImportParameters(void)
 	col_perms.clear();
 	connection.close();
 	catalog.closeConnection();
+	inherited_cols.clear();
 }
 
 QString DatabaseImportHelper::dumpObjectAttributes(attribs_map &attribs)
@@ -2257,7 +2258,7 @@ void DatabaseImportHelper::destroyDetachedColumns(void)
 
 	dbmodel->disconnectRelationships();
 
-	emit s_progressUpdated(95,
+	emit s_progressUpdated(100,
 						   trUtf8("Destroying unused detached columns..."),
 						   OBJ_COLUMN);
 
@@ -2294,7 +2295,7 @@ void DatabaseImportHelper::assignSequencesToColumns(void)
 {
 	Table *table=nullptr;
 	Column *col=nullptr;
-	emit s_progressUpdated(95,
+	emit s_progressUpdated(100,
 							 trUtf8("Assigning sequences to columns..."),
 						   OBJ_SEQUENCE);
 
