@@ -639,9 +639,10 @@ double BaseObjectView::getFontFactor(void)
 double BaseObjectView::getScreenDpiFactor(void)
 {
 	double factor = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->logicalDotsPerInch() / 96.0f;
+  double pixel_ratio = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->devicePixelRatio();
 
 	if(factor < 1)
 		return (1);
 
-	return(factor);
+	return(factor * pixel_ratio);
 }
