@@ -120,35 +120,33 @@ void Connection::setAutoBrowseDB(bool value)
 
 void Connection::generateConnectionString(void)
 {
-	attribs_map::iterator itr;
-	QString value;
-
-	itr=connection_params.begin();
+	QString value, param_str = QString("%1=%2 ");
 
 	//Scans the parameter map concatening the params (itr->first) / values (itr->second)
 	connection_str=QString();
-	while(itr!=connection_params.end())
+
+	for(auto &itr : connection_params)
 	{
-		if(itr->first!=PARAM_ALIAS)
+		if(itr.first!=PARAM_ALIAS)
 		{
-			value=itr->second;
+			value=itr.second;
 
 			value.replace("\\","\\\\");
 			value.replace("'","\\'");
 
-			if(itr->first==PARAM_PASSWORD && (value.contains(' ') || value.isEmpty()))
+			if(itr.first==PARAM_PASSWORD && (value.contains(' ') || value.isEmpty()))
 				value=QString("'%1'").arg(value);
 
 			if(!value.isEmpty())
 			{
-				if(itr->first!=PARAM_OTHERS)
-					connection_str+=itr->first + "=" + value + " ";
+				if(itr.first==PARAM_DB_NAME)
+					connection_str.prepend(param_str.arg(itr.first).arg(value));
+				else if(itr.first!=PARAM_OTHERS)
+					connection_str+=param_str.arg(itr.first).arg(value);
 				else
 					connection_str+=value;
 			}
 		}
-
-		itr++;
 	}
 }
 

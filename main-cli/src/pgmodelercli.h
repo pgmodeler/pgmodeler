@@ -57,7 +57,10 @@ class PgModelerCLI: public QApplication {
 		ObjectsScene *scene;
 
 		//! \brief Stores the configured connection
-		Connection connection;
+		Connection connection,
+
+		//! \brief Stores the extra configured connection (only for diff)
+		extra_connection;
 
 		//! \brief Loaded connections
 		map<QString, Connection *> connections;
@@ -98,6 +101,7 @@ class PgModelerCLI: public QApplication {
 		//! \brief Option names constants
 		static const QString INPUT,
 		OUTPUT,
+		INPUT_DB,
 		EXPORT_TO_FILE,
 		EXPORT_TO_PNG,
 		EXPORT_TO_SVG,
@@ -195,7 +199,10 @@ class PgModelerCLI: public QApplication {
 		void fixModel(void);
 		void exportModel(void);
 		void importDatabase(void);
+		void diffModelDatabase(void);
 		void updateMimeType(void);
+
+		void configureConnection(bool extra_conn);
 
 	public:
 		PgModelerCLI(int argc, char **argv);

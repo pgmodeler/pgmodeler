@@ -25,6 +25,7 @@ const QString PgModelerCLI::PASSWORD_PLACEHOLDER=QString("password=******");
 
 const QString PgModelerCLI::INPUT=QString("--input");
 const QString PgModelerCLI::OUTPUT=QString("--output");
+const QString PgModelerCLI::INPUT_DB=QString("--input-db");
 const QString PgModelerCLI::EXPORT_TO_FILE=QString("--export-to-file");
 const QString PgModelerCLI::EXPORT_TO_PNG=QString("--export-to-png");
 const QString PgModelerCLI::EXPORT_TO_SVG=QString("--export-to-svg");
@@ -162,31 +163,17 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 				BaseObjectView::loadObjectsStyle();
 			}
 
-			if(parsed_opts.count(EXPORT_TO_DBMS) || parsed_opts.count(IMPORT_DB))
+			if(parsed_opts.count(EXPORT_TO_DBMS) || parsed_opts.count(IMPORT_DB) || parsed_opts.count(DIFF))
 			{
-				//Getting the connection using its alias
-				if(parsed_opts.count(CONN_ALIAS))
-				{
-					if(!connections.count(parsed_opts[CONN_ALIAS]))
-						throw Exception(trUtf8("Connection aliased as '%1' was not found on configuration file.").arg(parsed_opts[CONN_ALIAS]),
-										ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-					//Make a copy of the named connection
-					connection=(*connections[parsed_opts[CONN_ALIAS]]);
-				}
-				else
-				{
-					connection.setConnectionParam(Connection::PARAM_SERVER_FQDN, parsed_opts[HOST]);
-					connection.setConnectionParam(Connection::PARAM_USER, parsed_opts[USER]);
-					connection.setConnectionParam(Connection::PARAM_PORT, parsed_opts[PORT]);
-					connection.setConnectionParam(Connection::PARAM_PASSWORD, parsed_opts[PASSWD]);
-					connection.setConnectionParam(Connection::PARAM_DB_NAME, parsed_opts[INITIAL_DB]);
-				}
+				configureConnection(false);
 
 				//Replacing the initial db parameter for the input database when reverse engineering
-				if(parsed_opts.count(IMPORT_DB))
-					connection.setConnectionParam(Connection::PARAM_DB_NAME, parsed_opts[INPUT]);
+				if(parsed_opts.count(IMPORT_DB) || parsed_opts.count(DIFF))
+					connection.setConnectionParam(Connection::PARAM_DB_NAME, parsed_opts[INPUT_DB]);
 			}
+
+			if(parsed_opts.count(DIFF))
+				configureConnection(true);
 
 			if(!silent_mode)
 			{
@@ -197,7 +184,7 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw e;
 	}
 }
 
@@ -207,10 +194,36 @@ PgModelerCLI::~PgModelerCLI(void)
 	delete(model);
 }
 
+void PgModelerCLI::configureConnection(bool extra_conn)
+{
+	QString chr = (extra_conn ? "1" : "");
+	Connection *conn = (extra_conn ? &extra_connection : &connection);
+
+	//Getting the connection using its alias
+	if(parsed_opts.count(CONN_ALIAS + chr))
+	{
+		if(!connections.count(parsed_opts[CONN_ALIAS + chr]))
+			throw Exception(trUtf8("Connection aliased as '%1' was not found in the configuration file.").arg(parsed_opts[CONN_ALIAS + chr]),
+							ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		//Make a copy of the named connection
+		*conn = (*connections[parsed_opts[CONN_ALIAS + chr]]);
+	}
+	else
+	{
+		conn->setConnectionParam(Connection::PARAM_SERVER_FQDN, parsed_opts[HOST + chr]);
+		conn->setConnectionParam(Connection::PARAM_USER, parsed_opts[USER + chr]);
+		conn->setConnectionParam(Connection::PARAM_PORT, parsed_opts[PORT + chr]);
+		conn->setConnectionParam(Connection::PARAM_PASSWORD, parsed_opts[PASSWD + chr]);
+		conn->setConnectionParam(Connection::PARAM_DB_NAME, parsed_opts[INITIAL_DB + chr]);
+	}
+}
+
 void PgModelerCLI::initializeOptions(void)
 {
 	long_opts[INPUT]=true;
 	long_opts[OUTPUT]=true;
+	long_opts[INPUT_DB]=true;
 	long_opts[EXPORT_TO_FILE]=false;
 	long_opts[EXPORT_TO_PNG]=false;
 	long_opts[EXPORT_TO_SVG]=false;
@@ -260,11 +273,12 @@ void PgModelerCLI::initializeOptions(void)
 
 	short_opts[INPUT]=QString("-if");
 	short_opts[OUTPUT]=QString("-of");
+	short_opts[INPUT_DB]=QString("-id");
 	short_opts[EXPORT_TO_FILE]=QString("-ef");
 	short_opts[EXPORT_TO_PNG]=QString("-ep");
 	short_opts[EXPORT_TO_SVG]=QString("-es");
 	short_opts[EXPORT_TO_DBMS]=QString("-ed");
-	short_opts[IMPORT_DB]=QString("-id");
+	short_opts[IMPORT_DB]=QString("-im");
 	short_opts[DIFF]=QString("-df");
 	short_opts[DROP_DATABASE]=QString("-dd");
 	short_opts[DROP_OBJECTS]=QString("-do");
@@ -275,14 +289,14 @@ void PgModelerCLI::initializeOptions(void)
 	short_opts[PAGE_BY_PAGE]=QString("-pp");
 	short_opts[IGNORE_DUPLICATES]=QString("-ir");
 	short_opts[IGNORE_ERROR_CODES]=QString("-ic");
-	short_opts[CONN_ALIAS]=QString("-ca");
+	short_opts[CONN_ALIAS]=QString("-A");
 	short_opts[HOST]=QString("-H");
 	short_opts[PORT]=QString("-P");
 	short_opts[USER]=QString("-U");
 	short_opts[PASSWD]=QString("-W");
-	short_opts[INITIAL_DB]=QString("-db");
+	short_opts[INITIAL_DB]=QString("-D");
 	short_opts[SILENT]=QString("-s");
-	short_opts[LIST_CONNS]=QString("-lc");
+	short_opts[LIST_CONNS]=QString("-L");
 	short_opts[SIMULATE]=QString("-sm");
 	short_opts[FIX_MODEL]=QString("-fm");
 	short_opts[FIX_TRIES]=QString("-ft");
@@ -311,17 +325,27 @@ void PgModelerCLI::initializeOptions(void)
 
 bool PgModelerCLI::isOptionRecognized(QString &op, bool &accepts_val)
 {
-	attribs_map::iterator itr=short_opts.begin();
-	bool found=false;
+	bool found=false, append_chr = false;
 
-	while(itr!=short_opts.end() && !found)
+	if(op.endsWith('1'))
 	{
-		found=(op==itr->first || op==itr->second);
-		accepts_val=(found && long_opts[itr->first]);
-		if(found)	op=itr->first;
-		itr++;
+		op.chop(1);
+		append_chr = true;
 	}
 
+	for(auto &itr : short_opts)
+	{
+		found=(op==itr.first || op==itr.second);
+		accepts_val=(found && long_opts[itr.first]);
+
+		if(found)
+		{
+			op = itr.first;
+			break;
+		}
+	}
+
+	if(append_chr) op += '1';
 	return(found);
 }
 
@@ -336,10 +360,11 @@ void PgModelerCLI::showMenu(void)
 	out << trUtf8("This CLI tool provides several operations over models and databases without the need to perform them\non pgModeler's graphical interface. All available options are described below.") << endl;
 	out << endl;
 	out << trUtf8("General options: ") << endl;
-	out << trUtf8("  %1, %2=[FILE|DBNAME]\t    Input model file (.dbm) or database name. This is mandatory in fix, export, import and diff operations.").arg(short_opts[INPUT]).arg(INPUT) << endl;
-	out << trUtf8("  %1, %2=[FILE]\t\t    Output file. Mandatory use in fixing model or exporting to file, png or svg.").arg(short_opts[OUTPUT]).arg(OUTPUT) << endl;
+	out << trUtf8("  %1, %2 [FILE]\t\t    Input model file (.dbm). This is mandatory in fix, export operations.").arg(short_opts[INPUT]).arg(INPUT) << endl;
+	out << trUtf8("  %1, %2 [DBNAME]\t    Input database name. This is mandatory import operation.").arg(short_opts[INPUT_DB]).arg(INPUT_DB) << endl;
+	out << trUtf8("  %1, %2 [FILE]\t\t    Output file. Mandatory use in fixing model or exporting to file, png or svg.").arg(short_opts[OUTPUT]).arg(OUTPUT) << endl;
 	out << trUtf8("  %1, %2\t\t    Try to fix the structure of the input model file in order to make it loadable again.").arg(short_opts[FIX_MODEL]).arg(FIX_MODEL) << endl;
-	out << trUtf8("  %1, %2\t\t    Model fix tries. When reaching the maximum count the invalid objects will be discard.").arg(short_opts[FIX_TRIES]).arg(FIX_TRIES) << endl;
+	out << trUtf8("  %1, %2 [NUMBER]\t    Model fix tries. When reaching the maximum count the invalid objects will be discard.").arg(short_opts[FIX_TRIES]).arg(FIX_TRIES) << endl;
 	out << trUtf8("  %1, %2\t\t    Export the input model to a sql script file.").arg(short_opts[EXPORT_TO_FILE]).arg(EXPORT_TO_FILE)<< endl;
 	out << trUtf8("  %1, %2\t\t    Export the input model to a png image.").arg(short_opts[EXPORT_TO_PNG]).arg(EXPORT_TO_PNG) << endl;
 	out << trUtf8("  %1, %2\t\t    Export the input model to a svg file.").arg(short_opts[EXPORT_TO_SVG]).arg(EXPORT_TO_SVG) << endl;
@@ -352,22 +377,22 @@ void PgModelerCLI::showMenu(void)
 	out << endl;
 	out << trUtf8("Connection options: ") << endl;
 	out << trUtf8("  %1, %2\t\t    List available connections in file %3.").arg(short_opts[LIST_CONNS]).arg(LIST_CONNS).arg(GlobalAttributes::CONNECTIONS_CONF + GlobalAttributes::CONFIGURATION_EXT) << endl;
-	out << trUtf8("  %1, %2=[ALIAS]\t    Connection configuration alias to be used.").arg(short_opts[CONN_ALIAS]).arg(CONN_ALIAS) << endl;
-	out << trUtf8("  %1, %2=[HOST]\t\t    PostgreSQL host which a task will operate.").arg(short_opts[HOST]).arg(HOST) << endl;
-	out << trUtf8("  %1, %2=[PORT]\t\t    PostgreSQL host listening port.").arg(short_opts[PORT]).arg(PORT) << endl;
-	out << trUtf8("  %1, %2=[USER]\t\t    PostgreSQL username.").arg(short_opts[USER]).arg(USER) << endl;
-	out << trUtf8("  %1, %2=[PASSWORD]\t    PostgreSQL user password.").arg(short_opts[PASSWD]).arg(PASSWD) << endl;
-	out << trUtf8("  %1, %2=[DBNAME]\t    Connection's initial database.").arg(short_opts[INITIAL_DB]).arg(INITIAL_DB) << endl;
+	out << trUtf8("  %1, %2 [ALIAS]\t    Connection configuration alias to be used.").arg(short_opts[CONN_ALIAS]).arg(CONN_ALIAS) << endl;
+	out << trUtf8("  %1, %2 [HOST]\t\t    PostgreSQL host which a task will operate.").arg(short_opts[HOST]).arg(HOST) << endl;
+	out << trUtf8("  %1, %2 [PORT]\t\t    PostgreSQL host listening port.").arg(short_opts[PORT]).arg(PORT) << endl;
+	out << trUtf8("  %1, %2 [USER]\t\t    PostgreSQL username.").arg(short_opts[USER]).arg(USER) << endl;
+	out << trUtf8("  %1, %2 [PASSWORD]\t    PostgreSQL user password.").arg(short_opts[PASSWD]).arg(PASSWD) << endl;
+	out << trUtf8("  %1, %2 [DBNAME]\t    Connection's initial database.").arg(short_opts[INITIAL_DB]).arg(INITIAL_DB) << endl;
 	out << endl;
 	out << trUtf8("PNG and SVG export options: ") << endl;
 	out << trUtf8("  %1, %2\t\t    Draws the grid on the exported png image.").arg(short_opts[SHOW_GRID]).arg(SHOW_GRID) << endl;
 	out << trUtf8("  %1, %2\t    Draws the page delimiters on the exported png image.").arg(short_opts[SHOW_DELIMITERS]).arg(SHOW_DELIMITERS) << endl;
 	out << trUtf8("  %1, %2\t\t    Each page will be exported on a separated png image. (Only for PNG)").arg(short_opts[PAGE_BY_PAGE]).arg(PAGE_BY_PAGE) << endl;
-	out << trUtf8("  %1, %2=[FACTOR]\t\t    Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4 (Only for PNG)").arg(short_opts[ZOOM_FACTOR]).arg(ZOOM_FACTOR).arg(ModelWidget::MINIMUM_ZOOM*100).arg(ModelWidget::MAXIMUM_ZOOM*100) << endl;
+	out << trUtf8("  %1, %2 [FACTOR]\t\t    Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4 (Only for PNG)").arg(short_opts[ZOOM_FACTOR]).arg(ZOOM_FACTOR).arg(ModelWidget::MINIMUM_ZOOM*100).arg(ModelWidget::MAXIMUM_ZOOM*100) << endl;
 	out << endl;
 	out << trUtf8("DBMS export options: ") << endl;
 	out << trUtf8("  %1, %2\t    Ignores errors related to duplicated objects that eventually exists on server side.").arg(short_opts[IGNORE_DUPLICATES]).arg(IGNORE_DUPLICATES) << endl;
-	out << trUtf8("  %1, %2=[CODES] Ignores additional errors by their codes. A comma-separated list of alphanumeric codes should be provided.").arg(short_opts[IGNORE_ERROR_CODES]).arg(IGNORE_ERROR_CODES) << endl;
+	out << trUtf8("  %1, %2 [CODES] Ignores additional errors by their codes. A comma-separated list of alphanumeric codes should be provided.").arg(short_opts[IGNORE_ERROR_CODES]).arg(IGNORE_ERROR_CODES) << endl;
 	out << trUtf8("  %1, %2\t\t    Drop the database before execute a export process.").arg(short_opts[DROP_DATABASE]).arg(DROP_DATABASE) << endl;
 	out << trUtf8("  %1, %2\t\t    Runs the DROP commands attached to SQL-enabled objects.").arg(short_opts[DROP_OBJECTS]).arg(DROP_OBJECTS) << endl;
 	out << trUtf8("  %1, %2\t\t    Simulates a export process. Actually executes all steps but undoing any modification.").arg(short_opts[SIMULATE]).arg(SIMULATE) << endl;
@@ -380,7 +405,7 @@ void PgModelerCLI::showMenu(void)
 	out << trUtf8("  %1, %2\t\t    Run import in debug mode printing all queries executed in the server.").arg(short_opts[DEBUG_MODE]).arg(DEBUG_MODE) << endl;
 	out << endl;
 	out << trUtf8("Diff options: ") << endl;
-	out << trUtf8("  %1, %2=[DBNAME]\t    The database used in the comparison. All the SQL code generated is applied to it.").arg(short_opts[COMPARE_TO]).arg(COMPARE_TO) << endl;
+	out << trUtf8("  %1, %2 [DBNAME]\t    The database used in the comparison. All the SQL code generated is applied to it.").arg(short_opts[COMPARE_TO]).arg(COMPARE_TO) << endl;
 	out << trUtf8("  %1, %2\t\t    Save the generated diff code to output file.").arg(short_opts[SAVE_DIFF]).arg(SAVE_DIFF) << endl;
 	out << trUtf8("  %1, %2\t\t    Apply the generated diff code to the database.").arg(short_opts[APPLY_DIFF]).arg(APPLY_DIFF) << endl;
 	out << trUtf8("  %1, %2\t    Don't preview the generated diff code.").arg(short_opts[NO_DIFF_PREVIEW]).arg(NO_DIFF_PREVIEW) << endl;
@@ -395,21 +420,26 @@ void PgModelerCLI::showMenu(void)
 	out << trUtf8("  %1, %2\t    Don't force the recreation of objects. Avoids the usage of a DROP and CREATE commands to create a new version of the objects.").arg(short_opts[NO_FORCE_OBJ_RECREATION]).arg(NO_FORCE_OBJ_RECREATION) << endl;
 	out << trUtf8("  %1, %2\t    Don't recreate the unmodifiable objects. These objects are the ones which can't be changed via ALTER command.").arg(short_opts[NO_UNMOD_OBJ_RECREATION]).arg(NO_UNMOD_OBJ_RECREATION) << endl;
 	out << endl;
-	out << trUtf8("** NOTE: The diff process allows the usage of the following options related to import and export operations: ") << endl;
-	out << "   " << QStringList({ trUtf8("* Export: "), IGNORE_DUPLICATES, IGNORE_ERROR_CODES, IGNORE_IMPORT_ERRORS, "\n  ", trUtf8("* Import: "), IMPORT_SYSTEM_OBJS, IMPORT_EXTENSION_OBJS, DEBUG_MODE }).join(" ") << endl;
-	out << endl;
 
 #ifndef Q_OS_MAC
 	out << trUtf8("Miscellaneous options: ") << endl;
-	out << trUtf8("  %1, %2=[ACTION]\t    Handles the file association to .dbm files. The ACTION can be [%3 | %4].").arg(short_opts[DBM_MIME_TYPE]).arg(DBM_MIME_TYPE).arg(INSTALL).arg(UNINSTALL) << endl;
+	out << trUtf8("  %1, %2 [ACTION]\t    Handles the file association to .dbm files. The ACTION can be [%3 | %4].").arg(short_opts[DBM_MIME_TYPE]).arg(DBM_MIME_TYPE).arg(INSTALL).arg(UNINSTALL) << endl;
 	out << endl;
 #endif
+
+	out << trUtf8("** The diff process allows the usage of the following options related to import and export operations: ") << endl;
+	out << "   " << QStringList({ trUtf8("* Export: "), IGNORE_DUPLICATES, IGNORE_ERROR_CODES, IGNORE_IMPORT_ERRORS, "\n  ", trUtf8("* Import: "), IMPORT_SYSTEM_OBJS, IMPORT_EXTENSION_OBJS, DEBUG_MODE }).join(" ") << endl;
+	out << endl;
+	out << trUtf8("** When running the diff using two databases (%1 and %2) there's the need to specify two connections/aliases. ").arg(INPUT_DB).arg(COMPARE_TO) << endl;
+	out << trUtf8("   If only one connection is set it will be used to import the input database as well to retrieve database used in the comparison.") << endl;
+	out << trUtf8("   A second connection can be specified by appending a 1 on any connection configuration parameter listed above.") << endl;
+	out << endl;
 }
 
 void PgModelerCLI::parseOptions(attribs_map &opts)
 {
 	//Loading connections
-	if(opts.count(LIST_CONNS) || opts.count(EXPORT_TO_DBMS) || opts.count(IMPORT_DB))
+	if(opts.count(LIST_CONNS) || opts.count(EXPORT_TO_DBMS) || opts.count(IMPORT_DB) || opts.count(DIFF))
 	{
 		conn_conf.loadConfiguration();
 		conn_conf.getConnections(connections, false);
@@ -449,8 +479,7 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 	{
 		int mode_cnt=0, other_modes_cnt=0;
 		bool fix_model=(opts.count(FIX_MODEL) > 0), upd_mime=(opts.count(DBM_MIME_TYPE) > 0),
-				import_db=(opts.count(IMPORT_DB) > 0);
-		QFileInfo input_fi(opts[INPUT]), output_fi(opts[OUTPUT]);
+				import_db=(opts.count(IMPORT_DB) > 0), diff=(opts.count(DIFF) > 0);
 
 		//Checking if multiples export modes were specified
 		mode_cnt+=opts.count(EXPORT_TO_FILE);
@@ -460,36 +489,70 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 
 		other_modes_cnt+=opts.count(FIX_MODEL);
 		other_modes_cnt+=opts.count(IMPORT_DB);
+		other_modes_cnt+=opts.count(DIFF);
 		other_modes_cnt+=opts.count(DBM_MIME_TYPE);
 
 		if(opts.count(ZOOM_FACTOR))
 			zoom=opts[ZOOM_FACTOR].toDouble()/static_cast<double>(100);
 
 		if(other_modes_cnt==0 && mode_cnt==0)
-			throw Exception(trUtf8("No operation mode specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		if((mode_cnt > 0 && (fix_model || upd_mime || import_db)) || (mode_cnt==0 && other_modes_cnt > 1))
-			throw Exception(trUtf8("Export, fix model, import database and update mime operations can't be used at the same time!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		else if(!fix_model && !upd_mime && mode_cnt > 1)
-			throw Exception(trUtf8("Multiple export mode specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		else	if(!upd_mime && opts[INPUT].isEmpty())
-			throw Exception(trUtf8("No input file specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		else	if(!opts.count(EXPORT_TO_DBMS) && !upd_mime && opts[OUTPUT].isEmpty())
-			throw Exception(trUtf8("No output file specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		else if(!opts.count(EXPORT_TO_DBMS) && !upd_mime && input_fi.absoluteFilePath()==output_fi.absoluteFilePath())
+			throw Exception(trUtf8("No operation mode was specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		
+		if((mode_cnt > 0 && (fix_model || upd_mime || import_db || diff)) || (mode_cnt==0 && other_modes_cnt > 1))
+			throw Exception(trUtf8("Export, fix model, import database, diff and update mime operations can't be used at the same time!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		
+		if(!fix_model && !upd_mime && mode_cnt > 1)
+			throw Exception(trUtf8("Multiple export mode was specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		
+		if(!upd_mime && !import_db && !diff && opts[INPUT].isEmpty())
+			throw Exception(trUtf8("No input file was specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		if(import_db && opts[INPUT_DB].isEmpty())
+			throw Exception(trUtf8("No input database was specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		if(!opts.count(EXPORT_TO_DBMS) && !upd_mime && !diff && opts[OUTPUT].isEmpty())
+			throw Exception(trUtf8("No output file was specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		
+		if(!opts.count(EXPORT_TO_DBMS) && !upd_mime && !import_db &&
+			 !opts[INPUT].isEmpty() && !opts[OUTPUT].isEmpty() &&
+			 QFileInfo(opts[INPUT]).absoluteFilePath() == QFileInfo(opts[OUTPUT]).absoluteFilePath())
 			throw Exception(trUtf8("Input file must be different from output!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		else if(opts.count(EXPORT_TO_DBMS) && !opts.count(CONN_ALIAS) &&
-				(!opts.count(HOST) || !opts.count(USER) || !opts.count(PASSWD) || !opts.count(INITIAL_DB)) )
+		
+		if(opts.count(EXPORT_TO_DBMS) && !opts.count(CONN_ALIAS) &&
+			 (!opts.count(HOST) || !opts.count(USER) || !opts.count(PASSWD) || !opts.count(INITIAL_DB)) )
 			throw Exception(trUtf8("Incomplete connection information!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		else if(opts.count(EXPORT_TO_PNG) && (zoom < ModelWidget::MINIMUM_ZOOM || zoom > ModelWidget::MAXIMUM_ZOOM))
+		
+		if(opts.count(EXPORT_TO_PNG) && (zoom < ModelWidget::MINIMUM_ZOOM || zoom > ModelWidget::MAXIMUM_ZOOM))
 			throw Exception(trUtf8("Invalid zoom specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		else if(upd_mime && opts[DBM_MIME_TYPE]!=INSTALL && opts[DBM_MIME_TYPE]!=UNINSTALL)
+		
+		if(upd_mime && opts[DBM_MIME_TYPE]!=INSTALL && opts[DBM_MIME_TYPE]!=UNINSTALL)
 			throw Exception(trUtf8("Invalid action specified to update mime option!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			
+		if(opts.count(DIFF))
+		{
+			if(opts[INPUT].isEmpty() && opts[INPUT_DB].isEmpty())
+				throw Exception(trUtf8("No input file or database was specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+			if(!opts[INPUT].isEmpty() && !opts[INPUT_DB].isEmpty())
+				throw Exception(trUtf8("The input file and database can't be used at the same time!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+			if(!opts.count(COMPARE_TO))
+				throw Exception(trUtf8("No database to be compared was specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+			if(!opts.count(SAVE_DIFF) && !opts.count(APPLY_DIFF))
+				throw Exception(trUtf8("No diff action (save or apply) was specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+			if(opts.count(SAVE_DIFF) && opts[OUTPUT].isEmpty())
+				throw Exception(trUtf8("No output file for the diff code was specified!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
+		
 		//Converting input and output files to absolute paths to avoid that they are read/written on the app's working dir
-		if(!import_db)
-			opts[INPUT]=input_fi.absoluteFilePath();
+		if(!opts[INPUT].isEmpty())
+			opts[INPUT]=QFileInfo(opts[INPUT]).absoluteFilePath();
 
-		opts[OUTPUT]=output_fi.absoluteFilePath();
+		if(!opts[OUTPUT].isEmpty())
+			opts[OUTPUT]=QFileInfo(opts[OUTPUT]).absoluteFilePath();
+
 		parsed_opts=opts;
 	}
 }
@@ -509,6 +572,8 @@ int PgModelerCLI::exec(void)
 				updateMimeType();
 			else if(parsed_opts.count(IMPORT_DB))
 				importDatabase();
+			else if(parsed_opts.count(DIFF))
+				diffModelDatabase();
 			else
 				exportModel();
 		}
@@ -517,7 +582,7 @@ int PgModelerCLI::exec(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw e;
 	}
 }
 
@@ -1214,6 +1279,24 @@ void PgModelerCLI::importDatabase(void)
 
 	if(!silent_mode)
 		out << trUtf8("Import successfully ended!") << endl << endl;
+}
+
+void PgModelerCLI::diffModelDatabase(void)
+{
+	if(!silent_mode)
+	{
+		out << trUtf8("Starting diff process...") << endl;
+
+		if(!parsed_opts[INPUT].isEmpty())
+			out << trUtf8("Input model: ") <<  parsed_opts[INPUT] << endl;
+		else
+			out << trUtf8("Input database: ") <<  connection.getConnectionString().replace(PASSWORD_REGEXP, PASSWORD_PLACEHOLDER) << endl;
+
+		out << trUtf8("Compare to: ") <<  connection.getConnectionString().replace(PASSWORD_REGEXP, PASSWORD_PLACEHOLDER) << endl;
+	}
+
+	if(!silent_mode)
+		out << trUtf8("Diff successfully ended!") << endl << endl;
 }
 
 void PgModelerCLI::updateMimeType(void)

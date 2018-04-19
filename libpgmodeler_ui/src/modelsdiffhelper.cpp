@@ -30,7 +30,7 @@ ModelsDiffHelper::ModelsDiffHelper(void)
 	diff_opts[OPT_KEEP_CLUSTER_OBJS]=true;
 	diff_opts[OPT_CASCADE_MODE]=true;
 	diff_opts[OPT_TRUCANTE_TABLES]=false;
-	diff_opts[OPT_FORCE_RECREATION]=false;
+	diff_opts[OPT_FORCE_RECREATION]=true;
 	diff_opts[OPT_RECREATE_UNCHANGEBLE]=true;
 	diff_opts[OPT_KEEP_OBJ_PERMS]=true;
 	diff_opts[OPT_REUSE_SEQUENCES]=true;
