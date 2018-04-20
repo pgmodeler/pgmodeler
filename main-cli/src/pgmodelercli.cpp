@@ -298,12 +298,12 @@ void PgModelerCLI::initializeOptions(void)
 	short_opts[IGNORE_ERROR_CODES]=QString("-ic");
 	short_opts[CONN_ALIAS]=QString("-ca");
 	short_opts[HOST]=QString("-H");
-	short_opts[PORT]=QString("-P");
-	short_opts[USER]=QString("-U");
-	short_opts[PASSWD]=QString("-W");
+	short_opts[PORT]=QString("-p");
+	short_opts[USER]=QString("-u");
+	short_opts[PASSWD]=QString("-w");
 	short_opts[INITIAL_DB]=QString("-D");
 	short_opts[SILENT]=QString("-s");
-	short_opts[LIST_CONNS]=QString("-L");
+	short_opts[LIST_CONNS]=QString("-lc");
 	short_opts[SIMULATE]=QString("-sm");
 	short_opts[FIX_MODEL]=QString("-fm");
 	short_opts[FIX_TRIES]=QString("-ft");
