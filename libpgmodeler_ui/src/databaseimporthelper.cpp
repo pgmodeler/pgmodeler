@@ -657,6 +657,10 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 	ObjectType obj_type=static_cast<ObjectType>(attribs[ParsersAttributes::OBJECT_TYPE].toUInt());
 	QString obj_name=getObjectName(attribs[ParsersAttributes::OID], (obj_type==OBJ_FUNCTION || obj_type==OBJ_OPERATOR));
 
+	//Avoiding the creation of pgModeler's temp objects created in database during the catalog reading
+	if(obj_name.contains(Catalog::PGMODELER_TEMP_DB_OBJ))
+		return;
+
 	try
 	{
 		if(!import_canceled &&

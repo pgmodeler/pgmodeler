@@ -25,6 +25,7 @@ const QString Catalog::PGSQL_FALSE=QString("f");
 const QString Catalog::BOOL_FIELD=QString("_bool");
 const QString Catalog::ARRAY_PATTERN=QString("((\\[)[0-9]+(\\:)[0-9]+(\\])=)?(\\{)((.)+(,)*)*(\\})$");
 const QString Catalog::GET_EXT_OBJS_SQL=QString("SELECT objid AS oid FROM pg_depend WHERE objid > 0 AND refobjid > 0 AND deptype='e'");
+const QString Catalog::PGMODELER_TEMP_DB_OBJ=QString("__pgmodeler_tmp");
 
 bool Catalog::use_cached_queries=false;
 attribs_map Catalog::catalog_queries;

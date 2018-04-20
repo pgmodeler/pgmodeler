@@ -785,11 +785,11 @@ void ModelsDiffHelper::processDiffInfos(void)
 					if(diff.getOldObject())
 						alter_def=diff.getOldObject()->getAlterDefinition(object);
 
+					if(obj_type == OBJ_DATABASE && diff_opts[OPT_PRESERVE_DB_NAME])
+						alter_def.remove(QRegExp(QString("(ALTER)( )+(DATABASE)( )+(%1)( )+(RENAME)( )+(TO)(.)*(\\n)").arg(diff.getOldObject()->getSignature())));
+
 					if(!alter_def.isEmpty())
 					{
-						if(obj_type == OBJ_DATABASE && diff_opts[OPT_PRESERVE_DB_NAME])
-							alter_def.remove(QRegExp(QString("(ALTER)( )+(DATABASE)( )+(%1)( )+(RENAME)( )+(TO)(.)*(\\n)").arg(diff.getOldObject()->getSignature())));
-
 						alter_objs[object->getObjectId()]=alter_def;
 
 						/* If the object is a column checks if the types of the columns are differents,

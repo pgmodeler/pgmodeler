@@ -209,6 +209,8 @@ class PgModelerCLI: public QApplication {
 		void configureConnection(bool extra_conn);
 		void importDatabase(DatabaseModel *model, Connection conn);
 
+		void printMessage(const QString &msg);
+
 	public:
 		PgModelerCLI(int argc, char **argv);
 		~PgModelerCLI(void);
@@ -217,6 +219,7 @@ class PgModelerCLI: public QApplication {
 	private slots:
 		void handleObjectAddition(BaseObject *);
 		void updateProgress(int progress, QString msg, ObjectType = BASE_OBJECT);
+		void printIgnoredError(QString err_cod, QString err_msg, QString cmd);
 		void handleObjectRemoval(BaseObject *object);
 };
 

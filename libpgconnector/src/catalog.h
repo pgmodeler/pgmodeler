@@ -128,6 +128,9 @@ class Catalog {
 		Catalog(void);
 		Catalog(const Catalog &catalog);
 
+		//! \brief Stores the prefix of any temp object (in pg_temp) created during catalog reading by pgModeler
+		static const QString PGMODELER_TEMP_DB_OBJ;
+
 		//! \brief Excludes the system objects from listing
 		static const unsigned EXCL_SYSTEM_OBJS=1,
 
