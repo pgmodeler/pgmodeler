@@ -168,12 +168,19 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 				configureConnection(false);
 
 				//Replacing the initial db parameter for the input database when reverse engineering
-				if(parsed_opts.count(IMPORT_DB) || parsed_opts.count(DIFF))
+				if((parsed_opts.count(IMPORT_DB) || parsed_opts.count(DIFF)) && !parsed_opts[INPUT_DB].isEmpty())
 					connection.setConnectionParam(Connection::PARAM_DB_NAME, parsed_opts[INPUT_DB]);
 			}
 
-			if(parsed_opts.count(DIFF) && !parsed_opts[INPUT_DB].isEmpty())
+			if(parsed_opts.count(DIFF))
+			{
 				configureConnection(true);
+
+				if(!extra_connection.isConfigured())
+					extra_connection = connection;
+
+				extra_connection.setConnectionParam(Connection::PARAM_DB_NAME, parsed_opts[COMPARE_TO]);
+			}
 
 			if(!silent_mode)
 			{
@@ -1238,7 +1245,7 @@ void PgModelerCLI::exportModel(void)
 void PgModelerCLI::importDatabase(void)
 {
 	printMessage(trUtf8("Starting database import..."));
-	printMessage(trUtf8("Input database: %1").arg(connection.getConnectionString().replace(PASSWORD_REGEXP, PASSWORD_PLACEHOLDER)));
+	printMessage(trUtf8("Input database: %1").arg(connection.getConnectionId(true, true)));
 
 	ModelWidget *model_wgt = new ModelWidget;
 
@@ -1305,9 +1312,10 @@ void PgModelerCLI::diffModelDatabase(void)
 	if(!parsed_opts[INPUT].isEmpty())
 		printMessage(trUtf8("Input model: %1").arg(parsed_opts[INPUT]));
 	else
-		printMessage(trUtf8("Input database: %1").arg(connection.getConnectionString().replace(PASSWORD_REGEXP, PASSWORD_PLACEHOLDER)));
+		printMessage(trUtf8("Input database: %1").arg(connection.getConnectionId(true, true)));
 
-	printMessage(trUtf8("Compare to: %1").arg(connection.getConnectionString().replace(PASSWORD_REGEXP, PASSWORD_PLACEHOLDER)));
+	dbname = extra_connection.getConnectionId(true, true);
+	printMessage(trUtf8("Compare to: %1").arg(dbname));
 
 	if(!parsed_opts[INPUT].isEmpty())
 	{
@@ -1321,23 +1329,10 @@ void PgModelerCLI::diffModelDatabase(void)
 		importDatabase(model, connection);
 	}
 
-	if(extra_connection.isConfigured())
-	{
-		extra_connection.setConnectionParam(Connection::PARAM_DB_NAME, 	parsed_opts[COMPARE_TO]);
-		dbname = extra_connection.getConnectionId(true, true);
-	}
-	else
-	{
-		connection.setConnectionParam(Connection::PARAM_DB_NAME, 	parsed_opts[COMPARE_TO]);
-		dbname = connection.getConnectionId(true, true);
-	}
-
-	printMessage(QString("\n") + trUtf8("Importing the database `%1'...").arg(dbname));
-
-	importDatabase(model_aux, extra_connection.isConfigured() ? extra_connection : connection);
+	printMessage(trUtf8("Importing the database `%1'...").arg(dbname));
+	importDatabase(model_aux, extra_connection);
 
 	diff_hlp.setModels(model, model_aux);
-
 	diff_hlp.setDiffOption(ModelsDiffHelper::OPT_KEEP_CLUSTER_OBJS, !parsed_opts.count(DROP_CLUSTER_OBJS));
 	diff_hlp.setDiffOption(ModelsDiffHelper::OPT_CASCADE_MODE, !parsed_opts.count(NO_CASCADE_DROP_TRUNC));
 	diff_hlp.setDiffOption(ModelsDiffHelper::OPT_TRUCANTE_TABLES, parsed_opts.count(TRUNC_ON_COLS_TYPE_CHANGE));
@@ -1349,7 +1344,7 @@ void PgModelerCLI::diffModelDatabase(void)
 	diff_hlp.setDiffOption(ModelsDiffHelper::OPT_DONT_DROP_MISSING_OBJS, !parsed_opts.count(DROP_MISSING_OBJS));
 	diff_hlp.setDiffOption(ModelsDiffHelper::OPT_DROP_MISSING_COLS_CONSTR, !parsed_opts.count(FORCE_DROP_COLS_CONSTRS));
 
-	printMessage(QString("\n") + trUtf8("Comparing the generated models..."));
+	printMessage(trUtf8("Comparing the generated models..."));
 	diff_hlp.diffModels();
 
 	if(diff_hlp.getDiffDefinition().isEmpty())
@@ -1402,11 +1397,13 @@ void PgModelerCLI::diffModelDatabase(void)
 				}
 
 				out << endl;
-				out << trUtf8("* WARNING: you are about to apply the generated SQL code to the server! Data can be lost in the process.") << endl;
-				out << trUtf8("* Proceed with the diff applying? (yes/no)") << endl;
+				out << trUtf8("** WARNING: you are about to apply the generated SQL code to the server! Data can be lost in the process.") << endl;
 
 				do
 				{
+					out << trUtf8("** Proceed with the diff applying? (yes/no) > ");
+					out.flush();
+
 					in.skipWhiteSpace();
 					res = in.readLine();
 				}
@@ -1415,15 +1412,15 @@ void PgModelerCLI::diffModelDatabase(void)
 				if(res.toLower() == trUtf8("no"))
 				{
 					apply_diff = false;
-					printMessage(trUtf8("Code not applied to the server."));
+					printMessage(trUtf8("Diff code not applied to the server."));
 				}
 			}
 
 			if(apply_diff)
 			{
-				printMessage(QString("\n") + trUtf8("Applying diff to the database `%1'...").arg(dbname));
+				printMessage(trUtf8("Applying diff to the database `%1'...").arg(dbname));
 				export_hlp.setExportToDBMSParams(diff_hlp.getDiffDefinition(),
-																				 extra_connection.isConfigured() ? &extra_connection : &connection,
+																				 &extra_connection,
 																				 parsed_opts[COMPARE_TO], parsed_opts.count(IGNORE_DUPLICATES));
 
 				if(parsed_opts.count(IGNORE_ERROR_CODES))

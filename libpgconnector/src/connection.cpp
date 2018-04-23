@@ -149,7 +149,9 @@ void Connection::generateConnectionString(void)
 		}
 	}
 
-	if(!connection_str.contains(PARAM_DB_NAME))
+	if(!connection_str.contains(PARAM_DB_NAME) ||
+		 (!connection_str.contains(PARAM_SERVER_FQDN) &&
+			!connection_str.contains(PARAM_SERVER_IP)))
 		connection_str.clear();
 }
 
@@ -307,20 +309,26 @@ QString Connection::getConnectionString(void)
 
 QString Connection::getConnectionId(bool host_port_only, bool incl_db_name)
 {
-	QString addr, db_name;
+	QString addr, db_name, port;
+
+	if(!isConfigured())
+		return(QString());
 
 	if(!connection_params[PARAM_SERVER_FQDN].isEmpty())
 		addr=connection_params[PARAM_SERVER_FQDN];
 	else
 		addr=connection_params[PARAM_SERVER_IP];
 
+	if(!connection_params[PARAM_PORT].isEmpty())
+		port = QString(":%1").arg(connection_params[PARAM_PORT]);
+
 	if(incl_db_name)
 		db_name = QString("%1@").arg(connection_params[PARAM_DB_NAME]);
 
 	if(host_port_only)
-		return(QString("%1%2:%3").arg(db_name, addr, connection_params[PARAM_PORT]));
+		return(QString("%1%2%3").arg(db_name, addr, port));
 	else
-		return(QString("%1%2 (%3:%4)").arg(db_name, connection_params[PARAM_ALIAS], addr, connection_params[PARAM_PORT]));
+		return(QString("%1%2 (%3%4)").arg(db_name, connection_params[PARAM_ALIAS], addr, port));
 }
 
 bool Connection::isStablished(void)
