@@ -279,8 +279,10 @@ namespace PgModelerUiNS {
 				screen_id = qApp->desktop()->screenNumber(qApp->activeWindow());
 		QScreen *screen=qApp->screens().at(screen_id);
 		float dpi_factor = 0;
+    float pixel_ratio = 0;
 
 		dpi_factor = screen->logicalDotsPerInch() / 96.0f;
+    pixel_ratio = screen->devicePixelRatio();
 
 		//If the dpi_factor is unchanged (1) we keep the dialog original dimension
 		if(dpi_factor <= 1.01f)
@@ -307,8 +309,8 @@ namespace PgModelerUiNS {
 		else if(min_size.height() >= max_h)
 			curr_h = max_h;
 
-		curr_w *= dpi_factor;
-		curr_h *= dpi_factor;
+		curr_w *= dpi_factor * pixel_ratio;
+		curr_h *= dpi_factor * pixel_ratio;
 
 		if(curr_w > screen->size().width())
 			curr_w = screen->size().width() * 0.80;
