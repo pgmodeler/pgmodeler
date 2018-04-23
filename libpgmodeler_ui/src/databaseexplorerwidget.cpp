@@ -93,7 +93,8 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{SERVER_VERSION, QT_TR_NOOP("Server version")},      {IDENT_FILE, QT_TR_NOOP("Ident file")},                {PASSWORD_ENCRYPTION, QT_TR_NOOP("Password encryption")},
 	{CONNECTION, QT_TR_NOOP("Connection ID")},           {SERVER_PID, QT_TR_NOOP("Server PID")},                {SERVER_PROTOCOL, QT_TR_NOOP("Server protocol")},
 	{REFERRERS, QT_TR_NOOP("Referrers")},                {IDENTITY_TYPE, QT_TR_NOOP("Identity")},               {COMMAND, QT_TR_NOOP("Command")},
-	{USING_EXP, QT_TR_NOOP("USING expr.")},              {CHECK_EXP, QT_TR_NOOP("CHECK expr.")},                {ROLES, QT_TR_NOOP("Roles")}
+	{USING_EXP, QT_TR_NOOP("USING expr.")},              {CHECK_EXP, QT_TR_NOOP("CHECK expr.")},                {ROLES, QT_TR_NOOP("Roles")},
+	{RLS_ENABLED, QT_TR_NOOP("RLS enabled")},            {RLS_FORCED, QT_TR_NOOP("RLS forced")}
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
@@ -509,7 +510,9 @@ void DatabaseExplorerWidget::formatOperatorAttribs(attribs_map &attribs)
 void DatabaseExplorerWidget::formatTableAttribs(attribs_map &attribs)
 {
 	formatBooleanAttribs(attribs, { ParsersAttributes::OIDS,
-									ParsersAttributes::UNLOGGED });
+																	ParsersAttributes::UNLOGGED,
+																	ParsersAttributes::RLS_ENABLED,
+																	ParsersAttributes::RLS_FORCED});
 
 	formatOidAttribs(attribs, { ParsersAttributes::PARENTS }, OBJ_TABLE, true);
 }

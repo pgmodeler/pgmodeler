@@ -8808,6 +8808,15 @@ void DatabaseModel::__getObjectReferences(BaseObject *object, vector<BaseObject 
 	}
 }
 
+void DatabaseModel::setObjectsModified(vector<BaseObject *> &objects)
+{
+	for(auto &obj : objects)
+	{
+		if(BaseGraphicObject::isGraphicObject(obj->getObjectType()))
+			dynamic_cast<BaseGraphicObject *>(obj)->setModified(true);
+	}
+}
+
 void DatabaseModel::setObjectsModified(vector<ObjectType> types)
 {
 	ObjectType obj_types[]={OBJ_TABLE, OBJ_VIEW,

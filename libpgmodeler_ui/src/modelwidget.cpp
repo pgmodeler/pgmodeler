@@ -2006,11 +2006,13 @@ void ModelWidget::setTag(void)
 			{
 				op_id=op_list->registerObject(obj, Operation::OBJECT_MODIFIED, -1);
 				tab->setTag(dynamic_cast<Tag *>(tag));
-				tab->setModified(true);
 			}
 		}
 
 		op_list->finishOperationChain();
+		db_model->setObjectsModified(selected_objects);
+		scene->clearSelection();
+
 		emit s_objectModified();
 	}
 	catch(Exception &e)
@@ -3134,9 +3136,9 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 				menus[i]->clear();
 
 				//Configuring actions "Move to schema", "Change Owner" and "Set tag"
-				if((i==0 && accepts_schema) ||
-						(i==1 && accepts_owner) ||
-						(i==2 && tab_or_view))
+				if((types[i] == OBJ_SCHEMA && accepts_schema) ||
+						(types[i] == OBJ_ROLE && accepts_owner) ||
+						(types[i]==OBJ_TAG && tab_or_view))
 				{
 					obj_list=db_model->getObjects(types[i]);
 
@@ -3147,6 +3149,12 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 					}
 					else
 					{
+						if(types[i] == OBJ_TAG)
+						{
+							menus[i]->addAction(trUtf8("None"), this, SLOT(setTag()));
+							menus[i]->addSeparator();
+						}
+
 						while(!obj_list.empty())
 						{
 							act=new QAction(obj_list.back()->getName(), menus[i]);
