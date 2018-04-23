@@ -157,6 +157,8 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		if(!this->isSelected() && event->buttons()==Qt::LeftButton &&
 			 this->ext_attribs_toggler->boundingRect().contains(pnt))
 		{
+			Schema *schema = dynamic_cast<Schema *>(this->getSourceObject()->getSchema());
+
 			//We need to force the object to be not selectable so further calls to mousePressEvent doesn't select the object
 			this->setFlag(QGraphicsItem::ItemIsSelectable, false);
 
@@ -170,6 +172,9 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 			// Using a single shot time to restore the selectable flag
 			QTimer::singleShot(300, [&]{ this->setFlag(QGraphicsItem::ItemIsSelectable, true); });
+
+			//Updating the schema box that holds the object (if visible)
+			schema->setModified(true);
 
 			emit s_extAttributesToggled();
 		}

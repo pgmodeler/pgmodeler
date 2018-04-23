@@ -36,6 +36,8 @@
 #include "connectionsconfigwidget.h"
 #include "relationshipconfigwidget.h"
 #include "generalconfigwidget.h"
+#include "databaseimporthelper.h"
+#include "modelsdiffhelper.h"
 
 class PgModelerCLI: public QApplication {
 	private:
@@ -46,6 +48,12 @@ class PgModelerCLI: public QApplication {
 		//! \brief Export helper object
 		ModelExportHelper export_hlp;
 
+		//! \brief Import helper object
+		DatabaseImportHelper import_hlp;
+
+		//! \brief Diff helper object
+		ModelsDiffHelper diff_hlp;
+
 		//! \brief Reference database model
 		DatabaseModel *model;
 
@@ -53,7 +61,10 @@ class PgModelerCLI: public QApplication {
 		ObjectsScene *scene;
 
 		//! \brief Stores the configured connection
-		Connection connection;
+		Connection connection,
+
+		//! \brief Stores the extra configured connection (only for diff)
+		extra_connection;
 
 		//! \brief Loaded connections
 		map<QString, Connection *> connections;
@@ -87,13 +98,20 @@ class PgModelerCLI: public QApplication {
 		//! \brief Zoom to be applied onto the png export
 		double zoom;
 
+		static const QRegExp PASSWORD_REGEXP;
+
+		static const QString PASSWORD_PLACEHOLDER;
+
 		//! \brief Option names constants
 		static const QString INPUT,
 		OUTPUT,
+		INPUT_DB,
 		EXPORT_TO_FILE,
 		EXPORT_TO_PNG,
 		EXPORT_TO_SVG,
 		EXPORT_TO_DBMS,
+		IMPORT_DB,
+		DIFF,
 		DROP_DATABASE,
 		DROP_OBJECTS,
 		PGSQL_VER,
@@ -119,6 +137,26 @@ class PgModelerCLI: public QApplication {
 		DBM_MIME_TYPE,
 		INSTALL,
 		UNINSTALL,
+
+		IGNORE_IMPORT_ERRORS,
+		IMPORT_SYSTEM_OBJS,
+		IMPORT_EXTENSION_OBJS,
+		DEBUG_MODE,
+
+		COMPARE_TO,
+		SAVE_DIFF,
+		APPLY_DIFF,
+		NO_DIFF_PREVIEW,
+		DROP_CLUSTER_OBJS,
+		REVOKE_PERMISSIONS,
+		DROP_MISSING_OBJS,
+		FORCE_DROP_COLS_CONSTRS,
+		RENAME_DB,
+		TRUNC_ON_COLS_TYPE_CHANGE,
+		NO_SEQUENCE_REUSE,
+		NO_CASCADE_DROP_TRUNC,
+		NO_FORCE_OBJ_RECREATION,
+		NO_UNMOD_OBJ_RECREATION,
 
 		TAG_EXPR,
 		END_TAG_EXPR,
@@ -162,6 +200,17 @@ class PgModelerCLI: public QApplication {
 		only over operator classes, indexes and constraints */
 		void fixOpClassesFamiliesReferences(QString &obj_xml);
 
+		void fixModel(void);
+		void exportModel(void);
+		void importDatabase(void);
+		void diffModelDatabase(void);
+		void updateMimeType(void);
+
+		void configureConnection(bool extra_conn);
+		void importDatabase(DatabaseModel *model, Connection conn);
+
+		void printMessage(const QString &msg);
+
 	public:
 		PgModelerCLI(int argc, char **argv);
 		~PgModelerCLI(void);
@@ -169,7 +218,8 @@ class PgModelerCLI: public QApplication {
 
 	private slots:
 		void handleObjectAddition(BaseObject *);
-		void updateProgress(int progress, QString msg);
+		void updateProgress(int progress, QString msg, ObjectType = BASE_OBJECT);
+		void printIgnoredError(QString err_cod, QString err_msg, QString cmd);
 		void handleObjectRemoval(BaseObject *object);
 };
 

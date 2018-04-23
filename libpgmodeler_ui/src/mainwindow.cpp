@@ -1308,8 +1308,8 @@ void MainWindow::saveModel(ModelWidget *model)
 				msg_box.show(trUtf8("Confirmation"),
 							 trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! It's recommended to validate it before save in order to create a consistent model otherwise the generated file will be broken demanding manual fixes to be loadable again!").arg(db_model->getName()),
 							 Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
-							 trUtf8("Save anyway"), trUtf8("Validate"),QString(),
-							 PgModelerUiNS::getIconPath("salvar"), PgModelerUiNS::getIconPath("validation"));
+							 trUtf8("Validate"), trUtf8("Save anyway"), QString(),
+								PgModelerUiNS::getIconPath("validation"), PgModelerUiNS::getIconPath("salvar"));
 
 				//If the user cancel the saving force the stopping of autosave timer to give user the chance to validate the model
 				if(msg_box.isCancelled())
@@ -1319,7 +1319,7 @@ void MainWindow::saveModel(ModelWidget *model)
 					//The autosave timer will be reactivated in 5 minutes
 					QTimer::singleShot(300000, &model_save_timer, SLOT(start()));
 				}
-				else if(msg_box.result()==QDialog::Rejected)
+				else if(msg_box.result()==QDialog::Accepted)
 				{
 					validation_btn->setChecked(true);
 					this->pending_op=(sender()==action_save_as ? PENDING_SAVE_AS_OPER : PENDING_SAVE_OPER);
@@ -1331,7 +1331,8 @@ void MainWindow::saveModel(ModelWidget *model)
 			stopTimers(true);
 
 			if((!confirm_validation ||
-				(!db_model->isInvalidated() || (confirm_validation && db_model->isInvalidated() && msg_box.result()==QDialog::Accepted)))
+				(!db_model->isInvalidated() ||
+				 (confirm_validation && db_model->isInvalidated() && !msg_box.isCancelled() && msg_box.result()==QDialog::Rejected)))
 					&& (model->isModified() || sender()==action_save_as))
 			{
 				//If the action that calls the slot were the 'save as' or the model filename isn't set
@@ -1385,10 +1386,10 @@ void MainWindow::exportModel(void)
 		msg_box.show(trUtf8("Confirmation"),
 					 trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the export process it's recommended to validate in order to correctly create the objects on database server!").arg(db_model->getName()),
 					 Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
-					 trUtf8("Export anyway"), trUtf8("Validate"), QString(),
-					 PgModelerUiNS::getIconPath("exportar"), PgModelerUiNS::getIconPath("validation"));
+					 trUtf8("Validate"), trUtf8("Export anyway"), QString(),
+					 PgModelerUiNS::getIconPath("validation"), PgModelerUiNS::getIconPath("exportar"));
 
-		if(!msg_box.isCancelled() && msg_box.result()==QDialog::Rejected)
+		if(msg_box.result()==QDialog::Accepted)
 		{
 			validation_btn->setChecked(true);
 			this->pending_op=PENDING_EXPORT_OPER;
@@ -1397,7 +1398,7 @@ void MainWindow::exportModel(void)
 	}
 
 	if(!confirm_validation ||
-			(!db_model->isInvalidated() || (confirm_validation && msg_box.result()==QDialog::Accepted)))
+			(!db_model->isInvalidated() || (confirm_validation && !msg_box.isCancelled() && msg_box.result()==QDialog::Rejected)))
 	{
 		stopTimers(true);
 		connect(&model_export_form, &ModelExportForm::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
@@ -1439,10 +1440,10 @@ void MainWindow::diffModelDatabase(void)
 		msg_box.show(trUtf8("Confirmation"),
 					 trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the diff process it's recommended to validate in order to correctly analyze and generate the difference between the model and a database!").arg(db_model->getName()),
 					 Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
-					 trUtf8("Diff anyway"), trUtf8("Validate"), QString(),
-					 PgModelerUiNS::getIconPath("diff"), PgModelerUiNS::getIconPath("validation"));
+					 trUtf8("Validate"), trUtf8("Diff anyway"), QString(),
+					 PgModelerUiNS::getIconPath("validation"), PgModelerUiNS::getIconPath("diff"));
 
-		if(!msg_box.isCancelled() && msg_box.result()==QDialog::Rejected)
+		if(msg_box.result()==QDialog::Accepted)
 		{
 			validation_btn->setChecked(true);
 			this->pending_op=PENDING_DIFF_OPER;
@@ -1451,7 +1452,7 @@ void MainWindow::diffModelDatabase(void)
 	}
 
 	if(!confirm_validation || !db_model ||
-			((db_model && !db_model->isInvalidated()) || (confirm_validation && msg_box.result()==QDialog::Accepted)))
+			((db_model && !db_model->isInvalidated()) || (confirm_validation && !msg_box.isCancelled() && msg_box.result()==QDialog::Rejected)))
 	{
 		modeldb_diff_frm.setModelWidget(current_model);
 

@@ -657,6 +657,10 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 	ObjectType obj_type=static_cast<ObjectType>(attribs[ParsersAttributes::OBJECT_TYPE].toUInt());
 	QString obj_name=getObjectName(attribs[ParsersAttributes::OID], (obj_type==OBJ_FUNCTION || obj_type==OBJ_OPERATOR));
 
+	//Avoiding the creation of pgModeler's temp objects created in database during the catalog reading
+	if(obj_name.contains(Catalog::PGMODELER_TEMP_DB_OBJ))
+		return;
+
 	try
 	{
 		if(!import_canceled &&
@@ -891,6 +895,7 @@ void DatabaseImportHelper::resetImportParameters(void)
 	col_perms.clear();
 	connection.close();
 	catalog.closeConnection();
+	inherited_cols.clear();
 }
 
 QString DatabaseImportHelper::dumpObjectAttributes(attribs_map &attribs)
@@ -1493,9 +1498,10 @@ void DatabaseImportHelper::createAggregate(attribs_map &attribs)
 			attribs[func_types[i]]=getDependencyObject(attribs[func_types[i]], OBJ_FUNCTION, true, auto_resolve_deps, true, {{ParsersAttributes::REF_TYPE, func_types[i]}});
 
 		types=getTypes(attribs[ParsersAttributes::TYPES], true);
+		attribs[ParsersAttributes::TYPES]=QString();
+
 		if(!types.isEmpty())
 		{
-			attribs[ParsersAttributes::TYPES]=QString();
 			for(int i=0; i < types.size(); i++)
 				attribs[ParsersAttributes::TYPES]+=types[i];
 		}
@@ -2256,7 +2262,7 @@ void DatabaseImportHelper::destroyDetachedColumns(void)
 
 	dbmodel->disconnectRelationships();
 
-	emit s_progressUpdated(95,
+	emit s_progressUpdated(100,
 						   trUtf8("Destroying unused detached columns..."),
 						   OBJ_COLUMN);
 
@@ -2293,7 +2299,7 @@ void DatabaseImportHelper::assignSequencesToColumns(void)
 {
 	Table *table=nullptr;
 	Column *col=nullptr;
-	emit s_progressUpdated(95,
+	emit s_progressUpdated(100,
 							 trUtf8("Assigning sequences to columns..."),
 						   OBJ_SEQUENCE);
 

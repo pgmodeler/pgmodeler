@@ -880,11 +880,12 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	vector<QPointF> points;
 	vector<QPointF>::iterator itr;
 	vector<BaseObject *> rels, base_rels;
+	QSet<Schema *> schemas;
 	BaseRelationship *base_rel=nullptr;
 	RelationshipView *rel=nullptr;
 	BaseObjectView *obj_view=nullptr;
 	BaseTableView *tab_view=nullptr;
-	QList<BaseObjectView *> tables;
+	QSet<BaseObjectView *> tables;
 
 	//Gathering the relationships inside the selected schemsa in order to move their points too
 	for(auto &item : items)
@@ -897,7 +898,7 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 			obj_view->togglePlaceholder(false);
 
 		if(tab_view)
-			tables.push_back(tab_view);
+			tables.insert(tab_view);
 		else if(sch_view)
 		{
 			//Get the schema object
@@ -921,7 +922,7 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 						rel_list.push_back(dynamic_cast<QGraphicsItem *>(base_rel->getReceiverObject()));
 				}
 
-				tables.append(sch_view->getChildren());
+				tables.unite(sch_view->getChildren().toSet());
 			}
 		}
 	}
@@ -1007,17 +1008,24 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 		this->setSceneRect(rect);
 	}
 
-	if(BaseObjectView::isPlaceholderEnabled())
+	for(auto &obj : tables)
 	{
-		/* Updating relationships related to moved tables. Converting the list of table to a set
-	 in order to remove the duplicated elements */
-		for(auto &obj : tables.toSet())
+		tab_view=dynamic_cast<BaseTableView *>(obj);
+
+		//Realign tables if the parent schema had the position adjusted too
+		if(align_objs_grid)
 		{
-			tab_view=dynamic_cast<BaseTableView *>(obj);
-			if(tab_view)
-				tab_view->requestRelationshipsUpdate();
+			tab_view->setPos(alignPointToGrid(tab_view->pos()));
+			schemas.insert(dynamic_cast<Schema *>(tab_view->getSourceObject()->getSchema()));
 		}
+
+		if(BaseObjectView::isPlaceholderEnabled())
+			tab_view->requestRelationshipsUpdate();
 	}
+
+	//Updating schemas bounding rects after moving objects
+	for(auto &obj : schemas)
+		obj->setModified(true);
 
 	emit s_objectsMoved(true);
 	moving_objs=false;

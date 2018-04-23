@@ -970,7 +970,7 @@ void DataManipulationForm::markDeleteOnRows(void)
 	results_tbw->clearSelection();
 }
 
-void DataManipulationForm::addRow(void)
+void DataManipulationForm::addRow(bool focus_new_row)
 {
 	int row=results_tbw->rowCount();
 	QTableWidgetItem *item=nullptr;
@@ -996,15 +996,17 @@ void DataManipulationForm::addRow(void)
 
 	results_tbw->setVerticalHeaderItem(row, new QTableWidgetItem(QString::number(row + 1)));
 	results_tbw->blockSignals(false);
-	results_tbw->setFocus();
 
 	markOperationOnRow(OP_INSERT, row);
-
-	results_tbw->clearSelection();
 	item=results_tbw->item(row, 0);
-	results_tbw->setCurrentCell(row, 0, QItemSelectionModel::ClearAndSelect);
-	results_tbw->editItem(item);
 	hint_frm->setVisible(true);
+
+	if(focus_new_row)
+	{
+		results_tbw->setFocus();
+		results_tbw->setCurrentCell(row, 0, QItemSelectionModel::ClearAndSelect);
+		results_tbw->editItem(item);
+	}
 }
 
 void DataManipulationForm::duplicateRows(void)
@@ -1017,7 +1019,7 @@ void DataManipulationForm::duplicateRows(void)
 		{
 			for(int row=sel_rng.topRow(); row <= sel_rng.bottomRow(); row++)
 			{
-				addRow();
+				addRow(false);
 
 				for(int col=0; col < results_tbw->columnCount(); col++)
 				{
@@ -1026,6 +1028,8 @@ void DataManipulationForm::duplicateRows(void)
 				}
 			}
 		}
+
+		results_tbw->setCurrentItem(results_tbw->item(results_tbw->rowCount() - 1, 0), QItemSelectionModel::ClearAndSelect);
 	}
 }
 

@@ -25,6 +25,7 @@ const QString Catalog::PGSQL_FALSE=QString("f");
 const QString Catalog::BOOL_FIELD=QString("_bool");
 const QString Catalog::ARRAY_PATTERN=QString("((\\[)[0-9]+(\\:)[0-9]+(\\])=)?(\\{)((.)+(,)*)*(\\})$");
 const QString Catalog::GET_EXT_OBJS_SQL=QString("SELECT objid AS oid FROM pg_depend WHERE objid > 0 AND refobjid > 0 AND deptype='e'");
+const QString Catalog::PGMODELER_TEMP_DB_OBJ=QString("__pgmodeler_tmp");
 
 bool Catalog::use_cached_queries=false;
 attribs_map Catalog::catalog_queries;
@@ -37,7 +38,7 @@ map<ObjectType, QString> Catalog::oid_fields=
   {OBJ_CONVERSION, "cn.oid"}, {OBJ_CAST, "cs.oid"}, {OBJ_VIEW, "vw.oid"},
   {OBJ_SEQUENCE, "sq.oid"}, {OBJ_DOMAIN, "dm.oid"}, {OBJ_TYPE, "tp.oid"},
   {OBJ_TABLE, "tb.oid"}, {OBJ_COLUMN, "cl.oid"}, {OBJ_CONSTRAINT, "cs.oid"},
-  {OBJ_RULE, "rl.oid"}, {OBJ_TRIGGER, "tg.oid"}, {OBJ_INDEX, "id.oid"},
+	{OBJ_RULE, "rl.oid"}, {OBJ_TRIGGER, "tg.oid"}, {OBJ_INDEX, "id.indexrelid"},
 	{OBJ_EVENT_TRIGGER, "et.oid"}, {OBJ_POLICY, "pl.oid"}
 };
 
@@ -46,7 +47,7 @@ map<ObjectType, QString> Catalog::ext_oid_fields={
 	{OBJ_INDEX, "id.indexrelid"},
 	{OBJ_TRIGGER, "tg.tgrelid"},
 	{OBJ_RULE, "rl.ev_class"},
-	{OBJ_POLICY, "pl.oid"}
+	{OBJ_POLICY, "pl.polrelid"}
 };
 
 map<ObjectType, QString> Catalog::name_fields=
@@ -566,12 +567,9 @@ vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QSt
 		if(!filter_oids.empty())
 			extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
 
-		//Retrieve the comment catalog query. Only columns need to retreive columns in their own catalog query file
+		//Retrieve the comment catalog query. Only columns need to retreive comments in their own catalog query file
 		if(obj_type != OBJ_COLUMN)
-		{
-			extra_attribs[ParsersAttributes::COMMENT]=
-					getCommentQuery(!TableObject::isTableObject(obj_type) ? oid_fields[obj_type] : ext_oid_fields[obj_type], is_shared_obj);
-		}
+			extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery(oid_fields[obj_type], is_shared_obj);
 
 		return(getMultipleAttributes(obj_type, extra_attribs));
 	}

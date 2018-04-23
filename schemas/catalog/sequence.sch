@@ -23,7 +23,7 @@
 %else
     %if {attribs} %then
       #Creates a temporary function to retrieve the sequence attributes
-      [CREATE OR REPLACE FUNCTION pg_temp.get_seq_attribs(text,text)
+      [CREATE OR REPLACE FUNCTION pg_temp.__pgmodeler_tmp_get_seq_attribs(text,text)
        RETURNS text
        AS
        $$
@@ -54,7 +54,7 @@
 
       [ SELECT sq.oid, sq.relname AS name, sq.relnamespace AS schema, sq.relowner AS owner,
 	 (SELECT refobjid || ':' || refobjsubid FROM pg_depend WHERE objid=sq.oid AND deptype in ('a', 'i')) AS owner_col,
-	  (pg_temp.get_seq_attribs(ns.nspname, sq.relname)) AS attribute, ]
+	  (pg_temp.__pgmodeler_tmp_get_seq_attribs(ns.nspname, sq.relname)) AS attribute, ]
 
       ({comment}) [ AS comment ]
 

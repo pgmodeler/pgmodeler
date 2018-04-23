@@ -120,36 +120,39 @@ void Connection::setAutoBrowseDB(bool value)
 
 void Connection::generateConnectionString(void)
 {
-	attribs_map::iterator itr;
-	QString value;
-
-	itr=connection_params.begin();
+	QString value, param_str = QString("%1=%2 ");
 
 	//Scans the parameter map concatening the params (itr->first) / values (itr->second)
-	connection_str=QString();
-	while(itr!=connection_params.end())
+	connection_str.clear();
+
+	for(auto &itr : connection_params)
 	{
-		if(itr->first!=PARAM_ALIAS)
+		if(itr.first!=PARAM_ALIAS)
 		{
-			value=itr->second;
+			value=itr.second;
 
 			value.replace("\\","\\\\");
 			value.replace("'","\\'");
 
-			if(itr->first==PARAM_PASSWORD && (value.contains(' ') || value.isEmpty()))
+			if(itr.first==PARAM_PASSWORD && (value.contains(' ') || value.isEmpty()))
 				value=QString("'%1'").arg(value);
 
 			if(!value.isEmpty())
 			{
-				if(itr->first!=PARAM_OTHERS)
-					connection_str+=itr->first + "=" + value + " ";
+				if(itr.first==PARAM_DB_NAME)
+					connection_str.prepend(param_str.arg(itr.first).arg(value));
+				else if(itr.first!=PARAM_OTHERS)
+					connection_str+=param_str.arg(itr.first).arg(value);
 				else
 					connection_str+=value;
 			}
 		}
-
-		itr++;
 	}
+
+	if(!connection_str.contains(PARAM_DB_NAME) ||
+		 (!connection_str.contains(PARAM_SERVER_FQDN) &&
+			!connection_str.contains(PARAM_SERVER_IP)))
+		connection_str.clear();
 }
 
 void Connection::noticeProcessor(void *, const char *message)
@@ -306,25 +309,36 @@ QString Connection::getConnectionString(void)
 
 QString Connection::getConnectionId(bool host_port_only, bool incl_db_name)
 {
-	QString addr, db_name;
+	QString addr, db_name, port;
+
+	if(!isConfigured())
+		return(QString());
 
 	if(!connection_params[PARAM_SERVER_FQDN].isEmpty())
 		addr=connection_params[PARAM_SERVER_FQDN];
 	else
 		addr=connection_params[PARAM_SERVER_IP];
 
+	if(!connection_params[PARAM_PORT].isEmpty())
+		port = QString(":%1").arg(connection_params[PARAM_PORT]);
+
 	if(incl_db_name)
 		db_name = QString("%1@").arg(connection_params[PARAM_DB_NAME]);
 
 	if(host_port_only)
-		return(QString("%1%2:%3").arg(db_name, addr, connection_params[PARAM_PORT]));
+		return(QString("%1%2%3").arg(db_name, addr, port));
 	else
-		return(QString("%1%2 (%3:%4)").arg(db_name, connection_params[PARAM_ALIAS], addr, connection_params[PARAM_PORT]));
+		return(QString("%1%2 (%3%4)").arg(db_name, connection_params[PARAM_ALIAS], addr, port));
 }
 
 bool Connection::isStablished(void)
 {
 	return(connection!=nullptr);
+}
+
+bool Connection::isConfigured(void)
+{
+	return(!connection_str.isEmpty());
 }
 
 bool Connection::isAutoBrowseDB(void)

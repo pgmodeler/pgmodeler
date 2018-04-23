@@ -208,8 +208,11 @@ class Connection {
 		raise an exception and switch back to the previous database. */
 		void switchToDatabase(const QString &dbname);
 
-		//! \brief Returns if the connections is stablished
+		//! \brief Returns if the connection is stablished
 		bool isStablished(void);
+
+		//! \brief Returns if the connection is configured (has some attributes set)
+		bool isConfigured(void);
 
 		//! \brief Returns if the db configured in the connection can be automatically browsed in SQLTool
 		bool isAutoBrowseDB(void);

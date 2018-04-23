@@ -913,6 +913,7 @@ void BaseObjectWidget::cancelConfiguration(void)
 		catch(Exception &){}
 	}
 
+	QApplication::restoreOverrideCursor();
 	emit s_objectManipulated();
 }
 

@@ -731,7 +731,8 @@ void ModelExportHelper::restoreObjectNames(void)
 
 	/* Invalidates the codes of all objects on database model in order to generate the SQL referencing the
 		 object's with their original names */
-	db_model->setCodesInvalidated();
+	if(db_model)
+		db_model->setCodesInvalidated();
 }
 
 bool ModelExportHelper::isDuplicationError(const QString &error_code)
@@ -758,9 +759,8 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 {
 	Connection aux_conn;
 	QString sql_buf=buffer, sql_cmd, aux_cmd, lin, msg,
-			obj_name, obj_tp_name, tab_name,
+			obj_name, obj_tp_name, tab_name, orig_conn_db_name,
 			alter_tab=QString("ALTER TABLE");
-	//vector<Exception> errors;
 	vector<QString> db_sql_cmds;
 	QTextStream ts;
 	ObjectType obj_type=BASE_OBJECT;
@@ -791,6 +791,8 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
 	if(!conn.isStablished())
 	{
+		orig_conn_db_name = conn.getConnectionParam(Connection::PARAM_DB_NAME);
+
 		if(!db_name.isEmpty())
 			conn.setConnectionParam(Connection::PARAM_DB_NAME, db_name);
 
@@ -989,6 +991,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 			{
 				conn.close();
 				aux_conn=conn;
+				aux_conn.setConnectionParam(Connection::PARAM_DB_NAME, orig_conn_db_name);
 				aux_conn.connect();
 				for(QString cmd : db_sql_cmds)
 					aux_conn.executeDDLCommand(cmd);
@@ -997,9 +1000,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 		catch(Exception &e)
 		{
 			if(ddl_tk_found) ddl_tk_found=false;
-
 			handleSQLError(e, sql_cmd, ignore_dup);
-
 			sql_cmd.clear();
 		}
 	}

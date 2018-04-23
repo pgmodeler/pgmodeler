@@ -160,10 +160,10 @@ void CollationWidget::applyConfiguration(void)
 			collation->setLocale(locale_cmb->currentText());
 
 		if(lccollate_cmb->currentIndex() > 0)
-			collation->setLocalization(LC_COLLATE, lccollate_cmb->currentText());
+			collation->setLocalization(Collation::_LC_COLLATE, lccollate_cmb->currentText());
 
 		if(lcctype_cmb->currentIndex() > 0)
-			collation->setLocalization(LC_CTYPE, lcctype_cmb->currentText());
+			collation->setLocalization(Collation::_LC_CTYPE, lcctype_cmb->currentText());
 
 		finishConfiguration();
 	}

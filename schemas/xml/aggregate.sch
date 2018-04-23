@@ -22,7 +22,8 @@
   %if {appended-sql} %then {appended-sql} %end
   %if {prepended-sql} %then {prepended-sql} %end
 
-  {types}
+  %if {types} %then {types} %end
+  
   {state-type}
   {transition}
   %if {final} %then {final} %end

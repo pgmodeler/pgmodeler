@@ -26,6 +26,8 @@ class BulkDataEditWidget: public QWidget, public Ui::BulkDataEditWidget {
 	private:
 		Q_OBJECT
 
+		void showEvent(QShowEvent *);
+
 	public:
 		BulkDataEditWidget(QWidget *parent = 0);
 };
