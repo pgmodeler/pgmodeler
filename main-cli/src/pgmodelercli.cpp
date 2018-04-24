@@ -1344,6 +1344,15 @@ void PgModelerCLI::diffModelDatabase(void)
 	diff_hlp.setDiffOption(ModelsDiffHelper::OPT_DONT_DROP_MISSING_OBJS, !parsed_opts.count(DROP_MISSING_OBJS));
 	diff_hlp.setDiffOption(ModelsDiffHelper::OPT_DROP_MISSING_COLS_CONSTR, !parsed_opts.count(FORCE_DROP_COLS_CONSTRS));
 
+	if(!parsed_opts[PGSQL_VER].isEmpty())
+		diff_hlp.setPgSQLVersion(parsed_opts[PGSQL_VER]);
+	else
+	{
+		extra_connection.connect();
+		diff_hlp.setPgSQLVersion(extra_connection.getPgSQLVersion(true));
+		extra_connection.close();
+	}
+
 	printMessage(trUtf8("Comparing the generated models..."));
 	diff_hlp.diffModels();
 
