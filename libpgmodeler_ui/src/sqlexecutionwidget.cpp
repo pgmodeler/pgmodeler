@@ -416,6 +416,7 @@ void SQLExecutionWidget::runSQLCommand(void)
 	{
 		ResultSet res;
 		QStringList conn_notices;
+		qint64 start_exec=0, end_exec=0, total_exec = 0;
 
 		output_tb->setChecked(true);
 
@@ -436,9 +437,11 @@ void SQLExecutionWidget::runSQLCommand(void)
 		}
 
 		QApplication::setOverrideCursor(Qt::WaitCursor);
-		sql_cmd_conn.executeDMLCommand(cmd, res);
-		conn_notices=sql_cmd_conn.getNotices();
 
+		start_exec=QDateTime::currentDateTime().toMSecsSinceEpoch();
+		sql_cmd_conn.executeDMLCommand(cmd, res);
+
+		conn_notices=sql_cmd_conn.getNotices();
 		addToSQLHistory(cmd, res.getTupleCount());
 
 		output_tbw->setTabEnabled(0, !res.isEmpty());
@@ -474,9 +477,13 @@ void SQLExecutionWidget::runSQLCommand(void)
 																					QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")));
 		}
 
+		end_exec=QDateTime::currentDateTime().toMSecsSinceEpoch();
+		total_exec = end_exec - start_exec;
+
 		PgModelerUiNS::createOutputListItem(msgoutput_lst,
-																				PgModelerUiNS::formatMessage(trUtf8("[%1]: SQL command successfully executed. <em>%2 <strong>%3</strong></em>")
+																				PgModelerUiNS::formatMessage(trUtf8("[%1]: SQL command successfully executed in <em><strong>%2</strong></em>. <em>%3 <strong>%4</strong></em>")
 																																		 .arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz")))
+																																		 .arg(total_exec >= 1000 ? QString("%1 s").arg(total_exec/1000) : QString("%1 ms").arg(total_exec))
 																																		 .arg(res.isEmpty() ? trUtf8("Rows affected") :  trUtf8("Rows retrieved"))
 																																		 .arg(res.getTupleCount())),
 																				QPixmap(PgModelerUiNS::getIconPath("msgbox_info")));
