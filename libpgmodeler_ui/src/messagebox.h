@@ -67,6 +67,9 @@ class Messagebox: public QDialog, public Ui::Messagebox {
 
 		bool isCancelled(void);
 
+		void setCustomOptionText(const QString &text);
+		bool isCustomOptionChecked(void);
+
 	private slots:
 		void handleYesOkClick(void);
 		void handleNoCancelClick(void);

@@ -1268,6 +1268,7 @@ void DatabaseExplorerWidget::truncateTable(QTreeWidgetItem *item, bool cascade)
 			else
 				msg=trUtf8("Do you really want to <strong>cascade</strong> truncate the table <strong>%1</strong>? This action will truncate all the tables that depends on it?").arg(obj_name);
 
+			msg_box.setCustomOptionText(trUtf8("Also restart sequences"));
 			msg_box.show(msg, Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
 			if(msg_box.result()==QDialog::Accepted)
@@ -1279,7 +1280,7 @@ void DatabaseExplorerWidget::truncateTable(QTreeWidgetItem *item, bool cascade)
 				attribs[ParsersAttributes::SQL_OBJECT]=BaseObject::getSQLName(OBJ_TABLE);
 				attribs[ParsersAttributes::SIGNATURE]=sch_name + QString(".\"%1\"").arg(obj_name);
 				attribs[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : "");
-
+				attribs[ParsersAttributes::RESTART_SEQ]=(msg_box.isCustomOptionChecked() ? ParsersAttributes::_TRUE_ : "");
 
 				//Generate the truncate command
 				schparser.ignoreEmptyAttributes(true);

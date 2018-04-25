@@ -410,6 +410,7 @@ namespace ParsersAttributes {
 	RENAME=QString("rename"),
 	REPLICATION=QString("replication"),
 	RESTRICTION_FUNC=QString("restriction"),
+	RESTART_SEQ=QString("restart-seq"),
 	RETURN_TABLE=QString("return-table"),
 	RETURN_TYPE=QString("return-type"),
 	RETURNS_SETOF=QString("returns-setof"),
