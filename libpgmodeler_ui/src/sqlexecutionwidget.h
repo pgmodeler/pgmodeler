@@ -33,6 +33,7 @@
 #include "codecompletionwidget.h"
 #include "numberedtexteditor.h"
 #include "findreplacewidget.h"
+#include "resultsetmodel.h"
 
 class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 	private:
@@ -74,6 +75,8 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 
 		FindReplaceWidget *find_history_wgt;
 
+		ResultSetModel *result_model;
+
 		/*! \brief Enables/Disables the fields for sql input and execution.
 				When enabling a new connection to server will be opened. */
 		void enableSQLExecution(bool enable);
@@ -103,6 +106,7 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		static const QString COLUMN_NULL_VALUE;
 
 		SQLExecutionWidget(QWidget * parent = 0);
+		~SQLExecutionWidget(void);
 
 		//! \brief Configures the connection to query the server
 		void setConnection(Connection conn);

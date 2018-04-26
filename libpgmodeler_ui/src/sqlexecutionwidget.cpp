@@ -34,6 +34,8 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 {
 	setupUi(this);
 
+	result_model = nullptr;
+
 	sql_cmd_txt=PgModelerUiNS::createNumberedTextEditor(sql_cmd_wgt);
 	cmd_history_txt=PgModelerUiNS::createNumberedTextEditor(cmd_history_parent);
 	cmd_history_txt->setCustomContextMenuEnabled(false);
@@ -84,6 +86,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	find_tb->setToolTip(find_tb->toolTip() + QString(" (%1)").arg(find_tb->shortcut().toString()));
 
 	results_tbw->setItemDelegate(new PlainTextItemDelegate(this, true));
+	tableView->setItemDelegate(new PlainTextItemDelegate(this, true));
 
 	action_load=new QAction(QIcon(PgModelerUiNS::getIconPath("abrir")), trUtf8("Load"), this);
 	action_save=new QAction(QIcon(PgModelerUiNS::getIconPath("salvar")), trUtf8("Save"), this);
@@ -127,6 +130,16 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	toggleOutputPane(false);
 	filename_wgt->setVisible(false);
 	v_splitter->handle(1)->installEventFilter(this);
+}
+
+SQLExecutionWidget::~SQLExecutionWidget(void)
+{
+	if(result_model)
+	{
+		tableView->blockSignals(true);
+		tableView->setModel(nullptr);
+		delete(result_model);
+	}
 }
 
 bool SQLExecutionWidget::eventFilter(QObject *object, QEvent *event)
@@ -187,7 +200,21 @@ void SQLExecutionWidget::fillResultsTable(ResultSet &res)
 		aux_conn.setConnectionParams(sql_cmd_conn.getConnectionParams());
 		export_tb->setEnabled(res.getTupleCount() > 0);
 		catalog.setConnection(aux_conn);
-		fillResultsTable(catalog, res, results_tbw);
+
+		tableView->setSortingEnabled(false);
+		tableView->blockSignals(true);
+		tableView->setUpdatesEnabled(false);
+		tableView->setModel(nullptr);
+
+		if(result_model)
+			delete(result_model);
+
+		result_model = new ResultSetModel(res, catalog);
+
+		tableView->setModel(result_model);
+		tableView->resizeColumnsToContents();
+		tableView->setUpdatesEnabled(true);
+		tableView->blockSignals(false);
 	}
 	catch(Exception &e)
 	{
