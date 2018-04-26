@@ -43,12 +43,6 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 
 		static int cmd_history_max_len;
 
-		/*! \brief The maximum amount of rows allowed to the results grid.
-		 * This attribute is used to limit the amount of rows inserted in any QTableWidget instance
-		 * by fillResultsTable() in order to avoid memory exhaustion leading to crash depending on
-		 * the amount of rows stored in a result set */
-		static int max_result_rows;
-
 		SchemaParser schparser;
 
 		//! \brief Syntax highlighter for sql input field
@@ -129,10 +123,6 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 
 		//! \brief Exports the results to csv file
 		static void exportResults(QTableView *results_tbw);
-
-		static void setMaxResultRows(int max_val);
-
-		static int getMaxResultRows(void);
 
 	public slots:
 		void configureSnippets(void);

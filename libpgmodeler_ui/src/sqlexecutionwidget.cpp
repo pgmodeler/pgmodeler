@@ -27,7 +27,6 @@
 map<QString, QString> SQLExecutionWidget::cmd_history;
 
 int SQLExecutionWidget::cmd_history_max_len = 1000;
-int SQLExecutionWidget::max_result_rows = 20000;
 const QString SQLExecutionWidget::COLUMN_NULL_VALUE = QString("␀");
 
 SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
@@ -294,16 +293,13 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 		for(col=0; col < col_cnt; col++)
 		{
 			item=results_tbw->horizontalHeaderItem(col);
-			item->setToolTip(res.getColumnName(col) + QString(" [%1]").arg(type_names[res.getColumnTypeId(col)]));
+			item->setToolTip(type_names[res.getColumnTypeId(col)]);
 			item->setData(Qt::UserRole, type_names[res.getColumnTypeId(col)]);
 		}
 
 		if(res.accessTuple(ResultSet::FIRST_TUPLE))
 		{
-			if(max_result_rows != 0 && res.getTupleCount() > max_result_rows)
-				results_tbw->setRowCount(max_result_rows);
-			else
-				results_tbw->setRowCount(res.getTupleCount());
+			results_tbw->setRowCount(res.getTupleCount());
 
 			do
 			{
@@ -617,16 +613,6 @@ void SQLExecutionWidget::exportResults(QTableView *results_tbw)
 		results_tbw->setUpdatesEnabled(true);
 		QApplication::restoreOverrideCursor();
 	}
-}
-
-void SQLExecutionWidget::setMaxResultRows(int max_val)
-{
-	max_result_rows = (max_val < 0 ? 0 : max_val);
-}
-
-int SQLExecutionWidget::getMaxResultRows(void)
-{
-	return(max_result_rows);
 }
 
 int SQLExecutionWidget::clearAll(void)
