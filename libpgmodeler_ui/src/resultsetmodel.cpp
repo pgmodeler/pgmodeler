@@ -29,12 +29,12 @@ ResultSetModel::ResultSetModel(ResultSet &res, Catalog &catalog, QObject *parent
 		map<int, QString> type_names;
 		int col = 0;
 
-		col_cnt = res.getColumnCount();
-		row_cnt = res.getTupleCount();
-		insertColumns(0, col_cnt);
-		insertRows(0, row_cnt);
+		col_count = res.getColumnCount();
+		row_count = res.getTupleCount();
+		insertColumns(0, col_count);
+		insertRows(0, row_count);
 
-		for(col=0; col < col_cnt; col++)
+		for(col=0; col < col_count; col++)
 		{
 			header_data.push_back(res.getColumnName(col));
 			type_ids.push_back(res.getColumnTypeId(col));
@@ -45,7 +45,7 @@ ResultSetModel::ResultSetModel(ResultSet &res, Catalog &catalog, QObject *parent
 			do
 			{
 				//Fills the current row with the values of current tuple
-				for(int col=0; col < col_cnt; col++)
+				for(int col=0; col < col_count; col++)
 				{
 					if(res.isColumnBinaryFormat(col))
 						item_data.push_back(trUtf8("[binary data]"));
@@ -67,7 +67,7 @@ ResultSetModel::ResultSetModel(ResultSet &res, Catalog &catalog, QObject *parent
 		for(auto &tp : types)
 			type_names[tp[ParsersAttributes::OID].toInt()]=tp[ParsersAttributes::NAME];
 
-		for(col=0; col < col_cnt; col++)
+		for(col=0; col < col_count; col++)
 			tooltip_data.push_back(type_names[res.getColumnTypeId(col)]);
 	}
 	catch(Exception &e)
@@ -78,12 +78,12 @@ ResultSetModel::ResultSetModel(ResultSet &res, Catalog &catalog, QObject *parent
 
 int ResultSetModel::rowCount(const QModelIndex &) const
 {
-	return(row_cnt);
+	return(row_count);
 }
 
 int ResultSetModel::columnCount(const QModelIndex &) const
 {
-	return(col_cnt);
+	return(col_count);
 }
 
 QModelIndex ResultSetModel::index(int row, int column, const QModelIndex &parent) const
@@ -98,10 +98,10 @@ QModelIndex ResultSetModel::parent(const QModelIndex &) const
 
 QVariant ResultSetModel::data(const QModelIndex &index, int role) const
 {
-	if(index.row() < row_cnt && index.column() < col_cnt)
+	if(index.row() < row_count && index.column() < col_count)
 	{
 		if(role == Qt::DisplayRole)
-			return(item_data.at(index.row() * col_cnt + index.column()));
+			return(item_data.at(index.row() * col_count + index.column()));
 
 		if(role == Qt::TextAlignmentRole)
 			return(QVariant(Qt::AlignLeft | Qt::AlignVCenter));
@@ -114,7 +114,7 @@ QVariant ResultSetModel::headerData(int section, Qt::Orientation orientation, in
 {
 	if(orientation == Qt::Horizontal)
 	{
-		if(section >= col_cnt)
+		if(section >= col_count)
 			return(QVariant(QVariant::Invalid));
 
 		if(role == Qt::DisplayRole)

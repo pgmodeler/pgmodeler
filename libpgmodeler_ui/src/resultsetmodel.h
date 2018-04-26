@@ -33,7 +33,7 @@ class ResultSetModel: public QAbstractTableModel {
 	private:
 		Q_OBJECT
 
-		int col_cnt, row_cnt;
+		int col_count, row_count;
 		QStringList item_data, header_data, tooltip_data;
 
 		void insertColumn(int, const QModelIndex &){}
