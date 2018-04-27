@@ -8101,7 +8101,10 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						{
 							col=tab->getColumn(i1);
 
-							if(!col->isAddedByRelationship() && col->getType()==ptr_pgsqltype)
+							if(!col->isAddedByRelationship() &&
+								 (col->getType()==ptr_pgsqltype ||
+									//Special case for postgis extension
+									(obj_type == OBJ_EXTENSION && object->getName() == QString("postgis") && col->getType().isGiSType())))
 							{
 								refer=true;
 								refs.push_back(col);
