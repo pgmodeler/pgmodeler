@@ -3,7 +3,7 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-  [SELECT tp.oid, replace(replace(tp.oid::regtype::text,'"', ''), ns.nspname || '.', '') FROM pg_type AS tp ]
+  [SELECT tp.oid, replace(replace(tp.oid::regtype::text,'"', ''), ns.nspname || '.', '') AS name FROM pg_type AS tp ]
   [ LEFT JOIN pg_namespace AS ns ON tp.typnamespace = ns.oid ]
 
   %if {schema} %then
