@@ -32,6 +32,10 @@ class LineNumbersWidget : public QWidget {
 	private:
 		Q_OBJECT
 
+		QPlainTextEdit *parent_edt;
+
+		bool has_selection;
+
 		//! \brief The first line number that must be drawn
 		unsigned first_line,
 
@@ -49,9 +53,12 @@ class LineNumbersWidget : public QWidget {
 
 	protected:
 		void paintEvent(QPaintEvent *event);
+		void mousePressEvent(QMouseEvent *event);
+		void mouseMoveEvent(QMouseEvent *event);
+		void mouseReleaseEvent(QMouseEvent *);
 
 	public:
-		explicit LineNumbersWidget(QPlainTextEdit *parent = 0);
+		explicit LineNumbersWidget(QPlainTextEdit *parent);
 
 		/*! \brief Draw the lines starting from 'first_line' and stoping at fisrt_line + line_count -1.
 		The dy param. defines an initial Y translation before drawn lines */

@@ -19,14 +19,20 @@
 #include "linenumberswidget.h"
 #include <QPainter>
 #include <QPaintEvent>
+#include "exception.h"
 
 QColor LineNumbersWidget::font_color=Qt::lightGray;
 QColor LineNumbersWidget::bg_color=Qt::black;
 
 LineNumbersWidget::LineNumbersWidget(QPlainTextEdit * parent) : QWidget(parent)
 {
+	if(!parent)
+		throw Exception(ERR_ASG_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	parent_edt = qobject_cast<QPlainTextEdit *>(parent);
 	first_line=line_count=0;
 	dy=0;
+	has_selection = false;
 }
 
 void LineNumbersWidget::drawLineNumbers(unsigned first_line, unsigned line_count, int dy)
@@ -65,6 +71,34 @@ void LineNumbersWidget::paintEvent(QPaintEvent *event)
 						 Qt::AlignHCenter, QString::number(lin));
 		y+=height;
 	}
+}
+
+void LineNumbersWidget::mousePressEvent(QMouseEvent *event)
+{
+	if(event->buttons() == Qt::LeftButton && !has_selection)
+	{
+		QTextCursor cursor = parent_edt->cursorForPosition(QPoint(0, event->pos().y()));
+		cursor.select(QTextCursor::LineUnderCursor);
+		parent_edt->setTextCursor(cursor);
+		has_selection = true;
+	}
+}
+
+void LineNumbersWidget::mouseMoveEvent(QMouseEvent *event)
+{
+	if(event->buttons() == Qt::LeftButton && has_selection)
+	{
+		QTextCursor cursor = parent_edt->cursorForPosition(QPoint(0, event->pos().y())),
+				curr_cursor = parent_edt->textCursor();
+
+		curr_cursor.setPosition(cursor.position(), QTextCursor::KeepAnchor);
+		parent_edt->setTextCursor(curr_cursor);
+	}
+}
+
+void LineNumbersWidget::mouseReleaseEvent(QMouseEvent *)
+{
+	has_selection = false;
 }
 
 QColor LineNumbersWidget::getBackgroundColor(void)
