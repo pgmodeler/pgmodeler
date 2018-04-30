@@ -20,6 +20,7 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include "exception.h"
+#include <QTextBlock>
 
 QColor LineNumbersWidget::font_color=Qt::lightGray;
 QColor LineNumbersWidget::bg_color=Qt::black;
@@ -33,6 +34,10 @@ LineNumbersWidget::LineNumbersWidget(QPlainTextEdit * parent) : QWidget(parent)
 	first_line=line_count=0;
 	dy=0;
 	has_selection = false;
+	first_sel_line = -1;
+	last_sel_line = -1;
+
+	connect(parent_edt, SIGNAL(selectionChanged()), this, SLOT(updateSelectedLineNumbers()));
 }
 
 void LineNumbersWidget::drawLineNumbers(unsigned first_line, unsigned line_count, int dy)
@@ -57,8 +62,11 @@ void LineNumbersWidget::setColors(const QColor &font_color, const QColor &bg_col
 void LineNumbersWidget::paintEvent(QPaintEvent *event)
 {
 	QPainter painter(this);
-	int y=dy, height=fontMetrics().height();
+	int y = dy, height = 0;
 	unsigned last_line=first_line + line_count;
+	QFont font = painter.font();
+	unsigned fs_line = std::min(first_sel_line, last_sel_line),
+			ls_line = std::max(first_sel_line, last_sel_line);
 
 	//Repaint the widget to clear previous drawn numbers
 	painter.fillRect(event->rect(), bg_color);
@@ -67,8 +75,10 @@ void LineNumbersWidget::paintEvent(QPaintEvent *event)
 	//Draw line numbers
 	for(unsigned lin=first_line; lin < last_line; lin++)
 	{
-		painter.drawText(0, y, this->width(), fontMetrics().height(),
-						 Qt::AlignHCenter, QString::number(lin));
+		font.setBold(lin-1 >= fs_line && lin-1 <= ls_line);
+		height =  QFontMetrics(font).height();
+		painter.setFont(font);
+		painter.drawText(0, y, this->width(), height, Qt::AlignHCenter, QString::number(lin));
 		y+=height;
 	}
 }
@@ -78,9 +88,13 @@ void LineNumbersWidget::mousePressEvent(QMouseEvent *event)
 	if(event->buttons() == Qt::LeftButton && !has_selection)
 	{
 		QTextCursor cursor = parent_edt->cursorForPosition(QPoint(0, event->pos().y()));
+
+		parent_edt->blockSignals(true);
 		cursor.select(QTextCursor::LineUnderCursor);
 		parent_edt->setTextCursor(cursor);
 		has_selection = true;
+		first_sel_line = last_sel_line = cursor.blockNumber();
+		this->update();
 	}
 }
 
@@ -91,14 +105,43 @@ void LineNumbersWidget::mouseMoveEvent(QMouseEvent *event)
 		QTextCursor cursor = parent_edt->cursorForPosition(QPoint(0, event->pos().y())),
 				curr_cursor = parent_edt->textCursor();
 
-		curr_cursor.setPosition(cursor.position(), QTextCursor::KeepAnchor);
-		parent_edt->setTextCursor(curr_cursor);
+		last_sel_line = cursor.blockNumber();
+
+		//If the current selected line is the same as the first one (when the first click ocurred)
+		if(first_sel_line == cursor.blockNumber())
+		{
+			//Forcing the selection of the whole line
+			cursor.movePosition(QTextCursor::StartOfLine);
+			cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
+			parent_edt->setTextCursor(cursor);
+		}
+		//If the user wants selects lines below the first
+		else if(first_sel_line < cursor.blockNumber())
+		{
+			cursor.movePosition(QTextCursor::EndOfLine);
+			curr_cursor.setPosition(cursor.position(), QTextCursor::KeepAnchor);
+			parent_edt->setTextCursor(curr_cursor);
+		}
+		//If the user wants selects lines above the first
+		else
+		{
+			int pos = curr_cursor.position();
+
+			//We first move the cursor related to the mouse position to the start of the line
+			cursor.movePosition(QTextCursor::StartOfLine);
+			//Then we move it to the position of the current cursor (where the click occured)
+			cursor.setPosition(pos, QTextCursor::KeepAnchor);
+			parent_edt->setTextCursor(cursor);
+		}
+
+		this->update();
 	}
 }
 
 void LineNumbersWidget::mouseReleaseEvent(QMouseEvent *)
 {
 	has_selection = false;
+	parent_edt->blockSignals(false);
 }
 
 QColor LineNumbersWidget::getBackgroundColor(void)
@@ -106,4 +149,22 @@ QColor LineNumbersWidget::getBackgroundColor(void)
 	return(LineNumbersWidget::bg_color);
 }
 
+void LineNumbersWidget::updateSelectedLineNumbers(void)
+{
+	QTextCursor cursor = parent_edt->textCursor();
 
+	if(cursor.hasSelection())
+	{
+		QTextCursor start = cursor,
+				end = cursor;
+
+		start.setPosition(cursor.selectionStart());
+		first_sel_line = start.blockNumber();
+		end.setPosition(cursor.selectionEnd());
+		last_sel_line = end.blockNumber();
+	}
+	else
+		first_sel_line = last_sel_line = -1;
+
+	this->update();
+}

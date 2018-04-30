@@ -45,6 +45,8 @@ class LineNumbersWidget : public QWidget {
 		//! \brief The y axis increment to start drawn the line number
 		int dy;
 
+		int	first_sel_line, last_sel_line;
+
 		//! \brief Font color for drawn line numbers
 		static QColor font_color,
 
@@ -68,6 +70,9 @@ class LineNumbersWidget : public QWidget {
 		static void setColors(const QColor &font_color, const QColor &bg_color);
 
 		static QColor getBackgroundColor(void);
+
+	private slots:
+		void updateSelectedLineNumbers(void);
 };
 
 #endif
