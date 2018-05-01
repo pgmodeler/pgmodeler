@@ -36,7 +36,6 @@ LineNumbersWidget::LineNumbersWidget(QPlainTextEdit * parent) : QWidget(parent)
 	has_selection = false;
 	first_sel_line = -1;
 	last_sel_line = -1;
-
 	connect(parent_edt, SIGNAL(selectionChanged()), this, SLOT(updateSelectedLineNumbers()));
 }
 
@@ -78,6 +77,17 @@ void LineNumbersWidget::paintEvent(QPaintEvent *event)
 		font.setBold(lin-1 >= fs_line && lin-1 <= ls_line);
 		height =  QFontMetrics(font).height();
 		painter.setFont(font);
+
+		if(font.bold())
+		{
+			painter.setBrush(bg_color.dark(150));
+			painter.setPen(Qt::transparent);
+			painter.drawRect(QRect(-1, y, this->width() + 1, height));
+			painter.setPen(font_color.light(180));
+		}
+		else
+			painter.setPen(font_color);
+
 		painter.drawText(0, y, this->width(), height, Qt::AlignHCenter, QString::number(lin));
 		y+=height;
 	}
