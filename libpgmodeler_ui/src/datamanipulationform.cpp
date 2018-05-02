@@ -374,6 +374,9 @@ void DataManipulationForm::retrieveData(void)
 		paste_tb->setEnabled(!qApp->clipboard()->text().isEmpty() &&
 												 table_cmb->currentData().toUInt() == OBJ_TABLE &&
 												 !col_names.isEmpty());
+
+		code_compl_wgt->clearCustomItems();
+		code_compl_wgt->insertCustomItems(col_names, trUtf8("Column"), OBJ_COLUMN);
 	}
 	catch(Exception &e)
 	{
