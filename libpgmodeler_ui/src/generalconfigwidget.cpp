@@ -86,8 +86,6 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	connect(tab_width_chk, SIGNAL(toggled(bool)), tab_width_spb, SLOT(setEnabled(bool)));
 	connect(tab_width_chk, SIGNAL(toggled(bool)), this, SLOT(updateFontPreview()));
 
-	connect(max_result_rows_chk, SIGNAL(toggled(bool)), max_result_rows_spb, SLOT(setEnabled(bool)));
-
 	connect(font_preview_txt, SIGNAL(cursorPositionChanged()), this, SLOT(updateFontPreview()));
 	connect(select_editor_btn, SIGNAL(clicked(bool)), this, SLOT(selectSourceEditor()));
 
@@ -129,7 +127,6 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SOURCE_EDITOR_APP]=QString();
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::UI_LANGUAGE]=QString();
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::USE_CURVED_LINES]=QString();
-	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::MAX_RESULT_ROWS]=QString();
 
 	simp_obj_creation_ht=new HintTextWidget(simp_obj_creation_hint, this);
 	simp_obj_creation_ht->setText(simple_obj_creation_chk->statusTip());
@@ -181,9 +178,6 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 
 	use_curved_lines_ht=new HintTextWidget(use_curved_lines_hint, this);
 	use_curved_lines_ht->setText(use_curved_lines_chk->statusTip());
-
-	max_result_rows_ht=new HintTextWidget(max_result_rows_hint, this);
-	max_result_rows_ht->setText(max_result_rows_spb->statusTip());
 
 	selectPaperSize();
 
@@ -308,11 +302,6 @@ void GeneralConfigWidget::loadConfiguration(void)
 
 		min_obj_opacity_spb->setValue(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::MIN_OBJECT_OPACITY].toUInt());
 
-		int value = config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::MAX_RESULT_ROWS].toInt();
-		max_result_rows_chk->setChecked(value > 0);
-		max_result_rows_spb->setEnabled(value > 0);
-		max_result_rows_spb->setValue(value);
-
 		margin=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN].split(',');
 		custom_size=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_CUSTOM_SIZE].split(',');
 
@@ -433,7 +422,6 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::MIN_OBJECT_OPACITY]=QString::number(min_obj_opacity_spb->value());
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::USE_PLACEHOLDERS]=(use_placeholders_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::HISTORY_MAX_LENGTH]=QString::number(history_max_length_spb->value());
-		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::MAX_RESULT_ROWS]=QString::number(max_result_rows_chk->isChecked() ? max_result_rows_spb->value() : 0);
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::USE_CURVED_LINES]=(use_curved_lines_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
 
 		ObjectsScene::getGridOptions(show_grid, align_grid, show_delim);
@@ -552,7 +540,6 @@ void GeneralConfigWidget::applyConfiguration(void)
 	MainWindow::setConfirmValidation(confirm_validation_chk->isChecked());
 	BaseObjectView::setPlaceholderEnabled(use_placeholders_chk->isChecked());
 	SQLExecutionWidget::setSQLHistoryMaxLength(history_max_length_spb->value());
-	SQLExecutionWidget::setMaxResultRows(max_result_rows_chk->isChecked()? max_result_rows_spb->value() : 0);
 
 	fnt.setFamily(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]);
 	fnt.setPointSize(fnt_size);

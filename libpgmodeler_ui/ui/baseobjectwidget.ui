@@ -507,6 +507,9 @@ This will disable the code of all child and referrer objects.</string>
      <height>80</height>
     </size>
    </property>
+   <property name="tabChangesFocus">
+    <bool>true</bool>
+   </property>
   </widget>
  </widget>
  <tabstops>

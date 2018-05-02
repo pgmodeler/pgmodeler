@@ -581,7 +581,7 @@
               <property name="bottomMargin">
                <number>4</number>
               </property>
-              <item row="0" column="0">
+              <item row="1" column="0">
                <widget class="QWidget" name="results_parent" native="true">
                 <property name="minimumSize">
                  <size>
@@ -605,14 +605,8 @@
                  <property name="horizontalSpacing">
                   <number>0</number>
                  </property>
-                 <item row="0" column="0" colspan="2">
-                  <widget class="QTableWidget" name="results_tbw">
-                   <property name="enabled">
-                    <bool>true</bool>
-                   </property>
-                   <property name="autoFillBackground">
-                    <bool>true</bool>
-                   </property>
+                 <item row="0" column="0">
+                  <widget class="QTableView" name="results_tbw">
                    <property name="editTriggers">
                     <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
                    </property>
@@ -622,16 +616,16 @@
                    <property name="selectionMode">
                     <enum>QAbstractItemView::ContiguousSelection</enum>
                    </property>
-                   <property name="verticalScrollMode">
-                    <enum>QAbstractItemView::ScrollPerItem</enum>
-                   </property>
-                   <property name="horizontalScrollMode">
-                    <enum>QAbstractItemView::ScrollPerPixel</enum>
-                   </property>
-                   <property name="sortingEnabled">
+                   <attribute name="horizontalHeaderVisible">
+                    <bool>true</bool>
+                   </attribute>
+                   <attribute name="horizontalHeaderCascadingSectionResizes">
                     <bool>false</bool>
-                   </property>
+                   </attribute>
                    <attribute name="horizontalHeaderStretchLastSection">
+                    <bool>true</bool>
+                   </attribute>
+                   <attribute name="verticalHeaderVisible">
                     <bool>true</bool>
                    </attribute>
                    <attribute name="verticalHeaderDefaultSectionSize">
@@ -640,16 +634,6 @@
                    <attribute name="verticalHeaderMinimumSectionSize">
                     <number>25</number>
                    </attribute>
-                   <row>
-                    <property name="text">
-                     <string>...</string>
-                    </property>
-                   </row>
-                   <column>
-                    <property name="text">
-                     <string>...</string>
-                    </property>
-                   </column>
                   </widget>
                  </item>
                 </layout>

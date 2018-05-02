@@ -50,8 +50,9 @@ class ValidationInfo {
 		BROKEN_REFERENCE=1,
 		SP_OBJ_BROKEN_REFERENCE=2,
 		BROKEN_REL_CONFIG=3,
-		SQL_VALIDATION_ERR=4,
-		VALIDATION_ABORTED=5;
+		MISSING_EXTENSION=4,
+		SQL_VALIDATION_ERR=5,
+		VALIDATION_ABORTED=6;
 
 		ValidationInfo(void);
 		ValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> references);

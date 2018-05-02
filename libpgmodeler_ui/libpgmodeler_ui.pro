@@ -112,7 +112,8 @@ SOURCES += src/mainwindow.cpp \
     src/sceneinfowidget.cpp \
     src/bulkdataeditwidget.cpp \
     src/policywidget.cpp \
-    src/objectstablewidget.cpp
+    src/objectstablewidget.cpp \
+    src/resultsetmodel.cpp
 
 
 HEADERS += src/mainwindow.h \
@@ -212,7 +213,8 @@ HEADERS += src/mainwindow.h \
     src/sceneinfowidget.h \
     src/bulkdataeditwidget.h \
     src/policywidget.h \
-    src/objectstablewidget.h
+    src/objectstablewidget.h \
+    src/resultsetmodel.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \

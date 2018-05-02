@@ -35,7 +35,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	name_list=new QListWidget(completion_wgt);
 	name_list->setSpacing(2);
 	name_list->setIconSize(QSize(16,16));
-	name_list->setSortingEnabled(true);
+	name_list->setSortingEnabled(false);
 
 	persistent_chk=new QCheckBox(completion_wgt);
 	persistent_chk->setText(trUtf8("Make &persistent"));
@@ -256,6 +256,12 @@ void CodeCompletionWidget::insertCustomItems(const QStringList &names, const QSt
 	{
 		insertCustomItem(names[i], (i < tooltips.size() ? tooltips[i] : QString()), icon);
 	}
+}
+
+void CodeCompletionWidget::insertCustomItems(const QStringList &names, const QString &tooltip, ObjectType obj_type)
+{
+	for(auto &name : names)
+		insertCustomItem(name, tooltip, QPixmap(PgModelerUiNS::getIconPath(obj_type)));
 }
 
 void CodeCompletionWidget::clearCustomItems(void)

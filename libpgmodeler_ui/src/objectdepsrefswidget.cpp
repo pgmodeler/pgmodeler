@@ -84,12 +84,12 @@ void ObjectDepsRefsWidget::updateObjectTables(void)
 	objs.erase(std::find(objs.begin(), objs.end(), this->object));
 	ObjectFinderWidget::updateObjectTable(dependences_tbw, objs);
 
+	objs.clear();
 	if(!inc_ind_refs_chk->isChecked())
 		model->getObjectReferences(object, objs);
 	else
 		model->__getObjectReferences(object, objs);
 
-	objs.clear();
 	ObjectFinderWidget::updateObjectTable(references_tbw, objs);
 
 	references_tbw->resizeColumnsToContents();

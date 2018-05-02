@@ -3,7 +3,7 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-  [SELECT tp.oid, replace(tp.oid::regtype::text, ns.nspname || '.', '') AS name FROM pg_type AS tp ]
+  [SELECT tp.oid, replace(replace(tp.oid::regtype::text,'"', ''), ns.nspname || '.', '') AS name FROM pg_type AS tp ]
   [ LEFT JOIN pg_namespace AS ns ON tp.typnamespace = ns.oid ]
 
   %if {schema} %then
@@ -34,7 +34,7 @@
 
 %else
     %if {attribs} %then
-    [SELECT tp.oid, replace(tp.oid::regtype::text, ns.nspname || '.', '') AS name, tp.typnamespace AS schema, tp.typowner AS owner, ]
+    [SELECT tp.oid, replace(replace(tp.oid::regtype::text,'"', ''), ns.nspname || '.', '') AS name, tp.typnamespace AS schema, tp.typowner AS owner, ]
     
     #Retrieve the OID for table/view/sequence that generates the composite type
     [ (SELECT 

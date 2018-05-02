@@ -718,7 +718,7 @@
       <string>Try to resolve the reported issues.</string>
      </property>
      <property name="text">
-      <string>Apply Fix</string>
+      <string>Apply fixes</string>
      </property>
      <property name="icon">
       <iconset resource="../res/resources.qrc">
@@ -753,7 +753,7 @@
       <string>Change the creation order for two objects by swapping their ids</string>
      </property>
      <property name="text">
-      <string>Swap Ids</string>
+      <string>Swap ids</string>
      </property>
      <property name="icon">
       <iconset resource="../res/resources.qrc">
