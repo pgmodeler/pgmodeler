@@ -37,7 +37,7 @@ void LineNumbersTest::handleLineSelectionUsingMouse(void)
 
 	LineNumbersWidget::setColors(Qt::darkGray, QColor(230,230,230));
   layout->addWidget(edt);
-	dlg->setMinimumSize(640,480);
+	dlg->setMinimumSize(640,220);
 
 	edt->setPlainText("--\n\
 -- PostgreSQL database dump\n\
@@ -46,6 +46,36 @@ void LineNumbersTest::handleLineSelectionUsingMouse(void)
 -- Dumped by pg_dump version 9.4.4\n\
 -- Started on 2015-07-20 19:24:52 WEST\n\
 \n\
+SET statement_timeout = 0;\n\
+SET lock_timeout = 0;\n\
+SET client_encoding = 'UTF8';\n\
+SET standard_conforming_strings = on;\n\
+SET check_function_bodies = false;\n\
+SET client_min_messages = warning;\n\
+--\n\
+-- PostgreSQL database dump\n\
+--\n\
+-- Dumped from database version 9.4.4\n\
+-- Dumped by pg_dump version 9.4.4\n\
+-- Started on 2015-07-20 19:24:52 WEST\n\
+SET statement_timeout = 0;\n\
+SET lock_timeout = 0;\n\
+SET client_encoding = 'UTF8';\n\
+SET standard_conforming_strings = on;\n\
+SET check_function_bodies = false;\n\
+SET client_min_messages = warning;\n\
+-- Dumped from database version 9.4.4\n\
+-- Dumped by pg_dump version 9.4.4\n\
+-- Started on 2015-07-20 19:24:52 WEST\n\
+SET statement_timeout = 0;\n\
+SET lock_timeout = 0;\n\
+SET client_encoding = 'UTF8';\n\
+SET standard_conforming_strings = on;\n\
+SET check_function_bodies = false;\n\
+SET client_min_messages = warning;\n\
+-- Dumped from database version 9.4.4\n\
+-- Dumped by pg_dump version 9.4.4\n\
+-- Started on 2015-07-20 19:24:52 WEST\n\
 SET statement_timeout = 0;\n\
 SET lock_timeout = 0;\n\
 SET client_encoding = 'UTF8';\n\

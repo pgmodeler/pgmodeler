@@ -45,7 +45,7 @@ class LineNumbersWidget : public QWidget {
 		//! \brief The y axis increment to start drawn the line number
 		int dy;
 
-		int	first_sel_line, last_sel_line;
+		int	start_sel_line, end_sel_line, start_sel_pos;
 
 		//! \brief Font color for drawn line numbers
 		static QColor font_color,
