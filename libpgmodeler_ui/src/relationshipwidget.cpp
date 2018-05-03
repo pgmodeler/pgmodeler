@@ -157,8 +157,12 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_lbl, SLOT(setEnabled(bool)));
 
-		connect(identifier_chk, SIGNAL(toggled(bool)), table1_mand_chk, SLOT(setDisabled(bool)));
-		connect(identifier_chk, SIGNAL(toggled(bool)), table2_mand_chk, SLOT(setDisabled(bool)));
+		connect(identifier_chk, &QCheckBox::toggled, [&](){
+			table1_mand_chk->setDisabled(identifier_chk->isChecked());
+			table2_mand_chk->setEnabled(!identifier_chk->isChecked() &&
+																	this->object &&
+																	dynamic_cast<BaseRelationship *>(this->object)->getRelationshipType() != BaseRelationship::RELATIONSHIP_1N);
+		});
 
 		connect(attributes_tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removeObjects(void)));
 		connect(attributes_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addObject(void)));
