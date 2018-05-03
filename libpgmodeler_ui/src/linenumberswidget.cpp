@@ -36,9 +36,8 @@ LineNumbersWidget::LineNumbersWidget(QPlainTextEdit * parent) : QWidget(parent)
 	dy=0;
 	has_selection = false;
 	start_sel_line = -1;
-	end_sel_line = -1;
 
-	connect(parent_edt, SIGNAL(selectionChanged()), this, SLOT(updateSelectedLineNumbers()));	
+	connect(parent_edt, SIGNAL(selectionChanged()), this, SLOT(update()));
 }
 
 void LineNumbersWidget::drawLineNumbers(unsigned first_line, unsigned line_count, int dy)
@@ -66,8 +65,17 @@ void LineNumbersWidget::paintEvent(QPaintEvent *event)
 	int y = dy, height = 0;
 	unsigned last_line=first_line + line_count;
 	QFont font = painter.font();
-	unsigned fs_line = std::min(start_sel_line, end_sel_line),
-			ls_line = std::max(start_sel_line, end_sel_line);
+	unsigned fs_line = 0,	ls_line = 0;
+	QTextCursor cursor = parent_edt->textCursor();
+
+	if(cursor.hasSelection())
+	{
+		QTextCursor start = cursor,	end = cursor;
+		start.setPosition(cursor.selectionStart(), QTextCursor::MoveAnchor);
+		fs_line = start.blockNumber();
+		end.setPosition(cursor.selectionEnd(), QTextCursor::KeepAnchor);
+		ls_line = end.blockNumber();
+	}
 
 	//Repaint the widget to clear previous drawn numbers
 	painter.fillRect(event->rect(), bg_color);
@@ -76,7 +84,7 @@ void LineNumbersWidget::paintEvent(QPaintEvent *event)
 	//Draw line numbers
 	for(unsigned lin=first_line; lin < last_line; lin++)
 	{
-		font.setBold(lin-1 >= fs_line && lin-1 <= ls_line);
+		font.setBold(cursor.hasSelection() && lin-1 >= fs_line && lin-1 <= ls_line);
 		height =  QFontMetrics(font).height();
 		painter.setFont(font);
 
@@ -101,10 +109,10 @@ void LineNumbersWidget::mousePressEvent(QMouseEvent *event)
 	{
 		QTextCursor cursor = parent_edt->cursorForPosition(QPoint(0, event->pos().y()));
 
+		has_selection = true;
 		cursor.select(QTextCursor::LineUnderCursor);
 		parent_edt->setTextCursor(cursor);
-		has_selection = true;
-		start_sel_line = end_sel_line = cursor.blockNumber();
+		start_sel_line = cursor.blockNumber();
 		start_sel_pos = cursor.position();
 	}
 }
@@ -116,23 +124,28 @@ void LineNumbersWidget::mouseMoveEvent(QMouseEvent *event)
 		QTextCursor cursor = parent_edt->cursorForPosition(QPoint(0, event->pos().y())),
 				curr_cursor = parent_edt->textCursor();
 
-		end_sel_line = cursor.blockNumber();
-
 		//If the user wants selects lines below the first
-		if(start_sel_line < end_sel_line)
+		if(start_sel_line < cursor.blockNumber())
 		{
 			cursor.movePosition(QTextCursor::EndOfLine);
 			curr_cursor.setPosition(cursor.position(), QTextCursor::KeepAnchor);
 			parent_edt->setTextCursor(curr_cursor);
 		}
 		//If the user wants selects lines above the first
-		else if(start_sel_line > end_sel_line)
+		else if(start_sel_line > cursor.blockNumber())
 		{
 			curr_cursor.setPosition(start_sel_pos);
 			curr_cursor.movePosition(QTextCursor::EndOfLine);
 			curr_cursor.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor, curr_cursor.position() - cursor.position());
 			parent_edt->setTextCursor(curr_cursor);
 		}
+		else
+		{
+			cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
+			parent_edt->setTextCursor(cursor);
+		}
+
+		this->update();
 	}
 }
 
@@ -144,24 +157,4 @@ void LineNumbersWidget::mouseReleaseEvent(QMouseEvent *)
 QColor LineNumbersWidget::getBackgroundColor(void)
 {
 	return(LineNumbersWidget::bg_color);
-}
-
-void LineNumbersWidget::updateSelectedLineNumbers(void)
-{
-	QTextCursor cursor = parent_edt->textCursor();
-
-	if(cursor.hasSelection())
-	{
-		QTextCursor start = cursor,
-				end = cursor;
-
-		start.setPosition(cursor.selectionStart());
-		start_sel_line = start.blockNumber();
-		end.setPosition(cursor.selectionEnd());
-		end_sel_line = end.blockNumber();
-	}
-	else
-		start_sel_line = end_sel_line = -1;
-
-	this->update();
 }
