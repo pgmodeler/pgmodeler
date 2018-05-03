@@ -20,8 +20,6 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include "exception.h"
-#include <QTextBlock>
-#include <QTextStream>
 
 QColor LineNumbersWidget::font_color=Qt::lightGray;
 QColor LineNumbersWidget::bg_color=Qt::black;
