@@ -117,7 +117,7 @@
          <bool>false</bool>
         </property>
         <property name="dragDropMode">
-         <enum>QAbstractItemView::DragOnly</enum>
+         <enum>QAbstractItemView::NoDragDrop</enum>
         </property>
         <property name="defaultDropAction">
          <enum>Qt::IgnoreAction</enum>
@@ -205,6 +205,9 @@
           <iconset resource="../res/resources.qrc">
            <normaloff>:/icones/icones/relationshiptv.png</normaloff>:/icones/icones/relationshiptv.png</iconset>
          </property>
+         <property name="flags">
+          <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
+         </property>
         </item>
         <item>
          <property name="text">
@@ -243,6 +246,9 @@
          <property name="icon">
           <iconset resource="../res/resources.qrc">
            <normaloff>:/icones/icones/codesnippet.png</normaloff>:/icones/icones/codesnippet.png</iconset>
+         </property>
+         <property name="flags">
+          <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
          </property>
         </item>
         <item>
