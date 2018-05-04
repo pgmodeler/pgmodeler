@@ -1383,9 +1383,10 @@ void PgModelerCLI::diffModelDatabase(void)
 				QString res, buff, line;
 				QTextStream in(stdin), preview;
 
+				buff += "\n** Press ENTER to scroll the preview **\n";
 				buff += "\n### DIFF PREVIEW ###\n\n";
 				buff += diff_hlp.getDiffDefinition();
-				buff += "\n### END PREVIEW  ###\n\n";
+				buff += "\n### END OF PREVIEW  ###\n\n";
 
 				preview.setString(&buff, QIODevice::ReadOnly);
 
@@ -1406,7 +1407,7 @@ void PgModelerCLI::diffModelDatabase(void)
 				}
 
 				out << endl;
-				out << trUtf8("** WARNING: you are about to apply the generated SQL code to the server! Data can be lost in the process.") << endl;
+				out << trUtf8("** WARNING: You are about to apply the generated diff code to the server. Data can be lost in the process!") << endl;
 
 				do
 				{
