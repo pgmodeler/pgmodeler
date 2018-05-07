@@ -1,50 +1,47 @@
-v0.9.1-beta1
+v0.9.1
 ------
 
-<em>Release date: April 6, 2018</em><br/>
-<em>Changes since: <strong>v0.9.1-beta</strong></em><br/>
+<em>Release date: May 14, 2018</em><br/>
+<em>Changes since: <strong>v0.9.1-beta1</strong></em><br/>
 
-<strong>Summary:</strong> finally we've reached the last beta release of the 0.9.1! This time pgModeler brings important fixes and new features requested long ago which are finally implemented in experimental stage. <br/>
+<strong>Summary:</strong> after eight months of hard work we finally have the stable release 0.9.1. This version is a mark in the pgModeler's development and so important as the release 0.8.2 in terms of improvements because it brought features requested long ago and that will make pgModeler even better to work with, being some of them: crow's foot notation support, multiple relationships for the same table pair, support to row level security, identity columns and much more. <br/>
 
-The first new feature we have in this release is the support to multiples relationships for the same pair of tables. In previous versions, pgModeler would refuse to create a second relationship between the tables A and B. From now on, pgModeler will accept the creation of one-to-many and many-to-many relationships linking A and B more then once. For the other kinds of relationships (generalization, copy, one-to-one) the old rule is still valid: only one relationship per table pair is accepted. <br/>
+For this release specifically (considering only the work after 0.9.1-beta1), the golden rule was to fix bugs, adjust the current features and introduce few new things and thus was done: 21 bug fixes, 14 changes/improvements and 7 new features.
 
-Some missing features of PostgreSQL are present in this version too being them: row level security (RLS) and identity columns. For RLS, introduced in PostgreSQL 9.5, we have added the related options to toggle it in tables (ENABLE|FORCE RLS) as well the support to policy objects which are the main part of this new security modality. The identity columns, introduced in PostgreSQL 10, are now fully supported by pgModeler and you can make use of them from the column editing form.<br/>
+The majority of new features are related to the CLI which received the ability to import and diff databases which can make it even better to integrate to automtated deployment processess or run quick tasks over models or databases without the need to open pgModeler's GUI.<br/>
 
-Other new feature is the support to multiple check constraints by domains. Actually, this is more a patch than a new feature because pgModeler was unaware that domains could support more than one check constraint, so we have fixed that now. <br/>
+Some important improvements were done in the overall performance of the SQL tool. The query execution and results display are a lot better now being quicker and less eager in terms of memory consumption avoiding crashes when querying large tables. The data manipulation also received a patch that makes the row duplication more efficient.<br/>
 
-Now, talking about changes, we fixed an old missinterpretation of the PostgreSQL's documentations by changing the way extensions are stored in the database model. Previously, this kind of objects were stored at schemas level but the right way to store them is at database level. So now instead of seeing extensions in the schema's subtree you'll see them in the database subtree. All validation rules, export, import and diff processes were fixed in such way to reflect the right way to treat these objects. <br/>
+Now, for the fixes, another patch was introduced in order to resize correctly dialogs in HiDPI/Retina displays. Several reverse engineering bugs were fixes and now databases are imported more precisely compared to previous releases. Lastly, a bug that seems to happen only on macOS while dealing with large models is finally fixed and was related to some running threads messing around with the main process avoiding it to correctly save the model and causing hang ups sometimes.<br/>
 
-Another important change, and that one is related to an annoying behaviour of the tool, is that pgModeler will silently ignore the absence of the plugins folder and proceed with the normal startup avoiding the display of a message box regarding the missing folder and automatically disabling the plugins search mechanism. <br/>
+The whole set of changes of this release (considering the alpha and beta stages) has 152 entries being 43 new features, 47 changes/improvements and 62 bug fixes. Below we highlight some of news for the work since 0.9.1-beta1, for the complete list of changes, please, take a look into the CHANGELOG.md. <br/>
 
-In the fixes section, we've included a patch for a bug that was causing recurrent crashes on macOS when the user tried to load a second model file making almost impossible the working on two or more database models at once. Also, we've patched the reverse engineering in such way to avoid the duplication of data types related to tables, sequences and views which was causing problems in the validation process. Another fix was done in the diff process that was generating a malformed DROP command for extensions. <br/>
-
-The set of changes of this release has 47 entries between new features, changes, improvements and bug fixes. Below we highlight some of them, for the complete list, please, consider reading the CHANGELOG.md. <br/>
-
-* [New] Added the ability to create multiples one-to-many and many-to-many relatationships between the same pair of tables.
-* [New] Added the ability to use more special ascii chars in the middle of object names.
-* [New] Added support to multi line comments in UI.
-* [New] Added full support to row level security (RLS), including export, import and diff of this kind of object.
-* [New] Added support to bulk data editing in DataManipulationForm.
-* [New] Added an option to diff process to force the generation of DROP commands for columns and constraints even if the missing objects need to be preserved. This is useful to work with partial models and the user need to remove columns/constraints and preserve the rest of objects.
-* [New] Added support to identity columns (PostgreSQL 10).
-* [New] Added the support to BYPASSRLS option on roles.
-* [New] Added support to IS_TEMPLATE and ALLOW_CONNECTIONS options in database object.
-* [New] Added the procedures to fix old style domains in CLI.
-* [New] Added support to multiple check constraint in domains.
-* [New] Added support to sort items alphabetically (ascending) or by oid in DatabaseExplorerWidget.
-* [Change] Changed the input mode of the password field in ConnectionsConfigWidget in order to hide the passwords in the form. NOTE: the passwords are still in plain text in the config file.
-* [Change] Moved extensions from schema level to database level in order to reproduce better the PostgreSQL's behavior.
-* [Change] In GeneralConfigWidget when restoring default settings the default settings for syntax highlight are restored as well.
-* [Change] pgModeler will not try to create the plugins path anymore. This will avoid constant error messages during startup. Now, it'll silently ignore the absence of that folder and skip the plugin loading.
-* [Change] Improved the source editing in external application. The use is informed about the app running state and the contents for the source editor field are locked until the user closes the external app.
-* [Fix] Fixed the query catalog for built-in types to include the types related to domains.
-* [Fix] Fixed the extension creation, allowing only one instance of the named extension per database no matter the schema used to allocate its children objects.
-* [Fix] Fixed a bug when dropping Functions in DatabaseExplorerWidget.
-* [Fix] Fixed a bug that was causing the disabling of connections for database models created prior to 0.9.1-beta1.
-* [Fix] Fixed a bug on import process that was wrongly creating types derivated from tables/sequence/views causing duplication problems during validation.
-* [Fix] Fixed a crash on macOs when opening a second model.
-* [Fix] Fixed an issue in diff process that was generating a malformed DROP command for extensions.
-* [Fix] Fixed the diff for domains which contain multiple check constraints.
-* [Fix] Fixed a bug that was not selecting the correct spatial type in the widget.
-* [Fix] Fixed a conflict of shortcuts in DatabaseExplorerWidget. Now F5 updates a leaf/subtree and Alt+F5 performs quick refresh of the tree.
-* [Fix] Fixed a problem with sqlexecutionwidget.ui that is not building properly in Qt 5.10.
+* [New] Added support to line selection by clicking and moving the mouse over the line numbers widget in any source code field.
+* [New] The validator now checks if the model has columns referencing spatial data types and creates the postgis extension automatically when fixing the model.
+* [New] Added support to RESTART IDENTITY on truncate tables in DatabaseExplorerWidget.
+* [New] Added support to diff operation in CLI.
+* [New] Added support to import database from CLI.
+* [New] Adding missing types regrole and regnamespace.
+* [Change] Added column names to the code completion widget used in the filter widget at DataManipulationForm.
+* [Change] Improved the SQLExecutionWidget in such way that it'll display large amount of data more quickly and consuming less memory.
+* [Change] Minor improvement in SQLExecutionWidget to show the amount of time took to run a query.
+* [Change] Minor improvement in the text find widgets in SQL tool in order to make them closable via dedicated button.
+* [Change] Improved the set tag operation in ModelWidget in order to cleanup the assigned tags to a set of objects.
+* [Change] Refactored all the CLI options.
+* [Change] Improved the performance of the row duplication action in DataManipulationForm.
+* [Change] Improved the performance of "Move to schema" operation.
+* [Change] Changed the behaviour of select and fade buttons in ObjectFinderWidget in such way to enable the user to select/fade the objects in the listing (or not included in the results).
+* [Fix] Fixed the tab behavior on comment box in all editing forms of database objects.
+* [Fix] Fixed the catalog query for user defined types.
+* [Fix] Fixed the import of user defined types which names contains uppercase characters.
+* [Fix] Fix window scaling on HiDPI/Retina screens.
+* [Fix] Fixed a bug in ModelExportHelper that was failing to remane the database when the command appeared.
+* [Fix] Fixed a bug in CollationWidget that was referencing the collation attributes LC_??? using the wrong constant.
+* [Fix] Fixed the behaviour of the message box that warns about the need of validate the model prior to export, save or diff. Now rejecting the dialog (i.e. closing it) will be considered that the user wants to proceed with the pending operation even with an invalid model.
+* [Fix] Fixed the import of comments for constraints,triggers, index and rules.
+* [Fix] Fixed a bug in the aggregate import process.
+* [Fix] Minor fix in DataManipulationForm to avoid the generation of a where clause when the filter is filled only with spaces.
+* [Fix] Minor fix in the magnfier tool to use the same render hints as the canvas viewport.
+* [Fix] Fixed a bug in the diff process that was trying to recreate the whole database when the "Force recreation" option was set.
+* [Fix] Fixed a bug when showing the source of tables in DatabaseExplorerWidget when these objects have permissions assigned.
+* [Fix] Fixed the saving process for large models by stopping the threads related to temp models saving while the model file is being written.
