@@ -22,6 +22,7 @@ The whole set of changes of this release (considering the alpha and beta stages)
 * [New] Added support to diff operation in CLI.
 * [New] Added support to import database from CLI.
 * [New] Adding missing types regrole and regnamespace.
+* [Change] Improved the copy/duplicate operation in order to copy rules, index, trigger and policies together to their parents.
 * [Change] Added column names to the code completion widget used in the filter widget at DataManipulationForm.
 * [Change] Improved the SQLExecutionWidget in such way that it'll display large amount of data more quickly and consuming less memory.
 * [Change] Minor improvement in SQLExecutionWidget to show the amount of time took to run a query.
