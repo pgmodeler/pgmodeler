@@ -2212,9 +2212,9 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 	vector<BaseObject *> deps;
 	BaseObject *object=nullptr;
 	TableObject *tab_obj=nullptr;
-	Table *table=nullptr;
+	BaseTable *table=nullptr;
 	Constraint *constr=nullptr;
-	ObjectType types[]={ OBJ_TRIGGER, OBJ_INDEX, OBJ_CONSTRAINT };
+	ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX, OBJ_CONSTRAINT, OBJ_POLICY };
 	unsigned i, type_id, count;
 	Messagebox msg_box;
 
@@ -2256,11 +2256,11 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 
 			/* Copying the special objects (which references columns added by relationship) in order
 			to be correclty created when pasted */
-			if(object->getObjectType()==OBJ_TABLE)
+			if(object->getObjectType()==OBJ_TABLE || object->getObjectType() == OBJ_VIEW)
 			{
-				table=dynamic_cast<Table *>(object);
+				table=dynamic_cast<BaseTable *>(object);
 
-				for(type_id=0; type_id < 3; type_id++)
+				for(type_id=0; type_id < 4; type_id++)
 				{
 					count=table->getObjectCount(types[type_id]);
 
@@ -2273,14 +2273,16 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 						columns added by relationship. Case the object is a constraint, it cannot be a primary key because
 						this type of constraint is treated separetely by relationships */
 						if(!tab_obj->isAddedByRelationship() &&
-								((constr &&
+							 (!constr ||
+								(((constr &&
 									(constr->getConstraintType()==ConstraintType::foreign_key ||
 									 (constr->getConstraintType()==ConstraintType::unique &&
-									constr->isReferRelationshipAddedColumn()))) ||
-								 (types[type_id]==OBJ_TRIGGER && dynamic_cast<Trigger *>(tab_obj)->isReferRelationshipAddedColumn()) ||
-								 (types[type_id]==OBJ_INDEX && dynamic_cast<Index *>(tab_obj)->isReferRelationshipAddedColumn())))
+									constr->isReferRelationshipAddedColumn())))))))
 							deps.push_back(tab_obj);
 					}
+
+					if(object->getObjectType() == OBJ_VIEW && type_id >= 2)
+						break;
 				}
 			}
 		}
@@ -2376,7 +2378,7 @@ void ModelWidget::pasteObjects(void)
 				aux_object=db_model->getObject(aux_name, obj_type);
 			else
 			{
-				if(sel_view && (obj_type==OBJ_TRIGGER || obj_type==OBJ_RULE))
+				if(sel_view && (obj_type==OBJ_TRIGGER || obj_type==OBJ_RULE || obj_type==OBJ_INDEX))
 					aux_object=sel_view->getObject(aux_name, obj_type);
 				else if(sel_table)
 					aux_object=sel_table->getObject(aux_name, obj_type);
@@ -2422,7 +2424,12 @@ void ModelWidget::pasteObjects(void)
 					else
 					{
 						if(tab_obj)
-							tab_obj->setName(PgModelerNS::generateUniqueName(tab_obj, (*sel_table->getObjectList(tab_obj->getObjectType())), false, QString("_cp"), true));
+						{
+							if(sel_table)
+								tab_obj->setName(PgModelerNS::generateUniqueName(tab_obj, (*sel_table->getObjectList(tab_obj->getObjectType())), false, QString("_cp"), true));
+							else
+								tab_obj->setName(PgModelerNS::generateUniqueName(tab_obj, (*sel_view->getObjectList(tab_obj->getObjectType())), false, QString("_cp"), true));
+						}
 						else
 							object->setName(PgModelerNS::generateUniqueName(object, (*db_model->getObjectList(object->getObjectType())), false, QString("_cp"), true));
 
@@ -2469,11 +2476,12 @@ void ModelWidget::pasteObjects(void)
 				parent=sel_view;
 
 			/* Only generates the XML for a table object when the selected receiver object
-		is a table or is a view and the current object is a trigger or rule (because
+		is a table or is a view and the current object is a trigger, index, or rule (because
 		view's only accepts this two types) */
 			if(sel_table ||
 					(sel_view && (tab_obj->getObjectType()==OBJ_TRIGGER ||
-									tab_obj->getObjectType()==OBJ_RULE)))
+												tab_obj->getObjectType()==OBJ_RULE ||
+												tab_obj->getObjectType()==OBJ_INDEX)))
 			{
 				//Backups the original parent table
 				orig_parent_tab=tab_obj->getParentTable();
@@ -2551,16 +2559,10 @@ void ModelWidget::pasteObjects(void)
 				//Special case for table objects
 				if(tab_obj)
 				{
-					if(sel_table &&
-							(tab_obj->getObjectType()==OBJ_COLUMN ||	tab_obj->getObjectType()==OBJ_RULE))
+					if(sel_table && tab_obj->getObjectType()==OBJ_COLUMN)
 					{
 						sel_table->addObject(tab_obj);
 						sel_table->setModified(true);
-					}
-					else if(sel_view && tab_obj->getObjectType()==OBJ_RULE)
-					{
-						sel_view->addObject(tab_obj);
-						sel_view->setModified(true);
 					}
 
 					//Updates the fk relationships if the constraint is a foreign-key
@@ -2641,7 +2643,11 @@ void ModelWidget::duplicateObject(void)
 
 			table = dynamic_cast<TableObject *>(object)->getParentTable();
 			PgModelerNS::copyObject(&dup_object, object, obj_type);
-			dup_object->setName(PgModelerNS::generateUniqueName(dup_object, *dynamic_cast<Table *>(table)->getObjectList(obj_type), false, QString("_cp")));
+
+			if(table->getObjectType() == OBJ_TABLE)
+				dup_object->setName(PgModelerNS::generateUniqueName(dup_object, *dynamic_cast<Table *>(table)->getObjectList(obj_type), false, QString("_cp")));
+			else
+				dup_object->setName(PgModelerNS::generateUniqueName(dup_object, *dynamic_cast<View *>(table)->getObjectList(obj_type), false, QString("_cp")));
 
 			op_id=op_list->registerObject(dup_object, Operation::OBJECT_CREATED, -1, table);
 			table->addObject(dup_object);
