@@ -191,7 +191,7 @@ void RelationshipConfigWidget::restoreDefaults(void)
 {
 	try
 	{
-		BaseConfigWidget::restoreDefaults(GlobalAttributes::RELATIONSHIPS_CONF);
+		BaseConfigWidget::restoreDefaults(GlobalAttributes::RELATIONSHIPS_CONF, false);
 		this->loadConfiguration();
 		setConfigurationChanged(true);
 	}

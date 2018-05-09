@@ -55,8 +55,9 @@ class BaseConfigWidget: public QWidget {
 		//! \brief Get a configuratoin key from the xml parser
 		void getConfigurationParams(map<QString, attribs_map> &config_params, const vector<QString> &key_attribs);
 		
-		//! \brief Restore the configuration specified by conf_in loading them from the original file (conf/defaults)
-		void restoreDefaults(const QString &conf_id);
+		/*! \brief Restore the configuration specified by conf_in loading them from the original file (conf/defaults)
+		 * The silent parameter indicates that the restoration should not emit a message box informing the restoration sucess */
+		void restoreDefaults(const QString &conf_id, bool silent);
 		
 		//! \brief Adds a parameter to the specified configuration parameters set
 		static void addConfigurationParam(map<QString, attribs_map> &config_params, const QString &param, const attribs_map &attribs);

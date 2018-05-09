@@ -384,7 +384,7 @@ void AppearanceConfigWidget::restoreDefaults(void)
 {
 	try
 	{
-		BaseConfigWidget::restoreDefaults(GlobalAttributes::OBJECTS_STYLE_CONF);
+		BaseConfigWidget::restoreDefaults(GlobalAttributes::OBJECTS_STYLE_CONF, false);
 		this->loadConfiguration();
 		setConfigurationChanged(true);
 	}

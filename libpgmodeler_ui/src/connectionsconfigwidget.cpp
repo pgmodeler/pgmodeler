@@ -451,7 +451,7 @@ void ConnectionsConfigWidget::restoreDefaults(void)
 	try
 	{
 		//Restore the default connection config file
-		BaseConfigWidget::restoreDefaults(GlobalAttributes::CONNECTIONS_CONF);
+		BaseConfigWidget::restoreDefaults(GlobalAttributes::CONNECTIONS_CONF, false);
 
 		//Remove all connections
 		while(connections_cmb->count() > 0)
