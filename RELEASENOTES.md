@@ -32,6 +32,7 @@ The whole set of changes of this release (considering the alpha and beta stages)
 * [Change] Improved the performance of the row duplication action in DataManipulationForm.
 * [Change] Improved the performance of "Move to schema" operation.
 * [Change] Changed the behaviour of select and fade buttons in ObjectFinderWidget in such way to enable the user to select/fade the objects in the listing (or not included in the results).
+* [Fix] Fixed a bug when import identity columns in certain cases when the identity column was followed by another column which data type was not accepted for identity, e.g, text after smallint.
 * [Fix] Fixed the tab behavior on comment box in all editing forms of database objects.
 * [Fix] Fixed the catalog query for user defined types.
 * [Fix] Fixed the import of user defined types which names contains uppercase characters.

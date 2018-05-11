@@ -27,6 +27,7 @@ v0.9.1
 * [Change] Added an busy cursor while closing a model.
 * [Change] Improved the object selection in object finder.
 * [Change] Changed the behaviour of select and fade buttons in ObjectFinderWidget in such way to enable the user to select/fade the objects in the listing (or not included in the results).
+* [Fix] Fixed a bug when import identity columns in certain cases when the identity column was followed by another column which data type was not accepted for identity, e.g, text after smallint.
 * [Fix] Fixed the check boxes disabling when dealing with identifier relationships.
 * [Fix] Disabled the drag & drop for items in the side listing at ConfigurationForm.
 * [Fix] Fixed the tab behavior on comment box in all editing forms of database objects.
