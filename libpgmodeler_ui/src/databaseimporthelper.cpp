@@ -1695,6 +1695,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 					type_def=getDependencyObject(itr->second[ParsersAttributes::TYPE_OID], OBJ_DOMAIN);
 			}
 
+			col.setIdentityType(BaseType::null);
 			col.setType(PgSQLType::parseString(type_name));
 			col.setNotNull(!itr->second[ParsersAttributes::NOT_NULL].isEmpty());
 			col.setComment(itr->second[ParsersAttributes::COMMENT]);
