@@ -1,6 +1,8 @@
 ---
-name: Bug report
-about: Instructions on how to report pgModeler bugs
+name: Report a bug
+about: Instructions on how to report pgModeler bugs. Before report any bug please
+  check if someone already has submited issues similiar to yours. Duplicated issues
+  will be ignored.
 
 ---
 
