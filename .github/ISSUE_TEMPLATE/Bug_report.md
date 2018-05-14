@@ -8,7 +8,7 @@ about: Instructions on how to report pgModeler bugs
 _A clear and concise description of what the bug is._
 
 **How to reproduce**
-_Please, if the bug can be reproduceable describe the steps in full details_
+_Please, if the bug can be reproduceable describe the steps in full details. If possible provide a sample model and/or a SQL dump for test purposes._
 
 **Expected behavior**
 _A clear and concise description of what you expected to happen._
