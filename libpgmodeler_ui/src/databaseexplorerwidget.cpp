@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -92,13 +92,19 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{SSL_CERT_FILE, QT_TR_NOOP("SSL cert file")},        {SSL_CRL_FILE, QT_TR_NOOP("SSL crl file")},            {SSL_KEY_FILE, QT_TR_NOOP("SSL key file")},
 	{SERVER_VERSION, QT_TR_NOOP("Server version")},      {IDENT_FILE, QT_TR_NOOP("Ident file")},                {PASSWORD_ENCRYPTION, QT_TR_NOOP("Password encryption")},
 	{CONNECTION, QT_TR_NOOP("Connection ID")},           {SERVER_PID, QT_TR_NOOP("Server PID")},                {SERVER_PROTOCOL, QT_TR_NOOP("Server protocol")},
-	{REFERRERS, QT_TR_NOOP("Referrers")}
+	{REFERRERS, QT_TR_NOOP("Referrers")},                {IDENTITY_TYPE, QT_TR_NOOP("Identity")},               {COMMAND, QT_TR_NOOP("Command")},
+	{USING_EXP, QT_TR_NOOP("USING expr.")},              {CHECK_EXP, QT_TR_NOOP("CHECK expr.")},                {ROLES, QT_TR_NOOP("Roles")},
+	{RLS_ENABLED, QT_TR_NOOP("RLS enabled")},            {RLS_FORCED, QT_TR_NOOP("RLS forced")}
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
-	splitter->setSizes({ 70, 30 });
+
+	filter_parent->setVisible(false);
+
+	sort_column = 0;
+	splitter->setSizes({ 80, 20 });
 
 	properties_tbw->setItemDelegate(new PlainTextItemDelegate(this, true));
 	rename_item=nullptr;
@@ -106,6 +112,24 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	data_grid_tb->setToolTip(data_grid_tb->toolTip() + QString(" (%1)").arg(data_grid_tb->shortcut().toString()));
 	runsql_tb->setToolTip(runsql_tb->toolTip() + QString(" (%1)").arg(runsql_tb->shortcut().toString()));
 	refresh_tb->setToolTip(refresh_tb->toolTip() + QString(" (%1)").arg(refresh_tb->shortcut().toString()));
+
+	QAction *act = nullptr;
+
+	act = toggle_disp_menu.addAction(trUtf8("Show objects filter"));
+	act->setCheckable(true);
+	connect(act, SIGNAL(toggled(bool)), filter_parent, SLOT(setVisible(bool)));
+
+	toggle_disp_menu.addSeparator();
+
+	show_sys_objs = toggle_disp_menu.addAction(trUtf8("Show system objects"));
+	show_sys_objs->setCheckable(true);
+	connect(show_sys_objs, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
+
+	show_ext_objs = toggle_disp_menu.addAction(trUtf8("Show extension objects"));
+	show_ext_objs->setCheckable(true);
+	connect(show_ext_objs, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
+
+	toggle_display_tb->setMenu(&toggle_disp_menu);
 
 	snippets_menu.setTitle(trUtf8("Snippets"));
 	snippets_menu.setIcon(QIcon(QString(":icones/icones/codesnippet.png")));
@@ -135,8 +159,6 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	objects_trw->installEventFilter(this);
 
 	connect(refresh_tb, SIGNAL(clicked(void)), this, SLOT(listObjects(void)));
-	connect(ext_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
-	connect(sys_objs_chk, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
 	connect(objects_trw, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(handleObject(QTreeWidgetItem *,int)));
 	connect(objects_trw, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(showObjectProperties()));
 	connect(raw_attrib_names_chk, SIGNAL(toggled(bool)), this, SLOT(showObjectProperties()));
@@ -148,16 +170,14 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	connect(data_grid_tb, SIGNAL(clicked(bool)), this, SLOT(openDataGrid()));
 	connect(drop_db_tb, SIGNAL(clicked(bool)), this, SLOT(dropDatabase()));
 	connect(collapse_all_tb, SIGNAL(clicked(bool)), objects_trw, SLOT(collapseAll(void)));
+	connect(by_oid_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects(void)));
+	connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterObjects(void)));
 
 	connect(runsql_tb, &QToolButton::clicked,
 			[&]() { emit s_sqlExecutionRequested(); });
 
 	connect(properties_tbw, &QTableWidget::itemPressed,
 			[&]() { SQLExecutionWidget::copySelection(properties_tbw, true); });
-
-	connect(filter_edt, &QLineEdit::textChanged,
-			[&](){ DatabaseImportForm::filterObjects(objects_trw, filter_edt->text(),
-													 (by_oid_chk->isChecked() ? DatabaseImportForm::OBJECT_ID : 0), false); });
 
 	connect(expand_all_tb, &QToolButton::clicked,
 			[&](){
@@ -177,10 +197,15 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 				}
 			});
 
-	QMenu *refresh_menu=new QMenu(refresh_tb);
-	QAction *act=nullptr;
+	connect(sort_by_name_tb, &QToolButton::clicked,
+	[&]() {
+			sort_column = sort_by_name_tb->isChecked() ? 0 : DatabaseImportForm::OBJECT_ID;
+			objects_trw->sortByColumn(sort_column);
+	});
 
-	act=refresh_menu->addAction(trUtf8("Quick refresh"), this, SLOT(listObjects()), QKeySequence("F5"));
+	QMenu *refresh_menu=new QMenu(refresh_tb);
+
+	act=refresh_menu->addAction(trUtf8("Quick refresh"), this, SLOT(listObjects()), QKeySequence("Alt+F5"));
 	act->setData(QVariant::fromValue<bool>(true));
 
 	act=refresh_menu->addAction(trUtf8("Full refresh"), this, SLOT(listObjects()), QKeySequence("Ctrl+F5"));
@@ -282,6 +307,7 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 			case OBJ_COLUMN: formatColumnAttribs(attribs); break;
 			case OBJ_CONSTRAINT: formatConstraintAttribs(attribs); break;
 			case OBJ_INDEX: formatIndexAttribs(attribs); break;
+			case OBJ_POLICY: formatPolicyAttribs(attribs); break;
 			default: break;
 		}
 	}
@@ -484,7 +510,9 @@ void DatabaseExplorerWidget::formatOperatorAttribs(attribs_map &attribs)
 void DatabaseExplorerWidget::formatTableAttribs(attribs_map &attribs)
 {
 	formatBooleanAttribs(attribs, { ParsersAttributes::OIDS,
-									ParsersAttributes::UNLOGGED });
+																	ParsersAttributes::UNLOGGED,
+																	ParsersAttributes::RLS_ENABLED,
+																	ParsersAttributes::RLS_FORCED});
 
 	formatOidAttribs(attribs, { ParsersAttributes::PARENTS }, OBJ_TABLE, true);
 }
@@ -521,7 +549,7 @@ void DatabaseExplorerWidget::formatSequenceAttribs(attribs_map &attribs)
 		ResultSet res;
 
 		conn.connect();
-		conn.executeDMLCommand(QString("SELECT last_value FROM %1.%2").arg(sch_name).arg(BaseObject::formatName(attribs[ParsersAttributes::NAME])), res);
+		conn.executeDMLCommand(QString("SELECT last_value FROM \"%1\".\"%2\"").arg(sch_name).arg(BaseObject::formatName(attribs[ParsersAttributes::NAME])), res);
 
 		if(res.accessTuple(ResultSet::FIRST_TUPLE))
 			attribs[ParsersAttributes::LAST_VALUE]=res.getColumnValue(QString("last_value"));
@@ -735,8 +763,12 @@ void DatabaseExplorerWidget::formatIndexAttribs(attribs_map &attribs)
 														   Catalog::parseArrayValues(attribs[ParsersAttributes::OP_CLASSES])).join(ELEM_SEPARATOR);
 
 	attribs[ParsersAttributes::COLUMNS]=getObjectsNames(OBJ_COLUMN,
-														Catalog::parseArrayValues(attribs[ParsersAttributes::COLUMNS]),
-														names[0], names[1]).join(ELEM_SEPARATOR);
+														Catalog::parseArrayValues(attribs[ParsersAttributes::COLUMNS]),	names[0], names[1]).join(ELEM_SEPARATOR);
+}
+
+void DatabaseExplorerWidget::formatPolicyAttribs(attribs_map &attribs)
+{
+	attribs[ParsersAttributes::ROLES] = getObjectsNames(OBJ_ROLE, Catalog::parseArrayValues(attribs[ParsersAttributes::ROLES])).join(ELEM_SEPARATOR);
 }
 
 QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
@@ -899,7 +931,7 @@ void DatabaseExplorerWidget::listObjects(void)
 		if(quick_refresh)
 			QApplication::setOverrideCursor(Qt::WaitCursor);
 
-		DatabaseImportForm::listObjects(import_helper, objects_trw, false, false, true, quick_refresh);
+		DatabaseImportForm::listObjects(import_helper, objects_trw, false, false, true, quick_refresh, sort_column);
 
 		QTreeWidgetItem *root = new QTreeWidgetItem, *curr_root = nullptr;
 
@@ -933,7 +965,9 @@ void DatabaseExplorerWidget::configureImportHelper(void)
 {
 	import_helper.setConnection(connection);
 	import_helper.setCurrentDatabase(connection.getConnectionParam(Connection::PARAM_DB_NAME));
-	import_helper.setImportOptions(sys_objs_chk->isChecked(), ext_objs_chk->isChecked(), false, false, false, false, false);
+	import_helper.setImportOptions(show_sys_objs->isChecked(),
+																 show_ext_objs->isChecked(),
+																 false, false, false, false, false);
 
 	catalog.closeConnection();
 	catalog.setFilter(Catalog::LIST_ALL_OBJS);
@@ -1115,6 +1149,20 @@ attribs_map DatabaseExplorerWidget::extractAttributesFromItem(QTreeWidgetItem *i
 	}
 	else
 	{
+		/* If we are handling a view we need to append the MATERIALIZED keyword in the sql-object in order
+		 * to construct DDL commands correctly for this kind of object */
+		if(obj_type==OBJ_VIEW)
+		{
+			attribs_map aux_attribs=item->data(DatabaseImportForm::OBJECT_OTHER_DATA, Qt::UserRole).value<attribs_map>();
+
+			if(aux_attribs[ParsersAttributes::MATERIALIZED] == ParsersAttributes::_TRUE_)
+			{
+				attribs[ParsersAttributes::SQL_OBJECT] =
+						QString("%1 %2").arg(ParsersAttributes::MATERIALIZED.toUpper())
+														.arg(BaseObject::getSQLName(OBJ_VIEW));
+			}
+		}
+
 		if(!attribs[ParsersAttributes::SCHEMA].isEmpty() &&
 				attribs[ParsersAttributes::NAME].indexOf(attribs[ParsersAttributes::SCHEMA] + QString(".")) < 0)
 			attribs[ParsersAttributes::SIGNATURE]=attribs[ParsersAttributes::SCHEMA] + QString(".") + attribs[ParsersAttributes::NAME];
@@ -1158,6 +1206,9 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 				Connection conn;
 
 				attribs=extractAttributesFromItem(item);
+
+				if(obj_type==OBJ_OPERATOR || obj_type==OBJ_FUNCTION)
+						attribs[ParsersAttributes::SIGNATURE].replace(ELEM_SEPARATOR, QChar(','));
 
 				//Generate the drop command
 				schparser.ignoreEmptyAttributes(true);
@@ -1217,6 +1268,7 @@ void DatabaseExplorerWidget::truncateTable(QTreeWidgetItem *item, bool cascade)
 			else
 				msg=trUtf8("Do you really want to <strong>cascade</strong> truncate the table <strong>%1</strong>? This action will truncate all the tables that depends on it?").arg(obj_name);
 
+			msg_box.setCustomOptionText(trUtf8("Also restart sequences"));
 			msg_box.show(msg, Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 
 			if(msg_box.result()==QDialog::Accepted)
@@ -1226,9 +1278,9 @@ void DatabaseExplorerWidget::truncateTable(QTreeWidgetItem *item, bool cascade)
 				Connection conn;
 
 				attribs[ParsersAttributes::SQL_OBJECT]=BaseObject::getSQLName(OBJ_TABLE);
-				attribs[ParsersAttributes::SIGNATURE]=sch_name + QString(".") + obj_name;
+				attribs[ParsersAttributes::SIGNATURE]=sch_name + QString(".\"%1\"").arg(obj_name);
 				attribs[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : "");
-
+				attribs[ParsersAttributes::RESTART_SEQ]=(msg_box.isCustomOptionChecked() ? ParsersAttributes::_TRUE_ : "");
 
 				//Generate the truncate command
 				schparser.ignoreEmptyAttributes(true);
@@ -1303,11 +1355,11 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item)
 
 			//Updates the group type only
 			if(obj_id==0 || (obj_type!=OBJ_TABLE && obj_type!=OBJ_VIEW && obj_type!=OBJ_SCHEMA))
-				gen_items=DatabaseImportForm::updateObjectsTree(import_helper, objects_trw, { obj_type }, false, false, root, sch_name, tab_name);
+				gen_items=DatabaseImportForm::updateObjectsTree(import_helper, objects_trw, { obj_type }, false, false, root, sch_name, tab_name, sort_column);
 			else
 				//Updates all child objcts when the selected object is a schema or table or view
 				gen_items=DatabaseImportForm::updateObjectsTree(import_helper, objects_trw,
-																BaseObject::getChildObjectTypes(obj_type), false, false, root, sch_name, tab_name);
+																BaseObject::getChildObjectTypes(obj_type), false, false, root, sch_name, tab_name, sort_column);
 
 			//Creating dummy items for schemas and tables
 			if(obj_type==OBJ_SCHEMA || obj_type==OBJ_TABLE || obj_type==OBJ_VIEW)
@@ -1321,7 +1373,7 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item)
 			}
 
 			import_helper.closeConnection();
-			objects_trw->sortItems(0, Qt::AscendingOrder);
+			objects_trw->sortItems(sort_column, Qt::AscendingOrder);
 			objects_trw->setCurrentItem(nullptr);
 
 			if(obj_type==OBJ_TABLE)
@@ -1703,7 +1755,9 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 				dbmodel.createSystemObjects(false);
 				import_hlp.setConnection(connection);
 				import_hlp.setCurrentDatabase(connection.getConnectionParam(Connection::PARAM_DB_NAME));
-				import_hlp.setImportOptions(sys_objs_chk->isChecked(), ext_objs_chk->isChecked(), true, false, false, false, false);
+				import_hlp.setImportOptions(toggle_disp_menu.actions().at(0)->isChecked(),
+																		toggle_disp_menu.actions().at(1)->isChecked(),
+																		true, false, false, false, false);
 				import_hlp.setSelectedOIDs(&dbmodel, {{OBJ_DATABASE, {db_oid}}, {obj_type,{oid}}}, {});
 				sys_oid=import_hlp.getLastSystemOID();
 
@@ -1802,6 +1856,12 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 		QApplication::restoreOverrideCursor();
 		emit s_sourceCodeShowRequested(QString("/* Could not generate source code due to one or more errors! \n \n %1 */").arg(e.getExceptionsText()));
 	}
+}
+
+void DatabaseExplorerWidget::filterObjects(void)
+{
+	DatabaseImportForm::filterObjects(objects_trw, filter_edt->text(),
+																		(by_oid_chk->isChecked() ? DatabaseImportForm::OBJECT_ID : 0), false);
 }
 
 QString DatabaseExplorerWidget::getObjectSource(BaseObject *object, DatabaseModel *dbmodel)

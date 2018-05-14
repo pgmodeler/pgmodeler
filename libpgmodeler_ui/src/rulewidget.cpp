@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RULE)
 		command_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 		command_cp=new CodeCompletionWidget(comando_txt);
 
-		commands_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^ ObjectTableWidget::DUPLICATE_BUTTON, true, this);
+		commands_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^ ObjectsTableWidget::DUPLICATE_BUTTON, true, this);
 		commands_tab->setHeaderLabel(trUtf8("SQL command"),0);
 		commands_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("codigosql")),0);
 		dynamic_cast<QGridLayout *>(commands_gb->layout())->addWidget(commands_tab, 1, 0, 1, 2);
@@ -64,15 +64,6 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RULE)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
-}
-
-void RuleWidget::hideEvent(QHideEvent *event)
-{
-	BaseObjectWidget::hideEvent(event);
-	comando_txt->clear();
-	commands_tab->removeRows();
-	event_cmb->setCurrentIndex(0);
-	exec_type_cmb->setCurrentIndex(0);
 }
 
 void RuleWidget::editCommand(int row)

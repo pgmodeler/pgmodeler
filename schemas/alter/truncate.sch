@@ -5,9 +5,14 @@
  
 [TRUNCATE ] {sql-object} $sp {signature} 
 
+%if {restart-seq} %then
+    [ RESTART IDENTITY ]
+%end
+
 %if {cascade} %then
-   [ CASCADE]
- %end
- ; 
+    [ CASCADE]
+%end
+
+; 
 
 $br [-- ddl-end --] $br

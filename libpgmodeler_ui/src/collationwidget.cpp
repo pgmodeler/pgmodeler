@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 
 		configureTabOrder({ locale_cmb, encoding_cmb, lccollate_cmb, lcctype_cmb });
 
-		setMinimumSize(520, 380);
+		setMinimumSize(520, 420);
 	}
 	catch(Exception &e)
 	{
@@ -96,12 +96,6 @@ void CollationWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 			}
 		}
 	}
-}
-
-void CollationWidget::hideEvent(QHideEvent *event)
-{
-	resetFields();
-	BaseObjectWidget::hideEvent(event);
 }
 
 void CollationWidget::resetFields(void)
@@ -166,10 +160,10 @@ void CollationWidget::applyConfiguration(void)
 			collation->setLocale(locale_cmb->currentText());
 
 		if(lccollate_cmb->currentIndex() > 0)
-			collation->setLocalization(LC_COLLATE, lccollate_cmb->currentText());
+			collation->setLocalization(Collation::_LC_COLLATE, lccollate_cmb->currentText());
 
 		if(lcctype_cmb->currentIndex() > 0)
-			collation->setLocalization(LC_CTYPE, lcctype_cmb->currentText());
+			collation->setLocalization(Collation::_LC_CTYPE, lcctype_cmb->currentText());
 
 		finishConfiguration();
 	}

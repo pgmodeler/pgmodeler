@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ View::View(void) : BaseTable()
 	attributes[ParsersAttributes::SELECT_EXP]=QString();
 	attributes[ParsersAttributes::FROM_EXP]=QString();
 	attributes[ParsersAttributes::SIMPLE_EXP]=QString();
+	attributes[ParsersAttributes::END_EXP]=QString();
 	attributes[ParsersAttributes::CTE_EXPRESSION]=QString();
 	attributes[ParsersAttributes::MATERIALIZED]=QString();
 	attributes[ParsersAttributes::RECURSIVE]=QString();
@@ -178,6 +179,8 @@ vector<unsigned> *View::getExpressionList(unsigned sql_type)
 		return(&exp_from);
 	else if(sql_type==Reference::SQL_REFER_WHERE)
 		return(&exp_where);
+	else if(sql_type==Reference::SQL_REFER_END_EXPR)
+		return(&exp_end);
 	else
 		return(nullptr);
 }
@@ -334,7 +337,7 @@ Reference View::getReference(unsigned ref_id, unsigned sql_type)
 
 void View::removeReference(unsigned ref_id)
 {
-	vector<unsigned> *vect_idref[3]={&exp_select, &exp_from, &exp_where};
+	vector<unsigned> *vect_idref[4]={&exp_select, &exp_from, &exp_where, &exp_end};
 	vector<unsigned>::iterator itr, itr_end;
 	unsigned i;
 
@@ -368,6 +371,7 @@ void View::removeReferences(void)
 	exp_select.clear();
 	exp_from.clear();
 	exp_where.clear();
+	exp_end.clear();
 	setCodeInvalidated(true);
 }
 
@@ -426,35 +430,36 @@ void View::setDefinitionAttribute(void)
 		}
 		else
 		{
-			vector<unsigned> *refs_vect[3]={&exp_select, &exp_from, &exp_where};
+			vector<unsigned> *refs_vect[4]={&exp_select, &exp_from, &exp_where, &exp_end};
 			vector<unsigned>::iterator itr, itr_end;
-			QString palavras[3]={"SELECT\n", "\nFROM\n", "\nWHERE\n"};
-			unsigned i, qtd, idx, tipo_sql[3]={Reference::SQL_REFER_SELECT,
-											   Reference::SQL_REFER_FROM,
-											   Reference::SQL_REFER_WHERE};
+			QString keywords[4]={"SELECT\n", "\nFROM\n", "\nWHERE\n", "\n"};
+			unsigned i, cnt, idx, sql_type[4]={ Reference::SQL_REFER_SELECT,
+																					Reference::SQL_REFER_FROM,
+																					Reference::SQL_REFER_WHERE,
+																					Reference::SQL_REFER_END_EXPR };
 
-			for(i=0; i < 3; i++)
+			for(i=0; i < 4; i++)
 			{
 				if(refs_vect[i]->size() > 0)
 				{
-					decl+=palavras[i];
+					decl+=keywords[i];
 
 					itr=refs_vect[i]->begin();
 					itr_end=refs_vect[i]->end();
 					while(itr!=itr_end)
 					{
 						idx=(*itr);
-						decl+=references[idx].getSQLDefinition(tipo_sql[i]);
+						decl+=references[idx].getSQLDefinition(sql_type[i]);
 						itr++;
 					}
 
-					if(tipo_sql[i]==Reference::SQL_REFER_SELECT ||
-							tipo_sql[i]==Reference::SQL_REFER_FROM)
+					if(sql_type[i]==Reference::SQL_REFER_SELECT ||
+							sql_type[i]==Reference::SQL_REFER_FROM)
 					{
 						//Removing the final comma from SELECT / FROM declarations
-						qtd=decl.size();
-						if(decl[qtd-2]==',')
-							decl.remove(qtd-2,2);
+						cnt=decl.size();
+						if(decl[cnt-2]==',')
+							decl.remove(cnt-2,2);
 					}
 				}
 			}
@@ -472,24 +477,25 @@ void View::setReferencesAttribute(void)
 {
 	QString str_aux;
 	QString attribs[]={ ParsersAttributes::SELECT_EXP,
-						ParsersAttributes::FROM_EXP,
-						ParsersAttributes::SIMPLE_EXP };
-	vector<unsigned> *vect_exp[]={&exp_select, &exp_from, &exp_where};
-	int qtd, i, i1;
+											ParsersAttributes::FROM_EXP,
+											ParsersAttributes::SIMPLE_EXP,
+											ParsersAttributes::END_EXP};
+	vector<unsigned> *vect_exp[]={&exp_select, &exp_from, &exp_where, &exp_end};
+	int cnt, i, i1;
 
-	qtd=references.size();
-	for(i=0; i < qtd; i++)
+	cnt=references.size();
+	for(i=0; i < cnt; i++)
 		str_aux+=references[i].getXMLDefinition();
 	attributes[ParsersAttributes::REFERENCES]=str_aux;
 
-	for(i=0; i < 3; i++)
+	for(i=0; i < 4; i++)
 	{
 		str_aux=QString();
-		qtd=vect_exp[i]->size();
-		for(i1=0; i1 < qtd; i1++)
+		cnt=vect_exp[i]->size();
+		for(i1=0; i1 < cnt; i1++)
 		{
 			str_aux+=QString("%1").arg(vect_exp[i]->at(i1));
-			if(i1 < qtd-1) str_aux+=QString(",");
+			if(i1 < cnt-1) str_aux+=QString(",");
 		}
 		attributes[attribs[i]]=str_aux;
 	}

@@ -1,6 +1,185 @@
 Change Log
 ---------
 
+v0.9.1
+------
+<em>Release date: May 14, 2018</em><br/>
+
+* [New] Added support to line selection by clicking and moving the mouse over the line numbers widget in any source code field.
+* [New] The validator now checks if the model has columns referencing spatial data types and creates the postgis extension automatically when fixing the model.
+* [New] Added support to RESTART IDENTITY on truncate tables in DatabaseExplorerWidget.
+* [New] Added an custom option checkbox in Messagebox for general purpose usage.
+* [New] Added support to diff operation in CLI.
+* [New] Added support to import database from CLI.
+* [New] Adding missing types regrole and regnamespace.
+* [Change] Improved the copy/duplicate operation in order to copy rules, index, trigger and policies together to their parents.
+* [Change] Added column names to the code completion widget used in the filter widget at DataManipulationForm.
+* [Change] Improved the SQLExecutionWidget in such way that it'll display large amount of data more quickly and consuming less memory.
+* [Change] Minor improvement in SQLExecutionWidget to show the amount of time took to run a query.
+* [Change] Minor improvement in the text find widgets in SQL tool in order to make them closable via dedicated button.
+* [Change] Improved the set tag operation in ModelWidget in order to cleanup the assigned tags to a set of objects.
+* [Change] Minor improvement on DatabaseExplorerWidget to show the rls attributes labels correctly in the attributes grid.
+* [Change] Refactored all the CLI options.
+* [Change] Minor change in Connection::generateConnectionString in order to put the dbname param in the start of the string.
+* [Change] Improved the performance of the row duplication action in DataManipulationForm.
+* [Change] Minor improvement in order to update the schemas boxes when the tables have their extended attributes box toggled.
+* [Change] Improved the performance of "Move to schema" operation.
+* [Change] Added an busy cursor while closing a model.
+* [Change] Improved the object selection in object finder.
+* [Change] Changed the behaviour of select and fade buttons in ObjectFinderWidget in such way to enable the user to select/fade the objects in the listing (or not included in the results).
+* [Fix] Fixed a bug when import identity columns in certain cases when the identity column was followed by another column which data type was not accepted for identity, e.g, text after smallint.
+* [Fix] Fixed the check boxes disabling when dealing with identifier relationships.
+* [Fix] Disabled the drag & drop for items in the side listing at ConfigurationForm.
+* [Fix] Fixed the tab behavior on comment box in all editing forms of database objects.
+* [Fix] Fixed the catalog query for user defined types.
+* [Fix] Fixed the import of user defined types which names contains uppercase characters.
+* [Fix] Minor typo fixes in CLI.
+* [Fix] Fix window scaling on HiDPI/Retina screens.
+* [Fix] Minor fix in Connection::getConnectionId in order to omit port when that parameter is not configured in the connection.
+* [Fix] Fixed a bug in ModelExportHelper that was failing to remane the database when the command appeared.
+* [Fix] Fixed a bug in CollationWidget that was referencing the collation attributes LC_??? using the wrong constant.
+* [Fix] Fixed the behaviour of the message box that warns about the need of validate the model prior to export, save or diff. Now rejecting the dialog (i.e. closing it) will be considered that the user wants to proceed with the pending operation even with an invalid model.
+* [Fix] Fixed the import of comments for constraints,triggers, index and rules.
+* [Fix] The value input in BulkDataEditWidget will be focused as soon as the widget appears.
+* [Fix] Fixed a bug in the aggregate import process.
+* [Fix] Minor fix in DataManipulationForm to avoid the generation of a where clause when the filter is filled only with spaces.
+* [Fix] Minor fix in the magnfier tool to use the same render hints as the canvas viewport.
+* [Fix] Fixed a bug in the diff process that was trying to recreate the whole database when the "Force recreation" option was set.
+* [Fix] Fixed a bug when showing the source of tables in DatabaseExplorerWidget when these objects have permissions assigned.
+* [Fix] Adjusting tables position when the parent schema is moved and the alignment to grid is enabled.
+* [Fix] Minor fix in the CLI menu.
+* [Fix] Fixed the saving process for large models by stopping the threads related to temp models saving while the model file is being written.
+
+v0.9.1-beta1
+------
+<em>Release date: April 6, 2018</em><br/>
+
+* [New] Added the ability to create multiples one-to-many and many-to-many relatationships between the same pair of tables.
+* [New] Added the ability to use more special ascii chars in the middle of object names.
+* [New] Added missing SQL keywords into sql-highlight.conf
+* [New] Added support to multi line comments in UI.
+* [New] Added code snippets for CREATE and ALTER policy.
+* [New] Added full support to row level security (RLS), including export, import and diff of this kind of object.
+* [New] Added the method DatabaseExplorerWidget::formatPolicyAttribs in order to display some attributes values correctly.
+* [New] Added support to bulk data editing in DataManipulationForm.
+* [New] Added an option to diff process to force the generation of DROP commands for columns and constraints even if the missing objects need to be preserved. This is useful to work with partial models and the user need to remove columns/constraints and preserve the rest of objects.
+* [New] Added the ability to generate diff code to Enable/Force RLS attribute of tables.
+* [New] Added support to RLS on tables.
+* [New] Added the support to detect identity columns in diff.
+* [New] Added support to identity columns (PostgreSQL 10).
+* [New] Added the support to BYPASSRLS option on roles.
+* [New] Added support to IS_TEMPLATE and ALLOW_CONNECTIONS options in database object.
+* [New] Added the procedures to fix old style domains in CLI.
+* [New] Added support to multiple check constraint in domains.
+* [New] Added support to sort items alphabetically (ascending) or by oid in DatabaseExplorerWidget.
+* [Change] Changed the input mode of the password field in ConnectionsConfigWidget in order to hide the passwords in the form. NOTE: the passwords are still in plain text in the config file.
+* [Change] Moved extensions from schema level to database level in order to reproduce better the PostgreSQL's behavior.
+* [Change] The filter widget is now toggled in DatabaseExplorerWidget via filter menu.
+* [Change] Minor adjustments on forms sizes.
+* [Change] In GeneralConfigWidget when restoring default settings the default settings for syntax highlight are restored as well.
+* [Change] pgModeler will not try to create the plugins path anymore. This will avoid constant error messages during startup. Now, it'll silently ignore the absence of that folder and skip the plugin loading.
+* [Change] Minor improvements on catalog queries for index, trigger, rule, policy, constraint in order to use the comment catalog query.
+* [Change] Removed an uneeded form adjustment code in Table::openEditingForm.
+* [Change] Minor improvements on DatabaseModel::getCreationOrder.
+* [Change] Improved the source editing in external application. The use is informed about the app running state and the contents for the source editor field are locked until the user closes the external app.
+* [Change] Improved the model loading on macOs in such way to avoid showing the visual objects creation while they are being loaded from file.
+* [Change] Improved the reverse engineering and diff process to accept the new attributes of database object.
+* [Fix] Fixed the query catalog for built-in types to include the types related to domains.
+* [Fix] Fixed the Extension::setSchema method to accept null schemas.
+* [Fix] Fixed the generation of XML code for casts.
+* [Fix] Fixed the extension creation, allowing only one instance of the named extension per database no matter the schema used to allocate its children objects.
+* [Fix] Minor fix in ObjectDepsRefsWidget to correctly list the indirect references.
+* [Fix] Fixed a bug when dropping Functions in DatabaseExplorerWidget.
+* [Fix] Improved the import of sequences in such way to avoid unsolvable reference breaking.
+* [Fix] Fixed a bug that cause the disabling of connections for database models created prior to 0.9.1-beta1.
+* [Fix] Fixed a bug on import process that was wrongly creating types derivated from tables/sequence/views causing duplication problems during validation.
+* [Fix] Fixed a crash on macOs when opening a second model.
+* [Fix] Fixed the import of sequences which now assigns owner columns correctly. If the owner column is an identity one the SQL code of the sequence is disabled by default which will not cause confusion in the diff process trying to drop it in some cases.
+* [Fix] Fixed an issue in diff process that was generating a malformed DROP command for extensions.
+* [Fix] Minor fixed in the "Filter by OID" feature in DatabaseExplorerWidget and DatabaseImportForm.
+* [Fix] Fixed the diff for domains which contain multiple check constraints.
+* [Fix] Fixed a bug that was not selecting the correct spatial type in the widget.
+* [Fix] Fixed a conflict of shortcuts in DatabaseExplorerWidget. Now F5 updates a leaf/subtree and Alt+F5 performs quick refresh of the tree.
+* [Fix] Fixed a problem with sqlexecutionwidget.ui that is not building properly in Qt 5.10.
+
+v0.9.1-beta
+------
+<em>Release date: January 26, 2018</em><br/>
+
+* [New] Added support to GROUP BY/HAVING clauses in Views by adding a new kind of reference. Proper changes done in ViewWidget to allow configuring those clauses.
+* [New] Added the method Catalog::isSystemObject(oid) which indicates if the provided OID is related to a system object.
+* [Change] Minor adjustment in the copy/paste operation to generate suffix in the pasted objects only when there're conflics.
+* [Change] Removed the port range limitation in connection configuration dialog.
+* [Change] Updated the default version of Qt and PostgreSQL to, respectively, 5.9.3 and 10.1 in deployment scripts.
+* [Change] Changed the method PgSQLType::getTypeName by adding a bool parameter so the name can be returned with dimension descriptor (when dimension is > 0). Useful for configuring operator's signatures.
+* [Fix] Fixed the drop action for materialized views in database explorer.
+* [Fix] Fixed a crash when importing extension objects.
+* [Fix] Fixed the generation of operator's signature that must consider dimensions of the arguments' types.
+* [Fix] Fixed the bounding rect calculation for relationship instances when one or more labels are hidden.
+* [Fix] Fixed the SVG & PNG export to properly determine the area to be drawn in the destination graphics file.
+* [Fix] Fixed a crash when adding attributes into many-to-many relationships.
+
+v0.9.1-alpha1
+------
+<em>Release date: November 30, 2017</em><br/>
+
+* [New] Added the ability to compare two databases, and not only a model and a database, in diff tool.
+* [New] Added the relationship creation buttons on the object overlay when a single table is selected.
+* [New] Added the "Relationship" action in "New" submenu on table's popup menu so the user can create relationships using the selected table as source. This avoids the need to use blank areas of the canvas to start creating relationships.
+* [New] Improved the data manipulation dialog in such way that when dealing with deletes in tables without PK, tuples with NULL values can be correctly considered.
+* [New] Improved the validations on ResultSet class.
+* [New] Added a method to indicate if a column value is null in ResultSet.
+* [New] Added support to fade in/out objects in object finder in order to highlight the graphical objects retrieved from the search.
+* [New] Added an attribute in pgmodeler.conf to store the current status of the "Fade in" button in object finder widget.
+* [Change] Minor improvement in the diff generated metadata.
+* [Change] Increased the maximum allowed amount of lines in command history.
+* [Change] Minor adjustment on diff tool so the connections combo can be correctly updated when the user edit connections from within that form.
+* [Change] Improved the progress info of diff process so it can be more accurate.
+* [Fix] Fixed the way PostgreSQL 10+ version is returned from Connection::getPgSQLVersion.
+* [Fix] Fixed the sequence importing on PostgreSQL 10.
+
+v0.9.1-alpha
+------
+<em>Release date: October 20, 2017</em><br/>
+
+* [New] Added support to crow's foot notation.
+* [New] Added the crow's foot notation switch in RelationshipConfigWidget.
+* [New] Added the grid arrangement in the arrangment menu at MainWindow.
+* [New] Added the schema arrangement (scattered).
+* [New] Added an action to toggle schemas rectangle on ModelWidget.
+* [New] CLI now loads the relationship and general settings to reflect relationship styles in export modes.
+* [New] Added support to connect relatinship on tables' edges when using classical notation.
+* [New] Added support to apostrophes in the middle of object's name.
+* [Change] Removed the controls related to arragement in DatabaseImportForm.
+* [Change] Minor adjustments in tables' spacing in auto arrangement process.
+* [Change] Minor improvement on SQLExecutionWidget and DataManipulationForm in order to make possible to paste csv buffer from SQLExecutionWidget to DataManipulationForm.
+* [Change] Improvements done in the Spanish UI translation.
+* [Change] Changed the position of the zoom info icon in SceneInfoWidget.
+* [Change] Minor adjustments in the pen width of relationship lines and objects borders.
+* [Change] Minor improvement when aligning objects to grid forcing the relationships updating.
+* [Change] Minor arrangement of the connection modes in RelationshipConfigWidget.
+* [Change] Improved the performance of (de)selection of several objects at once in ModelWidget and ObjectsScene.
+* [Change] Removed unused attributes from BezierCurveItem.
+* [Change] Improved the BezierCurveItem class to enable the drawing of inverted curve by inverting its bounding rect.
+* [Change] Improved the import of index objects.
+* [Change] Minor tweak to enable clipboard usage in macOS when copying data in DataManipulationForm.
+* [Fix] Fixed a bug in ObjectsScene that was not emitting signals of deselection correctly.
+* [Fix] Fixed a bug in SQLToolWidget that was not cleaning up the source code pane when all databases were disconnected.
+* [Fix] Fixed a bug that was causing the diff process to try to remove the not null constraint of a primary key.
+* [Fix] Fixed a bug that was causing relationship line to be wrongly constructed in case the tables bounding rects don't intercepted.
+* [Fix] Fixed a bug that was recognizing the creation of a constraint but wasn't generating the SQL in diff process.
+* [Fix] Minor fix in order to avoid the inheritance/dependency descriptor to be rotated to the wrong size when curved lines are being used.
+* [Fix] Fixed the generation of sql comments for database and tablespace.
+* [Fix] Minor fix in example.dbm
+* [Fix] Fixed the configuration of bidirectional fk relationships when crow's foot is enabled.
+* [Fix] Fix a bug in GeneralConfigWidget that was reverting the grid optins everytime the user applyed settings.
+* [Fix] Fixed the genaration of index elements containing expressions.
+* [Fix] Fixed the import of operators and operator classes.
+* [Fix] Fixed the generation of operator signature by removing the length/precision of the types.
+* [Fix] Minor fix in CSVLoadWidget::loadCsvFromBuffer in order to preserve the line breaks avoiding the creation of unecessary lines.
+* [Fix] Fixed the import of exclude constraint.
+* [Fix] Fixed the import of timestamp(0) type.
+
 v0.9.0
 ------
 <em>Release date: September 1st, 2017</em><br/>

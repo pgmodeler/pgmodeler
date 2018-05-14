@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,21 +27,6 @@ TextboxWidget::TextboxWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TEXT
 	connect(color_select_tb, SIGNAL(clicked(void)), this, SLOT(selectTextColor(void)));
 
 	setMinimumSize(500, 200);
-}
-
-void TextboxWidget::hideEvent(QHideEvent *event)
-{
-	QPalette palette;
-
-	text_txt->clear();
-	bold_chk->setChecked(false);
-	italic_chk->setChecked(false);
-	underline_chk->setChecked(false);
-
-	palette.setColor(QPalette::Button, QColor(0,0,0));
-	color_select_tb->setPalette(palette);
-
-	BaseObjectWidget::hideEvent(event);
 }
 
 void TextboxWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Textbox *txtbox, double obj_px, double obj_py)

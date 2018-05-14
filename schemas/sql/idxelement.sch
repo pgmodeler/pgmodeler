@@ -7,7 +7,7 @@ $br $tb $sp $sp
  {column}
 %else 
   %if {expression} %then
-    {expression}
+    ({expression})
   %end
 %end
 

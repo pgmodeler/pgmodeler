@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 		elem_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		parent_obj=nullptr;
-		elements_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^ ObjectTableWidget::DUPLICATE_BUTTON, true, this);
+		elements_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^ ObjectsTableWidget::DUPLICATE_BUTTON, true, this);
 		op_class_sel=new ObjectSelectorWidget(OBJ_OPCLASS, true, this);
 		collation_sel=new ObjectSelectorWidget(OBJ_COLLATION, true, this);
 		operator_sel=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);

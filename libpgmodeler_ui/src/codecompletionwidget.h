@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -112,11 +112,14 @@ class CodeCompletionWidget: public QWidget
 		highlighter uses an different configuration */
 		void configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl=nullptr, const QString &keywords_grp=QString("keywords"));
 		
-		//! \brief Inserts a custom named item on the list with a custom icon. Custom item will be always appear at the beggining of the list
+		//! \brief Inserts a custom named item on the list with a custom icon. Custom item will always appear at the beggining of the list
 		void insertCustomItem(const QString &name, const QString &tooltip, const QPixmap &icon);
 		
-		//! \brief Inserts several custom named item on the list with a custom icon. Custom item will be always appear at the beggining of the list
+		//! \brief Inserts several custom named item on the list with a custom icon. Custom item will always appear at the beggining of the list
 		void insertCustomItems(const QStringList &names, const QStringList &tooltips, const QPixmap &icon);
+
+//! \brief Inserts several custom named items on the list with an icon related to the obj_type. Custom item will always appear at the beggining of the list
+		void insertCustomItems(const QStringList &names, const QString &tooltip, ObjectType obj_type);
 		
 		//! \brief Clear the custom added items
 		void clearCustomItems(void);

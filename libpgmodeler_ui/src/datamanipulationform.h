@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -108,6 +108,8 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		//! \brief Defines the connection and current schema and table to be handled, this method should be called before show the dialog
 		void setAttributes(Connection conn, const QString curr_schema=QString("public"), const QString curr_table=QString(), const QString &filter=QString());
 
+		static void setHasCsvClipboard(bool value);
+
 	private slots:
 		//! \brief List the tables based upon the current schema
 		void listTables(void);
@@ -149,7 +151,7 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		void markDeleteOnRows(void);
 		
 		//! \brief Add a new row on the grid with the first column with edition enabled
-		void addRow(void);
+		void addRow(bool focus_new_row = true);
 		
 		//! \brief Duplicate the selected rows creating new ones with the same values as the selection
 		void duplicateRows(void);
@@ -174,6 +176,9 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 
 		//! brief Browse the referencing table data using the selected row in the results grid
 		void browseReferrerTable(void);
+
+		//! brief Changes the values of the grid selection at once
+		void bulkDataEdit(void);
 };
 
 #endif

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -477,10 +477,21 @@ void ObjectsScene::removeItem(QGraphicsItem *item)
 	}
 }
 
+void ObjectsScene::blockItemsSignals(bool block)
+{
+	BaseObjectView *obj_view = nullptr;
+
+	for(auto &item : this->items())
+	{
+		obj_view = dynamic_cast<BaseObjectView *>(item);
+		if(obj_view)
+			obj_view->blockSignals(block);
+	}
+}
+
 void ObjectsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
 	QGraphicsScene::mouseDoubleClickEvent(event);
-	//enablePannigMode(false);
 
 	if(this->selectedItems().size()==1 && event->buttons()==Qt::LeftButton && !rel_line->isVisible())
 	{
@@ -499,6 +510,7 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
 	//Gets the item at mouse position
 	QGraphicsItem* item=this->itemAt(event->scenePos().x(), event->scenePos().y(), QTransform());
+	bool is_deselection = !this->selectedItems().isEmpty() && !this->itemAt(event->scenePos(), QTransform());
 
 	if(selectedItems().empty())
 		emit s_objectsScenePressed(event->buttons());
@@ -510,7 +522,16 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	if(rel_line->isVisible())
 		event->setModifiers(Qt::ControlModifier);
 
+	if(is_deselection)
+		this->blockItemsSignals(true);
+
 	QGraphicsScene::mousePressEvent(event);
+
+	if(is_deselection)
+	{
+		this->blockItemsSignals(false);
+		emit s_objectSelected(nullptr, false);
+	}
 
 	if(event->buttons()==Qt::LeftButton)
 	{
@@ -834,12 +855,18 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 		QPainterPath sel_area;
 
 		sel_area.addRect(selection_rect->polygon().boundingRect());
+
+		this->blockItemsSignals(true);
 		this->setSelectionArea(sel_area, Qt::IntersectsItemShape);
+		this->blockItemsSignals(false);
 
 		selection_rect->setVisible(false);
 		selection_rect->setPolygon(pol);
 		sel_ini_pnt.setX(NAN);
 		sel_ini_pnt.setY(NAN);
+
+		if(!this->selectedItems().isEmpty())
+			emit s_objectsSelectedInRange();
 	}
 }
 
@@ -853,11 +880,12 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	vector<QPointF> points;
 	vector<QPointF>::iterator itr;
 	vector<BaseObject *> rels, base_rels;
+	QSet<Schema *> schemas;
 	BaseRelationship *base_rel=nullptr;
 	RelationshipView *rel=nullptr;
 	BaseObjectView *obj_view=nullptr;
 	BaseTableView *tab_view=nullptr;
-	QList<BaseObjectView *> tables;
+	QSet<BaseObjectView *> tables;
 
 	//Gathering the relationships inside the selected schemsa in order to move their points too
 	for(auto &item : items)
@@ -870,7 +898,7 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 			obj_view->togglePlaceholder(false);
 
 		if(tab_view)
-			tables.push_back(tab_view);
+			tables.insert(tab_view);
 		else if(sch_view)
 		{
 			//Get the schema object
@@ -894,7 +922,7 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 						rel_list.push_back(dynamic_cast<QGraphicsItem *>(base_rel->getReceiverObject()));
 				}
 
-				tables.append(sch_view->getChildren());
+				tables.unite(sch_view->getChildren().toSet());
 			}
 		}
 	}
@@ -980,17 +1008,24 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 		this->setSceneRect(rect);
 	}
 
-	if(BaseObjectView::isPlaceholderEnabled())
+	for(auto &obj : tables)
 	{
-		/* Updating relationships related to moved tables. Converting the list of table to a set
-	 in order to remove the duplicated elements */
-		for(auto &obj : tables.toSet())
+		tab_view=dynamic_cast<BaseTableView *>(obj);
+
+		//Realign tables if the parent schema had the position adjusted too
+		if(align_objs_grid)
 		{
-			tab_view=dynamic_cast<BaseTableView *>(obj);
-			if(tab_view)
-				tab_view->requestRelationshipsUpdate();
+			tab_view->setPos(alignPointToGrid(tab_view->pos()));
+			schemas.insert(dynamic_cast<Schema *>(tab_view->getSourceObject()->getSchema()));
 		}
+
+		if(BaseObjectView::isPlaceholderEnabled())
+			tab_view->requestRelationshipsUpdate();
 	}
+
+	//Updating schemas bounding rects after moving objects
+	for(auto &obj : schemas)
+		obj->setModified(true);
 
 	emit s_objectsMoved(true);
 	moving_objs=false;

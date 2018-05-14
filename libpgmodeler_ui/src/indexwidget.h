@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_indexwidget.h"
-#include "objecttablewidget.h"
+#include "objectstablewidget.h"
 #include "elementswidget.h"
 
 class IndexWidget: public BaseObjectWidget, public Ui::IndexWidget {
@@ -44,7 +44,6 @@ class IndexWidget: public BaseObjectWidget, public Ui::IndexWidget {
 		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseTable *parent_obj, Index *index);
 
 	private slots:
-		void hideEvent(QHideEvent *event);
 		void selectIndexingType(void);
 		void enableSortingOptions(void);
 

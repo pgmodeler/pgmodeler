@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 #include "baseobjectwidget.h"
 #include "ui_typewidget.h"
 #include "pgsqltypewidget.h"
-#include "objecttablewidget.h"
+#include "objectstablewidget.h"
 
 /* Declaring the TypeAttribute class as a Qt metatype in order to permit
 	 that instances of the class be used as data of QVariant and QMetaType */
@@ -51,7 +51,7 @@ class TypeWidget: public BaseObjectWidget, public Ui::TypeWidget {
 		*range_subtype;
 
 		//! \brief Tables that store enumaration elementas and composite attributes
-		ObjectTableWidget *enumerations_tab,
+		ObjectsTableWidget *enumerations_tab,
 		*attributes_tab;
 
 		//! \brief Composite type attribute collation selector
@@ -59,8 +59,6 @@ class TypeWidget: public BaseObjectWidget, public Ui::TypeWidget {
 
 		//! \brief Composite type attribute datatype configurator
 		PgSQLTypeWidget *attrib_type_wgt;
-
-		void hideEvent(QHideEvent *event);
 
 	public:
 		TypeWidget(QWidget * parent = 0);

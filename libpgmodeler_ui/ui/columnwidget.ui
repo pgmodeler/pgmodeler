@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>347</width>
-    <height>124</height>
+    <height>171</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="column_grid">
@@ -44,6 +44,20 @@
       <property name="bottomMargin">
        <number>4</number>
       </property>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="identity_type_cmb">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QRadioButton" name="identity_rb">
+        <property name="text">
+         <string>Identity:</string>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="0">
        <widget class="QRadioButton" name="expression_rb">
         <property name="text">
@@ -54,10 +68,17 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0" colspan="2">
+      <item row="1" column="0">
+       <widget class="QRadioButton" name="sequence_rb">
+        <property name="text">
+         <string>Se&amp;quence:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
        <widget class="QCheckBox" name="notnull_chk">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -67,14 +88,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QRadioButton" name="sequence_rb">
-        <property name="text">
-         <string>Se&amp;quence:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
+      <item row="0" column="1" colspan="2">
        <widget class="QPlainTextEdit" name="def_value_txt">
         <property name="maximumSize">
          <size>
@@ -111,7 +125,6 @@
   <tabstop>expression_rb</tabstop>
   <tabstop>def_value_txt</tabstop>
   <tabstop>sequence_rb</tabstop>
-  <tabstop>notnull_chk</tabstop>
  </tabstops>
  <resources/>
  <connections/>

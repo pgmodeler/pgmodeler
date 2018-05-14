@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,18 +26,16 @@
 #define EVENT_TRIGGER_WIDGET_H
 
 #include "baseobjectwidget.h"
-#include "objecttablewidget.h"
+#include "objectstablewidget.h"
 #include "ui_eventtriggerwidget.h"
 
 class EventTriggerWidget: public BaseObjectWidget, public Ui::EventTriggerWidget {
 	private:
 		Q_OBJECT
 		
-		ObjectTableWidget *filter_tab;
+		ObjectsTableWidget *filter_tab;
 		
 		ObjectSelectorWidget *function_sel;
-		
-		void hideEvent(QHideEvent*);
 		
 	public:
 		EventTriggerWidget(QWidget * parent = 0);

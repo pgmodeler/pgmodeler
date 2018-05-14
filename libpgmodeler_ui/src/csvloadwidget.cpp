@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -87,12 +87,14 @@ QList<QStringList> CsvLoadWidget::loadCsvFromBuffer(const QString &csv_buffer, c
 	if(!csv_buffer.isEmpty())
 	{
 		QString	double_quote=QString("%1%1").arg(text_delim),
-				placeholder = QString("⁋");
+				placeholder = QString("⁋"), aux_buffer = csv_buffer;
 		QStringList values, rows;
 		QRegExp empty_val;
 
 		//If no custom separator is specified we use the default ';'
-		rows=csv_buffer.split(QChar::LineFeed, QString::SkipEmptyParts);
+		aux_buffer.replace(QString("\r\n"), placeholder);
+		rows=aux_buffer.split(QChar::LineFeed, QString::SkipEmptyParts);
+		rows.replaceInStrings(placeholder, QString("\r\n"));
 
 		if(cols_in_first_row)
 		{

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_rolewidget.h"
-#include "objecttablewidget.h"
+#include "objectstablewidget.h"
 
 class RoleWidget: public BaseObjectWidget, public Ui::RoleWidget {
 	private:
@@ -37,15 +37,13 @@ class RoleWidget: public BaseObjectWidget, public Ui::RoleWidget {
 		ModelObjectsWidget *object_selection_wgt;
 
 		//! \brief Store the table widgets used to reference the member roles
-		ObjectTableWidget *members_tab[3];
+		ObjectsTableWidget *members_tab[3];
 
 		//! \brief Fills the tables with to member roles of the editing role
 		void fillMembersTable(void);
 
 		//! \brief Show the specified role data on the specified table index at the specified row
 		void showRoleData(Role *role, unsigned table_id, unsigned row);
-
-		void hideEvent(QHideEvent *event);
 
 	public:
 		RoleWidget(QWidget * parent = 0);

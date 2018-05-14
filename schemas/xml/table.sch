@@ -9,6 +9,8 @@
   %if {sql-disabled} %then [ sql-disabled=] "true" %end
   %if {hide-ext-attribs} %then [ hide-ext-attribs=] "true" %end
   %if {faded-out} %then [ faded-out=] "true" %end
+  %if {rls-enabled} %then [ rls-enabled=] "true" %end
+  %if {rls-forced} %then [ rls-forced=] "true" %end
 > $br
 
  {schema}

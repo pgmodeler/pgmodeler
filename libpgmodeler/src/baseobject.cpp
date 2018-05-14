@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@
 #include "pgmodelerns.h"
 #include <QApplication>
 
+const QByteArray BaseObject::special_chars = QByteArray("'_-.@ $:()/<>+*\\=~!#%^&|?{}[]`;");
+
 /* CAUTION: If both amount and order of the enumerations are modified
 	 then the order and amount of the elements of this vector
 	 must also be modified */
@@ -30,7 +32,7 @@ QString BaseObject::objs_schemas[OBJECT_TYPE_COUNT]={
 	"sequence", "role", "conversion", "cast",
 	"language", "usertype", "tablespace",
 	"opfamily", "opclass", "database","collation",
-	"extension", "eventtrigger", "relationship",
+	"extension", "eventtrigger", "policy", "relationship",
 	"textbox",	"permission", "parameter", "typeattribute",
 	"tag", "genericsql", "relationship"
 };
@@ -44,9 +46,9 @@ QString BaseObject::obj_type_names[OBJECT_TYPE_COUNT]={
 	QT_TR_NOOP("Cast"), QT_TR_NOOP("Language"), QT_TR_NOOP("Type"), QT_TR_NOOP("Tablespace"),
 	QT_TR_NOOP("Operator Family"), QT_TR_NOOP("Operator Class"),
 	QT_TR_NOOP("Database"), QT_TR_NOOP("Collation"), QT_TR_NOOP("Extension"),
-	QT_TR_NOOP("Event Trigger"), QT_TR_NOOP("Relationship"),	QT_TR_NOOP("Textbox"),
-	QT_TR_NOOP("Permission"), QT_TR_NOOP("Parameter"), QT_TR_NOOP("Type Attribute"),
-	QT_TR_NOOP("Tag"), QT_TR_NOOP("Generic SQL"),  QT_TR_NOOP("Basic Relationship")
+	QT_TR_NOOP("Event Trigger"), QT_TR_NOOP("Policy"), QT_TR_NOOP("Relationship"),
+	QT_TR_NOOP("Textbox"), QT_TR_NOOP("Permission"), QT_TR_NOOP("Parameter"), QT_TR_NOOP("Type Attribute"),
+	QT_TR_NOOP("Tag"), QT_TR_NOOP("Generic SQL"),	QT_TR_NOOP("Basic Relationship")
 };
 
 QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
@@ -56,7 +58,7 @@ QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
 	QString("OPERATOR"), QString("SEQUENCE"), QString("ROLE"), QString("CONVERSION"),
 	QString("CAST"), QString("LANGUAGE"), QString("TYPE"), QString("TABLESPACE"),
 	QString("OPERATOR FAMILY"), QString("OPERATOR CLASS"), QString("DATABASE"),
-	QString("COLLATION"), QString("EXTENSION"), QString("EVENT TRIGGER")
+	QString("COLLATION"), QString("EXTENSION"), QString("EVENT TRIGGER"), QString("POLICY")
 };
 
 /* Initializes the global id which is shared between instances
@@ -159,26 +161,18 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 	if(!is_formated && (is_operator || isValidName(name)))
 	{
 		bool needs_fmt=false;
-		unsigned i, qtd;
+		unsigned i = 0, qtd = 0;
 
 		raw_name.append(name);
 
 		/* Checks if the name has some upper case letter. If its the
 		 case the name will be enclosed in quotes */
-		qtd=name.size();
-		needs_fmt=(!is_operator &&
-				 (name.indexOf('-')>=0 ||
-					name.indexOf('.')>=0 ||
-					name.indexOf('@')>=0 ||
-					name.indexOf(' ')>=0 ||
-					name.indexOf('$')>=0 ||
-					name.indexOf(':')>=0 ||
-					name.indexOf('(')>=0 ||
-					name.indexOf(')')>=0 ||
-					name.indexOf('/')>=0 ||
-					name.indexOf('\\')>=0 ||
-					name.contains(QRegExp("^[0-9]+"))));
+		needs_fmt = (!is_operator && name.contains(QRegExp("^[0-9]+")));
 
+		for(int idx = 0; idx < special_chars.size() && !needs_fmt; idx++)
+			needs_fmt = (!is_operator && special_chars.at(idx) != '_' && name.indexOf(special_chars.at(idx)) >= 0);
+
+		qtd=name.size();
 		i=0;
 		while(i < qtd && !needs_fmt)
 		{
@@ -234,7 +228,6 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 bool BaseObject::isValidName(const QString &name)
 {
 	QString aux_name=name;
-	QByteArray special_chars=QByteArray("_-.@ $:()/\\");
 
 	if(aux_name.contains(QRegExp("^(\")(.)+(\")$")))
 	{
@@ -275,7 +268,7 @@ bool BaseObject::isValidName(const QString &name)
 			chr=raw_name[i];
 
 			/* Validation of simple ASCI characters.
-				Checks if the name has the characters in the set [ a-z A-Z 0-9 _ . @ $ - : space ()] */
+				Checks if the name has the characters in the set [ a-z A-Z 0-9 _ . @ $ - : space () <>] */
 			if((chr >= 'a' && chr <='z') || (chr >= 'A' && chr <='Z') ||
 					(chr >= '0' && chr <='9') || special_chars.contains(chr))
 			{
@@ -450,7 +443,7 @@ bool BaseObject::acceptsAlterCommand(ObjectType obj_type)
 		   obj_type==OBJ_INDEX || obj_type==OBJ_ROLE ||
 		   obj_type==OBJ_SCHEMA || obj_type==OBJ_SEQUENCE ||
 		   obj_type==OBJ_TABLE || obj_type==OBJ_TABLESPACE ||
-		   obj_type==OBJ_TYPE);
+			 obj_type==OBJ_TYPE || obj_type==OBJ_POLICY);
 }
 
 bool BaseObject::acceptsDropCommand(ObjectType obj_type)
@@ -753,16 +746,10 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			else
 				attributes[ParsersAttributes::COMMENT]=comment;
 
-			if((def_type==SchemaParser::SQL_DEFINITION &&
-				obj_type!=OBJ_TABLESPACE &&
-				obj_type!=OBJ_DATABASE) ||
-					def_type==SchemaParser::XML_DEFINITION)
-			{
-				schparser.ignoreUnkownAttributes(true);
+			schparser.ignoreUnkownAttributes(true);
 
-				attributes[ParsersAttributes::COMMENT]=
-						schparser.getCodeDefinition(ParsersAttributes::COMMENT, attributes, def_type);
-			}
+			attributes[ParsersAttributes::COMMENT]=
+					schparser.getCodeDefinition(ParsersAttributes::COMMENT, attributes, def_type);
 		}
 
 		if(!appended_sql.isEmpty())
@@ -937,6 +924,7 @@ vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, vector<Object
 		vet_types.push_back(OBJ_TRIGGER);
 		vet_types.push_back(OBJ_RULE);
 		vet_types.push_back(OBJ_INDEX);
+		vet_types.push_back(OBJ_POLICY);
 	}
 
 	for(ObjectType type : exclude_types)
@@ -952,12 +940,12 @@ vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, vector<Object
 vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
 {
 	if(obj_type==OBJ_DATABASE)
-		return(vector<ObjectType>()={OBJ_CAST, OBJ_ROLE, OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_SCHEMA, OBJ_EVENT_TRIGGER});
+		return(vector<ObjectType>()={OBJ_CAST, OBJ_ROLE, OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_SCHEMA, OBJ_EXTENSION, OBJ_EVENT_TRIGGER});
 	else if(obj_type==OBJ_SCHEMA)
-		return(vector<ObjectType>()={OBJ_AGGREGATE, OBJ_CONVERSION, OBJ_COLLATION, OBJ_DOMAIN, OBJ_EXTENSION, OBJ_FUNCTION,
+		return(vector<ObjectType>()={OBJ_AGGREGATE, OBJ_CONVERSION, OBJ_COLLATION, OBJ_DOMAIN, OBJ_FUNCTION,
 									OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_SEQUENCE, OBJ_TYPE, OBJ_TABLE, OBJ_VIEW});
 	else if(obj_type==OBJ_TABLE)
-		return(vector<ObjectType>()={OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX});
+		return(vector<ObjectType>()={OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX, OBJ_POLICY});
 	else if(obj_type==OBJ_VIEW)
 		return(vector<ObjectType>()={OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX});
 	else

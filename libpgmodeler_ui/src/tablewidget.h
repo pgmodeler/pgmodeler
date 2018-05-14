@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,19 +27,19 @@
 
 #include "baseobjectwidget.h"
 #include "ui_tablewidget.h"
-#include "objecttablewidget.h"
+#include "objectstablewidget.h"
 #include "tableview.h"
 
 class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 	private:
 		Q_OBJECT
 
-		ObjectTableWidget *parent_tables;
+		ObjectsTableWidget *parent_tables;
 
 		ObjectSelectorWidget *tag_sel;
 
 		//! \brief Stores the objects tables used to handle columns, constraints, indexes, rules and triggers
-		map<ObjectType, ObjectTableWidget *> objects_tab_map;
+		map<ObjectType, ObjectsTableWidget *> objects_tab_map;
 
 		//! \brief Lists (on the correct object table) the table objects according to the specified type
 		void listObjects(ObjectType obj_type);
@@ -48,7 +48,7 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 		void showObjectData(TableObject *object, int row);
 
 		//! \brief Returns the object table according with the child type
-		ObjectTableWidget *getObjectTable(ObjectType obj_type);
+		ObjectsTableWidget *getObjectTable(ObjectType obj_type);
 
 		//! \brief Returns the object type according to the widget (in this case a object table) that called the method
 		ObjectType getObjectType(QObject *sender);
@@ -57,8 +57,6 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 				Class and ClassWidget should be compatible, e.g., "Column" can only be edited using ColumnWidget */
 		template<class Class, class ClassWidget>
 		int openEditingForm(TableObject *object);
-
-		void hideEvent(QHideEvent *event);
 
 	public:
 		TableWidget(QWidget * parent = 0);

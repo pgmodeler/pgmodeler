@@ -61,7 +61,8 @@
 <!ATTLIST widget regexp (false|true) "false">
 <!ATTLIST widget exact-match (false|true) "false">
 <!ATTLIST widget case-sensitive (false|true) "false">
-<!ATTLIST widget highlight-objects (false|true) "false">
+<!ATTLIST widget select-objects (false|true) "false">
+<!ATTLIST widget fadein-objects (false|true) "false">
 <!ATTLIST widget show-attributes-grid (false|true) "true">
 <!ATTLIST widget show-source-pane (false|true) "true">
 

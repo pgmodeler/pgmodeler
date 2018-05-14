@@ -531,9 +531,6 @@
               <height>22</height>
              </size>
             </property>
-            <property name="shortcut">
-             <string>Ctrl+X</string>
-            </property>
             <property name="popupMode">
              <enum>QToolButton::InstantPopup</enum>
             </property>
@@ -663,6 +660,43 @@
             </property>
             <property name="shortcut">
              <string>Del</string>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonIconOnly</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="bulkedit_tb">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="toolTip">
+             <string>Change the values of all selected cells at once</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../res/resources.qrc">
+              <normaloff>:/icones/icones/bulkedit.png</normaloff>:/icones/icones/bulkedit.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>22</width>
+              <height>22</height>
+             </size>
+            </property>
+            <property name="shortcut">
+             <string>Ctrl+E</string>
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonIconOnly</enum>
@@ -1422,10 +1456,13 @@
               <number>0</number>
              </property>
              <property name="maximum">
-              <number>999999</number>
+              <number>1000000</number>
+             </property>
+             <property name="singleStep">
+              <number>50</number>
              </property>
              <property name="value">
-              <number>500</number>
+              <number>1000</number>
              </property>
             </widget>
            </item>

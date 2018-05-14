@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -141,7 +141,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		main_menu,
 
-		sample_mdls_menu;
+		sample_mdls_menu,
+
+		arrange_menu;
 
 		//! \brief QMainWindow::closeEvent() overload: Saves the configurations before close the application
 		void closeEvent(QCloseEvent *event);

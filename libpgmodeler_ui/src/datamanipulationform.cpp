@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@
 #include "pgmodeleruins.h"
 #include "pgmodelerns.h"
 #include "plaintextitemdelegate.h"
+#include "baseform.h"
+#include "bulkdataeditwidget.h"
 
 const QColor DataManipulationForm::ROW_COLORS[3]={ QColor(QString("#C0FFC0")), QColor(QString("#FFFFC0")), QColor(QString("#FFC0C0"))  };
 const unsigned DataManipulationForm::NO_OPERATION=0;
@@ -114,6 +116,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(duplicate_tb, SIGNAL(clicked()), this, SLOT(duplicateRows()));
 	connect(undo_tb, SIGNAL(clicked()), this, SLOT(undoOperations()));
 	connect(save_tb, SIGNAL(clicked()), this, SLOT(saveChanges()));
+	connect(bulkedit_tb, SIGNAL(clicked()), this, SLOT(bulkDataEdit()));
 	connect(ord_columns_lst, SIGNAL(currentRowChanged(int)), this, SLOT(enableColumnControlButtons()));
 	connect(move_down_tb, SIGNAL(clicked()), this, SLOT(swapColumns()));
 	connect(move_up_tb, SIGNAL(clicked()), this, SLOT(swapColumns()));
@@ -160,6 +163,9 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 							act = item_menu.addAction(delete_tb->icon(), trUtf8("Delete row(s)"), this, SLOT(markDeleteOnRows()), delete_tb->shortcut());
 							act->setEnabled(delete_tb->isEnabled());
+
+							act = item_menu.addAction(bulkedit_tb->icon(), trUtf8("Edit cell(s)"), this, SLOT(bulkDataEdit()), bulkedit_tb->shortcut());
+							act->setEnabled(bulkedit_tb->isEnabled());
 						}
 
 						item_menu.exec(QCursor::pos());
@@ -214,6 +220,11 @@ void DataManipulationForm::setAttributes(Connection conn, const QString curr_sch
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+}
+
+void DataManipulationForm::setHasCsvClipboard(bool value)
+{
+	has_csv_clipboard = value;
 }
 
 void DataManipulationForm::listTables(void)
@@ -299,7 +310,7 @@ void DataManipulationForm::retrieveData(void)
 		unsigned limit=limit_spb->value();
 
 		//Building the where clause
-		if(!filter_txt->toPlainText().isEmpty())
+		if(!filter_txt->toPlainText().trimmed().isEmpty())
 			query+=QString(" WHERE ") + filter_txt->toPlainText();
 
 		//Building the order by clause
@@ -363,6 +374,9 @@ void DataManipulationForm::retrieveData(void)
 		paste_tb->setEnabled(!qApp->clipboard()->text().isEmpty() &&
 												 table_cmb->currentData().toUInt() == OBJ_TABLE &&
 												 !col_names.isEmpty());
+
+		code_compl_wgt->clearCustomItems();
+		code_compl_wgt->insertCustomItems(col_names, trUtf8("Column"), OBJ_COLUMN);
 	}
 	catch(Exception &e)
 	{
@@ -408,6 +422,7 @@ void DataManipulationForm::enableRowControlButtons(void)
 											 table_cmb->currentData().toUInt() == OBJ_TABLE  &&
 											 !col_names.isEmpty());
 	browse_tabs_tb->setEnabled((!fk_infos.empty() || !ref_fk_infos.empty()) && sel_ranges.count() == 1 && sel_ranges.at(0).rowCount() == 1);
+	bulkedit_tb->setEnabled(sel_ranges.count() != 0);
 }
 
 void DataManipulationForm::resetAdvancedControls(void)
@@ -958,7 +973,7 @@ void DataManipulationForm::markDeleteOnRows(void)
 	results_tbw->clearSelection();
 }
 
-void DataManipulationForm::addRow(void)
+void DataManipulationForm::addRow(bool focus_new_row)
 {
 	int row=results_tbw->rowCount();
 	QTableWidgetItem *item=nullptr;
@@ -984,15 +999,17 @@ void DataManipulationForm::addRow(void)
 
 	results_tbw->setVerticalHeaderItem(row, new QTableWidgetItem(QString::number(row + 1)));
 	results_tbw->blockSignals(false);
-	results_tbw->setFocus();
 
 	markOperationOnRow(OP_INSERT, row);
-
-	results_tbw->clearSelection();
 	item=results_tbw->item(row, 0);
-	results_tbw->setCurrentCell(row, 0, QItemSelectionModel::ClearAndSelect);
-	results_tbw->editItem(item);
 	hint_frm->setVisible(true);
+
+	if(focus_new_row)
+	{
+		results_tbw->setFocus();
+		results_tbw->setCurrentCell(row, 0, QItemSelectionModel::ClearAndSelect);
+		results_tbw->editItem(item);
+	}
 }
 
 void DataManipulationForm::duplicateRows(void)
@@ -1005,7 +1022,7 @@ void DataManipulationForm::duplicateRows(void)
 		{
 			for(int row=sel_rng.topRow(); row <= sel_rng.bottomRow(); row++)
 			{
-				addRow();
+				addRow(false);
 
 				for(int col=0; col < results_tbw->columnCount(); col++)
 				{
@@ -1014,6 +1031,8 @@ void DataManipulationForm::duplicateRows(void)
 				}
 			}
 		}
+
+		results_tbw->setCurrentItem(results_tbw->item(results_tbw->rowCount() - 1, 0), QItemSelectionModel::ClearAndSelect);
 	}
 }
 
@@ -1106,6 +1125,31 @@ void DataManipulationForm::browseTable(const QString &fk_name, bool browse_ref_t
 void DataManipulationForm::browseReferrerTable(void)
 {
 	browseTable(qobject_cast<QAction *>(sender())->data().toString(), true);
+}
+
+void DataManipulationForm::bulkDataEdit(void)
+{
+	BaseForm base_frm;
+	BulkDataEditWidget *bulkedit_wgt = new BulkDataEditWidget;
+
+	base_frm.setMainWidget(bulkedit_wgt);
+	base_frm.setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
+
+	if(base_frm.exec() == QDialog::Accepted)
+	{
+		QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
+
+		for(auto range : sel_ranges)
+		{
+			for(int row = range.topRow(); row <= range.bottomRow(); row++)
+			{
+				for(int col = range.leftColumn(); col <= range.rightColumn(); col++)
+				{
+					results_tbw->item(row, col)->setText(bulkedit_wgt->value_edt->toPlainText());
+				}
+			}
+		}
+	}
 }
 
 void DataManipulationForm::browseReferencedTable(void)
@@ -1256,6 +1300,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 	unsigned op_type=results_tbw->verticalHeaderItem(row)->data(Qt::UserRole).toUInt();
 	QStringList val_list, col_list, flt_list;
 	QString col_name, value;
+	QVariant data;
 
 	if(op_type==OP_DELETE || op_type==OP_UPDATE)
 	{
@@ -1272,8 +1317,12 @@ QString DataManipulationForm::getDMLCommand(int row)
 		//Creating the where clause with original column's values
 		for(QString pk_col : pk_col_names)
 		{
-			flt_list.push_back(QString("\"%1\"='%2'").arg(pk_col)
-								 .arg(results_tbw->item(row,  col_names.indexOf(pk_col))->data(Qt::UserRole).toString().replace("\'","''")));
+			data = results_tbw->item(row,  col_names.indexOf(pk_col))->data(Qt::UserRole);
+
+			if(data.toString() == SQLExecutionWidget::COLUMN_NULL_VALUE)
+				flt_list.push_back(QString("\"%1\" IS NULL").arg(pk_col));
+			else
+				flt_list.push_back(QString("\"%1\"='%2'").arg(pk_col).arg(data.toString().replace("\'","''")));
 		}
 	}
 

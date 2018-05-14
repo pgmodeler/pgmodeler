@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -148,9 +148,19 @@ QList<BaseObjectView *> SchemaView::getChildren(void)
 
 void SchemaView::togglePlaceholder(bool visible)
 {
-	//BaseObjectView::togglePlaceholder(visible);
 	for(auto &obj : getChildren())
 		obj->togglePlaceholder(visible);
+}
+
+void SchemaView::moveTo(QPointF new_pos)
+{
+	double dx=new_pos.x() - pos().x(),
+			dy=new_pos.y() - pos().y();
+
+	this->setPos(new_pos);
+
+	for(auto &child : children)
+		child->moveBy(dx, dy);
 }
 
 void SchemaView::configureObject(void)
@@ -223,7 +233,7 @@ void SchemaView::configureObject(void)
 		this->setFlag(ItemSendsGeometryChanges, true);
 
 		color=schema->getFillColor();
-		color.setAlpha(80);
+		color.setAlpha(OBJ_ALPHA_CHANNEL * 0.80);
 		box->setBrush(color);
 
 		color=QColor(color.red()/3,color.green()/3,color.blue()/3, 80);

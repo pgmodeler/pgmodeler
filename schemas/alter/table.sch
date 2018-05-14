@@ -6,20 +6,57 @@
 {alter-cmds}
 
 %if {has-changes} %then
-  ALTER $sp {sql-object} $sp {signature}
-  
+  %set {alter}   ALTER $sp {sql-object} $sp {signature}
+  %set {rls}     [ROW LEVEL SECURITY]
+  %set {ddl-end} ; $br [-- ddl-end --] $br
+
   %if {oids} %then
-    [ SET ]
-  
+    {alter} [ SET ]
+
     %if ({oids}=="unset") %then
       WITHOUT
     %else
       WITH
     %end
-  
+
     [ OIDS]
+    {ddl-end}
   %end
 
-  ; $br
-  [-- ddl-end --] $br
+  %if {unlogged} %then
+    {alter} [ SET ]
+
+    %if ({unlogged}=="unset") %then
+      [LOGGED]
+    %else
+      [UNLOGGED]
+    %end
+
+    {ddl-end}
+  %end
+
+  %if {rls-enabled} %then
+    {alter} 
+
+    %if ({rls-enabled}=="unset") %then
+      [ DISABLE ]
+    %else
+      [ ENABLE ]
+    %end
+
+    {rls}
+    {ddl-end}
+  %end
+
+  %if {rls-forced} %then
+    {alter}
+
+    %if ({rls-forced}=="unset") %then
+      [ NO]
+    %end
+
+    [ FORCE ] {rls}
+    {ddl-end}
+  %end
+
 %end

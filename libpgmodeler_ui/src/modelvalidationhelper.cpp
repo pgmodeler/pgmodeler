@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -46,7 +46,8 @@ ModelValidationHelper::~ModelValidationHelper(void)
 void ModelValidationHelper::generateValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> refs)
 {
 	if(!refs.empty() ||
-			(val_type==ValidationInfo::BROKEN_REL_CONFIG &&
+		 val_type==ValidationInfo::MISSING_EXTENSION ||
+		 (val_type==ValidationInfo::BROKEN_REL_CONFIG &&
 			 std::find(inv_rels.begin(), inv_rels.end(), object)==inv_rels.end()))
 	{
 		//Configures a validation info
@@ -71,7 +72,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 
 		//Resolving broken references by swaping the object ids
 		if(info.getValidationType()==ValidationInfo::BROKEN_REFERENCE ||
-				info.getValidationType()==ValidationInfo::SP_OBJ_BROKEN_REFERENCE)
+			 info.getValidationType()==ValidationInfo::SP_OBJ_BROKEN_REFERENCE)
 		{
 			BaseObject *info_obj=info.getObject(), *aux_obj=nullptr;
 			unsigned obj_id=info_obj->getObjectId();
@@ -190,6 +191,13 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 				refs.pop_back();
 			}
 		}
+		//Resolving the absence of postgis extension
+		else if(info.getValidationType()==ValidationInfo::MISSING_EXTENSION && !db_model->getExtension(QString("postgis")))
+		{
+			Extension *extension = new Extension();
+			extension->setName(QString("postgis"));
+			db_model->addExtension(extension);
+		}
 	}
 	catch(Exception &e)
 	{
@@ -274,13 +282,14 @@ void ModelValidationHelper::validateModel(void)
 		map<QString, vector<BaseObject *> > dup_objects;
 		map<QString, vector<BaseObject *> >::iterator mitr;
 		QString name, signal_msg=QString("`%1' (%2)");
+		bool postgis_exists = db_model->getObjectIndex(QString("postgis"), OBJ_EXTENSION) >= 0;
 
 		warn_count=error_count=progress=0;
 		val_infos.clear();
 		valid_canceled=false;
 
 		/* Step 1: Validating broken references. This situation happens when a object references another
-	   whose id is smaller than the id of the first one. */
+		 which id is smaller than the id of the first one. */
 		for(i=0; i < count && !valid_canceled; i++)
 		{
 			obj_list=db_model->getObjectList(types[i]);
@@ -508,8 +517,31 @@ void ModelValidationHelper::validateModel(void)
 			i++; mitr++;
 		}
 
+		// Step 3: Checking if columns of any table is using GiS data types and the postgis extension is not created.
+		if(!postgis_exists)
+		{
+			obj_list=db_model->getObjectList(OBJ_TABLE);
+			itr=obj_list->begin();
+			i=0;
 
-		/* Step 3: Checking if there are some invalidated relationship. In some cases, specially with identifier and generalization relationships,
+			while(itr!=obj_list->end() && !valid_canceled)
+			{
+				table = dynamic_cast<Table *>(*itr);
+				itr++;
+
+				for(auto &obj : *table->getObjectList(OBJ_COLUMN))
+				{
+					col = dynamic_cast<Column *>(obj);
+
+					if(col->getType().isGiSType())
+						generateValidationInfo(ValidationInfo::MISSING_EXTENSION, col, {});
+				}
+
+				progress=30 + ((i/static_cast<float>(obj_list->size()))*20);
+			}
+		}
+
+		/* Step 4: Checking if there are some invalidated relationship. In some cases, specially with identifier and generalization relationships,
 	   the columns aren't correctly propagated due to creation order and special behavior of those objects. Thus, in order to
 	   keep all columns synchonized it is need to make this step and change the relationship creation order if needed. This step is executed
 	   only when there is no validation infos generated because for each broken relationship there is the need to do a revalidation of all relationships */
@@ -520,7 +552,7 @@ void ModelValidationHelper::validateModel(void)
 
 			while(itr!=obj_list->end() && !valid_canceled)
 			{
-				progress=30 + ((i/static_cast<float>(obj_list->size()))*20);
+				progress=40 + ((i/static_cast<float>(obj_list->size()))*20);
 
 				if(dynamic_cast<Relationship *>(*itr)->isInvalidated())
 					generateValidationInfo(ValidationInfo::BROKEN_REL_CONFIG, *itr, {});
@@ -528,7 +560,6 @@ void ModelValidationHelper::validateModel(void)
 				itr++;
 			}
 		}
-
 
 		if(!valid_canceled && !fix_mode)
 		{
@@ -575,8 +606,9 @@ void ModelValidationHelper::applyFixes(void)
 			{
 				if(!validate_rels)
 					validate_rels=(val_infos[i].getValidationType()==ValidationInfo::BROKEN_REFERENCE ||
-								   val_infos[i].getValidationType()==ValidationInfo::SP_OBJ_BROKEN_REFERENCE ||
-								   val_infos[i].getValidationType()==ValidationInfo::NO_UNIQUE_NAME);
+												 val_infos[i].getValidationType()==ValidationInfo::SP_OBJ_BROKEN_REFERENCE ||
+												 val_infos[i].getValidationType()==ValidationInfo::NO_UNIQUE_NAME ||
+												 val_infos[i].getValidationType()==ValidationInfo::MISSING_EXTENSION);
 
 				/* Checking if a broken relatinship is found, when this is the case all the pending validation info
 		   will not be analyzed until no broken relationship is found */

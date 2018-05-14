@@ -26,15 +26,8 @@
  $br $tb [NOT NULL]
 %end
 
-%if {expression} %then
-
- $br $tb
-
- %if {constraint} %then
-   [CONSTRAINT ] {constraint} $sp
- %end
-
- [CHECK ] ({expression})
+%if {constraints} %then
+  {constraints}
 %end
 
 ;$br

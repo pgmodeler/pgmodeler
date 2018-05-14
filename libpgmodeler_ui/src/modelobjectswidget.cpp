@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 	cancel_tb->setVisible(simplified_view);
 	options_tb->setVisible(!simplified_view);
 	visibleobjects_grp->setVisible(false);
+	filter_wgt->setVisible(simplified_view);
 
 	selected_object=nullptr;
 	splitter->handle(1)->setEnabled(false);
@@ -380,6 +381,7 @@ void ModelObjectsWidget::changeObjectsView(void)
 	}
 	else if(sender()==options_tb)
 	{
+		filter_wgt->setVisible(options_tb->isChecked());
 		visibleobjects_grp->setVisible(options_tb->isChecked());
 		splitter->handle(1)->setEnabled(options_tb->isChecked());
 
@@ -459,17 +461,17 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 {
 	if(db_model && visible_objs_map[OBJ_SCHEMA])
 	{
-		BaseObject *object=nullptr, *schema=nullptr;
+		BaseObject *schema=nullptr;
 		vector<BaseObject *> obj_list;
 		QFont font;
 		QTreeWidgetItem *item=nullptr, *item1=nullptr, *item2=nullptr, *item3=nullptr;
-		ObjectType types[]={ OBJ_FUNCTION, OBJ_AGGREGATE,
-							 OBJ_DOMAIN, OBJ_TYPE, OBJ_CONVERSION,
-							 OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_OPCLASS,
-							 OBJ_SEQUENCE, OBJ_COLLATION, OBJ_EXTENSION };
-		int count, count2, type_cnt=sizeof(types)/sizeof(ObjectType), i, i1, i2;
-
+		vector<ObjectType> types = BaseObject::getChildObjectTypes(OBJ_SCHEMA);
+		int count, count2, i;
 		QPixmap group_icon=QPixmap(PgModelerUiNS::getIconPath(QString(BaseObject::getSchemaName(OBJ_SCHEMA)) + QString("_grp")));
+
+		//Removing the OBJ_TABLE and OBJ_VIEW types since they are handled separetedly
+		types.erase(std::find(types.begin(), types.end(), OBJ_TABLE));
+		types.erase(std::find(types.begin(), types.end(), OBJ_VIEW));
 
 		//Get the current schema count on database
 		count=(db_model->getObjectCount(OBJ_SCHEMA));
@@ -478,8 +480,7 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 		item->setData(1, Qt::UserRole, QVariant::fromValue<unsigned>(OBJ_SCHEMA));
 
 		//Create the schema group item
-		item->setText(0,BaseObject::getTypeName(OBJ_SCHEMA) +
-					  QString(" (%1)").arg(count));
+		item->setText(0, QString("%1 (%2)").arg(BaseObject::getTypeName(OBJ_SCHEMA)).arg(count));
 		font=item->font(0);
 		font.setItalic(true);
 		item->setFont(0, font);
@@ -497,7 +498,7 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 				}
 				else
 				{
-					schema=db_model->getObject(i,OBJ_SCHEMA);
+					schema=db_model->getObject(i, OBJ_SCHEMA);
 					item2=createItemForObject(schema, item);
 				}
 
@@ -508,31 +509,26 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 				updateViewTree(item2, schema);
 
 				//Creates the object group at schema level (function, domain, sequences, etc)
-				for(i1=0; i1 < type_cnt; i1++)
+				for(auto type : types)
 				{
-					if(visible_objs_map[types[i1]])
+					if(visible_objs_map[type])
 					{
 						item3=new QTreeWidgetItem(item2);
-						item3->setIcon(0,QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(types[i1]) + QString("_grp"))));
+						item3->setIcon(0,QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))));
 
 						//Get the objects that belongs to the current schema
-						obj_list=db_model->getObjects(types[i1], schema);
+						obj_list=db_model->getObjects(type, schema);
 
 						count2=obj_list.size();
-						item3->setText(0,
-									   BaseObject::getTypeName(types[i1]) +
-									   QString(" (%1)").arg(count2));
-						item3->setData(1, Qt::UserRole, QVariant::fromValue<unsigned>(types[i1]));
+						item3->setText(0, QString("%1 (%2)").arg(BaseObject::getTypeName(type)).arg(count2));
+						item3->setData(1, Qt::UserRole, QVariant::fromValue<unsigned>(type));
 
 						font=item3->font(0);
 						font.setItalic(true);
 						item3->setFont(0, font);
 
-						for(i2=0; i2 < count2; i2++)
-						{
-							object=obj_list[i2];
-							createItemForObject(object, item3);
-						}
+						for(auto obj : obj_list)
+							createItemForObject(obj, item3);
 					}
 				}
 			}
@@ -548,14 +544,11 @@ void ModelObjectsWidget::updateTableTree(QTreeWidgetItem *root, BaseObject *sche
 {
 	if(db_model && visible_objs_map[OBJ_TABLE])
 	{
-		BaseObject *object=nullptr;
 		vector<BaseObject *> obj_list;
 		Table *table=nullptr;
 		QTreeWidgetItem *item=nullptr, *item1=nullptr, *item2=nullptr;
 		QFont font;
-		ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE,
-												 OBJ_TRIGGER, OBJ_INDEX };
-		int count, count1, type_cnt=sizeof(types)/sizeof(ObjectType), i, i1, i2;
+		vector<ObjectType> types = BaseObject::getChildObjectTypes(OBJ_TABLE);
 		QPixmap group_icon=QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(OBJ_TABLE) + QString("_grp")));
 
 		try
@@ -574,32 +567,26 @@ void ModelObjectsWidget::updateTableTree(QTreeWidgetItem *root, BaseObject *sche
 			font.setItalic(true);
 			item->setFont(0, font);
 
-			count=obj_list.size();
-			for(i=0; i < count; i++)
+			for(auto obj : obj_list)
 			{
-				table=dynamic_cast<Table *>(obj_list[i]);
+				table=dynamic_cast<Table *>(obj);
 				item1=createItemForObject(table, item);
 
 				//Creating the group for the child objects (column, rules, triggers, indexes and constraints)
-				for(i1=0; i1 < type_cnt; i1++)
+				for(auto type : types)
 				{
-					if(visible_objs_map[types[i1]])
+					if(visible_objs_map[type])
 					{
 						item2=new QTreeWidgetItem(item1);
-						item2->setIcon(0,QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(types[i1]) + QString("_grp"))));
+						item2->setIcon(0,QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))));
 						font=item2->font(0);
 						font.setItalic(true);
 						item2->setFont(0, font);
 
-						count1=table->getObjectCount(types[i1]);
-						item2->setText(0,BaseObject::getTypeName(types[i1]) +
-									   QString(" (%1)").arg(count1));
+						item2->setText(0, QString("%1 (%2)").arg(BaseObject::getTypeName(type)).arg(table->getObjectCount(type)));
 
-						for(i2=0; i2 < count1; i2++)
-						{
-							object=table->getObject(i2,types[i1]);
-							createItemForObject(object, item2);
-						}
+						for(auto tab_obj : *table->getObjectList(type))
+							createItemForObject(tab_obj, item2);
 					}
 				}
 			}
@@ -720,7 +707,8 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 		vector<BaseObject *> ref_list, tree_state, obj_list;
 		ObjectType types[]={ OBJ_ROLE, OBJ_TABLESPACE,
 							 OBJ_LANGUAGE, OBJ_CAST, OBJ_TEXTBOX,
-							 OBJ_RELATIONSHIP, OBJ_EVENT_TRIGGER, OBJ_TAG, OBJ_GENERIC_SQL };
+							 OBJ_RELATIONSHIP, OBJ_EVENT_TRIGGER,
+							 OBJ_TAG, OBJ_GENERIC_SQL, OBJ_EXTENSION };
 		unsigned count, i, i1, type_cnt=sizeof(types)/sizeof(ObjectType);
 
 		try

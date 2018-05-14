@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 {
 	try
 	{
-		ObjectTableWidget *tab=nullptr;
+		ObjectsTableWidget *tab=nullptr;
 		ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX };
 		QGridLayout *grid=nullptr;
 		QVBoxLayout *vbox=nullptr;
@@ -64,12 +64,12 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		column_sel=new ObjectSelectorWidget(OBJ_COLUMN, true, this);
 		column_sel->enableObjectCreation(false);
 
-		references_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
+		references_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS, true, this);
 		references_tab->setColumnCount(4);
 		references_tab->setHeaderLabel(trUtf8("Col./Expr."),0);
 		references_tab->setHeaderLabel(trUtf8("Alias"),1);
 		references_tab->setHeaderLabel(trUtf8("Alias Col."),2);
-		references_tab->setHeaderLabel(trUtf8("Flags: SF FW AW VD"),3);
+		references_tab->setHeaderLabel(trUtf8("Flags: SF FW AW EX VD"),3);
 
 		cte_expression_cp=new CodeCompletionWidget(cte_expression_txt, true);
 		expression_cp=new CodeCompletionWidget(expression_txt, true);
@@ -84,8 +84,8 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		//Configuring the table objects that stores the triggers and rules
 		for(unsigned i=0, tab_id=1; i < sizeof(types)/sizeof(ObjectType); i++, tab_id++)
 		{
-			tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-									  (ObjectTableWidget::UPDATE_BUTTON  | ObjectTableWidget::MOVE_BUTTONS), true, this);
+			tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
+									  (ObjectsTableWidget::UPDATE_BUTTON  | ObjectsTableWidget::MOVE_BUTTONS), true, this);
 
 			objects_tab_map[types[i]]=tab;
 
@@ -172,7 +172,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 	}
 }
 
-ObjectTableWidget *ViewWidget::getObjectTable(ObjectType obj_type)
+ObjectsTableWidget *ViewWidget::getObjectTable(ObjectType obj_type)
 {
 	if(objects_tab_map.count(obj_type) > 0)
 		return(objects_tab_map[obj_type]);
@@ -197,7 +197,7 @@ void ViewWidget::handleObject(void)
 {
 	ObjectType obj_type=BASE_OBJECT;
 	TableObject *object=nullptr;
-	ObjectTableWidget *obj_table=nullptr;
+	ObjectsTableWidget *obj_table=nullptr;
 
 	try
 	{
@@ -227,7 +227,7 @@ void ViewWidget::duplicateObject(int curr_row, int new_row)
 {
 	ObjectType obj_type=BASE_OBJECT;
 	BaseObject *object=nullptr, *dup_object=nullptr;
-	ObjectTableWidget *obj_table=nullptr;
+	ObjectsTableWidget *obj_table=nullptr;
 	View *view = dynamic_cast<View *>(this->object);
 	int op_id = -1;
 
@@ -332,7 +332,7 @@ ObjectType ViewWidget::getObjectType(QObject *sender)
 
 	if(sender)
 	{
-		map<ObjectType, ObjectTableWidget *>::iterator itr, itr_end;
+		map<ObjectType, ObjectsTableWidget *>::iterator itr, itr_end;
 
 		itr=objects_tab_map.begin();
 		itr_end=objects_tab_map.end();
@@ -351,7 +351,7 @@ ObjectType ViewWidget::getObjectType(QObject *sender)
 
 void ViewWidget::showObjectData(TableObject *object, int row)
 {
-	ObjectTableWidget *tab=nullptr;
+	ObjectsTableWidget *tab=nullptr;
 	Trigger *trigger=nullptr;
 	Rule *rule=nullptr;
 	Index *index=nullptr;
@@ -412,7 +412,7 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 
 void ViewWidget::listObjects(ObjectType obj_type)
 {
-	ObjectTableWidget *tab=nullptr;
+	ObjectsTableWidget *tab=nullptr;
 	unsigned count, i;
 	View *view=nullptr;
 
@@ -438,30 +438,6 @@ void ViewWidget::listObjects(ObjectType obj_type)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
-}
-
-void ViewWidget::hideEvent(QHideEvent *evento)
-{
-	//View *view=dynamic_cast<View *>(this->object);
-	ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE };
-
-	references_tab->removeRows();
-	tabWidget->setCurrentIndex(0);
-	cte_expression_txt->clear();
-
-	clearReferenceForm();
-
-	for(unsigned i=0; i < sizeof(types)/sizeof(ObjectType); i++)
-	{
-		objects_tab_map[types[i]]->blockSignals(true);
-		objects_tab_map[types[i]]->removeRows();
-		objects_tab_map[types[i]]->blockSignals(false);
-	}
-
-	if(this->new_object)// && !view->isModified())
-		this->cancelConfiguration();
-
-	BaseObjectWidget::hideEvent(evento);
 }
 
 void ViewWidget::clearReferenceForm(void)
@@ -510,24 +486,21 @@ void ViewWidget::handleReference(int ref_idx)
 		if(static_cast<unsigned>(ref_type_cmb->currentIndex())==Reference::REFER_COLUMN)
 		{
 			ref=Reference(dynamic_cast<Table *>(table_sel->getSelectedObject()),
-						  dynamic_cast<Column *>(column_sel->getSelectedObject()),
-						  tab_alias_edt->text().toUtf8(), col_alias_edt->text().toUtf8());
+										dynamic_cast<Column *>(column_sel->getSelectedObject()),
+										tab_alias_edt->text().toUtf8(), col_alias_edt->text().toUtf8());
 		}
 		//Creating a reference to an expression
 		else
 		{
-			ref=Reference(expression_txt->toPlainText(),
-						  expr_alias_edt->text().toUtf8());
+			ref=Reference(expression_txt->toPlainText(), expr_alias_edt->text().toUtf8());
 		}
 
 		/* The reference must have an SQL application (be between SELECT-FROM, FROM-WHERE or after WHERE),
 			 if the user do not check some of these attributes raises an error */
-		if(!select_from_chk->isChecked() &&
-				!from_where_chk->isChecked() &&
-				!after_where_chk->isChecked() &&
+		if(!select_from_chk->isChecked() &&	!from_where_chk->isChecked() &&
+				!after_where_chk->isChecked() && !end_expr_chk->isChecked() &&
 				!view_def_chk->isChecked())
 			throw Exception(ERR_SQL_SCOPE_INV_VIEW_REF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
 
 		if(view_def_chk->isChecked())
 		{
@@ -537,7 +510,7 @@ void ViewWidget::handleReference(int ref_idx)
 		}
 
 		showReferenceData(ref, select_from_chk->isChecked(), from_where_chk->isChecked(),
-						  after_where_chk->isChecked(), view_def_chk->isChecked() ,ref_idx);
+											after_where_chk->isChecked(), end_expr_chk->isChecked(), view_def_chk->isChecked() ,ref_idx);
 
 		clearReferenceForm();
 		references_tab->clearSelection();
@@ -580,7 +553,8 @@ void ViewWidget::editReference(int ref_idx)
 	select_from_chk->setChecked(str_aux[0]=='1');
 	from_where_chk->setChecked(str_aux[1]=='1');
 	after_where_chk->setChecked(str_aux[2]=='1');
-	view_def_chk->setChecked(str_aux[3]=='1');
+	end_expr_chk->setChecked(str_aux[3]=='1');
+	view_def_chk->setChecked(str_aux[4]=='1');
 }
 
 void ViewWidget::showObjectName(void)
@@ -613,7 +587,7 @@ void ViewWidget::showObjectName(void)
 	}
 }
 
-void ViewWidget::showReferenceData(Reference refer, bool selec_from, bool from_where, bool after_where, bool view_def, unsigned row)
+void ViewWidget::showReferenceData(Reference refer, bool selec_from, bool from_where, bool after_where, bool end_expr, bool view_def, unsigned row)
 {
 	Table *tab=nullptr;
 	Column *col=nullptr;
@@ -648,6 +622,7 @@ void ViewWidget::showReferenceData(Reference refer, bool selec_from, bool from_w
 	str_aux+=(selec_from ? QString("1") : QString("0"));
 	str_aux+=(from_where ? QString("1") : QString("0"));
 	str_aux+=(after_where ? QString("1") : QString("0"));
+	str_aux+=(end_expr ? QString("1") : QString("0"));
 	str_aux+=(view_def ? QString("1") : QString("0"));
 	references_tab->setCellText(str_aux,row,3);
 
@@ -665,10 +640,12 @@ void ViewWidget::updateCodePreview(void)
 			Reference refer;
 			QString str_aux;
 			TableObject *tab_obj=nullptr;
-			map<ObjectType, ObjectTableWidget *>::iterator itr, itr_end;
-			unsigned i, count, i1, expr_type[]={Reference::SQL_REFER_SELECT,
+			map<ObjectType, ObjectsTableWidget *>::iterator itr, itr_end;
+			unsigned i, count, i1, expr_type[]={
+												Reference::SQL_REFER_SELECT,
 												Reference::SQL_REFER_FROM,
 												Reference::SQL_REFER_WHERE,
+												Reference::SQL_REFER_END_EXPR,
 												Reference::SQL_VIEW_DEFINITION};
 
 			aux_view.BaseObject::setName(name_edt->text().toUtf8());
@@ -739,7 +716,7 @@ void ViewWidget::updateCodePreview(void)
 void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, View *view, double px, double py)
 {
 	unsigned i, count;
-	bool sel_from, from_where, after_where, view_def;
+	bool sel_from = false, from_where = false, after_where = false, view_def = false, end_expr = false;
 	Reference refer;
 
 	if(!view)
@@ -785,9 +762,10 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 		sel_from=(view->getReferenceIndex(refer,Reference::SQL_REFER_SELECT) >= 0);
 		from_where=(view->getReferenceIndex(refer,Reference::SQL_REFER_FROM) >= 0);
 		after_where=(view->getReferenceIndex(refer,Reference::SQL_REFER_WHERE)>= 0);
+		end_expr=(view->getReferenceIndex(refer,Reference::SQL_REFER_END_EXPR)>= 0);
 		view_def=(view->getReferenceIndex(refer,Reference::SQL_VIEW_DEFINITION)>= 0);
 
-		showReferenceData(refer, sel_from, from_where, after_where, view_def, i);
+		showReferenceData(refer, sel_from, from_where, after_where, end_expr, view_def, i);
 	}
 
 	references_tab->blockSignals(false);
@@ -805,9 +783,10 @@ void ViewWidget::applyConfiguration(void)
 		View *view=nullptr;
 		ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX };
 		unsigned expr_type[]={ Reference::SQL_REFER_SELECT,
-							   Reference::SQL_REFER_FROM,
-							   Reference::SQL_REFER_WHERE,
-							   Reference::SQL_VIEW_DEFINITION};
+													 Reference::SQL_REFER_FROM,
+													 Reference::SQL_REFER_WHERE,
+													 Reference::SQL_REFER_END_EXPR,
+													 Reference::SQL_VIEW_DEFINITION};
 		Reference refer;
 		QString str_aux;
 

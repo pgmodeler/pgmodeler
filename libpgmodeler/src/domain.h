@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,12 +31,8 @@
 
 class Domain: public BaseObject{
 	private:
-		//! \brief Constraint name used by the domain
-		QString constraint_name,
-		//! \brief Validation expression used by domain (check) constraint
-		expression,
 		//! \brief Domain default data type value
-		default_value;
+		QString default_value;
 
 		//! \brief Indicates that the domains accepts null values or not
 		bool not_null;
@@ -44,14 +40,17 @@ class Domain: public BaseObject{
 		//! \brief Domain data type
 		PgSQLType type;
 
+		//! \brief Store the check constraint expressions (key:name value:expression)
+		attribs_map chk_constrs;
+
 	public:
 		Domain(void);
 
-		//! \brief Sets the domain's constraint name
-		void setConstraintName(const QString &constr_name);
+		void addCheckConstraint(const QString &name, const QString &expr);
 
-		//! \brief Sets the check expression of the domain
-		void setExpression(const QString &expr);
+		void removeCheckConstraints(void);
+
+		attribs_map getCheckConstraints(void);
 
 		//! \brief Sets the default value of the domain
 		void setDefaultValue(const QString &default_val);

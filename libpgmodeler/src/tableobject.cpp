@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ bool  TableObject::isDeclaredInTable(void)
 bool TableObject::isTableObject(ObjectType type)
 {
 	return(type==OBJ_COLUMN || type==OBJ_CONSTRAINT || type==OBJ_TRIGGER ||
-		   type==OBJ_RULE || type==OBJ_INDEX);
+			 type==OBJ_RULE || type==OBJ_INDEX || type==OBJ_POLICY);
 }
 
 void TableObject::operator = (TableObject &object)

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 	if(handle_ext_files)
 	{
 		QPalette pal;
-		QHBoxLayout *hbox = new QHBoxLayout;
+		QHBoxLayout *hbox = new QHBoxLayout, *hbox1 = new QHBoxLayout;
 		QFont font = this->font();
 
 		font.setPointSizeF(font.pointSizeF() * 0.95f);
@@ -56,13 +56,31 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		top_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
 		hbox->setContentsMargins(2,2,2,2);
+		hbox1->setContentsMargins(0,0,0,0);
+
+		QLabel *ico = new QLabel(this);
+		msg_lbl = new QLabel(this);
+		msg_lbl->setTextInteractionFlags(Qt::TextSelectableByMouse);
+
+		ico->setMaximumSize(22,22);
+		ico->setPixmap(QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")));
+		ico->setScaledContents(true);
+
+		editor_alert_wgt = new QWidget(this);
+		editor_alert_wgt->setFont(font);
+		hbox1->addWidget(ico);
+		hbox1->addWidget(msg_lbl);
+		editor_alert_wgt->setLayout(hbox1);
+		editor_alert_wgt->setVisible(false);
+
+		hbox->addWidget(editor_alert_wgt);
 		hbox->addSpacerItem(new QSpacerItem(10,10, QSizePolicy::Expanding));
 
 		load_file_btn = new QToolButton(top_widget);
 		load_file_btn->setIcon(QPixmap(PgModelerUiNS::getIconPath("abrir")));
 		load_file_btn->setIconSize(QSize(16,16));
 		load_file_btn->setAutoRaise(true);
-		load_file_btn->setText(trUtf8("Load file"));
+		load_file_btn->setText(trUtf8("Load"));
 		load_file_btn->setToolTip(trUtf8("Load the object's source code from an external file"));
 		load_file_btn->setFont(font);
 		load_file_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
@@ -73,7 +91,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		edit_src_btn->setIcon(QPixmap(PgModelerUiNS::getIconPath("editar")));
 		edit_src_btn->setIconSize(QSize(16,16));
 		edit_src_btn->setAutoRaise(true);
-		edit_src_btn->setText(trUtf8("Edit source"));
+		edit_src_btn->setText(trUtf8("Edit"));
 		edit_src_btn->setToolTip(trUtf8("Edit the source code in the preferred external editor"));
 		edit_src_btn->setFont(font);
 		edit_src_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
@@ -121,6 +139,7 @@ NumberedTextEditor::~NumberedTextEditor(void)
 		disconnect(&src_editor_proc, nullptr, this, nullptr);
 		src_editor_proc.terminate();
 		src_editor_proc.waitForFinished();
+		QFile(tmp_src_file.fileName()).remove();
 	}
 }
 
@@ -338,15 +357,6 @@ void NumberedTextEditor::loadFile(void)
 
 void NumberedTextEditor::editSource(void)
 {
-	//If the editor process is already running we block a second try to start the editor process
-	if(src_editor_proc.state() != QProcess::NotRunning)
-	{
-		Messagebox msg_box;
-		msg_box.show(PgModelerUiNS::formatMessage(trUtf8("The source code is currently being edited in the application `%1' (pid: %2)! Only one instance of the source code editor application is allowed.")
-																							.arg(src_editor_proc.program()).arg(src_editor_proc.processId())), Messagebox::ALERT_ICON);
-		return;
-	}
-
 	QByteArray buffer;
 	QFile input;
 
@@ -368,11 +378,29 @@ void NumberedTextEditor::editSource(void)
 	src_editor_proc.setProgram(NumberedTextEditor::src_editor_app);
 	src_editor_proc.setArguments({ src_editor_app_args, tmp_src_file.fileName() });
 	src_editor_proc.start();
+
+	src_editor_proc.waitForStarted();
+	if(src_editor_proc.state() == QProcess::Running)
+	{
+		msg_lbl->setText(PgModelerUiNS::formatMessage(trUtf8("The source editor `%1' is running on `pid: %2'.")
+																									.arg(src_editor_proc.program()).arg(src_editor_proc.processId())));
+		editor_alert_wgt->setVisible(true);
+		load_file_btn->setEnabled(false);
+		edit_src_btn->setEnabled(false);
+		clear_btn->setEnabled(false);
+		this->setReadOnly(true);
+	}
 }
 
 void NumberedTextEditor::updateSource(void)
 {
 	QFile input(tmp_src_file.fileName());
+
+	editor_alert_wgt->setVisible(false);
+	load_file_btn->setEnabled(true);
+	edit_src_btn->setEnabled(true);
+	clear_btn->setEnabled(!this->toPlainText().isEmpty());
+	this->setReadOnly(false);
 
 	if(!input.open(QFile::ReadOnly))
 		throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED)

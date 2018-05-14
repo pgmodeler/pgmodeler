@@ -25,7 +25,7 @@
 	     dm.typbasetype AS type, ]
 
 	#TODO: Discover which field is the acl for domain on PgSQL 9.0 and 9.1
-				%if ({pgsql-ver} <=f "9.1") %then
+	%if ({pgsql-ver} <=f "9.1") %then
 	 [ NULL AS permission, NULL AS collation, ]
 	%else
 	 [ dm.typacl AS permission, dm.typcollation AS collation, ]
@@ -37,20 +37,20 @@
 	  END AS length,
 
 	  CASE
-						WHEN _dm1.numeric_precision_radix IS NOT NULL THEN _dm1.numeric_scale ] %if ({pgsql-ver} <=f "9.1") %then [::varchar] %end
-				[   WHEN _dm1.datetime_precision IS NOT NULL THEN _dm1.datetime_precision ] %if ({pgsql-ver} <=f "9.1") %then [::varchar] %end
-				[   WHEN _dm1.interval_precision IS NOT NULL THEN _dm1.interval_precision ] %if ({pgsql-ver} <=f "9.1") %then [::varchar] %end
+		WHEN _dm1.numeric_precision_radix IS NOT NULL THEN _dm1.numeric_scale ] %if ({pgsql-ver} <=f "9.1") %then [::varchar] %end
+		[   WHEN _dm1.datetime_precision IS NOT NULL THEN _dm1.datetime_precision ] %if ({pgsql-ver} <=f "9.1") %then [::varchar] %end
+		[   WHEN _dm1.interval_precision IS NOT NULL THEN _dm1.interval_precision ] %if ({pgsql-ver} <=f "9.1") %then [::varchar] %end
 	[   ELSE NULL
 	 END AS precision,
 
 	  dm.typnotnull AS not_null_bool,
 	  _dm1.interval_type, _dm1.domain_default AS default_value,
-	  cn.conname AS constraint, cn.consrc AS expression, ]
+	  (select array_agg(conname || ':' || consrc) from pg_constraint where contypid = dm.oid) as constraints,
+	]
 
       ({comment}) [ AS comment ]
 
       [ FROM pg_type AS dm
-	LEFT JOIN pg_constraint AS cn ON cn.contypid=dm.oid
         LEFT JOIN information_schema.domains AS _dm1 ON dm.typname=_dm1.domain_name
         WHERE dm.typrelid=0 ]
 

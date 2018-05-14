@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ based upon the code editor example provided by Qt
 #include <QToolButton>
 #include <QTemporaryFile>
 #include <QProcess>
+#include <QLabel>
 #include "linenumberswidget.h"
 
 class NumberedTextEditor : public QPlainTextEdit {
@@ -62,7 +63,11 @@ class NumberedTextEditor : public QPlainTextEdit {
 		//! \brief Indicates if the text editor can handle external files
 		bool handle_ext_files;
 
-		QWidget *top_widget;
+		QWidget *top_widget,
+
+		*editor_alert_wgt;
+
+		QLabel *msg_lbl;
 
 		QToolButton *load_file_btn, *edit_src_btn, *clear_btn;
 

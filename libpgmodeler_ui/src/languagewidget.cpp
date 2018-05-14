@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -47,21 +47,12 @@ LanguageWidget::LanguageWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_LA
 
 		configureTabOrder({ trusted_chk, func_handler_sel, func_validator_sel, func_inline_sel });
 
-		setMinimumSize(600, 380);
+		setMinimumSize(600, 420);
 	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
-}
-
-void LanguageWidget::hideEvent(QHideEvent *event)
-{
-	func_handler_sel->clearSelector();
-	func_validator_sel->clearSelector();
-	func_inline_sel->clearSelector();
-	trusted_chk->setChecked(false);
-	BaseObjectWidget::hideEvent(event);
 }
 
 void LanguageWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Language *language)

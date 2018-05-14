@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 #include "baseobjectwidget.h"
 #include "ui_aggregatewidget.h"
 #include "pgsqltypewidget.h"
-#include "objecttablewidget.h"
+#include "objectstablewidget.h"
 
 class AggregateWidget: public BaseObjectWidget, public Ui::AggregateWidget {
 	private:
@@ -44,7 +44,7 @@ class AggregateWidget: public BaseObjectWidget, public Ui::AggregateWidget {
 		/*! \brief Table that stores the multiple input data types. The elements
 		in this table are converted to class PgSQLType and assigned as input types
 		to the aggregat */
-		ObjectTableWidget *input_types_tab;
+		ObjectsTableWidget *input_types_tab;
 		
 		//! \brief Syntax highlighter used by the initial condition field
 		SyntaxHighlighter *initial_cond_hl;
@@ -59,7 +59,6 @@ class AggregateWidget: public BaseObjectWidget, public Ui::AggregateWidget {
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Aggregate *aggregate);
 		
 	private slots:
-		void hideEvent(QHideEvent *event);
 		void handleDataType(int row);
 		
 	public slots:

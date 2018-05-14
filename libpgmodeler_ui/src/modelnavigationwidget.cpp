@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -114,12 +114,12 @@ void ModelNavigationWidget::removeModel(int idx)
 
 void ModelNavigationWidget::setCurrentModel(void)
 {
-	models_cmb->setToolTip(models_cmb->currentData().toString());
+    models_cmb->setToolTip(models_cmb->currentData().toString());
 
-	enableNavigationButtons();
+    enableNavigationButtons();
 
-	if(models_cmb->currentIndex() >= 0)
-		emit s_currentModelChanged(models_cmb->currentIndex());
+    if(models_cmb->currentIndex() >= 0)
+      emit s_currentModelChanged(models_cmb->currentIndex());
 }
 
 void ModelNavigationWidget::enableNavigationButtons(void)

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class ObjectTableWidget
+\class ObjectsTableWidget
 \brief Implements a basic table (grid) which can be used commonly to store
 objects references and show information about them on it's rows. This
 class also implements operations to handle insertion/deletion/update/movements
@@ -28,11 +28,11 @@ of rows on the table.
 #ifndef OBJECT_TABLE_WIDGET_H
 #define OBJECT_TABLE_WIDGET_H
 
-#include "ui_objecttablewidget.h"
+#include "ui_objectstablewidget.h"
 #include "messagebox.h"
 #include "baseobjectwidget.h"
 
-class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
+class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 	private:
 		Q_OBJECT
 
@@ -54,7 +54,7 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 		ALL_BUTTONS=127,
 		NO_BUTTONS=0;
 
-		ObjectTableWidget(unsigned button_conf=ALL_BUTTONS, bool conf_exclusion=false, QWidget * parent = 0);
+		ObjectsTableWidget(unsigned button_conf=ALL_BUTTONS, bool conf_exclusion=false, QWidget * parent = 0);
 
 		//! \brief Sets the table's column count
 		void setColumnCount(unsigned col_count);

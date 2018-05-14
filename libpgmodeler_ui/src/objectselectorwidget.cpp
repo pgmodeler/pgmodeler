@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -83,10 +83,15 @@ void ObjectSelectorWidget::configureSelector(bool install_highlighter)
 bool ObjectSelectorWidget::eventFilter(QObject *obj, QEvent *evnt)
 {
 	if(this->isEnabled() && evnt->type()==QEvent::FocusIn &&
-			QApplication::mouseButtons()==Qt::LeftButton && obj==obj_name_txt)
+		 QApplication::mouseButtons()==Qt::LeftButton && obj==obj_name_txt)
 	{
-		showObjectView();
-		return(true);
+		QFocusEvent *focus_evnt = dynamic_cast<QFocusEvent *>(evnt);
+
+		if(focus_evnt->reason() == Qt::MouseFocusReason)
+		{
+			showObjectView();
+			return(true);
+		}
 	}
 
 	return(QWidget::eventFilter(obj, evnt));

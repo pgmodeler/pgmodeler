@@ -410,7 +410,7 @@
             <item>
              <widget class="QSpinBox" name="port_sbp">
               <property name="minimum">
-               <number>1025</number>
+               <number>1</number>
               </property>
               <property name="maximum">
                <number>65535</number>
@@ -448,6 +448,9 @@
             </property>
             <property name="placeholderText">
              <string/>
+            </property>
+            <property name="clearButtonEnabled">
+             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -491,7 +494,14 @@
            </widget>
           </item>
           <item row="4" column="1">
-           <widget class="QLineEdit" name="passwd_edt"/>
+           <widget class="QLineEdit" name="passwd_edt">
+            <property name="echoMode">
+             <enum>QLineEdit::Password</enum>
+            </property>
+            <property name="clearButtonEnabled">
+             <bool>false</bool>
+            </property>
+           </widget>
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="conn_db_lbl">

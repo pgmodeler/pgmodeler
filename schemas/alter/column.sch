@@ -43,4 +43,20 @@
 
     {ddl-end}
   %end
+
+  %if {identity-type} %or {new-identity-type} %then
+    {alter-table}
+
+    %if ({identity-type}=="unset") %then
+        [ DROP IDENTITY]
+    %else
+        %if {new-identity-type} %then
+            [ SET GENERATED ] {new-identity-type}
+        %else
+            [ ADD GENERATED ] {identity-type} [ AS IDENTITY]
+        %end
+    %end
+
+    {ddl-end}
+  %end
 %end

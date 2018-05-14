@@ -27,7 +27,6 @@ SOURCES += src/mainwindow.cpp \
 	   src/syntaxhighlighter.cpp \
 		 src/databasewidget.cpp \
 	   src/schemawidget.cpp \
-	   src/objecttablewidget.cpp \
 	   src/rolewidget.cpp \
 	   src/permissionwidget.cpp \
 	   src/tablespacewidget.cpp \
@@ -110,7 +109,11 @@ SOURCES += src/mainwindow.cpp \
 		src/plaintextitemdelegate.cpp \
 		src/csvloadwidget.cpp \
 		src/genericsqlwidget.cpp \
-    src/sceneinfowidget.cpp
+    src/sceneinfowidget.cpp \
+    src/bulkdataeditwidget.cpp \
+    src/policywidget.cpp \
+    src/objectstablewidget.cpp \
+    src/resultsetmodel.cpp
 
 
 HEADERS += src/mainwindow.h \
@@ -125,7 +128,6 @@ HEADERS += src/mainwindow.h \
 	   src/syntaxhighlighter.h \
            src/databasewidget.h \
 	   src/schemawidget.h \
-	   src/objecttablewidget.h \
 	   src/rolewidget.h \
 	   src/permissionwidget.h \
 	   src/tablespacewidget.h \
@@ -208,7 +210,11 @@ HEADERS += src/mainwindow.h \
 		src/plaintextitemdelegate.h \
 		src/csvloadwidget.h \
 		src/genericsqlwidget.h \
-    src/sceneinfowidget.h
+    src/sceneinfowidget.h \
+    src/bulkdataeditwidget.h \
+    src/policywidget.h \
+    src/objectstablewidget.h \
+    src/resultsetmodel.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \
@@ -219,7 +225,6 @@ FORMS += ui/mainwindow.ui \
 	 ui/sourcecodewidget.ui \
 	 ui/databasewidget.ui \
 	 ui/baseobjectwidget.ui \
-	 ui/objecttablewidget.ui \
 	 ui/rolewidget.ui \
 	 ui/permissionwidget.ui \
 	 ui/tablespacewidget.ui \
@@ -289,7 +294,10 @@ FORMS += ui/mainwindow.ui \
     ui/tabledatawidget.ui \
     ui/csvloadwidget.ui \
     ui/genericsqlwidget.ui \
-    ui/sceneinfowidget.ui
+    ui/sceneinfowidget.ui \
+    ui/bulkdataeditwidget.ui \
+    ui/policywidget.ui \
+    ui/objectstablewidget.ui
 
 unix|windows: LIBS += -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
                       -L$$OUT_PWD/../libpgconnector/ -lpgconnector \

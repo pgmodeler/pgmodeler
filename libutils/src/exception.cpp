@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -126,7 +126,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_ASG_INV_MAX_SIZE_OP_LIST", QT_TR_NOOP("Assignment of invalid maximum size to operation list!")},
 	{"ERR_FILE_DIR_NOT_WRITTEN", QT_TR_NOOP("Unable to write the file or directory `%1'! Make sure the output directory exists, or if the user has write permissions over it!")},
 	{"ERR_FILE_NOT_WRITTER_INV_DEF", QT_TR_NOOP("Unable to write the file `%1' due to one or more errors in the definition generation process!")},
-	{"ERR_DUPLIC_RELATIONSHIP", QT_TR_NOOP("There is already a relationship between `%1' (%2) and `%3' (%4) in the model!")},
+	{"ERR_DUPLIC_RELATIONSHIP", QT_TR_NOOP("There is already a relationship between `%1' (%2) and `%3' (%4) in the model! When using relationships of the type generalization, copy and one-to-one there can't be other relationships linked to the pair of tables.")},
 	{"ERR_INS_REL_GENS_REDUNDACY", QT_TR_NOOP("The configuration of the relationship `%1' generates a redundancy between the relationships `%2'. Redundancy on identifier or generalization/copy relationships are not accepted since they result in incorrect column spreading making the model inconsistent!")},
 	{"ERR_INVALIDATED_OBJECTS", QT_TR_NOOP("One or more objects were invalidated and automatically removed because they were referencing table columns which were included through relationships and which no longer exists due to disconnection of relationships or exclusion of such generated columns!")},
 	{"ERR_INV_PRIM_KEY_ALOCATION", QT_TR_NOOP("The primary key `%1' can only be allocated if declared within a block of code that defines a table or relationship!")},
@@ -227,7 +227,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_INV_ID_SWAP_SAME_OBJECT", QT_TR_NOOP("Invalid object id swapping operation! The objects involved are the same!")},
 	{"ERR_INV_ID_SWAP_INV_OBJ_TYPE", QT_TR_NOOP("Invalid object id swapping operation! The database itself, tablespaces or roles cannot have the ids swapped!")},
 	{"ERR_ASG_WGT_ALREADY_HAS_PARENT", QT_TR_NOOP("The widget already has a parent and cannot be assigned to a different object!")},
-	{"ERR_OBJECT_NOT_IMPORTED",  QT_TR_NOOP("The object `%1' (%2), oid `%3', could not be imported due to one or more errors! Check the exception stack for more details.")},
+	{"ERR_OBJECT_NOT_IMPORTED",  QT_TR_NOOP("The object `%1' (%2), oid `%3', could not be imported due to one or more errors! Check the exception stack for more details. `HINT:' if the object somehow references objects in `pg_catalog' or `information_schema' consider enable the importing of system objects.")},
 	{"ERR_MODEL_FILE_NOT_LOADED", QT_TR_NOOP("Could not load the database model file `%1'. Check the error stack to see details. Try to run `pgmodeler-cli --fix-model' in order to correct the structure of the file if that is the case.")},
 	{"ERR_INV_COLUMN_TABLE_TYPE", QT_TR_NOOP("The column `%1' cannot reference it's parent table `%2' as data type!")},
 	{"ERR_OPR_INV_ELEMENT_ID", QT_TR_NOOP("Operation with an invalid element id `%1'!")},
@@ -247,7 +247,11 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_ASG_ENUM_LONG_NAME", QT_TR_NOOP("The enumeration `%1' can't be assigned to the type `%2' because is too long!")},
 	{"ERR_CONNECTION_TIMEOUT", QT_TR_NOOP("The connection was idle for too long and was automatically closed!")},
 	{"ERR_CONNECTION_BROKEN", QT_TR_NOOP("The connection was unexpectedly closed by the database server `%1' at port `%2'!")},
-	{"ERR_DROP_CURRDB_DEFAULT", QT_TR_NOOP("Failed to drop the database `%1' because it is defined as the default database for the connection `%2'!")}
+	{"ERR_DROP_CURRDB_DEFAULT", QT_TR_NOOP("Failed to drop the database `%1' because it is defined as the default database for the connection `%2'!")},
+	{"ERR_NULL_PK_COLUMN", QT_TR_NOOP("The column `%1' must be `NOT NULL' because it composes the primary key of the table `%2'. You need to remove the column from the mentioned contraint in order to disable the `NOT NULL' on it!")},
+	{"ERR_ASG_INV_IDENTITY_COLUMN", QT_TR_NOOP("The identity column `%1' has an invalid data type! The data type must be `smallint', `integer' or `bigint'.")},
+	{"ERR_REF_INV_AFFECTED_CMD", QT_TR_NOOP("Reference to an invalid affected command in policy `%1'!")},
+	{"ERR_REF_INV_SPECIAL_ROLE", QT_TR_NOOP("Reference to an invalid special role in policy `%1'!")},
 };
 
 Exception::Exception(void)

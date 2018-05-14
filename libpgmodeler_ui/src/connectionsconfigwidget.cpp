@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -451,7 +451,7 @@ void ConnectionsConfigWidget::restoreDefaults(void)
 	try
 	{
 		//Restore the default connection config file
-		BaseConfigWidget::restoreDefaults(GlobalAttributes::CONNECTIONS_CONF);
+		BaseConfigWidget::restoreDefaults(GlobalAttributes::CONNECTIONS_CONF, false);
 
 		//Remove all connections
 		while(connections_cmb->count() > 0)

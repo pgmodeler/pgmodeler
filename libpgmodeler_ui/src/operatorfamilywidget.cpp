@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,13 +42,7 @@ OperatorFamilyWidget::OperatorFamilyWidget(QWidget *parent): BaseObjectWidget(pa
 	opfamily_grid->addWidget(frame, opfamily_grid->count()+1, 0, 1, 5);
 
 	configureTabOrder();
-	setMinimumSize(500, 250);
-}
-
-void OperatorFamilyWidget::hideEvent(QHideEvent *event)
-{
-	indexing_cmb->setCurrentIndex(0);
-	BaseObjectWidget::hideEvent(event);
+	setMinimumSize(500, 290);
 }
 
 void OperatorFamilyWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, OperatorFamily *op_family)

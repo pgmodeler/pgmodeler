@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>707</width>
+    <width>658</width>
     <height>469</height>
    </rect>
   </property>
@@ -228,7 +228,7 @@
            <widget class="QTabWidget" name="databases_tbw">
             <property name="minimumSize">
              <size>
-              <width>310</width>
+              <width>285</width>
               <height>0</height>
              </size>
             </property>

@@ -57,7 +57,7 @@
 	       (B'0010000'::integer & tgtype = 16) AS upd_event_bool,
 	       (B'0100000'::integer & tgtype = 32) AS trunc_event_bool,
 	       tg.tgdeferrable AS deferrable_bool,
-	       (tg.tgconstraint > 0) AS constraint_bool, ds.description AS comment,
+	       (tg.tgconstraint > 0) AS constraint_bool,
 
 	    CASE
 	      WHEN B'0000010'::integer & tgtype = 2 THEN 'BEFORE'
@@ -74,13 +74,14 @@
 	      WHEN (tg.tgconstraint > 0) THEN
                 regexp_replace(regexp_replace(pg_get_triggerdef(tg.oid), '(.)+((INSERT|DELETE|UPDATE)|( OF))', ''), '( ON)(.)*','')
 	      ELSE NULL
-	    END AS columns
+	    END AS columns, ]
 
-	 FROM pg_trigger AS tg
+         ({comment}) [ AS comment ] 
+	    
+	 [ FROM pg_trigger AS tg
 	 LEFT JOIN pg_constraint AS cs ON tg.tgconstraint = cs.oid
 	 LEFT JOIN pg_class AS tb ON tg.tgrelid = tb.oid
 	 LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace
-	 LEFT JOIN pg_description ds ON ds.objoid = tg.oid
 	 LEFT JOIN information_schema.triggers AS it ON
 		   it.trigger_schema=ns.nspname AND
 		   it.trigger_name=tg.tgname AND

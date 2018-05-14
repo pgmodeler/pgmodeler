@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,6 +34,9 @@
 
 class BaseRelationship: public BaseGraphicObject  {
 	protected:
+		//! \brief This attribute stores the foreign key used to generate the relationship (only for FK relationships)
+		Constraint *reference_fk;
+
 		//! \brief This attribute overrides the default color configuration for relationship line and descriptor
 		QColor custom_color;
 
@@ -85,6 +88,10 @@ class BaseRelationship: public BaseGraphicObject  {
 
 		virtual QString getDropDefinition(bool) final { return(""); }
 
+	protected:
+		void setReferenceForeignKey(Constraint *reference_fk);
+		Constraint *getReferenceForeignKey(void);
+
 	public:
 		//! \brief Constants used to assign the type to relationship
 		static const unsigned RELATIONSHIP_11=10, //! \brief One to one
@@ -105,8 +112,7 @@ class BaseRelationship: public BaseGraphicObject  {
 
 		BaseRelationship(BaseRelationship *rel);
 
-		BaseRelationship(unsigned rel_type, BaseTable *src_tab, BaseTable *dst_tab,
-						 bool dst_mandatory, bool src_mandatory);
+		BaseRelationship(unsigned rel_type, BaseTable *src_tab, BaseTable *dst_tab, bool dst_mandatory, bool src_mandatory);
 
 		~BaseRelationship(void);
 
@@ -138,10 +144,6 @@ class BaseRelationship: public BaseGraphicObject  {
 		//! \brief Returns whether the table is linked to itself via relationship (self-relationship)
 		bool isSelfRelationship(void);
 
-		/*! \brief Returns whether the envolved tables references each other. This method can return
-		true only for FK relationships, for the other types this method always returns false */
-		bool isBidirectional(void);
-
 		//! \brief Stores the points that defines the custom relationship line
 		void setPoints(const vector<QPointF> &points);
 
@@ -170,6 +172,8 @@ class BaseRelationship: public BaseGraphicObject  {
 		virtual QString getAlterDefinition(BaseObject *) { return(""); }
 
 		friend class DatabaseModel;
+		friend class RelationshipWidget;
+		friend class ModelWidget;
 };
 
 #endif

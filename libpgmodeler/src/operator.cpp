@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -262,7 +262,7 @@ QString Operator::getSignature(bool format_name)
 		if(argument_types[i]==QString("\"any\""))
 			args.push_back(QString("NONE"));
 		else
-			args.push_back(*argument_types[i]);
+			args.push_back(argument_types[i].getTypeName(true));
 	}
 
 	signature+=QString("(") + args.join(',') + QString(")");
@@ -293,12 +293,12 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 		if(def_type==SchemaParser::SQL_DEFINITION)
 		{
 			if(argument_types[i]!=QString("\"any\""))
-				attributes[type_attribs[i]]=(*argument_types[i]);
+				attributes[type_attribs[i]]=~argument_types[i];
 		}
 		else
 		{
 			attributes[type_attribs[i]]=argument_types[i].
-										getCodeDefinition(SchemaParser::XML_DEFINITION,type_attribs[i]);
+																	getCodeDefinition(SchemaParser::XML_DEFINITION,type_attribs[i]);
 		}
 	}
 

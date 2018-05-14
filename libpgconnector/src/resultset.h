@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -47,6 +47,10 @@ class ResultSet {
 		bool is_res_copied;
 
 		void destroyResultSet(void);
+
+		void validateColumnIndex(int column_idx);
+
+		int validateColumnName(const QString &column_name);
 
 	protected:
 		//! \brief Stores the current tuple index, just for navigation
@@ -107,6 +111,10 @@ class ResultSet {
 		//! \brief Informs if the column is in binary format
 		bool isColumnBinaryFormat(const QString &column_name);
 		bool isColumnBinaryFormat(int column_idx);
+
+		//! \brief Informs if the column has a null value. In PostgreSQL null =/= empty
+		bool isColumnValueNull(int column_idx);
+		bool isColumnValueNull(const QString &column_name);
 
 		//! \brief Access on tuple on result set via navigation constants
 		bool accessTuple(unsigned tuple_type);

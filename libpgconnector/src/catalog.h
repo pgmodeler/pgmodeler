@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -56,6 +56,9 @@ class Catalog {
 		/*! \brief This map stores the oid field name for each object type. The oid field name can be
 		composed by the pg_[OBJECT_TYPE] table alias. Refer to catalog query schema files for details */
 		static map<ObjectType, QString> oid_fields;
+
+		/*! \brief This map stores the name field for each object type. Refer to catalog query schema files for details */
+		static map<ObjectType, QString> name_fields;
 
 		/*! \brief This map stores the oid field name that is used to check if the object (or its parent) is part of a extension
 		(see getNotExtObjectQuery()). By default the attribute oid_fields is used instead for that purpose, but, for some objects,
@@ -125,6 +128,9 @@ class Catalog {
 		Catalog(void);
 		Catalog(const Catalog &catalog);
 
+		//! \brief Stores the prefix of any temp object (in pg_temp) created during catalog reading by pgModeler
+		static const QString PGMODELER_TEMP_DB_OBJ;
+
 		//! \brief Excludes the system objects from listing
 		static const unsigned EXCL_SYSTEM_OBJS=1,
 
@@ -154,6 +160,9 @@ class Catalog {
 
 		//! \brief Returns the last system object oid registered on the database
 		unsigned getLastSysObjectOID(void);
+
+		//! \brief Returns if the specified oid is amongst the system objects' oids
+		bool isSystemObject(unsigned oid);
 
 		//! \brief Returns if the specified oid is amongst the extension created objects' oids
 		bool isExtensionObject(unsigned oid);
@@ -186,6 +195,11 @@ class Catalog {
 
 		//! \brief Returns the attributes for the object specified by its type and OID
 		attribs_map getObjectAttributes(ObjectType obj_type, unsigned oid, const QString sch_name=QString(), const QString tab_name=QString(), attribs_map extra_attribs=attribs_map());
+
+		/*! \brief Returns the OID of the named object. User can filter items by schema (if the object type is suitable to accept schema)
+		and by table name (only when retriving child objects for a specific table). The method will raise an exception if the catalog query
+		used returns more than one result. A zero OID is returned when no suitable object is found. */
+		QString getObjectOID(const QString &name, ObjectType obj_type, const QString &schema = QString(), const QString &table = QString());
 
 		//! brief This special method returns some server's attributes read from pg_settings
 		attribs_map getServerAttributes(void);

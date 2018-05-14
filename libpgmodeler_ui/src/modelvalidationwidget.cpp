@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -266,6 +266,16 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 					   .arg(val_info.getObject()->getObjectId()));
 	else if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR)
 		label->setText(trUtf8("SQL validation failed due to error(s) below. <strong>NOTE:</strong><em> These errors does not invalidates the model but may affect operations like <strong>export</strong> and <strong>diff</strong>.</em>"));
+	else if(val_info.getValidationType() == ValidationInfo::MISSING_EXTENSION)
+	{
+		Column *col = dynamic_cast<Column *>(val_info.getObject());
+
+		label->setText(trUtf8("The column <strong>%1</strong> on <strong>%2</strong> <em>(%3)</em> is referencing the geospatial data type <strong>%4</strong> but the <strong>postgis</strong> extension is not present in the model!")
+									 .arg(col->getName())
+									 .arg(col->getParentTable()->getSignature(true))
+									 .arg(BaseObject::getTypeName(OBJ_TABLE))
+									 .arg(~col->getType()));
+	}
 	else
 		label->setText(val_info.getErrors().at(0));
 
@@ -305,6 +315,11 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 		{
 			PgModelerUiNS::createOutputTreeItem(output_trw, trUtf8("<strong>HINT:</strong> try to swap the relationship by another ones that somehow are linked to it through generated columns or constraints to solve this issue. Note that other objects may be lost in the swap process."),
 												QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")), item);
+		}
+		else if(val_info.getValidationType()==ValidationInfo::MISSING_EXTENSION)
+		{
+			PgModelerUiNS::createOutputTreeItem(output_trw, trUtf8("<strong>HINT:</strong> Create the extension in the model or let it be created by applying the needed fixes."),
+																					QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")), item);
 		}
 		else
 		{

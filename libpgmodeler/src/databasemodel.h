@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -86,6 +86,12 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Maximum number of connections
 		int conn_limit;
+
+		//! \brief Indicates if the database can be used as template
+		bool is_template,
+
+		//! \brief Indicates if the database accepts connection
+		allow_conns;
 
 		//! \brief Vectors that stores all the objects types
 		vector<BaseObject *> textboxes;
@@ -255,11 +261,19 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		void setDefaultObject(BaseObject *object, ObjectType obj_type=BASE_OBJECT);
 
+		void setIsTemplate(bool value);
+
+		void setAllowConnections(bool value);
+
 		//! \brief Returns the current state of the sql appeding at end of entire model definition
 		bool isAppendAtEOD(void);
 
 		//! \brief Returns the current state of the sql prepeding at beginning of entire model definition
 		bool isPrependedAtBOD(void);
+
+		bool isTemplate(void);
+
+		bool isAllowConnections(void);
 
 		//! \brief Destroys all the objects
 		void destroyObjects(void);
@@ -331,8 +345,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		/*! \brief Searchs and returns the relationship between the specified tables. If the second parameter
 		 is ommited (nullptr), the method returns the first relationship where the source table is
-		 participating */
-		BaseRelationship *getRelationship(BaseTable *src_tab, BaseTable *dst_tab);
+		 participating. The optional parameter ref_fk will search for foreign key relationships which the reference foreign key
+		is the one provided */
+		BaseRelationship *getRelationship(BaseTable *src_tab, BaseTable *dst_tab, Constraint *ref_fk = nullptr);
 
 		//! \brief Searchs and returns all the relationships that the specified table participates
 		vector<BaseRelationship *> getRelationships(BaseTable *tab);
@@ -502,6 +517,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		Rule *createRule(void);
 		Index *createIndex(void);
 		Trigger *createTrigger(void);
+		Policy *createPolicy(void);
 		EventTrigger *createEventTrigger(void);
 		GenericSQL *createGenericSQL(void);
 
@@ -545,9 +561,12 @@ class DatabaseModel:  public QObject, public BaseObject {
 		meaning that ALL objects directly or inderectly linked to the 'object' are retrieved. */
 		void __getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclude_perms=false);
 
-		/*! \brief Marks the graphical objects as modified forcing their redraw. User can specify only a set of
+		/*! \brief Marks the graphical objects of the provided types as modified forcing their redraw. User can specify only a set of
 	 graphical objects to be marked */
 		void setObjectsModified(vector<ObjectType> types={});
+
+		//! \brief Marks the graphical objects in the list as modified forcing their redraw.
+		void setObjectsModified(vector<BaseObject *> &objects);
 
 		/*! \brief Marks the objects with code invalidated forcing their code regeneration. User can specify only a set of
 		 graphical objects to be marked */

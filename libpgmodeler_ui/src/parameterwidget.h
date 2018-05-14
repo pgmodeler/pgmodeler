@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,8 +35,6 @@ class ParameterWidget: public BaseObjectWidget, public Ui::ParameterWidget {
 
 		PgSQLTypeWidget *data_type;
 		Parameter parameter;
-
-		void hideEvent(QHideEvent *event);
 
 	public:
 		ParameterWidget(QWidget * parent = 0);

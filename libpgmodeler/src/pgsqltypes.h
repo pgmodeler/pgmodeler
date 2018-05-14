@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
 
 class BaseType{
 	protected:
-		static const unsigned types_count=249;
+		static const unsigned types_count=258;
 		static QString type_list[types_count];
 
 		//! \brief Index of the type on the type_list vector
@@ -210,7 +210,7 @@ class IndexingType: public BaseType{
 
 class IntervalType: public BaseType{
 	private:
-		static const unsigned offset=136;
+		static const unsigned offset=138;
 		static const unsigned types_count=13;
 
 	public:
@@ -280,7 +280,7 @@ class UserTypeConfig {
 class SpatialType: public BaseType{
 	private:
 		unsigned variation;
-		static const unsigned offset=229;
+		static const unsigned offset=231;
 		static const unsigned types_count=16;
 
 		/*! \brief Used in conjunction with spatial_type, and denotes the SRID value
@@ -319,15 +319,15 @@ class SpatialType: public BaseType{
 class PgSQLType: public BaseType{
 	private:
 		static const unsigned offset=27;
-		static const unsigned types_count=109;
+		static const unsigned types_count=111;
 
 		//! \brief Offset for oid types
 		static const unsigned oid_start=108;
-		static const unsigned oid_end=120;
+		static const unsigned oid_end=122;
 
 		//! \brief Offset for pseudo types
-		static const unsigned pseudo_start=121;
-		static const unsigned pseudo_end=135;
+		static const unsigned pseudo_start=123;
+		static const unsigned pseudo_end=137;
 
 		//! \brief Configuration for user defined types
 		static vector<UserTypeConfig> user_types;
@@ -457,7 +457,7 @@ class PgSQLType: public BaseType{
 		QString getCodeDefinition(unsigned def_type, QString ref_type=QString());
 		QString operator ~ (void);
 
-		//! \brief Retorns the SQL definition for the type
+		//! \brief Returns the SQL definition for the type
 		QString operator * (void);
 
 		unsigned operator << (void *ptype);
@@ -481,8 +481,10 @@ class PgSQLType: public BaseType{
 		//! \brief Returns the code (id) of the type. This is equivalent to call !type
 		unsigned getTypeId(void);
 
-		//! \brief Returns the name of the type. This is equivalent to call ~type
-		QString getTypeName(void);
+		/*! \brief Returns the name of the type. This is equivalent to call ~type.
+		 * If incl_dimension is true then returns only the type name appending the dimension descriptor [] if the type's dimension is > 0.
+		 * Other attributes of the type are discarded. */
+		QString getTypeName(bool incl_dimension);
 
 		//! \brief Returns the name of the type in SQL form including length, precision and other parameters. This is equivalent to call *type
 		QString getSQLTypeName(void);
@@ -498,7 +500,7 @@ class PgSQLType: public BaseType{
 
 class BehaviorType: public BaseType{
 	private:
-		static const unsigned offset=149;
+		static const unsigned offset=151;
 		static const unsigned types_count=3;
 
 	public:
@@ -517,7 +519,7 @@ class BehaviorType: public BaseType{
 
 class SecurityType: public BaseType{
 	private:
-		static const unsigned offset=152;
+		static const unsigned offset=154;
 		static const unsigned types_count=2;
 
 	public:
@@ -535,7 +537,7 @@ class SecurityType: public BaseType{
 
 class LanguageType: public BaseType{
 	private:
-		static const unsigned offset=154;
+		static const unsigned offset=156;
 		static const unsigned types_count=7;
 
 	public:
@@ -558,7 +560,7 @@ class LanguageType: public BaseType{
 
 class EncodingType: public BaseType{
 	private:
-		static const unsigned offset=161;
+		static const unsigned offset=163;
 		static const unsigned types_count=42;
 
 	public:
@@ -578,7 +580,7 @@ class EncodingType: public BaseType{
 
 class StorageType: public BaseType{
 	private:
-		static const unsigned offset=203;
+		static const unsigned offset=207;
 		static const unsigned types_count=4;
 
 	public:
@@ -601,7 +603,7 @@ class StorageType: public BaseType{
 
 class MatchType: public BaseType{
 	private:
-		static const unsigned offset=207;
+		static const unsigned offset=209;
 		static const unsigned types_count=3;
 
 	public:
@@ -620,7 +622,7 @@ class MatchType: public BaseType{
 
 class DeferralType: public BaseType{
 	private:
-		static const unsigned offset=210;
+		static const unsigned offset=212;
 		static const unsigned types_count=2;
 
 	public:
@@ -638,7 +640,7 @@ class DeferralType: public BaseType{
 
 class CategoryType: public BaseType{
 	private:
-		static const unsigned offset=212;
+		static const unsigned offset=214;
 		static const unsigned types_count=14;
 
 	public:
@@ -668,7 +670,7 @@ class CategoryType: public BaseType{
 
 class FiringType: public BaseType{
 	private:
-		static const unsigned offset=226;
+		static const unsigned offset=228;
 		static const unsigned types_count=3;
 
 	public:
@@ -687,7 +689,7 @@ class FiringType: public BaseType{
 
 class EventTriggerType: public BaseType{
 	private:
-		static const unsigned offset=245;
+		static const unsigned offset=247;
 		static const unsigned types_count=4;
 
 	public:
@@ -699,6 +701,45 @@ class EventTriggerType: public BaseType{
 		EventTriggerType(const QString &type_name);
 		EventTriggerType(unsigned type_id);
 		EventTriggerType(void);
+
+		static void getTypes(QStringList&type_list);
+		unsigned operator = (unsigned type_id);
+		unsigned operator = (const QString &type_name);
+};
+
+class IdentityType: public BaseType{
+	private:
+		static const unsigned offset=251;
+		static const unsigned types_count=2;
+
+	public:
+		static const unsigned always=offset;
+		static const unsigned by_default=offset+1;
+
+		IdentityType(const QString &type_name);
+		IdentityType(unsigned type_id);
+		IdentityType(void);
+
+		static void getTypes(QStringList&type_list);
+		unsigned operator = (unsigned type_id);
+		unsigned operator = (const QString &type_name);
+};
+
+class PolicyCmdType: public BaseType {
+	private:
+		static const unsigned offset=253;
+		static const unsigned types_count=5;
+
+	public:
+		static const unsigned all=offset;
+		static const unsigned select=offset+1;
+		static const unsigned insert=offset+2;
+		static const unsigned updated=offset+3;
+		static const unsigned delete_=offset+4;
+
+		PolicyCmdType(const QString &type_name);
+		PolicyCmdType(unsigned type_id);
+		PolicyCmdType(void);
 
 		static void getTypes(QStringList&type_list);
 		unsigned operator = (unsigned type_id);

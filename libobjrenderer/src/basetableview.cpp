@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -74,8 +74,6 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 
 	this->setAcceptHoverEvents(true);
 	sel_child_obj=nullptr;
-	connected_rels=0;
-
 	configurePlaceholder();
 }
 
@@ -159,6 +157,8 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		if(!this->isSelected() && event->buttons()==Qt::LeftButton &&
 			 this->ext_attribs_toggler->boundingRect().contains(pnt))
 		{
+			Schema *schema = dynamic_cast<Schema *>(this->getSourceObject()->getSchema());
+
 			//We need to force the object to be not selectable so further calls to mousePressEvent doesn't select the object
 			this->setFlag(QGraphicsItem::ItemIsSelectable, false);
 
@@ -172,6 +172,9 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 			// Using a single shot time to restore the selectable flag
 			QTimer::singleShot(300, [&]{ this->setFlag(QGraphicsItem::ItemIsSelectable, true); });
+
+			//Updating the schema box that holds the object (if visible)
+			schema->setModified(true);
 
 			emit s_extAttributesToggled();
 		}
@@ -260,10 +263,48 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 	}
 }
 
-void BaseTableView::updateConnectedRelsCount(int inc)
+void BaseTableView::addConnectedRelationship(BaseRelationship *base_rel)
 {
-	connected_rels+=inc;
-	if(connected_rels < 0) connected_rels=0;
+	BaseTable *tab = dynamic_cast<BaseTable *>(getSourceObject());
+
+	if(!base_rel ||
+		 (base_rel &&
+			base_rel->getTable(BaseRelationship::SRC_TABLE) != tab &&
+			base_rel->getTable(BaseRelationship::DST_TABLE) != tab))
+		return;
+
+	connected_rels.push_back(base_rel);
+}
+
+void BaseTableView::removeConnectedRelationship(BaseRelationship *base_rel)
+{
+	connected_rels.erase(std::find(connected_rels.begin(), connected_rels.end(), base_rel));
+}
+
+int BaseTableView::getConnectedRelationshipIndex(BaseRelationship *base_rel)
+{
+	vector<BaseRelationship *>::iterator itr = std::find(connected_rels.begin(), connected_rels.end(), base_rel);
+
+	if(itr != connected_rels.end())
+		return(itr - connected_rels.begin());
+
+	return(-1);
+}
+
+unsigned BaseTableView::getConnectedRelsCount(BaseTable *src_tab, BaseTable *dst_tab)
+{
+	unsigned count = 0;
+
+	for(auto &rel : connected_rels)
+	{
+		if((rel->getTable(BaseRelationship::SRC_TABLE) == src_tab &&
+				rel->getTable(BaseRelationship::DST_TABLE) == dst_tab) ||
+			 (rel->getTable(BaseRelationship::SRC_TABLE) == dst_tab &&
+				rel->getTable(BaseRelationship::DST_TABLE) == src_tab))
+			count++;
+	}
+
+	return(count);
 }
 
 void BaseTableView::configureTag(void)
@@ -315,13 +356,14 @@ void BaseTableView::__configureObject(float width)
 		QPen pen = ext_attribs_body->pen();
 		float py = 0;
 		float factor = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->logicalDotsPerInch() / 96.0f;
+    float pixel_ratio = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->devicePixelRatio();
 
 		ext_attribs_toggler->setVisible(true);
 		ext_attribs_tog_arrow->setVisible(true);
 
 		ext_attribs_toggler->setPen(pen);
 		ext_attribs_toggler->setBrush(ext_attribs_body->brush());
-		ext_attribs_toggler->setRect(QRectF(0, 0, width, 12 * factor));
+		ext_attribs_toggler->setRect(QRectF(0, 0, width, 12 * factor * pixel_ratio));
 
 		if(!tab->isExtAttribsHidden())
 		{
@@ -342,14 +384,14 @@ void BaseTableView::__configureObject(float width)
 		if(!tab->isExtAttribsHidden())
 		{
 			pol.append(QPointF(0,0));
-			pol.append(QPointF(-5 * factor, 6 * factor));
-			pol.append(QPointF(5 * factor, 6 * factor));
+			pol.append(QPointF(-5 * factor * pixel_ratio, 6 * factor * pixel_ratio));
+			pol.append(QPointF(5 * factor * pixel_ratio, 6 * factor * pixel_ratio));
 		}
 		else
 		{
-			pol.append(QPointF(0,6 * factor));
-			pol.append(QPointF(-5 * factor, 0));
-			pol.append(QPointF(5 * factor, 0));
+			pol.append(QPointF(0,6 * factor * pixel_ratio));
+			pol.append(QPointF(-5 * factor * pixel_ratio, 0));
+			pol.append(QPointF(5 * factor * pixel_ratio, 0));
 		}
 
 		QLinearGradient grad(QPointF(0,0),QPointF(0,1));
@@ -427,7 +469,7 @@ float BaseTableView::calculateWidth(void)
 
 int BaseTableView::getConnectRelsCount(void)
 {
-	return(connected_rels);
+	return(connected_rels.size());
 }
 
 void BaseTableView::requestRelationshipsUpdate(void)
@@ -437,6 +479,6 @@ void BaseTableView::requestRelationshipsUpdate(void)
 
 void BaseTableView::togglePlaceholder(bool value)
 {
-	BaseObjectView::togglePlaceholder(connected_rels > 0 && value);
+	BaseObjectView::togglePlaceholder(!connected_rels.empty() && value);
 }
 

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ class RelationshipConfigWidget:  public BaseConfigWidget, public Ui::Relationshi
 
 		map<QString, attribs_map> patterns;
 
-		HintTextWidget *fk_to_pk_ht, *center_pnts_ht;
+		HintTextWidget *fk_to_pk_ht, *center_pnts_ht, *tab_edges_ht, *crows_foot_ht;
 
 		void hideEvent(QHideEvent *);
 
@@ -58,6 +58,7 @@ class RelationshipConfigWidget:  public BaseConfigWidget, public Ui::Relationshi
 	private slots:
 		void fillNamePatterns(void);
 		void updatePattern(void);
+		void enableConnModePreview(void);
 
 };
 

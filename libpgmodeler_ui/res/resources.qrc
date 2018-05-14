@@ -233,6 +233,12 @@
         <file>icones/aligntogrid.png</file>
         <file>icones/arrangetables.png</file>
         <file>icones/jumptotable.png</file>
+        <file>icones/schemarect.png</file>
+        <file>icones/flag_ecuador.png</file>
+        <file>icones/sortasc.png</file>
+        <file>icones/bulkedit.png</file>
+        <file>icones/policy_grp.png</file>
+        <file>icones/policy.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>
@@ -248,6 +254,8 @@
         <file>imagens/diff2db.png</file>
         <file>imagens/diff2sql.png</file>
         <file>imagens/bugreport.png</file>
+        <file>imagens/crows_foot_notation.png</file>
+        <file>imagens/rel_tab_edges.png</file>
     </qresource>
     <qresource prefix="/styles">
         <file>styles/pgmodeler_bg_logo.png</file>

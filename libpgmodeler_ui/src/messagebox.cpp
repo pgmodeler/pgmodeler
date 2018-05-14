@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,8 +31,10 @@ Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 	connect(show_errors_tb,SIGNAL(clicked()),this,SLOT(showExceptionList()));
 	connect(show_errors_tb,SIGNAL(toggled(bool)),show_raw_info_tb,SLOT(setVisible(bool)));
 	connect(show_raw_info_tb,SIGNAL(toggled(bool)),this,SLOT(showExceptionList(void)));
-	show_errors_tb->setVisible(false);
+
 	show_raw_info_tb->setVisible(false);
+	error_show_btns_wgt->setVisible(false);
+	custom_option_chk->setVisible(false);
 }
 
 void Messagebox::handleYesOkClick(void)
@@ -60,6 +62,17 @@ void Messagebox::handleNoCancelClick(void)
 bool Messagebox::isCancelled(void)
 {
 	return(cancelled);
+}
+
+void Messagebox::setCustomOptionText(const QString &text)
+{
+	custom_option_chk->setVisible(!text.isEmpty());
+	custom_option_chk->setText(text);
+}
+
+bool Messagebox::isCustomOptionChecked(void)
+{
+	return(custom_option_chk->isChecked());
 }
 
 void Messagebox::showExceptionList(void)
@@ -188,7 +201,7 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	this->setWindowTitle(aux_title);
 	this->objs_group_wgt->setCurrentIndex(0);
 	this->show_errors_tb->setChecked(false);
-	this->show_errors_tb->setVisible((exceptions_trw->topLevelItemCount() > 0));
+	error_show_btns_wgt->setVisible((exceptions_trw->topLevelItemCount() > 0));
 	showExceptionList();
 
 	this->resize(this->minimumWidth(), this->minimumHeight());

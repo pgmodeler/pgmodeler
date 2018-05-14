@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -54,20 +54,12 @@ CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_CAST)
 		configureTabOrder({ explicit_rb, implicit_rb, assignment_rb, input_output_chk,
 							conv_func_sel, src_datatype, trg_datatype });
 
-		setMinimumSize(520, 420);
+		setMinimumSize(520, 460);
 	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
-}
-
-void CastWidget::hideEvent(QHideEvent *event)
-{
-	input_output_chk->setChecked(false);
-	implicit_rb->setChecked(true);
-	conv_func_sel->clearSelector();
-	BaseObjectWidget::hideEvent(event);
 }
 
 void CastWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Cast *cast)
@@ -108,8 +100,10 @@ void CastWidget::applyConfiguration(void)
 
 		if(implicit_rb->isChecked())
 			cast->setCastType(Cast::IMPLICIT);
-		else
+		else if(assignment_rb->isChecked())
 			cast->setCastType(Cast::ASSIGNMENT);
+		else
+			cast->setCastType(Cast::EXPLICIT);
 
 		cast->setCastFunction(dynamic_cast<Function*>(conv_func_sel->getSelectedObject()));
 

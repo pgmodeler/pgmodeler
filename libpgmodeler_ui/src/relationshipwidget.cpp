@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -65,15 +65,15 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 											  GlobalAttributes::CONFIGURATION_EXT);
 		}
 
-		attributes_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
-											 (ObjectTableWidget::UPDATE_BUTTON |
-											  ObjectTableWidget::MOVE_BUTTONS), true, this);
+		attributes_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
+											 (ObjectsTableWidget::UPDATE_BUTTON |
+											  ObjectsTableWidget::MOVE_BUTTONS), true, this);
 
-		constraints_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS  ^
-											  (ObjectTableWidget::UPDATE_BUTTON |
-											   ObjectTableWidget::MOVE_BUTTONS), true, this);
+		constraints_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS  ^
+											  (ObjectsTableWidget::UPDATE_BUTTON |
+											   ObjectsTableWidget::MOVE_BUTTONS), true, this);
 
-		advanced_objs_tab=new ObjectTableWidget(ObjectTableWidget::EDIT_BUTTON, true, this);
+		advanced_objs_tab=new ObjectsTableWidget(ObjectsTableWidget::EDIT_BUTTON, true, this);
 
 		attributes_tab->setColumnCount(2);
 		attributes_tab->setHeaderLabel(trUtf8("Attribute"), 0);
@@ -157,8 +157,12 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_lbl, SLOT(setEnabled(bool)));
 
-		connect(identifier_chk, SIGNAL(toggled(bool)), table1_mand_chk, SLOT(setDisabled(bool)));
-		connect(identifier_chk, SIGNAL(toggled(bool)), table2_mand_chk, SLOT(setDisabled(bool)));
+		connect(identifier_chk, &QCheckBox::toggled, [&](){
+			table1_mand_chk->setDisabled(identifier_chk->isChecked());
+			table2_mand_chk->setEnabled(!identifier_chk->isChecked() &&
+																	this->object &&
+																	dynamic_cast<BaseRelationship *>(this->object)->getRelationshipType() != BaseRelationship::RELATIONSHIP_1N);
+		});
 
 		connect(attributes_tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removeObjects(void)));
 		connect(attributes_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addObject(void)));
@@ -194,36 +198,6 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
-}
-
-void RelationshipWidget::hideEvent(QHideEvent *event)
-{
-	BaseRelationship *rel=dynamic_cast<BaseRelationship *>(this->object);
-
-	custom_color_chk->setChecked(false);
-	identifier_chk->setChecked(false);
-	table1_mand_chk->setChecked(false);
-	table2_mand_chk->setChecked(false);
-	relnn_tab_name_edt->clear();
-	deferrable_chk->setChecked(false);
-	deferral_cmb->setCurrentIndex(0);
-	rel_attribs_tbw->setCurrentIndex(0);
-	del_action_cmb->setCurrentIndex(0);
-	upd_action_cmb->setCurrentIndex(0);
-
-	attributes_tab->blockSignals(true);
-	constraints_tab->blockSignals(true);
-	attributes_tab->removeRows();
-	constraints_tab->removeRows();
-	attributes_tab->blockSignals(false);
-	constraints_tab->blockSignals(false);
-
-	rel_columns_lst->clear();
-
-	if(rel && !rel->isModified())
-		this->cancelConfiguration();
-
-	BaseObjectWidget::hideEvent(event);
 }
 
 void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Table *src_tab, Table *dst_tab, unsigned rel_type)
@@ -334,8 +308,8 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		table2_mand_chk->setChecked(aux_rel->isTableMandatory(BaseRelationship::DST_TABLE));
 		identifier_chk->setChecked(aux_rel->isIdentifier());
 		relnn_tab_name_edt->setText(aux_rel->getTableNameRelNN());
-		attributes_tab->setButtonsEnabled(ObjectTableWidget::ALL_BUTTONS, !aux_rel->isProtected());
-		constraints_tab->setButtonsEnabled(ObjectTableWidget::ALL_BUTTONS, !aux_rel->isProtected());
+		attributes_tab->setButtonsEnabled(ObjectsTableWidget::ALL_BUTTONS, !aux_rel->isProtected());
+		constraints_tab->setButtonsEnabled(ObjectsTableWidget::ALL_BUTTONS, !aux_rel->isProtected());
 
 		//Lists the relationship attributes
 		listObjects(OBJ_COLUMN);
@@ -526,7 +500,7 @@ void RelationshipWidget::usePatternGlobalSettings(bool value)
 
 void RelationshipWidget::listObjects(ObjectType obj_type)
 {
-	ObjectTableWidget *tab=nullptr;
+	ObjectsTableWidget *tab=nullptr;
 	Relationship *rel=nullptr;
 	unsigned count, i;
 
@@ -551,7 +525,7 @@ void RelationshipWidget::listObjects(ObjectType obj_type)
 		tab->clearSelection();
 		tab->blockSignals(false);
 
-		constraints_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON,
+		constraints_tab->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON,
 										   attributes_tab->getRowCount() > 0);
 	}
 	catch(Exception &e)
@@ -617,23 +591,18 @@ void RelationshipWidget::listAdvancedObjects(void)
 		}
 		else if(base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
 		{
-			tab=dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::DST_TABLE));
-			dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SRC_TABLE))->getForeignKeys(constrs,false,tab);
+			Constraint *fk = base_rel->getReferenceForeignKey();
 
-			if(!base_rel->isSelfRelationship())
+			if(fk)
 			{
-				tab=dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SRC_TABLE));
-				dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::DST_TABLE))->getForeignKeys(constrs,false,tab);
-			}
+				int row = 0;
 
-			count=constrs.size();
-
-			for(i=0, i1=advanced_objs_tab->getRowCount(); i < count; i++, i1++)
-			{
 				advanced_objs_tab->addRow();
-				advanced_objs_tab->setCellText(constrs[i]->getName(),i1,0);
-				advanced_objs_tab->setCellText(constrs[i]->getTypeName(),i1,1);
-				advanced_objs_tab->setRowData(QVariant::fromValue<void *>(constrs[i]), i1);
+				row = advanced_objs_tab->getRowCount() - 1;
+
+				advanced_objs_tab->setCellText(fk->getName(), row ,0);
+				advanced_objs_tab->setCellText(fk->getTypeName(), row, 1);
+				advanced_objs_tab->setRowData(QVariant::fromValue<void *>(fk), row);
 			}
 		}
 
@@ -654,16 +623,28 @@ void RelationshipWidget::showAdvancedObject(int row)
 	Constraint *constr=nullptr;
 	Column *col=nullptr;
 	ObjectType obj_type=object->getObjectType();
+	bool is_protected = false;
 
 	if(obj_type==OBJ_COLUMN)
 	{
 		col=dynamic_cast<Column *>(object);
+		is_protected = col->isProtected();
 		openEditingForm<Column,ColumnWidget>(col, col->getParentTable());
 	}
 	else if(obj_type==OBJ_CONSTRAINT)
 	{
 		constr=dynamic_cast<Constraint *>(object);
+
+		if(!constr->isAddedByRelationship())
+		{
+			is_protected = constr->isProtected();
+			constr->setProtected(true);
+		}
+
 		openEditingForm<Constraint, ConstraintWidget>(constr, constr->getParentTable());
+
+		if(!constr->isAddedByRelationship())
+			constr->setProtected(is_protected);
 	}
 	else
 	{
@@ -731,7 +712,7 @@ void RelationshipWidget::duplicateObject(int curr_row, int new_row)
 	BaseObject *object = nullptr, *dup_object = nullptr;
 	Relationship *rel = dynamic_cast<Relationship *>(this->object);
 	vector<TableObject *> obj_list;
-	ObjectTableWidget *tab = nullptr;
+	ObjectsTableWidget *tab = nullptr;
 	int op_id = -1;
 
 	if(!rel)
@@ -814,7 +795,7 @@ void RelationshipWidget::editObject(int row)
 
 void RelationshipWidget::showObjectData(TableObject *object, int row)
 {
-	ObjectTableWidget *tab=nullptr;
+	ObjectsTableWidget *tab=nullptr;
 
 	if(object->getObjectType()==OBJ_COLUMN)
 	{

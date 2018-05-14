@@ -8,18 +8,20 @@
 %if {connlimit} %then [ connlimit=] "{connlimit}" %end
 %if {lc-collate} %then [ lc-collate=] "{lc-collate}" %end
 %if {lc-ctype} %then [ lc-ctype=] "{lc-ctype}" %end
+%if {is-template} %then [ is-template=] "{is-template}" %end
+%if {allow-conns} %then [ allow-conns=] "{allow-conns}" %end
 
-  %if {sql-disabled} %then
-   [ sql-disabled=] "true"
-  %end
+%if {sql-disabled} %then
+[ sql-disabled=] "true"
+%end
 
-  %if {append-at-eod} %then
-   [ append-at-eod=] "true"
-  %end
+%if {append-at-eod} %then
+[ append-at-eod=] "true"
+%end
 
-  %if {prepend-at-bod} %then
-   [ prepend-at-bod=] "true"
-  %end
+%if {prepend-at-bod} %then
+[ prepend-at-bod=] "true"
+%end
 
 > $br
 

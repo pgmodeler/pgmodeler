@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -105,7 +105,8 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 
 	/* If the previous block info is a open multiline expression the current block will inherit this settings
 	 to force the same text formatting */
-	if(prev_info && currentBlock().previous().userState()==OPEN_EXPR_BLOCK)
+	if(prev_info && currentBlock().previous().userState()==OPEN_EXPR_BLOCK &&
+		 currentBlockState() == OPEN_EXPR_BLOCK)
 	{
 		info->group=prev_info->group;
 		info->has_exprs=prev_info->has_exprs;
@@ -154,12 +155,44 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 				}
 				else
 				{
+					BlockInfo *prev_info = dynamic_cast<BlockInfo *>(currentBlock().previous().userData());
+
 					while(i < len &&
 						  !word_separators.contains(text[i]) &&
-						  !word_delimiters.contains(text[i]) &&
-						  !ignored_chars.contains(text[i]))
+							!ignored_chars.contains(text[i]) &&
+							!word_delimiters.contains(text[i]))
 					{
 						word+=text[i++];
+					}
+
+					/* This is an workaround for multi lined groups which use word delimiters
+					in their final expressions. In some cases the highlighter can't undertand that
+					a multi line group was closed and right after another group starts, this way it
+					continues to highlight text as the previous multi lined group.
+
+					An example of that situation is for multi lined string group:
+
+					word delimiter: ' (apostrophe)
+					initial-exp: (')(.)*(\n)
+					final-exp: (.)*(')(\n)*
+
+					String:	'lorem\n ipsum' nextword
+
+					In the example above, without the workaround, the highlighter would highlight the first line
+					"'lorem\n" as string and continue to hightlight the " ipsum' nextword" in the same way as well,
+					this because the final expression of the group contains the word delimiter '. In order to force the highlight stop
+					in the last ' we include it in the current evaluated word and increment the position in the text so the next
+					word starts without the word delimiter. */
+					if(word_delimiters.contains(text[i]) && prev_info && !prev_info->group.isEmpty() && prev_info->has_exprs)
+					{
+						for(auto exp : final_exprs[prev_info->group])
+						{
+							if(exp.pattern().contains(text[i]))
+							{
+								word+=text[i++];
+								break;
+							}
+						}
 					}
 				}
 			}
@@ -177,6 +210,7 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 
 				match_idx=-1;
 				match_len=0;
+
 				group=identifyWordGroup(word, lookahead_chr, match_idx, match_len);
 
 				if(!group.isEmpty())

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 
 #include <QtWidgets>
 #include "ui_elementswidget.h"
-#include "objecttablewidget.h"
+#include "objectstablewidget.h"
 #include "objectselectorwidget.h"
 #include "baseobjectwidget.h"
 
@@ -47,7 +47,7 @@ class ElementsWidget: public QWidget, public Ui::ElementsWidget {
 		SyntaxHighlighter	*elem_expr_hl;
 		
 		//! \brief Table widget used to control the index elements
-		ObjectTableWidget *elements_tab;
+		ObjectsTableWidget *elements_tab;
 		
 		//! \brief Operator class selector
 		ObjectSelectorWidget *op_class_sel,

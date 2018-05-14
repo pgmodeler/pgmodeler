@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,6 +32,10 @@ class LineNumbersWidget : public QWidget {
 	private:
 		Q_OBJECT
 
+		QPlainTextEdit *parent_edt;
+
+		bool has_selection;
+
 		//! \brief The first line number that must be drawn
 		unsigned first_line,
 
@@ -41,6 +45,8 @@ class LineNumbersWidget : public QWidget {
 		//! \brief The y axis increment to start drawn the line number
 		int dy;
 
+		int	start_sel_line, start_sel_pos;
+
 		//! \brief Font color for drawn line numbers
 		static QColor font_color,
 
@@ -49,9 +55,12 @@ class LineNumbersWidget : public QWidget {
 
 	protected:
 		void paintEvent(QPaintEvent *event);
+		void mousePressEvent(QMouseEvent *event);
+		void mouseMoveEvent(QMouseEvent *event);
+		void mouseReleaseEvent(QMouseEvent *);
 
 	public:
-		explicit LineNumbersWidget(QPlainTextEdit *parent = 0);
+		explicit LineNumbersWidget(QPlainTextEdit *parent);
 
 		/*! \brief Draw the lines starting from 'first_line' and stoping at fisrt_line + line_count -1.
 		The dy param. defines an initial Y translation before drawn lines */

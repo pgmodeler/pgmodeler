@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -344,8 +344,8 @@ QLinearGradient BaseObjectView::getFillStyle(const QString &id)
 		{
 			if(id==ParsersAttributes::OBJ_SELECTION || id==ParsersAttributes::PLACEHOLDER)
 			{
-				colors[0].setAlpha(128);
-				colors[1].setAlpha(128);
+				colors[0].setAlpha(OBJ_ALPHA_CHANNEL);
+				colors[1].setAlpha(OBJ_ALPHA_CHANNEL);
 			}
 
 			grad.setCoordinateMode(QGradient::ObjectBoundingMode);
@@ -369,7 +369,7 @@ QPen BaseObjectView::getBorderStyle(const QString &id)
 		if(!colors.empty())
 		{
 			if(id==ParsersAttributes::OBJ_SELECTION)
-				colors[2].setAlpha(128);
+				colors[2].setAlpha(OBJ_ALPHA_CHANNEL);
 
 			pen.setWidthF(OBJ_BORDER_WIDTH);
 			pen.setColor(colors[2]);
@@ -631,17 +631,19 @@ void BaseObjectView::togglePlaceholder(bool visible)
 	}
 }
 
-float BaseObjectView::getFontFactor(void)
+double BaseObjectView::getFontFactor(void)
 {
 	return(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE);
 }
 
-float BaseObjectView::getScreenDpiFactor(void)
+double BaseObjectView::getScreenDpiFactor(void)
 {
-	float factor = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->logicalDotsPerInch() / 96.0f;
+	QScreen *screen = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()));
+	double factor = screen->logicalDotsPerInch() / 96.0f;
+	double pixel_ratio = screen->devicePixelRatio();
 
 	if(factor < 1)
 		return (1);
 
-	return(factor);
+	return(factor * pixel_ratio);
 }

@@ -25,15 +25,6 @@ void ExtensionWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 	}
 }
 
-void ExtensionWidget::hideEvent(QHideEvent *event)
-{
-	handles_type_chk->setEnabled(true);
-	handles_type_chk->setChecked(false);
-	cur_ver_edt->clear();
-	old_ver_edt->clear();
-	BaseObjectWidget::hideEvent(event);
-}
-
 void ExtensionWidget::applyConfiguration(void)
 {
 	try

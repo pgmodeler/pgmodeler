@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>530</width>
+    <width>517</width>
     <height>455</height>
    </rect>
   </property>
@@ -131,38 +131,45 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
+      <item row="1" column="0">
        <widget class="QCheckBox" name="inh_perm_chk">
         <property name="text">
-         <string>Inherit Permissions</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QCheckBox" name="create_db_chk">
-        <property name="text">
-         <string>Can create Database</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QCheckBox" name="can_login_chk">
-        <property name="text">
-         <string>Can Login</string>
+         <string>Inherit permissions</string>
         </property>
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QCheckBox" name="create_role_chk">
+       <widget class="QCheckBox" name="create_db_chk">
         <property name="text">
-         <string>Can create Role</string>
+         <string>Can create database</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QCheckBox" name="bypass_rls_chk">
+        <property name="text">
+         <string>Bypass RLS</string>
         </property>
        </widget>
       </item>
       <item row="2" column="1">
        <widget class="QCheckBox" name="can_replicate_chk">
         <property name="text">
-         <string>Can use Replication</string>
+         <string>Can use replication</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QCheckBox" name="can_login_chk">
+        <property name="text">
+         <string>Can login</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="create_role_chk">
+        <property name="text">
+         <string>Can create role</string>
         </property>
        </widget>
       </item>
@@ -230,11 +237,7 @@
   <tabstop>validity_dte</tabstop>
   <tabstop>conn_limit_sb</tabstop>
   <tabstop>superusr_chk</tabstop>
-  <tabstop>inh_perm_chk</tabstop>
   <tabstop>create_db_chk</tabstop>
-  <tabstop>can_login_chk</tabstop>
-  <tabstop>create_role_chk</tabstop>
-  <tabstop>can_replicate_chk</tabstop>
   <tabstop>members_twg</tabstop>
  </tabstops>
  <resources/>

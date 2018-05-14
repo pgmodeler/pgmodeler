@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -154,6 +154,7 @@ class DatabaseImportHelper: public QObject {
 		void createTrigger(attribs_map &attribs);
 		void createIndex(attribs_map &attribs);
 		void createConstraint(attribs_map &attribs);
+		void createPolicy(attribs_map &attribs);
 		void createPermission(attribs_map &attribs);
 		void createEventTrigger(attribs_map &attribs);
 		void __createTableInheritances(void);
@@ -204,6 +205,10 @@ class DatabaseImportHelper: public QObject {
 		//! \brief Return a string containing all attributes and their values in a formatted way
 		QString dumpObjectAttributes(attribs_map &attribs);
 		
+		/*! \brief Parse a set of expressions related to an index returned by the pg_get_expr(oid) and separates
+		 * them as a string list. */
+		QStringList parseIndexExpressions(const QString &expr);
+
 	public:
 		DatabaseImportHelper(QObject *parent=0);
 		

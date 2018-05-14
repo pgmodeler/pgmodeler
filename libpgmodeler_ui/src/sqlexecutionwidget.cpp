@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,14 +22,18 @@
 #include "snippetsconfigwidget.h"
 #include "pgmodeleruins.h"
 #include "plaintextitemdelegate.h"
+#include "datamanipulationform.h"
 
 map<QString, QString> SQLExecutionWidget::cmd_history;
 
 int SQLExecutionWidget::cmd_history_max_len = 1000;
+const QString SQLExecutionWidget::COLUMN_NULL_VALUE = QString("␀");
 
 SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 {
 	setupUi(this);
+
+	result_model = nullptr;
 
 	sql_cmd_txt=PgModelerUiNS::createNumberedTextEditor(sql_cmd_wgt);
 	cmd_history_txt=PgModelerUiNS::createNumberedTextEditor(cmd_history_parent);
@@ -48,6 +52,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	layout->addWidget(find_history_wgt);
 	find_history_parent->setLayout(layout);
 	find_history_parent->setVisible(false);
+	connect(find_history_wgt->hide_tb, SIGNAL(clicked(bool)), find_history_parent, SLOT(hide()));
 
 	sql_cmd_hl=new SyntaxHighlighter(sql_cmd_txt, false);
 	sql_cmd_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
@@ -71,6 +76,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	hbox->setContentsMargins(0,0,0,0);
 	hbox->addWidget(find_replace_wgt);
 	find_wgt_parent->setVisible(false);
+	connect(find_replace_wgt->hide_tb, SIGNAL(clicked(bool)), find_tb, SLOT(toggle()));
 
 	run_sql_tb->setToolTip(run_sql_tb->toolTip() + QString(" (%1)").arg(run_sql_tb->shortcut().toString()));
 	export_tb->setToolTip(export_tb->toolTip() + QString(" (%1)").arg(export_tb->shortcut().toString()));
@@ -100,7 +106,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(output_tb, SIGNAL(toggled(bool)), this, SLOT(toggleOutputPane(bool)));
 
 	//Signal handling with C++11 lambdas Slots
-	connect(results_tbw, &QTableWidget::itemPressed,
+	connect(results_tbw, &QTableView::pressed,
 			[&](){ SQLExecutionWidget::copySelection(results_tbw); });
 
 	connect(export_tb, &QToolButton::clicked,
@@ -122,6 +128,16 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	toggleOutputPane(false);
 	filename_wgt->setVisible(false);
 	v_splitter->handle(1)->installEventFilter(this);
+}
+
+SQLExecutionWidget::~SQLExecutionWidget(void)
+{
+	if(result_model)
+	{
+		results_tbw->blockSignals(true);
+		results_tbw->setModel(nullptr);
+		delete(result_model);
+	}
 }
 
 bool SQLExecutionWidget::eventFilter(QObject *object, QEvent *event)
@@ -182,7 +198,21 @@ void SQLExecutionWidget::fillResultsTable(ResultSet &res)
 		aux_conn.setConnectionParams(sql_cmd_conn.getConnectionParams());
 		export_tb->setEnabled(res.getTupleCount() > 0);
 		catalog.setConnection(aux_conn);
-		fillResultsTable(catalog, res, results_tbw);
+
+		results_tbw->setSortingEnabled(false);
+		results_tbw->blockSignals(true);
+		results_tbw->setUpdatesEnabled(false);
+		results_tbw->setModel(nullptr);
+
+		if(result_model)
+			delete(result_model);
+
+		result_model = new ResultSetModel(res, catalog);
+
+		results_tbw->setModel(result_model);
+		results_tbw->resizeColumnsToContents();
+		results_tbw->setUpdatesEnabled(true);
+		results_tbw->blockSignals(false);
 	}
 	catch(Exception &e)
 	{
@@ -233,7 +263,9 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 		results_tbw->setRowCount(0);
 		results_tbw->setColumnCount(col_cnt);
 		results_tbw->verticalHeader()->setVisible(true);
+		results_tbw->setSortingEnabled(false);
 		results_tbw->blockSignals(true);
+		results_tbw->setUpdatesEnabled(false);
 
 		//Configuring the grid columns with the names of retrived table columns
 		for(col=0; col < col_cnt; col++)
@@ -261,7 +293,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 		for(col=0; col < col_cnt; col++)
 		{
 			item=results_tbw->horizontalHeaderItem(col);
-			item->setToolTip(res.getColumnName(col) + QString(" [%1]").arg(type_names[res.getColumnTypeId(col)]));
+			item->setToolTip(type_names[res.getColumnTypeId(col)]);
 			item->setData(Qt::UserRole, type_names[res.getColumnTypeId(col)]);
 		}
 
@@ -286,8 +318,10 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 					{
 						item->setText(res.getColumnValue(col));
 
+						/* When storing column values in the QTableWidget items we need distinguish empty from null values
+						 * Since it may affect the generation of SQL like delete when the field value is used somehow (see DataManipulationForm::getDMLCommand) */
 						if(store_data)
-							item->setData(Qt::UserRole, item->text());
+							item->setData(Qt::UserRole, res.isColumnValueNull(col) ? COLUMN_NULL_VALUE : item->text());
 					}
 
 					results_tbw->setItem(row, col, item);
@@ -300,6 +334,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 			while(res.accessTuple(ResultSet::NEXT_TUPLE));
 		}
 
+		results_tbw->setUpdatesEnabled(true);
 		results_tbw->blockSignals(false);
 		results_tbw->resizeColumnsToContents();
 		results_tbw->resizeRowsToContents();
@@ -403,6 +438,7 @@ void SQLExecutionWidget::runSQLCommand(void)
 	{
 		ResultSet res;
 		QStringList conn_notices;
+		qint64 start_exec=0, end_exec=0, total_exec = 0;
 
 		output_tb->setChecked(true);
 
@@ -423,9 +459,11 @@ void SQLExecutionWidget::runSQLCommand(void)
 		}
 
 		QApplication::setOverrideCursor(Qt::WaitCursor);
-		sql_cmd_conn.executeDMLCommand(cmd, res);
-		conn_notices=sql_cmd_conn.getNotices();
 
+		start_exec=QDateTime::currentDateTime().toMSecsSinceEpoch();
+		sql_cmd_conn.executeDMLCommand(cmd, res);
+
+		conn_notices=sql_cmd_conn.getNotices();
 		addToSQLHistory(cmd, res.getTupleCount());
 
 		output_tbw->setTabEnabled(0, !res.isEmpty());
@@ -435,7 +473,7 @@ void SQLExecutionWidget::runSQLCommand(void)
 		if(!res.isEmpty())
 		{
 			fillResultsTable(res);
-			output_tbw->setTabText(0, trUtf8("Results (%1)").arg(res.getTupleCount()));
+			output_tbw->setTabText(0, trUtf8("Results (%1)").arg(results_tbw->model()->rowCount()));
 			output_tbw->setCurrentIndex(0);
 		}
 		else
@@ -453,9 +491,13 @@ void SQLExecutionWidget::runSQLCommand(void)
 																					QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")));
 		}
 
+		end_exec=QDateTime::currentDateTime().toMSecsSinceEpoch();
+		total_exec = end_exec - start_exec;
+
 		PgModelerUiNS::createOutputListItem(msgoutput_lst,
-																				PgModelerUiNS::formatMessage(trUtf8("[%1]: SQL command successfully executed. <em>%2 <strong>%3</strong></em>")
+																				PgModelerUiNS::formatMessage(trUtf8("[%1]: SQL command successfully executed in <em><strong>%2</strong></em>. <em>%3 <strong>%4</strong></em>")
 																																		 .arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz")))
+																																		 .arg(total_exec >= 1000 ? QString("%1 s").arg(total_exec/1000) : QString("%1 ms").arg(total_exec))
 																																		 .arg(res.isEmpty() ? trUtf8("Rows affected") :  trUtf8("Rows retrieved"))
 																																		 .arg(res.getTupleCount())),
 																				QPixmap(PgModelerUiNS::getIconPath("msgbox_info")));
@@ -532,7 +574,7 @@ void SQLExecutionWidget::loadCommands(void)
 	}
 }
 
-void SQLExecutionWidget::exportResults(QTableWidget *results_tbw)
+void SQLExecutionWidget::exportResults(QTableView *results_tbw)
 {
 	if(!results_tbw)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -558,83 +600,19 @@ void SQLExecutionWidget::exportResults(QTableWidget *results_tbw)
 							.arg(csv_file_dlg.selectedFiles().at(0))
 							, ERR_FILE_DIR_NOT_ACCESSED ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		file.write(generateCSVBuffer(results_tbw, 0, 0, results_tbw->rowCount(), results_tbw->columnCount()));
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+		results_tbw->setUpdatesEnabled(false);
+		results_tbw->blockSignals(true);
+		results_tbw->selectAll();
+
+		file.write(generateCSVBuffer(results_tbw));
 		file.close();
+
+		results_tbw->clearSelection();
+		results_tbw->blockSignals(false);
+		results_tbw->setUpdatesEnabled(true);
+		QApplication::restoreOverrideCursor();
 	}
-}
-
-QByteArray SQLExecutionWidget::generateCSVBuffer(QTableWidget *results_tbw, int start_row, int start_col, int row_cnt, int col_cnt)
-{
-	if(!results_tbw)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	QByteArray buf;
-	QStringList line;
-
-	//If the selection interval is valid
-	if(start_row >=0 && start_col >=0 &&
-			start_row + row_cnt <= results_tbw->rowCount() &&
-			start_col + col_cnt <= results_tbw->columnCount())
-	{
-		int col=0, row=0,
-				max_col=start_col + col_cnt,
-				max_row=start_row + row_cnt;
-
-		//Creating the header of csv
-		for(col=start_col; col < max_col; col++)
-			line.append(QString("\"%1\"").arg(results_tbw->horizontalHeaderItem(col)->text()));
-
-		buf.append(line.join(';'));
-		buf.append('\n');
-		line.clear();
-
-		//Creating the content
-		for(row=start_row; row < max_row; row++)
-		{
-			for(col=start_col; col < max_col; col++)
-				line.append(QString("\"%1\"").arg(results_tbw->item(row, col)->text()));
-
-			buf.append(line.join(';'));
-			line.clear();
-			buf.append('\n');
-		}
-	}
-
-	return(buf);
-}
-
-QByteArray SQLExecutionWidget::generateTextBuffer(QTableWidget *results_tbw, int start_row, int start_col, int row_cnt, int col_cnt)
-{
-	if(!results_tbw)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	QByteArray buf;
-	QStringList line;
-
-	//If the selection interval is valid
-	if(start_row >=0 && start_col >=0 &&
-			start_row + row_cnt <= results_tbw->rowCount() &&
-			start_col + col_cnt <= results_tbw->columnCount())
-	{
-		int col=0, row=0,
-				max_col=start_col + col_cnt,
-				max_row=start_row + row_cnt;
-
-		//Creating the content
-		for(row=start_row; row < max_row; row++)
-		{
-			for(col=start_col; col < max_col; col++)
-			{
-				line.push_back(results_tbw->item(row, col)->text());
-			}
-
-			buf.append(line.join('\t'));
-			line.clear();
-			buf.append('\n');
-		}
-	}
-
-	return(buf);
 }
 
 int SQLExecutionWidget::clearAll(void)
@@ -659,15 +637,80 @@ int SQLExecutionWidget::clearAll(void)
 	return(res);
 }
 
-void SQLExecutionWidget::copySelection(QTableWidget *results_tbw, bool use_popup, bool csv_is_default)
+QByteArray SQLExecutionWidget::generateCSVBuffer(QTableView *results_tbw)
+{
+	return(generateBuffer(results_tbw, QChar(';'), true, true));
+}
+
+QByteArray SQLExecutionWidget::generateTextBuffer(QTableView *results_tbw)
+{
+	return(generateBuffer(results_tbw, QChar('\t'), false, false));
+}
+
+QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar separator, bool incl_col_names, bool use_quotes)
 {
 	if(!results_tbw)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
+	if(!results_tbw->selectionModel())
+		return (QByteArray());
 
-	if(sel_ranges.count()==1 && (!use_popup || (use_popup && QApplication::mouseButtons()==Qt::RightButton)))
+	QAbstractItemModel *model = results_tbw->model();
+	QModelIndexList sel_indexes = results_tbw->selectionModel()->selectedIndexes();
+	QByteArray buf;
+	QStringList line;
+	QModelIndex index;
+	QString str_pattern = use_quotes ? QString("\"%1\"") : QString("%1");
+	int start_row = -1, start_col = -1,
+			row_cnt = 0, col_cnt = 0;
+
+	start_row = sel_indexes.at(0).row();
+	start_col = sel_indexes.at(0).column();
+	row_cnt = (sel_indexes.last().row() - start_row) + 1;
+	col_cnt = (sel_indexes.last().column() - start_col) + 1;
+
+	int col=0, row=0,
+			max_col=start_col + col_cnt,
+			max_row=start_row + row_cnt;
+
+	if(incl_col_names)
 	{
+		//Creating the header
+		for(col=start_col; col < max_col; col++)
+			line.append(str_pattern.arg(model->headerData(col, Qt::Horizontal).toString()));
+
+		buf.append(line.join(separator));
+		buf.append('\n');
+		line.clear();
+	}
+
+	//Creating the content
+	for(row=start_row; row < max_row; row++)
+	{
+		for(col=start_col; col < max_col; col++)
+		{
+			index = model->index(row, col);
+			line.append(str_pattern.arg(index.data().toString()));
+		}
+
+		buf.append(line.join(separator));
+		line.clear();
+		buf.append('\n');
+	}
+
+	return(buf);
+}
+
+void SQLExecutionWidget::copySelection(QTableView *results_tbw, bool use_popup, bool csv_is_default)
+{
+	if(!results_tbw)
+		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	QItemSelectionModel *selection = results_tbw->selectionModel();
+
+	if(selection && (!use_popup || (use_popup && QApplication::mouseButtons()==Qt::RightButton)))
+	{
+		QModelIndexList sel_indexes = selection->selectedIndexes();
 		QMenu copy_menu, copy_mode_menu;
 		QAction *act = nullptr, *act_csv = nullptr, *act_txt = nullptr;
 
@@ -682,21 +725,21 @@ void SQLExecutionWidget::copySelection(QTableWidget *results_tbw, bool use_popup
 
 		if(!use_popup || act)
 		{
-			QTableWidgetSelectionRange selection=sel_ranges.at(0);
+			//QTableWidgetSelectionRange selection=sel_ranges.at(0);
 			QByteArray buf;
 
 			if((use_popup && act == act_csv) || (!use_popup && csv_is_default))
 			{
 				//Generates the csv buffer and assigns it to application's clipboard
-				buf=generateCSVBuffer(results_tbw,
-															selection.topRow(), selection.leftColumn(),
-															selection.rowCount(), selection.columnCount());
+				buf=generateCSVBuffer(results_tbw);
+
+				/* Making DataManipulationForm instances know that the clipboard has csv buffer
+				 * in order to paste the contents properly */
+				DataManipulationForm::setHasCsvClipboard(true);
 			}
 			else if((use_popup && act == act_txt) || (!use_popup && !csv_is_default))
 			{
-				buf=generateTextBuffer(results_tbw,
-															 selection.topRow(), selection.leftColumn(),
-															 selection.rowCount(), selection.columnCount());
+				buf=generateTextBuffer(results_tbw);
 			}
 
 			qApp->clipboard()->setText(buf);
@@ -712,17 +755,6 @@ void SQLExecutionWidget::selectSnippet(QAction *act)
 	sql_cmd_txt->appendPlainText(SnippetsConfigWidget::getParsedSnippet(act->text()));
 	sql_cmd_txt->setTextCursor(cursor);
 }
-
-/*void SQLExecutionWidget::handleSelectedWord(QString word)
-{
-	if(SnippetsConfigWidget::isSnippetExists(word))
-	{
-		QTextCursor tc=sql_cmd_txt->textCursor();
-		tc.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor);
-		tc.removeSelectedText();
-		tc.insertText(SnippetsConfigWidget::getParsedSnippet(word));
-	}
-}*/
 
 void SQLExecutionWidget::toggleOutputPane(bool visible)
 {

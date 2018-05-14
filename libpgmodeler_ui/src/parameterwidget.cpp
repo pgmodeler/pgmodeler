@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -59,14 +59,6 @@ void ParameterWidget::enableVariadic(void)
 {
 	param_variadic_chk->setChecked(!param_in_chk->isChecked() &&
 								   !param_out_chk->isChecked());
-}
-
-void ParameterWidget::hideEvent(QHideEvent *event)
-{
-	param_in_chk->setChecked(false);
-	param_out_chk->setChecked(false);
-	default_value_edt->clear();
-	BaseObjectWidget::hideEvent(event);
 }
 
 void ParameterWidget::setAttributes(Parameter param, DatabaseModel *model)

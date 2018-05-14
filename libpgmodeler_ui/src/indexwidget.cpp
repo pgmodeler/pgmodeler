@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -67,20 +67,6 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
-}
-
-void IndexWidget::hideEvent(QHideEvent *event)
-{
-	BaseObjectWidget::hideEvent(event);
-
-	predicate_txt->clear();
-	concurrent_chk->setChecked(false);
-	unique_chk->setChecked(false);
-	buffering_chk->setChecked(false);
-	indexing_cmb->setCurrentIndex(0);
-	fill_factor_sb->setValue(90);
-	tabWidget->setCurrentIndex(0);
-	elements_wgt->clear();
 }
 
 void IndexWidget::selectIndexingType(void)

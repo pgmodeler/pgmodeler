@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -384,12 +384,11 @@ QString Index::getAlterDefinition(BaseObject *object)
 
 	try
 	{
+		attribs_map attribs;
 		attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
 
 		if(this->indexing_type==index->indexing_type)
 		{
-			attribs_map attribs;
-
 			if(this->fill_factor!=index->fill_factor && index->fill_factor >= 10)
 				attribs[ParsersAttributes::FACTOR]=QString::number(index->fill_factor);
 
@@ -400,10 +399,9 @@ QString Index::getAlterDefinition(BaseObject *object)
 			if(this->indexing_type==IndexingType::gist &&
 					this->index_attribs[BUFFERING] != index->index_attribs[BUFFERING])
 				attribs[ParsersAttributes::BUFFERING]=(index->index_attribs[BUFFERING] ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
-
-			copyAttributes(attribs);
 		}
 
+		copyAttributes(attribs);
 		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
 	}
 	catch(Exception &e)

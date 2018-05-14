@@ -39,7 +39,7 @@
 
 %else
     %if {attribs} %then
-     [SELECT cs.oid, cs.conname AS name, cs.conrelid AS table, ds.description AS comment,
+     [SELECT cs.oid, cs.conname AS name, cs.conrelid AS table,
 	     cs.conkey AS src_columns, cs.confkey AS dst_columns, cs.consrc AS expression,
 	     cs.condeferrable AS deferrable_bool, cs.confrelid AS ref_table,
 	     cl.reltablespace AS tablespace, cs.conexclop AS operators,
@@ -48,9 +48,9 @@
      [ id.indkey::oid] $ob $cb [ AS columns,
        id. indclass::oid] $ob $cb [ AS opclasses,
        pg_get_expr(id.indpred, id.indexrelid) AS condition,
-       pg_get_expr(id.indexprs, id.indexrelid) AS expressions, ]
+       pg_get_constraintdef(cs.oid) AS expressions, ]
 
-		 %if ({pgsql-ver} <=f "9.1") %then
+     %if ({pgsql-ver} <=f "9.1") %then
      [ FALSE AS no_inherit_bool, ]
      %else
      [ cs.connoinherit AS no_inherit_bool, ]
@@ -97,13 +97,14 @@
 	  WHEN 'f' THEN 'MATCH FULL'
 	  WHEN 'p' THEN 'MATCH PARTIAL' ]
 
-					[ WHEN ] %if ({pgsql-ver} >=f "9.3") %then 's' %else 'u' %end [ THEN 'MATCH SIMPLE' ]
+	[ WHEN ] %if ({pgsql-ver} >=f "9.3") %then 's' %else 'u' %end [ THEN 'MATCH SIMPLE' ]
 
 	[ ELSE NULL
-	END AS comparison_type
+	END AS comparison_type, ]
 
-     FROM pg_constraint AS cs
-     LEFT JOIN pg_description AS ds ON ds.objoid=cs.oid
+     ({comment}) [ AS comment ]
+	
+     [ FROM pg_constraint AS cs
      LEFT JOIN pg_class AS cl ON cl.oid = cs.conindid
      LEFT JOIN pg_am AS am ON cl.relam = am.oid
      LEFT JOIN pg_index AS id ON id.indexrelid= cs.conindid ]

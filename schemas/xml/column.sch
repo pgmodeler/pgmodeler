@@ -14,6 +14,10 @@ $tb [<column name=] "{name}"
  %if {sequence} %then
   [ sequence=] "{sequence}"
  %end
+ 
+ %if {identity-type} %then
+  [ identity-type=] "{identity-type}"
+ %end
 
  %if {protected} %then 
   [ protected=] "true"

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -126,20 +126,6 @@ bool BaseObjectWidget::isHandledObjectProtected(void)
 	return(object_protected);
 }
 
-void BaseObjectWidget::hideEvent(QHideEvent *)
-{
-	name_edt->clear();
-	comment_edt->clear();
-
-	tablespace_sel->clearSelector();
-	schema_sel->clearSelector();
-	owner_sel->clearSelector();
-	collation_sel->clearSelector();
-
-	disable_sql_chk->setChecked(false);
-	new_object=false;
-}
-
 void BaseObjectWidget::showEvent(QShowEvent *)
 {
 	name_edt->setFocus();
@@ -149,26 +135,22 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 {
 	if(widget)
 	{
-		QLabel *lbl=dynamic_cast<QLabel *>(widget);
-		QLineEdit *edt=dynamic_cast<QLineEdit *>(widget);
-		QTextEdit *txt=dynamic_cast<QTextEdit *>(widget);
-		QGroupBox *grp=dynamic_cast<QGroupBox *>(widget);
+		QLabel *lbl=qobject_cast<QLabel *>(widget);
+		QLineEdit *edt=qobject_cast<QLineEdit *>(widget);
+		QTextEdit *txt=qobject_cast<QTextEdit *>(widget);
+		QGroupBox *grp=qobject_cast<QGroupBox *>(widget);
 		ObjectSelectorWidget *sel=dynamic_cast<ObjectSelectorWidget *>(widget);
 		PgSQLTypeWidget *pgtype=dynamic_cast<PgSQLTypeWidget *>(widget);
 		QString str_aux=QString(" <span style='color: #ff0000;'>*</span> ");
 		QColor bgcolor=QColor(QString("#ffffc0"));
 
-		QFont fnt=widget->font();
-
 		if(lbl || pgtype || grp)
 		{
-			fnt.setBold(true);
-
 			if(lbl)
 				lbl->setText(str_aux + lbl->text());
 
 			if(!grp)
-				widget->setFont(fnt);
+				widget->setStyleSheet(QString("QWidget {	font-weight: bold; }"));
 			else
 				grp->setStyleSheet(QString("QGroupBox {	font-weight: bold; }"));
 		}
@@ -372,7 +354,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 		else
 			name_edt->setText(object->getSignature());
 
-		comment_edt->setText(object->getComment());
+		comment_edt->setPlainText(object->getComment());
 
 		/* When creating a new table or relationship the object is pre allocated and the flag new_object is set.
 	   In order to avoid the selectors to have empty values, we check if the flag is false which means
@@ -480,8 +462,11 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 			setRequiredField(name_edt);
 		}
 
-		setRequiredField(schema_lbl);
-		setRequiredField(schema_sel);
+		if(obj_type!=OBJ_EXTENSION)
+		{
+			setRequiredField(schema_lbl);
+			setRequiredField(schema_sel);
+		}
 	}
 
 	if(BaseObject::acceptsCollation(obj_type))
@@ -570,59 +555,47 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 	return(info_frm);
 }
 
+void BaseObjectWidget::highlightVersionSpecificFields(map<QString, vector<QWidget *> > &fields,
+																											map< QWidget *, vector<QString> > *values)
+{
+	QString field_name;
+	QColor color=QColor(0,0,128);
+
+	for(auto itr : fields)
+	{
+		for(auto wgt : itr.second)
+		{
+			if(values && values->count(wgt) > 0)
+			{
+				field_name+=QString("<br/>") + trUtf8("Value(s)") + QString(": (");
+				for(auto value : values->at(wgt))
+				{
+					field_name += value;
+					field_name+=", ";
+				}
+
+				field_name.remove(field_name.length() - 2, 2);
+				field_name+=")";
+			}
+
+			wgt->setStyleSheet(QString("QWidget {	font-weight: bold; font-style: italic; color: %1}").arg(color.name()));
+			wgt->setToolTip(QString("<em style='font-size: 8pt'>") +
+											trUtf8("Version") +
+											itr.first + QString(" %1</em>").arg(field_name));
+		}
+	}
+}
+
 QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidget *> > &fields,
-													  map< QWidget *, vector<QString> > *values)
+																											map< QWidget *, vector<QString> > *values)
 {
 	QFrame *alert_frm=nullptr;
 	QGridLayout *grid=nullptr;
 	QLabel *ico_lbl=nullptr, *msg_lbl=nullptr;
-	QString field_name;
 	QFont font;
-	QWidget *wgt=nullptr;
-	QPalette pal;
 	QColor color=QColor(0,0,128);
-	map<QString, vector<QWidget *> >::iterator itr, itr_end;
-	vector<QString> values_vect;
-	unsigned i, count, count1, i1;
 
-	itr=fields.begin();
-	itr_end=fields.end();
-
-	while(itr!=itr_end)
-	{
-		count=itr->second.size();
-
-		for(i=0; i < count; i++)
-		{
-			wgt=itr->second.at(i);
-			if(values && values->count(wgt) > 0)
-			{
-				values_vect=values->at(wgt);
-				count1=values_vect.size();
-
-				field_name+=QString("<br/>") + trUtf8("Value(s)") + QString(": (");
-				for(i1=0; i1 < count1; i1++)
-				{
-					field_name+=values_vect.at(i1);
-					if(i1 < count1-1) field_name+=", ";
-				}
-				field_name+=")";
-			}
-
-			font=wgt->font();
-
-			pal.setBrush(QPalette::Active, QPalette::WindowText, color);
-			wgt->setPalette(pal);
-
-			font.setBold(true);
-			font.setItalic(true);
-			wgt->setFont(font);
-			wgt->setToolTip(QString("<em style='font-size: 8pt'>") + trUtf8("Version") +
-							itr->first + QString(" %1</em>").arg(field_name));
-		}
-		itr++;
-	}
-
+	highlightVersionSpecificFields(fields, values);
 
 	alert_frm = new QFrame;
 	font.setItalic(false);
@@ -700,6 +673,7 @@ void BaseObjectWidget::applyConfiguration(void)
 			ObjectType obj_type=object->getObjectType();
 			QString obj_name;
 
+			QApplication::setOverrideCursor(Qt::WaitCursor);
 			obj_name=BaseObject::formatName(name_edt->text().toUtf8(), obj_type==OBJ_OPERATOR);
 
 			if(this->object->acceptsSchema() &&  schema_sel->getSelectedObject())
@@ -764,7 +738,7 @@ void BaseObjectWidget::applyConfiguration(void)
 
 			//Sets the object's comment
 			if(comment_edt->isVisible())
-				object->setComment(comment_edt->text().toUtf8());
+				object->setComment(comment_edt->toPlainText().toUtf8());
 
 			//Sets the object's tablespace
 			if(tablespace_sel->isVisible())
@@ -791,6 +765,7 @@ void BaseObjectWidget::applyConfiguration(void)
 		}
 		catch(Exception &e)
 		{
+			QApplication::restoreOverrideCursor();
 			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
@@ -878,9 +853,13 @@ void BaseObjectWidget::finishConfiguration(void)
 			emit s_objectManipulated();
 			emit s_closeRequested();
 		}
+
+		QApplication::restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{
+		QApplication::restoreOverrideCursor();
+
 		if(e.getErrorType()==ERR_ASG_OBJ_INV_DEFINITION)
 			throw Exception(Exception::getErrorMessage(ERR_REQ_FIELDS_NOT_FILLED)
 							.arg(this->object->getName()).arg(this->object->getTypeName()),
@@ -892,8 +871,10 @@ void BaseObjectWidget::finishConfiguration(void)
 
 void BaseObjectWidget::cancelConfiguration(void)
 {
-	ObjectType obj_type;
+	if(!object)
+		return;
 
+	ObjectType obj_type;
 	obj_type=this->object->getObjectType();
 
 	if(new_object)
@@ -932,6 +913,7 @@ void BaseObjectWidget::cancelConfiguration(void)
 		catch(Exception &){}
 	}
 
+	QApplication::restoreOverrideCursor();
 	emit s_objectManipulated();
 }
 

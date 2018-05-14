@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -60,16 +60,20 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		QMenu handle_menu,
 		
 		//! \brief Stores the snippets' actions
-		snippets_menu;
+		snippets_menu,
+
+		toggle_disp_menu;
 		
 		QAction *copy_action, *drop_action, *drop_cascade_action,
 		*show_data_action, *refresh_action, *properties_action,
 		*trunc_cascade_action, *truncate_action, *rename_action,
-		*source_action;
+		*source_action, *show_sys_objs, *show_ext_objs;
 		
 		QTreeWidgetItem *rename_item;
 		
 		HintTextWidget *filter_ht;
+
+		unsigned sort_column;
 
 		void configureImportHelper(void);
 		
@@ -127,6 +131,7 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		void formatColumnAttribs(attribs_map &attribs);
 		void formatConstraintAttribs(attribs_map &attribs);
 		void formatIndexAttribs(attribs_map &attribs);
+		void formatPolicyAttribs(attribs_map &attribs);
 		void handleSelectedSnippet(const QString &snip_id);
 		
 		//! \brief Extract an attribute map containing the basic attributes for drop/rename commands
@@ -179,6 +184,8 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		void dropDatabase(void);
 
 		void loadObjectSource(void);
+
+		void filterObjects(void);
 
 	signals:
 		//! \brief This signal is emmited to indicate that a sql execution widget need to be opened

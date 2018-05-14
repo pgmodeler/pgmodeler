@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,12 +31,6 @@ TablespaceWidget::TablespaceWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	configureTabOrder();
 
 	setMinimumSize(480, 140);
-}
-
-void TablespaceWidget::hideEvent(QHideEvent *event)
-{
-	directory_edt->clear();
-	BaseObjectWidget::hideEvent(event);
 }
 
 void TablespaceWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Tablespace *tablespc)

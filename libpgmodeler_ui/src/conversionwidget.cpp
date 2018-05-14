@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -54,13 +54,6 @@ ConversionWidget::ConversionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
-}
-
-void ConversionWidget::hideEvent(QHideEvent *event)
-{
-	conv_func_sel->clearSelector();
-	default_conv_chk->setChecked(false);
-	BaseObjectWidget::hideEvent(event);
 }
 
 void ConversionWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Conversion *conv)

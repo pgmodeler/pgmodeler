@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -66,6 +66,9 @@ class Messagebox: public QDialog, public Ui::Messagebox {
 		void show(const QString &msg, unsigned icon_type=NO_ICON, unsigned buttons=OK_BUTTON);
 
 		bool isCancelled(void);
+
+		void setCustomOptionText(const QString &text);
+		bool isCustomOptionChecked(void);
 
 	private slots:
 		void handleYesOkClick(void);

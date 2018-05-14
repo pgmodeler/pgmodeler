@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -524,9 +524,9 @@ void GeneralConfigWidget::applyConfiguration(void)
 	ObjectsScene::setInvertRangeSelectionTrigger(invert_rangesel_chk->isChecked());
 	ObjectsScene::setGridSize(grid_size_spb->value());
 
-	ObjectsScene::setGridOptions(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_CANVAS_GRID]!=ParsersAttributes::_FALSE_,
-															 config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::ALIGN_OBJS_TO_GRID]!=ParsersAttributes::_FALSE_,
-															 config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_PAGE_DELIMITERS]!=ParsersAttributes::_FALSE_);
+	ObjectsScene::setGridOptions(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_CANVAS_GRID]==ParsersAttributes::_TRUE_,
+															 config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::ALIGN_OBJS_TO_GRID]==ParsersAttributes::_TRUE_,
+															 config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_PAGE_DELIMITERS]==ParsersAttributes::_TRUE_);
 
 	OperationList::setMaximumSize(oplist_size_spb->value());
 	BaseTableView::setHideExtAttributes(hide_ext_attribs_chk->isChecked());
@@ -557,7 +557,10 @@ void GeneralConfigWidget::restoreDefaults(void)
 {
 	try
 	{
-		BaseConfigWidget::restoreDefaults(GlobalAttributes::GENERAL_CONF);
+		BaseConfigWidget::restoreDefaults(GlobalAttributes::GENERAL_CONF, false);
+		BaseConfigWidget::restoreDefaults(GlobalAttributes::XML_HIGHLIGHT_CONF, true);
+		BaseConfigWidget::restoreDefaults(GlobalAttributes::SQL_HIGHLIGHT_CONF, true);
+		BaseConfigWidget::restoreDefaults(GlobalAttributes::UI_STYLE_CONF, true);
 		this->loadConfiguration();
 		this->applyConfiguration();
 		setConfigurationChanged(true);
@@ -638,9 +641,4 @@ void GeneralConfigWidget::selectSourceEditor(void)
 
 	if(sel_editor_dlg.result()==QDialog::Accepted)
 		source_editor_edt->setText(sel_editor_dlg.selectedFiles().at(0));
-}
-
-void GeneralConfigWidget::hideEvent(QHideEvent *)
-{
-	settings_twg->setCurrentIndex(0);
 }

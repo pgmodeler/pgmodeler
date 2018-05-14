@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ Role::Role(void)
 	obj_type=OBJ_ROLE;
 	object_id=Role::role_id++;
 
-	for(unsigned i=0; i <= OP_REPLICATION; i++)
+	for(unsigned i=0; i <= OP_BYPASSRLS; i++)
 		options[i]=false;
 
 	conn_limit=-1;
@@ -44,11 +44,12 @@ Role::Role(void)
 	attributes[ParsersAttributes::ADMIN_ROLES]=QString();
 	attributes[ParsersAttributes::REPLICATION]=QString();
 	attributes[ParsersAttributes::GROUP]=QString();
+	attributes[ParsersAttributes::BYPASSRLS]=QString();
 }
 
 void Role::setOption(unsigned op_type, bool value)
 {
-	if(op_type > OP_REPLICATION)
+	if(op_type > OP_BYPASSRLS)
 		//Raises an error if the option type is invalid
 		throw Exception(ERR_ASG_VAL_INV_ROLE_OPT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -261,7 +262,7 @@ bool Role::isRoleExists(unsigned role_type, Role *role)
 
 bool Role::getOption(unsigned op_type)
 {
-	if(op_type > OP_REPLICATION)
+	if(op_type > OP_BYPASSRLS)
 		throw Exception(ERR_ASG_VAL_INV_ROLE_OPT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(options[op_type]);
@@ -331,13 +332,13 @@ QString Role::getCodeDefinition(unsigned def_type)
 	QString op_attribs[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
 						   ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,
 						   ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED,
-						   ParsersAttributes::REPLICATION };
+							 ParsersAttributes::REPLICATION, ParsersAttributes::BYPASSRLS };
 
 	setRoleAttribute(REF_ROLE);
 	setRoleAttribute(MEMBER_ROLE);
 	setRoleAttribute(ADMIN_ROLE);
 
-	for(i=0; i <= OP_REPLICATION; i++)
+	for(i=0; i <= OP_BYPASSRLS; i++)
 		attributes[op_attribs[i]]=(options[i] ? ParsersAttributes::_TRUE_ : QString());
 
 	attributes[ParsersAttributes::PASSWORD]=password;
@@ -362,7 +363,7 @@ QString Role::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
 		QString op_attribs[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
 							   ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,
 							   ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED,
-							   ParsersAttributes::REPLICATION };
+								 ParsersAttributes::REPLICATION, ParsersAttributes::BYPASSRLS };
 
 		attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object, ignore_name_diff);
 
@@ -372,7 +373,7 @@ QString Role::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
 		if(this->validity!=role->validity)
 			attribs[ParsersAttributes::VALIDITY]=role->validity;
 
-		for(unsigned i=0; i <= OP_REPLICATION; i++)
+		for(unsigned i=0; i <= OP_BYPASSRLS; i++)
 		{
 			if((attribs.count(ParsersAttributes::PASSWORD) && i==OP_ENCRYPTED) ||
 					this->options[i]!=role->options[i])

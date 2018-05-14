@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -2542,3 +2542,21 @@ QString Relationship::getInheritDefinition(bool undo_inherit)
 	return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes));
 }
 
+
+bool Relationship::isReferenceTableMandatory(void)
+{
+	if(rel_type == BaseRelationship::RELATIONSHIP_11 && getReferenceTable() == dst_table && !src_mandatory)
+		return(dst_mandatory);
+	else
+		return((getReferenceTable() == src_table && isTableMandatory(SRC_TABLE)) ||
+					 (getReferenceTable() == dst_table && isTableMandatory(DST_TABLE)));
+}
+
+bool Relationship::isReceiverTableMandatory(void)
+{
+	if(rel_type == BaseRelationship::RELATIONSHIP_11 && getReferenceTable() == dst_table && !src_mandatory)
+		return(false);
+	else
+		return((getReceiverTable() == src_table && isTableMandatory(SRC_TABLE)) ||
+					 (getReceiverTable() == dst_table && isTableMandatory(DST_TABLE)));
+}

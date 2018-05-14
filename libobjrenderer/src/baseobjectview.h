@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -114,7 +114,9 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		static constexpr double VERT_SPACING=2.0f,
 		HORIZ_SPACING=2.0f,
 		DEFAULT_FONT_SIZE=9.0f,
-		OBJ_BORDER_WIDTH=0.80f;
+		OBJ_BORDER_WIDTH=0.85f;
+
+		static constexpr int OBJ_ALPHA_CHANNEL=128;
 
 		BaseObjectView(BaseObject *object=nullptr);
 		virtual ~BaseObjectView(void);
@@ -176,10 +178,10 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 
 		/*! \brief Returns the current font DPI factor of the screen. This factor is used to resize
 		 * objects according to the screen's resolution/font dpi */
-		static float getScreenDpiFactor(void);
+		static double getScreenDpiFactor(void);
 
 		//! \brief Returns the current factor between the default font size and the current defined one
-		static float getFontFactor(void);
+		static double getFontFactor(void);
 
 	protected slots:
 		//! \brief Make the basic object operations

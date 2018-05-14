@@ -17,6 +17,16 @@
 	     cl.attacl AS permission, df.adsrc AS default_value,
 	     ds.description AS comment, tb.oid AS table, ]
 
+    %if ({pgsql-ver} >=f "10.0") %then
+        [ CASE
+          WHEN cl.attidentity = 'a' THEN 'ALWAYS'
+          WHEN cl.attidentity = 'd' THEN 'BY DEFAULT'
+          ELSE NULL
+          END AS identity_type, ]
+    %else
+        [ NULL AS identity_type, ]
+    %end
+
        #Creating an attribute to indicate if the column is inherited or not
        [ CASE
          WHEN cl.attinhcount > 0 THEN TRUE

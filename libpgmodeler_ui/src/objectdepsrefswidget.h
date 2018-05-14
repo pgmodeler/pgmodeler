@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2017 - Raphael Araújo e Silva <raphael@pgmodeler.com.br>
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,9 +32,9 @@
 class ObjectDepsRefsWidget: public BaseObjectWidget, public Ui::ObjectDepsRefsWidget {
 	private:
 		Q_OBJECT
+
 		ModelWidget *model_wgt;
 
-		void hideEvent(QHideEvent *event);
 		void setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj);
 
 	public:
