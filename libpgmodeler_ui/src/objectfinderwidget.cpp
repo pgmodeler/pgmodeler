@@ -27,6 +27,14 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	splitter->handle(1)->setEnabled(false);
 	updateObjectTypeList(obj_types_lst);
 
+	select_menu.addAction(trUtf8("Listed"), this, SLOT(selectObjects()));
+	select_menu.addAction(trUtf8("Not listed"), this, SLOT(selectObjects()));
+	select_btn->setMenu(&select_menu);
+
+	fade_menu.addAction(trUtf8("Listed"), this, SLOT(fadeObjects()));
+	fade_menu.addAction(trUtf8("Not listed"), this, SLOT(fadeObjects()));
+	fade_btn->setMenu(&fade_menu);
+
 	connect(filter_btn, SIGNAL(toggled(bool)), filter_frm, SLOT(setVisible(bool)));
 	connect(filter_btn, &QToolButton::toggled, [&](){
 		splitter->setSizes({0, 1000});
@@ -40,7 +48,6 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	connect(clear_res_btn, SIGNAL(clicked(void)), this, SLOT(clearResult(void)));
 	connect(select_all_btn, SIGNAL(clicked(void)), this, SLOT(setAllObjectsChecked(void)));
 	connect(clear_all_btn, SIGNAL(clicked(void)), this, SLOT(setAllObjectsChecked(void)));
-	connect(fade_btn, SIGNAL(toggled(bool)), this, SLOT(fadeObjects()));
 
 	this->setModel(nullptr);
 	pattern_edt->installEventFilter(this);
@@ -85,6 +92,7 @@ void ObjectFinderWidget::resizeEvent(QResizeEvent *event)
 		find_btn->setToolButtonStyle(style);
 		clear_res_btn->setToolButtonStyle(style);
 		select_btn->setToolButtonStyle(style);
+		fade_btn->setToolButtonStyle(style);
 	}
 }
 
@@ -94,6 +102,7 @@ void ObjectFinderWidget::fadeObjects(void)
 		return;
 
 	vector<BaseObject *> objects, other_objs;
+	bool fade_listed = false;
 
 	for(auto obj_type : {OBJ_TABLE, OBJ_VIEW, OBJ_TEXTBOX, OBJ_RELATIONSHIP, BASE_RELATIONSHIP, OBJ_SCHEMA})
 	{
@@ -102,19 +111,75 @@ void ObjectFinderWidget::fadeObjects(void)
 									 model_wgt->getDatabaseModel()->getObjectList(obj_type)->end());
 	}
 
-	if(!fade_btn->isChecked())
-	{
-		model_wgt->fadeObjects(objects, true);
+	model_wgt->fadeObjects(objects, true);
+
+	if(!fade_menu.actions().contains(qobject_cast<QAction *>(sender())))
 		return;
-	}
+
+	fade_listed = qobject_cast<QAction *>(sender()) == fade_menu.actions().at(0);
 
 	std::sort(objects.begin(), objects.end());
 	std::sort(found_objs.begin(), found_objs.end());
 	std::set_difference(objects.begin(), objects.end(), found_objs.begin(), found_objs.end(),
 											std::inserter(other_objs, other_objs.begin()));
 
-	model_wgt->fadeObjects(found_objs, true);
-	model_wgt->fadeObjects(other_objs, false);
+	model_wgt->fadeObjects(found_objs, fade_listed);
+	model_wgt->fadeObjects(other_objs, !fade_listed);
+}
+
+void ObjectFinderWidget::selectObjects(void)
+{
+	if(!model_wgt)
+		return;
+
+	vector<BaseObject *> objects, other_objs;
+	BaseObjectView *obj_view = nullptr;
+	BaseGraphicObject *graph_obj = nullptr;
+	bool sel_listed = false;
+
+	for(auto obj_type : {OBJ_TABLE, OBJ_VIEW, OBJ_TEXTBOX, OBJ_RELATIONSHIP, BASE_RELATIONSHIP, OBJ_SCHEMA})
+	{
+		objects.insert(objects.end(),
+									 model_wgt->getDatabaseModel()->getObjectList(obj_type)->begin(),
+									 model_wgt->getDatabaseModel()->getObjectList(obj_type)->end());
+	}
+
+	model_wgt->scene->blockSignals(true);
+	fadeObjects();
+	model_wgt->scene->blockSignals(false);
+
+	sel_listed = qobject_cast<QAction *>(sender()) == select_menu.actions().at(0);
+
+	std::sort(objects.begin(), objects.end());
+	std::sort(found_objs.begin(), found_objs.end());
+	std::set_difference(objects.begin(), objects.end(), found_objs.begin(), found_objs.end(),
+											std::inserter(other_objs, other_objs.begin()));
+
+	objects.clear();
+
+	if(sel_listed)
+		objects.assign(found_objs.begin(), found_objs.end());
+	else
+		objects.assign(other_objs.begin(), other_objs.end());
+
+	for(auto &obj : objects)
+	{
+		graph_obj = dynamic_cast<BaseGraphicObject *>(obj);
+
+		if(graph_obj)
+		{
+			obj_view = dynamic_cast<BaseObjectView *>(graph_obj->getReceiverObject());
+
+			if(obj_view)
+			{
+				obj_view->blockSignals(true);
+				obj_view->setSelected(true);
+				obj_view->blockSignals(false);
+			}
+		}
+	}
+
+	model_wgt->configureObjectSelection();
 }
 
 void ObjectFinderWidget::setModel(ModelWidget *model_wgt)
@@ -129,7 +194,6 @@ void ObjectFinderWidget::setModel(ModelWidget *model_wgt)
 	pattern_lbl->setEnabled(enable);
 	find_btn->setEnabled(enable);
 	result_tbw->setEnabled(enable);
-	select_btn->setEnabled(enable);
 }
 
 void ObjectFinderWidget::clearResult(void)
@@ -142,6 +206,9 @@ void ObjectFinderWidget::clearResult(void)
 
 	found_lbl->setVisible(false);
 	clear_res_btn->setEnabled(false);
+
+	select_btn->setEnabled(false);
+	fade_btn->setEnabled(false);
 }
 
 void ObjectFinderWidget::findObjects(void)
@@ -178,6 +245,8 @@ void ObjectFinderWidget::findObjects(void)
 			found_lbl->setText(trUtf8("No objects found."));
 
 		clear_res_btn->setEnabled(!found_objs.empty());
+		select_btn->setEnabled(!found_objs.empty());
+		fade_btn->setEnabled(!found_objs.empty());
 		fadeObjects();
 	}
 }
@@ -198,8 +267,7 @@ void ObjectFinderWidget::selectObject(void)
 			if(tab_obj && !graph_obj)
 				graph_obj=dynamic_cast<BaseGraphicObject *>(tab_obj->getParentTable());
 
-			//Highlight the graphical object when the 'highlight' button is checked
-			if(graph_obj && select_btn->isChecked())
+			if(graph_obj)
 			{
 				BaseObjectView *obj=dynamic_cast<BaseObjectView *>(graph_obj->getReceiverObject());
 				model_wgt->scene->clearSelection();

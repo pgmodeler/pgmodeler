@@ -1879,15 +1879,15 @@ void ModelWidget::renameObject(void)
 void ModelWidget::moveToSchema(void)
 {
 	QAction *act=dynamic_cast<QAction *>(sender());
-	Schema *schema=dynamic_cast<Schema *>(reinterpret_cast<BaseObject *>(act->data().value<void *>())),
-			*prev_schema=nullptr;
+	Schema *schema=dynamic_cast<Schema *>(reinterpret_cast<BaseObject *>(act->data().value<void *>()));
 	BaseGraphicObject *obj_graph=nullptr;
 	vector<BaseObject *> ref_objs;
-	vector<BaseRelationship *>rels;
 	int op_id=-1, op_curr_idx=op_list->getCurrentIndex();
 
 	try
 	{
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+
 		op_list->startOperationChain();
 
 		for(BaseObject *obj : selected_objects)
@@ -1895,7 +1895,6 @@ void ModelWidget::moveToSchema(void)
 			//Change the object's schema only if the new schema is different from the current
 			if(obj->acceptsSchema() && obj->getSchema()!=schema)
 			{
-				prev_schema=dynamic_cast<Schema *>(obj->getSchema());
 				op_id=op_list->registerObject(obj, Operation::OBJECT_MODIFIED, -1);
 
 				obj->setSchema(schema);
@@ -1913,55 +1912,28 @@ void ModelWidget::moveToSchema(void)
 						p.setY(dst_schema->pos().y() + dst_schema->boundingRect().height() + BaseObjectView::VERT_SPACING);
 						dynamic_cast<BaseObjectView *>(obj_graph->getReceiverObject())->setPos(p);
 					}
-
-					obj_graph->setModified(true);
-					schema->setModified(true);
-					prev_schema->setModified(true);
 				}
 
 				//Invalidating the code of the object's references
 				db_model->getObjectReferences(obj, ref_objs);
+
 				for(BaseObject *ref_obj : ref_objs)
-				{
 					ref_obj->setCodeInvalidated(true);
-
-					//If the ref object is an table child object
-					if(TableObject::isTableObject(ref_obj->getObjectType()))
-					{
-						//Updates the parent table instead of the object
-						obj_graph=dynamic_cast<BaseGraphicObject *>(dynamic_cast<TableObject *>(ref_obj)->getParentTable());
-
-						//Get the relationships that the table participate
-						rels=db_model->getRelationships(dynamic_cast<BaseTable *>(obj_graph));
-
-						obj_graph->setModified(true);
-
-						if(!rels.empty())
-						{
-							//Updating the tables from relationships
-							for(auto &rel : rels)
-							{
-								if(rel->getTable(BaseRelationship::SRC_TABLE)!=obj_graph)
-									rel->getTable(BaseRelationship::SRC_TABLE)->setModified(true);
-
-								if(rel->getTable(BaseRelationship::DST_TABLE)!=obj_graph)
-									rel->getTable(BaseRelationship::DST_TABLE)->setModified(true);
-							}
-						}
-					}
-					else
-						dynamic_cast<BaseGraphicObject *>(ref_obj)->setModified(true);
-				}
 			}
 		}
 
 		op_list->finishOperationChain();
-
+		db_model->setObjectsModified();
 		this->setModified(true);
+
 		emit s_objectModified();
+
+		QApplication::restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{
+		QApplication::restoreOverrideCursor();
+
 		if(op_id >=0 && op_id > op_curr_idx)
 			op_list->removeLastOperation();
 
@@ -2034,11 +2006,13 @@ void ModelWidget::setTag(void)
 			{
 				op_id=op_list->registerObject(obj, Operation::OBJECT_MODIFIED, -1);
 				tab->setTag(dynamic_cast<Tag *>(tag));
-				tab->setModified(true);
 			}
 		}
 
 		op_list->finishOperationChain();
+		db_model->setObjectsModified(selected_objects);
+		scene->clearSelection();
+
 		emit s_objectModified();
 	}
 	catch(Exception &e)
@@ -2238,9 +2212,9 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 	vector<BaseObject *> deps;
 	BaseObject *object=nullptr;
 	TableObject *tab_obj=nullptr;
-	Table *table=nullptr;
+	BaseTable *table=nullptr;
 	Constraint *constr=nullptr;
-	ObjectType types[]={ OBJ_TRIGGER, OBJ_INDEX, OBJ_CONSTRAINT };
+	ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX, OBJ_CONSTRAINT, OBJ_POLICY };
 	unsigned i, type_id, count;
 	Messagebox msg_box;
 
@@ -2282,11 +2256,11 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 
 			/* Copying the special objects (which references columns added by relationship) in order
 			to be correclty created when pasted */
-			if(object->getObjectType()==OBJ_TABLE)
+			if(object->getObjectType()==OBJ_TABLE || object->getObjectType() == OBJ_VIEW)
 			{
-				table=dynamic_cast<Table *>(object);
+				table=dynamic_cast<BaseTable *>(object);
 
-				for(type_id=0; type_id < 3; type_id++)
+				for(type_id=0; type_id < 4; type_id++)
 				{
 					count=table->getObjectCount(types[type_id]);
 
@@ -2299,14 +2273,16 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 						columns added by relationship. Case the object is a constraint, it cannot be a primary key because
 						this type of constraint is treated separetely by relationships */
 						if(!tab_obj->isAddedByRelationship() &&
-								((constr &&
+							 (!constr ||
+								(((constr &&
 									(constr->getConstraintType()==ConstraintType::foreign_key ||
 									 (constr->getConstraintType()==ConstraintType::unique &&
-									constr->isReferRelationshipAddedColumn()))) ||
-								 (types[type_id]==OBJ_TRIGGER && dynamic_cast<Trigger *>(tab_obj)->isReferRelationshipAddedColumn()) ||
-								 (types[type_id]==OBJ_INDEX && dynamic_cast<Index *>(tab_obj)->isReferRelationshipAddedColumn())))
+									constr->isReferRelationshipAddedColumn())))))))
 							deps.push_back(tab_obj);
 					}
+
+					if(object->getObjectType() == OBJ_VIEW && type_id >= 2)
+						break;
 				}
 			}
 		}
@@ -2402,7 +2378,7 @@ void ModelWidget::pasteObjects(void)
 				aux_object=db_model->getObject(aux_name, obj_type);
 			else
 			{
-				if(sel_view && (obj_type==OBJ_TRIGGER || obj_type==OBJ_RULE))
+				if(sel_view && (obj_type==OBJ_TRIGGER || obj_type==OBJ_RULE || obj_type==OBJ_INDEX))
 					aux_object=sel_view->getObject(aux_name, obj_type);
 				else if(sel_table)
 					aux_object=sel_table->getObject(aux_name, obj_type);
@@ -2448,7 +2424,12 @@ void ModelWidget::pasteObjects(void)
 					else
 					{
 						if(tab_obj)
-							tab_obj->setName(PgModelerNS::generateUniqueName(tab_obj, (*sel_table->getObjectList(tab_obj->getObjectType())), false, QString("_cp"), true));
+						{
+							if(sel_table)
+								tab_obj->setName(PgModelerNS::generateUniqueName(tab_obj, (*sel_table->getObjectList(tab_obj->getObjectType())), false, QString("_cp"), true));
+							else
+								tab_obj->setName(PgModelerNS::generateUniqueName(tab_obj, (*sel_view->getObjectList(tab_obj->getObjectType())), false, QString("_cp"), true));
+						}
 						else
 							object->setName(PgModelerNS::generateUniqueName(object, (*db_model->getObjectList(object->getObjectType())), false, QString("_cp"), true));
 
@@ -2495,11 +2476,12 @@ void ModelWidget::pasteObjects(void)
 				parent=sel_view;
 
 			/* Only generates the XML for a table object when the selected receiver object
-		is a table or is a view and the current object is a trigger or rule (because
+		is a table or is a view and the current object is a trigger, index, or rule (because
 		view's only accepts this two types) */
 			if(sel_table ||
 					(sel_view && (tab_obj->getObjectType()==OBJ_TRIGGER ||
-									tab_obj->getObjectType()==OBJ_RULE)))
+												tab_obj->getObjectType()==OBJ_RULE ||
+												tab_obj->getObjectType()==OBJ_INDEX)))
 			{
 				//Backups the original parent table
 				orig_parent_tab=tab_obj->getParentTable();
@@ -2577,16 +2559,10 @@ void ModelWidget::pasteObjects(void)
 				//Special case for table objects
 				if(tab_obj)
 				{
-					if(sel_table &&
-							(tab_obj->getObjectType()==OBJ_COLUMN ||	tab_obj->getObjectType()==OBJ_RULE))
+					if(sel_table && tab_obj->getObjectType()==OBJ_COLUMN)
 					{
 						sel_table->addObject(tab_obj);
 						sel_table->setModified(true);
-					}
-					else if(sel_view && tab_obj->getObjectType()==OBJ_RULE)
-					{
-						sel_view->addObject(tab_obj);
-						sel_view->setModified(true);
 					}
 
 					//Updates the fk relationships if the constraint is a foreign-key
@@ -2667,7 +2643,11 @@ void ModelWidget::duplicateObject(void)
 
 			table = dynamic_cast<TableObject *>(object)->getParentTable();
 			PgModelerNS::copyObject(&dup_object, object, obj_type);
-			dup_object->setName(PgModelerNS::generateUniqueName(dup_object, *dynamic_cast<Table *>(table)->getObjectList(obj_type), false, QString("_cp")));
+
+			if(table->getObjectType() == OBJ_TABLE)
+				dup_object->setName(PgModelerNS::generateUniqueName(dup_object, *dynamic_cast<Table *>(table)->getObjectList(obj_type), false, QString("_cp")));
+			else
+				dup_object->setName(PgModelerNS::generateUniqueName(dup_object, *dynamic_cast<View *>(table)->getObjectList(obj_type), false, QString("_cp")));
 
 			op_id=op_list->registerObject(dup_object, Operation::OBJECT_CREATED, -1, table);
 			table->addObject(dup_object);
@@ -3162,9 +3142,9 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 				menus[i]->clear();
 
 				//Configuring actions "Move to schema", "Change Owner" and "Set tag"
-				if((i==0 && accepts_schema) ||
-						(i==1 && accepts_owner) ||
-						(i==2 && tab_or_view))
+				if((types[i] == OBJ_SCHEMA && accepts_schema) ||
+						(types[i] == OBJ_ROLE && accepts_owner) ||
+						(types[i]==OBJ_TAG && tab_or_view))
 				{
 					obj_list=db_model->getObjects(types[i]);
 
@@ -3175,6 +3155,12 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 					}
 					else
 					{
+						if(types[i] == OBJ_TAG)
+						{
+							menus[i]->addAction(trUtf8("None"), this, SLOT(setTag()));
+							menus[i]->addSeparator();
+						}
+
 						while(!obj_list.empty())
 						{
 							act=new QAction(obj_list.back()->getName(), menus[i]);
@@ -3548,7 +3534,7 @@ void ModelWidget::updateObjectsOpacity(void)
 	}
 }
 
-void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
+void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 {
 	QMenu *submenu=nullptr;
 	Table *table=nullptr;
@@ -4853,12 +4839,11 @@ void ModelWidget::updateMagnifierArea(void)
 		magnifier_area_lbl->move(5, magnifier_area_lbl->geometry().top());
 
 	QPainter p(&pix);
-	p.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
+	p.setRenderHints(viewport->renderHints());
 
 	scene->blockSignals(true);
 	scene->render(&p, QRectF(QPointF(0,0), size), QRectF(scene_pos - QPointF(cx, cy), size));
 
-	p.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing, false);
 	p.setPen(QColor(80,0,0));
 	p.drawLine(QPointF(cx, cy - 10), QPointF(cx, cy + 10));
 	p.drawLine(QPointF(cx - 10, cy), QPointF(cx + 10, cy));

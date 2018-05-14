@@ -557,9 +557,10 @@ void GeneralConfigWidget::restoreDefaults(void)
 {
 	try
 	{
-		BaseConfigWidget::restoreDefaults(GlobalAttributes::GENERAL_CONF);
-		BaseConfigWidget::restoreDefaults(GlobalAttributes::XML_HIGHLIGHT_CONF);
-		BaseConfigWidget::restoreDefaults(GlobalAttributes::SQL_HIGHLIGHT_CONF);
+		BaseConfigWidget::restoreDefaults(GlobalAttributes::GENERAL_CONF, false);
+		BaseConfigWidget::restoreDefaults(GlobalAttributes::XML_HIGHLIGHT_CONF, true);
+		BaseConfigWidget::restoreDefaults(GlobalAttributes::SQL_HIGHLIGHT_CONF, true);
+		BaseConfigWidget::restoreDefaults(GlobalAttributes::UI_STYLE_CONF, true);
 		this->loadConfiguration();
 		this->applyConfiguration();
 		setConfigurationChanged(true);

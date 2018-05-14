@@ -166,7 +166,7 @@ class ModelWidget: public QWidget {
 		int openEditingForm(BaseObject *object, BaseObject *parent_obj, const QPointF &pos);
 
 		//! \brief Configures the popup menu according the the selected objects list
-		void configurePopupMenu(vector<BaseObject *> objects=vector<BaseObject *>());
+		void configurePopupMenu(const vector<BaseObject *> &objects=vector<BaseObject *>());
 
 		//! \brief Configures the submenu related to the object
 		void configureSubmenu(BaseObject *object);
@@ -188,9 +188,6 @@ class ModelWidget: public QWidget {
 		 * be provided. The method will avoid to put two or more tables in the same position causing
 		 * overlaping. This method causes the schema rectangle to be enabled. */
 		void rearrangeTablesInSchema(Schema *schema, QPointF start);
-
-		//! \brief Arrange all tables it their schemas randomly (scattered)
-		void rearrangeTablesInSchemas(void);
 
 		void updateMagnifierArea(void);
 
@@ -269,10 +266,6 @@ class ModelWidget: public QWidget {
 		//! \brief Disables the model actions when some new object action is active
 		void enableModelActions(bool value);
 
-		/*! \brief Reorganizes the schemas over the scene in a grid form. The parameters are: an origin point,
-		number of tables per row, schemas per row and a object spacing */
-		void rearrangeSchemasInGrid(QPointF origin = QPointF(50, 50), unsigned tabs_per_row = 5, unsigned sch_per_row = 3, double obj_spacing = 50);
-
 		/*! \brief Reorganizes the tables of a specific schema over the scene. The parameter are:
 		 the schema in which the tables will be rearranged, an origin point, number of tables per row
 		 a object spacing */
@@ -349,6 +342,13 @@ class ModelWidget: public QWidget {
 		/*! \brief Rearrange table/view/textboxes in the canvas in such way to provide better visualization
 		 * of the whole model. Currently only hierachical arrangement is possible. See rearrangeTablesHierarchically() */
 		void rearrangeTablesHierarchically(void);
+
+		/*! \brief Reorganizes the schemas over the scene in a grid form. The parameters are: an origin point,
+		number of tables per row, schemas per row and a object spacing */
+		void rearrangeSchemasInGrid(QPointF origin = QPointF(50, 50), unsigned tabs_per_row = 5, unsigned sch_per_row = 3, double obj_spacing = 50);
+
+		//! \brief Arrange all tables it their schemas randomly (scattered)
+		void rearrangeTablesInSchemas(void);
 
 		void emitSceneInteracted(void);
 

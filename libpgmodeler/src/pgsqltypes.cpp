@@ -106,38 +106,39 @@ QString BaseType::type_list[types_count]=
 	"tsrange","tstzrange","daterange",
 
 	//Object Identification type (OID)
-	//offsets 108 to 120
+	//offsets 108 to 122
 	"oid", "regproc", "regprocedure",
 	"regoper", "regoperator", "regclass",
-	"regtype", "regconfig", "regdictionary",
-	"xid", "cid", "tid",  "oidvector",
+	"regrole", "regnamespace", "regtype",
+	"regconfig", "regdictionary", "xid", "cid",
+	"tid",  "oidvector",
 
 	//Pseudo-types
-	//offsets 121 to 135
+	//offsets 123 to 137
 	"\"any\"","anyarray","anyelement","anyenum",
 	"anynonarray", "anyrange", "cstring","internal","language_handler",
 	"record","trigger","void","opaque", "fdw_handler", "event_trigger",
 
 	//Interval types
-	//offsets 136 to 148
+	//offsets 138 to 150
 	"YEAR", "MONTH", "DAY", "HOUR",
 	"MINUTE", "SECOND","YEAR TO MONTH",
 	"DAY TO HOUR","DAY TO MINUTE","DAY TO SECOND",
 	"HOUR TO MINUTE","HOUR TO SECOND","MINUTE TO SECOND",
 
 	//Types used by the class BehaviorType
-	//offsets 149 to 151
+	//offsets 151 to 153
 	"CALLED ON NULL INPUT",
 	"RETURNS NULL ON NULL INPUT",
 	"STRICT",
 
 	//Types used by the class SecurityType
-	//offsets 152 to 153
+	//offsets 154 to 155
 	"SECURITY INVOKER",
 	"SECURITY DEFINER",
 
 	//Types used by the class LanguageType
-	//offsets 154 to 160
+	//offsets 156 to 162
 	"sql",
 	"c",
 	"plpgsql",
@@ -147,7 +148,7 @@ QString BaseType::type_list[types_count]=
 	"internal",
 
 	//Types used by the class EncodingType
-	//offsets 161 to 202
+	//offsets 163 to 204
 	"UTF8", "BIG5", "EUC_CN", "EUC_JP", "EUC_JIS_2004",
 	"EUC_KR", "EUC_TW", "GB18030", "GBK",
 	"ISO_8859_5", "ISO_8859_6", "ISO_8859_7", "ISO_8859_8",
@@ -160,25 +161,25 @@ QString BaseType::type_list[types_count]=
 	"WIN1254", "WIN1255", "WIN1256", "WIN1257", "WIN1258",
 
 	//Types used by the class StorageType
-	//offsets 203 to 206
+	//offsets 205 to 208
 	"plain",
 	"external",
 	"extended",
 	"main",
 
 	//Types used by the class MatchType
-	//offsets 207 to 209
+	//offsets 209 to 211
 	"MATCH FULL",
 	"MATCH PARTIAL",
 	"MATCH SIMPLE",
 
 	//Types used by the class DeferralType
-	//offsets 210 to 211
+	//offsets 212 to 213
 	"INITIALLY IMMEDIATE",
 	"INITIALLY DEFERRED",
 
 	//Types used by the class CategoryType
-	//offsets 212 to 225 - See table 44-43 on PostgreSQL 8.4 documentation
+	//offsets 214 to 227 - See table 44-43 on PostgreSQL 8.4 documentation
 	"U", //User-defined types
 	"A", //Array types
 	"B", //Boolean types
@@ -195,7 +196,7 @@ QString BaseType::type_list[types_count]=
 	"X", //Unknown type
 
 	//Types used by the class FiringType
-	//offsets 226 to 228
+	//offsets 228 to 230
 	"BEFORE",
 	"AFTER",
 	"INSTEAD OF",
@@ -204,7 +205,7 @@ QString BaseType::type_list[types_count]=
 	These types accepts variations Z, M e ZM.
 	> Example: POINT, POINTZ, POINTM, POINTZM
 	Reference: http://postgis.refractions.net/documentation/manual-2.0/using_postgis_dbmanagement.html */
-	//offsets 229 to 244
+	//offsets 231 to 246
 	"POINT",
 	"LINESTRING",
 	"POLYGON",
@@ -223,19 +224,19 @@ QString BaseType::type_list[types_count]=
 	"MULTISURFACE",
 
 	//Types used by the class EventTriggerType
-	//offsets 245 to 248
+	//offsets 247 to 250
 	"ddl_command_start",
 	"ddl_command_end",
 	"sql_drop",
 	"table_rewrite",
 
 	//Types used by the class IdentityType
-	//offsets 249 to 250
+	//offsets 251 to 252
 	"ALWAYS",
 	"BY DEFAULT",
 
 	//Types used by the class PolicyCmdType
-	//offsets 251 to 255
+	//offsets 253 to 257
 	"ALL",
 	"SELECT",
 	"INSERT",

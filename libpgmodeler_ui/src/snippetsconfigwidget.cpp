@@ -484,7 +484,7 @@ void SnippetsConfigWidget::restoreDefaults(void)
 {
 	try
 	{
-		BaseConfigWidget::restoreDefaults(GlobalAttributes::SNIPPETS_CONF);
+		BaseConfigWidget::restoreDefaults(GlobalAttributes::SNIPPETS_CONF, false);
 		this->loadConfiguration();
 		setConfigurationChanged(true);
 	}

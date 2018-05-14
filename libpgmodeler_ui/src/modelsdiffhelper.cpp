@@ -30,7 +30,7 @@ ModelsDiffHelper::ModelsDiffHelper(void)
 	diff_opts[OPT_KEEP_CLUSTER_OBJS]=true;
 	diff_opts[OPT_CASCADE_MODE]=true;
 	diff_opts[OPT_TRUCANTE_TABLES]=false;
-	diff_opts[OPT_FORCE_RECREATION]=false;
+	diff_opts[OPT_FORCE_RECREATION]=true;
 	diff_opts[OPT_RECREATE_UNCHANGEBLE]=true;
 	diff_opts[OPT_KEEP_OBJ_PERMS]=true;
 	diff_opts[OPT_REUSE_SEQUENCES]=true;
@@ -785,11 +785,11 @@ void ModelsDiffHelper::processDiffInfos(void)
 					if(diff.getOldObject())
 						alter_def=diff.getOldObject()->getAlterDefinition(object);
 
+					if(obj_type == OBJ_DATABASE && diff_opts[OPT_PRESERVE_DB_NAME])
+						alter_def.remove(QRegExp(QString("(ALTER)( )+(DATABASE)( )+(%1)( )+(RENAME)( )+(TO)(.)*(\\n)").arg(diff.getOldObject()->getSignature())));
+
 					if(!alter_def.isEmpty())
 					{
-						if(obj_type == OBJ_DATABASE && diff_opts[OPT_PRESERVE_DB_NAME])
-							alter_def.remove(QRegExp(QString("(ALTER)( )+(DATABASE)( )+(%1)( )+(RENAME)( )+(TO)(.)*(\\n)").arg(diff.getOldObject()->getSignature())));
-
 						alter_objs[object->getObjectId()]=alter_def;
 
 						/* If the object is a column checks if the types of the columns are differents,
@@ -978,7 +978,8 @@ void ModelsDiffHelper::recreateObject(BaseObject *object, vector<BaseObject *> &
 {
 	if(object &&
 			object->getObjectType()!=BASE_RELATIONSHIP &&
-			object->getObjectType()!=OBJ_RELATIONSHIP)
+			object->getObjectType()!=OBJ_RELATIONSHIP &&
+			object->getObjectType()!=OBJ_DATABASE)
 	{
 		vector<BaseObject *> ref_objs;
 		BaseObject *aux_obj=nullptr;

@@ -157,6 +157,8 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		if(!this->isSelected() && event->buttons()==Qt::LeftButton &&
 			 this->ext_attribs_toggler->boundingRect().contains(pnt))
 		{
+			Schema *schema = dynamic_cast<Schema *>(this->getSourceObject()->getSchema());
+
 			//We need to force the object to be not selectable so further calls to mousePressEvent doesn't select the object
 			this->setFlag(QGraphicsItem::ItemIsSelectable, false);
 
@@ -170,6 +172,9 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 			// Using a single shot time to restore the selectable flag
 			QTimer::singleShot(300, [&]{ this->setFlag(QGraphicsItem::ItemIsSelectable, true); });
+
+			//Updating the schema box that holds the object (if visible)
+			schema->setModified(true);
 
 			emit s_extAttributesToggled();
 		}
@@ -351,13 +356,14 @@ void BaseTableView::__configureObject(float width)
 		QPen pen = ext_attribs_body->pen();
 		float py = 0;
 		float factor = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->logicalDotsPerInch() / 96.0f;
+    float pixel_ratio = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->devicePixelRatio();
 
 		ext_attribs_toggler->setVisible(true);
 		ext_attribs_tog_arrow->setVisible(true);
 
 		ext_attribs_toggler->setPen(pen);
 		ext_attribs_toggler->setBrush(ext_attribs_body->brush());
-		ext_attribs_toggler->setRect(QRectF(0, 0, width, 12 * factor));
+		ext_attribs_toggler->setRect(QRectF(0, 0, width, 12 * factor * pixel_ratio));
 
 		if(!tab->isExtAttribsHidden())
 		{
@@ -378,14 +384,14 @@ void BaseTableView::__configureObject(float width)
 		if(!tab->isExtAttribsHidden())
 		{
 			pol.append(QPointF(0,0));
-			pol.append(QPointF(-5 * factor, 6 * factor));
-			pol.append(QPointF(5 * factor, 6 * factor));
+			pol.append(QPointF(-5 * factor * pixel_ratio, 6 * factor * pixel_ratio));
+			pol.append(QPointF(5 * factor * pixel_ratio, 6 * factor * pixel_ratio));
 		}
 		else
 		{
-			pol.append(QPointF(0,6 * factor));
-			pol.append(QPointF(-5 * factor, 0));
-			pol.append(QPointF(5 * factor, 0));
+			pol.append(QPointF(0,6 * factor * pixel_ratio));
+			pol.append(QPointF(-5 * factor * pixel_ratio, 0));
+			pol.append(QPointF(5 * factor * pixel_ratio, 0));
 		}
 
 		QLinearGradient grad(QPointF(0,0),QPointF(0,1));

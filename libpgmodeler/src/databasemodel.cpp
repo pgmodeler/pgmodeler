@@ -654,18 +654,17 @@ unsigned DatabaseModel::getObjectCount(ObjectType obj_type)
 
 unsigned DatabaseModel::getObjectCount(void)
 {
-	ObjectType types[20]={
+	vector<ObjectType> types={
 		BASE_RELATIONSHIP,OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW,
-		OBJ_AGGREGATE, OBJ_OPERATOR,
-		OBJ_SEQUENCE, OBJ_CONVERSION,
-		OBJ_CAST, OBJ_OPFAMILY, OBJ_OPCLASS,
-		BASE_RELATIONSHIP, OBJ_TEXTBOX,
-		OBJ_DOMAIN, OBJ_TYPE, OBJ_FUNCTION, OBJ_SCHEMA,
-		OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_ROLE };
-	unsigned count=0, i;
+		OBJ_AGGREGATE, OBJ_OPERATOR, OBJ_SEQUENCE, OBJ_CONVERSION,
+		OBJ_CAST, OBJ_OPFAMILY, OBJ_OPCLASS, OBJ_TEXTBOX, OBJ_DOMAIN,
+		OBJ_TYPE, OBJ_FUNCTION, OBJ_SCHEMA,	OBJ_LANGUAGE, OBJ_TABLESPACE,
+		OBJ_ROLE, OBJ_PERMISSION, OBJ_COLLATION, OBJ_EXTENSION, OBJ_TAG,
+		OBJ_EVENT_TRIGGER, OBJ_GENERIC_SQL};
+	unsigned count=0;
 
-	for(i=0; i < 20; i++)
-		count+=getObjectList(types[i])->size();
+	for(auto &type : types)
+		count+=getObjectList(type)->size();
 
 	return(count);
 }
@@ -708,30 +707,22 @@ QString DatabaseModel::getAuthor(void)
 
 void DatabaseModel::setProtected(bool value)
 {
-	ObjectType types[19]={
-		OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW,
+	vector<ObjectType> types = {
+		BASE_RELATIONSHIP,OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW,
 		OBJ_AGGREGATE, OBJ_OPERATOR,
 		OBJ_SEQUENCE, OBJ_CONVERSION,
 		OBJ_CAST, OBJ_OPFAMILY, OBJ_OPCLASS,
 		BASE_RELATIONSHIP, OBJ_TEXTBOX,
-		OBJ_DOMAIN, OBJ_TYPE, OBJ_FUNCTION, OBJ_SCHEMA,
-		OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_ROLE };
-	vector<BaseObject *> *lista=nullptr;
-	vector<BaseObject *>::iterator itr, itr_end;
-	BaseObject *objeto=nullptr;
-	unsigned i;
+		OBJ_DOMAIN, OBJ_TYPE, OBJ_FUNCTION,
+		OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_ROLE, OBJ_COLLATION,
+		OBJ_EXTENSION, OBJ_SCHEMA, OBJ_PERMISSION, OBJ_TAG, OBJ_GENERIC_SQL
+	};
 
-	for(i=0; i < 19; i++)
+	for(auto &type : types)
 	{
-		lista=getObjectList(types[i]);
-		itr=lista->begin();
-		itr_end=lista->end();
-
-		while(itr!=itr_end)
+		for(auto &object :  *getObjectList(type))
 		{
-			objeto=(*itr);
-			objeto->setProtected(value);
-			itr++;
+			object->setProtected(value);
 		}
 	}
 
@@ -6576,7 +6567,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 	bool sql_disabled=false;
 	BaseObject *object=nullptr;
 	QString def, search_path=QString("pg_catalog,public"),
-			msg=trUtf8("Generating %1 of the object `%2' (%3)"),
+			msg=trUtf8("Generating %1 code: `%2' (%3)"),
 			attrib=ParsersAttributes::OBJECTS, attrib_aux,
 			def_type_str=(def_type==SchemaParser::SQL_DEFINITION ? QString("SQL") : QString("XML"));
 	Type *usr_type=nullptr;
@@ -6586,7 +6577,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 	try
 	{
 		objects_map=getCreationOrder(def_type);
-		general_obj_cnt=this->getObjectCount();
+		general_obj_cnt=objects_map.size();
 		gen_defs_count=0;
 
 		attribs_aux[ParsersAttributes::SHELL_TYPES]=QString();
@@ -6699,7 +6690,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			if((def_type==SchemaParser::SQL_DEFINITION && !object->isSQLDisabled()) ||
 					(def_type==SchemaParser::XML_DEFINITION && !object->isSystemObject()))
 			{
-				emit s_objectLoaded((gen_defs_count/static_cast<unsigned>(general_obj_cnt)) * 100,
+				emit s_objectLoaded((gen_defs_count/static_cast<double>(general_obj_cnt)) * 100,
 									msg.arg(def_type_str)
 									.arg(object->getName())
 									.arg(object->getTypeName()),
@@ -8110,7 +8101,10 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						{
 							col=tab->getColumn(i1);
 
-							if(!col->isAddedByRelationship() && col->getType()==ptr_pgsqltype)
+							if(!col->isAddedByRelationship() &&
+								 (col->getType()==ptr_pgsqltype ||
+									//Special case for postgis extension
+									(obj_type == OBJ_EXTENSION && object->getName() == QString("postgis") && col->getType().isGiSType())))
 							{
 								refer=true;
 								refs.push_back(col);
@@ -8817,6 +8811,15 @@ void DatabaseModel::__getObjectReferences(BaseObject *object, vector<BaseObject 
 	}
 }
 
+void DatabaseModel::setObjectsModified(vector<BaseObject *> &objects)
+{
+	for(auto &obj : objects)
+	{
+		if(BaseGraphicObject::isGraphicObject(obj->getObjectType()))
+			dynamic_cast<BaseGraphicObject *>(obj)->setModified(true);
+	}
+}
+
 void DatabaseModel::setObjectsModified(vector<ObjectType> types)
 {
 	ObjectType obj_types[]={OBJ_TABLE, OBJ_VIEW,
@@ -8867,8 +8870,8 @@ void DatabaseModel::setCodesInvalidated(vector<ObjectType> types)
 	else
 	{
 		ObjectType tab_obj_types[]={OBJ_COLUMN, OBJ_CONSTRAINT,
-									OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX};
-		for(unsigned i=0; i < 5; i++)
+									OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX, OBJ_POLICY};
+		for(unsigned i=0; i < 6; i++)
 			sel_types.erase(std::find(sel_types.begin(), sel_types.end(), tab_obj_types[i]));
 
 		sel_types=types;

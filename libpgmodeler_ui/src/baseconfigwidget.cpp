@@ -99,7 +99,7 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, at
 	}
 }
 
-void BaseConfigWidget::restoreDefaults(const QString &conf_id)
+void BaseConfigWidget::restoreDefaults(const QString &conf_id, bool silent)
 {
 	QString current_file, default_file;
 
@@ -134,7 +134,7 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id)
 		bkp_saved = QFile::rename(current_file, bkp_filename);
 		QFile::copy(default_file, current_file);
 
-		if(bkp_saved)
+		if(bkp_saved && !silent)
 		{
 			Messagebox msg_box;
 			msg_box.show(trUtf8("A backup of the previous settings was saved into <strong>%1</strong>!").arg(bkp_filename), Messagebox::INFO_ICON);

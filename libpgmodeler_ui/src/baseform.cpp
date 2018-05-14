@@ -46,10 +46,12 @@ void BaseForm::resizeForm(QWidget *widget)
 			screen_id = qApp->desktop()->screenNumber(qApp->activeWindow());
 	QScreen *screen=qApp->screens().at(screen_id);
 	float dpi_factor = 0;
+  float pixel_ratio = 0;
 
 	max_w = screen->size().width() * 0.70;
 	max_h = screen->size().height() * 0.70;
 	dpi_factor = screen->logicalDotsPerInch() / 96.0f;
+  pixel_ratio = screen->devicePixelRatio();
 
 	if(dpi_factor <= 1.01f)
 		dpi_factor = 1.0f;
@@ -102,8 +104,8 @@ void BaseForm::resizeForm(QWidget *widget)
 							((buttons_lt->contentsMargins().top() +
 								buttons_lt->contentsMargins().bottom()) * 6);
 
-	curr_w *= dpi_factor;
-	curr_h *= dpi_factor;
+	curr_w *= dpi_factor * pixel_ratio;
+	curr_h *= dpi_factor * pixel_ratio;
 
 	if(curr_w > screen->size().width())
 		curr_w = screen->size().width() * 0.80;
@@ -134,7 +136,7 @@ void BaseForm::setMainWidget(BaseObjectWidget *widget)
 	setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
 
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(reject()));
-	connect(this, SIGNAL(rejected()), widget, SLOT(cancelConfiguration()));
+	//connect(this, SIGNAL(rejected()), widget, SLOT(cancelConfiguration()));
 	connect(apply_ok_btn, SIGNAL(clicked(bool)), widget, SLOT(applyConfiguration()));
 	connect(widget, SIGNAL(s_closeRequested()), this, SLOT(accept()));
 }

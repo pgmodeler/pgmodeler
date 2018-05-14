@@ -1011,50 +1011,14 @@
           <property name="bottomMargin">
            <number>4</number>
           </property>
-          <item row="2" column="1">
-           <widget class="QLineEdit" name="source_editor_edt">
-            <property name="toolTip">
-             <string/>
-            </property>
-            <property name="readOnly">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="0">
-           <widget class="QLabel" name="sql_history_lbl">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
+          <item row="4" column="1">
+           <widget class="QLabel" name="label_4">
             <property name="text">
-             <string>SQL history max. length:</string>
+             <string>Souce code editor args:</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="confs_dir_edt">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>Souce code editor:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="1" colspan="2">
+          <item row="7" column="2" colspan="2">
            <layout class="QHBoxLayout" name="horizontalLayout_19">
             <item>
              <widget class="QSpinBox" name="history_max_length_spb">
@@ -1184,44 +1148,21 @@
             </item>
            </layout>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>Configurations directory:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2">
-           <widget class="QToolButton" name="select_editor_btn">
+          <item row="0" column="3">
+           <widget class="QWidget" name="ui_language_hint" native="true">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="minimumSize">
              <size>
-              <width>0</width>
-              <height>0</height>
+              <width>22</width>
+              <height>22</height>
              </size>
             </property>
             <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="toolTip">
-             <string>Browse the source code editor application</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="../res/resources.qrc">
-              <normaloff>:/icones/icones/abrir.png</normaloff>:/icones/icones/abrir.png</iconset>
-            </property>
-            <property name="iconSize">
              <size>
               <width>22</width>
               <height>22</height>
@@ -1229,7 +1170,7 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="2">
+          <item row="1" column="3">
            <widget class="QToolButton" name="open_dir_tb">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -1267,7 +1208,43 @@
             </property>
            </widget>
           </item>
-          <item row="12" column="0">
+          <item row="0" column="2">
+           <widget class="QComboBox" name="ui_language_cmb">
+            <property name="statusTip">
+             <string>Overrides the default user interface language defined by the system. Requires restarting the program. &lt;strong&gt;NOTE:&lt;/strong&gt; UI translations are third party collaborations thus any typo or mistake should be reported directly to their respective maintainers.</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="1">
+           <widget class="QLabel" name="sql_history_lbl">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>SQL history max. length:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QLineEdit" name="source_editor_edt">
+            <property name="toolTip">
+             <string/>
+            </property>
+            <property name="readOnly">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="11" column="1">
            <widget class="QCheckBox" name="check_upd_chk">
             <property name="toolTip">
              <string>Check if there is a new version on server</string>
@@ -1280,7 +1257,14 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="1" colspan="2">
+          <item row="1" column="2">
+           <widget class="QLineEdit" name="confs_dir_edt">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2" colspan="2">
            <widget class="QLineEdit" name="source_editor_args_edt">
             <property name="toolTip">
              <string/>
@@ -1290,46 +1274,62 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>Souce code editor args:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
+          <item row="0" column="1">
            <widget class="QLabel" name="label_5">
             <property name="text">
              <string>User interface language:</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="ui_language_cmb">
-            <property name="statusTip">
-             <string>Overrides the default user interface language defined by the system. Requires restarting the program. &lt;strong&gt;NOTE:&lt;/strong&gt; UI translations are third party collaborations thus any typo or mistake should be reported directly to their respective maintainers.</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QWidget" name="ui_language_hint" native="true">
+          <item row="2" column="3">
+           <widget class="QToolButton" name="select_editor_btn">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="minimumSize">
              <size>
-              <width>22</width>
-              <height>22</height>
+              <width>0</width>
+              <height>0</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
+              <width>16777215</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Browse the source code editor application</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../res/resources.qrc">
+              <normaloff>:/icones/icones/abrir.png</normaloff>:/icones/icones/abrir.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
               <width>22</width>
               <height>22</height>
              </size>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Souce code editor:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Configurations directory:</string>
             </property>
            </widget>
           </item>

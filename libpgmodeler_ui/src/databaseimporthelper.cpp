@@ -657,6 +657,10 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 	ObjectType obj_type=static_cast<ObjectType>(attribs[ParsersAttributes::OBJECT_TYPE].toUInt());
 	QString obj_name=getObjectName(attribs[ParsersAttributes::OID], (obj_type==OBJ_FUNCTION || obj_type==OBJ_OPERATOR));
 
+	//Avoiding the creation of pgModeler's temp objects created in database during the catalog reading
+	if(obj_name.contains(Catalog::PGMODELER_TEMP_DB_OBJ))
+		return;
+
 	try
 	{
 		if(!import_canceled &&
@@ -891,6 +895,7 @@ void DatabaseImportHelper::resetImportParameters(void)
 	col_perms.clear();
 	connection.close();
 	catalog.closeConnection();
+	inherited_cols.clear();
 }
 
 QString DatabaseImportHelper::dumpObjectAttributes(attribs_map &attribs)
@@ -1493,9 +1498,10 @@ void DatabaseImportHelper::createAggregate(attribs_map &attribs)
 			attribs[func_types[i]]=getDependencyObject(attribs[func_types[i]], OBJ_FUNCTION, true, auto_resolve_deps, true, {{ParsersAttributes::REF_TYPE, func_types[i]}});
 
 		types=getTypes(attribs[ParsersAttributes::TYPES], true);
+		attribs[ParsersAttributes::TYPES]=QString();
+
 		if(!types.isEmpty())
 		{
-			attribs[ParsersAttributes::TYPES]=QString();
 			for(int i=0; i < types.size(); i++)
 				attribs[ParsersAttributes::TYPES]+=types[i];
 		}
@@ -1664,8 +1670,8 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 			{
 				/* Building the type name prepending the schema name in order to search it on
 		   the user defined types list at PgSQLType class */
-				type_name=getObjectName(types[type_oid][ParsersAttributes::SCHEMA], true);
-				type_name+=QString(".") + types[type_oid][ParsersAttributes::NAME];
+				type_name=BaseObject::formatName(getObjectName(types[type_oid][ParsersAttributes::SCHEMA], true), false);
+				type_name+=QString(".") + BaseObject::formatName(types[type_oid][ParsersAttributes::NAME], false);
 				is_type_registered=PgSQLType::isRegistered(type_name, dbmodel);
 			}
 			else
@@ -1689,6 +1695,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 					type_def=getDependencyObject(itr->second[ParsersAttributes::TYPE_OID], OBJ_DOMAIN);
 			}
 
+			col.setIdentityType(BaseType::null);
 			col.setType(PgSQLType::parseString(type_name));
 			col.setNotNull(!itr->second[ParsersAttributes::NOT_NULL].isEmpty());
 			col.setComment(itr->second[ParsersAttributes::COMMENT]);
@@ -2169,6 +2176,13 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 			{
 				role=dynamic_cast<Role *>(dbmodel->getObject(role_name, OBJ_ROLE));
 
+				if(auto_resolve_deps && !role_name.isEmpty() && !role)
+				{
+					QString oid = catalog.getObjectOID(role_name, OBJ_ROLE);
+					getDependencyObject(oid, OBJ_ROLE);
+					role=dynamic_cast<Role *>(dbmodel->getObject(role_name, OBJ_ROLE));
+				}
+
 				/* If the role doesn't exists and there is a name defined, throws an error because
 				the roles wasn't found on the model */
 				if(!role && !role_name.isEmpty())
@@ -2249,7 +2263,7 @@ void DatabaseImportHelper::destroyDetachedColumns(void)
 
 	dbmodel->disconnectRelationships();
 
-	emit s_progressUpdated(95,
+	emit s_progressUpdated(100,
 						   trUtf8("Destroying unused detached columns..."),
 						   OBJ_COLUMN);
 
@@ -2286,7 +2300,7 @@ void DatabaseImportHelper::assignSequencesToColumns(void)
 {
 	Table *table=nullptr;
 	Column *col=nullptr;
-	emit s_progressUpdated(95,
+	emit s_progressUpdated(100,
 							 trUtf8("Assigning sequences to columns..."),
 						   OBJ_SEQUENCE);
 

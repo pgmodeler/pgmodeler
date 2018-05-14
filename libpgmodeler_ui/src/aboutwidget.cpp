@@ -31,26 +31,19 @@ AboutWidget::AboutWidget(QWidget *parent) : QWidget(parent)
 	drop_shadow->setBlurRadius(30);
 	this->setGraphicsEffect(drop_shadow);
 
-	pgmodeler_ver_lbl->setText(QString("v%1").arg(GlobalAttributes::PGMODELER_VERSION));
-	build_num_lbl->setText(GlobalAttributes::PGMODELER_BUILD_NUMBER);
+	PgModelerUiNS::configureWidgetFont(title_lbl, PgModelerUiNS::HUGE_FONT_FACTOR);
+	PgModelerUiNS::configureWidgetFont(pgmodeler_ver_lbl, PgModelerUiNS::HUGE_FONT_FACTOR);
+	PgModelerUiNS::configureWidgetFont(build_lbl, PgModelerUiNS::BIG_FONT_FACTOR);
+	PgModelerUiNS::configureWidgetFont(build_num_lbl, PgModelerUiNS::BIG_FONT_FACTOR);
 
-	for(int row=0; row < contributors_tab->rowCount(); row++)
-		contributors_tab->item(row, 2)->setToolTip(contributors_tab->item(row, 2)->text().replace(QString("; "), QString(";\n")));
-
-	contributors_tab->sortByColumn(0, Qt::AscendingOrder);
-	contributors_tab->resizeColumnsToContents();
+	pgmodeler_ver_lbl->setText(QString("v%1 ").arg(GlobalAttributes::PGMODELER_VERSION));
+	build_num_lbl->setText(QString("%1 Qt %2").arg(GlobalAttributes::PGMODELER_BUILD_NUMBER).arg(QT_VERSION_STR));
 
 	connect(hide_tb, &QToolButton::clicked, this,
 			[&](){
 		this->close();
 		emit s_visibilityChanged(false);
 	});
-
-	PgModelerUiNS::configureWidgetFont(title_lbl, PgModelerUiNS::HUGE_FONT_FACTOR);
-	PgModelerUiNS::configureWidgetFont(slogan_lbl, PgModelerUiNS::BIG_FONT_FACTOR);
-	PgModelerUiNS::configureWidgetFont(pgmodeler_ver_lbl, PgModelerUiNS::HUGE_FONT_FACTOR);
-	PgModelerUiNS::configureWidgetFont(build_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
-	PgModelerUiNS::configureWidgetFont(build_num_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 
 	float factor = BaseObjectView::getScreenDpiFactor();
 	this->adjustSize();

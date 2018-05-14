@@ -33,6 +33,7 @@
 #include "codecompletionwidget.h"
 #include "numberedtexteditor.h"
 #include "findreplacewidget.h"
+#include "resultsetmodel.h"
 
 class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 	private:
@@ -68,6 +69,8 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 
 		FindReplaceWidget *find_history_wgt;
 
+		ResultSetModel *result_model;
+
 		/*! \brief Enables/Disables the fields for sql input and execution.
 				When enabling a new connection to server will be opened. */
 		void enableSQLExecution(bool enable);
@@ -97,6 +100,7 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		static const QString COLUMN_NULL_VALUE;
 
 		SQLExecutionWidget(QWidget * parent = 0);
+		~SQLExecutionWidget(void);
 
 		//! \brief Configures the connection to query the server
 		void setConnection(Connection conn);
@@ -106,16 +110,19 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		static void fillResultsTable(Catalog &catalog, ResultSet &res, QTableWidget *results_tbw, bool store_data=false);
 
 		//! \brief Copy to clipboard (in csv format) the current selected items on results grid
-		static void copySelection(QTableWidget *results_tbw, bool use_popup=true, bool csv_is_default = false);
+		static void copySelection(QTableView *results_tbw, bool use_popup=true, bool csv_is_default = false);
 
 		//! \brief Generates a CSV buffer based upon the selection on the results grid
-		static QByteArray generateCSVBuffer(QTableWidget *results_tbw, int start_row, int start_col, int row_cnt, int col_cnt);
+		static QByteArray generateCSVBuffer(QTableView *results_tbw);
 
 		//! \brief Generates a Plain text buffer based upon the selection on the results grid (this method does not include the column names)
-		static QByteArray generateTextBuffer(QTableWidget *results_tbw, int start_row, int start_col, int row_cnt, int col_cnt);
+		static QByteArray generateTextBuffer(QTableView *results_tbw);
+
+		//! \brief Generates a custom text buffer. User can specify a separator for columns, include column names and quote values
+		static QByteArray generateBuffer(QTableView *results_tbw, QChar separator, bool incl_col_names, bool use_quotes);
 
 		//! \brief Exports the results to csv file
-		static void exportResults(QTableWidget *results_tbw);
+		static void exportResults(QTableView *results_tbw);
 
 	public slots:
 		void configureSnippets(void);
@@ -149,8 +156,6 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		int clearAll(void);
 
 		void selectSnippet(QAction *act);
-
-		//void handleSelectedWord(QString word);
 
 		void toggleOutputPane(bool visible);
 

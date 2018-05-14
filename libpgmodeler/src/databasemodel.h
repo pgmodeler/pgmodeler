@@ -561,9 +561,12 @@ class DatabaseModel:  public QObject, public BaseObject {
 		meaning that ALL objects directly or inderectly linked to the 'object' are retrieved. */
 		void __getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclude_perms=false);
 
-		/*! \brief Marks the graphical objects as modified forcing their redraw. User can specify only a set of
+		/*! \brief Marks the graphical objects of the provided types as modified forcing their redraw. User can specify only a set of
 	 graphical objects to be marked */
 		void setObjectsModified(vector<ObjectType> types={});
+
+		//! \brief Marks the graphical objects in the list as modified forcing their redraw.
+		void setObjectsModified(vector<BaseObject *> &objects);
 
 		/*! \brief Marks the objects with code invalidated forcing their code regeneration. User can specify only a set of
 		 graphical objects to be marked */

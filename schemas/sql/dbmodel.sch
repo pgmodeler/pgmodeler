@@ -25,14 +25,14 @@ $br $br
 
  %if {role} %then {role} %end
  %if {tablespace} %then 
-   [-- Tablespaces creation must be done outside an multicommand file.] $br
-   [-- These commands were put in this file only for convenience.] $br
+   [-- Tablespaces creation must be done outside a multicommand file.] $br
+   [-- These commands were put in this file only as a convenience.] $br
    {tablespace} $br
  %end
 
 $br
-    [-- Database creation must be done outside an multicommand file.] $br
-    [-- These commands were put in this file only for convenience.] $br
+    [-- Database creation must be done outside a multicommand file.] $br
+    [-- These commands were put in this file only as a convenience.] $br
    {database} $br
 %end
 

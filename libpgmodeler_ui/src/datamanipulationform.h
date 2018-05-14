@@ -151,7 +151,7 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		void markDeleteOnRows(void);
 		
 		//! \brief Add a new row on the grid with the first column with edition enabled
-		void addRow(void);
+		void addRow(bool focus_new_row = true);
 		
 		//! \brief Duplicate the selected rows creating new ones with the same values as the selection
 		void duplicateRows(void);

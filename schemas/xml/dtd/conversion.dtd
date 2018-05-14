@@ -7,4 +7,5 @@
 <!ATTLIST conversion src-encoding CDATA #REQUIRED>
 <!ATTLIST conversion dst-encoding CDATA #REQUIRED>
 <!ATTLIST conversion protected (false|true) "false">
+<!ATTLIST conversion default (false|true) "false">
 <!ATTLIST conversion sql-disabled (false|true) "false">

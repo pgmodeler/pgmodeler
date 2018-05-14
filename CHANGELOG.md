@@ -1,6 +1,55 @@
 Change Log
 ---------
 
+v0.9.1
+------
+<em>Release date: May 14, 2018</em><br/>
+
+* [New] Added support to line selection by clicking and moving the mouse over the line numbers widget in any source code field.
+* [New] The validator now checks if the model has columns referencing spatial data types and creates the postgis extension automatically when fixing the model.
+* [New] Added support to RESTART IDENTITY on truncate tables in DatabaseExplorerWidget.
+* [New] Added an custom option checkbox in Messagebox for general purpose usage.
+* [New] Added support to diff operation in CLI.
+* [New] Added support to import database from CLI.
+* [New] Adding missing types regrole and regnamespace.
+* [Change] Improved the copy/duplicate operation in order to copy rules, index, trigger and policies together to their parents.
+* [Change] Added column names to the code completion widget used in the filter widget at DataManipulationForm.
+* [Change] Improved the SQLExecutionWidget in such way that it'll display large amount of data more quickly and consuming less memory.
+* [Change] Minor improvement in SQLExecutionWidget to show the amount of time took to run a query.
+* [Change] Minor improvement in the text find widgets in SQL tool in order to make them closable via dedicated button.
+* [Change] Improved the set tag operation in ModelWidget in order to cleanup the assigned tags to a set of objects.
+* [Change] Minor improvement on DatabaseExplorerWidget to show the rls attributes labels correctly in the attributes grid.
+* [Change] Refactored all the CLI options.
+* [Change] Minor change in Connection::generateConnectionString in order to put the dbname param in the start of the string.
+* [Change] Improved the performance of the row duplication action in DataManipulationForm.
+* [Change] Minor improvement in order to update the schemas boxes when the tables have their extended attributes box toggled.
+* [Change] Improved the performance of "Move to schema" operation.
+* [Change] Added an busy cursor while closing a model.
+* [Change] Improved the object selection in object finder.
+* [Change] Changed the behaviour of select and fade buttons in ObjectFinderWidget in such way to enable the user to select/fade the objects in the listing (or not included in the results).
+* [Fix] Fixed a bug when import identity columns in certain cases when the identity column was followed by another column which data type was not accepted for identity, e.g, text after smallint.
+* [Fix] Fixed the check boxes disabling when dealing with identifier relationships.
+* [Fix] Disabled the drag & drop for items in the side listing at ConfigurationForm.
+* [Fix] Fixed the tab behavior on comment box in all editing forms of database objects.
+* [Fix] Fixed the catalog query for user defined types.
+* [Fix] Fixed the import of user defined types which names contains uppercase characters.
+* [Fix] Minor typo fixes in CLI.
+* [Fix] Fix window scaling on HiDPI/Retina screens.
+* [Fix] Minor fix in Connection::getConnectionId in order to omit port when that parameter is not configured in the connection.
+* [Fix] Fixed a bug in ModelExportHelper that was failing to remane the database when the command appeared.
+* [Fix] Fixed a bug in CollationWidget that was referencing the collation attributes LC_??? using the wrong constant.
+* [Fix] Fixed the behaviour of the message box that warns about the need of validate the model prior to export, save or diff. Now rejecting the dialog (i.e. closing it) will be considered that the user wants to proceed with the pending operation even with an invalid model.
+* [Fix] Fixed the import of comments for constraints,triggers, index and rules.
+* [Fix] The value input in BulkDataEditWidget will be focused as soon as the widget appears.
+* [Fix] Fixed a bug in the aggregate import process.
+* [Fix] Minor fix in DataManipulationForm to avoid the generation of a where clause when the filter is filled only with spaces.
+* [Fix] Minor fix in the magnfier tool to use the same render hints as the canvas viewport.
+* [Fix] Fixed a bug in the diff process that was trying to recreate the whole database when the "Force recreation" option was set.
+* [Fix] Fixed a bug when showing the source of tables in DatabaseExplorerWidget when these objects have permissions assigned.
+* [Fix] Adjusting tables position when the parent schema is moved and the alignment to grid is enabled.
+* [Fix] Minor fix in the CLI menu.
+* [Fix] Fixed the saving process for large models by stopping the threads related to temp models saving while the model file is being written.
+
 v0.9.1-beta1
 ------
 <em>Release date: April 6, 2018</em><br/>
