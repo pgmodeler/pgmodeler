@@ -25,11 +25,13 @@ _If applicable, add screenshots to help explain your problem._
  - pgModeler version:
  - Qt version:
 
-**Stacktrace**
+**Stacktrace / Debug info**
 _If pgModeler crashed after the bug raised attach the stacktrace below_
 
 ```
+
  Put the stacktrace here!
+
 ```
 
 **Additional info**
