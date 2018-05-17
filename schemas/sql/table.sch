@@ -33,12 +33,15 @@
         
         %if %not {constr-sql-disabled} %and {constraints} %then [,] $br %end
     %end
+    
+    %if {inh-columns} %then 
+        $br {inh-columns} 
+    %end
 
-    %if {inh-columns} %then {inh-columns} %end
-
-    %if {constraints} %then       
+    %if {constraints} %then
         {constraints}
     %end
+
   %end
 
 $br )
