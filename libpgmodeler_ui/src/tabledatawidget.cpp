@@ -19,6 +19,7 @@
 #include "tabledatawidget.h"
 #include "htmlitemdelegate.h"
 #include "bulkdataeditwidget.h"
+#include "sqlexecutionwidget.h"
 
 const QString TableDataWidget::PLACEHOLDER_COLUMN=QString("$placeholder$");
 
@@ -75,10 +76,49 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, BASE
 		populateDataGrid(csv_load_wgt->getCsvBuffer(Table::DATA_SEPARATOR, Table::DATA_LINE_BREAK));
 	});
 
+	connect(paste_tb, &QToolButton::clicked, [&](){
+		csv_load_wgt->loadCsvBuffer(qApp->clipboard()->text(), QString(";"), QString("\""), true);
+		populateDataGrid(csv_load_wgt->getCsvBuffer(Table::DATA_SEPARATOR, Table::DATA_LINE_BREAK));
+		qApp->clipboard()->clear();
+		paste_tb->setEnabled(false);
+	});
+
 	connect(bulkedit_tb, &QToolButton::clicked, [&](){
 		PgModelerUiNS::bulkDataEdit(data_tbw);
 	});
 
+	connect(copy_tb, &QToolButton::clicked, [&](){
+		SQLExecutionWidget::copySelection(data_tbw, false, true);
+		paste_tb->setEnabled(true);
+	});
+
+	connect(data_tbw, &QTableWidget::itemPressed,
+	[&](){
+					if(QApplication::mouseButtons()==Qt::RightButton)
+					{
+						QMenu item_menu;
+						QAction *act = nullptr;
+						QList<QToolButton *> btns = { add_row_tb, add_col_tb, dup_rows_tb, nullptr,
+																					del_rows_tb, del_cols_tb, nullptr,
+																					clear_rows_tb, clear_cols_tb, nullptr,
+																					copy_tb, paste_tb };
+
+						for(auto &btn : btns)
+						{
+							if(!btn)
+							{
+								item_menu.addSeparator();
+								continue;
+							}
+
+							act = item_menu.addAction(btn->icon(), btn->text(), btn, SLOT(click()), btn->shortcut());
+							act->setEnabled(btn->isEnabled());
+							act->setMenu(btn->menu());
+						}
+
+						item_menu.exec(QCursor::pos());
+					}
+		});
 }
 
 void TableDataWidget::insertRowOnTabPress(int curr_row, int curr_col, int prev_row, int prev_col)
@@ -269,6 +309,7 @@ void TableDataWidget::enableButtons(void)
 	del_cols_tb->setEnabled(rows_selected);
 	dup_rows_tb->setEnabled(cols_selected);
 	bulkedit_tb->setEnabled(!sel_ranges.isEmpty());
+	copy_tb->setEnabled(!sel_ranges.isEmpty());
 }
 
 void TableDataWidget::setAttributes(DatabaseModel *model, Table *table)
@@ -302,14 +343,13 @@ void TableDataWidget::populateDataGrid(const QString &data)
 	else
 		ini_data=table->getInitialData();
 
-
 	/* If the initial data buffer is preset the columns
 	there have priority over the current table's columns */
 	if(!ini_data.isEmpty())
 	{		
 		buffer=ini_data.split(Table::DATA_LINE_BREAK);
 
-		//The first line of the buffer always have the column names
+		//The first line of the buffer always has the column names
 		if(!buffer.isEmpty() && !buffer[0].isEmpty())
 			columns.append(buffer[0].split(Table::DATA_SEPARATOR));
 	}
@@ -469,6 +509,16 @@ QString TableDataWidget::generateDataBuffer(void)
 		return(QString());
 
 	return(buffer.join(Table::DATA_LINE_BREAK));
+}
+
+void TableDataWidget::enterEvent(QEvent *)
+{
+	paste_tb->setEnabled(!qApp->clipboard()->text().isEmpty());
+}
+
+void TableDataWidget::showEvent(QShowEvent *)
+{
+	paste_tb->setEnabled(!qApp->clipboard()->text().isEmpty());
 }
 
 void TableDataWidget::addRow(void)

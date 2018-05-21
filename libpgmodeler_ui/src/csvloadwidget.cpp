@@ -147,17 +147,20 @@ void CsvLoadWidget::loadCsvFile(void)
 
 	if(!csv_buffer.isEmpty())
 	{
-		QString separator;
-		QStringList separators={ QString(";"), QString(","), QString(" "), QString("\t") };
-		separators += (separator_edt->text().isEmpty() ? QString(";") : separator_edt->text());
-		separator = separators[separator_cmb->currentIndex()];
-		csv_rows = loadCsvFromBuffer(csv_buffer, separator,
+		csv_rows = loadCsvFromBuffer(csv_buffer, getSeparator(),
 																 txt_delim_chk->isChecked() ? txt_delim_edt->text() : QString(),
 																 col_names_chk->isChecked(), csv_columns);
 	}
 
 	file_edt->clear();
 	emit s_csvFileLoaded();
+}
+
+QString CsvLoadWidget::getSeparator(void)
+{
+	QStringList separators={ QString(";"), QString(","), QString(" "), QString("\t") };
+	separators += (separator_edt->text().isEmpty() ? QString(";") : separator_edt->text());
+	return(separators[separator_cmb->currentIndex()]);
 }
 
 QString CsvLoadWidget::getCsvBuffer(QString separator, QString line_break)
@@ -184,4 +187,18 @@ QString CsvLoadWidget::getCsvBuffer(QString separator, QString line_break)
 bool CsvLoadWidget::isColumnsInFirstRow(void)
 {
 	return(col_names_chk->isChecked());
+}
+
+void CsvLoadWidget::loadCsvBuffer(const QString csv_buffer, const QString &separator, const QString &text_delim, bool cols_in_first_row)
+{
+	csv_columns.clear();
+	csv_rows.clear();
+	csv_rows = loadCsvFromBuffer(csv_buffer, separator, text_delim, cols_in_first_row, csv_columns);
+}
+
+void CsvLoadWidget::loadCsvBuffer(const QString csv_buffer)
+{
+	loadCsvBuffer(csv_buffer, getSeparator(),
+								txt_delim_chk->isChecked() ? txt_delim_edt->text() : QString(),
+								col_names_chk->isChecked());
 }

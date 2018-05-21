@@ -4376,14 +4376,10 @@ void ModelWidget::jumpToTable(void)
 
 void ModelWidget::editTableData(void)
 {
-	BaseForm base_form(this);
-	TableDataWidget *tab_data_wgt=new TableDataWidget(this);
+	TableDataWidget *tab_data_wgt=new TableDataWidget;
 
 	tab_data_wgt->setAttributes(db_model, dynamic_cast<Table *>(selected_objects.at(0)));
-	base_form.setMainWidget(tab_data_wgt);
-	base_form.setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
-	base_form.exec();
-
+	openEditingForm(tab_data_wgt);
 	this->setModified(true);
 	emit s_objectManipulated();
 }

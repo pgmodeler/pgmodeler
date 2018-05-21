@@ -54,6 +54,10 @@ class TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 		//! brief Generated the CSV-like buffer to be used as initial data in the table object
 		QString generateDataBuffer(void);
 
+		void showEvent(QShowEvent *);
+
+		void enterEvent(QEvent *);
+
 	public:
 		static const QString PLACEHOLDER_COLUMN;
 
