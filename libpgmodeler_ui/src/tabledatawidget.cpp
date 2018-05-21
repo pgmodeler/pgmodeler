@@ -18,6 +18,7 @@
 
 #include "tabledatawidget.h"
 #include "htmlitemdelegate.h"
+#include "bulkdataeditwidget.h"
 
 const QString TableDataWidget::PLACEHOLDER_COLUMN=QString("$placeholder$");
 
@@ -73,6 +74,11 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, BASE
 	connect(csv_load_wgt, &CsvLoadWidget::s_csvFileLoaded, [&](){
 		populateDataGrid(csv_load_wgt->getCsvBuffer(Table::DATA_SEPARATOR, Table::DATA_LINE_BREAK));
 	});
+
+	connect(bulkedit_tb, &QToolButton::clicked, [&](){
+		PgModelerUiNS::bulkDataEdit(data_tbw);
+	});
+
 }
 
 void TableDataWidget::insertRowOnTabPress(int curr_row, int curr_col, int prev_row, int prev_col)
@@ -262,6 +268,7 @@ void TableDataWidget::enableButtons(void)
 	add_row_tb->setEnabled(data_tbw->columnCount() > 0);
 	del_cols_tb->setEnabled(rows_selected);
 	dup_rows_tb->setEnabled(cols_selected);
+	bulkedit_tb->setEnabled(!sel_ranges.isEmpty());
 }
 
 void TableDataWidget::setAttributes(DatabaseModel *model, Table *table)

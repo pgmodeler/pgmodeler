@@ -27,6 +27,7 @@
 
 #include <QTreeWidget>
 #include <QListWidget>
+#include <QTableWidget>
 #include <QPixmap>
 #include "baseobject.h"
 #include "numberedtexteditor.h"
@@ -77,6 +78,9 @@ namespace PgModelerUiNS {
 
 	//! \brief Resizes the provided dialog considering font dpi changes as well screen size
 	extern void resizeDialog(QDialog *dialog);
+
+	//! brief Changes the values of the grid selection at once
+	extern void bulkDataEdit(QTableWidget *results_tbw);
 }
 
 #endif

@@ -116,11 +116,14 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(duplicate_tb, SIGNAL(clicked()), this, SLOT(duplicateRows()));
 	connect(undo_tb, SIGNAL(clicked()), this, SLOT(undoOperations()));
 	connect(save_tb, SIGNAL(clicked()), this, SLOT(saveChanges()));
-	connect(bulkedit_tb, SIGNAL(clicked()), this, SLOT(bulkDataEdit()));
 	connect(ord_columns_lst, SIGNAL(currentRowChanged(int)), this, SLOT(enableColumnControlButtons()));
 	connect(move_down_tb, SIGNAL(clicked()), this, SLOT(swapColumns()));
 	connect(move_up_tb, SIGNAL(clicked()), this, SLOT(swapColumns()));
 	connect(filter_tb, SIGNAL(toggled(bool)), v_splitter, SLOT(setVisible(bool)));
+
+	connect(bulkedit_tb, &QToolButton::clicked, [&](){
+		PgModelerUiNS::bulkDataEdit(results_tbw);
+	});
 
 	connect(filter_tb, &QToolButton::toggled,
 			[&](bool checked){
@@ -1125,31 +1128,6 @@ void DataManipulationForm::browseTable(const QString &fk_name, bool browse_ref_t
 void DataManipulationForm::browseReferrerTable(void)
 {
 	browseTable(qobject_cast<QAction *>(sender())->data().toString(), true);
-}
-
-void DataManipulationForm::bulkDataEdit(void)
-{
-	BaseForm base_frm;
-	BulkDataEditWidget *bulkedit_wgt = new BulkDataEditWidget;
-
-	base_frm.setMainWidget(bulkedit_wgt);
-	base_frm.setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
-
-	if(base_frm.exec() == QDialog::Accepted)
-	{
-		QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
-
-		for(auto range : sel_ranges)
-		{
-			for(int row = range.topRow(); row <= range.bottomRow(); row++)
-			{
-				for(int col = range.leftColumn(); col <= range.rightColumn(); col++)
-				{
-					results_tbw->item(row, col)->setText(bulkedit_wgt->value_edt->toPlainText());
-				}
-			}
-		}
-	}
 }
 
 void DataManipulationForm::browseReferencedTable(void)

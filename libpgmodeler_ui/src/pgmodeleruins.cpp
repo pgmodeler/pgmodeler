@@ -5,6 +5,8 @@
 #include "numberedtexteditor.h"
 #include <QScreen>
 #include <QDesktopWidget>
+#include "baseform.h"
+#include "bulkdataeditwidget.h"
 
 namespace PgModelerUiNS {
 
@@ -320,5 +322,33 @@ namespace PgModelerUiNS {
 
 		widget->setMinimumSize(widget->minimumSize());
 		widget->resize(curr_w, curr_h);
+	}
+
+	void bulkDataEdit(QTableWidget *results_tbw)
+	{
+		if(!results_tbw)
+			return;
+
+		BaseForm base_frm;
+		BulkDataEditWidget *bulkedit_wgt = new BulkDataEditWidget;
+
+		base_frm.setMainWidget(bulkedit_wgt);
+		base_frm.setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
+
+		if(base_frm.exec() == QDialog::Accepted)
+		{
+			QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
+
+			for(auto range : sel_ranges)
+			{
+				for(int row = range.topRow(); row <= range.bottomRow(); row++)
+				{
+					for(int col = range.leftColumn(); col <= range.rightColumn(); col++)
+					{
+						results_tbw->item(row, col)->setText(bulkedit_wgt->value_edt->toPlainText());
+					}
+				}
+			}
+		}
 	}
 }

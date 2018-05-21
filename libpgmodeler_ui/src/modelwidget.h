@@ -243,7 +243,8 @@ class ModelWidget: public QWidget {
 		*action_jump_to_table,
 		*action_schemas_rects,
 		*action_show_schemas_rects,
-		*action_hide_schemas_rects;
+		*action_hide_schemas_rects,
+		*action_edit_data;
 
 		//! \brief Actions used to create new objects on the model
 		map<ObjectType, QAction *> actions_new_objects;
@@ -475,6 +476,8 @@ class ModelWidget: public QWidget {
 		void editCreationOrder(void);
 
 		void jumpToTable(void);
+
+		void editTableData(void);
 
 	public slots:
 		void loadModel(const QString &filename);

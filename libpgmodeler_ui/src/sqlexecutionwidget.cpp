@@ -710,7 +710,6 @@ void SQLExecutionWidget::copySelection(QTableView *results_tbw, bool use_popup, 
 
 	if(selection && (!use_popup || (use_popup && QApplication::mouseButtons()==Qt::RightButton)))
 	{
-		QModelIndexList sel_indexes = selection->selectedIndexes();
 		QMenu copy_menu, copy_mode_menu;
 		QAction *act = nullptr, *act_csv = nullptr, *act_txt = nullptr;
 
@@ -725,7 +724,6 @@ void SQLExecutionWidget::copySelection(QTableView *results_tbw, bool use_popup, 
 
 		if(!use_popup || act)
 		{
-			//QTableWidgetSelectionRange selection=sel_ranges.at(0);
 			QByteArray buf;
 
 			if((use_popup && act == act_csv) || (!use_popup && csv_is_default))

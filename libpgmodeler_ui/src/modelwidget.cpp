@@ -56,6 +56,7 @@
 #include "swapobjectsidswidget.h"
 #include "genericsqlwidget.h"
 #include "policywidget.h"
+#include "tabledatawidget.h"
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
@@ -209,6 +210,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	zoom_info_lbl->setVisible(false);
 	zoom_info_timer.setInterval(3000);
 
+	action_edit_data=new QAction(QIcon(PgModelerUiNS::getIconPath("editdata")), trUtf8("Edit data"), this);
+
 	action_source_code=new QAction(QIcon(PgModelerUiNS::getIconPath("codigosql")), trUtf8("Source"), this);
 	action_source_code->setShortcut(QKeySequence(trUtf8("Alt+S")));
 	action_source_code->setToolTip(trUtf8("Show object source code"));
@@ -223,11 +226,11 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_remove=new QAction(QIcon(PgModelerUiNS::getIconPath("excluir")), trUtf8("Delete"), this);
 	action_remove->setShortcut(QKeySequence(trUtf8("Del")));
-    action_remove->setMenuRole(QAction::NoRole);
+	action_remove->setMenuRole(QAction::NoRole);
 
 	action_cascade_del=new QAction(QIcon(PgModelerUiNS::getIconPath("delcascade")), trUtf8("Del. cascade"), this);
 	action_cascade_del->setShortcut(QKeySequence(trUtf8("Shift+Del")));
-    action_cascade_del->setMenuRole(QAction::NoRole);
+	action_cascade_del->setMenuRole(QAction::NoRole);
 
 	action_select_all=new QAction(QIcon(PgModelerUiNS::getIconPath("seltodos")), trUtf8("Select all"), this);
 	action_select_all->setToolTip(trUtf8("Selects all the graphical objects in the model"));
@@ -237,15 +240,15 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_copy=new QAction(QIcon(PgModelerUiNS::getIconPath("copiar")), trUtf8("Copy"), this);
 	action_copy->setShortcut(QKeySequence(trUtf8("Ctrl+C")));
-    action_copy->setMenuRole(QAction::NoRole);
+	action_copy->setMenuRole(QAction::NoRole);
 
 	action_paste=new QAction(QIcon(PgModelerUiNS::getIconPath("colar")), trUtf8("Paste"), this);
 	action_paste->setShortcut(QKeySequence(trUtf8("Ctrl+V")));
-    action_paste->setMenuRole(QAction::NoRole);
+	action_paste->setMenuRole(QAction::NoRole);
 
 	action_cut=new QAction(QIcon(PgModelerUiNS::getIconPath("recortar")), trUtf8("Cut"), this);
 	action_cut->setShortcut(QKeySequence(trUtf8("Ctrl+X")));
-    action_cut->setMenuRole(QAction::NoRole);
+	action_cut->setMenuRole(QAction::NoRole);
 
 	action_deps_refs=new QAction(QIcon(PgModelerUiNS::getIconPath("depsrefs")), trUtf8("Deps && Referrers"), this);
 
@@ -293,7 +296,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_duplicate=new QAction(QIcon(PgModelerUiNS::getIconPath("duplicate")), trUtf8("Duplicate"), this);
 	action_duplicate->setShortcut(QKeySequence(trUtf8("Ctrl+D")));
-    action_duplicate->setMenuRole(QAction::NoRole);
+	action_duplicate->setMenuRole(QAction::NoRole);
 
 	action_extended_attribs=new QAction(QIcon(PgModelerUiNS::getIconPath("toggleattribs")), trUtf8("Extended attributes"), this);
 	action_show_ext_attribs=new QAction(trUtf8("Show"), this);
@@ -409,6 +412,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		connect(action, SIGNAL(triggered(bool)), this, SLOT(selectAllObjects()));
 	}
 
+	connect(action_edit_data, SIGNAL(triggered(bool)), this, SLOT(editTableData()));
 	connect(&zoom_info_timer, SIGNAL(timeout()), zoom_info_lbl, SLOT(hide()));
 	connect(action_source_code, SIGNAL(triggered(bool)), this, SLOT(showSourceCode(void)));
 	connect(action_edit, SIGNAL(triggered(bool)),this,SLOT(editObject(void)));
@@ -433,24 +437,18 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_remove_rel_points, SIGNAL(triggered(bool)), this, SLOT(removeRelationshipPoints(void)));
 	connect(action_enable_sql, SIGNAL(triggered(bool)), this, SLOT(toggleObjectSQL(void)));
 	connect(action_disable_sql, SIGNAL(triggered(bool)), this, SLOT(toggleObjectSQL(void)));
-
 	connect(action_remove, &QAction::triggered, [&](){ removeObjects(false); });
 	connect(action_cascade_del, &QAction::triggered, [&](){ removeObjects(true); });
-
 	connect(action_fade_in, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
 	connect(action_fade_out, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
 	connect(action_fade_rels_in, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
 	connect(action_fade_rels_out, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
-
 	connect(action_show_ext_attribs, SIGNAL(triggered(bool)), this, SLOT(toggleExtendedAttributes()));
 	connect(action_hide_ext_attribs, SIGNAL(triggered(bool)), this, SLOT(toggleExtendedAttributes()));
-
 	connect(action_show_schemas_rects, SIGNAL(triggered(bool)), this, SLOT(toggleSchemasRectangles()));
 	connect(action_hide_schemas_rects, SIGNAL(triggered(bool)), this, SLOT(toggleSchemasRectangles()));
-
 	connect(db_model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
 	connect(db_model, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(handleObjectRemoval(BaseObject *)));
-
 	connect(scene, SIGNAL(s_objectsMoved(bool)), this, SLOT(handleObjectsMovement(bool)));
 	connect(scene, SIGNAL(s_objectModified(BaseGraphicObject*)), this, SLOT(handleObjectModification(BaseGraphicObject*)));
 	connect(scene, SIGNAL(s_objectDoubleClicked(BaseGraphicObject*)), this, SLOT(handleObjectDoubleClick(BaseGraphicObject*)));
@@ -458,9 +456,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, SIGNAL(s_popupMenuRequested(void)), this, SLOT(showObjectMenu(void)));
 	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(configureObjectSelection(void)));
 	connect(scene, SIGNAL(s_objectsSelectedInRange(void)), this, SLOT(configureObjectSelection(void)));
-
 	connect(scene, &ObjectsScene::s_extAttributesToggled, [&](){ modified = true; });
-
 	connect(scene, SIGNAL(s_popupMenuRequested(BaseObject*)), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_popupMenuRequested(void)), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), new_obj_overlay_wgt, SLOT(hide()));
@@ -3218,14 +3214,15 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 		if(tab_or_view)
 			quick_actions_menu.addAction(action_set_tag);
 
-		//Display the "Edit permissions" action a single object is selected and it accepts permissions
 		if(object && Permission::objectAcceptsPermission(obj_type))
 		{
 			quick_actions_menu.addAction(action_edit_perms);
 			action_edit_perms->setData(QVariant::fromValue<void *>(object));
 		}
 
-		//Display the "Edit permissions" action a single object is selected and it accepts permissions
+		if(object && obj_type == OBJ_TABLE)
+			quick_actions_menu.addAction(action_edit_data);
+
 		if(object && BaseObject::acceptsCustomSQL(obj_type))
 		{
 			action_append_sql->setData(QVariant::fromValue<void *>(object));
@@ -4375,6 +4372,20 @@ void ModelWidget::jumpToTable(void)
 	tab_view = dynamic_cast<BaseTableView *>(tab->getReceiverObject());
 	tab_view->setSelected(true);
 	viewport->centerOn(tab_view);
+}
+
+void ModelWidget::editTableData(void)
+{
+	BaseForm base_form(this);
+	TableDataWidget *tab_data_wgt=new TableDataWidget(this);
+
+	tab_data_wgt->setAttributes(db_model, dynamic_cast<Table *>(selected_objects.at(0)));
+	base_form.setMainWidget(tab_data_wgt);
+	base_form.setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
+	base_form.exec();
+
+	this->setModified(true);
+	emit s_objectManipulated();
 }
 
 void ModelWidget::rearrangeTablesHierarchically(void)
