@@ -536,7 +536,7 @@ void DataManipulationForm::loadDataFromCsv(bool load_from_clipboard)
 		addRow();
 		row_id=results_tbw->rowCount() - 1;
 
-		for(int i = 0; i < values.count(); i++)
+		for(int i = 0; i < values.count() && i < cols.count(); i++)
 		{
 			if((!load_from_clipboard && csv_load_wgt->isColumnsInFirstRow()) ||
 				 (load_from_clipboard && !cols.isEmpty()))
