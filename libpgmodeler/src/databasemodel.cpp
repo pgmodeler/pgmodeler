@@ -4674,6 +4674,8 @@ Column *DatabaseModel::createColumn(void)
 		xmlparser.getElementAttributes(attribs);
 		column->setNotNull(attribs[ParsersAttributes::NOT_NULL]==ParsersAttributes::_TRUE_);
 		column->setDefaultValue(attribs[ParsersAttributes::DEFAULT_VALUE]);
+		column->setIdSeqAttributes(attribs[ParsersAttributes::MIN_VALUE], attribs[ParsersAttributes::MAX_VALUE], attribs[ParsersAttributes::INCREMENT],
+																attribs[ParsersAttributes::START], attribs[ParsersAttributes::CACHE], attribs[ParsersAttributes::CYCLE] == ParsersAttributes::_TRUE_);
 
 		if(!attribs[ParsersAttributes::IDENTITY_TYPE].isEmpty())
 			column->setIdentityType(IdentityType(attribs[ParsersAttributes::IDENTITY_TYPE]));

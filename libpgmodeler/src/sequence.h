@@ -53,7 +53,7 @@ class Sequence: public BaseObject {
 		bool isValidValue(const QString &value);
 
 		//! \brief Returns true when the passed value is null (zero)
-		bool isNullValue(const QString &value);
+		bool isZeroValue(const QString &value);
 
 		//! \brief Returns the formated value excluding the aditional operators
 		QString formatValue(const QString &value);
