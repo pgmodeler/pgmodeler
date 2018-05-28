@@ -368,6 +368,10 @@ void TableObjectView::configureObject(void)
 					str_constr = TXT_UNIQUE;
 				else if(type == ConstraintType::exclude)
 					str_constr = TXT_EXCLUDE;
+				else if(type == ConstraintType::check)
+					str_constr = TXT_CHECK;
+
+				atribs_tip = (~type).toLower();
 			}
 
 			if(!str_constr.isEmpty())

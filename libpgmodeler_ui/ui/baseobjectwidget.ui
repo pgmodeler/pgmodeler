@@ -147,7 +147,7 @@
     <string>Schema:</string>
    </property>
   </widget>
-  <widget class="QToolButton" name="edt_perms_tb">
+  <widget class="QPushButton" name="edt_perms_tb">
    <property name="geometry">
     <rect>
      <x>318</x>
@@ -192,9 +192,6 @@
      <width>22</width>
      <height>22</height>
     </size>
-   </property>
-   <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonTextBesideIcon</enum>
    </property>
   </widget>
   <widget class="QFrame" name="protected_obj_frm">
@@ -331,7 +328,7 @@ This will disable the code of all child and referrer objects.</string>
     <string>Collation:</string>
    </property>
   </widget>
-  <widget class="QToolButton" name="append_sql_tb">
+  <widget class="QPushButton" name="append_sql_tb">
    <property name="geometry">
     <rect>
      <x>197</x>
@@ -376,9 +373,6 @@ This will disable the code of all child and referrer objects.</string>
      <width>22</width>
      <height>22</height>
     </size>
-   </property>
-   <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonTextBesideIcon</enum>
    </property>
   </widget>
   <widget class="QLabel" name="owner_lbl">

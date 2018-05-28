@@ -1473,7 +1473,11 @@ void DatabaseImportHelper::createSequence(attribs_map &attribs)
 
 		//Disable the sequence's SQL when the owner column is identity
 		if(col && col->isIdentity())
+		{
+			col->setIdSeqAttributes(seq->getMinValue(), seq->getMaxValue(), seq->getIncrement(),
+															seq->getStart(), seq->getCache(), seq->isCycle());
 			seq->setSQLDisabled(true);
+		}
 	}
 	catch(Exception &e)
 	{

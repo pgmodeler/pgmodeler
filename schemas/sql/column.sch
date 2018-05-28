@@ -21,6 +21,39 @@
 
 %if ({pgsql-ver} >=f "10.0") %and {identity-type} %then
     [ GENERATED ] {identity-type} [ AS IDENTITY ]
+  
+    %if {increment} %or {min-value} %or {max-value} %or  {start} %or {cache} %or {cycle} %then
+        [(]
+    %end
+        
+    %if {increment} %then
+        [ INCREMENT BY ] {increment}
+    %end
+
+    %if {min-value} %then
+        [ MINVALUE ] {min-value}
+    %end
+
+    %if {max-value} %then
+        [ MAXVALUE ] {max-value}
+    %end
+
+    %if {start} %then
+        [ START WITH ] {start}
+    %end
+
+    %if {cache} %then
+        [ CACHE ] {cache}
+    %end
+
+    %if {cycle} %then
+        [ CYCLE]
+    %end
+    
+    %if {increment} %or {min-value} %or {max-value} %or {start} %or {cache} %or {cycle} %then
+        [ )]
+    %end
+    
 %else
     %if {default-value} %then
         [ DEFAULT ] {default-value}

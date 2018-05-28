@@ -124,6 +124,7 @@ namespace ParsersAttributes {
 	CROWS_FOOT=QString("crows-foot"),
 	CTE_EXPRESSION=QString("cte-exp"),
 	CUR_VERSION=QString("cur-version"),
+	CUR_IDENTITY_TYPE=QString("cur-identity-type"),
 	CUSTOM_COLOR=QString("custom-color"),
 	CUSTOM_FILTER=QString("custom-filter"),
 	CUSTOMIDXS=QString("customidxs"),

@@ -309,9 +309,6 @@ void ConstraintWidget::selectConstraintType(void)
 	no_inherit_lbl->setVisible(constr_type==ConstraintType::check);
 	warn_frm->setVisible(constr_type==ConstraintType::check);
 
-	/*fill_factor_lbl->setVisible(constr_type==ConstraintType::unique ||
-															constr_type==ConstraintType::primary_key ||
-															constr_type==ConstraintType::exclude); */
 	fill_factor_chk->setVisible(constr_type==ConstraintType::unique ||
 								constr_type==ConstraintType::primary_key ||
 								constr_type==ConstraintType::exclude);

@@ -668,8 +668,14 @@ int RelationshipWidget::openEditingForm(TableObject *object, BaseObject *parent)
 {
 	BaseForm editing_form(this);
 	WidgetClass *object_wgt=new WidgetClass;
+	BaseObject *parent_aux = nullptr;
 
-	object_wgt->setAttributes(this->model, this->op_list, (!parent ? this->object : parent), dynamic_cast<Class *>(object));
+	if(this->object->getObjectType() == BASE_RELATIONSHIP)
+		parent_aux = dynamic_cast<BaseRelationship *>(this->object)->getTable(BaseRelationship::SRC_TABLE);
+	else
+		parent_aux = !parent ? this->object : parent;
+
+	object_wgt->setAttributes(this->model, this->op_list, parent_aux, dynamic_cast<Class *>(object));
 	editing_form.setMainWidget(object_wgt);
 
 	return(editing_form.exec());

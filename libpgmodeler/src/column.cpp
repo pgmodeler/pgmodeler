@@ -21,7 +21,7 @@
 Column::Column(void)
 {
 	obj_type=OBJ_COLUMN;
-	not_null=false;
+	not_null=seq_cycle=false;
 	attributes[ParsersAttributes::TYPE]=QString();
 	attributes[ParsersAttributes::DEFAULT_VALUE]=QString();
 	attributes[ParsersAttributes::NOT_NULL]=QString();
@@ -29,6 +29,13 @@ Column::Column(void)
 	attributes[ParsersAttributes::SEQUENCE]=QString();
 	attributes[ParsersAttributes::DECL_IN_TABLE]=QString();
 	attributes[ParsersAttributes::IDENTITY_TYPE]=QString();
+	attributes[ParsersAttributes::INCREMENT]=QString();
+	attributes[ParsersAttributes::MIN_VALUE]=QString();
+	attributes[ParsersAttributes::MAX_VALUE]=QString();
+	attributes[ParsersAttributes::START]=QString();
+	attributes[ParsersAttributes::CACHE]=QString();
+	attributes[ParsersAttributes::CYCLE]=QString();
+
 	parent_rel=sequence=nullptr;
 	identity_type=BaseType::null;
 }
@@ -185,6 +192,46 @@ BaseObject *Column::getSequence(void)
 	return(sequence);
 }
 
+bool Column::isIdSeqCycle(void)
+{
+	return(seq_cycle);
+}
+
+QString Column::getIdSeqMaxValue(void)
+{
+	return(seq_max_value);
+}
+
+QString Column::getIdSeqMinValue(void)
+{
+	return(seq_min_value);
+}
+
+QString Column::getIdSeqIncrement(void)
+{
+	return(seq_increment);
+}
+
+QString Column::getIdSeqStart(void)
+{
+	return(seq_start);
+}
+
+QString Column::getIdSeqCache(void)
+{
+	return(seq_cache);
+}
+
+void Column::setIdSeqAttributes(QString minv, QString maxv, QString inc, QString start, QString cache, bool cycle)
+{
+	seq_min_value = minv;
+	seq_max_value = maxv;
+	seq_increment = inc;
+	seq_start = start;
+	seq_cache = cache;
+	seq_cycle = cycle;
+}
+
 QString Column::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
@@ -198,7 +245,15 @@ QString Column::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::IDENTITY_TYPE]=QString();
 
 	if(identity_type != BaseType::null)
-		attributes[ParsersAttributes::IDENTITY_TYPE] = ~identity_type;
+	{
+		attributes[ParsersAttributes::IDENTITY_TYPE] = ~identity_type;	
+		attributes[ParsersAttributes::INCREMENT]=seq_increment;
+		attributes[ParsersAttributes::MIN_VALUE]=seq_min_value;
+		attributes[ParsersAttributes::MAX_VALUE]=seq_max_value;
+		attributes[ParsersAttributes::START]=seq_start;
+		attributes[ParsersAttributes::CACHE]=seq_cache;
+		attributes[ParsersAttributes::CYCLE]=(seq_cycle ? ParsersAttributes::_TRUE_ : QString());
+	}
 	else
 	{
 		if(!sequence)
@@ -207,7 +262,7 @@ QString Column::getCodeDefinition(unsigned def_type)
 		{
 			//Configuring the default value of the column to get the next value of the sequence
 			if(def_type==SchemaParser::SQL_DEFINITION)
-				attributes[ParsersAttributes::DEFAULT_VALUE]=QString("nextval('%1'::regclass)").arg(sequence->getSignature());//.remove("\""));
+				attributes[ParsersAttributes::DEFAULT_VALUE]=QString("nextval('%1'::regclass)").arg(sequence->getSignature());
 
 			attributes[ParsersAttributes::SEQUENCE]=sequence->getName(true);
 		}
@@ -230,6 +285,7 @@ QString Column::getAlterDefinition(BaseObject *object)
 	{
 		attribs_map attribs;
 		QString def_val;
+		bool ident_seq_changed = false;
 
 		BaseObject::setBasicAttributes(true);
 
@@ -263,6 +319,57 @@ QString Column::getAlterDefinition(BaseObject *object)
 						this->identity_type != col->identity_type)
 			attribs[ParsersAttributes::NEW_IDENTITY_TYPE] = ~col->identity_type;
 
+		attribs[ParsersAttributes::CUR_IDENTITY_TYPE] = QString();
+		attribs[ParsersAttributes::MIN_VALUE] = QString();
+		attribs[ParsersAttributes::MAX_VALUE] = QString();
+		attribs[ParsersAttributes::START] = QString();
+		attribs[ParsersAttributes::INCREMENT] = QString();
+		attribs[ParsersAttributes::CACHE] = QString();
+		attribs[ParsersAttributes::CYCLE] = QString();
+
+		//Checking differences in the underlying sequence (identity col)
+		if(attribs[ParsersAttributes::IDENTITY_TYPE] != ParsersAttributes::UNSET)
+		{
+			if(!col->seq_min_value.isEmpty() && this->seq_min_value != col->seq_min_value)
+			{
+				attribs[ParsersAttributes::MIN_VALUE] = col->seq_min_value;
+				ident_seq_changed = true;
+			}
+
+			if(!col->seq_max_value.isEmpty() && this->seq_max_value != col->seq_max_value)
+			{
+				attribs[ParsersAttributes::MAX_VALUE] = col->seq_max_value;
+				ident_seq_changed = true;
+			}
+
+			if(!col->seq_start.isEmpty() && this->seq_start != col->seq_start)
+			{
+				attribs[ParsersAttributes::START] = col->seq_start;
+				ident_seq_changed = true;
+			}
+
+			if(!col->seq_increment.isEmpty() && this->seq_increment != col->seq_increment)
+			{
+				attribs[ParsersAttributes::INCREMENT] = col->seq_increment;
+				ident_seq_changed = true;
+			}
+
+			if(!col->seq_cache.isEmpty() && this->seq_cache != col->seq_cache)
+			{
+				attribs[ParsersAttributes::CACHE] = col->seq_cache;
+				ident_seq_changed = true;
+			}
+
+			if(this->seq_cycle != col->seq_cycle)
+			{
+				attribs[ParsersAttributes::CYCLE] = (col->seq_cycle ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
+				ident_seq_changed = true;
+			}
+
+			if(ident_seq_changed)
+				attribs[ParsersAttributes::CUR_IDENTITY_TYPE] = ~this->identity_type;
+		}
+
 		copyAttributes(attribs);
 		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
 	}
@@ -287,6 +394,13 @@ void Column::operator = (Column &col)
 	this->parent_rel=col.parent_rel;
 	this->sequence=col.sequence;
 	this->identity_type=col.identity_type;
+
+	this->seq_cache = col.seq_cache;
+	this->seq_cycle = col.seq_cycle;
+	this->seq_increment = col.seq_increment;
+	this->seq_max_value = col.seq_max_value;
+	this->seq_min_value = col.seq_min_value;
+	this->seq_start = col.seq_start;
 
 	this->setParentTable(col.getParentTable());
 	this->setAddedByCopy(false);
