@@ -1707,7 +1707,7 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 	Reference ref;
 	ObjectType tab_obj_type[3]={ OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_INDEX };
 	bool found=false;
-	vector<BaseObject *> objects, rem_objects;
+	vector<BaseObject *> objects, rem_objects, upd_tables_rels;
 
 	try
 	{
@@ -1765,8 +1765,14 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 
 					if(found)
 					{
+						constr = dynamic_cast<Constraint *>(tab_obj);
+
 						//When found the special object must be removed from the parent table
 						table->removeObject(tab_obj->getName(), tab_obj->getObjectType());
+
+						//We need to store the table which fk was referencing relationship added columns in order to update the fk relationships of that table
+						if(constr && constr->getConstraintType() == ConstraintType::foreign_key)
+							upd_tables_rels.push_back(table);
 
 						//Removes the permission from the table object
 						removePermissions(tab_obj);
@@ -1775,6 +1781,22 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 					}
 				}
 			}
+		}
+
+		//Updating fk rels of tables which had fks referencing relationship added columns
+		if(!upd_tables_rels.empty())
+		{
+			vector<BaseObject *>::iterator end;
+
+			if(upd_tables_rels.size() > 1)
+			{
+				std::sort(upd_tables_rels.begin(), upd_tables_rels.end());
+				end = std::unique(upd_tables_rels.begin(), upd_tables_rels.end());
+				upd_tables_rels.erase(end, upd_tables_rels.end());
+			}
+
+			for(auto &tab : upd_tables_rels)
+				updateTableFKRelationships(dynamic_cast<Table *>(tab));
 		}
 
 		//Making a copy of the sequences list to avoid iterator invalidation when removing an object
@@ -3064,6 +3086,7 @@ void DatabaseModel::loadModel(const QString &filename)
 			{
 				emit s_objectLoaded(100, trUtf8("Validating relationships..."), OBJ_RELATIONSHIP);
 				validateRelationships();
+				updateTablesFKRelationships();
 			}
 		}
 		catch(Exception &e)
