@@ -164,8 +164,12 @@ class BaseObject {
 
 		//! \brief Comments related to object
 		QString comment,
+
 		//! \brief Object's name (in PostgreSQL accepted format)
 		obj_name,
+
+		//! \brief Object's logical (human readable) name
+		logical_name,
 
 		//! \brief The set of SQL commands appended on the objectc's definition
 		appended_sql,
@@ -277,6 +281,11 @@ class BaseObject {
 		//! \brief Defines the objects name. If the passed name isn't valid it'll raise an error
 		virtual void setName(const QString &name);
 
+		/*! \brief Defines the object's logical name. A logical name is used when the database model is being
+		 * displayed in logical mode more user/client friendly. This method raises an error when the provided
+		 * name is larger than 63 bytes (the same rule for PostgreSQL names length) */
+		virtual void setLogicalName(const QString &name);
+
 		//! \brief Toggles the object's modify protection
 		virtual void setProtected(bool value);
 
@@ -318,6 +327,9 @@ class BaseObject {
 		 the name properly formated (using quotes when there is uppercase char or extended utf-8),
 		 the parameter 'prepend_schema' includes the schema name on the objects name (defult) */
 		virtual QString getName(bool format=false, bool prepend_schema=true);
+
+		//! \brief Returns the object's logical (user friendly) name
+		virtual QString getLogicalName(void);
 
 		//! \brief Returns the name of the object with schema name (when available) prepended by default
 		virtual QString getSignature(bool format=true);
@@ -406,6 +418,9 @@ class BaseObject {
 
 		//! \brief Returns if the specified type accepts the use of DROP commands
 		static bool acceptsDropCommand(ObjectType obj_type);
+
+		//! \brief Returns if the specified type accepts a logical name
+		static bool acceptsLogicalName(ObjectType obj_type);
 
 		//! \brief Returns if the object accepts to have a schema assigned
 		bool acceptsSchema(void);

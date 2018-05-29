@@ -3,6 +3,10 @@
 #          Code generation can be broken if incorrect changes are made.
 [<view name=] "{name}" 
 
+ %if {logical-name} %then
+   $sp logical-name="{logical-name}"
+ %end
+
  %if {protected} %then [ protected=] "true" %end
  %if {materialized} %then [ materialized=] "true" %end
  %if {recursive} %then [ recursive=] "true" %end

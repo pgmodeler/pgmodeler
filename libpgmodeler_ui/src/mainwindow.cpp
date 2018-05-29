@@ -203,7 +203,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(action_redo,SIGNAL(triggered(bool)),oper_list_wgt,SLOT(redoOperation(void)));
 
 	connect(model_nav_wgt, SIGNAL(s_modelCloseRequested(int)), this, SLOT(closeModel(int)));
-    connect(model_nav_wgt, SIGNAL(s_currentModelChanged(int)), this, SLOT(setCurrentModel()));
+	connect(model_nav_wgt, SIGNAL(s_currentModelChanged(int)), this, SLOT(setCurrentModel()));
 
 	connect(action_print, SIGNAL(triggered(bool)), this, SLOT(printModel(void)));
 	connect(action_configuration, SIGNAL(triggered(bool)), configuration_form, SLOT(show()));
@@ -226,6 +226,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	connect(model_valid_wgt, &ModelValidationWidget::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
 	connect(sql_tool_wgt, &SQLToolWidget::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
+
+	connect(logical_view_btn, SIGNAL(toggled(bool)), this, SLOT(toggleLogicalView()));
 
 	window_title=this->windowTitle() + QString(" ") + GlobalAttributes::PGMODELER_VERSION;
 
@@ -1965,4 +1967,20 @@ void MainWindow::arrangeObjects(void)
 
 		QApplication::restoreOverrideCursor();
 	}
+}
+
+void MainWindow::toggleLogicalView(void)
+{
+	ModelWidget *model_wgt = nullptr;
+
+	BaseObjectView::setLogicalViewMode(logical_view_btn->isChecked());
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+
+	for(int idx = 0; idx < models_tbw->count(); idx++)
+	{
+		model_wgt = dynamic_cast<ModelWidget *>(models_tbw->widget(idx));
+		model_wgt->getDatabaseModel()->setObjectsModified({ OBJ_TABLE, OBJ_RELATIONSHIP, BASE_RELATIONSHIP, OBJ_VIEW, OBJ_SCHEMA});
+	}
+
+	QApplication::restoreOverrideCursor();
 }

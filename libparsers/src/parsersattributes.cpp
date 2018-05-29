@@ -287,6 +287,7 @@ namespace ParsersAttributes {
 	LOCALE=QString("locale"),
 	LOCKER_ARC=QString("locker-arc"),
 	LOCKER_BODY=QString("locker-body"),
+	LOGICAL_NAME=QString("logical-name"),
 	LOGIN=QString("login"),
 	LOOKAHEAD_CHAR=QString("lookahead-char"),
 	MATERIALIZED=QString("materialized"),

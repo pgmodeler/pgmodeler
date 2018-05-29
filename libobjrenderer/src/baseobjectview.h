@@ -46,6 +46,11 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		 is incremented each time an object is selected. */
 		static unsigned global_sel_order;
 
+		/*! \brief Stores the current status for object's logical view display.
+		 * In logical view the logical name of object's are shown. Also, data types and constraint descriptors are hidden,
+		 * as well the table's extended area are collapsed by default */
+		static bool logical_view;
+
 		/*! \brief Stores the selection order of the current object. This attribute is used to
 		 know when an item was selected before another in the scene because the implementation of
 		 the method QGraphicsScene :: selectedItem() the selected objects are returned without
@@ -152,6 +157,8 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		static void setPlaceholderEnabled(bool value);
 
 		static bool isPlaceholderEnabled(void);
+
+		static void setLogicalViewMode(bool value);
 
 		//! \brief Sets the  font style for the specified element id
 		static void setFontStyle(const QString &id, QTextCharFormat font_fmt);

@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1068</width>
-    <height>673</height>
+    <height>708</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -517,7 +517,7 @@
                   <string>Toggle the object finder</string>
                  </property>
                  <property name="text">
-                  <string>Find Object</string>
+                  <string>Find objects</string>
                  </property>
                  <property name="icon">
                   <iconset resource="../res/resources.qrc">
@@ -531,6 +531,38 @@
                  </property>
                  <property name="shortcut">
                   <string>Ctrl+F</string>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="toolButtonStyle">
+                  <enum>Qt::ToolButtonTextBesideIcon</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QToolButton" name="logical_view_btn">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string>Toogle the logical (more compact) view</string>
+                 </property>
+                 <property name="text">
+                  <string>Logical view</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../res/resources.qrc">
+                   <normaloff>:/icones/icones/visaogeral.png</normaloff>:/icones/icones/visaogeral.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
                  </property>
                  <property name="checkable">
                   <bool>true</bool>
@@ -678,7 +710,7 @@
      <x>0</x>
      <y>0</y>
      <width>1068</width>
-     <height>23</height>
+     <height>25</height>
     </rect>
    </property>
    <property name="autoFillBackground">

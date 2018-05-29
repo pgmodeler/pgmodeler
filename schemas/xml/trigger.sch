@@ -2,6 +2,11 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
  [<trigger name=] "{name}" 
+ 
+ %if {logical-name} %then
+   $sp logical-name="{logical-name}"
+ %end
+ 
  [ firing-type=] "{firing-type}"
  [ per-line=] %if {per-line} %then "true" %else "false" %end
  [ constraint=] %if {constraint} %then "true" %else "false" %end

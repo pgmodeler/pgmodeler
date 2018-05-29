@@ -3183,7 +3183,7 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 		if(tab_or_view)
 			quick_actions_menu.addAction(action_set_tag);
 
-		if(object && Permission::objectAcceptsPermission(obj_type))
+		if(object && Permission::acceptsPermission(obj_type))
 		{
 			quick_actions_menu.addAction(action_edit_perms);
 			action_edit_perms->setData(QVariant::fromValue<void *>(object));

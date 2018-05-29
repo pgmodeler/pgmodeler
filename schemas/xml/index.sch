@@ -3,7 +3,11 @@
 #          Code generation can be broken if incorrect changes are made.
 
 [<index name=] "{name}" [ table=] "{table}"
-
+ 
+ %if {logical-name} %then
+   $sp logical-name="{logical-name}"
+ %end
+  
  $br $tb
  [ concurrent=] %if {concurrent} %then "true" %else "false" %end 
  [ unique=] %if {unique} %then "true" %else "false" %end

@@ -351,7 +351,7 @@ void BaseTableView::__configureObject(float width)
 {
 	BaseTable *tab = dynamic_cast<BaseTable *>(this->getSourceObject());
 
-	if(!ext_attribs->childItems().isEmpty() && !hide_ext_attribs)
+	if(!ext_attribs->childItems().isEmpty() && !hide_ext_attribs && !logical_view)
 	{
 		QPen pen = ext_attribs_body->pen();
 		float py = 0;
@@ -454,11 +454,11 @@ float BaseTableView::calculateWidth(void)
 		This width is used to set the uniform width of table */
 	if(!columns->childItems().isEmpty() &&
 			(columns->boundingRect().width() > title->boundingRect().width() &&
-			 (hide_ext_attribs || dynamic_cast<BaseTable *>(this->getSourceObject())->isExtAttribsHidden() ||
+			 (hide_ext_attribs || logical_view || dynamic_cast<BaseTable *>(this->getSourceObject())->isExtAttribsHidden() ||
 				(columns->boundingRect().width() > ext_attribs->boundingRect().width()))))
 		return(columns->boundingRect().width() + (2 * HORIZ_SPACING));
 
-	if(!ext_attribs->childItems().isEmpty() && !hide_ext_attribs &&
+	if(!ext_attribs->childItems().isEmpty() && !hide_ext_attribs && !logical_view &&
 		 !dynamic_cast<BaseTable *>(this->getSourceObject())->isExtAttribsHidden() &&
 			(ext_attribs->boundingRect().width() > title->boundingRect().width() &&
 			 ext_attribs->boundingRect().width() > columns->boundingRect().width()))

@@ -520,7 +520,7 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
 
 			if(obj_idx >= 0)
 			{
-				if(Permission::objectAcceptsPermission(obj_type))
+				if(Permission::acceptsPermission(obj_type))
 					removePermissions(object);
 
 				obj_list->erase(obj_list->begin() + obj_idx);
@@ -3195,8 +3195,12 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 	xmlparser.getElementAttributes(attribs);
 
 	obj_type_aux=object->getObjectType();
+
 	if(obj_type_aux!=OBJ_CAST)
 		object->setName(attribs[ParsersAttributes::NAME]);
+
+	if(BaseObject::acceptsLogicalName(obj_type_aux))
+		object->setLogicalName(attribs[ParsersAttributes::LOGICAL_NAME]);
 
 	protected_obj=attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_;
 	sql_disabled=attribs[ParsersAttributes::SQL_DISABLED]==ParsersAttributes::_TRUE_;
@@ -6114,6 +6118,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 
 				base_rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_FK, tables[0], tables[1], false, false);
 				base_rel->setName(attribs[ParsersAttributes::NAME]);
+				base_rel->setLogicalName(attribs[ParsersAttributes::LOGICAL_NAME]);
 				addRelationship(base_rel);
 			}
 			else if(base_rel)
@@ -6178,6 +6183,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 				rel->setTableNameRelNN(attribs[ParsersAttributes::TABLE_NAME]);
 
 			rel->setName(attribs[ParsersAttributes::NAME]);
+			rel->setLogicalName(attribs[ParsersAttributes::LOGICAL_NAME]);
 			base_rel=rel;
 
 			//Configuring the name patterns

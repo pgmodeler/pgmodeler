@@ -4,6 +4,10 @@
 
 [<policy name=] "{name}" [ table=] "{table}" [ command=] "{command}"
 
+%if {logical-name} %then
+   $sp logical-name="{logical-name}"
+%end
+
 [ permissive=] %if {permissive} %then  "true" %else "false" %end
 
 %if {protected} %then [ protected=] "true" %end

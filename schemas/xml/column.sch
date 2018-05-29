@@ -3,6 +3,10 @@
 #          Code generation can be broken if incorrect changes are made.
 $tb [<column name=] "{name}"
 
+ %if {logical-name} %then
+   $sp logical-name="{logical-name}"
+ %end
+
  %if {not-null} %then
   [ not-null=] "true"
  %end

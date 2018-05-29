@@ -83,6 +83,7 @@ BaseObject::BaseObject(void)
 	database=nullptr;
 	collation=nullptr;
 	attributes[ParsersAttributes::NAME]=QString();
+	attributes[ParsersAttributes::LOGICAL_NAME]=QString();
 	attributes[ParsersAttributes::COMMENT]=QString();
 	attributes[ParsersAttributes::OWNER]=QString();
 	attributes[ParsersAttributes::TABLESPACE]=QString();
@@ -360,6 +361,15 @@ void BaseObject::setName(const QString &name)
 	this->obj_name=aux_name;
 }
 
+void BaseObject::setLogicalName(const QString &name)
+{
+	if(name.size() > OBJECT_NAME_MAX_LENGTH)
+		throw Exception(ERR_ASG_LONG_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	this->logical_name = name;
+	setCodeInvalidated(this->logical_name != name);
+}
+
 void BaseObject::setComment(const QString &comment)
 {
 	setCodeInvalidated(this->comment!=comment);
@@ -449,10 +459,19 @@ bool BaseObject::acceptsAlterCommand(ObjectType obj_type)
 bool BaseObject::acceptsDropCommand(ObjectType obj_type)
 {
 	return(obj_type!=OBJ_PERMISSION && obj_type!=OBJ_RELATIONSHIP &&
-									obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_TYPE_ATTRIBUTE &&
-									obj_type!=OBJ_PARAMETER && obj_type!=BASE_OBJECT &&
-									obj_type!=OBJ_TAG && obj_type!=BASE_RELATIONSHIP &&
-									obj_type!=BASE_TABLE);
+				obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_TYPE_ATTRIBUTE &&
+				obj_type!=OBJ_PARAMETER && obj_type!=BASE_OBJECT &&
+				obj_type!=OBJ_TAG && obj_type!=BASE_RELATIONSHIP &&
+				obj_type!=BASE_TABLE);
+}
+
+bool BaseObject::acceptsLogicalName(ObjectType obj_type)
+{
+	return(obj_type==OBJ_RELATIONSHIP || obj_type==BASE_RELATIONSHIP ||
+				 obj_type==OBJ_TABLE || obj_type==OBJ_SCHEMA ||
+				 obj_type == OBJ_COLUMN || obj_type == OBJ_CONSTRAINT ||
+				 obj_type == OBJ_INDEX || obj_type == OBJ_RULE ||
+				 obj_type == OBJ_TRIGGER || obj_type == OBJ_POLICY);
 }
 
 bool BaseObject::acceptsCustomSQL(void)
@@ -556,6 +575,11 @@ QString BaseObject::getName(bool format, bool prepend_schema)
 		return(this->obj_name);
 }
 
+QString BaseObject::getLogicalName(void)
+{
+	return(this->logical_name);
+}
+
 QString BaseObject::getSignature(bool format)
 {
 	return(this->getName(format, true));
@@ -652,6 +676,9 @@ void BaseObject::setBasicAttributes(bool format_name)
 {
 	if(attributes[ParsersAttributes::NAME].isEmpty())
 		attributes[ParsersAttributes::NAME]=this->getName(format_name);
+
+	if(attributes[ParsersAttributes::LOGICAL_NAME].isEmpty())
+		attributes[ParsersAttributes::LOGICAL_NAME]=this->getLogicalName();
 
 	if(attributes[ParsersAttributes::SIGNATURE].isEmpty())
 		attributes[ParsersAttributes::SIGNATURE]=this->getSignature(format_name);
@@ -975,6 +1002,7 @@ void BaseObject::operator = (BaseObject &obj)
 	this->database=obj.database;
 	this->comment=obj.comment;
 	this->obj_name=obj.obj_name;
+	this->logical_name=obj.logical_name;
 	this->obj_type=obj.obj_type;
 	this->is_protected=obj.is_protected;
 	this->sql_disabled=obj.sql_disabled;

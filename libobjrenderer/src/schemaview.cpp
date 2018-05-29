@@ -200,7 +200,7 @@ void SchemaView::configureObject(void)
 		}
 
 		//Configures the schema name at the top
-		sch_name->setText(schema->getName());
+		sch_name->setText(logical_view && !schema->getLogicalName().isEmpty() ? schema->getLogicalName() : schema->getName());
 		font=BaseObjectView::getFontStyle(ParsersAttributes::GLOBAL).font();
 		font.setItalic(true);
 		font.setBold(true);

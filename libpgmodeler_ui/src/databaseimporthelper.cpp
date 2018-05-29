@@ -2136,7 +2136,7 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 	Permission *perm=nullptr;
 	QString sig;
 
-	if(Permission::objectAcceptsPermission(obj_type))
+	if(Permission::acceptsPermission(obj_type))
 	{
 		QStringList perm_list;
 		vector<unsigned> privs, gop_privs;

@@ -2,6 +2,10 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 [<relationship name=] "{name}" [ type=] "{type}"
+  
+  %if {logical-name} %then
+    $sp logical-name="{logical-name}"
+  %end
 
   %if {src-col-pattern} %or {dst-col-pattern} %then
     $br $tb

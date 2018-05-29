@@ -4,6 +4,7 @@
 -->
 <!ELEMENT column (type?, collation?, comment?)>
 <!ATTLIST column name CDATA #REQUIRED>
+<!ATTLIST column logical-name CDATA #IMPLIED>
 <!ATTLIST column not-null (true | false) "false">
 <!ATTLIST column default-value CDATA #IMPLIED>
 <!ATTLIST column sequence CDATA #IMPLIED>
