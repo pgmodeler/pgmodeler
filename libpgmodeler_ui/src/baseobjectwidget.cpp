@@ -61,9 +61,6 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 		tablespace_sel=new ObjectSelectorWidget(OBJ_TABLESPACE, true, this);
 		owner_sel=new ObjectSelectorWidget(OBJ_ROLE, true, this);
 
-		name_ht=new HintTextWidget(name_hint, this);
-		name_ht->setText(name_edt->statusTip());
-
 		logical_name_ht=new HintTextWidget(logical_name_hint, this);
 		logical_name_ht->setText(logical_name_edt->statusTip());
 
@@ -221,7 +218,7 @@ void BaseObjectWidget::configureTabOrder(vector<QWidget *> widgets)
 	int idx=0, cnt=0;
 
 	widgets.insert(widgets.begin(),
-	{ name_edt, name_ht, logical_name_edt, logical_name_ht, schema_sel , collation_sel, owner_sel, tablespace_sel,
+	{ name_edt, logical_name_edt, logical_name_ht, schema_sel , collation_sel, owner_sel, tablespace_sel,
 	  comment_edt, append_sql_tb, edt_perms_tb, disable_sql_chk });
 
 	for(auto &wgt : widgets)
@@ -353,6 +350,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 
 	if(object)
 	{
+		obj_id_lbl->setVisible(true);
 		obj_id_lbl->setText(QString("ID: %1").arg(object->getObjectId()));
 
 		if(handled_obj_type != BASE_OBJECT)
@@ -361,7 +359,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 			name_edt->setText(object->getSignature());
 
 		comment_edt->setPlainText(object->getComment());
-		logical_name_edt->setText(object->getLogicalName());
+		logical_name_edt->setText(object->getAlias());
 
 		/* When creating a new table or relationship the object is pre allocated and the flag new_object is set.
 	   In order to avoid the selectors to have empty values, we check if the flag is false which means
@@ -389,7 +387,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	else
 	{
 		object_protected = false;
-		obj_id_lbl->setText(" ");
+		obj_id_lbl->setVisible(false);
 		protected_obj_frm->setVisible(false);
 
 		if(parent_obj && parent_obj->getObjectType()==OBJ_SCHEMA)
@@ -439,11 +437,9 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 															obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_TAG &&
 															obj_type!=OBJ_PARAMETER);
 
-	name_hint->setVisible(BaseObject::acceptsLogicalName(obj_type));
-
-	logical_name_edt->setVisible(BaseObject::acceptsLogicalName(obj_type));
-	logical_name_hint_wgt->setVisible(BaseObject::acceptsLogicalName(obj_type));
-	logical_name_lbl->setVisible(BaseObject::acceptsLogicalName(obj_type));
+	logical_name_edt->setVisible(BaseObject::acceptsAlias(obj_type));
+	logical_name_hint_wgt->setVisible(BaseObject::acceptsAlias(obj_type));
+	logical_name_lbl->setVisible(BaseObject::acceptsAlias(obj_type));
 
 	edt_perms_tb->setVisible(Permission::acceptsPermission(obj_type));
 	append_sql_tb->setVisible(BaseObject::acceptsCustomSQL(obj_type));
@@ -750,7 +746,7 @@ void BaseObjectWidget::applyConfiguration(void)
 			}
 
 			if(logical_name_edt->isVisible())
-				object->setLogicalName(logical_name_edt->text().trimmed());
+				object->setAlias(logical_name_edt->text().trimmed());
 
 			//Sets the object's comment
 			if(comment_edt->isVisible())

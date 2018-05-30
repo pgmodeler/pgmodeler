@@ -24,7 +24,7 @@ map<QString, QTextCharFormat> BaseObjectView::font_config;
 map<QString, vector<QColor>> BaseObjectView::color_config;
 unsigned BaseObjectView::global_sel_order=1;
 bool BaseObjectView::use_placeholder=true;
-bool BaseObjectView::logical_view=false;
+bool BaseObjectView::compact_view=false;
 
 BaseObjectView::BaseObjectView(BaseObject *object)
 {
@@ -398,9 +398,9 @@ bool BaseObjectView::isPlaceholderEnabled(void)
 	return(use_placeholder);
 }
 
-void BaseObjectView::setLogicalViewMode(bool value)
+void BaseObjectView::setCompactViewMode(bool value)
 {
-	logical_view = value;
+	compact_view = value;
 }
 
 QVariant BaseObjectView::itemChange(GraphicsItemChange change, const QVariant &value)

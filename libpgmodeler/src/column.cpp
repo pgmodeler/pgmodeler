@@ -385,7 +385,7 @@ void Column::operator = (Column &col)
 	this->is_protected=col.is_protected;
 
 	this->obj_name=col.obj_name;
-	this->logical_name=col.logical_name;
+	this->alias=col.alias;
 	this->old_name=col.old_name;
 
 	this->type=col.type;

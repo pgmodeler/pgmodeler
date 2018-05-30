@@ -80,8 +80,8 @@ void TableView::configureObject(void)
 		//Special case: if there is no item on extended attributes, the extended body is hidden
 		if(obj_idx==1)
 		{
-			groups[obj_idx]->setVisible(count > 0 && !hide_ext_attribs && !logical_view);
-			bodies[obj_idx]->setVisible(count > 0 && !hide_ext_attribs && !logical_view);
+			groups[obj_idx]->setVisible(count > 0 && !hide_ext_attribs);
+			bodies[obj_idx]->setVisible(count > 0 && !hide_ext_attribs);
 		}
 
 		for(i=0; i < count; i++)

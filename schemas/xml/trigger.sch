@@ -3,8 +3,8 @@
 #          Code generation can be broken if incorrect changes are made.
  [<trigger name=] "{name}" 
  
- %if {logical-name} %then
-   $sp logical-name="{logical-name}"
+ %if {alias} %then
+   $sp alias="{alias}"
  %end
  
  [ firing-type=] "{firing-type}"

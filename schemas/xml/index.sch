@@ -4,8 +4,8 @@
 
 [<index name=] "{name}" [ table=] "{table}"
  
- %if {logical-name} %then
-   $sp logical-name="{logical-name}"
+ %if {alias} %then
+   $sp alias="{alias}"
  %end
   
  $br $tb

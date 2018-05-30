@@ -3,8 +3,8 @@
 #          Code generation can be broken if incorrect changes are made.
 [<relationship name=] "{name}" [ type=] "{type}"
   
-  %if {logical-name} %then
-    $sp logical-name="{logical-name}"
+  %if {alias} %then
+   $sp alias="{alias}"
   %end
 
   %if {src-col-pattern} %or {dst-col-pattern} %then

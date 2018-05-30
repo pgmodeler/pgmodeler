@@ -5,9 +5,9 @@
 
 [<constraint name=] "{name}" [ type=] "{type}"
 
-  %if {logical-name} %then
-    $sp logical-name="{logical-name}"
-  %end
+ %if {alias} %then
+   $sp alias="{alias}"
+ %end
 
  %if {fk-constr} %then
     [ comparison-type=] "{comparison-type}"

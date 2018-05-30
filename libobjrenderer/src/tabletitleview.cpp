@@ -90,8 +90,8 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 		schema_name->setText(QString(" "));
 	else
 	{
-		if(logical_view && !schema->getLogicalName().isEmpty())
-			schema_name->setText(schema->getLogicalName() + QString("."));
+		if(compact_view && !schema->getAlias().isEmpty())
+			schema_name->setText(schema->getAlias() + QString("."));
 		else
 			schema_name->setText(schema->getName() + QString("."));
 	}
@@ -100,7 +100,7 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	font=fmt.font();
 
 	obj_name->setFont(font);
-	obj_name->setText(logical_view && !object->getLogicalName().isEmpty() ? object->getLogicalName() : object->getName());
+	obj_name->setText(compact_view && !object->getAlias().isEmpty() ? object->getAlias() : object->getName());
 
 	if(!tag)
 	{

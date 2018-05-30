@@ -4,9 +4,9 @@
 %if {reduced-form} %then $tb %end
 [<schema name=] "{name}"
 
-  %if {logical-name} %then
-    $sp logical-name="{logical-name}"
-  %end
+ %if {alias} %then
+   $sp alias="{alias}"
+ %end
 
 %if {reduced-form} %then
 /> $br

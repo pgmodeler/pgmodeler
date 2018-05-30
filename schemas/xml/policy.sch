@@ -4,9 +4,9 @@
 
 [<policy name=] "{name}" [ table=] "{table}" [ command=] "{command}"
 
-%if {logical-name} %then
-   $sp logical-name="{logical-name}"
-%end
+ %if {alias} %then
+   $sp alias="{alias}"
+ %end
 
 [ permissive=] %if {permissive} %then  "true" %else "false" %end
 

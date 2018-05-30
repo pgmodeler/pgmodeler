@@ -4,7 +4,7 @@
 -->
 <!ELEMENT trigger (comment?,condition?,appended-sql?,prepended-sql?,function,columns?)>
 <!ATTLIST trigger name CDATA #REQUIRED>
-<!ATTLIST trigger logical-name CDATA #IMPLIED>
+<!ATTLIST trigger alias CDATA #IMPLIED>
 <!ATTLIST trigger firing-type CDATA #REQUIRED>
 <!ATTLIST trigger per-line (true | false) "false">
 <!ATTLIST trigger arguments CDATA #IMPLIED>

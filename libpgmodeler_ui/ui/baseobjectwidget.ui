@@ -75,7 +75,7 @@
     </size>
    </property>
    <property name="statusTip">
-    <string>This is the name of the object in the PostgreSQL database or physical name.</string>
+    <string>This is the name of the object in the PostgreSQL database.</string>
    </property>
    <property name="text">
     <string/>
@@ -423,31 +423,9 @@ This will disable the code of all child and referrer objects.</string>
      <number>0</number>
     </property>
     <item>
-     <widget class="QWidget" name="name_hint" native="true">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>22</width>
-        <height>22</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>22</width>
-        <height>22</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-    <item>
      <widget class="QLabel" name="obj_id_lbl">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
@@ -558,7 +536,7 @@ This will disable the code of all child and referrer objects.</string>
     </size>
    </property>
    <property name="statusTip">
-    <string>This is a user/client friendly name for the object. When displaying the model in logical view this is the name shown for the object instead of its real name. If this field is empty the real name will be displayed.</string>
+    <string>This is a more friendly name for the object. When displaying the model in compact view this is the name shown for the object instead of its real name. If this field is empty the real name will be displayed anyway.</string>
    </property>
    <property name="text">
     <string/>
@@ -586,7 +564,7 @@ This will disable the code of all child and referrer objects.</string>
     </size>
    </property>
    <property name="text">
-    <string>Logical:</string>
+    <string>Alias:</string>
    </property>
   </widget>
   <widget class="QWidget" name="logical_name_hint_wgt" native="true">
@@ -594,9 +572,15 @@ This will disable the code of all child and referrer objects.</string>
     <rect>
      <x>200</x>
      <y>120</y>
-     <width>94</width>
+     <width>31</width>
      <height>31</height>
     </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
     <property name="spacing">
@@ -635,22 +619,6 @@ This will disable the code of all child and referrer objects.</string>
        </size>
       </property>
      </widget>
-    </item>
-    <item>
-     <spacer name="horizontalSpacer">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Expanding</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>63</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
     </item>
    </layout>
   </widget>

@@ -1750,7 +1750,7 @@ void RelationshipView::configureAttributes(void)
 
 			attrib->setPos(px, py);
 
-			text->setText(logical_view && !col->getLogicalName().isEmpty() ? col->getLogicalName() : col->getName());
+			text->setText(compact_view && !col->getAlias().isEmpty() ? col->getAlias() : col->getName());
 			text->setPos(QPointF(desc->pos().x() + desc->boundingRect().width() + (HORIZ_SPACING * factor), 0));
 			desc->setPos(0, VERT_SPACING * factor);
 
@@ -1807,9 +1807,9 @@ void RelationshipView::configureLabels(void)
 	{
 		Textbox *txtbox = dynamic_cast<Textbox *>(labels[BaseRelationship::REL_NAME_LABEL]->getSourceObject());
 
-		if(logical_view && !base_rel->getLogicalName().isEmpty())
+		if(compact_view && !base_rel->getAlias().isEmpty())
 		{
-			txtbox->setComment(base_rel->getLogicalName());
+			txtbox->setComment(base_rel->getAlias());
 			txtbox->setModified(true);
 		}
 		else if(txtbox->getComment() != base_rel->getName(true))

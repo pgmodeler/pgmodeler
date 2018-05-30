@@ -3199,8 +3199,8 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 	if(obj_type_aux!=OBJ_CAST)
 		object->setName(attribs[ParsersAttributes::NAME]);
 
-	if(BaseObject::acceptsLogicalName(obj_type_aux))
-		object->setLogicalName(attribs[ParsersAttributes::LOGICAL_NAME]);
+	if(BaseObject::acceptsAlias(obj_type_aux))
+		object->setAlias(attribs[ParsersAttributes::ALIAS]);
 
 	protected_obj=attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_;
 	sql_disabled=attribs[ParsersAttributes::SQL_DISABLED]==ParsersAttributes::_TRUE_;
@@ -6118,7 +6118,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 
 				base_rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_FK, tables[0], tables[1], false, false);
 				base_rel->setName(attribs[ParsersAttributes::NAME]);
-				base_rel->setLogicalName(attribs[ParsersAttributes::LOGICAL_NAME]);
+				base_rel->setAlias(attribs[ParsersAttributes::ALIAS]);
 				addRelationship(base_rel);
 			}
 			else if(base_rel)
@@ -6183,7 +6183,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 				rel->setTableNameRelNN(attribs[ParsersAttributes::TABLE_NAME]);
 
 			rel->setName(attribs[ParsersAttributes::NAME]);
-			rel->setLogicalName(attribs[ParsersAttributes::LOGICAL_NAME]);
+			rel->setAlias(attribs[ParsersAttributes::ALIAS]);
 			base_rel=rel;
 
 			//Configuring the name patterns

@@ -3,9 +3,9 @@
 #          Code generation can be broken if incorrect changes are made.
 [<table name=] "{name}" 
   
-  %if {logical-name} %then
-    $sp logical-name="{logical-name}"
-  %end
+ %if {alias} %then
+   $sp alias="{alias}"
+ %end
   
   %if {oids} %then [ oids="true"] %end
   %if {gen-alter-cmds} %then [ gen-alter-cmds="true"] %end

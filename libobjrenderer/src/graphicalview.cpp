@@ -107,8 +107,8 @@ void GraphicalView::configureObject(void)
 					view->getObjectList(OBJ_INDEX)->begin(),
 					view->getObjectList(OBJ_INDEX)->end());
 
-	ext_attribs->setVisible(!tab_objs.empty() && !hide_ext_attribs && !logical_view);
-	ext_attribs_body->setVisible(!tab_objs.empty() && !hide_ext_attribs && !logical_view);
+	ext_attribs->setVisible(!tab_objs.empty() && !hide_ext_attribs);
+	ext_attribs_body->setVisible(!tab_objs.empty() && !hide_ext_attribs);
 
 	if(!tab_objs.empty())
 	{
