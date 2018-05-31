@@ -23,20 +23,25 @@ QMAKE_CMD=qmake
 LOG="$PWD/linuxdeploy.log"
 QT_IFW_ROOT=/opt/qt-ifw-1.5.0
 
+
+# Prepare setup variables
 STARTUP_SCRIPT="start-pgmodeler.sh"
 MIME_UPDATE_SCRIPT="dbm-mime-type.sh"
 ENV_VARS_SCRIPT="pgmodeler.vars"
 BUILD_DIR="$PWD/build"
 DIST_DIR="$PWD/dist"
-INSTALL_ROOT="/opt/pgmodeler"
+# Detecting current pgModeler version
+DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PGMODELER_VERSION | sed 's/PGMODELER_VERSION=QString("//g' | sed 's/"),//g' | sed 's/^ *//g' | cut -s -f2`
+PREFIX="/opt/pgmodeler"
+# Uncomment this line if you want to keep several versions of pgmodeler
+#PREFIX="/opt/pgmodeler/$DEPLOY_VER"
+INSTALL_ROOT="$PREFIX"
 INSTALLER_CONF_DIR="$PWD/installer/linux/config"
 INSTALLER_PKG_DIR="$PWD/installer/linux/packages"
 INSTALLER_DATA_DIR="$INSTALLER_PKG_DIR/br.com.pgmodeler/data"
 QT_CONF="$BUILD_DIR/$INSTALL_ROOT/qt.conf"
 DEP_PLUGINS_DIR="$BUILD_DIR/$INSTALL_ROOT/lib/qtplugins"
   
-# Detecting current pgModeler version
-DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PGMODELER_VERSION | sed 's/PGMODELER_VERSION=QString("//g' | sed 's/"),//g' | sed 's/^ *//g' | cut -s -f2`
 GEN_INSTALLER_OPT='-gen-installer'
 DEMO_VERSION_OPT='-demo-version'
 NO_QT_LIBS_OPT='-no-qt-libs'
@@ -49,7 +54,6 @@ BUNDLE_QT_LIBS=1
 BUILD_ALL=0
 
 # pgModeler output paths settings
-PREFIX="/opt/pgmodeler"
 BINDIR=$PREFIX
 PRIVATEBINDIR=$PREFIX
 PRIVATELIBDIR="$PREFIX/lib"
