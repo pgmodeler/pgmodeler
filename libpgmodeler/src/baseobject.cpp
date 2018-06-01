@@ -471,7 +471,7 @@ bool BaseObject::acceptsAlias(ObjectType obj_type)
 				 obj_type==OBJ_TABLE || obj_type==OBJ_SCHEMA ||
 				 obj_type == OBJ_COLUMN || obj_type == OBJ_CONSTRAINT ||
 				 obj_type == OBJ_INDEX || obj_type == OBJ_RULE ||
-				 obj_type == OBJ_TRIGGER || obj_type == OBJ_POLICY);
+				 obj_type == OBJ_TRIGGER);
 }
 
 bool BaseObject::acceptsCustomSQL(void)

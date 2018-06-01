@@ -4,10 +4,6 @@
 
 [<policy name=] "{name}" [ table=] "{table}" [ command=] "{command}"
 
- %if {alias} %then
-   $sp alias="{alias}"
- %end
-
 [ permissive=] %if {permissive} %then  "true" %else "false" %end
 
 %if {protected} %then [ protected=] "true" %end
