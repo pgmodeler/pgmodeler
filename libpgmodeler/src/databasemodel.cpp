@@ -9265,7 +9265,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 	bool save_db_attribs=false, save_objs_pos=false, save_objs_prot=false,
 			save_objs_sqldis=false, save_textboxes=false, save_tags=false,
 			save_custom_sql=false, save_custom_colors=false, save_fadeout=false,
-			save_extattribs=false, save_genericsqls=false;
+			save_extattribs=false, save_genericsqls=false, save_objs_aliases=false;
 	QStringList labels_attrs={ ParsersAttributes::SRC_LABEL,
 														 ParsersAttributes::DST_LABEL,
 														 ParsersAttributes::NAME_LABEL };
@@ -9281,6 +9281,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 	save_fadeout=(META_OBJS_FADEDOUT & options) == META_OBJS_FADEDOUT;
 	save_extattribs=(META_OBJS_EXTATTRIBS & options) == META_OBJS_EXTATTRIBS;
 	save_genericsqls=(META_GENERIC_SQL_OBJS & options) == META_GENERIC_SQL_OBJS;
+	save_objs_aliases=(META_OBJS_ALIASES & options) == META_OBJS_ALIASES;
 
 	output.open(QFile::WriteOnly);
 
@@ -9305,7 +9306,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 		if(save_db_attribs)
 			objects.push_back(this);
 
-		if(save_objs_pos)
+		if(save_objs_pos || save_objs_aliases)
 		{
 			objects.insert(objects.end(), schemas.begin(), schemas.end());
 			objects.insert(objects.end(), tables.begin(), tables.end());
@@ -9317,7 +9318,8 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			for(BaseObject *object : relationships)
 			{
 				rel=dynamic_cast<Relationship *>(object);
-				if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN && rel->getReceiverTable())
+
+				if(save_objs_pos && rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN && rel->getReceiverTable())
 				{
 					tab_nn=rel->getReceiverTable();
 					src_tab=rel->getTable(BaseRelationship::SRC_TABLE);
@@ -9370,6 +9372,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			base_tab=dynamic_cast<BaseTable *>(object);
 
 			attribs[ParsersAttributes::NAME]=object->getSignature();
+			attribs[ParsersAttributes::ALIAS]=(save_objs_aliases ? object->getAlias() : QString());
 			attribs[ParsersAttributes::TYPE]=object->getSchemaName();
 			attribs[ParsersAttributes::PROTECTED]=(save_objs_prot && object->isProtected() && !object->isSystemObject() ? ParsersAttributes::_TRUE_ : QString());
 			attribs[ParsersAttributes::SQL_DISABLED]=(save_objs_sqldis && object->isSQLDisabled() && !object->isSystemObject()  ? ParsersAttributes::_TRUE_ : QString());
@@ -9511,7 +9514,8 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 				 (save_custom_sql && (!attribs[ParsersAttributes::APPENDED_SQL].isEmpty() ||
 															!attribs[ParsersAttributes::PREPENDED_SQL].isEmpty())) ||
 				 (save_fadeout && !attribs[ParsersAttributes::FADED_OUT].isEmpty()) ||
-				 (save_extattribs && !attribs[ParsersAttributes::HIDE_EXT_ATTRIBS].isEmpty()))
+				 (save_extattribs && !attribs[ParsersAttributes::HIDE_EXT_ATTRIBS].isEmpty()) ||
+				 (save_objs_aliases && !attribs[ParsersAttributes::ALIAS].isEmpty()))
 			{
 				emit s_objectLoaded(((idx++)/static_cast<float>(objects.size()))*100,
 														trUtf8("Saving metadata of the object `%1' (%2)")

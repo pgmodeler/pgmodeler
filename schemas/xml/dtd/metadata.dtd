@@ -40,5 +40,6 @@
 <!ATTLIST info default-tablespace CDATA #IMPLIED>
 <!ATTLIST info faded-out (false|true) "false">
 <!ATTLIST info hide-ext-attribs (false|true) "false">
+<!ATTLIST info alias CDATA #IMPLIED>
 
 <!ELEMENT metadata (textbox*, tag*, genericsql*, info*)>
