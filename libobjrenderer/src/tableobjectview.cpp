@@ -266,8 +266,7 @@ void TableObjectView::configureObject(void)
 		px=descriptor->pos().x() + descriptor->boundingRect().width() + (2 * HORIZ_SPACING);
 
 		//Configuring the labels as follow: [object name] [type] [constraints]
-		//Configuring tha name label
-		lables[0]->setText(tab_obj->getName());
+		lables[0]->setText(compact_view && !tab_obj->getAlias().isEmpty() ? tab_obj->getAlias() : tab_obj->getName());
 
 		//Strikeout the column name when its SQL is disabled
 		QFont font=fmt.font();
@@ -281,10 +280,16 @@ void TableObjectView::configureObject(void)
 
 		//Configuring the type label
 		fmt=font_config[ParsersAttributes::OBJECT_TYPE];
-		if(column)
-			lables[1]->setText(TYPE_SEPARATOR + (*column->getType()));
+
+		if(compact_view)
+			lables[1]->setText(" ");
 		else
-			lables[1]->setText(TYPE_SEPARATOR + tab_obj->getSchemaName());
+		{
+			if(column)
+				lables[1]->setText(TYPE_SEPARATOR + (*column->getType()));
+			else
+				lables[1]->setText(TYPE_SEPARATOR + tab_obj->getSchemaName());
+		}
 
 		lables[1]->setFont(fmt.font());
 		lables[1]->setBrush(fmt.foreground());
@@ -293,7 +298,9 @@ void TableObjectView::configureObject(void)
 
 		//Configuring the constraints label
 		fmt=font_config[ParsersAttributes::CONSTRAINTS];
-		if(column)
+		if(compact_view)
+			lables[2]->setText(" ");
+		else if(column)
 			lables[2]->setText(str_constr);
 		else
 		{

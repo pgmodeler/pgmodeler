@@ -92,6 +92,7 @@ namespace ParsersAttributes {
 	COMMENT=QString("comment"),
 	COMMUTATOR_OP=QString("commutator-op"),
 	COMPARISON_TYPE=QString("comparison-type"),
+	COMPACT_VIEW=QString("compact-view"),
 	COMPLETION_TRIGGER=QString("completion-trigger"),
 	COMPOSITE_TYPE=QString("composite"),
 	CONCURRENT=QString("concurrent"),

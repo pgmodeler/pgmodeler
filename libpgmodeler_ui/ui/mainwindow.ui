@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1068</width>
-    <height>673</height>
+    <height>708</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -517,7 +517,7 @@
                   <string>Toggle the object finder</string>
                  </property>
                  <property name="text">
-                  <string>Find Object</string>
+                  <string>Find objects</string>
                  </property>
                  <property name="icon">
                   <iconset resource="../res/resources.qrc">
@@ -678,7 +678,7 @@
      <x>0</x>
      <y>0</y>
      <width>1068</width>
-     <height>23</height>
+     <height>25</height>
     </rect>
    </property>
    <property name="autoFillBackground">
@@ -873,6 +873,7 @@
    <addaction name="action_show_delimiters"/>
    <addaction name="action_show_grid"/>
    <addaction name="action_alin_objs_grade"/>
+   <addaction name="action_compact_view"/>
    <addaction name="separator"/>
   </widget>
   <action name="action_new_model">
@@ -1512,6 +1513,24 @@
    </property>
    <property name="toolTip">
     <string>Rearrange objects over the canvas</string>
+   </property>
+  </action>
+  <action name="action_compact_view">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icones/icones/compactview.png</normaloff>:/icones/icones/compactview.png</iconset>
+   </property>
+   <property name="text">
+    <string>Compact view</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle the compact view on the model(s)</string>
    </property>
   </action>
  </widget>

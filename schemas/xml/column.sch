@@ -3,6 +3,10 @@
 #          Code generation can be broken if incorrect changes are made.
 $tb [<column name=] "{name}"
 
+ %if {alias} %then
+   $sp alias="{alias}"
+ %end
+
  %if {not-null} %then
   [ not-null=] "true"
  %end

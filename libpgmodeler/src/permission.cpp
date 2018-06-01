@@ -34,7 +34,7 @@ Permission::Permission(BaseObject *obj)
 
 	/* Raises an error if the object type to be associated to the permission is
 		invalid according to the rule (see class definition) */
-	if(!objectAcceptsPermission(obj->getObjectType()))
+	if(!acceptsPermission(obj->getObjectType()))
 		throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->object=obj;
@@ -51,7 +51,7 @@ Permission::Permission(BaseObject *obj)
 	attributes[ParsersAttributes::PRIVILEGES_GOP]=QString();
 }
 
-bool Permission::objectAcceptsPermission(ObjectType obj_type, int privilege)
+bool Permission::acceptsPermission(ObjectType obj_type, int privilege)
 {
 	bool result=false;
 	unsigned priv_id=static_cast<unsigned>(privilege);
@@ -142,7 +142,7 @@ void Permission::setPrivilege(unsigned priv_id, bool value, bool grant_op)
 	if(priv_id > PRIV_USAGE)
 		throw Exception(ERR_REF_INV_PRIVILEGE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	if(!objectAcceptsPermission(object->getObjectType(), priv_id))
+	if(!acceptsPermission(object->getObjectType(), priv_id))
 		//Raises an error if the privilege is invalid according to the object type
 		throw Exception(ERR_ASG_INCOMP_PRIV_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 

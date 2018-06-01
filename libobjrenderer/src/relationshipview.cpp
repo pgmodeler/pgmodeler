@@ -1750,7 +1750,7 @@ void RelationshipView::configureAttributes(void)
 
 			attrib->setPos(px, py);
 
-			text->setText(col->getName());
+			text->setText(compact_view && !col->getAlias().isEmpty() ? col->getAlias() : col->getName());
 			text->setPos(QPointF(desc->pos().x() + desc->boundingRect().width() + (HORIZ_SPACING * factor), 0));
 			desc->setPos(0, VERT_SPACING * factor);
 
@@ -1802,6 +1802,22 @@ void RelationshipView::configureLabels(void)
 
 	labels[BaseRelationship::REL_NAME_LABEL]->setVisible(!hide_name_label);
 	configureLabelPosition(BaseRelationship::REL_NAME_LABEL, x, y);
+
+	if(!hide_name_label)
+	{
+		Textbox *txtbox = dynamic_cast<Textbox *>(labels[BaseRelationship::REL_NAME_LABEL]->getSourceObject());
+
+		if(compact_view && !base_rel->getAlias().isEmpty())
+		{
+			txtbox->setComment(base_rel->getAlias());
+			txtbox->setModified(true);
+		}
+		else if(txtbox->getComment() != base_rel->getName(true))
+		{
+			txtbox->setComment(base_rel->getName(true));
+			txtbox->setModified(true);
+		}
+	}
 
 	//Hides the cardinality labels when crow's feet is enabled
 	if(labels[BaseRelationship::SRC_CARD_LABEL] && labels[BaseRelationship::DST_CARD_LABEL])

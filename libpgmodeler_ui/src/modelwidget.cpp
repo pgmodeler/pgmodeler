@@ -3183,7 +3183,7 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 		if(tab_or_view)
 			quick_actions_menu.addAction(action_set_tag);
 
-		if(object && Permission::objectAcceptsPermission(obj_type))
+		if(object && Permission::acceptsPermission(obj_type))
 		{
 			quick_actions_menu.addAction(action_edit_perms);
 			action_edit_perms->setData(QVariant::fromValue<void *>(object));
@@ -3425,6 +3425,26 @@ void ModelWidget::fadeObjectsIn(void)
 void ModelWidget::fadeObjectsOut(void)
 {
 	fadeObjects(qobject_cast<QAction *>(sender()), false);
+}
+
+void ModelWidget::toggleAllExtendedAttributes(bool value)
+{
+	BaseTable *base_tab = nullptr;
+	vector<BaseObject *> objects;
+
+	this->scene->clearSelection();
+	objects.assign(db_model->getObjectList(OBJ_TABLE)->begin(), db_model->getObjectList(OBJ_TABLE)->end());
+	objects.insert(objects.end(), db_model->getObjectList(OBJ_VIEW)->begin(), db_model->getObjectList(OBJ_VIEW)->end());
+
+	for(auto obj : objects)
+	{
+		base_tab = dynamic_cast<BaseTable *>(obj);
+
+		if(base_tab)
+			base_tab->setExtAttribsHidden(value);
+	}
+
+	this->setModified(true);
 }
 
 void ModelWidget::toggleExtendedAttributes(void)

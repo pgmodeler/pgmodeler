@@ -274,6 +274,8 @@ class ModelWidget: public QWidget {
 
 		void fadeObjects(const vector<BaseObject *> &objects, bool fade_in);
 
+		void toggleAllExtendedAttributes(bool value);
+
 	public:
 		static constexpr double MINIMUM_ZOOM=0.050000,
 		MAXIMUM_ZOOM=5.000001,
