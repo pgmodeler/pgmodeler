@@ -428,17 +428,27 @@ void TableObjectView::configureObject(Reference reference)
 	{
 		//Configures the name label as: [table].[column]
 		fmt=font_config[ParsersAttributes::REF_TABLE];
-		lables[0]->setText(reference.getTable()->getName() + ".");
+
+		if(compact_view && !reference.getReferenceAlias().isEmpty())
+			lables[0]->setText(reference.getReferenceAlias());
+		else
+			lables[0]->setText(reference.getTable()->getName() + ".");
+
 		lables[0]->setFont(fmt.font());
 		lables[0]->setBrush(fmt.foreground());
 		lables[0]->setPos(px, 0);
 		px+=lables[0]->boundingRect().width();
 
 		fmt=font_config[ParsersAttributes::REF_COLUMN];
-		if(reference.getColumn())
-			lables[1]->setText(reference.getColumn()->getName());
+		if(compact_view && !reference.getReferenceAlias().isEmpty())
+			lables[1]->setText(QString(" "));
 		else
-			lables[1]->setText("*");
+		{
+			if(reference.getColumn())
+				lables[1]->setText(reference.getColumn()->getName());
+			else
+				lables[1]->setText("*");
+		}
 
 		lables[1]->setFont(fmt.font());
 		lables[1]->setBrush(fmt.foreground());
@@ -448,10 +458,14 @@ void TableObjectView::configureObject(Reference reference)
 	else
 	{
 		fmt=font_config[ParsersAttributes::REF_TABLE];
+		str_aux = compact_view && !reference.getReferenceAlias().isEmpty() ? reference.getReferenceAlias() : QString();
 
-		str_aux=reference.getExpression().simplified().mid(0,25);
-		if(reference.getExpression().size() > 25) str_aux+=QString("...");
-		str_aux.replace(QString("\n"), QString(" "));
+		if(str_aux.isEmpty())
+		{
+			str_aux=reference.getExpression().simplified().mid(0,25);
+			if(reference.getExpression().size() > 25) str_aux+=QString("...");
+			str_aux.replace(QString("\n"), QString(" "));
+		}
 
 		lables[0]->setText(str_aux);
 		lables[0]->setFont(fmt.font());
@@ -462,8 +476,9 @@ void TableObjectView::configureObject(Reference reference)
 	}
 
 	//Configures a label for the alias (if there is one)
-	if((reference.getColumn() && !reference.getColumnAlias().isEmpty()) ||
-			(!reference.getAlias().isEmpty() && reference.getReferenceType()==Reference::REFER_EXPRESSION))
+	if(!compact_view &&
+		 ((reference.getColumn() && !reference.getColumnAlias().isEmpty()) ||
+			(!reference.getAlias().isEmpty() && reference.getReferenceType()==Reference::REFER_EXPRESSION)))
 	{
 		if(reference.getReferenceType()==Reference::REFER_EXPRESSION)
 			str_aux=reference.getAlias();
@@ -477,6 +492,8 @@ void TableObjectView::configureObject(Reference reference)
 		lables[2]->setBrush(fmt.foreground());
 		lables[2]->setPos(px, 0);
 	}
+	else
+		lables[2]->setText(QString(" "));
 
 	descriptor->setPos(HORIZ_SPACING, lables[0]->boundingRect().center().y() - descriptor->boundingRect().center().y());
 	bounding_rect.setTopLeft(QPointF(descriptor->pos().x(), lables[0]->pos().y()));

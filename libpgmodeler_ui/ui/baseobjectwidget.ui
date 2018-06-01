@@ -508,7 +508,7 @@ This will disable the code of all child and referrer objects.</string>
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QLineEdit" name="logical_name_edt">
+  <widget class="QLineEdit" name="alias_edt">
    <property name="geometry">
     <rect>
      <x>80</x>
@@ -567,7 +567,7 @@ This will disable the code of all child and referrer objects.</string>
     <string>Alias:</string>
    </property>
   </widget>
-  <widget class="QWidget" name="logical_name_hint_wgt" native="true">
+  <widget class="QWidget" name="alias_hint_wgt" native="true">
    <property name="geometry">
     <rect>
      <x>200</x>
@@ -599,7 +599,7 @@ This will disable the code of all child and referrer objects.</string>
      <number>0</number>
     </property>
     <item>
-     <widget class="QWidget" name="logical_name_hint" native="true">
+     <widget class="QWidget" name="alias_hint" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
         <horstretch>0</horstretch>

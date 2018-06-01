@@ -55,7 +55,7 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 
 		QHBoxLayout *misc_btns_lt;
 
-		HintTextWidget *logical_name_ht;
+		HintTextWidget *alias_ht;
 
 		//! \brief Store the kind of object being handled by the widget (configured in the constructor)
 		ObjectType handled_obj_type;

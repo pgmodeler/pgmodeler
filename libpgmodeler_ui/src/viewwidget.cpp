@@ -76,10 +76,10 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 
 		frame_info=generateInformationFrame(trUtf8("To reference all columns in a table (*) just do not fill the field <strong>Column</strong>, this is the same as write <em><strong>[schema].[table].*</strong></em>"));
 
-		referencias_grid->addWidget(table_sel, 2,1,1,2);
-		referencias_grid->addWidget(column_sel, 3,1,1,2);
-		referencias_grid->addWidget(frame_info, 6, 0, 1, 0);
-		referencias_grid->addWidget(references_tab, 7,0,2,0);
+		referencias_grid->addWidget(table_sel, 3,1,1,2);
+		referencias_grid->addWidget(column_sel, 4,1,1,2);
+		referencias_grid->addWidget(frame_info, 7, 0, 1, 0);
+		referencias_grid->addWidget(references_tab, 8,0,2,0);
 
 		//Configuring the table objects that stores the triggers and rules
 		for(unsigned i=0, tab_id=1; i < sizeof(types)/sizeof(ObjectType); i++, tab_id++)
@@ -495,6 +495,8 @@ void ViewWidget::handleReference(int ref_idx)
 			ref=Reference(expression_txt->toPlainText(), expr_alias_edt->text().toUtf8());
 		}
 
+		ref.setReferenceAlias(ref_alias_edt->text());
+
 		/* The reference must have an SQL application (be between SELECT-FROM, FROM-WHERE or after WHERE),
 			 if the user do not check some of these attributes raises an error */
 		if(!select_from_chk->isChecked() &&	!from_where_chk->isChecked() &&
@@ -532,6 +534,7 @@ void ViewWidget::editReference(int ref_idx)
 	//Get the reference at the selected table row
 	ref=references_tab->getRowData(ref_idx).value<Reference>();
 	ref_type_cmb->setCurrentIndex(ref.getReferenceType());
+	ref_alias_edt->setText(ref.getReferenceAlias());
 
 	if(ref.getReferenceType()==Reference::REFER_COLUMN)
 	{

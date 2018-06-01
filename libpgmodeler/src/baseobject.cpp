@@ -361,13 +361,13 @@ void BaseObject::setName(const QString &name)
 	this->obj_name=aux_name;
 }
 
-void BaseObject::setAlias(const QString &name)
+void BaseObject::setAlias(const QString &alias)
 {
-	if(name.size() > OBJECT_NAME_MAX_LENGTH)
+	if(alias.size() > OBJECT_NAME_MAX_LENGTH)
 		throw Exception(ERR_ASG_LONG_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	this->alias = name;
-	setCodeInvalidated(this->alias != name);
+	this->alias = alias;
+	setCodeInvalidated(this->alias != alias);
 }
 
 void BaseObject::setComment(const QString &comment)
@@ -468,7 +468,7 @@ bool BaseObject::acceptsDropCommand(ObjectType obj_type)
 bool BaseObject::acceptsAlias(ObjectType obj_type)
 {
 	return(obj_type==OBJ_RELATIONSHIP || obj_type==BASE_RELATIONSHIP ||
-				 obj_type==OBJ_TABLE || obj_type==OBJ_SCHEMA ||
+				 obj_type==OBJ_TABLE || obj_type==OBJ_SCHEMA || obj_type==OBJ_VIEW ||
 				 obj_type == OBJ_COLUMN || obj_type == OBJ_CONSTRAINT ||
 				 obj_type == OBJ_INDEX || obj_type == OBJ_RULE ||
 				 obj_type == OBJ_TRIGGER);

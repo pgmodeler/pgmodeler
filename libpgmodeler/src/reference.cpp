@@ -106,6 +106,19 @@ unsigned Reference::getReferenceType(void)
 		return(REFER_EXPRESSION);
 }
 
+void Reference::setReferenceAlias(const QString &alias)
+{
+	if(alias.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
+		throw Exception(ERR_ASG_LONG_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	ref_alias = alias;
+}
+
+QString Reference::getReferenceAlias(void)
+{
+	return(ref_alias);
+}
+
 QString Reference::getSQLDefinition(unsigned sql_type)
 {
 	QString sql_def, tab_name;

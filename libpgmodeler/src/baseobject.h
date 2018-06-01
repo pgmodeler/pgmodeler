@@ -284,7 +284,7 @@ class BaseObject {
 		/*! \brief Defines the object's alias (human readable / friendly name). An alias is used when the database model is being
 		 * displayed in compact view. This method raises an error when the provided name is larger than 63 bytes
 		 * (the same rule for PostgreSQL names length) */
-		virtual void setAlias(const QString &name);
+		virtual void setAlias(const QString &alias);
 
 		//! \brief Toggles the object's modify protection
 		virtual void setProtected(bool value);

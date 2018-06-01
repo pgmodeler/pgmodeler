@@ -61,8 +61,8 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 		tablespace_sel=new ObjectSelectorWidget(OBJ_TABLESPACE, true, this);
 		owner_sel=new ObjectSelectorWidget(OBJ_ROLE, true, this);
 
-		logical_name_ht=new HintTextWidget(logical_name_hint, this);
-		logical_name_ht->setText(logical_name_edt->statusTip());
+		alias_ht=new HintTextWidget(alias_hint, this);
+		alias_ht->setText(alias_edt->statusTip());
 
 		baseobject_grid = new QGridLayout;
 		baseobject_grid->setObjectName("objetobase_grid");
@@ -71,8 +71,8 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 		baseobject_grid->addWidget(name_edt, 1, 1, 1, 1);
 		baseobject_grid->addWidget(id_ico_wgt, 1, 2, 1, 3);
 		baseobject_grid->addWidget(logical_name_lbl, 2, 0, 1, 1);
-		baseobject_grid->addWidget(logical_name_edt, 2, 1, 1, 1);
-		baseobject_grid->addWidget(logical_name_hint_wgt, 2, 2, 1, 3);
+		baseobject_grid->addWidget(alias_edt, 2, 1, 1, 1);
+		baseobject_grid->addWidget(alias_hint_wgt, 2, 2, 1, 3);
 		baseobject_grid->addWidget(schema_lbl, 4, 0, 1, 1);
 		baseobject_grid->addWidget(schema_sel, 4, 1, 1, 4);
 		baseobject_grid->addWidget(collation_lbl, 5, 0, 1, 1);
@@ -218,7 +218,7 @@ void BaseObjectWidget::configureTabOrder(vector<QWidget *> widgets)
 	int idx=0, cnt=0;
 
 	widgets.insert(widgets.begin(),
-	{ name_edt, logical_name_edt, logical_name_ht, schema_sel , collation_sel, owner_sel, tablespace_sel,
+	{ name_edt, alias_edt, alias_ht, schema_sel , collation_sel, owner_sel, tablespace_sel,
 	  comment_edt, append_sql_tb, edt_perms_tb, disable_sql_chk });
 
 	for(auto &wgt : widgets)
@@ -359,7 +359,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 			name_edt->setText(object->getSignature());
 
 		comment_edt->setPlainText(object->getComment());
-		logical_name_edt->setText(object->getAlias());
+		alias_edt->setText(object->getAlias());
 
 		/* When creating a new table or relationship the object is pre allocated and the flag new_object is set.
 	   In order to avoid the selectors to have empty values, we check if the flag is false which means
@@ -437,8 +437,8 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 															obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_TAG &&
 															obj_type!=OBJ_PARAMETER);
 
-	logical_name_edt->setVisible(BaseObject::acceptsAlias(obj_type));
-	logical_name_hint_wgt->setVisible(BaseObject::acceptsAlias(obj_type));
+	alias_edt->setVisible(BaseObject::acceptsAlias(obj_type));
+	alias_hint_wgt->setVisible(BaseObject::acceptsAlias(obj_type));
 	logical_name_lbl->setVisible(BaseObject::acceptsAlias(obj_type));
 
 	edt_perms_tb->setVisible(Permission::acceptsPermission(obj_type));
@@ -745,8 +745,8 @@ void BaseObjectWidget::applyConfiguration(void)
 				object->setName(name_edt->text().trimmed().toUtf8());
 			}
 
-			if(logical_name_edt->isVisible())
-				object->setAlias(logical_name_edt->text().trimmed());
+			if(alias_edt->isVisible())
+				object->setAlias(alias_edt->text().trimmed());
 
 			//Sets the object's comment
 			if(comment_edt->isVisible())
