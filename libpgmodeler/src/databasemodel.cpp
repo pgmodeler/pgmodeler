@@ -9252,7 +9252,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 	QFile output(filename);
 	QByteArray buf;
 	QString objs_def;
-	vector<BaseObject *> objects;
+	vector<BaseObject *> objects, tab_objs;
 	attribs_map attribs;
 	BaseGraphicObject *graph_obj=nullptr;
 	Relationship *rel=nullptr;
@@ -9333,6 +9333,22 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 					objects.push_back(tab_nn);
 				}
 			}
+
+			//Saving aliases the children of tables and views
+			if(save_objs_aliases)
+			{
+				for(auto &tab : tables)
+				{
+					tab_objs = dynamic_cast<Table *>(tab)->getObjects();
+					objects.insert(objects.end(), tab_objs.begin(), tab_objs.end());
+				}
+
+				for(auto &vw : views)
+				{
+					tab_objs = dynamic_cast<View *>(vw)->getObjects();
+					objects.insert(objects.end(), tab_objs.begin(), tab_objs.end());
+				}
+			}
 		}
 
 		if(save_objs_prot || save_objs_sqldis)
@@ -9367,11 +9383,15 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 				objs_def+=object->getCodeDefinition(SchemaParser::XML_DEFINITION);
 				continue;
 			}
+			//Discarding the relationship added table objects (when extracting aliases)
+			else if(TableObject::isTableObject(obj_type) && dynamic_cast<TableObject *>(object)->isAddedByRelationship())
+				continue;
 
 			graph_obj=dynamic_cast<BaseGraphicObject *>(object);
 			base_tab=dynamic_cast<BaseTable *>(object);
 
-			attribs[ParsersAttributes::NAME]=object->getSignature();
+			attribs[ParsersAttributes::TABLE]=QString();
+			attribs[ParsersAttributes::NAME]=(TableObject::isTableObject(obj_type) ? object->getName() : object->getSignature());
 			attribs[ParsersAttributes::ALIAS]=(save_objs_aliases ? object->getAlias() : QString());
 			attribs[ParsersAttributes::TYPE]=object->getSchemaName();
 			attribs[ParsersAttributes::PROTECTED]=(save_objs_prot && object->isProtected() && !object->isSystemObject() ? ParsersAttributes::_TRUE_ : QString());
@@ -9379,9 +9399,14 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			attribs[ParsersAttributes::TAG]=(save_tags && base_tab && base_tab->getTag() ? base_tab->getTag()->getName() : QString());
 			attribs[ParsersAttributes::APPENDED_SQL]=object->getAppendedSQL();
 			attribs[ParsersAttributes::PREPENDED_SQL]=object->getPrependedSQL();
-
 			attribs[ParsersAttributes::HIDE_EXT_ATTRIBS]=(save_extattribs && base_tab && base_tab->isExtAttribsHidden() ? ParsersAttributes::_TRUE_ : QString());
 			attribs[ParsersAttributes::FADED_OUT]=(save_fadeout && graph_obj && graph_obj->isFadedOut() ? ParsersAttributes::_TRUE_ : QString());
+
+			if(TableObject::isTableObject(obj_type))
+			{
+				base_tab = dynamic_cast<TableObject *>(object)->getParentTable();
+				attribs[ParsersAttributes::TABLE]=base_tab->getSignature();
+			}
 
 			if(save_custom_sql && obj_type==OBJ_DATABASE)
 			{
@@ -9576,12 +9601,11 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 	BaseRelationship *rel=nullptr;
 	Schema *schema=nullptr;
 	Tag *tag=nullptr;
-	QPointF pnt;
 	int progress=0;
 	bool load_db_attribs=false, load_objs_pos=false, load_objs_prot=false,
 			load_objs_sqldis=false, load_textboxes=false, load_tags=false,
 			load_custom_sql=false, load_custom_colors=false, load_fadeout=false,
-			load_extattribs=false, load_genericsqls=false;
+			load_extattribs=false, load_genericsqls=false, load_objs_aliases=false;
 
 	load_db_attribs=(META_DB_ATTRIBUTES & options) == META_DB_ATTRIBUTES;
 	load_objs_pos=(META_OBJS_POSITIONING & options) == META_OBJS_POSITIONING;
@@ -9594,6 +9618,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 	load_fadeout=(META_OBJS_FADEDOUT & options) == META_OBJS_FADEDOUT;
 	load_extattribs=(META_OBJS_EXTATTRIBS & options) == META_OBJS_EXTATTRIBS;
 	load_genericsqls=(META_GENERIC_SQL_OBJS & options) == META_GENERIC_SQL_OBJS;
+	load_objs_aliases=(META_OBJS_ALIASES & options) == META_OBJS_ALIASES;
 
 	try
 	{
@@ -9669,6 +9694,20 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 							object=this;
 						}
+						else if(TableObject::isTableObject(obj_type))
+						{
+							base_tab = getTable(attribs[ParsersAttributes::TABLE]);
+
+							if(!base_tab && (obj_type == OBJ_RULE || obj_type == OBJ_INDEX || obj_type == OBJ_TRIGGER))
+								base_tab = getView(attribs[ParsersAttributes::TABLE]);
+
+							if(base_tab)
+								object = base_tab->getObject(attribs[ParsersAttributes::OBJECT], obj_type);
+
+							//Discarding the object if it was added by relationship
+							if(object && dynamic_cast<TableObject *>(object)->isAddedByRelationship())
+								object = nullptr;
+						}
 						else
 							object=getObject(obj_name, obj_type);
 
@@ -9713,6 +9752,9 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 								if(!attribs[ParsersAttributes::PREPEND_AT_BOD].isEmpty())
 									this->setPrependAtBOD(attribs[ParsersAttributes::PREPEND_AT_BOD]==ParsersAttributes::_TRUE_);
 							}
+
+							if(load_objs_aliases && !attribs[ParsersAttributes::ALIAS].isEmpty())
+								object->setAlias(attribs[ParsersAttributes::ALIAS]);
 
 							if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 							{

@@ -52,12 +52,18 @@ $tb [<info object=] "{name}" [ type=] "{type}"
     %if {rect-visible} %then [ rect-visible=] "{rect-visible}" %end
 %end
 
-%if {faded-out} %or {hide-ext-attribs} %or {alias} %then
+%if {faded-out} %or {hide-ext-attribs} %then
     $br $tb $tb
     %if {faded-out} %then [ faded-out=] "{faded-out}" %end
     %if {hide-ext-attribs} %then [ hide-ext-attribs=] "{hide-ext-attribs}" %end
-    %if {alias} %then [ alias=] "{alias}" %end
 %end
+
+%if {alias} %then
+    $br $tb $tb
+    %if {alias} %then [ alias=] "{alias}" %end
+    %if {table} %then [ table=] "{table}" %end
+%end
+    
 
 %if {position} %or {appended-sql} %or {prepended-sql} %then
     > $br

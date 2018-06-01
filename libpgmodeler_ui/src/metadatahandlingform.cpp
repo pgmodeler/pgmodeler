@@ -91,6 +91,8 @@ MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) :
 	connect(restore_rb, SIGNAL(toggled(bool)), this, SLOT(enableMetadataHandling()));
 	connect(extract_restore_rb, SIGNAL(toggled(bool)), this, SLOT(enableMetadataHandling()));
 	connect(extract_only_rb, SIGNAL(toggled(bool)), this, SLOT(enableMetadataHandling()));
+	connect(select_all_btn, SIGNAL(clicked(bool)), this, SLOT(selectAllOptions()));
+	connect(clear_all_btn, SIGNAL(clicked(bool)), this, SLOT(selectAllOptions()));
 }
 
 void MetadataHandlingForm::enableMetadataHandling(void)
@@ -104,6 +106,20 @@ void MetadataHandlingForm::enableMetadataHandling(void)
 												(((extract_restore_rb->isChecked() && extract_from_cmb->count() > 0) ||
 													(extract_only_rb->isChecked() && extract_from_cmb->count() > 0 && !backup_file_edt->text().isEmpty()) ||
 													(restore_rb->isChecked() && !backup_file_edt->text().isEmpty()))));
+}
+
+void MetadataHandlingForm::selectAllOptions(void)
+{
+	bool check = sender() == select_all_btn;
+	QCheckBox *checkbox = nullptr;
+
+	for(auto &obj : options_grp->children())
+	{
+		checkbox = dynamic_cast<QCheckBox *>(obj);
+
+		if(checkbox)
+			checkbox->setChecked(check);
+	}
 }
 
 void MetadataHandlingForm::setModelWidget(ModelWidget *model_wgt)
@@ -163,7 +179,7 @@ void MetadataHandlingForm::handleObjectsMetada(void)
 		options+=(generic_sql_objs_chk->isChecked() ? DatabaseModel::META_GENERIC_SQL_OBJS : 0);
 		options+=(objs_aliases_chk->isChecked() ? DatabaseModel::META_OBJS_ALIASES : 0);
 
-		connect(model_wgt->getDatabaseModel(), SIGNAL(s_objectLoaded(int,QString,unsigned)), this, SLOT(updateProgress(int,QString,unsigned)));
+		connect(model_wgt->getDatabaseModel(), SIGNAL(s_objectLoaded(int,QString,unsigned)), this, SLOT(updateProgress(int,QString,unsigned)), Qt::UniqueConnection);
 
 		if(extract_restore_rb->isChecked() || extract_only_rb->isChecked())
 		{
@@ -183,7 +199,7 @@ void MetadataHandlingForm::handleObjectsMetada(void)
 				tmp_file.close();
 			}
 
-			connect(extract_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), this, SLOT(updateProgress(int,QString,unsigned)));
+			connect(extract_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), this, SLOT(updateProgress(int,QString,unsigned)), Qt::UniqueConnection);
 
 			root_item=PgModelerUiNS::createOutputTreeItem(output_trw,
 																										PgModelerUiNS::formatMessage(trUtf8("Extracting metadata to file `%1'").arg(metadata_file)),
