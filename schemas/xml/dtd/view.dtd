@@ -14,6 +14,7 @@
 <!ATTLIST view faded-out (false|true) "false">
 
 <!ELEMENT reference (expression?)>
+<!ATTLIST reference ref-alias CDATA #IMPLIED>
 <!ATTLIST reference alias CDATA #IMPLIED>
 <!ATTLIST reference column-alias CDATA #IMPLIED>
 <!ATTLIST reference column CDATA #IMPLIED>

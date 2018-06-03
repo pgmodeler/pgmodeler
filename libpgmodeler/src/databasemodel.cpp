@@ -5728,6 +5728,7 @@ View *DatabaseModel::createView(void)
 	unsigned type;
 	int ref_idx, i, count;
 	bool refs_in_expr=false;
+	Reference reference;
 
 	try
 	{
@@ -5793,9 +5794,11 @@ View *DatabaseModel::createView(void)
 							}
 
 							//Adds the configured reference to a temporarily list
-							refs.push_back(Reference(table, column,
-													 attribs[ParsersAttributes::ALIAS],
-										   attribs[ParsersAttributes::COLUMN_ALIAS]));
+							reference = Reference(table, column,
+																		attribs[ParsersAttributes::ALIAS],
+																		attribs[ParsersAttributes::COLUMN_ALIAS]);
+							reference.setReferenceAlias(attribs[ParsersAttributes::REF_ALIAS]);
+							refs.push_back(reference);
 						}
 						else
 						{
@@ -5804,7 +5807,10 @@ View *DatabaseModel::createView(void)
 
 							xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
 							xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
-							refs.push_back(Reference(xmlparser.getElementContent(),str_aux));
+
+							reference = Reference(xmlparser.getElementContent(),str_aux);
+							reference.setReferenceAlias(attribs[ParsersAttributes::REF_ALIAS]);
+							refs.push_back(reference);
 
 							xmlparser.restorePosition();
 						}

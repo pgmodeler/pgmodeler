@@ -3,6 +3,10 @@
 #          Code generation can be broken if incorrect changes are made.
 $tb <reference
 
+%if {ref-alias} %then 
+    [ ref-alias=] "{ref-alias}" 
+%end
+
 %if {table} %then
   [ table=] "{table}" 
   %if {column} %then [ column=] "{column}" %end

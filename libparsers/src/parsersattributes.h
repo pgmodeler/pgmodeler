@@ -404,6 +404,7 @@ namespace ParsersAttributes {
 	RECURSIVE,
 	RECV_FUNC,
 	REDUCED_FORM,
+	REF_ALIAS,
 	REF_COLUMN,
 	REF_ROLES,
 	REF_TABLE,

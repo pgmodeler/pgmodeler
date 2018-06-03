@@ -441,7 +441,7 @@ void TableObjectView::configureObject(Reference reference)
 
 		fmt=font_config[ParsersAttributes::REF_COLUMN];
 		if(compact_view && !reference.getReferenceAlias().isEmpty())
-			lables[1]->setText(QString());
+			lables[1]->setText(QString(" "));
 		else
 		{
 			if(reference.getColumn())
@@ -493,7 +493,7 @@ void TableObjectView::configureObject(Reference reference)
 		lables[2]->setPos(px, 0);
 	}
 	else
-		lables[2]->setText(QString(" "));
+		lables[2]->setText(QString());
 
 	descriptor->setPos(HORIZ_SPACING, lables[0]->boundingRect().center().y() - descriptor->boundingRect().center().y());
 	bounding_rect.setTopLeft(QPointF(descriptor->pos().x(), lables[0]->pos().y()));

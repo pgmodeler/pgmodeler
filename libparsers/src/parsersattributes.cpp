@@ -389,6 +389,7 @@ namespace ParsersAttributes {
 	RECURSIVE=QString("recursive"),
 	RECV_FUNC=QString("receive"),
 	REDUCED_FORM=QString("reduced-form"),
+	REF_ALIAS=QString("ref-alias"),
 	REF_COLUMN=QString("ref-column"),
 	REF_ROLES=QString("ref-roles"),
 	REF_TABLE=QString("ref-table"),
