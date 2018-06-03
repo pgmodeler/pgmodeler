@@ -1130,7 +1130,7 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 				}
 				else
 				{
-					rel->setModified(true);
+					rel->setModified(!loading_model);
 					itr1++; idx++;
 				}
 			}
@@ -1284,6 +1284,7 @@ void DatabaseModel::disconnectRelationships(void)
 		{
 			base_rel=dynamic_cast<BaseRelationship *>(*ritr_rel);
 			ritr_rel++;
+			base_rel->blockSignals(loading_model);
 
 			if(base_rel->getObjectType()==OBJ_RELATIONSHIP)
 			{
@@ -1292,6 +1293,8 @@ void DatabaseModel::disconnectRelationships(void)
 			}
 			else
 				base_rel->disconnectRelationship();
+
+			base_rel->blockSignals(false);
 		}
 	}
 	catch(Exception &e)
@@ -1542,11 +1545,14 @@ void DatabaseModel::validateRelationships(void)
 	//The validation continues until there is some invalid relationship
 	while(found_inval_rel);
 
-	//Updates the schemas to ajdust its sizes due to the tables resizings
-	while(!schemas.empty())
+	if(!loading_model)
 	{
-		schemas.back()->setModified(true);
-		schemas.pop_back();
+		//Updates the schemas to ajdust its sizes due to the tables resizings
+		while(!schemas.empty())
+		{
+			schemas.back()->setModified(true);
+			schemas.pop_back();
+		}
 	}
 
 	//Stores the errors related to creation of special objects on the general error vector
@@ -1964,6 +1970,7 @@ void DatabaseModel::addRelationship(BaseRelationship *rel, int obj_idx)
 		if(rel->getObjectType()==OBJ_RELATIONSHIP)
 			checkRelationshipRedundancy(dynamic_cast<Relationship *>(rel));
 
+		rel->blockSignals(loading_model);
 		__addObject(rel, obj_idx);
 
 		if(rel->getObjectType()==OBJ_RELATIONSHIP)
@@ -1973,6 +1980,8 @@ void DatabaseModel::addRelationship(BaseRelationship *rel, int obj_idx)
 		}
 		else
 			rel->connectRelationship();
+
+		rel->blockSignals(false);
 	}
 	catch(Exception &e)
 	{
@@ -2000,7 +2009,9 @@ void DatabaseModel::removeRelationship(BaseRelationship *rel, int obj_idx)
 			}
 			else if(rel->getObjectType()==BASE_RELATIONSHIP)
 			{
+				rel->blockSignals(loading_model);
 				rel->disconnectRelationship();
+				rel->blockSignals(false);
 			}
 
 			__removeObject(rel, obj_idx);
@@ -3079,6 +3090,8 @@ void DatabaseModel::loadModel(const QString &filename)
 			}
 
 			this->setInvalidated(false);
+
+			emit s_objectLoaded(100, trUtf8("Validating relationships..."), OBJ_RELATIONSHIP);
 			this->setObjectsModified({OBJ_RELATIONSHIP, BASE_RELATIONSHIP});
 
 			//Doing another relationship validation when there are inheritances to avoid incomplete tables
@@ -6132,7 +6145,9 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 					.arg(BaseObject::getTypeName(BASE_RELATIONSHIP)),
 					ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+			base_rel->blockSignals(loading_model);
 			base_rel->disconnectRelationship();
+			base_rel->blockSignals(false);
 		}
 		else
 		{
@@ -6283,7 +6298,11 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 	/* If the FK relationship does not reference a foreign key (models generated in older versions)
 	 * we need to assign them to the respective relationships */
 	if(base_rel && base_rel->getObjectType()==BASE_RELATIONSHIP)
+	{
+		base_rel->blockSignals(loading_model);
 		base_rel->connectRelationship();
+		base_rel->blockSignals(false);
+	}
 
 	if(base_rel &&
 		 base_rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_FK &&

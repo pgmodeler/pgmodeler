@@ -263,17 +263,20 @@ void BaseRelationship::setConnected(bool value)
 {
 	connected=value;
 
-	src_table->setModified(true);
+	if(!this->signalsBlocked())
+	{
+		src_table->setModified(true);
 
-	if(dst_table!=src_table)
-		dst_table->setModified(true);
+		if(dst_table!=src_table)
+			dst_table->setModified(true);
 
-	dynamic_cast<Schema *>(src_table->getSchema())->setModified(true);
+		dynamic_cast<Schema *>(src_table->getSchema())->setModified(true);
 
-	if(dst_table->getSchema()!=src_table->getSchema())
-		dynamic_cast<Schema *>(dst_table->getSchema())->setModified(true);
+		if(dst_table->getSchema()!=src_table->getSchema())
+			dynamic_cast<Schema *>(dst_table->getSchema())->setModified(true);
 
-	this->setModified(true);
+		this->setModified(true);
+	}
 }
 
 void BaseRelationship::disconnectRelationship(void)

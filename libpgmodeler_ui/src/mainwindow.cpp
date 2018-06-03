@@ -500,6 +500,8 @@ void MainWindow::restoreLastSession(void)
 	{
 		try
 		{
+			qApp->setOverrideCursor(Qt::WaitCursor);
+
 			while(!prev_session_files.isEmpty())
 			{
 				this->addModel(prev_session_files.front());
@@ -508,9 +510,11 @@ void MainWindow::restoreLastSession(void)
 
 			action_restore_session->setEnabled(false);
 			central_wgt->last_session_tb->setEnabled(false);
+			qApp->restoreOverrideCursor();
 		}
 		catch(Exception &e)
 		{
+			qApp->restoreOverrideCursor();
 			Messagebox msg_box;
 			msg_box.show(e);
 		}
@@ -796,12 +800,15 @@ void MainWindow::loadModelFromAction(void)
 
 		try
 		{
+			qApp->setOverrideCursor(Qt::WaitCursor);
 			addModel(filename);
 			recent_models.push_back(act->data().toString());
 			updateRecentModelsMenu();
+			qApp->restoreOverrideCursor();
 		}
 		catch(Exception &e)
 		{
+			qApp->restoreOverrideCursor();
 			if(QFileInfo(filename).exists())
 				showFixMessage(e, filename);
 			else
@@ -1561,16 +1568,20 @@ void MainWindow::loadModels(const QStringList &list)
 
 	try
 	{
+		qApp->setOverrideCursor(Qt::WaitCursor);
+
 		for(i=0; i < list.count(); i++)
 		{
 			addModel(list[i]);
 			recent_models.push_front(list[i]);
 		}
 
-		updateRecentModelsMenu();
+		updateRecentModelsMenu();		
+		qApp->restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{
+		qApp->restoreOverrideCursor();
 		showFixMessage(e, list[i]);
 	}
 }

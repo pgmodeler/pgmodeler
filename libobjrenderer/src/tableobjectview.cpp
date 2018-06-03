@@ -441,7 +441,7 @@ void TableObjectView::configureObject(Reference reference)
 
 		fmt=font_config[ParsersAttributes::REF_COLUMN];
 		if(compact_view && !reference.getReferenceAlias().isEmpty())
-			lables[1]->setText(QString(" "));
+			lables[1]->setText(QString());
 		else
 		{
 			if(reference.getColumn())
