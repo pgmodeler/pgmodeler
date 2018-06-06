@@ -398,9 +398,14 @@ bool BaseObjectView::isPlaceholderEnabled(void)
 	return(use_placeholder);
 }
 
-void BaseObjectView::setCompactViewMode(bool value)
+void BaseObjectView::setCompactViewEnabled(bool value)
 {
 	compact_view = value;
+}
+
+bool BaseObjectView::isCompactViewEnabled(void)
+{
+	return(compact_view);
 }
 
 QVariant BaseObjectView::itemChange(GraphicsItemChange change, const QVariant &value)

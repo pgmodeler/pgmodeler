@@ -158,7 +158,9 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 
 		static bool isPlaceholderEnabled(void);
 
-		static void setCompactViewMode(bool value);
+		static void setCompactViewEnabled(bool value);
+
+		static bool isCompactViewEnabled(void);
 
 		//! \brief Sets the  font style for the specified element id
 		static void setFontStyle(const QString &id, QTextCharFormat font_fmt);

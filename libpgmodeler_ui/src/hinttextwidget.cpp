@@ -140,3 +140,9 @@ bool HintTextWidget::eventFilter(QObject *object, QEvent *event)
 
 	return(QWidget::eventFilter(object, event));
 }
+
+void HintTextWidget::showEvent(QShowEvent *)
+{
+	this->activateWindow();
+	this->raise();
+}

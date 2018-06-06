@@ -322,6 +322,7 @@ namespace PgModelerUiNS {
 
 		widget->setMinimumSize(widget->minimumSize());
 		widget->resize(curr_w, curr_h);
+		widget->adjustSize();
 	}
 
 	void bulkDataEdit(QTableWidget *results_tbw)

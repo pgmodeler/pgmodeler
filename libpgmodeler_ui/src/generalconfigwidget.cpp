@@ -459,6 +459,8 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SOURCE_EDITOR_ARGS]=source_editor_args_edt->text();
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::UI_LANGUAGE]=ui_language_cmb->currentData().toString();
 
+		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::COMPACT_VIEW]=(BaseObjectView::isCompactViewEnabled() ? ParsersAttributes::_TRUE_ : QString());
+
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]=QString();
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]=QString();
 

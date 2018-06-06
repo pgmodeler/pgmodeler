@@ -58,11 +58,11 @@ class Reference {
 		REFER_EXPRESSION=1; //! \brief The reference is based on an expression
 
 		//! \brief Constants used on the view code generation
-		static const unsigned SQL_REFER_WHERE=10,
-		SQL_REFER_SELECT=20,
-		SQL_REFER_FROM=30,
-		SQL_REFER_END_EXPR=40,
-		SQL_VIEW_DEFINITION=50;
+		static const unsigned SQL_REFER_WHERE=1,
+		SQL_REFER_SELECT=2,
+		SQL_REFER_FROM=4,
+		SQL_REFER_END_EXPR=8,
+		SQL_VIEW_DEFINITION=15;
 
 		Reference(void);
 

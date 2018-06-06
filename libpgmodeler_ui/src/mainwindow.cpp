@@ -1990,7 +1990,7 @@ void MainWindow::toggleCompactView(void)
 {
 	ModelWidget *model_wgt = nullptr;
 
-	BaseObjectView::setCompactViewMode(action_compact_view->isChecked());
+	BaseObjectView::setCompactViewEnabled(action_compact_view->isChecked());
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 
 	for(int idx = 0; idx < models_tbw->count(); idx++)

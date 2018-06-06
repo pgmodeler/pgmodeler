@@ -33,7 +33,7 @@ Reference::Reference(Table *table, Column *column, const QString &tab_alias, con
 
 	//Raises an error if the table/column alias has an invalid name
 	else if((!tab_alias.isEmpty() && !BaseObject::isValidName(tab_alias)) ||
-			(!col_alias.isEmpty() && !BaseObject::isValidName(col_alias)))
+					(!col_alias.isEmpty() && !BaseObject::isValidName(col_alias)))
 		throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Raises an error if the column parent table differs from the passed table
