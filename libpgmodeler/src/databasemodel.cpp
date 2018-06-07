@@ -1255,8 +1255,8 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 
 		for(i=0; i < ref_count; i++)
 		{
-			ref=view->getReference(i, Reference::SQL_REFER_SELECT);
-			tab=ref.getTable();
+			ref = view->getReference(i, Reference::SQL_REFER_SELECT);
+			tab = ref.getTable();
 
 			rel=getRelationship(view,tab);
 			if(tab && !rel)

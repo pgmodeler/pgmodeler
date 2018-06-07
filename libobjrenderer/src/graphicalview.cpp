@@ -58,8 +58,7 @@ void GraphicalView::configureObject(void)
 		count=count1=view->getReferenceCount(Reference::SQL_VIEW_DEFINITION);
 
 	//Moves the references group to the origin to be moved latter
-	columns->moveBy(-columns->scenePos().x(),
-					-columns->scenePos().y());
+	columns->moveBy(-columns->scenePos().x(),	-columns->scenePos().y());
 
 	subitems=columns->childItems();
 

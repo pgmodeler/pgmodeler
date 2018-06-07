@@ -255,6 +255,10 @@ void View::addReference(Reference &refer, unsigned sql_type, int expr_id)
 		//Gets the expression list
 		expr_list=getExpressionList(sql_type);
 
+		//Avoiding the insertion of a duplicated reference in the expression list
+		if(std::find(expr_list->begin(), expr_list->end(), idx) != expr_list->end())
+			return;
+
 		//Inserts the reference id on the expression list
 		if(expr_id >= 0 && expr_id < static_cast<int>(expr_list->size()))
 			expr_list->insert(expr_list->begin() + expr_id, static_cast<unsigned>(idx));

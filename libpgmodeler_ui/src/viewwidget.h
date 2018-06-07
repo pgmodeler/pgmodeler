@@ -73,15 +73,14 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 
 		int openReferenceForm(Reference ref, int row, bool update);
 
+		unsigned getReferenceFlag(int row);
+
 	public:
 		ViewWidget(QWidget * parent = 0);
 
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, View *view, double px, double py);
 
 	private slots:
-		//! \brief Creates a reference from the values filled on the form
-		void handleReference(int ref_idx);
-
 		//! \brief Edits the selected reference
 		void editReference(int ref_idx);
 
@@ -102,6 +101,9 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 
 		//! \brief Opens the reference form when a new row is added in the references grid
 		void addReference(int row);
+
+		//! \brief Duplicate the current selected reference
+		void duplicateReference(int orig_row, int new_row);
 
 	public slots:
 		void applyConfiguration(void);

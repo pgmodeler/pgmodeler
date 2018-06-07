@@ -122,6 +122,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 
 		connect(references_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addReference(int)));
 		connect(references_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editReference(int)));
+		connect(references_tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateReference(int,int)));
 		connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(updateCodePreview(void)));
 
 		connect(materialized_rb, SIGNAL(toggled(bool)), with_no_data_chk, SLOT(setEnabled(bool)));
@@ -284,6 +285,12 @@ void ViewWidget::addReference(int row)
 	openReferenceForm(Reference(), row, false);
 }
 
+void ViewWidget::duplicateReference(int orig_row, int new_row)
+{
+ showReferenceData(references_tab->getRowData(orig_row).value<Reference>(),
+									 getReferenceFlag(orig_row), new_row);
+}
+
 void ViewWidget::removeObject(int row)
 {
 	View *view=nullptr;
@@ -422,9 +429,7 @@ int ViewWidget::openReferenceForm(Reference ref, int row, bool update)
 {
 	BaseForm editing_form(this);
 	ReferenceWidget *ref_wgt=new ReferenceWidget;
-	unsigned ref_flags = 0;
 	int result = 0;
-	QString str_aux;
 
 	editing_form.setMainWidget(ref_wgt);
 	editing_form.setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
@@ -433,26 +438,7 @@ int ViewWidget::openReferenceForm(Reference ref, int row, bool update)
 	connect(editing_form.apply_ok_btn, SIGNAL(clicked(bool)), ref_wgt, SLOT(applyConfiguration()));
 	connect(ref_wgt, SIGNAL(s_closeRequested()), &editing_form, SLOT(accept()));
 
-	 str_aux = references_tab->getCellText(references_tab->getSelectedRow(), 3);
-
-	if(str_aux[4] == '1')
-		ref_flags = Reference::SQL_VIEW_DEFINITION;
-	else
-	{
-		if(str_aux[0] == '1')
-			ref_flags |= Reference::SQL_REFER_SELECT;
-
-		if(str_aux[1] == '1')
-			ref_flags |= Reference::SQL_REFER_FROM;
-
-		if(str_aux[2] == '1')
-			ref_flags |= Reference::SQL_REFER_WHERE;
-
-		if(str_aux[3] == '1')
-			ref_flags |= Reference::SQL_REFER_END_EXPR;
-	}
-
-	ref_wgt->setAttributes(ref, ref_flags, model);
+	ref_wgt->setAttributes(ref, getReferenceFlag(row), model);
 	result = editing_form.exec();
 	disconnect(ref_wgt, nullptr, &editing_form, nullptr);
 
@@ -462,6 +448,31 @@ int ViewWidget::openReferenceForm(Reference ref, int row, bool update)
 		references_tab->removeRow(row);
 
 	return(result);
+}
+
+unsigned ViewWidget::getReferenceFlag(int row)
+{
+	QString flags_str = references_tab->getCellText(row, 3);
+	unsigned ref_flags = 0;
+
+	if(flags_str[4] == '1')
+		ref_flags = Reference::SQL_VIEW_DEFINITION;
+	else
+	{
+		if(flags_str[0] == '1')
+			ref_flags |= Reference::SQL_REFER_SELECT;
+
+		if(flags_str[1] == '1')
+			ref_flags |= Reference::SQL_REFER_FROM;
+
+		if(flags_str[2] == '1')
+			ref_flags |= Reference::SQL_REFER_WHERE;
+
+		if(flags_str[3] == '1')
+			ref_flags |= Reference::SQL_REFER_END_EXPR;
+	}
+
+	return(ref_flags);
 }
 
 void ViewWidget::editReference(int ref_idx)
@@ -706,7 +717,7 @@ void ViewWidget::applyConfiguration(void)
 			refer=references_tab->getRowData(i).value<Reference>();
 
 			//Get the SQL application string for the current reference
-			str_aux=references_tab->getCellText(i,3);
+			str_aux=references_tab->getCellText(i, 3);
 			for(unsigned i=0; i < sizeof(expr_type)/sizeof(unsigned); i++)
 			{
 				if(str_aux[i]=='1')
