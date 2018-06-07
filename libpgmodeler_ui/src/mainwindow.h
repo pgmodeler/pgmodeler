@@ -291,6 +291,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void handleObjectsMetadata(void);
 		void restoreTemporaryModels(void);
 		void arrangeObjects(void);
+		void toggleCompactView(void);
 };
 
 #endif

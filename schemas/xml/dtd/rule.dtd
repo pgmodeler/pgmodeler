@@ -4,6 +4,7 @@
 -->
 <!ELEMENT rule (comment?,appended-sql?,prepended-sql?,condition?,commands?)>
 <!ATTLIST rule name CDATA #REQUIRED>
+<!ATTLIST rule alias CDATA #IMPLIED>
 <!ATTLIST rule table CDATA #IMPLIED>
 <!ATTLIST rule event-type CDATA #REQUIRED>
 <!ATTLIST rule exec-type CDATA #REQUIRED>

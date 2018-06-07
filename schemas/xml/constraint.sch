@@ -5,6 +5,10 @@
 
 [<constraint name=] "{name}" [ type=] "{type}"
 
+ %if {alias} %then
+   $sp alias="{alias}"
+ %end
+
  %if {fk-constr} %then
     [ comparison-type=] "{comparison-type}"
    $br

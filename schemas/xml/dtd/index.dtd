@@ -4,6 +4,7 @@
 -->
 <!ELEMENT index (tablespace?,comment?,appended-sql?,prepended-sql?,idxelement+,predicate?)>
 <!ATTLIST index name CDATA #REQUIRED>
+<!ATTLIST index alias CDATA #IMPLIED>
 <!ATTLIST index unique (true | false) "false">
 <!ATTLIST index concurrent (true | false) "false">
 <!ATTLIST index fast-update (true | false) "false">

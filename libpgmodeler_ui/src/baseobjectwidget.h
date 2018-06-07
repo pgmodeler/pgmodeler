@@ -33,6 +33,7 @@
 #include "ui_baseobjectwidget.h"
 #include "pgsqltypewidget.h"
 #include "pgmodeleruins.h"
+#include "hinttextwidget.h"
 
 /* Declaring the PgSQLType class as a Qt metatype in order to permit
 	 that instances of the class be used as data of QVariant and QMetaType */
@@ -53,6 +54,8 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		bool object_protected;
 
 		QHBoxLayout *misc_btns_lt;
+
+		HintTextWidget *alias_ht;
 
 		//! \brief Store the kind of object being handled by the widget (configured in the constructor)
 		ObjectType handled_obj_type;

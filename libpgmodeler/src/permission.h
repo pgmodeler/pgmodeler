@@ -154,7 +154,7 @@ class Permission: public BaseObject {
 		bool isSimilarTo(Permission *perm);
 
 		//! \brief Returns if the passed object type accepts permission
-		static bool objectAcceptsPermission(ObjectType obj_type, int privilege=-1);
+		static bool acceptsPermission(ObjectType obj_type, int privilege=-1);
 
 		//! \brief Returns the SQL / XML definition for the permission
 		virtual QString getCodeDefinition(unsigned def_type) final;

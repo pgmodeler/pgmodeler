@@ -239,6 +239,7 @@
         <file>icones/bulkedit.png</file>
         <file>icones/policy_grp.png</file>
         <file>icones/policy.png</file>
+        <file>icones/compactview.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

@@ -2681,7 +2681,7 @@ void ModelWidget::removeObjects(bool cascade)
 	ObjectType obj_type=BASE_OBJECT, parent_type=BASE_OBJECT;
 	BaseObject *object=nullptr, *aux_obj=nullptr;
 	vector<BaseObject *> sel_objs, aux_sel_objs;
-	vector<Constraint *> constrs;
+
 	map<unsigned, tuple<BaseObject *, QString, ObjectType, QString, ObjectType>> objs_map;
 	map<unsigned, tuple<BaseObject *, QString, ObjectType, QString, ObjectType>>::reverse_iterator ritr, ritr_end;
 	QAction *obj_sender=dynamic_cast<QAction *>(sender());
@@ -2782,37 +2782,6 @@ void ModelWidget::removeObjects(bool cascade)
 					//If the object is as FK relationship remove the foreign keys that generates it
 					if(obj_type==BASE_RELATIONSHIP)
 					{
-						/*rel=dynamic_cast<BaseRelationship *>(object);
-						if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
-						{
-							aux_table=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DST_TABLE));
-							dynamic_cast<Table *>(rel->getTable(BaseRelationship::SRC_TABLE))->getForeignKeys(constrs,false, aux_table);
-
-							if(!rel->isSelfRelationship())
-							{
-								aux_table=dynamic_cast<Table *>(rel->getTable(BaseRelationship::SRC_TABLE));
-								dynamic_cast<Table *>(rel->getTable(BaseRelationship::DST_TABLE))->getForeignKeys(constrs,false, aux_table);
-							}
-
-							//Adds the fks to the map of objects to be removed
-							while(!constrs.empty())
-							{
-								tab_obj=constrs.back();
-								obj_id=tab_obj->getObjectId();
-
-								if(objs_map.count(obj_id)==0)
-								{
-									objs_map[tab_obj->getObjectId()]=std::make_tuple(tab_obj,
-																					 tab_obj->getName(true),
-																					 tab_obj->getObjectType(),
-																					 tab_obj->getParentTable()->getName(true),
-																					 tab_obj->getParentTable()->getObjectType());
-
-								}
-								constrs.pop_back();
-							}
-						}*/
-
 						rel = dynamic_cast<BaseRelationship *>(object);
 
 						if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
@@ -2826,7 +2795,7 @@ void ModelWidget::removeObjects(bool cascade)
 																																 tab_obj->getName(true),
 																																 tab_obj->getObjectType(),
 																																 tab_obj->getParentTable()->getName(true),
-																																 tab_obj->getParentTable()->getObjectType());
+																																 OBJ_TABLE);
 
 							}
 						}
@@ -2840,10 +2809,10 @@ void ModelWidget::removeObjects(bool cascade)
 						parent_type=(tab_obj ? tab_obj->getParentTable()->getObjectType() : OBJ_DATABASE);
 
 						objs_map[object->getObjectId()]=std::make_tuple(object,
-																		obj_name,
-																		obj_type,
-																		parent_name,
-																		parent_type);
+																														obj_name,
+																														obj_type,
+																														parent_name,
+																														parent_type);
 					}
 				}
 
@@ -3214,7 +3183,7 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 		if(tab_or_view)
 			quick_actions_menu.addAction(action_set_tag);
 
-		if(object && Permission::objectAcceptsPermission(obj_type))
+		if(object && Permission::acceptsPermission(obj_type))
 		{
 			quick_actions_menu.addAction(action_edit_perms);
 			action_edit_perms->setData(QVariant::fromValue<void *>(object));
@@ -3456,6 +3425,26 @@ void ModelWidget::fadeObjectsIn(void)
 void ModelWidget::fadeObjectsOut(void)
 {
 	fadeObjects(qobject_cast<QAction *>(sender()), false);
+}
+
+void ModelWidget::toggleAllExtendedAttributes(bool value)
+{
+	BaseTable *base_tab = nullptr;
+	vector<BaseObject *> objects;
+
+	this->scene->clearSelection();
+	objects.assign(db_model->getObjectList(OBJ_TABLE)->begin(), db_model->getObjectList(OBJ_TABLE)->end());
+	objects.insert(objects.end(), db_model->getObjectList(OBJ_VIEW)->begin(), db_model->getObjectList(OBJ_VIEW)->end());
+
+	for(auto obj : objects)
+	{
+		base_tab = dynamic_cast<BaseTable *>(obj);
+
+		if(base_tab)
+			base_tab->setExtAttribsHidden(value);
+	}
+
+	this->setModified(true);
 }
 
 void ModelWidget::toggleExtendedAttributes(void)

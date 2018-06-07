@@ -4,6 +4,7 @@
 -->
 <!ELEMENT constraint (tablespace?,columns*,excelement*,expression?,comment?)>
 <!ATTLIST constraint name CDATA #REQUIRED>
+<!ATTLIST constraint alias CDATA #IMPLIED>
 <!ATTLIST constraint type CDATA #REQUIRED>
 <!ATTLIST constraint deferrable (true | false) "false">
 <!ATTLIST constraint no-inherit (true | false) "false">

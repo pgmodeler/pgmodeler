@@ -669,7 +669,7 @@ void ModelObjectsWidget::updatePermissionTree(QTreeWidgetItem *root, BaseObject 
 	try
 	{
 		if(db_model && visible_objs_map[OBJ_PERMISSION] &&
-				Permission::objectAcceptsPermission(object->getObjectType()))
+				Permission::acceptsPermission(object->getObjectType()))
 		{
 			vector<Permission *> perms;
 			QTreeWidgetItem *item=new QTreeWidgetItem(root);

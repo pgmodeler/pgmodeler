@@ -73,7 +73,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		grid->addWidget(sql_tool_wgt, 0, 0);
 		views_stw->widget(MANAGE_VIEW)->setLayout(grid);
 
-        configuration_form=new ConfigurationForm(nullptr, Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+		configuration_form=new ConfigurationForm(nullptr, Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 		PgModelerUiNS::resizeDialog(configuration_form);
 		configuration_form->loadConfiguration();
 
@@ -118,6 +118,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		//Enables the action to restore session when there are registered session files
 		action_restore_session->setEnabled(!prev_session_files.isEmpty());
 		central_wgt->last_session_tb->setEnabled(action_restore_session->isEnabled());
+
+
 	}
 	catch(Exception &e)
 	{
@@ -203,7 +205,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(action_redo,SIGNAL(triggered(bool)),oper_list_wgt,SLOT(redoOperation(void)));
 
 	connect(model_nav_wgt, SIGNAL(s_modelCloseRequested(int)), this, SLOT(closeModel(int)));
-    connect(model_nav_wgt, SIGNAL(s_currentModelChanged(int)), this, SLOT(setCurrentModel()));
+	connect(model_nav_wgt, SIGNAL(s_currentModelChanged(int)), this, SLOT(setCurrentModel()));
 
 	connect(action_print, SIGNAL(triggered(bool)), this, SLOT(printModel(void)));
 	connect(action_configuration, SIGNAL(triggered(bool)), configuration_form, SLOT(show()));
@@ -226,6 +228,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	connect(model_valid_wgt, &ModelValidationWidget::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
 	connect(sql_tool_wgt, &SQLToolWidget::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
+
+	connect(action_compact_view, SIGNAL(toggled(bool)), this, SLOT(toggleCompactView()));
 
 	window_title=this->windowTitle() + QString(" ") + GlobalAttributes::PGMODELER_VERSION;
 
@@ -386,6 +390,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	action_show_grid->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_CANVAS_GRID]==ParsersAttributes::_TRUE_);
 	action_alin_objs_grade->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::ALIGN_OBJS_TO_GRID]==ParsersAttributes::_TRUE_);
 	action_show_delimiters->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_PAGE_DELIMITERS]==ParsersAttributes::_TRUE_);
+	action_compact_view->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::COMPACT_VIEW]==ParsersAttributes::_TRUE_);
 
 	ObjectsScene::setGridOptions(action_show_grid->isChecked(),
 															 action_alin_objs_grade->isChecked(),
@@ -495,6 +500,8 @@ void MainWindow::restoreLastSession(void)
 	{
 		try
 		{
+			qApp->setOverrideCursor(Qt::WaitCursor);
+
 			while(!prev_session_files.isEmpty())
 			{
 				this->addModel(prev_session_files.front());
@@ -503,9 +510,11 @@ void MainWindow::restoreLastSession(void)
 
 			action_restore_session->setEnabled(false);
 			central_wgt->last_session_tb->setEnabled(false);
+			qApp->restoreOverrideCursor();
 		}
 		catch(Exception &e)
 		{
+			qApp->restoreOverrideCursor();
 			Messagebox msg_box;
 			msg_box.show(e);
 		}
@@ -619,7 +628,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
 			confs=conf_wgt->getConfigurationParams();
 
+			attribs[ParsersAttributes::COMPACT_VIEW]=action_compact_view->isChecked() ? ParsersAttributes::_TRUE_ : QString();
 			attribs[ParsersAttributes::SHOW_MAIN_MENU]=main_menu_mb->isVisible() ? ParsersAttributes::_TRUE_ : QString();
+
 			conf_wgt->addConfigurationParam(ParsersAttributes::CONFIGURATION, attribs);
 			attribs.clear();
 
@@ -789,12 +800,15 @@ void MainWindow::loadModelFromAction(void)
 
 		try
 		{
+			qApp->setOverrideCursor(Qt::WaitCursor);
 			addModel(filename);
 			recent_models.push_back(act->data().toString());
 			updateRecentModelsMenu();
+			qApp->restoreOverrideCursor();
 		}
 		catch(Exception &e)
 		{
+			qApp->restoreOverrideCursor();
 			if(QFileInfo(filename).exists())
 				showFixMessage(e, filename);
 			else
@@ -1554,16 +1568,20 @@ void MainWindow::loadModels(const QStringList &list)
 
 	try
 	{
+		qApp->setOverrideCursor(Qt::WaitCursor);
+
 		for(i=0; i < list.count(); i++)
 		{
 			addModel(list[i]);
 			recent_models.push_front(list[i]);
 		}
 
-		updateRecentModelsMenu();
+		updateRecentModelsMenu();		
+		qApp->restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{
+		qApp->restoreOverrideCursor();
 		showFixMessage(e, list[i]);
 	}
 }
@@ -1614,6 +1632,7 @@ void MainWindow::updateToolsState(bool model_closed)
 	action_alin_objs_grade->setEnabled(enabled);
 	action_undo->setEnabled(enabled);
 	action_redo->setEnabled(enabled);
+	action_compact_view->setEnabled(enabled);
 
 	action_handle_metadata->setEnabled(enabled);
 
@@ -1965,4 +1984,21 @@ void MainWindow::arrangeObjects(void)
 
 		QApplication::restoreOverrideCursor();
 	}
+}
+
+void MainWindow::toggleCompactView(void)
+{
+	ModelWidget *model_wgt = nullptr;
+
+	BaseObjectView::setCompactViewEnabled(action_compact_view->isChecked());
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+
+	for(int idx = 0; idx < models_tbw->count(); idx++)
+	{
+		model_wgt = dynamic_cast<ModelWidget *>(models_tbw->widget(idx));
+		model_wgt->toggleAllExtendedAttributes(action_compact_view->isChecked());
+		model_wgt->getDatabaseModel()->setObjectsModified({ OBJ_TABLE, OBJ_VIEW, OBJ_RELATIONSHIP, BASE_RELATIONSHIP, OBJ_SCHEMA});
+	}
+
+	QApplication::restoreOverrideCursor();
 }
