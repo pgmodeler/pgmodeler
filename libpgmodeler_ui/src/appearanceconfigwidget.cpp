@@ -25,36 +25,70 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 	setupUi(this);
 
 	QString conf_ids[]={
-		ParsersAttributes::GLOBAL,ParsersAttributes::CONSTRAINTS, ParsersAttributes::OBJ_SELECTION,
-		ParsersAttributes::POSITION_INFO, ParsersAttributes::POSITION_INFO,
-		ParsersAttributes::OBJECT_TYPE, ParsersAttributes::LOCKER_ARC, ParsersAttributes::LOCKER_BODY,
-		ParsersAttributes::TABLE_SCHEMA_NAME, ParsersAttributes::TABLE_NAME, ParsersAttributes::TABLE_BODY,
-		ParsersAttributes::TABLE_EXT_BODY, ParsersAttributes::TABLE_TITLE,
-		BaseObject::getSchemaName(OBJ_RULE), BaseObject::getSchemaName(OBJ_RULE),
-		BaseObject::getSchemaName(OBJ_INDEX),	BaseObject::getSchemaName(OBJ_INDEX),
-		BaseObject::getSchemaName(OBJ_TRIGGER),	BaseObject::getSchemaName(OBJ_TRIGGER),
-		BaseObject::getSchemaName(OBJ_CONSTRAINT),	BaseObject::getSchemaName(OBJ_CONSTRAINT),
-		ParsersAttributes::VIEW_SCHEMA_NAME, ParsersAttributes::VIEW_NAME,
-		ParsersAttributes::VIEW_BODY /*23*/, ParsersAttributes::VIEW_EXT_BODY /*24*/, ParsersAttributes::VIEW_TITLE /*25*/, ParsersAttributes::ALIAS,
-		ParsersAttributes::REF_COLUMN, ParsersAttributes::REF_TABLE, ParsersAttributes::REFERENCE,
-		BaseObject::getSchemaName(OBJ_TEXTBOX), ParsersAttributes::COLUMN, ParsersAttributes::COLUMN,
-		ParsersAttributes::INH_COLUMN, ParsersAttributes::PROT_COLUMN, ParsersAttributes::PK_COLUMN,
-		ParsersAttributes::PK_COLUMN, ParsersAttributes::FK_COLUMN, ParsersAttributes::FK_COLUMN,
-		ParsersAttributes::UQ_COLUMN, ParsersAttributes::UQ_COLUMN, ParsersAttributes::NN_COLUMN,
-		ParsersAttributes::NN_COLUMN, ParsersAttributes::RELATIONSHIP, ParsersAttributes::LABEL,
-		ParsersAttributes::LABEL, ParsersAttributes::ATTRIBUTE, ParsersAttributes::ATTRIBUTE,
-		ParsersAttributes::TAG, ParsersAttributes::TAG, ParsersAttributes::PLACEHOLDER};
+		ParsersAttributes::GLOBAL, //0
+		ParsersAttributes::CONSTRAINTS, //1
+		ParsersAttributes::OBJ_SELECTION, //2
+		ParsersAttributes::POSITION_INFO, //3
+		ParsersAttributes::POSITION_INFO, //4
+		ParsersAttributes::OBJECT_TYPE, //5
+		ParsersAttributes::LOCKER_ARC, //6
+		ParsersAttributes::LOCKER_BODY, //7
+		ParsersAttributes::TABLE_SCHEMA_NAME, //8
+		ParsersAttributes::TABLE_NAME, //9
+		ParsersAttributes::TABLE_BODY, //10
+		ParsersAttributes::TABLE_EXT_BODY, //11
+		ParsersAttributes::TABLE_TITLE, //12
+		BaseObject::getSchemaName(OBJ_RULE), //13
+		BaseObject::getSchemaName(OBJ_RULE), //14
+		BaseObject::getSchemaName(OBJ_INDEX), //15
+		BaseObject::getSchemaName(OBJ_INDEX), //16
+		BaseObject::getSchemaName(OBJ_TRIGGER), //17
+		BaseObject::getSchemaName(OBJ_TRIGGER), //18
+		BaseObject::getSchemaName(OBJ_CONSTRAINT), //19
+		BaseObject::getSchemaName(OBJ_CONSTRAINT), //20
+		BaseObject::getSchemaName(OBJ_POLICY), //21
+		BaseObject::getSchemaName(OBJ_POLICY), //22
+		ParsersAttributes::VIEW_SCHEMA_NAME, //21 -> 23
+		ParsersAttributes::VIEW_NAME, //22
+		ParsersAttributes::VIEW_BODY, //23
+		ParsersAttributes::VIEW_EXT_BODY, //24
+		ParsersAttributes::VIEW_TITLE, //25
+		ParsersAttributes::ALIAS, //26
+		ParsersAttributes::REF_COLUMN, //27
+		ParsersAttributes::REF_TABLE, //28
+		ParsersAttributes::REFERENCE, //29
+		BaseObject::getSchemaName(OBJ_TEXTBOX), //30
+		ParsersAttributes::COLUMN, //31
+		ParsersAttributes::COLUMN, //32
+		ParsersAttributes::INH_COLUMN, //33
+		ParsersAttributes::PROT_COLUMN, //34
+		ParsersAttributes::PK_COLUMN, //35
+		ParsersAttributes::PK_COLUMN, //36
+		ParsersAttributes::FK_COLUMN, //37
+		ParsersAttributes::FK_COLUMN, //38
+		ParsersAttributes::UQ_COLUMN, //39
+		ParsersAttributes::UQ_COLUMN, //40
+		ParsersAttributes::NN_COLUMN, //41
+		ParsersAttributes::NN_COLUMN, //42
+		ParsersAttributes::RELATIONSHIP, //43
+		ParsersAttributes::LABEL, //44
+		ParsersAttributes::LABEL, //45
+		ParsersAttributes::ATTRIBUTE, //46
+		ParsersAttributes::ATTRIBUTE, //47
+		ParsersAttributes::TAG, //48
+		ParsersAttributes::TAG, //49
+		ParsersAttributes::PLACEHOLDER /*50*/};
 	int i, count=element_cmb->count(),
 			//This auxiliary vector stores the id of elements that represents color/font conf. of objects
-			obj_conf_ids_vect[]={ 2, 4, 6, 7, 10, 11, 12, 14, 16, 18, 20, 23, 24, 25,
-														29, 30, 32, 36, 38, 40, 42, 43, 45, 47, 49, 50 };
+			obj_conf_ids_vect[]={ 2, 4, 6, 7, 10, 11, 12, 14, 16, 18, 20, 22, 25, 26, 27,
+														31, 32, 34, 38, 40, 42, 44, 45, 47, 49, 51, 52 };
 	vector<int> conf_obj_ids(obj_conf_ids_vect, obj_conf_ids_vect + sizeof(obj_conf_ids_vect) / sizeof(int));
 
 	conf_items.resize(count);
 	for(i=0; i < count; i++)
 	{
 		conf_items[i].conf_id=conf_ids[i];
-		conf_items[i].obj_conf=(std::find(conf_obj_ids.begin(), conf_obj_ids.end(), i)!=conf_obj_ids.end());
+		conf_items[i].obj_conf=(std::find(conf_obj_ids.begin(), conf_obj_ids.end(), i) != conf_obj_ids.end());
 	}
 
 	color_picker=new ColorPickerWidget(3, this);
@@ -302,8 +336,8 @@ void AppearanceConfigWidget::enableConfigElement(void)
 	color_picker->setVisible(colors_lbl->isVisible());
 
 	//Buttons visible when a object configuration element is selected
-	//color_picker->setButtonVisible(1, conf_items[idx].obj_conf);
-	//color_picker->setButtonVisible(2, conf_items[idx].obj_conf);
+	color_picker->setButtonVisible(1, conf_items[idx].obj_conf);
+	color_picker->setButtonVisible(2, conf_items[idx].obj_conf);
 
 	underline_chk->blockSignals(true);
 	italic_chk->blockSignals(true);

@@ -69,6 +69,9 @@ void TableView::configureObject(void)
 			tab_objs.insert(tab_objs.end(),
 							table->getObjectList(OBJ_RULE)->begin(),
 							table->getObjectList(OBJ_RULE)->end());
+			tab_objs.insert(tab_objs.end(),
+							table->getObjectList(OBJ_POLICY)->begin(),
+							table->getObjectList(OBJ_POLICY)->end());
 		}
 
 		//Gets the subitems of the current group

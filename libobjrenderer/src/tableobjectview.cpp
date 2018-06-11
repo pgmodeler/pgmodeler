@@ -150,8 +150,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 			desc->setPen(pen);
 		}
 	}
-	else if(obj_type==OBJ_INDEX || obj_type==OBJ_RULE ||
-					obj_type==OBJ_TRIGGER || obj_type==OBJ_CONSTRAINT)
+	else if(obj_type != BASE_OBJECT)
 	{
 		TableObject *tab_obj=dynamic_cast<TableObject *>(this->getSourceObject());
 		QGraphicsPolygonItem *desc=dynamic_cast<QGraphicsPolygonItem *>(descriptor);
@@ -176,8 +175,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 	{
 		QGraphicsEllipseItem *desc=dynamic_cast<QGraphicsEllipseItem *>(descriptor);
 
-		desc->setRect(QRectF(QPointF(0,0),
-							 QSizeF(9.0f * factor, 9.0f * factor)));
+		desc->setRect(QRectF(QPointF(0,0), QSizeF(9.0f * factor, 9.0f * factor)));
 		desc->setBrush(this->getFillStyle(ParsersAttributes::REFERENCE));
 
 		pen = this->getBorderStyle(ParsersAttributes::REFERENCE);
@@ -308,6 +306,7 @@ void TableObjectView::configureObject(void)
 			Trigger *trigger=dynamic_cast<Trigger *>(tab_obj);
 			Index *index=dynamic_cast<Index *>(tab_obj);
 			Constraint *constr=dynamic_cast<Constraint *>(tab_obj);
+			Policy *policy = dynamic_cast<Policy *>(tab_obj);
 
 			if(rule)
 			{
@@ -379,6 +378,23 @@ void TableObjectView::configureObject(void)
 					str_constr = TXT_CHECK;
 
 				atribs_tip = (~type).toLower();
+			}
+			else if(policy)
+			{
+				if(policy->isPermissive())
+				{
+					str_constr += QString("p");
+					atribs_tip += QString("permissive");
+				}
+				else
+				{
+					str_constr += QString("r");
+					atribs_tip += QString("restrictive");
+				}
+
+				atribs_tip += QString(", ");
+				str_constr += (~policy->getPolicyCommand()).toLower().at(0);
+				atribs_tip += (~policy->getPolicyCommand()).toLower();
 			}
 
 			if(!str_constr.isEmpty())
