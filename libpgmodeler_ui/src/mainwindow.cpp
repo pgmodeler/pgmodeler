@@ -83,6 +83,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		action_plugins->setEnabled(!plugins_menu->isEmpty());
 		action_plugins->setMenu(plugins_menu);
 
+		action_other_actions->setMenu(&more_actions_menu);
+
 		confs=GeneralConfigWidget::getConfigurationParams();
 		itr=confs.begin();
 		itr_end=confs.end();
@@ -140,6 +142,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 		control_tb->addAction(action_bug_report);
 		control_tb->addAction(action_donate);
+		control_tb->addAction(action_support);
 		control_tb->addAction(action_about);
 		control_tb->addAction(action_update_found);
 
@@ -168,6 +171,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(central_wgt->new_tb, SIGNAL(clicked()), this, SLOT(addModel()));
 	connect(central_wgt->open_tb, SIGNAL(clicked()), this, SLOT(loadModel()));
 	connect(central_wgt->last_session_tb, SIGNAL(clicked()), this, SLOT(restoreLastSession()));
+	connect(central_wgt->support_tb, SIGNAL(clicked()), this, SLOT(openSupport()));
 
 #ifndef NO_UPDATE_CHECK
 	connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), action_update_found, SLOT(setVisible(bool)));
@@ -980,10 +984,10 @@ void MainWindow::setCurrentModel(void)
 
 	removeModelActions();
 
-    edit_menu->clear();
-    edit_menu->addAction(action_undo);
-    edit_menu->addAction(action_redo);
-    edit_menu->addSeparator();
+	edit_menu->clear();
+	edit_menu->addAction(action_undo);
+	edit_menu->addAction(action_redo);
+	edit_menu->addSeparator();
 
 	//Avoids the tree state saving in order to restore the current model tree state
 	model_objs_wgt->saveTreeState(false);
@@ -992,7 +996,7 @@ void MainWindow::setCurrentModel(void)
 	if(current_model)
 		model_objs_wgt->saveTreeState(model_tree_states[current_model]);
 
-    models_tbw->setCurrentIndex(model_nav_wgt->getCurrentIndex());
+	models_tbw->setCurrentIndex(model_nav_wgt->getCurrentIndex());
 	current_model=dynamic_cast<ModelWidget *>(models_tbw->currentWidget());
 	action_arrange_objects->setEnabled(current_model != nullptr);
 
@@ -1004,7 +1008,7 @@ void MainWindow::setCurrentModel(void)
 		current_model->setFocus(Qt::OtherFocusReason);
 		current_model->cancelObjectAddition();
 
-        general_tb->addAction(current_model->action_new_object);
+		general_tb->addAction(current_model->action_new_object);
 		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_new_object));
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
 		btns.push_back(tool_btn);
@@ -1022,7 +1026,7 @@ void MainWindow::setCurrentModel(void)
 		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_source_code));
 		btns.push_back(tool_btn);
 
-		general_tb->addAction(current_model->action_select_all);
+		/* general_tb->addAction(current_model->action_select_all);
 		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_select_all));
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
 		btns.push_back(tool_btn);
@@ -1032,22 +1036,37 @@ void MainWindow::setCurrentModel(void)
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
 		btns.push_back(tool_btn);
 
+		general_tb->addAction(current_model->action_extended_attribs);
+		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_extended_attribs));
+		tool_btn->setPopupMode(QToolButton::InstantPopup);
+		btns.push_back(tool_btn);
+
 		general_tb->addAction(current_model->action_edit_creation_order);
 		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_edit_creation_order));
+		btns.push_back(tool_btn); */
+
+		more_actions_menu.clear();
+		more_actions_menu.addAction(current_model->action_select_all);
+		more_actions_menu.addAction(current_model->action_fade);
+		more_actions_menu.addAction(current_model->action_extended_attribs);
+		more_actions_menu.addAction(current_model->action_edit_creation_order);
+		general_tb->addAction(action_other_actions);
+		tool_btn = qobject_cast<QToolButton *>(general_tb->widgetForAction(action_other_actions));
+		tool_btn->setPopupMode(QToolButton::InstantPopup);
 		btns.push_back(tool_btn);
 
 		for(QToolButton *btn : btns)
 		{
 			PgModelerUiNS::configureWidgetFont(btn, PgModelerUiNS::SMALL_FONT_FACTOR);
 			btn->setGraphicsEffect(createDropShadow(tool_btn));
-        }
+		}
 
-        edit_menu->addAction(current_model->action_copy);
-        edit_menu->addAction(current_model->action_cut);
-        edit_menu->addAction(current_model->action_duplicate);
-        edit_menu->addAction(current_model->action_paste);
-        edit_menu->addAction(current_model->action_remove);
-        edit_menu->addAction(current_model->action_cascade_del);
+		edit_menu->addAction(current_model->action_copy);
+		edit_menu->addAction(current_model->action_cut);
+		edit_menu->addAction(current_model->action_duplicate);
+		edit_menu->addAction(current_model->action_paste);
+		edit_menu->addAction(current_model->action_remove);
+		edit_menu->addAction(current_model->action_cascade_del);
 
 		if(current_model->getFilename().isEmpty())
 			this->setWindowTitle(window_title);

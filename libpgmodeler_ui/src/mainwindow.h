@@ -58,7 +58,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Maximum number of files listed on recent models menu
 		const static int MAX_RECENT_MODELS=15;
 
-		const static int GENERAL_ACTIONS_COUNT=8;
+		const static int GENERAL_ACTIONS_COUNT=7;
 
 		const static int WELCOME_VIEW=0,
 		DESIGN_VIEW=1,
@@ -143,7 +143,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		sample_mdls_menu,
 
-		arrange_menu;
+		arrange_menu,
+
+		more_actions_menu;
 
 		//! \brief QMainWindow::closeEvent() overload: Saves the configurations before close the application
 		void closeEvent(QCloseEvent *event);

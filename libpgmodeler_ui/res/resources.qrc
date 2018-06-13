@@ -240,6 +240,8 @@
         <file>icones/policy_grp.png</file>
         <file>icones/policy.png</file>
         <file>icones/compactview.png</file>
+        <file>icones/help_big.png</file>
+        <file>icones/moreactions.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

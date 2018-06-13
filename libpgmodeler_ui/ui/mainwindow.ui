@@ -678,7 +678,7 @@
      <x>0</x>
      <y>0</y>
      <width>1068</width>
-     <height>25</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="autoFillBackground">
@@ -804,7 +804,6 @@
    <addaction name="action_export"/>
    <addaction name="action_diff"/>
    <addaction name="action_configuration"/>
-   <addaction name="action_support"/>
   </widget>
   <widget class="QToolBar" name="control_tb">
    <property name="enabled">
@@ -1531,6 +1530,18 @@
    </property>
    <property name="toolTip">
     <string>Toggle the compact view on the model(s)</string>
+   </property>
+  </action>
+  <action name="action_other_actions">
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icones/icones/moreactions.png</normaloff>:/icones/icones/moreactions.png</iconset>
+   </property>
+   <property name="text">
+    <string>More</string>
+   </property>
+   <property name="toolTip">
+    <string>Addition action over the model</string>
    </property>
   </action>
  </widget>
