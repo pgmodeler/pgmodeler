@@ -162,14 +162,18 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 		}
 		else if(edt || txt || sel)
 		{
-			QPalette pal;
-			pal.setColor(QPalette::Base, bgcolor);
-			pal.setColor(QPalette::Text, QColor(0,0,0));
-
 			if(sel)
+			{
 				widget=sel->obj_name_txt;
-
-			widget->setPalette(pal);
+				widget->setStyleSheet(QString("ObjectSelectorWidget > QPlainTextEdit { background-color: %1; }").arg(bgcolor.name()));
+			}
+			else
+			{
+				QPalette pal;
+				pal.setColor(QPalette::Base, bgcolor);
+				pal.setColor(QPalette::Text, QColor(0,0,0));
+				widget->setPalette(pal);
+			}
 		}
 
 		str_aux=(!widget->toolTip().isEmpty() ? QString("\n") : QString());
