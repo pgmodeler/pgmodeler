@@ -1726,7 +1726,7 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 				attribs_map attribs=item->data(DatabaseImportForm::OBJECT_OTHER_DATA, Qt::UserRole).value<attribs_map>();
 				bool is_column=false;
 				unsigned oid=item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt(),
-						db_oid=objects_trw->topLevelItem(0)->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt(),
+						db_oid=objects_trw->topLevelItem(0)->child(0)->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt(),
 						sys_oid=0;
 				int sbar_value=(objects_trw->verticalScrollBar() ? objects_trw->verticalScrollBar()->value() : 0);
 
@@ -1758,7 +1758,9 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 				import_hlp.setImportOptions(toggle_disp_menu.actions().at(0)->isChecked(),
 																		toggle_disp_menu.actions().at(1)->isChecked(),
 																		true, false, false, false, false);
+
 				import_hlp.setSelectedOIDs(&dbmodel, {{OBJ_DATABASE, {db_oid}}, {obj_type,{oid}}}, {});
+
 				sys_oid=import_hlp.getLastSystemOID();
 
 				//Currently pgModeler does not support the visualization of base types and built-in ones
