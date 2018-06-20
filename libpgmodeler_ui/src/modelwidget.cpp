@@ -3304,7 +3304,10 @@ void ModelWidget::configureFadeMenu(void)
 			}
 
 			if(obj_type == OBJ_TABLE || obj_type == OBJ_VIEW)
+			{
 				fade_menu.addAction(action_fade_rels);
+				action_fade_rels->setText(trUtf8("Table && Relationships"));
+			}
 		}
 	}
 }
@@ -3342,7 +3345,6 @@ void ModelWidget::fadeObjects(QAction *action, bool fade_in)
 		return;
 
 	vector<BaseObject *> list;
-	//BaseObjectView *obj_view = nullptr;
 
 	//If the database object is selected or there is no object select
 	if(selected_objects.empty() || (selected_objects.size() == 1 && selected_objects[0]->getObjectType() == OBJ_DATABASE))
@@ -3388,30 +3390,22 @@ void ModelWidget::fadeObjects(QAction *action, bool fade_in)
 				vector<BaseRelationship *> rel_list = db_model->getRelationships(dynamic_cast<BaseTable *>(selected_objects[0]));
 
 				for(auto rel : rel_list)
+				{
 					list.push_back(rel);
+					list.push_back(rel->getTable(BaseRelationship::SRC_TABLE));
+					list.push_back(rel->getTable(BaseRelationship::DST_TABLE));
+				}
+
+				vector<BaseObject *>::iterator end;
+				std::sort(list.begin(), list.end());
+				end=std::unique(list.begin(), list.end());
+				list.erase(end, list.end());
 			}
 			else
 				//Applying fade to the selected objects
 				list = selected_objects;
 		}
 	}
-
-	/*for(auto obj : list)
-	{
-		obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
-
-		if(obj_view)
-		{
-			dynamic_cast<BaseGraphicObject *>(obj)->setFadedOut(!fade_in);
-
-			obj_view->setOpacity(fade_in ? 1 : min_object_opacity);
-
-			//If the minimum opacity is zero the object hidden
-			obj_view->setVisible(fade_in || (!fade_in && min_object_opacity > 0));
-
-			this->modified = true;
-		}
-	} */
 
 	fadeObjects(list, fade_in);
 	scene->clearSelection();
