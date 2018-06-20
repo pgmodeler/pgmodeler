@@ -27,13 +27,15 @@ PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_POLICY
 		model_objs_wgt = new ModelObjectsWidget(true, this);
 		model_objs_wgt->setObjectVisible(OBJ_ROLE, true);
 
-		check_edt = PgModelerUiNS::createNumberedTextEditor(check_wgt);
-		check_hl = new SyntaxHighlighter(check_edt);
-		check_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
-
 		using_edt = PgModelerUiNS::createNumberedTextEditor(using_wgt);
+		using_edt->setTabChangesFocus(true);
 		using_hl = new SyntaxHighlighter(using_edt);
 		using_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+
+		check_edt = PgModelerUiNS::createNumberedTextEditor(check_wgt);
+		check_edt->setTabChangesFocus(true);
+		check_hl = new SyntaxHighlighter(check_edt);
+		check_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
 		roles_tab = new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
 																			 (ObjectsTableWidget::DUPLICATE_BUTTON |
@@ -58,6 +60,7 @@ PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_POLICY
 		command_cmb->addItems(cmds);
 
 		configureFormLayout(policy_grid, OBJ_POLICY);
+		configureTabOrder({ basics_grp, attribs_tbw });
 
 		connect(roles_tab, SIGNAL(s_rowAdded(int)), model_objs_wgt, SLOT(show()));
 		connect(model_objs_wgt, SIGNAL(s_visibilityChanged(BaseObject*, bool)), this, SLOT(selectRole(BaseObject*, bool)));
