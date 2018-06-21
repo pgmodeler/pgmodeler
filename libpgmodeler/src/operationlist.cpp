@@ -314,9 +314,9 @@ void OperationList::removeFromPool(unsigned obj_idx)
 	BaseObject *object=nullptr;
 	vector<BaseObject *>::iterator itr;
 
-	//Raises an error if the object index is invalid (out of bound)
+	//Avoiding the removal of an object in invalid index (out of bound)
 	if(obj_idx >= object_pool.size())
-		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		return;
 
 	//Gets the element to bo removed through its index
 	itr=object_pool.begin() + obj_idx;
