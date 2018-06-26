@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>843</width>
-    <height>478</height>
+    <height>349</height>
    </rect>
   </property>
   <property name="baseSize">
@@ -546,11 +546,11 @@
           </property>
           <item>
            <widget class="QTabWidget" name="output_tbw">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
             <property name="tabPosition">
              <enum>QTabWidget::South</enum>
@@ -583,12 +583,6 @@
               </property>
               <item row="1" column="0">
                <widget class="QWidget" name="results_parent" native="true">
-                <property name="minimumSize">
-                 <size>
-                  <width>100</width>
-                  <height>200</height>
-                 </size>
-                </property>
                 <layout class="QGridLayout" name="gridLayout_3">
                  <property name="leftMargin">
                   <number>0</number>
