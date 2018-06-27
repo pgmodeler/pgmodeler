@@ -23,6 +23,7 @@
 #include "plaintextitemdelegate.h"
 #include "baseform.h"
 #include "bulkdataeditwidget.h"
+#include "databaseexplorerwidget.h"
 
 const QColor DataManipulationForm::ROW_COLORS[3]={ QColor(QString("#C0FFC0")), QColor(QString("#FFFFC0")), QColor(QString("#FFC0C0"))  };
 const unsigned DataManipulationForm::NO_OPERATION=0;
@@ -66,6 +67,10 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 		has_csv_clipboard = false;
 		paste_tb->setEnabled(true);
 	});
+
+	truncate_tb->setMenu(&truncate_menu);
+	truncate_menu.addAction(QIcon(PgModelerUiNS::getIconPath("truncate")), trUtf8("Truncate"), this, SLOT(truncateTable()))->setData(QVariant::fromValue<bool>(false));
+	truncate_menu.addAction(QIcon(PgModelerUiNS::getIconPath("trunccascade")), trUtf8("Truncate cascade"), this, SLOT(truncateTable()))->setData(QVariant::fromValue<bool>(true));
 
 	copy_tb->setMenu(&copy_menu);
 	refresh_tb->setToolTip(refresh_tb->toolTip() + QString(" (%1)").arg(refresh_tb->shortcut().toString()));
@@ -120,6 +125,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(move_down_tb, SIGNAL(clicked()), this, SLOT(swapColumns()));
 	connect(move_up_tb, SIGNAL(clicked()), this, SLOT(swapColumns()));
 	connect(filter_tb, SIGNAL(toggled(bool)), v_splitter, SLOT(setVisible(bool)));
+	connect(truncate_tb, SIGNAL(clicked(bool)), this, SLOT(truncateTable()));
 
 	connect(bulkedit_tb, &QToolButton::clicked, [&](){
 		PgModelerUiNS::bulkDataEdit(results_tbw);
@@ -378,6 +384,10 @@ void DataManipulationForm::retrieveData(void)
 												 table_cmb->currentData().toUInt() == OBJ_TABLE &&
 												 !col_names.isEmpty());
 
+		truncate_tb->setEnabled(table_cmb->currentData().toUInt() == OBJ_TABLE &&
+														res.getTupleCount() > 0 &&
+														!col_names.isEmpty());
+
 		code_compl_wgt->clearCustomItems();
 		code_compl_wgt->insertCustomItems(col_names, trUtf8("Column"), OBJ_COLUMN);
 	}
@@ -400,6 +410,8 @@ void DataManipulationForm::disableControlButtons(void)
 	add_tb->setEnabled(false);
 	duplicate_tb->setEnabled(false);
 	export_tb->setEnabled(false);
+	paste_tb->setEnabled(false);
+	truncate_tb->setEnabled(false);
 	csv_load_tb->setEnabled(false);
 	csv_load_tb->setChecked(false);
 	clearChangedRows();
@@ -1374,4 +1386,41 @@ QString DataManipulationForm::getDMLCommand(int row)
 	}
 
 	return(fmt_cmd);
+}
+
+void DataManipulationForm::resizeEvent(QResizeEvent *event)
+{
+	Qt::ToolButtonStyle style = Qt::ToolButtonIconOnly;
+	QToolButton *btn = nullptr;
+
+	if(event->size().width() > this->baseSize().width())
+		style = Qt::ToolButtonTextBesideIcon;
+
+	if(refresh_tb->toolButtonStyle() != style)
+	{
+		for(auto obj : bnts_parent_wgt->children())
+		{
+			btn = qobject_cast<QToolButton *>(obj);
+
+			if(btn)
+				btn->setToolButtonStyle(style);
+		}
+	}
+}
+
+void DataManipulationForm::truncateTable(void)
+{
+	try
+	{
+		QAction *act = dynamic_cast<QAction *>(sender());
+
+		if(DatabaseExplorerWidget::truncateTable(schema_cmb->currentText(), table_cmb->currentText(),
+																						 act->data().toBool(), Connection(tmpl_conn_params)))
+			retrieveData();
+	}
+	catch(Exception &e)
+	{
+		Messagebox msg_box;
+		msg_box.show(e);
+	}
 }

@@ -34,6 +34,9 @@
    </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <property name="spacing">
+      <number>4</number>
+     </property>
      <item>
       <widget class="QToolButton" name="toggle_display_tb">
        <property name="enabled">
@@ -68,6 +71,9 @@
        </property>
        <property name="toolButtonStyle">
         <enum>Qt::ToolButtonIconOnly</enum>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -109,6 +115,9 @@
        <property name="toolButtonStyle">
         <enum>Qt::ToolButtonIconOnly</enum>
        </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item>
@@ -143,6 +152,9 @@
        <property name="toolButtonStyle">
         <enum>Qt::ToolButtonIconOnly</enum>
        </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item>
@@ -169,6 +181,9 @@
        <property name="shortcut">
         <string>Ctrl+F6</string>
        </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item>
@@ -192,6 +207,9 @@
          <height>22</height>
         </size>
        </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item>
@@ -214,6 +232,9 @@
          <width>22</width>
          <height>22</height>
         </size>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
        </property>
       </widget>
      </item>

@@ -155,6 +155,9 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		//! \brief Clears the object's properties table
 		void clearObjectProperties(void);
 		
+		//! \brief Truncates a named table (in cascade mode or not) using the provided connection
+		static bool truncateTable(const QString &sch_name, const QString &obj_name, bool cascade, Connection connection);
+
 	public slots:
 		//! \brief Lists all objects for the current selected database
 		void listObjects(void);

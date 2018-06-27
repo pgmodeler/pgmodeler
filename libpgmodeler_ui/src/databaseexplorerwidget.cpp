@@ -1250,55 +1250,70 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 	}
 }
 
+bool DatabaseExplorerWidget::truncateTable(const QString &sch_name, const QString &obj_name, bool cascade, Connection connection)
+{
+	try
+	{
+		Messagebox msg_box;
+		QString msg;
+
+		if(!cascade)
+			msg=trUtf8("Do you really want to truncate the table <strong>%1.%2</strong>?").arg(sch_name).arg(obj_name);
+		else
+			msg=trUtf8("Do you really want to truncate in <strong>cascade</strong> mode the table <strong>%1.%2</strong>? This action will truncate all the tables that depends on it?").arg(sch_name).arg(obj_name);
+
+		msg_box.setCustomOptionText(trUtf8("Also restart sequences"));
+		msg_box.show(msg, Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+
+		if(msg_box.result()==QDialog::Accepted)
+		{
+			attribs_map attribs;
+			QString truc_cmd;
+			Connection conn;
+			SchemaParser schparser;
+
+			attribs[ParsersAttributes::SQL_OBJECT]=BaseObject::getSQLName(OBJ_TABLE);
+			attribs[ParsersAttributes::SIGNATURE]=QString("%1.%2").arg(BaseObject::formatName(sch_name)).arg(BaseObject::formatName(obj_name));
+			attribs[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : "");
+			attribs[ParsersAttributes::RESTART_SEQ]=(msg_box.isCustomOptionChecked() ? ParsersAttributes::_TRUE_ : "");
+
+			//Generate the truncate command
+			schparser.ignoreEmptyAttributes(true);
+			schparser.ignoreUnkownAttributes(true);
+			truc_cmd=schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
+																					 GlobalAttributes::ALTER_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
+																					 ParsersAttributes::TRUNCATE + GlobalAttributes::SCHEMA_EXT,
+																					 attribs);
+
+			//Executes the truncate cmd
+			conn = connection;
+			conn.connect();
+			conn.executeDDLCommand(truc_cmd);
+		}
+
+		return(msg_box.result()==QDialog::Accepted);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+}
+
 void DatabaseExplorerWidget::truncateTable(QTreeWidgetItem *item, bool cascade)
 {
-	Messagebox msg_box;
-
 	try
 	{
 		if(item && static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt()) > 0)
 		{
-			QString msg, obj_name, sch_name;
-
+			QString obj_name, sch_name;
 			obj_name=item->data(DatabaseImportForm::OBJECT_NAME, Qt::UserRole).toString();
 			sch_name=BaseObject::formatName(item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString());
-
-			if(!cascade)
-				msg=trUtf8("Do you really want to truncate the table <strong>%1</strong>?").arg(obj_name);
-			else
-				msg=trUtf8("Do you really want to <strong>cascade</strong> truncate the table <strong>%1</strong>? This action will truncate all the tables that depends on it?").arg(obj_name);
-
-			msg_box.setCustomOptionText(trUtf8("Also restart sequences"));
-			msg_box.show(msg, Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
-
-			if(msg_box.result()==QDialog::Accepted)
-			{
-				attribs_map attribs;
-				QString truc_cmd;
-				Connection conn;
-
-				attribs[ParsersAttributes::SQL_OBJECT]=BaseObject::getSQLName(OBJ_TABLE);
-				attribs[ParsersAttributes::SIGNATURE]=sch_name + QString(".\"%1\"").arg(obj_name);
-				attribs[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : "");
-				attribs[ParsersAttributes::RESTART_SEQ]=(msg_box.isCustomOptionChecked() ? ParsersAttributes::_TRUE_ : "");
-
-				//Generate the truncate command
-				schparser.ignoreEmptyAttributes(true);
-				schparser.ignoreUnkownAttributes(true);
-				truc_cmd=schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-													 GlobalAttributes::ALTER_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
-													 ParsersAttributes::TRUNCATE + GlobalAttributes::SCHEMA_EXT,
-													 attribs);
-
-				//Executes the truncate cmd
-				conn=connection;
-				conn.connect();
-				conn.executeDDLCommand(truc_cmd);
-			}
+			truncateTable(sch_name, obj_name, cascade, connection);
 		}
 	}
 	catch(Exception &e)
 	{
+		Messagebox msg_box;
 		msg_box.show(e);
 	}
 }
