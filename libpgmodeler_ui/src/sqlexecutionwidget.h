@@ -34,6 +34,7 @@
 #include "numberedtexteditor.h"
 #include "findreplacewidget.h"
 #include "resultsetmodel.h"
+#include "sqlexecutionhelper.h"
 
 class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 	private:
@@ -44,6 +45,10 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		static int cmd_history_max_len;
 
 		SchemaParser schparser;
+
+		QThread sql_exec_thread;
+
+		SQLExecutionHelper sql_exec_hlp;
 
 		//! \brief Syntax highlighter for sql input field
 		SyntaxHighlighter *sql_cmd_hl,

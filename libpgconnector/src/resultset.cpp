@@ -67,10 +67,10 @@ ResultSet::ResultSet(PGresult *sql_result)
 
 ResultSet::~ResultSet(void)
 {
-	destroyResultSet();
+	clearResultSet();
 }
 
-void ResultSet::destroyResultSet(void)
+void ResultSet::clearResultSet(void)
 {
 	/* Destroy the resultset of the object if it was not copied
 		to another class instance (see 'operator =') */
@@ -316,6 +316,11 @@ bool ResultSet::isEmpty(void)
 	return(empty_result);
 }
 
+bool ResultSet::isValid(void)
+{
+	return(sql_result != nullptr);
+}
+
 void ResultSet::operator = (ResultSet &res)
 {
 	/* Mark the result parameter as copied, avoiding
@@ -324,7 +329,7 @@ void ResultSet::operator = (ResultSet &res)
 
 	/* If the resultset 'this' is allocated,
 		it will be deallocated to avoid memory leaks */
-	destroyResultSet();
+	clearResultSet();
 
 	//Copy the parameter restulset attributes to 'this' resultset
 	this->current_tuple=res.current_tuple;

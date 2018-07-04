@@ -128,6 +128,11 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	toggleOutputPane(false);
 	filename_wgt->setVisible(false);
 	v_splitter->handle(1)->installEventFilter(this);
+
+	sql_exec_hlp.moveToThread(&sql_exec_thread);
+	connect(&sql_exec_thread, SIGNAL(started()), &sql_exec_hlp, SLOT(executeCommand()));
+	connect(&sql_exec_hlp, SIGNAL(s_executionCancelled()), &sql_exec_thread, SLOT(quit()));
+	connect(stop_tb, SIGNAL(clicked(bool)), &sql_exec_hlp, SLOT(cancelCommand()));
 }
 
 SQLExecutionWidget::~SQLExecutionWidget(void)
@@ -436,9 +441,9 @@ void SQLExecutionWidget::runSQLCommand(void)
 
 	try
 	{
-		ResultSet res;
-		QStringList conn_notices;
-		qint64 start_exec=0, end_exec=0, total_exec = 0;
+		//ResultSet res;
+		//QStringList conn_notices;
+		//qint64 start_exec=0, end_exec=0, total_exec = 0;
 
 		output_tb->setChecked(true);
 
@@ -449,7 +454,11 @@ void SQLExecutionWidget::runSQLCommand(void)
 
 		msgoutput_lst->clear();
 
-		if(!sql_cmd_conn.isStablished())
+		sql_exec_hlp.setCommand(cmd);
+		sql_exec_hlp.setConnection(sql_cmd_conn);
+		sql_exec_thread.start();
+
+		/*if(!sql_cmd_conn.isStablished())
 		{
 			sql_cmd_conn.setNoticeEnabled(true);
 			sql_cmd_conn.connect();
@@ -504,7 +513,7 @@ void SQLExecutionWidget::runSQLCommand(void)
 
 		output_tbw->setTabText(1, trUtf8("Messages (%1)").arg(msgoutput_lst->count()));
 
-		QApplication::restoreOverrideCursor();
+		QApplication::restoreOverrideCursor(); */
 	}
 	catch(Exception &e)
 	{

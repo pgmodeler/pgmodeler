@@ -57,6 +57,7 @@ Connection::Connection(void)
 {
 	connection=nullptr;
 	auto_browse_db=false;	
+	async_conn=false;
 	cmd_exec_timeout=0;
 
 	for(unsigned idx=OP_VALIDATION; idx <= OP_DIFF; idx++)
@@ -211,7 +212,7 @@ bool Connection::isConnErrorSilenced(void)
 	return(silence_conn_err);
 }
 
-void Connection::connect(void)
+void Connection::connect(bool async)
 {
 	/* If the connection string is not established indicates that the user
 		is trying to connect without configuring connection parameters,
@@ -234,6 +235,7 @@ void Connection::connect(void)
 	//Try to connect to the database
 	connection=PQconnectdb(connection_str.toStdString().c_str());
 	last_cmd_execution=QDateTime::currentDateTime();
+	async_conn = async;
 
 	/* If the connection descriptor has not been allocated or if the connection state
 		is CONNECTION_BAD it indicates that the connection was not successful */
@@ -265,6 +267,7 @@ void Connection::close(void)
 
 		connection=nullptr;
 		last_cmd_execution=QDateTime();
+		async_conn=false;
 	}
 }
 
@@ -394,6 +397,9 @@ void Connection::executeDMLCommand(const QString &sql, ResultSet &result)
 	if(!connection)
 		throw Exception(ERR_OPR_NOT_ALOC_CONN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
+	if(async_conn)
+		throw Exception(ERR_EXEC_SYNC_CMD_ASYN_CONN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
 	validateConnectionStatus();
 	notices.clear();
 
@@ -435,6 +441,9 @@ void Connection::executeDDLCommand(const QString &sql)
 	if(!connection)
 		throw Exception(ERR_OPR_NOT_ALOC_CONN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
+	if(async_conn)
+		throw Exception(ERR_EXEC_SYNC_CMD_ASYN_CONN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
 	validateConnectionStatus();
 	notices.clear();
 	sql_res=PQexec(connection, sql.toStdString().c_str());
@@ -459,6 +468,80 @@ void Connection::executeDDLCommand(const QString &sql)
 	}
 
 	PQclear(sql_res);
+}
+
+void Connection::executeAsyncCommand(const QString &sql)
+{
+	if(!connection)
+		throw Exception(ERR_OPR_NOT_ALOC_CONN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
+	if(!async_conn)
+		throw Exception(ERR_EXEC_SYNC_CMD_ASYN_CONN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
+	validateConnectionStatus();
+	notices.clear();
+
+	//Prints the SQL to stdout when the flag is active
+	if(print_sql)
+	{
+		QTextStream out(stdout);
+		out << QString("\n---\n") << sql << endl;
+	}
+
+	PQsendQuery(connection, sql.toStdString().c_str());
+	PQsetnonblocking(connection, 1);
+	PQsetSingleRowMode(connection);
+
+	//Raise an error in case the command sql execution is not sucessful
+	if(strlen(PQerrorMessage(connection)) > 0)
+	{
+		throw Exception(QString(Exception::getErrorMessage(ERR_CMD_SQL_NOT_EXECUTED))
+						.arg(PQerrorMessage(connection)),
+						ERR_CMD_SQL_NOT_EXECUTED, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
+}
+
+bool Connection::fetchSingleResult(ResultSet &result)
+{
+	PGresult *sql_res=nullptr;
+
+	if(!connection)
+		throw Exception(ERR_OPR_NOT_ALOC_CONN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
+	if(!async_conn)
+		throw Exception(ERR_EXEC_SYNC_CMD_ASYN_CONN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
+	if(!PQconsumeInput(connection))
+	{
+		throw Exception(QString(Exception::getErrorMessage(ERR_CONN_DATA_NOT_CONSUMED))
+						.arg(PQerrorMessage(connection)),
+						ERR_CONN_DATA_NOT_CONSUMED, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
+
+	if(!PQisBusy(connection))
+	{
+		result.clearResultSet();
+		sql_res = PQgetResult(connection);
+
+		if(sql_res)
+		{
+			ResultSet *new_res=nullptr;
+
+			//Generates the resultset based on the sql result descriptor
+			new_res=new ResultSet(sql_res);
+
+			//Copy the new resultset to the parameter resultset
+			result=*(new_res);
+
+			//Deallocate the new resultset
+			delete(new_res);
+			PQclear(sql_res);
+		}
+
+		return(true);
+	}
+
+	return(false);
 }
 
 void Connection::setDefaultForOperation(unsigned op_id, bool value)
@@ -510,6 +593,7 @@ void Connection::operator = (const Connection &conn)
 	if(this->isStablished())
 		this->close();
 
+	this->async_conn=false;
 	this->auto_browse_db=conn.auto_browse_db;
 	this->connection_params=conn.connection_params;
 	this->connection_str=conn.connection_str;

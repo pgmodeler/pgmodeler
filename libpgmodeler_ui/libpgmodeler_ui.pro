@@ -114,7 +114,8 @@ SOURCES += src/mainwindow.cpp \
     src/policywidget.cpp \
     src/objectstablewidget.cpp \
     src/resultsetmodel.cpp \
-    src/referencewidget.cpp
+    src/referencewidget.cpp \
+    src/sqlexecutionhelper.cpp
 
 
 HEADERS += src/mainwindow.h \
@@ -216,7 +217,8 @@ HEADERS += src/mainwindow.h \
     src/policywidget.h \
     src/objectstablewidget.h \
     src/resultsetmodel.h \
-    src/referencewidget.h
+    src/referencewidget.h \
+    src/sqlexecutionhelper.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \
