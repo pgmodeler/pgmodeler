@@ -481,16 +481,16 @@ void Connection::executeAsyncCommand(const QString &sql)
 	validateConnectionStatus();
 	notices.clear();
 
+	PQsendQuery(connection, sql.toStdString().c_str());
+	PQsetnonblocking(connection, 1);
+	PQsetSingleRowMode(connection);
+
 	//Prints the SQL to stdout when the flag is active
 	if(print_sql)
 	{
 		QTextStream out(stdout);
 		out << QString("\n---\n") << sql << endl;
 	}
-
-	PQsendQuery(connection, sql.toStdString().c_str());
-	PQsetnonblocking(connection, 1);
-	PQsetSingleRowMode(connection);
 
 	//Raise an error in case the command sql execution is not sucessful
 	if(strlen(PQerrorMessage(connection)) > 0)

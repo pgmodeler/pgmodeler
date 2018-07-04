@@ -44,6 +44,8 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 
 		static int cmd_history_max_len;
 
+		qint64 start_exec, end_exec, total_exec;
+
 		SchemaParser schparser;
 
 		QThread sql_exec_thread;
@@ -83,13 +85,14 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		//! \brief Stores the command on the sql command history
 		void addToSQLHistory(const QString &cmd, unsigned rows=0, const QString &error=QString());
 
-		//! \brief Show the exception message in the output widget
-		void showError(Exception &e);
-
 		//! \brief Fills the result grid with the specified result set
 		void fillResultsTable(ResultSet &res);
 
+		void fillResultsTable(void);
+
 		static void validateSQLHistoryLength(const QString &conn_id, const QString &fmt_cmd = QString(), NumberedTextEditor *cmd_history_txt = nullptr);
+
+		void switchToExecutionMode(bool value);
 
 	protected:
 		//! \brief Widget that serves as SQL commands input
@@ -129,9 +132,6 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		//! \brief Exports the results to csv file
 		static void exportResults(QTableView *results_tbw);
 
-	public slots:
-		void configureSnippets(void);
-
 		//! \brief Save the history of all connections open in the SQL Execution to the sql-history.conf
 		static void saveSQLHistory(void);
 
@@ -143,6 +143,14 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		static void setSQLHistoryMaxLength(int len);
 
 		static int getSQLHistoryMaxLength(void);
+
+	public slots:
+		void configureSnippets(void);
+
+		//! \brief Show the exception message in the output widget
+		void	handleExecutionAborted(Exception e);
+
+		void finishExecution(void);
 
 	private slots:
 		//! \brief Enables the command buttons when user fills the sql field

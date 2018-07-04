@@ -27,6 +27,7 @@
 
 #include <QObject>
 #include "connection.h"
+#include "resultsetmodel.h"
 
 class SQLExecutionHelper : public QObject {
 	private:
@@ -36,13 +37,20 @@ class SQLExecutionHelper : public QObject {
 
 		QString command;
 
+		ResultSetModel *result_model;
+
 		bool cancelled;
+
+		QStringList notices;
 
 	public:
 		SQLExecutionHelper(void);
 
 		void setConnection(Connection conn);
 		void setCommand(const QString &cmd);
+		ResultSetModel *getResultSetModel(void);
+		bool isCancelled(void);
+		QStringList getNotices(void);
 
 	public slots:
 		void executeCommand(void);

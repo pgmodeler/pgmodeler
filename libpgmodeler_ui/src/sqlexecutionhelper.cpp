@@ -18,10 +18,13 @@
 
 #include "sqlexecutionhelper.h"
 #include <QThread>
+#include <QApplication>
+#include <QTextStream>
 
 SQLExecutionHelper::SQLExecutionHelper(void) : QObject(nullptr)
 {
-
+	cancelled = false;
+	result_model = nullptr;
 }
 
 void SQLExecutionHelper::setConnection(Connection conn)
@@ -34,25 +37,55 @@ void SQLExecutionHelper::setCommand(const QString &cmd)
 	command = cmd;
 }
 
+ResultSetModel *SQLExecutionHelper::getResultSetModel(void)
+{
+	return(result_model);
+}
+
+bool SQLExecutionHelper::isCancelled(void)
+{
+	return(cancelled);
+}
+
+QStringList SQLExecutionHelper::getNotices(void)
+{
+	return(notices);
+}
+
 void SQLExecutionHelper::executeCommand(void)
 {
 	try
 	{
 		ResultSet res;
 		bool fetched = false;
+		Catalog catalog;
+		Connection aux_conn = connection;
 
+		catalog.setConnection(aux_conn);
+		result_model = nullptr;
+		cancelled = false;
 		connection.connect(true);
+		connection.setNoticeEnabled(true);
 		connection.executeAsyncCommand(command);
 
 		do
 		{
 			fetched = connection.fetchSingleResult(res);
 
-			if(this->thread())
-				this->thread()->msleep(20);
-		}
-		while(fetched && res.isValid() && !cancelled);
+			if(res.isValid())
+			{
+				if(!result_model)
+					result_model = new ResultSetModel(res, catalog);
+				else
+					result_model->append(res);
+			}
 
+			if(fetched && !res.isValid())
+				break;
+		}
+		while(!cancelled);
+
+		notices = connection.getNotices();
 		connection.close();
 
 		if(cancelled)
