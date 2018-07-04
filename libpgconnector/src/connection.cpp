@@ -518,4 +518,3 @@ void Connection::operator = (const Connection &conn)
 	for(unsigned idx=OP_VALIDATION; idx <= OP_DIFF; idx++)
 		default_for_oper[idx]=conn.default_for_oper[idx];
 }
-
