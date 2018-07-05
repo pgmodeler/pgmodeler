@@ -76,8 +76,6 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 
 		FindReplaceWidget *find_history_wgt;
 
-		ResultSetModel *result_model;
-
 		/*! \brief Enables/Disables the fields for sql input and execution.
 				When enabling a new connection to server will be opened. */
 		void enableSQLExecution(bool enable);
@@ -85,14 +83,13 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		//! \brief Stores the command on the sql command history
 		void addToSQLHistory(const QString &cmd, unsigned rows=0, const QString &error=QString());
 
-		//! \brief Fills the result grid with the specified result set
-		void fillResultsTable(ResultSet &res);
-
 		void fillResultsTable(void);
 
 		static void validateSQLHistoryLength(const QString &conn_id, const QString &fmt_cmd = QString(), NumberedTextEditor *cmd_history_txt = nullptr);
 
 		void switchToExecutionMode(bool value);
+
+		void destroyResultModel(void);
 
 	protected:
 		//! \brief Widget that serves as SQL commands input
@@ -150,8 +147,6 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		//! \brief Show the exception message in the output widget
 		void	handleExecutionAborted(Exception e);
 
-		void finishExecution(void);
-
 	private slots:
 		//! \brief Enables the command buttons when user fills the sql field
 		void enableCommandButtons(void);
@@ -173,6 +168,8 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		void toggleOutputPane(bool visible);
 
 		void showHistoryContextMenu(void);
+
+		void finishExecution(int rows_affected = 0);
 
 		friend class SQLToolWidget;
 };

@@ -17,9 +17,6 @@
 */
 
 #include "sqlexecutionhelper.h"
-#include <QThread>
-#include <QApplication>
-#include <QTextStream>
 
 SQLExecutionHelper::SQLExecutionHelper(void) : QObject(nullptr)
 {
@@ -27,14 +24,10 @@ SQLExecutionHelper::SQLExecutionHelper(void) : QObject(nullptr)
 	result_model = nullptr;
 }
 
-void SQLExecutionHelper::setConnection(Connection conn)
-{
-	connection = conn;
-}
-
-void SQLExecutionHelper::setCommand(const QString &cmd)
+void SQLExecutionHelper::setParameters(Connection conn, const QString &cmd)
 {
 	command = cmd;
+	connection = conn;
 }
 
 ResultSetModel *SQLExecutionHelper::getResultSetModel(void)
@@ -57,41 +50,22 @@ void SQLExecutionHelper::executeCommand(void)
 	try
 	{
 		ResultSet res;
-		bool fetched = false;
 		Catalog catalog;
 		Connection aux_conn = connection;
 
 		catalog.setConnection(aux_conn);
 		result_model = nullptr;
 		cancelled = false;
-		connection.connect(true);
+		connection.connect();
 		connection.setNoticeEnabled(true);
-		connection.executeAsyncCommand(command);
+		connection.executeDMLCommand(command, res);
 
-		do
-		{
-			fetched = connection.fetchSingleResult(res);
-
-			if(res.isValid())
-			{
-				if(!result_model)
-					result_model = new ResultSetModel(res, catalog);
-				else
-					result_model->append(res);
-			}
-
-			if(fetched && !res.isValid())
-				break;
-		}
-		while(!cancelled);
+		if(!res.isEmpty())
+			result_model = new ResultSetModel(res, catalog);
 
 		notices = connection.getNotices();
 		connection.close();
-
-		if(cancelled)
-			emit s_executionCancelled();
-		else
-			emit s_executionFinished();
+		emit s_executionFinished(res.getTupleCount());
 	}
 	catch(Exception &e)
 	{
@@ -102,5 +76,6 @@ void SQLExecutionHelper::executeCommand(void)
 
 void SQLExecutionHelper::cancelCommand(void)
 {
+	connection.requestCancel();
 	cancelled = true;
 }

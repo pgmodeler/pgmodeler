@@ -33,8 +33,6 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 {
 	setupUi(this);
 
-	result_model = nullptr;
-
 	sql_cmd_txt=PgModelerUiNS::createNumberedTextEditor(sql_cmd_wgt);
 	cmd_history_txt=PgModelerUiNS::createNumberedTextEditor(cmd_history_parent);
 	cmd_history_txt->setCustomContextMenuEnabled(false);
@@ -134,7 +132,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 
 	connect(&sql_exec_thread, SIGNAL(started()), &sql_exec_hlp, SLOT(executeCommand()));
 	connect(&sql_exec_hlp, SIGNAL(s_executionCancelled()), this, SLOT(finishExecution()));
-	connect(&sql_exec_hlp, SIGNAL(s_executionFinished()), this, SLOT(finishExecution()));
+	connect(&sql_exec_hlp, SIGNAL(s_executionFinished(int)), this, SLOT(finishExecution(int)));
 	connect(&sql_exec_hlp, SIGNAL(s_executionAborted(Exception)), &sql_exec_thread, SLOT(quit()));
 	connect(&sql_exec_hlp, SIGNAL(s_executionAborted(Exception)), this, SLOT(handleExecutionAborted(Exception)));
 	connect(stop_tb, SIGNAL(clicked(bool)), &sql_exec_hlp, SLOT(cancelCommand()), Qt::DirectConnection);
@@ -148,12 +146,7 @@ SQLExecutionWidget::~SQLExecutionWidget(void)
 		sql_exec_thread.quit();
 	}
 
-	if(result_model)
-	{
-		results_tbw->blockSignals(true);
-		results_tbw->setModel(nullptr);
-		delete(result_model);
-	}
+	destroyResultModel();
 }
 
 bool SQLExecutionWidget::eventFilter(QObject *object, QEvent *event)
@@ -204,96 +197,10 @@ void SQLExecutionWidget::enableCommandButtons(void)
 	clear_btn->setEnabled(run_sql_tb->isEnabled());
 }
 
-void SQLExecutionWidget::fillResultsTable(ResultSet &res)
-{
-	try
-	{
-		Catalog catalog;
-		Connection aux_conn;
-
-		aux_conn.setConnectionParams(sql_cmd_conn.getConnectionParams());
-		export_tb->setEnabled(res.getTupleCount() > 0);
-		catalog.setConnection(aux_conn);
-
-		results_tbw->setSortingEnabled(false);
-		results_tbw->blockSignals(true);
-		results_tbw->setUpdatesEnabled(false);
-		results_tbw->setModel(nullptr);
-
-		if(result_model)
-			delete(result_model);
-
-		result_model = new ResultSetModel(res, catalog);
-
-		results_tbw->setModel(result_model);
-		results_tbw->resizeColumnsToContents();
-		results_tbw->setUpdatesEnabled(true);
-		results_tbw->blockSignals(false);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
-}
-
 void SQLExecutionWidget::fillResultsTable(void)
 {
-	ResultSetModel *old_model = dynamic_cast<ResultSetModel *>(results_tbw->model()),
-			*new_model = sql_exec_hlp.getResultSetModel();
 
-	end_exec=QDateTime::currentDateTime().toMSecsSinceEpoch();
-	total_exec = end_exec - start_exec;
-
-	results_tbw->setSortingEnabled(false);
-	results_tbw->blockSignals(true);
-	results_tbw->setUpdatesEnabled(false);
-	results_tbw->setModel(nullptr);
-
-	if(old_model)
-		delete(old_model);
-
-	results_tbw->setModel(new_model);
-	results_tbw->resizeColumnsToContents();
-	results_tbw->setUpdatesEnabled(true);
-	results_tbw->blockSignals(false);
-
-	addToSQLHistory(sql_cmd_txt->toPlainText(), new_model->rowCount());
-
-	output_tbw->setTabEnabled(0, !new_model->isEmpty());
-	results_parent->setVisible(!new_model->isEmpty());
-	export_tb->setEnabled(!new_model->isEmpty());
-
-	if(!new_model->isEmpty())
-	{
-		output_tbw->setTabText(0, trUtf8("Results (%1)").arg(new_model->rowCount()));
-		output_tbw->setCurrentIndex(0);
-	}
-	else
-	{
-		output_tbw->setTabText(0, trUtf8("Results"));
-		output_tbw->setCurrentIndex(1);
-	}
-
-	msgoutput_lst->clear();
-
-	for(QString notice : sql_exec_hlp.getNotices())
-	{
-		PgModelerUiNS::createOutputListItem(msgoutput_lst,
-																				PgModelerUiNS::formatMessage(QString("[%1]: %2").arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))).arg(notice)),
-																				QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")));
-	}
-
-	PgModelerUiNS::createOutputListItem(msgoutput_lst,
-																			PgModelerUiNS::formatMessage(trUtf8("[%1]: SQL command successfully executed in <em><strong>%2</strong></em>. <em>%3 <strong>%4</strong></em>")
-																																	 .arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz")))
-																																	 .arg(total_exec >= 1000 ? QString("%1 s").arg(total_exec/1000) : QString("%1 ms").arg(total_exec))
-																																	 .arg(new_model->isEmpty() ? trUtf8("Rows affected") :  trUtf8("Rows retrieved"))
-																																	 .arg(new_model->rowCount())),
-																			QPixmap(PgModelerUiNS::getIconPath("msgbox_info")));
-
-	output_tbw->setTabText(1, trUtf8("Messages (%1)").arg(msgoutput_lst->count()));
 }
-
 
 void SQLExecutionWidget::showEvent(QShowEvent *)
 {
@@ -448,14 +355,70 @@ void SQLExecutionWidget::handleExecutionAborted(Exception e)
 	output_tbw->setTabText(1, trUtf8("Messages (%1)").arg(msgoutput_lst->count()));
 	output_tbw->setCurrentIndex(1);
 	output_tbw->setTabEnabled(0, false);
+
+	addToSQLHistory(sql_cmd_txt->toPlainText(), 0, e.getErrorMessage());
 }
 
-void SQLExecutionWidget::finishExecution(void)
+void SQLExecutionWidget::finishExecution(int rows_affected)
 {
 	sql_exec_thread.quit();
 
-	if(!sql_exec_hlp.isCancelled())
-		fillResultsTable();
+	if(sql_exec_hlp.isCancelled())
+		destroyResultModel();
+	else
+	{
+		bool empty = false;
+		ResultSetModel *res_model = sql_exec_hlp.getResultSetModel();
+
+		results_tbw->setSortingEnabled(false);
+		results_tbw->blockSignals(true);
+		results_tbw->setUpdatesEnabled(false);
+		destroyResultModel();
+		results_tbw->setModel(res_model);
+		results_tbw->resizeColumnsToContents();
+		results_tbw->setUpdatesEnabled(true);
+		results_tbw->blockSignals(false);
+
+		end_exec=QDateTime::currentDateTime().toMSecsSinceEpoch();
+		total_exec = end_exec - start_exec;
+
+		addToSQLHistory(sql_cmd_txt->toPlainText(), rows_affected);
+
+		empty = (!res_model || res_model->rowCount() == 0);
+		output_tbw->setTabEnabled(0, !empty);
+		results_parent->setVisible(!empty);
+		export_tb->setEnabled(!empty);
+
+		if(!empty)
+		{
+			output_tbw->setTabText(0, trUtf8("Results (%1)").arg(res_model->rowCount()));
+			output_tbw->setCurrentIndex(0);
+		}
+		else
+		{
+			output_tbw->setTabText(0, trUtf8("Results"));
+			output_tbw->setCurrentIndex(1);
+		}
+
+		msgoutput_lst->clear();
+
+		for(QString notice : sql_exec_hlp.getNotices())
+		{
+			PgModelerUiNS::createOutputListItem(msgoutput_lst,
+																					PgModelerUiNS::formatMessage(QString("[%1]: %2").arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))).arg(notice)),
+																					QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")));
+		}
+
+		PgModelerUiNS::createOutputListItem(msgoutput_lst,
+																				PgModelerUiNS::formatMessage(trUtf8("[%1]: SQL command successfully executed in <em><strong>%2</strong></em>. <em>%3 <strong>%4</strong></em>")
+																																		 .arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz")))
+																																		 .arg(total_exec >= 1000 ? QString("%1 s").arg(total_exec/1000) : QString("%1 ms").arg(total_exec))
+																																		 .arg(!res_model ? trUtf8("Rows affected") :  trUtf8("Rows retrieved"))
+																																		 .arg(rows_affected)),
+																				QPixmap(PgModelerUiNS::getIconPath("msgbox_info")));
+
+		output_tbw->setTabText(1, trUtf8("Messages (%1)").arg(msgoutput_lst->count()));
+	}
 
 	switchToExecutionMode(false);
 }
@@ -469,17 +432,19 @@ void SQLExecutionWidget::addToSQLHistory(const QString &cmd, unsigned rows, cons
 		if(!cmd_history_txt->toPlainText().isEmpty())
 			fmt_cmd += QString("\n");
 
-		fmt_cmd += QString("-- Executed at [%1] -- \n").arg(QDateTime::currentDateTime().toString(QString("yyyy-MM-dd hh:mm:ss.zzz")));
+		fmt_cmd += QString("-- %1 [%2] -- \n")
+							 .arg(trUtf8("Executed at"))
+							 .arg(QDateTime::currentDateTime().toString(QString("yyyy-MM-dd hh:mm:ss.zzz")));
 		fmt_cmd += cmd;
 		fmt_cmd += QChar('\n');
 
 		if(!error.isEmpty())
 		{
-			fmt_cmd += QString("-- Query failed --\n");
+			fmt_cmd += QString("-- %1 --\n").arg(trUtf8("Query failed"));
 			fmt_cmd += QString("/*\n%1\n*/\n").arg(error);
 		}
 		else
-			fmt_cmd += QString("-- Rows retrieved: %1\n").arg(rows);
+			fmt_cmd += QString("-- %1 %2\n").arg(trUtf8("Rows:")).arg(rows);
 
 		if(!fmt_cmd.trimmed().endsWith(ParsersAttributes::DDL_END_TOKEN))
 			fmt_cmd += ParsersAttributes::DDL_END_TOKEN + QChar('\n');
@@ -545,99 +510,42 @@ void SQLExecutionWidget::switchToExecutionMode(bool value)
 	}
 }
 
+void SQLExecutionWidget::destroyResultModel(void)
+{
+	if(results_tbw->model())
+	{
+		ResultSetModel *result_model = dynamic_cast<ResultSetModel *>(results_tbw->model());
+		results_tbw->blockSignals(true);
+		results_tbw->setModel(nullptr);
+		delete(result_model);
+		results_tbw->blockSignals(false);
+	}
+}
+
 void SQLExecutionWidget::runSQLCommand(void)
 {
 	QString cmd=sql_cmd_txt->textCursor().selectedText();
 
-	try
-	{
-		//ResultSet res;
-		//QStringList conn_notices;
+	output_tb->setChecked(true);
 
-		output_tb->setChecked(true);
+	if(cmd.isEmpty())
+		cmd=sql_cmd_txt->toPlainText();
+	else
+		cmd.replace(QChar::ParagraphSeparator, '\n');
 
-		if(cmd.isEmpty())
-			cmd=sql_cmd_txt->toPlainText();
-		else
-			cmd.replace(QChar::ParagraphSeparator, '\n');
+	msgoutput_lst->clear();
+	sql_exec_hlp.setParameters(sql_cmd_conn, cmd);
+	start_exec=QDateTime::currentDateTime().toMSecsSinceEpoch();
+	sql_exec_thread.start();
+	switchToExecutionMode(true);
 
-		msgoutput_lst->clear();
-		sql_exec_hlp.setCommand(cmd);
-		sql_exec_hlp.setConnection(sql_cmd_conn);
-
-		start_exec=QDateTime::currentDateTime().toMSecsSinceEpoch();
-		sql_exec_thread.start();
-		switchToExecutionMode(true);
-
-		PgModelerUiNS::createOutputListItem(msgoutput_lst,
-																				PgModelerUiNS::formatMessage(trUtf8("[%1]: Running SQL command...")
-																																		 .arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz")))),
-																				QPixmap(PgModelerUiNS::getIconPath("msgbox_info")));
-
-		/*if(!sql_cmd_conn.isStablished())
-		{
-			sql_cmd_conn.setNoticeEnabled(true);
-			sql_cmd_conn.connect();
-
-			//The connection will break the execution if it keeps idle for one hour or more
-			sql_cmd_conn.setSQLExecutionTimout(3600);
-		}
-
-		QApplication::setOverrideCursor(Qt::WaitCursor);
-
-
-		sql_cmd_conn.executeDMLCommand(cmd, res);
-
-		conn_notices=sql_cmd_conn.getNotices();
-		addToSQLHistory(cmd, res.getTupleCount());
-
-		output_tbw->setTabEnabled(0, !res.isEmpty());
-		results_parent->setVisible(!res.isEmpty());
-		export_tb->setEnabled(!res.isEmpty());
-
-		if(!res.isEmpty())
-		{
-			fillResultsTable(res);
-			output_tbw->setTabText(0, trUtf8("Results (%1)").arg(results_tbw->model()->rowCount()));
-			output_tbw->setCurrentIndex(0);
-		}
-		else
-		{
-			output_tbw->setTabText(0, trUtf8("Results"));
-			output_tbw->setCurrentIndex(1);
-		}
-
-		msgoutput_lst->clear();
-
-		for(QString notice : conn_notices)
-		{
-			PgModelerUiNS::createOutputListItem(msgoutput_lst,
-																					PgModelerUiNS::formatMessage(QString("[%1]: %2").arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))).arg(notice)),
-																					QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")));
-		}
-
-		end_exec=QDateTime::currentDateTime().toMSecsSinceEpoch();
-		total_exec = end_exec - start_exec;
-
-		PgModelerUiNS::createOutputListItem(msgoutput_lst,
-																				PgModelerUiNS::formatMessage(trUtf8("[%1]: SQL command successfully executed in <em><strong>%2</strong></em>. <em>%3 <strong>%4</strong></em>")
-																																		 .arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz")))
-																																		 .arg(total_exec >= 1000 ? QString("%1 s").arg(total_exec/1000) : QString("%1 ms").arg(total_exec))
-																																		 .arg(res.isEmpty() ? trUtf8("Rows affected") :  trUtf8("Rows retrieved"))
-																																		 .arg(res.getTupleCount())),
-																				QPixmap(PgModelerUiNS::getIconPath("msgbox_info")));
-
-		output_tbw->setTabText(1, trUtf8("Messages (%1)").arg(msgoutput_lst->count()));
-
-		QApplication::restoreOverrideCursor(); */
-	}
-	catch(Exception &e)
-	{
-		addToSQLHistory(cmd, 0, e.getErrorMessage());
-		//QApplication::restoreOverrideCursor();
-		//sql_cmd_conn.close();
-		//handleExecutionAborted(e);
-	}
+	output_tbw->setTabEnabled(0, false);
+	output_tbw->setTabText(0, trUtf8("Results"));
+	output_tbw->setCurrentIndex(1);
+	PgModelerUiNS::createOutputListItem(msgoutput_lst,
+																			PgModelerUiNS::formatMessage(trUtf8("[%1]: The query is running...")
+																																	 .arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz")))),
+																			QPixmap(PgModelerUiNS::getIconPath("msgbox_info")));
 }
 
 void SQLExecutionWidget::saveCommands(void)

@@ -251,10 +251,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_NULL_PK_COLUMN", QT_TR_NOOP("The column `%1' must be `NOT NULL' because it composes the primary key of the table `%2'. You need to remove the column from the mentioned contraint in order to disable the `NOT NULL' on it!")},
 	{"ERR_ASG_INV_IDENTITY_COLUMN", QT_TR_NOOP("The identity column `%1' has an invalid data type! The data type must be `smallint', `integer' or `bigint'.")},
 	{"ERR_REF_INV_AFFECTED_CMD", QT_TR_NOOP("Reference to an invalid affected command in policy `%1'!")},
-	{"ERR_REF_INV_SPECIAL_ROLE", QT_TR_NOOP("Reference to an invalid special role in policy `%1'!")},
-	{"ERR_EXEC_SYNC_CMD_ASYN_CONN",QT_TR_NOOP("Executing an synchronous SQL command in an asynchronous connection!")},
-	{"ERR_EXEC_ASYNC_CMD_SYN_CONN",QT_TR_NOOP("Executing an asynchronous SQL command in a synchronous connection!")},
-	{"ERR_CONN_DATA_NOT_CONSUMED",QT_TR_NOOP("Failed to consume data from asynchronous connection! Error returned: `%1'")}
+	{"ERR_REF_INV_SPECIAL_ROLE", QT_TR_NOOP("Reference to an invalid special role in policy `%1'!")}
 };
 
 Exception::Exception(void)

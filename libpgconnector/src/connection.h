@@ -86,12 +86,7 @@ class Connection {
 
 		/*! \brief Indicates in which operations (diff, export, import, validation) the connection
 		is used if none is explicitly specified by the user in the UI */
-		default_for_oper[4],
-
-		/*! \brief Indicates that the connection is in asynchronous mode. An async connection should run the sql commands
-		 * using executeAsyncCommand() and retrieve results via fetchSingleResult(). Any try to call executeDMLCommand or executeDDLCommand
-		 * in a async connection will raise errors */
-		async_conn;
+		default_for_oper[4];
 
 		/*! \brief Validates the connection status (command exec. timeout and connection status) and
 		raise errors in case of exceeded timeout or bad connection. This method is called prior any
@@ -173,16 +168,17 @@ class Connection {
 		//! \brief Set if the database configured on the connection is auto browseable when using the SQLTool manage database
 		void setAutoBrowseDB(bool value);
 
-		/*! \brief Open the connection to the database. The async parameter switches the connection to asynchronous mode and the results are
-		 * retrived row by row (see PQsetnonblocking and PQsetSingleRow).
-		 * In this mode the commands need to be executed using executeAsyncCommand() and results fetched using fetchSingleResult() */
-		void connect(bool async = false);
+		//! \brief Open the connection to the database.
+		void connect(void);
 
 		//! \brief Resets the database connection
 		void reset(void);
 
 		//! \brief Close the opened connection
 		void close(void);
+
+		//! \brief Request the cancel of the running command on a opened connection
+		void requestCancel(void);
 
 		//! \brief Returns the value of specified parameter name
 		QString getConnectionParam(const QString &param);
@@ -232,10 +228,6 @@ class Connection {
 		 The user don't need to specify the resultset since the commando executed is intended
 		 to be an data definition one  */
 		void executeDDLCommand(const QString &sql);
-
-		void executeAsyncCommand(const QString &sql);
-
-		bool fetchSingleResult(ResultSet &res);
 
 		//! \brief Toggles the default status for the connect in the specified operation (OP_??? constants).
 		void setDefaultForOperation(unsigned op_id, bool value);
