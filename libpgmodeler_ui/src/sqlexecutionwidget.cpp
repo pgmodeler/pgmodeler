@@ -182,7 +182,7 @@ bool SQLExecutionWidget::eventFilter(QObject *object, QEvent *event)
 
 void SQLExecutionWidget::setConnection(Connection conn)
 {
-	sql_cmd_conn=conn;
+	sql_exec_hlp.setConnection(conn);
 	db_name_lbl->setText(QString("<strong>%1</strong>@<em>%2:%3</em>")
 						 .arg(conn.getConnectionParam(Connection::PARAM_DB_NAME))
 						 .arg(conn.getConnectionParam(Connection::PARAM_SERVER_IP).isEmpty() ?
@@ -361,8 +361,6 @@ void SQLExecutionWidget::handleExecutionAborted(Exception e)
 
 void SQLExecutionWidget::finishExecution(int rows_affected)
 {
-	sql_exec_thread.quit();
-
 	if(sql_exec_hlp.isCancelled())
 		destroyResultModel();
 	else
@@ -421,6 +419,7 @@ void SQLExecutionWidget::finishExecution(int rows_affected)
 	}
 
 	switchToExecutionMode(false);
+	sql_exec_thread.quit();
 }
 
 void SQLExecutionWidget::addToSQLHistory(const QString &cmd, unsigned rows, const QString &error)
@@ -534,7 +533,7 @@ void SQLExecutionWidget::runSQLCommand(void)
 		cmd.replace(QChar::ParagraphSeparator, '\n');
 
 	msgoutput_lst->clear();
-	sql_exec_hlp.setParameters(sql_cmd_conn, cmd);
+	sql_exec_hlp.setCommand(cmd);
 	start_exec=QDateTime::currentDateTime().toMSecsSinceEpoch();
 	sql_exec_thread.start();
 	switchToExecutionMode(true);
@@ -543,7 +542,7 @@ void SQLExecutionWidget::runSQLCommand(void)
 	output_tbw->setTabText(0, trUtf8("Results"));
 	output_tbw->setCurrentIndex(1);
 	PgModelerUiNS::createOutputListItem(msgoutput_lst,
-																			PgModelerUiNS::formatMessage(trUtf8("[%1]: The query is running...")
+																			PgModelerUiNS::formatMessage(trUtf8("[%1]: SQL command is running...")
 																																	 .arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz")))),
 																			QPixmap(PgModelerUiNS::getIconPath("msgbox_info")));
 }

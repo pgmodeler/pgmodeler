@@ -208,7 +208,7 @@
         </size>
        </property>
        <property name="shortcut">
-        <string>F6</string>
+        <string>Esc</string>
        </property>
        <property name="toolButtonStyle">
         <enum>Qt::ToolButtonTextBesideIcon</enum>

@@ -49,8 +49,9 @@ class SQLExecutionHelper : public QObject {
 	public:
 		SQLExecutionHelper(void);
 
-		//! \brief Configures the execution params. (connection and sql command to be executed)
-		void setParameters(Connection conn, const QString &cmd);
+		void setConnection(Connection conn);
+
+		void setCommand(const QString &cmd);
 
 		//! \brief Returns the result set model created in the execution. This object is not deleted after the execution.
 		ResultSetModel *getResultSetModel(void);

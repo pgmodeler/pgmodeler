@@ -24,10 +24,14 @@ SQLExecutionHelper::SQLExecutionHelper(void) : QObject(nullptr)
 	result_model = nullptr;
 }
 
-void SQLExecutionHelper::setParameters(Connection conn, const QString &cmd)
+void SQLExecutionHelper::setConnection(Connection conn)
+{
+	connection = conn;
+}
+
+void SQLExecutionHelper::setCommand(const QString &cmd)
 {
 	command = cmd;
-	connection = conn;
 }
 
 ResultSetModel *SQLExecutionHelper::getResultSetModel(void)
@@ -51,20 +55,27 @@ void SQLExecutionHelper::executeCommand(void)
 	{
 		ResultSet res;
 		Catalog catalog;
-		Connection aux_conn = connection;
+		Connection aux_conn = Connection(connection.getConnectionParams());
 
 		catalog.setConnection(aux_conn);
 		result_model = nullptr;
 		cancelled = false;
-		connection.connect();
-		connection.setNoticeEnabled(true);
+
+		if(!connection.isStablished())
+		{
+			connection.connect();
+			connection.setNoticeEnabled(true);
+
+			//The connection will break the execution if it keeps idle for one hour or more
+			connection.setSQLExecutionTimout(3600);
+		}
+
 		connection.executeDMLCommand(command, res);
 
 		if(!res.isEmpty())
 			result_model = new ResultSetModel(res, catalog);
 
 		notices = connection.getNotices();
-		connection.close();
 		emit s_executionFinished(res.getTupleCount());
 	}
 	catch(Exception &e)
