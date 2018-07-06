@@ -138,7 +138,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		connect(schema_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(updateCodePreview(void)));
 
 		configureTabOrder({ tag_sel, ordinary_rb, recursive_rb, with_no_data_chk, tabWidget });
-		setMinimumSize(600, 650);
+		setMinimumSize(660, 650);
 	}
 	catch(Exception &e)
 	{
