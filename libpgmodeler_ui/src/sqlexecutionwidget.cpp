@@ -77,6 +77,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(find_replace_wgt->hide_tb, SIGNAL(clicked(bool)), find_tb, SLOT(toggle()));
 
 	run_sql_tb->setToolTip(run_sql_tb->toolTip() + QString(" (%1)").arg(run_sql_tb->shortcut().toString()));
+	stop_tb->setToolTip(stop_tb->toolTip() + QString(" (%1)").arg(stop_tb->shortcut().toString()));
 	export_tb->setToolTip(export_tb->toolTip() + QString(" (%1)").arg(export_tb->shortcut().toString()));
 	file_tb->setToolTip(file_tb->toolTip() + QString(" (%1)").arg(file_tb->shortcut().toString()));
 	output_tb->setToolTip(output_tb->toolTip() + QString(" (%1)").arg(output_tb->shortcut().toString()));
@@ -183,6 +184,8 @@ bool SQLExecutionWidget::eventFilter(QObject *object, QEvent *event)
 void SQLExecutionWidget::setConnection(Connection conn)
 {
 	sql_exec_hlp.setConnection(conn);
+	sql_cmd_conn = conn;
+
 	db_name_lbl->setText(QString("<strong>%1</strong>@<em>%2:%3</em>")
 						 .arg(conn.getConnectionParam(Connection::PARAM_DB_NAME))
 						 .arg(conn.getConnectionParam(Connection::PARAM_SERVER_IP).isEmpty() ?
@@ -439,7 +442,7 @@ void SQLExecutionWidget::addToSQLHistory(const QString &cmd, unsigned rows, cons
 
 		if(!error.isEmpty())
 		{
-			fmt_cmd += QString("-- %1 --\n").arg(trUtf8("Query failed"));
+			fmt_cmd += QString("-- %1 --\n").arg(trUtf8("Command failed"));
 			fmt_cmd += QString("/*\n%1\n*/\n").arg(error);
 		}
 		else
