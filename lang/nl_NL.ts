@@ -270,7 +270,7 @@
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/aggregatewidget.ui" line="75"/>
-        <source>Funtion Inputs</source>
+        <source>Function Inputs</source>
         <translation>Functie Invoer</translation>
     </message>
     <message>
@@ -2262,7 +2262,7 @@ Deze optie afvinken zorgt ervoor dat de SQL wordt ingevoegd na het CREATE DATABA
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="812"/>
-        <source>&lt;strong&gt;WARNING:&lt;/strong&gt; Once commited its not possible to undo the changes! Proceed with saving?</source>
+        <source>&lt;strong&gt;WARNING:&lt;/strong&gt; Once committed its not possible to undo the changes! Proceed with saving?</source>
         <translation>&lt;strong&gt;OPGEPAST: &lt;/strong&gt; Eens toegepast is het niet langer mogelijk om aanpassingen ongedaan te maken! Bent u zeker dat u wilt opslaan?</translation>
     </message>
     <message>
@@ -3532,7 +3532,7 @@ Ref. column(s): %2</source>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="522"/>
-        <source>Importing process sucessfuly ended!</source>
+        <source>Importing process successfully ended!</source>
         <translation>Het import proces werd succesvol beëindigt!</translation>
     </message>
     <message>
@@ -5024,7 +5024,7 @@ Het bericht dat terugkwam van de DBMS is: `%1&apos;</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="223"/>
-        <source>Assignement of an invalid object name pattern to the relationship `%1&apos;!</source>
+        <source>Assignment of an invalid object name pattern to the relationship `%1&apos;!</source>
         <translation>Toewijzijng van een ongeldig objectnaamspatroon aan de relatie `%1&apos;!</translation>
     </message>
     <message>
@@ -6092,7 +6092,7 @@ Het bericht dat terugkwam van de DBMS is: `%1&apos;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="482"/>
-        <source>Toogle the model validation widgets</source>
+        <source>Toggle the model validation widgets</source>
         <translation>Toon of verberg het modelvalidatie-widget</translation>
     </message>
     <message>
@@ -7925,7 +7925,7 @@ Het bericht dat terugkwam van de DBMS is: `%1&apos;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexportform.cpp" line="316"/>
-        <source>Exporting process sucessfuly ended!</source>
+        <source>Exporting process successfully ended!</source>
         <translation>Het export proces werd succesvol beëindigt!</translation>
     </message>
 </context>
@@ -12347,7 +12347,7 @@ laatste geaccepteerde structuur. Alle beschikbare opties worden hieronder beschr
         <source>-- NOTE: the code below contains the SQL for the selected object
 -- as well for its dependencies and children (if applicable).
 -- 
--- This feature is only a convinience in order to permit you to test
+-- This feature is only a convenience in order to permit you to test
 -- the whole object&apos;s SQL definition at once.
 -- 
 -- When exporting or generating the SQL for the whole database model
@@ -12472,7 +12472,7 @@ laatste geaccepteerde structuur. Alle beschikbare opties worden hieronder beschr
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/tabledatawidget.ui" line="143"/>
-        <source>Some invalid or duplicated columns were detected. In order to solve this issue double-click the header of the highlighted ones in order to define the correct name in which the data belongs to or delete the entire column. Note that these columns are completely igored when generating the &lt;strong&gt;INSERT&lt;/strong&gt; commands.</source>
+        <source>Some invalid or duplicated columns were detected. In order to solve this issue double-click the header of the highlighted ones in order to define the correct name in which the data belongs to or delete the entire column. Note that these columns are completely ignored when generating the &lt;strong&gt;INSERT&lt;/strong&gt; commands.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

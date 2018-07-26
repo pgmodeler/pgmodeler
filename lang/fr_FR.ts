@@ -227,7 +227,7 @@
         <translation>Condition initiale:</translation>
     </message>
     <message>
-        <source>Funtion Inputs</source>
+        <source>Function Inputs</source>
         <translation>Entrées de la fonction</translation>
     </message>
     <message>
@@ -1834,7 +1834,7 @@ Sinon (décoché) pgModeler ajoutera ce code après la commande SQL CREATE DATAB
         <translation>[données binaires]</translation>
     </message>
     <message>
-        <source>&lt;strong&gt;WARNING:&lt;/strong&gt; Once commited its not possible to undo the changes! Proceed with saving?</source>
+        <source>&lt;strong&gt;WARNING:&lt;/strong&gt; Once committed its not possible to undo the changes! Proceed with saving?</source>
         <translation>&lt;strong&gt;ATTENTION:&lt;/strong&gt; Une fois validés (Commit), il ne sera plus possible d&apos;annuler les changements ! Sauvegarder les changements ?</translation>
     </message>
     <message>
@@ -2896,7 +2896,7 @@ Ref. column(s): %2</source>
         <translation>Processus d&apos;importation interrompu par l&apos;utilisateur !</translation>
     </message>
     <message>
-        <source>Importing process sucessfuly ended!</source>
+        <source>Importing process successfully ended!</source>
         <translation>Processus d&apos;importation terminé avec succès !</translation>
     </message>
     <message>
@@ -4106,7 +4106,7 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Assignement of an invalid object name pattern to the relationship `%1&apos;!</source>
+        <source>Assignment of an invalid object name pattern to the relationship `%1&apos;!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5450,7 +5450,7 @@ Voulez-vous vraiment le FERMER SANS le SAUVEGARDER?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Toogle the model validation widgets</source>
+        <source>Toggle the model validation widgets</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6425,7 +6425,7 @@ Voulez-vous vraiment le FERMER SANS le SAUVEGARDER?</translation>
         <translation>Processus d&apos;exportation annulé par l&apos;utilisateur!</translation>
     </message>
     <message>
-        <source>Exporting process sucessfuly ended!</source>
+        <source>Exporting process successfully ended!</source>
         <translation>Processus d&apos;exportation terminé avec succès!</translation>
     </message>
     <message>
@@ -9986,7 +9986,7 @@ accepted structure. All available options are described below.</source>
         <source>-- NOTE: the code below contains the SQL for the selected object
 -- as well for its dependencies and children (if applicable).
 -- 
--- This feature is only a convinience in order to permit you to test
+-- This feature is only a convenience in order to permit you to test
 -- the whole object&apos;s SQL definition at once.
 -- 
 -- When exporting or generating the SQL for the whole database model
@@ -10076,7 +10076,7 @@ accepted structure. All available options are described below.</source>
         <translation type="unfinished">Ins</translation>
     </message>
     <message>
-        <source>Some invalid or duplicated columns were detected. In order to solve this issue double-click the header of the highlighted ones in order to define the correct name in which the data belongs to or delete the entire column. Note that these columns are completely igored when generating the &lt;strong&gt;INSERT&lt;/strong&gt; commands.</source>
+        <source>Some invalid or duplicated columns were detected. In order to solve this issue double-click the header of the highlighted ones in order to define the correct name in which the data belongs to or delete the entire column. Note that these columns are completely ignored when generating the &lt;strong&gt;INSERT&lt;/strong&gt; commands.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

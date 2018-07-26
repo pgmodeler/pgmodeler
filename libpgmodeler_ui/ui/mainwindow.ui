@@ -479,7 +479,7 @@
                   </sizepolicy>
                  </property>
                  <property name="toolTip">
-                  <string>Toogle the model validation widgets</string>
+                  <string>Toggle the model validation widgets</string>
                  </property>
                  <property name="text">
                   <string>&amp;Validation</string>

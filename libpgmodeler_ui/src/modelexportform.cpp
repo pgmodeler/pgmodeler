@@ -324,7 +324,7 @@ void ModelExportForm::handleExportCanceled(void)
 void ModelExportForm::handleExportFinished(void)
 {
 	QPixmap ico=QPixmap(PgModelerUiNS::getIconPath("msgbox_info"));
-	QString msg=trUtf8("Exporting process sucessfuly ended!");
+	QString msg=trUtf8("Exporting process successfully ended!");
 
 	finishExport(msg);
 	ico_lbl->setPixmap(ico);

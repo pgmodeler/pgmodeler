@@ -270,7 +270,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
         <translation type="obsolete">最终条件：</translation>
     </message>
     <message>
-        <source>Funtion Inputs</source>
+        <source>Function Inputs</source>
         <translation>函数输入</translation>
     </message>
     <message>
@@ -1953,7 +1953,7 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;strong&gt;WARNING:&lt;/strong&gt; Once commited its not possible to undo the changes! Proceed with saving?</source>
+        <source>&lt;strong&gt;WARNING:&lt;/strong&gt; Once committed its not possible to undo the changes! Proceed with saving?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2941,7 +2941,7 @@ Ref. column(s): %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Importing process sucessfuly ended!</source>
+        <source>Importing process successfully ended!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4543,7 +4543,7 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Assignement of an invalid object name pattern to the relationship `%1&apos;!</source>
+        <source>Assignment of an invalid object name pattern to the relationship `%1&apos;!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5817,7 +5817,7 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Toogle the model validation widgets</source>
+        <source>Toggle the model validation widgets</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6950,7 +6950,7 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation type="obsolete">正在对数据库 &apos;%1&apos; 创建对象...</translation>
     </message>
     <message>
-        <source>Exporting process sucessfuly ended!</source>
+        <source>Exporting process successfully ended!</source>
         <translation>成功导出！</translation>
     </message>
     <message>
@@ -10764,7 +10764,7 @@ p, li { white-space: pre-wrap; }
         <source>-- NOTE: the code below contains the SQL for the selected object
 -- as well for its dependencies and children (if applicable).
 -- 
--- This feature is only a convinience in order to permit you to test
+-- This feature is only a convenience in order to permit you to test
 -- the whole object&apos;s SQL definition at once.
 -- 
 -- When exporting or generating the SQL for the whole database model
@@ -10846,7 +10846,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Ins</translation>
     </message>
     <message>
-        <source>Some invalid or duplicated columns were detected. In order to solve this issue double-click the header of the highlighted ones in order to define the correct name in which the data belongs to or delete the entire column. Note that these columns are completely igored when generating the &lt;strong&gt;INSERT&lt;/strong&gt; commands.</source>
+        <source>Some invalid or duplicated columns were detected. In order to solve this issue double-click the header of the highlighted ones in order to define the correct name in which the data belongs to or delete the entire column. Note that these columns are completely ignored when generating the &lt;strong&gt;INSERT&lt;/strong&gt; commands.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

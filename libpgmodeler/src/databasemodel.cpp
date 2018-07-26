@@ -6802,7 +6802,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 		{
 			for(auto &object : (*obj_list))
 			{
-				/* If the object is a FK relationship it's stored in a separeted list in order to have the
+				/* If the object is a FK relationship it's stored in a separated list in order to have the
 			 code generated at end of whole definition (after foreign keys definition) */
 				if(object->getObjectType()==BASE_RELATIONSHIP &&
 						dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)

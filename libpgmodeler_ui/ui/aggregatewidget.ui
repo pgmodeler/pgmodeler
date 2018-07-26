@@ -72,7 +72,7 @@
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>Funtion Inputs</string>
+       <string>Function Inputs</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab_2">

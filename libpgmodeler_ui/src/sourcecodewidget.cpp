@@ -162,7 +162,7 @@ void SourceCodeWidget::generateSourceCode(int)
 					aux_def=trUtf8("-- NOTE: the code below contains the SQL for the selected object\n\
 -- as well for its dependencies and children (if applicable).\n\
 -- \n\
--- This feature is only a convinience in order to permit you to test\n\
+-- This feature is only a convenience in order to permit you to test\n\
 -- the whole object's SQL definition at once.\n\
 -- \n\
 -- When exporting or generating the SQL for the whole database model\n\
