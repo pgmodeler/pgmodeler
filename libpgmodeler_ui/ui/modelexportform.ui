@@ -511,7 +511,7 @@
                      </sizepolicy>
                     </property>
                     <property name="statusTip">
-                     <string>This advanced option causes pgModeler to ignore extra errors by their numeric codes. These errors must be informed in the input below and separeted by space. For the complete list of error codes check the PostgreSQL docs, section &lt;strong&gt; Appendix A. PostgreSQL Error Codes&lt;/strong&gt;. &lt;strong&gt;WARNING:&lt;/strong&gt; use this option with extreme care since it can interfere in final export result.</string>
+                     <string>This advanced option causes pgModeler to ignore extra errors by their numeric codes. These errors must be informed in the input below and separated by space. For the complete list of error codes check the PostgreSQL docs, section &lt;strong&gt; Appendix A. PostgreSQL Error Codes&lt;/strong&gt;. &lt;strong&gt;WARNING:&lt;/strong&gt; use this option with extreme care since it can interfere in final export result.</string>
                     </property>
                     <property name="text">
                      <string>Ignore error codes</string>

@@ -469,7 +469,7 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 		int count, count2, i;
 		QPixmap group_icon=QPixmap(PgModelerUiNS::getIconPath(QString(BaseObject::getSchemaName(OBJ_SCHEMA)) + QString("_grp")));
 
-		//Removing the OBJ_TABLE and OBJ_VIEW types since they are handled separetedly
+		//Removing the OBJ_TABLE and OBJ_VIEW types since they are handled separatedly
 		types.erase(std::find(types.begin(), types.end(), OBJ_TABLE));
 		types.erase(std::find(types.begin(), types.end(), OBJ_VIEW));
 

@@ -2234,7 +2234,7 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 					 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
 	}
 
-	/* When in cut operation is necessary to store the selected objects in a separeted list
+	/* When in cut operation is necessary to store the selected objects in a separated list
 	in order to correclty cut (remove) the object on the source model */
 	if(ModelWidget::cut_operation)
 		cutted_objects=selected_objects;

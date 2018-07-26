@@ -282,7 +282,7 @@ Danúbio Viana Nogueira</source>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/aggregatewidget.ui" line="75"/>
-        <source>Funtion Inputs</source>
+        <source>Function Inputs</source>
         <translation>Entradas de Funciones</translation>
     </message>
     <message>
@@ -2301,7 +2301,7 @@ Desmarcando esto hará que el SQL que se adjunta al final del mandato CREATE DAT
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/datamanipulationform.cpp" line="1189"/>
-        <source>&lt;strong&gt;WARNING:&lt;/strong&gt; Once commited its not possible to undo the changes! Proceed with saving?</source>
+        <source>&lt;strong&gt;WARNING:&lt;/strong&gt; Once committed its not possible to undo the changes! Proceed with saving?</source>
         <translation>&lt;strong&gt;WARNING:&lt;/strong&gt; Una vez que su cometido no es posible deshacer los cambios! Procedo con salvar?</translation>
     </message>
     <message>
@@ -3678,7 +3678,7 @@ Ref. column(s): %2</source>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/databaseimportform.cpp" line="527"/>
-        <source>Importing process sucessfuly ended!</source>
+        <source>Importing process successfully ended!</source>
         <translation>Proceso de Importación terminado satisfactoriamente!</translation>
     </message>
     <message>
@@ -5208,7 +5208,7 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
     </message>
     <message>
         <location filename="../libutils/src/exception.cpp" line="222"/>
-        <source>Assignement of an invalid object name pattern to the relationship `%1&apos;!</source>
+        <source>Assignment of an invalid object name pattern to the relationship `%1&apos;!</source>
         <translation>Asignacion de un patrón de nombre de objeto no válido a la relación `%1&apos;!</translation>
     </message>
     <message>
@@ -5766,7 +5766,7 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1053"/>
-        <source>Souce code editor:</source>
+        <source>Source code editor:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5776,7 +5776,7 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1152"/>
-        <source>Clear the entire SQL comand history.</source>
+        <source>Clear the entire SQL command history.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5806,7 +5806,7 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="1296"/>
-        <source>Souce code editor args:</source>
+        <source>Source code editor args:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6271,7 +6271,7 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="482"/>
-        <source>Toogle the model validation widgets</source>
+        <source>Toggle the model validation widgets</source>
         <translation>Cambiar el modelo de validación del widgets</translation>
     </message>
     <message>
@@ -7586,7 +7586,7 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeldatabasediffform.ui" line="1322"/>
-        <source>This advanced option causes pgModeler to ignore extra errors by their numeric codes. These errors must be informed in the input below and separeted by space. For the complete list of error codes check the PostgreSQL docs, section &lt;strong&gt; Appendix A. PostgreSQL Error Codes&lt;/strong&gt;. &lt;strong&gt;WARNING:&lt;/strong&gt; use this option with extreme care since it can interfere in final export result.</source>
+        <source>This advanced option causes pgModeler to ignore extra errors by their numeric codes. These errors must be informed in the input below and separated by space. For the complete list of error codes check the PostgreSQL docs, section &lt;strong&gt; Appendix A. PostgreSQL Error Codes&lt;/strong&gt;. &lt;strong&gt;WARNING:&lt;/strong&gt; use this option with extreme care since it can interfere in final export result.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7822,7 +7822,7 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="514"/>
-        <source>This advanced option causes pgModeler to ignore extra errors by their numeric codes. These errors must be informed in the input below and separeted by space. For the complete list of error codes check the PostgreSQL docs, section &lt;strong&gt; Appendix A. PostgreSQL Error Codes&lt;/strong&gt;. &lt;strong&gt;WARNING:&lt;/strong&gt; use this option with extreme care since it can interfere in final export result.</source>
+        <source>This advanced option causes pgModeler to ignore extra errors by their numeric codes. These errors must be informed in the input below and separated by space. For the complete list of error codes check the PostgreSQL docs, section &lt;strong&gt; Appendix A. PostgreSQL Error Codes&lt;/strong&gt;. &lt;strong&gt;WARNING:&lt;/strong&gt; use this option with extreme care since it can interfere in final export result.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8001,7 +8001,7 @@ Mensage retornada por el SGBD: `%1&apos;</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelexportform.cpp" line="327"/>
-        <source>Exporting process sucessfuly ended!</source>
+        <source>Exporting process successfully ended!</source>
         <translation>Proceso de exportación terminó satisfactoriamente! </translation>
     </message>
 </context>
@@ -12451,7 +12451,7 @@ modos se describen a continuación.</translation>
         <source>-- NOTE: the code below contains the SQL for the selected object
 -- as well for its dependencies and children (if applicable).
 -- 
--- This feature is only a convinience in order to permit you to test
+-- This feature is only a convenience in order to permit you to test
 -- the whole object&apos;s SQL definition at once.
 -- 
 -- When exporting or generating the SQL for the whole database model
@@ -12610,7 +12610,7 @@ modos se describen a continuación.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/ui/tabledatawidget.ui" line="604"/>
-        <source>Some invalid or duplicated columns were detected. In order to solve this issue double-click the header of the highlighted ones in order to define the correct name in which the data belongs to or delete the entire column. Note that these columns are completely igored when generating the &lt;strong&gt;INSERT&lt;/strong&gt; commands.</source>
+        <source>Some invalid or duplicated columns were detected. In order to solve this issue double-click the header of the highlighted ones in order to define the correct name in which the data belongs to or delete the entire column. Note that these columns are completely ignored when generating the &lt;strong&gt;INSERT&lt;/strong&gt; commands.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

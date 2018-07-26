@@ -601,7 +601,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Some invalid or duplicated columns were detected. In order to solve this issue double-click the header of the highlighted ones in order to define the correct name in which the data belongs to or delete the entire column. Note that these columns are completely igored when generating the &lt;strong&gt;INSERT&lt;/strong&gt; commands.</string>
+         <string>Some invalid or duplicated columns were detected. In order to solve this issue double-click the header of the highlighted ones in order to define the correct name in which the data belongs to or delete the entire column. Note that these columns are completely ignored when generating the &lt;strong&gt;INSERT&lt;/strong&gt; commands.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>

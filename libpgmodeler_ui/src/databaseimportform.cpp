@@ -529,7 +529,7 @@ void DatabaseImportForm::handleImportFinished(Exception e)
 
 	model_wgt->getDatabaseModel()->setInvalidated(false);
 
-	finishImport(trUtf8("Importing process sucessfuly ended!"));
+	finishImport(trUtf8("Importing process successfully ended!"));
 	ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("msgbox_info")));
 
 	import_helper->closeConnection();
