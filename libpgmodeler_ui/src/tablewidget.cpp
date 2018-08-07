@@ -159,7 +159,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	configureFormLayout(table_grid, OBJ_TABLE);
 	configureTabOrder({ tag_sel });
 
-	setMinimumSize(600, 610);
+	setMinimumSize(660, 620);
 }
 
 template<class Class, class WidgetClass>

@@ -1527,9 +1527,6 @@
              <height>22</height>
             </size>
            </property>
-           <property name="shortcut">
-            <string>Del</string>
-           </property>
            <property name="popupMode">
             <enum>QToolButton::InstantPopup</enum>
            </property>
