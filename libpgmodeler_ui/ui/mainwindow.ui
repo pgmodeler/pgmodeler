@@ -678,7 +678,7 @@
      <x>0</x>
      <y>0</y>
      <width>1068</width>
-     <height>23</height>
+     <height>27</height>
     </rect>
    </property>
    <property name="autoFillBackground">
@@ -744,6 +744,7 @@
     <addaction name="action_inc_zoom"/>
     <addaction name="action_dec_zoom"/>
     <addaction name="separator"/>
+    <addaction name="action_compact_view"/>
     <addaction name="action_overview"/>
    </widget>
    <widget class="QMenu" name="plugins_menu">
