@@ -292,6 +292,9 @@
          <height>22</height>
         </size>
        </property>
+       <property name="shortcut">
+        <string>Ctrl+F</string>
+       </property>
        <property name="checkable">
         <bool>true</bool>
        </property>
