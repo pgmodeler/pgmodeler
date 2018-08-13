@@ -15,12 +15,15 @@
             %if {table} %then
                 [ AND tb.relkind='r' AND tb.relname=] '{table}'
             %end
+
+            %if {last-sys-oid} %or {not-ext-object} %then 
+                [ AND ] 
+            %end
             
-          [ AND ] 
         %else
          [ WHERE ]
         %end
-
+        
         %if {last-sys-oid} %then
             [ pl.oid ] {oid-filter-op} $sp {last-sys-oid}
         %end
