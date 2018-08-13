@@ -63,19 +63,19 @@ void SQLExecutionHelper::executeCommand(void)
 
 		if(!connection.isStablished())
 		{
-			connection.connect();
-			connection.setNoticeEnabled(true);
+            connection.setNoticeEnabled(true);
+            connection.connect();
 
 			//The connection will break the execution if it keeps idle for one hour or more
 			connection.setSQLExecutionTimout(3600);
 		}
 
 		connection.executeDMLCommand(command, res);
+        notices = connection.getNotices();
 
 		if(!res.isEmpty())
 			result_model = new ResultSetModel(res, catalog);
 
-		notices = connection.getNotices();
 		emit s_executionFinished(res.getTupleCount());
 	}
 	catch(Exception &e)
