@@ -201,7 +201,7 @@ namespace PgModelerUiNS {
 		switch(factor_id)
 		{
 			case SMALL_FONT_FACTOR:
-				factor=0.85f;
+				factor=0.80f;
 			break;
 			case MEDIUM_FONT_FACTOR:
 				factor=0.90f;
@@ -215,10 +215,10 @@ namespace PgModelerUiNS {
 			break;
 		}
 
-		configureWidgetFont(widget, factor);
+		__configureWidgetFont(widget, factor);
 	}
 
-	void configureWidgetFont(QWidget *widget, float factor)
+	void __configureWidgetFont(QWidget *widget, float factor)
 	{
 		if(!widget)
 			return;

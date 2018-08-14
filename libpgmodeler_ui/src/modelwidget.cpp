@@ -57,6 +57,7 @@
 #include "genericsqlwidget.h"
 #include "policywidget.h"
 #include "tabledatawidget.h"
+#include "generalconfigwidget.h"
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
@@ -1603,6 +1604,7 @@ int ModelWidget::openEditingForm(QWidget *widget, unsigned button_conf)
 {
 	BaseForm editing_form(this);
 	BaseObjectWidget *base_obj_wgt=qobject_cast<BaseObjectWidget *>(widget);
+    int res = 0;
 
 	if(base_obj_wgt)
 		editing_form.setMainWidget(base_obj_wgt);
@@ -1610,7 +1612,12 @@ int ModelWidget::openEditingForm(QWidget *widget, unsigned button_conf)
 		editing_form.setMainWidget(widget);
 
 	editing_form.setButtonConfiguration(button_conf);
-	return(editing_form.exec());
+
+	GeneralConfigWidget::restoreWidgetGeometry(&editing_form, widget->metaObject()->className());
+    res = editing_form.exec();
+	GeneralConfigWidget::saveWidgetGeometry(&editing_form, widget->metaObject()->className());
+
+    return(res);
 }
 
 template<class Class, class WidgetClass>

@@ -103,6 +103,8 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		void browseTable(const QString &fk_name, bool browse_ref_tab);
 
 		void resizeEvent(QResizeEvent *event);
+		void closeEvent(QCloseEvent *);
+		void showEvent(QShowEvent *);
 
 	public:
 		DataManipulationForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -113,6 +115,8 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		static void setHasCsvClipboard(bool value);
 
 	private slots:
+		void reject(void);
+
 		//! \brief List the tables based upon the current schema
 		void listTables(void);
 		

@@ -1,4 +1,4 @@
-/*
+﻿/*
 # PostgreSQL Database Modeler (pgModeler)
 #
 # Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
@@ -40,6 +40,8 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 
 		NumberedTextEditor *font_preview_txt;
 
+		static map<QString, QRect> widgets_geom;
+
 		static map<QString, attribs_map> config_params;
 
 		static const unsigned UNIT_MILIMETERS=0,
@@ -68,6 +70,9 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 		/*! \brief Returns a single value of a configuration param in the specified section id.
 		Section id can be <configuration>, <dock-widget>, <file[n]> or <recent[n]> */
 		static QString getConfigurationParam(const QString &section_id, const QString &param_name);
+
+		static void saveWidgetGeometry(QWidget *widget, const QString &custom_wgt_name = QString());
+		static void restoreWidgetGeometry(QWidget *widget, const QString &custom_wgt_name = QString());
 
 	public slots:
 		void applyConfiguration(void);

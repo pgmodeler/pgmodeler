@@ -24,6 +24,7 @@
 #include "baseform.h"
 #include "bulkdataeditwidget.h"
 #include "databaseexplorerwidget.h"
+#include "generalconfigwidget.h"
 
 const QColor DataManipulationForm::ROW_COLORS[3]={ QColor(QString("#C0FFC0")), QColor(QString("#FFFFC0")), QColor(QString("#FFC0C0"))  };
 const unsigned DataManipulationForm::NO_OPERATION=0;
@@ -101,7 +102,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 		paste_tb->setEnabled(false);
 	});
 
-	connect(csv_load_tb, SIGNAL(toggled(bool)), csv_load_parent, SLOT(setVisible(bool)));
+	connect(csv_load_tb, SIGNAL(toggled(bool)), csv_load_parent, SLOT(setVisible(bool)));	
 	connect(close_btn, SIGNAL(clicked()), this, SLOT(reject()));
 	connect(schema_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(listTables()));
 	connect(hide_views_chk, SIGNAL(toggled(bool)), this, SLOT(listTables()));
@@ -233,7 +234,13 @@ void DataManipulationForm::setAttributes(Connection conn, const QString curr_sch
 
 void DataManipulationForm::setHasCsvClipboard(bool value)
 {
-	has_csv_clipboard = value;
+  has_csv_clipboard = value;
+}
+
+void DataManipulationForm::reject(void)
+{
+  GeneralConfigWidget::saveWidgetGeometry(this);
+  QDialog::reject();
 }
 
 void DataManipulationForm::listTables(void)
@@ -1406,6 +1413,16 @@ void DataManipulationForm::resizeEvent(QResizeEvent *event)
 				btn->setToolButtonStyle(style);
 		}
 	}
+}
+
+void DataManipulationForm::closeEvent(QCloseEvent *)
+{
+  GeneralConfigWidget::saveWidgetGeometry(this);
+}
+
+void DataManipulationForm::showEvent(QShowEvent *)
+{
+  GeneralConfigWidget::restoreWidgetGeometry(this);
 }
 
 void DataManipulationForm::truncateTable(void)
