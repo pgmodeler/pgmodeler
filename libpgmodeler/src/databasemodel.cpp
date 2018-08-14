@@ -1045,7 +1045,6 @@ void DatabaseModel::addView(View *view, int obj_idx)
 	try
 	{
 		__addObject(view, obj_idx);
-
 		PgSQLType::addUserType(view->getName(true), view, this, UserTypeConfig::VIEW_TYPE);
 
 		updateViewRelationships(view);
@@ -1261,7 +1260,8 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 			rel=getRelationship(view,tab);
 			if(tab && !rel)
 			{
-				rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_DEP,view,tab,false,false);
+                rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_DEP, view, tab, false, false);
+                rel->setName(PgModelerNS::generateUniqueName(rel, base_relationships));
 				addRelationship(rel);
 			}
 		}
