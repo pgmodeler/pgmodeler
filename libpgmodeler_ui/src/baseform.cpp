@@ -136,6 +136,7 @@ void BaseForm::setMainWidget(BaseObjectWidget *widget)
 	resizeForm(widget);
 	setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
 
+	connect(cancel_btn, SIGNAL(clicked(bool)), widget, SLOT(cancelConfiguration()));
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(reject()));
 	connect(apply_ok_btn, SIGNAL(clicked(bool)), widget, SLOT(applyConfiguration()));
 	connect(widget, SIGNAL(s_closeRequested()), this, SLOT(accept()));
