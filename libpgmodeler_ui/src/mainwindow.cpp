@@ -1024,6 +1024,8 @@ void MainWindow::setCurrentModel(void)
 		current_model->setFocus(Qt::OtherFocusReason);
 		current_model->cancelObjectAddition();
 
+		general_tb->addSeparator();
+
 		general_tb->addAction(current_model->action_new_object);
 		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_new_object));
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
@@ -1073,7 +1075,8 @@ void MainWindow::setCurrentModel(void)
 		else
 			this->setWindowTitle(window_title + QString(" - ") + QDir::toNativeSeparators(current_model->getFilename()));
 
-		connect(current_model, SIGNAL(s_manipulationCanceled(void)),this, SLOT(updateDockWidgets(void)), Qt::UniqueConnection);
+		//connect(current_model, SIGNAL(s_manipulationCanceled(void)),this, SLOT(updateDockWidgets(void)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_manipulationCanceled(void)),oper_list_wgt, SLOT(updateOperationList(void)), Qt::UniqueConnection);
 		connect(current_model, SIGNAL(s_objectsMoved(void)),oper_list_wgt, SLOT(updateOperationList(void)), Qt::UniqueConnection);
 		connect(current_model, SIGNAL(s_objectModified(void)),this, SLOT(updateDockWidgets(void)), Qt::UniqueConnection);
 		connect(current_model, SIGNAL(s_objectCreated(void)),this, SLOT(updateDockWidgets(void)), Qt::UniqueConnection);

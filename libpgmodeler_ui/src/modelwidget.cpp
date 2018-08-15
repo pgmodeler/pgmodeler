@@ -1799,7 +1799,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			emit s_objectManipulated();
 		}
 		else
-			emit s_manipulationCanceled();
+		  emit s_manipulationCanceled();
 
 		this->setFocus();
 	}

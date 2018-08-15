@@ -444,10 +444,6 @@ void ModelObjectsWidget::updateObjectsList(void)
 
 	if(db_model)
 	{
-	   //Avoiding update the tree if the model is not modified and there's already items on it
-	   if(model_wgt && !model_wgt->isModified() && objectslist_tbw->rowCount() > 0)
-		  return;
-
 		vector<ObjectType> visible_types;
 
 		for(auto &tp : visible_objs_map)
@@ -706,10 +702,6 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 		objectstree_tw->clear();
 	else
 	{
-		//Avoiding update the list if the model is not modified and there's already items on it
-		if(!model_wgt->isModified() && objectstree_tw->topLevelItemCount() > 0)
-		  return;
-
 		QString str_aux;
 		BaseObject *object=nullptr;
 		QTreeWidgetItem *root=nullptr,*item1=nullptr, *item2=nullptr;
@@ -802,7 +794,7 @@ BaseObject *ModelObjectsWidget::getSelectedObject(void)
 
 void ModelObjectsWidget::enableObjectCreation(bool value)
 {
-	enable_obj_creation=value;
+  enable_obj_creation=value;
 }
 
 void ModelObjectsWidget::close(void)

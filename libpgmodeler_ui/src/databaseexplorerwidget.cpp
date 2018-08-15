@@ -951,9 +951,10 @@ void DatabaseExplorerWidget::listObjects(void)
 		root->addChild(curr_root);
 		objects_trw->addTopLevelItem(root);
 		root->setExpanded(true);
+		root->setSelected(true);
+		objects_trw->setCurrentItem(root);
 
 		QApplication::restoreOverrideCursor();
-
 		objects_trw->blockSignals(false);
 
 		import_helper.closeConnection();

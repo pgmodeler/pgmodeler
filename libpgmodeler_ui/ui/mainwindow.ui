@@ -503,6 +503,9 @@
                  <property name="toolButtonStyle">
                   <enum>Qt::ToolButtonTextBesideIcon</enum>
                  </property>
+                 <property name="autoRaise">
+                  <bool>false</bool>
+                 </property>
                 </widget>
                </item>
                <item>
@@ -537,6 +540,9 @@
                  </property>
                  <property name="toolButtonStyle">
                   <enum>Qt::ToolButtonTextBesideIcon</enum>
+                 </property>
+                 <property name="autoRaise">
+                  <bool>false</bool>
                  </property>
                 </widget>
                </item>
@@ -585,6 +591,9 @@
                  </property>
                  <property name="toolButtonStyle">
                   <enum>Qt::ToolButtonTextBesideIcon</enum>
+                 </property>
+                 <property name="autoRaise">
+                  <bool>false</bool>
                  </property>
                 </widget>
                </item>
@@ -636,6 +645,9 @@
                  </property>
                  <property name="toolButtonStyle">
                   <enum>Qt::ToolButtonTextBesideIcon</enum>
+                 </property>
+                 <property name="autoRaise">
+                  <bool>false</bool>
                  </property>
                 </widget>
                </item>
@@ -807,9 +819,11 @@
    <addaction name="action_welcome"/>
    <addaction name="action_design"/>
    <addaction name="action_manage"/>
+   <addaction name="separator"/>
    <addaction name="action_import"/>
    <addaction name="action_export"/>
    <addaction name="action_diff"/>
+   <addaction name="separator"/>
    <addaction name="action_configuration"/>
   </widget>
   <widget class="QToolBar" name="control_tb">

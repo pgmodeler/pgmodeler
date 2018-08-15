@@ -38,7 +38,7 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 		/*! \brief Indicates if the widget must be used as a simplified view (without the most interactions).
 		The purpose to use it as simplified view is to be serve as a object pick commonly used on the
 		object selectors. See ObjectSelectorWidget for details. */
-		bool	simplified_view,
+		bool simplified_view,
 
 		/*! \brief Indicates if the object tree state must be saved, this means, that the current item
 					expansion is memorized and can be restored at any moment via restoreTreeState() method */
