@@ -269,9 +269,13 @@ void ObjectFinderWidget::selectObject(void)
 			if(graph_obj)
 			{
 				BaseObjectView *obj=dynamic_cast<BaseObjectView *>(graph_obj->getReceiverObject());
-				model_wgt->scene->clearSelection();
-				model_wgt->viewport->centerOn(obj);
-				obj->setSelected(true);
+
+				if(obj)
+				{
+				  model_wgt->scene->clearSelection();
+				  model_wgt->viewport->centerOn(obj);
+				  obj->setSelected(true);
+				}
 			}
 		}
 		//Showing the popup menu for the selected object in the result set

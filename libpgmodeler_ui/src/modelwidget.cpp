@@ -3322,10 +3322,14 @@ void ModelWidget::configureFadeMenu(void)
 void ModelWidget::fadeObjects(const vector<BaseObject *> &objects, bool fade_in)
 {
 	BaseObjectView *obj_view = nullptr;
+	Schema *schema = nullptr;
 
 	for(auto obj : objects)
 	{
-		if(!BaseGraphicObject::isGraphicObject(obj->getObjectType()))
+	  schema = dynamic_cast<Schema *>(obj);
+
+	  if(!BaseGraphicObject::isGraphicObject(obj->getObjectType()) ||
+		 (schema && !schema->isRectVisible()))
 			continue;
 
 		obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
