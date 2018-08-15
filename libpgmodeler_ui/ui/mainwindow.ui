@@ -554,7 +554,7 @@
                 <number>3</number>
                </property>
                <item>
-                <widget class="QToolButton" name="operations_btn">
+                <widget class="QToolButton" name="objects_btn">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -562,14 +562,14 @@
                   </sizepolicy>
                  </property>
                  <property name="toolTip">
-                  <string>Toggle the operation history widget</string>
+                  <string>Toggle the model objects widget</string>
                  </property>
                  <property name="text">
-                  <string>&amp;Operations</string>
+                  <string>O&amp;bjects</string>
                  </property>
                  <property name="icon">
                   <iconset resource="../res/resources.qrc">
-                   <normaloff>:/icones/icones/funcao.png</normaloff>:/icones/icones/funcao.png</iconset>
+                   <normaloff>:/icones/icones/tablespace.png</normaloff>:/icones/icones/tablespace.png</iconset>
                  </property>
                  <property name="iconSize">
                   <size>
@@ -578,7 +578,7 @@
                   </size>
                  </property>
                  <property name="shortcut">
-                  <string>Alt+O</string>
+                  <string>Alt+B</string>
                  </property>
                  <property name="checkable">
                   <bool>true</bool>
@@ -605,7 +605,7 @@
                 </spacer>
                </item>
                <item>
-                <widget class="QToolButton" name="objects_btn">
+                <widget class="QToolButton" name="operations_btn">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -613,14 +613,14 @@
                   </sizepolicy>
                  </property>
                  <property name="toolTip">
-                  <string>Toggle the model objects widget</string>
+                  <string>Toggle the operation history widget</string>
                  </property>
                  <property name="text">
-                  <string>O&amp;bjects</string>
+                  <string>&amp;Operations</string>
                  </property>
                  <property name="icon">
                   <iconset resource="../res/resources.qrc">
-                   <normaloff>:/icones/icones/tablespace.png</normaloff>:/icones/icones/tablespace.png</iconset>
+                   <normaloff>:/icones/icones/funcao.png</normaloff>:/icones/icones/funcao.png</iconset>
                  </property>
                  <property name="iconSize">
                   <size>
@@ -629,7 +629,7 @@
                   </size>
                  </property>
                  <property name="shortcut">
-                  <string>Alt+B</string>
+                  <string>Alt+O</string>
                  </property>
                  <property name="checkable">
                   <bool>true</bool>

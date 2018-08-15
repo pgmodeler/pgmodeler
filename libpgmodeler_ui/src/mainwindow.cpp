@@ -748,6 +748,7 @@ void MainWindow::saveTemporaryModels(void)
 
 		if(count > 0)
 		{
+			QApplication::setOverrideCursor(Qt::WaitCursor);
 			canvas_info_parent->setVisible(false);
 			bg_saving_wgt->setVisible(true);
 			bg_saving_pb->setValue(0);
@@ -767,14 +768,15 @@ void MainWindow::saveTemporaryModels(void)
 			bg_saving_pb->setValue(100);
 			bg_saving_wgt->setVisible(false);
 			canvas_info_parent->setVisible(true);
+			QApplication::restoreOverrideCursor();
 		}
 
-		tmpmodel_thread.quit();
+		tmpmodel_thread.quit();		
 	}
 	catch(Exception &e)
 	{
+		QApplication::restoreOverrideCursor();
 		Messagebox msg_box;
-
 		tmpmodel_thread.quit();
 		msg_box.show(e);
 	}
@@ -1071,7 +1073,7 @@ void MainWindow::setCurrentModel(void)
 		else
 			this->setWindowTitle(window_title + QString(" - ") + QDir::toNativeSeparators(current_model->getFilename()));
 
-        connect(current_model, SIGNAL(s_manipulationCanceled(void)),this, SLOT(updateDockWidgets(void)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_manipulationCanceled(void)),this, SLOT(updateDockWidgets(void)), Qt::UniqueConnection);
 		connect(current_model, SIGNAL(s_objectsMoved(void)),oper_list_wgt, SLOT(updateOperationList(void)), Qt::UniqueConnection);
 		connect(current_model, SIGNAL(s_objectModified(void)),this, SLOT(updateDockWidgets(void)), Qt::UniqueConnection);
 		connect(current_model, SIGNAL(s_objectCreated(void)),this, SLOT(updateDockWidgets(void)), Qt::UniqueConnection);
@@ -1646,7 +1648,6 @@ void MainWindow::updateToolsState(bool model_closed)
 	action_save_model->setEnabled(enabled);
 	action_save_all->setEnabled(enabled);
 	action_export->setEnabled(enabled);
-	//action_diff->setEnabled(enabled);
 	action_close_model->setEnabled(enabled);
 	action_show_grid->setEnabled(enabled);
 	action_show_delimiters->setEnabled(enabled);
@@ -1683,7 +1684,7 @@ void MainWindow::updateDockWidgets(void)
 	model_valid_wgt->setModel(current_model);
 
 	if(current_model && obj_finder_wgt->result_tbw->rowCount() > 0)
-		obj_finder_wgt->findObjects();
+	  obj_finder_wgt->findObjects();
 }
 
 void MainWindow::executePlugin(void)

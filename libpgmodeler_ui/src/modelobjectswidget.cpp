@@ -129,7 +129,9 @@ void ModelObjectsWidget::editObject(void)
 			Permission *perm=dynamic_cast<Permission *>(obj);
 
 			if(perm)
-				model_wgt->showObjectForm(OBJ_PERMISSION,perm->getObject());
+			  model_wgt->showObjectForm(OBJ_PERMISSION,perm->getObject());
+			else
+			  model_wgt->editObject();
 		}
 		else
 			model_wgt->editObject();
@@ -429,11 +431,11 @@ void ModelObjectsWidget::filterObjects(void)
 
 void ModelObjectsWidget::updateObjectsView(void)
 {
-	updateDatabaseTree();
-	updateObjectsList();
+  updateDatabaseTree();
+  updateObjectsList();
 
-	if(!filter_edt->text().isEmpty())
-		filterObjects();
+  if(!filter_edt->text().isEmpty())
+	filterObjects();
 }
 
 void ModelObjectsWidget::updateObjectsList(void)
@@ -442,6 +444,10 @@ void ModelObjectsWidget::updateObjectsList(void)
 
 	if(db_model)
 	{
+	   //Avoiding update the tree if the model is not modified and there's already items on it
+	   if(model_wgt && !model_wgt->isModified() && objectslist_tbw->rowCount() > 0)
+		  return;
+
 		vector<ObjectType> visible_types;
 
 		for(auto &tp : visible_objs_map)
@@ -700,6 +706,10 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 		objectstree_tw->clear();
 	else
 	{
+		//Avoiding update the list if the model is not modified and there's already items on it
+		if(!model_wgt->isModified() && objectstree_tw->topLevelItemCount() > 0)
+		  return;
+
 		QString str_aux;
 		BaseObject *object=nullptr;
 		QTreeWidgetItem *root=nullptr,*item1=nullptr, *item2=nullptr;
@@ -716,6 +726,7 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 			if(save_tree_state)
 				saveTreeState(tree_state);
 
+			objectstree_tw->setUpdatesEnabled(false);
 			objectstree_tw->clear();
 
 			if(visible_objs_map[OBJ_DATABASE])
@@ -768,6 +779,7 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 					}
 				}
 
+				objectstree_tw->setUpdatesEnabled(true);
 				objectstree_tw->expandItem(root);
 
 				if(save_tree_state)
@@ -952,6 +964,8 @@ void ModelObjectsWidget::restoreTreeState(vector<BaseObject *> &tree_items)
 {
 	QTreeWidgetItem *item=nullptr, *parent_item=nullptr;
 
+	objectslist_tbw->setUpdatesEnabled(false);
+
 	while(!tree_items.empty())
 	{
 		item=getTreeItem(tree_items.back());
@@ -969,6 +983,8 @@ void ModelObjectsWidget::restoreTreeState(vector<BaseObject *> &tree_items)
 
 		tree_items.pop_back();
 	}
+
+	objectslist_tbw->setUpdatesEnabled(true);
 }
 
 QTreeWidgetItem *ModelObjectsWidget::getTreeItem(BaseObject *object)
