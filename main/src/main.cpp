@@ -139,7 +139,7 @@ int main(int argc, char **argv)
 			fmain.loadModels(params);
 #endif
 
-		fmain.showMaximized();
+		fmain.show();
 		splash.finish(&fmain);
 		res=app.exec();
 		app.closeAllWindows();

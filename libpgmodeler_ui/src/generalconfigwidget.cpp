@@ -27,7 +27,7 @@
 #include "sqlexecutionwidget.h"
 
 map<QString, attribs_map> GeneralConfigWidget::config_params;
-map<QString, QRect> GeneralConfigWidget::widgets_geom;
+map<QString, GeneralConfigWidget::WidgetState> GeneralConfigWidget::widgets_geom;
 
 GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
@@ -89,6 +89,8 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 
 	connect(font_preview_txt, SIGNAL(cursorPositionChanged()), this, SLOT(updateFontPreview()));
 	connect(select_editor_btn, SIGNAL(clicked(bool)), this, SLOT(selectSourceEditor()));
+	connect(save_restore_geometry_chk, SIGNAL(toggled(bool)), reset_sizes_tb, SLOT(setEnabled(bool)));
+	connect(reset_sizes_tb, SIGNAL(clicked(bool)), this, SLOT(resetDialogsSizes()));
 
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]=QString();
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]=QString();
@@ -331,6 +333,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 		source_editor_args_edt->setText(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SOURCE_EDITOR_ARGS]);
 
 		save_restore_geometry_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_RESTORE_GEOMETRY]==ParsersAttributes::_TRUE_);
+		reset_sizes_tb->setEnabled(save_restore_geometry_chk->isChecked());
 
 		int ui_idx = ui_language_cmb->findData(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::UI_LANGUAGE]);
 		ui_language_cmb->setCurrentIndex(ui_idx >= 0 ? ui_idx : 0);
@@ -341,13 +344,14 @@ void GeneralConfigWidget::loadConfiguration(void)
 		widgets_geom.clear();
 		for(auto itr : config_params)
 		{
-		  if(itr.second.count(ParsersAttributes::WIDTH))
+		  if(itr.second.count(ParsersAttributes::X_POS))
 		  {
 			x = itr.second[ParsersAttributes::X_POS].toInt();
 			y = itr.second[ParsersAttributes::Y_POS].toInt();
 			w = itr.second[ParsersAttributes::WIDTH].toInt();
 			h = itr.second[ParsersAttributes::HEIGHT].toInt();
-			widgets_geom[itr.first] = QRect(QPoint(x,y), QSize(w, h));
+			widgets_geom[itr.first].geometry = QRect(QPoint(x,y), QSize(w, h));
+			widgets_geom[itr.first].maximized = itr.second[ParsersAttributes::MAXIMIZED] == ParsersAttributes::_TRUE_;
 		  }
 		}
 
@@ -406,20 +410,36 @@ void GeneralConfigWidget::saveWidgetGeometry(QWidget *widget, const QString &cus
 	return;
 
   QString dlg_name = custom_wgt_name.isEmpty() ? widget->metaObject()->className() : custom_wgt_name;
-  widgets_geom[dlg_name.toLower()] = widget->geometry();
+
+  widgets_geom[dlg_name.toLower()].geometry = widget->geometry();
+  widgets_geom[dlg_name.toLower()].maximized = widget->isMaximized();
 }
 
-void GeneralConfigWidget::restoreWidgetGeometry(QWidget *widget, const QString &custom_wgt_name)
+bool GeneralConfigWidget::restoreWidgetGeometry(QWidget *widget, const QString &custom_wgt_name)
 {
   if(!widget ||
 	 config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_RESTORE_GEOMETRY] != ParsersAttributes::_TRUE_)
-	return;
+	return(false);
 
   QString dlg_name = custom_wgt_name.isEmpty() ? widget->metaObject()->className() : custom_wgt_name;
   dlg_name = dlg_name.toLower();
 
-  if(widgets_geom.count(dlg_name) && widgets_geom[dlg_name].width() > 0 && widgets_geom[dlg_name].height() > 0)
-	widget->setGeometry(widgets_geom[dlg_name]);
+  if(widgets_geom.count(dlg_name) &&
+	 (widgets_geom[dlg_name].maximized ||
+	  (widgets_geom[dlg_name].geometry.width() > 0 && widgets_geom[dlg_name].geometry.height() > 0)))
+  {
+	if(widgets_geom[dlg_name].maximized)
+	{
+	  widget->move(widgets_geom[dlg_name].geometry.topLeft());
+	  widget->setWindowState(Qt::WindowMaximized);
+	}
+	else
+	  widget->setGeometry(widgets_geom[dlg_name].geometry);
+
+	return(true);
+  }
+
+  return(false);
 }
 
 void GeneralConfigWidget::saveConfiguration(void)
@@ -548,10 +568,11 @@ void GeneralConfigWidget::saveConfiguration(void)
 		  for(auto &itr : widgets_geom)
 		  {
 			attribs[ParsersAttributes::ID] = itr.first;
-			attribs[ParsersAttributes::X_POS] = QString::number(itr.second.left());
-			attribs[ParsersAttributes::Y_POS] = QString::number(itr.second.top());
-			attribs[ParsersAttributes::WIDTH] = QString::number(itr.second.width());
-			attribs[ParsersAttributes::HEIGHT] = QString::number(itr.second.height());
+			attribs[ParsersAttributes::X_POS] = QString::number(itr.second.geometry.left());
+			attribs[ParsersAttributes::Y_POS] = QString::number(itr.second.geometry.top());
+			attribs[ParsersAttributes::WIDTH] = QString::number(itr.second.geometry.width());
+			attribs[ParsersAttributes::HEIGHT] = QString::number(itr.second.geometry.height());
+			attribs[ParsersAttributes::MAXIMIZED] = itr.second.maximized ? ParsersAttributes::_TRUE_ : QString();
 
 			schparser.ignoreUnkownAttributes(true);
 			config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::WIDGETS_GEOMETRY]+=
@@ -708,4 +729,14 @@ void GeneralConfigWidget::selectSourceEditor(void)
 
 	if(sel_editor_dlg.result()==QDialog::Accepted)
 		source_editor_edt->setText(sel_editor_dlg.selectedFiles().at(0));
+}
+
+void GeneralConfigWidget::resetDialogsSizes(void)
+{
+	Messagebox msg_box;
+	msg_box.show(trUtf8("This action will reset all dialogs to their default size and positions on the screen! Do you really want to proceed?"),
+						Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+
+	if(msg_box.result() == QDialog::Accepted)
+	  widgets_geom.clear();
 }

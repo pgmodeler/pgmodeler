@@ -25,8 +25,13 @@ $tb [<widget]
             [ id="] {id} ["]
             [ x="] {x} ["]
             [ y="] {y} ["]
-            [ width="] {width} ["]
-            [ height="] {height} ["]
+            
+            %if {maximized} %then
+                [ maximized="true"]
+            %else
+                [ width="] {width} ["]
+                [ height="] {height} ["]
+            %end
         %end
     %end
   %end

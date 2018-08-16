@@ -426,6 +426,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	action_update_found->setVisible(false);
 	QTimer::singleShot(1000, this, SLOT(restoreTemporaryModels()));
 
+	//If there's no previuos geometry registered for the mainwindow display it maximized
+	if(!GeneralConfigWidget::restoreWidgetGeometry(this))
+	  this->setWindowState(Qt::WindowMaximized);
+
 #ifdef NO_UPDATE_CHECK
 #warning "NO UPDATE CHECK: Update checking is disabled."
 #else
@@ -593,6 +597,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	{
 		GeneralConfigWidget *conf_wgt=nullptr;
 		map<QString, attribs_map > confs;
+
+		GeneralConfigWidget::saveWidgetGeometry(this);
 
 		//Stops the saving timers as well the temp. model saving thread before close pgmodeler
 		model_save_timer.stop();

@@ -72,6 +72,7 @@
 <!ATTLIST widget y CDATA #IMPLIED>
 <!ATTLIST widget width CDATA #IMPLIED>
 <!ATTLIST widget height CDATA #IMPLIED>
+<!ATTLIST widget maximized (false|true) "false">
 
 
 

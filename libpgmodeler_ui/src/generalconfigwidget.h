@@ -36,11 +36,21 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 	private:
 		Q_OBJECT
 
+		/* This simple struct is used to store the widgets geometry and maximized state
+		 * in order to save this info to configuration file being possible to restore
+		 * it when reloading the application */
+		struct WidgetState
+		{
+		  QRect geometry;
+		  bool maximized;
+		  WidgetState() { maximized = false; }
+		};
+
 		QWidgetList child_wgts;
 
 		NumberedTextEditor *font_preview_txt;
 
-		static map<QString, QRect> widgets_geom;
+		static map<QString, WidgetState> widgets_geom;
 
 		static map<QString, attribs_map> config_params;
 
@@ -72,7 +82,7 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 		static QString getConfigurationParam(const QString &section_id, const QString &param_name);
 
 		static void saveWidgetGeometry(QWidget *widget, const QString &custom_wgt_name = QString());
-		static void restoreWidgetGeometry(QWidget *widget, const QString &custom_wgt_name = QString());
+		static bool restoreWidgetGeometry(QWidget *widget, const QString &custom_wgt_name = QString());
 
 	public slots:
 		void applyConfiguration(void);
@@ -83,6 +93,7 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 	private slots:
 		void convertMarginUnity(void);
 		void updateFontPreview(void);
+		void resetDialogsSizes(void);
 };
 
 #endif
