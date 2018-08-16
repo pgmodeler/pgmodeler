@@ -823,7 +823,6 @@
    <addaction name="action_import"/>
    <addaction name="action_export"/>
    <addaction name="action_diff"/>
-   <addaction name="separator"/>
    <addaction name="action_configuration"/>
   </widget>
   <widget class="QToolBar" name="control_tb">
