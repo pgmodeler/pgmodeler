@@ -42,10 +42,12 @@ namespace PgModelerUiNS {
 		else
 		{
 			QLabel *label=new QLabel;
+			label->setUpdatesEnabled(false);
 			label->setTextFormat(Qt::AutoText);
 			label->setText(text);
 			label->setWordWrap(true);
 			label->setTextInteractionFlags(Qt::TextSelectableByMouse);
+			label->setUpdatesEnabled(true);
 			label->setMinimumHeight(output_trw->iconSize().height() * 1.5);
 			label->setMaximumHeight(label->heightForWidth(label->width()));
 			output_trw->setItemWidget(item, 0, label);
@@ -65,6 +67,7 @@ namespace PgModelerUiNS {
 			throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		QListWidgetItem *item=new QListWidgetItem;
+
 		item->setIcon(ico);
 		output_lst->addItem(item);
 
@@ -73,6 +76,14 @@ namespace PgModelerUiNS {
 		else
 		{
 			QLabel *label=new QLabel(text);
+			int txt_height = 0;
+
+			txt_height = output_lst->fontMetrics().height() * text.count(QString("<br/>"));
+
+			if(txt_height == 0)
+				txt_height = output_lst->fontMetrics().height();
+
+			item->setSizeHint(QSize(output_lst->width(), txt_height));
 			output_lst->setItemWidget(item, label);
 		}
 	}

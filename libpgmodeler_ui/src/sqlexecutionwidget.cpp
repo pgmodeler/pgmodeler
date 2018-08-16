@@ -406,8 +406,8 @@ void SQLExecutionWidget::finishExecution(int rows_affected)
 		for(QString notice : sql_exec_hlp.getNotices())
 		{
 			PgModelerUiNS::createOutputListItem(msgoutput_lst,
-																					PgModelerUiNS::formatMessage(QString("[%1]: %2").arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))).arg(notice)),
-																					QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")));
+																					QString("[%1]: %2").arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))).arg(notice.trimmed()),
+																					QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")), false);
 		}
 
 		PgModelerUiNS::createOutputListItem(msgoutput_lst,
