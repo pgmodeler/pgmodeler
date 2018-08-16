@@ -97,7 +97,6 @@ void ConfigurationForm::applyConfiguration(void)
 
 	general_conf->applyConfiguration();
 	relationships_conf->applyConfiguration();
-
 	QDialog::accept();
 }
 

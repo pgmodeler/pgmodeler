@@ -294,6 +294,9 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	if(!model || (uses_op_list && !op_list))
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	if(op_list)
+	  operation_count = op_list->getCurrentSize();
+
 	this->model=model;
 
 	if(parent_obj)
@@ -918,8 +921,8 @@ void BaseObjectWidget::cancelConfiguration(void)
 
 	//If the object is not a new one, restore its previous state
 	if(op_list &&
-			((!new_object && obj_type!=OBJ_DATABASE && obj_type!=OBJ_PERMISSION) ||
-			 (new_object && (obj_type==OBJ_TABLE || obj_type==OBJ_VIEW || obj_type==OBJ_RELATIONSHIP))))
+	  ((!new_object && obj_type!=OBJ_DATABASE && obj_type!=OBJ_PERMISSION && operation_count != op_list->getCurrentSize()) ||
+	   (new_object && (obj_type==OBJ_TABLE || obj_type==OBJ_VIEW || obj_type==OBJ_RELATIONSHIP))))
 	{
 		try
 		{

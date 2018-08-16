@@ -503,6 +503,9 @@
                  <property name="toolButtonStyle">
                   <enum>Qt::ToolButtonTextBesideIcon</enum>
                  </property>
+                 <property name="autoRaise">
+                  <bool>false</bool>
+                 </property>
                 </widget>
                </item>
                <item>
@@ -538,6 +541,9 @@
                  <property name="toolButtonStyle">
                   <enum>Qt::ToolButtonTextBesideIcon</enum>
                  </property>
+                 <property name="autoRaise">
+                  <bool>false</bool>
+                 </property>
                 </widget>
                </item>
               </layout>
@@ -553,6 +559,60 @@
                <property name="bottomMargin">
                 <number>3</number>
                </property>
+               <item>
+                <widget class="QToolButton" name="objects_btn">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string>Toggle the model objects widget</string>
+                 </property>
+                 <property name="text">
+                  <string>O&amp;bjects</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../res/resources.qrc">
+                   <normaloff>:/icones/icones/tablespace.png</normaloff>:/icones/icones/tablespace.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="shortcut">
+                  <string>Alt+B</string>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="toolButtonStyle">
+                  <enum>Qt::ToolButtonTextBesideIcon</enum>
+                 </property>
+                 <property name="autoRaise">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_3">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeType">
+                  <enum>QSizePolicy::Fixed</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>6</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
                <item>
                 <widget class="QToolButton" name="operations_btn">
                  <property name="sizePolicy">
@@ -586,56 +646,8 @@
                  <property name="toolButtonStyle">
                   <enum>Qt::ToolButtonTextBesideIcon</enum>
                  </property>
-                </widget>
-               </item>
-               <item>
-                <spacer name="horizontalSpacer_3">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeType">
-                  <enum>QSizePolicy::Fixed</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>6</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item>
-                <widget class="QToolButton" name="objects_btn">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="toolTip">
-                  <string>Toggle the model objects widget</string>
-                 </property>
-                 <property name="text">
-                  <string>O&amp;bjects</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="../res/resources.qrc">
-                   <normaloff>:/icones/icones/tablespace.png</normaloff>:/icones/icones/tablespace.png</iconset>
-                 </property>
-                 <property name="iconSize">
-                  <size>
-                   <width>22</width>
-                   <height>22</height>
-                  </size>
-                 </property>
-                 <property name="shortcut">
-                  <string>Alt+B</string>
-                 </property>
-                 <property name="checkable">
-                  <bool>true</bool>
-                 </property>
-                 <property name="toolButtonStyle">
-                  <enum>Qt::ToolButtonTextBesideIcon</enum>
+                 <property name="autoRaise">
+                  <bool>false</bool>
                  </property>
                 </widget>
                </item>
@@ -768,6 +780,12 @@
      <height>0</height>
     </size>
    </property>
+   <property name="font">
+    <font>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
    <property name="windowTitle">
     <string>General</string>
    </property>
@@ -801,6 +819,7 @@
    <addaction name="action_welcome"/>
    <addaction name="action_design"/>
    <addaction name="action_manage"/>
+   <addaction name="separator"/>
    <addaction name="action_import"/>
    <addaction name="action_export"/>
    <addaction name="action_diff"/>

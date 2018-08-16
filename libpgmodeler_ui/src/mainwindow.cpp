@@ -212,9 +212,15 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(model_nav_wgt, SIGNAL(s_currentModelChanged(int)), this, SLOT(setCurrentModel()));
 
 	connect(action_print, SIGNAL(triggered(bool)), this, SLOT(printModel(void)));
-	connect(action_configuration, SIGNAL(triggered(bool)), configuration_form, SLOT(show()));
+
+	connect(action_configuration, &QAction::triggered, [&](){
+	  GeneralConfigWidget::restoreWidgetGeometry(configuration_form);
+	  configuration_form->exec();
+	  GeneralConfigWidget::saveWidgetGeometry(configuration_form);
+	});
 
 	connect(oper_list_wgt, SIGNAL(s_operationExecuted(void)), overview_wgt, SLOT(updateOverview(void)));
+
 	connect(configuration_form, SIGNAL(finished(int)), this, SLOT(applyConfigurations(void)));
 	connect(configuration_form, SIGNAL(rejected()), this, SLOT(updateConnections()));
 	connect(&model_save_timer, SIGNAL(timeout(void)), this, SLOT(saveAllModels(void)));
@@ -343,6 +349,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	QList<QAction *> actions=general_tb->actions();
 	QToolButton *btn=nullptr;
+	QFont font;
 
 	for(auto &act : actions)
 	{
@@ -350,7 +357,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 		if(btn)
 		{
-			PgModelerUiNS::configureWidgetFont(btn, PgModelerUiNS::SMALL_FONT_FACTOR);
+			PgModelerUiNS::configureWidgetFont(btn, static_cast<unsigned>(PgModelerUiNS::MEDIUM_FONT_FACTOR));
+			font = btn->font();
+			font.setBold(true);
+			btn->setFont(font);
 			btn->setGraphicsEffect(createDropShadow(btn));
 		}
 	}
@@ -554,7 +564,10 @@ void MainWindow::fixModel(const QString &filename)
 	}
 
 	PgModelerUiNS::resizeDialog(&model_fix_form);
+	GeneralConfigWidget::restoreWidgetGeometry(&model_fix_form);
 	model_fix_form.exec();
+	GeneralConfigWidget::saveWidgetGeometry(&model_fix_form);
+
 	disconnect(&model_fix_form, nullptr, this, nullptr);
 }
 
@@ -735,6 +748,7 @@ void MainWindow::saveTemporaryModels(void)
 
 		if(count > 0)
 		{
+			QApplication::setOverrideCursor(Qt::WaitCursor);
 			canvas_info_parent->setVisible(false);
 			bg_saving_wgt->setVisible(true);
 			bg_saving_pb->setValue(0);
@@ -754,14 +768,15 @@ void MainWindow::saveTemporaryModels(void)
 			bg_saving_pb->setValue(100);
 			bg_saving_wgt->setVisible(false);
 			canvas_info_parent->setVisible(true);
+			QApplication::restoreOverrideCursor();
 		}
 
-		tmpmodel_thread.quit();
+		tmpmodel_thread.quit();		
 	}
 	catch(Exception &e)
 	{
+		QApplication::restoreOverrideCursor();
 		Messagebox msg_box;
-
 		tmpmodel_thread.quit();
 		msg_box.show(e);
 	}
@@ -1004,9 +1019,12 @@ void MainWindow::setCurrentModel(void)
 	{
 		QToolButton *tool_btn=nullptr;
 		QList<QToolButton *> btns;
+		QFont font;
 
 		current_model->setFocus(Qt::OtherFocusReason);
 		current_model->cancelObjectAddition();
+
+		general_tb->addSeparator();
 
 		general_tb->addAction(current_model->action_new_object);
 		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_new_object));
@@ -1026,25 +1044,6 @@ void MainWindow::setCurrentModel(void)
 		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_source_code));
 		btns.push_back(tool_btn);
 
-		/* general_tb->addAction(current_model->action_select_all);
-		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_select_all));
-		tool_btn->setPopupMode(QToolButton::InstantPopup);
-		btns.push_back(tool_btn);
-
-		general_tb->addAction(current_model->action_fade);
-		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_fade));
-		tool_btn->setPopupMode(QToolButton::InstantPopup);
-		btns.push_back(tool_btn);
-
-		general_tb->addAction(current_model->action_extended_attribs);
-		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_extended_attribs));
-		tool_btn->setPopupMode(QToolButton::InstantPopup);
-		btns.push_back(tool_btn);
-
-		general_tb->addAction(current_model->action_edit_creation_order);
-		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_edit_creation_order));
-		btns.push_back(tool_btn); */
-
 		more_actions_menu.clear();
 		more_actions_menu.addAction(current_model->action_select_all);
 		more_actions_menu.addAction(current_model->action_fade);
@@ -1057,7 +1056,10 @@ void MainWindow::setCurrentModel(void)
 
 		for(QToolButton *btn : btns)
 		{
-			PgModelerUiNS::configureWidgetFont(btn, PgModelerUiNS::SMALL_FONT_FACTOR);
+			PgModelerUiNS::configureWidgetFont(btn, static_cast<unsigned>(PgModelerUiNS::MEDIUM_FONT_FACTOR));
+			font = btn->font();
+			font.setBold(true);
+			btn->setFont(font);
 			btn->setGraphicsEffect(createDropShadow(tool_btn));
 		}
 
@@ -1073,7 +1075,8 @@ void MainWindow::setCurrentModel(void)
 		else
 			this->setWindowTitle(window_title + QString(" - ") + QDir::toNativeSeparators(current_model->getFilename()));
 
-		connect(current_model, SIGNAL(s_manipulationCanceled(void)),this, SLOT(updateDockWidgets(void)), Qt::UniqueConnection);
+		//connect(current_model, SIGNAL(s_manipulationCanceled(void)),this, SLOT(updateDockWidgets(void)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_manipulationCanceled(void)),oper_list_wgt, SLOT(updateOperationList(void)), Qt::UniqueConnection);
 		connect(current_model, SIGNAL(s_objectsMoved(void)),oper_list_wgt, SLOT(updateOperationList(void)), Qt::UniqueConnection);
 		connect(current_model, SIGNAL(s_objectModified(void)),this, SLOT(updateDockWidgets(void)), Qt::UniqueConnection);
 		connect(current_model, SIGNAL(s_objectCreated(void)),this, SLOT(updateDockWidgets(void)), Qt::UniqueConnection);
@@ -1263,7 +1266,7 @@ void MainWindow::updateModelTabName(void)
 
 void MainWindow::applyConfigurations(void)
 {
-	if(!sender() ||
+  if(!sender() ||
 			(sender()==configuration_form && configuration_form->result()==QDialog::Accepted))
 	{
 		GeneralConfigWidget *conf_wgt=nullptr;
@@ -1435,8 +1438,12 @@ void MainWindow::exportModel(void)
 	{
 		stopTimers(true);
 		connect(&model_export_form, &ModelExportForm::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
+
 		PgModelerUiNS::resizeDialog(&model_export_form);
+		GeneralConfigWidget::restoreWidgetGeometry(&model_export_form);
 		model_export_form.exec(current_model);
+		GeneralConfigWidget::saveWidgetGeometry(&model_export_form);
+
 		stopTimers(false);
 	}
 }
@@ -1450,7 +1457,9 @@ void MainWindow::importDatabase(void)
 	connect(&db_import_form, &DatabaseImportForm::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
 	db_import_form.setModelWidget(current_model);
 	PgModelerUiNS::resizeDialog(&db_import_form);
+	GeneralConfigWidget::restoreWidgetGeometry(&db_import_form);
 	db_import_form.exec();
+	GeneralConfigWidget::saveWidgetGeometry(&db_import_form);
 	stopTimers(false);
 
 	if(db_import_form.result()==QDialog::Accepted && db_import_form.getModelWidget())
@@ -1491,8 +1500,11 @@ void MainWindow::diffModelDatabase(void)
 
 		stopTimers(true);
 		connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
+
 		PgModelerUiNS::resizeDialog(&modeldb_diff_frm);
+		GeneralConfigWidget::restoreWidgetGeometry(&modeldb_diff_frm);
 		modeldb_diff_frm.exec();
+		GeneralConfigWidget::saveWidgetGeometry(&modeldb_diff_frm);
 		stopTimers(false);
 	}
 }
@@ -1639,7 +1651,6 @@ void MainWindow::updateToolsState(bool model_closed)
 	action_save_model->setEnabled(enabled);
 	action_save_all->setEnabled(enabled);
 	action_export->setEnabled(enabled);
-	//action_diff->setEnabled(enabled);
 	action_close_model->setEnabled(enabled);
 	action_show_grid->setEnabled(enabled);
 	action_show_delimiters->setEnabled(enabled);
@@ -1676,7 +1687,7 @@ void MainWindow::updateDockWidgets(void)
 	model_valid_wgt->setModel(current_model);
 
 	if(current_model && obj_finder_wgt->result_tbw->rowCount() > 0)
-		obj_finder_wgt->findObjects();
+	  obj_finder_wgt->findObjects();
 }
 
 void MainWindow::executePlugin(void)
@@ -1960,7 +1971,9 @@ void MainWindow::reportBug(void)
 {
 	BugReportForm bugrep_frm;
 	PgModelerUiNS::resizeDialog(&bugrep_frm);
+	GeneralConfigWidget::restoreWidgetGeometry(&bugrep_frm);
 	bugrep_frm.exec();
+	GeneralConfigWidget::saveWidgetGeometry(&bugrep_frm);
 }
 
 void MainWindow::removeOperations(void)
@@ -1979,7 +1992,11 @@ void MainWindow::handleObjectsMetadata(void)
 	objs_meta_frm.setModelWidget(current_model);
 	objs_meta_frm.setModelWidgets(model_nav_wgt->getModelWidgets());
 	connect(&objs_meta_frm, SIGNAL(s_metadataHandled()), model_objs_wgt, SLOT(updateObjectsView()));
+
+	PgModelerUiNS::resizeDialog(&objs_meta_frm);
+	GeneralConfigWidget::restoreWidgetGeometry(&objs_meta_frm);
 	objs_meta_frm.exec();
+	GeneralConfigWidget::saveWidgetGeometry(&objs_meta_frm);
 }
 
 void MainWindow::arrangeObjects(void)

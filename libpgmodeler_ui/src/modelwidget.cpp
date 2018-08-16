@@ -57,6 +57,7 @@
 #include "genericsqlwidget.h"
 #include "policywidget.h"
 #include "tabledatawidget.h"
+#include "generalconfigwidget.h"
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
@@ -1603,6 +1604,7 @@ int ModelWidget::openEditingForm(QWidget *widget, unsigned button_conf)
 {
 	BaseForm editing_form(this);
 	BaseObjectWidget *base_obj_wgt=qobject_cast<BaseObjectWidget *>(widget);
+    int res = 0;
 
 	if(base_obj_wgt)
 		editing_form.setMainWidget(base_obj_wgt);
@@ -1610,7 +1612,12 @@ int ModelWidget::openEditingForm(QWidget *widget, unsigned button_conf)
 		editing_form.setMainWidget(widget);
 
 	editing_form.setButtonConfiguration(button_conf);
-	return(editing_form.exec());
+
+	GeneralConfigWidget::restoreWidgetGeometry(&editing_form, widget->metaObject()->className());
+    res = editing_form.exec();
+	GeneralConfigWidget::saveWidgetGeometry(&editing_form, widget->metaObject()->className());
+
+    return(res);
 }
 
 template<class Class, class WidgetClass>
@@ -1792,7 +1799,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			emit s_objectManipulated();
 		}
 		else
-			emit s_manipulationCanceled();
+		  emit s_manipulationCanceled();
 
 		this->setFocus();
 	}
@@ -3315,10 +3322,14 @@ void ModelWidget::configureFadeMenu(void)
 void ModelWidget::fadeObjects(const vector<BaseObject *> &objects, bool fade_in)
 {
 	BaseObjectView *obj_view = nullptr;
+	Schema *schema = nullptr;
 
 	for(auto obj : objects)
 	{
-		if(!BaseGraphicObject::isGraphicObject(obj->getObjectType()))
+	  schema = dynamic_cast<Schema *>(obj);
+
+	  if(!BaseGraphicObject::isGraphicObject(obj->getObjectType()) ||
+		 (schema && !schema->isRectVisible()))
 			continue;
 
 		obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
