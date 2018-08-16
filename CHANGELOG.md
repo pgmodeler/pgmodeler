@@ -3,9 +3,10 @@ Change Log
 
 v0.9.2-alpha
 ------
-<em>Release date: August 17, 2018</em><br/>
+<em>Release date: August 20, 2018</em><br/>
 
 * [New] Added the support to cancelling SQL execution in SQLExecutionWidget.
+* [New] Added support to save/restore the dialogs sizes and positions.
 * [New] Added support to truncate tables in DataManipulationForm.
 * [New] Added support to aliases on some graphical objects that is used in the compact view mode.
 * [New] Added support to save/load object's metadata containing aliases information.
@@ -21,6 +22,18 @@ v0.9.2-alpha
 * [Change] Minor adjustment on constraints rendering at extended attributes section of tables.
 * [Change] French translation update.
 * [Change] Updated the other lang dictionaries with the new text brought by new releases.
+* [Change] Removing icons at the top of the dialogs: DatabaseImportForm, MetaDataHandlingForm, ModelDatabaseDiffForm, ModelExportForm, ModelFixForm.
+* [Change] Minor adjustments in the features of the demo version.
+* [Change] Minor adjustments in the UI stylesheet.
+* [Change] In DatabaseExplorerWidget the root item will come automatically selcted when browsing a database.
+* [Change] Minor performance tuning when handling big models.
+* [Change] Added some statistics attributes for tables on DatabaseExplorerWidget.
+* [Change] Minor adjustment in NewObjectOverlayWidget by putting the tool buttons under categories.
+* [Fix] Fixed a bug in ObjectFinderWidget that was forcing schemas rectangles to appear even if the flag indicating them to be visible was set to false.
+* [Fix] Fixed the editing form cancel operation. Now operations done when the form was active are undone correctly.
+* [Fix] Fixed a bug that was preventing to create a view containing the same name as a table but in different schema.
+* [Fix] Fixed a regression that caused notices not to be shown in the output panel at SQLExecutionWidget.
+* [Fix] Fixed the query catalog for policies which was causing syntax error when combining import system objects and extension objects options.
 * [Fix] Fixed the disabling of some actions related to design when switching to manage view.
 * [Fix] Minor fix on stylesheet in order to display the extended button on general toolbar.
 * [Fix] Fix a shortcut conflict in DataManipulationform.

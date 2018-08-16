@@ -1,20 +1,23 @@
 v0.9.2-alpha
 ------
 
-<em>Release date: August 17, 2018</em><br/>
+<em>Release date: August 20, 2018</em><br/>
 <em>Changes since: <strong>v0.9.1</strong></em><br/>
 
 <strong>Summary:</strong> this release does not have an extensive change log but brings some long desired features as well important fixes. The first feature to talk about is the long awaited SQL execution cancelling which enables the user to abort the execution of any command issued to the server in the SQL execution field (Manage view) without the need to kill the application in order to interrupt the running SQL (like on previous releases). <br/>
 
 Another feature introduced is the compact view of the model. This one makes the tables and views smaller by hiding the columns' data types and other informations. This feature came as a support to those developers who need to present their models to an audience without database specific knowledge. The trick here is to replace the original names of graphical objects by more friendly ones so the audience can understand the essence of the model being worked without worry about the tech details. <br/>
 
-More features were implemented in this release too being them: the support to sequence options on indentity columns, the support to bulk data edition on data manipulation dialog, the support to paste CSV text from clipboard into the dialog where initial data can be specified for tables (in design view) and some other. <br/>
+Also I decided to include a functionality to save and restore the majority of dialogs sizes and their positions, another long requested feature. This one can be useful for those who don't want pgModeler to resize the forms automatically everytime (specially when working in high resolution screens or dual monitors environments). This feature comes activated by default on new installations and can be deactivated at general settings. <br/>
+
+More features were implemented in this release too, being some of them: the support to sequence options on indentity columns, the support to bulk data edition on data manipulation dialog, the support to paste CSV text from clipboard into the dialog where initial data can be specified for tables (in design view) and some other. <br/>
 
 One important change done was a partial refactoring of the View editing form by moving the fields related to view's references to a dedicated dialog making the whole form a bit less complicated to use. I have plans to keep improving that dialog in special but in future releases a full UX/UI remodeling will be done in the application. <br/>
 
 Below some of the changes of this release, for the complete list of changes, please, take a look into the CHANGELOG.md. <br/>
 
 * [New] Added the support to cancelling SQL execution in SQLExecutionWidget.
+* [New] Added support to save/restore the dialogs sizes and positions.
 * [New] Added support to truncate tables in DataManipulationForm.
 * [New] Added support to aliases on some graphical objects to be is used in the compact view mode.
 * [New] Added support to save/load object's metadata containing aliases information.
