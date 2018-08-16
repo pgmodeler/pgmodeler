@@ -1219,6 +1219,13 @@ void DataManipulationForm::insertRowOnTabPress(int curr_row, int curr_col, int p
 
 void DataManipulationForm::saveChanges(void)
 {
+#ifdef DEMO_VERSION
+#warning "DEMO VERSION: data manipulation save feature disabled warning."
+	Messagebox msg_box;
+	msg_box.show(trUtf8("Warning"),
+				 trUtf8("You're running a demonstration version! The save feature of the data manipulation form is available only in the full version!"),
+				 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
+#else
 	int row=0;
 	Connection conn=Connection(tmpl_conn_params);
 
@@ -1281,6 +1288,7 @@ void DataManipulationForm::saveChanges(void)
 						.arg(op_names[op_type]).arg(tab_name).arg(row + 1).arg(e.getErrorMessage()),
 						ERR_ROW_DATA_NOT_MANIPULATED,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+#endif
 }
 
 QString DataManipulationForm::getDMLCommand(int row)

@@ -26,8 +26,8 @@ int main(int argc, char **argv)
 #ifdef DEMO_VERSION
 	out << endl;
 	out << QString("pgModeler ") << GlobalAttributes::PGMODELER_VERSION << QT_TR_NOOP(" command line interface.") << endl;
-	out << QT_TR_NOOP("PostgreSQL Database Modeler Project - pgmodeler.com.br") << endl;
-	out << QT_TR_NOOP("Copyright 2006-2015 Raphael A. Silva <raphael@pgmodeler.com.br>") << endl;
+	out << QT_TR_NOOP("PostgreSQL Database Modeler Project - pgmodeler.io") << endl;
+	out << QT_TR_NOOP("Copyright 2006-2018 Raphael A. Silva <raphael@pgmodeler.io>") << endl;
 	out << QT_TR_NOOP("\n** CLI disabled in demonstration version! **") << endl << endl;
 #else
 	try

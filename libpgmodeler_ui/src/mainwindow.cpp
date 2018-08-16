@@ -879,7 +879,6 @@ void MainWindow::addModel(const QString &filename)
 
 		//Creating the system objects (public schema and languages C, SQL and pgpgsql)
 		model_tab->db_model->createSystemObjects(filename.isEmpty());
-		model_tab->db_model->setInvalidated(false);
 
 		if(!filename.isEmpty())
 		{
@@ -887,11 +886,12 @@ void MainWindow::addModel(const QString &filename)
 			{
 				model_tab->loadModel(filename);
 				models_tbw->setTabToolTip(models_tbw->currentIndex(), filename);
+
 				//Get the "public" schema and set as system object
 				public_sch=dynamic_cast<Schema *>(model_tab->db_model->getObject(QString("public"), OBJ_SCHEMA));
 				if(public_sch)	public_sch->setSystemObject(true);
 
-				models_tbw->setVisible(true);
+				model_tab->db_model->setInvalidated(false);
 				model_tab->restoreLastCanvasPosition();
 			}
 			catch(Exception &e)
@@ -913,6 +913,7 @@ void MainWindow::addModel(const QString &filename)
 
 		model_nav_wgt->addModel(model_tab);
         models_tbw->setUpdatesEnabled(true);
+		models_tbw->setVisible(true);
 		setCurrentModel();
 
         if(start_timers)
@@ -927,8 +928,6 @@ void MainWindow::addModel(const QString &filename)
 
 		if(action_alin_objs_grade->isChecked())
 			current_model->scene->alignObjectsToGrid();
-
-        models_tbw->update();
 	}
 	catch(Exception &e)
 	{
@@ -1879,8 +1878,8 @@ void MainWindow::showDemoVersionWarning(void)
 	Messagebox msg_box;
 	msg_box.show(trUtf8("Warning"),
 				 trUtf8("You're running a demonstration version! Note that you'll be able to create only <strong>%1</strong> instances \
-						of each type of object and some key features will be disabled or limited!<br/><br/>You can purchase a full binary copy or get the source code at <a href='http://pgmodeler.com.br'>pgmodeler.com.br</a>.\
-						<strong>NOTE:</strong> pgModeler is an open source software, but purchasing binary copies or providing some donations will support the project and cover all development costs.<br/><br/>\
+						of each type of object and some key features will be disabled or limited!<br/><br/>You can purchase a full binary copy or get the source code at <a href='https://pgmodeler.io'>https://pgmodeler.io</a>.\
+						<strong>NOTE:</strong> pgModeler is an open source software, but purchasing binary copies or providing some donations will support the project and keep the development alive and at full speed!<br/><br/>\
 						<strong>HINT:</strong> in order to test all features it's recommended to use the <strong>demo.dbm</strong> model located in </strong>Sample models</strong> at <strong>Welcome</strong> view.<br/><br/><br/><br/>").arg(GlobalAttributes::MAX_OBJECT_COUNT),
 						Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
 #endif

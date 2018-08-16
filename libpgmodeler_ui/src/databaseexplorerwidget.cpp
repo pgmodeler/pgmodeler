@@ -1913,13 +1913,6 @@ QString DatabaseExplorerWidget::getObjectSource(BaseObject *object, DatabaseMode
 
 void DatabaseExplorerWidget::openDataGrid(const QString &schema, const QString &table, bool hide_views)
 {
-#ifdef DEMO_VERSION
-#warning "DEMO VERSION: data manipulation feature disabled warning."
-	Messagebox msg_box;
-	msg_box.show(trUtf8("Warning"),
-				 trUtf8("You're running a demonstration version! The data manipulation feature is available only in the full version!"),
-				 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
-#else
 	DataManipulationForm *data_manip=new DataManipulationForm;
 	Connection conn=Connection(this->connection.getConnectionParams());
 
@@ -1931,7 +1924,6 @@ void DatabaseExplorerWidget::openDataGrid(const QString &schema, const QString &
 
 	PgModelerUiNS::resizeDialog(data_manip);
 	data_manip->show();
-#endif
 }
 
 void DatabaseExplorerWidget::dropDatabase(void)

@@ -141,7 +141,7 @@ namespace GlobalAttributes {
 
 #ifdef DEMO_VERSION
 	//Maximum object creation counter for demo version
-	const unsigned MAX_OBJECT_COUNT=9;
+	const unsigned MAX_OBJECT_COUNT=15;
 #endif
 
 
