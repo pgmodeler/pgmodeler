@@ -24,7 +24,7 @@ QMAKE_ARGS="-r -spec linux-g++"
 QMAKE_ROOT=/usr/bin
 QMAKE_CMD=qmake
 LOG="$PWD/linuxdeploy.log"
-QT_IFW_ROOT=/opt/qt-ifw-1.5.0
+QT_IFW_ROOT=/opt/qt-ifw-3.0.4
 
 STARTUP_SCRIPT="start-pgmodeler.sh"
 MIME_UPDATE_SCRIPT="dbm-mime-type.sh"
