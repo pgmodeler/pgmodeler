@@ -14,6 +14,7 @@ v0.9.2-alpha
 * [New] Added support to sequence options for identity columns.
 * [New] Added the ability to paste CSV text from clipboard into the TableDataWidget.
 * [New] Added support to bulk data edit in TableDataWidget.
+* [Change] Added missing copy options on copy relationships.
 * [Change] Minor adjustments on the item delegates in order draw text in the right alignment.
 * [Change] Minor adjustment on buttons style in DatabaseExplorerWidget, DataManipulationForm and SQLExecutionWidget.
 * [Change] Minor adjustment on OperationList::removeFromPool to avoid throw an exception when an invalid index is passed.
