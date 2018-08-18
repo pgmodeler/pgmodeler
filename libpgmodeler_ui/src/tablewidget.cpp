@@ -25,6 +25,7 @@
 #include "baseform.h"
 #include "tabledatawidget.h"
 #include "policywidget.h"
+#include "generalconfigwidget.h"
 
 TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 {
@@ -724,7 +725,10 @@ void TableWidget::editData(void)
 	tab_data_wgt->setAttributes(this->model, dynamic_cast<Table *>(this->object));
 	base_form.setMainWidget(tab_data_wgt);
 	base_form.setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
+
+	GeneralConfigWidget::restoreWidgetGeometry(&base_form, tab_data_wgt->metaObject()->className());
 	base_form.exec();
+	GeneralConfigWidget::saveWidgetGeometry(&base_form, tab_data_wgt->metaObject()->className());
 }
 
 void TableWidget::applyConfiguration(void)

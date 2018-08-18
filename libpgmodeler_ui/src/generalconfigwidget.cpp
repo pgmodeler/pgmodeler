@@ -405,41 +405,41 @@ QString GeneralConfigWidget::getConfigurationParam(const QString &section_id, co
 
 void GeneralConfigWidget::saveWidgetGeometry(QWidget *widget, const QString &custom_wgt_name)
 {
-  if(!widget ||
-	 config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_RESTORE_GEOMETRY] != ParsersAttributes::_TRUE_)
-	return;
+	if(!widget ||
+		 config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_RESTORE_GEOMETRY] != ParsersAttributes::_TRUE_)
+		return;
 
-  QString dlg_name = custom_wgt_name.isEmpty() ? widget->metaObject()->className() : custom_wgt_name;
+	QString dlg_name = custom_wgt_name.isEmpty() ? widget->metaObject()->className() : custom_wgt_name;
 
-  widgets_geom[dlg_name.toLower()].geometry = widget->geometry();
-  widgets_geom[dlg_name.toLower()].maximized = widget->isMaximized();
+	widgets_geom[dlg_name.toLower()].geometry = widget->geometry();
+	widgets_geom[dlg_name.toLower()].maximized = widget->isMaximized();
 }
 
 bool GeneralConfigWidget::restoreWidgetGeometry(QWidget *widget, const QString &custom_wgt_name)
 {
-  if(!widget ||
-	 config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_RESTORE_GEOMETRY] != ParsersAttributes::_TRUE_)
-	return(false);
+	if(!widget ||
+		 config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_RESTORE_GEOMETRY] != ParsersAttributes::_TRUE_)
+		return(false);
 
-  QString dlg_name = custom_wgt_name.isEmpty() ? widget->metaObject()->className() : custom_wgt_name;
-  dlg_name = dlg_name.toLower();
+	QString dlg_name = custom_wgt_name.isEmpty() ? widget->metaObject()->className() : custom_wgt_name;
+	dlg_name = dlg_name.toLower();
 
-  if(widgets_geom.count(dlg_name) &&
-	 (widgets_geom[dlg_name].maximized ||
-	  (widgets_geom[dlg_name].geometry.width() > 0 && widgets_geom[dlg_name].geometry.height() > 0)))
-  {
-	if(widgets_geom[dlg_name].maximized)
+	if(widgets_geom.count(dlg_name) &&
+		 (widgets_geom[dlg_name].maximized ||
+			(widgets_geom[dlg_name].geometry.width() > 0 && widgets_geom[dlg_name].geometry.height() > 0)))
 	{
-	  widget->move(widgets_geom[dlg_name].geometry.topLeft());
-	  widget->setWindowState(Qt::WindowMaximized);
+		if(widgets_geom[dlg_name].maximized)
+		{
+			widget->move(widgets_geom[dlg_name].geometry.topLeft());
+			widget->setWindowState(Qt::WindowMaximized);
+		}
+		else
+			widget->setGeometry(widgets_geom[dlg_name].geometry);
+
+		return(true);
 	}
-	else
-	  widget->setGeometry(widgets_geom[dlg_name].geometry);
 
-	return(true);
-  }
-
-  return(false);
+	return(false);
 }
 
 void GeneralConfigWidget::saveConfiguration(void)

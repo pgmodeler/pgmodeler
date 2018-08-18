@@ -20,6 +20,7 @@
 #include "permissionwidget.h"
 #include "customsqlwidget.h"
 #include "baseform.h"
+#include "generalconfigwidget.h"
 
 const QColor BaseObjectWidget::PROT_LINE_BGCOLOR=QColor(255,180,180);
 const QColor BaseObjectWidget::PROT_LINE_FGCOLOR=QColor(80,80,80);
@@ -665,17 +666,23 @@ void BaseObjectWidget::editPermissions(void)
 	permission_wgt->setAttributes(this->model, parent_obj, this->object);
 	parent_form.setMainWidget(permission_wgt);
 	parent_form.setButtonConfiguration(Messagebox::OK_BUTTON);
+
+	GeneralConfigWidget::restoreWidgetGeometry(&parent_form, permission_wgt->metaObject()->className());
 	parent_form.exec();
+	GeneralConfigWidget::saveWidgetGeometry(&parent_form, permission_wgt->metaObject()->className());
 }
 
 void BaseObjectWidget::editCustomSQL(void)
 {
 	BaseForm parent_form(this);
-  CustomSQLWidget *customsql_wgt=new CustomSQLWidget;
+	CustomSQLWidget *customsql_wgt=new CustomSQLWidget;
 
-  customsql_wgt->setAttributes(this->model, this->object);
-  parent_form.setMainWidget(customsql_wgt);
+	customsql_wgt->setAttributes(this->model, this->object);
+	parent_form.setMainWidget(customsql_wgt);
+
+	GeneralConfigWidget::restoreWidgetGeometry(&parent_form, customsql_wgt->metaObject()->className());
 	parent_form.exec();
+	GeneralConfigWidget::saveWidgetGeometry(&parent_form, customsql_wgt->metaObject()->className());
 }
 
 void BaseObjectWidget::applyConfiguration(void)

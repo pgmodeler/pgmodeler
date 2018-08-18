@@ -19,6 +19,7 @@
 #include "columnwidget.h"
 #include "sequencewidget.h"
 #include "baseform.h"
+#include "generalconfigwidget.h"
 
 ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN)
 {
@@ -159,7 +160,9 @@ void ColumnWidget::editSequenceAttributes(void)
 
 	seq_wgt->setAttributesReadonly(this->model, nullptr, nullptr, &ident_col_seq, col);
 	editing_form.setMainWidget(seq_wgt);
+	GeneralConfigWidget::restoreWidgetGeometry(&editing_form, seq_wgt->metaObject()->className());
 	editing_form.exec();
+	GeneralConfigWidget::saveWidgetGeometry(&editing_form, seq_wgt->metaObject()->className());
 }
 
 void ColumnWidget::applyConfiguration(void)
