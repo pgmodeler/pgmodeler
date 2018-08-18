@@ -2522,7 +2522,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		if(copy_options.getCopyMode()!=0)
 		{
 			attributes[ParsersAttributes::COPY_OPTIONS]=QString("%1").arg(copy_options.getCopyOptionsIds());
-			attributes[ParsersAttributes::COPY_MODE]=QString("%1").arg(copy_options.getCopyMode());;
+			attributes[ParsersAttributes::COPY_MODE]=QString("%1").arg(copy_options.getCopyMode());
 		}
 
 		reduced_form=(attributes[ParsersAttributes::COLUMNS].isEmpty() &&

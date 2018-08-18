@@ -17,6 +17,7 @@
 */
 
 #include "copyoptions.h"
+#include "baseobject.h"
 
 CopyOptions::CopyOptions(void)
 {
@@ -64,8 +65,8 @@ QString CopyOptions::getSQLDefinition(void)
 {
 	QString def, mode, op_name;
 	unsigned op_id,
-			ids[]={ALL, DEFAULTS, CONSTRAINTS,
-				   INDEXES, STORAGE, COMMENTS },
+			ids[]={ALL, DEFAULTS, CONSTRAINTS, INDEXES,
+						 STORAGE, COMMENTS, IDENTITY, STATISTICS },
 			cnt = sizeof(ids) / sizeof(unsigned);
 
 	mode = (copy_mode == INCLUDING ? QString(" INCLUDING") : QString(" EXCLUDING"));
@@ -83,6 +84,8 @@ QString CopyOptions::getSQLDefinition(void)
 				case INDEXES: op_name=QString(" INDEXES"); break;
 				case STORAGE: op_name=QString(" STORAGE"); break;
 				case COMMENTS: op_name=QString(" COMMENTS"); break;
+				case IDENTITY: op_name=(BaseObject::getPgSQLVersion().toFloat() > PgSQLVersions::PGSQL_VERSION_96.toFloat() ? QString(" IDENTITY") : QString()); break;
+				case STATISTICS: op_name=(BaseObject::getPgSQLVersion().toFloat() > PgSQLVersions::PGSQL_VERSION_96.toFloat() ? QString(" STATISTICS") : QString()); break;
 			}
 
 			if(!op_name.isEmpty())
