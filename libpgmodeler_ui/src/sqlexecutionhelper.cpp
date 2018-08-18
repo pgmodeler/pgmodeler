@@ -63,15 +63,15 @@ void SQLExecutionHelper::executeCommand(void)
 
 		if(!connection.isStablished())
 		{
-            connection.setNoticeEnabled(true);
-            connection.connect();
+			connection.setNoticeEnabled(true);
+			connection.connect();
 
 			//The connection will break the execution if it keeps idle for one hour or more
 			connection.setSQLExecutionTimout(3600);
 		}
 
 		connection.executeDMLCommand(command, res);
-        notices = connection.getNotices();
+		notices = connection.getNotices();
 
 		if(!res.isEmpty())
 			result_model = new ResultSetModel(res, catalog);
@@ -87,6 +87,9 @@ void SQLExecutionHelper::executeCommand(void)
 
 void SQLExecutionHelper::cancelCommand(void)
 {
-	connection.requestCancel();
-	cancelled = true;
+	if(connection.isStablished())
+	{
+		connection.requestCancel();
+		cancelled = true;
+	}
 }
