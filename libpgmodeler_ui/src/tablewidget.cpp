@@ -168,10 +168,17 @@ int TableWidget::openEditingForm(TableObject *object)
 {
 	BaseForm editing_form(this);
 	WidgetClass *object_wgt=new WidgetClass;
+	int res = 0;
+
 	object_wgt->setAttributes(this->model, this->op_list,
-														dynamic_cast<Table *>(this->object), dynamic_cast<Class *>(object));
+							  dynamic_cast<Table *>(this->object), dynamic_cast<Class *>(object));
 	editing_form.setMainWidget(object_wgt);
-	return(editing_form.exec());
+
+	GeneralConfigWidget::restoreWidgetGeometry(&editing_form, object_wgt->metaObject()->className());
+	res = editing_form.exec();
+	GeneralConfigWidget::saveWidgetGeometry(&editing_form, object_wgt->metaObject()->className());
+
+	return(res);
 }
 
 ObjectsTableWidget *TableWidget::getObjectTable(ObjectType obj_type)

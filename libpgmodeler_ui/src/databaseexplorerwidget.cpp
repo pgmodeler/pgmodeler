@@ -23,6 +23,7 @@
 #include "snippetsconfigwidget.h"
 #include "plaintextitemdelegate.h"
 #include "pgmodeleruins.h"
+#include "generalconfigwidget.h"
 
 using namespace ParsersAttributes;
 
@@ -1921,8 +1922,8 @@ void DatabaseExplorerWidget::openDataGrid(const QString &schema, const QString &
 	data_manip->hide_views_chk->setChecked(hide_views);
 
 	data_manip->setAttributes(conn, schema, table);
-
 	PgModelerUiNS::resizeDialog(data_manip);
+	GeneralConfigWidget::restoreWidgetGeometry(data_manip);
 	data_manip->show();
 }
 

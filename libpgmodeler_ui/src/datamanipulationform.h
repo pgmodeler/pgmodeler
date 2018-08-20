@@ -104,7 +104,6 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 
 		void resizeEvent(QResizeEvent *event);
 		void closeEvent(QCloseEvent *);
-		void showEvent(QShowEvent *);
 
 	public:
 		DataManipulationForm(QWidget * parent = 0, Qt::WindowFlags f = 0);

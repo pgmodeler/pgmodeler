@@ -1428,11 +1428,6 @@ void DataManipulationForm::closeEvent(QCloseEvent *)
   GeneralConfigWidget::saveWidgetGeometry(this);
 }
 
-void DataManipulationForm::showEvent(QShowEvent *)
-{
-  GeneralConfigWidget::restoreWidgetGeometry(this);
-}
-
 void DataManipulationForm::truncateTable(void)
 {
 	try
