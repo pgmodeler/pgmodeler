@@ -339,15 +339,15 @@ void SQLExecutionWidget::handleExecutionAborted(Exception e)
 	msgoutput_lst->clear();
 
 	PgModelerUiNS::createOutputListItem(msgoutput_lst,
-																			QString("%1 %2").arg(time_str).arg(e.getErrorMessage()),
-																			QPixmap(PgModelerUiNS::getIconPath("msgbox_erro")), false);
+										QString("%1 %2").arg(time_str).arg(e.getErrorMessage()),
+										QPixmap(PgModelerUiNS::getIconPath("msgbox_erro")), false);
 
 	if(e.getErrorType()==ERR_CONNECTION_TIMEOUT ||
 		 e.getErrorType()==ERR_CONNECTION_BROKEN)
 	{
 		PgModelerUiNS::createOutputListItem(msgoutput_lst,
-																				QString("%1 %2").arg(time_str).arg(trUtf8("No results retrieved or changes done due to the error above.")),
-																				QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")), false);
+											QString("%1 %2").arg(time_str).arg(trUtf8("No results retrieved or changes done due to the error above! Run the command again.")),
+											QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")), false);
 	}
 
 	msgoutput_lst->setVisible(true);

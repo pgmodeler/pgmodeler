@@ -555,7 +555,16 @@ void SnippetsConfigWidget::configureSnippetsMenu(QMenu *snip_menu, vector<Object
 
 	//Include the "general" submenu at the end of snippet menu
 	if(submenus.count(ParsersAttributes::GENERAL)!=0)
-		snip_menu->addMenu(submenus[ParsersAttributes::GENERAL]);
+	{
+		if(snip_menu->isEmpty())
+		  snip_menu->addMenu(submenus[ParsersAttributes::GENERAL]);
+		else
+		{
+		  //Inserting the "general" submenu at the top of snippets actions
+		  snip_menu->insertMenu(snip_menu->actions().at(0), submenus[ParsersAttributes::GENERAL]);
+		  snip_menu->insertSeparator(snip_menu->actions().at(1));
+		}
+	}
 }
 
 bool SnippetsConfigWidget::isSnippetExists(const QString &snip_id)
