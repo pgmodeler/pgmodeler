@@ -358,9 +358,9 @@ void View::removeReference(unsigned ref_id)
 		{
 			//Removes the reference id from the expression list
 			if(references[*itr]==references[ref_id])
-				vect_idref[i]->erase(itr);
-
-			itr++;
+				itr = vect_idref[i]->erase(itr);
+			else
+				itr++;
 		}
 	}
 
