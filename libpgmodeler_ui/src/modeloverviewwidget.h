@@ -34,6 +34,8 @@ class ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
 	private:
 		Q_OBJECT
 
+		QScrollArea *scrollarea;
+
 		//! \brief Model which object are drawn on the overview widget
 		ModelWidget *model;
 
