@@ -1718,14 +1718,7 @@ void MainWindow::showOverview(bool show)
 
 void MainWindow::openSupport(void)
 {
-	Messagebox msg_box;
-
-	msg_box.show(trUtf8("Access support page"),
-				 trUtf8("This action will open a web browser window! Want to proceed?"),
-				 Messagebox::CONFIRM_ICON,Messagebox::YES_NO_BUTTONS);
-
-	if(msg_box.result()==QDialog::Accepted)
-		QDesktopServices::openUrl(QUrl(GlobalAttributes::PGMODELER_SUPPORT));
+  QDesktopServices::openUrl(QUrl(GlobalAttributes::PGMODELER_SUPPORT));
 }
 
 void MainWindow::toggleUpdateNotifier(bool show)

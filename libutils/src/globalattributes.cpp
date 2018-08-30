@@ -28,7 +28,7 @@ namespace GlobalAttributes {
 	PGMODELER_VERSION=QString("0.9.2-alpha1"),
 	PGMODELER_BUILD_NUMBER=QString(BUILDNUM),
 	PGMODELER_SITE=QString("https://pgmodeler.io"),
-	PGMODELER_SUPPORT=QString("https://github.com/pgmodeler/pgmodeler/issues"),
+	PGMODELER_SUPPORT=QString("https://pgmodeler.io/support/docs"),
 	PGMODELER_SRC_URL=QString("https://github.com/pgmodeler/pgmodeler/releases"),
 	PGMODELER_DOWNLOAD_URL=QString("%1/download").arg(PGMODELER_SITE),
 	PGMODELER_DONATE_URL=QString("%1/#donationForm").arg(PGMODELER_SITE),
