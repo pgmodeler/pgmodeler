@@ -34,6 +34,7 @@ ModelOverviewWidget::ModelOverviewWidget(QWidget *parent) : QWidget(parent, Qt::
 	scrollarea->setWidgetResizable(true);
 	scrollarea->setFrameStyle(QFrame::Box);
 	scrollarea->setFrameShadow(QFrame::Plain);
+	scrollarea->setVisible(false);
 	vbox->addWidget(scrollarea);
 	vbox->setContentsMargins(0,0,0,0);
 	frame->setLayout(vbox);
@@ -126,6 +127,8 @@ void ModelOverviewWidget::updateOverview(bool force_update)
 	{
 		QPixmap pix;
 
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+
 		//Creates a pixmap with the size of the scene
 		pix=QPixmap(pixmap_size);
 
@@ -152,6 +155,7 @@ void ModelOverviewWidget::updateOverview(bool force_update)
 		}
 
 		label->resize(curr_size.toSize());
+		QApplication::restoreOverrideCursor();
 	}
 }
 
@@ -246,7 +250,7 @@ void ModelOverviewWidget::resizeOverview(void)
 		  show_scrollarea = true;
 		}
 
-		if(show_scrollarea)
+		if(show_scrollarea && !scrollarea->isVisible())
 		{
 		  frame->setStyleSheet("QFrame#frame{ border: 0px; }");
 		  frame->layout()->removeWidget(label);
@@ -255,7 +259,7 @@ void ModelOverviewWidget::resizeOverview(void)
 		  scrollarea->setWidget(label);
 		  window_frm->setParent(scrollarea);
 		}
-		else
+		else if(!show_scrollarea)
 		{
 		  frame->setStyleSheet("");
 		  scrollarea->setVisible(false);
@@ -269,7 +273,6 @@ void ModelOverviewWidget::resizeOverview(void)
 		this->resize(size);
 		this->setMaximumSize(size);
 		this->setMinimumSize(size);
-		this->adjustSize();
 	}
 }
 
@@ -292,7 +295,7 @@ void ModelOverviewWidget::mouseMoveEvent(QMouseEvent *event)
 	if(event->buttons()==Qt::LeftButton)
 	{
 		QRect rect=window_frm->geometry(), rect1;
-		int width, height, x=event->x(), y=event->y();
+		int width = 0, height = 0, x=event->x(), y=event->y() + scrollarea->verticalScrollBar()->value();
 
 		width=rect.width()/2;
 		height=rect.height()/2;
@@ -303,21 +306,7 @@ void ModelOverviewWidget::mouseMoveEvent(QMouseEvent *event)
 		rect.setRight(x + width);
 		rect.setBottom(y + height);
 
-		rect1=frame->geometry();
-
-		/*if(rect.left() < 0)
-			rect.translate(abs(rect.left()),0);
-
-		if(rect.top() < 0)
-			rect.translate(0, abs(rect.top()));
-
-		if(rect.right() >= rect1.right())
-			rect.translate((rect1.right() - rect.right())-rect1.left(),0);
-
-		if(rect.bottom() >= rect1.bottom())
-			rect.translate(0,(rect1.bottom() - rect.bottom())-rect1.top());*/
-
-		//window_frm->setGeometry(rect);
+		rect1=label->geometry();
 		this->model->viewport->horizontalScrollBar()->setValue(ceilf(zoom_factor * scene_rect.width() * (rect.x()/static_cast<double>(rect1.width()))));
 		this->model->viewport->verticalScrollBar()->setValue(ceilf(zoom_factor * scene_rect.height() * (rect.y()/static_cast<double>(rect1.height()))));
 	}
