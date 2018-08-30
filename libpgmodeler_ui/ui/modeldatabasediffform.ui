@@ -140,7 +140,7 @@
                  </size>
                 </property>
                 <property name="title">
-                 <string>Source database</string>
+                 <string>Input</string>
                 </property>
                 <property name="flat">
                  <bool>false</bool>
@@ -446,7 +446,7 @@
                    <item>
                     <widget class="QCheckBox" name="pgsql_ver_chk">
                      <property name="statusTip">
-                      <string>Override the PostgreSQL version when generating the diff. The default is to use the same version as the input database.</string>
+                      <string>Override the PostgreSQL version when generating the diff code. The default is to use the same version as the input database (detected automatically).</string>
                      </property>
                      <property name="text">
                       <string>Use PostgreSQL:</string>
@@ -814,7 +814,7 @@
                     <string/>
                    </property>
                    <property name="statusTip">
-                    <string>Permissions already set on database objects will be kept.The ones configured on the model will be applied to the database.</string>
+                    <string>Permissions already set on database objects will be kept. The ones configured on the model will be applied to the database.</string>
                    </property>
                    <property name="text">
                     <string>Keep object's permissions</string>
@@ -913,7 +913,7 @@
                     <string/>
                    </property>
                    <property name="statusTip">
-                    <string>Froce the generation of DROP commands for columns and constraints that exist in database but not in the model. This is useful when diff a partial model against the complete database and the user needs to drop columns and constraint but preserve the rest of the objects.</string>
+                    <string>Force the generation of DROP commands for columns and constraints that exist in database but not in the model. This is useful when diff a partial model against the complete database and the user needs to drop columns and constraint but preserve the rest of the objects.</string>
                    </property>
                    <property name="text">
                     <string>Drop missing columns and constraints</string>

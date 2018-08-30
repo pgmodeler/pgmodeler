@@ -209,7 +209,7 @@
                </size>
               </property>
               <property name="statusTip">
-               <string>Defines the vertical and horizontal grid size. This value affects the spacing of objects when using object grid alignment feature.</string>
+               <string>Defines the vertical and horizontal grid size. This value affects the spacing of objects when using the feature that aligns the objects on the grid. </string>
               </property>
               <property name="minimum">
                <number>10</number>
@@ -417,7 +417,7 @@
                <string/>
               </property>
               <property name="statusTip">
-               <string>Hide the portion of table which represent triggers, indexes and rules</string>
+               <string>Hide the portion of table which represents triggers, indexes and rules.</string>
               </property>
               <property name="text">
                <string>Hide table extended attributes</string>
@@ -718,7 +718,7 @@
                <string/>
               </property>
               <property name="statusTip">
-               <string>Disable antialiasing for lines and texts improving performance when handling huge models.</string>
+               <string> Disable the antialiasing for lines and texts improving performance when handling huge models.</string>
               </property>
               <property name="text">
                <string>Disable render smoothness</string>
