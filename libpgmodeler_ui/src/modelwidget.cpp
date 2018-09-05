@@ -2799,10 +2799,10 @@ void ModelWidget::removeObjects(bool cascade)
 							if(objs_map.count(obj_id)==0)
 							{
 								objs_map[tab_obj->getObjectId()]=std::make_tuple(tab_obj,
-																																 tab_obj->getName(true),
-																																 tab_obj->getObjectType(),
-																																 tab_obj->getParentTable()->getName(true),
-																																 OBJ_TABLE);
+																				 tab_obj->getName(true),
+																				 tab_obj->getObjectType(),
+																				 tab_obj->getParentTable()->getName(true),
+																				 OBJ_TABLE);
 
 							}
 						}

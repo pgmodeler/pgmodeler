@@ -6120,25 +6120,42 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 
 			/* Creates the fk relationship if it not exists. This generally happens when a foreign key is
 			added to the table after its creation. */
-			if(/*!base_rel &&*/ attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_FK)
+			if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_FK)
 			{
-				vector<Constraint *> fks;
-				dynamic_cast<Table *>(tables[0])->getForeignKeys(fks, false, dynamic_cast<Table *>(tables[1]));
-
-				/* If the tables[0] doesn't has any fk that references the tables[1] indicates that the relationship
-				is being created before the fk that represents it (inconsistence!). In this case an error is raised. */
-				if(fks.empty())
-				{
-					throw Exception(Exception::getErrorMessage(ERR_ALOC_INV_FK_RELATIONSHIP)
-									.arg(attribs[ParsersAttributes::NAME])
-							.arg(tables[0]->getName(true)),
-							ERR_ALOC_INV_FK_RELATIONSHIP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-				}
-
 				base_rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_FK, tables[0], tables[1], false, false);
 				base_rel->setName(attribs[ParsersAttributes::NAME]);
 				base_rel->setAlias(attribs[ParsersAttributes::ALIAS]);
 				addRelationship(base_rel);
+
+				/* If the source table doesn't have any fk that references the destination table indicates that the relationship
+				is being created before the fk that represents it or the fk is invalid (inconsistence!). In this case an error is raised. */
+				if(base_rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_FK &&
+				   !base_rel->getReferenceForeignKey())
+				{
+					Table *src_tab = dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SRC_TABLE)),
+						  *dst_tab = dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::DST_TABLE));
+					vector<Constraint *> fks;
+
+					src_tab->getForeignKeys(fks, false, dst_tab);
+
+					for(auto fk : fks)
+					{
+						if(!getRelationship(src_tab, dst_tab, fk))
+						{
+							base_rel->setReferenceForeignKey(fk);
+							break;
+						}
+					}
+
+					//Throws an error if the relationship was created without a valid foreign key attached to it
+					if(!base_rel->getReferenceForeignKey())
+					{
+					  throw Exception(Exception::getErrorMessage(ERR_ALOC_INV_FK_RELATIONSHIP)
+									  .arg(attribs[ParsersAttributes::NAME])
+									  .arg(src_tab->getName(true)),
+									  ERR_ALOC_INV_FK_RELATIONSHIP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					}
+				}
 			}
 			else if(base_rel)
 				base_rel->setName(attribs[ParsersAttributes::NAME]);
@@ -6308,26 +6325,6 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 		base_rel->blockSignals(loading_model);
 		base_rel->connectRelationship();
 		base_rel->blockSignals(false);
-	}
-
-	if(base_rel &&
-		 base_rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_FK &&
-		 !base_rel->getReferenceForeignKey())
-	{
-		Table *src_tab = dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SRC_TABLE)),
-				*dst_tab = dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::DST_TABLE));
-		vector<Constraint *> fks;
-
-		src_tab->getForeignKeys(fks, false, dst_tab);
-
-		for(auto fk : fks)
-		{
-			if(!getRelationship(src_tab, dst_tab, fk))
-			{
-				base_rel->setReferenceForeignKey(fk);
-				break;
-			}
-		}
 	}
 
 	return(base_rel);
