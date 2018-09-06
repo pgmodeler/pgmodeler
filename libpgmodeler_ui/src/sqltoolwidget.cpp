@@ -22,6 +22,7 @@
 #include "snippetsconfigwidget.h"
 #include "sqlexecutionwidget.h"
 #include "connectionsconfigwidget.h"
+#include "pgmodeleruins.h"
 
 SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 {
@@ -29,8 +30,15 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 
 	h_splitter->setSizes({315, 10000});
 	h_splitter->handle(1)->installEventFilter(this);
-
 	v_splitter->setSizes({1000, 400});
+
+	sql_exec_corner_btn = new QToolButton;
+	sql_exec_corner_btn->setIcon(QPixmap(PgModelerUiNS::getIconPath("newtab")));
+	sql_exec_corner_btn->setIconSize(QSize(18, 18));
+	sql_exec_corner_btn->setStyleSheet("QToolButton { margin-left: 4px; margin-bottom: 4px; padding: 2px; }");
+	sql_exec_corner_btn->setShortcut(QKeySequence("Ctrl+T"));
+	sql_exec_corner_btn->setToolTip(trUtf8("Add a new execution tab for the current database (%1)").arg(sql_exec_corner_btn->shortcut().toString()));
+	sql_exec_tbw->setCornerWidget(sql_exec_corner_btn, Qt::TopRightCorner);
 
 	QVBoxLayout *vbox=new QVBoxLayout;
 	sourcecode_txt=new NumberedTextEditor(sourcecode_gb);
@@ -50,6 +58,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	connect(database_cmb, SIGNAL(activated(int)), this, SLOT(browseDatabase()));
 	connect(disconnect_tb, SIGNAL(clicked()), this, SLOT(disconnectFromDatabases()));
 	connect(source_pane_tb, SIGNAL(toggled(bool)), sourcecode_gb, SLOT(setVisible(bool)));
+	connect(sql_exec_corner_btn, SIGNAL(clicked(bool)), this, SLOT(addSQLExecutionTab()));
 
 	connect(databases_tbw, &QTabWidget::currentChanged,
 			[&](){
@@ -277,9 +286,13 @@ void SQLToolWidget::addSQLExecutionTab(void)
 	try
 	{
 		SQLExecutionWidget *sql_exec_wgt=new SQLExecutionWidget;
-		DatabaseExplorerWidget *db_explorer_wgt=dynamic_cast<DatabaseExplorerWidget *>(sender());
-		Connection conn=db_explorer_wgt->getConnection();
+		DatabaseExplorerWidget *db_explorer_wgt=dynamic_cast<DatabaseExplorerWidget *>(databases_tbw->currentWidget());
+		Connection conn;
 
+		if(!db_explorer_wgt)
+		  return;
+
+		conn = db_explorer_wgt->getConnection();
 		sql_exec_wgt->setConnection(conn);
 		sql_exec_tbw->addTab(sql_exec_wgt, conn.getConnectionParam(Connection::PARAM_DB_NAME));
 		sql_exec_tbw->setCurrentWidget(sql_exec_wgt);

@@ -38,6 +38,8 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 	private:
 		Q_OBJECT
 
+		QToolButton *sql_exec_corner_btn;
+
 		NumberedTextEditor *sourcecode_txt;
 
 		SyntaxHighlighter *sourcecode_hl;
