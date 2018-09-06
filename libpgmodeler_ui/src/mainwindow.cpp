@@ -344,8 +344,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	configureSamplesMenu();
 	applyConfigurations();
 
-	//Temporary models are saved every two minutes
-	tmpmodel_save_timer.setInterval(120000);
+	//Temporary models are saved every five minutes
+	tmpmodel_save_timer.setInterval(300000);
 
 	QList<QAction *> actions=general_tb->actions();
 	QToolButton *btn=nullptr;
