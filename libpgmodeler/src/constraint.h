@@ -146,6 +146,9 @@ class Constraint: public TableObject{
 		//! \brief Retuns the action type (ON DELETE or ON UPDATE) of a foreign key
 		ActionType getActionType(unsigned act_id);
 
+		//! \brief Returns the list of columns of the specified type SOURCE_COLS or REFERENCED_COLS
+		vector<Column *> getColumns(unsigned col_type);
+
 		/*! \brief Returns one column (using its index) from the internal constraint column lists.
 		 Use the constants SOURCE_COLS or REFERENCED_COLS to access the lists */
 		Column *getColumn(unsigned col_idx, unsigned col_type);

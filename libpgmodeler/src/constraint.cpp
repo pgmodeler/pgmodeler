@@ -276,7 +276,12 @@ ActionType Constraint::getActionType(unsigned act_id)
 	if(act_id==DELETE_ACTION)
 		return(del_action);
 	else
-		return(upd_action);
+	  return(upd_action);
+}
+
+vector<Column *> Constraint::getColumns(unsigned col_type)
+{
+  return(col_type==SOURCE_COLS ? columns : ref_columns);
 }
 
 QString Constraint::getExpression(void)

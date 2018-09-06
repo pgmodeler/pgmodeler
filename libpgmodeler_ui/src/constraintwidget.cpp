@@ -355,6 +355,7 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	Column *column=nullptr;
 	Table *ref_table=nullptr;
 	vector<ExcludeElement> excl_elems;
+	vector<Column *> columns;
 
 	if(!parent_obj)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -368,25 +369,17 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	info_frm->setVisible(this->table!=nullptr);
 	ref_table_sel->setModel(model);
 
-	if(this->table)
-		count=table->getObjectCount(OBJ_COLUMN);
-	else
-		count=relationship->getAttributeCount();
-
 	columns_tab->blockSignals(true);
-	for(i=0, row=0; i < count; i++)
-	{
-		if(this->table)
-			column=dynamic_cast<Column *>(table->getObject(i, OBJ_COLUMN));
-		else
-			column=relationship->getAttribute(i);
 
-		if(constr && constr->isColumnExists(column, Constraint::SOURCE_COLS))
-		{
-			columns_tab->addRow();
-			addColumn(column, Constraint::SOURCE_COLS, row);
-			row++;
-		}
+	if(constr)
+	{
+	  row = 0;
+	  for(auto column : constr->getColumns(Constraint::SOURCE_COLS))
+	  {
+		columns_tab->addRow();
+		addColumn(column, Constraint::SOURCE_COLS, row);
+		row++;
+	  }
 	}
 
 	updateColumnsCombo(Constraint::SOURCE_COLS);
@@ -422,16 +415,12 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 			ref_columns_tab->blockSignals(true);
 			ref_table_sel->setSelectedObject(ref_table);
 
-			count=ref_table->getColumnCount();
-			for(i=0, row=0; i < count; i++)
+			row = 0;
+			for(auto column : constr->getColumns(Constraint::REFERENCED_COLS))
 			{
-				column=ref_table->getColumn(i);
-				if(constr->isColumnExists(column, Constraint::REFERENCED_COLS))
-				{
-					ref_columns_tab->addRow();
-					addColumn(column, Constraint::REFERENCED_COLS, row);
-					row++;
-				}
+			  ref_columns_tab->addRow();
+			  addColumn(column, Constraint::REFERENCED_COLS, row);
+			  row++;
 			}
 
 			updateColumnsCombo(Constraint::REFERENCED_COLS);
