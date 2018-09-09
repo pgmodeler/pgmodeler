@@ -88,9 +88,6 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Widget used to navigate through the opened models.
 		ModelNavigationWidget *model_nav_wgt;
 
-		//! \brief Thread that controls temporary model file savings
-		QThread tmpmodel_thread;
-
 		//! \brief Timer used for auto saving the model and temporary model.
 		QTimer model_save_timer,	tmpmodel_save_timer;
 

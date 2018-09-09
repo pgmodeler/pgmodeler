@@ -93,7 +93,7 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>200</width>
+                <width>210</width>
                 <height>0</height>
                </size>
               </property>
@@ -182,7 +182,7 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>200</width>
+                <width>210</width>
                 <height>0</height>
                </size>
               </property>
@@ -505,7 +505,7 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>200</width>
+                <width>210</width>
                 <height>0</height>
                </size>
               </property>
@@ -638,7 +638,7 @@
                <string/>
               </property>
               <property name="statusTip">
-               <string>Defines the period when the opened models will be saved automatically.</string>
+               <string>Defines the period when the opened models will be saved automatically. The temporary models saving period will be defined as the half of the value defined here. If the autosave is disabled the temporary models saving will occur in a period of 5 minutes.</string>
               </property>
               <property name="text">
                <string>Autosave interval (minutes):</string>
@@ -660,10 +660,13 @@
                </size>
               </property>
               <property name="minimum">
-               <number>1</number>
+               <number>5</number>
               </property>
               <property name="maximum">
                <number>30</number>
+              </property>
+              <property name="singleStep">
+               <number>5</number>
               </property>
              </widget>
             </item>

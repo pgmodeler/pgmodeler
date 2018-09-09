@@ -95,17 +95,20 @@ void HintTextWidget::setText(const QString &text)
 	QFontMetrics f=text_lbl->fontMetrics();
 	QString txt=text;
 	QRect ret;
-	QSize txt_size;
+	QSize txt_size, max_size;
 
 	txt.replace(QRegExp(QString("(<)(br)(/)?(>)")), QString("\n"));
 	txt.remove(QRegExp(QString("(<)(/)?([a-z]|[A-Z])+(>)")));
 	ret=f.boundingRect(0,0, this->maximumWidth(), this->maximumHeight(), Qt::TextWordWrap | Qt::AlignLeft | Qt::AlignTop , txt);
 	txt_size=QSize(ret.size().width() + 15, ret.size().height() + 15);
+	max_size=txt_size;
+	max_size.setWidth(max_size.width() * 1.025);
+	max_size.setHeight(max_size.height() * 1.05);
 
 	text_lbl->setMargin(5);
 	text_lbl->setText(text);
-	text_lbl->setMaximumSize(txt_size);
-	text_lbl->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+	text_lbl->setMaximumSize(max_size);
+	text_lbl->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Preferred);
 	this->setMinimumSize(txt_size);
 	this->adjustSize();
 }
@@ -129,7 +132,7 @@ QString HintTextWidget::getText(void)
 bool HintTextWidget::eventFilter(QObject *object, QEvent *event)
 {
 	//Close the hint when it text lost its focus
-	if(object==text_lbl && (event->type()==QEvent::MouseButtonPress || event->type()==QEvent::FocusOut))
+	if(object==text_lbl && (event->type()==QEvent::MouseButtonDblClick || event->type()==QEvent::FocusOut))
 	{
 		hint_tb->setChecked(false);
 		return(true);

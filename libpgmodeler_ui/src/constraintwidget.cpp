@@ -351,11 +351,9 @@ void ConstraintWidget::selectConstraintType(void)
 void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_list,  BaseObject *parent_obj, Constraint *constr)
 {
 	ObjectType obj_type;
-	unsigned count, i, row;
-	Column *column=nullptr;
+	unsigned row = 0;
 	Table *ref_table=nullptr;
 	vector<ExcludeElement> excl_elems;
-	vector<Column *> columns;
 
 	if(!parent_obj)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);

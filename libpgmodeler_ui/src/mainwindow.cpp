@@ -323,9 +323,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(model_valid_wgt, SIGNAL(s_fixApplied()), this, SLOT(removeOperations()), Qt::QueuedConnection);
 	connect(model_valid_wgt, SIGNAL(s_graphicalObjectsUpdated()), model_objs_wgt, SLOT(updateObjectsView()), Qt::QueuedConnection);
 
-	connect(&tmpmodel_save_timer, SIGNAL(timeout()), &tmpmodel_thread, SLOT(start()));
-	connect(&tmpmodel_thread, SIGNAL(started()), this, SLOT(saveTemporaryModels()));
-	connect(&tmpmodel_thread, &QThread::started, [&](){ tmpmodel_thread.setPriority(QThread::HighPriority); });
+	connect(&tmpmodel_save_timer, SIGNAL(timeout()), this, SLOT(saveTemporaryModels()));
 
 	models_tbw_parent->resize(QSize(models_tbw_parent->maximumWidth(), models_tbw_parent->height()));
 
@@ -343,9 +341,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	updateRecentModelsMenu();
 	configureSamplesMenu();
 	applyConfigurations();
-
-	//Temporary models are saved every five minutes
-	tmpmodel_save_timer.setInterval(300000);
 
 	QList<QAction *> actions=general_tb->actions();
 	QToolButton *btn=nullptr;
@@ -545,7 +540,6 @@ void MainWindow::stopTimers(bool value)
 	{
 		tmpmodel_save_timer.stop();
 		model_save_timer.stop();
-		tmpmodel_thread.quit();
 	}
 	else
 	{
@@ -603,7 +597,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
 		//Stops the saving timers as well the temp. model saving thread before close pgmodeler
 		model_save_timer.stop();
 		tmpmodel_save_timer.stop();
-		tmpmodel_thread.quit();
 		plugins_menu->clear();
 
 		//If not in demo version there is no confirmation before close the software
@@ -765,10 +758,8 @@ void MainWindow::saveTemporaryModels(void)
 				model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
 				bg_saving_pb->setValue(((i+1)/static_cast<float>(count)) * 100);
 
-				if(model->isModified() || !QFileInfo(model->getTempFilename()).exists())
+				if(model->isModified() /*|| !QFileInfo(model->getTempFilename()).exists()*/)
 					model->getDatabaseModel()->saveModel(model->getTempFilename(), SchemaParser::XML_DEFINITION);
-
-				QThread::msleep(200);
 			}
 
 			bg_saving_pb->setValue(100);
@@ -777,14 +768,14 @@ void MainWindow::saveTemporaryModels(void)
 			QApplication::restoreOverrideCursor();
 		}
 
-		tmpmodel_thread.quit();		
+		tmpmodel_save_timer.start();
 	}
 	catch(Exception &e)
 	{
 		QApplication::restoreOverrideCursor();
 		Messagebox msg_box;
-		tmpmodel_thread.quit();
 		msg_box.show(e);
+		tmpmodel_save_timer.start();
 	}
 #endif
 }
@@ -1292,6 +1283,10 @@ void MainWindow::applyConfigurations(void)
 			model_save_timer.setInterval(conf_wgt->autosave_interv_spb->value() * 60000);
 			model_save_timer.start();
 		}
+
+		//Temporary models are saved every five minutes
+		tmpmodel_save_timer.setInterval(model_save_timer.interval() != 0 ? model_save_timer.interval()/2 : 300000);
+		tmpmodel_save_timer.start();
 
 		//Force the update of all opened models
 		count=models_tbw->count();
