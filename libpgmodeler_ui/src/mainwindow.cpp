@@ -758,7 +758,7 @@ void MainWindow::saveTemporaryModels(void)
 				model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
 				bg_saving_pb->setValue(((i+1)/static_cast<float>(count)) * 100);
 
-				if(model->isModified() /*|| !QFileInfo(model->getTempFilename()).exists()*/)
+				if(model->isModified())
 					model->getDatabaseModel()->saveModel(model->getTempFilename(), SchemaParser::XML_DEFINITION);
 			}
 
@@ -890,6 +890,9 @@ void MainWindow::addModel(const QString &filename)
 
 				model_tab->db_model->setInvalidated(false);
 				model_tab->restoreLastCanvasPosition();
+
+				//Making a copy of the loaded database model file as the first version of the temp. model
+				QFile::copy(filename, model_tab->getTempFilename());
 			}
 			catch(Exception &e)
 			{
