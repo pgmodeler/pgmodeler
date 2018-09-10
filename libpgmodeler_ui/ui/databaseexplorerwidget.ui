@@ -163,7 +163,7 @@
         <bool>true</bool>
        </property>
        <property name="toolTip">
-        <string>Open a new SQL execution pane</string>
+        <string>Add a new SQL execution tab for the current database</string>
        </property>
        <property name="text">
         <string>...</string>
