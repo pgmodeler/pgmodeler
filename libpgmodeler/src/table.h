@@ -85,11 +85,11 @@ class Table: public BaseTable {
 		BaseObject *getObject(const QString &name, ObjectType obj_type, int &obj_idx);
 
 		//! \brief The methods below generates the table attributes used by the SchemaParser
-		void setColumnsAttribute(unsigned def_type);
+		void setColumnsAttribute(unsigned def_type, bool incl_rel_added_cols);
 		void setConstraintsAttribute(unsigned def_type);
 		void setCommentAttribute(TableObject *tab_obj);
 		void setAncestorTableAttribute(void);
-		void setRelObjectsIndexesAttribute(void);
+		void setRelObjectsIndexesAttribute(void);		
 
 	protected:
 		//! \brief Adds an ancestor table
@@ -392,6 +392,12 @@ class Table: public BaseTable {
 		/*! \brief Translate the CSV-like initial data to a set of INSERT commands.
 		In invalid columns exist in the buffer they will be rejected when generating the commands */
 		QString getInitialDataCommands(void);
+
+		/*! \brief Generates the table's SQL code considering adding the relationship added object or not.
+		 * Note if the method is called with incl_rel_added_objs = true it can produce an SQL/XML code
+		 * that does not reflect the real semantics of the table. So take care to use this method and always
+		 * invalidate the tables code (see setCodeInvalidated()) after retrieving the resulting code */
+		QString __getCodeDefinition(unsigned def_type, bool incl_rel_added_objs);
 
 		friend class Relationship;
 		friend class OperationList;

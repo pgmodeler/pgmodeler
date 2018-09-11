@@ -2263,7 +2263,7 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 			{
 				table=dynamic_cast<BaseTable *>(object);
 
-				for(type_id=0; type_id < 4; type_id++)
+				for(type_id=0; type_id <= 4; type_id++)
 				{
 					count=table->getObjectCount(types[type_id]);
 
@@ -2275,12 +2275,14 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 						/* The object is only inserted at the list when it was not included by relationship but references
 						columns added by relationship. Case the object is a constraint, it cannot be a primary key because
 						this type of constraint is treated separetely by relationships */
-						if(!tab_obj->isAddedByRelationship() &&
+						if(duplicate_mode ||
+						   (!duplicate_mode &&
+							!tab_obj->isAddedByRelationship() &&
 							 (!constr ||
 								(((constr &&
 									(constr->getConstraintType()==ConstraintType::foreign_key ||
 									 (constr->getConstraintType()==ConstraintType::unique &&
-									constr->isReferRelationshipAddedColumn())))))))
+									constr->isReferRelationshipAddedColumn()))))))))
 							deps.push_back(tab_obj);
 					}
 
@@ -2317,7 +2319,7 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 	}
 }
 
-void ModelWidget::pasteObjects(void)
+void ModelWidget::pasteObjects(bool duplicate_mode)
 {
 	map<BaseObject *, QString> xml_objs;
 	BaseTable *orig_parent_tab=nullptr;
@@ -2325,7 +2327,7 @@ void ModelWidget::pasteObjects(void)
 	map<BaseObject *, QString> orig_obj_names;
 	BaseObject *object=nullptr, *aux_object=nullptr;
 	TableObject *tab_obj=nullptr;
-	Table *sel_table=nullptr;
+	Table *sel_table=nullptr, *aux_table = nullptr;
 	View *sel_view=nullptr;
 	BaseTable *parent=nullptr;
 	Function *func=nullptr;
@@ -2467,8 +2469,18 @@ void ModelWidget::pasteObjects(void)
 									 object->getObjectType());
 
 		if(!tab_obj)
+		{
+			aux_table =  dynamic_cast<Table *>(object);;
+
 			//Stores the XML definition on a xml buffer map
-			xml_objs[object]=object->getCodeDefinition(SchemaParser::XML_DEFINITION);
+			if(duplicate_mode && aux_table)
+			{
+			  xml_objs[object] = aux_table->__getCodeDefinition(SchemaParser::XML_DEFINITION, true);
+			  object->setCodeInvalidated(true);
+			}
+			else
+			  xml_objs[object]=object->getCodeDefinition(SchemaParser::XML_DEFINITION);
+		}
 
 		//Store the original parent table of the object
 		else if(tab_obj && (sel_table || sel_view))
@@ -2479,21 +2491,29 @@ void ModelWidget::pasteObjects(void)
 				parent=sel_view;
 
 			/* Only generates the XML for a table object when the selected receiver object
-		is a table or is a view and the current object is a trigger, index, or rule (because
-		view's only accepts this two types) */
+			 * is a table or is a view and the current object is a trigger, index, or rule (because
+			 * view's only accepts this two types) */
 			if(sel_table ||
 					(sel_view && (tab_obj->getObjectType()==OBJ_TRIGGER ||
-												tab_obj->getObjectType()==OBJ_RULE ||
-												tab_obj->getObjectType()==OBJ_INDEX)))
+								  tab_obj->getObjectType()==OBJ_RULE ||
+								  tab_obj->getObjectType()==OBJ_INDEX)))
 			{
 				//Backups the original parent table
 				orig_parent_tab=tab_obj->getParentTable();
+
+				constr = dynamic_cast<Constraint *>(tab_obj);
 
 				//Set the parent table as the selected table/view
 				tab_obj->setParentTable(parent);
 
 				//Generates the XML code with the new parent table
-				xml_objs[object]=object->getCodeDefinition(SchemaParser::XML_DEFINITION);
+				if(constr)
+				{
+				  xml_objs[object]=constr->getCodeDefinition(SchemaParser::XML_DEFINITION, duplicate_mode);
+				  tab_obj->setCodeInvalidated(true);
+				}
+				else
+				  xml_objs[object]=object->getCodeDefinition(SchemaParser::XML_DEFINITION);
 
 				//Restore the original parent table
 				tab_obj->setParentTable(orig_parent_tab);
@@ -2502,7 +2522,15 @@ void ModelWidget::pasteObjects(void)
 		else if(tab_obj)
 		{
 			//Generates the XML code with the new parent table
-			xml_objs[object]=tab_obj->getCodeDefinition(SchemaParser::XML_DEFINITION);
+			constr = dynamic_cast<Constraint *>(tab_obj);
+
+			if(constr)
+			{
+			  xml_objs[object]=constr->getCodeDefinition(SchemaParser::XML_DEFINITION, duplicate_mode);
+			  tab_obj->setCodeInvalidated(true);
+			}
+			else
+			  xml_objs[object]=tab_obj->getCodeDefinition(SchemaParser::XML_DEFINITION);
 		}
 	}
 
@@ -2550,7 +2578,7 @@ void ModelWidget::pasteObjects(void)
 				constr=dynamic_cast<Constraint *>(tab_obj);
 
 				/* Once created, the object is added on the model, except for relationships and table objects
-		because they are inserted automatically */
+				 * because they are inserted automatically */
 				if(object && !tab_obj && !dynamic_cast<Relationship *>(object))
 				{
 					if(db_model->getObjectIndex(object->getSignature(), object->getObjectType()) >= 0)
@@ -2566,6 +2594,13 @@ void ModelWidget::pasteObjects(void)
 					{
 						sel_table->addObject(tab_obj);
 						sel_table->setModified(true);
+					}
+					else if(constr && duplicate_mode &&
+							constr->getConstraintType() == ConstraintType::primary_key &&
+							constr->getParentTable()->getObjectIndex(constr) < 0)
+					{
+					  constr->getParentTable()->addObject(constr);
+					  constr->getParentTable()->setModified(true);
 					}
 
 					//Updates the fk relationships if the constraint is a foreign-key
@@ -2657,14 +2692,17 @@ void ModelWidget::duplicateObject(void)
 			table->setModified(true);
 
 			if(obj_type == OBJ_COLUMN)
-				db_model->validateRelationships();
+			  db_model->validateRelationships();
+			else if(obj_type == OBJ_CONSTRAINT &&
+					dynamic_cast<Constraint *>(object)->getConstraintType() == ConstraintType::foreign_key)
+			  db_model->updateTableFKRelationships(dynamic_cast<Table *>(table));
 
 			emit s_objectCreated();
 		}
 		else if(!selected_objects.empty())
 		{
 			copyObjects(true);
-			pasteObjects();
+			pasteObjects(true);
 		}
 	}
 	catch(Exception &e)
