@@ -3,10 +3,7 @@
 #          Code generation can be broken if incorrect changes are made.
 [<table name=] "{name}" 
   
- %if {alias} %then
-   $sp alias="{alias}"
- %end
-  
+  %if {alias} %then $sp alias="{alias}" %end
   %if {oids} %then [ oids="true"] %end
   %if {gen-alter-cmds} %then [ gen-alter-cmds="true"] %end
   %if {unlogged} %then [ unlogged="true"] %end
@@ -16,6 +13,7 @@
   %if {faded-out} %then [ faded-out=] "true" %end
   %if {rls-enabled} %then [ rls-enabled=] "true" %end
   %if {rls-forced} %then [ rls-forced=] "true" %end
+  %if {max-obj-count} %then [ max-obj-count=] "{max-obj-count}" %end
 > $br
 
  {schema}

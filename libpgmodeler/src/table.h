@@ -399,6 +399,10 @@ class Table: public BaseTable {
 		 * invalidate the tables code (see setCodeInvalidated()) after retrieving the resulting code */
 		QString __getCodeDefinition(unsigned def_type, bool incl_rel_added_objs);
 
+		void setObjectListsCapacity(unsigned capacity);
+
+		unsigned getMaxObjectCount(void);
+
 		friend class Relationship;
 		friend class OperationList;
 };

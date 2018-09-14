@@ -14,7 +14,7 @@
  %if {sql-disabled} %then [ sql-disabled=] "true" %end
  %if {hide-ext-attribs} %then [ hide-ext-attribs=] "true" %end
  %if {faded-out} %then [ faded-out=] "true" %end
-
+ %if {max-obj-count} %then [ max-obj-count=] "{max-obj-count}" %end
  > $br
 
  {schema}

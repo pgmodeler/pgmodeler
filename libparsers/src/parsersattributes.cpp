@@ -301,6 +301,7 @@ namespace ParsersAttributes {
 	LOOKAHEAD_CHAR=QString("lookahead-char"),
 	MATERIALIZED=QString("materialized"),
 	MAX_CONNECTIONS=QString("max-connections"),
+	MAX_OBJ_COUNT=QString("max-obj-count"),
 	MAX_VALUE=QString("max-value"),
 	MAXIMIZED=QString("maximized"),
 	MEMBER_ROLES=QString("member-roles"),

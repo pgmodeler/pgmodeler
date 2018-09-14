@@ -12,6 +12,7 @@
 <!ATTLIST view sql-disabled (false|true) "false">
 <!ATTLIST view hide-ext-attribs (false|true) "false">
 <!ATTLIST view faded-out (false|true) "false">
+<!ATTLIST view max-obj-count CDATA #IMPLIED>
 
 <!ELEMENT reference (expression?)>
 <!ATTLIST reference ref-alias CDATA #IMPLIED>

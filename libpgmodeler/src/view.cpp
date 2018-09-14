@@ -37,10 +37,10 @@ View::View(void) : BaseTable()
 
 View::~View(void)
 {
-	ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE };
+	ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX };
 	vector<TableObject *> *list=nullptr;
 
-	for(unsigned i=0; i < 2; i++)
+	for(unsigned i=0; i < 3; i++)
 	{
 		list=getObjectList(types[i]);
 		while(!list->empty())
@@ -596,6 +596,7 @@ QString View::getCodeDefinition(unsigned def_type)
 		setPositionAttribute();
 		setFadedOutAttribute();
 		setReferencesAttribute();
+		attributes[ParsersAttributes::MAX_OBJ_COUNT]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
 	}
 
 	return(BaseObject::__getCodeDefinition(def_type));
@@ -604,7 +605,32 @@ QString View::getCodeDefinition(unsigned def_type)
 void View::setSQLObjectAttribute(void)
 {
 	if(materialized)
-		attributes[ParsersAttributes::SQL_OBJECT]=QString("MATERIALIZED ") + BaseObject::getSQLName(OBJ_VIEW);
+	  attributes[ParsersAttributes::SQL_OBJECT]=QString("MATERIALIZED ") + BaseObject::getSQLName(OBJ_VIEW);
+}
+
+void View::setObjectListsCapacity(unsigned capacity)
+{
+  if(capacity < DEF_MAX_OBJ_COUNT || capacity > DEF_MAX_OBJ_COUNT * 10)
+	capacity = DEF_MAX_OBJ_COUNT;
+
+  references.reserve(capacity);
+  indexes.reserve(capacity/2);
+  rules.reserve(capacity/2);
+  triggers.reserve(capacity/2);
+}
+
+unsigned View::getMaxObjectCount(void)
+{
+  unsigned count = 0, max = references.size();
+  vector<ObjectType> types = { OBJ_INDEX, OBJ_RULE, OBJ_TRIGGER };
+
+  for(auto type : types)
+  {
+	count = getObjectList(type)->size();
+	if(count > max) max = count;
+  }
+
+  return(max);
 }
 
 QString View::getDropDefinition(bool cascade)
