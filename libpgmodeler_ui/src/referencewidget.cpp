@@ -23,6 +23,7 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
 
+	ref_flags = 0;
 	ref_alias_ht=new HintTextWidget(ref_alias_hint, this);
 	ref_alias_ht->setText(ref_alias_edt->statusTip());
 
@@ -134,6 +135,8 @@ void ReferenceWidget::applyConfiguration(void)
 			 !view_def_chk->isChecked())
 			throw Exception(ERR_SQL_SCOPE_INV_VIEW_REF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+		ref_flags = 0;
+
 		if(view_def_chk->isChecked())
 			ref_flags = Reference::SQL_VIEW_DEFINITION;
 
@@ -147,7 +150,7 @@ void ReferenceWidget::applyConfiguration(void)
 			ref_flags |= Reference::SQL_REFER_WHERE;
 
 		if(end_expr_chk->isChecked())
-			ref_flags |= Reference::SQL_REFER_WHERE;
+			ref_flags |= Reference::SQL_REFER_END_EXPR;
 
 		emit s_closeRequested();
 	}

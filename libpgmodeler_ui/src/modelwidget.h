@@ -420,7 +420,7 @@ class ModelWidget: public QWidget {
 		void copyObjects(bool duplicate_mode = false);
 
 		//! \brief Paste all the objects copied previously
-		void pasteObjects(void);
+		void pasteObjects(bool duplicate_mode = false);
 
 		//! \brief Duplicate the selected table object in its parent table
 		void duplicateObject(void);

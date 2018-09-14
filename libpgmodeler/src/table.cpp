@@ -192,7 +192,7 @@ void Table::setRelObjectsIndexesAttribute(void)
 	}
 }
 
-void Table::setColumnsAttribute(unsigned def_type)
+void Table::setColumnsAttribute(unsigned def_type, bool incl_rel_added_cols)
 {
 	QString str_cols, inh_cols;
 	unsigned i, count;
@@ -202,8 +202,8 @@ void Table::setColumnsAttribute(unsigned def_type)
 	{
 		/* Do not generates the column code definition when it is not included by
 		 relatoinship, in case of XML definition. */
-		if((def_type==SchemaParser::SQL_DEFINITION && !columns[i]->isAddedByCopy() && !columns[i]->isAddedByGeneralization())||
-				(def_type==SchemaParser::XML_DEFINITION &&	!columns[i]->isAddedByRelationship()))
+		if((def_type==SchemaParser::SQL_DEFINITION && !columns[i]->isAddedByCopy() && !columns[i]->isAddedByGeneralization()) ||
+		   (def_type==SchemaParser::XML_DEFINITION && (!columns[i]->isAddedByRelationship() || (incl_rel_added_cols && columns[i]->isAddedByRelationship()))))
 		{
 			str_cols+=columns[i]->getCodeDefinition(def_type);
 
@@ -1429,44 +1429,49 @@ void Table::updateAlterCmdsStatus(void)
 										   dynamic_cast<Constraint *>(constraints[i])->getConstraintType()!=ConstraintType::foreign_key);
 }
 
+QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
+{
+  attributes[ParsersAttributes::OIDS]=(with_oid ? ParsersAttributes::_TRUE_ : QString());
+  attributes[ParsersAttributes::GEN_ALTER_CMDS]=(gen_alter_cmds ? ParsersAttributes::_TRUE_ : QString());
+  attributes[ParsersAttributes::UNLOGGED]=(unlogged ? ParsersAttributes::_TRUE_ : QString());
+  attributes[ParsersAttributes::RLS_ENABLED]=(rls_enabled ? ParsersAttributes::_TRUE_ : QString());
+  attributes[ParsersAttributes::RLS_FORCED]=(rls_forced ? ParsersAttributes::_TRUE_ : QString());
+  attributes[ParsersAttributes::COPY_TABLE]=QString();
+  attributes[ParsersAttributes::ANCESTOR_TABLE]=QString();
+  attributes[ParsersAttributes::TAG]=QString();
+  attributes[ParsersAttributes::HIDE_EXT_ATTRIBS]=(isExtAttribsHidden() ? ParsersAttributes::_TRUE_ : QString());
+
+  if(def_type==SchemaParser::SQL_DEFINITION && copy_table)
+	  attributes[ParsersAttributes::COPY_TABLE]=copy_table->getName(true) + copy_op.getSQLDefinition();
+
+  if(tag && def_type==SchemaParser::XML_DEFINITION)
+	  attributes[ParsersAttributes::TAG]=tag->getCodeDefinition(def_type, true);
+
+  (copy_table ? copy_table->getName(true) : QString());
+
+  setColumnsAttribute(def_type, incl_rel_added_objs);
+  setConstraintsAttribute(def_type);
+  setAncestorTableAttribute();
+
+  if(def_type==SchemaParser::XML_DEFINITION)
+  {
+	  setRelObjectsIndexesAttribute();
+	  setPositionAttribute();
+	  setFadedOutAttribute();
+	  attributes[ParsersAttributes::INITIAL_DATA]=initial_data;
+  }
+  else
+	  attributes[ParsersAttributes::INITIAL_DATA]=getInitialDataCommands();
+
+  return(BaseObject::__getCodeDefinition(def_type));
+}
+
 QString Table::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-	attributes[ParsersAttributes::OIDS]=(with_oid ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::GEN_ALTER_CMDS]=(gen_alter_cmds ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::UNLOGGED]=(unlogged ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::RLS_ENABLED]=(rls_enabled ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::RLS_FORCED]=(rls_forced ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::COPY_TABLE]=QString();
-	attributes[ParsersAttributes::ANCESTOR_TABLE]=QString();
-	attributes[ParsersAttributes::TAG]=QString();
-	attributes[ParsersAttributes::HIDE_EXT_ATTRIBS]=(isExtAttribsHidden() ? ParsersAttributes::_TRUE_ : QString());
-
-	if(def_type==SchemaParser::SQL_DEFINITION && copy_table)
-		attributes[ParsersAttributes::COPY_TABLE]=copy_table->getName(true) + copy_op.getSQLDefinition();
-
-	if(tag && def_type==SchemaParser::XML_DEFINITION)
-		attributes[ParsersAttributes::TAG]=tag->getCodeDefinition(def_type, true);
-
-	(copy_table ? copy_table->getName(true) : QString());
-
-	setColumnsAttribute(def_type);
-	setConstraintsAttribute(def_type);
-	setAncestorTableAttribute();
-
-	if(def_type==SchemaParser::XML_DEFINITION)
-	{
-		setRelObjectsIndexesAttribute();
-		setPositionAttribute();
-		setFadedOutAttribute();
-		attributes[ParsersAttributes::INITIAL_DATA]=initial_data;
-	}
-	else
-		attributes[ParsersAttributes::INITIAL_DATA]=getInitialDataCommands();
-
-	return(BaseObject::__getCodeDefinition(def_type));
+	return(__getCodeDefinition(def_type, false));
 }
 
 void Table::operator = (Table &tab)
