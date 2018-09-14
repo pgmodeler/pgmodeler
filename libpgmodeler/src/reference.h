@@ -62,7 +62,7 @@ class Reference {
 		SQL_REFER_SELECT=2,
 		SQL_REFER_FROM=4,
 		SQL_REFER_END_EXPR=8,
-		SQL_VIEW_DEFINITION=15;
+		SQL_VIEW_DEFINITION=16;
 
 		Reference(void);
 
