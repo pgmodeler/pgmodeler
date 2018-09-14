@@ -94,7 +94,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 		connect(tab, SIGNAL(s_rowsMoved(int,int)), this, SLOT(swapObjects(int,int)));
 	}
 
-	objects_tab_map[OBJ_COLUMN]->setColumnCount(5);
+	objects_tab_map[OBJ_COLUMN]->setColumnCount(6);
 	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("PK"), 0);
 	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Name"), 1);
 	objects_tab_map[OBJ_COLUMN]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),1);
@@ -102,6 +102,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	objects_tab_map[OBJ_COLUMN]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),2);
 	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Default Value"), 3);
 	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Attribute(s)"), 4);
+	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Alias"), 5);
 	objects_tab_map[OBJ_COLUMN]->adjustColumnToContents(0);
 
 	connect(objects_tab_map[OBJ_COLUMN], &ObjectsTableWidget::s_cellClicked, [&](int row, int col){
@@ -118,15 +119,16 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 		}
 	});
 
-	objects_tab_map[OBJ_CONSTRAINT]->setColumnCount(4);
+	objects_tab_map[OBJ_CONSTRAINT]->setColumnCount(5);
 	objects_tab_map[OBJ_CONSTRAINT]->setHeaderLabel(trUtf8("Name"), 0);
 	objects_tab_map[OBJ_CONSTRAINT]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 	objects_tab_map[OBJ_CONSTRAINT]->setHeaderLabel(trUtf8("Type"), 1);
 	objects_tab_map[OBJ_CONSTRAINT]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
 	objects_tab_map[OBJ_CONSTRAINT]->setHeaderLabel(trUtf8("ON DELETE"), 2);
 	objects_tab_map[OBJ_CONSTRAINT]->setHeaderLabel(trUtf8("ON UPDATE"), 3);
+	objects_tab_map[OBJ_CONSTRAINT]->setHeaderLabel(trUtf8("Alias"), 4);
 
-	objects_tab_map[OBJ_TRIGGER]->setColumnCount(4);
+	objects_tab_map[OBJ_TRIGGER]->setColumnCount(5);
 	objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Name"), 0);
 	objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 	objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Refer. Table"), 1);
@@ -134,19 +136,22 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Firing"), 2);
 	objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("trigger")),2);
 	objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Events"), 3);
+	objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Alias"), 4);
 
-	objects_tab_map[OBJ_RULE]->setColumnCount(3);
+	objects_tab_map[OBJ_RULE]->setColumnCount(4);
 	objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Name"), 0);
 	objects_tab_map[OBJ_RULE]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 	objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Execution"), 1);
 	objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Event"), 2);
+	objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Alias"), 3);
 
-	objects_tab_map[OBJ_INDEX]->setColumnCount(2);
+	objects_tab_map[OBJ_INDEX]->setColumnCount(3);
 	objects_tab_map[OBJ_INDEX]->setHeaderLabel(trUtf8("Name"), 0);
 	objects_tab_map[OBJ_INDEX]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 	objects_tab_map[OBJ_INDEX]->setHeaderLabel(trUtf8("Indexing"), 1);
+	objects_tab_map[OBJ_INDEX]->setHeaderLabel(trUtf8("Alias"), 2);
 
-	objects_tab_map[OBJ_POLICY]->setColumnCount(6);
+	objects_tab_map[OBJ_POLICY]->setColumnCount(7);
 	objects_tab_map[OBJ_POLICY]->setHeaderLabel(trUtf8("Name"), 0);
 	objects_tab_map[OBJ_POLICY]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
 	objects_tab_map[OBJ_POLICY]->setHeaderLabel(trUtf8("Command"), 1);
@@ -156,6 +161,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	objects_tab_map[OBJ_POLICY]->setHeaderLabel(trUtf8("CHECK expression"), 4);
 	objects_tab_map[OBJ_POLICY]->setHeaderLabel(trUtf8("Roles"), 5);
 	objects_tab_map[OBJ_POLICY]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),5);
+	objects_tab_map[OBJ_POLICY]->setHeaderLabel(trUtf8("Alias"), 6);
 
 	configureFormLayout(table_grid, OBJ_TABLE);
 	configureTabOrder({ tag_sel });
@@ -445,6 +451,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		if(column->isAddedByRelationship() || (pk && pk->isAddedByRelationship()))
 			tab->setCellDisabled(row, 0, true);
 
+		tab->setCellText(column->getAlias(), row, 5);
 		tab->adjustColumnToContents(0);
 	}
 	else if(obj_type==OBJ_CONSTRAINT)
@@ -467,6 +474,8 @@ void TableWidget::showObjectData(TableObject *object, int row)
 			tab->setCellText(QString("-"),row,2);
 			tab->setCellText(QString("-"),row,3);
 		}
+
+		tab->setCellText(constr->getAlias(), row, 4);
 	}
 	else if(obj_type==OBJ_TRIGGER)
 	{
@@ -487,7 +496,8 @@ void TableWidget::showObjectData(TableObject *object, int row)
 				str_aux+=~events[i] + QString(", ");
 		}
 		str_aux.remove(str_aux.size()-2, 2);
-		tab->setCellText(str_aux ,row,3);
+		tab->setCellText(str_aux ,row,3);		
+		tab->setCellText(trigger->getAlias(), row, 4);
 	}
 	else if(obj_type==OBJ_RULE)
 	{
@@ -498,6 +508,8 @@ void TableWidget::showObjectData(TableObject *object, int row)
 
 		//Column 2: Rule event type
 		tab->setCellText(~rule->getEventType(),row,2);
+
+		tab->setCellText(rule->getAlias(), row, 3);
 	}
 	else if(obj_type==OBJ_INDEX)
 	{
@@ -505,6 +517,8 @@ void TableWidget::showObjectData(TableObject *object, int row)
 
 		//Coluna 1: Indexing type
 		tab->setCellText(~index->getIndexingType(),row,1);
+
+		tab->setCellText(index->getAlias(), row, 2);
 	}
 	else if(obj_type==OBJ_POLICY)
 	{
@@ -529,6 +543,8 @@ void TableWidget::showObjectData(TableObject *object, int row)
 
 		//Column 5: Roles
 		tab->setCellText(!rol_names.isEmpty() ? rol_names.join(", ") : QString("PUBLIC"), row, 5);
+
+		tab->setCellText(policy->getAlias(), row, 6);
 	}
 
 	//Changes the foreground/background color of the table row if the object is protected or added by relationship
