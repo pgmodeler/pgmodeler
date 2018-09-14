@@ -439,7 +439,7 @@ void DataManipulationForm::enableRowControlButtons(void)
 
 	delete_tb->setEnabled(cols_selected);
 	duplicate_tb->setEnabled(cols_selected);
-	copy_tb->setEnabled(sel_ranges.count() == 1);
+	copy_tb->setEnabled(sel_ranges.count() != 0);
 	paste_tb->setEnabled(!qApp->clipboard()->text().isEmpty() &&
 											 table_cmb->currentData().toUInt() == OBJ_TABLE  &&
 											 !col_names.isEmpty());
