@@ -649,18 +649,26 @@ unsigned DatabaseModel::getObjectCount(ObjectType obj_type)
 	if(!obj_list)
 		throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
-		return(obj_list->size());
+	  return(obj_list->size());
+}
+
+unsigned DatabaseModel::getMaxObjectCount(void)
+{
+  vector<ObjectType> types = getObjectTypes(false, {OBJ_DATABASE});
+  unsigned count = 0, max = 0;
+
+  for(auto &type : types)
+  {
+	 count = getObjectList(type)->size();
+	 if(count > max) max = count;
+  }
+
+  return(max);
 }
 
 unsigned DatabaseModel::getObjectCount(void)
 {
-	vector<ObjectType> types={
-		BASE_RELATIONSHIP,OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW,
-		OBJ_AGGREGATE, OBJ_OPERATOR, OBJ_SEQUENCE, OBJ_CONVERSION,
-		OBJ_CAST, OBJ_OPFAMILY, OBJ_OPCLASS, OBJ_TEXTBOX, OBJ_DOMAIN,
-		OBJ_TYPE, OBJ_FUNCTION, OBJ_SCHEMA,	OBJ_LANGUAGE, OBJ_TABLESPACE,
-		OBJ_ROLE, OBJ_PERMISSION, OBJ_COLLATION, OBJ_EXTENSION, OBJ_TAG,
-		OBJ_EVENT_TRIGGER, OBJ_GENERIC_SQL};
+  vector<ObjectType> types= getObjectTypes(false, {OBJ_DATABASE});
 	unsigned count=0;
 
 	for(auto &type : types)
@@ -2979,6 +2987,8 @@ void DatabaseModel::loadModel(const QString &filename)
 			//Gets the basic model information
 			xmlparser.getElementAttributes(attribs);
 
+			setObjectListsCapacity(attribs[ParsersAttributes::MAX_OBJ_COUNT].toUInt());
+
 			this->author=attribs[ParsersAttributes::MODEL_AUTHOR];
 
 			pos_str=attribs[ParsersAttributes::LAST_POSITION].split(',');
@@ -3345,6 +3355,46 @@ QString DatabaseModel::getErrorExtraInfo(void)
 		extra_info=xmlparser.getXMLBuffer();
 
 	return extra_info;
+}
+
+void DatabaseModel::setLoadingModel(bool value)
+{
+  loading_model = value;
+}
+
+void DatabaseModel::setObjectListsCapacity(unsigned capacity)
+{
+  if(capacity < BaseObject::DEF_MAX_OBJ_COUNT ||
+	 capacity > (BaseObject::DEF_MAX_OBJ_COUNT * 1000))
+	capacity = BaseObject::DEF_MAX_OBJ_COUNT;
+
+  unsigned half_cap = capacity/2, one_fourth_cap = capacity/4;
+
+  views.reserve(capacity);
+  tables.reserve(capacity);
+  relationships.reserve(capacity);
+  base_relationships.reserve(capacity);
+  sequences.reserve(capacity);
+  permissions.reserve(capacity);
+  schemas.reserve(half_cap);
+  roles.reserve(half_cap);
+  functions.reserve(half_cap);
+  types.reserve(half_cap);
+  textboxes.reserve(half_cap);
+  aggregates.reserve(half_cap);
+  operators.reserve(half_cap);
+  op_classes.reserve(half_cap);
+  op_families.reserve(half_cap);
+  domains.reserve(half_cap);
+  collations.reserve(half_cap);
+  extensions.reserve(half_cap);
+  tags.reserve(half_cap);
+  genericsqls.reserve(half_cap);
+  tablespaces.reserve(one_fourth_cap);
+  languages.reserve(one_fourth_cap);
+  casts.reserve(one_fourth_cap);
+  conversions.reserve(one_fourth_cap);
+  eventtriggers.reserve(one_fourth_cap);
 }
 
 void DatabaseModel::setLastPosition(const QPoint &pnt)
@@ -4594,6 +4644,7 @@ Table *DatabaseModel::createTable(void)
 		setBasicAttributes(table);
 		xmlparser.getElementAttributes(attribs);
 
+		table->setObjectListsCapacity(attribs[ParsersAttributes::MAX_OBJ_COUNT].toUInt());
 		table->setWithOIDs(attribs[ParsersAttributes::OIDS]==ParsersAttributes::_TRUE_);
 		table->setUnlogged(attribs[ParsersAttributes::UNLOGGED]==ParsersAttributes::_TRUE_);
 		table->setRLSEnabled(attribs[ParsersAttributes::RLS_ENABLED]==ParsersAttributes::_TRUE_);
@@ -5736,6 +5787,7 @@ View *DatabaseModel::createView(void)
 		setBasicAttributes(view);
 
 		xmlparser.getElementAttributes(attribs);
+		view->setObjectListsCapacity(attribs[ParsersAttributes::MAX_OBJ_COUNT].toUInt());
 		view->setMaterialized(attribs[ParsersAttributes::MATERIALIZED]==ParsersAttributes::_TRUE_);
 		view->setRecursive(attribs[ParsersAttributes::RECURSIVE]==ParsersAttributes::_TRUE_);
 		view->setWithNoData(attribs[ParsersAttributes::WITH_NO_DATA]==ParsersAttributes::_TRUE_);
@@ -6757,6 +6809,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 
 		if(def_type==SchemaParser::XML_DEFINITION)
 		{
+			attribs_aux[ParsersAttributes::MAX_OBJ_COUNT]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
 			attribs_aux[ParsersAttributes::PROTECTED]=(this->is_protected ? ParsersAttributes::_TRUE_ : QString());
 			attribs_aux[ParsersAttributes::LAST_POSITION]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
 			attribs_aux[ParsersAttributes::LAST_ZOOM]=QString::number(last_zoom);

@@ -32,6 +32,7 @@ OperationList::OperationList(DatabaseModel *model)
 	current_index=0;
 	next_op_chain=Operation::NO_CHAIN;
 	ignore_chain=false;
+	operations.reserve(max_size);
 }
 
 OperationList::~OperationList(void)

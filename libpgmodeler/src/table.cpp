@@ -1459,6 +1459,7 @@ QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 	  setPositionAttribute();
 	  setFadedOutAttribute();
 	  attributes[ParsersAttributes::INITIAL_DATA]=initial_data;
+	  attributes[ParsersAttributes::MAX_OBJ_COUNT]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
   }
   else
 	  attributes[ParsersAttributes::INITIAL_DATA]=getInitialDataCommands();
@@ -1843,4 +1844,32 @@ QString Table::createInsertCommand(const QStringList &col_names, const QStringLi
 	}
 
 	return(fmt_cmd);
+}
+
+void Table::setObjectListsCapacity(unsigned capacity)
+{
+  if(capacity < DEF_MAX_OBJ_COUNT || capacity > DEF_MAX_OBJ_COUNT * 10)
+	capacity = DEF_MAX_OBJ_COUNT;
+
+  columns.reserve(capacity);
+  constraints.reserve(capacity/2);
+  indexes.reserve(capacity/2);
+  rules.reserve(capacity/2);
+  triggers.reserve(capacity/2);
+  policies.reserve(capacity/2);
+}
+
+unsigned Table::getMaxObjectCount(void)
+{
+  unsigned count = 0, max = 0;
+  vector<ObjectType> types = { OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_INDEX,
+							   OBJ_RULE, OBJ_TRIGGER, OBJ_POLICY };
+
+  for(auto type : types)
+  {
+	count = getObjectList(type)->size();
+	if(count > max) max = count;
+  }
+
+  return(max);
 }

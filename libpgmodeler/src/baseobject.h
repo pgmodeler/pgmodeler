@@ -232,6 +232,11 @@ class BaseObject {
 		//! \brief Maximum number of characters that an object name on PostgreSQL can have
 		static const int OBJECT_NAME_MAX_LENGTH=63;
 
+		/*! \brief The default number of objects supposed to be stored in objects list.
+		 * This values is just a reference (hint) and is used to preallocate (reserve) space on vectors which handle objects
+		 * to avoid excessive allocation/deallocation by resizing the vectors due to insert operation */
+		static const unsigned DEF_MAX_OBJ_COUNT=20;
+
 		BaseObject(void);
 		BaseObject(bool system_obj);
 		virtual ~BaseObject(void){}

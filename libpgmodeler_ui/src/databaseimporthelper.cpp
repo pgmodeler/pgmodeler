@@ -547,6 +547,9 @@ void DatabaseImportHelper::importDatabase(void)
 		if(!dbmodel)
 			throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+		dbmodel->setLoadingModel(true);
+		dbmodel->setObjectListsCapacity(creation_order.size());
+
 		retrieveSystemObjects();
 		retrieveUserObjects();
 		createObjects();
@@ -596,6 +599,8 @@ void DatabaseImportHelper::importDatabase(void)
 		}
 		else
 			emit s_importCanceled();
+
+		dbmodel->setLoadingModel(false);
 
 		if(!import_canceled)
 		{
@@ -1653,6 +1658,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 
 		itr=itr1=columns[attribs[ParsersAttributes::OID].toUInt()].begin();
 		itr_end=columns[attribs[ParsersAttributes::OID].toUInt()].end();
+		attribs[ParsersAttributes::MAX_OBJ_COUNT]=QString::number(columns[attribs[ParsersAttributes::OID].toUInt()].size());
 
 		//Creating columns
 		while(itr!=itr_end)

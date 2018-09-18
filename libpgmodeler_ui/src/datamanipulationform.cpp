@@ -86,7 +86,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	//Forcing the splitter that handles the bottom widgets to resize its children to their minimum size
 	h_splitter->setSizes({500, 250, 500});
-	v_splitter->setVisible(false);
+	filter_tbw->setVisible(false);
 	csv_load_parent->setVisible(false);
 
 	csv_load_wgt = new CsvLoadWidget(this, false);
@@ -102,7 +102,25 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 		paste_tb->setEnabled(false);
 	});
 
-	connect(csv_load_tb, SIGNAL(toggled(bool)), csv_load_parent, SLOT(setVisible(bool)));	
+	connect(columns_lst, &QListWidget::itemDoubleClicked, [&](QListWidgetItem *item){
+	  if(item->checkState() == Qt::Checked)
+		item->setCheckState(Qt::Unchecked);
+	  else
+		item->setCheckState(Qt::Checked);
+
+	  toggleColumnDisplay(item);
+	});
+
+	connect(select_all_tb, &QToolButton::clicked, [&](){
+	  setColumnsCheckState(Qt::Checked);
+	});
+
+	connect(clear_all_tb, &QToolButton::clicked, [&](){
+	  setColumnsCheckState(Qt::Unchecked);
+	});
+
+	connect(columns_lst, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(toggleColumnDisplay(QListWidgetItem*)));
+	connect(csv_load_tb, SIGNAL(toggled(bool)), csv_load_parent, SLOT(setVisible(bool)));
 	connect(close_btn, SIGNAL(clicked()), this, SLOT(reject()));
 	connect(schema_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(listTables()));
 	connect(hide_views_chk, SIGNAL(toggled(bool)), this, SLOT(listTables()));
@@ -125,7 +143,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(ord_columns_lst, SIGNAL(currentRowChanged(int)), this, SLOT(enableColumnControlButtons()));
 	connect(move_down_tb, SIGNAL(clicked()), this, SLOT(swapColumns()));
 	connect(move_up_tb, SIGNAL(clicked()), this, SLOT(swapColumns()));
-	connect(filter_tb, SIGNAL(toggled(bool)), v_splitter, SLOT(setVisible(bool)));
+	connect(filter_tb, SIGNAL(toggled(bool)), filter_tbw, SLOT(setVisible(bool)));
 	connect(truncate_tb, SIGNAL(clicked(bool)), this, SLOT(truncateTable()));
 
 	connect(bulkedit_tb, &QToolButton::clicked, [&](){
@@ -397,6 +415,22 @@ void DataManipulationForm::retrieveData(void)
 
 		code_compl_wgt->clearCustomItems();
 		code_compl_wgt->insertCustomItems(col_names, trUtf8("Column"), OBJ_COLUMN);
+
+		columns_lst->clear();
+		QListWidgetItem *item = nullptr;
+
+		for(auto &col : col_names)
+		{
+		  columns_lst->addItem(col);
+		  item = columns_lst->item(columns_lst->count() - 1);
+		  item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+		  item->setCheckState(Qt::Checked);
+		  item->setData(Qt::UserRole, item->checkState());
+		}
+
+		//Restoring the visibily of the columns
+		for(int idx = 0; idx < results_tbw->horizontalHeader()->count(); idx++)
+		   results_tbw->horizontalHeader()->setSectionHidden(idx, false);
 	}
 	catch(Exception &e)
 	{
@@ -439,7 +473,7 @@ void DataManipulationForm::enableRowControlButtons(void)
 
 	delete_tb->setEnabled(cols_selected);
 	duplicate_tb->setEnabled(cols_selected);
-	copy_tb->setEnabled(sel_ranges.count() == 1);
+	copy_tb->setEnabled(sel_ranges.count() != 0);
 	paste_tb->setEnabled(!qApp->clipboard()->text().isEmpty() &&
 											 table_cmb->currentData().toUInt() == OBJ_TABLE  &&
 											 !col_names.isEmpty());
@@ -1428,6 +1462,22 @@ void DataManipulationForm::closeEvent(QCloseEvent *)
   GeneralConfigWidget::saveWidgetGeometry(this);
 }
 
+void DataManipulationForm::setColumnsCheckState(Qt::CheckState state)
+{
+  QListWidgetItem *item = nullptr;
+
+  results_tbw->blockSignals(true);
+
+  for(int idx = 0; idx < columns_lst->count(); idx++)
+  {
+	item = columns_lst->item(idx);
+	item->setCheckState(state);
+	toggleColumnDisplay(item);
+  }
+
+  results_tbw->blockSignals(false);
+}
+
 void DataManipulationForm::truncateTable(void)
 {
 	try
@@ -1442,5 +1492,23 @@ void DataManipulationForm::truncateTable(void)
 	{
 		Messagebox msg_box;
 		msg_box.show(e);
-	}
+  }
+}
+
+void DataManipulationForm::toggleColumnDisplay(QListWidgetItem *item)
+{
+  if(!item)
+	return;
+
+  if(item->checkState() != static_cast<Qt::CheckState>(item->data(Qt::UserRole).toInt()))
+  {
+	int idx = 0;
+	bool hide = false;
+
+	idx = col_names.indexOf(item->text());
+	hide = item->checkState() == Qt::Unchecked;
+	results_tbw->horizontalHeader()->setSectionHidden(idx, hide);
+	item->setCheckState(hide ? Qt::Unchecked : Qt::Checked);
+	item->setData(Qt::UserRole, item->checkState());
+  }
 }

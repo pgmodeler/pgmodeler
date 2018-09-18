@@ -21,6 +21,10 @@
  %if {last-zoom} %then
   [ last-zoom=] "{last-zoom}"
  %end
+ 
+ %if {max-obj-count} %then
+  [ max-obj-count=] "{max-obj-count}"
+ %end
 
  %if {default-schema} %or {default-owner}  %then
     $br $tb

@@ -169,6 +169,16 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns extra error info when loading database models
 		QString getErrorExtraInfo(void);
 
+		/*! \brief This method forces the indication that the model is being loaded or not by setting the attribute loading_model.
+		 * The attribute loading_model causes the model perform certain operations only when model starts/ends the loading process,
+		 * for instance, if loading_model = true graphical objects will be rendered only when the loading process finishes (loading_model =false)
+		 * otherwise the objects are rendered as they are added to the model. The drawback of this approach is, depending on the operation being used after
+		 * calling this method, the user is obligated to call the methdo setObjectsModified() to force the graphical objects rendering. */
+		void setLoadingModel(bool value);
+
+		//! \brief Set the initial capacity of the objects list for a optimized memory usage
+		void setObjectListsCapacity(unsigned capacity);
+
 	public:
 		static const unsigned META_DB_ATTRIBUTES=1,	//! \brief Handle database model attribute when save/load metadata file
 		META_OBJS_POSITIONING=2,	//! \brief Handle objects' positioning when save/load metadata file
@@ -282,8 +292,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns the object count for the specified type
 		unsigned getObjectCount(ObjectType obj_type);
 
-		//! \brief Returns the object count for all object types
+		//! \brief Returns the object count for all object types.
 		unsigned getObjectCount(void);
+
+		unsigned getMaxObjectCount(void);
 
 		//! \brief Retuns the specified localization value
 		QString getLocalization(unsigned localiz_id);
@@ -619,6 +631,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Signal emitted when an object is created from a xml code
 		void s_objectLoaded(int progress, QString object_id, unsigned obj_type);
+
+	friend class DatabaseImportHelper;
 };
 
 #endif

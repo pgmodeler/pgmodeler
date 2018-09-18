@@ -80,6 +80,14 @@ class BaseTable: public BaseGraphicObject {
 
 		virtual QString getAlterDefinition(BaseObject *object);
 
+		/*! \brief Set the initial capacity of the objects list for a optimized memory usage.
+		 * This method should be called prior to adding the first object to the table because, depending o the capacity,
+		 * there'll be memory reallocations which can degradate the performance */
+		virtual void setObjectListsCapacity(unsigned capacity) = 0;
+
+		//! \brief Returns the maximum item count from all of the objects lists
+		virtual unsigned getMaxObjectCount(void) = 0;
+
 		//! \brief Copy the attributes between two tables
 		void operator = (BaseTable &tab);
 
