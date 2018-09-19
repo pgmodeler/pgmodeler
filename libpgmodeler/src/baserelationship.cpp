@@ -129,7 +129,7 @@ void BaseRelationship::configureRelationship(void)
 			and the source and destination table are the same. */
 		if((rel_type==RELATIONSHIP_GEN ||
 			rel_type==RELATIONSHIP_DEP) && src_table==dst_table)
-			throw Exception(ERR_INV_INH_COPY_RELATIONSHIP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ERR_INV_INH_COPY_PART_RELATIONSHIP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Allocates the textbox for the name label
 		lables[REL_NAME_LABEL]=new Textbox;

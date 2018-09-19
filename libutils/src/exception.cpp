@@ -67,7 +67,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_REF_ROLE_INV_INDEX", QT_TR_NOOP("Reference to a role which index is out of role list bounds!")},
 	{"ERR_INS_EMPTY_RULE_COMMAND", QT_TR_NOOP("Insertion of empty command to the rule!")},
 	{"ERR_REF_RULE_CMD_INV_INDEX", QT_TR_NOOP("Reference to a command which index is out of the command list bounds!")},
-	{"ERR_INV_INH_COPY_RELATIONSHIP", QT_TR_NOOP("Is not possible to create a self generalization/copy relationship! The table can not inherit or copy their own attributes!")},
+	{"ERR_INV_INH_COPY_PART_RELATIONSHIP", QT_TR_NOOP("Is not possible to create a self generalization/copy/partition relationship! The table can not inherit or copy its own attributes or be a partition of itself!")},
 	{"ERR_ASG_OBJ_BELONGS_OTHER_TABLE", QT_TR_NOOP("Assignment of an object that already belongs to another table!")},
 	{"ERR_ASG_SEQ_DIF_TABLE_SCHEMA", QT_TR_NOOP("Assignment of a schema to the sequence which differs from the schema of the owner table!")},
 	{"ERR_ASG_INV_VALUE_SEQ_ATTRIBS", QT_TR_NOOP("Assignment of an invalid value to one of the sequence attributes!")},
@@ -251,7 +251,9 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_NULL_PK_COLUMN", QT_TR_NOOP("The column `%1' must be `NOT NULL' because it composes the primary key of the table `%2'. You need to remove the column from the mentioned contraint in order to disable the `NOT NULL' on it!")},
 	{"ERR_ASG_INV_IDENTITY_COLUMN", QT_TR_NOOP("The identity column `%1' has an invalid data type! The data type must be `smallint', `integer' or `bigint'.")},
 	{"ERR_REF_INV_AFFECTED_CMD", QT_TR_NOOP("Reference to an invalid affected command in policy `%1'!")},
-	{"ERR_REF_INV_SPECIAL_ROLE", QT_TR_NOOP("Reference to an invalid special role in policy `%1'!")}
+	{"ERR_REF_INV_SPECIAL_ROLE", QT_TR_NOOP("Reference to an invalid special role in policy `%1'!")},
+	{"ERR_INV_COLUMN_COUNT_PART_REL", QT_TR_NOOP("Unable to create a partition relationship because the partion table `%1' is not empty or has columns that are not present on the partitioned table `%2'!")},
+	{"ERR_INV_PARTITIONIG_TYPE_PART_REL", QT_TR_NOOP("Unable to create a partition relationship between the tables `%1' (partition) and `%2' (partitioned) because no partitioning type is defined on the latter!")}
 };
 
 Exception::Exception(void)

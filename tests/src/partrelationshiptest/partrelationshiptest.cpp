@@ -1,0 +1,269 @@
+/*
+# PostgreSQL Database Modeler (pgModeler)
+#
+# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation version 3.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# The complete text of GPLv3 is at LICENSE file on source code root directory.
+# Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
+*/
+
+#include <QtTest/QtTest>
+#include "relationship.h"
+
+class PartRelationhipTest: public QObject {
+  private:
+    Q_OBJECT
+
+  private slots:
+	void connRelTableNoColumnsAndTableTwoColumns(void);
+	void connRelTablesTwoColumnsSameNameShouldNotRaiseError(void);
+	void connRelTablePartionHasMoreColsThanPartitionedTableShouldRaiseError(void);
+	void connRelTablePartionHasDifferentColsThanPartitionedTableShouldRaiseError(void);
+	void connRelShouldInvalidateIfPartitionedColumnChanges(void);
+};
+
+void PartRelationhipTest::connRelTableNoColumnsAndTableTwoColumns(void)
+{
+  Schema *schema = new Schema;
+  Table *partitioned = new Table;
+  Table *partition = new Table;
+  Column *col = new Column, *col1 = new Column;
+  Relationship *part_rel = nullptr;
+
+  try
+  {
+	schema->setName("public");
+	partitioned->setSchema(schema);
+	partition->setSchema(schema);
+
+	partitioned->setPartitioningType(PartitioningType::list);
+	partitioned->setName("table_a");
+	partition->setName("partion_a");
+
+	col->setName("id");
+	col->setType(PgSQLType("serial"));
+	col1->setName("sku");
+	col1->setType(PgSQLType("smallint"));
+
+	partitioned->addColumn(col);
+	partitioned->addColumn(col1);
+
+	part_rel = new Relationship(BaseRelationship::RELATIONSHIP_PART, partition, partitioned);
+	part_rel->connectRelationship();
+
+	QVERIFY(partitioned->getColumnCount() == partition->getColumnCount());
+  }
+  catch(Exception &e)
+  {
+	QFAIL(e.getErrorMessage().toStdString().c_str());
+  }
+}
+
+void PartRelationhipTest::connRelTablesTwoColumnsSameNameShouldNotRaiseError(void)
+{
+  Schema *schema = new Schema;
+  Table *partitioned = new Table;
+  Table *partition = new Table;
+  Column *col = new Column, *col1 = new Column;
+  Relationship *part_rel = nullptr;
+
+  try
+  {
+	schema->setName("public");
+	partitioned->setSchema(schema);
+	partition->setSchema(schema);
+
+	partitioned->setPartitioningType(PartitioningType::list);
+	partitioned->setName("table_a");
+	partition->setName("partion_a");
+
+	col->setName("id");
+	col->setType(PgSQLType("serial"));
+	col1->setName("sku");
+	col1->setType(PgSQLType("smallint"));
+
+	partitioned->addColumn(col);
+	partitioned->addColumn(col1);
+
+	col = new Column;
+	col1 = new Column;
+	col->setName("id");
+	col->setType(PgSQLType("serial"));
+	col1->setName("sku");
+	col1->setType(PgSQLType("smallint"));
+
+	partition->addColumn(col);
+	partition->addColumn(col1);
+
+	part_rel = new Relationship(BaseRelationship::RELATIONSHIP_PART, partition, partitioned);
+	part_rel->connectRelationship();
+
+	QVERIFY(partitioned->getColumnCount() == partition->getColumnCount());
+  }
+  catch(Exception &e)
+  {
+	QFAIL(e.getErrorMessage().toStdString().c_str());
+  }
+}
+
+void PartRelationhipTest::connRelTablePartionHasMoreColsThanPartitionedTableShouldRaiseError(void)
+{
+  Schema *schema = new Schema;
+  Table *partitioned = new Table;
+  Table *partition = new Table;
+  Column *col = new Column, *col1 = new Column, *col2 = nullptr;
+  Relationship *part_rel = nullptr;
+
+  try
+  {
+	schema->setName("public");
+	partitioned->setSchema(schema);
+	partition->setSchema(schema);
+
+	partitioned->setPartitioningType(PartitioningType::list);
+	partitioned->setName("table_a");
+	partition->setName("partion_a");
+
+	col->setName("id");
+	col->setType(PgSQLType("serial"));
+	col1->setName("sku");
+	col1->setType(PgSQLType("smallint"));
+
+	partitioned->addColumn(col);
+	partitioned->addColumn(col1);
+
+	col = new Column;
+	col1 = new Column;
+	col->setName("id");
+	col->setType(PgSQLType("serial"));
+	col1->setName("sku");
+	col1->setType(PgSQLType("smallint"));
+	col2 = new Column;
+	col2->setName("date");
+	col2->setType(PgSQLType("date"));
+
+	partition->addColumn(col);
+	partition->addColumn(col1);
+	partition->addColumn(col2);
+
+	part_rel = new Relationship(BaseRelationship::RELATIONSHIP_PART, partition, partitioned);
+	part_rel->connectRelationship();
+
+	QFAIL("Should return exception because tables have different column count!");
+  }
+  catch(Exception &e)
+  {
+	QVERIFY(e.getErrorType() == ERR_INV_COLUMN_COUNT_PART_REL);
+  }
+}
+
+void PartRelationhipTest::connRelTablePartionHasDifferentColsThanPartitionedTableShouldRaiseError(void)
+{
+  Schema *schema = new Schema;
+  Table *partitioned = new Table;
+  Table *partition = new Table;
+  Column *col = new Column, *col1 = new Column;
+  Relationship *part_rel = nullptr;
+
+  try
+  {
+	schema->setName("public");
+	partitioned->setSchema(schema);
+	partition->setSchema(schema);
+
+	partitioned->setPartitioningType(PartitioningType::list);
+	partitioned->setName("table_a");
+	partition->setName("partion_a");
+
+	col->setName("id");
+	col->setType(PgSQLType("serial"));
+	col1->setName("sku");
+	col1->setType(PgSQLType("smallint"));
+
+	partitioned->addColumn(col);
+	partitioned->addColumn(col1);
+
+	col = new Column;
+	col1 = new Column;
+	col->setName("tag_id");
+	col->setType(PgSQLType("serial"));
+	col1->setName("serial_number");
+	col1->setType(PgSQLType("smallint"));
+
+	partition->addColumn(col);
+	partition->addColumn(col1);
+
+	part_rel = new Relationship(BaseRelationship::RELATIONSHIP_PART, partition, partitioned);
+	part_rel->connectRelationship();
+
+	QFAIL("Should return exception because tables have different columns names!");
+  }
+  catch(Exception &e)
+  {
+	QVERIFY(e.getErrorType() == ERR_INV_COLUMN_COUNT_PART_REL);
+  }
+}
+
+void PartRelationhipTest::connRelShouldInvalidateIfPartitionedColumnChanges(void)
+{
+  Schema *schema = new Schema;
+  Table *partitioned = new Table;
+  Table *partition = new Table;
+  Column *col = new Column, *col1 = new Column;
+  Relationship *part_rel = nullptr;
+
+  try
+  {
+	schema->setName("public");
+	partitioned->setSchema(schema);
+	partition->setSchema(schema);
+
+	partitioned->setPartitioningType(PartitioningType::list);
+	partitioned->setName("table_a");
+	partition->setName("partion_a");
+
+	col->setName("id");
+	col->setType(PgSQLType("serial"));
+	col1->setName("sku");
+	col1->setType(PgSQLType("smallint"));
+
+	partitioned->addColumn(col);
+	partitioned->addColumn(col1);
+
+	col = new Column;
+	col1 = new Column;
+	col->setName("id");
+	col->setType(PgSQLType("serial"));
+	col1->setName("sku");
+	col1->setType(PgSQLType("smallint"));
+
+	partition->addColumn(col);
+	partition->addColumn(col1);
+
+	part_rel = new Relationship(BaseRelationship::RELATIONSHIP_PART, partition, partitioned);
+	part_rel->connectRelationship();
+
+	partitioned->getColumn(0)->setName("new_id");
+	QVERIFY(part_rel->isInvalidated() == true);
+
+	partitioned->getColumn(0)->setName("id");
+	partitioned->getColumn(0)->setType(PgSQLType("date"));
+	QVERIFY(part_rel->isInvalidated() == true);
+  }
+  catch(Exception &e)
+  {
+	QFAIL(e.getErrorMessage().toStdString().c_str());
+  }
+}
+
+QTEST_MAIN(PartRelationhipTest)
+#include "partrelationshiptest.moc"

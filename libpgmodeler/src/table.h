@@ -54,6 +54,9 @@ class Table: public BaseTable {
 
 		//! \brief Stores the tables that 'this' object inherits attributes
 		vector<Table *> ancestor_tables;
+		
+		//! \brief Stores the table which this one is partition of
+		Table *partioned_table;
 
 		//! \brief Specifies the table from which columns are copied
 		Table *copy_table;
@@ -80,6 +83,9 @@ class Table: public BaseTable {
 		//! \brief Stores the relationship added column / constraints indexes
 		map<QString, unsigned> col_indexes,	constr_indexes;
 
+		//! \brief The partitioning mode/type used by the table
+		PartitioningType partitioning_type;
+
 		/*! \brief Gets one table ancestor (OBJ_TABLE) or copy (BASE_TABLE) using its name and stores
 		 the index of the found object on parameter 'obj_idx' */
 		BaseObject *getObject(const QString &name, ObjectType obj_type, int &obj_idx);
@@ -94,10 +100,7 @@ class Table: public BaseTable {
 	protected:
 		//! \brief Adds an ancestor table
 		void addAncestorTable(Table *tab, int idx=-1);
-
-		//! \brief Adds an copy table
-		void addCopyTable(Table *tab, int idx=-1);
-
+		
 		//! \brief Removes an acestor table using its name
 		void removeAncestorTable(const QString &name);
 
@@ -139,6 +142,12 @@ class Table: public BaseTable {
 		//! \brief Defines if the row level security on table is forced for the table owner
 		void setRLSForced(bool value);
 
+		//! \brief Defines if the partitioning type of the table
+		void setPartitioningType(PartitioningType part_type);
+
+		//! \brief Returns the current partitioning type defined for the table
+		PartitioningType getPartitioningType(void);
+
 		//! \brief Adds an object to the table. It can be inserted at a specified index 'obj_idx'.
 		void addObject(BaseObject *obj, int obj_idx=-1);
 
@@ -174,6 +183,9 @@ class Table: public BaseTable {
 
 		//! \brief Adds a policy to table (optionally the user can add the object at the specified index 'idx')
 		void addPolicy(Policy *pol, int idx_pol=-1);
+
+		//! \brief Adds a partition table
+		void setPartionedTable(Table *table);
 
 		//! \brief Configures the copy table
 		void setCopyTable(Table *tab);
@@ -347,6 +359,9 @@ class Table: public BaseTable {
 
 		//! \brief Returns if the table references objects added by relationship
 		bool isReferRelationshipAddedObject(void);
+		
+		//! \brief Returns if the table is a partition of another table
+		bool isPartition(void);
 
 		//! \brief Copy the attributes between two tables
 		void operator = (Table &tabela);

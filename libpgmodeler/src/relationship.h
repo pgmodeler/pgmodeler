@@ -221,7 +221,7 @@ class Relationship: public BaseRelationship {
 		/*! \brief Copy columns from one table to another. This operation is done in
 		 relationships of type copy / generalization. It is necessary
 		 to check duplicate names and incompatible types of columns */
-		void addColumnsRelGen(void);
+		void addColumnsRelGenPart(void);
 
 		/*! \brief Copy constraints from the parent table to the child. Currently, only
 		check constraints are copied only if the NO INHERIT attribute is not set and

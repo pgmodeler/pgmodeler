@@ -95,7 +95,7 @@ enum ErrorType {
 	ERR_REF_ROLE_INV_INDEX,
 	ERR_INS_EMPTY_RULE_COMMAND,
 	ERR_REF_RULE_CMD_INV_INDEX,
-	ERR_INV_INH_COPY_RELATIONSHIP,
+	ERR_INV_INH_COPY_PART_RELATIONSHIP,
 	ERR_ASG_OBJ_BELONGS_OTHER_TABLE,
 	ERR_ASG_SEQ_DIF_TABLE_SCHEMA,
 	ERR_ASG_INV_VALUE_SEQ_ATTRIBS,
@@ -279,12 +279,14 @@ enum ErrorType {
 	ERR_NULL_PK_COLUMN,
 	ERR_INV_IDENTITY_COLUMN,
 	ERR_REF_INV_AFFECTED_CMD,
-	ERR_REF_INV_SPECIAL_ROLE
+	ERR_REF_INV_SPECIAL_ROLE,
+	ERR_INV_COLUMN_COUNT_PART_REL,
+	ERR_INV_PARTITIONIG_TYPE_PART_REL
 };
 
 class Exception {
 	private:
-		static const int ERROR_COUNT=233;
+		static const int ERROR_COUNT=235;
 
 		/*! \brief Stores other exceptions before raise the 'this' exception.
 		 This structure can be used to simulate a stack trace to improve the debug */

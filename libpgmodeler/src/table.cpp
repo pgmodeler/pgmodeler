@@ -42,7 +42,9 @@ Table::Table(void) : BaseTable()
 	attributes[ParsersAttributes::RLS_ENABLED]=QString();
 	attributes[ParsersAttributes::RLS_FORCED]=QString();
 
-	copy_table=nullptr;
+	copy_table=partioned_table=nullptr;
+	partitioning_type=BaseType::null;
+
 	this->setName(trUtf8("new_table").toUtf8());
 }
 
@@ -95,6 +97,17 @@ void Table::setRLSForced(bool value)
 {
 	setCodeInvalidated(rls_forced != value);
 	rls_forced = value;
+}
+
+void Table::setPartitioningType(PartitioningType part_type)
+{
+  setCodeInvalidated(partitioning_type != part_type);
+  partitioning_type = part_type;
+}
+
+PartitioningType Table::getPartitioningType(void)
+{
+  return(partitioning_type);
 }
 
 void Table::setProtected(bool value)
@@ -362,7 +375,7 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 
 			//Raises an error if the user try to set the table as ancestor/copy of itself
 			else if((obj_type==OBJ_TABLE || obj_type==BASE_TABLE) && obj==this)
-				throw Exception(ERR_INV_INH_COPY_RELATIONSHIP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(ERR_INV_INH_COPY_PART_RELATIONSHIP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			switch(obj_type)
 			{
@@ -519,7 +532,12 @@ void Table::addPolicy(Policy *pol, int idx_pol)
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+  }
+}
+
+void Table::setPartionedTable(Table *table)
+{
+  partioned_table = table;
 }
 
 void Table::addConstraint(Constraint *constr, int idx)
@@ -543,7 +561,7 @@ void Table::addAncestorTable(Table *tab, int idx)
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+  }
 }
 
 void Table::setCopyTable(Table *tab)
@@ -1510,6 +1528,11 @@ bool Table::isReferRelationshipAddedObject(void)
 	}
 
 	return(found);
+}
+
+bool Table::isPartition(void)
+{
+  return(partioned_table != nullptr);
 }
 
 void Table::swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2)

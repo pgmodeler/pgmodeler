@@ -89,6 +89,8 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 			str_aux=QApplication::translate("Relationship","many_%1_has_many_%2","");
 		else if(rel_type==RELATIONSHIP_GEN)
 			str_aux=QApplication::translate("Relationship","%1_inherits_%2","");
+		else if(rel_type==RELATIONSHIP_PART)
+			str_aux=QApplication::translate("Relationship","%1_is_partition_of_%2","");
 		else
 			str_aux=QApplication::translate("Relationship","%1_copies_%2","");
 
@@ -806,7 +808,7 @@ void Relationship::addConstraints(Table *recv_tab)
 	}
 }
 
-void Relationship::addColumnsRelGen(void)
+void Relationship::addColumnsRelGenPart(void)
 {
 	Table *src_tab=nullptr, *dst_tab=nullptr,
 			*parent_tab=nullptr, *aux_tab=nullptr;
@@ -830,11 +832,28 @@ void Relationship::addColumnsRelGen(void)
 	{
 		src_tab=dynamic_cast<Table *>(src_table);
 		dst_tab=dynamic_cast<Table *>(dst_table);
-
+		
 		//Gets the column count from participant tables
 		src_count=src_tab->getColumnCount();
 		dst_count=dst_tab->getColumnCount();
 		rejected_col_count=0;
+
+		/*  If the relationship is partitioning the destination table (partitioned) shoud have
+		 *  a partitioning type defined otherwise and error is raised */
+		if(rel_type == RELATIONSHIP_PART && dst_tab->getPartitioningType() == PartitioningType::null)
+		  throw Exception(Exception::getErrorMessage(ERR_INV_PARTITIONIG_TYPE_PART_REL)
+						  .arg(src_tab->getSignature()).arg(dst_tab->getSignature()),
+						  ERR_INV_PARTITIONIG_TYPE_PART_REL, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		/* If the relationship is partitioning the source table (partition) should be empty
+		 * or at least have the same number of columns of the destination table (partitioned),
+		 * otherwise an exception is raised. */
+		if(rel_type == RELATIONSHIP_PART && src_count > 0 && src_count != dst_count)
+		{
+		  throw Exception(Exception::getErrorMessage(ERR_INV_COLUMN_COUNT_PART_REL)
+						  .arg(src_tab->getSignature()).arg(dst_tab->getSignature()),
+						  ERR_INV_COLUMN_COUNT_PART_REL, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
 
 		/* This for compares the columns of the receiver table
 		 with the columns of the reference table in order to
@@ -920,7 +939,7 @@ void Relationship::addColumnsRelGen(void)
 								parent_tab=aux_tab->getCopyTable();
 								cond=(parent_tab &&
 									  aux_col->getParentTable()==parent_tab &&
-									  aux_col->isAddedByGeneralization());
+									  aux_col->isAddedByCopy());
 							}
 
 							if(id_tab==0)
@@ -934,7 +953,7 @@ void Relationship::addColumnsRelGen(void)
 				column is from the table itself or it came from a copy table and the
 				destination column is from the destination table or came from a copy table
 				of the destination table itself */
-					if(rel_type==RELATIONSHIP_DEP &&
+					if((rel_type==RELATIONSHIP_DEP) &&
 
 							((!src_flags[0] && !src_flags[1]) ||
 							 (!src_flags[0] &&  src_flags[1])) &&
@@ -945,12 +964,17 @@ void Relationship::addColumnsRelGen(void)
 						err_type=ERR_DUPLIC_COLS_COPY_REL;
 					}
 					/* Error condition 2: The relationship type is generalization and the column
-				types is incompatible */
-					else if(rel_type==RELATIONSHIP_GEN &&
-							src_type!=dst_type)
+					 * types is incompatible */
+					else if((rel_type == RELATIONSHIP_GEN || rel_type==RELATIONSHIP_PART) && src_type != dst_type)
 						err_type=ERR_INCOMP_COLS_INHERIT_REL;
 				}
 			}
+
+			/* In partition relationships, raises an error if the currently evaluated column from
+			 * source table (partition) does not exist in the destination table (partitioned) because
+			 * both tables should have the same columns */
+			if(src_count > 0 && !duplic && rel_type == RELATIONSHIP_PART)
+			  err_type = ERR_INV_COLUMN_COUNT_PART_REL;
 
 			//In case that no error was detected (ERR_CUSTOM)
 			if(err_type==ERR_CUSTOM)
@@ -964,9 +988,7 @@ void Relationship::addColumnsRelGen(void)
 					(*column)=(*dst_col);
 
 					if(rel_type==RELATIONSHIP_GEN)
-					{
 						column->setAddedByGeneralization(true);
-					}
 					else
 						column->setAddedByCopy(true);
 
@@ -1025,17 +1047,23 @@ void Relationship::addColumnsRelGen(void)
 			if(err_type==ERR_DUPLIC_COLS_COPY_REL)
 			{
 				msg=QString(str_aux)
-					.arg(dst_col->getName())
-					.arg(dst_tab->getName())
-					.arg(src_tab->getName());
+					.arg(dst_col->getName(true))
+					.arg(dst_tab->getName(true))
+					.arg(src_tab->getName(true));
+			}
+			else if(err_type==ERR_INV_COLUMN_COUNT_PART_REL)
+			{
+				msg=QString(str_aux)
+					.arg(src_tab->getName(true))
+					.arg(dst_tab->getName(true));
 			}
 			else
 			{
 				msg=QString(str_aux)
-					.arg(dst_col->getName())
-					.arg(dst_tab->getName())
-					.arg(src_col->getName())
-					.arg(src_tab->getName());
+					.arg(dst_col->getName(true))
+					.arg(dst_tab->getName(true))
+					.arg(src_col->getName(true))
+					.arg(src_tab->getName(true));
 			}
 
 			throw Exception(msg, err_type,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -1110,7 +1138,7 @@ void Relationship::connectRelationship(void)
 				addConstraintsRelGen();
 
 				//Creates the columns on the receiver table following the rules for generalization rules
-				addColumnsRelGen();
+				addColumnsRelGenPart();
 
 				//The reference table is added as parent table on the receiver
 				getReceiverTable()->addAncestorTable(dynamic_cast<Table *>(getReferenceTable()));
@@ -1118,11 +1146,17 @@ void Relationship::connectRelationship(void)
 			else if(rel_type==RELATIONSHIP_DEP)
 			{
 				//Creates the columns on the receiver table following the rules for copy rules
-				addColumnsRelGen();
+				addColumnsRelGenPart();
 
 				//The reference table is added as copy table on the receiver
 				getReceiverTable()->setCopyTable(dynamic_cast<Table *>(getReferenceTable()));
 				getReceiverTable()->setCopyTableOptions(this->copy_options);
+			}
+			else if(rel_type == RELATIONSHIP_PART)
+			{
+			  //Creates the columns on the receiver table following the rules for copy rules
+			  addColumnsRelGenPart();			  
+			  getReceiverTable()->setPartionedTable(dynamic_cast<Table *>(getReferenceTable()));
 			}
 			else if(rel_type==RELATIONSHIP_11 ||
 					rel_type==RELATIONSHIP_1N)
@@ -1862,7 +1896,8 @@ Table *Relationship::getReceiverTable(void)
 	/* For generalization / copy relationships the columns are always added
 		in the source table */
 	else if(rel_type==RELATIONSHIP_GEN ||
-			rel_type==RELATIONSHIP_DEP)
+			rel_type==RELATIONSHIP_DEP ||
+			rel_type==RELATIONSHIP_PART)
 		return(dynamic_cast<Table *>(src_table));
 	//For n-n relationships, the columns are added in the table that represents the relationship (table_relnn)
 	else
@@ -2226,8 +2261,8 @@ bool Relationship::isInvalidated(void)
 	Table *table=nullptr, *table1=nullptr;
 	Constraint *fk=nullptr, *fk1=nullptr, *constr=nullptr, *pk=nullptr;
 	bool valid=false;
-	Column *rel_pk_col=nullptr, *gen_col=nullptr, *pk_col=nullptr;
-	QString col_name, col_alias;
+	Column *rel_pk_col=nullptr, *gen_col=nullptr, *col_aux=nullptr, *col_aux1 = nullptr, *pk_col=nullptr;
+	QString col_name;
 
 	if(invalidated)
 	{
@@ -2298,7 +2333,7 @@ bool Relationship::isInvalidated(void)
 					 obtained directly from the primary key */
 					col_name=generateObjectName(SRC_COL_PATTERN, rel_pk_col);
 					valid=(rel_pk_col==pk_col &&
-							(gen_col->getName()==col_name ||	gen_col->getName().contains(pk_col->getName())) &&
+							(gen_col->getName()==col_name ||gen_col->getName().contains(pk_col->getName())) &&
 							(rel_pk_col->getType()==gen_col->getType() ||
 							(rel_pk_col->getType()==QString("serial") && gen_col->getType()==QString("integer")) ||
 							(rel_pk_col->getType()==QString("bigserial") && gen_col->getType()==QString("bigint")) ||
@@ -2309,7 +2344,7 @@ bool Relationship::isInvalidated(void)
 		/* For copy / generalization relationships,
 		 is obtained the number of columns created when connecting it
 		 and comparing with the number of columns of the source table */
-		else if(rel_type==RELATIONSHIP_DEP || rel_type==RELATIONSHIP_GEN)
+		else if(rel_type==RELATIONSHIP_DEP || rel_type==RELATIONSHIP_GEN || rel_type==RELATIONSHIP_PART)
 		{
 			table=getReferenceTable();
 			table1=getReceiverTable();
@@ -2325,16 +2360,40 @@ bool Relationship::isInvalidated(void)
 			valid=(rel_cols_count == tab_cols_count);
 
 			/* Checking if the columns created with inheritance / copy still exist
-			in reference table */
+			in reference table, and their types are compatible */
 			for(i=0; i < gen_columns.size() && valid; i++)
-				valid=table->getColumn(gen_columns[i]->getName(true));
+			{
+			  gen_col = gen_columns[i];
+			  col_aux = table->getColumn(gen_col->getName(true));
+			  valid = col_aux && (col_aux->getType().isEquivalentTo(gen_col->getType()) ||
+								  col_aux->getType().getAliasType().isEquivalentTo(gen_col->getType()));
+			}
+
+			// Specific for partition relatoinship: check if all the columns on the source table (partition) exist on the partitioned table
+			if(rel_type==RELATIONSHIP_PART)
+			{
+			  count = table1->getColumnCount();
+
+			  for(i=0; i < count && valid; i++)
+			  {
+				col_aux1 = table1->getColumn(i);
+				col_aux = table->getColumn(col_aux1->getName(true));
+				valid = col_aux && (col_aux->getType().isEquivalentTo(col_aux1->getType()) ||
+									col_aux->getType().getAliasType().isEquivalentTo(col_aux1->getType()));
+			  }
+			}
 
 			/* Checking if the reference table columns are in the receiver table.
 			In theory all columns must exist in the two table because one
 			inherits another soon they will possess all the same columns.
 			if this not happen indicates that a reference table column was renamed */
 			for(i=0; i < tab_cols_count && valid; i++)
-				valid=table1->getColumn(table->getColumn(i)->getName(true));
+			{
+				col_aux = table->getColumn(i);
+				col_aux1 = table1->getColumn(col_aux->getName(true));
+				valid = col_aux && (col_aux->getType().isEquivalentTo(col_aux1->getType()) ||
+									col_aux->getType().getAliasType().isEquivalentTo(col_aux1->getType()));
+			}
 
 			//Checking if the check constraints were not renamed in the parent table
 			for(i=0; i < ck_constraints.size() && valid; i++)
