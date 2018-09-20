@@ -24,7 +24,10 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 {
 	QStringList list, rel_types={ ParsersAttributes::RELATIONSHIP_11, ParsersAttributes::RELATIONSHIP_1N,
 								  ParsersAttributes::RELATIONSHIP_NN, ParsersAttributes::RELATIONSHIP_GEN,
-								  ParsersAttributes::RELATIONSHIP_DEP };
+								  ParsersAttributes::RELATIONSHIP_DEP, ParsersAttributes::RELATIONSHIP_PART };
+	unsigned rel_types_id[]={ BaseRelationship::RELATIONSHIP_11, BaseRelationship::RELATIONSHIP_1N,
+							  BaseRelationship::RELATIONSHIP_NN, BaseRelationship::RELATIONSHIP_GEN,
+							  BaseRelationship::RELATIONSHIP_DEP, BaseRelationship::RELATIONSHIP_PART};
 
 	Ui_RelationshipConfigWidget::setupUi(this);
 
@@ -65,7 +68,7 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 	upd_action_cmb->addItems(list);
 
 	for(int i=0; i < rel_types.size(); i++)
-		rel_type_cmb->setItemData(i, rel_types[i]);
+		rel_type_cmb->addItem(BaseRelationship::getRelationshipTypeName(rel_types_id[i]), rel_types[i]);
 
 	connect(crows_foot_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview(void)));
 	connect(fk_to_pk_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview(void)));
@@ -114,6 +117,7 @@ void RelationshipConfigWidget::loadConfiguration(void)
 		patterns[ParsersAttributes::RELATIONSHIP_NN]=config_params[ParsersAttributes::RELATIONSHIP_NN];
 		patterns[ParsersAttributes::RELATIONSHIP_GEN]=config_params[ParsersAttributes::RELATIONSHIP_GEN];
 		patterns[ParsersAttributes::RELATIONSHIP_DEP]=config_params[ParsersAttributes::RELATIONSHIP_DEP];
+		patterns[ParsersAttributes::RELATIONSHIP_PART]=config_params[ParsersAttributes::RELATIONSHIP_PART];
 
 		fillNamePatterns();
 		this->applyConfiguration();
@@ -215,7 +219,7 @@ void RelationshipConfigWidget::fillNamePatterns(void)
 								 ParsersAttributes::PK_COL_PATTERN };
 
 	relnn=(rel_type==ParsersAttributes::RELATIONSHIP_NN);
-	reldep=(rel_type==ParsersAttributes::RELATIONSHIP_DEP);
+	reldep=(rel_type==ParsersAttributes::RELATIONSHIP_DEP || rel_type==ParsersAttributes::RELATIONSHIP_PART);
 	relgen=(rel_type==ParsersAttributes::RELATIONSHIP_GEN);
 
 	dst_col_pattern_txt->setEnabled(relnn);
@@ -255,7 +259,6 @@ void RelationshipConfigWidget::updatePattern(void)
 												{ src_fk_pattern_txt, ParsersAttributes::SRC_FK_PATTERN   },
 												{ dst_fk_pattern_txt, ParsersAttributes::DST_FK_PATTERN   },
 												{ pk_col_pattern_txt, ParsersAttributes::PK_COL_PATTERN   } };
-
 
 	setConfigurationChanged(true);
 	patterns[rel_type][inputs_map[input]]=input->toPlainText();

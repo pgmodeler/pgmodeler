@@ -53,7 +53,7 @@ $br $tb [ dst-table=] "{dst-table}"
 %end
 
 
-%if %not {relgen} %and %not {reldep} %then
+%if %not {relgen} %and %not {reldep} %and %not {relpart} %then
   $br $tb
   [ src-required=] %if {src-required} %then "true" %else "false" %end
   [ dst-required=] %if {dst-required} %then "true" %else "false" %end

@@ -24,3 +24,4 @@
 <!ATTLIST table rls-enabled (false|true) "false">
 <!ATTLIST table rls-forced (false|true) "false">
 <!ATTLIST table max-obj-count CDATA #IMPLIED>
+<!ATTLIST table partitioning-type CDATA #IMPLIED>

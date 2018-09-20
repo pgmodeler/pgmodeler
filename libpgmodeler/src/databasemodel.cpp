@@ -4652,6 +4652,7 @@ Table *DatabaseModel::createTable(void)
 		table->setGenerateAlterCmds(attribs[ParsersAttributes::GEN_ALTER_CMDS]==ParsersAttributes::_TRUE_);
 		table->setExtAttribsHidden(attribs[ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::_TRUE_);
 		table->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::_TRUE_);
+		table->setPartitioningType(PartitioningType(attribs[ParsersAttributes::PARTITIONING_TYPE]));
 
 		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
@@ -6257,6 +6258,8 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 				rel_type=BaseRelationship::RELATIONSHIP_GEN;
 			else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_DEP)
 				rel_type=BaseRelationship::RELATIONSHIP_DEP;
+			else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_PART)
+				rel_type=BaseRelationship::RELATIONSHIP_PART;
 
 			rel=new Relationship(rel_type,
 								 dynamic_cast<Table *>(tables[0]),

@@ -158,6 +158,9 @@ void TableView::configureObject(void)
 		bodies[obj_idx]->setRect(QRectF(0,0, width, groups[obj_idx]->boundingRect().height() + (2 * VERT_SPACING)));
 		pen=this->getBorderStyle(atribs[obj_idx]);
 
+		if(table->isPartition())
+		  pen.setStyle(Qt::DashLine);
+
 		if(!tag)
 			bodies[obj_idx]->setBrush(this->getFillStyle(atribs[obj_idx]));
 		else

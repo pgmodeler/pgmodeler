@@ -13,6 +13,7 @@
   %if {faded-out} %then [ faded-out=] "true" %end
   %if {rls-enabled} %then [ rls-enabled=] "true" %end
   %if {rls-forced} %then [ rls-forced=] "true" %end
+  %if {partitioning-type} %then [ partitioning-type=] "{partitioning-type}" %end
   %if {max-obj-count} %then [ max-obj-count=] "{max-obj-count}" %end
 > $br
 

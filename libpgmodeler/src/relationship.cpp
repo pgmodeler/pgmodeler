@@ -2034,7 +2034,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 			vector<TableObject *>::iterator itr_atrib, itr_atrib_end;
 			TableObject *tab_obj=nullptr;
 
-			if(rel_type==RELATIONSHIP_GEN || rel_type==RELATIONSHIP_DEP)
+			if(rel_type==RELATIONSHIP_GEN || rel_type==RELATIONSHIP_DEP || rel_type== RELATIONSHIP_PART)
 			{
 				table=getReceiverTable();
 
@@ -2058,6 +2058,8 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 						ck_constraints.pop_back();
 					}
 				}
+				else if(rel_type == RELATIONSHIP_PART)
+					table->setPartionedTable(nullptr);
 				else
 					table->setCopyTable(nullptr);
 			}
@@ -2542,6 +2544,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		attributes[ParsersAttributes::TABLE_NAME]=tab_name_relnn;
 		attributes[ParsersAttributes::RELATIONSHIP_GEN]=(rel_type==RELATIONSHIP_GEN ? ParsersAttributes::_TRUE_ : QString());
 		attributes[ParsersAttributes::RELATIONSHIP_DEP]=(rel_type==RELATIONSHIP_DEP ? ParsersAttributes::_TRUE_ : QString());
+		attributes[ParsersAttributes::RELATIONSHIP_PART]=(rel_type==RELATIONSHIP_PART ? ParsersAttributes::_TRUE_ : QString());
 
 		attributes[ParsersAttributes::SRC_COL_PATTERN]=name_patterns[SRC_COL_PATTERN];
 		attributes[ParsersAttributes::DST_COL_PATTERN]=name_patterns[DST_COL_PATTERN];

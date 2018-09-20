@@ -172,6 +172,10 @@ class BaseRelationship: public BaseGraphicObject  {
 
 		virtual QString getAlterDefinition(BaseObject *) { return(""); }
 
+		static QString getRelationshipTypeName(unsigned rel_type, bool is_view = false);
+
+		QString getRelationshipTypeName(void);
+
 		friend class DatabaseModel;
 		friend class RelationshipWidget;
 		friend class ModelWidget;

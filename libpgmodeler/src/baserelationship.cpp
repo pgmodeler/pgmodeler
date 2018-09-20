@@ -95,6 +95,7 @@ void BaseRelationship::configureRelationship(void)
 	attributes[ParsersAttributes::RELATIONSHIP_NN]=QString();
 	attributes[ParsersAttributes::RELATIONSHIP_GEN]=QString();
 	attributes[ParsersAttributes::RELATIONSHIP_DEP]=QString();
+	attributes[ParsersAttributes::RELATIONSHIP_PART]=QString();
 	attributes[ParsersAttributes::RELATIONSHIP_1N]=QString();
 	attributes[ParsersAttributes::RELATIONSHIP_11]=QString();
 	attributes[ParsersAttributes::CONSTRAINTS]=QString();
@@ -506,6 +507,7 @@ QString BaseRelationship::getRelTypeAttribute(void)
 		case RELATIONSHIP_1N: return(ParsersAttributes::RELATIONSHIP_1N); break;
 		case RELATIONSHIP_NN: return(ParsersAttributes::RELATIONSHIP_NN); break;
 		case RELATIONSHIP_GEN: return(ParsersAttributes::RELATIONSHIP_GEN); break;
+		case RELATIONSHIP_PART: return(ParsersAttributes::RELATIONSHIP_PART); break;
 		case RELATIONSHIP_FK: return(ParsersAttributes::RELATIONSHIP_FK); break;
 		default:
 			if(src_table->getObjectType()==OBJ_VIEW)
@@ -514,6 +516,30 @@ QString BaseRelationship::getRelTypeAttribute(void)
 				return(ParsersAttributes::RELATIONSHIP_DEP);
 		break;
 	}
+}
+
+QString BaseRelationship::getRelationshipTypeName(unsigned rel_type, bool is_view)
+{
+  switch(rel_type)
+  {
+	  case RELATIONSHIP_11: return(trUtf8("One-to-one")); break;
+	  case RELATIONSHIP_1N: return(trUtf8("One-to-many")); break;
+	  case RELATIONSHIP_NN: return(trUtf8("Many-to-many")); break;
+	  case RELATIONSHIP_GEN: return(trUtf8("Inheritance")); break;
+	  case RELATIONSHIP_PART: return(trUtf8("Partitioning")); break;
+	  case RELATIONSHIP_FK: return(trUtf8("FK relationship")); break;
+	  default:
+		  if(is_view)
+			  return(trUtf8("Dependency"));
+		  else
+			  return(trUtf8("Copy"));
+	  break;
+  }
+}
+
+QString BaseRelationship::getRelationshipTypeName(void)
+{
+  return(getRelationshipTypeName(rel_type, src_table->getObjectType()==OBJ_VIEW));
 }
 
 void BaseRelationship::setCodeInvalidated(bool value)

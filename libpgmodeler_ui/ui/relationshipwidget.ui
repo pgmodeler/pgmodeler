@@ -504,212 +504,34 @@
        <item row="1" column="1" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QRadioButton" name="rel_11_rb">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
+          <widget class="QLabel" name="rel_icon_lbl">
            <property name="minimumSize">
             <size>
-             <width>0</width>
-             <height>0</height>
+             <width>22</width>
+             <height>22</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>16777215</width>
-             <height>16777215</height>
+             <width>22</width>
+             <height>22</height>
             </size>
            </property>
-           <property name="font">
-            <font>
-             <italic>true</italic>
-            </font>
-           </property>
-           <property name="toolTip">
-            <string>One to one relationship</string>
-           </property>
-           <property name="text">
-            <string>&amp;1-1</string>
+           <property name="scaledContents">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QRadioButton" name="rel_1n_rb">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>16777215</height>
-            </size>
-           </property>
+          <widget class="QLabel" name="rel_type_name_lbl">
            <property name="font">
             <font>
-             <italic>true</italic>
+             <weight>75</weight>
+             <bold>true</bold>
             </font>
            </property>
-           <property name="toolTip">
-            <string>One to many relationship</string>
-           </property>
            <property name="text">
-            <string>1-n</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="rel_nn_rb">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <italic>true</italic>
-            </font>
-           </property>
-           <property name="toolTip">
-            <string>Many to many relationship</string>
-           </property>
-           <property name="text">
-            <string>n-n</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="rel_gen_rb">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <italic>true</italic>
-            </font>
-           </property>
-           <property name="toolTip">
-            <string>Generalization relationship (inheritance)</string>
-           </property>
-           <property name="text">
-            <string>&amp;gen</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="rel_dep_rb">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <italic>true</italic>
-            </font>
-           </property>
-           <property name="toolTip">
-            <string>Dependency / Copy relationship</string>
-           </property>
-           <property name="text">
-            <string>dep</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="rel_fk_rb">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>50</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <italic>true</italic>
-            </font>
-           </property>
-           <property name="toolTip">
-            <string>Relationship generated via foreign key</string>
-           </property>
-           <property name="text">
-            <string>fk</string>
+            <string>rel_type</string>
            </property>
           </widget>
          </item>
@@ -1524,12 +1346,6 @@
  </widget>
  <tabstops>
   <tabstop>rel_attribs_tbw</tabstop>
-  <tabstop>rel_11_rb</tabstop>
-  <tabstop>rel_1n_rb</tabstop>
-  <tabstop>rel_nn_rb</tabstop>
-  <tabstop>rel_gen_rb</tabstop>
-  <tabstop>rel_dep_rb</tabstop>
-  <tabstop>rel_fk_rb</tabstop>
   <tabstop>table1_mand_chk</tabstop>
   <tabstop>table2_mand_chk</tabstop>
   <tabstop>relnn_tab_name_edt</tabstop>

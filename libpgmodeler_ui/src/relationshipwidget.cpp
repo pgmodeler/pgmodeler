@@ -243,15 +243,8 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	}
 
 	rel_type=base_rel->getRelationshipType();
-	switch(rel_type)
-	{
-		case BaseRelationship::RELATIONSHIP_11: rel_11_rb->setChecked(true); break;
-		case BaseRelationship::RELATIONSHIP_1N: rel_1n_rb->setChecked(true); break;
-		case BaseRelationship::RELATIONSHIP_NN: rel_nn_rb->setChecked(true); break;
-		case BaseRelationship::RELATIONSHIP_GEN: rel_gen_rb->setChecked(true); break;
-		case BaseRelationship::RELATIONSHIP_FK:  rel_fk_rb->setChecked(true); break;
-		case BaseRelationship::RELATIONSHIP_DEP: rel_dep_rb->setChecked(true); break;
-	}
+	rel_type_name_lbl->setText(base_rel->getRelationshipTypeName());
+	rel_icon_lbl->setPixmap(PgModelerUiNS::getIconPath(base_rel->getRelTypeAttribute().replace("rel", "relationship")));
 
 	aux_rel=dynamic_cast<Relationship *>(base_rel);
 
@@ -277,7 +270,18 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	}
 	else if(aux_rel)
 	{
-		if(rel_type!=BaseRelationship::RELATIONSHIP_NN)
+		if(rel_type == BaseRelationship::RELATIONSHIP_PART)
+		{
+		  ref_table_lbl->setText(trUtf8("Partitioned Table:"));
+		  ref_table_ht->setText(trUtf8("Partitioned table is the one which is splitted into smaller pieces (partitions). This table is where the partitioning strategy or type is defined."));
+
+		  recv_table_lbl->setText(trUtf8("Partition Table:"));
+		  recv_table_ht->setText(trUtf8("Partition table is the one attached to a partitioned table in which operations over data will be routed (according to the paritionig rule) when trying to handle the partitioned table."));
+
+		  ref_table_txt->setPlainText(aux_rel->getReferenceTable()->getName(true));
+		  recv_table_txt->setPlainText(aux_rel->getReceiverTable()->getName(true));
+		}
+		else if(rel_type!=BaseRelationship::RELATIONSHIP_NN)
 		{
 			ref_table_lbl->setText(trUtf8("Reference Table:"));
 			ref_table_ht->setText(trUtf8("Reference table has the columns from its primary key will copied to the receiver table in order to represent the linking between them. This is the (1) side of relationship."));
@@ -348,6 +352,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 	relgen_dep=(rel_type==BaseRelationship::RELATIONSHIP_DEP ||
 				rel_type==BaseRelationship::RELATIONSHIP_GEN ||
+				rel_type==BaseRelationship::RELATIONSHIP_PART ||
 				rel_type==BaseRelationship::RELATIONSHIP_FK);
 
 	use_name_patterns=(rel1n || relnn ||
@@ -425,10 +430,15 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 QSize RelationshipWidget::getIdealSize(void)
 {
-	if(rel_fk_rb->isChecked() ||
-		 (rel_dep_rb->isChecked() &&	this->object && this->object->getObjectType()==BASE_RELATIONSHIP))
+	unsigned rel_type = 0;
+
+	if(this->object)
+	  rel_type = dynamic_cast<BaseRelationship *>(this->object)->getRelationshipType();
+
+	if(rel_type == BaseRelationship::RELATIONSHIP_FK ||
+	   (BaseRelationship::RELATIONSHIP_DEP && this->object && this->object->getObjectType()==BASE_RELATIONSHIP))
 		return(QSize(640, 320));
-	else if(rel_gen_rb->isChecked())
+	else if(BaseRelationship::RELATIONSHIP_GEN)
 		return(QSize(640, 520));
 	else
 		return(QSize(640, 680));

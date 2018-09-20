@@ -41,6 +41,7 @@ Table::Table(void) : BaseTable()
 	attributes[ParsersAttributes::INITIAL_DATA]=QString();
 	attributes[ParsersAttributes::RLS_ENABLED]=QString();
 	attributes[ParsersAttributes::RLS_FORCED]=QString();
+	attributes[ParsersAttributes::PARTITIONING_TYPE]=QString();
 
 	copy_table=partioned_table=nullptr;
 	partitioning_type=BaseType::null;
@@ -216,6 +217,7 @@ void Table::setColumnsAttribute(unsigned def_type, bool incl_rel_added_cols)
 		/* Do not generates the column code definition when it is not included by
 		 relatoinship, in case of XML definition. */
 		if((def_type==SchemaParser::SQL_DEFINITION && !columns[i]->isAddedByCopy() && !columns[i]->isAddedByGeneralization()) ||
+		   (def_type==SchemaParser::SQL_DEFINITION && columns[i]->isAddedByCopy() && this->isPartition()) ||
 		   (def_type==SchemaParser::XML_DEFINITION && (!columns[i]->isAddedByRelationship() || (incl_rel_added_cols && columns[i]->isAddedByRelationship()))))
 		{
 			str_cols+=columns[i]->getCodeDefinition(def_type);
@@ -1458,6 +1460,7 @@ QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
   attributes[ParsersAttributes::ANCESTOR_TABLE]=QString();
   attributes[ParsersAttributes::TAG]=QString();
   attributes[ParsersAttributes::HIDE_EXT_ATTRIBS]=(isExtAttribsHidden() ? ParsersAttributes::_TRUE_ : QString());
+  attributes[ParsersAttributes::PARTITIONING_TYPE]=~partitioning_type;
 
   if(def_type==SchemaParser::SQL_DEFINITION && copy_table)
 	  attributes[ParsersAttributes::COPY_TABLE]=copy_table->getName(true) + copy_op.getSQLDefinition();

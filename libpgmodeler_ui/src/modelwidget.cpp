@@ -80,9 +80,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	QGridLayout *grid=nullptr;
 	QAction *action=nullptr;
 	QString str_ico, str_txt;
-	QStringList rel_types_cod={QString("11"), QString("1n"), QString("nn"), QString("dep"), QString("gen") },
+	QStringList rel_types_cod={QString("11"), QString("1n"), QString("nn"), QString("dep"), QString("gen"), QString("part") },
 			rel_labels={ trUtf8("One to One (1-1)"), trUtf8("One to Many (1-n)"),
-						 trUtf8("Many to Many (n-n)"), trUtf8("Copy"), trUtf8("Inheritance") };
+						 trUtf8("Many to Many (n-n)"), trUtf8("Copy"), trUtf8("Inheritance"), trUtf8("Partitioning") };
 	ObjectType types[]={ OBJ_TABLE, OBJ_VIEW, OBJ_TEXTBOX, OBJ_RELATIONSHIP,
 						 OBJ_CAST, OBJ_CONVERSION, OBJ_DOMAIN,
 						 OBJ_FUNCTION, OBJ_AGGREGATE, OBJ_LANGUAGE,
@@ -94,7 +94,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	unsigned i, obj_cnt=sizeof(types)/sizeof(ObjectType),
 			rel_types_id[]={ BaseRelationship::RELATIONSHIP_11, BaseRelationship::RELATIONSHIP_1N,
 							 BaseRelationship::RELATIONSHIP_NN, BaseRelationship::RELATIONSHIP_DEP,
-							 BaseRelationship::RELATIONSHIP_GEN };
+							 BaseRelationship::RELATIONSHIP_GEN, BaseRelationship::RELATIONSHIP_PART};
 
 	current_zoom=1;
 	modified=panning_mode=false;
@@ -375,9 +375,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	for(int i=0; i < rel_types_cod.size(); i++)
 	{
 		str_ico=BaseObject::getSchemaName(OBJ_RELATIONSHIP) + rel_types_cod[i];
-		str_txt=rel_labels[i];
 
-		action=new QAction(QIcon(PgModelerUiNS::getIconPath(str_ico)), str_txt, this);
+		action=new QAction(QIcon(PgModelerUiNS::getIconPath(str_ico)),
+						   BaseRelationship::getRelationshipTypeName(rel_types_id[i], false), this);
 
 		//Storing a unique identifier for the relationship type
 		action->setData(QVariant(OBJ_RELATIONSHIP + rel_types_id[i]));
