@@ -4652,7 +4652,6 @@ Table *DatabaseModel::createTable(void)
 		table->setGenerateAlterCmds(attribs[ParsersAttributes::GEN_ALTER_CMDS]==ParsersAttributes::_TRUE_);
 		table->setExtAttribsHidden(attribs[ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::_TRUE_);
 		table->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::_TRUE_);
-		table->setPartitioningType(PartitioningType(attribs[ParsersAttributes::PARTITIONING_TYPE]));
 
 		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
@@ -4718,6 +4717,12 @@ Table *DatabaseModel::createTable(void)
 						}
 
 						xmlparser.restorePosition();
+					}
+					else if(elem==ParsersAttributes::PARTITIONING)
+					{
+						xmlparser.getElementAttributes(aux_attribs);
+						table->setPartitioningType(aux_attribs[ParsersAttributes::TYPE]);
+#warning "TODO: load partitionkey tag data"
 					}
 					//Retrieving initial data
 					else if(elem==ParsersAttributes::INITIAL_DATA)

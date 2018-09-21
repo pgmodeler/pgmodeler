@@ -41,7 +41,7 @@ Table::Table(void) : BaseTable()
 	attributes[ParsersAttributes::INITIAL_DATA]=QString();
 	attributes[ParsersAttributes::RLS_ENABLED]=QString();
 	attributes[ParsersAttributes::RLS_FORCED]=QString();
-	attributes[ParsersAttributes::PARTITIONING_TYPE]=QString();
+	attributes[ParsersAttributes::PARTITIONING]=QString();
 
 	copy_table=partioned_table=nullptr;
 	partitioning_type=BaseType::null;
@@ -1460,7 +1460,7 @@ QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
   attributes[ParsersAttributes::ANCESTOR_TABLE]=QString();
   attributes[ParsersAttributes::TAG]=QString();
   attributes[ParsersAttributes::HIDE_EXT_ATTRIBS]=(isExtAttribsHidden() ? ParsersAttributes::_TRUE_ : QString());
-  attributes[ParsersAttributes::PARTITIONING_TYPE]=~partitioning_type;
+  attributes[ParsersAttributes::PARTITIONING]=~partitioning_type;
 
   if(def_type==SchemaParser::SQL_DEFINITION && copy_table)
 	  attributes[ParsersAttributes::COPY_TABLE]=copy_table->getName(true) + copy_op.getSQLDefinition();

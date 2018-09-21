@@ -60,7 +60,8 @@ HEADERS += src/textbox.h \
 		 src/tag.h \
 		 src/eventtrigger.h \
 		 src/genericsql.h \
-		 src/policy.h
+		 src/policy.h \
+    src/partitionkey.h
 
 SOURCES +=  src/textbox.cpp \
 	    src/domain.cpp \
@@ -109,7 +110,8 @@ SOURCES +=  src/textbox.cpp \
 			src/eventtrigger.cpp \
 			src/operation.cpp \
 			src/genericsql.cpp \
-			src/policy.cpp
+			src/policy.cpp \
+    src/partitionkey.cpp
 
 unix|windows: LIBS += -L$$OUT_PWD/../libparsers/ -lparsers \
                     -L$$OUT_PWD/../libutils/ -lutils

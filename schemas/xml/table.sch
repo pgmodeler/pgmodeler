@@ -13,7 +13,6 @@
   %if {faded-out} %then [ faded-out=] "true" %end
   %if {rls-enabled} %then [ rls-enabled=] "true" %end
   %if {rls-forced} %then [ rls-forced=] "true" %end
-  %if {partitioning-type} %then [ partitioning-type=] "{partitioning-type}" %end
   %if {max-obj-count} %then [ max-obj-count=] "{max-obj-count}" %end
 > $br
 
@@ -31,6 +30,14 @@
  
  %if {col-indexes} %then {col-indexes} %end
  %if {constr-indexes} %then {constr-indexes} %end
+ 
+ %if {partitioning} %then
+ $tb [<partitioning type=]"{partitioning}"[>] $br
+ $tb $tb [<partitionkey>] $br
+ $tb $tb $tb [<column name="teste"/>] $br
+ $tb $tb [</partitionkey>] $br
+ $tb [</partitioning>] $br
+ %end
  
  %if {initial-data} %then
  $tb <initial-data> $br
