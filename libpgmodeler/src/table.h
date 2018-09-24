@@ -36,6 +36,7 @@
 #include "role.h"
 #include "policy.h"
 #include "copyoptions.h"
+#include "partitionkey.h"
 #include <QStringList>
 
 class Table: public BaseTable {
@@ -55,6 +56,9 @@ class Table: public BaseTable {
 		//! \brief Stores the tables that 'this' object inherits attributes
 		vector<Table *> ancestor_tables;
 		
+		//! \brief Stores the partition keys of the table partitioning being used
+		vector<PartitionKey> partition_keys;
+
 		//! \brief Stores the table which this one is partition of
 		Table *partioned_table;
 
@@ -326,6 +330,9 @@ class Table: public BaseTable {
 
 		//! \brief Returns all child objects of the table. This is the same as call getObjects(false)
 		vector<BaseObject *> getObjects(void);
+
+		//! \brief Returns all the partition keys used by the table
+		vector<PartitionKey> getPartitionKeys(void);
 
 		/*! \brief Stores on the specified vector 'fks' the foreign key present on table. The
 		 boolean paramenter is used to include those foreign keys includes by relationship. The third parameter

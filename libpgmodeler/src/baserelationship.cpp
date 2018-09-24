@@ -128,8 +128,7 @@ void BaseRelationship::configureRelationship(void)
 
 		/* Raises an error if the relationship type is generalization or dependency
 			and the source and destination table are the same. */
-		if((rel_type==RELATIONSHIP_GEN ||
-			rel_type==RELATIONSHIP_DEP) && src_table==dst_table)
+		if((rel_type==RELATIONSHIP_GEN || rel_type==RELATIONSHIP_DEP || rel_type==RELATIONSHIP_PART) && src_table==dst_table)
 			throw Exception(ERR_INV_INH_COPY_PART_RELATIONSHIP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Allocates the textbox for the name label

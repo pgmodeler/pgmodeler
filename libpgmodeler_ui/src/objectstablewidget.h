@@ -62,6 +62,9 @@ class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 		//! \brief Sets the specified column header label
 		void setHeaderLabel(const QString &label, unsigned col_idx);
 
+		//! \brief Sets the specified column header to be visible or not
+		void setHeaderVisible(unsigned col_idx, bool visible);
+
 		//! \brief Sets the specified column header icon
 		void setHeaderIcon(const QIcon &icon, unsigned col_idx);
 

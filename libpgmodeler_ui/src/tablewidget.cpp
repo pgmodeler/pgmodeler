@@ -30,11 +30,13 @@
 TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 {
 	QGridLayout *grid=nullptr;
+	QVBoxLayout *vbox=nullptr;
 	ObjectsTableWidget *tab=nullptr;
 	ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX, OBJ_POLICY };
 	map<QString, vector<QWidget *> > fields_map;
 	QFrame *frame=nullptr;
 	QPushButton *edt_data_tb=nullptr;
+	QStringList part_types;
 
 	Ui_TableWidget::setupUi(this);
 
@@ -65,13 +67,15 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	parent_tables->setHeaderLabel(trUtf8("Type"), 2);
 	parent_tables->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),2);
 
-	tag_sel=new ObjectSelectorWidget(OBJ_TAG, false, this);
-	dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1,1,3);
+	tag_sel = new ObjectSelectorWidget(OBJ_TAG, false, this);
+	vbox = new QVBoxLayout(tag_sel_parent);
+	vbox->addWidget(tag_sel);
+	vbox->setContentsMargins(0,0,0,0);
 
 	grid=new QGridLayout;
 	grid->addWidget(parent_tables, 0,0,1,1);
 	grid->setContentsMargins(4,4,4,4);
-	attributes_tbw->widget(6)->setLayout(grid);
+	attributes_tbw->widget(7)->setLayout(grid);
 
 	//Configuring the table objects that stores the columns, triggers, constraints, rules and indexes
 	for(unsigned i=0; i <= 5; i++)
@@ -163,9 +167,28 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	objects_tab_map[OBJ_POLICY]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),5);
 	objects_tab_map[OBJ_POLICY]->setHeaderLabel(trUtf8("Alias"), 6);
 
+	partion_keys_tab = new ObjectsTableWidget;
+	partion_keys_tab->setEnabled(false);
+	partion_keys_tab->setColumnCount(3);
+	partion_keys_tab->setHeaderLabel(trUtf8("Element"), 0);
+	partion_keys_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("column")),0);
+	partion_keys_tab->setHeaderLabel(trUtf8("Type"), 1);
+	partion_keys_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
+	partion_keys_tab->setHeaderLabel(trUtf8("Operator Class"), 2);
+	partion_keys_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("opclass")),2);
+	grid = dynamic_cast<QGridLayout *>(attributes_tbw->widget(6)->layout());
+	grid->addWidget(partion_keys_tab, 1, 0, 1, 2);
+
+	PartitioningType::getTypes(part_types);
+	part_types.push_front(trUtf8("None"));
+	partitioning_type_cmb->addItems(part_types);
+
+	connect(partitioning_type_cmb, &QComboBox::currentTextChanged, [&](){
+	  partion_keys_tab->setEnabled(partitioning_type_cmb->currentIndex() != 0);
+	});
+
 	configureFormLayout(table_grid, OBJ_TABLE);
 	configureTabOrder({ tag_sel });
-
 	setMinimumSize(660, 620);
 }
 

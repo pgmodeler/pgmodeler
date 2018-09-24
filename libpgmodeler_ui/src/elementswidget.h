@@ -30,6 +30,7 @@
 #include "objectstablewidget.h"
 #include "objectselectorwidget.h"
 #include "baseobjectwidget.h"
+#include "partitionkey.h"
 
 /* Declaring the IndexElement and ExcludeElement class as a Qt metatype in order to permit
 	 that instances of the class be used as data of QVariant and QMetaType */
@@ -40,6 +41,9 @@ Q_DECLARE_METATYPE(ExcludeElement)
 class ElementsWidget: public QWidget, public Ui::ElementsWidget {
 	private:
 		Q_OBJECT
+
+		QFrame *warning_frame;
+
 		//! \brief Parent object (table or relationship) from which the columns will be referenced on the elements
 		BaseObject *parent_obj;
 		
@@ -71,10 +75,13 @@ class ElementsWidget: public QWidget, public Ui::ElementsWidget {
 		ElementsWidget(QWidget *parent = 0);
 		
 		//! \brief Enables the widget to handle index elements
-		void setAttributes(DatabaseModel *model, BaseTable *table, vector<IndexElement> &elems);
+		void setAttributes(DatabaseModel *model, BaseTable *table, vector<IndexElement> elems);
 		
 		//! \brief Enables the widget to handle exclude constraint elements
-		void setAttributes(DatabaseModel *model, BaseObject *parent_obj, vector<ExcludeElement> &elems);
+		void setAttributes(DatabaseModel *model, BaseObject *parent_obj, vector<ExcludeElement> elems);
+
+		//! \brief Enables the widget to handle partition key elements
+		void setAttributes(DatabaseModel *model, BaseTable *table, vector<PartitionKey> elems);
 		
 		//! \brief Copy the current elements into the list
 		void getElements(vector<IndexElement> &elems);

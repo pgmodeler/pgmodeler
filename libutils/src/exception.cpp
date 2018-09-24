@@ -67,7 +67,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_REF_ROLE_INV_INDEX", QT_TR_NOOP("Reference to a role which index is out of role list bounds!")},
 	{"ERR_INS_EMPTY_RULE_COMMAND", QT_TR_NOOP("Insertion of empty command to the rule!")},
 	{"ERR_REF_RULE_CMD_INV_INDEX", QT_TR_NOOP("Reference to a command which index is out of the command list bounds!")},
-	{"ERR_INV_INH_COPY_PART_RELATIONSHIP", QT_TR_NOOP("Is not possible to create a self generalization/copy/partition relationship! The table can not inherit or copy its own attributes or be a partition of itself!")},
+	{"ERR_INV_INH_COPY_PART_RELATIONSHIP", QT_TR_NOOP("It's not possible to create a self generalization/copy/partition relationship! The table can not inherit or copy its own attributes or be a partition of itself!")},
 	{"ERR_ASG_OBJ_BELONGS_OTHER_TABLE", QT_TR_NOOP("Assignment of an object that already belongs to another table!")},
 	{"ERR_ASG_SEQ_DIF_TABLE_SCHEMA", QT_TR_NOOP("Assignment of a schema to the sequence which differs from the schema of the owner table!")},
 	{"ERR_ASG_INV_VALUE_SEQ_ATTRIBS", QT_TR_NOOP("Assignment of an invalid value to one of the sequence attributes!")},

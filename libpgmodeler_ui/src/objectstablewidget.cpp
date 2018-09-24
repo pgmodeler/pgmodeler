@@ -139,6 +139,14 @@ void ObjectsTableWidget::setHeaderLabel(const QString &label, unsigned col_idx)
 	item->setText(label);
 }
 
+void ObjectsTableWidget::setHeaderVisible(unsigned col_idx, bool visible)
+{
+  if(col_idx >= static_cast<unsigned>(table_tbw->columnCount()))
+	  throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+  table_tbw->horizontalHeader()->setSectionHidden(col_idx, !visible);
+}
+
 void ObjectsTableWidget::setHeaderIcon(const QIcon &icon, unsigned col_idx)
 {
 	QTableWidgetItem *item=nullptr;

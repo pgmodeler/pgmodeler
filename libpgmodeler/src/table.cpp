@@ -1690,7 +1690,12 @@ vector<BaseObject *> Table::getObjects(bool excl_cols_constr)
 
 vector<BaseObject *> Table::getObjects(void)
 {
-	return(getObjects(false));
+  return(getObjects(false));
+}
+
+vector<PartitionKey> Table::getPartitionKeys(void)
+{
+  return(partition_keys);
 }
 
 void Table::setCodeInvalidated(bool value)

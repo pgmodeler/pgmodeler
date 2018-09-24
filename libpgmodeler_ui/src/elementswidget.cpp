@@ -23,7 +23,7 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 	try
 	{
 		map<QString, vector<QWidget *> > fields_map;
-		QFrame *frame=nullptr;
+		warning_frame=nullptr;
 
 		setupUi(this);
 		elem_expr_hl=new SyntaxHighlighter(elem_expr_txt, false, true);
@@ -52,9 +52,9 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 		element_grid->addWidget(elements_tab, 7,0,1,3);
 
 		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_91)].push_back(collation_lbl);
-		frame=BaseObjectWidget::generateVersionWarningFrame(fields_map);
-		element_grid->addWidget(frame, element_grid->count()+1, 0, 1, 3);
-		frame->setParent(this);
+		warning_frame=BaseObjectWidget::generateVersionWarningFrame(fields_map);
+		element_grid->addWidget(warning_frame, element_grid->count()+1, 0, 1, 3);
+		warning_frame->setParent(this);
 
 		connect(elements_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleElement(int)));
 		connect(elements_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleElement(int)));
@@ -123,12 +123,12 @@ void ElementsWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj)
 		updateColumnsCombo();
 }
 
-void ElementsWidget::setAttributes(DatabaseModel *model, BaseTable *table, vector<IndexElement> &elems)
+void ElementsWidget::setAttributes(DatabaseModel *model, BaseTable *table, vector<IndexElement> elems)
 {
 	setAttributes(model, table);
 	collation_sel->setVisible(true);
 	collation_lbl->setVisible(true);
-
+	warning_frame->setVisible(true);
 	elements_tab->setHeaderLabel(trUtf8("Collation"), 2);
 	elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("collation")),2);
 	elements_tab->blockSignals(true);
@@ -142,7 +142,7 @@ void ElementsWidget::setAttributes(DatabaseModel *model, BaseTable *table, vecto
 	elements_tab->blockSignals(false);
 }
 
-void ElementsWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, vector<ExcludeElement> &elems)
+void ElementsWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, vector<ExcludeElement> elems)
 {
 	setAttributes(model, parent_obj);
 	operator_sel->setVisible(true);
@@ -156,6 +156,32 @@ void ElementsWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj,
 	{
 		elements_tab->addRow();
 		showElementData(elems[i], i);
+	}
+
+	elements_tab->blockSignals(false);
+}
+
+void ElementsWidget::setAttributes(DatabaseModel *model, BaseTable *table, vector<PartitionKey> elems)
+{
+	setAttributes(model, table);
+	elements_tab->setHeaderVisible(2, false);
+	elements_tab->setHeaderVisible(4, false);
+	elements_tab->setHeaderVisible(5, false);
+
+	collation_sel->setVisible(false);
+	collation_lbl->setVisible(false);
+	sorting_chk->setVisible(false);
+	ascending_rb->setVisible(false);
+	descending_rb->setVisible(false);
+	nulls_first_chk->setVisible(false);
+	warning_frame->setVisible(false);
+	elements_tab->blockSignals(true);
+
+#warning "TODO: handle partition keys"
+	for(unsigned i=0; i < elems.size(); i++)
+	{
+		//elements_tab->addRow();
+		//showElementData(elems[i], i);
 	}
 
 	elements_tab->blockSignals(false);
@@ -178,6 +204,7 @@ void ElementsWidget::clear(void)
 
 	collation_sel->setVisible(false);
 	collation_lbl->setVisible(false);
+	warning_frame->setVisible(false);
 	operator_sel->setVisible(false);
 	operator_lbl->setVisible(false);
 }
