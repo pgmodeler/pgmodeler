@@ -1301,10 +1301,9 @@ void RelationshipView::configureDescriptor(void)
 	}
 	else if(rel_type==BaseRelationship::RELATIONSHIP_PART)
 	{
-	  pol.append(QPointF(0,5)); pol.append(QPointF(10,5));
-	  pol.append(QPointF(10,0)); pol.append(QPointF(19,9));
-	  pol.append(QPointF(10,18)); pol.append(QPointF(10,13));
-	  pol.append(QPointF(0,13));
+	  pol.append(QPointF(0,4)); pol.append(QPointF(4,0));
+	  pol.append(QPointF(18,12)); pol.append(QPointF(4,24));
+	  pol.append(QPointF(0,20)); pol.append(QPointF(10,12));
 	}
 	else
 	{

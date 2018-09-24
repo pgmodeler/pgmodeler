@@ -2854,10 +2854,10 @@ void ModelWidget::removeObjects(bool cascade)
 						parent_type=(tab_obj ? tab_obj->getParentTable()->getObjectType() : OBJ_DATABASE);
 
 						objs_map[object->getObjectId()]=std::make_tuple(object,
-																														obj_name,
-																														obj_type,
-																														parent_name,
-																														parent_type);
+																		obj_name,
+																		obj_type,
+																		parent_name,
+																		parent_type);
 					}
 				}
 
@@ -2882,7 +2882,7 @@ void ModelWidget::removeObjects(bool cascade)
 					else if(parent_type!=OBJ_DATABASE)
 					{
 						/* If the parent table does not exist on the model of the object to be removed
-				 does not exists in parent table, it'll not be processed */
+						 * does not exists in parent table, it'll not be processed */
 						table=dynamic_cast<BaseTable *>(db_model->getObject(parent_name, parent_type));
 						if(!table || (table && table->getObjectIndex(obj_name, obj_type) < 0))
 							continue;
@@ -2931,7 +2931,7 @@ void ModelWidget::removeObjects(bool cascade)
 
 								aux_table=dynamic_cast<Table *>(table);
 								if(aux_table && obj_type==OBJ_CONSTRAINT &&
-										dynamic_cast<Constraint *>(tab_obj)->getConstraintType()==ConstraintType::foreign_key)
+								   dynamic_cast<Constraint *>(tab_obj)->getConstraintType()==ConstraintType::foreign_key)
 									db_model->updateTableFKRelationships(aux_table);
 
 								table->setModified(true);

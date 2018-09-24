@@ -6561,9 +6561,11 @@ void DatabaseModel::validateRelationships(TableObject *object, Table *parent_tab
 
 			/* Relationship validation condition:
 			> Case the object is a column and its reference by the parent table primary key
+			> Case the parent table is a partition and a column is being removed
 			> Case the object is a constraint and its a table primary key */
 			revalidate_rels=((obj_type==OBJ_COLUMN &&
-							  parent_tab->isConstraintRefColumn(dynamic_cast<Column *>(object), ConstraintType::primary_key)) ||
+							  (parent_tab->isConstraintRefColumn(dynamic_cast<Column *>(object), ConstraintType::primary_key) ||
+							   parent_tab->isPartition())) ||
 							 (obj_type==OBJ_CONSTRAINT &&
 							  dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::primary_key));
 

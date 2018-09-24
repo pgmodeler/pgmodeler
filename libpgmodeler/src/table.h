@@ -148,6 +148,9 @@ class Table: public BaseTable {
 		//! \brief Returns the current partitioning type defined for the table
 		PartitioningType getPartitioningType(void);
 
+		//! \brief Returns the partitioned table which this table is a partition of
+		Table *getPartitionedTable(void);
+
 		//! \brief Adds an object to the table. It can be inserted at a specified index 'obj_idx'.
 		void addObject(BaseObject *obj, int obj_idx=-1);
 

@@ -69,6 +69,12 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 							.arg(dst_tab->getName(true))
 							.arg(src_tab->getCopyTable()->getName(true)),
 							ERR_COPY_REL_TAB_DEFINED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		else if(rel_type==RELATIONSHIP_PART && src_tab->getPartitionedTable())
+			throw Exception(Exception::getErrorMessage(ERR_PART_REL_PATITIONED_DEFINED)
+							.arg(src_tab->getName(true))
+							.arg(dst_tab->getName(true))
+							.arg(src_tab->getPartitionedTable()->getName(true)),
+							ERR_PART_REL_PATITIONED_DEFINED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		copy_options=copy_op;
 		table_relnn=nullptr;
@@ -2380,8 +2386,8 @@ bool Relationship::isInvalidated(void)
 			  {
 				col_aux1 = table1->getColumn(i);
 				col_aux = table->getColumn(col_aux1->getName(true));
-				valid = col_aux && (col_aux->getType().isEquivalentTo(col_aux1->getType()) ||
-									col_aux->getType().getAliasType().isEquivalentTo(col_aux1->getType()));
+				valid = col_aux && col_aux1 && (col_aux->getType().isEquivalentTo(col_aux1->getType()) ||
+												col_aux->getType().getAliasType().isEquivalentTo(col_aux1->getType()));
 			  }
 			}
 
@@ -2393,8 +2399,8 @@ bool Relationship::isInvalidated(void)
 			{
 				col_aux = table->getColumn(i);
 				col_aux1 = table1->getColumn(col_aux->getName(true));
-				valid = col_aux && (col_aux->getType().isEquivalentTo(col_aux1->getType()) ||
-									col_aux->getType().getAliasType().isEquivalentTo(col_aux1->getType()));
+				valid = col_aux && col_aux1 && (col_aux->getType().isEquivalentTo(col_aux1->getType()) ||
+												col_aux->getType().getAliasType().isEquivalentTo(col_aux1->getType()));
 			}
 
 			//Checking if the check constraints were not renamed in the parent table

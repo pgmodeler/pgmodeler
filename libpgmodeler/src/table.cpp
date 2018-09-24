@@ -111,6 +111,11 @@ PartitioningType Table::getPartitioningType(void)
   return(partitioning_type);
 }
 
+Table *Table::getPartitionedTable(void)
+{
+  return(partioned_table);
+}
+
 void Table::setProtected(bool value)
 {
 	ObjectType obj_types[]={ OBJ_COLUMN, OBJ_CONSTRAINT,

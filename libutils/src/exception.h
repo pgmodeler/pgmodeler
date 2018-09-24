@@ -233,6 +233,7 @@ enum ErrorType {
 	ERR_ASG_INV_OPFAM_OPCLSELEM,
 	ERR_REF_INV_LIKE_OP_TYPE,
 	ERR_COPY_REL_TAB_DEFINED,
+	ERR_PART_REL_PATITIONED_DEFINED,
 	ERR_TABLE_TRIG_INSTEADOF_FIRING,
 	ERR_TRIGGER_INV_TRUNCATE_USAGE,
 	ERR_TRIGGER_INV_INSTEADOF_USAGE,
@@ -286,7 +287,7 @@ enum ErrorType {
 
 class Exception {
 	private:
-		static const int ERROR_COUNT=235;
+		static const int ERROR_COUNT=236;
 
 		/*! \brief Stores other exceptions before raise the 'this' exception.
 		 This structure can be used to simulate a stack trace to improve the debug */
