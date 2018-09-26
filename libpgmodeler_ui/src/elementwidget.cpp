@@ -102,7 +102,8 @@ void ElementWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, 
 	else
 	  setPartitionKey(part_key);
 
-	if(column || (!column && elem->getExpression().isEmpty()))
+	if(parent_obj->getObjectType() == OBJ_TABLE &&
+	   (column || (!column && elem->getExpression().isEmpty())))
 	{
 		column_rb->setChecked(true);
 
@@ -170,6 +171,7 @@ void ElementWidget::setExcludeElement(ExcludeElement *elem)
 	setWindowTitle(trUtf8("Exclude element properties"));
 	operator_sel->setVisible(true);
 	operator_lbl->setVisible(true);
+	warning_frame->setVisible(false);
 }
 
 void ElementWidget::setPartitionKey(PartitionKey *elem)

@@ -44,6 +44,9 @@ class ElementsTableWidget: public QWidget {
 	private:
 		Q_OBJECT
 
+		/*! \brief Store an instance of the element being handled (see setAttributes())
+		 * This one is used to determine the settings of the element widget open when the user
+		 * wants to create new elements on the grid */
 		Element *handled_elem;
 
 		ElementWidget *element_wgt;
@@ -60,14 +63,17 @@ class ElementsTableWidget: public QWidget {
 		//! \brief Shows the element data on the elements table at the specified line
 		void showElementData(Element *elem, int elem_idx);
 
+		//! \brief Copies the provided element storing it on a QVariant according to its real type (class)
 		QVariant copyElementData(Element *elem);
 		
+		//! \brief Opens the element editing form using the attributes of the provided element
 		int openElementForm(Element *elem);
 
 	public:
 		ElementsTableWidget(QWidget *parent = 0);
 		~ElementsTableWidget(void);
 
+		//! \brief Configures the grid based upon the template Class in use
 		template<class Class>
 		void setAttributes(DatabaseModel *model, BaseObject *parent_obj)
 		{
@@ -98,6 +104,7 @@ class ElementsTableWidget: public QWidget {
 		  }
 		}
 
+		//! \brief Fills the grid with the elements on the vector vector
 		template<class Class>
 		void setElements(vector<Class> elems)
 		{
@@ -110,6 +117,7 @@ class ElementsTableWidget: public QWidget {
 		  elements_tab->blockSignals(false);
 		}
 
+		//! \brief Fills the provided vector with the elements on the grid
 		template<class Class>
 		void getElements(vector<Class> &elems)
 		{

@@ -68,14 +68,17 @@ class ElementWidget: public QWidget, public Ui::ElementWidget {
 		//! \brief Enables the widget to handle partition key elements
 		void setPartitionKey(PartitionKey *elem);
 
+		//! \brief Allocates the handled element based upon the provided Class (should be child of Element)
 		template<class Class>
 		void createElement(Class *elem);
 		
 	public:
 		ElementWidget(QWidget *parent = 0);
 		
+		//! \brief Configures the widget to handle the element considering its type (IndexElement, ExcludeElement, PartitionKey)
 		void setAttributes(DatabaseModel *model, BaseObject *parent_obj, Element *elem);
 
+		//! \brief Returns the configured element
 		Element *getElement(void);
 
 	public slots:
