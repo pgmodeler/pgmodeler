@@ -26,6 +26,7 @@
 
 #include "column.h"
 #include "operatorclass.h"
+#include "collation.h"
 
 class Element {
 	private:
@@ -67,6 +68,8 @@ class Element {
 		void setExpression(const QString &expression);
 		void setOperatorClass(OperatorClass *oper_class);
 		void setSortingEnabled(bool value);
+		virtual void setCollation(Collation *){}
+		virtual void setOperator(Operator *){}
 
 		//! \brief Sets the state of one of the element sorting method
 		void setSortingAttribute(unsigned attrib, bool value);
@@ -77,9 +80,12 @@ class Element {
 		Column *getColumn(void);
 		QString getExpression(void);
 		OperatorClass *getOperatorClass(void);
+		virtual Collation *getCollation(void){ return(nullptr); }
+		virtual Operator *getOperator(void){ return(nullptr); }
+
 		bool isSortingEnabled(void);
 
-		virtual QString getCodeDefinition(unsigned) = 0;
+		virtual QString getCodeDefinition(unsigned) { return(QString()); }
 		bool operator == (Element &elem);
 };
 

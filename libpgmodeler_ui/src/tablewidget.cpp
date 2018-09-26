@@ -167,15 +167,8 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	objects_tab_map[OBJ_POLICY]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),5);
 	objects_tab_map[OBJ_POLICY]->setHeaderLabel(trUtf8("Alias"), 6);
 
-	partion_keys_tab = new ObjectsTableWidget;
+	partion_keys_tab = new ElementsTableWidget;
 	partion_keys_tab->setEnabled(false);
-	partion_keys_tab->setColumnCount(3);
-	partion_keys_tab->setHeaderLabel(trUtf8("Element"), 0);
-	partion_keys_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("column")),0);
-	partion_keys_tab->setHeaderLabel(trUtf8("Type"), 1);
-	partion_keys_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
-	partion_keys_tab->setHeaderLabel(trUtf8("Operator Class"), 2);
-	partion_keys_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("opclass")),2);
 	grid = dynamic_cast<QGridLayout *>(attributes_tbw->widget(6)->layout());
 	grid->addWidget(partion_keys_tab, 1, 0, 1, 2);
 
@@ -304,6 +297,8 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 
 		tag_sel->setModel(this->model);
 		tag_sel->setSelectedObject(table->getTag());
+
+		partion_keys_tab->setAttributes<PartitionKey>(model, table);
 	}
 	catch(Exception &e)
 	{

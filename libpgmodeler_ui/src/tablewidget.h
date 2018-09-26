@@ -29,13 +29,15 @@
 #include "ui_tablewidget.h"
 #include "objectstablewidget.h"
 #include "tableview.h"
-#include "elementswidget.h"
+#include "elementstablewidget.h"
 
 class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 	private:
 		Q_OBJECT
 
-		ObjectsTableWidget *parent_tables, *partion_keys_tab;
+		ObjectsTableWidget *parent_tables;
+
+		ElementsTableWidget *partion_keys_tab;
 
 		ObjectSelectorWidget *tag_sel;
 
