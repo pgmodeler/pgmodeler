@@ -167,17 +167,17 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	objects_tab_map[OBJ_POLICY]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),5);
 	objects_tab_map[OBJ_POLICY]->setHeaderLabel(trUtf8("Alias"), 6);
 
-	partion_keys_tab = new ElementsTableWidget;
-	partion_keys_tab->setEnabled(false);
+	partition_keys_tab = new ElementsTableWidget;
+	partition_keys_tab->setEnabled(false);
 	grid = dynamic_cast<QGridLayout *>(attributes_tbw->widget(6)->layout());
-	grid->addWidget(partion_keys_tab, 1, 0, 1, 2);
+	grid->addWidget(partition_keys_tab, 1, 0, 1, 2);
 
 	PartitioningType::getTypes(part_types);
 	part_types.push_front(trUtf8("None"));
 	partitioning_type_cmb->addItems(part_types);
 
 	connect(partitioning_type_cmb, &QComboBox::currentTextChanged, [&](){
-	  partion_keys_tab->setEnabled(partitioning_type_cmb->currentIndex() != 0);
+	  partition_keys_tab->setEnabled(partitioning_type_cmb->currentIndex() != 0);
 	});
 
 	configureFormLayout(table_grid, OBJ_TABLE);
@@ -298,7 +298,7 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 		tag_sel->setModel(this->model);
 		tag_sel->setSelectedObject(table->getTag());
 
-		partion_keys_tab->setAttributes<PartitionKey>(model, table);
+		partition_keys_tab->setAttributes<PartitionKey>(model, table);
 	}
 	catch(Exception &e)
 	{
@@ -780,7 +780,9 @@ void TableWidget::applyConfiguration(void)
 		Constraint *pk = nullptr;
 		vector<BaseRelationship *> rels;
 		vector<Column *> pk_cols;
+		vector<PartitionKey> part_keys;
 		ObjectsTableWidget *col_tab = objects_tab_map[OBJ_COLUMN];
+		PartitioningType part_type;
 
 		if(!this->new_object)
 			op_list->registerObject(this->object, Operation::OBJECT_MODIFIED);
@@ -794,6 +796,17 @@ void TableWidget::applyConfiguration(void)
 		table->setRLSForced(force_rls_chk->isChecked());
 		table->setUnlogged(unlogged_chk->isChecked());
 		table->setTag(dynamic_cast<Tag *>(tag_sel->getSelectedObject()));
+
+		part_type = partitioning_type_cmb->currentIndex() == 0 ? BaseType::null : PartitioningType(partitioning_type_cmb->currentText());
+		table->setPartitioningType(part_type);
+
+		if(part_type != BaseType::null)
+		{
+		  partition_keys_tab->getElements<PartitionKey>(part_keys);
+		  table->addPartitionKeys(part_keys);
+		}
+		else
+		  table->removePartitionKeys();
 
 		BaseObjectWidget::applyConfiguration();
 

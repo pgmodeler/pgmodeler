@@ -37,7 +37,7 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 
 		ObjectsTableWidget *parent_tables;
 
-		ElementsTableWidget *partion_keys_tab;
+		ElementsTableWidget *partition_keys_tab;
 
 		ObjectSelectorWidget *tag_sel;
 

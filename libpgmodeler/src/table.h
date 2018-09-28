@@ -200,6 +200,12 @@ class Table: public BaseTable {
 		//! \brief Configures the copy table options
 		void setCopyTableOptions(CopyOptions copy_op);
 
+		//! \brief Adds partition keys to the table. This method overrides the currently configure partition keys.
+		void addPartitionKeys(vector<PartitionKey> &part_keys);
+
+		//! \brief Remove all partition keys configured for the table
+		void removePartitionKeys(void);
+
 		//! \brief Returns the copy table
 		Table *getCopyTable(void);
 

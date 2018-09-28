@@ -589,6 +589,32 @@ void Table::setCopyTableOptions(CopyOptions like_op)
 	}
 }
 
+void Table::addPartitionKeys(vector<PartitionKey> &part_keys)
+{
+  vector<PartitionKey> part_keys_bkp = partition_keys;
+
+  partition_keys.clear();
+
+  for(auto &part_key : part_keys)
+  {
+	if(std::find(partition_keys.begin(), partition_keys.end(), part_key) != partition_keys.end())
+	{
+	  partition_keys = part_keys_bkp;
+	  throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+
+	partition_keys.push_back(part_key);
+  }
+
+  setCodeInvalidated(true);
+}
+
+void Table::removePartitionKeys(void)
+{
+  partition_keys.clear();
+  setCodeInvalidated(true);
+}
+
 Table *Table::getCopyTable(void)
 {
 	return(copy_table);

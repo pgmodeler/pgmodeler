@@ -50,6 +50,9 @@ class Element {
 		//! \brief Enable the use of the sort attributes
 		sorting_enabled;
 
+		//! \brief Compares the attributes of provided element against this returning true/false if the match or not
+		bool isEqualsTo(Element &elem);
+
 	protected:
 		SchemaParser schparser;
 
@@ -87,6 +90,7 @@ class Element {
 
 		virtual QString getCodeDefinition(unsigned) { return(QString()); }
 		bool operator == (Element &elem);
+		bool operator ==(const Element &elem);
 };
 
 #endif
