@@ -692,7 +692,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 				while(!recent_models.isEmpty())
 				{
-					param_id=QString("%1%2").arg(ParsersAttributes::RECENT).arg(i++);
+					param_id=QString("%1%2").arg(ParsersAttributes::RECENT).arg(QString::number(i++).rightJustified(2, '0'));
 					attribs[ParsersAttributes::ID]=param_id;
 					attribs[ParsersAttributes::PATH]=recent_models.front();
 					conf_wgt->addConfigurationParam(param_id, attribs);
