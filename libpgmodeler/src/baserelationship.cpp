@@ -137,7 +137,8 @@ void BaseRelationship::configureRelationship(void)
 
 		//Allocates the cardinality labels only when the relationship is not generalization or dependency (copy)
 		if(rel_type!=RELATIONSHIP_GEN &&
-				rel_type!=RELATIONSHIP_DEP)
+			 rel_type!=RELATIONSHIP_DEP &&
+			 rel_type!=RELATIONSHIP_PART)
 		{
 			lables[SRC_CARD_LABEL]=new Textbox;
 			lables[DST_CARD_LABEL]=new Textbox;
