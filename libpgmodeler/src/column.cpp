@@ -284,7 +284,7 @@ QString Column::getAlterDefinition(BaseObject *object)
 	try
 	{
 		attribs_map attribs;
-		QString def_val;
+		QString def_val, alter_def;
 		bool ident_seq_changed = false;
 
 		BaseObject::setBasicAttributes(true);
@@ -371,7 +371,10 @@ QString Column::getAlterDefinition(BaseObject *object)
 		}
 
 		copyAttributes(attribs);
-		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+		alter_def = BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
+		alter_def += getAlterCommentDefinition(object, attributes);
+
+		return(alter_def);
 	}
 	catch(Exception &e)
 	{

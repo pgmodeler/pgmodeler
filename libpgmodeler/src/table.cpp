@@ -151,7 +151,7 @@ void Table::setProtected(bool value)
 
 void Table::setCommentAttribute(TableObject *tab_obj)
 {
-	if(tab_obj && !tab_obj->getComment().isEmpty())
+	if(tab_obj && !tab_obj->getComment().isEmpty() && tab_obj->isDeclaredInTable())
 	{
 		attribs_map attribs;
 

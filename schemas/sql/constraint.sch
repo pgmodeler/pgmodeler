@@ -76,4 +76,8 @@
 [-- ddl-end --] $br
 %end
 
+%if %not {decl-in-table} %and {comment} %then
+ {comment} $br 
+%end
+
 $br

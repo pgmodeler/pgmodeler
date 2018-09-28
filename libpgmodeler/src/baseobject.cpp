@@ -1216,6 +1216,20 @@ QString BaseObject::getAlterDefinition(BaseObject *object, bool ignore_name_diff
 			}
 		}
 
+		alter += getAlterCommentDefinition(object, attributes);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+
+	return(alter);
+}
+
+QString BaseObject::getAlterCommentDefinition(BaseObject *object, attribs_map attributes)
+{
+	try
+	{
 		if(this->getComment()!=object->getComment())
 		{
 			if(object->getComment().isEmpty())
@@ -1225,13 +1239,13 @@ QString BaseObject::getAlterDefinition(BaseObject *object, bool ignore_name_diff
 
 			schparser.ignoreUnkownAttributes(true);
 			schparser.ignoreEmptyAttributes(true);
-			alter+=schparser.getCodeDefinition(ParsersAttributes::COMMENT, attributes, SchemaParser::SQL_DEFINITION);
+			return(schparser.getCodeDefinition(ParsersAttributes::COMMENT, attributes, SchemaParser::SQL_DEFINITION));
 		}
+
+		return(QString());
 	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
-
-	return(alter);
 }

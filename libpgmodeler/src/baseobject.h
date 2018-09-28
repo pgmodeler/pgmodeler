@@ -228,6 +228,8 @@ class BaseObject {
 
 		static QString getAlterDefinition(QString sch_name, attribs_map &attribs, bool ignore_ukn_attribs=false, bool ignore_empty_attribs=false);
 
+		QString getAlterCommentDefinition(BaseObject *object, attribs_map attributes);
+
 	public:
 		//! \brief Maximum number of characters that an object name on PostgreSQL can have
 		static const int OBJECT_NAME_MAX_LENGTH=63;
