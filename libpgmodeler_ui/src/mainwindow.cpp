@@ -441,6 +441,19 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 MainWindow::~MainWindow(void)
 {
+	ModelWidget *model = nullptr;
+	int idx = 0;
+
+	/* Destroying models from the last to the first in order
+	 * to destroy other objects inside the models in the proper order */
+	while(models_tbw->count() > 0)
+	{
+		idx = models_tbw->count() - 1;
+		model = dynamic_cast<ModelWidget *>(models_tbw->widget(idx));
+		models_tbw->removeTab(idx);
+		delete(model);
+	}
+
 	//This fix the crash on exit at Mac OSX system (but not sure why) (???)
 	file_menu->clear();
 	delete(restoration_form);

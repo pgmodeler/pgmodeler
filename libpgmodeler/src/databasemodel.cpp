@@ -739,60 +739,80 @@ void DatabaseModel::setProtected(bool value)
 
 void DatabaseModel::destroyObjects(void)
 {
-	ObjectType types[]={
-		BASE_RELATIONSHIP,OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW,
-		OBJ_AGGREGATE, OBJ_OPERATOR,
-		OBJ_SEQUENCE, OBJ_CONVERSION,
-		OBJ_CAST, OBJ_OPFAMILY, OBJ_OPCLASS,
-		BASE_RELATIONSHIP, OBJ_TEXTBOX,
-		OBJ_DOMAIN, OBJ_TYPE, OBJ_FUNCTION,
-		OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_ROLE, OBJ_COLLATION,
-		OBJ_EXTENSION, OBJ_SCHEMA, OBJ_PERMISSION, OBJ_TAG, OBJ_GENERIC_SQL };
-
 	ObjectType graph_types[]={ OBJ_SCHEMA, BASE_RELATIONSHIP, OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW };
-	vector<BaseObject *> *list=nullptr;
 	BaseObject *object=nullptr;
-	unsigned i, cnt=sizeof(types)/sizeof(ObjectType);
+	map<unsigned, BaseObject *> objects;
+	map<unsigned, BaseObject *>::reverse_iterator ritr, ritr_end;
+	vector<ObjectType> rem_obj_types;
 
 	//Blocking signals of all graphical objects to avoid uneeded updates in the destruction
 	this->blockSignals(true);
 
-	for(i=0; i < 5; i++)
+	for(unsigned i=0; i < 5; i++)
 	{
 		for(auto &object : *this->getObjectList(graph_types[i]))
 			dynamic_cast<BaseGraphicObject *>(object)->blockSignals(true);
 	}
 
-	//Removing the special objects first
-	storeSpecialObjectsXML();
-	disconnectRelationships();
-
-	for(i=0; i < cnt; i++)
+	try
 	{
-		list=getObjectList(types[i]);
+		//Removing the special objects first
+		storeSpecialObjectsXML();
+		disconnectRelationships();
+	}
+	catch(Exception &e)
+	{
+		/* DEBUG: An exception at this point shouldn't never occur but if
+		 * it is raised, we spit out the error to the stdout in order to try to
+		 * find out the problem! */
+		QTextStream out(stdout);
+		out << trUtf8("** FAIL TO DESTROY ALL OBJECTS **") << endl;
+		out << e.getExceptionsText() << endl;
+	}
 
-		while(!list->empty())
+	objects = getCreationOrder(SchemaParser::XML_DEFINITION, true);
+	ritr = objects.rbegin(),
+	ritr_end = objects.rend();
+
+	while(ritr != ritr_end)
+	{
+		object = ritr->second;
+		ritr++;
+
+		// We ignore the database itself as well table children objects
+		if(object->getObjectType() == OBJ_DATABASE ||
+			 TableObject::isTableObject(object->getObjectType()))
+			continue;
+
+		// Register the type of the object being removed so the respective list can be cleaned in the end
+		rem_obj_types.push_back(object->getObjectType());
+
+		/* If the object is graphical destroy using the __removeObject in order
+		emit the signal to object scene to remove the graphical representation
+		of the to-be-destroyed object */
+		if(dynamic_cast<BaseGraphicObject *>(object))
 		{
-			object=list->back();
+			__removeObject(object,-1,false);
 
-			/* If the object is graphical destroy using the __removeObject in order
-			emit the signal to object scene to remove the graphical representation
-			of the to-be-destroyed object */
-			if(dynamic_cast<BaseGraphicObject *>(object))
-			{
-				__removeObject(object,-1,false);
-
-				if(object->getObjectType()==OBJ_RELATIONSHIP)
-					dynamic_cast<Relationship *>(object)->destroyObjects();
-			}
-			else
-				list->pop_back();
-
-			delete(object);
+			if(object->getObjectType()==OBJ_RELATIONSHIP)
+				dynamic_cast<Relationship *>(object)->destroyObjects();
 		}
+
+		delete(object);
 	}
 
 	PgSQLType::removeUserTypes(this);
+
+	//Cleaning out the list of removed objects to avoid segfaults while calling this method again
+	if(!rem_obj_types.empty())
+	{
+		std::sort(rem_obj_types.begin(), rem_obj_types.end());
+		vector<ObjectType>::iterator end = std::unique(rem_obj_types.begin(), rem_obj_types.end());
+		rem_obj_types.erase(end, rem_obj_types.end());
+
+		for(auto type : rem_obj_types)
+			getObjectList(type)->clear();
+	}
 }
 
 void DatabaseModel::addTable(Table *table, int obj_idx)
@@ -1268,8 +1288,8 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 			rel=getRelationship(view,tab);
 			if(tab && !rel)
 			{
-                rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_DEP, view, tab, false, false);
-                rel->setName(PgModelerNS::generateUniqueName(rel, base_relationships));
+				rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_DEP, view, tab, false, false);
+				rel->setName(PgModelerNS::generateUniqueName(rel, base_relationships));
 				addRelationship(rel);
 			}
 		}
@@ -4722,7 +4742,7 @@ Table *DatabaseModel::createTable(void)
 					{
 						xmlparser.getElementAttributes(aux_attribs);
 						table->setPartitioningType(aux_attribs[ParsersAttributes::TYPE]);
-#warning "TODO: load partitionkey tag data"
+						#warning "TODO: load partitionkey tag data"
 					}
 					//Retrieving initial data
 					else if(elem==ParsersAttributes::INITIAL_DATA)
@@ -8169,7 +8189,9 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			switch(obj_type)
 			{
 				case OBJ_TYPE: ptr_pgsqltype=dynamic_cast<Type*>(object); break;
-				case OBJ_DOMAIN: ptr_pgsqltype=dynamic_cast<Domain*>(object); break;
+				case OBJ_DOMAIN:
+			  ptr_pgsqltype=dynamic_cast<Domain*>(object);
+			  break;
 				case OBJ_SEQUENCE: ptr_pgsqltype=dynamic_cast<Sequence*>(object); break;
 				case OBJ_EXTENSION: ptr_pgsqltype=dynamic_cast<Extension*>(object); break;
 				case OBJ_VIEW: ptr_pgsqltype=dynamic_cast<View*>(object); break;
