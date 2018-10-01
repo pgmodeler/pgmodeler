@@ -77,64 +77,65 @@ class ElementsTableWidget: public QWidget {
 		template<class Class>
 		void setAttributes(DatabaseModel *model, BaseObject *parent_obj)
 		{
-		  if(handled_elem && !dynamic_cast<Class *>(handled_elem))
-		  {
-			delete(handled_elem);
-			handled_elem = nullptr;
-		  }
+			if(handled_elem && !dynamic_cast<Class *>(handled_elem))
+			{
+				delete(handled_elem);
+				handled_elem = nullptr;
+			}
 
-		  if(!handled_elem)
-			handled_elem = new Class;
+			if(!handled_elem)
+				handled_elem = new Class;
 
-		  this->model = model;
-		  this->parent_obj = parent_obj;
+			this->model = model;
+			this->parent_obj = parent_obj;
 
-		  if(dynamic_cast<IndexElement *>(handled_elem))
-			elements_tab->setHeaderVisible(2, false);
+			if(dynamic_cast<IndexElement *>(handled_elem))
+				elements_tab->setHeaderVisible(2, false);
 
-		  if(dynamic_cast<ExcludeElement *>(handled_elem))
-			elements_tab->setHeaderVisible(4, false);
+			if(dynamic_cast<ExcludeElement *>(handled_elem))
+				elements_tab->setHeaderVisible(4, false);
 
-		  if(dynamic_cast<PartitionKey *>(handled_elem))
-		  {
-			elements_tab->setHeaderVisible(2, false);
-			elements_tab->setHeaderVisible(4, false);
-			elements_tab->setHeaderVisible(5, false);
-			elements_tab->setHeaderVisible(6, false);
-		  }
+			if(dynamic_cast<PartitionKey *>(handled_elem))
+			{
+				elements_tab->setHeaderVisible(2, false);
+				elements_tab->setHeaderVisible(4, false);
+				elements_tab->setHeaderVisible(5, false);
+				elements_tab->setHeaderVisible(6, false);
+			}
 		}
 
 		//! \brief Fills the grid with the elements on the vector vector
 		template<class Class>
 		void setElements(vector<Class> elems)
 		{
-		  elements_tab->blockSignals(true);
-		  for(auto &elem : elems)
-		  {
-			  elements_tab->addRow();
-			  showElementData(&elem, elements_tab->getRowCount() - 1);
-		  }
-		  elements_tab->blockSignals(false);
+			elements_tab->blockSignals(true);
+			for(auto &elem : elems)
+			{
+				elements_tab->addRow();
+				showElementData(&elem, elements_tab->getRowCount() - 1);
+			}
+			elements_tab->clearSelection();
+			elements_tab->blockSignals(false);
 		}
 
 		//! \brief Fills the provided vector with the elements on the grid
 		template<class Class>
 		void getElements(vector<Class> &elems)
 		{
-		  if(elements_tab->getRowCount() > 0)
-		  {
-			if(elements_tab->getRowData(0).canConvert<Class>())
+			if(elements_tab->getRowCount() > 0)
 			{
-				elems.clear();
-				for(unsigned i=0; i < elements_tab->getRowCount(); i++)
-				  elems.push_back(elements_tab->getRowData(i).value<Class>());
+				if(elements_tab->getRowData(0).canConvert<Class>())
+				{
+					elems.clear();
+					for(unsigned i=0; i < elements_tab->getRowCount(); i++)
+						elems.push_back(elements_tab->getRowData(i).value<Class>());
+				}
 			}
-		  }
 		}
 		
-  private slots:
-	void addElement(int elem_idx);
-	void editElement(int elem_idx);
+	private slots:
+		void addElement(int elem_idx);
+		void editElement(int elem_idx);
 };
 
 #endif

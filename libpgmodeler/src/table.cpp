@@ -593,7 +593,14 @@ void Table::addPartitionKeys(vector<PartitionKey> &part_keys)
 {
   vector<PartitionKey> part_keys_bkp = partition_keys;
 
-  partition_keys.clear();
+	if(partitioning_type == BaseType::null)
+		return;
+
+	if(partitioning_type == PartitioningType::list && part_keys.size() > 1)
+		throw Exception(Exception::getErrorMessage(ERR_INV_PARTITION_KEY_COUNT).arg(this->getSignature()),
+										ERR_INV_PARTITION_KEY_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	partition_keys.clear();
 
   for(auto &part_key : part_keys)
   {
@@ -1536,9 +1543,11 @@ void Table::operator = (Table &tab)
 	this->with_oid=tab.with_oid;
 	this->col_indexes=tab.col_indexes;
 	this->constr_indexes=tab.constr_indexes;
-
-	setGenerateAlterCmds(tab.gen_alter_cmds);
-	setProtected(tab.is_protected);
+	this->partitioning_type=tab.partitioning_type;
+	this->initial_data=tab.initial_data;
+	this->partition_keys=tab.partition_keys;
+	this->copy_op=tab.copy_op;
+	this->unlogged=tab.unlogged;
 
 	PgSQLType::renameUserType(prev_name, this, this->getName(true));
 }

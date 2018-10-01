@@ -34,7 +34,7 @@ ElementsTableWidget::ElementsTableWidget(QWidget *parent) : QWidget(parent)
 
 		QVBoxLayout *vbox = new QVBoxLayout(this);
 		elements_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
-											(ObjectsTableWidget::UPDATE_BUTTON | ObjectsTableWidget::DUPLICATE_BUTTON), true, this);
+																				(ObjectsTableWidget::UPDATE_BUTTON | ObjectsTableWidget::DUPLICATE_BUTTON), true, this);
 
 		elements_tab->setColumnCount(7);
 		elements_tab->setHeaderLabel(trUtf8("Element"), 0);
@@ -59,19 +59,19 @@ ElementsTableWidget::ElementsTableWidget(QWidget *parent) : QWidget(parent)
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-  }
+	}
 }
 
 ElementsTableWidget::~ElementsTableWidget(void)
 {
-  if(handled_elem)
-	delete(handled_elem);
+	if(handled_elem)
+		delete(handled_elem);
 }
 
 void ElementsTableWidget::showElementData(Element *elem, int elem_idx)
 {
 	if(!elem)
-	  return;
+		return;
 
 	if(elem->getColumn())
 	{
@@ -86,15 +86,15 @@ void ElementsTableWidget::showElementData(Element *elem, int elem_idx)
 
 	elements_tab->clearCellText(elem_idx, 2);
 	if(elem->getOperator())
-	  elements_tab->setCellText(elem->getOperator()->getSignature(true), elem_idx, 2);
+		elements_tab->setCellText(elem->getOperator()->getSignature(true), elem_idx, 2);
 
 	elements_tab->clearCellText(elem_idx, 3);
 	if(elem->getOperatorClass())
-	  elements_tab->setCellText(elem->getOperatorClass()->getName(true), elem_idx, 3);
+		elements_tab->setCellText(elem->getOperatorClass()->getName(true), elem_idx, 3);
 
 	elements_tab->clearCellText(elem_idx, 4);
 	if(elem->getCollation())
-	  elements_tab->setCellText(elem->getCollation()->getName(true), elem_idx, 4);
+		elements_tab->setCellText(elem->getCollation()->getName(true), elem_idx, 4);
 
 	if(elem->isSortingEnabled())
 	{
@@ -119,29 +119,29 @@ void ElementsTableWidget::showElementData(Element *elem, int elem_idx)
 
 QVariant ElementsTableWidget::copyElementData(Element *elem)
 {
-  if(dynamic_cast<IndexElement *>(elem))
-	return(QVariant::fromValue<IndexElement>(*dynamic_cast<IndexElement *>(elem)));
+	if(dynamic_cast<IndexElement *>(elem))
+		return(QVariant::fromValue<IndexElement>(*dynamic_cast<IndexElement *>(elem)));
 
-  if(dynamic_cast<ExcludeElement *>(elem))
-	return(QVariant::fromValue<ExcludeElement>(*dynamic_cast<ExcludeElement *>(elem)));
+	if(dynamic_cast<ExcludeElement *>(elem))
+		return(QVariant::fromValue<ExcludeElement>(*dynamic_cast<ExcludeElement *>(elem)));
 
-  if(dynamic_cast<PartitionKey *>(elem))
-	return(QVariant::fromValue<PartitionKey>(*dynamic_cast<PartitionKey *>(elem)));
+	if(dynamic_cast<PartitionKey *>(elem))
+		return(QVariant::fromValue<PartitionKey>(*dynamic_cast<PartitionKey *>(elem)));
 
-  return(QVariant());
+	return(QVariant());
 }
 
 int ElementsTableWidget::openElementForm(Element *elem)
 {
-  int res = 0;
+	int res = 0;
 
-  GeneralConfigWidget::restoreWidgetGeometry(&element_form, element_wgt->metaObject()->className());
-  element_wgt->setAttributes(model, parent_obj, elem);
-  element_form.setWindowTitle(element_wgt->windowTitle());
-  res = element_form.exec();
-  GeneralConfigWidget::saveWidgetGeometry(&element_form, element_wgt->metaObject()->className());
+	GeneralConfigWidget::restoreWidgetGeometry(&element_form, element_wgt->metaObject()->className());
+	element_wgt->setAttributes(model, parent_obj, elem);
+	element_form.setWindowTitle(element_wgt->windowTitle());
+	res = element_form.exec();
+	GeneralConfigWidget::saveWidgetGeometry(&element_form, element_wgt->metaObject()->className());
 
-  return(res);
+	return(res);
 }
 
 void ElementsTableWidget::editElement(int elem_idx)
@@ -155,32 +155,32 @@ void ElementsTableWidget::editElement(int elem_idx)
 
 	if(data.canConvert<IndexElement>())
 	{
-	  idx_elem = data.value<IndexElement>();
-	  elem = &idx_elem;
+		idx_elem = data.value<IndexElement>();
+		elem = &idx_elem;
 	}
 
 	if(data.canConvert<ExcludeElement>())
 	{
-	  exc_elem = data.value<ExcludeElement>();
-	  elem = &exc_elem;
+		exc_elem = data.value<ExcludeElement>();
+		elem = &exc_elem;
 	}
 
 	if(data.canConvert<PartitionKey>())
 	{
-	  part_key = data.value<PartitionKey>();
-	  elem = &part_key;
+		part_key = data.value<PartitionKey>();
+		elem = &part_key;
 	}
 
 	res = openElementForm(elem);
 
 	if(elem && res == QDialog::Accepted)
-	  showElementData(element_wgt->getElement(), elem_idx);
+		showElementData(element_wgt->getElement(), elem_idx);
 }
 
 void ElementsTableWidget::addElement(int elem_idx)
 {
-  if(openElementForm(handled_elem) == QDialog::Accepted)
-	showElementData(element_wgt->getElement(), elem_idx);
-  else
-	elements_tab->removeRow(elem_idx);
+	if(openElementForm(handled_elem) == QDialog::Accepted)
+		showElementData(element_wgt->getElement(), elem_idx);
+	else
+		elements_tab->removeRow(elem_idx);
 }

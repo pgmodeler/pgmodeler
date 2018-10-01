@@ -254,7 +254,8 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_REF_INV_AFFECTED_CMD", QT_TR_NOOP("Reference to an invalid affected command in policy `%1'!")},
 	{"ERR_REF_INV_SPECIAL_ROLE", QT_TR_NOOP("Reference to an invalid special role in policy `%1'!")},
 	{"ERR_INV_COLUMN_COUNT_PART_REL", QT_TR_NOOP("Unable to create a partition relationship because the partion table `%1' is not empty or has columns that are not present on the partitioned table `%2'!")},
-	{"ERR_INV_PARTITIONIG_TYPE_PART_REL", QT_TR_NOOP("Unable to create a partition relationship between the tables `%1' (partition) and `%2' (partitioned) because no partitioning type is defined on the latter!")}
+	{"ERR_INV_PARTITIONIG_TYPE_PART_REL", QT_TR_NOOP("Unable to create a partition relationship between the tables `%1' (partition) and `%2' (partitioned) because no partitioning type is defined on the latter!")},
+	{"ERR_INV_PARTITION_KEY_COUNT", QT_TR_NOOP("Invalid amount of partition keys being assinged to the table `%1'! Multiples partition keys are allowed only on `HASH' and `RANGE' partitioning strategies.")}
 };
 
 Exception::Exception(void)

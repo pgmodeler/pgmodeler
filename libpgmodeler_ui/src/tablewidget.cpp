@@ -241,6 +241,7 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 		unsigned i, count;
 		Table *aux_tab=nullptr;
 		ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX, OBJ_POLICY };
+		vector<PartitionKey> part_keys;
 
 		if(!table)
 		{
@@ -298,7 +299,13 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 		tag_sel->setModel(this->model);
 		tag_sel->setSelectedObject(table->getTag());
 
+		int idx = partitioning_type_cmb->findText(~table->getPartitioningType());
+		partitioning_type_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 		partition_keys_tab->setAttributes<PartitionKey>(model, table);
+
+		part_keys = table->getPartitionKeys();
+		partition_keys_tab->setAttributes<PartitionKey>(this->model, table);
+		partition_keys_tab->setElements<PartitionKey>(part_keys);
 	}
 	catch(Exception &e)
 	{
@@ -802,11 +809,11 @@ void TableWidget::applyConfiguration(void)
 
 		if(part_type != BaseType::null)
 		{
-		  partition_keys_tab->getElements<PartitionKey>(part_keys);
-		  table->addPartitionKeys(part_keys);
+			partition_keys_tab->getElements<PartitionKey>(part_keys);
+			table->addPartitionKeys(part_keys);
 		}
 		else
-		  table->removePartitionKeys();
+			table->removePartitionKeys();
 
 		BaseObjectWidget::applyConfiguration();
 
