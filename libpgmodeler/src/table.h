@@ -370,6 +370,10 @@ class Table: public BaseTable {
 		 The user must specify the constraint type */
 		bool isConstraintRefColumn(Column *column, ConstraintType constr_type);
 
+		/*! \brief Returns if the specified column is referenced by one of the constraints on table.
+		 The user must specify the constraint type */
+		bool isPartitionKeyRefColumn(Column *column);
+
 		//! \brief Swaps two objects position
 		void swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2);
 
@@ -378,6 +382,9 @@ class Table: public BaseTable {
 		
 		//! \brief Returns if the table is a partition of another table
 		bool isPartition(void);
+
+		//! \brief Returns if the table is a partitioned. This is the same as getPartitioningType() != BaseType::null
+		bool isPartitioned(void);
 
 		//! \brief Copy the attributes between two tables
 		void operator = (Table &tabela);

@@ -31,11 +31,9 @@
  %if {col-indexes} %then {col-indexes} %end
  %if {constr-indexes} %then {constr-indexes} %end
  
- %if {partitioning} %then
+ %if {partitioning} %and {partitionkey} %then
  $tb [<partitioning type=]"{partitioning}"[>] $br
- $tb $tb [<partitionkey>] $br
- $tb $tb $tb [<column name="teste"/>] $br
- $tb $tb [</partitionkey>] $br
+        {partitionkey}  
  $tb [</partitioning>] $br
  %end
  

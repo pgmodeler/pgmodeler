@@ -79,54 +79,54 @@ ElementWidget::ElementWidget(QWidget *parent) : QWidget(parent)
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-  }
+	}
 }
 
 void ElementWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, Element *elem)
 {
-  if(!elem)
-	this->setEnabled(false);
-  else
-  {
-	IndexElement *idx_elem = dynamic_cast<IndexElement *>(elem);
-	ExcludeElement *exc_elem = dynamic_cast<ExcludeElement *>(elem);
-	PartitionKey *part_key = dynamic_cast<PartitionKey *>(elem);
-	Column *column = elem->getColumn();
-
-	setAttributes(model, parent_obj);
-
-	if(idx_elem)
-	  setIndexElement(idx_elem);
-	else if(exc_elem)
-	  setExcludeElement(exc_elem);
-	else
-	  setPartitionKey(part_key);
-
-	if(parent_obj->getObjectType() == OBJ_TABLE &&
-	   (column || (!column && elem->getExpression().isEmpty())))
-	{
-		column_rb->setChecked(true);
-
-		if(column)
-		  column_cmb->setCurrentIndex(column_cmb->findText(column->getName()));
-	}
+	if(!elem)
+		this->setEnabled(false);
 	else
 	{
-		expression_rb->setChecked(true);
-		elem_expr_txt->setPlainText(elem->getExpression());
+		IndexElement *idx_elem = dynamic_cast<IndexElement *>(elem);
+		ExcludeElement *exc_elem = dynamic_cast<ExcludeElement *>(elem);
+		PartitionKey *part_key = dynamic_cast<PartitionKey *>(elem);
+		Column *column = elem->getColumn();
+
+		setAttributes(model, parent_obj);
+
+		if(idx_elem)
+			setIndexElement(idx_elem);
+		else if(exc_elem)
+			setExcludeElement(exc_elem);
+		else
+			setPartitionKey(part_key);
+
+		if(parent_obj->getObjectType() == OBJ_TABLE &&
+			 (column || (!column && elem->getExpression().isEmpty())))
+		{
+			column_rb->setChecked(true);
+
+			if(column)
+				column_cmb->setCurrentIndex(column_cmb->findText(column->getName()));
+		}
+		else
+		{
+			expression_rb->setChecked(true);
+			elem_expr_txt->setPlainText(elem->getExpression());
+		}
+
+		if(elem->getSortingAttribute(IndexElement::ASC_ORDER))
+			ascending_rb->setChecked(true);
+		else
+			descending_rb->setChecked(true);
+
+		nulls_first_chk->setChecked(elem->getSortingAttribute(IndexElement::NULLS_FIRST));
+		sorting_chk->setChecked(elem->isSortingEnabled());
+		op_class_sel->setSelectedObject(elem->getOperatorClass());
+		collation_sel->setSelectedObject(elem->getCollation());
+		operator_sel->setSelectedObject(elem->getOperator());
 	}
-
-	if(elem->getSortingAttribute(IndexElement::ASC_ORDER))
-		ascending_rb->setChecked(true);
-	else
-		descending_rb->setChecked(true);
-
-	nulls_first_chk->setChecked(elem->getSortingAttribute(IndexElement::NULLS_FIRST));
-	sorting_chk->setChecked(elem->isSortingEnabled());
-	op_class_sel->setSelectedObject(elem->getOperatorClass());
-	collation_sel->setSelectedObject(elem->getCollation());
-	operator_sel->setSelectedObject(elem->getOperator());
-  }
 }
 
 void ElementWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj)
@@ -176,35 +176,35 @@ void ElementWidget::setExcludeElement(ExcludeElement *elem)
 
 void ElementWidget::setPartitionKey(PartitionKey *elem)
 {
-  createElement<PartitionKey>(elem);
-  setWindowTitle(trUtf8("Partition key properties"));
-  collation_sel->setVisible(false);
-  collation_lbl->setVisible(false);
-  sorting_chk->setVisible(false);
-  ascending_rb->setVisible(false);
-  descending_rb->setVisible(false);
-  nulls_first_chk->setVisible(false);
-  warning_frame->setVisible(false);
+	createElement<PartitionKey>(elem);
+	setWindowTitle(trUtf8("Partition key properties"));
+	collation_sel->setVisible(true);
+	collation_lbl->setVisible(true);
+	sorting_chk->setVisible(false);
+	ascending_rb->setVisible(false);
+	descending_rb->setVisible(false);
+	nulls_first_chk->setVisible(false);
+	warning_frame->setVisible(true);
 }
 
 Element *ElementWidget::getElement(void)
 {
-  return(element);
+	return(element);
 }
 
 void ElementWidget::applyConfiguration(void)
 {
-  element->setSortingEnabled(sorting_chk->isChecked());
-  element->setSortingAttribute(IndexElement::NULLS_FIRST, nulls_first_chk->isChecked());
-  element->setSortingAttribute(IndexElement::ASC_ORDER, ascending_rb->isChecked());
-  element->setOperatorClass(dynamic_cast<OperatorClass *>(op_class_sel->getSelectedObject()));
-  element->setCollation(dynamic_cast<Collation *>(collation_sel->getSelectedObject()));
-  element->setOperator(dynamic_cast<Operator *>(operator_sel->getSelectedObject()));
+	element->setSortingEnabled(sorting_chk->isChecked());
+	element->setSortingAttribute(IndexElement::NULLS_FIRST, nulls_first_chk->isChecked());
+	element->setSortingAttribute(IndexElement::ASC_ORDER, ascending_rb->isChecked());
+	element->setOperatorClass(dynamic_cast<OperatorClass *>(op_class_sel->getSelectedObject()));
+	element->setCollation(dynamic_cast<Collation *>(collation_sel->getSelectedObject()));
+	element->setOperator(dynamic_cast<Operator *>(operator_sel->getSelectedObject()));
 
-  if(expression_rb->isChecked())
-	element->setExpression(elem_expr_txt->toPlainText().toUtf8());
-  else
-	element->setColumn(reinterpret_cast<Column *>(column_cmb->itemData(column_cmb->currentIndex()).value<void *>()));
+	if(expression_rb->isChecked())
+		element->setExpression(elem_expr_txt->toPlainText().toUtf8());
+	else
+		element->setColumn(reinterpret_cast<Column *>(column_cmb->itemData(column_cmb->currentIndex()).value<void *>()));
 }
 
 void ElementWidget::updateColumnsCombo(void)
@@ -227,7 +227,7 @@ void ElementWidget::updateColumnsCombo(void)
 			{
 				column=table->getColumn(i);
 				column_cmb->addItem(column->getName(),
-									QVariant::fromValue<void *>(column));
+														QVariant::fromValue<void *>(column));
 			}
 		}
 		else if(rel)
@@ -237,7 +237,7 @@ void ElementWidget::updateColumnsCombo(void)
 			{
 				column=rel->getAttribute(i);
 				column_cmb->addItem(column->getName(),
-									QVariant::fromValue<void *>(column));
+														QVariant::fromValue<void *>(column));
 			}
 		}
 	}
@@ -277,11 +277,11 @@ void ElementWidget::selectElementObject(void)
 template<class Class>
 void ElementWidget::createElement(Class *elem)
 {
-  if(element && !dynamic_cast<Class *>(element))
-	delete(element);
+	if(element && !dynamic_cast<Class *>(element))
+		delete(element);
 
-  if(!element)
-	element = new Class;
+	if(!element)
+		element = new Class;
 
-  *element = *elem;
+	*element = *elem;
 }

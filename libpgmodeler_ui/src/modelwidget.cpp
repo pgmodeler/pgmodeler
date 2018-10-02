@@ -2930,6 +2930,7 @@ void ModelWidget::removeObjects(bool cascade)
 								db_model->removePermissions(tab_obj);
 
 								aux_table=dynamic_cast<Table *>(table);
+
 								if(aux_table && obj_type==OBJ_CONSTRAINT &&
 								   dynamic_cast<Constraint *>(tab_obj)->getConstraintType()==ConstraintType::foreign_key)
 									db_model->updateTableFKRelationships(aux_table);

@@ -846,20 +846,10 @@ void Relationship::addColumnsRelGenPart(void)
 
 		/*  If the relationship is partitioning the destination table (partitioned) shoud have
 		 *  a partitioning type defined otherwise and error is raised */
-		if(rel_type == RELATIONSHIP_PART && dst_tab->getPartitioningType() == PartitioningType::null)
+		if(rel_type == RELATIONSHIP_PART && !dst_tab->isPartitioned())
 		  throw Exception(Exception::getErrorMessage(ERR_INV_PARTITIONIG_TYPE_PART_REL)
 						  .arg(src_tab->getSignature()).arg(dst_tab->getSignature()),
 						  ERR_INV_PARTITIONIG_TYPE_PART_REL, __PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		/* If the relationship is partitioning the source table (partition) should be empty
-		 * or at least have the same number of columns of the destination table (partitioned),
-		 * otherwise an exception is raised. */
-		if(rel_type == RELATIONSHIP_PART && src_count > 0 && src_count != dst_count)
-		{
-		  throw Exception(Exception::getErrorMessage(ERR_INV_COLUMN_COUNT_PART_REL)
-						  .arg(src_tab->getSignature()).arg(dst_tab->getSignature()),
-						  ERR_INV_COLUMN_COUNT_PART_REL, __PRETTY_FUNCTION__,__FILE__,__LINE__);
-		}
 
 		/* This for compares the columns of the receiver table
 		 with the columns of the reference table in order to
@@ -934,8 +924,7 @@ void Relationship::addColumnsRelGenPart(void)
 								for(idx=0; idx < tab_count; idx++)
 								{
 									parent_tab=dynamic_cast<Table *>(aux_tab->getObject(idx, OBJ_TABLE));
-									cond=(aux_col->getParentTable()==parent_tab &&
-										  aux_col->isAddedByGeneralization());
+									cond=(aux_col->getParentTable()==parent_tab && aux_col->isAddedByGeneralization());
 								}
 
 							}
@@ -943,9 +932,8 @@ void Relationship::addColumnsRelGenPart(void)
 							else
 							{
 								parent_tab=aux_tab->getCopyTable();
-								cond=(parent_tab &&
-									  aux_col->getParentTable()==parent_tab &&
-									  aux_col->isAddedByCopy());
+								cond=(parent_tab && rel_type == RELATIONSHIP_DEP &&
+										aux_col->getParentTable()==parent_tab && aux_col->isAddedByCopy());
 							}
 
 							if(id_tab==0)
@@ -975,12 +963,6 @@ void Relationship::addColumnsRelGenPart(void)
 						err_type=ERR_INCOMP_COLS_INHERIT_REL;
 				}
 			}
-
-			/* In partition relationships, raises an error if the currently evaluated column from
-			 * source table (partition) does not exist in the destination table (partitioned) because
-			 * both tables should have the same columns */
-			if(src_count > 0 && !duplic && rel_type == RELATIONSHIP_PART)
-			  err_type = ERR_INV_COLUMN_COUNT_PART_REL;
 
 			//In case that no error was detected (ERR_CUSTOM)
 			if(err_type==ERR_CUSTOM)
@@ -1020,6 +1002,9 @@ void Relationship::addColumnsRelGenPart(void)
 					rejected_col_count++;
 			}
 		}
+
+		if((src_tab->getColumnCount() + columns.size()) != dst_tab->getColumnCount() && rel_type == RELATIONSHIP_PART)
+			err_type = ERR_INV_COLUMN_COUNT_PART_REL;
 
 		//In case that no duplicity error is detected
 		if(err_type==ERR_CUSTOM)

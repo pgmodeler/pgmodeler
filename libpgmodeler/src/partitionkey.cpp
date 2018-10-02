@@ -20,10 +20,34 @@
 
 PartitionKey::PartitionKey(void)
 {
+	collation = nullptr;
+}
 
+void PartitionKey::setCollation(Collation *collation)
+{
+	this->collation=collation;
+}
+
+Collation *PartitionKey::getCollation(void)
+{
+	return(collation);
 }
 
 QString PartitionKey::getCodeDefinition(unsigned def_type)
 {
+	attribs_map attribs;
+	schparser.setPgSQLVersion(BaseObject::getPgSQLVersion());
 
+	attribs[ParsersAttributes::COLLATION]=QString();
+	configureAttributes(attribs, def_type);
+
+	if(collation)
+	{
+		if(def_type==SchemaParser::SQL_DEFINITION)
+			attribs[ParsersAttributes::COLLATION]=collation->getName(true);
+		else
+			attribs[ParsersAttributes::COLLATION]=collation->getCodeDefinition(def_type, true);
+	}
+
+	return(schparser.getCodeDefinition(ParsersAttributes::PARTITION_KEY, attribs, def_type));
 }

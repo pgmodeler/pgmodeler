@@ -283,12 +283,15 @@ enum ErrorType {
 	ERR_REF_INV_SPECIAL_ROLE,
 	ERR_INV_COLUMN_COUNT_PART_REL,
 	ERR_INV_PARTITIONIG_TYPE_PART_REL,
-	ERR_INV_PARTITION_KEY_COUNT
+	ERR_INV_PARTITION_KEY_COUNT,
+	ERR_PART_KEY_REF_OBJ_INEXISTS_MODEL,
+	ERR_ASG_INV_COLUMN_PARTITION_KEY,
+	ERR_REM_COL_REF_PARTITION_KEY
 };
 
 class Exception {
 	private:
-		static const int ERROR_COUNT=237;
+		static const int ERROR_COUNT=240;
 
 		/*! \brief Stores other exceptions before raise the 'this' exception.
 		 This structure can be used to simulate a stack trace to improve the debug */

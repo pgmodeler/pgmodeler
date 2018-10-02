@@ -27,13 +27,21 @@
 #include "element.h"
 
 class PartitionKey: public Element {
-  private:
+	private:
+		//! \brief Collation referenced by the element
+		Collation *collation;
 
-  public:
-	PartitionKey(void);
+	public:
+		PartitionKey(void);
 
-	//! \brief Returns the SQL / XML code definition for the partition key
-	virtual QString getCodeDefinition(unsigned def_type) final;
+		//! \brief Defines the collation referenced by the element
+		void setCollation(Collation *collation);
+
+		//! \brief Get the collation referenced by the element
+		Collation *getCollation(void);
+
+		//! \brief Returns the SQL / XML code definition for the partition key
+		virtual QString getCodeDefinition(unsigned def_type) final;
 };
 
 #endif

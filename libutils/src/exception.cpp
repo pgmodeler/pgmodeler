@@ -255,7 +255,11 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_REF_INV_SPECIAL_ROLE", QT_TR_NOOP("Reference to an invalid special role in policy `%1'!")},
 	{"ERR_INV_COLUMN_COUNT_PART_REL", QT_TR_NOOP("Unable to create a partition relationship because the partion table `%1' is not empty or has columns that are not present on the partitioned table `%2'!")},
 	{"ERR_INV_PARTITIONIG_TYPE_PART_REL", QT_TR_NOOP("Unable to create a partition relationship between the tables `%1' (partition) and `%2' (partitioned) because no partitioning type is defined on the latter!")},
-	{"ERR_INV_PARTITION_KEY_COUNT", QT_TR_NOOP("Invalid amount of partition keys being assinged to the table `%1'! Multiples partition keys are allowed only on `HASH' and `RANGE' partitioning strategies.")}
+	{"ERR_INV_PARTITION_KEY_COUNT", QT_TR_NOOP("Invalid amount of partition keys being assinged to the table `%1'! Multiples partition keys are allowed only on `HASH' and `RANGE' partitioning strategies.")},
+	{"ERR_PART_KEY_REF_OBJ_INEXISTS_MODEL", QT_TR_NOOP("A partition key of the table `%1' is referencing the object `%3' (%4) which was not found in the model!")},
+	{"ERR_ASG_INV_COLUMN_PARTITION_KEY", QT_TR_NOOP("The column `%1' can't be assigned to a partition key because it was created by a relatinship and this kind of operation is not yet supported! HINT: create the column manually on the table and then create the partition key using it.")},
+	{"ERR_REM_COL_REF_PARTITION_KEY", QT_TR_NOOP("The column `%1' on the table `%2' can't be removed because it is being referenced by one or more patition keys!")},
+
 };
 
 Exception::Exception(void)

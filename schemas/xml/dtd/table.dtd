@@ -8,7 +8,7 @@
 %constraint;
 
 <!ELEMENT initial-data (#PCDATA)>
-<!ELEMENT partitionkey (column?, expression?, opclass?)>
+<!ELEMENT partitionkey (column?, expression?, collation?, opclass?)>
 
 <!ELEMENT partitioning (partitionkey+)>
 <!ATTLIST partitioning type CDATA #REQUIRED>

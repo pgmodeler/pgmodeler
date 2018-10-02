@@ -9,6 +9,10 @@ $tb $tb <partitionkey> $br
   $tb $tb $tb <expression> <! $ob CDATA $ob {expression} $cb $cb > </expression> $br
 %end
 
+%if {collation} %then
+  $tb $tb {collation}
+%end
+
 %if {opclass} %then
   $tb $tb $tb {opclass}
 %end

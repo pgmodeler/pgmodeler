@@ -360,6 +360,8 @@ namespace ParsersAttributes {
 	PARENTS=QString("parents"),
 	PARSABLE=QString("parsable"),
 	PARTIAL_MATCH=QString("partial-match"),
+	PARTITION_KEY=QString("partitionkey"),
+	PARTITIONED_TABLE=QString("partitioned-table"),
 	PARTITIONING=QString("partitioning"),
 	PASSWORD=QString("password"),
 	PASSWORD_ENCRYPTION=QString("password-encryption"),

@@ -98,7 +98,6 @@ class ElementsTableWidget: public QWidget {
 			if(dynamic_cast<PartitionKey *>(handled_elem))
 			{
 				elements_tab->setHeaderVisible(2, false);
-				elements_tab->setHeaderVisible(4, false);
 				elements_tab->setHeaderVisible(5, false);
 				elements_tab->setHeaderVisible(6, false);
 			}

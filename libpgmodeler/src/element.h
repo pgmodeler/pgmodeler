@@ -67,12 +67,12 @@ class Element {
 		virtual ~Element(void) {}
 
 		//! \brief Element configuration methods
-		void setColumn(Column *column);
-		void setExpression(const QString &expression);
-		void setOperatorClass(OperatorClass *oper_class);
-		void setSortingEnabled(bool value);
+		virtual void setColumn(Column *column);
+		virtual void setExpression(const QString &expression);
+		virtual void setOperatorClass(OperatorClass *oper_class);
 		virtual void setCollation(Collation *){}
 		virtual void setOperator(Operator *){}
+		void setSortingEnabled(bool value);
 
 		//! \brief Sets the state of one of the element sorting method
 		void setSortingAttribute(unsigned attrib, bool value);
