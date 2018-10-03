@@ -6377,7 +6377,14 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==ParsersAttributes::COLUMN && rel)
+					if(elem == ParsersAttributes::EXPRESSION && rel)
+					{
+						xmlparser.savePosition();
+						xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
+						rel->setPartitionBoundingExpr(xmlparser.getElementContent());
+						xmlparser.restorePosition();
+					}
+					else if(elem==ParsersAttributes::COLUMN && rel)
 					{
 						xmlparser.savePosition();
 						rel->addObject(createColumn());

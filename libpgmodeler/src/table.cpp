@@ -44,6 +44,7 @@ Table::Table(void) : BaseTable()
 	attributes[ParsersAttributes::PARTITIONING]=QString();
 	attributes[ParsersAttributes::PARTITION_KEY]=QString();
 	attributes[ParsersAttributes::PARTITIONED_TABLE]=QString();
+	attributes[ParsersAttributes::PARTITION_BOUND_EXPR]=QString();
 
 	copy_table=partioned_table=nullptr;
 	partitioning_type=BaseType::null;
@@ -546,7 +547,14 @@ void Table::addPolicy(Policy *pol, int idx_pol)
 
 void Table::setPartionedTable(Table *table)
 {
-  partioned_table = table;
+	setCodeInvalidated(partioned_table != table);
+	partioned_table = table;
+}
+
+void Table::setPartitionBoundingExpr(const QString part_bound_expr)
+{
+	setCodeInvalidated(part_bounding_expr != part_bound_expr);
+	part_bounding_expr = part_bound_expr;
 }
 
 void Table::addConstraint(Constraint *constr, int idx)
@@ -1538,6 +1546,7 @@ QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 	attributes[ParsersAttributes::HIDE_EXT_ATTRIBS]=(isExtAttribsHidden() ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::PARTITIONING]=~partitioning_type;
 	attributes[ParsersAttributes::PARTITION_KEY]=QString();
+	attributes[ParsersAttributes::PARTITION_BOUND_EXPR]=part_bounding_expr;
 
 	for(auto part_key : partition_keys)
 		part_keys_code+=part_key.getCodeDefinition(def_type);

@@ -5,7 +5,7 @@
 <!ENTITY % label SYSTEM "label.dtd">
 %label;
 
-<!ELEMENT relationship (line*,label*,column*,constraint*,special-pk-cols?)>
+<!ELEMENT relationship (line*,label*,column*,constraint*,special-pk-cols?,expression?)>
 <!ATTLIST relationship name CDATA #REQUIRED>
 <!ATTLIST relationship alias CDATA #IMPLIED>
 <!ATTLIST relationship src-required (false|true) "false">

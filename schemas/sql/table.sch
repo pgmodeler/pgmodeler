@@ -50,8 +50,17 @@
 
 $br )
 
-%if ({pgsql-ver} >=f "10.0") %and {partitioned-table} %then $br [FOR VALUES ] ... %end
-%if ({pgsql-ver} >=f "10.0") %and {partitioning} %then $br [PARTITION BY ] {partitioning} [ (] {partitionkey} $br [)] %end
+%if ({pgsql-ver} >=f "10.0") %and {partitioned-table} %then 
+    $br [FOR VALUES ]
+    
+    %if {partition-bound-expr} %then
+        {partition-bound-expr}
+    %else
+        $tb [/* Undefined bounding expression */]
+    %end
+%end
+
+%if ({pgsql-ver} >=f "10.0") %and {partitioning} %then $br [PARTITION BY ] {partitioning} [ (] {partitionkey} [)] %end
 %if {ancestor-table} %then [ INHERITS(] {ancestor-table} [)] %end
 %if {oids} %then $br [WITH ( OIDS = TRUE )] %end
 %if {tablespace} %then

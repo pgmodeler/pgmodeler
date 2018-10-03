@@ -45,6 +45,9 @@ class Table: public BaseTable {
 		This will produce a set of INSERT commands that is appended to the table's SQL definition */
 		QString initial_data;
 
+		//! \brief The partition bounding expression
+		QString part_bounding_expr;
+
 		//! \brief Vectors that store basic table attributes
 		vector<TableObject *> columns;
 		vector<TableObject *> constraints;
@@ -193,6 +196,9 @@ class Table: public BaseTable {
 
 		//! \brief Adds a partition table
 		void setPartionedTable(Table *table);
+
+		//! \brief Defines the partition bounding expression
+		void setPartitionBoundingExpr(const QString part_bound_expr);
 
 		//! \brief Configures the copy table
 		void setCopyTable(Table *tab);

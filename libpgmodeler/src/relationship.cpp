@@ -329,6 +329,17 @@ QString Relationship::getTableNameRelNN(void)
 	return(tab_name_relnn);
 }
 
+void Relationship::setPartitionBoundingExpr(const QString &part_bound_expr)
+{
+	part_bounding_expr = part_bound_expr;
+	this->invalidated = true;
+}
+
+QString Relationship::getPartitionBoundingExpr(void)
+{
+	return(part_bounding_expr);
+}
+
 bool Relationship::isDeferrable(void)
 {
 	return(deferrable);
@@ -1145,9 +1156,10 @@ void Relationship::connectRelationship(void)
 			}
 			else if(rel_type == RELATIONSHIP_PART)
 			{
-			  //Creates the columns on the receiver table following the rules for copy rules
-			  addColumnsRelGenPart();			  
-			  getReceiverTable()->setPartionedTable(dynamic_cast<Table *>(getReferenceTable()));
+				//Creates the columns on the receiver table following the rules for copy rules
+				addColumnsRelGenPart();
+				getReceiverTable()->setPartionedTable(dynamic_cast<Table *>(getReferenceTable()));
+				getReceiverTable()->setPartitionBoundingExpr(part_bounding_expr);
 			}
 			else if(rel_type==RELATIONSHIP_11 ||
 					rel_type==RELATIONSHIP_1N)
@@ -2544,6 +2556,8 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		attributes[ParsersAttributes::SRC_FK_PATTERN]=name_patterns[SRC_FK_PATTERN];
 		attributes[ParsersAttributes::DST_FK_PATTERN]=name_patterns[DST_FK_PATTERN];
 		attributes[ParsersAttributes::PK_COL_PATTERN]=name_patterns[PK_COL_PATTERN];
+
+		attributes[ParsersAttributes::PARTITION_BOUND_EXPR]=part_bounding_expr;
 
 		attributes[ParsersAttributes::COLUMNS]=QString();
 		count=rel_attributes.size();

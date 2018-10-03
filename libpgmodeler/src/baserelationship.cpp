@@ -115,6 +115,7 @@ void BaseRelationship::configureRelationship(void)
 	attributes[ParsersAttributes::DEL_ACTION]=QString();
 	attributes[ParsersAttributes::CUSTOM_COLOR]=QString();
 	attributes[ParsersAttributes::REFERENCE_FK]=QString();
+	attributes[ParsersAttributes::PARTITION_BOUND_EXPR]=QString();
 
 	//Check if the relationship type is valid
 	if(rel_type <= RELATIONSHIP_FK)

@@ -1604,18 +1604,25 @@ int ModelWidget::openEditingForm(QWidget *widget, unsigned button_conf)
 {
 	BaseForm editing_form(this);
 	BaseObjectWidget *base_obj_wgt=qobject_cast<BaseObjectWidget *>(widget);
+	QString class_name = widget->metaObject()->className();
 	int res = 0;
 
 	if(base_obj_wgt)
+	{
+		BaseRelationship *rel = dynamic_cast<BaseRelationship *>(base_obj_wgt->getHandledObject());
 		editing_form.setMainWidget(base_obj_wgt);
+
+		if(rel)
+			class_name.prepend(rel->getRelationshipTypeName().replace(QRegExp("( )+|(\\-)+"), QString()));
+	}
 	else
 		editing_form.setMainWidget(widget);
 
 	editing_form.setButtonConfiguration(button_conf);
 
-	GeneralConfigWidget::restoreWidgetGeometry(&editing_form, widget->metaObject()->className());
+	GeneralConfigWidget::restoreWidgetGeometry(&editing_form, class_name);
 	res = editing_form.exec();
-	GeneralConfigWidget::saveWidgetGeometry(&editing_form, widget->metaObject()->className());
+	GeneralConfigWidget::saveWidgetGeometry(&editing_form, class_name);
 
 	return(res);
 }
