@@ -811,6 +811,9 @@ void TableWidget::applyConfiguration(void)
 		{
 			partition_keys_tab->getElements<PartitionKey>(part_keys);
 			table->addPartitionKeys(part_keys);
+
+			if(part_keys.empty())
+				part_type = BaseType::null;
 		}
 		else
 			table->removePartitionKeys();

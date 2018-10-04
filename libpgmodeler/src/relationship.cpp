@@ -72,6 +72,13 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 							.arg(src_tab->getCopyTable()->getName(true)),
 							ERR_COPY_REL_TAB_DEFINED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+		/*  If the relationship is partitioning the destination table (partitioned) shoud have
+		 *  a partitioning type defined otherwise and error is raised */
+		if(rel_type == RELATIONSHIP_PART && !dst_tab->isPartitioned())
+			throw Exception(Exception::getErrorMessage(ERR_INV_PARTITIONIG_TYPE_PART_REL)
+							.arg(src_tab->getSignature()).arg(dst_tab->getSignature()),
+							ERR_INV_PARTITIONIG_TYPE_PART_REL, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+
 		// Raises an error if the user tries to create a partitioning relationship where one of the tables are already a partition table
 		if(rel_type==RELATIONSHIP_PART && src_tab->getPartitionedTable())
 			throw Exception(Exception::getErrorMessage(ERR_PART_REL_PATITIONED_DEFINED)
@@ -2426,6 +2433,7 @@ bool Relationship::isInvalidated(void)
 			if(rel_type==RELATIONSHIP_PART)
 			{
 			  count = table1->getColumnCount();
+				valid = table->isPartitioned();
 
 			  for(i=0; i < count && valid; i++)
 			  {
@@ -2454,6 +2462,7 @@ bool Relationship::isInvalidated(void)
 				constr=table->getConstraint(ck_constraints[i]->getName(true));
 				valid=(constr && !constr->isNoInherit() && constr->getConstraintType()==ConstraintType::check);
 			}
+
 		}
 
 		/* For n-n relationships, it is necessary the comparisons:
