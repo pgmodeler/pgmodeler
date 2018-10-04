@@ -102,6 +102,10 @@ $br $tb [ dst-table=] "{dst-table}"
    %if {columns} %then {columns} %end
    %if {constraints} %then {constraints} %end
  %end
+ 
+ %if {original-pk} %then
+    {original-pk}
+ %end
 
  %if {special-pk-cols} %then
    $tb [<special-pk-cols indexes=]"{special-pk-cols}"/> $br
@@ -109,7 +113,7 @@ $br $tb [ dst-table=] "{dst-table}"
  
  %if {partition-bound-expr} %then
    $tb <expression> <! $ob CDATA $ob {partition-bound-expr} $cb $cb > </expression> $br
- %end  
+ %end
 
  </relationship>  $br $br
 %end

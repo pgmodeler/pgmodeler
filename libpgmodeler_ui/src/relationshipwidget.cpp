@@ -311,7 +311,8 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 			recv_table_txt->setPlainText(base_rel->getTable(BaseRelationship::DST_TABLE)->getName(true));
 		}
 
-		part_type_lbl->setText(~aux_rel->getReferenceTable()->getPartitioningType());
+		if(rel_type == BaseRelationship::RELATIONSHIP_PART)
+			part_type_lbl->setText(~aux_rel->getReferenceTable()->getPartitioningType());
 	}
 
 	disable_sql_chk->setVisible(base_rel->getObjectType()==OBJ_RELATIONSHIP);
@@ -353,8 +354,13 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 				identity_chk->setChecked(!all_chk->isChecked() && copy_op.isOptionSet(CopyOptions::IDENTITY));
 				statistics_chk->setChecked(!all_chk->isChecked() && copy_op.isOptionSet(CopyOptions::STATISTICS));
 			}
-			else if(rel_type == BaseRelationship::RELATIONSHIP_PART && this->new_object)
-				generateBoundingExpr();
+			else if(rel_type == BaseRelationship::RELATIONSHIP_PART)
+			{
+				if(this->new_object)
+					generateBoundingExpr();
+				else
+					part_bound_expr_txt->setPlainText(aux_rel->getPartitionBoundingExpr());
+			}
 		}
 	}
 

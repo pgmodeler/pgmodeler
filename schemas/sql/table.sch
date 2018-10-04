@@ -52,6 +52,10 @@
 
 $br )
 
+%else 
+    %if {partitioned-table} %and {constraints} %then
+        [ (] $br {constraints} [)] $br
+    %end
 %end
 
 %if ({pgsql-ver} >=f "10.0") %and {partitioned-table} %then 

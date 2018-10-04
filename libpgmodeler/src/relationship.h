@@ -172,6 +172,8 @@ class Relationship: public BaseRelationship {
 								to generalization / copy relationships */
 		*pk_special,
 
+		*pk_original,
+
 		//! \brief Stores the unique key that represents the 1-1 relationship (including the fk_rel1n)
 		*uq_rel11;
 
@@ -229,7 +231,7 @@ class Relationship: public BaseRelationship {
 		/*! \brief Copy constraints from the parent table to the child. Currently, only
 		check constraints are copied only if the NO INHERIT attribute is not set and
 		there are no conflicting constraints (name or expression) on the child table */
-		void addConstraintsRelGen(void);
+		void addConstraintsRelGenPart(void);
 
 		/*! \brief Creates the foreign key that represents the relationship and adds it
 		 to the receiver table. Must be specified the actions ON DELETE and UPDATE. */
@@ -272,6 +274,8 @@ class Relationship: public BaseRelationship {
 
 		//! \brief Generates the object name according to the specified name pattern
 		QString generateObjectName(unsigned pat_id, Column *id_col=nullptr, bool use_alias=false);
+
+		void setOriginalPrimaryKey(Constraint *pk);
 
 	protected:
 		//! \brief Destroy all the relationship attributes and constraints

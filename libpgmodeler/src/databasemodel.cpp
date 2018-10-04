@@ -4987,7 +4987,6 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 			constr->setIndexType(attribs[ParsersAttributes::INDEX_TYPE]);
 		}
 
-
 		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
@@ -6192,7 +6191,7 @@ Textbox *DatabaseModel::createTextbox(void)
 BaseRelationship *DatabaseModel::createRelationship(void)
 {
 	vector<unsigned> cols_special_pk;
-	attribs_map attribs;
+	attribs_map attribs, constr_attribs;
 	map<QString, unsigned> labels_id;
 	BaseRelationship *base_rel=nullptr;
 	Relationship *rel=nullptr;
@@ -6206,6 +6205,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 			tab_attribs[2]={ ParsersAttributes::SRC_TABLE,
 							 ParsersAttributes::DST_TABLE };
 	QColor custom_color=Qt::transparent;
+	Table *table = nullptr;
 
 	try
 	{
@@ -6393,7 +6393,21 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 					else if(elem==ParsersAttributes::CONSTRAINT && rel)
 					{
 						xmlparser.savePosition();
-						rel->addObject(createConstraint(rel));
+						xmlparser.getElementAttributes(constr_attribs);
+
+						/* If we find a primary key constraint at this point means that we're handling the original primary key stored by the relationship.
+						 * Since relationships can't have primary keys created manually by the users we assume that
+						 * the relationship contains a special primary key (created during relationship connection)
+						 * and the current constraint is the original one owned by one of the tables prior the connection
+						 * of the relationship. */
+						if(constr_attribs[ParsersAttributes::TYPE] == ParsersAttributes::PK_CONSTR)
+						{
+							table = getTable(constr_attribs[ParsersAttributes::TABLE]);
+							rel->setOriginalPrimaryKey(createConstraint(table));
+						}
+						else
+							rel->addObject(createConstraint(rel));
+
 						xmlparser.restorePosition();
 					}
 					else if(elem==ParsersAttributes::LINE)
