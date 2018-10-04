@@ -63,18 +63,32 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 							.arg(src_tab->getName(true))
 							.arg(dst_tab->getName(true)),
 							ERR_LINK_TABLES_NO_PK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		else if(rel_type==RELATIONSHIP_DEP && src_tab->getCopyTable())
+
+		// Raises an error if the user tries to create another copy relationship if the table already copies another table
+		if(rel_type==RELATIONSHIP_DEP && src_tab->getCopyTable())
 			throw Exception(Exception::getErrorMessage(ERR_COPY_REL_TAB_DEFINED)
 							.arg(src_tab->getName(true))
 							.arg(dst_tab->getName(true))
 							.arg(src_tab->getCopyTable()->getName(true)),
 							ERR_COPY_REL_TAB_DEFINED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		else if(rel_type==RELATIONSHIP_PART && src_tab->getPartitionedTable())
+
+		// Raises an error if the user tries to create a partitioning relationship where one of the tables are already a partition table
+		if(rel_type==RELATIONSHIP_PART && src_tab->getPartitionedTable())
 			throw Exception(Exception::getErrorMessage(ERR_PART_REL_PATITIONED_DEFINED)
 							.arg(src_tab->getName(true))
 							.arg(dst_tab->getName(true))
 							.arg(src_tab->getPartitionedTable()->getName(true)),
 							ERR_PART_REL_PATITIONED_DEFINED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		// Raises an error if the user tries to create a relationship that is not partitioning using partition/partitioned tables
+		if(rel_type!=RELATIONSHIP_PART && (src_tab->isPartition() || src_tab->isPartitioned() ||
+																			 dst_tab->isPartition() || dst_tab->isPartitioned()))
+			throw Exception(Exception::getErrorMessage(ERR_INV_REL_TYPE_FOR_PART_TABLES)
+							.arg(src_tab->getName(true))
+							.arg(dst_tab->getName(true))
+							.arg(src_tab->isPartitioned() || src_tab->isPartition() ? src_tab->getName(true) : dst_tab->getName(true)),
+							ERR_INV_REL_TYPE_FOR_PART_TABLES,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
 
 		copy_options=copy_op;
 		table_relnn=nullptr;

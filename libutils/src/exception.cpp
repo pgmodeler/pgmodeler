@@ -206,6 +206,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_REF_INV_LIKE_OP_TYPE", QT_TR_NOOP("Reference to an invalid copy table option!")},
 	{"ERR_COPY_REL_TAB_DEFINED", QT_TR_NOOP("The copy relationship between the tables `%1' and `%2' cannot be done because the first one already copies attributes from `%3'! Tables can have only one copy table!")},
 	{"ERR_PART_REL_PATITIONED_DEFINED", QT_TR_NOOP("The paritioning relationship between the tables `%1' and `%2' cannot be done because the first one is already a partition of the table `%3'! Partition tables can be participating of only one partition hierarchy at a time!")},
+	{"ERR_INV_REL_TYPE_FOR_PART_TABLES", QT_TR_NOOP("The relationship between the tables `%1' and `%2' cannot be done because the table `%3' is part of a partitioning hierachy either as a partitioned table or as a partition table! That table can't be used in other relationships except the partitioning one.")},
 	{"ERR_TABLE_TRIG_INSTEADOF_FIRING",QT_TR_NOOP("The INSTEAD OF mode cannot be used on triggers that belongs to tables! This is available only for view triggers!")},
 	{"ERR_TRIGGER_INV_TRUNCATE_USAGE",QT_TR_NOOP("The TRUNCATE event can only be used when the trigger executes for each statement and belongs to a table!")},
 	{"ERR_TRIGGER_INV_INSTEADOF_USAGE",QT_TR_NOOP("The INSTEAD OF mode cannot be used on view triggers that executes for each statement!")},

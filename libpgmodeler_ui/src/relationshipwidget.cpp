@@ -533,13 +533,13 @@ void RelationshipWidget::generateBoundingExpr(void)
 	QString tmpl;
 
 	if(part_type == PartitioningType::list)
-		tmpl = QString("IN ( value )");
+		tmpl = QString("IN (value)");
 	else if(part_type == PartitioningType::range)
-		tmpl = QString("FROM ( value )\nTO ( value )");
+		tmpl = QString("FROM (value)\nTO (value)");
 	else
-		tmpl = QString("WITH ( MODULUS m, REMAINDER r )");
+		tmpl = QString("WITH (MODULUS m, REMAINDER r)");
 
-	part_bound_expr_txt->clear();
+	part_bound_expr_txt->setPlainText(QString());
 	part_bound_expr_txt->setPlainText(tmpl);
 }
 

@@ -20,7 +20,9 @@
 
 [ TABLE ] {name} 
 
-%if ({pgsql-ver} >=f "10.0") %and {partitioned-table} %then [ PARTITION OF ] {partitioned-table} %end
+%if ({pgsql-ver} >=f "10.0") %and {partitioned-table} %then [ PARTITION OF ] {partitioned-table} $sp %end
+
+%if %not {partitioned-table} %or ({pgsql-ver} <f "10.0")  %then 
 
 [ (] $br
   %if {copy-table} %then
@@ -49,6 +51,8 @@
   %end
 
 $br )
+
+%end
 
 %if ({pgsql-ver} >=f "10.0") %and {partitioned-table} %then 
     $br [FOR VALUES ]
