@@ -87,9 +87,21 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 							.arg(src_tab->getPartitionedTable()->getName(true)),
 							ERR_PART_REL_PATITIONED_DEFINED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		// Raises an error if the user tries to create a relationship that is not partitioning using partition/partitioned tables
-		if(rel_type!=RELATIONSHIP_PART && (src_tab->isPartition() || src_tab->isPartitioned() ||
-																			 dst_tab->isPartition() || dst_tab->isPartitioned()))
+		/* Raises an error if the user tries to create a relationship in the following configuration:
+		 * 1) Many-to-many relationship where one of the tables is a partitioned one
+		 *		it will be created a fk in the intermediate table which references the partitioned table which
+		 *		is not allowed by partitioning rules.
+		 *
+		 * 2) One-to-many relationship which the reference table is partitioned and the received is a ordinary table, because
+		 *		a fk will be created on the ordinary table (receiver) which will be referencing the partitioned table, situation
+		 *		that is not allowed as too.
+		 *
+		 * 3) Generalization, copy relationship or one-to-many in which one of the tables is part of a partitioning hierarchy.
+		 */
+		if((rel_type == RELATIONSHIP_NN && (src_tab->isPartitioned() || dst_tab->isPartitioned())) ||
+			 (rel_type == RELATIONSHIP_1N &&	getReferenceTable()->isPartitioned() && !getReceiverTable()->isPartitioned()) ||
+				((rel_type == RELATIONSHIP_GEN || rel_type == RELATIONSHIP_DEP || rel_type == RELATIONSHIP_11) &&
+					 (src_tab->isPartition() || src_tab->isPartitioned() || dst_tab->isPartition() || dst_tab->isPartitioned())))
 			throw Exception(Exception::getErrorMessage(ERR_INV_REL_TYPE_FOR_PART_TABLES)
 							.arg(src_tab->getName(true))
 							.arg(dst_tab->getName(true))
