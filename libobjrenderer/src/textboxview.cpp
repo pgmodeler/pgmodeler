@@ -70,27 +70,10 @@ void TextboxView::setFontStyle(const QTextCharFormat &fmt)
 	}
 }
 
-/*void TextboxView::togglePlaceholder(bool visible)
+void TextboxView::setToolTip(const QString &tooltip)
 {
-  if(use_placeholder && this->scene())
-  {
-	if(!placeholder_pol->scene())
-	 this->scene()->addItem(placeholder_pol);
-
-	if(visible)
-	{
-	  QPen pen=BaseObjectView::getBorderStyle(ParsersAttributes::PLACEHOLDER);
-	  pen.setStyle(Qt::DashLine);
-
-	  placeholder_pol->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::PLACEHOLDER));
-	  placeholder_pol->setPen(pen);
-	  placeholder_pol->setPolygon(box->polygon());
-	  placeholder_pol->setPos(this->mapToScene(this->bounding_rect.topLeft()));
-	}
-
-	placeholder_pol->setVisible(visible);
-  }
-}*/
+	txtbox_tooltip = tooltip;
+}
 
 void TextboxView::__configureObject(void)
 {
@@ -137,8 +120,10 @@ void TextboxView::__configureObject(void)
 
 	this->bounding_rect.setTopLeft(box->boundingRect().topLeft());
 	this->bounding_rect.setBottomRight(box->boundingRect().bottomRight());
-
 	BaseObjectView::__configureObject();
+
+	if(!txtbox_tooltip.isEmpty())
+		this->BaseObjectView::setToolTip(txtbox_tooltip);
 }
 
 void TextboxView::configureObject(void)

@@ -42,6 +42,7 @@ void TableView::configureObject(void)
 
 	//Configures the table title
 	title->configureObject(table);
+
 	px=0;
 
 	old_width=this->bounding_rect.width();
@@ -201,6 +202,19 @@ void TableView::configureObject(void)
 	}
 
 	BaseTableView::__configureObject(width);
+
+	if(table->isPartitioned())
+		table_tooltip += QString("\n%1 (%2)").arg(trUtf8("Partitioned")).arg(~table->getPartitioningType());
+
+	if(table->isPartition())
+		table_tooltip += QString("\n%1 of %2").arg(trUtf8("Partition")).arg(table->getPartitionedTable()->getSignature(true));
+
+	if(!table->getAlias().isEmpty())
+		table_tooltip += QString("\nAlias: %1").arg(table->getAlias());
+
+	if(!table->getComment().isEmpty())
+		table_tooltip += QString("\n---\n%1").arg(table->getComment());
+
 	BaseObjectView::__configureObject();
 	BaseObjectView::configureObjectShadow();
 	BaseObjectView::configureObjectSelection();

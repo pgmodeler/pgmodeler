@@ -7,9 +7,9 @@
 
   %if {schema} %then
     [ LEFT JOIN pg_namespace AS ns ON ns.oid=tb.relnamespace
-      WHERE tb.relkind='r' AND ns.nspname= ] '{schema}'
+      WHERE tb.relkind IN ('r','p') AND ns.nspname= ] '{schema}'
   %else
-    [ WHERE tb.relkind='r']
+    [ WHERE tb.relkind IN ('r','p')]
   %end
 
   %if {last-sys-oid} %then
@@ -54,7 +54,7 @@
     [ FROM pg_class AS tb
       LEFT JOIN pg_tables AS _tb1 ON _tb1.tablename=tb.relname 
       LEFT JOIN pg_stat_all_tables AS st ON st.relid=tb.oid
-      WHERE tb.relkind='r' ]
+      WHERE tb.relkind IN ('r','p') ]
 
     %if {last-sys-oid} %then
         [ AND tb.oid ] {oid-filter-op} $sp {last-sys-oid}

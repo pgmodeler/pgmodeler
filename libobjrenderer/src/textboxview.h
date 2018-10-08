@@ -36,6 +36,8 @@ class TextboxView: public BaseObjectView {
 		//! \brief Indicates the the font / color styles will be overriden (need to call setColorStyle, setFontStyle)
 		bool override_style;
 
+		QString txtbox_tooltip;
+
 	protected:
 		//! \brief Graphical item that represent the box
 		QGraphicsPolygonItem *box;
@@ -63,6 +65,8 @@ class TextboxView: public BaseObjectView {
 		/*! \brief Sets the font style for the text box. This method has effect only when
 		 the style can be overriden (via constructor) */
 		void setFontStyle(const QTextCharFormat &fmt);
+
+		void setToolTip(const QString &tooltip);
 
 	protected slots:
 		virtual void configureObject(void);

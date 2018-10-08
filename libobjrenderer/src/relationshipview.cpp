@@ -1231,7 +1231,14 @@ void RelationshipView::configureLine(void)
 			tool_tip=base_rel->getName(true) +
 					 QString(" (") + base_rel->getTypeName() + QString(")");
 
-		tool_tip += QString("\nId: %1").arg(base_rel->getObjectId());
+		tool_tip += QString("\nId: %1\n").arg(base_rel->getObjectId()) +
+								TableObjectView::CONSTR_DELIM_START +
+								QString(" %1 ").arg(base_rel->getRelationshipTypeName()) +
+								TableObjectView::CONSTR_DELIM_END;
+
+		if(!base_rel->getAlias().isEmpty())
+			tool_tip += QString("\nAlias: %1").arg(base_rel->getAlias());
+
 		this->setToolTip(tool_tip);
 
 		for(i=0; i < 3; i++)
@@ -1241,6 +1248,18 @@ void RelationshipView::configureLine(void)
 		}
 
 		descriptor->setToolTip(tool_tip);
+
+		for(auto &curve : curves)
+			curve->setToolTip(tool_tip);
+
+		for(int i = 0; i < 2; i++)
+		{
+		 if(cf_descriptors[i])
+			 cf_descriptors[i]->setToolTip(tool_tip);
+
+		 if(round_cf_descriptors[i])
+			 round_cf_descriptors[i]->setToolTip(tool_tip);
+		}
 	}
 }
 

@@ -1932,7 +1932,8 @@ void DatabaseExplorerWidget::dropDatabase(void)
 	QString dbname = connection.getConnectionParam(Connection::PARAM_DB_NAME);
 
 	msg_box.show(trUtf8("Warning"),
-				 trUtf8("<strong>CAUTION:</strong> You are about to drop the entire database <strong>%1</strong>! All data will be completely wiped out. Do you really want to proceed?").arg(dbname),
+				 trUtf8("<strong>CAUTION:</strong> You are about to drop the entire database <strong>%1</strong> from the server <strong>%2</strong>! All data will be completely wiped out. Do you really want to proceed?")
+							 .arg(dbname).arg(connection.getConnectionId(true)),
 				 Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
 
 	if(msg_box.result()==QDialog::Accepted)
