@@ -200,8 +200,8 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 
 		connect(fk_gconf_chk, SIGNAL(toggled(bool)), this, SLOT(useFKGlobalSettings(bool)));
 		connect(patterns_gconf_chk, SIGNAL(toggled(bool)), this, SLOT(usePatternGlobalSettings(bool)));
-
 		connect(gen_bound_expr_tb, SIGNAL(clicked(bool)), this, SLOT(generateBoundingExpr()));
+		connect(default_part_chk, SIGNAL(toggled(bool)), part_bound_expr_txt, SLOT(setDisabled(bool)));
 
 		setMinimumSize(600, 380);
 	}
@@ -311,7 +311,11 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 			recv_table_txt->setPlainText(base_rel->getTable(BaseRelationship::DST_TABLE)->getName(true));
 		}
 
-		part_type_lbl->setText(~aux_rel->getReferenceTable()->getPartitioningType());
+		if(rel_type == BaseRelationship::RELATIONSHIP_PART)
+		{
+			part_type_lbl->setText(~aux_rel->getReferenceTable()->getPartitioningType());
+			default_part_chk->setChecked(aux_rel->getPartitionBoundingExpr().isEmpty());
+		}
 	}
 
 	disable_sql_chk->setVisible(base_rel->getObjectType()==OBJ_RELATIONSHIP);
@@ -353,8 +357,13 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 				identity_chk->setChecked(!all_chk->isChecked() && copy_op.isOptionSet(CopyOptions::IDENTITY));
 				statistics_chk->setChecked(!all_chk->isChecked() && copy_op.isOptionSet(CopyOptions::STATISTICS));
 			}
-			else if(rel_type == BaseRelationship::RELATIONSHIP_PART && this->new_object)
-				generateBoundingExpr();
+			else if(rel_type == BaseRelationship::RELATIONSHIP_PART)
+			{
+				if(this->new_object)
+					generateBoundingExpr();
+				else
+					part_bound_expr_txt->setPlainText(aux_rel->getPartitionBoundingExpr());
+			}
 		}
 	}
 
@@ -541,6 +550,7 @@ void RelationshipWidget::generateBoundingExpr(void)
 
 	part_bound_expr_txt->setPlainText(QString());
 	part_bound_expr_txt->setPlainText(tmpl);
+	default_part_chk->setChecked(false);
 }
 
 void RelationshipWidget::listObjects(ObjectType obj_type)
@@ -1084,7 +1094,7 @@ void RelationshipWidget::applyConfiguration(void)
 			rel_type=rel->getRelationshipType();
 			rel->blockSignals(true);
 
-			rel->setPartitionBoundingExpr(part_bound_expr_txt->toPlainText());
+			rel->setPartitionBoundingExpr(default_part_chk->isChecked() ? QString() : part_bound_expr_txt->toPlainText());
 
 			if(!defaults_rb->isChecked())
 			{
@@ -1146,6 +1156,7 @@ void RelationshipWidget::applyConfiguration(void)
 				//Checking if there is relationship redundancy
 				if(rel_type==BaseRelationship::RELATIONSHIP_DEP ||
 						rel_type==BaseRelationship::RELATIONSHIP_GEN ||
+						rel_type==BaseRelationship::RELATIONSHIP_PART ||
 						rel->isIdentifier())
 					model->checkRelationshipRedundancy(rel);
 

@@ -557,6 +557,11 @@ void Table::setPartitionBoundingExpr(const QString part_bound_expr)
 	part_bounding_expr = part_bound_expr;
 }
 
+QString Table::getPartitionBoundingExpr(void)
+{
+	return(part_bounding_expr);
+}
+
 void Table::addConstraint(Constraint *constr, int idx)
 {
 	try

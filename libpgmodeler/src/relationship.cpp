@@ -72,6 +72,13 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 							.arg(src_tab->getCopyTable()->getName(true)),
 							ERR_COPY_REL_TAB_DEFINED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+		/*  If the relationship is partitioning the destination table (partitioned) shoud have
+		 *  a partitioning type defined otherwise and error is raised */
+		if(rel_type == RELATIONSHIP_PART && !dst_tab->isPartitioned())
+			throw Exception(Exception::getErrorMessage(ERR_INV_PARTITIONIG_TYPE_PART_REL)
+							.arg(src_tab->getSignature()).arg(dst_tab->getSignature()),
+							ERR_INV_PARTITIONIG_TYPE_PART_REL, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+
 		// Raises an error if the user tries to create a partitioning relationship where one of the tables are already a partition table
 		if(rel_type==RELATIONSHIP_PART && src_tab->getPartitionedTable())
 			throw Exception(Exception::getErrorMessage(ERR_PART_REL_PATITIONED_DEFINED)
@@ -80,19 +87,30 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 							.arg(src_tab->getPartitionedTable()->getName(true)),
 							ERR_PART_REL_PATITIONED_DEFINED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		// Raises an error if the user tries to create a relationship that is not partitioning using partition/partitioned tables
-		if(rel_type!=RELATIONSHIP_PART && (src_tab->isPartition() || src_tab->isPartitioned() ||
-																			 dst_tab->isPartition() || dst_tab->isPartitioned()))
+		/* Raises an error if the user tries to create a relationship in the following configuration:
+		 * 1) Many-to-many relationship where one of the tables is a partitioned one
+		 *		it will be created a fk in the intermediate table which references the partitioned table which
+		 *		is not allowed by partitioning rules.
+		 *
+		 * 2) One-to-many relationship which the reference table is partitioned and the received is a ordinary table, because
+		 *		a fk will be created on the ordinary table (receiver) which will be referencing the partitioned table, situation
+		 *		that is not allowed as too.
+		 *
+		 * 3) Generalization, copy relationship or one-to-many in which one of the tables is part of a partitioning hierarchy.
+		 */
+		if((rel_type == RELATIONSHIP_NN && (src_tab->isPartitioned() || dst_tab->isPartitioned())) ||
+			 (rel_type == RELATIONSHIP_1N &&	getReferenceTable()->isPartitioned() && !getReceiverTable()->isPartitioned()) ||
+				((rel_type == RELATIONSHIP_GEN || rel_type == RELATIONSHIP_DEP || rel_type == RELATIONSHIP_11) &&
+					 (src_tab->isPartition() || src_tab->isPartitioned() || dst_tab->isPartition() || dst_tab->isPartitioned())))
 			throw Exception(Exception::getErrorMessage(ERR_INV_REL_TYPE_FOR_PART_TABLES)
 							.arg(src_tab->getName(true))
 							.arg(dst_tab->getName(true))
 							.arg(src_tab->isPartitioned() || src_tab->isPartition() ? src_tab->getName(true) : dst_tab->getName(true)),
 							ERR_INV_REL_TYPE_FOR_PART_TABLES,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-
 		copy_options=copy_op;
 		table_relnn=nullptr;
-		fk_rel1n=pk_relident=pk_special=uq_rel11=nullptr;
+		fk_rel1n=pk_relident=pk_special=uq_rel11=pk_original=nullptr;
 		this->deferrable=deferrable;
 		this->deferral_type=deferral_type;
 		this->del_action=fk_del_act;
@@ -231,6 +249,11 @@ QString Relationship::generateObjectName(unsigned pat_id, Column *id_col, bool u
 	return(name);
 }
 
+void Relationship::setOriginalPrimaryKey(Constraint *pk)
+{
+	pk_original = pk;
+}
+
 void Relationship::setMandatoryTable(unsigned table_id, bool value)
 {
 	BaseRelationship::setMandatoryTable(table_id, value);
@@ -282,6 +305,14 @@ void Relationship::createSpecialPrimaryKey(void)
 	{
 		unsigned i, count;
 		vector<Column *> gen_cols;
+		Table *table = getReceiverTable();
+
+		// First we need to remove the original primary key in order to use the special pk
+		if(table->getPrimaryKey())
+		{
+			pk_original = table->getPrimaryKey();
+			table->removeObject(pk_original);
+		}
 
 		/* Allocates the primary key with the following feature:
 		 1) Protected and included by linking in order to be easily identified
@@ -298,6 +329,10 @@ void Relationship::createSpecialPrimaryKey(void)
 
 		//For generalization relationships generates the primary key in form of ALTER command
 		pk_special->setDeclaredInTable(this->getRelationshipType()!=RELATIONSHIP_GEN);
+
+		// Adding the collumns of the original primary key to the special one
+		for(i=0; pk_original && i < pk_original->getColumnCount(Constraint::SOURCE_COLS); i++)
+			pk_special->addColumn(pk_original->getColumn(i, Constraint::SOURCE_COLS), Constraint::SOURCE_COLS);
 
 		gen_cols=gen_columns;
 		for(auto &attrib : rel_attributes)
@@ -345,7 +380,7 @@ QString Relationship::getTableNameRelNN(void)
 
 void Relationship::setPartitionBoundingExpr(const QString &part_bound_expr)
 {
-	part_bounding_expr = part_bound_expr;
+	part_bounding_expr = part_bound_expr.toLower() == ParsersAttributes::DEFAULT.toLower() ? QString() : part_bound_expr;
 	this->invalidated = true;
 }
 
@@ -457,7 +492,8 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 	/* Raises an error if the user try to add  manually a special primary key on
 		the relationship and the relationship type is not generalization or copy */
 	if((rel_type==RELATIONSHIP_GEN ||
-		rel_type==RELATIONSHIP_DEP) &&
+			rel_type==RELATIONSHIP_DEP ||
+			rel_type==RELATIONSHIP_PART) &&
 			!(tab_obj->isAddedByRelationship() &&
 			  tab_obj->isProtected() &&
 			  tab_obj->getObjectType()==OBJ_CONSTRAINT))
@@ -1101,7 +1137,7 @@ void Relationship::addColumnsRelGenPart(void)
 	}
 }
 
-void Relationship::addConstraintsRelGen(void)
+void Relationship::addConstraintsRelGenPart(void)
 {
 	Table *parent_tab=dynamic_cast<Table *>(getReferenceTable()),
 			*child_tab=dynamic_cast<Table *>(getReceiverTable());
@@ -1151,7 +1187,7 @@ void Relationship::connectRelationship(void)
 			if(rel_type==RELATIONSHIP_GEN)
 			{
 				//Copying the CHECK constraints before adding custom constraints like special pk
-				addConstraintsRelGen();
+				addConstraintsRelGenPart();
 
 				//Creates the columns on the receiver table following the rules for generalization rules
 				addColumnsRelGenPart();
@@ -1170,6 +1206,9 @@ void Relationship::connectRelationship(void)
 			}
 			else if(rel_type == RELATIONSHIP_PART)
 			{
+				//Copying the CHECK constraints before adding custom constraints like special pk
+				addConstraintsRelGenPart();
+
 				//Creates the columns on the receiver table following the rules for copy rules
 				addColumnsRelGenPart();
 				getReceiverTable()->setPartionedTable(dynamic_cast<Table *>(getReferenceTable()));
@@ -2062,12 +2101,16 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 
 				//Removes the special primary key
 				if(table->getObjectIndex(pk_special) >= 0)
+				{
 					table->removeObject(pk_special);
 
-				if(rel_type==RELATIONSHIP_GEN)
-				{
-					table->removeObject(getReferenceTable());
+					// Restoring the original primary key of the table
+					if(pk_original)
+						table->addObject(pk_original);
+				}
 
+				if(rel_type==RELATIONSHIP_GEN || rel_type==RELATIONSHIP_PART)
+				{
 					while(!ck_constraints.empty())
 					{
 						table->removeObject(ck_constraints.back());
@@ -2075,6 +2118,9 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 						ck_constraints.pop_back();
 					}
 				}
+
+				if(rel_type==RELATIONSHIP_GEN)
+					table->removeObject(getReferenceTable());
 				else if(rel_type == RELATIONSHIP_PART)
 					table->setPartionedTable(nullptr);
 				else
@@ -2142,7 +2188,13 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 						pk_relident=nullptr;
 					}
 					else if(pk_special && table->getObjectIndex(pk_special) >= 0)
+					{
 						table->removeObject(pk_special);
+
+						// Restoring the original primary key of the table
+						if(pk_original)
+							table->addObject(pk_original);
+					}
 				}
 				else if(rel_type==RELATIONSHIP_NN)
 				{
@@ -2220,6 +2272,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 				table_relnn=nullptr;
 			}
 
+			pk_original = nullptr;
 			BaseRelationship::disconnectRelationship();
 		}
 	}
@@ -2392,6 +2445,7 @@ bool Relationship::isInvalidated(void)
 			if(rel_type==RELATIONSHIP_PART)
 			{
 			  count = table1->getColumnCount();
+				valid = table->isPartitioned();
 
 			  for(i=0; i < count && valid; i++)
 			  {
@@ -2420,6 +2474,7 @@ bool Relationship::isInvalidated(void)
 				constr=table->getConstraint(ck_constraints[i]->getName(true));
 				valid=(constr && !constr->isNoInherit() && constr->getConstraintType()==ConstraintType::check);
 			}
+
 		}
 
 		/* For n-n relationships, it is necessary the comparisons:
@@ -2588,6 +2643,13 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 			if(!rel_constraints[i]->isProtected())
 				attributes[ParsersAttributes::CONSTRAINTS]+=dynamic_cast<Constraint *>(rel_constraints[i])->
 															getCodeDefinition(SchemaParser::XML_DEFINITION, true);
+		}
+
+		if(pk_original)
+		{
+			pk_original->setParentTable(getReceiverTable());
+			attributes[ParsersAttributes::ORIGINAL_PK]=pk_original->getCodeDefinition(SchemaParser::XML_DEFINITION);
+			pk_original->setParentTable(nullptr);
 		}
 
 		count=column_ids_pk_rel.size();

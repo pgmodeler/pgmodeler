@@ -1644,11 +1644,11 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
 		/* Only identifier relationships or relationship that has identifier
 		 attributes (primary keys) are checked */
 		if((!rel->isSelfRelationship() &&
-			(rel->isIdentifier() ||
-			 rel->hasIndentifierAttribute())) ||
-
+				(rel->isIdentifier() ||
+				 rel->hasIndentifierAttribute())) ||
 				(rel_type==Relationship::RELATIONSHIP_GEN ||
-				 rel_type==Relationship::RELATIONSHIP_DEP))
+				 rel_type==Relationship::RELATIONSHIP_DEP ||
+				 rel_type==Relationship::RELATIONSHIP_PART))
 		{
 			BaseTable *ref_table=nullptr, *src_table=nullptr;
 			Table *recv_table=nullptr;
@@ -1690,7 +1690,8 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
 							  (rel_aux->isIdentifier() ||
 							   rel_aux->hasIndentifierAttribute())) ||
 							 (aux_rel_type==Relationship::RELATIONSHIP_GEN ||
-							  aux_rel_type==Relationship::RELATIONSHIP_DEP)))
+								aux_rel_type==Relationship::RELATIONSHIP_DEP ||
+								aux_rel_type==Relationship::RELATIONSHIP_PART)))
 
 					{
 						//The receiver table will be the receiver from the current relationship
@@ -4987,7 +4988,6 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 			constr->setIndexType(attribs[ParsersAttributes::INDEX_TYPE]);
 		}
 
-
 		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
 		{
 			do
@@ -6192,7 +6192,7 @@ Textbox *DatabaseModel::createTextbox(void)
 BaseRelationship *DatabaseModel::createRelationship(void)
 {
 	vector<unsigned> cols_special_pk;
-	attribs_map attribs;
+	attribs_map attribs, constr_attribs;
 	map<QString, unsigned> labels_id;
 	BaseRelationship *base_rel=nullptr;
 	Relationship *rel=nullptr;
@@ -6206,6 +6206,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 			tab_attribs[2]={ ParsersAttributes::SRC_TABLE,
 							 ParsersAttributes::DST_TABLE };
 	QColor custom_color=Qt::transparent;
+	Table *table = nullptr;
 
 	try
 	{
@@ -6393,7 +6394,21 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 					else if(elem==ParsersAttributes::CONSTRAINT && rel)
 					{
 						xmlparser.savePosition();
-						rel->addObject(createConstraint(rel));
+						xmlparser.getElementAttributes(constr_attribs);
+
+						/* If we find a primary key constraint at this point means that we're handling the original primary key stored by the relationship.
+						 * Since relationships can't have primary keys created manually by the users we assume that
+						 * the relationship contains a special primary key (created during relationship connection)
+						 * and the current constraint is the original one owned by one of the tables prior the connection
+						 * of the relationship. */
+						if(constr_attribs[ParsersAttributes::TYPE] == ParsersAttributes::PK_CONSTR)
+						{
+							table = getTable(constr_attribs[ParsersAttributes::TABLE]);
+							rel->setOriginalPrimaryKey(createConstraint(table));
+						}
+						else
+							rel->addObject(createConstraint(rel));
+
 						xmlparser.restorePosition();
 					}
 					else if(elem==ParsersAttributes::LINE)
@@ -8911,6 +8926,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						Trigger *trig=nullptr;
 						Index *index=nullptr;
 						Constraint *constr=nullptr;
+						vector<PartitionKey> part_keys;
 
 						count=tab->getConstraintCount();
 						for(idx=0; idx < count && (!exclusion_mode || (exclusion_mode && !refer)); idx++)
@@ -8949,6 +8965,18 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 								}
 							}
 						}
+
+						part_keys = tab->getPartitionKeys();
+						for(auto &part_key : part_keys)
+						{
+							if(part_key.getColumn() == column)
+							{
+								refer = true;
+								refs.push_back(tab);
+								break;
+							}
+						}
+
 					}
 					else if(obj_types[i]==OBJ_RELATIONSHIP)
 					{

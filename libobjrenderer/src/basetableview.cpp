@@ -441,9 +441,7 @@ void BaseTableView::__configureObject(float width)
 	this->table_tooltip=this->getSourceObject()->getName(true) +
 						QString(" (") + this->getSourceObject()->getTypeName() + QString(") \n") +
 						QString("Id: %1\n").arg(this->getSourceObject()->getObjectId()) +
-						TableObjectView::CONSTR_DELIM_START +
-						trUtf8("Connected rels: %1").arg(this->getConnectRelsCount()) +
-						TableObjectView::CONSTR_DELIM_END;
+						trUtf8("Connected rels: %1").arg(this->getConnectRelsCount());
 
 	this->setToolTip(this->table_tooltip);
 }

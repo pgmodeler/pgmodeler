@@ -27,7 +27,6 @@ const QString Catalog::ARRAY_PATTERN=QString("((\\[)[0-9]+(\\:)[0-9]+(\\])=)?(\\
 const QString Catalog::GET_EXT_OBJS_SQL=QString("SELECT objid AS oid FROM pg_depend WHERE objid > 0 AND refobjid > 0 AND deptype='e'");
 const QString Catalog::PGMODELER_TEMP_DB_OBJ=QString("__pgmodeler_tmp");
 
-bool Catalog::use_cached_queries=false;
 attribs_map Catalog::catalog_queries;
 
 map<ObjectType, QString> Catalog::oid_fields=
@@ -157,13 +156,12 @@ bool Catalog::isExtensionObject(unsigned oid)
 
 void Catalog::loadCatalogQuery(const QString &qry_id)
 {
-	if((!use_cached_queries) ||
-			(use_cached_queries && catalog_queries.count(qry_id)==0))
+	if(catalog_queries.count(qry_id)==0)
 	{
 		QFile input;
 		input.setFileName(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-						  CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR +
-						  qry_id + GlobalAttributes::SCHEMA_EXT);
+							CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR +
+							qry_id + GlobalAttributes::SCHEMA_EXT);
 
 		if(!input.open(QFile::ReadOnly))
 			throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(input.fileName()),
@@ -476,6 +474,40 @@ vector<attribs_map> Catalog::getMultipleAttributes(ObjectType obj_type, attribs_
 	}
 }
 
+vector<attribs_map> Catalog::getMultipleAttributes(const QString &catalog_sch, attribs_map attribs)
+{
+	try
+	{
+		ResultSet res;
+		attribs_map tuple;
+		vector<attribs_map> obj_attribs;
+
+		loadCatalogQuery(catalog_sch);
+		schparser.ignoreUnkownAttributes(true);
+		schparser.ignoreEmptyAttributes(true);
+
+		attribs[ParsersAttributes::PGSQL_VERSION]=schparser.getPgSQLVersion();
+		connection.executeDMLCommand(schparser.getCodeDefinition(attribs).simplified(), res);
+
+		if(res.accessTuple(ResultSet::FIRST_TUPLE))
+		{
+			do
+			{
+				tuple=changeAttributeNames(res.getTupleValues());
+				obj_attribs.push_back(tuple);
+				tuple.clear();
+			}
+			while(res.accessTuple(ResultSet::NEXT_TUPLE));
+		}
+
+		return(obj_attribs);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
 QString Catalog::getCommentQuery(const QString &oid_field, bool is_shared_obj)
 {
 	QString query_id=ParsersAttributes::COMMENT;
@@ -750,16 +782,6 @@ QStringList Catalog::parseRuleCommands(const QString &cmds)
 	start=cmd_regexp.indexIn(cmds) + cmd_regexp.matchedLength();
 	end=cmds.lastIndexOf(';');
 	return(cmds.mid(start,(end - start) + 1).split(';', QString::SkipEmptyParts));
-}
-
-void Catalog::enableCachedQueries(bool value)
-{
-	use_cached_queries=value;
-}
-
-bool Catalog::isCachedQueriesEnabled(void)
-{
-	return(use_cached_queries);
 }
 
 void Catalog::operator = (const Catalog &catalog)

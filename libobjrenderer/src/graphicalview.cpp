@@ -221,6 +221,13 @@ void GraphicalView::configureObject(void)
 	this->bounding_rect.setWidth(title->boundingRect().width());
 
 	BaseTableView::__configureObject(width);
+
+	if(!view->getAlias().isEmpty())
+		table_tooltip += QString("\nAlias: %1").arg(view->getAlias());
+
+	if(!view->getComment().isEmpty())
+		table_tooltip += QString("\n---\n%1").arg(view->getComment());
+
 	BaseObjectView::__configureObject();
 	BaseObjectView::configureObjectShadow();
 	BaseObjectView::configureObjectSelection();
