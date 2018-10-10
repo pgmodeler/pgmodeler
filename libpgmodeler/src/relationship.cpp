@@ -380,7 +380,7 @@ QString Relationship::getTableNameRelNN(void)
 
 void Relationship::setPartitionBoundingExpr(const QString &part_bound_expr)
 {
-	part_bounding_expr = part_bound_expr;
+	part_bounding_expr = part_bound_expr.toLower() == ParsersAttributes::DEFAULT.toLower() ? QString() : part_bound_expr;
 	this->invalidated = true;
 }
 

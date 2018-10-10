@@ -1644,11 +1644,11 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
 		/* Only identifier relationships or relationship that has identifier
 		 attributes (primary keys) are checked */
 		if((!rel->isSelfRelationship() &&
-			(rel->isIdentifier() ||
-			 rel->hasIndentifierAttribute())) ||
-
+				(rel->isIdentifier() ||
+				 rel->hasIndentifierAttribute())) ||
 				(rel_type==Relationship::RELATIONSHIP_GEN ||
-				 rel_type==Relationship::RELATIONSHIP_DEP))
+				 rel_type==Relationship::RELATIONSHIP_DEP ||
+				 rel_type==Relationship::RELATIONSHIP_PART))
 		{
 			BaseTable *ref_table=nullptr, *src_table=nullptr;
 			Table *recv_table=nullptr;
@@ -1690,7 +1690,8 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
 							  (rel_aux->isIdentifier() ||
 							   rel_aux->hasIndentifierAttribute())) ||
 							 (aux_rel_type==Relationship::RELATIONSHIP_GEN ||
-							  aux_rel_type==Relationship::RELATIONSHIP_DEP)))
+								aux_rel_type==Relationship::RELATIONSHIP_DEP ||
+								aux_rel_type==Relationship::RELATIONSHIP_PART)))
 
 					{
 						//The receiver table will be the receiver from the current relationship
@@ -8925,6 +8926,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						Trigger *trig=nullptr;
 						Index *index=nullptr;
 						Constraint *constr=nullptr;
+						vector<PartitionKey> part_keys;
 
 						count=tab->getConstraintCount();
 						for(idx=0; idx < count && (!exclusion_mode || (exclusion_mode && !refer)); idx++)
@@ -8963,6 +8965,18 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 								}
 							}
 						}
+
+						part_keys = tab->getPartitionKeys();
+						for(auto &part_key : part_keys)
+						{
+							if(part_key.getColumn() == column)
+							{
+								refer = true;
+								refs.push_back(tab);
+								break;
+							}
+						}
+
 					}
 					else if(obj_types[i]==OBJ_RELATIONSHIP)
 					{

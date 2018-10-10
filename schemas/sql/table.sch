@@ -59,12 +59,10 @@ $br )
 %end
 
 %if ({pgsql-ver} >=f "10.0") %and {partitioned-table} %then 
-    $br [FOR VALUES ]
-    
     %if {partition-bound-expr} %then
-        {partition-bound-expr}
+        $br [FOR VALUES ] {partition-bound-expr}
     %else
-        $tb [/* Undefined bounding expression */]
+        DEFAULT
     %end
 %end
 
