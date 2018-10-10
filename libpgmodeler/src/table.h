@@ -200,6 +200,8 @@ class Table: public BaseTable {
 		//! \brief Defines the partition bounding expression
 		void setPartitionBoundingExpr(const QString part_bound_expr);
 
+		QString getPartitionBoundingExpr(void);
+
 		//! \brief Configures the copy table
 		void setCopyTable(Table *tab);
 

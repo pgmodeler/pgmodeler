@@ -43,7 +43,35 @@
         [ tb.relforcerowsecurity AS rls_forced_bool, ]
     %end
 
-    [(SELECT array_agg(inhparent) AS parents FROM pg_inherits WHERE inhrelid = tb.oid)],
+    [(SELECT array_agg(inhparent) AS parents FROM pg_inherits WHERE inhrelid = tb.oid]
+    
+    # In PostgreSQL 10+ we need to separate partitioned tables from parent tables
+    %if ({pgsql-ver} >=f "10.0") %then
+        [ AND inhparent NOT IN (SELECT partrelid FROM pg_partitioned_table)]
+    %end
+    
+    [)],
+    
+    %if ({pgsql-ver} >=f "10.0") %then
+        [ CASE relkind 
+            WHEN 'p' THEN TRUE
+            ELSE FALSE 
+          END AS is_partitioned_bool, 
+        
+          CASE relispartition
+            WHEN TRUE THEN
+               (SELECT inhparent FROM pg_inherits WHERE inhrelid = tb.oid)
+            ELSE
+                NULL 
+          END AS partitioned_table, 
+          
+          pg_get_expr(relpartbound, tb.oid) AS partition_bound_expr,
+            
+        ]
+    %else
+        [ FALSE AS is_partitioned_bool, NULL AS partitioned_table, NULL AS partition_bound_expr,] 
+    %end
+     
 
     ({comment}) [ AS comment ]
     
