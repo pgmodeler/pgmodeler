@@ -1182,14 +1182,17 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 						if(!extract && if_level >= 0)
 						{
 							//If in 'else' the related 'if' is false, extracts the attribute
-							if(prev_cond==TOKEN_ELSE && !vet_expif[if_level])
+							if(prev_cond == TOKEN_ELSE && !vet_expif[if_level])
 								extract=true;
-							else if(prev_cond!=TOKEN_ELSE)
+							else if(prev_cond != TOKEN_ELSE)
 							{
 								//If in the 'if' part all the previous ifs until the current must be true
 								extract=true;
 								for(int i=0; i <= if_level && extract; i++)
-									extract=vet_expif[i];
+								{
+									extract=(vet_expif[i] && !vet_tk_else[i]) ||
+													(!vet_expif[i] && vet_tk_else[i]);
+								}
 							}
 						}
 
