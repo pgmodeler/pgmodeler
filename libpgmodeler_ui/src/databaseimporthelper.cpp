@@ -1785,6 +1785,66 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 			}
 		}
 
+		// Creating partition keys if present
+		if(attribs[ParsersAttributes::IS_PARTITIONED] == ParsersAttributes::_TRUE_)
+		{
+			QStringList cols, collations, opclasses, exprs;
+			PartitionKey part_key;
+			PartitioningType part_type;
+			QString coll_name, opc_name;
+			Collation *coll = nullptr;
+			OperatorClass *opclass = nullptr;
+			vector<PartitionKey> part_keys;
+
+			part_type = PartitioningType(attribs[ParsersAttributes::PARTITIONING]);
+			table->setPartitioningType(part_type);
+
+			cols=Catalog::parseArrayValues(attribs[ParsersAttributes::PART_KEY_COLS]);
+			collations=Catalog::parseArrayValues(attribs[ParsersAttributes::PART_KEY_COLLS]);
+			opclasses=Catalog::parseArrayValues(attribs[ParsersAttributes::PART_KEY_OPCLS]);
+			exprs = parseIndexExpressions(attribs[ParsersAttributes::PART_KEY_EXPRS]);
+
+			for(int i = 0; i < cols.size(); i++)
+			{
+				part_key = PartitionKey();
+
+				// Retrieving the column used by the partition key
+				if(cols[i] != QString("0"))
+					part_key.setColumn(table->getColumn(getColumnName(attribs[ParsersAttributes::OID], cols[i])));
+				else if(!exprs.isEmpty())
+				{
+					part_key.setExpression(exprs.front());
+					exprs.pop_front();
+				}
+
+				// Retriving the collation for the partion key
+				if(i < collations.size() && collations[i] != QString("0"))
+				{
+					coll_name = getDependencyObject(collations[i], OBJ_COLLATION, false, true, false);
+					coll = dynamic_cast<Collation *>(dbmodel->getObject(coll_name, OBJ_COLLATION));
+
+					//Even if the collation exists we'll ignore it when it is the "pg_catalog.default"
+					if(coll && (!coll->isSystemObject() ||
+											(coll->isSystemObject() && coll->getName() != QString("default"))))
+						part_key.setCollation(coll);
+				}
+
+				// Retriving the operator class for the partion key
+				if(i < opclasses.size() && opclasses[i] != QString("0"))
+				{
+					opc_name = getDependencyObject(opclasses[i], OBJ_OPCLASS, true, true, false);
+					opclass = dynamic_cast<OperatorClass *>(dbmodel->getObject(opc_name, OBJ_OPCLASS));
+
+					if(opclass)
+						part_key.setOperatorClass(opclass);
+				}
+
+				part_keys.push_back(part_key);
+			}
+
+			table->addPartitionKeys(part_keys);
+		}
+
 		dbmodel->addTable(table);
 		imported_tables[tab_oid] = table;
 	}
@@ -2296,88 +2356,13 @@ void DatabaseImportHelper::createTablePartitionings(void)
 
 	try
 	{
-		QStringList oids, cols, collations, opclasses, exprs;
-		attribs_map attribs;
-		vector<attribs_map> attribs_vect;
-		vector<PartitionKey> part_keys;
-		PartitionKey part_key;
-		PartitioningType part_type;
 		Table *table = nullptr, *part_table = nullptr;
-		unsigned tab_oid = 0;
-		QString coll_name, opc_name, part_bound_expr;
-		Collation *coll = nullptr;
-		OperatorClass *opclass = nullptr;
+		QString part_bound_expr;
 		Relationship *rel_part = nullptr;
 
 		emit s_progressUpdated(95,
 								 trUtf8("Creating table partitionings..."),
 								 OBJ_RELATIONSHIP);
-
-		// Retriveing the partition keys for each table
-		for(auto &itr : imported_tables)
-			oids.push_back(QString::number(itr.first));
-
-		attribs[ParsersAttributes::FILTER_OIDS] = oids.join(',');
-		attribs_vect = catalog.getMultipleAttributes(ParsersAttributes::PARTITION_KEY, attribs);
-
-		// With the parition key attributes retrived we need to assing them properly to the tables
-		for(auto &pk_attr : attribs_vect)
-		{
-			tab_oid = pk_attr[ParsersAttributes::TABLE].toUInt();
-
-			if(imported_tables.count(tab_oid))
-			{
-				table = imported_tables[tab_oid];
-				part_type = PartitioningType(pk_attr[ParsersAttributes::PARTITIONING]);
-				table->setPartitioningType(part_type);
-
-				cols=Catalog::parseArrayValues(pk_attr[ParsersAttributes::COLUMNS]);
-				collations=Catalog::parseArrayValues(pk_attr[ParsersAttributes::COLLATIONS]);
-				opclasses=Catalog::parseArrayValues(pk_attr[ParsersAttributes::OP_CLASSES]);
-				exprs = parseIndexExpressions(pk_attr[ParsersAttributes::EXPRESSIONS]);
-
-				for(int i = 0; i < cols.size(); i++)
-				{
-					part_key = PartitionKey();
-
-					// Retrieving the column used by the partition key
-					if(cols[i] != QString("0"))
-						part_key.setColumn(table->getColumn(getColumnName(pk_attr[ParsersAttributes::TABLE], cols[i])));
-					else if(!exprs.isEmpty())
-					{
-						part_key.setExpression(exprs.front());
-						exprs.pop_front();
-					}
-
-					// Retriving the collation for the partion key
-					if(i < collations.size() && collations[i] != QString("0"))
-					{
-						coll_name = getDependencyObject(collations[i], OBJ_COLLATION, false, true, false);
-						coll = dynamic_cast<Collation *>(dbmodel->getObject(coll_name, OBJ_COLLATION));
-
-						//Even if the collation exists we'll ignore it when it is the "pg_catalog.default"
-						if(coll && (!coll->isSystemObject() ||
-												(coll->isSystemObject() && coll->getName() != QString("default"))))
-							part_key.setCollation(coll);
-					}
-
-					// Retriving the operator class for the partion key
-					if(i < opclasses.size() && opclasses[i] != QString("0"))
-					{
-						opc_name = getDependencyObject(opclasses[i], OBJ_OPCLASS, true, true, false);
-						opclass = dynamic_cast<OperatorClass *>(dbmodel->getObject(opc_name, OBJ_OPCLASS));
-
-						if(opclass)
-							part_key.setOperatorClass(opclass);
-					}
-
-					part_keys.push_back(part_key);
-				}
-
-				table->addPartitionKeys(part_keys);
-				part_keys.clear();
-			}
-		}
 
 		// Creating the paritioning relationships
 		for(auto &itr : imported_tables)

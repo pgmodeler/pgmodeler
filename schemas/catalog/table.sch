@@ -75,14 +75,34 @@
 
     ({comment}) [ AS comment ]
     
-    [ , st.seq_scan AS seq_scan, st.seq_tup_read AS seq_scan_read, st.idx_scan AS index_scan, st.idx_tup_fetch AS index_scan_read, 
-      st.n_tup_ins AS tuples_ins, st.n_tup_upd AS tuples_upd, st.n_tup_del AS tuples_del, st.n_live_tup AS row_amount, 
-      st.last_vacuum, st.last_autovacuum, st.last_analyze, st.vacuum_count, st.autovacuum_count, st.analyze_count, st.autoanalyze_count ]
+    [ , st.n_tup_ins AS tuples_ins, st.n_tup_upd AS tuples_upd, st.n_tup_del AS tuples_del, st.n_live_tup AS row_amount,
+        st.n_dead_tup AS dead_rows_amount, st.last_vacuum, st.last_autovacuum, st.last_analyze, ]
+        
+    %if ({pgsql-ver} >=f "10.0") %then    
+    [ CASE partstrat
+        WHEN 'l' then 'LIST'
+        WHEN 'r' then 'RANGE'
+        ELSE 'HASH'
+      END AS partitioning,
+      pg_get_expr(partexprs, partrelid) AS part_key_exprs,
+      partattrs::oid] $ob $cb [ AS part_key_cols, 
+      partclass::oid] $ob $cb [ AS part_key_opcls, 
+      partcollation::oid] $ob $cb [ AS part_key_colls ]
+    %else
+      [ NULL AS partitioning, NULL AS part_key_exprs, NULL AS part_key_cols,
+        NULL AS part_key_opcls, NULL AS part_key_colls ]
+    %end
   
     [ FROM pg_class AS tb
       LEFT JOIN pg_tables AS _tb1 ON _tb1.tablename=tb.relname 
-      LEFT JOIN pg_stat_all_tables AS st ON st.relid=tb.oid
-      WHERE tb.relkind IN ('r','p') ]
+      LEFT JOIN pg_stat_all_tables AS st ON st.relid=tb.oid ]
+    
+    %if ({pgsql-ver} >=f "10.0") %then
+      [ LEFT JOIN pg_partitioned_table AS pt ON pt.partrelid = tb.oid ]
+    %end
+
+      
+    [ WHERE tb.relkind IN ('r','p') ]
 
     %if {last-sys-oid} %then
         [ AND tb.oid ] {oid-filter-op} $sp {last-sys-oid}
