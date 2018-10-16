@@ -46,7 +46,7 @@ Table::Table(void) : BaseTable()
 	attributes[ParsersAttributes::PARTITIONED_TABLE]=QString();
 	attributes[ParsersAttributes::PARTITION_BOUND_EXPR]=QString();
 
-	copy_table=partioned_table=nullptr;
+	copy_table=partitioned_table=nullptr;
 	partitioning_type=BaseType::null;
 
 	this->setName(trUtf8("new_table").toUtf8());
@@ -63,6 +63,7 @@ Table::~Table(void)
 	}
 
 	ancestor_tables.clear();
+	partition_tables.clear();
 }
 
 void Table::setName(const QString &name)
@@ -116,7 +117,7 @@ PartitioningType Table::getPartitioningType(void)
 
 Table *Table::getPartitionedTable(void)
 {
-  return(partioned_table);
+	return(partitioned_table);
 }
 
 void Table::setProtected(bool value)
@@ -547,8 +548,15 @@ void Table::addPolicy(Policy *pol, int idx_pol)
 
 void Table::setPartionedTable(Table *table)
 {
-	setCodeInvalidated(partioned_table != table);
-	partioned_table = table;
+	setCodeInvalidated(partitioned_table != table);
+
+	if(table != partitioned_table && partitioned_table)
+		partitioned_table->removePartitionTable(this);
+
+	partitioned_table = table;
+
+	if(partitioned_table)
+		partitioned_table->addPartitionTable(this);
 }
 
 void Table::setPartitionBoundingExpr(const QString part_bound_expr)
@@ -560,6 +568,16 @@ void Table::setPartitionBoundingExpr(const QString part_bound_expr)
 QString Table::getPartitionBoundingExpr(void)
 {
 	return(part_bounding_expr);
+}
+
+vector<Table *> Table::getPartionTables(void)
+{
+	return(partition_tables);
+}
+
+bool Table::isPartitionTableExists(Table *table, bool compare_names)
+{
+	return(getPartitionTableIndex(table, compare_names) >= 0);
 }
 
 void Table::addConstraint(Constraint *constr, int idx)
@@ -583,7 +601,42 @@ void Table::addAncestorTable(Table *tab, int idx)
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-  }
+	}
+}
+
+void Table::addPartitionTable(Table *tab)
+{
+	if(tab && std::find(partition_tables.begin(), partition_tables.end(), tab) == partition_tables.end())
+		partition_tables.push_back(tab);
+}
+
+void Table::removePartitionTable(Table *tab)
+{
+	int idx = getPartitionTableIndex(tab, false);
+
+	if(idx >= 0)
+		partition_tables.erase(partition_tables.begin() + idx);
+}
+
+int Table::getPartitionTableIndex(Table *tab, bool compare_names)
+{
+	if(!tab)
+		return(-1);
+
+	vector<Table *>::iterator itr = partition_tables.begin();
+
+	while(itr != partition_tables.end())
+	{
+		if(*itr == tab || (compare_names && tab->getName(true) == (*itr)->getName(true)))
+			break;
+
+		itr++;
+	}
+
+	if(itr == partition_tables.end())
+		return(-1);
+
+	return(itr - partition_tables.begin());
 }
 
 void Table::setCopyTable(Table *tab)
@@ -1564,8 +1617,8 @@ QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 	if(def_type==SchemaParser::SQL_DEFINITION && copy_table)
 		attributes[ParsersAttributes::COPY_TABLE]=copy_table->getName(true) + copy_op.getSQLDefinition();
 
-	if(def_type==SchemaParser::SQL_DEFINITION && partioned_table)
-		attributes[ParsersAttributes::PARTITIONED_TABLE]=partioned_table->getName(true);
+	if(def_type==SchemaParser::SQL_DEFINITION && partitioned_table)
+		attributes[ParsersAttributes::PARTITIONED_TABLE]=partitioned_table->getName(true);
 
 	if(tag && def_type==SchemaParser::XML_DEFINITION)
 		attributes[ParsersAttributes::TAG]=tag->getCodeDefinition(def_type, true);
@@ -1639,7 +1692,7 @@ bool Table::isReferRelationshipAddedObject(void)
 
 bool Table::isPartition(void)
 {
-	return(partioned_table != nullptr);
+	return(partitioned_table != nullptr);
 }
 
 bool Table::isPartitioned(void)

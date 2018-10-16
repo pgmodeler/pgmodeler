@@ -58,12 +58,15 @@ class Table: public BaseTable {
 
 		//! \brief Stores the tables that 'this' object inherits attributes
 		vector<Table *> ancestor_tables;
+
+		//! \brief Stores the tables that 'this' object has as its partitions
+		vector<Table *> partition_tables;
 		
 		//! \brief Stores the partition keys of the table partitioning being used
 		vector<PartitionKey> partition_keys;
 
 		//! \brief Stores the table which this one is partition of
-		Table *partioned_table;
+		Table *partitioned_table;
 
 		//! \brief Specifies the table from which columns are copied
 		Table *copy_table;
@@ -107,6 +110,17 @@ class Table: public BaseTable {
 	protected:
 		//! \brief Adds an ancestor table
 		void addAncestorTable(Table *tab, int idx=-1);
+
+		//! \brief Adds a partition table
+		void addPartitionTable(Table *tab);
+
+		//! \brief Removes a partition table
+		void removePartitionTable(Table *tab);
+
+		/*! \brief Returns the index of the partition table. If the
+		 * compare_names is true then the search will compare the names if
+		 * the object itself is not present in the list of partitions */
+		int getPartitionTableIndex(Table *tab, bool compare_names);
 		
 		//! \brief Removes an acestor table using its name
 		void removeAncestorTable(const QString &name);
@@ -200,7 +214,14 @@ class Table: public BaseTable {
 		//! \brief Defines the partition bounding expression
 		void setPartitionBoundingExpr(const QString part_bound_expr);
 
+		//! \brief Returns the partition bounding expression
 		QString getPartitionBoundingExpr(void);
+
+		//! \brief Returns the partition tables
+		vector<Table *> getPartionTables(void);
+
+		//! \brief Returs if the provided table is amongst the partitions
+		bool isPartitionTableExists(Table *table, bool compare_names);
 
 		//! \brief Configures the copy table
 		void setCopyTable(Table *tab);

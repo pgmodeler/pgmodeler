@@ -283,10 +283,31 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 		aux_tab=table->getCopyTable();
 		if(aux_tab)
 		{
+			i = parent_tables->getRowCount();
 			parent_tables->addRow();
 			parent_tables->setCellText(aux_tab->getName(), i, 0);
 			parent_tables->setCellText(aux_tab->getSchema()->getName(), i, 1);
 			parent_tables->setCellText(trUtf8("Copy"), i, 2);
+		}
+
+		aux_tab=table->getPartitionedTable();
+		if(aux_tab)
+		{
+			i = parent_tables->getRowCount();
+			parent_tables->addRow();
+			parent_tables->setCellText(aux_tab->getName(), i, 0);
+			parent_tables->setCellText(aux_tab->getSchema()->getName(), i, 1);
+			parent_tables->setCellText(trUtf8("Partitioned"), i, 2);
+		}
+
+		i = parent_tables->getRowCount();
+		for(auto &tab : table->getPartionTables())
+		{
+			parent_tables->addRow();
+			parent_tables->setCellText(tab->getName(), i, 0);
+			parent_tables->setCellText(tab->getSchema()->getName(), i, 1);
+			parent_tables->setCellText(trUtf8("Partition"), i, 2);
+			i++;
 		}
 
 		parent_tables->clearSelection();
