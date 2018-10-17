@@ -497,7 +497,7 @@ class Relationship: public BaseRelationship {
 		//! \brief Copies the attributes from one relationship to another
 		void operator = (Relationship &rel);
 
-		QString getInheritDefinition(bool undo_inherit);
+		QString getAlterRelationshipDefinition(bool undo_inh_part);
 
 		//! \brief Returns true when the reference table is mandatory in the relationship
 		bool isReferenceTableMandatory(void);

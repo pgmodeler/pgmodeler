@@ -2705,14 +2705,29 @@ void Relationship::operator = (Relationship &rel)
 	this->single_pk_column=rel.single_pk_column;
 }
 
-QString Relationship::getInheritDefinition(bool undo_inherit)
+QString Relationship::getAlterRelationshipDefinition(bool undo_inh_part)
 {
-	if(rel_type!=RELATIONSHIP_GEN)
+	if(rel_type != RELATIONSHIP_GEN && rel_type != RELATIONSHIP_PART)
 		return(QString());
 
-	attributes[ParsersAttributes::INHERIT]=(undo_inherit ? ParsersAttributes::UNSET : ParsersAttributes::_TRUE_);
-	attributes[ParsersAttributes::TABLE]=getReceiverTable()->getName(true);
-	attributes[ParsersAttributes::ANCESTOR_TABLE]=getReferenceTable()->getName(true);
+	attributes[ParsersAttributes::INHERIT]=QString();
+	attributes[ParsersAttributes::ANCESTOR_TABLE]=QString();
+	attributes[ParsersAttributes::PARTITIONED_TABLE]=QString();
+	attributes[ParsersAttributes::PARTITION_BOUND_EXPR]=QString();
+
+	if(rel_type == RELATIONSHIP_GEN)
+	{
+		attributes[ParsersAttributes::INHERIT]=(undo_inh_part ? ParsersAttributes::UNSET : ParsersAttributes::_TRUE_);
+		attributes[ParsersAttributes::TABLE]=getReceiverTable()->getName(true);
+		attributes[ParsersAttributes::ANCESTOR_TABLE]=getReferenceTable()->getName(true);
+	}
+	else
+	{
+		attributes[ParsersAttributes::PARTITIONING]=(undo_inh_part ? ParsersAttributes::UNSET : ParsersAttributes::_TRUE_);
+		attributes[ParsersAttributes::TABLE]=getReceiverTable()->getName(true);
+		attributes[ParsersAttributes::PARTITIONED_TABLE]=getReferenceTable()->getName(true);
+		attributes[ParsersAttributes::PARTITION_BOUND_EXPR]=getReceiverTable()->getPartitionBoundingExpr();
+	}
 
 	return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes));
 }

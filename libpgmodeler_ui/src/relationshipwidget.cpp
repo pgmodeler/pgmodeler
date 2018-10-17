@@ -544,7 +544,7 @@ void RelationshipWidget::generateBoundingExpr(void)
 	if(part_type == PartitioningType::list)
 		tmpl = QString("IN (value)");
 	else if(part_type == PartitioningType::range)
-		tmpl = QString("FROM (value)\nTO (value)");
+		tmpl = QString("FROM (value) TO (value)");
 	else
 		tmpl = QString("WITH (MODULUS m, REMAINDER r)");
 
