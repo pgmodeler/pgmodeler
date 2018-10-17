@@ -285,6 +285,9 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 									created (see table's code defintion) */
 							if(rec_tab && !aux_rel)
 								generateDiffInfo(diff_type, rel);
+							/* Special case for partitioning: we detach (drop) and reattach (create) the partition
+							 * if the partition bound expression differs from a model to another. This is done only
+							 * if the receiver table (partition) exists in the imported model. */
 							else if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_PART &&
 											rec_tab &&
 											aux_model == imported_model &&
@@ -468,7 +471,7 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
 			ObjectsDiffInfo diff_info;
 
 			/* If the info is for ALTER and there is a DROP info on the list,
-	   the object will be recreated instead of modified */
+			 * the object will be recreated instead of modified */
 			if((!diff_opts[OPT_FORCE_RECREATION] || diff_opts[OPT_RECREATE_UNCHANGEBLE]) &&
 					diff_type==ObjectsDiffInfo::ALTER_OBJECT &&
 					isDiffInfoExists(ObjectsDiffInfo::DROP_OBJECT, old_object, nullptr) &&
@@ -485,9 +488,9 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
 						*old_col=dynamic_cast<Column *>(old_object);
 
 				/* Special case for columns marked with ALTER.
-		   If the type of them is "serial" or similar then a sequence will be created and the
-		   type of the column changed to "integer" or similar, this because the ALTER command
-		   for columns don't accept the type "serial" */
+				 * If the type of them is "serial" or similar then a sequence will be created and the
+				 * type of the column changed to "integer" or similar, this because the ALTER command
+				 * for columns don't accept the type "serial" */
 				if(diff_type==ObjectsDiffInfo::ALTER_OBJECT && col && old_col &&
 						(col->getType()!=old_col->getType() && col->getType().isSerialType()))
 				{
@@ -511,11 +514,19 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
 					//Assigns the sequence to the column in order to configure the default value correctly
 					aux_col->setSequence(seq);
 
-					//Creates a new ALTER info with the created column
-					diff_info=ObjectsDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, aux_col, col);
-					diff_infos.push_back(diff_info);
-					diffs_counter[ObjectsDiffInfo::ALTER_OBJECT]++;
-					emit s_objectsDiffInfoGenerated(diff_info);
+					/* Creates a new ALTER info with the created column onlly if we don't need to reuse sequences
+					 * or if the sequence reusing is enabled but the type of the columns aren't equivalent or even
+					 * the types are equivalent but the sequences used by each columns aren't the same */
+					if(!diff_opts[OPT_REUSE_SEQUENCES] ||
+						 (diff_opts[OPT_REUSE_SEQUENCES] &&
+							(!col->getType().getAliasType().isEquivalentTo(old_col->getType()) ||
+								(old_col->getSequence() && old_col->getSequence()->getSignature() != seq->getSignature()))))
+					{
+						diff_info=ObjectsDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, aux_col, col);
+						diff_infos.push_back(diff_info);
+						diffs_counter[ObjectsDiffInfo::ALTER_OBJECT]++;
+						emit s_objectsDiffInfoGenerated(diff_info);
+					}
 
 					if(!diff_opts[OPT_REUSE_SEQUENCES] || imported_model->getObjectIndex(seq->getSignature(), OBJ_SEQUENCE) < 0)
 					{
@@ -545,8 +556,8 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
 						}
 					}
 
-					/* Stores the created objects in the temp list in order to be destroyed at the
-			   end of the process. */
+					/* Stores the created objects in the temp list in order to be destroyed
+					 * at the end of the process. */
 					tmp_objects.push_back(aux_col);
 					tmp_objects.push_back(seq);
 				}
