@@ -635,6 +635,9 @@
             </item>
             <item>
              <widget class="QCheckBox" name="default_part_chk">
+              <property name="statusTip">
+               <string>Default partitions are only supported on &lt;strong&gt;PostgreSQL 11+&lt;/strong&gt;. Using this option and exporting the code to PostgreSQL 10 syntax errors will be raised.</string>
+              </property>
               <property name="text">
                <string>Default partition</string>
               </property>

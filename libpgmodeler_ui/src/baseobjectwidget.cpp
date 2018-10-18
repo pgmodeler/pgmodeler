@@ -601,8 +601,8 @@ void BaseObjectWidget::highlightVersionSpecificFields(map<QString, vector<QWidge
 			}
 
 			wgt->setStyleSheet(QString("QWidget {	font-weight: bold; font-style: italic; color: %1}").arg(color.name()));
-			wgt->setToolTip(QString("<em style='font-size: 8pt'>") +
-											trUtf8("Version") +
+			wgt->setToolTip(QString("<em>") +
+											trUtf8("Version ") +
 											itr.first + QString(" %1</em>").arg(field_name));
 		}
 	}

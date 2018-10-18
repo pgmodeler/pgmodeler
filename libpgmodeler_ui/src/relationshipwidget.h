@@ -42,7 +42,8 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		SPECIAL_PK_TAB=4,
 		ADVANCED_TAB=5;
 
-		HintTextWidget *gen_tab_name_ht, *ref_table_ht, *recv_table_ht, *identifier_ht, *single_pk_ht;
+		HintTextWidget *gen_tab_name_ht, *ref_table_ht, *recv_table_ht,
+		*identifier_ht, *single_pk_ht, *default_part_ht;
 
 		ColorPickerWidget *color_picker;
 

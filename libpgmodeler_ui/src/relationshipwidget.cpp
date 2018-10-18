@@ -50,6 +50,9 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		single_pk_ht=new HintTextWidget(single_pk_hint, this);
 		single_pk_ht->setText(single_pk_chk->statusTip());
 
+		default_part_ht=new HintTextWidget(default_part_hint, this);
+		default_part_ht->setText(default_part_chk->statusTip());
+
 		table1_hl=nullptr;
 		table1_hl=new SyntaxHighlighter(ref_table_txt, true);
 		table1_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
