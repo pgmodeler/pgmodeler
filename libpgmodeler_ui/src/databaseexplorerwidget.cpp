@@ -99,7 +99,7 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{LAST_AUTOVACUUM, QT_TR_NOOP("Last autovacuum")},    {LAST_VACUUM, QT_TR_NOOP("Last vacuum")},              {TUPLES_DEL, QT_TR_NOOP("Tuples deleted")},
 	{TUPLES_UPD, QT_TR_NOOP("Tuples updated")},          {TUPLES_INS, QT_TR_NOOP("Tuples inserted")},           {IS_PARTITIONED, QT_TR_NOOP("Partitioned")},
 	{PARTITIONED_TABLE, QT_TR_NOOP("Partition of")},     {PARTITION_BOUND_EXPR, QT_TR_NOOP("Partition bound expr.")}, {DEAD_ROWS_AMOUNT, QT_TR_NOOP("Dead rows amount")},
-	{PARTITION_KEY, QT_TR_NOOP("Partition keys")}
+	{PARTITION_KEY, QT_TR_NOOP("Partition keys")},       {PARTITIONING, QT_TR_NOOP("Partitioning")}
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
@@ -521,6 +521,7 @@ void DatabaseExplorerWidget::formatTableAttribs(attribs_map &attribs)
 																	ParsersAttributes::RLS_FORCED});
 
 	formatOidAttribs(attribs, { ParsersAttributes::PARENTS }, OBJ_TABLE, true);
+	formatOidAttribs(attribs, { ParsersAttributes::PARTITIONED_TABLE }, OBJ_TABLE, false);
 
 	part_keys.push_back(getObjectsNames(OBJ_COLUMN,
 																			Catalog::parseArrayValues(attribs[ParsersAttributes::PART_KEY_COLS]),

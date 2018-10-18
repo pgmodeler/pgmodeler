@@ -79,10 +79,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	QLabel *label=nullptr;
 	QGridLayout *grid=nullptr;
 	QAction *action=nullptr;
-	QString str_ico, str_txt;
-	QStringList rel_types_cod={QString("11"), QString("1n"), QString("nn"), QString("dep"), QString("gen"), QString("part") },
-			rel_labels={ trUtf8("One to One (1-1)"), trUtf8("One to Many (1-n)"),
-						 trUtf8("Many to Many (n-n)"), trUtf8("Copy"), trUtf8("Inheritance"), trUtf8("Partitioning") };
+	QString str_ico;
+	QStringList rel_types_cod={QString("11"), QString("1n"), QString("nn"), QString("dep"), QString("gen"), QString("part") };
 	ObjectType types[]={ OBJ_TABLE, OBJ_VIEW, OBJ_TEXTBOX, OBJ_RELATIONSHIP,
 						 OBJ_CAST, OBJ_CONVERSION, OBJ_DOMAIN,
 						 OBJ_FUNCTION, OBJ_AGGREGATE, OBJ_LANGUAGE,
@@ -110,17 +108,17 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	tmp_file.close();
 
 	protected_model_frm=new QFrame(this);
-	protected_model_frm->setGeometry(QRect(20, 10, 511, 48));
-	protected_model_frm->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-	protected_model_frm->setMinimumSize(QSize(0, 48));
-	protected_model_frm->setMaximumHeight(48);
+	protected_model_frm->setGeometry(QRect(20, 10, 500, 25));
+	protected_model_frm->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+	protected_model_frm->setMinimumSize(QSize(0, 25));
 	protected_model_frm->setFrameShape(QFrame::StyledPanel);
 	protected_model_frm->setFrameShadow(QFrame::Raised);
 	protected_model_frm->setVisible(false);
 
 	label=new QLabel(protected_model_frm);
-	label->setMinimumSize(QSize(32, 32));
-	label->setMaximumSize(QSize(32, 32));
+	label->setMinimumSize(QSize(20, 20));
+	label->setMaximumSize(QSize(20, 20));
+	label->setScaledContents(true);
 	label->setPixmap(QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")));
 
 	grid=new QGridLayout;
@@ -152,7 +150,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	viewport=new QGraphicsView(scene);
 	updateRenderHints();
-	viewport->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+	viewport->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
 	//Force the scene to be drawn from the left to right and from top to bottom
 	viewport->setAlignment(Qt::AlignLeft | Qt::AlignTop);
