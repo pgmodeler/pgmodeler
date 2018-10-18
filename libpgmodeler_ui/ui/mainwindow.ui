@@ -756,6 +756,7 @@
     <addaction name="action_inc_zoom"/>
     <addaction name="action_dec_zoom"/>
     <addaction name="separator"/>
+    <addaction name="action_arrange_objects"/>
     <addaction name="action_compact_view"/>
     <addaction name="action_overview"/>
    </widget>

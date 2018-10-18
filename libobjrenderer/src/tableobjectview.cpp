@@ -410,7 +410,11 @@ void TableObjectView::configureObject(void)
 
 			atribs_tip=QString("\n") + CONSTR_DELIM_START +
 					   QString(" ") + atribs_tip + QString(" ") + CONSTR_DELIM_END;
+
 		}
+
+		if(!tab_obj->getComment().isEmpty())
+			atribs_tip += QString("\n---\n%1").arg(tab_obj->getComment());
 
 		lables[2]->setFont(fmt.font());
 		lables[2]->setBrush(fmt.foreground());

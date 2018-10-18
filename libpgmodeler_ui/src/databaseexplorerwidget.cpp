@@ -95,12 +95,11 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{CONNECTION, QT_TR_NOOP("Connection ID")},           {SERVER_PID, QT_TR_NOOP("Server PID")},                {SERVER_PROTOCOL, QT_TR_NOOP("Server protocol")},
 	{REFERRERS, QT_TR_NOOP("Referrers")},                {IDENTITY_TYPE, QT_TR_NOOP("Identity")},               {COMMAND, QT_TR_NOOP("Command")},
 	{USING_EXP, QT_TR_NOOP("USING expr.")},              {CHECK_EXP, QT_TR_NOOP("CHECK expr.")},                {ROLES, QT_TR_NOOP("Roles")},
-    {RLS_ENABLED, QT_TR_NOOP("RLS enabled")},            {RLS_FORCED, QT_TR_NOOP("RLS forced")},                {INDEX_SCAN, QT_TR_NOOP("Index scans")},
-    {INDEX_SCAN_READ, QT_TR_NOOP("Index scans tuples")}, {LAST_ANALYZE, QT_TR_NOOP("Last analyze")},            {LAST_AUTOVACUUM, QT_TR_NOOP("Last autovacuum")},
-    {LAST_VACUUM, QT_TR_NOOP("Last vacuum")},            {TUPLES_DEL, QT_TR_NOOP("Tuples deleted")},            {TUPLES_UPD, QT_TR_NOOP("Tuples updated")},
-    {TUPLES_INS, QT_TR_NOOP("Tuples inserted")},         {SEQ_SCAN, QT_TR_NOOP("Sequential scans")},            {SEQ_SCAN_READ, QT_TR_NOOP("Sequential scans tuples")},
-    {VACUUM_COUNT, QT_TR_NOOP("Vacuum count")},          {AUTOVACUUM_COUNT, QT_TR_NOOP("Autovacuum count")},    {ANALYZE_COUNT, QT_TR_NOOP("Analyze count")},
-    {AUTOANALYZE_COUNT, QT_TR_NOOP("Autoanalyze count")}
+	{RLS_ENABLED, QT_TR_NOOP("RLS enabled")},            {RLS_FORCED, QT_TR_NOOP("RLS forced")},                {LAST_ANALYZE, QT_TR_NOOP("Last analyze")},
+	{LAST_AUTOVACUUM, QT_TR_NOOP("Last autovacuum")},    {LAST_VACUUM, QT_TR_NOOP("Last vacuum")},              {TUPLES_DEL, QT_TR_NOOP("Tuples deleted")},
+	{TUPLES_UPD, QT_TR_NOOP("Tuples updated")},          {TUPLES_INS, QT_TR_NOOP("Tuples inserted")},           {IS_PARTITIONED, QT_TR_NOOP("Partitioned")},
+	{PARTITIONED_TABLE, QT_TR_NOOP("Partition of")},     {PARTITION_BOUND_EXPR, QT_TR_NOOP("Partition bound expr.")}, {DEAD_ROWS_AMOUNT, QT_TR_NOOP("Dead rows amount")},
+	{PARTITION_KEY, QT_TR_NOOP("Partition keys")},       {PARTITIONING, QT_TR_NOOP("Partitioning")}
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
@@ -514,12 +513,29 @@ void DatabaseExplorerWidget::formatOperatorAttribs(attribs_map &attribs)
 
 void DatabaseExplorerWidget::formatTableAttribs(attribs_map &attribs)
 {
+	QStringList part_keys;
+
 	formatBooleanAttribs(attribs, { ParsersAttributes::OIDS,
 																	ParsersAttributes::UNLOGGED,
 																	ParsersAttributes::RLS_ENABLED,
 																	ParsersAttributes::RLS_FORCED});
 
 	formatOidAttribs(attribs, { ParsersAttributes::PARENTS }, OBJ_TABLE, true);
+	formatOidAttribs(attribs, { ParsersAttributes::PARTITIONED_TABLE }, OBJ_TABLE, false);
+
+	part_keys.push_back(getObjectsNames(OBJ_COLUMN,
+																			Catalog::parseArrayValues(attribs[ParsersAttributes::PART_KEY_COLS]),
+																			getObjectName(OBJ_SCHEMA, attribs[ParsersAttributes::SCHEMA]),
+																			attribs[ParsersAttributes::NAME]).join(ELEM_SEPARATOR));
+
+	part_keys.push_back(Catalog::parseArrayValues(attribs[ParsersAttributes::EXPRESSIONS]).join(ELEM_SEPARATOR));
+	part_keys.removeAll(QString());
+
+	attribs[ParsersAttributes::PARTITION_KEY] = part_keys.join(ELEM_SEPARATOR);
+	attribs.erase(ParsersAttributes::PART_KEY_COLLS);
+	attribs.erase(ParsersAttributes::PART_KEY_OPCLS);
+	attribs.erase(ParsersAttributes::PART_KEY_EXPRS);
+	attribs.erase(ParsersAttributes::PART_KEY_COLS);
 }
 
 void DatabaseExplorerWidget::formatSequenceAttribs(attribs_map &attribs)
@@ -1932,7 +1948,8 @@ void DatabaseExplorerWidget::dropDatabase(void)
 	QString dbname = connection.getConnectionParam(Connection::PARAM_DB_NAME);
 
 	msg_box.show(trUtf8("Warning"),
-				 trUtf8("<strong>CAUTION:</strong> You are about to drop the entire database <strong>%1</strong>! All data will be completely wiped out. Do you really want to proceed?").arg(dbname),
+				 trUtf8("<strong>CAUTION:</strong> You are about to drop the entire database <strong>%1</strong> from the server <strong>%2</strong>! All data will be completely wiped out. Do you really want to proceed?")
+							 .arg(dbname).arg(connection.getConnectionId(true)),
 				 Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
 
 	if(msg_box.result()==QDialog::Accepted)

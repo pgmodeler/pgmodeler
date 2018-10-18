@@ -62,7 +62,8 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 															{ rel1n_tb,  std::make_tuple(trUtf8("2"), 1) },
 															{ relnn_tb,  std::make_tuple(trUtf8("3"), 2) },
 															{ reldep_tb, std::make_tuple(trUtf8("5"), 3) },
-															{ relgen_tb, std::make_tuple(trUtf8("4"), 4) } };
+															{ relgen_tb, std::make_tuple(trUtf8("4"), 4) },
+															{ relpart_tb, std::make_tuple(trUtf8("5"), 5) }};
 
 	vector<QToolButton *> permission_btns={db_sch_perms_tb, tab_perms_tb };
 

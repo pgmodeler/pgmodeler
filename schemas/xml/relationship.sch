@@ -53,7 +53,7 @@ $br $tb [ dst-table=] "{dst-table}"
 %end
 
 
-%if %not {relgen} %and %not {reldep} %then
+%if %not {relgen} %and %not {reldep} %and %not {relpart} %then
   $br $tb
   [ src-required=] %if {src-required} %then "true" %else "false" %end
   [ dst-required=] %if {dst-required} %then "true" %else "false" %end
@@ -98,13 +98,21 @@ $br $tb [ dst-table=] "{dst-table}"
  %if {points} %then $tb <line> $br $tb {points} $tb </line> $br %end
  %if {labels-pos} %then {labels-pos} %end
 
- %if %not {relgen} %and %not {reldep} %then
+ %if %not {relgen} %and %not {reldep} %and %not {relpart} %then
    %if {columns} %then {columns} %end
    %if {constraints} %then {constraints} %end
+ %end
+ 
+ %if {original-pk} %then
+    {original-pk}
  %end
 
  %if {special-pk-cols} %then
    $tb [<special-pk-cols indexes=]"{special-pk-cols}"/> $br
+ %end
+ 
+ %if {partition-bound-expr} %then
+   $tb <expression> <! $ob CDATA $ob {partition-bound-expr} $cb $cb > </expression> $br
  %end
 
  </relationship>  $br $br

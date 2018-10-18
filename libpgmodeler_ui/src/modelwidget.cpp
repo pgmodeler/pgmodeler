@@ -79,10 +79,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	QLabel *label=nullptr;
 	QGridLayout *grid=nullptr;
 	QAction *action=nullptr;
-	QString str_ico, str_txt;
-	QStringList rel_types_cod={QString("11"), QString("1n"), QString("nn"), QString("dep"), QString("gen") },
-			rel_labels={ trUtf8("One to One (1-1)"), trUtf8("One to Many (1-n)"),
-						 trUtf8("Many to Many (n-n)"), trUtf8("Copy"), trUtf8("Inheritance") };
+	QString str_ico;
+	QStringList rel_types_cod={QString("11"), QString("1n"), QString("nn"), QString("dep"), QString("gen"), QString("part") };
 	ObjectType types[]={ OBJ_TABLE, OBJ_VIEW, OBJ_TEXTBOX, OBJ_RELATIONSHIP,
 						 OBJ_CAST, OBJ_CONVERSION, OBJ_DOMAIN,
 						 OBJ_FUNCTION, OBJ_AGGREGATE, OBJ_LANGUAGE,
@@ -94,7 +92,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	unsigned i, obj_cnt=sizeof(types)/sizeof(ObjectType),
 			rel_types_id[]={ BaseRelationship::RELATIONSHIP_11, BaseRelationship::RELATIONSHIP_1N,
 							 BaseRelationship::RELATIONSHIP_NN, BaseRelationship::RELATIONSHIP_DEP,
-							 BaseRelationship::RELATIONSHIP_GEN };
+							 BaseRelationship::RELATIONSHIP_GEN, BaseRelationship::RELATIONSHIP_PART};
 
 	current_zoom=1;
 	modified=panning_mode=false;
@@ -110,17 +108,17 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	tmp_file.close();
 
 	protected_model_frm=new QFrame(this);
-	protected_model_frm->setGeometry(QRect(20, 10, 511, 48));
-	protected_model_frm->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-	protected_model_frm->setMinimumSize(QSize(0, 48));
-	protected_model_frm->setMaximumHeight(48);
+	protected_model_frm->setGeometry(QRect(20, 10, 500, 25));
+	protected_model_frm->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+	protected_model_frm->setMinimumSize(QSize(0, 25));
 	protected_model_frm->setFrameShape(QFrame::StyledPanel);
 	protected_model_frm->setFrameShadow(QFrame::Raised);
 	protected_model_frm->setVisible(false);
 
 	label=new QLabel(protected_model_frm);
-	label->setMinimumSize(QSize(32, 32));
-	label->setMaximumSize(QSize(32, 32));
+	label->setMinimumSize(QSize(20, 20));
+	label->setMaximumSize(QSize(20, 20));
+	label->setScaledContents(true);
 	label->setPixmap(QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")));
 
 	grid=new QGridLayout;
@@ -152,7 +150,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	viewport=new QGraphicsView(scene);
 	updateRenderHints();
-	viewport->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+	viewport->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
 	//Force the scene to be drawn from the left to right and from top to bottom
 	viewport->setAlignment(Qt::AlignLeft | Qt::AlignTop);
@@ -375,9 +373,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	for(int i=0; i < rel_types_cod.size(); i++)
 	{
 		str_ico=BaseObject::getSchemaName(OBJ_RELATIONSHIP) + rel_types_cod[i];
-		str_txt=rel_labels[i];
 
-		action=new QAction(QIcon(PgModelerUiNS::getIconPath(str_ico)), str_txt, this);
+		action=new QAction(QIcon(PgModelerUiNS::getIconPath(str_ico)),
+						   BaseRelationship::getRelationshipTypeName(rel_types_id[i], false), this);
 
 		//Storing a unique identifier for the relationship type
 		action->setData(QVariant(OBJ_RELATIONSHIP + rel_types_id[i]));
@@ -1604,18 +1602,25 @@ int ModelWidget::openEditingForm(QWidget *widget, unsigned button_conf)
 {
 	BaseForm editing_form(this);
 	BaseObjectWidget *base_obj_wgt=qobject_cast<BaseObjectWidget *>(widget);
+	QString class_name = widget->metaObject()->className();
 	int res = 0;
 
 	if(base_obj_wgt)
+	{
+		BaseRelationship *rel = dynamic_cast<BaseRelationship *>(base_obj_wgt->getHandledObject());
 		editing_form.setMainWidget(base_obj_wgt);
+
+		if(rel)
+			class_name.prepend(rel->getRelationshipTypeName().replace(QRegExp("( )+|(\\-)+"), QString()));
+	}
 	else
 		editing_form.setMainWidget(widget);
 
 	editing_form.setButtonConfiguration(button_conf);
 
-	GeneralConfigWidget::restoreWidgetGeometry(&editing_form, widget->metaObject()->className());
+	GeneralConfigWidget::restoreWidgetGeometry(&editing_form, class_name);
 	res = editing_form.exec();
-	GeneralConfigWidget::saveWidgetGeometry(&editing_form, widget->metaObject()->className());
+	GeneralConfigWidget::saveWidgetGeometry(&editing_form, class_name);
 
 	return(res);
 }
@@ -2854,10 +2859,10 @@ void ModelWidget::removeObjects(bool cascade)
 						parent_type=(tab_obj ? tab_obj->getParentTable()->getObjectType() : OBJ_DATABASE);
 
 						objs_map[object->getObjectId()]=std::make_tuple(object,
-																														obj_name,
-																														obj_type,
-																														parent_name,
-																														parent_type);
+																		obj_name,
+																		obj_type,
+																		parent_name,
+																		parent_type);
 					}
 				}
 
@@ -2882,7 +2887,7 @@ void ModelWidget::removeObjects(bool cascade)
 					else if(parent_type!=OBJ_DATABASE)
 					{
 						/* If the parent table does not exist on the model of the object to be removed
-				 does not exists in parent table, it'll not be processed */
+						 * does not exists in parent table, it'll not be processed */
 						table=dynamic_cast<BaseTable *>(db_model->getObject(parent_name, parent_type));
 						if(!table || (table && table->getObjectIndex(obj_name, obj_type) < 0))
 							continue;
@@ -2930,8 +2935,9 @@ void ModelWidget::removeObjects(bool cascade)
 								db_model->removePermissions(tab_obj);
 
 								aux_table=dynamic_cast<Table *>(table);
+
 								if(aux_table && obj_type==OBJ_CONSTRAINT &&
-										dynamic_cast<Constraint *>(tab_obj)->getConstraintType()==ConstraintType::foreign_key)
+								   dynamic_cast<Constraint *>(tab_obj)->getConstraintType()==ConstraintType::foreign_key)
 									db_model->updateTableFKRelationships(aux_table);
 
 								table->setModified(true);

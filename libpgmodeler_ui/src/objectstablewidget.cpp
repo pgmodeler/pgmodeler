@@ -41,6 +41,12 @@ ObjectsTableWidget::ObjectsTableWidget(unsigned button_conf, bool conf_exclusion
 		emit s_cellClicked(row, col);
 	});
 
+	connect(resize_cols_tb, &QToolButton::clicked, [&](){
+	  table_tbw->resizeColumnsToContents();
+	  table_tbw->resizeRowsToContents();
+	  table_tbw->horizontalHeader()->setSectionResizeMode(table_tbw->horizontalHeader()->count() - 1, QHeaderView::Stretch);
+	});
+
 	this->conf_exclusion=conf_exclusion;
 
 	setButtonConfiguration(button_conf);
@@ -137,6 +143,14 @@ void ObjectsTableWidget::setHeaderLabel(const QString &label, unsigned col_idx)
 
 	item=table_tbw->horizontalHeaderItem(col_idx);
 	item->setText(label);
+}
+
+void ObjectsTableWidget::setHeaderVisible(unsigned col_idx, bool visible)
+{
+  if(col_idx >= static_cast<unsigned>(table_tbw->columnCount()))
+	  throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+  table_tbw->horizontalHeader()->setSectionHidden(col_idx, !visible);
 }
 
 void ObjectsTableWidget::setHeaderIcon(const QIcon &icon, unsigned col_idx)
@@ -595,6 +609,9 @@ void ObjectsTableWidget::setButtonsEnabled(unsigned button_conf, bool value)
 
 	if((button_conf & DUPLICATE_BUTTON) == DUPLICATE_BUTTON)
 		duplicate_tb->setEnabled(value && lin >= 0);
+
+	if((button_conf & RESIZE_COLS_BUTTON) == RESIZE_COLS_BUTTON)
+		resize_cols_tb->setEnabled(value && table_tbw->rowCount() > 0);
 }
 
 void ObjectsTableWidget::setButtonsEnabled(void)

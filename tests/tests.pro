@@ -14,4 +14,5 @@ src/syntaxhighlightertest \
 src/databasemodeltest \
 src/schemaparsertest \
 src/linenumberstest \
+src/partrelationshiptest
 

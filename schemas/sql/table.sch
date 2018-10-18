@@ -18,7 +18,13 @@
   [ UNLOGGED]
 %end
 
-[ TABLE ] {name} ( $br
+[ TABLE ] {name} 
+
+%if ({pgsql-ver} >=f "10.0") %and {partitioned-table} %then [ PARTITION OF ] {partitioned-table} $sp %end
+
+%if %not {partitioned-table} %or ({pgsql-ver} <f "10.0")  %then 
+
+[ (] $br
   %if {copy-table} %then
     $tb LIKE $sp {copy-table}
     %if %not {gen-alter-cmds} %then
@@ -46,8 +52,23 @@
 
 $br )
 
-%if {ancestor-table} %then [ INHERITS(] {ancestor-table} [)] $br %end
-%if {oids} %then [WITH ( OIDS = TRUE )] %end
+%else 
+    %if {partitioned-table} %and {constraints} %then
+        [ (] $br {constraints} [)] $br
+    %end
+%end
+
+%if ({pgsql-ver} >=f "10.0") %and {partitioned-table} %then 
+    %if {partition-bound-expr} %then
+        $br [FOR VALUES ] {partition-bound-expr}
+    %else
+        DEFAULT
+    %end
+%end
+
+%if ({pgsql-ver} >=f "10.0") %and {partitioning} %then $br [PARTITION BY ] {partitioning} [ (] {partitionkey} [)] %end
+%if {ancestor-table} %then [ INHERITS(] {ancestor-table} [)] %end
+%if {oids} %then $br [WITH ( OIDS = TRUE )] %end
 %if {tablespace} %then
  $br [TABLESPACE ] {tablespace}
 %end

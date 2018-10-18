@@ -33,7 +33,7 @@
 
 class BaseType{
 	protected:
-		static const unsigned types_count=258;
+		static const unsigned types_count=261;
 		static QString type_list[types_count];
 
 		//! \brief Index of the type on the type_list vector
@@ -740,6 +740,25 @@ class PolicyCmdType: public BaseType {
 		PolicyCmdType(const QString &type_name);
 		PolicyCmdType(unsigned type_id);
 		PolicyCmdType(void);
+
+		static void getTypes(QStringList&type_list);
+		unsigned operator = (unsigned type_id);
+		unsigned operator = (const QString &type_name);
+};
+
+class PartitioningType: public BaseType {
+	private:
+		static const unsigned offset=258;
+		static const unsigned types_count=3;
+
+	public:
+		static const unsigned range=offset;
+		static const unsigned list=offset+1;
+		static const unsigned hash=offset+2;
+
+		PartitioningType(const QString &type_name);
+		PartitioningType(unsigned type_id);
+		PartitioningType(void);
 
 		static void getTypes(QStringList&type_list);
 		unsigned operator = (unsigned type_id);

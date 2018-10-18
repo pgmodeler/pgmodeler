@@ -30,11 +30,13 @@
 TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 {
 	QGridLayout *grid=nullptr;
+	QVBoxLayout *vbox=nullptr;
 	ObjectsTableWidget *tab=nullptr;
 	ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX, OBJ_POLICY };
 	map<QString, vector<QWidget *> > fields_map;
 	QFrame *frame=nullptr;
 	QPushButton *edt_data_tb=nullptr;
+	QStringList part_types;
 
 	Ui_TableWidget::setupUi(this);
 
@@ -65,13 +67,15 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	parent_tables->setHeaderLabel(trUtf8("Type"), 2);
 	parent_tables->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),2);
 
-	tag_sel=new ObjectSelectorWidget(OBJ_TAG, false, this);
-	dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1,1,3);
+	tag_sel = new ObjectSelectorWidget(OBJ_TAG, false, this);
+	vbox = new QVBoxLayout(tag_sel_parent);
+	vbox->addWidget(tag_sel);
+	vbox->setContentsMargins(0,0,0,0);
 
 	grid=new QGridLayout;
 	grid->addWidget(parent_tables, 0,0,1,1);
 	grid->setContentsMargins(4,4,4,4);
-	attributes_tbw->widget(6)->setLayout(grid);
+	attributes_tbw->widget(7)->setLayout(grid);
 
 	//Configuring the table objects that stores the columns, triggers, constraints, rules and indexes
 	for(unsigned i=0; i <= 5; i++)
@@ -163,9 +167,21 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	objects_tab_map[OBJ_POLICY]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),5);
 	objects_tab_map[OBJ_POLICY]->setHeaderLabel(trUtf8("Alias"), 6);
 
+	partition_keys_tab = new ElementsTableWidget;
+	partition_keys_tab->setEnabled(false);
+	grid = dynamic_cast<QGridLayout *>(attributes_tbw->widget(6)->layout());
+	grid->addWidget(partition_keys_tab, 1, 0, 1, 2);
+
+	PartitioningType::getTypes(part_types);
+	part_types.push_front(trUtf8("None"));
+	partitioning_type_cmb->addItems(part_types);
+
+	connect(partitioning_type_cmb, &QComboBox::currentTextChanged, [&](){
+	  partition_keys_tab->setEnabled(partitioning_type_cmb->currentIndex() != 0);
+	});
+
 	configureFormLayout(table_grid, OBJ_TABLE);
 	configureTabOrder({ tag_sel });
-
 	setMinimumSize(660, 620);
 }
 
@@ -225,6 +241,7 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 		unsigned i, count;
 		Table *aux_tab=nullptr;
 		ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX, OBJ_POLICY };
+		vector<PartitionKey> part_keys;
 
 		if(!table)
 		{
@@ -266,10 +283,31 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 		aux_tab=table->getCopyTable();
 		if(aux_tab)
 		{
+			i = parent_tables->getRowCount();
 			parent_tables->addRow();
 			parent_tables->setCellText(aux_tab->getName(), i, 0);
 			parent_tables->setCellText(aux_tab->getSchema()->getName(), i, 1);
 			parent_tables->setCellText(trUtf8("Copy"), i, 2);
+		}
+
+		aux_tab=table->getPartitionedTable();
+		if(aux_tab)
+		{
+			i = parent_tables->getRowCount();
+			parent_tables->addRow();
+			parent_tables->setCellText(aux_tab->getName(), i, 0);
+			parent_tables->setCellText(aux_tab->getSchema()->getName(), i, 1);
+			parent_tables->setCellText(trUtf8("Partitioned"), i, 2);
+		}
+
+		i = parent_tables->getRowCount();
+		for(auto &tab : table->getPartionTables())
+		{
+			parent_tables->addRow();
+			parent_tables->setCellText(tab->getName(), i, 0);
+			parent_tables->setCellText(tab->getSchema()->getName(), i, 1);
+			parent_tables->setCellText(trUtf8("Partition"), i, 2);
+			i++;
 		}
 
 		parent_tables->clearSelection();
@@ -281,6 +319,14 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 
 		tag_sel->setModel(this->model);
 		tag_sel->setSelectedObject(table->getTag());
+
+		int idx = partitioning_type_cmb->findText(~table->getPartitioningType());
+		partitioning_type_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
+		partition_keys_tab->setAttributes<PartitionKey>(model, table);
+
+		part_keys = table->getPartitionKeys();
+		partition_keys_tab->setAttributes<PartitionKey>(this->model, table);
+		partition_keys_tab->setElements<PartitionKey>(part_keys);
 	}
 	catch(Exception &e)
 	{
@@ -762,7 +808,9 @@ void TableWidget::applyConfiguration(void)
 		Constraint *pk = nullptr;
 		vector<BaseRelationship *> rels;
 		vector<Column *> pk_cols;
+		vector<PartitionKey> part_keys;
 		ObjectsTableWidget *col_tab = objects_tab_map[OBJ_COLUMN];
+		PartitioningType part_type;
 
 		if(!this->new_object)
 			op_list->registerObject(this->object, Operation::OBJECT_MODIFIED);
@@ -776,6 +824,20 @@ void TableWidget::applyConfiguration(void)
 		table->setRLSForced(force_rls_chk->isChecked());
 		table->setUnlogged(unlogged_chk->isChecked());
 		table->setTag(dynamic_cast<Tag *>(tag_sel->getSelectedObject()));
+
+		part_type = partitioning_type_cmb->currentIndex() == 0 ? BaseType::null : PartitioningType(partitioning_type_cmb->currentText());
+		table->setPartitioningType(part_type);
+
+		if(part_type != BaseType::null)
+		{
+			partition_keys_tab->getElements<PartitionKey>(part_keys);
+			table->addPartitionKeys(part_keys);
+
+			if(part_keys.empty())
+				part_type = BaseType::null;
+		}
+		else
+			table->removePartitionKeys();
 
 		BaseObjectWidget::applyConfiguration();
 

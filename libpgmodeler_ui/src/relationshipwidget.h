@@ -36,14 +36,17 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		Q_OBJECT
 
 		static const unsigned GENERAL_TAB=0,
-		ATTRIBUTES_TAB=1,
-		CONSTRAINTS_TAB=2,
-		SPECIAL_PK_TAB=3,
-		ADVANCED_TAB=4;
+		SETTINGS_TAB=1,
+		ATTRIBUTES_TAB=2,
+		CONSTRAINTS_TAB=3,
+		SPECIAL_PK_TAB=4,
+		ADVANCED_TAB=5;
 
 		HintTextWidget *gen_tab_name_ht, *ref_table_ht, *recv_table_ht, *identifier_ht, *single_pk_ht;
 
 		ColorPickerWidget *color_picker;
+
+		NumberedTextEditor *part_bound_expr_txt;
 
 		//! \brief Stores the tab objects to change the configuration of the form depending on the type of the relationship
 		QWidgetList tabs;
@@ -53,7 +56,8 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 
 		SyntaxHighlighter *table1_hl,
 		*table2_hl,
-		*patterns_hl[7];
+		*patterns_hl[7],
+		*part_bound_expr_hl;
 
 		//! \brief Table widgets that stores the attributes, constraint and advanced objects of relationship
 		ObjectsTableWidget *attributes_tab,
@@ -93,9 +97,9 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		void selectCopyOptions(void);
 		void listSpecialPkColumns(void);
 		void duplicateObject(int curr_row, int new_row);
-
 		void useFKGlobalSettings(bool value);
 		void usePatternGlobalSettings(bool value);
+		void generateBoundingExpr(void);
 
 	public slots:
 		void applyConfiguration(void);

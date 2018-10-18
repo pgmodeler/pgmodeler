@@ -51,9 +51,10 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	QTextCharFormat fmt;
 	QString name_attrib, schema_name_attrib, title_color_attrib;
 	QPen pen;
-	Schema *schema=dynamic_cast<Schema *>(object->getSchema());
+	Schema *schema=nullptr;
 	QFont font;
-	Tag *tag=dynamic_cast<BaseTable *>(object)->getTag();
+	Tag *tag=nullptr;
+	Table *table = dynamic_cast<Table *>(object);
 
 	//Raises an error if the object related to the title is not allocated
 	if(!object)
@@ -62,6 +63,9 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	else if(object->getObjectType()!=OBJ_TABLE  &&
 			object->getObjectType()!=OBJ_VIEW)
 		throw Exception(ERR_OPR_OBJ_INV_TYPE, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
+	schema=dynamic_cast<Schema *>(object->getSchema());
+	tag=dynamic_cast<BaseTable *>(object)->getTag();
 
 	if(object->getObjectType()==OBJ_VIEW && !tag)
 	{
@@ -118,7 +122,8 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	if(tag)
 		pen.setColor(tag->getElementColor(title_color_attrib, Tag::BORDER_COLOR));
 
-	if(object->getObjectType()==OBJ_VIEW)
+	if(object->getObjectType()==OBJ_VIEW ||
+	   (table && table->isPartition()))
 		pen.setStyle(Qt::DashLine);
 
 	box->setPen(pen);

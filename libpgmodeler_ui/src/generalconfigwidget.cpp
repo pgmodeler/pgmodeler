@@ -553,11 +553,11 @@ void GeneralConfigWidget::saveConfiguration(void)
 					itr->first==ParsersAttributes::SQL_TOOL)
 			{
 				schparser.ignoreUnkownAttributes(true);
-                schparser.ignoreEmptyAttributes(true);
+				schparser.ignoreEmptyAttributes(true);
 				config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DOCK_WIDGETS]+=
-					schparser.getCodeDefinition(widget_sch, itr->second);
+						schparser.getCodeDefinition(widget_sch, itr->second);
 				schparser.ignoreUnkownAttributes(false);
-                schparser.ignoreEmptyAttributes(false);
+				schparser.ignoreEmptyAttributes(false);
 			}
 
 			itr++;

@@ -871,7 +871,7 @@ void RelationshipView::configureLine(void)
 						line = QLineF(tables[1]->getCenter(), points[points.size() - 1]);
 				}
 
-				if(rel_type==BaseRelationship::RELATIONSHIP_GEN || rel_type==BaseRelationship::RELATIONSHIP_DEP)
+				if(rel_type==BaseRelationship::RELATIONSHIP_GEN || rel_type==BaseRelationship::RELATIONSHIP_DEP || rel_type==BaseRelationship::RELATIONSHIP_PART)
 					size_factor = 0.40;
 				else if(use_crows_foot)
 				{
@@ -884,7 +884,8 @@ void RelationshipView::configureLine(void)
 					else
 						size_factor = 1.5 * font_factor;
 
-					if(rel_type == BaseRelationship::RELATIONSHIP_GEN ||
+					if(rel_type == BaseRelationship::RELATIONSHIP_PART ||
+					   rel_type == BaseRelationship::RELATIONSHIP_GEN ||
 						 rel_type == BaseRelationship::RELATIONSHIP_DEP ||
 						 rel_type == BaseRelationship::RELATIONSHIP_11 ||
 						 (tab_idx == 0 && rel_type == BaseRelationship::RELATIONSHIP_1N) ||
@@ -1007,8 +1008,9 @@ void RelationshipView::configureLine(void)
 				pen=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP);
 		}
 
-		//For dependency relationships the line is dashed
-		if(rel_type==BaseRelationship::RELATIONSHIP_DEP)
+		//For dependency/partition relationships the line is dashed
+		if(rel_type==BaseRelationship::RELATIONSHIP_DEP ||
+		   rel_type == BaseRelationship::RELATIONSHIP_PART)
 			pen.setStyle(Qt::DashLine);
 
 		/* For identifier relationships an additional point is created on the center of the
@@ -1125,6 +1127,7 @@ void RelationshipView::configureLine(void)
 			 (!base_rel->isSelfRelationship() &&
 				((line_conn_mode != CONNECT_TABLE_EGDES && rel_type==BaseRelationship::RELATIONSHIP_DEP) ||
 				 (line_conn_mode != CONNECT_TABLE_EGDES && rel_type==BaseRelationship::RELATIONSHIP_GEN) ||
+				 (line_conn_mode != CONNECT_TABLE_EGDES && rel_type==BaseRelationship::RELATIONSHIP_PART) ||
 				 (line_conn_mode != CONNECT_TABLE_EGDES && rel_type==BaseRelationship::RELATIONSHIP_NN  && !use_crows_foot))))
 		{
 			for(i=0; i < 2; i++)
@@ -1228,7 +1231,14 @@ void RelationshipView::configureLine(void)
 			tool_tip=base_rel->getName(true) +
 					 QString(" (") + base_rel->getTypeName() + QString(")");
 
-		tool_tip += QString("\nId: %1").arg(base_rel->getObjectId());
+		tool_tip += QString("\nId: %1\n").arg(base_rel->getObjectId()) +
+								TableObjectView::CONSTR_DELIM_START +
+								QString(" %1 ").arg(base_rel->getRelationshipTypeName()) +
+								TableObjectView::CONSTR_DELIM_END;
+
+		if(!base_rel->getAlias().isEmpty())
+			tool_tip += QString("\nAlias: %1").arg(base_rel->getAlias());
+
 		this->setToolTip(tool_tip);
 
 		for(i=0; i < 3; i++)
@@ -1238,6 +1248,18 @@ void RelationshipView::configureLine(void)
 		}
 
 		descriptor->setToolTip(tool_tip);
+
+		for(auto &curve : curves)
+			curve->setToolTip(tool_tip);
+
+		for(int i = 0; i < 2; i++)
+		{
+		 if(cf_descriptors[i])
+			 cf_descriptors[i]->setToolTip(tool_tip);
+
+		 if(round_cf_descriptors[i])
+			 round_cf_descriptors[i]->setToolTip(tool_tip);
+		}
 	}
 }
 
@@ -1264,7 +1286,8 @@ void RelationshipView::configureDescriptor(void)
 		//Using the default color
 		pen=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP);
 
-	if(rel_type==BaseRelationship::RELATIONSHIP_DEP)
+	if(rel_type==BaseRelationship::RELATIONSHIP_DEP ||
+	   rel_type == BaseRelationship::RELATIONSHIP_PART)
 		pen.setStyle(Qt::DashLine);
 
 	descriptor->setPen(pen);
@@ -1290,10 +1313,16 @@ void RelationshipView::configureDescriptor(void)
 		descriptor->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::RELATIONSHIP));
 
 	if(rel_type==BaseRelationship::RELATIONSHIP_DEP ||
-			rel_type==BaseRelationship::RELATIONSHIP_GEN)
+	   rel_type==BaseRelationship::RELATIONSHIP_GEN)
 	{
-		pol.append(QPointF(0,0)); pol.append(QPointF(18,10));
-		pol.append(QPointF(0,20)); pol.append(QPointF(0,10));
+	  pol.append(QPointF(0,0)); pol.append(QPointF(18,10));
+	  pol.append(QPointF(0,20)); pol.append(QPointF(0,10));
+	}
+	else if(rel_type==BaseRelationship::RELATIONSHIP_PART)
+	{
+	  pol.append(QPointF(0,4)); pol.append(QPointF(4,0));
+	  pol.append(QPointF(18,12)); pol.append(QPointF(4,24));
+	  pol.append(QPointF(0,20)); pol.append(QPointF(10,12));
 	}
 	else
 	{
@@ -1329,7 +1358,9 @@ void RelationshipView::configureDescriptor(void)
 				/* Workaround to avoid the inheritance / dependency relationship to get the descriptor rotated to the wrong side
 				 * We create and auxiliary line with points from the position at 65% of the curve to the 45% and use the
 				 * angle of that line instead of the angle at 50% of the curve */
-				if((rel_type == BaseRelationship::RELATIONSHIP_DEP || rel_type == BaseRelationship::RELATIONSHIP_GEN) &&
+				if((rel_type == BaseRelationship::RELATIONSHIP_DEP ||
+					rel_type == BaseRelationship::RELATIONSHIP_GEN ||
+					rel_type == BaseRelationship::RELATIONSHIP_PART) &&
 					 curve->isControlPointsInverted() && !curve->isSimpleCurve() && !curve->isStraightLine())
 				{
 					QLineF lin_aux = QLineF(path.pointAtPercent(0.65), path.pointAtPercent(0.45));
@@ -1398,12 +1429,13 @@ void RelationshipView::configureDescriptor(void)
 	this->configurePositionInfo();
 
 	/* If the crow's feet is enabled the relationship descriptor is hidden
-	 * for 1:1, 1:n, n:n and fk relationship. For generalization and dependency
+	 * for 1:1, 1:n, n:n and fk relationship. For generalization, dependency and partitioning
 	 * relationships the descriptor is still displayed. */
 	descriptor->setVisible(!use_crows_foot ||
 												 (use_crows_foot && (
 														rel_type == BaseRelationship::RELATIONSHIP_DEP ||
-														rel_type == BaseRelationship::RELATIONSHIP_GEN)));
+														rel_type == BaseRelationship::RELATIONSHIP_GEN ||
+														rel_type == BaseRelationship::RELATIONSHIP_PART)));
 	obj_shadow->setVisible(descriptor->isVisible());
 }
 
@@ -1828,7 +1860,8 @@ void RelationshipView::configureLabels(void)
 
 	if(!use_crows_foot &&
 		 rel_type!=BaseRelationship::RELATIONSHIP_GEN &&
-		 rel_type!=BaseRelationship::RELATIONSHIP_DEP)
+		 rel_type!=BaseRelationship::RELATIONSHIP_DEP &&
+		 rel_type!=BaseRelationship::RELATIONSHIP_PART)
 	{
 		QPointF pi, pf, p_int, pos;
 		unsigned idx, i1;

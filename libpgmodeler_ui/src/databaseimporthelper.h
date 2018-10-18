@@ -125,7 +125,10 @@ class DatabaseImportHelper: public QObject {
 		
 		//! \brief Reference for the database model instance of the model widget
 		DatabaseModel *dbmodel;
-		
+
+		//! \brief Stored the table created (value) from the oid (key) so the partitioning hierarchy (if existent) can be reconstructed
+		map<unsigned, Table *> imported_tables;
+
 		XMLParser *xmlparser;
 		
 		SchemaParser schparser;
@@ -159,8 +162,9 @@ class DatabaseImportHelper: public QObject {
 		void createEventTrigger(attribs_map &attribs);
 		void __createTableInheritances(void);
 		void createTableInheritances(void);
+		void createTablePartitionings(void);
 		void destroyDetachedColumns(void);
-		
+
 		//! \brief Tries to assign imported sequences that are related to nextval() calls used in columns default values
 		void assignSequencesToColumns(void);
 		

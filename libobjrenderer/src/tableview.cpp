@@ -42,6 +42,7 @@ void TableView::configureObject(void)
 
 	//Configures the table title
 	title->configureObject(table);
+
 	px=0;
 
 	old_width=this->bounding_rect.width();
@@ -158,6 +159,9 @@ void TableView::configureObject(void)
 		bodies[obj_idx]->setRect(QRectF(0,0, width, groups[obj_idx]->boundingRect().height() + (2 * VERT_SPACING)));
 		pen=this->getBorderStyle(atribs[obj_idx]);
 
+		if(table->isPartition())
+		  pen.setStyle(Qt::DashLine);
+
 		if(!tag)
 			bodies[obj_idx]->setBrush(this->getFillStyle(atribs[obj_idx]));
 		else
@@ -198,6 +202,19 @@ void TableView::configureObject(void)
 	}
 
 	BaseTableView::__configureObject(width);
+
+	if(table->isPartitioned())
+		table_tooltip += QString("\n%1 (%2)").arg(trUtf8("Partitioned")).arg(~table->getPartitioningType());
+
+	if(table->isPartition())
+		table_tooltip += QString("\n%1 of %2").arg(trUtf8("Partition")).arg(table->getPartitionedTable()->getSignature(true));
+
+	if(!table->getAlias().isEmpty())
+		table_tooltip += QString("\nAlias: %1").arg(table->getAlias());
+
+	if(!table->getComment().isEmpty())
+		table_tooltip += QString("\n---\n%1").arg(table->getComment());
+
 	BaseObjectView::__configureObject();
 	BaseObjectView::configureObjectShadow();
 	BaseObjectView::configureObjectSelection();

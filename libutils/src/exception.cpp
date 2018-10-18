@@ -67,7 +67,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_REF_ROLE_INV_INDEX", QT_TR_NOOP("Reference to a role which index is out of role list bounds!")},
 	{"ERR_INS_EMPTY_RULE_COMMAND", QT_TR_NOOP("Insertion of empty command to the rule!")},
 	{"ERR_REF_RULE_CMD_INV_INDEX", QT_TR_NOOP("Reference to a command which index is out of the command list bounds!")},
-	{"ERR_INV_INH_COPY_RELATIONSHIP", QT_TR_NOOP("Is not possible to create a self generalization/copy relationship! The table can not inherit or copy their own attributes!")},
+	{"ERR_INV_INH_COPY_PART_RELATIONSHIP", QT_TR_NOOP("It's not possible to create a self generalization/copy/partition relationship! The table can not inherit or copy its own attributes or be a partition of itself!")},
 	{"ERR_ASG_OBJ_BELONGS_OTHER_TABLE", QT_TR_NOOP("Assignment of an object that already belongs to another table!")},
 	{"ERR_ASG_SEQ_DIF_TABLE_SCHEMA", QT_TR_NOOP("Assignment of a schema to the sequence which differs from the schema of the owner table!")},
 	{"ERR_ASG_INV_VALUE_SEQ_ATTRIBS", QT_TR_NOOP("Assignment of an invalid value to one of the sequence attributes!")},
@@ -119,7 +119,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_DUPLIC_COLS_COPY_REL", QT_TR_NOOP("Unable to create a copy relationship because the column `%1' in table `%2' already exists in table `%3'!")},
 	{"ERR_INCOMP_COLS_INHERIT_REL", QT_TR_NOOP("Unable to create the generalization relationship because the column `%1' in table `%2' can not be merged with the column `%3' of table `%4' because they have incompatible types!")},
 	{"ERR_INCOMP_CONSTRS_INHERIT_REL", QT_TR_NOOP("Unable to create the generalization relationship because the constraint `%1' in table `%2' can not be merged with the constraint `%3' of table `%4' due to their incompatible composition!")},
-	{"ERR_ASG_OBJ_INV_REL_TYPE", QT_TR_NOOP("An attribute can not be added to a copy or generalization relationship!")},
+	{"ERR_ASG_OBJ_INV_REL_TYPE", QT_TR_NOOP("An attribute can not be added to a copy, generalization or partitioning relationship!")},
 	{"ERR_ASG_FOREIGN_KEY_REL", QT_TR_NOOP("A foreign key can not be added to a relationship because is created automatically when this is connected!")},
 	{"ERR_REF_OBJ_INEXISTS_MODEL", QT_TR_NOOP("The object `%1' (%2) is referencing the object `%3' (%4) which was not found in the model!")},
 	{"ERR_REF_INEXIST_USER_TYPE", QT_TR_NOOP("Reference to an user-defined data type that not exists in the model!")},
@@ -204,7 +204,9 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_OBJECT_REFERENCING_ITSELF", QT_TR_NOOP("The object `%1' (%2) cannot reference itself! This operation is not permitted for this kind of object!")},
 	{"ERR_ASG_INV_OPFAM_OPCLSELEM", QT_TR_NOOP("Only operator families which uses `btree' as indexing method are accepted by operator class elements!")},
 	{"ERR_REF_INV_LIKE_OP_TYPE", QT_TR_NOOP("Reference to an invalid copy table option!")},
-	{"ERR_COPY_REL_TAB_DEFINED", QT_TR_NOOP("Copy relationship between tables `%1' and `%2' cannot be done because the first one already copies attributes from `%3'! Tables can have only one copy table!")},
+	{"ERR_COPY_REL_TAB_DEFINED", QT_TR_NOOP("The copy relationship between the tables `%1' and `%2' cannot be done because the first one already copies attributes from `%3'! Tables can have only one copy table!")},
+	{"ERR_PART_REL_PATITIONED_DEFINED", QT_TR_NOOP("The paritioning relationship between the tables `%1' and `%2' cannot be done because the first one is already a partition of the table `%3'! Partition tables can be participating of only one partition hierarchy at a time!")},
+	{"ERR_INV_REL_TYPE_FOR_PART_TABLES", QT_TR_NOOP("The relationship between the tables `%1' and `%2' can't be created because the first entity is part of a partitioning hierachy! The table `%3' can't be used in `generalization', `copy' and `one-to-one' relationships. In `one-to-many' and `many-to-many' relationships the mentioned table can't be referenced by the generated foreign key(s).")},
 	{"ERR_TABLE_TRIG_INSTEADOF_FIRING",QT_TR_NOOP("The INSTEAD OF mode cannot be used on triggers that belongs to tables! This is available only for view triggers!")},
 	{"ERR_TRIGGER_INV_TRUNCATE_USAGE",QT_TR_NOOP("The TRUNCATE event can only be used when the trigger executes for each statement and belongs to a table!")},
 	{"ERR_TRIGGER_INV_INSTEADOF_USAGE",QT_TR_NOOP("The INSTEAD OF mode cannot be used on view triggers that executes for each statement!")},
@@ -251,7 +253,14 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_NULL_PK_COLUMN", QT_TR_NOOP("The column `%1' must be `NOT NULL' because it composes the primary key of the table `%2'. You need to remove the column from the mentioned contraint in order to disable the `NOT NULL' on it!")},
 	{"ERR_ASG_INV_IDENTITY_COLUMN", QT_TR_NOOP("The identity column `%1' has an invalid data type! The data type must be `smallint', `integer' or `bigint'.")},
 	{"ERR_REF_INV_AFFECTED_CMD", QT_TR_NOOP("Reference to an invalid affected command in policy `%1'!")},
-	{"ERR_REF_INV_SPECIAL_ROLE", QT_TR_NOOP("Reference to an invalid special role in policy `%1'!")}
+	{"ERR_REF_INV_SPECIAL_ROLE", QT_TR_NOOP("Reference to an invalid special role in policy `%1'!")},
+	{"ERR_INV_COLUMN_COUNT_PART_REL", QT_TR_NOOP("Unable to create a partition relationship because the partion table `%1' is not empty or has columns that are not present on the partitioned table `%2'!")},
+	{"ERR_INV_PARTITIONIG_TYPE_PART_REL", QT_TR_NOOP("Unable to create a partition relationship between the tables `%1' (partition) and `%2' (partitioned) because no partitioning type is defined on the latter!")},
+	{"ERR_INV_PARTITION_KEY_COUNT", QT_TR_NOOP("Invalid amount of partition keys being assinged to the table `%1'! Multiples partition keys are allowed only on `HASH' and `RANGE' partitioning strategies.")},
+	{"ERR_PART_KEY_REF_OBJ_INEXISTS_MODEL", QT_TR_NOOP("A partition key of the table `%1' is referencing the object `%3' (%4) which was not found in the model!")},
+	{"ERR_ASG_INV_COLUMN_PARTITION_KEY", QT_TR_NOOP("The column `%1' can't be assigned to a partition key because it was created by a relatinship and this kind of operation is not yet supported! HINT: create the column manually on the table and then create the partition key using it.")},
+	{"ERR_REM_COL_REF_PARTITION_KEY", QT_TR_NOOP("The column `%1' on the table `%2' can't be removed because it is being referenced by one or more patition keys!")},
+
 };
 
 Exception::Exception(void)

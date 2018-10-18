@@ -41,8 +41,14 @@ Table::Table(void) : BaseTable()
 	attributes[ParsersAttributes::INITIAL_DATA]=QString();
 	attributes[ParsersAttributes::RLS_ENABLED]=QString();
 	attributes[ParsersAttributes::RLS_FORCED]=QString();
+	attributes[ParsersAttributes::PARTITIONING]=QString();
+	attributes[ParsersAttributes::PARTITION_KEY]=QString();
+	attributes[ParsersAttributes::PARTITIONED_TABLE]=QString();
+	attributes[ParsersAttributes::PARTITION_BOUND_EXPR]=QString();
 
-	copy_table=nullptr;
+	copy_table=partitioned_table=nullptr;
+	partitioning_type=BaseType::null;
+
 	this->setName(trUtf8("new_table").toUtf8());
 }
 
@@ -57,6 +63,7 @@ Table::~Table(void)
 	}
 
 	ancestor_tables.clear();
+	partition_tables.clear();
 }
 
 void Table::setName(const QString &name)
@@ -97,6 +104,22 @@ void Table::setRLSForced(bool value)
 	rls_forced = value;
 }
 
+void Table::setPartitioningType(PartitioningType part_type)
+{
+  setCodeInvalidated(partitioning_type != part_type);
+  partitioning_type = part_type;
+}
+
+PartitioningType Table::getPartitioningType(void)
+{
+  return(partitioning_type);
+}
+
+Table *Table::getPartitionedTable(void)
+{
+	return(partitioned_table);
+}
+
 void Table::setProtected(bool value)
 {
 	ObjectType obj_types[]={ OBJ_COLUMN, OBJ_CONSTRAINT,
@@ -132,7 +155,7 @@ void Table::setProtected(bool value)
 
 void Table::setCommentAttribute(TableObject *tab_obj)
 {
-	if(tab_obj && !tab_obj->getComment().isEmpty())
+	if(tab_obj && !tab_obj->getComment().isEmpty() && tab_obj->isDeclaredInTable())
 	{
 		attribs_map attribs;
 
@@ -203,7 +226,8 @@ void Table::setColumnsAttribute(unsigned def_type, bool incl_rel_added_cols)
 		/* Do not generates the column code definition when it is not included by
 		 relatoinship, in case of XML definition. */
 		if((def_type==SchemaParser::SQL_DEFINITION && !columns[i]->isAddedByCopy() && !columns[i]->isAddedByGeneralization()) ||
-		   (def_type==SchemaParser::XML_DEFINITION && (!columns[i]->isAddedByRelationship() || (incl_rel_added_cols && columns[i]->isAddedByRelationship()))))
+			 (def_type==SchemaParser::SQL_DEFINITION && columns[i]->isAddedByCopy() && this->isPartition()) ||
+			 (def_type==SchemaParser::XML_DEFINITION && (!columns[i]->isAddedByRelationship() || (incl_rel_added_cols && columns[i]->isAddedByRelationship()))))
 		{
 			str_cols+=columns[i]->getCodeDefinition(def_type);
 
@@ -362,7 +386,7 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 
 			//Raises an error if the user try to set the table as ancestor/copy of itself
 			else if((obj_type==OBJ_TABLE || obj_type==BASE_TABLE) && obj==this)
-				throw Exception(ERR_INV_INH_COPY_RELATIONSHIP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(ERR_INV_INH_COPY_PART_RELATIONSHIP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			switch(obj_type)
 			{
@@ -519,7 +543,41 @@ void Table::addPolicy(Policy *pol, int idx_pol)
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+  }
+}
+
+void Table::setPartionedTable(Table *table)
+{
+	setCodeInvalidated(partitioned_table != table);
+
+	if(table != partitioned_table && partitioned_table)
+		partitioned_table->removePartitionTable(this);
+
+	partitioned_table = table;
+
+	if(partitioned_table)
+		partitioned_table->addPartitionTable(this);
+}
+
+void Table::setPartitionBoundingExpr(const QString part_bound_expr)
+{
+	setCodeInvalidated(part_bounding_expr != part_bound_expr);
+	part_bounding_expr = part_bound_expr;
+}
+
+QString Table::getPartitionBoundingExpr(void)
+{
+	return(part_bounding_expr);
+}
+
+vector<Table *> Table::getPartionTables(void)
+{
+	return(partition_tables);
+}
+
+bool Table::isPartitionTableExists(Table *table, bool compare_names)
+{
+	return(getPartitionTableIndex(table, compare_names) >= 0);
 }
 
 void Table::addConstraint(Constraint *constr, int idx)
@@ -546,6 +604,41 @@ void Table::addAncestorTable(Table *tab, int idx)
 	}
 }
 
+void Table::addPartitionTable(Table *tab)
+{
+	if(tab && std::find(partition_tables.begin(), partition_tables.end(), tab) == partition_tables.end())
+		partition_tables.push_back(tab);
+}
+
+void Table::removePartitionTable(Table *tab)
+{
+	int idx = getPartitionTableIndex(tab, false);
+
+	if(idx >= 0)
+		partition_tables.erase(partition_tables.begin() + idx);
+}
+
+int Table::getPartitionTableIndex(Table *tab, bool compare_names)
+{
+	if(!tab)
+		return(-1);
+
+	vector<Table *>::iterator itr = partition_tables.begin();
+
+	while(itr != partition_tables.end())
+	{
+		if(*itr == tab || (compare_names && tab->getName(true) == (*itr)->getName(true)))
+			break;
+
+		itr++;
+	}
+
+	if(itr == partition_tables.end())
+		return(-1);
+
+	return(itr - partition_tables.begin());
+}
+
 void Table::setCopyTable(Table *tab)
 {
 	setCodeInvalidated(copy_table != tab);
@@ -562,6 +655,47 @@ void Table::setCopyTableOptions(CopyOptions like_op)
 		setCodeInvalidated(copy_op != like_op);
 		this->copy_op=like_op;
 	}
+}
+
+void Table::addPartitionKeys(vector<PartitionKey> &part_keys)
+{
+	vector<PartitionKey> part_keys_bkp = partition_keys;
+
+	if(partitioning_type == BaseType::null)
+		return;
+
+	if(partitioning_type == PartitioningType::list && part_keys.size() > 1)
+		throw Exception(Exception::getErrorMessage(ERR_INV_PARTITION_KEY_COUNT).arg(this->getSignature()),
+										ERR_INV_PARTITION_KEY_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	partition_keys.clear();
+
+	for(auto &part_key : part_keys)
+	{
+		if(std::find(partition_keys.begin(), partition_keys.end(), part_key) != partition_keys.end())
+		{
+			partition_keys = part_keys_bkp;
+			throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
+
+		if(part_key.getColumn() && part_key.getColumn()->isAddedByRelationship())
+		{
+			partition_keys = part_keys_bkp;
+			throw Exception(Exception::getErrorMessage(ERR_ASG_INV_COLUMN_PARTITION_KEY)
+											.arg(part_key.getColumn()->getSignature(true)),
+											ERR_ASG_INV_COLUMN_PARTITION_KEY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
+
+		partition_keys.push_back(part_key);
+	}
+
+	setCodeInvalidated(true);
+}
+
+void Table::removePartitionKeys(void)
+{
+  partition_keys.clear();
+  setCodeInvalidated(true);
 }
 
 Table *Table::getCopyTable(void)
@@ -677,6 +811,14 @@ void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 						.arg(this->getName(true))
 						.arg(this->getTypeName()),
 						ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			}
+
+			//Raises an error if the column is being referenced by any partition key
+			if(isPartitionKeyRefColumn(column))
+			{
+				throw Exception(Exception::getErrorMessage(ERR_REM_COL_REF_PARTITION_KEY)
+								.arg(column->getName()).arg(this->getName(true)),
+								ERR_REM_COL_REF_PARTITION_KEY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
 			column->setParentTable(nullptr);
@@ -1404,6 +1546,25 @@ bool Table::isConstraintRefColumn(Column *column, ConstraintType constr_type)
 	return(found);
 }
 
+bool Table::isPartitionKeyRefColumn(Column *column)
+{
+	bool found=false;
+
+	if(column)
+	{
+		for(auto &part_key : partition_keys)
+		{
+			if(part_key.getColumn() == column)
+			{
+				found = true;
+				break;
+			}
+		}
+	}
+
+	return(found);
+}
+
 void Table::setGenerateAlterCmds(bool value)
 {
 	setCodeInvalidated(gen_alter_cmds != value);
@@ -1431,40 +1592,55 @@ void Table::updateAlterCmdsStatus(void)
 
 QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 {
-  attributes[ParsersAttributes::OIDS]=(with_oid ? ParsersAttributes::_TRUE_ : QString());
-  attributes[ParsersAttributes::GEN_ALTER_CMDS]=(gen_alter_cmds ? ParsersAttributes::_TRUE_ : QString());
-  attributes[ParsersAttributes::UNLOGGED]=(unlogged ? ParsersAttributes::_TRUE_ : QString());
-  attributes[ParsersAttributes::RLS_ENABLED]=(rls_enabled ? ParsersAttributes::_TRUE_ : QString());
-  attributes[ParsersAttributes::RLS_FORCED]=(rls_forced ? ParsersAttributes::_TRUE_ : QString());
-  attributes[ParsersAttributes::COPY_TABLE]=QString();
-  attributes[ParsersAttributes::ANCESTOR_TABLE]=QString();
-  attributes[ParsersAttributes::TAG]=QString();
-  attributes[ParsersAttributes::HIDE_EXT_ATTRIBS]=(isExtAttribsHidden() ? ParsersAttributes::_TRUE_ : QString());
+	QStringList part_keys_code;
+	attributes[ParsersAttributes::OIDS]=(with_oid ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::GEN_ALTER_CMDS]=(gen_alter_cmds ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::UNLOGGED]=(unlogged ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::RLS_ENABLED]=(rls_enabled ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::RLS_FORCED]=(rls_forced ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::COPY_TABLE]=QString();
+	attributes[ParsersAttributes::ANCESTOR_TABLE]=QString();
+	attributes[ParsersAttributes::TAG]=QString();
+	attributes[ParsersAttributes::HIDE_EXT_ATTRIBS]=(isExtAttribsHidden() ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::PARTITIONING]=~partitioning_type;
+	attributes[ParsersAttributes::PARTITION_KEY]=QString();
+	attributes[ParsersAttributes::PARTITION_BOUND_EXPR]=part_bounding_expr;
 
-  if(def_type==SchemaParser::SQL_DEFINITION && copy_table)
-	  attributes[ParsersAttributes::COPY_TABLE]=copy_table->getName(true) + copy_op.getSQLDefinition();
+	for(auto part_key : partition_keys)
+		part_keys_code+=part_key.getCodeDefinition(def_type);
 
-  if(tag && def_type==SchemaParser::XML_DEFINITION)
-	  attributes[ParsersAttributes::TAG]=tag->getCodeDefinition(def_type, true);
+	if(def_type == SchemaParser::SQL_DEFINITION)
+		attributes[ParsersAttributes::PARTITION_KEY]=part_keys_code.join(',');
+	else
+		attributes[ParsersAttributes::PARTITION_KEY]=part_keys_code.join(' ');
 
-  (copy_table ? copy_table->getName(true) : QString());
+	if(def_type==SchemaParser::SQL_DEFINITION && copy_table)
+		attributes[ParsersAttributes::COPY_TABLE]=copy_table->getName(true) + copy_op.getSQLDefinition();
 
-  setColumnsAttribute(def_type, incl_rel_added_objs);
-  setConstraintsAttribute(def_type);
-  setAncestorTableAttribute();
+	if(def_type==SchemaParser::SQL_DEFINITION && partitioned_table)
+		attributes[ParsersAttributes::PARTITIONED_TABLE]=partitioned_table->getName(true);
 
-  if(def_type==SchemaParser::XML_DEFINITION)
-  {
-	  setRelObjectsIndexesAttribute();
-	  setPositionAttribute();
-	  setFadedOutAttribute();
-	  attributes[ParsersAttributes::INITIAL_DATA]=initial_data;
-	  attributes[ParsersAttributes::MAX_OBJ_COUNT]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
-  }
-  else
-	  attributes[ParsersAttributes::INITIAL_DATA]=getInitialDataCommands();
+	if(tag && def_type==SchemaParser::XML_DEFINITION)
+		attributes[ParsersAttributes::TAG]=tag->getCodeDefinition(def_type, true);
 
-  return(BaseObject::__getCodeDefinition(def_type));
+	(copy_table ? copy_table->getName(true) : QString());
+
+	setColumnsAttribute(def_type, incl_rel_added_objs);
+	setConstraintsAttribute(def_type);
+	setAncestorTableAttribute();
+
+	if(def_type==SchemaParser::XML_DEFINITION)
+	{
+		setRelObjectsIndexesAttribute();
+		setPositionAttribute();
+		setFadedOutAttribute();
+		attributes[ParsersAttributes::INITIAL_DATA]=initial_data;
+		attributes[ParsersAttributes::MAX_OBJ_COUNT]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
+	}
+	else
+		attributes[ParsersAttributes::INITIAL_DATA]=getInitialDataCommands();
+
+	return(BaseObject::__getCodeDefinition(def_type));
 }
 
 QString Table::getCodeDefinition(unsigned def_type)
@@ -1484,9 +1660,11 @@ void Table::operator = (Table &tab)
 	this->with_oid=tab.with_oid;
 	this->col_indexes=tab.col_indexes;
 	this->constr_indexes=tab.constr_indexes;
-
-	setGenerateAlterCmds(tab.gen_alter_cmds);
-	setProtected(tab.is_protected);
+	this->partitioning_type=tab.partitioning_type;
+	this->initial_data=tab.initial_data;
+	this->partition_keys=tab.partition_keys;
+	this->copy_op=tab.copy_op;
+	this->unlogged=tab.unlogged;
 
 	PgSQLType::renameUserType(prev_name, this, this->getName(true));
 }
@@ -1510,6 +1688,16 @@ bool Table::isReferRelationshipAddedObject(void)
 	}
 
 	return(found);
+}
+
+bool Table::isPartition(void)
+{
+	return(partitioned_table != nullptr);
+}
+
+bool Table::isPartitioned(void)
+{
+	return(partitioning_type != BaseType::null);
 }
 
 void Table::swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2)
@@ -1659,7 +1847,12 @@ vector<BaseObject *> Table::getObjects(bool excl_cols_constr)
 
 vector<BaseObject *> Table::getObjects(void)
 {
-	return(getObjects(false));
+  return(getObjects(false));
+}
+
+vector<PartitionKey> Table::getPartitionKeys(void)
+{
+  return(partition_keys);
 }
 
 void Table::setCodeInvalidated(bool value)
@@ -1848,28 +2041,28 @@ QString Table::createInsertCommand(const QStringList &col_names, const QStringLi
 
 void Table::setObjectListsCapacity(unsigned capacity)
 {
-  if(capacity < DEF_MAX_OBJ_COUNT || capacity > DEF_MAX_OBJ_COUNT * 10)
-	capacity = DEF_MAX_OBJ_COUNT;
+	if(capacity < DEF_MAX_OBJ_COUNT || capacity > DEF_MAX_OBJ_COUNT * 10)
+		capacity = DEF_MAX_OBJ_COUNT;
 
-  columns.reserve(capacity);
-  constraints.reserve(capacity/2);
-  indexes.reserve(capacity/2);
-  rules.reserve(capacity/2);
-  triggers.reserve(capacity/2);
-  policies.reserve(capacity/2);
+	columns.reserve(capacity);
+	constraints.reserve(capacity/2);
+	indexes.reserve(capacity/2);
+	rules.reserve(capacity/2);
+	triggers.reserve(capacity/2);
+	policies.reserve(capacity/2);
 }
 
 unsigned Table::getMaxObjectCount(void)
 {
-  unsigned count = 0, max = 0;
-  vector<ObjectType> types = { OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_INDEX,
-							   OBJ_RULE, OBJ_TRIGGER, OBJ_POLICY };
+	unsigned count = 0, max = 0;
+	vector<ObjectType> types = { OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_INDEX,
+															 OBJ_RULE, OBJ_TRIGGER, OBJ_POLICY };
 
-  for(auto type : types)
-  {
-	count = getObjectList(type)->size();
-	if(count > max) max = count;
-  }
+	for(auto type : types)
+	{
+		count = getObjectList(type)->size();
+		if(count > max) max = count;
+	}
 
-  return(max);
+	return(max);
 }

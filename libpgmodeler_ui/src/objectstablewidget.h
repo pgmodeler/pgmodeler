@@ -51,7 +51,8 @@ class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 		EDIT_BUTTON=16,
 		DUPLICATE_BUTTON=32,
 		REMOVE_ALL_BUTTON=64,
-		ALL_BUTTONS=127,
+		RESIZE_COLS_BUTTON=128,
+		ALL_BUTTONS=255,
 		NO_BUTTONS=0;
 
 		ObjectsTableWidget(unsigned button_conf=ALL_BUTTONS, bool conf_exclusion=false, QWidget * parent = 0);
@@ -61,6 +62,9 @@ class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 
 		//! \brief Sets the specified column header label
 		void setHeaderLabel(const QString &label, unsigned col_idx);
+
+		//! \brief Sets the specified column header to be visible or not
+		void setHeaderVisible(unsigned col_idx, bool visible);
 
 		//! \brief Sets the specified column header icon
 		void setHeaderIcon(const QIcon &icon, unsigned col_idx);

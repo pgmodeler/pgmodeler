@@ -241,7 +241,13 @@ QString BaseType::type_list[types_count]=
 	"SELECT",
 	"INSERT",
 	"DELETE",
-	"UPDATE"
+	"UPDATE",
+
+  //Types used by the class PartitioningType
+  //offsets 258 to 260
+  "RANGE",
+  "LIST",
+  "HASH",
 };
 
 BaseType::BaseType(void)
@@ -2187,6 +2193,44 @@ unsigned PolicyCmdType::operator = (unsigned type_id)
 }
 
 unsigned PolicyCmdType::operator = (const QString &type_name)
+{
+	unsigned type_id;
+
+	type_id=BaseType::getType(type_name, offset, types_count);
+	BaseType::setType(type_id,offset,types_count);
+	return(type_id);
+}
+
+/***************************
+ * CLASS: PartitioningType *
+ ***************************/
+PartitioningType::PartitioningType(void)
+{
+	type_idx=offset;
+}
+
+PartitioningType::PartitioningType(unsigned type_id)
+{
+	(*this)=type_id;
+}
+
+PartitioningType::PartitioningType(const QString &type_name)
+{
+	(*this)=type_name;
+}
+
+void PartitioningType::getTypes(QStringList &tipos)
+{
+	BaseType::getTypes(tipos,offset,types_count);
+}
+
+unsigned PartitioningType::operator = (unsigned type_id)
+{
+	BaseType::setType(type_id,offset,types_count);
+	return(type_idx);
+}
+
+unsigned PartitioningType::operator = (const QString &type_name)
 {
 	unsigned type_id;
 

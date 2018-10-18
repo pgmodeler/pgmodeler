@@ -554,6 +554,7 @@ void DatabaseImportHelper::importDatabase(void)
 		retrieveUserObjects();
 		createObjects();
 		createTableInheritances();
+		createTablePartitionings();
 		createConstraints();
 		destroyDetachedColumns();
 		createPermissions();
@@ -901,6 +902,7 @@ void DatabaseImportHelper::resetImportParameters(void)
 	connection.close();
 	catalog.closeConnection();
 	inherited_cols.clear();
+	imported_tables.clear();
 }
 
 QString DatabaseImportHelper::dumpObjectAttributes(attribs_map &attribs)
@@ -1760,7 +1762,91 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 		for(unsigned col_idx : inh_cols)
 			inherited_cols.push_back(table->getColumn(col_idx));
 
+		// Storing the partition bound expression temporarily in the table in order to configure the partition hierarchy later
+		table->setPartitionBoundingExpr(attribs[ParsersAttributes::PARTITION_BOUND_EXPR].remove(QRegExp("^(FOR)( )+(VALUES)( )*", Qt::CaseInsensitive)));
+
+		// Retrieving the partitioned table related to the partition table being created
+		if(!attribs[ParsersAttributes::PARTITIONED_TABLE].isEmpty())
+		{
+			Table *partitioned_tab = nullptr;
+
+			attribs[ParsersAttributes::PARTITIONED_TABLE] =
+					getDependencyObject(attribs[ParsersAttributes::PARTITIONED_TABLE], OBJ_TABLE, true, auto_resolve_deps, false);
+
+			partitioned_tab = dbmodel->getTable(attribs[ParsersAttributes::PARTITIONED_TABLE]);
+			table->setPartionedTable(partitioned_tab);
+
+			if(!partitioned_tab)
+			{
+				throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+												.arg(attribs[ParsersAttributes::NAME]).arg(BaseObject::getTypeName(OBJ_TABLE))
+												.arg(attribs[ParsersAttributes::PARTITIONED_TABLE]).arg(BaseObject::getTypeName(OBJ_TABLE)),
+												ERR_REF_OBJ_INEXISTS_MODEL ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			}
+		}
+
+		// Creating partition keys if present
+		if(attribs[ParsersAttributes::IS_PARTITIONED] == ParsersAttributes::_TRUE_)
+		{
+			QStringList cols, collations, opclasses, exprs;
+			PartitionKey part_key;
+			PartitioningType part_type;
+			QString coll_name, opc_name;
+			Collation *coll = nullptr;
+			OperatorClass *opclass = nullptr;
+			vector<PartitionKey> part_keys;
+
+			part_type = PartitioningType(attribs[ParsersAttributes::PARTITIONING]);
+			table->setPartitioningType(part_type);
+
+			cols=Catalog::parseArrayValues(attribs[ParsersAttributes::PART_KEY_COLS]);
+			collations=Catalog::parseArrayValues(attribs[ParsersAttributes::PART_KEY_COLLS]);
+			opclasses=Catalog::parseArrayValues(attribs[ParsersAttributes::PART_KEY_OPCLS]);
+			exprs = parseIndexExpressions(attribs[ParsersAttributes::PART_KEY_EXPRS]);
+
+			for(int i = 0; i < cols.size(); i++)
+			{
+				part_key = PartitionKey();
+
+				// Retrieving the column used by the partition key
+				if(cols[i] != QString("0"))
+					part_key.setColumn(table->getColumn(getColumnName(attribs[ParsersAttributes::OID], cols[i])));
+				else if(!exprs.isEmpty())
+				{
+					part_key.setExpression(exprs.front());
+					exprs.pop_front();
+				}
+
+				// Retriving the collation for the partion key
+				if(i < collations.size() && collations[i] != QString("0"))
+				{
+					coll_name = getDependencyObject(collations[i], OBJ_COLLATION, false, true, false);
+					coll = dynamic_cast<Collation *>(dbmodel->getObject(coll_name, OBJ_COLLATION));
+
+					//Even if the collation exists we'll ignore it when it is the "pg_catalog.default"
+					if(coll && (!coll->isSystemObject() ||
+											(coll->isSystemObject() && coll->getName() != QString("default"))))
+						part_key.setCollation(coll);
+				}
+
+				// Retriving the operator class for the partion key
+				if(i < opclasses.size() && opclasses[i] != QString("0"))
+				{
+					opc_name = getDependencyObject(opclasses[i], OBJ_OPCLASS, true, true, false);
+					opclass = dynamic_cast<OperatorClass *>(dbmodel->getObject(opc_name, OBJ_OPCLASS));
+
+					if(opclass)
+						part_key.setOperatorClass(opclass);
+				}
+
+				part_keys.push_back(part_key);
+			}
+
+			table->addPartitionKeys(part_keys);
+		}
+
 		dbmodel->addTable(table);
+		imported_tables[tab_oid] = table;
 	}
 	catch(Exception &e)
 	{
@@ -2260,6 +2346,48 @@ void DatabaseImportHelper::createTableInheritances(void)
 			else
 				throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
+	}
+}
+
+void DatabaseImportHelper::createTablePartitionings(void)
+{
+	if(imported_tables.empty())
+		return;
+
+	try
+	{
+		Table *table = nullptr, *part_table = nullptr;
+		QString part_bound_expr;
+		Relationship *rel_part = nullptr;
+
+		emit s_progressUpdated(95,
+								 trUtf8("Creating table partitionings..."),
+								 OBJ_RELATIONSHIP);
+
+		// Creating the paritioning relationships
+		for(auto &itr : imported_tables)
+		{
+			table = itr.second;
+
+			if(table->isPartition())
+			{
+				part_bound_expr = table->getPartitionBoundingExpr();
+				part_table = table->getPartitionedTable();
+
+				/* Here, we force the detaching of the partition table so when
+				 * creating the relationship below all the needed validations can be done correctly */
+				table->setPartionedTable(nullptr);
+				table->setPartitionBoundingExpr(QString());
+
+				rel_part = new Relationship(BaseRelationship::RELATIONSHIP_PART, table, part_table);
+				rel_part->setPartitionBoundingExpr(part_bound_expr);
+				dbmodel->addRelationship(rel_part);
+			}
+		}
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 

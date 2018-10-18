@@ -29,7 +29,7 @@
 #include "ui_constraintwidget.h"
 #include "objectstablewidget.h"
 #include "messagebox.h"
-#include "elementswidget.h"
+#include "elementstablewidget.h"
 
 class ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
 	private:
@@ -39,7 +39,7 @@ class ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
 		
 		SyntaxHighlighter *expression_hl;
 		
-		ElementsWidget *excl_elems_wgt;
+		ElementsTableWidget *excl_elems_tab;
 		
 		/*! \brief Table widgets used to store the columns that forms the constraint as well the
 		referenced columns (only for foreign keys) */

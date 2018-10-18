@@ -100,18 +100,18 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		grid=new QGridLayout;
 		grid->addWidget(attributes_tab, 0,0,1,1);
 		grid->setContentsMargins(4,4,4,4);
-		rel_attribs_tbw->widget(1)->setLayout(grid);
+		rel_attribs_tbw->widget(ATTRIBUTES_TAB)->setLayout(grid);
 
 		grid=new QGridLayout;
 		grid->addWidget(constraints_tab, 0,0,1,1);
 		grid->setContentsMargins(4,4,4,4);
-		rel_attribs_tbw->widget(2)->setLayout(grid);
+		rel_attribs_tbw->widget(CONSTRAINTS_TAB)->setLayout(grid);
 
-		grid=dynamic_cast<QGridLayout *>(rel_attribs_tbw->widget(3)->layout());
+		grid=dynamic_cast<QGridLayout *>(rel_attribs_tbw->widget(SPECIAL_PK_TAB)->layout());
 		frame=generateInformationFrame(trUtf8("Use the special primary key if you want to include a primary key containing generated columns to the receiver table. <strong>Important:</strong> if this is a new relationship there is a need to finish its creation and reopen this dialog to create the special primary key."));
 
 		grid->addWidget(frame, 1, 0, 1, 1);
-		frame->setParent(rel_attribs_tbw->widget(3));
+		frame->setParent(rel_attribs_tbw->widget(SPECIAL_PK_TAB));
 
 		grid=new QGridLayout;
 		grid->setContentsMargins(4,4,4,4);
@@ -121,11 +121,11 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		frame=generateInformationFrame(trUtf8("This advanced tab shows the objects (columns or table) auto created by the relationship's connection as well the foreign keys that represents the link between the participant tables."));
 		grid->addWidget(frame, 1, 0, 1, 1);
 
-		rel_attribs_tbw->widget(4)->setLayout(grid);
+		rel_attribs_tbw->widget(ADVANCED_TAB)->setLayout(grid);
 
 		color_picker=new ColorPickerWidget(1,this);
 		color_picker->setEnabled(false);
-		grid=dynamic_cast<QGridLayout *>(rel_attribs_tbw->widget(0)->layout());
+		grid=dynamic_cast<QGridLayout *>(rel_attribs_tbw->widget(GENERAL_TAB)->layout());
 		grid->addWidget(color_picker, 0, 1);
 
 		configureFormLayout(relationship_grid, OBJ_RELATIONSHIP);
@@ -150,11 +150,18 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		del_action_cmb->addItems(list);
 		upd_action_cmb->addItems(list);
 
-		tabs={ nullptr, rel_attribs_tbw->widget(ATTRIBUTES_TAB), rel_attribs_tbw->widget(CONSTRAINTS_TAB),
-			   rel_attribs_tbw->widget(SPECIAL_PK_TAB), rel_attribs_tbw->widget(ADVANCED_TAB) };
+		tabs={ nullptr, rel_attribs_tbw->widget(SETTINGS_TAB),
+					 rel_attribs_tbw->widget(ATTRIBUTES_TAB), rel_attribs_tbw->widget(CONSTRAINTS_TAB),
+					 rel_attribs_tbw->widget(SPECIAL_PK_TAB), rel_attribs_tbw->widget(ADVANCED_TAB) };
 
-		tab_labels=QStringList{ QString(), rel_attribs_tbw->tabText(ATTRIBUTES_TAB), rel_attribs_tbw->tabText(CONSTRAINTS_TAB),
-				   rel_attribs_tbw->tabText(SPECIAL_PK_TAB), rel_attribs_tbw->tabText(ADVANCED_TAB)};
+		tab_labels=QStringList{ QString(), rel_attribs_tbw->tabText(SETTINGS_TAB),
+							 rel_attribs_tbw->tabText(ATTRIBUTES_TAB), rel_attribs_tbw->tabText(CONSTRAINTS_TAB),
+							 rel_attribs_tbw->tabText(SPECIAL_PK_TAB), rel_attribs_tbw->tabText(ADVANCED_TAB)};
+
+		part_bound_expr_txt=new NumberedTextEditor(this, true);
+		part_bound_expr_hl=new SyntaxHighlighter(part_bound_expr_txt);
+		part_bound_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		dynamic_cast<QGridLayout *>(part_bound_expr_gb->layout())->addWidget(part_bound_expr_txt, 1, 0);
 
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_lbl, SLOT(setEnabled(bool)));
@@ -193,8 +200,10 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 
 		connect(fk_gconf_chk, SIGNAL(toggled(bool)), this, SLOT(useFKGlobalSettings(bool)));
 		connect(patterns_gconf_chk, SIGNAL(toggled(bool)), this, SLOT(usePatternGlobalSettings(bool)));
+		connect(gen_bound_expr_tb, SIGNAL(clicked(bool)), this, SLOT(generateBoundingExpr()));
+		connect(default_part_chk, SIGNAL(toggled(bool)), part_bound_expr_txt, SLOT(setDisabled(bool)));
 
-		setMinimumSize(620, 670);
+		setMinimumSize(600, 380);
 	}
 	catch(Exception &e)
 	{
@@ -243,15 +252,8 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	}
 
 	rel_type=base_rel->getRelationshipType();
-	switch(rel_type)
-	{
-		case BaseRelationship::RELATIONSHIP_11: rel_11_rb->setChecked(true); break;
-		case BaseRelationship::RELATIONSHIP_1N: rel_1n_rb->setChecked(true); break;
-		case BaseRelationship::RELATIONSHIP_NN: rel_nn_rb->setChecked(true); break;
-		case BaseRelationship::RELATIONSHIP_GEN: rel_gen_rb->setChecked(true); break;
-		case BaseRelationship::RELATIONSHIP_FK:  rel_fk_rb->setChecked(true); break;
-		case BaseRelationship::RELATIONSHIP_DEP: rel_dep_rb->setChecked(true); break;
-	}
+	rel_type_name_lbl->setText(base_rel->getRelationshipTypeName());
+	rel_icon_lbl->setPixmap(PgModelerUiNS::getIconPath(base_rel->getRelTypeAttribute().replace("rel", "relationship")));
 
 	aux_rel=dynamic_cast<Relationship *>(base_rel);
 
@@ -277,7 +279,18 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	}
 	else if(aux_rel)
 	{
-		if(rel_type!=BaseRelationship::RELATIONSHIP_NN)
+		if(rel_type == BaseRelationship::RELATIONSHIP_PART)
+		{
+		  ref_table_lbl->setText(trUtf8("Partitioned Table:"));
+		  ref_table_ht->setText(trUtf8("Partitioned table is the one which is splitted into smaller pieces (partitions). This table is where the partitioning strategy or type is defined."));
+
+		  recv_table_lbl->setText(trUtf8("Partition Table:"));
+		  recv_table_ht->setText(trUtf8("Partition table is the one attached to a partitioned table in which operations over data will be routed (according to the paritionig rule) when trying to handle the partitioned table."));
+
+		  ref_table_txt->setPlainText(aux_rel->getReferenceTable()->getName(true));
+		  recv_table_txt->setPlainText(aux_rel->getReceiverTable()->getName(true));
+		}
+		else if(rel_type!=BaseRelationship::RELATIONSHIP_NN)
 		{
 			ref_table_lbl->setText(trUtf8("Reference Table:"));
 			ref_table_ht->setText(trUtf8("Reference table has the columns from its primary key will copied to the receiver table in order to represent the linking between them. This is the (1) side of relationship."));
@@ -296,6 +309,12 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 			recv_table_ht->setText(ref_table_ht->getText());
 			ref_table_txt->setPlainText(base_rel->getTable(BaseRelationship::SRC_TABLE)->getName(true));
 			recv_table_txt->setPlainText(base_rel->getTable(BaseRelationship::DST_TABLE)->getName(true));
+		}
+
+		if(rel_type == BaseRelationship::RELATIONSHIP_PART)
+		{
+			part_type_lbl->setText(~aux_rel->getReferenceTable()->getPartitioningType());
+			default_part_chk->setChecked(aux_rel->getPartitionBoundingExpr().isEmpty());
 		}
 	}
 
@@ -338,6 +357,13 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 				identity_chk->setChecked(!all_chk->isChecked() && copy_op.isOptionSet(CopyOptions::IDENTITY));
 				statistics_chk->setChecked(!all_chk->isChecked() && copy_op.isOptionSet(CopyOptions::STATISTICS));
 			}
+			else if(rel_type == BaseRelationship::RELATIONSHIP_PART)
+			{
+				if(this->new_object)
+					generateBoundingExpr();
+				else
+					part_bound_expr_txt->setPlainText(aux_rel->getPartitionBoundingExpr());
+			}
 		}
 	}
 
@@ -348,6 +374,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 	relgen_dep=(rel_type==BaseRelationship::RELATIONSHIP_DEP ||
 				rel_type==BaseRelationship::RELATIONSHIP_GEN ||
+				rel_type==BaseRelationship::RELATIONSHIP_PART ||
 				rel_type==BaseRelationship::RELATIONSHIP_FK);
 
 	use_name_patterns=(rel1n || relnn ||
@@ -383,12 +410,14 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	relnn_tab_name_edt->setVisible(relnn);
 	gen_tab_name_hint->setVisible(relnn);
 
-	for(i=ATTRIBUTES_TAB; i <= ADVANCED_TAB; i++)
+	part_bound_expr_gb->setVisible(rel_type==BaseRelationship::RELATIONSHIP_PART);
+
+	for(i=SETTINGS_TAB; i <= ADVANCED_TAB; i++)
 		rel_attribs_tbw->removeTab(1);
 
 	if(!relgen_dep)
 	{
-		for(i=ATTRIBUTES_TAB; i <= SPECIAL_PK_TAB; i++)
+		for(i=SETTINGS_TAB; i <= SPECIAL_PK_TAB; i++)
 			rel_attribs_tbw->addTab(tabs[i], tab_labels[i]);
 	}
 	else if(relgen_dep && base_rel->getObjectType()==OBJ_RELATIONSHIP)
@@ -425,10 +454,15 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 QSize RelationshipWidget::getIdealSize(void)
 {
-	if(rel_fk_rb->isChecked() ||
-		 (rel_dep_rb->isChecked() &&	this->object && this->object->getObjectType()==BASE_RELATIONSHIP))
+	unsigned rel_type = 0;
+
+	if(this->object)
+	  rel_type = dynamic_cast<BaseRelationship *>(this->object)->getRelationshipType();
+
+	if(rel_type == BaseRelationship::RELATIONSHIP_FK ||
+	   (BaseRelationship::RELATIONSHIP_DEP && this->object && this->object->getObjectType()==BASE_RELATIONSHIP))
 		return(QSize(640, 320));
-	else if(rel_gen_rb->isChecked())
+	else if(BaseRelationship::RELATIONSHIP_GEN)
 		return(QSize(640, 520));
 	else
 		return(QSize(640, 680));
@@ -500,6 +534,23 @@ void RelationshipWidget::usePatternGlobalSettings(bool value)
 			pk_col_pattern_txt->setPlainText(rel->getNamePattern(Relationship::PK_COL_PATTERN));
 		}
 	}
+}
+
+void RelationshipWidget::generateBoundingExpr(void)
+{
+	PartitioningType part_type = part_type_lbl->text();
+	QString tmpl;
+
+	if(part_type == PartitioningType::list)
+		tmpl = QString("IN (value)");
+	else if(part_type == PartitioningType::range)
+		tmpl = QString("FROM (value) TO (value)");
+	else
+		tmpl = QString("WITH (MODULUS m, REMAINDER r)");
+
+	part_bound_expr_txt->setPlainText(QString());
+	part_bound_expr_txt->setPlainText(tmpl);
+	default_part_chk->setChecked(false);
 }
 
 void RelationshipWidget::listObjects(ObjectType obj_type)
@@ -1043,6 +1094,8 @@ void RelationshipWidget::applyConfiguration(void)
 			rel_type=rel->getRelationshipType();
 			rel->blockSignals(true);
 
+			rel->setPartitionBoundingExpr(default_part_chk->isChecked() ? QString() : part_bound_expr_txt->toPlainText());
+
 			if(!defaults_rb->isChecked())
 			{
 				if(including_rb->isChecked())
@@ -1103,6 +1156,7 @@ void RelationshipWidget::applyConfiguration(void)
 				//Checking if there is relationship redundancy
 				if(rel_type==BaseRelationship::RELATIONSHIP_DEP ||
 						rel_type==BaseRelationship::RELATIONSHIP_GEN ||
+						rel_type==BaseRelationship::RELATIONSHIP_PART ||
 						rel->isIdentifier())
 					model->checkRelationshipRedundancy(rel);
 

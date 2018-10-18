@@ -115,12 +115,22 @@ void Element::configureAttributes(attribs_map &attributes, unsigned def_type)
 	}
 }
 
+bool Element::isEqualsTo(Element &elem)
+{
+  return(this->column == elem.column &&
+		 this->expression == elem.expression &&
+		 this->operator_class == elem.operator_class &&
+		 this->sorting_enabled == elem.sorting_enabled &&
+		 this->sorting_attibs[ASC_ORDER] == elem.sorting_attibs[ASC_ORDER] &&
+		 this->sorting_attibs[NULLS_FIRST] == elem.sorting_attibs[NULLS_FIRST]);
+}
+
 bool Element::operator == (Element &elem)
 {
-	return(this->column == elem.column &&
-		   this->expression == elem.expression &&
-		   this->operator_class == elem.operator_class &&
-		   this->sorting_enabled == elem.sorting_enabled &&
-		   this->sorting_attibs[ASC_ORDER] == elem.sorting_attibs[ASC_ORDER] &&
-		   this->sorting_attibs[NULLS_FIRST] == elem.sorting_attibs[NULLS_FIRST]);
+  return(isEqualsTo(elem));
+}
+
+bool Element::operator == (const Element &elem)
+{
+  return(isEqualsTo(const_cast<Element &>(elem)));
 }

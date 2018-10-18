@@ -43,7 +43,7 @@
         <bool>true</bool>
        </property>
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -81,7 +81,7 @@
         <bool>false</bool>
        </property>
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -119,7 +119,7 @@
         <bool>false</bool>
        </property>
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -157,7 +157,7 @@
         <bool>false</bool>
        </property>
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -195,7 +195,7 @@
         <bool>false</bool>
        </property>
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -233,7 +233,7 @@
         <bool>false</bool>
        </property>
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -271,7 +271,7 @@
         <bool>false</bool>
        </property>
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -309,7 +309,7 @@
         <bool>false</bool>
        </property>
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -347,7 +347,7 @@
         <bool>false</bool>
        </property>
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -385,7 +385,7 @@
         <bool>false</bool>
        </property>
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -414,6 +414,41 @@
        </property>
        <property name="shortcut">
         <string>Ctrl+End, Ctrl+S</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="resize_cols_tb">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Resize columns to fit contents</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/icones/icones/resizecols.png</normaloff>:/icones/icones/resizecols.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
        </property>
       </widget>
      </item>
@@ -471,33 +506,33 @@
      </attribute>
     </widget>
    </item>
-   <item row="0" column="0">
-    <spacer name="left_spc">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Preferred</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>97</width>
-       <height>22</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
    <item row="0" column="2">
     <spacer name="right_spc">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="sizeType">
-      <enum>QSizePolicy::Preferred</enum>
+      <enum>QSizePolicy::Expanding</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
        <width>92</width>
+       <height>22</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="0">
+    <spacer name="left_spc">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>97</width>
        <height>22</height>
       </size>
      </property>

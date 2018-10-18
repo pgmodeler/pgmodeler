@@ -258,6 +258,11 @@ void BaseObjectWidget::configureTabOrder(vector<QWidget *> widgets)
 		QWidget::setTabOrder(tab_order[idx], tab_order[idx+1]);
 }
 
+BaseObject *BaseObjectWidget::getHandledObject(void)
+{
+	return(object);
+}
+
 void BaseObjectWidget::cancelChainedOperation(void)
 {
 	bool op_list_changed=false;

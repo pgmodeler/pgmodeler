@@ -29,10 +29,10 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 
 		Ui_ConstraintWidget::setupUi(this);
 
-		excl_elems_wgt=new ElementsWidget(this);
+		excl_elems_tab=new ElementsTableWidget(this);
 		grid=new QGridLayout;
 		grid->setContentsMargins(4,4,4,4);
-		grid->addWidget(excl_elems_wgt,0,0);
+		grid->addWidget(excl_elems_tab,0,0);
 		excl_elems_grp->setLayout(grid);
 
 		expression_hl=new SyntaxHighlighter(expression_txt, false, true);
@@ -427,7 +427,8 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 		}
 	}
 
-	excl_elems_wgt->setAttributes(model, parent_obj, excl_elems);
+	excl_elems_tab->setAttributes<ExcludeElement>(model, parent_obj);
+	excl_elems_tab->setElements<ExcludeElement>(excl_elems);
 }
 
 void ConstraintWidget::applyConfiguration(void)
@@ -479,7 +480,7 @@ void ConstraintWidget::applyConfiguration(void)
 			}
 		}
 
-		excl_elems_wgt->getElements(excl_elems);
+		excl_elems_tab->getElements<ExcludeElement>(excl_elems);
 		constr->addExcludeElements(excl_elems);
 
 		//Raises an error if the user try to create a primary key that has columns added by relationship (not supported)

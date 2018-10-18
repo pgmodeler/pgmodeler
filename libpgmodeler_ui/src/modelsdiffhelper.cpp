@@ -137,7 +137,7 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
 		comp_tab=src_table;
 	}
 	else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT ||
-			diff_type==ObjectsDiffInfo::ALTER_OBJECT)
+					diff_type==ObjectsDiffInfo::ALTER_OBJECT)
 	{
 		ref_tab=src_table;
 		comp_tab=imp_table;
@@ -177,8 +177,8 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
 
 				}
 				/*	If the object does not exists it will generate a drop info and the original
-						one (tab_obj) was not included by generalization (to avoid drop inherited columns) */
-				else if(!aux_obj && !tab_obj->isAddedByGeneralization())
+						one (tab_obj) was not included by generalization or partitioning (to avoid drop inherited/copied columns) */
+				else if(!aux_obj && !tab_obj->isAddedByGeneralization() && !tab_obj->isAddedByCopy())
 				{
 					if(diff_type!=ObjectsDiffInfo::DROP_OBJECT ||
 						 (diff_type==ObjectsDiffInfo::DROP_OBJECT && !diff_opts[OPT_DONT_DROP_MISSING_OBJS]) ||
@@ -264,7 +264,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 							   !diff_opts[OPT_KEEP_OBJ_PERMS]))))
 						generateDiffInfo(diff_type, object);
 
-					//Processing relationship (in this case only generalization ones are considered)
+					//Processing relationship (in this case only generalization and patitioning ones are considered)
 					else if(obj_type==OBJ_RELATIONSHIP)
 					{
 						Table *ref_tab=nullptr, *rec_tab=nullptr;
@@ -272,15 +272,31 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 
 						rec_tab=aux_model->getTable(rel->getReceiverTable()->getName(true));
 
-						if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN)
+						if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN ||
+							 rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_PART)
 						{
-							ref_tab=aux_model->getTable(rel->getReferenceTable()->getName(true));
+							Relationship *aux_rel = nullptr;
+
+							ref_tab = aux_model->getTable(rel->getReferenceTable()->getName(true));
+							aux_rel = dynamic_cast<Relationship *>(aux_model->getRelationship(ref_tab, rec_tab));
 
 							/* If the receiver table exists on the model generates a info for the relationship,
 									otherwise, the generalization will be created automatically when the table is
 									created (see table's code defintion) */
-							if(rec_tab && !aux_model->getRelationship(ref_tab, rec_tab))
+							if(rec_tab && !aux_rel)
 								generateDiffInfo(diff_type, rel);
+							/* Special case for partitioning: we detach (drop) and reattach (create) the partition
+							 * if the partition bound expression differs from a model to another. This is done only
+							 * if the receiver table (partition) exists in the imported model. */
+							else if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_PART &&
+											rec_tab &&
+											aux_model == imported_model &&
+											aux_rel && rel->getPartitionBoundingExpr().simplified() !=
+											aux_rel->getPartitionBoundingExpr().simplified())
+							{
+								generateDiffInfo(ObjectsDiffInfo::DROP_OBJECT, rel);
+								generateDiffInfo(ObjectsDiffInfo::CREATE_OBJECT, rel);
+							}
 						}
 					}
 					else if(obj_type!=OBJ_PERMISSION)
@@ -455,7 +471,7 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
 			ObjectsDiffInfo diff_info;
 
 			/* If the info is for ALTER and there is a DROP info on the list,
-	   the object will be recreated instead of modified */
+			 * the object will be recreated instead of modified */
 			if((!diff_opts[OPT_FORCE_RECREATION] || diff_opts[OPT_RECREATE_UNCHANGEBLE]) &&
 					diff_type==ObjectsDiffInfo::ALTER_OBJECT &&
 					isDiffInfoExists(ObjectsDiffInfo::DROP_OBJECT, old_object, nullptr) &&
@@ -472,9 +488,9 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
 						*old_col=dynamic_cast<Column *>(old_object);
 
 				/* Special case for columns marked with ALTER.
-		   If the type of them is "serial" or similar then a sequence will be created and the
-		   type of the column changed to "integer" or similar, this because the ALTER command
-		   for columns don't accept the type "serial" */
+				 * If the type of them is "serial" or similar then a sequence will be created and the
+				 * type of the column changed to "integer" or similar, this because the ALTER command
+				 * for columns don't accept the type "serial" */
 				if(diff_type==ObjectsDiffInfo::ALTER_OBJECT && col && old_col &&
 						(col->getType()!=old_col->getType() && col->getType().isSerialType()))
 				{
@@ -498,11 +514,19 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
 					//Assigns the sequence to the column in order to configure the default value correctly
 					aux_col->setSequence(seq);
 
-					//Creates a new ALTER info with the created column
-					diff_info=ObjectsDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, aux_col, col);
-					diff_infos.push_back(diff_info);
-					diffs_counter[ObjectsDiffInfo::ALTER_OBJECT]++;
-					emit s_objectsDiffInfoGenerated(diff_info);
+					/* Creates a new ALTER info with the created column onlly if we don't need to reuse sequences
+					 * or if the sequence reusing is enabled but the type of the columns aren't equivalent or even
+					 * the types are equivalent but the sequences used by each columns aren't the same */
+					if(!diff_opts[OPT_REUSE_SEQUENCES] ||
+						 (diff_opts[OPT_REUSE_SEQUENCES] &&
+							(!col->getType().getAliasType().isEquivalentTo(old_col->getType()) ||
+								(old_col->getSequence() && old_col->getSequence()->getSignature() != seq->getSignature()))))
+					{
+						diff_info=ObjectsDiffInfo(ObjectsDiffInfo::ALTER_OBJECT, aux_col, col);
+						diff_infos.push_back(diff_info);
+						diffs_counter[ObjectsDiffInfo::ALTER_OBJECT]++;
+						emit s_objectsDiffInfoGenerated(diff_info);
+					}
 
 					if(!diff_opts[OPT_REUSE_SEQUENCES] || imported_model->getObjectIndex(seq->getSignature(), OBJ_SEQUENCE) < 0)
 					{
@@ -532,8 +556,8 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
 						}
 					}
 
-					/* Stores the created objects in the temp list in order to be destroyed at the
-			   end of the process. */
+					/* Stores the created objects in the temp list in order to be destroyed
+					 * at the end of the process. */
 					tmp_objects.push_back(aux_col);
 					tmp_objects.push_back(seq);
 				}
@@ -688,10 +712,11 @@ void ModelsDiffHelper::processDiffInfos(void)
 			//Generating the DROP commands
 			if(diff_type==ObjectsDiffInfo::DROP_OBJECT)
 			{
-				if(rel && rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN)
+				if(rel && (rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN ||
+									 rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_PART))
 				{
 					//Undoing inheritances
-					no_inherit_def+=rel->getInheritDefinition(true);
+					no_inherit_def+=rel->getAlterRelationshipDefinition(true);
 				}
 				else if(obj_type==OBJ_PERMISSION)
 					//Unsetting permissions
@@ -714,10 +739,11 @@ void ModelsDiffHelper::processDiffInfos(void)
 			//Generating the CREATE commands
 			else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT)
 			{
-				if(rel && rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN)
+				if(rel && (rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN ||
+									 rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_PART))
 				{
 					//Creating inheritances
-					inherit_def+=rel->getInheritDefinition(false);
+					inherit_def+=rel->getAlterRelationshipDefinition(false);
 				}
 				else if(obj_type==OBJ_PERMISSION)
 					//Setting permissions

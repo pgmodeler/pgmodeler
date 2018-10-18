@@ -134,6 +134,8 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		void disableReferencesSQL(BaseObject *object);
 		
 		void configureTabOrder(vector<QWidget *> widgets={});
+
+		BaseObject *getHandledObject(void);
 			
 	public:
 		//! \brief Constants used to generate version intervals for version alert frame
@@ -192,6 +194,7 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		void s_closeRequested(void);
 
 	friend class BaseForm;
+	friend class ModelWidget;
 };
 
 template<class Class>

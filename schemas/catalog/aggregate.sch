@@ -2,6 +2,12 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
+%if ({pgsql-ver} <=f "10.0") %then
+    %set {is-agg} [pr.proisagg IS TRUE]
+%else
+    %set {is-agg} [pr.prokind = 'a']
+%end    
+
 %if {list} %then
   [SELECT pr.oid, proname || '(' || 
   
@@ -14,9 +20,9 @@
 
   %if {schema} %then
     [ LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid
-       WHERE pr.proisagg IS TRUE AND ns.nspname = ] '{schema}'
+       WHERE ] {is-agg} [ AND ns.nspname = ] '{schema}'
   %else
-    [ WHERE pr.proisagg IS TRUE ]
+    [ WHERE ] {is-agg}
   %end
 
   %if {last-sys-oid} %then
@@ -24,7 +30,7 @@
   %end
 
   %if {not-ext-object} %then
-    [ AND ] ( {not-ext-object} ) # [ IS FALSE ]
+    [ AND ] ( {not-ext-object} ) 
   %end
 
 %else
@@ -43,23 +49,24 @@
        [ LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid ]
       %end
 
-      [ WHERE pr.proisagg IS TRUE ]
+      [ WHERE ] {is-agg}
+      
       %if {last-sys-oid} %then
-	[ AND pr.oid ] {oid-filter-op} $sp {last-sys-oid}
+        [ AND pr.oid ] {oid-filter-op} $sp {last-sys-oid}
       %end
 
       %if {not-ext-object} %then
-	[ AND ] ( {not-ext-object} )
+        [ AND ] ( {not-ext-object} )
       %end
 
       %if {filter-oids} %or {schema} %then
-	 %if {filter-oids} %then
-	   [ AND pr.oid IN (] {filter-oids} )
-	 %end
+        %if {filter-oids} %then
+        [ AND pr.oid IN (] {filter-oids} )
+        %end
 
-	 %if {schema} %then
-	   [ AND  ns.nspname = ] '{schema}'
-	 %end
+        %if {schema} %then
+        [ AND  ns.nspname = ] '{schema}'
+        %end
       %end
     %end
 %end

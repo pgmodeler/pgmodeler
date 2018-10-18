@@ -33,11 +33,11 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 		predicate_hl=new SyntaxHighlighter(predicate_txt, false, true);
 		predicate_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
 
-		elements_wgt = new ElementsWidget(this);
+		elements_tab = new ElementsTableWidget(this);
 
 		grid=new QGridLayout;
 		grid->setContentsMargins(4,4,4,4);
-		grid->addWidget(elements_wgt,0,0);
+		grid->addWidget(elements_tab,0,0);
 		tabWidget->widget(1)->setLayout(grid);
 
 		configureFormLayout(index_grid, OBJ_INDEX);
@@ -56,7 +56,7 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 
 		connect(indexing_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectIndexingType(void)));
 		connect(fill_factor_chk, SIGNAL(toggled(bool)), fill_factor_sb, SLOT(setEnabled(bool)));
-		connect(elements_wgt, SIGNAL(s_elementHandled(int)), this, SLOT(enableSortingOptions()));
+		//connect(elements_tab, SIGNAL(s_elementHandled(int)), this, SLOT(enableSortingOptions()));
 
 		configureTabOrder();
 		selectIndexingType();
@@ -74,22 +74,22 @@ void IndexWidget::selectIndexingType(void)
 	fast_update_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::gin);
 	buffering_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::gist);
 	fill_factor_sb->setEnabled(fill_factor_chk->isChecked() && fill_factor_chk->isEnabled());
-	enableSortingOptions();
+	//enableSortingOptions();
 }
 
-void IndexWidget::enableSortingOptions(void)
+/*void IndexWidget::enableSortingOptions(void)
 {
-	elements_wgt->sorting_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::btree);
-	elements_wgt->ascending_rb->setEnabled(elements_wgt->sorting_chk->isEnabled());
-	elements_wgt->descending_rb->setEnabled(elements_wgt->sorting_chk->isEnabled());
-	elements_wgt->nulls_first_chk->setEnabled(elements_wgt->sorting_chk->isEnabled());
+	elements_tab->sorting_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::btree);
+	elements_tab->ascending_rb->setEnabled(elements_tab->sorting_chk->isEnabled());
+	elements_tab->descending_rb->setEnabled(elements_tab->sorting_chk->isEnabled());
+	elements_tab->nulls_first_chk->setEnabled(elements_tab->sorting_chk->isEnabled());
 
-	if(!elements_wgt->sorting_chk->isEnabled())
+	if(!elements_tab->sorting_chk->isEnabled())
 	{
-		elements_wgt->sorting_chk->setChecked(false);
-		elements_wgt->nulls_first_chk->setChecked(false);
+		elements_tab->sorting_chk->setChecked(false);
+		elements_tab->nulls_first_chk->setChecked(false);
 	}
-}
+}*/
 
 void IndexWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseTable *parent_obj, Index *index)
 {
@@ -122,7 +122,8 @@ void IndexWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Ba
 		selectIndexingType();
 	}
 
-	elements_wgt->setAttributes(model, parent_obj, idx_elems);
+	elements_tab->setAttributes<IndexElement>(model, parent_obj);
+	elements_tab->setElements<IndexElement>(idx_elems);
 }
 
 void IndexWidget::applyConfiguration(void)
@@ -150,7 +151,7 @@ void IndexWidget::applyConfiguration(void)
 		else
 			index->setFillFactor(0);
 
-		elements_wgt->getElements(idx_elems);
+		elements_tab->getElements<IndexElement>(idx_elems);
 		index->addIndexElements(idx_elems);
 
 		finishConfiguration();

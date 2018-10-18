@@ -441,6 +441,19 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 MainWindow::~MainWindow(void)
 {
+	ModelWidget *model = nullptr;
+	int idx = 0;
+
+	/* Destroying models from the last to the first in order
+	 * to destroy other objects inside the models in the proper order */
+	while(models_tbw->count() > 0)
+	{
+		idx = models_tbw->count() - 1;
+		model = dynamic_cast<ModelWidget *>(models_tbw->widget(idx));
+		models_tbw->removeTab(idx);
+		delete(model);
+	}
+
 	//This fix the crash on exit at Mac OSX system (but not sure why) (???)
 	file_menu->clear();
 	delete(restoration_form);
@@ -679,7 +692,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 				while(!recent_models.isEmpty())
 				{
-					param_id=QString("%1%2").arg(ParsersAttributes::RECENT).arg(i++);
+					param_id=QString("%1%2").arg(ParsersAttributes::RECENT).arg(QString::number(i++).rightJustified(2, '0'));
 					attribs[ParsersAttributes::ID]=param_id;
 					attribs[ParsersAttributes::PATH]=recent_models.front();
 					conf_wgt->addConfigurationParam(param_id, attribs);

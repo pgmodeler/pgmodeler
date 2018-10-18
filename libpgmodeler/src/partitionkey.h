@@ -16,26 +16,32 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "pgsqlversions.h"
+/**
+\ingroup libpgmodeler
+\brief Implements the operations to manipulate partition key elements.
+*/
 
-namespace PgSQLVersions {
-	const QString
-	PGSQL_VERSION_90=QString("9.0"),
-	PGSQL_VERSION_91=QString("9.1"),
-	PGSQL_VERSION_92=QString("9.2"),
-	PGSQL_VERSION_93=QString("9.3"),
-	PGSQL_VERSION_94=QString("9.4"),
-	PGSQL_VERSION_95=QString("9.5"),
-	PGSQL_VERSION_96=QString("9.6"),
-	PGSQL_VERSION_100=QString("10.0"),
-	PGSQL_VERSION_110=QString("11.0"),
-	DEFAULT_VERSION=PGSQL_VERSION_110;
+#ifndef PARTITION_KEY_H
+#define PARTITION_KEY_H
 
-	const QStringList
-	ALL_VERSIONS={
-		PGSQL_VERSION_110, PGSQL_VERSION_100,
-		PGSQL_VERSION_96, PGSQL_VERSION_95,
-		PGSQL_VERSION_94, PGSQL_VERSION_93,
-		PGSQL_VERSION_92, PGSQL_VERSION_91,
-		PGSQL_VERSION_90 };
-}
+#include "element.h"
+
+class PartitionKey: public Element {
+	private:
+		//! \brief Collation referenced by the element
+		Collation *collation;
+
+	public:
+		PartitionKey(void);
+
+		//! \brief Defines the collation referenced by the element
+		void setCollation(Collation *collation);
+
+		//! \brief Get the collation referenced by the element
+		Collation *getCollation(void);
+
+		//! \brief Returns the SQL / XML code definition for the partition key
+		virtual QString getCodeDefinition(unsigned def_type) final;
+};
+
+#endif
