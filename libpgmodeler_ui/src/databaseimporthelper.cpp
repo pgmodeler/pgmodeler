@@ -1681,9 +1681,20 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 			if(types.count(type_oid)!=0 && type_oid > catalog.getLastSysObjectOID())
 			{
 				/* Building the type name prepending the schema name in order to search it on
-		   the user defined types list at PgSQLType class */
+				 * the user defined types list at PgSQLType class */
 				type_name=BaseObject::formatName(getObjectName(types[type_oid][ParsersAttributes::SCHEMA], true), false);
-				type_name+=QString(".") + BaseObject::formatName(types[type_oid][ParsersAttributes::NAME], false);
+				type_name+=QString(".");
+
+				if(types[type_oid][ParsersAttributes::CATEGORY] == ~CategoryType(CategoryType::array))
+				{
+					int dim = types[type_oid][ParsersAttributes::NAME].count(QString("[]"));
+					QString aux_name = types[type_oid][ParsersAttributes::NAME].remove(QString("[]"));
+					type_name+=BaseObject::formatName(aux_name, false);
+					type_name+=QString("[]").repeated(dim);
+				}
+				else
+					type_name+=BaseObject::formatName(types[type_oid][ParsersAttributes::NAME], false);
+
 				is_type_registered=PgSQLType::isRegistered(type_name, dbmodel);
 			}
 			else
