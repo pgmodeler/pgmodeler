@@ -5490,6 +5490,8 @@ Trigger *DatabaseModel::createTrigger(void)
 
 		trigger->setFiringType(FiringType(attribs[ParsersAttributes::FIRING_TYPE]));
 
+		trigger->setTransitionTableName(Trigger::OLD_TABLE_NAME, attribs[ParsersAttributes::OLD_TABLE_NAME]);
+		trigger->setTransitionTableName(Trigger::NEW_TABLE_NAME, attribs[ParsersAttributes::NEW_TABLE_NAME]);
 
 		list_aux=attribs[ParsersAttributes::ARGUMENTS].split(',');
 		count=list_aux.count();

@@ -19,3 +19,5 @@
 <!ATTLIST trigger table CDATA #IMPLIED>
 <!ATTLIST trigger constraint (false|true) "false">
 <!ATTLIST trigger sql-disabled (false|true) "false">
+<!ATTLIST trigger old-table-name CDATA #IMPLIED>
+<!ATTLIST trigger new-table-name CDATA #IMPLIED>

@@ -43,6 +43,12 @@
   %if {sql-disabled} %then
    [ sql-disabled=] "true"
   %end
+  
+ %if {old-table-name} %or {new-table-name} %then
+    $br $tb 
+    %if {old-table-name} %then [ old-table-name=] "{old-table-name}" %end
+    %if {new-table-name} %then [ new-table-name=] "{new-table-name}" %end
+ %end
 
  > $br
  %if {comment} %then $tb {comment} %end

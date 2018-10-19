@@ -59,6 +59,7 @@ class TriggerWidget: public BaseObjectWidget, public Ui::TriggerWidget {
 		void editArgument(int lin_idx);
 		void updateColumnsCombo(void);
 		void setConstraintTrigger(bool value);
+		void enableTransitionTableNames(void);
 
 	public slots:
 		void applyConfiguration(void);

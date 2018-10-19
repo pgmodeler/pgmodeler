@@ -49,6 +49,8 @@ Trigger::Trigger(void)
 	attributes[ParsersAttributes::DEFERRABLE]=QString();
 	attributes[ParsersAttributes::DECL_IN_TABLE]=QString();
 	attributes[ParsersAttributes::CONSTRAINT]=QString();
+	attributes[ParsersAttributes::OLD_TABLE_NAME]=QString();
+	attributes[ParsersAttributes::NEW_TABLE_NAME]=QString();
 }
 
 void Trigger::addArgument(const QString &arg)
@@ -287,6 +289,23 @@ void Trigger::setConstraint(bool value)
 	is_constraint=value;
 }
 
+void Trigger::setTransitionTableName(unsigned tab_idx, const QString &name)
+{
+	if(tab_idx > NEW_TABLE_NAME)
+		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	setCodeInvalidated(transition_tabs_names[tab_idx] != name);
+	transition_tabs_names[tab_idx] = name;
+}
+
+QString Trigger::getTransitionTableName(unsigned tab_idx)
+{
+	if(tab_idx > NEW_TABLE_NAME)
+		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	return(transition_tabs_names[tab_idx]);
+}
+
 bool Trigger::isConstraint(void)
 {
 	return(is_constraint);
@@ -402,6 +421,17 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 
 	attributes[ParsersAttributes::DEFERRABLE]=(is_deferrable ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::DEFER_TYPE]=(~deferral_type);
+
+	if(def_type == SchemaParser::XML_DEFINITION)
+	{
+		attributes[ParsersAttributes::OLD_TABLE_NAME]=transition_tabs_names[OLD_TABLE_NAME];
+		attributes[ParsersAttributes::NEW_TABLE_NAME]=transition_tabs_names[NEW_TABLE_NAME];
+	}
+	else
+	{
+		attributes[ParsersAttributes::OLD_TABLE_NAME]=BaseObject::formatName(transition_tabs_names[OLD_TABLE_NAME]);
+		attributes[ParsersAttributes::NEW_TABLE_NAME]=BaseObject::formatName(transition_tabs_names[NEW_TABLE_NAME]);
+	}
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }

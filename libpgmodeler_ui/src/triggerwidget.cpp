@@ -40,8 +40,7 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 		function_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
 		ref_table_sel->setEnabled(false);
 
-		trigger_grid->addWidget(function_sel, 2, 2, 1, 1);
-		trigger_grid->addWidget(ref_table_sel, 6, 2, 1, 1);
+		trigger_grid->addWidget(function_sel, 3, 1, 1, 5);
 
 		columns_tab->setColumnCount(2);
 		columns_tab->setHeaderLabel(trUtf8("Column"), 0);
@@ -51,6 +50,7 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 
 		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(1)->layout())->addWidget(columns_tab, 1,0,1,3);
 		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(0)->layout())->addWidget(arguments_tab, 1,0,1,3);
+		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(2)->layout())->addWidget(ref_table_sel, 1, 1, 1, 1);
 
 		DeferralType::getTypes(list);
 		deferral_type_cmb->addItems(list);
@@ -67,15 +67,21 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 		connect(arguments_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleArgument(int)));
 		connect(arguments_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleArgument(int)));
 		connect(arguments_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editArgument(int)));
-		connect(constr_trig_chk, SIGNAL(toggled(bool)), this, SLOT(setConstraintTrigger(bool)));
+		connect(constraint_rb, SIGNAL(toggled(bool)), this, SLOT(setConstraintTrigger(bool)));
 		connect(update_chk, SIGNAL(toggled(bool)), this, SLOT(selectUpdateEvent(void)));
+
+		connect(insert_chk, SIGNAL(toggled(bool)), this, SLOT(enableTransitionTableNames()));
+		connect(delete_chk, SIGNAL(toggled(bool)), this, SLOT(enableTransitionTableNames()));
+		connect(update_chk, SIGNAL(toggled(bool)), this, SLOT(enableTransitionTableNames()));
+		connect(truncate_chk, SIGNAL(toggled(bool)), this, SLOT(enableTransitionTableNames()));
+		connect(firing_mode_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableTransitionTableNames()));
 
 		setRequiredField(event_lbl);
 		setRequiredField(firing_mode_lbl);
 		setRequiredField(function_lbl);
 		setRequiredField(function_sel);
 
-		setMinimumSize(580, 580);
+		setMinimumSize(580, 500);
 	}
 	catch(Exception &e)
 	{
@@ -110,6 +116,26 @@ void TriggerWidget::setConstraintTrigger(bool value)
 	}
 	else
 		firing_mode_cmb->setCurrentText(~FiringType(FiringType::after));
+}
+
+void TriggerWidget::enableTransitionTableNames(void)
+{
+	int num_evnts = 0;
+	QWidget *wgt = nullptr;
+	QCheckBox *chk = nullptr;
+	FiringType firing_type = firing_mode_cmb->currentText();
+
+	for(auto &obj : events_wgt->children())
+	{
+		wgt = qobject_cast<QWidget *>(obj);
+		chk = dynamic_cast<QCheckBox *>(wgt);
+
+		if(chk && chk->isChecked())
+			num_evnts++;
+	}
+
+	old_table_edt->setEnabled(firing_type == FiringType::after && num_evnts == 1 && (update_chk->isChecked() || delete_chk->isChecked()));
+	new_table_edt->setEnabled(firing_type == FiringType::after && num_evnts == 1 && (update_chk->isChecked() || insert_chk->isChecked()));
 }
 
 void TriggerWidget::addColumn(int lin_idx)
@@ -203,7 +229,7 @@ void TriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_list, 
 
 	if(trigger)
 	{
-		constr_trig_chk->setChecked(trigger->isConstraint());
+		constraint_rb->setChecked(trigger->isConstraint());
 
 		exec_per_row_chk->setChecked(trigger->isExecutePerRow());
 		cond_expr_txt->setPlainText(trigger->getCondition());
@@ -239,6 +265,9 @@ void TriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_list, 
 		columns_tab->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
 		arguments_tab->blockSignals(false);
 		columns_tab->blockSignals(false);
+
+		old_table_edt->setText(trigger->getTransitionTableName(Trigger::OLD_TABLE_NAME));
+		new_table_edt->setText(trigger->getTransitionTableName(Trigger::NEW_TABLE_NAME));
 	}
 
 	updateColumnsCombo();
@@ -255,7 +284,7 @@ void TriggerWidget::applyConfiguration(void)
 		startConfiguration<Trigger>();
 
 		trigger=dynamic_cast<Trigger *>(this->object);
-		trigger->setConstraint(constr_trig_chk->isChecked());
+		trigger->setConstraint(constraint_rb->isChecked());
 		trigger->setFiringType(FiringType(firing_mode_cmb->currentText()));
 		trigger->setExecutePerRow(exec_per_row_chk->isChecked());
 		trigger->setDeferrable(deferrable_chk->isChecked());
@@ -267,6 +296,8 @@ void TriggerWidget::applyConfiguration(void)
 		trigger->setEvent(EventType::on_update, update_chk->isChecked());
 		trigger->setEvent(EventType::on_delete, delete_chk->isChecked());
 		trigger->setEvent(EventType::on_truncate, truncate_chk->isChecked());
+		trigger->setTransitionTableName(Trigger::OLD_TABLE_NAME, old_table_edt->isEnabled() ? old_table_edt->text() : QString());
+		trigger->setTransitionTableName(Trigger::NEW_TABLE_NAME, new_table_edt->isEnabled() ? new_table_edt->text() : QString());
 		trigger->removeArguments();
 		trigger->removeColumns();
 
