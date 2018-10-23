@@ -273,32 +273,32 @@ Exception::Exception(const QString &msg, const QString &method, const QString &f
 	if(exception) addException(*exception);
 }
 
-Exception::Exception(ErrorCode error_type, const QString &method, const QString &file, int line, Exception *exception, const QString &extra_info)
+Exception::Exception(ErrorCode error_code, const QString &method, const QString &file, int line, Exception *exception, const QString &extra_info)
 {
 	/* Because the Exception class is not derived from QObject the function tr() is inefficient to translate messages
 		so the translation method is called  directly from the application specifying the
 		context (Exception) in the ts file and the text to be translated */
-	configureException(QApplication::translate("Exception",messages[static_cast<int>(error_type)][ErrorMessage].toStdString().c_str(),"", -1),
-						 error_type, method, file, line, extra_info);
+	configureException(QApplication::translate("Exception",messages[static_cast<int>(error_code)][ErrorMessage].toStdString().c_str(),"", -1),
+						 error_code, method, file, line, extra_info);
 
 	if(exception) addException(*exception);
 }
 
-Exception::Exception(const QString &msg, ErrorCode error_type, const QString &method, const QString &file, int line, Exception *exception, const QString &extra_info)
+Exception::Exception(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, Exception *exception, const QString &extra_info)
 {
-	configureException(msg,error_type, method, file, line, extra_info);
+	configureException(msg,error_code, method, file, line, extra_info);
 	if(exception) addException(*exception);
 }
 
-Exception::Exception(ErrorCode error_type, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info)
+Exception::Exception(ErrorCode error_code, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info)
 {
 	vector<Exception>::iterator itr, itr_end;
 
 	/* Because the Exception class is not derived from QObject the function tr() is inefficient to translate messages
 		so the translation method is called  directly from the application specifying the
 		context (Exception) in the ts file and the text to be translated */
-	configureException(QApplication::translate("Exception",messages[static_cast<int>(error_type)][ErrorMessage].toStdString().c_str(),"",-1),
-						 error_type, method, file, line, extra_info);
+	configureException(QApplication::translate("Exception",messages[static_cast<int>(error_code)][ErrorMessage].toStdString().c_str(),"",-1),
+						 error_code, method, file, line, extra_info);
 
 	itr=exceptions.begin();
 	itr_end=exceptions.end();
@@ -324,11 +324,11 @@ Exception::Exception(const QString &msg, const QString &method, const QString &f
 	}
 }
 
-Exception::Exception(const QString &msg, ErrorCode error_type, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info)
+Exception::Exception(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info)
 {
 	vector<Exception>::iterator itr=exceptions.begin();
 
-	configureException(msg,error_type, method, file, line, extra_info);
+	configureException(msg,error_code, method, file, line, extra_info);
 
 	while(itr!=exceptions.end())
 	{
@@ -337,9 +337,9 @@ Exception::Exception(const QString &msg, ErrorCode error_type, const QString &me
 	}
 }
 
-void Exception::configureException(const QString &msg, ErrorCode error_type, const QString &method, const QString &file, int line, const QString &extra_info)
+void Exception::configureException(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, const QString &extra_info)
 {
-	this->error_type=error_type;
+	this->error_code=error_code;
 	this->error_msg=msg;
 	this->method=method;
 	this->file=file;
@@ -352,21 +352,21 @@ QString Exception::getErrorMessage(void)
 	return(error_msg);
 }
 
-QString Exception::getErrorMessage(ErrorCode error_type)
+QString Exception::getErrorMessage(ErrorCode error_code)
 {
-	if(static_cast<int>(error_type) < ErrorCount)
+	if(static_cast<int>(error_code) < ErrorCount)
 		/* Because the Exception class is not derived from QObject the function tr() is inefficient to translate messages
 		 so the translation method is called  directly from the application specifying the
 		 context (Exception) in the ts file and the text to be translated */
-		return(QApplication::translate("Exception", messages[static_cast<int>(error_type)][ErrorMessage].toStdString().c_str(), "", -1));
+		return(QApplication::translate("Exception", messages[static_cast<int>(error_code)][ErrorMessage].toStdString().c_str(), "", -1));
 	else
 		return(QString());
 }
 
-QString Exception::getErrorCode(ErrorCode error_type)
+QString Exception::getErrorCode(ErrorCode error_code)
 {
-	if(static_cast<int>(error_type) < ErrorCount)
-		return(messages[static_cast<int>(error_type)][ErrorCodeId]);
+	if(static_cast<int>(error_code) < ErrorCount)
+		return(messages[static_cast<int>(error_code)][ErrorCodeId]);
 	else
 		return(QString());
 }
@@ -388,7 +388,7 @@ QString Exception::getLine(void)
 
 ErrorCode Exception::getErrorType(void)
 {
-	return(error_type);
+	return(error_code);
 }
 
 QString Exception::getExtraInfo(void)
@@ -405,19 +405,19 @@ void Exception::addException(Exception &exception)
 
 	while(itr!=itr_end)
 	{
-		this->exceptions.push_back(Exception(itr->error_msg,itr->error_type,
+		this->exceptions.push_back(Exception(itr->error_msg,itr->error_code,
 											 itr->method,itr->file,itr->line,nullptr,itr->extra_info));
 		itr++;
 	}
 	exception.exceptions.clear();
-	this->exceptions.push_back(Exception(exception.error_msg,exception.error_type,
+	this->exceptions.push_back(Exception(exception.error_msg,exception.error_code,
 										 exception.method,exception.file,exception.line,nullptr,exception.extra_info));
 }
 
 void Exception::getExceptionsList(vector<Exception> &list)
 {
 	list.assign(this->exceptions.begin(), this->exceptions.end());
-	list.push_back(Exception(this->error_msg,this->error_type,
+	list.push_back(Exception(this->error_msg,this->error_code,
 							 this->method,this->file,this->line,nullptr,this->extra_info));
 }
 

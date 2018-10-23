@@ -886,7 +886,7 @@ void Relationship::addColumnsRelGenPart(void)
 			idx, tab_count;
 	vector<Column *> columns;
 	ObjectType types[2]={ObjTable, ObjBaseTable};
-	ErrorCode err_type=Custom;
+	ErrorCode err_code=Custom;
 	bool duplic=false, cond=false,
 			/* 0 -> Column created by inheritance relationship
 								 1 -> Column created by copy relationship */
@@ -915,7 +915,7 @@ void Relationship::addColumnsRelGenPart(void)
 		/* This for compares the columns of the receiver table
 		 with the columns of the reference table in order to
 		 resolve the conflicting names */
-		for(i=0; i < dst_count && err_type==Custom; i++)
+		for(i=0; i < dst_count && err_code==Custom; i++)
 		{
 			//Gets the column from the receiver (destination) table
 			dst_col=dst_tab->getColumn(i);
@@ -1016,17 +1016,17 @@ void Relationship::addColumnsRelGenPart(void)
 							((!dst_flags[0] && !dst_flags[1]) ||
 							 (!dst_flags[0] &&  dst_flags[1])))
 					{
-						err_type=InvCopyRelationshipDuplicCols;
+						err_code=InvCopyRelationshipDuplicCols;
 					}
 					/* Error condition 2: The relationship type is generalization and the column
 					 * types is incompatible */
 					else if((rel_type == RELATIONSHIP_GEN || rel_type==RELATIONSHIP_PART) && src_type != dst_type)
-						err_type=InvInheritRelationshipIncompCols;
+						err_code=InvInheritRelationshipIncompCols;
 				}
 			}
 
 			//In case that no error was detected (ERR_CUSTOM)
-			if(err_type==Custom)
+			if(err_code==Custom)
 			{
 				//In case there is no column duplicity
 				if(!duplic)
@@ -1065,10 +1065,10 @@ void Relationship::addColumnsRelGenPart(void)
 		}
 
 		if((src_tab->getColumnCount() + columns.size()) != dst_tab->getColumnCount() && rel_type == RELATIONSHIP_PART)
-			err_type = InvColumnCountPartRel;
+			err_code = InvColumnCountPartRel;
 
 		//In case that no duplicity error is detected
-		if(err_type==Custom)
+		if(err_code==Custom)
 		{
 			vector<Column *>::iterator itr, itr_end;
 
@@ -1094,16 +1094,16 @@ void Relationship::addColumnsRelGenPart(void)
 				columns.pop_back();
 			}
 
-			str_aux=Exception::getErrorMessage(err_type);
+			str_aux=Exception::getErrorMessage(err_code);
 
-			if(err_type==InvCopyRelationshipDuplicCols)
+			if(err_code==InvCopyRelationshipDuplicCols)
 			{
 				msg=QString(str_aux)
 					.arg(dst_col->getName(true))
 					.arg(dst_tab->getName(true))
 					.arg(src_tab->getName(true));
 			}
-			else if(err_type==InvColumnCountPartRel)
+			else if(err_code==InvColumnCountPartRel)
 			{
 				msg=QString(str_aux)
 					.arg(src_tab->getName(true))
@@ -1118,7 +1118,7 @@ void Relationship::addColumnsRelGenPart(void)
 					.arg(src_tab->getName(true));
 			}
 
-			throw Exception(msg, err_type,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(msg, err_code,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
 		//Creates the special primary key if exists

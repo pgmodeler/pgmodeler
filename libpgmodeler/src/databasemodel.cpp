@@ -486,32 +486,32 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
 			//If there are objects referencing the table
 			if(!refs.empty())
 			{
-				ErrorCode err_type;
+				ErrorCode err_code;
 
 				//Raises an error indicating the object that is referencing the table
 				if(!dynamic_cast<TableObject *>(refs[0]))
 				{
-					err_type=RemDirectReference;
-					throw Exception(QString(Exception::getErrorMessage(err_type))
+					err_code=RemDirectReference;
+					throw Exception(QString(Exception::getErrorMessage(err_code))
 									.arg(object->getName(true))
 									.arg(object->getTypeName())
 									.arg(refs[0]->getName(true))
 							.arg(refs[0]->getTypeName()),
-							err_type,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							err_code,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 				}
 				else
 				{
 					BaseObject *ref_obj_parent=dynamic_cast<TableObject *>(refs[0])->getParentTable();
 
-					err_type=RemInderectReference;
-					throw Exception(QString(Exception::getErrorMessage(err_type))
+					err_code=RemInderectReference;
+					throw Exception(QString(Exception::getErrorMessage(err_code))
 									.arg(object->getName(true))
 									.arg(object->getTypeName())
 									.arg(refs[0]->getName(true))
 							.arg(refs[0]->getTypeName())
 							.arg(ref_obj_parent->getName(true))
 							.arg(ref_obj_parent->getTypeName()),
-							err_type,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							err_code,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 				}
 			}
 

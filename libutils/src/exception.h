@@ -293,7 +293,7 @@ class Exception {
 		static constexpr unsigned ErrorCodeId=0, ErrorMessage=1;
 
 		//! \brief Error type related to the exception
-		ErrorCode error_type;
+		ErrorCode error_code;
 
 		//! \brief Formated error message
 		QString error_msg,
@@ -314,7 +314,7 @@ class Exception {
 		int line;
 
 		//! \brief Configures the basic attributes of exception
-		void configureException(const QString &msg, ErrorCode error_type, const QString &method, const QString &file, int line, const QString &extra_info);
+		void configureException(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, const QString &extra_info);
 
 		//! \brief Adds a exception to the list of exceptions
 		void addException(Exception &exception);
@@ -323,15 +323,15 @@ class Exception {
 		Exception(void);
 		Exception(const QString &msg, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info=QString());
 		Exception(const QString &msg, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info=QString());
-		Exception(const QString &msg, ErrorCode error_type, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info=QString());
-		Exception(const QString &msg, ErrorCode error_type, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info=QString());
-		Exception(ErrorCode error_type, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info=QString());
-		Exception(ErrorCode error_type, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info=QString());
+		Exception(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info=QString());
+		Exception(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info=QString());
+		Exception(ErrorCode error_code, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info=QString());
+		Exception(ErrorCode error_code, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info=QString());
 
 		~Exception(void){}
 		QString getErrorMessage(void);
-		static QString getErrorMessage(ErrorCode error_type);
-		static QString getErrorCode(ErrorCode error_type);
+		static QString getErrorMessage(ErrorCode error_code);
+		static QString getErrorCode(ErrorCode error_code);
 		QString getMethod(void);
 		QString getFile(void);
 		QString getLine(void);
