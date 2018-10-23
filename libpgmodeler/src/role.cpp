@@ -51,7 +51,7 @@ void Role::setOption(unsigned op_type, bool value)
 {
 	if(op_type > OP_BYPASSRLS)
 		//Raises an error if the option type is invalid
-		throw Exception(ERR_ASG_VAL_INV_ROLE_OPT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgValueInvalidRoleOptionType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(options[op_type] != value);
 	options[op_type]=value;
@@ -61,12 +61,12 @@ void Role::addRole(unsigned role_type, Role *role)
 {
 	//Raises an error if the role to be added is not allocated
 	if(!role)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the role to be added is the 'this' role
 	else if(role && this==role)
-		throw Exception(Exception::getErrorMessage(ERR_ROLE_MEMBER_ITSELF)
+		throw Exception(Exception::getErrorMessage(AsgRoleMemberItself)
 						.arg(role->getName()),
-						ERR_ROLE_MEMBER_ITSELF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						AsgRoleMemberItself,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
 		bool role_ref, role_mem, role_adm,
@@ -87,10 +87,10 @@ void Role::addRole(unsigned role_type, Role *role)
 		if((role_type==REF_ROLE && role_ref) ||
 				(role_type==MEMBER_ROLE && (role_mem || role_adm)) ||
 				(role_type==ADMIN_ROLE && (role_adm || role_mem)))
-			throw Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_ROLE)
+			throw Exception(Exception::getErrorMessage(InsDuplicatedRole)
 							.arg(role->getName())
 							.arg(this->getName()),
-							ERR_INS_DUPLIC_ROLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							InsDuplicatedRole,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		/* Checking for redundant reference between roles.
 			A redundant reference can happen when:
@@ -117,10 +117,10 @@ void Role::addRole(unsigned role_type, Role *role)
 		else if((role_type==REF_ROLE && ((role_mem || role_adm) || role_ref1)) ||
 				(role_type==MEMBER_ROLE && ((role_mem1 || role_adm1) || role_ref)) ||
 				(role_type==ADMIN_ROLE &&  ((role_mem1 || role_adm1) || role_ref)))
-			throw Exception(Exception::getErrorMessage(ERR_ROLE_REF_REDUNDANCY)
+			throw Exception(Exception::getErrorMessage(AsgRoleReferenceRedundancy)
 							.arg(this->getName())
 							.arg(role->getName()),
-							ERR_ROLE_REF_REDUNDANCY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							AsgRoleReferenceRedundancy,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else
 		{
 			switch(role_type)
@@ -201,12 +201,12 @@ void Role::removeRole(unsigned role_type, unsigned role_idx)
 		case ADMIN_ROLE: list=&admin_roles; break;
 		default:
 			//Raises an error if the role type is invalid
-			throw Exception(ERR_REF_INV_ROLE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(RefInvalidRoleType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		break;
 	}
 
 	if(role_idx >= list->size())
-		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	itr=list->begin() + role_idx;
 	list->erase(itr);
@@ -224,7 +224,7 @@ void Role::removeRoles(unsigned role_type)
 		case ADMIN_ROLE: list=&admin_roles; break;
 		default:
 			//Raises an error if the role type is invalid
-			throw Exception(ERR_REF_INV_ROLE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(RefInvalidRoleType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		break;
 	}
 
@@ -245,7 +245,7 @@ bool Role::isRoleExists(unsigned role_type, Role *role)
 		case ADMIN_ROLE: list=&admin_roles; break;
 		default:
 			//Raises an error if the role type is invalid
-			throw Exception(ERR_REF_INV_ROLE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(RefInvalidRoleType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		break;
 	}
 
@@ -263,7 +263,7 @@ bool Role::isRoleExists(unsigned role_type, Role *role)
 bool Role::getOption(unsigned op_type)
 {
 	if(op_type > OP_BYPASSRLS)
-		throw Exception(ERR_ASG_VAL_INV_ROLE_OPT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgValueInvalidRoleOptionType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(options[op_type]);
 }
@@ -279,13 +279,13 @@ Role *Role::getRole(unsigned role_type, unsigned role_idx)
 		case ADMIN_ROLE: list=&admin_roles; break;
 		default:
 			//Raises an error if the role type is invalid
-			throw Exception(ERR_REF_INV_ROLE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(RefInvalidRoleType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		break;
 	}
 
 	//Raises an error if the role index is invalid (out of bound)
 	if(role_idx > list->size())
-		throw Exception(ERR_REF_ROLE_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefRoleInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(list->at(role_idx));
 }
@@ -301,7 +301,7 @@ unsigned Role::getRoleCount(unsigned role_type)
 		case ADMIN_ROLE: list=&admin_roles; break;
 		default:
 			//Raises an error if the role type is invalid
-			throw Exception(ERR_REF_INV_ROLE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(RefInvalidRoleType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		break;
 	}
 
@@ -355,7 +355,7 @@ QString Role::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
 	Role *role=dynamic_cast<Role *>(object);
 
 	if(!role)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{

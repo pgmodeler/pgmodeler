@@ -54,7 +54,7 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 
 		static map<QString, attribs_map> config_params;
 
-		static const unsigned UNIT_MILIMETERS=0,
+		static constexpr unsigned UNIT_MILIMETERS=0,
 		UNIT_POINT=1,
 		UNIT_INCHS=2,
 		UNIT_CENTIMETERS=3;

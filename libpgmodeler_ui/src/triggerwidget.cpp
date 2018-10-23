@@ -27,7 +27,7 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 		Ui_TriggerWidget::setupUi(this);
 
 		cond_expr_hl=new SyntaxHighlighter(cond_expr_txt, false, true);
-		cond_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		cond_expr_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
 		columns_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
 										  (ObjectsTableWidget::EDIT_BUTTON |
@@ -221,7 +221,7 @@ void TriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_list, 
 	Column *column=nullptr;
 
 	if(!parent_table)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObjectWidget::setAttributes(model, op_list, trigger, parent_table);
 	ref_table_sel->setModel(model);

@@ -59,7 +59,7 @@ class CrashHandlerForm: public BugReportForm {
 
 	public:
 		//! \brief Analysis mode argument
-		const static QString ANALYSIS_MODE;
+		static const QString ANALYSIS_MODE;
 
 		CrashHandlerForm(bool analysis_mode=false, QWidget * parent = 0, Qt::WindowFlags f = 0);
 

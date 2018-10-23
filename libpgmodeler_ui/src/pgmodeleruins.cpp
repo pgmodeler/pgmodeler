@@ -27,7 +27,7 @@ namespace PgModelerUiNS {
 	QTreeWidgetItem *createOutputTreeItem(QTreeWidget *output_trw, const QString &text, const QPixmap &ico, QTreeWidgetItem *parent, bool expand_item, bool word_wrap)
 	{
 		if(!output_trw)
-			throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		QTreeWidgetItem *item=nullptr;
 
@@ -64,7 +64,7 @@ namespace PgModelerUiNS {
 	void createOutputListItem(QListWidget *output_lst, const QString &text, const QPixmap &ico, bool is_formated)
 	{
 		if(!output_lst)
-			throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		QListWidgetItem *item=new QListWidgetItem;
 
@@ -97,10 +97,10 @@ namespace PgModelerUiNS {
 			bool curr_val=object->isSQLDisabled();
 
 			if(object->isSystemObject())
-				throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
+				throw Exception(Exception::getErrorMessage(OprReservedObject)
 								.arg(object->getName(true))
 								.arg(object->getTypeName()),
-								ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+								OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			object->setSQLDisabled(disable);
 

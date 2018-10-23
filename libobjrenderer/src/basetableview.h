@@ -88,7 +88,7 @@ class BaseTableView: public BaseObjectView {
 		float calculateWidth(void);
 
 	public:
-		static const unsigned LEFT_CONN_POINT=0,
+		static constexpr unsigned LEFT_CONN_POINT=0,
 		RIGHT_CONN_POINT=1;
 
 		BaseTableView(BaseTable *base_tab);

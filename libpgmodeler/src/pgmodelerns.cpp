@@ -33,7 +33,7 @@ namespace PgModelerNS {
 
 		//Raises an error if the copy object is not allocated
 		if(!copy_obj)
-			throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Allocates the source object if its not allocated
 		if(!orig_obj)
@@ -151,7 +151,7 @@ namespace PgModelerNS {
 				copyObject(psrc_obj, dynamic_cast<GenericSQL *>(copy_obj));
 			break;
 			default:
-				throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			break;
 		}
 	}

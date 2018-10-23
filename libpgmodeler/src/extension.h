@@ -40,7 +40,7 @@ class Extension: public BaseObject {
 		QString versions[2];
 
 	public:
-		static const unsigned CUR_VERSION=0,
+		static constexpr unsigned CUR_VERSION=0,
 		OLD_VERSION=1;
 		Extension(void);
 

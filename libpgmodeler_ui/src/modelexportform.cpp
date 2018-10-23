@@ -93,8 +93,8 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(svg_rb, SIGNAL(toggled(bool)), page_by_page_chk, SLOT(setDisabled(bool)));
 	connect(ignore_error_codes_chk, SIGNAL(toggled(bool)), error_codes_edt, SLOT(setEnabled(bool)));
 
-	pgsqlvers_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
-	pgsqlvers1_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
+	pgsqlvers_cmb->addItems(PgSQLVersions::AllVersions);
+	pgsqlvers1_cmb->addItems(PgSQLVersions::AllVersions);
 
 	double values[]={ ModelWidget::MINIMUM_ZOOM, 0.10f, 0.25f, 0.5f, 0.75f, 1, 1.25f, 1.50f, 1.75f, 2,
 										2.25, 2.50, 2.75, 3, 3.25, 3.50, 3.75, ModelWidget::MAXIMUM_ZOOM };

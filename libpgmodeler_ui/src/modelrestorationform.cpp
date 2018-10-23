@@ -35,7 +35,7 @@ ModelRestorationForm::ModelRestorationForm(QWidget *parent, Qt::WindowFlags f) :
 QStringList ModelRestorationForm::getTemporaryModels(void)
 {
 	//Returns if there is some .dbm file on the tmp dir
-	return(QDir(GlobalAttributes::TEMPORARY_DIR, QString("*.dbm"), QDir::Name, QDir::Files | QDir::NoDotAndDotDot).entryList());
+	return(QDir(GlobalAttributes::TemporaryDir, QString("*.dbm"), QDir::Name, QDir::Files | QDir::NoDotAndDotDot).entryList());
 }
 
 int ModelRestorationForm::exec(void)
@@ -51,8 +51,8 @@ int ModelRestorationForm::exec(void)
 
 	while(!file_list.isEmpty())
 	{
-		info.setFile(GlobalAttributes::TEMPORARY_DIR, file_list.front());
-		filename=GlobalAttributes::TEMPORARY_DIR + GlobalAttributes::DIR_SEPARATOR + file_list.front();
+		info.setFile(GlobalAttributes::TemporaryDir, file_list.front());
+		filename=GlobalAttributes::TemporaryDir + GlobalAttributes::DirSeparator + file_list.front();
 
 		input.setFileName(filename);
 		input.open(QFile::ReadOnly);
@@ -105,7 +105,7 @@ void ModelRestorationForm::removeTemporaryModels(void)
 
 	while(!file_list.isEmpty())
 	{
-		tmp_file.remove(GlobalAttributes::TEMPORARY_DIR + GlobalAttributes::DIR_SEPARATOR + file_list.front());
+		tmp_file.remove(GlobalAttributes::TemporaryDir + GlobalAttributes::DirSeparator + file_list.front());
 		file_list.pop_front();
 	}
 }
@@ -114,7 +114,7 @@ void ModelRestorationForm::removeTemporaryModel(const QString &tmp_model)
 {
 	QDir tmp_file;
 	QString file=QFileInfo(tmp_model).fileName();
-	tmp_file.remove(GlobalAttributes::TEMPORARY_DIR + GlobalAttributes::DIR_SEPARATOR + file);
+	tmp_file.remove(GlobalAttributes::TemporaryDir + GlobalAttributes::DirSeparator + file);
 }
 
 void ModelRestorationForm::enableRestoration(void)

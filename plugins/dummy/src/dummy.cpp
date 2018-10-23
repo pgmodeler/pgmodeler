@@ -27,10 +27,10 @@ Dummy::Dummy(void)
 						getPluginAuthor(),
 						getPluginDescription(),
 
-						GlobalAttributes::PLUGINS_DIR +
-						GlobalAttributes::DIR_SEPARATOR +
+						GlobalAttributes::PluginsDir +
+						GlobalAttributes::DirSeparator +
 						QString("dummy") +
-						GlobalAttributes::DIR_SEPARATOR + QString("dummy.png"));
+						GlobalAttributes::DirSeparator + QString("dummy.png"));
 }
 
 QString Dummy::getPluginTitle(void)

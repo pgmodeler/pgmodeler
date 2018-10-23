@@ -80,7 +80,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		ret_table_gb->setLayout(grid1);
 		ret_table_gb->setVisible(false);
 
-		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_92)].push_back(leakproof_chk);
+		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PgSQLVersion92)].push_back(leakproof_chk);
 		frame=generateVersionWarningFrame(fields_map, &value_map);
 		grid->addWidget(frame, grid->count()+1, 0, 1, 5);
 		frame->setParent(func_config_twg->widget(0));
@@ -366,15 +366,15 @@ void FunctionWidget::selectLanguage(void)
 	{
 		try
 		{
-			source_code_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-											  GlobalAttributes::DIR_SEPARATOR +
+			source_code_hl->loadConfiguration(GlobalAttributes::ConfigurationsDir +
+												GlobalAttributes::DirSeparator +
 											  language_cmb->currentText() +
-											  GlobalAttributes::HIGHLIGHT_FILE_SUF +
-											  GlobalAttributes::CONFIGURATION_EXT);
+												GlobalAttributes::HighlightFileSuffix +
+												GlobalAttributes::ConfigurationExt);
 		}
 		catch(Exception &)
 		{
-			source_code_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+			source_code_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 		}
 
 		source_code_hl->rehighlight();
@@ -483,10 +483,10 @@ void FunctionWidget::validateConfiguredFunction(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(Exception::getErrorMessage(ERR_FUNC_CONFIG_INV_OBJECT)
+		throw Exception(Exception::getErrorMessage(InvFuncConfigInvalidatesObject)
 						.arg(object->getName(true))
 						.arg(object->getTypeName()),
-						ERR_FUNC_CONFIG_INV_OBJECT,
+						InvFuncConfigInvalidatesObject,
 						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }

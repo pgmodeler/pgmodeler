@@ -80,10 +80,10 @@ void Function::addParameter(Parameter param)
 
 	//If a duplicated parameter is found an error is raised
 	if(found)
-		throw Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PARAM_FUNCTION)
+		throw Exception(Exception::getErrorMessage(AsgDuplicatedParameterFunction)
 						.arg(param.getName())
 						.arg(this->signature),
-						ERR_ASG_DUPLIC_PARAM_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						AsgDuplicatedParameterFunction,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Inserts the parameter in the function
 	parameters.push_back(param);
@@ -94,7 +94,7 @@ void Function::addReturnedTableColumn(const QString &name, PgSQLType type)
 {
 	//Raises an error if the column name is empty
 	if(name.isEmpty())
-		throw Exception(ERR_ASG_EMPTY_NAME_RET_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgEmptyNameTableReturnType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	vector<Parameter>::iterator itr,itr_end;
 	bool found=false;
@@ -113,10 +113,10 @@ void Function::addReturnedTableColumn(const QString &name, PgSQLType type)
 
 	//Raises an error if the column is duplicated
 	if(found)
-		throw Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_RET_TAB_TYPE)
+		throw Exception(Exception::getErrorMessage(InsDuplicatedTableReturnType)
 						.arg(name)
 						.arg(this->signature),
-						ERR_INS_DUPLIC_RET_TAB_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						InsDuplicatedTableReturnType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	Parameter p;
 	p.setName(name);
@@ -174,9 +174,9 @@ void Function::setRowAmount(unsigned row_amount)
 void Function::setLibrary(const QString &library)
 {
 	if(language->getName().toLower()!=~LanguageType("c"))
-		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_REFLIB_LANG_NOT_C)
+		throw Exception(Exception::getErrorMessage(AsgRefLibraryFuncLanguageNotC)
 						.arg(this->getSignature()),
-						ERR_ASG_FUNC_REFLIB_LANG_NOT_C,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						AsgRefLibraryFuncLanguageNotC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->library != library);
 	this->library=library;
@@ -185,9 +185,9 @@ void Function::setLibrary(const QString &library)
 void Function::setSymbol(const QString &symbol)
 {
 	if(language->getName().toLower()!=~LanguageType("c"))
-		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_REFLIB_LANG_NOT_C)
+		throw Exception(Exception::getErrorMessage(AsgRefLibraryFuncLanguageNotC)
 						.arg(this->getSignature()),
-						ERR_ASG_FUNC_REFLIB_LANG_NOT_C,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						AsgRefLibraryFuncLanguageNotC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->symbol != symbol);
 	this->symbol=symbol;
@@ -209,10 +209,10 @@ void Function::setLanguage(BaseObject *language)
 {
 	//Raises an error if the language is not allocated
 	if(!language)
-		throw Exception(ERR_ASG_NOT_ALOC_LANGUAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocatedLanguage,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the language object is invalid
 	else if(language->getObjectType()!=OBJ_LANGUAGE)
-		throw Exception(ERR_ASG_INV_LANGUAGE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgInvalidLanguageObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->language != language);
 	this->language=language;
@@ -251,9 +251,9 @@ void Function::setBehaviorType(BehaviorType behav_type)
 void Function::setSourceCode(const QString &src_code)
 {
 	if(language && language->getName().toLower()==~LanguageType("c"))
-		throw Exception(Exception::getErrorMessage(ERR_ASG_CODE_FUNC_C_LANGUAGE)
+		throw Exception(Exception::getErrorMessage(AsgSourceCodeFuncCLanguage)
 						.arg(this->getSignature()),
-						ERR_ASG_CODE_FUNC_C_LANGUAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						AsgSourceCodeFuncCLanguage,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->source_code != src_code);
 	this->source_code=src_code;
@@ -323,7 +323,7 @@ Parameter Function::getParameter(unsigned param_idx)
 {
 	//Raises an error if the parameter index is out of bound
 	if(param_idx>=parameters.size())
-		throw Exception(ERR_REF_PARAM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefParameterInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(parameters[param_idx]);
 }
@@ -332,7 +332,7 @@ Parameter Function::getReturnedTableColumn(unsigned column_idx)
 {
 	//Raises an error if the column index is out of bound
 	if(column_idx>=ret_table_columns.size())
-		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(ret_table_columns[column_idx]);
 }
@@ -395,7 +395,7 @@ void Function::removeParameter(unsigned param_idx)
 {
 	//Raises an error if parameter index is out of bound
 	if(param_idx>=parameters.size())
-		throw Exception(ERR_REF_PARAM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefParameterInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	vector<Parameter>::iterator itr;
 	itr=parameters.begin()+param_idx;
@@ -407,7 +407,7 @@ void Function::removeParameter(unsigned param_idx)
 void Function::removeReturnedTableColumn(unsigned column_idx)
 {
 	if(column_idx>=ret_table_columns.size())
-		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	vector<Parameter>::iterator itr;
 	itr=ret_table_columns.begin()+column_idx;
@@ -499,7 +499,7 @@ QString Function::getAlterDefinition(BaseObject *object)
 	Function *func=dynamic_cast<Function *>(object);
 
 	if(!func)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{

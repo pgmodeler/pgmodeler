@@ -56,18 +56,18 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		Q_OBJECT
 
 		//! \brief Maximum number of files listed on recent models menu
-		const static int MAX_RECENT_MODELS=15;
+		static constexpr int MAX_RECENT_MODELS=15;
 
-		const static int GENERAL_ACTIONS_COUNT=8;
+		static constexpr int GENERAL_ACTIONS_COUNT=8;
 
-		const static int WELCOME_VIEW=0,
+		static constexpr int WELCOME_VIEW=0,
 		DESIGN_VIEW=1,
 		MANAGE_VIEW=2;
 
 		static bool confirm_validation;
 
 		//! \brief Constants used to mark a pending operation to be executed after validate model
-		const static unsigned NO_PENDING_OPER=0,
+		static constexpr unsigned NO_PENDING_OPER=0,
 		PENDING_SAVE_OPER=1,
 		PENDING_SAVE_AS_OPER=2,
 		PENDING_EXPORT_OPER=3,

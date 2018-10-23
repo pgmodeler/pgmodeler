@@ -98,9 +98,9 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 		ignore_error_codes_ht->setText(ignore_error_codes_chk->statusTip());
 
 		sqlcode_hl=new SyntaxHighlighter(sqlcode_txt);
-		sqlcode_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		sqlcode_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
-		pgsql_ver_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
+		pgsql_ver_cmb->addItems(PgSQLVersions::AllVersions);
 
 		PgModelerUiNS::configureWidgetFont(message_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 
@@ -430,7 +430,7 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 	try
 	{
 		if(thread_id != SRC_IMPORT_THREAD && thread_id != IMPORT_THREAD)
-			throw Exception(ERR_ALOC_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(AllocationObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		createThread(thread_id);
 
@@ -621,8 +621,8 @@ void ModelDatabaseDiffForm::saveDiffToFile(void)
 		output.setFileName(file_edt->text());
 
 		if(!output.open(QFile::WriteOnly))
-			captureThreadError(Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(file_edt->text()),
-										 ERR_FILE_DIR_NOT_WRITTEN, __PRETTY_FUNCTION__,__FILE__,__LINE__));
+			captureThreadError(Exception(Exception::getErrorMessage(FileDirectoryNotWritten).arg(file_edt->text()),
+										 FileDirectoryNotWritten, __PRETTY_FUNCTION__,__FILE__,__LINE__));
 
 		output.write(sqlcode_txt->toPlainText().toUtf8());
 		output.close();

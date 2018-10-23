@@ -18,11 +18,11 @@
 
 #include "objectsdiffinfo.h"
 
-const unsigned ObjectsDiffInfo::CREATE_OBJECT=0;
-const unsigned ObjectsDiffInfo::DROP_OBJECT=1;
-const unsigned ObjectsDiffInfo::ALTER_OBJECT=2;
-const unsigned ObjectsDiffInfo::IGNORE_OBJECT=3;
-const unsigned ObjectsDiffInfo::NO_DIFFERENCE=4;
+constexpr unsigned ObjectsDiffInfo::CREATE_OBJECT;
+constexpr unsigned ObjectsDiffInfo::DROP_OBJECT;
+constexpr unsigned ObjectsDiffInfo::ALTER_OBJECT;
+constexpr unsigned ObjectsDiffInfo::IGNORE_OBJECT;
+constexpr unsigned ObjectsDiffInfo::NO_DIFFERENCE;
 
 ObjectsDiffInfo::ObjectsDiffInfo(void)
 {

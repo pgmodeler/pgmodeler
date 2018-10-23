@@ -53,10 +53,10 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(find_history_wgt->hide_tb, SIGNAL(clicked(bool)), find_history_parent, SLOT(hide()));
 
 	sql_cmd_hl=new SyntaxHighlighter(sql_cmd_txt, false);
-	sql_cmd_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+	sql_cmd_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
 	cmd_history_hl=new SyntaxHighlighter(cmd_history_txt, false);
-	cmd_history_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+	cmd_history_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
 	results_parent->setVisible(false);
 	output_tbw->setTabEnabled(0, false);
@@ -234,7 +234,7 @@ void SQLExecutionWidget::resizeEvent(QResizeEvent *event)
 void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTableWidget *results_tbw, bool store_data)
 {
 	if(!results_tbw)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{
@@ -342,8 +342,8 @@ void SQLExecutionWidget::handleExecutionAborted(Exception e)
 										QString("%1 %2").arg(time_str).arg(e.getErrorMessage()),
 										QPixmap(PgModelerUiNS::getIconPath("msgbox_erro")), false);
 
-	if(e.getErrorType()==ERR_CONNECTION_TIMEOUT ||
-		 e.getErrorType()==ERR_CONNECTION_BROKEN)
+	if(e.getErrorType()==ConnectionTimeout ||
+		 e.getErrorType()==ConnectionBroken)
 	{
 		PgModelerUiNS::createOutputListItem(msgoutput_lst,
 											QString("%1 %2").arg(time_str).arg(trUtf8("No results retrieved or changes done due to the error above! Run the command again.")),
@@ -573,8 +573,8 @@ void SQLExecutionWidget::saveCommands(void)
 		file.setFileName(filename);
 
 		if(!file.open(QFile::WriteOnly))
-			throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(filename),
-											ERR_FILE_DIR_NOT_ACCESSED ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(FileDirectoryNotAccessed).arg(filename),
+											FileDirectoryNotAccessed ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		file.write(sql_cmd_txt->toPlainText().toUtf8());
 		file.close();
@@ -596,9 +596,9 @@ void SQLExecutionWidget::loadCommands(void)
 		file.setFileName(sql_file_dlg.selectedFiles().at(0));
 
 		if(!file.open(QFile::ReadOnly))
-			throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED)
+			throw Exception(Exception::getErrorMessage(FileDirectoryNotAccessed)
 							.arg(sql_file_dlg.selectedFiles().at(0))
-							,ERR_FILE_DIR_NOT_ACCESSED ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							,FileDirectoryNotAccessed ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		sql_cmd_txt->clear();
 		sql_cmd_txt->setPlainText(file.readAll());
@@ -612,7 +612,7 @@ void SQLExecutionWidget::loadCommands(void)
 void SQLExecutionWidget::exportResults(QTableView *results_tbw)
 {
 	if(!results_tbw)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	QFileDialog csv_file_dlg;
 
@@ -631,9 +631,9 @@ void SQLExecutionWidget::exportResults(QTableView *results_tbw)
 		file.setFileName(csv_file_dlg.selectedFiles().at(0));
 
 		if(!file.open(QFile::WriteOnly))
-			throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED)
+			throw Exception(Exception::getErrorMessage(FileDirectoryNotAccessed)
 							.arg(csv_file_dlg.selectedFiles().at(0))
-							, ERR_FILE_DIR_NOT_ACCESSED ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							, FileDirectoryNotAccessed ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 		results_tbw->setUpdatesEnabled(false);
@@ -685,7 +685,7 @@ QByteArray SQLExecutionWidget::generateTextBuffer(QTableView *results_tbw)
 QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar separator, bool incl_col_names, bool use_quotes)
 {
 	if(!results_tbw)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(!results_tbw->selectionModel())
 		return (QByteArray());
@@ -739,7 +739,7 @@ QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar sep
 void SQLExecutionWidget::copySelection(QTableView *results_tbw, bool use_popup, bool csv_is_default)
 {
 	if(!results_tbw)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	QItemSelectionModel *selection = results_tbw->selectionModel();
 
@@ -832,34 +832,34 @@ void SQLExecutionWidget::saveSQLHistory(void)
 			attribs[ParsersAttributes::CONNECTION] = hist.first;
 			attribs[ParsersAttributes::COMMANDS] = hist.second;
 			schparser.ignoreEmptyAttributes(true);
-			commands += schparser.getCodeDefinition(GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
-																							GlobalAttributes::DIR_SEPARATOR +
-																							GlobalAttributes::SCHEMAS_DIR +
-																							GlobalAttributes::DIR_SEPARATOR +
+			commands += schparser.getCodeDefinition(GlobalAttributes::TmplConfigurationDir +
+																							GlobalAttributes::DirSeparator +
+																							GlobalAttributes::SchemasDir +
+																							GlobalAttributes::DirSeparator +
 																							ParsersAttributes::COMMANDS +
-																							GlobalAttributes::SCHEMA_EXT, attribs);
+																							GlobalAttributes::SchemaExt, attribs);
 		}
 
-		schparser.loadFile(GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
-											 GlobalAttributes::DIR_SEPARATOR +
-											 GlobalAttributes::SCHEMAS_DIR +
-											 GlobalAttributes::DIR_SEPARATOR +
-											 GlobalAttributes::SQL_HISTORY_CONF +
-											 GlobalAttributes::SCHEMA_EXT);
+		schparser.loadFile(GlobalAttributes::TmplConfigurationDir +
+											 GlobalAttributes::DirSeparator +
+											 GlobalAttributes::SchemasDir +
+											 GlobalAttributes::DirSeparator +
+											 GlobalAttributes::SQLHistoryConf +
+											 GlobalAttributes::SchemaExt);
 
 		attribs.clear();
 		attribs[ParsersAttributes::COMMANDS] = commands;
 		buffer.append(schparser.getCodeDefinition(attribs));
 
 
-		file.setFileName(GlobalAttributes::CONFIGURATIONS_DIR +
-										 GlobalAttributes::DIR_SEPARATOR +
-										 GlobalAttributes::SQL_HISTORY_CONF +
-										 GlobalAttributes::CONFIGURATION_EXT);
+		file.setFileName(GlobalAttributes::ConfigurationsDir +
+										 GlobalAttributes::DirSeparator +
+										 GlobalAttributes::SQLHistoryConf +
+										 GlobalAttributes::ConfigurationExt);
 
 		if(!file.open(QFile::WriteOnly))
-			throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(file.fileName()),
-											ERR_FILE_DIR_NOT_ACCESSED, __PRETTY_FUNCTION__, __FILE__ ,__LINE__);
+			throw Exception(Exception::getErrorMessage(FileDirectoryNotAccessed).arg(file.fileName()),
+											FileDirectoryNotAccessed, __PRETTY_FUNCTION__, __FILE__ ,__LINE__);
 
 		file.write(buffer);
 		file.close();
@@ -877,18 +877,18 @@ void SQLExecutionWidget::loadSQLHistory(void)
 		XMLParser xmlparser;
 		attribs_map attribs;
 
-		xmlparser.setDTDFile(GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
-												 GlobalAttributes::DIR_SEPARATOR +
-												 GlobalAttributes::OBJECT_DTD_DIR +
-												 GlobalAttributes::DIR_SEPARATOR +
-												 GlobalAttributes::SQL_HISTORY_CONF +
-												 GlobalAttributes::OBJECT_DTD_EXT,
-												 GlobalAttributes::SQL_HISTORY_CONF);
+		xmlparser.setDTDFile(GlobalAttributes::TmplConfigurationDir +
+												 GlobalAttributes::DirSeparator +
+												 GlobalAttributes::ObjectDTDDir +
+												 GlobalAttributes::DirSeparator +
+												 GlobalAttributes::SQLHistoryConf +
+												 GlobalAttributes::ObjectDTDExt,
+												 GlobalAttributes::SQLHistoryConf);
 
-		xmlparser.loadXMLFile(GlobalAttributes::CONFIGURATIONS_DIR +
-													GlobalAttributes::DIR_SEPARATOR +
-													GlobalAttributes::SQL_HISTORY_CONF +
-													GlobalAttributes::CONFIGURATION_EXT);
+		xmlparser.loadXMLFile(GlobalAttributes::ConfigurationsDir +
+													GlobalAttributes::DirSeparator +
+													GlobalAttributes::SQLHistoryConf +
+													GlobalAttributes::ConfigurationExt);
 
 		cmd_history.clear();
 
@@ -925,10 +925,10 @@ void SQLExecutionWidget::destroySQLHistory(void)
 
 	if(msg_box.result() == QDialog::Accepted)
 	{
-		QFile::remove(GlobalAttributes::CONFIGURATIONS_DIR +
-									GlobalAttributes::DIR_SEPARATOR +
-									GlobalAttributes::SQL_HISTORY_CONF +
-									GlobalAttributes::CONFIGURATION_EXT);
+		QFile::remove(GlobalAttributes::ConfigurationsDir +
+									GlobalAttributes::DirSeparator +
+									GlobalAttributes::SQLHistoryConf +
+									GlobalAttributes::ConfigurationExt);
 
 		SQLExecutionWidget::cmd_history.clear();
 	}

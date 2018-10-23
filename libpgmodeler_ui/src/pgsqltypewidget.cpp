@@ -35,7 +35,7 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 
 		format_hl=nullptr;
 		format_hl=new SyntaxHighlighter(format_txt, true);
-		format_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		format_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 		this->adjustSize();
 
 		IntervalType::getTypes(interval_lst);
@@ -213,7 +213,7 @@ void PgSQLTypeWidget::setAttributes(PgSQLType type, DatabaseModel *model,  unsig
 PgSQLType PgSQLTypeWidget::getPgSQLType(void)
 {
 	if(format_txt->toPlainText() == INVALID_TYPE)
-		throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(type);
 }

@@ -158,7 +158,7 @@ class RelationshipView: public BaseObjectView {
 		void configureObject(void);
 
 	public:
-		static const unsigned CONNECT_CENTER_PNTS=0,
+		static constexpr unsigned CONNECT_CENTER_PNTS=0,
 		CONNECT_FK_TO_PK=1,
 		CONNECT_TABLE_EGDES=2;
 

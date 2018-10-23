@@ -55,19 +55,19 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 
 		table1_hl=nullptr;
 		table1_hl=new SyntaxHighlighter(ref_table_txt, true);
-		table1_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		table1_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
 		table2_hl=nullptr;
 		table2_hl=new SyntaxHighlighter(recv_table_txt, true);
-		table2_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		table2_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
 		for(int i=0; i < pattern_fields.size(); i++)
 		{
 			patterns_hl[i]=new SyntaxHighlighter(qobject_cast<QPlainTextEdit *>(pattern_fields[i]), true);
-			patterns_hl[i]->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-											  GlobalAttributes::DIR_SEPARATOR +
-											  GlobalAttributes::PATTERN_HIGHLIGHT_CONF +
-											  GlobalAttributes::CONFIGURATION_EXT);
+			patterns_hl[i]->loadConfiguration(GlobalAttributes::ConfigurationsDir +
+											  GlobalAttributes::DirSeparator +
+											  GlobalAttributes::PatternHighlightConf +
+											  GlobalAttributes::ConfigurationExt);
 		}
 
 		attributes_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
@@ -163,7 +163,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 
 		part_bound_expr_txt=new NumberedTextEditor(this, true);
 		part_bound_expr_hl=new SyntaxHighlighter(part_bound_expr_txt);
-		part_bound_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		part_bound_expr_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 		dynamic_cast<QGridLayout *>(part_bound_expr_gb->layout())->addWidget(part_bound_expr_txt, 1, 0);
 
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
@@ -244,7 +244,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	bool rel1n=false, relnn=false, relgen_dep=false, use_name_patterns=false;
 
 	if(!base_rel)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObjectWidget::setAttributes(model, op_list, base_rel);
 
@@ -1172,7 +1172,7 @@ void RelationshipWidget::applyConfiguration(void)
 			{
 				Messagebox msg_box;
 
-				if(e.getErrorType()==ERR_INVALIDATED_OBJECTS)
+				if(e.getErrorType()==RemInvalidatedObjects)
 					msg_box.show(e);
 				else
 					throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);

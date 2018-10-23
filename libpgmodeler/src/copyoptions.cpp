@@ -27,7 +27,7 @@ CopyOptions::CopyOptions(void)
 CopyOptions::CopyOptions(unsigned copy_mode, unsigned copy_op_ids)
 {
 	if((copy_mode!=0 && copy_mode!=INCLUDING && copy_mode!=EXCLUDING) || copy_op_ids > ALL)
-		throw Exception(ERR_REF_INV_LIKE_OP_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefInvalidLikeOptionType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->copy_mode = copy_mode;
 	this->copy_op_ids = copy_op_ids;
@@ -41,7 +41,7 @@ unsigned CopyOptions::getCopyMode(void)
 bool CopyOptions::isOptionSet(unsigned op)
 {
 	if(op > ALL)
-		throw Exception(ERR_REF_INV_LIKE_OP_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefInvalidLikeOptionType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return((copy_op_ids & op) == op);
 }
@@ -84,8 +84,8 @@ QString CopyOptions::getSQLDefinition(void)
 				case INDEXES: op_name=QString(" INDEXES"); break;
 				case STORAGE: op_name=QString(" STORAGE"); break;
 				case COMMENTS: op_name=QString(" COMMENTS"); break;
-				case IDENTITY: op_name=(BaseObject::getPgSQLVersion().toFloat() > PgSQLVersions::PGSQL_VERSION_96.toFloat() ? QString(" IDENTITY") : QString()); break;
-				case STATISTICS: op_name=(BaseObject::getPgSQLVersion().toFloat() > PgSQLVersions::PGSQL_VERSION_96.toFloat() ? QString(" STATISTICS") : QString()); break;
+				case IDENTITY: op_name=(BaseObject::getPgSQLVersion().toFloat() > PgSQLVersions::PgSQLVersion96.toFloat() ? QString(" IDENTITY") : QString()); break;
+				case STATISTICS: op_name=(BaseObject::getPgSQLVersion().toFloat() > PgSQLVersions::PgSQLVersion96.toFloat() ? QString(" STATISTICS") : QString()); break;
 			}
 
 			if(!op_name.isEmpty())

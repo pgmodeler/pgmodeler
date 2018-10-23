@@ -115,13 +115,13 @@ void ConfigurationForm::loadConfiguration(void)
 		{
 			Messagebox msg_box;
 
-			if(e.getErrorType()==ERR_PLUGINS_NOT_LOADED)
+			if(e.getErrorType()==PluginsNotLoaded)
 			{
 				msg_box.show(e);
 			}
 			else
 			{
-				Exception ex = Exception(Exception::getErrorMessage(ERR_CONFIG_NOT_LOADED).arg(e.getExtraInfo()),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+				Exception ex = Exception(Exception::getErrorMessage(ConfigurationNotLoaded).arg(e.getExtraInfo()),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 				msg_box.show(ex, QString("%1 %2").arg(ex.getErrorMessage()).arg(trUtf8("In some cases restore the default settings related to it may solve the problem. Would like to do that?")),
 										 Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS, trUtf8("Restore"), QString(), QString(), PgModelerUiNS::getIconPath("atualizar"));
 

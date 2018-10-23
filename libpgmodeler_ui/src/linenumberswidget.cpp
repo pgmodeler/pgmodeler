@@ -27,7 +27,7 @@ QColor LineNumbersWidget::bg_color=Qt::black;
 LineNumbersWidget::LineNumbersWidget(QPlainTextEdit * parent) : QWidget(parent)
 {
 	if(!parent)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocattedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	parent_edt = qobject_cast<QPlainTextEdit *>(parent);
 	first_line=line_count=start_sel_pos=0;

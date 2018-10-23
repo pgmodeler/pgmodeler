@@ -25,7 +25,7 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, OB
 
 	definition_txt = PgModelerUiNS::createNumberedTextEditor(sqlcode_grp, true);
 	definition_hl = new SyntaxHighlighter(definition_txt);
-	definition_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+	definition_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
 	definition_cp=new CodeCompletionWidget(definition_txt, true);
 

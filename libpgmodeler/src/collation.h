@@ -48,7 +48,7 @@ class Collation : public BaseObject {
 		locale;
 
 	public:
-		static const unsigned _LC_CTYPE=0,
+		static constexpr unsigned _LC_CTYPE=0,
 		_LC_COLLATE=1;
 
 		Collation(void);

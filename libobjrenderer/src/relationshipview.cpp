@@ -26,7 +26,7 @@ unsigned RelationshipView::line_conn_mode=RelationshipView::CONNECT_FK_TO_PK;
 RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 {
 	if(!rel)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		throw Exception(AsgNotAllocattedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	for(unsigned i=BaseRelationship::SRC_CARD_LABEL;
 			i <= BaseRelationship::REL_NAME_LABEL; i++)
@@ -199,7 +199,7 @@ unsigned RelationshipView::getLineConnectinMode(void)
 QPointF RelationshipView::getConnectionPoint(unsigned table_idx)
 {
 	if(table_idx > 2)
-		throw Exception(ERR_REF_ELEM_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefElementInvalidIndex ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(conn_points[table_idx]);
 }
@@ -1984,7 +1984,7 @@ void RelationshipView::configureLabels(void)
 void RelationshipView::configureLabelPosition(unsigned label_id, double x, double y)
 {
 	if(label_id > BaseRelationship::REL_NAME_LABEL)
-		throw Exception(ERR_REF_OBJ_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefObjectInvalidIndex ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(labels[label_id])
 	{

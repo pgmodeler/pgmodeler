@@ -129,7 +129,7 @@ class Catalog {
 		static const QString PGMODELER_TEMP_DB_OBJ;
 
 		//! \brief Excludes the system objects from listing
-		static const unsigned EXCL_SYSTEM_OBJS=1,
+		static constexpr unsigned EXCL_SYSTEM_OBJS=1,
 
 		//! \brief Excludes the extension generated objects from listing
 		EXCL_EXTENSION_OBJS=2,

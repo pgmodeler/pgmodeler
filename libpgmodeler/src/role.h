@@ -59,7 +59,7 @@ class Role: public BaseObject {
 
 	public:
 		//! \brief Constants used to reference the available options for the role
-		static const unsigned OP_SUPERUSER=0,
+		static constexpr unsigned OP_SUPERUSER=0,
 		OP_CREATEDB=1,
 		OP_CREATEROLE=2,
 		OP_INHERIT=3,
@@ -69,7 +69,7 @@ class Role: public BaseObject {
 		OP_BYPASSRLS=7;
 
 		//! \brief Constants used to reference the internal role lists of the class
-		static const unsigned REF_ROLE=10,
+		static constexpr unsigned REF_ROLE=10,
 		MEMBER_ROLE=20,
 		ADMIN_ROLE=30;
 

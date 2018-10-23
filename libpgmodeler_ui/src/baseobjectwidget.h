@@ -45,7 +45,7 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		Q_OBJECT
 		
 	protected:
-		static const int MAX_OBJECT_SIZE=16777215;
+		static constexpr int MAX_OBJECT_SIZE=16777215;
 		static const QColor PROT_LINE_BGCOLOR,
 		PROT_LINE_FGCOLOR,
 		RELINC_LINE_BGCOLOR,
@@ -139,7 +139,7 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 			
 	public:
 		//! \brief Constants used to generate version intervals for version alert frame
-		static const unsigned UNTIL_VERSION=0,
+		static constexpr unsigned UNTIL_VERSION=0,
 		VERSIONS_INTERVAL=1,
 		AFTER_VERSION=2;
 		

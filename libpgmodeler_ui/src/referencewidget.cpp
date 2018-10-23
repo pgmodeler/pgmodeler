@@ -35,7 +35,7 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 
 	expression_txt=new NumberedTextEditor(this, true);
 	expression_hl=new SyntaxHighlighter(expression_txt, false, true);
-	expression_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+	expression_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
 	ref_object_sel=new ObjectSelectorWidget({ OBJ_TABLE, OBJ_COLUMN }, true, this);
 	ref_object_sel->enableObjectCreation(false);
@@ -133,7 +133,7 @@ void ReferenceWidget::applyConfiguration(void)
 		if(!select_from_chk->isChecked() &&	!from_where_chk->isChecked() &&
 			 !after_where_chk->isChecked() && !end_expr_chk->isChecked() &&
 			 !view_def_chk->isChecked())
-			throw Exception(ERR_SQL_SCOPE_INV_VIEW_REF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(InvSQLScopeViewReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		ref_flags = 0;
 

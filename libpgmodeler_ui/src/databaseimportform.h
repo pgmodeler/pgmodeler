@@ -80,7 +80,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 
 	public:
 		//! \brief Constants used to access the tree widget items data
-		static const unsigned OBJECT_ID=1,
+		static constexpr unsigned OBJECT_ID=1,
 		OBJECT_TYPE=2,
 		OBJECT_NAME=3,
 		OBJECT_SCHEMA=4,

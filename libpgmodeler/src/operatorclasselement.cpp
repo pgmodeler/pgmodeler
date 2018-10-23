@@ -31,11 +31,11 @@ void OperatorClassElement::setFunction(Function *func, unsigned stg_number)
 {
 	//Raises an exception case the function is not allocated
 	if(!func)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Raises an error case the stratagy number is zero (invalid)
 	else if(stg_number==0)
-		throw Exception(ERR_ASG_INV_SUPSTG_NUMBER,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgInvalidSupportStrategyNumber,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Clear the attributes not related to the FUNCTION element type
 	this->_operator=nullptr;
@@ -51,11 +51,11 @@ void OperatorClassElement::setOperator(Operator *oper, unsigned stg_number)
 {
 	//Raises an error in case the operator is not allocated
 	if(!oper)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Raises an error case the stratagy number is zero (invalid)
 	else if(stg_number==0)
-		throw Exception(ERR_ASG_INV_SUPSTG_NUMBER,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgInvalidSupportStrategyNumber,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Clear the attributes not related to the OPERATOR element type
 	this->function=nullptr;
@@ -71,7 +71,7 @@ void OperatorClassElement::setOperatorFamily(OperatorFamily *op_family)
 	if(this->element_type==OPERATOR_ELEM)
 	{
 		if(op_family && op_family->getIndexingType()!=IndexingType::btree)
-			throw Exception(ERR_ASG_INV_OPFAM_OPCLSELEM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(AsgInvalidOpFamilyOpClassElem,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		this->op_family=op_family;
 	}

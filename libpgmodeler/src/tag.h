@@ -43,7 +43,7 @@ class Tag: public BaseObject {
 		void validateElementId(const QString &elem_id, unsigned color_id);
 
 	public:
-		static const unsigned FILL_COLOR1=0,
+		static constexpr unsigned FILL_COLOR1=0,
 		FILL_COLOR2=1,
 		BORDER_COLOR=2,
 		COLOR_COUNT=3;

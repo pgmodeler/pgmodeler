@@ -38,17 +38,17 @@ void Cast::setDataType(unsigned type_idx, PgSQLType type)
 	{
 		//Raises an error if the passed data type is null
 		if((*type).isEmpty())
-			throw Exception(Exception::getErrorMessage(ERR_ASG_NULL_TYPE_OBJECT)
+			throw Exception(Exception::getErrorMessage(AsgNullTypeObject)
 							.arg(this->getName())
 							.arg(BaseObject::getTypeName(OBJ_CAST)),
-							ERR_ASG_NULL_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							AsgNullTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		setCodeInvalidated(this->types[type_idx] != type);
 		this->types[type_idx]=type;
 	}
 	else
 		//Raises an error if the type index is invalid
-		throw Exception(ERR_REF_TYPE_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefTypeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Configures the cast name (in form of signature: cast(src_type, dst_type) )
 	this->obj_name=QString("cast(%1,%2)").arg(~types[SRC_TYPE]).arg(~types[DST_TYPE]);
@@ -58,7 +58,7 @@ void Cast::setCastType(unsigned cast_type)
 {
 	//Raises an error if the user tries to assign an invalid cast type
 	if(cast_type > IMPLICIT)
-		throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->cast_type != cast_type);
 	this->cast_type=cast_type;
@@ -77,20 +77,20 @@ void Cast::setCastFunction(Function *cast_func)
 	PgSQLType ret_type;
 
 	if(!cast_func)
-		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
+		throw Exception(Exception::getErrorMessage(AsgNotAllocatedFunction)
 						.arg(this->getName())
 						.arg(BaseObject::getTypeName(OBJ_CAST)),
-						ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						AsgNotAllocatedFunction,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Retrieve the cast function parameter count for specific validations
 	param_count=cast_func->getParameterCount();
 
 	//Raises an error if the function don't have at least 1 parameter or a maximum of 3
 	if(param_count==0 || param_count > 3)
-		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
+		throw Exception(Exception::getErrorMessage(AsgFunctionInvalidParamCount)
 						.arg(this->getName())
 						.arg(BaseObject::getTypeName(OBJ_CAST)),
-						ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						AsgFunctionInvalidParamCount,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
 		/* Error condition 1: Check if the first function parameter data type differs
@@ -110,10 +110,10 @@ void Cast::setCastFunction(Function *cast_func)
 
 		//In case some error condition is reached raises an error
 		if(error)
-			throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_PARAMS)
+			throw Exception(Exception::getErrorMessage(AsgFunctionInvalidParameters)
 							.arg(this->getName())
 							.arg(BaseObject::getTypeName(OBJ_CAST)),
-							ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							AsgFunctionInvalidParameters,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
 	/* Raises an error if the return type of the function differs from the destination data type.
@@ -121,10 +121,10 @@ void Cast::setCastFunction(Function *cast_func)
 	ret_type=cast_func->getReturnType();
 
 	if(ret_type!=this->types[DST_TYPE] && !ret_type.canCastTo(this->types[DST_TYPE]))
-		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
+		throw Exception(Exception::getErrorMessage(AsgFunctionInvalidReturnType)
 						.arg(this->getName())
 						.arg(BaseObject::getTypeName(OBJ_CAST)),
-						ERR_ASG_FUNCTION_INV_RET_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						AsgFunctionInvalidReturnType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(cast_function != cast_func);
 	this->cast_function=cast_func;
@@ -133,7 +133,7 @@ void Cast::setCastFunction(Function *cast_func)
 PgSQLType Cast::getDataType(unsigned type_idx)
 {
 	if(type_idx > DST_TYPE)
-		throw Exception(ERR_REF_TYPE_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefTypeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(this->types[type_idx]);
 }

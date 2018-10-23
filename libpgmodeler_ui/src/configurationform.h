@@ -48,7 +48,7 @@ class ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
 		void showEvent(QShowEvent *);
 		
 	public:
-		static const int	GENERAL_CONF_WGT=0,
+		static constexpr int	GENERAL_CONF_WGT=0,
 		RELATIONSHIPS_CONF_WGT=1,
 		APPEARANCE_CONF_WGT=2,
 		CONNECTIONS_CONF_WGT=3,

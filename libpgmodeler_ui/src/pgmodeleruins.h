@@ -33,7 +33,7 @@
 #include "numberedtexteditor.h"
 
 namespace PgModelerUiNS {
-	static const unsigned SMALL_FONT_FACTOR = 0,
+	static constexpr unsigned SMALL_FONT_FACTOR = 0,
 	MEDIUM_FONT_FACTOR = 1,
 	BIG_FONT_FACTOR = 2,
 	HUGE_FONT_FACTOR = 3;

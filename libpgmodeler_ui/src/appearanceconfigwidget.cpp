@@ -157,9 +157,9 @@ void AppearanceConfigWidget::loadExampleModel(void)
 
 		if(model->getObjectCount()==0)
 		{
-			model->loadModel(GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
-							 GlobalAttributes::DIR_SEPARATOR +
-							 GlobalAttributes::EXAMPLE_MODEL);
+			model->loadModel(GlobalAttributes::TmplConfigurationDir +
+							 GlobalAttributes::DirSeparator +
+							 GlobalAttributes::ExampleModel);
 
 			count=model->getObjectCount(OBJ_TABLE);
 			for(i=0; i < count; i++)
@@ -307,8 +307,8 @@ void AppearanceConfigWidget::saveConfiguration(void)
 			}
 		}
 
-		config_params[GlobalAttributes::OBJECTS_STYLE_CONF]=attribs;
-		BaseConfigWidget::saveConfiguration(GlobalAttributes::OBJECTS_STYLE_CONF, config_params);
+		config_params[GlobalAttributes::ObjectsStyleConf]=attribs;
+		BaseConfigWidget::saveConfiguration(GlobalAttributes::ObjectsStyleConf, config_params);
 	}
 	catch(Exception &e)
 	{
@@ -418,7 +418,7 @@ void AppearanceConfigWidget::restoreDefaults(void)
 {
 	try
 	{
-		BaseConfigWidget::restoreDefaults(GlobalAttributes::OBJECTS_STYLE_CONF, false);
+		BaseConfigWidget::restoreDefaults(GlobalAttributes::ObjectsStyleConf, false);
 		this->loadConfiguration();
 		setConfigurationChanged(true);
 	}

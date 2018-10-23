@@ -36,7 +36,7 @@ int main(int argc, char **argv)
 		PgModelerCLI pgmodeler_cli(argc, argv);
 
 		//Tries to load the ui translation according to the system's locale
-		translator.load(QLocale::system().name(), GlobalAttributes::LANGUAGES_DIR);
+		translator.load(QLocale::system().name(), GlobalAttributes::LanguagesDir);
 
 		//Installs the translator on the application
 		pgmodeler_cli.installTranslator(&translator);
@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 		out << endl;
 		out << e.getExceptionsText();
 		out << QString("** pgmodeler-cli aborted due to critical error(s). **") << endl << endl;
-		return(e.getErrorType()==ERR_CUSTOM ? -1 : e.getErrorType());
+		return(e.getErrorType()==Custom ? -1 : e.getErrorType());
 	}
 #endif
 }

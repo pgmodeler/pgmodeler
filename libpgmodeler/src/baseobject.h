@@ -105,7 +105,7 @@ class BaseObject {
 		unsigned object_id;
 
 		//! \brief Objects type count declared on enum ObjectType
-		static const int OBJECT_TYPE_COUNT=37;
+		static constexpr int OBJECT_TYPE_COUNT=37;
 
 		/*! \brief Indicates whether the object is protected or not.
 		 A protected object indicates that it can not suffer changes in position
@@ -232,12 +232,12 @@ class BaseObject {
 
 	public:
 		//! \brief Maximum number of characters that an object name on PostgreSQL can have
-		static const int OBJECT_NAME_MAX_LENGTH=63;
+		static constexpr int OBJECT_NAME_MAX_LENGTH=63;
 
 		/*! \brief The default number of objects supposed to be stored in objects list.
 		 * This values is just a reference (hint) and is used to preallocate (reserve) space on vectors which handle objects
 		 * to avoid excessive allocation/deallocation by resizing the vectors due to insert operation */
-		static const unsigned DEF_MAX_OBJ_COUNT=20;
+		static constexpr unsigned DEF_MAX_OBJ_COUNT=20;
 
 		BaseObject(void);
 		BaseObject(bool system_obj);

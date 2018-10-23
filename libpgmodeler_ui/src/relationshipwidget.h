@@ -35,7 +35,7 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 	private:
 		Q_OBJECT
 
-		static const unsigned GENERAL_TAB=0,
+		static constexpr unsigned GENERAL_TAB=0,
 		SETTINGS_TAB=1,
 		ATTRIBUTES_TAB=2,
 		CONSTRAINTS_TAB=3,

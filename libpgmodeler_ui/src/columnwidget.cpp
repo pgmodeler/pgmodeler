@@ -39,7 +39,7 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN
 
 		hl_default_value=nullptr;
 		hl_default_value=new SyntaxHighlighter(def_value_txt, true);
-		hl_default_value->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		hl_default_value->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
 		sequence_sel=new ObjectSelectorWidget(OBJ_SEQUENCE, true, this);
 		sequence_sel->setEnabled(false);
@@ -54,7 +54,7 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN
 		configureTabOrder({ data_type });
 
 		map<QString, vector<QWidget *> > fields_map;
-		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_100)].push_back(identity_rb);
+		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PgSQLVersion100)].push_back(identity_rb);
 		highlightVersionSpecificFields(fields_map);
 
 		connect(sequence_rb, &QRadioButton::clicked,
@@ -100,7 +100,7 @@ void ColumnWidget::setAttributes(DatabaseModel *model, OperationList *op_list, B
 	PgSQLType type;
 
 	if(!parent_obj)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObjectWidget::setAttributes(model, op_list, column, parent_obj);
 	sequence_sel->setModel(model);
@@ -191,10 +191,10 @@ void ColumnWidget::applyConfiguration(void)
 		{
 			pk = dynamic_cast<Table *>(table)->getPrimaryKey();
 			if(pk && pk->isColumnReferenced(column) && !notnull_chk->isChecked())
-				throw Exception(Exception::getErrorMessage(ERR_NULL_PK_COLUMN)
+				throw Exception(Exception::getErrorMessage(NullPrimaryKeyColumn)
 												.arg(column->getName())
 												.arg(pk->getParentTable()->getSignature(true)),
-												ERR_NULL_PK_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+												NullPrimaryKeyColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
 		BaseObjectWidget::applyConfiguration();

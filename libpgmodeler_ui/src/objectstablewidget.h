@@ -44,7 +44,7 @@ class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 
 	public:
 		//! \brief Constants used to configure the table buttons
-		static const unsigned ADD_BUTTON=1,
+		static constexpr unsigned ADD_BUTTON=1,
 		REMOVE_BUTTON=2,
 		UPDATE_BUTTON=4,
 		MOVE_BUTTONS=8,

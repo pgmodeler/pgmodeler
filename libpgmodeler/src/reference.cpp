@@ -29,16 +29,16 @@ Reference::Reference(Table *table, Column *column, const QString &tab_alias, con
 {
 	//Raises an error if the table is not allocated
 	if(!table)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Raises an error if the table/column alias has an invalid name
 	else if((!tab_alias.isEmpty() && !BaseObject::isValidName(tab_alias)) ||
 					(!col_alias.isEmpty() && !BaseObject::isValidName(col_alias)))
-		throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgInvalidNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Raises an error if the column parent table differs from the passed table
 	else if(column && column->getParentTable()!=table)
-		throw Exception(ERR_ASG_OBJ_BELONGS_OTHER_TABLE ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgObjectBelongsAnotherTable ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->table=table;
 	this->column=column;
@@ -51,10 +51,10 @@ Reference::Reference(const QString &expression, const QString &expr_alias)
 {
 	//Raises an error if the user try to create an reference using an empty expression
 	if(expression.isEmpty())
-		throw Exception(ERR_ASG_INV_EXPR_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgInvalidExpressionObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the expression alias has an invalid name
 	else if(!expr_alias.isEmpty() && !BaseObject::isValidName(expr_alias))
-		throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgInvalidNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	table=nullptr;
 	column=nullptr;
@@ -109,7 +109,7 @@ unsigned Reference::getReferenceType(void)
 void Reference::setReferenceAlias(const QString &alias)
 {
 	if(alias.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
-		throw Exception(ERR_ASG_LONG_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgLongNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	ref_alias = alias;
 }

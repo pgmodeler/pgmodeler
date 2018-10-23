@@ -51,7 +51,7 @@ class RoundedRectItem: public QGraphicsRectItem {
 
 	public:
 		//! \brief Implies a normal rectangle (no rounded corner)
-		static const unsigned NO_CORNERS=0,
+		static constexpr unsigned NO_CORNERS=0,
 
 		//! \brief The top-left corner will be rounded
 		TOPLEFT_CORNER=2,

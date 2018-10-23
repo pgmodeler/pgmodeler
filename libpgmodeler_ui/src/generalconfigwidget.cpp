@@ -221,7 +221,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 		connect(radio, SIGNAL(clicked()), this, SLOT(setConfigurationChanged()));
 	}
 
-	confs_dir_edt->setText(GlobalAttributes::CONFIGURATIONS_DIR);
+	confs_dir_edt->setText(GlobalAttributes::ConfigurationsDir);
 
 	connect(open_dir_tb, &QToolButton::clicked, [&](){
 		QDesktopServices::openUrl(QUrl(QString("file://") + confs_dir_edt->text()));
@@ -237,8 +237,8 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 #endif
 
 	//Retrieving the available UI dictionaries
-	QStringList langs = QDir(GlobalAttributes::LANGUAGES_DIR +
-													 GlobalAttributes::DIR_SEPARATOR,
+	QStringList langs = QDir(GlobalAttributes::LanguagesDir +
+													 GlobalAttributes::DirSeparator,
 													 QString("*.qm"), QDir::Name, QDir::AllEntries | QDir::NoDotAndDotDot).entryList();
 
 	langs.replaceInStrings(QString(".qm"), QString());
@@ -269,7 +269,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 			wgt->blockSignals(true);
 
 		key_attribs.push_back(ParsersAttributes::ID);
-		BaseConfigWidget::loadConfiguration(GlobalAttributes::GENERAL_CONF, config_params, key_attribs);
+		BaseConfigWidget::loadConfiguration(GlobalAttributes::GeneralConf, config_params, key_attribs);
 
 		grid_size_spb->setValue((config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]).toUInt());
 		oplist_size_spb->setValue((config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]).toUInt());
@@ -451,20 +451,20 @@ void GeneralConfigWidget::saveConfiguration(void)
 		QString file_sch, root_dir, widget_sch;
 		bool show_grid=false, show_delim=false, align_grid=false;
 
-		root_dir=GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
-				 GlobalAttributes::DIR_SEPARATOR;
+		root_dir=GlobalAttributes::TmplConfigurationDir +
+				 GlobalAttributes::DirSeparator;
 
 		file_sch=root_dir +
-				 GlobalAttributes::SCHEMAS_DIR +
-				 GlobalAttributes::DIR_SEPARATOR +
+				 GlobalAttributes::SchemasDir +
+				 GlobalAttributes::DirSeparator +
 				 ParsersAttributes::_FILE_ +
-				 GlobalAttributes::SCHEMA_EXT;
+				 GlobalAttributes::SchemaExt;
 
 		widget_sch=root_dir +
-				   GlobalAttributes::SCHEMAS_DIR +
-				   GlobalAttributes::DIR_SEPARATOR +
+				   GlobalAttributes::SchemasDir +
+				   GlobalAttributes::DirSeparator +
 				   ParsersAttributes::WIDGET +
-				   GlobalAttributes::SCHEMA_EXT;
+				   GlobalAttributes::SchemaExt;
 
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]=QString::number(grid_size_spb->value());
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]=QString::number(oplist_size_spb->value());
@@ -581,7 +581,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 		  }
 		}
 
-		BaseConfigWidget::saveConfiguration(GlobalAttributes::GENERAL_CONF, config_params);
+		BaseConfigWidget::saveConfiguration(GlobalAttributes::GeneralConf, config_params);
 	}
 	catch(Exception &e)
 	{
@@ -645,10 +645,10 @@ void GeneralConfigWidget::restoreDefaults(void)
 {
 	try
 	{
-		BaseConfigWidget::restoreDefaults(GlobalAttributes::GENERAL_CONF, false);
-		BaseConfigWidget::restoreDefaults(GlobalAttributes::XML_HIGHLIGHT_CONF, true);
-		BaseConfigWidget::restoreDefaults(GlobalAttributes::SQL_HIGHLIGHT_CONF, true);
-		BaseConfigWidget::restoreDefaults(GlobalAttributes::UI_STYLE_CONF, true);
+		BaseConfigWidget::restoreDefaults(GlobalAttributes::GeneralConf, false);
+		BaseConfigWidget::restoreDefaults(GlobalAttributes::XMLHighlightConf, true);
+		BaseConfigWidget::restoreDefaults(GlobalAttributes::SQLHighlightConf, true);
+		BaseConfigWidget::restoreDefaults(GlobalAttributes::UiStyleConf, true);
 		this->loadConfiguration();
 		this->applyConfiguration();
 		setConfigurationChanged(true);

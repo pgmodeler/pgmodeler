@@ -41,7 +41,7 @@ void Collation::setLocalization(unsigned lc_id, QString lc_name)
 	if(locale.isEmpty())
 	{
 		if(lc_id > _LC_COLLATE)
-			throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		/* Removes encoding specification from localization e.g 'aa_BB.ENC' will
 		 turn into 'aa_BB' since the encoding is appended on code generation */
@@ -60,10 +60,10 @@ void Collation::setEncoding(EncodingType encoding)
 void Collation::setCollation(BaseObject *collation)
 {
 	if(collation==this)
-		throw Exception(Exception::getErrorMessage(ERR_OBJECT_REFERENCING_ITSELF)
+		throw Exception(Exception::getErrorMessage(ObjectReferencingItself)
 						.arg(this->getName(true))
 						.arg(this->getTypeName()),
-						ERR_OBJECT_REFERENCING_ITSELF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						ObjectReferencingItself,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObject::setCollation(collation);
 
@@ -80,7 +80,7 @@ QString Collation::getLocale(void)
 QString Collation::getLocalization(unsigned lc_id)
 {
 	if(lc_id > _LC_COLLATE)
-		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(localization[lc_id]);
 }
@@ -114,7 +114,7 @@ QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 		QString lc_attribs[2]={ ParsersAttributes::_LC_CTYPE_, ParsersAttributes::_LC_COLLATE_ };
 
 		if(localization[_LC_CTYPE].isEmpty() && localization[_LC_COLLATE].isEmpty())
-			throw Exception(ERR_EMPTY_LOCAL_ATTRIB_COLLATION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(EmptyLCCollationAttributes,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		for(unsigned int i=_LC_CTYPE; i <= _LC_COLLATE; i++)
 		{

@@ -124,7 +124,7 @@ class Connection {
 		SERVER_PID;
 
 		//! \brief Constants used to reference the default usage in model operations (see setDefaultForOperation())
-		static const unsigned OP_VALIDATION=0,
+		static constexpr unsigned OP_VALIDATION=0,
 		OP_EXPORT=1,
 		OP_IMPORT=2,
 		OP_DIFF=3,

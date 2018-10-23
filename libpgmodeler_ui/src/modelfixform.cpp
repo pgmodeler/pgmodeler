@@ -72,7 +72,7 @@ void ModelFixForm::hideEvent(QHideEvent *)
 
 int ModelFixForm::exec(void)
 {
-	QFileInfo fi(GlobalAttributes::PGMODELER_CLI_PATH);
+	QFileInfo fi(GlobalAttributes::PgModelerCLIPath);
 
 	//Show an warning if the cli command doesn't exists
 	if(!fi.exists())
@@ -85,7 +85,7 @@ int ModelFixForm::exec(void)
 		sel_cli_exe_tb->setVisible(true);
 	}
 	else
-		pgmodeler_cli_edt->setText(GlobalAttributes::PGMODELER_CLI_PATH);
+		pgmodeler_cli_edt->setText(GlobalAttributes::PgModelerCLIPath);
 
 	return(QDialog::exec());
 }

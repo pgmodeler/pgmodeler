@@ -68,10 +68,10 @@ bool ModelWidget::simple_obj_creation=true;
 ModelWidget *ModelWidget::src_model=nullptr;
 float ModelWidget::min_object_opacity=0.10f;
 
-const unsigned ModelWidget::BREAK_VERT_NINETY_DEGREES=0;
-const unsigned ModelWidget::BREAK_HORIZ_NINETY_DEGREES=1;
-const unsigned ModelWidget::BREAK_VERT_2NINETY_DEGREES=2;
-const unsigned ModelWidget::BREAK_HORIZ_2NINETY_DEGREES=3;
+constexpr unsigned ModelWidget::BREAK_VERT_NINETY_DEGREES;
+constexpr unsigned ModelWidget::BREAK_HORIZ_NINETY_DEGREES;
+constexpr unsigned ModelWidget::BREAK_VERT_2NINETY_DEGREES;
+constexpr unsigned ModelWidget::BREAK_HORIZ_2NINETY_DEGREES;
 
 ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 {
@@ -102,7 +102,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	QTemporaryFile tmp_file;
 
 	//Configuring the template mask which includes the full path to temporary dir
-	tmp_file.setFileTemplate(GlobalAttributes::TEMPORARY_DIR + GlobalAttributes::DIR_SEPARATOR + QString("model_XXXXXX") + QString(".dbm"));
+	tmp_file.setFileTemplate(GlobalAttributes::TemporaryDir + GlobalAttributes::DirSeparator + QString("model_XXXXXX") + QString(".dbm"));
 	tmp_file.open();
 	tmp_filename=tmp_file.fileName();
 	tmp_file.close();
@@ -1670,10 +1670,10 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		if(obj_type!=OBJ_PERMISSION)
 		{
 			if(object && obj_type!=object->getObjectType())
-				throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			//If the user try to call the table object form without specify a parent object
 			else if(!parent_obj && TableObject::isTableObject(obj_type))
-				throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
 		if(object && dynamic_cast<BaseGraphicObject *>(object))
@@ -1683,9 +1683,9 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		that can be edited only on its fill color an rectangle attributes */
 		if(object && object->isSystemObject() &&
 				(object->getObjectType()!=OBJ_SCHEMA || object->getName()!="public"))
-			throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
+			throw Exception(Exception::getErrorMessage(OprReservedObject)
 							.arg(object->getName()).arg(object->getTypeName()),
-							ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		if(obj_type==OBJ_SCHEMA)
 			res=openEditingForm<Schema,SchemaWidget>(object);
@@ -1869,9 +1869,9 @@ void ModelWidget::renameObject(void)
 	BaseObject *obj=reinterpret_cast<BaseObject *>(act->data().value<void *>());
 
 	if(obj->isSystemObject())
-		throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
+		throw Exception(Exception::getErrorMessage(OprReservedObject)
 						.arg(obj->getName()).arg(obj->getTypeName()),
-						ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	ObjectRenameWidget objectrename_wgt(this);
 	objectrename_wgt.setAttributes(obj, this->db_model, this->op_list);
@@ -1970,10 +1970,10 @@ void ModelWidget::changeOwner(void)
 			if(obj->acceptsOwner() && obj->getOwner()!=owner)
 			{
 				if(obj->isSystemObject())
-					throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
+					throw Exception(Exception::getErrorMessage(OprReservedObject)
 									.arg(obj->getName())
 									.arg(obj->getTypeName()),
-									ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 				//Register an operation only if the object is not the database itself
 				if(obj->getObjectType()!=OBJ_DATABASE)
@@ -2178,9 +2178,9 @@ void ModelWidget::protectObject(void)
 
 					if(tab_obj->isAddedByRelationship())
 					{
-						throw Exception(QString(Exception::getErrorMessage(ERR_OPR_REL_INCL_OBJECT))
+						throw Exception(QString(Exception::getErrorMessage(OprRelationshipAddedObject))
 										.arg(object->getName()).arg(object->getTypeName()),
-										ERR_OPR_REL_INCL_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+										OprRelationshipAddedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
 				}
 
@@ -2230,9 +2230,9 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 	{
 		//Raise an error if the user try to copy a reserved object
 		if(selected_objects[0]->isSystemObject())
-			throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
+			throw Exception(Exception::getErrorMessage(OprReservedObject)
 							.arg(selected_objects[0]->getName()).arg(selected_objects[0]->getTypeName()),
-				ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
 	if(!duplicate_mode)
@@ -2635,7 +2635,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 	if(!errors.empty())
 	{
 		Messagebox msg_box;
-		msg_box.show(Exception(trUtf8("Not all objects were pasted to the model due to errors returned during the process! Refer to error stack for more details!"), ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors),
+		msg_box.show(Exception(trUtf8("Not all objects were pasted to the model due to errors returned during the process! Refer to error stack for more details!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors),
 								 QString(),
 								 Messagebox::ALERT_ICON);
 	}
@@ -2902,16 +2902,16 @@ void ModelWidget::removeObjects(bool cascade)
 
 					//Raises an error if the user try to remove a reserved object
 					if(object->isSystemObject())
-						throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
+						throw Exception(Exception::getErrorMessage(OprReservedObject)
 										.arg(object->getName()).arg(object->getTypeName()),
-										ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+										OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					//Raises an error if the user try to remove a protected object
 					else if(object->isProtected())
 					{
-						throw Exception(QString(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT))
+						throw Exception(QString(Exception::getErrorMessage(RemProtectedObject))
 										.arg(object->getName(true))
 										.arg(object->getTypeName()),
-										ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+										RemProtectedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
 					else
 					{
@@ -2948,11 +2948,11 @@ void ModelWidget::removeObjects(bool cascade)
 							}
 							catch(Exception &e)
 							{
-								if(cascade && (e.getErrorType()==ERR_INVALIDATED_OBJECTS ||
-												 e.getErrorType()==ERR_REM_DIRECT_REFERENCE ||
-												 e.getErrorType()==ERR_REM_INDIRECT_REFERENCE ||
-												 e.getErrorType()==ERR_REM_PROTECTED_OBJECT ||
-												 e.getErrorType()==ERR_OPR_RESERVED_OBJECT))
+								if(cascade && (e.getErrorType()==RemInvalidatedObjects ||
+												 e.getErrorType()==RemDirectReference ||
+												 e.getErrorType()==RemInderectReference ||
+												 e.getErrorType()==RemProtectedObject ||
+												 e.getErrorType()==OprReservedObject))
 									errors.push_back(e);
 								else
 									throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
@@ -2978,11 +2978,11 @@ void ModelWidget::removeObjects(bool cascade)
 								}
 								catch(Exception &e)
 								{
-									if(cascade && (e.getErrorType()==ERR_INVALIDATED_OBJECTS ||
-													 e.getErrorType()==ERR_REM_DIRECT_REFERENCE ||
-													 e.getErrorType()==ERR_REM_INDIRECT_REFERENCE ||
-													 e.getErrorType()==ERR_REM_PROTECTED_OBJECT ||
-													 e.getErrorType()==ERR_OPR_RESERVED_OBJECT))
+									if(cascade && (e.getErrorType()==RemInvalidatedObjects ||
+													 e.getErrorType()==RemDirectReference ||
+													 e.getErrorType()==RemInderectReference ||
+													 e.getErrorType()==RemProtectedObject ||
+													 e.getErrorType()==OprReservedObject))
 										errors.push_back(e);
 									else
 										throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
@@ -3009,7 +3009,7 @@ void ModelWidget::removeObjects(bool cascade)
 
 				if(!errors.empty())
 				{
-					msg_box.show(Exception(ERR_INVALIDATED_OBJECTS, __PRETTY_FUNCTION__,__FILE__,__LINE__, errors),
+					msg_box.show(Exception(RemInvalidatedObjects, __PRETTY_FUNCTION__,__FILE__,__LINE__, errors),
 								 trUtf8("The cascade deletion found some problems when running! Some objects could not be deleted or registered in the operation's history! Please, refer to error stack for more details."),
 								 Messagebox::ALERT_ICON);
 				}
@@ -4131,8 +4131,8 @@ void ModelWidget::convertIntegerToSerial(void)
 		QString serial_tp;
 
 		if(!col_type.isIntegerType() || (!col->getDefaultValue().contains(regexp) && !col->getSequence()))
-			throw Exception(Exception::getErrorMessage(ERR_INV_CONV_INTEGER_TO_SERIAL).arg(col->getName()),
-							ERR_INV_CONV_INTEGER_TO_SERIAL ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(InvConversionIntegerToSerial).arg(col->getName()),
+							InvConversionIntegerToSerial ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		op_list->registerObject(col, Operation::OBJECT_MODIFIED, -1, tab);
 

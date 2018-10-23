@@ -34,7 +34,7 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	Ui_PermissionWidget::setupUi(this);
 
 	code_hl=new SyntaxHighlighter(code_txt);
-	code_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+	code_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
 	object_selection_wgt=new ModelObjectsWidget(true);
 	permission=nullptr;
@@ -262,11 +262,11 @@ void PermissionWidget::showSelectedRoleData(void)
 		//Raise an error if the role already exists on selected role table
 		if(role && row_idx >= 0)
 		{
-			throw Exception(Exception::getErrorMessage(ERR_ASG_DUPL_OBJ_CONTAINER)
+			throw Exception(Exception::getErrorMessage(AsgDuplicatedObjectContainer)
 							.arg(role->getName())
 							.arg(role->getTypeName())
 							.arg(roles_gb->title()),
-							ERR_INS_DUPLIC_ROLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							InsDuplicatedRole,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 	}
 }
@@ -326,10 +326,10 @@ void PermissionWidget::updatePermission(void)
 		else
 		{
 			//Raises an error if the configured permission already exists
-			throw Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PERMISSION)
+			throw Exception(Exception::getErrorMessage(AsgDuplicatedPermission)
 							.arg(permission->getObject()->getName())
 							.arg(permission->getObject()->getTypeName()),
-							ERR_ASG_DUPLIC_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							AsgDuplicatedPermission,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
 		delete(perm_bkp);

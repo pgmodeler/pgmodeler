@@ -1124,7 +1124,7 @@ void DatabaseExplorerWidget::handleSelectedSnippet(const QString &snip_id)
 attribs_map DatabaseExplorerWidget::extractAttributesFromItem(QTreeWidgetItem *item)
 {
 	if(!item)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_TYPE, Qt::UserRole).toUInt());
 	QString obj_name=item->text(0);
@@ -1302,9 +1302,9 @@ bool DatabaseExplorerWidget::truncateTable(const QString &sch_name, const QStrin
 			//Generate the truncate command
 			schparser.ignoreEmptyAttributes(true);
 			schparser.ignoreUnkownAttributes(true);
-			truc_cmd=schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-																					 GlobalAttributes::ALTER_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
-																					 ParsersAttributes::TRUNCATE + GlobalAttributes::SCHEMA_EXT,
+			truc_cmd=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+																					 GlobalAttributes::AlterSchemaDir + GlobalAttributes::DirSeparator +
+																					 ParsersAttributes::TRUNCATE + GlobalAttributes::SchemaExt,
 																					 attribs);
 
 			//Executes the truncate cmd
@@ -1701,9 +1701,9 @@ void DatabaseExplorerWidget::finishObjectRename(void)
 			//Generate the drop command
 			schparser.ignoreEmptyAttributes(true);
 			schparser.ignoreUnkownAttributes(true);
-			rename_cmd=schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-												   GlobalAttributes::ALTER_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
-												   ParsersAttributes::RENAME + GlobalAttributes::SCHEMA_EXT,
+			rename_cmd=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+												   GlobalAttributes::AlterSchemaDir + GlobalAttributes::DirSeparator +
+												   ParsersAttributes::RENAME + GlobalAttributes::SchemaExt,
 												   attribs);
 
 			//Executes the rename cmd
@@ -1967,9 +1967,9 @@ void DatabaseExplorerWidget::dropDatabase(void)
 		catch(Exception &e)
 		{
 			if(connection.getConnectionParam(Connection::PARAM_DB_NAME) == default_db)
-				throw Exception(Exception::getErrorMessage(ERR_DROP_CURRDB_DEFAULT)
+				throw Exception(Exception::getErrorMessage(DropCurrentDBDefault)
 												.arg(dbname).arg(connection.getConnectionParam(Connection::PARAM_ALIAS)),
-												ERR_DROP_CURRDB_DEFAULT,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+												DropCurrentDBDefault,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 			else
 				throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}

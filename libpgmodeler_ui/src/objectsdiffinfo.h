@@ -36,11 +36,11 @@ class ObjectsDiffInfo {
 		BaseObject *object, *old_object;
 
 	public:
-		static const unsigned CREATE_OBJECT,
-		DROP_OBJECT,
-		ALTER_OBJECT,
-		IGNORE_OBJECT,
-		NO_DIFFERENCE;
+		static constexpr unsigned CREATE_OBJECT=0,
+		DROP_OBJECT=1,
+		ALTER_OBJECT=2,
+		IGNORE_OBJECT=3,
+		NO_DIFFERENCE=4;
 
 		ObjectsDiffInfo(void);
 		ObjectsDiffInfo(unsigned diff_type, BaseObject *ref_object, BaseObject *old_object);

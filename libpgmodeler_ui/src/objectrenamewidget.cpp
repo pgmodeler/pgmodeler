@@ -38,12 +38,12 @@ void ObjectRenameWidget::setAttributes(BaseObject *object, DatabaseModel *model,
 	TableObject *tab_obj=dynamic_cast<TableObject *>(object);
 
 	if(!object || !op_list)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(tab_obj && tab_obj->isAddedByRelationship())
-		throw Exception(Exception::getErrorMessage(ERR_OPR_REL_INCL_OBJECT)
+		throw Exception(Exception::getErrorMessage(OprRelationshipAddedObject)
 						.arg(tab_obj->getName())
 						.arg(tab_obj->getTypeName())
-						,ERR_OPR_REL_INCL_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						,OprRelationshipAddedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->adjustSize();
 	this->object=object;
@@ -119,12 +119,12 @@ void ObjectRenameWidget::applyRenaming(void)
 				//Raises a error if another object is found
 				if(aux_obj && aux_obj!=object)
 				{
-					throw Exception(QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
+					throw Exception(QString(Exception::getErrorMessage(AsgDuplicatedObject))
 									.arg(fmt_name)
 									.arg(object->getTypeName())
 									.arg(parent_obj->getName(true))
 									.arg(parent_obj->getTypeName()),
-									ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									AsgDuplicatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 				}
 			}
 

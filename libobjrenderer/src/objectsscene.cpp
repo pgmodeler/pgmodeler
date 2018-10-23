@@ -350,7 +350,7 @@ void ObjectsScene::getPaperConfiguration(QPrinter::PaperSize &paper_sz, QPrinter
 void ObjectsScene::configurePrinter(QPrinter *printer)
 {
 	if(!printer)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(paper_size!=QPrinter::Custom)
 		printer->setPaperSize(paper_size);

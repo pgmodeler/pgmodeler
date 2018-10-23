@@ -76,7 +76,7 @@ void DatabaseModel::setEncoding(EncodingType encod)
 void DatabaseModel::setLocalization(unsigned localiz_id, const QString &value)
 {
 	if(localiz_id > Collation::_LC_COLLATE)
-		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	localizations[localiz_id]=value;
 }
@@ -90,7 +90,7 @@ void DatabaseModel::setConnectionLimit(int conn_lim)
 void DatabaseModel::setTemplateDB(const QString &temp_db)
 {
 	if(!temp_db.isEmpty() && !BaseObject::isValidName(temp_db))
-		throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgInvalidNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->template_db=temp_db;
 }
@@ -296,7 +296,7 @@ void DatabaseModel::removeObject(unsigned obj_idx, ObjectType obj_type)
 	if(TableObject::isTableObject(obj_type) ||
 			obj_type==BASE_OBJECT || obj_type==BASE_RELATIONSHIP ||
 			obj_type==OBJ_DATABASE)
-		throw Exception(ERR_REM_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RemObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	else
 	{
@@ -305,7 +305,7 @@ void DatabaseModel::removeObject(unsigned obj_idx, ObjectType obj_type)
 
 		obj_list=getObjectList(obj_type);
 		if(obj_idx >= obj_list->size())
-			throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		object=(*obj_list)[obj_idx];
 		if(obj_type==OBJ_TEXTBOX)
@@ -363,7 +363,7 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 	vector<BaseObject *>::iterator itr, itr_end;
 
 	if(!object)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 
 	obj_type=object->getObjectType();
@@ -371,9 +371,9 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: database model object creation limit."
 	obj_list=getObjectList(obj_type);
-	if(obj_list && obj_list->size() >= GlobalAttributes::MAX_OBJECT_COUNT)
+	if(obj_list && obj_list->size() >= GlobalAttributes::MaxObjectCount)
 		throw Exception(trUtf8("The demonstration version can create only `%1' instances of each object type! You've reach this limit for the type: `%2'")
-						.arg(GlobalAttributes::MAX_OBJECT_COUNT)
+						.arg(GlobalAttributes::MaxObjectCount)
 						.arg(BaseObject::getTypeName(obj_type)),
 						ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -396,10 +396,10 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 			there is some other tablespace pointing to the same directory */
 			if(tabspc->getDirectory()==aux_tabspc->getDirectory())
 			{
-				throw Exception(Exception::getErrorMessage(ERR_ASG_DUP_TABLESPACE_DIR)
+				throw Exception(Exception::getErrorMessage(AsgTablespaceDuplicatedDirectory)
 								.arg(tabspc->getName())
 								.arg(aux_tabspc->getName()),
-								ERR_ASG_DUP_TABLESPACE_DIR,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+								AsgTablespaceDuplicatedDirectory,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
 			itr++;
@@ -418,13 +418,13 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 	{
 		QString str_aux;
 
-		str_aux=QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
+		str_aux=QString(Exception::getErrorMessage(AsgDuplicatedObject))
 				.arg(object->getName(obj_type != OBJ_EXTENSION))
 				.arg(object->getTypeName())
 				.arg(this->getName(true))
 				.arg(this->getTypeName());
 
-		throw Exception(str_aux,ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(str_aux,AsgDuplicatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
 	try
@@ -464,7 +464,7 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_refs)
 {
 	if(!object)
-		throw Exception(ERR_REM_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RemNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
 		vector<BaseObject *> *obj_list=nullptr;
@@ -474,7 +474,7 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
 		obj_list=getObjectList(obj_type);
 
 		if(!obj_list)
-			throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else
 		{
 			vector<BaseObject *> refs;
@@ -491,7 +491,7 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
 				//Raises an error indicating the object that is referencing the table
 				if(!dynamic_cast<TableObject *>(refs[0]))
 				{
-					err_type=ERR_REM_DIRECT_REFERENCE;
+					err_type=RemDirectReference;
 					throw Exception(QString(Exception::getErrorMessage(err_type))
 									.arg(object->getName(true))
 									.arg(object->getTypeName())
@@ -503,7 +503,7 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
 				{
 					BaseObject *ref_obj_parent=dynamic_cast<TableObject *>(refs[0])->getParentTable();
 
-					err_type=ERR_REM_INDIRECT_REFERENCE;
+					err_type=RemInderectReference;
 					throw Exception(QString(Exception::getErrorMessage(err_type))
 									.arg(object->getName(true))
 									.arg(object->getTypeName())
@@ -541,7 +541,7 @@ vector<BaseObject *> DatabaseModel::getObjects(ObjectType obj_type, BaseObject *
 	obj_list=getObjectList(obj_type);
 
 	if(!obj_list)
-		throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	itr=obj_list->begin();
 	itr_end=obj_list->end();
@@ -598,7 +598,7 @@ BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, i
 	obj_list=getObjectList(obj_type);
 
 	if(!obj_list)
-		throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
 		QString signature;
@@ -633,9 +633,9 @@ BaseObject *DatabaseModel::getObject(unsigned obj_idx, ObjectType obj_type)
 	obj_list=getObjectList(obj_type);
 
 	if(!obj_list)
-		throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(obj_idx >= obj_list->size())
-		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 		return(obj_list->at(obj_idx));
 }
@@ -647,7 +647,7 @@ unsigned DatabaseModel::getObjectCount(ObjectType obj_type)
 	obj_list=getObjectList(obj_type);
 
 	if(!obj_list)
-		throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	  return(obj_list->size());
 }
@@ -680,7 +680,7 @@ unsigned DatabaseModel::getObjectCount(void)
 QString DatabaseModel::getLocalization(unsigned localiz_id)
 {
 	if(localiz_id > Collation::_LC_COLLATE)
-		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(localizations[localiz_id]);
 }
@@ -703,7 +703,7 @@ EncodingType DatabaseModel::getEncoding(void)
 BaseObject *DatabaseModel::getDefaultObject(ObjectType obj_type)
 {
 	if(default_objs.count(obj_type)==0)
-		throw Exception(ERR_REF_OBJ_INV_TYPE, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefObjectInvalidType, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(default_objs[obj_type]);
 }
@@ -1113,7 +1113,7 @@ void DatabaseModel::removeView(View *view, int obj_idx)
 void DatabaseModel::updateTableFKRelationships(Table *table)
 {
 	if(!table)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(table->getDatabase()==this)
 	{
 		Table *ref_tab=nullptr;
@@ -1215,7 +1215,7 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 	vector<BaseObject *>::iterator itr, itr_end;
 
 	if(!view)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(getObjectIndex(view) < 0 || force_rel_removal)
 	{
 		//Remove all the relationship related to the view when this latter no longer exists
@@ -1475,7 +1475,7 @@ void DatabaseModel::validateRelationships(void)
 						/* If the relationship connection failed after 'rels_gen_pk' times at the
 						different errors or exists on the fail_rels vector (already tried to be validated)
 						it will be deleted from model */
-						if((e.getErrorType()!=ERR_LINK_TABLES_NO_PK && conn_tries[rel] > rels_gen_pk) ||
+						if((e.getErrorType()!=InvLinkTablesNoPrimaryKey && conn_tries[rel] > rels_gen_pk) ||
 								(std::find(fail_rels.begin(), fail_rels.end(), rel)!=fail_rels.end()))
 						{
 							//Removes the relationship
@@ -1491,7 +1491,7 @@ void DatabaseModel::validateRelationships(void)
 								the connection tries exceed the size of the relationship the relationship is isolated
 								on a "failed to validate" list. This list will be appended to the main rel list when
 								there is only one relationship to be validated */
-						else if(e.getErrorType()==ERR_LINK_TABLES_NO_PK &&
+						else if(e.getErrorType()==InvLinkTablesNoPrimaryKey &&
 								(conn_tries[rel] > rels.size() ||
 								 rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN))
 						{
@@ -1617,7 +1617,7 @@ void DatabaseModel::validateRelationships(void)
 		this->setObjectsModified();
 
 		//Redirects all the errors captured on the revalidation
-		throw Exception(ERR_INVALIDATED_OBJECTS,__PRETTY_FUNCTION__,__FILE__,__LINE__,errors);
+		throw Exception(RemInvalidatedObjects,__PRETTY_FUNCTION__,__FILE__,__LINE__,errors);
 	}
 
 	if(!loading_model)
@@ -1637,7 +1637,7 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
 
 		//Raises an error if the user try to check the redundancy starting from a unnallocated relationship
 		if(!rel)
-			throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		rel_type=rel->getRelationshipType();
 
@@ -1713,10 +1713,10 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
 			if(found_cycle)
 			{
 				str_aux+=rel->getName();
-				msg=Exception::getErrorMessage(ERR_INS_REL_GENS_REDUNDACY)
+				msg=Exception::getErrorMessage(InsRelationshipRedundancy)
 					.arg(rel->getName())
 					.arg(str_aux);
-				throw Exception(msg,ERR_INS_REL_GENS_REDUNDACY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(msg,InsRelationshipRedundancy,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 		}
 	}
@@ -1986,12 +1986,12 @@ void DatabaseModel::addRelationship(BaseRelationship *rel, int obj_idx)
 				 rel->getRelationshipType() != Relationship::RELATIONSHIP_FK &&
 				 getRelationship(tab1,tab2))
 			{
-				msg=Exception::getErrorMessage(ERR_DUPLIC_RELATIONSHIP)
+				msg=Exception::getErrorMessage(InsDuplicatedRelationship)
 					.arg(tab1->getName(true))
 					.arg(tab1->getTypeName())
 					.arg(tab2->getName(true))
 					.arg(tab2->getTypeName());
-				throw Exception(msg,ERR_DUPLIC_RELATIONSHIP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(msg,InsDuplicatedRelationship,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 		}
 
@@ -2065,7 +2065,7 @@ BaseRelationship *DatabaseModel::getRelationship(unsigned obj_idx, ObjectType re
 {
 	//Raises an error if the object type used to get a relationship is invalid
 	if(rel_type!=OBJ_RELATIONSHIP && rel_type!=BASE_RELATIONSHIP)
-		throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(dynamic_cast<BaseRelationship *>(getObject(obj_idx, rel_type)));
 }
@@ -2477,12 +2477,12 @@ void DatabaseModel::addDomain(Domain *domain, int obj_idx)
 		//Raises an error if found a type with the same name as the domain
 		if(found)
 		{
-			str_aux=QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
+			str_aux=QString(Exception::getErrorMessage(AsgDuplicatedObject))
 					.arg(domain->getName(true))
 					.arg(domain->getTypeName())
 					.arg(this->getName(true))
 					.arg(this->getTypeName());
-			throw Exception(str_aux, ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(str_aux, AsgDuplicatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
 		try
@@ -2643,12 +2643,12 @@ void DatabaseModel::addType(Type *type, int obj_idx)
 
 		if(found)
 		{
-			str_aux=QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
+			str_aux=QString(Exception::getErrorMessage(AsgDuplicatedObject))
 					.arg(type->getName(true))
 					.arg(type->getTypeName())
 					.arg(this->getName(true))
 					.arg(this->getTypeName());
-			throw Exception(str_aux, ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(str_aux, AsgDuplicatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
 		try
@@ -2735,39 +2735,39 @@ void DatabaseModel::addPermission(Permission *perm)
 	try
 	{
 		if(!perm)
-			throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		TableObject *tab_obj=dynamic_cast<TableObject *>(perm->getObject());
 
 		if(getPermissionIndex(perm, false) >=0)
 		{
-			throw Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PERMISSION)
+			throw Exception(Exception::getErrorMessage(AsgDuplicatedPermission)
 							.arg(perm->getObject()->getName())
 							.arg(perm->getObject()->getTypeName()),
-							ERR_ASG_DUPLIC_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							AsgDuplicatedPermission,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 		//Raises an error if the permission is referencing an object that does not exists on model
 		else if(perm->getObject()!=this &&
 				((tab_obj && (getObjectIndex(tab_obj->getParentTable()) < 0)) ||
 				 (!tab_obj && (getObjectIndex(perm->getObject()) < 0))))
-			throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+			throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 							.arg(perm->getName())
 							.arg(perm->getObject()->getTypeName())
 							.arg(perm->getObject()->getName())
 							.arg(perm->getObject()->getTypeName()),
-							ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		permissions.push_back(perm);
 		perm->setDatabase(this);
 	}
 	catch(Exception &e)
 	{
-		if(e.getErrorType()==ERR_ASG_DUPLIC_OBJECT)
+		if(e.getErrorType()==AsgDuplicatedObject)
 			throw
-			Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PERMISSION)
+			Exception(Exception::getErrorMessage(AsgDuplicatedPermission)
 					  .arg(perm->getObject()->getName())
 					  .arg(perm->getObject()->getTypeName()),
-					  ERR_ASG_DUPLIC_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+						AsgDuplicatedPermission,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 
 		else
 			throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
@@ -2793,7 +2793,7 @@ void DatabaseModel::removePermissions(BaseObject *object)
 	unsigned idx=0;
 
 	if(!object)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	itr=permissions.begin();
 	itr_end=permissions.end();
@@ -2821,7 +2821,7 @@ void DatabaseModel::getPermissions(BaseObject *object, vector<Permission *> &per
 	Permission *perm=nullptr;
 
 	if(!object)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	itr=permissions.begin();
 	itr_end=permissions.end();
@@ -2935,7 +2935,7 @@ int DatabaseModel::getObjectIndex(BaseObject *object)
 		obj_list=getObjectList(obj_type);
 
 		if(!obj_list)
-			throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else
 		{
 			itr=obj_list->begin();
@@ -2985,12 +2985,12 @@ void DatabaseModel::loadModel(const QString &filename)
 		map<ObjectType, QString> def_objs;
 
 		//Configuring the path to the base path for objects DTD
-		dtd_file=GlobalAttributes::SCHEMAS_ROOT_DIR +
-				 GlobalAttributes::DIR_SEPARATOR +
-				 GlobalAttributes::XML_SCHEMA_DIR +
-				 GlobalAttributes::DIR_SEPARATOR +
-				 GlobalAttributes::OBJECT_DTD_DIR +
-				 GlobalAttributes::DIR_SEPARATOR;
+		dtd_file=GlobalAttributes::SchemasRootDir +
+				 GlobalAttributes::DirSeparator +
+				 GlobalAttributes::XMLSchemaDir +
+				 GlobalAttributes::DirSeparator +
+				 GlobalAttributes::ObjectDTDDir +
+				 GlobalAttributes::DirSeparator;
 
 		try
 		{
@@ -2998,9 +2998,9 @@ void DatabaseModel::loadModel(const QString &filename)
 			xmlparser.restartParser();
 
 			//Loads the root DTD
-			xmlparser.setDTDFile(dtd_file + GlobalAttributes::ROOT_DTD +
-								 GlobalAttributes::OBJECT_DTD_EXT,
-								 GlobalAttributes::ROOT_DTD);
+			xmlparser.setDTDFile(dtd_file + GlobalAttributes::RootDTD +
+								 GlobalAttributes::ObjectDTDExt,
+								 GlobalAttributes::RootDTD);
 
 			//Loads the file validating it against the root DTD
 			xmlparser.loadXMLFile(filename);
@@ -3096,12 +3096,12 @@ void DatabaseModel::loadModel(const QString &filename)
 					object=this->getObject(itr.second, itr.first);
 
 					if(!object)
-						throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+						throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 										.arg(this->getName())
 										.arg(this->getTypeName())
 										.arg(itr.second)
 										.arg(BaseObject::getTypeName(itr.first)),
-										ERR_ASG_DUPLIC_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+										AsgDuplicatedPermission,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 					this->setDefaultObject(object);
 				}
@@ -3141,10 +3141,10 @@ void DatabaseModel::loadModel(const QString &filename)
 			if(xmlparser.getCurrentElement())
 				extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
 
-			if(e.getErrorType()>=ERR_INV_SYNTAX)
+			if(e.getErrorType()>=InvalidSyntax)
 			{
-				str_aux=QString(Exception::getErrorMessage(ERR_LOAD_INV_MODEL_FILE)).arg(filename);
-				throw Exception(str_aux,ERR_LOAD_INV_MODEL_FILE,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+				str_aux=QString(Exception::getErrorMessage(InvModelFileNotLoaded)).arg(filename);
+				throw Exception(str_aux,InvModelFileNotLoaded,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
 			}
 			else
 				throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
@@ -3234,7 +3234,7 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 	bool has_error=false, protected_obj=false, sql_disabled=false;
 
 	if(!object)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	xmlparser.getElementAttributes(attribs);
 
@@ -3343,12 +3343,12 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 
 	if(has_error)
 	{
-		throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+		throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 						.arg(object->getName())
 						.arg(object->getTypeName())
 						.arg(attribs_aux[ParsersAttributes::NAME])
 				.arg(BaseObject::getTypeName(obj_type)),
-				ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 	else if(!object->getSchema() &&
 			(obj_type_aux==OBJ_FUNCTION || obj_type_aux==OBJ_TABLE ||
@@ -3358,10 +3358,10 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 			 obj_type_aux==OBJ_TYPE || obj_type_aux==OBJ_OPFAMILY ||
 			 obj_type_aux==OBJ_OPCLASS))
 	{
-		throw Exception(Exception::getErrorMessage(ERR_ALOC_OBJECT_NO_SCHEMA)
+		throw Exception(Exception::getErrorMessage(InvObjectAllocationNoSchema)
 						.arg(object->getName())
 						.arg(object->getTypeName()),
-						ERR_ALOC_OBJECT_NO_SCHEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						InvObjectAllocationNoSchema,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 }
 
@@ -3513,12 +3513,12 @@ Role *DatabaseModel::createRole(void)
 							//Raises an error if the roles doesn't exists
 							if(!ref_role)
 							{
-								throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+								throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 												.arg(role->getName())
 												.arg(BaseObject::getTypeName(OBJ_ROLE))
 												.arg(list[i])
 												.arg(BaseObject::getTypeName(OBJ_ROLE)),
-												ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+												RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 							}
 
 							role->addRole(role_type, ref_role);
@@ -3624,12 +3624,12 @@ Language *DatabaseModel::createLanguage(void)
 
 							//Raises an error if the function doesn't exists
 							if(!func)
-								throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+								throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 												.arg(lang->getName())
 												.arg(lang->getTypeName())
 												.arg(signature)
 												.arg(BaseObject::getTypeName(OBJ_FUNCTION)),
-												ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+												RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 							if(ref_type==ParsersAttributes::VALIDATOR_FUNC)
 								lang->setFunction(dynamic_cast<Function *>(func), Language::VALIDATOR_FUNC);
@@ -3641,7 +3641,7 @@ Language *DatabaseModel::createLanguage(void)
 						}
 						else
 							//Raises an error if the function type is invalid
-							throw Exception(ERR_REF_FUNCTION_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							throw Exception(RefFunctionInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
 				}
 			}
@@ -3755,12 +3755,12 @@ Function *DatabaseModel::createFunction(void)
 
 						//Raises an error if the function doesn't exisits
 						if(!object)
-							throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+							throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 											.arg(func->getName())
 											.arg(func->getTypeName())
 											.arg(attribs[ParsersAttributes::NAME])
 								.arg(BaseObject::getTypeName(OBJ_LANGUAGE)),
-								ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+								RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 						func->setLanguage(dynamic_cast<Language *>(object));
 					}
@@ -3799,11 +3799,11 @@ Function *DatabaseModel::createFunction(void)
 			delete(func);
 		}
 
-		if(e.getErrorType()==ERR_REF_INEXIST_USER_TYPE)
-			throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
+		if(e.getErrorType()==RefUserTypeInexistsModel)
+			throw Exception(Exception::getErrorMessage(AsgObjectInvalidDefinition)
 							.arg(str_aux)
 							.arg(BaseObject::getTypeName(OBJ_FUNCTION)),
-							ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, getErrorExtraInfo());
+							AsgObjectInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, getErrorExtraInfo());
 		else
 			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
@@ -3893,12 +3893,12 @@ TypeAttribute DatabaseModel::createTypeAttribute(void)
 						//Raises an error if the operator class doesn't exists
 						if(!collation)
 						{
-							throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+							throw Exception(QString(Exception::getErrorMessage(RefObjectInexistsModel))
 											.arg(tpattrib.getName())
 											.arg(tpattrib.getTypeName())
 											.arg(attribs[ParsersAttributes::NAME])
 									.arg(BaseObject::getTypeName(OBJ_COLLATION)),
-									ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 
 						tpattrib.setCollation(collation);
@@ -3970,7 +3970,7 @@ PgSQLType DatabaseModel::createPgSQLType(void)
 	{
 		//Raises an error if the referenced type name doesn't exists
 		if(PgSQLType::getUserTypeIndex(name,nullptr,this) == BaseType::null)
-			throw Exception(ERR_REF_INEXIST_USER_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(RefUserTypeInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		type_idx=PgSQLType::getUserTypeIndex(name, ptype);
 		return(PgSQLType(type_idx,length,dimension,precision,with_timezone,interv_type,spatial_type));
@@ -4085,12 +4085,12 @@ Type *DatabaseModel::createType(void)
 						//Raises an error if the operator class doesn't exists
 						if(!collation)
 						{
-							throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+							throw Exception(QString(Exception::getErrorMessage(RefObjectInexistsModel))
 											.arg(type->getName())
 											.arg(type->getTypeName())
 											.arg(attribs[ParsersAttributes::NAME])
 									.arg(BaseObject::getTypeName(OBJ_COLLATION)),
-									ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 
 						type->setCollation(collation);
@@ -4103,12 +4103,12 @@ Type *DatabaseModel::createType(void)
 						//Raises an error if the operator class doesn't exists
 						if(!op_class)
 						{
-							throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+							throw Exception(QString(Exception::getErrorMessage(RefObjectInexistsModel))
 											.arg(type->getName())
 											.arg(type->getTypeName())
 											.arg(attribs[ParsersAttributes::NAME])
 									.arg(BaseObject::getTypeName(OBJ_OPCLASS)),
-									ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 
 						type->setSubtypeOpClass(op_class);
@@ -4123,15 +4123,15 @@ Type *DatabaseModel::createType(void)
 
 						//Raises an error if the function doesn't exists
 						if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
-							throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+							throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 											.arg(type->getName())
 											.arg(type->getTypeName())
 											.arg(attribs[ParsersAttributes::SIGNATURE])
 								.arg(BaseObject::getTypeName(OBJ_FUNCTION)),
-								ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+								RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						//Raises an error if the function type is invalid
 						else if(func_types.count(attribs[ParsersAttributes::REF_TYPE])==0)
-							throw Exception(ERR_REF_FUNCTION_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							throw Exception(RefFunctionInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 						type->setFunction(func_types[attribs[ParsersAttributes::REF_TYPE]],	dynamic_cast<Function *>(func));
 					}
@@ -4148,11 +4148,11 @@ Type *DatabaseModel::createType(void)
 			delete(type);
 		}
 
-		if(e.getErrorType()==ERR_REF_INEXIST_USER_TYPE)
-			throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
+		if(e.getErrorType()==RefUserTypeInexistsModel)
+			throw Exception(Exception::getErrorMessage(AsgObjectInvalidDefinition)
 							.arg(str_aux)
 							.arg(type->getTypeName()),
-							ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, getErrorExtraInfo());
+							AsgObjectInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, getErrorExtraInfo());
 		else
 			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
@@ -4263,12 +4263,12 @@ Cast *DatabaseModel::createCast(void)
 
 						//Raises an error if the function doesn't exists
 						if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
-							throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+							throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 											.arg(cast->getName())
 											.arg(cast->getTypeName())
 											.arg(attribs[ParsersAttributes::SIGNATURE])
 								.arg(BaseObject::getTypeName(OBJ_FUNCTION)),
-								ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+								RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 						cast->setCastFunction(dynamic_cast<Function *>(func));
 					}
@@ -4322,12 +4322,12 @@ Conversion *DatabaseModel::createConversion(void)
 
 						//Raises an error if the function doesn't exists
 						if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
-							throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+							throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 											.arg(conv->getName())
 											.arg(conv->getTypeName())
 											.arg(attribs[ParsersAttributes::SIGNATURE])
 								.arg(BaseObject::getTypeName(OBJ_FUNCTION)),
-								ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+								RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 						conv->setConversionFunction(dynamic_cast<Function *>(func));
 					}
@@ -4387,12 +4387,12 @@ Operator *DatabaseModel::createOperator(void)
 
 						//Raises an error if the auxiliary operator doesn't exists
 						if(!oper_aux && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
-							throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+							throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 											.arg(oper->getSignature(true))
 											.arg(oper->getTypeName())
 											.arg(attribs[ParsersAttributes::SIGNATURE])
 								.arg(BaseObject::getTypeName(OBJ_OPERATOR)),
-								ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+								RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 						oper->setOperator(dynamic_cast<Operator *>(oper_aux),
 										  oper_types[attribs[ParsersAttributes::REF_TYPE]]);
@@ -4416,12 +4416,12 @@ Operator *DatabaseModel::createOperator(void)
 
 						//Raises an error if the function doesn't exists on the model
 						if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
-							throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+							throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 											.arg(oper->getName())
 											.arg(oper->getTypeName())
 											.arg(attribs[ParsersAttributes::SIGNATURE])
 								.arg(BaseObject::getTypeName(OBJ_FUNCTION)),
-								ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+								RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 						oper->setFunction(dynamic_cast<Function *>(func),
 										  func_types[attribs[ParsersAttributes::REF_TYPE]]);
@@ -4479,12 +4479,12 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 
 						//Raises an error if the operator family doesn't exists
 						if(!object)
-							throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+							throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 											.arg(op_class->getName())
 											.arg(op_class->getTypeName())
 											.arg(attribs[ParsersAttributes::SIGNATURE])
 								.arg(BaseObject::getTypeName(OBJ_OPFAMILY)),
-								ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+								RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 						op_class->setFamily(dynamic_cast<OperatorFamily *>(object));
 					}
@@ -4529,12 +4529,12 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 								object=getObject(attribs_aux[ParsersAttributes::SIGNATURE],OBJ_OPFAMILY);
 
 								if(!object && !attribs_aux[ParsersAttributes::SIGNATURE].isEmpty())
-									throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+									throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 													.arg(op_class->getName())
 													.arg(op_class->getTypeName())
 													.arg(attribs_aux[ParsersAttributes::SIGNATURE])
 										.arg(BaseObject::getTypeName(OBJ_OPFAMILY)),
-										ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+										RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 								class_elem.setOperatorFamily(dynamic_cast<OperatorFamily *>(object));
 								xmlparser.restorePosition();
@@ -4620,12 +4620,12 @@ Aggregate *DatabaseModel::createAggregate(void)
 
 						//Raises an error if the function doesn't exists on the model
 						if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
-							throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+							throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 											.arg(aggreg->getName())
 											.arg(aggreg->getTypeName())
 											.arg(attribs[ParsersAttributes::SIGNATURE])
 								.arg(BaseObject::getTypeName(OBJ_FUNCTION)),
-								ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+								RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 						if(attribs[ParsersAttributes::REF_TYPE]==ParsersAttributes::TRANSITION_FUNC)
 							aggreg->setFunction(Aggregate::TRANSITION_FUNC,
@@ -4697,12 +4697,12 @@ Table *DatabaseModel::createTable(void)
 
 						if(!tag)
 						{
-							throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+							throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 											.arg(attribs[ParsersAttributes::NAME])
 									.arg(BaseObject::getTypeName(OBJ_TABLE))
 									.arg(aux_attribs[ParsersAttributes::TABLE])
 									.arg(BaseObject::getTypeName(OBJ_TAG))
-									, ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									, RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 
 						table->setTag(dynamic_cast<Tag *>(tag));
@@ -4823,12 +4823,12 @@ Column *DatabaseModel::createColumn(void)
 			seq=getObject(attribs[ParsersAttributes::SEQUENCE], OBJ_SEQUENCE);
 
 			if(!seq)
-				throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+				throw Exception(QString(Exception::getErrorMessage(RefObjectInexistsModel))
 								.arg(attribs[ParsersAttributes::NAME])
 					.arg(BaseObject::getTypeName(OBJ_COLUMN))
 					.arg(attribs[ParsersAttributes::SEQUENCE])
 					.arg(BaseObject::getTypeName(OBJ_SEQUENCE)),
-					ERR_PERM_REF_INEXIST_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					PermissionRefInexistObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 
 			column->setSequence(seq);
@@ -4893,7 +4893,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 				rel=dynamic_cast<Relationship *>(parent_obj);
 			else
 				//Raises an error if the user tries to create a constraint in a invalid parent
-				throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 		else
 		{
@@ -4905,13 +4905,13 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 			//Raises an error if the parent table doesn't exists
 			if(!table)
 			{
-				str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+				str_aux=QString(Exception::getErrorMessage(RefObjectInexistsModel))
 						.arg(attribs[ParsersAttributes::NAME])
 						.arg(BaseObject::getTypeName(OBJ_CONSTRAINT))
 						.arg(attribs[ParsersAttributes::TABLE])
 						.arg(BaseObject::getTypeName(OBJ_TABLE));
 
-				throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(str_aux,RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 		}
 
@@ -4939,9 +4939,9 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 
 		//Raises an error if the constraint is a primary key and no parent object is specified
 		if(!parent_obj && constr_type==ConstraintType::primary_key)
-			throw Exception(Exception::getErrorMessage(ERR_INV_PRIM_KEY_ALOCATION)
+			throw Exception(Exception::getErrorMessage(InvPrimaryKeyAllocation)
 							.arg(constr->getName()),
-							ERR_INV_PRIM_KEY_ALOCATION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							InvPrimaryKeyAllocation,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		deferrable=(attribs[ParsersAttributes::DEFERRABLE]==ParsersAttributes::_TRUE_);
 		constr->setDeferrable(deferrable);
@@ -4968,13 +4968,13 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 			//Raises an error if the referenced table doesn't exists
 			if(!ref_table)
 			{
-				str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+				str_aux=QString(Exception::getErrorMessage(RefObjectInexistsModel))
 						.arg(constr->getName())
 						.arg(constr->getTypeName())
 						.arg(attribs[ParsersAttributes::REF_TABLE])
 						.arg(BaseObject::getTypeName(OBJ_TABLE));
 
-				throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(str_aux,RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
 			constr->setReferencedTable(dynamic_cast<BaseTable *>(ref_table));
@@ -5119,20 +5119,20 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 					{
 						if(!is_part_key)
 						{
-							throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+							throw Exception(QString(Exception::getErrorMessage(RefObjectInexistsModel))
 											.arg(tab_obj->getName())
 											.arg(tab_obj->getTypeName())
 											.arg(attribs[ParsersAttributes::SIGNATURE])
 									.arg(BaseObject::getTypeName(OBJ_OPCLASS)),
-									ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 						else
 						{
-							throw Exception(QString(Exception::getErrorMessage(ERR_PART_KEY_REF_OBJ_INEXISTS_MODEL))
+							throw Exception(QString(Exception::getErrorMessage(PartKeyObjectInexistsModel))
 											.arg(parent_obj->getName())
 											.arg(attribs[ParsersAttributes::SIGNATURE])
 									.arg(BaseObject::getTypeName(OBJ_OPCLASS)),
-									ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 					}
 
@@ -5147,12 +5147,12 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 					//Raises an error if the operator doesn't exists
 					if(!oper)
 					{
-						throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+						throw Exception(QString(Exception::getErrorMessage(RefObjectInexistsModel))
 										.arg(tab_obj->getName())
 										.arg(tab_obj->getTypeName())
 										.arg(attribs[ParsersAttributes::SIGNATURE])
 								.arg(BaseObject::getTypeName(OBJ_OPERATOR)),
-								ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+								RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
 
 					elem.setOperator(oper);
@@ -5167,20 +5167,20 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 					{
 						if(!is_part_key)
 						{
-							throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+							throw Exception(QString(Exception::getErrorMessage(RefObjectInexistsModel))
 															.arg(tab_obj->getName())
 															.arg(tab_obj->getTypeName())
 															.arg(attribs[ParsersAttributes::NAME])
 															.arg(BaseObject::getTypeName(OBJ_COLLATION)),
-															ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+															RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 						else
 						{
-							throw Exception(QString(Exception::getErrorMessage(ERR_PART_KEY_REF_OBJ_INEXISTS_MODEL))
+							throw Exception(QString(Exception::getErrorMessage(PartKeyObjectInexistsModel))
 															.arg(parent_obj->getName())
 															.arg(attribs[ParsersAttributes::NAME])
 															.arg(BaseObject::getTypeName(OBJ_COLLATION)),
-															ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+															RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 					}
 
@@ -5207,20 +5207,20 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 					{
 						if(!is_part_key)
 						{
-							throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+							throw Exception(QString(Exception::getErrorMessage(RefObjectInexistsModel))
 											.arg(tab_obj->getName())
 											.arg(tab_obj->getTypeName())
 											.arg(attribs[ParsersAttributes::NAME])
 									.arg(BaseObject::getTypeName(OBJ_COLUMN)),
-									ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 						else
 						{
-							throw Exception(QString(Exception::getErrorMessage(ERR_PART_KEY_REF_OBJ_INEXISTS_MODEL))
+							throw Exception(QString(Exception::getErrorMessage(PartKeyObjectInexistsModel))
 											.arg(parent_obj->getName())
 											.arg(attribs[ParsersAttributes::NAME])
 									.arg(BaseObject::getTypeName(OBJ_COLUMN)),
-									ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 					}
 
@@ -5251,7 +5251,7 @@ QString DatabaseModel::getAlterDefinition(BaseObject *object)
 	DatabaseModel *db_aux=dynamic_cast<DatabaseModel *>(object);
 
 	if(!db_aux)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{
@@ -5301,13 +5301,13 @@ Index *DatabaseModel::createIndex(void)
 		//Raises an error if the parent table doesn't exists
 		if(!table)
 		{
-			str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+			str_aux=QString(Exception::getErrorMessage(RefObjectInexistsModel))
 					.arg(attribs[ParsersAttributes::NAME])
 					.arg(BaseObject::getTypeName(OBJ_INDEX))
 					.arg(attribs[ParsersAttributes::TABLE])
 					.arg(BaseObject::getTypeName(OBJ_TABLE));
 
-			throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(str_aux,RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
 		index=new Index;
@@ -5380,12 +5380,12 @@ Rule *DatabaseModel::createRule(void)
 			table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_VIEW));
 
 		if(!table)
-			throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+			throw Exception(QString(Exception::getErrorMessage(RefObjectInexistsModel))
 							.arg(attribs[ParsersAttributes::NAME])
 				.arg(BaseObject::getTypeName(OBJ_RULE))
 				.arg(attribs[ParsersAttributes::TABLE])
 				.arg(BaseObject::getTypeName(OBJ_TABLE)),
-				ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 
 		rule->setExecutionType(attribs[ParsersAttributes::EXEC_TYPE]);
@@ -5459,12 +5459,12 @@ Trigger *DatabaseModel::createTrigger(void)
 			table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_VIEW));
 
 		if(!table)
-			throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+			throw Exception(QString(Exception::getErrorMessage(RefObjectInexistsModel))
 							.arg(attribs[ParsersAttributes::NAME])
 				.arg(BaseObject::getTypeName(OBJ_TRIGGER))
 				.arg(attribs[ParsersAttributes::TABLE])
 				.arg(BaseObject::getTypeName(OBJ_TABLE)),
-				ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 
 		trigger=new Trigger;
@@ -5516,12 +5516,12 @@ Trigger *DatabaseModel::createTrigger(void)
 			//Raises an error if the trigger is referencing a inexistent table
 			if(!ref_table)
 			{
-				throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+				throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 								.arg(trigger->getName())
 								.arg(trigger->getTypeName())
 								.arg(attribs[ParsersAttributes::REF_TABLE])
 						.arg(BaseObject::getTypeName(OBJ_TABLE)),
-						ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
 			trigger->setReferecendTable(dynamic_cast<BaseTable *>(ref_table));
@@ -5543,13 +5543,13 @@ Trigger *DatabaseModel::createTrigger(void)
 						//Raises an error if the function doesn't exists
 						if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
 						{
-							str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+							str_aux=QString(Exception::getErrorMessage(RefObjectInexistsModel))
 									.arg(trigger->getName())
 									.arg(trigger->getTypeName())
 									.arg(attribs[ParsersAttributes::SIGNATURE])
 									.arg(BaseObject::getTypeName(OBJ_FUNCTION));
 
-							throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							throw Exception(str_aux,RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 
 						trigger->setFunction(dynamic_cast<Function *>(func));
@@ -5613,12 +5613,12 @@ Policy *DatabaseModel::createPolicy(void)
 		table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE));
 
 		if(!table)
-			throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+			throw Exception(QString(Exception::getErrorMessage(RefObjectInexistsModel))
 											.arg(attribs[ParsersAttributes::NAME])
 											.arg(BaseObject::getTypeName(OBJ_POLICY))
 											.arg(attribs[ParsersAttributes::TABLE])
 											.arg(BaseObject::getTypeName(OBJ_TABLE)),
-				ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		policy->setPermissive(attribs[ParsersAttributes::PERMISSIVE] == ParsersAttributes::_TRUE_);
 		policy->setPolicyCommand(PolicyCmdType(attribs[ParsersAttributes::COMMAND]));
@@ -5660,12 +5660,12 @@ Policy *DatabaseModel::createPolicy(void)
 							//Raises an error if the referenced role doesn't exists
 							if(!role)
 							{
-								throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+								throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 																.arg(policy->getName())
 																.arg(policy->getTypeName())
 																.arg(name)
 																.arg(BaseObject::getTypeName(OBJ_ROLE)),
-																ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+																RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 							}
 
 							policy->addRole(role);
@@ -5718,12 +5718,12 @@ EventTrigger *DatabaseModel::createEventTrigger(void)
 						//Raises an error if the function doesn't exists
 						if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
 						{
-							throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+							throw Exception(QString(Exception::getErrorMessage(RefObjectInexistsModel))
 											.arg(event_trig->getName())
 											.arg(event_trig->getTypeName())
 											.arg(attribs[ParsersAttributes::SIGNATURE])
 									.arg(BaseObject::getTypeName(OBJ_FUNCTION)),
-									ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 
 						event_trig->setFunction(dynamic_cast<Function *>(func));
@@ -5822,13 +5822,13 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 			//Raises an error if the column parent table doesn't exists
 			if(!table)
 			{
-				str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+				str_aux=QString(Exception::getErrorMessage(RefObjectInexistsModel))
 						.arg(sequence->getName())
 						.arg(BaseObject::getTypeName(OBJ_SEQUENCE))
 						.arg(tab_name)
 						.arg(BaseObject::getTypeName(OBJ_TABLE));
 
-				throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(str_aux,RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
 			column=dynamic_cast<Table *>(table)->getColumn(col_name);
@@ -5838,9 +5838,9 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 
 			//Raises an error if the column doesn't exists
 			if(!column && !ignore_onwer)
-				throw Exception(Exception::getErrorMessage(ERR_ASG_INEXIST_OWNER_COL_SEQ)
+				throw Exception(Exception::getErrorMessage(AsgInexistentSeqOwnerColumn)
 								.arg(sequence->getName(true)),
-								ERR_ASG_INEXIST_OWNER_COL_SEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+								AsgInexistentSeqOwnerColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			sequence->setOwnerColumn(column);
 		}
@@ -5903,13 +5903,13 @@ View *DatabaseModel::createView(void)
 							//Raises an error if the table doesn't exists
 							if(!table)
 							{
-								str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+								str_aux=QString(Exception::getErrorMessage(RefObjectInexistsModel))
 										.arg(view->getName())
 										.arg(BaseObject::getTypeName(OBJ_VIEW))
 										.arg(attribs[ParsersAttributes::TABLE])
 										.arg(BaseObject::getTypeName(OBJ_TABLE));
 
-								throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+								throw Exception(str_aux,RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 							}
 
 							if(!attribs[ParsersAttributes::COLUMN].isEmpty())
@@ -5922,14 +5922,14 @@ View *DatabaseModel::createView(void)
 								//Raises an error if the view references an inexistant column
 								if(!column)
 								{
-									str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+									str_aux=QString(Exception::getErrorMessage(RefObjectInexistsModel))
 											.arg(view->getName())
 											.arg(BaseObject::getTypeName(OBJ_VIEW))
 											.arg(attribs[ParsersAttributes::TABLE] + QString(".") +
 											attribs[ParsersAttributes::COLUMN])
 											.arg(BaseObject::getTypeName(OBJ_COLUMN));
 
-									throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									throw Exception(str_aux,RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 								}
 							}
 
@@ -5997,12 +5997,12 @@ View *DatabaseModel::createView(void)
 
 						if(!tag)
 						{
-							throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+							throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 											.arg(attribs[ParsersAttributes::NAME])
 									.arg(BaseObject::getTypeName(OBJ_TABLE))
 									.arg(aux_attribs[ParsersAttributes::TABLE])
 									.arg(BaseObject::getTypeName(OBJ_TAG))
-									, ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									, RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 
 						view->setTag(dynamic_cast<Tag *>(tag));
@@ -6071,12 +6071,12 @@ Collation *DatabaseModel::createCollation(void)
 			//Raises an error if the copy collation doesn't exists
 			if(!copy_coll)
 			{
-				throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+				throw Exception(QString(Exception::getErrorMessage(RefObjectInexistsModel))
 								.arg(collation->getName())
 								.arg(BaseObject::getTypeName(OBJ_COLLATION))
 								.arg(attribs[ParsersAttributes::COLLATION])
 						.arg(BaseObject::getTypeName(OBJ_COLLATION)),
-						ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
 			collation->setCollation(dynamic_cast<Collation *>(copy_coll));
@@ -6245,13 +6245,13 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 			//Raises an error if some table doesn't exists
 			if(!tables[i])
 			{
-				str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+				str_aux=QString(Exception::getErrorMessage(RefObjectInexistsModel))
 						.arg(attribs[ParsersAttributes::NAME])
 						.arg(BaseObject::getTypeName(obj_rel_type))
 						.arg(attribs[tab_attribs[i]])
 						.arg(BaseObject::getTypeName(table_types[i]));
 
-				throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(str_aux,RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 		}
 
@@ -6291,10 +6291,10 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 					//Throws an error if the relationship was created without a valid foreign key attached to it
 					if(!base_rel->getReferenceForeignKey())
 					{
-					  throw Exception(Exception::getErrorMessage(ERR_ALOC_INV_FK_RELATIONSHIP)
+						throw Exception(Exception::getErrorMessage(InvAllocationFKRelationship)
 									  .arg(attribs[ParsersAttributes::NAME])
 									  .arg(src_tab->getName(true)),
-									  ERR_ALOC_INV_FK_RELATIONSHIP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+										InvAllocationFKRelationship,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
 				}
 			}
@@ -6302,12 +6302,12 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 				base_rel->setName(attribs[ParsersAttributes::NAME]);
 
 			if(!base_rel)
-				throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+				throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 								.arg(this->getName())
 								.arg(this->getTypeName())
 								.arg(attribs[ParsersAttributes::NAME])
 					.arg(BaseObject::getTypeName(BASE_RELATIONSHIP)),
-					ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			base_rel->blockSignals(loading_model);
 			base_rel->disconnectRelationship();
@@ -6539,10 +6539,10 @@ Permission *DatabaseModel::createPermission(void)
 
 		//Raises an error if the permission references an object that does not exists
 		if(!object)
-			throw Exception(Exception::getErrorMessage(ERR_PERM_REF_INEXIST_OBJECT)
+			throw Exception(Exception::getErrorMessage(PermissionRefInexistObject)
 							.arg(obj_name)
 							.arg(BaseObject::getTypeName(obj_type)),
-							ERR_PERM_REF_INEXIST_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							PermissionRefInexistObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		perm=new Permission(object);
 		perm->setRevoke(revoke);
@@ -6564,10 +6564,10 @@ Permission *DatabaseModel::createPermission(void)
 					//Raises an error if the referenced role doesn't exists
 					if(!role)
 					{
-						throw Exception(Exception::getErrorMessage(ERR_PERM_REF_INEXIST_OBJECT)
+						throw Exception(Exception::getErrorMessage(PermissionRefInexistObject)
 										.arg(list[i])
 										.arg(BaseObject::getTypeName(OBJ_ROLE)),
-										ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+										RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 					}
 
@@ -6641,12 +6641,12 @@ void DatabaseModel::validateColumnRemoval(Column *column)
 
 		//Raises an error if there are objects referencing the column
 		if(!refs.empty())
-			throw Exception(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE)
+			throw Exception(Exception::getErrorMessage(RemDirectReference)
 							.arg(column->getParentTable()->getName(true) + QString(".") + column->getName(true))
 							.arg(column->getTypeName())
 							.arg(refs[0]->getName(true))
 				.arg(refs[0]->getTypeName()),
-				ERR_REM_DIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				RemDirectReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 }
 
@@ -6919,7 +6919,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 
 		attribs_aux[ParsersAttributes::SEARCH_PATH]=search_path;
 		attribs_aux[ParsersAttributes::MODEL_AUTHOR]=author;
-		attribs_aux[ParsersAttributes::PGMODELER_VERSION]=GlobalAttributes::PGMODELER_VERSION;
+		attribs_aux[ParsersAttributes::PGMODELER_VERSION]=GlobalAttributes::PgModelerVersion;
 
 		if(def_type==SchemaParser::XML_DEFINITION)
 		{
@@ -7402,8 +7402,8 @@ void DatabaseModel::saveModel(const QString &filename, unsigned def_type)
 	output.open(QFile::WriteOnly);
 
 	if(!output.isOpen())
-		throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(filename),
-						ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(Exception::getErrorMessage(FileDirectoryNotWritten).arg(filename),
+						FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{
@@ -7414,8 +7414,8 @@ void DatabaseModel::saveModel(const QString &filename, unsigned def_type)
 	catch(Exception &e)
 	{
 		if(output.isOpen()) output.close();
-		throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTER_INV_DEF).arg(filename),
-						ERR_FILE_NOT_WRITTER_INV_DEF,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(Exception::getErrorMessage(FileNotWrittenInvalidDefinition).arg(filename),
+						FileNotWrittenInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -9194,7 +9194,7 @@ void DatabaseModel::validateSchemaRenaming(Schema *schema, const QString &prev_s
 
 	//Raise an error if the schema is not allocated
 	if(!schema)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Get all the objects on the informed schema
 	for(unsigned i=0; i < 5; i++)
@@ -9439,7 +9439,7 @@ void DatabaseModel::setDefaultObject(BaseObject *object, ObjectType obj_type)
 {
 	if((!object && default_objs.count(obj_type)==0) ||
 			(object && default_objs.count(object->getObjectType())==0))
-		throw Exception(ERR_REF_OBJ_INV_TYPE, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefObjectInvalidType, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(!object)
 		default_objs[obj_type]=nullptr;
@@ -9516,8 +9516,8 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 	output.open(QFile::WriteOnly);
 
 	if(!output.isOpen())
-		throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(filename),
-										ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(Exception::getErrorMessage(FileDirectoryNotWritten).arg(filename),
+										FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{
@@ -9686,9 +9686,9 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 					{
 						schparser.ignoreUnkownAttributes(true);
 						attribs[ParsersAttributes::POSITION]=
-								schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-																						GlobalAttributes::XML_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
-																						ParsersAttributes::POSITION + GlobalAttributes::SCHEMA_EXT, attribs);
+								schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+																						GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
+																						ParsersAttributes::POSITION + GlobalAttributes::SchemaExt, attribs);
 					}
 				}
 				else
@@ -9713,9 +9713,9 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 
 						schparser.ignoreUnkownAttributes(true);
 						attribs[ParsersAttributes::POSITION]+=
-								schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-																						GlobalAttributes::XML_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
-																						ParsersAttributes::POSITION + GlobalAttributes::SCHEMA_EXT, attribs);
+								schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+																						GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
+																						ParsersAttributes::POSITION + GlobalAttributes::SchemaExt, attribs);
 					}
 
 					//Saving the labels' custom positions
@@ -9728,13 +9728,13 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 							aux_attribs[ParsersAttributes::Y_POS]=QString::number(pnt.y());
 							aux_attribs[ParsersAttributes::REF_TYPE]=labels_attrs[id];
 
-							aux_attribs[ParsersAttributes::POSITION]=schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-																																									 GlobalAttributes::XML_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
-																																									 ParsersAttributes::POSITION + GlobalAttributes::SCHEMA_EXT, aux_attribs);
+							aux_attribs[ParsersAttributes::POSITION]=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+																																									 GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
+																																									 ParsersAttributes::POSITION + GlobalAttributes::SchemaExt, aux_attribs);
 
-							attribs[ParsersAttributes::POSITION]+=schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-																																								GlobalAttributes::XML_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
-																																								ParsersAttributes::LABEL + GlobalAttributes::SCHEMA_EXT, aux_attribs);
+							attribs[ParsersAttributes::POSITION]+=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+																																								GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
+																																								ParsersAttributes::LABEL + GlobalAttributes::SchemaExt, aux_attribs);
 						}
 					}
 				}
@@ -9744,14 +9744,14 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			if(save_custom_sql)
 			{
 				if(!object->getAppendedSQL().isEmpty())
-					attribs[ParsersAttributes::APPENDED_SQL]=schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-																																							 GlobalAttributes::XML_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
-																																							 QString(ParsersAttributes::APPENDED_SQL).remove(QChar('-')) + GlobalAttributes::SCHEMA_EXT, attribs);
+					attribs[ParsersAttributes::APPENDED_SQL]=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+																																							 GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
+																																							 QString(ParsersAttributes::APPENDED_SQL).remove(QChar('-')) + GlobalAttributes::SchemaExt, attribs);
 
 				if(!object->getPrependedSQL().isEmpty())
-					attribs[ParsersAttributes::PREPENDED_SQL]=schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-																																								GlobalAttributes::XML_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
-																																								QString(ParsersAttributes::PREPENDED_SQL).remove(QChar('-')) + GlobalAttributes::SCHEMA_EXT, attribs);
+					attribs[ParsersAttributes::PREPENDED_SQL]=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+																																								GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
+																																								QString(ParsersAttributes::PREPENDED_SQL).remove(QChar('-')) + GlobalAttributes::SchemaExt, attribs);
 			}
 
 			/* The object's metadata code will be generated only if one of the key attributes
@@ -9778,9 +9778,9 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 
 				schparser.ignoreUnkownAttributes(true);
 				objs_def+=schparser.convertCharsToXMLEntities(
-										schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-																							GlobalAttributes::XML_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
-																							ParsersAttributes::INFO + GlobalAttributes::SCHEMA_EXT, attribs));
+										schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+																							GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
+																							ParsersAttributes::INFO + GlobalAttributes::SchemaExt, attribs));
 			}
 			else
 				idx++;
@@ -9792,9 +9792,9 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 		{
 			//Generates the metadata XML buffer
 			attribs[ParsersAttributes::INFO]=objs_def;
-			buf.append(schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-																						 GlobalAttributes::XML_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
-																						 ParsersAttributes::METADATA + GlobalAttributes::SCHEMA_EXT, attribs));
+			buf.append(schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+																						 GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
+																						 ParsersAttributes::METADATA + GlobalAttributes::SchemaExt, attribs));
 			output.write(buf.data(),buf.size());
 
 			emit s_objectLoaded(100, trUtf8("Metadata file successfully saved!"), BASE_OBJECT);
@@ -9807,20 +9807,20 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 	catch(Exception &e)
 	{
 		if(output.isOpen()) output.close();
-		throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTER_INV_DEF).arg(filename),
-										ERR_FILE_NOT_WRITTER_INV_DEF,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(Exception::getErrorMessage(FileNotWrittenInvalidDefinition).arg(filename),
+										FileNotWrittenInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
 void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned options)
 {
 	QString elem_name, aux_elem, obj_name, ref_type,
-			dtd_file=GlobalAttributes::SCHEMAS_ROOT_DIR +
-							 GlobalAttributes::DIR_SEPARATOR +
-							 GlobalAttributes::XML_SCHEMA_DIR +
-							 GlobalAttributes::DIR_SEPARATOR +
-							 GlobalAttributes::OBJECT_DTD_DIR +
-							 GlobalAttributes::DIR_SEPARATOR;
+			dtd_file=GlobalAttributes::SchemasRootDir +
+							 GlobalAttributes::DirSeparator +
+							 GlobalAttributes::XMLSchemaDir +
+							 GlobalAttributes::DirSeparator +
+							 GlobalAttributes::ObjectDTDDir +
+							 GlobalAttributes::DirSeparator;
 	attribs_map attribs, aux_attrib;
 	ObjectType obj_type;
 	BaseObject *object=nullptr, *new_object=nullptr;
@@ -9858,9 +9858,9 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 		xmlparser.restartParser();
 
-		xmlparser.setDTDFile(dtd_file + GlobalAttributes::METADATA_DTD +
-												 GlobalAttributes::OBJECT_DTD_EXT,
-												 GlobalAttributes::METADATA_DTD);
+		xmlparser.setDTDFile(dtd_file + GlobalAttributes::MetadataDTD +
+												 GlobalAttributes::ObjectDTDExt,
+												 GlobalAttributes::MetadataDTD);
 
 		xmlparser.loadXMLFile(filename);
 

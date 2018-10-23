@@ -74,9 +74,9 @@ int Index::getElementIndex(IndexElement elem)
 void Index::addIndexElement(IndexElement elem)
 {
 	if(getElementIndex(elem) >= 0)
-		throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(elem.getExpression().isEmpty() && !elem.getColumn())
-		throw Exception(ERR_ASG_INV_EXPR_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgInvalidExpressionObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	idx_elements.push_back(elem);
 	setCodeInvalidated(true);
@@ -91,7 +91,7 @@ void Index::addIndexElement(const QString &expr, Collation *coll, OperatorClass 
 
 		//Raises an error if the expression is empty
 		if(expr.isEmpty())
-			throw Exception(ERR_ASG_INV_EXPR_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(AsgInvalidExpressionObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Configures the element
 		elem.setExpression(expr);
@@ -102,7 +102,7 @@ void Index::addIndexElement(const QString &expr, Collation *coll, OperatorClass 
 		elem.setSortingAttribute(IndexElement::ASC_ORDER, asc_order);
 
 		if(getElementIndex(elem) >= 0)
-			throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		idx_elements.push_back(elem);
 		setCodeInvalidated(true);
@@ -122,10 +122,10 @@ void Index::addIndexElement(Column *column, Collation *coll, OperatorClass *op_c
 
 		//Case the column is not allocated raises an error
 		if(!column)
-			throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN)
+			throw Exception(Exception::getErrorMessage(ErrorType::AsgNotAllocatedColumn)
 							.arg(this->getName())
 							.arg(this->getTypeName()),
-							ERR_ASG_NOT_ALOC_COLUMN, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorType::AsgNotAllocatedColumn, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Configures the element
 		elem.setColumn(column);
@@ -136,7 +136,7 @@ void Index::addIndexElement(Column *column, Collation *coll, OperatorClass *op_c
 		elem.setSortingAttribute(IndexElement::ASC_ORDER, asc_order);
 
 		if(getElementIndex(elem) >= 0)
-			throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		idx_elements.push_back(elem);
 		setCodeInvalidated(true);
@@ -169,7 +169,7 @@ void Index::addIndexElements(vector<IndexElement> &elems)
 void Index::removeIndexElement(unsigned idx_elem)
 {
 	if(idx_elem >= idx_elements.size())
-		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	idx_elements.erase(idx_elements.begin() + idx_elem);
 	setCodeInvalidated(true);
@@ -184,7 +184,7 @@ void Index::removeIndexElements(void)
 IndexElement Index::getIndexElement(unsigned elem_idx)
 {
 	if(elem_idx >= idx_elements.size())
-		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(idx_elements[elem_idx]);
 }
@@ -202,7 +202,7 @@ unsigned Index::getIndexElementCount(void)
 void Index::setIndexAttribute(unsigned attrib_id, bool value)
 {
 	if(attrib_id > BUFFERING)
-		throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(index_attribs[attrib_id] != value);
 	index_attribs[attrib_id]=value;
@@ -235,7 +235,7 @@ unsigned Index::getFillFactor(void)
 bool Index::getIndexAttribute(unsigned attrib_id)
 {
 	if(attrib_id > BUFFERING)
-		throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(index_attribs[attrib_id]);
 }
@@ -380,7 +380,7 @@ QString Index::getAlterDefinition(BaseObject *object)
 	Index *index=dynamic_cast<Index *>(object);
 
 	if(!index)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{

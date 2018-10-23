@@ -24,7 +24,7 @@ bool BaseTableView::hide_tags=false;
 BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 {
 	if(!base_tab)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		throw Exception(AsgNotAllocattedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	body=new RoundedRectItem;
 	body->setRoundedCorners(RoundedRectItem::BOTTOMLEFT_CORNER | RoundedRectItem::BOTTOMRIGHT_CORNER);

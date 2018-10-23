@@ -152,7 +152,7 @@ void MetadataHandlingForm::handleObjectsMetada(void)
 	if(!backup_file_edt->text().isEmpty() &&
 		 backup_file_edt->text() == model_wgt->getFilename())
 		throw Exception(trUtf8("The backup file cannot be the same as the input model!"),
-										ERR_CUSTOM,	__PRETTY_FUNCTION__,__FILE__,__LINE__);
+										Custom,	__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	QTemporaryFile tmp_file;
 	QString metadata_file;
@@ -190,8 +190,8 @@ void MetadataHandlingForm::handleObjectsMetada(void)
 			else
 			{
 				//Configuring the temporary metadata file
-				tmp_file.setFileTemplate(GlobalAttributes::TEMPORARY_DIR +
-																 GlobalAttributes::DIR_SEPARATOR +
+				tmp_file.setFileTemplate(GlobalAttributes::TemporaryDir +
+																 GlobalAttributes::DirSeparator +
 																 QString("%1_metadata_XXXXXX.%2").arg(extract_model->getName()).arg(QString("omf")));
 
 				tmp_file.open();

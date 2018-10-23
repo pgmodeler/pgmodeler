@@ -298,7 +298,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	this->table=nullptr;
 
 	if(!model || (uses_op_list && !op_list))
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(op_list)
 	  operation_count = op_list->getCurrentSize();
@@ -314,7 +314,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 		else if(parent_type==OBJ_RELATIONSHIP)
 			this->relationship=dynamic_cast<Relationship *>(parent_obj);
 		else if(parent_type!=OBJ_DATABASE && parent_type!=OBJ_SCHEMA)
-			throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(AsgObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 	else
 	{
@@ -495,7 +495,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 	{
 		QFrame *frame=nullptr;
 		map<QString, vector<QWidget *> > fields_map;
-		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_91)].push_back(collation_lbl);
+		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PgSQLVersion91)].push_back(collation_lbl);
 		frame=generateVersionWarningFrame(fields_map);
 		baseobject_grid->addWidget(frame, baseobject_grid->count()+1, 0, 1, 0);
 		frame->setParent(this);
@@ -748,12 +748,12 @@ void BaseObjectWidget::applyConfiguration(void)
 				//Raises an error if another object is found with the same name as the editing object
 				if(!new_obj && aux_obj && aux_obj!=object)
 				{
-					throw Exception(QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
+					throw Exception(QString(Exception::getErrorMessage(AsgDuplicatedObject))
 									.arg(obj_name)
 									.arg(BaseObject::getTypeName(obj_type))
 									.arg(parent_obj->getName(true))
 									.arg(parent_obj->getTypeName()),
-									ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									AsgDuplicatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 				}
 			}
 
@@ -891,10 +891,10 @@ void BaseObjectWidget::finishConfiguration(void)
 	{
 		QApplication::restoreOverrideCursor();
 
-		if(e.getErrorType()==ERR_ASG_OBJ_INV_DEFINITION)
-			throw Exception(Exception::getErrorMessage(ERR_REQ_FIELDS_NOT_FILLED)
+		if(e.getErrorType()==AsgObjectInvalidDefinition)
+			throw Exception(Exception::getErrorMessage(RequiredFieldsNotFilled)
 							.arg(this->object->getName()).arg(this->object->getTypeName()),
-							ERR_REQ_FIELDS_NOT_FILLED,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+							RequiredFieldsNotFilled,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 		else
 			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}

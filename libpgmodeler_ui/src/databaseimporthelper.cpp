@@ -67,7 +67,7 @@ void DatabaseImportHelper::setCurrentDatabase(const QString &dbname)
 void DatabaseImportHelper::setSelectedOIDs(DatabaseModel *db_model, const map<ObjectType, vector<unsigned> > &obj_oids, const map<unsigned, vector<unsigned> > &col_oids)
 {
 	if(!db_model)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocattedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	dbmodel=db_model;
 	xmlparser=dbmodel->getXMLParser();
@@ -545,7 +545,7 @@ void DatabaseImportHelper::importDatabase(void)
 	try
 	{
 		if(!dbmodel)
-			throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		dbmodel->setLoadingModel(true);
 		dbmodel->setObjectListsCapacity(creation_order.size());
@@ -578,8 +578,8 @@ void DatabaseImportHelper::importDatabase(void)
 				QString log_name;
 
 				//Writing the erros to log file
-				log_name=GlobalAttributes::TEMPORARY_DIR +
-						 GlobalAttributes::DIR_SEPARATOR +
+				log_name=GlobalAttributes::TemporaryDir +
+						 GlobalAttributes::DirSeparator +
 						 QString("%1_%2_%3.log").arg(dbmodel->getName())
 						 .arg(QString("import"))
 						 .arg(QDateTime::currentDateTime().toString(QString("yyyy-MM-dd_hhmmss")));
@@ -748,9 +748,9 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(Exception::getErrorMessage(ERR_OBJECT_NOT_IMPORTED)
+		throw Exception(Exception::getErrorMessage(ObjectNotImported)
 										.arg(obj_name).arg(BaseObject::getTypeName(obj_type)).arg(attribs[ParsersAttributes::OID]),
-										ERR_OBJECT_NOT_IMPORTED,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, dumpObjectAttributes(attribs));
+										ObjectNotImported,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, dumpObjectAttributes(attribs));
 	}
 }
 
@@ -1789,10 +1789,10 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 
 			if(!partitioned_tab)
 			{
-				throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+				throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 												.arg(attribs[ParsersAttributes::NAME]).arg(BaseObject::getTypeName(OBJ_TABLE))
 												.arg(attribs[ParsersAttributes::PARTITIONED_TABLE]).arg(BaseObject::getTypeName(OBJ_TABLE)),
-												ERR_REF_OBJ_INEXISTS_MODEL ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+												RefObjectInexistsModel ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 		}
 
@@ -2020,10 +2020,10 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 			parent_tab=dynamic_cast<BaseTable *>(dbmodel->getObject(tab_name, OBJ_VIEW));
 
 			if(!parent_tab)
-				throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+				throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 												.arg(attribs[ParsersAttributes::NAME]).arg(BaseObject::getTypeName(OBJ_INDEX))
 												.arg(tab_name).arg(BaseObject::getTypeName(OBJ_TABLE)),
-												ERR_REF_OBJ_INEXISTS_MODEL ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+												RefObjectInexistsModel ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
 		cols=Catalog::parseArrayValues(attribs[ParsersAttributes::COLUMNS]);
@@ -2293,7 +2293,7 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 				/* If the role doesn't exists and there is a name defined, throws an error because
 				the roles wasn't found on the model */
 				if(!role && !role_name.isEmpty())
-					throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+					throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 									.arg(QString("permission_%1").arg(perm_list[i])).arg(BaseObject::getTypeName(OBJ_PERMISSION))
 									.arg(role_name).arg(BaseObject::getTypeName(OBJ_ROLE))
 									,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -2529,8 +2529,8 @@ void DatabaseImportHelper::__createTableInheritances(void)
 					}
 
 					if(!parent_tab)
-						throw Exception(Exception::getErrorMessage(ERR_INV_INH_PARENT_TAB_NOT_FOUND).arg(child_tab->getSignature()).arg(inh_list.front()),
-										ERR_INV_INH_PARENT_TAB_NOT_FOUND,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						throw Exception(Exception::getErrorMessage(InvInheritParentTableNotFound).arg(child_tab->getSignature()).arg(inh_list.front()),
+										InvInheritParentTableNotFound,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 					inh_list.pop_front();
 

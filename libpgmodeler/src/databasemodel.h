@@ -180,7 +180,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void setObjectListsCapacity(unsigned capacity);
 
 	public:
-		static const unsigned META_DB_ATTRIBUTES=1,	//! \brief Handle database model attribute when save/load metadata file
+		static constexpr unsigned META_DB_ATTRIBUTES=1,	//! \brief Handle database model attribute when save/load metadata file
 		META_OBJS_POSITIONING=2,	//! \brief Handle objects' positioning when save/load metadata file
 		META_OBJS_PROTECTION=4,	//! \brief Handle objects' protection status when save/load metadata file
 		META_OBJS_SQLDISABLED=8,	//! \brief Handle objects' sql disabled status when save/load metadata file

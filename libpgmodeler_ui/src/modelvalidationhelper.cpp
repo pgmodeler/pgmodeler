@@ -233,7 +233,7 @@ void ModelValidationHelper::redirectExportProgress(int prog, QString msg, Object
 void ModelValidationHelper::setValidationParams(DatabaseModel *model, Connection *conn, const QString &pgsql_ver, bool use_tmp_names)
 {
 	if(!model)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	fix_mode=false;
 	valid_canceled=false;
@@ -259,7 +259,7 @@ bool ModelValidationHelper::isInFixMode()
 void ModelValidationHelper::validateModel(void)
 {
 	if(!db_model)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{

@@ -36,7 +36,7 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		excl_elems_grp->setLayout(grid);
 
 		expression_hl=new SyntaxHighlighter(expression_txt, false, true);
-		expression_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		expression_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
 		columns_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
 										  (ObjectsTableWidget::EDIT_BUTTON |
@@ -89,8 +89,8 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		constraint_grid->addWidget(info_frm, constraint_grid->count()+1, 0, 1, 0);
 		info_frm->setParent(this);
 
-		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_92)].push_back(no_inherit_lbl);
-		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(indexing_chk);
+		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PgSQLVersion92)].push_back(no_inherit_lbl);
+		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PgSQLVersion95)].push_back(indexing_chk);
 		values_map[indexing_chk].push_back(~IndexingType(IndexingType::brin));
 
 		warn_frm=generateVersionWarningFrame(fields_map, &values_map);
@@ -356,11 +356,11 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	vector<ExcludeElement> excl_elems;
 
 	if(!parent_obj)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	obj_type=parent_obj->getObjectType();
 	if(obj_type!=OBJ_TABLE && obj_type!=OBJ_RELATIONSHIP)
-		throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObjectWidget::setAttributes(model, op_list, constr, parent_obj);
 
@@ -486,7 +486,7 @@ void ConstraintWidget::applyConfiguration(void)
 		//Raises an error if the user try to create a primary key that has columns added by relationship (not supported)
 		if(constr->getConstraintType()==ConstraintType::primary_key &&
 				constr->isReferRelationshipAddedColumn())
-			throw Exception(ERR_PK_USING_COLS_ADDED_BY_REL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(UnsupportedPKColsAddedByRel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		BaseObjectWidget::applyConfiguration();
 
@@ -497,7 +497,7 @@ void ConstraintWidget::applyConfiguration(void)
 			constr->getColumnCount(Constraint::SOURCE_COLS)==0) ||
 				(constr->getConstraintType()==ConstraintType::foreign_key &&
 				 constr->getColumnCount(Constraint::REFERENCED_COLS)==0))
-			throw Exception(ERR_CONSTR_NO_COLUMNS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(InvConstratintNoColumns,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		finishConfiguration();
 

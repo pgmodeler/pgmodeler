@@ -42,7 +42,7 @@ class Textbox: public BaseGraphicObject{
 
 	public:
 		//! \brief Constants used to configure the text attributes
-		static const unsigned ITALIC_TXT=0,
+		static constexpr unsigned ITALIC_TXT=0,
 		BOLD_TXT=1,
 		UNDERLINE_TXT=2;
 

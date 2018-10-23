@@ -40,7 +40,7 @@ DonateWidget::DonateWidget(QWidget *parent) : QWidget(parent)
 
 	connect(donate_tb, &QToolButton::clicked,
 			[&](){
-		QDesktopServices::openUrl(QUrl(GlobalAttributes::PGMODELER_DONATE_URL));
+		QDesktopServices::openUrl(QUrl(GlobalAttributes::PgModelerDonateURL));
 		this->close();
 		emit s_visibilityChanged(false);
 	});

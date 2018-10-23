@@ -27,10 +27,10 @@ ValidationInfo::ValidationInfo(void)
 ValidationInfo::ValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> references)
 {
 	if(val_type >= SQL_VALIDATION_ERR)
-		throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if((val_type==NO_UNIQUE_NAME || val_type==BROKEN_REFERENCE) &&
 			(!object || references.empty()))
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->val_type=val_type;
 	this->object=object;

@@ -29,7 +29,7 @@ ElementWidget::ElementWidget(QWidget *parent) : QWidget(parent)
 
 		setupUi(this);
 		elem_expr_hl=new SyntaxHighlighter(elem_expr_txt, false, true);
-		elem_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		elem_expr_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
 		parent_obj=nullptr;
 		op_class_sel=new ObjectSelectorWidget(OBJ_OPCLASS, true, this);
@@ -40,7 +40,7 @@ ElementWidget::ElementWidget(QWidget *parent) : QWidget(parent)
 		element_grid->addWidget(op_class_sel, 4,1,1,2);
 		element_grid->addWidget(operator_sel, 5,1,1,2);
 
-		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_91)].push_back(collation_lbl);
+		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PgSQLVersion91)].push_back(collation_lbl);
 		warning_frame=BaseObjectWidget::generateVersionWarningFrame(fields_map);
 		element_grid->addWidget(warning_frame, element_grid->count()+1, 0, 1, 3);
 		warning_frame->setParent(this);
@@ -134,12 +134,12 @@ void ElementWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj)
 	if(!model || !parent_obj)
 	{
 		this->setEnabled(false);
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 	else if(parent_obj->getObjectType()!=OBJ_TABLE &&
 					parent_obj->getObjectType()!=OBJ_VIEW &&
 					parent_obj->getObjectType()!=OBJ_RELATIONSHIP)
-		throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->setEnabled(true);
 	this->parent_obj=parent_obj;

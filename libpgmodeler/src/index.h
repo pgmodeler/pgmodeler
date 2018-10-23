@@ -54,7 +54,7 @@ class Index: public TableObject{
 		void validateElements(void);
 
 	public:
-		static const  unsigned UNIQUE=0,
+		static constexpr  unsigned UNIQUE=0,
 		CONCURRENT=1,
 		FAST_UPDATE=2,
 		BUFFERING=3;

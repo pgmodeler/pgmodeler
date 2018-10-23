@@ -30,12 +30,12 @@ Permission::Permission(BaseObject *obj)
 
 	//Raises an error if the object associated to the permission is no allocated
 	if(!obj)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	/* Raises an error if the object type to be associated to the permission is
 		invalid according to the rule (see class definition) */
 	if(!acceptsPermission(obj->getObjectType()))
-		throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->object=obj;
 	this->obj_type=OBJ_PERMISSION;
@@ -123,11 +123,11 @@ void Permission::addRole(Role *role)
 {
 	//Raises an error if the role is not allocated
 	if(!role)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Raises an error if the role already exists in the permission
 	if(isRoleExists(role))
-		throw Exception(ERR_INS_DUP_ROLE_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(InsDuplicatedRolePermission,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	roles.push_back(role);
 	setCodeInvalidated(true);
@@ -140,11 +140,11 @@ void Permission::setPrivilege(unsigned priv_id, bool value, bool grant_op)
 {
 	//Caso o tipo de privilégio sejá inválido dispara uma exceção
 	if(priv_id > PRIV_USAGE)
-		throw Exception(ERR_REF_INV_PRIVILEGE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefInvalidPrivilegeType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(!acceptsPermission(object->getObjectType(), priv_id))
 		//Raises an error if the privilege is invalid according to the object type
-		throw Exception(ERR_ASG_INCOMP_PRIV_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgInvalidPrivilegeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated((privileges[priv_id] != value) || grant_option[priv_id] != grant_op);
 	privileges[priv_id]=value;
@@ -205,7 +205,7 @@ bool Permission::isSimilarTo(Permission *perm)
 void Permission::removeRole(unsigned role_idx)
 {
 	if(role_idx > roles.size())
-		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	roles.erase(roles.begin() + role_idx);
 	generatePermissionId();
@@ -222,7 +222,7 @@ void Permission::removeRoles(void)
 Role *Permission::getRole(unsigned role_idx)
 {
 	if(role_idx > roles.size())
-		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(roles[role_idx]);
 }
@@ -246,7 +246,7 @@ bool Permission::getPrivilege(unsigned priv_id)
 {
 	//Raises an error if the privilege is invalid
 	if(priv_id > PRIV_USAGE)
-		throw Exception(ERR_REF_INV_PRIVILEGE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefInvalidPrivilegeType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(privileges[priv_id]);
 }
@@ -255,7 +255,7 @@ bool Permission::getGrantOption(unsigned priv_id)
 {
 	//Raises an error if the privilege is invalid
 	if(priv_id > PRIV_USAGE)
-		throw Exception(ERR_REF_INV_PRIVILEGE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefInvalidPrivilegeType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(grant_option[priv_id]);
 }

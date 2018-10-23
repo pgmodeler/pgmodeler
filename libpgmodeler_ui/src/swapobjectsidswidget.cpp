@@ -183,11 +183,11 @@ void SwapObjectsIdsWidget::swapObjectsIds(void)
 			*graph_dst_obj=dynamic_cast<BaseGraphicObject *>(dst_obj);
 
 	if(!src_obj && !dst_obj)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raise an exception if the user try to swap an id of relationship by other object of different kind
 	else if((src_obj->getObjectType()==OBJ_RELATIONSHIP || dst_obj->getObjectType()==OBJ_RELATIONSHIP) &&
 			(src_obj->getObjectType() != dst_obj->getObjectType()))
-		throw Exception(ERR_INV_REL_ID_SWAP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(InvRelationshipIdSwap,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{

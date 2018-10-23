@@ -50,18 +50,18 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, at
 	QByteArray buf;
 
 	//Configures the schema filename for the configuration
-	QString	sch_filename=GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
-						 GlobalAttributes::DIR_SEPARATOR +
-						 GlobalAttributes::SCHEMAS_DIR +
-						 GlobalAttributes::DIR_SEPARATOR +
+	QString	sch_filename=GlobalAttributes::TmplConfigurationDir +
+						 GlobalAttributes::DirSeparator +
+						 GlobalAttributes::SchemasDir +
+						 GlobalAttributes::DirSeparator +
 						 conf_id +
-						 GlobalAttributes::SCHEMA_EXT,
+						 GlobalAttributes::SchemaExt,
 
 			//Cofnigures the filename for the configuration file
-			cfg_filename=GlobalAttributes::CONFIGURATIONS_DIR +
-						 GlobalAttributes::DIR_SEPARATOR +
+			cfg_filename=GlobalAttributes::ConfigurationsDir +
+						 GlobalAttributes::DirSeparator +
 						 conf_id +
-						 GlobalAttributes::CONFIGURATION_EXT;
+						 GlobalAttributes::ConfigurationExt;
 	QFile output(cfg_filename);
 	attribs_map attribs;
 	map<QString, attribs_map >::iterator itr, itr_end;
@@ -83,8 +83,8 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, at
 		output.open(QFile::WriteOnly);
 
 		if(!output.isOpen())
-			throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(cfg_filename),
-							ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(FileDirectoryNotWritten).arg(cfg_filename),
+							FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Writes the generated configuration to the output file
 		output.write(buf.data(), buf.size());
@@ -94,8 +94,8 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, at
 	catch(Exception &e)
 	{
 		if(output.isOpen()) output.close();
-		throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTER_INV_DEF).arg(cfg_filename),
-						ERR_FILE_NOT_WRITTER_INV_DEF,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(Exception::getErrorMessage(FileNotWrittenInvalidDefinition).arg(cfg_filename),
+						FileNotWrittenInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -104,30 +104,30 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id, bool silent)
 	QString current_file, default_file;
 
 	//Build the path to the current configuration (conf/[conf_id].conf
-	current_file=GlobalAttributes::CONFIGURATIONS_DIR +
-				 GlobalAttributes::DIR_SEPARATOR +
+	current_file=GlobalAttributes::ConfigurationsDir +
+				 GlobalAttributes::DirSeparator +
 				 conf_id +
-				 GlobalAttributes::CONFIGURATION_EXT;
+				 GlobalAttributes::ConfigurationExt;
 
 	//Build the path to the default configuration file (conf/defaults/[conf_id].conf
-	default_file=GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
-				 GlobalAttributes::DIR_SEPARATOR +
-				 GlobalAttributes::DEFAULT_CONFS_DIR+
-				 GlobalAttributes::DIR_SEPARATOR +
+	default_file=GlobalAttributes::TmplConfigurationDir +
+				 GlobalAttributes::DirSeparator +
+				 GlobalAttributes::DefaultConfsDir+
+				 GlobalAttributes::DirSeparator +
 				 conf_id +
-				 GlobalAttributes::CONFIGURATION_EXT;
+				 GlobalAttributes::ConfigurationExt;
 
 	//Raises an error if the default file doesn't exists
 	if(!QFile::exists(default_file))
-		throw Exception(Exception::getErrorMessage(ERR_DEFAULT_CONFIG_NOT_REST).arg(default_file),
-						ERR_DEFAULT_CONFIG_NOT_REST,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(Exception::getErrorMessage(DefaultConfigNotRestored).arg(default_file),
+						DefaultConfigNotRestored,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
 		bool bkp_saved = false;
 		QFileInfo fi(current_file);
 		QDir dir;
-		QString bkp_dir = fi.absolutePath() + GlobalAttributes::DIR_SEPARATOR + GlobalAttributes::CONFS_BACKUPS_DIR,
-				bkp_filename = bkp_dir + GlobalAttributes::DIR_SEPARATOR +
+		QString bkp_dir = fi.absolutePath() + GlobalAttributes::DirSeparator + GlobalAttributes::ConfsBackupsDir,
+				bkp_filename = bkp_dir + GlobalAttributes::DirSeparator +
 											 QString("%1.bkp_%2").arg(fi.fileName()).arg(QDateTime::currentDateTime().toString("yyyyMMd_hhmmss"));
 
 		dir.mkpath(bkp_dir);
@@ -148,19 +148,19 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, at
 
 	try
 	{
-		filename = GlobalAttributes::CONFIGURATIONS_DIR +
-							 GlobalAttributes::DIR_SEPARATOR +
+		filename = GlobalAttributes::ConfigurationsDir +
+							 GlobalAttributes::DirSeparator +
 							 conf_id +
-							 GlobalAttributes::CONFIGURATION_EXT;
+							 GlobalAttributes::ConfigurationExt;
 
 		config_params.clear();
 		xmlparser.restartParser();
-		xmlparser.setDTDFile(GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
-							 GlobalAttributes::DIR_SEPARATOR +
-							 GlobalAttributes::OBJECT_DTD_DIR +
-							 GlobalAttributes::DIR_SEPARATOR +
+		xmlparser.setDTDFile(GlobalAttributes::TmplConfigurationDir +
+							 GlobalAttributes::DirSeparator +
+							 GlobalAttributes::ObjectDTDDir +
+							 GlobalAttributes::DirSeparator +
 							 conf_id +
-							 GlobalAttributes::OBJECT_DTD_EXT,
+							 GlobalAttributes::ObjectDTDExt,
 							 conf_id);
 
 		xmlparser.loadXMLFile(filename);

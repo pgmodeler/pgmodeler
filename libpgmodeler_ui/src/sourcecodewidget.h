@@ -34,7 +34,7 @@ class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
 	private:
 		Q_OBJECT
 
-		static const int ORIGINAL_SQL=0,
+		static constexpr int ORIGINAL_SQL=0,
 		DEPENDENCIES_SQL=1,
 		CHILDREN_SQL=2;
 

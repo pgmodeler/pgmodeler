@@ -62,7 +62,7 @@ void ModelExportHelper::setIgnoredErrors(const QStringList &err_codes)
 void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver)
 {
 	if(!db_model)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	connect(db_model, SIGNAL(s_objectLoaded(int,QString,uint)), this, SLOT(updateProgress(int,QString,uint)));
 
@@ -91,7 +91,7 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename, double zoom, bool show_grid, bool show_delim, bool page_by_page, QGraphicsView *viewp)
 {
 	if(!scene)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{
@@ -146,7 +146,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 			pages=scene->getPagesForPrinting(page_sz, margins.size(), h_cnt, v_cnt);
 
 			//Configures the template filename for pages pixmaps
-			tmpl_filename=fi.absolutePath() + GlobalAttributes::DIR_SEPARATOR + fi.baseName() + QString("_p%1.") + fi.completeSuffix();
+			tmpl_filename=fi.absolutePath() + GlobalAttributes::DirSeparator + fi.baseName() + QString("_p%1.") + fi.completeSuffix();
 		}
 		else
 		{
@@ -214,8 +214,8 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 				ObjectsScene::setGridOptions(shw_grd, align_objs, shw_dlm);
 				scene->update();
 
-				throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(file),
-								ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(Exception::getErrorMessage(FileDirectoryNotWritten).arg(file),
+								FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 		}
 
@@ -243,7 +243,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename, bool show_grid, bool show_delim)
 {
 	if(!scene)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	bool shw_dlm=false, shw_grd=false, align_objs=false;
 	QSvgGenerator svg_gen;
@@ -273,8 +273,8 @@ void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename
 	scene->update();
 
 	if(!fi.exists() || !fi.isWritable() || !fi.isReadable())
-			throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(filename),
-											ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(FileDirectoryNotWritten).arg(filename),
+											FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	QFile svg_file;
 	svg_file.setFileName(filename);
@@ -322,15 +322,15 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 	try
 	{
 		if(!db_model)
-			throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		/* If the export is called using ignore duplications or drop database and simulation mode at same time
 		an error is raised because the simulate mode (mainly used as SQL validation) cannot
 		undo column addition (this can be changed in the future) */
 		if(simulate && (ignore_dup || drop_db || drop_objs))
-			throw Exception(ERR_MIX_INCOMP_EXPORT_OPTS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(MixingIncompExportOptions,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(drop_db && drop_objs)
-			throw Exception(ERR_MIX_INCOMP_DROP_OPTS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(MixingIncompDropOptions,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		connect(db_model, SIGNAL(s_objectLoaded(int,QString,uint)), this, SLOT(updateProgress(int,QString,uint)), Qt::DirectConnection);
 
@@ -364,7 +364,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			generateTempObjectNames(db_model);
 		}
 		else if(use_tmp_names)
-			throw Exception(ERR_INV_USE_TMPNAMES_EXPORT_OPT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(InvUsageTempNamesExportOption,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 
 		if(simulate && db_model->isSQLDisabled())

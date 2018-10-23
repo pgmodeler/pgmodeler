@@ -51,10 +51,10 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	connect(edt_data_tb, SIGNAL(clicked(bool)), this, SLOT(editData()));
 	misc_btns_lt->insertWidget(1, edt_data_tb);
 
-	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_91)].push_back(unlogged_chk);
-	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(enable_rls_chk);
-	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(force_rls_chk);
-	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_100)].push_back(partitioning_type_lbl);
+	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PgSQLVersion91)].push_back(unlogged_chk);
+	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PgSQLVersion95)].push_back(enable_rls_chk);
+	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PgSQLVersion95)].push_back(force_rls_chk);
+	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PgSQLVersion100)].push_back(partitioning_type_lbl);
 	frame=generateVersionWarningFrame(fields_map);
 	table_grid->addWidget(frame, table_grid->count()+1, 0, 1, 2);
 	frame->setParent(this);
@@ -635,10 +635,10 @@ void TableWidget::removeObjects(void)
 				table->removeObject(object);
 			}
 			else
-				throw Exception(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT)
+				throw Exception(Exception::getErrorMessage(RemProtectedObject)
 								.arg(object->getName())
 								.arg(object->getTypeName()),
-								ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+								RemProtectedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
 		if(obj_type == OBJ_CONSTRAINT)
@@ -688,10 +688,10 @@ void TableWidget::removeObject(int row)
 			table->setModified(true);
 		}
 		else
-			throw Exception(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT)
+			throw Exception(Exception::getErrorMessage(RemProtectedObject)
 							.arg(object->getName())
 							.arg(object->getTypeName()),
-							ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							RemProtectedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		if(obj_type == OBJ_CONSTRAINT)
 			listObjects(OBJ_COLUMN);
@@ -911,7 +911,7 @@ void TableWidget::applyConfiguration(void)
 		{
 			Messagebox msg_box;
 
-			if(e.getErrorType()==ERR_INVALIDATED_OBJECTS)
+			if(e.getErrorType()==RemInvalidatedObjects)
 				msg_box.show(e);
 			else
 				throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);

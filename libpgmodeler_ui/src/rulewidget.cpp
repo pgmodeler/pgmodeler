@@ -28,10 +28,10 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RULE)
 		Ui_RuleWidget::setupUi(this);
 
 		cond_expr_hl=new SyntaxHighlighter(cond_expr_txt, false, true);
-		cond_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		cond_expr_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
 		command_hl=new SyntaxHighlighter(comando_txt, false, true);
-		command_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		command_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 		command_cp=new CodeCompletionWidget(comando_txt);
 
 		commands_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^ ObjectsTableWidget::DUPLICATE_BUTTON, true, this);
@@ -87,7 +87,7 @@ void RuleWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Bas
 	unsigned qtd, i;
 
 	if(!parent_tab)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObjectWidget::setAttributes(model, op_list, rule, parent_tab);
 

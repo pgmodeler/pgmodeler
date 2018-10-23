@@ -58,7 +58,7 @@ void ObjectSelectorWidget::configureSelector(bool install_highlighter)
 		if(install_highlighter)
 		{
 			obj_name_hl=new SyntaxHighlighter(obj_name_txt, true);
-			obj_name_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+			obj_name_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 		}
 		else
 		{

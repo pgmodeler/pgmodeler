@@ -66,11 +66,11 @@ void Column::setType(PgSQLType type)
 {
 	//An error is raised if the column receive a pseudo-type as data type.
 	if(type.isPseudoType())
-		throw Exception(ERR_ASG_PSDTYPE_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorType::AsgPseudoTypeColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(this->identity_type != BaseType::null && !type.isIntegerType())
 	{
-		throw Exception(Exception::getErrorMessage(ERR_INV_IDENTITY_COLUMN).arg(getSignature()),
-										ERR_INV_IDENTITY_COLUMN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		throw Exception(Exception::getErrorMessage(ErrorType::InvalidIdentityColumn).arg(getSignature()),
+										ErrorType::InvalidIdentityColumn, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 
 	setCodeInvalidated(this->type != type);
@@ -81,8 +81,8 @@ void Column::setIdentityType(IdentityType id_type)
 {
 	if(id_type != BaseType::null && !type.isIntegerType())
 	{
-		throw Exception(Exception::getErrorMessage(ERR_INV_IDENTITY_COLUMN).arg(getSignature()),
-										ERR_INV_IDENTITY_COLUMN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		throw Exception(Exception::getErrorMessage(ErrorType::InvalidIdentityColumn).arg(getSignature()),
+										ErrorType::InvalidIdentityColumn, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 
 	setCodeInvalidated(identity_type != id_type);
@@ -153,7 +153,7 @@ QString Column::getOldName(bool format)
 void Column::setParentRelationship(BaseObject *parent_rel)
 {
 	if(parent_rel && parent_rel->getObjectType()!=OBJ_RELATIONSHIP)
-		throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->parent_rel=parent_rel;
 }
@@ -168,16 +168,16 @@ void Column::setSequence(BaseObject *seq)
 	if(seq)
 	{
 		if(seq->getObjectType()!=OBJ_SEQUENCE)
-			throw Exception(Exception::getErrorMessage(ERR_ASG_INV_OBJECT_TYPE)
+			throw Exception(Exception::getErrorMessage(AsgInvalidObjectType)
 							.arg(this->obj_name)
 							.arg(this->getTypeName())
 							.arg(BaseObject::getTypeName(OBJ_SEQUENCE)),
-							ERR_ASG_INV_OBJECT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							AsgInvalidObjectType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(!type.isIntegerType())
-			throw Exception(Exception::getErrorMessage(ERR_INCOMP_COL_TYPE_FOR_SEQ)
+			throw Exception(Exception::getErrorMessage(IncompColumnTypeForSequence)
 							.arg(seq->getName(true))
 							.arg(this->obj_name),
-							ERR_INCOMP_COL_TYPE_FOR_SEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							IncompColumnTypeForSequence,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		default_value=QString();
 		identity_type=BaseType::null;
@@ -279,7 +279,7 @@ QString Column::getAlterDefinition(BaseObject *object)
 	Column *col=dynamic_cast<Column *>(object);
 
 	if(!col)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{

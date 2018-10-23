@@ -62,7 +62,7 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		this->setLayout(grid);
 		configureFormLayout(grid, OBJ_OPCLASS);
 
-		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(indexing_lbl);
+		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PgSQLVersion95)].push_back(indexing_lbl);
 		values_map[indexing_lbl].push_back(~IndexingType(IndexingType::brin));
 
 		frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);

@@ -301,13 +301,13 @@ class Relationship: public BaseRelationship {
 		SRC_COL_TOKEN; //{sc}
 
 		//! \brief Patterns ids
-		static const unsigned SRC_COL_PATTERN,
-		DST_COL_PATTERN,
-		PK_PATTERN,
-		UQ_PATTERN,
-		SRC_FK_PATTERN,
-		DST_FK_PATTERN,
-		PK_COL_PATTERN;
+		static constexpr unsigned SRC_COL_PATTERN=0,
+		DST_COL_PATTERN=1,
+		PK_PATTERN=2,
+		UQ_PATTERN=3,
+		SRC_FK_PATTERN=4,
+		DST_FK_PATTERN=5,
+		PK_COL_PATTERN=6;
 
 		Relationship(Relationship *rel);
 

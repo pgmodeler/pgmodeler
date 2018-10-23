@@ -88,7 +88,7 @@ bool Constraint::isColumnExists(Column *column, unsigned col_type)
 
 	//Raises an error if the column is not allocated
 	if(!column)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Gets the iterators from the specified internal list
 	if(col_type==SOURCE_COLS)
@@ -147,10 +147,10 @@ void Constraint::addColumn(Column *column, unsigned col_type)
 {
 	//Raises an error if the column is not allocated
 	if(!column)
-		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN)
+		throw Exception(Exception::getErrorMessage(ErrorType::AsgNotAllocatedColumn)
 						.arg(this->getName())
 						.arg(BaseObject::getTypeName(OBJ_CONSTRAINT)),
-						ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						ErrorType::AsgNotAllocatedColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(constr_type!=ConstraintType::check)
 	{
 		//Adds the column only if the column doesn't exists on the internal list
@@ -176,7 +176,7 @@ void Constraint::setTablespace(BaseObject *tabspc)
 		if(tabspc &&
 				constr_type!=ConstraintType::primary_key &&
 				constr_type!=ConstraintType::unique)
-			throw Exception(ERR_ASG_TABSPC_INV_CONSTR_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(AsgTablespaceInvalidConstraintType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		BaseObject::setTablespace(tabspc);
 	}
@@ -297,7 +297,7 @@ Column *Constraint::getColumn(unsigned col_idx, unsigned col_type)
 
 	//Raises an error if the column index is invalid (out of bound)
 	if(col_idx>=col_list->size())
-		throw Exception(ERR_REF_COLUMN_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefColumnInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(col_list->at(col_idx));
 }
@@ -506,9 +506,9 @@ void Constraint::addExcludeElements(vector<ExcludeElement> &elems)
 void Constraint::addExcludeElement(ExcludeElement elem)
 {
 	if(getExcludeElementIndex(elem) >= 0)
-		throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(elem.getExpression().isEmpty() && !elem.getColumn())
-		throw Exception(ERR_ASG_INV_EXPR_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgInvalidExpressionObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	excl_elements.push_back(elem);
 	setCodeInvalidated(true);
@@ -522,7 +522,7 @@ void Constraint::addExcludeElement(const QString &expr, Operator *oper, Operator
 
 		//Raises an error if the expression is empty
 		if(expr.isEmpty())
-			throw Exception(ERR_ASG_INV_EXPR_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(AsgInvalidExpressionObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Configures the element
 		elem.setExpression(expr);
@@ -533,7 +533,7 @@ void Constraint::addExcludeElement(const QString &expr, Operator *oper, Operator
 		elem.setSortingAttribute(ExcludeElement::ASC_ORDER, asc_order);
 
 		if(getExcludeElementIndex(elem) >= 0)
-			throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		excl_elements.push_back(elem);
 		setCodeInvalidated(true);
@@ -552,10 +552,10 @@ void Constraint::addExcludeElement(Column *column, Operator *oper, OperatorClass
 
 		//Case the column is not allocated raises an error
 		if(!column)
-			throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN)
+			throw Exception(Exception::getErrorMessage(ErrorType::AsgNotAllocatedColumn)
 							.arg(this->getName())
 							.arg(this->getTypeName()),
-							ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorType::AsgNotAllocatedColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Configures the element
 		elem.setColumn(column);
@@ -566,7 +566,7 @@ void Constraint::addExcludeElement(Column *column, Operator *oper, OperatorClass
 		elem.setSortingAttribute(ExcludeElement::ASC_ORDER, asc_order);
 
 		if(getExcludeElementIndex(elem) >= 0)
-			throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		excl_elements.push_back(elem);
 		setCodeInvalidated(true);
@@ -580,7 +580,7 @@ void Constraint::addExcludeElement(Column *column, Operator *oper, OperatorClass
 void Constraint::removeExcludeElement(unsigned elem_idx)
 {
 	if(elem_idx >= excl_elements.size())
-		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	excl_elements.erase(excl_elements.begin() + elem_idx);
 	setCodeInvalidated(true);
@@ -607,7 +607,7 @@ void Constraint::setColumnsNotNull(bool value)
 ExcludeElement Constraint::getExcludeElement(unsigned elem_idx)
 {
 	if(elem_idx >= excl_elements.size())
-		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(excl_elements[elem_idx]);
 }
@@ -746,9 +746,9 @@ QString Constraint::getSignature(bool format)
 bool Constraint::isCodeDiffersFrom(BaseObject *object, const vector<QString> &ignored_attribs, const vector<QString> &ignored_tags)
 {
 	if(!object)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(object->getObjectType()!=this->getObjectType())
-		throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{

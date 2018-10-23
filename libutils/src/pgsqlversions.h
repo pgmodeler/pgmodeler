@@ -30,18 +30,18 @@
 
 namespace PgSQLVersions {
 	extern const QString
-	PGSQL_VERSION_90,
-	PGSQL_VERSION_91,
-	PGSQL_VERSION_92,
-	PGSQL_VERSION_93,
-	PGSQL_VERSION_94,
-	PGSQL_VERSION_95,
-	PGSQL_VERSION_96,
-	PGSQL_VERSION_100,
-	PGSQL_VERSION_110,
-	DEFAULT_VERSION;
+	PgSQLVersion90,
+	PgSQLVersion91,
+	PgSQLVersion92,
+	PgSQLVersion93,
+	PgSQLVersion94,
+	PgSQLVersion95,
+	PgSQLVersion96,
+	PgSQLVersion100,
+	PgSQLVersion110,
+	DefaulVersion;
 
-	extern const QStringList ALL_VERSIONS;
+	extern const QStringList AllVersions;
 }
 
 #endif

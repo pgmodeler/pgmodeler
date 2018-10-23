@@ -64,7 +64,7 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		static QFont default_font;
 
 		//! \brief Indicates that the current block has no special meaning
-		static const int SIMPLE_BLOCK=-1,
+		static constexpr int SIMPLE_BLOCK=-1,
 
 		/*! \brief Indicates that the current block has an open (but still to close) expression (e.g. multline comments)
 		When the highlighter finds this const it'll do special operation like highlight next blocks with the same

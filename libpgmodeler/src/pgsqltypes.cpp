@@ -258,7 +258,7 @@ BaseType::BaseType(void)
 QString BaseType::getTypeString(unsigned type_id)
 {
 	if(type_id > types_count)
-		throw Exception(ERR_REF_TYPE_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefTypeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(type_list[type_id]);
 }
@@ -267,10 +267,10 @@ void BaseType::setType(unsigned type_id,unsigned offset,unsigned count)
 {
 	//Raises an error if the type count is invalid
 	if(count==0 || count > this->types_count)
-		throw Exception(ERR_OBT_TYPES_INV_QUANTITY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ObtTypesInvalidQuantity,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the type id is invalid
 	else if(!isTypeValid(type_id,offset,count))
-		throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 		type_idx=type_id;
 }
@@ -285,7 +285,7 @@ void BaseType::getTypes(QStringList &types,unsigned offset,unsigned count)
 {
 	//Raises an error if the type count is invalid
 	if(count==0 || count > BaseType::types_count)
-		throw Exception(ERR_OBT_TYPES_INV_QUANTITY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ObtTypesInvalidQuantity,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
 		unsigned idx,total;
@@ -940,7 +940,7 @@ unsigned PgSQLType::operator = (unsigned type_id)
 	else if(type_id > 0)
 		BaseType::setType(type_id,offset,types_count);
 	else if(type_id==0)
-		throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(type_idx);
 }
@@ -953,7 +953,7 @@ unsigned PgSQLType::operator = (const QString &type_name)
 	usr_type_idx=getUserTypeIndex(type_name, nullptr);
 
 	if(type_idx==0 && usr_type_idx==0)
-		throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(type_idx!=0)
 	{
 		BaseType::setType(type_idx,offset,types_count);
@@ -1121,7 +1121,7 @@ void PgSQLType::setUserType(unsigned type_id)
 			(type_id >= lim1 && type_id < lim2))
 		type_idx=type_id;
 	else
-		throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 void PgSQLType::setUserType(void *ptype)
@@ -1130,7 +1130,7 @@ void PgSQLType::setUserType(void *ptype)
 
 	idx=getUserTypeIndex(QString(),ptype);
 	if(idx <= 0)
-		throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 		type_idx=idx;
 }
@@ -1535,7 +1535,7 @@ void PgSQLType::setDimension(unsigned dim)
 		if(static_cast<unsigned>(idx) < user_types.size() &&
 				(user_types[idx].type_conf==UserTypeConfig::DOMAIN_TYPE ||
 				 user_types[idx].type_conf==UserTypeConfig::SEQUENCE_TYPE))
-			throw Exception(ERR_ASG_INV_DOMAIN_ARRAY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(AsgInvalidDomainArray,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
 	dimension=dim;
@@ -1553,12 +1553,12 @@ void PgSQLType::setPrecision(int prec)
 		//Raises an error if the user tries to specify a precision > length
 		if(((BaseType::type_list[type_idx]==QString("numeric") ||
 			 BaseType::type_list[type_idx]==QString("decimal")) && prec > static_cast<int>(length)))
-			throw Exception(ERR_ASG_INV_PRECISION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorType::AsgInvalidPrecision,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		//Raises an error if the precision is greater thant 6
 		else if(((BaseType::type_list[type_idx]==QString("time") ||
 				  BaseType::type_list[type_idx]==QString("timestamp") ||
 				  BaseType::type_list[type_idx]==QString("interval")) && prec > 6))
-			throw Exception(ERR_ASG_INV_PREC_TIMESTAMP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorType::AsgInvalidPrecisionTimestamp,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		this->precision=prec;
 	}

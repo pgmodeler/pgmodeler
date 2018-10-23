@@ -231,9 +231,9 @@ void TableView::configureObject(void)
 QPointF TableView::getConnectionPoints(TableObject *tab_obj, unsigned pnt_type)
 {
 	if(!tab_obj)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(pnt_type > RIGHT_CONN_POINT)
-		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(conn_points.count(tab_obj)==0)
 		//Returns the center point in case of the connection point of the table object wasn't calculated already
 		return(this->getCenter());

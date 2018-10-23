@@ -241,7 +241,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	connect(action_compact_view, SIGNAL(toggled(bool)), this, SLOT(toggleCompactView()));
 
-	window_title=this->windowTitle() + QString(" ") + GlobalAttributes::PGMODELER_VERSION;
+	window_title=this->windowTitle() + QString(" ") + GlobalAttributes::PgModelerVersion;
 
 #ifdef DEMO_VERSION
 	window_title+=trUtf8(" (Demo)");
@@ -571,7 +571,7 @@ void MainWindow::fixModel(const QString &filename)
 	{
 		QFileInfo fi(filename);
 		model_fix_form.input_file_edt->setText(fi.absoluteFilePath());
-		model_fix_form.output_file_edt->setText(fi.absolutePath() + GlobalAttributes::DIR_SEPARATOR + fi.baseName() + QString("_fixed.") + fi.suffix());
+		model_fix_form.output_file_edt->setText(fi.absolutePath() + GlobalAttributes::DirSeparator + fi.baseName() + QString("_fixed.") + fi.suffix());
 	}
 
 	PgModelerUiNS::resizeDialog(&model_fix_form);
@@ -710,7 +710,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			restoration_form->removeTemporaryModels();
 
 			//Remove import log files
-			QDir dir(GlobalAttributes::TEMPORARY_DIR);
+			QDir dir(GlobalAttributes::TemporaryDir);
 			QStringList log_files;
 
 			dir.setNameFilters({QString("*.log")});
@@ -953,9 +953,9 @@ void MainWindow::addModel(ModelWidget *model_wgt)
 	try
 	{
 		if(!model_wgt)
-			throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(model_wgt->parent())
-			throw Exception(ERR_ASG_WGT_ALREADY_HAS_PARENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(AsgWidgetAlreadyHasParent,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		model_nav_wgt->addModel(model_wgt);
 
@@ -983,7 +983,7 @@ int MainWindow::getModelCount(void)
 ModelWidget *MainWindow::getModel(int idx)
 {
 	if(idx < 0 || idx > models_tbw->count())
-		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(dynamic_cast<ModelWidget *>(models_tbw->widget(idx)));
 }
@@ -1637,8 +1637,8 @@ void MainWindow::showFixMessage(Exception &e, const QString &filename)
 {
 	Messagebox msg_box;
 
-	msg_box.show(Exception(Exception::getErrorMessage(ERR_MODEL_FILE_NOT_LOADED).arg(filename),
-						   ERR_MODEL_FILE_NOT_LOADED ,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e),
+	msg_box.show(Exception(Exception::getErrorMessage(ModelFileNotLoaded).arg(filename),
+							 ModelFileNotLoaded ,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e),
 				 trUtf8("Could not load the database model file `%1'. Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(filename),
 				 Messagebox::ERROR_ICON, Messagebox::YES_NO_BUTTONS,
 				 trUtf8("Fix model"), trUtf8("Cancel"), QString(),
@@ -1729,7 +1729,7 @@ void MainWindow::showOverview(bool show)
 
 void MainWindow::openSupport(void)
 {
-  QDesktopServices::openUrl(QUrl(GlobalAttributes::PGMODELER_SUPPORT));
+	QDesktopServices::openUrl(QUrl(GlobalAttributes::PgModelerSupport));
 }
 
 void MainWindow::toggleUpdateNotifier(bool show)
@@ -1803,7 +1803,7 @@ QGraphicsDropShadowEffect *MainWindow::createDropShadow(QToolButton *btn)
 
 void MainWindow::configureSamplesMenu(void)
 {
-	QDir dir(GlobalAttributes::SAMPLES_DIR);
+	QDir dir(GlobalAttributes::SamplesDir);
 	QStringList files=dir.entryList({QString("*.dbm")});
 	QAction *act=nullptr;
 	QString path;
@@ -1811,7 +1811,7 @@ void MainWindow::configureSamplesMenu(void)
 	while(!files.isEmpty())
 	{
 		act=sample_mdls_menu.addAction(files.front(),this,SLOT(loadModelFromAction(void)));
-		path=QFileInfo(GlobalAttributes::SAMPLES_DIR + GlobalAttributes::DIR_SEPARATOR + files.front()).absoluteFilePath();
+		path=QFileInfo(GlobalAttributes::SamplesDir + GlobalAttributes::DirSeparator + files.front()).absoluteFilePath();
 		act->setToolTip(path);
 		act->setData(path);
 		files.pop_front();
@@ -1890,7 +1890,7 @@ void MainWindow::showDemoVersionWarning(void)
 				 trUtf8("You're running a demonstration version! Note that you'll be able to create only <strong>%1</strong> instances \
 						of each type of object and some key features will be disabled or limited!<br/><br/>You can purchase a full binary copy or get the source code at <a href='https://pgmodeler.io'>https://pgmodeler.io</a>.\
 						<strong>NOTE:</strong> pgModeler is an open source software, but purchasing binary copies or providing some donations will support the project and keep the development alive and at full speed!<br/><br/>\
-						<strong>HINT:</strong> in order to test all features it's recommended to use the <strong>demo.dbm</strong> model located in </strong>Sample models</strong> at <strong>Welcome</strong> view.<br/><br/><br/><br/>").arg(GlobalAttributes::MAX_OBJECT_COUNT),
+						<strong>HINT:</strong> in order to test all features it's recommended to use the <strong>demo.dbm</strong> model located in </strong>Sample models</strong> at <strong>Welcome</strong> view.<br/><br/><br/><br/>").arg(GlobalAttributes::MaxObjectCount),
 						Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
 #endif
 }

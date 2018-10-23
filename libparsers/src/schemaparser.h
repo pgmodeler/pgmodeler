@@ -187,7 +187,7 @@ class SchemaParser {
 
 	public:
 		//! \brief Constants used to get a specific object definition
-		static const unsigned SQL_DEFINITION=0,
+		static constexpr unsigned SQL_DEFINITION=0,
 		XML_DEFINITION=1;
 
 		SchemaParser(void);

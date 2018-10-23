@@ -208,19 +208,19 @@ void BaseObjectView::loadObjectsStyle(void)
 	map<QString, QTextCharFormat>::iterator itr;
 	QStringList list;
 	QString elem,
-			config_file=GlobalAttributes::CONFIGURATIONS_DIR + GlobalAttributes::DIR_SEPARATOR +
-						GlobalAttributes::OBJECTS_STYLE_CONF + GlobalAttributes::CONFIGURATION_EXT;
+			config_file=GlobalAttributes::ConfigurationsDir + GlobalAttributes::DirSeparator +
+						GlobalAttributes::ObjectsStyleConf + GlobalAttributes::ConfigurationExt;
 	XMLParser xmlparser;
 
 	try
 	{
 		xmlparser.restartParser();
-		xmlparser.setDTDFile(GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
-							 GlobalAttributes::DIR_SEPARATOR +
-							 GlobalAttributes::OBJECT_DTD_DIR +
-							 GlobalAttributes::DIR_SEPARATOR +
-							 GlobalAttributes::OBJECTS_STYLE_CONF +
-							 GlobalAttributes::OBJECT_DTD_EXT, GlobalAttributes::OBJECTS_STYLE_CONF);
+		xmlparser.setDTDFile(GlobalAttributes::TmplConfigurationDir +
+							 GlobalAttributes::DirSeparator +
+							 GlobalAttributes::ObjectDTDDir +
+							 GlobalAttributes::DirSeparator +
+							 GlobalAttributes::ObjectsStyleConf +
+							 GlobalAttributes::ObjectDTDExt, GlobalAttributes::ObjectsStyleConf);
 		xmlparser.loadXMLFile(config_file);
 
 		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))

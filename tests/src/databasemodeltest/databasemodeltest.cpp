@@ -32,8 +32,8 @@ void DatabaseModelTest::saveObjectsMetadata(void)
 {
 	DatabaseModel dbmodel;
 	QTextStream out(stdout);
-	QString output=QFileInfo(BINDIR).absolutePath() + GlobalAttributes::DIR_SEPARATOR + QString("demo.omf"),
-			input=SAMPLESDIR + GlobalAttributes::DIR_SEPARATOR + QString("demo.dbm");
+	QString output=QFileInfo(BINDIR).absolutePath() + GlobalAttributes::DirSeparator + QString("demo.omf"),
+			input=SAMPLESDIR + GlobalAttributes::DirSeparator + QString("demo.dbm");
 
 	try
 	{
@@ -55,9 +55,9 @@ void DatabaseModelTest::loadObjectsMetadata(void)
 {
 	DatabaseModel dbmodel;
 	QTextStream out(stdout);
-	QString input_opf=QFileInfo(BINDIR).absolutePath() + GlobalAttributes::DIR_SEPARATOR + QString("demo.omf"),
-			input_dbm=SAMPLESDIR + GlobalAttributes::DIR_SEPARATOR + QString("demo.dbm"),
-			output=QFileInfo(BINDIR).absolutePath() + GlobalAttributes::DIR_SEPARATOR + QString("demo_changed.dbm");
+	QString input_opf=QFileInfo(BINDIR).absolutePath() + GlobalAttributes::DirSeparator + QString("demo.omf"),
+			input_dbm=SAMPLESDIR + GlobalAttributes::DirSeparator + QString("demo.dbm"),
+			output=QFileInfo(BINDIR).absolutePath() + GlobalAttributes::DirSeparator + QString("demo_changed.dbm");
 
 	try
 	{

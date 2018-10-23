@@ -28,7 +28,7 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		QFrame *frame=nullptr;
 
 		initial_cond_hl=new SyntaxHighlighter(initial_cond_txt);
-		initial_cond_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		initial_cond_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
 		final_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
 		transition_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);

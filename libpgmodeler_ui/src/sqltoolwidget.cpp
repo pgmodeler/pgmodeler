@@ -45,7 +45,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	sourcecode_txt->setReadOnly(true);
 
 	sourcecode_hl=new SyntaxHighlighter(sourcecode_txt);
-	sourcecode_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+	sourcecode_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
 	vbox->setContentsMargins(4,4,4,4);
 	vbox->addWidget(sourcecode_txt);

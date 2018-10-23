@@ -169,7 +169,7 @@ void OperationListWidget::undoOperation(void)
 		QApplication::restoreOverrideCursor();
 		this->updateOperationList();
 
-		if(e.getErrorType()==ERR_UNDO_REDO_OPR_INV_OBJECT)
+		if(e.getErrorType()==UndoRedoOperationInvalidObject)
 		{
 			Messagebox msg_box;
 			msg_box.show(e, "", Messagebox::ALERT_ICON);
@@ -193,7 +193,7 @@ void OperationListWidget::redoOperation(void)
 	{
 		QApplication::restoreOverrideCursor();
 
-		if(e.getErrorType()==ERR_UNDO_REDO_OPR_INV_OBJECT)
+		if(e.getErrorType()==UndoRedoOperationInvalidObject)
 		{
 			Messagebox msg_box;
 			msg_box.show(e, "", Messagebox::ALERT_ICON);

@@ -54,7 +54,7 @@ void ObjectDepsRefsWidget::setAttributes(DatabaseModel *model, BaseObject *objec
 void ObjectDepsRefsWidget::setAttributes(ModelWidget *model_wgt, BaseObject *object, BaseObject *parent_obj)
 {
 	if(!model_wgt)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->model_wgt=model_wgt;
 	setAttributes(model_wgt->getDatabaseModel(), object, parent_obj);

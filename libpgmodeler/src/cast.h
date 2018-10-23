@@ -49,7 +49,7 @@ class Cast: public BaseObject {
 
 	public:
 		//! \brief Constants used to access the data types envolved in the cast
-		static const unsigned SRC_TYPE=0,
+		static constexpr unsigned SRC_TYPE=0,
 		DST_TYPE=1,
 		//! \brief Constants used to define the cast type
 		EXPLICIT=0,

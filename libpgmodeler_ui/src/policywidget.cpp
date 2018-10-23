@@ -30,12 +30,12 @@ PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_POLICY
 		using_edt = PgModelerUiNS::createNumberedTextEditor(using_wgt);
 		using_edt->setTabChangesFocus(true);
 		using_hl = new SyntaxHighlighter(using_edt);
-		using_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		using_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
 		check_edt = PgModelerUiNS::createNumberedTextEditor(check_wgt);
 		check_edt->setTabChangesFocus(true);
 		check_hl = new SyntaxHighlighter(check_edt);
-		check_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		check_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
 		roles_tab = new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
 																			 (ObjectsTableWidget::DUPLICATE_BUTTON |
@@ -74,7 +74,7 @@ PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_POLICY
 void PolicyWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *parent_obj, Policy *policy)
 {
 	if(!parent_obj)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObjectWidget::setAttributes(model, op_list, policy, parent_obj);
 	model_objs_wgt->setModel(model);

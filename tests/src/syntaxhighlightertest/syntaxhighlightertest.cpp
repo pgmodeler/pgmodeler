@@ -35,7 +35,7 @@ void SyntaxHighlighterTest::handleMultiLineComment(void)
   SyntaxHighlighter *sql_hl=nullptr;
 
   sql_hl=new SyntaxHighlighter(edt, false);
-  sql_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+  sql_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
   layout->addWidget(edt);
   dlg->exec();

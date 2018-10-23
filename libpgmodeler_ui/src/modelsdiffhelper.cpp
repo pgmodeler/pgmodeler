@@ -23,7 +23,7 @@
 ModelsDiffHelper::ModelsDiffHelper(void)
 {
 	diff_canceled=false;
-	pgsql_version=PgSQLVersions::DEFAULT_VERSION;
+	pgsql_version=PgSQLVersions::DefaulVersion;
 	source_model=imported_model=nullptr;
 	resetDiffCounter();
 
@@ -47,7 +47,7 @@ ModelsDiffHelper::~ModelsDiffHelper(void)
 void ModelsDiffHelper::setDiffOption(unsigned opt_id, bool value)
 {
 	if(opt_id > OPT_DROP_MISSING_COLS_CONSTR)
-		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(opt_id == OPT_DROP_MISSING_COLS_CONSTR)
 		diff_opts[opt_id]=value & !diff_opts[OPT_DROP_MISSING_COLS_CONSTR];
@@ -82,7 +82,7 @@ void ModelsDiffHelper::setModels(DatabaseModel *src_model, DatabaseModel *imp_mo
 unsigned ModelsDiffHelper::getDiffTypeCount(unsigned diff_type)
 {
 	if(diff_type >= ObjectsDiffInfo::NO_DIFFERENCE)
-		throw Exception(ERR_REF_ELEM_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefElementInvalidIndex ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(diffs_counter[diff_type]);
 }
@@ -92,7 +92,7 @@ void ModelsDiffHelper::diffModels(void)
 	try
 	{
 		if(!source_model || !imported_model)
-			throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//First, we need to detect the objects to be dropped
 		diffModels(ObjectsDiffInfo::DROP_OBJECT);
@@ -870,7 +870,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 
 			//Attributes used on the diff schema file
 			attribs[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::_TRUE_;
-			attribs[ParsersAttributes::PGMODELER_VERSION]=GlobalAttributes::PGMODELER_VERSION;
+			attribs[ParsersAttributes::PGMODELER_VERSION]=GlobalAttributes::PgModelerVersion;
 			attribs[ParsersAttributes::DB_MODEL]=source_model->getName();
 			attribs[ParsersAttributes::DATABASE]=imported_model->getName();
 			attribs[ParsersAttributes::DATE]=QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
@@ -923,9 +923,9 @@ void ModelsDiffHelper::processDiffInfos(void)
 
 			//Generating the whole diff buffer
 			schparser.setPgSQLVersion(pgsql_version);
-			diff_def=schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-												 GlobalAttributes::ALTER_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
-												 ParsersAttributes::DIFF + GlobalAttributes::SCHEMA_EXT, attribs);
+			diff_def=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+												 GlobalAttributes::AlterSchemaDir + GlobalAttributes::DirSeparator +
+												 ParsersAttributes::DIFF + GlobalAttributes::SchemaExt, attribs);
 		}
 
 		if(diff_def.isEmpty())

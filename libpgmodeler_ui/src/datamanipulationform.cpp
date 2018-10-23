@@ -27,11 +27,12 @@
 #include "generalconfigwidget.h"
 
 const QColor DataManipulationForm::ROW_COLORS[3]={ QColor(QString("#C0FFC0")), QColor(QString("#FFFFC0")), QColor(QString("#FFC0C0"))  };
-const unsigned DataManipulationForm::NO_OPERATION=0;
-const unsigned DataManipulationForm::OP_INSERT=1;
-const unsigned DataManipulationForm::OP_UPDATE=2;
-const unsigned DataManipulationForm::OP_DELETE=3;
 bool DataManipulationForm::has_csv_clipboard=false;
+
+constexpr unsigned DataManipulationForm::NO_OPERATION;
+constexpr unsigned DataManipulationForm::OP_INSERT;
+constexpr unsigned DataManipulationForm::OP_UPDATE;
+constexpr unsigned DataManipulationForm::OP_DELETE;
 
 DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f): QDialog(parent, f)
 {
@@ -45,7 +46,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	PgModelerUiNS::configureWidgetFont(warning_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
 
 	filter_hl=new SyntaxHighlighter(filter_txt);
-	filter_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+	filter_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
 	code_compl_wgt=new CodeCompletionWidget(filter_txt);
 	code_compl_wgt->configureCompletion(nullptr, filter_hl);
@@ -1318,9 +1319,9 @@ void DataManipulationForm::saveChanges(void)
 		results_tbw->selectRow(row);
 		results_tbw->scrollToItem(results_tbw->item(row, 0));
 
-		throw Exception(Exception::getErrorMessage(ERR_ROW_DATA_NOT_MANIPULATED)
+		throw Exception(Exception::getErrorMessage(RowDataNotManipulated)
 						.arg(op_names[op_type]).arg(tab_name).arg(row + 1).arg(e.getErrorMessage()),
-						ERR_ROW_DATA_NOT_MANIPULATED,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+						RowDataNotManipulated,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 #endif
 }
@@ -1389,9 +1390,9 @@ QString DataManipulationForm::getDMLCommand(int row)
 					if((value.startsWith(PgModelerNS::UNESC_VALUE_START) && value.endsWith(QString("\\") + PgModelerNS::UNESC_VALUE_END)) ||
 							(value.startsWith(PgModelerNS::UNESC_VALUE_START) && !value.endsWith(PgModelerNS::UNESC_VALUE_END)) ||
 							(!value.startsWith(PgModelerNS::UNESC_VALUE_START) && !value.endsWith(QString("\\") + PgModelerNS::UNESC_VALUE_END) && value.endsWith(PgModelerNS::UNESC_VALUE_END)))
-						throw Exception(Exception::getErrorMessage(ERR_MALFORMED_UNESCAPED_VALUE)
+						throw Exception(Exception::getErrorMessage(MalformedUnescapedValue)
 										.arg(row + 1).arg(col_name),
-										ERR_MALFORMED_UNESCAPED_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+										MalformedUnescapedValue,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 					col_list.push_back(QString("\"%1\"").arg(col_name));
 

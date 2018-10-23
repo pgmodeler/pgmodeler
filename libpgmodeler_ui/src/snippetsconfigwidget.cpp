@@ -64,7 +64,7 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 	try
 	{
 		snippet_hl=new SyntaxHighlighter(snippet_txt);
-		snippet_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		snippet_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 	}
 	catch(Exception &e)
 	{
@@ -270,7 +270,7 @@ void SnippetsConfigWidget::loadConfiguration(void)
 		QStringList inv_snippets;
 
 		this->resetForm();
-		BaseConfigWidget::loadConfiguration(GlobalAttributes::SNIPPETS_CONF, config_params, { ParsersAttributes::ID });
+		BaseConfigWidget::loadConfiguration(GlobalAttributes::SnippetsConf, config_params, { ParsersAttributes::ID });
 
 		//Check if there are invalid snippets loaded
 		for(auto &snip : config_params)
@@ -445,14 +445,14 @@ void SnippetsConfigWidget::saveConfiguration(void)
 { 
 	try
 	{
-		QString root_dir=GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
-						 GlobalAttributes::DIR_SEPARATOR,
+		QString root_dir=GlobalAttributes::TmplConfigurationDir +
+						 GlobalAttributes::DirSeparator,
 
 				snippet_sch=root_dir +
-							GlobalAttributes::SCHEMAS_DIR +
-							GlobalAttributes::DIR_SEPARATOR +
+							GlobalAttributes::SchemasDir +
+							GlobalAttributes::DirSeparator +
 							ParsersAttributes::SNIPPET +
-							GlobalAttributes::SCHEMA_EXT;
+							GlobalAttributes::SchemaExt;
 
 		attribs_map attribs;
 		ObjectType obj_type;
@@ -471,8 +471,8 @@ void SnippetsConfigWidget::saveConfiguration(void)
 			}
 		}
 
-		config_params[GlobalAttributes::SNIPPETS_CONF]=attribs;
-		BaseConfigWidget::saveConfiguration(GlobalAttributes::SNIPPETS_CONF, config_params);
+		config_params[GlobalAttributes::SnippetsConf]=attribs;
+		BaseConfigWidget::saveConfiguration(GlobalAttributes::SnippetsConf, config_params);
 	}
 	catch(Exception &e)
 	{
@@ -484,7 +484,7 @@ void SnippetsConfigWidget::restoreDefaults(void)
 {
 	try
 	{
-		BaseConfigWidget::restoreDefaults(GlobalAttributes::SNIPPETS_CONF, false);
+		BaseConfigWidget::restoreDefaults(GlobalAttributes::SnippetsConf, false);
 		this->loadConfiguration();
 		setConfigurationChanged(true);
 	}

@@ -53,7 +53,7 @@ void Element::setOperatorClass(OperatorClass *oper_class)
 void Element::setSortingAttribute(unsigned attrib, bool value)
 {
 	if(attrib > NULLS_FIRST)
-		throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	sorting_attibs[attrib]=value;
 }
@@ -71,7 +71,7 @@ bool Element::isSortingEnabled(void)
 bool Element::getSortingAttribute(unsigned attrib)
 {
 	if(attrib > NULLS_FIRST)
-		throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(sorting_attibs[attrib]);
 }

@@ -32,11 +32,11 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 		prepend_sql_txt=PgModelerUiNS::createNumberedTextEditor(prepend_sql_wgt, true);
 
 		append_sql_hl=new SyntaxHighlighter(append_sql_txt);
-		append_sql_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		append_sql_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 		append_sql_cp=new CodeCompletionWidget(append_sql_txt, true);
 
 		prepend_sql_hl=new SyntaxHighlighter(prepend_sql_txt);
-		prepend_sql_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		prepend_sql_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 		prepend_sql_cp=new CodeCompletionWidget(prepend_sql_txt, true);
 
 		name_edt->setReadOnly(true);
@@ -122,9 +122,9 @@ void CustomSQLWidget::configureMenus(void)
 void CustomSQLWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 {
 	if(!object)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(!BaseObject::acceptsCustomSQL(object->getObjectType()))
-		throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{

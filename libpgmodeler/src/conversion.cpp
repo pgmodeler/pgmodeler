@@ -36,34 +36,34 @@ void Conversion::setEncoding(unsigned encoding_idx, EncodingType encoding_type)
 	{
 		//If the passed enconding type is null an error is raised
 		if((~encoding_type).isEmpty())
-			throw Exception(Exception::getErrorMessage(ERR_ASG_NULL_TYPE_OBJECT)
+			throw Exception(Exception::getErrorMessage(AsgNullTypeObject)
 							.arg(this->getName())
 							.arg(BaseObject::getTypeName(OBJ_CONVERSION)),
-							ERR_ASG_NULL_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							AsgNullTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Assigns the encoding to the conversion in the specified index
 		this->encodings[encoding_idx]=encoding_type;
 	}
 	else
 		//Raises an error if the encoding index is invalid
-		throw Exception(ERR_REF_TYPE_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefTypeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 void Conversion::setConversionFunction(Function *conv_func)
 {
 	//Raises an error in case the passed conversion function is null
 	if(!conv_func)
-		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
+		throw Exception(Exception::getErrorMessage(AsgNotAllocatedFunction)
 						.arg(this->getName(true))
 						.arg(BaseObject::getTypeName(OBJ_CONVERSION)),
-						ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						AsgNotAllocatedFunction,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	/* The conversion function must have 5 parameters if it's not the case
 		raises an error. */
 	else if(conv_func->getParameterCount()!=5)
-		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
+		throw Exception(Exception::getErrorMessage(AsgFunctionInvalidParamCount)
 						.arg(this->getName(true))
 						.arg(BaseObject::getTypeName(OBJ_CONVERSION)),
-						ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						AsgFunctionInvalidParamCount,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	/* Raises an error if the function parameters does not following the type order:
 		interger, integer, cstring, internal, integer */
 	else if(conv_func->getParameter(0).getType()!=QString("integer") ||
@@ -71,16 +71,16 @@ void Conversion::setConversionFunction(Function *conv_func)
 			conv_func->getParameter(2).getType()!=QString("cstring") ||
 			conv_func->getParameter(3).getType()!=QString("internal") ||
 			conv_func->getParameter(4).getType()!=QString("integer"))
-		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_PARAMS)
+		throw Exception(Exception::getErrorMessage(AsgFunctionInvalidParameters)
 						.arg(this->getName(true))
 						.arg(BaseObject::getTypeName(OBJ_CONVERSION)),
-						ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						AsgFunctionInvalidParameters,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the conversion function return type is not 'void'
 	else if(conv_func->getReturnType()!=QString("void"))
-		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
+		throw Exception(Exception::getErrorMessage(AsgFunctionInvalidReturnType)
 						.arg(this->getName(true))
 						.arg(BaseObject::getTypeName(OBJ_CONVERSION)),
-						ERR_ASG_FUNCTION_INV_RET_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						AsgFunctionInvalidReturnType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(conversion_func != conv_func);
 	this->conversion_func=conv_func;
@@ -95,7 +95,7 @@ void Conversion::setDefault(bool value)
 EncodingType Conversion::getEncoding(unsigned encoding_idx)
 {
 	if(encoding_idx > DST_ENCODING)
-		throw Exception(ERR_REF_TYPE_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefTypeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(this->encodings[encoding_idx]);
 }

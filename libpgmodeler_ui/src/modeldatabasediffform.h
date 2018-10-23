@@ -110,7 +110,7 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		void finishDiff(void);
 
 		//! \brief Constants used to reference the thread/helper to be handled in createThread() and destroyThread()
-		static const unsigned SRC_IMPORT_THREAD=0,
+		static constexpr unsigned SRC_IMPORT_THREAD=0,
 		IMPORT_THREAD=1,
 		DIFF_THREAD=2,
 		EXPORT_THREAD=3;

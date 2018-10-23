@@ -5,7 +5,7 @@ Xml2ObjectWidget::Xml2ObjectWidget(QWidget *parent, Qt::WindowFlags f) : QDialog
 	setupUi(this);
 
 	code_hl=new SyntaxHighlighter(code_txt);
-	code_hl->loadConfiguration(GlobalAttributes::XML_HIGHLIGHT_CONF_PATH);
+	code_hl->loadConfiguration(GlobalAttributes::XMLHighlightConfPath);
 
 	connect(close_btn, SIGNAL(clicked(void)), this, SLOT(close(void)));
 	connect(clear_btn, SIGNAL(clicked(void)), this, SLOT(clearSource(void)));
@@ -34,8 +34,8 @@ void Xml2ObjectWidget::loadXML(void)
 		f.open(QFile::ReadOnly);
 
 		if(!f.isOpen())
-			throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(file_dlg.selectedFiles().at(0)),
-							ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(FileDirectoryNotAccessed).arg(file_dlg.selectedFiles().at(0)),
+							FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 
 		code_txt->setPlainText(QString::fromUtf8(f.readAll()));

@@ -99,7 +99,7 @@ class ModelsDiffHelper: public QObject {
 		BaseObject *getRelNNTable(const QString &obj_name, DatabaseModel *model);
 
 	public:
-		static const unsigned OPT_KEEP_CLUSTER_OBJS=0,
+		static constexpr unsigned OPT_KEEP_CLUSTER_OBJS=0,
 
 		//! \brief Indicates if any DROP/TRUNCATE generated must be in cascade mode
 		OPT_CASCADE_MODE=1,

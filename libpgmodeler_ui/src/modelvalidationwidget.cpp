@@ -30,7 +30,7 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		output_trw->setItemDelegateForColumn(0, htmlitem_del);
 
 		version_cmb->addItem(trUtf8("Autodetect"));
-		version_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
+		version_cmb->addItems(PgSQLVersions::AllVersions);
 
 		options_frm->setVisible(false);
 		curr_step=0;

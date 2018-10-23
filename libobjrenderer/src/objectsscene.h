@@ -49,7 +49,7 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Indicates if the scene need to be moved
 		bool move_scene;
 
-		static const int SCENE_MOVE_STEP=20,
+		static constexpr int SCENE_MOVE_STEP=20,
 		SCENE_MOVE_TIMEOUT=50,
 		SCENE_MOVE_THRESHOLD=30;
 

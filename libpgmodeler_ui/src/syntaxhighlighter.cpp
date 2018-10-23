@@ -24,7 +24,7 @@ QFont SyntaxHighlighter::default_font=QFont(QString("Source Code Pro"), 10);
 SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode, bool use_custom_tab_width) : QSyntaxHighlighter(parent)
 {
 	if(!parent)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->setDocument(parent->document());
 	this->single_line_mode=single_line_mode;
@@ -372,13 +372,13 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 		{
 			clearConfiguration();
 			xmlparser.restartParser();
-			xmlparser.setDTDFile(GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
-								 GlobalAttributes::DIR_SEPARATOR +
-								 GlobalAttributes::OBJECT_DTD_DIR +
-								 GlobalAttributes::DIR_SEPARATOR +
-								 GlobalAttributes::CODE_HIGHLIGHT_CONF +
-								 GlobalAttributes::OBJECT_DTD_EXT,
-								 GlobalAttributes::CODE_HIGHLIGHT_CONF);
+			xmlparser.setDTDFile(GlobalAttributes::TmplConfigurationDir +
+								 GlobalAttributes::DirSeparator +
+								 GlobalAttributes::ObjectDTDDir +
+								 GlobalAttributes::DirSeparator +
+								 GlobalAttributes::CodeHighlightConf +
+								 GlobalAttributes::ObjectDTDExt,
+								 GlobalAttributes::CodeHighlightConf);
 
 			xmlparser.loadXMLFile(filename);
 
@@ -439,15 +439,15 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								//Raises an error if the group was declared before
 								if(find(groups_order.begin(), groups_order.end(), group)!=groups_order.end())
 								{
-									throw Exception(Exception::getErrorMessage(ERR_REDECL_HL_GROUP).arg(group),
-													ERR_REDECL_HL_GROUP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									throw Exception(Exception::getErrorMessage(InvRedeclarationGroup).arg(group),
+													InvRedeclarationGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 								}
 								//Raises an error if the group is being declared and build at the declaration statment (not permitted)
 								else if(attribs.size() > 1 || xmlparser.hasElement(XMLParser::CHILD_ELEMENT))
 								{
-									throw Exception(Exception::getErrorMessage(ERR_DEF_INV_GROUP_DECL)
+									throw Exception(Exception::getErrorMessage(InvGroupDeclaration)
 													.arg(group).arg(ParsersAttributes::HIGHLIGHT_ORDER),
-													ERR_REDECL_HL_GROUP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+													InvRedeclarationGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 								}
 
 								groups_order.push_back(group);
@@ -458,21 +458,21 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								//Raises an error if the group is being constructed by a second time
 								if(initial_exprs.count(group)!=0)
 								{
-									throw Exception(Exception::getErrorMessage(ERR_DEF_DUPLIC_GROUP).arg(group),
-													ERR_DEF_DUPLIC_GROUP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									throw Exception(Exception::getErrorMessage(DefDuplicatedGroup).arg(group),
+													DefDuplicatedGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 								}
 								//Raises an error if the group is being constructed without being declared
 								else if(find(groups_order.begin(), groups_order.end(), group)==groups_order.end())
 								{
-									throw Exception(Exception::getErrorMessage(ERR_DEF_NOT_DECL_GROUP)
+									throw Exception(Exception::getErrorMessage(DefNotDeclaredGroup)
 													.arg(group).arg(ParsersAttributes::HIGHLIGHT_ORDER),
-													ERR_DEF_NOT_DECL_GROUP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+													DefNotDeclaredGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 								}
 								//Raises an error if the group does not have children element
 								else if(!xmlparser.hasElement(XMLParser::CHILD_ELEMENT))
 								{
-									throw Exception(Exception::getErrorMessage(ERR_DEF_EMPTY_GROUP).arg(group),
-													ERR_DEF_EMPTY_GROUP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									throw Exception(Exception::getErrorMessage(DefEmptyGroup).arg(group),
+													DefEmptyGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 								}
 
 								chr_sensitive=(attribs[ParsersAttributes::CASE_SENSITIVE]==ParsersAttributes::_TRUE_);
@@ -568,8 +568,8 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 				if(initial_exprs[group].size()==0)
 				{
 					//Raises an error if the group was declared but not constructed
-					throw Exception(Exception::getErrorMessage(ERR_GROUP_DECL_NOT_DEFINED).arg(group),
-									ERR_GROUP_DECL_NOT_DEFINED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					throw Exception(Exception::getErrorMessage(InvGroupDeclarationNotDefined).arg(group),
+									InvGroupDeclarationNotDefined,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 				}
 			}
 

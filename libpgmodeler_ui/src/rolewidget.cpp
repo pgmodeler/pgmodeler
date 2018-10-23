@@ -38,8 +38,8 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 4);
 	frame->setParent(this);
 
-	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_91)].push_back(can_replicate_chk);
-	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(bypass_rls_chk);
+	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PgSQLVersion91)].push_back(can_replicate_chk);
+	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PgSQLVersion95)].push_back(bypass_rls_chk);
 	frame=generateVersionWarningFrame(fields_map);
 	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 0);
 	frame->setParent(this);
@@ -143,7 +143,7 @@ void RoleWidget::showRoleData(Role *role, unsigned table_id, unsigned row)
 				role_types[3]={ Role::REF_ROLE, Role::MEMBER_ROLE, Role::ADMIN_ROLE };
 
 		if(table_id > 3)
-			throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		members_tab[table_id]->setRowData(QVariant::fromValue(reinterpret_cast<void *>(role)), row);
 		members_tab[table_id]->setCellText(role->getName(), row, 0);
@@ -219,10 +219,10 @@ void RoleWidget::showSelectedRoleData(void)
 		if(!members_tab[idx_tab]->getRowData(lin).value<void *>())
 			members_tab[idx_tab]->removeRow(lin);
 
-		msg_box.show(Exception(Exception::getErrorMessage(ERR_ROLE_REF_REDUNDANCY)
+		msg_box.show(Exception(Exception::getErrorMessage(AsgRoleReferenceRedundancy)
 							   .arg(obj_sel->getName())
 							   .arg(name_edt->text()),
-							   ERR_ROLE_REF_REDUNDANCY,__PRETTY_FUNCTION__,__FILE__,__LINE__));
+							   AsgRoleReferenceRedundancy,__PRETTY_FUNCTION__,__FILE__,__LINE__));
 	}
 	//If the role does not exist on table, show its data
 	else if(obj_sel && idx_lin < 0)
@@ -237,10 +237,10 @@ void RoleWidget::showSelectedRoleData(void)
 		//Raises an error if the role already is in the table
 		if(obj_sel && idx_lin >= 0)
 		{
-			msg_box.show( Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_ROLE)
+			msg_box.show( Exception(Exception::getErrorMessage(InsDuplicatedRole)
 									.arg(obj_sel->getName())
 									.arg(name_edt->text()),
-									ERR_INS_DUPLIC_ROLE,__PRETTY_FUNCTION__,__FILE__,__LINE__));
+									InsDuplicatedRole,__PRETTY_FUNCTION__,__FILE__,__LINE__));
 		}
 	}
 }

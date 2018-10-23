@@ -40,14 +40,14 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		code_txt=new NumberedTextEditor(this);
 		code_txt->setReadOnly(true);
 		code_hl=new SyntaxHighlighter(code_txt);
-		code_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		code_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 		vbox=new QVBoxLayout(code_prev_tab);
 		vbox->setContentsMargins(4,4,4,4);
 		vbox->addWidget(code_txt);
 
 		cte_expression_txt=new NumberedTextEditor(this, true);
 		cte_expression_hl=new SyntaxHighlighter(cte_expression_txt);
-		cte_expression_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		cte_expression_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 		vbox=new QVBoxLayout(cte_tab);
 		vbox->setContentsMargins(4,4,4,4);
 		vbox->addWidget(cte_expression_txt);
@@ -113,9 +113,9 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		tablespace_lbl->setEnabled(false);
 		configureFormLayout(view_grid, OBJ_VIEW);
 
-		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_93)].push_back(recursive_rb);
-		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_93)].push_back(materialized_rb);
-		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_93)].push_back(with_no_data_chk);
+		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PgSQLVersion93)].push_back(recursive_rb);
+		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PgSQLVersion93)].push_back(materialized_rb);
+		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PgSQLVersion93)].push_back(with_no_data_chk);
 		frame=generateVersionWarningFrame(fields_map);
 		view_grid->addWidget(frame, view_grid->count()+1, 0, 1,3);
 		frame->setParent(this);

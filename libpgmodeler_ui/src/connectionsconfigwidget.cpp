@@ -112,7 +112,7 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 
 		destroyConnections();
 		key_attribs.push_back(ParsersAttributes::ALIAS);
-		BaseConfigWidget::loadConfiguration(GlobalAttributes::CONNECTIONS_CONF, config_params, key_attribs);
+		BaseConfigWidget::loadConfiguration(GlobalAttributes::ConnectionsConf, config_params, key_attribs);
 
 		/*try
 		{
@@ -451,7 +451,7 @@ void ConnectionsConfigWidget::restoreDefaults(void)
 	try
 	{
 		//Restore the default connection config file
-		BaseConfigWidget::restoreDefaults(GlobalAttributes::CONNECTIONS_CONF, false);
+		BaseConfigWidget::restoreDefaults(GlobalAttributes::ConnectionsConf, false);
 
 		//Remove all connections
 		while(connections_cmb->count() > 0)
@@ -489,12 +489,12 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 				handleConnection();
 		}
 
-		config_params[GlobalAttributes::CONNECTIONS_CONF].clear();
+		config_params[GlobalAttributes::ConnectionsConf].clear();
 
 		/* Workaround: When there is no connection, to prevent saving an empty file, is necessary to
 		 fill the attribute CONNECTIONS with white spaces */
 		if(connections.empty())
-			config_params[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONNECTIONS]=QString("  ");
+			config_params[GlobalAttributes::ConnectionsConf][ParsersAttributes::CONNECTIONS]=QString("  ");
 		else
 		{
 			for(Connection *conn : connections)
@@ -514,13 +514,13 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 				attribs[DEFAULT_FOR.arg(ParsersAttributes::VALIDATION)]=(conn->isDefaultForOperation(Connection::OP_VALIDATION) ? ParsersAttributes::_TRUE_ : QString());
 
 				schparser.ignoreUnkownAttributes(true);
-				config_params[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONNECTIONS]+=
-						schparser.getCodeDefinition(GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
-													GlobalAttributes::DIR_SEPARATOR +
-													GlobalAttributes::SCHEMAS_DIR +
-													GlobalAttributes::DIR_SEPARATOR +
-													GlobalAttributes::CONNECTIONS_CONF +
-													GlobalAttributes::SCHEMA_EXT,
+				config_params[GlobalAttributes::ConnectionsConf][ParsersAttributes::CONNECTIONS]+=
+						schparser.getCodeDefinition(GlobalAttributes::TmplConfigurationDir +
+													GlobalAttributes::DirSeparator +
+													GlobalAttributes::SchemasDir +
+													GlobalAttributes::DirSeparator +
+													GlobalAttributes::ConnectionsConf +
+													GlobalAttributes::SchemaExt,
 													attribs);
 
 				schparser.ignoreUnkownAttributes(false);
@@ -528,7 +528,7 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 		}
 
 		schparser.ignoreUnkownAttributes(true);
-		BaseConfigWidget::saveConfiguration(GlobalAttributes::CONNECTIONS_CONF, config_params);
+		BaseConfigWidget::saveConfiguration(GlobalAttributes::ConnectionsConf, config_params);
 		schparser.ignoreUnkownAttributes(false);
 	}
 	catch(Exception &e)
@@ -559,7 +559,7 @@ void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool inc
 	Connection *def_conn=nullptr;
 
 	if(!combo)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	getConnections(connections);
 

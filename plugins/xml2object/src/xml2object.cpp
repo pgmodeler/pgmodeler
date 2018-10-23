@@ -27,10 +27,10 @@ Xml2Object::Xml2Object(void)
 						getPluginAuthor(),
 						getPluginDescription(),
 
-						GlobalAttributes::PLUGINS_DIR +
-						GlobalAttributes::DIR_SEPARATOR +
+						GlobalAttributes::PluginsDir +
+						GlobalAttributes::DirSeparator +
 						QString("xml2object") +
-						GlobalAttributes::DIR_SEPARATOR + QString("xml2object.png"));
+						GlobalAttributes::DirSeparator + QString("xml2object.png"));
 }
 
 QString Xml2Object::getPluginTitle(void)
@@ -61,7 +61,7 @@ void Xml2Object::showPluginInfo(void)
 void Xml2Object::executePlugin(ModelWidget *model)
 {
 	if(!model)
-		throw Exception(trUtf8("This plugin must be executed with at least one model opened!"),ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(trUtf8("This plugin must be executed with at least one model opened!"),Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	xml2obj_wgt.show(model->getDatabaseModel(), model->getOperationList());
 }

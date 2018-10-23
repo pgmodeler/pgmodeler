@@ -101,10 +101,10 @@ void ObjectsTableWidget::setButtonConfiguration(unsigned button_conf)
 QTableWidgetItem *ObjectsTableWidget::getItem(unsigned row_idx, unsigned col_idx)
 {
 	if(row_idx >= static_cast<unsigned>(table_tbw->rowCount()))
-		throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefRowObjectTabInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(col_idx >= static_cast<unsigned>(table_tbw->columnCount()))
-		throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefColObjectTabInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(table_tbw->item(row_idx, col_idx));
 }
@@ -139,7 +139,7 @@ void ObjectsTableWidget::setHeaderLabel(const QString &label, unsigned col_idx)
 	QTableWidgetItem *item=nullptr;
 
 	if(col_idx >= static_cast<unsigned>(table_tbw->columnCount()))
-		throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefColObjectTabInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	item=table_tbw->horizontalHeaderItem(col_idx);
 	item->setText(label);
@@ -148,7 +148,7 @@ void ObjectsTableWidget::setHeaderLabel(const QString &label, unsigned col_idx)
 void ObjectsTableWidget::setHeaderVisible(unsigned col_idx, bool visible)
 {
   if(col_idx >= static_cast<unsigned>(table_tbw->columnCount()))
-	  throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefColObjectTabInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   table_tbw->horizontalHeader()->setSectionHidden(col_idx, !visible);
 }
@@ -158,7 +158,7 @@ void ObjectsTableWidget::setHeaderIcon(const QIcon &icon, unsigned col_idx)
 	QTableWidgetItem *item=nullptr;
 
 	if(col_idx >= static_cast<unsigned>(table_tbw->columnCount()))
-		throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefColObjectTabInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	item=table_tbw->horizontalHeaderItem(col_idx);
 	item->setIcon(icon);
@@ -192,7 +192,7 @@ void ObjectsTableWidget::setRowFont(int row_idx, const QFont &font, const QColor
 	int col_count, i;
 
 	if(row_idx >= table_tbw->rowCount())
-		throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefRowObjectTabInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	col_count=table_tbw->columnCount();
 	for(i=0; i < col_count; i++)
@@ -209,7 +209,7 @@ void ObjectsTableWidget::setRowData(const QVariant &data, unsigned row_idx)
 	QTableWidgetItem *item=nullptr;
 
 	if(row_idx >= static_cast<unsigned>(table_tbw->rowCount()))
-		throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefRowObjectTabInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Gets the vertical header of the row. This header stores the whole row data.
 	item=table_tbw->verticalHeaderItem(row_idx);
@@ -231,7 +231,7 @@ QString ObjectsTableWidget::getHeaderLabel(unsigned col_idx)
 	QTableWidgetItem *item=nullptr;
 
 	if(col_idx >= static_cast<unsigned>(table_tbw->columnCount()))
-		throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefColObjectTabInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	item=table_tbw->horizontalHeaderItem(col_idx);
 	return(item->text());
@@ -272,7 +272,7 @@ QVariant ObjectsTableWidget::getRowData(unsigned row_idx)
 	QTableWidgetItem *item=nullptr;
 
 	if(row_idx >= static_cast<unsigned>(table_tbw->rowCount()))
-		throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefRowObjectTabInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	item=table_tbw->verticalHeaderItem(row_idx);
 	return(item->data(Qt::UserRole));
@@ -369,7 +369,7 @@ void ObjectsTableWidget::removeRow(unsigned row_idx)
 	bool conf;
 
 	if(row_idx >= static_cast<unsigned>(table_tbw->rowCount()))
-		throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefRowObjectTabInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Before remove the row, clears the selection
 	table_tbw->clearSelection();
@@ -465,7 +465,7 @@ void ObjectsTableWidget::removeRows(void)
 void ObjectsTableWidget::removeColumn(unsigned col_idx)
 {
 	if(col_idx >= static_cast<unsigned>(table_tbw->columnCount()))
-		throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefColObjectTabInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	table_tbw->removeColumn(col_idx);
 	table_tbw->clearSelection();

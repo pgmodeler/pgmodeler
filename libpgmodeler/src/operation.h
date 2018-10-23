@@ -70,7 +70,7 @@ class Operation {
 
 	public:
 		//! \brief Constants used to reference the type of operations
-		static const unsigned NO_OPERATION=0,
+		static constexpr unsigned NO_OPERATION=0,
 		OBJECT_MODIFIED=1,
 		OBJECT_CREATED=2,
 		OBJECT_REMOVED=3,
@@ -81,7 +81,7 @@ class Operation {
 		OBJECT_MOVED=4;
 
 		//! \brief Operation chain types
-		static const unsigned NO_CHAIN=0, //! \brief The operation is not part of a chain
+		static constexpr unsigned NO_CHAIN=0, //! \brief The operation is not part of a chain
 		CHAIN_START=1, //! \brief The operation is the head of the chain
 		CHAIN_MIDDLE=2, //! \brief The operation is in the middle of the chain
 		CHAIN_END=3; //! \brief The operation is the last on the chain

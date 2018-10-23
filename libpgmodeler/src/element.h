@@ -60,7 +60,7 @@ class Element {
 
 	public:
 		//! \brief Constants used to reference the sorting method of the element
-		static const unsigned ASC_ORDER=0,
+		static constexpr unsigned ASC_ORDER=0,
 		NULLS_FIRST=1;
 
 		Element(void);

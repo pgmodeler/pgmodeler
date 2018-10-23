@@ -342,9 +342,9 @@ void NumberedTextEditor::loadFile(void)
 		file.setFileName(sql_file_dlg.selectedFiles().at(0));
 
 		if(!file.open(QFile::ReadOnly))
-			throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED)
+			throw Exception(Exception::getErrorMessage(FileDirectoryNotAccessed)
 											.arg(sql_file_dlg.selectedFiles().at(0))
-											,ERR_FILE_DIR_NOT_ACCESSED ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+											,FileDirectoryNotAccessed ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		this->clear();
 		this->setPlainText(file.readAll());
@@ -360,15 +360,15 @@ void NumberedTextEditor::editSource(void)
 	QByteArray buffer;
 	QFile input;
 
-	tmp_src_file.setFileTemplate(GlobalAttributes::TEMPORARY_DIR + GlobalAttributes::DIR_SEPARATOR + QString("source_XXXXXX") + QString(".sql"));
+	tmp_src_file.setFileTemplate(GlobalAttributes::TemporaryDir + GlobalAttributes::DirSeparator + QString("source_XXXXXX") + QString(".sql"));
 	tmp_src_file.open();
 	tmp_src_file.close();
 	input.setFileName(tmp_src_file.fileName());
 
 	if(!input.open(QFile::WriteOnly | QFile::Truncate))
-		throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED)
+		throw Exception(Exception::getErrorMessage(FileDirectoryNotAccessed)
 										.arg(tmp_src_file.fileName())
-										,ERR_FILE_DIR_NOT_ACCESSED ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+										,FileDirectoryNotAccessed ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	buffer.append(this->toPlainText());
 	input.write(buffer);
@@ -403,9 +403,9 @@ void NumberedTextEditor::updateSource(void)
 	this->setReadOnly(false);
 
 	if(!input.open(QFile::ReadOnly))
-		throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED)
+		throw Exception(Exception::getErrorMessage(FileDirectoryNotAccessed)
 										.arg(tmp_src_file.fileName())
-										,ERR_FILE_DIR_NOT_ACCESSED ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+										,FileDirectoryNotAccessed ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->setPlainText(input.readAll());
 	input.close();

@@ -39,7 +39,7 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 		xmlcode_txt->setReadOnly(true);
 
 		name_edt->setReadOnly(true);
-		version_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
+		version_cmb->addItems(PgSQLVersions::AllVersions);
 
 		code_options_ht=new HintTextWidget(code_options_hint, this);
 		code_options_ht->setText(
@@ -109,8 +109,8 @@ void SourceCodeWidget::saveSQLCode(void)
 			out.setFileName(file_dlg.selectedFiles().at(0));
 
 			if(!out.open(QFile::WriteOnly))
-				throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(file_dlg.selectedFiles().at(0)),
-								ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(Exception::getErrorMessage(FileDirectoryNotWritten).arg(file_dlg.selectedFiles().at(0)),
+								FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			buf.append(sqlcode_txt->toPlainText());
 			out.write(buf.data(), buf.size());
@@ -242,10 +242,10 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 			obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(object->getObjectType())));
 
 			if(!hl_sqlcode->isConfigurationLoaded())
-				hl_sqlcode->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+				hl_sqlcode->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
 			if(!hl_xmlcode->isConfigurationLoaded())
-				hl_xmlcode->loadConfiguration(GlobalAttributes::XML_HIGHLIGHT_CONF_PATH);
+				hl_xmlcode->loadConfiguration(GlobalAttributes::XMLHighlightConfPath);
 
 			generateSourceCode();
 		}

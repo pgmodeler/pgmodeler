@@ -36,22 +36,22 @@ void EventTrigger::setEvent(EventTriggerType evnt_type)
 void EventTrigger::setFunction(Function *func)
 {
 	if(!func)
-		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
+		throw Exception(Exception::getErrorMessage(AsgNotAllocatedFunction)
 						.arg(this->getName())
 						.arg(BaseObject::getTypeName(OBJ_EVENT_TRIGGER)),
-						ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						AsgNotAllocatedFunction,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Functions with return type other that event_trigger are not accepted
 	else if(func->getReturnType()!=QString("event_trigger"))
-		throw Exception(Exception::getErrorMessage(ERR_ASG_INV_TRIGGER_FUNCTION).arg(QString("event_trigger")),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(Exception::getErrorMessage(AsgInvalidTriggerFunction).arg(QString("event_trigger")),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Functions with one or more parameters are not accepted
 	else if(func->getParameterCount()!=0)
-		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
+		throw Exception(Exception::getErrorMessage(AsgFunctionInvalidParamCount)
 						.arg(this->getName())
 						.arg(BaseObject::getTypeName(OBJ_EVENT_TRIGGER)),
-						ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						AsgFunctionInvalidParamCount,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Functions coded in SQL lang. is not accepted by event triggers
 	else if(func->getLanguage()->getName()==~LanguageType(LanguageType::sql))
-		throw Exception(ERR_ASG_EVNT_TRIG_FUNC_INV_LANG,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgEventTriggerFuncInvalidLang,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(function != func);
 	function=func;
@@ -60,7 +60,7 @@ void EventTrigger::setFunction(Function *func)
 void EventTrigger::setFilter(const QString &variable, const QStringList &values)
 {
 	if(variable.toLower()!=ParsersAttributes::TAG)
-		throw Exception(Exception::getErrorMessage(ERR_ASG_INV_EVENT_TRIGGER_VARIABLE).arg(variable),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(Exception::getErrorMessage(AsgInvalidEventTriggerVariable).arg(variable),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(!values.isEmpty())
 	{

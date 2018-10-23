@@ -25,7 +25,7 @@ OperationList::OperationList(DatabaseModel *model)
 	/* Raises an error if the user tries to allocate an operation list linked to
 		to an unallocated model */
 	if(!model)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->model=model;
 	xmlparser=model->getXMLParser();
@@ -140,7 +140,7 @@ void OperationList::setMaximumSize(unsigned max)
 {
 	//Raises an error if a zero max size is assigned to the list
 	if(max==0)
-		throw Exception(ERR_ASG_INV_MAX_SIZE_OP_LIST,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgInvalidMaxSizeOpList,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	max_size=max;
 }
@@ -154,7 +154,7 @@ void OperationList::addToPool(BaseObject *object, unsigned op_type)
 
 		//Raises an error if the object to be added is not allocated
 		if(!object)
-			throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		obj_type=object->getObjectType();
 
@@ -167,11 +167,11 @@ void OperationList::addToPool(BaseObject *object, unsigned op_type)
 			if(obj_type!=BASE_OBJECT && obj_type!=OBJ_DATABASE)
 				PgModelerNS::copyObject(&copy_obj, object, obj_type);
 			else
-				throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(AsgObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			//Raises an error if the copy fails (returning a null object)
 			if(!copy_obj)
-				throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			else
 				//Inserts the copy on the pool
 				object_pool.push_back(copy_obj);
@@ -297,7 +297,7 @@ bool OperationList::isObjectOnPool(BaseObject *object)
 	vector<BaseObject *>::iterator itr, itr_end;
 
 	if(!object)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	itr=object_pool.begin();
 	itr_end=object_pool.end();
@@ -348,18 +348,18 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 	{
 		//Raises an error if the user tries to register an operation with null object
 		if(!object)
-			throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		obj_type=object->getObjectType();
 		if(tab_obj && !parent_obj)
-			throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		else if(parent_obj &&
 				(((obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT) &&
 				  (parent_obj->getObjectType()!=OBJ_RELATIONSHIP && parent_obj->getObjectType()!=OBJ_TABLE)) ||
 
 				 ((obj_type==OBJ_TRIGGER || obj_type==OBJ_RULE || obj_type==OBJ_INDEX) && !dynamic_cast<BaseTable *>(parent_obj))))
-			throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//If the operations list is full makes the automatic cleaning before inserting a new operation
 		if(current_index == static_cast<int>(max_size-1))
@@ -457,7 +457,7 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 			}
 			//Raises an error if both parent table / relationship isn't allocated
 			else
-				throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 		else
 		{
@@ -501,7 +501,7 @@ void OperationList::getOperationData(unsigned oper_idx, unsigned &oper_type, QSt
 	BaseObject *pool_obj=nullptr;
 
 	if(oper_idx >= operations.size())
-		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	operation=operations[oper_idx];
 	oper_type=operation->getOperationType();
@@ -617,8 +617,8 @@ void OperationList::undoOperation(void)
 		while(!ignore_chain && isUndoAvailable() &&
 			  operation->getChainType()!=Operation::NO_CHAIN);
 
-		if(error.getErrorType()!=ERR_CUSTOM)
-			throw Exception(ERR_UNDO_REDO_OPR_INV_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__, &error);
+		if(error.getErrorType()!=Custom)
+			throw Exception(UndoRedoOperationInvalidObject,__PRETTY_FUNCTION__,__FILE__,__LINE__, &error);
 	}
 }
 
@@ -672,8 +672,8 @@ void OperationList::redoOperation(void)
 		while(!ignore_chain && isRedoAvailable() &&
 			  operation->getChainType()!=Operation::NO_CHAIN);
 
-		if(error.getErrorType()!=ERR_CUSTOM)
-			throw Exception(ERR_UNDO_REDO_OPR_INV_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__, &error);
+		if(error.getErrorType()!=Custom)
+			throw Exception(UndoRedoOperationInvalidObject,__PRETTY_FUNCTION__,__FILE__,__LINE__, &error);
 	}
 }
 
@@ -984,7 +984,7 @@ void OperationList::updateObjectIndex(BaseObject *object, unsigned new_idx)
 	Operation *oper=nullptr;
 
 	if(!object)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	itr=operations.begin();
 	itr_end=operations.end();

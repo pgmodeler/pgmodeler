@@ -344,7 +344,7 @@ vector<TableObject *> *Table::getObjectList(ObjectType obj_type)
 	else if(obj_type==OBJ_POLICY)
 		return(&policies);
 	else
-		throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 void Table::addObject(BaseObject *obj, int obj_idx)
@@ -352,7 +352,7 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 	ObjectType obj_type;
 
 	if(!obj)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
 		int idx;
@@ -362,10 +362,10 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 #warning "DEMO VERSION: table children objects creation limit."
 		vector<TableObject *> *obj_list=(obj_type!=OBJ_TABLE ? getObjectList(obj_type) : nullptr);
 
-		if((obj_list && obj_list->size() >= GlobalAttributes::MAX_OBJECT_COUNT) ||
-				(obj_type==OBJ_TABLE && ancestor_tables.size() >= GlobalAttributes::MAX_OBJECT_COUNT))
+		if((obj_list && obj_list->size() >= GlobalAttributes::MaxObjectCount) ||
+				(obj_type==OBJ_TABLE && ancestor_tables.size() >= GlobalAttributes::MaxObjectCount))
 			throw Exception(trUtf8("In demonstration version tables can have only `%1' instances of each child object type or ancestor tables! You've reach this limit for the type: `%2'")
-							.arg(GlobalAttributes::MAX_OBJECT_COUNT)
+							.arg(GlobalAttributes::MaxObjectCount)
 							.arg(BaseObject::getTypeName(obj_type)),
 							ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -376,17 +376,17 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 			//Raises an error if already exists a object with the same name and type
 			if(getObject(obj->getName(),obj_type,idx))
 			{
-				throw Exception(QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
+				throw Exception(QString(Exception::getErrorMessage(AsgDuplicatedObject))
 								.arg(obj->getName(true))
 								.arg(obj->getTypeName())
 								.arg(this->getName(true))
 								.arg(this->getTypeName()),
-								ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+								AsgDuplicatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
 			//Raises an error if the user try to set the table as ancestor/copy of itself
 			else if((obj_type==OBJ_TABLE || obj_type==BASE_TABLE) && obj==this)
-				throw Exception(ERR_INV_INH_COPY_PART_RELATIONSHIP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(InvInheritCopyPartRelationship,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			switch(obj_type)
 			{
@@ -408,24 +408,24 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 						tab_obj->setParentTable(this);
 					//Raises an error if the parent table of the table object is different from table 'this'
 					else if(tab_obj->getParentTable()!=this)
-						throw Exception(ERR_ASG_OBJ_BELONGS_OTHER_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						throw Exception(AsgObjectBelongsAnotherTable,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 					//Validates the object SQL code befor insert on table
 					obj->getCodeDefinition(SchemaParser::SQL_DEFINITION);
 
 					if(col && col->getType()==this)
 					{
-						throw Exception(Exception::getErrorMessage(ERR_INV_COLUMN_TABLE_TYPE)
+						throw Exception(Exception::getErrorMessage(InvColumnTableType)
 										.arg(col->getName())
 										.arg(this->getName()),
-										ERR_INV_COLUMN_TABLE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+										InvColumnTableType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
 					else if(obj_type==OBJ_CONSTRAINT)
 					{
 						//Raises a error if the user try to add a second primary key on the table
 						if(dynamic_cast<Constraint *>(tab_obj)->getConstraintType()==ConstraintType::primary_key &&
 								this->getPrimaryKey())
-							throw Exception(ERR_ASG_EXISTING_PK_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							throw Exception(AsgExistingPrimaryKeyTable,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
 					else if(obj_type==OBJ_TRIGGER)
 						dynamic_cast<Trigger *>(tab_obj)->validateTrigger();
@@ -467,7 +467,7 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 				break;
 
 				default:
-					throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					throw Exception(AsgObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 				break;
 			}
 
@@ -475,11 +475,11 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 		}
 		catch(Exception &e)
 		{
-			if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
-				throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
+			if(e.getErrorType()==UndefinedAttributeValue)
+				throw Exception(Exception::getErrorMessage(AsgObjectInvalidDefinition)
 								.arg(obj->getName())
 								.arg(obj->getTypeName()),
-								ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+								AsgObjectInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 			else
 				throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
@@ -665,8 +665,8 @@ void Table::addPartitionKeys(vector<PartitionKey> &part_keys)
 		return;
 
 	if(partitioning_type == PartitioningType::list && part_keys.size() > 1)
-		throw Exception(Exception::getErrorMessage(ERR_INV_PARTITION_KEY_COUNT).arg(this->getSignature()),
-										ERR_INV_PARTITION_KEY_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(Exception::getErrorMessage(InvPartitionKeyCount).arg(this->getSignature()),
+										InvPartitionKeyCount,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	partition_keys.clear();
 
@@ -675,15 +675,15 @@ void Table::addPartitionKeys(vector<PartitionKey> &part_keys)
 		if(std::find(partition_keys.begin(), partition_keys.end(), part_key) != partition_keys.end())
 		{
 			partition_keys = part_keys_bkp;
-			throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
 		if(part_key.getColumn() && part_key.getColumn()->isAddedByRelationship())
 		{
 			partition_keys = part_keys_bkp;
-			throw Exception(Exception::getErrorMessage(ERR_ASG_INV_COLUMN_PARTITION_KEY)
+			throw Exception(Exception::getErrorMessage(AsgInvalidColumnPartitionKey)
 											.arg(part_key.getColumn()->getSignature(true)),
-											ERR_ASG_INV_COLUMN_PARTITION_KEY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+											AsgInvalidColumnPartitionKey,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
 		partition_keys.push_back(part_key);
@@ -744,7 +744,7 @@ void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 {
 	//Raises an error if the user try to remove a object with invalid type
 	if(!TableObject::isTableObject(obj_type) && obj_type!=OBJ_TABLE)
-		throw Exception(ERR_REM_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RemObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	else if(obj_type==OBJ_TABLE && obj_idx < ancestor_tables.size())
 	{
@@ -775,7 +775,7 @@ void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 
 		//Raises an error if the object index is out of bound
 		if(obj_idx >= obj_list->size())
-			throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		if(obj_type!=OBJ_COLUMN)
 		{
@@ -803,22 +803,22 @@ void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 			//Case some trigger, constraint, index is referencing the column raises an error
 			if(!refs.empty())
 			{
-				throw Exception(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE)
+				throw Exception(Exception::getErrorMessage(RemInderectReference)
 								.arg(column->getName())
 								.arg(column->getTypeName())
 								.arg(refs[0]->getName())
 						.arg(refs[0]->getTypeName())
 						.arg(this->getName(true))
 						.arg(this->getTypeName()),
-						ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						RemInderectReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
 			//Raises an error if the column is being referenced by any partition key
 			if(isPartitionKeyRefColumn(column))
 			{
-				throw Exception(Exception::getErrorMessage(ERR_REM_COL_REF_PARTITION_KEY)
+				throw Exception(Exception::getErrorMessage(RemColumnRefByPartitionKey)
 								.arg(column->getName()).arg(this->getName(true)),
-								ERR_REM_COL_REF_PARTITION_KEY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+								RemColumnRefByPartitionKey,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
 			column->setParentTable(nullptr);
@@ -1099,7 +1099,7 @@ BaseObject *Table::getObject(const QString &name, ObjectType obj_type, int &obj_
 		else obj_idx=-1;
 	}
 	else
-		throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(object);
 }
@@ -1112,7 +1112,7 @@ BaseObject *Table::getObject(unsigned obj_idx, ObjectType obj_type)
 	{
 		//Raises an error if the object index is out of bound
 		if(obj_idx >= ancestor_tables.size())
-			throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		return(ancestor_tables[obj_idx]);
 	}
@@ -1123,7 +1123,7 @@ BaseObject *Table::getObject(unsigned obj_idx, ObjectType obj_type)
 			return(obj_list->at(obj_idx));
 		else
 			//Raises an error if the object index is out of bound
-			throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 }
 
@@ -1296,7 +1296,7 @@ unsigned Table::getObjectCount(ObjectType obj_type, bool inc_added_by_rel)
 		}
 	}
 	else
-		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 Constraint *Table::getPrimaryKey(void)
@@ -1382,7 +1382,7 @@ void Table::setRelObjectsIndexes(const vector<QString> &obj_names, const vector<
 		else if(obj_type==OBJ_CONSTRAINT)
 			obj_idxs_map=&constr_indexes;
 		else
-			throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		for(idx=0; idx < size; idx++)
 			(*obj_idxs_map)[obj_names[idx]]=idxs[idx];
@@ -1714,7 +1714,7 @@ void Table::swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2
 
 			//Raises an error if both index is out of list bounds
 			if(idx1 >= obj_list->size() && idx2 >= obj_list->size())
-				throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			//If the idx1 is out of bound inserts the element idx2 at the list's begin
 			else if(idx1 >= obj_list->size())
 			{
@@ -1874,7 +1874,7 @@ QString Table::getAlterDefinition(BaseObject *object)
 	Table *tab=dynamic_cast<Table *>(object);
 
 	if(!tab)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{

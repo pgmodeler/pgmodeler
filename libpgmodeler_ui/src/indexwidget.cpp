@@ -31,7 +31,7 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 		Ui_IndexWidget::setupUi(this);
 
 		predicate_hl=new SyntaxHighlighter(predicate_txt, false, true);
-		predicate_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		predicate_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
 		elements_tab = new ElementsTableWidget(this);
 
@@ -45,8 +45,8 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 		IndexingType::getTypes(list);
 		indexing_cmb->addItems(list);
 
-		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_92)].push_back(buffering_chk);
-		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(indexing_lbl);
+		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PgSQLVersion92)].push_back(buffering_chk);
+		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PgSQLVersion95)].push_back(indexing_lbl);
 		values_map[indexing_lbl].push_back(~IndexingType(IndexingType::brin));
 
 		frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);
@@ -96,7 +96,7 @@ void IndexWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Ba
 	vector<IndexElement> idx_elems;
 
 	if(!parent_obj)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObjectWidget::setAttributes(model, op_list, index, parent_obj);
 
