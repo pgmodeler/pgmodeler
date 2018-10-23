@@ -153,7 +153,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 			QRectF rect=scene->itemsBoundingRect(true);
 
 			//Give some margin to the resulting image
-			QSizeF margin=QSizeF(5 * BaseObjectView::HORIZ_SPACING, 5 * BaseObjectView::VERT_SPACING);
+			QSizeF margin=QSizeF(5 * BaseObjectView::HorizSpacing, 5 * BaseObjectView::VertSpacing);
 			rect.setTopLeft(rect.topLeft() - QPointF(margin.width(), margin.height()));
 			rect.setSize(rect.size() + margin);
 

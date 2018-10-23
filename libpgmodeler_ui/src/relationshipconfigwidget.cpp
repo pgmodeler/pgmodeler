@@ -183,11 +183,11 @@ void RelationshipConfigWidget::applyConfiguration(void)
 	if(!crows_foot_rb->isChecked())
 	{
 		if(fk_to_pk_rb->isChecked())
-			RelationshipView::setLineConnectionMode(RelationshipView::CONNECT_FK_TO_PK);
+			RelationshipView::setLineConnectionMode(RelationshipView::ConnectFkToPk);
 		else if(tab_edges_rb->isChecked())
-			RelationshipView::setLineConnectionMode(RelationshipView::CONNECT_TABLE_EGDES);
+			RelationshipView::setLineConnectionMode(RelationshipView::ConnectTableEdges);
 		else
-			RelationshipView::setLineConnectionMode(RelationshipView::CONNECT_CENTER_PNTS);
+			RelationshipView::setLineConnectionMode(RelationshipView::ConnectCenterPoints);
 	}
 }
 

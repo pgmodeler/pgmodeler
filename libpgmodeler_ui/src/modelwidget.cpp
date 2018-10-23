@@ -1917,7 +1917,7 @@ void ModelWidget::moveToSchema(void)
 					if(dst_schema && dst_schema->isVisible())
 					{
 						p.setX(dst_schema->pos().x());
-						p.setY(dst_schema->pos().y() + dst_schema->boundingRect().height() + BaseObjectView::VERT_SPACING);
+						p.setY(dst_schema->pos().y() + dst_schema->boundingRect().height() + BaseObjectView::VertSpacing);
 						dynamic_cast<BaseObjectView *>(obj_graph->getReceiverObject())->setPos(p);
 					}
 				}
@@ -3883,11 +3883,11 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 				{
 					switch(!constr->getConstraintType())
 					{
-						case ConstraintType::primary_key: str_aux=QString("_%1").arg(TableObjectView::TXT_PRIMARY_KEY); break;
-						case ConstraintType::foreign_key: str_aux=QString("_%1").arg(TableObjectView::TXT_FOREIGN_KEY); break;
-						case ConstraintType::check: str_aux=QString("_%1").arg(TableObjectView::TXT_CHECK); break;
-						case ConstraintType::unique: str_aux=QString("_%1").arg(TableObjectView::TXT_UNIQUE); break;
-						case ConstraintType::exclude: str_aux=QString("_%1").arg(TableObjectView::TXT_EXCLUDE); break;
+						case ConstraintType::primary_key: str_aux=QString("_%1").arg(TableObjectView::TextPrimaryKey); break;
+						case ConstraintType::foreign_key: str_aux=QString("_%1").arg(TableObjectView::TextForeignKey); break;
+						case ConstraintType::check: str_aux=QString("_%1").arg(TableObjectView::TextCheck); break;
+						case ConstraintType::unique: str_aux=QString("_%1").arg(TableObjectView::TextUnique); break;
+						case ConstraintType::exclude: str_aux=QString("_%1").arg(TableObjectView::TextExclude); break;
 					}
 
 					//For each constaint is created a menu with the edit, source code, protect/unprotect and delete actions

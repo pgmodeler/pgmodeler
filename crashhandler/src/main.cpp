@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 		translator.load(QLocale::system().name(), GlobalAttributes::LanguagesDir);
 		app.installTranslator(&translator);
 
-		CrashHandlerForm crashhandler(args.size() > 1 && args[1]==CrashHandlerForm::ANALYSIS_MODE);
+		CrashHandlerForm crashhandler(args.size() > 1 && args[1]==CrashHandlerForm::AnalysisMode);
 		PgModelerUiNS::resizeDialog(&crashhandler);
 		crashhandler.show();
 		app.exec();

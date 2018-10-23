@@ -20,7 +20,7 @@
 #include "messagebox.h"
 #include "pgmodeleruins.h"
 
-const QString CrashHandlerForm::ANALYSIS_MODE=QString("-analysis-mode");
+const QString CrashHandlerForm::AnalysisMode=QString("-analysis-mode");
 
 CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::WindowFlags f) : BugReportForm(parent, f)
 {

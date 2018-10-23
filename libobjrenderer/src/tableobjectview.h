@@ -52,16 +52,16 @@ class TableObjectView: public BaseObjectView
 		}
 
 	public:
-		static const QString	CONSTR_DELIM_END,
-		CONSTR_DELIM_START,
-		TYPE_SEPARATOR,
-		CONSTR_SEPARATOR,
-		TXT_FOREIGN_KEY,
-		TXT_NOT_NULL,
-		TXT_PRIMARY_KEY,
-		TXT_UNIQUE,
-		TXT_CHECK,
-		TXT_EXCLUDE;
+		static const QString	ConstrDelimEnd,
+		ConstrDelimStart,
+		TypeSeparator,
+		ConstrSeparator,
+		TextForeignKey,
+		TextNotNull,
+		TextPrimaryKey,
+		TextUnique,
+		TextCheck,
+		TextExclude;
 
 		TableObjectView(TableObject *object=nullptr);
 		~TableObjectView(void);

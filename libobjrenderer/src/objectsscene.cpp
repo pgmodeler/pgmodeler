@@ -62,9 +62,9 @@ ObjectsScene::ObjectsScene(void)
 		object_move_timer.stop();
 	});
 
-	scene_move_timer.setInterval(SCENE_MOVE_TIMEOUT);
-	corner_hover_timer.setInterval(SCENE_MOVE_TIMEOUT * 10);
-	object_move_timer.setInterval(SCENE_MOVE_TIMEOUT * 10);
+	scene_move_timer.setInterval(SceneMoveTimeout);
+	corner_hover_timer.setInterval(SceneMoveTimeout * 10);
+	object_move_timer.setInterval(SceneMoveTimeout * 10);
 }
 
 ObjectsScene::~ObjectsScene(void)
@@ -577,17 +577,17 @@ bool ObjectsScene::mouseIsAtCorner(void)
 
 		if(rect.contains(pos))
 		{
-			if(pos.x() <= SCENE_MOVE_THRESHOLD)
-				scene_move_dx=-SCENE_MOVE_STEP;
-			else if(pos.x() >= (view->width() - view->verticalScrollBar()->width() - SCENE_MOVE_THRESHOLD))
-				scene_move_dx=SCENE_MOVE_STEP;
+			if(pos.x() <= SceneMoveThreshold)
+				scene_move_dx=-SceneMoveStep;
+			else if(pos.x() >= (view->width() - view->verticalScrollBar()->width() - SceneMoveThreshold))
+				scene_move_dx=SceneMoveStep;
 			else
 				scene_move_dx=0;
 
-			if(pos.y() <= SCENE_MOVE_THRESHOLD)
-				scene_move_dy=-SCENE_MOVE_STEP;
-			else if(pos.y() >= (view->height() - view->horizontalScrollBar()->height() - SCENE_MOVE_THRESHOLD))
-				scene_move_dy=SCENE_MOVE_STEP;
+			if(pos.y() <= SceneMoveThreshold)
+				scene_move_dy=-SceneMoveStep;
+			else if(pos.y() >= (view->height() - view->horizontalScrollBar()->height() - SceneMoveThreshold))
+				scene_move_dy=SceneMoveStep;
 			else
 				scene_move_dy=0;
 

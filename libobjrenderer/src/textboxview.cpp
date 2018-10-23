@@ -105,18 +105,18 @@ void TextboxView::__configureObject(void)
 	text->setText(txtbox->getComment());
 
 	if(text->font().italic())
-		text->setPos(HORIZ_SPACING * 1.5, VERT_SPACING * 0.90);
+		text->setPos(HorizSpacing * 1.5, VertSpacing * 0.90);
 	else
-		text->setPos(HORIZ_SPACING, VERT_SPACING);
+		text->setPos(HorizSpacing, VertSpacing);
 
-	this->resizePolygon(polygon, roundf(text->boundingRect().width() + (2.5 * HORIZ_SPACING)),
-						roundf(text->boundingRect().height() + (1.5 * VERT_SPACING)));
+	this->resizePolygon(polygon, roundf(text->boundingRect().width() + (2.5 * HorizSpacing)),
+						roundf(text->boundingRect().height() + (1.5 * VertSpacing)));
 
 	box->setPos(0,0);
 	box->setPolygon(polygon);
 
-	protected_icon->setPos(box->boundingRect().right() - (protected_icon->boundingRect().width() + 2 * HORIZ_SPACING),
-						   box->boundingRect().bottom()- (protected_icon->boundingRect().height() + 2 * VERT_SPACING));
+	protected_icon->setPos(box->boundingRect().right() - (protected_icon->boundingRect().width() + 2 * HorizSpacing),
+						   box->boundingRect().bottom()- (protected_icon->boundingRect().height() + 2 * VertSpacing));
 
 	this->bounding_rect.setTopLeft(box->boundingRect().topLeft());
 	this->bounding_rect.setBottomRight(box->boundingRect().bottomRight());

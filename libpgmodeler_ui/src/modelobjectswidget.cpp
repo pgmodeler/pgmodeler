@@ -306,15 +306,15 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
 		constr_type=dynamic_cast<Constraint *>(object)->getConstraintType();
 
 		if(constr_type==ConstraintType::primary_key)
-			str_aux=QString("_%1").arg(TableObjectView::TXT_PRIMARY_KEY);
+			str_aux=QString("_%1").arg(TableObjectView::TextPrimaryKey);
 		else if(constr_type==ConstraintType::foreign_key)
-			str_aux=QString("_%1").arg(TableObjectView::TXT_FOREIGN_KEY);
+			str_aux=QString("_%1").arg(TableObjectView::TextForeignKey);
 		else if(constr_type==ConstraintType::check)
-			str_aux=QString("_%1").arg(TableObjectView::TXT_CHECK);
+			str_aux=QString("_%1").arg(TableObjectView::TextCheck);
 		else if(constr_type==ConstraintType::unique)
-			str_aux=QString("_%1").arg(TableObjectView::TXT_UNIQUE);
+			str_aux=QString("_%1").arg(TableObjectView::TextUnique);
 		else if(constr_type==ConstraintType::exclude)
-			str_aux=QString("_%1").arg(TableObjectView::TXT_EXCLUDE);
+			str_aux=QString("_%1").arg(TableObjectView::TextExclude);
 	}
 
 	item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(obj_type) + str_aux)));

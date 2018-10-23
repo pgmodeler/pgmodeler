@@ -434,11 +434,11 @@ void TableWidget::showObjectData(TableObject *object, int row)
 	QStringList contr_types={ ~ConstraintType(ConstraintType::primary_key), ~ConstraintType(ConstraintType::foreign_key),
 							  ~ConstraintType(ConstraintType::check), ~ConstraintType(ConstraintType::unique),
 							  QString("NOT NULL") },
-			constr_codes={ TableObjectView::TXT_PRIMARY_KEY,
-										 TableObjectView::TXT_FOREIGN_KEY,
-										 TableObjectView::TXT_CHECK,
-										 TableObjectView::TXT_UNIQUE,
-										 TableObjectView::TXT_NOT_NULL};
+			constr_codes={ TableObjectView::TextPrimaryKey,
+										 TableObjectView::TextForeignKey,
+										 TableObjectView::TextCheck,
+										 TableObjectView::TextUnique,
+										 TableObjectView::TextNotNull};
 
 	QFont font;
 	unsigned i;
@@ -490,7 +490,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 
 		tab->setCellText(str_aux1,row,4);
 
-		if(str_aux.indexOf(TableObjectView::TXT_PRIMARY_KEY) >= 0)
+		if(str_aux.indexOf(TableObjectView::TextPrimaryKey) >= 0)
 			tab->setCellCheckState(row, 0, Qt::Checked);
 		else
 			tab->setCellCheckState(row, 0, Qt::Unchecked);
@@ -920,7 +920,7 @@ void TableWidget::applyConfiguration(void)
 		op_list->finishOperationChain();
 		finishConfiguration();
 
-		if(RelationshipView::getLineConnectinMode()==RelationshipView::CONNECT_FK_TO_PK)
+		if(RelationshipView::getLineConnectinMode()==RelationshipView::ConnectFkToPk)
 		{
 			/* Forcing the update of relationships connected to the table in order to reconfigure the line
 			 in case of the relationship is using the CONNECT_FK_TO_PK line mode */

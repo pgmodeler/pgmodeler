@@ -106,12 +106,12 @@ void TableView::configureObject(void)
 
 			//Configures the item and set its position
 			col_item->configureObject();
-			col_item->moveBy(HORIZ_SPACING, (i * col_item->boundingRect().height()) + VERT_SPACING);
+			col_item->moveBy(HorizSpacing, (i * col_item->boundingRect().height()) + VertSpacing);
 
 			/* Calculates the width of the name + type of the object. This is used to align all
 			the constraint labels on table */
 			width=col_item->getChildObject(0)->boundingRect().width() +
-						col_item->getChildObject(1)->boundingRect().width() + (6 * HORIZ_SPACING);
+						col_item->getChildObject(1)->boundingRect().width() + (6 * HorizSpacing);
 
 			if(px < width)
 				px=width;
@@ -156,7 +156,7 @@ void TableView::configureObject(void)
 	//Resizes the columns/extended attributes using the new width
 	for(obj_idx=0; obj_idx < 2; obj_idx++)
 	{
-		bodies[obj_idx]->setRect(QRectF(0,0, width, groups[obj_idx]->boundingRect().height() + (2 * VERT_SPACING)));
+		bodies[obj_idx]->setRect(QRectF(0,0, width, groups[obj_idx]->boundingRect().height() + (2 * VertSpacing)));
 		pen=this->getBorderStyle(atribs[obj_idx]);
 
 		if(table->isPartition())
@@ -186,7 +186,7 @@ void TableView::configureObject(void)
 			col_item=dynamic_cast<TableObjectView *>(subitems.front());
 			subitems.pop_front();
 			col_item->setChildObjectXPos(3, width -
-										 col_item->boundingRect().width() - (2 * HORIZ_SPACING) - 1);
+										 col_item->boundingRect().width() - (2 * HorizSpacing) - 1);
 
 
 			//Generating the connection points of the columns
@@ -195,8 +195,8 @@ void TableView::configureObject(void)
 				tab_obj=dynamic_cast<TableObject *>(col_item->getSourceObject());
 				cy=title->boundingRect().height() + col_item->pos().y() + (col_item->boundingRect().height()/2);
 				conn_points[tab_obj].resize(2);
-				conn_points[tab_obj][LEFT_CONN_POINT]=QPointF(col_item->pos().x() - 1.5f, cy);
-				conn_points[tab_obj][RIGHT_CONN_POINT]=QPointF(col_item->pos().x() + width - 1.5f  , cy);
+				conn_points[tab_obj][LeftConnPoint]=QPointF(col_item->pos().x() - 1.5f, cy);
+				conn_points[tab_obj][RightConnPoint]=QPointF(col_item->pos().x() + width - 1.5f  , cy);
 			}
 		}
 	}
@@ -232,7 +232,7 @@ QPointF TableView::getConnectionPoints(TableObject *tab_obj, unsigned pnt_type)
 {
 	if(!tab_obj)
 		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(pnt_type > RIGHT_CONN_POINT)
+	else if(pnt_type > RightConnPoint)
 		throw Exception(RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(conn_points.count(tab_obj)==0)
 		//Returns the center point in case of the connection point of the table object wasn't calculated already

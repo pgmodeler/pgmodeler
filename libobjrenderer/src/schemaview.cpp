@@ -207,12 +207,12 @@ void SchemaView::configureObject(void)
 		font.setPointSizeF(font.pointSizeF() * 1.3f);
 
 		sch_name->setFont(font);
-		sch_name->setPos(HORIZ_SPACING, VERT_SPACING);
-		txt_h=sch_name->boundingRect().height() + (2 * VERT_SPACING);
+		sch_name->setPos(HorizSpacing, VertSpacing);
+		txt_h=sch_name->boundingRect().height() + (2 * VertSpacing);
 
 		//Configures the box with the points calculated above
-		sp_h=(3 * HORIZ_SPACING);
-		sp_v=(3 * VERT_SPACING) + txt_h;
+		sp_h=(3 * HorizSpacing);
+		sp_v=(3 * VertSpacing) + txt_h;
 
 		width=(x2-x1) + 1;
 
@@ -233,7 +233,7 @@ void SchemaView::configureObject(void)
 		this->setFlag(ItemSendsGeometryChanges, true);
 
 		color=schema->getFillColor();
-		color.setAlpha(OBJ_ALPHA_CHANNEL * 0.80);
+		color.setAlpha(ObjectAlphaChannel * 0.80);
 		box->setBrush(color);
 
 		color=QColor(color.red()/3,color.green()/3,color.blue()/3, 80);
@@ -248,7 +248,7 @@ void SchemaView::configureObject(void)
 		sch_name->setToolTip(this->toolTip());
 
 		this->protected_icon->setPos(QPointF( sch_name->boundingRect().width() + sp_h,
-											  sch_name->pos().y() + VERT_SPACING ));
+											  sch_name->pos().y() + VertSpacing ));
 
 		this->configureObjectSelection();
 		this->configureProtectedIcon();

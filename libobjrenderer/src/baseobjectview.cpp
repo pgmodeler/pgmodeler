@@ -345,8 +345,8 @@ QLinearGradient BaseObjectView::getFillStyle(const QString &id)
 		{
 			if(id==ParsersAttributes::OBJ_SELECTION || id==ParsersAttributes::PLACEHOLDER)
 			{
-				colors[0].setAlpha(OBJ_ALPHA_CHANNEL);
-				colors[1].setAlpha(OBJ_ALPHA_CHANNEL);
+				colors[0].setAlpha(ObjectAlphaChannel);
+				colors[1].setAlpha(ObjectAlphaChannel);
 			}
 
 			grad.setCoordinateMode(QGradient::ObjectBoundingMode);
@@ -370,9 +370,9 @@ QPen BaseObjectView::getBorderStyle(const QString &id)
 		if(!colors.empty())
 		{
 			if(id==ParsersAttributes::OBJ_SELECTION)
-				colors[2].setAlpha(OBJ_ALPHA_CHANNEL);
+				colors[2].setAlpha(ObjectAlphaChannel);
 
-			pen.setWidthF(OBJ_BORDER_WIDTH);
+			pen.setWidthF(ObjectBorderWidth);
 			pen.setColor(colors[2]);
 		}
 	}
@@ -497,14 +497,14 @@ void BaseObjectView::configureSQLDisabledInfo(void)
 			sql_disabled_txt->setText(trUtf8("SQL off"));
 			sql_disabled_txt->setBrush(char_fmt.foreground());
 
-			sql_disabled_box->setRect(QRectF(QPointF(0,0), sql_disabled_txt->boundingRect().size() + QSizeF(1.5 * HORIZ_SPACING, 1.5 * VERT_SPACING)));
+			sql_disabled_box->setRect(QRectF(QPointF(0,0), sql_disabled_txt->boundingRect().size() + QSizeF(1.5 * HorizSpacing, 1.5 * VertSpacing)));
 			sql_disabled_box->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::POSITION_INFO));
 			sql_disabled_box->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::POSITION_INFO));
 
-			px=bounding_rect.width() - sql_disabled_box->boundingRect().width() + (1.5 * HORIZ_SPACING),
+			px=bounding_rect.width() - sql_disabled_box->boundingRect().width() + (1.5 * HorizSpacing),
 					py=-(sql_disabled_box->boundingRect().height()/2);
 
-			sql_disabled_txt->setPos(px + (HORIZ_SPACING * 0.75), py + (VERT_SPACING * 0.75));
+			sql_disabled_txt->setPos(px + (HorizSpacing * 0.75), py + (VertSpacing * 0.75));
 			sql_disabled_box->setPos(px, py);
 		}
 	}
@@ -546,7 +546,7 @@ void BaseObjectView::configureProtectedIcon(void)
 		double factor;
 
 		//Calculates the factor used to resize the protection icon accordding the font size
-		factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
+		factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DefaultFontSize;
 
 		pol.append(QPointF(2,5)); pol.append(QPointF(2,2));
 		pol.append(QPointF(3,1)); pol.append(QPointF(4,0));
@@ -644,7 +644,7 @@ void BaseObjectView::togglePlaceholder(bool visible)
 
 double BaseObjectView::getFontFactor(void)
 {
-	return(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE);
+	return(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DefaultFontSize);
 }
 
 double BaseObjectView::getScreenDpiFactor(void)

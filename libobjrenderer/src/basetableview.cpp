@@ -27,15 +27,15 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 		throw Exception(AsgNotAllocattedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	body=new RoundedRectItem;
-	body->setRoundedCorners(RoundedRectItem::BOTTOMLEFT_CORNER | RoundedRectItem::BOTTOMRIGHT_CORNER);
+	body->setRoundedCorners(RoundedRectItem::BottomLeftCorner | RoundedRectItem::BottomRightCorner);
 
 	title=new TableTitleView;
 
 	ext_attribs_body=new RoundedRectItem;
-	ext_attribs_body->setRoundedCorners(RoundedRectItem::NO_CORNERS);
+	ext_attribs_body->setRoundedCorners(RoundedRectItem::NoCorners);
 
 	ext_attribs_toggler=new RoundedRectItem;
-	ext_attribs_toggler->setRoundedCorners(RoundedRectItem::BOTTOMLEFT_CORNER | RoundedRectItem::BOTTOMRIGHT_CORNER);
+	ext_attribs_toggler->setRoundedCorners(RoundedRectItem::BottomLeftCorner | RoundedRectItem::BottomRightCorner);
 	ext_attribs_toggler->setZValue(-1);
 
 	ext_attribs=new QGraphicsItemGroup;
@@ -222,13 +222,13 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 		{
 			dynamic_cast<RoundedRectItem *>(obj_selection)->setBorderRadius(2);
 			dynamic_cast<RoundedRectItem *>(obj_selection)->setRect(QRectF(0,0,
-																			title->boundingRect().width() - (2.5 * HORIZ_SPACING),
+																			title->boundingRect().width() - (2.5 * HorizSpacing),
 																			ext_attribs_toggler->boundingRect().height() * 0.65f));
 
 			//Sets the selection position as same as item's position
 			rect1=this->mapRectToItem(ext_attribs_toggler, ext_attribs_toggler->boundingRect());
 			obj_selection->setVisible(true);
-			obj_selection->setPos(QPointF(title->pos().x() + HORIZ_SPACING, -rect1.top() + 1.5f));
+			obj_selection->setPos(QPointF(title->pos().x() + HorizSpacing, -rect1.top() + 1.5f));
 			this->setToolTip(trUtf8("Toggles the extended attributes display"));
 		}
 		//If the index is invalid clears the selection
@@ -247,14 +247,14 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 			{
 				dynamic_cast<RoundedRectItem *>(obj_selection)->setBorderRadius(2);
 				dynamic_cast<RoundedRectItem *>(obj_selection)->setRect(QRectF(0,0,
-																			   title->boundingRect().width() - (2.5 * HORIZ_SPACING),
+																			   title->boundingRect().width() - (2.5 * HorizSpacing),
 																			   item->boundingRect().height()));
 			}
 
 			//Sets the selection position as same as item's position
 			rect1=this->mapRectToItem(item, item->boundingRect());
 			obj_selection->setVisible(true);
-			obj_selection->setPos(QPointF(title->pos().x() + HORIZ_SPACING,-rect1.top()));
+			obj_selection->setPos(QPointF(title->pos().x() + HorizSpacing,-rect1.top()));
 
 			//Stores the selected child object
 			sel_child_obj=dynamic_cast<TableObject *>(item->getSourceObject());
@@ -331,12 +331,12 @@ void BaseTableView::configureTag(void)
 		p2=tag_name->boundingRect().bottomRight();
 		bottom=this->boundingRect().bottom();
 
-		pol.append(QPointF(p1.x()-BaseObjectView::HORIZ_SPACING, p1.y() - BaseObjectView::VERT_SPACING));
-		pol.append(QPointF(p2.x(), p1.y() - BaseObjectView::VERT_SPACING));
-		pol.append(QPointF(p2.x() + BaseObjectView::HORIZ_SPACING + 5, p2.y()/2));
-		pol.append(QPointF(p2.x(), p2.y() + BaseObjectView::VERT_SPACING));
-		pol.append(QPointF(p1.x(), p2.y() + BaseObjectView::VERT_SPACING));
-		pol.append(QPointF(p1.x()-BaseObjectView::HORIZ_SPACING, p2.y() + BaseObjectView::VERT_SPACING));
+		pol.append(QPointF(p1.x()-BaseObjectView::HorizSpacing, p1.y() - BaseObjectView::VertSpacing));
+		pol.append(QPointF(p2.x(), p1.y() - BaseObjectView::VertSpacing));
+		pol.append(QPointF(p2.x() + BaseObjectView::HorizSpacing + 5, p2.y()/2));
+		pol.append(QPointF(p2.x(), p2.y() + BaseObjectView::VertSpacing));
+		pol.append(QPointF(p1.x(), p2.y() + BaseObjectView::VertSpacing));
+		pol.append(QPointF(p1.x()-BaseObjectView::HorizSpacing, p2.y() + BaseObjectView::VertSpacing));
 
 		tag_body->setPolygon(pol);
 		tag_body->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::TAG));
@@ -369,7 +369,7 @@ void BaseTableView::__configureObject(float width)
 		{
 			py = title->boundingRect().height() +
 					 body->boundingRect().height() +
-					 ext_attribs_body->boundingRect().height() - VERT_SPACING - 1;
+					 ext_attribs_body->boundingRect().height() - VertSpacing - 1;
 		}
 		else
 		{
@@ -414,7 +414,7 @@ void BaseTableView::__configureObject(float width)
 	}
 
 	//Set the protected icon position to the top-right on the title
-	protected_icon->setPos(title->pos().x() + title->boundingRect().width() * 0.90f, 2 * VERT_SPACING);
+	protected_icon->setPos(title->pos().x() + title->boundingRect().width() * 0.90f, 2 * VertSpacing);
 
 	this->bounding_rect.setTopLeft(title->boundingRect().topLeft());
 	this->bounding_rect.setWidth(title->boundingRect().width());
@@ -423,7 +423,7 @@ void BaseTableView::__configureObject(float width)
 	{
 		this->bounding_rect.setHeight(title->boundingRect().height() +
 																	body->boundingRect().height() - 1);
-		body->setRoundedCorners(RoundedRectItem::BOTTOMLEFT_CORNER | RoundedRectItem::BOTTOMRIGHT_CORNER);
+		body->setRoundedCorners(RoundedRectItem::BottomLeftCorner | RoundedRectItem::BottomRightCorner);
 	}
 	else
 	{
@@ -433,9 +433,9 @@ void BaseTableView::__configureObject(float width)
 		this->bounding_rect.setHeight(title->boundingRect().height() +
 										body->boundingRect().height() +
 										(!tab->isExtAttribsHidden() ? ext_attribs_body->boundingRect().height() : 0) +
-										ext_attribs_toggler->boundingRect().height() - VERT_SPACING - 1);
+										ext_attribs_toggler->boundingRect().height() - VertSpacing - 1);
 
-		body->setRoundedCorners(RoundedRectItem::NO_CORNERS);
+		body->setRoundedCorners(RoundedRectItem::NoCorners);
 	}
 
 	this->table_tooltip=this->getSourceObject()->getName(true) +
@@ -454,15 +454,15 @@ float BaseTableView::calculateWidth(void)
 			(columns->boundingRect().width() > title->boundingRect().width() &&
 			 (hide_ext_attribs || dynamic_cast<BaseTable *>(this->getSourceObject())->isExtAttribsHidden() ||
 				(columns->boundingRect().width() > ext_attribs->boundingRect().width()))))
-		return(columns->boundingRect().width() + (2 * HORIZ_SPACING));
+		return(columns->boundingRect().width() + (2 * HorizSpacing));
 
 	if(!ext_attribs->childItems().isEmpty() && !hide_ext_attribs &&
 		 !dynamic_cast<BaseTable *>(this->getSourceObject())->isExtAttribsHidden() &&
 			(ext_attribs->boundingRect().width() > title->boundingRect().width() &&
 			 ext_attribs->boundingRect().width() > columns->boundingRect().width()))
-		return(ext_attribs->boundingRect().width() + (2 * HORIZ_SPACING));
+		return(ext_attribs->boundingRect().width() + (2 * HorizSpacing));
 
-	return(title->boundingRect().width() + (2 * HORIZ_SPACING));
+	return(title->boundingRect().width() + (2 * HorizSpacing));
 }
 
 int BaseTableView::getConnectRelsCount(void)

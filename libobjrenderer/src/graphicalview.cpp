@@ -83,7 +83,7 @@ void GraphicalView::configureObject(void)
 
 		columns->removeFromGroup(graph_ref);
 		graph_ref->configureObject(ref);
-		graph_ref->moveBy(HORIZ_SPACING, (i * graph_ref->boundingRect().height()) + VERT_SPACING);
+		graph_ref->moveBy(HorizSpacing, (i * graph_ref->boundingRect().height()) + VertSpacing);
 		columns->addToGroup(graph_ref);
 	}
 
@@ -135,17 +135,17 @@ void GraphicalView::configureObject(void)
 
 			//Configures the item and set its position
 			col_item->configureObject();
-			col_item->moveBy(HORIZ_SPACING, (i * col_item->boundingRect().height()) + VERT_SPACING);
+			col_item->moveBy(HorizSpacing, (i * col_item->boundingRect().height()) + VertSpacing);
 
 			/* Calculates the width of the name + type of the object. This is used to align all
 			the constraint labels on table */
 			width=col_item->getChildObject(0)->boundingRect().width() +
-				  col_item->getChildObject(1)->boundingRect().width() + (3 * HORIZ_SPACING);
+				  col_item->getChildObject(1)->boundingRect().width() + (3 * HorizSpacing);
 			if(px < width)  px=width;
 
 			//Gets the maximum width of the column type label to align all at same horizontal position
 			if(type_width < col_item->getChildObject(2)->boundingRect().width())
-				type_width=col_item->getChildObject(2)->boundingRect().width() + (3 * HORIZ_SPACING);
+				type_width=col_item->getChildObject(2)->boundingRect().width() + (3 * HorizSpacing);
 
 			col_items.push_back(col_item);
 		}
@@ -184,7 +184,7 @@ void GraphicalView::configureObject(void)
 	//Resizes the columns/extended attributes using the new width
 	for(int idx=0; idx < 2; idx++)
 	{
-		bodies[idx]->setRect(QRectF(0,0, width, groups[idx]->boundingRect().height() + (2 * VERT_SPACING)));
+		bodies[idx]->setRect(QRectF(0,0, width, groups[idx]->boundingRect().height() + (2 * VertSpacing)));
 
 		pen=this->getBorderStyle(attribs[idx]);
 		pen.setStyle(Qt::DashLine);
@@ -213,7 +213,7 @@ void GraphicalView::configureObject(void)
 			col_item=dynamic_cast<TableObjectView *>(subitems.front());
 			subitems.pop_front();
 			col_item->setChildObjectXPos(3, width -
-										 col_item->boundingRect().width() - (2 * HORIZ_SPACING) - 1);
+										 col_item->boundingRect().width() - (2 * HorizSpacing) - 1);
 		}
 	}
 

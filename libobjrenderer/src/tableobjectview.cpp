@@ -18,16 +18,16 @@
 
 #include "tableobjectview.h"
 
-const QString TableObjectView::TYPE_SEPARATOR=QString(" ");
-const QString TableObjectView::CONSTR_SEPARATOR=QString(" ");
-const QString TableObjectView::TXT_UNIQUE=QString("uq");
-const QString TableObjectView::TXT_EXCLUDE=QString("ex");
-const QString TableObjectView::TXT_CHECK=QString("ck");
-const QString TableObjectView::TXT_PRIMARY_KEY=QString("pk");
-const QString TableObjectView::TXT_FOREIGN_KEY=QString("fk");
-const QString TableObjectView::TXT_NOT_NULL=QString("nn");
-const QString TableObjectView::CONSTR_DELIM_START=QString("«");
-const QString TableObjectView::CONSTR_DELIM_END=QString("»");
+const QString TableObjectView::TypeSeparator=QString(" ");
+const QString TableObjectView::ConstrSeparator=QString(" ");
+const QString TableObjectView::TextUnique=QString("uq");
+const QString TableObjectView::TextExclude=QString("ex");
+const QString TableObjectView::TextCheck=QString("ck");
+const QString TableObjectView::TextPrimaryKey=QString("pk");
+const QString TableObjectView::TextForeignKey=QString("fk");
+const QString TableObjectView::TextNotNull=QString("nn");
+const QString TableObjectView::ConstrDelimStart=QString("«");
+const QString TableObjectView::ConstrDelimEnd=QString("»");
 
 TableObjectView::TableObjectView(TableObject *object) : BaseObjectView(object)
 {
@@ -57,7 +57,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 	ObjectType obj_type=BASE_OBJECT;
 	Column *column=dynamic_cast<Column *>(this->getSourceObject());
 	bool ellipse_desc=false;
-	double factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE) * BaseObjectView::getScreenDpiFactor();
+	double factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DefaultFontSize) * BaseObjectView::getScreenDpiFactor();
 	QPen pen;
 
 	//Based upon the source object type the descriptor is allocated
@@ -105,7 +105,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 			desc->setBrush(this->getFillStyle(attrib));
 
 			pen = this->getBorderStyle(attrib);
-			pen.setWidthF(OBJ_BORDER_WIDTH * 1.15f);
+			pen.setWidthF(ObjectBorderWidth * 1.15f);
 			desc->setPen(pen);
 		}
 		else
@@ -146,7 +146,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 			desc->setBrush(this->getFillStyle(attrib));
 
 			pen = this->getBorderStyle(attrib);
-			pen.setWidthF(OBJ_BORDER_WIDTH * 1.15f);
+			pen.setWidthF(ObjectBorderWidth * 1.15f);
 			desc->setPen(pen);
 		}
 	}
@@ -168,7 +168,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 		desc->setBrush(this->getFillStyle(tab_obj->getSchemaName()));
 
 		pen = this->getBorderStyle(tab_obj->getSchemaName());
-		pen.setWidthF(OBJ_BORDER_WIDTH * 1.15f);
+		pen.setWidthF(ObjectBorderWidth * 1.15f);
 		desc->setPen(pen);
 	}
 	else
@@ -179,7 +179,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 		desc->setBrush(this->getFillStyle(ParsersAttributes::REFERENCE));
 
 		pen = this->getBorderStyle(ParsersAttributes::REFERENCE);
-		pen.setWidthF(OBJ_BORDER_WIDTH * 1.15f);
+		pen.setWidthF(ObjectBorderWidth * 1.15f);
 		desc->setPen(pen);
 	}
 }
@@ -207,22 +207,22 @@ void TableObjectView::configureObject(void)
 
 			str_constr=this->getConstraintString(column);
 
-			if(str_constr.indexOf(TXT_PRIMARY_KEY)>=0)
+			if(str_constr.indexOf(TextPrimaryKey)>=0)
 			{
 				fmt=font_config[ParsersAttributes::PK_COLUMN];
 				constr_type=ConstraintType::primary_key;
 			}
-			else if(str_constr.indexOf(TXT_FOREIGN_KEY)>=0)
+			else if(str_constr.indexOf(TextForeignKey)>=0)
 			{
 				fmt=font_config[ParsersAttributes::FK_COLUMN];
 				constr_type=ConstraintType::foreign_key;
 			}
-			else if(str_constr.indexOf(TXT_UNIQUE)>=0)
+			else if(str_constr.indexOf(TextUnique)>=0)
 			{
 				fmt=font_config[ParsersAttributes::UQ_COLUMN];
 				constr_type=ConstraintType::unique;
 			}
-			else if(str_constr.indexOf(TXT_NOT_NULL)>=0)
+			else if(str_constr.indexOf(TextNotNull)>=0)
 				fmt=font_config[ParsersAttributes::NN_COLUMN];
 			else
 				fmt=font_config[ParsersAttributes::COLUMN];
@@ -232,19 +232,19 @@ void TableObjectView::configureObject(void)
 			else if(column->isProtected())
 				fmt=font_config[ParsersAttributes::PROT_COLUMN];
 
-			if(str_constr.indexOf(TXT_PRIMARY_KEY)>=0)
+			if(str_constr.indexOf(TextPrimaryKey)>=0)
 				atribs_tip+=(~ConstraintType(ConstraintType::primary_key)).toLower() + QString(", ");
 
-			if(str_constr.indexOf(TXT_FOREIGN_KEY)>=0)
+			if(str_constr.indexOf(TextForeignKey)>=0)
 				atribs_tip+=(~ConstraintType(ConstraintType::foreign_key)).toLower() + QString(", ");
 
-			if(str_constr.indexOf(TXT_UNIQUE)>=0)
+			if(str_constr.indexOf(TextUnique)>=0)
 				atribs_tip+=(~ConstraintType(ConstraintType::unique)).toLower() + QString(", ");
 
-			if(str_constr.indexOf(TXT_EXCLUDE)>=0)
+			if(str_constr.indexOf(TextExclude)>=0)
 				atribs_tip+=(~ConstraintType(ConstraintType::exclude)).toLower() + QString(", ");
 
-			if(str_constr.indexOf(TXT_NOT_NULL)>=0)
+			if(str_constr.indexOf(TextNotNull)>=0)
 				atribs_tip+=QString("not null");
 		}
 		else
@@ -260,8 +260,8 @@ void TableObjectView::configureObject(void)
 		configureDescriptor(constr_type);
 
 		//Set the descriptor position as the first item on the view
-		descriptor->setPos(HORIZ_SPACING, 1);
-		px=descriptor->pos().x() + descriptor->boundingRect().width() + (2 * HORIZ_SPACING);
+		descriptor->setPos(HorizSpacing, 1);
+		px=descriptor->pos().x() + descriptor->boundingRect().width() + (2 * HorizSpacing);
 
 		//Configuring the labels as follow: [object name] [type] [constraints]
 		lables[0]->setText(compact_view && !tab_obj->getAlias().isEmpty() ? tab_obj->getAlias() : tab_obj->getName());
@@ -284,15 +284,15 @@ void TableObjectView::configureObject(void)
 		else
 		{
 			if(column)
-				lables[1]->setText(TYPE_SEPARATOR + (*column->getType()));
+				lables[1]->setText(TypeSeparator + (*column->getType()));
 			else
-				lables[1]->setText(TYPE_SEPARATOR + tab_obj->getSchemaName());
+				lables[1]->setText(TypeSeparator + tab_obj->getSchemaName());
 		}
 
 		lables[1]->setFont(fmt.font());
 		lables[1]->setBrush(fmt.foreground());
 		lables[1]->setPos(px, 0);
-		px+=lables[1]->boundingRect().width() + (3 * HORIZ_SPACING);
+		px+=lables[1]->boundingRect().width() + (3 * HorizSpacing);
 
 		//Configuring the constraints label
 		fmt=font_config[ParsersAttributes::CONSTRAINTS];
@@ -313,7 +313,7 @@ void TableObjectView::configureObject(void)
 				str_constr+=(~rule->getExecutionType()).mid(0,1);
 				atribs_tip+=(~rule->getExecutionType()).toLower() + QString(", ");
 
-				str_constr+=CONSTR_SEPARATOR;
+				str_constr+=ConstrSeparator;
 
 				str_constr+=(~rule->getEventType()).mid(3,1);
 				atribs_tip+=(~rule->getEventType()).toLower();
@@ -322,7 +322,7 @@ void TableObjectView::configureObject(void)
 			else if(trigger)
 			{
 				str_constr+=(~trigger->getFiringType()).mid(0,1);
-				str_constr+=CONSTR_SEPARATOR;
+				str_constr+=ConstrSeparator;
 
 				atribs_tip+=(~trigger->getFiringType()).toLower() + QString(", ");
 
@@ -367,15 +367,15 @@ void TableObjectView::configureObject(void)
 				ConstraintType type = constr->getConstraintType();
 
 				if(type == ConstraintType::primary_key)
-					str_constr = TXT_PRIMARY_KEY;
+					str_constr = TextPrimaryKey;
 				else if(type == ConstraintType::foreign_key)
-					str_constr = TXT_FOREIGN_KEY;
+					str_constr = TextForeignKey;
 				else if(type == ConstraintType::unique)
-					str_constr = TXT_UNIQUE;
+					str_constr = TextUnique;
 				else if(type == ConstraintType::exclude)
-					str_constr = TXT_EXCLUDE;
+					str_constr = TextExclude;
 				else if(type == ConstraintType::check)
-					str_constr = TXT_CHECK;
+					str_constr = TextCheck;
 
 				atribs_tip = (~type).toLower();
 			}
@@ -398,9 +398,9 @@ void TableObjectView::configureObject(void)
 			}
 
 			if(!str_constr.isEmpty())
-				lables[2]->setText(CONSTR_DELIM_START + QString(" ") +
+				lables[2]->setText(ConstrDelimStart + QString(" ") +
 								   str_constr + QString(" ") +
-								   CONSTR_DELIM_END);
+								   ConstrDelimEnd);
 		}
 
 		if(!atribs_tip.isEmpty())
@@ -408,8 +408,8 @@ void TableObjectView::configureObject(void)
 			if(atribs_tip.at(atribs_tip.length()-1)==' ')
 				atribs_tip.remove(atribs_tip.length()-2, 2);
 
-			atribs_tip=QString("\n") + CONSTR_DELIM_START +
-					   QString(" ") + atribs_tip + QString(" ") + CONSTR_DELIM_END;
+			atribs_tip=QString("\n") + ConstrDelimStart +
+					   QString(" ") + atribs_tip + QString(" ") + ConstrDelimEnd;
 
 		}
 
@@ -421,7 +421,7 @@ void TableObjectView::configureObject(void)
 		lables[2]->setPos(px, 0);
 
 		//Calculating the object bounding rect that is composed by the join of the all object's child dimensions
-		descriptor->setPos(HORIZ_SPACING, lables[0]->boundingRect().center().y() - descriptor->boundingRect().center().y());
+		descriptor->setPos(HorizSpacing, lables[0]->boundingRect().center().y() - descriptor->boundingRect().center().y());
 		bounding_rect.setTopLeft(QPointF(descriptor->boundingRect().left(), lables[0]->boundingRect().top()));
 
 		//Special case: when the constraint label has no text use the type label dimension
@@ -441,8 +441,8 @@ void TableObjectView::configureObject(Reference reference)
 	QString str_aux;
 
 	configureDescriptor();
-	descriptor->setPos(HORIZ_SPACING, 1);
-	px=descriptor->pos().x() + descriptor->boundingRect().width() + (2 * HORIZ_SPACING);
+	descriptor->setPos(HorizSpacing, 1);
+	px=descriptor->pos().x() + descriptor->boundingRect().width() + (2 * HorizSpacing);
 
 	if(reference.getReferenceType()==Reference::REFER_COLUMN)
 	{
@@ -515,7 +515,7 @@ void TableObjectView::configureObject(Reference reference)
 	else
 		lables[2]->setText(QString());
 
-	descriptor->setPos(HORIZ_SPACING, lables[0]->boundingRect().center().y() - descriptor->boundingRect().center().y());
+	descriptor->setPos(HorizSpacing, lables[0]->boundingRect().center().y() - descriptor->boundingRect().center().y());
 	bounding_rect.setTopLeft(QPointF(descriptor->pos().x(), lables[0]->pos().y()));
 
 	if(lables[2]->text().isEmpty())
@@ -571,26 +571,26 @@ QString TableObjectView::getConstraintString(Column *column)
 				constr_type=constr->getConstraintType();
 
 				if(constr_type==ConstraintType::primary_key)
-					str_constr=TXT_PRIMARY_KEY + CONSTR_SEPARATOR + str_constr;
+					str_constr=TextPrimaryKey + ConstrSeparator + str_constr;
 
-				if(constr_type==ConstraintType::foreign_key && str_constr.indexOf(TXT_FOREIGN_KEY) < 0)
-					str_constr+=TXT_FOREIGN_KEY + CONSTR_SEPARATOR;
+				if(constr_type==ConstraintType::foreign_key && str_constr.indexOf(TextForeignKey) < 0)
+					str_constr+=TextForeignKey + ConstrSeparator;
 
-				if(constr_type==ConstraintType::unique && str_constr.indexOf(TXT_UNIQUE) < 0)
-					str_constr+=TXT_UNIQUE + CONSTR_SEPARATOR;
+				if(constr_type==ConstraintType::unique && str_constr.indexOf(TextUnique) < 0)
+					str_constr+=TextUnique + ConstrSeparator;
 
-				if(constr_type==ConstraintType::exclude && str_constr.indexOf(TXT_EXCLUDE) < 0)
-					str_constr+=TXT_EXCLUDE + CONSTR_SEPARATOR;
+				if(constr_type==ConstraintType::exclude && str_constr.indexOf(TextExclude) < 0)
+					str_constr+=TextExclude + ConstrSeparator;
 			}
 		}
 
-		if(column->isNotNull() && !str_constr.contains(TXT_PRIMARY_KEY))
-			str_constr+=TXT_NOT_NULL + CONSTR_SEPARATOR;
+		if(column->isNotNull() && !str_constr.contains(TextPrimaryKey))
+			str_constr+=TextNotNull + ConstrSeparator;
 
 		if(!str_constr.isEmpty())
-			str_constr= CONSTR_DELIM_START +
-						CONSTR_SEPARATOR + str_constr +
-						CONSTR_DELIM_END;
+			str_constr= ConstrDelimStart +
+						ConstrSeparator + str_constr +
+						ConstrDelimEnd;
 
 		return(str_constr);
 	}

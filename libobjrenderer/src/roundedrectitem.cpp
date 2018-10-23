@@ -21,7 +21,7 @@
 RoundedRectItem::RoundedRectItem(QGraphicsItem *parent) :  QGraphicsRectItem(parent)
 {
 	radius=5;
-	corners=ALL_CORNERS;
+	corners=AllCorners;
 }
 
 void RoundedRectItem::setBorderRadius(double radius)
@@ -37,8 +37,8 @@ double RoundedRectItem::getBorderRadius(void)
 
 void RoundedRectItem::setRoundedCorners(unsigned corners)
 {
-	if(corners > ALL_CORNERS)
-		corners=ALL_CORNERS;
+	if(corners > AllCorners)
+		corners=AllCorners;
 
 	this->corners=corners;
 	createPolygon();
@@ -65,9 +65,9 @@ void RoundedRectItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
 	painter->setPen(this->pen());
 	painter->setBrush(this->brush());
 
-	if(corners==NO_CORNERS)
+	if(corners==NoCorners)
 		painter->drawRect(this->rect());
-	else if(corners==ALL_CORNERS)
+	else if(corners==AllCorners)
 		painter->drawRoundedRect(this->rect(), radius, radius);
 	else
 		painter->drawPolygon(polygon);
@@ -77,26 +77,26 @@ void RoundedRectItem::createPolygon(void)
 {
 	polygon.clear();
 
-	if(corners!=NO_CORNERS && corners!=ALL_CORNERS && this->rect().isValid())
+	if(corners!=NoCorners && corners!=AllCorners && this->rect().isValid())
 	{
 		QRectF rect=this->rect();
 
-		if(isCornerRounded(TOPLEFT_CORNER))
+		if(isCornerRounded(TopLeftCorner))
 			polygon << calculatePoints(rect.topLeft() + QPointF(radius, radius), 180, 90);
 		else
 			polygon.append(this->rect().topLeft());
 
-		if(isCornerRounded(TOPRIGHT_CORNER))
+		if(isCornerRounded(TopRightCorner))
 			polygon << calculatePoints(this->rect().topRight() + QPointF(-radius, radius), 90, 0);
 		else
 			polygon.append(this->rect().topRight());
 
-		if(isCornerRounded(BOTTOMRIGHT_CORNER))
+		if(isCornerRounded(BottomRightCorner))
 			polygon << calculatePoints(this->rect().bottomRight() + QPointF(-radius, -radius), 360, 270);
 		else
 			polygon.append(this->rect().bottomRight());
 
-		if(isCornerRounded(BOTTOMLEFT_CORNER))
+		if(isCornerRounded(BottomLeftCorner))
 			polygon << calculatePoints(this->rect().bottomLeft() + QPointF(radius, -radius), 270, 180);
 		else
 			polygon.append(this->rect().bottomLeft());
