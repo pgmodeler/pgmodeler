@@ -19,7 +19,7 @@
 #include "rolewidget.h"
 #include "modelobjectswidget.h"
 
-RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
+RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjRole)
 {
 	ObjectsTableWidget *obj_tab=nullptr;
 	QGridLayout *grid=nullptr;
@@ -28,7 +28,7 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 	unsigned i;
 
 	Ui_RoleWidget::setupUi(this);
-	configureFormLayout(role_grid, OBJ_ROLE);
+	configureFormLayout(role_grid, ObjRole);
 
 	object_selection_wgt=new ModelObjectsWidget(true);
 
@@ -102,7 +102,7 @@ void RoleWidget::configureRoleSelection(void)
 
 void RoleWidget::selectMemberRole(void)
 {
-	object_selection_wgt->setObjectVisible(OBJ_ROLE, true);
+	object_selection_wgt->setObjectVisible(ObjRole, true);
 	object_selection_wgt->setModel(this->model);
 	object_selection_wgt->show();
 }

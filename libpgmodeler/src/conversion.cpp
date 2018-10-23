@@ -20,7 +20,7 @@
 
 Conversion::Conversion(void)
 {
-	obj_type=OBJ_CONVERSION;
+	obj_type=ObjConversion;
 	conversion_func=nullptr;
 	is_default=false;
 	attributes[ParsersAttributes::DEFAULT]=QString();
@@ -38,7 +38,7 @@ void Conversion::setEncoding(unsigned encoding_idx, EncodingType encoding_type)
 		if((~encoding_type).isEmpty())
 			throw Exception(Exception::getErrorMessage(AsgNullTypeObject)
 							.arg(this->getName())
-							.arg(BaseObject::getTypeName(OBJ_CONVERSION)),
+							.arg(BaseObject::getTypeName(ObjConversion)),
 							AsgNullTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Assigns the encoding to the conversion in the specified index
@@ -55,14 +55,14 @@ void Conversion::setConversionFunction(Function *conv_func)
 	if(!conv_func)
 		throw Exception(Exception::getErrorMessage(AsgNotAllocatedFunction)
 						.arg(this->getName(true))
-						.arg(BaseObject::getTypeName(OBJ_CONVERSION)),
+						.arg(BaseObject::getTypeName(ObjConversion)),
 						AsgNotAllocatedFunction,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	/* The conversion function must have 5 parameters if it's not the case
 		raises an error. */
 	else if(conv_func->getParameterCount()!=5)
 		throw Exception(Exception::getErrorMessage(AsgFunctionInvalidParamCount)
 						.arg(this->getName(true))
-						.arg(BaseObject::getTypeName(OBJ_CONVERSION)),
+						.arg(BaseObject::getTypeName(ObjConversion)),
 						AsgFunctionInvalidParamCount,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	/* Raises an error if the function parameters does not following the type order:
 		interger, integer, cstring, internal, integer */
@@ -73,13 +73,13 @@ void Conversion::setConversionFunction(Function *conv_func)
 			conv_func->getParameter(4).getType()!=QString("integer"))
 		throw Exception(Exception::getErrorMessage(AsgFunctionInvalidParameters)
 						.arg(this->getName(true))
-						.arg(BaseObject::getTypeName(OBJ_CONVERSION)),
+						.arg(BaseObject::getTypeName(ObjConversion)),
 						AsgFunctionInvalidParameters,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the conversion function return type is not 'void'
 	else if(conv_func->getReturnType()!=QString("void"))
 		throw Exception(Exception::getErrorMessage(AsgFunctionInvalidReturnType)
 						.arg(this->getName(true))
-						.arg(BaseObject::getTypeName(OBJ_CONVERSION)),
+						.arg(BaseObject::getTypeName(ObjConversion)),
 						AsgFunctionInvalidReturnType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(conversion_func != conv_func);

@@ -18,10 +18,10 @@
 
 #include "tablespacewidget.h"
 
-TablespaceWidget::TablespaceWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLESPACE)
+TablespaceWidget::TablespaceWidget(QWidget *parent): BaseObjectWidget(parent, ObjTablespace)
 {
 	Ui_TablespaceWidget::setupUi(this);
-	configureFormLayout(tablespace_grid, OBJ_TABLESPACE);
+	configureFormLayout(tablespace_grid, ObjTablespace);
 
 	tablespace_grid->addItem(new QSpacerItem(10,0,QSizePolicy::Minimum,QSizePolicy::Expanding), tablespace_grid->count(), 0);
 

@@ -106,7 +106,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 						}
 					}
 
-					if(aux_obj && (aux_obj->getObjectType()==OBJ_VIEW || aux_obj->getObjectType()==OBJ_TABLE))
+					if(aux_obj && (aux_obj->getObjectType()==ObjView || aux_obj->getObjectType()==ObjTable))
 					{
 						vector<BaseRelationship *> base_rels=db_model->getRelationships(dynamic_cast<BaseTable *>(aux_obj));
 						for(auto &rel : base_rels)
@@ -143,8 +143,8 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 
 			/* If the last element of the referrer objects is a table or view the
 			info object itself need to be renamed since tables and views will not be renamed */
-			bool rename_obj=(refs.back()->getObjectType()==OBJ_TABLE ||
-							 refs.back()->getObjectType()==OBJ_VIEW);
+			bool rename_obj=(refs.back()->getObjectType()==ObjTable ||
+							 refs.back()->getObjectType()==ObjView);
 
 			if(rename_obj)
 			{
@@ -263,11 +263,11 @@ void ModelValidationHelper::validateModel(void)
 
 	try
 	{
-		ObjectType types[]={ OBJ_ROLE, OBJ_TABLESPACE, OBJ_SCHEMA, OBJ_LANGUAGE, OBJ_FUNCTION,
-							 OBJ_TYPE, OBJ_DOMAIN, OBJ_SEQUENCE, OBJ_OPERATOR, OBJ_OPFAMILY,
-							 OBJ_OPCLASS, OBJ_COLLATION, OBJ_TABLE, OBJ_EXTENSION, OBJ_VIEW, OBJ_RELATIONSHIP },
-				aux_types[]={ OBJ_TABLE, OBJ_VIEW },
-				tab_obj_types[]={ OBJ_CONSTRAINT, OBJ_INDEX },
+		ObjectType types[]={ ObjRole, ObjTablespace, ObjSchema, ObjLanguage, ObjFunction,
+							 ObjType, ObjDomain, ObjSequence, ObjOperator, ObjOpFamily,
+							 ObjOpClass, ObjCollation, ObjTable, ObjExtension, ObjView, ObjRelationship },
+				aux_types[]={ ObjTable, ObjView },
+				tab_obj_types[]={ ObjConstraint, ObjIndex },
 				obj_type;
 		unsigned i, i1, cnt, aux_cnt=sizeof(aux_types)/sizeof(ObjectType),
 				count=sizeof(types)/sizeof(ObjectType), count1=sizeof(tab_obj_types)/sizeof(ObjectType);
@@ -282,7 +282,7 @@ void ModelValidationHelper::validateModel(void)
 		map<QString, vector<BaseObject *> > dup_objects;
 		map<QString, vector<BaseObject *> >::iterator mitr;
 		QString name, signal_msg=QString("`%1' (%2)");
-		bool postgis_exists = db_model->getObjectIndex(QString("postgis"), OBJ_EXTENSION) >= 0;
+		bool postgis_exists = db_model->getObjectIndex(QString("postgis"), ObjExtension) >= 0;
 
 		warn_count=error_count=progress=0;
 		val_infos.clear();
@@ -309,7 +309,7 @@ void ModelValidationHelper::validateModel(void)
 
 					/* Special validation case: For generalization and copy relationships validates the ids of participant tables.
 		   * Reference table cannot own an id greater thant receiver table */
-					if(obj_type==OBJ_RELATIONSHIP)
+					if(obj_type==ObjRelationship)
 					{
 						rel=dynamic_cast<Relationship *>(object);
 						if(rel->getRelationshipType()==Relationship::RELATIONSHIP_GEN ||
@@ -362,9 +362,9 @@ void ModelValidationHelper::validateModel(void)
 						/* Validating a special object. The validation made here is to check if the special object
 				(constraint/index/trigger/view) references a column added by a relationship and
 				 that relationship is being created after the creation of the special object */
-						if(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW /* || obj_type==OBJ_SEQUENCE */)
+						if(obj_type==ObjTable || obj_type==ObjView /* || obj_type==ObjSequence */)
 						{
-							vector<ObjectType> tab_aux_types={ OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_INDEX };
+							vector<ObjectType> tab_aux_types={ ObjConstraint, ObjTrigger, ObjIndex };
 							vector<TableObject *> *tab_objs;
 							vector<Column *> ref_cols;
 							vector<BaseObject *> rels;
@@ -391,14 +391,14 @@ void ModelValidationHelper::validateModel(void)
 
 										if(!tab_obj->isAddedByRelationship())
 										{
-											if(obj_tp==OBJ_CONSTRAINT)
+											if(obj_tp==ObjConstraint)
 											{
 												constr=dynamic_cast<Constraint *>(tab_obj);
 
 												if(constr->getConstraintType()!=ConstraintType::primary_key)
 													ref_cols=constr->getRelationshipAddedColumns();
 											}
-											else if(obj_tp==OBJ_TRIGGER)
+											else if(obj_tp==ObjTrigger)
 												ref_cols=dynamic_cast<Trigger *>(tab_obj)->getRelationshipAddedColumns();
 											else
 												ref_cols=dynamic_cast<Index *>(tab_obj)->getRelationshipAddedColumns();
@@ -445,7 +445,7 @@ void ModelValidationHelper::validateModel(void)
 
 		/* Step 2: Validating name conflitcs between primary keys, unique keys, exclude constraints
 	  and indexs of all tables/views. The table and view names are checked too. */
-		obj_list=db_model->getObjectList(OBJ_TABLE);
+		obj_list=db_model->getObjectList(ObjTable);
 		itr=obj_list->begin();
 
 		//Searching the model's tables and gathering all the constraints and index
@@ -520,7 +520,7 @@ void ModelValidationHelper::validateModel(void)
 		// Step 3: Checking if columns of any table is using GiS data types and the postgis extension is not created.
 		if(!postgis_exists)
 		{
-			obj_list=db_model->getObjectList(OBJ_TABLE);
+			obj_list=db_model->getObjectList(ObjTable);
 			itr=obj_list->begin();
 			i=0;
 
@@ -529,7 +529,7 @@ void ModelValidationHelper::validateModel(void)
 				table = dynamic_cast<Table *>(*itr);
 				itr++;
 
-				for(auto &obj : *table->getObjectList(OBJ_COLUMN))
+				for(auto &obj : *table->getObjectList(ObjColumn))
 				{
 					col = dynamic_cast<Column *>(obj);
 
@@ -547,8 +547,8 @@ void ModelValidationHelper::validateModel(void)
 	   only when there is no validation infos generated because for each broken relationship there is the need to do a revalidation of all relationships */
 		if(val_infos.empty())
 		{
-			obj_list=db_model->getObjectList(OBJ_RELATIONSHIP);
-			itr=db_model->getObjectList(OBJ_RELATIONSHIP)->begin();
+			obj_list=db_model->getObjectList(ObjRelationship);
+			itr=db_model->getObjectList(ObjRelationship)->begin();
 
 			while(itr!=obj_list->end() && !valid_canceled)
 			{

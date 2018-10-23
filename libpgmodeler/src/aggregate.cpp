@@ -20,7 +20,7 @@
 
 Aggregate::Aggregate(void)
 {
-	obj_type=OBJ_AGGREGATE;
+	obj_type=ObjAggregate;
 	functions[0]=functions[1]=nullptr;
 	sort_operator=nullptr;
 	attributes[ParsersAttributes::TYPES]=QString();
@@ -42,7 +42,7 @@ void Aggregate::setFunction(unsigned func_idx, Function *func)
 	if(!isValidFunction(func_idx, func))
 		throw Exception(Exception::getErrorMessage(AsgFunctionInvalidConfiguration)
 						.arg(this->getName())
-						.arg(BaseObject::getTypeName(OBJ_AGGREGATE)),
+						.arg(BaseObject::getTypeName(ObjAggregate)),
 						AsgFunctionInvalidConfiguration,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(functions[func_idx]!=func);

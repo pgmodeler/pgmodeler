@@ -161,7 +161,7 @@ void BaseObjectView::setSourceObject(BaseObject *object)
 			this->addToGroup(pos_info_txt);
 		}
 
-		if(!sql_disabled_box && object->getObjectType()!=OBJ_TEXTBOX)
+		if(!sql_disabled_box && object->getObjectType()!=ObjTextbox)
 		{
 			sql_disabled_txt=new QGraphicsSimpleTextItem;
 			sql_disabled_box=new QGraphicsRectItem;

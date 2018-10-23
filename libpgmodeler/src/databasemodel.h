@@ -270,7 +270,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Sets the sql prepeding at beginning of entire model definition
 		void setPrependAtBOD(bool value);
 
-		void setDefaultObject(BaseObject *object, ObjectType obj_type=BASE_OBJECT);
+		void setDefaultObject(BaseObject *object, ObjectType obj_type=ObjBaseObject);
 
 		void setIsTemplate(bool value);
 

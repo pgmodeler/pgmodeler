@@ -79,7 +79,7 @@ class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWi
 		static QStringList getSnippetsIdsByObject(ObjectType obj_type);
 
 		/*! \brief Returns a vector of snippets' attributes filtering by the object type in which they apply.
-		There's a special group for general purpose snippets that can be retrieved using BASE_OBJECT type.
+		There's a special group for general purpose snippets that can be retrieved using ObjBaseObject type.
 		If there is no snippets related to the type an empty vector is returned. */
 		static vector<attribs_map> getSnippetsByObject(ObjectType obj_type);
 

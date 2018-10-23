@@ -90,7 +90,7 @@ namespace PgModelerUiNS {
 
 	void disableObjectSQL(BaseObject *object, bool disable)
 	{
-		if(object && object->getObjectType()!=BASE_RELATIONSHIP)
+		if(object && object->getObjectType()!=ObjBaseRelationship)
 		{
 			Messagebox msgbox;
 			ObjectType obj_type=object->getObjectType();
@@ -104,7 +104,7 @@ namespace PgModelerUiNS {
 
 			object->setSQLDisabled(disable);
 
-			if(obj_type!=OBJ_DATABASE && curr_val!=disable)
+			if(obj_type!=ObjDatabase && curr_val!=disable)
 			{
 				msgbox.show(QString(QT_TR_NOOP("Do you want to apply the <strong>SQL %1 status</strong> to the object's references too? This will avoid problems when exporting or validating the model.")).arg(disable ? QT_TR_NOOP("disabling") : QT_TR_NOOP("enabling")),
 							Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
@@ -115,10 +115,10 @@ namespace PgModelerUiNS {
 
 			/* Special case for tables. When disable the code there is the need to disable constraints
 	   codes when the code of parent table is disabled too in order to avoid export errors */
-			if(object->getObjectType()==OBJ_TABLE)
+			if(object->getObjectType()==ObjTable)
 			{
 				Constraint *constr = nullptr;
-				vector<TableObject *> *objects=dynamic_cast<Table *>(object)->getObjectList(OBJ_CONSTRAINT);
+				vector<TableObject *> *objects=dynamic_cast<Table *>(object)->getObjectList(ObjConstraint);
 
 				for(auto &obj : (*objects))
 				{
@@ -150,7 +150,7 @@ namespace PgModelerUiNS {
 				tab_obj=dynamic_cast<TableObject *>(refs.back());
 
 				//If the object is a relationship added does not do anything since the relationship itself will be disabled
-				if(refs.back()->getObjectType()!=BASE_RELATIONSHIP &&
+				if(refs.back()->getObjectType()!=ObjBaseRelationship &&
 						(!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship())))
 				{
 					refs.back()->setSQLDisabled(object->isSQLDisabled());

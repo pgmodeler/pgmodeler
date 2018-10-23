@@ -20,7 +20,7 @@
 
 Schema::Schema(void)
 {
-	obj_type=OBJ_SCHEMA;
+	obj_type=ObjSchema;
 	fill_color=QColor(225,225,225, 80);
 	rect_visible=false;
 	attributes[ParsersAttributes::FILL_COLOR]=QString();
@@ -34,7 +34,7 @@ void Schema::setName(const QString &name)
 	if(name.mid(0,3)==QString("pg_"))
 		throw Exception(Exception::getErrorMessage(AsgReservedName)
 						.arg(this->getName())
-						.arg(BaseObject::getTypeName(OBJ_SCHEMA)),
+						.arg(BaseObject::getTypeName(ObjSchema)),
 						AsgReservedName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObject::setName(name);

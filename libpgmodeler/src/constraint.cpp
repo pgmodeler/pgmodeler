@@ -21,7 +21,7 @@
 Constraint::Constraint(void)
 {
 	ref_table=nullptr;
-	obj_type=OBJ_CONSTRAINT;
+	obj_type=ObjConstraint;
 	deferrable=false;
 	no_inherit=false;
 	fill_factor=0;
@@ -149,7 +149,7 @@ void Constraint::addColumn(Column *column, unsigned col_type)
 	if(!column)
 		throw Exception(Exception::getErrorMessage(ErrorType::AsgNotAllocatedColumn)
 						.arg(this->getName())
-						.arg(BaseObject::getTypeName(OBJ_CONSTRAINT)),
+						.arg(BaseObject::getTypeName(ObjConstraint)),
 						ErrorType::AsgNotAllocatedColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(constr_type!=ConstraintType::check)
 	{

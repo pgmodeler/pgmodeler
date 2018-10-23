@@ -23,12 +23,12 @@
 
 const QString TableDataWidget::PLACEHOLDER_COLUMN=QString("$placeholder$");
 
-TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, BASE_OBJECT)
+TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, ObjBaseObject)
 {
 	Ui_TableDataWidget::setupUi(this);
-	configureFormLayout(tabledata_grid, BASE_OBJECT);
+	configureFormLayout(tabledata_grid, ObjBaseObject);
 
-	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(OBJ_TABLE)));
+	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(ObjTable)));
 
 	comment_lbl->setVisible(false);
 	comment_edt->setVisible(false);
@@ -355,7 +355,7 @@ void TableDataWidget::populateDataGrid(const QString &data)
 	}
 	else
 	{
-		for(auto object : *table->getObjectList(OBJ_COLUMN))
+		for(auto object : *table->getObjectList(ObjColumn))
 			columns.push_back(object->getName());
 	}
 
@@ -434,7 +434,7 @@ void TableDataWidget::configureColumnNamesMenu(void)
 
 	col_names_menu.clear();
 
-	for(auto object : *table->getObjectList(OBJ_COLUMN))
+	for(auto object : *table->getObjectList(ObjColumn))
 		col_names.push_back(object->getName());
 
 	for(int col = 0; col < data_tbw->columnCount(); col++)

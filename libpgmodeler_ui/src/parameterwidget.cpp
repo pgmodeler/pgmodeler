@@ -18,7 +18,7 @@
 
 #include "parameterwidget.h"
 
-ParameterWidget::ParameterWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_PARAMETER)
+ParameterWidget::ParameterWidget(QWidget *parent): BaseObjectWidget(parent, ObjParameter)
 {
 	try
 	{
@@ -41,7 +41,7 @@ ParameterWidget::ParameterWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		parameter_grid->addWidget(data_type,2, 0, 1, 4);
 		parameter_grid->addItem(spacer, parameter_grid->count()+1,0);
 
-		configureFormLayout(parameter_grid, OBJ_PARAMETER);
+		configureFormLayout(parameter_grid, ObjParameter);
 		connect(param_variadic_chk, SIGNAL(toggled(bool)), param_in_chk, SLOT(setDisabled(bool)));
 		connect(param_variadic_chk, SIGNAL(toggled(bool)), param_out_chk, SLOT(setDisabled(bool)));
 		connect(param_in_chk, SIGNAL(toggled(bool)), this, SLOT(enableVariadic(void)));

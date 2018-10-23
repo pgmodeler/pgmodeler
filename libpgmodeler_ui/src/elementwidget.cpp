@@ -32,9 +32,9 @@ ElementWidget::ElementWidget(QWidget *parent) : QWidget(parent)
 		elem_expr_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
 		parent_obj=nullptr;
-		op_class_sel=new ObjectSelectorWidget(OBJ_OPCLASS, true, this);
-		collation_sel=new ObjectSelectorWidget(OBJ_COLLATION, true, this);
-		operator_sel=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);
+		op_class_sel=new ObjectSelectorWidget(ObjOpClass, true, this);
+		collation_sel=new ObjectSelectorWidget(ObjCollation, true, this);
+		operator_sel=new ObjectSelectorWidget(ObjOperator, true, this);
 
 		element_grid->addWidget(collation_sel, 3,1,1,2);
 		element_grid->addWidget(op_class_sel, 4,1,1,2);
@@ -102,7 +102,7 @@ void ElementWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, 
 		else
 			setPartitionKey(part_key);
 
-		if(parent_obj->getObjectType() == OBJ_TABLE &&
+		if(parent_obj->getObjectType() == ObjTable &&
 			 (column || (!column && elem->getExpression().isEmpty())))
 		{
 			column_rb->setChecked(true);
@@ -136,9 +136,9 @@ void ElementWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj)
 		this->setEnabled(false);
 		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
-	else if(parent_obj->getObjectType()!=OBJ_TABLE &&
-					parent_obj->getObjectType()!=OBJ_VIEW &&
-					parent_obj->getObjectType()!=OBJ_RELATIONSHIP)
+	else if(parent_obj->getObjectType()!=ObjTable &&
+					parent_obj->getObjectType()!=ObjView &&
+					parent_obj->getObjectType()!=ObjRelationship)
 		throw Exception(OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->setEnabled(true);
@@ -148,11 +148,11 @@ void ElementWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj)
 	collation_sel->setModel(model);
 	operator_sel->setModel(model);
 
-	cols_combo_parent->setVisible(parent_obj->getObjectType() == OBJ_TABLE);
-	column_rb->setVisible(parent_obj->getObjectType() == OBJ_TABLE);
-	expression_rb->setChecked(parent_obj->getObjectType() == OBJ_VIEW);
+	cols_combo_parent->setVisible(parent_obj->getObjectType() == ObjTable);
+	column_rb->setVisible(parent_obj->getObjectType() == ObjTable);
+	expression_rb->setChecked(parent_obj->getObjectType() == ObjView);
 
-	if(parent_obj->getObjectType() == OBJ_TABLE)
+	if(parent_obj->getObjectType() == ObjTable)
 		updateColumnsCombo();
 }
 

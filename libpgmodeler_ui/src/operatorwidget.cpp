@@ -18,7 +18,7 @@
 
 #include "operatorwidget.h"
 
-OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_OPERATOR)
+OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, ObjOperator)
 {
 	try
 	{
@@ -50,7 +50,7 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_OP
 		for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICT; i++)
 		{
 			functions_sel[i]=nullptr;
-			functions_sel[i]=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
+			functions_sel[i]=new ObjectSelectorWidget(ObjFunction, true, this);
 
 			if(i!=Operator::FUNC_OPERATOR)
 				grid->addWidget(functions_sel[i],i,1,1,1);
@@ -59,12 +59,12 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_OP
 		for(i=Operator::OPER_COMMUTATOR, i1=3; i <= Operator::OPER_NEGATOR; i++,i1++)
 		{
 			operators_sel[i]=nullptr;
-			operators_sel[i]=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);
+			operators_sel[i]=new ObjectSelectorWidget(ObjOperator, true, this);
 			grid->addWidget(operators_sel[i],i1,1,1,1);
 		}
 
 		operator_grid->addWidget(functions_sel[0],0,1,1,3);
-		configureFormLayout(operator_grid, OBJ_OPERATOR);
+		configureFormLayout(operator_grid, ObjOperator);
 
 		setRequiredField(operator_func_lbl);
 		setRequiredField(functions_sel[0]);

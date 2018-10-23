@@ -37,7 +37,7 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 	expression_hl=new SyntaxHighlighter(expression_txt, false, true);
 	expression_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
-	ref_object_sel=new ObjectSelectorWidget({ OBJ_TABLE, OBJ_COLUMN }, true, this);
+	ref_object_sel=new ObjectSelectorWidget({ ObjTable, ObjColumn }, true, this);
 	ref_object_sel->enableObjectCreation(false);
 	expression_cp=new CodeCompletionWidget(expression_txt, true);
 

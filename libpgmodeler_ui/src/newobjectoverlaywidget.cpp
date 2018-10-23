@@ -29,34 +29,34 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 	int action_idx=0;
 	QList<QAction *> rel_actions=parent->rels_menu->actions();
 	map<QToolButton *, tuple<QString, ObjectType>>  obj_shortcuts={
-																	{ aggregate_tb,    std::make_tuple(trUtf8("A"), OBJ_AGGREGATE)    },
-																	{ cast_tb,         std::make_tuple(trUtf8("G"), OBJ_CAST)         },
-																	{ eventtrigger_tb, std::make_tuple(trUtf8("K"), OBJ_EVENT_TRIGGER)},
-																	{ collation_tb,    std::make_tuple(trUtf8("H"), OBJ_COLLATION)    },
-																	{ conversion_tb,   std::make_tuple(trUtf8("J"), OBJ_CONVERSION)   },
-																	{ domain_tb,       std::make_tuple(trUtf8("D"), OBJ_DOMAIN)       },
-																	{ extension_tb,    std::make_tuple(trUtf8("E"), OBJ_EXTENSION)    },
-																	{ function_tb,     std::make_tuple(trUtf8("F"), OBJ_FUNCTION)     },
-																	{ language_tb,     std::make_tuple(trUtf8("L"), OBJ_LANGUAGE)     },
-																	{ opclass_tb,      std::make_tuple(trUtf8("O"), OBJ_OPCLASS)      },
-																	{ operator_tb,     std::make_tuple(trUtf8("U"), OBJ_OPERATOR)     },
-																	{ opfamily_tb,     std::make_tuple(trUtf8("I"), OBJ_OPFAMILY)     },
-																	{ role_tb,         std::make_tuple(trUtf8("R"), OBJ_ROLE)         },
-																	{ schema_tb,       std::make_tuple(trUtf8("S"), OBJ_SCHEMA)       },
-																	{ sequence_tb,     std::make_tuple(trUtf8("Q"), OBJ_SEQUENCE)     },
-																	{ table_tb,        std::make_tuple(trUtf8("T"), OBJ_TABLE)        },
-																	{ tablespace_tb,   std::make_tuple(trUtf8("P"), OBJ_TABLESPACE)   },
-																	{ textbox_tb,      std::make_tuple(trUtf8("M"), OBJ_TEXTBOX)      },
-																	{ type_tb,         std::make_tuple(trUtf8("Y"), OBJ_TYPE)         },
-																	{ view_tb,         std::make_tuple(trUtf8("W"), OBJ_VIEW)         },
-																	{ tag_tb,          std::make_tuple(trUtf8("9"), OBJ_TAG)          },
-																	{ constraint_tb,   std::make_tuple(trUtf8("Z"), OBJ_CONSTRAINT)   },
-																	{ index_tb,        std::make_tuple(trUtf8("X"), OBJ_INDEX)        },
-																	{ column_tb,       std::make_tuple(trUtf8("C"), OBJ_COLUMN)       },
-																	{ rule_tb,         std::make_tuple(trUtf8("V"), OBJ_RULE)         },
-																	{ trigger_tb,      std::make_tuple(trUtf8("B"), OBJ_TRIGGER)      },
-																	{ policy_tb,       std::make_tuple(trUtf8("9"), OBJ_POLICY)       },
-																	{ genericsql_tb,   std::make_tuple(trUtf8("8"), OBJ_GENERIC_SQL)  } };
+																	{ aggregate_tb,    std::make_tuple(trUtf8("A"), ObjAggregate)    },
+																	{ cast_tb,         std::make_tuple(trUtf8("G"), ObjCast)         },
+																	{ eventtrigger_tb, std::make_tuple(trUtf8("K"), ObjEventTrigger)},
+																	{ collation_tb,    std::make_tuple(trUtf8("H"), ObjCollation)    },
+																	{ conversion_tb,   std::make_tuple(trUtf8("J"), ObjConversion)   },
+																	{ domain_tb,       std::make_tuple(trUtf8("D"), ObjDomain)       },
+																	{ extension_tb,    std::make_tuple(trUtf8("E"), ObjExtension)    },
+																	{ function_tb,     std::make_tuple(trUtf8("F"), ObjFunction)     },
+																	{ language_tb,     std::make_tuple(trUtf8("L"), ObjLanguage)     },
+																	{ opclass_tb,      std::make_tuple(trUtf8("O"), ObjOpClass)      },
+																	{ operator_tb,     std::make_tuple(trUtf8("U"), ObjOperator)     },
+																	{ opfamily_tb,     std::make_tuple(trUtf8("I"), ObjOpFamily)     },
+																	{ role_tb,         std::make_tuple(trUtf8("R"), ObjRole)         },
+																	{ schema_tb,       std::make_tuple(trUtf8("S"), ObjSchema)       },
+																	{ sequence_tb,     std::make_tuple(trUtf8("Q"), ObjSequence)     },
+																	{ table_tb,        std::make_tuple(trUtf8("T"), ObjTable)        },
+																	{ tablespace_tb,   std::make_tuple(trUtf8("P"), ObjTablespace)   },
+																	{ textbox_tb,      std::make_tuple(trUtf8("M"), ObjTextbox)      },
+																	{ type_tb,         std::make_tuple(trUtf8("Y"), ObjType)         },
+																	{ view_tb,         std::make_tuple(trUtf8("W"), ObjView)         },
+																	{ tag_tb,          std::make_tuple(trUtf8("9"), ObjTag)          },
+																	{ constraint_tb,   std::make_tuple(trUtf8("Z"), ObjConstraint)   },
+																	{ index_tb,        std::make_tuple(trUtf8("X"), ObjIndex)        },
+																	{ column_tb,       std::make_tuple(trUtf8("C"), ObjColumn)       },
+																	{ rule_tb,         std::make_tuple(trUtf8("V"), ObjRule)         },
+																	{ trigger_tb,      std::make_tuple(trUtf8("B"), ObjTrigger)      },
+																	{ policy_tb,       std::make_tuple(trUtf8("9"), ObjPolicy)       },
+																	{ genericsql_tb,   std::make_tuple(trUtf8("8"), ObjGenericSQL)  } };
 
 	map<QToolButton *, tuple<QString, int>> rel_shortcuts={ { rel11_tb,  std::make_tuple(trUtf8("1"), 0) },
 															{ rel1n_tb,  std::make_tuple(trUtf8("2"), 1) },
@@ -107,26 +107,26 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 
 void NewObjectOverlayWidget::setSelectedObjects(vector<BaseObject *> &sel_objs)
 {
-	ObjectType obj_type=BASE_OBJECT;
+	ObjectType obj_type=ObjBaseObject;
 
 	if(sel_objs.size()==1)
 		obj_type=sel_objs.at(0)->getObjectType();
 	else if(sel_objs.empty())
-		obj_type=OBJ_DATABASE;
+		obj_type=ObjDatabase;
 
-    db_objs_grp->setVisible(obj_type==OBJ_DATABASE);
-    sch_objs_grp->setVisible(obj_type==OBJ_DATABASE || obj_type==OBJ_SCHEMA);
+    db_objs_grp->setVisible(obj_type==ObjDatabase);
+    sch_objs_grp->setVisible(obj_type==ObjDatabase || obj_type==ObjSchema);
 
-    tab_objs_grp->setVisible(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW || obj_type==OBJ_RELATIONSHIP);
-	column_tb->setDisabled(obj_type==OBJ_VIEW);
-	constraint_tb->setDisabled(obj_type==OBJ_VIEW);
-	index_tb->setVisible(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW);
-	rule_tb->setVisible(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW);
-	trigger_tb->setVisible(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW);
-    policy_tb->setVisible(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW);
-	tab_perms_tb->setVisible(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW);
-    rels_grp->setVisible((sel_objs.size()==1 && sel_objs.at(0)->getObjectType()==OBJ_TABLE) ||
-                         (sel_objs.size()==2 && sel_objs.at(0)->getObjectType()==OBJ_TABLE && sel_objs.at(1)->getObjectType()==OBJ_TABLE));
+    tab_objs_grp->setVisible(obj_type==ObjTable || obj_type==ObjView || obj_type==ObjRelationship);
+	column_tb->setDisabled(obj_type==ObjView);
+	constraint_tb->setDisabled(obj_type==ObjView);
+	index_tb->setVisible(obj_type==ObjTable || obj_type==ObjView);
+	rule_tb->setVisible(obj_type==ObjTable || obj_type==ObjView);
+	trigger_tb->setVisible(obj_type==ObjTable || obj_type==ObjView);
+    policy_tb->setVisible(obj_type==ObjTable || obj_type==ObjView);
+	tab_perms_tb->setVisible(obj_type==ObjTable || obj_type==ObjView);
+    rels_grp->setVisible((sel_objs.size()==1 && sel_objs.at(0)->getObjectType()==ObjTable) ||
+                         (sel_objs.size()==2 && sel_objs.at(0)->getObjectType()==ObjTable && sel_objs.at(1)->getObjectType()==ObjTable));
 
 	overlay_frm->adjustSize();
 	this->adjustSize();

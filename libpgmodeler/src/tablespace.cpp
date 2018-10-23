@@ -22,7 +22,7 @@ unsigned Tablespace::tabspace_id=1000;
 
 Tablespace::Tablespace(void)
 {
-	obj_type=OBJ_TABLESPACE;
+	obj_type=ObjTablespace;
 	attributes[ParsersAttributes::DIRECTORY]=QString();
 	object_id=Tablespace::tabspace_id++;
 }
@@ -34,7 +34,7 @@ void Tablespace::setName(const QString &name)
 	if(name.mid(0,3)==QString("pg_"))
 		throw Exception(Exception::getErrorMessage(AsgReservedName)
 						.arg(this->getName())
-						.arg(BaseObject::getTypeName(OBJ_TABLESPACE)),
+						.arg(BaseObject::getTypeName(ObjTablespace)),
 						AsgReservedName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObject::setName(name);

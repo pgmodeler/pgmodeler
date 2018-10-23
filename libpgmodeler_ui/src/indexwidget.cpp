@@ -18,7 +18,7 @@
 
 #include "indexwidget.h"
 
-IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
+IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, ObjIndex)
 {
 	try
 	{
@@ -40,7 +40,7 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 		grid->addWidget(elements_tab,0,0);
 		tabWidget->widget(1)->setLayout(grid);
 
-		configureFormLayout(index_grid, OBJ_INDEX);
+		configureFormLayout(index_grid, ObjIndex);
 
 		IndexingType::getTypes(list);
 		indexing_cmb->addItems(list);

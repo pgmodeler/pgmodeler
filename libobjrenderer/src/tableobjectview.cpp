@@ -54,7 +54,7 @@ TableObjectView::~TableObjectView(void)
 
 void TableObjectView::configureDescriptor(ConstraintType constr_type)
 {
-	ObjectType obj_type=BASE_OBJECT;
+	ObjectType obj_type=ObjBaseObject;
 	Column *column=dynamic_cast<Column *>(this->getSourceObject());
 	bool ellipse_desc=false;
 	double factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DefaultFontSize) * BaseObjectView::getScreenDpiFactor();
@@ -150,7 +150,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 			desc->setPen(pen);
 		}
 	}
-	else if(obj_type != BASE_OBJECT)
+	else if(obj_type != ObjBaseObject)
 	{
 		TableObject *tab_obj=dynamic_cast<TableObject *>(this->getSourceObject());
 		QGraphicsPolygonItem *desc=dynamic_cast<QGraphicsPolygonItem *>(descriptor);
@@ -556,8 +556,8 @@ QString TableObjectView::getConstraintString(Column *column)
 		vector<TableObject *>::iterator itr,itr_end;
 		ConstraintType constr_type;
 
-		itr=table->getObjectList(OBJ_CONSTRAINT)->begin();
-		itr_end=table->getObjectList(OBJ_CONSTRAINT)->end();
+		itr=table->getObjectList(ObjConstraint)->begin();
+		itr_end=table->getObjectList(ObjConstraint)->end();
 
 		while(itr!=itr_end)
 		{

@@ -1226,7 +1226,7 @@ void RelationshipView::configureLine(void)
 		for semantics purposes shows the type of this relationship as "Relationship" unlike "Link" */
 		if(rel_type==BaseRelationship::RELATIONSHIP_FK)
 			tool_tip=base_rel->getName(true) +
-					 QString(" (") + BaseObject::getTypeName(OBJ_RELATIONSHIP) + QString(")");
+					 QString(" (") + BaseObject::getTypeName(ObjRelationship) + QString(")");
 		else
 			tool_tip=base_rel->getName(true) +
 					 QString(" (") + base_rel->getTypeName() + QString(")");

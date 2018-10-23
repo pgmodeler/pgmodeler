@@ -20,7 +20,7 @@
 
 GenericSQL::GenericSQL(void)
 {
-	obj_type=OBJ_GENERIC_SQL;
+	obj_type=ObjGenericSQL;
 	attributes[ParsersAttributes::DEFINITION] = QString();
 }
 

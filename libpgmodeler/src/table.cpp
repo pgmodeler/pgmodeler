@@ -24,7 +24,7 @@ const QString Table::DATA_LINE_BREAK = QString("%1%2").arg("⸣").arg('\n');
 
 Table::Table(void) : BaseTable()
 {
-	obj_type=OBJ_TABLE;
+	obj_type=ObjTable;
 	with_oid=gen_alter_cmds=unlogged=rls_enabled=rls_forced=false;
 	attributes[ParsersAttributes::COLUMNS]=QString();
 	attributes[ParsersAttributes::INH_COLUMNS]=QString();
@@ -122,8 +122,8 @@ Table *Table::getPartitionedTable(void)
 
 void Table::setProtected(bool value)
 {
-	ObjectType obj_types[]={ OBJ_COLUMN, OBJ_CONSTRAINT,
-							 OBJ_INDEX, OBJ_RULE, OBJ_TRIGGER };
+	ObjectType obj_types[]={ ObjColumn, ObjConstraint,
+							 ObjIndex, ObjRule, ObjTrigger };
 	unsigned i;
 	vector<TableObject *>::iterator itr, itr_end;
 	vector<TableObject *> *list=nullptr;
@@ -161,8 +161,8 @@ void Table::setCommentAttribute(TableObject *tab_obj)
 
 		attribs[ParsersAttributes::SIGNATURE]=tab_obj->getSignature();
 		attribs[ParsersAttributes::SQL_OBJECT]=tab_obj->getSQLName();
-		attribs[ParsersAttributes::COLUMN]=(tab_obj->getObjectType()==OBJ_COLUMN ? ParsersAttributes::_TRUE_ : QString());
-		attribs[ParsersAttributes::CONSTRAINT]=(tab_obj->getObjectType()==OBJ_CONSTRAINT ? ParsersAttributes::_TRUE_ : QString());
+		attribs[ParsersAttributes::COLUMN]=(tab_obj->getObjectType()==ObjColumn ? ParsersAttributes::_TRUE_ : QString());
+		attribs[ParsersAttributes::CONSTRAINT]=(tab_obj->getObjectType()==ObjConstraint ? ParsersAttributes::_TRUE_ : QString());
 		attribs[ParsersAttributes::TABLE]=this->getName(true);
 		attribs[ParsersAttributes::NAME]=tab_obj->getName(true);
 		attribs[ParsersAttributes::COMMENT]=QString(tab_obj->getComment()).replace(QString("'"), QString("''"));;
@@ -190,18 +190,18 @@ void Table::setAncestorTableAttribute(void)
 void Table::setRelObjectsIndexesAttribute(void)
 {
 	attribs_map aux_attribs;
-	vector<map<QString, unsigned> *> obj_indexes={ &col_indexes, &constr_indexes };
+	vector<map<QString, unsigned> *> ObjIndexes={ &col_indexes, &constr_indexes };
 	QString attribs[]={ ParsersAttributes::COL_INDEXES,  ParsersAttributes::CONSTR_INDEXES };
-	ObjectType obj_types[]={ OBJ_COLUMN, OBJ_CONSTRAINT };
-	unsigned idx=0, size=obj_indexes.size();
+	ObjectType obj_types[]={ ObjColumn, ObjConstraint };
+	unsigned idx=0, size=ObjIndexes.size();
 
 	for(idx=0; idx < size; idx++)
 	{
 		attributes[attribs[idx]]=QString();
 
-		if(!obj_indexes[idx]->empty())
+		if(!ObjIndexes[idx]->empty())
 		{
-			for(auto &obj_idx : (*obj_indexes[idx]))
+			for(auto &obj_idx : (*ObjIndexes[idx]))
 			{
 				aux_attribs[ParsersAttributes::NAME]=obj_idx.first;
 				aux_attribs[ParsersAttributes::INDEX]=QString::number(obj_idx.second);
@@ -331,17 +331,17 @@ void Table::setConstraintsAttribute(unsigned def_type)
 
 vector<TableObject *> *Table::getObjectList(ObjectType obj_type)
 {
-	if(obj_type==OBJ_COLUMN)
+	if(obj_type==ObjColumn)
 		return(&columns);
-	else if(obj_type==OBJ_CONSTRAINT)
+	else if(obj_type==ObjConstraint)
 		return(&constraints);
-	else if(obj_type==OBJ_RULE)
+	else if(obj_type==ObjRule)
 		return(&rules);
-	else if(obj_type==OBJ_TRIGGER)
+	else if(obj_type==ObjTrigger)
 		return(&triggers);
-	else if(obj_type==OBJ_INDEX)
+	else if(obj_type==ObjIndex)
 		return(&indexes);
-	else if(obj_type==OBJ_POLICY)
+	else if(obj_type==ObjPolicy)
 		return(&policies);
 	else
 		throw Exception(ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -360,10 +360,10 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: table children objects creation limit."
-		vector<TableObject *> *obj_list=(obj_type!=OBJ_TABLE ? getObjectList(obj_type) : nullptr);
+		vector<TableObject *> *obj_list=(obj_type!=ObjTable ? getObjectList(obj_type) : nullptr);
 
 		if((obj_list && obj_list->size() >= GlobalAttributes::MaxObjectCount) ||
-				(obj_type==OBJ_TABLE && ancestor_tables.size() >= GlobalAttributes::MaxObjectCount))
+				(obj_type==ObjTable && ancestor_tables.size() >= GlobalAttributes::MaxObjectCount))
 			throw Exception(trUtf8("In demonstration version tables can have only `%1' instances of each child object type or ancestor tables! You've reach this limit for the type: `%2'")
 							.arg(GlobalAttributes::MaxObjectCount)
 							.arg(BaseObject::getTypeName(obj_type)),
@@ -385,17 +385,17 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 			}
 
 			//Raises an error if the user try to set the table as ancestor/copy of itself
-			else if((obj_type==OBJ_TABLE || obj_type==BASE_TABLE) && obj==this)
+			else if((obj_type==ObjTable || obj_type==ObjBaseTable) && obj==this)
 				throw Exception(InvInheritCopyPartRelationship,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			switch(obj_type)
 			{
-				case OBJ_COLUMN:
-				case OBJ_CONSTRAINT:
-				case OBJ_TRIGGER:
-				case OBJ_INDEX:
-				case OBJ_RULE:
-				case OBJ_POLICY:
+				case ObjColumn:
+				case ObjConstraint:
+				case ObjTrigger:
+				case ObjIndex:
+				case ObjRule:
+				case ObjPolicy:
 					TableObject *tab_obj;
 					vector<TableObject *> *obj_list;
 					Column *col;
@@ -420,14 +420,14 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 										.arg(this->getName()),
 										InvColumnTableType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
-					else if(obj_type==OBJ_CONSTRAINT)
+					else if(obj_type==ObjConstraint)
 					{
 						//Raises a error if the user try to add a second primary key on the table
 						if(dynamic_cast<Constraint *>(tab_obj)->getConstraintType()==ConstraintType::primary_key &&
 								this->getPrimaryKey())
 							throw Exception(AsgExistingPrimaryKeyTable,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
-					else if(obj_type==OBJ_TRIGGER)
+					else if(obj_type==ObjTrigger)
 						dynamic_cast<Trigger *>(tab_obj)->validateTrigger();
 
 					obj_list=getObjectList(obj_type);
@@ -444,16 +444,16 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 							obj_list->push_back(tab_obj);
 					}
 
-					if(obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT)
+					if(obj_type==ObjColumn || obj_type==ObjConstraint)
 					{
 						updateAlterCmdsStatus();
 
-						if(obj_type==OBJ_CONSTRAINT)
+						if(obj_type==ObjConstraint)
 							dynamic_cast<Constraint *>(tab_obj)->setColumnsNotNull(true);
 					}
 				break;
 
-				case OBJ_TABLE:
+				case ObjTable:
 					Table *tab;
 					tab=dynamic_cast<Table *>(obj);
 					if(obj_idx < 0 || obj_idx >= static_cast<int>(ancestor_tables.size()))
@@ -719,7 +719,7 @@ void Table::removeObject(BaseObject *obj)
 			if(tab_obj)
 				removeObject(getObjectIndex(tab_obj), obj->getObjectType());
 			else
-				removeObject(obj->getName(true), OBJ_TABLE);
+				removeObject(obj->getName(true), ObjTable);
 		}
 	}
 	catch(Exception &e)
@@ -743,10 +743,10 @@ void Table::removeObject(const QString &name, ObjectType obj_type)
 void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 {
 	//Raises an error if the user try to remove a object with invalid type
-	if(!TableObject::isTableObject(obj_type) && obj_type!=OBJ_TABLE)
+	if(!TableObject::isTableObject(obj_type) && obj_type!=ObjTable)
 		throw Exception(RemObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	else if(obj_type==OBJ_TABLE && obj_idx < ancestor_tables.size())
+	else if(obj_type==ObjTable && obj_idx < ancestor_tables.size())
 	{
 		vector<Table *>::iterator itr;
 		Table *tab=nullptr;
@@ -766,7 +766,7 @@ void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 			}
 		}
 	}
-	else if(obj_type!=OBJ_TABLE && obj_type!=BASE_TABLE)
+	else if(obj_type!=ObjTable && obj_type!=ObjBaseTable)
 	{
 		vector<TableObject *> *obj_list=nullptr;
 		vector<TableObject *>::iterator itr;
@@ -777,7 +777,7 @@ void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 		if(obj_idx >= obj_list->size())
 			throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		if(obj_type!=OBJ_COLUMN)
+		if(obj_type!=ObjColumn)
 		{
 			itr=obj_list->begin() + obj_idx;
 			TableObject *tab_obj=(*itr);
@@ -833,7 +833,7 @@ void Table::removeColumn(const QString &name)
 {
 	try
 	{
-		removeObject(name,OBJ_COLUMN);
+		removeObject(name,ObjColumn);
 	}
 	catch(Exception &e)
 	{
@@ -845,7 +845,7 @@ void Table::removeColumn(unsigned idx)
 {
 	try
 	{
-		removeObject(idx,OBJ_COLUMN);
+		removeObject(idx,ObjColumn);
 	}
 	catch(Exception &e)
 	{
@@ -857,7 +857,7 @@ void Table::removeTrigger(const QString &name)
 {
 	try
 	{
-		removeObject(name,OBJ_TRIGGER);
+		removeObject(name,ObjTrigger);
 	}
 	catch(Exception &e)
 	{
@@ -869,7 +869,7 @@ void Table::removeTrigger(unsigned idx)
 {
 	try
 	{
-		removeObject(idx,OBJ_TRIGGER);
+		removeObject(idx,ObjTrigger);
 	}
 	catch(Exception &e)
 	{
@@ -881,7 +881,7 @@ void Table::removeIndex(const QString &name)
 {
 	try
 	{
-		removeObject(name,OBJ_INDEX);
+		removeObject(name,ObjIndex);
 	}
 	catch(Exception &e)
 	{
@@ -893,7 +893,7 @@ void Table::removeIndex(unsigned idx)
 {
 	try
 	{
-		removeObject(idx,OBJ_INDEX);
+		removeObject(idx,ObjIndex);
 	}
 	catch(Exception &e)
 	{
@@ -905,7 +905,7 @@ void Table::removeRule(const QString &name)
 {
 	try
 	{
-		removeObject(name,OBJ_RULE);
+		removeObject(name,ObjRule);
 	}
 	catch(Exception &e)
 	{
@@ -917,7 +917,7 @@ void Table::removeRule(unsigned idx)
 {
 	try
 	{
-		removeObject(idx,OBJ_RULE);
+		removeObject(idx,ObjRule);
 	}
 	catch(Exception &e)
 	{
@@ -929,7 +929,7 @@ void Table::removePolicy(const QString &name)
 {
 	try
 	{
-		removeObject(name, OBJ_POLICY);
+		removeObject(name, ObjPolicy);
 	}
 	catch(Exception &e)
 	{
@@ -941,7 +941,7 @@ void Table::removePolicy(unsigned idx)
 {
 	try
 	{
-		removeObject(idx, OBJ_POLICY);
+		removeObject(idx, ObjPolicy);
 	}
 	catch(Exception &e)
 	{
@@ -953,7 +953,7 @@ void Table::removeConstraint(const QString &name)
 {
 	try
 	{
-		removeObject(name,OBJ_CONSTRAINT);
+		removeObject(name,ObjConstraint);
 	}
 	catch(Exception &e)
 	{
@@ -965,7 +965,7 @@ void Table::removeConstraint(unsigned idx)
 {
 	try
 	{
-		removeObject(idx,OBJ_CONSTRAINT);
+		removeObject(idx,ObjConstraint);
 	}
 	catch(Exception &e)
 	{
@@ -977,7 +977,7 @@ void Table::removeAncestorTable(const QString &name)
 {
 	try
 	{
-		removeObject(name,OBJ_TABLE);
+		removeObject(name,ObjTable);
 	}
 	catch(Exception &e)
 	{
@@ -989,7 +989,7 @@ void Table::removeAncestorTable(unsigned idx)
 {
 	try
 	{
-		removeObject(idx,OBJ_TABLE);
+		removeObject(idx,ObjTable);
 	}
 	catch(Exception &e)
 	{
@@ -1071,7 +1071,7 @@ BaseObject *Table::getObject(const QString &name, ObjectType obj_type, int &obj_
 		}
 		else obj_idx=-1;
 	}
-	else if(obj_type==OBJ_TABLE)
+	else if(obj_type==ObjTable)
 	{
 		vector<Table *>::iterator itr_tab, itr_end_tab;
 		QString tab_name, aux_name=name;
@@ -1108,7 +1108,7 @@ BaseObject *Table::getObject(unsigned obj_idx, ObjectType obj_type)
 {
 	vector<TableObject *> *obj_list=nullptr;
 
-	if(obj_type==OBJ_TABLE)
+	if(obj_type==ObjTable)
 	{
 		//Raises an error if the object index is out of bound
 		if(obj_idx >= ancestor_tables.size())
@@ -1130,12 +1130,12 @@ BaseObject *Table::getObject(unsigned obj_idx, ObjectType obj_type)
 Table *Table::getAncestorTable(const QString &name)
 {
 	int idx;
-	return(dynamic_cast<Table *>(getObject(name,OBJ_TABLE,idx)));
+	return(dynamic_cast<Table *>(getObject(name,ObjTable,idx)));
 }
 
 Table *Table::getAncestorTable(unsigned idx)
 {
-	return(dynamic_cast<Table *>(getObject(idx,OBJ_TABLE)));
+	return(dynamic_cast<Table *>(getObject(idx,ObjTable)));
 }
 
 Column *Table::getColumn(const QString &name, bool ref_old_name)
@@ -1143,7 +1143,7 @@ Column *Table::getColumn(const QString &name, bool ref_old_name)
 	if(!ref_old_name)
 	{
 		int idx;
-		return(dynamic_cast<Column *>(getObject(name,OBJ_COLUMN,idx)));
+		return(dynamic_cast<Column *>(getObject(name,ObjColumn,idx)));
 	}
 	else
 	{
@@ -1170,62 +1170,62 @@ Column *Table::getColumn(const QString &name, bool ref_old_name)
 
 Column *Table::getColumn(unsigned idx)
 {
-	return(dynamic_cast<Column *>(getObject(idx,OBJ_COLUMN)));
+	return(dynamic_cast<Column *>(getObject(idx,ObjColumn)));
 }
 
 Trigger *Table::getTrigger(const QString &name)
 {
 	int idx;
-	return(dynamic_cast<Trigger *>(getObject(name,OBJ_TRIGGER,idx)));
+	return(dynamic_cast<Trigger *>(getObject(name,ObjTrigger,idx)));
 }
 
 Trigger *Table::getTrigger(unsigned idx)
 {
-	return(dynamic_cast<Trigger *>(getObject(idx,OBJ_TRIGGER)));
+	return(dynamic_cast<Trigger *>(getObject(idx,ObjTrigger)));
 }
 
 Constraint *Table::getConstraint(const QString &name)
 {
 	int idx;
-	return(dynamic_cast<Constraint *>(getObject(name,OBJ_CONSTRAINT,idx)));
+	return(dynamic_cast<Constraint *>(getObject(name,ObjConstraint,idx)));
 }
 
 Constraint *Table::getConstraint(unsigned idx)
 {
-	return(dynamic_cast<Constraint *>(getObject(idx,OBJ_CONSTRAINT)));
+	return(dynamic_cast<Constraint *>(getObject(idx,ObjConstraint)));
 }
 
 Index *Table::getIndex(const QString &name)
 {
 	int idx;
-	return(dynamic_cast<Index *>(getObject(name,OBJ_INDEX,idx)));
+	return(dynamic_cast<Index *>(getObject(name,ObjIndex,idx)));
 }
 
 Index *Table::getIndex(unsigned idx)
 {
-	return(dynamic_cast<Index *>(getObject(idx,OBJ_INDEX)));
+	return(dynamic_cast<Index *>(getObject(idx,ObjIndex)));
 }
 
 Rule *Table::getRule(const QString &name)
 {
 	int idx;
-	return(dynamic_cast<Rule *>(getObject(name,OBJ_RULE,idx)));
+	return(dynamic_cast<Rule *>(getObject(name,ObjRule,idx)));
 }
 
 Rule *Table::getRule(unsigned idx)
 {
-	return(dynamic_cast<Rule *>(getObject(idx,OBJ_RULE)));
+	return(dynamic_cast<Rule *>(getObject(idx,ObjRule)));
 }
 
 Policy *Table::getPolicy(const QString &name)
 {
 	int idx;
-	return(dynamic_cast<Policy *>(getObject(name, OBJ_POLICY,idx)));
+	return(dynamic_cast<Policy *>(getObject(name, ObjPolicy,idx)));
 }
 
 Policy *Table::getPolicy(unsigned idx)
 {
-	return(dynamic_cast<Policy *>(getObject(idx, OBJ_POLICY)));
+	return(dynamic_cast<Policy *>(getObject(idx, ObjPolicy)));
 }
 
 unsigned Table::getColumnCount(void)
@@ -1265,9 +1265,9 @@ unsigned Table::getAncestorTableCount(void)
 
 unsigned Table::getObjectCount(ObjectType obj_type, bool inc_added_by_rel)
 {
-	if(TableObject::isTableObject(obj_type) || obj_type==OBJ_TABLE)
+	if(TableObject::isTableObject(obj_type) || obj_type==ObjTable)
 	{
-		if(obj_type==OBJ_TABLE)
+		if(obj_type==ObjTable)
 		{
 			return(ancestor_tables.size());
 		}
@@ -1377,9 +1377,9 @@ void Table::setRelObjectsIndexes(const vector<QString> &obj_names, const vector<
 		map<QString, unsigned > *obj_idxs_map=nullptr;
 		unsigned idx=0, size=obj_names.size();
 
-		if(obj_type==OBJ_COLUMN)
+		if(obj_type==ObjColumn)
 			obj_idxs_map=&col_indexes;
-		else if(obj_type==OBJ_CONSTRAINT)
+		else if(obj_type==ObjConstraint)
 			obj_idxs_map=&constr_indexes;
 		else
 			throw Exception(OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -1394,12 +1394,12 @@ void Table::saveRelObjectsIndexes(ObjectType obj_type)
 	map<QString, unsigned > *obj_idxs_map=nullptr;
 	vector<TableObject *> *list=nullptr;
 
-	if(obj_type==OBJ_COLUMN)
+	if(obj_type==ObjColumn)
 	{
 		obj_idxs_map=&col_indexes;
 		list=&columns;
 	}
-	else if(obj_type==OBJ_CONSTRAINT)
+	else if(obj_type==ObjConstraint)
 	{
 		obj_idxs_map=&constr_indexes;
 		list=&constraints;
@@ -1424,14 +1424,14 @@ void Table::saveRelObjectsIndexes(ObjectType obj_type)
 
 void Table::saveRelObjectsIndexes(void)
 {
-	saveRelObjectsIndexes(OBJ_COLUMN);
-	saveRelObjectsIndexes(OBJ_CONSTRAINT);
+	saveRelObjectsIndexes(ObjColumn);
+	saveRelObjectsIndexes(ObjConstraint);
 }
 
 void Table::restoreRelObjectsIndexes(void)
 {
-	restoreRelObjectsIndexes(OBJ_COLUMN);
-	restoreRelObjectsIndexes(OBJ_CONSTRAINT);
+	restoreRelObjectsIndexes(ObjColumn);
+	restoreRelObjectsIndexes(ObjConstraint);
 
 	if(!col_indexes.empty() || !constr_indexes.empty())
 	{
@@ -1444,7 +1444,7 @@ void Table::restoreRelObjectsIndexes(ObjectType obj_type)
 {
 	map<QString, unsigned> *obj_idxs=nullptr;
 
-	if(obj_type==OBJ_COLUMN)
+	if(obj_type==ObjColumn)
 		obj_idxs=&col_indexes;
 	else
 		obj_idxs=&constr_indexes;
@@ -1672,7 +1672,7 @@ void Table::operator = (Table &tab)
 bool Table::isReferRelationshipAddedObject(void)
 {
 	vector<TableObject *>::iterator itr, itr_end;
-	ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT };
+	ObjectType types[]={ ObjColumn, ObjConstraint };
 	bool found=false;
 
 	for(unsigned i=0; i < 2 && !found; i++)
@@ -1743,7 +1743,7 @@ void Table::swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2
 				(*itr2)=aux_obj;
 			}
 
-			if(obj_type!=OBJ_COLUMN && obj_type!=OBJ_CONSTRAINT)
+			if(obj_type!=ObjColumn && obj_type!=ObjConstraint)
 				BaseObject::swapObjectsIds(aux_obj, aux_obj1, false);
 
 			setCodeInvalidated(true);
@@ -1831,12 +1831,12 @@ void Table::getColumnReferences(Column *column, vector<TableObject *> &refs, boo
 vector<BaseObject *> Table::getObjects(bool excl_cols_constr)
 {
 	vector<BaseObject *> list;
-	vector<ObjectType> types={ OBJ_COLUMN, OBJ_CONSTRAINT,
-														 OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE, OBJ_POLICY };
+	vector<ObjectType> types={ ObjColumn, ObjConstraint,
+														 ObjTrigger, ObjIndex, ObjRule, ObjPolicy };
 
 	for(auto type : types)
 	{
-		if(excl_cols_constr && (type == OBJ_COLUMN || type == OBJ_CONSTRAINT))
+		if(excl_cols_constr && (type == ObjColumn || type == ObjConstraint))
 			continue;
 
 		list.insert(list.end(), getObjectList(type)->begin(), getObjectList(type)->end()) ;
@@ -1857,8 +1857,8 @@ vector<PartitionKey> Table::getPartitionKeys(void)
 
 void Table::setCodeInvalidated(bool value)
 {
-	vector<ObjectType> types={ OBJ_COLUMN, OBJ_CONSTRAINT,
-														 OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE, OBJ_POLICY };
+	vector<ObjectType> types={ ObjColumn, ObjConstraint,
+														 ObjTrigger, ObjIndex, ObjRule, ObjPolicy };
 
 	for(auto type : types)
 	{
@@ -1954,7 +1954,7 @@ QString Table::getInitialDataCommands(void)
 		//Separating valid columns (selected) from the invalids (ignored)
 		for(QString col_name : col_names)
 		{
-			if(getObjectIndex(col_name, OBJ_COLUMN) >= 0)
+			if(getObjectIndex(col_name, ObjColumn) >= 0)
 				selected_cols.append(col_name);
 			else
 				ignored_cols.append(curr_col);
@@ -2055,8 +2055,8 @@ void Table::setObjectListsCapacity(unsigned capacity)
 unsigned Table::getMaxObjectCount(void)
 {
 	unsigned count = 0, max = 0;
-	vector<ObjectType> types = { OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_INDEX,
-															 OBJ_RULE, OBJ_TRIGGER, OBJ_POLICY };
+	vector<ObjectType> types = { ObjColumn, ObjConstraint, ObjIndex,
+															 ObjRule, ObjTrigger, ObjPolicy };
 
 	for(auto type : types)
 	{

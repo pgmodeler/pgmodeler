@@ -25,7 +25,7 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 	try
 	{
 		Ui_SourceCodeWidget::setupUi(this);
-		configureFormLayout(codigofonte_grid, BASE_OBJECT);
+		configureFormLayout(codigofonte_grid, ObjBaseObject);
 		comment_lbl->setVisible(false);
 		comment_edt->setVisible(false);
 
@@ -76,9 +76,9 @@ void SourceCodeWidget::setSourceCodeTab(int)
 		code_icon=QString("codigoxml");
 
 	enabled=(sourcecode_twg->currentIndex()==0 &&
-			 ((obj_type==BASE_RELATIONSHIP &&
+			 ((obj_type==ObjBaseRelationship &&
 			   dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
-			  || (obj_type!=BASE_RELATIONSHIP && obj_type!=OBJ_TEXTBOX)));
+			  || (obj_type!=ObjBaseRelationship && obj_type!=ObjTextbox)));
 
 	icone=QPixmap(PgModelerUiNS::getIconPath(code_icon));
 	icon_lbl->setPixmap(icone);
@@ -130,14 +130,14 @@ void SourceCodeWidget::generateSourceCode(int)
 		xmlcode_txt->clear();
 
 		obj_type=object->getObjectType();
-		if(obj_type!=OBJ_TEXTBOX ||
-				(obj_type==BASE_RELATIONSHIP &&
+		if(obj_type!=ObjTextbox ||
+				(obj_type==ObjBaseRelationship &&
 				 dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK))
 		{
 			QString aux_def;
 			BaseObject::setPgSQLVersion(version_cmb->currentText());
 
-			if(obj_type==OBJ_DATABASE)
+			if(obj_type==ObjDatabase)
 			{
 				task_prog_wgt=new TaskProgressWidget;
 				task_prog_wgt->setWindowTitle(trUtf8("Generating source code..."));
@@ -229,10 +229,10 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 			this->name_edt->setText(QString("%1 (%2)").arg(object->getSignature()).arg(object->getTypeName()));
 			this->protected_obj_frm->setVisible(false);
 			this->obj_id_lbl->setVisible(false);
-			this->code_options_cmb->setEnabled(obj_type!=OBJ_DATABASE &&
-																					obj_type!=OBJ_TEXTBOX &&
-																					obj_type!=BASE_RELATIONSHIP &&
-																					obj_type!=OBJ_RELATIONSHIP);
+			this->code_options_cmb->setEnabled(obj_type!=ObjDatabase &&
+																					obj_type!=ObjTextbox &&
+																					obj_type!=ObjBaseRelationship &&
+																					obj_type!=ObjRelationship);
 
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: SQL code display options disabled."

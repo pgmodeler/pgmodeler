@@ -272,7 +272,7 @@ class DatabaseImportHelper: public QObject {
 		
 	signals:
 		//! \brief This singal is emitted whenever the export progress changes
-		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=BASE_OBJECT);
+		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=ObjBaseObject);
 		
 		//! \brief This signal is emited when the import has finished
 		void s_importFinished(Exception e=Exception());

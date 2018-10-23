@@ -75,7 +75,7 @@ BaseRelationship::BaseRelationship(unsigned rel_type, BaseTable *src_tab, BaseTa
 
 void BaseRelationship::configureRelationship(void)
 {
-	obj_type=BASE_RELATIONSHIP;
+	obj_type=ObjBaseRelationship;
 
 	attributes[ParsersAttributes::TYPE]=QString();
 	attributes[ParsersAttributes::SRC_REQUIRED]=QString();
@@ -125,7 +125,7 @@ void BaseRelationship::configureRelationship(void)
 		if(!src_table || !dst_table)
 			throw Exception(Exception::getErrorMessage(AsgNotAllocatedTable)
 							.arg(this->getName())
-							.arg(BaseObject::getTypeName(BASE_RELATIONSHIP)),
+							.arg(BaseObject::getTypeName(ObjBaseRelationship)),
 							AsgNotAllocatedTable,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		/* Raises an error if the relationship type is generalization or dependency
@@ -512,7 +512,7 @@ QString BaseRelationship::getRelTypeAttribute(void)
 		case RELATIONSHIP_PART: return(ParsersAttributes::RELATIONSHIP_PART); break;
 		case RELATIONSHIP_FK: return(ParsersAttributes::RELATIONSHIP_FK); break;
 		default:
-			if(src_table->getObjectType()==OBJ_VIEW)
+			if(src_table->getObjectType()==ObjView)
 				return(ParsersAttributes::RELATION_TAB_VIEW);
 			else
 				return(ParsersAttributes::RELATIONSHIP_DEP);
@@ -541,7 +541,7 @@ QString BaseRelationship::getRelationshipTypeName(unsigned rel_type, bool is_vie
 
 QString BaseRelationship::getRelationshipTypeName(void)
 {
-  return(getRelationshipTypeName(rel_type, src_table->getObjectType()==OBJ_VIEW));
+  return(getRelationshipTypeName(rel_type, src_table->getObjectType()==ObjView));
 }
 
 void BaseRelationship::setCodeInvalidated(bool value)

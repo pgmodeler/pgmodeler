@@ -36,42 +36,42 @@
 #include <QTextStream>
 
 enum ObjectType {
-	OBJ_COLUMN,
-	OBJ_CONSTRAINT,
-	OBJ_FUNCTION,
-	OBJ_TRIGGER,
-	OBJ_INDEX,
-	OBJ_RULE,
-	OBJ_TABLE,
-	OBJ_VIEW,
-	OBJ_DOMAIN,
-	OBJ_SCHEMA,
-	OBJ_AGGREGATE,
-	OBJ_OPERATOR,
-	OBJ_SEQUENCE,
-	OBJ_ROLE,
-	OBJ_CONVERSION,
-	OBJ_CAST,
-	OBJ_LANGUAGE,
-	OBJ_TYPE,
-	OBJ_TABLESPACE,
-	OBJ_OPFAMILY,
-	OBJ_OPCLASS,
-	OBJ_DATABASE,
-	OBJ_COLLATION,
-	OBJ_EXTENSION,
-	OBJ_EVENT_TRIGGER,
-	OBJ_POLICY,
-	OBJ_RELATIONSHIP,
-	OBJ_TEXTBOX,
-	OBJ_PERMISSION,
-	OBJ_PARAMETER,
-	OBJ_TYPE_ATTRIBUTE,
-	OBJ_TAG,
-	OBJ_GENERIC_SQL,
-	BASE_RELATIONSHIP,
-	BASE_OBJECT,
-	BASE_TABLE
+	ObjColumn,
+	ObjConstraint,
+	ObjFunction,
+	ObjTrigger,
+	ObjIndex,
+	ObjRule,
+	ObjTable,
+	ObjView,
+	ObjDomain,
+	ObjSchema,
+	ObjAggregate,
+	ObjOperator,
+	ObjSequence,
+	ObjRole,
+	ObjConversion,
+	ObjCast,
+	ObjLanguage,
+	ObjType,
+	ObjTablespace,
+	ObjOpFamily,
+	ObjOpClass,
+	ObjDatabase,
+	ObjCollation,
+	ObjExtension,
+	ObjEventTrigger,
+	ObjPolicy,
+	ObjRelationship,
+	ObjTextbox,
+	ObjPermission,
+	ObjParameter,
+	ObjTypeAttribute,
+	ObjTag,
+	ObjGenericSQL,
+	ObjBaseRelationship,
+	ObjBaseObject,
+	ObjBaseTable
 };
 
 class BaseObject {
@@ -470,7 +470,7 @@ class BaseObject {
 		static void enableCachedCode(bool value);
 
 		/*! \brief Returns the valid object types in a vector. The types
-		BASE_OBJECT, TYPE_ATTRIBUTE and BASE_TABLE aren't included in return vector.
+		ObjBaseObject, TYPE_ATTRIBUTE and ObjBaseTable aren't included in return vector.
 		By default table objects (columns, trigger, constraints, etc) are included. To
 		avoid the insertion of these types set the boolean param to false. */
 		static vector<ObjectType> getObjectTypes(bool inc_table_objs=true, vector<ObjectType> exclude_types={});
@@ -478,7 +478,7 @@ class BaseObject {
 		/*! \brief Returns the valid object types that are child or grouped under the specified type.
 	This method works a litte different from getObjectTypes() since this latter returns all valid types
 	and this one returns only the valid types for the current specified type. For now the only accepted
-	types are OBJ_DATABASE, OBJ_SCHEMA and OBJ_TABLE */
+	types are ObjDatabase, ObjSchema and ObjTable */
 		static vector<ObjectType> getChildObjectTypes(ObjectType obj_type);
 
 		/*! \brief Sets the default version when generating the SQL code. This affects all instances of classes that

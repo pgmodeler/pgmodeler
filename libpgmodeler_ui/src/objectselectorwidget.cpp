@@ -129,7 +129,7 @@ void ObjectSelectorWidget::setSelectedObject(BaseObject *object)
 		rem_object_tb->setEnabled(object);
 		this->selected_obj=object;
 
-		if(object->getObjectType()!=OBJ_CONSTRAINT)
+		if(object->getObjectType()!=ObjConstraint)
 			obj_name_txt->setPlainText(selected_obj->getSignature());
 		else
 			obj_name_txt->setPlainText(QString("%1.%2")

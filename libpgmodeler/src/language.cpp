@@ -20,7 +20,7 @@
 
 Language::Language(void)
 {
-	obj_type=OBJ_LANGUAGE;
+	obj_type=ObjLanguage;
 	is_trusted=false;
 
 	for(unsigned i=VALIDATOR_FUNC; i <= INLINE_FUNC; i++)
@@ -38,7 +38,7 @@ void Language::setName(const QString &name)
 	if(name.toLower()==~LanguageType("c") || name.toLower()==~LanguageType("sql"))
 		throw Exception(Exception::getErrorMessage(AsgReservedName)
 						.arg(this->getName())
-						.arg(BaseObject::getTypeName(OBJ_LANGUAGE)),
+						.arg(BaseObject::getTypeName(ObjLanguage)),
 						AsgReservedName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObject::setName(name);
@@ -85,7 +85,7 @@ void  Language::setFunction(Function *func, unsigned func_type)
 			((func_type==VALIDATOR_FUNC || func_type==INLINE_FUNC) && func->getReturnType()!=QString("void")))
 		throw Exception(Exception::getErrorMessage(AsgFunctionInvalidReturnType)
 						.arg(this->getName(true))
-						.arg(BaseObject::getTypeName(OBJ_LANGUAGE)),
+						.arg(BaseObject::getTypeName(ObjLanguage)),
 						AsgFunctionInvalidReturnType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 		//Raises an error in case the function has invalid parameters (count and types)

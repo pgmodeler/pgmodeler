@@ -164,7 +164,7 @@ void OperationList::addToPool(BaseObject *object, unsigned op_type)
 		{
 			BaseObject *copy_obj=nullptr;
 
-			if(obj_type!=BASE_OBJECT && obj_type!=OBJ_DATABASE)
+			if(obj_type!=ObjBaseObject && obj_type!=ObjDatabase)
 				PgModelerNS::copyObject(&copy_obj, object, obj_type);
 			else
 				throw Exception(AsgObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -228,7 +228,7 @@ void OperationList::removeOperations(void)
 			if(unallocated_objs.count(object)==0 &&
 					(!tab_obj && model->getObjectIndex(object) < 0))
 			{
-				if(object->getObjectType()==OBJ_TABLE)
+				if(object->getObjectType()==ObjTable)
 				{
 					vector<BaseObject *> list=dynamic_cast<Table *>(object)->getObjects();
 
@@ -355,10 +355,10 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 			throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		else if(parent_obj &&
-				(((obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT) &&
-				  (parent_obj->getObjectType()!=OBJ_RELATIONSHIP && parent_obj->getObjectType()!=OBJ_TABLE)) ||
+				(((obj_type==ObjColumn || obj_type==ObjConstraint) &&
+				  (parent_obj->getObjectType()!=ObjRelationship && parent_obj->getObjectType()!=ObjTable)) ||
 
-				 ((obj_type==OBJ_TRIGGER || obj_type==OBJ_RULE || obj_type==OBJ_INDEX) && !dynamic_cast<BaseTable *>(parent_obj))))
+				 ((obj_type==ObjTrigger || obj_type==ObjRule || obj_type==ObjIndex) && !dynamic_cast<BaseTable *>(parent_obj))))
 			throw Exception(OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//If the operations list is full makes the automatic cleaning before inserting a new operation
@@ -414,19 +414,19 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 		 in the list on the parent object */
 		if(tab_obj)
 		{
-			if(parent_obj->getObjectType()==OBJ_RELATIONSHIP)
+			if(parent_obj->getObjectType()==ObjRelationship)
 				parent_rel=dynamic_cast<Relationship *>(parent_obj);
 			else
 				parent_tab=dynamic_cast<BaseTable *>(parent_obj);
 
-			if(((obj_type==OBJ_TRIGGER && dynamic_cast<Trigger *>(tab_obj)->isReferRelationshipAddedColumn()) ||
-				(obj_type==OBJ_INDEX && dynamic_cast<Index *>(tab_obj)->isReferRelationshipAddedColumn()) ||
-				(obj_type==OBJ_CONSTRAINT && dynamic_cast<Constraint *>(tab_obj)->isReferRelationshipAddedColumn())))
+			if(((obj_type==ObjTrigger && dynamic_cast<Trigger *>(tab_obj)->isReferRelationshipAddedColumn()) ||
+				(obj_type==ObjIndex && dynamic_cast<Index *>(tab_obj)->isReferRelationshipAddedColumn()) ||
+				(obj_type==ObjConstraint && dynamic_cast<Constraint *>(tab_obj)->isReferRelationshipAddedColumn())))
 			{
 				if(op_type==Operation::OBJECT_REMOVED)
 					tab_obj->setParentTable(parent_tab);
 
-				if(tab_obj->getObjectType()==OBJ_CONSTRAINT)
+				if(tab_obj->getObjectType()==ObjConstraint)
 					operation->setXMLDefinition(dynamic_cast<Constraint *>(tab_obj)->getCodeDefinition(SchemaParser::XML_DEFINITION, true));
 				else
 					operation->setXMLDefinition(tab_obj->getCodeDefinition(SchemaParser::XML_DEFINITION));
@@ -436,7 +436,7 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 
 			/* If there is a parent relationship will get the index of the object.
 			Only columns and constraints are handled case the parent is a relationship */
-			if(parent_rel && (obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT))
+			if(parent_rel && (obj_type==ObjColumn || obj_type==ObjConstraint))
 			{
 				//Case a specific index wasn't specified
 				if(object_idx < 0)
@@ -461,8 +461,8 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 		}
 		else
 		{
-			if((obj_type==OBJ_SEQUENCE && dynamic_cast<Sequence *>(object)->isReferRelationshipAddedColumn()) ||
-					(obj_type==OBJ_VIEW && dynamic_cast<View *>(object)->isReferRelationshipAddedColumn()))
+			if((obj_type==ObjSequence && dynamic_cast<Sequence *>(object)->isReferRelationshipAddedColumn()) ||
+					(obj_type==ObjView && dynamic_cast<View *>(object)->isReferRelationshipAddedColumn()))
 				operation->setXMLDefinition(object->getCodeDefinition(SchemaParser::XML_DEFINITION));
 
 			//Case a specific index wasn't specified
@@ -474,7 +474,7 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 				obj_idx=object_idx;
 		}
 
-		if(obj_type==OBJ_COLUMN && dynamic_cast<Column *>(object)->getType().isUserType())
+		if(obj_type==ObjColumn && dynamic_cast<Column *>(object)->getType().isUserType())
 			operation->setXMLDefinition(object->getCodeDefinition(SchemaParser::XML_DEFINITION));
 
 		operation->setObjectIndex(obj_idx);
@@ -517,7 +517,7 @@ void OperationList::getOperationData(unsigned oper_idx, unsigned &oper_type, QSt
 	}
 	else
 	{
-		obj_type=BASE_OBJECT;
+		obj_type=ObjBaseObject;
 		obj_name=trUtf8("(invalid object)");
 	}
 }
@@ -698,13 +698,13 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 		obj_idx=oper->getObjectIndex();
 
 		/* Converting the parent object, if any, to the correct class according
-			to the type of the parent object. If OBJ_TABLE|OBJ_VIEW, the pointer
+			to the type of the parent object. If ObjTable|ObjView, the pointer
 			'parent_tab' get the reference to table/view and will be used as referential
 			in the operations below. If the parent object is a relationship, the pointer
 					'parent_rel' get the reference to the relationship */
 		if(parent_obj)
 		{
-			if(parent_obj->getObjectType()==OBJ_RELATIONSHIP)
+			if(parent_obj->getObjectType()==ObjRelationship)
 				parent_rel=dynamic_cast<Relationship *>(parent_obj);
 			else
 				parent_tab=dynamic_cast<BaseTable *>(parent_obj);
@@ -722,17 +722,17 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 			xmlparser->restartParser();
 			xmlparser->loadXMLBuffer(xml_def);
 
-			if(obj_type==OBJ_TRIGGER)
+			if(obj_type==ObjTrigger)
 				aux_obj=model->createTrigger();
-			else if(obj_type==OBJ_INDEX)
+			else if(obj_type==ObjIndex)
 				aux_obj=model->createIndex();
-			else if(obj_type==OBJ_CONSTRAINT)
+			else if(obj_type==ObjConstraint)
 				aux_obj=model->createConstraint(parent_obj);
-			else if(obj_type==OBJ_SEQUENCE)
+			else if(obj_type==ObjSequence)
 				aux_obj=model->createSequence();
-			else if(obj_type==OBJ_VIEW)
+			else if(obj_type==ObjView)
 				aux_obj=model->createView();
-			else if(obj_type==OBJ_COLUMN)
+			else if(obj_type==ObjColumn)
 				aux_obj=model->createColumn();
 		}
 
@@ -741,7 +741,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 		if(op_type==Operation::OBJECT_MODIFIED ||
 				op_type==Operation::OBJECT_MOVED)
 		{
-			if(obj_type==OBJ_RELATIONSHIP)
+			if(obj_type==ObjRelationship)
 			{
 				/* Due to the complexity of the class Relationship and the strong link between all
 				relationships of the model it is necessary to store XML for special objects and
@@ -764,7 +764,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 
 
 			//For pk constraint, before restore the previous configuration, uncheck the not-null flag of the source columns
-			if(obj_type==OBJ_CONSTRAINT)
+			if(obj_type==ObjConstraint)
 				dynamic_cast<Constraint *>(orig_obj)->setColumnsNotNull(false);
 
 			/* The original object (obtained from the table, relationship or model) will have its
@@ -780,7 +780,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 				PgModelerNS::copyObject(reinterpret_cast<BaseObject **>(&object), aux_obj, obj_type);
 
 			//For pk constraint, after restore the previous configuration, check the not-null flag of the new source columns
-			if(obj_type==OBJ_CONSTRAINT)
+			if(obj_type==ObjConstraint)
 				dynamic_cast<Constraint *>(orig_obj)->setColumnsNotNull(true);
 		}
 
@@ -798,13 +798,13 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 			{
 				parent_tab->addObject(dynamic_cast<TableObject *>(object), obj_idx);
 
-				if(object->getObjectType()==OBJ_CONSTRAINT &&
+				if(object->getObjectType()==ObjConstraint &&
 						dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::foreign_key)
 					model->updateTableFKRelationships(dynamic_cast<Table *>(parent_tab));
 			}
 			else if(parent_rel)
 				parent_rel->addObject(dynamic_cast<TableObject *>(object), obj_idx);
-			else if(object->getObjectType()==OBJ_TABLE)
+			else if(object->getObjectType()==ObjTable)
 				dynamic_cast<Table *>(object)->getCodeDefinition(SchemaParser::SQL_DEFINITION);
 
 			model->addObject(object, obj_idx);
@@ -838,12 +838,12 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 				if(parent_tab->getSchema())
 					dynamic_cast<Schema *>(parent_tab->getSchema())->setModified(true);
 
-				if(object->getObjectType()==OBJ_COLUMN ||
-						object->getObjectType()==OBJ_CONSTRAINT)
+				if(object->getObjectType()==ObjColumn ||
+						object->getObjectType()==ObjConstraint)
 				{
 					model->validateRelationships(dynamic_cast<TableObject *>(object), dynamic_cast<Table *>(parent_tab));
 
-					if(object->getObjectType()==OBJ_CONSTRAINT &&
+					if(object->getObjectType()==ObjConstraint &&
 							dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::foreign_key)
 						model->updateTableFKRelationships(dynamic_cast<Table *>(parent_tab));
 				}
@@ -858,9 +858,9 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 
 		/* If the object in question is graphical it has the modified flag
 			marked to force the redraw at the time of its restoration */
-		else if(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW ||
-				obj_type==BASE_RELATIONSHIP || obj_type==OBJ_RELATIONSHIP ||
-				obj_type==OBJ_TEXTBOX || obj_type==OBJ_SCHEMA)
+		else if(obj_type==ObjTable || obj_type==ObjView ||
+				obj_type==ObjBaseRelationship || obj_type==ObjRelationship ||
+				obj_type==ObjTextbox || obj_type==ObjSchema)
 		{
 			BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(object);
 
@@ -869,15 +869,15 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 				graph_obj->setModified(true);
 
 			//Case the object is a view is necessary to update the table-view relationships on the model
-			if(obj_type==OBJ_VIEW && op_type==Operation::OBJECT_MODIFIED)
+			if(obj_type==ObjView && op_type==Operation::OBJECT_MODIFIED)
 				model->updateViewRelationships(dynamic_cast<View *>(graph_obj));
-			else if((obj_type==OBJ_RELATIONSHIP ||
-					 (obj_type==OBJ_TABLE && model->getRelationship(dynamic_cast<BaseTable *>(object), nullptr))) &&
+			else if((obj_type==ObjRelationship ||
+					 (obj_type==ObjTable && model->getRelationship(dynamic_cast<BaseTable *>(object), nullptr))) &&
 					op_type==Operation::OBJECT_MODIFIED)
 				model->validateRelationships();
 
 			//If a object had its schema restored is necessary to update the envolved schemas
-			if((obj_type==OBJ_TABLE || obj_type==OBJ_VIEW) &&
+			if((obj_type==ObjTable || obj_type==ObjView) &&
 					((bkp_obj && graph_obj->getSchema()!=bkp_obj->getSchema() && op_type==Operation::OBJECT_MODIFIED) ||
 					 op_type==Operation::OBJECT_MOVED))
 			{
@@ -889,12 +889,12 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 		}
 		else if(op_type==Operation::OBJECT_MODIFIED)
 		{
-			if(obj_type==OBJ_SCHEMA)
+			if(obj_type==ObjSchema)
 			{
 				model->validateSchemaRenaming(dynamic_cast<Schema *>(object), bkp_obj->getName());
 				dynamic_cast<Schema *>(object)->setModified(true);
 			}
-			else if(obj_type==OBJ_TAG)
+			else if(obj_type==ObjTag)
 			{
 				vector<BaseObject *> refs;
 				model->getObjectReferences(object, refs);
@@ -909,16 +909,16 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 
 		//Case the object is a type update the tables that are referencing it
 		if(op_type==Operation::OBJECT_MODIFIED &&
-				(object->getObjectType()==OBJ_TYPE || object->getObjectType()==OBJ_DOMAIN ||
-				 object->getObjectType()==OBJ_TABLE || object->getObjectType()==OBJ_VIEW ||
-				 object->getObjectType()==OBJ_EXTENSION))
+				(object->getObjectType()==ObjType || object->getObjectType()==ObjDomain ||
+				 object->getObjectType()==ObjTable || object->getObjectType()==ObjView ||
+				 object->getObjectType()==ObjExtension))
 		{
 			vector<BaseObject *> ref_objs;
 			model->getObjectReferences(object, ref_objs);
 
 			for(auto &obj : ref_objs)
 			{
-				if(obj->getObjectType()==OBJ_COLUMN)
+				if(obj->getObjectType()==ObjColumn)
 					dynamic_cast<Column *>(obj)->getParentTable()->setModified(true);
 			}
 		}

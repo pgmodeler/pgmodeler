@@ -30,8 +30,8 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 	QPixmap ico;
 	QString gen_purpose=trUtf8("General purpose");
 	map<QString, ObjectType> types_map;
-	vector<ObjectType> types=BaseObject::getObjectTypes(true, {OBJ_RELATIONSHIP, OBJ_TAG, OBJ_TEXTBOX,
-															   OBJ_PERMISSION, BASE_RELATIONSHIP });
+	vector<ObjectType> types=BaseObject::getObjectTypes(true, {ObjRelationship, ObjTag, ObjTextbox,
+															   ObjPermission, ObjBaseRelationship });
 
 	setupUi(this);
 
@@ -46,10 +46,10 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 		filter_cmb->addItem(ico, itr.first, itr.second);
 	}
 
-	applies_to_cmb->insertItem(0, gen_purpose, BASE_OBJECT);
+	applies_to_cmb->insertItem(0, gen_purpose, ObjBaseObject);
 	applies_to_cmb->setCurrentIndex(0);
 
-	filter_cmb->insertItem(0, gen_purpose, BASE_OBJECT);
+	filter_cmb->insertItem(0, gen_purpose, ObjBaseObject);
 	filter_cmb->insertItem(0, trUtf8("All snippets"));
 	filter_cmb->setCurrentIndex(0);
 
@@ -106,7 +106,7 @@ attribs_map SnippetsConfigWidget::getSnippetById(const QString &snip_id)
 QStringList SnippetsConfigWidget::getSnippetsIdsByObject(ObjectType obj_type)
 {
 	QStringList ids;
-	QString type_name=(obj_type==BASE_OBJECT ?
+	QString type_name=(obj_type==ObjBaseObject ?
 						   ParsersAttributes::GENERAL : BaseObject::getSchemaName(obj_type));
 
 	for(auto &snip : config_params)
@@ -121,7 +121,7 @@ QStringList SnippetsConfigWidget::getSnippetsIdsByObject(ObjectType obj_type)
 vector<attribs_map> SnippetsConfigWidget::getSnippetsByObject(ObjectType obj_type)
 {
 	vector<attribs_map> snippets;
-	QString type_name=(obj_type==BASE_OBJECT ?
+	QString type_name=(obj_type==ObjBaseObject ?
 						   ParsersAttributes::GENERAL : BaseObject::getSchemaName(obj_type));
 
 	for(auto &snip : config_params)

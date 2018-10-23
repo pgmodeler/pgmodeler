@@ -307,7 +307,7 @@ void MetadataHandlingForm::updateProgress(int progress, QString msg, unsigned in
 	QString fmt_msg=PgModelerUiNS::formatMessage(msg);
 	QPixmap icon;
 
-	if(obj_type==BASE_OBJECT)
+	if(obj_type==ObjBaseObject)
 	{
 		if(progress==100)
 			icon=QPixmap(PgModelerUiNS::getIconPath("msgbox_info"));

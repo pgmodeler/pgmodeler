@@ -38,16 +38,16 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 		ParsersAttributes::TABLE_BODY, //10
 		ParsersAttributes::TABLE_EXT_BODY, //11
 		ParsersAttributes::TABLE_TITLE, //12
-		BaseObject::getSchemaName(OBJ_RULE), //13
-		BaseObject::getSchemaName(OBJ_RULE), //14
-		BaseObject::getSchemaName(OBJ_INDEX), //15
-		BaseObject::getSchemaName(OBJ_INDEX), //16
-		BaseObject::getSchemaName(OBJ_TRIGGER), //17
-		BaseObject::getSchemaName(OBJ_TRIGGER), //18
-		BaseObject::getSchemaName(OBJ_CONSTRAINT), //19
-		BaseObject::getSchemaName(OBJ_CONSTRAINT), //20
-		BaseObject::getSchemaName(OBJ_POLICY), //21
-		BaseObject::getSchemaName(OBJ_POLICY), //22
+		BaseObject::getSchemaName(ObjRule), //13
+		BaseObject::getSchemaName(ObjRule), //14
+		BaseObject::getSchemaName(ObjIndex), //15
+		BaseObject::getSchemaName(ObjIndex), //16
+		BaseObject::getSchemaName(ObjTrigger), //17
+		BaseObject::getSchemaName(ObjTrigger), //18
+		BaseObject::getSchemaName(ObjConstraint), //19
+		BaseObject::getSchemaName(ObjConstraint), //20
+		BaseObject::getSchemaName(ObjPolicy), //21
+		BaseObject::getSchemaName(ObjPolicy), //22
 		ParsersAttributes::VIEW_SCHEMA_NAME, //21 -> 23
 		ParsersAttributes::VIEW_NAME, //22
 		ParsersAttributes::VIEW_BODY, //23
@@ -57,7 +57,7 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 		ParsersAttributes::REF_COLUMN, //27
 		ParsersAttributes::REF_TABLE, //28
 		ParsersAttributes::REFERENCE, //29
-		BaseObject::getSchemaName(OBJ_TEXTBOX), //30
+		BaseObject::getSchemaName(ObjTextbox), //30
 		ParsersAttributes::COLUMN, //31
 		ParsersAttributes::COLUMN, //32
 		ParsersAttributes::INH_COLUMN, //33
@@ -161,7 +161,7 @@ void AppearanceConfigWidget::loadExampleModel(void)
 							 GlobalAttributes::DirSeparator +
 							 GlobalAttributes::ExampleModel);
 
-			count=model->getObjectCount(OBJ_TABLE);
+			count=model->getObjectCount(ObjTable);
 			for(i=0; i < count; i++)
 			{
 				tab=new TableView(model->getTable(i));
@@ -169,28 +169,28 @@ void AppearanceConfigWidget::loadExampleModel(void)
 				scene->addItem(tab);
 			}
 
-			count=model->getObjectCount(OBJ_VIEW);
+			count=model->getObjectCount(ObjView);
 			for(i=0; i < count; i++)
 			{
 				view=new GraphicalView(model->getView(i));
 				scene->addItem(view);
 			}
 
-			count=model->getObjectCount(OBJ_RELATIONSHIP);
+			count=model->getObjectCount(ObjRelationship);
 			for(i=0; i < count; i++)
 			{
-				rel=new RelationshipView(model->getRelationship(i, OBJ_RELATIONSHIP));
+				rel=new RelationshipView(model->getRelationship(i, ObjRelationship));
 				scene->addItem(rel);
 			}
 
-			count=model->getObjectCount(BASE_RELATIONSHIP);
+			count=model->getObjectCount(ObjBaseRelationship);
 			for(i=0; i < count; i++)
 			{
-				rel=new RelationshipView(model->getRelationship(i, BASE_RELATIONSHIP));
+				rel=new RelationshipView(model->getRelationship(i, ObjBaseRelationship));
 				scene->addItem(rel);
 			}
 
-			count=model->getObjectCount(OBJ_TEXTBOX);
+			count=model->getObjectCount(ObjTextbox);
 			for(i=0; i < count; i++)
 			{
 				txtbox=new StyledTextboxView(model->getTextbox(i));

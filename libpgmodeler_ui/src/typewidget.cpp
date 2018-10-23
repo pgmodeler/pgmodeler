@@ -18,7 +18,7 @@
 
 #include "typewidget.h"
 
-TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
+TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, ObjType)
 {
 	try
 	{
@@ -28,7 +28,7 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 		unsigned i,i1;
 
 		Ui_TypeWidget::setupUi(this);
-		configureFormLayout(type_grid, OBJ_TYPE);
+		configureFormLayout(type_grid, ObjType);
 
 		like_type=new PgSQLTypeWidget(this, trUtf8("Like Type"));
 		element_type=new PgSQLTypeWidget(this, trUtf8("Element Type"));
@@ -43,7 +43,7 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 		for(i=Type::INPUT_FUNC; i <= Type::ANALYZE_FUNC; i++)
 		{
 			functions_sel[i]=nullptr;
-			functions_sel[i]=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
+			functions_sel[i]=new ObjectSelectorWidget(ObjFunction, true, this);
 			grid->addWidget(functions_sel[i],i,1,1,1);
 		}
 
@@ -64,7 +64,7 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 
 		grid=dynamic_cast<QGridLayout *>(attributes_gb->layout());
 
-		attrib_collation_sel=new ObjectSelectorWidget(OBJ_COLLATION, true, this);
+		attrib_collation_sel=new ObjectSelectorWidget(ObjCollation, true, this);
 		grid->addWidget(attrib_collation_sel, 1,1,1,2);
 
 		attrib_type_wgt=new PgSQLTypeWidget(this);
@@ -81,13 +81,13 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 		frame->setParent(base_attribs_twg->widget(0));
 
 		grid=dynamic_cast<QGridLayout *>(range_attribs_gb->layout());
-		opclass_sel=new ObjectSelectorWidget(OBJ_OPCLASS, true, this);
+		opclass_sel=new ObjectSelectorWidget(ObjOpClass, true, this);
 		grid->addWidget(opclass_sel,0,1,1,1);
 
 		for(i1=1, i=Type::CANONICAL_FUNC; i <= Type::SUBTYPE_DIFF_FUNC; i++,i1++)
 		{
 			functions_sel[i]=nullptr;
-			functions_sel[i]=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
+			functions_sel[i]=new ObjectSelectorWidget(ObjFunction, true, this);
 			grid->addWidget(functions_sel[i],i1,1,1,1);
 		}
 

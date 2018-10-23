@@ -24,7 +24,7 @@
 #include "relationshipconfigwidget.h"
 #include "generalconfigwidget.h"
 
-RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RELATIONSHIP)
+RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent, ObjRelationship)
 {
 	try
 	{
@@ -131,7 +131,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		grid=dynamic_cast<QGridLayout *>(rel_attribs_tbw->widget(GENERAL_TAB)->layout());
 		grid->addWidget(color_picker, 0, 1);
 
-		configureFormLayout(relationship_grid, OBJ_RELATIONSHIP);
+		configureFormLayout(relationship_grid, ObjRelationship);
 
 		DeferralType::getTypes(list);
 		deferral_cmb->addItems(list);
@@ -260,7 +260,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 	aux_rel=dynamic_cast<Relationship *>(base_rel);
 
-	if(base_rel->getObjectType()==BASE_RELATIONSHIP)
+	if(base_rel->getObjectType()==ObjBaseRelationship)
 	{
 		if(base_rel->getRelationshipType()!=BaseRelationship::RELATIONSHIP_FK)
 		{
@@ -321,7 +321,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		}
 	}
 
-	disable_sql_chk->setVisible(base_rel->getObjectType()==OBJ_RELATIONSHIP);
+	disable_sql_chk->setVisible(base_rel->getObjectType()==ObjRelationship);
 	table1_mand_chk->setText(base_rel->getTable(BaseRelationship::SRC_TABLE)->getName() + trUtf8(" is required"));
 	table2_mand_chk->setText(base_rel->getTable(BaseRelationship::DST_TABLE)->getName() + trUtf8(" is required"));
 
@@ -336,10 +336,10 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		constraints_tab->setButtonsEnabled(ObjectsTableWidget::ALL_BUTTONS, !aux_rel->isProtected());
 
 		//Lists the relationship attributes
-		listObjects(OBJ_COLUMN);
+		listObjects(ObjColumn);
 
 		//Lists the relationship constraints
-		listObjects(OBJ_CONSTRAINT);
+		listObjects(ObjConstraint);
 
 		listSpecialPkColumns();
 
@@ -381,7 +381,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 				rel_type==BaseRelationship::RELATIONSHIP_FK);
 
 	use_name_patterns=(rel1n || relnn ||
-					   (relgen_dep && base_rel->getObjectType()==OBJ_RELATIONSHIP));
+					   (relgen_dep && base_rel->getObjectType()==ObjRelationship));
 
 	name_patterns_grp->setVisible(use_name_patterns);
 
@@ -423,15 +423,15 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		for(i=SETTINGS_TAB; i <= SPECIAL_PK_TAB; i++)
 			rel_attribs_tbw->addTab(tabs[i], tab_labels[i]);
 	}
-	else if(relgen_dep && base_rel->getObjectType()==OBJ_RELATIONSHIP)
+	else if(relgen_dep && base_rel->getObjectType()==ObjRelationship)
 		rel_attribs_tbw->addTab(tabs[SPECIAL_PK_TAB], tab_labels[SPECIAL_PK_TAB]);
 
-	if(base_rel->getObjectType()==OBJ_RELATIONSHIP ||
-			(base_rel->getObjectType()==BASE_RELATIONSHIP &&
+	if(base_rel->getObjectType()==ObjRelationship ||
+			(base_rel->getObjectType()==ObjBaseRelationship &&
 			 base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK))
 		rel_attribs_tbw->addTab(tabs[ADVANCED_TAB], tab_labels[ADVANCED_TAB]);
 
-	copy_options_grp->setVisible(base_rel->getObjectType()==OBJ_RELATIONSHIP &&
+	copy_options_grp->setVisible(base_rel->getObjectType()==ObjRelationship &&
 								 base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_DEP);
 
 	custom_color_chk->setChecked(base_rel->getCustomColor()!=Qt::transparent);
@@ -463,7 +463,7 @@ QSize RelationshipWidget::getIdealSize(void)
 	  rel_type = dynamic_cast<BaseRelationship *>(this->object)->getRelationshipType();
 
 	if(rel_type == BaseRelationship::RELATIONSHIP_FK ||
-	   (BaseRelationship::RELATIONSHIP_DEP && this->object && this->object->getObjectType()==BASE_RELATIONSHIP))
+	   (BaseRelationship::RELATIONSHIP_DEP && this->object && this->object->getObjectType()==ObjBaseRelationship))
 		return(QSize(640, 320));
 	else if(BaseRelationship::RELATIONSHIP_GEN)
 		return(QSize(640, 520));
@@ -564,7 +564,7 @@ void RelationshipWidget::listObjects(ObjectType obj_type)
 
 	try
 	{
-		if(obj_type==OBJ_COLUMN)
+		if(obj_type==ObjColumn)
 			tab=attributes_tab;
 		else
 			tab=constraints_tab;
@@ -683,13 +683,13 @@ void RelationshipWidget::showAdvancedObject(int row)
 	ObjectType obj_type=object->getObjectType();
 	bool is_protected = false;
 
-	if(obj_type==OBJ_COLUMN)
+	if(obj_type==ObjColumn)
 	{
 		col=dynamic_cast<Column *>(object);
 		is_protected = col->isProtected();
 		openEditingForm<Column,ColumnWidget>(col, col->getParentTable());
 	}
-	else if(obj_type==OBJ_CONSTRAINT)
+	else if(obj_type==ObjConstraint)
 	{
 		constr=dynamic_cast<Constraint *>(object);
 
@@ -733,7 +733,7 @@ int RelationshipWidget::openEditingForm(TableObject *object, BaseObject *parent)
 	BaseObject *parent_aux = nullptr;
 	int res = 0;
 
-	if(this->object->getObjectType() == BASE_RELATIONSHIP)
+	if(this->object->getObjectType() == ObjBaseRelationship)
 		parent_aux = dynamic_cast<BaseRelationship *>(this->object)->getTable(BaseRelationship::SRC_TABLE);
 	else
 		parent_aux = !parent ? this->object : parent;
@@ -750,22 +750,22 @@ int RelationshipWidget::openEditingForm(TableObject *object, BaseObject *parent)
 
 void RelationshipWidget::addObject(void)
 {
-	ObjectType obj_type=BASE_OBJECT;
+	ObjectType obj_type=ObjBaseObject;
 
 	try
 	{
 		if(sender()==attributes_tab)
 		{
-			obj_type=OBJ_COLUMN;
+			obj_type=ObjColumn;
 			tab=attributes_tab;
 		}
 		else
 		{
-			obj_type=OBJ_CONSTRAINT;
+			obj_type=ObjConstraint;
 			tab=constraints_tab;
 		}
 
-		if(obj_type==OBJ_COLUMN)
+		if(obj_type==ObjColumn)
 			openEditingForm<Column,ColumnWidget>(nullptr);
 		else
 			openEditingForm<Constraint,ConstraintWidget>(nullptr);
@@ -781,7 +781,7 @@ void RelationshipWidget::addObject(void)
 
 void RelationshipWidget::duplicateObject(int curr_row, int new_row)
 {
-	ObjectType obj_type=BASE_OBJECT;
+	ObjectType obj_type=ObjBaseObject;
 	BaseObject *object = nullptr, *dup_object = nullptr;
 	Relationship *rel = dynamic_cast<Relationship *>(this->object);
 	vector<TableObject *> obj_list;
@@ -795,13 +795,13 @@ void RelationshipWidget::duplicateObject(int curr_row, int new_row)
 	{
 		if(sender()==attributes_tab)
 		{
-			obj_type=OBJ_COLUMN;
+			obj_type=ObjColumn;
 			tab=attributes_tab;
 			obj_list = rel->getAttributes();
 		}
 		else
 		{
-			obj_type=OBJ_CONSTRAINT;
+			obj_type=ObjConstraint;
 			tab=constraints_tab;
 			obj_list = rel->getConstraints();
 		}
@@ -835,7 +835,7 @@ void RelationshipWidget::duplicateObject(int curr_row, int new_row)
 
 void RelationshipWidget::editObject(int row)
 {
-	ObjectType obj_type=OBJ_COLUMN;
+	ObjectType obj_type=ObjColumn;
 	TableObject *tab_obj=nullptr;
 
 	try
@@ -844,13 +844,13 @@ void RelationshipWidget::editObject(int row)
 
 		if(sender()==attributes_tab)
 		{
-			obj_type=OBJ_COLUMN;
+			obj_type=ObjColumn;
 			tab_obj=reinterpret_cast<TableObject *>(attributes_tab->getRowData(row).value<void *>());
 			openEditingForm<Column,ColumnWidget>(tab_obj);
 		}
 		else
 		{
-			obj_type=OBJ_CONSTRAINT;
+			obj_type=ObjConstraint;
 			tab_obj=reinterpret_cast<TableObject *>(constraints_tab->getRowData(row).value<void *>());
 			openEditingForm<Constraint,ConstraintWidget>(tab_obj);
 		}
@@ -870,7 +870,7 @@ void RelationshipWidget::showObjectData(TableObject *object, int row)
 {
 	ObjectsTableWidget *tab=nullptr;
 
-	if(object->getObjectType()==OBJ_COLUMN)
+	if(object->getObjectType()==ObjColumn)
 	{
 		tab=attributes_tab;
 		attributes_tab->setCellText(*dynamic_cast<Column *>(object)->getType(),row,1);
@@ -888,7 +888,7 @@ void RelationshipWidget::showObjectData(TableObject *object, int row)
 void RelationshipWidget::removeObjects(void)
 {
 	Relationship *rel=nullptr;
-	ObjectType obj_type=BASE_OBJECT;
+	ObjectType obj_type=ObjBaseObject;
 	unsigned count, op_count=0, i;
 	TableObject *object=nullptr;
 
@@ -898,12 +898,12 @@ void RelationshipWidget::removeObjects(void)
 
 		if(sender()==attributes_tab)
 		{
-			obj_type=OBJ_COLUMN;
+			obj_type=ObjColumn;
 			count=rel->getAttributeCount();
 		}
 		else
 		{
-			obj_type=OBJ_CONSTRAINT;
+			obj_type=ObjConstraint;
 			count=rel->getConstraintCount();
 		}
 
@@ -917,7 +917,7 @@ void RelationshipWidget::removeObjects(void)
 			rel->removeObject(object);
 		}
 
-		if(obj_type==OBJ_COLUMN)
+		if(obj_type==ObjColumn)
 			listSpecialPkColumns();
 	}
 	catch(Exception &e)
@@ -944,7 +944,7 @@ void RelationshipWidget::removeObjects(void)
 void RelationshipWidget::removeObject(int row)
 {
 	Relationship *rel=nullptr;
-	ObjectType obj_type=BASE_OBJECT;
+	ObjectType obj_type=ObjBaseObject;
 	TableObject *object=nullptr;
 	int op_id=-1;
 
@@ -953,15 +953,15 @@ void RelationshipWidget::removeObject(int row)
 		rel=dynamic_cast<Relationship *>(this->object);
 
 		if(sender()==attributes_tab)
-			obj_type=OBJ_COLUMN;
+			obj_type=ObjColumn;
 		else
-			obj_type=OBJ_CONSTRAINT;
+			obj_type=ObjConstraint;
 
 		object=rel->getObject(row, obj_type);
 		op_id=op_list->registerObject(object, Operation::OBJECT_REMOVED, 0, rel);
 		rel->removeObject(object);
 
-		if(obj_type==OBJ_COLUMN)
+		if(obj_type==ObjColumn)
 			listSpecialPkColumns();
 	}
 	catch(Exception &e)
@@ -1058,13 +1058,13 @@ void RelationshipWidget::applyConfiguration(void)
 		/* Due to the complexity of the Relationship class and the strong link between all
 		 the relationships on the model is necessary to store the XML of the special objects
 		 and disconnect all relationships, edit the relationshi and revalidate all the relationships again */
-		if(this->object->getObjectType()==OBJ_RELATIONSHIP)
+		if(this->object->getObjectType()==ObjRelationship)
 		{
 			model->storeSpecialObjectsXML();
 			model->disconnectRelationships();
 		}
 
-		if(!this->new_object && this->object->getObjectType()==OBJ_RELATIONSHIP)
+		if(!this->new_object && this->object->getObjectType()==ObjRelationship)
 			op_list->registerObject(this->object, Operation::OBJECT_MODIFIED);
 		else
 			registerNewObject();
@@ -1076,7 +1076,7 @@ void RelationshipWidget::applyConfiguration(void)
 		else
 			base_rel->setCustomColor(Qt::transparent);
 
-		if(this->object->getObjectType()==OBJ_RELATIONSHIP)
+		if(this->object->getObjectType()==ObjRelationship)
 		{
 			QPlainTextEdit *pattern_fields[]={ src_col_pattern_txt, dst_col_pattern_txt,
 																				 src_fk_pattern_txt, dst_fk_pattern_txt,

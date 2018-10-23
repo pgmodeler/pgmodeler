@@ -218,7 +218,7 @@ class PgModelerCLI: public QApplication {
 
 	private slots:
 		void handleObjectAddition(BaseObject *);
-		void updateProgress(int progress, QString msg, ObjectType = BASE_OBJECT);
+		void updateProgress(int progress, QString msg, ObjectType = ObjBaseObject);
 		void printIgnoredError(QString err_cod, QString err_msg, QString cmd);
 		void handleObjectRemoval(BaseObject *object);
 };

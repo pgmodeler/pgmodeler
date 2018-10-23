@@ -18,7 +18,7 @@
 
 #include "operatorclasswidget.h"
 
-OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_OPCLASS)
+OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(parent, ObjOpClass)
 {
 	try
 	{
@@ -30,11 +30,11 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 
 		Ui_OperatorClassWidget::setupUi(this);
 
-		family_sel=new ObjectSelectorWidget(OBJ_OPFAMILY, true, this);
+		family_sel=new ObjectSelectorWidget(ObjOpFamily, true, this);
 		data_type=new PgSQLTypeWidget(this);
-		operator_sel=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);
-		elem_family_sel=new ObjectSelectorWidget(OBJ_OPFAMILY, true, this);
-		function_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
+		operator_sel=new ObjectSelectorWidget(ObjOperator, true, this);
+		elem_family_sel=new ObjectSelectorWidget(ObjOpFamily, true, this);
+		function_sel=new ObjectSelectorWidget(ObjFunction, true, this);
 		storage_type=new PgSQLTypeWidget(this, trUtf8("Storage Type"));
 		elements_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^ ObjectsTableWidget::DUPLICATE_BUTTON, true, this);
 
@@ -60,7 +60,7 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		grid->addWidget(data_type,4,0,1,5);
 		grid->addWidget(elements_grp,5,0,1,5);
 		this->setLayout(grid);
-		configureFormLayout(grid, OBJ_OPCLASS);
+		configureFormLayout(grid, ObjOpClass);
 
 		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PgSQLVersion95)].push_back(indexing_lbl);
 		values_map[indexing_lbl].push_back(~IndexingType(IndexingType::brin));
@@ -150,7 +150,7 @@ void OperatorClassWidget::showElementData(OperatorClassElement elem, int lin_idx
 	else
 	{
 		elements_tab->setCellText(*elem.getStorage(), lin_idx, 0);
-		elements_tab->setCellText(BaseObject::getTypeName(OBJ_TYPE), lin_idx, 1);
+		elements_tab->setCellText(BaseObject::getTypeName(ObjType), lin_idx, 1);
 	}
 
 	if(elem_type!=OperatorClassElement::STORAGE_ELEM)

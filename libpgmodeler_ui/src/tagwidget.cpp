@@ -18,10 +18,10 @@
 
 #include "tagwidget.h"
 
-TagWidget::TagWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TAG)
+TagWidget::TagWidget(QWidget *parent): BaseObjectWidget(parent, ObjTag)
 {
 	Ui_TagWidget::setupUi(this);
-	configureFormLayout(tag_grid, OBJ_TAG);
+	configureFormLayout(tag_grid, ObjTag);
 
 	QStringList attribs={ ParsersAttributes::TABLE_NAME, ParsersAttributes::TABLE_SCHEMA_NAME,
 						  ParsersAttributes::TABLE_TITLE, ParsersAttributes::TABLE_BODY,

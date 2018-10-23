@@ -627,20 +627,20 @@ void PgModelerCLI::handleObjectAddition(BaseObject *object)
 
 		switch(obj_type)
 		{
-			case OBJ_TABLE:
+			case ObjTable:
 				item=new TableView(dynamic_cast<Table *>(graph_obj));
 			break;
 
-			case OBJ_VIEW:
+			case ObjView:
 				item=new GraphicalView(dynamic_cast<View *>(graph_obj));
 			break;
 
-			case OBJ_RELATIONSHIP:
-			case BASE_RELATIONSHIP:
+			case ObjRelationship:
+			case ObjBaseRelationship:
 				item=new RelationshipView(dynamic_cast<BaseRelationship *>(graph_obj)); break;
 			break;
 
-			case OBJ_SCHEMA:
+			case ObjSchema:
 				item=new SchemaView(dynamic_cast<Schema *>(graph_obj)); break;
 			break;
 
@@ -651,7 +651,7 @@ void PgModelerCLI::handleObjectAddition(BaseObject *object)
 
 		scene->addItem(item);
 
-		if(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW)
+		if(obj_type==ObjTable || obj_type==ObjView)
 			dynamic_cast<Schema *>(graph_obj->getSchema())->setModified(true);
 	}
 }
@@ -667,7 +667,7 @@ void PgModelerCLI::handleObjectRemoval(BaseObject *object)
 
 		//Updates the parent schema if the removed object were a table or view
 		if(graph_obj->getSchema() &&
-				(graph_obj->getObjectType()==OBJ_TABLE || graph_obj->getObjectType()==OBJ_VIEW))
+				(graph_obj->getObjectType()==ObjTable || graph_obj->getObjectType()==ObjView))
 			dynamic_cast<Schema *>(graph_obj->getSchema())->setModified(true);
 	}
 }
@@ -722,12 +722,12 @@ void PgModelerCLI::extractObjectXML(void)
 			/*  Special case for empty tags like <language />, they will be converted to
 		  <language></language> in order to be correctly extracted further. Currently only language has this
 		  behaviour, so additional object may be added in the future. */
-			if(lin.contains(QString("<%1").arg(BaseObject::getSchemaName(OBJ_LANGUAGE))))
+			if(lin.contains(QString("<%1").arg(BaseObject::getSchemaName(ObjLanguage))))
 			{
 				lin=lin.simplified();
 
 				if(lin.contains(QString("/>")))
-					lin.replace(QString("/>"), QString("></%1>").arg(BaseObject::getSchemaName(OBJ_LANGUAGE)));
+					lin.replace(QString("/>"), QString("></%1>").arg(BaseObject::getSchemaName(ObjLanguage)));
 			}
 			/* Special case for function signatures. In previous releases, the function's signature was wrongly
 		 including OUT parameters and according to docs they are not part of the signature, so it is needed
@@ -820,8 +820,8 @@ void PgModelerCLI::recreateObjects(void)
 	QStringList fail_objs, constr, list;
 	QString xml_def, aux_def, start_tag="<%1", end_tag="</%1>", aux_tag;
 	BaseObject *object=nullptr;
-	ObjectType obj_type=BASE_OBJECT;
-	vector<ObjectType> types={ OBJ_INDEX, OBJ_TRIGGER, OBJ_RULE };
+	ObjectType obj_type=ObjBaseObject;
+	vector<ObjectType> types={ ObjIndex, ObjTrigger, ObjRule };
 	attribs_map attribs;
 	bool use_fail_obj=false;
 	unsigned tries=0, max_tries=parsed_opts[FIX_TRIES].toUInt();
@@ -858,11 +858,11 @@ void PgModelerCLI::recreateObjects(void)
 
 			xmlparser->getElementAttributes(attribs);
 
-			if(obj_type==OBJ_DATABASE)
+			if(obj_type==ObjDatabase)
 				model->configureDatabase(attribs);
 			else
 			{
-				if(obj_type==OBJ_TABLE)
+				if(obj_type==ObjTable)
 				{
 					//Before create a table extract it's foreign keys
 					list=extractForeignKeys(xml_def);
@@ -878,14 +878,14 @@ void PgModelerCLI::recreateObjects(void)
 				}
 
 				//Discarding fk relationships
-				if(obj_type!=OBJ_RELATIONSHIP ||
-						(obj_type==OBJ_RELATIONSHIP && !xml_def.contains(QString("\"%1\"").arg(ParsersAttributes::RELATIONSHIP_FK))))
+				if(obj_type!=ObjRelationship ||
+						(obj_type==ObjRelationship && !xml_def.contains(QString("\"%1\"").arg(ParsersAttributes::RELATIONSHIP_FK))))
 				{
 					object=model->createObject(obj_type);
 
 					if(object)
 					{
-						if(!dynamic_cast<TableObject *>(object) && obj_type!=OBJ_RELATIONSHIP && obj_type!=BASE_RELATIONSHIP)
+						if(!dynamic_cast<TableObject *>(object) && obj_type!=ObjRelationship && obj_type!=ObjBaseRelationship)
 							model->addObject(object);
 					}
 
@@ -895,7 +895,7 @@ void PgModelerCLI::recreateObjects(void)
 
 				/* Additional step to extract indexes/triggers/rules from within tables/views
 		   and putting their xml on the list of object to be created */
-				if((obj_type==OBJ_TABLE || obj_type==OBJ_VIEW) &&
+				if((obj_type==ObjTable || obj_type==ObjView) &&
 						xml_def.contains(QRegExp("(<)(index|trigger|rule)")))
 				{
 					for(ObjectType type : types)
@@ -933,7 +933,7 @@ void PgModelerCLI::recreateObjects(void)
 		}
 		catch(Exception &e)
 		{
-			if(obj_type!=OBJ_DATABASE)
+			if(obj_type!=ObjDatabase)
 				fail_objs.push_back(xml_def);
 			else
 				throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
@@ -972,14 +972,14 @@ void PgModelerCLI::recreateObjects(void)
 void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 {
 	//Placing objects <index>, <rule>, <trigger> outside of <table>
-	if(!obj_xml.startsWith(TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_TABLESPACE))) &&
-			obj_xml.startsWith(TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_TABLE))))
+	if(!obj_xml.startsWith(TAG_EXPR.arg(BaseObject::getSchemaName(ObjTablespace))) &&
+			obj_xml.startsWith(TAG_EXPR.arg(BaseObject::getSchemaName(ObjTable))))
 	{
 		int start_idx=-1, end_idx=-1, len=0;
-		ObjectType obj_types[3]={ OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX  };
+		ObjectType obj_types[3]={ ObjRule, ObjTrigger, ObjIndex  };
 		QString  curr_tag, curr_end_tag, def, tab_name, sch_name,
 				name_attr=QString("name=\""),
-				sch_name_attr=TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_SCHEMA)) + QString(" ") + name_attr;
+				sch_name_attr=TAG_EXPR.arg(BaseObject::getSchemaName(ObjSchema)) + QString(" ") + name_attr;
 
 		//Extracting the table's name
 		start_idx=obj_xml.indexOf(name_attr);
@@ -1008,7 +1008,7 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 				obj_xml.remove(start_idx, len);
 
 				//If the object is a rule include the table attribute
-				if(def.startsWith(TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_RULE))))
+				if(def.startsWith(TAG_EXPR.arg(BaseObject::getSchemaName(ObjRule))))
 				{
 					start_idx=def.indexOf('>');
 					def.replace(start_idx, 1, QString(" ") + tab_name + QString(">"));
@@ -1028,7 +1028,7 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 		obj_xml.remove(QRegExp(ATTRIBUTE_EXPR.arg(QString("recheck"))));
 
 	//Remove values greater-op, less-op, sort-op or sort2-op from ref-type attribute from <operator> tags.
-	if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_OPERATOR))))
+	if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(ObjOperator))))
 	{
 		obj_xml.remove(QString("greater-op"));
 		obj_xml.remove(QString("less-op"));
@@ -1037,11 +1037,11 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 	}
 
 	//Replacing attribute owner by onwer-col for sequences
-	if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_SEQUENCE))))
+	if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(ObjSequence))))
 		obj_xml.replace(ParsersAttributes::OWNER, ParsersAttributes::OWNER_COLUMN);
 
 	//Remove sysid attribute from <role> tags.
-	if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_ROLE))))
+	if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(ObjRole))))
 		obj_xml.remove(QRegExp(ATTRIBUTE_EXPR.arg(QString("sysid"))));
 
 	//Replace <parameter> tag by <typeattrib> on <usertype> tags.
@@ -1051,7 +1051,7 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 		obj_xml.replace(END_TAG_EXPR.arg(ParsersAttributes::PARAMETER), END_TAG_EXPR.arg(ParsersAttributes::TYPE_ATTRIBUTE));
 	}
 
-	if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_RELATIONSHIP))))
+	if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(ObjRelationship))))
 	{
 		//Remove auto-sufix, src-sufix, dst-sufix, col-indexes, constr-indexes, attrib-indexes from <relationship> tags.
 		obj_xml.remove(QRegExp(ATTRIBUTE_EXPR.arg(QString("auto-sufix"))));
@@ -1065,25 +1065,25 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 	}
 
 	//Renaming the tag <condition> to <predicate> on indexes
-	if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_INDEX))))
+	if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(ObjIndex))))
 	{
 		obj_xml.replace(TAG_EXPR.arg(ParsersAttributes::CONDITION), TAG_EXPR.arg(ParsersAttributes::PREDICATE));
 		obj_xml.replace(END_TAG_EXPR.arg(ParsersAttributes::CONDITION), END_TAG_EXPR.arg(ParsersAttributes::PREDICATE));
 	}
 
 	//Renaming the attribute default to default-value on domain
-	if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_DOMAIN))))
+	if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(ObjDomain))))
 		obj_xml.replace(ParsersAttributes::DEFAULT, ParsersAttributes::DEFAULT_VALUE);
 
 	//Renaming the tag <grant> to <permission>
 	if(obj_xml.contains(TAG_EXPR.arg(QString("grant"))))
 	{
-		obj_xml.replace(TAG_EXPR.arg(QString("grant")), TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_PERMISSION)));
-		obj_xml.replace(END_TAG_EXPR.arg(QString("grant")), END_TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_PERMISSION)));
+		obj_xml.replace(TAG_EXPR.arg(QString("grant")), TAG_EXPR.arg(BaseObject::getSchemaName(ObjPermission)));
+		obj_xml.replace(END_TAG_EXPR.arg(QString("grant")), END_TAG_EXPR.arg(BaseObject::getSchemaName(ObjPermission)));
 	}
 
 	//Replace the constraint attribute and tag expression by constraint tag in <domain>.
-	if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_DOMAIN))) &&
+	if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(ObjDomain))) &&
 		 obj_xml.contains(TAG_EXPR.arg(ParsersAttributes::EXPRESSION)))
 	{
 		int start_idx=-1, end_idx=-1;
@@ -1112,13 +1112,13 @@ void PgModelerCLI::fixOpClassesFamiliesReferences(QString &obj_xml)
 {
 	ObjectType ref_obj_type;
 
-	if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_INDEX))) ||
+	if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(ObjIndex))) ||
 			obj_xml.contains(QRegExp(QString("(%1)(.)+(type=)(\")(%2)(\")")
-									 .arg(TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_CONSTRAINT)))
+									 .arg(TAG_EXPR.arg(BaseObject::getSchemaName(ObjConstraint)))
 									 .arg(ParsersAttributes::EX_CONSTR))))
-		ref_obj_type=OBJ_OPCLASS;
-	else if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(OBJ_OPCLASS))))
-		ref_obj_type=OBJ_OPFAMILY;
+		ref_obj_type=ObjOpClass;
+	else if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(ObjOpClass))))
+		ref_obj_type=ObjOpFamily;
 	else
 		return;
 
@@ -1278,8 +1278,8 @@ void PgModelerCLI::importDatabase(DatabaseModel *model, Connection conn)
 
 		catalog.getObjectsOIDs(obj_oids, col_oids, {{ParsersAttributes::FILTER_TABLE_TYPES, ParsersAttributes::_TRUE_}});
 
-		db_oid = catalog.getObjectOID(conn.getConnectionParam(Connection::PARAM_DB_NAME), OBJ_DATABASE);
-		obj_oids[OBJ_DATABASE].push_back(db_oid.toUInt());
+		db_oid = catalog.getObjectOID(conn.getConnectionParam(Connection::PARAM_DB_NAME), ObjDatabase);
+		obj_oids[ObjDatabase].push_back(db_oid.toUInt());
 
 		catalog.closeConnection();
 

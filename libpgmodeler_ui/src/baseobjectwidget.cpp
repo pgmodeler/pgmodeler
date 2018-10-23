@@ -57,10 +57,10 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 		connect(edt_perms_tb, SIGNAL(clicked(bool)),this, SLOT(editPermissions(void)));
 		connect(append_sql_tb, SIGNAL(clicked(bool)),this, SLOT(editCustomSQL(void)));
 
-		schema_sel=new ObjectSelectorWidget(OBJ_SCHEMA, true, this);
-		collation_sel=new ObjectSelectorWidget(OBJ_COLLATION, true, this);
-		tablespace_sel=new ObjectSelectorWidget(OBJ_TABLESPACE, true, this);
-		owner_sel=new ObjectSelectorWidget(OBJ_ROLE, true, this);
+		schema_sel=new ObjectSelectorWidget(ObjSchema, true, this);
+		collation_sel=new ObjectSelectorWidget(ObjCollation, true, this);
+		tablespace_sel=new ObjectSelectorWidget(ObjTablespace, true, this);
+		owner_sel=new ObjectSelectorWidget(ObjRole, true, this);
 
 		alias_ht=new HintTextWidget(alias_hint, this);
 		alias_ht->setText(alias_edt->statusTip());
@@ -287,7 +287,7 @@ void BaseObjectWidget::cancelChainedOperation(void)
 
 void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *object, BaseObject *parent_obj, double obj_px, double obj_py, bool uses_op_list)
 {
-	ObjectType obj_type, parent_type=BASE_OBJECT;
+	ObjectType obj_type, parent_type=ObjBaseObject;
 
 	/* Reseting the objects attributes in order to force them to be redefined
 	every time this method is called */
@@ -309,11 +309,11 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	{
 		parent_type=parent_obj->getObjectType();
 
-		if(parent_type==OBJ_TABLE || parent_type==OBJ_VIEW)
+		if(parent_type==ObjTable || parent_type==ObjView)
 			this->table=dynamic_cast<BaseTable *>(parent_obj);
-		else if(parent_type==OBJ_RELATIONSHIP)
+		else if(parent_type==ObjRelationship)
 			this->relationship=dynamic_cast<Relationship *>(parent_obj);
-		else if(parent_type!=OBJ_DATABASE && parent_type!=OBJ_SCHEMA)
+		else if(parent_type!=ObjDatabase && parent_type!=ObjSchema)
 			throw Exception(AsgObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 	else
@@ -350,23 +350,23 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	append_sql_tb->setEnabled(object!=nullptr && !new_object);
 
 	owner_sel->setModel(model);
-	owner_sel->setSelectedObject(model->getDefaultObject(OBJ_ROLE));
+	owner_sel->setSelectedObject(model->getDefaultObject(ObjRole));
 
 	schema_sel->setModel(model);
-	schema_sel->setSelectedObject(model->getDefaultObject(OBJ_SCHEMA));
+	schema_sel->setSelectedObject(model->getDefaultObject(ObjSchema));
 
 	tablespace_sel->setModel(model);
-	tablespace_sel->setSelectedObject(model->getDefaultObject(OBJ_TABLESPACE));
+	tablespace_sel->setSelectedObject(model->getDefaultObject(ObjTablespace));
 
 	collation_sel->setModel(model);
-	collation_sel->setSelectedObject(model->getDefaultObject(OBJ_COLLATION));
+	collation_sel->setSelectedObject(model->getDefaultObject(ObjCollation));
 
 	if(object)
 	{
 		obj_id_lbl->setVisible(true);
 		obj_id_lbl->setText(QString("ID: %1").arg(object->getObjectId()));
 
-		if(handled_obj_type != BASE_OBJECT)
+		if(handled_obj_type != ObjBaseObject)
 			name_edt->setText(object->getName());
 		else
 			name_edt->setText(object->getSignature());
@@ -390,9 +390,9 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 			schema_sel->setSelectedObject(object->getSchema());
 
 		obj_type=object->getObjectType();
-		object_protected=(parent_type!=OBJ_RELATIONSHIP &&
+		object_protected=(parent_type!=ObjRelationship &&
 						   (object->isProtected() ||
-							((obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT) &&
+							((obj_type==ObjColumn || obj_type==ObjConstraint) &&
 							 dynamic_cast<TableObject *>(object)->isAddedByRelationship())));
 		protected_obj_frm->setVisible(object_protected);
 		disable_sql_chk->setChecked(object->isSQLDisabled());
@@ -403,7 +403,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 		obj_id_lbl->setVisible(false);
 		protected_obj_frm->setVisible(false);
 
-		if(parent_obj && parent_obj->getObjectType()==OBJ_SCHEMA)
+		if(parent_obj && parent_obj->getObjectType()==ObjSchema)
 			schema_sel->setSelectedObject(parent_obj);
 	}
 }
@@ -446,9 +446,9 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 		this->setLayout(baseobject_grid);
 
 	baseobject_grid->setContentsMargins(4, 4, 4, 4);
-	disable_sql_chk->setVisible(obj_type!=BASE_OBJECT && obj_type!=OBJ_PERMISSION &&
-															obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_TAG &&
-															obj_type!=OBJ_PARAMETER);
+	disable_sql_chk->setVisible(obj_type!=ObjBaseObject && obj_type!=ObjPermission &&
+															obj_type!=ObjTextbox && obj_type!=ObjTag &&
+															obj_type!=ObjParameter);
 
 	alias_edt->setVisible(BaseObject::acceptsAlias(obj_type));
 	alias_hint_wgt->setVisible(BaseObject::acceptsAlias(obj_type));
@@ -469,22 +469,22 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 	collation_lbl->setVisible(BaseObject::acceptsCollation(obj_type));
 	collation_sel->setVisible(BaseObject::acceptsCollation(obj_type));
 
-	show_comment=obj_type!=OBJ_RELATIONSHIP && obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_PARAMETER;
+	show_comment=obj_type!=ObjRelationship && obj_type!=ObjTextbox && obj_type!=ObjParameter;
 	comment_lbl->setVisible(show_comment);
 	comment_edt->setVisible(show_comment);
 
-	if(obj_type!=BASE_OBJECT)
+	if(obj_type!=ObjBaseObject)
 	{
 		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(obj_type)));
 		obj_icon_lbl->setToolTip(BaseObject::getTypeName(obj_type));
 
-		if(obj_type!=OBJ_PERMISSION && obj_type!=OBJ_CAST)
+		if(obj_type!=ObjPermission && obj_type!=ObjCast)
 		{
 			setRequiredField(name_lbl);
 			setRequiredField(name_edt);
 		}
 
-		if(obj_type!=OBJ_EXTENSION)
+		if(obj_type!=ObjExtension)
 		{
 			setRequiredField(schema_lbl);
 			setRequiredField(schema_sel);
@@ -702,13 +702,13 @@ void BaseObjectWidget::applyConfiguration(void)
 			QString obj_name;
 
 			QApplication::setOverrideCursor(Qt::WaitCursor);
-			obj_name=BaseObject::formatName(name_edt->text().toUtf8(), obj_type==OBJ_OPERATOR);
+			obj_name=BaseObject::formatName(name_edt->text().toUtf8(), obj_type==ObjOperator);
 
 			if(this->object->acceptsSchema() &&  schema_sel->getSelectedObject())
 				obj_name=schema_sel->getSelectedObject()->getName(true) + "." + obj_name;
 
 			//Checking the object duplicity
-			if(obj_type!=OBJ_DATABASE && obj_type!=OBJ_PERMISSION && obj_type!=OBJ_PARAMETER)
+			if(obj_type!=ObjDatabase && obj_type!=ObjPermission && obj_type!=ObjParameter)
 			{
 				if(table)
 				{
@@ -736,10 +736,10 @@ void BaseObjectWidget::applyConfiguration(void)
 					checking on table list when the configured object is a view or a checking
 					on view list when the configured object is a table, this because PostgreSQL
 					does not accepts tables and views have the same name on the same schema */
-					if(!aux_obj && obj_type==OBJ_TABLE)
-						aux_obj=model->getObject(obj_name, OBJ_VIEW);
-					else if(!aux_obj && obj_type==OBJ_VIEW)
-						aux_obj=model->getObject(obj_name, OBJ_TABLE);
+					if(!aux_obj && obj_type==ObjTable)
+						aux_obj=model->getObject(obj_name, ObjView);
+					else if(!aux_obj && obj_type==ObjView)
+						aux_obj=model->getObject(obj_name, ObjTable);
 
 					aux_obj1=model->getObject(object->getSignature(), obj_type);
 					new_obj=(!aux_obj && !aux_obj1);
@@ -758,7 +758,7 @@ void BaseObjectWidget::applyConfiguration(void)
 			}
 
 			//Renames the object (only cast object aren't renamed)
-			if(obj_type!=OBJ_CAST)
+			if(obj_type!=ObjCast)
 			{
 				prev_name=object->getName();
 				object->setName(name_edt->text().trimmed().toUtf8());
@@ -819,10 +819,10 @@ void BaseObjectWidget::finishConfiguration(void)
 				if(table && TableObject::isTableObject(obj_type))
 					table->addObject(this->object);
 				//Adding the object on the relationship, if specified
-				else if(relationship && (obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT))
+				else if(relationship && (obj_type==ObjColumn || obj_type==ObjConstraint))
 					relationship->addObject(dynamic_cast<TableObject *>(this->object));
 				//Adding the object on the model
-				else if(obj_type!=OBJ_PARAMETER)
+				else if(obj_type!=ObjParameter)
 					model->addObject(this->object);
 
 				registerNewObject();
@@ -831,7 +831,7 @@ void BaseObjectWidget::finishConfiguration(void)
 			else
 			{
 				//If the object is being updated, validates its SQL definition
-				if(obj_type==BASE_RELATIONSHIP || obj_type==OBJ_TEXTBOX || obj_type==OBJ_TAG)
+				if(obj_type==ObjBaseRelationship || obj_type==ObjTextbox || obj_type==ObjTag)
 					this->object->getCodeDefinition(SchemaParser::XML_DEFINITION);
 				else
 					this->object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
@@ -842,7 +842,7 @@ void BaseObjectWidget::finishConfiguration(void)
 			{
 				obj->setCodeInvalidated(true);
 
-				if(obj->getObjectType()==OBJ_COLUMN)
+				if(obj->getObjectType()==ObjColumn)
 					dynamic_cast<Column *>(obj)->getParentTable()->setModified(true);
 			}
 
@@ -851,7 +851,7 @@ void BaseObjectWidget::finishConfiguration(void)
 			//If the object is graphical (or a table object), updates it (or its parent) on the scene
 			if(graph_obj || tab_obj)
 			{
-				if(!graph_obj && tab_obj && tab_obj->getObjectType()!=OBJ_PARAMETER)
+				if(!graph_obj && tab_obj && tab_obj->getObjectType()!=ObjParameter)
 				{
 					if(this->table)
 						graph_obj=dynamic_cast<BaseGraphicObject *>(this->table);
@@ -920,9 +920,9 @@ void BaseObjectWidget::cancelConfiguration(void)
 		else if(relationship && relationship->getObjectIndex(tab_obj) >= 0)
 			relationship->removeObject(tab_obj);
 
-		if(obj_type!=OBJ_TABLE &&
-				obj_type!=OBJ_VIEW &&
-				obj_type!=OBJ_RELATIONSHIP)
+		if(obj_type!=ObjTable &&
+				obj_type!=ObjView &&
+				obj_type!=ObjRelationship)
 		{
 			if(!op_list->isObjectRegistered(this->object, Operation::OBJECT_CREATED))
 				delete(this->object);
@@ -933,8 +933,8 @@ void BaseObjectWidget::cancelConfiguration(void)
 
 	//If the object is not a new one, restore its previous state
 	if(op_list &&
-	  ((!new_object && obj_type!=OBJ_DATABASE && obj_type!=OBJ_PERMISSION && operation_count != op_list->getCurrentSize()) ||
-	   (new_object && (obj_type==OBJ_TABLE || obj_type==OBJ_VIEW || obj_type==OBJ_RELATIONSHIP))))
+	  ((!new_object && obj_type!=ObjDatabase && obj_type!=ObjPermission && operation_count != op_list->getCurrentSize()) ||
+	   (new_object && (obj_type==ObjTable || obj_type==ObjView || obj_type==ObjRelationship))))
 	{
 		try
 		{

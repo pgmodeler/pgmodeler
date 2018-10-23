@@ -18,10 +18,10 @@
 
 #include "genericsqlwidget.h"
 
-GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_GENERIC_SQL)
+GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, ObjGenericSQL)
 {
 	Ui_GenericSQLWidget::setupUi(this);
-	configureFormLayout(genericsql_grid, OBJ_GENERIC_SQL);
+	configureFormLayout(genericsql_grid, ObjGenericSQL);
 
 	definition_txt = PgModelerUiNS::createNumberedTextEditor(sqlcode_grp, true);
 	definition_hl = new SyntaxHighlighter(definition_txt);

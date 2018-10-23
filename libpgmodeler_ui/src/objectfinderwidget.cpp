@@ -104,7 +104,7 @@ void ObjectFinderWidget::fadeObjects(void)
 	vector<BaseObject *> objects, other_objs;
 	bool fade_listed = false;
 
-	for(auto obj_type : {OBJ_TABLE, OBJ_VIEW, OBJ_TEXTBOX, OBJ_RELATIONSHIP, BASE_RELATIONSHIP, OBJ_SCHEMA})
+	for(auto obj_type : {ObjTable, ObjView, ObjTextbox, ObjRelationship, ObjBaseRelationship, ObjSchema})
 	{
 		objects.insert(objects.end(),
 									 model_wgt->getDatabaseModel()->getObjectList(obj_type)->begin(),
@@ -137,7 +137,7 @@ void ObjectFinderWidget::selectObjects(void)
 	BaseGraphicObject *graph_obj = nullptr;
 	bool sel_listed = false;
 
-	for(auto obj_type : {OBJ_TABLE, OBJ_VIEW, OBJ_TEXTBOX, OBJ_RELATIONSHIP, BASE_RELATIONSHIP, OBJ_SCHEMA})
+	for(auto obj_type : {ObjTable, ObjView, ObjTextbox, ObjRelationship, ObjBaseRelationship, ObjSchema})
 	{
 		objects.insert(objects.end(),
 									 model_wgt->getDatabaseModel()->getObjectList(obj_type)->begin(),
@@ -291,8 +291,8 @@ void ObjectFinderWidget::editObject(void)
 {
 	if(selected_obj)
 	{
-		if(selected_obj->getObjectType()==OBJ_PERMISSION)
-			model_wgt->showObjectForm(OBJ_PERMISSION, dynamic_cast<Permission *>(selected_obj)->getObject());
+		if(selected_obj->getObjectType()==ObjPermission)
+			model_wgt->showObjectForm(ObjPermission, dynamic_cast<Permission *>(selected_obj)->getObject());
 		else
 		{
 			vector<BaseObject *> vect;
@@ -330,7 +330,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 
 		for(lin_idx=0, i=0; i < objs.size(); i++)
 		{
-			if(objs[i]->getObjectType()==BASE_RELATIONSHIP)
+			if(objs[i]->getObjectType()==ObjBaseRelationship)
 				str_aux=QString("tv");
 			else
 				str_aux.clear();
@@ -466,7 +466,7 @@ void ObjectFinderWidget::updateObjectTypeList(QListWidget *list_wgt)
 		{
 			item=new QListWidgetItem;
 
-			if(types[type_id]==BASE_RELATIONSHIP)
+			if(types[type_id]==ObjBaseRelationship)
 				str_aux=QString(BaseObject::getSchemaName(types[type_id])) + QString("tv");
 			else
 				str_aux=QString(BaseObject::getSchemaName(types[type_id]));

@@ -20,7 +20,7 @@
 
 Parameter::Parameter(void)
 {
-	obj_type=OBJ_PARAMETER;
+	obj_type=ObjParameter;
 	is_in=is_out=is_variadic=false;
 }
 

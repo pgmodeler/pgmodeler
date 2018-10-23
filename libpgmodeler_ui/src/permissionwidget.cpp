@@ -18,7 +18,7 @@
 
 #include "permissionwidget.h"
 
-PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_PERMISSION)
+PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, ObjPermission)
 {
 	QGridLayout *grid=nullptr;
 	QFrame *frame=nullptr;
@@ -39,7 +39,7 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	object_selection_wgt=new ModelObjectsWidget(true);
 	permission=nullptr;
 
-	configureFormLayout(permission_grid, OBJ_PERMISSION);
+	configureFormLayout(permission_grid, ObjPermission);
 
 	name_edt->setReadOnly(true);
 	comment_edt->setVisible(false);
@@ -89,7 +89,7 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	}
 
 	frame=generateInformationFrame(trUtf8("Leave the <em><strong>Roles</strong></em> grid empty in order to create a %1 applicable to <strong><em>PUBLIC</em></strong>.")
-																 .arg(BaseObject::getTypeName(OBJ_PERMISSION).toLower()));
+																 .arg(BaseObject::getTypeName(ObjPermission).toLower()));
 	permission_grid->addWidget(frame, permission_grid->count()+1, 0, 1, 0);
 	frame->setParent(this);
 
@@ -163,7 +163,7 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 
 void PermissionWidget::selectRole(void)
 {
-	object_selection_wgt->setObjectVisible(OBJ_ROLE, true);
+	object_selection_wgt->setObjectVisible(ObjRole, true);
 	object_selection_wgt->setModel(this->model);
 	object_selection_wgt->show();
 }
@@ -317,7 +317,7 @@ void PermissionWidget::updatePermission(void)
 		//Checking if the permission already exists on model
 		perm_idx=model->getPermissionIndex(perm, false);
 
-		if(perm_idx < 0 || (perm_idx >=0 && model->getObject(perm_idx,OBJ_PERMISSION)==permission))
+		if(perm_idx < 0 || (perm_idx >=0 && model->getObject(perm_idx,ObjPermission)==permission))
 		{
 			(*permission)=(*perm);
 			listPermissions();

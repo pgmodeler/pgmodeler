@@ -27,7 +27,7 @@ const QString Sequence::MAX_BIG_NEGATIVE_VALUE=QString("-9223372036854775808");
 
 Sequence::Sequence(void)
 {
-	obj_type=OBJ_SEQUENCE;
+	obj_type=ObjSequence;
 	cycle=false;
 	setDefaultValues(PgSQLType(QString("serial")));
 	owner_col=nullptr;

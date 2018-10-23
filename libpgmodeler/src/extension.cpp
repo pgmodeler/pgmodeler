@@ -2,7 +2,7 @@
 
 Extension::Extension(void)
 {
-	obj_type=OBJ_EXTENSION;
+	obj_type=ObjExtension;
 	handles_type=false;
 	attributes[ParsersAttributes::HANDLES_TYPE]=QString();
 	attributes[ParsersAttributes::CUR_VERSION]=QString();

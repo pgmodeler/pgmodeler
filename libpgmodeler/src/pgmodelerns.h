@@ -65,16 +65,16 @@ namespace PgModelerNS {
 		if(!obj)
 			return("");
 		//Cast objects will not have the name changed since their name are automatically generated
-		else if(obj->getObjectType()==OBJ_CAST || obj->getObjectType()==OBJ_DATABASE)
+		else if(obj->getObjectType()==ObjCast || obj->getObjectType()==ObjDatabase)
 			return(obj->getName());
 
 		obj_name=obj->getName(fmt_name);
 		obj_type=obj->getObjectType();
 
-		if(!use_suf_on_conflict && obj_type!=OBJ_OPERATOR)
+		if(!use_suf_on_conflict && obj_type!=ObjOperator)
 			obj_name += suffix;
 
-		counter = (use_suf_on_conflict && obj_type!= OBJ_OPERATOR? 0 : 1);
+		counter = (use_suf_on_conflict && obj_type!= ObjOperator? 0 : 1);
 		id=QString::number(obj->getObjectId());
 		len=obj_name.size() + id.size();
 
@@ -85,7 +85,7 @@ namespace PgModelerNS {
 			obj_name.chop(id.size() + 3);
 
 			//Append the id of the object on its name (this is not applied to operators)
-			if(obj_type!=OBJ_OPERATOR)
+			if(obj_type!=ObjOperator)
 				obj_name+=QString("_") + id;
 		}
 
@@ -101,7 +101,7 @@ namespace PgModelerNS {
 			if(/*aux_obj!=obj &&*/ aux_obj->getName(fmt_name)==aux_name)
 			{
 				//For operators is appended a '?' on the name
-				if(obj_type==OBJ_OPERATOR)
+				if(obj_type==ObjOperator)
 					aux_name=QString("%1%2").arg(obj_name).arg(QString("").leftJustified(counter++, oper_uniq_chr));
 				else
 				{

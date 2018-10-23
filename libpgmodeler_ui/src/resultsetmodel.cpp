@@ -61,7 +61,7 @@ ResultSetModel::ResultSetModel(ResultSet &res, Catalog &catalog, QObject *parent
 		end=std::unique(type_ids.begin(), type_ids.end());
 		type_ids.erase(end, type_ids.end());
 
-		types = aux_cat.getObjectsAttributes(OBJ_TYPE, QString(), QString(), type_ids);
+		types = aux_cat.getObjectsAttributes(ObjType, QString(), QString(), type_ids);
 		col = 0;
 
 		for(auto &tp : types)

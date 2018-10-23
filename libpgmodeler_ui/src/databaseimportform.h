@@ -116,7 +116,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		/*! \brief Retrieve the specified objects from the database and insert them onto the tree view.
 		The "root" parameter is used to associate the group of objects as child of it.
 		The "schema" and "table" parameter are used to filter objects by schema and/or table.
-		This method automatically returns a list of QTreeWidgetItem when the vector "types" contains OBJ_SCHEMA or OBJ_TABLE or OBJ_VIEW */
+		This method automatically returns a list of QTreeWidgetItem when the vector "types" contains ObjSchema or ObjTable or ObjView */
 		static vector<QTreeWidgetItem *> updateObjectsTree(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, vector<ObjectType> types,
 																											 bool checkable_items=false, bool disable_empty_grps=true, QTreeWidgetItem *root=nullptr,
 																											 const QString &schema=QString(), const QString &table=QString(), unsigned sort_by = 0);

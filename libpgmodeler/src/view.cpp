@@ -20,7 +20,7 @@
 
 View::View(void) : BaseTable()
 {
-	obj_type=OBJ_VIEW;
+	obj_type=ObjView;
 	materialized=recursive=with_no_data=false;
 	attributes[ParsersAttributes::DEFINITION]=QString();
 	attributes[ParsersAttributes::REFERENCES]=QString();
@@ -37,7 +37,7 @@ View::View(void) : BaseTable()
 
 View::~View(void)
 {
-	ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX };
+	ObjectType types[]={ ObjTrigger, ObjRule, ObjIndex };
 	vector<TableObject *> *list=nullptr;
 
 	for(unsigned i=0; i < 3; i++)
@@ -67,7 +67,7 @@ void View::setSchema(BaseObject *schema)
 
 void View::setProtected(bool value)
 {
-	ObjectType obj_types[]={ OBJ_RULE, OBJ_TRIGGER };
+	ObjectType obj_types[]={ ObjRule, ObjTrigger };
 	unsigned i;
 	vector<TableObject *>::iterator itr, itr_end;
 	vector<TableObject *> *list=nullptr;
@@ -605,7 +605,7 @@ QString View::getCodeDefinition(unsigned def_type)
 void View::setSQLObjectAttribute(void)
 {
 	if(materialized)
-	  attributes[ParsersAttributes::SQL_OBJECT]=QString("MATERIALIZED ") + BaseObject::getSQLName(OBJ_VIEW);
+	  attributes[ParsersAttributes::SQL_OBJECT]=QString("MATERIALIZED ") + BaseObject::getSQLName(ObjView);
 }
 
 void View::setObjectListsCapacity(unsigned capacity)
@@ -622,7 +622,7 @@ void View::setObjectListsCapacity(unsigned capacity)
 unsigned View::getMaxObjectCount(void)
 {
   unsigned count = 0, max = references.size();
-  vector<ObjectType> types = { OBJ_INDEX, OBJ_RULE, OBJ_TRIGGER };
+  vector<ObjectType> types = { ObjIndex, ObjRule, ObjTrigger };
 
   for(auto type : types)
   {
@@ -721,7 +721,7 @@ void View::addObject(BaseObject *obj, int obj_idx)
 			tab_obj->getCodeDefinition(SchemaParser::SQL_DEFINITION);
 
 			//Make a additional validation if the object is a trigger
-			if(tab_obj->getObjectType()==OBJ_TRIGGER)
+			if(tab_obj->getObjectType()==ObjTrigger)
 				dynamic_cast<Trigger *>(tab_obj)->validateTrigger();
 
 			//Inserts the object at specified position
@@ -824,7 +824,7 @@ void View::removeTrigger(unsigned idx)
 {
 	try
 	{
-		removeObject(idx, OBJ_TRIGGER);
+		removeObject(idx, ObjTrigger);
 	}
 	catch(Exception &e)
 	{
@@ -836,7 +836,7 @@ void View::removeRule(unsigned idx)
 {
 	try
 	{
-		removeObject(idx, OBJ_RULE);
+		removeObject(idx, ObjRule);
 	}
 	catch(Exception &e)
 	{
@@ -848,7 +848,7 @@ void View::removeIndex(unsigned idx)
 {
 	try
 	{
-		removeObject(idx, OBJ_INDEX);
+		removeObject(idx, ObjIndex);
 	}
 	catch(Exception &e)
 	{
@@ -889,7 +889,7 @@ Trigger *View::getTrigger(unsigned obj_idx)
 {
 	try
 	{
-		return(dynamic_cast<Trigger *>(getObject(obj_idx, OBJ_TRIGGER)));
+		return(dynamic_cast<Trigger *>(getObject(obj_idx, ObjTrigger)));
 	}
 	catch(Exception &e)
 	{
@@ -901,7 +901,7 @@ Rule *View::getRule(unsigned obj_idx)
 {
 	try
 	{
-		return(dynamic_cast<Rule *>(getObject(obj_idx, OBJ_RULE)));
+		return(dynamic_cast<Rule *>(getObject(obj_idx, ObjRule)));
 	}
 	catch(Exception &e)
 	{
@@ -913,7 +913,7 @@ Index *View::getIndex(unsigned obj_idx)
 {
 	try
 	{
-		return(dynamic_cast<Index *>(getObject(obj_idx, OBJ_INDEX)));
+		return(dynamic_cast<Index *>(getObject(obj_idx, ObjIndex)));
 	}
 	catch(Exception &e)
 	{
@@ -950,11 +950,11 @@ unsigned View::getIndexCount()
 
 vector<TableObject *> *View::getObjectList(ObjectType obj_type)
 {
-	if(obj_type==OBJ_TRIGGER)
+	if(obj_type==ObjTrigger)
 		return(&triggers);
-	else if(obj_type==OBJ_RULE)
+	else if(obj_type==ObjRule)
 		return(&rules);
-	else if(obj_type==OBJ_INDEX)
+	else if(obj_type==ObjIndex)
 		return(&indexes);
 	else
 		throw Exception(ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);

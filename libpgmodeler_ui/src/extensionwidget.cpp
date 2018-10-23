@@ -1,9 +1,9 @@
 #include "extensionwidget.h"
 
-ExtensionWidget::ExtensionWidget(QWidget * parent) : BaseObjectWidget(parent, OBJ_EXTENSION)
+ExtensionWidget::ExtensionWidget(QWidget * parent) : BaseObjectWidget(parent, ObjExtension)
 {
 	Ui_ExtensionWidget::setupUi(this);
-	configureFormLayout(extension_grid, OBJ_EXTENSION);
+	configureFormLayout(extension_grid, ObjExtension);
 
 	extension_grid->addItem(new QSpacerItem(10,10,QSizePolicy::Minimum,QSizePolicy::Expanding), extension_grid->count()+1, 0, 1, 0);
 	configureTabOrder({ cur_ver_edt, old_ver_edt, handles_type_chk });
