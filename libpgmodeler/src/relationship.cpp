@@ -142,16 +142,16 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 			str_aux=str_aux.arg(this->getReceiverTable()->getName())
 					.arg(this->getReferenceTable()->getName());
 
-		if(str_aux.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
-			str_aux.resize(BaseObject::OBJECT_NAME_MAX_LENGTH);
+		if(str_aux.size() > BaseObject::ObjectNameMaxLength)
+			str_aux.resize(BaseObject::ObjectNameMaxLength);
 
 		setName(str_aux);
 
 		if(rel_type==RELATIONSHIP_NN)
 		{
 			tab_name_relnn=this->obj_name;
-			if(tab_name_relnn.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
-				tab_name_relnn.resize(BaseObject::OBJECT_NAME_MAX_LENGTH);
+			if(tab_name_relnn.size() > BaseObject::ObjectNameMaxLength)
+				tab_name_relnn.resize(BaseObject::ObjectNameMaxLength);
 
 			setNamePattern(PK_PATTERN, GEN_TAB_TOKEN + SUFFIX_SEPARATOR + QString("pk"));
 			setNamePattern(SRC_FK_PATTERN, SRC_TAB_TOKEN + SUFFIX_SEPARATOR + QString("fk"));
@@ -243,8 +243,8 @@ QString Relationship::generateObjectName(unsigned pat_id, Column *id_col, bool u
 
 	name.replace(SRC_COL_TOKEN, aux_name);
 
-	if(name.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
-		name.remove(BaseObject::OBJECT_NAME_MAX_LENGTH, name.size());
+	if(name.size() > BaseObject::ObjectNameMaxLength)
+		name.remove(BaseObject::ObjectNameMaxLength, name.size());
 
 	return(name);
 }

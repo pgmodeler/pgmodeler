@@ -610,8 +610,8 @@ void View::setSQLObjectAttribute(void)
 
 void View::setObjectListsCapacity(unsigned capacity)
 {
-  if(capacity < DEF_MAX_OBJ_COUNT || capacity > DEF_MAX_OBJ_COUNT * 10)
-	capacity = DEF_MAX_OBJ_COUNT;
+  if(capacity < DefMaxObjectCount || capacity > DefMaxObjectCount * 10)
+	capacity = DefMaxObjectCount;
 
   references.reserve(capacity);
   indexes.reserve(capacity/2);

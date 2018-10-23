@@ -105,7 +105,7 @@ class BaseObject {
 		unsigned object_id;
 
 		//! \brief Objects type count declared on enum ObjectType
-		static constexpr int OBJECT_TYPE_COUNT=37;
+		static constexpr int ObjectTypeCount=37;
 
 		/*! \brief Indicates whether the object is protected or not.
 		 A protected object indicates that it can not suffer changes in position
@@ -136,15 +136,15 @@ class BaseObject {
 
 		/*! \brief This map stores the name of each object type associated to a schema file
 		 that generates the object's code definition */
-		static QString objs_schemas[OBJECT_TYPE_COUNT];
+		static const QString objs_schemas[ObjectTypeCount];
 
 		/*! \brief This map associates the object type to a keyword on
 		 SQL language that represents the object */
-		static QString objs_sql[OBJECT_TYPE_COUNT];
+		static const QString objs_sql[ObjectTypeCount];
 
 		/*! \brief Stores the name of the type of objects to be used in error messages formatting
 		 and others operations that envolves object type name */
-		static QString obj_type_names[OBJECT_TYPE_COUNT];
+		static const QString obj_type_names[ObjectTypeCount];
 
 		/*! \brief Role that is owner of the object. Some objects cannot be associated to a role
 		 so if one is assigned to the object an error will be raised */
@@ -232,12 +232,12 @@ class BaseObject {
 
 	public:
 		//! \brief Maximum number of characters that an object name on PostgreSQL can have
-		static constexpr int OBJECT_NAME_MAX_LENGTH=63;
+		static constexpr int ObjectNameMaxLength=63;
 
 		/*! \brief The default number of objects supposed to be stored in objects list.
 		 * This values is just a reference (hint) and is used to preallocate (reserve) space on vectors which handle objects
 		 * to avoid excessive allocation/deallocation by resizing the vectors due to insert operation */
-		static constexpr unsigned DEF_MAX_OBJ_COUNT=20;
+		static constexpr unsigned DefMaxObjectCount=20;
 
 		BaseObject(void);
 		BaseObject(bool system_obj);

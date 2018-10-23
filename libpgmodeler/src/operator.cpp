@@ -55,7 +55,7 @@ bool Operator::isValidName(const QString &name)
 	bool valid=true;
 
 	//Checks if the size of the name is valid
-	valid=(name.size() <= static_cast<int>(OBJECT_NAME_MAX_LENGTH));
+	valid=(name.size() <= static_cast<int>(ObjectNameMaxLength));
 
 	/* Checking if the name is valid according the conditions:
 		 1) The name has only the chars defined in 'valid_chars' */

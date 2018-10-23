@@ -499,8 +499,8 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
 					BaseTable *tab=col->getParentTable();
 					QString seq_name=QString("%1_%2_seq").arg(tab->getName()).arg(col->getName());
 
-					if(seq_name.length() > BaseObject::OBJECT_NAME_MAX_LENGTH)
-						seq_name.chop(seq_name.length() - BaseObject::OBJECT_NAME_MAX_LENGTH);
+					if(seq_name.length() > BaseObject::ObjectNameMaxLength)
+						seq_name.chop(seq_name.length() - BaseObject::ObjectNameMaxLength);
 
 					seq->setName(seq_name);
 					seq->setOwner(tab->getOwner());

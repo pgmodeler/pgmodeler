@@ -43,7 +43,7 @@ void Tag::setName(const QString &name)
 {
 	if(name.isEmpty())
 		throw Exception(AsgEmptyNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(name.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
+	else if(name.size() > BaseObject::ObjectNameMaxLength)
 		throw Exception(AsgLongNameObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->obj_name=name;

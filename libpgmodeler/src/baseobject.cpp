@@ -25,7 +25,7 @@ const QByteArray BaseObject::special_chars = QByteArray("'_-.@ $:()/<>+*\\=~!#%^
 /* CAUTION: If both amount and order of the enumerations are modified
 	 then the order and amount of the elements of this vector
 	 must also be modified */
-QString BaseObject::objs_schemas[OBJECT_TYPE_COUNT]={
+const QString BaseObject::objs_schemas[BaseObject::ObjectTypeCount]={
 	"column",  "constraint", "function", "trigger",
 	"index", "rule", "table", "view",
 	"domain", "schema", "aggregate", "operator",
@@ -37,7 +37,7 @@ QString BaseObject::objs_schemas[OBJECT_TYPE_COUNT]={
 	"tag", "genericsql", "relationship"
 };
 
-QString BaseObject::obj_type_names[OBJECT_TYPE_COUNT]={
+const QString BaseObject::obj_type_names[BaseObject::ObjectTypeCount]={
 	QT_TR_NOOP("Column"), QT_TR_NOOP("Constraint"), QT_TR_NOOP("Function"),
 	QT_TR_NOOP("Trigger"), QT_TR_NOOP("Index"), QT_TR_NOOP("Rule"),
 	QT_TR_NOOP("Table"), QT_TR_NOOP("View"),  QT_TR_NOOP("Domain"),
@@ -51,7 +51,7 @@ QString BaseObject::obj_type_names[OBJECT_TYPE_COUNT]={
 	QT_TR_NOOP("Tag"), QT_TR_NOOP("Generic SQL"),	QT_TR_NOOP("Basic Relationship")
 };
 
-QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
+const QString BaseObject::objs_sql[BaseObject::ObjectTypeCount]={
 	QString("COLUMN"),  QString("CONSTRAINT"), QString("FUNCTION"),
 	QString("TRIGGER"), QString("INDEX"), QString("RULE"), QString("TABLE"),
 	QString("VIEW"), QString("DOMAIN"), QString("SCHEMA"), QString("AGGREGATE"),
@@ -123,7 +123,7 @@ ObjectType BaseObject::getObjectType(const QString &type_name)
 {
 	ObjectType obj_type=ObjBaseObject;
 
-	for(int i=0; i < BaseObject::OBJECT_TYPE_COUNT; i++)
+	for(int i=0; i < BaseObject::ObjectTypeCount; i++)
 	{
 		if(objs_schemas[i]==type_name)
 		{
@@ -240,7 +240,7 @@ bool BaseObject::isValidName(const QString &name)
 	by PostgreSQL (currently 63 bytes) the name is invalid.
 	In this case the starting and ending quotes are discarded from
 	the name in order to validate the length. */
-	if(name.isEmpty() || aux_name.size() > OBJECT_NAME_MAX_LENGTH)
+	if(name.isEmpty() || aux_name.size() > ObjectNameMaxLength)
 		return(false);
 	else
 	{
@@ -350,7 +350,7 @@ void BaseObject::setName(const QString &name)
 		if(aux_name.isEmpty())
 			throw Exception(AsgEmptyNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		//If the name is quoted we add 2 bytes to the maximum in order to check if it exceeds the limit
-		else if(aux_name.size() > (OBJECT_NAME_MAX_LENGTH + (is_quoted ? 2 : 0)))
+		else if(aux_name.size() > (ObjectNameMaxLength + (is_quoted ? 2 : 0)))
 			throw Exception(AsgLongNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else
 			throw Exception(AsgInvalidNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -363,7 +363,7 @@ void BaseObject::setName(const QString &name)
 
 void BaseObject::setAlias(const QString &alias)
 {
-	if(alias.size() > OBJECT_NAME_MAX_LENGTH)
+	if(alias.size() > ObjectNameMaxLength)
 		throw Exception(AsgLongNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->alias = alias;

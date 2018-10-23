@@ -79,7 +79,7 @@ namespace PgModelerNS {
 		len=obj_name.size() + id.size();
 
 		//If the name length exceeds the maximum size
-		if(len > BaseObject::OBJECT_NAME_MAX_LENGTH)
+		if(len > BaseObject::ObjectNameMaxLength)
 		{
 			//Remove the last chars in the count of 3 + length of id
 			obj_name.chop(id.size() + 3);

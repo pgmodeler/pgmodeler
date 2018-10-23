@@ -150,7 +150,7 @@ void Type::addEnumeration(const QString &enum_name)
 	if(enum_name.isEmpty())
 		throw Exception(InsInvalidEnumerationItem,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the enumeration name is invalid (exceeds the maximum length)
-	else if(enum_name.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
+	else if(enum_name.size() > BaseObject::ObjectNameMaxLength)
 		throw Exception(Exception::getErrorMessage(AsgEnumLongName).arg(enum_name).arg(this->getName(true)),
 						AsgEnumLongName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(enum_name.contains(QChar(',')))

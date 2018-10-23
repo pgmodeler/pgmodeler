@@ -108,7 +108,7 @@ unsigned Reference::getReferenceType(void)
 
 void Reference::setReferenceAlias(const QString &alias)
 {
-	if(alias.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
+	if(alias.size() > BaseObject::ObjectNameMaxLength)
 		throw Exception(AsgLongNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	ref_alias = alias;

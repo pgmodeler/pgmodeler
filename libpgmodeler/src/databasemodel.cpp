@@ -3385,9 +3385,9 @@ void DatabaseModel::setLoadingModel(bool value)
 
 void DatabaseModel::setObjectListsCapacity(unsigned capacity)
 {
-  if(capacity < BaseObject::DEF_MAX_OBJ_COUNT ||
-	 capacity > (BaseObject::DEF_MAX_OBJ_COUNT * 1000))
-	capacity = BaseObject::DEF_MAX_OBJ_COUNT;
+  if(capacity < BaseObject::DefMaxObjectCount ||
+	 capacity > (BaseObject::DefMaxObjectCount * 1000))
+	capacity = BaseObject::DefMaxObjectCount;
 
   unsigned half_cap = capacity/2, one_fourth_cap = capacity/4;
 
