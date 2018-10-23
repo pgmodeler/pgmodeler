@@ -264,16 +264,16 @@ QString Exception::messages[Exception::ErrorCount][2]={
 
 Exception::Exception(void)
 {
-	configureException(QString(),ErrorType::Custom,QString(),QString(),-1,QString());
+	configureException(QString(),ErrorCode::Custom,QString(),QString(),-1,QString());
 }
 
 Exception::Exception(const QString &msg, const QString &method, const QString &file, int line, Exception *exception, const QString &extra_info)
 {
-	configureException(msg,ErrorType::Custom, method, file, line, extra_info);
+	configureException(msg,ErrorCode::Custom, method, file, line, extra_info);
 	if(exception) addException(*exception);
 }
 
-Exception::Exception(ErrorType error_type, const QString &method, const QString &file, int line, Exception *exception, const QString &extra_info)
+Exception::Exception(ErrorCode error_type, const QString &method, const QString &file, int line, Exception *exception, const QString &extra_info)
 {
 	/* Because the Exception class is not derived from QObject the function tr() is inefficient to translate messages
 		so the translation method is called  directly from the application specifying the
@@ -284,13 +284,13 @@ Exception::Exception(ErrorType error_type, const QString &method, const QString 
 	if(exception) addException(*exception);
 }
 
-Exception::Exception(const QString &msg, ErrorType error_type, const QString &method, const QString &file, int line, Exception *exception, const QString &extra_info)
+Exception::Exception(const QString &msg, ErrorCode error_type, const QString &method, const QString &file, int line, Exception *exception, const QString &extra_info)
 {
 	configureException(msg,error_type, method, file, line, extra_info);
 	if(exception) addException(*exception);
 }
 
-Exception::Exception(ErrorType error_type, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info)
+Exception::Exception(ErrorCode error_type, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info)
 {
 	vector<Exception>::iterator itr, itr_end;
 
@@ -313,7 +313,7 @@ Exception::Exception(const QString &msg, const QString &method, const QString &f
 {
 	vector<Exception>::iterator itr, itr_end;
 
-	configureException(msg,ErrorType::Custom, method, file, line, extra_info);
+	configureException(msg,ErrorCode::Custom, method, file, line, extra_info);
 
 	itr=exceptions.begin();
 	itr_end=exceptions.end();
@@ -324,7 +324,7 @@ Exception::Exception(const QString &msg, const QString &method, const QString &f
 	}
 }
 
-Exception::Exception(const QString &msg, ErrorType error_type, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info)
+Exception::Exception(const QString &msg, ErrorCode error_type, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info)
 {
 	vector<Exception>::iterator itr=exceptions.begin();
 
@@ -337,7 +337,7 @@ Exception::Exception(const QString &msg, ErrorType error_type, const QString &me
 	}
 }
 
-void Exception::configureException(const QString &msg, ErrorType error_type, const QString &method, const QString &file, int line, const QString &extra_info)
+void Exception::configureException(const QString &msg, ErrorCode error_type, const QString &method, const QString &file, int line, const QString &extra_info)
 {
 	this->error_type=error_type;
 	this->error_msg=msg;
@@ -352,7 +352,7 @@ QString Exception::getErrorMessage(void)
 	return(error_msg);
 }
 
-QString Exception::getErrorMessage(ErrorType error_type)
+QString Exception::getErrorMessage(ErrorCode error_type)
 {
 	if(static_cast<int>(error_type) < ErrorCount)
 		/* Because the Exception class is not derived from QObject the function tr() is inefficient to translate messages
@@ -363,10 +363,10 @@ QString Exception::getErrorMessage(ErrorType error_type)
 		return(QString());
 }
 
-QString Exception::getErrorCode(ErrorType error_type)
+QString Exception::getErrorCode(ErrorCode error_type)
 {
 	if(static_cast<int>(error_type) < ErrorCount)
-		return(messages[static_cast<int>(error_type)][ErrorCode]);
+		return(messages[static_cast<int>(error_type)][ErrorCodeId]);
 	else
 		return(QString());
 }
@@ -386,7 +386,7 @@ QString Exception::getLine(void)
 	return(QString("%1").arg(line));
 }
 
-ErrorType Exception::getErrorType(void)
+ErrorCode Exception::getErrorType(void)
 {
 	return(error_type);
 }

@@ -886,7 +886,7 @@ void Relationship::addColumnsRelGenPart(void)
 			idx, tab_count;
 	vector<Column *> columns;
 	ObjectType types[2]={ObjTable, ObjBaseTable};
-	ErrorType err_type=Custom;
+	ErrorCode err_type=Custom;
 	bool duplic=false, cond=false,
 			/* 0 -> Column created by inheritance relationship
 								 1 -> Column created by copy relationship */

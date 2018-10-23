@@ -486,7 +486,7 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
 			//If there are objects referencing the table
 			if(!refs.empty())
 			{
-				ErrorType err_type;
+				ErrorCode err_type;
 
 				//Raises an error indicating the object that is referencing the table
 				if(!dynamic_cast<TableObject *>(refs[0]))

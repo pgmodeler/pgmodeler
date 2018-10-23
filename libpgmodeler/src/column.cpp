@@ -66,11 +66,11 @@ void Column::setType(PgSQLType type)
 {
 	//An error is raised if the column receive a pseudo-type as data type.
 	if(type.isPseudoType())
-		throw Exception(ErrorType::AsgPseudoTypeColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgPseudoTypeColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(this->identity_type != BaseType::null && !type.isIntegerType())
 	{
-		throw Exception(Exception::getErrorMessage(ErrorType::InvalidIdentityColumn).arg(getSignature()),
-										ErrorType::InvalidIdentityColumn, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidIdentityColumn).arg(getSignature()),
+										ErrorCode::InvalidIdentityColumn, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 
 	setCodeInvalidated(this->type != type);
@@ -81,8 +81,8 @@ void Column::setIdentityType(IdentityType id_type)
 {
 	if(id_type != BaseType::null && !type.isIntegerType())
 	{
-		throw Exception(Exception::getErrorMessage(ErrorType::InvalidIdentityColumn).arg(getSignature()),
-										ErrorType::InvalidIdentityColumn, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidIdentityColumn).arg(getSignature()),
+										ErrorCode::InvalidIdentityColumn, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 
 	setCodeInvalidated(identity_type != id_type);

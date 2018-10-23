@@ -122,10 +122,10 @@ void Index::addIndexElement(Column *column, Collation *coll, OperatorClass *op_c
 
 		//Case the column is not allocated raises an error
 		if(!column)
-			throw Exception(Exception::getErrorMessage(ErrorType::AsgNotAllocatedColumn)
+			throw Exception(Exception::getErrorMessage(ErrorCode::AsgNotAllocatedColumn)
 							.arg(this->getName())
 							.arg(this->getTypeName()),
-							ErrorType::AsgNotAllocatedColumn, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::AsgNotAllocatedColumn, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Configures the element
 		elem.setColumn(column);

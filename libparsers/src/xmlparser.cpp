@@ -75,8 +75,8 @@ void XMLParser::loadXMLFile(const QString &filename)
 			//Case the file opening was not sucessful
 			if(!input.isOpen())
 			{
-				throw Exception(QString(Exception::getErrorMessage(ErrorType::FileDirectoryNotAccessed)).arg(filename),
-								ErrorType::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(QString(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed)).arg(filename),
+								ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
 			buffer=input.readAll();
@@ -99,7 +99,7 @@ void XMLParser::loadXMLBuffer(const QString &xml_buf)
 		int pos1=-1, pos2=-1, tam=0;
 
 		if(xml_buf.isEmpty())
-			throw Exception(ErrorType::AsgEmptyXMLBuffer,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::AsgEmptyXMLBuffer,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		pos1=xml_buf.indexOf(QLatin1String("<?xml"));
 		pos2=xml_buf.indexOf(QLatin1String("?>"));
@@ -128,10 +128,10 @@ void XMLParser::setDTDFile(const QString &dtd_file, const QString &dtd_name)
 	QString fmt_dtd_file;
 
 	if(dtd_file.isEmpty())
-		throw Exception(ErrorType::AsgEmptyDTDFile,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgEmptyDTDFile,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(dtd_name.isEmpty())
-		throw Exception(ErrorType::AsgEmptyDTDName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgEmptyDTDName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 #ifndef Q_OS_WIN
 	fmt_dtd_file=QString("file://");
@@ -193,9 +193,9 @@ void XMLParser::readBuffer(void)
 			if(xml_doc) restartParser();
 
 			//Raise an exception with the error massege from the parser xml
-			throw Exception(QString(Exception::getErrorMessage(ErrorType::LibXMLError))
+			throw Exception(QString(Exception::getErrorMessage(ErrorCode::LibXMLError))
 							.arg(xml_error->line).arg(xml_error->int2).arg(msg).arg(file),
-							ErrorType::LibXMLError,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::LibXMLError,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
 		//Gets the referênce to the root element on the document
@@ -206,7 +206,7 @@ void XMLParser::readBuffer(void)
 void XMLParser::savePosition(void)
 {
 	if(!root_elem)
-		throw Exception(ErrorType::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	elems_stack.push(curr_elem);
 }
@@ -214,7 +214,7 @@ void XMLParser::savePosition(void)
 void XMLParser::restorePosition(void)
 {
 	if(!root_elem)
-		throw Exception(ErrorType::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(elems_stack.empty())
 		curr_elem=root_elem;
@@ -228,9 +228,9 @@ void XMLParser::restorePosition(void)
 void XMLParser::restorePosition(const xmlNode *elem)
 {
 	if(!elem)
-		throw Exception(ErrorType::OprNotAllocatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(elem->doc!=xml_doc)
-		throw Exception(ErrorType::OprInexistentElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprInexistentElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	restartNavigation();
 	curr_elem=const_cast<xmlNode *>(elem);
@@ -239,7 +239,7 @@ void XMLParser::restorePosition(const xmlNode *elem)
 void XMLParser::restartNavigation(void)
 {
 	if(!root_elem)
-		throw Exception(ErrorType::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	curr_elem=root_elem;
 
@@ -271,7 +271,7 @@ bool XMLParser::accessElement(unsigned elem_type)
 	xmlNode *elems[4];
 
 	if(!root_elem)
-		throw Exception(ErrorType::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	elems[ROOT_ELEMENT]=curr_elem->parent;
 	elems[CHILD_ELEMENT]=curr_elem->children;
@@ -293,7 +293,7 @@ bool XMLParser::accessElement(unsigned elem_type)
 bool XMLParser::hasElement(unsigned elem_type, xmlElementType xml_node_type)
 {
 	if(!root_elem)
-		throw Exception(ErrorType::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(elem_type==ROOT_ELEMENT)
 		/* Returns the verification if the current element has a parent.
@@ -318,7 +318,7 @@ bool XMLParser::hasElement(unsigned elem_type, xmlElementType xml_node_type)
 bool XMLParser::hasAttributes(void)
 {
 	if(!root_elem)
-		throw Exception(ErrorType::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(curr_elem->properties!=nullptr);
 }
@@ -326,7 +326,7 @@ bool XMLParser::hasAttributes(void)
 QString XMLParser::getElementContent(void)
 {
 	if(!root_elem)
-		throw Exception(ErrorType::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	/* If the current element has  <![CDATA[]]> node returns the content of the CDATA instead
 	of return the content of the element itself */
@@ -340,7 +340,7 @@ QString XMLParser::getElementContent(void)
 QString XMLParser::getElementName(void)
 {
 	if(!root_elem)
-		throw Exception(ErrorType::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(QString(reinterpret_cast<const char *>(curr_elem->name)));
 }
@@ -348,7 +348,7 @@ QString XMLParser::getElementName(void)
 xmlElementType XMLParser::getElementType(void)
 {
 	if(!root_elem)
-		throw Exception(ErrorType::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(curr_elem->type);
 }
@@ -364,7 +364,7 @@ void XMLParser::getElementAttributes(attribs_map &attributes)
 	QString attrib, value;
 
 	if(!root_elem)
-		throw Exception(ErrorType::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Always clears the passed attributes maps
 	attributes.clear();

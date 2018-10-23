@@ -1553,12 +1553,12 @@ void PgSQLType::setPrecision(int prec)
 		//Raises an error if the user tries to specify a precision > length
 		if(((BaseType::type_list[type_idx]==QString("numeric") ||
 			 BaseType::type_list[type_idx]==QString("decimal")) && prec > static_cast<int>(length)))
-			throw Exception(ErrorType::AsgInvalidPrecision,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(AsgInvalidPrecision,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		//Raises an error if the precision is greater thant 6
 		else if(((BaseType::type_list[type_idx]==QString("time") ||
 				  BaseType::type_list[type_idx]==QString("timestamp") ||
 				  BaseType::type_list[type_idx]==QString("interval")) && prec > 6))
-			throw Exception(ErrorType::AsgInvalidPrecisionTimestamp,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(AsgInvalidPrecisionTimestamp,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		this->precision=prec;
 	}
