@@ -38,7 +38,7 @@ class BugReportForm : public QDialog, public Ui::BugReportForm {
 		
 	protected:
 		//! \brief Delimiter character which separates the sections of the compressed file
-		static constexpr char CHR_DELIMITER = static_cast<char>(3);
+		static constexpr char CharDelimiter = static_cast<char>(3);
 		
 		//! \brief Generates an uncompressed buffer based upon the data in fields
 		virtual QByteArray generateReportBuffer(void);

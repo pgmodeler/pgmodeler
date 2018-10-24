@@ -37,7 +37,7 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
 		
 		HintTextWidget *auto_browse_ht, *default_for_ops_ht, *other_params_ht;
 
-		static const QString DEFAULT_FOR;
+		static const QString DefaultFor;
 		
 		//! \brief Stores the connections created by the user
 		static vector<Connection *> connections;

@@ -69,7 +69,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 
 				if(dbexplorer && dbexplorer->objects_trw->currentItem())
 					sourcecode_txt->setPlainText(dbexplorer->objects_trw->currentItem()->
-																			 data(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole).toString());
+																			 data(DatabaseImportForm::ObjectSource, Qt::UserRole).toString());
 
 				while(itr != sql_exec_wgts.end())
 				{

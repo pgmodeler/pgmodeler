@@ -153,7 +153,7 @@ void CrashHandlerForm::loadReport(const QString &filename)
 		//Showing the sections of the uncompressed buffer on the respective widgets
 		while(i < buf_aux.size() && idx <= 2)
 		{
-			if(buf_aux.at(i).toLatin1()!=CHR_DELIMITER)
+			if(buf_aux.at(i).toLatin1()!=CharDelimiter)
 				str_aux.append(buf_aux.at(i));
 			else
 			{
@@ -251,7 +251,7 @@ QByteArray CrashHandlerForm::generateReportBuffer(void)
 {
 	QByteArray buf=BugReportForm::generateReportBuffer();
 	buf.append(stack_txt->toPlainText().toUtf8());
-	buf.append(CHR_DELIMITER);
+	buf.append(CharDelimiter);
 
 	return(buf);
 }

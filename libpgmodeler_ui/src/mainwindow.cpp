@@ -77,7 +77,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		PgModelerUiNs::resizeDialog(configuration_form);
 		configuration_form->loadConfiguration();
 
-		plugins_conf_wgt=dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PLUGINS_CONF_WGT));
+		plugins_conf_wgt=dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PluginsConfWgt));
 		plugins_conf_wgt->installPluginsActions(nullptr, plugins_menu, this, SLOT(executePlugin(void)));
 		plugins_menu->setEnabled(!plugins_menu->isEmpty());
 		action_plugins->setEnabled(!plugins_menu->isEmpty());
@@ -333,7 +333,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	showRightWidgetsBar();
 	showBottomWidgetsBar();
 
-	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 	confs=conf_wgt->getConfigurationParams();
 
 	//If a previous session was restored save the temp models
@@ -654,7 +654,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			attribs_map attribs;
 
 			this->overview_wgt->close();
-			conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+			conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 			confs=conf_wgt->getConfigurationParams();
 
 			attribs[ParsersAttributes::COMPACT_VIEW]=action_compact_view->isChecked() ? ParsersAttributes::_TRUE_ : QString();
@@ -731,7 +731,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::updateConnections(bool force)
 {
 	ConnectionsConfigWidget *conn_cfg_wgt=
-			dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT));
+			dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::ConnectionsConfWgt));
 
 	if(force || (!force && (conn_cfg_wgt->isConfigurationChanged() ||
 							model_valid_wgt->connections_cmb->count()==0 ||
@@ -1138,7 +1138,7 @@ void MainWindow::setCurrentModel(void)
 
 void MainWindow::setGridOptions(void)
 {
-	GeneralConfigWidget *conf_wgt = dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+	GeneralConfigWidget *conf_wgt = dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 	map<QString, attribs_map> attribs = conf_wgt->getConfigurationParams();
 
 	//Configures the global settings for the scene grid
@@ -1285,7 +1285,7 @@ void MainWindow::applyConfigurations(void)
 		int count, i;
 		ModelWidget *model=nullptr;
 
-		conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+		conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 
 		//Disable the auto save if the option is not checked
 		if(!conf_wgt->autosave_interv_chk->isChecked())
@@ -1536,7 +1536,7 @@ void MainWindow::printModel(void)
 		QRectF margins;
 		QSizeF custom_size;
 		qreal ml,mt,mr,mb, ml1, mt1, mr1, mb1;
-		GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+		GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 
 		print_dlg.setOption(QAbstractPrintDialog::PrintCurrentPage, false);
 		print_dlg.setWindowTitle(trUtf8("Database model printing"));
@@ -1828,7 +1828,7 @@ void MainWindow::configureSamplesMenu(void)
 
 void MainWindow::storeDockWidgetsSettings(void)
 {
-	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 	attribs_map params;
 
 	params[ParsersAttributes::VALIDATOR]=ParsersAttributes::_TRUE_;
@@ -1856,7 +1856,7 @@ void MainWindow::storeDockWidgetsSettings(void)
 
 void MainWindow::restoreDockWidgetsSettings(void)
 {
-	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 	map<QString, attribs_map> confs=conf_wgt->getConfigurationParams();
 
 	if(confs.count(ParsersAttributes::VALIDATOR))

@@ -33,7 +33,7 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
 						   appearance_conf, connections_conf,
 						   snippets_conf, plugins_conf};
 
-	for(int i=GENERAL_CONF_WGT; i <= PLUGINS_CONF_WGT; i++)
+	for(int i=GeneralConfWgt; i <= PluginsConfWgt; i++)
 		confs_stw->addWidget(wgt_list[i]);
 
 	connect(icons_lst, SIGNAL(currentRowChanged(int)), confs_stw, SLOT(setCurrentIndex(int)));
@@ -41,7 +41,7 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
 	connect(apply_btn, SIGNAL(clicked(void)), this, SLOT(applyConfiguration(void)));
 	connect(defaults_btn, SIGNAL(clicked(void)), this, SLOT(restoreDefaults(void)));
 
-	icons_lst->setCurrentRow(GENERAL_CONF_WGT);
+	icons_lst->setCurrentRow(GeneralConfWgt);
 }
 
 ConfigurationForm::~ConfigurationForm(void)
@@ -51,7 +51,7 @@ ConfigurationForm::~ConfigurationForm(void)
 
 void ConfigurationForm::hideEvent(QHideEvent *)
 {
-	icons_lst->setCurrentRow(GENERAL_CONF_WGT);
+	icons_lst->setCurrentRow(GeneralConfWgt);
 }
 
 void ConfigurationForm::showEvent(QShowEvent *)
@@ -87,7 +87,7 @@ void ConfigurationForm::applyConfiguration(void)
 {
 	BaseConfigWidget *conf_wgt=nullptr;
 
-	for(int i=GENERAL_CONF_WGT; i <= SNIPPETS_CONF_WGT; i++)
+	for(int i=GeneralConfWgt; i <= SnippetsConfWgt; i++)
 	{
 		conf_wgt=qobject_cast<BaseConfigWidget *>(confs_stw->widget(i));
 
@@ -104,7 +104,7 @@ void ConfigurationForm::loadConfiguration(void)
 {
 	BaseConfigWidget *config_wgt = nullptr;
 
-	for(int i=GENERAL_CONF_WGT; i <= PLUGINS_CONF_WGT; i++)
+	for(int i=GeneralConfWgt; i <= PluginsConfWgt; i++)
 	{
 		try
 		{

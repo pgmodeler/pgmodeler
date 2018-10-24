@@ -53,7 +53,7 @@ class ColorPickerWidget: public QWidget, public Ui::ColorPickerWidget {
 		bool eventFilter(QObject *object, QEvent *event);
 		
 	public:
-		static constexpr int MAX_COLOR_BUTTONS=20;
+		static constexpr int MaxColorButtons=20;
 		
 		explicit ColorPickerWidget(int color_count, QWidget * parent = 0);
 		

@@ -204,9 +204,9 @@ void ConstraintWidget::addColumn(Column *column, unsigned col_id, int row)
 			fonte.setItalic(true);
 
 			if(column->isProtected())
-				table_wgt->setRowFont(row, fonte, PROT_LINE_FGCOLOR, PROT_LINE_BGCOLOR);
+				table_wgt->setRowFont(row, fonte, ProtRowFgColor, ProtRowBgColor);
 			else
-				table_wgt->setRowFont(row, fonte, RELINC_LINE_FGCOLOR, RELINC_LINE_BGCOLOR);
+				table_wgt->setRowFont(row, fonte, RelAddedRowFgColor, RelAddedRowBgColor);
 		}
 	}
 }

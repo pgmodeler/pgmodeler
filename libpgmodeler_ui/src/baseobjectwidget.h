@@ -45,11 +45,12 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		Q_OBJECT
 		
 	protected:
-		static constexpr int MAX_OBJECT_SIZE=16777215;
-		static const QColor PROT_LINE_BGCOLOR,
-		PROT_LINE_FGCOLOR,
-		RELINC_LINE_BGCOLOR,
-		RELINC_LINE_FGCOLOR;
+		static constexpr int MaxObjectSize=16777215;
+
+		static const QColor ProtRowBgColor,
+		ProtRowFgColor,
+		RelAddedRowBgColor,
+		RelAddedRowFgColor;
 
 		bool object_protected;
 

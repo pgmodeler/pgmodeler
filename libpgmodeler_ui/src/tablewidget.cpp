@@ -601,9 +601,9 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		font.setItalic(true);
 
 		if(object->isAddedByRelationship())
-			tab->setRowFont(row, font, RELINC_LINE_FGCOLOR, RELINC_LINE_BGCOLOR);
+			tab->setRowFont(row, font, RelAddedRowFgColor, RelAddedRowBgColor);
 		else
-			tab->setRowFont(row, font, PROT_LINE_FGCOLOR, PROT_LINE_BGCOLOR);
+			tab->setRowFont(row, font, ProtRowFgColor, ProtRowBgColor);
 	}
 
 	tab->setRowData(QVariant::fromValue<void *>(object), row);

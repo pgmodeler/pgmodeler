@@ -22,7 +22,7 @@
 
 vector<Connection *> ConnectionsConfigWidget::connections;
 map<QString, attribs_map> ConnectionsConfigWidget::config_params;
-const QString ConnectionsConfigWidget::DEFAULT_FOR=QString("default-for-%1");
+const QString ConnectionsConfigWidget::DefaultFor=QString("default-for-%1");
 
 ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
@@ -151,10 +151,10 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 			conn->setConnectionParam(Connection::ParamOthers, itr->second[Connection::ParamOthers]);
 
 			conn->setAutoBrowseDB(itr->second[ParsersAttributes::AUTO_BROWSE_DB]==ParsersAttributes::_TRUE_);
-			conn->setDefaultForOperation(Connection::OpDiff, itr->second[DEFAULT_FOR.arg(ParsersAttributes::DIFF)]==ParsersAttributes::_TRUE_);
-			conn->setDefaultForOperation(Connection::OpExport, itr->second[DEFAULT_FOR.arg(ParsersAttributes::EXPORT)]==ParsersAttributes::_TRUE_);
-			conn->setDefaultForOperation(Connection::OpImport, itr->second[DEFAULT_FOR.arg(ParsersAttributes::IMPORT)]==ParsersAttributes::_TRUE_);
-			conn->setDefaultForOperation(Connection::OpValidation, itr->second[DEFAULT_FOR.arg(ParsersAttributes::VALIDATION)]==ParsersAttributes::_TRUE_);
+			conn->setDefaultForOperation(Connection::OpDiff, itr->second[DefaultFor.arg(ParsersAttributes::DIFF)]==ParsersAttributes::_TRUE_);
+			conn->setDefaultForOperation(Connection::OpExport, itr->second[DefaultFor.arg(ParsersAttributes::EXPORT)]==ParsersAttributes::_TRUE_);
+			conn->setDefaultForOperation(Connection::OpImport, itr->second[DefaultFor.arg(ParsersAttributes::IMPORT)]==ParsersAttributes::_TRUE_);
+			conn->setDefaultForOperation(Connection::OpValidation, itr->second[DefaultFor.arg(ParsersAttributes::VALIDATION)]==ParsersAttributes::_TRUE_);
 
 			connections.push_back(conn);
 			itr++;
@@ -508,10 +508,10 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 				attribs[ParsersAttributes::AUTO_BROWSE_DB]=(conn->isAutoBrowseDB() ? ParsersAttributes::_TRUE_ : QString());
 				attribs[ParsersAttributes::CONNECTION_TIMEOUT]=attribs[Connection::ParamConnTimeout];
 
-				attribs[DEFAULT_FOR.arg(ParsersAttributes::EXPORT)]=(conn->isDefaultForOperation(Connection::OpExport) ? ParsersAttributes::_TRUE_ : QString());
-				attribs[DEFAULT_FOR.arg(ParsersAttributes::IMPORT)]=(conn->isDefaultForOperation(Connection::OpImport) ? ParsersAttributes::_TRUE_ : QString());
-				attribs[DEFAULT_FOR.arg(ParsersAttributes::DIFF)]=(conn->isDefaultForOperation(Connection::OpDiff) ? ParsersAttributes::_TRUE_ : QString());
-				attribs[DEFAULT_FOR.arg(ParsersAttributes::VALIDATION)]=(conn->isDefaultForOperation(Connection::OpValidation) ? ParsersAttributes::_TRUE_ : QString());
+				attribs[DefaultFor.arg(ParsersAttributes::EXPORT)]=(conn->isDefaultForOperation(Connection::OpExport) ? ParsersAttributes::_TRUE_ : QString());
+				attribs[DefaultFor.arg(ParsersAttributes::IMPORT)]=(conn->isDefaultForOperation(Connection::OpImport) ? ParsersAttributes::_TRUE_ : QString());
+				attribs[DefaultFor.arg(ParsersAttributes::DIFF)]=(conn->isDefaultForOperation(Connection::OpDiff) ? ParsersAttributes::_TRUE_ : QString());
+				attribs[DefaultFor.arg(ParsersAttributes::VALIDATION)]=(conn->isDefaultForOperation(Connection::OpValidation) ? ParsersAttributes::_TRUE_ : QString());
 
 				schparser.ignoreUnkownAttributes(true);
 				config_params[GlobalAttributes::ConnectionsConf][ParsersAttributes::CONNECTIONS]+=

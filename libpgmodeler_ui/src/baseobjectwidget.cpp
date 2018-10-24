@@ -22,10 +22,10 @@
 #include "baseform.h"
 #include "generalconfigwidget.h"
 
-const QColor BaseObjectWidget::PROT_LINE_BGCOLOR=QColor(255,180,180);
-const QColor BaseObjectWidget::PROT_LINE_FGCOLOR=QColor(80,80,80);
-const QColor BaseObjectWidget::RELINC_LINE_BGCOLOR=QColor(164,249,176);
-const QColor BaseObjectWidget::RELINC_LINE_FGCOLOR=QColor(80,80,80);
+const QColor BaseObjectWidget::ProtRowBgColor=QColor(255,180,180);
+const QColor BaseObjectWidget::ProtRowFgColor=QColor(80,80,80);
+const QColor BaseObjectWidget::RelAddedRowBgColor=QColor(164,249,176);
+const QColor BaseObjectWidget::RelAddedRowFgColor=QColor(80,80,80);
 
 BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidget(parent)
 {

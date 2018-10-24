@@ -32,8 +32,8 @@ ColorPickerWidget::ColorPickerWidget(int color_count, QWidget * parent) : QWidge
 
 	if(color_count==0)
 		color_count=1;
-	else if(color_count > MAX_COLOR_BUTTONS)
-		color_count=MAX_COLOR_BUTTONS;
+	else if(color_count > MaxColorButtons)
+		color_count=MaxColorButtons;
 
 	hbox=new QHBoxLayout(this);
 	hbox->setContentsMargins(0,0,0,0);
