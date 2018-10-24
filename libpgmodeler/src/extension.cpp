@@ -85,7 +85,7 @@ QString Extension::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-	attributes[ParsersAttributes::NAME]=this->getName(def_type==SchemaParser::SQL_DEFINITION, false);
+	attributes[ParsersAttributes::NAME]=this->getName(def_type==SchemaParser::SqlDefinition, false);
 	attributes[ParsersAttributes::HANDLES_TYPE]=(handles_type ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::CUR_VERSION]=versions[CUR_VERSION];
 	attributes[ParsersAttributes::OLD_VERSION]=versions[OLD_VERSION];

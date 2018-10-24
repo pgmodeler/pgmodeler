@@ -520,7 +520,7 @@ void PermissionWidget::updateCodePreview(void)
 		cnt=perms.size();
 
 		for(i=0; i < cnt; i++)
-			code+=perms[i]->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+			code+=perms[i]->getCodeDefinition(SchemaParser::SqlDefinition);
 
 		if(code.isEmpty())
 			code=trUtf8("-- No permissions defined for the specified object!");

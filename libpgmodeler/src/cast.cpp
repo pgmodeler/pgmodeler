@@ -164,7 +164,7 @@ QString Cast::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-	if(def_type==SchemaParser::SQL_DEFINITION)
+	if(def_type==SchemaParser::SqlDefinition)
 	{
 		attributes[ParsersAttributes::SOURCE_TYPE]=(*types[SRC_TYPE]);
 		attributes[ParsersAttributes::DEST_TYPE]=(*types[DST_TYPE]);
@@ -177,7 +177,7 @@ QString Cast::getCodeDefinition(unsigned def_type)
 
 	if(!is_in_out && cast_function)
 	{
-		if(def_type==SchemaParser::SQL_DEFINITION)
+		if(def_type==SchemaParser::SqlDefinition)
 			attributes[ParsersAttributes::FUNCTION]=cast_function->getSignature();
 		else
 			attributes[ParsersAttributes::FUNCTION]=cast_function->getCodeDefinition(def_type, true);
@@ -192,7 +192,7 @@ QString Cast::getCodeDefinition(unsigned def_type)
 	else
 		attributes[ParsersAttributes::CAST_TYPE]=QString();
 
-	if(def_type==SchemaParser::SQL_DEFINITION)
+	if(def_type==SchemaParser::SqlDefinition)
 		attributes[ParsersAttributes::CAST_TYPE]=attributes[ParsersAttributes::CAST_TYPE].toUpper();
 
 	return(BaseObject::__getCodeDefinition(def_type));

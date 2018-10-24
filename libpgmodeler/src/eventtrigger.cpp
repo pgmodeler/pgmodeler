@@ -111,7 +111,7 @@ QString EventTrigger::getCodeDefinition(unsigned def_type)
 
 	attributes[ParsersAttributes::EVENT]=~event;
 
-	if(def_type==SchemaParser::SQL_DEFINITION)
+	if(def_type==SchemaParser::SqlDefinition)
 	{
 		QStringList str_list;
 

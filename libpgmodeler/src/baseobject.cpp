@@ -696,11 +696,11 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
 	QString code_def;
 
-	if((def_type==SchemaParser::SQL_DEFINITION &&
+	if((def_type==SchemaParser::SqlDefinition &&
 		obj_type!=ObjBaseObject && obj_type!=ObjBaseRelationship &&
 		obj_type!=ObjBaseTable && obj_type!=ObjTextbox) ||
 
-			(def_type==SchemaParser::XML_DEFINITION &&
+			(def_type==SchemaParser::XmlDefinition &&
 			 obj_type!=ObjBaseObject && obj_type!=ObjBaseTable))
 	{
 		bool format=false;
@@ -709,26 +709,26 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		attributes[ParsersAttributes::SQL_DISABLED]=(sql_disabled ? ParsersAttributes::_TRUE_ : QString());
 
 		//Formats the object's name in case the SQL definition is being generated
-		format=((def_type==SchemaParser::SQL_DEFINITION) ||
-				(def_type==SchemaParser::XML_DEFINITION && reduced_form &&
+		format=((def_type==SchemaParser::SqlDefinition) ||
+				(def_type==SchemaParser::XmlDefinition && reduced_form &&
 				 obj_type!=ObjTextbox && obj_type!=ObjRelationship));
 
 		setBasicAttributes(format);
 
 		if(schema)
 		{
-			if(def_type==SchemaParser::XML_DEFINITION)
+			if(def_type==SchemaParser::XmlDefinition)
 				attributes[ParsersAttributes::SCHEMA]=schema->getCodeDefinition(def_type, true);
 			else
 				attributes[ParsersAttributes::SCHEMA]=schema->getName(format);
 		}
 
-		if(def_type==SchemaParser::XML_DEFINITION)
+		if(def_type==SchemaParser::XmlDefinition)
 			attributes[ParsersAttributes::PROTECTED]=(is_protected ? ParsersAttributes::_TRUE_ : QString());
 
 		if(tablespace)
 		{
-			if(def_type==SchemaParser::SQL_DEFINITION)
+			if(def_type==SchemaParser::SqlDefinition)
 				attributes[ParsersAttributes::TABLESPACE]=tablespace->getName(format);
 			else
 				attributes[ParsersAttributes::TABLESPACE]=tablespace->getCodeDefinition(def_type, true);
@@ -736,7 +736,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 		if(collation && attributes[ParsersAttributes::COLLATION].isEmpty())
 		{
-			if(def_type==SchemaParser::SQL_DEFINITION)
+			if(def_type==SchemaParser::SqlDefinition)
 				attributes[ParsersAttributes::COLLATION]=collation->getName(format);
 			else
 				attributes[ParsersAttributes::COLLATION]=collation->getCodeDefinition(def_type, true);
@@ -744,7 +744,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 		if(owner)
 		{
-			if(def_type==SchemaParser::SQL_DEFINITION)
+			if(def_type==SchemaParser::SqlDefinition)
 			{
 				attributes[ParsersAttributes::OWNER]=owner->getName(format);
 
@@ -768,7 +768,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 		if(!comment.isEmpty())
 		{
-			if(def_type==SchemaParser::SQL_DEFINITION)
+			if(def_type==SchemaParser::SqlDefinition)
 				attributes[ParsersAttributes::COMMENT]=QString(comment).replace(QString("'"), QString("''"));
 			else
 				attributes[ParsersAttributes::COMMENT]=comment;
@@ -783,7 +783,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		{
 			attributes[ParsersAttributes::APPENDED_SQL]=appended_sql;
 
-			if(def_type==SchemaParser::XML_DEFINITION)
+			if(def_type==SchemaParser::XmlDefinition)
 			{
 				schparser.ignoreUnkownAttributes(true);
 				attributes[ParsersAttributes::APPENDED_SQL]=
@@ -799,7 +799,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		{
 			attributes[ParsersAttributes::PREPENDED_SQL]=prepended_sql;
 
-			if(def_type==SchemaParser::XML_DEFINITION)
+			if(def_type==SchemaParser::XmlDefinition)
 			{
 				schparser.ignoreUnkownAttributes(true);
 				attributes[ParsersAttributes::PREPENDED_SQL]=
@@ -811,7 +811,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			}
 		}
 
-		if(def_type==SchemaParser::SQL_DEFINITION && this->acceptsDropCommand())
+		if(def_type==SchemaParser::SqlDefinition && this->acceptsDropCommand())
 		{
 			attributes[ParsersAttributes::DROP]=getDropDefinition(true);
 			attributes[ParsersAttributes::DROP].remove(ParsersAttributes::DDL_END_TOKEN + '\n');
@@ -824,7 +824,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			code_def+=schparser.getCodeDefinition(objs_schemas[obj_type], attributes, def_type);
 
 			//Internally disabling the SQL definition
-			if(sql_disabled && def_type==SchemaParser::SQL_DEFINITION)
+			if(sql_disabled && def_type==SchemaParser::SqlDefinition)
 			{
 				//Creates a text stream and insert an comment start token on each line
 				QTextStream ts(&code_def);
@@ -842,8 +842,8 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			//Database object doesn't handles cached code.
 			if(use_cached_code && obj_type!=ObjDatabase)
 			{
-				if(def_type==SchemaParser::SQL_DEFINITION ||
-						(!reduced_form && def_type==SchemaParser::XML_DEFINITION))
+				if(def_type==SchemaParser::SqlDefinition ||
+						(!reduced_form && def_type==SchemaParser::XmlDefinition))
 					cached_code[def_type]=code_def;
 				else if(reduced_form)
 					cached_reduced_code=code_def;
@@ -1081,8 +1081,8 @@ bool BaseObject::isCodeDiffersFrom(BaseObject *object, const vector<QString> &ig
 
 	try
 	{
-		return(BaseObject::isCodeDiffersFrom(this->getCodeDefinition(SchemaParser::XML_DEFINITION),
-											 object->getCodeDefinition(SchemaParser::XML_DEFINITION),
+		return(BaseObject::isCodeDiffersFrom(this->getCodeDefinition(SchemaParser::XmlDefinition),
+											 object->getCodeDefinition(SchemaParser::XmlDefinition),
 											 ignored_attribs, ignored_tags));
 	}
 	catch(Exception &e)
@@ -1093,14 +1093,14 @@ bool BaseObject::isCodeDiffersFrom(BaseObject *object, const vector<QString> &ig
 
 QString BaseObject::getCachedCode(unsigned def_type, bool reduced_form)
 {
-	if(use_cached_code && def_type==SchemaParser::SQL_DEFINITION && schparser.getPgSQLVersion()!=BaseObject::pgsql_ver)
+	if(use_cached_code && def_type==SchemaParser::SqlDefinition && schparser.getPgSQLVersion()!=BaseObject::pgsql_ver)
 		code_invalidated=true;
 
 	if(!code_invalidated &&
 			((!reduced_form && !cached_code[def_type].isEmpty()) ||
-			 (def_type==SchemaParser::XML_DEFINITION  && reduced_form && !cached_reduced_code.isEmpty())))
+			 (def_type==SchemaParser::XmlDefinition  && reduced_form && !cached_reduced_code.isEmpty())))
 	{
-		if(def_type==SchemaParser::XML_DEFINITION  && reduced_form)
+		if(def_type==SchemaParser::XmlDefinition  && reduced_form)
 			return(cached_reduced_code);
 		else
 			return(cached_code[def_type]);
@@ -1131,7 +1131,7 @@ QString BaseObject::getDropDefinition(bool cascade)
 
 			attribs[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : QString());
 
-			return(schparser.getCodeDefinition(ParsersAttributes::DROP, attribs, SchemaParser::SQL_DEFINITION));
+			return(schparser.getCodeDefinition(ParsersAttributes::DROP, attribs, SchemaParser::SqlDefinition));
 		}
 		else
 			return(QString());
@@ -1239,7 +1239,7 @@ QString BaseObject::getAlterCommentDefinition(BaseObject *object, attribs_map at
 
 			schparser.ignoreUnkownAttributes(true);
 			schparser.ignoreEmptyAttributes(true);
-			return(schparser.getCodeDefinition(ParsersAttributes::COMMENT, attributes, SchemaParser::SQL_DEFINITION));
+			return(schparser.getCodeDefinition(ParsersAttributes::COMMENT, attributes, SchemaParser::SqlDefinition));
 		}
 
 		return(QString());

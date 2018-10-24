@@ -885,7 +885,7 @@ QString SchemaParser::getCodeDefinition(const QString & obj_name, attribs_map &a
 	{
 		QString filename;
 
-		if(def_type==SQL_DEFINITION)
+		if(def_type==SqlDefinition)
 		{
 			//Formats the filename
 			filename=GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
@@ -979,14 +979,14 @@ QString SchemaParser::convertCharsToXMLEntities(QString buf)
 					if(str_aux.contains(QRegExp("(&|\\<|\\>|\")")))
 					{
 						//Replaces the char by the XML entities
-						if(!str_aux.contains(XMLParser::CHAR_QUOT) && !str_aux.contains(XMLParser::CHAR_LT) &&
-								!str_aux.contains(XMLParser::CHAR_GT) && !str_aux.contains(XMLParser::CHAR_AMP) &&
-								!str_aux.contains(XMLParser::CHAR_APOS) && str_aux.contains('&'))
-							str_aux.replace('&', XMLParser::CHAR_AMP);
+						if(!str_aux.contains(XMLParser::CharQuot) && !str_aux.contains(XMLParser::CharLt) &&
+								!str_aux.contains(XMLParser::CharGt) && !str_aux.contains(XMLParser::CharAmp) &&
+								!str_aux.contains(XMLParser::CharApos) && str_aux.contains('&'))
+							str_aux.replace('&', XMLParser::CharAmp);
 
-						str_aux.replace('"',XMLParser::CHAR_QUOT);
-						str_aux.replace('<',XMLParser::CHAR_LT);
-						str_aux.replace('>',XMLParser::CHAR_GT);
+						str_aux.replace('"',XMLParser::CharQuot);
+						str_aux.replace('<',XMLParser::CharLt);
+						str_aux.replace('>',XMLParser::CharGt);
 
 						//Puts on the original XML definition the modified string
 						lin.replace(attr_start, count, str_aux);

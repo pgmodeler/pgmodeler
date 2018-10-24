@@ -187,10 +187,10 @@ void SQLExecutionWidget::setConnection(Connection conn)
 	sql_cmd_conn = conn;
 
 	db_name_lbl->setText(QString("<strong>%1</strong>@<em>%2:%3</em>")
-						 .arg(conn.getConnectionParam(Connection::PARAM_DB_NAME))
-						 .arg(conn.getConnectionParam(Connection::PARAM_SERVER_IP).isEmpty() ?
-								  conn.getConnectionParam(Connection::PARAM_SERVER_FQDN) : conn.getConnectionParam(Connection::PARAM_SERVER_IP))
-						 .arg(conn.getConnectionParam(Connection::PARAM_PORT)));
+						 .arg(conn.getConnectionParam(Connection::ParamDbName))
+						 .arg(conn.getConnectionParam(Connection::ParamServerIp).isEmpty() ?
+								  conn.getConnectionParam(Connection::ParamServerFqdn) : conn.getConnectionParam(Connection::ParamServerIp))
+						 .arg(conn.getConnectionParam(Connection::ParamPort)));
 }
 
 void SQLExecutionWidget::enableCommandButtons(void)
@@ -263,7 +263,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 		}
 
 		//Retrieving the data type names for each column
-		catalog.setFilter(Catalog::LIST_ALL_OBJS);
+		catalog.setFilter(Catalog::ListAllObjects);
 		std::sort(type_ids.begin(), type_ids.end());
 		end=std::unique(type_ids.begin(), type_ids.end());
 		type_ids.erase(end, type_ids.end());
@@ -892,7 +892,7 @@ void SQLExecutionWidget::loadSQLHistory(void)
 
 		cmd_history.clear();
 
-		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser.accessElement(XMLParser::ChildElement))
 		{
 			do
 			{
@@ -901,13 +901,13 @@ void SQLExecutionWidget::loadSQLHistory(void)
 					xmlparser.getElementAttributes(attribs);
 					xmlparser.savePosition();
 
-					if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
+					if(xmlparser.accessElement(XMLParser::ChildElement))
 						cmd_history[attribs[ParsersAttributes::CONNECTION]].append(xmlparser.getElementContent());
 
 					xmlparser.restorePosition();
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser.accessElement(XMLParser::NextElement));
 		}
 	}
 	catch(Exception &e)

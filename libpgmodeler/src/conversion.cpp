@@ -121,7 +121,7 @@ QString Conversion::getCodeDefinition(unsigned def_type)
 
 	if(conversion_func)
 	{
-		if(def_type==SchemaParser::SQL_DEFINITION)
+		if(def_type==SchemaParser::SqlDefinition)
 			attributes[ParsersAttributes::FUNCTION]=conversion_func->getName(true);
 		else
 			attributes[ParsersAttributes::FUNCTION]=conversion_func->getCodeDefinition(def_type, true);

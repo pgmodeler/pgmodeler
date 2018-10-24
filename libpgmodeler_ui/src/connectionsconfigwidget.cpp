@@ -134,27 +134,27 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 		{
 			conn=new Connection;
 
-			conn->setConnectionParam(Connection::PARAM_ALIAS, itr->second[ParsersAttributes::ALIAS]);
-			conn->setConnectionParam(Connection::PARAM_SERVER_FQDN, itr->second[Connection::PARAM_SERVER_FQDN]);
-			conn->setConnectionParam(Connection::PARAM_PORT, itr->second[Connection::PARAM_PORT]);
-			conn->setConnectionParam(Connection::PARAM_USER, itr->second[Connection::PARAM_USER]);
-			conn->setConnectionParam(Connection::PARAM_PASSWORD,itr->second[Connection::PARAM_PASSWORD]);
-			conn->setConnectionParam(Connection::PARAM_DB_NAME, itr->second[Connection::PARAM_DB_NAME]);
-			conn->setConnectionParam(Connection::PARAM_CONN_TIMEOUT, itr->second[ParsersAttributes::CONNECTION_TIMEOUT]);
-			conn->setConnectionParam(Connection::PARAM_SSL_MODE, itr->second[Connection::PARAM_SSL_MODE]);
-			conn->setConnectionParam(Connection::PARAM_SSL_ROOT_CERT, itr->second[Connection::PARAM_SSL_ROOT_CERT]);
-			conn->setConnectionParam(Connection::PARAM_SSL_CERT, itr->second[Connection::PARAM_SSL_CERT]);
-			conn->setConnectionParam(Connection::PARAM_SSL_KEY, itr->second[Connection::PARAM_SSL_KEY]);
-			conn->setConnectionParam(Connection::PARAM_SSL_CRL, itr->second[Connection::PARAM_SSL_CRL]);
-			conn->setConnectionParam(Connection::PARAM_LIB_GSSAPI, itr->second[Connection::PARAM_LIB_GSSAPI]);
-			conn->setConnectionParam(Connection::PARAM_KERBEROS_SERVER, itr->second[Connection::PARAM_KERBEROS_SERVER]);
-			conn->setConnectionParam(Connection::PARAM_OTHERS, itr->second[Connection::PARAM_OTHERS]);
+			conn->setConnectionParam(Connection::ParamAlias, itr->second[ParsersAttributes::ALIAS]);
+			conn->setConnectionParam(Connection::ParamServerFqdn, itr->second[Connection::ParamServerFqdn]);
+			conn->setConnectionParam(Connection::ParamPort, itr->second[Connection::ParamPort]);
+			conn->setConnectionParam(Connection::ParamUser, itr->second[Connection::ParamUser]);
+			conn->setConnectionParam(Connection::ParamPassword,itr->second[Connection::ParamPassword]);
+			conn->setConnectionParam(Connection::ParamDbName, itr->second[Connection::ParamDbName]);
+			conn->setConnectionParam(Connection::ParamConnTimeout, itr->second[ParsersAttributes::CONNECTION_TIMEOUT]);
+			conn->setConnectionParam(Connection::ParamSslMode, itr->second[Connection::ParamSslMode]);
+			conn->setConnectionParam(Connection::ParamSslRootCert, itr->second[Connection::ParamSslRootCert]);
+			conn->setConnectionParam(Connection::ParamSslCert, itr->second[Connection::ParamSslCert]);
+			conn->setConnectionParam(Connection::ParamSslKey, itr->second[Connection::ParamSslKey]);
+			conn->setConnectionParam(Connection::ParamSslCrl, itr->second[Connection::ParamSslCrl]);
+			conn->setConnectionParam(Connection::ParamLibGssapi, itr->second[Connection::ParamLibGssapi]);
+			conn->setConnectionParam(Connection::ParamKerberosServer, itr->second[Connection::ParamKerberosServer]);
+			conn->setConnectionParam(Connection::ParamOthers, itr->second[Connection::ParamOthers]);
 
 			conn->setAutoBrowseDB(itr->second[ParsersAttributes::AUTO_BROWSE_DB]==ParsersAttributes::_TRUE_);
-			conn->setDefaultForOperation(Connection::OP_DIFF, itr->second[DEFAULT_FOR.arg(ParsersAttributes::DIFF)]==ParsersAttributes::_TRUE_);
-			conn->setDefaultForOperation(Connection::OP_EXPORT, itr->second[DEFAULT_FOR.arg(ParsersAttributes::EXPORT)]==ParsersAttributes::_TRUE_);
-			conn->setDefaultForOperation(Connection::OP_IMPORT, itr->second[DEFAULT_FOR.arg(ParsersAttributes::IMPORT)]==ParsersAttributes::_TRUE_);
-			conn->setDefaultForOperation(Connection::OP_VALIDATION, itr->second[DEFAULT_FOR.arg(ParsersAttributes::VALIDATION)]==ParsersAttributes::_TRUE_);
+			conn->setDefaultForOperation(Connection::OpDiff, itr->second[DEFAULT_FOR.arg(ParsersAttributes::DIFF)]==ParsersAttributes::_TRUE_);
+			conn->setDefaultForOperation(Connection::OpExport, itr->second[DEFAULT_FOR.arg(ParsersAttributes::EXPORT)]==ParsersAttributes::_TRUE_);
+			conn->setDefaultForOperation(Connection::OpImport, itr->second[DEFAULT_FOR.arg(ParsersAttributes::IMPORT)]==ParsersAttributes::_TRUE_);
+			conn->setDefaultForOperation(Connection::OpValidation, itr->second[DEFAULT_FOR.arg(ParsersAttributes::VALIDATION)]==ParsersAttributes::_TRUE_);
 
 			connections.push_back(conn);
 			itr++;
@@ -243,7 +243,7 @@ void ConnectionsConfigWidget::duplicateConnection(void)
 		(*new_conn)=(*conn);
 		connections.push_back(new_conn);
 
-		new_conn->setConnectionParam(Connection::PARAM_ALIAS, QString("cp_%1").arg(conn->getConnectionParam(Connection::PARAM_ALIAS)));
+		new_conn->setConnectionParam(Connection::ParamAlias, QString("cp_%1").arg(conn->getConnectionParam(Connection::ParamAlias)));
 		connections_cmb->addItem(QIcon(QString(":icones/icones/server.png")), new_conn->getConnectionId());
 		connections_cmb->setCurrentIndex(connections_cmb->count()-1);
 		setConfigurationChanged(true);
@@ -312,46 +312,46 @@ void ConnectionsConfigWidget::editConnection(void)
 		Connection *conn=nullptr;
 
 		conn=connections.at(connections_cmb->currentIndex());
-		alias_edt->setText(conn->getConnectionParam(Connection::PARAM_ALIAS));
+		alias_edt->setText(conn->getConnectionParam(Connection::ParamAlias));
 		auto_browse_chk->setChecked(conn->isAutoBrowseDB());
 
-		diff_chk->setChecked(conn->isDefaultForOperation(Connection::OP_DIFF));
-		export_chk->setChecked(conn->isDefaultForOperation(Connection::OP_EXPORT));
-		import_chk->setChecked(conn->isDefaultForOperation(Connection::OP_IMPORT));
-		validation_chk->setChecked(conn->isDefaultForOperation(Connection::OP_VALIDATION));
+		diff_chk->setChecked(conn->isDefaultForOperation(Connection::OpDiff));
+		export_chk->setChecked(conn->isDefaultForOperation(Connection::OpExport));
+		import_chk->setChecked(conn->isDefaultForOperation(Connection::OpImport));
+		validation_chk->setChecked(conn->isDefaultForOperation(Connection::OpValidation));
 
-		if(!conn->getConnectionParam(Connection::PARAM_SERVER_FQDN).isEmpty())
-			host_edt->setText(conn->getConnectionParam(Connection::PARAM_SERVER_FQDN));
+		if(!conn->getConnectionParam(Connection::ParamServerFqdn).isEmpty())
+			host_edt->setText(conn->getConnectionParam(Connection::ParamServerFqdn));
 		else
-			host_edt->setText(conn->getConnectionParam(Connection::PARAM_SERVER_IP));
+			host_edt->setText(conn->getConnectionParam(Connection::ParamServerIp));
 
-		conn_db_edt->setText(conn->getConnectionParam(Connection::PARAM_DB_NAME));
-		user_edt->setText(conn->getConnectionParam(Connection::PARAM_USER));
-		passwd_edt->setText(conn->getConnectionParam(Connection::PARAM_PASSWORD));
-		port_sbp->setValue(conn->getConnectionParam(Connection::PARAM_PORT).toInt());
-		timeout_sbp->setValue(conn->getConnectionParam(Connection::PARAM_CONN_TIMEOUT).toInt());
+		conn_db_edt->setText(conn->getConnectionParam(Connection::ParamDbName));
+		user_edt->setText(conn->getConnectionParam(Connection::ParamUser));
+		passwd_edt->setText(conn->getConnectionParam(Connection::ParamPassword));
+		port_sbp->setValue(conn->getConnectionParam(Connection::ParamPort).toInt());
+		timeout_sbp->setValue(conn->getConnectionParam(Connection::ParamConnTimeout).toInt());
 
-		krb_server_edt->setText(conn->getConnectionParam(Connection::PARAM_KERBEROS_SERVER));
-		gssapi_auth_chk->setChecked(conn->getConnectionParam(Connection::PARAM_LIB_GSSAPI)==QString("gssapi"));
-		other_params_edt->setText(conn->getConnectionParam(Connection::PARAM_OTHERS));
+		krb_server_edt->setText(conn->getConnectionParam(Connection::ParamKerberosServer));
+		gssapi_auth_chk->setChecked(conn->getConnectionParam(Connection::ParamLibGssapi)==QString("gssapi"));
+		other_params_edt->setText(conn->getConnectionParam(Connection::ParamOthers));
 
-		if(conn->getConnectionParam(Connection::PARAM_SSL_MODE)==Connection::SSL_DESABLE)
+		if(conn->getConnectionParam(Connection::ParamSslMode)==Connection::SslDisable)
 			ssl_mode_cmb->setCurrentIndex(0);
-		else if(conn->getConnectionParam(Connection::PARAM_SSL_MODE)==Connection::SSL_ALLOW)
+		else if(conn->getConnectionParam(Connection::ParamSslMode)==Connection::SslAllow)
 			ssl_mode_cmb->setCurrentIndex(1);
-		else if(conn->getConnectionParam(Connection::PARAM_SSL_MODE)==Connection::SSL_REQUIRE)
+		else if(conn->getConnectionParam(Connection::ParamSslMode)==Connection::SslRequire)
 			ssl_mode_cmb->setCurrentIndex(2);
-		else if(conn->getConnectionParam(Connection::PARAM_SSL_MODE)==Connection::SSL_CA_VERIF)
+		else if(conn->getConnectionParam(Connection::ParamSslMode)==Connection::SslCaVerify)
 			ssl_mode_cmb->setCurrentIndex(3);
 		else
 			ssl_mode_cmb->setCurrentIndex(4);
 
 		if(ssl_mode_cmb->currentIndex() > 0)
 		{
-			client_cert_edt->setText(conn->getConnectionParam(Connection::PARAM_SSL_CERT));
-			root_cert_edt->setText(conn->getConnectionParam(Connection::PARAM_SSL_ROOT_CERT));
-			client_key_edt->setText(conn->getConnectionParam(Connection::PARAM_SSL_KEY));
-			crl_edt->setText(conn->getConnectionParam(Connection::PARAM_SSL_CRL));
+			client_cert_edt->setText(conn->getConnectionParam(Connection::ParamSslCert));
+			root_cert_edt->setText(conn->getConnectionParam(Connection::ParamSslRootCert));
+			client_key_edt->setText(conn->getConnectionParam(Connection::ParamSslKey));
+			crl_edt->setText(conn->getConnectionParam(Connection::ParamSslCrl));
 		}
 
 		update_tb->setVisible(true);
@@ -370,56 +370,56 @@ void ConnectionsConfigWidget::configureConnection(Connection *conn)
 	if(conn)
 	{
 		conn->setAutoBrowseDB(auto_browse_chk->isChecked());
-		conn->setConnectionParam(Connection::PARAM_ALIAS, alias_edt->text());
-		conn->setConnectionParam(Connection::PARAM_SERVER_IP, QString());
-		conn->setConnectionParam(Connection::PARAM_SERVER_FQDN, host_edt->text());
-		conn->setConnectionParam(Connection::PARAM_PORT, QString("%1").arg(port_sbp->value()));
-		conn->setConnectionParam(Connection::PARAM_USER, user_edt->text());
-		conn->setConnectionParam(Connection::PARAM_PASSWORD, passwd_edt->text());
-		conn->setConnectionParam(Connection::PARAM_DB_NAME, conn_db_edt->text());
-		conn->setConnectionParam(Connection::PARAM_CONN_TIMEOUT, QString("%1").arg(timeout_sbp->value()));
+		conn->setConnectionParam(Connection::ParamAlias, alias_edt->text());
+		conn->setConnectionParam(Connection::ParamServerIp, QString());
+		conn->setConnectionParam(Connection::ParamServerFqdn, host_edt->text());
+		conn->setConnectionParam(Connection::ParamPort, QString("%1").arg(port_sbp->value()));
+		conn->setConnectionParam(Connection::ParamUser, user_edt->text());
+		conn->setConnectionParam(Connection::ParamPassword, passwd_edt->text());
+		conn->setConnectionParam(Connection::ParamDbName, conn_db_edt->text());
+		conn->setConnectionParam(Connection::ParamConnTimeout, QString("%1").arg(timeout_sbp->value()));
 
-		conn->setDefaultForOperation(Connection::OP_DIFF, diff_chk->isChecked());
-		conn->setDefaultForOperation(Connection::OP_EXPORT, export_chk->isChecked());
-		conn->setDefaultForOperation(Connection::OP_IMPORT, import_chk->isChecked());
-		conn->setDefaultForOperation(Connection::OP_VALIDATION, validation_chk->isChecked());
+		conn->setDefaultForOperation(Connection::OpDiff, diff_chk->isChecked());
+		conn->setDefaultForOperation(Connection::OpExport, export_chk->isChecked());
+		conn->setDefaultForOperation(Connection::OpImport, import_chk->isChecked());
+		conn->setDefaultForOperation(Connection::OpValidation, validation_chk->isChecked());
 
 		switch(ssl_mode_cmb->currentIndex())
 		{
 			case 1:
-				conn->setConnectionParam(Connection::PARAM_SSL_MODE, Connection::SSL_ALLOW);
+				conn->setConnectionParam(Connection::ParamSslMode, Connection::SslAllow);
 			break;
 			case 2:
-				conn->setConnectionParam(Connection::PARAM_SSL_MODE, Connection::SSL_REQUIRE);
+				conn->setConnectionParam(Connection::ParamSslMode, Connection::SslRequire);
 			break;
 			case 3:
-				conn->setConnectionParam(Connection::PARAM_SSL_MODE, Connection::SSL_CA_VERIF);
+				conn->setConnectionParam(Connection::ParamSslMode, Connection::SslCaVerify);
 			break;
 			case 4:
-				conn->setConnectionParam(Connection::PARAM_SSL_MODE, Connection::SSL_FULL_VERIF);
+				conn->setConnectionParam(Connection::ParamSslMode, Connection::SslFullVerify);
 			break;
 			default:
 			case 0:
-				conn->setConnectionParam(Connection::PARAM_SSL_MODE, Connection::SSL_DESABLE);
+				conn->setConnectionParam(Connection::ParamSslMode, Connection::SslDisable);
 			break;
 		}
 
 		if(ssl_mode_cmb->currentIndex()!=0)
 		{
-			conn->setConnectionParam(Connection::PARAM_SSL_ROOT_CERT, root_cert_edt->text());
-			conn->setConnectionParam(Connection::PARAM_SSL_CERT, client_cert_edt->text());
-			conn->setConnectionParam(Connection::PARAM_SSL_KEY, client_key_edt->text());
-			conn->setConnectionParam(Connection::PARAM_SSL_CRL, crl_edt->text());
+			conn->setConnectionParam(Connection::ParamSslRootCert, root_cert_edt->text());
+			conn->setConnectionParam(Connection::ParamSslCert, client_cert_edt->text());
+			conn->setConnectionParam(Connection::ParamSslKey, client_key_edt->text());
+			conn->setConnectionParam(Connection::ParamSslCrl, crl_edt->text());
 		}
 
 		if(gssapi_auth_chk->isChecked())
-			conn->setConnectionParam(Connection::PARAM_LIB_GSSAPI, QString("gssapi"));
+			conn->setConnectionParam(Connection::ParamLibGssapi, QString("gssapi"));
 
 		if(!krb_server_edt->text().isEmpty())
-			conn->setConnectionParam(Connection::PARAM_KERBEROS_SERVER, krb_server_edt->text());
+			conn->setConnectionParam(Connection::ParamKerberosServer, krb_server_edt->text());
 
 		if(!other_params_edt->text().isEmpty())
-			conn->setConnectionParam(Connection::PARAM_OTHERS, other_params_edt->text());
+			conn->setConnectionParam(Connection::ParamOthers, other_params_edt->text());
 	}
 }
 
@@ -436,9 +436,9 @@ void ConnectionsConfigWidget::testConnection(void)
 		srv_info=conn.getServerInfo();
 		msg_box.show(trUtf8("Success"),
 					 PgModelerUiNS::formatMessage(trUtf8("Connection successfully established!\n\nServer details:\n\nPID: `%1'\nProtocol: `%2'\nVersion: `%3'"))
-					 .arg(srv_info[Connection::SERVER_PID])
-				.arg(srv_info[Connection::SERVER_PROTOCOL])
-				.arg(srv_info[Connection::SERVER_VERSION]), Messagebox::INFO_ICON);
+					 .arg(srv_info[Connection::ServerPid])
+				.arg(srv_info[Connection::ServerProtocol])
+				.arg(srv_info[Connection::ServerVersion]), Messagebox::INFO_ICON);
 	}
 	catch(Exception &e)
 	{
@@ -501,17 +501,17 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 			{
 				attribs=conn->getConnectionParams();
 
-				if(attribs[Connection::PARAM_SERVER_FQDN].isEmpty())
-					attribs[Connection::PARAM_SERVER_FQDN]=attribs[Connection::PARAM_SERVER_IP];
+				if(attribs[Connection::ParamServerFqdn].isEmpty())
+					attribs[Connection::ParamServerFqdn]=attribs[Connection::ParamServerIp];
 
-				attribs[ParsersAttributes::ALIAS]=attribs[Connection::PARAM_ALIAS];
+				attribs[ParsersAttributes::ALIAS]=attribs[Connection::ParamAlias];
 				attribs[ParsersAttributes::AUTO_BROWSE_DB]=(conn->isAutoBrowseDB() ? ParsersAttributes::_TRUE_ : QString());
-				attribs[ParsersAttributes::CONNECTION_TIMEOUT]=attribs[Connection::PARAM_CONN_TIMEOUT];
+				attribs[ParsersAttributes::CONNECTION_TIMEOUT]=attribs[Connection::ParamConnTimeout];
 
-				attribs[DEFAULT_FOR.arg(ParsersAttributes::EXPORT)]=(conn->isDefaultForOperation(Connection::OP_EXPORT) ? ParsersAttributes::_TRUE_ : QString());
-				attribs[DEFAULT_FOR.arg(ParsersAttributes::IMPORT)]=(conn->isDefaultForOperation(Connection::OP_IMPORT) ? ParsersAttributes::_TRUE_ : QString());
-				attribs[DEFAULT_FOR.arg(ParsersAttributes::DIFF)]=(conn->isDefaultForOperation(Connection::OP_DIFF) ? ParsersAttributes::_TRUE_ : QString());
-				attribs[DEFAULT_FOR.arg(ParsersAttributes::VALIDATION)]=(conn->isDefaultForOperation(Connection::OP_VALIDATION) ? ParsersAttributes::_TRUE_ : QString());
+				attribs[DEFAULT_FOR.arg(ParsersAttributes::EXPORT)]=(conn->isDefaultForOperation(Connection::OpExport) ? ParsersAttributes::_TRUE_ : QString());
+				attribs[DEFAULT_FOR.arg(ParsersAttributes::IMPORT)]=(conn->isDefaultForOperation(Connection::OpImport) ? ParsersAttributes::_TRUE_ : QString());
+				attribs[DEFAULT_FOR.arg(ParsersAttributes::DIFF)]=(conn->isDefaultForOperation(Connection::OpDiff) ? ParsersAttributes::_TRUE_ : QString());
+				attribs[DEFAULT_FOR.arg(ParsersAttributes::VALIDATION)]=(conn->isDefaultForOperation(Connection::OpValidation) ? ParsersAttributes::_TRUE_ : QString());
 
 				schparser.ignoreUnkownAttributes(true);
 				config_params[GlobalAttributes::ConnectionsConf][ParsersAttributes::CONNECTIONS]+=

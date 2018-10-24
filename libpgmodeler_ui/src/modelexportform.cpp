@@ -113,7 +113,7 @@ void ModelExportForm::exec(ModelWidget *model)
 	if(model)
 	{
 		this->model=model;
-		ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true, Connection::OP_EXPORT);
+		ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true, Connection::OpExport);
 		selectExportMode();
 		QDialog::exec();
 	}

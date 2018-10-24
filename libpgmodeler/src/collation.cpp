@@ -104,7 +104,7 @@ QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 	{
 		attributes[ParsersAttributes::LOCALE]=locale;
 
-		if(def_type==SchemaParser::SQL_DEFINITION && encoding!=BaseType::null)
+		if(def_type==SchemaParser::SqlDefinition && encoding!=BaseType::null)
 			attributes[ParsersAttributes::LOCALE]=locale + "." + (~encoding).toLower();
 	}
 	else if(collation)
@@ -120,7 +120,7 @@ QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 		{
 			attributes[lc_attribs[i]]=getLocalization(i);
 
-			if(def_type==SchemaParser::SQL_DEFINITION && encoding!=BaseType::null &&
+			if(def_type==SchemaParser::SqlDefinition && encoding!=BaseType::null &&
 					!attributes[lc_attribs[i]].isEmpty())
 				attributes[lc_attribs[i]]+="." + (~encoding).toLower();
 		}

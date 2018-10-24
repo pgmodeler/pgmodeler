@@ -169,7 +169,7 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 
 				//Replacing the initial db parameter for the input database when reverse engineering
 				if((parsed_opts.count(IMPORT_DB) || parsed_opts.count(DIFF)) && !parsed_opts[INPUT_DB].isEmpty())
-					connection.setConnectionParam(Connection::PARAM_DB_NAME, parsed_opts[INPUT_DB]);
+					connection.setConnectionParam(Connection::ParamDbName, parsed_opts[INPUT_DB]);
 			}
 
 			if(parsed_opts.count(DIFF))
@@ -179,7 +179,7 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 				if(!extra_connection.isConfigured())
 					extra_connection = connection;
 
-				extra_connection.setConnectionParam(Connection::PARAM_DB_NAME, parsed_opts[COMPARE_TO]);
+				extra_connection.setConnectionParam(Connection::ParamDbName, parsed_opts[COMPARE_TO]);
 			}
 
 			if(!silent_mode)
@@ -225,11 +225,11 @@ void PgModelerCLI::configureConnection(bool extra_conn)
 	}
 	else
 	{
-		conn->setConnectionParam(Connection::PARAM_SERVER_FQDN, parsed_opts[HOST + chr]);
-		conn->setConnectionParam(Connection::PARAM_USER, parsed_opts[USER + chr]);
-		conn->setConnectionParam(Connection::PARAM_PORT, parsed_opts[PORT + chr]);
-		conn->setConnectionParam(Connection::PARAM_PASSWORD, parsed_opts[PASSWD + chr]);
-		conn->setConnectionParam(Connection::PARAM_DB_NAME, parsed_opts[INITIAL_DB + chr]);
+		conn->setConnectionParam(Connection::ParamServerFqdn, parsed_opts[HOST + chr]);
+		conn->setConnectionParam(Connection::ParamUser, parsed_opts[USER + chr]);
+		conn->setConnectionParam(Connection::ParamPort, parsed_opts[PORT + chr]);
+		conn->setConnectionParam(Connection::ParamPassword, parsed_opts[PASSWD + chr]);
+		conn->setConnectionParam(Connection::ParamDbName, parsed_opts[INITIAL_DB + chr]);
 	}
 }
 
@@ -1150,7 +1150,7 @@ void PgModelerCLI::fixOpClassesFamiliesReferences(QString &obj_xml)
 			obj_name.remove('"');
 
 			//Transforming xml entity for quote into the char
-			obj_name.replace(XMLParser::CHAR_QUOT, QString("\""));
+			obj_name.replace(XMLParser::CharQuot, QString("\""));
 
 			for(QString idx_type : index_types)
 			{
@@ -1160,7 +1160,7 @@ void PgModelerCLI::fixOpClassesFamiliesReferences(QString &obj_xml)
 				if(model->getObjectIndex(aux_obj_name, ref_obj_type) >= 0)
 				{
 					//Replacing the old signature with the corrected form
-					aux_obj_name.replace(QString("\""), XMLParser::CHAR_QUOT);
+					aux_obj_name.replace(QString("\""), XMLParser::CharQuot);
 					obj_xml.replace(pos, sign_regexp.matchedLength(), QString("signature=\"%1\"").arg(aux_obj_name));
 					break;
 				}
@@ -1181,7 +1181,7 @@ void PgModelerCLI::fixModel(void)
 	extractObjectXML();
 	recreateObjects();
 	model->updateTablesFKRelationships();
-	model->saveModel(parsed_opts[OUTPUT], SchemaParser::XML_DEFINITION);
+	model->saveModel(parsed_opts[OUTPUT], SchemaParser::XmlDefinition);
 
 	printMessage(trUtf8("Model successfully fixed!"));
 }
@@ -1254,7 +1254,7 @@ void PgModelerCLI::importDatabase(void)
 
 	printMessage(trUtf8("Saving the imported database to file..."));
 
-	model_wgt->getDatabaseModel()->saveModel(parsed_opts[OUTPUT], SchemaParser::XML_DEFINITION);
+	model_wgt->getDatabaseModel()->saveModel(parsed_opts[OUTPUT], SchemaParser::XmlDefinition);
 
 	printMessage(trUtf8("Import successfully ended!\n"));
 
@@ -1273,12 +1273,12 @@ void PgModelerCLI::importDatabase(DatabaseModel *model, Connection conn)
 		catalog.setConnection(conn);
 
 		//For diff we don't need the oids of all system objects
-		catalog.setFilter(Catalog::LIST_ALL_OBJS | Catalog::EXCL_BUILTIN_ARRAY_TYPES |
-											Catalog::EXCL_EXTENSION_OBJS | Catalog::EXCL_SYSTEM_OBJS);
+		catalog.setFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
+											Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs);
 
 		catalog.getObjectsOIDs(obj_oids, col_oids, {{ParsersAttributes::FILTER_TABLE_TYPES, ParsersAttributes::_TRUE_}});
 
-		db_oid = catalog.getObjectOID(conn.getConnectionParam(Connection::PARAM_DB_NAME), ObjDatabase);
+		db_oid = catalog.getObjectOID(conn.getConnectionParam(Connection::ParamDbName), ObjDatabase);
 		obj_oids[ObjDatabase].push_back(db_oid.toUInt());
 
 		catalog.closeConnection();

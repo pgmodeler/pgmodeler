@@ -56,7 +56,7 @@ ResultSetModel::ResultSetModel(ResultSet &res, Catalog &catalog, QObject *parent
 			while(res.accessTuple(ResultSet::NEXT_TUPLE));
 		}
 
-		aux_cat.setFilter(Catalog::LIST_ALL_OBJS);
+		aux_cat.setFilter(Catalog::ListAllObjects);
 		std::sort(type_ids.begin(), type_ids.end());
 		end=std::unique(type_ids.begin(), type_ids.end());
 		type_ids.erase(end, type_ids.end());

@@ -426,7 +426,7 @@ void Type::setElementsAttribute(unsigned def_type)
 	for(i=0; i < count; i++)
 		str_elem+=type_attribs[i].getCodeDefinition(def_type);
 
-	if(def_type==SchemaParser::SQL_DEFINITION)
+	if(def_type==SchemaParser::SqlDefinition)
 		str_elem.remove(str_elem.lastIndexOf(','), str_elem.size());
 
 	attributes[ParsersAttributes::TYPE_ATTRIBUTE]=str_elem;
@@ -440,7 +440,7 @@ void Type::setEnumerationsAttribute(unsigned def_type)
 	count=enumerations.size();
 	for(i=0; i < count; i++)
 	{
-		if(def_type==SchemaParser::SQL_DEFINITION)
+		if(def_type==SchemaParser::SqlDefinition)
 			str_enum+=QString("'") + enumerations[i] + QString("'");
 		else
 			str_enum+=enumerations[i];
@@ -629,14 +629,14 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 	{
 		attributes[ParsersAttributes::RANGE_TYPE]=ParsersAttributes::_TRUE_;
 
-		if(def_type==SchemaParser::SQL_DEFINITION)
+		if(def_type==SchemaParser::SqlDefinition)
 			attributes[ParsersAttributes::SUBTYPE]=(*subtype);
 		else
-			attributes[ParsersAttributes::SUBTYPE]=subtype.getCodeDefinition(SchemaParser::XML_DEFINITION);
+			attributes[ParsersAttributes::SUBTYPE]=subtype.getCodeDefinition(SchemaParser::XmlDefinition);
 
 		if(subtype_opclass)
 		{
-			if(def_type==SchemaParser::SQL_DEFINITION)
+			if(def_type==SchemaParser::SqlDefinition)
 				attributes[ParsersAttributes::OP_CLASS]=subtype_opclass->getName(true);
 			else
 				attributes[ParsersAttributes::OP_CLASS]=subtype_opclass->getCodeDefinition(def_type, true);
@@ -646,7 +646,7 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 	{
 		attributes[ParsersAttributes::BASE_TYPE]=ParsersAttributes::_TRUE_;
 
-		if(internal_len==0 && def_type==SchemaParser::SQL_DEFINITION)
+		if(internal_len==0 && def_type==SchemaParser::SqlDefinition)
 			attributes[ParsersAttributes::INTERNAL_LENGTH]=QString("VARIABLE");
 		else
 			attributes[ParsersAttributes::INTERNAL_LENGTH]=QString("%1").arg(internal_len);
@@ -669,10 +669,10 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 		if(like_type!=QString("\"any\""))
 		{
-			if(def_type==SchemaParser::SQL_DEFINITION)
+			if(def_type==SchemaParser::SqlDefinition)
 				attributes[ParsersAttributes::LIKE_TYPE]=(*like_type);
 			else
-				attributes[ParsersAttributes::LIKE_TYPE]=like_type.getCodeDefinition(SchemaParser::XML_DEFINITION);
+				attributes[ParsersAttributes::LIKE_TYPE]=like_type.getCodeDefinition(SchemaParser::XmlDefinition);
 		}
 	}
 
@@ -693,7 +693,7 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 		{
 			if(functions[i])
 			{
-				if(def_type==SchemaParser::SQL_DEFINITION)
+				if(def_type==SchemaParser::SqlDefinition)
 					attributes[func_attrib[i]]=functions[i]->getName();
 				else
 				{
@@ -771,7 +771,7 @@ QString Type::getAlterDefinition(BaseObject *object)
 					if(attrib_idx < 0)
 					{
 						attribs[ParsersAttributes::ATTRIBUTE]=attrib.getName(true);
-						attribs[ParsersAttributes::TYPE]=attrib.getType().getCodeDefinition(SchemaParser::SQL_DEFINITION);
+						attribs[ParsersAttributes::TYPE]=attrib.getType().getCodeDefinition(SchemaParser::SqlDefinition);
 						attribs[ParsersAttributes::COLLATION]=QString();
 
 						if(attrib.getCollation())
@@ -788,7 +788,7 @@ QString Type::getAlterDefinition(BaseObject *object)
 						if(!type_attribs[attrib_idx].getType().isEquivalentTo(attrib.getType()))
 						{
 							attribs[ParsersAttributes::ATTRIBUTE]=attrib.getName(true);
-							attribs[ParsersAttributes::TYPE]=attrib.getType().getCodeDefinition(SchemaParser::SQL_DEFINITION);
+							attribs[ParsersAttributes::TYPE]=attrib.getType().getCodeDefinition(SchemaParser::SqlDefinition);
 						}
 
 						copyAttributes(attribs);

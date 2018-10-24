@@ -136,7 +136,7 @@ QString Domain::getCodeDefinition(unsigned def_type)
 		attributes[ParsersAttributes::CONSTRAINTS]+=schparser.getCodeDefinition(ParsersAttributes::DOM_CONSTRAINT, aux_attribs, def_type);
 	}
 
-	if(def_type==SchemaParser::SQL_DEFINITION)
+	if(def_type==SchemaParser::SqlDefinition)
 		attributes[ParsersAttributes::TYPE]=(*type);
 	else
 		attributes[ParsersAttributes::TYPE]=type.getCodeDefinition(def_type);

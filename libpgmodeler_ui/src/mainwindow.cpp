@@ -744,7 +744,7 @@ void MainWindow::updateConnections(bool force)
 		}
 
 		if(sender()!=model_valid_wgt)
-			ConnectionsConfigWidget::fillConnectionsComboBox(model_valid_wgt->connections_cmb, true, Connection::OP_VALIDATION);
+			ConnectionsConfigWidget::fillConnectionsComboBox(model_valid_wgt->connections_cmb, true, Connection::OpValidation);
 	}
 }
 
@@ -772,7 +772,7 @@ void MainWindow::saveTemporaryModels(void)
 				bg_saving_pb->setValue(((i+1)/static_cast<float>(count)) * 100);
 
 				if(model->isModified())
-					model->getDatabaseModel()->saveModel(model->getTempFilename(), SchemaParser::XML_DEFINITION);
+					model->getDatabaseModel()->saveModel(model->getTempFilename(), SchemaParser::XmlDefinition);
 			}
 
 			bg_saving_pb->setValue(100);

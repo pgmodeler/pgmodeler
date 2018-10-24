@@ -74,16 +74,16 @@ class XMLParser {
 
 	public:
 		//! \brief Constants used to referência the elements on the element tree
-		static constexpr unsigned ROOT_ELEMENT=0,
-		CHILD_ELEMENT=1,
-		NEXT_ELEMENT=2,
-		PREVIOUS_ELEMENT=3;
+		static constexpr unsigned RootElement=0,
+		ChildElement=1,
+		NextElement=2,
+		PreviousElement=3;
 
-		static const QString CHAR_AMP; //! \brief & = &amp;
-		static const QString CHAR_LT; //! \brief  < = &lt;
-		static const QString CHAR_GT; //! \brief  < = &gt;
-		static const QString CHAR_QUOT; //! \brief  < = &quot;
-		static const QString CHAR_APOS; //! \brief  < = &apos;
+		static const QString CharAmp, //! \brief & = &amp;
+		CharLt, //! \brief  < = &lt;
+		CharGt, //! \brief  < = &gt;
+		CharQuot, //! \brief  < = &quot;
+		CharApos; //! \brief  < = &apos;
 
 		XMLParser(void);
 		~XMLParser(void);

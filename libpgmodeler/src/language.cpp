@@ -122,14 +122,14 @@ QString Language::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	attributes[ParsersAttributes::TRUSTED]=(is_trusted ? ParsersAttributes::_TRUE_ : QString());
 
-	if(!reduced_form && def_type==SchemaParser::XML_DEFINITION)
+	if(!reduced_form && def_type==SchemaParser::XmlDefinition)
 		reduced_form=(!functions[VALIDATOR_FUNC] && !functions[HANDLER_FUNC] && !functions[INLINE_FUNC] && !this->getOwner());
 
 	for(i=0; i < 3; i++)
 	{
 		if(functions[i])
 		{
-			if(def_type==SchemaParser::SQL_DEFINITION)
+			if(def_type==SchemaParser::SqlDefinition)
 				attributes[attribs_func[i]]=functions[i]->getName(true);
 			else
 			{

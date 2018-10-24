@@ -986,13 +986,13 @@ void DatabaseExplorerWidget::listObjects(void)
 void DatabaseExplorerWidget::configureImportHelper(void)
 {
 	import_helper.setConnection(connection);
-	import_helper.setCurrentDatabase(connection.getConnectionParam(Connection::PARAM_DB_NAME));
+	import_helper.setCurrentDatabase(connection.getConnectionParam(Connection::ParamDbName));
 	import_helper.setImportOptions(show_sys_objs->isChecked(),
 																 show_ext_objs->isChecked(),
 																 false, false, false, false, false);
 
 	catalog.closeConnection();
-	catalog.setFilter(Catalog::LIST_ALL_OBJS);
+	catalog.setFilter(Catalog::ListAllObjects);
 	catalog.setConnection(connection);
 }
 
@@ -1235,7 +1235,7 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 				//Generate the drop command
 				schparser.ignoreEmptyAttributes(true);
 				schparser.ignoreUnkownAttributes(true);
-				drop_cmd=schparser.getCodeDefinition(ParsersAttributes::DROP, attribs, SchemaParser::SQL_DEFINITION);
+				drop_cmd=schparser.getCodeDefinition(ParsersAttributes::DROP, attribs, SchemaParser::SqlDefinition);
 
 				if(cascade)
 					drop_cmd.replace(';', QString(" CASCADE;"));
@@ -1791,7 +1791,7 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 				//Importing the object and its dependencies
 				dbmodel.createSystemObjects(false);
 				import_hlp.setConnection(connection);
-				import_hlp.setCurrentDatabase(connection.getConnectionParam(Connection::PARAM_DB_NAME));
+				import_hlp.setCurrentDatabase(connection.getConnectionParam(Connection::ParamDbName));
 				import_hlp.setImportOptions(toggle_disp_menu.actions().at(0)->isChecked(),
 																		toggle_disp_menu.actions().at(1)->isChecked(),
 																		true, false, false, false, false);
@@ -1917,12 +1917,12 @@ QString DatabaseExplorerWidget::getObjectSource(BaseObject *object, DatabaseMode
 	object->setCodeInvalidated(true);
 
 	if(object!=dbmodel)
-		source=object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+		source=object->getCodeDefinition(SchemaParser::SqlDefinition);
 	else
-		source=dbmodel->__getCodeDefinition(SchemaParser::SQL_DEFINITION);
+		source=dbmodel->__getCodeDefinition(SchemaParser::SqlDefinition);
 
 	for(auto &perm : perms)
-		source+=perm->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+		source+=perm->getCodeDefinition(SchemaParser::SqlDefinition);
 
 	return(source);
 }
@@ -1945,7 +1945,7 @@ void DatabaseExplorerWidget::openDataGrid(const QString &schema, const QString &
 void DatabaseExplorerWidget::dropDatabase(void)
 {
 	Messagebox msg_box;
-	QString dbname = connection.getConnectionParam(Connection::PARAM_DB_NAME);
+	QString dbname = connection.getConnectionParam(Connection::ParamDbName);
 
 	msg_box.show(trUtf8("Warning"),
 				 trUtf8("<strong>CAUTION:</strong> You are about to drop the entire database <strong>%1</strong> from the server <strong>%2</strong>! All data will be completely wiped out. Do you really want to proceed?")
@@ -1957,7 +1957,7 @@ void DatabaseExplorerWidget::dropDatabase(void)
 		try
 		{
 			Connection conn=Connection(connection.getConnectionParams());
-			conn.setConnectionParam(Connection::PARAM_DB_NAME, default_db);
+			conn.setConnectionParam(Connection::ParamDbName, default_db);
 			conn.connect();
 			conn.executeDDLCommand(QString("DROP DATABASE \"%1\";").arg(dbname));
 			conn.close();
@@ -1966,9 +1966,9 @@ void DatabaseExplorerWidget::dropDatabase(void)
 		}
 		catch(Exception &e)
 		{
-			if(connection.getConnectionParam(Connection::PARAM_DB_NAME) == default_db)
+			if(connection.getConnectionParam(Connection::ParamDbName) == default_db)
 				throw Exception(Exception::getErrorMessage(DropCurrentDBDefault)
-												.arg(dbname).arg(connection.getConnectionParam(Connection::PARAM_ALIAS)),
+												.arg(dbname).arg(connection.getConnectionParam(Connection::ParamAlias)),
 												DropCurrentDBDefault,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 			else
 				throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);

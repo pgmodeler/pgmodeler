@@ -136,7 +136,7 @@ void Function::setParametersAttribute(unsigned def_type)
 		str_param+=parameters[i].getCodeDefinition(def_type);
 	}
 
-	if(def_type==SchemaParser::SQL_DEFINITION)
+	if(def_type==SchemaParser::SqlDefinition)
 		str_param.remove(str_param.size()-2,2);
 
 	attributes[ParsersAttributes::PARAMETERS]=str_param;
@@ -153,7 +153,7 @@ void Function::setTableReturnTypeAttribute(unsigned def_type)
 		str_type+=ret_table_columns[i].getCodeDefinition(def_type);
 	}
 
-	if(def_type==SchemaParser::SQL_DEFINITION)
+	if(def_type==SchemaParser::SqlDefinition)
 		str_type.remove(str_type.size()-2,2);
 
 	attributes[ParsersAttributes::RETURN_TABLE]=str_type;
@@ -433,7 +433,7 @@ void Function::createSignature(bool format, bool prepend_schema)
 				(parameters[i].isIn() && parameters[i].isOut()) ||
 				(parameters[i].isIn() && !parameters[i].isOut()))
 		{
-			str_param+=parameters[i].getCodeDefinition(SchemaParser::SQL_DEFINITION, true).trimmed();
+			str_param+=parameters[i].getCodeDefinition(SchemaParser::SqlDefinition, true).trimmed();
 			parameters[i].setCodeInvalidated(true);
 		}
 	}
@@ -463,7 +463,7 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	if(language)
 	{
-		if(def_type==SchemaParser::SQL_DEFINITION)
+		if(def_type==SchemaParser::SqlDefinition)
 		{
 			attributes[ParsersAttributes::LANGUAGE]=language->getName(false);
 			attributes[ParsersAttributes::RETURN_TYPE]=(*return_type);
@@ -511,7 +511,7 @@ QString Function::getAlterDefinition(BaseObject *object)
 				this->library!=func->library ||
 				this->symbol!=func->symbol)
 		{
-			attribs[ParsersAttributes::DEFINITION]=func->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+			attribs[ParsersAttributes::DEFINITION]=func->getCodeDefinition(SchemaParser::SqlDefinition);
 			attribs[ParsersAttributes::DEFINITION].replace(QString("CREATE FUNCTION"), QString("CREATE OR REPLACE FUNCTION"));
 		}
 		else

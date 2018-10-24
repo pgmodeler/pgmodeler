@@ -74,7 +74,7 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 							   trUtf8("Generating SQL code for PostgreSQL `%1'").arg(BaseObject::getPgSQLVersion()),
 							   ObjBaseObject);
 		progress=1;
-		db_model->saveModel(filename, SchemaParser::SQL_DEFINITION);
+		db_model->saveModel(filename, SchemaParser::SqlDefinition);
 
 		emit s_progressUpdated(100, trUtf8("Output SQL file `%1' successfully written.").arg(filename), ObjBaseObject);
 		emit s_exportFinished();
@@ -427,7 +427,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 											   .arg(object->getTypeName()),
 											   object->getObjectType());
 
-						sql_cmd=object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+						sql_cmd=object->getCodeDefinition(SchemaParser::SqlDefinition);
 
 						if(types[type_id] == ObjTablespace)
 						{
@@ -471,7 +471,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 									   .arg(db_model->getName()),
 									   ObjDatabase);
 
-				sql_cmd=db_model->__getCodeDefinition(SchemaParser::SQL_DEFINITION);
+				sql_cmd=db_model->__getCodeDefinition(SchemaParser::SqlDefinition);
 				pos = comm_regexp.indexIn(sql_cmd);
 
 				/* If we find a comment on statment we should strip it from the DB definition in
@@ -499,7 +499,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			//Connects to the new created database to create the other objects
 			progress=20;
 			new_db_conn=conn;
-			new_db_conn.setConnectionParam(Connection::PARAM_DB_NAME, db_model->getName());
+			new_db_conn.setConnectionParam(Connection::ParamDbName, db_model->getName());
 			emit s_progressUpdated(progress,
 								   trUtf8("Connecting to database `%1'")
 								   .arg(db_model->getName()));
@@ -511,7 +511,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			emit s_progressUpdated(progress, trUtf8("Generating SQL for `%1' objects...").arg(db_model->getObjectCount()));
 
 			//Exporting the database model definition using the opened connection
-			buf=db_model->getCodeDefinition(SchemaParser::SQL_DEFINITION, false);
+			buf=db_model->getCodeDefinition(SchemaParser::SqlDefinition, false);
 			progress=40;
 			exportBufferToDBMS(buf, new_db_conn, drop_objs);
 		}
@@ -791,10 +791,10 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
 	if(!conn.isStablished())
 	{
-		orig_conn_db_name = conn.getConnectionParam(Connection::PARAM_DB_NAME);
+		orig_conn_db_name = conn.getConnectionParam(Connection::ParamDbName);
 
 		if(!db_name.isEmpty())
-			conn.setConnectionParam(Connection::PARAM_DB_NAME, db_name);
+			conn.setConnectionParam(Connection::ParamDbName, db_name);
 
 		conn.connect();
 	}
@@ -991,7 +991,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 			{
 				conn.close();
 				aux_conn=conn;
-				aux_conn.setConnectionParam(Connection::PARAM_DB_NAME, orig_conn_db_name);
+				aux_conn.setConnectionParam(Connection::ParamDbName, orig_conn_db_name);
 				aux_conn.connect();
 				for(QString cmd : db_sql_cmds)
 					aux_conn.executeDDLCommand(cmd);

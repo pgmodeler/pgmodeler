@@ -93,7 +93,7 @@ QString Parameter::getCodeDefinition(unsigned def_type)
 
 QString Parameter::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
-	if(def_type==SchemaParser::SQL_DEFINITION)
+	if(def_type==SchemaParser::SqlDefinition)
 		attributes[ParsersAttributes::NAME]=BaseObject::formatName(obj_name);
 	else
 		attributes[ParsersAttributes::NAME]=obj_name;

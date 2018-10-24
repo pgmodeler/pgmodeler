@@ -1581,7 +1581,7 @@ int PgSQLType::getPrecision(void)
 
 QString PgSQLType::getCodeDefinition(unsigned def_type,QString ref_type)
 {
-	if(def_type==SchemaParser::SQL_DEFINITION)
+	if(def_type==SchemaParser::SqlDefinition)
 		return(*(*this));
 	else
 	{

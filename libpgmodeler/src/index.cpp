@@ -51,7 +51,7 @@ void Index::setIndexElementsAttribute(unsigned def_type)
 	for(i=0; i < count; i++)
 	{
 		str_elem+=idx_elements[i].getCodeDefinition(def_type);
-		if(i < (count-1) && def_type==SchemaParser::SQL_DEFINITION) str_elem+=',';
+		if(i < (count-1) && def_type==SchemaParser::SqlDefinition) str_elem+=',';
 	}
 
 	attributes[ParsersAttributes::ELEMENTS]=str_elem;
@@ -341,7 +341,7 @@ QString Index::getCodeDefinition(unsigned def_type)
 	{
 		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
-		if(def_type==SchemaParser::SQL_DEFINITION && getParentTable()->getSchema())
+		if(def_type==SchemaParser::SqlDefinition && getParentTable()->getSchema())
 			attributes[ParsersAttributes::SCHEMA]=getParentTable()->getSchema()->getName(true);
 	}
 
@@ -356,7 +356,7 @@ QString Index::getCodeDefinition(unsigned def_type)
 		attributes[ParsersAttributes::FACTOR]=QString("%1").arg(fill_factor);
 		attributes[ParsersAttributes::STORAGE_PARAMS]=ParsersAttributes::_TRUE_;
 	}
-	else if(def_type==SchemaParser::XML_DEFINITION)
+	else if(def_type==SchemaParser::XmlDefinition)
 		attributes[ParsersAttributes::FACTOR]=QString("0");
 
 	/* Case the index doesn't referece some column added by relationship it will be declared

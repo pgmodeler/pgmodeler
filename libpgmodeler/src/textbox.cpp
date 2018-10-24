@@ -32,7 +32,7 @@ Textbox::Textbox(void)
 
 QString Textbox::getCodeDefinition(unsigned def_type)
 {
-	if(def_type==SchemaParser::SQL_DEFINITION)
+	if(def_type==SchemaParser::SqlDefinition)
 		return(QString());
 	else
 	{
@@ -56,7 +56,7 @@ QString Textbox::getCodeDefinition(unsigned def_type)
 
 		attributes[ParsersAttributes::FONT_SIZE]=QString("%1").arg(font_size);
 
-		return(this->BaseObject::__getCodeDefinition(SchemaParser::XML_DEFINITION));
+		return(this->BaseObject::__getCodeDefinition(SchemaParser::XmlDefinition));
 	}
 }
 

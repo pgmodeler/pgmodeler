@@ -95,40 +95,40 @@ class Connection {
 
 	public:
 		//! \brief Constants used to reference the connections parameters
-		static const QString	PARAM_ALIAS,
-		PARAM_SERVER_FQDN,
-		PARAM_SERVER_IP,
-		PARAM_PORT,
-		PARAM_DB_NAME,
-		PARAM_USER,
-		PARAM_PASSWORD,
-		PARAM_CONN_TIMEOUT,
-		PARAM_OTHERS,
-		PARAM_SSL_MODE,
-		PARAM_SSL_CERT,
-		PARAM_SSL_KEY,
-		PARAM_SSL_ROOT_CERT,
-		PARAM_SSL_CRL,
-		PARAM_KERBEROS_SERVER,
-		PARAM_LIB_GSSAPI,
-		SSL_DESABLE,
-		SSL_ALLOW,
-		SSL_PREFER,
-		SSL_REQUIRE,
-		SSL_CA_VERIF,
-		SSL_FULL_VERIF;
+		static const QString	ParamAlias,
+		ParamServerFqdn,
+		ParamServerIp,
+		ParamPort,
+		ParamDbName,
+		ParamUser,
+		ParamPassword,
+		ParamConnTimeout,
+		ParamOthers,
+		ParamSslMode,
+		ParamSslCert,
+		ParamSslKey,
+		ParamSslRootCert,
+		ParamSslCrl,
+		ParamKerberosServer,
+		ParamLibGssapi,
+		SslDisable,
+		SslAllow,
+		SslPrefer,
+		SslRequire,
+		SslCaVerify,
+		SslFullVerify;
 
 		//! \brief Constants used to reference the server info details (see getServerInfo())
-		static const QString	SERVER_VERSION,
-		SERVER_PROTOCOL,
-		SERVER_PID;
+		static const QString	ServerVersion,
+		ServerProtocol,
+		ServerPid;
 
 		//! \brief Constants used to reference the default usage in model operations (see setDefaultForOperation())
-		static constexpr unsigned OP_VALIDATION=0,
-		OP_EXPORT=1,
-		OP_IMPORT=2,
-		OP_DIFF=3,
-		OP_NONE=4;
+		static constexpr unsigned OpValidation=0,
+		OpExport=1,
+		OpImport=2,
+		OpDiff=3,
+		OpNone=4;
 
 		Connection(void);
 		Connection(const attribs_map &params);

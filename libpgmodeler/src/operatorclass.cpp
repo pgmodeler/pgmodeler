@@ -74,7 +74,7 @@ void OperatorClass::setElementsAttribute(unsigned def_type)
 	for(i=0; i < count; i++)
 	{
 		str_elems+=elements[i].getCodeDefinition(def_type);
-		if(def_type==SchemaParser::SQL_DEFINITION &&
+		if(def_type==SchemaParser::SqlDefinition &&
 				i < count-1) str_elems+=QString(",\n");
 	}
 
@@ -175,14 +175,14 @@ QString OperatorClass::getCodeDefinition(unsigned def_type, bool reduced_form)
 	attributes[ParsersAttributes::INDEX_TYPE]=(~indexing_type);
 	attributes[ParsersAttributes::DEFAULT]=(is_default ? ParsersAttributes::_TRUE_ : QString());
 
-	if(def_type==SchemaParser::SQL_DEFINITION)
+	if(def_type==SchemaParser::SqlDefinition)
 		attributes[ParsersAttributes::TYPE]=(*data_type);
 	else
 		attributes[ParsersAttributes::TYPE]=data_type.getCodeDefinition(def_type);
 
 	if(family)
 	{
-		if(def_type==SchemaParser::SQL_DEFINITION)
+		if(def_type==SchemaParser::SqlDefinition)
 			attributes[ParsersAttributes::FAMILY]=family->getName(true);
 		else
 			attributes[ParsersAttributes::FAMILY]=family->getSignature();

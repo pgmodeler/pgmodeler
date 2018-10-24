@@ -562,7 +562,7 @@ void DatabaseImportForm::finishImport(const QString &msg)
 
 void DatabaseImportForm::showEvent(QShowEvent *)
 {
-	ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true, Connection::OP_IMPORT);
+	ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true, Connection::OpImport);
 	createThread();
 
 	if(connections_cmb->currentIndex() > 0)

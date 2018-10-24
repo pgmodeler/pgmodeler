@@ -261,7 +261,7 @@ QString Column::getCodeDefinition(unsigned def_type)
 		else
 		{
 			//Configuring the default value of the column to get the next value of the sequence
-			if(def_type==SchemaParser::SQL_DEFINITION)
+			if(def_type==SchemaParser::SqlDefinition)
 				attributes[ParsersAttributes::DEFAULT_VALUE]=QString("nextval('%1'::regclass)").arg(sequence->getSignature());
 
 			attributes[ParsersAttributes::SEQUENCE]=sequence->getName(true);
@@ -296,7 +296,7 @@ QString Column::getAlterDefinition(BaseObject *object)
 				(this->type.isEquivalentTo(col->type) &&
 				 ((this->type.hasVariableLength() && (this->type.getLength()!=col->type.getLength())) ||
 					(this->type.acceptsPrecision() && (this->type.getPrecision()!=col->type.getPrecision())))))
-			attribs[ParsersAttributes::TYPE]=col->type.getCodeDefinition(SchemaParser::SQL_DEFINITION);
+			attribs[ParsersAttributes::TYPE]=col->type.getCodeDefinition(SchemaParser::SqlDefinition);
 
 		if(col->sequence)
 			def_val=QString("nextval('%1'::regclass)").arg(col->sequence->getSignature());

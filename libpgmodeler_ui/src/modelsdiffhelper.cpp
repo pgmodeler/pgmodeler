@@ -215,7 +215,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 			/* For DROP detection, we must gather the objects from the database in order to check
 		 if they exists on the model. The object drop order here is the inverse of the creation order
 		 on the database */
-			obj_order=imported_model->getCreationOrder(SchemaParser::SQL_DEFINITION, true);
+			obj_order=imported_model->getCreationOrder(SchemaParser::SqlDefinition, true);
 			aux_model=source_model;
 			factor=25;
 		}
@@ -224,7 +224,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 		{
 			/* For creation or modification of objects the order followed is the same
 		 as the creation order on the source model */
-			obj_order=source_model->getCreationOrder(SchemaParser::SQL_DEFINITION, true, true);
+			obj_order=source_model->getCreationOrder(SchemaParser::SqlDefinition, true, true);
 			aux_model=imported_model;
 			factor=50;
 			prog=50;
@@ -747,7 +747,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 				}
 				else if(obj_type==ObjPermission)
 					//Setting permissions
-					set_perms+=object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+					set_perms+=object->getCodeDefinition(SchemaParser::SqlDefinition);
 				else
 				{
 					/* Special case for constaints: the creation commands for these objects are appended at the very end of create commands secion.
@@ -775,8 +775,8 @@ void ModelsDiffHelper::processDiffInfos(void)
 				if((diff_opts[OPT_FORCE_RECREATION] && obj_type!=ObjDatabase) &&
 						(!diff_opts[OPT_RECREATE_UNCHANGEBLE] ||
 						 (diff_opts[OPT_RECREATE_UNCHANGEBLE] && !object->acceptsAlterCommand() &&
-						  diff.getObject()->getCodeDefinition(SchemaParser::SQL_DEFINITION).simplified()!=
-						  diff.getOldObject()->getCodeDefinition(SchemaParser::SQL_DEFINITION).simplified())))
+						  diff.getObject()->getCodeDefinition(SchemaParser::SqlDefinition).simplified()!=
+						  diff.getOldObject()->getCodeDefinition(SchemaParser::SqlDefinition).simplified())))
 				{
 					recreateObject(object, drop_vect, create_vect);
 
@@ -845,9 +845,9 @@ void ModelsDiffHelper::processDiffInfos(void)
 			schema_id=type->getSchema()->getObjectId();
 
 			if(create_objs.count(schema_id)!=0)
-				create_objs[schema_id]+=type->getCodeDefinition(SchemaParser::SQL_DEFINITION, true);
+				create_objs[schema_id]+=type->getCodeDefinition(SchemaParser::SqlDefinition, true);
 			else
-				attribs[ParsersAttributes::CREATE_CMDS]+=type->getCodeDefinition(SchemaParser::SQL_DEFINITION, true);
+				attribs[ParsersAttributes::CREATE_CMDS]+=type->getCodeDefinition(SchemaParser::SqlDefinition, true);
 
 			type->convertFunctionParameters(true);
 		}
@@ -967,7 +967,7 @@ QString ModelsDiffHelper::getCodeDefinition(BaseObject *object, bool drop_cmd)
 			if(drop_cmd)
 				cmd=tab_obj->getDropDefinition(diff_opts[OPT_CASCADE_MODE]);
 			else
-				cmd=tab_obj->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+				cmd=tab_obj->getCodeDefinition(SchemaParser::SqlDefinition);
 
 			table->setGenerateAlterCmds(gen_alter);
 		}
@@ -976,7 +976,7 @@ QString ModelsDiffHelper::getCodeDefinition(BaseObject *object, bool drop_cmd)
 			if(drop_cmd)
 				cmd=object->getDropDefinition(diff_opts[OPT_CASCADE_MODE]);
 			else
-				cmd=object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+				cmd=object->getCodeDefinition(SchemaParser::SqlDefinition);
 		}
 
 		return(cmd);

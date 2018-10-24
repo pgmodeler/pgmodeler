@@ -171,7 +171,7 @@ void Table::setCommentAttribute(TableObject *tab_obj)
 		if(tab_obj->isSQLDisabled())
 			attributes[ParsersAttributes::COLS_COMMENT]+=QString("-- ");
 
-		attributes[ParsersAttributes::COLS_COMMENT]+=schparser.getCodeDefinition(ParsersAttributes::COMMENT, attribs, SchemaParser::SQL_DEFINITION);
+		attributes[ParsersAttributes::COLS_COMMENT]+=schparser.getCodeDefinition(ParsersAttributes::COMMENT, attribs, SchemaParser::SqlDefinition);
 		schparser.ignoreUnkownAttributes(false);
 	}
 }
@@ -205,11 +205,11 @@ void Table::setRelObjectsIndexesAttribute(void)
 			{
 				aux_attribs[ParsersAttributes::NAME]=obj_idx.first;
 				aux_attribs[ParsersAttributes::INDEX]=QString::number(obj_idx.second);
-				aux_attribs[ParsersAttributes::OBJECTS]+=schparser.getCodeDefinition(ParsersAttributes::OBJECT, aux_attribs, SchemaParser::XML_DEFINITION);
+				aux_attribs[ParsersAttributes::OBJECTS]+=schparser.getCodeDefinition(ParsersAttributes::OBJECT, aux_attribs, SchemaParser::XmlDefinition);
 			}
 
 			aux_attribs[ParsersAttributes::OBJECT_TYPE]=BaseObject::getSchemaName(obj_types[idx]);
-			attributes[attribs[idx]]=schparser.getCodeDefinition(ParsersAttributes::CUSTOMIDXS, aux_attribs, SchemaParser::XML_DEFINITION);
+			attributes[attribs[idx]]=schparser.getCodeDefinition(ParsersAttributes::CUSTOMIDXS, aux_attribs, SchemaParser::XmlDefinition);
 			aux_attribs.clear();
 		}
 	}
@@ -225,22 +225,22 @@ void Table::setColumnsAttribute(unsigned def_type, bool incl_rel_added_cols)
 	{
 		/* Do not generates the column code definition when it is not included by
 		 relatoinship, in case of XML definition. */
-		if((def_type==SchemaParser::SQL_DEFINITION && !columns[i]->isAddedByCopy() && !columns[i]->isAddedByGeneralization()) ||
-			 (def_type==SchemaParser::SQL_DEFINITION && columns[i]->isAddedByCopy() && this->isPartition()) ||
-			 (def_type==SchemaParser::XML_DEFINITION && (!columns[i]->isAddedByRelationship() || (incl_rel_added_cols && columns[i]->isAddedByRelationship()))))
+		if((def_type==SchemaParser::SqlDefinition && !columns[i]->isAddedByCopy() && !columns[i]->isAddedByGeneralization()) ||
+			 (def_type==SchemaParser::SqlDefinition && columns[i]->isAddedByCopy() && this->isPartition()) ||
+			 (def_type==SchemaParser::XmlDefinition && (!columns[i]->isAddedByRelationship() || (incl_rel_added_cols && columns[i]->isAddedByRelationship()))))
 		{
 			str_cols+=columns[i]->getCodeDefinition(def_type);
 
-			if(def_type==SchemaParser::SQL_DEFINITION)
+			if(def_type==SchemaParser::SqlDefinition)
 				setCommentAttribute(columns[i]);
 		}
-		else if(def_type==SchemaParser::SQL_DEFINITION && columns[i]->isAddedByGeneralization() && !gen_alter_cmds)
+		else if(def_type==SchemaParser::SqlDefinition && columns[i]->isAddedByGeneralization() && !gen_alter_cmds)
 		{
 			inh_cols+=QString("-- ") + columns[i]->getCodeDefinition(def_type);
 		}
 	}
 
-	if(def_type==SchemaParser::SQL_DEFINITION)
+	if(def_type==SchemaParser::SqlDefinition)
 	{
 		if(!str_cols.isEmpty())
 		{
@@ -270,29 +270,29 @@ void Table::setConstraintsAttribute(unsigned def_type)
 
 		if(constr->getConstraintType()!=ConstraintType::foreign_key &&
 
-				((def_type==SchemaParser::SQL_DEFINITION &&
+				((def_type==SchemaParser::SqlDefinition &&
 				  ((!constr->isReferRelationshipAddedColumn() && constr->getConstraintType()!=ConstraintType::check) ||
 				   (constr->getConstraintType()==ConstraintType::check && !constr->isAddedByGeneralization()) ||
 				   constr->getConstraintType()==ConstraintType::primary_key)) ||
 
-				 (def_type==SchemaParser::XML_DEFINITION && !constr->isAddedByRelationship() &&
+				 (def_type==SchemaParser::XmlDefinition && !constr->isAddedByRelationship() &&
 				  ((constr->getConstraintType()!=ConstraintType::primary_key && !constr->isReferRelationshipAddedColumn()) ||
 				   (constr->getConstraintType()==ConstraintType::primary_key)))))
 		{
-			inc_added_by_rel=(def_type==SchemaParser::SQL_DEFINITION);
+			inc_added_by_rel=(def_type==SchemaParser::SqlDefinition);
 
-			if(def_type==SchemaParser::XML_DEFINITION)
+			if(def_type==SchemaParser::XmlDefinition)
 				str_constr+=constr->getCodeDefinition(def_type,inc_added_by_rel);
 			else
 				//For sql definition the generated constraints are stored in a vector to be treated below
 				lines.push_back(constr->getCodeDefinition(def_type,inc_added_by_rel));
 
-			if(def_type==SchemaParser::SQL_DEFINITION)
+			if(def_type==SchemaParser::SqlDefinition)
 				setCommentAttribute(constr);
 		}
 	}
 
-	if(def_type==SchemaParser::SQL_DEFINITION && !lines.empty())
+	if(def_type==SchemaParser::SqlDefinition && !lines.empty())
 	{
 		/* When the coistraints are being generated in form of ALTER commands
 		simply concatenates all the lines */
@@ -411,7 +411,7 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 						throw Exception(AsgObjectBelongsAnotherTable,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 					//Validates the object SQL code befor insert on table
-					obj->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+					obj->getCodeDefinition(SchemaParser::SqlDefinition);
 
 					if(col && col->getType()==this)
 					{
@@ -1609,18 +1609,18 @@ QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 	for(auto part_key : partition_keys)
 		part_keys_code+=part_key.getCodeDefinition(def_type);
 
-	if(def_type == SchemaParser::SQL_DEFINITION)
+	if(def_type == SchemaParser::SqlDefinition)
 		attributes[ParsersAttributes::PARTITION_KEY]=part_keys_code.join(',');
 	else
 		attributes[ParsersAttributes::PARTITION_KEY]=part_keys_code.join(' ');
 
-	if(def_type==SchemaParser::SQL_DEFINITION && copy_table)
+	if(def_type==SchemaParser::SqlDefinition && copy_table)
 		attributes[ParsersAttributes::COPY_TABLE]=copy_table->getName(true) + copy_op.getSQLDefinition();
 
-	if(def_type==SchemaParser::SQL_DEFINITION && partitioned_table)
+	if(def_type==SchemaParser::SqlDefinition && partitioned_table)
 		attributes[ParsersAttributes::PARTITIONED_TABLE]=partitioned_table->getName(true);
 
-	if(tag && def_type==SchemaParser::XML_DEFINITION)
+	if(tag && def_type==SchemaParser::XmlDefinition)
 		attributes[ParsersAttributes::TAG]=tag->getCodeDefinition(def_type, true);
 
 	(copy_table ? copy_table->getName(true) : QString());
@@ -1629,7 +1629,7 @@ QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 	setConstraintsAttribute(def_type);
 	setAncestorTableAttribute();
 
-	if(def_type==SchemaParser::XML_DEFINITION)
+	if(def_type==SchemaParser::XmlDefinition)
 	{
 		setRelObjectsIndexesAttribute();
 		setPositionAttribute();

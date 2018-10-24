@@ -216,10 +216,10 @@ void DataManipulationForm::setAttributes(Connection conn, const QString curr_sch
 		QString db_name;
 
 		tmpl_conn_params=conn.getConnectionParams();
-		db_name=QString("<strong>%1</strong>@<em>%2:%3</em>").arg(conn.getConnectionParam(Connection::PARAM_DB_NAME))
-				.arg(conn.getConnectionParam(Connection::PARAM_SERVER_IP).isEmpty() ?
-						 conn.getConnectionParam(Connection::PARAM_SERVER_FQDN) : conn.getConnectionParam(Connection::PARAM_SERVER_IP))
-				.arg(conn.getConnectionParam(Connection::PARAM_PORT));
+		db_name=QString("<strong>%1</strong>@<em>%2:%3</em>").arg(conn.getConnectionParam(Connection::ParamDbName))
+				.arg(conn.getConnectionParam(Connection::ParamServerIp).isEmpty() ?
+						 conn.getConnectionParam(Connection::ParamServerFqdn) : conn.getConnectionParam(Connection::ParamServerIp))
+				.arg(conn.getConnectionParam(Connection::ParamPort));
 
 		db_name_lbl->setText(db_name);
 		db_name.remove(QRegExp("<(/)?(strong|em)>"));
@@ -671,7 +671,7 @@ void DataManipulationForm::listObjects(QComboBox *combo, vector<ObjectType> obj_
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 
 		catalog.setConnection(conn);
-		catalog.setFilter(Catalog::LIST_ALL_OBJS);
+		catalog.setFilter(Catalog::ListAllObjects);
 		combo->blockSignals(true);
 		combo->clear();
 

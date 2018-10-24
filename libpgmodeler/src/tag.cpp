@@ -141,7 +141,7 @@ QString Tag::getCodeDefinition(unsigned def_type)
 
 QString Tag::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
-	if(def_type==SchemaParser::SQL_DEFINITION)
+	if(def_type==SchemaParser::SqlDefinition)
 		return(QString());
 	else
 	{
@@ -163,7 +163,7 @@ QString Tag::getCodeDefinition(unsigned def_type, bool reduced_form)
 					attribs[ParsersAttributes::COLORS]=itr.second[FILL_COLOR1].name() + QString(",") +
 													   itr.second[FILL_COLOR2].name() + QString(",") + itr.second[BORDER_COLOR].name();
 
-				attributes[ParsersAttributes::STYLES]+=schparser.getCodeDefinition(ParsersAttributes::STYLE, attribs, SchemaParser::XML_DEFINITION);
+				attributes[ParsersAttributes::STYLES]+=schparser.getCodeDefinition(ParsersAttributes::STYLE, attribs, SchemaParser::XmlDefinition);
 			}
 		}
 		catch(Exception &e)

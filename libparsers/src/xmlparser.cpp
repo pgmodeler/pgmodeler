@@ -19,11 +19,11 @@
 #include "xmlparser.h"
 #include <QUrl>
 
-const QString XMLParser::CHAR_AMP=QString("&amp;");
-const QString XMLParser::CHAR_LT=QString("&lt;");
-const QString XMLParser::CHAR_GT=QString("&gt;");
-const QString XMLParser::CHAR_QUOT=QString("&quot;");
-const QString XMLParser::CHAR_APOS=QString("&apos;");
+const QString XMLParser::CharAmp=QString("&amp;");
+const QString XMLParser::CharLt=QString("&lt;");
+const QString XMLParser::CharGt=QString("&gt;");
+const QString XMLParser::CharQuot=QString("&quot;");
+const QString XMLParser::CharApos=QString("&apos;");
 
 XMLParser::XMLParser(void)
 {
@@ -273,10 +273,10 @@ bool XMLParser::accessElement(unsigned elem_type)
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	elems[ROOT_ELEMENT]=curr_elem->parent;
-	elems[CHILD_ELEMENT]=curr_elem->children;
-	elems[NEXT_ELEMENT]=curr_elem->next;
-	elems[PREVIOUS_ELEMENT]=curr_elem->prev;
+	elems[RootElement]=curr_elem->parent;
+	elems[ChildElement]=curr_elem->children;
+	elems[NextElement]=curr_elem->next;
+	elems[PreviousElement]=curr_elem->prev;
 
 	/* Checks whether the current element has the element that
 		is to  be accessed. The flag 'has_elem' is also used
@@ -295,17 +295,17 @@ bool XMLParser::hasElement(unsigned elem_type, xmlElementType xml_node_type)
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	if(elem_type==ROOT_ELEMENT)
+	if(elem_type==RootElement)
 		/* Returns the verification if the current element has a parent.
 		 The element must be different from the root, because the root element
 		 is not connected to a parent */
 		return(curr_elem!=root_elem && curr_elem->parent!=nullptr &&
 														  (xml_node_type==0 || (xml_node_type!=0 && curr_elem->parent->type==xml_node_type)));
-	else if(elem_type==CHILD_ELEMENT)
+	else if(elem_type==ChildElement)
 		//Returns the verification if the current element has children
 		return(curr_elem->children!=nullptr &&
 									(xml_node_type==0 || (xml_node_type!=0 && curr_elem->children->type==xml_node_type)));
-	else if(elem_type==NEXT_ELEMENT)
+	else if(elem_type==NextElement)
 		return(curr_elem->next!=nullptr &&
 								(xml_node_type==0 || (xml_node_type!=0 && curr_elem->next->type==xml_node_type)));
 	else

@@ -423,7 +423,7 @@ QString Permission::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::REVOKE]=(revoke ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : QString());
 
-	if(def_type==SchemaParser::SQL_DEFINITION)
+	if(def_type==SchemaParser::SqlDefinition)
 	{
 		//Views and Tables uses the same key word when setting permission (TABLE)
 		attributes[ParsersAttributes::TYPE]=
@@ -440,7 +440,7 @@ QString Permission::getCodeDefinition(unsigned def_type)
 	else
 		attributes[ParsersAttributes::OBJECT]=object->getSignature();
 
-	if(def_type==SchemaParser::XML_DEFINITION)
+	if(def_type==SchemaParser::XmlDefinition)
 	{
 		for(i=0; i < 12; i++)
 		{
@@ -507,7 +507,7 @@ QString Permission::getDropDefinition(bool cascade)
 
 		this->setRevoke(!revoke);
 		this->setCascade(cascade);
-		def=this->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+		def=this->getCodeDefinition(SchemaParser::SqlDefinition);
 		this->setRevoke(revoke);
 		this->setCascade(this->cascade);
 

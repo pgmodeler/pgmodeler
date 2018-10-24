@@ -223,7 +223,7 @@ void BaseObjectView::loadObjectsStyle(void)
 							 GlobalAttributes::ObjectDTDExt, GlobalAttributes::ObjectsStyleConf);
 		xmlparser.loadXMLFile(config_file);
 
-		if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser.accessElement(XMLParser::ChildElement))
 		{
 			do
 			{
@@ -266,7 +266,7 @@ void BaseObjectView::loadObjectsStyle(void)
 					}
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
+			while(xmlparser.accessElement(XMLParser::NextElement));
 		}
 	}
 	catch(Exception &e)

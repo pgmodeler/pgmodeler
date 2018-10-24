@@ -231,7 +231,7 @@ QString Reference::getXMLDefinition(void)
 	attribs[ParsersAttributes::ALIAS]=alias;
 	attribs[ParsersAttributes::COLUMN_ALIAS]=column_alias;
 
-	return(schparser.getCodeDefinition(ParsersAttributes::REFERENCE, attribs, SchemaParser::XML_DEFINITION));
+	return(schparser.getCodeDefinition(ParsersAttributes::REFERENCE, attribs, SchemaParser::XmlDefinition));
 }
 
 bool Reference::operator == (Reference &refer)

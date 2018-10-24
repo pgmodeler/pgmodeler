@@ -66,7 +66,7 @@ void Trigger::setArgumentAttribute(unsigned def_type)
 	count=arguments.size();
 	for(i=0; i < count; i++)
 	{
-		if(def_type==SchemaParser::SQL_DEFINITION)
+		if(def_type==SchemaParser::SqlDefinition)
 			str_args+=QString("'") + arguments[i] + QString("'");
 		else
 			str_args+=arguments[i];
@@ -379,14 +379,14 @@ void Trigger::setBasicAttributes(unsigned def_type)
 
 	if(!str_aux.isEmpty()) str_aux.remove(str_aux.size()-3,3);
 
-	if(def_type==SchemaParser::SQL_DEFINITION && !attributes[ParsersAttributes::COLUMNS].isEmpty())
+	if(def_type==SchemaParser::SqlDefinition && !attributes[ParsersAttributes::COLUMNS].isEmpty())
 		str_aux+=QString(" OF ") + attributes[ParsersAttributes::COLUMNS];
 
 	attributes[ParsersAttributes::EVENTS]=str_aux;
 
 	if(function)
 	{
-		if(def_type==SchemaParser::SQL_DEFINITION)
+		if(def_type==SchemaParser::SqlDefinition)
 			attributes[ParsersAttributes::TRIGGER_FUNC]=function->getName(true);
 		else
 			attributes[ParsersAttributes::TRIGGER_FUNC]=function->getCodeDefinition(def_type, true);
@@ -422,7 +422,7 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::DEFERRABLE]=(is_deferrable ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::DEFER_TYPE]=(~deferral_type);
 
-	if(def_type == SchemaParser::XML_DEFINITION)
+	if(def_type == SchemaParser::XmlDefinition)
 	{
 		attributes[ParsersAttributes::OLD_TABLE_NAME]=transition_tabs_names[OLD_TABLE_NAME];
 		attributes[ParsersAttributes::NEW_TABLE_NAME]=transition_tabs_names[NEW_TABLE_NAME];

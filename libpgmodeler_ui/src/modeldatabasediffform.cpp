@@ -179,7 +179,7 @@ void ModelDatabaseDiffForm::resetForm(void)
 	src_connections_cmb->setEnabled(src_connections_cmb->count() > 0);
 	src_connection_lbl->setEnabled(src_connections_cmb->isEnabled());
 
-	ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true, Connection::OP_DIFF);
+	ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true, Connection::OpDiff);
 	connections_cmb->setEnabled(connections_cmb->count() > 0);
 	connection_lbl->setEnabled(connections_cmb->isEnabled());
 
@@ -463,8 +463,8 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 		catalog.setConnection(conn);
 
 		//The import process will exclude built-in array array types, system and extension objects
-		catalog.setFilter(Catalog::LIST_ALL_OBJS | Catalog::EXCL_BUILTIN_ARRAY_TYPES |
-						  Catalog::EXCL_EXTENSION_OBJS | Catalog::EXCL_SYSTEM_OBJS);
+		catalog.setFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
+						  Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs);
 		catalog.getObjectsOIDs(obj_oids, col_oids, {{ParsersAttributes::FILTER_TABLE_TYPES, ParsersAttributes::_TRUE_}});
 		obj_oids[ObjDatabase].push_back(db_cmb->currentData().value<unsigned>());
 

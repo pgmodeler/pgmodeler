@@ -600,7 +600,7 @@ void ViewWidget::updateCodePreview(void)
 
 				itr++;
 			}
-			code_txt->setPlainText(aux_view.getCodeDefinition(SchemaParser::SQL_DEFINITION));
+			code_txt->setPlainText(aux_view.getCodeDefinition(SchemaParser::SqlDefinition));
 		}
 	}
 	catch(Exception &e)

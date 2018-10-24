@@ -108,7 +108,7 @@ void Element::configureAttributes(attribs_map &attributes, unsigned def_type)
 
 	if(operator_class)
 	{
-		if(def_type==SchemaParser::SQL_DEFINITION)
+		if(def_type==SchemaParser::SqlDefinition)
 			attributes[ParsersAttributes::OP_CLASS]=operator_class->getName(true);
 		else
 			attributes[ParsersAttributes::OP_CLASS]=operator_class->getCodeDefinition(def_type, true);

@@ -67,7 +67,7 @@ void Xml2ObjectWidget::generateObject(void)
 		xmlparser->restartParser();
 		xmlparser->loadXMLBuffer(code_txt->toPlainText().toUtf8());
 
-		if(xmlparser->accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser->accessElement(XMLParser::ChildElement))
 		{
 			do
 			{
@@ -90,7 +90,7 @@ void Xml2ObjectWidget::generateObject(void)
 					xmlparser->restorePosition();
 				}
 			}
-			while(xmlparser->accessElement(xmlparser->NEXT_ELEMENT));
+			while(xmlparser->accessElement(xmlparser->NextElement));
 		}
 
 		op_list->finishOperationChain();

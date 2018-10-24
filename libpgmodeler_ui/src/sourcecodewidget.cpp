@@ -143,18 +143,18 @@ void SourceCodeWidget::generateSourceCode(int)
 				task_prog_wgt->setWindowTitle(trUtf8("Generating source code..."));
 				task_prog_wgt->show();
 				connect(this->model, SIGNAL(s_objectLoaded(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
-				sqlcode_txt->setPlainText(object->getCodeDefinition(SchemaParser::SQL_DEFINITION));
+				sqlcode_txt->setPlainText(object->getCodeDefinition(SchemaParser::SqlDefinition));
 			}
 			else
 			{
 				if(code_options_cmb->currentIndex()==ORIGINAL_SQL)
-					sqlcode_txt->setPlainText(object->getCodeDefinition(SchemaParser::SQL_DEFINITION));
+					sqlcode_txt->setPlainText(object->getCodeDefinition(SchemaParser::SqlDefinition));
 				else
 				{
 					vector<BaseObject *> objs=model->getCreationOrder(object, code_options_cmb->currentIndex()==CHILDREN_SQL);
 
 					for(BaseObject *obj : objs)
-						aux_def+=obj->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+						aux_def+=obj->getCodeDefinition(SchemaParser::SqlDefinition);
 				}
 
 				if(!aux_def.isEmpty())
@@ -193,7 +193,7 @@ void SourceCodeWidget::generateSourceCode(int)
 #warning "DEMO VERSION: XML code preview disabled."
 		xmlcode_txt->setPlainText(trUtf8("<!-- XML code preview disabled in demonstration version -->"));
 #else
-		xmlcode_txt->setPlainText(object->getCodeDefinition(SchemaParser::XML_DEFINITION));
+		xmlcode_txt->setPlainText(object->getCodeDefinition(SchemaParser::XmlDefinition));
 #endif
 
 		setSourceCodeTab();

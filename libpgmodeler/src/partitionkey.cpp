@@ -43,7 +43,7 @@ QString PartitionKey::getCodeDefinition(unsigned def_type)
 
 	if(collation)
 	{
-		if(def_type==SchemaParser::SQL_DEFINITION)
+		if(def_type==SchemaParser::SqlDefinition)
 			attribs[ParsersAttributes::COLLATION]=collation->getName(true);
 		else
 			attribs[ParsersAttributes::COLLATION]=collation->getCodeDefinition(def_type, true);

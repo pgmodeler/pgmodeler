@@ -290,7 +290,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	for(i=Operator::LEFT_ARG; i <= Operator::RIGHT_ARG; i++)
 	{
-		if(def_type==SchemaParser::SQL_DEFINITION)
+		if(def_type==SchemaParser::SqlDefinition)
 		{
 			if(argument_types[i]!=QString("\"any\""))
 				attributes[type_attribs[i]]=~argument_types[i];
@@ -298,7 +298,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 		else
 		{
 			attributes[type_attribs[i]]=argument_types[i].
-																	getCodeDefinition(SchemaParser::XML_DEFINITION,type_attribs[i]);
+																	getCodeDefinition(SchemaParser::XmlDefinition,type_attribs[i]);
 		}
 	}
 
@@ -306,7 +306,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 	{
 		if(operators[i])
 		{
-			if(def_type==SchemaParser::SQL_DEFINITION)
+			if(def_type==SchemaParser::SqlDefinition)
 				attributes[op_attribs[i]]=operators[i]->getName(true);
 			else
 			{
@@ -320,7 +320,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 	{
 		if(functions[i])
 		{
-			if(def_type==SchemaParser::SQL_DEFINITION)
+			if(def_type==SchemaParser::SqlDefinition)
 				attributes[func_attribs[i]]=functions[i]->getName(true);
 			else
 			{

@@ -140,7 +140,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 		attributes[ParsersAttributes::FUNCTION]=ParsersAttributes::_TRUE_;
 		attributes[ParsersAttributes::STRATEGY_NUM]=QString("%1").arg(strategy_number);
 
-		if(def_type==SchemaParser::SQL_DEFINITION)
+		if(def_type==SchemaParser::SqlDefinition)
 			attributes[ParsersAttributes::SIGNATURE]=function->getSignature();
 		else
 			attributes[ParsersAttributes::DEFINITION]=function->getCodeDefinition(def_type,true);
@@ -151,14 +151,14 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 		attributes[ParsersAttributes::OPERATOR]=ParsersAttributes::_TRUE_;
 		attributes[ParsersAttributes::STRATEGY_NUM]=QString("%1").arg(strategy_number);
 
-		if(def_type==SchemaParser::SQL_DEFINITION)
+		if(def_type==SchemaParser::SqlDefinition)
 			attributes[ParsersAttributes::SIGNATURE]=_operator->getSignature();
 		else
 			attributes[ParsersAttributes::DEFINITION]=_operator->getCodeDefinition(def_type,true);
 
 		if(op_family)
 		{
-			if(def_type==SchemaParser::SQL_DEFINITION)
+			if(def_type==SchemaParser::SqlDefinition)
 				attributes[ParsersAttributes::OP_FAMILY]=op_family->getName(true);
 			else
 				attributes[ParsersAttributes::DEFINITION]+=op_family->getCodeDefinition(def_type,true);
@@ -169,7 +169,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 		//STORAGE storage_type
 		attributes[ParsersAttributes::STORAGE]=ParsersAttributes::_TRUE_;
 
-		if(def_type==SchemaParser::SQL_DEFINITION)
+		if(def_type==SchemaParser::SqlDefinition)
 			attributes[ParsersAttributes::TYPE]=(*storage);
 		else
 			attributes[ParsersAttributes::DEFINITION]=storage.getCodeDefinition(def_type);

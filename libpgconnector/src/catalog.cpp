@@ -17,15 +17,15 @@
 */
 #include "catalog.h"
 
-const QString Catalog::QUERY_LIST=QString("list");
-const QString Catalog::QUERY_ATTRIBS=QString("attribs");
-const QString Catalog::CATALOG_SCH_DIR=QString("catalog");
-const QString Catalog::PGSQL_TRUE=QString("t");
-const QString Catalog::PGSQL_FALSE=QString("f");
-const QString Catalog::BOOL_FIELD=QString("_bool");
-const QString Catalog::ARRAY_PATTERN=QString("((\\[)[0-9]+(\\:)[0-9]+(\\])=)?(\\{)((.)+(,)*)*(\\})$");
-const QString Catalog::GET_EXT_OBJS_SQL=QString("SELECT objid AS oid FROM pg_depend WHERE objid > 0 AND refobjid > 0 AND deptype='e'");
-const QString Catalog::PGMODELER_TEMP_DB_OBJ=QString("__pgmodeler_tmp");
+const QString Catalog::QueryList=QString("list");
+const QString Catalog::QueryAttribs=QString("attribs");
+const QString Catalog::CatalogSchemasDir=QString("catalog");
+const QString Catalog::PgSqlTrue=QString("t");
+const QString Catalog::PgSqlFalse=QString("f");
+const QString Catalog::BoolField=QString("_bool");
+const QString Catalog::ArrayPattern=QString("((\\[)[0-9]+(\\:)[0-9]+(\\])=)?(\\{)((.)+(,)*)*(\\})$");
+const QString Catalog::GetExtensionObjsSql=QString("SELECT objid AS oid FROM pg_depend WHERE objid > 0 AND refobjid > 0 AND deptype='e'");
+const QString Catalog::PgModelerTempDbObj=QString("__pgmodeler_tmp");
 
 attribs_map Catalog::catalog_queries;
 
@@ -64,7 +64,7 @@ map<ObjectType, QString> Catalog::name_fields=
 Catalog::Catalog(void)
 {
 	last_sys_oid=0;
-	setFilter(EXCL_EXTENSION_OBJS | EXCL_SYSTEM_OBJS);
+	setFilter(ExclExtensionObjs | ExclSystemObjs);
 }
 
 Catalog::Catalog(const Catalog &catalog)
@@ -84,8 +84,8 @@ void Catalog::setConnection(Connection &conn)
 		connection.connect();
 
 		//Retrieving the last system oid
-		executeCatalogQuery(QUERY_LIST, ObjDatabase, res, true,
-		{{ParsersAttributes::NAME, conn.getConnectionParam(Connection::PARAM_DB_NAME)}});
+		executeCatalogQuery(QueryList, ObjDatabase, res, true,
+		{{ParsersAttributes::NAME, conn.getConnectionParam(Connection::ParamDbName)}});
 
 		if(res.accessTuple(ResultSet::FIRST_TUPLE))
 		{
@@ -94,7 +94,7 @@ void Catalog::setConnection(Connection &conn)
 		}
 
 		//Retrieving the list of objects created by extensions
-		this->connection.executeDMLCommand(GET_EXT_OBJS_SQL, res);
+		this->connection.executeDMLCommand(GetExtensionObjsSql, res);
 		if(res.accessTuple(ResultSet::FIRST_TUPLE))
 		{
 			do
@@ -119,17 +119,17 @@ void Catalog::closeConnection(void)
 
 void Catalog::setFilter(unsigned filter)
 {
-	bool list_all=(LIST_ALL_OBJS & filter) == LIST_ALL_OBJS;
+	bool list_all=(ListAllObjects & filter) == ListAllObjects;
 
 	this->filter=filter;
 	list_only_sys_objs=false;
-	exclude_array_types=(EXCL_BUILTIN_ARRAY_TYPES & filter) == EXCL_BUILTIN_ARRAY_TYPES;
-	exclude_ext_objs=(EXCL_EXTENSION_OBJS & filter) == EXCL_EXTENSION_OBJS;
-	exclude_sys_objs=(EXCL_SYSTEM_OBJS & filter) == EXCL_SYSTEM_OBJS;
+	exclude_array_types=(ExclBuiltinArrayTypes & filter) == ExclBuiltinArrayTypes;
+	exclude_ext_objs=(ExclExtensionObjs & filter) == ExclExtensionObjs;
+	exclude_sys_objs=(ExclSystemObjs & filter) == ExclSystemObjs;
 
 	if(!list_all)
 	{
-		list_only_sys_objs=(LIST_ONLY_SYS_OBJS & filter) == LIST_ONLY_SYS_OBJS;
+		list_only_sys_objs=(ListOnlySystemObjs & filter) == ListOnlySystemObjs;
 
 		if(list_only_sys_objs)
 		{
@@ -160,7 +160,7 @@ void Catalog::loadCatalogQuery(const QString &qry_id)
 	{
 		QFile input;
 		input.setFileName(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
-							CATALOG_SCH_DIR + GlobalAttributes::DirSeparator +
+							CatalogSchemasDir + GlobalAttributes::DirSeparator +
 							qry_id + GlobalAttributes::SchemaExt);
 
 		if(!input.open(QFile::ReadOnly))
@@ -268,7 +268,7 @@ unsigned Catalog::getObjectCount(ObjectType obj_type, const QString &sch_name, c
 		extra_attribs[ParsersAttributes::SCHEMA]=sch_name;
 		extra_attribs[ParsersAttributes::TABLE]=tab_name;
 
-		executeCatalogQuery(QUERY_LIST, obj_type, res, false, extra_attribs);
+		executeCatalogQuery(QueryList, obj_type, res, false, extra_attribs);
 		res.accessTuple(ResultSet::FIRST_TUPLE);
 		return(res.getTupleCount());
 	}
@@ -335,7 +335,7 @@ attribs_map Catalog::getObjectsNames(ObjectType obj_type, const QString &sch_nam
 
 		extra_attribs[ParsersAttributes::SCHEMA]=sch_name;
 		extra_attribs[ParsersAttributes::TABLE]=tab_name;
-		executeCatalogQuery(QUERY_LIST, obj_type, res, false, extra_attribs);
+		executeCatalogQuery(QueryList, obj_type, res, false, extra_attribs);
 
 		if(res.accessTuple(ResultSet::FIRST_TUPLE))
 		{
@@ -370,7 +370,7 @@ vector<attribs_map> Catalog::getObjectsNames(vector<ObjectType> obj_types, const
 		for(ObjectType obj_type : obj_types)
 		{
 			//Build the catalog query for the specified object type
-			sql=getCatalogQuery(QUERY_LIST, obj_type, false, extra_attribs);
+			sql=getCatalogQuery(QueryList, obj_type, false, extra_attribs);
 
 			/* For certain objects the catalog query will be empty due to the
 			absence of that kind of element in the version of the database.
@@ -424,7 +424,7 @@ attribs_map Catalog::getAttributes(const QString &obj_name, ObjectType obj_type,
 
 		//Add the name of the object as extra attrib in order to retrieve the data only for it
 		extra_attribs[ParsersAttributes::NAME]=obj_name;
-		executeCatalogQuery(QUERY_ATTRIBS, obj_type, res, true, extra_attribs);
+		executeCatalogQuery(QueryAttribs, obj_type, res, true, extra_attribs);
 
 		if(res.accessTuple(ResultSet::FIRST_TUPLE))
 			obj_attribs=changeAttributeNames(res.getTupleValues());
@@ -449,7 +449,7 @@ vector<attribs_map> Catalog::getMultipleAttributes(ObjectType obj_type, attribs_
 		attribs_map tuple;
 		vector<attribs_map> obj_attribs;
 
-		executeCatalogQuery(QUERY_ATTRIBS, obj_type, res, false, extra_attribs);
+		executeCatalogQuery(QueryAttribs, obj_type, res, false, extra_attribs);
 		if(res.accessTuple(ResultSet::FIRST_TUPLE))
 		{
 			do
@@ -558,10 +558,10 @@ attribs_map Catalog::changeAttributeNames(const attribs_map &attribs)
 		attr_name=itr->first;
 		value=itr->second;
 
-		if(attr_name.endsWith(BOOL_FIELD))
+		if(attr_name.endsWith(BoolField))
 		{
-			attr_name.remove(BOOL_FIELD);
-			if(value==PGSQL_FALSE) value.clear();
+			attr_name.remove(BoolField);
+			if(value==PgSqlFalse) value.clear();
 			else value=ParsersAttributes::_TRUE_;
 		}
 
@@ -636,7 +636,7 @@ QString Catalog::getObjectOID(const QString &name, ObjectType obj_type, const QS
 		attribs[ParsersAttributes::CUSTOM_FILTER] = QString("%1 = E'%2'").arg(name_fields[obj_type]).arg(name);
 		attribs[ParsersAttributes::SCHEMA] = schema;
 		attribs[ParsersAttributes::TABLE] = table;
-		executeCatalogQuery(QUERY_LIST, obj_type, res, false, attribs);
+		executeCatalogQuery(QueryList, obj_type, res, false, attribs);
 
 		if(res.getTupleCount() > 1)
 			throw Exception(QApplication::translate("Catalog","The catalog query returned more than one OID!","", -1),
@@ -702,7 +702,7 @@ QStringList Catalog::parseArrayValues(const QString &array_val)
 {
 	QStringList list;
 
-	if(QRegExp(ARRAY_PATTERN).exactMatch(array_val))
+	if(QRegExp(ArrayPattern).exactMatch(array_val))
 	{
 		//Detecting the position of { and }
 		int start=array_val.indexOf('{')+1,

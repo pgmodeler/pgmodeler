@@ -143,9 +143,9 @@ void Aggregate::setTypesAttribute(unsigned def_type)
 	count=data_types.size();
 	for(i=0; i < count; i++)
 	{
-		if(def_type==SchemaParser::SQL_DEFINITION)
+		if(def_type==SchemaParser::SqlDefinition)
 		{
-			str_types+=data_types[i].getCodeDefinition(SchemaParser::SQL_DEFINITION);
+			str_types+=data_types[i].getCodeDefinition(SchemaParser::SqlDefinition);
 			if(i < (count-1)) str_types+=',';
 		}
 		else str_types+=data_types[i].getCodeDefinition(def_type);
@@ -153,7 +153,7 @@ void Aggregate::setTypesAttribute(unsigned def_type)
 
 	/* Case none data type is specified for the aggregate creates
 		an aggregate that accepts any possible data '*' e.g. function(*) */
-	if(def_type == SchemaParser::SQL_DEFINITION && str_types.isEmpty()) str_types='*';
+	if(def_type == SchemaParser::SqlDefinition && str_types.isEmpty()) str_types='*';
 
 	attributes[ParsersAttributes::TYPES]=str_types;
 }
@@ -228,7 +228,7 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 
 	if(functions[TRANSITION_FUNC])
 	{
-		if(def_type==SchemaParser::SQL_DEFINITION)
+		if(def_type==SchemaParser::SqlDefinition)
 			attributes[ParsersAttributes::TRANSITION_FUNC]=functions[TRANSITION_FUNC]->getSignature();
 		else
 		{
@@ -240,7 +240,7 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 
 	if(functions[FINAL_FUNC])
 	{
-		if(def_type==SchemaParser::SQL_DEFINITION)
+		if(def_type==SchemaParser::SqlDefinition)
 			attributes[ParsersAttributes::FINAL_FUNC]=functions[FINAL_FUNC]->getSignature();
 		else
 		{
@@ -252,7 +252,7 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 
 	if(sort_operator)
 	{
-		if(def_type==SchemaParser::SQL_DEFINITION)
+		if(def_type==SchemaParser::SqlDefinition)
 			attributes[ParsersAttributes::SORT_OP]=sort_operator->getName(true);
 		else
 			attributes[ParsersAttributes::SORT_OP]=sort_operator->getCodeDefinition(def_type,true);
@@ -261,7 +261,7 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 	if(!initial_condition.isEmpty())
 		attributes[ParsersAttributes::INITIAL_COND]=initial_condition;
 
-	if(def_type==SchemaParser::SQL_DEFINITION)
+	if(def_type==SchemaParser::SqlDefinition)
 		attributes[ParsersAttributes::STATE_TYPE]=*(state_type);
 	else
 		attributes[ParsersAttributes::STATE_TYPE]=state_type.getCodeDefinition(def_type,ParsersAttributes::STATE_TYPE);
@@ -271,7 +271,7 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 
 QString Aggregate::getDropDefinition(bool cascade)
 {
-	setTypesAttribute(SchemaParser::SQL_DEFINITION);
+	setTypesAttribute(SchemaParser::SqlDefinition);
 	return(BaseObject::getDropDefinition(cascade));
 }
 
@@ -279,7 +279,7 @@ QString Aggregate::getAlterDefinition(BaseObject *object)
 {
 	try
 	{
-		setTypesAttribute(SchemaParser::SQL_DEFINITION);
+		setTypesAttribute(SchemaParser::SqlDefinition);
 		return(BaseObject::getAlterDefinition(object));
 	}
 	catch(Exception &e)
@@ -297,7 +297,7 @@ QString Aggregate::getSignature(bool format)
 	else
 	{
 		for(auto &tp : data_types)
-			types.push_back(tp.getCodeDefinition(SchemaParser::SQL_DEFINITION));
+			types.push_back(tp.getCodeDefinition(SchemaParser::SqlDefinition));
 	}
 
 	return(BaseObject::getSignature(format) + QString("(%1)").arg(types.join(',')));

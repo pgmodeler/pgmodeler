@@ -25,7 +25,7 @@ QString ExcludeElement::getCodeDefinition(unsigned def_type)
 
 	if(_operator)
 	{
-		if(def_type==SchemaParser::SQL_DEFINITION)
+		if(def_type==SchemaParser::SqlDefinition)
 			attributes[ParsersAttributes::OPERATOR]=_operator->getName(true);
 		else
 			attributes[ParsersAttributes::OPERATOR]=_operator->getCodeDefinition(def_type, true);

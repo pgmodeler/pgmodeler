@@ -520,7 +520,7 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 
 			//Generates the code for the object only for validation
 			if(obj_type==ObjColumn)
-				dynamic_cast<Column *>(tab_obj)->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+				dynamic_cast<Column *>(tab_obj)->getCodeDefinition(SchemaParser::SqlDefinition);
 			else
 			{
 				Constraint *rest=nullptr;
@@ -530,7 +530,7 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 				if(rest->getConstraintType()==ConstraintType::foreign_key)
 					throw Exception(AsgForeignKeyRelationship,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-				rest->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+				rest->getCodeDefinition(SchemaParser::SqlDefinition);
 			}
 
 			//Switch back to null the object parent
@@ -2555,7 +2555,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type);
 	if(!code_def.isEmpty()) return(code_def);
 
-	if(def_type==SchemaParser::SQL_DEFINITION)
+	if(def_type==SchemaParser::SqlDefinition)
 	{
 		if(fk_rel1n && (rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N))
 		{
@@ -2598,7 +2598,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 			attributes[ParsersAttributes::TABLE]=getReceiverTable()->getName(true);
 		}
 
-		return(this->BaseObject::__getCodeDefinition(SchemaParser::SQL_DEFINITION));
+		return(this->BaseObject::__getCodeDefinition(SchemaParser::SqlDefinition));
 	}
 	else
 	{
@@ -2633,7 +2633,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		for(i=0; i < count; i++)
 		{
 			attributes[ParsersAttributes::COLUMNS]+=dynamic_cast<Column *>(rel_attributes[i])->
-													getCodeDefinition(SchemaParser::XML_DEFINITION);
+													getCodeDefinition(SchemaParser::XmlDefinition);
 		}
 
 		attributes[ParsersAttributes::CONSTRAINTS]=QString();
@@ -2642,13 +2642,13 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		{
 			if(!rel_constraints[i]->isProtected())
 				attributes[ParsersAttributes::CONSTRAINTS]+=dynamic_cast<Constraint *>(rel_constraints[i])->
-															getCodeDefinition(SchemaParser::XML_DEFINITION, true);
+															getCodeDefinition(SchemaParser::XmlDefinition, true);
 		}
 
 		if(pk_original)
 		{
 			pk_original->setParentTable(getReceiverTable());
-			attributes[ParsersAttributes::ORIGINAL_PK]=pk_original->getCodeDefinition(SchemaParser::XML_DEFINITION);
+			attributes[ParsersAttributes::ORIGINAL_PK]=pk_original->getCodeDefinition(SchemaParser::XmlDefinition);
 			pk_original->setParentTable(nullptr);
 		}
 
@@ -2678,7 +2678,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		if(!reduced_form)
 			cached_reduced_code.clear();
 
-		return(this->BaseObject::getCodeDefinition(SchemaParser::XML_DEFINITION, reduced_form));
+		return(this->BaseObject::getCodeDefinition(SchemaParser::XmlDefinition, reduced_form));
 	}
 
 }

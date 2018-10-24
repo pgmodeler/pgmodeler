@@ -349,7 +349,7 @@ void BaseRelationship::setRelationshipAttributes(void)
 	{
 		attributes[ParsersAttributes::X_POS]=QString("%1").arg(points[i].x());
 		attributes[ParsersAttributes::Y_POS]=QString("%1").arg(points[i].y());
-		str_aux+=schparser.getCodeDefinition(ParsersAttributes::POSITION, attributes, SchemaParser::XML_DEFINITION);
+		str_aux+=schparser.getCodeDefinition(ParsersAttributes::POSITION, attributes, SchemaParser::XmlDefinition);
 	}
 	attributes[ParsersAttributes::POINTS]=str_aux;
 
@@ -360,9 +360,9 @@ void BaseRelationship::setRelationshipAttributes(void)
 		{
 			attributes[ParsersAttributes::X_POS]=QString("%1").arg(lables_dist[i].x());
 			attributes[ParsersAttributes::Y_POS]=QString("%1").arg(lables_dist[i].y());
-			attributes[ParsersAttributes::POSITION]=schparser.getCodeDefinition(ParsersAttributes::POSITION, attributes, SchemaParser::XML_DEFINITION);
+			attributes[ParsersAttributes::POSITION]=schparser.getCodeDefinition(ParsersAttributes::POSITION, attributes, SchemaParser::XmlDefinition);
 			attributes[ParsersAttributes::REF_TYPE]=label_attribs[i];
-			str_aux+=schparser.getCodeDefinition(ParsersAttributes::LABEL, attributes, SchemaParser::XML_DEFINITION);
+			str_aux+=schparser.getCodeDefinition(ParsersAttributes::LABEL, attributes, SchemaParser::XmlDefinition);
 		}
 	}
 
@@ -376,9 +376,9 @@ QString BaseRelationship::getCachedCode(unsigned def_type)
 {
 	if(!code_invalidated &&
 			((!cached_code[def_type].isEmpty()) ||
-			 (def_type==SchemaParser::XML_DEFINITION  && !cached_reduced_code.isEmpty())))
+			 (def_type==SchemaParser::XmlDefinition  && !cached_reduced_code.isEmpty())))
 	{
-		if(def_type==SchemaParser::XML_DEFINITION  && !cached_reduced_code.isEmpty())
+		if(def_type==SchemaParser::XmlDefinition  && !cached_reduced_code.isEmpty())
 			return(cached_reduced_code);
 		else
 			return(cached_code[def_type]);
@@ -405,13 +405,13 @@ QString BaseRelationship::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type);
 	if(!code_def.isEmpty()) return(code_def);
 
-	if(def_type==SchemaParser::SQL_DEFINITION)
+	if(def_type==SchemaParser::SqlDefinition)
 	{
 		if(rel_type!=RELATIONSHIP_FK)
 			return(QString());
 		else
 		{
-			cached_code[def_type] = reference_fk->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+			cached_code[def_type] = reference_fk->getCodeDefinition(SchemaParser::SqlDefinition);
 			return(cached_code[def_type]);
 		}
 	}
@@ -425,7 +425,7 @@ QString BaseRelationship::getCodeDefinition(unsigned def_type)
 		if(!reduced_form)
 			cached_reduced_code.clear();
 
-		return(BaseObject::getCodeDefinition(SchemaParser::XML_DEFINITION,reduced_form));
+		return(BaseObject::getCodeDefinition(SchemaParser::XmlDefinition,reduced_form));
 	}
 }
 

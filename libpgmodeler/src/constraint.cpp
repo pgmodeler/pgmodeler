@@ -192,7 +192,7 @@ void Constraint::setColumnsAttribute(unsigned col_type, unsigned def_type, bool 
 	Column *col=nullptr;
 	QString str_cols, attrib;
 	unsigned i, count;
-	bool format=(def_type==SchemaParser::SQL_DEFINITION);
+	bool format=(def_type==SchemaParser::SqlDefinition);
 
 	if(col_type==REFERENCED_COLS)
 	{
@@ -214,8 +214,8 @@ void Constraint::setColumnsAttribute(unsigned col_type, unsigned def_type, bool 
 		 through relationship can not be included because they are inserted
 		 to the restriction on the time of creation of the relationship from its XML
 		 so the parameter 'inc_addedbyrel' can be used to solve this case. */
-		if((def_type==SchemaParser::SQL_DEFINITION) ||
-				((def_type==SchemaParser::XML_DEFINITION) &&
+		if((def_type==SchemaParser::SqlDefinition) ||
+				((def_type==SchemaParser::XmlDefinition) &&
 				 ((inc_addedbyrel && col->isAddedByRelationship()) ||
 				  (inc_addedbyrel && !col->isAddedByRelationship()) ||
 				  (!inc_addedbyrel && !col->isAddedByRelationship()))))
@@ -626,7 +626,7 @@ void Constraint::setExcludeElementsAttribute(unsigned def_type)
 	for(i=0; i < count; i++)
 	{
 		str_elem+=excl_elements[i].getCodeDefinition(def_type);
-		if(i < (count-1) && def_type==SchemaParser::SQL_DEFINITION) str_elem+=',';
+		if(i < (count-1) && def_type==SchemaParser::SqlDefinition) str_elem+=',';
 	}
 
 	attributes[ParsersAttributes::ELEMENTS]=str_elem;
@@ -752,8 +752,8 @@ bool Constraint::isCodeDiffersFrom(BaseObject *object, const vector<QString> &ig
 
 	try
 	{
-		return(BaseObject::isCodeDiffersFrom(this->getCodeDefinition(SchemaParser::XML_DEFINITION, true),
-											 object->getCodeDefinition(SchemaParser::XML_DEFINITION, true),
+		return(BaseObject::isCodeDiffersFrom(this->getCodeDefinition(SchemaParser::XmlDefinition, true),
+											 object->getCodeDefinition(SchemaParser::XmlDefinition, true),
 											 ignored_attribs, ignored_tags));
 	}
 	catch(Exception &e)

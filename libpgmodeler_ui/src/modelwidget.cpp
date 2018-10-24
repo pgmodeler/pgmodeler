@@ -1175,7 +1175,7 @@ void ModelWidget::convertRelationshipNN(void)
 						}
 					}
 
-					xml_buf=tab_nn->getCodeDefinition(SchemaParser::XML_DEFINITION);
+					xml_buf=tab_nn->getCodeDefinition(SchemaParser::XmlDefinition);
 
 					//Creates the table from the xml code
 					xmlparser->restartParser();
@@ -1210,7 +1210,7 @@ void ModelWidget::convertRelationshipNN(void)
 						count=tab_nn->getConstraintCount();
 						for(idx=0; idx < count; idx++)
 						{
-							xml_buf=tab_nn->getConstraint(idx)->getCodeDefinition(SchemaParser::XML_DEFINITION,true);
+							xml_buf=tab_nn->getConstraint(idx)->getCodeDefinition(SchemaParser::XmlDefinition,true);
 
 							xmlparser->restartParser();
 							xmlparser->loadXMLBuffer(xml_buf);
@@ -1572,7 +1572,7 @@ void ModelWidget::saveModel(const QString &filename)
 		task_prog_wgt.show();
 
 		saveLastCanvasPosition();
-		db_model->saveModel(filename, SchemaParser::XML_DEFINITION);
+		db_model->saveModel(filename, SchemaParser::XmlDefinition);
 
 		this->filename=filename;
 
@@ -2403,8 +2403,8 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 					(aux_object &&
 					 (dynamic_cast<BaseGraphicObject *>(object) ||
 						(aux_object->getDatabase()==object->getDatabase()) ||
-						(aux_object->getCodeDefinition(SchemaParser::SchemaParser::XML_DEFINITION) !=
-						 object->getCodeDefinition(SchemaParser::SchemaParser::XML_DEFINITION)))))
+						(aux_object->getCodeDefinition(SchemaParser::SchemaParser::XmlDefinition) !=
+						 object->getCodeDefinition(SchemaParser::SchemaParser::XmlDefinition)))))
 			{
 				//Resolving name conflicts
 				if(obj_type!=ObjCast)
@@ -2480,11 +2480,11 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 			//Stores the XML definition on a xml buffer map
 			if(duplicate_mode && aux_table)
 			{
-			  xml_objs[object] = aux_table->__getCodeDefinition(SchemaParser::XML_DEFINITION, true);
+				xml_objs[object] = aux_table->__getCodeDefinition(SchemaParser::XmlDefinition, true);
 			  object->setCodeInvalidated(true);
 			}
 			else
-			  xml_objs[object]=object->getCodeDefinition(SchemaParser::XML_DEFINITION);
+				xml_objs[object]=object->getCodeDefinition(SchemaParser::XmlDefinition);
 		}
 
 		//Store the original parent table of the object
@@ -2514,11 +2514,11 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 				//Generates the XML code with the new parent table
 				if(constr)
 				{
-				  xml_objs[object]=constr->getCodeDefinition(SchemaParser::XML_DEFINITION, duplicate_mode);
+					xml_objs[object]=constr->getCodeDefinition(SchemaParser::XmlDefinition, duplicate_mode);
 				  tab_obj->setCodeInvalidated(true);
 				}
 				else
-				  xml_objs[object]=object->getCodeDefinition(SchemaParser::XML_DEFINITION);
+					xml_objs[object]=object->getCodeDefinition(SchemaParser::XmlDefinition);
 
 				//Restore the original parent table
 				tab_obj->setParentTable(orig_parent_tab);
@@ -2531,11 +2531,11 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 
 			if(constr)
 			{
-			  xml_objs[object]=constr->getCodeDefinition(SchemaParser::XML_DEFINITION, duplicate_mode);
+				xml_objs[object]=constr->getCodeDefinition(SchemaParser::XmlDefinition, duplicate_mode);
 			  tab_obj->setCodeInvalidated(true);
 			}
 			else
-			  xml_objs[object]=tab_obj->getCodeDefinition(SchemaParser::XML_DEFINITION);
+				xml_objs[object]=tab_obj->getCodeDefinition(SchemaParser::XmlDefinition);
 		}
 	}
 

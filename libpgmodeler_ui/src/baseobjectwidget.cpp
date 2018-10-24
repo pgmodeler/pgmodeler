@@ -520,11 +520,11 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 QString BaseObjectWidget::generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver)
 {
 	if(ver_interv_id==UNTIL_VERSION && !ini_ver.isEmpty())
-		return(XMLParser::CHAR_LT + QString("= ") + ini_ver);
+		return(XMLParser::CharLt + QString("= ") + ini_ver);
 	else if(ver_interv_id==VERSIONS_INTERVAL && !ini_ver.isEmpty() && !end_ver.isEmpty())
-		return(XMLParser::CHAR_GT + QString("= ") + ini_ver + XMLParser::CHAR_AMP + XMLParser::CHAR_LT + QString("= ") + end_ver);
+		return(XMLParser::CharGt + QString("= ") + ini_ver + XMLParser::CharAmp + XMLParser::CharLt + QString("= ") + end_ver);
 	else if(ver_interv_id==AFTER_VERSION &&  !ini_ver.isEmpty())
-		return(XMLParser::CHAR_GT + QString("= ") + ini_ver);
+		return(XMLParser::CharGt + QString("= ") + ini_ver);
 	else
 		return(QString());
 }
@@ -832,9 +832,9 @@ void BaseObjectWidget::finishConfiguration(void)
 			{
 				//If the object is being updated, validates its SQL definition
 				if(obj_type==ObjBaseRelationship || obj_type==ObjTextbox || obj_type==ObjTag)
-					this->object->getCodeDefinition(SchemaParser::XML_DEFINITION);
+					this->object->getCodeDefinition(SchemaParser::XmlDefinition);
 				else
-					this->object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+					this->object->getCodeDefinition(SchemaParser::SqlDefinition);
 			}
 
 			model->getObjectReferences(object, ref_objs);

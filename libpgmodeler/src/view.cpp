@@ -586,10 +586,10 @@ QString View::getCodeDefinition(unsigned def_type)
 	if(recursive)
 		attributes[ParsersAttributes::COLUMNS]=getColumnsList().join(',');
 
-	if(tag && def_type==SchemaParser::XML_DEFINITION)
+	if(tag && def_type==SchemaParser::XmlDefinition)
 		attributes[ParsersAttributes::TAG]=tag->getCodeDefinition(def_type, true);
 
-	if(def_type==SchemaParser::SQL_DEFINITION)
+	if(def_type==SchemaParser::SqlDefinition)
 		setDefinitionAttribute();
 	else
 	{
@@ -718,7 +718,7 @@ void View::addObject(BaseObject *obj, int obj_idx)
 
 			//Validates the object definition
 			tab_obj->setParentTable(this);
-			tab_obj->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+			tab_obj->getCodeDefinition(SchemaParser::SqlDefinition);
 
 			//Make a additional validation if the object is a trigger
 			if(tab_obj->getObjectType()==ObjTrigger)

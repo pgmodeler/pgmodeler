@@ -120,7 +120,7 @@ void SwapObjectsIdsWidget::fillCreationOrderGrid(void)
 	if(!model)
 		return;
 
-	map<unsigned, BaseObject *> creation_order = model->getCreationOrder(SchemaParser::SQL_DEFINITION);
+	map<unsigned, BaseObject *> creation_order = model->getCreationOrder(SchemaParser::SqlDefinition);
 	vector<BaseObject *> objects;
 
 	//Using an stl function to extract all the values (objects) from the map and put them into a list
