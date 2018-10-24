@@ -221,7 +221,7 @@ void TriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_list, 
 	Column *column=nullptr;
 
 	if(!parent_table)
-		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObjectWidget::setAttributes(model, op_list, trigger, parent_table);
 	ref_table_sel->setModel(model);

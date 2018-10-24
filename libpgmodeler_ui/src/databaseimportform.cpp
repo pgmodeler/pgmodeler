@@ -422,7 +422,7 @@ void DatabaseImportForm::filterObjects(void)
 void DatabaseImportForm::filterObjects(QTreeWidget *tree_wgt, const QString &pattern, int search_column, bool sel_single_leaf)
 {
 	if(!tree_wgt)
-		throw Exception(OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	QList<QTreeWidgetItem*> items;
 	QTreeWidgetItemIterator itr(tree_wgt);

@@ -103,7 +103,7 @@ void BugReportForm::generateReport(const QByteArray &buf)
 	output.open(QFile::WriteOnly);
 
 	if(!output.isOpen())
-		msgbox.show(Exception::getErrorMessage(FileDirectoryNotWritten).arg(filename), Messagebox::ErrorIcon);
+		msgbox.show(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(filename), Messagebox::ErrorIcon);
 	else
 	{
 		QByteArray comp_buf;
@@ -140,8 +140,8 @@ void BugReportForm::attachModel(void)
 			input.open(QFile::ReadOnly);
 
 			if(!input.isOpen())
-				throw Exception(Exception::getErrorMessage(FileDirectoryNotAccessed).arg(file_dlg.selectedFiles().at(0)),
-								FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(file_dlg.selectedFiles().at(0)),
+												ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			buf=input.readAll();
 			model_txt->setPlainText(QString(buf));

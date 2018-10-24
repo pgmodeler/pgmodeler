@@ -137,8 +137,8 @@ void CsvLoadWidget::loadCsvFile(void)
 	file.setFileName(file_edt->text());
 
 	if(!file.open(QFile::ReadOnly))
-		throw Exception(Exception::getErrorMessage(FileDirectoryNotAccessed).arg(file_edt->text()),
-										FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(file_edt->text()),
+										ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	csv_columns.clear();
 	csv_rows.clear();

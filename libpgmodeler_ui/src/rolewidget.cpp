@@ -143,7 +143,7 @@ void RoleWidget::showRoleData(Role *role, unsigned table_id, unsigned row)
 				role_types[3]={ Role::RefRole, Role::MemberRole, Role::AdminRole };
 
 		if(table_id > 3)
-			throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		members_tab[table_id]->setRowData(QVariant::fromValue(reinterpret_cast<void *>(role)), row);
 		members_tab[table_id]->setCellText(role->getName(), row, 0);
@@ -219,10 +219,10 @@ void RoleWidget::showSelectedRoleData(void)
 		if(!members_tab[idx_tab]->getRowData(lin).value<void *>())
 			members_tab[idx_tab]->removeRow(lin);
 
-		msg_box.show(Exception(Exception::getErrorMessage(AsgRoleReferenceRedundancy)
-							   .arg(obj_sel->getName())
-							   .arg(name_edt->text()),
-							   AsgRoleReferenceRedundancy,__PRETTY_FUNCTION__,__FILE__,__LINE__));
+		msg_box.show(Exception(Exception::getErrorMessage(ErrorCode::AsgRoleReferenceRedundancy)
+													 .arg(obj_sel->getName())
+													 .arg(name_edt->text()),
+													 ErrorCode::AsgRoleReferenceRedundancy,__PRETTY_FUNCTION__,__FILE__,__LINE__));
 	}
 	//If the role does not exist on table, show its data
 	else if(obj_sel && idx_lin < 0)
@@ -237,10 +237,10 @@ void RoleWidget::showSelectedRoleData(void)
 		//Raises an error if the role already is in the table
 		if(obj_sel && idx_lin >= 0)
 		{
-			msg_box.show( Exception(Exception::getErrorMessage(InsDuplicatedRole)
-									.arg(obj_sel->getName())
-									.arg(name_edt->text()),
-									InsDuplicatedRole,__PRETTY_FUNCTION__,__FILE__,__LINE__));
+			msg_box.show( Exception(Exception::getErrorMessage(ErrorCode::InsDuplicatedRole)
+															.arg(obj_sel->getName())
+															.arg(name_edt->text()),
+															ErrorCode::InsDuplicatedRole,__PRETTY_FUNCTION__,__FILE__,__LINE__));
 		}
 	}
 }

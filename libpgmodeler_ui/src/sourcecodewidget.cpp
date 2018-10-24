@@ -109,8 +109,8 @@ void SourceCodeWidget::saveSQLCode(void)
 			out.setFileName(file_dlg.selectedFiles().at(0));
 
 			if(!out.open(QFile::WriteOnly))
-				throw Exception(Exception::getErrorMessage(FileDirectoryNotWritten).arg(file_dlg.selectedFiles().at(0)),
-								FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(file_dlg.selectedFiles().at(0)),
+												ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			buf.append(sqlcode_txt->toPlainText());
 			out.write(buf.data(), buf.size());

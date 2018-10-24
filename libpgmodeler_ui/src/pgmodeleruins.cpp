@@ -27,7 +27,7 @@ namespace PgModelerUiNs {
 	QTreeWidgetItem *createOutputTreeItem(QTreeWidget *output_trw, const QString &text, const QPixmap &ico, QTreeWidgetItem *parent, bool expand_item, bool word_wrap)
 	{
 		if(!output_trw)
-			throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		QTreeWidgetItem *item=nullptr;
 
@@ -64,7 +64,7 @@ namespace PgModelerUiNs {
 	void createOutputListItem(QListWidget *output_lst, const QString &text, const QPixmap &ico, bool is_formated)
 	{
 		if(!output_lst)
-			throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		QListWidgetItem *item=new QListWidgetItem;
 
@@ -97,10 +97,10 @@ namespace PgModelerUiNs {
 			bool curr_val=object->isSQLDisabled();
 
 			if(object->isSystemObject())
-				throw Exception(Exception::getErrorMessage(OprReservedObject)
+				throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
 								.arg(object->getName(true))
 								.arg(object->getTypeName()),
-								OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+								ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			object->setSQLDisabled(disable);
 
@@ -259,7 +259,7 @@ namespace PgModelerUiNs {
 			text=QString("%1 (%2)").arg(ex.getFile()).arg(ex.getLine());
 			createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("codigofonte")), item, false, true);
 
-			text=QString("%1 (%2)").arg(Exception::getErrorCode(ex.getErrorType())).arg(ex.getErrorType());
+			text=QString("%1 (%2)").arg(Exception::getErrorCode(ex.getErrorType())).arg(~ex.getErrorType());
 			createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("msgbox_alerta")), item, false, true);
 
 			child_item=createOutputTreeItem(exceptions_trw, ex.getErrorMessage(), QPixmap(getIconPath("msgbox_erro")), item, false, true);

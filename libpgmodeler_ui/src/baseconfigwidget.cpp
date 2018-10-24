@@ -83,8 +83,8 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, at
 		output.open(QFile::WriteOnly);
 
 		if(!output.isOpen())
-			throw Exception(Exception::getErrorMessage(FileDirectoryNotWritten).arg(cfg_filename),
-							FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(cfg_filename),
+											ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Writes the generated configuration to the output file
 		output.write(buf.data(), buf.size());
@@ -94,8 +94,8 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, at
 	catch(Exception &e)
 	{
 		if(output.isOpen()) output.close();
-		throw Exception(Exception::getErrorMessage(FileNotWrittenInvalidDefinition).arg(cfg_filename),
-						FileNotWrittenInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(Exception::getErrorMessage(ErrorCode::FileNotWrittenInvalidDefinition).arg(cfg_filename),
+										ErrorCode::FileNotWrittenInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -119,8 +119,8 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id, bool silent)
 
 	//Raises an error if the default file doesn't exists
 	if(!QFile::exists(default_file))
-		throw Exception(Exception::getErrorMessage(DefaultConfigNotRestored).arg(default_file),
-						DefaultConfigNotRestored,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(Exception::getErrorMessage(ErrorCode::DefaultConfigNotRestored).arg(default_file),
+										ErrorCode::DefaultConfigNotRestored,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
 		bool bkp_saved = false;

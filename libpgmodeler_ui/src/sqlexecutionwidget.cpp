@@ -234,7 +234,7 @@ void SQLExecutionWidget::resizeEvent(QResizeEvent *event)
 void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTableWidget *results_tbw, bool store_data)
 {
 	if(!results_tbw)
-		throw Exception(OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{
@@ -342,8 +342,8 @@ void SQLExecutionWidget::handleExecutionAborted(Exception e)
 										QString("%1 %2").arg(time_str).arg(e.getErrorMessage()),
 										QPixmap(PgModelerUiNs::getIconPath("msgbox_erro")), false);
 
-	if(e.getErrorType()==ConnectionTimeout ||
-		 e.getErrorType()==ConnectionBroken)
+	if(e.getErrorType()==ErrorCode::ConnectionTimeout ||
+		 e.getErrorType()==ErrorCode::ConnectionBroken)
 	{
 		PgModelerUiNs::createOutputListItem(msgoutput_lst,
 											QString("%1 %2").arg(time_str).arg(trUtf8("No results retrieved or changes done due to the error above! Run the command again.")),
@@ -573,8 +573,8 @@ void SQLExecutionWidget::saveCommands(void)
 		file.setFileName(filename);
 
 		if(!file.open(QFile::WriteOnly))
-			throw Exception(Exception::getErrorMessage(FileDirectoryNotAccessed).arg(filename),
-											FileDirectoryNotAccessed ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(filename),
+											ErrorCode::FileDirectoryNotAccessed ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		file.write(sql_cmd_txt->toPlainText().toUtf8());
 		file.close();
@@ -596,9 +596,9 @@ void SQLExecutionWidget::loadCommands(void)
 		file.setFileName(sql_file_dlg.selectedFiles().at(0));
 
 		if(!file.open(QFile::ReadOnly))
-			throw Exception(Exception::getErrorMessage(FileDirectoryNotAccessed)
-							.arg(sql_file_dlg.selectedFiles().at(0))
-							,FileDirectoryNotAccessed ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed)
+											.arg(sql_file_dlg.selectedFiles().at(0)),
+											ErrorCode::FileDirectoryNotAccessed ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		sql_cmd_txt->clear();
 		sql_cmd_txt->setPlainText(file.readAll());
@@ -612,7 +612,7 @@ void SQLExecutionWidget::loadCommands(void)
 void SQLExecutionWidget::exportResults(QTableView *results_tbw)
 {
 	if(!results_tbw)
-		throw Exception(OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	QFileDialog csv_file_dlg;
 
@@ -631,9 +631,9 @@ void SQLExecutionWidget::exportResults(QTableView *results_tbw)
 		file.setFileName(csv_file_dlg.selectedFiles().at(0));
 
 		if(!file.open(QFile::WriteOnly))
-			throw Exception(Exception::getErrorMessage(FileDirectoryNotAccessed)
-							.arg(csv_file_dlg.selectedFiles().at(0))
-							, FileDirectoryNotAccessed ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed)
+											.arg(csv_file_dlg.selectedFiles().at(0)),
+											ErrorCode::FileDirectoryNotAccessed ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 		results_tbw->setUpdatesEnabled(false);
@@ -685,7 +685,7 @@ QByteArray SQLExecutionWidget::generateTextBuffer(QTableView *results_tbw)
 QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar separator, bool incl_col_names, bool use_quotes)
 {
 	if(!results_tbw)
-		throw Exception(OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(!results_tbw->selectionModel())
 		return (QByteArray());
@@ -739,7 +739,7 @@ QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar sep
 void SQLExecutionWidget::copySelection(QTableView *results_tbw, bool use_popup, bool csv_is_default)
 {
 	if(!results_tbw)
-		throw Exception(OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	QItemSelectionModel *selection = results_tbw->selectionModel();
 
@@ -858,8 +858,8 @@ void SQLExecutionWidget::saveSQLHistory(void)
 										 GlobalAttributes::ConfigurationExt);
 
 		if(!file.open(QFile::WriteOnly))
-			throw Exception(Exception::getErrorMessage(FileDirectoryNotAccessed).arg(file.fileName()),
-											FileDirectoryNotAccessed, __PRETTY_FUNCTION__, __FILE__ ,__LINE__);
+			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(file.fileName()),
+											ErrorCode::FileDirectoryNotAccessed, __PRETTY_FUNCTION__, __FILE__ ,__LINE__);
 
 		file.write(buffer);
 		file.close();

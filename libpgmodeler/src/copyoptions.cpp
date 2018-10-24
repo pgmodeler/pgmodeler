@@ -27,7 +27,7 @@ CopyOptions::CopyOptions(void)
 CopyOptions::CopyOptions(unsigned copy_mode, unsigned copy_op_ids)
 {
 	if((copy_mode!=0 && copy_mode!=Including && copy_mode!=Excluding) || copy_op_ids > All)
-		throw Exception(RefInvalidLikeOptionType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefInvalidLikeOptionType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->copy_mode = copy_mode;
 	this->copy_op_ids = copy_op_ids;
@@ -41,7 +41,7 @@ unsigned CopyOptions::getCopyMode(void)
 bool CopyOptions::isOptionSet(unsigned op)
 {
 	if(op > All)
-		throw Exception(RefInvalidLikeOptionType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefInvalidLikeOptionType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return((copy_op_ids & op) == op);
 }

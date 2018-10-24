@@ -223,7 +223,7 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
 	QString obj_name;
 
 	if(!object)
-		throw Exception(OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	obj_type=object->getObjectType();
 	tab_obj=dynamic_cast<TableObject *>(object);

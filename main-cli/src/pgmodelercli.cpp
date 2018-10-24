@@ -122,13 +122,13 @@ PgModelerCli::PgModelerCli(int argc, char **argv) :  QApplication(argc, argv)
 
 					//Raises an error if the option is not recognized
 					if(!isOptionRecognized(op, accepts_val))
-						throw Exception(trUtf8("Unrecognized option '%1'.").arg(op), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						throw Exception(trUtf8("Unrecognized option '%1'.").arg(op), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 					//Raises an error if the value is empty and the option accepts a value
 					if(accepts_val && value.isEmpty())
-						throw Exception(trUtf8("Value not specified for option '%1'.").arg(op), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						throw Exception(trUtf8("Value not specified for option '%1'.").arg(op), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					else if(!accepts_val && !value.isEmpty())
-						throw Exception(trUtf8("Option '%1' does not accept values.").arg(op), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						throw Exception(trUtf8("Option '%1' does not accept values.").arg(op), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 					opts[op]=value;
 				}
@@ -218,7 +218,7 @@ void PgModelerCli::configureConnection(bool extra_conn)
 	{
 		if(!connections.count(parsed_opts[ConnAlias + chr]))
 			throw Exception(trUtf8("Connection aliased as '%1' was not found in the configuration file.").arg(parsed_opts[ConnAlias + chr]),
-							Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Make a copy of the named connection
 		*conn = (*connections[parsed_opts[ConnAlias + chr]]);
@@ -510,54 +510,54 @@ void PgModelerCli::parseOptions(attribs_map &opts)
 			zoom=opts[ZoomFactor].toDouble()/static_cast<double>(100);
 
 		if(other_modes_cnt==0 && mode_cnt==0)
-			throw Exception(trUtf8("No operation mode was specified!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(trUtf8("No operation mode was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
 		if((mode_cnt > 0 && (fix_model || upd_mime || import_db || diff)) || (mode_cnt==0 && other_modes_cnt > 1))
-			throw Exception(trUtf8("Export, fix model, import database, diff and update mime operations can't be used at the same time!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(trUtf8("Export, fix model, import database, diff and update mime operations can't be used at the same time!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
 		if(!fix_model && !upd_mime && mode_cnt > 1)
-			throw Exception(trUtf8("Multiple export mode was specified!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(trUtf8("Multiple export mode was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
 		if(!upd_mime && !import_db && !diff && opts[Input].isEmpty())
-			throw Exception(trUtf8("No input file was specified!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(trUtf8("No input file was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		if(import_db && opts[InputDb].isEmpty())
-			throw Exception(trUtf8("No input database was specified!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(trUtf8("No input database was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		if(!opts.count(ExportToDbms) && !upd_mime && !diff && opts[Output].isEmpty())
-			throw Exception(trUtf8("No output file was specified!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(trUtf8("No output file was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
 		if(!opts.count(ExportToDbms) && !upd_mime && !import_db &&
 			 !opts[Input].isEmpty() && !opts[Output].isEmpty() &&
 			 QFileInfo(opts[Input]).absoluteFilePath() == QFileInfo(opts[Output]).absoluteFilePath())
-			throw Exception(trUtf8("Input file must be different from output!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(trUtf8("Input file must be different from output!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
 		if(opts.count(ExportToDbms) && !opts.count(ConnAlias) &&
 			 (!opts.count(Host) || !opts.count(User) || !opts.count(Passwd) || !opts.count(InitialDb)) )
-			throw Exception(trUtf8("Incomplete connection information!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(trUtf8("Incomplete connection information!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
 		if(opts.count(ExportToPng) && (zoom < ModelWidget::MinimumZoom || zoom > ModelWidget::MaximumZoom))
-			throw Exception(trUtf8("Invalid zoom specified!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(trUtf8("Invalid zoom specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
 		if(upd_mime && opts[DbmMimeType]!=Install && opts[DbmMimeType]!=Uninstall)
-			throw Exception(trUtf8("Invalid action specified to update mime option!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(trUtf8("Invalid action specified to update mime option!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			
 		if(opts.count(Diff))
 		{
 			if(opts[Input].isEmpty() && opts[InputDb].isEmpty())
-				throw Exception(trUtf8("No input file or database was specified!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(trUtf8("No input file or database was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			if(!opts[Input].isEmpty() && !opts[InputDb].isEmpty())
-				throw Exception(trUtf8("The input file and database can't be used at the same time!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(trUtf8("The input file and database can't be used at the same time!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			if(!opts.count(CompareTo))
-				throw Exception(trUtf8("No database to be compared was specified!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(trUtf8("No database to be compared was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			if(!opts.count(SaveDiff) && !opts.count(ApplyDiff))
-				throw Exception(trUtf8("No diff action (save or apply) was specified!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(trUtf8("No diff action (save or apply) was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			if(opts.count(SaveDiff) && opts[Output].isEmpty())
-				throw Exception(trUtf8("No output file for the diff code was specified!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(trUtf8("No output file for the diff code was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 		
 		//Converting input and output files to absolute paths to avoid that they are read/written on the app's working dir
@@ -695,8 +695,8 @@ void PgModelerCli::extractObjectXML(void)
 	input.open(QFile::ReadOnly);
 
 	if(!input.isOpen())
-		throw Exception(Exception::getErrorMessage(FileDirectoryNotAccessed).arg(parsed_opts[Input]),
-						FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(parsed_opts[Input]),
+										ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	buf.append(input.readAll());
 	input.close();
@@ -705,7 +705,7 @@ void PgModelerCli::extractObjectXML(void)
 	start=regexp.indexIn(buf);
 
 	if(start < 0)
-		throw Exception(trUtf8("Invalid input file! It seems that is not a pgModeler generated model or the file is corrupted!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(trUtf8("Invalid input file! It seems that is not a pgModeler generated model or the file is corrupted!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
 		//Remove the header entry from buffer
@@ -1368,8 +1368,8 @@ void PgModelerCli::diffModelDatabase(void)
 			output.setFileName(parsed_opts[Output]);
 
 			if(!output.open(QFile::WriteOnly))
-				throw Exception(Exception::getErrorMessage(FileDirectoryNotWritten).arg(parsed_opts[Output]),
-												FileDirectoryNotWritten, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(parsed_opts[Output]),
+												ErrorCode::FileDirectoryNotWritten, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 			output.write(diff_hlp.getDiffDefinition().toUtf8());
 			output.close();
 		}
@@ -1550,11 +1550,11 @@ void PgModelerCli::handleMimeDatabase(bool uninstall)
 	//When installing, check if the necessary file exists. If exists, raises an error and abort.
 	if(!uninstall && (QFileInfo(files[0]).exists() || QFileInfo(files[1]).exists()))
 	{
-		throw Exception(msg_file_associated, Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(msg_file_associated, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 	else if(uninstall && (!QFileInfo(files[0]).exists() && !QFileInfo(files[1]).exists()))
 	{
-		throw Exception(msg_no_association, Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(msg_no_association, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 	else if(!uninstall)
 	{
@@ -1575,7 +1575,7 @@ void PgModelerCli::handleMimeDatabase(bool uninstall)
 			{
 				if(!QFile(files[i]).remove())
 					throw Exception(trUtf8("Can't erase the file %1! Check if the current user has permissions to delete it and if the file exists.").arg(files[i]),
-									Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+													ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 			else
 			{
@@ -1587,8 +1587,8 @@ void PgModelerCli::handleMimeDatabase(bool uninstall)
 				out.open(QFile::WriteOnly);
 
 				if(!out.isOpen())
-					throw Exception(Exception::getErrorMessage(FileDirectoryNotWritten).arg(files[i]),
-									FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(files[i]),
+													ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 				out.write(buf.data(), buf.size());
 				out.close();
@@ -1612,8 +1612,8 @@ void PgModelerCli::handleMimeDatabase(bool uninstall)
 			out.open(QFile::ReadOnly);
 
 			if(!out.isOpen())
-				throw Exception(Exception::getErrorMessage(FileDirectoryNotWritten).arg(mimeapps),
-								FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(mimeapps),
+												ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			//Opens the mimeapps.list to add a entry linking pgModeler to .dbm files
 			buf=out.readAll();

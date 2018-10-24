@@ -34,6 +34,7 @@
 #include <QRegExp>
 #include <QStringList>
 #include <QTextStream>
+#include <type_traits>
 
 enum ObjectType {
 	ObjColumn,

@@ -134,12 +134,12 @@ void ElementWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj)
 	if(!model || !parent_obj)
 	{
 		this->setEnabled(false);
-		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 	else if(parent_obj->getObjectType()!=ObjectType::ObjTable &&
 					parent_obj->getObjectType()!=ObjectType::ObjView &&
 					parent_obj->getObjectType()!=ObjectType::ObjRelationship)
-		throw Exception(OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->setEnabled(true);
 	this->parent_obj=parent_obj;

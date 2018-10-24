@@ -79,7 +79,7 @@ void SchemaParser::setPgSQLVersion(const QString &pgsql_ver)
 						.arg(pgsql_ver)
 						.arg(PgSqlVersions::PgSqlVersion90)
 						.arg(PgSqlVersions::DefaulVersion),
-						InvPostgreSQLVersion,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						ErrorCode::InvPostgreSQLVersion,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(curr_ver > 0 && curr_ver <= default_ver)
 		pgsql_version=pgsql_ver;
@@ -1317,9 +1317,9 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 										raises an exception */
 										if(word.isEmpty() && !ignore_empty_atribs)
 										{
-											throw Exception(Exception::getErrorMessage(UndefinedAttributeValue)
+											throw Exception(Exception::getErrorMessage(ErrorCode::UndefinedAttributeValue)
 															.arg(atrib).arg(filename).arg(line + comment_count +1).arg(column+1),
-															UndefinedAttributeValue,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+															ErrorCode::UndefinedAttributeValue,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 										}
 									}
 
@@ -1367,9 +1367,9 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 
 						if(error)
 						{
-							throw Exception(Exception::getErrorMessage(InvalidSyntax)
+							throw Exception(Exception::getErrorMessage(ErrorCode::InvalidSyntax)
 											.arg(filename).arg(line + comment_count +1).arg(column+1),
-											InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+											ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 					}
 				break;
@@ -1389,9 +1389,9 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 						 because only an attribute must be on the 'if' expression  */
 						if(vet_tk_if[if_level] && !vet_tk_then[if_level])
 						{
-							throw Exception(Exception::getErrorMessage(InvalidSyntax)
+							throw Exception(Exception::getErrorMessage(ErrorCode::InvalidSyntax)
 											.arg(filename).arg(line + comment_count +1).arg(column+1),
-											InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+											ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 						//Case the parser is in 'if' section
 						else if(vet_tk_if[if_level] &&
@@ -1414,9 +1414,9 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 		was not closed thus the parser returns an error */
 		if(if_cnt!=end_cnt)
 		{
-			throw Exception(Exception::getErrorMessage(InvalidSyntax)
+			throw Exception(Exception::getErrorMessage(ErrorCode::InvalidSyntax)
 							.arg(filename).arg(line + comment_count +1).arg(column+1),
-							InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 	}
 

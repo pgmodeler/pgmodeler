@@ -133,18 +133,18 @@ void PluginsConfigWidget::loadConfiguration(void)
 		}
 		else
 		{
-			errors.push_back(Exception(Exception::getErrorMessage(PluginNotLoaded)
-									   .arg(dir_list.front())
-									   .arg(lib)
-									   .arg(plugin_loader.errorString()),
-									   PluginNotLoaded, __PRETTY_FUNCTION__,__FILE__,__LINE__));
+			errors.push_back(Exception(Exception::getErrorMessage(ErrorCode::PluginNotLoaded)
+																 .arg(dir_list.front())
+																 .arg(lib)
+																 .arg(plugin_loader.errorString()),
+																 ErrorCode::PluginNotLoaded, __PRETTY_FUNCTION__,__FILE__,__LINE__));
 		}
 		dir_list.pop_front();
 		plugins_tab->clearSelection();
 	}
 
 	if(!errors.empty())
-		throw Exception(PluginsNotLoaded,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
+		throw Exception(ErrorCode::PluginsNotLoaded,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
 }
 
 void PluginsConfigWidget::installPluginsActions(QToolBar *toolbar, QMenu *menu, QObject *recv, const char *slot)

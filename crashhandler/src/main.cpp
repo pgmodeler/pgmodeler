@@ -44,6 +44,6 @@ int main(int argc, char **argv)
 	{
 		QTextStream out(stdout);
 		out << e.getExceptionsText();
-		return(e.getErrorType());
+		return(~e.getErrorType());
 	}
 }

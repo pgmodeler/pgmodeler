@@ -38,12 +38,12 @@ void ObjectRenameWidget::setAttributes(BaseObject *object, DatabaseModel *model,
 	TableObject *tab_obj=dynamic_cast<TableObject *>(object);
 
 	if(!object || !op_list)
-		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(tab_obj && tab_obj->isAddedByRelationship())
-		throw Exception(Exception::getErrorMessage(OprRelationshipAddedObject)
-						.arg(tab_obj->getName())
-						.arg(tab_obj->getTypeName())
-						,OprRelationshipAddedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(Exception::getErrorMessage(ErrorCode::OprRelationshipAddedObject)
+										.arg(tab_obj->getName())
+										.arg(tab_obj->getTypeName()),
+										ErrorCode::OprRelationshipAddedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->adjustSize();
 	this->object=object;
@@ -119,12 +119,12 @@ void ObjectRenameWidget::applyRenaming(void)
 				//Raises a error if another object is found
 				if(aux_obj && aux_obj!=object)
 				{
-					throw Exception(Exception::getErrorMessage(AsgDuplicatedObject)
-									.arg(fmt_name)
-									.arg(object->getTypeName())
-									.arg(parent_obj->getName(true))
-									.arg(parent_obj->getTypeName()),
-									AsgDuplicatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					throw Exception(Exception::getErrorMessage(ErrorCode::AsgDuplicatedObject)
+													.arg(fmt_name)
+													.arg(object->getTypeName())
+													.arg(parent_obj->getName(true))
+													.arg(parent_obj->getTypeName()),
+													ErrorCode::AsgDuplicatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 				}
 			}
 

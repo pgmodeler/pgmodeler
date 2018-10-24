@@ -1319,9 +1319,9 @@ void DataManipulationForm::saveChanges(void)
 		results_tbw->selectRow(row);
 		results_tbw->scrollToItem(results_tbw->item(row, 0));
 
-		throw Exception(Exception::getErrorMessage(RowDataNotManipulated)
+		throw Exception(Exception::getErrorMessage(ErrorCode::RowDataNotManipulated)
 						.arg(op_names[op_type]).arg(tab_name).arg(row + 1).arg(e.getErrorMessage()),
-						RowDataNotManipulated,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+						ErrorCode::RowDataNotManipulated,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 #endif
 }
@@ -1390,9 +1390,9 @@ QString DataManipulationForm::getDMLCommand(int row)
 					if((value.startsWith(PgModelerNs::UnescValueStart) && value.endsWith(QString("\\") + PgModelerNs::UnescValueEnd)) ||
 							(value.startsWith(PgModelerNs::UnescValueStart) && !value.endsWith(PgModelerNs::UnescValueEnd)) ||
 							(!value.startsWith(PgModelerNs::UnescValueStart) && !value.endsWith(QString("\\") + PgModelerNs::UnescValueEnd) && value.endsWith(PgModelerNs::UnescValueEnd)))
-						throw Exception(Exception::getErrorMessage(MalformedUnescapedValue)
+						throw Exception(Exception::getErrorMessage(ErrorCode::MalformedUnescapedValue)
 										.arg(row + 1).arg(col_name),
-										MalformedUnescapedValue,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+										ErrorCode::MalformedUnescapedValue,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 					col_list.push_back(QString("\"%1\"").arg(col_name));
 

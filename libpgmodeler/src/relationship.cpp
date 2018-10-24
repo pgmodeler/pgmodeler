@@ -37,7 +37,7 @@ constexpr unsigned Relationship::PkColPattern;
 Relationship::Relationship(Relationship *rel) : BaseRelationship(rel)
 {
 	if(!rel)
-		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	(*(this))=(*rel);
 }
@@ -58,34 +58,34 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 		if(((rel_type==Relationship11 || rel_type==Relationship1n) &&
 			!this->getReferenceTable()->getPrimaryKey()) ||
 				(rel_type==RelationshipNn && (!src_tab->getPrimaryKey() || !dst_tab->getPrimaryKey())))
-			throw Exception(Exception::getErrorMessage(InvLinkTablesNoPrimaryKey)
+			throw Exception(Exception::getErrorMessage(ErrorCode::InvLinkTablesNoPrimaryKey)
 							.arg(obj_name)
 							.arg(src_tab->getName(true))
 							.arg(dst_tab->getName(true)),
-							InvLinkTablesNoPrimaryKey,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::InvLinkTablesNoPrimaryKey,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		// Raises an error if the user tries to create another copy relationship if the table already copies another table
 		if(rel_type==RelationshipDep && src_tab->getCopyTable())
-			throw Exception(Exception::getErrorMessage(InvCopyRelTableDefined)
+			throw Exception(Exception::getErrorMessage(ErrorCode::InvCopyRelTableDefined)
 							.arg(src_tab->getName(true))
 							.arg(dst_tab->getName(true))
 							.arg(src_tab->getCopyTable()->getName(true)),
-							InvCopyRelTableDefined,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::InvCopyRelTableDefined,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		/*  If the relationship is partitioning the destination table (partitioned) shoud have
 		 *  a partitioning type defined otherwise and error is raised */
 		if(rel_type == RelationshipPart && !dst_tab->isPartitioned())
-			throw Exception(Exception::getErrorMessage(InvPartitioningTypePartRel)
+			throw Exception(Exception::getErrorMessage(ErrorCode::InvPartitioningTypePartRel)
 							.arg(src_tab->getSignature()).arg(dst_tab->getSignature()),
-							InvPartitioningTypePartRel, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::InvPartitioningTypePartRel, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		// Raises an error if the user tries to create a partitioning relationship where one of the tables are already a partition table
 		if(rel_type==RelationshipPart && src_tab->getPartitionedTable())
-			throw Exception(Exception::getErrorMessage(InvPartRelPartitionedDefined)
+			throw Exception(Exception::getErrorMessage(ErrorCode::InvPartRelPartitionedDefined)
 							.arg(src_tab->getName(true))
 							.arg(dst_tab->getName(true))
 							.arg(src_tab->getPartitionedTable()->getName(true)),
-							InvPartRelPartitionedDefined,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::InvPartRelPartitionedDefined,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		/* Raises an error if the user tries to create a relationship in the following configuration:
 		 * 1) Many-to-many relationship where one of the tables is a partitioned one
@@ -102,11 +102,11 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 			 (rel_type == Relationship1n &&	getReferenceTable()->isPartitioned() && !getReceiverTable()->isPartitioned()) ||
 				((rel_type == RelationshipGen || rel_type == RelationshipDep || rel_type == Relationship11) &&
 					 (src_tab->isPartition() || src_tab->isPartitioned() || dst_tab->isPartition() || dst_tab->isPartitioned())))
-			throw Exception(Exception::getErrorMessage(InvRelTypeForPatitionTables)
+			throw Exception(Exception::getErrorMessage(ErrorCode::InvRelTypeForPatitionTables)
 							.arg(src_tab->getName(true))
 							.arg(dst_tab->getName(true))
 							.arg(src_tab->isPartitioned() || src_tab->isPartition() ? src_tab->getName(true) : dst_tab->getName(true)),
-							InvRelTypeForPatitionTables,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::InvRelTypeForPatitionTables,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		copy_options=copy_op;
 		table_relnn=nullptr;
@@ -193,10 +193,10 @@ void Relationship::setNamePattern(unsigned pat_id, const QString &pattern)
 			aux_name.replace(pat_tokens[i], QString("%1").arg(static_cast<char>('a' + i)));
 
 		if(pat_id > PkColPattern)
-			throw Exception(Exception::getErrorMessage(RefInvalidNamePatternId)
+			throw Exception(Exception::getErrorMessage(ErrorCode::RefInvalidNamePatternId)
 							.arg(this->getName()),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(!BaseObject::isValidName(aux_name))
-			throw Exception(Exception::getErrorMessage(AsgInvalidNamePattern)
+			throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidNamePattern)
 							.arg(this->getName()),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		name_patterns[pat_id]=pattern;
@@ -207,7 +207,7 @@ void Relationship::setNamePattern(unsigned pat_id, const QString &pattern)
 QString Relationship::getNamePattern(unsigned pat_id)
 {
 	if(pat_id > PkColPattern)
-		throw Exception(RefInvalidNamePatternId,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefInvalidNamePatternId,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(name_patterns[pat_id]);
 }
@@ -276,7 +276,7 @@ void Relationship::setIdentifier(bool value)
 			 (rel_type==RelationshipNn ||
 				rel_type==RelationshipGen ||
 				rel_type==RelationshipDep)))
-		throw Exception(InvIdentifierRelationship,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::InvIdentifierRelationship,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	identifier=value;
 	this->invalidated=true;
@@ -287,9 +287,9 @@ void Relationship::setSpecialPrimaryKeyCols(vector<unsigned> &cols)
 	/* Raises an error if the user try to set columns for special primary key when the
 		relationship type is identifier or self relationship */
 	if(!cols.empty() && (isSelfRelationship() || isIdentifier()))
-		throw Exception(Exception::getErrorMessage(InvUseSpecialPrimaryKey)
+		throw Exception(Exception::getErrorMessage(ErrorCode::InvUseSpecialPrimaryKey)
 						.arg(this->getName()),
-						InvUseSpecialPrimaryKey,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						ErrorCode::InvUseSpecialPrimaryKey,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->column_ids_pk_rel=cols;
 }
@@ -365,7 +365,7 @@ void Relationship::setTableNameRelNN(const QString &name)
 	if(rel_type==RelationshipNn)
 	{
 		if(!BaseObject::isValidName(name))
-			throw Exception(AsgInvalidNameTableRelNN, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::AsgInvalidNameTableRelNN, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		tab_name_relnn=name;
 		tab_name_relnn.remove('"');
@@ -433,7 +433,7 @@ int Relationship::getObjectIndex(TableObject *object)
 
 	//Raises an error if the object is not allocated
 	if(!object)
-		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Selecting the correct list using the object type
 	obj_type=object->getObjectType();
@@ -443,7 +443,7 @@ int Relationship::getObjectIndex(TableObject *object)
 		list=&rel_constraints;
 	else
 		//Raises an error if the object type isn't valid (not a column or constraint)
-		throw Exception(RefObjectInvalidType, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefObjectInvalidType, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	itr=list->begin();
 	itr_end=list->end();
@@ -469,7 +469,7 @@ bool Relationship::isColumnExists(Column *column)
 
 	//Raises an error if the column is not allocated
 	if(!column)
-		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	itr=gen_columns.begin();
 	itr_end=gen_columns.end();
@@ -497,7 +497,7 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 			!(tab_obj->isAddedByRelationship() &&
 			  tab_obj->isProtected() &&
 			  tab_obj->getObjectType()==ObjectType::ObjConstraint))
-		throw Exception(AsgObjectInvalidRelationshipType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgObjectInvalidRelationshipType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{
@@ -513,7 +513,7 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 				obj_list=&rel_constraints;
 			else
 				//Raises an error if the object type isn't valid (not a column or constraint)
-				throw Exception(AsgObjectInvalidType, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(ErrorCode::AsgObjectInvalidType, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			//Defines the parent table for the object only for validation
 			tab_obj->setParentTable(src_table);
@@ -528,7 +528,7 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 
 				//Raises an error if the user try to add as foreign key to relationship
 				if(rest->getConstraintType()==ConstraintType::foreign_key)
-					throw Exception(AsgForeignKeyRelationship,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					throw Exception(ErrorCode::AsgForeignKeyRelationship,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 				rest->getCodeDefinition(SchemaParser::SqlDefinition);
 			}
@@ -550,20 +550,20 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 			this->invalidated=true;
 		}
 		else
-			throw Exception(Exception::getErrorMessage(AsgDuplicatedObject)
+			throw Exception(Exception::getErrorMessage(ErrorCode::AsgDuplicatedObject)
 							.arg(tab_obj->getName(true))
 							.arg(tab_obj->getTypeName())
 							.arg(this->getName(true))
 							.arg(this->getTypeName()),
-							AsgDuplicatedObject, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::AsgDuplicatedObject, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 	catch(Exception &e)
 	{
-		if(e.getErrorType()==UndefinedAttributeValue)
-			throw Exception(Exception::getErrorMessage(AsgObjectInvalidDefinition)
+		if(e.getErrorType()==ErrorCode::UndefinedAttributeValue)
+			throw Exception(Exception::getErrorMessage(ErrorCode::AsgObjectInvalidDefinition)
 							.arg(tab_obj->getName())
 							.arg(tab_obj->getTypeName()),
-							AsgObjectInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+							ErrorCode::AsgObjectInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		else
 			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -595,11 +595,11 @@ void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
 	else if(obj_type==ObjectType::ObjConstraint)
 		obj_list=&rel_constraints;
 	else
-		throw Exception(RefObjectInvalidType, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefObjectInvalidType, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Raises an error if the object index is out of bound
 	if(obj_id >= obj_list->size())
-		throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	tab_obj=obj_list->at(obj_id);
 	recv_table=this->getReceiverTable();
@@ -628,14 +628,14 @@ void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
 
 		//Raises an error if the column to be removed is referenced by a relationship constraint
 		if(refer)
-			throw Exception(Exception::getErrorMessage(RemInderectReference)
+			throw Exception(Exception::getErrorMessage(ErrorCode::RemInderectReference)
 							.arg(col->getName())
 							.arg(col->getTypeName())
 							.arg(constr->getName())
 							.arg(constr->getTypeName())
 							.arg(this->getName(true))
 							.arg(this->getTypeName()),
-							RemInderectReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::RemInderectReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Generating the column index inside the special pk column list
 		col_idx=getObjectIndex(col) + gen_columns.size();
@@ -663,7 +663,7 @@ void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
 void Relationship::removeObject(TableObject *object)
 {
 	if(!object)
-		throw Exception(RemNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RemNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	removeObject(getObjectIndex(object),object->getObjectType());
 }
@@ -713,10 +713,10 @@ TableObject *Relationship::getObject(unsigned obj_idx, ObjectType obj_type)
 	else if(obj_type==ObjectType::ObjConstraint)
 		list=&rel_constraints;
 	else
-		throw Exception(RefObjectInvalidType, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefObjectInvalidType, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(obj_idx >= list->size())
-		throw Exception(RefObjectInvalidIndex, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefObjectInvalidIndex, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(list->at(obj_idx));
 }
@@ -733,7 +733,7 @@ TableObject *Relationship::getObject(const QString &name, ObjectType obj_type)
 	else if(obj_type==ObjectType::ObjConstraint)
 		list=&rel_constraints;
 	else
-		throw Exception(RefObjectInvalidType, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefObjectInvalidType, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	itr=list->begin();
 	itr_end=list->end();
@@ -755,7 +755,7 @@ Column *Relationship::getAttribute(unsigned attrib_idx)
 {
 	//Raises an error if the attribute index is out of bound
 	if(attrib_idx >= rel_attributes.size())
-		throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(dynamic_cast<Column *>(rel_attributes[attrib_idx]));
 }
@@ -774,7 +774,7 @@ Constraint *Relationship::getConstraint(unsigned constr_idx)
 {
 	//Raises an error if the constraint index is out of bound
 	if(constr_idx >= rel_constraints.size())
-		throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(dynamic_cast<Constraint *>(rel_constraints[constr_idx]));
 }
@@ -806,7 +806,7 @@ unsigned Relationship::getObjectCount(ObjectType obj_type)
 	else if(obj_type==ObjectType::ObjConstraint)
 		return(rel_constraints.size());
 	else
-		throw Exception(RefObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 void Relationship::addConstraints(Table *recv_tab)
@@ -886,7 +886,7 @@ void Relationship::addColumnsRelGenPart(void)
 			idx, tab_count;
 	vector<Column *> columns;
 	ObjectType types[2]={ObjectType::ObjTable, ObjectType::ObjBaseTable};
-	ErrorCode err_code=Custom;
+	ErrorCode err_code=ErrorCode::Custom;
 	bool duplic=false, cond=false,
 			/* 0 -> Column created by inheritance relationship
 								 1 -> Column created by copy relationship */
@@ -908,14 +908,14 @@ void Relationship::addColumnsRelGenPart(void)
 		/*  If the relationship is partitioning the destination table (partitioned) shoud have
 		 *  a partitioning type defined otherwise and error is raised */
 		if(rel_type == RelationshipPart && !dst_tab->isPartitioned())
-			throw Exception(Exception::getErrorMessage(InvPartitioningTypePartRel)
+			throw Exception(Exception::getErrorMessage(ErrorCode::InvPartitioningTypePartRel)
 						  .arg(src_tab->getSignature()).arg(dst_tab->getSignature()),
-							InvPartitioningTypePartRel, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::InvPartitioningTypePartRel, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		/* This for compares the columns of the receiver table
 		 with the columns of the reference table in order to
 		 resolve the conflicting names */
-		for(i=0; i < dst_count && err_code==Custom; i++)
+		for(i=0; i < dst_count && err_code==ErrorCode::Custom; i++)
 		{
 			//Gets the column from the receiver (destination) table
 			dst_col=dst_tab->getColumn(i);
@@ -1016,17 +1016,17 @@ void Relationship::addColumnsRelGenPart(void)
 							((!dst_flags[0] && !dst_flags[1]) ||
 							 (!dst_flags[0] &&  dst_flags[1])))
 					{
-						err_code=InvCopyRelationshipDuplicCols;
+						err_code=ErrorCode::InvCopyRelationshipDuplicCols;
 					}
 					/* Error condition 2: The relationship type is generalization and the column
 					 * types is incompatible */
 					else if((rel_type == RelationshipGen || rel_type==RelationshipPart) && src_type != dst_type)
-						err_code=InvInheritRelationshipIncompCols;
+						err_code=ErrorCode::InvInheritRelationshipIncompCols;
 				}
 			}
 
 			//In case that no error was detected (ERR_CUSTOM)
-			if(err_code==Custom)
+			if(err_code==ErrorCode::Custom)
 			{
 				//In case there is no column duplicity
 				if(!duplic)
@@ -1065,10 +1065,10 @@ void Relationship::addColumnsRelGenPart(void)
 		}
 
 		if((src_tab->getColumnCount() + columns.size()) != dst_tab->getColumnCount() && rel_type == RelationshipPart)
-			err_code = InvColumnCountPartRel;
+			err_code = ErrorCode::InvColumnCountPartRel;
 
 		//In case that no duplicity error is detected
-		if(err_code==Custom)
+		if(err_code==ErrorCode::Custom)
 		{
 			vector<Column *>::iterator itr, itr_end;
 
@@ -1096,14 +1096,14 @@ void Relationship::addColumnsRelGenPart(void)
 
 			str_aux=Exception::getErrorMessage(err_code);
 
-			if(err_code==InvCopyRelationshipDuplicCols)
+			if(err_code==ErrorCode::InvCopyRelationshipDuplicCols)
 			{
 				msg=QString(str_aux)
 					.arg(dst_col->getName(true))
 					.arg(dst_tab->getName(true))
 					.arg(src_tab->getName(true));
 			}
-			else if(err_code==InvColumnCountPartRel)
+			else if(err_code==ErrorCode::InvColumnCountPartRel)
 			{
 				msg=QString(str_aux)
 					.arg(src_tab->getName(true))
@@ -1165,10 +1165,10 @@ void Relationship::addConstraintsRelGenPart(void)
 				}
 				else if(aux_constr->getConstraintType()!=ConstraintType::check ||
 						aux_constr->getExpression().simplified()!=constr->getExpression().simplified())
-					throw Exception(Exception::getErrorMessage(InvInheritRelationshipIncompConstrs)
+					throw Exception(Exception::getErrorMessage(ErrorCode::InvInheritRelationshipIncompConstrs)
 									.arg(constr->getName()).arg(parent_tab->getName(false, true))
 									.arg(aux_constr->getName()).arg(child_tab->getName(false, true)),
-									InvInheritRelationshipIncompConstrs,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									ErrorCode::InvInheritRelationshipIncompConstrs,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 		}
 	}
@@ -1552,11 +1552,11 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null, b
 		 the relationship is 1-1, 1-n or n-n */
 		if((!src_pk && (rel_type==Relationship1n || rel_type==Relationship11)) ||
 				(!src_pk && !dst_pk && rel_type==RelationshipNn))
-			throw Exception(Exception::getErrorMessage(InvLinkTablesNoPrimaryKey)
+			throw Exception(Exception::getErrorMessage(ErrorCode::InvLinkTablesNoPrimaryKey)
 							.arg(this->obj_name)
 							.arg(ref_tab->getName(true))
 							.arg(recv_tab->getName(true)),
-							InvLinkTablesNoPrimaryKey,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::InvLinkTablesNoPrimaryKey,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		count=pk->getColumnCount(Constraint::SourceCols);
 

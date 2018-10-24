@@ -42,9 +42,9 @@ Tag::Tag(void)
 void Tag::setName(const QString &name)
 {
 	if(name.isEmpty())
-		throw Exception(AsgEmptyNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgEmptyNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(name.size() > BaseObject::ObjectNameMaxLength)
-		throw Exception(AsgLongNameObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgLongNameObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->obj_name=name;
 }
@@ -106,13 +106,13 @@ QColor Tag::getElementColor(const QString &elem_id, unsigned color_id)
 void Tag::validateElementId(const QString &id, unsigned color_id)
 {
 	if(color_config.count(id) == 0)
-		throw Exception(Exception::getErrorMessage(OprInvalidElementId).arg(id),
-						OprInvalidElementId ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(Exception::getErrorMessage(ErrorCode::OprInvalidElementId).arg(id),
+										ErrorCode::OprInvalidElementId ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if((color_id > ColorCount) ||
 					(color_id > 0 &&
 					 (id==ParsersAttributes::TABLE_NAME || id==ParsersAttributes::TABLE_SCHEMA_NAME)))
-		throw Exception(Exception::getErrorMessage(RefInvalidElementColorId).arg(id).arg(color_id),
-										RefInvalidElementColorId ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(Exception::getErrorMessage(ErrorCode::RefInvalidElementColorId).arg(id).arg(color_id),
+										ErrorCode::RefInvalidElementColorId ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 QLinearGradient Tag::getFillStyle(const QString &elem_id)

@@ -635,10 +635,10 @@ void TableWidget::removeObjects(void)
 				table->removeObject(object);
 			}
 			else
-				throw Exception(Exception::getErrorMessage(RemProtectedObject)
+				throw Exception(Exception::getErrorMessage(ErrorCode::RemProtectedObject)
 								.arg(object->getName())
 								.arg(object->getTypeName()),
-								RemProtectedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+								ErrorCode::RemProtectedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
 		if(obj_type == ObjectType::ObjConstraint)
@@ -688,10 +688,10 @@ void TableWidget::removeObject(int row)
 			table->setModified(true);
 		}
 		else
-			throw Exception(Exception::getErrorMessage(RemProtectedObject)
+			throw Exception(Exception::getErrorMessage(ErrorCode::RemProtectedObject)
 							.arg(object->getName())
 							.arg(object->getTypeName()),
-							RemProtectedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::RemProtectedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		if(obj_type == ObjectType::ObjConstraint)
 			listObjects(ObjectType::ObjColumn);
@@ -911,7 +911,7 @@ void TableWidget::applyConfiguration(void)
 		{
 			Messagebox msg_box;
 
-			if(e.getErrorType()==RemInvalidatedObjects)
+			if(e.getErrorType()==ErrorCode::RemInvalidatedObjects)
 				msg_box.show(e);
 			else
 				throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);

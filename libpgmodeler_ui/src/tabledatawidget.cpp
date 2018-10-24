@@ -494,9 +494,9 @@ QString TableDataWidget::generateDataBuffer(void)
 			if((value.startsWith(PgModelerNs::UnescValueStart) && value.endsWith(QString("\\") + PgModelerNs::UnescValueEnd)) ||
 					(value.startsWith(PgModelerNs::UnescValueStart) && !value.endsWith(PgModelerNs::UnescValueEnd)) ||
 					(!value.startsWith(PgModelerNs::UnescValueStart) && !value.endsWith(QString("\\") + PgModelerNs::UnescValueEnd) && value.endsWith(PgModelerNs::UnescValueEnd)))
-				throw Exception(Exception::getErrorMessage(MalformedUnescapedValue)
-								.arg(row + 1).arg(col_names[col]),
-								MalformedUnescapedValue,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(Exception::getErrorMessage(ErrorCode::MalformedUnescapedValue)
+												.arg(row + 1).arg(col_names[col]),
+												ErrorCode::MalformedUnescapedValue,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			val_list.push_back(value);
 		}

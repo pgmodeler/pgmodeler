@@ -262,11 +262,11 @@ void PermissionWidget::showSelectedRoleData(void)
 		//Raise an error if the role already exists on selected role table
 		if(role && row_idx >= 0)
 		{
-			throw Exception(Exception::getErrorMessage(AsgDuplicatedObjectContainer)
-							.arg(role->getName())
-							.arg(role->getTypeName())
-							.arg(roles_gb->title()),
-							InsDuplicatedRole,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(ErrorCode::AsgDuplicatedObjectContainer)
+											.arg(role->getName())
+											.arg(role->getTypeName())
+											.arg(roles_gb->title()),
+											ErrorCode::InsDuplicatedRole,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 	}
 }
@@ -326,10 +326,10 @@ void PermissionWidget::updatePermission(void)
 		else
 		{
 			//Raises an error if the configured permission already exists
-			throw Exception(Exception::getErrorMessage(AsgDuplicatedPermission)
+			throw Exception(Exception::getErrorMessage(ErrorCode::AsgDuplicatedPermission)
 							.arg(permission->getObject()->getName())
 							.arg(permission->getObject()->getTypeName()),
-							AsgDuplicatedPermission,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::AsgDuplicatedPermission,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
 		delete(perm_bkp);

@@ -86,7 +86,7 @@ void Trigger::setFiringType(FiringType firing_type)
 void Trigger::setEvent(EventType event, bool value)
 {
 	if(event==EventType::on_select)
-		throw Exception(RefInvalidTriggerEvent,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefInvalidTriggerEvent,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(events[event] != value);
 	events[event]=value;
@@ -96,21 +96,21 @@ void Trigger::setFunction(Function *func)
 {
 	//Case the function is null an error is raised
 	if(!func)
-		throw Exception(Exception::getErrorMessage(AsgNotAllocatedFunction)
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgNotAllocatedFunction)
 						.arg(this->getName())
 						.arg(BaseObject::getTypeName(ObjectType::ObjTrigger)),
-						AsgNotAllocatedFunction,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						ErrorCode::AsgNotAllocatedFunction,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
 		//Case the function doesn't returns 'trigger' it cannot be used with the trigger thus raise an error
 		if(func->getReturnType()!=QString("trigger"))
-			throw Exception(Exception::getErrorMessage(AsgInvalidTriggerFunction).arg(QString("trigger")),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidTriggerFunction).arg(QString("trigger")),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		//Case the function has some parameters raise an error
 		else if(func->getParameterCount()!=0)
-			throw Exception(Exception::getErrorMessage(AsgFunctionInvalidParamCount)
+			throw Exception(Exception::getErrorMessage(ErrorCode::AsgFunctionInvalidParamCount)
 							.arg(this->getName())
 							.arg(BaseObject::getTypeName(ObjectType::ObjTrigger)),
-							AsgFunctionInvalidParamCount,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::AsgFunctionInvalidParamCount,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		setCodeInvalidated(function != func);
 		this->function=func;
@@ -150,7 +150,7 @@ void Trigger::editArgument(unsigned arg_idx, const QString &new_arg)
 {
 	//Raises an error if the argument index is invalid (out of bound)
 	if(arg_idx>=arguments.size())
-		throw Exception(RefArgumentInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefArgumentInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	vector<QString>::iterator itr;
 
@@ -169,7 +169,7 @@ void Trigger::setExecutePerRow(bool value)
 bool Trigger::isExecuteOnEvent(EventType event)
 {
 	if(event==EventType::on_select)
-		throw Exception(RefInvalidTriggerEvent,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefInvalidTriggerEvent,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(events.at(!event));
 }
@@ -183,7 +183,7 @@ QString Trigger::getArgument(unsigned arg_idx)
 {
 	//Raises an error if the argument index is invalid (out of bound)
 	if(arg_idx>=arguments.size())
-		throw Exception(RefArgumentInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefArgumentInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(arguments[arg_idx]);
 }
@@ -192,7 +192,7 @@ Column *Trigger::getColumn(unsigned col_idx)
 {
 	//Raises an error if the column index is invalid (out of bound)
 	if(col_idx>=upd_columns.size())
-		throw Exception(RefColumnInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefColumnInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(upd_columns[col_idx]);
 }
@@ -226,7 +226,7 @@ void Trigger::removeArgument(unsigned arg_idx)
 {
 	//Raises an error if the argument index is invalid (out of bound)
 	if(arg_idx>=arguments.size())
-		throw Exception(RefArgumentInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefArgumentInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	vector<QString>::iterator itr;
 	itr=arguments.begin()+arg_idx;
@@ -250,7 +250,7 @@ void Trigger::setReferecendTable(BaseTable *ref_table)
 {
 	//If the referenced table isn't valid raises an error
 	if(ref_table && ref_table->getObjectType()!=ObjectType::ObjTable)
-		throw Exception(AsgObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(referenced_table != ref_table);
 	this->referenced_table=ref_table;
@@ -292,7 +292,7 @@ void Trigger::setConstraint(bool value)
 void Trigger::setTransitionTableName(unsigned tab_idx, const QString &name)
 {
 	if(tab_idx > NewTableName)
-		throw Exception(RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(transition_tabs_names[tab_idx] != name);
 	transition_tabs_names[tab_idx] = name;
@@ -301,7 +301,7 @@ void Trigger::setTransitionTableName(unsigned tab_idx, const QString &name)
 QString Trigger::getTransitionTableName(unsigned tab_idx)
 {
 	if(tab_idx > NewTableName)
-		throw Exception(RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(transition_tabs_names[tab_idx]);
 }
@@ -446,33 +446,33 @@ void Trigger::validateTrigger(void)
 		{
 			//The INSTEAD OF mode cannot be used on triggers that belongs to tables! This is available only for view triggers
 			if(firing_type==FiringType::instead_of && parent_type==ObjectType::ObjTable)
-				throw Exception(InvTableTriggerInsteadOfFiring,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(ErrorCode::InvTableTriggerInsteadOfFiring,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			//The INSTEAD OF mode cannot be used on view triggers that executes for each statement
 			else if(firing_type==FiringType::instead_of && parent_type==ObjectType::ObjView && !is_exec_per_row)
-				throw Exception(InvUsageInsteadOfOnTrigger,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(ErrorCode::InvUsageInsteadOfOnTrigger,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			//A trigger cannot make reference to columns when using INSTEAD OF mode and UPDATE event
 			else if(firing_type==FiringType::instead_of && events[EventType::on_update] && !upd_columns.empty())
-				throw Exception(InvUsageInsteadOfUpdateTrigger,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(ErrorCode::InvUsageInsteadOfUpdateTrigger,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			//The TRUNCATE event can only be used when the trigger executes for each statement and belongs to a table
 			else if(events[EventType::on_truncate] && (is_exec_per_row || parent_type==ObjectType::ObjView))
-				throw Exception(InvUsageTruncateOnTrigger,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(ErrorCode::InvUsageTruncateOnTrigger,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			//A view trigger cannot be AFTER/BEFORE when it executes for each row
 			else if(parent_type==ObjectType::ObjView && is_exec_per_row && (firing_type==FiringType::after || firing_type==FiringType::before))
-				throw Exception(InvUsageAfterBeforeViewTrigger,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(ErrorCode::InvUsageAfterBeforeViewTrigger,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			//Only constraint triggers can be deferrable or reference another table
 			else if(referenced_table || is_deferrable)
-				throw Exception(InvUseConstraintTriggerAttribs,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(ErrorCode::InvUseConstraintTriggerAttribs,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 		//Constraint triggers can only be executed on AFTER events and for each row
 		else
 		{
 			if(firing_type!=FiringType::after && !is_exec_per_row)
-				throw Exception(InvConstrTriggerNotAfterRow,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(ErrorCode::InvConstrTriggerNotAfterRow,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 	}
 }

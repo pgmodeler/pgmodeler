@@ -226,17 +226,17 @@ void View::addReference(Reference &refer, unsigned sql_type, int expr_id)
 	{
 		//Raises an error if the expression is empty
 		if(refer.getExpression().isEmpty())
-			throw Exception(AsgInvalidViewDefExpression,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::AsgInvalidViewDefExpression,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		//Raises an error if already exists a definition expression
 		else if(hasDefinitionExpression())
-			throw Exception(AsgSecondViewDefExpression,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::AsgSecondViewDefExpression,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		//Raises an error if the user try to add a definition expression when already exists another references
 		else if(!references.empty())
-			throw Exception(MixingViewDefExprsReferences,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::MixingViewDefExprsReferences,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 	//Raises an error if the user try to add a ordinary reference when there is a reference used as definition expression
 	else if(hasDefinitionExpression())
-		throw Exception(MixingViewDefExprsReferences,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::MixingViewDefExprsReferences,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Checks if the reference already exists
 	idx=getReferenceIndex(refer);
@@ -264,7 +264,7 @@ void View::addReference(Reference &refer, unsigned sql_type, int expr_id)
 			expr_list->insert(expr_list->begin() + expr_id, static_cast<unsigned>(idx));
 		//Raises an error if the expression id is invalid
 		else if(expr_id >= 0 && expr_id >= static_cast<int>(expr_list->size()))
-			throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else
 			expr_list->push_back(static_cast<unsigned>(idx));
 
@@ -320,7 +320,7 @@ Reference View::getReference(unsigned ref_id)
 {
 	//Raises an error if the reference id is out of bound
 	if(ref_id >= references.size())
-		throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(references[ref_id]);
 }
@@ -331,7 +331,7 @@ Reference View::getReference(unsigned ref_id, unsigned sql_type)
 
 	//Raises an error if the reference id is out of bound
 	if(ref_id >= references.size())
-		throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(sql_type==Reference::SqlViewDefinition || vect_idref)
 		return(references[ref_id]);
@@ -347,7 +347,7 @@ void View::removeReference(unsigned ref_id)
 
 	//Raises an error if the reference id is out of bound
 	if(ref_id >= references.size())
-		throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	for(i=0; i < 3; i++)
 	{
@@ -384,7 +384,7 @@ void View::removeReference(unsigned expr_id, unsigned sql_type)
 	vector<unsigned> *vect_idref=getExpressionList(sql_type);
 
 	if(expr_id >= vect_idref->size())
-		throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	vect_idref->erase(vect_idref->begin() + expr_id);
 	setCodeInvalidated(true);
@@ -697,7 +697,7 @@ int View::getObjectIndex(const QString &name, ObjectType obj_type)
 void View::addObject(BaseObject *obj, int obj_idx)
 {
 	if(!obj)
-		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
 		try
@@ -708,12 +708,12 @@ void View::addObject(BaseObject *obj, int obj_idx)
 			//Raises an error if already exists a object with the same name and type
 			if(getObjectIndex(obj->getName(), tab_obj->getObjectType()) >= 0)
 			{
-				throw Exception(Exception::getErrorMessage(AsgDuplicatedObject)
+				throw Exception(Exception::getErrorMessage(ErrorCode::AsgDuplicatedObject)
 								.arg(obj->getName(true))
 								.arg(obj->getTypeName())
 								.arg(this->getName(true))
 								.arg(this->getTypeName()),
-								AsgDuplicatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+								ErrorCode::AsgDuplicatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
 			//Validates the object definition
@@ -734,11 +734,11 @@ void View::addObject(BaseObject *obj, int obj_idx)
 		}
 		catch(Exception &e)
 		{
-			if(e.getErrorType()==UndefinedAttributeValue)
-				throw Exception(Exception::getErrorMessage(AsgObjectInvalidDefinition)
+			if(e.getErrorType()==ErrorCode::UndefinedAttributeValue)
+				throw Exception(Exception::getErrorMessage(ErrorCode::AsgObjectInvalidDefinition)
 								.arg(obj->getName())
 								.arg(obj->getTypeName()),
-								AsgObjectInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+								ErrorCode::AsgObjectInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 			else
 				throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
@@ -788,7 +788,7 @@ void View::removeObject(unsigned obj_idx, ObjectType obj_type)
 
 	//Raises an error if the object index is out of bound
 	if(obj_idx >= obj_list->size())
-		throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	itr=obj_list->begin() + obj_idx;
 	(*itr)->setParentTable(nullptr);
@@ -862,7 +862,7 @@ TableObject *View::getObject(unsigned obj_idx, ObjectType obj_type)
 
 	//Raises an error if the object index is out of bound
 	if(obj_idx >= obj_list->size())
-		throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(obj_list->at(obj_idx));
 }
@@ -957,7 +957,7 @@ vector<TableObject *> *View::getObjectList(ObjectType obj_type)
 	else if(obj_type==ObjectType::ObjIndex)
 		return(&indexes);
 	else
-		throw Exception(ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 void View::removeObjects(void)

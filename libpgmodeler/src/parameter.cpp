@@ -27,7 +27,7 @@ Parameter::Parameter(void)
 void Parameter::setType(PgSQLType type)
 {
 	if(!type.isArrayType() && !type.isPolymorphicType() && is_variadic)
-		throw Exception(InvUsageVariadicParamMode ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::InvUsageVariadicParamMode ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->type != type);
 	this->type=type;
@@ -50,7 +50,7 @@ void Parameter::setOut(bool value)
 void Parameter::setVariadic(bool value)
 {
 	if(value && !type.isArrayType() && !type.isPolymorphicType())
-		throw Exception(InvUsageVariadicParamMode ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::InvUsageVariadicParamMode ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(is_variadic != value);
 	is_variadic=value;

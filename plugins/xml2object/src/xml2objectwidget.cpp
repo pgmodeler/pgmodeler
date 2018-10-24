@@ -34,8 +34,8 @@ void Xml2ObjectWidget::loadXML(void)
 		f.open(QFile::ReadOnly);
 
 		if(!f.isOpen())
-			throw Exception(Exception::getErrorMessage(FileDirectoryNotAccessed).arg(file_dlg.selectedFiles().at(0)),
-							FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(file_dlg.selectedFiles().at(0)),
+											ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 
 		code_txt->setPlainText(QString::fromUtf8(f.readAll()));

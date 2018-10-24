@@ -164,8 +164,8 @@ void Catalog::loadCatalogQuery(const QString &qry_id)
 							qry_id + GlobalAttributes::SchemaExt);
 
 		if(!input.open(QFile::ReadOnly))
-			throw Exception(Exception::getErrorMessage(FileDirectoryNotAccessed).arg(input.fileName()),
-							FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(input.fileName()),
+											ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		catalog_queries[qry_id]=QString(input.readAll());
 		input.close();
@@ -640,7 +640,7 @@ QString Catalog::getObjectOID(const QString &name, ObjectType obj_type, const QS
 
 		if(res.getTupleCount() > 1)
 			throw Exception(QApplication::translate("Catalog","The catalog query returned more than one OID!","", -1),
-											Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+											ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		else if(res.isEmpty())
 			return("0");

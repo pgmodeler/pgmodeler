@@ -224,7 +224,7 @@ void Sequence::setSchema(BaseObject *schema)
 
 		//Raises an error when the passed schema differs from the table schema
 		if(table && table->getSchema()!=schema)
-			throw Exception(AsgSchemaSequenceDiffersTableSchema,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::AsgSchemaSequenceDiffersTableSchema,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
 	BaseObject::setSchema(schema);
@@ -246,16 +246,16 @@ void Sequence::setValues(QString minv, QString maxv, QString inc, QString start,
 	cache=formatValue(cache);
 
 	if(compareValues(minv,maxv) > 0)
-		throw Exception(AsgInvalidSequenceMinValue,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgInvalidSequenceMinValue,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error when the start value is less that min value or grater than max value
 	else if(compareValues(start, minv) < 0 ||	compareValues(start, maxv) > 0)
-		throw Exception(AsgInvalidSequenceStartValue,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgInvalidSequenceStartValue,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error when the increment value is null (0)
 	else if(isZeroValue(inc))
-		throw Exception(AsgInvalidSequenceIncrementValue,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgInvalidSequenceIncrementValue,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error when the cache value is null (0)
 	else if(isZeroValue(cache))
-		throw Exception(AsgInvalidSequenceCacheValue,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgInvalidSequenceCacheValue,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->min_value=minv;
 	this->max_value=maxv;
@@ -274,24 +274,24 @@ void Sequence::setOwnerColumn(Table *table, const QString &col_name)
 	{
 		//Raises an error if the table schema differs from the sequence schema
 		if(table->getSchema()!=this->schema)
-			throw Exception(Exception::getErrorMessage(AsgSeqOwnerTableDifferentSchema)
+			throw Exception(Exception::getErrorMessage(ErrorCode::AsgSeqOwnerTableDifferentSchema)
 							.arg(this->getName(true)),
-							AsgSeqOwnerTableDifferentSchema,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::AsgSeqOwnerTableDifferentSchema,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Raises an error when the table owner role differs from the sequence owner
 		if(table->getOwner()!=this->owner)
-			throw Exception(Exception::getErrorMessage(AsgSeqOwnerTableDifferentRole)
+			throw Exception(Exception::getErrorMessage(ErrorCode::AsgSeqOwnerTableDifferentRole)
 							.arg(this->getName(true)),
-							AsgSeqOwnerTableDifferentRole,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::AsgSeqOwnerTableDifferentRole,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Gets the column with the passed name
 		this->owner_col=table->getColumn(col_name);
 
 		//Raises an error if the column doesn't exists
 		if(!this->owner_col)
-			throw Exception(Exception::getErrorMessage(AsgInexistentSeqOwnerColumn)
+			throw Exception(Exception::getErrorMessage(ErrorCode::AsgInexistentSeqOwnerColumn)
 							.arg(this->getName(true)),
-							AsgInexistentSeqOwnerColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::AsgInexistentSeqOwnerColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		/* If the onwer column was added by relationship and the column id is greater than
 		 sequence id, change the sequence id to be greater to avoid reference errors */
@@ -315,21 +315,21 @@ void Sequence::setOwnerColumn(Column *column)
 
 		//Raises an error when the column doesn't has a parent table
 		if(!table)
-			throw Exception(Exception::getErrorMessage(AsgInvalidSeqOwnerColumn)
+			throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidSeqOwnerColumn)
 							.arg(this->getName(true)),
-							AsgInvalidSeqOwnerColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::AsgInvalidSeqOwnerColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Raises an error if the table schema differs from the sequence schema
 		if(table->getSchema()!=this->schema)
-			throw Exception(Exception::getErrorMessage(AsgSeqOwnerTableDifferentSchema)
+			throw Exception(Exception::getErrorMessage(ErrorCode::AsgSeqOwnerTableDifferentSchema)
 							.arg(this->getName(true)),
-							AsgSeqOwnerTableDifferentSchema,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::AsgSeqOwnerTableDifferentSchema,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Raises an error when the table owner role differs from the sequence owner
 		if(table->getOwner()!=this->owner)
-			throw Exception(Exception::getErrorMessage(AsgSeqOwnerTableDifferentRole)
+			throw Exception(Exception::getErrorMessage(ErrorCode::AsgSeqOwnerTableDifferentRole)
 							.arg(this->getName(true)),
-							AsgSeqOwnerTableDifferentRole,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::AsgSeqOwnerTableDifferentRole,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		this->owner_col=column;
 
@@ -417,7 +417,7 @@ QString Sequence::getAlterDefinition(BaseObject *object)
 	Sequence *seq=dynamic_cast<Sequence *>(object);
 
 	if(!seq)
-		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{

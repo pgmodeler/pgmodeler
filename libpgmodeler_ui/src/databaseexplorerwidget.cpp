@@ -1124,7 +1124,7 @@ void DatabaseExplorerWidget::handleSelectedSnippet(const QString &snip_id)
 attribs_map DatabaseExplorerWidget::extractAttributesFromItem(QTreeWidgetItem *item)
 {
 	if(!item)
-		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt());
 	QString obj_name=item->text(0);
@@ -1967,9 +1967,9 @@ void DatabaseExplorerWidget::dropDatabase(void)
 		catch(Exception &e)
 		{
 			if(connection.getConnectionParam(Connection::ParamDbName) == default_db)
-				throw Exception(Exception::getErrorMessage(DropCurrentDBDefault)
+				throw Exception(Exception::getErrorMessage(ErrorCode::DropCurrentDBDefault)
 												.arg(dbname).arg(connection.getConnectionParam(Connection::ParamAlias)),
-												DropCurrentDBDefault,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+												ErrorCode::DropCurrentDBDefault,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 			else
 				throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}

@@ -32,10 +32,10 @@ void Schema::setName(const QString &name)
 	/* Schema names starting with pg_ is reserved to PostgreSQL if its the case
 		raises an error */
 	if(name.mid(0,3)==QString("pg_"))
-		throw Exception(Exception::getErrorMessage(AsgReservedName)
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgReservedName)
 						.arg(this->getName())
 						.arg(BaseObject::getTypeName(ObjectType::ObjSchema)),
-						AsgReservedName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						ErrorCode::AsgReservedName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObject::setName(name);
 }

@@ -31,10 +31,12 @@
 #include <signal.h>
 #include <vector>
 #include <deque>
+#include <type_traits>
 
 using namespace std;
 
-enum ErrorCode {
+//! \brief This enum defines the global error codes used throughout the application
+enum class ErrorCode {
 	Custom,
 	AsgPseudoTypeColumn,
 	AsgInvalidPrecision,
@@ -277,6 +279,12 @@ enum ErrorCode {
 	AsgInvalidColumnPartitionKey,
 	RemColumnRefByPartitionKey
 };
+
+//! \brief This unary operator overloading causes the provided enum to be converted to its underlying datatype
+constexpr std::underlying_type<ErrorCode>::type operator ~ (ErrorCode err_code) noexcept
+{
+	return(static_cast<typename std::underlying_type<ErrorCode>::type>(err_code));
+}
 
 class Exception {
 	private:

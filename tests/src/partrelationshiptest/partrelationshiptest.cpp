@@ -162,7 +162,7 @@ void PartRelationhipTest::connRelTablePartionHasMoreColsThanPartitionedTableShou
   }
   catch(Exception &e)
   {
-	QVERIFY(e.getErrorType() == InvColumnCountPartRel);
+	QVERIFY(e.getErrorType() == ErrorCode::InvColumnCountPartRel);
   }
 }
 
@@ -209,7 +209,7 @@ void PartRelationhipTest::connRelTablePartionHasDifferentColsThanPartitionedTabl
   }
   catch(Exception &e)
   {
-	QVERIFY(e.getErrorType() == InvColumnCountPartRel);
+	QVERIFY(e.getErrorType() == ErrorCode::InvColumnCountPartRel);
   }
 }
 

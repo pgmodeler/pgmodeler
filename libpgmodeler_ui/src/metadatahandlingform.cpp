@@ -152,7 +152,7 @@ void MetadataHandlingForm::handleObjectsMetada(void)
 	if(!backup_file_edt->text().isEmpty() &&
 		 backup_file_edt->text() == model_wgt->getFilename())
 		throw Exception(trUtf8("The backup file cannot be the same as the input model!"),
-										Custom,	__PRETTY_FUNCTION__,__FILE__,__LINE__);
+										ErrorCode::Custom,	__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	QTemporaryFile tmp_file;
 	QString metadata_file;

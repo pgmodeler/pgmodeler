@@ -88,7 +88,7 @@ bool Constraint::isColumnExists(Column *column, unsigned col_type)
 
 	//Raises an error if the column is not allocated
 	if(!column)
-		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Gets the iterators from the specified internal list
 	if(col_type==SourceCols)
@@ -176,7 +176,7 @@ void Constraint::setTablespace(BaseObject *tabspc)
 		if(tabspc &&
 				constr_type!=ConstraintType::primary_key &&
 				constr_type!=ConstraintType::unique)
-			throw Exception(AsgTablespaceInvalidConstraintType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::AsgTablespaceInvalidConstraintType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		BaseObject::setTablespace(tabspc);
 	}
@@ -297,7 +297,7 @@ Column *Constraint::getColumn(unsigned col_idx, unsigned col_type)
 
 	//Raises an error if the column index is invalid (out of bound)
 	if(col_idx>=col_list->size())
-		throw Exception(RefColumnInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefColumnInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(col_list->at(col_idx));
 }
@@ -506,9 +506,10 @@ void Constraint::addExcludeElements(vector<ExcludeElement> &elems)
 void Constraint::addExcludeElement(ExcludeElement elem)
 {
 	if(getExcludeElementIndex(elem) >= 0)
-		throw Exception(InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(elem.getExpression().isEmpty() && !elem.getColumn())
-		throw Exception(AsgInvalidExpressionObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	if(elem.getExpression().isEmpty() && !elem.getColumn())
+		throw Exception(ErrorCode::AsgInvalidExpressionObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	excl_elements.push_back(elem);
 	setCodeInvalidated(true);
@@ -522,7 +523,7 @@ void Constraint::addExcludeElement(const QString &expr, Operator *oper, Operator
 
 		//Raises an error if the expression is empty
 		if(expr.isEmpty())
-			throw Exception(AsgInvalidExpressionObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::AsgInvalidExpressionObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Configures the element
 		elem.setExpression(expr);
@@ -533,7 +534,7 @@ void Constraint::addExcludeElement(const QString &expr, Operator *oper, Operator
 		elem.setSortingAttribute(ExcludeElement::AscOrder, asc_order);
 
 		if(getExcludeElementIndex(elem) >= 0)
-			throw Exception(InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		excl_elements.push_back(elem);
 		setCodeInvalidated(true);
@@ -566,7 +567,7 @@ void Constraint::addExcludeElement(Column *column, Operator *oper, OperatorClass
 		elem.setSortingAttribute(ExcludeElement::AscOrder, asc_order);
 
 		if(getExcludeElementIndex(elem) >= 0)
-			throw Exception(InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		excl_elements.push_back(elem);
 		setCodeInvalidated(true);
@@ -580,7 +581,7 @@ void Constraint::addExcludeElement(Column *column, Operator *oper, OperatorClass
 void Constraint::removeExcludeElement(unsigned elem_idx)
 {
 	if(elem_idx >= excl_elements.size())
-		throw Exception(RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	excl_elements.erase(excl_elements.begin() + elem_idx);
 	setCodeInvalidated(true);
@@ -607,7 +608,7 @@ void Constraint::setColumnsNotNull(bool value)
 ExcludeElement Constraint::getExcludeElement(unsigned elem_idx)
 {
 	if(elem_idx >= excl_elements.size())
-		throw Exception(RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(excl_elements[elem_idx]);
 }
@@ -746,9 +747,9 @@ QString Constraint::getSignature(bool format)
 bool Constraint::isCodeDiffersFrom(BaseObject *object, const vector<QString> &ignored_attribs, const vector<QString> &ignored_tags)
 {
 	if(!object)
-		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(object->getObjectType()!=this->getObjectType())
-		throw Exception(OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{

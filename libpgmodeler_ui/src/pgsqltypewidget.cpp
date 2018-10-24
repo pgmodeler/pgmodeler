@@ -213,7 +213,7 @@ void PgSQLTypeWidget::setAttributes(PgSQLType type, DatabaseModel *model,  unsig
 PgSQLType PgSQLTypeWidget::getPgSQLType(void)
 {
 	if(format_txt->toPlainText() == InvalidType)
-		throw Exception(AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(type);
 }

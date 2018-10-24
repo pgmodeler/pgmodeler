@@ -244,7 +244,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	bool rel1n=false, relnn=false, relgen_dep=false, use_name_patterns=false;
 
 	if(!base_rel)
-		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObjectWidget::setAttributes(model, op_list, base_rel);
 
@@ -1172,7 +1172,7 @@ void RelationshipWidget::applyConfiguration(void)
 			{
 				Messagebox msg_box;
 
-				if(e.getErrorType()==RemInvalidatedObjects)
+				if(e.getErrorType()==ErrorCode::RemInvalidatedObjects)
 					msg_box.show(e);
 				else
 					throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);

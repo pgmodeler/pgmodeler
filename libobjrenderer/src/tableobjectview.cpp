@@ -527,7 +527,7 @@ void TableObjectView::configureObject(Reference reference)
 void TableObjectView::setChildObjectXPos(unsigned obj_idx, double px)
 {
 	if(obj_idx >= 4)
-		throw Exception(RefObjectInvalidIndex, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		throw Exception(ErrorCode::RefObjectInvalidIndex, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	if(obj_idx==0)
 		descriptor->setPos(px, descriptor->pos().y());
@@ -538,7 +538,7 @@ void TableObjectView::setChildObjectXPos(unsigned obj_idx, double px)
 QGraphicsItem *TableObjectView::getChildObject(unsigned obj_idx)
 {
 	if(obj_idx >= 4)
-		throw Exception(RefObjectInvalidIndex, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		throw Exception(ErrorCode::RefObjectInvalidIndex, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	if(obj_idx==0)
 		return(descriptor);

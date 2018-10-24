@@ -67,7 +67,7 @@ void DatabaseImportHelper::setCurrentDatabase(const QString &dbname)
 void DatabaseImportHelper::setSelectedOIDs(DatabaseModel *db_model, const map<ObjectType, vector<unsigned> > &obj_oids, const map<unsigned, vector<unsigned> > &col_oids)
 {
 	if(!db_model)
-		throw Exception(AsgNotAllocattedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	dbmodel=db_model;
 	xmlparser=dbmodel->getXMLParser();
@@ -545,7 +545,7 @@ void DatabaseImportHelper::importDatabase(void)
 	try
 	{
 		if(!dbmodel)
-			throw Exception(OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		dbmodel->setLoadingModel(true);
 		dbmodel->setObjectListsCapacity(creation_order.size());
@@ -748,9 +748,9 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(Exception::getErrorMessage(ObjectNotImported)
+		throw Exception(Exception::getErrorMessage(ErrorCode::ObjectNotImported)
 										.arg(obj_name).arg(BaseObject::getTypeName(obj_type)).arg(attribs[ParsersAttributes::OID]),
-										ObjectNotImported,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, dumpObjectAttributes(attribs));
+										ErrorCode::ObjectNotImported,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, dumpObjectAttributes(attribs));
 	}
 }
 
@@ -1789,10 +1789,10 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 
 			if(!partitioned_tab)
 			{
-				throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
+				throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 												.arg(attribs[ParsersAttributes::NAME]).arg(BaseObject::getTypeName(ObjectType::ObjTable))
 												.arg(attribs[ParsersAttributes::PARTITIONED_TABLE]).arg(BaseObject::getTypeName(ObjectType::ObjTable)),
-												RefObjectInexistsModel ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+												ErrorCode::RefObjectInexistsModel ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 		}
 
@@ -2020,10 +2020,10 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 			parent_tab=dynamic_cast<BaseTable *>(dbmodel->getObject(tab_name, ObjectType::ObjView));
 
 			if(!parent_tab)
-				throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
+				throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 												.arg(attribs[ParsersAttributes::NAME]).arg(BaseObject::getTypeName(ObjectType::ObjIndex))
 												.arg(tab_name).arg(BaseObject::getTypeName(ObjectType::ObjTable)),
-												RefObjectInexistsModel ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+												ErrorCode::RefObjectInexistsModel ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
 		cols=Catalog::parseArrayValues(attribs[ParsersAttributes::COLUMNS]);
@@ -2293,7 +2293,7 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 				/* If the role doesn't exists and there is a name defined, throws an error because
 				the roles wasn't found on the model */
 				if(!role && !role_name.isEmpty())
-					throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
+					throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 									.arg(QString("permission_%1").arg(perm_list[i])).arg(BaseObject::getTypeName(ObjectType::ObjPermission))
 									.arg(role_name).arg(BaseObject::getTypeName(ObjectType::ObjRole))
 									,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -2529,8 +2529,9 @@ void DatabaseImportHelper::__createTableInheritances(void)
 					}
 
 					if(!parent_tab)
-						throw Exception(Exception::getErrorMessage(InvInheritParentTableNotFound).arg(child_tab->getSignature()).arg(inh_list.front()),
-										InvInheritParentTableNotFound,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						throw Exception(Exception::getErrorMessage(ErrorCode::InvInheritParentTableNotFound)
+														.arg(child_tab->getSignature()).arg(inh_list.front()),
+														ErrorCode::InvInheritParentTableNotFound,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 					inh_list.pop_front();
 

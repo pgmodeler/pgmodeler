@@ -133,7 +133,7 @@ void ReferenceWidget::applyConfiguration(void)
 		if(!select_from_chk->isChecked() &&	!from_where_chk->isChecked() &&
 			 !after_where_chk->isChecked() && !end_expr_chk->isChecked() &&
 			 !view_def_chk->isChecked())
-			throw Exception(InvSQLScopeViewReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::InvSQLScopeViewReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		ref_flags = 0;
 

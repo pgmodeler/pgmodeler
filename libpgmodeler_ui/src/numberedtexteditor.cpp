@@ -342,9 +342,9 @@ void NumberedTextEditor::loadFile(void)
 		file.setFileName(sql_file_dlg.selectedFiles().at(0));
 
 		if(!file.open(QFile::ReadOnly))
-			throw Exception(Exception::getErrorMessage(FileDirectoryNotAccessed)
-											.arg(sql_file_dlg.selectedFiles().at(0))
-											,FileDirectoryNotAccessed ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed)
+											.arg(sql_file_dlg.selectedFiles().at(0)),
+											ErrorCode::FileDirectoryNotAccessed ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		this->clear();
 		this->setPlainText(file.readAll());
@@ -366,9 +366,9 @@ void NumberedTextEditor::editSource(void)
 	input.setFileName(tmp_src_file.fileName());
 
 	if(!input.open(QFile::WriteOnly | QFile::Truncate))
-		throw Exception(Exception::getErrorMessage(FileDirectoryNotAccessed)
-										.arg(tmp_src_file.fileName())
-										,FileDirectoryNotAccessed ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed)
+										.arg(tmp_src_file.fileName()),
+										ErrorCode::FileDirectoryNotAccessed ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	buffer.append(this->toPlainText());
 	input.write(buffer);
@@ -403,9 +403,9 @@ void NumberedTextEditor::updateSource(void)
 	this->setReadOnly(false);
 
 	if(!input.open(QFile::ReadOnly))
-		throw Exception(Exception::getErrorMessage(FileDirectoryNotAccessed)
-										.arg(tmp_src_file.fileName())
-										,FileDirectoryNotAccessed ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed)
+										.arg(tmp_src_file.fileName()),
+										ErrorCode::FileDirectoryNotAccessed ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->setPlainText(input.readAll());
 	input.close();

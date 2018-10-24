@@ -61,7 +61,7 @@ void Xml2Object::showPluginInfo(void)
 void Xml2Object::executePlugin(ModelWidget *model)
 {
 	if(!model)
-		throw Exception(trUtf8("This plugin must be executed with at least one model opened!"),Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(trUtf8("This plugin must be executed with at least one model opened!"),ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	xml2obj_wgt.show(model->getDatabaseModel(), model->getOperationList());
 }

@@ -62,7 +62,7 @@ void ModelExportHelper::setIgnoredErrors(const QStringList &err_codes)
 void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver)
 {
 	if(!db_model)
-		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	connect(db_model, SIGNAL(s_objectLoaded(int,QString,uint)), this, SLOT(updateProgress(int,QString,uint)));
 
@@ -91,7 +91,7 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename, double zoom, bool show_grid, bool show_delim, bool page_by_page, QGraphicsView *viewp)
 {
 	if(!scene)
-		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{
@@ -214,8 +214,8 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 				ObjectsScene::setGridOptions(shw_grd, align_objs, shw_dlm);
 				scene->update();
 
-				throw Exception(Exception::getErrorMessage(FileDirectoryNotWritten).arg(file),
-								FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(file),
+												ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 		}
 
@@ -243,7 +243,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename, bool show_grid, bool show_delim)
 {
 	if(!scene)
-		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	bool shw_dlm=false, shw_grd=false, align_objs=false;
 	QSvgGenerator svg_gen;
@@ -273,8 +273,8 @@ void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename
 	scene->update();
 
 	if(!fi.exists() || !fi.isWritable() || !fi.isReadable())
-			throw Exception(Exception::getErrorMessage(FileDirectoryNotWritten).arg(filename),
-											FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(filename),
+											ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	QFile svg_file;
 	svg_file.setFileName(filename);
@@ -322,15 +322,15 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 	try
 	{
 		if(!db_model)
-			throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		/* If the export is called using ignore duplications or drop database and simulation mode at same time
 		an error is raised because the simulate mode (mainly used as SQL validation) cannot
 		undo column addition (this can be changed in the future) */
 		if(simulate && (ignore_dup || drop_db || drop_objs))
-			throw Exception(MixingIncompExportOptions,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::MixingIncompExportOptions,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(drop_db && drop_objs)
-			throw Exception(MixingIncompDropOptions,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::MixingIncompDropOptions,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		connect(db_model, SIGNAL(s_objectLoaded(int,QString,uint)), this, SLOT(updateProgress(int,QString,uint)), Qt::DirectConnection);
 
@@ -364,7 +364,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			generateTempObjectNames(db_model);
 		}
 		else if(use_tmp_names)
-			throw Exception(InvUsageTempNamesExportOption,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::InvUsageTempNamesExportOption,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 
 		if(simulate && db_model->isSQLDisabled())

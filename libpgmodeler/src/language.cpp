@@ -36,10 +36,10 @@ void Language::setName(const QString &name)
 {
 	//Raises an error if the user try to set an system reserved language name (C, SQL)
 	if(name.toLower()==~LanguageType("c") || name.toLower()==~LanguageType("sql"))
-		throw Exception(Exception::getErrorMessage(AsgReservedName)
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgReservedName)
 						.arg(this->getName())
 						.arg(BaseObject::getTypeName(ObjectType::ObjLanguage)),
-						AsgReservedName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						ErrorCode::AsgReservedName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObject::setName(name);
 }
@@ -83,19 +83,19 @@ void  Language::setFunction(Function *func, unsigned func_type)
 	//Raises an error in case the function return type doesn't matches the required by each rule
 	else if((func_type==HandlerFunc && func->getReturnType()!=QString("language_handler")) ||
 			((func_type==ValidatorFunc || func_type==InlineFunc) && func->getReturnType()!=QString("void")))
-		throw Exception(Exception::getErrorMessage(AsgFunctionInvalidReturnType)
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgFunctionInvalidReturnType)
 						.arg(this->getName(true))
 						.arg(BaseObject::getTypeName(ObjectType::ObjLanguage)),
-						AsgFunctionInvalidReturnType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						ErrorCode::AsgFunctionInvalidReturnType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 		//Raises an error in case the function has invalid parameters (count and types)
-		throw Exception(AsgFunctionInvalidParameters,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgFunctionInvalidParameters,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 Function * Language::getFunction(unsigned func_type)
 {
 	if(func_type > InlineFunc)
-		throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(functions[func_type]);
 }

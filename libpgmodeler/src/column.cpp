@@ -153,7 +153,7 @@ QString Column::getOldName(bool format)
 void Column::setParentRelationship(BaseObject *parent_rel)
 {
 	if(parent_rel && parent_rel->getObjectType()!=ObjectType::ObjRelationship)
-		throw Exception(AsgObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->parent_rel=parent_rel;
 }
@@ -168,16 +168,16 @@ void Column::setSequence(BaseObject *seq)
 	if(seq)
 	{
 		if(seq->getObjectType()!=ObjectType::ObjSequence)
-			throw Exception(Exception::getErrorMessage(AsgInvalidObjectType)
+			throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidObjectType)
 							.arg(this->obj_name)
 							.arg(this->getTypeName())
 							.arg(BaseObject::getTypeName(ObjectType::ObjSequence)),
-							AsgInvalidObjectType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::AsgInvalidObjectType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(!type.isIntegerType())
-			throw Exception(Exception::getErrorMessage(IncompColumnTypeForSequence)
+			throw Exception(Exception::getErrorMessage(ErrorCode::IncompColumnTypeForSequence)
 							.arg(seq->getName(true))
 							.arg(this->obj_name),
-							IncompColumnTypeForSequence,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::IncompColumnTypeForSequence,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		default_value=QString();
 		identity_type=BaseType::null;
@@ -279,7 +279,7 @@ QString Column::getAlterDefinition(BaseObject *object)
 	Column *col=dynamic_cast<Column *>(object);
 
 	if(!col)
-		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{

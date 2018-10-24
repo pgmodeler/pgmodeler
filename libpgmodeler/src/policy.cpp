@@ -34,11 +34,11 @@ void Policy::setParentTable(BaseTable *table)
 {
 	if(table && table->getObjectType() != ObjectType::ObjTable)
 	{
-		throw Exception(Exception::getErrorMessage(AsgInvalidObjectType)
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidObjectType)
 						.arg(this->obj_name)
 						.arg(this->getTypeName())
 						.arg(BaseObject::getTypeName(ObjectType::ObjTable)),
-						AsgInvalidObjectType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						ErrorCode::AsgInvalidObjectType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
 	TableObject::setParentTable(table);
@@ -91,7 +91,7 @@ QString Policy::getCheckExpression(void)
 void Policy::addRole(Role *role)
 {
 	if(!role)
-		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(std::find(roles.begin(), roles.end(), role) == roles.end())
 		roles.push_back(role);
@@ -144,7 +144,7 @@ QString Policy::getAlterDefinition(BaseObject *object)
 	Policy *policy=dynamic_cast<Policy *>(object);
 
 	if(!policy)
-		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{

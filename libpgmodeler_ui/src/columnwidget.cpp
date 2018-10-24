@@ -100,7 +100,7 @@ void ColumnWidget::setAttributes(DatabaseModel *model, OperationList *op_list, B
 	PgSQLType type;
 
 	if(!parent_obj)
-		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObjectWidget::setAttributes(model, op_list, column, parent_obj);
 	sequence_sel->setModel(model);
@@ -191,10 +191,10 @@ void ColumnWidget::applyConfiguration(void)
 		{
 			pk = dynamic_cast<Table *>(table)->getPrimaryKey();
 			if(pk && pk->isColumnReferenced(column) && !notnull_chk->isChecked())
-				throw Exception(Exception::getErrorMessage(NullPrimaryKeyColumn)
+				throw Exception(Exception::getErrorMessage(ErrorCode::NullPrimaryKeyColumn)
 												.arg(column->getName())
 												.arg(pk->getParentTable()->getSignature(true)),
-												NullPrimaryKeyColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+												ErrorCode::NullPrimaryKeyColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
 		BaseObjectWidget::applyConfiguration();

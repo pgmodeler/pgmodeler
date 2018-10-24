@@ -47,7 +47,7 @@ ModelsDiffHelper::~ModelsDiffHelper(void)
 void ModelsDiffHelper::setDiffOption(unsigned opt_id, bool value)
 {
 	if(opt_id > OptDropMissingColsConstr)
-		throw Exception(RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(opt_id == OptDropMissingColsConstr)
 		diff_opts[opt_id]=value & !diff_opts[OptDropMissingColsConstr];
@@ -82,7 +82,7 @@ void ModelsDiffHelper::setModels(DatabaseModel *src_model, DatabaseModel *imp_mo
 unsigned ModelsDiffHelper::getDiffTypeCount(unsigned diff_type)
 {
 	if(diff_type >= ObjectsDiffInfo::NoDifference)
-		throw Exception(RefElementInvalidIndex ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefElementInvalidIndex ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(diffs_counter[diff_type]);
 }
@@ -92,7 +92,7 @@ void ModelsDiffHelper::diffModels(void)
 	try
 	{
 		if(!source_model || !imported_model)
-			throw Exception(OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//First, we need to detect the objects to be dropped
 		diffModels(ObjectsDiffInfo::DropObject);

@@ -51,9 +51,9 @@ void Extension::setHandlesType(bool value)
 	try to change the attribute value. This cannot be done to avoid cascade reference breaking
 	on table columns/functions or any other objects that references PgSQLType */
 	if(!value && PgSQLType::getUserTypeIndex(this->getName(true), this) != BaseType::null)
-		throw Exception(Exception::getErrorMessage(ExtensionHandlingTypeImmutable)
+		throw Exception(Exception::getErrorMessage(ErrorCode::ExtensionHandlingTypeImmutable)
 						.arg(this->getName(true)),
-						ExtensionHandlingTypeImmutable,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						ErrorCode::ExtensionHandlingTypeImmutable,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->handles_type=value;
 }
@@ -61,7 +61,7 @@ void Extension::setHandlesType(bool value)
 void Extension::setVersion(unsigned ver, const QString &value)
 {
 	if(ver > OldVersion)
-		throw Exception(RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(versions[ver] != value);
 	versions[ver]=value;
@@ -75,7 +75,7 @@ bool Extension::handlesType(void)
 QString Extension::getVersion(unsigned ver)
 {
 	if(ver > OldVersion)
-		throw Exception(RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(versions[ver]);
 }
@@ -98,7 +98,7 @@ QString Extension::getAlterDefinition(BaseObject *object)
 	Extension *ext=dynamic_cast<Extension *>(object);
 
 	if(!ext)
-		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{

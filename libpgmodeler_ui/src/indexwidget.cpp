@@ -96,7 +96,7 @@ void IndexWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Ba
 	vector<IndexElement> idx_elems;
 
 	if(!parent_obj)
-		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObjectWidget::setAttributes(model, op_list, index, parent_obj);
 

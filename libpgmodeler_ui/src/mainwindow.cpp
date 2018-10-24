@@ -953,9 +953,9 @@ void MainWindow::addModel(ModelWidget *model_wgt)
 	try
 	{
 		if(!model_wgt)
-			throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(model_wgt->parent())
-			throw Exception(AsgWidgetAlreadyHasParent,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::AsgWidgetAlreadyHasParent,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		model_nav_wgt->addModel(model_wgt);
 
@@ -983,7 +983,7 @@ int MainWindow::getModelCount(void)
 ModelWidget *MainWindow::getModel(int idx)
 {
 	if(idx < 0 || idx > models_tbw->count())
-		throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(dynamic_cast<ModelWidget *>(models_tbw->widget(idx)));
 }
@@ -1637,12 +1637,12 @@ void MainWindow::showFixMessage(Exception &e, const QString &filename)
 {
 	Messagebox msg_box;
 
-	msg_box.show(Exception(Exception::getErrorMessage(ModelFileNotLoaded).arg(filename),
-							 ModelFileNotLoaded ,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e),
-				 trUtf8("Could not load the database model file `%1'. Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(filename),
-				 Messagebox::ErrorIcon, Messagebox::YesNoButtons,
-				 trUtf8("Fix model"), trUtf8("Cancel"), QString(),
-				 PgModelerUiNs::getIconPath("fixobject"), PgModelerUiNs::getIconPath("msgbox_erro"));
+	msg_box.show(Exception(Exception::getErrorMessage(ErrorCode::ModelFileNotLoaded).arg(filename),
+												 ErrorCode::ModelFileNotLoaded ,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e),
+							 trUtf8("Could not load the database model file `%1'. Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(filename),
+							 Messagebox::ErrorIcon, Messagebox::YesNoButtons,
+							 trUtf8("Fix model"), trUtf8("Cancel"), QString(),
+							 PgModelerUiNs::getIconPath("fixobject"), PgModelerUiNs::getIconPath("msgbox_erro"));
 
 	if(msg_box.result()==QDialog::Accepted)
 		fixModel(filename);

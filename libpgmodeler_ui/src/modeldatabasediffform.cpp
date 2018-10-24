@@ -430,7 +430,7 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 	try
 	{
 		if(thread_id != SrcImportThread && thread_id != ImportThread)
-			throw Exception(AllocationObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::AllocationObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		createThread(thread_id);
 
@@ -621,8 +621,8 @@ void ModelDatabaseDiffForm::saveDiffToFile(void)
 		output.setFileName(file_edt->text());
 
 		if(!output.open(QFile::WriteOnly))
-			captureThreadError(Exception(Exception::getErrorMessage(FileDirectoryNotWritten).arg(file_edt->text()),
-										 FileDirectoryNotWritten, __PRETTY_FUNCTION__,__FILE__,__LINE__));
+			captureThreadError(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(file_edt->text()),
+																	 ErrorCode::FileDirectoryNotWritten, __PRETTY_FUNCTION__,__FILE__,__LINE__));
 
 		output.write(sqlcode_txt->toPlainText().toUtf8());
 		output.close();

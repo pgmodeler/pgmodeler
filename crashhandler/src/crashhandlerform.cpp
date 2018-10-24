@@ -125,7 +125,7 @@ void CrashHandlerForm::loadReport(const QString &filename)
 
 	//Raises an error if the file could not be opened
 	if(!input.isOpen())
-		msgbox.show(Exception::getErrorMessage(FileDirectoryNotAccessed).arg(filename), Messagebox::ErrorIcon);
+		msgbox.show(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(filename), Messagebox::ErrorIcon);
 	else
 	{
 		QByteArray uncomp_buf;
@@ -210,8 +210,8 @@ void CrashHandlerForm::saveModel(void)
 			output.open(QFile::WriteOnly);
 
 			if(!output.isOpen())
-				throw Exception(Exception::getErrorMessage(FileDirectoryNotWritten).arg(file_dlg.selectedFiles().at(0)),
-								FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(file_dlg.selectedFiles().at(0)),
+												ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			buf.append(model_txt->toPlainText());
 			output.write(buf.data(),buf.size());

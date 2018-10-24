@@ -483,10 +483,10 @@ void FunctionWidget::validateConfiguredFunction(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(Exception::getErrorMessage(InvFuncConfigInvalidatesObject)
+		throw Exception(Exception::getErrorMessage(ErrorCode::InvFuncConfigInvalidatesObject)
 						.arg(object->getName(true))
 						.arg(object->getTypeName()),
-						InvFuncConfigInvalidatesObject,
+						ErrorCode::InvFuncConfigInvalidatesObject,
 						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }

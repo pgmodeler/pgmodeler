@@ -32,10 +32,10 @@ void Tablespace::setName(const QString &name)
 	/* Tablespace names starting with pg_ is reserved to PostgreSQL if its the case
 		raises an error */
 	if(name.mid(0,3)==QString("pg_"))
-		throw Exception(Exception::getErrorMessage(AsgReservedName)
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgReservedName)
 						.arg(this->getName())
 						.arg(BaseObject::getTypeName(ObjectType::ObjTablespace)),
-						AsgReservedName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						ErrorCode::AsgReservedName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObject::setName(name);
 }
@@ -47,7 +47,7 @@ void Tablespace::setDirectory(const QString &dir)
 
 	//Raises an error if the directory is an empty path
 	if(dir_aux.isEmpty())
-		throw Exception(AsgEmptyDirectoryName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgEmptyDirectoryName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->directory != dir_aux);
 	this->directory=dir_aux;

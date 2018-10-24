@@ -32,19 +32,19 @@ void Domain::addCheckConstraint(const QString &name, const QString &expr)
 {
 	//Raises an error if the constraint name is invalid
 	if(!name.isEmpty() && !BaseObject::isValidName(name))
-		throw Exception(AsgInvalidNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgInvalidNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(expr.isEmpty())
-		throw Exception(AsgInvalidExpressionObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgInvalidExpressionObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(chk_constrs.count(name))
 	{
-		throw Exception(Exception::getErrorMessage(AsgDuplicatedObject)
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgDuplicatedObject)
 						.arg(name)
 						.arg(BaseObject::getTypeName(ObjectType::ObjConstraint))
 						.arg(this->getName(true))
 						.arg(this->getTypeName()),
-						AsgDuplicatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						ErrorCode::AsgDuplicatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
 	chk_constrs[name] = expr;
@@ -161,7 +161,7 @@ QString Domain::getAlterDefinition(BaseObject *object)
 	Domain *domain=dynamic_cast<Domain *>(object);
 
 	if(!domain)
-		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{

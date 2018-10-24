@@ -50,8 +50,8 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 		if(!dir.mkdir(GlobalAttributes::TemporaryDir))
 		{
 			Messagebox msg;
-			msg.show(Exception(Exception::getErrorMessage(FileDirectoryNotWritten).arg(GlobalAttributes::TemporaryDir),
-							   FileDirectoryNotWritten, __PRETTY_FUNCTION__,__FILE__,__LINE__));
+			msg.show(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(GlobalAttributes::TemporaryDir),
+												 ErrorCode::FileDirectoryNotWritten, __PRETTY_FUNCTION__,__FILE__,__LINE__));
 		}
 	}
 
@@ -116,8 +116,8 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 	if(!ui_style.isOpen())
 	{
 		Messagebox msg;
-		msg.show(Exception(Exception::getErrorMessage(FileDirectoryNotAccessed).arg(ui_style.fileName()),
-						   FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__));
+		msg.show(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(ui_style.fileName()),
+											 ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__));
 	}
 	else
 		this->setStyleSheet(ui_style.readAll());
@@ -168,7 +168,7 @@ void Application::copyFilesRecursively(const QString &src_path, const QString &d
 	QFileInfo src_file(src_path);
 
 	if(!src_file.exists())
-		throw Exception(Exception::getErrorMessage(FileDirectoryNotAccessed).arg(src_path),
+		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(src_path),
 						__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(src_file.isDir())
@@ -179,7 +179,7 @@ void Application::copyFilesRecursively(const QString &src_path, const QString &d
 				src_dir(src_path);
 
 		if(!dst_dir.exists() && !dst_dir.mkpath(dst_path))
-			throw Exception(Exception::getErrorMessage(FileDirectoryNotWritten).arg(dst_path),
+			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(dst_path),
 							__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		filenames = src_dir.entryList({QString("*%1").arg(GlobalAttributes::ConfigurationExt)},
@@ -198,7 +198,7 @@ void Application::copyFilesRecursively(const QString &src_path, const QString &d
 	}
 	else if(!QFile::exists(dst_path) && !QFile::copy(src_path, dst_path))
 	{
-		throw Exception(Exception::getErrorMessage(FileDirectoryNotWritten).arg(dst_path),
+		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(dst_path),
 						__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 }

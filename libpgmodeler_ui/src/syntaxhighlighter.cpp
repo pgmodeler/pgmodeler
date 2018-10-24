@@ -24,7 +24,7 @@ QFont SyntaxHighlighter::default_font=QFont(QString("Source Code Pro"), 10);
 SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode, bool use_custom_tab_width) : QSyntaxHighlighter(parent)
 {
 	if(!parent)
-		throw Exception(AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->setDocument(parent->document());
 	this->single_line_mode=single_line_mode;
@@ -439,15 +439,15 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								//Raises an error if the group was declared before
 								if(find(groups_order.begin(), groups_order.end(), group)!=groups_order.end())
 								{
-									throw Exception(Exception::getErrorMessage(InvRedeclarationGroup).arg(group),
-													InvRedeclarationGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									throw Exception(Exception::getErrorMessage(ErrorCode::InvRedeclarationGroup).arg(group),
+																	ErrorCode::InvRedeclarationGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 								}
 								//Raises an error if the group is being declared and build at the declaration statment (not permitted)
 								else if(attribs.size() > 1 || xmlparser.hasElement(XmlParser::ChildElement))
 								{
-									throw Exception(Exception::getErrorMessage(InvGroupDeclaration)
-													.arg(group).arg(ParsersAttributes::HIGHLIGHT_ORDER),
-													InvRedeclarationGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									throw Exception(Exception::getErrorMessage(ErrorCode::InvGroupDeclaration)
+																	.arg(group).arg(ParsersAttributes::HIGHLIGHT_ORDER),
+																	ErrorCode::InvRedeclarationGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 								}
 
 								groups_order.push_back(group);
@@ -458,21 +458,21 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								//Raises an error if the group is being constructed by a second time
 								if(initial_exprs.count(group)!=0)
 								{
-									throw Exception(Exception::getErrorMessage(DefDuplicatedGroup).arg(group),
-													DefDuplicatedGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									throw Exception(Exception::getErrorMessage(ErrorCode::DefDuplicatedGroup).arg(group),
+																	ErrorCode::DefDuplicatedGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 								}
 								//Raises an error if the group is being constructed without being declared
 								else if(find(groups_order.begin(), groups_order.end(), group)==groups_order.end())
 								{
-									throw Exception(Exception::getErrorMessage(DefNotDeclaredGroup)
-													.arg(group).arg(ParsersAttributes::HIGHLIGHT_ORDER),
-													DefNotDeclaredGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									throw Exception(Exception::getErrorMessage(ErrorCode::DefNotDeclaredGroup)
+																	.arg(group).arg(ParsersAttributes::HIGHLIGHT_ORDER),
+																	ErrorCode::DefNotDeclaredGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 								}
 								//Raises an error if the group does not have children element
 								else if(!xmlparser.hasElement(XmlParser::ChildElement))
 								{
-									throw Exception(Exception::getErrorMessage(DefEmptyGroup).arg(group),
-													DefEmptyGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									throw Exception(Exception::getErrorMessage(ErrorCode::DefEmptyGroup).arg(group),
+																	ErrorCode::DefEmptyGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 								}
 
 								chr_sensitive=(attribs[ParsersAttributes::CASE_SENSITIVE]==ParsersAttributes::_TRUE_);
@@ -568,8 +568,8 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 				if(initial_exprs[group].size()==0)
 				{
 					//Raises an error if the group was declared but not constructed
-					throw Exception(Exception::getErrorMessage(InvGroupDeclarationNotDefined).arg(group),
-									InvGroupDeclarationNotDefined,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					throw Exception(Exception::getErrorMessage(ErrorCode::InvGroupDeclarationNotDefined).arg(group),
+													ErrorCode::InvGroupDeclarationNotDefined,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 				}
 			}
 

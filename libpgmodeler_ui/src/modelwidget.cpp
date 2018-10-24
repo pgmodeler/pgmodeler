@@ -1670,10 +1670,10 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		if(obj_type!=ObjectType::ObjPermission)
 		{
 			if(object && obj_type!=object->getObjectType())
-				throw Exception(OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(ErrorCode::OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			//If the user try to call the table object form without specify a parent object
 			else if(!parent_obj && TableObject::isTableObject(obj_type))
-				throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
 		if(object && dynamic_cast<BaseGraphicObject *>(object))
@@ -1683,9 +1683,9 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		that can be edited only on its fill color an rectangle attributes */
 		if(object && object->isSystemObject() &&
 				(object->getObjectType()!=ObjectType::ObjSchema || object->getName()!="public"))
-			throw Exception(Exception::getErrorMessage(OprReservedObject)
-							.arg(object->getName()).arg(object->getTypeName()),
-							OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
+											.arg(object->getName()).arg(object->getTypeName()),
+											ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		if(obj_type==ObjectType::ObjSchema)
 			res=openEditingForm<Schema,SchemaWidget>(object);
@@ -1869,9 +1869,9 @@ void ModelWidget::renameObject(void)
 	BaseObject *obj=reinterpret_cast<BaseObject *>(act->data().value<void *>());
 
 	if(obj->isSystemObject())
-		throw Exception(Exception::getErrorMessage(OprReservedObject)
+		throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
 						.arg(obj->getName()).arg(obj->getTypeName()),
-						OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	ObjectRenameWidget objectrename_wgt(this);
 	objectrename_wgt.setAttributes(obj, this->db_model, this->op_list);
@@ -1970,10 +1970,10 @@ void ModelWidget::changeOwner(void)
 			if(obj->acceptsOwner() && obj->getOwner()!=owner)
 			{
 				if(obj->isSystemObject())
-					throw Exception(Exception::getErrorMessage(OprReservedObject)
+					throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
 									.arg(obj->getName())
 									.arg(obj->getTypeName()),
-									OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 				//Register an operation only if the object is not the database itself
 				if(obj->getObjectType()!=ObjectType::ObjDatabase)
@@ -2178,9 +2178,9 @@ void ModelWidget::protectObject(void)
 
 					if(tab_obj->isAddedByRelationship())
 					{
-						throw Exception(Exception::getErrorMessage(OprRelationshipAddedObject)
+						throw Exception(Exception::getErrorMessage(ErrorCode::OprRelationshipAddedObject)
 										.arg(object->getName()).arg(object->getTypeName()),
-										OprRelationshipAddedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+										ErrorCode::OprRelationshipAddedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
 				}
 
@@ -2230,9 +2230,9 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 	{
 		//Raise an error if the user try to copy a reserved object
 		if(selected_objects[0]->isSystemObject())
-			throw Exception(Exception::getErrorMessage(OprReservedObject)
-							.arg(selected_objects[0]->getName()).arg(selected_objects[0]->getTypeName()),
-				OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
+											.arg(selected_objects[0]->getName()).arg(selected_objects[0]->getTypeName()),
+											ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
 	if(!duplicate_mode)
@@ -2635,8 +2635,8 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 	if(!errors.empty())
 	{
 		Messagebox msg_box;
-		msg_box.show(Exception(trUtf8("Not all objects were pasted to the model due to errors returned during the process! Refer to error stack for more details!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors),
-								 QString(),
+		msg_box.show(Exception(trUtf8("Not all objects were pasted to the model due to errors returned during the process! Refer to error stack for more details!"),
+								 ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors), QString(),
 								 Messagebox::AlertIcon);
 	}
 
@@ -2902,16 +2902,16 @@ void ModelWidget::removeObjects(bool cascade)
 
 					//Raises an error if the user try to remove a reserved object
 					if(object->isSystemObject())
-						throw Exception(Exception::getErrorMessage(OprReservedObject)
-										.arg(object->getName()).arg(object->getTypeName()),
-										OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
+														.arg(object->getName()).arg(object->getTypeName()),
+														ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					//Raises an error if the user try to remove a protected object
 					else if(object->isProtected())
 					{
-						throw Exception(Exception::getErrorMessage(RemProtectedObject)
-										.arg(object->getName(true))
-										.arg(object->getTypeName()),
-										RemProtectedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						throw Exception(Exception::getErrorMessage(ErrorCode::RemProtectedObject)
+														.arg(object->getName(true))
+														.arg(object->getTypeName()),
+														ErrorCode::RemProtectedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
 					else
 					{
@@ -2948,11 +2948,11 @@ void ModelWidget::removeObjects(bool cascade)
 							}
 							catch(Exception &e)
 							{
-								if(cascade && (e.getErrorType()==RemInvalidatedObjects ||
-												 e.getErrorType()==RemDirectReference ||
-												 e.getErrorType()==RemInderectReference ||
-												 e.getErrorType()==RemProtectedObject ||
-												 e.getErrorType()==OprReservedObject))
+								if(cascade && (e.getErrorType()==ErrorCode::RemInvalidatedObjects ||
+															 e.getErrorType()==ErrorCode::RemDirectReference ||
+															 e.getErrorType()==ErrorCode::RemInderectReference ||
+															 e.getErrorType()==ErrorCode::RemProtectedObject ||
+															 e.getErrorType()==ErrorCode::OprReservedObject))
 									errors.push_back(e);
 								else
 									throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
@@ -2978,11 +2978,11 @@ void ModelWidget::removeObjects(bool cascade)
 								}
 								catch(Exception &e)
 								{
-									if(cascade && (e.getErrorType()==RemInvalidatedObjects ||
-													 e.getErrorType()==RemDirectReference ||
-													 e.getErrorType()==RemInderectReference ||
-													 e.getErrorType()==RemProtectedObject ||
-													 e.getErrorType()==OprReservedObject))
+									if(cascade && (e.getErrorType()==ErrorCode::RemInvalidatedObjects ||
+																 e.getErrorType()==ErrorCode::RemDirectReference ||
+																 e.getErrorType()==ErrorCode::RemInderectReference ||
+																 e.getErrorType()==ErrorCode::RemProtectedObject ||
+																 e.getErrorType()==ErrorCode::OprReservedObject))
 										errors.push_back(e);
 									else
 										throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
@@ -3009,7 +3009,7 @@ void ModelWidget::removeObjects(bool cascade)
 
 				if(!errors.empty())
 				{
-					msg_box.show(Exception(RemInvalidatedObjects, __PRETTY_FUNCTION__,__FILE__,__LINE__, errors),
+					msg_box.show(Exception(ErrorCode::RemInvalidatedObjects, __PRETTY_FUNCTION__,__FILE__,__LINE__, errors),
 								 trUtf8("The cascade deletion found some problems when running! Some objects could not be deleted or registered in the operation's history! Please, refer to error stack for more details."),
 								 Messagebox::AlertIcon);
 				}
@@ -4131,8 +4131,8 @@ void ModelWidget::convertIntegerToSerial(void)
 		QString serial_tp;
 
 		if(!col_type.isIntegerType() || (!col->getDefaultValue().contains(regexp) && !col->getSequence()))
-			throw Exception(Exception::getErrorMessage(InvConversionIntegerToSerial).arg(col->getName()),
-							InvConversionIntegerToSerial ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(ErrorCode::InvConversionIntegerToSerial).arg(col->getName()),
+											ErrorCode::InvConversionIntegerToSerial ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		op_list->registerObject(col, Operation::ObjectModified, -1, tab);
 

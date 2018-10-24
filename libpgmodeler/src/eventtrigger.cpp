@@ -36,22 +36,22 @@ void EventTrigger::setEvent(EventTriggerType evnt_type)
 void EventTrigger::setFunction(Function *func)
 {
 	if(!func)
-		throw Exception(Exception::getErrorMessage(AsgNotAllocatedFunction)
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgNotAllocatedFunction)
 						.arg(this->getName())
 						.arg(BaseObject::getTypeName(ObjectType::ObjEventTrigger)),
-						AsgNotAllocatedFunction,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						ErrorCode::AsgNotAllocatedFunction,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Functions with return type other that event_trigger are not accepted
 	else if(func->getReturnType()!=QString("event_trigger"))
-		throw Exception(Exception::getErrorMessage(AsgInvalidTriggerFunction).arg(QString("event_trigger")),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidTriggerFunction).arg(QString("event_trigger")),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Functions with one or more parameters are not accepted
 	else if(func->getParameterCount()!=0)
-		throw Exception(Exception::getErrorMessage(AsgFunctionInvalidParamCount)
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgFunctionInvalidParamCount)
 						.arg(this->getName())
 						.arg(BaseObject::getTypeName(ObjectType::ObjEventTrigger)),
-						AsgFunctionInvalidParamCount,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						ErrorCode::AsgFunctionInvalidParamCount,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Functions coded in SQL lang. is not accepted by event triggers
 	else if(func->getLanguage()->getName()==~LanguageType(LanguageType::sql))
-		throw Exception(AsgEventTriggerFuncInvalidLang,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgEventTriggerFuncInvalidLang,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(function != func);
 	function=func;
@@ -60,7 +60,7 @@ void EventTrigger::setFunction(Function *func)
 void EventTrigger::setFilter(const QString &variable, const QStringList &values)
 {
 	if(variable.toLower()!=ParsersAttributes::TAG)
-		throw Exception(Exception::getErrorMessage(AsgInvalidEventTriggerVariable).arg(variable),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidEventTriggerVariable).arg(variable),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(!values.isEmpty())
 	{
