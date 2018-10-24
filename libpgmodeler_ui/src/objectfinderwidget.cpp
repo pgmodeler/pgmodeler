@@ -104,7 +104,7 @@ void ObjectFinderWidget::fadeObjects(void)
 	vector<BaseObject *> objects, other_objs;
 	bool fade_listed = false;
 
-	for(auto obj_type : {ObjectType::ObjTable, ObjectType::ObjView, ObjectType::ObjTextbox, ObjectType::ObjRelationship, ObjectType::ObjBaseRelationship, ObjectType::ObjSchema})
+	for(auto obj_type : {ObjectType::Table, ObjectType::View, ObjectType::Textbox, ObjectType::Relationship, ObjectType::BaseRelationship, ObjectType::Schema})
 	{
 		objects.insert(objects.end(),
 									 model_wgt->getDatabaseModel()->getObjectList(obj_type)->begin(),
@@ -137,7 +137,7 @@ void ObjectFinderWidget::selectObjects(void)
 	BaseGraphicObject *graph_obj = nullptr;
 	bool sel_listed = false;
 
-	for(auto obj_type : {ObjectType::ObjTable, ObjectType::ObjView, ObjectType::ObjTextbox, ObjectType::ObjRelationship, ObjectType::ObjBaseRelationship, ObjectType::ObjSchema})
+	for(auto obj_type : {ObjectType::Table, ObjectType::View, ObjectType::Textbox, ObjectType::Relationship, ObjectType::BaseRelationship, ObjectType::Schema})
 	{
 		objects.insert(objects.end(),
 									 model_wgt->getDatabaseModel()->getObjectList(obj_type)->begin(),
@@ -291,8 +291,8 @@ void ObjectFinderWidget::editObject(void)
 {
 	if(selected_obj)
 	{
-		if(selected_obj->getObjectType()==ObjectType::ObjPermission)
-			model_wgt->showObjectForm(ObjectType::ObjPermission, dynamic_cast<Permission *>(selected_obj)->getObject());
+		if(selected_obj->getObjectType()==ObjectType::Permission)
+			model_wgt->showObjectForm(ObjectType::Permission, dynamic_cast<Permission *>(selected_obj)->getObject());
 		else
 		{
 			vector<BaseObject *> vect;
@@ -330,7 +330,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 
 		for(lin_idx=0, i=0; i < objs.size(); i++)
 		{
-			if(objs[i]->getObjectType()==ObjectType::ObjBaseRelationship)
+			if(objs[i]->getObjectType()==ObjectType::BaseRelationship)
 				str_aux=QString("tv");
 			else
 				str_aux.clear();
@@ -466,7 +466,7 @@ void ObjectFinderWidget::updateObjectTypeList(QListWidget *list_wgt)
 		{
 			item=new QListWidgetItem;
 
-			if(types[type_id]==ObjectType::ObjBaseRelationship)
+			if(types[type_id]==ObjectType::BaseRelationship)
 				str_aux=QString(BaseObject::getSchemaName(types[type_id])) + QString("tv");
 			else
 				str_aux=QString(BaseObject::getSchemaName(types[type_id]));

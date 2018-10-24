@@ -95,7 +95,7 @@ void OperationListWidget::updateOperationList(void)
 			str_aux=QString(BaseObject::getSchemaName(obj_type));
 			item->setData(0, Qt::UserRole, QVariant(~obj_type));
 
-			if(obj_type==ObjectType::ObjBaseRelationship)
+			if(obj_type==ObjectType::BaseRelationship)
 				str_aux+=QString("tv");
 
 			item->setIcon(0,QPixmap(PgModelerUiNs::getIconPath(str_aux)));

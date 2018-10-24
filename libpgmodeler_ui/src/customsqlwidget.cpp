@@ -26,7 +26,7 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 		QFont font;
 
 		Ui_CustomSQLWidget::setupUi(this);
-		configureFormLayout(sqlappend_grid, ObjectType::ObjBaseObject);
+		configureFormLayout(sqlappend_grid, ObjectType::BaseObject);
 
 		append_sql_txt=PgModelerUiNs::createNumberedTextEditor(append_sql_wgt, true);
 		prepend_sql_txt=PgModelerUiNs::createNumberedTextEditor(prepend_sql_wgt, true);
@@ -106,9 +106,9 @@ void CustomSQLWidget::configureMenus(void)
 	for(int i=0; i < count; i++)
 		btns[i]->setMenu(nullptr);
 
-	if(obj_type==ObjectType::ObjTable || obj_type==ObjectType::ObjView)
+	if(obj_type==ObjectType::Table || obj_type==ObjectType::View)
 	{
-		if(obj_type==ObjectType::ObjTable)
+		if(obj_type==ObjectType::Table)
 		{
 			insert_tb->setMenu(&insert_menu);
 			delete_tb->setMenu(&delete_menu);
@@ -132,7 +132,7 @@ void CustomSQLWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 
 		name_edt->setText(QString("%1 (%2)").arg(object->getSignature()).arg(object->getTypeName()));
 
-		if(object->getObjectType()==ObjectType::ObjDatabase)
+		if(object->getObjectType()==ObjectType::Database)
 			end_of_model_chk->setChecked(dynamic_cast<DatabaseModel *>(object)->isAppendAtEOD());
 
 		append_sql_txt->setFocus();
@@ -145,8 +145,8 @@ void CustomSQLWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 		prepend_sql_cp->configureCompletion(model, prepend_sql_hl);
 		prepend_sql_txt->moveCursor(QTextCursor::End);
 
-		end_of_model_chk->setVisible(object->getObjectType()==ObjectType::ObjDatabase);
-		begin_of_model_chk->setVisible(object->getObjectType()==ObjectType::ObjDatabase);
+		end_of_model_chk->setVisible(object->getObjectType()==ObjectType::Database);
+		begin_of_model_chk->setVisible(object->getObjectType()==ObjectType::Database);
 
 		protected_obj_frm->setVisible(false);
 		obj_id_lbl->setVisible(false);
@@ -164,7 +164,7 @@ void CustomSQLWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 
 void CustomSQLWidget::applyConfiguration(void)
 {
-	if(this->object->getObjectType()==ObjectType::ObjDatabase)
+	if(this->object->getObjectType()==ObjectType::Database)
 	{
 		dynamic_cast<DatabaseModel *>(this->object)->setAppendAtEOD(end_of_model_chk->isChecked());
 		dynamic_cast<DatabaseModel *>(this->object)->setPrependAtBOD(begin_of_model_chk->isChecked());

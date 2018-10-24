@@ -89,8 +89,8 @@ bool  TableObject::isDeclaredInTable(void)
 
 bool TableObject::isTableObject(ObjectType type)
 {
-	return(type==ObjectType::ObjColumn || type==ObjectType::ObjConstraint || type==ObjectType::ObjTrigger ||
-			 type==ObjectType::ObjRule || type==ObjectType::ObjIndex || type==ObjectType::ObjPolicy);
+	return(type==ObjectType::Column || type==ObjectType::Constraint || type==ObjectType::Trigger ||
+			 type==ObjectType::Rule || type==ObjectType::Index || type==ObjectType::Policy);
 }
 
 void TableObject::operator = (TableObject &object)

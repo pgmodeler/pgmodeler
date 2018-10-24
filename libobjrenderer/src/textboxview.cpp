@@ -89,8 +89,8 @@ void TextboxView::__configureObject(void)
 	if(!override_style)
 	{
 		QFont font;
-		box->setBrush(this->getFillStyle(BaseObject::getSchemaName(ObjectType::ObjTextbox)));
-		box->setPen(this->getBorderStyle(BaseObject::getSchemaName(ObjectType::ObjTextbox)));
+		box->setBrush(this->getFillStyle(BaseObject::getSchemaName(ObjectType::Textbox)));
+		box->setPen(this->getBorderStyle(BaseObject::getSchemaName(ObjectType::Textbox)));
 
 		font=fmt.font();
 		font.setItalic(txtbox->getTextAttribute(Textbox::ItalicText));

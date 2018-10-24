@@ -18,7 +18,7 @@
 
 #include "rulewidget.h"
 
-RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::ObjRule)
+RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Rule)
 {
 	try
 	{
@@ -43,7 +43,7 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ob
 		rule_grid->addWidget(frame, rule_grid->count()+1, 0, 1, 0);
 		frame->setParent(this);
 
-		configureFormLayout(rule_grid, ObjectType::ObjRule);
+		configureFormLayout(rule_grid, ObjectType::Rule);
 
 		EventType::getTypes(list);
 		event_cmb->addItems(list);

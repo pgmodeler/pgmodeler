@@ -22,7 +22,7 @@ unsigned Role::role_id=0;
 
 Role::Role(void)
 {
-	obj_type=ObjectType::ObjRole;
+	obj_type=ObjectType::Role;
 	object_id=Role::role_id++;
 
 	for(unsigned i=0; i <= OpBypassRls; i++)

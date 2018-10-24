@@ -23,12 +23,12 @@
 #include "baseform.h"
 #include "referencewidget.h"
 
-ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::ObjView)
+ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::View)
 {
 	try
 	{
 		ObjectsTableWidget *tab=nullptr;
-		ObjectType types[]={ ObjectType::ObjTrigger, ObjectType::ObjRule, ObjectType::ObjIndex };
+		ObjectType types[]={ ObjectType::Trigger, ObjectType::Rule, ObjectType::Index };
 		QGridLayout *grid=nullptr;
 		QVBoxLayout *vbox=nullptr;
 
@@ -52,7 +52,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ob
 		vbox->setContentsMargins(4,4,4,4);
 		vbox->addWidget(cte_expression_txt);
 
-		tag_sel=new ObjectSelectorWidget(ObjectType::ObjTag, false, this);
+		tag_sel=new ObjectSelectorWidget(ObjectType::Tag, false, this);
 		dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 4);
 
 		references_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::UpdateButton, true, this);
@@ -89,29 +89,29 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ob
 			connect(tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateObject(int,int)));
 		}
 
-		objects_tab_map[ObjectType::ObjTrigger]->setColumnCount(4);
-		objects_tab_map[ObjectType::ObjTrigger]->setHeaderLabel(trUtf8("Name"), 0);
-		objects_tab_map[ObjectType::ObjTrigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
-		objects_tab_map[ObjectType::ObjTrigger]->setHeaderLabel(trUtf8("Refer. Table"), 1);
-		objects_tab_map[ObjectType::ObjTrigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("table")),1);
-		objects_tab_map[ObjectType::ObjTrigger]->setHeaderLabel(trUtf8("Firing"), 2);
-		objects_tab_map[ObjectType::ObjTrigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("trigger")),2);
-		objects_tab_map[ObjectType::ObjTrigger]->setHeaderLabel(trUtf8("Events"), 3);
+		objects_tab_map[ObjectType::Trigger]->setColumnCount(4);
+		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Name"), 0);
+		objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
+		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Refer. Table"), 1);
+		objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("table")),1);
+		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Firing"), 2);
+		objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("trigger")),2);
+		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Events"), 3);
 
-		objects_tab_map[ObjectType::ObjIndex]->setColumnCount(2);
-		objects_tab_map[ObjectType::ObjIndex]->setHeaderLabel(trUtf8("Name"), 0);
-		objects_tab_map[ObjectType::ObjIndex]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
-		objects_tab_map[ObjectType::ObjIndex]->setHeaderLabel(trUtf8("Indexing"), 1);
+		objects_tab_map[ObjectType::Index]->setColumnCount(2);
+		objects_tab_map[ObjectType::Index]->setHeaderLabel(trUtf8("Name"), 0);
+		objects_tab_map[ObjectType::Index]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
+		objects_tab_map[ObjectType::Index]->setHeaderLabel(trUtf8("Indexing"), 1);
 
-		objects_tab_map[ObjectType::ObjRule]->setColumnCount(3);
-		objects_tab_map[ObjectType::ObjRule]->setHeaderLabel(trUtf8("Name"), 0);
-		objects_tab_map[ObjectType::ObjRule]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
-		objects_tab_map[ObjectType::ObjRule]->setHeaderLabel(trUtf8("Execution"), 1);
-		objects_tab_map[ObjectType::ObjRule]->setHeaderLabel(trUtf8("Event"), 2);
+		objects_tab_map[ObjectType::Rule]->setColumnCount(3);
+		objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Name"), 0);
+		objects_tab_map[ObjectType::Rule]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
+		objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Execution"), 1);
+		objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Event"), 2);
 
 		tablespace_sel->setEnabled(false);
 		tablespace_lbl->setEnabled(false);
-		configureFormLayout(view_grid, ObjectType::ObjView);
+		configureFormLayout(view_grid, ObjectType::View);
 
 		fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion93)].push_back(recursive_rb);
 		fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion93)].push_back(materialized_rb);
@@ -169,7 +169,7 @@ int ViewWidget::openEditingForm(TableObject *object)
 
 void ViewWidget::handleObject(void)
 {
-	ObjectType obj_type=ObjectType::ObjBaseObject;
+	ObjectType obj_type=ObjectType::BaseObject;
 	TableObject *object=nullptr;
 	ObjectsTableWidget *obj_table=nullptr;
 
@@ -181,9 +181,9 @@ void ViewWidget::handleObject(void)
 		if(obj_table->getSelectedRow()>=0)
 			object=reinterpret_cast<TableObject *>(obj_table->getRowData(obj_table->getSelectedRow()).value<void *>());
 
-		if(obj_type==ObjectType::ObjTrigger)
+		if(obj_type==ObjectType::Trigger)
 			openEditingForm<Trigger,TriggerWidget>(object);
-		else if(obj_type==ObjectType::ObjIndex)
+		else if(obj_type==ObjectType::Index)
 			openEditingForm<Index,IndexWidget>(object);
 		else
 			openEditingForm<Rule,RuleWidget>(object);
@@ -199,7 +199,7 @@ void ViewWidget::handleObject(void)
 
 void ViewWidget::duplicateObject(int curr_row, int new_row)
 {
-	ObjectType obj_type=ObjectType::ObjBaseObject;
+	ObjectType obj_type=ObjectType::BaseObject;
 	BaseObject *object=nullptr, *dup_object=nullptr;
 	ObjectsTableWidget *obj_table=nullptr;
 	View *view = dynamic_cast<View *>(this->object);
@@ -313,7 +313,7 @@ void ViewWidget::removeObject(int row)
 
 ObjectType ViewWidget::getObjectType(QObject *sender)
 {
-	ObjectType obj_type=ObjectType::ObjBaseObject;
+	ObjectType obj_type=ObjectType::BaseObject;
 
 	if(sender)
 	{
@@ -322,7 +322,7 @@ ObjectType ViewWidget::getObjectType(QObject *sender)
 		itr=objects_tab_map.begin();
 		itr_end=objects_tab_map.end();
 
-		while(itr!=itr_end && obj_type==ObjectType::ObjBaseObject)
+		while(itr!=itr_end && obj_type==ObjectType::BaseObject)
 		{
 			if(itr->second==sender)
 				obj_type=itr->first;
@@ -352,7 +352,7 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 	//Column 0: Object name
 	tab->setCellText(object->getName(),row,0);
 
-	if(obj_type==ObjectType::ObjTrigger)
+	if(obj_type==ObjectType::Trigger)
 	{
 		trigger=dynamic_cast<Trigger *>(object);
 
@@ -374,7 +374,7 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 		str_aux.remove(str_aux.size()-2, 2);
 		tab->setCellText(str_aux ,row,3);
 	}
-	else if(obj_type==ObjectType::ObjRule)
+	else if(obj_type==ObjectType::Rule)
 	{
 		rule=dynamic_cast<Rule *>(object);
 
@@ -583,7 +583,7 @@ void ViewWidget::updateCodePreview(void)
 				//Make a copy of each view objects (rule/trigger) to the auxiliary view
 				for(i=0; i < count; i++)
 				{
-					if(itr->first==ObjectType::ObjTrigger)
+					if(itr->first==ObjectType::Trigger)
 					{
 						tab_obj=new Trigger;
 						(*dynamic_cast<Trigger *>(tab_obj))=
@@ -677,9 +677,9 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 	references_tab->blockSignals(false);
 	references_tab->clearSelection();
 
-	listObjects(ObjectType::ObjTrigger);
-	listObjects(ObjectType::ObjRule);
-	listObjects(ObjectType::ObjIndex);
+	listObjects(ObjectType::Trigger);
+	listObjects(ObjectType::Rule);
+	listObjects(ObjectType::Index);
 }
 
 void ViewWidget::applyConfiguration(void)
@@ -687,7 +687,7 @@ void ViewWidget::applyConfiguration(void)
 	try
 	{
 		View *view=nullptr;
-		ObjectType types[]={ ObjectType::ObjTrigger, ObjectType::ObjRule, ObjectType::ObjIndex };
+		ObjectType types[]={ ObjectType::Trigger, ObjectType::Rule, ObjectType::Index };
 		unsigned expr_type[]={ Reference::SqlReferSelect,
 													 Reference::SqlReferFrom,
 													 Reference::SqlReferWhere,

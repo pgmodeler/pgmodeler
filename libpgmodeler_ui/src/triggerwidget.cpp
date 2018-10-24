@@ -18,7 +18,7 @@
 
 #include "triggerwidget.h"
 
-TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::ObjTrigger)
+TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Trigger)
 {
 	try
 	{
@@ -36,8 +36,8 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 
 		arguments_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
 
-		ref_table_sel=new ObjectSelectorWidget(ObjectType::ObjTable, true, this);
-		function_sel=new ObjectSelectorWidget(ObjectType::ObjFunction, true, this);
+		ref_table_sel=new ObjectSelectorWidget(ObjectType::Table, true, this);
+		function_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
 		ref_table_sel->setEnabled(false);
 
 		trigger_grid->addWidget(function_sel, 3, 1, 1, 5);
@@ -58,7 +58,7 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 		FiringType::getTypes(list);
 		firing_mode_cmb->addItems(list);
 
-		configureFormLayout(trigger_grid, ObjectType::ObjTrigger);
+		configureFormLayout(trigger_grid, ObjectType::Trigger);
 
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_type_cmb, SLOT(setEnabled(bool)));
 		connect(columns_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addColumn(int)));
@@ -97,7 +97,7 @@ void TriggerWidget::selectUpdateEvent(void)
 	/* Disable the columns tab when the trigger belongs to a view.
 	pgModeler does not support triggers reference view columns (yet) */
 	arg_cols_tbw->widget(1)->setEnabled(update_chk->isChecked() &&
-										table->getObjectType()==ObjectType::ObjTable);
+										table->getObjectType()==ObjectType::Table);
 }
 
 void TriggerWidget::setConstraintTrigger(bool value)
@@ -173,14 +173,14 @@ void TriggerWidget::updateColumnsCombo(void)
 
 	try
 	{
-		if(this->table->getObjectType()==ObjectType::ObjTable)
+		if(this->table->getObjectType()==ObjectType::Table)
 		{
-			col_count=table->getObjectCount(ObjectType::ObjColumn);
+			col_count=table->getObjectCount(ObjectType::Column);
 			column_cmb->clear();
 
 			for(i=0; i < col_count; i++)
 			{
-				column=dynamic_cast<Column *>(table->getObject(i, ObjectType::ObjColumn));
+				column=dynamic_cast<Column *>(table->getObject(i, ObjectType::Column));
 
 				if(columns_tab->getRowIndex(QVariant::fromValue<void *>(column)) < 0)
 				{

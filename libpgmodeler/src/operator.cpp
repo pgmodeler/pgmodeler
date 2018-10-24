@@ -22,7 +22,7 @@ Operator::Operator(void)
 {
 	unsigned i;
 
-	obj_type=ObjectType::ObjOperator;
+	obj_type=ObjectType::Operator;
 
 	for(i=FUNC_OPERATOR; i <= FUNC_RESTRICT; i++)
 		functions[i]=nullptr;
@@ -100,14 +100,14 @@ void Operator::setFunction(Function *func, unsigned func_type)
 		if(!func)
 			throw Exception(Exception::getErrorMessage(ErrorCode::AsgNotAllocatedFunction)
 							.arg(this->getName(true))
-							.arg(BaseObject::getTypeName(ObjectType::ObjOperator)),
+							.arg(BaseObject::getTypeName(ObjectType::Operator)),
 							ErrorCode::AsgNotAllocatedFunction,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		/* Raises an error if the parameter count is invalid. To be used by the operator
 		 the function must own 1 or 2 parameters */
 		else if(func->getParameterCount()==0 || func->getParameterCount() > 2)
 			throw Exception(Exception::getErrorMessage(ErrorCode::AsgFunctionInvalidParamCount)
 							.arg(this->getName())
-							.arg(BaseObject::getTypeName(ObjectType::ObjOperator)),
+							.arg(BaseObject::getTypeName(ObjectType::Operator)),
 							ErrorCode::AsgFunctionInvalidParamCount,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else
 		{
@@ -142,7 +142,7 @@ void Operator::setFunction(Function *func, unsigned func_type)
 						(argument_types[1]!=QString("\"any\"") && argument_types[1]!=param_type1))))
 				throw Exception(Exception::getErrorMessage(ErrorCode::AsgFunctionInvalidParameters)
 								.arg(this->getName())
-								.arg(BaseObject::getTypeName(ObjectType::ObjOperator)),
+								.arg(BaseObject::getTypeName(ObjectType::Operator)),
 								ErrorCode::AsgFunctionInvalidParameters,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 	}

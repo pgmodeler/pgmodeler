@@ -18,7 +18,7 @@
 
 #include "constraintwidget.h"
 
-ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::ObjConstraint)
+ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Constraint)
 {
 	try
 	{
@@ -48,7 +48,7 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 												 ObjectsTableWidget::UpdateButton |
 												ObjectsTableWidget::DuplicateButton), true, this);
 
-		ref_table_sel=new ObjectSelectorWidget(ObjectType::ObjTable, true, this);
+		ref_table_sel=new ObjectSelectorWidget(ObjectType::Table, true, this);
 
 		columns_tab->setColumnCount(2);
 		columns_tab->setHeaderLabel(trUtf8("Column"), 0);
@@ -67,7 +67,7 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		dynamic_cast<QGridLayout *>(columns_tbw->widget(1)->layout())->addWidget(ref_table_sel, 0,1,1,2);
 		dynamic_cast<QGridLayout *>(columns_tbw->widget(1)->layout())->addWidget(ref_columns_tab, 3,0,1,3);
 
-		configureFormLayout(constraint_grid, ObjectType::ObjConstraint);
+		configureFormLayout(constraint_grid, ObjectType::Constraint);
 
 		ConstraintType::getTypes(list);
 		constr_type_cmb->addItems(list);
@@ -359,7 +359,7 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	obj_type=parent_obj->getObjectType();
-	if(obj_type!=ObjectType::ObjTable && obj_type!=ObjectType::ObjRelationship)
+	if(obj_type!=ObjectType::Table && obj_type!=ObjectType::Relationship)
 		throw Exception(ErrorCode::OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObjectWidget::setAttributes(model, op_list, constr, parent_obj);

@@ -21,7 +21,7 @@
 #include "baseform.h"
 #include "generalconfigwidget.h"
 
-ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::ObjColumn)
+ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Column)
 {
 	try
 	{
@@ -41,7 +41,7 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 		hl_default_value=new SyntaxHighlighter(def_value_txt, true);
 		hl_default_value->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
-		sequence_sel=new ObjectSelectorWidget(ObjectType::ObjSequence, true, this);
+		sequence_sel=new ObjectSelectorWidget(ObjectType::Sequence, true, this);
 		sequence_sel->setEnabled(false);
 
 		column_grid->addWidget(data_type,0,0,1,0);
@@ -50,7 +50,7 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 		column_grid->addItem(spacer,column_grid->count(),0);
 		dynamic_cast<QGridLayout *>(default_value_grp->layout())->addWidget(sequence_sel, 1, 1, 1, 6);
 
-		configureFormLayout(column_grid, ObjectType::ObjColumn);
+		configureFormLayout(column_grid, ObjectType::Column);
 		configureTabOrder({ data_type });
 
 		map<QString, vector<QWidget *> > fields_map;
@@ -148,7 +148,7 @@ void ColumnWidget::editSequenceAttributes(void)
 		schema = this->model->getSchema("public");
 
 	ident_col_seq.setName(QString("%1_%2_seq").arg(table ? table->getName() : QString()).arg(col ? col->getName() : QString("new_column")));
-	ident_col_seq.setName(PgModelerNs::generateUniqueName(&ident_col_seq, *model->getObjectList(ObjectType::ObjSequence), false));
+	ident_col_seq.setName(PgModelerNs::generateUniqueName(&ident_col_seq, *model->getObjectList(ObjectType::Sequence), false));
 	ident_col_seq.setSchema(schema);
 
 	if(col)

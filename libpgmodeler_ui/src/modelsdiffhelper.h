@@ -164,7 +164,7 @@ class ModelsDiffHelper: public QObject {
 
 	signals:
 		//! \brief This singal is emitted whenever the diff progress changes
-		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=ObjectType::ObjBaseObject);
+		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=ObjectType::BaseObject);
 
 		//! \brief This signal is emited when the diff has finished
 		void s_diffFinished(void);

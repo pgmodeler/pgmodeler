@@ -20,7 +20,7 @@
 
 Cast::Cast(void)
 {
-	obj_type=ObjectType::ObjCast;
+	obj_type=ObjectType::Cast;
 	cast_function=nullptr;
 	cast_type=Explicit;
 	is_in_out=false;
@@ -40,7 +40,7 @@ void Cast::setDataType(unsigned type_idx, PgSqlType type)
 		if((*type).isEmpty())
 			throw Exception(Exception::getErrorMessage(ErrorCode::AsgNullTypeObject)
 							.arg(this->getName())
-							.arg(BaseObject::getTypeName(ObjectType::ObjCast)),
+							.arg(BaseObject::getTypeName(ObjectType::Cast)),
 							ErrorCode::AsgNullTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		setCodeInvalidated(this->types[type_idx] != type);
@@ -79,7 +79,7 @@ void Cast::setCastFunction(Function *cast_func)
 	if(!cast_func)
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgNotAllocatedFunction)
 						.arg(this->getName())
-						.arg(BaseObject::getTypeName(ObjectType::ObjCast)),
+						.arg(BaseObject::getTypeName(ObjectType::Cast)),
 						ErrorCode::AsgNotAllocatedFunction,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Retrieve the cast function parameter count for specific validations
@@ -89,7 +89,7 @@ void Cast::setCastFunction(Function *cast_func)
 	if(param_count==0 || param_count > 3)
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgFunctionInvalidParamCount)
 						.arg(this->getName())
-						.arg(BaseObject::getTypeName(ObjectType::ObjCast)),
+						.arg(BaseObject::getTypeName(ObjectType::Cast)),
 						ErrorCode::AsgFunctionInvalidParamCount,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
@@ -112,7 +112,7 @@ void Cast::setCastFunction(Function *cast_func)
 		if(error)
 			throw Exception(Exception::getErrorMessage(ErrorCode::AsgFunctionInvalidParameters)
 							.arg(this->getName())
-							.arg(BaseObject::getTypeName(ObjectType::ObjCast)),
+							.arg(BaseObject::getTypeName(ObjectType::Cast)),
 							ErrorCode::AsgFunctionInvalidParameters,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
@@ -123,7 +123,7 @@ void Cast::setCastFunction(Function *cast_func)
 	if(ret_type!=this->types[DstType] && !ret_type.canCastTo(this->types[DstType]))
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgFunctionInvalidReturnType)
 						.arg(this->getName())
-						.arg(BaseObject::getTypeName(ObjectType::ObjCast)),
+						.arg(BaseObject::getTypeName(ObjectType::Cast)),
 						ErrorCode::AsgFunctionInvalidReturnType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(cast_function != cast_func);

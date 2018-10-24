@@ -466,7 +466,7 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 		catalog.setFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
 						  Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs);
 		catalog.getObjectsOIDs(obj_oids, col_oids, {{ParsersAttributes::FILTER_TABLE_TYPES, ParsersAttributes::_TRUE_}});
-		obj_oids[ObjectType::ObjDatabase].push_back(db_cmb->currentData().value<unsigned>());
+		obj_oids[ObjectType::Database].push_back(db_cmb->currentData().value<unsigned>());
 
 		if(thread_id == SrcImportThread)
 		{
@@ -807,7 +807,7 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 	}
 	else if(diff_thread && diff_thread->isRunning())
 	{
-		if((progress == 0 || progress == 100) && obj_type==ObjectType::ObjBaseObject)
+		if((progress == 0 || progress == 100) && obj_type==ObjectType::BaseObject)
 		{
 			PgModelerUiNs::createOutputTreeItem(output_trw, msg,
 												QPixmap(PgModelerUiNs::getIconPath("msgbox_info")),
@@ -823,7 +823,7 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 
 		progress_aux = diff_progress + (progress/3);
 
-		if(obj_type==ObjectType::ObjBaseObject)
+		if(obj_type==ObjectType::BaseObject)
 			ico=QPixmap(PgModelerUiNs::getIconPath("codigosql"));
 		else
 			ico=QPixmap(PgModelerUiNs::getIconPath(obj_type));
@@ -840,7 +840,7 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 	progress_lbl->setText(msg);
 	progress_pb->setValue(progress);
 
-	if(obj_type!=ObjectType::ObjBaseObject)
+	if(obj_type!=ObjectType::BaseObject)
 		progress_ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(obj_type)));
 	else
 		progress_ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("msgbox_info")));

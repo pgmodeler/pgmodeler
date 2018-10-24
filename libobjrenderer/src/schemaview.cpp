@@ -77,8 +77,8 @@ void SchemaView::fetchChildren(void)
 	vector<BaseObject *> objs, objs1;
 
 	//Gets all tables and views that belongs to the schema
-	objs=model->getObjects(ObjectType::ObjTable, schema);
-	objs1=model->getObjects(ObjectType::ObjView, schema);
+	objs=model->getObjects(ObjectType::Table, schema);
+	objs1=model->getObjects(ObjectType::View, schema);
 	objs.insert(objs.end(), objs1.begin(), objs1.end());
 
 	children.clear();

@@ -18,7 +18,7 @@
 
 #include "databasewidget.h"
 
-DatabaseWidget::DatabaseWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::ObjDatabase)
+DatabaseWidget::DatabaseWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Database)
 {
 	try
 	{
@@ -27,12 +27,12 @@ DatabaseWidget::DatabaseWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		QGridLayout *grid=nullptr;
 
 		Ui_DatabaseWidget::setupUi(this);
-		configureFormLayout(database_grid, ObjectType::ObjDatabase);
+		configureFormLayout(database_grid, ObjectType::Database);
 
-		def_schema_sel=new ObjectSelectorWidget(ObjectType::ObjSchema, true, this);
-		def_collation_sel=new ObjectSelectorWidget(ObjectType::ObjCollation, true, this);
-		def_owner_sel=new ObjectSelectorWidget(ObjectType::ObjRole, true, this);
-		def_tablespace_sel=new ObjectSelectorWidget(ObjectType::ObjTablespace, true, this);
+		def_schema_sel=new ObjectSelectorWidget(ObjectType::Schema, true, this);
+		def_collation_sel=new ObjectSelectorWidget(ObjectType::Collation, true, this);
+		def_owner_sel=new ObjectSelectorWidget(ObjectType::Role, true, this);
+		def_tablespace_sel=new ObjectSelectorWidget(ObjectType::Tablespace, true, this);
 
 		frame=generateInformationFrame(trUtf8("The fields <strong>LC_COLLATE</strong> and <strong>LC_CTYPE</strong> have pre-configured values based upon the running system. You can freely modify those values if you intend to export the model to another host."));
 		grid=dynamic_cast<QGridLayout *>(attributes_twg->widget(0)->layout());
@@ -98,16 +98,16 @@ void DatabaseWidget::setAttributes(DatabaseModel *model)
 			lcctype_cmb->setCurrentText(model->getLocalization(Collation::LcCtype));
 
 		def_schema_sel->setModel(model);
-		def_schema_sel->setSelectedObject(model->getDefaultObject(ObjectType::ObjSchema));
+		def_schema_sel->setSelectedObject(model->getDefaultObject(ObjectType::Schema));
 
 		def_collation_sel->setModel(model);
-		def_collation_sel->setSelectedObject(model->getDefaultObject(ObjectType::ObjCollation));
+		def_collation_sel->setSelectedObject(model->getDefaultObject(ObjectType::Collation));
 
 		def_owner_sel->setModel(model);
-		def_owner_sel->setSelectedObject(model->getDefaultObject(ObjectType::ObjRole));
+		def_owner_sel->setSelectedObject(model->getDefaultObject(ObjectType::Role));
 
 		def_tablespace_sel->setModel(model);
-		def_tablespace_sel->setSelectedObject(model->getDefaultObject(ObjectType::ObjTablespace));
+		def_tablespace_sel->setSelectedObject(model->getDefaultObject(ObjectType::Tablespace));
 
 		allow_conn_chk->setChecked(model->isAllowConnections());
 		is_template_chk->setChecked(model->isTemplate());
@@ -142,10 +142,10 @@ void DatabaseWidget::applyConfiguration(void)
 		else
 			model->setLocalization(Collation::LcCtype, QString());
 
-		model->setDefaultObject(def_schema_sel->getSelectedObject(), ObjectType::ObjSchema);
-		model->setDefaultObject(def_owner_sel->getSelectedObject(), ObjectType::ObjRole);
-		model->setDefaultObject(def_collation_sel->getSelectedObject(), ObjectType::ObjCollation);
-		model->setDefaultObject(def_tablespace_sel->getSelectedObject(), ObjectType::ObjTablespace);
+		model->setDefaultObject(def_schema_sel->getSelectedObject(), ObjectType::Schema);
+		model->setDefaultObject(def_owner_sel->getSelectedObject(), ObjectType::Role);
+		model->setDefaultObject(def_collation_sel->getSelectedObject(), ObjectType::Collation);
+		model->setDefaultObject(def_tablespace_sel->getSelectedObject(), ObjectType::Tablespace);
 		model->setIsTemplate(is_template_chk->isChecked());
 		model->setAllowConnections(allow_conn_chk->isChecked());
 

@@ -18,7 +18,7 @@
 
 #include "operatorclasswidget.h"
 
-OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::ObjOpClass)
+OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::OpClass)
 {
 	try
 	{
@@ -30,11 +30,11 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 
 		Ui_OperatorClassWidget::setupUi(this);
 
-		family_sel=new ObjectSelectorWidget(ObjectType::ObjOpFamily, true, this);
+		family_sel=new ObjectSelectorWidget(ObjectType::OpFamily, true, this);
 		data_type=new PgSQLTypeWidget(this);
-		operator_sel=new ObjectSelectorWidget(ObjectType::ObjOperator, true, this);
-		elem_family_sel=new ObjectSelectorWidget(ObjectType::ObjOpFamily, true, this);
-		function_sel=new ObjectSelectorWidget(ObjectType::ObjFunction, true, this);
+		operator_sel=new ObjectSelectorWidget(ObjectType::Operator, true, this);
+		elem_family_sel=new ObjectSelectorWidget(ObjectType::OpFamily, true, this);
+		function_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
 		storage_type=new PgSQLTypeWidget(this, trUtf8("Storage Type"));
 		elements_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
 
@@ -60,7 +60,7 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		grid->addWidget(data_type,4,0,1,5);
 		grid->addWidget(elements_grp,5,0,1,5);
 		this->setLayout(grid);
-		configureFormLayout(grid, ObjectType::ObjOpClass);
+		configureFormLayout(grid, ObjectType::OpClass);
 
 		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSqlVersions::PgSqlVersion95)].push_back(indexing_lbl);
 		values_map[indexing_lbl].push_back(~IndexingType(IndexingType::Brin));
@@ -150,7 +150,7 @@ void OperatorClassWidget::showElementData(OperatorClassElement elem, int lin_idx
 	else
 	{
 		elements_tab->setCellText(*elem.getStorage(), lin_idx, 0);
-		elements_tab->setCellText(BaseObject::getTypeName(ObjectType::ObjType), lin_idx, 1);
+		elements_tab->setCellText(BaseObject::getTypeName(ObjectType::Type), lin_idx, 1);
 	}
 
 	if(elem_type!=OperatorClassElement::StorageElem)

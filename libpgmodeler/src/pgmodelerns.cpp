@@ -50,7 +50,7 @@ namespace PgModelerNs {
 	{
 		switch(obj_type)
 		{
-			case ObjectType::ObjRelationship:
+			case ObjectType::Relationship:
 				Relationship *rel1;
 				rel1=new Relationship(dynamic_cast<Relationship *>(copy_obj));
 				if(!(*psrc_obj))
@@ -58,7 +58,7 @@ namespace PgModelerNs {
 				else
 					(*(dynamic_cast<Relationship *>(*psrc_obj)))=(*rel1);
 			break;
-			case ObjectType::ObjBaseRelationship:
+			case ObjectType::BaseRelationship:
 				BaseRelationship *rel;
 				rel=new BaseRelationship(dynamic_cast<BaseRelationship *>(copy_obj));
 				if(!(*psrc_obj))
@@ -66,88 +66,88 @@ namespace PgModelerNs {
 				else
 					(*(dynamic_cast<BaseRelationship *>(*psrc_obj)))=(*rel);
 			break;
-			case ObjectType::ObjColumn:
+			case ObjectType::Column:
 				copyObject(psrc_obj, dynamic_cast<Column *>(copy_obj));
 			break;
-			case ObjectType::ObjConstraint:
+			case ObjectType::Constraint:
 				copyObject(psrc_obj, dynamic_cast<Constraint *>(copy_obj));
 			break;
-			case ObjectType::ObjTrigger:
+			case ObjectType::Trigger:
 				copyObject(psrc_obj, dynamic_cast<Trigger *>(copy_obj));
 			break;
-			case ObjectType::ObjRule:
+			case ObjectType::Rule:
 				copyObject(psrc_obj, dynamic_cast<Rule *>(copy_obj));
 			break;
-			case ObjectType::ObjIndex:
+			case ObjectType::Index:
 				copyObject(psrc_obj, dynamic_cast<Index *>(copy_obj));
 			break;
-			case ObjectType::ObjPolicy:
+			case ObjectType::Policy:
 				copyObject(psrc_obj, dynamic_cast<Policy *>(copy_obj));
 			break;
-			case ObjectType::ObjTable:
+			case ObjectType::Table:
 				copyObject(psrc_obj, dynamic_cast<Table *>(copy_obj));
 			break;
-			case ObjectType::ObjTextbox:
+			case ObjectType::Textbox:
 				copyObject(psrc_obj, dynamic_cast<Textbox *>(copy_obj));
 			break;
-			case ObjectType::ObjOpClass:
+			case ObjectType::OpClass:
 				copyObject(psrc_obj, dynamic_cast<OperatorClass *>(copy_obj));
 			break;
-			case ObjectType::ObjConversion:
+			case ObjectType::Conversion:
 				copyObject(psrc_obj, dynamic_cast<Conversion *>(copy_obj));
 			break;
-			case ObjectType::ObjCast:
+			case ObjectType::Cast:
 				copyObject(psrc_obj, dynamic_cast<Cast *>(copy_obj));
 			break;
-			case ObjectType::ObjDomain:
+			case ObjectType::Domain:
 				copyObject(psrc_obj, dynamic_cast<Domain *>(copy_obj));
 			break;
-			case ObjectType::ObjTablespace:
+			case ObjectType::Tablespace:
 				copyObject(psrc_obj, dynamic_cast<Tablespace *>(copy_obj));
 			break;
-			case ObjectType::ObjSchema:
+			case ObjectType::Schema:
 				copyObject(psrc_obj, dynamic_cast<Schema *>(copy_obj));
 			break;
-			case ObjectType::ObjOpFamily:
+			case ObjectType::OpFamily:
 				copyObject(psrc_obj, dynamic_cast<OperatorFamily *>(copy_obj));
 			break;
-			case ObjectType::ObjFunction:
+			case ObjectType::Function:
 				copyObject(psrc_obj, dynamic_cast<Function *>(copy_obj));
 			break;
-			case ObjectType::ObjAggregate:
+			case ObjectType::Aggregate:
 				copyObject(psrc_obj, dynamic_cast<Aggregate *>(copy_obj));
 			break;
-			case ObjectType::ObjLanguage:
+			case ObjectType::Language:
 				copyObject(psrc_obj, dynamic_cast<Language *>(copy_obj));
 			break;
-			case ObjectType::ObjOperator:
+			case ObjectType::Operator:
 				copyObject(psrc_obj, dynamic_cast<Operator *>(copy_obj));
 			break;
-			case ObjectType::ObjRole:
+			case ObjectType::Role:
 				copyObject(psrc_obj, dynamic_cast<Role *>(copy_obj));
 			break;
-			case ObjectType::ObjSequence:
+			case ObjectType::Sequence:
 				copyObject(psrc_obj, dynamic_cast<Sequence *>(copy_obj));
 			break;
-			case ObjectType::ObjType:
+			case ObjectType::Type:
 				copyObject(psrc_obj, dynamic_cast<Type *>(copy_obj));
 			break;
-			case ObjectType::ObjView:
+			case ObjectType::View:
 				copyObject(psrc_obj, dynamic_cast<View *>(copy_obj));
 			break;
-			case ObjectType::ObjCollation:
+			case ObjectType::Collation:
 				copyObject(psrc_obj, dynamic_cast<Collation *>(copy_obj));
 			break;
-			case ObjectType::ObjExtension:
+			case ObjectType::Extension:
 				copyObject(psrc_obj, dynamic_cast<Extension *>(copy_obj));
 			break;
-			case ObjectType::ObjTag:
+			case ObjectType::Tag:
 				copyObject(psrc_obj, dynamic_cast<Tag *>(copy_obj));
 			break;
-			case ObjectType::ObjEventTrigger:
+			case ObjectType::EventTrigger:
 				copyObject(psrc_obj, dynamic_cast<EventTrigger *>(copy_obj));
 			break;
-			case ObjectType::ObjGenericSQL:
+			case ObjectType::GenericSql:
 				copyObject(psrc_obj, dynamic_cast<GenericSQL *>(copy_obj));
 			break;
 			default:

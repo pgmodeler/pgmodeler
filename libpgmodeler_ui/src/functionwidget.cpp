@@ -19,7 +19,7 @@
 #include "functionwidget.h"
 #include "baseform.h"
 
-FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::ObjFunction)
+FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Function)
 {
 	try
 	{
@@ -34,7 +34,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, Object
 
 		Ui_FunctionWidget::setupUi(this);
 
-		configureFormLayout(function_grid, ObjectType::ObjFunction);
+		configureFormLayout(function_grid, ObjectType::Function);
 		source_code_txt=new NumberedTextEditor(this, true);
 		dynamic_cast<QGridLayout *>(source_code_frm->layout())->addWidget(source_code_txt, 1, 0, 1, 2);
 
@@ -268,7 +268,7 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 	PgSqlType aux_type;
 
 	BaseObjectWidget::setAttributes(model, op_list, func, schema);
-	languages=model->getObjects(ObjectType::ObjLanguage);
+	languages=model->getObjects(ObjectType::Language);
 
 	while(!languages.empty())
 	{
@@ -420,19 +420,19 @@ void FunctionWidget::validateConfiguredFunction(void)
 
 				If the function is invalid the instances raises	exceptions accusing the error
 				that is enough to check	the validity of the function in relation to objects that reference it. */
-			if(obj_type==ObjectType::ObjConversion)
+			if(obj_type==ObjectType::Conversion)
 			{
 				conv=dynamic_cast<Conversion *>(object);
 				if(conv->getConversionFunction()==func)
 					conv->setConversionFunction(func);
 			}
-			else if(obj_type==ObjectType::ObjCast)
+			else if(obj_type==ObjectType::Cast)
 			{
 				cast=dynamic_cast<Cast *>(object);
 				if(cast->getCastFunction()==func)
 					cast->setCastFunction(func);
 			}
-			else if(obj_type==ObjectType::ObjAggregate)
+			else if(obj_type==ObjectType::Aggregate)
 			{
 				aggr=dynamic_cast<Aggregate *>(object);
 				if(aggr->getFunction(Aggregate::FinalFunc)==func)
@@ -440,11 +440,11 @@ void FunctionWidget::validateConfiguredFunction(void)
 				else if(aggr->getFunction(Aggregate::TransitionFunc)==func)
 					aggr->setFunction(Aggregate::TransitionFunc, func);
 			}
-			else if(obj_type==ObjectType::ObjTrigger)
+			else if(obj_type==ObjectType::Trigger)
 			{
 				dynamic_cast<Trigger *>(object)->setFunction(func);
 			}
-			else if(obj_type==ObjectType::ObjLanguage)
+			else if(obj_type==ObjectType::Language)
 			{
 				lang=dynamic_cast<Language *>(object);
 
@@ -454,7 +454,7 @@ void FunctionWidget::validateConfiguredFunction(void)
 						lang->setFunction(func, i1);
 				}
 			}
-			else if(obj_type==ObjectType::ObjOperator)
+			else if(obj_type==ObjectType::Operator)
 			{
 				oper=dynamic_cast<Operator *>(object);
 				for(i1=Operator::FUNC_OPERATOR; i1 <= Operator::FUNC_RESTRICT; i1++)
@@ -463,7 +463,7 @@ void FunctionWidget::validateConfiguredFunction(void)
 						oper->setFunction(func, i1);
 				}
 			}
-			else if(obj_type==ObjectType::ObjType)
+			else if(obj_type==ObjectType::Type)
 			{
 				type=dynamic_cast<Type *>(object);
 				if(type->getConfiguration()==Type::BaseType)
@@ -475,7 +475,7 @@ void FunctionWidget::validateConfiguredFunction(void)
 					}
 				}
 			}
-			else if(obj_type==ObjectType::ObjEventTrigger)
+			else if(obj_type==ObjectType::EventTrigger)
 			{
 				dynamic_cast<EventTrigger *>(object)->setFunction(func);
 			}
@@ -504,7 +504,7 @@ void FunctionWidget::applyConfiguration(void)
 		startConfiguration<Function>();
 
 		func=dynamic_cast<Function *>(this->object);
-		func->setLanguage(model->getObject(language_cmb->currentText(), ObjectType::ObjLanguage));
+		func->setLanguage(model->getObject(language_cmb->currentText(), ObjectType::Language));
 		func->setFunctionType(func_type_cmb->currentText());
 		func->setWindowFunction(window_func_chk->isChecked());
 		func->setLeakProof(leakproof_chk->isChecked());

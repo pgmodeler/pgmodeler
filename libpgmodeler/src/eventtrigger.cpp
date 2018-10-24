@@ -20,7 +20,7 @@
 
 EventTrigger::EventTrigger(void)
 {
-	obj_type=ObjectType::ObjEventTrigger;
+	obj_type=ObjectType::EventTrigger;
 	function=nullptr;
 	attributes[ParsersAttributes::EVENT]=QString();
 	attributes[ParsersAttributes::FILTER]=QString();
@@ -38,7 +38,7 @@ void EventTrigger::setFunction(Function *func)
 	if(!func)
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgNotAllocatedFunction)
 						.arg(this->getName())
-						.arg(BaseObject::getTypeName(ObjectType::ObjEventTrigger)),
+						.arg(BaseObject::getTypeName(ObjectType::EventTrigger)),
 						ErrorCode::AsgNotAllocatedFunction,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Functions with return type other that event_trigger are not accepted
 	else if(func->getReturnType()!=QString("event_trigger"))
@@ -47,7 +47,7 @@ void EventTrigger::setFunction(Function *func)
 	else if(func->getParameterCount()!=0)
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgFunctionInvalidParamCount)
 						.arg(this->getName())
-						.arg(BaseObject::getTypeName(ObjectType::ObjEventTrigger)),
+						.arg(BaseObject::getTypeName(ObjectType::EventTrigger)),
 						ErrorCode::AsgFunctionInvalidParamCount,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Functions coded in SQL lang. is not accepted by event triggers
 	else if(func->getLanguage()->getName()==~LanguageType(LanguageType::Sql))

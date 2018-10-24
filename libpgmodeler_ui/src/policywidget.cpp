@@ -18,14 +18,14 @@
 
 #include "policywidget.h"
 
-PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::ObjPolicy)
+PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Policy)
 {
 	try
 	{
 		Ui_PolicyWidget::setupUi(this);
 
 		model_objs_wgt = new ModelObjectsWidget(true, this);
-		model_objs_wgt->setObjectVisible(ObjectType::ObjRole, true);
+		model_objs_wgt->setObjectVisible(ObjectType::Role, true);
 
 		using_edt = PgModelerUiNs::createNumberedTextEditor(using_wgt);
 		using_edt->setTabChangesFocus(true);
@@ -49,7 +49,7 @@ PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 		vbox->addWidget(roles_tab);
 
 		QFrame *frame=generateInformationFrame(trUtf8("Leave the <em><strong>Roles</strong></em> grid empty in order to create a %1 applicable to <strong><em>PUBLIC</em></strong>.")
-																					 .arg(BaseObject::getTypeName(ObjectType::ObjPolicy).toLower()));
+																					 .arg(BaseObject::getTypeName(ObjectType::Policy).toLower()));
 		vbox->addWidget(frame);
 		frame->setParent(this);
 		vbox->setContentsMargins(4,4,4,4);
@@ -59,7 +59,7 @@ PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 		PolicyCmdType::getTypes(cmds);
 		command_cmb->addItems(cmds);
 
-		configureFormLayout(policy_grid, ObjectType::ObjPolicy);
+		configureFormLayout(policy_grid, ObjectType::Policy);
 		configureTabOrder({ basics_grp, attribs_tbw });
 
 		connect(roles_tab, SIGNAL(s_rowAdded(int)), model_objs_wgt, SLOT(show()));

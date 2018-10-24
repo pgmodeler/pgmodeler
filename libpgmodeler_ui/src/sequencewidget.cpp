@@ -18,17 +18,17 @@
 
 #include "sequencewidget.h"
 
-SequenceWidget::SequenceWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::ObjSequence)
+SequenceWidget::SequenceWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Sequence)
 {
 	try
 	{
 		Ui_SequenceWidget::setupUi(this);
 
 		column_sel=nullptr;
-		column_sel=new ObjectSelectorWidget(ObjectType::ObjColumn, true, this);
+		column_sel=new ObjectSelectorWidget(ObjectType::Column, true, this);
 		sequence_grid->addWidget(column_sel, 4, 1, 1, 3);
 
-		configureFormLayout(sequence_grid, ObjectType::ObjSequence);
+		configureFormLayout(sequence_grid, ObjectType::Sequence);
 		sequence_grid->addItem(new QSpacerItem(10,0,QSizePolicy::Minimum,QSizePolicy::Expanding), sequence_grid->count(), 0);
 		configureTabOrder();
 

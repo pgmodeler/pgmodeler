@@ -18,7 +18,7 @@
 
 #include "operatorfamilywidget.h"
 
-OperatorFamilyWidget::OperatorFamilyWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::ObjOpFamily)
+OperatorFamilyWidget::OperatorFamilyWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::OpFamily)
 {
 	QStringList types;
 	map<QString, vector<QWidget *> > fields_map;
@@ -26,7 +26,7 @@ OperatorFamilyWidget::OperatorFamilyWidget(QWidget *parent): BaseObjectWidget(pa
 	QFrame *frame=nullptr;
 
 	Ui_OperatorFamilyWidget::setupUi(this);
-	configureFormLayout(opfamily_grid, ObjectType::ObjOpFamily);
+	configureFormLayout(opfamily_grid, ObjectType::OpFamily);
 
 	IndexingType::getTypes(types);
 	indexing_cmb->addItems(types);

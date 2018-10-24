@@ -60,14 +60,14 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	if(!object)
 		throw Exception(ErrorCode::OprNotAllocatedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	//Raises an error if the object is invalid
-	else if(object->getObjectType()!=ObjectType::ObjTable  &&
-			object->getObjectType()!=ObjectType::ObjView)
+	else if(object->getObjectType()!=ObjectType::Table  &&
+			object->getObjectType()!=ObjectType::View)
 		throw Exception(ErrorCode::OprObjectInvalidType, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	schema=dynamic_cast<Schema *>(object->getSchema());
 	tag=dynamic_cast<BaseTable *>(object)->getTag();
 
-	if(object->getObjectType()==ObjectType::ObjView && !tag)
+	if(object->getObjectType()==ObjectType::View && !tag)
 	{
 		name_attrib=ParsersAttributes::VIEW_NAME;
 		schema_name_attrib=ParsersAttributes::VIEW_SCHEMA_NAME;
@@ -122,7 +122,7 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	if(tag)
 		pen.setColor(tag->getElementColor(title_color_attrib, Tag::BorderColor));
 
-	if(object->getObjectType()==ObjectType::ObjView ||
+	if(object->getObjectType()==ObjectType::View ||
 	   (table && table->isPartition()))
 		pen.setStyle(Qt::DashLine);
 

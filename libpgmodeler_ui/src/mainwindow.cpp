@@ -898,7 +898,7 @@ void MainWindow::addModel(const QString &filename)
 				models_tbw->setTabToolTip(models_tbw->currentIndex(), filename);
 
 				//Get the "public" schema and set as system object
-				public_sch=dynamic_cast<Schema *>(model_tab->db_model->getObject(QString("public"), ObjectType::ObjSchema));
+				public_sch=dynamic_cast<Schema *>(model_tab->db_model->getObject(QString("public"), ObjectType::Schema));
 				if(public_sch)	public_sch->setSystemObject(true);
 
 				model_tab->db_model->setInvalidated(false);
@@ -1158,7 +1158,7 @@ void MainWindow::setGridOptions(void)
 			current_model->scene->alignObjectsToGrid();
 
 			//Forcing the relationship updating to fit the new position of the tables
-			current_model->getDatabaseModel()->setObjectsModified({ ObjectType::ObjRelationship, ObjectType::ObjBaseRelationship });
+			current_model->getDatabaseModel()->setObjectsModified({ ObjectType::Relationship, ObjectType::BaseRelationship });
 		}
 
 		//Redraw the scene to apply the new grid options
@@ -2042,7 +2042,7 @@ void MainWindow::toggleCompactView(void)
 	{
 		model_wgt = dynamic_cast<ModelWidget *>(models_tbw->widget(idx));
 		model_wgt->toggleAllExtendedAttributes(action_compact_view->isChecked());
-		model_wgt->getDatabaseModel()->setObjectsModified({ ObjectType::ObjTable, ObjectType::ObjView, ObjectType::ObjRelationship, ObjectType::ObjBaseRelationship, ObjectType::ObjSchema});
+		model_wgt->getDatabaseModel()->setObjectsModified({ ObjectType::Table, ObjectType::View, ObjectType::Relationship, ObjectType::BaseRelationship, ObjectType::Schema});
 	}
 
 	QApplication::restoreOverrideCursor();

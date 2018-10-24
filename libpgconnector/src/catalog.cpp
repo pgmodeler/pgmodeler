@@ -30,35 +30,35 @@ const QString Catalog::PgModelerTempDbObj=QString("__pgmodeler_tmp");
 attribs_map Catalog::catalog_queries;
 
 map<ObjectType, QString> Catalog::oid_fields=
-{ {ObjectType::ObjDatabase, "oid"}, {ObjectType::ObjRole, "oid"}, {ObjectType::ObjSchema,"oid"},
-  {ObjectType::ObjLanguage, "oid"}, {ObjectType::ObjTablespace, "oid"}, {ObjectType::ObjExtension, "ex.oid"},
-  {ObjectType::ObjFunction, "pr.oid"}, {ObjectType::ObjAggregate, "pr.oid"}, {ObjectType::ObjOperator, "op.oid"},
-  {ObjectType::ObjOpClass, "op.oid"}, {ObjectType::ObjOpFamily, "op.oid"}, {ObjectType::ObjCollation, "cl.oid"},
-  {ObjectType::ObjConversion, "cn.oid"}, {ObjectType::ObjCast, "cs.oid"}, {ObjectType::ObjView, "vw.oid"},
-  {ObjectType::ObjSequence, "sq.oid"}, {ObjectType::ObjDomain, "dm.oid"}, {ObjectType::ObjType, "tp.oid"},
-  {ObjectType::ObjTable, "tb.oid"}, {ObjectType::ObjColumn, "cl.oid"}, {ObjectType::ObjConstraint, "cs.oid"},
-	{ObjectType::ObjRule, "rl.oid"}, {ObjectType::ObjTrigger, "tg.oid"}, {ObjectType::ObjIndex, "id.indexrelid"},
-	{ObjectType::ObjEventTrigger, "et.oid"}, {ObjectType::ObjPolicy, "pl.oid"}
+{ {ObjectType::Database, "oid"}, {ObjectType::Role, "oid"}, {ObjectType::Schema,"oid"},
+	{ObjectType::Language, "oid"}, {ObjectType::Tablespace, "oid"}, {ObjectType::Extension, "ex.oid"},
+	{ObjectType::Function, "pr.oid"}, {ObjectType::Aggregate, "pr.oid"}, {ObjectType::Operator, "op.oid"},
+	{ObjectType::OpClass, "op.oid"}, {ObjectType::OpFamily, "op.oid"}, {ObjectType::Collation, "cl.oid"},
+	{ObjectType::Conversion, "cn.oid"}, {ObjectType::Cast, "cs.oid"}, {ObjectType::View, "vw.oid"},
+	{ObjectType::Sequence, "sq.oid"}, {ObjectType::Domain, "dm.oid"}, {ObjectType::Type, "tp.oid"},
+	{ObjectType::Table, "tb.oid"}, {ObjectType::Column, "cl.oid"}, {ObjectType::Constraint, "cs.oid"},
+	{ObjectType::Rule, "rl.oid"}, {ObjectType::Trigger, "tg.oid"}, {ObjectType::Index, "id.indexrelid"},
+	{ObjectType::EventTrigger, "et.oid"}, {ObjectType::Policy, "pl.oid"}
 };
 
 map<ObjectType, QString> Catalog::ext_oid_fields={
-	{ObjectType::ObjConstraint, "cs.conrelid"},
-	{ObjectType::ObjIndex, "id.indexrelid"},
-	{ObjectType::ObjTrigger, "tg.tgrelid"},
-	{ObjectType::ObjRule, "rl.ev_class"},
-	{ObjectType::ObjPolicy, "pl.polrelid"}
+	{ObjectType::Constraint, "cs.conrelid"},
+	{ObjectType::Index, "id.indexrelid"},
+	{ObjectType::Trigger, "tg.tgrelid"},
+	{ObjectType::Rule, "rl.ev_class"},
+	{ObjectType::Policy, "pl.polrelid"}
 };
 
 map<ObjectType, QString> Catalog::name_fields=
-{ {ObjectType::ObjDatabase, "datname"}, {ObjectType::ObjRole, "rolname"}, {ObjectType::ObjSchema,"nspname"},
-	{ObjectType::ObjLanguage, "lanname"}, {ObjectType::ObjTablespace, "spcname"}, {ObjectType::ObjExtension, "extname"},
-	{ObjectType::ObjFunction, "proname"}, {ObjectType::ObjAggregate, "proname"}, {ObjectType::ObjOperator, "oprname"},
-	{ObjectType::ObjOpClass, "opcname"}, {ObjectType::ObjOpFamily, "opfname"}, {ObjectType::ObjCollation, "collname"},
-	{ObjectType::ObjConversion, "conname"}, {ObjectType::ObjCast, ""}, {ObjectType::ObjView, "relname"},
-	{ObjectType::ObjSequence, "relname"}, {ObjectType::ObjDomain, "typname"}, {ObjectType::ObjType, "typname"},
-	{ObjectType::ObjTable, "relname"}, {ObjectType::ObjColumn, "attname"}, {ObjectType::ObjConstraint, "conname"},
-	{ObjectType::ObjRule, "rulename"}, {ObjectType::ObjTrigger, "tgname"}, {ObjectType::ObjIndex, "relname"},
-	{ObjectType::ObjEventTrigger, "evtname"}, {ObjectType::ObjPolicy, "polname"}
+{ {ObjectType::Database, "datname"}, {ObjectType::Role, "rolname"}, {ObjectType::Schema,"nspname"},
+	{ObjectType::Language, "lanname"}, {ObjectType::Tablespace, "spcname"}, {ObjectType::Extension, "extname"},
+	{ObjectType::Function, "proname"}, {ObjectType::Aggregate, "proname"}, {ObjectType::Operator, "oprname"},
+	{ObjectType::OpClass, "opcname"}, {ObjectType::OpFamily, "opfname"}, {ObjectType::Collation, "collname"},
+	{ObjectType::Conversion, "conname"}, {ObjectType::Cast, ""}, {ObjectType::View, "relname"},
+	{ObjectType::Sequence, "relname"}, {ObjectType::Domain, "typname"}, {ObjectType::Type, "typname"},
+	{ObjectType::Table, "relname"}, {ObjectType::Column, "attname"}, {ObjectType::Constraint, "conname"},
+	{ObjectType::Rule, "rulename"}, {ObjectType::Trigger, "tgname"}, {ObjectType::Index, "relname"},
+	{ObjectType::EventTrigger, "evtname"}, {ObjectType::Policy, "polname"}
 };
 
 Catalog::Catalog(void)
@@ -84,7 +84,7 @@ void Catalog::setConnection(Connection &conn)
 		connection.connect();
 
 		//Retrieving the last system oid
-		executeCatalogQuery(QueryList, ObjectType::ObjDatabase, res, true,
+		executeCatalogQuery(QueryList, ObjectType::Database, res, true,
 		{{ParsersAttributes::NAME, conn.getConnectionParam(Connection::ParamDbName)}});
 
 		if(res.accessTuple(ResultSet::FirstTuple))
@@ -197,7 +197,7 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 	else
 		attribs[ParsersAttributes::OID_FILTER_OP]=QString(">");
 
-	if(obj_type==ObjectType::ObjType && exclude_array_types)
+	if(obj_type==ObjectType::Type && exclude_array_types)
 		attribs[ParsersAttributes::EXC_BUILTIN_ARRAYS]=ParsersAttributes::_TRUE_;
 
 	//Checking if the custom filter expression is present
@@ -207,7 +207,7 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 		attribs.erase(ParsersAttributes::CUSTOM_FILTER);
 	}
 
-	if(exclude_ext_objs && obj_type!=ObjectType::ObjDatabase &&	obj_type!=ObjectType::ObjRole && obj_type!=ObjectType::ObjTablespace && obj_type!=ObjectType::ObjExtension)
+	if(exclude_ext_objs && obj_type!=ObjectType::Database &&	obj_type!=ObjectType::Role && obj_type!=ObjectType::Tablespace && obj_type!=ObjectType::Extension)
 	{
 		if(ext_oid_fields.count(obj_type)==0)
 			attribs[ParsersAttributes::NOT_EXT_OBJECT]=getNotExtObjectQuery(oid_fields[obj_type]);
@@ -287,9 +287,9 @@ void Catalog::getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<u
 {
 	try
 	{
-		vector<ObjectType> types=BaseObject::getObjectTypes(true, { ObjectType::ObjDatabase, ObjectType::ObjRelationship, ObjectType::ObjBaseRelationship,
-																																ObjectType::ObjTextbox, ObjectType::ObjTag, ObjectType::ObjColumn, ObjectType::ObjPermission,
-																																ObjectType::ObjGenericSQL });
+		vector<ObjectType> types=BaseObject::getObjectTypes(true, { ObjectType::Database, ObjectType::Relationship, ObjectType::BaseRelationship,
+																																ObjectType::Textbox, ObjectType::Tag, ObjectType::Column, ObjectType::Permission,
+																																ObjectType::GenericSql });
 		attribs_map attribs, col_attribs, sch_names;
 		vector<attribs_map> tab_attribs;
 		unsigned tab_oid=0;
@@ -303,16 +303,16 @@ void Catalog::getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<u
 				obj_oids[type].push_back(attr.first.toUInt());
 
 				//Store the schemas names in order to retrieve the tables' columns correctly
-				if(type==ObjectType::ObjSchema)
+				if(type==ObjectType::Schema)
 					sch_names[attr.first]=attr.second;
-				else if(type==ObjectType::ObjTable)
+				else if(type==ObjectType::Table)
 				{
 					//Get the full set of attributes of the table
 					tab_oid=attr.first.toUInt();
 					tab_attribs=getObjectsAttributes(type, QString(), QString(), { tab_oid });
 
 					//Retrieve the oid and names of the table's columns
-					col_attribs=getObjectsNames(ObjectType::ObjColumn, sch_names[tab_attribs[0][ParsersAttributes::SCHEMA]], attr.second);
+					col_attribs=getObjectsNames(ObjectType::Column, sch_names[tab_attribs[0][ParsersAttributes::SCHEMA]], attr.second);
 
 					for(auto &col_attr : col_attribs)
 						col_oids[tab_oid].push_back(col_attr.first.toUInt());
@@ -590,8 +590,8 @@ vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QSt
 {
 	try
 	{
-		bool is_shared_obj=(obj_type==ObjectType::ObjDatabase ||	obj_type==ObjectType::ObjRole ||	obj_type==ObjectType::ObjTablespace ||
-												obj_type==ObjectType::ObjLanguage || obj_type==ObjectType::ObjCast);
+		bool is_shared_obj=(obj_type==ObjectType::Database ||	obj_type==ObjectType::Role ||	obj_type==ObjectType::Tablespace ||
+												obj_type==ObjectType::Language || obj_type==ObjectType::Cast);
 
 		extra_attribs[ParsersAttributes::SCHEMA]=schema;
 		extra_attribs[ParsersAttributes::TABLE]=table;
@@ -600,7 +600,7 @@ vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QSt
 			extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
 
 		//Retrieve the comment catalog query. Only columns need to retreive comments in their own catalog query file
-		if(obj_type != ObjectType::ObjColumn)
+		if(obj_type != ObjectType::Column)
 			extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery(oid_fields[obj_type], is_shared_obj);
 
 		return(getMultipleAttributes(obj_type, extra_attribs));

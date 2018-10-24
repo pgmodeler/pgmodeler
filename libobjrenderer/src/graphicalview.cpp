@@ -97,14 +97,14 @@ void GraphicalView::configureObject(void)
 		i--;
 	}
 
-	tab_objs.assign(view->getObjectList(ObjectType::ObjRule)->begin(),
-					view->getObjectList(ObjectType::ObjRule)->end());
+	tab_objs.assign(view->getObjectList(ObjectType::Rule)->begin(),
+					view->getObjectList(ObjectType::Rule)->end());
 	tab_objs.insert(tab_objs.end(),
-					view->getObjectList(ObjectType::ObjTrigger)->begin(),
-					view->getObjectList(ObjectType::ObjTrigger)->end());
+					view->getObjectList(ObjectType::Trigger)->begin(),
+					view->getObjectList(ObjectType::Trigger)->end());
 	tab_objs.insert(tab_objs.end(),
-					view->getObjectList(ObjectType::ObjIndex)->begin(),
-					view->getObjectList(ObjectType::ObjIndex)->end());
+					view->getObjectList(ObjectType::Index)->begin(),
+					view->getObjectList(ObjectType::Index)->end());
 
 	ext_attribs->setVisible(!tab_objs.empty() && !hide_ext_attribs);
 	ext_attribs_body->setVisible(!tab_objs.empty() && !hide_ext_attribs);

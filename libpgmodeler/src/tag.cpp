@@ -26,7 +26,7 @@ Tag::Tag(void)
 						  ParsersAttributes::TABLE_TITLE, ParsersAttributes::TABLE_BODY,
 						  ParsersAttributes::TABLE_EXT_BODY };
 
-	obj_type=ObjectType::ObjTag;
+	obj_type=ObjectType::Tag;
 	object_id=Tag::tag_id++;
 	attributes[ParsersAttributes::STYLES]=QString();
 

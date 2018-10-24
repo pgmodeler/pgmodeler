@@ -21,7 +21,7 @@
 Rule::Rule(void)
 {
 	execution_type=BaseType::Null;
-	obj_type=ObjectType::ObjRule;
+	obj_type=ObjectType::Rule;
 	attributes[ParsersAttributes::EVENT_TYPE]=QString();
 	attributes[ParsersAttributes::TABLE]=QString();
 	attributes[ParsersAttributes::CONDITION]=QString();

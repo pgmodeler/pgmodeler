@@ -20,7 +20,7 @@
 
 OperatorFamily::OperatorFamily(void)
 {
-	obj_type=ObjectType::ObjOpFamily;
+	obj_type=ObjectType::OpFamily;
 	attributes[ParsersAttributes::INDEX_TYPE]=QString();
 }
 

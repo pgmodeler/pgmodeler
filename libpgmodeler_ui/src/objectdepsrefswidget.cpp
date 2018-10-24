@@ -22,7 +22,7 @@
 ObjectDepsRefsWidget::ObjectDepsRefsWidget(QWidget *parent): BaseObjectWidget(parent)
 {
 	Ui_ObjectDepsRefsWidget::setupUi(this);
-	configureFormLayout(objectdepsrefs_grid, ObjectType::ObjBaseObject);
+	configureFormLayout(objectdepsrefs_grid, ObjectType::BaseObject);
 
 	PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
 
@@ -116,7 +116,7 @@ void ObjectDepsRefsWidget::handleItemSelection(QTableWidgetItem *item)
 		{
 			parent=dynamic_cast<TableObject *>(this->object)->getParentTable();
 
-			if(parent->getObjectType()==ObjectType::ObjTable)
+			if(parent->getObjectType()==ObjectType::Table)
 				parent_tab=dynamic_cast<Table *>(parent);
 			else
 				parent_view=dynamic_cast<View *>(parent);
