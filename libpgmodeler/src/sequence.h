@@ -86,7 +86,7 @@ class Sequence: public BaseObject {
 
 		/*! \brief Sets all values at once based on the serial type specified (smallserial, serial or bigserial).
 		If other type the three serial types are passed the method will consider as 'serial' */
-		void setDefaultValues(PgSQLType serial_type);
+		void setDefaultValues(PgSqlType serial_type);
 
 		//! \brief Defines the owner column using a table and a column name
 		void setOwnerColumn(Table *tabela, const QString &col_name);

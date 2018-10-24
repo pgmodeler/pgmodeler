@@ -64,7 +64,7 @@ CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ob
 
 void CastWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Cast *cast)
 {
-	PgSQLType src_type, trg_type;
+	PgSqlType src_type, trg_type;
 
 	BaseObjectWidget::setAttributes(model, op_list, cast);
 	conv_func_sel->setModel(model);

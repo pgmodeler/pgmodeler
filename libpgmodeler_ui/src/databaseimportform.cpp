@@ -836,9 +836,9 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 					else if((obj_type==ObjectType::ObjTablespace && (name==QString("pg_default") || name==QString("pg_global"))) ||
 									(obj_type==ObjectType::ObjRole && (name==QString("postgres"))) ||
 									(obj_type==ObjectType::ObjSchema && (name==QString("pg_catalog") || name==QString("public"))) ||
-									(obj_type==ObjectType::ObjLanguage && (name==~LanguageType(LanguageType::c) ||
-																							name==~LanguageType(LanguageType::sql) ||
-																							name==~LanguageType(LanguageType::plpgsql))))
+									(obj_type==ObjectType::ObjLanguage && (name==~LanguageType(LanguageType::C) ||
+																							name==~LanguageType(LanguageType::Sql) ||
+																							name==~LanguageType(LanguageType::PlPgsql))))
 					{
 						item->setFont(0, grp_fnt);
 						item->setForeground(0, BaseObjectView::getFontStyle(ParsersAttributes::PROT_COLUMN).foreground());

@@ -55,14 +55,14 @@ void View::setName(const QString &name)
 {
 	QString prev_name=this->getName(true);
 	BaseObject::setName(name);
-	PgSQLType::renameUserType(prev_name, this, this->getName(true));
+	PgSqlType::renameUserType(prev_name, this, this->getName(true));
 }
 
 void View::setSchema(BaseObject *schema)
 {
 	QString prev_name=this->getName(true);
 	BaseObject::setSchema(schema);
-	PgSQLType::renameUserType(prev_name, this, this->getName(true));
+	PgSqlType::renameUserType(prev_name, this, this->getName(true));
 }
 
 void View::setProtected(bool value)
@@ -996,7 +996,7 @@ void View::operator = (View &view)
 	this->recursive=view.recursive;
 	this->with_no_data=view.with_no_data;
 
-	PgSQLType::renameUserType(prev_name, this, this->getName(true));
+	PgSqlType::renameUserType(prev_name, this, this->getName(true));
 }
 
 vector<BaseObject *> View::getObjects(void)

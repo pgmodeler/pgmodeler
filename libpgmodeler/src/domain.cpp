@@ -70,7 +70,7 @@ void Domain::setName(const QString &name)
 	new_name=this->getName(true);
 
 	//Renames the PostgreSQL type represented by the domain
-	PgSQLType::renameUserType(prev_name, this, new_name);
+	PgSqlType::renameUserType(prev_name, this, new_name);
 }
 
 void Domain::setSchema(BaseObject *schema)
@@ -81,7 +81,7 @@ void Domain::setSchema(BaseObject *schema)
 	BaseObject::setSchema(schema);
 
 	//Renames the PostgreSQL type represented by the domain
-	PgSQLType::renameUserType(prev_name, this, this->getName(true));
+	PgSqlType::renameUserType(prev_name, this, this->getName(true));
 }
 
 void Domain::setDefaultValue(const QString &default_val)
@@ -98,7 +98,7 @@ void Domain::setNotNull(bool value)
 	not_null=value;
 }
 
-void Domain::setType(PgSQLType type)
+void Domain::setType(PgSqlType type)
 {
 	setCodeInvalidated(this->type != type);
 	this->type=type;
@@ -114,7 +114,7 @@ bool Domain::isNotNull(void)
 	return(not_null);
 }
 
-PgSQLType Domain::getType(void)
+PgSqlType Domain::getType(void)
 {
 	return(type);
 }
@@ -153,7 +153,7 @@ void Domain::operator = (Domain &domain)
 	this->default_value=domain.default_value;
 	this->type=domain.type;
 	this->chk_constrs=domain.chk_constrs;
-	PgSQLType::renameUserType(prev_name, this, this->getName(true));
+	PgSqlType::renameUserType(prev_name, this, this->getName(true));
 }
 
 QString Domain::getAlterDefinition(BaseObject *object)

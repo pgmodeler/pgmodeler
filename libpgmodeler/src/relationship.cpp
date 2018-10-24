@@ -322,7 +322,7 @@ void Relationship::createSpecialPrimaryKey(void)
 		pk_special=new Constraint;
 		pk_special->setName(generateObjectName(PkPattern));
 		pk_special->setAlias(generateObjectName(PkPattern, nullptr, true));
-		pk_special->setConstraintType(ConstraintType::primary_key);
+		pk_special->setConstraintType(ConstraintType::PrimaryKey);
 		pk_special->setAddedByLinking(true);
 		pk_special->setProtected(true);
 		pk_special->setTablespace(dynamic_cast<Tablespace *>(getReceiverTable()->getTablespace()));
@@ -527,7 +527,7 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 				rest=dynamic_cast<Constraint *>(tab_obj);
 
 				//Raises an error if the user try to add as foreign key to relationship
-				if(rest->getConstraintType()==ConstraintType::foreign_key)
+				if(rest->getConstraintType()==ConstraintType::ForeignKey)
 					throw Exception(ErrorCode::AsgForeignKeyRelationship,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 				rest->getCodeDefinition(SchemaParser::SqlDefinition);
@@ -827,7 +827,7 @@ void Relationship::addConstraints(Table *recv_tab)
 			if(constr->getParentTable())
 				break;
 
-			if(constr->getConstraintType()!=ConstraintType::primary_key)
+			if(constr->getConstraintType()!=ConstraintType::PrimaryKey)
 			{
 				constr->setName(PgModelerNs::generateUniqueName(constr, (*recv_tab->getObjectList(ObjectType::ObjConstraint))));
 				recv_tab->addConstraint(constr);
@@ -893,7 +893,7 @@ void Relationship::addColumnsRelGenPart(void)
 			src_flags[2]={false,false},
 			dst_flags[2]={false,false};
 	QString str_aux, msg;
-	PgSQLType src_type, dst_type;
+	PgSqlType src_type, dst_type;
 
 	try
 	{
@@ -1046,11 +1046,11 @@ void Relationship::addColumnsRelGenPart(void)
 
 					//Converts the type
 					if(column->getType()==QString("serial"))
-						column->setType(PgSQLType(QString("integer")));
+						column->setType(PgSqlType(QString("integer")));
 					else if(column->getType()==QString("bigserial"))
-						column->setType(PgSQLType(QString("bigint")));
+						column->setType(PgSqlType(QString("bigint")));
 					else if(column->getType()==QString("smallserial"))
-						column->setType(PgSQLType(QString("smallint")));
+						column->setType(PgSqlType(QString("smallint")));
 
 					//Adds the new column to the temporary column list
 					columns.push_back(column);
@@ -1150,7 +1150,7 @@ void Relationship::addConstraintsRelGenPart(void)
 		{
 			constr=dynamic_cast<Constraint *>(obj);
 
-			if(constr->getConstraintType()==ConstraintType::check && !constr->isNoInherit())
+			if(constr->getConstraintType()==ConstraintType::Check && !constr->isNoInherit())
 			{
 				aux_constr=dynamic_cast<Constraint *>(child_tab->getObject(constr->getName(), ObjectType::ObjConstraint));
 
@@ -1163,7 +1163,7 @@ void Relationship::addConstraintsRelGenPart(void)
 					child_tab->addConstraint(ck_constr);
 					ck_constraints.push_back(ck_constr);
 				}
-				else if(aux_constr->getConstraintType()!=ConstraintType::check ||
+				else if(aux_constr->getConstraintType()!=ConstraintType::Check ||
 						aux_constr->getExpression().simplified()!=constr->getExpression().simplified())
 					throw Exception(Exception::getErrorMessage(ErrorCode::InvInheritRelationshipIncompConstrs)
 									.arg(constr->getName()).arg(parent_tab->getName(false, true))
@@ -1280,7 +1280,7 @@ void Relationship::configureIndentifierRel(Table *recv_tab)
 			if(!pk_relident)
 			{
 				pk=new Constraint;
-				pk->setConstraintType(ConstraintType::primary_key);
+				pk->setConstraintType(ConstraintType::PrimaryKey);
 				pk->setAddedByLinking(true);
 				pk->setDeferrable(this->deferrable);
 				pk->setDeferralType(this->deferral_type);
@@ -1340,7 +1340,7 @@ void Relationship::addUniqueKey(Table *recv_tab)
 			uq=new Constraint;
 			uq->setDeferrable(this->deferrable);
 			uq->setDeferralType(this->deferral_type);
-			uq->setConstraintType(ConstraintType::unique);
+			uq->setConstraintType(ConstraintType::Unique);
 			uq->setAddedByLinking(true);
 			uq_rel11=uq;
 		}
@@ -1386,7 +1386,7 @@ void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del
 			fk=new Constraint;
 			fk->setDeferrable(this->deferrable);
 			fk->setDeferralType(this->deferral_type);
-			fk->setConstraintType(ConstraintType::foreign_key);
+			fk->setConstraintType(ConstraintType::ForeignKey);
 			fk->setAddedByLinking(true);
 
 			//The reference table is the table referenced by the foreign key
@@ -1608,11 +1608,11 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null, b
 
 			//Converting the serial like types
 			if(column->getType()==QString("serial"))
-				column->setType(PgSQLType(QString("integer")));
+				column->setType(PgSqlType(QString("integer")));
 			else if(column->getType()==QString("bigserial"))
-				column->setType(PgSQLType(QString("bigint")));
+				column->setType(PgSqlType(QString("bigint")));
 			else if(column->getType()==QString("smallserial"))
-				column->setType(PgSQLType(QString("smallint")));
+				column->setType(PgSqlType(QString("smallint")));
 
 			column->setName(name);
 			name=PgModelerNs::generateUniqueName(column, (*recv_tab->getObjectList(ObjectType::ObjColumn)));
@@ -1662,25 +1662,25 @@ void Relationship::addColumnsRel11(void)
 		ref_tab=dynamic_cast<Table *>(this->getReferenceTable());
 		recv_tab=dynamic_cast<Table *>(this->getReceiverTable());
 
-		if(this->upd_action!=ActionType::null)
+		if(this->upd_action!=ActionType::Null)
 			upd_action=this->upd_action;
 		else
-			upd_action=ActionType::cascade;
+			upd_action=ActionType::Cascade;
 
-		if(this->del_action!=ActionType::null)
+		if(this->del_action!=ActionType::Null)
 			del_action=this->del_action;
 		else
 		{
 			if(identifier)
-				del_action=ActionType::cascade;
+				del_action=ActionType::Cascade;
 			else
 			{
 				//Case the reference table is mandatory participation set as RESTRICT the delete action on the foreign key
 				if((ref_tab==this->src_table && this->isTableMandatory(SrcTable)) ||
 						(ref_tab==this->dst_table && this->isTableMandatory(DstTable)))
-					del_action=ActionType::restrict;
+					del_action=ActionType::Restrict;
 				else
-					del_action=ActionType::set_null;
+					del_action=ActionType::SetNull;
 			}
 		}
 
@@ -1735,19 +1735,19 @@ void Relationship::addColumnsRel1n(void)
 {
 	Table *ref_tab=nullptr, *recv_tab=nullptr;
 	bool not_null=false;
-	ActionType del_action=ActionType::set_null, upd_action;
+	ActionType del_action=ActionType::SetNull, upd_action;
 
 	try
 	{
 		recv_tab=dynamic_cast<Table *>(this->getReceiverTable());
 		ref_tab=dynamic_cast<Table *>(this->getReferenceTable());
 
-		if(this->upd_action!=ActionType::null)
+		if(this->upd_action!=ActionType::Null)
 			upd_action=this->upd_action;
 		else
-			upd_action=ActionType::cascade;
+			upd_action=ActionType::Cascade;
 
-		if(this->del_action!=ActionType::null)
+		if(this->del_action!=ActionType::Null)
 			del_action=this->del_action;
 		else
 		{
@@ -1757,9 +1757,9 @@ void Relationship::addColumnsRel1n(void)
 			if(!identifier && src_mandatory)
 			{
 				if(!deferrable)
-					del_action=ActionType::restrict;
+					del_action=ActionType::Restrict;
 				else
-					del_action=ActionType::no_action;
+					del_action=ActionType::NoAction;
 			}
 
 			/* Case the relationship is identifier configures the ON DELETE anda ON UPDATE action
@@ -1767,7 +1767,7 @@ void Relationship::addColumnsRel1n(void)
 	  entity also exists, this means if the strong entity tuple is removed the weak entity
 	  tuple is also removed */
 			else if(identifier)
-				del_action=ActionType::cascade;
+				del_action=ActionType::Cascade;
 		}
 
 		if(!identifier && src_mandatory)
@@ -1814,8 +1814,8 @@ void Relationship::addColumnsRelNn(void)
 	Table *tab=nullptr, *tab1=nullptr;
 	Constraint *pk_tabnn=nullptr;
 	bool src_not_null=false, dst_not_null=false;
-	ActionType src_del_act=ActionType::restrict, dst_del_act=ActionType::restrict,
-			src_upd_act=ActionType::cascade, dst_upd_act=ActionType::cascade;
+	ActionType src_del_act=ActionType::Restrict, dst_del_act=ActionType::Restrict,
+			src_upd_act=ActionType::Cascade, dst_upd_act=ActionType::Cascade;
 
 
 	try
@@ -1823,15 +1823,15 @@ void Relationship::addColumnsRelNn(void)
 		tab=dynamic_cast<Table *>(src_table);
 		tab1=dynamic_cast<Table *>(dst_table);
 
-		if(this->upd_action!=ActionType::null)
+		if(this->upd_action!=ActionType::Null)
 			src_upd_act=dst_upd_act=this->upd_action;
 		else
-			src_upd_act=dst_upd_act=ActionType::cascade;
+			src_upd_act=dst_upd_act=ActionType::Cascade;
 
-		if(this->del_action!=ActionType::null)
+		if(this->del_action!=ActionType::Null)
 			src_del_act=dst_del_act=this->del_action;
 		else
-			src_del_act=dst_del_act=ActionType::restrict;
+			src_del_act=dst_del_act=ActionType::Restrict;
 
 		/* Copy the columns from the primary keys of the source and destination tables
 		 to the table that represents the n-n relationship */
@@ -1843,7 +1843,7 @@ void Relationship::addColumnsRelNn(void)
 			pk_col=new Column;
 			pk_col->setName(generateObjectName(PkColPattern));
 			pk_col->setAlias(generateObjectName(PkColPattern, nullptr, true));
-			pk_col->setType(PgSQLType(QString("serial")));
+			pk_col->setType(PgSqlType(QString("serial")));
 			pk_col->setAddedByLinking(true);
 			table_relnn->addColumn(pk_col);
 		}
@@ -1852,7 +1852,7 @@ void Relationship::addColumnsRelNn(void)
 		pk_tabnn=new Constraint;
 		pk_tabnn->setName(generateObjectName(PkPattern));
 		pk_tabnn->setAlias(generateObjectName(PkPattern, nullptr, true));
-		pk_tabnn->setConstraintType(ConstraintType::primary_key);
+		pk_tabnn->setConstraintType(ConstraintType::PrimaryKey);
 		pk_tabnn->setAddedByLinking(true);
 
 		if(!single_pk_column)
@@ -2001,7 +2001,7 @@ void Relationship::removeTableObjectsRefCols(Table *table)
 	{
 		constr=table->getConstraint(i);
 		if(!constr->isAddedByRelationship() &&
-				constr->getConstraintType()!=ConstraintType::primary_key &&
+				constr->getConstraintType()!=ConstraintType::PrimaryKey &&
 				constr->isReferRelationshipAddedColumn())
 		{
 			table->removeObject(constr);
@@ -2315,7 +2315,7 @@ bool Relationship::hasIndentifierAttribute(void)
 
 		/* A relationship is considered to own a identifier attribute when
 		 a primary key is found among the constraints */
-		found=(constr->getConstraintType()==ConstraintType::primary_key);
+		found=(constr->getConstraintType()==ConstraintType::PrimaryKey);
 		itr++;
 	}
 
@@ -2472,7 +2472,7 @@ bool Relationship::isInvalidated(void)
 			for(i=0; i < ck_constraints.size() && valid; i++)
 			{
 				constr=table->getConstraint(ck_constraints[i]->getName(true));
-				valid=(constr && !constr->isNoInherit() && constr->getConstraintType()==ConstraintType::check);
+				valid=(constr && !constr->isNoInherit() && constr->getConstraintType()==ConstraintType::Check);
 			}
 
 		}
@@ -2499,7 +2499,7 @@ bool Relationship::isInvalidated(void)
 				for(i=0; i < count; i++)
 				{
 					constr=table_relnn->getConstraint(i);
-					if(constr->getConstraintType()==ConstraintType::foreign_key)
+					if(constr->getConstraintType()==ConstraintType::ForeignKey)
 					{
 						if(!fk && constr->getReferencedTable()==table)
 							fk=constr;
@@ -2570,7 +2570,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 			count=rel_constraints.size();
 			for(i=0; i < count; i++)
 			{
-				if(dynamic_cast<Constraint *>(rel_constraints[i])->getConstraintType()!=ConstraintType::primary_key)
+				if(dynamic_cast<Constraint *>(rel_constraints[i])->getConstraintType()!=ConstraintType::PrimaryKey)
 					attributes[ParsersAttributes::CONSTRAINTS]+=dynamic_cast<Constraint *>(rel_constraints[i])->getCodeDefinition(def_type, false);
 
 			}
@@ -2587,8 +2587,8 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 			count=table_relnn->getConstraintCount();
 			for(i=0; i < count; i++)
 			{
-				if(table_relnn->getConstraint(i)->getConstraintType()!=ConstraintType::primary_key &&
-						table_relnn->getConstraint(i)->getConstraintType()!=ConstraintType::check)
+				if(table_relnn->getConstraint(i)->getConstraintType()!=ConstraintType::PrimaryKey &&
+						table_relnn->getConstraint(i)->getConstraintType()!=ConstraintType::Check)
 					attributes[ParsersAttributes::CONSTRAINTS]+=table_relnn->getConstraint(i)->getCodeDefinition(def_type, true);
 			}
 		}

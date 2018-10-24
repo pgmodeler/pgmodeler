@@ -52,7 +52,7 @@ void Language::setTrusted(bool value)
 
 void  Language::setFunction(Function *func, unsigned func_type)
 {
-	LanguageType lang=LanguageType::c;
+	LanguageType lang=LanguageType::C;
 
 	if(!func ||
 			(func &&

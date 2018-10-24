@@ -206,14 +206,14 @@ void TypeWidget::handleAttribute(int row)
 
 void TypeWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Type *type)
 {
-	PgSQLType like_tp, elem_tp;
+	PgSqlType like_tp, elem_tp;
 	unsigned type_conf, i, count;
 
 	BaseObjectWidget::setAttributes(model, op_list, type, schema);
 
 	attrib_collation_sel->setModel(model);
-	attrib_type_wgt->setAttributes(PgSQLType(), model);
-	range_subtype->setAttributes(PgSQLType(), model);
+	attrib_type_wgt->setAttributes(PgSqlType(), model);
+	range_subtype->setAttributes(PgSqlType(), model);
 
 	opclass_sel->setModel(model);
 
@@ -346,7 +346,7 @@ void TypeWidget::applyConfiguration(void)
 
 			type->setDefaultValue(default_value_edt->text());
 			type->setCategory(CategoryType(category_cmb->currentText()));
-			type->setAlignment(PgSQLType(alignment_cmb->currentText()));
+			type->setAlignment(PgSqlType(alignment_cmb->currentText()));
 			type->setStorage(StorageType(storage_cmb->currentText()));
 
 			for(i=Type::InputFunc; i <= Type::AnalyzeFunc; i++)

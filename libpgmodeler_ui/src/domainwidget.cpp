@@ -66,7 +66,7 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 
 void DomainWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Domain *domain)
 {
-	PgSQLType type;
+	PgSqlType type;
 
 	BaseObjectWidget::setAttributes(model, op_list, domain, schema);
 

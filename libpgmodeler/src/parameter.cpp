@@ -24,7 +24,7 @@ Parameter::Parameter(void)
 	is_in=is_out=is_variadic=false;
 }
 
-void Parameter::setType(PgSQLType type)
+void Parameter::setType(PgSqlType type)
 {
 	if(!type.isArrayType() && !type.isPolymorphicType() && is_variadic)
 		throw Exception(ErrorCode::InvUsageVariadicParamMode ,__PRETTY_FUNCTION__,__FILE__,__LINE__);

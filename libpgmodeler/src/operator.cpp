@@ -31,8 +31,8 @@ Operator::Operator(void)
 		operators[i]=nullptr;
 
 	hashes=merges=false;
-	argument_types[LEFT_ARG]=PgSQLType(QString("\"any\""));
-	argument_types[RIGHT_ARG]=PgSQLType(QString("\"any\""));
+	argument_types[LEFT_ARG]=PgSqlType(QString("\"any\""));
+	argument_types[RIGHT_ARG]=PgSqlType(QString("\"any\""));
 
 	attributes[ParsersAttributes::LEFT_TYPE]=QString();
 	attributes[ParsersAttributes::RIGHT_TYPE]=QString();
@@ -112,7 +112,7 @@ void Operator::setFunction(Function *func, unsigned func_type)
 		else
 		{
 			unsigned param_count=func->getParameterCount();
-			PgSQLType param_type1=PgSQLType(QString("\"any\"")), param_type2=PgSQLType(QString("\"any\""));
+			PgSqlType param_type1=PgSqlType(QString("\"any\"")), param_type2=PgSqlType(QString("\"any\""));
 
 			//Get the function parameter to make validations
 			param_type1=func->getParameter(0).getType();
@@ -151,7 +151,7 @@ void Operator::setFunction(Function *func, unsigned func_type)
 	functions[func_type]=func;
 }
 
-void Operator::setArgumentType(PgSQLType arg_type, unsigned arg_id)
+void Operator::setArgumentType(PgSqlType arg_type, unsigned arg_id)
 {
 	//Raises an error if the argument id is invalid
 	if(arg_id > RIGHT_ARG)
@@ -222,7 +222,7 @@ Function *Operator::getFunction(unsigned func_type)
 	return(functions[func_type]);
 }
 
-PgSQLType Operator::getArgumentType(unsigned arg_id)
+PgSqlType Operator::getArgumentType(unsigned arg_id)
 {
 	//Raises an error if the argument id is invalid
 	if(arg_id > RIGHT_ARG)

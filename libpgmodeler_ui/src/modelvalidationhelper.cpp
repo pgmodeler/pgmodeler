@@ -342,7 +342,7 @@ void ModelValidationHelper::validateModel(void)
 				at end of code defintion being free of any reference breaking. */
 							if(object != refs.back() &&
 									(
-										((col || (constr && constr->getConstraintType()!=ConstraintType::foreign_key)) &&
+										((col || (constr && constr->getConstraintType()!=ConstraintType::ForeignKey)) &&
 										 (tab_obj->getParentTable()->getObjectId() <= object->getObjectId()))
 										||
 										(!constr && refs.back()->getObjectId() <= object->getObjectId()))
@@ -395,7 +395,7 @@ void ModelValidationHelper::validateModel(void)
 											{
 												constr=dynamic_cast<Constraint *>(tab_obj);
 
-												if(constr->getConstraintType()!=ConstraintType::primary_key)
+												if(constr->getConstraintType()!=ConstraintType::PrimaryKey)
 													ref_cols=constr->getRelationshipAddedColumns();
 											}
 											else if(obj_tp==ObjectType::ObjTrigger)
@@ -475,9 +475,9 @@ void ModelValidationHelper::validateModel(void)
 					/* If the object is an index or	a primary key, unique or exclude constraint,
 		  insert the object on duplicated	objects map */
 					if((!constr ||
-						(constr && (constr->getConstraintType()==ConstraintType::primary_key ||
-									constr->getConstraintType()==ConstraintType::unique ||
-									constr->getConstraintType()==ConstraintType::exclude))))
+						(constr && (constr->getConstraintType()==ConstraintType::PrimaryKey ||
+									constr->getConstraintType()==ConstraintType::Unique ||
+									constr->getConstraintType()==ConstraintType::Exclude))))
 						dup_objects[name].push_back(tab_obj);
 				}
 			}

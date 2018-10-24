@@ -36,7 +36,7 @@ class Operator: public BaseObject {
 		Function *functions[3];
 
 		//! \brief Stores the arguments types (left and right) used by the operator
-		PgSQLType argument_types[2];
+		PgSqlType argument_types[2];
 
 		//! \brief Stores the auxiliary operators
 		Operator *operators[2];
@@ -62,7 +62,7 @@ class Operator: public BaseObject {
 		void setFunction(Function *func, unsigned func_type);
 
 		//! \brief Defines the argument data type for operator (constants ARG_[LEFT | RIGHT])
-		void setArgumentType(PgSQLType arg_type, unsigned arg_id);
+		void setArgumentType(PgSqlType arg_type, unsigned arg_id);
 
 		//! \brief Defines the auxiliary operators (constants OPER_[COMMUTATOR | NEGATOR])
 		void setOperator(Operator *oper, unsigned op_type);
@@ -77,7 +77,7 @@ class Operator: public BaseObject {
 		Function *getFunction(unsigned func_type);
 
 		//! \brief Returns the type of the passed argument id
-		PgSQLType getArgumentType(unsigned arg_id);
+		PgSqlType getArgumentType(unsigned arg_id);
 
 		//! \brief Returns on of the auxiliary operators
 		Operator *getOperator(unsigned op_type);

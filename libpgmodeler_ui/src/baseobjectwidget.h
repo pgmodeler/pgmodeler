@@ -38,7 +38,7 @@
 /* Declaring the PgSQLType class as a Qt metatype in order to permit
 	 that instances of the class be used as data of QVariant and QMetaType */
 #include <QMetaType>
-Q_DECLARE_METATYPE(PgSQLType)
+Q_DECLARE_METATYPE(PgSqlType)
 
 class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 	private:

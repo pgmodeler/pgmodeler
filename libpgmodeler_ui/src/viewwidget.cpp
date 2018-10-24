@@ -343,8 +343,8 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 	ObjectType obj_type;
 	QString str_aux;
 	unsigned i;
-	EventType events[]={ EventType::on_insert, EventType::on_delete,
-						 EventType::on_truncate,	EventType::on_update };
+	EventType events[]={ EventType::OnInsert, EventType::OnDelete,
+						 EventType::OnTruncate,	EventType::OnUpdate };
 
 	obj_type=object->getObjectType();
 	tab=objects_tab_map[obj_type];

@@ -431,8 +431,8 @@ void TableWidget::showObjectData(TableObject *object, int row)
 	ObjectType obj_type;
 	QString str_aux, str_aux1;
 
-	QStringList contr_types={ ~ConstraintType(ConstraintType::primary_key), ~ConstraintType(ConstraintType::foreign_key),
-							  ~ConstraintType(ConstraintType::check), ~ConstraintType(ConstraintType::unique),
+	QStringList contr_types={ ~ConstraintType(ConstraintType::PrimaryKey), ~ConstraintType(ConstraintType::ForeignKey),
+							  ~ConstraintType(ConstraintType::Check), ~ConstraintType(ConstraintType::Unique),
 							  QString("NOT NULL") },
 			constr_codes={ TableObjectView::TextPrimaryKey,
 										 TableObjectView::TextForeignKey,
@@ -442,8 +442,8 @@ void TableWidget::showObjectData(TableObject *object, int row)
 
 	QFont font;
 	unsigned i;
-	EventType events[]={ EventType::on_insert, EventType::on_delete,
-						 EventType::on_truncate,	EventType::on_update };
+	EventType events[]={ EventType::OnInsert, EventType::OnDelete,
+						 EventType::OnTruncate,	EventType::OnUpdate };
 
 	obj_type=object->getObjectType();
 	tab=objects_tab_map[obj_type];
@@ -467,7 +467,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		//Column 3: Column defaul value
 		if(column->getSequence())
 			str_aux=QString("nextval('%1'::regclass)").arg(column->getSequence()->getName(true).remove('"'));
-		else if(column->getIdentityType() != BaseType::null)
+		else if(column->getIdentityType() != BaseType::Null)
 			str_aux=QString("GENERATED %1 AS IDENTITY").arg(~column->getIdentityType());
 		else
 			str_aux=column->getDefaultValue();
@@ -508,7 +508,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		//Column 1: Constraint type
 		tab->setCellText(~constr->getConstraintType(),row,1);
 
-		if(constr->getConstraintType()==ConstraintType::foreign_key)
+		if(constr->getConstraintType()==ConstraintType::ForeignKey)
 		{
 			//Column 2: ON DELETE action
 			tab->setCellText(~constr->getActionType(false),row,2);
@@ -826,16 +826,16 @@ void TableWidget::applyConfiguration(void)
 		table->setUnlogged(unlogged_chk->isChecked());
 		table->setTag(dynamic_cast<Tag *>(tag_sel->getSelectedObject()));
 
-		part_type = partitioning_type_cmb->currentIndex() == 0 ? BaseType::null : PartitioningType(partitioning_type_cmb->currentText());
+		part_type = partitioning_type_cmb->currentIndex() == 0 ? BaseType::Null : PartitioningType(partitioning_type_cmb->currentText());
 		table->setPartitioningType(part_type);
 
-		if(part_type != BaseType::null)
+		if(part_type != BaseType::Null)
 		{
 			partition_keys_tab->getElements<PartitionKey>(part_keys);
 			table->addPartitionKeys(part_keys);
 
 			if(part_keys.empty())
-				part_type = BaseType::null;
+				part_type = BaseType::Null;
 		}
 		else
 			table->removePartitionKeys();

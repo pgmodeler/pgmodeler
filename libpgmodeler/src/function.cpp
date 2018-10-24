@@ -20,7 +20,7 @@
 
 Function::Function(void)
 {
-	return_type=PgSQLType(QString("void"));
+	return_type=PgSqlType(QString("void"));
 	language=nullptr;
 	returns_setof=false;
 	is_wnd_function=false;
@@ -90,7 +90,7 @@ void Function::addParameter(Parameter param)
 	createSignature();
 }
 
-void Function::addReturnedTableColumn(const QString &name, PgSQLType type)
+void Function::addReturnedTableColumn(const QString &name, PgSqlType type)
 {
 	//Raises an error if the column name is empty
 	if(name.isEmpty())
@@ -193,7 +193,7 @@ void Function::setSymbol(const QString &symbol)
 	this->symbol=symbol;
 }
 
-void Function::setReturnType(PgSQLType type)
+void Function::setReturnType(PgSqlType type)
 {
 	setCodeInvalidated(return_type != type);
 	return_type=type;
@@ -259,7 +259,7 @@ void Function::setSourceCode(const QString &src_code)
 	this->source_code=src_code;
 }
 
-PgSQLType Function::getReturnType(void)
+PgSqlType Function::getReturnType(void)
 {
 	return(return_type);
 }
@@ -369,7 +369,7 @@ void Function::removeReturnedTableColumns(void)
 	setCodeInvalidated(true);
 }
 
-void Function::removeParameter(const QString &name, PgSQLType type)
+void Function::removeParameter(const QString &name, PgSqlType type)
 {
 	vector<Parameter>::iterator itr,itr_end;
 
@@ -484,7 +484,7 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 	attributes[ParsersAttributes::BEHAVIOR_TYPE]=(~behavior_type);
 	attributes[ParsersAttributes::DEFINITION]=source_code;
 
-	if(language->getName()==~LanguageType(LanguageType::c))
+	if(language->getName()==~LanguageType(LanguageType::C))
 	{
 		attributes[ParsersAttributes::SYMBOL]=symbol;
 		attributes[ParsersAttributes::LIBRARY]=library;
@@ -535,9 +535,9 @@ QString Function::getAlterDefinition(BaseObject *object)
 				attribs[ParsersAttributes::SECURITY_TYPE]=~func->security_type;
 
 			if((this->behavior_type!=func->behavior_type) &&
-					((this->behavior_type==BehaviorType::called_on_null_input) ||
-					 ((this->behavior_type==BehaviorType::strict || this->behavior_type==BehaviorType::returns_null_on_null_input) &&
-					  func->function_type==BehaviorType::called_on_null_input)))
+					((this->behavior_type==BehaviorType::CalledOnNullInput) ||
+					 ((this->behavior_type==BehaviorType::Strict || this->behavior_type==BehaviorType::ReturnsNullOnNullInput) &&
+					  func->function_type==BehaviorType::CalledOnNullInput)))
 				attribs[ParsersAttributes::BEHAVIOR_TYPE]=~func->behavior_type;
 		}
 

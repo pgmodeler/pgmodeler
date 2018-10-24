@@ -305,15 +305,15 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
 	{
 		constr_type=dynamic_cast<Constraint *>(object)->getConstraintType();
 
-		if(constr_type==ConstraintType::primary_key)
+		if(constr_type==ConstraintType::PrimaryKey)
 			str_aux=QString("_%1").arg(TableObjectView::TextPrimaryKey);
-		else if(constr_type==ConstraintType::foreign_key)
+		else if(constr_type==ConstraintType::ForeignKey)
 			str_aux=QString("_%1").arg(TableObjectView::TextForeignKey);
-		else if(constr_type==ConstraintType::check)
+		else if(constr_type==ConstraintType::Check)
 			str_aux=QString("_%1").arg(TableObjectView::TextCheck);
-		else if(constr_type==ConstraintType::unique)
+		else if(constr_type==ConstraintType::Unique)
 			str_aux=QString("_%1").arg(TableObjectView::TextUnique);
-		else if(constr_type==ConstraintType::exclude)
+		else if(constr_type==ConstraintType::Exclude)
 			str_aux=QString("_%1").arg(TableObjectView::TextExclude);
 	}
 

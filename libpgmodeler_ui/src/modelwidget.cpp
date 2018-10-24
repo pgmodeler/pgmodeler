@@ -2285,8 +2285,8 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 							!tab_obj->isAddedByRelationship() &&
 							 (!constr ||
 								(((constr &&
-									(constr->getConstraintType()==ConstraintType::foreign_key ||
-									 (constr->getConstraintType()==ConstraintType::unique &&
+									(constr->getConstraintType()==ConstraintType::ForeignKey ||
+									 (constr->getConstraintType()==ConstraintType::Unique &&
 									constr->isReferRelationshipAddedColumn()))))))))
 							deps.push_back(tab_obj);
 					}
@@ -2601,7 +2601,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 						sel_table->setModified(true);
 					}
 					else if(constr && duplicate_mode &&
-							constr->getConstraintType() == ConstraintType::primary_key &&
+							constr->getConstraintType() == ConstraintType::PrimaryKey &&
 							constr->getParentTable()->getObjectIndex(constr) < 0)
 					{
 					  constr->getParentTable()->addObject(constr);
@@ -2609,7 +2609,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 					}
 
 					//Updates the fk relationships if the constraint is a foreign-key
-					if(constr && constr->getConstraintType()==ConstraintType::foreign_key)
+					if(constr && constr->getConstraintType()==ConstraintType::ForeignKey)
 						db_model->updateTableFKRelationships(dynamic_cast<Table *>(tab_obj->getParentTable()));
 
 					op_list->registerObject(tab_obj, Operation::ObjectCreated, -1, tab_obj->getParentTable());
@@ -2699,7 +2699,7 @@ void ModelWidget::duplicateObject(void)
 			if(obj_type == ObjectType::ObjColumn)
 			  db_model->validateRelationships();
 			else if(obj_type == ObjectType::ObjConstraint &&
-					dynamic_cast<Constraint *>(object)->getConstraintType() == ConstraintType::foreign_key)
+					dynamic_cast<Constraint *>(object)->getConstraintType() == ConstraintType::ForeignKey)
 			  db_model->updateTableFKRelationships(dynamic_cast<Table *>(table));
 
 			emit s_objectCreated();
@@ -2937,7 +2937,7 @@ void ModelWidget::removeObjects(bool cascade)
 								aux_table=dynamic_cast<Table *>(table);
 
 								if(aux_table && obj_type==ObjectType::ObjConstraint &&
-								   dynamic_cast<Constraint *>(tab_obj)->getConstraintType()==ConstraintType::foreign_key)
+									 dynamic_cast<Constraint *>(tab_obj)->getConstraintType()==ConstraintType::ForeignKey)
 									db_model->updateTableFKRelationships(aux_table);
 
 								table->setModified(true);
@@ -3883,11 +3883,11 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 				{
 					switch(!constr->getConstraintType())
 					{
-						case ConstraintType::primary_key: str_aux=QString("_%1").arg(TableObjectView::TextPrimaryKey); break;
-						case ConstraintType::foreign_key: str_aux=QString("_%1").arg(TableObjectView::TextForeignKey); break;
-						case ConstraintType::check: str_aux=QString("_%1").arg(TableObjectView::TextCheck); break;
-						case ConstraintType::unique: str_aux=QString("_%1").arg(TableObjectView::TextUnique); break;
-						case ConstraintType::exclude: str_aux=QString("_%1").arg(TableObjectView::TextExclude); break;
+						case ConstraintType::PrimaryKey: str_aux=QString("_%1").arg(TableObjectView::TextPrimaryKey); break;
+						case ConstraintType::ForeignKey: str_aux=QString("_%1").arg(TableObjectView::TextForeignKey); break;
+						case ConstraintType::Check: str_aux=QString("_%1").arg(TableObjectView::TextCheck); break;
+						case ConstraintType::Unique: str_aux=QString("_%1").arg(TableObjectView::TextUnique); break;
+						case ConstraintType::Exclude: str_aux=QString("_%1").arg(TableObjectView::TextExclude); break;
 					}
 
 					//For each constaint is created a menu with the edit, source code, protect/unprotect and delete actions
@@ -4126,7 +4126,7 @@ void ModelWidget::convertIntegerToSerial(void)
 		QAction *action=dynamic_cast<QAction *>(sender());
 		Column *col=reinterpret_cast<Column *>(action->data().value<void *>());
 		Table *tab=dynamic_cast<Table *>(col->getParentTable());
-		PgSQLType col_type=col->getType();
+		PgSqlType col_type=col->getType();
 		QRegExp regexp(QString("^nextval\\(.+\\:\\:regclass\\)"));
 		QString serial_tp;
 
@@ -4143,7 +4143,7 @@ void ModelWidget::convertIntegerToSerial(void)
 		else
 			serial_tp=QString("bigserial");
 
-		col->setType(PgSQLType(serial_tp));
+		col->setType(PgSqlType(serial_tp));
 		col->setDefaultValue(QString());
 
 		//Revalidate the relationships since the modified column can be a primary key

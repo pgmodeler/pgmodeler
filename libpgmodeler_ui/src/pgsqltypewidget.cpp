@@ -121,11 +121,11 @@ void PgSQLTypeWidget::updateTypeFormat(void)
 			spatial_tp=SpatialType(spatial_cmb->currentText(), srid_spb->value());
 
 			if(var_z_chk->isChecked() && var_m_chk->isChecked())
-				spatial_tp.setVariation(SpatialType::var_zm);
+				spatial_tp.setVariation(SpatialType::VarZm);
 			else if(var_m_chk->isChecked())
-				spatial_tp.setVariation(SpatialType::var_m);
+				spatial_tp.setVariation(SpatialType::VarM);
 			else if(var_z_chk->isChecked())
-				spatial_tp.setVariation(SpatialType::var_z);
+				spatial_tp.setVariation(SpatialType::VarZ);
 
 			type.setSpatialType(spatial_tp);
 		}
@@ -154,21 +154,21 @@ void PgSQLTypeWidget::listPgSQLTypes(QComboBox *combo, DatabaseModel *model, uns
 		combo->clear();
 
 		//Getting the user defined type adding them into the combo
-		PgSQLType::getUserTypes(types,model, user_type_conf);
+		PgSqlType::getUserTypes(types,model, user_type_conf);
 		types.sort();
 		count=types.size();
 
 		for(idx=0; idx < count; idx++)
-			combo->addItem(types[idx], QVariant(PgSQLType::getUserTypeIndex(types[idx],nullptr,model)));
+			combo->addItem(types[idx], QVariant(PgSqlType::getUserTypeIndex(types[idx],nullptr,model)));
 
 		//Getting the built-in type adding them into the combo
-		PgSQLType::getTypes(types, oid_types, pseudo_types);
+		PgSqlType::getTypes(types, oid_types, pseudo_types);
 		types.sort();
 		combo->addItems(types);
 	}
 }
 
-void PgSQLTypeWidget::setAttributes(PgSQLType type, DatabaseModel *model,  unsigned usr_type_conf, bool oid_types, bool pseudo_types)
+void PgSQLTypeWidget::setAttributes(PgSqlType type, DatabaseModel *model,  unsigned usr_type_conf, bool oid_types, bool pseudo_types)
 {
 	try
 	{
@@ -210,7 +210,7 @@ void PgSQLTypeWidget::setAttributes(PgSQLType type, DatabaseModel *model,  unsig
 	}
 }
 
-PgSQLType PgSQLTypeWidget::getPgSQLType(void)
+PgSqlType PgSQLTypeWidget::getPgSQLType(void)
 {
 	if(format_txt->toPlainText() == InvalidType)
 		throw Exception(ErrorCode::AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);

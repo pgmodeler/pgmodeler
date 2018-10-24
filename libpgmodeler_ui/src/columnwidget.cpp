@@ -97,7 +97,7 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 
 void ColumnWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *parent_obj, Column *column)
 {
-	PgSQLType type;
+	PgSqlType type;
 
 	if(!parent_obj)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -120,7 +120,7 @@ void ColumnWidget::setAttributes(DatabaseModel *model, OperationList *op_list, B
 			sequence_sel->setEnabled(true);
 			sequence_sel->setSelectedObject(column->getSequence());
 		}
-		else if(column->getIdentityType() != BaseType::null)
+		else if(column->getIdentityType() != BaseType::Null)
 		{
 			identity_rb->click();
 			identity_type_cmb->setEnabled(true);
@@ -130,8 +130,8 @@ void ColumnWidget::setAttributes(DatabaseModel *model, OperationList *op_list, B
 	}
 
 	data_type->setAttributes(type, model,
-													 UserTypeConfig::BASE_TYPE | UserTypeConfig::TABLE_TYPE | UserTypeConfig::VIEW_TYPE |
-													 UserTypeConfig::DOMAIN_TYPE | UserTypeConfig::EXTENSION_TYPE, true,false);
+													 UserTypeConfig::BaseType | UserTypeConfig::TableType | UserTypeConfig::ViewType |
+													 UserTypeConfig::DomainType | UserTypeConfig::ExtensionType, true,false);
 }
 
 void ColumnWidget::editSequenceAttributes(void)

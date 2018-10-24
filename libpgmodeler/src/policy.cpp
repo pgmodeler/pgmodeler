@@ -21,7 +21,7 @@ Policy::Policy(void) : TableObject()
 {
 	obj_type=ObjectType::ObjPolicy;
 	permissive = false;
-	policy_cmd = PolicyCmdType::all;
+	policy_cmd = PolicyCmdType::All;
 
 	attributes[ParsersAttributes::PERMISSIVE] = QString();
 	attributes[ParsersAttributes::COMMAND] = QString();

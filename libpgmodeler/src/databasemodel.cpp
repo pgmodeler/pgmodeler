@@ -30,7 +30,7 @@ DatabaseModel::DatabaseModel(void)
 	is_template = false;
 	allow_conns = true;
 
-	encoding=BaseType::null;
+	encoding=BaseType::Null;
 	BaseObject::setName(QObject::trUtf8("new_database").toUtf8());
 
 	default_objs[ObjectType::ObjSchema]=nullptr;
@@ -801,7 +801,7 @@ void DatabaseModel::destroyObjects(void)
 		delete(object);
 	}
 
-	PgSQLType::removeUserTypes(this);
+	PgSqlType::removeUserTypes(this);
 
 	//Cleaning out the list of removed objects to avoid segfaults while calling this method again
 	if(!rem_obj_types.empty())
@@ -821,7 +821,7 @@ void DatabaseModel::addTable(Table *table, int obj_idx)
 	{
 		__addObject(table, obj_idx);
 
-		PgSQLType::addUserType(table->getName(true), table, this, UserTypeConfig::TABLE_TYPE);
+		PgSqlType::addUserType(table->getName(true), table, this, UserTypeConfig::TableType);
 
 		updateTableFKRelationships(table);
 
@@ -848,7 +848,7 @@ void DatabaseModel::removeTable(Table *table, int obj_idx)
 	try
 	{
 		__removeObject(table, obj_idx);
-		PgSQLType::removeUserType(table->getName(true), table);
+		PgSqlType::removeUserType(table->getName(true), table);
 		updateTableFKRelationships(table);
 	}
 	catch(Exception &e)
@@ -862,7 +862,7 @@ void DatabaseModel::addSequence(Sequence *sequence, int obj_idx)
 	try
 	{
 		__addObject(sequence, obj_idx);
-		PgSQLType::addUserType(sequence->getName(true), sequence, this, UserTypeConfig::SEQUENCE_TYPE);
+		PgSqlType::addUserType(sequence->getName(true), sequence, this, UserTypeConfig::SequenceType);
 	}
 	catch(Exception &e)
 	{
@@ -933,7 +933,7 @@ void DatabaseModel::addExtension(Extension *extension, int obj_idx)
 		__addObject(extension, obj_idx);
 
 		if(extension->handlesType())
-			PgSQLType::addUserType(extension->getName(true), extension, this, UserTypeConfig::EXTENSION_TYPE);
+			PgSqlType::addUserType(extension->getName(true), extension, this, UserTypeConfig::ExtensionType);
 	}
 	catch(Exception &e)
 	{
@@ -1073,7 +1073,7 @@ void DatabaseModel::addView(View *view, int obj_idx)
 	try
 	{
 		__addObject(view, obj_idx);
-		PgSQLType::addUserType(view->getName(true), view, this, UserTypeConfig::VIEW_TYPE);
+		PgSqlType::addUserType(view->getName(true), view, this, UserTypeConfig::ViewType);
 
 		updateViewRelationships(view);
 		dynamic_cast<Schema *>(view->getSchema())->setModified(true);
@@ -1102,7 +1102,7 @@ void DatabaseModel::removeView(View *view, int obj_idx)
 		updateViewRelationships(view, true);
 
 		__removeObject(view, obj_idx);
-		PgSQLType::removeUserType(view->getName(true), view);
+		PgSqlType::removeUserType(view->getName(true), view);
 	}
 	catch(Exception &e)
 	{
@@ -1775,7 +1775,7 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 							 relationship (created manually by the user) */
 						found=(!constr->isAddedByRelationship() &&
 									 constr->isReferRelationshipAddedColumn() &&
-									 constr->getConstraintType()!=ConstraintType::primary_key);
+									 constr->getConstraintType()!=ConstraintType::PrimaryKey);
 
 						//When found some special object, stores is xml definition
 						if(found)
@@ -1806,7 +1806,7 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 						table->removeObject(tab_obj->getName(), tab_obj->getObjectType());
 
 						//We need to store the table which fk was referencing relationship added columns in order to update the fk relationships of that table
-						if(constr && constr->getConstraintType() == ConstraintType::foreign_key)
+						if(constr && constr->getConstraintType() == ConstraintType::ForeignKey)
 							upd_tables_rels.push_back(table);
 
 						//Removes the permission from the table object
@@ -2490,7 +2490,7 @@ void DatabaseModel::addDomain(Domain *domain, int obj_idx)
 			__addObject(domain, obj_idx);
 
 			//When added to the model the domain is inserted on the pgsql base type list to be used as a column type
-			PgSQLType::addUserType(domain->getName(true), domain, this, UserTypeConfig::DOMAIN_TYPE);
+			PgSqlType::addUserType(domain->getName(true), domain, this, UserTypeConfig::DomainType);
 		}
 		catch(Exception &e)
 		{
@@ -2656,7 +2656,7 @@ void DatabaseModel::addType(Type *type, int obj_idx)
 			__addObject(type, obj_idx);
 
 			//When added to the model the user type is inserted on the pgsql base type list to be used as a column type
-			PgSQLType::addUserType(type->getName(true), type, this, UserTypeConfig::BASE_TYPE);
+			PgSqlType::addUserType(type->getName(true), type, this, UserTypeConfig::BaseType);
 		}
 		catch(Exception &e)
 		{
@@ -2694,7 +2694,7 @@ void DatabaseModel::removeUserType(BaseObject *object, int obj_idx)
 		__removeObject(object, obj_idx);
 
 		//Removes the user type from the list of base types of pgsql
-		PgSQLType::removeUserType(object->getName(true), object);
+		PgSqlType::removeUserType(object->getName(true), object);
 	}
 	catch(Exception &e)
 	{
@@ -3664,7 +3664,7 @@ Function *DatabaseModel::createFunction(void)
 	Function *func=nullptr;
 	ObjectType obj_type;
 	BaseObject *object=nullptr;
-	PgSQLType type;
+	PgSqlType type;
 	Parameter param;
 	QString str_aux, elem;
 
@@ -3920,7 +3920,7 @@ TypeAttribute DatabaseModel::createTypeAttribute(void)
 	return(tpattrib);
 }
 
-PgSQLType DatabaseModel::createPgSQLType(void)
+PgSqlType DatabaseModel::createPgSQLType(void)
 {
 	attribs_map attribs;
 	unsigned length=1, dimension=0, type_idx=0;
@@ -3961,19 +3961,19 @@ PgSQLType DatabaseModel::createPgSQLType(void)
 		name.remove(QString(" with time zone"), Qt::CaseInsensitive);
 	}
 
-	type_idx=PgSQLType::getBaseTypeIndex(name);
-	if(type_idx!=PgSQLType::null)
+	type_idx=PgSqlType::getBaseTypeIndex(name);
+	if(type_idx!=PgSqlType::Null)
 	{
-		return(PgSQLType(name,length,dimension,precision,with_timezone,interv_type, spatial_type));
+		return(PgSqlType(name,length,dimension,precision,with_timezone,interv_type, spatial_type));
 	}
 	else
 	{
 		//Raises an error if the referenced type name doesn't exists
-		if(PgSQLType::getUserTypeIndex(name,nullptr,this) == BaseType::null)
+		if(PgSqlType::getUserTypeIndex(name,nullptr,this) == BaseType::Null)
 			throw Exception(ErrorCode::RefUserTypeInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		type_idx=PgSQLType::getUserTypeIndex(name, ptype);
-		return(PgSQLType(type_idx,length,dimension,precision,with_timezone,interv_type,spatial_type));
+		type_idx=PgSqlType::getUserTypeIndex(name, ptype);
+		return(PgSqlType(type_idx,length,dimension,precision,with_timezone,interv_type,spatial_type));
 	}
 }
 
@@ -3987,7 +3987,7 @@ Type *DatabaseModel::createType(void)
 	QString elem, str_aux;
 	BaseObject *func=nullptr, *collation=nullptr;
 	OperatorClass *op_class=nullptr;
-	PgSQLType aux_type;
+	PgSqlType aux_type;
 
 	try
 	{
@@ -4219,7 +4219,7 @@ Cast *DatabaseModel::createCast(void)
 	Cast *cast=nullptr;
 	QString elem;
 	unsigned type_idx=0;
-	PgSQLType type;
+	PgSqlType type;
 	BaseObject *func=nullptr;
 
 	try
@@ -4354,7 +4354,7 @@ Operator *DatabaseModel::createOperator(void)
 	QString elem;
 	BaseObject *func=nullptr,*oper_aux=nullptr;
 	unsigned arg_type;
-	PgSQLType type;
+	PgSqlType type;
 
 	try
 	{
@@ -4446,7 +4446,7 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 	map<QString, unsigned> elem_types;
 	BaseObject *object=nullptr;
 	QString elem;
-	PgSQLType type;
+	PgSqlType type;
 	OperatorClass *op_class=nullptr;
 	OperatorClassElement class_elem;
 	unsigned stg_number, elem_type;
@@ -4584,7 +4584,7 @@ Aggregate *DatabaseModel::createAggregate(void)
 	attribs_map attribs;
 	BaseObject *func=nullptr;
 	QString elem;
-	PgSQLType type;
+	PgSqlType type;
 	Aggregate *aggreg=nullptr;
 
 	try
@@ -4920,15 +4920,15 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 
 		//Configuring the constraint type
 		if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::CK_CONSTR)
-			constr_type=ConstraintType::check;
+			constr_type=ConstraintType::Check;
 		else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::PK_CONSTR)
-			constr_type=ConstraintType::primary_key;
+			constr_type=ConstraintType::PrimaryKey;
 		else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::FK_CONSTR)
-			constr_type=ConstraintType::foreign_key;
+			constr_type=ConstraintType::ForeignKey;
 		else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::UQ_CONSTR)
-			constr_type=ConstraintType::unique;
+			constr_type=ConstraintType::Unique;
 		else
-			constr_type=ConstraintType::exclude;
+			constr_type=ConstraintType::Exclude;
 
 		constr->setConstraintType(constr_type);
 
@@ -4938,7 +4938,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 		setBasicAttributes(constr);
 
 		//Raises an error if the constraint is a primary key and no parent object is specified
-		if(!parent_obj && constr_type==ConstraintType::primary_key)
+		if(!parent_obj && constr_type==ConstraintType::PrimaryKey)
 			throw Exception(Exception::getErrorMessage(ErrorCode::InvPrimaryKeyAllocation)
 							.arg(constr->getName()),
 							ErrorCode::InvPrimaryKeyAllocation,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -4949,7 +4949,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 		if(deferrable && !attribs[ParsersAttributes::DEFER_TYPE].isEmpty())
 			constr->setDeferralType(attribs[ParsersAttributes::DEFER_TYPE]);
 
-		if(constr_type==ConstraintType::foreign_key)
+		if(constr_type==ConstraintType::ForeignKey)
 		{
 			if(!attribs[ParsersAttributes::COMPARISON_TYPE].isEmpty())
 				constr->setMatchType(attribs[ParsersAttributes::COMPARISON_TYPE]);
@@ -4979,11 +4979,11 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 
 			constr->setReferencedTable(dynamic_cast<BaseTable *>(ref_table));
 		}
-		else if(constr_type==ConstraintType::check)
+		else if(constr_type==ConstraintType::Check)
 		{
 			constr->setNoInherit(attribs[ParsersAttributes::NO_INHERIT]==ParsersAttributes::_TRUE_);
 		}
-		else if(constr_type==ConstraintType::exclude &&	!attribs[ParsersAttributes::INDEX_TYPE].isEmpty())
+		else if(constr_type==ConstraintType::Exclude &&	!attribs[ParsersAttributes::INDEX_TYPE].isEmpty())
 		{
 			constr->setIndexType(attribs[ParsersAttributes::INDEX_TYPE]);
 		}
@@ -5057,7 +5057,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 
 		if(ins_constr_table)
 		{
-			if(constr->getConstraintType()!=ConstraintType::primary_key)
+			if(constr->getConstraintType()!=ConstraintType::PrimaryKey)
 			{
 				table->addConstraint(constr);
 				if(this->getObjectIndex(table) >= 0)
@@ -5474,16 +5474,16 @@ Trigger *DatabaseModel::createTrigger(void)
 
 		trigger->setConstraint(attribs[ParsersAttributes::CONSTRAINT]==ParsersAttributes::_TRUE_);
 
-		trigger->setEvent(EventType::on_insert,
+		trigger->setEvent(EventType::OnInsert,
 						  (attribs[ParsersAttributes::INS_EVENT]==ParsersAttributes::_TRUE_));
 
-		trigger->setEvent(EventType::on_delete,
+		trigger->setEvent(EventType::OnDelete,
 						  (attribs[ParsersAttributes::DEL_EVENT]==ParsersAttributes::_TRUE_));
 
-		trigger->setEvent(EventType::on_update,
+		trigger->setEvent(EventType::OnUpdate,
 						  (attribs[ParsersAttributes::UPD_EVENT]==ParsersAttributes::_TRUE_));
 
-		trigger->setEvent(EventType::on_truncate,
+		trigger->setEvent(EventType::OnTruncate,
 						  (attribs[ParsersAttributes::TRUNC_EVENT]==ParsersAttributes::_TRUE_));
 
 		trigger->setExecutePerRow(attribs[ParsersAttributes::PER_ROW]==ParsersAttributes::_TRUE_);
@@ -6668,10 +6668,10 @@ void DatabaseModel::validateRelationships(TableObject *object, Table *parent_tab
 			> Case the parent table is a partition and a column is being removed
 			> Case the object is a constraint and its a table primary key */
 			revalidate_rels=((obj_type==ObjectType::ObjColumn &&
-												(parent_tab->isConstraintRefColumn(dynamic_cast<Column *>(object), ConstraintType::primary_key) ||
+												(parent_tab->isConstraintRefColumn(dynamic_cast<Column *>(object), ConstraintType::PrimaryKey) ||
 												 parent_tab->isPartition() || parent_tab->isPartitioned())) ||
 											 (obj_type==ObjectType::ObjConstraint &&
-												dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::primary_key));
+												dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::PrimaryKey));
 
 			/* Additional validation for columns: checks if the parent table participates on a
 			generalization/copy as destination table */
@@ -6718,7 +6718,7 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 	{
 		QString loc_attribs[]={ ParsersAttributes::_LC_CTYPE_,  ParsersAttributes::_LC_COLLATE_ };
 
-		if(encoding!=BaseType::null)
+		if(encoding!=BaseType::Null)
 			attributes[ParsersAttributes::ENCODING]=QString("'%1'").arg(~encoding);
 
 		for(unsigned i=0; i < 2; i++)
@@ -7061,10 +7061,10 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 			/* Case the constraint is a special object stores it on the objects map. Independently to the
 		configuration, foreign keys are discarded in this iteration because on the end of the method
 		they have the definition generated */
-			if(constr->getConstraintType()!=ConstraintType::foreign_key &&  !constr->isAddedByLinking() &&
-					((constr->getConstraintType()!=ConstraintType::primary_key && constr->isReferRelationshipAddedColumn())))
+			if(constr->getConstraintType()!=ConstraintType::ForeignKey &&  !constr->isAddedByLinking() &&
+					((constr->getConstraintType()!=ConstraintType::PrimaryKey && constr->isReferRelationshipAddedColumn())))
 				objects_map[constr->getObjectId()]=constr;
-			else if(constr->getConstraintType()==ConstraintType::foreign_key && !constr->isAddedByLinking())
+			else if(constr->getConstraintType()==ConstraintType::ForeignKey && !constr->isAddedByLinking())
 				fkeys.push_back(constr);
 		}
 
@@ -7126,7 +7126,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 					{
 						constr=dynamic_cast<Constraint *>(tab_obj);
 
-						if(constr->getConstraintType()==ConstraintType::foreign_key)
+						if(constr->getConstraintType()==ConstraintType::ForeignKey)
 							fkeys.push_back(constr);
 					}
 				}
@@ -7136,7 +7136,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 
 					for(auto &constr : constrs)
 					{
-						if(constr->getConstraintType()!=ConstraintType::primary_key)
+						if(constr->getConstraintType()!=ConstraintType::PrimaryKey)
 							rel_constrs.push_back(constr);
 					}
 				}
@@ -7244,9 +7244,9 @@ void DatabaseModel::__getObjectDependencies(BaseObject *object, vector<BaseObjec
 		   or foreign keys in which referenced table resides in the same schema as their parent tables */
 				if((!constr && child->getObjectType()!=ObjectType::ObjColumn) ||
 						(constr &&
-						 ((constr->getConstraintType()==ConstraintType::foreign_key) ||
-						  (constr->getConstraintType()!=ConstraintType::foreign_key &&
-						   constr->getConstraintType()!=ConstraintType::primary_key &&
+						 ((constr->getConstraintType()==ConstraintType::ForeignKey) ||
+							(constr->getConstraintType()!=ConstraintType::ForeignKey &&
+							 constr->getConstraintType()!=ConstraintType::PrimaryKey &&
 						   constr->isReferRelationshipAddedColumn()))))
 				{
 					__getObjectDependencies(child, objs);
@@ -7328,9 +7328,9 @@ vector<BaseObject *> DatabaseModel::getCreationOrder(BaseObject *object, bool on
 
 					if((!constr && child->getObjectType()!=ObjectType::ObjColumn) ||
 							(constr &&
-							 ((constr->getConstraintType()==ConstraintType::foreign_key) ||
-							  (constr->getConstraintType()!=ConstraintType::foreign_key &&
-							   constr->getConstraintType()!=ConstraintType::primary_key &&
+							 ((constr->getConstraintType()==ConstraintType::ForeignKey) ||
+								(constr->getConstraintType()!=ConstraintType::ForeignKey &&
+								 constr->getConstraintType()!=ConstraintType::PrimaryKey &&
 							   constr->isReferRelationshipAddedColumn()))))
 					{
 						objs_aux.push_back(child);
@@ -7762,7 +7762,7 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 
 					if(inc_indirect_deps &&
 							!constr->isAddedByLinking() &&
-							constr->getConstraintType()==ConstraintType::foreign_key)
+							constr->getConstraintType()==ConstraintType::ForeignKey)
 						getObjectDependecies(constr->getReferencedTable(), deps, inc_indirect_deps);
 
 					if(!constr->isAddedByLinking() && constr->getTablespace())
@@ -7997,7 +7997,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 				{
 					constr=tab->getConstraint(i);
 					//If a constraint references its own parent table it'll not be included on the references list
-					if(constr->getConstraintType()==ConstraintType::foreign_key &&
+					if(constr->getConstraintType()==ConstraintType::ForeignKey &&
 							constr->getParentTable()!=constr->getReferencedTable() &&
 							constr->getReferencedTable()==table)
 					{
@@ -8787,7 +8787,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						{
 							constr=table->getConstraint(i1);
 
-							if(constr->getConstraintType()==ConstraintType::exclude)
+							if(constr->getConstraintType()==ConstraintType::Exclude)
 							{
 								for(auto &elem : constr->getExcludeElements())
 								{
@@ -9151,31 +9151,31 @@ void DatabaseModel::setCodesInvalidated(vector<ObjectType> types)
 	}
 }
 
-BaseObject *DatabaseModel::getObjectPgSQLType(PgSQLType type)
+BaseObject *DatabaseModel::getObjectPgSQLType(PgSqlType type)
 {
 	switch(type.getUserTypeConfig())
 	{
-		case UserTypeConfig::BASE_TYPE:
+		case UserTypeConfig::BaseType:
 		return(this->getObject(*type, ObjectType::ObjType));
 		break;
 
-		case UserTypeConfig::DOMAIN_TYPE:
+		case UserTypeConfig::DomainType:
 		return(this->getObject(*type, ObjectType::ObjDomain));
 		break;
 
-		case UserTypeConfig::TABLE_TYPE:
+		case UserTypeConfig::TableType:
 		return(this->getObject(*type, ObjectType::ObjTable));
 		break;
 
-		case UserTypeConfig::VIEW_TYPE:
+		case UserTypeConfig::ViewType:
 		return(this->getObject(*type, ObjectType::ObjView));
 		break;
 
-		case UserTypeConfig::SEQUENCE_TYPE:
+		case UserTypeConfig::SequenceType:
 		return(this->getObject(*type, ObjectType::ObjSequence));
 		break;
 
-		case UserTypeConfig::EXTENSION_TYPE:
+		case UserTypeConfig::ExtensionType:
 		return(this->getObject(*type, ObjectType::ObjExtension));
 		break;
 
@@ -9217,9 +9217,9 @@ void DatabaseModel::validateSchemaRenaming(Schema *schema, const QString &prev_s
 			/* Special case for tables. Need to make a dynamic_cast before the reinterpret_cast to get
 			the correct reference to table */
 			if(obj->getObjectType()==ObjectType::ObjTable)
-				PgSQLType::renameUserType(prev_name, reinterpret_cast<void *>(dynamic_cast<Table *>(obj)), obj->getName(true));
+				PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(dynamic_cast<Table *>(obj)), obj->getName(true));
 			else
-				PgSQLType::renameUserType(prev_name, reinterpret_cast<void *>(obj), obj->getName(true));
+				PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(obj), obj->getName(true));
 		}
 
 		//For graphical objects set them as modified to redraw them
@@ -9235,7 +9235,7 @@ void DatabaseModel::createSystemObjects(bool create_public)
 	Schema *public_sch=nullptr, *pg_catalog=nullptr;
 	Language *lang=nullptr;
 	Tablespace *tbspace=nullptr;
-	LanguageType lang_types[]={ LanguageType::c, LanguageType::sql, LanguageType::plpgsql, LanguageType::internal };
+	LanguageType lang_types[]={ LanguageType::C, LanguageType::Sql, LanguageType::PlPgsql, LanguageType::Internal };
 	Role *postgres=nullptr;
 	Collation *collation=nullptr;
 	QString collnames[]={ "default", "C", "POSIX" };

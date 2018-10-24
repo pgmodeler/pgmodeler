@@ -97,7 +97,7 @@ bool Aggregate::isValidFunction(unsigned func_idx, Function *func)
 	else return(true);
 }
 
-void Aggregate::setStateType(PgSQLType state_type)
+void Aggregate::setStateType(PgSqlType state_type)
 {
 	setCodeInvalidated(this->state_type != state_type);
 	this->state_type=state_type;
@@ -158,7 +158,7 @@ void Aggregate::setTypesAttribute(unsigned def_type)
 	attributes[ParsersAttributes::TYPES]=str_types;
 }
 
-void Aggregate::addDataType(PgSQLType type)
+void Aggregate::addDataType(PgSqlType type)
 {
 	data_types.push_back(type);
 	setCodeInvalidated(true);
@@ -195,7 +195,7 @@ Function *Aggregate::getFunction(unsigned func_idx)
 	return(functions[func_idx]);
 }
 
-PgSQLType Aggregate::getStateType(void)
+PgSqlType Aggregate::getStateType(void)
 {
 	return(state_type);
 }
@@ -210,7 +210,7 @@ Operator *Aggregate::getSortOperator(void)
 	return(sort_operator);
 }
 
-PgSQLType Aggregate::getDataType(unsigned type_idx)
+PgSqlType Aggregate::getDataType(unsigned type_idx)
 {
 	//Raises an exception if the type index is out of bound
 	if(type_idx >= data_types.size())

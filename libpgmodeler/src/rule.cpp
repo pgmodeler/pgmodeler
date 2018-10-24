@@ -20,7 +20,7 @@
 
 Rule::Rule(void)
 {
-	execution_type=BaseType::null;
+	execution_type=BaseType::Null;
 	obj_type=ObjectType::ObjRule;
 	attributes[ParsersAttributes::EVENT_TYPE]=QString();
 	attributes[ParsersAttributes::TABLE]=QString();

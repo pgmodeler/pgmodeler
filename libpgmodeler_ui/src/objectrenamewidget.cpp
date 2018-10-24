@@ -148,7 +148,7 @@ void ObjectRenameWidget::applyRenaming(void)
 
 				/* If the object is a column and some primary key on table is referencing it
 			 the model relationship will be revalidated */
-				if(col && tab->isConstraintRefColumn(col, ConstraintType::primary_key))
+				if(col && tab->isConstraintRefColumn(col, ConstraintType::PrimaryKey))
 					model->validateRelationships();
 
 				tab->setModified(true);

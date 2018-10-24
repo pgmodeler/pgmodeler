@@ -34,7 +34,7 @@ class Cast: public BaseObject {
 		/*! \brief Data types used on the cast:
 		0 -> Source data type
 		1 -> Destination data type */
-		PgSQLType types[2];
+		PgSqlType types[2];
 
 		//! \brief Conversion type (ASSIGNMENT or IMPLICIT)
 		unsigned cast_type;
@@ -61,7 +61,7 @@ class Cast: public BaseObject {
 
 		/*! \brief Defines one of the data types envolved on the cast
 		 (using constants SRC_TYPE | DST_TYPE) */
-		void setDataType(unsigned type_idx, PgSQLType type);
+		void setDataType(unsigned type_idx, PgSqlType type);
 
 		//! \brief Defines the cast type (using constants ASSINGMENT | IMPLICIT)
 		void setCastType(unsigned cast_type);
@@ -75,7 +75,7 @@ class Cast: public BaseObject {
 		void setInOut(bool value);
 
 		//! \brief Returns one of the cast envolved data types
-		PgSQLType getDataType(unsigned type_idx);
+		PgSqlType getDataType(unsigned type_idx);
 
 		//! \brief Returns the cast type
 		unsigned getCastType(void);

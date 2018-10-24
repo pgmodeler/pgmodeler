@@ -23,13 +23,13 @@ TypeAttribute::TypeAttribute(void)
 	obj_type=ObjectType::ObjTypeAttribute;
 }
 
-void TypeAttribute::setType(PgSQLType type)
+void TypeAttribute::setType(PgSqlType type)
 {
 	setCodeInvalidated(this->type != type);
 	this->type=type;
 }
 
-PgSQLType TypeAttribute::getType(void)
+PgSqlType TypeAttribute::getType(void)
 {
 	return(type);
 }

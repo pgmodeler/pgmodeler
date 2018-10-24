@@ -25,7 +25,7 @@ Constraint::Constraint(void)
 	deferrable=false;
 	no_inherit=false;
 	fill_factor=0;
-	index_type=BaseType::null;
+	index_type=BaseType::Null;
 
 	attributes[ParsersAttributes::PK_CONSTR]=QString();
 	attributes[ParsersAttributes::FK_CONSTR]=QString();
@@ -117,17 +117,17 @@ bool Constraint::isColumnReferenced(Column *column, bool search_only_ref_cols)
 	bool found=false;
 	vector<ExcludeElement>::iterator itr, itr_end;
 
-	if(constr_type == ConstraintType::primary_key ||
-			constr_type == ConstraintType::unique ||
-			constr_type == ConstraintType::foreign_key)
+	if(constr_type == ConstraintType::PrimaryKey ||
+			constr_type == ConstraintType::Unique ||
+			constr_type == ConstraintType::ForeignKey)
 	{
 		if(!search_only_ref_cols)
 			found=isColumnExists(column, SourceCols);
 
-		if(!found && constr_type==ConstraintType::foreign_key)
+		if(!found && constr_type==ConstraintType::ForeignKey)
 			found=isColumnExists(column, ReferencedCols);
 	}
-	else if(constr_type==ConstraintType::exclude)
+	else if(constr_type==ConstraintType::Exclude)
 	{
 		//Iterates over the exclude elements
 		itr=excl_elements.begin();
@@ -151,7 +151,7 @@ void Constraint::addColumn(Column *column, unsigned col_type)
 						.arg(this->getName())
 						.arg(BaseObject::getTypeName(ObjectType::ObjConstraint)),
 						ErrorCode::AsgNotAllocatedColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(constr_type!=ConstraintType::check)
+	else if(constr_type!=ConstraintType::Check)
 	{
 		//Adds the column only if the column doesn't exists on the internal list
 		if(!isColumnExists(column,col_type))
@@ -174,8 +174,8 @@ void Constraint::setTablespace(BaseObject *tabspc)
 	try
 	{
 		if(tabspc &&
-				constr_type!=ConstraintType::primary_key &&
-				constr_type!=ConstraintType::unique)
+				constr_type!=ConstraintType::PrimaryKey &&
+				constr_type!=ConstraintType::Unique)
 			throw Exception(ErrorCode::AsgTablespaceInvalidConstraintType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		BaseObject::setTablespace(tabspc);
@@ -367,7 +367,7 @@ void Constraint::removeColumn(const QString &name, unsigned col_type)
 		//Case the column is found
 		if(col->getName()==name)
 		{
-			if(constr_type==ConstraintType::primary_key)
+			if(constr_type==ConstraintType::PrimaryKey)
 				col->setNotNull(false);
 
 			//Remove its iterator from the list
@@ -595,7 +595,7 @@ void Constraint::removeExcludeElements(void)
 
 void Constraint::setColumnsNotNull(bool value)
 {
-	if(constr_type==ConstraintType::primary_key)
+	if(constr_type==ConstraintType::PrimaryKey)
 	{
 		for(auto &col : columns)
 		{
@@ -650,9 +650,9 @@ QString Constraint::getCodeDefinition(unsigned def_type)
 
 void Constraint::setDeclInTableAttribute(void)
 {
-	if(!isDeclaredInTable() || (constr_type==ConstraintType::foreign_key && !isAddedByLinking()))
+	if(!isDeclaredInTable() || (constr_type==ConstraintType::ForeignKey && !isAddedByLinking()))
 		attributes[ParsersAttributes::DECL_IN_TABLE]=QString();
-	else if(!isReferRelationshipAddedColumn() || constr_type==ConstraintType::primary_key)
+	else if(!isReferRelationshipAddedColumn() || constr_type==ConstraintType::PrimaryKey)
 		attributes[ParsersAttributes::DECL_IN_TABLE]=ParsersAttributes::_TRUE_;
 }
 
@@ -671,16 +671,16 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 
 	switch(!constr_type)
 	{
-		case ConstraintType::check:
+		case ConstraintType::Check:
 			attrib=ParsersAttributes::CK_CONSTR;
 		break;
-		case ConstraintType::primary_key:
+		case ConstraintType::PrimaryKey:
 			attrib=ParsersAttributes::PK_CONSTR;
 		break;
-		case ConstraintType::foreign_key:
+		case ConstraintType::ForeignKey:
 			attrib=ParsersAttributes::FK_CONSTR;
 		break;
-		case ConstraintType::unique:
+		case ConstraintType::Unique:
 			attrib=ParsersAttributes::UQ_CONSTR;
 		break;
 		default:
@@ -694,9 +694,9 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 	attributes[ParsersAttributes::DEL_ACTION]=(~del_action);
 	attributes[ParsersAttributes::EXPRESSION]=expression;
 
-	if(constr_type!=ConstraintType::check)
+	if(constr_type!=ConstraintType::Check)
 	{
-		if(constr_type!=ConstraintType::exclude)
+		if(constr_type!=ConstraintType::Exclude)
 			setColumnsAttribute(SourceCols, def_type, inc_addedbyrel);
 		else
 			setExcludeElementsAttribute(def_type);
@@ -706,7 +706,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 		 this means the constraint is configured correctly, otherwise don't generates
 		 the attribute forcing the schema parser to return an error because the foreign key is
 		 misconfigured. */
-		if(constr_type==ConstraintType::foreign_key && columns.size() == ref_columns.size())
+		if(constr_type==ConstraintType::ForeignKey && columns.size() == ref_columns.size())
 			setColumnsAttribute(ReferencedCols, def_type, inc_addedbyrel);
 	}
 
@@ -722,7 +722,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 
 	setDeclInTableAttribute();
 
-	if(fill_factor!=0 && (constr_type==ConstraintType::primary_key || constr_type==ConstraintType::unique))
+	if(fill_factor!=0 && (constr_type==ConstraintType::PrimaryKey || constr_type==ConstraintType::Unique))
 		attributes[ParsersAttributes::FACTOR]=QString("%1").arg(fill_factor);
 	else
 		attributes[ParsersAttributes::FACTOR]=QString();

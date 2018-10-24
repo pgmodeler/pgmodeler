@@ -799,7 +799,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 				parent_tab->addObject(dynamic_cast<TableObject *>(object), obj_idx);
 
 				if(object->getObjectType()==ObjectType::ObjConstraint &&
-						dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::foreign_key)
+						dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::ForeignKey)
 					model->updateTableFKRelationships(dynamic_cast<Table *>(parent_tab));
 			}
 			else if(parent_rel)
@@ -844,7 +844,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 					model->validateRelationships(dynamic_cast<TableObject *>(object), dynamic_cast<Table *>(parent_tab));
 
 					if(object->getObjectType()==ObjectType::ObjConstraint &&
-							dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::foreign_key)
+							dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::ForeignKey)
 						model->updateTableFKRelationships(dynamic_cast<Table *>(parent_tab));
 				}
 			}

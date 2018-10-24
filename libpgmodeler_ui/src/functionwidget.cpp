@@ -212,7 +212,7 @@ Parameter FunctionWidget::getParameter(ObjectsTableWidget *tab, unsigned row)
 		try
 		{
 			param.setName(tab->getCellText(row,0));
-			param.setType(tab->getRowData(row).value<PgSQLType>());
+			param.setType(tab->getRowData(row).value<PgSqlType>());
 
 			if(tab==parameters_tab)
 			{
@@ -240,7 +240,7 @@ void FunctionWidget::showParameterData(Parameter param, ObjectsTableWidget *tab,
 
 		tab->setCellText(param.getName(),row,0);
 		tab->setCellText(*param.getType(),row,1);
-		tab->setRowData(QVariant::fromValue<PgSQLType>(param.getType()), row);
+		tab->setRowData(QVariant::fromValue<PgSqlType>(param.getType()), row);
 
 		if(tab==parameters_tab)
 		{
@@ -265,7 +265,7 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 	QStringList list;
 	unsigned count=0, i;
 	Parameter param;
-	PgSQLType aux_type;
+	PgSqlType aux_type;
 
 	BaseObjectWidget::setAttributes(model, op_list, func, schema);
 	languages=model->getObjects(ObjectType::ObjLanguage);
@@ -279,7 +279,7 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 
 	list.sort();
 	language_cmb->addItems(list);
-	language_cmb->setCurrentText(~LanguageType(LanguageType::sql));
+	language_cmb->setCurrentText(~LanguageType(LanguageType::Sql));
 
 	if(func)
 	{
@@ -358,7 +358,7 @@ void FunctionWidget::selectLanguage(void)
 {
 	bool c_lang;
 
-	c_lang=(language_cmb->currentText()==~LanguageType(LanguageType::c));
+	c_lang=(language_cmb->currentText()==~LanguageType(LanguageType::C));
 	source_code_frm->setVisible(!c_lang);
 	library_frm->setVisible(c_lang);
 
@@ -519,7 +519,7 @@ void FunctionWidget::applyConfiguration(void)
 		for(i=0; i < count; i++)
 		{
 			param.setName(parameters_tab->getCellText(i,0));
-			param.setType(parameters_tab->getRowData(i).value<PgSQLType>());
+			param.setType(parameters_tab->getRowData(i).value<PgSqlType>());
 
 			str_aux=parameters_tab->getCellText(i,2);
 			param.setIn(str_aux.indexOf(QString("IN")) >= 0);
@@ -532,7 +532,7 @@ void FunctionWidget::applyConfiguration(void)
 		}
 
 
-		if(language_cmb->currentText()==~LanguageType(LanguageType::c))
+		if(language_cmb->currentText()==~LanguageType(LanguageType::C))
 		{
 			func->setLibrary(library_edt->text());
 			func->setSymbol(symbol_edt->text());
@@ -553,7 +553,7 @@ void FunctionWidget::applyConfiguration(void)
 			for(i=0; i<count; i++)
 			{
 				func->addReturnedTableColumn(return_tab->getCellText(i,0),
-											 return_tab->getRowData(i).value<PgSQLType>());
+											 return_tab->getRowData(i).value<PgSqlType>());
 			}
 		}
 

@@ -91,7 +91,7 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 
 		fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion92)].push_back(no_inherit_lbl);
 		fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion95)].push_back(indexing_chk);
-		values_map[indexing_chk].push_back(~IndexingType(IndexingType::brin));
+		values_map[indexing_chk].push_back(~IndexingType(IndexingType::Brin));
 
 		warn_frm=generateVersionWarningFrame(fields_map, &values_map);
 		constraint_grid->addWidget(warn_frm, constraint_grid->count()+1, 0, 1, 0);
@@ -298,45 +298,45 @@ void ConstraintWidget::selectConstraintType(void)
 {
 	ConstraintType constr_type=ConstraintType(constr_type_cmb->currentText());
 
-	tablespace_lbl->setVisible(constr_type==ConstraintType::primary_key || constr_type==ConstraintType::unique);
-	tablespace_sel->setVisible(constr_type==ConstraintType::primary_key || constr_type==ConstraintType::unique);
+	tablespace_lbl->setVisible(constr_type==ConstraintType::PrimaryKey || constr_type==ConstraintType::Unique);
+	tablespace_sel->setVisible(constr_type==ConstraintType::PrimaryKey || constr_type==ConstraintType::Unique);
 
 	if(!tablespace_sel->isVisible()) tablespace_sel->clearSelector();
 
-	expression_lbl->setVisible(constr_type==ConstraintType::check || constr_type==ConstraintType::exclude);
-	expression_txt->setVisible(constr_type==ConstraintType::check || constr_type==ConstraintType::exclude);
-	no_inherit_chk->setVisible(constr_type==ConstraintType::check);
-	no_inherit_lbl->setVisible(constr_type==ConstraintType::check);
-	warn_frm->setVisible(constr_type==ConstraintType::check);
+	expression_lbl->setVisible(constr_type==ConstraintType::Check || constr_type==ConstraintType::Exclude);
+	expression_txt->setVisible(constr_type==ConstraintType::Check || constr_type==ConstraintType::Exclude);
+	no_inherit_chk->setVisible(constr_type==ConstraintType::Check);
+	no_inherit_lbl->setVisible(constr_type==ConstraintType::Check);
+	warn_frm->setVisible(constr_type==ConstraintType::Check);
 
-	fill_factor_chk->setVisible(constr_type==ConstraintType::unique ||
-								constr_type==ConstraintType::primary_key ||
-								constr_type==ConstraintType::exclude);
-	fill_factor_sb->setVisible(constr_type==ConstraintType::unique ||
-							   constr_type==ConstraintType::primary_key ||
-							   constr_type==ConstraintType::exclude);
+	fill_factor_chk->setVisible(constr_type==ConstraintType::Unique ||
+								constr_type==ConstraintType::PrimaryKey ||
+								constr_type==ConstraintType::Exclude);
+	fill_factor_sb->setVisible(constr_type==ConstraintType::Unique ||
+							   constr_type==ConstraintType::PrimaryKey ||
+							   constr_type==ConstraintType::Exclude);
 
-	info_frm->setVisible(constr_type==ConstraintType::primary_key);
+	info_frm->setVisible(constr_type==ConstraintType::PrimaryKey);
 
-	deferrable_lbl->setVisible(constr_type!=ConstraintType::check);
-	deferrable_chk->setVisible(constr_type!=ConstraintType::check);
-	deferral_cmb->setVisible(constr_type!=ConstraintType::check);
-	deferral_lbl->setVisible(constr_type!=ConstraintType::check);
+	deferrable_lbl->setVisible(constr_type!=ConstraintType::Check);
+	deferrable_chk->setVisible(constr_type!=ConstraintType::Check);
+	deferral_cmb->setVisible(constr_type!=ConstraintType::Check);
+	deferral_lbl->setVisible(constr_type!=ConstraintType::Check);
 
-	match_lbl->setVisible(constr_type==ConstraintType::foreign_key);
-	match_cmb->setVisible(constr_type==ConstraintType::foreign_key);
-	on_delete_cmb->setVisible(constr_type==ConstraintType::foreign_key);
-	on_delete_lbl->setVisible(constr_type==ConstraintType::foreign_key);
-	on_update_cmb->setVisible(constr_type==ConstraintType::foreign_key);
-	on_update_lbl->setVisible(constr_type==ConstraintType::foreign_key);
+	match_lbl->setVisible(constr_type==ConstraintType::ForeignKey);
+	match_cmb->setVisible(constr_type==ConstraintType::ForeignKey);
+	on_delete_cmb->setVisible(constr_type==ConstraintType::ForeignKey);
+	on_delete_lbl->setVisible(constr_type==ConstraintType::ForeignKey);
+	on_update_cmb->setVisible(constr_type==ConstraintType::ForeignKey);
+	on_update_lbl->setVisible(constr_type==ConstraintType::ForeignKey);
 
-	columns_tbw->setVisible(constr_type!=ConstraintType::check &&
-										 constr_type!=ConstraintType::exclude);
+	columns_tbw->setVisible(constr_type!=ConstraintType::Check &&
+										 constr_type!=ConstraintType::Exclude);
 
-	indexing_chk->setVisible(constr_type==ConstraintType::exclude);
-	indexing_cmb->setVisible(constr_type==ConstraintType::exclude);
+	indexing_chk->setVisible(constr_type==ConstraintType::Exclude);
+	indexing_cmb->setVisible(constr_type==ConstraintType::Exclude);
 
-	if(constr_type!=ConstraintType::foreign_key)
+	if(constr_type!=ConstraintType::ForeignKey)
 	{
 		columns_tbw->setTabEnabled(1, false);
 		columns_tbw->setCurrentIndex(0);
@@ -345,7 +345,7 @@ void ConstraintWidget::selectConstraintType(void)
 	else
 		columns_tbw->setTabEnabled(1, true);
 
-	excl_elems_grp->setVisible(constr_type==ConstraintType::exclude);
+	excl_elems_grp->setVisible(constr_type==ConstraintType::Exclude);
 }
 
 void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_list,  BaseObject *parent_obj, Constraint *constr)
@@ -388,7 +388,7 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	{
 		excl_elems = constr->getExcludeElements();
 
-		indexing_chk->setChecked(constr->getIndexType()!=BaseType::null);
+		indexing_chk->setChecked(constr->getIndexType()!=BaseType::Null);
 		indexing_cmb->setCurrentIndex(indexing_cmb->findText(~constr->getIndexType()));
 
 		constr_type_cmb->setCurrentIndex(constr_type_cmb->findText(~constr->getConstraintType()));
@@ -462,9 +462,9 @@ void ConstraintWidget::applyConfiguration(void)
 		if(indexing_chk->isChecked())
 			constr->setIndexType(IndexingType(indexing_cmb->currentText()));
 		else
-			constr->setIndexType(BaseType::null);
+			constr->setIndexType(BaseType::Null);
 
-		if(constr->getConstraintType()==ConstraintType::foreign_key)
+		if(constr->getConstraintType()==ConstraintType::ForeignKey)
 			constr->setReferencedTable(dynamic_cast<BaseTable *>(ref_table_sel->getSelectedObject()));
 
 		constr->removeColumns();
@@ -484,7 +484,7 @@ void ConstraintWidget::applyConfiguration(void)
 		constr->addExcludeElements(excl_elems);
 
 		//Raises an error if the user try to create a primary key that has columns added by relationship (not supported)
-		if(constr->getConstraintType()==ConstraintType::primary_key &&
+		if(constr->getConstraintType()==ConstraintType::PrimaryKey &&
 				constr->isReferRelationshipAddedColumn())
 			throw Exception(ErrorCode::UnsupportedPKColsAddedByRel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -492,17 +492,17 @@ void ConstraintWidget::applyConfiguration(void)
 
 		/* Raises an error if the constraint type requires at least one column to be assinged and
 		there is no columns configured on the form */
-		if(((constr->getConstraintType()==ConstraintType::foreign_key ||
-			 constr->getConstraintType()==ConstraintType::primary_key) &&
+		if(((constr->getConstraintType()==ConstraintType::ForeignKey ||
+			 constr->getConstraintType()==ConstraintType::PrimaryKey) &&
 			constr->getColumnCount(Constraint::SourceCols)==0) ||
-				(constr->getConstraintType()==ConstraintType::foreign_key &&
+				(constr->getConstraintType()==ConstraintType::ForeignKey &&
 				 constr->getColumnCount(Constraint::ReferencedCols)==0))
 			throw Exception(ErrorCode::InvConstratintNoColumns,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		finishConfiguration();
 
 		//For the foreign keys, updates the fk relationships on the model
-		if(constr->getConstraintType()==ConstraintType::foreign_key)
+		if(constr->getConstraintType()==ConstraintType::ForeignKey)
 			this->model->updateTableFKRelationships(dynamic_cast<Table *>(this->table));
 	}
 	catch(Exception &e)

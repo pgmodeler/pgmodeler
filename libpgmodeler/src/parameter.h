@@ -35,7 +35,7 @@ class Parameter: public Column {
 	public:
 		Parameter(void);
 
-		void setType(PgSQLType type);
+		void setType(PgSqlType type);
 		void setIn(bool value);
 		void setOut(bool value);
 		void setVariadic(bool value);

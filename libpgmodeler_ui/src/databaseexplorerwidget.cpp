@@ -709,11 +709,11 @@ void DatabaseExplorerWidget::formatColumnAttribs(attribs_map &attribs)
 
 void DatabaseExplorerWidget::formatConstraintAttribs(attribs_map &attribs)
 {
-	map<QString, ConstraintType> types={{ParsersAttributes::PK_CONSTR, ConstraintType(ConstraintType::primary_key)},
-										{ParsersAttributes::FK_CONSTR, ConstraintType(ConstraintType::foreign_key)},
-										{ParsersAttributes::UQ_CONSTR, ConstraintType(ConstraintType::unique)},
-										{ParsersAttributes::CK_CONSTR, ConstraintType(ConstraintType::check)},
-										{ParsersAttributes::EX_CONSTR, ConstraintType(ConstraintType::exclude)}};
+	map<QString, ConstraintType> types={{ParsersAttributes::PK_CONSTR, ConstraintType(ConstraintType::PrimaryKey)},
+										{ParsersAttributes::FK_CONSTR, ConstraintType(ConstraintType::ForeignKey)},
+										{ParsersAttributes::UQ_CONSTR, ConstraintType(ConstraintType::Unique)},
+										{ParsersAttributes::CK_CONSTR, ConstraintType(ConstraintType::Check)},
+										{ParsersAttributes::EX_CONSTR, ConstraintType(ConstraintType::Exclude)}};
 
 	ConstraintType constr_type=types[attribs[ParsersAttributes::TYPE]];
 	QStringList names=getObjectName(ObjectType::ObjTable, attribs[ParsersAttributes::TABLE]).split('.');
@@ -727,7 +727,7 @@ void DatabaseExplorerWidget::formatConstraintAttribs(attribs_map &attribs)
 															Catalog::parseArrayValues(attribs[ParsersAttributes::SRC_COLUMNS]),
 			names[0], names[1]).join(ElemSeparator);
 
-	if(constr_type==ConstraintType::foreign_key)
+	if(constr_type==ConstraintType::ForeignKey)
 	{
 		attribs[ParsersAttributes::REF_TABLE]=getObjectName(ObjectType::ObjTable, attribs[ParsersAttributes::REF_TABLE]);
 		names=attribs[ParsersAttributes::REF_TABLE].split('.');
@@ -744,7 +744,7 @@ void DatabaseExplorerWidget::formatConstraintAttribs(attribs_map &attribs)
 		attribs.erase(ParsersAttributes::COMPARISON_TYPE);
 	}
 
-	if(constr_type==ConstraintType::check)
+	if(constr_type==ConstraintType::Check)
 	{
 		attribs.erase(ParsersAttributes::DEFERRABLE);
 		attribs.erase(ParsersAttributes::DEFER_TYPE);
@@ -752,7 +752,7 @@ void DatabaseExplorerWidget::formatConstraintAttribs(attribs_map &attribs)
 	else
 		attribs.erase(ParsersAttributes::EXPRESSION);
 
-	if(constr_type==ConstraintType::exclude)
+	if(constr_type==ConstraintType::Exclude)
 	{
 		attribs[ParsersAttributes::EXPRESSIONS]=Catalog::parseArrayValues(attribs[ParsersAttributes::EXPRESSIONS]).join(ElemSeparator);
 		attribs[ParsersAttributes::OPERATORS]=getObjectsNames(ObjectType::ObjOperator,
@@ -1579,7 +1579,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 				{
 					QTreeWidgetItem *fk_item=nullptr, *src_item=nullptr;
 
-					if(cached_attribs[ParsersAttributes::TYPE]==~ConstraintType(ConstraintType::foreign_key))
+					if(cached_attribs[ParsersAttributes::TYPE]==~ConstraintType(ConstraintType::ForeignKey))
 					{
 						/* Creates two items denoting the source columns and referenced tables.
 							These items have a negative id indicating that no popup menu will be show if user
@@ -1607,8 +1607,8 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 																.arg(cached_attribs[ParsersAttributes::DST_COLUMNS]));
 						fk_item->setFlags(Qt::ItemIsEnabled);
 					}
-					else if(cached_attribs[ParsersAttributes::TYPE]==~ConstraintType(ConstraintType::unique) ||
-									cached_attribs[ParsersAttributes::TYPE]==~ConstraintType(ConstraintType::primary_key))
+					else if(cached_attribs[ParsersAttributes::TYPE]==~ConstraintType(ConstraintType::Unique) ||
+									cached_attribs[ParsersAttributes::TYPE]==~ConstraintType(ConstraintType::PrimaryKey))
 					{
 						QStringList columns=cached_attribs[ParsersAttributes::SRC_COLUMNS].split(ElemSeparator);
 

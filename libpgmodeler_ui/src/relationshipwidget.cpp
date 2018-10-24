@@ -544,9 +544,9 @@ void RelationshipWidget::generateBoundingExpr(void)
 	PartitioningType part_type = part_type_lbl->text();
 	QString tmpl;
 
-	if(part_type == PartitioningType::list)
+	if(part_type == PartitioningType::List)
 		tmpl = QString("IN (value)");
-	else if(part_type == PartitioningType::range)
+	else if(part_type == PartitioningType::Range)
 		tmpl = QString("FROM (value) TO (value)");
 	else
 		tmpl = QString("WITH (MODULUS m, REMAINDER r)");
@@ -1138,8 +1138,8 @@ void RelationshipWidget::applyConfiguration(void)
 			{
 				rel->setDeferrable(deferrable_chk->isChecked());
 				rel->setDeferralType(DeferralType(deferral_cmb->currentText()));
-				rel->setActionType((del_action_cmb->currentIndex()!=0 ? ActionType(del_action_cmb->currentText()) : ActionType::null), Constraint::DeleteAction);
-				rel->setActionType((upd_action_cmb->currentIndex()!=0 ? ActionType(upd_action_cmb->currentText()) : ActionType::null), Constraint::UpdateAction);
+				rel->setActionType((del_action_cmb->currentIndex()!=0 ? ActionType(del_action_cmb->currentText()) : ActionType::Null), Constraint::DeleteAction);
+				rel->setActionType((upd_action_cmb->currentIndex()!=0 ? ActionType(upd_action_cmb->currentText()) : ActionType::Null), Constraint::UpdateAction);
 
 				if(rel_type==BaseRelationship::RelationshipNn)
 					rel->setSiglePKColumn(single_pk_chk->isChecked());

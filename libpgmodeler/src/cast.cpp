@@ -31,7 +31,7 @@ Cast::Cast(void)
 	attributes[ParsersAttributes::FUNCTION]=QString();
 }
 
-void Cast::setDataType(unsigned type_idx, PgSQLType type)
+void Cast::setDataType(unsigned type_idx, PgSqlType type)
 {
 	//Check if the type index is valid
 	if(type_idx<=DstType)
@@ -74,7 +74,7 @@ void Cast::setCastFunction(Function *cast_func)
 {
 	unsigned param_count;
 	bool error=false;
-	PgSQLType ret_type;
+	PgSqlType ret_type;
 
 	if(!cast_func)
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgNotAllocatedFunction)
@@ -130,7 +130,7 @@ void Cast::setCastFunction(Function *cast_func)
 	this->cast_function=cast_func;
 }
 
-PgSQLType Cast::getDataType(unsigned type_idx)
+PgSqlType Cast::getDataType(unsigned type_idx)
 {
 	if(type_idx > DstType)
 		throw Exception(ErrorCode::RefTypeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);

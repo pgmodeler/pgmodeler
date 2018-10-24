@@ -52,7 +52,7 @@ class OperatorClassElement {
 
 		/*! \brief PostgreSQL type used in the indexing method of operator class.
 		 (only for type STORAGE_ELEM) */
-		PgSQLType storage;
+		PgSqlType storage;
 
 		/*! \brief Strategy number (or support number for functions). This attribute
 		 must have a value greater than 0 (only for OPERATOR_ELEM and FUNCTION_ELEM) */
@@ -77,7 +77,7 @@ class OperatorClassElement {
 		void setOperatorFamily(OperatorFamily *op_family);
 
 		//! \brief Defines the element as a storage clause
-		void setStorage(PgSQLType storage);
+		void setStorage(PgSqlType storage);
 
 		//! \brief Returns the element type
 		unsigned getElementType(void);
@@ -95,7 +95,7 @@ class OperatorClassElement {
 		OperatorFamily *getOperatorFamily(void);
 
 		//! \brief Storage type of the element
-		PgSQLType getStorage(void);
+		PgSqlType getStorage(void);
 
 		//! \brief Returns the strategy (support) number of the element
 		unsigned getStrategyNumber(void);

@@ -345,10 +345,10 @@ QString Index::getCodeDefinition(unsigned def_type)
 			attributes[ParsersAttributes::SCHEMA]=getParentTable()->getSchema()->getName(true);
 	}
 
-	if(this->indexing_type==IndexingType::gin)
+	if(this->indexing_type==IndexingType::Gin)
 		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::FAST_UPDATE]=(index_attribs[FastUpdate] ? ParsersAttributes::_TRUE_ : QString());
 
-	if(this->indexing_type==IndexingType::gist)
+	if(this->indexing_type==IndexingType::Gist)
 		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::BUFFERING]=(index_attribs[Buffering] ? ParsersAttributes::_TRUE_ : QString());
 
 	if(/*this->indexing_type==IndexingType::btree && */fill_factor >= 10)
@@ -392,11 +392,11 @@ QString Index::getAlterDefinition(BaseObject *object)
 			if(this->fill_factor!=index->fill_factor && index->fill_factor >= 10)
 				attribs[ParsersAttributes::FACTOR]=QString::number(index->fill_factor);
 
-			if(this->indexing_type==IndexingType::gin &&
+			if(this->indexing_type==IndexingType::Gin &&
 					this->index_attribs[FastUpdate] != index->index_attribs[FastUpdate])
 				attribs[ParsersAttributes::FAST_UPDATE]=(index->index_attribs[FastUpdate] ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
 
-			if(this->indexing_type==IndexingType::gist &&
+			if(this->indexing_type==IndexingType::Gist &&
 					this->index_attribs[Buffering] != index->index_attribs[Buffering])
 				attribs[ParsersAttributes::BUFFERING]=(index->index_attribs[Buffering] ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
 		}
@@ -412,7 +412,7 @@ QString Index::getAlterDefinition(BaseObject *object)
 
 void Index::validateElements(void)
 {
-	if(indexing_type!=IndexingType::btree)
+	if(indexing_type!=IndexingType::Btree)
 	{
 		for(unsigned i=0; i < idx_elements.size(); i++)
 		{

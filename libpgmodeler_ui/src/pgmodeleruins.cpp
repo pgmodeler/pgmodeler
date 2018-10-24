@@ -126,8 +126,8 @@ namespace PgModelerUiNs {
 
 					/* If the constraint is not FK but is declared outside table via alter (ALTER TABLE...ADD CONSTRAINT...) or
 		   The constraint is FK and the reference table is disabled the FK will not be enabled */
-					if((constr->getConstraintType()!=ConstraintType::foreign_key && !constr->isDeclaredInTable()) ||
-							(constr->getConstraintType()==ConstraintType::foreign_key &&
+					if((constr->getConstraintType()!=ConstraintType::ForeignKey && !constr->isDeclaredInTable()) ||
+							(constr->getConstraintType()==ConstraintType::ForeignKey &&
 							 (disable || (!disable && !constr->getReferencedTable()->isSQLDisabled()))))
 						constr->setSQLDisabled(disable);
 				}

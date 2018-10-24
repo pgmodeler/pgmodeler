@@ -47,7 +47,7 @@ Table::Table(void) : BaseTable()
 	attributes[ParsersAttributes::PARTITION_BOUND_EXPR]=QString();
 
 	copy_table=partitioned_table=nullptr;
-	partitioning_type=BaseType::null;
+	partitioning_type=BaseType::Null;
 
 	this->setName(trUtf8("new_table").toUtf8());
 }
@@ -70,14 +70,14 @@ void Table::setName(const QString &name)
 {
 	QString prev_name=this->getName(true);
 	BaseObject::setName(name);
-	PgSQLType::renameUserType(prev_name, this, this->getName(true));
+	PgSqlType::renameUserType(prev_name, this, this->getName(true));
 }
 
 void Table::setSchema(BaseObject *schema)
 {
 	QString prev_name=this->getName(true);
 	BaseObject::setSchema(schema);
-	PgSQLType::renameUserType(prev_name, this, this->getName(true));
+	PgSqlType::renameUserType(prev_name, this, this->getName(true));
 }
 
 void Table::setWithOIDs(bool value)
@@ -268,16 +268,16 @@ void Table::setConstraintsAttribute(unsigned def_type)
 	{
 		constr=dynamic_cast<Constraint *>(constraints[i]);
 
-		if(constr->getConstraintType()!=ConstraintType::foreign_key &&
+		if(constr->getConstraintType()!=ConstraintType::ForeignKey &&
 
 				((def_type==SchemaParser::SqlDefinition &&
-				  ((!constr->isReferRelationshipAddedColumn() && constr->getConstraintType()!=ConstraintType::check) ||
-				   (constr->getConstraintType()==ConstraintType::check && !constr->isAddedByGeneralization()) ||
-				   constr->getConstraintType()==ConstraintType::primary_key)) ||
+					((!constr->isReferRelationshipAddedColumn() && constr->getConstraintType()!=ConstraintType::Check) ||
+					 (constr->getConstraintType()==ConstraintType::Check && !constr->isAddedByGeneralization()) ||
+					 constr->getConstraintType()==ConstraintType::PrimaryKey)) ||
 
 				 (def_type==SchemaParser::XmlDefinition && !constr->isAddedByRelationship() &&
-				  ((constr->getConstraintType()!=ConstraintType::primary_key && !constr->isReferRelationshipAddedColumn()) ||
-				   (constr->getConstraintType()==ConstraintType::primary_key)))))
+					((constr->getConstraintType()!=ConstraintType::PrimaryKey && !constr->isReferRelationshipAddedColumn()) ||
+					 (constr->getConstraintType()==ConstraintType::PrimaryKey)))))
 		{
 			inc_added_by_rel=(def_type==SchemaParser::SqlDefinition);
 
@@ -423,7 +423,7 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 					else if(obj_type==ObjectType::ObjConstraint)
 					{
 						//Raises a error if the user try to add a second primary key on the table
-						if(dynamic_cast<Constraint *>(tab_obj)->getConstraintType()==ConstraintType::primary_key &&
+						if(dynamic_cast<Constraint *>(tab_obj)->getConstraintType()==ConstraintType::PrimaryKey &&
 								this->getPrimaryKey())
 							throw Exception(ErrorCode::AsgExistingPrimaryKeyTable,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
@@ -661,10 +661,10 @@ void Table::addPartitionKeys(vector<PartitionKey> &part_keys)
 {
 	vector<PartitionKey> part_keys_bkp = partition_keys;
 
-	if(partitioning_type == BaseType::null)
+	if(partitioning_type == BaseType::Null)
 		return;
 
-	if(partitioning_type == PartitioningType::list && part_keys.size() > 1)
+	if(partitioning_type == PartitioningType::List && part_keys.size() > 1)
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvPartitionKeyCount).arg(this->getSignature()),
 										ErrorCode::InvPartitionKeyCount,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -786,7 +786,7 @@ void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 			tab_obj->setParentTable(nullptr);
 			obj_list->erase(itr);
 
-			if(constr && constr->getConstraintType()==ConstraintType::primary_key)
+			if(constr && constr->getConstraintType()==ConstraintType::PrimaryKey)
 				dynamic_cast<Constraint *>(tab_obj)->setColumnsNotNull(false);
 		}
 		else
@@ -1308,7 +1308,7 @@ Constraint *Table::getPrimaryKey(void)
 	for(i=0; i < count && !pk; i++)
 	{
 		constr=dynamic_cast<Constraint *>(constraints[i]);
-		pk=(constr->getConstraintType()==ConstraintType::primary_key ? constr : nullptr);
+		pk=(constr->getConstraintType()==ConstraintType::PrimaryKey ? constr : nullptr);
 	}
 
 	return(pk);
@@ -1324,7 +1324,7 @@ void Table::getForeignKeys(vector<Constraint *> &fks, bool inc_added_by_rel, Tab
 	{
 		constr=dynamic_cast<Constraint *>(constraints[i]);
 
-		if(constr->getConstraintType()==ConstraintType::foreign_key &&
+		if(constr->getConstraintType()==ConstraintType::ForeignKey &&
 				(!ref_table || (ref_table && constr->getReferencedTable()==ref_table)) &&
 				(!constr->isAddedByLinking() ||
 				 (constr->isAddedByLinking() && inc_added_by_rel)))
@@ -1362,7 +1362,7 @@ bool Table::isReferTableOnForeignKey(Table *ref_tab)
 	for(i=0; i < count && !found; i++)
 	{
 		constr=dynamic_cast<Constraint *>(constraints[i]);
-		found=(constr->getConstraintType()==ConstraintType::foreign_key &&
+		found=(constr->getConstraintType()==ConstraintType::ForeignKey &&
 			   !constr->isAddedByLinking() &&
 			   constr->getReferencedTable() == ref_tab);
 	}
@@ -1587,7 +1587,7 @@ void Table::updateAlterCmdsStatus(void)
 	//Foreign keys are aways created as ALTER form
 	for(i=0; i < constraints.size(); i++)
 		constraints[i]->setDeclaredInTable(!gen_alter_cmds &&
-										   dynamic_cast<Constraint *>(constraints[i])->getConstraintType()!=ConstraintType::foreign_key);
+											 dynamic_cast<Constraint *>(constraints[i])->getConstraintType()!=ConstraintType::ForeignKey);
 }
 
 QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
@@ -1666,7 +1666,7 @@ void Table::operator = (Table &tab)
 	this->copy_op=tab.copy_op;
 	this->unlogged=tab.unlogged;
 
-	PgSQLType::renameUserType(prev_name, this, this->getName(true));
+	PgSqlType::renameUserType(prev_name, this, this->getName(true));
 }
 
 bool Table::isReferRelationshipAddedObject(void)
@@ -1697,7 +1697,7 @@ bool Table::isPartition(void)
 
 bool Table::isPartitioned(void)
 {
-	return(partitioning_type != BaseType::null);
+	return(partitioning_type != BaseType::Null);
 }
 
 void Table::swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2)

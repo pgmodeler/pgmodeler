@@ -35,10 +35,10 @@ OperatorClass::~OperatorClass(void)
 	elements.clear();
 }
 
-void OperatorClass::setDataType(PgSQLType data_type)
+void OperatorClass::setDataType(PgSqlType data_type)
 {
 	//A null datatype is not accepted by the operator class
-	if(data_type==PgSQLType::null)
+	if(data_type==PgSqlType::Null)
 		throw Exception(ErrorCode::AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->data_type != data_type);
@@ -141,7 +141,7 @@ unsigned OperatorClass::getElementCount(void)
 	return(elements.size());
 }
 
-PgSQLType OperatorClass::getDataType(void)
+PgSqlType OperatorClass::getDataType(void)
 {
 	return(data_type);
 }

@@ -21,7 +21,7 @@
 /********************
  * CLASS: BaseType  *
  ********************/
-QString BaseType::type_list[types_count]=
+QString BaseType::type_list[BaseType::TypesCount]=
 {
 	/* Tipo vazio, quando se instância a classe TipoBase ao usar o operador ~
 				este será o único tipo retornado */
@@ -252,12 +252,12 @@ QString BaseType::type_list[types_count]=
 
 BaseType::BaseType(void)
 {
-	type_idx=BaseType::null;
+	type_idx=BaseType::Null;
 }
 
 QString BaseType::getTypeString(unsigned type_id)
 {
-	if(type_id > types_count)
+	if(type_id > TypesCount)
 		throw Exception(ErrorCode::RefTypeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(type_list[type_id]);
@@ -266,7 +266,7 @@ QString BaseType::getTypeString(unsigned type_id)
 void BaseType::setType(unsigned type_id,unsigned offset,unsigned count)
 {
 	//Raises an error if the type count is invalid
-	if(count==0 || count > this->types_count)
+	if(count==0 || count > this->TypesCount)
 		throw Exception(ErrorCode::ObtTypesInvalidQuantity,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the type id is invalid
 	else if(!isTypeValid(type_id,offset,count))
@@ -278,13 +278,13 @@ void BaseType::setType(unsigned type_id,unsigned offset,unsigned count)
 bool BaseType::isTypeValid(unsigned type_id,unsigned offset,unsigned count)
 {
 	//Returns if the type id is valid according to the specified interval (offset-count)
-	return((type_id>=offset && type_id<=(offset+count-1)) || type_id==BaseType::null);
+	return((type_id>=offset && type_id<=(offset+count-1)) || type_id==BaseType::Null);
 }
 
 void BaseType::getTypes(QStringList &types,unsigned offset,unsigned count)
 {
 	//Raises an error if the type count is invalid
-	if(count==0 || count > BaseType::types_count)
+	if(count==0 || count > BaseType::TypesCount)
 		throw Exception(ErrorCode::ObtTypesInvalidQuantity,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
@@ -304,7 +304,7 @@ unsigned BaseType::getType(const QString &type_name,unsigned offset,unsigned cou
 	bool found=false;
 
 	if(type_name.isEmpty())
-		return(BaseType::null);
+		return(BaseType::Null);
 	else
 	{
 		QString aux_name, tp_name=type_name;
@@ -322,7 +322,7 @@ unsigned BaseType::getType(const QString &type_name,unsigned offset,unsigned cou
 		if(found)
 		{ idx--; return(idx); }
 		else
-			return(BaseType::null);
+			return(BaseType::Null);
 	}
 }
 
@@ -381,17 +381,17 @@ ActionType::ActionType(const QString &type_name)
 
 ActionType::ActionType(void)
 {
-	type_idx=offset;
+	type_idx=Offset;
 }
 
 void ActionType::getTypes(QStringList &type_list)
 {
-	BaseType::getTypes(type_list,offset,types_count);
+	BaseType::getTypes(type_list,Offset,TypesCount);
 }
 
 unsigned ActionType::operator = (unsigned type_id)
 {
-	BaseType::setType(type_id,offset,types_count);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_idx);
 }
 
@@ -399,8 +399,8 @@ unsigned ActionType::operator = (const QString &type_name)
 {
 	unsigned type_idx;
 
-	type_idx=BaseType::getType(type_name, offset, types_count);
-	BaseType::setType(type_idx,offset,types_count);
+	type_idx=BaseType::getType(type_name, Offset, TypesCount);
+	BaseType::setType(type_idx,Offset,TypesCount);
 	return(type_idx);
 }
 
@@ -419,17 +419,17 @@ ConstraintType::ConstraintType(const QString &type_name)
 
 ConstraintType::ConstraintType(void)
 {
-	type_idx=offset;
+	type_idx=Offset;
 }
 
 void ConstraintType::getTypes(QStringList &type_list)
 {
-	BaseType::getTypes(type_list,offset,types_count);
+	BaseType::getTypes(type_list,Offset,TypesCount);
 }
 
 unsigned ConstraintType::operator = (unsigned type_id)
 {
-	BaseType::setType(type_id,offset,types_count);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_idx);
 }
 
@@ -437,8 +437,8 @@ unsigned ConstraintType::operator = (const QString &type_name)
 {
 	unsigned type_id;
 
-	type_id=BaseType::getType(type_name, offset, types_count);
-	BaseType::setType(type_id,offset,types_count);
+	type_id=BaseType::getType(type_name, Offset, TypesCount);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_id);
 }
 
@@ -447,7 +447,7 @@ unsigned ConstraintType::operator = (const QString &type_name)
  ********************/
 EventType::EventType(void)
 {
-	type_idx=offset;
+	type_idx=Offset;
 }
 
 EventType::EventType(const QString &type_name)
@@ -462,12 +462,12 @@ EventType::EventType(unsigned type_id)
 
 void EventType::getTypes(QStringList &type_list)
 {
-	BaseType::getTypes(type_list,offset,types_count);
+	BaseType::getTypes(type_list,Offset,TypesCount);
 }
 
 unsigned EventType::operator = (unsigned type_id)
 {
-	BaseType::setType(type_id,offset,types_count);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_idx);
 }
 
@@ -475,8 +475,8 @@ unsigned EventType::operator = (const QString &type_name)
 {
 	unsigned type_id;
 
-	type_id=BaseType::getType(type_name, offset, types_count);
-	BaseType::setType(type_id,offset,types_count);
+	type_id=BaseType::getType(type_name, Offset, TypesCount);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_id);
 }
 
@@ -495,7 +495,7 @@ bool EventType::operator < (unsigned type_id) const
  ************************/
 ExecutionType::ExecutionType(void)
 {
-	type_idx=offset;
+	type_idx=Offset;
 }
 
 ExecutionType::ExecutionType(unsigned type_id)
@@ -510,12 +510,12 @@ ExecutionType::ExecutionType(const QString &type_name)
 
 void ExecutionType::getTypes(QStringList &type_list)
 {
-	BaseType::getTypes(type_list,offset,types_count);
+	BaseType::getTypes(type_list,Offset,TypesCount);
 }
 
 unsigned ExecutionType::operator = (unsigned type_id)
 {
-	BaseType::setType(type_id,offset,types_count);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_idx);
 }
 
@@ -523,8 +523,8 @@ unsigned ExecutionType::operator = (const QString &type_name)
 {
 	unsigned type_id;
 
-	type_id=BaseType::getType(type_name, offset, types_count);
-	BaseType::setType(type_id,offset,types_count);
+	type_id=BaseType::getType(type_name, Offset, TypesCount);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_id);
 }
 
@@ -538,7 +538,7 @@ FunctionType::FunctionType(unsigned type_id)
 
 FunctionType::FunctionType(void)
 {
-	type_idx=offset;
+	type_idx=Offset;
 }
 
 FunctionType::FunctionType(const QString &type_name)
@@ -548,12 +548,12 @@ FunctionType::FunctionType(const QString &type_name)
 
 void FunctionType::getTypes(QStringList &tipos)
 {
-	BaseType::getTypes(tipos,offset,types_count);
+	BaseType::getTypes(tipos,Offset,TypesCount);
 }
 
 unsigned FunctionType::operator = (unsigned type_id)
 {
-	BaseType::setType(type_id,offset,types_count);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_idx);
 }
 
@@ -561,8 +561,8 @@ unsigned FunctionType::operator = (const QString &type_name)
 {
 	unsigned type_id;
 
-	type_id=BaseType::getType(type_name, offset, types_count);
-	BaseType::setType(type_id,offset,types_count);
+	type_id=BaseType::getType(type_name, Offset, TypesCount);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_id);
 }
 
@@ -576,7 +576,7 @@ IndexingType::IndexingType(unsigned type_id)
 
 IndexingType::IndexingType(void)
 {
-	type_idx=offset;
+	type_idx=Offset;
 }
 
 IndexingType::IndexingType(const QString &type_name)
@@ -586,12 +586,12 @@ IndexingType::IndexingType(const QString &type_name)
 
 void IndexingType::getTypes(QStringList &type_list)
 {
-	BaseType::getTypes(type_list,offset,types_count);
+	BaseType::getTypes(type_list,Offset,TypesCount);
 }
 
 unsigned IndexingType::operator = (unsigned type_id)
 {
-	BaseType::setType(type_id,offset,types_count);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_idx);
 }
 
@@ -599,8 +599,8 @@ unsigned IndexingType::operator = (const QString &type_name)
 {
 	unsigned type_id;
 
-	type_id=BaseType::getType(type_name, offset, types_count);
-	BaseType::setType(type_id,offset,types_count);
+	type_id=BaseType::getType(type_name, Offset, TypesCount);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_id);
 }
 
@@ -614,7 +614,7 @@ IntervalType::IntervalType(unsigned type_id)
 
 IntervalType::IntervalType(void)
 {
-	type_idx=BaseType::null;
+	type_idx=BaseType::Null;
 }
 
 IntervalType::IntervalType(const QString &type_name)
@@ -624,12 +624,12 @@ IntervalType::IntervalType(const QString &type_name)
 
 void IntervalType::getTypes(QStringList &type_list)
 {
-	BaseType::getTypes(type_list,offset,types_count);
+	BaseType::getTypes(type_list,Offset,TypesCount);
 }
 
 unsigned IntervalType::operator = (unsigned type_id)
 {
-	BaseType::setType(type_id,offset,types_count);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_idx);
 }
 
@@ -637,8 +637,8 @@ unsigned IntervalType::operator = (const QString &type_name)
 {
 	unsigned type_id;
 
-	type_id=BaseType::getType(type_name, offset, types_count);
-	BaseType::setType(type_id,offset,types_count);
+	type_id=BaseType::getType(type_name, Offset, TypesCount);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_id);
 }
 
@@ -651,44 +651,44 @@ SpatialType::SpatialType(const QString &type_name, int srid, unsigned variation_
 
 	if(name.endsWith(QString("ZM")))
 	{
-		variation_id=var_zm;
+		variation_id=VarZm;
 		name.remove(QString("ZM"));
 	}
 	else if(name.endsWith(QString("M")))
 	{
-		variation_id=var_m;
+		variation_id=VarM;
 		name.remove(QString("M"));
 	}
 	else if(name.endsWith(QString("Z")))
 	{
-		variation_id=var_z;
+		variation_id=VarZ;
 		name.remove(QString("Z"));
 	}
 
-	BaseType::setType(BaseType::getType(name, offset, types_count),
-					  offset, types_count);
+	BaseType::setType(BaseType::getType(name, Offset, TypesCount),
+						Offset, TypesCount);
 	setVariation(variation_id);
 	setSRID(srid);
 }
 
 SpatialType::SpatialType(unsigned type_id, int srid, unsigned var_id)
 {
-	BaseType::setType(type_id,offset,types_count);
+	BaseType::setType(type_id,Offset,TypesCount);
 	setVariation(var_id);
 	setSRID(srid);
 }
 
 SpatialType::SpatialType(void)
 {
-	type_idx=BaseType::null;
-	variation=no_var;
+	type_idx=BaseType::Null;
+	variation=NoVar;
 	srid=0;
 }
 
 void SpatialType::setVariation(unsigned var)
 {
-	if(var > var_zm)
-		variation=var_zm;
+	if(var > VarZm)
+		variation=VarZm;
 	else
 		variation=var;
 }
@@ -700,7 +700,7 @@ unsigned SpatialType::getVariation(void)
 
 void SpatialType::getTypes(QStringList &type_list)
 {
-	BaseType::getTypes(type_list,offset,types_count);
+	BaseType::getTypes(type_list,Offset,TypesCount);
 }
 
 void SpatialType::setSRID(int srid)
@@ -716,15 +716,15 @@ int SpatialType::getSRID(void)
 
 QString SpatialType::operator * (void)
 {
-	if(this->type_idx!=BaseType::null)
+	if(this->type_idx!=BaseType::Null)
 	{
 		QString var_str;
 
 		switch(variation)
 		{
-			case var_z: var_str+=QString("Z"); break;
-			case var_m: var_str+=QString("M"); break;
-			case var_zm: var_str+=QString("ZM"); break;
+			case VarZ: var_str+=QString("Z"); break;
+			case VarM: var_str+=QString("M"); break;
+			case VarZm: var_str+=QString("ZM"); break;
 			default: var_str=QString(); break;
 		}
 
@@ -740,28 +740,28 @@ QString SpatialType::operator * (void)
 /********************
  * CLASS: PgSQLType *
  ********************/
-vector<UserTypeConfig> PgSQLType::user_types;
+vector<UserTypeConfig> PgSqlType::user_types;
 
-PgSQLType::PgSQLType(void)
+PgSqlType::PgSqlType(void)
 {
-	type_idx=offset;
+	type_idx=Offset;
 	length=0;
 	precision=-1;
 	dimension=0;
 	with_timezone=false;
 }
 
-PgSQLType::PgSQLType(const QString &type_name) : PgSQLType()
+PgSqlType::PgSqlType(const QString &type_name) : PgSqlType()
 {
 	(*this)=type_name;
 }
 
-PgSQLType::PgSQLType(void *ptype) : PgSQLType()
+PgSqlType::PgSqlType(void *ptype) : PgSqlType()
 {
 	(*this) << ptype;
 }
 
-PgSQLType::PgSQLType(void *ptype, unsigned length, unsigned dimension, int precision, bool with_timezone, IntervalType interv_type, SpatialType spatial_type) : PgSQLType()
+PgSqlType::PgSqlType(void *ptype, unsigned length, unsigned dimension, int precision, bool with_timezone, IntervalType interv_type, SpatialType spatial_type) : PgSqlType()
 {
 	(*this) << ptype;
 	setLength(length);
@@ -772,7 +772,7 @@ PgSQLType::PgSQLType(void *ptype, unsigned length, unsigned dimension, int preci
 	setSpatialType(spatial_type);
 }
 
-PgSQLType::PgSQLType(const QString &type_name, unsigned length, unsigned dimension, int precision, bool with_timezone, IntervalType interv_type, SpatialType spatial_type) : PgSQLType()
+PgSqlType::PgSqlType(const QString &type_name, unsigned length, unsigned dimension, int precision, bool with_timezone, IntervalType interv_type, SpatialType spatial_type) : PgSqlType()
 {
 	(*this)=type_name;
 	setLength(length);
@@ -783,7 +783,7 @@ PgSQLType::PgSQLType(const QString &type_name, unsigned length, unsigned dimensi
 	setSpatialType(spatial_type);
 }
 
-PgSQLType::PgSQLType(unsigned type_id, unsigned length, unsigned dimension, int precision, bool with_timezone, IntervalType interv_type, SpatialType spatial_type) : PgSQLType()
+PgSqlType::PgSqlType(unsigned type_id, unsigned length, unsigned dimension, int precision, bool with_timezone, IntervalType interv_type, SpatialType spatial_type) : PgSqlType()
 {
 	(*this)=type_id;
 	setLength(length);
@@ -794,7 +794,7 @@ PgSQLType::PgSQLType(unsigned type_id, unsigned length, unsigned dimension, int 
 	setSpatialType(spatial_type);
 }
 
-PgSQLType PgSQLType::parseString(const QString &str)
+PgSqlType PgSqlType::parseString(const QString &str)
 {
 	QString type_str=str.toLower().simplified(), sptype, interv;
 	bool with_tz=false;
@@ -802,7 +802,7 @@ PgSQLType PgSQLType::parseString(const QString &str)
 	int prec=-1, len = -1;
 	int start=-1, end=-1;
 	QStringList value, intervals;
-	PgSQLType type;
+	PgSqlType type;
 
 	//Checking if the string contains one of interval types
 	IntervalType::getTypes(intervals);
@@ -873,7 +873,7 @@ PgSQLType PgSQLType::parseString(const QString &str)
 		try
 		{
 			//Creates the type based on the extracted values
-			type=PgSQLType(type_str);
+			type=PgSqlType(type_str);
 		}
 		catch(Exception &)
 		{
@@ -882,12 +882,12 @@ PgSQLType PgSQLType::parseString(const QString &str)
 			QStringList typname=type_str.split('.');
 
 			if(typname.size()==2)
-				type=PgSQLType(typname[1]);
+				type=PgSqlType(typname[1]);
 			else
 			{
 				/* One last try it to check if the type has an entry on user defined types
 		   as pg_catalog.[type name] */
-				type=PgSQLType(QString("pg_catalog.") + type_str);
+				type=PgSqlType(QString("pg_catalog.") + type_str);
 			}
 		}
 
@@ -917,35 +917,35 @@ PgSQLType PgSQLType::parseString(const QString &str)
 	}
 }
 
-void PgSQLType::getTypes(QStringList &type_list, bool oids, bool pseudos)
+void PgSqlType::getTypes(QStringList &type_list, bool oids, bool pseudos)
 {
 	unsigned idx,total;
 
 	type_list.clear();
-	total=offset+types_count;
+	total=Offset+TypesCount;
 
-	for(idx=offset; idx<total; idx++)
+	for(idx=Offset; idx<total; idx++)
 	{
-		if(idx<oid_start ||
-				(oids && idx>=oid_start && idx<=oid_end) ||
-				(pseudos && idx>=pseudo_start && idx<=pseudo_end))
+		if(idx<OidStart ||
+				(oids && idx>=OidStart && idx<=OidEnd) ||
+				(pseudos && idx>=PseudoStart && idx<=PseudoEnd))
 			type_list.push_back(BaseType::type_list[idx]);
 	}
 }
 
-unsigned PgSQLType::operator = (unsigned type_id)
+unsigned PgSqlType::operator = (unsigned type_id)
 {
-	if(type_id>=offset)
+	if(type_id>=Offset)
 		setUserType(type_id);
 	else if(type_id > 0)
-		BaseType::setType(type_id,offset,types_count);
+		BaseType::setType(type_id,Offset,TypesCount);
 	else if(type_id==0)
 		throw Exception(ErrorCode::AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(type_idx);
 }
 
-unsigned PgSQLType::operator = (const QString &type_name)
+unsigned PgSqlType::operator = (const QString &type_name)
 {
 	unsigned type_idx, usr_type_idx;
 
@@ -956,7 +956,7 @@ unsigned PgSQLType::operator = (const QString &type_name)
 		throw Exception(ErrorCode::AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(type_idx!=0)
 	{
-		BaseType::setType(type_idx,offset,types_count);
+		BaseType::setType(type_idx,Offset,TypesCount);
 		return(type_idx);
 	}
 	else
@@ -966,28 +966,28 @@ unsigned PgSQLType::operator = (const QString &type_name)
 	}
 }
 
-void *PgSQLType::getUserTypeReference(void)
+void *PgSqlType::getUserTypeReference(void)
 {
 	if(this->isUserType())
-		return(user_types[this->type_idx - (pseudo_end + 1)].ptype);
+		return(user_types[this->type_idx - (PseudoEnd + 1)].ptype);
 	else
 		return(nullptr);
 }
 
-unsigned PgSQLType::getUserTypeConfig(void)
+unsigned PgSqlType::getUserTypeConfig(void)
 {
 	if(this->isUserType())
-		return(user_types[this->type_idx - (pseudo_end + 1)].type_conf);
+		return(user_types[this->type_idx - (PseudoEnd + 1)].type_conf);
 	else
 		return(0);
 }
 
-unsigned PgSQLType::getTypeId(void)
+unsigned PgSqlType::getTypeId(void)
 {
 	return(!(*this));
 }
 
-QString PgSQLType::getTypeName(bool incl_dimension)
+QString PgSqlType::getTypeName(bool incl_dimension)
 {
 	if(incl_dimension)
 	{
@@ -1004,32 +1004,32 @@ QString PgSQLType::getTypeName(bool incl_dimension)
 	return(~(*this));
 }
 
-QString PgSQLType::getSQLTypeName(void)
+QString PgSqlType::getSQLTypeName(void)
 {
 	return(*(*this));
 }
 
-bool PgSQLType::isRegistered(const QString &type, void *pmodel)
+bool PgSqlType::isRegistered(const QString &type, void *pmodel)
 {
-	if(getBaseTypeIndex(type)!=BaseType::null)
+	if(getBaseTypeIndex(type)!=BaseType::Null)
 		return(true);
 	else
-		return(getUserTypeIndex(type, nullptr, pmodel)!=BaseType::null);
+		return(getUserTypeIndex(type, nullptr, pmodel)!=BaseType::Null);
 }
 
-bool PgSQLType::operator == (unsigned type_id)
+bool PgSqlType::operator == (unsigned type_id)
 {
 	return(this->type_idx==type_id);
 }
 
-bool PgSQLType::operator == (const QString &type_name)
+bool PgSqlType::operator == (const QString &type_name)
 {
 	unsigned idx,total;
 	bool found=false;
 
-	total=offset + types_count;
+	total=Offset + TypesCount;
 
-	for(idx=offset; idx<total && !found; idx++)
+	for(idx=Offset; idx<total && !found; idx++)
 		found=(type_name==BaseType::type_list[idx]);
 
 	if(found) idx--;
@@ -1037,94 +1037,94 @@ bool PgSQLType::operator == (const QString &type_name)
 	return(type_idx==idx);
 }
 
-bool PgSQLType::operator != (const QString &type_name)
+bool PgSqlType::operator != (const QString &type_name)
 {
 	return(!((*this)==type_name));
 }
 
-bool PgSQLType::operator != (PgSQLType type)
+bool PgSqlType::operator != (PgSqlType type)
 {
 	return(this->type_idx!=type.type_idx);
 }
 
-bool PgSQLType::operator != (unsigned type_id)
+bool PgSqlType::operator != (unsigned type_id)
 {
 	return(this->type_idx!=type_id);
 }
 
-bool PgSQLType::operator == (PgSQLType type)
+bool PgSqlType::operator == (PgSqlType type)
 {
 	return(this->type_idx==type.type_idx);
 }
 
-bool PgSQLType::operator == (void *ptype)
+bool PgSqlType::operator == (void *ptype)
 {
 	int idx;
 	idx=getUserTypeIndex(QString(),ptype);
 	return(static_cast<int>(type_idx) == idx);
 }
 
-IntervalType PgSQLType::getIntervalType(void)
+IntervalType PgSqlType::getIntervalType(void)
 {
 	return(interval_type);
 }
 
-SpatialType PgSQLType::getSpatialType(void)
+SpatialType PgSqlType::getSpatialType(void)
 {
 	return(spatial_type);
 }
 
-bool PgSQLType::isWithTimezone(void)
+bool PgSqlType::isWithTimezone(void)
 {
 	return(with_timezone);
 }
 
-bool PgSQLType::isOIDType(void)
+bool PgSqlType::isOIDType(void)
 {
-	return(type_idx>=oid_start && type_idx<=oid_end);
+	return(type_idx>=OidStart && type_idx<=OidEnd);
 }
 
-bool PgSQLType::isPseudoType(void)
+bool PgSqlType::isPseudoType(void)
 {
-	return(type_idx>=pseudo_start && type_idx<=pseudo_end);
+	return(type_idx>=PseudoStart && type_idx<=PseudoEnd);
 }
 
-unsigned PgSQLType::operator << (void *ptype)
+unsigned PgSqlType::operator << (void *ptype)
 {
 	setUserType(ptype);
 	return(type_idx);
 }
 
-void PgSQLType::setIntervalType(IntervalType interv_type)
+void PgSqlType::setIntervalType(IntervalType interv_type)
 {
 	interval_type=interv_type;
 }
 
-void PgSQLType::setSpatialType(SpatialType spat_type)
+void PgSqlType::setSpatialType(SpatialType spat_type)
 {
 	spatial_type=spat_type;
 }
 
-void PgSQLType::setWithTimezone(bool with_tz)
+void PgSqlType::setWithTimezone(bool with_tz)
 {
 	this->with_timezone=with_tz;
 }
 
-void PgSQLType::setUserType(unsigned type_id)
+void PgSqlType::setUserType(unsigned type_id)
 {
 	unsigned lim1, lim2;
 
-	lim1=pseudo_end + 1;
-	lim2=lim1 + PgSQLType::user_types.size();
+	lim1=PseudoEnd + 1;
+	lim2=lim1 + PgSqlType::user_types.size();
 
-	if(PgSQLType::user_types.size() > 0 &&
+	if(PgSqlType::user_types.size() > 0 &&
 			(type_id >= lim1 && type_id < lim2))
 		type_idx=type_id;
 	else
 		throw Exception(ErrorCode::AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-void PgSQLType::setUserType(void *ptype)
+void PgSqlType::setUserType(void *ptype)
 {
 	int idx;
 
@@ -1135,15 +1135,15 @@ void PgSQLType::setUserType(void *ptype)
 		type_idx=idx;
 }
 
-void PgSQLType::addUserType(const QString &type_name, void *ptype, void *pmodel, unsigned type_conf)
+void PgSqlType::addUserType(const QString &type_name, void *ptype, void *pmodel, unsigned type_conf)
 {
 	if(!type_name.isEmpty() && ptype && pmodel &&
-			(type_conf==UserTypeConfig::DOMAIN_TYPE ||
-			 type_conf==UserTypeConfig::SEQUENCE_TYPE ||
-			 type_conf==UserTypeConfig::TABLE_TYPE ||
-			 type_conf==UserTypeConfig::VIEW_TYPE ||
-			 type_conf==UserTypeConfig::EXTENSION_TYPE ||
-			 type_conf==UserTypeConfig::BASE_TYPE) &&
+			(type_conf==UserTypeConfig::DomainType ||
+			 type_conf==UserTypeConfig::SequenceType ||
+			 type_conf==UserTypeConfig::TableType ||
+			 type_conf==UserTypeConfig::ViewType ||
+			 type_conf==UserTypeConfig::ExtensionType ||
+			 type_conf==UserTypeConfig::BaseType) &&
 			getUserTypeIndex(type_name,ptype,pmodel)==0)
 	{
 		UserTypeConfig cfg;
@@ -1152,19 +1152,19 @@ void PgSQLType::addUserType(const QString &type_name, void *ptype, void *pmodel,
 		cfg.ptype=ptype;
 		cfg.pmodel=pmodel;
 		cfg.type_conf=type_conf;
-		PgSQLType::user_types.push_back(cfg);
+		PgSqlType::user_types.push_back(cfg);
 	}
 }
 
-void PgSQLType::removeUserType(const QString &type_name, void *ptype)
+void PgSqlType::removeUserType(const QString &type_name, void *ptype)
 {
-	if(PgSQLType::user_types.size() > 0 &&
+	if(PgSqlType::user_types.size() > 0 &&
 			!type_name.isEmpty() && ptype)
 	{
 		vector<UserTypeConfig>::iterator itr, itr_end;
 
-		itr=PgSQLType::user_types.begin();
-		itr_end=PgSQLType::user_types.end();
+		itr=PgSqlType::user_types.begin();
+		itr_end=PgSqlType::user_types.end();
 
 		while(itr!=itr_end)
 		{
@@ -1181,15 +1181,15 @@ void PgSQLType::removeUserType(const QString &type_name, void *ptype)
 	}
 }
 
-void PgSQLType::renameUserType(const QString &type_name, void *ptype,const QString &new_name)
+void PgSqlType::renameUserType(const QString &type_name, void *ptype,const QString &new_name)
 {
-	if(PgSQLType::user_types.size() > 0 &&
+	if(PgSqlType::user_types.size() > 0 &&
 			!type_name.isEmpty() && ptype && type_name!=new_name)
 	{
 		vector<UserTypeConfig>::iterator itr, itr_end;
 
-		itr=PgSQLType::user_types.begin();
-		itr_end=PgSQLType::user_types.end();
+		itr=PgSqlType::user_types.begin();
+		itr_end=PgSqlType::user_types.end();
 
 		while(itr!=itr_end)
 		{
@@ -1203,7 +1203,7 @@ void PgSQLType::renameUserType(const QString &type_name, void *ptype,const QStri
 	}
 }
 
-void PgSQLType::removeUserTypes(void *pmodel)
+void PgSqlType::removeUserTypes(void *pmodel)
 {
 	if(pmodel)
 	{
@@ -1227,25 +1227,25 @@ void PgSQLType::removeUserTypes(void *pmodel)
 	}
 }
 
-unsigned PgSQLType::getBaseTypeIndex(const QString &type_name)
+unsigned PgSqlType::getBaseTypeIndex(const QString &type_name)
 {
 	QString aux_name=type_name;
 
 	aux_name.remove(QString("[]"));
 	aux_name.remove(QRegExp(QString("( )(with)(out)?(.)*")));
 	aux_name=aux_name.trimmed();
-	return(getType(aux_name,offset,types_count));
+	return(getType(aux_name,Offset,TypesCount));
 }
 
-unsigned PgSQLType::getUserTypeIndex(const QString &type_name, void *ptype, void *pmodel)
+unsigned PgSqlType::getUserTypeIndex(const QString &type_name, void *ptype, void *pmodel)
 {
-	if(PgSQLType::user_types.size() > 0 && (!type_name.isEmpty() || ptype))
+	if(PgSqlType::user_types.size() > 0 && (!type_name.isEmpty() || ptype))
 	{
 		vector<UserTypeConfig>::iterator itr, itr_end;
 		int idx=0;
 
-		itr=PgSQLType::user_types.begin();
-		itr_end=PgSQLType::user_types.end();
+		itr=PgSqlType::user_types.begin();
+		itr_end=PgSqlType::user_types.end();
 
 		while(itr!=itr_end)
 		{
@@ -1259,34 +1259,34 @@ unsigned PgSQLType::getUserTypeIndex(const QString &type_name, void *ptype, void
 		}
 
 		if(itr!=itr_end)
-			return(pseudo_end + 1 + idx);
+			return(PseudoEnd + 1 + idx);
 		else
-			return(BaseType::null);
+			return(BaseType::Null);
 	}
-	else return(BaseType::null);
+	else return(BaseType::Null);
 }
 
-QString PgSQLType::getUserTypeName(unsigned type_id)
+QString PgSqlType::getUserTypeName(unsigned type_id)
 {
 	unsigned lim1, lim2;
 
-	lim1=pseudo_end + 1;
-	lim2=lim1 + PgSQLType::user_types.size();
+	lim1=PseudoEnd + 1;
+	lim2=lim1 + PgSqlType::user_types.size();
 
 
-	if(PgSQLType::user_types.size() > 0 &&
+	if(PgSqlType::user_types.size() > 0 &&
 			(type_id >= lim1 && type_id < lim2))
-		return(PgSQLType::user_types[type_id - lim1].name);
+		return(PgSqlType::user_types[type_id - lim1].name);
 	else
 		return(QString());
 }
 
-void PgSQLType::getUserTypes(QStringList &type_list, void *pmodel, unsigned inc_usr_types)
+void PgSqlType::getUserTypes(QStringList &type_list, void *pmodel, unsigned inc_usr_types)
 {
 	unsigned idx,total;
 
 	type_list.clear();
-	total=PgSQLType::user_types.size();
+	total=PgSqlType::user_types.size();
 
 	for(idx=0; idx < total; idx++)
 	{
@@ -1297,12 +1297,12 @@ void PgSQLType::getUserTypes(QStringList &type_list, void *pmodel, unsigned inc_
 	}
 }
 
-void PgSQLType::getUserTypes(vector<void *> &ptypes, void *pmodel, unsigned inc_usr_types)
+void PgSqlType::getUserTypes(vector<void *> &ptypes, void *pmodel, unsigned inc_usr_types)
 {
 	unsigned idx, total;
 
 	ptypes.clear();
-	total=PgSQLType::user_types.size();
+	total=PgSqlType::user_types.size();
 
 	for(idx=0; idx < total; idx++)
 	{
@@ -1313,10 +1313,10 @@ void PgSQLType::getUserTypes(vector<void *> &ptypes, void *pmodel, unsigned inc_
 	}
 }
 
-QString PgSQLType::operator ~ (void)
+QString PgSqlType::operator ~ (void)
 {
-	if(type_idx >= pseudo_end + 1)
-		return(user_types[type_idx - (pseudo_end + 1)].name);
+	if(type_idx >= PseudoEnd + 1)
+		return(user_types[type_idx - (PseudoEnd + 1)].name);
 	else
 	{
 		QString name=BaseType::type_list[type_idx];
@@ -1328,17 +1328,17 @@ QString PgSQLType::operator ~ (void)
 	}
 }
 
-bool PgSQLType::isArrayType(void)
+bool PgSqlType::isArrayType(void)
 {
 	return(dimension > 0);
 }
 
-bool PgSQLType::isUserType(void)
+bool PgSqlType::isUserType(void)
 {
-	return(type_idx > pseudo_end);
+	return(type_idx > PseudoEnd);
 }
 
-bool PgSQLType::isNetworkType(void)
+bool PgSqlType::isNetworkType(void)
 {
 	QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
 
@@ -1347,7 +1347,7 @@ bool PgSQLType::isNetworkType(void)
 					curr_type==QString("inet")));
 }
 
-bool PgSQLType::isGiSType(void)
+bool PgSqlType::isGiSType(void)
 {
 	QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
 
@@ -1357,7 +1357,7 @@ bool PgSQLType::isGiSType(void)
 					curr_type==QString("geometry_dump")));
 }
 
-bool PgSQLType::isRangeType(void)
+bool PgSqlType::isRangeType(void)
 {
 	QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
 
@@ -1367,7 +1367,7 @@ bool PgSQLType::isRangeType(void)
 				curr_type==QString("tstzrange") || curr_type==QString("daterange")));
 }
 
-bool PgSQLType::isSerialType(void)
+bool PgSqlType::isSerialType(void)
 {
 	QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
 
@@ -1377,7 +1377,7 @@ bool PgSQLType::isSerialType(void)
 				curr_type==QString("bigserial")));
 }
 
-bool PgSQLType::isDateTimeType(void)
+bool PgSqlType::isDateTimeType(void)
 {
 	QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
 
@@ -1387,7 +1387,7 @@ bool PgSQLType::isDateTimeType(void)
 				 curr_type==QString("timetz") || curr_type==QString("timestamptz")));
 }
 
-bool PgSQLType::isNumericType(void)
+bool PgSqlType::isNumericType(void)
 {
 	QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
 
@@ -1395,7 +1395,7 @@ bool PgSQLType::isNumericType(void)
 					(curr_type==QString("numeric") || curr_type==QString("decimal")));
 }
 
-bool PgSQLType::isIntegerType(void)
+bool PgSqlType::isIntegerType(void)
 {
 	QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
 
@@ -1405,7 +1405,7 @@ bool PgSQLType::isIntegerType(void)
 				curr_type==QString("int8") || curr_type==QString("int2")));
 }
 
-bool PgSQLType::hasVariableLength(void)
+bool PgSqlType::hasVariableLength(void)
 {
 	QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
 
@@ -1417,7 +1417,7 @@ bool PgSQLType::hasVariableLength(void)
 				curr_type==QString("varbit")));
 }
 
-bool PgSQLType::isCharacterType(void)
+bool PgSqlType::isCharacterType(void)
 {
 	QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
 
@@ -1426,7 +1426,7 @@ bool PgSQLType::isCharacterType(void)
 				 curr_type==QString("character varying") || curr_type==QString("text"));
 }
 
-bool PgSQLType::isPolymorphicType(void)
+bool PgSqlType::isPolymorphicType(void)
 {
 		QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
 
@@ -1435,13 +1435,13 @@ bool PgSQLType::isPolymorphicType(void)
 				 curr_type==QString("anyrange") || curr_type==QString("\"any\""));
 }
 
-bool PgSQLType::acceptsPrecision(void)
+bool PgSqlType::acceptsPrecision(void)
 {
 	return(isNumericType() ||
 				(!isUserType() && type_list[this->type_idx]!=QString("date") && isDateTimeType()));
 }
 
-bool PgSQLType::canCastTo(PgSQLType type)
+bool PgSqlType::canCastTo(PgSqlType type)
 {
 	// If the types are the same of belongs to the same category they naturally can be casted
 	if(this->type_idx==type.type_idx ||
@@ -1471,7 +1471,7 @@ bool PgSQLType::canCastTo(PgSQLType type)
 	return(false);
 }
 
-bool PgSQLType::isEquivalentTo(PgSQLType type)
+bool PgSqlType::isEquivalentTo(PgSqlType type)
 {
 	unsigned this_idx=0, type_idx=0;
 	static vector<QStringList> types={{QString("int2"),QString("smallint")},
@@ -1510,43 +1510,43 @@ bool PgSQLType::isEquivalentTo(PgSQLType type)
 		   this->isArrayType()==type.isArrayType());
 }
 
-PgSQLType PgSQLType::getAliasType(void)
+PgSqlType PgSqlType::getAliasType(void)
 {
 	if(!isUserType())
 	{
 		if(type_list[this->type_idx]==QString("serial"))
-			return(PgSQLType(QString("integer")));
+			return(PgSqlType(QString("integer")));
 		else if(type_list[this->type_idx]==QString("smallserial"))
-			return(PgSQLType(QString("smallint")));
+			return(PgSqlType(QString("smallint")));
 		else if(type_list[this->type_idx]==QString("bigserial"))
-			return(PgSQLType(QString("bigint")));
+			return(PgSqlType(QString("bigint")));
 		else
-			return(PgSQLType(type_list[this->type_idx]));
+			return(PgSqlType(type_list[this->type_idx]));
 	}
 	else
 		return(*this);
 }
 
-void PgSQLType::setDimension(unsigned dim)
+void PgSqlType::setDimension(unsigned dim)
 {
 	if(dim > 0 && this->isUserType())
 	{
-		int idx=getUserTypeIndex(~(*this), nullptr) - (pseudo_end + 1);
+		int idx=getUserTypeIndex(~(*this), nullptr) - (PseudoEnd + 1);
 		if(static_cast<unsigned>(idx) < user_types.size() &&
-				(user_types[idx].type_conf==UserTypeConfig::DOMAIN_TYPE ||
-				 user_types[idx].type_conf==UserTypeConfig::SEQUENCE_TYPE))
+				(user_types[idx].type_conf==UserTypeConfig::DomainType ||
+				 user_types[idx].type_conf==UserTypeConfig::SequenceType))
 			throw Exception(ErrorCode::AsgInvalidDomainArray,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
 	dimension=dim;
 }
 
-void PgSQLType::setLength(unsigned len)
+void PgSqlType::setLength(unsigned len)
 {
 	this->length=len;
 }
 
-void PgSQLType::setPrecision(int prec)
+void PgSqlType::setPrecision(int prec)
 {
 	if(!isUserType())
 	{
@@ -1564,22 +1564,22 @@ void PgSQLType::setPrecision(int prec)
 	}
 }
 
-unsigned PgSQLType::getDimension(void)
+unsigned PgSqlType::getDimension(void)
 {
 	return(dimension);
 }
 
-unsigned PgSQLType::getLength(void)
+unsigned PgSqlType::getLength(void)
 {
 	return(length);
 }
 
-int PgSQLType::getPrecision(void)
+int PgSqlType::getPrecision(void)
 {
 	return(precision);
 }
 
-QString PgSQLType::getCodeDefinition(unsigned def_type,QString ref_type)
+QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
 {
 	if(def_type==SchemaParser::SqlDefinition)
 		return(*(*this));
@@ -1607,7 +1607,7 @@ QString PgSQLType::getCodeDefinition(unsigned def_type,QString ref_type)
 		if(precision >= 0)
 			attribs[ParsersAttributes::PRECISION]=QString("%1").arg(this->precision);
 
-		if(interval_type != BaseType::null)
+		if(interval_type != BaseType::Null)
 			attribs[ParsersAttributes::INTERVAL_TYPE]=(~interval_type);
 
 		if(isGiSType())
@@ -1624,7 +1624,7 @@ QString PgSQLType::getCodeDefinition(unsigned def_type,QString ref_type)
 	}
 }
 
-QString PgSQLType::operator * (void)
+QString PgSqlType::operator * (void)
 {
 	QString fmt_type, type, aux;
 	unsigned idx;
@@ -1663,7 +1663,7 @@ QString PgSQLType::operator * (void)
 		{
 			aux=BaseType::type_list[type_idx];
 
-			if(interval_type!=BaseType::null)
+			if(interval_type!=BaseType::Null)
 				aux+=QString(" %1 ").arg(~interval_type);
 
 			if(precision >= 0)
@@ -1695,7 +1695,7 @@ BehaviorType::BehaviorType(unsigned type_id)
 
 BehaviorType::BehaviorType(void)
 {
-	type_idx=offset;
+	type_idx=Offset;
 }
 
 BehaviorType::BehaviorType(const QString &type_name)
@@ -1705,12 +1705,12 @@ BehaviorType::BehaviorType(const QString &type_name)
 
 void BehaviorType::getTypes(QStringList &type_list)
 {
-	BaseType::getTypes(type_list,offset,types_count);
+	BaseType::getTypes(type_list,Offset,TypesCount);
 }
 
 unsigned BehaviorType::operator = (unsigned type_id)
 {
-	BaseType::setType(type_id,offset,types_count);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_idx);
 }
 
@@ -1718,8 +1718,8 @@ unsigned BehaviorType::operator = (const QString &type_name)
 {
 	unsigned type_id;
 
-	type_id=BaseType::getType(type_name, offset, types_count);
-	BaseType::setType(type_id,offset,types_count);
+	type_id=BaseType::getType(type_name, Offset, TypesCount);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_id);
 }
 
@@ -1728,7 +1728,7 @@ unsigned BehaviorType::operator = (const QString &type_name)
  ***********************/
 SecurityType::SecurityType(void)
 {
-	type_idx=offset;
+	type_idx=Offset;
 }
 
 SecurityType::SecurityType(const QString &type_name)
@@ -1743,12 +1743,12 @@ SecurityType::SecurityType(unsigned type_id)
 
 void SecurityType::getTypes(QStringList &tipos)
 {
-	BaseType::getTypes(tipos,offset,types_count);
+	BaseType::getTypes(tipos,Offset,TypesCount);
 }
 
 unsigned SecurityType::operator = (unsigned type_id)
 {
-	BaseType::setType(type_id,offset,types_count);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_idx);
 }
 
@@ -1756,8 +1756,8 @@ unsigned SecurityType::operator = (const QString &type_name)
 {
 	unsigned type_id;
 
-	type_id=BaseType::getType(type_name, offset, types_count);
-	BaseType::setType(type_id,offset,types_count);
+	type_id=BaseType::getType(type_name, Offset, TypesCount);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_id);
 }
 
@@ -1766,7 +1766,7 @@ unsigned SecurityType::operator = (const QString &type_name)
  ***********************/
 LanguageType::LanguageType(void)
 {
-	type_idx=offset;
+	type_idx=Offset;
 }
 
 LanguageType::LanguageType(unsigned type_id)
@@ -1781,12 +1781,12 @@ LanguageType::LanguageType(const QString &type_name)
 
 void LanguageType::getTypes(QStringList &tipos)
 {
-	BaseType::getTypes(tipos,offset,types_count);
+	BaseType::getTypes(tipos,Offset,TypesCount);
 }
 
 unsigned LanguageType::operator = (unsigned tipo_id)
 {
-	BaseType::setType(tipo_id,offset,types_count);
+	BaseType::setType(tipo_id,Offset,TypesCount);
 	return(type_idx);
 }
 
@@ -1794,8 +1794,8 @@ unsigned LanguageType::operator = (const QString &type_name)
 {
 	unsigned type_id;
 
-	type_id=BaseType::getType(type_name, offset, types_count);
-	BaseType::setType(type_id,offset,types_count);
+	type_id=BaseType::getType(type_name, Offset, TypesCount);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_id);
 }
 
@@ -1804,7 +1804,7 @@ unsigned LanguageType::operator = (const QString &type_name)
  ***********************/
 EncodingType::EncodingType(void)
 {
-	type_idx=offset;
+	type_idx=Offset;
 }
 
 EncodingType::EncodingType(const QString &type)
@@ -1819,12 +1819,12 @@ EncodingType::EncodingType(const unsigned type_id)
 
 void EncodingType::getTypes(QStringList &tipos)
 {
-	BaseType::getTypes(tipos,offset,types_count);
+	BaseType::getTypes(tipos,Offset,TypesCount);
 }
 
 unsigned EncodingType::operator = (unsigned type_id)
 {
-	BaseType::setType(type_id,offset,types_count);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_idx);
 }
 
@@ -1832,8 +1832,8 @@ unsigned EncodingType::operator = (const QString &type_name)
 {
 	unsigned type_id;
 
-	type_id=BaseType::getType(type_name, offset, types_count);
-	BaseType::setType(type_id,offset,types_count);
+	type_id=BaseType::getType(type_name, Offset, TypesCount);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_id);
 }
 
@@ -1847,9 +1847,9 @@ bool EncodingType::operator == (const QString &type_name)
 	unsigned idx,total;
 	bool found=false;
 
-	total=offset + types_count;
+	total=Offset + TypesCount;
 
-	for(idx=offset; idx<total && !found; idx++)
+	for(idx=Offset; idx<total && !found; idx++)
 		found=(type_name==BaseType::type_list[idx]);
 
 	if(found) idx--;
@@ -1877,7 +1877,7 @@ bool EncodingType::operator != (unsigned type_id)
  **********************/
 StorageType::StorageType(void)
 {
-	type_idx=offset;
+	type_idx=Offset;
 }
 
 StorageType::StorageType(const QString &type_name)
@@ -1887,12 +1887,12 @@ StorageType::StorageType(const QString &type_name)
 
 void StorageType::getTypes(QStringList &tipos)
 {
-	BaseType::getTypes(tipos,offset,types_count);
+	BaseType::getTypes(tipos,Offset,TypesCount);
 }
 
 unsigned StorageType::operator = (unsigned type_id)
 {
-	BaseType::setType(type_id,offset,types_count);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_idx);
 }
 
@@ -1900,8 +1900,8 @@ unsigned StorageType::operator = (const QString &type_name)
 {
 	unsigned type_id;
 
-	type_id=BaseType::getType(type_name, offset, types_count);
-	BaseType::setType(type_id,offset,types_count);
+	type_id=BaseType::getType(type_name, Offset, TypesCount);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_id);
 }
 
@@ -1915,9 +1915,9 @@ bool StorageType::operator == (const QString &type_name)
 	unsigned idx,total;
 	bool found=false;
 
-	total=offset + types_count;
+	total=Offset + TypesCount;
 
-	for(idx=offset; idx<total && !found; idx++)
+	for(idx=Offset; idx<total && !found; idx++)
 		found=(type_name==BaseType::type_list[idx]);
 
 	if(found) idx--;
@@ -1940,7 +1940,7 @@ bool StorageType::operator != (StorageType type)
  ********************/
 MatchType::MatchType(void)
 {
-	type_idx=offset;
+	type_idx=Offset;
 }
 
 MatchType::MatchType(const QString &type_name)
@@ -1955,12 +1955,12 @@ MatchType::MatchType(unsigned type_id)
 
 void MatchType::getTypes(QStringList &tipos)
 {
-	BaseType::getTypes(tipos,offset,types_count);
+	BaseType::getTypes(tipos,Offset,TypesCount);
 }
 
 unsigned MatchType::operator = (unsigned type_id)
 {
-	BaseType::setType(type_id,offset,types_count);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_idx);
 }
 
@@ -1968,8 +1968,8 @@ unsigned MatchType::operator = (const QString &type_name)
 {
 	unsigned type_id;
 
-	type_id=BaseType::getType(type_name, offset, types_count);
-	BaseType::setType(type_id,offset,types_count);
+	type_id=BaseType::getType(type_name, Offset, TypesCount);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_id);
 }
 
@@ -1978,7 +1978,7 @@ unsigned MatchType::operator = (const QString &type_name)
  ***********************/
 DeferralType::DeferralType(void)
 {
-	type_idx=offset;
+	type_idx=Offset;
 }
 
 DeferralType::DeferralType(const QString &type_name)
@@ -1993,12 +1993,12 @@ DeferralType::DeferralType(unsigned type_id)
 
 void DeferralType::getTypes(QStringList &tipos)
 {
-	BaseType::getTypes(tipos,offset,types_count);
+	BaseType::getTypes(tipos,Offset,TypesCount);
 }
 
 unsigned DeferralType::operator = (unsigned type_id)
 {
-	BaseType::setType(type_id,offset,types_count);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_idx);
 }
 
@@ -2006,8 +2006,8 @@ unsigned DeferralType::operator = (const QString &type_name)
 {
 	unsigned type_id;
 
-	type_id=BaseType::getType(type_name, offset, types_count);
-	BaseType::setType(type_id,offset,types_count);
+	type_id=BaseType::getType(type_name, Offset, TypesCount);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_id);
 }
 
@@ -2016,7 +2016,7 @@ unsigned DeferralType::operator = (const QString &type_name)
  ***********************/
 CategoryType::CategoryType(void)
 {
-	type_idx=offset;
+	type_idx=Offset;
 }
 
 CategoryType::CategoryType(const QString &type_name)
@@ -2031,12 +2031,12 @@ CategoryType::CategoryType(unsigned type_id)
 
 void CategoryType::getTypes(QStringList &tipos)
 {
-	BaseType::getTypes(tipos,offset,types_count);
+	BaseType::getTypes(tipos,Offset,TypesCount);
 }
 
 unsigned CategoryType::operator = (unsigned type_id)
 {
-	BaseType::setType(type_id,offset,types_count);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_idx);
 }
 
@@ -2044,8 +2044,8 @@ unsigned CategoryType::operator = (const QString &type_name)
 {
 	unsigned type_id;
 
-	type_id=BaseType::getType(type_name, offset, types_count);
-	BaseType::setType(type_id,offset,types_count);
+	type_id=BaseType::getType(type_name, Offset, TypesCount);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_id);
 }
 
@@ -2054,7 +2054,7 @@ unsigned CategoryType::operator = (const QString &type_name)
  *********************/
 FiringType::FiringType(void)
 {
-	type_idx=offset;
+	type_idx=Offset;
 }
 
 FiringType::FiringType(unsigned type_id)
@@ -2069,12 +2069,12 @@ FiringType::FiringType(const QString &type_name)
 
 void FiringType::getTypes(QStringList &tipos)
 {
-	BaseType::getTypes(tipos,offset,types_count);
+	BaseType::getTypes(tipos,Offset,TypesCount);
 }
 
 unsigned FiringType::operator = (unsigned type_id)
 {
-	BaseType::setType(type_id,offset,types_count);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_idx);
 }
 
@@ -2082,8 +2082,8 @@ unsigned FiringType::operator = (const QString &type_name)
 {
 	unsigned type_id;
 
-	type_id=BaseType::getType(type_name, offset, types_count);
-	BaseType::setType(type_id,offset,types_count);
+	type_id=BaseType::getType(type_name, Offset, TypesCount);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_id);
 }
 
@@ -2092,7 +2092,7 @@ unsigned FiringType::operator = (const QString &type_name)
  ***************************/
 EventTriggerType::EventTriggerType(void)
 {
-	type_idx=offset;
+	type_idx=Offset;
 }
 
 EventTriggerType::EventTriggerType(unsigned type_id)
@@ -2107,12 +2107,12 @@ EventTriggerType::EventTriggerType(const QString &type_name)
 
 void EventTriggerType::getTypes(QStringList &tipos)
 {
-	BaseType::getTypes(tipos,offset,types_count);
+	BaseType::getTypes(tipos,Offset,TypesCount);
 }
 
 unsigned EventTriggerType::operator = (unsigned type_id)
 {
-	BaseType::setType(type_id,offset,types_count);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_idx);
 }
 
@@ -2120,8 +2120,8 @@ unsigned EventTriggerType::operator = (const QString &type_name)
 {
 	unsigned type_id;
 
-	type_id=BaseType::getType(type_name, offset, types_count);
-	BaseType::setType(type_id,offset,types_count);
+	type_id=BaseType::getType(type_name, Offset, TypesCount);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_id);
 }
 
@@ -2130,7 +2130,7 @@ unsigned EventTriggerType::operator = (const QString &type_name)
  ***************************/
 IdentityType::IdentityType(void)
 {
-	type_idx=offset;
+	type_idx=Offset;
 }
 
 IdentityType::IdentityType(unsigned type_id)
@@ -2145,12 +2145,12 @@ IdentityType::IdentityType(const QString &type_name)
 
 void IdentityType::getTypes(QStringList &tipos)
 {
-	BaseType::getTypes(tipos,offset,types_count);
+	BaseType::getTypes(tipos,Offset,TypesCount);
 }
 
 unsigned IdentityType::operator = (unsigned type_id)
 {
-	BaseType::setType(type_id,offset,types_count);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_idx);
 }
 
@@ -2158,8 +2158,8 @@ unsigned IdentityType::operator = (const QString &type_name)
 {
 	unsigned type_id;
 
-	type_id=BaseType::getType(type_name, offset, types_count);
-	BaseType::setType(type_id,offset,types_count);
+	type_id=BaseType::getType(type_name, Offset, TypesCount);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_id);
 }
 
@@ -2168,7 +2168,7 @@ unsigned IdentityType::operator = (const QString &type_name)
  ***************************/
 PolicyCmdType::PolicyCmdType(void)
 {
-	type_idx=offset;
+	type_idx=Offset;
 }
 
 PolicyCmdType::PolicyCmdType(unsigned type_id)
@@ -2183,12 +2183,12 @@ PolicyCmdType::PolicyCmdType(const QString &type_name)
 
 void PolicyCmdType::getTypes(QStringList &tipos)
 {
-	BaseType::getTypes(tipos,offset,types_count);
+	BaseType::getTypes(tipos,Offset,TypesCount);
 }
 
 unsigned PolicyCmdType::operator = (unsigned type_id)
 {
-	BaseType::setType(type_id,offset,types_count);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_idx);
 }
 
@@ -2196,8 +2196,8 @@ unsigned PolicyCmdType::operator = (const QString &type_name)
 {
 	unsigned type_id;
 
-	type_id=BaseType::getType(type_name, offset, types_count);
-	BaseType::setType(type_id,offset,types_count);
+	type_id=BaseType::getType(type_name, Offset, TypesCount);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_id);
 }
 
@@ -2206,7 +2206,7 @@ unsigned PolicyCmdType::operator = (const QString &type_name)
  ***************************/
 PartitioningType::PartitioningType(void)
 {
-	type_idx=offset;
+	type_idx=Offset;
 }
 
 PartitioningType::PartitioningType(unsigned type_id)
@@ -2221,12 +2221,12 @@ PartitioningType::PartitioningType(const QString &type_name)
 
 void PartitioningType::getTypes(QStringList &tipos)
 {
-	BaseType::getTypes(tipos,offset,types_count);
+	BaseType::getTypes(tipos,Offset,TypesCount);
 }
 
 unsigned PartitioningType::operator = (unsigned type_id)
 {
-	BaseType::setType(type_id,offset,types_count);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_idx);
 }
 
@@ -2234,8 +2234,8 @@ unsigned PartitioningType::operator = (const QString &type_name)
 {
 	unsigned type_id;
 
-	type_id=BaseType::getType(type_name, offset, types_count);
-	BaseType::setType(type_id,offset,types_count);
+	type_id=BaseType::getType(type_name, Offset, TypesCount);
+	BaseType::setType(type_id,Offset,TypesCount);
 	return(type_id);
 }
 

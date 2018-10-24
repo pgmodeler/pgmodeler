@@ -45,14 +45,14 @@ void PartRelationhipTest::connRelTableNoColumnsAndTableTwoColumns(void)
 	partitioned->setSchema(schema);
 	partition->setSchema(schema);
 
-	partitioned->setPartitioningType(PartitioningType::list);
+	partitioned->setPartitioningType(PartitioningType::List);
 	partitioned->setName("table_a");
 	partition->setName("partion_a");
 
 	col->setName("id");
-	col->setType(PgSQLType("serial"));
+	col->setType(PgSqlType("serial"));
 	col1->setName("sku");
-	col1->setType(PgSQLType("smallint"));
+	col1->setType(PgSqlType("smallint"));
 
 	partitioned->addColumn(col);
 	partitioned->addColumn(col1);
@@ -82,14 +82,14 @@ void PartRelationhipTest::connRelTablesTwoColumnsSameNameShouldNotRaiseError(voi
 	partitioned->setSchema(schema);
 	partition->setSchema(schema);
 
-	partitioned->setPartitioningType(PartitioningType::list);
+	partitioned->setPartitioningType(PartitioningType::List);
 	partitioned->setName("table_a");
 	partition->setName("partion_a");
 
 	col->setName("id");
-	col->setType(PgSQLType("serial"));
+	col->setType(PgSqlType("serial"));
 	col1->setName("sku");
-	col1->setType(PgSQLType("smallint"));
+	col1->setType(PgSqlType("smallint"));
 
 	partitioned->addColumn(col);
 	partitioned->addColumn(col1);
@@ -97,9 +97,9 @@ void PartRelationhipTest::connRelTablesTwoColumnsSameNameShouldNotRaiseError(voi
 	col = new Column;
 	col1 = new Column;
 	col->setName("id");
-	col->setType(PgSQLType("serial"));
+	col->setType(PgSqlType("serial"));
 	col1->setName("sku");
-	col1->setType(PgSQLType("smallint"));
+	col1->setType(PgSqlType("smallint"));
 
 	partition->addColumn(col);
 	partition->addColumn(col1);
@@ -129,14 +129,14 @@ void PartRelationhipTest::connRelTablePartionHasMoreColsThanPartitionedTableShou
 	partitioned->setSchema(schema);
 	partition->setSchema(schema);
 
-	partitioned->setPartitioningType(PartitioningType::list);
+	partitioned->setPartitioningType(PartitioningType::List);
 	partitioned->setName("table_a");
 	partition->setName("partion_a");
 
 	col->setName("id");
-	col->setType(PgSQLType("serial"));
+	col->setType(PgSqlType("serial"));
 	col1->setName("sku");
-	col1->setType(PgSQLType("smallint"));
+	col1->setType(PgSqlType("smallint"));
 
 	partitioned->addColumn(col);
 	partitioned->addColumn(col1);
@@ -144,12 +144,12 @@ void PartRelationhipTest::connRelTablePartionHasMoreColsThanPartitionedTableShou
 	col = new Column;
 	col1 = new Column;
 	col->setName("id");
-	col->setType(PgSQLType("serial"));
+	col->setType(PgSqlType("serial"));
 	col1->setName("sku");
-	col1->setType(PgSQLType("smallint"));
+	col1->setType(PgSqlType("smallint"));
 	col2 = new Column;
 	col2->setName("date");
-	col2->setType(PgSQLType("date"));
+	col2->setType(PgSqlType("date"));
 
 	partition->addColumn(col);
 	partition->addColumn(col1);
@@ -180,14 +180,14 @@ void PartRelationhipTest::connRelTablePartionHasDifferentColsThanPartitionedTabl
 	partitioned->setSchema(schema);
 	partition->setSchema(schema);
 
-	partitioned->setPartitioningType(PartitioningType::list);
+	partitioned->setPartitioningType(PartitioningType::List);
 	partitioned->setName("table_a");
 	partition->setName("partion_a");
 
 	col->setName("id");
-	col->setType(PgSQLType("serial"));
+	col->setType(PgSqlType("serial"));
 	col1->setName("sku");
-	col1->setType(PgSQLType("smallint"));
+	col1->setType(PgSqlType("smallint"));
 
 	partitioned->addColumn(col);
 	partitioned->addColumn(col1);
@@ -195,9 +195,9 @@ void PartRelationhipTest::connRelTablePartionHasDifferentColsThanPartitionedTabl
 	col = new Column;
 	col1 = new Column;
 	col->setName("tag_id");
-	col->setType(PgSQLType("serial"));
+	col->setType(PgSqlType("serial"));
 	col1->setName("serial_number");
-	col1->setType(PgSQLType("smallint"));
+	col1->setType(PgSqlType("smallint"));
 
 	partition->addColumn(col);
 	partition->addColumn(col1);
@@ -227,14 +227,14 @@ void PartRelationhipTest::connRelShouldInvalidateIfPartitionedColumnChanges(void
 	partitioned->setSchema(schema);
 	partition->setSchema(schema);
 
-	partitioned->setPartitioningType(PartitioningType::list);
+	partitioned->setPartitioningType(PartitioningType::List);
 	partitioned->setName("table_a");
 	partition->setName("partion_a");
 
 	col->setName("id");
-	col->setType(PgSQLType("serial"));
+	col->setType(PgSqlType("serial"));
 	col1->setName("sku");
-	col1->setType(PgSQLType("smallint"));
+	col1->setType(PgSqlType("smallint"));
 
 	partitioned->addColumn(col);
 	partitioned->addColumn(col1);
@@ -242,9 +242,9 @@ void PartRelationhipTest::connRelShouldInvalidateIfPartitionedColumnChanges(void
 	col = new Column;
 	col1 = new Column;
 	col->setName("id");
-	col->setType(PgSQLType("serial"));
+	col->setType(PgSqlType("serial"));
 	col1->setName("sku");
-	col1->setType(PgSQLType("smallint"));
+	col1->setType(PgSqlType("smallint"));
 
 	partition->addColumn(col);
 	partition->addColumn(col1);
@@ -256,7 +256,7 @@ void PartRelationhipTest::connRelShouldInvalidateIfPartitionedColumnChanges(void
 	QVERIFY(part_rel->isInvalidated() == true);
 
 	partitioned->getColumn(0)->setName("id");
-	partitioned->getColumn(0)->setType(PgSQLType("date"));
+	partitioned->getColumn(0)->setType(PgSqlType("date"));
 	QVERIFY(part_rel->isInvalidated() == true);
   }
   catch(Exception &e)

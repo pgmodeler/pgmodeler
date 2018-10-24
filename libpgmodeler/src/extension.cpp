@@ -22,7 +22,7 @@ void Extension::setName(const QString &name)
 		new_name=this->getName(true);
 
 		//Renames the PostgreSQL type represented by the extension
-		PgSQLType::renameUserType(prev_name, this, new_name);
+		PgSqlType::renameUserType(prev_name, this, new_name);
 	}
 }
 
@@ -40,7 +40,7 @@ void Extension::setSchema(BaseObject *schema)
 			prev_name=this->getName(true);
 
 			//Renames the PostgreSQL type represented by the extension
-			PgSQLType::renameUserType(prev_name, this, this->getName(true));
+			PgSqlType::renameUserType(prev_name, this, this->getName(true));
 		}
 	}
 }
@@ -50,7 +50,7 @@ void Extension::setHandlesType(bool value)
 	/* Raises an error if the extension is already registered as a data type and the
 	try to change the attribute value. This cannot be done to avoid cascade reference breaking
 	on table columns/functions or any other objects that references PgSQLType */
-	if(!value && PgSQLType::getUserTypeIndex(this->getName(true), this) != BaseType::null)
+	if(!value && PgSqlType::getUserTypeIndex(this->getName(true), this) != BaseType::Null)
 		throw Exception(Exception::getErrorMessage(ErrorCode::ExtensionHandlingTypeImmutable)
 						.arg(this->getName(true)),
 						ErrorCode::ExtensionHandlingTypeImmutable,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -143,5 +143,5 @@ void Extension::operator = (Extension &ext)
 	this->handles_type=ext.handles_type;
 
 	if(this->handles_type)
-		PgSQLType::renameUserType(prev_name, this, this->getName(true));
+		PgSqlType::renameUserType(prev_name, this, this->getName(true));
 }

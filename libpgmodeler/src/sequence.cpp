@@ -29,7 +29,7 @@ Sequence::Sequence(void)
 {
 	obj_type=ObjectType::ObjSequence;
 	cycle=false;
-	setDefaultValues(PgSQLType(QString("serial")));
+	setDefaultValues(PgSqlType(QString("serial")));
 	owner_col=nullptr;
 
 	attributes[ParsersAttributes::INCREMENT]=QString();
@@ -178,7 +178,7 @@ int Sequence::compareValues(QString value1, QString value2)
 	}
 }
 
-void Sequence::setDefaultValues(PgSQLType serial_type)
+void Sequence::setDefaultValues(PgSqlType serial_type)
 {
 	QString min, max;
 
@@ -209,7 +209,7 @@ void Sequence::setName(const QString &name)
 	QString prev_name=this->getName(true);
 
 	BaseObject::setName(name);
-	PgSQLType::renameUserType(prev_name, this, this->getName(true));
+	PgSqlType::renameUserType(prev_name, this, this->getName(true));
 }
 
 void Sequence::setSchema(BaseObject *schema)
@@ -228,7 +228,7 @@ void Sequence::setSchema(BaseObject *schema)
 	}
 
 	BaseObject::setSchema(schema);
-	PgSQLType::renameUserType(prev_name, this, this->getName(true));
+	PgSqlType::renameUserType(prev_name, this, this->getName(true));
 }
 
 void Sequence::setCycle(bool value)
@@ -400,7 +400,7 @@ QString Sequence::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::COLUMN]=(owner_col ? owner_col->getName(true) : QString());
 
 	attributes[ParsersAttributes::COL_IS_IDENTITY]=
-			(owner_col && owner_col->getIdentityType() != BaseType::null ? ParsersAttributes::_TRUE_ : QString());
+			(owner_col && owner_col->getIdentityType() != BaseType::Null ? ParsersAttributes::_TRUE_ : QString());
 
 	attributes[ParsersAttributes::INCREMENT]=increment;
 	attributes[ParsersAttributes::MIN_VALUE]=min_value;
@@ -487,6 +487,6 @@ void Sequence::operator = (Sequence &seq)
 	this->cache=seq.cache;
 	this->owner_col=seq.owner_col;
 
-	PgSQLType::renameUserType(prev_name, this, this->getName(true));
+	PgSqlType::renameUserType(prev_name, this, this->getName(true));
 }
 

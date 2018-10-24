@@ -161,7 +161,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		/*! \brief Returns the object on the model that represents the base pgsql type. The possible
 		 returned object can be: table, sequence, domain or type */
-		BaseObject *getObjectPgSQLType(PgSQLType type);
+		BaseObject *getObjectPgSQLType(PgSqlType type);
 
 		//! \brief Creates a IndexElement or ExcludeElement from XML depending on type of the 'elem' param.
 		void createElement(Element &elem, TableObject *tab_obj, BaseObject *parent_obj);
@@ -499,7 +499,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void setBasicAttributes(BaseObject *object);
 
 		void configureDatabase(attribs_map &attribs);
-		PgSQLType createPgSQLType(void);
+		PgSqlType createPgSQLType(void);
 		BaseObject *createObject(ObjectType obj_type);
 		Role *createRole(void);
 		Tablespace *createTablespace(void);

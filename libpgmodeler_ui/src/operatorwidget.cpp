@@ -81,7 +81,7 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, Object
 void OperatorWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Operator *oper)
 {
 	unsigned i;
-	PgSQLType left_type, right_type;
+	PgSqlType left_type, right_type;
 
 	BaseObjectWidget::setAttributes(model,op_list, oper, schema);
 

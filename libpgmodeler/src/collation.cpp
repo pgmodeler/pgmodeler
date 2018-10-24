@@ -21,7 +21,7 @@
 Collation::Collation(void)
 {
 	obj_type=ObjectType::ObjCollation;
-	encoding=BaseType::null;
+	encoding=BaseType::Null;
 
 	attributes[ParsersAttributes::_LC_CTYPE_]=QString();
 	attributes[ParsersAttributes::_LC_COLLATE_]=QString();
@@ -67,7 +67,7 @@ void Collation::setCollation(BaseObject *collation)
 
 	BaseObject::setCollation(collation);
 
-	encoding=BaseType::null;
+	encoding=BaseType::Null;
 	locale.clear();
 	localization[0]=localization[1]=QString();
 }
@@ -104,7 +104,7 @@ QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 	{
 		attributes[ParsersAttributes::LOCALE]=locale;
 
-		if(def_type==SchemaParser::SqlDefinition && encoding!=BaseType::null)
+		if(def_type==SchemaParser::SqlDefinition && encoding!=BaseType::Null)
 			attributes[ParsersAttributes::LOCALE]=locale + "." + (~encoding).toLower();
 	}
 	else if(collation)
@@ -120,7 +120,7 @@ QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 		{
 			attributes[lc_attribs[i]]=getLocalization(i);
 
-			if(def_type==SchemaParser::SqlDefinition && encoding!=BaseType::null &&
+			if(def_type==SchemaParser::SqlDefinition && encoding!=BaseType::Null &&
 					!attributes[lc_attribs[i]].isEmpty())
 				attributes[lc_attribs[i]]+="." + (~encoding).toLower();
 		}

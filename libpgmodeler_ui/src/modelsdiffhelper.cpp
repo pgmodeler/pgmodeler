@@ -156,7 +156,7 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
 			//Ignoring object with sql disabled or check constraints added by generalizations
 			if(tab_obj->isSQLDisabled() ||
 				 (constr && constr->isAddedByGeneralization() &&
-					constr->getConstraintType()==ConstraintType::check))
+					constr->getConstraintType()==ConstraintType::Check))
 			{
 				generateDiffInfo(ObjectsDiffInfo::IgnoreObject, tab_obj);
 			}
@@ -169,7 +169,7 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
 				if(aux_obj && diff_type!=ObjectsDiffInfo::DropObject &&
 						((tab_obj->isAddedByGeneralization() || !tab_obj->isAddedByLinking() ||
 							(aux_obj->getObjectType()==ObjectType::ObjColumn && tab_obj->isAddedByLinking())) ||
-						 (constr && constr->getConstraintType()!=ConstraintType::foreign_key)))
+						 (constr && constr->getConstraintType()!=ConstraintType::ForeignKey)))
 				{
 					//If there are some differences on the XML code of the objects
 					if(tab_obj->isCodeDiffersFrom(aux_obj))
@@ -684,7 +684,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 		 check if the constraint is added by generalization or if this is not the case
 		 if it already exists in a ancestor table of its parent, this avoid the generation
 		 of commands to create or drop an inherited constraint raising errors when export the diff */
-			if(constr && constr->getConstraintType()==ConstraintType::check)
+			if(constr && constr->getConstraintType()==ConstraintType::Check)
 			{
 				parent_tab=dynamic_cast<Table *>(constr->getParentTable());
 				skip_obj=constr->isAddedByGeneralization();
@@ -754,7 +754,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 						Primary keys, unique keys, check constraints and exclude constraints are created after foreign keys */
 					if(object->getObjectType()==ObjectType::ObjConstraint)
 					{
-						if(dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::foreign_key)
+						if(dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::ForeignKey)
 							create_fks[object->getObjectId()]=getCodeDefinition(object, false);
 						else
 							create_constrs[object->getObjectId()]=getCodeDefinition(object, false);
@@ -794,7 +794,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 							 create them at the end of diff buffer */
 							if(obj->getObjectType()==ObjectType::ObjConstraint)
 							{
-								if(dynamic_cast<Constraint *>(obj)->getConstraintType()==ConstraintType::foreign_key)
+								if(dynamic_cast<Constraint *>(obj)->getConstraintType()==ConstraintType::ForeignKey)
 									create_fks[obj->getObjectId()]=getCodeDefinition(obj, false);
 								else
 									create_constrs[obj->getObjectId()]=getCodeDefinition(obj, false);
@@ -1038,7 +1038,7 @@ void ModelsDiffHelper::recreateObject(BaseObject *object, vector<BaseObject *> &
 		{
 			Constraint *constr=dynamic_cast<Constraint *>(aux_obj);
 
-			if(constr->getConstraintType()==ConstraintType::primary_key)
+			if(constr->getConstraintType()==ConstraintType::PrimaryKey)
 			{
 				unsigned i=0, col_cnt=constr->getColumnCount(Constraint::SourceCols);
 				vector<BaseObject *> ref_aux;
@@ -1053,7 +1053,7 @@ void ModelsDiffHelper::recreateObject(BaseObject *object, vector<BaseObject *> &
 					for(BaseObject *obj : ref_aux)
 					{
 						aux_constr=dynamic_cast<Constraint *>(obj);
-						if(aux_constr && aux_constr->getConstraintType()==ConstraintType::foreign_key)
+						if(aux_constr && aux_constr->getConstraintType()==ConstraintType::ForeignKey)
 							ref_objs.push_back(aux_constr);
 					}
 				}

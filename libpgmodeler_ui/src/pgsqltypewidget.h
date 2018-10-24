@@ -37,7 +37,7 @@ class PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
 		Q_OBJECT
 
 		//! \brief Stores the PostgreSQL type configured on the form
-		PgSQLType type;
+		PgSqlType type;
 
 		//! \brief Syntax highlighter used on the format field
 		SyntaxHighlighter *format_hl;
@@ -53,19 +53,19 @@ class PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
 		must be shown using the last tree parameters. The DatabaseModel parameter is used to
 		gather the user-defined types of the specified model. */
 		static void listPgSQLTypes(QComboBox *combo, DatabaseModel *model,
-								   unsigned user_type_conf=UserTypeConfig::ALL_USER_TYPES,
+								   unsigned user_type_conf=UserTypeConfig::AllUserTypes,
 								   bool oid_types=true, bool pseudo_types=true);
 
 	private slots:
 		void updateTypeFormat(void);
 
 	public slots:
-		void setAttributes(PgSQLType type, DatabaseModel *model,
-						   unsigned usr_type_conf=UserTypeConfig::ALL_USER_TYPES,
+		void setAttributes(PgSqlType type, DatabaseModel *model,
+						   unsigned usr_type_conf=UserTypeConfig::AllUserTypes,
 						   bool oid_types=true, bool pseudo_types=true);
 
 		//! \brief Returns the PostgreSQL type configured via form
-		PgSQLType getPgSQLType(void);
+		PgSqlType getPgSQLType(void);
 };
 
 #endif

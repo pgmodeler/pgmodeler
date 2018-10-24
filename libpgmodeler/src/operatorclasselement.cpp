@@ -70,14 +70,14 @@ void OperatorClassElement::setOperatorFamily(OperatorFamily *op_family)
 {
 	if(this->element_type==OperatorElem)
 	{
-		if(op_family && op_family->getIndexingType()!=IndexingType::btree)
+		if(op_family && op_family->getIndexingType()!=IndexingType::Btree)
 			throw Exception(ErrorCode::AsgInvalidOpFamilyOpClassElem,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		this->op_family=op_family;
 	}
 }
 
-void OperatorClassElement::setStorage(PgSQLType storage)
+void OperatorClassElement::setStorage(PgSqlType storage)
 {
 	//Clear the attributes not related to the STORAGE element type
 	this->function=nullptr;
@@ -110,7 +110,7 @@ OperatorFamily *OperatorClassElement::getOperatorFamily(void)
 	return(op_family);
 }
 
-PgSQLType OperatorClassElement::getStorage(void)
+PgSqlType OperatorClassElement::getStorage(void)
 {
 	return(storage);
 }
@@ -164,7 +164,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 				attributes[ParsersAttributes::DEFINITION]+=op_family->getCodeDefinition(def_type,true);
 		}
 	}
-	else if(element_type==StorageElem && storage!=PgSQLType::null)
+	else if(element_type==StorageElem && storage!=PgSqlType::Null)
 	{
 		//STORAGE storage_type
 		attributes[ParsersAttributes::STORAGE]=ParsersAttributes::_TRUE_;

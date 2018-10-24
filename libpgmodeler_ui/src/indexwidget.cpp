@@ -47,7 +47,7 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::
 
 		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSqlVersions::PgSqlVersion92)].push_back(buffering_chk);
 		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSqlVersions::PgSqlVersion95)].push_back(indexing_lbl);
-		values_map[indexing_lbl].push_back(~IndexingType(IndexingType::brin));
+		values_map[indexing_lbl].push_back(~IndexingType(IndexingType::Brin));
 
 		frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);
 		frame->setParent(this);
@@ -71,8 +71,8 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::
 
 void IndexWidget::selectIndexingType(void)
 {
-	fast_update_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::gin);
-	buffering_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::gist);
+	fast_update_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::Gin);
+	buffering_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::Gist);
 	fill_factor_sb->setEnabled(fill_factor_chk->isChecked() && fill_factor_chk->isEnabled());
 	//enableSortingOptions();
 }

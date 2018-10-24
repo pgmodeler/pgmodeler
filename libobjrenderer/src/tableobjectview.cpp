@@ -66,7 +66,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 
 	/* Elliptical descriptor is used to columns (with or without not-null constraint),
 		for other object types, polygonal descriptor is usded */
-	ellipse_desc=((column && constr_type==BaseType::null) || (!TableObject::isTableObject(obj_type)));
+	ellipse_desc=((column && constr_type==BaseType::Null) || (!TableObject::isTableObject(obj_type)));
 
 	if(descriptor && ((ellipse_desc && !dynamic_cast<QGraphicsEllipseItem *>(descriptor)) ||
 										(!ellipse_desc && dynamic_cast<QGraphicsEllipseItem *>(descriptor))))
@@ -91,7 +91,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 		QString attrib;
 		QPolygonF pol;
 
-		if(constr_type==BaseType::null)
+		if(constr_type==BaseType::Null)
 		{
 			QGraphicsEllipseItem *desc=dynamic_cast<QGraphicsEllipseItem *>(descriptor);
 
@@ -112,7 +112,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 		{
 			QGraphicsPolygonItem *desc=dynamic_cast<QGraphicsPolygonItem *>(descriptor);
 
-			if(constr_type==ConstraintType::primary_key)
+			if(constr_type==ConstraintType::PrimaryKey)
 			{
 				attrib=ParsersAttributes::PK_COLUMN;
 				pol.append(QPointF(2,0)); pol.append(QPointF(0,2)); pol.append(QPointF(0,7));
@@ -121,7 +121,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 				pol.append(QPointF(7,5)); pol.append(QPointF(9,7)); pol.append(QPointF(9,3));
 				pol.append(QPointF(3,3)); pol.append(QPointF(3,1));
 			}
-			else if(constr_type==ConstraintType::foreign_key)
+			else if(constr_type==ConstraintType::ForeignKey)
 			{
 				attrib=ParsersAttributes::FK_COLUMN;
 				pol.append(QPointF(0,3)); pol.append(QPointF(0,6)); pol.append(QPointF(4,6));
@@ -129,7 +129,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 				pol.append(QPointF(9,4)); pol.append(QPointF(5,0)); pol.append(QPointF(4,0));
 				pol.append(QPointF(4,3));
 			}
-			else if(constr_type==ConstraintType::unique)
+			else if(constr_type==ConstraintType::Unique)
 			{
 				attrib=ParsersAttributes::UQ_COLUMN;
 				pol.append(QPointF(4,0)); pol.append(QPointF(0,4)); pol.append(QPointF(0,5));
@@ -193,7 +193,7 @@ void TableObjectView::configureObject(void)
 		QString str_constr, tooltip, atribs_tip;
 		TableObject *tab_obj=dynamic_cast<TableObject *>(this->getSourceObject());
 		Column *column=dynamic_cast<Column *>(tab_obj);
-		ConstraintType constr_type=ConstraintType::null;
+		ConstraintType constr_type=ConstraintType::Null;
 		bool sql_disabled=false;
 
 		tooltip=tab_obj->getName() + QString(" (") + tab_obj->getTypeName() + QString(")");
@@ -210,17 +210,17 @@ void TableObjectView::configureObject(void)
 			if(str_constr.indexOf(TextPrimaryKey)>=0)
 			{
 				fmt=font_config[ParsersAttributes::PK_COLUMN];
-				constr_type=ConstraintType::primary_key;
+				constr_type=ConstraintType::PrimaryKey;
 			}
 			else if(str_constr.indexOf(TextForeignKey)>=0)
 			{
 				fmt=font_config[ParsersAttributes::FK_COLUMN];
-				constr_type=ConstraintType::foreign_key;
+				constr_type=ConstraintType::ForeignKey;
 			}
 			else if(str_constr.indexOf(TextUnique)>=0)
 			{
 				fmt=font_config[ParsersAttributes::UQ_COLUMN];
-				constr_type=ConstraintType::unique;
+				constr_type=ConstraintType::Unique;
 			}
 			else if(str_constr.indexOf(TextNotNull)>=0)
 				fmt=font_config[ParsersAttributes::NN_COLUMN];
@@ -233,16 +233,16 @@ void TableObjectView::configureObject(void)
 				fmt=font_config[ParsersAttributes::PROT_COLUMN];
 
 			if(str_constr.indexOf(TextPrimaryKey)>=0)
-				atribs_tip+=(~ConstraintType(ConstraintType::primary_key)).toLower() + QString(", ");
+				atribs_tip+=(~ConstraintType(ConstraintType::PrimaryKey)).toLower() + QString(", ");
 
 			if(str_constr.indexOf(TextForeignKey)>=0)
-				atribs_tip+=(~ConstraintType(ConstraintType::foreign_key)).toLower() + QString(", ");
+				atribs_tip+=(~ConstraintType(ConstraintType::ForeignKey)).toLower() + QString(", ");
 
 			if(str_constr.indexOf(TextUnique)>=0)
-				atribs_tip+=(~ConstraintType(ConstraintType::unique)).toLower() + QString(", ");
+				atribs_tip+=(~ConstraintType(ConstraintType::Unique)).toLower() + QString(", ");
 
 			if(str_constr.indexOf(TextExclude)>=0)
-				atribs_tip+=(~ConstraintType(ConstraintType::exclude)).toLower() + QString(", ");
+				atribs_tip+=(~ConstraintType(ConstraintType::Exclude)).toLower() + QString(", ");
 
 			if(str_constr.indexOf(TextNotNull)>=0)
 				atribs_tip+=QString("not null");
@@ -326,7 +326,7 @@ void TableObjectView::configureObject(void)
 
 				atribs_tip+=(~trigger->getFiringType()).toLower() + QString(", ");
 
-				for(unsigned i=EventType::on_insert; i <= EventType::on_truncate; i++)
+				for(unsigned i=EventType::OnInsert; i <= EventType::OnTruncate; i++)
 				{
 					if(trigger->isExecuteOnEvent(EventType(i)))
 					{
@@ -366,15 +366,15 @@ void TableObjectView::configureObject(void)
 			{
 				ConstraintType type = constr->getConstraintType();
 
-				if(type == ConstraintType::primary_key)
+				if(type == ConstraintType::PrimaryKey)
 					str_constr = TextPrimaryKey;
-				else if(type == ConstraintType::foreign_key)
+				else if(type == ConstraintType::ForeignKey)
 					str_constr = TextForeignKey;
-				else if(type == ConstraintType::unique)
+				else if(type == ConstraintType::Unique)
 					str_constr = TextUnique;
-				else if(type == ConstraintType::exclude)
+				else if(type == ConstraintType::Exclude)
 					str_constr = TextExclude;
-				else if(type == ConstraintType::check)
+				else if(type == ConstraintType::Check)
 					str_constr = TextCheck;
 
 				atribs_tip = (~type).toLower();
@@ -565,21 +565,21 @@ QString TableObjectView::getConstraintString(Column *column)
 			itr++;
 
 			//Check if the column is referecend by the constraint
-			if((constr->getConstraintType()!=ConstraintType::exclude && constr->isColumnExists(column, Constraint::SourceCols)) ||
-				 (constr->getConstraintType()==ConstraintType::exclude && constr->isColumnReferenced(column, false)))
+			if((constr->getConstraintType()!=ConstraintType::Exclude && constr->isColumnExists(column, Constraint::SourceCols)) ||
+				 (constr->getConstraintType()==ConstraintType::Exclude && constr->isColumnReferenced(column, false)))
 			{
 				constr_type=constr->getConstraintType();
 
-				if(constr_type==ConstraintType::primary_key)
+				if(constr_type==ConstraintType::PrimaryKey)
 					str_constr=TextPrimaryKey + ConstrSeparator + str_constr;
 
-				if(constr_type==ConstraintType::foreign_key && str_constr.indexOf(TextForeignKey) < 0)
+				if(constr_type==ConstraintType::ForeignKey && str_constr.indexOf(TextForeignKey) < 0)
 					str_constr+=TextForeignKey + ConstrSeparator;
 
-				if(constr_type==ConstraintType::unique && str_constr.indexOf(TextUnique) < 0)
+				if(constr_type==ConstraintType::Unique && str_constr.indexOf(TextUnique) < 0)
 					str_constr+=TextUnique + ConstrSeparator;
 
-				if(constr_type==ConstraintType::exclude && str_constr.indexOf(TextExclude) < 0)
+				if(constr_type==ConstraintType::Exclude && str_constr.indexOf(TextExclude) < 0)
 					str_constr+=TextExclude + ConstrSeparator;
 			}
 		}

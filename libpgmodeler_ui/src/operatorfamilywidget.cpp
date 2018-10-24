@@ -33,7 +33,7 @@ OperatorFamilyWidget::OperatorFamilyWidget(QWidget *parent): BaseObjectWidget(pa
 
 	setRequiredField(indexing_lbl);
 	fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSqlVersions::PgSqlVersion95)].push_back(indexing_lbl);
-	values_map[indexing_lbl].push_back(~IndexingType(IndexingType::brin));
+	values_map[indexing_lbl].push_back(~IndexingType(IndexingType::Brin));
 
 	opfamily_grid->addItem(new QSpacerItem(10,10,QSizePolicy::Minimum,QSizePolicy::Expanding), opfamily_grid->count()+1, 0, 1, 0);
 

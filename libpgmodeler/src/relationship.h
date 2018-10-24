@@ -315,9 +315,9 @@ class Relationship: public BaseRelationship {
 					 Table *src_tab, Table *dst_tab,
 					 bool src_mdtry=false, bool dst_mdtry=false,
 					 bool identifier=false, bool deferrable=false,
-					 DeferralType deferral_type=DeferralType::immediate,
-					 ActionType fk_del_act=ActionType::null,
-					 ActionType fk_upd_act=ActionType::null,
+					 DeferralType deferral_type=DeferralType::Immediate,
+					 ActionType fk_del_act=ActionType::Null,
+					 ActionType fk_upd_act=ActionType::Null,
 					 CopyOptions copy_op = CopyOptions(0,0));
 
 		//! \brief  Connects the relationship making the configuration according to its type

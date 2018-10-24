@@ -63,7 +63,7 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		configureFormLayout(grid, ObjectType::ObjOpClass);
 
 		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSqlVersions::PgSqlVersion95)].push_back(indexing_lbl);
-		values_map[indexing_lbl].push_back(~IndexingType(IndexingType::brin));
+		values_map[indexing_lbl].push_back(~IndexingType(IndexingType::Brin));
 
 		frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);
 		frame->setParent(this);
@@ -205,7 +205,7 @@ void OperatorClassWidget::handleElement(int lin_idx)
 
 void OperatorClassWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, OperatorClass *op_class)
 {
-	PgSQLType type;
+	PgSqlType type;
 	unsigned i, count;
 
 	BaseObjectWidget::setAttributes(model, op_list, op_class, schema);

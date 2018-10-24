@@ -37,7 +37,7 @@ Column::Column(void)
 	attributes[ParsersAttributes::CYCLE]=QString();
 
 	parent_rel=sequence=nullptr;
-	identity_type=BaseType::null;
+	identity_type=BaseType::Null;
 }
 
 void Column::setName(const QString &name)
@@ -62,12 +62,12 @@ void Column::setName(const QString &name)
 	}
 }
 
-void Column::setType(PgSQLType type)
+void Column::setType(PgSqlType type)
 {
 	//An error is raised if the column receive a pseudo-type as data type.
 	if(type.isPseudoType())
 		throw Exception(ErrorCode::AsgPseudoTypeColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(this->identity_type != BaseType::null && !type.isIntegerType())
+	else if(this->identity_type != BaseType::Null && !type.isIntegerType())
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidIdentityColumn).arg(getSignature()),
 										ErrorCode::InvalidIdentityColumn, __PRETTY_FUNCTION__, __FILE__, __LINE__);
@@ -79,7 +79,7 @@ void Column::setType(PgSQLType type)
 
 void Column::setIdentityType(IdentityType id_type)
 {
-	if(id_type != BaseType::null && !type.isIntegerType())
+	if(id_type != BaseType::Null && !type.isIntegerType())
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidIdentityColumn).arg(getSignature()),
 										ErrorCode::InvalidIdentityColumn, __PRETTY_FUNCTION__, __FILE__, __LINE__);
@@ -91,7 +91,7 @@ void Column::setIdentityType(IdentityType id_type)
 	sequence = nullptr;
 
 	//Identity column implies NOT NULL constraint
-	if(id_type != BaseType::null)
+	if(id_type != BaseType::Null)
 		setNotNull(true);
 }
 
@@ -100,7 +100,7 @@ void Column::setDefaultValue(const QString &value)
 	setCodeInvalidated(default_value != value);
 	default_value=value.trimmed();
 	sequence=nullptr;
-	identity_type=BaseType::null;
+	identity_type=BaseType::Null;
 }
 
 void Column::setNotNull(bool value)
@@ -109,7 +109,7 @@ void Column::setNotNull(bool value)
 	not_null=value;
 }
 
-PgSQLType Column::getType(void)
+PgSqlType Column::getType(void)
 {
 	return(type);
 }
@@ -126,7 +126,7 @@ bool Column::isNotNull(void)
 
 bool Column::isIdentity(void)
 {
-	return(identity_type != BaseType::null);
+	return(identity_type != BaseType::Null);
 }
 
 QString Column::getTypeReference(void)
@@ -180,7 +180,7 @@ void Column::setSequence(BaseObject *seq)
 							ErrorCode::IncompColumnTypeForSequence,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		default_value=QString();
-		identity_type=BaseType::null;
+		identity_type=BaseType::Null;
 	}
 
 	setCodeInvalidated(sequence != seq);
@@ -244,7 +244,7 @@ QString Column::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::DEFAULT_VALUE]=QString();
 	attributes[ParsersAttributes::IDENTITY_TYPE]=QString();
 
-	if(identity_type != BaseType::null)
+	if(identity_type != BaseType::Null)
 	{
 		attributes[ParsersAttributes::IDENTITY_TYPE] = ~identity_type;	
 		attributes[ParsersAttributes::INCREMENT]=seq_increment;
@@ -311,11 +311,11 @@ QString Column::getAlterDefinition(BaseObject *object)
 
 		attribs[ParsersAttributes::NEW_IDENTITY_TYPE] = QString();
 
-		if(this->identity_type == BaseType::null && col->identity_type != BaseType::null)
+		if(this->identity_type == BaseType::Null && col->identity_type != BaseType::Null)
 			attribs[ParsersAttributes::IDENTITY_TYPE] = ~col->identity_type;
-		else if(this->identity_type != BaseType::null && col->identity_type == BaseType::null)
+		else if(this->identity_type != BaseType::Null && col->identity_type == BaseType::Null)
 			attribs[ParsersAttributes::IDENTITY_TYPE] = ParsersAttributes::UNSET;
-		else if(this->identity_type != BaseType::null && col->identity_type != BaseType::null &&
+		else if(this->identity_type != BaseType::Null && col->identity_type != BaseType::Null &&
 						this->identity_type != col->identity_type)
 			attribs[ParsersAttributes::NEW_IDENTITY_TYPE] = ~col->identity_type;
 

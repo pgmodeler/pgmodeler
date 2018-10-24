@@ -50,7 +50,7 @@ void EventTrigger::setFunction(Function *func)
 						.arg(BaseObject::getTypeName(ObjectType::ObjEventTrigger)),
 						ErrorCode::AsgFunctionInvalidParamCount,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Functions coded in SQL lang. is not accepted by event triggers
-	else if(func->getLanguage()->getName()==~LanguageType(LanguageType::sql))
+	else if(func->getLanguage()->getName()==~LanguageType(LanguageType::Sql))
 		throw Exception(ErrorCode::AsgEventTriggerFuncInvalidLang,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(function != func);

@@ -115,7 +115,7 @@ void TriggerWidget::setConstraintTrigger(bool value)
 		deferrable_chk->setChecked(false);
 	}
 	else
-		firing_mode_cmb->setCurrentText(~FiringType(FiringType::after));
+		firing_mode_cmb->setCurrentText(~FiringType(FiringType::After));
 }
 
 void TriggerWidget::enableTransitionTableNames(void)
@@ -134,8 +134,8 @@ void TriggerWidget::enableTransitionTableNames(void)
 			num_evnts++;
 	}
 
-	old_table_edt->setEnabled(firing_type == FiringType::after && num_evnts == 1 && (update_chk->isChecked() || delete_chk->isChecked()));
-	new_table_edt->setEnabled(firing_type == FiringType::after && num_evnts == 1 && (update_chk->isChecked() || insert_chk->isChecked()));
+	old_table_edt->setEnabled(firing_type == FiringType::After && num_evnts == 1 && (update_chk->isChecked() || delete_chk->isChecked()));
+	new_table_edt->setEnabled(firing_type == FiringType::After && num_evnts == 1 && (update_chk->isChecked() || insert_chk->isChecked()));
 }
 
 void TriggerWidget::addColumn(int lin_idx)
@@ -237,10 +237,10 @@ void TriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_list, 
 		deferral_type_cmb->setCurrentIndex(deferral_type_cmb->findText(~trigger->getDeferralType()));
 		firing_mode_cmb->setCurrentIndex(firing_mode_cmb->findText(~trigger->getFiringType()));
 
-		insert_chk->setChecked(trigger->isExecuteOnEvent(EventType::on_insert));
-		delete_chk->setChecked(trigger->isExecuteOnEvent(EventType::on_delete));
-		update_chk->setChecked(trigger->isExecuteOnEvent(EventType::on_update));
-		truncate_chk->setChecked(trigger->isExecuteOnEvent(EventType::on_truncate));
+		insert_chk->setChecked(trigger->isExecuteOnEvent(EventType::OnInsert));
+		delete_chk->setChecked(trigger->isExecuteOnEvent(EventType::OnDelete));
+		update_chk->setChecked(trigger->isExecuteOnEvent(EventType::OnUpdate));
+		truncate_chk->setChecked(trigger->isExecuteOnEvent(EventType::OnTruncate));
 		ref_table_sel->setSelectedObject(trigger->getReferencedTable());
 		function_sel->setSelectedObject(trigger->getFunction());
 
@@ -292,10 +292,10 @@ void TriggerWidget::applyConfiguration(void)
 		trigger->setCondition(cond_expr_txt->toPlainText());
 		trigger->setFunction(dynamic_cast<Function *>(function_sel->getSelectedObject()));
 		trigger->setReferecendTable(dynamic_cast<Table *>(ref_table_sel->getSelectedObject()));
-		trigger->setEvent(EventType::on_insert, insert_chk->isChecked());
-		trigger->setEvent(EventType::on_update, update_chk->isChecked());
-		trigger->setEvent(EventType::on_delete, delete_chk->isChecked());
-		trigger->setEvent(EventType::on_truncate, truncate_chk->isChecked());
+		trigger->setEvent(EventType::OnInsert, insert_chk->isChecked());
+		trigger->setEvent(EventType::OnUpdate, update_chk->isChecked());
+		trigger->setEvent(EventType::OnDelete, delete_chk->isChecked());
+		trigger->setEvent(EventType::OnTruncate, truncate_chk->isChecked());
 		trigger->setTransitionTableName(Trigger::OldTableName, old_table_edt->isEnabled() ? old_table_edt->text() : QString());
 		trigger->setTransitionTableName(Trigger::NewTableName, new_table_edt->isEnabled() ? new_table_edt->text() : QString());
 		trigger->removeArguments();

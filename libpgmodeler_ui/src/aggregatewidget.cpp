@@ -86,7 +86,7 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 void AggregateWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Aggregate *aggregate)
 {
 	unsigned count, i;
-	PgSQLType type;
+	PgSqlType type;
 
 	BaseObjectWidget::setAttributes(model,op_list, aggregate, schema);
 
@@ -110,7 +110,7 @@ void AggregateWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 		{
 			input_types_tab->addRow();
 			type=aggregate->getDataType(i);
-			input_types_tab->setRowData(QVariant::fromValue<PgSQLType>(type), i);
+			input_types_tab->setRowData(QVariant::fromValue<PgSqlType>(type), i);
 			input_types_tab->setCellText(*type,i,0);
 		}
 		input_types_tab->blockSignals(false);
@@ -124,10 +124,10 @@ void AggregateWidget::handleDataType(int row)
 {
 	try
 	{
-		PgSQLType type;
+		PgSqlType type;
 
 		type=input_type->getPgSQLType();
-		input_types_tab->setRowData(QVariant::fromValue<PgSQLType>(type), row);
+		input_types_tab->setRowData(QVariant::fromValue<PgSqlType>(type), row);
 		input_types_tab->setCellText(*type,row,0);
 	}
 	catch(Exception &e)
@@ -156,7 +156,7 @@ void AggregateWidget::applyConfiguration(void)
 		count=input_types_tab->getRowCount();
 
 		for(i=0; i < count; i++)
-			aggregate->addDataType(input_types_tab->getRowData(i).value<PgSQLType>());
+			aggregate->addDataType(input_types_tab->getRowData(i).value<PgSqlType>());
 
 		aggregate->setFunction(Aggregate::TransitionFunc, dynamic_cast<Function *>(transition_func_sel->getSelectedObject()));
 		aggregate->setFunction(Aggregate::FinalFunc, dynamic_cast<Function *>(final_func_sel->getSelectedObject()));

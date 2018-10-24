@@ -1051,7 +1051,7 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 {
 	Function *func=nullptr;
 	Parameter param;
-	PgSQLType type;
+	PgSqlType type;
 	unsigned dim=0;
 	QStringList param_types, param_names, param_modes, param_def_vals, param_xmls;
 	QString param_tmpl_name=QString("_param%1");
@@ -1072,7 +1072,7 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 					(attribs[ParsersAttributes::REF_TYPE]==ParsersAttributes::SEND_FUNC ||
 					 attribs[ParsersAttributes::REF_TYPE]==ParsersAttributes::OUTPUT_FUNC ||
 					 attribs[ParsersAttributes::REF_TYPE]==ParsersAttributes::CANONICAL_FUNC))
-				type=PgSQLType(QString("\"any\""));
+				type=PgSqlType(QString("\"any\""));
 			else
 			{
 				//If the type contains array descriptor [] set the dimension to 1
@@ -1080,7 +1080,7 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 
 				//Create the type
 				param_types[i].remove(QString("[]"));
-				type=PgSQLType::parseString(param_types[i]);
+				type=PgSqlType::parseString(param_types[i]);
 				type.setDimension(dim);
 			}
 
@@ -1158,7 +1158,7 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 			if(attribs[ParsersAttributes::REF_TYPE]==ParsersAttributes::INPUT_FUNC ||
 					attribs[ParsersAttributes::REF_TYPE]==ParsersAttributes::RECV_FUNC ||
 					attribs[ParsersAttributes::REF_TYPE]==ParsersAttributes::CANONICAL_FUNC)
-				attribs[ParsersAttributes::RETURN_TYPE]=PgSQLType(QString("\"any\"")).getCodeDefinition(SchemaParser::XmlDefinition);
+				attribs[ParsersAttributes::RETURN_TYPE]=PgSqlType(QString("\"any\"")).getCodeDefinition(SchemaParser::XmlDefinition);
 			else
 				attribs[ParsersAttributes::RETURN_TYPE]=getType(attribs[ParsersAttributes::RETURN_TYPE], true);
 		}
@@ -1569,7 +1569,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 				if(values.size() >= 2)
 				{
 					type_attrib.setName(values[0].remove('"'));
-					type_attrib.setType(PgSQLType::parseString(values[1].remove('\\')));
+					type_attrib.setType(PgSqlType::parseString(values[1].remove('\\')));
 					type_attrib.setCollation(dbmodel->getObject(getObjectName(values[2].remove('"')),	ObjectType::ObjCollation));
 					attribs[ParsersAttributes::TYPE_ATTRIBUTE]+=type_attrib.getCodeDefinition(SchemaParser::XmlDefinition);
 				}
@@ -1685,7 +1685,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 				type_name=BaseObject::formatName(getObjectName(types[type_oid][ParsersAttributes::SCHEMA], true), false);
 				type_name+=QString(".");
 
-				if(types[type_oid][ParsersAttributes::CATEGORY] == ~CategoryType(CategoryType::array))
+				if(types[type_oid][ParsersAttributes::CATEGORY] == ~CategoryType(CategoryType::Array))
 				{
 					int dim = types[type_oid][ParsersAttributes::NAME].count(QString("[]"));
 					QString aux_name = types[type_oid][ParsersAttributes::NAME].remove(QString("[]"));
@@ -1695,7 +1695,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 				else
 					type_name+=BaseObject::formatName(types[type_oid][ParsersAttributes::NAME], false);
 
-				is_type_registered=PgSQLType::isRegistered(type_name, dbmodel);
+				is_type_registered=PgSqlType::isRegistered(type_name, dbmodel);
 			}
 			else
 			{
@@ -1718,8 +1718,8 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 					type_def=getDependencyObject(itr->second[ParsersAttributes::TYPE_OID], ObjectType::ObjDomain);
 			}
 
-			col.setIdentityType(BaseType::null);
-			col.setType(PgSQLType::parseString(type_name));
+			col.setIdentityType(BaseType::Null);
+			col.setType(PgSqlType::parseString(type_name));
 			col.setNotNull(!itr->second[ParsersAttributes::NOT_NULL].isEmpty());
 			col.setComment(itr->second[ParsersAttributes::COMMENT]);
 
@@ -2182,7 +2182,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 			loadObjectXML(ObjectType::ObjConstraint, attribs);
 			constr=dbmodel->createConstraint(nullptr);
 
-			if(table &&  constr->getConstraintType()==ConstraintType::primary_key)
+			if(table &&  constr->getConstraintType()==ConstraintType::PrimaryKey)
 			{
 				table->addConstraint(constr);
 				table->setModified(true);

@@ -21,8 +21,8 @@
 Trigger::Trigger(void)
 {
 	unsigned i;
-	EventType tipos[4]={EventType::on_insert, EventType::on_delete,
-						EventType::on_update, EventType::on_truncate};
+	EventType tipos[4]={EventType::OnInsert, EventType::OnDelete,
+						EventType::OnUpdate, EventType::OnTruncate};
 
 	function=nullptr;
 	is_exec_per_row=is_constraint=is_deferrable=false;
@@ -85,7 +85,7 @@ void Trigger::setFiringType(FiringType firing_type)
 
 void Trigger::setEvent(EventType event, bool value)
 {
-	if(event==EventType::on_select)
+	if(event==EventType::OnSelect)
 		throw Exception(ErrorCode::RefInvalidTriggerEvent,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(events[event] != value);
@@ -168,7 +168,7 @@ void Trigger::setExecutePerRow(bool value)
 
 bool Trigger::isExecuteOnEvent(EventType event)
 {
-	if(event==EventType::on_select)
+	if(event==EventType::OnSelect)
 		throw Exception(ErrorCode::RefInvalidTriggerEvent,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(events.at(!event));
@@ -349,8 +349,8 @@ void Trigger::setBasicAttributes(unsigned def_type)
 			attribs[4]={ParsersAttributes::INS_EVENT, ParsersAttributes::DEL_EVENT,
 						ParsersAttributes::TRUNC_EVENT, ParsersAttributes::UPD_EVENT },
 			sql_event[4]={"INSERT OR ", "DELETE OR ", "TRUNCATE OR ", "UPDATE   "};
-	unsigned count, i, i1, event_types[4]={EventType::on_insert, EventType::on_delete,
-										   EventType::on_truncate, EventType::on_update};
+	unsigned count, i, i1, event_types[4]={EventType::OnInsert, EventType::OnDelete,
+										   EventType::OnTruncate, EventType::OnUpdate};
 
 
 	setArgumentAttribute(def_type);
@@ -362,7 +362,7 @@ void Trigger::setBasicAttributes(unsigned def_type)
 			str_aux+=sql_event[i];
 			attributes[attribs[i]]=ParsersAttributes::_TRUE_;
 
-			if(event_types[i]==EventType::on_update)
+			if(event_types[i]==EventType::OnUpdate)
 			{
 				count=upd_columns.size();
 				attributes[ParsersAttributes::COLUMNS]=QString();
@@ -445,23 +445,23 @@ void Trigger::validateTrigger(void)
 		if(!is_constraint)
 		{
 			//The INSTEAD OF mode cannot be used on triggers that belongs to tables! This is available only for view triggers
-			if(firing_type==FiringType::instead_of && parent_type==ObjectType::ObjTable)
+			if(firing_type==FiringType::InsteadOf && parent_type==ObjectType::ObjTable)
 				throw Exception(ErrorCode::InvTableTriggerInsteadOfFiring,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			//The INSTEAD OF mode cannot be used on view triggers that executes for each statement
-			else if(firing_type==FiringType::instead_of && parent_type==ObjectType::ObjView && !is_exec_per_row)
+			else if(firing_type==FiringType::InsteadOf && parent_type==ObjectType::ObjView && !is_exec_per_row)
 				throw Exception(ErrorCode::InvUsageInsteadOfOnTrigger,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			//A trigger cannot make reference to columns when using INSTEAD OF mode and UPDATE event
-			else if(firing_type==FiringType::instead_of && events[EventType::on_update] && !upd_columns.empty())
+			else if(firing_type==FiringType::InsteadOf && events[EventType::OnUpdate] && !upd_columns.empty())
 				throw Exception(ErrorCode::InvUsageInsteadOfUpdateTrigger,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			//The TRUNCATE event can only be used when the trigger executes for each statement and belongs to a table
-			else if(events[EventType::on_truncate] && (is_exec_per_row || parent_type==ObjectType::ObjView))
+			else if(events[EventType::OnTruncate] && (is_exec_per_row || parent_type==ObjectType::ObjView))
 				throw Exception(ErrorCode::InvUsageTruncateOnTrigger,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			//A view trigger cannot be AFTER/BEFORE when it executes for each row
-			else if(parent_type==ObjectType::ObjView && is_exec_per_row && (firing_type==FiringType::after || firing_type==FiringType::before))
+			else if(parent_type==ObjectType::ObjView && is_exec_per_row && (firing_type==FiringType::After || firing_type==FiringType::Before))
 				throw Exception(ErrorCode::InvUsageAfterBeforeViewTrigger,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			//Only constraint triggers can be deferrable or reference another table
@@ -471,7 +471,7 @@ void Trigger::validateTrigger(void)
 		//Constraint triggers can only be executed on AFTER events and for each row
 		else
 		{
-			if(firing_type!=FiringType::after && !is_exec_per_row)
+			if(firing_type!=FiringType::After && !is_exec_per_row)
 				throw Exception(ErrorCode::InvConstrTriggerNotAfterRow,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 	}

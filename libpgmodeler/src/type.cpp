@@ -60,7 +60,7 @@ void Type::setName(const QString &name)
 
 	prev_name=this->getName(true);//this->nome;
 	BaseObject::setName(name);
-	PgSQLType::renameUserType(prev_name, this, this->getName(true));
+	PgSqlType::renameUserType(prev_name, this, this->getName(true));
 }
 
 void Type::setSchema(BaseObject *schema)
@@ -69,7 +69,7 @@ void Type::setSchema(BaseObject *schema)
 
 	prev_name=this->getName(true);
 	BaseObject::setSchema(schema);
-	PgSQLType::renameUserType(prev_name, this, this->getName(true));
+	PgSqlType::renameUserType(prev_name, this, this->getName(true));
 }
 
 int Type::getAttributeIndex(const QString &attrib_name)
@@ -97,10 +97,10 @@ int Type::getAttributeIndex(const QString &attrib_name)
 void Type::addAttribute(TypeAttribute attrib)
 {
 	//Raises an error if the attribute has an empty name or null type
-	if(attrib.getName().isEmpty() || attrib.getType()==PgSQLType::null)
+	if(attrib.getName().isEmpty() || attrib.getType()==PgSqlType::Null)
 		throw Exception(ErrorCode::InsInvalidTypeAttribute,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the passed attribute has the same type as the defining type (this)
-	else if(PgSQLType::getUserTypeIndex(this->getName(true), this) == !attrib.getType())
+	else if(PgSqlType::getUserTypeIndex(this->getName(true), this) == !attrib.getType())
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvUserTypeSelfReference).arg(this->getName(true)),
 						ErrorCode::InvUserTypeSelfReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error when the attribute already exists
@@ -196,10 +196,10 @@ void Type::setConfiguration(unsigned conf)
 
 	alignment=QString("integer");
 	delimiter='\0';
-	storage=StorageType::plain;
+	storage=StorageType::Plain;
 	element=QString("\"any\"");
 	internal_len=0;
-	category=CategoryType::userdefined;
+	category=CategoryType::UserDefined;
 	preferred=collatable=by_value=false;
 	like_type=QString("\"any\"");
 
@@ -211,7 +211,7 @@ void Type::setFunction(unsigned func_id, Function *func)
 {
 	unsigned param_count=0;
 	LanguageType lang;
-	lang=LanguageType::c;
+	lang=LanguageType::C;
 	unsigned funcs_len=sizeof(functions)/sizeof(Function *);
 
 	//Raises an error if the function id is invalid
@@ -239,8 +239,8 @@ void Type::setFunction(unsigned func_id, Function *func)
 		/* Raises an error if the function language is not C.
 		 Functions assigned to base type must be written in C */
 		if((func_id!=CanonicalFunc && func_id!=SubtypeDiffFunc) &&
-				func->getLanguage()->getName()!=~LanguageType(LanguageType::c) &&
-				func->getLanguage()->getName()!=~LanguageType(LanguageType::internal))
+				func->getLanguage()->getName()!=~LanguageType(LanguageType::C) &&
+				func->getLanguage()->getName()!=~LanguageType(LanguageType::Internal))
 			throw Exception(ErrorCode::AsgFunctionInvalidLanguage,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		/* Raises an error if the parameter count for INPUT and RECV functions
@@ -335,21 +335,21 @@ void Type::convertFunctionParameters(bool inverse_conv)
 
 				if(!inverse_conv)
 				{
-					param.setType(PgSQLType(this));
+					param.setType(PgSqlType(this));
 					func->addParameter(param);
 				}
 				else
 				{
-					param.setType(PgSQLType(QString("\"any\"")));
+					param.setType(PgSqlType(QString("\"any\"")));
 					func->addParameter(param);
 				}
 			}
 			else if(conf_funcs[i]==InputFunc || conf_funcs[i]==RecvFunc)
 			{
 				if(!inverse_conv)
-					func->setReturnType(PgSQLType(this));
+					func->setReturnType(PgSqlType(this));
 				else
-					func->setReturnType(PgSQLType(QString("\"any\"")));
+					func->setReturnType(PgSqlType(QString("\"any\"")));
 			}
 		}
 	}
@@ -369,7 +369,7 @@ void Type::setByValue(bool value)
 	by_value=value;
 }
 
-void Type::setAlignment(PgSQLType type)
+void Type::setAlignment(PgSqlType type)
 {
 	QString tp=(*type);
 
@@ -396,9 +396,9 @@ void Type::setDefaultValue(const QString &value)
 	this->default_value=def;
 }
 
-void Type::setElement(PgSQLType elem)
+void Type::setElement(PgSqlType elem)
 {
-	if(PgSQLType::getUserTypeIndex(this->getName(true), this) == !elem)
+	if(PgSqlType::getUserTypeIndex(this->getName(true), this) == !elem)
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvUserTypeSelfReference).arg(this->getName(true)),
 						ErrorCode::InvUserTypeSelfReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(elem!=QString("\"any\"") &&
@@ -469,9 +469,9 @@ void Type::setCollatable(bool value)
 	this->collatable=value;
 }
 
-void Type::setLikeType(PgSQLType like_type)
+void Type::setLikeType(PgSqlType like_type)
 {
-	if(PgSQLType::getUserTypeIndex(this->getName(true), this) == !like_type)
+	if(PgSqlType::getUserTypeIndex(this->getName(true), this) == !like_type)
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvUserTypeSelfReference).arg(this->getName(true)),
 						ErrorCode::InvUserTypeSelfReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -479,9 +479,9 @@ void Type::setLikeType(PgSQLType like_type)
 	this->like_type=like_type;
 }
 
-void Type::setSubtype(PgSQLType subtype)
+void Type::setSubtype(PgSqlType subtype)
 {
-	if(PgSQLType::getUserTypeIndex(this->getName(true), this) == !subtype)
+	if(PgSqlType::getUserTypeIndex(this->getName(true), this) == !subtype)
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvUserTypeSelfReference).arg(this->getName(true)),
 						ErrorCode::InvUserTypeSelfReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -491,7 +491,7 @@ void Type::setSubtype(PgSQLType subtype)
 
 void Type::setSubtypeOpClass(OperatorClass *opclass)
 {
-	if(opclass && opclass->getIndexingType()!=IndexingType::btree)
+	if(opclass && opclass->getIndexingType()!=IndexingType::Btree)
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidOpClassObject)
 						.arg(this->getName(true))
 						.arg(this->getTypeName()),
@@ -545,7 +545,7 @@ bool Type::isByValue(void)
 	return(by_value);
 }
 
-PgSQLType Type::getAlignment(void)
+PgSqlType Type::getAlignment(void)
 {
 	return(alignment);
 }
@@ -560,7 +560,7 @@ QString Type::getDefaultValue(void)
 	return(default_value);
 }
 
-PgSQLType Type::getElement(void)
+PgSqlType Type::getElement(void)
 {
 	return(element);
 }
@@ -590,12 +590,12 @@ bool Type::isCollatable(void)
 	return(collatable);
 }
 
-PgSQLType Type::getLikeType(void)
+PgSqlType Type::getLikeType(void)
 {
 	return(like_type);
 }
 
-PgSQLType Type::getSubtype(void)
+PgSqlType Type::getSubtype(void)
 {
 	return(subtype);
 }
@@ -840,6 +840,6 @@ void Type::operator = (Type &type)
 		i++;
 	}
 
-	PgSQLType::renameUserType(prev_name, this, this->getName(true));
+	PgSqlType::renameUserType(prev_name, this, this->getName(true));
 }
 
