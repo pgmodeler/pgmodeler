@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 		app.installTranslator(&translator);
 
 		CrashHandlerForm crashhandler(args.size() > 1 && args[1]==CrashHandlerForm::AnalysisMode);
-		PgModelerUiNS::resizeDialog(&crashhandler);
+		PgModelerUiNs::resizeDialog(&crashhandler);
 		crashhandler.show();
 		app.exec();
 

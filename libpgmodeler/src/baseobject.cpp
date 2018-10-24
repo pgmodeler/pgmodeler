@@ -68,7 +68,7 @@ const QString BaseObject::objs_sql[BaseObject::ObjectTypeCount]={
    DatabaseModel, Tag */
 unsigned BaseObject::global_id=4000;
 
-QString BaseObject::pgsql_ver=PgSQLVersions::DefaulVersion;
+QString BaseObject::pgsql_ver=PgSqlVersions::DefaulVersion;
 bool BaseObject::use_cached_code=true;
 
 BaseObject::BaseObject(void)
@@ -215,7 +215,7 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 
 		}
 
-		if(needs_fmt || PgModelerNS::isReservedKeyword(name))
+		if(needs_fmt || PgModelerNs::isReservedKeyword(name))
 			frmt_name=QString("\"%1\"").arg(name);
 		else
 			frmt_name=name;

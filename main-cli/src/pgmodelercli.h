@@ -43,7 +43,7 @@ class PgModelerCLI: public QApplication {
 	private:
 		Q_OBJECT
 
-		XMLParser *xmlparser;
+		XmlParser *xmlparser;
 
 		//! \brief Export helper object
 		ModelExportHelper export_hlp;

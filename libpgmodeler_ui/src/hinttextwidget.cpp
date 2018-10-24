@@ -36,7 +36,7 @@ HintTextWidget::HintTextWidget(QWidget *btn_parent, QWidget *parent): QWidget(pa
 	hint_tb=new QToolButton(this);
 	hint_tb->setCheckable(true);
 	hint_tb->setToolButtonStyle(Qt::ToolButtonIconOnly);
-	hint_tb->setIcon(QPixmap(PgModelerUiNS::getIconPath("help")));
+	hint_tb->setIcon(QPixmap(PgModelerUiNs::getIconPath("help")));
 
 	shadow=new QGraphicsDropShadowEffect(this);
 	shadow->setOffset(5,5);
@@ -49,7 +49,7 @@ HintTextWidget::HintTextWidget(QWidget *btn_parent, QWidget *parent): QWidget(pa
 
 	this->setVisible(false);
 	text_lbl->installEventFilter(this);
-	PgModelerUiNS::configureWidgetFont(text_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(text_lbl, PgModelerUiNs::MEDIUM_FONT_FACTOR);
 
 	parent->installEventFilter(this);
 

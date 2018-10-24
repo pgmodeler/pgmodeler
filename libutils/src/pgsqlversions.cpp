@@ -18,24 +18,24 @@
 
 #include "pgsqlversions.h"
 
-namespace PgSQLVersions {
+namespace PgSqlVersions {
 	const QString
-	PgSQLVersion90=QString("9.0"),
-	PgSQLVersion91=QString("9.1"),
-	PgSQLVersion92=QString("9.2"),
-	PgSQLVersion93=QString("9.3"),
-	PgSQLVersion94=QString("9.4"),
-	PgSQLVersion95=QString("9.5"),
-	PgSQLVersion96=QString("9.6"),
-	PgSQLVersion100=QString("10.0"),
-	PgSQLVersion110=QString("11.0"),
-	DefaulVersion=PgSQLVersion110;
+	PgSqlVersion90=QString("9.0"),
+	PgSqlVersion91=QString("9.1"),
+	PgSqlVersion92=QString("9.2"),
+	PgSqlVersion93=QString("9.3"),
+	PgSqlVersion94=QString("9.4"),
+	PgSqlVersion95=QString("9.5"),
+	PgSqlVersion96=QString("9.6"),
+	PgSqlVersion100=QString("10.0"),
+	PgSqlVersion110=QString("11.0"),
+	DefaulVersion=PgSqlVersion110;
 
 	const QStringList
 	AllVersions={
-		PgSQLVersion110, PgSQLVersion100,
-		PgSQLVersion96, PgSQLVersion95,
-		PgSQLVersion94, PgSQLVersion93,
-		PgSQLVersion92, PgSQLVersion91,
-		PgSQLVersion90 };
+		PgSqlVersion110, PgSqlVersion100,
+		PgSqlVersion96, PgSqlVersion95,
+		PgSqlVersion94, PgSqlVersion93,
+		PgSqlVersion92, PgSqlVersion91,
+		PgSqlVersion90 };
 }

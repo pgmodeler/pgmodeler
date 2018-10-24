@@ -33,8 +33,8 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 {
 	setupUi(this);
 
-	sql_cmd_txt=PgModelerUiNS::createNumberedTextEditor(sql_cmd_wgt);
-	cmd_history_txt=PgModelerUiNS::createNumberedTextEditor(cmd_history_parent);
+	sql_cmd_txt=PgModelerUiNs::createNumberedTextEditor(sql_cmd_wgt);
+	cmd_history_txt=PgModelerUiNs::createNumberedTextEditor(cmd_history_parent);
 	cmd_history_txt->setCustomContextMenuEnabled(false);
 
 	cmd_history_txt->setTabStopWidth(sql_cmd_txt->getTabWidth());
@@ -85,9 +85,9 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 
 	results_tbw->setItemDelegate(new PlainTextItemDelegate(this, true));
 
-	action_load=new QAction(QIcon(PgModelerUiNS::getIconPath("abrir")), trUtf8("Load"), this);
-	action_save=new QAction(QIcon(PgModelerUiNS::getIconPath("salvar")), trUtf8("Save"), this);
-	action_save_as=new QAction(QIcon(PgModelerUiNS::getIconPath("salvar_como")), trUtf8("Save as"), this);
+	action_load=new QAction(QIcon(PgModelerUiNs::getIconPath("abrir")), trUtf8("Load"), this);
+	action_save=new QAction(QIcon(PgModelerUiNs::getIconPath("salvar")), trUtf8("Save"), this);
+	action_save_as=new QAction(QIcon(PgModelerUiNs::getIconPath("salvar_como")), trUtf8("Save as"), this);
 
 	file_menu.addAction(action_load);
 	file_menu.addAction(action_save);
@@ -283,7 +283,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 			item->setData(Qt::UserRole, type_names[res.getColumnTypeId(col)]);
 		}
 
-		if(res.accessTuple(ResultSet::FIRST_TUPLE))
+		if(res.accessTuple(ResultSet::FirstTuple))
 		{
 			results_tbw->setRowCount(res.getTupleCount());
 
@@ -317,7 +317,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 				results_tbw->setVerticalHeaderItem(row, new QTableWidgetItem(QString::number(row + 1)));
 				row++;
 			}
-			while(res.accessTuple(ResultSet::NEXT_TUPLE));
+			while(res.accessTuple(ResultSet::NextTuple));
 		}
 
 		results_tbw->setUpdatesEnabled(true);
@@ -338,16 +338,16 @@ void SQLExecutionWidget::handleExecutionAborted(Exception e)
 	switchToExecutionMode(false);
 	msgoutput_lst->clear();
 
-	PgModelerUiNS::createOutputListItem(msgoutput_lst,
+	PgModelerUiNs::createOutputListItem(msgoutput_lst,
 										QString("%1 %2").arg(time_str).arg(e.getErrorMessage()),
-										QPixmap(PgModelerUiNS::getIconPath("msgbox_erro")), false);
+										QPixmap(PgModelerUiNs::getIconPath("msgbox_erro")), false);
 
 	if(e.getErrorType()==ConnectionTimeout ||
 		 e.getErrorType()==ConnectionBroken)
 	{
-		PgModelerUiNS::createOutputListItem(msgoutput_lst,
+		PgModelerUiNs::createOutputListItem(msgoutput_lst,
 											QString("%1 %2").arg(time_str).arg(trUtf8("No results retrieved or changes done due to the error above! Run the command again.")),
-											QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")), false);
+											QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")), false);
 	}
 
 	msgoutput_lst->setVisible(true);
@@ -405,18 +405,18 @@ void SQLExecutionWidget::finishExecution(int rows_affected)
 
 		for(QString notice : sql_exec_hlp.getNotices())
 		{
-			PgModelerUiNS::createOutputListItem(msgoutput_lst,
+			PgModelerUiNs::createOutputListItem(msgoutput_lst,
 																					QString("[%1]: %2").arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))).arg(notice.trimmed()),
-																					QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")), false);
+																					QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")), false);
 		}
 
-		PgModelerUiNS::createOutputListItem(msgoutput_lst,
-																				PgModelerUiNS::formatMessage(trUtf8("[%1]: SQL command successfully executed in <em><strong>%2</strong></em>. <em>%3 <strong>%4</strong></em>")
+		PgModelerUiNs::createOutputListItem(msgoutput_lst,
+																				PgModelerUiNs::formatMessage(trUtf8("[%1]: SQL command successfully executed in <em><strong>%2</strong></em>. <em>%3 <strong>%4</strong></em>")
 																																		 .arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz")))
 																																		 .arg(total_exec >= 1000 ? QString("%1 s").arg(total_exec/1000) : QString("%1 ms").arg(total_exec))
 																																		 .arg(!res_model ? trUtf8("Rows affected") :  trUtf8("Rows retrieved"))
 																																		 .arg(rows_affected)),
-																				QPixmap(PgModelerUiNS::getIconPath("msgbox_info")));
+																				QPixmap(PgModelerUiNs::getIconPath("msgbox_info")));
 
 		output_tbw->setTabText(1, trUtf8("Messages (%1)").arg(msgoutput_lst->count()));
 	}
@@ -544,10 +544,10 @@ void SQLExecutionWidget::runSQLCommand(void)
 	output_tbw->setTabEnabled(0, false);
 	output_tbw->setTabText(0, trUtf8("Results"));
 	output_tbw->setCurrentIndex(1);
-	PgModelerUiNS::createOutputListItem(msgoutput_lst,
-																			PgModelerUiNS::formatMessage(trUtf8("[%1]: SQL command is running...")
+	PgModelerUiNs::createOutputListItem(msgoutput_lst,
+																			PgModelerUiNs::formatMessage(trUtf8("[%1]: SQL command is running...")
 																																	 .arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz")))),
-																			QPixmap(PgModelerUiNS::getIconPath("msgbox_info")));
+																			QPixmap(PgModelerUiNs::getIconPath("msgbox_info")));
 }
 
 void SQLExecutionWidget::saveCommands(void)
@@ -874,7 +874,7 @@ void SQLExecutionWidget::loadSQLHistory(void)
 {
 	try
 	{
-		XMLParser xmlparser;
+		XmlParser xmlparser;
 		attribs_map attribs;
 
 		xmlparser.setDTDFile(GlobalAttributes::TmplConfigurationDir +
@@ -892,7 +892,7 @@ void SQLExecutionWidget::loadSQLHistory(void)
 
 		cmd_history.clear();
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -901,13 +901,13 @@ void SQLExecutionWidget::loadSQLHistory(void)
 					xmlparser.getElementAttributes(attribs);
 					xmlparser.savePosition();
 
-					if(xmlparser.accessElement(XMLParser::ChildElement))
+					if(xmlparser.accessElement(XmlParser::ChildElement))
 						cmd_history[attribs[ParsersAttributes::CONNECTION]].append(xmlparser.getElementContent());
 
 					xmlparser.restorePosition();
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NextElement));
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 	}
 	catch(Exception &e)
@@ -967,14 +967,14 @@ void SQLExecutionWidget::enableSQLExecution(bool enable)
 void SQLExecutionWidget::showHistoryContextMenu(void)
 {
 	QMenu *ctx_menu=cmd_history_txt->createStandardContextMenu();
-	QAction *action_clear = new QAction(QPixmap(PgModelerUiNS::getIconPath("limpartexto")), trUtf8("Clear history"), ctx_menu),
-			*action_save = new QAction(QPixmap(PgModelerUiNS::getIconPath("salvar")), trUtf8("Save history"), ctx_menu),
-			*action_reload = new QAction(QPixmap(PgModelerUiNS::getIconPath("atualizar")), trUtf8("Reload history"), ctx_menu),
+	QAction *action_clear = new QAction(QPixmap(PgModelerUiNs::getIconPath("limpartexto")), trUtf8("Clear history"), ctx_menu),
+			*action_save = new QAction(QPixmap(PgModelerUiNs::getIconPath("salvar")), trUtf8("Save history"), ctx_menu),
+			*action_reload = new QAction(QPixmap(PgModelerUiNs::getIconPath("atualizar")), trUtf8("Reload history"), ctx_menu),
 			*action_toggle_find = nullptr,
 			*exec_act = nullptr;
 
 	if(!find_history_parent->isVisible())
-		action_toggle_find = new QAction(QPixmap(PgModelerUiNS::getIconPath("buscar")), trUtf8("Find in history"), ctx_menu);
+		action_toggle_find = new QAction(QPixmap(PgModelerUiNs::getIconPath("buscar")), trUtf8("Find in history"), ctx_menu);
 	else
 		action_toggle_find = new QAction(trUtf8("Hide find tool"), ctx_menu);
 

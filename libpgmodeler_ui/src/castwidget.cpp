@@ -71,14 +71,14 @@ void CastWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Cas
 
 	if(cast)
 	{
-		src_type=cast->getDataType(Cast::SRC_TYPE);
-		trg_type=cast->getDataType(Cast::DST_TYPE);
+		src_type=cast->getDataType(Cast::SrcType);
+		trg_type=cast->getDataType(Cast::DstType);
 
 		conv_func_sel->setSelectedObject(cast->getCastFunction());
 		input_output_chk->setChecked(cast->isInOut());
-		explicit_rb->setChecked(cast->getCastType()==Cast::EXPLICIT);
-		implicit_rb->setChecked(cast->getCastType()==Cast::IMPLICIT);
-		assignment_rb->setChecked(cast->getCastType()==Cast::ASSIGNMENT);
+		explicit_rb->setChecked(cast->getCastType()==Cast::Explicit);
+		implicit_rb->setChecked(cast->getCastType()==Cast::Implicit);
+		assignment_rb->setChecked(cast->getCastType()==Cast::Assignment);
 	}
 
 	src_datatype->setAttributes(src_type,model);
@@ -94,16 +94,16 @@ void CastWidget::applyConfiguration(void)
 		startConfiguration<Cast>();
 
 		cast=dynamic_cast<Cast *>(this->object);
-		cast->setDataType(Cast::SRC_TYPE, src_datatype->getPgSQLType());
-		cast->setDataType(Cast::DST_TYPE, trg_datatype->getPgSQLType());
+		cast->setDataType(Cast::SrcType, src_datatype->getPgSQLType());
+		cast->setDataType(Cast::DstType, trg_datatype->getPgSQLType());
 		cast->setInOut(input_output_chk->isChecked());
 
 		if(implicit_rb->isChecked())
-			cast->setCastType(Cast::IMPLICIT);
+			cast->setCastType(Cast::Implicit);
 		else if(assignment_rb->isChecked())
-			cast->setCastType(Cast::ASSIGNMENT);
+			cast->setCastType(Cast::Assignment);
 		else
-			cast->setCastType(Cast::EXPLICIT);
+			cast->setCastType(Cast::Explicit);
 
 		cast->setCastFunction(dynamic_cast<Function*>(conv_func_sel->getSelectedObject()));
 

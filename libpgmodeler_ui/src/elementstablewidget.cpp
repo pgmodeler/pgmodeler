@@ -38,15 +38,15 @@ ElementsTableWidget::ElementsTableWidget(QWidget *parent) : QWidget(parent)
 
 		elements_tab->setColumnCount(7);
 		elements_tab->setHeaderLabel(trUtf8("Element"), 0);
-		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("column")),0);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("column")),0);
 		elements_tab->setHeaderLabel(trUtf8("Type"), 1);
-		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
 		elements_tab->setHeaderLabel(trUtf8("Operator"), 2);
-		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("operator")),2);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("operator")),2);
 		elements_tab->setHeaderLabel(trUtf8("Operator Class"), 3);
-		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("opclass")),3);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("opclass")),3);
 		elements_tab->setHeaderLabel(trUtf8("Collation"), 4);
-		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("collation")),4);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("collation")),4);
 		elements_tab->setHeaderLabel(trUtf8("Sorting"), 5);
 		elements_tab->setHeaderLabel(trUtf8("Nulls First"), 6);
 

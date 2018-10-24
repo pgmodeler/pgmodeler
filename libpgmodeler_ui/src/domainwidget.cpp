@@ -40,10 +40,10 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, ObjDomain)
 		constr_tab->setColumnCount(2);
 
 		constr_tab->setHeaderLabel(trUtf8("Name"), 0);
-		constr_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("constraint_ck")), 0);
+		constr_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("constraint_ck")), 0);
 
 		constr_tab->setHeaderLabel(trUtf8("Expression"), 1);
-		constr_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("codigofonte")), 1);
+		constr_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("codigofonte")), 1);
 
 		grid = dynamic_cast<QGridLayout *>(dom_attribs_tbw->widget(1)->layout());
 		grid->addWidget(constr_tab, 2, 0, 1, 2);

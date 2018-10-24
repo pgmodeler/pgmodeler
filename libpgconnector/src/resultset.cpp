@@ -278,7 +278,7 @@ bool ResultSet::accessTuple(unsigned tuple_type)
 		is derived from a command which affects only rows or
 		The tuple type to be accessed is invalid, out of
 		set defined by the class */
-	if(empty_result || tuple_type > NEXT_TUPLE)
+	if(empty_result || tuple_type > NextTuple)
 		throw Exception(RefInvalidTuple, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	if(tuple_count==0)
@@ -289,20 +289,20 @@ bool ResultSet::accessTuple(unsigned tuple_type)
 
 		switch(tuple_type)
 		{
-			case FIRST_TUPLE:
+			case FirstTuple:
 				current_tuple=0;
 			break;
 
-			case LAST_TUPLE:
+			case LastTuple:
 				current_tuple=tuple_count-1;
 			break;
 
-			case PREVIOUS_TUPLE:
+			case PreviousTuple:
 				accessed=(current_tuple > 0);
 				if(accessed) current_tuple--;
 			break;
 
-			case NEXT_TUPLE:
+			case NextTuple:
 				accessed=(current_tuple < (tuple_count-1));
 				if(accessed) current_tuple++;
 			break;

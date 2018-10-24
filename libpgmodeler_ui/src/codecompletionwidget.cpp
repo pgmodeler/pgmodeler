@@ -49,7 +49,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	vbox->setSpacing(6);
 	completion_wgt->setLayout(vbox);
 
-	PgModelerUiNS::configureWidgetFont(name_list, PgModelerUiNS::MEDIUM_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(name_list, PgModelerUiNs::MEDIUM_FONT_FACTOR);
 
 	this->code_field_txt=code_field_txt;
 	auto_triggered=false;
@@ -228,7 +228,7 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
 			clearCustomItems();
 			insertCustomItems(SnippetsConfigWidget::getAllSnippetsAttribute(ParsersAttributes::ID),
 												SnippetsConfigWidget::getAllSnippetsAttribute(ParsersAttributes::LABEL),
-												QPixmap(PgModelerUiNS::getIconPath("codesnippet")));
+												QPixmap(PgModelerUiNs::getIconPath("codesnippet")));
 		}
 	}
 	else
@@ -259,7 +259,7 @@ void CodeCompletionWidget::insertCustomItems(const QStringList &names, const QSt
 void CodeCompletionWidget::insertCustomItems(const QStringList &names, const QString &tooltip, ObjectType obj_type)
 {
 	for(auto &name : names)
-		insertCustomItem(name, tooltip, QPixmap(PgModelerUiNS::getIconPath(obj_type)));
+		insertCustomItem(name, tooltip, QPixmap(PgModelerUiNs::getIconPath(obj_type)));
 }
 
 void CodeCompletionWidget::clearCustomItems(void)
@@ -295,7 +295,7 @@ void CodeCompletionWidget::populateNameList(vector<BaseObject *> &objects, QStri
 		//The object will be inserted if its name matches the filter or there is no filter set
 		if(filter.isEmpty() || regexp.exactMatch(obj_name))
 		{
-			item=new QListWidgetItem(QPixmap(PgModelerUiNS::getIconPath(objects[i]->getSchemaName())), obj_name);
+			item=new QListWidgetItem(QPixmap(PgModelerUiNs::getIconPath(objects[i]->getSchemaName())), obj_name);
 			item->setToolTip(QString("%1 (%2)").arg(objects[i]->getName(true)).arg(objects[i]->getTypeName()));
 			item->setData(Qt::UserRole, QVariant::fromValue<void *>(objects[i]));
 			item->setToolTip(BaseObject::getTypeName(obj_type));
@@ -447,7 +447,7 @@ void CodeCompletionWidget::updateList(void)
 		list=keywords.filter(regexp);
 		for(int i=0; i < list.size(); i++)
 		{
-			item=new QListWidgetItem(QPixmap(PgModelerUiNS::getIconPath("keyword")), list[i]);
+			item=new QListWidgetItem(QPixmap(PgModelerUiNs::getIconPath("keyword")), list[i]);
 			item->setToolTip(trUtf8("SQL Keyword"));
 			name_list->addItem(item);
 		}

@@ -41,7 +41,7 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 	//Creates a combo with the accepted object type
 	for(auto &itr : types_map)
 	{
-		ico.load(PgModelerUiNS::getIconPath(itr.second));
+		ico.load(PgModelerUiNs::getIconPath(itr.second));
 		applies_to_cmb->addItem(ico, itr.first, itr.second);
 		filter_cmb->addItem(ico, itr.first, itr.second);
 	}
@@ -59,7 +59,7 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 	placeholders_ht=new HintTextWidget(placeholders_hint, this);
 	placeholders_ht->setText(placeholders_chk->statusTip());
 
-	snippet_txt=PgModelerUiNS::createNumberedTextEditor(snippet_wgt);
+	snippet_txt=PgModelerUiNs::createNumberedTextEditor(snippet_wgt);
 
 	try
 	{
@@ -534,7 +534,7 @@ void SnippetsConfigWidget::configureSnippetsMenu(QMenu *snip_menu, vector<Object
 				type_name=trUtf8("General");
 			}
 			else
-				ico=QPixmap(PgModelerUiNS::getIconPath(object));
+				ico=QPixmap(PgModelerUiNs::getIconPath(object));
 
 			menu=new QMenu(type_name, snip_menu);
 			menu->setIcon(ico);
@@ -548,7 +548,7 @@ void SnippetsConfigWidget::configureSnippetsMenu(QMenu *snip_menu, vector<Object
 		}
 
 		//Creating the action for the current snippet
-		act=new QAction(QPixmap(PgModelerUiNS::getIconPath("codesnippet")), snip_id, submenus[object]);
+		act=new QAction(QPixmap(PgModelerUiNs::getIconPath("codesnippet")), snip_id, submenus[object]);
 		act->setToolTip(snip[ParsersAttributes::LABEL]);
 		submenus[object]->addAction(act);
 	}

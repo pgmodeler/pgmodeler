@@ -31,10 +31,10 @@ AboutWidget::AboutWidget(QWidget *parent) : QWidget(parent)
 	drop_shadow->setBlurRadius(30);
 	this->setGraphicsEffect(drop_shadow);
 
-	PgModelerUiNS::configureWidgetFont(title_lbl, PgModelerUiNS::HUGE_FONT_FACTOR);
-	PgModelerUiNS::configureWidgetFont(pgmodeler_ver_lbl, PgModelerUiNS::HUGE_FONT_FACTOR);
-	PgModelerUiNS::configureWidgetFont(build_lbl, PgModelerUiNS::BIG_FONT_FACTOR);
-	PgModelerUiNS::configureWidgetFont(build_num_lbl, PgModelerUiNS::BIG_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(title_lbl, PgModelerUiNs::HUGE_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(pgmodeler_ver_lbl, PgModelerUiNs::HUGE_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(build_lbl, PgModelerUiNs::BIG_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(build_num_lbl, PgModelerUiNs::BIG_FONT_FACTOR);
 
 	pgmodeler_ver_lbl->setText(QString("v%1 ").arg(GlobalAttributes::PgModelerVersion));
 	build_num_lbl->setText(QString("%1 Qt %2").arg(GlobalAttributes::PgModelerBuildNumber).arg(QT_VERSION_STR));

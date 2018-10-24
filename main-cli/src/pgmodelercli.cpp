@@ -1150,7 +1150,7 @@ void PgModelerCLI::fixOpClassesFamiliesReferences(QString &obj_xml)
 			obj_name.remove('"');
 
 			//Transforming xml entity for quote into the char
-			obj_name.replace(XMLParser::CharQuot, QString("\""));
+			obj_name.replace(XmlParser::CharQuot, QString("\""));
 
 			for(QString idx_type : index_types)
 			{
@@ -1160,7 +1160,7 @@ void PgModelerCLI::fixOpClassesFamiliesReferences(QString &obj_xml)
 				if(model->getObjectIndex(aux_obj_name, ref_obj_type) >= 0)
 				{
 					//Replacing the old signature with the corrected form
-					aux_obj_name.replace(QString("\""), XMLParser::CharQuot);
+					aux_obj_name.replace(QString("\""), XmlParser::CharQuot);
 					obj_xml.replace(pos, sign_regexp.matchedLength(), QString("signature=\"%1\"").arg(aux_obj_name));
 					break;
 				}

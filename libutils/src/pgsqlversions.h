@@ -28,17 +28,17 @@
 
 #include <QStringList>
 
-namespace PgSQLVersions {
+namespace PgSqlVersions {
 	extern const QString
-	PgSQLVersion90,
-	PgSQLVersion91,
-	PgSQLVersion92,
-	PgSQLVersion93,
-	PgSQLVersion94,
-	PgSQLVersion95,
-	PgSQLVersion96,
-	PgSQLVersion100,
-	PgSQLVersion110,
+	PgSqlVersion90,
+	PgSqlVersion91,
+	PgSqlVersion92,
+	PgSqlVersion93,
+	PgSqlVersion94,
+	PgSqlVersion95,
+	PgSqlVersion96,
+	PgSqlVersion100,
+	PgSqlVersion110,
 	DefaulVersion;
 
 	extern const QStringList AllVersions;

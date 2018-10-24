@@ -91,21 +91,21 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjView)
 
 		objects_tab_map[ObjTrigger]->setColumnCount(4);
 		objects_tab_map[ObjTrigger]->setHeaderLabel(trUtf8("Name"), 0);
-		objects_tab_map[ObjTrigger]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
+		objects_tab_map[ObjTrigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
 		objects_tab_map[ObjTrigger]->setHeaderLabel(trUtf8("Refer. Table"), 1);
-		objects_tab_map[ObjTrigger]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("table")),1);
+		objects_tab_map[ObjTrigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("table")),1);
 		objects_tab_map[ObjTrigger]->setHeaderLabel(trUtf8("Firing"), 2);
-		objects_tab_map[ObjTrigger]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("trigger")),2);
+		objects_tab_map[ObjTrigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("trigger")),2);
 		objects_tab_map[ObjTrigger]->setHeaderLabel(trUtf8("Events"), 3);
 
 		objects_tab_map[ObjIndex]->setColumnCount(2);
 		objects_tab_map[ObjIndex]->setHeaderLabel(trUtf8("Name"), 0);
-		objects_tab_map[ObjIndex]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
+		objects_tab_map[ObjIndex]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
 		objects_tab_map[ObjIndex]->setHeaderLabel(trUtf8("Indexing"), 1);
 
 		objects_tab_map[ObjRule]->setColumnCount(3);
 		objects_tab_map[ObjRule]->setHeaderLabel(trUtf8("Name"), 0);
-		objects_tab_map[ObjRule]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
+		objects_tab_map[ObjRule]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
 		objects_tab_map[ObjRule]->setHeaderLabel(trUtf8("Execution"), 1);
 		objects_tab_map[ObjRule]->setHeaderLabel(trUtf8("Event"), 2);
 
@@ -113,9 +113,9 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjView)
 		tablespace_lbl->setEnabled(false);
 		configureFormLayout(view_grid, ObjView);
 
-		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PgSQLVersion93)].push_back(recursive_rb);
-		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PgSQLVersion93)].push_back(materialized_rb);
-		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PgSQLVersion93)].push_back(with_no_data_chk);
+		fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion93)].push_back(recursive_rb);
+		fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion93)].push_back(materialized_rb);
+		fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion93)].push_back(with_no_data_chk);
 		frame=generateVersionWarningFrame(fields_map);
 		view_grid->addWidget(frame, view_grid->count()+1, 0, 1,3);
 		frame->setParent(this);
@@ -216,8 +216,8 @@ void ViewWidget::duplicateObject(int curr_row, int new_row)
 		if(curr_row >= 0)
 			object = reinterpret_cast<BaseObject *>(obj_table->getRowData(curr_row).value<void *>());
 
-		PgModelerNS::copyObject(&dup_object, object, obj_type);
-		dup_object->setName(PgModelerNS::generateUniqueName(dup_object, *view->getObjectList(obj_type), false, QString("_cp")));
+		PgModelerNs::copyObject(&dup_object, object, obj_type);
+		dup_object->setName(PgModelerNs::generateUniqueName(dup_object, *view->getObjectList(obj_type), false, QString("_cp")));
 
 		op_id=op_list->registerObject(dup_object, Operation::OBJECT_CREATED, new_row, this->object);
 

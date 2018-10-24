@@ -8,7 +8,7 @@
 #include "baseform.h"
 #include "bulkdataeditwidget.h"
 
-namespace PgModelerUiNS {
+namespace PgModelerUiNs {
 
 	NumberedTextEditor *createNumberedTextEditor(QWidget *parent, bool handle_ext_files)
 	{

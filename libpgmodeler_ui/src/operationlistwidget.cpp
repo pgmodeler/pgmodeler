@@ -98,14 +98,14 @@ void OperationListWidget::updateOperationList(void)
 			if(obj_type==ObjBaseRelationship)
 				str_aux+=QString("tv");
 
-			item->setIcon(0,QPixmap(PgModelerUiNS::getIconPath(str_aux)));
+			item->setIcon(0,QPixmap(PgModelerUiNs::getIconPath(str_aux)));
 
 			operations_tw->insertTopLevelItem(i,item);
 			item->setFont(0,font);
 			item->setText(0,trUtf8("Object: %1").arg(BaseObject::getTypeName(obj_type)));
 
 			item2=new QTreeWidgetItem(item);
-			item2->setIcon(0,QPixmap(PgModelerUiNS::getIconPath("uid")));
+			item2->setIcon(0,QPixmap(PgModelerUiNs::getIconPath("uid")));
 			item2->setFont(0,font);
 			item2->setText(0,trUtf8("Name: %1").arg(obj_name));
 
@@ -131,7 +131,7 @@ void OperationListWidget::updateOperationList(void)
 			}
 
 			item1=new QTreeWidgetItem(item);
-			item1->setIcon(0,QPixmap(PgModelerUiNS::getIconPath(op_icon)));
+			item1->setIcon(0,QPixmap(PgModelerUiNs::getIconPath(op_icon)));
 			item1->setFont(0,font);
 			item1->setText(0,trUtf8("Operation: %1").arg(op_name));
 

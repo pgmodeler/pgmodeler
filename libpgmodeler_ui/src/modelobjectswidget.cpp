@@ -164,7 +164,7 @@ void ModelObjectsWidget::selectObject(void)
 				obj_type!=ObjColumn && obj_type!=ObjConstraint && obj_type!=ObjRule &&
 				obj_type!=ObjIndex && obj_type!=ObjTrigger && obj_type!=ObjPermission)
 		{
-			QAction act(QPixmap(PgModelerUiNS::getIconPath(obj_type)),
+			QAction act(QPixmap(PgModelerUiNs::getIconPath(obj_type)),
 						trUtf8("New") + QString(" ") + BaseObject::getTypeName(obj_type), nullptr);
 			QMenu popup;
 
@@ -285,20 +285,20 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
 
 		if(obj_type==ObjBaseRelationship)
 		{
-			if(rel_type==BaseRelationship::RELATIONSHIP_FK)
+			if(rel_type==BaseRelationship::RelationshipFk)
 				str_aux=QString("fk");
 			else
 				str_aux=QString("tv");
 		}
-		else if(rel_type==BaseRelationship::RELATIONSHIP_11)
+		else if(rel_type==BaseRelationship::Relationship11)
 			str_aux=QString("11");
-		else if(rel_type==BaseRelationship::RELATIONSHIP_1N)
+		else if(rel_type==BaseRelationship::Relationship1n)
 			str_aux=QString("1n");
-		else if(rel_type==BaseRelationship::RELATIONSHIP_NN)
+		else if(rel_type==BaseRelationship::RelationshipNn)
 			str_aux=QString("nn");
-		else if(rel_type==BaseRelationship::RELATIONSHIP_DEP)
+		else if(rel_type==BaseRelationship::RelationshipDep)
 			str_aux=QString("dep");
-		else if(rel_type==BaseRelationship::RELATIONSHIP_GEN)
+		else if(rel_type==BaseRelationship::RelationshipGen)
 			str_aux=QString("gen");
 	}
 	else if(obj_type==ObjConstraint)
@@ -317,7 +317,7 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
 			str_aux=QString("_%1").arg(TableObjectView::TextExclude);
 	}
 
-	item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(obj_type) + str_aux)));
+	item->setIcon(0, QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(obj_type) + str_aux)));
 
 	return(item);
 }
@@ -469,7 +469,7 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 		QTreeWidgetItem *item=nullptr, *item1=nullptr, *item2=nullptr, *item3=nullptr;
 		vector<ObjectType> types = BaseObject::getChildObjectTypes(ObjSchema);
 		int count, count2, i;
-		QPixmap group_icon=QPixmap(PgModelerUiNS::getIconPath(QString(BaseObject::getSchemaName(ObjSchema)) + QString("_grp")));
+		QPixmap group_icon=QPixmap(PgModelerUiNs::getIconPath(QString(BaseObject::getSchemaName(ObjSchema)) + QString("_grp")));
 
 		//Removing the ObjTable and ObjView types since they are handled separetedly
 		types.erase(std::find(types.begin(), types.end(), ObjTable));
@@ -516,7 +516,7 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 					if(visible_objs_map[type])
 					{
 						item3=new QTreeWidgetItem(item2);
-						item3->setIcon(0,QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))));
+						item3->setIcon(0,QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))));
 
 						//Get the objects that belongs to the current schema
 						obj_list=db_model->getObjects(type, schema);
@@ -551,7 +551,7 @@ void ModelObjectsWidget::updateTableTree(QTreeWidgetItem *root, BaseObject *sche
 		QTreeWidgetItem *item=nullptr, *item1=nullptr, *item2=nullptr;
 		QFont font;
 		vector<ObjectType> types = BaseObject::getChildObjectTypes(ObjTable);
-		QPixmap group_icon=QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(ObjTable) + QString("_grp")));
+		QPixmap group_icon=QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(ObjTable) + QString("_grp")));
 
 		try
 		{
@@ -580,7 +580,7 @@ void ModelObjectsWidget::updateTableTree(QTreeWidgetItem *root, BaseObject *sche
 					if(visible_objs_map[type])
 					{
 						item2=new QTreeWidgetItem(item1);
-						item2->setIcon(0,QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))));
+						item2->setIcon(0,QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))));
 						font=item2->font(0);
 						font.setItalic(true);
 						item2->setFont(0, font);
@@ -611,7 +611,7 @@ void ModelObjectsWidget::updateViewTree(QTreeWidgetItem *root, BaseObject *schem
 		QFont font;
 		ObjectType types[]={ ObjRule, ObjTrigger, ObjIndex };
 		int count, count1, type_cnt=sizeof(types)/sizeof(ObjectType), i, i1, i2;
-		QPixmap group_icon=QPixmap(PgModelerUiNS::getIconPath(QString(BaseObject::getSchemaName(ObjView)) + QString("_grp")));
+		QPixmap group_icon=QPixmap(PgModelerUiNs::getIconPath(QString(BaseObject::getSchemaName(ObjView)) + QString("_grp")));
 
 		try
 		{
@@ -641,7 +641,7 @@ void ModelObjectsWidget::updateViewTree(QTreeWidgetItem *root, BaseObject *schem
 					if(visible_objs_map[types[i1]])
 					{
 						item2=new QTreeWidgetItem(item1);
-						item2->setIcon(0,QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(types[i1]) + QString("_grp"))));
+						item2->setIcon(0,QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(types[i1]) + QString("_grp"))));
 						font=item2->font(0);
 						font.setItalic(true);
 						item2->setFont(0, font);
@@ -678,7 +678,7 @@ void ModelObjectsWidget::updatePermissionTree(QTreeWidgetItem *root, BaseObject 
 			QFont font=item->font(0);
 
 			db_model->getPermissions(object, perms);
-			item->setIcon(0,QPixmap(PgModelerUiNS::getIconPath("permission_grp")));
+			item->setIcon(0,QPixmap(PgModelerUiNs::getIconPath("permission_grp")));
 
 			font.setItalic(true);
 			item->setFont(0, font);
@@ -735,7 +735,7 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 						item1=new QTreeWidgetItem(root);
 						str_aux=QString(BaseObject::getSchemaName(types[i]));
 
-						item1->setIcon(0,QPixmap(PgModelerUiNS::getIconPath(str_aux + QString("_grp"))));
+						item1->setIcon(0,QPixmap(PgModelerUiNs::getIconPath(str_aux + QString("_grp"))));
 						item1->setData(1, Qt::UserRole, QVariant::fromValue<unsigned>(types[i]));
 
 						obj_list=(*db_model->getObjectList(types[i]));

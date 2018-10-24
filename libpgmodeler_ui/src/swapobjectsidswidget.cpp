@@ -12,7 +12,7 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 																   ObjColumn, ObjConstraint });
 		setupUi(this);
 
-		PgModelerUiNS::configureWidgetFont(message_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
+		PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MEDIUM_FONT_FACTOR);
 
 		src_object_sel=nullptr;
 		dst_object_sel=nullptr;
@@ -156,7 +156,7 @@ void SwapObjectsIdsWidget::showObjectId(void)
 	if(sel_obj)
 	{
 		id_lbl->setText(ID_LABEL.arg(sel_obj->getObjectId()));
-		ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(sel_obj->getObjectType())));
+		ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(sel_obj->getObjectType())));
 		ico_lbl->setToolTip(sel_obj->getTypeName());
 
 		id_lbl->setVisible(true);

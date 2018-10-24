@@ -38,8 +38,8 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjRole)
 	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 4);
 	frame->setParent(this);
 
-	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PgSQLVersion91)].push_back(can_replicate_chk);
-	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PgSQLVersion95)].push_back(bypass_rls_chk);
+	fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion91)].push_back(can_replicate_chk);
+	fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion95)].push_back(bypass_rls_chk);
 	frame=generateVersionWarningFrame(fields_map);
 	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 0);
 	frame->setParent(this);
@@ -57,19 +57,19 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjRole)
 		obj_tab->setColumnCount(5);
 
 		obj_tab->setHeaderLabel(trUtf8("Role"),0);
-		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),0);
+		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("role")),0);
 
 		obj_tab->setHeaderLabel(trUtf8("Validity"),1);
-		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("validade")),1);
+		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("validade")),1);
 
 		obj_tab->setHeaderLabel(trUtf8("Member of"),2);
-		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),2);
+		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("role")),2);
 
 		obj_tab->setHeaderLabel(trUtf8("Members"),3);
-		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),3);
+		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("role")),3);
 
 		obj_tab->setHeaderLabel(trUtf8("Members (Admin.)"),4);
-		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),4);
+		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("role")),4);
 
 		grid=new QGridLayout;
 		grid->addWidget(obj_tab,0,0,1,1);

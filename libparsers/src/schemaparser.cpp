@@ -65,26 +65,26 @@ SchemaParser::SchemaParser(void)
 {
 	line=column=comment_count=0;
 	ignore_unk_atribs=ignore_empty_atribs=false;
-	pgsql_version=PgSQLVersions::DefaulVersion;
+	pgsql_version=PgSqlVersions::DefaulVersion;
 }
 
 void SchemaParser::setPgSQLVersion(const QString &pgsql_ver)
 {
 	unsigned curr_ver = QString(pgsql_ver).remove('.').toUInt(),
-			version90 = QString(PgSQLVersions::PgSQLVersion90).remove('.').toUInt(),
-			default_ver = QString(PgSQLVersions::DefaulVersion).remove('.').toUInt();
+			version90 = QString(PgSqlVersions::PgSqlVersion90).remove('.').toUInt(),
+			default_ver = QString(PgSqlVersions::DefaulVersion).remove('.').toUInt();
 
 	if(curr_ver != 0 && (curr_ver < version90))
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvPostgreSQLVersion)
 						.arg(pgsql_ver)
-						.arg(PgSQLVersions::PgSQLVersion90)
-						.arg(PgSQLVersions::DefaulVersion),
+						.arg(PgSqlVersions::PgSqlVersion90)
+						.arg(PgSqlVersions::DefaulVersion),
 						InvPostgreSQLVersion,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(curr_ver > 0 && curr_ver <= default_ver)
 		pgsql_version=pgsql_ver;
 	else
-		pgsql_version=PgSQLVersions::DefaulVersion;
+		pgsql_version=PgSqlVersions::DefaulVersion;
 }
 
 QString SchemaParser::getPgSQLVersion(void)
@@ -979,14 +979,14 @@ QString SchemaParser::convertCharsToXMLEntities(QString buf)
 					if(str_aux.contains(QRegExp("(&|\\<|\\>|\")")))
 					{
 						//Replaces the char by the XML entities
-						if(!str_aux.contains(XMLParser::CharQuot) && !str_aux.contains(XMLParser::CharLt) &&
-								!str_aux.contains(XMLParser::CharGt) && !str_aux.contains(XMLParser::CharAmp) &&
-								!str_aux.contains(XMLParser::CharApos) && str_aux.contains('&'))
-							str_aux.replace('&', XMLParser::CharAmp);
+						if(!str_aux.contains(XmlParser::CharQuot) && !str_aux.contains(XmlParser::CharLt) &&
+								!str_aux.contains(XmlParser::CharGt) && !str_aux.contains(XmlParser::CharAmp) &&
+								!str_aux.contains(XmlParser::CharApos) && str_aux.contains('&'))
+							str_aux.replace('&', XmlParser::CharAmp);
 
-						str_aux.replace('"',XMLParser::CharQuot);
-						str_aux.replace('<',XMLParser::CharLt);
-						str_aux.replace('>',XMLParser::CharGt);
+						str_aux.replace('"',XmlParser::CharQuot);
+						str_aux.replace('<',XmlParser::CharLt);
+						str_aux.replace('>',XmlParser::CharGt);
 
 						//Puts on the original XML definition the modified string
 						lin.replace(attr_start, count, str_aux);

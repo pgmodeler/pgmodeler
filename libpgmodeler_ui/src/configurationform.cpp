@@ -123,7 +123,7 @@ void ConfigurationForm::loadConfiguration(void)
 			{
 				Exception ex = Exception(Exception::getErrorMessage(ConfigurationNotLoaded).arg(e.getExtraInfo()),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 				msg_box.show(ex, QString("%1 %2").arg(ex.getErrorMessage()).arg(trUtf8("In some cases restore the default settings related to it may solve the problem. Would like to do that?")),
-										 Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS, trUtf8("Restore"), QString(), QString(), PgModelerUiNS::getIconPath("atualizar"));
+										 Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS, trUtf8("Restore"), QString(), QString(), PgModelerUiNs::getIconPath("atualizar"));
 
 				if(msg_box.result() == QDialog::Accepted)
 					config_wgt->restoreDefaults();

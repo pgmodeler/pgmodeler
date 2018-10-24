@@ -33,7 +33,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	v_splitter->setSizes({1000, 400});
 
 	sql_exec_corner_btn = new QToolButton;
-	sql_exec_corner_btn->setIcon(QPixmap(PgModelerUiNS::getIconPath("newtab")));
+	sql_exec_corner_btn->setIcon(QPixmap(PgModelerUiNs::getIconPath("newtab")));
 	sql_exec_corner_btn->setIconSize(QSize(18, 18));
 	sql_exec_corner_btn->setStyleSheet("QToolButton { margin-left: 4px; margin-bottom: 4px; padding: 2px; }");
 	sql_exec_corner_btn->setShortcut(QKeySequence("Ctrl+T"));

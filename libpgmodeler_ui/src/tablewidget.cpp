@@ -41,7 +41,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, ObjTable)
 	Ui_TableWidget::setupUi(this);
 
 	edt_data_tb=new QPushButton(this);
-	QPixmap icon=QPixmap(PgModelerUiNS::getIconPath("editdata"));
+	QPixmap icon=QPixmap(PgModelerUiNs::getIconPath("editdata"));
 	edt_data_tb->setMinimumSize(edt_perms_tb->minimumSize());
 	edt_data_tb->setText(trUtf8("Edit data"));
 	edt_data_tb->setToolTip(trUtf8("Define initial data for the table"));
@@ -51,10 +51,10 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, ObjTable)
 	connect(edt_data_tb, SIGNAL(clicked(bool)), this, SLOT(editData()));
 	misc_btns_lt->insertWidget(1, edt_data_tb);
 
-	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PgSQLVersion91)].push_back(unlogged_chk);
-	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PgSQLVersion95)].push_back(enable_rls_chk);
-	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PgSQLVersion95)].push_back(force_rls_chk);
-	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PgSQLVersion100)].push_back(partitioning_type_lbl);
+	fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion91)].push_back(unlogged_chk);
+	fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion95)].push_back(enable_rls_chk);
+	fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion95)].push_back(force_rls_chk);
+	fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion100)].push_back(partitioning_type_lbl);
 	frame=generateVersionWarningFrame(fields_map);
 	table_grid->addWidget(frame, table_grid->count()+1, 0, 1, 2);
 	frame->setParent(this);
@@ -62,11 +62,11 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, ObjTable)
 	parent_tables = new ObjectsTableWidget(ObjectsTableWidget::NO_BUTTONS, true, this);
 	parent_tables->setColumnCount(3);
 	parent_tables->setHeaderLabel(trUtf8("Name"), 0);
-	parent_tables->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
+	parent_tables->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
 	parent_tables->setHeaderLabel(trUtf8("Schema"), 1);
-	parent_tables->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("schema")),1);
+	parent_tables->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("schema")),1);
 	parent_tables->setHeaderLabel(trUtf8("Type"), 2);
-	parent_tables->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),2);
+	parent_tables->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),2);
 
 	tag_sel = new ObjectSelectorWidget(ObjTag, false, this);
 	vbox = new QVBoxLayout(tag_sel_parent);
@@ -102,9 +102,9 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, ObjTable)
 	objects_tab_map[ObjColumn]->setColumnCount(6);
 	objects_tab_map[ObjColumn]->setHeaderLabel(trUtf8("PK"), 0);
 	objects_tab_map[ObjColumn]->setHeaderLabel(trUtf8("Name"), 1);
-	objects_tab_map[ObjColumn]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),1);
+	objects_tab_map[ObjColumn]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),1);
 	objects_tab_map[ObjColumn]->setHeaderLabel(trUtf8("Type"), 2);
-	objects_tab_map[ObjColumn]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),2);
+	objects_tab_map[ObjColumn]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),2);
 	objects_tab_map[ObjColumn]->setHeaderLabel(trUtf8("Default Value"), 3);
 	objects_tab_map[ObjColumn]->setHeaderLabel(trUtf8("Attribute(s)"), 4);
 	objects_tab_map[ObjColumn]->setHeaderLabel(trUtf8("Alias"), 5);
@@ -126,46 +126,46 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, ObjTable)
 
 	objects_tab_map[ObjConstraint]->setColumnCount(5);
 	objects_tab_map[ObjConstraint]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[ObjConstraint]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
+	objects_tab_map[ObjConstraint]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
 	objects_tab_map[ObjConstraint]->setHeaderLabel(trUtf8("Type"), 1);
-	objects_tab_map[ObjConstraint]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
+	objects_tab_map[ObjConstraint]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
 	objects_tab_map[ObjConstraint]->setHeaderLabel(trUtf8("ON DELETE"), 2);
 	objects_tab_map[ObjConstraint]->setHeaderLabel(trUtf8("ON UPDATE"), 3);
 	objects_tab_map[ObjConstraint]->setHeaderLabel(trUtf8("Alias"), 4);
 
 	objects_tab_map[ObjTrigger]->setColumnCount(5);
 	objects_tab_map[ObjTrigger]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[ObjTrigger]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
+	objects_tab_map[ObjTrigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
 	objects_tab_map[ObjTrigger]->setHeaderLabel(trUtf8("Refer. Table"), 1);
-	objects_tab_map[ObjTrigger]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("table")),1);
+	objects_tab_map[ObjTrigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("table")),1);
 	objects_tab_map[ObjTrigger]->setHeaderLabel(trUtf8("Firing"), 2);
-	objects_tab_map[ObjTrigger]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("trigger")),2);
+	objects_tab_map[ObjTrigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("trigger")),2);
 	objects_tab_map[ObjTrigger]->setHeaderLabel(trUtf8("Events"), 3);
 	objects_tab_map[ObjTrigger]->setHeaderLabel(trUtf8("Alias"), 4);
 
 	objects_tab_map[ObjRule]->setColumnCount(4);
 	objects_tab_map[ObjRule]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[ObjRule]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
+	objects_tab_map[ObjRule]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
 	objects_tab_map[ObjRule]->setHeaderLabel(trUtf8("Execution"), 1);
 	objects_tab_map[ObjRule]->setHeaderLabel(trUtf8("Event"), 2);
 	objects_tab_map[ObjRule]->setHeaderLabel(trUtf8("Alias"), 3);
 
 	objects_tab_map[ObjIndex]->setColumnCount(3);
 	objects_tab_map[ObjIndex]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[ObjIndex]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
+	objects_tab_map[ObjIndex]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
 	objects_tab_map[ObjIndex]->setHeaderLabel(trUtf8("Indexing"), 1);
 	objects_tab_map[ObjIndex]->setHeaderLabel(trUtf8("Alias"), 2);
 
 	objects_tab_map[ObjPolicy]->setColumnCount(7);
 	objects_tab_map[ObjPolicy]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[ObjPolicy]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
+	objects_tab_map[ObjPolicy]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
 	objects_tab_map[ObjPolicy]->setHeaderLabel(trUtf8("Command"), 1);
-	objects_tab_map[ObjPolicy]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("keyword")),1);
+	objects_tab_map[ObjPolicy]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("keyword")),1);
 	objects_tab_map[ObjPolicy]->setHeaderLabel(trUtf8("Permissive"), 2);
 	objects_tab_map[ObjPolicy]->setHeaderLabel(trUtf8("USING expression"), 3);
 	objects_tab_map[ObjPolicy]->setHeaderLabel(trUtf8("CHECK expression"), 4);
 	objects_tab_map[ObjPolicy]->setHeaderLabel(trUtf8("Roles"), 5);
-	objects_tab_map[ObjPolicy]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),5);
+	objects_tab_map[ObjPolicy]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("role")),5);
 	objects_tab_map[ObjPolicy]->setHeaderLabel(trUtf8("Alias"), 6);
 
 	partition_keys_tab = new ElementsTableWidget;
@@ -730,8 +730,8 @@ void TableWidget::duplicateObject(int sel_row, int new_row)
 		if(sel_row >= 0)
 			object = reinterpret_cast<BaseObject *>(obj_table->getRowData(sel_row).value<void *>());
 
-		PgModelerNS::copyObject(&dup_object, object, obj_type);
-		dup_object->setName(PgModelerNS::generateUniqueName(dup_object, *table->getObjectList(obj_type), false, QString("_cp")));
+		PgModelerNs::copyObject(&dup_object, object, obj_type);
+		dup_object->setName(PgModelerNs::generateUniqueName(dup_object, *table->getObjectList(obj_type), false, QString("_cp")));
 
 		op_id=op_list->registerObject(dup_object, Operation::OBJECT_CREATED, new_row, this->object);
 
@@ -861,17 +861,17 @@ void TableWidget::applyConfiguration(void)
 
 				pk = new Constraint;
 				pk->setName(pk_name);
-				pk->setName(PgModelerNS::generateUniqueName(pk, *table->getObjectList(ObjConstraint)));
+				pk->setName(PgModelerNs::generateUniqueName(pk, *table->getObjectList(ObjConstraint)));
 
 				for(Column *col : pk_cols)
-					pk->addColumn(col, Constraint::SOURCE_COLS);
+					pk->addColumn(col, Constraint::SourceCols);
 
 				table->addConstraint(pk);
 				op_list->registerObject(pk, Operation::OBJECT_CREATED, -1, table);
 			}
 			else if(!pk->isAddedByRelationship())
 			{
-			  vector<Column *> orig_pk_cols = pk->getColumns(Constraint::SOURCE_COLS);
+			  vector<Column *> orig_pk_cols = pk->getColumns(Constraint::SourceCols);
 
 				//If the table owns a pk we only update the columns
 				op_list->registerObject(pk, Operation::OBJECT_MODIFIED, -1, table);
@@ -882,13 +882,13 @@ void TableWidget::applyConfiguration(void)
 				for(auto col : orig_pk_cols)
 				{
 				  if(std::find(pk_cols.begin(), pk_cols.end(), col) != pk_cols.end())
-					pk->addColumn(col, Constraint::SOURCE_COLS);
+					pk->addColumn(col, Constraint::SourceCols);
 				}
 
 				/* Adding the other columns selected in the grid as pk columns.
 				 * Duplicated columns are discarded by the method Constraint::addColumn */
 				for(Column *col : pk_cols)
-					pk->addColumn(col, Constraint::SOURCE_COLS);
+					pk->addColumn(col, Constraint::SourceCols);
 			}
 		}
 		else if(pk_cols.empty() && pk && !pk->isAddedByRelationship())
@@ -927,9 +927,9 @@ void TableWidget::applyConfiguration(void)
 			rels=model->getRelationships(table);
 			for(auto &rel : rels)
 			{
-				if(rel->getRelationshipType()==Relationship::RELATIONSHIP_11 ||
-						rel->getRelationshipType()==Relationship::RELATIONSHIP_1N ||
-						rel->getRelationshipType()==Relationship::RELATIONSHIP_FK)
+				if(rel->getRelationshipType()==Relationship::Relationship11 ||
+						rel->getRelationshipType()==Relationship::Relationship1n ||
+						rel->getRelationshipType()==Relationship::RelationshipFk)
 					rel->setModified(true);
 			}
 		}

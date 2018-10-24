@@ -34,7 +34,7 @@
 #include <iostream>
 #include "attribsmap.h"
 
-class XMLParser {
+class XmlParser {
 	private:
 		/*! \brief Stores the name of the file that generated the xml buffer when
 		 loadXMLFile() method is called */
@@ -85,8 +85,8 @@ class XMLParser {
 		CharQuot, //! \brief  < = &quot;
 		CharApos; //! \brief  < = &apos;
 
-		XMLParser(void);
-		~XMLParser(void);
+		XmlParser(void);
+		~XmlParser(void);
 
 		//! \brief Loads the XML buffer from a file
 		void loadXMLFile(const QString &filename);

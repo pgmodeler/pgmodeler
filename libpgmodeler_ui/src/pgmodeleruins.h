@@ -32,7 +32,7 @@
 #include "baseobject.h"
 #include "numberedtexteditor.h"
 
-namespace PgModelerUiNS {
+namespace PgModelerUiNs {
 	static constexpr unsigned SMALL_FONT_FACTOR = 0,
 	MEDIUM_FONT_FACTOR = 1,
 	BIG_FONT_FACTOR = 2,

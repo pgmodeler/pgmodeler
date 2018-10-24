@@ -119,7 +119,7 @@ void BaseRelationship::configureRelationship(void)
 	attributes[ParsersAttributes::ORIGINAL_PK]=QString();
 
 	//Check if the relationship type is valid
-	if(rel_type <= RELATIONSHIP_FK)
+	if(rel_type <= RelationshipFk)
 	{
 		//Raises an error if one of the tables is not allocated
 		if(!src_table || !dst_table)
@@ -130,26 +130,26 @@ void BaseRelationship::configureRelationship(void)
 
 		/* Raises an error if the relationship type is generalization or dependency
 			and the source and destination table are the same. */
-		if((rel_type==RELATIONSHIP_GEN || rel_type==RELATIONSHIP_DEP || rel_type==RELATIONSHIP_PART) && src_table==dst_table)
+		if((rel_type==RelationshipGen || rel_type==RelationshipDep || rel_type==RelationshipPart) && src_table==dst_table)
 			throw Exception(InvInheritCopyPartRelationship,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Allocates the textbox for the name label
-		lables[REL_NAME_LABEL]=new Textbox;
-		lables[REL_NAME_LABEL]->setTextAttribute(Textbox::ITALIC_TXT, true);
+		lables[RelNameLabel]=new Textbox;
+		lables[RelNameLabel]->setTextAttribute(Textbox::ITALIC_TXT, true);
 
 		//Allocates the cardinality labels only when the relationship is not generalization or dependency (copy)
-		if(rel_type!=RELATIONSHIP_GEN &&
-			 rel_type!=RELATIONSHIP_DEP &&
-			 rel_type!=RELATIONSHIP_PART)
+		if(rel_type!=RelationshipGen &&
+			 rel_type!=RelationshipDep &&
+			 rel_type!=RelationshipPart)
 		{
-			lables[SRC_CARD_LABEL]=new Textbox;
-			lables[DST_CARD_LABEL]=new Textbox;
-			lables[SRC_CARD_LABEL]->setTextAttribute(Textbox::ITALIC_TXT, true);
-			lables[DST_CARD_LABEL]->setTextAttribute(Textbox::ITALIC_TXT, true);
+			lables[SrcCardLabel]=new Textbox;
+			lables[DstCardLabel]=new Textbox;
+			lables[SrcCardLabel]->setTextAttribute(Textbox::ITALIC_TXT, true);
+			lables[DstCardLabel]->setTextAttribute(Textbox::ITALIC_TXT, true);
 
 			//Configures the mandatory participation for both tables
-			setMandatoryTable(SRC_TABLE,src_mandatory);
-			setMandatoryTable(DST_TABLE,dst_mandatory);
+			setMandatoryTable(SrcTable,src_mandatory);
+			setMandatoryTable(DstTable,dst_mandatory);
 		}
 	}
 	else
@@ -172,8 +172,8 @@ void BaseRelationship::setName(const QString &name)
 	{
 		BaseObject::setName(name);
 
-		if(lables[REL_NAME_LABEL])
-			lables[REL_NAME_LABEL]->setComment(name);
+		if(lables[RelNameLabel])
+			lables[RelNameLabel]->setComment(name);
 	}
 	catch(Exception &e)
 	{
@@ -190,21 +190,21 @@ void BaseRelationship::setMandatoryTable(unsigned table_id, bool value)
 		One to One where both tables are mandatory partitipation
 		(1,1)-<>-(1,1). This type of relationship is not implemented because
 		it requires the table fusion. */
-	if(rel_type==RELATIONSHIP_11 &&
-			((table_id==SRC_TABLE && value && dst_mandatory) ||
-			 (table_id==DST_TABLE && value && src_mandatory)))
+	if(rel_type==Relationship11 &&
+			((table_id==SrcTable && value && dst_mandatory) ||
+			 (table_id==DstTable && value && src_mandatory)))
 		throw Exception(NotImplementedRelationshipType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Case the source table is mandatory
-	if(table_id==SRC_TABLE)
+	if(table_id==SrcTable)
 	{
 		src_mandatory=value;
 		//Indicates that the source cardinality label will be configured
-		label_id=SRC_CARD_LABEL;
+		label_id=SrcCardLabel;
 	}
 	else
 	{
-		if(rel_type!=RELATIONSHIP_1N)
+		if(rel_type!=Relationship1n)
 			dst_mandatory=value;
 		else
 			/* For One to many (1-n) relationship the entity on the "many" side
@@ -212,7 +212,7 @@ void BaseRelationship::setMandatoryTable(unsigned table_id, bool value)
 			dst_mandatory=false;
 
 		//Indicates that the destination cardinality label will be configured
-		label_id=DST_CARD_LABEL;
+		label_id=DstCardLabel;
 	}
 
 	if(!value) cmin=QString("0");
@@ -220,24 +220,24 @@ void BaseRelationship::setMandatoryTable(unsigned table_id, bool value)
 
 	if(lables[label_id])
 	{
-		if(rel_type==RELATIONSHIP_11)
+		if(rel_type==Relationship11)
 			lables[label_id]->setComment(cmin + QString(":1"));
-		else if(rel_type==RELATIONSHIP_1N)
+		else if(rel_type==Relationship1n)
 		{
-			aux=(table_id==SRC_TABLE ? QString("1") : QString("n"));
+			aux=(table_id==SrcTable ? QString("1") : QString("n"));
 			lables[label_id]->setComment(cmin + QString(":") + aux);
 		}
-		else if(rel_type==RELATIONSHIP_FK)
+		else if(rel_type==RelationshipFk)
 		{
-			if((table_id==SRC_TABLE && dynamic_cast<Table *>(src_table)->isReferTableOnForeignKey(dynamic_cast<Table *>(dst_table))) ||
-				 (!isSelfRelationship() && table_id==DST_TABLE && dynamic_cast<Table *>(dst_table)->isReferTableOnForeignKey(dynamic_cast<Table *>(src_table))))
+			if((table_id==SrcTable && dynamic_cast<Table *>(src_table)->isReferTableOnForeignKey(dynamic_cast<Table *>(dst_table))) ||
+				 (!isSelfRelationship() && table_id==DstTable && dynamic_cast<Table *>(dst_table)->isReferTableOnForeignKey(dynamic_cast<Table *>(src_table))))
 				aux=QString("n");
 			else
 				aux=QString("1");
 
 			lables[label_id]->setComment(aux);
 		}
-		else if(rel_type==RELATIONSHIP_NN)
+		else if(rel_type==RelationshipNn)
 			lables[label_id]->setComment(QString("n"));
 
 		lables[label_id]->setModified(true);
@@ -246,9 +246,9 @@ void BaseRelationship::setMandatoryTable(unsigned table_id, bool value)
 
 BaseTable *BaseRelationship::getTable(unsigned table_id)
 {
-	if(table_id==SRC_TABLE)
+	if(table_id==SrcTable)
 		return(src_table);
-	else if(table_id==DST_TABLE)
+	else if(table_id==DstTable)
 		return(dst_table);
 	else
 		return(nullptr);
@@ -256,7 +256,7 @@ BaseTable *BaseRelationship::getTable(unsigned table_id)
 
 bool BaseRelationship::isTableMandatory(unsigned table_id)
 {
-	if(table_id==SRC_TABLE)
+	if(table_id==SrcTable)
 		return(src_mandatory);
 	else
 		return(dst_mandatory);
@@ -302,7 +302,7 @@ void BaseRelationship::connectRelationship(void)
 
 Textbox *BaseRelationship::getLabel(unsigned label_id)
 {
-	if(label_id<=REL_NAME_LABEL)
+	if(label_id<=RelNameLabel)
 		return(lables[label_id]);
 	else
 		//Raises an error when the label id is invalid
@@ -407,7 +407,7 @@ QString BaseRelationship::getCodeDefinition(unsigned def_type)
 
 	if(def_type==SchemaParser::SqlDefinition)
 	{
-		if(rel_type!=RELATIONSHIP_FK)
+		if(rel_type!=RelationshipFk)
 			return(QString());
 		else
 		{
@@ -437,7 +437,7 @@ void BaseRelationship::setPoints(const vector<QPointF> &points)
 
 void BaseRelationship::setLabelDistance(unsigned label_id, QPointF label_dist)
 {
-	if(label_id > REL_NAME_LABEL)
+	if(label_id > RelNameLabel)
 		throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->lables_dist[label_id]=label_dist;
@@ -446,7 +446,7 @@ void BaseRelationship::setLabelDistance(unsigned label_id, QPointF label_dist)
 
 QPointF BaseRelationship::getLabelDistance(unsigned label_id)
 {
-	if(label_id > REL_NAME_LABEL)
+	if(label_id > RelNameLabel)
 		throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(this->lables_dist[label_id]);
@@ -494,23 +494,23 @@ void BaseRelationship::operator = (BaseRelationship &rel)
 		this->lables_dist[i]=rel.lables_dist[i];
 	}
 
-	this->setMandatoryTable(SRC_TABLE, false);
-	this->setMandatoryTable(DST_TABLE, false);
+	this->setMandatoryTable(SrcTable, false);
+	this->setMandatoryTable(DstTable, false);
 
-	this->setMandatoryTable(SRC_TABLE, rel.src_mandatory);
-	this->setMandatoryTable(DST_TABLE, rel.dst_mandatory);
+	this->setMandatoryTable(SrcTable, rel.src_mandatory);
+	this->setMandatoryTable(DstTable, rel.dst_mandatory);
 }
 
 QString BaseRelationship::getRelTypeAttribute(void)
 {
 	switch(rel_type)
 	{
-		case RELATIONSHIP_11: return(ParsersAttributes::RELATIONSHIP_11); break;
-		case RELATIONSHIP_1N: return(ParsersAttributes::RELATIONSHIP_1N); break;
-		case RELATIONSHIP_NN: return(ParsersAttributes::RELATIONSHIP_NN); break;
-		case RELATIONSHIP_GEN: return(ParsersAttributes::RELATIONSHIP_GEN); break;
-		case RELATIONSHIP_PART: return(ParsersAttributes::RELATIONSHIP_PART); break;
-		case RELATIONSHIP_FK: return(ParsersAttributes::RELATIONSHIP_FK); break;
+		case Relationship11: return(ParsersAttributes::RELATIONSHIP_11); break;
+		case Relationship1n: return(ParsersAttributes::RELATIONSHIP_1N); break;
+		case RelationshipNn: return(ParsersAttributes::RELATIONSHIP_NN); break;
+		case RelationshipGen: return(ParsersAttributes::RELATIONSHIP_GEN); break;
+		case RelationshipPart: return(ParsersAttributes::RELATIONSHIP_PART); break;
+		case RelationshipFk: return(ParsersAttributes::RELATIONSHIP_FK); break;
 		default:
 			if(src_table->getObjectType()==ObjView)
 				return(ParsersAttributes::RELATION_TAB_VIEW);
@@ -524,12 +524,12 @@ QString BaseRelationship::getRelationshipTypeName(unsigned rel_type, bool is_vie
 {
   switch(rel_type)
   {
-	  case RELATIONSHIP_11: return(trUtf8("One-to-one")); break;
-	  case RELATIONSHIP_1N: return(trUtf8("One-to-many")); break;
-	  case RELATIONSHIP_NN: return(trUtf8("Many-to-many")); break;
-	  case RELATIONSHIP_GEN: return(trUtf8("Inheritance")); break;
-	  case RELATIONSHIP_PART: return(trUtf8("Partitioning")); break;
-	  case RELATIONSHIP_FK: return(trUtf8("FK relationship")); break;
+	  case Relationship11: return(trUtf8("One-to-one")); break;
+	  case Relationship1n: return(trUtf8("One-to-many")); break;
+	  case RelationshipNn: return(trUtf8("Many-to-many")); break;
+	  case RelationshipGen: return(trUtf8("Inheritance")); break;
+	  case RelationshipPart: return(trUtf8("Partitioning")); break;
+	  case RelationshipFk: return(trUtf8("FK relationship")); break;
 	  default:
 		  if(is_view)
 			  return(trUtf8("Dependency"));

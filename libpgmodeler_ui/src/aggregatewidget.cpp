@@ -98,8 +98,8 @@ void AggregateWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 
 	if(aggregate)
 	{
-		final_func_sel->setSelectedObject(aggregate->getFunction(Aggregate::FINAL_FUNC));
-		transition_func_sel->setSelectedObject(aggregate->getFunction(Aggregate::TRANSITION_FUNC));
+		final_func_sel->setSelectedObject(aggregate->getFunction(Aggregate::FinalFunc));
+		transition_func_sel->setSelectedObject(aggregate->getFunction(Aggregate::TransitionFunc));
 		sort_op_sel->setSelectedObject(aggregate->getSortOperator());
 		initial_cond_txt->setPlainText(aggregate->getInitialCondition());
 
@@ -158,8 +158,8 @@ void AggregateWidget::applyConfiguration(void)
 		for(i=0; i < count; i++)
 			aggregate->addDataType(input_types_tab->getRowData(i).value<PgSQLType>());
 
-		aggregate->setFunction(Aggregate::TRANSITION_FUNC, dynamic_cast<Function *>(transition_func_sel->getSelectedObject()));
-		aggregate->setFunction(Aggregate::FINAL_FUNC, dynamic_cast<Function *>(final_func_sel->getSelectedObject()));
+		aggregate->setFunction(Aggregate::TransitionFunc, dynamic_cast<Function *>(transition_func_sel->getSelectedObject()));
+		aggregate->setFunction(Aggregate::FinalFunc, dynamic_cast<Function *>(final_func_sel->getSelectedObject()));
 		aggregate->setSortOperator(dynamic_cast<Operator *>(sort_op_sel->getSelectedObject()));
 
 		BaseObjectWidget::applyConfiguration();

@@ -63,7 +63,7 @@ void Constraint::setConstraintType(ConstraintType constr_type)
 
 void Constraint::setActionType(ActionType action_type, unsigned act_id)
 {
-	if(act_id==DELETE_ACTION)
+	if(act_id==DeleteAction)
 	{
 		setCodeInvalidated(this->del_action != action_type);
 		this->del_action=action_type;
@@ -91,7 +91,7 @@ bool Constraint::isColumnExists(Column *column, unsigned col_type)
 		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Gets the iterators from the specified internal list
-	if(col_type==SOURCE_COLS)
+	if(col_type==SourceCols)
 	{
 		itr=columns.begin();
 		itr_end=columns.end();
@@ -122,10 +122,10 @@ bool Constraint::isColumnReferenced(Column *column, bool search_only_ref_cols)
 			constr_type == ConstraintType::foreign_key)
 	{
 		if(!search_only_ref_cols)
-			found=isColumnExists(column, SOURCE_COLS);
+			found=isColumnExists(column, SourceCols);
 
 		if(!found && constr_type==ConstraintType::foreign_key)
-			found=isColumnExists(column, REFERENCED_COLS);
+			found=isColumnExists(column, ReferencedCols);
 	}
 	else if(constr_type==ConstraintType::exclude)
 	{
@@ -156,7 +156,7 @@ void Constraint::addColumn(Column *column, unsigned col_type)
 		//Adds the column only if the column doesn't exists on the internal list
 		if(!isColumnExists(column,col_type))
 		{
-			if(col_type==REFERENCED_COLS)
+			if(col_type==ReferencedCols)
 				ref_columns.push_back(column);
 			else
 			{
@@ -194,7 +194,7 @@ void Constraint::setColumnsAttribute(unsigned col_type, unsigned def_type, bool 
 	unsigned i, count;
 	bool format=(def_type==SchemaParser::SqlDefinition);
 
-	if(col_type==REFERENCED_COLS)
+	if(col_type==ReferencedCols)
 	{
 		col_vector=&ref_columns;
 		attrib=ParsersAttributes::DST_COLUMNS;
@@ -273,7 +273,7 @@ ConstraintType Constraint::getConstraintType(void)
 
 ActionType Constraint::getActionType(unsigned act_id)
 {
-	if(act_id==DELETE_ACTION)
+	if(act_id==DeleteAction)
 		return(del_action);
 	else
 	  return(upd_action);
@@ -281,7 +281,7 @@ ActionType Constraint::getActionType(unsigned act_id)
 
 vector<Column *> Constraint::getColumns(unsigned col_type)
 {
-  return(col_type==SOURCE_COLS ? columns : ref_columns);
+  return(col_type==SourceCols ? columns : ref_columns);
 }
 
 QString Constraint::getExpression(void)
@@ -293,7 +293,7 @@ Column *Constraint::getColumn(unsigned col_idx, unsigned col_type)
 {
 	vector<Column *> *col_list=nullptr;
 
-	col_list=(col_type==SOURCE_COLS ? &columns : &ref_columns);
+	col_list=(col_type==SourceCols ? &columns : &ref_columns);
 
 	//Raises an error if the column index is invalid (out of bound)
 	if(col_idx>=col_list->size())
@@ -308,7 +308,7 @@ Column *Constraint::getColumn(const QString &name, unsigned col_type)
 	vector<Column *> *col_list=nullptr;
 	vector<Column *>::iterator itr_col, itr_end_col;
 
-	col_list=(col_type==SOURCE_COLS? &columns : &ref_columns);
+	col_list=(col_type==SourceCols? &columns : &ref_columns);
 
 	itr_col=col_list->begin();
 	itr_end_col=col_list->end();
@@ -331,7 +331,7 @@ BaseTable *Constraint::getReferencedTable(void)
 
 unsigned Constraint::getColumnCount(unsigned col_type)
 {
-	if(col_type==REFERENCED_COLS)
+	if(col_type==ReferencedCols)
 		return(ref_columns.size());
 	else
 		return(columns.size());
@@ -352,7 +352,7 @@ void Constraint::removeColumn(const QString &name, unsigned col_type)
 	Column *col=nullptr;
 
 	//Gets the column list using the specified internal list type
-	if(col_type==REFERENCED_COLS)
+	if(col_type==ReferencedCols)
 		cols=&ref_columns;
 	else
 		cols=&columns;
@@ -696,7 +696,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 	if(constr_type!=ConstraintType::check)
 	{
 		if(constr_type!=ConstraintType::exclude)
-			setColumnsAttribute(SOURCE_COLS, def_type, inc_addedbyrel);
+			setColumnsAttribute(SourceCols, def_type, inc_addedbyrel);
 		else
 			setExcludeElementsAttribute(def_type);
 
@@ -706,7 +706,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 		 the attribute forcing the schema parser to return an error because the foreign key is
 		 misconfigured. */
 		if(constr_type==ConstraintType::foreign_key && columns.size() == ref_columns.size())
-			setColumnsAttribute(REFERENCED_COLS, def_type, inc_addedbyrel);
+			setColumnsAttribute(ReferencedCols, def_type, inc_addedbyrel);
 	}
 
 	attributes[ParsersAttributes::REF_TABLE]=(ref_table ? ref_table->getName(true) : QString());

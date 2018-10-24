@@ -32,14 +32,14 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 		hl_sqlcode=nullptr;
 		hl_xmlcode=nullptr;
 
-		sqlcode_txt=PgModelerUiNS::createNumberedTextEditor(sqlcode_wgt);
+		sqlcode_txt=PgModelerUiNs::createNumberedTextEditor(sqlcode_wgt);
 		sqlcode_txt->setReadOnly(true);
 
-		xmlcode_txt=PgModelerUiNS::createNumberedTextEditor(xmlcode_wgt);
+		xmlcode_txt=PgModelerUiNs::createNumberedTextEditor(xmlcode_wgt);
 		xmlcode_txt->setReadOnly(true);
 
 		name_edt->setReadOnly(true);
-		version_cmb->addItems(PgSQLVersions::AllVersions);
+		version_cmb->addItems(PgSqlVersions::AllVersions);
 
 		code_options_ht=new HintTextWidget(code_options_hint, this);
 		code_options_ht->setText(
@@ -77,10 +77,10 @@ void SourceCodeWidget::setSourceCodeTab(int)
 
 	enabled=(sourcecode_twg->currentIndex()==0 &&
 			 ((obj_type==ObjBaseRelationship &&
-			   dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
+			   dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RelationshipFk)
 			  || (obj_type!=ObjBaseRelationship && obj_type!=ObjTextbox)));
 
-	icone=QPixmap(PgModelerUiNS::getIconPath(code_icon));
+	icone=QPixmap(PgModelerUiNs::getIconPath(code_icon));
 	icon_lbl->setPixmap(icone);
 	version_cmb->setEnabled(enabled);
 	pgsql_lbl->setEnabled(enabled);
@@ -132,7 +132,7 @@ void SourceCodeWidget::generateSourceCode(int)
 		obj_type=object->getObjectType();
 		if(obj_type!=ObjTextbox ||
 				(obj_type==ObjBaseRelationship &&
-				 dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK))
+				 dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RelationshipFk))
 		{
 			QString aux_def;
 			BaseObject::setPgSQLVersion(version_cmb->currentText());
@@ -239,7 +239,7 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 			code_options_cmb->setEnabled(false);
 #endif
 
-			obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(object->getObjectType())));
+			obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(object->getObjectType())));
 
 			if(!hl_sqlcode->isConfigurationLoaded())
 				hl_sqlcode->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);

@@ -21,7 +21,7 @@
 #include <QDebug>
 #include <QHash>
 
-namespace PgModelerNS {
+namespace PgModelerNs {
 
 	template <class Class>
 	void copyObject(BaseObject **psrc_obj, Class *copy_obj)

@@ -51,17 +51,17 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, ObjFun
 										 ObjectsTableWidget::UPDATE_BUTTON, true, this);
 		return_tab->setColumnCount(2);
 		return_tab->setHeaderLabel(trUtf8("Column"), 0);
-		return_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("column")),0);
+		return_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("column")),0);
 		return_tab->setHeaderLabel(trUtf8("Type"), 1);
-		return_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
+		return_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
 
 		parameters_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
 											 ObjectsTableWidget::UPDATE_BUTTON, true, this);
 		parameters_tab->setColumnCount(4);
 		parameters_tab->setHeaderLabel(trUtf8("Name"),0);
-		parameters_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("parameter")),0);
+		parameters_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("parameter")),0);
 		parameters_tab->setHeaderLabel(trUtf8("Type"),1);
-		parameters_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
+		parameters_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
 		parameters_tab->setHeaderLabel(trUtf8("Mode"),2);
 		parameters_tab->setHeaderLabel(trUtf8("Default Value"),3);
 
@@ -80,7 +80,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, ObjFun
 		ret_table_gb->setLayout(grid1);
 		ret_table_gb->setVisible(false);
 
-		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PgSQLVersion92)].push_back(leakproof_chk);
+		fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion92)].push_back(leakproof_chk);
 		frame=generateVersionWarningFrame(fields_map, &value_map);
 		grid->addWidget(frame, grid->count()+1, 0, 1, 5);
 		frame->setParent(func_config_twg->widget(0));
@@ -435,10 +435,10 @@ void FunctionWidget::validateConfiguredFunction(void)
 			else if(obj_type==ObjAggregate)
 			{
 				aggr=dynamic_cast<Aggregate *>(object);
-				if(aggr->getFunction(Aggregate::FINAL_FUNC)==func)
-					aggr->setFunction(Aggregate::FINAL_FUNC, func);
-				else if(aggr->getFunction(Aggregate::TRANSITION_FUNC)==func)
-					aggr->setFunction(Aggregate::TRANSITION_FUNC, func);
+				if(aggr->getFunction(Aggregate::FinalFunc)==func)
+					aggr->setFunction(Aggregate::FinalFunc, func);
+				else if(aggr->getFunction(Aggregate::TransitionFunc)==func)
+					aggr->setFunction(Aggregate::TransitionFunc, func);
 			}
 			else if(obj_type==ObjTrigger)
 			{

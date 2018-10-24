@@ -42,8 +42,8 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	table_oid=0;
 
-	PgModelerUiNS::configureWidgetFont(hint_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
-	PgModelerUiNS::configureWidgetFont(warning_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(hint_lbl, PgModelerUiNs::MEDIUM_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(warning_lbl, PgModelerUiNs::MEDIUM_FONT_FACTOR);
 
 	filter_hl=new SyntaxHighlighter(filter_txt);
 	filter_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
@@ -71,8 +71,8 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	});
 
 	truncate_tb->setMenu(&truncate_menu);
-	truncate_menu.addAction(QIcon(PgModelerUiNS::getIconPath("truncate")), trUtf8("Truncate"), this, SLOT(truncateTable()))->setData(QVariant::fromValue<bool>(false));
-	truncate_menu.addAction(QIcon(PgModelerUiNS::getIconPath("trunccascade")), trUtf8("Truncate cascade"), this, SLOT(truncateTable()))->setData(QVariant::fromValue<bool>(true));
+	truncate_menu.addAction(QIcon(PgModelerUiNs::getIconPath("truncate")), trUtf8("Truncate"), this, SLOT(truncateTable()))->setData(QVariant::fromValue<bool>(false));
+	truncate_menu.addAction(QIcon(PgModelerUiNs::getIconPath("trunccascade")), trUtf8("Truncate cascade"), this, SLOT(truncateTable()))->setData(QVariant::fromValue<bool>(true));
 
 	copy_tb->setMenu(&copy_menu);
 	refresh_tb->setToolTip(refresh_tb->toolTip() + QString(" (%1)").arg(refresh_tb->shortcut().toString()));
@@ -148,7 +148,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(truncate_tb, SIGNAL(clicked(bool)), this, SLOT(truncateTable()));
 
 	connect(bulkedit_tb, &QToolButton::clicked, [&](){
-		PgModelerUiNS::bulkDataEdit(results_tbw);
+		PgModelerUiNs::bulkDataEdit(results_tbw);
 	});
 
 	connect(filter_tb, &QToolButton::toggled,
@@ -171,10 +171,10 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 						QAction *act = nullptr;
 						ObjectType obj_type=static_cast<ObjectType>(table_cmb->currentData().toUInt());
 
-						act = item_menu.addAction(QIcon(PgModelerUiNS::getIconPath("copiar")), trUtf8("Copy items"));
+						act = item_menu.addAction(QIcon(PgModelerUiNs::getIconPath("copiar")), trUtf8("Copy items"));
 						act->setMenu(&copy_menu);
 
-						act = item_menu.addAction(QIcon(PgModelerUiNS::getIconPath("colar")), trUtf8("Pase items"));
+						act = item_menu.addAction(QIcon(PgModelerUiNs::getIconPath("colar")), trUtf8("Pase items"));
 						act->setShortcut(paste_tb->shortcut());
 						connect(act, SIGNAL(triggered(bool)), paste_tb, SLOT(click()));
 						act->setEnabled(!qApp->clipboard()->text().isEmpty() && obj_type == ObjTable);
@@ -302,7 +302,7 @@ void DataManipulationForm::listColumns(void)
 			{
 				col_names.push_back(col[ParsersAttributes::NAME]);
 				code_compl_wgt->insertCustomItem(col[ParsersAttributes::NAME], {},
-				QPixmap(PgModelerUiNS::getIconPath("column")));
+				QPixmap(PgModelerUiNs::getIconPath("column")));
 			}
 
 			ord_column_cmb->addItems(col_names);
@@ -689,7 +689,7 @@ void DataManipulationForm::listObjects(QComboBox *combo, vector<ObjectType> obj_
 
 			for(; idx < count; idx++)
 			{
-				combo->setItemIcon(idx, QPixmap(PgModelerUiNS::getIconPath(obj_type)));
+				combo->setItemIcon(idx, QPixmap(PgModelerUiNs::getIconPath(obj_type)));
 				combo->setItemData(idx, obj_type);
 			}
 
@@ -812,7 +812,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 			QStringList name_list;
 
 			submenu = new QMenu(this);
-			fks_menu.addAction(QPixmap(PgModelerUiNS::getIconPath("referenced")), trUtf8("Referenced tables"))->setMenu(submenu);
+			fks_menu.addAction(QPixmap(PgModelerUiNs::getIconPath("referenced")), trUtf8("Referenced tables"))->setMenu(submenu);
 
 			if(fks.empty())
 				submenu->addAction(trUtf8("(none)"))->setEnabled(false);
@@ -829,7 +829,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				//Store the referenced schema and table names
 				fk_infos[fk_name][ParsersAttributes::REF_TABLE] = aux_table[ParsersAttributes::NAME];
 				fk_infos[fk_name][ParsersAttributes::SCHEMA] = aux_schema[ParsersAttributes::NAME];
-				action = submenu->addAction(QPixmap(PgModelerUiNS::getIconPath("table")),
+				action = submenu->addAction(QPixmap(PgModelerUiNs::getIconPath("table")),
 																		QString("%1.%2 (%3)").arg(aux_schema[ParsersAttributes::NAME])
 																													.arg(aux_table[ParsersAttributes::NAME])
 																													.arg(fk[ParsersAttributes::NAME]), this, SLOT(browseReferencedTable()));
@@ -861,7 +861,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 			}
 
 			submenu = new QMenu(this);
-			fks_menu.addAction(QPixmap(PgModelerUiNS::getIconPath("referrer")), trUtf8("Referrer tables"))->setMenu(submenu);
+			fks_menu.addAction(QPixmap(PgModelerUiNs::getIconPath("referrer")), trUtf8("Referrer tables"))->setMenu(submenu);
 
 			if(ref_fks.empty())
 				submenu->addAction(trUtf8("(none)"))->setEnabled(false);
@@ -885,7 +885,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				for(auto &col : catalog.getObjectsAttributes(ObjColumn, aux_schema[ParsersAttributes::NAME], aux_table[ParsersAttributes::NAME], col_ids))
 					name_list.push_back(BaseObject::formatName(col[ParsersAttributes::NAME]));
 
-				action = submenu->addAction(QPixmap(PgModelerUiNS::getIconPath("table")),
+				action = submenu->addAction(QPixmap(PgModelerUiNs::getIconPath("table")),
 																		QString("%1.%2 (%3)").arg(aux_schema[ParsersAttributes::NAME])
 																													.arg(aux_table[ParsersAttributes::NAME])
 																													.arg(fk[ParsersAttributes::NAME]), this, SLOT(browseReferrerTable()));
@@ -1175,7 +1175,7 @@ void DataManipulationForm::browseTable(const QString &fk_name, bool browse_ref_t
 	data_manip->setAttribute(Qt::WA_DeleteOnClose, true);
 	data_manip->setAttributes(conn, schema, table, filter.join(QString("AND")));
 
-	PgModelerUiNS::resizeDialog(data_manip);
+	PgModelerUiNs::resizeDialog(data_manip);
 	data_manip->show();
 }
 
@@ -1387,9 +1387,9 @@ QString DataManipulationForm::getDMLCommand(int row)
 				if(op_type==OP_INSERT || (op_type==OP_UPDATE && value!=item->data(Qt::UserRole)))
 				{
 					//Checking if the value is a malformed unescaped value, e.g., {value, value}, {value\}
-					if((value.startsWith(PgModelerNS::UNESC_VALUE_START) && value.endsWith(QString("\\") + PgModelerNS::UNESC_VALUE_END)) ||
-							(value.startsWith(PgModelerNS::UNESC_VALUE_START) && !value.endsWith(PgModelerNS::UNESC_VALUE_END)) ||
-							(!value.startsWith(PgModelerNS::UNESC_VALUE_START) && !value.endsWith(QString("\\") + PgModelerNS::UNESC_VALUE_END) && value.endsWith(PgModelerNS::UNESC_VALUE_END)))
+					if((value.startsWith(PgModelerNs::UNESC_VALUE_START) && value.endsWith(QString("\\") + PgModelerNs::UNESC_VALUE_END)) ||
+							(value.startsWith(PgModelerNs::UNESC_VALUE_START) && !value.endsWith(PgModelerNs::UNESC_VALUE_END)) ||
+							(!value.startsWith(PgModelerNs::UNESC_VALUE_START) && !value.endsWith(QString("\\") + PgModelerNs::UNESC_VALUE_END) && value.endsWith(PgModelerNs::UNESC_VALUE_END)))
 						throw Exception(Exception::getErrorMessage(MalformedUnescapedValue)
 										.arg(row + 1).arg(col_name),
 										MalformedUnescapedValue,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -1402,7 +1402,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 						value=QString("DEFAULT");
 					}
 					//Unescaped values will not be enclosed in quotes
-					else if(value.startsWith(PgModelerNS::UNESC_VALUE_START) && value.endsWith(PgModelerNS::UNESC_VALUE_END))
+					else if(value.startsWith(PgModelerNs::UNESC_VALUE_START) && value.endsWith(PgModelerNs::UNESC_VALUE_END))
 					{
 						value.remove(0,1);
 						value.remove(value.length()-1, 1);
@@ -1410,8 +1410,8 @@ QString DataManipulationForm::getDMLCommand(int row)
 					//Quoting value
 					else
 					{
-						value.replace(QString("\\") + PgModelerNS::UNESC_VALUE_START, PgModelerNS::UNESC_VALUE_START);
-						value.replace(QString("\\") + PgModelerNS::UNESC_VALUE_END, PgModelerNS::UNESC_VALUE_END);
+						value.replace(QString("\\") + PgModelerNs::UNESC_VALUE_START, PgModelerNs::UNESC_VALUE_START);
+						value.replace(QString("\\") + PgModelerNs::UNESC_VALUE_END, PgModelerNs::UNESC_VALUE_END);
 						value.replace("\'","''");
 						value=QString("E'") + value + QString("'");
 					}

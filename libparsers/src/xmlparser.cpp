@@ -19,13 +19,13 @@
 #include "xmlparser.h"
 #include <QUrl>
 
-const QString XMLParser::CharAmp=QString("&amp;");
-const QString XMLParser::CharLt=QString("&lt;");
-const QString XMLParser::CharGt=QString("&gt;");
-const QString XMLParser::CharQuot=QString("&quot;");
-const QString XMLParser::CharApos=QString("&apos;");
+const QString XmlParser::CharAmp=QString("&amp;");
+const QString XmlParser::CharLt=QString("&lt;");
+const QString XmlParser::CharGt=QString("&gt;");
+const QString XmlParser::CharQuot=QString("&quot;");
+const QString XmlParser::CharApos=QString("&apos;");
 
-XMLParser::XMLParser(void)
+XmlParser::XmlParser(void)
 {
 	root_elem=nullptr;
 	curr_elem=nullptr;
@@ -33,13 +33,13 @@ XMLParser::XMLParser(void)
 	xmlInitParser();
 }
 
-XMLParser::~XMLParser(void)
+XmlParser::~XmlParser(void)
 {
 	restartParser();
 	xmlCleanupParser();
 }
 
-void XMLParser::removeDTD(void)
+void XmlParser::removeDTD(void)
 {
 	int pos1=-1, pos2=-1, pos3=-1, len;
 
@@ -59,7 +59,7 @@ void XMLParser::removeDTD(void)
 	}
 }
 
-void XMLParser::loadXMLFile(const QString &filename)
+void XmlParser::loadXMLFile(const QString &filename)
 {
 	try
 	{
@@ -92,7 +92,7 @@ void XMLParser::loadXMLFile(const QString &filename)
 	}
 }
 
-void XMLParser::loadXMLBuffer(const QString &xml_buf)
+void XmlParser::loadXMLBuffer(const QString &xml_buf)
 {
 	try
 	{
@@ -123,7 +123,7 @@ void XMLParser::loadXMLBuffer(const QString &xml_buf)
 	}
 }
 
-void XMLParser::setDTDFile(const QString &dtd_file, const QString &dtd_name)
+void XmlParser::setDTDFile(const QString &dtd_file, const QString &dtd_name)
 {
 	QString fmt_dtd_file;
 
@@ -147,7 +147,7 @@ void XMLParser::setDTDFile(const QString &dtd_file, const QString &dtd_name)
 			 fmt_dtd_file + QString("\">\n");
 }
 
-void XMLParser::readBuffer(void)
+void XmlParser::readBuffer(void)
 {
 	QByteArray buffer;
 	QString msg, file;
@@ -203,7 +203,7 @@ void XMLParser::readBuffer(void)
 	}
 }
 
-void XMLParser::savePosition(void)
+void XmlParser::savePosition(void)
 {
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -211,7 +211,7 @@ void XMLParser::savePosition(void)
 	elems_stack.push(curr_elem);
 }
 
-void XMLParser::restorePosition(void)
+void XmlParser::restorePosition(void)
 {
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -225,7 +225,7 @@ void XMLParser::restorePosition(void)
 	}
 }
 
-void XMLParser::restorePosition(const xmlNode *elem)
+void XmlParser::restorePosition(const xmlNode *elem)
 {
 	if(!elem)
 		throw Exception(ErrorCode::OprNotAllocatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -236,7 +236,7 @@ void XMLParser::restorePosition(const xmlNode *elem)
 	curr_elem=const_cast<xmlNode *>(elem);
 }
 
-void XMLParser::restartNavigation(void)
+void XmlParser::restartNavigation(void)
 {
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -247,7 +247,7 @@ void XMLParser::restartNavigation(void)
 		elems_stack.pop();
 }
 
-void XMLParser::restartParser(void)
+void XmlParser::restartParser(void)
 {
 	root_elem=curr_elem=nullptr;
 
@@ -265,7 +265,7 @@ void XMLParser::restartParser(void)
 	xmlResetLastError();
 }
 
-bool XMLParser::accessElement(unsigned elem_type)
+bool XmlParser::accessElement(unsigned elem_type)
 {
 	bool has_elem;
 	xmlNode *elems[4];
@@ -290,7 +290,7 @@ bool XMLParser::accessElement(unsigned elem_type)
 	return(has_elem);
 }
 
-bool XMLParser::hasElement(unsigned elem_type, xmlElementType xml_node_type)
+bool XmlParser::hasElement(unsigned elem_type, xmlElementType xml_node_type)
 {
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -315,7 +315,7 @@ bool XMLParser::hasElement(unsigned elem_type, xmlElementType xml_node_type)
 															(xml_node_type==0 || (xml_node_type!=0 && curr_elem->prev->type==xml_node_type)));
 }
 
-bool XMLParser::hasAttributes(void)
+bool XmlParser::hasAttributes(void)
 {
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -323,7 +323,7 @@ bool XMLParser::hasAttributes(void)
 	return(curr_elem->properties!=nullptr);
 }
 
-QString XMLParser::getElementContent(void)
+QString XmlParser::getElementContent(void)
 {
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -337,7 +337,7 @@ QString XMLParser::getElementContent(void)
 		return(QString(reinterpret_cast<char *>(curr_elem->content)));
 }
 
-QString XMLParser::getElementName(void)
+QString XmlParser::getElementName(void)
 {
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -345,7 +345,7 @@ QString XMLParser::getElementName(void)
 	return(QString(reinterpret_cast<const char *>(curr_elem->name)));
 }
 
-xmlElementType XMLParser::getElementType(void)
+xmlElementType XmlParser::getElementType(void)
 {
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -353,12 +353,12 @@ xmlElementType XMLParser::getElementType(void)
 	return(curr_elem->type);
 }
 
-const xmlNode *XMLParser::getCurrentElement(void)
+const xmlNode *XmlParser::getCurrentElement(void)
 {
 	return(curr_elem);
 }
 
-void XMLParser::getElementAttributes(attribs_map &attributes)
+void XmlParser::getElementAttributes(attribs_map &attributes)
 {
 	xmlAttr *elem_attribs=nullptr;
 	QString attrib, value;
@@ -388,17 +388,17 @@ void XMLParser::getElementAttributes(attribs_map &attributes)
 	}
 }
 
-QString XMLParser::getLoadedFilename(void)
+QString XmlParser::getLoadedFilename(void)
 {
 	return(xml_doc_filename);
 }
 
-QString XMLParser::getXMLBuffer(void)
+QString XmlParser::getXMLBuffer(void)
 {
 	return(xml_buffer);
 }
 
-int XMLParser::getCurrentBufferLine(void)
+int XmlParser::getCurrentBufferLine(void)
 {
 	if(curr_elem)
 		return(curr_elem->line);
@@ -406,7 +406,7 @@ int XMLParser::getCurrentBufferLine(void)
 		return(0);
 }
 
-int XMLParser::getBufferLineCount(void)
+int XmlParser::getBufferLineCount(void)
 {
 	if(xml_doc)
 		/* To get the very last line of the document is necessary to call

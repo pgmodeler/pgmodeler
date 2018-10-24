@@ -165,7 +165,7 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, at
 
 		xmlparser.loadXMLFile(filename);
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -173,10 +173,10 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, at
 				{
 					this->getConfigurationParams(config_params, key_attribs);
 
-					if(xmlparser.hasElement(XMLParser::ChildElement, XML_ELEMENT_NODE))
+					if(xmlparser.hasElement(XmlParser::ChildElement, XML_ELEMENT_NODE))
 					{
 						xmlparser.savePosition();
-						xmlparser.accessElement(XMLParser::ChildElement);
+						xmlparser.accessElement(XmlParser::ChildElement);
 
 						if(xmlparser.getElementType()!=XML_TEXT_NODE)
 						{
@@ -184,14 +184,14 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, at
 							{
 								this->getConfigurationParams(config_params, key_attribs);
 							}
-							while(xmlparser.accessElement(XMLParser::NextElement));
+							while(xmlparser.accessElement(XmlParser::NextElement));
 						}
 
 						xmlparser.restorePosition();
 					}
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NextElement));
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 	}
 	catch(Exception &e)
@@ -223,10 +223,10 @@ void BaseConfigWidget::getConfigurationParams(map<QString, attribs_map> &config_
 		key=xmlparser.getElementName();
 
 	//Extract the contents of the child element and create a special element on map called "_contents_"
-	if(xmlparser.hasElement(XMLParser::ChildElement, XML_TEXT_NODE))
+	if(xmlparser.hasElement(XmlParser::ChildElement, XML_TEXT_NODE))
 	{
 		xmlparser.savePosition();
-		xmlparser.accessElement(XMLParser::ChildElement);
+		xmlparser.accessElement(XmlParser::ChildElement);
 		aux_attribs[ParsersAttributes::CONTENTS]=xmlparser.getElementContent();
 		xmlparser.restorePosition();
 	}

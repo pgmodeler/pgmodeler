@@ -49,12 +49,14 @@ class Cast: public BaseObject {
 
 	public:
 		//! \brief Constants used to access the data types envolved in the cast
-		static constexpr unsigned SRC_TYPE=0,
-		DST_TYPE=1,
+		static constexpr unsigned SrcType=0,
+		DstType=1,
+
 		//! \brief Constants used to define the cast type
-		EXPLICIT=0,
-		ASSIGNMENT=1,
-		IMPLICIT=2;
+		Explicit=0,
+		Assignment=1,
+		Implicit=2;
+
 		Cast(void);
 
 		/*! \brief Defines one of the data types envolved on the cast

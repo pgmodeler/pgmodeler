@@ -129,7 +129,7 @@ class DatabaseImportHelper: public QObject {
 		//! \brief Stored the table created (value) from the oid (key) so the partitioning hierarchy (if existent) can be reconstructed
 		map<unsigned, Table *> imported_tables;
 
-		XMLParser *xmlparser;
+		XmlParser *xmlparser;
 		
 		SchemaParser schparser;
 		

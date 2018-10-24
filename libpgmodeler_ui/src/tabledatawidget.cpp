@@ -28,7 +28,7 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, ObjB
 	Ui_TableDataWidget::setupUi(this);
 	configureFormLayout(tabledata_grid, ObjBaseObject);
 
-	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(ObjTable)));
+	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(ObjTable)));
 
 	comment_lbl->setVisible(false);
 	comment_edt->setVisible(false);
@@ -84,7 +84,7 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, ObjB
 	});
 
 	connect(bulkedit_tb, &QToolButton::clicked, [&](){
-		PgModelerUiNS::bulkDataEdit(data_tbw);
+		PgModelerUiNs::bulkDataEdit(data_tbw);
 	});
 
 	connect(copy_tb, &QToolButton::clicked, [&](){
@@ -491,9 +491,9 @@ QString TableDataWidget::generateDataBuffer(void)
 			value = data_tbw->item(row, col)->text();
 
 			//Checking if the value is a malformed unescaped value, e.g., {value, value}, {value\}
-			if((value.startsWith(PgModelerNS::UNESC_VALUE_START) && value.endsWith(QString("\\") + PgModelerNS::UNESC_VALUE_END)) ||
-					(value.startsWith(PgModelerNS::UNESC_VALUE_START) && !value.endsWith(PgModelerNS::UNESC_VALUE_END)) ||
-					(!value.startsWith(PgModelerNS::UNESC_VALUE_START) && !value.endsWith(QString("\\") + PgModelerNS::UNESC_VALUE_END) && value.endsWith(PgModelerNS::UNESC_VALUE_END)))
+			if((value.startsWith(PgModelerNs::UNESC_VALUE_START) && value.endsWith(QString("\\") + PgModelerNs::UNESC_VALUE_END)) ||
+					(value.startsWith(PgModelerNs::UNESC_VALUE_START) && !value.endsWith(PgModelerNs::UNESC_VALUE_END)) ||
+					(!value.startsWith(PgModelerNs::UNESC_VALUE_START) && !value.endsWith(QString("\\") + PgModelerNs::UNESC_VALUE_END) && value.endsWith(PgModelerNs::UNESC_VALUE_END)))
 				throw Exception(Exception::getErrorMessage(MalformedUnescapedValue)
 								.arg(row + 1).arg(col_names[col]),
 								MalformedUnescapedValue,__PRETTY_FUNCTION__,__FILE__,__LINE__);

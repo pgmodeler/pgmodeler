@@ -65,7 +65,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		static unsigned dbmodel_id;
 
-		XMLParser xmlparser;
+		XmlParser xmlparser;
 
 		//! \brief Stores the model widget that is managing this database model instance
 		ModelWidget *model_wgt;
@@ -610,7 +610,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 the create* method.
 
 		\note: This is not the better approach and certainly will be changed in future releases */
-		XMLParser *getXMLParser(void);
+		XmlParser *getXMLParser(void);
 
 		//! \brief Returns the ALTER definition between the current model and the provided one
 		virtual QString getAlterDefinition(BaseObject *object) final;

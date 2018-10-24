@@ -23,7 +23,7 @@
 ModelsDiffHelper::ModelsDiffHelper(void)
 {
 	diff_canceled=false;
-	pgsql_version=PgSQLVersions::DefaulVersion;
+	pgsql_version=PgSqlVersions::DefaulVersion;
 	source_model=imported_model=nullptr;
 	resetDiffCounter();
 
@@ -272,8 +272,8 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 
 						rec_tab=aux_model->getTable(rel->getReceiverTable()->getName(true));
 
-						if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN ||
-							 rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_PART)
+						if(rel->getRelationshipType()==BaseRelationship::RelationshipGen ||
+							 rel->getRelationshipType()==BaseRelationship::RelationshipPart)
 						{
 							Relationship *aux_rel = nullptr;
 
@@ -288,7 +288,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 							/* Special case for partitioning: we detach (drop) and reattach (create) the partition
 							 * if the partition bound expression differs from a model to another. This is done only
 							 * if the receiver table (partition) exists in the imported model. */
-							else if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_PART &&
+							else if(rel->getRelationshipType()==BaseRelationship::RelationshipPart &&
 											rec_tab &&
 											aux_model == imported_model &&
 											aux_rel && rel->getPartitionBoundingExpr().simplified() !=
@@ -451,7 +451,7 @@ BaseObject *ModelsDiffHelper::getRelNNTable(const QString &obj_name, DatabaseMod
 	for(auto &obj : *rels)
 	{
 		rel=dynamic_cast<Relationship *>(obj);
-		if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN &&
+		if(rel->getRelationshipType()==BaseRelationship::RelationshipNn &&
 				rel->getGeneratedTable() && rel->getGeneratedTable()->getSignature()==obj_name)
 		{
 			tab=rel->getGeneratedTable();
@@ -712,8 +712,8 @@ void ModelsDiffHelper::processDiffInfos(void)
 			//Generating the DROP commands
 			if(diff_type==ObjectsDiffInfo::DROP_OBJECT)
 			{
-				if(rel && (rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN ||
-									 rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_PART))
+				if(rel && (rel->getRelationshipType()==BaseRelationship::RelationshipGen ||
+									 rel->getRelationshipType()==BaseRelationship::RelationshipPart))
 				{
 					//Undoing inheritances
 					no_inherit_def+=rel->getAlterRelationshipDefinition(true);
@@ -739,8 +739,8 @@ void ModelsDiffHelper::processDiffInfos(void)
 			//Generating the CREATE commands
 			else if(diff_type==ObjectsDiffInfo::CREATE_OBJECT)
 			{
-				if(rel && (rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN ||
-									 rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_PART))
+				if(rel && (rel->getRelationshipType()==BaseRelationship::RelationshipGen ||
+									 rel->getRelationshipType()==BaseRelationship::RelationshipPart))
 				{
 					//Creating inheritances
 					inherit_def+=rel->getAlterRelationshipDefinition(false);
@@ -1040,14 +1040,14 @@ void ModelsDiffHelper::recreateObject(BaseObject *object, vector<BaseObject *> &
 
 			if(constr->getConstraintType()==ConstraintType::primary_key)
 			{
-				unsigned i=0, col_cnt=constr->getColumnCount(Constraint::SOURCE_COLS);
+				unsigned i=0, col_cnt=constr->getColumnCount(Constraint::SourceCols);
 				vector<BaseObject *> ref_aux;
 				Constraint *aux_constr=nullptr;
 
 				for(i=0; i < col_cnt; i++)
 				{
 					//Get the objects referencing the source columns of the pk
-					imported_model->getObjectReferences(constr->getColumn(i, Constraint::SOURCE_COLS), ref_aux, false, true);
+					imported_model->getObjectReferences(constr->getColumn(i, Constraint::SourceCols), ref_aux, false, true);
 
 					//Selecting only fks from the references list
 					for(BaseObject *obj : ref_aux)

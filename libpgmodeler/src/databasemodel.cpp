@@ -75,7 +75,7 @@ void DatabaseModel::setEncoding(EncodingType encod)
 
 void DatabaseModel::setLocalization(unsigned localiz_id, const QString &value)
 {
-	if(localiz_id > Collation::_LC_COLLATE)
+	if(localiz_id > Collation::LcCollate)
 		throw Exception(RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	localizations[localiz_id]=value;
@@ -551,8 +551,8 @@ vector<BaseObject *> DatabaseModel::getObjects(ObjectType obj_type, BaseObject *
 		rel=dynamic_cast<BaseRelationship *>(*itr);
 
 		if((!rel && (*itr)->getSchema()==schema) ||
-				(rel && (rel->getTable(BaseRelationship::SRC_TABLE)->getSchema()==schema ||
-						 rel->getTable(BaseRelationship::DST_TABLE)->getSchema()==schema)))
+				(rel && (rel->getTable(BaseRelationship::SrcTable)->getSchema()==schema ||
+						 rel->getTable(BaseRelationship::DstTable)->getSchema()==schema)))
 			sel_list.push_back(*itr);
 
 		itr++;
@@ -679,7 +679,7 @@ unsigned DatabaseModel::getObjectCount(void)
 
 QString DatabaseModel::getLocalization(unsigned localiz_id)
 {
-	if(localiz_id > Collation::_LC_COLLATE)
+	if(localiz_id > Collation::LcCollate)
 		throw Exception(RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(localizations[localiz_id]);
@@ -1138,15 +1138,15 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 		{
 			rel=dynamic_cast<BaseRelationship *>(*itr1);
 
-			if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK &&
-					(rel->getTable(BaseRelationship::SRC_TABLE)==table ||
-					 rel->getTable(BaseRelationship::DST_TABLE)==table))
+			if(rel->getRelationshipType()==BaseRelationship::RelationshipFk &&
+					(rel->getTable(BaseRelationship::SrcTable)==table ||
+					 rel->getTable(BaseRelationship::DstTable)==table))
 			{
 				Constraint *fk = rel->getReferenceForeignKey();
-				if(rel->getTable(BaseRelationship::SRC_TABLE)==table)
-					ref_tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DST_TABLE));
+				if(rel->getTable(BaseRelationship::SrcTable)==table)
+					ref_tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DstTable));
 				else
-					ref_tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::SRC_TABLE));
+					ref_tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::SrcTable));
 
 				//Removes the relationship if the table does'nt references the 'ref_tab'
 				if(fk->getReferencedTable() == ref_tab && table->getObjectIndex(fk) < 0)
@@ -1179,7 +1179,7 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 
 			if(!rel && ref_tab->getDatabase()==this)
 			{
-				rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_FK, table, ref_tab, false, false);
+				rel=new BaseRelationship(BaseRelationship::RelationshipFk, table, ref_tab, false, false);
 				rel->setReferenceForeignKey(fk);
 				rel->setCustomColor(Qt::transparent);
 
@@ -1187,7 +1187,7 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 					 name so it`s necessary to check if a relationship with the same name already exists. If exists changes
 					 the name of the new one */
 				if(getObjectIndex(rel->getName(), ObjBaseRelationship) >= 0)
-					rel->setName(PgModelerNS::generateUniqueName(rel, base_relationships));
+					rel->setName(PgModelerNs::generateUniqueName(rel, base_relationships));
 
 				addRelationship(rel);
 			}
@@ -1227,8 +1227,8 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 		{
 			rel=dynamic_cast<BaseRelationship *>(*itr);
 
-			if(rel->getTable(BaseRelationship::SRC_TABLE)==view ||
-					rel->getTable(BaseRelationship::DST_TABLE)==view)
+			if(rel->getTable(BaseRelationship::SrcTable)==view ||
+					rel->getTable(BaseRelationship::DstTable)==view)
 			{
 				removeRelationship(rel);
 				itr=base_relationships.begin() + idx;
@@ -1252,13 +1252,13 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 		{
 			rel=dynamic_cast<BaseRelationship *>(*itr);
 
-			if(rel->getTable(BaseRelationship::SRC_TABLE)==view ||
-					rel->getTable(BaseRelationship::DST_TABLE)==view)
+			if(rel->getTable(BaseRelationship::SrcTable)==view ||
+					rel->getTable(BaseRelationship::DstTable)==view)
 			{
-				if(rel->getTable(BaseRelationship::SRC_TABLE)->getObjectType()==ObjTable)
-					tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::SRC_TABLE));
+				if(rel->getTable(BaseRelationship::SrcTable)->getObjectType()==ObjTable)
+					tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::SrcTable));
 				else
-					tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DST_TABLE));
+					tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DstTable));
 
 				if(!view->isReferencingTable(tab))
 				{
@@ -1288,8 +1288,8 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 			rel=getRelationship(view,tab);
 			if(tab && !rel)
 			{
-				rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_DEP, view, tab, false, false);
-				rel->setName(PgModelerNS::generateUniqueName(rel, base_relationships));
+				rel=new BaseRelationship(BaseRelationship::RelationshipDep, view, tab, false, false);
+				rel->setName(PgModelerNs::generateUniqueName(rel, base_relationships));
 				addRelationship(rel);
 			}
 		}
@@ -1361,8 +1361,8 @@ void DatabaseModel::validateRelationships(void)
 		itr++;
 
 		if(rel &&
-				(rel->getRelationshipType()==Relationship::RELATIONSHIP_11 ||
-				 rel->getRelationshipType()==Relationship::RELATIONSHIP_1N) &&
+				(rel->getRelationshipType()==Relationship::Relationship11 ||
+				 rel->getRelationshipType()==Relationship::Relationship1n) &&
 				rel->getReferenceTable()->getPrimaryKey() &&
 				rel->getReferenceTable()->getPrimaryKey()->isAddedByRelationship())
 			rels_gen_pk++;
@@ -1440,8 +1440,8 @@ void DatabaseModel::validateRelationships(void)
 						rel->connectRelationship();
 
 						//Storing the schemas on a auxiliary vector to update them later
-						tab1=rel->getTable(BaseRelationship::SRC_TABLE);
-						tab2=rel->getTable(BaseRelationship::DST_TABLE);
+						tab1=rel->getTable(BaseRelationship::SrcTable);
+						tab2=rel->getTable(BaseRelationship::DstTable);
 
 						if(std::find(schemas.begin(), schemas.end(), tab1->getSchema())==schemas.end())
 							schemas.push_back(dynamic_cast<Schema *>(tab1->getSchema()));
@@ -1493,7 +1493,7 @@ void DatabaseModel::validateRelationships(void)
 								there is only one relationship to be validated */
 						else if(e.getErrorType()==InvLinkTablesNoPrimaryKey &&
 								(conn_tries[rel] > rels.size() ||
-								 rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN))
+								 rel->getRelationshipType()==BaseRelationship::RelationshipNn))
 						{
 							fail_rels.push_back(rel);
 							rels.erase(itr_ant);
@@ -1607,8 +1607,8 @@ void DatabaseModel::validateRelationships(void)
 		{
 			base_rel=dynamic_cast<BaseRelationship *>(*itr);
 
-			if(base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
-				this->updateTableFKRelationships(dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SRC_TABLE)));
+			if(base_rel->getRelationshipType()==BaseRelationship::RelationshipFk)
+				this->updateTableFKRelationships(dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SrcTable)));
 
 			itr++;
 		}
@@ -1646,9 +1646,9 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
 		if((!rel->isSelfRelationship() &&
 				(rel->isIdentifier() ||
 				 rel->hasIndentifierAttribute())) ||
-				(rel_type==Relationship::RELATIONSHIP_GEN ||
-				 rel_type==Relationship::RELATIONSHIP_DEP ||
-				 rel_type==Relationship::RELATIONSHIP_PART))
+				(rel_type==Relationship::RelationshipGen ||
+				 rel_type==Relationship::RelationshipDep ||
+				 rel_type==Relationship::RelationshipPart))
 		{
 			BaseTable *ref_table=nullptr, *src_table=nullptr;
 			Table *recv_table=nullptr;
@@ -1689,9 +1689,9 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
 							((!rel_aux->isSelfRelationship() &&
 							  (rel_aux->isIdentifier() ||
 							   rel_aux->hasIndentifierAttribute())) ||
-							 (aux_rel_type==Relationship::RELATIONSHIP_GEN ||
-								aux_rel_type==Relationship::RELATIONSHIP_DEP ||
-								aux_rel_type==Relationship::RELATIONSHIP_PART)))
+							 (aux_rel_type==Relationship::RelationshipGen ||
+								aux_rel_type==Relationship::RelationshipDep ||
+								aux_rel_type==Relationship::RelationshipPart)))
 
 					{
 						//The receiver table will be the receiver from the current relationship
@@ -1977,13 +1977,13 @@ void DatabaseModel::addRelationship(BaseRelationship *rel, int obj_idx)
 
 		if(rel)
 		{
-			tab1=rel->getTable(BaseRelationship::SRC_TABLE);
-			tab2=rel->getTable(BaseRelationship::DST_TABLE);
+			tab1=rel->getTable(BaseRelationship::SrcTable);
+			tab2=rel->getTable(BaseRelationship::DstTable);
 
 			//Raises an error if already exists an relationship between the tables
-			if(rel->getRelationshipType() != Relationship::RELATIONSHIP_1N &&
-				 rel->getRelationshipType() != Relationship::RELATIONSHIP_NN &&
-				 rel->getRelationshipType() != Relationship::RELATIONSHIP_FK &&
+			if(rel->getRelationshipType() != Relationship::Relationship1n &&
+				 rel->getRelationshipType() != Relationship::RelationshipNn &&
+				 rel->getRelationshipType() != Relationship::RelationshipFk &&
 				 getRelationship(tab1,tab2))
 			{
 				msg=Exception::getErrorMessage(InsDuplicatedRelationship)
@@ -2030,7 +2030,7 @@ void DatabaseModel::removeRelationship(BaseRelationship *rel, int obj_idx)
 			{
 				/* If the relationship is not a many-to-many we store the receiver table in order to
 		   update the fk relationships (if there are any) */
-				if(rel->getRelationshipType()!=Relationship::RELATIONSHIP_NN)
+				if(rel->getRelationshipType()!=Relationship::RelationshipNn)
 					recv_tab=dynamic_cast<Relationship *>(rel)->getReceiverTable();
 
 				storeSpecialObjectsXML();
@@ -2112,8 +2112,8 @@ BaseRelationship *DatabaseModel::getRelationship(BaseTable *src_tab, BaseTable *
 		while(itr!=itr_end && !found)
 		{
 			rel=dynamic_cast<BaseRelationship *>(*itr);
-			tab1=rel->getTable(BaseRelationship::SRC_TABLE);
-			tab2=rel->getTable(BaseRelationship::DST_TABLE);
+			tab1=rel->getTable(BaseRelationship::SrcTable);
+			tab2=rel->getTable(BaseRelationship::DstTable);
 
 			found=((!ref_fk || (ref_fk && rel->getReferenceForeignKey() == ref_fk)) &&
 						 ((tab1==src_tab && tab2==dst_tab) ||
@@ -2141,8 +2141,8 @@ vector<BaseRelationship *> DatabaseModel::getRelationships(BaseTable *tab)
 	{
 		base_rel=dynamic_cast<BaseRelationship *>(obj);
 
-		if(base_rel->getTable(BaseRelationship::SRC_TABLE)==tab ||
-			 base_rel->getTable(BaseRelationship::DST_TABLE)==tab)
+		if(base_rel->getTable(BaseRelationship::SrcTable)==tab ||
+			 base_rel->getTable(BaseRelationship::DstTable)==tab)
 			aux_rels.push_back(base_rel);
 	}
 
@@ -3031,7 +3031,7 @@ void DatabaseModel::loadModel(const QString &filename)
 			def_objs[ObjCollation]=attribs[ParsersAttributes::DEFAULT_COLLATION];
 			def_objs[ObjTablespace]=attribs[ParsersAttributes::DEFAULT_TABLESPACE];
 
-			if(xmlparser.accessElement(XMLParser::ChildElement))
+			if(xmlparser.accessElement(XmlParser::ChildElement))
 			{
 				do
 				{
@@ -3063,7 +3063,7 @@ void DatabaseModel::loadModel(const QString &filename)
 									/* If there is at least one inheritance relationship we need to flag this situation
 									 in order to do an addtional rel. validation in the end of loading */
 									if(!found_inh_rel && object->getObjectType()==ObjRelationship &&
-											dynamic_cast<Relationship *>(object)->getRelationshipType()==BaseRelationship::RELATIONSHIP_GEN)
+											dynamic_cast<Relationship *>(object)->getRelationshipType()==BaseRelationship::RelationshipGen)
 										found_inh_rel=true;
 
 									emit s_objectLoaded((xmlparser.getCurrentBufferLine()/static_cast<float>(xmlparser.getBufferLineCount()))*100,
@@ -3083,7 +3083,7 @@ void DatabaseModel::loadModel(const QString &filename)
 						}
 					}
 				}
-				while(xmlparser.accessElement(XMLParser::NextElement));
+				while(xmlparser.accessElement(XmlParser::NextElement));
 			}
 
 			this->BaseObject::setProtected(protected_model);
@@ -3251,7 +3251,7 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 
 	xmlparser.savePosition();
 
-	if(xmlparser.accessElement(XMLParser::ChildElement))
+	if(xmlparser.accessElement(XmlParser::ChildElement))
 	{
 		do
 		{
@@ -3263,7 +3263,7 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 				if(elem_name==ParsersAttributes::COMMENT)
 				{
 					xmlparser.savePosition();
-					xmlparser.accessElement(XMLParser::ChildElement);
+					xmlparser.accessElement(XmlParser::ChildElement);
 					object->setComment(xmlparser.getElementContent());
 					xmlparser.restorePosition();
 				}
@@ -3306,14 +3306,14 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 				else if(elem_name==ParsersAttributes::APPENDED_SQL)
 				{
 					xmlparser.savePosition();
-					xmlparser.accessElement(XMLParser::ChildElement);
+					xmlparser.accessElement(XmlParser::ChildElement);
 					object->setAppendedSQL(xmlparser.getElementContent());
 					xmlparser.restorePosition();
 				}
 				else if(elem_name==ParsersAttributes::PREPENDED_SQL)
 				{
 					xmlparser.savePosition();
-					xmlparser.accessElement(XMLParser::ChildElement);
+					xmlparser.accessElement(XmlParser::ChildElement);
 					object->setPrependedSQL(xmlparser.getElementContent());
 					xmlparser.restorePosition();
 				}
@@ -3334,7 +3334,7 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 				}
 			}
 		}
-		while(!has_error && xmlparser.accessElement(XMLParser::NextElement));
+		while(!has_error && xmlparser.accessElement(XmlParser::NextElement));
 	}
 
 	xmlparser.restorePosition();
@@ -3479,7 +3479,7 @@ Role *DatabaseModel::createRole(void)
 			role->setOption(op_vect[i], marked);
 		}
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -3526,7 +3526,7 @@ Role *DatabaseModel::createRole(void)
 					}
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NextElement));
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 	}
 	catch(Exception &e)
@@ -3598,7 +3598,7 @@ Language *DatabaseModel::createLanguage(void)
 
 		lang->setTrusted(attribs[ParsersAttributes::TRUSTED]==ParsersAttributes::_TRUE_);
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -3645,7 +3645,7 @@ Language *DatabaseModel::createLanguage(void)
 					}
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NextElement));
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
 	}
@@ -3701,7 +3701,7 @@ Function *DatabaseModel::createFunction(void)
 		if(!attribs[ParsersAttributes::ROW_AMOUNT].isEmpty())
 			func->setRowAmount(attribs[ParsersAttributes::ROW_AMOUNT].toInt());
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -3717,7 +3717,7 @@ Function *DatabaseModel::createFunction(void)
 
 						try
 						{
-							xmlparser.accessElement(XMLParser::ChildElement);
+							xmlparser.accessElement(XmlParser::ChildElement);
 
 							do
 							{
@@ -3737,7 +3737,7 @@ Function *DatabaseModel::createFunction(void)
 									}
 								}
 							}
-							while(xmlparser.accessElement(XMLParser::NextElement));
+							while(xmlparser.accessElement(XmlParser::NextElement));
 
 							xmlparser.restorePosition();
 						}
@@ -3781,14 +3781,14 @@ Function *DatabaseModel::createFunction(void)
 							func->setLibrary(attribs_aux[ParsersAttributes::LIBRARY]);
 							func->setSymbol(attribs_aux[ParsersAttributes::SYMBOL]);
 						}
-						else if(xmlparser.accessElement(XMLParser::ChildElement))
+						else if(xmlparser.accessElement(XmlParser::ChildElement))
 							func->setSourceCode(xmlparser.getElementContent());
 
 						xmlparser.restorePosition();
 					}
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NextElement));
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 	}
 	catch(Exception &e)
@@ -3825,7 +3825,7 @@ Parameter DatabaseModel::createParameter(void)
 		param.setName(attribs[ParsersAttributes::NAME]);
 		param.setDefaultValue(attribs[ParsersAttributes::DEFAULT_VALUE]);
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -3839,7 +3839,7 @@ Parameter DatabaseModel::createParameter(void)
 					}
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NextElement));
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
 		param.setIn(attribs[ParsersAttributes::PARAM_IN]==ParsersAttributes::_TRUE_);
@@ -3872,7 +3872,7 @@ TypeAttribute DatabaseModel::createTypeAttribute(void)
 
 		tpattrib.setName(attribs[ParsersAttributes::NAME]);
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -3905,7 +3905,7 @@ TypeAttribute DatabaseModel::createTypeAttribute(void)
 					}
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NextElement));
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
 		xmlparser.restorePosition();
@@ -4044,7 +4044,7 @@ Type *DatabaseModel::createType(void)
 			func_types[ParsersAttributes::SUBTYPE_DIFF_FUNC]=Type::SUBTYPE_DIFF_FUNC;
 		}
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -4137,7 +4137,7 @@ Type *DatabaseModel::createType(void)
 					}
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NextElement));
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 	}
 	catch(Exception &e)
@@ -4177,7 +4177,7 @@ Domain *DatabaseModel::createDomain(void)
 
 		domain->setNotNull(attribs[ParsersAttributes::NOT_NULL]==ParsersAttributes::_TRUE_);
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -4194,8 +4194,8 @@ Domain *DatabaseModel::createDomain(void)
 					{
 						xmlparser.savePosition();
 						xmlparser.getElementAttributes(attribs);
-						xmlparser.accessElement(XMLParser::ChildElement);
-						xmlparser.accessElement(XMLParser::ChildElement);
+						xmlparser.accessElement(XmlParser::ChildElement);
+						xmlparser.accessElement(XmlParser::ChildElement);
 						domain->addCheckConstraint(attribs[ParsersAttributes::NAME], xmlparser.getElementContent());
 						xmlparser.restorePosition();
 					}
@@ -4229,15 +4229,15 @@ Cast *DatabaseModel::createCast(void)
 		xmlparser.getElementAttributes(attribs);
 
 		if(attribs[ParsersAttributes::CAST_TYPE]==ParsersAttributes::IMPLICIT)
-			cast->setCastType(Cast::IMPLICIT);
+			cast->setCastType(Cast::Implicit);
 		else if(attribs[ParsersAttributes::CAST_TYPE]==ParsersAttributes::ASSIGNMENT)
-			cast->setCastType(Cast::ASSIGNMENT);
+			cast->setCastType(Cast::Assignment);
 		else
-			cast->setCastType(Cast::EXPLICIT);
+			cast->setCastType(Cast::Explicit);
 
 		cast->setInOut(attribs[ParsersAttributes::IO_CAST]==ParsersAttributes::_TRUE_);
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -4250,9 +4250,9 @@ Cast *DatabaseModel::createCast(void)
 					{
 						type=createPgSQLType();
 						if(type_idx==0)
-							cast->setDataType(Cast::SRC_TYPE, type);
+							cast->setDataType(Cast::SrcType, type);
 						else
-							cast->setDataType(Cast::DST_TYPE, type);
+							cast->setDataType(Cast::DstType, type);
 						type_idx++;
 					}
 					//Extracts the conversion function
@@ -4274,7 +4274,7 @@ Cast *DatabaseModel::createCast(void)
 					}
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NextElement));
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 	}
 	catch(Exception &e)
@@ -4307,7 +4307,7 @@ Conversion *DatabaseModel::createConversion(void)
 
 		conv->setDefault(attribs[ParsersAttributes::DEFAULT]==ParsersAttributes::_TRUE_);
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -4333,7 +4333,7 @@ Conversion *DatabaseModel::createConversion(void)
 					}
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NextElement));
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 	}
 	catch(Exception &e)
@@ -4372,7 +4372,7 @@ Operator *DatabaseModel::createOperator(void)
 		oper_types[ParsersAttributes::COMMUTATOR_OP]=Operator::OPER_COMMUTATOR;
 		oper_types[ParsersAttributes::NEGATOR_OP]=Operator::OPER_NEGATOR;
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -4428,7 +4428,7 @@ Operator *DatabaseModel::createOperator(void)
 					}
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NextElement));
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 	}
 	catch(Exception &e)
@@ -4464,7 +4464,7 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 		elem_types[ParsersAttributes::OPERATOR]=OperatorClassElement::OPERATOR_ELEM;
 		elem_types[ParsersAttributes::STORAGE]=OperatorClassElement::STORAGE_ELEM;
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -4502,7 +4502,7 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 						elem_type=elem_types[attribs[ParsersAttributes::TYPE]];
 
 						xmlparser.savePosition();
-						xmlparser.accessElement(XMLParser::ChildElement);
+						xmlparser.accessElement(XmlParser::ChildElement);
 						xmlparser.getElementAttributes(attribs);
 
 						if(elem_type==OperatorClassElement::STORAGE_ELEM)
@@ -4520,10 +4520,10 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 							object=getObject(attribs[ParsersAttributes::SIGNATURE],ObjOperator);
 							class_elem.setOperator(dynamic_cast<Operator *>(object),stg_number);
 
-							if(xmlparser.hasElement(XMLParser::NextElement))
+							if(xmlparser.hasElement(XmlParser::NextElement))
 							{
 								xmlparser.savePosition();
-								xmlparser.accessElement(XMLParser::NextElement);
+								xmlparser.accessElement(XmlParser::NextElement);
 								xmlparser.getElementAttributes(attribs_aux);
 
 								object=getObject(attribs_aux[ParsersAttributes::SIGNATURE],ObjOpFamily);
@@ -4546,7 +4546,7 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 					}
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NextElement));
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 	}
 	catch(Exception &e)
@@ -4595,7 +4595,7 @@ Aggregate *DatabaseModel::createAggregate(void)
 
 		aggreg->setInitialCondition(attribs[ParsersAttributes::INITIAL_COND]);
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -4628,15 +4628,15 @@ Aggregate *DatabaseModel::createAggregate(void)
 								RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 						if(attribs[ParsersAttributes::REF_TYPE]==ParsersAttributes::TRANSITION_FUNC)
-							aggreg->setFunction(Aggregate::TRANSITION_FUNC,
+							aggreg->setFunction(Aggregate::TransitionFunc,
 												dynamic_cast<Function *>(func));
 						else
-							aggreg->setFunction(Aggregate::FINAL_FUNC,
+							aggreg->setFunction(Aggregate::FinalFunc,
 												dynamic_cast<Function *>(func));
 					}
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NextElement));
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 	}
 	catch(Exception &e)
@@ -4676,7 +4676,7 @@ Table *DatabaseModel::createTable(void)
 		table->setExtAttribsHidden(attribs[ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::_TRUE_);
 		table->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::_TRUE_);
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -4715,7 +4715,7 @@ Table *DatabaseModel::createTable(void)
 
 						xmlparser.savePosition();
 
-						if(xmlparser.accessElement(XMLParser::ChildElement))
+						if(xmlparser.accessElement(XmlParser::ChildElement))
 						{
 							do
 							{
@@ -4732,7 +4732,7 @@ Table *DatabaseModel::createTable(void)
 									}
 								}
 							}
-							while(xmlparser.accessElement(XMLParser::NextElement));
+							while(xmlparser.accessElement(XmlParser::NextElement));
 
 							table->setRelObjectsIndexes(names, idxs, obj_type);
 							names.clear();
@@ -4747,7 +4747,7 @@ Table *DatabaseModel::createTable(void)
 						table->setPartitioningType(aux_attribs[ParsersAttributes::TYPE]);
 						xmlparser.savePosition();
 
-						if(xmlparser.accessElement(XMLParser::ChildElement))
+						if(xmlparser.accessElement(XmlParser::ChildElement))
 						{
 							do
 							{
@@ -4758,7 +4758,7 @@ Table *DatabaseModel::createTable(void)
 										partition_keys.push_back(part_key);
 								}
 							}
-							while(xmlparser.accessElement(XMLParser::NextElement));
+							while(xmlparser.accessElement(XmlParser::NextElement));
 
 							table->addPartitionKeys(partition_keys);
 						}
@@ -4769,7 +4769,7 @@ Table *DatabaseModel::createTable(void)
 					else if(elem==ParsersAttributes::INITIAL_DATA)
 					{
 						xmlparser.savePosition();
-						xmlparser.accessElement(XMLParser::ChildElement);
+						xmlparser.accessElement(XmlParser::ChildElement);
 						table->setInitialData(xmlparser.getElementContent());
 						xmlparser.restorePosition();
 					}
@@ -4780,7 +4780,7 @@ Table *DatabaseModel::createTable(void)
 					xmlparser.restorePosition();
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NextElement));
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
 		table->setProtected(table->isProtected());
@@ -4834,7 +4834,7 @@ Column *DatabaseModel::createColumn(void)
 			column->setSequence(seq);
 		}
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -4848,7 +4848,7 @@ Column *DatabaseModel::createColumn(void)
 					}
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NextElement));
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 	}
 	catch(Exception &e)
@@ -4955,10 +4955,10 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 				constr->setMatchType(attribs[ParsersAttributes::COMPARISON_TYPE]);
 
 			if(!attribs[ParsersAttributes::DEL_ACTION].isEmpty())
-				constr->setActionType(attribs[ParsersAttributes::DEL_ACTION], Constraint::DELETE_ACTION);
+				constr->setActionType(attribs[ParsersAttributes::DEL_ACTION], Constraint::DeleteAction);
 
 			if(!attribs[ParsersAttributes::UPD_ACTION].isEmpty())
-				constr->setActionType(attribs[ParsersAttributes::UPD_ACTION], Constraint::UPDATE_ACTION);
+				constr->setActionType(attribs[ParsersAttributes::UPD_ACTION], Constraint::UpdateAction);
 
 			ref_table=getObject(attribs[ParsersAttributes::REF_TABLE], ObjTable);
 
@@ -4988,7 +4988,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 			constr->setIndexType(attribs[ParsersAttributes::INDEX_TYPE]);
 		}
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -5004,7 +5004,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 					else if(elem==ParsersAttributes::EXPRESSION)
 					{
 						xmlparser.savePosition();
-						xmlparser.accessElement(XMLParser::ChildElement);
+						xmlparser.accessElement(XmlParser::ChildElement);
 
 						constr->setExpression(xmlparser.getElementContent());
 
@@ -5018,13 +5018,13 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 						count=col_list.count();
 
 						if(attribs[ParsersAttributes::REF_TYPE]==ParsersAttributes::SRC_COLUMNS)
-							col_type=Constraint::SOURCE_COLS;
+							col_type=Constraint::SourceCols;
 						else
-							col_type=Constraint::REFERENCED_COLS;
+							col_type=Constraint::ReferencedCols;
 
 						for(i=0; i < count; i++)
 						{
-							if(col_type==Constraint::SOURCE_COLS)
+							if(col_type==Constraint::SourceCols)
 							{
 								if(obj_type==ObjTable)
 								{
@@ -5052,7 +5052,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 					}
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NextElement));
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
 		if(ins_constr_table)
@@ -5101,7 +5101,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 		elem.setSortingEnabled(attribs[ParsersAttributes::USE_SORTING]!=ParsersAttributes::_FALSE_);
 
 		xmlparser.savePosition();
-		xmlparser.accessElement(XMLParser::ChildElement);
+		xmlparser.accessElement(XmlParser::ChildElement);
 
 		do
 		{
@@ -5229,19 +5229,19 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 				else if(xml_elem==ParsersAttributes::EXPRESSION)
 				{
 					xmlparser.savePosition();
-					xmlparser.accessElement(XMLParser::ChildElement);
+					xmlparser.accessElement(XmlParser::ChildElement);
 					elem.setExpression(xmlparser.getElementContent());
 					xmlparser.restorePosition();
 				}
 			}
 		}
-		while(xmlparser.accessElement(XMLParser::NextElement));
+		while(xmlparser.accessElement(XmlParser::NextElement));
 
 		xmlparser.restorePosition();
 	}
 }
 
-XMLParser *DatabaseModel::getXMLParser(void)
+XmlParser *DatabaseModel::getXMLParser(void)
 {
 	return(&xmlparser);
 }
@@ -5320,7 +5320,7 @@ Index *DatabaseModel::createIndex(void)
 		index->setIndexingType(attribs[ParsersAttributes::INDEX_TYPE]);
 		index->setFillFactor(attribs[ParsersAttributes::FACTOR].toUInt());
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -5336,14 +5336,14 @@ Index *DatabaseModel::createIndex(void)
 					else if(elem==ParsersAttributes::PREDICATE)
 					{
 						xmlparser.savePosition();
-						xmlparser.accessElement(XMLParser::ChildElement);
+						xmlparser.accessElement(XmlParser::ChildElement);
 						str_aux=xmlparser.getElementContent();
 						xmlparser.restorePosition();
 						index->setPredicate(str_aux);
 					}
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NextElement));
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
 		table->addObject(index);
@@ -5391,7 +5391,7 @@ Rule *DatabaseModel::createRule(void)
 		rule->setExecutionType(attribs[ParsersAttributes::EXEC_TYPE]);
 		rule->setEventType(attribs[ParsersAttributes::EVENT_TYPE]);
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -5403,7 +5403,7 @@ Rule *DatabaseModel::createRule(void)
 							elem==ParsersAttributes::CONDITION)
 					{
 						xmlparser.savePosition();
-						xmlparser.accessElement(XMLParser::ChildElement);
+						xmlparser.accessElement(XmlParser::ChildElement);
 
 						str_aux=xmlparser.getElementContent();
 						xmlparser.restorePosition();
@@ -5423,7 +5423,7 @@ Rule *DatabaseModel::createRule(void)
 					}
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NextElement));
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
 		table->addObject(rule);
@@ -5527,7 +5527,7 @@ Trigger *DatabaseModel::createTrigger(void)
 			trigger->setReferecendTable(dynamic_cast<BaseTable *>(ref_table));
 		}
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -5557,7 +5557,7 @@ Trigger *DatabaseModel::createTrigger(void)
 					else if(elem==ParsersAttributes::CONDITION)
 					{
 						xmlparser.savePosition();
-						xmlparser.accessElement(XMLParser::ChildElement);
+						xmlparser.accessElement(XmlParser::ChildElement);
 						str_aux=xmlparser.getElementContent();
 						xmlparser.restorePosition();
 						trigger->setCondition(str_aux);
@@ -5581,7 +5581,7 @@ Trigger *DatabaseModel::createTrigger(void)
 					}
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NextElement));
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
 		table->addObject(trigger);
@@ -5623,7 +5623,7 @@ Policy *DatabaseModel::createPolicy(void)
 		policy->setPermissive(attribs[ParsersAttributes::PERMISSIVE] == ParsersAttributes::_TRUE_);
 		policy->setPolicyCommand(PolicyCmdType(attribs[ParsersAttributes::COMMAND]));
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -5635,7 +5635,7 @@ Policy *DatabaseModel::createPolicy(void)
 					{
 						xmlparser.getElementAttributes(attribs);
 						xmlparser.savePosition();
-						xmlparser.accessElement(XMLParser::ChildElement);
+						xmlparser.accessElement(XmlParser::ChildElement);
 
 						if(attribs[ParsersAttributes::TYPE] == ParsersAttributes::USING_EXP)
 							policy->setUsingExpression(xmlparser.getElementContent());
@@ -5673,7 +5673,7 @@ Policy *DatabaseModel::createPolicy(void)
 					}
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NextElement));
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
 		table->addObject(policy);
@@ -5702,7 +5702,7 @@ EventTrigger *DatabaseModel::createEventTrigger(void)
 		xmlparser.getElementAttributes(attribs);
 		event_trig->setEvent(EventTriggerType(attribs[ParsersAttributes::EVENT]));
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -5735,7 +5735,7 @@ EventTrigger *DatabaseModel::createEventTrigger(void)
 					}
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NextElement));
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
 	}
@@ -5758,11 +5758,11 @@ GenericSQL *DatabaseModel::createGenericSQL(void)
 		genericsql=new GenericSQL;
 		setBasicAttributes(genericsql);
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			if(xmlparser.getElementType()==XML_ELEMENT_NODE && xmlparser.getElementName() == ParsersAttributes::DEFINITION)
 			{
-				xmlparser.accessElement(XMLParser::ChildElement);
+				xmlparser.accessElement(XmlParser::ChildElement);
 				genericsql->setDefinition(xmlparser.getElementContent());
 			}
 		}
@@ -5882,7 +5882,7 @@ View *DatabaseModel::createView(void)
 		view->setExtAttribsHidden(attribs[ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::_TRUE_);
 		view->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::_TRUE_);
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -5945,8 +5945,8 @@ View *DatabaseModel::createView(void)
 							xmlparser.savePosition();
 							str_aux=attribs[ParsersAttributes::ALIAS];
 
-							xmlparser.accessElement(XMLParser::ChildElement);
-							xmlparser.accessElement(XMLParser::ChildElement);
+							xmlparser.accessElement(XmlParser::ChildElement);
+							xmlparser.accessElement(XmlParser::ChildElement);
 
 							reference = Reference(xmlparser.getElementContent(),str_aux);
 							reference.setReferenceAlias(attribs[ParsersAttributes::REF_ALIAS]);
@@ -5959,7 +5959,7 @@ View *DatabaseModel::createView(void)
 					{
 						xmlparser.savePosition();
 						xmlparser.getElementAttributes(attribs);
-						xmlparser.accessElement(XMLParser::ChildElement);
+						xmlparser.accessElement(XmlParser::ChildElement);
 
 						if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::CTE_EXPRESSION)
 							view->setCommomTableExpression(xmlparser.getElementContent());
@@ -6009,7 +6009,7 @@ View *DatabaseModel::createView(void)
 					}
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NextElement));
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
 		/** Special case for refereces used as view definition **
@@ -6084,8 +6084,8 @@ Collation *DatabaseModel::createCollation(void)
 		//Creating a collation using LC_COLLATE and LC_CTYPE params
 		else
 		{
-			collation->setLocalization(Collation::_LC_COLLATE, attribs[ParsersAttributes::_LC_COLLATE_]);
-			collation->setLocalization(Collation::_LC_CTYPE, attribs[ParsersAttributes::_LC_CTYPE_]);
+			collation->setLocalization(Collation::LcCollate, attribs[ParsersAttributes::_LC_COLLATE_]);
+			collation->setLocalization(Collation::LcCtype, attribs[ParsersAttributes::_LC_CTYPE_]);
 		}
 	}
 	catch(Exception &e)
@@ -6132,7 +6132,7 @@ Tag *DatabaseModel::createTag(void)
 		tag=new Tag;
 		setBasicAttributes(tag);
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -6147,7 +6147,7 @@ Tag *DatabaseModel::createTag(void)
 					}
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NextElement));
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
 		return(tag);
@@ -6212,9 +6212,9 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 
 	try
 	{
-		labels_id[ParsersAttributes::NAME_LABEL]=BaseRelationship::REL_NAME_LABEL;
-		labels_id[ParsersAttributes::SRC_LABEL]=BaseRelationship::SRC_CARD_LABEL;
-		labels_id[ParsersAttributes::DST_LABEL]=BaseRelationship::DST_CARD_LABEL;
+		labels_id[ParsersAttributes::NAME_LABEL]=BaseRelationship::RelNameLabel;
+		labels_id[ParsersAttributes::SRC_LABEL]=BaseRelationship::SrcCardLabel;
+		labels_id[ParsersAttributes::DST_LABEL]=BaseRelationship::DstCardLabel;
 
 		xmlparser.getElementAttributes(attribs);
 		protect=(attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
@@ -6263,18 +6263,18 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 			added to the table after its creation. */
 			if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_FK)
 			{
-				base_rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_FK, tables[0], tables[1], false, false);
+				base_rel=new BaseRelationship(BaseRelationship::RelationshipFk, tables[0], tables[1], false, false);
 				base_rel->setName(attribs[ParsersAttributes::NAME]);
 				base_rel->setAlias(attribs[ParsersAttributes::ALIAS]);
 				addRelationship(base_rel);
 
 				/* If the source table doesn't have any fk that references the destination table indicates that the relationship
 				is being created before the fk that represents it or the fk is invalid (inconsistence!). In this case an error is raised. */
-				if(base_rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_FK &&
+				if(base_rel->getRelationshipType() == BaseRelationship::RelationshipFk &&
 				   !base_rel->getReferenceForeignKey())
 				{
-					Table *src_tab = dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SRC_TABLE)),
-						  *dst_tab = dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::DST_TABLE));
+					Table *src_tab = dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SrcTable)),
+							*dst_tab = dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::DstTable));
 					vector<Constraint *> fks;
 
 					src_tab->getForeignKeys(fks, false, dst_tab);
@@ -6337,17 +6337,17 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 			single_pk_col=(attribs[ParsersAttributes::SINGLE_PK_COLUMN]==ParsersAttributes::_TRUE_);
 
 			if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_11)
-				rel_type=BaseRelationship::RELATIONSHIP_11;
+				rel_type=BaseRelationship::Relationship11;
 			else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_1N)
-				rel_type=BaseRelationship::RELATIONSHIP_1N;
+				rel_type=BaseRelationship::Relationship1n;
 			else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_NN)
-				rel_type=BaseRelationship::RELATIONSHIP_NN;
+				rel_type=BaseRelationship::RelationshipNn;
 			else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_GEN)
-				rel_type=BaseRelationship::RELATIONSHIP_GEN;
+				rel_type=BaseRelationship::RelationshipGen;
 			else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_DEP)
-				rel_type=BaseRelationship::RELATIONSHIP_DEP;
+				rel_type=BaseRelationship::RelationshipDep;
 			else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_PART)
-				rel_type=BaseRelationship::RELATIONSHIP_PART;
+				rel_type=BaseRelationship::RelationshipPart;
 
 			rel=new Relationship(rel_type,
 								 dynamic_cast<Table *>(tables[0]),
@@ -6372,7 +6372,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 				rel->setNamePattern(pattern_id[i], attribs[pat_attrib[i]]);
 		}
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -6383,7 +6383,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 					if(elem == ParsersAttributes::EXPRESSION && rel)
 					{
 						xmlparser.savePosition();
-						xmlparser.accessElement(XMLParser::ChildElement);
+						xmlparser.accessElement(XmlParser::ChildElement);
 						rel->setPartitionBoundingExpr(xmlparser.getElementContent());
 						xmlparser.restorePosition();
 					}
@@ -6417,7 +6417,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 					{
 						vector<QPointF> points;
 						xmlparser.savePosition();
-						xmlparser.accessElement(XMLParser::ChildElement);
+						xmlparser.accessElement(XmlParser::ChildElement);
 
 						do
 						{
@@ -6425,7 +6425,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 							points.push_back(QPointF(attribs[ParsersAttributes::X_POS].toDouble(),
 											 attribs[ParsersAttributes::Y_POS].toDouble()));
 						}
-						while(xmlparser.accessElement(XMLParser::NextElement));
+						while(xmlparser.accessElement(XmlParser::NextElement));
 
 						base_rel->setPoints(points);
 						xmlparser.restorePosition();
@@ -6436,7 +6436,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 						str_aux=attribs[ParsersAttributes::REF_TYPE];
 
 						xmlparser.savePosition();
-						xmlparser.accessElement(XMLParser::ChildElement);
+						xmlparser.accessElement(XmlParser::ChildElement);
 						xmlparser.getElementAttributes(attribs);
 						xmlparser.restorePosition();
 
@@ -6461,7 +6461,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 					}
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NextElement));
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 	}
 	catch(Exception &e)
@@ -6515,7 +6515,7 @@ Permission *DatabaseModel::createPermission(void)
 		cascade=priv_attribs[ParsersAttributes::CASCADE]==ParsersAttributes::_TRUE_;
 
 		xmlparser.savePosition();
-		xmlparser.accessElement(XMLParser::ChildElement);
+		xmlparser.accessElement(XmlParser::ChildElement);
 		xmlparser.getElementAttributes(attribs);
 
 		obj_type=BaseObject::getObjectType(attribs[ParsersAttributes::TYPE]);
@@ -6619,7 +6619,7 @@ Permission *DatabaseModel::createPermission(void)
 				}
 			}
 		}
-		while(xmlparser.accessElement(XMLParser::NextElement));
+		while(xmlparser.accessElement(XmlParser::NextElement));
 
 		xmlparser.restorePosition();
 	}
@@ -6684,7 +6684,7 @@ void DatabaseModel::validateRelationships(TableObject *object, Table *parent_tab
 				{
 					rel=dynamic_cast<Relationship *>(*itr);
 					itr++;
-					ref_tab_inheritance=(rel->getRelationshipType()==Relationship::RELATIONSHIP_GEN &&
+					ref_tab_inheritance=(rel->getRelationshipType()==Relationship::RelationshipGen &&
 															 rel->getReferenceTable()==parent_tab);
 				}
 			}
@@ -7025,7 +7025,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 				/* If the object is a FK relationship it's stored in a separeted list in order to have the
 			 code generated at end of whole definition (after foreign keys definition) */
 				if(object->getObjectType()==ObjBaseRelationship &&
-						dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
+						dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RelationshipFk)
 				{
 					fk_rels.push_back(object);
 				}
@@ -7040,7 +7040,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 						/* Avoiding many-to-many relationships to be included in the map.
 			 They are treated in a separated way below, because on the diff process (ModelsDiffHelper) the generated table
 			 need to be compared to other tables not the relationship itself */
-						if(!incl_relnn_objs || !rel || (rel && rel->getRelationshipType()!=BaseRelationship::RELATIONSHIP_NN))
+						if(!incl_relnn_objs || !rel || (rel && rel->getRelationshipType()!=BaseRelationship::RelationshipNn))
 							objects_map[object->getObjectId()]=object;
 					}
 				}
@@ -7109,14 +7109,14 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 			if(object->getObjectType()==ObjRelationship)
 			{
 				rel=dynamic_cast<Relationship *>(object);
-				objs[0]=rel->getTable(Relationship::SRC_TABLE);
-				objs[1]=rel->getTable(Relationship::DST_TABLE);
+				objs[0]=rel->getTable(Relationship::SrcTable);
+				objs[1]=rel->getTable(Relationship::DstTable);
 
 				/* For many-to-many relationship, the generated table and the foreign keys that represents
 		   the link are included on the creation order map instead of the relationship itself. This is
 		   done to permit the table to be accessed and compared on the diff process */
 				if(incl_relnn_objs &&
-						rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN &&
+						rel->getRelationshipType()==BaseRelationship::RelationshipNn &&
 						rel->getGeneratedTable())
 				{
 					table=rel->getGeneratedTable();
@@ -7296,7 +7296,7 @@ vector<BaseObject *> DatabaseModel::getCreationOrder(BaseObject *object, bool on
 		{
 			rel=dynamic_cast<Relationship *>(obj);
 
-			if(rel->getRelationshipType()==Relationship::RELATIONSHIP_NN &&
+			if(rel->getRelationshipType()==Relationship::RelationshipNn &&
 					rel->getGeneratedTable() &&
 					rel->getGeneratedTable()->getSchema()==object)
 			{
@@ -7500,7 +7500,7 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 				Cast *cast=dynamic_cast<Cast *>(object);
 				BaseObject *usr_type=nullptr;
 
-				for(unsigned i=Cast::SRC_TYPE; i <= Cast::DST_TYPE; i++)
+				for(unsigned i=Cast::SrcType; i <= Cast::DstType; i++)
 				{
 					usr_type=getObjectPgSQLType(cast->getDataType(i));
 
@@ -7553,7 +7553,7 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 				BaseObject *usr_type=nullptr;
 				unsigned count, i;
 
-				for(i=Aggregate::FINAL_FUNC; i <= Aggregate::TRANSITION_FUNC; i++)
+				for(i=Aggregate::FinalFunc; i <= Aggregate::TransitionFunc; i++)
 					getObjectDependecies(aggreg->getFunction(i), deps, inc_indirect_deps);
 
 				usr_type=getObjectPgSQLType(aggreg->getStateType());
@@ -7633,8 +7633,8 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 				Constraint *constr=nullptr;
 				unsigned i, count;
 
-				getObjectDependecies(rel->getTable(Relationship::SRC_TABLE), deps, inc_indirect_deps);
-				getObjectDependecies(rel->getTable(Relationship::DST_TABLE), deps, inc_indirect_deps);
+				getObjectDependecies(rel->getTable(Relationship::SrcTable), deps, inc_indirect_deps);
+				getObjectDependecies(rel->getTable(Relationship::DstTable), deps, inc_indirect_deps);
 
 				count=rel->getAttributeCount();
 				for(i=0; i < count; i++)
@@ -7944,8 +7944,8 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
 			{
 				base_rel=dynamic_cast<BaseRelationship *>(*itr);
-				if(base_rel->getTable(BaseRelationship::SRC_TABLE)==table ||
-						base_rel->getTable(BaseRelationship::DST_TABLE)==table)
+				if(base_rel->getTable(BaseRelationship::SrcTable)==table ||
+						base_rel->getTable(BaseRelationship::DstTable)==table)
 				{
 					refer=true;
 					refs.push_back(base_rel);
@@ -7959,9 +7959,9 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
 			{
 				base_rel=dynamic_cast<BaseRelationship *>(*itr);
-				if(base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK &&
-						(base_rel->getTable(BaseRelationship::SRC_TABLE)==table ||
-						 base_rel->getTable(BaseRelationship::DST_TABLE)==table))
+				if(base_rel->getRelationshipType()==BaseRelationship::RelationshipFk &&
+						(base_rel->getTable(BaseRelationship::SrcTable)==table ||
+						 base_rel->getTable(BaseRelationship::DstTable)==table))
 				{
 					refer=true;
 					refs.push_back(base_rel);
@@ -8045,8 +8045,8 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			{
 				base_rel=dynamic_cast<BaseRelationship *>(*itr);
 
-				if(base_rel->getTable(BaseRelationship::SRC_TABLE)==table ||
-						base_rel->getTable(BaseRelationship::DST_TABLE)==table)
+				if(base_rel->getTable(BaseRelationship::SrcTable)==table ||
+						base_rel->getTable(BaseRelationship::DstTable)==table)
 				{
 					refer=true;
 					refs.push_back(base_rel);
@@ -8120,8 +8120,8 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 					{
 						aggreg=dynamic_cast<Aggregate *>(*itr);
 
-						if(aggreg->getFunction(Aggregate::FINAL_FUNC)==func ||
-								aggreg->getFunction(Aggregate::TRANSITION_FUNC)==func)
+						if(aggreg->getFunction(Aggregate::FinalFunc)==func ||
+								aggreg->getFunction(Aggregate::TransitionFunc)==func)
 						{
 							refer=true;
 							refs.push_back(aggreg);
@@ -8455,8 +8455,8 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						cast=dynamic_cast<Cast *>(*itr);
 						itr++;
 
-						if(cast->getDataType(Cast::SRC_TYPE)==ptr_pgsqltype ||
-								cast->getDataType(Cast::DST_TYPE)==ptr_pgsqltype)
+						if(cast->getDataType(Cast::SrcType)==ptr_pgsqltype ||
+								cast->getDataType(Cast::DstType)==ptr_pgsqltype)
 						{
 							refer=true;
 							refs.push_back(cast);
@@ -9549,11 +9549,11 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			{
 				rel=dynamic_cast<Relationship *>(object);
 
-				if(save_objs_pos && rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN && rel->getReceiverTable())
+				if(save_objs_pos && rel->getRelationshipType()==BaseRelationship::RelationshipNn && rel->getReceiverTable())
 				{
 					tab_nn=rel->getReceiverTable();
-					src_tab=rel->getTable(BaseRelationship::SRC_TABLE);
-					dst_tab=rel->getTable(BaseRelationship::DST_TABLE);
+					src_tab=rel->getTable(BaseRelationship::SrcTable);
+					dst_tab=rel->getTable(BaseRelationship::DstTable);
 
 					//Since the generated table does not have a position we create one based upon the source tables  positions
 					pnt.setX((src_tab->getPosition().x() + dst_tab->getPosition().x())/2.0f);
@@ -9700,11 +9700,11 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 
 					attribs[ParsersAttributes::CUSTOM_COLOR]=(save_custom_colors && rel->getCustomColor()!=Qt::transparent ? rel->getCustomColor().name() : ParsersAttributes::NONE);
 
-					attribs[ParsersAttributes::SRC_TABLE]=rel->getTable(BaseRelationship::SRC_TABLE)->getSignature();
-					attribs[ParsersAttributes::SRC_TYPE]=rel->getTable(BaseRelationship::SRC_TABLE)->getSchemaName();
+					attribs[ParsersAttributes::SRC_TABLE]=rel->getTable(BaseRelationship::SrcTable)->getSignature();
+					attribs[ParsersAttributes::SRC_TYPE]=rel->getTable(BaseRelationship::SrcTable)->getSchemaName();
 
-					attribs[ParsersAttributes::DST_TABLE]=rel->getTable(BaseRelationship::DST_TABLE)->getSignature();
-					attribs[ParsersAttributes::DST_TYPE]=rel->getTable(BaseRelationship::DST_TABLE)->getSchemaName();
+					attribs[ParsersAttributes::DST_TABLE]=rel->getTable(BaseRelationship::DstTable)->getSignature();
+					attribs[ParsersAttributes::DST_TYPE]=rel->getTable(BaseRelationship::DstTable)->getSchemaName();
 
 					for(QPointF pnt : points)
 					{
@@ -9719,7 +9719,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 					}
 
 					//Saving the labels' custom positions
-					for(unsigned id=BaseRelationship::SRC_CARD_LABEL; id <= BaseRelationship::REL_NAME_LABEL; id++)
+					for(unsigned id=BaseRelationship::SrcCardLabel; id <= BaseRelationship::RelNameLabel; id++)
 					{
 						pnt=rel->getLabelDistance(id);
 						if(!std::isnan(pnt.x()) && !std::isnan(pnt.y()))
@@ -9852,9 +9852,9 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 	try
 	{
-		labels_attrs[ParsersAttributes::SRC_LABEL]=BaseRelationship::SRC_CARD_LABEL;
-		labels_attrs[ParsersAttributes::DST_LABEL]=BaseRelationship::DST_CARD_LABEL;
-		labels_attrs[ParsersAttributes::NAME_LABEL]=BaseRelationship::REL_NAME_LABEL;
+		labels_attrs[ParsersAttributes::SRC_LABEL]=BaseRelationship::SrcCardLabel;
+		labels_attrs[ParsersAttributes::DST_LABEL]=BaseRelationship::DstCardLabel;
+		labels_attrs[ParsersAttributes::NAME_LABEL]=BaseRelationship::RelNameLabel;
 
 		xmlparser.restartParser();
 
@@ -9864,7 +9864,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 		xmlparser.loadXMLFile(filename);
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -9986,7 +9986,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 							if(load_objs_aliases && !attribs[ParsersAttributes::ALIAS].isEmpty())
 								object->setAlias(attribs[ParsersAttributes::ALIAS]);
 
-							if(xmlparser.accessElement(XMLParser::ChildElement))
+							if(xmlparser.accessElement(XmlParser::ChildElement))
 							{
 								do
 								{
@@ -10005,7 +10005,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 										ref_type=aux_attrib[ParsersAttributes::REF_TYPE];
 										xmlparser.savePosition();
 
-										if(xmlparser.accessElement(XMLParser::ChildElement))
+										if(xmlparser.accessElement(XmlParser::ChildElement))
 										{
 											xmlparser.getElementAttributes(aux_attrib);
 											labels_pos[labels_attrs[ref_type]]=QPointF(aux_attrib[ParsersAttributes::X_POS].toFloat(),
@@ -10018,7 +10018,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 													attribs[ParsersAttributes::APPENDED_SQL].isEmpty())
 									{
 										xmlparser.savePosition();
-										xmlparser.accessElement(XMLParser::ChildElement);
+										xmlparser.accessElement(XmlParser::ChildElement);
 										object->setAppendedSQL(xmlparser.getElementContent());
 										xmlparser.restorePosition();
 									}
@@ -10026,12 +10026,12 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 													attribs[ParsersAttributes::PREPENDED_SQL].isEmpty())
 									{
 										xmlparser.savePosition();
-										xmlparser.accessElement(XMLParser::ChildElement);
+										xmlparser.accessElement(XmlParser::ChildElement);
 										object->setPrependedSQL(xmlparser.getElementContent());
 										xmlparser.restorePosition();
 									}
 								}
-								while(xmlparser.accessElement(XMLParser::NextElement));
+								while(xmlparser.accessElement(XmlParser::NextElement));
 							}
 
 							if(BaseGraphicObject::isGraphicObject(obj_type))
@@ -10056,7 +10056,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 									{
 										rel->setPoints(points);
 
-										for(unsigned id=BaseRelationship::SRC_CARD_LABEL; id <= BaseRelationship::REL_NAME_LABEL; id++)
+										for(unsigned id=BaseRelationship::SrcCardLabel; id <= BaseRelationship::RelNameLabel; id++)
 										{
 											rel->setLabelDistance(id, labels_pos[id]);
 											labels_pos[id]=QPointF(NAN,NAN);
@@ -10092,7 +10092,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 					}
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NextElement));
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
 		emit s_objectLoaded(100, trUtf8("Metadata file successfully loaded!"), ObjBaseObject);

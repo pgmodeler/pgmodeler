@@ -2390,7 +2390,7 @@ void DatabaseImportHelper::createTablePartitionings(void)
 				table->setPartionedTable(nullptr);
 				table->setPartitionBoundingExpr(QString());
 
-				rel_part = new Relationship(BaseRelationship::RELATIONSHIP_PART, table, part_table);
+				rel_part = new Relationship(BaseRelationship::RelationshipPart, table, part_table);
 				rel_part->setPartitionBoundingExpr(part_bound_expr);
 				dbmodel->addRelationship(rel_part);
 			}
@@ -2535,8 +2535,8 @@ void DatabaseImportHelper::__createTableInheritances(void)
 					inh_list.pop_front();
 
 					//Create the inheritance relationship
-					rel=new Relationship(Relationship::RELATIONSHIP_GEN, child_tab, parent_tab);
-					rel->setName(PgModelerNS::generateUniqueName(rel, (*dbmodel->getObjectList(ObjRelationship))));
+					rel=new Relationship(Relationship::RelationshipGen, child_tab, parent_tab);
+					rel->setName(PgModelerNs::generateUniqueName(rel, (*dbmodel->getObjectList(ObjRelationship))));
 
 					dbmodel->addRelationship(rel);
 					rel=nullptr;

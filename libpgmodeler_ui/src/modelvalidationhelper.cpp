@@ -312,8 +312,8 @@ void ModelValidationHelper::validateModel(void)
 					if(obj_type==ObjRelationship)
 					{
 						rel=dynamic_cast<Relationship *>(object);
-						if(rel->getRelationshipType()==Relationship::RELATIONSHIP_GEN ||
-								rel->getRelationshipType()==Relationship::RELATIONSHIP_DEP)
+						if(rel->getRelationshipType()==Relationship::RelationshipGen ||
+								rel->getRelationshipType()==Relationship::RelationshipDep)
 						{
 							recv_tab=rel->getReceiverTable();
 							ref_tab=rel->getReferenceTable();

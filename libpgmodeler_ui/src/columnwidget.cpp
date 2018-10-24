@@ -54,7 +54,7 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjColumn)
 		configureTabOrder({ data_type });
 
 		map<QString, vector<QWidget *> > fields_map;
-		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PgSQLVersion100)].push_back(identity_rb);
+		fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion100)].push_back(identity_rb);
 		highlightVersionSpecificFields(fields_map);
 
 		connect(sequence_rb, &QRadioButton::clicked,
@@ -148,7 +148,7 @@ void ColumnWidget::editSequenceAttributes(void)
 		schema = this->model->getSchema("public");
 
 	ident_col_seq.setName(QString("%1_%2_seq").arg(table ? table->getName() : QString()).arg(col ? col->getName() : QString("new_column")));
-	ident_col_seq.setName(PgModelerNS::generateUniqueName(&ident_col_seq, *model->getObjectList(ObjSequence), false));
+	ident_col_seq.setName(PgModelerNs::generateUniqueName(&ident_col_seq, *model->getObjectList(ObjSequence), false));
 	ident_col_seq.setSchema(schema);
 
 	if(col)

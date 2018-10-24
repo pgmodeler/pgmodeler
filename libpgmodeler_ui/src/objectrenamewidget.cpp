@@ -50,7 +50,7 @@ void ObjectRenameWidget::setAttributes(BaseObject *object, DatabaseModel *model,
 	this->op_list=op_list;
 	this->model=model;
 
-	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(object->getSchemaName())));
+	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(object->getSchemaName())));
 	obj_icon_lbl->setToolTip(object->getTypeName());
 
 	obj_name_lbl->setText(object->getName());

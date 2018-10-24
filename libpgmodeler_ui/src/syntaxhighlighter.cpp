@@ -382,7 +382,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 
 			xmlparser.loadXMLFile(filename);
 
-			if(xmlparser.accessElement(XMLParser::ChildElement))
+			if(xmlparser.accessElement(XmlParser::ChildElement))
 			{
 				do
 				{
@@ -423,7 +423,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 							//Marks a flag indication that groups are being declared
 							groups_decl=true;
 							xmlparser.savePosition();
-							xmlparser.accessElement(XMLParser::ChildElement);
+							xmlparser.accessElement(XmlParser::ChildElement);
 							elem=xmlparser.getElementName();
 						}
 
@@ -443,7 +443,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 													InvRedeclarationGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 								}
 								//Raises an error if the group is being declared and build at the declaration statment (not permitted)
-								else if(attribs.size() > 1 || xmlparser.hasElement(XMLParser::ChildElement))
+								else if(attribs.size() > 1 || xmlparser.hasElement(XmlParser::ChildElement))
 								{
 									throw Exception(Exception::getErrorMessage(InvGroupDeclaration)
 													.arg(group).arg(ParsersAttributes::HIGHLIGHT_ORDER),
@@ -469,7 +469,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 													DefNotDeclaredGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 								}
 								//Raises an error if the group does not have children element
-								else if(!xmlparser.hasElement(XMLParser::ChildElement))
+								else if(!xmlparser.hasElement(XmlParser::ChildElement))
 								{
 									throw Exception(Exception::getErrorMessage(DefEmptyGroup).arg(group),
 													DefEmptyGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -507,7 +507,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 
 
 								xmlparser.savePosition();
-								xmlparser.accessElement(XMLParser::ChildElement);
+								xmlparser.accessElement(XmlParser::ChildElement);
 
 								if(chr_sensitive)
 									regexp.setCaseSensitivity(Qt::CaseSensitive);
@@ -539,7 +539,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 											final_exprs[group].push_back(regexp);
 									}
 								}
-								while(xmlparser.accessElement(XMLParser::NextElement));
+								while(xmlparser.accessElement(XmlParser::NextElement));
 								xmlparser.restorePosition();
 							}
 						}
@@ -547,14 +547,14 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 
 					/* Check if there are some other groups to be declared, if not,
 							continues to reading to the other part of configuration */
-					if(groups_decl && !xmlparser.hasElement(XMLParser::NextElement))
+					if(groups_decl && !xmlparser.hasElement(XmlParser::NextElement))
 					{
 						groups_decl=false;
 						xmlparser.restorePosition();
 					}
 
 				}
-				while(xmlparser.accessElement(XMLParser::NextElement));
+				while(xmlparser.accessElement(XmlParser::NextElement));
 			}
 
 			itr=groups_order.begin();

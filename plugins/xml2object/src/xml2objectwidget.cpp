@@ -59,7 +59,7 @@ void Xml2ObjectWidget::generateObject(void)
 		BaseObject *object=nullptr;
 		ObjectType obj_type;
 		QString elem_name;
-		XMLParser *xmlparser=model->getXMLParser();
+		XmlParser *xmlparser=model->getXMLParser();
 
 		if(!op_list->isOperationChainStarted())
 			op_list->startOperationChain();
@@ -67,7 +67,7 @@ void Xml2ObjectWidget::generateObject(void)
 		xmlparser->restartParser();
 		xmlparser->loadXMLBuffer(code_txt->toPlainText().toUtf8());
 
-		if(xmlparser->accessElement(XMLParser::ChildElement))
+		if(xmlparser->accessElement(XmlParser::ChildElement))
 		{
 			do
 			{

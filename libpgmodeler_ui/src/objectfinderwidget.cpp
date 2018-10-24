@@ -357,7 +357,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 				fnt=tab_item->font();
 
 				tab_item->setText(objs[i]->getName());
-				tab_item->setIcon(QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(objs[i]->getObjectType()) + str_aux)));
+				tab_item->setIcon(QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(objs[i]->getObjectType()) + str_aux)));
 				if(new_row) tab_wgt->setItem(lin_idx, 1, tab_item);
 
 				if(objs[i]->isProtected() || objs[i]->isSystemObject())
@@ -425,7 +425,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 					}
 
 					tab_item->setFont(fnt);
-					tab_item->setIcon(QPixmap(PgModelerUiNS::getIconPath(parent_obj->getObjectType())));
+					tab_item->setIcon(QPixmap(PgModelerUiNs::getIconPath(parent_obj->getObjectType())));
 				}
 			}
 
@@ -471,7 +471,7 @@ void ObjectFinderWidget::updateObjectTypeList(QListWidget *list_wgt)
 			else
 				str_aux=QString(BaseObject::getSchemaName(types[type_id]));
 
-			icon=QPixmap(PgModelerUiNS::getIconPath(str_aux));
+			icon=QPixmap(PgModelerUiNs::getIconPath(str_aux));
 
 			item->setText(BaseObject::getTypeName(types[type_id]));
 			item->setIcon(icon);

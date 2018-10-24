@@ -28,8 +28,8 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 		Ui_CustomSQLWidget::setupUi(this);
 		configureFormLayout(sqlappend_grid, ObjBaseObject);
 
-		append_sql_txt=PgModelerUiNS::createNumberedTextEditor(append_sql_wgt, true);
-		prepend_sql_txt=PgModelerUiNS::createNumberedTextEditor(prepend_sql_wgt, true);
+		append_sql_txt=PgModelerUiNs::createNumberedTextEditor(append_sql_wgt, true);
+		prepend_sql_txt=PgModelerUiNs::createNumberedTextEditor(prepend_sql_wgt, true);
 
 		append_sql_hl=new SyntaxHighlighter(append_sql_txt);
 		append_sql_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
@@ -43,7 +43,7 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 		comment_edt->setVisible(false);
 		comment_lbl->setVisible(false);
 
-		PgModelerUiNS::configureWidgetFont(message_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
+		PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MEDIUM_FONT_FACTOR);
 
 		action_gen_insert=new QAction(trUtf8("Generic INSERT"), this);
 		action_gen_insert->setObjectName(QString("action_gen_insert"));
@@ -151,7 +151,7 @@ void CustomSQLWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 		protected_obj_frm->setVisible(false);
 		obj_id_lbl->setVisible(false);
 
-		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(object->getObjectType())));
+		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(object->getObjectType())));
 
 		configureMenus();
 	}

@@ -84,8 +84,8 @@ QString CopyOptions::getSQLDefinition(void)
 				case INDEXES: op_name=QString(" INDEXES"); break;
 				case STORAGE: op_name=QString(" STORAGE"); break;
 				case COMMENTS: op_name=QString(" COMMENTS"); break;
-				case IDENTITY: op_name=(BaseObject::getPgSQLVersion().toFloat() > PgSQLVersions::PgSQLVersion96.toFloat() ? QString(" IDENTITY") : QString()); break;
-				case STATISTICS: op_name=(BaseObject::getPgSQLVersion().toFloat() > PgSQLVersions::PgSQLVersion96.toFloat() ? QString(" STATISTICS") : QString()); break;
+				case IDENTITY: op_name=(BaseObject::getPgSQLVersion().toFloat() > PgSqlVersions::PgSqlVersion96.toFloat() ? QString(" IDENTITY") : QString()); break;
+				case STATISTICS: op_name=(BaseObject::getPgSQLVersion().toFloat() > PgSqlVersions::PgSqlVersion96.toFloat() ? QString(" STATISTICS") : QString()); break;
 			}
 
 			if(!op_name.isEmpty())

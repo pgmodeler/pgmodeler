@@ -63,7 +63,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		msg_lbl->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
 		ico->setMaximumSize(22,22);
-		ico->setPixmap(QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")));
+		ico->setPixmap(QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")));
 		ico->setScaledContents(true);
 
 		editor_alert_wgt = new QWidget(this);
@@ -77,7 +77,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		hbox->addSpacerItem(new QSpacerItem(10,10, QSizePolicy::Expanding));
 
 		load_file_btn = new QToolButton(top_widget);
-		load_file_btn->setIcon(QPixmap(PgModelerUiNS::getIconPath("abrir")));
+		load_file_btn->setIcon(QPixmap(PgModelerUiNs::getIconPath("abrir")));
 		load_file_btn->setIconSize(QSize(16,16));
 		load_file_btn->setAutoRaise(true);
 		load_file_btn->setText(trUtf8("Load"));
@@ -88,7 +88,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		connect(load_file_btn, SIGNAL(clicked(bool)), this, SLOT(loadFile()));
 
 		edit_src_btn = new QToolButton(top_widget);
-		edit_src_btn->setIcon(QPixmap(PgModelerUiNS::getIconPath("editar")));
+		edit_src_btn->setIcon(QPixmap(PgModelerUiNs::getIconPath("editar")));
 		edit_src_btn->setIconSize(QSize(16,16));
 		edit_src_btn->setAutoRaise(true);
 		edit_src_btn->setText(trUtf8("Edit"));
@@ -99,7 +99,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		connect(edit_src_btn, SIGNAL(clicked(bool)), this, SLOT(editSource()));
 
 		clear_btn = new QToolButton(top_widget);
-		clear_btn->setIcon(QPixmap(PgModelerUiNS::getIconPath("limpartexto")));
+		clear_btn->setIcon(QPixmap(PgModelerUiNs::getIconPath("limpartexto")));
 		clear_btn->setIconSize(QSize(16,16));
 		clear_btn->setAutoRaise(true);
 		clear_btn->setText(trUtf8("Clear"));
@@ -382,7 +382,7 @@ void NumberedTextEditor::editSource(void)
 	src_editor_proc.waitForStarted();
 	if(src_editor_proc.state() == QProcess::Running)
 	{
-		msg_lbl->setText(PgModelerUiNS::formatMessage(trUtf8("The source editor `%1' is running on `pid: %2'.")
+		msg_lbl->setText(PgModelerUiNs::formatMessage(trUtf8("The source editor `%1' is running on `pid: %2'.")
 																									.arg(src_editor_proc.program()).arg(src_editor_proc.processId())));
 		editor_alert_wgt->setVisible(true);
 		load_file_btn->setEnabled(false);
@@ -415,7 +415,7 @@ void NumberedTextEditor::updateSource(void)
 void NumberedTextEditor::handleProcessError(void)
 {
 	Messagebox msg_box;
-	msg_box.show(PgModelerUiNS::formatMessage(trUtf8("Could not start the source code editor application `%1'! Make to sure that the source editor path defined in the general settings points to a valid executable and the current user has permission to run the application. Error message returned: `%2'")
+	msg_box.show(PgModelerUiNs::formatMessage(trUtf8("Could not start the source code editor application `%1'! Make to sure that the source editor path defined in the general settings points to a valid executable and the current user has permission to run the application. Error message returned: `%2'")
 																						.arg(src_editor_proc.program()).arg(src_editor_proc.errorString())), Messagebox::ERROR_ICON);
 }
 

@@ -435,7 +435,7 @@ void ConnectionsConfigWidget::testConnection(void)
 		conn.connect();
 		srv_info=conn.getServerInfo();
 		msg_box.show(trUtf8("Success"),
-					 PgModelerUiNS::formatMessage(trUtf8("Connection successfully established!\n\nServer details:\n\nPID: `%1'\nProtocol: `%2'\nVersion: `%3'"))
+					 PgModelerUiNs::formatMessage(trUtf8("Connection successfully established!\n\nServer details:\n\nPID: `%1'\nProtocol: `%2'\nVersion: `%3'"))
 					 .arg(srv_info[Connection::ServerPid])
 				.arg(srv_info[Connection::ServerProtocol])
 				.arg(srv_info[Connection::ServerVersion]), Messagebox::INFO_ICON);

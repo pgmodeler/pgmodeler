@@ -1068,8 +1068,8 @@ void ObjectsScene::alignObjectsToGrid(void)
 				}
 
 				//Align the labels
-				for(i1=BaseRelationship::SRC_CARD_LABEL;
-					i1<=BaseRelationship::REL_NAME_LABEL; i1++)
+				for(i1=BaseRelationship::SrcCardLabel;
+					i1<=BaseRelationship::RelNameLabel; i1++)
 				{
 					lab=rel->getLabel(i1);
 					if(lab)

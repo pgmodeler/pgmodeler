@@ -37,7 +37,7 @@ class ModelWidget: public QWidget {
 	private:
 		Q_OBJECT
 
-		XMLParser *xmlparser;
+		XmlParser *xmlparser;
 
 		NewObjectOverlayWidget *new_obj_overlay_wgt;
 

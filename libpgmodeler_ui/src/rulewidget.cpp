@@ -36,7 +36,7 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, ObjRule)
 
 		commands_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^ ObjectsTableWidget::DUPLICATE_BUTTON, true, this);
 		commands_tab->setHeaderLabel(trUtf8("SQL command"),0);
-		commands_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("codigosql")),0);
+		commands_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("codigosql")),0);
 		dynamic_cast<QGridLayout *>(commands_gb->layout())->addWidget(commands_tab, 1, 0, 1, 2);
 
 		frame=generateInformationFrame(trUtf8("To create a rule that does not perform any action (<strong>DO NOTHING</strong>) simply do not specify commands in the SQL commands table."));

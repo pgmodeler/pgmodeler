@@ -40,14 +40,14 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 
 		elements_tab->setColumnCount(4);
 		elements_tab->setHeaderLabel(trUtf8("Object"),0);
-		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("table")),0);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("table")),0);
 
 		elements_tab->setHeaderLabel(trUtf8("Type"),1);
-		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
 
 		elements_tab->setHeaderLabel(trUtf8("Support/Strategy"),2);
 		elements_tab->setHeaderLabel(trUtf8("Operator Family"),3);
-		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("opfamily")),3);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("opfamily")),3);
 
 		grid=new QGridLayout;
 		grid->setContentsMargins(0,0,0,0);
@@ -62,7 +62,7 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		this->setLayout(grid);
 		configureFormLayout(grid, ObjOpClass);
 
-		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PgSQLVersion95)].push_back(indexing_lbl);
+		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSqlVersions::PgSqlVersion95)].push_back(indexing_lbl);
 		values_map[indexing_lbl].push_back(~IndexingType(IndexingType::brin));
 
 		frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);

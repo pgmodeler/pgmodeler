@@ -45,6 +45,6 @@ DonateWidget::DonateWidget(QWidget *parent) : QWidget(parent)
 		emit s_visibilityChanged(false);
 	});
 
-	PgModelerUiNS::configureWidgetFont(title_lbl, PgModelerUiNS::BIG_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(title_lbl, PgModelerUiNs::BIG_FONT_FACTOR);
 	this->adjustSize();
 }

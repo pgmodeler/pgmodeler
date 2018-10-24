@@ -40,7 +40,7 @@ class BaseConfigWidget: public QWidget {
 		bool config_changed;
 		
 	protected:
-		XMLParser xmlparser;
+		XmlParser xmlparser;
 		SchemaParser schparser;
 		
 		/*! \brief Saves the configuration params on file. The conf_id param indicates the type of

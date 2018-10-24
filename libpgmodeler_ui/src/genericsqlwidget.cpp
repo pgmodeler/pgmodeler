@@ -23,7 +23,7 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	Ui_GenericSQLWidget::setupUi(this);
 	configureFormLayout(genericsql_grid, ObjGenericSQL);
 
-	definition_txt = PgModelerUiNS::createNumberedTextEditor(sqlcode_grp, true);
+	definition_txt = PgModelerUiNs::createNumberedTextEditor(sqlcode_grp, true);
 	definition_hl = new SyntaxHighlighter(definition_txt);
 	definition_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 

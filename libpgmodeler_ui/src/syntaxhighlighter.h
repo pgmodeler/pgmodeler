@@ -58,7 +58,7 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		};
 
 		//! \brief XML parser used to parse configuration files
-		XMLParser xmlparser;
+		XmlParser xmlparser;
 
 		//! \brief Default font configuratoin for all instances os syntax highlighter
 		static QFont default_font;

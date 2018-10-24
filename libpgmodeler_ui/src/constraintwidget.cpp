@@ -52,16 +52,16 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 
 		columns_tab->setColumnCount(2);
 		columns_tab->setHeaderLabel(trUtf8("Column"), 0);
-		columns_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("column")),0);
+		columns_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("column")),0);
 		columns_tab->setHeaderLabel(trUtf8("Type"), 1);
-		columns_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
+		columns_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
 
 		ref_columns_tab->setEnabled(false);
 		ref_columns_tab->setColumnCount(2);
 		ref_columns_tab->setHeaderLabel(trUtf8("Column"), 0);
-		ref_columns_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("column")),0);
+		ref_columns_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("column")),0);
 		ref_columns_tab->setHeaderLabel(trUtf8("Type"), 1);
-		ref_columns_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
+		ref_columns_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
 
 		dynamic_cast<QGridLayout *>(columns_tbw->widget(0)->layout())->addWidget(columns_tab, 1,0,1,3);
 		dynamic_cast<QGridLayout *>(columns_tbw->widget(1)->layout())->addWidget(ref_table_sel, 0,1,1,2);
@@ -89,8 +89,8 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		constraint_grid->addWidget(info_frm, constraint_grid->count()+1, 0, 1, 0);
 		info_frm->setParent(this);
 
-		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PgSQLVersion92)].push_back(no_inherit_lbl);
-		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PgSQLVersion95)].push_back(indexing_chk);
+		fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion92)].push_back(no_inherit_lbl);
+		fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion95)].push_back(indexing_chk);
 		values_map[indexing_chk].push_back(~IndexingType(IndexingType::brin));
 
 		warn_frm=generateVersionWarningFrame(fields_map, &values_map);
@@ -137,13 +137,13 @@ void ConstraintWidget::addColumn(int row)
 		{
 			aux_col_tab=columns_tab;
 			combo=column_cmb;
-			col_id=Constraint::SOURCE_COLS;
+			col_id=Constraint::SourceCols;
 		}
 		else
 		{
 			aux_col_tab=ref_columns_tab;
 			combo=ref_column_cmb;
-			col_id=Constraint::REFERENCED_COLS;
+			col_id=Constraint::ReferencedCols;
 		}
 
 		//Gets the reference to the selected column
@@ -168,17 +168,17 @@ void ConstraintWidget::addColumn(int row)
 void ConstraintWidget::removeColumn(int)
 {
 	if(sender()==columns_tab)
-		updateColumnsCombo(Constraint::SOURCE_COLS);
+		updateColumnsCombo(Constraint::SourceCols);
 	else
-		updateColumnsCombo(Constraint::REFERENCED_COLS);
+		updateColumnsCombo(Constraint::ReferencedCols);
 }
 
 void ConstraintWidget::removeColumns(void)
 {
 	if(sender()==columns_tab)
-		updateColumnsCombo(Constraint::SOURCE_COLS);
+		updateColumnsCombo(Constraint::SourceCols);
 	else
-		updateColumnsCombo(Constraint::REFERENCED_COLS);
+		updateColumnsCombo(Constraint::ReferencedCols);
 }
 
 void ConstraintWidget::addColumn(Column *column, unsigned col_id, int row)
@@ -187,7 +187,7 @@ void ConstraintWidget::addColumn(Column *column, unsigned col_id, int row)
 
 	if(column && row >= 0)
 	{
-		if(col_id==Constraint::SOURCE_COLS)
+		if(col_id==Constraint::SourceCols)
 			table_wgt=columns_tab;
 		else
 			table_wgt=ref_columns_tab;
@@ -222,7 +222,7 @@ void ConstraintWidget::updateColumnsCombo(unsigned col_id)
 
 	try
 	{
-		if(col_id==Constraint::SOURCE_COLS)
+		if(col_id==Constraint::SourceCols)
 		{
 			combo=column_cmb;
 			aux_col_tab=columns_tab;
@@ -290,7 +290,7 @@ void ConstraintWidget::selectReferencedTable(void)
 	else
 	{
 		ref_columns_tab->setEnabled(true);
-		updateColumnsCombo(Constraint::REFERENCED_COLS);
+		updateColumnsCombo(Constraint::ReferencedCols);
 	}
 }
 
@@ -372,15 +372,15 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	if(constr)
 	{
 	  row = 0;
-	  for(auto column : constr->getColumns(Constraint::SOURCE_COLS))
+	  for(auto column : constr->getColumns(Constraint::SourceCols))
 	  {
 		columns_tab->addRow();
-		addColumn(column, Constraint::SOURCE_COLS, row);
+		addColumn(column, Constraint::SourceCols, row);
 		row++;
 	  }
 	}
 
-	updateColumnsCombo(Constraint::SOURCE_COLS);
+	updateColumnsCombo(Constraint::SourceCols);
 	columns_tab->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
 	columns_tab->blockSignals(false);
 
@@ -400,8 +400,8 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 		deferrable_chk->setChecked(constr->isDeferrable());
 		deferral_cmb->setCurrentIndex(deferral_cmb->findText(~constr->getDeferralType()));
 		match_cmb->setCurrentIndex(match_cmb->findText(~constr->getMatchType()));
-		on_delete_cmb->setCurrentIndex(on_delete_cmb->findText(~constr->getActionType(Constraint::DELETE_ACTION)));
-		on_update_cmb->setCurrentIndex(on_update_cmb->findText(~constr->getActionType(Constraint::UPDATE_ACTION)));
+		on_delete_cmb->setCurrentIndex(on_delete_cmb->findText(~constr->getActionType(Constraint::DeleteAction)));
+		on_update_cmb->setCurrentIndex(on_update_cmb->findText(~constr->getActionType(Constraint::UpdateAction)));
 
 		fill_factor_chk->setChecked(constr->getFillFactor()!=0);
 		if(fill_factor_chk->isChecked())
@@ -414,14 +414,14 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 			ref_table_sel->setSelectedObject(ref_table);
 
 			row = 0;
-			for(auto column : constr->getColumns(Constraint::REFERENCED_COLS))
+			for(auto column : constr->getColumns(Constraint::ReferencedCols))
 			{
 			  ref_columns_tab->addRow();
-			  addColumn(column, Constraint::REFERENCED_COLS, row);
+			  addColumn(column, Constraint::ReferencedCols, row);
 			  row++;
 			}
 
-			updateColumnsCombo(Constraint::REFERENCED_COLS);
+			updateColumnsCombo(Constraint::ReferencedCols);
 			ref_columns_tab->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
 			ref_columns_tab->blockSignals(false);
 		}
@@ -455,8 +455,8 @@ void ConstraintWidget::applyConfiguration(void)
 		constr->setMatchType(MatchType(match_cmb->currentText()));
 		constr->setDeferrable(deferrable_chk->isChecked());
 		constr->setDeferralType(DeferralType(deferral_cmb->currentText()));
-		constr->setActionType(ActionType(on_delete_cmb->currentText()),Constraint::DELETE_ACTION);
-		constr->setActionType(ActionType(on_update_cmb->currentText()),Constraint::UPDATE_ACTION);
+		constr->setActionType(ActionType(on_delete_cmb->currentText()),Constraint::DeleteAction);
+		constr->setActionType(ActionType(on_update_cmb->currentText()),Constraint::UpdateAction);
 		constr->setNoInherit(no_inherit_chk->isChecked());
 
 		if(indexing_chk->isChecked())
@@ -468,9 +468,9 @@ void ConstraintWidget::applyConfiguration(void)
 			constr->setReferencedTable(dynamic_cast<BaseTable *>(ref_table_sel->getSelectedObject()));
 
 		constr->removeColumns();
-		for(col_id=Constraint::SOURCE_COLS; col_id <= Constraint::REFERENCED_COLS; col_id++)
+		for(col_id=Constraint::SourceCols; col_id <= Constraint::ReferencedCols; col_id++)
 		{
-			aux_col_tab=(col_id==Constraint::SOURCE_COLS ? columns_tab : ref_columns_tab);
+			aux_col_tab=(col_id==Constraint::SourceCols ? columns_tab : ref_columns_tab);
 
 			count=aux_col_tab->getRowCount();
 			for(i=0; i < count; i++)
@@ -494,9 +494,9 @@ void ConstraintWidget::applyConfiguration(void)
 		there is no columns configured on the form */
 		if(((constr->getConstraintType()==ConstraintType::foreign_key ||
 			 constr->getConstraintType()==ConstraintType::primary_key) &&
-			constr->getColumnCount(Constraint::SOURCE_COLS)==0) ||
+			constr->getColumnCount(Constraint::SourceCols)==0) ||
 				(constr->getConstraintType()==ConstraintType::foreign_key &&
-				 constr->getColumnCount(Constraint::REFERENCED_COLS)==0))
+				 constr->getColumnCount(Constraint::ReferencedCols)==0))
 			throw Exception(InvConstratintNoColumns,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		finishConfiguration();

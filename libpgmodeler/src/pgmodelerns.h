@@ -27,7 +27,7 @@
 
 #include "baseobject.h"
 
-namespace PgModelerNS {
+namespace PgModelerNs {
 	//! \brief Default char used as unescaped value start delimiter
 	static const QChar UNESC_VALUE_START='/';
 

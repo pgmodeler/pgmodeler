@@ -35,7 +35,7 @@ Aggregate::Aggregate(void)
 void Aggregate::setFunction(unsigned func_idx, Function *func)
 {
 	//Case the function index is invalid raises an error
-	if(func_idx!=FINAL_FUNC && func_idx!=TRANSITION_FUNC)
+	if(func_idx!=FinalFunc && func_idx!=TransitionFunc)
 		throw Exception(RefFunctionInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Checks if the function is valid, if not the case raises an error
@@ -53,7 +53,7 @@ bool Aggregate::isValidFunction(unsigned func_idx, Function *func)
 {
 	if(func)
 	{
-		if(func_idx==FINAL_FUNC)
+		if(func_idx==FinalFunc)
 		{
 			/* According to docs the final function to be valid must have 1 parameter which type is the
 					same as the state_type attribute. BUT when importing system aggregates some functions has
@@ -189,7 +189,7 @@ unsigned Aggregate::getDataTypeCount(void)
 Function *Aggregate::getFunction(unsigned func_idx)
 {
 	//Raises an exception if the function index is invalid
-	if(func_idx!=FINAL_FUNC && func_idx!=TRANSITION_FUNC)
+	if(func_idx!=FinalFunc && func_idx!=TransitionFunc)
 		throw Exception(RefFunctionInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(functions[func_idx]);
@@ -226,27 +226,27 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 
 	setTypesAttribute(def_type);
 
-	if(functions[TRANSITION_FUNC])
+	if(functions[TransitionFunc])
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[ParsersAttributes::TRANSITION_FUNC]=functions[TRANSITION_FUNC]->getSignature();
+			attributes[ParsersAttributes::TRANSITION_FUNC]=functions[TransitionFunc]->getSignature();
 		else
 		{
-			functions[TRANSITION_FUNC]->setAttribute(ParsersAttributes::REF_TYPE,
+			functions[TransitionFunc]->setAttribute(ParsersAttributes::REF_TYPE,
 													 ParsersAttributes::TRANSITION_FUNC);
-			attributes[ParsersAttributes::TRANSITION_FUNC]=functions[TRANSITION_FUNC]->getCodeDefinition(def_type,true);
+			attributes[ParsersAttributes::TRANSITION_FUNC]=functions[TransitionFunc]->getCodeDefinition(def_type,true);
 		}
 	}
 
-	if(functions[FINAL_FUNC])
+	if(functions[FinalFunc])
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[ParsersAttributes::FINAL_FUNC]=functions[FINAL_FUNC]->getSignature();
+			attributes[ParsersAttributes::FINAL_FUNC]=functions[FinalFunc]->getSignature();
 		else
 		{
-			functions[FINAL_FUNC]->setAttribute(ParsersAttributes::REF_TYPE,
+			functions[FinalFunc]->setAttribute(ParsersAttributes::REF_TYPE,
 												ParsersAttributes::FINAL_FUNC);
-			attributes[ParsersAttributes::FINAL_FUNC]=functions[FINAL_FUNC]->getCodeDefinition(def_type,true);
+			attributes[ParsersAttributes::FINAL_FUNC]=functions[FinalFunc]->getCodeDefinition(def_type,true);
 		}
 	}
 

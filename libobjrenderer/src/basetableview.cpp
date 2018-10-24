@@ -269,8 +269,8 @@ void BaseTableView::addConnectedRelationship(BaseRelationship *base_rel)
 
 	if(!base_rel ||
 		 (base_rel &&
-			base_rel->getTable(BaseRelationship::SRC_TABLE) != tab &&
-			base_rel->getTable(BaseRelationship::DST_TABLE) != tab))
+			base_rel->getTable(BaseRelationship::SrcTable) != tab &&
+			base_rel->getTable(BaseRelationship::DstTable) != tab))
 		return;
 
 	connected_rels.push_back(base_rel);
@@ -297,10 +297,10 @@ unsigned BaseTableView::getConnectedRelsCount(BaseTable *src_tab, BaseTable *dst
 
 	for(auto &rel : connected_rels)
 	{
-		if((rel->getTable(BaseRelationship::SRC_TABLE) == src_tab &&
-				rel->getTable(BaseRelationship::DST_TABLE) == dst_tab) ||
-			 (rel->getTable(BaseRelationship::SRC_TABLE) == dst_tab &&
-				rel->getTable(BaseRelationship::DST_TABLE) == src_tab))
+		if((rel->getTable(BaseRelationship::SrcTable) == src_tab &&
+				rel->getTable(BaseRelationship::DstTable) == dst_tab) ||
+			 (rel->getTable(BaseRelationship::SrcTable) == dst_tab &&
+				rel->getTable(BaseRelationship::DstTable) == src_tab))
 			count++;
 	}
 

@@ -210,7 +210,7 @@ void BaseObjectView::loadObjectsStyle(void)
 	QString elem,
 			config_file=GlobalAttributes::ConfigurationsDir + GlobalAttributes::DirSeparator +
 						GlobalAttributes::ObjectsStyleConf + GlobalAttributes::ConfigurationExt;
-	XMLParser xmlparser;
+	XmlParser xmlparser;
 
 	try
 	{
@@ -223,7 +223,7 @@ void BaseObjectView::loadObjectsStyle(void)
 							 GlobalAttributes::ObjectDTDExt, GlobalAttributes::ObjectsStyleConf);
 		xmlparser.loadXMLFile(config_file);
 
-		if(xmlparser.accessElement(XMLParser::ChildElement))
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -266,7 +266,7 @@ void BaseObjectView::loadObjectsStyle(void)
 					}
 				}
 			}
-			while(xmlparser.accessElement(XMLParser::NextElement));
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 	}
 	catch(Exception &e)

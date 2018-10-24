@@ -2002,7 +2002,7 @@ QString Table::createInsertCommand(const QStringList &col_names, const QStringLi
 			value=QString("DEFAULT");
 		}
 		//Unescaped values will not be enclosed in quotes
-		else if(value.startsWith(PgModelerNS::UNESC_VALUE_START) && value.endsWith(PgModelerNS::UNESC_VALUE_END))
+		else if(value.startsWith(PgModelerNs::UNESC_VALUE_START) && value.endsWith(PgModelerNs::UNESC_VALUE_END))
 		{
 			value.remove(0,1);
 			value.remove(value.length()-1, 1);
@@ -2010,8 +2010,8 @@ QString Table::createInsertCommand(const QStringList &col_names, const QStringLi
 		//Quoting value
 		else
 		{
-			value.replace(QString("\\") + PgModelerNS::UNESC_VALUE_START, PgModelerNS::UNESC_VALUE_START);
-			value.replace(QString("\\") + PgModelerNS::UNESC_VALUE_END, PgModelerNS::UNESC_VALUE_END);
+			value.replace(QString("\\") + PgModelerNs::UNESC_VALUE_START, PgModelerNs::UNESC_VALUE_START);
+			value.replace(QString("\\") + PgModelerNs::UNESC_VALUE_END, PgModelerNs::UNESC_VALUE_END);
 			value.replace(QString("\'"), QString("''"));
 			value.replace(QChar(QChar::LineFeed), QString("\\n"));
 			value=QString("E'") + value + QString("'");

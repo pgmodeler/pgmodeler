@@ -91,11 +91,11 @@ void DatabaseWidget::setAttributes(DatabaseModel *model)
 		if(idx < 0) idx=0;
 		encoding_cmb->setCurrentIndex(idx);
 
-		if(!model->getLocalization(Collation::_LC_COLLATE).isEmpty())
-			lccollate_cmb->setCurrentText(model->getLocalization(Collation::_LC_COLLATE));
+		if(!model->getLocalization(Collation::LcCollate).isEmpty())
+			lccollate_cmb->setCurrentText(model->getLocalization(Collation::LcCollate));
 
-		if(!model->getLocalization(Collation::_LC_CTYPE).isEmpty())
-			lcctype_cmb->setCurrentText(model->getLocalization(Collation::_LC_CTYPE));
+		if(!model->getLocalization(Collation::LcCtype).isEmpty())
+			lcctype_cmb->setCurrentText(model->getLocalization(Collation::LcCtype));
 
 		def_schema_sel->setModel(model);
 		def_schema_sel->setSelectedObject(model->getDefaultObject(ObjSchema));
@@ -133,14 +133,14 @@ void DatabaseWidget::applyConfiguration(void)
 			model->setEncoding(EncodingType(BaseType::null));
 
 		if(lccollate_cmb->currentText()!=trUtf8("Default"))
-			model->setLocalization(Collation::_LC_COLLATE, lccollate_cmb->currentText());
+			model->setLocalization(Collation::LcCollate, lccollate_cmb->currentText());
 		else
-			model->setLocalization(Collation::_LC_COLLATE, QString());
+			model->setLocalization(Collation::LcCollate, QString());
 
 		if(lcctype_cmb->currentText()!=trUtf8("Default"))
-			model->setLocalization(Collation::_LC_CTYPE, lcctype_cmb->currentText());
+			model->setLocalization(Collation::LcCtype, lcctype_cmb->currentText());
 		else
-			model->setLocalization(Collation::_LC_CTYPE, QString());
+			model->setLocalization(Collation::LcCtype, QString());
 
 		model->setDefaultObject(def_schema_sel->getSelectedObject(), ObjSchema);
 		model->setDefaultObject(def_owner_sel->getSelectedObject(), ObjRole);

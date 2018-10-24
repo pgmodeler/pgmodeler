@@ -25,9 +25,9 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 	QStringList list, rel_types={ ParsersAttributes::RELATIONSHIP_11, ParsersAttributes::RELATIONSHIP_1N,
 								  ParsersAttributes::RELATIONSHIP_NN, ParsersAttributes::RELATIONSHIP_GEN,
 								  ParsersAttributes::RELATIONSHIP_DEP, ParsersAttributes::RELATIONSHIP_PART };
-	unsigned rel_types_id[]={ BaseRelationship::RELATIONSHIP_11, BaseRelationship::RELATIONSHIP_1N,
-							  BaseRelationship::RELATIONSHIP_NN, BaseRelationship::RELATIONSHIP_GEN,
-							  BaseRelationship::RELATIONSHIP_DEP, BaseRelationship::RELATIONSHIP_PART};
+	unsigned rel_types_id[]={ BaseRelationship::Relationship11, BaseRelationship::Relationship1n,
+							  BaseRelationship::RelationshipNn, BaseRelationship::RelationshipGen,
+							  BaseRelationship::RelationshipDep, BaseRelationship::RelationshipPart};
 
 	Ui_RelationshipConfigWidget::setupUi(this);
 

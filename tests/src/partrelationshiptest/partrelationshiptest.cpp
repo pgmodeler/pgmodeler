@@ -57,7 +57,7 @@ void PartRelationhipTest::connRelTableNoColumnsAndTableTwoColumns(void)
 	partitioned->addColumn(col);
 	partitioned->addColumn(col1);
 
-	part_rel = new Relationship(BaseRelationship::RELATIONSHIP_PART, partition, partitioned);
+	part_rel = new Relationship(BaseRelationship::RelationshipPart, partition, partitioned);
 	part_rel->connectRelationship();
 
 	QVERIFY(partitioned->getColumnCount() == partition->getColumnCount());
@@ -104,7 +104,7 @@ void PartRelationhipTest::connRelTablesTwoColumnsSameNameShouldNotRaiseError(voi
 	partition->addColumn(col);
 	partition->addColumn(col1);
 
-	part_rel = new Relationship(BaseRelationship::RELATIONSHIP_PART, partition, partitioned);
+	part_rel = new Relationship(BaseRelationship::RelationshipPart, partition, partitioned);
 	part_rel->connectRelationship();
 
 	QVERIFY(partitioned->getColumnCount() == partition->getColumnCount());
@@ -155,7 +155,7 @@ void PartRelationhipTest::connRelTablePartionHasMoreColsThanPartitionedTableShou
 	partition->addColumn(col1);
 	partition->addColumn(col2);
 
-	part_rel = new Relationship(BaseRelationship::RELATIONSHIP_PART, partition, partitioned);
+	part_rel = new Relationship(BaseRelationship::RelationshipPart, partition, partitioned);
 	part_rel->connectRelationship();
 
 	QFAIL("Should return exception because tables have different column count!");
@@ -202,7 +202,7 @@ void PartRelationhipTest::connRelTablePartionHasDifferentColsThanPartitionedTabl
 	partition->addColumn(col);
 	partition->addColumn(col1);
 
-	part_rel = new Relationship(BaseRelationship::RELATIONSHIP_PART, partition, partitioned);
+	part_rel = new Relationship(BaseRelationship::RelationshipPart, partition, partitioned);
 	part_rel->connectRelationship();
 
 	QFAIL("Should return exception because tables have different columns names!");
@@ -249,7 +249,7 @@ void PartRelationhipTest::connRelShouldInvalidateIfPartitionedColumnChanges(void
 	partition->addColumn(col);
 	partition->addColumn(col1);
 
-	part_rel = new Relationship(BaseRelationship::RELATIONSHIP_PART, partition, partitioned);
+	part_rel = new Relationship(BaseRelationship::RelationshipPart, partition, partitioned);
 	part_rel->connectRelationship();
 
 	partitioned->getColumn(0)->setName("new_id");

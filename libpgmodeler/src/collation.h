@@ -48,8 +48,8 @@ class Collation : public BaseObject {
 		locale;
 
 	public:
-		static constexpr unsigned _LC_CTYPE=0,
-		_LC_COLLATE=1;
+		static constexpr unsigned LcCtype=0,
+		LcCollate=1;
 
 		Collation(void);
 

@@ -87,7 +87,7 @@ void Catalog::setConnection(Connection &conn)
 		executeCatalogQuery(QueryList, ObjDatabase, res, true,
 		{{ParsersAttributes::NAME, conn.getConnectionParam(Connection::ParamDbName)}});
 
-		if(res.accessTuple(ResultSet::FIRST_TUPLE))
+		if(res.accessTuple(ResultSet::FirstTuple))
 		{
 			attribs_map attribs=changeAttributeNames(res.getTupleValues());
 			last_sys_oid=attribs[ParsersAttributes::LAST_SYS_OID].toUInt();
@@ -95,13 +95,13 @@ void Catalog::setConnection(Connection &conn)
 
 		//Retrieving the list of objects created by extensions
 		this->connection.executeDMLCommand(GetExtensionObjsSql, res);
-		if(res.accessTuple(ResultSet::FIRST_TUPLE))
+		if(res.accessTuple(ResultSet::FirstTuple))
 		{
 			do
 			{
 				ext_obj.push_back(res.getColumnValue(QString("oid")));
 			}
-			while(res.accessTuple(ResultSet::NEXT_TUPLE));
+			while(res.accessTuple(ResultSet::NextTuple));
 
 			ext_obj_oids=ext_obj.join(',');
 		}
@@ -269,7 +269,7 @@ unsigned Catalog::getObjectCount(ObjectType obj_type, const QString &sch_name, c
 		extra_attribs[ParsersAttributes::TABLE]=tab_name;
 
 		executeCatalogQuery(QueryList, obj_type, res, false, extra_attribs);
-		res.accessTuple(ResultSet::FIRST_TUPLE);
+		res.accessTuple(ResultSet::FirstTuple);
 		return(res.getTupleCount());
 	}
 	catch(Exception &e)
@@ -337,13 +337,13 @@ attribs_map Catalog::getObjectsNames(ObjectType obj_type, const QString &sch_nam
 		extra_attribs[ParsersAttributes::TABLE]=tab_name;
 		executeCatalogQuery(QueryList, obj_type, res, false, extra_attribs);
 
-		if(res.accessTuple(ResultSet::FIRST_TUPLE))
+		if(res.accessTuple(ResultSet::FirstTuple))
 		{
 			do
 			{
 				objects[res.getColumnValue(ParsersAttributes::OID)]=res.getColumnValue(ParsersAttributes::NAME);
 			}
-			while(res.accessTuple(ResultSet::NEXT_TUPLE));
+			while(res.accessTuple(ResultSet::NextTuple));
 		}
 
 		return(objects);
@@ -394,7 +394,7 @@ vector<attribs_map> Catalog::getObjectsNames(vector<ObjectType> obj_types, const
 
 		connection.executeDMLCommand(sql, res);
 
-		if(res.accessTuple(ResultSet::FIRST_TUPLE))
+		if(res.accessTuple(ResultSet::FirstTuple))
 		{
 			do
 			{
@@ -404,7 +404,7 @@ vector<attribs_map> Catalog::getObjectsNames(vector<ObjectType> obj_types, const
 				objects.push_back(attribs);
 				attribs.clear();
 			}
-			while(res.accessTuple(ResultSet::NEXT_TUPLE));
+			while(res.accessTuple(ResultSet::NextTuple));
 		}
 
 		return(objects);
@@ -426,7 +426,7 @@ attribs_map Catalog::getAttributes(const QString &obj_name, ObjectType obj_type,
 		extra_attribs[ParsersAttributes::NAME]=obj_name;
 		executeCatalogQuery(QueryAttribs, obj_type, res, true, extra_attribs);
 
-		if(res.accessTuple(ResultSet::FIRST_TUPLE))
+		if(res.accessTuple(ResultSet::FirstTuple))
 			obj_attribs=changeAttributeNames(res.getTupleValues());
 
 		/* Insert the object type as an attribute of the query result to facilitate the
@@ -450,7 +450,7 @@ vector<attribs_map> Catalog::getMultipleAttributes(ObjectType obj_type, attribs_
 		vector<attribs_map> obj_attribs;
 
 		executeCatalogQuery(QueryAttribs, obj_type, res, false, extra_attribs);
-		if(res.accessTuple(ResultSet::FIRST_TUPLE))
+		if(res.accessTuple(ResultSet::FirstTuple))
 		{
 			do
 			{
@@ -463,7 +463,7 @@ vector<attribs_map> Catalog::getMultipleAttributes(ObjectType obj_type, attribs_
 				obj_attribs.push_back(tuple);
 				tuple.clear();
 			}
-			while(res.accessTuple(ResultSet::NEXT_TUPLE));
+			while(res.accessTuple(ResultSet::NextTuple));
 		}
 
 		return(obj_attribs);
@@ -489,7 +489,7 @@ vector<attribs_map> Catalog::getMultipleAttributes(const QString &catalog_sch, a
 		attribs[ParsersAttributes::PGSQL_VERSION]=schparser.getPgSQLVersion();
 		connection.executeDMLCommand(schparser.getCodeDefinition(attribs).simplified(), res);
 
-		if(res.accessTuple(ResultSet::FIRST_TUPLE))
+		if(res.accessTuple(ResultSet::FirstTuple))
 		{
 			do
 			{
@@ -497,7 +497,7 @@ vector<attribs_map> Catalog::getMultipleAttributes(const QString &catalog_sch, a
 				obj_attribs.push_back(tuple);
 				tuple.clear();
 			}
-			while(res.accessTuple(ResultSet::NEXT_TUPLE));
+			while(res.accessTuple(ResultSet::NextTuple));
 		}
 
 		return(obj_attribs);
@@ -646,7 +646,7 @@ QString Catalog::getObjectOID(const QString &name, ObjectType obj_type, const QS
 			return("0");
 		else
 		{
-			res.accessTuple(ResultSet::FIRST_TUPLE);
+			res.accessTuple(ResultSet::FirstTuple);
 			return(res.getColumnValue(ParsersAttributes::OID));
 		}
 	}
@@ -673,7 +673,7 @@ attribs_map Catalog::getServerAttributes(void)
 		sql = schparser.getCodeDefinition(attribs).simplified();
 		connection.executeDMLCommand(sql, res);
 
-		if(res.accessTuple(ResultSet::FIRST_TUPLE))
+		if(res.accessTuple(ResultSet::FirstTuple))
 		{
 			do
 			{
@@ -682,7 +682,7 @@ attribs_map Catalog::getServerAttributes(void)
 				attr_name.replace('_','-');
 				attribs[attr_name]=tuple[ParsersAttributes::VALUE];
 			}
-			while(res.accessTuple(ResultSet::NEXT_TUPLE));
+			while(res.accessTuple(ResultSet::NextTuple));
 
 			attribs[ParsersAttributes::CONNECTION] = connection.getConnectionId();
 			attribs_aux = connection.getServerInfo();
