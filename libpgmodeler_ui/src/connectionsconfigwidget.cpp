@@ -438,7 +438,7 @@ void ConnectionsConfigWidget::testConnection(void)
 					 PgModelerUiNs::formatMessage(trUtf8("Connection successfully established!\n\nServer details:\n\nPID: `%1'\nProtocol: `%2'\nVersion: `%3'"))
 					 .arg(srv_info[Connection::ServerPid])
 				.arg(srv_info[Connection::ServerProtocol])
-				.arg(srv_info[Connection::ServerVersion]), Messagebox::INFO_ICON);
+				.arg(srv_info[Connection::ServerVersion]), Messagebox::InfoIcon);
 	}
 	catch(Exception &e)
 	{
@@ -483,7 +483,7 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 			Messagebox msg_box;
 
 			msg_box.show(trUtf8("There is a connection being created or edited! Do you want to save it?"),
-									 Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
+									 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
 			if(msg_box.result()==QDialog::Accepted)
 				handleConnection();
@@ -612,7 +612,7 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 			conn_cfg_wgt.frame->layout()->setContentsMargins(2,2,2,2);
 
 			parent_form.setMainWidget(&conn_cfg_wgt);
-			parent_form.setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
+			parent_form.setButtonConfiguration(Messagebox::OkCancelButtons);
 			parent_form.exec();
 
 			if(parent_form.result()==QDialog::Accepted)

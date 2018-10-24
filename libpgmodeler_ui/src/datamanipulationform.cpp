@@ -26,13 +26,13 @@
 #include "databaseexplorerwidget.h"
 #include "generalconfigwidget.h"
 
-const QColor DataManipulationForm::ROW_COLORS[3]={ QColor(QString("#C0FFC0")), QColor(QString("#FFFFC0")), QColor(QString("#FFC0C0"))  };
+const QColor DataManipulationForm::RowColors[3]={ QColor(QString("#C0FFC0")), QColor(QString("#FFFFC0")), QColor(QString("#FFC0C0"))  };
 bool DataManipulationForm::has_csv_clipboard=false;
 
-constexpr unsigned DataManipulationForm::NO_OPERATION;
-constexpr unsigned DataManipulationForm::OP_INSERT;
-constexpr unsigned DataManipulationForm::OP_UPDATE;
-constexpr unsigned DataManipulationForm::OP_DELETE;
+constexpr unsigned DataManipulationForm::NoOperation;
+constexpr unsigned DataManipulationForm::OpInsert;
+constexpr unsigned DataManipulationForm::OpUpdate;
+constexpr unsigned DataManipulationForm::OpDelete;
 
 DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f): QDialog(parent, f)
 {
@@ -334,7 +334,7 @@ void DataManipulationForm::retrieveData(void)
 		if(!changed_rows.empty())
 		{
 			msg_box.show(trUtf8("<strong>WARNING: </strong> There are some changed rows waiting the commit! Do you really want to discard them and retrieve the data now?"),
-						 Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
+						 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
 			if(msg_box.result()==QDialog::Rejected)
 				return;
@@ -909,18 +909,18 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 void DataManipulationForm::markOperationOnRow(unsigned operation, int row)
 {
 	if(row < results_tbw->rowCount() &&
-			(operation==NO_OPERATION || results_tbw->verticalHeaderItem(row)->data(Qt::UserRole)!=OP_INSERT))
+			(operation==NoOperation || results_tbw->verticalHeaderItem(row)->data(Qt::UserRole)!=OpInsert))
 	{
 		QTableWidgetItem *item=nullptr, *header_item=results_tbw->verticalHeaderItem(row);
 		QString tooltip=trUtf8("This row is marked to be %1");
 		QFont fnt=results_tbw->font();
 		int marked_cols=0;
 
-		if(operation==OP_DELETE)
+		if(operation==OpDelete)
 			tooltip=tooltip.arg(trUtf8("deleted"));
-		else if(operation==OP_UPDATE)
+		else if(operation==OpUpdate)
 			tooltip=tooltip.arg(trUtf8("updated"));
-		else if(operation==OP_INSERT)
+		else if(operation==OpInsert)
 			tooltip=tooltip.arg(trUtf8("inserted"));
 		else
 			tooltip.clear();
@@ -936,24 +936,24 @@ void DataManipulationForm::markOperationOnRow(unsigned operation, int row)
 				item->setToolTip(tooltip);
 
 				//Restore the item's font and text when the operation is delete or none
-				if(operation==NO_OPERATION || operation==OP_DELETE)
+				if(operation==NoOperation || operation==OpDelete)
 				{
 					item->setFont(fnt);
 					item->setText(item->data(Qt::UserRole).toString());
 				}
 
-				if(operation==NO_OPERATION)
+				if(operation==NoOperation)
 					//Restore the item's background
 					item->setBackground(prev_row_colors[row]);
 				else
 				{
 					//Saves the item's background if it isn't already marked
-					if(header_item->data(Qt::UserRole)!=OP_DELETE &&
-							header_item->data(Qt::UserRole)!=OP_UPDATE)
+					if(header_item->data(Qt::UserRole)!=OpDelete &&
+							header_item->data(Qt::UserRole)!=OpUpdate)
 						prev_row_colors[row]=item->background();
 
 					//Changes the item's background according to the operation
-					item->setBackground(ROW_COLORS[operation - 1]);
+					item->setBackground(RowColors[operation - 1]);
 				}
 
 				marked_cols++;
@@ -964,12 +964,12 @@ void DataManipulationForm::markOperationOnRow(unsigned operation, int row)
 		{
 			auto itr=std::find(changed_rows.begin(), changed_rows.end(), row);
 
-			if(operation==NO_OPERATION && itr!=changed_rows.end())
+			if(operation==NoOperation && itr!=changed_rows.end())
 			{
 				changed_rows.erase(std::find(changed_rows.begin(), changed_rows.end(), row));
 				prev_row_colors.erase(row);
 			}
-			else if(operation!=NO_OPERATION && itr==changed_rows.end())
+			else if(operation!=NoOperation && itr==changed_rows.end())
 				changed_rows.push_back(row);
 
 			header_item->setData(Qt::UserRole, operation);
@@ -984,7 +984,7 @@ void DataManipulationForm::markOperationOnRow(unsigned operation, int row)
 
 void DataManipulationForm::markUpdateOnRow(QTableWidgetItem *item)
 {
-	if(results_tbw->verticalHeaderItem(item->row())->data(Qt::UserRole)!=OP_INSERT)
+	if(results_tbw->verticalHeaderItem(item->row())->data(Qt::UserRole)!=OpInsert)
 	{
 		bool items_changed=false;
 		QTableWidgetItem *aux_item=nullptr;
@@ -1003,7 +1003,7 @@ void DataManipulationForm::markUpdateOnRow(QTableWidgetItem *item)
 
 		fnt.setBold(items_changed);
 		item->setFont(fnt);
-		markOperationOnRow((items_changed ? OP_UPDATE : NO_OPERATION), item->row());
+		markOperationOnRow((items_changed ? OpUpdate : NoOperation), item->row());
 	}
 }
 
@@ -1019,10 +1019,10 @@ void DataManipulationForm::markDeleteOnRows(void)
 		{
 			item=results_tbw->verticalHeaderItem(row);
 
-			if(item->data(Qt::UserRole)==OP_INSERT)
+			if(item->data(Qt::UserRole)==OpInsert)
 				ins_rows.push_back(row);
 			else
-				markOperationOnRow(OP_DELETE, row);
+				markOperationOnRow(OpDelete, row);
 		}
 	}
 
@@ -1057,7 +1057,7 @@ void DataManipulationForm::addRow(bool focus_new_row)
 	results_tbw->setVerticalHeaderItem(row, new QTableWidgetItem(QString::number(row + 1)));
 	results_tbw->blockSignals(false);
 
-	markOperationOnRow(OP_INSERT, row);
+	markOperationOnRow(OpInsert, row);
 	item=results_tbw->item(row, 0);
 	hint_frm->setVisible(true);
 
@@ -1103,7 +1103,7 @@ void DataManipulationForm::removeNewRows(const vector<int> &ins_rows)
 
 		//Mark the rows as no-op to remove their indexes from changed rows set
 		for(idx=0; idx < cnt; idx++)
-			markOperationOnRow(NO_OPERATION, ins_rows[idx]);
+			markOperationOnRow(NoOperation, ins_rows[idx]);
 
 		//Remove the rows
 		for(idx=0; idx < cnt; idx++)
@@ -1199,7 +1199,7 @@ void DataManipulationForm::undoOperations(void)
 	{
 		for(int row=sel_range[0].topRow(); row <= sel_range[0].bottomRow(); row++)
 		{
-			if(results_tbw->verticalHeaderItem(row)->data(Qt::UserRole).toUInt()==OP_INSERT)
+			if(results_tbw->verticalHeaderItem(row)->data(Qt::UserRole).toUInt()==OpInsert)
 				ins_rows.push_back(row);
 			else
 				rows.push_back(row);
@@ -1215,22 +1215,22 @@ void DataManipulationForm::undoOperations(void)
 	for(auto &row : rows)
 	{
 		item=results_tbw->verticalHeaderItem(row);
-		if(item->data(Qt::UserRole).toUInt()!=OP_INSERT)
-			markOperationOnRow(NO_OPERATION, row);
+		if(item->data(Qt::UserRole).toUInt()!=OpInsert)
+			markOperationOnRow(NoOperation, row);
 	}
 
 	//If there is no selection, remove all new rows
 	if(sel_range.isEmpty())
 	{
 		if(results_tbw->rowCount() > 0 &&
-				results_tbw->verticalHeaderItem(results_tbw->rowCount()-1)->data(Qt::UserRole)==OP_INSERT)
+				results_tbw->verticalHeaderItem(results_tbw->rowCount()-1)->data(Qt::UserRole)==OpInsert)
 		{
 			do
 			{
 				results_tbw->removeRow(results_tbw->rowCount()-1);
 				item=results_tbw->verticalHeaderItem(results_tbw->rowCount()-1);
 			}
-			while(item && item->data(Qt::UserRole)==OP_INSERT);
+			while(item && item->data(Qt::UserRole)==OpInsert);
 		}
 
 		clearChangedRows();
@@ -1270,8 +1270,8 @@ void DataManipulationForm::saveChanges(void)
 		Messagebox msg_box;
 
 		msg_box.show(trUtf8("<strong>WARNING:</strong> Once commited its not possible to undo the changes! Proceed with saving?"),
-					 Messagebox::ALERT_ICON,
-					 Messagebox::YES_NO_BUTTONS);
+					 Messagebox::AlertIcon,
+					 Messagebox::YesNoButtons);
 
 		if(msg_box.result()==QDialog::Accepted)
 		{
@@ -1300,9 +1300,9 @@ void DataManipulationForm::saveChanges(void)
 	}
 	catch(Exception &e)
 	{
-		map<unsigned, QString> op_names={{ OP_DELETE, trUtf8("delete") },
-										 { OP_UPDATE, trUtf8("update") },
-										 { OP_INSERT, trUtf8("insert") }};
+		map<unsigned, QString> op_names={{ OpDelete, trUtf8("delete") },
+										 { OpUpdate, trUtf8("update") },
+										 { OpInsert, trUtf8("insert") }};
 
 		QString tab_name=QString("%1.%2")
 						 .arg(schema_cmb->currentText())
@@ -1342,7 +1342,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 	QString col_name, value;
 	QVariant data;
 
-	if(op_type==OP_DELETE || op_type==OP_UPDATE)
+	if(op_type==OpDelete || op_type==OpUpdate)
 	{
 		if(pk_col_names.isEmpty())
 		{
@@ -1366,13 +1366,13 @@ QString DataManipulationForm::getDMLCommand(int row)
 		}
 	}
 
-	if(op_type==OP_DELETE)
+	if(op_type==OpDelete)
 	{
 		fmt_cmd=QString(del_cmd).arg(tab_name).arg(flt_list.join(QString(" AND ")));
 	}
-	else if(op_type==OP_UPDATE || op_type==OP_INSERT)
+	else if(op_type==OpUpdate || op_type==OpInsert)
 	{
-		fmt_cmd=(op_type==OP_UPDATE ? upd_cmd : ins_cmd);
+		fmt_cmd=(op_type==OpUpdate ? upd_cmd : ins_cmd);
 
 		for(int col=0; col < results_tbw->columnCount(); col++)
 		{
@@ -1384,7 +1384,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 				value=item->text();
 				col_name=results_tbw->horizontalHeaderItem(col)->text();
 
-				if(op_type==OP_INSERT || (op_type==OP_UPDATE && value!=item->data(Qt::UserRole)))
+				if(op_type==OpInsert || (op_type==OpUpdate && value!=item->data(Qt::UserRole)))
 				{
 					//Checking if the value is a malformed unescaped value, e.g., {value, value}, {value\}
 					if((value.startsWith(PgModelerNs::UnescValueStart) && value.endsWith(QString("\\") + PgModelerNs::UnescValueEnd)) ||
@@ -1416,7 +1416,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 						value=QString("E'") + value + QString("'");
 					}
 
-					if(op_type==OP_INSERT)
+					if(op_type==OpInsert)
 						val_list.push_back(value);
 					else
 						val_list.push_back(QString("\"%1\"=%2").arg(col_name).arg(value));
@@ -1428,7 +1428,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 			return(QString());
 		else
 		{
-			if(op_type==OP_UPDATE)
+			if(op_type==OpUpdate)
 				fmt_cmd=fmt_cmd.arg(tab_name).arg(val_list.join(QString(", "))).arg(flt_list.join(QString(" AND ")));
 			else
 				fmt_cmd=fmt_cmd.arg(tab_name).arg(col_list.join(QString(", "))).arg(val_list.join(QString(", ")));

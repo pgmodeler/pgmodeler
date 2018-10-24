@@ -64,7 +64,7 @@ void Dummy::executePlugin(ModelWidget *)
 	Messagebox msgbox;
 	msgbox.show(trUtf8("Plugin successfully loaded!"),
 				trUtf8("Plugin successfully loaded! Check the <a href='http://www.pgmodeler.com.br/wiki/doku.php?id=plugins'>plugins wiki page</a> to know how to create your own plugins."),
-				Messagebox::INFO_ICON);
+				Messagebox::InfoIcon);
 }
 
 QKeySequence Dummy::getPluginShortcut(void)

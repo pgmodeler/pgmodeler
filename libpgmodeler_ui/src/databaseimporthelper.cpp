@@ -18,7 +18,7 @@
 
 #include "databaseimporthelper.h"
 
-const QString DatabaseImportHelper::UNKNOWN_OBJECT_OID_XML=QString("\t<!--[ unknown object OID=%1 ]-->\n");
+const QString DatabaseImportHelper::UnkownObjectOidXml=QString("\t<!--[ unknown object OID=%1 ]-->\n");
 
 DatabaseImportHelper::DatabaseImportHelper(QObject *parent) : QObject(parent)
 {
@@ -843,7 +843,7 @@ QString DatabaseImportHelper::getDependencyObject(const QString &oid, ObjectType
 			else
 				/* If the object oid is valid but there is no attribute set to it creates a xml definition
 					 containing an alert indicating that the object is unknown */
-				xml_def=QString(UNKNOWN_OBJECT_OID_XML).arg(oid);
+				xml_def=QString(UnkownObjectOidXml).arg(oid);
 		}
 
 		return(xml_def);
@@ -1710,7 +1710,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 			if(auto_resolve_deps && !is_type_registered && !type_name.contains(QString("[]")))
 			{
 				type_def=getDependencyObject(itr->second[ParsersAttributes::TYPE_OID], ObjType);
-				unknown_obj_xml=UNKNOWN_OBJECT_OID_XML.arg(type_oid);
+				unknown_obj_xml=UnkownObjectOidXml.arg(type_oid);
 
 				/* If the type still doesn't exists means that the column maybe is referencing a domain
 		  this way pgModeler will try to retrieve the mentionend object */

@@ -21,7 +21,7 @@
 #include <iostream>
 #include "pgmodeleruins.h"
 
-const QString ModelFixForm::PGMODELER_CLI=QString("pgmodeler-cli");
+const QString ModelFixForm::PgModelerCli=QString("pgmodeler-cli");
 
 ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -78,7 +78,7 @@ int ModelFixForm::exec(void)
 	if(!fi.exists())
 	{
 		not_found_lbl->setText(trUtf8("Could not locate <strong>%1</strong> tool on <strong>%2</strong>. The fix process can't continue! Please check pgModeler installation or try to manually specify the command below.")
-							   .arg(PGMODELER_CLI).arg(fi.absoluteDir().absolutePath()));
+							   .arg(PgModelerCli).arg(fi.absoluteDir().absolutePath()));
 		message_frm->setVisible(true);
 		pgmodeler_cli_lbl->setVisible(true);
 		pgmodeler_cli_edt->setVisible(true);
@@ -95,7 +95,7 @@ void ModelFixForm::enableFix(void)
 	if(!pgmodeler_cli_edt->text().isEmpty())
 	{
 		QFileInfo fi(pgmodeler_cli_edt->text());
-		bool visible=!fi.exists() || fi.baseName()!=PGMODELER_CLI;
+		bool visible=!fi.exists() || fi.baseName()!=PgModelerCli;
 
 		invalid_cli_lbl->setVisible(visible);
 		message_frm->setVisible(visible);
@@ -139,7 +139,7 @@ void ModelFixForm::selectFile(void)
 
 	if(sender_obj==sel_cli_exe_tb)
 	{
-		QString cli_cmd=PGMODELER_CLI;
+		QString cli_cmd=PgModelerCli;
 		txt=pgmodeler_cli_edt;
 
 #ifdef Q_OS_WIN

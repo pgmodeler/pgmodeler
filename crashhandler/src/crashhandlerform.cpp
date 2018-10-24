@@ -125,7 +125,7 @@ void CrashHandlerForm::loadReport(const QString &filename)
 
 	//Raises an error if the file could not be opened
 	if(!input.isOpen())
-		msgbox.show(Exception::getErrorMessage(FileDirectoryNotAccessed).arg(filename), Messagebox::ERROR_ICON);
+		msgbox.show(Exception::getErrorMessage(FileDirectoryNotAccessed).arg(filename), Messagebox::ErrorIcon);
 	else
 	{
 		QByteArray uncomp_buf;

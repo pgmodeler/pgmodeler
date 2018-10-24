@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	PluginsConfigWidget *plugins_conf_wgt=nullptr;
 	QGridLayout *grid=nullptr;
 
-	pending_op=NO_PENDING_OPER;
+	pending_op=NoPendingOp;
 	central_wgt=nullptr;
 
 	canvas_info_wgt = new SceneInfoWidget(this);
@@ -60,18 +60,18 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		grid->setContentsMargins(0,0,0,0);
 		grid->setSpacing(0);
 		grid->addWidget(central_wgt, 0, 0);
-		views_stw->widget(WELCOME_VIEW)->setLayout(grid);
+		views_stw->widget(WelcomeView)->setLayout(grid);
 
-		action_welcome->setData(WELCOME_VIEW);
-		action_design->setData(DESIGN_VIEW);
-		action_manage->setData(MANAGE_VIEW);
+		action_welcome->setData(WelcomeView);
+		action_design->setData(DesignView);
+		action_manage->setData(ManageView);
 
 		sql_tool_wgt=new SQLToolWidget;
 		grid=new QGridLayout;
 		grid->setContentsMargins(0,0,0,0);
 		grid->setSpacing(0);
 		grid->addWidget(sql_tool_wgt, 0, 0);
-		views_stw->widget(MANAGE_VIEW)->setLayout(grid);
+		views_stw->widget(ManageView)->setLayout(grid);
 
 		configuration_form=new ConfigurationForm(nullptr, Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 		PgModelerUiNs::resizeDialog(configuration_form);
@@ -318,7 +318,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), models_tbw, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), this, SLOT(stopTimers(bool)));
 
-	connect(model_valid_wgt, &ModelValidationWidget::s_validationCanceled, [&](){ pending_op=NO_PENDING_OPER; });
+	connect(model_valid_wgt, &ModelValidationWidget::s_validationCanceled, [&](){ pending_op=NoPendingOp; });
 	connect(model_valid_wgt, SIGNAL(s_validationFinished(bool)), this, SLOT(executePendingOperation(bool)));
 	connect(model_valid_wgt, SIGNAL(s_fixApplied()), this, SLOT(removeOperations()), Qt::QueuedConnection);
 	connect(model_valid_wgt, SIGNAL(s_graphicalObjectsUpdated()), model_objs_wgt, SLOT(updateObjectsView()), Qt::QueuedConnection);
@@ -636,7 +636,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 				msg_box.show(trUtf8("Save modified model(s)"),
 							 trUtf8("The following models were modified but not saved: %1. Do you really want to quit pgModeler?").arg(model_names.join(", ")),
-							 Messagebox::CONFIRM_ICON,Messagebox::YES_NO_BUTTONS);
+							 Messagebox::ConfirmIcon,Messagebox::YesNoButtons);
 
 				/* If the user rejects the message box the close event will be aborted
 				causing pgModeler not to be finished */
@@ -799,7 +799,7 @@ void MainWindow::updateRecentModelsMenu(void)
 	recent_mdls_menu.clear();
 	recent_models.removeDuplicates();
 
-	for(int i=0; i < recent_models.size() && i < MAX_RECENT_MODELS; i++)
+	for(int i=0; i < recent_models.size() && i < MaxRecentModels; i++)
 	{
 		act=recent_mdls_menu.addAction(QFileInfo(recent_models[i]).fileName(),this,SLOT(loadModelFromAction(void)));
 		act->setToolTip(recent_models[i]);
@@ -1190,7 +1190,7 @@ void MainWindow::removeModelActions(void)
 	QList<QAction *> act_list;
 	act_list=general_tb->actions();
 
-	while(act_list.size() > GENERAL_ACTIONS_COUNT)
+	while(act_list.size() > GeneralActionsCount)
 	{
 		general_tb->removeAction(act_list.back());
 		act_list.pop_back();
@@ -1221,7 +1221,7 @@ void MainWindow::closeModel(int model_id)
 		{
 			msg_box.show(trUtf8("Save model"),
 						 trUtf8("The model <strong>%1</strong> was modified! Do you really want to close without save it?").arg(model->getDatabaseModel()->getName()),
-						 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+						 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 		}
 #endif
 
@@ -1359,7 +1359,7 @@ void MainWindow::saveModel(ModelWidget *model)
 			{
 				msg_box.show(trUtf8("Confirmation"),
 							 trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! It's recommended to validate it before save in order to create a consistent model otherwise the generated file will be broken demanding manual fixes to be loadable again!").arg(db_model->getName()),
-							 Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
+							 Messagebox::AlertIcon, Messagebox::AllButtons,
 							 trUtf8("Validate"), trUtf8("Save anyway"), QString(),
 								PgModelerUiNs::getIconPath("validation"), PgModelerUiNs::getIconPath("salvar"));
 
@@ -1374,7 +1374,7 @@ void MainWindow::saveModel(ModelWidget *model)
 				else if(msg_box.result()==QDialog::Accepted)
 				{
 					validation_btn->setChecked(true);
-					this->pending_op=(sender()==action_save_as ? PENDING_SAVE_AS_OPER : PENDING_SAVE_OPER);
+					this->pending_op=(sender()==action_save_as ? PendingSaveAsOp : PendingSaveOp);
 					action_design->setChecked(true);
 					model_valid_wgt->validateModel();
 				}
@@ -1388,7 +1388,7 @@ void MainWindow::saveModel(ModelWidget *model)
 					&& (model->isModified() || sender()==action_save_as))
 			{
 				//If the action that calls the slot were the 'save as' or the model filename isn't set
-				if(sender()==action_save_as || model->filename.isEmpty() || pending_op==PENDING_SAVE_AS_OPER)
+				if(sender()==action_save_as || model->filename.isEmpty() || pending_op==PendingSaveAsOp)
 				{
 					QFileDialog file_dlg;
 
@@ -1437,14 +1437,14 @@ void MainWindow::exportModel(void)
 	{
 		msg_box.show(trUtf8("Confirmation"),
 					 trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the export process it's recommended to validate in order to correctly create the objects on database server!").arg(db_model->getName()),
-					 Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
+					 Messagebox::AlertIcon, Messagebox::AllButtons,
 					 trUtf8("Validate"), trUtf8("Export anyway"), QString(),
 					 PgModelerUiNs::getIconPath("validation"), PgModelerUiNs::getIconPath("exportar"));
 
 		if(msg_box.result()==QDialog::Accepted)
 		{
 			validation_btn->setChecked(true);
-			this->pending_op=PENDING_EXPORT_OPER;
+			this->pending_op=PendingExportOp;
 			model_valid_wgt->validateModel();
 		}
 	}
@@ -1497,14 +1497,14 @@ void MainWindow::diffModelDatabase(void)
 	{
 		msg_box.show(trUtf8("Confirmation"),
 					 trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the diff process it's recommended to validate in order to correctly analyze and generate the difference between the model and a database!").arg(db_model->getName()),
-					 Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
+					 Messagebox::AlertIcon, Messagebox::AllButtons,
 					 trUtf8("Validate"), trUtf8("Diff anyway"), QString(),
 					 PgModelerUiNs::getIconPath("validation"), PgModelerUiNs::getIconPath("diff"));
 
 		if(msg_box.result()==QDialog::Accepted)
 		{
 			validation_btn->setChecked(true);
-			this->pending_op=PENDING_DIFF_OPER;
+			this->pending_op=PendingDiffOp;
 			model_valid_wgt->validateModel();
 		}
 	}
@@ -1568,7 +1568,7 @@ void MainWindow::printModel(void)
 					orientation!=curr_orientation || curr_paper_size!=paper_size)
 			{
 				msg_box.show(trUtf8("Changes were detected in the definitions of paper/margin of the model which may cause the incorrect print of the objects. Do you want to continue printing using the new settings? To use the default settings click 'No' or 'Cancel' to abort printing."),
-							 Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS);
+							 Messagebox::AlertIcon, Messagebox::AllButtons);
 			}
 
 			if(!msg_box.isCancelled())
@@ -1640,7 +1640,7 @@ void MainWindow::showFixMessage(Exception &e, const QString &filename)
 	msg_box.show(Exception(Exception::getErrorMessage(ModelFileNotLoaded).arg(filename),
 							 ModelFileNotLoaded ,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e),
 				 trUtf8("Could not load the database model file `%1'. Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(filename),
-				 Messagebox::ERROR_ICON, Messagebox::YES_NO_BUTTONS,
+				 Messagebox::ErrorIcon, Messagebox::YesNoButtons,
 				 trUtf8("Fix model"), trUtf8("Cancel"), QString(),
 				 PgModelerUiNs::getIconPath("fixobject"), PgModelerUiNs::getIconPath("msgbox_erro"));
 
@@ -1897,7 +1897,7 @@ void MainWindow::showDemoVersionWarning(void)
 
 void MainWindow::executePendingOperation(bool valid_error)
 {
-	if(!valid_error && pending_op!=NO_PENDING_OPER)
+	if(!valid_error && pending_op!=NoPendingOp)
 	{
 		static const QString op_names[]={ QString(), QT_TR_NOOP("save"), QT_TR_NOOP("save"),
 										  QT_TR_NOOP("export"), QT_TR_NOOP("diff") };
@@ -1905,14 +1905,14 @@ void MainWindow::executePendingOperation(bool valid_error)
 		PgModelerUiNs::createOutputTreeItem(model_valid_wgt->output_trw,
 											trUtf8("Executing pending <strong>%1</strong> operation...").arg(op_names[pending_op]));
 
-		if(pending_op==PENDING_SAVE_OPER || pending_op==PENDING_SAVE_AS_OPER)
+		if(pending_op==PendingSaveOp || pending_op==PendingSaveAsOp)
 			saveModel();
-		else if(pending_op==PENDING_EXPORT_OPER)
+		else if(pending_op==PendingExportOp)
 			exportModel();
-		else if(pending_op==PENDING_DIFF_OPER)
+		else if(pending_op==PendingDiffOp)
 			diffModelDatabase();
 
-		pending_op=NO_PENDING_OPER;
+		pending_op=NoPendingOp;
 	}
 }
 
@@ -1941,7 +1941,7 @@ void MainWindow::changeCurrentView(bool checked)
 		action_design->blockSignals(false);
 
 		actions=general_tb->actions();
-		for(int i=GENERAL_ACTIONS_COUNT; i < actions.count(); i++)
+		for(int i=GeneralActionsCount; i < actions.count(); i++)
 		{
 			actions[i]->setEnabled(enable);
 
@@ -2014,7 +2014,7 @@ void MainWindow::arrangeObjects(void)
 		return;
 
 	Messagebox msgbox;
-	msgbox.show(trUtf8("Rearrange objects over the canvas is an irreversible operation! Would like to proceed?"), Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+	msgbox.show(trUtf8("Rearrange objects over the canvas is an irreversible operation! Would like to proceed?"), Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msgbox.result() == QDialog::Accepted)
 	{

@@ -150,9 +150,9 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 
 ModelDatabaseDiffForm::~ModelDatabaseDiffForm(void)
 {
-	destroyThread(IMPORT_THREAD);
-	destroyThread(DIFF_THREAD);
-	destroyThread(EXPORT_THREAD);
+	destroyThread(ImportThread);
+	destroyThread(DiffThread);
+	destroyThread(ExportThread);
 	destroyModel();
 }
 
@@ -208,7 +208,7 @@ void ModelDatabaseDiffForm::showEvent(QShowEvent *)
 
 void ModelDatabaseDiffForm::createThread(unsigned thread_id)
 {
-	if(thread_id==SRC_IMPORT_THREAD)
+	if(thread_id==SrcImportThread)
 	{
 		src_import_thread=new QThread;
 		src_import_helper=new DatabaseImportHelper;
@@ -221,7 +221,7 @@ void ModelDatabaseDiffForm::createThread(unsigned thread_id)
 		connect(src_import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)));
 		connect(src_import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)));
 	}
-	else if(thread_id==IMPORT_THREAD)
+	else if(thread_id==ImportThread)
 	{
 		import_thread=new QThread;
 		import_helper=new DatabaseImportHelper;
@@ -234,7 +234,7 @@ void ModelDatabaseDiffForm::createThread(unsigned thread_id)
 		connect(import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)));
 		connect(import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)));
 	}
-	else if(thread_id==DIFF_THREAD)
+	else if(thread_id==DiffThread)
 	{
 		diff_thread=new QThread;
 		diff_helper=new ModelsDiffHelper;
@@ -275,21 +275,21 @@ void ModelDatabaseDiffForm::createThread(unsigned thread_id)
 
 void ModelDatabaseDiffForm::destroyThread(unsigned thread_id)
 {
-	if(thread_id==SRC_IMPORT_THREAD && src_import_thread)
+	if(thread_id==SrcImportThread && src_import_thread)
 	{
 		delete(src_import_thread);
 		delete(src_import_helper);
 		src_import_thread=nullptr;
 		src_import_helper=nullptr;
 	}
-	else if(thread_id==IMPORT_THREAD && import_thread)
+	else if(thread_id==ImportThread && import_thread)
 	{
 		delete(import_thread);
 		delete(import_helper);
 		import_thread=nullptr;
 		import_helper=nullptr;
 	}
-	else if(thread_id==DIFF_THREAD && diff_thread)
+	else if(thread_id==DiffThread && diff_thread)
 	{
 		diff_thread=nullptr;
 		diff_helper=nullptr;
@@ -397,10 +397,10 @@ void ModelDatabaseDiffForm::generateDiff(void)
 {
 	//Destroy previously allocated threads and helper before start over.
 	destroyModel();
-	destroyThread(SRC_IMPORT_THREAD);
-	destroyThread(IMPORT_THREAD);
-	destroyThread(DIFF_THREAD);
-	destroyThread(EXPORT_THREAD);
+	destroyThread(SrcImportThread);
+	destroyThread(ImportThread);
+	destroyThread(DiffThread);
+	destroyThread(ExportThread);
 
 	clearOutput();
 	curr_step = 1;
@@ -413,7 +413,7 @@ void ModelDatabaseDiffForm::generateDiff(void)
 	else
 		total_steps=4;
 
-	importDatabase(src_database_rb->isChecked() ? SRC_IMPORT_THREAD : IMPORT_THREAD);
+	importDatabase(src_database_rb->isChecked() ? SrcImportThread : ImportThread);
 
 	buttons_wgt->setEnabled(false);
 	cancel_btn->setEnabled(true);
@@ -429,15 +429,15 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 {
 	try
 	{
-		if(thread_id != SRC_IMPORT_THREAD && thread_id != IMPORT_THREAD)
+		if(thread_id != SrcImportThread && thread_id != ImportThread)
 			throw Exception(AllocationObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		createThread(thread_id);
 
-		QThread *thread = (thread_id == SRC_IMPORT_THREAD ? src_import_thread : import_thread);
-		DatabaseImportHelper *import_hlp = (thread_id == SRC_IMPORT_THREAD ? src_import_helper : import_helper);
-		QComboBox *conn_cmb = (thread_id == SRC_IMPORT_THREAD ? src_connections_cmb : connections_cmb),
-				*db_cmb = (thread_id == SRC_IMPORT_THREAD ? src_database_cmb : database_cmb);
+		QThread *thread = (thread_id == SrcImportThread ? src_import_thread : import_thread);
+		DatabaseImportHelper *import_hlp = (thread_id == SrcImportThread ? src_import_helper : import_helper);
+		QComboBox *conn_cmb = (thread_id == SrcImportThread ? src_connections_cmb : connections_cmb),
+				*db_cmb = (thread_id == SrcImportThread ? src_database_cmb : database_cmb);
 		Connection conn=(*reinterpret_cast<Connection *>(conn_cmb->itemData(conn_cmb->currentIndex()).value<void *>())), conn1;
 		map<ObjectType, vector<unsigned>> obj_oids;
 		map<unsigned, vector<unsigned>> col_oids;
@@ -452,7 +452,7 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 
 		step_ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("import")));
 
-		if(thread_id == SRC_IMPORT_THREAD)
+		if(thread_id == SrcImportThread)
 			src_import_item=PgModelerUiNs::createOutputTreeItem(output_trw, step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
 		else
 			import_item=PgModelerUiNs::createOutputTreeItem(output_trw, step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
@@ -468,7 +468,7 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 		catalog.getObjectsOIDs(obj_oids, col_oids, {{ParsersAttributes::FILTER_TABLE_TYPES, ParsersAttributes::_TRUE_}});
 		obj_oids[ObjDatabase].push_back(db_cmb->currentData().value<unsigned>());
 
-		if(thread_id == SRC_IMPORT_THREAD)
+		if(thread_id == SrcImportThread)
 		{
 			source_model=new DatabaseModel;
 			source_model->createSystemObjects(true);
@@ -496,7 +496,7 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 
 void ModelDatabaseDiffForm::diffModels(void)
 {
-	createThread(DIFF_THREAD);
+	createThread(DiffThread);
 
 	step_lbl->setText(trUtf8("Step %1/%2: Comparing <strong>%3</strong> and <strong>%4</strong>...")
 						.arg(curr_step)
@@ -510,16 +510,16 @@ void ModelDatabaseDiffForm::diffModels(void)
 
 	diff_item=PgModelerUiNs::createOutputTreeItem(output_trw, step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
 
-	diff_helper->setDiffOption(ModelsDiffHelper::OPT_KEEP_CLUSTER_OBJS, keep_cluster_objs_chk->isChecked());
-	diff_helper->setDiffOption(ModelsDiffHelper::OPT_CASCADE_MODE, cascade_mode_chk->isChecked());
-	diff_helper->setDiffOption(ModelsDiffHelper::OPT_TRUCANTE_TABLES, trunc_tables_chk->isChecked());
-	diff_helper->setDiffOption(ModelsDiffHelper::OPT_FORCE_RECREATION, force_recreation_chk->isChecked());
-	diff_helper->setDiffOption(ModelsDiffHelper::OPT_RECREATE_UNCHANGEBLE, recreate_unmod_chk->isChecked());
-	diff_helper->setDiffOption(ModelsDiffHelper::OPT_KEEP_OBJ_PERMS, keep_obj_perms_chk->isChecked());
-	diff_helper->setDiffOption(ModelsDiffHelper::OPT_REUSE_SEQUENCES, reuse_sequences_chk->isChecked());
-	diff_helper->setDiffOption(ModelsDiffHelper::OPT_PRESERVE_DB_NAME, preserve_db_name_chk->isChecked());
-	diff_helper->setDiffOption(ModelsDiffHelper::OPT_DONT_DROP_MISSING_OBJS, dont_drop_missing_objs_chk->isChecked());
-	diff_helper->setDiffOption(ModelsDiffHelper::OPT_DROP_MISSING_COLS_CONSTR, drop_missing_cols_constr_chk->isChecked());
+	diff_helper->setDiffOption(ModelsDiffHelper::OptKeepClusterObjs, keep_cluster_objs_chk->isChecked());
+	diff_helper->setDiffOption(ModelsDiffHelper::OptCascadeMode, cascade_mode_chk->isChecked());
+	diff_helper->setDiffOption(ModelsDiffHelper::OptTruncateTables, trunc_tables_chk->isChecked());
+	diff_helper->setDiffOption(ModelsDiffHelper::OptForceRecreation, force_recreation_chk->isChecked());
+	diff_helper->setDiffOption(ModelsDiffHelper::OptRecreateUnchangeble, recreate_unmod_chk->isChecked());
+	diff_helper->setDiffOption(ModelsDiffHelper::OptKeepObjectPerms, keep_obj_perms_chk->isChecked());
+	diff_helper->setDiffOption(ModelsDiffHelper::OptReuseSequences, reuse_sequences_chk->isChecked());
+	diff_helper->setDiffOption(ModelsDiffHelper::OptPreserveDbName, preserve_db_name_chk->isChecked());
+	diff_helper->setDiffOption(ModelsDiffHelper::OptDontDropMissingObjs, dont_drop_missing_objs_chk->isChecked());
+	diff_helper->setDiffOption(ModelsDiffHelper::OptDropMissingColsConstr, drop_missing_cols_constr_chk->isChecked());
 
 	diff_helper->setModels(source_model, imported_model);
 
@@ -533,14 +533,14 @@ void ModelDatabaseDiffForm::diffModels(void)
 
 void ModelDatabaseDiffForm::exportDiff(bool confirm)
 {
-	createThread(EXPORT_THREAD);
+	createThread(ExportThread);
 
 	Messagebox msg_box;
 
 	if(confirm)
 		msg_box.show(trUtf8("Confirmation"),
 					 trUtf8(" <strong>WARNING:</strong> The generated diff is ready to be exported! Once started this process will cause irreversible changes on the database. Do you really want to proceed?"),
-					 Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
+					 Messagebox::AlertIcon, Messagebox::AllButtons,
 					 trUtf8("Apply diff"), trUtf8("Preview diff"), QString(),
 					 PgModelerUiNs::getIconPath("diff"), PgModelerUiNs::getIconPath("codigosql"));
 
@@ -706,7 +706,7 @@ void ModelDatabaseDiffForm::handleImportFinished(Exception e)
 	if(!e.getErrorMessage().isEmpty())
 	{
 		Messagebox msgbox;
-		msgbox.show(e, e.getErrorMessage(), Messagebox::ALERT_ICON);
+		msgbox.show(e, e.getErrorMessage(), Messagebox::AlertIcon);
 	}
 
 	curr_step++;
@@ -715,7 +715,7 @@ void ModelDatabaseDiffForm::handleImportFinished(Exception e)
 	{
 		src_import_thread->quit();
 		src_import_item->setExpanded(false);
-		importDatabase(IMPORT_THREAD);
+		importDatabase(ImportThread);
 	}
 	else
 	{

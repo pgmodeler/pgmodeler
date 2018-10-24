@@ -53,7 +53,7 @@ HintTextWidget::HintTextWidget(QWidget *btn_parent, QWidget *parent): QWidget(pa
 
 	parent->installEventFilter(this);
 
-	setIconSize(SMALL_ICON);
+	setIconSize(SmallIcon);
 	connect(hint_tb, SIGNAL(toggled(bool)), this, SLOT(setVisible(bool)));
 }
 
@@ -116,9 +116,9 @@ void HintTextWidget::setText(const QString &text)
 void HintTextWidget::setIconSize(unsigned icon_sz)
 {
 	if(icon_sz==0)
-		icon_sz=SMALL_ICON;
-	else if(icon_sz > LARGE_ICON)
-		icon_sz=LARGE_ICON;
+		icon_sz=SmallIcon;
+	else if(icon_sz > LargeIcon)
+		icon_sz=LargeIcon;
 
 	hint_tb->setMaximumSize(icon_sz + 8, icon_sz + 8);
 	hint_tb->setIconSize(QSize(icon_sz, icon_sz));

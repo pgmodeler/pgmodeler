@@ -36,13 +36,13 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		Q_OBJECT
 		
 		//! \brief Constants used to mark the type of operation performed on rows
-		static constexpr unsigned NO_OPERATION=0,
-		OP_INSERT=1,
-		OP_UPDATE=2,
-		OP_DELETE=3;
+		static constexpr unsigned NoOperation=0,
+		OpInsert=1,
+		OpUpdate=2,
+		OpDelete=3;
 
 		//! \brief Default row colors for each operation type
-		static const QColor ROW_COLORS[3];
+		static const QColor RowColors[3];
 
 		static bool has_csv_clipboard;
 		

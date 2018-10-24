@@ -137,7 +137,7 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id, bool silent)
 		if(bkp_saved && !silent)
 		{
 			Messagebox msg_box;
-			msg_box.show(trUtf8("A backup of the previous settings was saved into <strong>%1</strong>!").arg(bkp_filename), Messagebox::INFO_ICON);
+			msg_box.show(trUtf8("A backup of the previous settings was saved into <strong>%1</strong>!").arg(bkp_filename), Messagebox::InfoIcon);
 		}
 	}
 }

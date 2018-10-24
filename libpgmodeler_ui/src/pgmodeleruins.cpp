@@ -107,7 +107,7 @@ namespace PgModelerUiNs {
 			if(obj_type!=ObjDatabase && curr_val!=disable)
 			{
 				msgbox.show(QString(QT_TR_NOOP("Do you want to apply the <strong>SQL %1 status</strong> to the object's references too? This will avoid problems when exporting or validating the model.")).arg(disable ? QT_TR_NOOP("disabling") : QT_TR_NOOP("enabling")),
-							Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+							Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 				if(msgbox.result()==QDialog::Accepted)
 					disableReferencesSQL(object);
@@ -345,7 +345,7 @@ namespace PgModelerUiNs {
 		BulkDataEditWidget *bulkedit_wgt = new BulkDataEditWidget;
 
 		base_frm.setMainWidget(bulkedit_wgt);
-		base_frm.setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
+		base_frm.setButtonConfiguration(Messagebox::OkCancelButtons);
 
 		if(base_frm.exec() == QDialog::Accepted)
 		{

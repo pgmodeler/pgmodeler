@@ -195,7 +195,7 @@ void SQLToolWidget::disconnectFromDatabases(void)
 
 		msg_box.show(trUtf8("Warning"),
 					 trUtf8("<strong>ATTENTION:</strong> Disconnect from all databases will close any opened tab in this view! Do you really want to proceed?"),
-					 Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
+					 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
 		if(msg_box.result()==QDialog::Accepted)
 		{

@@ -138,7 +138,7 @@ bool Application::notify(QObject *receiver, QEvent *event)
 	catch(...)
 	{
 		Messagebox msg_box;
-		msg_box.show(trUtf8("Unknown exception caught!"), Messagebox::ERROR_ICON);
+		msg_box.show(trUtf8("Unknown exception caught!"), Messagebox::ErrorIcon);
 		return(false);
 	}
 }

@@ -173,7 +173,7 @@ void TableDataWidget::deleteColumns(void)
 	Messagebox msg_box;
 
 	msg_box.show(trUtf8("Delete columns is an irreversible action! Do you really want to proceed?"),
-							 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+							 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msg_box.result()==QDialog::Accepted)
 	{
@@ -208,7 +208,7 @@ void TableDataWidget::clearRows(bool confirm)
 
 	if(confirm)
 		msg_box.show(trUtf8("Remove all rows is an irreversible action! Do you really want to proceed?"),
-								 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+								 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(!confirm || msg_box.result()==QDialog::Accepted)
 	{
@@ -223,7 +223,7 @@ void TableDataWidget::clearColumns(void)
 	Messagebox msg_box;
 
 		msg_box.show(trUtf8("Remove all columns is an irreversible action! Do you really want to proceed?"),
-								 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+								 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msg_box.result()==QDialog::Accepted)
 	{

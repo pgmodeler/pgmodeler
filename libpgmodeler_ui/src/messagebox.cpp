@@ -132,7 +132,7 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	if(!yes_lbl.isEmpty())
 		yes_ok_btn->setText(yes_lbl);
 	else
-		yes_ok_btn->setText(buttons==OK_BUTTON ? trUtf8("&Ok") : trUtf8("&Yes"));
+		yes_ok_btn->setText(buttons==OkButton ? trUtf8("&Ok") : trUtf8("&Yes"));
 
 	yes_ok_btn->setIcon(!yes_ico.isEmpty() ? QIcon(yes_ico) : QPixmap(PgModelerUiNs::getIconPath("confirmar")));
 
@@ -142,26 +142,26 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	cancel_btn->setText(!cancel_lbl.isEmpty() ? cancel_lbl : trUtf8("&Cancel"));
 	cancel_btn->setIcon(!cancel_ico.isEmpty() ? QIcon(cancel_ico) : QPixmap(PgModelerUiNs::getIconPath("cancelar")));
 
-	no_btn->setVisible(buttons==YES_NO_BUTTONS || buttons==ALL_BUTTONS);
-	cancel_btn->setVisible(buttons==OK_CANCEL_BUTTONS || buttons==ALL_BUTTONS);
+	no_btn->setVisible(buttons==YesNoButtons || buttons==AllButtons);
+	cancel_btn->setVisible(buttons==OkCancelButtons || buttons==AllButtons);
 
 	if(title.isEmpty())
 	{
 		switch(icon_type)
 		{
-			case ERROR_ICON:
+			case ErrorIcon:
 				aux_title=trUtf8("Error");
 			break;
 
-			case ALERT_ICON:
+			case AlertIcon:
 				aux_title=trUtf8("Alert");
 			break;
 
-			case INFO_ICON:
+			case InfoIcon:
 				aux_title=trUtf8("Information");
 			break;
 
-			case CONFIRM_ICON:
+			case ConfirmIcon:
 				aux_title=trUtf8("Confirmation");
 			break;
 		}
@@ -169,19 +169,19 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 
 	switch(icon_type)
 	{
-		case ERROR_ICON:
+		case ErrorIcon:
 			icon_name=QString("msgbox_erro");
 		break;
 
-		case INFO_ICON:
+		case InfoIcon:
 			icon_name=QString("msgbox_info");
 		break;
 
-		case ALERT_ICON:
+		case AlertIcon:
 			icon_name=QString("msgbox_alerta");
 		break;
 
-		case CONFIRM_ICON:
+		case ConfirmIcon:
 			icon_name=QString("msgbox_quest");
 		break;
 

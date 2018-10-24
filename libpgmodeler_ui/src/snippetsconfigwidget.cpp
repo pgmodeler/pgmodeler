@@ -251,7 +251,7 @@ bool SnippetsConfigWidget::isSnippetValid(attribs_map &attribs, const QString &o
 
 	if(!err_msg.isEmpty())
 	{
-		msg_box.show(err_msg, Messagebox::ERROR_ICON, Messagebox::OK_BUTTON);
+		msg_box.show(err_msg, Messagebox::ErrorIcon, Messagebox::OkButton);
 		return(false);
 	}
 	else
@@ -364,7 +364,7 @@ void SnippetsConfigWidget::removeAllSnippets(void)
 	Messagebox msg_box;
 
 	msg_box.show(trUtf8("Do you really want to remove all snippets?"),
-				 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+				 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msg_box.result()==QDialog::Accepted)
 	{
@@ -433,7 +433,7 @@ void SnippetsConfigWidget::parseSnippet(void)
 	try
 	{
 		parseSnippet(getSnippetAttributes(), attribs_map());
-		msg_box.show(trUtf8("No syntax errors found in the snippet."), Messagebox::INFO_ICON);
+		msg_box.show(trUtf8("No syntax errors found in the snippet."), Messagebox::InfoIcon);
 	}
 	catch(Exception &e)
 	{

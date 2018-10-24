@@ -1132,7 +1132,7 @@ void ModelWidget::convertRelationshipNN(void)
 		{
 			Messagebox msg_box;
 			msg_box.show(trUtf8("Do you really want to convert the relationship into an intermediate table?"),
-						 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+						 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 			if(msg_box.result()==QDialog::Accepted)
 			{
@@ -1782,7 +1782,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			PermissionWidget *permission_wgt=new PermissionWidget;
 			Permission *perm=dynamic_cast<Permission *>(object);
 			permission_wgt->setAttributes(db_model, nullptr, (perm ? perm->getObject() : object));
-			res=openEditingForm(permission_wgt, Messagebox::OK_BUTTON);
+			res=openEditingForm(permission_wgt, Messagebox::OkButton);
 		}
 		else if(obj_type==ObjGenericSQL)
 		{
@@ -1827,7 +1827,7 @@ void ModelWidget::showDependenciesReferences(void)
 		{
 			ObjectDepsRefsWidget *deps_refs_wgt=new ObjectDepsRefsWidget;
 			deps_refs_wgt->setAttributes(this, object);
-			openEditingForm(deps_refs_wgt, Messagebox::OK_BUTTON);
+			openEditingForm(deps_refs_wgt, Messagebox::OkButton);
 		}
 	}
 }
@@ -1844,7 +1844,7 @@ void ModelWidget::showSourceCode(void)
 		{
 			SourceCodeWidget *sourcecode_wgt=new SourceCodeWidget;
 			sourcecode_wgt->setAttributes(this->db_model, object);
-			openEditingForm(sourcecode_wgt, Messagebox::OK_BUTTON);
+			openEditingForm(sourcecode_wgt, Messagebox::OkButton);
 		}
 	}
 }
@@ -2039,7 +2039,7 @@ void ModelWidget::editPermissions(void)
 	BaseObject *obj=reinterpret_cast<BaseObject *>(act->data().value<void *>());
 
 	permission_wgt->setAttributes(this->db_model, nullptr, obj);
-	openEditingForm(permission_wgt, Messagebox::OK_BUTTON);
+	openEditingForm(permission_wgt, Messagebox::OkButton);
 
 	this->setModified(true);
 	emit s_objectManipulated();
@@ -2126,7 +2126,7 @@ void ModelWidget::protectObject(void)
 				{
 					Messagebox msgbox;
 					msgbox.show(QString(QT_TR_NOOP("Do you want to %1 the selected schema's children too?")).arg(protect ? QT_TR_NOOP("protect") : QT_TR_NOOP("unprotect")),
-								Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+								Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 					if(msgbox.result()==QDialog::Accepted)
 					{
@@ -2239,7 +2239,7 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 	{
 		//Ask for confirmation to copy the dependencies of the object(s)
 		msg_box.show(trUtf8("Also copy all dependencies of selected objects? This minimizes the breakdown of references when copied objects are pasted into another model."),
-					 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+					 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 	}
 
 	/* When in cut operation is necessary to store the selected objects in a separeted list
@@ -2637,7 +2637,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 		Messagebox msg_box;
 		msg_box.show(Exception(trUtf8("Not all objects were pasted to the model due to errors returned during the process! Refer to error stack for more details!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors),
 								 QString(),
-								 Messagebox::ALERT_ICON);
+								 Messagebox::AlertIcon);
 	}
 
 	if(!ModelWidget::cut_operation)
@@ -2762,20 +2762,20 @@ void ModelWidget::removeObjects(bool cascade)
 		{
 			if(cascade)
 				msg_box.show(trUtf8("<strong>CAUTION:</strong> You are about to delete objects in cascade mode which means more objects than the selected will be dropped too. Do you really want to proceed?"),
-							 Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
+							 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 			else if(sel_objs.size() > 1)
 			{
 				msg_box.show(trUtf8("<strong>CAUTION:</strong> Remove multiple objects at once can cause irreversible invalidations to other objects in the model causing such invalid objects to be deleted too. Do you really want to proceed?"),
-							 Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
+							 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 			}
 			else
 			{
 				if(sel_objs[0]->getObjectType()==ObjRelationship)
 					msg_box.show(trUtf8("<strong>CAUTION:</strong> Remove a relationship can cause irreversible invalidations to other objects in the model causing such invalid objects to be deleted too. Do you really want to proceed?"),
-								 Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
+								 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 				else
 					msg_box.show(trUtf8("Do you really want to delete the selected object?"),
-								 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+								 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 			}
 		}
 
@@ -3011,7 +3011,7 @@ void ModelWidget::removeObjects(bool cascade)
 				{
 					msg_box.show(Exception(RemInvalidatedObjects, __PRETTY_FUNCTION__,__FILE__,__LINE__, errors),
 								 trUtf8("The cascade deletion found some problems when running! Some objects could not be deleted or registered in the operation's history! Please, refer to error stack for more details."),
-								 Messagebox::ALERT_ICON);
+								 Messagebox::AlertIcon);
 				}
 			}
 			catch(Exception &e)

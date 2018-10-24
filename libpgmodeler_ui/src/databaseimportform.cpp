@@ -192,7 +192,7 @@ void DatabaseImportForm::importDatabase(void)
 		if(import_to_model_chk->isChecked())
 		{
 			msg_box.show(trUtf8("<strong>ATTENTION:</strong> You are about to import objects to the current working model! This action will cause irreversible changes to it even in case of critical errors during the process. Do you want to proceed?"),
-						 Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
+						 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
 			if(msg_box.result()==QDialog::Rejected)
 				return;
@@ -522,7 +522,7 @@ void DatabaseImportForm::handleImportFinished(Exception e)
 	if(!e.getErrorMessage().isEmpty())
 	{
 		Messagebox msgbox;
-		msgbox.show(e, e.getErrorMessage(), Messagebox::ALERT_ICON);
+		msgbox.show(e, e.getErrorMessage(), Messagebox::AlertIcon);
 	}
 
 	model_wgt->rearrangeSchemasInGrid();

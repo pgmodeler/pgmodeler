@@ -118,9 +118,9 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, ObjTable)
 			Constraint *pk = table->getPrimaryKey();
 
 			if(pk && pk->isAddedByRelationship())
-				msg_box.show(trUtf8("It is not possible to mark a column as primary key when the table already has a primary key which was created by a relationship! This action should be done in the section <strong>Primary key</strong> of the relationship's editing form."), Messagebox::ALERT_ICON);
+				msg_box.show(trUtf8("It is not possible to mark a column as primary key when the table already has a primary key which was created by a relationship! This action should be done in the section <strong>Primary key</strong> of the relationship's editing form."), Messagebox::AlertIcon);
 			else
-				msg_box.show(trUtf8("It is not possible to mark a column created by a relationship as primary key! This action should be done in the section <strong>Primary key</strong> of the relationship's editing form."), Messagebox::ALERT_ICON);
+				msg_box.show(trUtf8("It is not possible to mark a column created by a relationship as primary key! This action should be done in the section <strong>Primary key</strong> of the relationship's editing form."), Messagebox::AlertIcon);
 		}
 	});
 
@@ -794,7 +794,7 @@ void TableWidget::editData(void)
 
 	tab_data_wgt->setAttributes(this->model, dynamic_cast<Table *>(this->object));
 	base_form.setMainWidget(tab_data_wgt);
-	base_form.setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
+	base_form.setButtonConfiguration(Messagebox::OkCancelButtons);
 
 	GeneralConfigWidget::restoreWidgetGeometry(&base_form, tab_data_wgt->metaObject()->className());
 	base_form.exec();

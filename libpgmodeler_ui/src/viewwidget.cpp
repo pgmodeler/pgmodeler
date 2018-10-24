@@ -432,7 +432,7 @@ int ViewWidget::openReferenceForm(Reference ref, int row, bool update)
 	int result = 0;
 
 	editing_form.setMainWidget(ref_wgt);
-	editing_form.setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
+	editing_form.setButtonConfiguration(Messagebox::OkCancelButtons);
 
 	disconnect(editing_form.apply_ok_btn, SIGNAL(clicked(bool)), &editing_form, SLOT(accept()));
 	connect(editing_form.apply_ok_btn, SIGNAL(clicked(bool)), ref_wgt, SLOT(applyConfiguration()));

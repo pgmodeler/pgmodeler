@@ -44,9 +44,9 @@ class HintTextWidget: public QWidget, public Ui::HintTextWidget {
 		void showEvent(QShowEvent *);
 
 	public:
-		static constexpr unsigned SMALL_ICON=16,
-		MEDIUM_ICON=24,
-		LARGE_ICON=32;
+		static constexpr unsigned SmallIcon=16,
+		MediumIcon=24,
+		LargeIcon=32;
 
 		HintTextWidget(QWidget *btn_parent, QWidget *parent);
 

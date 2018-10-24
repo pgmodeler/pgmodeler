@@ -172,7 +172,7 @@ void OperationListWidget::undoOperation(void)
 		if(e.getErrorType()==UndoRedoOperationInvalidObject)
 		{
 			Messagebox msg_box;
-			msg_box.show(e, "", Messagebox::ALERT_ICON);
+			msg_box.show(e, "", Messagebox::AlertIcon);
 		}
 		else
 			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
@@ -196,7 +196,7 @@ void OperationListWidget::redoOperation(void)
 		if(e.getErrorType()==UndoRedoOperationInvalidObject)
 		{
 			Messagebox msg_box;
-			msg_box.show(e, "", Messagebox::ALERT_ICON);
+			msg_box.show(e, "", Messagebox::AlertIcon);
 		}
 		else
 			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
@@ -209,8 +209,8 @@ void OperationListWidget::removeOperations(void)
 
 	msg_box.show(trUtf8("Operation history exclusion"),
 				 trUtf8("Delete the executed operations history is an irreversible action, do you want to continue?"),
-				 Messagebox::CONFIRM_ICON,
-				 Messagebox::YES_NO_BUTTONS);
+				 Messagebox::ConfirmIcon,
+				 Messagebox::YesNoButtons);
 
 	if(msg_box.result()==QDialog::Accepted)
 	{

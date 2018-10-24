@@ -400,7 +400,7 @@ void ObjectsTableWidget::removeRow(void)
 		{
 			if(conf_exclusion)
 				msg_box.show(trUtf8("Confirmation"),trUtf8("Do you really want to remove the selected item?"),
-							 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+							 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 			if(!conf_exclusion || (conf_exclusion && msg_box.result()==QDialog::Accepted))
 			{
@@ -449,7 +449,7 @@ void ObjectsTableWidget::removeRows(void)
 			 activating the 'remove_all_tb' button */
 		if(conf_exclusion && sender_obj==remove_all_tb)
 			msg_box.show(trUtf8("Confirmation"),trUtf8("Do you really want to remove all the items?"),
-						 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+						 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 		if(!conf_exclusion || (conf_exclusion && sender_obj!=remove_all_tb) ||
 				(conf_exclusion &&  sender_obj==remove_all_tb && msg_box.result()==QDialog::Accepted))

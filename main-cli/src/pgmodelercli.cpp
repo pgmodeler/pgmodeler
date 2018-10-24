@@ -1333,16 +1333,16 @@ void PgModelerCLI::diffModelDatabase(void)
 	importDatabase(model_aux, extra_connection);
 
 	diff_hlp.setModels(model, model_aux);
-	diff_hlp.setDiffOption(ModelsDiffHelper::OPT_KEEP_CLUSTER_OBJS, !parsed_opts.count(DROP_CLUSTER_OBJS));
-	diff_hlp.setDiffOption(ModelsDiffHelper::OPT_CASCADE_MODE, !parsed_opts.count(NO_CASCADE_DROP_TRUNC));
-	diff_hlp.setDiffOption(ModelsDiffHelper::OPT_TRUCANTE_TABLES, parsed_opts.count(TRUNC_ON_COLS_TYPE_CHANGE));
-	diff_hlp.setDiffOption(ModelsDiffHelper::OPT_FORCE_RECREATION, !parsed_opts.count(NO_FORCE_OBJ_RECREATION));
-	diff_hlp.setDiffOption(ModelsDiffHelper::OPT_RECREATE_UNCHANGEBLE, !parsed_opts.count(NO_UNMOD_OBJ_RECREATION));
-	diff_hlp.setDiffOption(ModelsDiffHelper::OPT_KEEP_OBJ_PERMS, !parsed_opts.count(REVOKE_PERMISSIONS));
-	diff_hlp.setDiffOption(ModelsDiffHelper::OPT_REUSE_SEQUENCES, !parsed_opts.count(NO_SEQUENCE_REUSE));
-	diff_hlp.setDiffOption(ModelsDiffHelper::OPT_PRESERVE_DB_NAME, !parsed_opts.count(RENAME_DB));
-	diff_hlp.setDiffOption(ModelsDiffHelper::OPT_DONT_DROP_MISSING_OBJS, !parsed_opts.count(DROP_MISSING_OBJS));
-	diff_hlp.setDiffOption(ModelsDiffHelper::OPT_DROP_MISSING_COLS_CONSTR, !parsed_opts.count(FORCE_DROP_COLS_CONSTRS));
+	diff_hlp.setDiffOption(ModelsDiffHelper::OptKeepClusterObjs, !parsed_opts.count(DROP_CLUSTER_OBJS));
+	diff_hlp.setDiffOption(ModelsDiffHelper::OptCascadeMode, !parsed_opts.count(NO_CASCADE_DROP_TRUNC));
+	diff_hlp.setDiffOption(ModelsDiffHelper::OptTruncateTables, parsed_opts.count(TRUNC_ON_COLS_TYPE_CHANGE));
+	diff_hlp.setDiffOption(ModelsDiffHelper::OptForceRecreation, !parsed_opts.count(NO_FORCE_OBJ_RECREATION));
+	diff_hlp.setDiffOption(ModelsDiffHelper::OptRecreateUnchangeble, !parsed_opts.count(NO_UNMOD_OBJ_RECREATION));
+	diff_hlp.setDiffOption(ModelsDiffHelper::OptKeepObjectPerms, !parsed_opts.count(REVOKE_PERMISSIONS));
+	diff_hlp.setDiffOption(ModelsDiffHelper::OptReuseSequences, !parsed_opts.count(NO_SEQUENCE_REUSE));
+	diff_hlp.setDiffOption(ModelsDiffHelper::OptPreserveDbName, !parsed_opts.count(RENAME_DB));
+	diff_hlp.setDiffOption(ModelsDiffHelper::OptDontDropMissingObjs, !parsed_opts.count(DROP_MISSING_OBJS));
+	diff_hlp.setDiffOption(ModelsDiffHelper::OptDropMissingColsConstr, !parsed_opts.count(FORCE_DROP_COLS_CONSTRS));
 
 	if(!parsed_opts[PGSQL_VER].isEmpty())
 		diff_hlp.setPgSQLVersion(parsed_opts[PGSQL_VER]);

@@ -656,7 +656,7 @@ int SQLExecutionWidget::clearAll(void)
 	int res = 0;
 
 	msg_box.show(trUtf8("The SQL input field and the results grid will be cleared! Want to proceed?"),
-							 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+							 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	res = msg_box.result();
 
@@ -921,7 +921,7 @@ void SQLExecutionWidget::destroySQLHistory(void)
 	Messagebox msg_box;
 
 	msg_box.show(trUtf8("This action will wipe out all the SQL commands history for all connections! Do you really want to proceed?"),
-								Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+								Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msg_box.result() == QDialog::Accepted)
 	{
@@ -992,7 +992,7 @@ void SQLExecutionWidget::showHistoryContextMenu(void)
 		Messagebox msg_box;
 
 		msg_box.show(trUtf8("This action will wipe out all the SQL commands history for the current connection! Do you really want to proceed?"),
-									Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+									Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 		if(msg_box.result() == QDialog::Accepted)
 		{

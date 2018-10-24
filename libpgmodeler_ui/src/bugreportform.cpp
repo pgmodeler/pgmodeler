@@ -103,7 +103,7 @@ void BugReportForm::generateReport(const QByteArray &buf)
 	output.open(QFile::WriteOnly);
 
 	if(!output.isOpen())
-		msgbox.show(Exception::getErrorMessage(FileDirectoryNotWritten).arg(filename), Messagebox::ERROR_ICON);
+		msgbox.show(Exception::getErrorMessage(FileDirectoryNotWritten).arg(filename), Messagebox::ErrorIcon);
 	else
 	{
 		QByteArray comp_buf;
@@ -116,7 +116,7 @@ void BugReportForm::generateReport(const QByteArray &buf)
 		output.close();
 
 		msgbox.show(trUtf8("Bug report successfuly generated! Please, send the file <strong>%1</strong> to <em>%2</em> in order be analyzed. Thank you for the collaboration!").arg(filename).arg(GlobalAttributes::BugReportEmail),
-					Messagebox::INFO_ICON);
+					Messagebox::InfoIcon);
 	}
 }
 

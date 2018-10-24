@@ -490,7 +490,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_PAGE_DELIMITERS]=(show_delim ? ParsersAttributes::_TRUE_ : QString());
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::ALIGN_OBJS_TO_GRID]=(align_grid ? ParsersAttributes::_TRUE_ : QString());
 
-		unity_cmb->setCurrentIndex(UNIT_MILIMETERS);
+		unity_cmb->setCurrentIndex(UnitMilimeters);
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN]=QString("%1,%2,%3,%4").arg(left_marg->value())
 																						 .arg(top_marg->value())
 																						 .arg(right_marg->value())
@@ -601,7 +601,7 @@ void GeneralConfigWidget::applyConfiguration(void)
 	if(!save_restore_geometry_chk->isChecked())
 	  widgets_geom.clear();
 
-	unity_cmb->setCurrentIndex(UNIT_POINT);
+	unity_cmb->setCurrentIndex(UnitPoint);
 	ObjectsScene::setPaperConfiguration(static_cast<QPrinter::PaperSize>(paper_cmb->itemData(paper_cmb->currentIndex()).toInt()),
 										(portrait_rb->isChecked() ? QPrinter::Portrait : QPrinter::Landscape),
 										QRectF(left_marg->value(), top_marg->value(), right_marg->value(), bottom_marg->value()),
@@ -661,7 +661,7 @@ void GeneralConfigWidget::restoreDefaults(void)
 
 void GeneralConfigWidget::convertMarginUnity(void)
 {
-	static int prev_unity=UNIT_MILIMETERS;
+	static int prev_unity=UnitMilimeters;
 	double conv_factor[]={1.0f, 2.83f, 0.04f, 0.1f},
 			left, right, top, bottom, width, height;
 
@@ -735,7 +735,7 @@ void GeneralConfigWidget::resetDialogsSizes(void)
 {
 	Messagebox msg_box;
 	msg_box.show(trUtf8("This action will reset all dialogs to their default size and positions on the screen! Do you really want to proceed?"),
-						Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+						Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msg_box.result() == QDialog::Accepted)
 	  widgets_geom.clear();

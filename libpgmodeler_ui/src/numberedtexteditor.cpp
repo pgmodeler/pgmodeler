@@ -416,7 +416,7 @@ void NumberedTextEditor::handleProcessError(void)
 {
 	Messagebox msg_box;
 	msg_box.show(PgModelerUiNs::formatMessage(trUtf8("Could not start the source code editor application `%1'! Make to sure that the source editor path defined in the general settings points to a valid executable and the current user has permission to run the application. Error message returned: `%2'")
-																						.arg(src_editor_proc.program()).arg(src_editor_proc.errorString())), Messagebox::ERROR_ICON);
+																						.arg(src_editor_proc.program()).arg(src_editor_proc.errorString())), Messagebox::ErrorIcon);
 }
 
 void NumberedTextEditor::setReadOnly(bool ro)

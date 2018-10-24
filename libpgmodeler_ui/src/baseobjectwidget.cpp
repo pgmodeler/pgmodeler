@@ -670,7 +670,7 @@ void BaseObjectWidget::editPermissions(void)
 
 	permission_wgt->setAttributes(this->model, parent_obj, this->object);
 	parent_form.setMainWidget(permission_wgt);
-	parent_form.setButtonConfiguration(Messagebox::OK_BUTTON);
+	parent_form.setButtonConfiguration(Messagebox::OkButton);
 
 	GeneralConfigWidget::restoreWidgetGeometry(&parent_form, permission_wgt->metaObject()->className());
 	parent_form.exec();

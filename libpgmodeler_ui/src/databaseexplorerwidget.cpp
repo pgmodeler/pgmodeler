@@ -1218,7 +1218,7 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 				msg=trUtf8("Do you really want to <strong>cascade</strong> drop the object <strong>%1</strong> <em>(%2)</em>? This action will drop all the other objects that depends on it.")
 					.arg(obj_name).arg(BaseObject::getTypeName(obj_type));
 
-			msg_box.show(msg, Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+			msg_box.show(msg, Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 			if(msg_box.result()==QDialog::Accepted)
 			{
@@ -1285,7 +1285,7 @@ bool DatabaseExplorerWidget::truncateTable(const QString &sch_name, const QStrin
 			msg=trUtf8("Do you really want to truncate in <strong>cascade</strong> mode the table <strong>%1.%2</strong>? This action will truncate all the tables that depends on it?").arg(sch_name).arg(obj_name);
 
 		msg_box.setCustomOptionText(trUtf8("Also restart sequences"));
-		msg_box.show(msg, Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+		msg_box.show(msg, Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 		if(msg_box.result()==QDialog::Accepted)
 		{
@@ -1950,7 +1950,7 @@ void DatabaseExplorerWidget::dropDatabase(void)
 	msg_box.show(trUtf8("Warning"),
 				 trUtf8("<strong>CAUTION:</strong> You are about to drop the entire database <strong>%1</strong> from the server <strong>%2</strong>! All data will be completely wiped out. Do you really want to proceed?")
 							 .arg(dbname).arg(connection.getConnectionId(true)),
-				 Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
+				 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
 	if(msg_box.result()==QDialog::Accepted)
 	{
