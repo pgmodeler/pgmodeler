@@ -18,69 +18,69 @@
 
 #include "pgmodelercli.h"
 
-QTextStream PgModelerCLI::out(stdout);
+QTextStream PgModelerCli::out(stdout);
 
-const QRegExp PgModelerCLI::PASSWORD_REGEXP=QRegExp("(password)(=)(.)*( )");
-const QString PgModelerCLI::PASSWORD_PLACEHOLDER=QString("password=******");
+const QRegExp PgModelerCli::PasswordRegExp=QRegExp("(password)(=)(.)*( )");
+const QString PgModelerCli::PasswordPlaceholder=QString("password=******");
 
-const QString PgModelerCLI::INPUT=QString("--input");
-const QString PgModelerCLI::OUTPUT=QString("--output");
-const QString PgModelerCLI::INPUT_DB=QString("--input-db");
-const QString PgModelerCLI::EXPORT_TO_FILE=QString("--export-to-file");
-const QString PgModelerCLI::EXPORT_TO_PNG=QString("--export-to-png");
-const QString PgModelerCLI::EXPORT_TO_SVG=QString("--export-to-svg");
-const QString PgModelerCLI::EXPORT_TO_DBMS=QString("--export-to-dbms");
-const QString PgModelerCLI::IMPORT_DB=QString("--import-db");
-const QString PgModelerCLI::DIFF=QString("--diff");
-const QString PgModelerCLI::DROP_DATABASE=QString("--drop-database");
-const QString PgModelerCLI::DROP_OBJECTS=QString("--drop-objects");
-const QString PgModelerCLI::PGSQL_VER=QString("--pgsql-ver");
-const QString PgModelerCLI::HELP=QString("--help");
-const QString PgModelerCLI::SHOW_GRID=QString("--show-grid");
-const QString PgModelerCLI::SHOW_DELIMITERS=QString("--show-delimiters");
-const QString PgModelerCLI::PAGE_BY_PAGE=QString("--page-by-page");
-const QString PgModelerCLI::IGNORE_DUPLICATES=QString("--ignore-duplicates");
-const QString PgModelerCLI::IGNORE_ERROR_CODES=QString("--ignore-error-codes");
-const QString PgModelerCLI::CONN_ALIAS=QString("--conn-alias");
-const QString PgModelerCLI::HOST=QString("--host");
-const QString PgModelerCLI::PORT=QString("--port");
-const QString PgModelerCLI::USER=QString("--user");
-const QString PgModelerCLI::PASSWD=QString("--passwd");
-const QString PgModelerCLI::INITIAL_DB=QString("--initial-db");
-const QString PgModelerCLI::SILENT=QString("--silent");
-const QString PgModelerCLI::LIST_CONNS=QString("--list-conns");
-const QString PgModelerCLI::SIMULATE=QString("--simulate");
-const QString PgModelerCLI::FIX_MODEL=QString("--fix-model");
-const QString PgModelerCLI::FIX_TRIES=QString("--fix-tries");
-const QString PgModelerCLI::ZOOM_FACTOR=QString("--zoom");
-const QString PgModelerCLI::USE_TMP_NAMES=QString("--use-tmp-names");
-const QString PgModelerCLI::DBM_MIME_TYPE=QString("--dbm-mime-type");
-const QString PgModelerCLI::INSTALL=QString("install");
-const QString PgModelerCLI::UNINSTALL=QString("uninstall");
-const QString PgModelerCLI::IGNORE_IMPORT_ERRORS=QString("--ignore-errors");
-const QString PgModelerCLI::IMPORT_SYSTEM_OBJS=QString("--import-sys-objs");
-const QString PgModelerCLI::IMPORT_EXTENSION_OBJS=QString("--import-ext-objs");
-const QString PgModelerCLI::DEBUG_MODE=QString("--debug-mode");
-const QString PgModelerCLI::COMPARE_TO=QString("--compare-to");
-const QString PgModelerCLI::SAVE_DIFF=QString("--save-diff");
-const QString PgModelerCLI::APPLY_DIFF=QString("--apply-diff");
-const QString PgModelerCLI::NO_DIFF_PREVIEW=QString("--no-diff-preview");
-const QString PgModelerCLI::DROP_CLUSTER_OBJS=QString("--drop-cluster-objs");
-const QString PgModelerCLI::REVOKE_PERMISSIONS=QString("--revoke-perms");
-const QString PgModelerCLI::DROP_MISSING_OBJS=QString("--drop-missing");
-const QString PgModelerCLI::FORCE_DROP_COLS_CONSTRS=QString("--force-drop-cols");
-const QString PgModelerCLI::RENAME_DB=QString("--rename-db");
-const QString PgModelerCLI::TRUNC_ON_COLS_TYPE_CHANGE=QString("--trunc-type-change");
-const QString PgModelerCLI::NO_SEQUENCE_REUSE=QString("--no-sequence-reuse");
-const QString PgModelerCLI::NO_CASCADE_DROP_TRUNC=QString("--no-cascade");
-const QString PgModelerCLI::NO_FORCE_OBJ_RECREATION=QString("--no-force-recreation");
-const QString PgModelerCLI::NO_UNMOD_OBJ_RECREATION=QString("--no-unmod-recreation");
+const QString PgModelerCli::Input=QString("--input");
+const QString PgModelerCli::Output=QString("--output");
+const QString PgModelerCli::InputDb=QString("--input-db");
+const QString PgModelerCli::ExportToFile=QString("--export-to-file");
+const QString PgModelerCli::ExportToPng=QString("--export-to-png");
+const QString PgModelerCli::ExportToSvg=QString("--export-to-svg");
+const QString PgModelerCli::ExportToDbms=QString("--export-to-dbms");
+const QString PgModelerCli::ImportDb=QString("--import-db");
+const QString PgModelerCli::Diff=QString("--diff");
+const QString PgModelerCli::DropDatabase=QString("--drop-database");
+const QString PgModelerCli::DropObjects=QString("--drop-objects");
+const QString PgModelerCli::PgSqlVer=QString("--pgsql-ver");
+const QString PgModelerCli::Help=QString("--help");
+const QString PgModelerCli::ShowGrid=QString("--show-grid");
+const QString PgModelerCli::ShowDelimiters=QString("--show-delimiters");
+const QString PgModelerCli::PageByPage=QString("--page-by-page");
+const QString PgModelerCli::IgnoreDuplicates=QString("--ignore-duplicates");
+const QString PgModelerCli::IgnoreErrorCodes=QString("--ignore-error-codes");
+const QString PgModelerCli::ConnAlias=QString("--conn-alias");
+const QString PgModelerCli::Host=QString("--host");
+const QString PgModelerCli::Port=QString("--port");
+const QString PgModelerCli::User=QString("--user");
+const QString PgModelerCli::Passwd=QString("--passwd");
+const QString PgModelerCli::InitialDb=QString("--initial-db");
+const QString PgModelerCli::Silent=QString("--silent");
+const QString PgModelerCli::ListConns=QString("--list-conns");
+const QString PgModelerCli::Simulate=QString("--simulate");
+const QString PgModelerCli::FixModel=QString("--fix-model");
+const QString PgModelerCli::FixTries=QString("--fix-tries");
+const QString PgModelerCli::ZoomFactor=QString("--zoom");
+const QString PgModelerCli::UseTmpNames=QString("--use-tmp-names");
+const QString PgModelerCli::DbmMimeType=QString("--dbm-mime-type");
+const QString PgModelerCli::Install=QString("install");
+const QString PgModelerCli::Uninstall=QString("uninstall");
+const QString PgModelerCli::IgnoreImportErrors=QString("--ignore-errors");
+const QString PgModelerCli::ImportSystemObjs=QString("--import-sys-objs");
+const QString PgModelerCli::ImportExtensionObjs=QString("--import-ext-objs");
+const QString PgModelerCli::DebugMode=QString("--debug-mode");
+const QString PgModelerCli::CompareTo=QString("--compare-to");
+const QString PgModelerCli::SaveDiff=QString("--save-diff");
+const QString PgModelerCli::ApplyDiff=QString("--apply-diff");
+const QString PgModelerCli::NoDiffPreview=QString("--no-diff-preview");
+const QString PgModelerCli::DropClusterObjs=QString("--drop-cluster-objs");
+const QString PgModelerCli::RevokePermissions=QString("--revoke-perms");
+const QString PgModelerCli::DropMissingObjs=QString("--drop-missing");
+const QString PgModelerCli::ForceDropColsConstrs=QString("--force-drop-cols");
+const QString PgModelerCli::RenameDb=QString("--rename-db");
+const QString PgModelerCli::TruncOnColsTypeChange=QString("--trunc-type-change");
+const QString PgModelerCli::NoSequenceReuse=QString("--no-sequence-reuse");
+const QString PgModelerCli::NoCascadeDropTrunc=QString("--no-cascade");
+const QString PgModelerCli::NoForceObjRecreation=QString("--no-force-recreation");
+const QString PgModelerCli::NoUnmodObjRecreation=QString("--no-unmod-recreation");
 
-const QString PgModelerCLI::TAG_EXPR=QString("<%1");
-const QString PgModelerCLI::END_TAG_EXPR=QString("</%1");
-const QString PgModelerCLI::ATTRIBUTE_EXPR=QString("(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&|\\;)+(\")");
+const QString PgModelerCli::TagExpr=QString("<%1");
+const QString PgModelerCli::EndTagExpr=QString("</%1");
+const QString PgModelerCli::AttributeExpr=QString("(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&|\\;)+(\")");
 
-PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
+PgModelerCli::PgModelerCli(int argc, char **argv) :  QApplication(argc, argv)
 {
 	try
 	{
@@ -142,10 +142,10 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 		{
 			model=new DatabaseModel;
 			xmlparser=model->getXMLParser();
-			silent_mode=(parsed_opts.count(SILENT));
+			silent_mode=(parsed_opts.count(Silent));
 
 			//If the export is to png or svg loads additional configurations
-			if(parsed_opts.count(EXPORT_TO_PNG) || parsed_opts.count(EXPORT_TO_SVG) || parsed_opts.count(IMPORT_DB))
+			if(parsed_opts.count(ExportToPng) || parsed_opts.count(ExportToSvg) || parsed_opts.count(ImportDb))
 			{
 				connect(model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
 				connect(model, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(handleObjectRemoval(BaseObject *)));
@@ -163,23 +163,23 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 				BaseObjectView::loadObjectsStyle();
 			}
 
-			if(parsed_opts.count(EXPORT_TO_DBMS) || parsed_opts.count(IMPORT_DB) || parsed_opts.count(DIFF))
+			if(parsed_opts.count(ExportToDbms) || parsed_opts.count(ImportDb) || parsed_opts.count(Diff))
 			{
 				configureConnection(false);
 
 				//Replacing the initial db parameter for the input database when reverse engineering
-				if((parsed_opts.count(IMPORT_DB) || parsed_opts.count(DIFF)) && !parsed_opts[INPUT_DB].isEmpty())
-					connection.setConnectionParam(Connection::ParamDbName, parsed_opts[INPUT_DB]);
+				if((parsed_opts.count(ImportDb) || parsed_opts.count(Diff)) && !parsed_opts[InputDb].isEmpty())
+					connection.setConnectionParam(Connection::ParamDbName, parsed_opts[InputDb]);
 			}
 
-			if(parsed_opts.count(DIFF))
+			if(parsed_opts.count(Diff))
 			{
 				configureConnection(true);
 
 				if(!extra_connection.isConfigured())
 					extra_connection = connection;
 
-				extra_connection.setConnectionParam(Connection::ParamDbName, parsed_opts[COMPARE_TO]);
+				extra_connection.setConnectionParam(Connection::ParamDbName, parsed_opts[CompareTo]);
 			}
 
 			if(!silent_mode)
@@ -197,147 +197,147 @@ PgModelerCLI::PgModelerCLI(int argc, char **argv) :  QApplication(argc, argv)
 	}
 }
 
-PgModelerCLI::~PgModelerCLI(void)
+PgModelerCli::~PgModelerCli(void)
 {
 	if(scene) delete(scene);
 	delete(model);
 }
 
-void PgModelerCLI::printMessage(const QString &msg)
+void PgModelerCli::printMessage(const QString &msg)
 {
 	if(!silent_mode) out << msg << endl;
 }
 
-void PgModelerCLI::configureConnection(bool extra_conn)
+void PgModelerCli::configureConnection(bool extra_conn)
 {
 	QString chr = (extra_conn ? "1" : "");
 	Connection *conn = (extra_conn ? &extra_connection : &connection);
 
 	//Getting the connection using its alias
-	if(parsed_opts.count(CONN_ALIAS + chr))
+	if(parsed_opts.count(ConnAlias + chr))
 	{
-		if(!connections.count(parsed_opts[CONN_ALIAS + chr]))
-			throw Exception(trUtf8("Connection aliased as '%1' was not found in the configuration file.").arg(parsed_opts[CONN_ALIAS + chr]),
+		if(!connections.count(parsed_opts[ConnAlias + chr]))
+			throw Exception(trUtf8("Connection aliased as '%1' was not found in the configuration file.").arg(parsed_opts[ConnAlias + chr]),
 							Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Make a copy of the named connection
-		*conn = (*connections[parsed_opts[CONN_ALIAS + chr]]);
+		*conn = (*connections[parsed_opts[ConnAlias + chr]]);
 	}
 	else
 	{
-		conn->setConnectionParam(Connection::ParamServerFqdn, parsed_opts[HOST + chr]);
-		conn->setConnectionParam(Connection::ParamUser, parsed_opts[USER + chr]);
-		conn->setConnectionParam(Connection::ParamPort, parsed_opts[PORT + chr]);
-		conn->setConnectionParam(Connection::ParamPassword, parsed_opts[PASSWD + chr]);
-		conn->setConnectionParam(Connection::ParamDbName, parsed_opts[INITIAL_DB + chr]);
+		conn->setConnectionParam(Connection::ParamServerFqdn, parsed_opts[Host + chr]);
+		conn->setConnectionParam(Connection::ParamUser, parsed_opts[User + chr]);
+		conn->setConnectionParam(Connection::ParamPort, parsed_opts[Port + chr]);
+		conn->setConnectionParam(Connection::ParamPassword, parsed_opts[Passwd + chr]);
+		conn->setConnectionParam(Connection::ParamDbName, parsed_opts[InitialDb + chr]);
 	}
 }
 
-void PgModelerCLI::initializeOptions(void)
+void PgModelerCli::initializeOptions(void)
 {
-	long_opts[INPUT]=true;
-	long_opts[OUTPUT]=true;
-	long_opts[INPUT_DB]=true;
-	long_opts[EXPORT_TO_FILE]=false;
-	long_opts[EXPORT_TO_PNG]=false;
-	long_opts[EXPORT_TO_SVG]=false;
-	long_opts[EXPORT_TO_DBMS]=false;
-	long_opts[IMPORT_DB]=false;
-	long_opts[DIFF]=false;
-	long_opts[DROP_DATABASE]=false;
-	long_opts[DROP_OBJECTS]=false;
-	long_opts[PGSQL_VER]=true;
-	long_opts[HELP]=false;
-	long_opts[SHOW_GRID]=false;
-	long_opts[SHOW_DELIMITERS]=false;
-	long_opts[PAGE_BY_PAGE]=false;
-	long_opts[IGNORE_DUPLICATES]=false;
-	long_opts[IGNORE_ERROR_CODES]=true;
-	long_opts[CONN_ALIAS]=true;
-	long_opts[HOST]=true;
-	long_opts[PORT]=true;
-	long_opts[USER]=true;
-	long_opts[PASSWD]=true;
-	long_opts[INITIAL_DB]=true;
-	long_opts[LIST_CONNS]=false;
-	long_opts[SIMULATE]=false;
-	long_opts[FIX_MODEL]=false;
-	long_opts[FIX_TRIES]=true;
-	long_opts[ZOOM_FACTOR]=true;
-	long_opts[USE_TMP_NAMES]=false;
-	long_opts[DBM_MIME_TYPE]=true;
-	long_opts[IGNORE_IMPORT_ERRORS]=false;
-	long_opts[IMPORT_SYSTEM_OBJS]=false;
-	long_opts[IMPORT_EXTENSION_OBJS]=false;
-	long_opts[DEBUG_MODE]=false;
-	long_opts[COMPARE_TO]=true;
-	long_opts[SAVE_DIFF]=false;
-	long_opts[APPLY_DIFF]=false;
-	long_opts[NO_DIFF_PREVIEW]=false;
-	long_opts[DROP_CLUSTER_OBJS]=false;
-	long_opts[REVOKE_PERMISSIONS]=false;
-	long_opts[DROP_MISSING_OBJS]=false;
-	long_opts[FORCE_DROP_COLS_CONSTRS]=false;
-	long_opts[RENAME_DB]=false;
-	long_opts[TRUNC_ON_COLS_TYPE_CHANGE]=false;
-	long_opts[NO_SEQUENCE_REUSE]=false;
-	long_opts[NO_CASCADE_DROP_TRUNC]=false;
-	long_opts[NO_FORCE_OBJ_RECREATION]=false;
-	long_opts[NO_UNMOD_OBJ_RECREATION]=false;
+	long_opts[Input]=true;
+	long_opts[Output]=true;
+	long_opts[InputDb]=true;
+	long_opts[ExportToFile]=false;
+	long_opts[ExportToPng]=false;
+	long_opts[ExportToSvg]=false;
+	long_opts[ExportToDbms]=false;
+	long_opts[ImportDb]=false;
+	long_opts[Diff]=false;
+	long_opts[DropDatabase]=false;
+	long_opts[DropObjects]=false;
+	long_opts[PgSqlVer]=true;
+	long_opts[Help]=false;
+	long_opts[ShowGrid]=false;
+	long_opts[ShowDelimiters]=false;
+	long_opts[PageByPage]=false;
+	long_opts[IgnoreDuplicates]=false;
+	long_opts[IgnoreErrorCodes]=true;
+	long_opts[ConnAlias]=true;
+	long_opts[Host]=true;
+	long_opts[Port]=true;
+	long_opts[User]=true;
+	long_opts[Passwd]=true;
+	long_opts[InitialDb]=true;
+	long_opts[ListConns]=false;
+	long_opts[Simulate]=false;
+	long_opts[FixModel]=false;
+	long_opts[FixTries]=true;
+	long_opts[ZoomFactor]=true;
+	long_opts[UseTmpNames]=false;
+	long_opts[DbmMimeType]=true;
+	long_opts[IgnoreImportErrors]=false;
+	long_opts[ImportSystemObjs]=false;
+	long_opts[ImportExtensionObjs]=false;
+	long_opts[DebugMode]=false;
+	long_opts[CompareTo]=true;
+	long_opts[SaveDiff]=false;
+	long_opts[ApplyDiff]=false;
+	long_opts[NoDiffPreview]=false;
+	long_opts[DropClusterObjs]=false;
+	long_opts[RevokePermissions]=false;
+	long_opts[DropMissingObjs]=false;
+	long_opts[ForceDropColsConstrs]=false;
+	long_opts[RenameDb]=false;
+	long_opts[TruncOnColsTypeChange]=false;
+	long_opts[NoSequenceReuse]=false;
+	long_opts[NoCascadeDropTrunc]=false;
+	long_opts[NoForceObjRecreation]=false;
+	long_opts[NoUnmodObjRecreation]=false;
 
-	short_opts[INPUT]=QString("-if");
-	short_opts[OUTPUT]=QString("-of");
-	short_opts[INPUT_DB]=QString("-id");
-	short_opts[EXPORT_TO_FILE]=QString("-ef");
-	short_opts[EXPORT_TO_PNG]=QString("-ep");
-	short_opts[EXPORT_TO_SVG]=QString("-es");
-	short_opts[EXPORT_TO_DBMS]=QString("-ed");
-	short_opts[IMPORT_DB]=QString("-im");
-	short_opts[DIFF]=QString("-df");
-	short_opts[DROP_DATABASE]=QString("-dd");
-	short_opts[DROP_OBJECTS]=QString("-do");
-	short_opts[PGSQL_VER]=QString("-v");
-	short_opts[HELP]=QString("-h");
-	short_opts[SHOW_GRID]=QString("-sg");
-	short_opts[SHOW_DELIMITERS]=QString("-sl");
-	short_opts[PAGE_BY_PAGE]=QString("-pp");
-	short_opts[IGNORE_DUPLICATES]=QString("-ir");
-	short_opts[IGNORE_ERROR_CODES]=QString("-ic");
-	short_opts[CONN_ALIAS]=QString("-ca");
-	short_opts[HOST]=QString("-H");
-	short_opts[PORT]=QString("-p");
-	short_opts[USER]=QString("-u");
-	short_opts[PASSWD]=QString("-w");
-	short_opts[INITIAL_DB]=QString("-D");
-	short_opts[SILENT]=QString("-s");
-	short_opts[LIST_CONNS]=QString("-lc");
-	short_opts[SIMULATE]=QString("-sm");
-	short_opts[FIX_MODEL]=QString("-fm");
-	short_opts[FIX_TRIES]=QString("-ft");
-	short_opts[ZOOM_FACTOR]=QString("-zf");
-	short_opts[USE_TMP_NAMES]=QString("-tn");
-	short_opts[DBM_MIME_TYPE]=QString("-mt");
-	short_opts[IGNORE_IMPORT_ERRORS]=QString("-ie");
-	short_opts[IMPORT_SYSTEM_OBJS]=QString("-is");
-	short_opts[IMPORT_EXTENSION_OBJS]=QString("-ix");
-	short_opts[DEBUG_MODE]=QString("-d");
-	short_opts[COMPARE_TO]=QString("-ct");
-	short_opts[SAVE_DIFF]=QString("-sd");
-	short_opts[APPLY_DIFF]=QString("-ad");
-	short_opts[NO_DIFF_PREVIEW]=QString("-np");
-	short_opts[DROP_CLUSTER_OBJS]=QString("-dc");
-	short_opts[REVOKE_PERMISSIONS]=QString("-rv");
-	short_opts[DROP_MISSING_OBJS]=QString("-dm");
-	short_opts[FORCE_DROP_COLS_CONSTRS]=QString("-fd");
-	short_opts[RENAME_DB]=QString("-rn");
-	short_opts[TRUNC_ON_COLS_TYPE_CHANGE]=QString("-tt");
-	short_opts[NO_SEQUENCE_REUSE]=QString("-ns");
-	short_opts[NO_CASCADE_DROP_TRUNC]=QString("-nd");
-	short_opts[NO_FORCE_OBJ_RECREATION]=QString("-nf");
-	short_opts[NO_UNMOD_OBJ_RECREATION]=QString("-nu");
+	short_opts[Input]=QString("-if");
+	short_opts[Output]=QString("-of");
+	short_opts[InputDb]=QString("-id");
+	short_opts[ExportToFile]=QString("-ef");
+	short_opts[ExportToPng]=QString("-ep");
+	short_opts[ExportToSvg]=QString("-es");
+	short_opts[ExportToDbms]=QString("-ed");
+	short_opts[ImportDb]=QString("-im");
+	short_opts[Diff]=QString("-df");
+	short_opts[DropDatabase]=QString("-dd");
+	short_opts[DropObjects]=QString("-do");
+	short_opts[PgSqlVer]=QString("-v");
+	short_opts[Help]=QString("-h");
+	short_opts[ShowGrid]=QString("-sg");
+	short_opts[ShowDelimiters]=QString("-sl");
+	short_opts[PageByPage]=QString("-pp");
+	short_opts[IgnoreDuplicates]=QString("-ir");
+	short_opts[IgnoreErrorCodes]=QString("-ic");
+	short_opts[ConnAlias]=QString("-ca");
+	short_opts[Host]=QString("-H");
+	short_opts[Port]=QString("-p");
+	short_opts[User]=QString("-u");
+	short_opts[Passwd]=QString("-w");
+	short_opts[InitialDb]=QString("-D");
+	short_opts[Silent]=QString("-s");
+	short_opts[ListConns]=QString("-lc");
+	short_opts[Simulate]=QString("-sm");
+	short_opts[FixModel]=QString("-fm");
+	short_opts[FixTries]=QString("-ft");
+	short_opts[ZoomFactor]=QString("-zf");
+	short_opts[UseTmpNames]=QString("-tn");
+	short_opts[DbmMimeType]=QString("-mt");
+	short_opts[IgnoreImportErrors]=QString("-ie");
+	short_opts[ImportSystemObjs]=QString("-is");
+	short_opts[ImportExtensionObjs]=QString("-ix");
+	short_opts[DebugMode]=QString("-d");
+	short_opts[CompareTo]=QString("-ct");
+	short_opts[SaveDiff]=QString("-sd");
+	short_opts[ApplyDiff]=QString("-ad");
+	short_opts[NoDiffPreview]=QString("-np");
+	short_opts[DropClusterObjs]=QString("-dc");
+	short_opts[RevokePermissions]=QString("-rv");
+	short_opts[DropMissingObjs]=QString("-dm");
+	short_opts[ForceDropColsConstrs]=QString("-fd");
+	short_opts[RenameDb]=QString("-rn");
+	short_opts[TruncOnColsTypeChange]=QString("-tt");
+	short_opts[NoSequenceReuse]=QString("-ns");
+	short_opts[NoCascadeDropTrunc]=QString("-nd");
+	short_opts[NoForceObjRecreation]=QString("-nf");
+	short_opts[NoUnmodObjRecreation]=QString("-nu");
 }
 
-bool PgModelerCLI::isOptionRecognized(QString &op, bool &accepts_val)
+bool PgModelerCli::isOptionRecognized(QString &op, bool &accepts_val)
 {
 	bool found=false, append_chr = false;
 
@@ -363,7 +363,7 @@ bool PgModelerCLI::isOptionRecognized(QString &op, bool &accepts_val)
 	return(found);
 }
 
-void PgModelerCLI::showMenu(void)
+void PgModelerCli::showMenu(void)
 {
 	out << endl;
 	out << QString("pgModeler ") << GlobalAttributes::PgModelerVersion << trUtf8(" command line interface.") << endl;
@@ -374,101 +374,101 @@ void PgModelerCLI::showMenu(void)
 	out << trUtf8("This CLI tool provides several operations over models and databases without the need to perform them\nin pgModeler's graphical interface. All available options are described below.") << endl;
 	out << endl;
 	out << trUtf8("General options: ") << endl;
-	out << trUtf8("  %1, %2 [FILE]\t\t    Input model file (.dbm). This is mandatory for fix, export operations.").arg(short_opts[INPUT]).arg(INPUT) << endl;
-	out << trUtf8("  %1, %2 [DBNAME]\t    Input database name. This is mandatory for import operation.").arg(short_opts[INPUT_DB]).arg(INPUT_DB) << endl;
-	out << trUtf8("  %1, %2 [FILE]\t\t    Output file. This is mandatory for fixing model or exporting to file, png or svg.").arg(short_opts[OUTPUT]).arg(OUTPUT) << endl;
-	out << trUtf8("  %1, %2\t\t    Try to fix the structure of the input model file in order to make it loadable again.").arg(short_opts[FIX_MODEL]).arg(FIX_MODEL) << endl;
-	out << trUtf8("  %1, %2 [NUMBER]\t    Model fix tries. When reaching the maximum count the invalid objects will be discarded.").arg(short_opts[FIX_TRIES]).arg(FIX_TRIES) << endl;
-	out << trUtf8("  %1, %2\t\t    Export the input model to a sql script file.").arg(short_opts[EXPORT_TO_FILE]).arg(EXPORT_TO_FILE)<< endl;
-	out << trUtf8("  %1, %2\t\t    Export the input model to a png image.").arg(short_opts[EXPORT_TO_PNG]).arg(EXPORT_TO_PNG) << endl;
-	out << trUtf8("  %1, %2\t\t    Export the input model to a svg file.").arg(short_opts[EXPORT_TO_SVG]).arg(EXPORT_TO_SVG) << endl;
-	out << trUtf8("  %1, %2\t\t    Export the input model directly to a PostgreSQL server.").arg(short_opts[EXPORT_TO_DBMS]).arg(EXPORT_TO_DBMS) << endl;
-	out << trUtf8("  %1, %2\t\t    Import a database to an output file.").arg(short_opts[IMPORT_DB]).arg(IMPORT_DB) << endl;
-	out << trUtf8("  %1, %2\t\t\t    Compares a model and a database or two databases generating the SQL script to synch the latter in relation to the first.").arg(short_opts[DIFF]).arg(DIFF) << endl;
-	out << trUtf8("  %1, %2\t\t    Force the PostgreSQL version of generated SQL code.").arg(short_opts[PGSQL_VER]).arg(PGSQL_VER) << endl;
-	out << trUtf8("  %1, %2\t\t\t    Silent execution. Only critical messages and errors are shown during process.").arg(short_opts[SILENT]).arg(SILENT) << endl;
-	out << trUtf8("  %1, %2\t\t\t    Show this help menu.").arg(short_opts[HELP]).arg(HELP) << endl;
+	out << trUtf8("  %1, %2 [FILE]\t\t    Input model file (.dbm). This is mandatory for fix, export operations.").arg(short_opts[Input]).arg(Input) << endl;
+	out << trUtf8("  %1, %2 [DBNAME]\t    Input database name. This is mandatory for import operation.").arg(short_opts[InputDb]).arg(InputDb) << endl;
+	out << trUtf8("  %1, %2 [FILE]\t\t    Output file. This is mandatory for fixing model or exporting to file, png or svg.").arg(short_opts[Output]).arg(Output) << endl;
+	out << trUtf8("  %1, %2\t\t    Try to fix the structure of the input model file in order to make it loadable again.").arg(short_opts[FixModel]).arg(FixModel) << endl;
+	out << trUtf8("  %1, %2 [NUMBER]\t    Model fix tries. When reaching the maximum count the invalid objects will be discarded.").arg(short_opts[FixTries]).arg(FixTries) << endl;
+	out << trUtf8("  %1, %2\t\t    Export the input model to a sql script file.").arg(short_opts[ExportToFile]).arg(ExportToFile)<< endl;
+	out << trUtf8("  %1, %2\t\t    Export the input model to a png image.").arg(short_opts[ExportToPng]).arg(ExportToPng) << endl;
+	out << trUtf8("  %1, %2\t\t    Export the input model to a svg file.").arg(short_opts[ExportToSvg]).arg(ExportToSvg) << endl;
+	out << trUtf8("  %1, %2\t\t    Export the input model directly to a PostgreSQL server.").arg(short_opts[ExportToDbms]).arg(ExportToDbms) << endl;
+	out << trUtf8("  %1, %2\t\t    Import a database to an output file.").arg(short_opts[ImportDb]).arg(ImportDb) << endl;
+	out << trUtf8("  %1, %2\t\t\t    Compares a model and a database or two databases generating the SQL script to synch the latter in relation to the first.").arg(short_opts[Diff]).arg(Diff) << endl;
+	out << trUtf8("  %1, %2\t\t    Force the PostgreSQL version of generated SQL code.").arg(short_opts[PgSqlVer]).arg(PgSqlVer) << endl;
+	out << trUtf8("  %1, %2\t\t\t    Silent execution. Only critical messages and errors are shown during process.").arg(short_opts[Silent]).arg(Silent) << endl;
+	out << trUtf8("  %1, %2\t\t\t    Show this help menu.").arg(short_opts[Help]).arg(Help) << endl;
 	out << endl;
 	out << trUtf8("Connection options: ") << endl;
-	out << trUtf8("  %1, %2\t\t    List available connections in file %3.").arg(short_opts[LIST_CONNS]).arg(LIST_CONNS).arg(GlobalAttributes::ConnectionsConf + GlobalAttributes::ConfigurationExt) << endl;
-	out << trUtf8("  %1, %2 [ALIAS]\t    Connection configuration alias to be used.").arg(short_opts[CONN_ALIAS]).arg(CONN_ALIAS) << endl;
-	out << trUtf8("  %1, %2 [HOST]\t\t    PostgreSQL host in which a task will operate.").arg(short_opts[HOST]).arg(HOST) << endl;
-	out << trUtf8("  %1, %2 [PORT]\t\t    PostgreSQL host listening port.").arg(short_opts[PORT]).arg(PORT) << endl;
-	out << trUtf8("  %1, %2 [USER]\t\t    PostgreSQL username.").arg(short_opts[USER]).arg(USER) << endl;
-	out << trUtf8("  %1, %2 [PASSWORD]\t    PostgreSQL user password.").arg(short_opts[PASSWD]).arg(PASSWD) << endl;
-	out << trUtf8("  %1, %2 [DBNAME]\t    Connection's initial database.").arg(short_opts[INITIAL_DB]).arg(INITIAL_DB) << endl;
+	out << trUtf8("  %1, %2\t\t    List available connections in file %3.").arg(short_opts[ListConns]).arg(ListConns).arg(GlobalAttributes::ConnectionsConf + GlobalAttributes::ConfigurationExt) << endl;
+	out << trUtf8("  %1, %2 [ALIAS]\t    Connection configuration alias to be used.").arg(short_opts[ConnAlias]).arg(ConnAlias) << endl;
+	out << trUtf8("  %1, %2 [HOST]\t\t    PostgreSQL host in which a task will operate.").arg(short_opts[Host]).arg(Host) << endl;
+	out << trUtf8("  %1, %2 [PORT]\t\t    PostgreSQL host listening port.").arg(short_opts[Port]).arg(Port) << endl;
+	out << trUtf8("  %1, %2 [USER]\t\t    PostgreSQL username.").arg(short_opts[User]).arg(User) << endl;
+	out << trUtf8("  %1, %2 [PASSWORD]\t    PostgreSQL user password.").arg(short_opts[Passwd]).arg(Passwd) << endl;
+	out << trUtf8("  %1, %2 [DBNAME]\t    Connection's initial database.").arg(short_opts[InitialDb]).arg(InitialDb) << endl;
 	out << endl;
 	out << trUtf8("PNG and SVG export options: ") << endl;
-	out << trUtf8("  %1, %2\t\t    Draws the grid in the exported image.").arg(short_opts[SHOW_GRID]).arg(SHOW_GRID) << endl;
-	out << trUtf8("  %1, %2\t    Draws the page delimiters in the exported image.").arg(short_opts[SHOW_DELIMITERS]).arg(SHOW_DELIMITERS) << endl;
-	out << trUtf8("  %1, %2\t\t    Each page will be exported in a separated png image. (Only for PNG images)").arg(short_opts[PAGE_BY_PAGE]).arg(PAGE_BY_PAGE) << endl;
-	out << trUtf8("  %1, %2 [FACTOR]\t\t    Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4 (Only for PNG images)").arg(short_opts[ZOOM_FACTOR]).arg(ZOOM_FACTOR).arg(ModelWidget::MinimumZoom*100).arg(ModelWidget::MaximumZoom*100) << endl;
+	out << trUtf8("  %1, %2\t\t    Draws the grid in the exported image.").arg(short_opts[ShowGrid]).arg(ShowGrid) << endl;
+	out << trUtf8("  %1, %2\t    Draws the page delimiters in the exported image.").arg(short_opts[ShowDelimiters]).arg(ShowDelimiters) << endl;
+	out << trUtf8("  %1, %2\t\t    Each page will be exported in a separated png image. (Only for PNG images)").arg(short_opts[PageByPage]).arg(PageByPage) << endl;
+	out << trUtf8("  %1, %2 [FACTOR]\t\t    Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4 (Only for PNG images)").arg(short_opts[ZoomFactor]).arg(ZoomFactor).arg(ModelWidget::MinimumZoom*100).arg(ModelWidget::MaximumZoom*100) << endl;
 	out << endl;
 	out << trUtf8("DBMS export options: ") << endl;
-	out << trUtf8("  %1, %2\t    Ignores errors related to duplicated objects that eventually exist in the server.").arg(short_opts[IGNORE_DUPLICATES]).arg(IGNORE_DUPLICATES) << endl;
-	out << trUtf8("  %1, %2 [CODES] Ignores additional errors by their codes. A comma-separated list of alphanumeric codes should be provided.").arg(short_opts[IGNORE_ERROR_CODES]).arg(IGNORE_ERROR_CODES) << endl;
-	out << trUtf8("  %1, %2\t\t    Drop the database before execute a export process.").arg(short_opts[DROP_DATABASE]).arg(DROP_DATABASE) << endl;
-	out << trUtf8("  %1, %2\t\t    Runs the DROP commands attached to SQL-enabled objects.").arg(short_opts[DROP_OBJECTS]).arg(DROP_OBJECTS) << endl;
-	out << trUtf8("  %1, %2\t\t    Simulates an export process by executing all steps but undoing any modification in the end.").arg(short_opts[SIMULATE]).arg(SIMULATE) << endl;
-	out << trUtf8("  %1, %2\t\t    Generates temporary names for database, roles and tablespaces when in simulation mode.").arg(short_opts[USE_TMP_NAMES]).arg(USE_TMP_NAMES) << endl;
+	out << trUtf8("  %1, %2\t    Ignores errors related to duplicated objects that eventually exist in the server.").arg(short_opts[IgnoreDuplicates]).arg(IgnoreDuplicates) << endl;
+	out << trUtf8("  %1, %2 [CODES] Ignores additional errors by their codes. A comma-separated list of alphanumeric codes should be provided.").arg(short_opts[IgnoreErrorCodes]).arg(IgnoreErrorCodes) << endl;
+	out << trUtf8("  %1, %2\t\t    Drop the database before execute a export process.").arg(short_opts[DropDatabase]).arg(DropDatabase) << endl;
+	out << trUtf8("  %1, %2\t\t    Runs the DROP commands attached to SQL-enabled objects.").arg(short_opts[DropObjects]).arg(DropObjects) << endl;
+	out << trUtf8("  %1, %2\t\t    Simulates an export process by executing all steps but undoing any modification in the end.").arg(short_opts[Simulate]).arg(Simulate) << endl;
+	out << trUtf8("  %1, %2\t\t    Generates temporary names for database, roles and tablespaces when in simulation mode.").arg(short_opts[UseTmpNames]).arg(UseTmpNames) << endl;
 	out << endl;
 	out << trUtf8("Database import options: ") << endl;
-	out << trUtf8("  %1, %2\t\t    Ignore all errors and try to create as many as possible objects.").arg(short_opts[IGNORE_IMPORT_ERRORS]).arg(IGNORE_IMPORT_ERRORS) << endl;
-	out << trUtf8("  %1, %2\t    Import system built-in objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[IMPORT_SYSTEM_OBJS]).arg(IMPORT_SYSTEM_OBJS) << endl;
-	out << trUtf8("  %1, %2\t    Import extension objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[IMPORT_EXTENSION_OBJS]).arg(IMPORT_EXTENSION_OBJS) << endl;
-	out << trUtf8("  %1, %2\t\t    Run import in debug mode printing all queries executed in the server.").arg(short_opts[DEBUG_MODE]).arg(DEBUG_MODE) << endl;
+	out << trUtf8("  %1, %2\t\t    Ignore all errors and try to create as many as possible objects.").arg(short_opts[IgnoreImportErrors]).arg(IgnoreImportErrors) << endl;
+	out << trUtf8("  %1, %2\t    Import system built-in objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[ImportSystemObjs]).arg(ImportSystemObjs) << endl;
+	out << trUtf8("  %1, %2\t    Import extension objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[ImportExtensionObjs]).arg(ImportExtensionObjs) << endl;
+	out << trUtf8("  %1, %2\t\t    Run import in debug mode printing all queries executed in the server.").arg(short_opts[DebugMode]).arg(DebugMode) << endl;
 	out << endl;
 	out << trUtf8("Diff options: ") << endl;
-	out << trUtf8("  %1, %2 [DBNAME]\t    The database used in the comparison. All the SQL code generated is applied to it.").arg(short_opts[COMPARE_TO]).arg(COMPARE_TO) << endl;
-	out << trUtf8("  %1, %2\t\t    Save the generated diff code to output file.").arg(short_opts[SAVE_DIFF]).arg(SAVE_DIFF) << endl;
-	out << trUtf8("  %1, %2\t\t    Apply the generated diff code on the database server.").arg(short_opts[APPLY_DIFF]).arg(APPLY_DIFF) << endl;
-	out << trUtf8("  %1, %2\t    Don't preview the generated diff code when applying it to the server.").arg(short_opts[NO_DIFF_PREVIEW]).arg(NO_DIFF_PREVIEW) << endl;
-	out << trUtf8("  %1, %2\t    Drop cluster level objects like roles and tablespaces.").arg(short_opts[DROP_CLUSTER_OBJS]).arg(DROP_CLUSTER_OBJS) << endl;
-	out << trUtf8("  %1, %2\t\t    Revoke permissions already set on the database. New permissions configured in the input model are still applied.").arg(short_opts[REVOKE_PERMISSIONS]).arg(REVOKE_PERMISSIONS) << endl;
-	out << trUtf8("  %1, %2\t\t    Drop missing objects. Generates DROP commands for objects that are present in the input model but not in the compared database.").arg(short_opts[DROP_MISSING_OBJS]).arg(DROP_MISSING_OBJS) << endl;
-	out << trUtf8("  %1, %2\t    Force the drop of missing columns and constraints. Causes only columns and constraints to be dropped, other missing objects aren't removed.").arg(short_opts[FORCE_DROP_COLS_CONSTRS]).arg(FORCE_DROP_COLS_CONSTRS) << endl;
-	out << trUtf8("  %1, %2\t\t    Rename the destination database when the names of the involved databases are different.").arg(short_opts[RENAME_DB]).arg(RENAME_DB) << endl;
-	out << trUtf8("  %1, %2\t\t    Don't drop or truncate objects in cascade mode.").arg(short_opts[NO_CASCADE_DROP_TRUNC]).arg(NO_CASCADE_DROP_TRUNC) << endl;
-	out << trUtf8("  %1, %2\t    Truncate tables prior to alter columns. Avoids errors related to type casting when the new type of a column isn't compatible to the old one.").arg(short_opts[TRUNC_ON_COLS_TYPE_CHANGE]).arg(TRUNC_ON_COLS_TYPE_CHANGE) << endl;
-	out << trUtf8("  %1, %2\t    Don't reuse sequences on serial columns. Drop the old sequence assigned to a serial column and creates a new one.").arg(short_opts[NO_SEQUENCE_REUSE]).arg(NO_SEQUENCE_REUSE) << endl;
-	out << trUtf8("  %1, %2\t    Don't force the recreation of objects. Avoids the usage of a DROP and CREATE commands to create a new version of the objects.").arg(short_opts[NO_FORCE_OBJ_RECREATION]).arg(NO_FORCE_OBJ_RECREATION) << endl;
-	out << trUtf8("  %1, %2\t    Don't recreate the unmodifiable objects. These objects are the ones which can't be changed via ALTER command.").arg(short_opts[NO_UNMOD_OBJ_RECREATION]).arg(NO_UNMOD_OBJ_RECREATION) << endl;
+	out << trUtf8("  %1, %2 [DBNAME]\t    The database used in the comparison. All the SQL code generated is applied to it.").arg(short_opts[CompareTo]).arg(CompareTo) << endl;
+	out << trUtf8("  %1, %2\t\t    Save the generated diff code to output file.").arg(short_opts[SaveDiff]).arg(SaveDiff) << endl;
+	out << trUtf8("  %1, %2\t\t    Apply the generated diff code on the database server.").arg(short_opts[ApplyDiff]).arg(ApplyDiff) << endl;
+	out << trUtf8("  %1, %2\t    Don't preview the generated diff code when applying it to the server.").arg(short_opts[NoDiffPreview]).arg(NoDiffPreview) << endl;
+	out << trUtf8("  %1, %2\t    Drop cluster level objects like roles and tablespaces.").arg(short_opts[DropClusterObjs]).arg(DropClusterObjs) << endl;
+	out << trUtf8("  %1, %2\t\t    Revoke permissions already set on the database. New permissions configured in the input model are still applied.").arg(short_opts[RevokePermissions]).arg(RevokePermissions) << endl;
+	out << trUtf8("  %1, %2\t\t    Drop missing objects. Generates DROP commands for objects that are present in the input model but not in the compared database.").arg(short_opts[DropMissingObjs]).arg(DropMissingObjs) << endl;
+	out << trUtf8("  %1, %2\t    Force the drop of missing columns and constraints. Causes only columns and constraints to be dropped, other missing objects aren't removed.").arg(short_opts[ForceDropColsConstrs]).arg(ForceDropColsConstrs) << endl;
+	out << trUtf8("  %1, %2\t\t    Rename the destination database when the names of the involved databases are different.").arg(short_opts[RenameDb]).arg(RenameDb) << endl;
+	out << trUtf8("  %1, %2\t\t    Don't drop or truncate objects in cascade mode.").arg(short_opts[NoCascadeDropTrunc]).arg(NoCascadeDropTrunc) << endl;
+	out << trUtf8("  %1, %2\t    Truncate tables prior to alter columns. Avoids errors related to type casting when the new type of a column isn't compatible to the old one.").arg(short_opts[TruncOnColsTypeChange]).arg(TruncOnColsTypeChange) << endl;
+	out << trUtf8("  %1, %2\t    Don't reuse sequences on serial columns. Drop the old sequence assigned to a serial column and creates a new one.").arg(short_opts[NoSequenceReuse]).arg(NoSequenceReuse) << endl;
+	out << trUtf8("  %1, %2\t    Don't force the recreation of objects. Avoids the usage of a DROP and CREATE commands to create a new version of the objects.").arg(short_opts[NoForceObjRecreation]).arg(NoForceObjRecreation) << endl;
+	out << trUtf8("  %1, %2\t    Don't recreate the unmodifiable objects. These objects are the ones which can't be changed via ALTER command.").arg(short_opts[NoUnmodObjRecreation]).arg(NoUnmodObjRecreation) << endl;
 	out << endl;
 
 #ifndef Q_OS_MAC
 	out << trUtf8("Miscellaneous options: ") << endl;
-	out << trUtf8("  %1, %2 [ACTION]\t    Handles the file association to .dbm files. The ACTION can be [%3 | %4].").arg(short_opts[DBM_MIME_TYPE]).arg(DBM_MIME_TYPE).arg(INSTALL).arg(UNINSTALL) << endl;
+	out << trUtf8("  %1, %2 [ACTION]\t    Handles the file association to .dbm files. The ACTION can be [%3 | %4].").arg(short_opts[DbmMimeType]).arg(DbmMimeType).arg(Install).arg(Uninstall) << endl;
 	out << endl;
 #endif
 
 	out << trUtf8("** The diff process allows the usage of the following options related to import and export operations: ") << endl;
-	out << "   " << QStringList({ trUtf8("* Export: "), IGNORE_DUPLICATES, IGNORE_ERROR_CODES, "\n  ", trUtf8("* Import: "), IMPORT_SYSTEM_OBJS, IMPORT_EXTENSION_OBJS, IGNORE_IMPORT_ERRORS, DEBUG_MODE }).join(" ") << endl;
+	out << "   " << QStringList({ trUtf8("* Export: "), IgnoreDuplicates, IgnoreErrorCodes, "\n  ", trUtf8("* Import: "), ImportSystemObjs, ImportExtensionObjs, IgnoreImportErrors, DebugMode }).join(" ") << endl;
 	out << endl;
-	out << trUtf8("** When running the diff using two databases (%1 and %2) there's the need to specify two connections/aliases. ").arg(INPUT_DB).arg(COMPARE_TO) << endl;
+	out << trUtf8("** When running the diff using two databases (%1 and %2) there's the need to specify two connections/aliases. ").arg(InputDb).arg(CompareTo) << endl;
 	out << trUtf8("   If only one connection is set it will be used to import the input database as well to retrieve database used in the comparison.") << endl;
 	out << trUtf8("   A second connection can be specified by appending a 1 on any connection configuration parameter listed above.") << endl;
 	out << endl;
 }
 
-void PgModelerCLI::parseOptions(attribs_map &opts)
+void PgModelerCli::parseOptions(attribs_map &opts)
 {
 	//Loading connections
-	if(opts.count(LIST_CONNS) || opts.count(EXPORT_TO_DBMS) || opts.count(IMPORT_DB) || opts.count(DIFF))
+	if(opts.count(ListConns) || opts.count(ExportToDbms) || opts.count(ImportDb) || opts.count(Diff))
 	{
 		conn_conf.loadConfiguration();
 		conn_conf.getConnections(connections, false);
 	}
 	//Loading general and relationship settings when exporting to image formats
-	else if(opts.count(EXPORT_TO_PNG) || opts.count(EXPORT_TO_SVG))
+	else if(opts.count(ExportToPng) || opts.count(ExportToSvg))
 	{
 		general_conf.loadConfiguration();
 		rel_conf.loadConfiguration();
 	}
 
-	if(opts.empty() || opts.count(HELP))
+	if(opts.empty() || opts.count(Help))
 		showMenu();
 	//Listing connections
-	else if(opts.count(LIST_CONNS))
+	else if(opts.count(ListConns))
 	{
 		map<QString, Connection *>::iterator itr=connections.begin();
 
@@ -482,7 +482,7 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 			while(itr != connections.end())
 			{
 				out << QString("[") << id++ <<  QString("] ") << itr->first << QString(" : ") <<
-							 itr->second->getConnectionString().replace(PASSWORD_REGEXP, PASSWORD_PLACEHOLDER) << endl;
+							 itr->second->getConnectionString().replace(PasswordRegExp, PasswordPlaceholder) << endl;
 
 				itr++;
 			}
@@ -492,22 +492,22 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 	else
 	{
 		int mode_cnt=0, other_modes_cnt=0;
-		bool fix_model=(opts.count(FIX_MODEL) > 0), upd_mime=(opts.count(DBM_MIME_TYPE) > 0),
-				import_db=(opts.count(IMPORT_DB) > 0), diff=(opts.count(DIFF) > 0);
+		bool fix_model=(opts.count(FixModel) > 0), upd_mime=(opts.count(DbmMimeType) > 0),
+				import_db=(opts.count(ImportDb) > 0), diff=(opts.count(Diff) > 0);
 
 		//Checking if multiples export modes were specified
-		mode_cnt+=opts.count(EXPORT_TO_FILE);
-		mode_cnt+=opts.count(EXPORT_TO_PNG);
-		mode_cnt+=opts.count(EXPORT_TO_SVG);
-		mode_cnt+=opts.count(EXPORT_TO_DBMS);
+		mode_cnt+=opts.count(ExportToFile);
+		mode_cnt+=opts.count(ExportToPng);
+		mode_cnt+=opts.count(ExportToSvg);
+		mode_cnt+=opts.count(ExportToDbms);
 
-		other_modes_cnt+=opts.count(FIX_MODEL);
-		other_modes_cnt+=opts.count(IMPORT_DB);
-		other_modes_cnt+=opts.count(DIFF);
-		other_modes_cnt+=opts.count(DBM_MIME_TYPE);
+		other_modes_cnt+=opts.count(FixModel);
+		other_modes_cnt+=opts.count(ImportDb);
+		other_modes_cnt+=opts.count(Diff);
+		other_modes_cnt+=opts.count(DbmMimeType);
 
-		if(opts.count(ZOOM_FACTOR))
-			zoom=opts[ZOOM_FACTOR].toDouble()/static_cast<double>(100);
+		if(opts.count(ZoomFactor))
+			zoom=opts[ZoomFactor].toDouble()/static_cast<double>(100);
 
 		if(other_modes_cnt==0 && mode_cnt==0)
 			throw Exception(trUtf8("No operation mode was specified!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -518,60 +518,60 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 		if(!fix_model && !upd_mime && mode_cnt > 1)
 			throw Exception(trUtf8("Multiple export mode was specified!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
-		if(!upd_mime && !import_db && !diff && opts[INPUT].isEmpty())
+		if(!upd_mime && !import_db && !diff && opts[Input].isEmpty())
 			throw Exception(trUtf8("No input file was specified!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		if(import_db && opts[INPUT_DB].isEmpty())
+		if(import_db && opts[InputDb].isEmpty())
 			throw Exception(trUtf8("No input database was specified!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		if(!opts.count(EXPORT_TO_DBMS) && !upd_mime && !diff && opts[OUTPUT].isEmpty())
+		if(!opts.count(ExportToDbms) && !upd_mime && !diff && opts[Output].isEmpty())
 			throw Exception(trUtf8("No output file was specified!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
-		if(!opts.count(EXPORT_TO_DBMS) && !upd_mime && !import_db &&
-			 !opts[INPUT].isEmpty() && !opts[OUTPUT].isEmpty() &&
-			 QFileInfo(opts[INPUT]).absoluteFilePath() == QFileInfo(opts[OUTPUT]).absoluteFilePath())
+		if(!opts.count(ExportToDbms) && !upd_mime && !import_db &&
+			 !opts[Input].isEmpty() && !opts[Output].isEmpty() &&
+			 QFileInfo(opts[Input]).absoluteFilePath() == QFileInfo(opts[Output]).absoluteFilePath())
 			throw Exception(trUtf8("Input file must be different from output!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
-		if(opts.count(EXPORT_TO_DBMS) && !opts.count(CONN_ALIAS) &&
-			 (!opts.count(HOST) || !opts.count(USER) || !opts.count(PASSWD) || !opts.count(INITIAL_DB)) )
+		if(opts.count(ExportToDbms) && !opts.count(ConnAlias) &&
+			 (!opts.count(Host) || !opts.count(User) || !opts.count(Passwd) || !opts.count(InitialDb)) )
 			throw Exception(trUtf8("Incomplete connection information!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
-		if(opts.count(EXPORT_TO_PNG) && (zoom < ModelWidget::MinimumZoom || zoom > ModelWidget::MaximumZoom))
+		if(opts.count(ExportToPng) && (zoom < ModelWidget::MinimumZoom || zoom > ModelWidget::MaximumZoom))
 			throw Exception(trUtf8("Invalid zoom specified!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
-		if(upd_mime && opts[DBM_MIME_TYPE]!=INSTALL && opts[DBM_MIME_TYPE]!=UNINSTALL)
+		if(upd_mime && opts[DbmMimeType]!=Install && opts[DbmMimeType]!=Uninstall)
 			throw Exception(trUtf8("Invalid action specified to update mime option!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			
-		if(opts.count(DIFF))
+		if(opts.count(Diff))
 		{
-			if(opts[INPUT].isEmpty() && opts[INPUT_DB].isEmpty())
+			if(opts[Input].isEmpty() && opts[InputDb].isEmpty())
 				throw Exception(trUtf8("No input file or database was specified!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-			if(!opts[INPUT].isEmpty() && !opts[INPUT_DB].isEmpty())
+			if(!opts[Input].isEmpty() && !opts[InputDb].isEmpty())
 				throw Exception(trUtf8("The input file and database can't be used at the same time!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-			if(!opts.count(COMPARE_TO))
+			if(!opts.count(CompareTo))
 				throw Exception(trUtf8("No database to be compared was specified!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-			if(!opts.count(SAVE_DIFF) && !opts.count(APPLY_DIFF))
+			if(!opts.count(SaveDiff) && !opts.count(ApplyDiff))
 				throw Exception(trUtf8("No diff action (save or apply) was specified!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-			if(opts.count(SAVE_DIFF) && opts[OUTPUT].isEmpty())
+			if(opts.count(SaveDiff) && opts[Output].isEmpty())
 				throw Exception(trUtf8("No output file for the diff code was specified!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 		
 		//Converting input and output files to absolute paths to avoid that they are read/written on the app's working dir
-		if(!opts[INPUT].isEmpty())
-			opts[INPUT]=QFileInfo(opts[INPUT]).absoluteFilePath();
+		if(!opts[Input].isEmpty())
+			opts[Input]=QFileInfo(opts[Input]).absoluteFilePath();
 
-		if(!opts[OUTPUT].isEmpty())
-			opts[OUTPUT]=QFileInfo(opts[OUTPUT]).absoluteFilePath();
+		if(!opts[Output].isEmpty())
+			opts[Output]=QFileInfo(opts[Output]).absoluteFilePath();
 
 		parsed_opts=opts;
 	}
 }
 
-int PgModelerCLI::exec(void)
+int PgModelerCli::exec(void)
 {
 	try
 	{
@@ -579,13 +579,13 @@ int PgModelerCLI::exec(void)
 		{
 			printMessage(QString("\npgModeler %1 %2").arg(GlobalAttributes::PgModelerVersion).arg(trUtf8(" command line interface.")));
 
-			if(parsed_opts.count(FIX_MODEL))
+			if(parsed_opts.count(FixModel))
 				fixModel();
-			else if(parsed_opts.count(DBM_MIME_TYPE))
+			else if(parsed_opts.count(DbmMimeType))
 				updateMimeType();
-			else if(parsed_opts.count(IMPORT_DB))
+			else if(parsed_opts.count(ImportDb))
 				importDatabase();
-			else if(parsed_opts.count(DIFF))
+			else if(parsed_opts.count(Diff))
 				diffModelDatabase();
 			else
 				exportModel();
@@ -599,7 +599,7 @@ int PgModelerCLI::exec(void)
 	}
 }
 
-void PgModelerCLI::updateProgress(int progress, QString msg, ObjectType)
+void PgModelerCli::updateProgress(int progress, QString msg, ObjectType)
 {
 	if(progress > 0)
 		out << QString("[%1%] ").arg(progress > 100 ? 100 : progress) << msg << endl;
@@ -607,7 +607,7 @@ void PgModelerCLI::updateProgress(int progress, QString msg, ObjectType)
 		out << msg << endl;
 }
 
-void PgModelerCLI::printIgnoredError(QString err_cod, QString err_msg, QString cmd)
+void PgModelerCli::printIgnoredError(QString err_cod, QString err_msg, QString cmd)
 {
 	out << endl;
 	out << trUtf8("** Error code `%1' found and ignored. Proceeding with export.").arg(err_cod) << endl;
@@ -616,7 +616,7 @@ void PgModelerCLI::printIgnoredError(QString err_cod, QString err_msg, QString c
 	out << endl;
 }
 
-void PgModelerCLI::handleObjectAddition(BaseObject *object)
+void PgModelerCli::handleObjectAddition(BaseObject *object)
 {
 	BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(object);
 
@@ -657,7 +657,7 @@ void PgModelerCLI::handleObjectAddition(BaseObject *object)
 }
 
 
-void PgModelerCLI::handleObjectRemoval(BaseObject *object)
+void PgModelerCli::handleObjectRemoval(BaseObject *object)
 {
 	BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(object);
 
@@ -673,7 +673,7 @@ void PgModelerCLI::handleObjectRemoval(BaseObject *object)
 }
 
 
-void PgModelerCLI::extractObjectXML(void)
+void PgModelerCli::extractObjectXML(void)
 {
 	QFile input;
 	QString buf, lin, def_xml, end_tag;
@@ -691,11 +691,11 @@ void PgModelerCLI::extractObjectXML(void)
 
 	printMessage(trUtf8("Extracting objects' XML..."));
 
-	input.setFileName(parsed_opts[INPUT]);
+	input.setFileName(parsed_opts[Input]);
 	input.open(QFile::ReadOnly);
 
 	if(!input.isOpen())
-		throw Exception(Exception::getErrorMessage(FileDirectoryNotAccessed).arg(parsed_opts[INPUT]),
+		throw Exception(Exception::getErrorMessage(FileDirectoryNotAccessed).arg(parsed_opts[Input]),
 						FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	buf.append(input.readAll());
@@ -815,7 +815,7 @@ void PgModelerCLI::extractObjectXML(void)
 	}
 }
 
-void PgModelerCLI::recreateObjects(void)
+void PgModelerCli::recreateObjects(void)
 {
 	QStringList fail_objs, constr, list;
 	QString xml_def, aux_def, start_tag="<%1", end_tag="</%1>", aux_tag;
@@ -824,7 +824,7 @@ void PgModelerCLI::recreateObjects(void)
 	vector<ObjectType> types={ ObjIndex, ObjTrigger, ObjRule };
 	attribs_map attribs;
 	bool use_fail_obj=false;
-	unsigned tries=0, max_tries=parsed_opts[FIX_TRIES].toUInt();
+	unsigned tries=0, max_tries=parsed_opts[FixTries].toUInt();
 	int start_pos=-1, end_pos=-1, len=0;
 
 	printMessage(trUtf8("Recreating objects..."));
@@ -969,17 +969,17 @@ void PgModelerCLI::recreateObjects(void)
 	}
 }
 
-void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
+void PgModelerCli::fixObjectAttributes(QString &obj_xml)
 {
 	//Placing objects <index>, <rule>, <trigger> outside of <table>
-	if(!obj_xml.startsWith(TAG_EXPR.arg(BaseObject::getSchemaName(ObjTablespace))) &&
-			obj_xml.startsWith(TAG_EXPR.arg(BaseObject::getSchemaName(ObjTable))))
+	if(!obj_xml.startsWith(TagExpr.arg(BaseObject::getSchemaName(ObjTablespace))) &&
+			obj_xml.startsWith(TagExpr.arg(BaseObject::getSchemaName(ObjTable))))
 	{
 		int start_idx=-1, end_idx=-1, len=0;
 		ObjectType obj_types[3]={ ObjRule, ObjTrigger, ObjIndex  };
 		QString  curr_tag, curr_end_tag, def, tab_name, sch_name,
 				name_attr=QString("name=\""),
-				sch_name_attr=TAG_EXPR.arg(BaseObject::getSchemaName(ObjSchema)) + QString(" ") + name_attr;
+				sch_name_attr=TagExpr.arg(BaseObject::getSchemaName(ObjSchema)) + QString(" ") + name_attr;
 
 		//Extracting the table's name
 		start_idx=obj_xml.indexOf(name_attr);
@@ -996,8 +996,8 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 
 		for(unsigned idx=0; idx < 3; idx++)
 		{
-			curr_tag=TAG_EXPR.arg(BaseObject::getSchemaName(obj_types[idx]));
-			curr_end_tag=END_TAG_EXPR.arg(BaseObject::getSchemaName(obj_types[idx])) + QString(">");
+			curr_tag=TagExpr.arg(BaseObject::getSchemaName(obj_types[idx]));
+			curr_end_tag=EndTagExpr.arg(BaseObject::getSchemaName(obj_types[idx])) + QString(">");
 			start_idx=obj_xml.indexOf(curr_tag);
 
 			while(start_idx >=0)
@@ -1008,7 +1008,7 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 				obj_xml.remove(start_idx, len);
 
 				//If the object is a rule include the table attribute
-				if(def.startsWith(TAG_EXPR.arg(BaseObject::getSchemaName(ObjRule))))
+				if(def.startsWith(TagExpr.arg(BaseObject::getSchemaName(ObjRule))))
 				{
 					start_idx=def.indexOf('>');
 					def.replace(start_idx, 1, QString(" ") + tab_name + QString(">"));
@@ -1024,11 +1024,11 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 	}
 
 	//Remove recheck attribute from <element> tags.
-	if(obj_xml.contains(TAG_EXPR.arg(ParsersAttributes::ELEMENT)))
-		obj_xml.remove(QRegExp(ATTRIBUTE_EXPR.arg(QString("recheck"))));
+	if(obj_xml.contains(TagExpr.arg(ParsersAttributes::ELEMENT)))
+		obj_xml.remove(QRegExp(AttributeExpr.arg(QString("recheck"))));
 
 	//Remove values greater-op, less-op, sort-op or sort2-op from ref-type attribute from <operator> tags.
-	if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(ObjOperator))))
+	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjOperator))))
 	{
 		obj_xml.remove(QString("greater-op"));
 		obj_xml.remove(QString("less-op"));
@@ -1037,57 +1037,57 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 	}
 
 	//Replacing attribute owner by onwer-col for sequences
-	if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(ObjSequence))))
+	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjSequence))))
 		obj_xml.replace(ParsersAttributes::OWNER, ParsersAttributes::OWNER_COLUMN);
 
 	//Remove sysid attribute from <role> tags.
-	if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(ObjRole))))
-		obj_xml.remove(QRegExp(ATTRIBUTE_EXPR.arg(QString("sysid"))));
+	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjRole))))
+		obj_xml.remove(QRegExp(AttributeExpr.arg(QString("sysid"))));
 
 	//Replace <parameter> tag by <typeattrib> on <usertype> tags.
-	if(obj_xml.contains(TAG_EXPR.arg(QString("usertype"))))
+	if(obj_xml.contains(TagExpr.arg(QString("usertype"))))
 	{
-		obj_xml.replace(TAG_EXPR.arg(ParsersAttributes::PARAMETER), TAG_EXPR.arg(ParsersAttributes::TYPE_ATTRIBUTE));
-		obj_xml.replace(END_TAG_EXPR.arg(ParsersAttributes::PARAMETER), END_TAG_EXPR.arg(ParsersAttributes::TYPE_ATTRIBUTE));
+		obj_xml.replace(TagExpr.arg(ParsersAttributes::PARAMETER), TagExpr.arg(ParsersAttributes::TYPE_ATTRIBUTE));
+		obj_xml.replace(EndTagExpr.arg(ParsersAttributes::PARAMETER), EndTagExpr.arg(ParsersAttributes::TYPE_ATTRIBUTE));
 	}
 
-	if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(ObjRelationship))))
+	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjRelationship))))
 	{
 		//Remove auto-sufix, src-sufix, dst-sufix, col-indexes, constr-indexes, attrib-indexes from <relationship> tags.
-		obj_xml.remove(QRegExp(ATTRIBUTE_EXPR.arg(QString("auto-sufix"))));
-		obj_xml.remove(QRegExp(ATTRIBUTE_EXPR.arg(QString("src-sufix"))));
-		obj_xml.remove(QRegExp(ATTRIBUTE_EXPR.arg(QString("dst-sufix"))));
-		obj_xml.remove(QRegExp(ATTRIBUTE_EXPR.arg(QString("col-indexes"))));
-		obj_xml.remove(QRegExp(ATTRIBUTE_EXPR.arg(QString("constr-indexes"))));
-		obj_xml.remove(QRegExp(ATTRIBUTE_EXPR.arg(QString("attrib-indexes"))));
+		obj_xml.remove(QRegExp(AttributeExpr.arg(QString("auto-sufix"))));
+		obj_xml.remove(QRegExp(AttributeExpr.arg(QString("src-sufix"))));
+		obj_xml.remove(QRegExp(AttributeExpr.arg(QString("dst-sufix"))));
+		obj_xml.remove(QRegExp(AttributeExpr.arg(QString("col-indexes"))));
+		obj_xml.remove(QRegExp(AttributeExpr.arg(QString("constr-indexes"))));
+		obj_xml.remove(QRegExp(AttributeExpr.arg(QString("attrib-indexes"))));
 
 		obj_xml.replace(QString("line-color"), ParsersAttributes::CUSTOM_COLOR);
 	}
 
 	//Renaming the tag <condition> to <predicate> on indexes
-	if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(ObjIndex))))
+	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjIndex))))
 	{
-		obj_xml.replace(TAG_EXPR.arg(ParsersAttributes::CONDITION), TAG_EXPR.arg(ParsersAttributes::PREDICATE));
-		obj_xml.replace(END_TAG_EXPR.arg(ParsersAttributes::CONDITION), END_TAG_EXPR.arg(ParsersAttributes::PREDICATE));
+		obj_xml.replace(TagExpr.arg(ParsersAttributes::CONDITION), TagExpr.arg(ParsersAttributes::PREDICATE));
+		obj_xml.replace(EndTagExpr.arg(ParsersAttributes::CONDITION), EndTagExpr.arg(ParsersAttributes::PREDICATE));
 	}
 
 	//Renaming the attribute default to default-value on domain
-	if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(ObjDomain))))
+	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjDomain))))
 		obj_xml.replace(ParsersAttributes::DEFAULT, ParsersAttributes::DEFAULT_VALUE);
 
 	//Renaming the tag <grant> to <permission>
-	if(obj_xml.contains(TAG_EXPR.arg(QString("grant"))))
+	if(obj_xml.contains(TagExpr.arg(QString("grant"))))
 	{
-		obj_xml.replace(TAG_EXPR.arg(QString("grant")), TAG_EXPR.arg(BaseObject::getSchemaName(ObjPermission)));
-		obj_xml.replace(END_TAG_EXPR.arg(QString("grant")), END_TAG_EXPR.arg(BaseObject::getSchemaName(ObjPermission)));
+		obj_xml.replace(TagExpr.arg(QString("grant")), TagExpr.arg(BaseObject::getSchemaName(ObjPermission)));
+		obj_xml.replace(EndTagExpr.arg(QString("grant")), EndTagExpr.arg(BaseObject::getSchemaName(ObjPermission)));
 	}
 
 	//Replace the constraint attribute and tag expression by constraint tag in <domain>.
-	if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(ObjDomain))) &&
-		 obj_xml.contains(TAG_EXPR.arg(ParsersAttributes::EXPRESSION)))
+	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjDomain))) &&
+		 obj_xml.contains(TagExpr.arg(ParsersAttributes::EXPRESSION)))
 	{
 		int start_idx=-1, end_idx=-1;
-		QRegExp regexp = QRegExp(ATTRIBUTE_EXPR.arg(ParsersAttributes::CONSTRAINT));
+		QRegExp regexp = QRegExp(AttributeExpr.arg(ParsersAttributes::CONSTRAINT));
 		QString constr_name;
 
 		regexp.indexIn(obj_xml);
@@ -1095,44 +1095,44 @@ void PgModelerCLI::fixObjectAttributes(QString &obj_xml)
 		constr_name.remove(QString("%1=\"").arg(ParsersAttributes::CONSTRAINT));
 		constr_name.remove(constr_name.length() - 1, 1);
 
-		obj_xml.remove(QRegExp(ATTRIBUTE_EXPR.arg(ParsersAttributes::CONSTRAINT)));
+		obj_xml.remove(QRegExp(AttributeExpr.arg(ParsersAttributes::CONSTRAINT)));
 
-		start_idx = obj_xml.indexOf(TAG_EXPR.arg(ParsersAttributes::EXPRESSION));
+		start_idx = obj_xml.indexOf(TagExpr.arg(ParsersAttributes::EXPRESSION));
 		obj_xml.insert(start_idx, QString("\n\t<constraint name=\"%1\" type=\"check\">\n\t\t").arg(constr_name));
 
-		end_idx = obj_xml.indexOf(END_TAG_EXPR.arg(ParsersAttributes::EXPRESSION));
-		obj_xml.insert(end_idx + END_TAG_EXPR.arg(ParsersAttributes::EXPRESSION).length() + 1, QString("\n\t</constraint>\n"));
+		end_idx = obj_xml.indexOf(EndTagExpr.arg(ParsersAttributes::EXPRESSION));
+		obj_xml.insert(end_idx + EndTagExpr.arg(ParsersAttributes::EXPRESSION).length() + 1, QString("\n\t</constraint>\n"));
 	}
 
 	//Fix the references to op. classes and families if needed
 	fixOpClassesFamiliesReferences(obj_xml);
 }
 
-void PgModelerCLI::fixOpClassesFamiliesReferences(QString &obj_xml)
+void PgModelerCli::fixOpClassesFamiliesReferences(QString &obj_xml)
 {
 	ObjectType ref_obj_type;
 
-	if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(ObjIndex))) ||
+	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjIndex))) ||
 			obj_xml.contains(QRegExp(QString("(%1)(.)+(type=)(\")(%2)(\")")
-									 .arg(TAG_EXPR.arg(BaseObject::getSchemaName(ObjConstraint)))
+									 .arg(TagExpr.arg(BaseObject::getSchemaName(ObjConstraint)))
 									 .arg(ParsersAttributes::EX_CONSTR))))
 		ref_obj_type=ObjOpClass;
-	else if(obj_xml.contains(TAG_EXPR.arg(BaseObject::getSchemaName(ObjOpClass))))
+	else if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjOpClass))))
 		ref_obj_type=ObjOpFamily;
 	else
 		return;
 
 	QString ref_obj_name=BaseObject::getSchemaName(ref_obj_type);
-	if(!obj_xml.contains(TAG_EXPR.arg(ref_obj_name)))
+	if(!obj_xml.contains(TagExpr.arg(ref_obj_name)))
 		return;
 
 	QString obj_name, aux_obj_name, signature=QString("%1 USING %2");
-	QRegExp sign_regexp=QRegExp(ATTRIBUTE_EXPR.arg(QString("signature")));
+	QRegExp sign_regexp=QRegExp(AttributeExpr.arg(QString("signature")));
 	QStringList index_types;
 	int pos=0;
 
-	obj_xml.replace(TAG_EXPR.arg(ref_obj_name) + QString(" name="),
-					TAG_EXPR.arg(ref_obj_name) + QString(" signature="));
+	obj_xml.replace(TagExpr.arg(ref_obj_name) + QString(" name="),
+					TagExpr.arg(ref_obj_name) + QString(" signature="));
 
 	IndexingType::getTypes(index_types);
 
@@ -1172,77 +1172,77 @@ void PgModelerCLI::fixOpClassesFamiliesReferences(QString &obj_xml)
 	while(pos >= 0);
 }
 
-void PgModelerCLI::fixModel(void)
+void PgModelerCli::fixModel(void)
 {
 	printMessage(trUtf8("Starting model fixing..."));
-	printMessage(trUtf8("Loading input file: %1").arg(parsed_opts[INPUT]));
-	printMessage(trUtf8("Fixed model file: %1").arg(parsed_opts[OUTPUT]));
+	printMessage(trUtf8("Loading input file: %1").arg(parsed_opts[Input]));
+	printMessage(trUtf8("Fixed model file: %1").arg(parsed_opts[Output]));
 
 	extractObjectXML();
 	recreateObjects();
 	model->updateTablesFKRelationships();
-	model->saveModel(parsed_opts[OUTPUT], SchemaParser::XmlDefinition);
+	model->saveModel(parsed_opts[Output], SchemaParser::XmlDefinition);
 
 	printMessage(trUtf8("Model successfully fixed!"));
 }
 
-void PgModelerCLI::exportModel(void)
+void PgModelerCli::exportModel(void)
 {
 	printMessage(trUtf8("Starting model export..."));
-	printMessage(trUtf8("Loading input file: %1").arg(parsed_opts[INPUT]));
+	printMessage(trUtf8("Loading input file: %1").arg(parsed_opts[Input]));
 
 	//Create the systems objects on model before loading it
 	model->createSystemObjects(false);
 
 	//Load the model file
-	model->loadModel(parsed_opts[INPUT]);
+	model->loadModel(parsed_opts[Input]);
 
 	//Export to PNG
-	if(parsed_opts.count(EXPORT_TO_PNG))
+	if(parsed_opts.count(ExportToPng))
 	{
-		printMessage(trUtf8("Export to PNG image: %1").arg(parsed_opts[OUTPUT]));
+		printMessage(trUtf8("Export to PNG image: %1").arg(parsed_opts[Output]));
 
-		export_hlp.exportToPNG(scene, parsed_opts[OUTPUT], zoom,
-								 parsed_opts.count(SHOW_GRID) > 0,
-								 parsed_opts.count(SHOW_DELIMITERS) > 0,
-								 parsed_opts.count(PAGE_BY_PAGE) > 0);
+		export_hlp.exportToPNG(scene, parsed_opts[Output], zoom,
+								 parsed_opts.count(ShowGrid) > 0,
+								 parsed_opts.count(ShowDelimiters) > 0,
+								 parsed_opts.count(PageByPage) > 0);
 	}
 	//Export to SVG
-	else if(parsed_opts.count(EXPORT_TO_SVG))
+	else if(parsed_opts.count(ExportToSvg))
 	{
-		printMessage(trUtf8("Export to SVG file: %1").arg(parsed_opts[OUTPUT]));
+		printMessage(trUtf8("Export to SVG file: %1").arg(parsed_opts[Output]));
 
-		export_hlp.exportToSVG(scene, parsed_opts[OUTPUT],
-													 parsed_opts.count(SHOW_GRID) > 0,
-													 parsed_opts.count(SHOW_DELIMITERS) > 0);
+		export_hlp.exportToSVG(scene, parsed_opts[Output],
+													 parsed_opts.count(ShowGrid) > 0,
+													 parsed_opts.count(ShowDelimiters) > 0);
 	}
 	//Export to SQL file
-	else if(parsed_opts.count(EXPORT_TO_FILE))
+	else if(parsed_opts.count(ExportToFile))
 	{
-		printMessage(trUtf8("Export to SQL script file: %1").arg(parsed_opts[OUTPUT]));
+		printMessage(trUtf8("Export to SQL script file: %1").arg(parsed_opts[Output]));
 
-		export_hlp.exportToSQL(model, parsed_opts[OUTPUT], parsed_opts[PGSQL_VER]);
+		export_hlp.exportToSQL(model, parsed_opts[Output], parsed_opts[PgSqlVer]);
 	}
 	//Export to DBMS
 	else
 	{
-		printMessage(trUtf8("Export to DBMS: %1").arg(connection.getConnectionString().replace(PASSWORD_REGEXP, PASSWORD_PLACEHOLDER)));
+		printMessage(trUtf8("Export to DBMS: %1").arg(connection.getConnectionString().replace(PasswordRegExp, PasswordPlaceholder)));
 
-		if(parsed_opts.count(IGNORE_ERROR_CODES))
-			export_hlp.setIgnoredErrors(parsed_opts[IGNORE_ERROR_CODES].split(','));
+		if(parsed_opts.count(IgnoreErrorCodes))
+			export_hlp.setIgnoredErrors(parsed_opts[IgnoreErrorCodes].split(','));
 
-		export_hlp.exportToDBMS(model, connection, parsed_opts[PGSQL_VER],
-								parsed_opts.count(IGNORE_DUPLICATES) > 0,
-								parsed_opts.count(DROP_DATABASE) > 0,
-								parsed_opts.count(DROP_OBJECTS) > 0,
-								parsed_opts.count(SIMULATE) > 0,
-								parsed_opts.count(USE_TMP_NAMES) > 0);
+		export_hlp.exportToDBMS(model, connection, parsed_opts[PgSqlVer],
+								parsed_opts.count(IgnoreDuplicates) > 0,
+								parsed_opts.count(DropDatabase) > 0,
+								parsed_opts.count(DropObjects) > 0,
+								parsed_opts.count(Simulate) > 0,
+								parsed_opts.count(UseTmpNames) > 0);
 	}
 
 	printMessage(trUtf8("Export successfully ended!\n"));
 }
 
-void PgModelerCLI::importDatabase(void)
+void PgModelerCli::importDatabase(void)
 {
 	printMessage(trUtf8("Starting database import..."));
 	printMessage(trUtf8("Input database: %1").arg(connection.getConnectionId(true, true)));
@@ -1254,14 +1254,14 @@ void PgModelerCLI::importDatabase(void)
 
 	printMessage(trUtf8("Saving the imported database to file..."));
 
-	model_wgt->getDatabaseModel()->saveModel(parsed_opts[OUTPUT], SchemaParser::XmlDefinition);
+	model_wgt->getDatabaseModel()->saveModel(parsed_opts[Output], SchemaParser::XmlDefinition);
 
 	printMessage(trUtf8("Import successfully ended!\n"));
 
 	delete(model_wgt);
 }
 
-void PgModelerCLI::importDatabase(DatabaseModel *model, Connection conn)
+void PgModelerCli::importDatabase(DatabaseModel *model, Connection conn)
 {
 	try
 	{
@@ -1284,12 +1284,12 @@ void PgModelerCLI::importDatabase(DatabaseModel *model, Connection conn)
 		catalog.closeConnection();
 
 		import_hlp.setConnection(conn);
-		import_hlp.setImportOptions(parsed_opts.count(IMPORT_SYSTEM_OBJS) > 0,
-																parsed_opts.count(IMPORT_EXTENSION_OBJS) > 0,
+		import_hlp.setImportOptions(parsed_opts.count(ImportSystemObjs) > 0,
+																parsed_opts.count(ImportExtensionObjs) > 0,
 																true,
-																parsed_opts.count(IGNORE_IMPORT_ERRORS) > 0,
-																parsed_opts.count(DEBUG_MODE) > 0,
-																!parsed_opts.count(DIFF), !parsed_opts.count(DIFF));
+																parsed_opts.count(IgnoreImportErrors) > 0,
+																parsed_opts.count(DebugMode) > 0,
+																!parsed_opts.count(Diff), !parsed_opts.count(Diff));
 
 		model->createSystemObjects(true);
 		import_hlp.setSelectedOIDs(model, obj_oids, col_oids);
@@ -1302,26 +1302,26 @@ void PgModelerCLI::importDatabase(DatabaseModel *model, Connection conn)
 	}
 }
 
-void PgModelerCLI::diffModelDatabase(void)
+void PgModelerCli::diffModelDatabase(void)
 {
 	DatabaseModel *model_aux = new DatabaseModel();
 	QString dbname;
 
 	printMessage(trUtf8("Starting diff process..."));
 
-	if(!parsed_opts[INPUT].isEmpty())
-		printMessage(trUtf8("Input model: %1").arg(parsed_opts[INPUT]));
+	if(!parsed_opts[Input].isEmpty())
+		printMessage(trUtf8("Input model: %1").arg(parsed_opts[Input]));
 	else
 		printMessage(trUtf8("Input database: %1").arg(connection.getConnectionId(true, true)));
 
 	dbname = extra_connection.getConnectionId(true, true);
 	printMessage(trUtf8("Compare to: %1").arg(dbname));
 
-	if(!parsed_opts[INPUT].isEmpty())
+	if(!parsed_opts[Input].isEmpty())
 	{
 		printMessage(trUtf8("Loading input model..."));
 		model->createSystemObjects(false);
-		model->loadModel(parsed_opts[INPUT]);
+		model->loadModel(parsed_opts[Input]);
 	}
 	else
 	{
@@ -1333,19 +1333,19 @@ void PgModelerCLI::diffModelDatabase(void)
 	importDatabase(model_aux, extra_connection);
 
 	diff_hlp.setModels(model, model_aux);
-	diff_hlp.setDiffOption(ModelsDiffHelper::OptKeepClusterObjs, !parsed_opts.count(DROP_CLUSTER_OBJS));
-	diff_hlp.setDiffOption(ModelsDiffHelper::OptCascadeMode, !parsed_opts.count(NO_CASCADE_DROP_TRUNC));
-	diff_hlp.setDiffOption(ModelsDiffHelper::OptTruncateTables, parsed_opts.count(TRUNC_ON_COLS_TYPE_CHANGE));
-	diff_hlp.setDiffOption(ModelsDiffHelper::OptForceRecreation, !parsed_opts.count(NO_FORCE_OBJ_RECREATION));
-	diff_hlp.setDiffOption(ModelsDiffHelper::OptRecreateUnchangeble, !parsed_opts.count(NO_UNMOD_OBJ_RECREATION));
-	diff_hlp.setDiffOption(ModelsDiffHelper::OptKeepObjectPerms, !parsed_opts.count(REVOKE_PERMISSIONS));
-	diff_hlp.setDiffOption(ModelsDiffHelper::OptReuseSequences, !parsed_opts.count(NO_SEQUENCE_REUSE));
-	diff_hlp.setDiffOption(ModelsDiffHelper::OptPreserveDbName, !parsed_opts.count(RENAME_DB));
-	diff_hlp.setDiffOption(ModelsDiffHelper::OptDontDropMissingObjs, !parsed_opts.count(DROP_MISSING_OBJS));
-	diff_hlp.setDiffOption(ModelsDiffHelper::OptDropMissingColsConstr, !parsed_opts.count(FORCE_DROP_COLS_CONSTRS));
+	diff_hlp.setDiffOption(ModelsDiffHelper::OptKeepClusterObjs, !parsed_opts.count(DropClusterObjs));
+	diff_hlp.setDiffOption(ModelsDiffHelper::OptCascadeMode, !parsed_opts.count(NoCascadeDropTrunc));
+	diff_hlp.setDiffOption(ModelsDiffHelper::OptTruncateTables, parsed_opts.count(TruncOnColsTypeChange));
+	diff_hlp.setDiffOption(ModelsDiffHelper::OptForceRecreation, !parsed_opts.count(NoForceObjRecreation));
+	diff_hlp.setDiffOption(ModelsDiffHelper::OptRecreateUnchangeble, !parsed_opts.count(NoUnmodObjRecreation));
+	diff_hlp.setDiffOption(ModelsDiffHelper::OptKeepObjectPerms, !parsed_opts.count(RevokePermissions));
+	diff_hlp.setDiffOption(ModelsDiffHelper::OptReuseSequences, !parsed_opts.count(NoSequenceReuse));
+	diff_hlp.setDiffOption(ModelsDiffHelper::OptPreserveDbName, !parsed_opts.count(RenameDb));
+	diff_hlp.setDiffOption(ModelsDiffHelper::OptDontDropMissingObjs, !parsed_opts.count(DropMissingObjs));
+	diff_hlp.setDiffOption(ModelsDiffHelper::OptDropMissingColsConstr, !parsed_opts.count(ForceDropColsConstrs));
 
-	if(!parsed_opts[PGSQL_VER].isEmpty())
-		diff_hlp.setPgSQLVersion(parsed_opts[PGSQL_VER]);
+	if(!parsed_opts[PgSqlVer].isEmpty())
+		diff_hlp.setPgSQLVersion(parsed_opts[PgSqlVer]);
 	else
 	{
 		extra_connection.connect();
@@ -1360,15 +1360,15 @@ void PgModelerCLI::diffModelDatabase(void)
 		printMessage(trUtf8("No differences were detected."));
 	else
 	{
-		if(parsed_opts.count(SAVE_DIFF))
+		if(parsed_opts.count(SaveDiff))
 		{
 			QFile output;
 
-			printMessage(trUtf8("Saving diff to file `%1'").arg(parsed_opts[OUTPUT]));
-			output.setFileName(parsed_opts[OUTPUT]);
+			printMessage(trUtf8("Saving diff to file `%1'").arg(parsed_opts[Output]));
+			output.setFileName(parsed_opts[Output]);
 
 			if(!output.open(QFile::WriteOnly))
-				throw Exception(Exception::getErrorMessage(FileDirectoryNotWritten).arg(parsed_opts[OUTPUT]),
+				throw Exception(Exception::getErrorMessage(FileDirectoryNotWritten).arg(parsed_opts[Output]),
 												FileDirectoryNotWritten, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 			output.write(diff_hlp.getDiffDefinition().toUtf8());
 			output.close();
@@ -1377,7 +1377,7 @@ void PgModelerCLI::diffModelDatabase(void)
 		{
 			bool apply_diff = true;
 
-			if(!parsed_opts.count(NO_DIFF_PREVIEW))
+			if(!parsed_opts.count(NoDiffPreview))
 			{
 				QString res, buff, line;
 				QTextStream in(stdin), preview;
@@ -1430,10 +1430,10 @@ void PgModelerCLI::diffModelDatabase(void)
 				printMessage(trUtf8("Applying diff to the database `%1'...").arg(dbname));
 				export_hlp.setExportToDBMSParams(diff_hlp.getDiffDefinition(),
 												 &extra_connection,
-												 parsed_opts[COMPARE_TO], parsed_opts.count(IGNORE_DUPLICATES));
+												 parsed_opts[CompareTo], parsed_opts.count(IgnoreDuplicates));
 
-				if(parsed_opts.count(IGNORE_ERROR_CODES))
-					export_hlp.setIgnoredErrors(parsed_opts[IGNORE_ERROR_CODES].split(','));
+				if(parsed_opts.count(IgnoreErrorCodes))
+					export_hlp.setIgnoredErrors(parsed_opts[IgnoreErrorCodes].split(','));
 
 				export_hlp.exportToDBMS();
 			}
@@ -1443,18 +1443,18 @@ void PgModelerCLI::diffModelDatabase(void)
 	printMessage(trUtf8("Diff successfully ended!\n"));
 }
 
-void PgModelerCLI::updateMimeType(void)
+void PgModelerCli::updateMimeType(void)
 {
 #ifndef Q_OS_MAC
 		printMessage(trUtf8("Starting mime update..."));
 
-		handleMimeDatabase(parsed_opts[DBM_MIME_TYPE]==UNINSTALL);
+		handleMimeDatabase(parsed_opts[DbmMimeType]==Uninstall);
 
 		printMessage(trUtf8("Mime database successfully updated!\n"));
 #endif
 }
 
-QStringList PgModelerCLI::extractForeignKeys(QString &obj_xml)
+QStringList PgModelerCli::extractForeignKeys(QString &obj_xml)
 {
 	QStringList constr_lst;
 	int start=0, end=0, pos=0, count=0;
@@ -1489,7 +1489,7 @@ QStringList PgModelerCLI::extractForeignKeys(QString &obj_xml)
 	return(constr_lst);
 }
 
-bool PgModelerCLI::containsRelAttributes(const QString &str)
+bool PgModelerCli::containsRelAttributes(const QString &str)
 {
 	bool found=false;
 	static vector<QString> attribs={ ParsersAttributes::RELATIONSHIP,
@@ -1509,7 +1509,7 @@ bool PgModelerCLI::containsRelAttributes(const QString &str)
 	return(found);
 }
 
-void PgModelerCLI::handleMimeDatabase(bool uninstall)
+void PgModelerCli::handleMimeDatabase(bool uninstall)
 {
 	SchemaParser schparser;
 	QString msg_file_associated=trUtf8("Database model files (.dbm) are already associated to pgModeler!"),
