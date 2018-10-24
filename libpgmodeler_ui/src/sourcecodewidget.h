@@ -34,9 +34,9 @@ class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
 	private:
 		Q_OBJECT
 
-		static constexpr int ORIGINAL_SQL=0,
-		DEPENDENCIES_SQL=1,
-		CHILDREN_SQL=2;
+		static constexpr int OriginalSql=0,
+		DependenciesSql=1,
+		ChildrenSql=2;
 
 		NumberedTextEditor *sqlcode_txt,
 		*xmlcode_txt;

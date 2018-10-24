@@ -33,10 +33,10 @@
 #include "numberedtexteditor.h"
 
 namespace PgModelerUiNs {
-	static constexpr unsigned SMALL_FONT_FACTOR = 0,
-	MEDIUM_FONT_FACTOR = 1,
-	BIG_FONT_FACTOR = 2,
-	HUGE_FONT_FACTOR = 3;
+	static constexpr unsigned SmallFontFactor = 0,
+	MediumFontFactor = 1,
+	BigFontFactor = 2,
+	HugeFontFactor = 3;
 
 	extern void configureWidgetFont(QWidget *widget, unsigned factor_id);
 	extern void __configureWidgetFont(QWidget *widget, float factor);

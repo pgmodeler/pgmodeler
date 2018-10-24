@@ -43,7 +43,7 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 		comment_edt->setVisible(false);
 		comment_lbl->setVisible(false);
 
-		PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MEDIUM_FONT_FACTOR);
+		PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
 
 		action_gen_insert=new QAction(trUtf8("Generic INSERT"), this);
 		action_gen_insert->setObjectName(QString("action_gen_insert"));

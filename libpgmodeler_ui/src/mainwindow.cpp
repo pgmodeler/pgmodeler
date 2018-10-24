@@ -352,7 +352,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 		if(btn)
 		{
-			PgModelerUiNs::configureWidgetFont(btn, static_cast<unsigned>(PgModelerUiNs::MEDIUM_FONT_FACTOR));
+			PgModelerUiNs::configureWidgetFont(btn, static_cast<unsigned>(PgModelerUiNs::MediumFontFactor));
 			font = btn->font();
 			font.setBold(true);
 			btn->setFont(font);
@@ -1068,7 +1068,7 @@ void MainWindow::setCurrentModel(void)
 
 		for(QToolButton *btn : btns)
 		{
-			PgModelerUiNs::configureWidgetFont(btn, static_cast<unsigned>(PgModelerUiNs::MEDIUM_FONT_FACTOR));
+			PgModelerUiNs::configureWidgetFont(btn, static_cast<unsigned>(PgModelerUiNs::MediumFontFactor));
 			font = btn->font();
 			font.setBold(true);
 			btn->setFont(font);
@@ -1176,10 +1176,10 @@ void MainWindow::applyZoom(void)
 
 		if(sender()==action_normal_zoom)
 			zoom=1;
-		else if(sender()==action_inc_zoom && zoom < ModelWidget::MAXIMUM_ZOOM)
-			zoom+=ModelWidget::ZOOM_INCREMENT;
-		else if(sender()==action_dec_zoom && zoom > ModelWidget::MINIMUM_ZOOM)
-			zoom-=ModelWidget::ZOOM_INCREMENT;
+		else if(sender()==action_inc_zoom && zoom < ModelWidget::MaximumZoom)
+			zoom+=ModelWidget::ZoomIncrement;
+		else if(sender()==action_dec_zoom && zoom > ModelWidget::MinimumZoom)
+			zoom-=ModelWidget::ZoomIncrement;
 
 		current_model->applyZoom(zoom);
 	}
@@ -1687,9 +1687,9 @@ void MainWindow::updateToolsState(bool model_closed)
 		action_undo->setEnabled(current_model->op_list->isUndoAvailable());
 		action_redo->setEnabled(current_model->op_list->isRedoAvailable());
 
-		action_inc_zoom->setEnabled(current_model->getCurrentZoom() <= (ModelWidget::MAXIMUM_ZOOM - ModelWidget::ZOOM_INCREMENT));
+		action_inc_zoom->setEnabled(current_model->getCurrentZoom() <= (ModelWidget::MaximumZoom - ModelWidget::ZoomIncrement));
 		action_normal_zoom->setEnabled(current_model->getCurrentZoom()!=0);
-		action_dec_zoom->setEnabled(current_model->getCurrentZoom() >= ModelWidget::MINIMUM_ZOOM);
+		action_dec_zoom->setEnabled(current_model->getCurrentZoom() >= ModelWidget::MinimumZoom);
 	}
 }
 

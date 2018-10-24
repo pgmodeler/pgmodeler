@@ -30,9 +30,9 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	setupUi(this);
 	hideEvent(nullptr);
 
-	PgModelerUiNs::configureWidgetFont(invalid_cli_lbl, PgModelerUiNs::MEDIUM_FONT_FACTOR);
-	PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MEDIUM_FONT_FACTOR);
-	PgModelerUiNs::configureWidgetFont(not_found_lbl, PgModelerUiNs::MEDIUM_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(invalid_cli_lbl, PgModelerUiNs::MediumFontFactor);
+	PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
+	PgModelerUiNs::configureWidgetFont(not_found_lbl, PgModelerUiNs::MediumFontFactor);
 
 	//Configuring font style for output widget
 	if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT].isEmpty())

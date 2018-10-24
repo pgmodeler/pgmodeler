@@ -59,7 +59,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, ObjTable)
 	table_grid->addWidget(frame, table_grid->count()+1, 0, 1, 2);
 	frame->setParent(this);
 
-	parent_tables = new ObjectsTableWidget(ObjectsTableWidget::NO_BUTTONS, true, this);
+	parent_tables = new ObjectsTableWidget(ObjectsTableWidget::NoButtons, true, this);
 	parent_tables->setColumnCount(3);
 	parent_tables->setHeaderLabel(trUtf8("Name"), 0);
 	parent_tables->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
@@ -81,8 +81,8 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, ObjTable)
 	//Configuring the table objects that stores the columns, triggers, constraints, rules and indexes
 	for(unsigned i=0; i <= 5; i++)
 	{
-		tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
-								  (ObjectsTableWidget::UPDATE_BUTTON), true, this);
+		tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+								  (ObjectsTableWidget::UpdateButton), true, this);
 
 		objects_tab_map[types[i]]=tab;
 
@@ -266,8 +266,8 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 		for(i=0; i < 6; i++)
 		{
 			listObjects(types[i]);
-			objects_tab_map[types[i]]->setButtonConfiguration(ObjectsTableWidget::ALL_BUTTONS ^
-															  (ObjectsTableWidget::UPDATE_BUTTON));
+			objects_tab_map[types[i]]->setButtonConfiguration(ObjectsTableWidget::AllButtons ^
+															  (ObjectsTableWidget::UpdateButton));
 		}
 
 		//Listing the ancestor tables
@@ -363,11 +363,11 @@ void TableWidget::listObjects(ObjectType obj_type)
 		//Enables the add button on the constraints, triggers and index tab only when there is columns created
 		if(obj_type==ObjColumn)
 		{
-			objects_tab_map[ObjConstraint]->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON,
+			objects_tab_map[ObjConstraint]->setButtonsEnabled(ObjectsTableWidget::AddButton,
 															   objects_tab_map[ObjColumn]->getRowCount() > 0);
-			objects_tab_map[ObjTrigger]->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON,
+			objects_tab_map[ObjTrigger]->setButtonsEnabled(ObjectsTableWidget::AddButton,
 															objects_tab_map[ObjColumn]->getRowCount() > 0);
-			objects_tab_map[ObjIndex]->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON,
+			objects_tab_map[ObjIndex]->setButtonsEnabled(ObjectsTableWidget::AddButton,
 														  objects_tab_map[ObjColumn]->getRowCount() > 0);
 		}
 	}

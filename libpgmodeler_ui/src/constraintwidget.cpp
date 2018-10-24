@@ -38,15 +38,15 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		expression_hl=new SyntaxHighlighter(expression_txt, false, true);
 		expression_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
-		columns_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
-										  (ObjectsTableWidget::EDIT_BUTTON |
-											 ObjectsTableWidget::UPDATE_BUTTON |
-											 ObjectsTableWidget::DUPLICATE_BUTTON), true, this);
+		columns_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+										  (ObjectsTableWidget::EditButton |
+											 ObjectsTableWidget::UpdateButton |
+											 ObjectsTableWidget::DuplicateButton), true, this);
 
-		ref_columns_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
-											  (ObjectsTableWidget::EDIT_BUTTON |
-												 ObjectsTableWidget::UPDATE_BUTTON |
-												ObjectsTableWidget::DUPLICATE_BUTTON), true, this);
+		ref_columns_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+											  (ObjectsTableWidget::EditButton |
+												 ObjectsTableWidget::UpdateButton |
+												ObjectsTableWidget::DuplicateButton), true, this);
 
 		ref_table_sel=new ObjectSelectorWidget(ObjTable, true, this);
 
@@ -156,7 +156,7 @@ void ConstraintWidget::addColumn(int row)
 		addColumn(column, col_id, row);
 
 		//When there is no items con the combo the insert button of the table is disabled
-		aux_col_tab->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON, (combo->count()!=0));
+		aux_col_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, (combo->count()!=0));
 	}
 	catch(Exception &e)
 	{
@@ -267,7 +267,7 @@ void ConstraintWidget::updateColumnsCombo(unsigned col_id)
 							   QString(")"), QVariant::fromValue<void *>(column));
 		}
 
-		aux_col_tab->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON, (combo->count()!=0));
+		aux_col_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, (combo->count()!=0));
 	}
 	catch(Exception &e)
 	{
@@ -381,7 +381,7 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	}
 
 	updateColumnsCombo(Constraint::SourceCols);
-	columns_tab->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
+	columns_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, (column_cmb->count()!=0));
 	columns_tab->blockSignals(false);
 
 	if(constr)
@@ -422,7 +422,7 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 			}
 
 			updateColumnsCombo(Constraint::ReferencedCols);
-			ref_columns_tab->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
+			ref_columns_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, (column_cmb->count()!=0));
 			ref_columns_tab->blockSignals(false);
 		}
 	}

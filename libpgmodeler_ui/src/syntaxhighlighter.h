@@ -64,12 +64,12 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		static QFont default_font;
 
 		//! \brief Indicates that the current block has no special meaning
-		static constexpr int SIMPLE_BLOCK=-1,
+		static constexpr int SimpleBlock=-1,
 
 		/*! \brief Indicates that the current block has an open (but still to close) expression (e.g. multline comments)
 		When the highlighter finds this const it'll do special operation like highlight next blocks with the same
 		configuration as the current one */
-		OPEN_EXPR_BLOCK=0;
+		OpenExprBlock=0;
 
 		/*! \brief Stores the regexp used to identify keywords, identifiers, strings, numbers.
 		Also stores initial regexps used to identify a multiline group */

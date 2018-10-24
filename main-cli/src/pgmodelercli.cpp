@@ -402,7 +402,7 @@ void PgModelerCLI::showMenu(void)
 	out << trUtf8("  %1, %2\t\t    Draws the grid in the exported image.").arg(short_opts[SHOW_GRID]).arg(SHOW_GRID) << endl;
 	out << trUtf8("  %1, %2\t    Draws the page delimiters in the exported image.").arg(short_opts[SHOW_DELIMITERS]).arg(SHOW_DELIMITERS) << endl;
 	out << trUtf8("  %1, %2\t\t    Each page will be exported in a separated png image. (Only for PNG images)").arg(short_opts[PAGE_BY_PAGE]).arg(PAGE_BY_PAGE) << endl;
-	out << trUtf8("  %1, %2 [FACTOR]\t\t    Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4 (Only for PNG images)").arg(short_opts[ZOOM_FACTOR]).arg(ZOOM_FACTOR).arg(ModelWidget::MINIMUM_ZOOM*100).arg(ModelWidget::MAXIMUM_ZOOM*100) << endl;
+	out << trUtf8("  %1, %2 [FACTOR]\t\t    Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4 (Only for PNG images)").arg(short_opts[ZOOM_FACTOR]).arg(ZOOM_FACTOR).arg(ModelWidget::MinimumZoom*100).arg(ModelWidget::MaximumZoom*100) << endl;
 	out << endl;
 	out << trUtf8("DBMS export options: ") << endl;
 	out << trUtf8("  %1, %2\t    Ignores errors related to duplicated objects that eventually exist in the server.").arg(short_opts[IGNORE_DUPLICATES]).arg(IGNORE_DUPLICATES) << endl;
@@ -536,7 +536,7 @@ void PgModelerCLI::parseOptions(attribs_map &opts)
 			 (!opts.count(HOST) || !opts.count(USER) || !opts.count(PASSWD) || !opts.count(INITIAL_DB)) )
 			throw Exception(trUtf8("Incomplete connection information!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
-		if(opts.count(EXPORT_TO_PNG) && (zoom < ModelWidget::MINIMUM_ZOOM || zoom > ModelWidget::MAXIMUM_ZOOM))
+		if(opts.count(EXPORT_TO_PNG) && (zoom < ModelWidget::MinimumZoom || zoom > ModelWidget::MaximumZoom))
 			throw Exception(trUtf8("Invalid zoom specified!"), Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
 		if(upd_mime && opts[DBM_MIME_TYPE]!=INSTALL && opts[DBM_MIME_TYPE]!=UNINSTALL)

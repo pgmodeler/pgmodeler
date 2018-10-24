@@ -27,7 +27,7 @@ PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : BaseConfigWidget(par
 
 	root_dir_edt->setText(dir.absolutePath());
 
-	plugins_tab=new ObjectsTableWidget(ObjectsTableWidget::EDIT_BUTTON, false, this);
+	plugins_tab=new ObjectsTableWidget(ObjectsTableWidget::EditButton, false, this);
 	plugins_tab->setColumnCount(3);
 	plugins_tab->setHeaderLabel(trUtf8("Plugin"),0);
 	plugins_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("plugins")),0);

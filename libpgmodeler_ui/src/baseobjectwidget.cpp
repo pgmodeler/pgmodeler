@@ -52,7 +52,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 		tablespace_sel=nullptr;
 		object_protected = false;
 
-		PgModelerUiNs::configureWidgetFont(protected_obj_lbl, PgModelerUiNs::MEDIUM_FONT_FACTOR);
+		PgModelerUiNs::configureWidgetFont(protected_obj_lbl, PgModelerUiNs::MediumFontFactor);
 
 		connect(edt_perms_tb, SIGNAL(clicked(bool)),this, SLOT(editPermissions(void)));
 		connect(append_sql_tb, SIGNAL(clicked(bool)),this, SLOT(editCustomSQL(void)));
@@ -542,7 +542,7 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 	font.setBold(false);
 	info_frm->setFont(font);
 
-	PgModelerUiNs::configureWidgetFont(info_frm, PgModelerUiNs::MEDIUM_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(info_frm, PgModelerUiNs::MediumFontFactor);
 
 	info_frm->setObjectName("info_frm");
 	info_frm->setFrameShape(QFrame::StyledPanel);
@@ -623,7 +623,7 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 	font.setItalic(false);
 	font.setBold(false);
 
-	PgModelerUiNs::configureWidgetFont(alert_frm, PgModelerUiNs::MEDIUM_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(alert_frm, PgModelerUiNs::MediumFontFactor);
 
 	alert_frm->setObjectName("alerta_frm");
 	alert_frm->setFrameShape(QFrame::StyledPanel);

@@ -206,7 +206,7 @@ bool ModelValidationWidget::isValidationRunning(void)
 void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 {
 	if(validation_thread &&
-			val_info.getValidationType()!=ValidationInfo::VALIDATION_ABORTED &&
+			val_info.getValidationType()!=ValidationInfo::ValidationAborted &&
 			!validation_thread->isRunning() &&
 			validation_helper->isValidationCanceled())
 		return;
@@ -219,13 +219,13 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 	QString ref_name;
 
 	label->setTextInteractionFlags(Qt::TextSelectableByMouse);
-	if(val_info.getValidationType()==ValidationInfo::BROKEN_REFERENCE)
+	if(val_info.getValidationType()==ValidationInfo::BrokenReference)
 		label->setText(trUtf8("The object <strong>%1</strong> <em>(%2)</em> [id: %3] is being referenced by <strong>%4</strong> object(s) before its creation.")
 					   .arg(val_info.getObject()->getName(true).remove('"'))
 					   .arg(val_info.getObject()->getTypeName())
 					   .arg(val_info.getObject()->getObjectId())
 					   .arg(val_info.getReferences().size()));
-	else if(val_info.getValidationType()==ValidationInfo::SP_OBJ_BROKEN_REFERENCE)
+	else if(val_info.getValidationType()==ValidationInfo::SpObjBrokenReference)
 	{
 		QString str_aux;
 
@@ -242,7 +242,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 					   .arg(str_aux)
 					   .arg(val_info.getReferences().size()));
 	}
-	else if(val_info.getValidationType()==ValidationInfo::NO_UNIQUE_NAME)
+	else if(val_info.getValidationType()==ValidationInfo::NoUniqueName)
 	{
 		tab_obj=dynamic_cast<TableObject *>(val_info.getObject());
 
@@ -260,13 +260,13 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 					   .arg(val_info.getReferences().size()));
 
 	}
-	else if(val_info.getValidationType()==ValidationInfo::BROKEN_REL_CONFIG)
+	else if(val_info.getValidationType()==ValidationInfo::BrokenRelConfig)
 		label->setText(trUtf8("The relationship <strong>%1</strong> [id: %2] is in a permanent invalidation state and needs to be relocated.")
 					   .arg(val_info.getObject()->getName(true).remove('"'))
 					   .arg(val_info.getObject()->getObjectId()));
-	else if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR)
+	else if(val_info.getValidationType()==ValidationInfo::SqlValidationError)
 		label->setText(trUtf8("SQL validation failed due to error(s) below. <strong>NOTE:</strong><em> These errors does not invalidates the model but may affect operations like <strong>export</strong> and <strong>diff</strong>.</em>"));
-	else if(val_info.getValidationType() == ValidationInfo::MISSING_EXTENSION)
+	else if(val_info.getValidationType() == ValidationInfo::MissingExtension)
 	{
 		Column *col = dynamic_cast<Column *>(val_info.getObject());
 
@@ -280,15 +280,15 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 		label->setText(val_info.getErrors().at(0));
 
 
-	if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR ||
-			val_info.getValidationType()==ValidationInfo::VALIDATION_ABORTED)
+	if(val_info.getValidationType()==ValidationInfo::SqlValidationError ||
+			val_info.getValidationType()==ValidationInfo::ValidationAborted)
 	{
 		QStringList errors=val_info.getErrors();
 		item->setIcon(0, QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")));
 		validation_prog_pb->setValue(validation_prog_pb->maximum());
 		reenableValidation();
 
-		if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR)
+		if(val_info.getValidationType()==ValidationInfo::SqlValidationError)
 		{
 			//Adding all the sql errors into the output pane
 			while(!errors.isEmpty())
@@ -307,12 +307,12 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 	{
 		item->setIcon(0, QPixmap(PgModelerUiNs::getIconPath("msgbox_erro")));
 
-		if(val_info.getValidationType()==ValidationInfo::BROKEN_REL_CONFIG)
+		if(val_info.getValidationType()==ValidationInfo::BrokenRelConfig)
 		{
 			PgModelerUiNs::createOutputTreeItem(output_trw, trUtf8("<strong>HINT:</strong> try to swap the relationship by another ones that somehow are linked to it through generated columns or constraints to solve this issue. Note that other objects may be lost in the swap process."),
 												QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")), item);
 		}
-		else if(val_info.getValidationType()==ValidationInfo::MISSING_EXTENSION)
+		else if(val_info.getValidationType()==ValidationInfo::MissingExtension)
 		{
 			PgModelerUiNs::createOutputTreeItem(output_trw, trUtf8("<strong>HINT:</strong> Create the extension in the model or let it be created by applying the needed fixes."),
 																					QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")), item);
@@ -334,7 +334,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 				if(tab_obj)
 					ref_name=dynamic_cast<TableObject *>(refs.back())->getParentTable()->getName(true) + QString(".") + ref_name;
 
-				if(val_info.getValidationType()==ValidationInfo::NO_UNIQUE_NAME)
+				if(val_info.getValidationType()==ValidationInfo::NoUniqueName)
 				{
 					//If the referrer object is a table object, concatenates the parent table name
 					if(tab_obj)
@@ -359,7 +359,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 				}
 				else
 				{
-					if(val_info.getValidationType()==ValidationInfo::SP_OBJ_BROKEN_REFERENCE)
+					if(val_info.getValidationType()==ValidationInfo::SpObjBrokenReference)
 						label1->setText(trUtf8("Relationship: <strong>%1</strong> [id: %2].")
 										.arg(ref_name.remove('"'))
 										.arg(refs.back()->getObjectId()));
@@ -389,7 +389,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 	output_trw->setItemHidden(item, false);
 	output_trw->scrollToBottom();
 
-	if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR)
+	if(val_info.getValidationType()==ValidationInfo::SqlValidationError)
 		emit s_validationFinished(validation_helper->getErrorCount() != 0);
 }
 

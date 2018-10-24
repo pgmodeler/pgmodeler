@@ -47,9 +47,9 @@ UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
 		emit s_visibilityChanged(false);
 	});
 
-	PgModelerUiNs::configureWidgetFont(changelog_txt, PgModelerUiNs::MEDIUM_FONT_FACTOR);
-	PgModelerUiNs::configureWidgetFont(ver_num_lbl, PgModelerUiNs::BIG_FONT_FACTOR);
-	PgModelerUiNs::configureWidgetFont(title_lbl, PgModelerUiNs::BIG_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(changelog_txt, PgModelerUiNs::MediumFontFactor);
+	PgModelerUiNs::configureWidgetFont(ver_num_lbl, PgModelerUiNs::BigFontFactor);
+	PgModelerUiNs::configureWidgetFont(title_lbl, PgModelerUiNs::BigFontFactor);
 	this->adjustSize();
 }
 

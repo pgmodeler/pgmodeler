@@ -46,8 +46,8 @@ ModelValidationHelper::~ModelValidationHelper(void)
 void ModelValidationHelper::generateValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> refs)
 {
 	if(!refs.empty() ||
-		 val_type==ValidationInfo::MISSING_EXTENSION ||
-		 (val_type==ValidationInfo::BROKEN_REL_CONFIG &&
+		 val_type==ValidationInfo::MissingExtension ||
+		 (val_type==ValidationInfo::BrokenRelConfig &&
 			 std::find(inv_rels.begin(), inv_rels.end(), object)==inv_rels.end()))
 	{
 		//Configures a validation info
@@ -55,7 +55,7 @@ void ModelValidationHelper::generateValidationInfo(unsigned val_type, BaseObject
 		error_count++;
 		val_infos.push_back(info);
 
-		if(val_type==ValidationInfo::BROKEN_REL_CONFIG)
+		if(val_type==ValidationInfo::BrokenRelConfig)
 			inv_rels.push_back(object);
 
 		//Emit the signal containing the info
@@ -71,13 +71,13 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 		BaseObject *obj=nullptr;
 
 		//Resolving broken references by swaping the object ids
-		if(info.getValidationType()==ValidationInfo::BROKEN_REFERENCE ||
-			 info.getValidationType()==ValidationInfo::SP_OBJ_BROKEN_REFERENCE)
+		if(info.getValidationType()==ValidationInfo::BrokenReference ||
+			 info.getValidationType()==ValidationInfo::SpObjBrokenReference)
 		{
 			BaseObject *info_obj=info.getObject(), *aux_obj=nullptr;
 			unsigned obj_id=info_obj->getObjectId();
 
-			if(info.getValidationType()==ValidationInfo::BROKEN_REFERENCE)
+			if(info.getValidationType()==ValidationInfo::BrokenReference)
 			{
 				//Search for the object with the minor id
 				while(!refs.empty() && !valid_canceled)
@@ -132,7 +132,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 			emit s_objectIdChanged(info_obj);
 		}
 		//Resolving no unique name by renaming the constraints/indexes
-		else if(info.getValidationType()==ValidationInfo::NO_UNIQUE_NAME)
+		else if(info.getValidationType()==ValidationInfo::NoUniqueName)
 		{
 			unsigned suffix=1;
 			QString new_name;
@@ -192,7 +192,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 			}
 		}
 		//Resolving the absence of postgis extension
-		else if(info.getValidationType()==ValidationInfo::MISSING_EXTENSION && !db_model->getExtension(QString("postgis")))
+		else if(info.getValidationType()==ValidationInfo::MissingExtension && !db_model->getExtension(QString("postgis")))
 		{
 			Extension *extension = new Extension();
 			extension->setName(QString("postgis"));
@@ -412,7 +412,7 @@ void ModelValidationHelper::validateModel(void)
 												rels.push_back(rel);
 										}
 
-										generateValidationInfo(ValidationInfo::SP_OBJ_BROKEN_REFERENCE, tab_obj, rels);
+										generateValidationInfo(ValidationInfo::SpObjBrokenReference, tab_obj, rels);
 									}
 								}
 							}
@@ -428,12 +428,12 @@ void ModelValidationHelper::validateModel(void)
 										rels.push_back(rel);
 								}
 
-								generateValidationInfo(ValidationInfo::SP_OBJ_BROKEN_REFERENCE, object, rels);
+								generateValidationInfo(ValidationInfo::SpObjBrokenReference, object, rels);
 							}
 						}
 					}
 
-					generateValidationInfo(ValidationInfo::BROKEN_REFERENCE, object, refs_aux);
+					generateValidationInfo(ValidationInfo::BrokenReference, object, refs_aux);
 				}
 			}
 
@@ -506,7 +506,7 @@ void ModelValidationHelper::validateModel(void)
 			if(mitr->second.size() > 1)
 			{
 				refs.assign(mitr->second.begin() + 1, mitr->second.end());
-				generateValidationInfo(ValidationInfo::NO_UNIQUE_NAME, mitr->second.front(), refs);
+				generateValidationInfo(ValidationInfo::NoUniqueName, mitr->second.front(), refs);
 				refs.clear();
 			}
 
@@ -534,7 +534,7 @@ void ModelValidationHelper::validateModel(void)
 					col = dynamic_cast<Column *>(obj);
 
 					if(col->getType().isGiSType())
-						generateValidationInfo(ValidationInfo::MISSING_EXTENSION, col, {});
+						generateValidationInfo(ValidationInfo::MissingExtension, col, {});
 				}
 
 				progress=30 + ((i/static_cast<float>(obj_list->size()))*20);
@@ -555,7 +555,7 @@ void ModelValidationHelper::validateModel(void)
 				progress=40 + ((i/static_cast<float>(obj_list->size()))*20);
 
 				if(dynamic_cast<Relationship *>(*itr)->isInvalidated())
-					generateValidationInfo(ValidationInfo::BROKEN_REL_CONFIG, *itr, {});
+					generateValidationInfo(ValidationInfo::BrokenRelConfig, *itr, {});
 
 				itr++;
 			}
@@ -605,15 +605,15 @@ void ModelValidationHelper::applyFixes(void)
 			for(unsigned i=0; i < val_infos.size() && !valid_canceled; i++)
 			{
 				if(!validate_rels)
-					validate_rels=(val_infos[i].getValidationType()==ValidationInfo::BROKEN_REFERENCE ||
-												 val_infos[i].getValidationType()==ValidationInfo::SP_OBJ_BROKEN_REFERENCE ||
-												 val_infos[i].getValidationType()==ValidationInfo::NO_UNIQUE_NAME ||
-												 val_infos[i].getValidationType()==ValidationInfo::MISSING_EXTENSION);
+					validate_rels=(val_infos[i].getValidationType()==ValidationInfo::BrokenReference ||
+												 val_infos[i].getValidationType()==ValidationInfo::SpObjBrokenReference ||
+												 val_infos[i].getValidationType()==ValidationInfo::NoUniqueName ||
+												 val_infos[i].getValidationType()==ValidationInfo::MissingExtension);
 
 				/* Checking if a broken relatinship is found, when this is the case all the pending validation info
 		   will not be analyzed until no broken relationship is found */
 				if(!found_broken_rels)
-					found_broken_rels=(val_infos[i].getValidationType()==ValidationInfo::BROKEN_REL_CONFIG);
+					found_broken_rels=(val_infos[i].getValidationType()==ValidationInfo::BrokenRelConfig);
 
 				if(!valid_canceled)
 					resolveConflict(val_infos[i]);
@@ -658,7 +658,7 @@ void ModelValidationHelper::captureThreadError(Exception e)
 
 	emit s_validationInfoGenerated(val_info);
 
-	if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR)
+	if(val_info.getValidationType()==ValidationInfo::SqlValidationError)
 		emit s_validationFinished();
 }
 

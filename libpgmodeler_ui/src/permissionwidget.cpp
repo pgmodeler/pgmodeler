@@ -45,9 +45,9 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	comment_edt->setVisible(false);
 	comment_lbl->setVisible(false);
 
-	roles_tab=new ObjectsTableWidget(ObjectsTableWidget::ADD_BUTTON |
-									ObjectsTableWidget::REMOVE_BUTTON |
-									ObjectsTableWidget::EDIT_BUTTON, false, this);
+	roles_tab=new ObjectsTableWidget(ObjectsTableWidget::AddButton |
+									ObjectsTableWidget::RemoveButton |
+									ObjectsTableWidget::EditButton, false, this);
 	roles_tab->setColumnCount(1);
 	roles_tab->setHeaderLabel(trUtf8("Name"),0);
 	roles_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
@@ -57,9 +57,9 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	grid->setContentsMargins(2,2,2,2);
 	roles_gb->setLayout(grid);
 
-	permissions_tab=new ObjectsTableWidget(ObjectsTableWidget::REMOVE_BUTTON |
-										  ObjectsTableWidget::EDIT_BUTTON |
-										  ObjectsTableWidget::REMOVE_ALL_BUTTON, true, this);
+	permissions_tab=new ObjectsTableWidget(ObjectsTableWidget::RemoveButton |
+										  ObjectsTableWidget::EditButton |
+										  ObjectsTableWidget::RemoveAllButton, true, this);
 	permissions_tab->setColumnCount(3);
 	permissions_tab->setHeaderLabel(trUtf8("Id"),0);
 	permissions_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);

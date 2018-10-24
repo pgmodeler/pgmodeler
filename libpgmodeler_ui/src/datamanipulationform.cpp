@@ -42,8 +42,8 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	table_oid=0;
 
-	PgModelerUiNs::configureWidgetFont(hint_lbl, PgModelerUiNs::MEDIUM_FONT_FACTOR);
-	PgModelerUiNs::configureWidgetFont(warning_lbl, PgModelerUiNs::MEDIUM_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(hint_lbl, PgModelerUiNs::MediumFontFactor);
+	PgModelerUiNs::configureWidgetFont(warning_lbl, PgModelerUiNs::MediumFontFactor);
 
 	filter_hl=new SyntaxHighlighter(filter_txt);
 	filter_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
@@ -1359,7 +1359,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 		{
 			data = results_tbw->item(row,  col_names.indexOf(pk_col))->data(Qt::UserRole);
 
-			if(data.toString() == SQLExecutionWidget::COLUMN_NULL_VALUE)
+			if(data.toString() == SQLExecutionWidget::ColumnNullValue)
 				flt_list.push_back(QString("\"%1\" IS NULL").arg(pk_col));
 			else
 				flt_list.push_back(QString("\"%1\"='%2'").arg(pk_col).arg(data.toString().replace("\'","''")));

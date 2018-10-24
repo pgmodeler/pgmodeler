@@ -18,7 +18,7 @@
 
 #include "pgsqltypewidget.h"
 
-const QString PgSQLTypeWidget::INVALID_TYPE = QString("invalid_type");
+const QString PgSQLTypeWidget::InvalidType = QString("invalid_type");
 
 PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidget(parent)
 {
@@ -76,7 +76,7 @@ bool PgSQLTypeWidget::eventFilter(QObject *object, QEvent *event)
 		}
 		catch(Exception &)
 		{
-			format_txt->setPlainText(INVALID_TYPE);
+			format_txt->setPlainText(InvalidType);
 		}
 	}
 
@@ -212,7 +212,7 @@ void PgSQLTypeWidget::setAttributes(PgSQLType type, DatabaseModel *model,  unsig
 
 PgSQLType PgSQLTypeWidget::getPgSQLType(void)
 {
-	if(format_txt->toPlainText() == INVALID_TYPE)
+	if(format_txt->toPlainText() == InvalidType)
 		throw Exception(AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(type);

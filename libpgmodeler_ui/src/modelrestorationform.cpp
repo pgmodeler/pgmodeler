@@ -23,7 +23,7 @@ ModelRestorationForm::ModelRestorationForm(QWidget *parent, Qt::WindowFlags f) :
 {
 	setupUi(this);
 
-	PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MEDIUM_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
 	keep_models_ht=new HintTextWidget(keep_models_hint, this);
 	keep_models_ht->setText(keep_models_chk->statusTip());
 

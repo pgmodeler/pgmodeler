@@ -100,18 +100,18 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 		//Reset the block's info to permit the rehighlighting
 		info=dynamic_cast<BlockInfo *>(currentBlockUserData());
 		info->resetBlockInfo();
-		setCurrentBlockState(SIMPLE_BLOCK);
+		setCurrentBlockState(SimpleBlock);
 	}
 
 	/* If the previous block info is a open multiline expression the current block will inherit this settings
 	 to force the same text formatting */
-	if(prev_info && currentBlock().previous().userState()==OPEN_EXPR_BLOCK &&
-		 currentBlockState() == OPEN_EXPR_BLOCK)
+	if(prev_info && currentBlock().previous().userState()==OpenExprBlock &&
+		 currentBlockState() == OpenExprBlock)
 	{
 		info->group=prev_info->group;
 		info->has_exprs=prev_info->has_exprs;
 		info->is_expr_closed=false;
-		setCurrentBlockState(OPEN_EXPR_BLOCK);
+		setCurrentBlockState(OpenExprBlock);
 	}
 
 	if(!txt.isEmpty())
@@ -220,9 +220,9 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 				}
 
 				if(info->has_exprs && !info->is_expr_closed && hasInitialAndFinalExprs(group))
-					setCurrentBlockState(OPEN_EXPR_BLOCK);
+					setCurrentBlockState(OpenExprBlock);
 				else
-					setCurrentBlockState(SIMPLE_BLOCK);
+					setCurrentBlockState(SimpleBlock);
 
 				aux_len=(match_idx + match_len);
 				if(match_idx >=0 &&  aux_len != word.length())

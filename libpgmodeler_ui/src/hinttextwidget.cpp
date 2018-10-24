@@ -49,7 +49,7 @@ HintTextWidget::HintTextWidget(QWidget *btn_parent, QWidget *parent): QWidget(pa
 
 	this->setVisible(false);
 	text_lbl->installEventFilter(this);
-	PgModelerUiNs::configureWidgetFont(text_lbl, PgModelerUiNs::MEDIUM_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(text_lbl, PgModelerUiNs::MediumFontFactor);
 
 	parent->installEventFilter(this);
 

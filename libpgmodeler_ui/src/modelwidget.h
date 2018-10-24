@@ -194,10 +194,10 @@ class ModelWidget: public QWidget {
 		void showMagnifierArea(bool show);
 
 	protected:
-		static constexpr unsigned BREAK_VERT_NINETY_DEGREES=0, //Break vertically the line in one 90° angle
-		BREAK_HORIZ_NINETY_DEGREES=1, //Break horizontally the line in one 90° angle
-		BREAK_VERT_2NINETY_DEGREES=2, //Break vertically the line in two 90° angles
-		BREAK_HORIZ_2NINETY_DEGREES=3;//Break horizontally the line in two 90° angles
+		static constexpr unsigned BreakVertNinetyDegrees=0, //Break vertically the line in one 90° angle
+		BreakHorizNinetyDegrees=1, //Break horizontally the line in one 90° angle
+		BreakVert2NinetyDegrees=2, //Break vertically the line in two 90° angles
+		BreakHoriz2NinetyDegrees=3;//Break horizontally the line in two 90° angles
 
 		QAction *action_source_code,
 		*action_edit,
@@ -277,9 +277,9 @@ class ModelWidget: public QWidget {
 		void toggleAllExtendedAttributes(bool value);
 
 	public:
-		static constexpr double MINIMUM_ZOOM=0.050000,
-		MAXIMUM_ZOOM=5.000001,
-		ZOOM_INCREMENT=0.050000;
+		static constexpr double MinimumZoom=0.050000,
+		MaximumZoom=5.000001,
+		ZoomIncrement=0.050000;
 
 		ModelWidget(QWidget *parent = 0);
 		~ModelWidget(void);

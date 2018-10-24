@@ -18,16 +18,16 @@
 
 #include "objectsdiffinfo.h"
 
-constexpr unsigned ObjectsDiffInfo::CREATE_OBJECT;
-constexpr unsigned ObjectsDiffInfo::DROP_OBJECT;
-constexpr unsigned ObjectsDiffInfo::ALTER_OBJECT;
-constexpr unsigned ObjectsDiffInfo::IGNORE_OBJECT;
-constexpr unsigned ObjectsDiffInfo::NO_DIFFERENCE;
+constexpr unsigned ObjectsDiffInfo::CreateObject;
+constexpr unsigned ObjectsDiffInfo::DropObject;
+constexpr unsigned ObjectsDiffInfo::AlterObject;
+constexpr unsigned ObjectsDiffInfo::IgnoreObject;
+constexpr unsigned ObjectsDiffInfo::NoDifference;
 
 ObjectsDiffInfo::ObjectsDiffInfo(void)
 {
 	object=old_object=nullptr;
-	diff_type=NO_DIFFERENCE;
+	diff_type=NoDifference;
 }
 
 ObjectsDiffInfo::ObjectsDiffInfo(unsigned diff_type, BaseObject *object, BaseObject *new_object)
@@ -48,7 +48,7 @@ QString ObjectsDiffInfo::getInfoMessage(void)
 	BaseObject *ref_obj=nullptr;
 	ObjectType obj_type=ObjBaseObject;
 
-	if(diff_type==ALTER_OBJECT && old_object)
+	if(diff_type==AlterObject && old_object)
 		ref_obj=old_object;
 	else
 		ref_obj=object;
@@ -65,28 +65,28 @@ QString ObjectsDiffInfo::getInfoMessage(void)
 	else
 		obj_name=ref_obj->getSignature();
 
-	if(diff_type==NO_DIFFERENCE)
+	if(diff_type==NoDifference)
 		return(QString());
-	else if(diff_type==DROP_OBJECT)
+	else if(diff_type==DropObject)
 	{
 		msg=msg.arg(QString("<font color=\"#e00000\"><strong>DROP</strong></font>"))
 			.arg(obj_name)
 			.arg(ref_obj->getTypeName());
 	}
-	else if(diff_type==CREATE_OBJECT)
+	else if(diff_type==CreateObject)
 	{
 		msg=msg.arg(QString("<font color=\"#008000\"><strong>CREATE</strong></font>"))
 			.arg(obj_name)
 			.arg(ref_obj->getTypeName());
 	}
-	else if(diff_type==ALTER_OBJECT)
+	else if(diff_type==AlterObject)
 	{
 		msg=msg.arg(QString("<font color=\"#ff8000\"><strong>ALTER</strong></font>"))
 			.arg(obj_name)
 			.arg(ref_obj->getTypeName());
 
 	}
-	else if(diff_type==IGNORE_OBJECT)
+	else if(diff_type==IgnoreObject)
 	{
 		msg=msg.arg(QString("<font color=\"#606060\"><strong>IGNORE</strong></font>"))
 			.arg(obj_name)
@@ -99,13 +99,13 @@ QString ObjectsDiffInfo::getInfoMessage(void)
 
 QString ObjectsDiffInfo::getDiffTypeString(void)
 {
-	if(diff_type==NO_DIFFERENCE)
+	if(diff_type==NoDifference)
 		return(QString());
-	else if(diff_type==DROP_OBJECT)
+	else if(diff_type==DropObject)
 		return(QString("DROP"));
-	else if(diff_type==CREATE_OBJECT)
+	else if(diff_type==CreateObject)
 		return(QString("CREATE"));
-	else if(diff_type==ALTER_OBJECT)
+	else if(diff_type==AlterObject)
 		return(QString("ALTER"));
 	else
 		return(QString("IGNORE"));

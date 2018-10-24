@@ -34,7 +34,7 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, ObjRule)
 		command_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 		command_cp=new CodeCompletionWidget(comando_txt);
 
-		commands_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^ ObjectsTableWidget::DUPLICATE_BUTTON, true, this);
+		commands_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
 		commands_tab->setHeaderLabel(trUtf8("SQL command"),0);
 		commands_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("codigosql")),0);
 		dynamic_cast<QGridLayout *>(commands_gb->layout())->addWidget(commands_tab, 1, 0, 1, 2);

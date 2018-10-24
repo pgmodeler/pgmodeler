@@ -147,11 +147,11 @@ void SourceCodeWidget::generateSourceCode(int)
 			}
 			else
 			{
-				if(code_options_cmb->currentIndex()==ORIGINAL_SQL)
+				if(code_options_cmb->currentIndex()==OriginalSql)
 					sqlcode_txt->setPlainText(object->getCodeDefinition(SchemaParser::SqlDefinition));
 				else
 				{
-					vector<BaseObject *> objs=model->getCreationOrder(object, code_options_cmb->currentIndex()==CHILDREN_SQL);
+					vector<BaseObject *> objs=model->getCreationOrder(object, code_options_cmb->currentIndex()==ChildrenSql);
 
 					for(BaseObject *obj : objs)
 						aux_def+=obj->getCodeDefinition(SchemaParser::SqlDefinition);

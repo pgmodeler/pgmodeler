@@ -102,7 +102,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 
 		pgsql_ver_cmb->addItems(PgSqlVersions::AllVersions);
 
-		PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MEDIUM_FONT_FACTOR);
+		PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
 
 		connect(cancel_btn, &QToolButton::clicked, [&](){ cancelOperation(true); });
 		connect(pgsql_ver_chk, SIGNAL(toggled(bool)), pgsql_ver_cmb, SLOT(setEnabled(bool)));
@@ -585,10 +585,10 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 void ModelDatabaseDiffForm::filterDiffInfos(void)
 {
 	QToolButton *btn=dynamic_cast<QToolButton *>(sender());
-	map<QToolButton *, unsigned> diff_types={ {create_tb, ObjectsDiffInfo::CREATE_OBJECT},
-											  {drop_tb, ObjectsDiffInfo::DROP_OBJECT},
-											  {alter_tb, ObjectsDiffInfo::ALTER_OBJECT},
-											  {ignore_tb, ObjectsDiffInfo::IGNORE_OBJECT}};
+	map<QToolButton *, unsigned> diff_types={ {create_tb, ObjectsDiffInfo::CreateObject},
+											  {drop_tb, ObjectsDiffInfo::DropObject},
+											  {alter_tb, ObjectsDiffInfo::AlterObject},
+											  {ignore_tb, ObjectsDiffInfo::IgnoreObject}};
 
 	for(int i=0; i < diff_item->childCount(); i++)
 	{
@@ -850,10 +850,10 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 
 void ModelDatabaseDiffForm::updateDiffInfo(ObjectsDiffInfo diff_info)
 {
-	map<unsigned, QToolButton *> buttons={ {ObjectsDiffInfo::CREATE_OBJECT, create_tb},
-										   {ObjectsDiffInfo::DROP_OBJECT,   drop_tb},
-										   {ObjectsDiffInfo::ALTER_OBJECT,  alter_tb},
-										   {ObjectsDiffInfo::IGNORE_OBJECT, ignore_tb} };
+	map<unsigned, QToolButton *> buttons={ {ObjectsDiffInfo::CreateObject, create_tb},
+										   {ObjectsDiffInfo::DropObject,   drop_tb},
+										   {ObjectsDiffInfo::AlterObject,  alter_tb},
+										   {ObjectsDiffInfo::IgnoreObject, ignore_tb} };
 
 	unsigned diff_type=diff_info.getDiffType();
 	QToolButton *btn=buttons[diff_type];

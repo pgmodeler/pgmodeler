@@ -50,8 +50,8 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjRole)
 	//Alocation of the member role tables
 	for(i=0; i < 3; i++)
 	{
-		obj_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
-																	(ObjectsTableWidget::UPDATE_BUTTON | ObjectsTableWidget::DUPLICATE_BUTTON), true, this);
+		obj_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+																	(ObjectsTableWidget::UpdateButton | ObjectsTableWidget::DuplicateButton), true, this);
 		members_tab[i]=obj_tab;
 
 		obj_tab->setColumnCount(5);

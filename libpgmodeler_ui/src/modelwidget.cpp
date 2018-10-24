@@ -68,10 +68,10 @@ bool ModelWidget::simple_obj_creation=true;
 ModelWidget *ModelWidget::src_model=nullptr;
 float ModelWidget::min_object_opacity=0.10f;
 
-constexpr unsigned ModelWidget::BREAK_VERT_NINETY_DEGREES;
-constexpr unsigned ModelWidget::BREAK_HORIZ_NINETY_DEGREES;
-constexpr unsigned ModelWidget::BREAK_VERT_2NINETY_DEGREES;
-constexpr unsigned ModelWidget::BREAK_HORIZ_2NINETY_DEGREES;
+constexpr unsigned ModelWidget::BreakVertNinetyDegrees;
+constexpr unsigned ModelWidget::BreakHorizNinetyDegrees;
+constexpr unsigned ModelWidget::BreakVert2NinetyDegrees;
+constexpr unsigned ModelWidget::BreakHoriz2NinetyDegrees;
 
 ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 {
@@ -135,7 +135,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	label->setFont(font);
 	label->setWordWrap(true);
 	label->setText(trUtf8("<strong>ATTENTION:</strong> The database model is protected! Operations that could modify it are disabled!"));
-	PgModelerUiNs::configureWidgetFont(label, PgModelerUiNs::MEDIUM_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(label, PgModelerUiNs::MediumFontFactor);
 
 	grid->addWidget(label, 0, 1, 1, 1);
 	protected_model_frm->setLayout(grid);
@@ -338,22 +338,22 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action=new QAction(QIcon(PgModelerUiNs::getIconPath("breakline_90dv")), trUtf8("90° (vertical)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine(void)));
-	action->setData(QVariant::fromValue<unsigned>(BREAK_VERT_NINETY_DEGREES));
+	action->setData(QVariant::fromValue<unsigned>(BreakVertNinetyDegrees));
 	break_rel_menu.addAction(action);
 
 	action=new QAction(QIcon(PgModelerUiNs::getIconPath("breakline_90dh")), trUtf8("90° (horizontal)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine(void)));
-	action->setData(QVariant::fromValue<unsigned>(BREAK_HORIZ_NINETY_DEGREES));
+	action->setData(QVariant::fromValue<unsigned>(BreakHorizNinetyDegrees));
 	break_rel_menu.addAction(action);
 
 	action=new QAction(QIcon(PgModelerUiNs::getIconPath("breakline_290dv")), trUtf8("90° + 90° (vertical)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine(void)));
-	action->setData(QVariant::fromValue<unsigned>(BREAK_VERT_2NINETY_DEGREES));
+	action->setData(QVariant::fromValue<unsigned>(BreakVert2NinetyDegrees));
 	break_rel_menu.addAction(action);
 
 	action=new QAction(QIcon(PgModelerUiNs::getIconPath("breakline_290dh")), trUtf8("90° + 90° (horizontal)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine(void)));
-	action->setData(QVariant::fromValue<unsigned>(BREAK_HORIZ_2NINETY_DEGREES));
+	action->setData(QVariant::fromValue<unsigned>(BreakHoriz2NinetyDegrees));
 	break_rel_menu.addAction(action);
 
 	action_break_rel_line->setMenu(&break_rel_menu);
@@ -538,9 +538,9 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 		 && event->type() == QEvent::Wheel && w_event->modifiers()==Qt::ControlModifier)
 	{
 		if(w_event->angleDelta().y() < 0)
-			this->applyZoom(this->current_zoom - ZOOM_INCREMENT);
+			this->applyZoom(this->current_zoom - ZoomIncrement);
 		else
-			this->applyZoom(this->current_zoom + ZOOM_INCREMENT);
+			this->applyZoom(this->current_zoom + ZoomIncrement);
 
 		return(true);
 	}
@@ -728,10 +728,10 @@ void ModelWidget::restoreLastCanvasPosition(void)
 
 void ModelWidget::applyZoom(double zoom)
 {
-	if(zoom < MINIMUM_ZOOM)
-		zoom = MINIMUM_ZOOM;
-	else if(zoom > MAXIMUM_ZOOM)
-		zoom = MAXIMUM_ZOOM;
+	if(zoom < MinimumZoom)
+		zoom = MinimumZoom;
+	else if(zoom > MaximumZoom)
+		zoom = MaximumZoom;
 
 	viewport->resetTransform();
 	viewport->scale(zoom, zoom);
@@ -4192,11 +4192,11 @@ void ModelWidget::breakRelationshipLine(BaseRelationship *rel, unsigned break_ty
 		src_pnt=rel_view->getConnectionPoint(BaseRelationship::SrcTable);
 		dst_pnt=rel_view->getConnectionPoint(BaseRelationship::DstTable);
 
-		if(break_type==BREAK_VERT_NINETY_DEGREES)
+		if(break_type==BreakVertNinetyDegrees)
 			rel->setPoints({ QPointF(src_pnt.x(), dst_pnt.y()) });
-		else if(break_type==BREAK_HORIZ_NINETY_DEGREES)
+		else if(break_type==BreakHorizNinetyDegrees)
 			rel->setPoints({ QPointF(dst_pnt.x(), src_pnt.y()) });
-		else if(break_type==BREAK_HORIZ_2NINETY_DEGREES)
+		else if(break_type==BreakHoriz2NinetyDegrees)
 		{
 			//Calculates the midle vertical point between the tables centers
 			dy=(src_pnt.y() + dst_pnt.y())/2;
@@ -4554,7 +4554,7 @@ void ModelWidget::rearrangeTablesHierarchically(void)
 			if(!RelationshipView::isCurvedLines() &&
 				 rel->getTable(BaseRelationship::SrcTable)->getPosition().y() !=
 				 rel->getTable(BaseRelationship::DstTable)->getPosition().y())
-				breakRelationshipLine(dynamic_cast<BaseRelationship *>(obj), ModelWidget::BREAK_VERT_2NINETY_DEGREES);
+				breakRelationshipLine(dynamic_cast<BaseRelationship *>(obj), ModelWidget::BreakVert2NinetyDegrees);
 		}
 
 		db_model->setObjectsModified({ ObjTable, ObjView, ObjSchema, ObjRelationship, ObjBaseRelationship });

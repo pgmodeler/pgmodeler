@@ -49,7 +49,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	vbox->setSpacing(6);
 	completion_wgt->setLayout(vbox);
 
-	PgModelerUiNs::configureWidgetFont(name_list, PgModelerUiNs::MEDIUM_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(name_list, PgModelerUiNs::MediumFontFactor);
 
 	this->code_field_txt=code_field_txt;
 	auto_triggered=false;

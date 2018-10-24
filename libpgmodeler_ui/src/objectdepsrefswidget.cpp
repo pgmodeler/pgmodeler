@@ -24,7 +24,7 @@ ObjectDepsRefsWidget::ObjectDepsRefsWidget(QWidget *parent): BaseObjectWidget(pa
 	Ui_ObjectDepsRefsWidget::setupUi(this);
 	configureFormLayout(objectdepsrefs_grid, ObjBaseObject);
 
-	PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MEDIUM_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
 
 	model_wgt=nullptr;
 	alert_frm->setVisible(false);

@@ -69,23 +69,23 @@ void ObjectsTableWidget::setButtonConfiguration(unsigned button_conf)
 	bool move_btn = false;
 
 	//Checking via bitwise operation the buttons available on the 'button_conf'
-	move_btn=(button_conf & MOVE_BUTTONS) == MOVE_BUTTONS;
+	move_btn=(button_conf & MoveButtons) == MoveButtons;
 
 	move_down_tb->setVisible(move_btn);
 	move_up_tb->setVisible(move_btn);
 	move_first_tb->setVisible(move_btn);
 	move_last_tb->setVisible(move_btn);
 
-	edit_tb->setVisible((button_conf & EDIT_BUTTON) == EDIT_BUTTON);
-	remove_all_tb->setVisible((button_conf & REMOVE_ALL_BUTTON) == REMOVE_ALL_BUTTON);
+	edit_tb->setVisible((button_conf & EditButton) == EditButton);
+	remove_all_tb->setVisible((button_conf & RemoveAllButton) == RemoveAllButton);
 
-	add_tb->setVisible((button_conf & ADD_BUTTON) == ADD_BUTTON);
-	remove_tb->setVisible((button_conf & REMOVE_BUTTON) == REMOVE_BUTTON);
-	update_tb->setVisible((button_conf & UPDATE_BUTTON) == UPDATE_BUTTON);
-	duplicate_tb->setVisible((button_conf & DUPLICATE_BUTTON) == DUPLICATE_BUTTON);
+	add_tb->setVisible((button_conf & AddButton) == AddButton);
+	remove_tb->setVisible((button_conf & RemoveButton) == RemoveButton);
+	update_tb->setVisible((button_conf & UpdateButton) == UpdateButton);
+	duplicate_tb->setVisible((button_conf & DuplicateButton) == DuplicateButton);
 
 	//Disabling the horizontal spacers when no buttons are visible
-	if(button_conf==NO_BUTTONS)
+	if(button_conf==NoButtons)
 	{
 		left_spc->changeSize(0,0,QSizePolicy::Ignored,QSizePolicy::Ignored);
 		right_spc->changeSize(0,0,QSizePolicy::Ignored,QSizePolicy::Ignored);
@@ -584,7 +584,7 @@ void ObjectsTableWidget::setButtonsEnabled(unsigned button_conf, bool value)
 	if(item)
 		lin=item->row();
 
-	if((button_conf & MOVE_BUTTONS) == MOVE_BUTTONS)
+	if((button_conf & MoveButtons) == MoveButtons)
 	{
 		move_up_tb->setEnabled(value && lin > 0);
 		move_down_tb->setEnabled(value && lin >= 0 && lin < table_tbw->rowCount()-1);
@@ -592,31 +592,31 @@ void ObjectsTableWidget::setButtonsEnabled(unsigned button_conf, bool value)
 		move_last_tb->setEnabled(value && lin >=0 && lin < table_tbw->rowCount()-1);
 	}
 
-	if((button_conf & EDIT_BUTTON) == EDIT_BUTTON)
+	if((button_conf & EditButton) == EditButton)
 		edit_tb->setEnabled(value && lin >= 0);
 
-	if((button_conf & ADD_BUTTON) == ADD_BUTTON)
+	if((button_conf & AddButton) == AddButton)
 		add_tb->setEnabled(value);
 
-	if((button_conf & REMOVE_BUTTON) == REMOVE_BUTTON)
+	if((button_conf & RemoveButton) == RemoveButton)
 		remove_tb->setEnabled(value && lin >= 0);
 
-	if((button_conf & REMOVE_ALL_BUTTON) == REMOVE_ALL_BUTTON)
+	if((button_conf & RemoveAllButton) == RemoveAllButton)
 		remove_all_tb->setEnabled(value && table_tbw->rowCount() > 0);
 
-	if((button_conf & UPDATE_BUTTON) == UPDATE_BUTTON)
+	if((button_conf & UpdateButton) == UpdateButton)
 		update_tb->setEnabled(value && lin >= 0);
 
-	if((button_conf & DUPLICATE_BUTTON) == DUPLICATE_BUTTON)
+	if((button_conf & DuplicateButton) == DuplicateButton)
 		duplicate_tb->setEnabled(value && lin >= 0);
 
-	if((button_conf & RESIZE_COLS_BUTTON) == RESIZE_COLS_BUTTON)
+	if((button_conf & ResizeColsButton) == ResizeColsButton)
 		resize_cols_tb->setEnabled(value && table_tbw->rowCount() > 0);
 }
 
 void ObjectsTableWidget::setButtonsEnabled(void)
 {
-	setButtonsEnabled(ALL_BUTTONS, true);
+	setButtonsEnabled(AllButtons, true);
 }
 
 void ObjectsTableWidget::emitRowSelected(void)

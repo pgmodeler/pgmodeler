@@ -55,7 +55,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjView)
 		tag_sel=new ObjectSelectorWidget(ObjTag, false, this);
 		dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 4);
 
-		references_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^ ObjectsTableWidget::UPDATE_BUTTON, true, this);
+		references_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::UpdateButton, true, this);
 		references_tab->setColumnCount(5);
 		references_tab->setHeaderLabel(trUtf8("Col./Expr."), 0);
 		references_tab->setHeaderLabel(trUtf8("Table alias"), 1);
@@ -72,8 +72,8 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjView)
 		//Configuring the table objects that stores the triggers and rules
 		for(unsigned i=0, tab_id=1; i < sizeof(types)/sizeof(ObjectType); i++, tab_id++)
 		{
-			tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
-									  (ObjectsTableWidget::UPDATE_BUTTON  | ObjectsTableWidget::MOVE_BUTTONS), true, this);
+			tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+									  (ObjectsTableWidget::UpdateButton  | ObjectsTableWidget::MoveButtons), true, this);
 
 			objects_tab_map[types[i]]=tab;
 

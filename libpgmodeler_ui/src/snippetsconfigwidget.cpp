@@ -23,7 +23,7 @@
 
 map<QString, attribs_map> SnippetsConfigWidget::config_params;
 
-const QRegExp SnippetsConfigWidget::ID_FORMAT_REGEXP=QRegExp(QString("^([a-z])([a-z]*|(\\d)*|(_)*)+"), Qt::CaseInsensitive);
+const QRegExp SnippetsConfigWidget::IdFormatRegExp=QRegExp(QString("^([a-z])([a-z]*|(\\d)*|(_)*)+"), Qt::CaseInsensitive);
 
 SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
@@ -224,7 +224,7 @@ bool SnippetsConfigWidget::isSnippetValid(attribs_map &attribs, const QString &o
 
 	if(!orig_id.isEmpty() && snip_id!=orig_id && config_params.count(snip_id)!=0)
 		err_msg=trUtf8("Duplicated snippet id <strong>%1</strong> detected. Please, specify a different one!").arg(snip_id);
-	else if(!ID_FORMAT_REGEXP.exactMatch(snip_id))
+	else if(!IdFormatRegExp.exactMatch(snip_id))
 		err_msg=trUtf8("Invalid ID pattern detected <strong>%1</strong>. This one must start with at leat one letter and be composed by letters, numbers and/or underscore!").arg(snip_id);
 	else if(attribs[ParsersAttributes::LABEL].isEmpty())
 		err_msg=trUtf8("Empty label for snippet <strong>%1</strong>. Please, specify a value for it!").arg(snip_id);

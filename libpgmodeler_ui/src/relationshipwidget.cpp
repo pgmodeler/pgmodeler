@@ -70,15 +70,15 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 											  GlobalAttributes::ConfigurationExt);
 		}
 
-		attributes_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
-											 (ObjectsTableWidget::UPDATE_BUTTON |
-											  ObjectsTableWidget::MOVE_BUTTONS), true, this);
+		attributes_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+											 (ObjectsTableWidget::UpdateButton |
+											  ObjectsTableWidget::MoveButtons), true, this);
 
-		constraints_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS  ^
-											  (ObjectsTableWidget::UPDATE_BUTTON |
-											   ObjectsTableWidget::MOVE_BUTTONS), true, this);
+		constraints_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons  ^
+											  (ObjectsTableWidget::UpdateButton |
+											   ObjectsTableWidget::MoveButtons), true, this);
 
-		advanced_objs_tab=new ObjectsTableWidget(ObjectsTableWidget::EDIT_BUTTON, true, this);
+		advanced_objs_tab=new ObjectsTableWidget(ObjectsTableWidget::EditButton, true, this);
 
 		attributes_tab->setColumnCount(2);
 		attributes_tab->setHeaderLabel(trUtf8("Attribute"), 0);
@@ -103,18 +103,18 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		grid=new QGridLayout;
 		grid->addWidget(attributes_tab, 0,0,1,1);
 		grid->setContentsMargins(4,4,4,4);
-		rel_attribs_tbw->widget(ATTRIBUTES_TAB)->setLayout(grid);
+		rel_attribs_tbw->widget(AttributesTab)->setLayout(grid);
 
 		grid=new QGridLayout;
 		grid->addWidget(constraints_tab, 0,0,1,1);
 		grid->setContentsMargins(4,4,4,4);
-		rel_attribs_tbw->widget(CONSTRAINTS_TAB)->setLayout(grid);
+		rel_attribs_tbw->widget(ConstraintsTab)->setLayout(grid);
 
-		grid=dynamic_cast<QGridLayout *>(rel_attribs_tbw->widget(SPECIAL_PK_TAB)->layout());
+		grid=dynamic_cast<QGridLayout *>(rel_attribs_tbw->widget(SpecialPkTab)->layout());
 		frame=generateInformationFrame(trUtf8("Use the special primary key if you want to include a primary key containing generated columns to the receiver table. <strong>Important:</strong> if this is a new relationship there is a need to finish its creation and reopen this dialog to create the special primary key."));
 
 		grid->addWidget(frame, 1, 0, 1, 1);
-		frame->setParent(rel_attribs_tbw->widget(SPECIAL_PK_TAB));
+		frame->setParent(rel_attribs_tbw->widget(SpecialPkTab));
 
 		grid=new QGridLayout;
 		grid->setContentsMargins(4,4,4,4);
@@ -124,11 +124,11 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		frame=generateInformationFrame(trUtf8("This advanced tab shows the objects (columns or table) auto created by the relationship's connection as well the foreign keys that represents the link between the participant tables."));
 		grid->addWidget(frame, 1, 0, 1, 1);
 
-		rel_attribs_tbw->widget(ADVANCED_TAB)->setLayout(grid);
+		rel_attribs_tbw->widget(AdvancedTab)->setLayout(grid);
 
 		color_picker=new ColorPickerWidget(1,this);
 		color_picker->setEnabled(false);
-		grid=dynamic_cast<QGridLayout *>(rel_attribs_tbw->widget(GENERAL_TAB)->layout());
+		grid=dynamic_cast<QGridLayout *>(rel_attribs_tbw->widget(GeneralTab)->layout());
 		grid->addWidget(color_picker, 0, 1);
 
 		configureFormLayout(relationship_grid, ObjRelationship);
@@ -153,13 +153,13 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		del_action_cmb->addItems(list);
 		upd_action_cmb->addItems(list);
 
-		tabs={ nullptr, rel_attribs_tbw->widget(SETTINGS_TAB),
-					 rel_attribs_tbw->widget(ATTRIBUTES_TAB), rel_attribs_tbw->widget(CONSTRAINTS_TAB),
-					 rel_attribs_tbw->widget(SPECIAL_PK_TAB), rel_attribs_tbw->widget(ADVANCED_TAB) };
+		tabs={ nullptr, rel_attribs_tbw->widget(SettingsTab),
+					 rel_attribs_tbw->widget(AttributesTab), rel_attribs_tbw->widget(ConstraintsTab),
+					 rel_attribs_tbw->widget(SpecialPkTab), rel_attribs_tbw->widget(AdvancedTab) };
 
-		tab_labels=QStringList{ QString(), rel_attribs_tbw->tabText(SETTINGS_TAB),
-							 rel_attribs_tbw->tabText(ATTRIBUTES_TAB), rel_attribs_tbw->tabText(CONSTRAINTS_TAB),
-							 rel_attribs_tbw->tabText(SPECIAL_PK_TAB), rel_attribs_tbw->tabText(ADVANCED_TAB)};
+		tab_labels=QStringList{ QString(), rel_attribs_tbw->tabText(SettingsTab),
+							 rel_attribs_tbw->tabText(AttributesTab), rel_attribs_tbw->tabText(ConstraintsTab),
+							 rel_attribs_tbw->tabText(SpecialPkTab), rel_attribs_tbw->tabText(AdvancedTab)};
 
 		part_bound_expr_txt=new NumberedTextEditor(this, true);
 		part_bound_expr_hl=new SyntaxHighlighter(part_bound_expr_txt);
@@ -332,8 +332,8 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		table2_mand_chk->setChecked(aux_rel->isTableMandatory(BaseRelationship::DstTable));
 		identifier_chk->setChecked(aux_rel->isIdentifier());
 		relnn_tab_name_edt->setText(aux_rel->getTableNameRelNN());
-		attributes_tab->setButtonsEnabled(ObjectsTableWidget::ALL_BUTTONS, !aux_rel->isProtected());
-		constraints_tab->setButtonsEnabled(ObjectsTableWidget::ALL_BUTTONS, !aux_rel->isProtected());
+		attributes_tab->setButtonsEnabled(ObjectsTableWidget::AllButtons, !aux_rel->isProtected());
+		constraints_tab->setButtonsEnabled(ObjectsTableWidget::AllButtons, !aux_rel->isProtected());
 
 		//Lists the relationship attributes
 		listObjects(ObjColumn);
@@ -415,21 +415,21 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 	part_bound_expr_gb->setVisible(rel_type==BaseRelationship::RelationshipPart);
 
-	for(i=SETTINGS_TAB; i <= ADVANCED_TAB; i++)
+	for(i=SettingsTab; i <= AdvancedTab; i++)
 		rel_attribs_tbw->removeTab(1);
 
 	if(!relgen_dep)
 	{
-		for(i=SETTINGS_TAB; i <= SPECIAL_PK_TAB; i++)
+		for(i=SettingsTab; i <= SpecialPkTab; i++)
 			rel_attribs_tbw->addTab(tabs[i], tab_labels[i]);
 	}
 	else if(relgen_dep && base_rel->getObjectType()==ObjRelationship)
-		rel_attribs_tbw->addTab(tabs[SPECIAL_PK_TAB], tab_labels[SPECIAL_PK_TAB]);
+		rel_attribs_tbw->addTab(tabs[SpecialPkTab], tab_labels[SpecialPkTab]);
 
 	if(base_rel->getObjectType()==ObjRelationship ||
 			(base_rel->getObjectType()==ObjBaseRelationship &&
 			 base_rel->getRelationshipType()==BaseRelationship::RelationshipFk))
-		rel_attribs_tbw->addTab(tabs[ADVANCED_TAB], tab_labels[ADVANCED_TAB]);
+		rel_attribs_tbw->addTab(tabs[AdvancedTab], tab_labels[AdvancedTab]);
 
 	copy_options_grp->setVisible(base_rel->getObjectType()==ObjRelationship &&
 								 base_rel->getRelationshipType()==BaseRelationship::RelationshipDep);
@@ -583,7 +583,7 @@ void RelationshipWidget::listObjects(ObjectType obj_type)
 		tab->clearSelection();
 		tab->blockSignals(false);
 
-		constraints_tab->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON,
+		constraints_tab->setButtonsEnabled(ObjectsTableWidget::AddButton,
 										   attributes_tab->getRowCount() > 0);
 	}
 	catch(Exception &e)

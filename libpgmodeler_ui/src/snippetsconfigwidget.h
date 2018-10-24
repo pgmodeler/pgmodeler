@@ -40,7 +40,7 @@ class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWi
 		static map<QString, attribs_map> config_params;
 
 		//! \brief The regular expression the defines a valid id for a snippet
-		static const QRegExp ID_FORMAT_REGEXP;
+		static const QRegExp IdFormatRegExp;
 
 		NumberedTextEditor *snippet_txt;
 

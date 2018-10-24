@@ -37,10 +37,10 @@ PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, ObjPolicy)
 		check_hl = new SyntaxHighlighter(check_edt);
 		check_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
-		roles_tab = new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
-																			 (ObjectsTableWidget::DUPLICATE_BUTTON |
-																				ObjectsTableWidget::UPDATE_BUTTON |
-																				ObjectsTableWidget::EDIT_BUTTON), true, this);
+		roles_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+																			 (ObjectsTableWidget::DuplicateButton |
+																				ObjectsTableWidget::UpdateButton |
+																				ObjectsTableWidget::EditButton), true, this);
 		roles_tab->setColumnCount(1);
 		roles_tab->setHeaderLabel(trUtf8("Name"), 0);
 		roles_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")), 0);

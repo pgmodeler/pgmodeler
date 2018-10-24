@@ -33,8 +33,8 @@ ElementsTableWidget::ElementsTableWidget(QWidget *parent) : QWidget(parent)
 		connect(&element_form, SIGNAL(accepted()), element_wgt, SLOT(applyConfiguration()));
 
 		QVBoxLayout *vbox = new QVBoxLayout(this);
-		elements_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
-																				(ObjectsTableWidget::UPDATE_BUTTON | ObjectsTableWidget::DUPLICATE_BUTTON), true, this);
+		elements_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+																				(ObjectsTableWidget::UpdateButton | ObjectsTableWidget::DuplicateButton), true, this);
 
 		elements_tab->setColumnCount(7);
 		elements_tab->setHeaderLabel(trUtf8("Element"), 0);

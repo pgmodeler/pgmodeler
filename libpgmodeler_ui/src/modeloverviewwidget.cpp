@@ -106,9 +106,9 @@ bool ModelOverviewWidget::eventFilter(QObject *object, QEvent *event)
 		QPoint dt_angle = w_event->angleDelta();
 
 		if(dt_angle.y() < 0)
-			model->applyZoom(model->getCurrentZoom() - ModelWidget::ZOOM_INCREMENT);
+			model->applyZoom(model->getCurrentZoom() - ModelWidget::ZoomIncrement);
 		else
-			model->applyZoom(model->getCurrentZoom() + ModelWidget::ZOOM_INCREMENT);
+			model->applyZoom(model->getCurrentZoom() + ModelWidget::ZoomIncrement);
 
 		return(false);
 	}

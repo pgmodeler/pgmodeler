@@ -211,16 +211,16 @@ namespace PgModelerUiNs {
 
 		switch(factor_id)
 		{
-			case SMALL_FONT_FACTOR:
+			case SmallFontFactor:
 				factor=0.80f;
 			break;
-			case MEDIUM_FONT_FACTOR:
+			case MediumFontFactor:
 				factor=0.90f;
 			break;
-			case BIG_FONT_FACTOR:
+			case BigFontFactor:
 				factor=1.10f;
 			break;
-			case HUGE_FONT_FACTOR:
+			case HugeFontFactor:
 			default:
 				factor=1.40f;
 			break;

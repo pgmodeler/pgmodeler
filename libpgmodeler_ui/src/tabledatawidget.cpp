@@ -21,7 +21,7 @@
 #include "bulkdataeditwidget.h"
 #include "sqlexecutionwidget.h"
 
-const QString TableDataWidget::PLACEHOLDER_COLUMN=QString("$placeholder$");
+const QString TableDataWidget::PlaceholderColumn=QString("$placeholder$");
 
 TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, ObjBaseObject)
 {
@@ -255,7 +255,7 @@ void TableDataWidget::changeColumnName(int col_idx)
 
 			item->setText(col_name);
 
-			if(act->text()==PLACEHOLDER_COLUMN)
+			if(act->text()==PlaceholderColumn)
 			{
 				item->setFlags(Qt::NoItemFlags);
 				item->setForeground(QColor(Qt::red));
@@ -274,7 +274,7 @@ void TableDataWidget::changeColumnName(int col_idx)
 			{
 				item=data_tbw->item(row, col_idx);
 
-				if(col_name==PLACEHOLDER_COLUMN)
+				if(col_name==PlaceholderColumn)
 					setItemInvalid(item);
 				else
 				{
@@ -449,7 +449,7 @@ void TableDataWidget::configureColumnNamesMenu(void)
 	}
 
 	col_names_menu.addSeparator();
-	col_names_menu.addAction(PLACEHOLDER_COLUMN);
+	col_names_menu.addAction(PlaceholderColumn);
 }
 
 void TableDataWidget::toggleWarningFrame(void)
